@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/stewid/siminf.png)](https://travis-ci.org/stewid/siminf)
+
 # siminf
 A framework for stochastic disease spread simulations
 
