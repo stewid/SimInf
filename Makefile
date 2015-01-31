@@ -47,7 +47,5 @@ clean:
 	-rm -f src/*.so
 	-rm -rf src-x64
 	-rm -rf src-i386
-	-rm -f inst/models/*.o
-	-rm -f inst/siminf/src/siminf/*.o
 
 .PHONY: install roxygen pdf check check_gctorture check_valgrind clean
