@@ -16,42 +16,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Internal function to run siminf stochastic simulation algorithms
-##'
-##' @param model The siminf model to run.
-##' @param verbose Level of siminf feeedback during simulation. Silent
-##' if 0, progress if 1, progress and number of transition
-##' events if 2.
-##' @param seed Random number seed.
-##' @param solver A character string giving the name of the C function
-##' to initiate and run the model.
-##' @return \code{siminf_model} with result from simulation.
-##' @keywords internal
-run_internal <- function(model, verbose, seed, solver)
-{
-    ## Check verbose
-    stopifnot(is.numeric(verbose),
-              identical(length(verbose), 1L),
-              is_wholenumber(verbose))
-    verbose <- as.integer(verbose)
-    if (!(verbose %in% c(0L, 1L, 2L))) {
-        stop("Unsupported verbose level");
-    }
-
-    ## Check seed
-    if (!is.null(seed)) {
-        stopifnot(is.numeric(seed),
-                  identical(length(seed), 1L),
-                  is_wholenumber(seed))
-    }
-
-    ## check that siminf_model contains all data structures
-    ## required by the siminf solver and that they make sense
-    validObject(model);
-
-    .Call(as.character(solver), model, 1L, verbose, seed)
-}
-
 ##' Run siminf stochastic simulation algorithms
 ##'
 ##' @rdname run-methods
@@ -75,7 +39,11 @@ setMethod("run",
           signature(model = "SISe3"),
           function(model, verbose, seed)
           {
-              run_internal(model, verbose, seed, SISe3_run)
+              ## check that siminf_model contains all data structures
+              ## required by the siminf solver and that they make sense
+              validObject(model);
+
+              .Call(SISe3_run, model, 1L, verbose, seed)
           }
 )
 
@@ -86,6 +54,11 @@ setMethod("run",
           signature(model = "SISe"),
           function(model, verbose, seed)
           {
-              run_internal(model, verbose, seed, SISe_run)
+
+              ## check that siminf_model contains all data structures
+              ## required by the siminf solver and that they make sense
+              validObject(model);
+
+              .Call(SISe_run, model, 1L, verbose, seed)
           }
 )
