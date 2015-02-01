@@ -34,11 +34,11 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##' @section Slots:
 ##' \describe{
 ##'   \item{E}{
-##'     Sparse matrix (\eqn{Ncompartments \times (4 * Nselect)}) of
+##'     Sparse matrix (\eqn{Ncompartments \times (4 * Nobs)}) of
 ##'     object class \code{"\linkS4class{dgCMatrix}"}. Each event
-##'     type contains Nselect columns. Currently 4 types of events
-##'     are implemented, see \code{ext_event}. For the events
-##'     EXIT_EVENT and EXTERNAL_TRANSFER_EVENT, a non-zero entry
+##'     type contains the number of observable states (Nobs) columns.
+##'     Currently 4 types of events are implemented, see \code{ext_event}.
+##'     For the events EXIT_EVENT and EXTERNAL_TRANSFER_EVENT, a non-zero entry
 ##'     in element \code{i} of select column \code{j} indicate the
 ##'     compartments to sample individuals from.
 ##'     For the event ENTER_EVENT, all individuals enter first non-zero
