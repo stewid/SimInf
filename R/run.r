@@ -49,7 +49,7 @@ run_internal <- function(model, verbose, seed, solver)
     ## required by the siminf solver and that they make sense
     validObject(model);
 
-    .Call(solver, model, 1L, verbose, seed)
+    .Call(as.character(solver), model, 1L, verbose, seed)
 }
 
 ##' Run siminf stochastic simulation algorithms
