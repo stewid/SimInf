@@ -79,31 +79,102 @@ void progress(
 }
 
 /**
+ * Get report level
+ *
+ * @param verbose Level of feedback from simulation
+ * @return integer with report level
+ */
+static int get_report_level(SEXP verbose)
+{
+    int n;
+
+    if (verbose == R_NilValue)
+        Rf_error("verbose must be specified");
+    if (LENGTH(verbose) != 1)
+        Rf_error("Invalid length of vebose vector");
+
+    if (isInteger(verbose)) {
+        if (INTEGER(verbose)[0] == NA_INTEGER)
+            Rf_error("Invalid value (NA) for verbose");
+        n = INTEGER(verbose)[0];
+    } else if (isReal(verbose)) {
+        if (REAL(verbose)[0] == NA_REAL)
+            Rf_error("Invalid value (NA) for verbose");
+        n = (int)(REAL(verbose)[0]);
+    } else {
+        Rf_error("Invalid type for verbose");
+    }
+
+    if (n < 0 || n > 2)
+        Rf_error("verbose must be a 0 <= value <= 0");
+
+    return n;
+}
+
+/**
  * Look for seed
  *
- * If seed is provided as a model parameter, it takes precedence.
  * @param seed Random number seed.
  * @return seed
  */
 static unsigned long int get_seed(SEXP seed)
 {
     if (seed != R_NilValue) {
-        if (!isInteger(seed))
-            Rf_error("Invalid type of seed");
-
-        if (length(seed) == 0)
+        switch (LENGTH(seed) == 0) {
+        case 0:
             return (unsigned long int)time(NULL);
-
-        if (length(seed) == 1) {
-            if (INTEGER(seed)[0] == NA_INTEGER)
-                Rf_error("Invalid value of seed: NA_INTEGER");
-            return (unsigned long int)INTEGER(seed)[0];
+        case 1:
+            if (isInteger(seed)) {
+                if (INTEGER(seed)[0] == NA_INTEGER)
+                    Rf_error("Invalid value (NA) of seed");
+                return (unsigned long int)INTEGER(seed)[0];
+            } else if (isReal(seed)) {
+                if (REAL(seed)[0] == NA_REAL)
+                    Rf_error("Invalid value (NA) of seed");
+                return (unsigned long int)REAL(seed)[0];
+            }
+            Rf_error("Invalid type of seed");
+            break;
+        default:
+            Rf_error("Invalid length of seed");
+            break;
         }
-
-        Rf_error("Invalid length of seed");
     }
 
     return (unsigned long int)time(NULL);
+}
+
+/**
+ * Get number of threads
+ *
+ * @param threads Number of threads
+ * @return Integer with number of threads
+ */
+static int get_threads(SEXP threads)
+{
+    int n;
+
+    if (threads == R_NilValue)
+        Rf_error("Number of threads must be specified");
+    if (LENGTH(threads) != 1)
+        Rf_error("Invalid length of threads vector");
+
+    if (isInteger(threads)) {
+        if (INTEGER(threads)[0] == NA_INTEGER)
+            Rf_error("Invalid value (NA) for threads");
+        n = INTEGER(threads)[0];
+    } else if (isReal(threads)) {
+        if (REAL(threads)[0] == NA_REAL)
+            Rf_error("Invalid value (NA) for threads");
+        n = (int)(REAL(threads)[0]);
+    } else {
+        Rf_error("Invalid type for threads");
+    }
+
+    if (n < 1)
+        Rf_error("Number of threads must be a value > 0");
+
+    return n;
 }
 
 /**
@@ -172,7 +243,7 @@ int run_internal(
     const PropensityFun *t_fun,
     const InfPressFun inf_fun)
 {
-    int err = 0, Nobs = 0;
+    int err = 0, Nobs = 0, report_level, n_threads;
     SEXP events, E, N;
     gsl_rng *rng = NULL;
     size_t *irN = NULL, *jcN = NULL;
@@ -183,20 +254,10 @@ int run_internal(
     size_t Nn, Nc, tlen, dsize, Nt;
 
     /* number of threads */
-    if (threads == R_NilValue)
-        Rf_error("Number of threads must be specified");
-    if (!isInteger(threads) ||
-        length(threads) != 1 ||
-        INTEGER(threads)[0] == NA_INTEGER ||
-        INTEGER(threads)[0] < 1)
-        Rf_error("Number of threads must be an integer vector of length one and value > 0");
+    n_threads = get_threads(threads);
 
     /* report level */
-    if (verbose == R_NilValue)
-        Rf_error("Report level must be specified");
-    if (!isInteger(verbose) || length(verbose) != 1 || INTEGER(verbose)[0] == NA_INTEGER ||
-        INTEGER(verbose)[0] < 0 || INTEGER(verbose)[0] > 2)
-        Rf_error("Report level must be an integer vector of length one and 0 <= value <= 2");
+    report_level = get_report_level(verbose);
 
     /* seed */
     rng = gsl_rng_alloc(gsl_rng_mt19937);
@@ -264,9 +325,7 @@ int run_internal(
         INTEGER(GET_SLOT(events, Rf_install("ext_n"))),
         REAL(GET_SLOT(events,    Rf_install("ext_p"))),
         INTEGER(GET_SLOT(events, Rf_install("ext_len")))[0],
-        INTEGER(verbose)[0],
-        INTEGER(threads)[0],
-        rng, t_fun, inf_fun, &progress);
+        report_level, n_threads, rng, t_fun, inf_fun, &progress);
 
 cleanup:
     if (rng)
