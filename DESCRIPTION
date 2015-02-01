@@ -1,5 +1,5 @@
 Package: siminf
-Title: Framework for Stochastic Disease Spread Simulations
+Title: A Framework for Stochastic Disease Spread Simulations
 Version: 0.1
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
     email = "stefan.widgren@sva.se"),
@@ -18,3 +18,9 @@ Depends:
     methods
 Collate:
     'external_events.r'
+    'siminf_model.r'
+    'SISe.r'
+    'SISe3.r'
+    'measures.r'
+    'run.r'
+    'siminf.r'
