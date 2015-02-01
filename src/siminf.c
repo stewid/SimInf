@@ -305,7 +305,7 @@ cleanup:
 SEXP SISe_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 {
     int err = 0;
-    SEXP result, class_name, events;
+    SEXP result, class_name;
     PropensityFun t_fun[] = {&SISe_S_to_I, &SISe_I_to_S};
 
     if (R_NilValue == model || S4SXP != TYPEOF(model))
@@ -345,7 +345,7 @@ SEXP SISe_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 SEXP SISe3_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 {
     int err = 0;
-    SEXP result, class_name, events;
+    SEXP result, class_name;
     PropensityFun t_fun[] = {&SISe3_S_age_1_to_I_age_1,
                              &SISe3_I_age_1_to_S_age_1,
                              &SISe3_S_age_2_to_I_age_2,
