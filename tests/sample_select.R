@@ -28,17 +28,14 @@ library(siminf)
 ## probability of becoming infected.
 ##
 ## At t = 1, two individuals are moved to node = 0. This should fail.
-init <- structure(list(id      = c(0, 1),
-                       S_age_1 = c(0, 1),
-                       I_age_1 = c(0, 0),
-                       S_age_2 = c(0, 0),
-                       I_age_2 = c(0, 0),
-                       S_age_3 = c(0, 0),
-                       I_age_3 = c(0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1),
+                       S_1 = c(0, 1),
+                       I_1 = c(0, 0),
+                       S_2 = c(0, 0),
+                       I_2 = c(0, 0),
+                       S_3 = c(0, 0),
+                       I_3 = c(0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L),
                   class = "data.frame")
 
@@ -53,21 +50,21 @@ events <- structure(list(event  = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 2),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 tools::assertError(run(model, verbose = 0))
 
@@ -79,17 +76,14 @@ tools::assertError(run(model, verbose = 0))
 ## probability of becoming infected.
 ##
 ## At t = 1, -1 individuals are moved to node = 0. This should fail.
-init <- structure(list(id      = c(0, 1),
-                       S_age_1 = c(0, 1),
-                       I_age_1 = c(0, 0),
-                       S_age_2 = c(0, 0),
-                       I_age_2 = c(0, 0),
-                       S_age_3 = c(0, 0),
-                       I_age_3 = c(0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1),
+                       S_1 = c(0, 1),
+                       I_1 = c(0, 0),
+                       S_2 = c(0, 0),
+                       I_2 = c(0, 0),
+                       S_3 = c(0, 0),
+                       I_3 = c(0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event  = 3,
@@ -103,21 +97,21 @@ events <- structure(list(event  = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 2),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 tools::assertError(run(model, verbose = 0))
 
@@ -130,17 +124,14 @@ tools::assertError(run(model, verbose = 0))
 ##
 ## At t = 1, a proportion of 10 individuals are moved to node =
 ## 0. This should fail.
-init <- structure(list(id      = c(0, 1),
-                       S_age_1 = c(0, 1),
-                       I_age_1 = c(0, 0),
-                       S_age_2 = c(0, 0),
-                       I_age_2 = c(0, 0),
-                       S_age_3 = c(0, 0),
-                       I_age_3 = c(0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1),
+                       S_1 = c(0, 1),
+                       I_1 = c(0, 0),
+                       S_2 = c(0, 0),
+                       I_2 = c(0, 0),
+                       S_3 = c(0, 0),
+                       I_3 = c(0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event  = 3,
@@ -155,41 +146,41 @@ events <- structure(list(event  = 3,
 
 ## We should not be able to create model with prop = 10
 tools::assertError(SISe3(init,
-                         tspan                       = 0:10,
-                         events                      = events,
-                         initial_infectious_pressure = rep(0, 2),
-                         response_age_1              = 0,
-                         response_age_2              = 0,
-                         response_age_3              = 0,
-                         recover_age_1               = 1,
-                         recover_age_2               = 1,
-                         recover_age_3               = 1,
-                         alpha                       = 0,
-                         beta_q1                     = 1,
-                         beta_q2                     = 1,
-                         beta_q3                     = 1,
-                         beta_q4                     = 1,
-                         epsilon                     = 0))
+                         tspan     = 0:10,
+                         events    = events,
+                         phi       = rep(0, 2),
+                         upsilon_1 = 0,
+                         upsilon_2 = 0,
+                         upsilon_3 = 0,
+                         gamma_1   = 1,
+                         gamma_2   = 1,
+                         gamma_3   = 1,
+                         alpha     = 0,
+                         beta_q1   = 1,
+                         beta_q2   = 1,
+                         beta_q3   = 1,
+                         beta_q4   = 1,
+                         epsilon   = 0))
 
 ## Replace prop = 10 to prop = 1
 events$prop <- 1
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 2),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 ## Replace prop = 10 to prop = 1
 model@events@ext_p <- 10
@@ -205,17 +196,14 @@ tools::assertError(run(model, verbose = 0))
 ##
 ## At t = 1, a proportion of -1 individuals are moved to node =
 ## 0. This should fail.
-init <- structure(list(id      = c(0, 1),
-                       S_age_1 = c(0, 1),
-                       I_age_1 = c(0, 0),
-                       S_age_2 = c(0, 0),
-                       I_age_2 = c(0, 0),
-                       S_age_3 = c(0, 0),
-                       I_age_3 = c(0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1),
+                       S_1 = c(0, 1),
+                       I_1 = c(0, 0),
+                       S_2 = c(0, 0),
+                       I_2 = c(0, 0),
+                       S_3 = c(0, 0),
+                       I_3 = c(0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event  = 3,
@@ -230,41 +218,41 @@ events <- structure(list(event  = 3,
 
 ## We should not be able to create model with prop = -1
 tools::assertError(SISe3(init,
-                         tspan                       = 0:10,
-                         events                      = events,
-                         initial_infectious_pressure = rep(0, 2),
-                         response_age_1              = 0,
-                         response_age_2              = 0,
-                         response_age_3              = 0,
-                         recover_age_1               = 1,
-                         recover_age_2               = 1,
-                         recover_age_3               = 1,
-                         alpha                       = 0,
-                         beta_q1                     = 1,
-                         beta_q2                     = 1,
-                         beta_q3                     = 1,
-                         beta_q4                     = 1,
-                         epsilon                     = 0))
+                         tspan     = 0:10,
+                         events    = events,
+                         phi       = rep(0, 2),
+                         upsilon_1 = 0,
+                         upsilon_2 = 0,
+                         upsilon_3 = 0,
+                         gamma_1   = 1,
+                         gamma_2   = 1,
+                         gamma_3   = 1,
+                         alpha     = 0,
+                         beta_q1   = 1,
+                         beta_q2   = 1,
+                         beta_q3   = 1,
+                         beta_q4   = 1,
+                         epsilon   = 0))
 
 ## Replace prop = -1 to prop = 0
 events$prop <- 0
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 2),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 ## Replace prop = 0 to prop = -1
 model@events@ext_p <- -1
@@ -279,17 +267,14 @@ tools::assertError(run(model, verbose = 0))
 ## probability of becoming infected.
 ##
 ## At t = 1, a proportion of 0 individuals are moved to node = 0.
-init <- structure(list(id      = c(0, 1),
-                       S_age_1 = c(0, 1),
-                       I_age_1 = c(0, 0),
-                       S_age_2 = c(0, 0),
-                       I_age_2 = c(0, 0),
-                       S_age_3 = c(0, 0),
-                       I_age_3  = c(0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1),
+                       S_1 = c(0, 1),
+                       I_1 = c(0, 0),
+                       S_2 = c(0, 0),
+                       I_2 = c(0, 0),
+                       S_3 = c(0, 0),
+                       I_3  = c(0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event  = 3,
@@ -303,21 +288,21 @@ events <- structure(list(event  = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:2,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 2),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:2,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 result <- run(model, verbose = 0)
 
@@ -343,17 +328,14 @@ stopifnot(identical(model@events, result@events))
 ## probability of becoming infected.
 ##
 ## At t = 1, proportion of all (1) individuals are moved to node = 0.
-init <- structure(list(id      = c(0, 1),
-                       S_age_1 = c(0, 1),
-                       I_age_1 = c(0, 0),
-                       S_age_2 = c(0, 0),
-                       I_age_2 = c(0, 0),
-                       S_age_3  = c(0, 0),
-                       I_age_3  = c(0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1),
+                       S_1 = c(0, 1),
+                       I_1 = c(0, 0),
+                       S_2 = c(0, 0),
+                       I_2 = c(0, 0),
+                       S_3  = c(0, 0),
+                       I_3  = c(0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event  = 3,
@@ -367,21 +349,21 @@ events <- structure(list(event  = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:2,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 2),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:2,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 result <- run(model, verbose = 0)
 
@@ -407,17 +389,14 @@ stopifnot(identical(model@events, result@events))
 ## probability of becoming infected.
 ##
 ## At t = 1, Nkind = 1, one individual is moved to node = 0.
-init <- structure(list(id      = c(0, 1),
-                       S_age_1 = c(0, 2),
-                       I_age_1 = c(0, 0),
-                       S_age_2 = c(0, 0),
-                       I_age_2 = c(0, 0),
-                       S_age_3 = c(0, 0),
-                       I_age_3  = c(0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1),
+                       S_1 = c(0, 2),
+                       I_1 = c(0, 0),
+                       S_2 = c(0, 0),
+                       I_2 = c(0, 0),
+                       S_3 = c(0, 0),
+                       I_3  = c(0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event  = 3,
@@ -431,21 +410,21 @@ events <- structure(list(event  = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:2,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 2),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:2,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 result <- run(model, verbose = 0)
 
@@ -472,17 +451,14 @@ stopifnot(identical(model@events, result@events))
 ## infected.
 ##
 ## At t = 1, Nkind = 2, one individual is moved to node = 0.
-init <- structure(list(id      = c(0, 1),
-                       S_age_1 = c(0, 2),
-                       I_age_1 = c(0, 8),
-                       S_age_2 = c(0, 0),
-                       I_age_2 = c(0, 0),
-                       S_age_3 = c(0, 0),
-                       I_age_3 = c(0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1),
+                       S_1 = c(0, 2),
+                       I_1 = c(0, 8),
+                       S_2 = c(0, 0),
+                       I_2 = c(0, 0),
+                       S_3 = c(0, 0),
+                       I_3 = c(0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event  = 3,
@@ -496,21 +472,21 @@ events <- structure(list(event  = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:2,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 2),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = .Machine$integer.max,
-               recover_age_2               = .Machine$integer.max,
-               recover_age_3               = .Machine$integer.max,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:2,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 0,
+               gamma_2   = 0,
+               gamma_3   = 0,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 result <- run(model, verbose = 0, seed = 123L)
 

@@ -30,17 +30,17 @@ init <- structure(list(id = 0, S = 1, I = 0),
                   class = "data.frame")
 
 model <- SISe(init,
-              tspan                       = 0:1000,
-              events                      = NULL,
-              initial_infectious_pressure = 1,
-              response                    = 1,
-              recover                     = 1,
-              alpha                       = 1,
-              beta_q1                     = 1,
-              beta_q2                     = 1,
-              beta_q3                     = 1,
-              beta_q4                     = 1,
-              epsilon                     = 1)
+              tspan   = 0:1000,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 1,
+              gamma   = 1,
+              alpha   = 1,
+              beta_q1 = 1,
+              beta_q2 = 1,
+              beta_q3 = 1,
+              beta_q4 = 1,
+              epsilon = 1)
 
 result <- run(model, verbose = 0, seed = 123L)
 
@@ -64,17 +64,14 @@ stopifnot(identical(model@events, result@events))
 ## becoming infected.
 ##
 ## At t = 1, all individuals are moved to node = 0.
-init <- structure(list(id      = c(0, 1, 2, 3, 4, 5),
-                       S_age_1 = c(0, 1, 2, 3, 4, 5),
-                       I_age_1 = c(0, 0, 0, 0, 0, 0),
-                       S_age_2 = c(0, 1, 2, 3, 4, 5),
-                       I_age_2 = c(0, 0, 0, 0, 0, 0),
-                       S_age_3 = c(0, 1, 2, 3, 4, 5),
-                       I_age_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
+                       S_1 = c(0, 1, 2, 3, 4, 5),
+                       I_1 = c(0, 0, 0, 0, 0, 0),
+                       S_2 = c(0, 1, 2, 3, 4, 5),
+                       I_2 = c(0, 0, 0, 0, 0, 0),
+                       S_3 = c(0, 1, 2, 3, 4, 5),
+                       I_3 = c(0, 0, 0, 0, 0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L),
                   class = "data.frame")
 
@@ -89,21 +86,21 @@ events <- structure(list(event  = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
                     row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = events,
-               initial_infectious_pressure = rep(1, 6),
-               response_age_1              = 1,
-               response_age_2              = 1,
-               response_age_3              = 1,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 1,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 1)
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(1, 6),
+               upsilon_1 = 1,
+               upsilon_2 = 1,
+               upsilon_3 = 1,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 1,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 1)
 
 result <- run(model, verbose = 0, seed = 123L)
 
@@ -127,35 +124,32 @@ stopifnot(identical(model@events, result@events))
 ## becoming infected.
 ##
 ## No external events
-init <- structure(list(id      = c(0, 1, 2, 3, 4, 5),
-                       S_age_1 = c(0, 1, 2, 3, 4, 5),
-                       I_age_1 = c(0, 0, 0, 0, 0, 0),
-                       S_age_2 = c(0, 1, 2, 3, 4, 5),
-                       I_age_2 = c(0, 0, 0, 0, 0, 0),
-                       S_age_3 = c(0, 1, 2, 3, 4, 5),
-                       I_age_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
+                       S_1 = c(0, 1, 2, 3, 4, 5),
+                       I_1 = c(0, 0, 0, 0, 0, 0),
+                       S_2 = c(0, 1, 2, 3, 4, 5),
+                       I_2 = c(0, 0, 0, 0, 0, 0),
+                       S_3 = c(0, 1, 2, 3, 4, 5),
+                       I_3 = c(0, 0, 0, 0, 0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = NULL,
-               initial_infectious_pressure = rep(1, 6),
-               response_age_1              = 1,
-               response_age_2              = 1,
-               response_age_3              = 1,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 1,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 1)
+               tspan     = 0:10,
+               events    = NULL,
+               phi       = rep(1, 6),
+               upsilon_1 = 1,
+               upsilon_2 = 1,
+               upsilon_3 = 1,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 1,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 1)
 
 result <- run(model, verbose = 0, seed = 123L)
 
@@ -179,17 +173,14 @@ stopifnot(identical(model@events, result@events))
 ## of becoming infected.
 ##
 ## At t = 1, all individuals are moved to node = 0.
-init <- structure(list(id      = c(0, 1, 2, 3, 4, 5),
-                       S_age_1 = c(0, 1, 2, 3, 4, 5),
-                       I_age_1 = c(0, 0, 0, 0, 0, 0),
-                       S_age_2 = c(0, 1, 2, 3, 4, 5),
-                       I_age_2 = c(0, 0, 0, 0, 0, 0),
-                       S_age_3 = c(0, 1, 2, 3, 4, 5),
-                       I_age_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
+                       S_1 = c(0, 1, 2, 3, 4, 5),
+                       I_1 = c(0, 0, 0, 0, 0, 0),
+                       S_2 = c(0, 1, 2, 3, 4, 5),
+                       I_2 = c(0, 0, 0, 0, 0, 0),
+                       S_3 = c(0, 1, 2, 3, 4, 5),
+                       I_3 = c(0, 0, 0, 0, 0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 events <- structure(list(event  = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -203,21 +194,21 @@ events <- structure(list(event  = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
                     row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 6),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 6),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 result <- run(model, verbose = 0, seed = 123L)
 
@@ -267,17 +258,14 @@ stopifnot(identical(model@events, result@events))
 ##
 ## No individuals at t = 0
 ## At t = 1, all individuals enter in susceptible state
-init <- structure(list(id      = c(0, 1, 2, 3, 4, 5),
-                       S_age_1 = c(0, 0, 0, 0, 0, 0),
-                       I_age_1 = c(0, 0, 0, 0, 0, 0),
-                       S_age_2 = c(0, 0, 0, 0, 0, 0),
-                       I_age_2 = c(0, 0, 0, 0, 0, 0),
-                       S_age_3 = c(0, 0, 0, 0, 0, 0),
-                       I_age_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
+                       S_1 = c(0, 0, 0, 0, 0, 0),
+                       I_1 = c(0, 0, 0, 0, 0, 0),
+                       S_2 = c(0, 0, 0, 0, 0, 0),
+                       I_2 = c(0, 0, 0, 0, 0, 0),
+                       S_3 = c(0, 0, 0, 0, 0, 0),
+                       I_3 = c(0, 0, 0, 0, 0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 events <- structure(list(event  = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -291,21 +279,21 @@ events <- structure(list(event  = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
                     row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 6),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 6),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 result <- run(model, verbose = 0, seed = 123L)
 
@@ -354,17 +342,14 @@ stopifnot(identical(model@events, result@events))
 ## of becoming infected.
 ##
 ## At t = 3, all individuals exit.
-init <- structure(list(id      = c(0, 1, 2, 3, 4, 5),
-                       S_age_1 = c(0, 1, 2, 3, 4, 5),
-                       I_age_1 = c(0, 0, 0, 0, 0, 0),
-                       S_age_2 = c(0, 1, 2, 3, 4, 5),
-                       I_age_2 = c(0, 0, 0, 0, 0, 0),
-                       S_age_3 = c(0, 1, 2, 3, 4, 5),
-                       I_age_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
+                       S_1 = c(0, 1, 2, 3, 4, 5),
+                       I_1 = c(0, 0, 0, 0, 0, 0),
+                       S_2 = c(0, 1, 2, 3, 4, 5),
+                       I_2 = c(0, 0, 0, 0, 0, 0),
+                       S_3 = c(0, 1, 2, 3, 4, 5),
+                       I_3 = c(0, 0, 0, 0, 0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 events <- structure(list(event  = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -378,21 +363,21 @@ events <- structure(list(event  = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
                     row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 6),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 6),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 result <- run(model, verbose = 0, seed = 123L)
 
@@ -440,19 +425,16 @@ stopifnot(identical(model@events, result@events))
 ## All individuals start in susceptible state, with a zero probability of
 ## becoming infected.
 ##
-## At t = 3, all individuals in age_1 category age.
-## At t = 6, all individuals in age_2 category age.
-init <- structure(list(id      = c(0, 1, 2, 3, 4, 5),
-                       S_age_1 = c(0, 1, 2, 3, 4, 5),
-                       I_age_1 = c(0, 0, 0, 0, 0, 0),
-                       S_age_2 = c(0, 1, 2, 3, 4, 5),
-                       I_age_2 = c(0, 0, 0, 0, 0, 0),
-                       S_age_3 = c(0, 1, 2, 3, 4, 5),
-                       I_age_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+## At t = 3, all individuals in age category 1 age.
+## At t = 6, all individuals in age category 2 age.
+init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
+                       S_1 = c(0, 1, 2, 3, 4, 5),
+                       I_1 = c(0, 0, 0, 0, 0, 0),
+                       S_2 = c(0, 1, 2, 3, 4, 5),
+                       I_2 = c(0, 0, 0, 0, 0, 0),
+                       S_3 = c(0, 1, 2, 3, 4, 5),
+                       I_3 = c(0, 0, 0, 0, 0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 events <- structure(list(event  = c(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
@@ -466,21 +448,21 @@ events <- structure(list(event  = c(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
                     row.names = c(NA, -10L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = events,
-               initial_infectious_pressure = rep(0, 6),
-               response_age_1              = 0,
-               response_age_2              = 0,
-               response_age_3              = 0,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 0,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 0)
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 6),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 0)
 
 result <- run(model, verbose = 0, seed = 123L)
 
@@ -530,35 +512,32 @@ stopifnot(identical(model@events, result@events))
 ## becoming infected and then return to susceptible.
 ##
 ## No external events
-init <- structure(list(id      = c(0, 1, 2, 3, 4, 5),
-                       S_age_1 = c(0, 1, 2, 3, 4, 5),
-                       I_age_1 = c(0, 0, 0, 0, 0, 0),
-                       S_age_2 = c(0, 1, 2, 3, 4, 5),
-                       I_age_2 = c(0, 0, 0, 0, 0, 0),
-                       S_age_3 = c(0, 1, 2, 3, 4, 5),
-                       I_age_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
+                       S_1 = c(0, 1, 2, 3, 4, 5),
+                       I_1 = c(0, 0, 0, 0, 0, 0),
+                       S_2 = c(0, 1, 2, 3, 4, 5),
+                       I_2 = c(0, 0, 0, 0, 0, 0),
+                       S_3 = c(0, 1, 2, 3, 4, 5),
+                       I_3 = c(0, 0, 0, 0, 0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 model <- SISe3(init,
-               tspan                       = 0:10,
-               events                      = NULL,
-               initial_infectious_pressure = rep(1, 6),
-               response_age_1              = 1,
-               response_age_2              = 1,
-               response_age_3              = 1,
-               recover_age_1               = 1,
-               recover_age_2               = 1,
-               recover_age_3               = 1,
-               alpha                       = 1,
-               beta_q1                     = 1,
-               beta_q2                     = 1,
-               beta_q3                     = 1,
-               beta_q4                     = 1,
-               epsilon                     = 1)
+               tspan     = 0:10,
+               events    = NULL,
+               phi       = rep(1, 6),
+               upsilon_1 = 1,
+               upsilon_2 = 1,
+               upsilon_3 = 1,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 1,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 1)
 
 result <- run(model, verbose = 0, seed = 123L)
 

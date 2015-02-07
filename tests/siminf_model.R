@@ -137,17 +137,14 @@ tools::assertError(new("siminf_model",
                        u0    = u0))
 
 ## Check initial state
-init <- structure(list(id =      c(0, 1, 2, 3, 4, 5),
-                       S_age_1 = c(0, 1, 2, 3, 4, 5),
-                       I_age_1 = c(0, 0, 0, 0, 0, 0),
-                       S_age_2 = c(0, 1, 2, 3, 4, 5),
-                       I_age_2 = c(0, 0, 0, 0, 0, 0),
-                       S_age_3 = c(0, 1, 2, 3, 4, 5),
-                       I_age_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id",
-                      "S_age_1", "I_age_1",
-                      "S_age_2", "I_age_2",
-                      "S_age_3", "I_age_3"),
+init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
+                       S_1 = c(0, 1, 2, 3, 4, 5),
+                       I_1 = c(0, 0, 0, 0, 0, 0),
+                       S_2 = c(0, 1, 2, 3, 4, 5),
+                       I_2 = c(0, 0, 0, 0, 0, 0),
+                       S_3 = c(0, 1, 2, 3, 4, 5),
+                       I_3 = c(0, 0, 0, 0, 0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 ## Both u0 and init are NULL

@@ -4,9 +4,9 @@
 \alias{SISe}
 \title{Create a SISe model}
 \usage{
-SISe(init, tspan, events = NULL, initial_infectious_pressure = NULL,
-  response = NULL, recover = NULL, alpha = NULL, beta_q1 = NULL,
-  beta_q2 = NULL, beta_q3 = NULL, beta_q4 = NULL, epsilon = NULL)
+SISe(init, tspan, events = NULL, phi = NULL, upsilon = NULL,
+  gamma = NULL, alpha = NULL, beta_q1 = NULL, beta_q2 = NULL,
+  beta_q3 = NULL, beta_q4 = NULL, epsilon = NULL)
 }
 \arguments{
 \item{init}{A \code{data.frame} with the initial state in each
@@ -18,13 +18,14 @@ state of the system is to be returned.}
 \item{events}{a \code{data.frame} with the scheduled events, see
 \code{\link{siminf_model}}.}
 
-\item{initial_infectious_pressure}{A numeric vector with the
-initial environmental infectious pressure in each node. Default
-NULL which gives 0 in each node.}
+\item{phi}{A numeric vector with the initial environmental
+infectious pressure in each node. Default NULL which gives 0 in
+each node.}
 
-\item{response}{The response rate from susceptible to infected}
+\item{upsilon}{The response rate from susceptible to infected due
+to the environmental infectious pressure}
 
-\item{recover}{The recover rate from infected to susceptible}
+\item{gamma}{The recover rate from infected to susceptible}
 
 \item{alpha}{The shed rate}
 

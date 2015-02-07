@@ -67,11 +67,12 @@ setAs(from = "siminf_model", to = "SISe", def = function(from) {
 ##' state of the system is to be returned.
 ##' @param events a \code{data.frame} with the scheduled events, see
 ##' \code{\link{siminf_model}}.
-##' @param initial_infectious_pressure A numeric vector with the
-##' initial environmental infectious pressure in each node. Default
-##' NULL which gives 0 in each node.
-##' @param response The response rate from susceptible to infected
-##' @param recover The recover rate from infected to susceptible
+##' @param phi A numeric vector with the initial environmental
+##' infectious pressure in each node. Default NULL which gives 0 in
+##' each node.
+##' @param upsilon The response rate from susceptible to infected due
+##' to the environmental infectious pressure
+##' @param gamma The recover rate from infected to susceptible
 ##' @param alpha The shed rate
 ##' @param beta_q1 The decay of the environmental infectious pressure
 ##' in the first quarter of the year.
@@ -86,16 +87,16 @@ setAs(from = "siminf_model", to = "SISe", def = function(from) {
 ##' @export
 SISe <- function(init,
                  tspan,
-                 events                      = NULL,
-                 initial_infectious_pressure = NULL,
-                 response                    = NULL,
-                 recover                     = NULL,
-                 alpha                       = NULL,
-                 beta_q1                     = NULL,
-                 beta_q2                     = NULL,
-                 beta_q3                     = NULL,
-                 beta_q4                     = NULL,
-                 epsilon                     = NULL)
+                 events  = NULL,
+                 phi     = NULL,
+                 upsilon = NULL,
+                 gamma   = NULL,
+                 alpha   = NULL,
+                 beta_q1 = NULL,
+                 beta_q2 = NULL,
+                 beta_q3 = NULL,
+                 beta_q4 = NULL,
+                 epsilon = NULL)
 {
     ## Check init
     if (!all(c("id", "S", "I") %in% names(init))) {
@@ -127,20 +128,20 @@ SISe <- function(init,
     N <- as(N, "dgCMatrix")
 
     ## Check initial infectious pressure
-    if (is.null(initial_infectious_pressure))
-        initial_infectious_pressure <- rep(0, nrow(init))
-    if (!is.numeric(initial_infectious_pressure))
-        stop("Invalid 'initial_infectious_pressure': must be numeric vector")
-    if (!is.null(dim(initial_infectious_pressure)))
-        stop("Invalid 'initial_infectious_pressure': must be numeric vector")
-    if (!identical(length(initial_infectious_pressure), nrow(init)))
-        stop("Invalid 'initial_infectious_pressure': must be numeric vector with length 'nrow(init)'")
-    if (any(initial_infectious_pressure < 0))
-        stop("Invalid 'initial_infectious_pressure': must be numeric vector with non-negative values")
+    if (is.null(phi))
+        phi <- rep(0, nrow(init))
+    if (!is.numeric(phi))
+        stop("Invalid 'phi': must be numeric vector")
+    if (!is.null(dim(phi)))
+        stop("Invalid 'phi': must be numeric vector")
+    if (!identical(length(phi), nrow(init)))
+        stop("Invalid 'phi': must be numeric vector with length 'nrow(init)'")
+    if (any(phi < 0))
+        stop("Invalid 'phi': must be numeric vector with non-negative values")
 
     ## Check parameters for response relationship and decay
-    if (any(is.null(response),
-            is.null(recover),
+    if (any(is.null(upsilon),
+            is.null(gamma),
             is.null(alpha),
             is.null(beta_q1),
             is.null(beta_q2),
@@ -150,8 +151,8 @@ SISe <- function(init,
         stop("Missing parameters to handle the infectious pressure")
     }
 
-    if (!all(is.numeric(response),
-             is.numeric(recover),
+    if (!all(is.numeric(upsilon),
+             is.numeric(gamma),
              is.numeric(alpha),
              is.numeric(beta_q1),
              is.numeric(beta_q2),
@@ -161,15 +162,15 @@ SISe <- function(init,
         stop("Parameters to handle the infectious pressure must be numeric")
     }
 
-    if (!all(identical(length(response), 1L),
-             identical(length(recover), 1L),
+    if (!all(identical(length(upsilon), 1L),
+             identical(length(gamma), 1L),
              identical(length(alpha), 1L),
              identical(length(epsilon), 1L))) {
         stop("Parameters to handle the infectious pressure must be of length 1")
     }
 
-    response <- rep(response, nrow(init))
-    recover <- rep(recover, nrow(init))
+    upsilon <- rep(upsilon, nrow(init))
+    gamma <- rep(gamma, nrow(init))
     alpha <- rep(alpha, nrow(init))
     epsilon <- rep(epsilon, nrow(init))
 
@@ -197,9 +198,9 @@ SISe <- function(init,
         stop("length of beta_q4 must either be 1 or nrow(init)")
     }
 
-    inf_data <- matrix(c(initial_infectious_pressure,
-                         response,
-                         recover,
+    inf_data <- matrix(c(phi,
+                         upsilon,
+                         gamma,
                          alpha,
                          beta_q1,
                          beta_q2,

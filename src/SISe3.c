@@ -19,30 +19,30 @@
  */
 
 /* Compartments */
-enum {S_age_1,
-      I_age_1,
-      S_age_2,
-      I_age_2,
-      S_age_3,
-      I_age_3};
+enum {S_1,
+      I_1,
+      S_2,
+      I_2,
+      S_3,
+      I_3};
 
-/* Offsets in data to handle the infectious pressure */
-enum {INFECTIOUS_PRESSURE,
-      RESPONSE_age_1,
-      RESPONSE_age_2,
-      RESPONSE_age_3,
-      RECOVER_age_1,
-      RECOVER_age_2,
-      RECOVER_age_3,
+/* Offsets in data to parameters in the model */
+enum {PHI,
+      UPSILON_1,
+      UPSILON_2,
+      UPSILON_3,
+      GAMMA_1,
+      GAMMA_2,
+      GAMMA_3,
       ALPHA,
-      BETA_SEASON_Q1,
-      BETA_SEASON_Q2,
-      BETA_SEASON_Q3,
-      BETA_SEASON_Q4,
+      BETA_Q1,
+      BETA_Q2,
+      BETA_Q3,
+      BETA_Q4,
       EPSILON};
 
 /**
- * age_1; susceptible to infected: S -> I
+ * In age category 1; susceptible to infected: S -> I
  *
  * @param x The state vector in node.
  * @param t Current time.
@@ -50,17 +50,17 @@ enum {INFECTIOUS_PRESSURE,
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_S_age_1_to_I_age_1(
+double SISe3_S_1_to_I_1(
     const int *x,
     double t,
     const double *data,
     int sd)
 {
-    return data[RESPONSE_age_1] * data[INFECTIOUS_PRESSURE] * x[S_age_1];
+    return data[UPSILON_1] * data[PHI] * x[S_1];
 }
 
 /**
- * age_2; susceptible to infected: S -> I
+ * In age category 2; susceptible to infected: S -> I
  *
  * @param x The state vector in node.
  * @param t Current time.
@@ -68,17 +68,17 @@ double SISe3_S_age_1_to_I_age_1(
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_S_age_2_to_I_age_2(
+double SISe3_S_2_to_I_2(
     const int *x,
     double t,
     const double *data,
     int sd)
 {
-    return data[RESPONSE_age_2] * data[INFECTIOUS_PRESSURE] * x[S_age_2];
+    return data[UPSILON_2] * data[PHI] * x[S_2];
 }
 
 /**
- *  age_3; susceptible to infected: S -> I
+ *  In age category 3; susceptible to infected: S -> I
  *
  * @param x The state vector in node.
  * @param t Current time.
@@ -86,17 +86,17 @@ double SISe3_S_age_2_to_I_age_2(
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_S_age_3_to_I_age_3(
+double SISe3_S_3_to_I_3(
     const int *x,
     double t,
     const double *data,
     int sd)
 {
-    return data[RESPONSE_age_3] * data[INFECTIOUS_PRESSURE] * x[S_age_3];
+    return data[UPSILON_3] * data[PHI] * x[S_3];
 }
 
 /**
- *  age_1; infected to susceptible: I -> S
+ *  In age category 1; infected to susceptible: I -> S
  *
  * @param x The state vector in node.
  * @param t Current time.
@@ -104,17 +104,17 @@ double SISe3_S_age_3_to_I_age_3(
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_I_age_1_to_S_age_1(
+double SISe3_I_1_to_S_1(
     const int *x,
     double t,
     const double *data,
     int sd)
 {
-    return x[I_age_1] / data[RECOVER_age_1];
+    return data[GAMMA_1] * x[I_1];
 }
 
 /**
- * age_2; infected to susceptible: I -> S
+ * In age category 2; infected to susceptible: I -> S
  *
  * @param x The state vector in node.
  * @param t Current time.
@@ -122,17 +122,17 @@ double SISe3_I_age_1_to_S_age_1(
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_I_age_2_to_S_age_2(
+double SISe3_I_2_to_S_2(
     const int *x,
     double t,
     const double *data,
     int sd)
 {
-    return x[I_age_2] / data[RECOVER_age_2];
+    return data[GAMMA_2] * x[I_2];
 }
 
 /**
- * age_3; infected to susceptible: I -> S
+ * In age category 3; infected to susceptible: I -> S
  *
  * @param x The state vector in node.
  * @param t Current time.
@@ -140,13 +140,13 @@ double SISe3_I_age_2_to_S_age_2(
  * @param sd The sub-domain of node.
  * @return propensity
  */
-double SISe3_I_age_3_to_S_age_3(
+double SISe3_I_3_to_S_3(
     const int *x,
     double t,
     const double *data,
     int sd)
 {
-    return x[I_age_3] / data[RECOVER_age_3];
+    return data[GAMMA_3] * x[I_3];
 }
 
 /**
@@ -168,16 +168,16 @@ int SISe3_update_infectious_pressure(
     const int days_in_quarter = 91;
 
     double S_n, I_n;
-    double tmp = data[INFECTIOUS_PRESSURE];
+    double tmp = data[PHI];
 
-    S_n = x[S_age_1] + x[S_age_2] + x[S_age_3];
-    I_n = x[I_age_1] + x[I_age_2] + x[I_age_3];
+    S_n = x[S_1] + x[S_2] + x[S_3];
+    I_n = x[I_1] + x[I_2] + x[I_3];
 
     /* Time dependent beta */
-    data[INFECTIOUS_PRESSURE] *= (1.0 - data[BETA_SEASON_Q1 + ((int)t % days_in_year) / days_in_quarter]);
+    data[PHI] *= (1.0 - data[BETA_Q1 + ((int)t % days_in_year) / days_in_quarter]);
 
-    data[INFECTIOUS_PRESSURE] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
+    data[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
 
     /* 1 if needs update */
-    return tmp != data[INFECTIOUS_PRESSURE];
+    return tmp != data[PHI];
 }

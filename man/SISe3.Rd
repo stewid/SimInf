@@ -4,11 +4,10 @@
 \alias{SISe3}
 \title{Create a SISe3 model}
 \usage{
-SISe3(init, tspan, events = NULL, initial_infectious_pressure = NULL,
-  response_age_1 = NULL, response_age_2 = NULL, response_age_3 = NULL,
-  recover_age_1 = NULL, recover_age_2 = NULL, recover_age_3 = NULL,
-  alpha = NULL, beta_q1 = NULL, beta_q2 = NULL, beta_q3 = NULL,
-  beta_q4 = NULL, epsilon = NULL)
+SISe3(init, tspan, events = NULL, phi = NULL, upsilon_1 = NULL,
+  upsilon_2 = NULL, upsilon_3 = NULL, gamma_1 = NULL, gamma_2 = NULL,
+  gamma_3 = NULL, alpha = NULL, beta_q1 = NULL, beta_q2 = NULL,
+  beta_q3 = NULL, beta_q4 = NULL, epsilon = NULL)
 }
 \arguments{
 \item{init}{A \code{data.frame} with the initial state in each
@@ -20,26 +19,29 @@ state of the system is to be returned.}
 \item{events}{a \code{data.frame} with the scheduled events, see
 \code{\link{siminf_model}}.}
 
-\item{initial_infectious_pressure}{A numeric vector with the
-initial environmental infectious pressure in each node. Default
-NULL which gives 0 in each node.}
+\item{phi}{A numeric vector with the initial environmental
+infectious pressure in each node. Default NULL which gives 0 in
+each node.}
 
-\item{response_age_1}{The response rate from susceptible to
-infected for age category 1}
+\item{upsilon_1}{The response rate from susceptible to
+infected due to the environmental infectious pressure in age
+category 1}
 
-\item{response_age_2}{The response rate from susceptible to
-infected for age category 2}
+\item{upsilon_2}{The response rate from susceptible to
+infected due to the environmental infectious pressure in age
+category 2}
 
-\item{response_age_3}{The response rate from susceptible to
-infected for age category 3}
+\item{upsilon_3}{The response rate from susceptible to
+infected due to the environmental infectious pressure in age
+category 3}
 
-\item{recover_age_1}{The recover rate from infected to
+\item{gamma_1}{The recover rate from infected to
 susceptible for age category 1}
 
-\item{recover_age_2}{The recover rate from infected to
+\item{gamma_2}{The recover rate from infected to
 susceptible for age category 2}
 
-\item{recover_age_3}{The recover rate from infected to
+\item{gamma_3}{The recover rate from infected to
 susceptible for age category 3}
 
 \item{alpha}{The shed rate}
@@ -71,12 +73,12 @@ columns:
 \item{id}{Node identifier that uniquely identifies each node. The
 node identifiers must be zero-based, i.e. the first identifier
 must be equal to zero.}
-\item{S_age_1}{The number of sucsceptible in age category 1}
-\item{I_age_1}{The number of infected in age category 1}
-\item{S_age_2}{The number of sucsceptible in age category 2}
-\item{I_age_2}{The number of infected in age category 2}
-\item{S_age_3}{The number of sucsceptible in age category 3}
-\item{I_age_3}{The number of infected in age category 3}
+\item{S_1}{The number of sucsceptible in age category 1}
+\item{I_1}{The number of infected in age category 1}
+\item{S_2}{The number of sucsceptible in age category 2}
+\item{I_2}{The number of infected in age category 2}
+\item{S_3}{The number of sucsceptible in age category 3}
+\item{I_3}{The number of infected in age category 3}
 }
 }
 

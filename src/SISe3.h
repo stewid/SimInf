@@ -21,12 +21,12 @@
 #ifndef INCLUDE_SISe3_h
 #define INCLUDE_SISe3_h
 
-double SISe3_S_age_1_to_I_age_1(const int *x, double t, const double *data, int sd);
-double SISe3_S_age_2_to_I_age_2(const int *x, double t, const double *data, int sd);
-double SISe3_S_age_3_to_I_age_3(const int *x, double t, const double *data, int sd);
-double SISe3_I_age_1_to_S_age_1(const int *x, double t, const double *data, int sd);
-double SISe3_I_age_2_to_S_age_2(const int *x, double t, const double *data, int sd);
-double SISe3_I_age_3_to_S_age_3(const int *x, double t, const double *data, int sd);
+double SISe3_S_1_to_I_1(const int *x, double t, const double *data, int sd);
+double SISe3_S_2_to_I_2(const int *x, double t, const double *data, int sd);
+double SISe3_S_3_to_I_3(const int *x, double t, const double *data, int sd);
+double SISe3_I_1_to_S_1(const int *x, double t, const double *data, int sd);
+double SISe3_I_2_to_S_2(const int *x, double t, const double *data, int sd);
+double SISe3_I_3_to_S_3(const int *x, double t, const double *data, int sd);
 
 int SISe3_update_infectious_pressure(const int *x, int src, double t, double *data);
 

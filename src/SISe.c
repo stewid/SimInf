@@ -21,15 +21,15 @@
 /* Compartments */
 enum {S, I};
 
-/* Offsets in data to handle the infectious pressure */
-enum {INFECTIOUS_PRESSURE,
-      RESPONSE,
-      RECOVER,
+/* Offsets in data to parameters in the model */
+enum {PHI,
+      UPSILON,
+      GAMMA,
       ALPHA,
-      BETA_SEASON_Q1,
-      BETA_SEASON_Q2,
-      BETA_SEASON_Q3,
-      BETA_SEASON_Q4,
+      BETA_Q1,
+      BETA_Q2,
+      BETA_Q3,
+      BETA_Q4,
       EPSILON};
 
 /**
@@ -43,7 +43,7 @@ enum {INFECTIOUS_PRESSURE,
  */
 double SISe_S_to_I(const int *x, double t, const double *data, int sd)
 {
-    return data[RESPONSE] * data[INFECTIOUS_PRESSURE] * x[S];
+    return data[UPSILON] * data[PHI] * x[S];
 }
 
 /**
@@ -57,7 +57,7 @@ double SISe_S_to_I(const int *x, double t, const double *data, int sd)
  */
 double SISe_I_to_S(const int *x, double t, const double *data, int sd)
 {
-    return x[I] / data[RECOVER];
+    return data[GAMMA] * x[I];
 }
 
 /**
@@ -79,16 +79,16 @@ int SISe_update_infectious_pressure(
     const int days_in_quarter = 91;
 
     double S_n, I_n;
-    double tmp = data[INFECTIOUS_PRESSURE];
+    double tmp = data[PHI];
 
     S_n = x[S];
     I_n = x[I];
 
     /* Time dependent beta */
-    data[INFECTIOUS_PRESSURE] *= (1.0 - data[BETA_SEASON_Q1 + ((int)t % days_in_year) / days_in_quarter]);
+    data[PHI] *= (1.0 - data[BETA_Q1 + ((int)t % days_in_year) / days_in_quarter]);
 
-    data[INFECTIOUS_PRESSURE] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
+    data[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
 
     /* 1 if needs update */
-    return tmp != data[INFECTIOUS_PRESSURE];
+    return tmp != data[PHI];
 }

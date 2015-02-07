@@ -36,15 +36,15 @@ setClass("SISe3", contains = c("siminf_model"))
 ##' @keywords methods
 setAs(from = "siminf_model", to = "SISe3", def = function(from) {
     return(new("SISe3",
-               G            = from@G,
-               N            = from@N,
-               U            = from@U,
-               Nn           = from@Nn,
-               data         = from@data,
-               sd           = from@sd,
-               tspan        = from@tspan,
-               u0           = from@u0,
-               events       = from@events))
+               G      = from@G,
+               N      = from@N,
+               U      = from@U,
+               Nn     = from@Nn,
+               data   = from@data,
+               sd     = from@sd,
+               tspan  = from@tspan,
+               u0     = from@u0,
+               events = from@events))
 })
 
 ##' Create a SISe3 model
@@ -58,12 +58,12 @@ setAs(from = "siminf_model", to = "SISe3", def = function(from) {
 ##' \item{id}{Node identifier that uniquely identifies each node. The
 ##' node identifiers must be zero-based, i.e. the first identifier
 ##' must be equal to zero.}
-##' \item{S_age_1}{The number of sucsceptible in age category 1}
-##' \item{I_age_1}{The number of infected in age category 1}
-##' \item{S_age_2}{The number of sucsceptible in age category 2}
-##' \item{I_age_2}{The number of infected in age category 2}
-##' \item{S_age_3}{The number of sucsceptible in age category 3}
-##' \item{I_age_3}{The number of infected in age category 3}
+##' \item{S_1}{The number of sucsceptible in age category 1}
+##' \item{I_1}{The number of infected in age category 1}
+##' \item{S_2}{The number of sucsceptible in age category 2}
+##' \item{I_2}{The number of infected in age category 2}
+##' \item{S_3}{The number of sucsceptible in age category 3}
+##' \item{I_3}{The number of infected in age category 3}
 ##' }
 ##' @param init A \code{data.frame} with the initial state in each
 ##' node, see details.
@@ -71,20 +71,23 @@ setAs(from = "siminf_model", to = "SISe3", def = function(from) {
 ##' state of the system is to be returned.
 ##' @param events a \code{data.frame} with the scheduled events, see
 ##' \code{\link{siminf_model}}.
-##' @param initial_infectious_pressure A numeric vector with the
-##' initial environmental infectious pressure in each node. Default
-##' NULL which gives 0 in each node.
-##' @param response_age_1 The response rate from susceptible to
-##' infected for age category 1
-##' @param response_age_2 The response rate from susceptible to
-##' infected for age category 2
-##' @param response_age_3 The response rate from susceptible to
-##' infected for age category 3
-##' @param recover_age_1 The recover rate from infected to
+##' @param phi A numeric vector with the initial environmental
+##' infectious pressure in each node. Default NULL which gives 0 in
+##' each node.
+##' @param upsilon_1 The response rate from susceptible to
+##' infected due to the environmental infectious pressure in age
+##' category 1
+##' @param upsilon_2 The response rate from susceptible to
+##' infected due to the environmental infectious pressure in age
+##' category 2
+##' @param upsilon_3 The response rate from susceptible to
+##' infected due to the environmental infectious pressure in age
+##' category 3
+##' @param gamma_1 The recover rate from infected to
 ##' susceptible for age category 1
-##' @param recover_age_2 The recover rate from infected to
+##' @param gamma_2 The recover rate from infected to
 ##' susceptible for age category 2
-##' @param recover_age_3 The recover rate from infected to
+##' @param gamma_3 The recover rate from infected to
 ##' susceptible for age category 3
 ##' @param alpha The shed rate
 ##' @param beta_q1 The decay of the environmental infectious pressure
@@ -100,36 +103,30 @@ setAs(from = "siminf_model", to = "SISe3", def = function(from) {
 ##' @export
 SISe3 <- function(init,
                   tspan,
-                  events                      = NULL,
-                  initial_infectious_pressure = NULL,
-                  response_age_1              = NULL,
-                  response_age_2              = NULL,
-                  response_age_3              = NULL,
-                  recover_age_1               = NULL,
-                  recover_age_2               = NULL,
-                  recover_age_3               = NULL,
-                  alpha                       = NULL,
-                  beta_q1                     = NULL,
-                  beta_q2                     = NULL,
-                  beta_q3                     = NULL,
-                  beta_q4                     = NULL,
-                  epsilon                     = NULL)
+                  events    = NULL,
+                  phi       = NULL,
+                  upsilon_1 = NULL,
+                  upsilon_2 = NULL,
+                  upsilon_3 = NULL,
+                  gamma_1   = NULL,
+                  gamma_2   = NULL,
+                  gamma_3   = NULL,
+                  alpha     = NULL,
+                  beta_q1   = NULL,
+                  beta_q2   = NULL,
+                  beta_q3   = NULL,
+                  beta_q4   = NULL,
+                  epsilon   = NULL)
 {
     ## Check init
-    if (!all(c("id",
-               "S_age_1",
-               "I_age_1",
-               "S_age_2",
-               "I_age_2",
-               "S_age_3",
-               "I_age_3") %in% names(init))) {
+    if (!all(c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3") %in% names(init))) {
         stop("Missing columns in init")
     }
 
     init <- init[,c("id",
-                    "S_age_1", "I_age_1",
-                    "S_age_2", "I_age_2",
-                    "S_age_3", "I_age_3")]
+                    "S_1", "I_1",
+                    "S_2", "I_2",
+                    "S_3", "I_3")]
 
     E <- Matrix(c(1, 0, 0,  1, 0, 0,  2, 0, 0,  1, 0, 0,
                   1, 0, 0,  0, 0, 0,  2, 0, 0,  1, 0, 0,
@@ -166,24 +163,24 @@ SISe3 <- function(init,
     N <- as(N, "dgCMatrix")
 
     ## Check initial infectious pressure
-    if (is.null(initial_infectious_pressure))
-        initial_infectious_pressure <- rep(0, nrow(init))
-    if (!is.numeric(initial_infectious_pressure))
-        stop("Invalid 'initial_infectious_pressure': must be numeric vector")
-    if (!is.null(dim(initial_infectious_pressure)))
-        stop("Invalid 'initial_infectious_pressure': must be numeric vector")
-    if (!identical(length(initial_infectious_pressure), nrow(init)))
-        stop("Invalid 'initial_infectious_pressure': must be numeric vector with length 'nrow(init)'")
-    if (any(initial_infectious_pressure < 0))
-        stop("Invalid 'initial_infectious_pressure': must be numeric vector with non-negative values")
+    if (is.null(phi))
+        phi <- rep(0, nrow(init))
+    if (!is.numeric(phi))
+        stop("Invalid 'phi': must be numeric vector")
+    if (!is.null(dim(phi)))
+        stop("Invalid 'phi': must be numeric vector")
+    if (!identical(length(phi), nrow(init)))
+        stop("Invalid 'phi': must be numeric vector with length 'nrow(init)'")
+    if (any(phi < 0))
+        stop("Invalid 'phi': must be numeric vector with non-negative values")
 
     ## Check parameters for response relationship and decay
-    if (any(is.null(response_age_1),
-            is.null(response_age_2),
-            is.null(response_age_3),
-            is.null(recover_age_1),
-            is.null(recover_age_2),
-            is.null(recover_age_3),
+    if (any(is.null(upsilon_1),
+            is.null(upsilon_2),
+            is.null(upsilon_3),
+            is.null(gamma_1),
+            is.null(gamma_2),
+            is.null(gamma_3),
             is.null(alpha),
             is.null(beta_q1),
             is.null(beta_q2),
@@ -193,12 +190,12 @@ SISe3 <- function(init,
         stop("Missing parameters to handle the infectious pressure")
     }
 
-    if (!all(is.numeric(response_age_1),
-             is.numeric(response_age_2),
-             is.numeric(response_age_3),
-             is.numeric(recover_age_1),
-             is.numeric(recover_age_2),
-             is.numeric(recover_age_3),
+    if (!all(is.numeric(upsilon_1),
+             is.numeric(upsilon_2),
+             is.numeric(upsilon_3),
+             is.numeric(gamma_1),
+             is.numeric(gamma_2),
+             is.numeric(gamma_3),
              is.numeric(alpha),
              is.numeric(beta_q1),
              is.numeric(beta_q2),
@@ -208,23 +205,23 @@ SISe3 <- function(init,
         stop("Parameters to handle the infectious pressure must be numeric")
     }
 
-    if (!all(identical(length(response_age_1), 1L),
-             identical(length(response_age_2), 1L),
-             identical(length(response_age_3), 1L),
-             identical(length(recover_age_1), 1L),
-             identical(length(recover_age_2), 1L),
-             identical(length(recover_age_3), 1L),
+    if (!all(identical(length(upsilon_1), 1L),
+             identical(length(upsilon_2), 1L),
+             identical(length(upsilon_3), 1L),
+             identical(length(gamma_1), 1L),
+             identical(length(gamma_2), 1L),
+             identical(length(gamma_3), 1L),
              identical(length(alpha), 1L),
              identical(length(epsilon), 1L))) {
         stop("Parameters to handle the infectious pressure must be of length 1")
     }
 
-    response_age_1 <- rep(response_age_1, nrow(init))
-    response_age_2 <- rep(response_age_2, nrow(init))
-    response_age_3 <- rep(response_age_3, nrow(init))
-    recover_age_1 <- rep(recover_age_1, nrow(init))
-    recover_age_2 <- rep(recover_age_2, nrow(init))
-    recover_age_3 <- rep(recover_age_3, nrow(init))
+    upsilon_1 <- rep(upsilon_1, nrow(init))
+    upsilon_2 <- rep(upsilon_2, nrow(init))
+    upsilon_3 <- rep(upsilon_3, nrow(init))
+    gamma_1 <- rep(gamma_1, nrow(init))
+    gamma_2 <- rep(gamma_2, nrow(init))
+    gamma_3 <- rep(gamma_3, nrow(init))
     alpha <- rep(alpha, nrow(init))
     epsilon <- rep(epsilon, nrow(init))
 
@@ -252,13 +249,13 @@ SISe3 <- function(init,
         stop("length of beta_q4 must either be 1 or nrow(init)")
     }
 
-    inf_data <- matrix(c(initial_infectious_pressure,
-                         response_age_1,
-                         response_age_2,
-                         response_age_3,
-                         recover_age_1,
-                         recover_age_2,
-                         recover_age_3,
+    inf_data <- matrix(c(phi,
+                         upsilon_1,
+                         upsilon_2,
+                         upsilon_3,
+                         gamma_1,
+                         gamma_2,
+                         gamma_3,
                          alpha,
                          beta_q1,
                          beta_q2,

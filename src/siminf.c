@@ -405,12 +405,12 @@ SEXP SISe3_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 {
     int err = 0;
     SEXP result, class_name;
-    PropensityFun t_fun[] = {&SISe3_S_age_1_to_I_age_1,
-                             &SISe3_I_age_1_to_S_age_1,
-                             &SISe3_S_age_2_to_I_age_2,
-                             &SISe3_I_age_2_to_S_age_2,
-                             &SISe3_S_age_3_to_I_age_3,
-                             &SISe3_I_age_3_to_S_age_3};
+    PropensityFun t_fun[] = {&SISe3_S_1_to_I_1,
+                             &SISe3_I_1_to_S_1,
+                             &SISe3_S_2_to_I_2,
+                             &SISe3_I_2_to_S_2,
+                             &SISe3_S_3_to_I_3,
+                             &SISe3_I_3_to_S_3};
 
     if (R_NilValue == model || S4SXP != TYPEOF(model))
         Rf_error("Invalid SISe3 model");
