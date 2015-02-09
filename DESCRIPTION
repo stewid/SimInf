@@ -25,5 +25,6 @@ Collate:
     'SISe.r'
     'SISe3.r'
     'measures.r'
+    'plot.r'
     'run.r'
     'siminf.r'
