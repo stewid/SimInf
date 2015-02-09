@@ -23,13 +23,13 @@
 ##' @param model The siminf model to run.
 ##' @param verbose Level of siminf feeedback during simulation. Silent
 ##' if 0, progress if 1, progress and number of transition
-##' events if 2.
+##' events if 2. Default is 0.
 ##' @param seed Random number seed.
 ##' @return \code{siminf_model} with result from simulation.
 setGeneric("run",
            signature = "model",
            function(model,
-                    verbose = 1,
+                    verbose = 0,
                     seed    = NULL) standardGeneric("run"))
 
 ##' @rdname run-methods
