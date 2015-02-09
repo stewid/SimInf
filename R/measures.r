@@ -67,6 +67,15 @@ setGeneric("infected",
            function(model, ...) standardGeneric("infected"))
 
 ##' @rdname infected-methods
+##' @include SISe.r
+##' @export
+setMethod("infected",
+          signature("SISe"),
+          function(model, ...) {
+              as.matrix(model@U[seq(from = 2, to = dim(model@U)[1], by = 2), ])
+          })
+
+##' @rdname infected-methods
 ##' @include SISe3.r
 ##' @export
 setMethod("infected",

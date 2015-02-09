@@ -36,3 +36,4 @@ result <- run(model, verbose = 0)
 result
 
 stopifnot(identical(length(susceptible(result)), 1001L))
+stopifnot(identical(length(infected(result)), 1001L))

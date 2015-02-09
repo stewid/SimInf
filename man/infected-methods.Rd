@@ -3,10 +3,13 @@
 \docType{methods}
 \name{infected}
 \alias{infected}
+\alias{infected,SISe-method}
 \alias{infected,SISe3-method}
 \title{Infected}
 \usage{
 infected(model, ...)
+
+\S4method{infected}{SISe}(model, ...)
 
 \S4method{infected}{SISe3}(model, age = c("age_1", "age_2", "age_3"), ...)
 }
