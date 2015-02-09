@@ -35,7 +35,7 @@ setGeneric("susceptible",
 setMethod("susceptible",
           signature("SISe"),
           function(model, ...) {
-              as.matrix(model@U[seq(from = 1, to = dim(model@U)[1], by = 2), ])
+              as.matrix(model@U[seq(from = 1, to = dim(model@U)[1], by = 2), , drop = FALSE])
           })
 
 ##' @rdname susceptible-methods
@@ -50,7 +50,7 @@ setMethod("susceptible",
                              age_2 = 3,
                              age_3 = 5)
               to = dim(model@U)[1]
-              as.matrix(model@U[seq(from = from, to = to, by = 6), ])
+              as.matrix(model@U[seq(from = from, to = to, by = 6), , drop = FALSE])
           })
 
 ##' Infected
@@ -72,7 +72,7 @@ setGeneric("infected",
 setMethod("infected",
           signature("SISe"),
           function(model, ...) {
-              as.matrix(model@U[seq(from = 2, to = dim(model@U)[1], by = 2), ])
+              as.matrix(model@U[seq(from = 2, to = dim(model@U)[1], by = 2), , drop = FALSE])
           })
 
 ##' @rdname infected-methods
@@ -87,7 +87,7 @@ setMethod("infected",
                              age_2 = 4,
                              age_3 = 6)
               to = dim(model@U)[1]
-              as.matrix(model@U[seq(from = from, to = to, by = 6), ])
+              as.matrix(model@U[seq(from = from, to = to, by = 6), , drop = FALSE])
           })
 
 ##' Prevalence
