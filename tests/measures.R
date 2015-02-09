@@ -37,3 +37,4 @@ result
 
 stopifnot(identical(length(susceptible(result)), 1001L))
 stopifnot(identical(length(infected(result)), 1001L))
+stopifnot(identical(length(prevalence(result)), 1001L))

@@ -89,3 +89,26 @@ setMethod("infected",
               to = dim(model@U)[1]
               as.matrix(model@U[seq(from = from, to = to, by = 6), ])
           })
+
+##' Prevalence
+##'
+##' Calculate the proportion infected individuals
+##' @rdname prevalence-methods
+##' @docType methods
+##' @param model The \code{model} to calculated the prevalence from
+##' @param ... Additional arguments affecting the measure
+##' @keywords methods
+##' @export
+setGeneric("prevalence",
+           function(model, ...) standardGeneric("prevalence"))
+
+##' @rdname prevalence-methods
+##' @include SISe.r
+##' @export
+setMethod("prevalence",
+          signature("SISe"),
+          function(model, ...) {
+              I <- colSums(infected(model))
+              S <- colSums(susceptible(model))
+              I / (S + I)
+          })
