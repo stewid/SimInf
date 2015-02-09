@@ -3,10 +3,13 @@
 \docType{methods}
 \name{susceptible}
 \alias{susceptible}
+\alias{susceptible,SISe-method}
 \alias{susceptible,SISe3-method}
 \title{Susceptible}
 \usage{
 susceptible(model, ...)
+
+\S4method{susceptible}{SISe}(model, ...)
 
 \S4method{susceptible}{SISe3}(model, age = c("age_1", "age_2", "age_3"), ...)
 }

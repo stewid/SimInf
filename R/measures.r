@@ -30,6 +30,15 @@ setGeneric("susceptible",
            function(model, ...) standardGeneric("susceptible"))
 
 ##' @rdname susceptible-methods
+##' @include SISe.r
+##' @export
+setMethod("susceptible",
+          signature("SISe"),
+          function(model, ...) {
+              as.matrix(model@U[seq(from = 1, to = dim(model@U)[1], by = 2), ])
+          })
+
+##' @rdname susceptible-methods
 ##' @include SISe3.r
 ##' @export
 setMethod("susceptible",
