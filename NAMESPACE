@@ -2,6 +2,7 @@
 
 export(SISe)
 export(SISe3)
+export(demo_model)
 export(external_events)
 export(infected)
 export(prevalence)
