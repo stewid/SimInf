@@ -18,7 +18,9 @@
 
 ##' plot,-method
 ##'
-##'
+##' @param x The \code{model} to plot
+##' @param y Unused argument
+##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SISe-method
 ##' @docType methods

@@ -9,6 +9,13 @@
 \usage{
 \S4method{plot}{SISe}(x, y, ...)
 }
+\arguments{
+\item{x}{The \code{model} to plot}
+
+\item{y}{Unused argument}
+
+\item{...}{Additional arguments affecting the plot produced.}
+}
 \description{
 plot,-method
 }
