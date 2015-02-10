@@ -120,7 +120,7 @@ static int get_report_level(SEXP verbose)
 static unsigned long int get_seed(SEXP seed)
 {
     if (seed != R_NilValue) {
-        switch (LENGTH(seed) == 0) {
+        switch (LENGTH(seed)) {
         case 0:
             return (unsigned long int)time(NULL);
         case 1:
