@@ -173,9 +173,21 @@ int SISe3_update_infectious_pressure(
     S_n = x[S_1] + x[S_2] + x[S_3];
     I_n = x[I_1] + x[I_2] + x[I_3];
 
-    /* Time dependent beta */
-    data[PHI] *= (1.0 - data[BETA_Q1 + ((int)t % days_in_year) / days_in_quarter]);
-
+    /* Time dependent beta for each quarter of the year. Forward Euler step. */
+    switch (((int)t % days_in_year) / days_in_quarter) {
+    case 0:
+        data[PHI] *= (1.0 - data[BETA_Q1]);
+        break;
+    case 1:
+        data[PHI] *= (1.0 - data[BETA_Q2]);
+        break;
+    case 2:
+        data[PHI] *= (1.0 - data[BETA_Q3]);
+        break;
+    default:
+        data[PHI] *= (1.0 - data[BETA_Q4]);
+        break;
+    }
     data[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
 
     /* 1 if needs update */
