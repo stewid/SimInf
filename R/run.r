@@ -92,7 +92,7 @@ setMethod("run",
               ## required by the siminf solver and that they make sense
               validObject(model);
 
-              .Call(SISe3_run, model, 1L, verbose, seed)
+              .Call(SISe3_run, model, threads, strategy, verbose, seed)
           }
 )
 
@@ -110,6 +110,6 @@ setMethod("run",
               ## required by the siminf solver and that they make sense
               validObject(model);
 
-              .Call(SISe_run, model, 1L, verbose, seed)
+              .Call(SISe_run, model, threads, strategy, verbose, seed)
           }
 )
