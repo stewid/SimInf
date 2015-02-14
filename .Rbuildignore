@@ -2,3 +2,4 @@
 ^LICENSE$
 ^\.travis\.yml$
 ^Makefile$
+^configure\.ac$
