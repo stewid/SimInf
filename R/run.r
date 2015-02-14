@@ -16,6 +16,48 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+##' Check strategy argument
+##'
+##' @param threads Number of threads.
+##' @param strategy The parallelization strategy.
+##' @return The strategy
+##' @keywords internal
+check_strategy <- function(threads, strategy)
+{
+    strategy <- as.character(strategy)
+
+    if (identical(strategy, "single")) {
+        if (threads[1] > 1)
+            stop("Invalid 'threads' argument")
+    } else if (identical(strategy, "omp")) {
+        if (!have_openmp())
+            stop("Not configured with OpenMP support")
+    } else if (identical(strategy, "sg")) {
+        if (!have_openmp())
+            stop("Not configured with SuperGlue support")
+    } else {
+        stop("Invalid 'strategy' argument")
+    }
+
+    strategy
+}
+
+##' Check threads argument
+##'
+##' @param threads Number of threads.
+##' @return Integer scalar with number of threads.
+##' @keywords internal
+check_threads <- function(threads)
+{
+    if (any(is.null(threads),
+            !is.numeric(threads),
+            !identical(length(threads), 1L),
+            !is_wholenumber(threads[1]),
+            threads[1] < 1))
+        stop("Invalid 'threads' argument")
+    as.integer(threads)
+}
+
 ##' Run siminf stochastic simulation algorithms
 ##'
 ##' @rdname run-methods
@@ -25,20 +67,27 @@
 ##' if 0, progress if 1, progress and number of transition
 ##' events if 2. Default is 0.
 ##' @param seed Random number seed.
+##' @param threads Number of threads. Default is 1.
+##' @param strategy The parallelization strategy. Default is 'single'.
 ##' @return \code{siminf_model} with result from simulation.
 setGeneric("run",
            signature = "model",
            function(model,
-                    verbose = 0,
-                    seed    = NULL) standardGeneric("run"))
+                    verbose  = 0,
+                    seed     = NULL,
+                    threads  = 1,
+                    strategy = c("single", "omp", "sg")) standardGeneric("run"))
 
 ##' @rdname run-methods
 ##' @include SISe3.r
 ##' @export
 setMethod("run",
           signature(model = "SISe3"),
-          function(model, verbose, seed)
+          function(model, verbose, seed, threads, strategy)
           {
+              threads <- check_threads(threads)
+              strategy <- check_strategy(threads, match.arg(strategy))
+
               ## check that siminf_model contains all data structures
               ## required by the siminf solver and that they make sense
               validObject(model);
@@ -52,8 +101,10 @@ setMethod("run",
 ##' @export
 setMethod("run",
           signature(model = "SISe"),
-          function(model, verbose, seed)
+          function(model, verbose, seed, threads, strategy)
           {
+              threads <- check_threads(threads)
+              strategy <- check_strategy(threads, match.arg(strategy))
 
               ## check that siminf_model contains all data structures
               ## required by the siminf solver and that they make sense
