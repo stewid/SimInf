@@ -42,6 +42,10 @@ check_valgrind: clean
 	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
 	cd .. && R CMD check --as-cran --no-manual --no-vignettes --no-build-vignettes --use-valgrind $(PKG_TAR)
 
+configure: configure.ac
+	autoconf ./configure.ac > ./configure
+	chmod +x ./configure
+
 clean:
 	-rm -f src/*.o
 	-rm -f src/*.so
