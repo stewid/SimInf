@@ -25,6 +25,7 @@ Collate:
     'SISe.r'
     'SISe3.r'
     'demo_model.r'
+    'dependencies.r'
     'measures.r'
     'plot.r'
     'run.r'
