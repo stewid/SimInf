@@ -43,6 +43,9 @@ void siminf_error(int err)
     case SIMINF_ERR_ALLOC_MEMORY_BUFFER:
         Rf_error("Unable to allocate memory buffer");
         break;
+    case SIMINF_UNSUPPORTED_PARALLELIZATION:
+        Rf_error("Unsupported parallelization strategy");
+        break;
     default:
         Rf_error("Unknown error code.");
     }
@@ -230,6 +233,7 @@ get_sparse_matrix_int(size_t **ir, size_t **jc, int **pr, SEXP m)
  *
  * @param result The siminf_model
  * @param threads Number of threads
+ * @param strategy The parallelization strategy
  * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @param t_fun Vector of function pointers to transition functions.
@@ -238,6 +242,7 @@ get_sparse_matrix_int(size_t **ir, size_t **jc, int **pr, SEXP m)
 int run_internal(
     SEXP result,
     SEXP threads,
+    SEXP strategy,
     SEXP verbose,
     SEXP seed,
     const PropensityFun *t_fun,
@@ -252,6 +257,11 @@ int run_internal(
     int *prE = NULL, *prN = NULL;
     double *data = NULL;
     size_t Nn, Nc, tlen, dsize, Nt;
+
+    /* Check strategy argument */
+    if (R_NilValue == strategy || !isString(strategy) ||
+        1 != length(strategy) || NA_STRING == STRING_ELT(strategy, 0))
+        Rf_error("Invalid 'strategy' argument");
 
     /* number of threads */
     n_threads = get_threads(threads);
@@ -306,26 +316,30 @@ int run_internal(
     SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
 
     /* Core simulation routine. */
-    err = siminf_core(
-        INTEGER(GET_SLOT(result, Rf_install("u0"))),
-        irG, jcG,
-        irN, jcN, prN,
-        REAL(GET_SLOT(result, Rf_install("tspan"))),
-        tlen,
-        INTEGER(GET_SLOT(result, Rf_install("U"))),
-        data,
-        INTEGER(GET_SLOT(result, Rf_install("sd"))),
-        Nn, Nc, Nt, Nobs, dsize,
-        irE, jcE, prE,
-        INTEGER(GET_SLOT(events, Rf_install("ext_event"))),
-        INTEGER(GET_SLOT(events, Rf_install("ext_time"))),
-        INTEGER(GET_SLOT(events, Rf_install("ext_select"))),
-        INTEGER(GET_SLOT(events, Rf_install("ext_node"))),
-        INTEGER(GET_SLOT(events, Rf_install("ext_dest"))),
-        INTEGER(GET_SLOT(events, Rf_install("ext_n"))),
-        REAL(GET_SLOT(events,    Rf_install("ext_p"))),
-        INTEGER(GET_SLOT(events, Rf_install("ext_len")))[0],
-        report_level, n_threads, rng, t_fun, inf_fun, &progress);
+    if (strcmp(CHAR(STRING_ELT(strategy, 0)), "single") == 0) {
+        err = siminf_core(
+            INTEGER(GET_SLOT(result, Rf_install("u0"))),
+            irG, jcG,
+            irN, jcN, prN,
+            REAL(GET_SLOT(result, Rf_install("tspan"))),
+            tlen,
+            INTEGER(GET_SLOT(result, Rf_install("U"))),
+            data,
+            INTEGER(GET_SLOT(result, Rf_install("sd"))),
+            Nn, Nc, Nt, Nobs, dsize,
+            irE, jcE, prE,
+            INTEGER(GET_SLOT(events, Rf_install("ext_event"))),
+            INTEGER(GET_SLOT(events, Rf_install("ext_time"))),
+            INTEGER(GET_SLOT(events, Rf_install("ext_select"))),
+            INTEGER(GET_SLOT(events, Rf_install("ext_node"))),
+            INTEGER(GET_SLOT(events, Rf_install("ext_dest"))),
+            INTEGER(GET_SLOT(events, Rf_install("ext_n"))),
+            REAL(GET_SLOT(events,    Rf_install("ext_p"))),
+            INTEGER(GET_SLOT(events, Rf_install("ext_len")))[0],
+            report_level, n_threads, rng, t_fun, inf_fun, &progress);
+    } else {
+        err = SIMINF_UNSUPPORTED_PARALLELIZATION;
+    }
 
 cleanup:
     if (rng)
@@ -357,11 +371,12 @@ cleanup:
  *
  * @param model The SISe model
  * @param threads Number of threads
+ * @param strategy The parallelization strategy
  * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @return S4 class SISe with the simulated trajectory in U
  */
-SEXP SISe_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
+SEXP SISe_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
 {
     int err = 0;
     SEXP result, class_name;
@@ -376,13 +391,8 @@ SEXP SISe_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 
     result = PROTECT(duplicate(model));
 
-    err = run_internal(
-        result,
-        threads,
-        verbose,
-        seed,
-        t_fun,
-        &SISe_update_infectious_pressure);
+    err = run_internal(result, threads, strategy, verbose, seed, t_fun,
+                       &SISe_update_infectious_pressure);
 
     UNPROTECT(1);
 
@@ -397,20 +407,18 @@ SEXP SISe_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
  *
  * @param model The SISe3 model
  * @param threads Number of threads
+ * @param strategy The parallelization strategy
  * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @return S4 class SISe3 with the simulated trajectory in U
  */
-SEXP SISe3_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
+SEXP SISe3_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
 {
     int err = 0;
     SEXP result, class_name;
-    PropensityFun t_fun[] = {&SISe3_S_1_to_I_1,
-                             &SISe3_I_1_to_S_1,
-                             &SISe3_S_2_to_I_2,
-                             &SISe3_I_2_to_S_2,
-                             &SISe3_S_3_to_I_3,
-                             &SISe3_I_3_to_S_3};
+    PropensityFun t_fun[] = {&SISe3_S_1_to_I_1, &SISe3_I_1_to_S_1,
+                             &SISe3_S_2_to_I_2, &SISe3_I_2_to_S_2,
+                             &SISe3_S_3_to_I_3, &SISe3_I_3_to_S_3};
 
     if (R_NilValue == model || S4SXP != TYPEOF(model))
         Rf_error("Invalid SISe3 model");
@@ -421,13 +429,8 @@ SEXP SISe3_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 
     result = PROTECT(duplicate(model));
 
-    err = run_internal(
-        result,
-        threads,
-        verbose,
-        seed,
-        t_fun,
-        &SISe3_update_infectious_pressure);
+    err = run_internal(result, threads, strategy, verbose, seed, t_fun,
+                       &SISe3_update_infectious_pressure);
 
     UNPROTECT(1);
 
@@ -439,8 +442,8 @@ SEXP SISe3_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 
 static const R_CallMethodDef callMethods[] =
 {
-    {"SISe_run", (DL_FUNC)&SISe_run, 4},
-    {"SISe3_run", (DL_FUNC)&SISe3_run, 4},
+    {"SISe_run", (DL_FUNC)&SISe_run, 5},
+    {"SISe3_run", (DL_FUNC)&SISe3_run, 5},
     {NULL, NULL, 0}
 };
 

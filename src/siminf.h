@@ -25,8 +25,9 @@
 #include <gsl/gsl_rng.h>
 
 /* Error constants */
-#define SIMINF_ERR_NEGATIVE_STATE      1
-#define SIMINF_ERR_ALLOC_MEMORY_BUFFER 2
+#define SIMINF_ERR_NEGATIVE_STATE          1
+#define SIMINF_ERR_ALLOC_MEMORY_BUFFER     2
+#define SIMINF_UNSUPPORTED_PARALLELIZATION 3
 
 /* Definition of the propensity function. */
 typedef double (*PropensityFun)(const int *x, double t, const double *data, int sd);
