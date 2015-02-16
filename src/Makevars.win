@@ -1,1 +1,2 @@
-PKG_LIBS = -lm -lgsl -lgslcblas
+PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS) -DSIMINF_OMP
+PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
