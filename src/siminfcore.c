@@ -21,6 +21,10 @@
 #include <string.h>
 #include <math.h>
 
+#ifdef SIMINF_OMP
+#include <omp.h>
+#endif
+
 #include "siminf.h"
 #include "events.h"
 
