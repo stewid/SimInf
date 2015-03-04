@@ -289,7 +289,7 @@ int siminf_core(
 
         /* (3) Update the infectious pressure variable. */
         for (node = 0; node < Nn; node++) {
-            if (pts_fun(&xx[node * Nc], node, tt, &data[node * dsize]) ||
+            if (pts_fun(&xx[node * Nc], node, tt, &data[node * dsize], sd[node]) ||
                 update_node[node])
             {
                 size_t i = 0;

@@ -30,10 +30,12 @@
 #define SIMINF_UNSUPPORTED_PARALLELIZATION 3
 
 /* Definition of the propensity function. */
-typedef double (*PropensityFun)(const int *x, double t, const double *data, int sd);
+typedef double (*PropensityFun)(const int *x, double t, const double *data,
+                                int sd);
 
 /* Definition of the callback function post one time step. */
-typedef int (*PostTimeStepFun)(const int *x, int src, double t, double *data);
+typedef int (*PostTimeStepFun)(const int *x, int src, double t, double *data,
+                               int sd);
 
 /* Definition of the callback function for reporting progress. */
 typedef void (*ProgressFun)(double t, const double t_begin, const double t_end,

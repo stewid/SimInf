@@ -28,6 +28,6 @@ double SISe3_I_1_to_S_1(const int *x, double t, const double *data, int sd);
 double SISe3_I_2_to_S_2(const int *x, double t, const double *data, int sd);
 double SISe3_I_3_to_S_3(const int *x, double t, const double *data, int sd);
 
-int SISe3_post_time_step(const int *x, int src, double t, double *data);
+int SISe3_post_time_step(const int *x, int src, double t, double *data, int sd);
 
 #endif

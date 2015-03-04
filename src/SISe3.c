@@ -153,6 +153,7 @@ double SISe3_I_3_to_S_3(
  * Update infectious pressure
  *
  * @param x The state vector in node.
+ * @param node The node.
  * @param t Current time.
  * @param data The data vector for node.
  * @param sd The sub-domain of node.
@@ -160,9 +161,10 @@ double SISe3_I_3_to_S_3(
  */
 int SISe3_post_time_step(
     const int *x,
-    int src,
+    int node,
     double t,
-    double *data)
+    double *data,
+    int sd)
 {
     const int days_in_year = 365;
     const int days_in_quarter = 91;
