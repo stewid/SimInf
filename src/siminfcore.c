@@ -90,7 +90,8 @@
  *        for this solver.
  * @param rng The random number generator.
  * @param t_fun Vector of function pointers to transition functions.
- * @param inf_fun Function pointer to update infectious pressure.
+ * @param pts_fun Function pointer to callback after each time step
+ *        e.g. update infectious pressure.
  * @param progress Function pointer to report progress.
  */
 int siminf_core(
@@ -102,7 +103,7 @@ int siminf_core(
     const int *ext_time, const int *ext_select, const int *ext_node,
     const int *ext_dest, const int *ext_n, const double *ext_p, int ext_len,
     int report_level, int Nthreads, const gsl_rng *rng,
-    const PropensityFun *t_fun, const InfPressFun inf_fun,
+    const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
     const ProgressFun progress)
 {
     double tt = tspan[0];
@@ -288,7 +289,7 @@ int siminf_core(
 
         /* (3) Update the infectious pressure variable. */
         for (node = 0; node < Nn; node++) {
-            if (inf_fun(&xx[node * Nc], node, tt, &data[node * dsize]) ||
+            if (pts_fun(&xx[node * Nc], node, tt, &data[node * dsize]) ||
                 update_node[node])
             {
                 size_t i = 0;

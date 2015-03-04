@@ -32,8 +32,8 @@
 /* Definition of the propensity function. */
 typedef double (*PropensityFun)(const int *x, double t, const double *data, int sd);
 
-/* Definition of the propensity function for infectious pressure. */
-typedef int (*InfPressFun)(const int *x, int src, double t, double *data);
+/* Definition of the callback function post one time step. */
+typedef int (*PostTimeStepFun)(const int *x, int src, double t, double *data);
 
 /* Definition of the callback function for reporting progress. */
 typedef void (*ProgressFun)(double t, const double t_begin, const double t_end,
@@ -48,7 +48,7 @@ int siminf_core(
     const int *ext_time, const int *ext_select, const int *ext_node,
     const int *ext_dest, const int *ext_n, const double *ext_p, int ext_len,
     int report_level, int Nthreads, const gsl_rng *rng,
-    const PropensityFun *t_fun, const InfPressFun inf_fun,
+    const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
     const ProgressFun progress);
 
 #endif

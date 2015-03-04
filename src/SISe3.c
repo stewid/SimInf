@@ -158,7 +158,7 @@ double SISe3_I_3_to_S_3(
  * @param sd The sub-domain of node.
  * @return 1 if needs update, else 0.
  */
-int SISe3_update_infectious_pressure(
+int SISe3_post_time_step(
     const int *x,
     int src,
     double t,

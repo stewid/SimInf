@@ -69,7 +69,7 @@ double SISe_I_to_S(const int *x, double t, const double *data, int sd)
  * @param sd The sub-domain of node.
  * @return 1 if needs update, else 0.
  */
-int SISe_update_infectious_pressure(
+int SISe_post_time_step(
     const int *x,
     int src,
     double t,

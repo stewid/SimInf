@@ -237,7 +237,8 @@ get_sparse_matrix_int(size_t **ir, size_t **jc, int **pr, SEXP m)
  * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @param t_fun Vector of function pointers to transition functions.
- * @param inf_fun Function pointer to update infectious pressure.
+ * @param pts_fun Function pointer to callback after each time step
+ *        e.g. update infectious pressure.
  */
 int run_internal(
     SEXP result,
@@ -246,7 +247,7 @@ int run_internal(
     SEXP verbose,
     SEXP seed,
     const PropensityFun *t_fun,
-    const InfPressFun inf_fun)
+    const PostTimeStepFun pts_fun)
 {
     int err = 0, Nobs = 0, report_level, n_threads;
     SEXP events, E, N;
@@ -336,7 +337,7 @@ int run_internal(
             INTEGER(GET_SLOT(events, Rf_install("ext_n"))),
             REAL(GET_SLOT(events,    Rf_install("ext_p"))),
             INTEGER(GET_SLOT(events, Rf_install("ext_len")))[0],
-            report_level, n_threads, rng, t_fun, inf_fun, &progress);
+            report_level, n_threads, rng, t_fun, pts_fun, &progress);
     } else {
         err = SIMINF_UNSUPPORTED_PARALLELIZATION;
     }
@@ -392,7 +393,7 @@ SEXP SISe_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
     result = PROTECT(duplicate(model));
 
     err = run_internal(result, threads, strategy, verbose, seed, t_fun,
-                       &SISe_update_infectious_pressure);
+                       &SISe_post_time_step);
 
     UNPROTECT(1);
 
@@ -430,7 +431,7 @@ SEXP SISe3_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
     result = PROTECT(duplicate(model));
 
     err = run_internal(result, threads, strategy, verbose, seed, t_fun,
-                       &SISe3_update_infectious_pressure);
+                       &SISe3_post_time_step);
 
     UNPROTECT(1);
 
