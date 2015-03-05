@@ -288,63 +288,6 @@ external_events <- function(E      = NULL,
                ext_len    = nrow(events)))
 }
 
-##' Coerce S4 class \code{external_events} to a \code{list}
-##'
-##' @name coerce-external_events-list-method
-##' @aliases coerce,external_events,list-method
-##' @docType methods
-##' @param from The external_events \code{object}
-##' @return \code{list}
-##' @keywords methods
-setAs(from="external_events",
-      to="list",
-      def=function(from)
-      {
-          return(list(E          = from@E,
-                      ext_event  = from@ext_event,
-                      ext_time   = from@ext_time,
-                      ext_select = from@ext_select,
-                      ext_node   = from@ext_node,
-                      ext_dest   = from@ext_dest,
-                      ext_n      = from@ext_n,
-                      ext_p      = from@ext_p,
-                      ext_len    = from@ext_len))
-      }
-)
-
-##' Coerce \code{list} to a S4 class \code{external_events}
-##'
-##' @name coerce-list-external_events-method
-##' @aliases coerce,list,external_events-method
-##' @docType methods
-##' @param from The list \code{object}
-##' @return S4 class \code{external_events}
-##' @keywords methods
-setAs(from="list",
-      to="external_events",
-      def=function(from)
-      {
-          if (!all(names(getSlots(to)) %in% names(from))) {
-              stop("Missing slots")
-          }
-
-          events <- data.frame(event  = from[["ext_event"]],
-                               time   = from[["ext_time"]],
-                               select = from[["ext_select"]],
-                               node   = from[["ext_node"]],
-                               dest   = from[["ext_dest"]],
-                               n      = from[["ext_n"]],
-                               prop   = from[["ext_p"]])
-
-          if (!identical(nrow(events), from[["ext_len"]])) {
-              stop("Events length mismatch")
-          }
-
-          return(external_events(E      = from[["E"]],
-                                 events = events))
-      }
-)
-
 ##' Brief summary of \code{external_events}
 ##'
 ##' @aliases show,external_events-methods
