@@ -28,42 +28,38 @@ Class to handle the external events
     compartment. The target compartment for sampled individuals is
     given by adding the value.
   }
-
   \item{ext_event}{
     Integer vector of length ext_len with external events.
     The following four events are implemented; EXIT_EVENT = 0,
     ENTER_EVENT = 1, INTERNAL_TRANSFER_EVENT = 2, and
     EXTERNAL_TRANSFER_EVENT = 3.
   }
-
   \item{ext_time}{
     Integer vector of length ext_len with the time for external event.
   }
-
   \item{ext_select}{
     Integer vector of length ext_len. Column j in the event matrix
     that determines the hidden states to sample from.
   }
-
   \item{ext_node}{
     Integer vector of length ext_len. The source herd of the event i.
   }
-
   \item{ext_dest}{
     Integer vector of length ext_len. The dest herd of the event i.
   }
-
   \item{ext_n}{
     Integer vector of length ext_len. The number of individuals in the external event. ext_n[i] >= 0.
   }
-
   \item{ext_p}{
-    Integer vector of length ext_len. If ext_n[i] equals zero,
+    Numeric vector of length ext_len. If ext_n[i] equals zero,
     then the number of individuals to sample is calculated by summing
     the number of individuals in the hidden states determined by
     ext_select[i] and multiplying with the proportion. 0 <= ext_p[i] <= 1.
   }
-
+  \item{ext_thread}{
+    Integer vector of length ext_len or 0. If the simulation runs in parallell,
+    this slot determines the thread for the event.
+  }
   \item{ext_len}{
     Number of scheduled external events.
   }

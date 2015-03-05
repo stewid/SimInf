@@ -38,7 +38,13 @@ columns:
     The number of individuals
   }
   \item{prop}{
-    The proportion of individuals. Not yet implemented and used.
+    The proportion of individuals. If n[i] equals zero,
+    then the number of individuals to sample is calculated by summing
+    the number of individuals in the hidden states determined by
+    select[i] and multiplying with the proportion. 0 <= p[i] <= 1.
+  }
+  \item{thread}{
+    Optional column with thread id of the event.
   }
 }
 }
