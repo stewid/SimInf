@@ -51,42 +51,38 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     compartment. The target compartment for sampled individuals is
 ##'     given by adding the value.
 ##'   }
-##'
 ##'   \item{ext_event}{
 ##'     Integer vector of length ext_len with external events.
 ##'     The following four events are implemented; EXIT_EVENT = 0,
 ##'     ENTER_EVENT = 1, INTERNAL_TRANSFER_EVENT = 2, and
 ##'     EXTERNAL_TRANSFER_EVENT = 3.
 ##'   }
-##'
 ##'   \item{ext_time}{
 ##'     Integer vector of length ext_len with the time for external event.
 ##'   }
-##'
 ##'   \item{ext_select}{
 ##'     Integer vector of length ext_len. Column j in the event matrix
 ##'     that determines the hidden states to sample from.
 ##'   }
-##'
 ##'   \item{ext_node}{
 ##'     Integer vector of length ext_len. The source herd of the event i.
 ##'   }
-##'
 ##'   \item{ext_dest}{
 ##'     Integer vector of length ext_len. The dest herd of the event i.
 ##'   }
-##'
 ##'   \item{ext_n}{
 ##'     Integer vector of length ext_len. The number of individuals in the external event. ext_n[i] >= 0.
 ##'   }
-##'
 ##'   \item{ext_p}{
-##'     Integer vector of length ext_len. If ext_n[i] equals zero,
+##'     Numeric vector of length ext_len. If ext_n[i] equals zero,
 ##'     then the number of individuals to sample is calculated by summing
 ##'     the number of individuals in the hidden states determined by
 ##'     ext_select[i] and multiplying with the proportion. 0 <= ext_p[i] <= 1.
 ##'   }
-##'
+##'   \item{ext_thread}{
+##'     Integer vector of length ext_len or 0. If the simulation runs in parallell,
+##'     this slot determines the thread for the event.
+##'   }
 ##'   \item{ext_len}{
 ##'     Number of scheduled external events.
 ##'   }
@@ -107,8 +103,10 @@ setClass("external_events",
                    ext_dest   = "integer",
                    ext_n      = "integer",
                    ext_p      = "numeric",
+                   ext_thread = "integer",
                    ext_len    = "integer"),
-         prototype = list(ext_len = 0L),
+         prototype = list(ext_len = 0L,
+                          ext_thread = integer(0)),
          validity = function(object) {
              errors <- character()
 
@@ -148,6 +146,18 @@ setClass("external_events",
                  errors <- c(errors, "prop must be in the range 0 <= prop <= 1")
              }
 
+             if (length(object@ext_thread)) {
+                 if (!identical(length(object@ext_thread),
+                                length(object@ext_len))) {
+                     errors <- c(errors,
+                                 "Length of external events must be equal to ext_len.")
+                 }
+
+                 if (any(object@ext_thread < 0)) {
+                     errors <- c(errors, "thread must be >= 0")
+                 }
+             }
+
              if (length(errors) == 0) TRUE else errors
          }
 )
@@ -176,7 +186,13 @@ setClass("external_events",
 ##'     The number of individuals
 ##'   }
 ##'   \item{prop}{
-##'     The proportion of individuals. Not yet implemented and used.
+##'     The proportion of individuals. If n[i] equals zero,
+##'     then the number of individuals to sample is calculated by summing
+##'     the number of individuals in the hidden states determined by
+##'     select[i] and multiplying with the proportion. 0 <= p[i] <= 1.
+##'   }
+##'   \item{thread}{
+##'     Optional column with thread id of the event.
 ##'   }
 ##' }
 ##' @param E Sparse matrix (\eqn{Ncompartments \times (4 * Nselect)}) of
@@ -202,12 +218,18 @@ external_events <- function(E      = NULL,
                              node   = as.integer(),
                              dest   = as.integer(),
                              n      = as.integer(),
-                             prop   = as.numeric())
+                             prop   = as.numeric(),
+                             thread = as.integer())
     }
     if (!is.data.frame(events))
         stop("events must be a data.frame")
-    if (!identical(ncol(events), 7L))
+    if ("thread" %in% colnames(events)) {
+        if (!identical(ncol(events), 8L)) {
+            stop("Wrong dimension of events")
+        }
+    } else if (!identical(ncol(events), 7L)) {
         stop("Wrong dimension of events")
+    }
     if (!all(c("event", "time", "select", "node", "dest", "n", "prop") %in% names(events)))
         stop("Missing columns in events")
     if (!is.numeric(events$event))
@@ -224,6 +246,10 @@ external_events <- function(E      = NULL,
         stop("Columns in events must be numeric")
     if (!is.numeric(events$prop))
         stop("Columns in events must be numeric")
+    if ("thread" %in% colnames(events)) {
+        if (!is.numeric(events$thread))
+            stop("Columns in events must be numeric")
+    }
     if (nrow(events)) {
         if (!all(is_wholenumber(events$event)))
             stop("Columns in events must be integer")
@@ -237,6 +263,14 @@ external_events <- function(E      = NULL,
             stop("Columns in events must be integer")
         if (!all(is_wholenumber(events$n)))
             stop("Columns in events must be integer")
+        if ("thread" %in% colnames(events)) {
+            if (!all(is.na(events$thread))) {
+                if (any(is.na(events$thread)))
+                    stop("Columns in events must be integer")
+                if (!all(is_wholenumber(events$thread)))
+                    stop("Columns in events must be integer")
+            }
+        }
     }
 
     events <- events[order(events$time, events$event),]
@@ -250,6 +284,7 @@ external_events <- function(E      = NULL,
                ext_dest   = as.integer(events$dest),
                ext_n      = as.integer(events$n),
                ext_p      = as.numeric(events$prop),
+               ext_thread = as.integer(events$thread),
                ext_len    = nrow(events)))
 }
 
@@ -365,6 +400,12 @@ setMethod("show",
                   cat(sprintf("ext_p: 1 x %i\n", length(object@ext_p)))
               } else {
                   cat("ext_p: 0 x 0\n")
+              }
+
+              if (length(object@ext_thread)) {
+                  cat(sprintf("ext_thread: 1 x %i\n", length(object@ext_thread)))
+              } else {
+                  cat("ext_thread: 0 x 0\n")
               }
 
               if (length(object@ext_len)) {

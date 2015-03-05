@@ -144,6 +144,7 @@ events <- new("external_events",
               ext_dest = integer(0),
               ext_n = integer(0),
               ext_p = numeric(0),
+              ext_thread = integer(0),
               ext_len = 0L)
 str(events)
 stopifnot(identical(external_events(), events))
