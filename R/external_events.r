@@ -80,7 +80,7 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     ext_select[i] and multiplying with the proportion. 0 <= ext_p[i] <= 1.
 ##'   }
 ##'   \item{ext_thread}{
-##'     Integer vector of length ext_len or 0. If the simulation runs in parallell,
+##'     Integer vector of length ext_len. If the simulation runs in parallell,
 ##'     this slot determines the thread for the event.
 ##'   }
 ##'   \item{ext_len}{
@@ -105,8 +105,7 @@ setClass("external_events",
                    ext_p      = "numeric",
                    ext_thread = "integer",
                    ext_len    = "integer"),
-         prototype = list(ext_len = 0L,
-                          ext_thread = integer(0)),
+         prototype = list(ext_len = 0L),
          validity = function(object) {
              errors <- character()
 
@@ -116,7 +115,8 @@ setClass("external_events",
                                             length(object@ext_node),
                                             length(object@ext_dest),
                                             length(object@ext_n),
-                                            length(object@ext_p)))) , 1L)) {
+                                            length(object@ext_p),
+                                            length(object@ext_thread)))) , 1L)) {
                  errors <- c(errors, "All external events must have equal length.")
              }
 
@@ -146,16 +146,8 @@ setClass("external_events",
                  errors <- c(errors, "prop must be in the range 0 <= prop <= 1")
              }
 
-             if (length(object@ext_thread)) {
-                 if (!identical(length(object@ext_thread),
-                                length(object@ext_len))) {
-                     errors <- c(errors,
-                                 "Length of external events must be equal to ext_len.")
-                 }
-
-                 if (any(object@ext_thread < 0)) {
-                     errors <- c(errors, "thread must be >= 0")
-                 }
+             if (any(object@ext_thread < 0)) {
+                 errors <- c(errors, "thread must be >= 0")
              }
 
              if (length(errors) == 0) TRUE else errors
@@ -249,6 +241,8 @@ external_events <- function(E      = NULL,
     if ("thread" %in% colnames(events)) {
         if (!is.numeric(events$thread))
             stop("Columns in events must be numeric")
+    } else {
+        events$thread <- rep(0L, nrow(events))
     }
     if (nrow(events)) {
         if (!all(is_wholenumber(events$event)))
@@ -263,14 +257,8 @@ external_events <- function(E      = NULL,
             stop("Columns in events must be integer")
         if (!all(is_wholenumber(events$n)))
             stop("Columns in events must be integer")
-        if ("thread" %in% colnames(events)) {
-            if (!all(is.na(events$thread))) {
-                if (any(is.na(events$thread)))
-                    stop("Columns in events must be integer")
-                if (!all(is_wholenumber(events$thread)))
-                    stop("Columns in events must be integer")
-            }
-        }
+        if (!all(is_wholenumber(events$thread)))
+            stop("Columns in events must be integer")
     }
 
     events <- events[order(events$time, events$event),]
