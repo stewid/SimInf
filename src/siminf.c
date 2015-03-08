@@ -329,14 +329,14 @@ int run_internal(
             INTEGER(GET_SLOT(result, Rf_install("sd"))),
             Nn, Nc, Nt, Nobs, dsize,
             irE, jcE, prE,
-            INTEGER(GET_SLOT(events, Rf_install("ext_event"))),
-            INTEGER(GET_SLOT(events, Rf_install("ext_time"))),
-            INTEGER(GET_SLOT(events, Rf_install("ext_select"))),
-            INTEGER(GET_SLOT(events, Rf_install("ext_node"))),
-            INTEGER(GET_SLOT(events, Rf_install("ext_dest"))),
-            INTEGER(GET_SLOT(events, Rf_install("ext_n"))),
-            REAL(GET_SLOT(events,    Rf_install("ext_p"))),
-            INTEGER(GET_SLOT(events, Rf_install("ext_len")))[0],
+            INTEGER(GET_SLOT(events, Rf_install("event"))),
+            INTEGER(GET_SLOT(events, Rf_install("time"))),
+            INTEGER(GET_SLOT(events, Rf_install("select"))),
+            INTEGER(GET_SLOT(events, Rf_install("node"))),
+            INTEGER(GET_SLOT(events, Rf_install("dest"))),
+            INTEGER(GET_SLOT(events, Rf_install("n"))),
+            REAL(GET_SLOT(events,    Rf_install("proportion"))),
+            INTEGER(GET_SLOT(events, Rf_install("len")))[0],
             report_level, n_threads, rng, t_fun, pts_fun, &progress);
     } else {
         err = SIMINF_UNSUPPORTED_PARALLELIZATION;
