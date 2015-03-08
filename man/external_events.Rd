@@ -43,9 +43,6 @@ columns:
     the number of individuals in the hidden states determined by
     select[i] and multiplying with the proportion. 0 <= p[i] <= 1.
   }
-  \item{thread}{
-    Optional column with thread id of the event.
-  }
 }
 }
 

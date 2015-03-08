@@ -79,10 +79,6 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     the number of individuals in the hidden states determined by
 ##'     ext_select[i] and multiplying with the proportion. 0 <= ext_p[i] <= 1.
 ##'   }
-##'   \item{ext_thread}{
-##'     Integer vector of length ext_len. If the simulation runs in parallell,
-##'     this slot determines the thread for the event.
-##'   }
 ##'   \item{ext_len}{
 ##'     Number of scheduled external events.
 ##'   }
@@ -103,7 +99,6 @@ setClass("external_events",
                    ext_dest   = "integer",
                    ext_n      = "integer",
                    ext_p      = "numeric",
-                   ext_thread = "integer",
                    ext_len    = "integer"),
          prototype = list(ext_len = 0L),
          validity = function(object) {
@@ -115,8 +110,7 @@ setClass("external_events",
                                             length(object@ext_node),
                                             length(object@ext_dest),
                                             length(object@ext_n),
-                                            length(object@ext_p),
-                                            length(object@ext_thread)))) , 1L)) {
+                                            length(object@ext_p)))) , 1L)) {
                  errors <- c(errors, "All external events must have equal length.")
              }
 
@@ -144,10 +138,6 @@ setClass("external_events",
 
              if (any(object@ext_p < 0, object@ext_p > 1)) {
                  errors <- c(errors, "prop must be in the range 0 <= prop <= 1")
-             }
-
-             if (any(object@ext_thread < 0)) {
-                 errors <- c(errors, "thread must be >= 0")
              }
 
              if (length(errors) == 0) TRUE else errors
@@ -183,17 +173,14 @@ setClass("external_events",
 ##'     the number of individuals in the hidden states determined by
 ##'     select[i] and multiplying with the proportion. 0 <= p[i] <= 1.
 ##'   }
-##'   \item{thread}{
-##'     Optional column with thread id of the event.
-##'   }
 ##' }
 ##' @param E Sparse matrix (\eqn{Ncompartments \times (4 * Nselect)}) of
 ##'        object class \code{"\linkS4class{dgCMatrix}"}.
 ##' @param events A \code{data.frame} with events.
 ##' @return S4 class \code{external_events}
 ##' @export
-external_events <- function(E      = NULL,
-                            events = NULL)
+external_events <- function(E       = NULL,
+                            events  = NULL)
 {
     ## Check E
     if (is.null(E)) {
@@ -210,18 +197,12 @@ external_events <- function(E      = NULL,
                              node   = as.integer(),
                              dest   = as.integer(),
                              n      = as.integer(),
-                             prop   = as.numeric(),
-                             thread = as.integer())
+                             prop   = as.numeric())
     }
     if (!is.data.frame(events))
         stop("events must be a data.frame")
-    if ("thread" %in% colnames(events)) {
-        if (!identical(ncol(events), 8L)) {
-            stop("Wrong dimension of events")
-        }
-    } else if (!identical(ncol(events), 7L)) {
+    if (!identical(ncol(events), 7L))
         stop("Wrong dimension of events")
-    }
     if (!all(c("event", "time", "select", "node", "dest", "n", "prop") %in% names(events)))
         stop("Missing columns in events")
     if (!is.numeric(events$event))
@@ -238,12 +219,7 @@ external_events <- function(E      = NULL,
         stop("Columns in events must be numeric")
     if (!is.numeric(events$prop))
         stop("Columns in events must be numeric")
-    if ("thread" %in% colnames(events)) {
-        if (!is.numeric(events$thread))
-            stop("Columns in events must be numeric")
-    } else {
-        events$thread <- rep(0L, nrow(events))
-    }
+
     if (nrow(events)) {
         if (!all(is_wholenumber(events$event)))
             stop("Columns in events must be integer")
@@ -257,11 +233,9 @@ external_events <- function(E      = NULL,
             stop("Columns in events must be integer")
         if (!all(is_wholenumber(events$n)))
             stop("Columns in events must be integer")
-        if (!all(is_wholenumber(events$thread)))
-            stop("Columns in events must be integer")
     }
 
-    events <- events[order(events$time, events$event),]
+    events <- events[order(events$time, events$event, events$node),]
 
     return(new("external_events",
                E          = E,
@@ -272,7 +246,6 @@ external_events <- function(E      = NULL,
                ext_dest   = as.integer(events$dest),
                ext_n      = as.integer(events$n),
                ext_p      = as.numeric(events$prop),
-               ext_thread = as.integer(events$thread),
                ext_len    = nrow(events)))
 }
 
@@ -331,12 +304,6 @@ setMethod("show",
                   cat(sprintf("ext_p: 1 x %i\n", length(object@ext_p)))
               } else {
                   cat("ext_p: 0 x 0\n")
-              }
-
-              if (length(object@ext_thread)) {
-                  cat(sprintf("ext_thread: 1 x %i\n", length(object@ext_thread)))
-              } else {
-                  cat("ext_thread: 0 x 0\n")
               }
 
               if (length(object@ext_len)) {

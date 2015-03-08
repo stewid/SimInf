@@ -56,10 +56,6 @@ Class to handle the external events
     the number of individuals in the hidden states determined by
     ext_select[i] and multiplying with the proportion. 0 <= ext_p[i] <= 1.
   }
-  \item{ext_thread}{
-    Integer vector of length ext_len. If the simulation runs in parallell,
-    this slot determines the thread for the event.
-  }
   \item{ext_len}{
     Number of scheduled external events.
   }
