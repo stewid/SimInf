@@ -28,6 +28,7 @@
 #include "siminf.h"
 #include "SISe.h"
 #include "SISe3.h"
+#include "events.h"
 
 /**
  * Report error
@@ -250,7 +251,8 @@ int run_internal(
     const PostTimeStepFun pts_fun)
 {
     int err = 0, Nobs = 0, report_level, n_threads;
-    SEXP events, E, N;
+    SEXP ext_events, E, N;
+    external_events events;
     gsl_rng *rng = NULL;
     size_t *irN = NULL, *jcN = NULL;
     size_t *irG = NULL, *jcG = NULL;
@@ -286,11 +288,19 @@ int run_internal(
         goto cleanup;
 
     /* External events */
-    events = GET_SLOT(result, Rf_install("events"));
-    E = GET_SLOT(events, Rf_install("E"));
+    ext_events = GET_SLOT(result, Rf_install("events"));
+    E = GET_SLOT(ext_events, Rf_install("E"));
     err = get_sparse_matrix_int(&irE, &jcE, &prE, E);
     if (err)
         goto cleanup;
+    events.event      = INTEGER(GET_SLOT(ext_events, Rf_install("event")));
+    events.time       = INTEGER(GET_SLOT(ext_events, Rf_install("time")));
+    events.select     = INTEGER(GET_SLOT(ext_events, Rf_install("select")));
+    events.node       = INTEGER(GET_SLOT(ext_events, Rf_install("node")));
+    events.dest       = INTEGER(GET_SLOT(ext_events, Rf_install("dest")));
+    events.n          = INTEGER(GET_SLOT(ext_events, Rf_install("n")));
+    events.proportion = REAL(GET_SLOT(ext_events,    Rf_install("proportion")));
+    events.len        = INTEGER(GET_SLOT(ext_events, Rf_install("len")))[0];
 
     /* data */
     dsize = LENGTH(GET_SLOT(result, Rf_install("data")));
@@ -328,15 +338,7 @@ int run_internal(
             data,
             INTEGER(GET_SLOT(result, Rf_install("sd"))),
             Nn, Nc, Nt, Nobs, dsize,
-            irE, jcE, prE,
-            INTEGER(GET_SLOT(events, Rf_install("event"))),
-            INTEGER(GET_SLOT(events, Rf_install("time"))),
-            INTEGER(GET_SLOT(events, Rf_install("select"))),
-            INTEGER(GET_SLOT(events, Rf_install("node"))),
-            INTEGER(GET_SLOT(events, Rf_install("dest"))),
-            INTEGER(GET_SLOT(events, Rf_install("n"))),
-            REAL(GET_SLOT(events,    Rf_install("proportion"))),
-            INTEGER(GET_SLOT(events, Rf_install("len")))[0],
+            irE, jcE, prE, &events,
             report_level, n_threads, rng, t_fun, pts_fun, &progress);
     } else {
         err = SIMINF_UNSUPPORTED_PARALLELIZATION;

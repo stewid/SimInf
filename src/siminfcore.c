@@ -66,24 +66,7 @@
  * @param irE Integer vector where irE[k] is the row of E[k].
  * @param jcE jcE[k], index to data of first non-zero element in row k.
  * @param prE Value of item (i, j) in E.
- * @param ext_event Integer vector of length ext_len with external
- *        events.
- * @param ext_time Integer vector of length ext_len with the time for
- *        external event.
- * @param ext_select Integer vector of length ext_len. Column j in the
- *        event matrix that determines the hidden states to sample from.
- * @param ext_node Integer vector of length ext_len. The source node
- *        of the event i.
- * @param ext_dest Integer vector of length ext_len. The dest node of
- *        the event i.
- * @param ext_n Integer vector of length ext_len. The number of
- *        individuals in the external event. ext_n[i] >= 0.
- * @param ext_p Integer vector of length ext_len. If ext_n[i] equals
- *        zero, then the number of individuals to sample is calculated
- *        by summing the number of individuals in the hidden states
- *        determined by ext_select[i] and multiplying with the
- *        proportion. 0 <= ext_p[i] <= 1.
- * @param ext_len Number of scheduled external events.
+ * @param events Structure that represents external events.
  * @param report_level The desired degree of feedback during
  *        simulations. 0, 1, and 2 are currently supported options.
  * @param Nthread Number of threads to use during simulation. Always 1
@@ -99,9 +82,8 @@ int siminf_core(
     const size_t *jcN, const int *prN, const double *tspan, const size_t tlen,
     int *U, double *data, const int *sd, const size_t Nn,
     const size_t Nc, const size_t Nt, const int Nobs, const size_t dsize,
-    const size_t *irE, const size_t *jcE, const int *prE, const int *ext_event,
-    const int *ext_time, const int *ext_select, const int *ext_node,
-    const int *ext_dest, const int *ext_n, const double *ext_p, int ext_len,
+    const size_t *irE, const size_t *jcE, const int *prE,
+    const external_events *events,
     int report_level, int Nthreads, const gsl_rng *rng,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
     const ProgressFun progress)
@@ -116,13 +98,21 @@ int siminf_core(
     const size_t Ndofs = Nn * Nc;
 
     /* Variables to handle external events */
-    ExtEventHandlerFun extfun[] = {event_exit,
-                                   event_enter,
-                                   event_internal_transfer,
-                                   event_external_transfer};
+    const int *ext_event         = events->event;
+    const int *ext_time          = events->time;
+    const int *ext_select        = events->select;
+    const int *ext_node          = events->node;
+    const int *ext_dest          = events->dest;
+    const int *ext_n             = events->n;
+    const double *ext_proportion = events->proportion;
+    int ext_len                  = events->len;
+    int ext_i                    = 0;
+    ExtEventHandlerFun extfun[]  = {event_exit,
+                                    event_enter,
+                                    event_internal_transfer,
+                                    event_external_transfer};
     double next_day = floor(tspan[0]) + 1.0;
     int *update_node = NULL;
-    int ext_i = 0;
 
     individuals = malloc(Nc * sizeof(int));
     if (!individuals) {
@@ -260,7 +250,8 @@ int siminf_core(
             errcode = (*extfun[ext_event[ext_i]])(irE, jcE, prE, Nc, Nobs, xx,
                                                   ext_node[ext_i], ext_dest[ext_i],
                                                   ext_select[ext_i], ext_n[ext_i],
-                                                  ext_p[ext_i], individuals, rng);
+                                                  ext_proportion[ext_i],
+                                                  individuals, rng);
 
             /* Check for error codes. */
             if (errcode) {

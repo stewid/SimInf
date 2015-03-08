@@ -24,6 +24,8 @@
 #include <stddef.h>
 #include <gsl/gsl_rng.h>
 
+#include "events.h"
+
 /* Error constants */
 #define SIMINF_ERR_NEGATIVE_STATE          1
 #define SIMINF_ERR_ALLOC_MEMORY_BUFFER     2
@@ -46,9 +48,8 @@ int siminf_core(
     const size_t *jcN, const int *prN, const double *tspan, const size_t tlen,
     int *U, double *data, const int *sd, const size_t Nn,
     const size_t Nc, const size_t Nt, const int Nobs, const size_t dsize,
-    const size_t *irE, const size_t *jcE, const int *prE, const int *ext_event,
-    const int *ext_time, const int *ext_select, const int *ext_node,
-    const int *ext_dest, const int *ext_n, const double *ext_p, int ext_len,
+    const size_t *irE, const size_t *jcE, const int *prE,
+    const external_events *events,
     int report_level, int Nthreads, const gsl_rng *rng,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
     const ProgressFun progress);
