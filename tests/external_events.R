@@ -36,12 +36,12 @@ events <- structure(list(event = c(3.1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
                          node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         prop = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E       = E,
-                                   events  = events))
+tools::assertError(external_events(E      = E,
+                                   events = events))
 
 
 ## Check events$time not equal to whole number
@@ -51,12 +51,12 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                          node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         prop = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E       = E,
-                                   events  = events))
+tools::assertError(external_events(E      = E,
+                                   events = events))
 
 ## Check events$select not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -65,12 +65,12 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                          node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         prop = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E       = E,
-                                   events  = events))
+tools::assertError(external_events(E      = E,
+                                   events = events))
 
 ## Check events$node not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -79,12 +79,12 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                          node = c(1.1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         prop = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E       = E,
-                                   events  = events))
+tools::assertError(external_events(E      = E,
+                                   events = events))
 
 ## Check events$dest not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -93,12 +93,12 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                          node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest = c(0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         prop = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E       = E,
-                                   events  = events))
+tools::assertError(external_events(E      = E,
+                                   events = events))
 
 ## Check events$n not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -107,12 +107,12 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                          node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n = c(1.1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         prop = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E       = E,
-                                   events  = events))
+tools::assertError(external_events(E      = E,
+                                   events = events))
 
 ## Check events$event equal to character
 events <- structure(list(event = c('3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3'),
@@ -121,12 +121,12 @@ events <- structure(list(event = c('3', '3', '3', '3', '3', '3', '3', '3', '3', 
                          node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         prop = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E       = E,
-                                   events  = events))
+tools::assertError(external_events(E      = E,
+                                   events = events))
 
 ## Check E and events equal to NULL (default).
 events <- new("external_events",
@@ -137,13 +137,13 @@ events <- new("external_events",
                   Dimnames = list(NULL, NULL),
                   x = numeric(0),
                   factors = list()),
-              ext_event = integer(0),
-              ext_time = integer(0),
-              ext_select = integer(0),
-              ext_node = integer(0),
-              ext_dest = integer(0),
-              ext_n = integer(0),
-              ext_p = numeric(0),
-              ext_len = 0L)
+              event = integer(0),
+              time = integer(0),
+              select = integer(0),
+              node = integer(0),
+              dest = integer(0),
+              n = integer(0),
+              proportion = numeric(0),
+              len = 0L)
 str(events)
 stopifnot(identical(external_events(), events))

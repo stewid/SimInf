@@ -39,14 +39,14 @@ init <- structure(list(id  = c(0, 1),
                   row.names = c(NA, -2L),
                   class = "data.frame")
 
-events <- structure(list(event  = 3,
-                         time   = 1,
-                         select = 0,
-                         node   = 1,
-                         dest   = 0,
-                         n      = 2,
-                         prop   = 1),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         select     = 0,
+                         node       = 1,
+                         dest       = 0,
+                         n          = 2,
+                         proportion = 1),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
@@ -86,14 +86,14 @@ init <- structure(list(id  = c(0, 1),
                   .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
-events <- structure(list(event  = 3,
-                         time   = 1,
-                         select = 0,
-                         node   = 1,
-                         dest   = 0,
-                         n      = -1,
-                         prop   = 1),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         select     = 0,
+                         node       = 1,
+                         dest       = 0,
+                         n          = -1,
+                         proportion = 1),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
@@ -134,14 +134,14 @@ init <- structure(list(id  = c(0, 1),
                   .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
-events <- structure(list(event  = 3,
-                         time   = 1,
-                         select = 0,
-                         node   = 1,
-                         dest   = 0,
-                         n      = 0,
-                         prop   = 10),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         select     = 0,
+                         node       = 1,
+                         dest       = 0,
+                         n          = 0,
+                         proportion = 10),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -1L), class = "data.frame")
 
 ## We should not be able to create model with prop = 10
@@ -162,8 +162,8 @@ tools::assertError(SISe3(init,
                          beta_q4   = 1,
                          epsilon   = 0))
 
-## Replace prop = 10 to prop = 1
-events$prop <- 1
+## Replace proportion = 10 to proportion = 1
+events$proportion <- 1
 
 model <- SISe3(init,
                tspan     = 0:10,
@@ -182,8 +182,8 @@ model <- SISe3(init,
                beta_q4   = 1,
                epsilon   = 0)
 
-## Replace prop = 10 to prop = 1
-model@events@ext_p <- 10
+## Replace proportion = 10 to proportion = 1
+model@events@proportion <- 10
 
 tools::assertError(run(model, verbose = 0))
 
@@ -206,17 +206,17 @@ init <- structure(list(id  = c(0, 1),
                   .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
-events <- structure(list(event  = 3,
-                         time   = 1,
-                         select = 0,
-                         node   = 1,
-                         dest   = 0,
-                         n      = 0,
-                         prop   = -1),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         select     = 0,
+                         node       = 1,
+                         dest       = 0,
+                         n          = 0,
+                         proportion = -1),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -1L), class = "data.frame")
 
-## We should not be able to create model with prop = -1
+## We should not be able to create model with proportion = -1
 tools::assertError(SISe3(init,
                          tspan     = 0:10,
                          events    = events,
@@ -234,8 +234,8 @@ tools::assertError(SISe3(init,
                          beta_q4   = 1,
                          epsilon   = 0))
 
-## Replace prop = -1 to prop = 0
-events$prop <- 0
+## Replace proportion = -1 to proportion = 0
+events$proportion <- 0
 
 model <- SISe3(init,
                tspan     = 0:10,
@@ -254,8 +254,8 @@ model <- SISe3(init,
                beta_q4   = 1,
                epsilon   = 0)
 
-## Replace prop = 0 to prop = -1
-model@events@ext_p <- -1
+## Replace proportion = 0 to proportion = -1
+model@events@proportion <- -1
 
 tools::assertError(run(model, verbose = 0))
 
@@ -277,14 +277,14 @@ init <- structure(list(id  = c(0, 1),
                   .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
-events <- structure(list(event  = 3,
-                         time   = 1,
-                         select = 0,
-                         node   = 1,
-                         dest   = 0,
-                         n      = 0,
-                         prop   = 0),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         select     = 0,
+                         node       = 1,
+                         dest       = 0,
+                         n          = 0,
+                         proportion = 0),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
@@ -338,14 +338,14 @@ init <- structure(list(id  = c(0, 1),
                   .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
-events <- structure(list(event  = 3,
-                         time   = 1,
-                         select = 0,
-                         node   = 1,
-                         dest   = 0,
-                         n      = 1,
-                         prop   = 0),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         select     = 0,
+                         node       = 1,
+                         dest       = 0,
+                         n          = 1,
+                         proportion = 0),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
@@ -399,14 +399,14 @@ init <- structure(list(id  = c(0, 1),
                   .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
-events <- structure(list(event  = 3,
-                         time   = 1,
-                         select = 0,
-                         node   = 1,
-                         dest   = 0,
-                         n      = 1,
-                         prop   = 0),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         select     = 0,
+                         node       = 1,
+                         dest       = 0,
+                         n          = 1,
+                         proportion = 0),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,
@@ -461,14 +461,14 @@ init <- structure(list(id  = c(0, 1),
                   .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
-events <- structure(list(event  = 3,
-                         time   = 1,
-                         select = 0,
-                         node   = 1,
-                         dest   = 0,
-                         n      = 1,
-                         prop   = 0),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "prop"),
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         select     = 0,
+                         node       = 1,
+                         dest       = 0,
+                         n          = 1,
+                         proportion = 0),
+                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
                     row.names = c(NA, -1L), class = "data.frame")
 
 model <- SISe3(init,

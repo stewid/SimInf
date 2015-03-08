@@ -14,7 +14,7 @@ Class to handle the external events
     Sparse matrix (\eqn{Ncompartments \times (4 * Nobs)}) of
     object class \code{"\linkS4class{dgCMatrix}"}. Each event
     type contains the number of observable states (Nobs) columns.
-    Currently 4 types of events are implemented, see \code{ext_event}.
+    Currently 4 types of events are implemented, see \code{event}.
     For the events EXIT_EVENT and EXTERNAL_TRANSFER_EVENT, a non-zero entry
     in element \code{i} of select column \code{j} indicate the
     compartments to sample individuals from.
@@ -28,35 +28,37 @@ Class to handle the external events
     compartment. The target compartment for sampled individuals is
     given by adding the value.
   }
-  \item{ext_event}{
-    Integer vector of length ext_len with external events.
+  \item{event}{
+    Integer vector of length \code{len} with external events.
     The following four events are implemented; EXIT_EVENT = 0,
     ENTER_EVENT = 1, INTERNAL_TRANSFER_EVENT = 2, and
     EXTERNAL_TRANSFER_EVENT = 3.
   }
-  \item{ext_time}{
-    Integer vector of length ext_len with the time for external event.
+  \item{time}{
+    Integer vector of length \code{len} with the time for external event.
   }
-  \item{ext_select}{
-    Integer vector of length ext_len. Column j in the event matrix
+  \item{select}{
+    Integer vector of length \code{len}. Column j in the event matrix
     that determines the hidden states to sample from.
   }
-  \item{ext_node}{
-    Integer vector of length ext_len. The source herd of the event i.
+  \item{node}{
+    Integer vector of length \code{len}. The source herd of the event i.
   }
-  \item{ext_dest}{
-    Integer vector of length ext_len. The dest herd of the event i.
+  \item{dest}{
+    Integer vector of length \code{len}. The dest herd of the event i.
   }
-  \item{ext_n}{
-    Integer vector of length ext_len. The number of individuals in the external event. ext_n[i] >= 0.
+  \item{n}{
+    Integer vector of length \code{len}. The number of individuals in the
+    external event. n[i] >= 0.
   }
-  \item{ext_p}{
-    Numeric vector of length ext_len. If ext_n[i] equals zero,
+  \item{proportion}{
+    Numeric vector of length \code{len}. If n[i] equals zero,
     then the number of individuals to sample is calculated by summing
     the number of individuals in the hidden states determined by
-    ext_select[i] and multiplying with the proportion. 0 <= ext_p[i] <= 1.
+    select[i] and multiplying with the proportion.
+    0 <= proportion[i] <= 1.
   }
-  \item{ext_len}{
+  \item{len}{
     Number of scheduled external events.
   }
 }
