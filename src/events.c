@@ -24,7 +24,6 @@
 #include <gsl/gsl_randist.h>
 
 #include "siminf.h"
-#include "events.h"
 
 enum {EXIT_EVENT,
       ENTER_EVENT,
@@ -406,4 +405,211 @@ int event_external_transfer(
     }
 
     return 0;
+}
+
+/**
+ * Assign thread id to each event
+ *
+ * Thread id 0 is the main thread. All external transfer events
+ * are assigned to thread id 0.
+ *
+ * All events (excluding external transfer events) for a node during
+ * one time step are assigned to the same thread.
+ * NOTE: This function assumes that the events are ordered by
+ * events[order(events$time, events$event, events$node),]
+ * before calling this function.
+ *
+ * @param node Integer vector with the node of the event
+ * @param event Integer vector with the event type
+ * @param thread_id Vector with thread id of each event.
+ * @param thread_n Vector with number of events in each thread.
+ * @param len Number of events
+ * @param Nthread Number of threads to use during simulation.
+ * @return void
+ */
+static void assign_thread_id(
+    int *node,
+    int *event,
+    size_t *thread_id,
+    size_t *thread_n,
+    size_t len,
+    size_t Nthread)
+{
+    size_t i, thread;
+    int old_node = node[0];
+
+    thread = 0;
+    if (Nthread > 1)
+        thread++;
+
+    /* Interate over all events and determine thread id for each
+     * event and total number of events in each thread. */
+    for (i = 0; i < len; i++) {
+        /* Assign thread id to each event. Increment counter of
+         * the total number of events for each thread. */
+        if (event[i] == 0) {
+            thread_id[i] = 0;
+        } else {
+            thread_id[i] = thread;
+
+            /* During one time step, all events for a node should be
+             * processed by the same thread */
+            if (old_node != node[i]) {
+                old_node = node[i];
+
+                /* Increment thread id and check for overflow. */
+                thread++;
+                if (thread >= Nthread) {
+                    thread = 0;
+                    if (Nthread > 1)
+                        thread++;
+                }
+            }
+        }
+
+        thread_n[thread_id[i]]++;
+        old_node = node[i];
+    }
+}
+
+/**
+ *  Allocate memory to hold assigned events in each thread
+ *
+ * @param threads Vector of length Nthread of external_events
+ * structures.
+ * @param thread_n Vector with number of events in each thread.
+ * @param Nthread Number of threads to use during simulation.
+ * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
+ */
+static int allocate_thread_mem(
+    external_events *threads,
+    size_t *thread_n,
+    size_t Nthread)
+{
+    size_t i;
+
+    /* Allocate memory to hold assigned events in each thread */
+    for (i = 0; i < Nthread; i++) {
+        threads[i].len = thread_n[i];
+
+        threads[i].event = malloc(threads[i].len * sizeof(int));
+        if (!threads[i].event)
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+
+        threads[i].time = malloc(threads[i].len * sizeof(int));
+        if (!threads[i].time)
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+
+        threads[i].select = malloc(threads[i].len * sizeof(int));
+        if (!threads[i].select)
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+
+        threads[i].node = malloc(threads[i].len * sizeof(int));
+        if (!threads[i].node)
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+
+        threads[i].dest = malloc(threads[i].len * sizeof(int));
+        if (!threads[i].dest)
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+
+        threads[i].n = malloc(threads[i].len * sizeof(int));
+        if (!threads[i].n)
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+
+        threads[i].proportion = malloc(threads[i].len * sizeof(double));
+        if (!threads[i].proportion)
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+    }
+
+    return 0;
+}
+
+/**
+ * Split external events by number of threads used during simulation
+ *
+ * Thread id 0 is the main thread. All external transfer events
+ * are assigned to thread id 0.
+ *
+ * All events (excluding external transfer events) for a node during
+ * one time step are assigned to the same thread.
+ *
+ * NOTE: This function assumes that the events are ordered by
+ * events[order(events$time, events$event, events$node),]
+ * before calling this function.
+ *
+ * @param threads Vector of length Nthread of external_events
+ * structures. This vector holds the result after splitting the
+ * external events.
+ * @param events Data structure of external_events to split.
+ * @param Nthread Number of threads to use during simulation.
+ * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
+ */
+int split_external_events(
+    external_events *threads,
+    const external_events *events,
+    size_t Nthread)
+{
+    int err = 0;
+
+    if (events->len) {
+        size_t i;
+        size_t *thread_i = NULL;
+        size_t *thread_id = NULL;
+        size_t *thread_n = NULL;
+
+        thread_i = calloc(Nthread, sizeof(size_t));
+        if (!thread_i) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        thread_id = calloc(events->len, sizeof(size_t));
+        if (!thread_id) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        thread_n = calloc(Nthread , sizeof(size_t));
+        if (!thread_n) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        assign_thread_id(events->node, events->event, thread_id, thread_n,
+                         events->len, Nthread);
+
+        err = allocate_thread_mem(threads, thread_n, Nthread);
+        if (err)
+            goto cleanup;
+
+        /* Split events to each thread */
+        for (i = 0; i < events->len; i++) {
+            external_events *e = &threads[thread_id[i]];
+            size_t j = thread_i[thread_id[i]];
+
+            e->event[j]      = events->event[i];
+            e->time[j]       = events->time[i];
+            e->select[j]     = events->select[i];
+            e->node[j]       = events->node[i];
+            e->dest[j]       = events->dest[i];
+            e->n[j]          = events->n[i];
+            e->proportion[j] = events->proportion[i];
+
+            thread_i[thread_id[i]]++;
+        }
+
+        /* Set number of external events in each thread. */
+        for (i = 0; i < Nthread; i++)
+            threads[i].len = thread_n[i];
+
+    cleanup:
+        if (thread_i)
+            free(thread_i);
+        if (thread_id)
+            free(thread_id);
+        if (thread_n)
+            free(thread_n);
+    }
+
+    return err;
 }

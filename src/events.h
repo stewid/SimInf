@@ -52,6 +52,13 @@ typedef struct external_events
     int len;
 } external_events;
 
+/* Definition of function to split external events by number of
+ * threads. */
+int split_external_events(
+    external_events *threads,
+    const external_events *events,
+    size_t Nthread);
+
 /* Definition of function to handle external events. */
 typedef int (*ExtEventHandlerFun)(
     const size_t *irE, const size_t *jcE, const int *prE, const size_t Nc,
