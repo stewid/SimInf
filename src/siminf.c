@@ -328,7 +328,7 @@ int run_internal(
 
     /* Core simulation routine. */
     if (strcmp(CHAR(STRING_ELT(strategy, 0)), "single") == 0) {
-        err = siminf_core(
+        err = siminf_core_single(
             INTEGER(GET_SLOT(result, Rf_install("u0"))),
             irG, jcG,
             irN, jcN, prN,

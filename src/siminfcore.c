@@ -77,7 +77,7 @@
  *        e.g. update infectious pressure.
  * @param progress Function pointer to report progress.
  */
-int siminf_core(
+int siminf_core_single(
     const int *u0, const size_t *irG, const size_t *jcG, const size_t *irN,
     const size_t *jcN, const int *prN, const double *tspan, const size_t tlen,
     int *U, double *data, const int *sd, const size_t Nn,
