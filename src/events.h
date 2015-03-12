@@ -60,34 +60,10 @@ int split_external_events(
     size_t Nthread);
 
 /* Definition of function to handle external events. */
-typedef int (*ExtEventHandlerFun)(
-    const size_t *irE, const size_t *jcE, const int *prE, const size_t Nc,
-    const int Nobs, int *state, const int node, const int dest,
-    const int select, const int n, const double proportion, int *inividuals,
-    const gsl_rng *rng);
-
-int event_exit(
-    const size_t *irE, const size_t *jcE, const int *prE, const size_t Nc,
-    const int Nobs, int *state, const int node, const int dest,
-    const int select, const int n, const double proportion, int *inividuals,
-    const gsl_rng *rng);
-
-int event_enter(
-    const size_t *irE, const size_t *jcE, const int *prE, const size_t Nc,
-    const int Nobs, int *state, const int node, const int dest,
-    const int select, const int n, const double proportion, int *inividuals,
-    const gsl_rng *rng);
-
-int event_internal_transfer(
-    const size_t *irE, const size_t *jcE, const int *prE, const size_t Nc,
-    const int Nobs, int *state, const int node, const int dest,
-    const int select, const int n, const double proportion, int *inividuals,
-    const gsl_rng *rng);
-
-int event_external_transfer(
-    const size_t *irE, const size_t *jcE, const int *prE, const size_t Nc,
-    const int Nobs, int *state, const int node, const int dest,
-    const int select, const int n, const double proportion, int *inividuals,
-    const gsl_rng *rng);
+int handle_external_event(
+    int event, const size_t *irE, const size_t *jcE, const int *prE,
+    const size_t Nc, const int Nobs, int *state, const int node,
+    const int dest, const int select, const int n, const double proportion,
+    int *inividuals, const gsl_rng *rng);
 
 #endif

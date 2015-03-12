@@ -191,7 +191,7 @@ sample_select(const size_t *irE,
  * @param rng Random number generator.
  * @return 0 on succes or 1 on failure.
  */
-int event_exit(
+static int event_exit(
     const size_t *irE,
     const size_t *jcE,
     const int *prE,
@@ -250,7 +250,7 @@ int event_exit(
  * @param rng Random number generator.
  * @return 0 on succes or 1 on failure.
  */
-int event_enter(
+static int event_enter(
     const size_t *irE,
     const size_t *jcE,
     const int *prE,
@@ -309,7 +309,7 @@ int event_enter(
  * @param rng Random number generator.
  * @return 0 on succes or 1 on failure.
  */
-int event_internal_transfer(
+static int event_internal_transfer(
     const size_t *irE,
     const size_t *jcE,
     const int *prE,
@@ -374,7 +374,7 @@ int event_internal_transfer(
  * @param rng Random number generator.
  * @return 0 on succes or 1 on failure.
  */
-int event_external_transfer(
+static int event_external_transfer(
     const size_t *irE,
     const size_t *jcE,
     const int *prE,
@@ -405,6 +405,71 @@ int event_external_transfer(
     }
 
     return 0;
+}
+
+/**
+ * Handle external events
+ *
+ * @ingroup events
+ * @param irE Array where irE[k] is the row of E[k]
+ * @param jcE jcE[k], index to data of first non-zero element in row k
+ * @param prE Value of item (i, j) in E.
+ * @param Nc Number of compartments in each node.
+ * @param Nobs Number of observable states.
+ * @param state The state vector with number of individuals in each
+ *  compartment at each node. The current state in each node is offset
+ *  by node * Nc.
+ * @param node The source node of the event.
+ * @param dest The dest node of the event.
+ * @param select Column j in the Select matrix that determines the
+ *  hidden states to sample from.
+ * @param n The number of individuals affected by the event. n >= 0.
+ * @param proportion If n equals zero, then the number of individuals
+ *  affected by the event is calculated by summing the number of
+ *  individuals in the hidden states determined by select and
+ *  multiplying with the proportion. 0 <= proportion <= 1.
+ * @param individuals The result of the sampling is stored in the
+ *  individuals vector. Passed as function argument to handle
+ *  parallellization.
+ * @param rng Random number generator.
+ * @return 0 on succes or 1 on failure.
+ */
+int handle_external_event(
+    int event,
+    const size_t *irE,
+    const size_t *jcE,
+    const int *prE,
+    const size_t Nc,
+    const int Nobs,
+    int *state,
+    const int node,
+    const int dest,
+    const int select,
+    const int n,
+    const double proportion,
+    int *inividuals,
+    const gsl_rng *rng)
+{
+    switch (event) {
+    case EXIT_EVENT:
+        return event_exit(
+            irE, jcE, prE, Nc, Nobs, state, node, dest, select, n,
+            proportion, inividuals, rng);
+    case ENTER_EVENT:
+        return event_enter(
+            irE, jcE, prE, Nc, Nobs, state, node, dest, select, n,
+            proportion, inividuals, rng);
+    case INTERNAL_TRANSFER_EVENT:
+        return event_internal_transfer(
+            irE, jcE, prE, Nc, Nobs, state, node, dest, select, n,
+            proportion, inividuals, rng);
+    case EXTERNAL_TRANSFER_EVENT:
+        return event_external_transfer(
+            irE, jcE, prE, Nc, Nobs, state, node, dest, select, n,
+            proportion, inividuals, rng);
+    default:
+        return SIMINF_UNDEFINED_EVENT;
+    }
 }
 
 /**

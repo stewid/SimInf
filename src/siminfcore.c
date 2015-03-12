@@ -108,10 +108,6 @@ static int siminf_core_single(
     const double *ext_proportion = events->proportion;
     int ext_len                  = events->len;
     int ext_i                    = 0;
-    ExtEventHandlerFun extfun[]  = {event_exit,
-                                    event_enter,
-                                    event_internal_transfer,
-                                    event_external_transfer};
     double next_day = floor(tspan[0]) + 1.0;
     int *update_node = NULL;
 
@@ -243,11 +239,10 @@ static int siminf_core_single(
 
         /* (2) Incorporate all scheduled external events. */
         while (ext_i < ext_len && tt >= ext_time[ext_i]) {
-            errcode = (*extfun[ext_event[ext_i]])(irE, jcE, prE, Nc, Nobs, xx,
-                                                  ext_node[ext_i], ext_dest[ext_i],
-                                                  ext_select[ext_i], ext_n[ext_i],
-                                                  ext_proportion[ext_i],
-                                                  individuals, rng);
+            errcode = handle_external_event(
+                ext_event[ext_i], irE, jcE, prE, Nc, Nobs, xx,
+                ext_node[ext_i], ext_dest[ext_i], ext_select[ext_i],
+                ext_n[ext_i], ext_proportion[ext_i], individuals, rng);
 
             /* Check for error codes. */
             if (errcode) {
