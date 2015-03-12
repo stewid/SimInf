@@ -230,11 +230,6 @@ static int siminf_core_single(
                     if (report_level)
                         progress(t_time[node], tspan[0], tspan[tlen - 1],
                                  total_transitions, report_level);
-
-                    /* Cannot continue. Clear this solution and exit. */
-                    memcpy(&U[Ndofs * it], &xx[0], Ndofs * sizeof(int));
-                    memset(&U[Ndofs * (it + 1)], 0,
-                           Ndofs * (tlen - it - 1) * sizeof(int));
                     break;
                 }
             }
@@ -260,11 +255,6 @@ static int siminf_core_single(
                 if (report_level)
                     progress(tt, tspan[0], tspan[tlen - 1],
                              total_transitions, report_level);
-
-                /* Cannot continue. Clear this solution and exit. */
-                memcpy(&U[Ndofs * it], &xx[0], Ndofs * sizeof(int));
-                memset(&U[Ndofs * (it + 1)], 0,
-                       Ndofs * (tlen - it - 1) * sizeof(int));
                 break;
             }
 
