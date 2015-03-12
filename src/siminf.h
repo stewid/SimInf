@@ -43,7 +43,7 @@ typedef int (*PostTimeStepFun)(const int *x, int src, double t, double *data,
 typedef void (*ProgressFun)(double t, const double t_begin, const double t_end,
                             long int total_transitions, int report_level);
 
-int siminf_core_single(
+int siminf_core(
     const int *u0, const size_t *irG, const size_t *jcG, const size_t *irN,
     const size_t *jcN, const int *prN, const double *tspan, const size_t tlen,
     int *U, double *data, const int *sd, const size_t Nn,
@@ -52,6 +52,6 @@ int siminf_core_single(
     const external_events *events,
     int report_level, int Nthreads, const gsl_rng *rng,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
-    const ProgressFun progress);
+    const ProgressFun progress, const char *strategy);
 
 #endif

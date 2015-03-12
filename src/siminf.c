@@ -327,22 +327,19 @@ int run_internal(
     SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
 
     /* Core simulation routine. */
-    if (strcmp(CHAR(STRING_ELT(strategy, 0)), "single") == 0) {
-        err = siminf_core_single(
-            INTEGER(GET_SLOT(result, Rf_install("u0"))),
-            irG, jcG,
-            irN, jcN, prN,
-            REAL(GET_SLOT(result, Rf_install("tspan"))),
-            tlen,
-            INTEGER(GET_SLOT(result, Rf_install("U"))),
-            data,
-            INTEGER(GET_SLOT(result, Rf_install("sd"))),
-            Nn, Nc, Nt, Nobs, dsize,
-            irE, jcE, prE, &events,
-            report_level, n_threads, rng, t_fun, pts_fun, &progress);
-    } else {
-        err = SIMINF_UNSUPPORTED_PARALLELIZATION;
-    }
+    err = siminf_core(
+        INTEGER(GET_SLOT(result, Rf_install("u0"))),
+        irG, jcG,
+        irN, jcN, prN,
+        REAL(GET_SLOT(result, Rf_install("tspan"))),
+        tlen,
+        INTEGER(GET_SLOT(result, Rf_install("U"))),
+        data,
+        INTEGER(GET_SLOT(result, Rf_install("sd"))),
+        Nn, Nc, Nt, Nobs, dsize,
+        irE, jcE, prE, &events,
+        report_level, n_threads, rng, t_fun, pts_fun,
+        &progress, CHAR(STRING_ELT(strategy, 0)));
 
 cleanup:
     if (rng)
