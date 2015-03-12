@@ -472,6 +472,8 @@ int handle_external_event(
     }
 }
 
+#ifdef SIMINF_OMP
+
 /**
  * Assign thread id to each event
  *
@@ -678,3 +680,5 @@ int split_external_events(
 
     return err;
 }
+
+#endif /* SIMINF_OMP */
