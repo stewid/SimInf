@@ -67,13 +67,13 @@ sample_select(const size_t *irE,
               const int select,
               int n,
               double proportion,
-              int *inividuals,
+              int *individuals,
               const gsl_rng *rng)
 {
     int i, Nstates, Nindividuals = 0, Nkinds = 0;
 
     /* Clear vector with number of sampled individuals */
-    memset(inividuals, 0, Nc * sizeof(int));
+    memset(individuals, 0, Nc * sizeof(int));
 
     /* 1) Count number of states with individuals */
     /* 2) Count total number of individuals       */
@@ -105,17 +105,17 @@ sample_select(const size_t *irE,
     } else if (Nindividuals == n) {
         /* Include all individuals */
         for (i = jcE[select]; i < jcE[select + 1]; i++)
-            inividuals[irE[i]] = state[node * Nc + irE[i]];
+            individuals[irE[i]] = state[node * Nc + irE[i]];
         return 0;
     } else if (Nstates == 1) {
         /* Only individuals from one state to select from. */
-        inividuals[irE[jcE[select]]] = n;
+        individuals[irE[jcE[select]]] = n;
         return 0;
     } else if (Nkinds == 1) {
         /* All individuals to choose from in one state */
         for (i = jcE[select]; i < jcE[select + 1]; i++) {
             if (state[node * Nc + irE[i]] > 0) {
-                inividuals[irE[i]] = n;
+                individuals[irE[i]] = n;
                 break;
             }
         }
@@ -126,12 +126,12 @@ sample_select(const size_t *irE,
     if (Nstates == 2) {
         /* Sample from the hypergeometric distribution */
         i = jcE[select];
-        inividuals[irE[i]] = gsl_ran_hypergeometric(
+        individuals[irE[i]] = gsl_ran_hypergeometric(
             rng,
             state[node * Nc + irE[i]],
             state[node * Nc + irE[i+1]],
             n);
-        inividuals[irE[i+1]] = n - inividuals[irE[i]];
+        individuals[irE[i+1]] = n - individuals[irE[i]];
     } else {
         /* Randomly choose n individuals from a vector of
          * Nindividudals in Nstates */
@@ -156,7 +156,7 @@ sample_select(const size_t *irE,
 
         /* Count kind of the choosen individuals */
         for (i = 0; i < n; i++)
-            inividuals[kind_dest[i]]++;
+            individuals[kind_dest[i]]++;
     }
 
     return 0;
@@ -203,16 +203,16 @@ static int event_exit(
     const int select,
     const int n,
     const double proportion,
-    int *inividuals,
+    int *individuals,
     const gsl_rng *rng)
 {
     int i;
 
-    if (sample_select(irE, jcE, Nc, state, node, select, n, proportion, inividuals, rng))
+    if (sample_select(irE, jcE, Nc, state, node, select, n, proportion, individuals, rng))
         return 1;
 
     for (i = jcE[select]; i < jcE[select + 1]; i++) {
-        state[node * Nc + irE[i]] -= inividuals[irE[i]];
+        state[node * Nc + irE[i]] -= individuals[irE[i]];
         if (state[node * Nc + irE[i]] < 0)
             return SIMINF_ERR_NEGATIVE_STATE;
     }
@@ -262,7 +262,7 @@ static int event_enter(
     const int select,
     const int n,
     const double proportion,
-    int *inividuals,
+    int *individuals,
     const gsl_rng *rng)
 {
     int j = Nobs + select;
@@ -321,20 +321,20 @@ static int event_internal_transfer(
     const int select,
     const int n,
     const double proportion,
-    int *inividuals,
+    int *individuals,
     const gsl_rng *rng)
 {
     int i, j;
 
     j = Nobs * INTERNAL_TRANSFER_EVENT + select;
-    if (sample_select(irE, jcE, Nc, state, node, j, n, proportion, inividuals, rng))
+    if (sample_select(irE, jcE, Nc, state, node, j, n, proportion, individuals, rng))
         return 1;
 
     for (i = jcE[j]; i < jcE[j + 1]; i++) {
-        state[node * Nc + irE[i] + prE[i]] += inividuals[irE[i]];
+        state[node * Nc + irE[i] + prE[i]] += individuals[irE[i]];
         if (state[node * Nc + irE[i] + prE[i]] < 0)
             return SIMINF_ERR_NEGATIVE_STATE;
-        state[node * Nc + irE[i]] -= inividuals[irE[i]];
+        state[node * Nc + irE[i]] -= individuals[irE[i]];
         if (state[node * Nc + irE[i]] < 0)
             return SIMINF_ERR_NEGATIVE_STATE;
     }
@@ -386,20 +386,20 @@ static int event_external_transfer(
     const int select,
     const int n,
     const double proportion,
-    int *inividuals,
+    int *individuals,
     const gsl_rng *rng)
 {
     int i, j;
 
     j = Nobs * EXTERNAL_TRANSFER_EVENT + select;
-    if (sample_select(irE, jcE, Nc, state, node, j, n, proportion, inividuals, rng))
+    if (sample_select(irE, jcE, Nc, state, node, j, n, proportion, individuals, rng))
         return 1;
 
     for (i = jcE[j]; i < jcE[j + 1]; i++) {
-        state[dest * Nc + irE[i]] += inividuals[irE[i]];
+        state[dest * Nc + irE[i]] += individuals[irE[i]];
         if (state[dest * Nc + irE[i]] < 0)
             return SIMINF_ERR_NEGATIVE_STATE;
-        state[node * Nc + irE[i]] -= inividuals[irE[i]];
+        state[node * Nc + irE[i]] -= individuals[irE[i]];
         if (state[node * Nc + irE[i]] < 0)
             return SIMINF_ERR_NEGATIVE_STATE;
     }
@@ -447,26 +447,26 @@ int handle_external_event(
     const int select,
     const int n,
     const double proportion,
-    int *inividuals,
+    int *individuals,
     const gsl_rng *rng)
 {
     switch (event) {
     case EXIT_EVENT:
         return event_exit(
             irE, jcE, prE, Nc, Nobs, state, node, dest, select, n,
-            proportion, inividuals, rng);
+            proportion, individuals, rng);
     case ENTER_EVENT:
         return event_enter(
             irE, jcE, prE, Nc, Nobs, state, node, dest, select, n,
-            proportion, inividuals, rng);
+            proportion, individuals, rng);
     case INTERNAL_TRANSFER_EVENT:
         return event_internal_transfer(
             irE, jcE, prE, Nc, Nobs, state, node, dest, select, n,
-            proportion, inividuals, rng);
+            proportion, individuals, rng);
     case EXTERNAL_TRANSFER_EVENT:
         return event_external_transfer(
             irE, jcE, prE, Nc, Nobs, state, node, dest, select, n,
-            proportion, inividuals, rng);
+            proportion, individuals, rng);
     default:
         return SIMINF_UNDEFINED_EVENT;
     }
