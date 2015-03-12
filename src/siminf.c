@@ -253,13 +253,13 @@ int run_internal(
     int err = 0, Nobs = 0, report_level, n_threads;
     SEXP ext_events, E, N;
     external_events events;
-    gsl_rng *rng = NULL;
     size_t *irN = NULL, *jcN = NULL;
     size_t *irG = NULL, *jcG = NULL;
     size_t *irE = NULL, *jcE = NULL;
     int *prE = NULL, *prN = NULL;
     double *data = NULL;
     size_t Nn, Nc, tlen, dsize, Nt;
+    unsigned long int s;
 
     /* Check strategy argument */
     if (R_NilValue == strategy || !isString(strategy) ||
@@ -273,8 +273,7 @@ int run_internal(
     report_level = get_report_level(verbose);
 
     /* seed */
-    rng = gsl_rng_alloc(gsl_rng_mt19937);
-    gsl_rng_set(rng, get_seed(seed));
+    s = get_seed(seed);
 
     /* G */
     err = get_sparse_matrix_int(&irG, &jcG, NULL, GET_SLOT(result, Rf_install("G")));
@@ -338,12 +337,10 @@ int run_internal(
         INTEGER(GET_SLOT(result, Rf_install("sd"))),
         Nn, Nc, Nt, Nobs, dsize,
         irE, jcE, prE, &events,
-        report_level, n_threads, rng, t_fun, pts_fun,
+        report_level, n_threads, s, t_fun, pts_fun,
         &progress, CHAR(STRING_ELT(strategy, 0)));
 
 cleanup:
-    if (rng)
-        gsl_rng_free(rng);
     if (data)
         free(data);
     if (irG)

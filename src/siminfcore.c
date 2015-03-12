@@ -344,18 +344,25 @@ int siminf_core(
     const size_t Nc, const size_t Nt, const int Nobs, const size_t dsize,
     const size_t *irE, const size_t *jcE, const int *prE,
     const external_events *events,
-    int report_level, int Nthreads, const gsl_rng *rng,
+    int report_level, int Nthreads, unsigned long int seed,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
     const ProgressFun progress, const char *strategy)
 {
     int err = SIMINF_UNSUPPORTED_PARALLELIZATION;
+    gsl_rng *rng = NULL;
 
     if (strcmp(strategy, "single") == 0) {
+        rng = gsl_rng_alloc(gsl_rng_mt19937);
+        gsl_rng_set(rng, seed);
+
         err = siminf_core_single(
             u0, irG, jcG, irN, jcN, prN, tspan, tlen, U, data, sd, Nn, Nc,
             Nt, Nobs, dsize, irE, jcE, prE, events, report_level, Nthreads,
             rng, t_fun, pts_fun, progress);
     }
+
+    if (rng)
+        gsl_rng_free(rng);
 
     return err;
 }
