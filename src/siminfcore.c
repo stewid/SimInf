@@ -77,7 +77,8 @@
  *        e.g. update infectious pressure.
  * @param progress Function pointer to report progress.
  */
-int siminf_core_single(
+
+static int siminf_core_single(
     const int *u0, const size_t *irG, const size_t *jcG, const size_t *irN,
     const size_t *jcN, const int *prN, const double *tspan, const size_t tlen,
     int *U, double *data, const int *sd, const size_t Nn,
@@ -349,4 +350,27 @@ cleanup:
         free(update_node);
 
     return errcode;
+}
+
+int siminf_core(
+    const int *u0, const size_t *irG, const size_t *jcG, const size_t *irN,
+    const size_t *jcN, const int *prN, const double *tspan, const size_t tlen,
+    int *U, double *data, const int *sd, const size_t Nn,
+    const size_t Nc, const size_t Nt, const int Nobs, const size_t dsize,
+    const size_t *irE, const size_t *jcE, const int *prE,
+    const external_events *events,
+    int report_level, int Nthreads, const gsl_rng *rng,
+    const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
+    const ProgressFun progress, const char *strategy)
+{
+    int err = SIMINF_UNSUPPORTED_PARALLELIZATION;
+
+    if (strcmp(strategy, "single") == 0) {
+        err = siminf_core_single(
+            u0, irG, jcG, irN, jcN, prN, tspan, tlen, U, data, sd, Nn, Nc,
+            Nt, Nobs, dsize, irE, jcE, prE, events, report_level, Nthreads,
+            rng, t_fun, pts_fun, progress);
+    }
+
+    return err;
 }
