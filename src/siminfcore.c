@@ -29,6 +29,104 @@
 #include "events.h"
 
 /**
+ * Epidemiological model
+ *
+ * Handle internal epidemiological model, continuous-time Markov
+ * chain, during one day.
+ *
+ * G is a sparse matrix dependency graph (Nt X Nt) in
+ * compressed column format (CCS). A non-zeros entry in element i of
+ * column j indicates that propensity i needs to be recalculated if
+ * the transition j occurs.
+ *
+ * N is a stoichiometry sparse matrix (Nc X Nt) in
+ * compressed column format (CCS). Each column corresponds to a
+ * transition, and execution of transition j amounts to adding the
+ * j'th column to the state vector.
+ *
+ * @param Nn Number of nodes.
+ * @param Nc Number of compartments in each node.
+ * @param Nt Total number of different transitions.
+ * @param dsize Size of data vector sent to propensities.
+ * @param state Integer vector of length Nn with state in each node.
+ * @param data Double vector (dsize X Nn) with data for each node.
+ * @param sd Integer vector of length Nn. Each node can be assigned to
+ *        a sub-domain.
+ * @param irG Integer vector where irG[k] is the row of G[k].
+ * @param jcG jcG[k], index to data of first non-zero element in row k.
+ * @param irN Integer vector where irN[k] is the row of N[k].
+ * @param jcN jcN[k], index to data of first non-zero element in row k.
+ * @param prN Value of item (i, j) in N.
+ * @param sum_t_rate Double vector of length Nn with the sum of
+ *        propensities in every node.
+ * @param t_rate Transition rate matrix (Nt X Nn) with all propensities
+ *        for state transitions.
+ * @param t_time Time for next event (transition) in each node.
+ * @param next_day Time for next day.
+ * @param t_fun Vector of function pointers to transition functions.
+ * @param rng The random number generator.
+ * @param err The error state of the simulation is saved here.
+ *        0 if ok, else error code.
+ */
+static void siminf_epi_model(
+    const int Nn, const int Nc, const int Nt, const int dsize, int *state,
+    double *data, const int *sd, const int *irG, const int *jcG,
+    const int *irN, const int *jcN, const int *prN, double *sum_t_rate,
+    double *t_rate, double *t_time, const double next_day,
+    const PropensityFun *t_fun, const gsl_rng *rng, int *err)
+{
+    int node;
+
+    /* Internal epidemiological model, continuous-time Markov
+     * chain. */
+    for (node = 0; node < Nn; node++) {
+        while (t_time[node] < next_day) {
+            double cum, rand, tot_rate, delta = 0.0;
+            int i, tr = 0;
+
+            /* a) Determine the transition that did occur (directSSA). */
+            cum = t_rate[node * Nt];
+            rand = gsl_rng_uniform(rng) * sum_t_rate[node];
+            while (tr < Nt && rand > cum) {
+                tr++;
+                cum += t_rate[node * Nt + tr];
+            }
+
+            /* b) Update the state of the node */
+            for (i = jcN[tr]; i < jcN[tr + 1]; i++) {
+                state[node * Nc + irN[i]] += prN[i];
+                if (state[node * Nc + irN[i]] < 0) {
+                    *err = SIMINF_ERR_NEGATIVE_STATE;
+                    return;
+                }
+            }
+
+            /* c) Recalculate sum_t_rate[node] using dependency graph. */
+            for (i = jcG[tr]; i < jcG[tr + 1]; i++) {
+                int j = irG[i];
+                double old = t_rate[node * Nt + j];
+                delta += (t_rate[node * Nt + j] = (*t_fun[j])(
+                              &state[node * Nc], t_time[node],
+                              &data[node * dsize], sd[node]))
+                    - old;
+            }
+            sum_t_rate[node] += delta;
+
+            /* d) Compute time to new event for this node. */
+            tot_rate = sum_t_rate[node];
+            if (tot_rate > 0.0) {
+                t_time[node] = -log(1.0 - gsl_rng_uniform(rng)) / tot_rate +
+                    t_time[node];
+            } else {
+                t_time[node] = INFINITY;
+            }
+        }
+    }
+
+    *err = 0;
+}
+
+/**
  * Core siminf solver
  *
  * G is a sparse matrix dependency graph (Nt X Nt) in
@@ -178,63 +276,11 @@ static int siminf_core_single(
     for (;;) {
         /* (1) Handle internal epidemiological model, continuous-time
          * Markov chain. */
-        for (node = 0; node < Nn; node++) {
-            while (t_time[node] < next_day) {
-                double cum, rand, tot_rate, delta = 0.0;
-                int i, tr = 0;
+        siminf_epi_model(
+            Nn, Nc, Nt, dsize, xx, data, sd, irG, jcG, irN, jcN, prN,
+            sum_t_rate, t_rate, t_time, next_day, t_fun, rng, &errcode);
 
-                /* a) Determine the transition that did occur (directSSA). */
-                cum = t_rate[node * Nt];
-                rand = gsl_rng_uniform(rng) * sum_t_rate[node];
-                while (tr < Nt && rand > cum) {
-                    tr++;
-                    cum += t_rate[node * Nt + tr];
-                }
-
-                /* b) Update the state of the node */
-                for (i = jcN[tr]; i < jcN[tr + 1]; i++) {
-                    xx[node * Nc + irN[i]] += prN[i];
-                    if (xx[node * Nc + irN[i]] < 0)
-                        errcode = SIMINF_ERR_NEGATIVE_STATE;
-                }
-
-                /* c) Recalculate sum_t_rate[node] using dependency graph. */
-                for (i = jcG[tr]; i < jcG[tr + 1]; i++) {
-                    int j = irG[i];
-                    double old = t_rate[node * Nt + j];
-                    delta += (t_rate[node * Nt + j] = (*t_fun[j])(
-                                  &xx[node * Nc], t_time[node],
-                                  &data[node * dsize], sd[node]))
-                        - old;
-                }
-                sum_t_rate[node] += delta;
-
-                total_transitions++; /* counter */
-
-                /* d) Compute time to new event for this node. */
-                tot_rate = sum_t_rate[node];
-                if (tot_rate > 0.0) {
-                    t_time[node] = -log(1.0 - gsl_rng_uniform(rng)) / tot_rate +
-                        t_time[node];
-                } else {
-                    t_time[node] = INFINITY;
-                }
-
-                /* e) Check for error codes. */
-                if (errcode) {
-                    /* Report when the error occurred. */
-                    if (report_level)
-                        progress(t_time[node], tspan[0], tspan[tlen - 1],
-                                 total_transitions, report_level);
-                    break;
-                }
-            }
-        }
-
-        /* Check if the exit from the while-loop was due to:
-         *   a) Simulation reached the final time
-         *   b) Error code. */
-        if (it >= tlen || errcode)
+        if (errcode)
             break;
 
         /* (2) Incorporate all scheduled external events. */
