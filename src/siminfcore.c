@@ -194,6 +194,78 @@ static void siminf_process_events(
 }
 
 /**
+ * Post timestep
+ *
+ * Incorporate model specific actions after each timestep e.g. update
+ * the infectious pressure variable.
+ *
+ * @param Nn Number of nodes.
+ * @param Nc Number of compartments in each node.
+ * @param Nt Total number of different transitions.
+ * @param dsize Size of data vector sent to propensities.
+ * @param state Integer vector of length Nn with state in each node.
+ * @param data Double vector (dsize X Nn) with data for each node.
+ * @param sd Integer vector of length Nn. Each node can be assigned to
+ *        a sub-domain.
+ * @param sum_t_rate Double vector of length Nn with the sum of
+ *        propensities in every node.
+ * @param t_rate Transition rate matrix (Nt X Nn) with all propensities
+ *        for state transitions.
+ * @param t_time Time for next event (transition) in each node.
+ * @param update_node Integer vector of length Nn used to indicate
+ *        nodes for update.
+ * @param tt The global time.
+ * @param t_fun Vector of function pointers to transition functions.
+ * @param pts_fun Function pointer to callback after each time step
+ *        e.g. update infectious pressure.
+ * @param rng Random number generator.
+ */
+static void siminf_post_timestep(
+    const int Nn, const int Nc, const int Nt, const int dsize, int *state,
+    double *data, const int *sd, double *sum_t_rate, double *t_rate,
+    double *t_time, int *update_node, const double tt,
+    const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
+    const gsl_rng *rng)
+{
+    int node;
+
+    for (node = 0; node < Nn; node++) {
+        if (pts_fun(
+                &state[node * Nc], node, tt, &data[node * dsize], sd[node]) ||
+            update_node[node])
+        {
+            int i = 0;
+            double delta = 0.0, old_t_rate = sum_t_rate[node];
+
+            /* compute new transition rate only for transitions
+             * dependent on infectious pressure */
+            for (; i < Nt; i++) {
+                double old = t_rate[node * Nt + i];
+                delta += (t_rate[node * Nt + i] =
+                          (*t_fun[i])(&state[node * Nc], tt,
+                                      &data[node * dsize], sd[node]))
+                    - old;
+            }
+            sum_t_rate[node] += delta;
+
+            if (sum_t_rate[node] > 0.0) {
+                if (old_t_rate > 0.0 && !isinf(old_t_rate)) {
+                    t_time[node] = old_t_rate / sum_t_rate[node]
+                        * (t_time[node] - tt) + tt;
+                } else {
+                    t_time[node] = -log(1.0 - gsl_rng_uniform(rng))
+                        / sum_t_rate[node] + tt;
+                }
+            } else {
+                t_time[node] = INFINITY;
+            }
+
+            update_node[node] = 0;
+        }
+    }
+}
+
+/**
  * Core siminf solver
  *
  * G is a sparse matrix dependency graph (Nt X Nt) in
@@ -352,39 +424,11 @@ static int siminf_core_single(
         if (errcode)
             break;
 
-        /* (3) Update the infectious pressure variable. */
-        for (node = 0; node < Nn; node++) {
-            if (pts_fun(&xx[node * Nc], node, tt, &data[node * dsize], sd[node]) ||
-                update_node[node])
-            {
-                int i = 0;
-                double delta = 0.0, old_t_rate = sum_t_rate[node];
-
-                /* compute new transition rate only for transitions
-                 * dependent on infectious pressure */
-                for (; i < Nt; i++) {
-                    double old = t_rate[node * Nt + i];
-                    delta += (t_rate[node * Nt + i] = (*t_fun[i])(
-                                  &xx[node * Nc], tt, &data[node * dsize], sd[node]))
-                        - old;
-                }
-                sum_t_rate[node] += delta;
-
-                if (sum_t_rate[node] > 0.0) {
-                    if (old_t_rate > 0.0 && !isinf(old_t_rate)) {
-                        t_time[node] = old_t_rate / sum_t_rate[node]
-                            * (t_time[node] - tt) + tt;
-                    } else {
-                        t_time[node] = -log(1.0 - gsl_rng_uniform(rng))
-                            / sum_t_rate[node] + tt;
-                    }
-                } else {
-                    t_time[node] = INFINITY;
-                }
-
-                update_node[node] = 0;
-            }
-        }
+        /* (3) Incorporate model specific actions after each timestep
+         * e.g. update the infectious pressure variable. */
+        siminf_post_timestep(
+            Nn, Nc, Nt, dsize, xx, data, sd, sum_t_rate, t_rate,
+            t_time, update_node, tt, t_fun, pts_fun, rng);
 
         /* The global time now equals next_day. */
         tt = next_day;
