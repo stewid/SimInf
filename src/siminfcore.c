@@ -127,6 +127,73 @@ static void siminf_epi_model(
 }
 
 /**
+ * Incorporate scheduled external events
+ *
+ * @param state Integer vector of length Nn with state in each node.
+ * @param event Integer vector of length len with external events.
+ * @param time Integer vector of length len with the time for external
+          event.
+ * @param select Integer vector of length len. Column j in the E
+ *        matrix that determines the compartments to sample from.
+ * @param node Integer vector of length len. The source node of the
+ *        event i.
+ * @param dest Integer vector of length len. The dest node of the
+ *        event i.
+ * @param n Integer vector of length len. The number of individuals
+ *        in the external event. n[i] >= 0.
+ * @param proportion Double vector of length len. If n[i] equals zero,
+ *        then the number of individuals to sample is calculated by
+ *        summing the number of individuals in the hidden states
+ *        determined by select[i] and multiplying with the proportion.
+ *        0 <= p[i] <= 1.
+ * @param len Number of scheduled external events.
+ * @param index The current index in event list to process. Updated
+ *        to the next start index on return.
+ * @param irE Array where irE[k] is the row of E[k]
+ * @param jcE jcE[k], index to data of first non-zero element in row k
+ * @param prE Value of item (i, j) in E.
+ * @param individuals The result of the sampling is stored in the
+ *        individuals vector. Passed as function argument to handle
+ *        parallellization.
+ * @param update_node Integer vector of length Nn used to indicate
+ *        nodes for update.
+ * @param tt The global time.
+ * @param rng Random number generator.
+ * @param err The error state of processing the events is saved here.
+ *        0 if ok, else error code.
+ */
+static void siminf_process_events(
+    const int Nc, const int Nobs, int *state, const int *event,
+    const int *time, const int *select, const int *node, const int *dest,
+    const int *n, const double *proportion, const int len, int *index,
+    const int *irE, const int *jcE, const int *prE, int *individuals,
+    int *update_node, const double tt, const gsl_rng *rng, int *err)
+{
+    int i = *index;
+    int e = 0;
+
+    /* Incorporate scheduled external events. */
+    while (i < len && tt >= time[i]) {
+        e = handle_external_event(
+            event[i], irE, jcE, prE, Nc, Nobs, state, node[i], dest[i],
+            select[i], n[i], proportion[i], individuals, rng);
+
+        /* Check for error codes. */
+        if (e)
+            break;
+
+        /* Indicate node and dest node for update */
+        update_node[node[i]] = 1;
+        update_node[dest[i]] = 1;
+
+        i++;
+    }
+
+    *index = i;
+    *err = e;
+}
+
+/**
  * Core siminf solver
  *
  * G is a sparse matrix dependency graph (Nt X Nt) in
@@ -197,14 +264,6 @@ static int siminf_core_single(
     const int Ndofs = Nn * Nc;
 
     /* Variables to handle external events */
-    const int *ext_event         = events->event;
-    const int *ext_time          = events->time;
-    const int *ext_select        = events->select;
-    const int *ext_node          = events->node;
-    const int *ext_dest          = events->dest;
-    const int *ext_n             = events->n;
-    const double *ext_proportion = events->proportion;
-    int ext_len                  = events->len;
     int ext_i                    = 0;
     double next_day = floor(tspan[0]) + 1.0;
     int *update_node = NULL;
@@ -284,29 +343,12 @@ static int siminf_core_single(
             break;
 
         /* (2) Incorporate all scheduled external events. */
-        while (ext_i < ext_len && tt >= ext_time[ext_i]) {
-            errcode = handle_external_event(
-                ext_event[ext_i], irE, jcE, prE, Nc, Nobs, xx,
-                ext_node[ext_i], ext_dest[ext_i], ext_select[ext_i],
-                ext_n[ext_i], ext_proportion[ext_i], individuals, rng);
+        siminf_process_events(
+            Nc, Nobs, xx, events->event, events->time, events->select,
+            events->node, events->dest, events->n, events->proportion,
+            events->len, &ext_i, irE, jcE, prE, individuals,
+            update_node, tt, rng, &errcode);
 
-            /* Check for error codes. */
-            if (errcode) {
-                /* Report when the error occurred. */
-                if (report_level)
-                    progress(tt, tspan[0], tspan[tlen - 1],
-                             total_transitions, report_level);
-                break;
-            }
-
-            /* Indicate node and dest node for update */
-            update_node[ext_node[ext_i]] = 1;
-            update_node[ext_dest[ext_i]] = 1;
-
-            ext_i++;
-        }
-
-        /* Check if the exit from the while-loop was due to error. */
         if (errcode)
             break;
 
