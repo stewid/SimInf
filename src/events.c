@@ -59,9 +59,9 @@ static __thread int kind_dest[MAX_INDIVIDUALS];
  * @return 0 on succes or 1 on failure.
  */
 static int
-sample_select(const size_t *irE,
-              const size_t *jcE,
-              const size_t Nc,
+sample_select(const int *irE,
+              const int *jcE,
+              const int Nc,
               const int *state,
               const int node,
               const int select,
@@ -192,10 +192,10 @@ sample_select(const size_t *irE,
  * @return 0 on succes or 1 on failure.
  */
 static int event_exit(
-    const size_t *irE,
-    const size_t *jcE,
+    const int *irE,
+    const int *jcE,
     const int *prE,
-    const size_t Nc,
+    const int Nc,
     const int Nobs,
     int *state,
     const int node,
@@ -251,10 +251,10 @@ static int event_exit(
  * @return 0 on succes or 1 on failure.
  */
 static int event_enter(
-    const size_t *irE,
-    const size_t *jcE,
+    const int *irE,
+    const int *jcE,
     const int *prE,
-    const size_t Nc,
+    const int Nc,
     const int Nobs,
     int *state,
     const int node,
@@ -310,10 +310,10 @@ static int event_enter(
  * @return 0 on succes or 1 on failure.
  */
 static int event_internal_transfer(
-    const size_t *irE,
-    const size_t *jcE,
+    const int *irE,
+    const int *jcE,
     const int *prE,
-    const size_t Nc,
+    const int Nc,
     const int Nobs,
     int *state,
     const int node,
@@ -375,10 +375,10 @@ static int event_internal_transfer(
  * @return 0 on succes or 1 on failure.
  */
 static int event_external_transfer(
-    const size_t *irE,
-    const size_t *jcE,
+    const int *irE,
+    const int *jcE,
     const int *prE,
-    const size_t Nc,
+    const int Nc,
     const int Nobs,
     int *state,
     const int node,
@@ -436,10 +436,10 @@ static int event_external_transfer(
  */
 int handle_external_event(
     int event,
-    const size_t *irE,
-    const size_t *jcE,
+    const int *irE,
+    const int *jcE,
     const int *prE,
-    const size_t Nc,
+    const int Nc,
     const int Nobs,
     int *state,
     const int node,
@@ -497,12 +497,12 @@ int handle_external_event(
 static void assign_thread_id(
     int *node,
     int *event,
-    size_t *thread_id,
-    size_t *thread_n,
-    size_t len,
-    size_t Nthread)
+    int *thread_id,
+    int *thread_n,
+    int len,
+    int Nthread)
 {
-    size_t i, thread;
+    int i, thread;
     int old_node = node[0];
 
     thread = 0;
@@ -550,10 +550,10 @@ static void assign_thread_id(
  */
 static int allocate_thread_mem(
     external_events *threads,
-    size_t *thread_n,
-    size_t Nthread)
+    int *thread_n,
+    int Nthread)
 {
-    size_t i;
+    int i;
 
     /* Allocate memory to hold assigned events in each thread */
     for (i = 0; i < Nthread; i++) {
@@ -614,29 +614,29 @@ static int allocate_thread_mem(
 int split_external_events(
     external_events *threads,
     const external_events *events,
-    size_t Nthread)
+    int Nthread)
 {
     int err = 0;
 
     if (events->len) {
-        size_t i;
-        size_t *thread_i = NULL;
-        size_t *thread_id = NULL;
-        size_t *thread_n = NULL;
+        int i;
+        int *thread_i = NULL;
+        int *thread_id = NULL;
+        int *thread_n = NULL;
 
-        thread_i = calloc(Nthread, sizeof(size_t));
+        thread_i = calloc(Nthread, sizeof(int));
         if (!thread_i) {
             err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
-        thread_id = calloc(events->len, sizeof(size_t));
+        thread_id = calloc(events->len, sizeof(int));
         if (!thread_id) {
             err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
-        thread_n = calloc(Nthread , sizeof(size_t));
+        thread_n = calloc(Nthread , sizeof(int));
         if (!thread_n) {
             err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
@@ -652,7 +652,7 @@ int split_external_events(
         /* Split events to each thread */
         for (i = 0; i < events->len; i++) {
             external_events *e = &threads[thread_id[i]];
-            size_t j = thread_i[thread_id[i]];
+            int j = thread_i[thread_id[i]];
 
             e->event[j]      = events->event[i];
             e->time[j]       = events->time[i];

@@ -191,32 +191,32 @@ static int get_threads(SEXP threads)
  * @return 0 on success, else error code.
  */
 static int
-get_sparse_matrix_int(size_t **ir, size_t **jc, int **pr, SEXP m)
+get_sparse_matrix_int(int **ir, int **jc, int **pr, SEXP m)
 {
     if (ir) {
-        size_t nir = LENGTH(GET_SLOT(m, Rf_install("i")));
+        int nir = LENGTH(GET_SLOT(m, Rf_install("i")));
         int *xir = INTEGER(GET_SLOT(m, Rf_install("i")));
         int i = 0;
-        *ir = (size_t*)malloc(nir * sizeof(size_t));
+        *ir = (int*)malloc(nir * sizeof(int));
         if (!(*ir))
             return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         for (; i < nir; i++)
-            (*ir)[i] = (size_t)xir[i];
+            (*ir)[i] = xir[i];
     }
 
     if (jc) {
-        size_t njc = LENGTH(GET_SLOT(m, Rf_install("p")));
+        int njc = LENGTH(GET_SLOT(m, Rf_install("p")));
         int *xjc = INTEGER(GET_SLOT(m, Rf_install("p")));
         int i = 0;
-        *jc = (size_t*)malloc(njc * sizeof(size_t));
+        *jc = (int*)malloc(njc * sizeof(int));
         if (!(*jc))
             return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         for (; i < njc; i++)
-            (*jc)[i] = (size_t)xjc[i];
+            (*jc)[i] = xjc[i];
     }
 
     if (pr) {
-        size_t npr = LENGTH(GET_SLOT(m, Rf_install("x")));
+        int npr = LENGTH(GET_SLOT(m, Rf_install("x")));
         double *xpr = REAL(GET_SLOT(m, Rf_install("x")));
         int i = 0;
         *pr = (int*)malloc(npr * sizeof(int));
@@ -253,12 +253,12 @@ int run_internal(
     int err = 0, Nobs = 0, report_level, n_threads;
     SEXP ext_events, E, N;
     external_events events;
-    size_t *irN = NULL, *jcN = NULL;
-    size_t *irG = NULL, *jcG = NULL;
-    size_t *irE = NULL, *jcE = NULL;
+    int *irN = NULL, *jcN = NULL;
+    int *irG = NULL, *jcG = NULL;
+    int *irE = NULL, *jcE = NULL;
     int *prE = NULL, *prN = NULL;
     double *data = NULL;
-    size_t Nn, Nc, tlen, dsize, Nt;
+    int Nn, Nc, tlen, dsize, Nt;
     unsigned long int s;
 
     /* Check strategy argument */

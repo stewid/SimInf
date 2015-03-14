@@ -79,11 +79,11 @@
  */
 
 static int siminf_core_single(
-    const int *u0, const size_t *irG, const size_t *jcG, const size_t *irN,
-    const size_t *jcN, const int *prN, const double *tspan, const size_t tlen,
-    int *U, double *data, const int *sd, const size_t Nn,
-    const size_t Nc, const size_t Nt, const int Nobs, const size_t dsize,
-    const size_t *irE, const size_t *jcE, const int *prE,
+    const int *u0, const int *irG, const int *jcG, const int *irN,
+    const int *jcN, const int *prN, const double *tspan, const int tlen,
+    int *U, double *data, const int *sd, const int Nn,
+    const int Nc, const int Nt, const int Nobs, const int dsize,
+    const int *irE, const int *jcE, const int *prE,
     const external_events *events,
     int report_level, int Nthreads, const gsl_rng *rng,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
@@ -95,8 +95,8 @@ static int siminf_core_single(
     int *individuals = NULL;
     long int total_transitions = 0;
     int node, errcode = 0;
-    size_t it = 0;
-    const size_t Ndofs = Nn * Nc;
+    int it = 0;
+    const int Ndofs = Nn * Nc;
 
     /* Variables to handle external events */
     const int *ext_event         = events->event;
@@ -158,7 +158,7 @@ static int siminf_core_single(
      * sum_t_rate. Calculate time to next event (transition) in each
      * node. */
     for (node = 0; node < Nn; node++) {
-        size_t i;
+        int i;
 
         sum_t_rate[node] = 0.0;
         for (i = 0; i < Nt; i++) {
@@ -181,7 +181,7 @@ static int siminf_core_single(
         for (node = 0; node < Nn; node++) {
             while (t_time[node] < next_day) {
                 double cum, rand, tot_rate, delta = 0.0;
-                size_t i, tr = 0;
+                int i, tr = 0;
 
                 /* a) Determine the transition that did occur (directSSA). */
                 cum = t_rate[node * Nt];
@@ -200,7 +200,7 @@ static int siminf_core_single(
 
                 /* c) Recalculate sum_t_rate[node] using dependency graph. */
                 for (i = jcG[tr]; i < jcG[tr + 1]; i++) {
-                    size_t j = irG[i];
+                    int j = irG[i];
                     double old = t_rate[node * Nt + j];
                     delta += (t_rate[node * Nt + j] = (*t_fun[j])(
                                   &xx[node * Nc], t_time[node],
@@ -269,7 +269,7 @@ static int siminf_core_single(
             if (pts_fun(&xx[node * Nc], node, tt, &data[node * dsize], sd[node]) ||
                 update_node[node])
             {
-                size_t i = 0;
+                int i = 0;
                 double delta = 0.0, old_t_rate = sum_t_rate[node];
 
                 /* compute new transition rate only for transitions
@@ -338,11 +338,11 @@ cleanup:
 }
 
 int siminf_core(
-    const int *u0, const size_t *irG, const size_t *jcG, const size_t *irN,
-    const size_t *jcN, const int *prN, const double *tspan, const size_t tlen,
-    int *U, double *data, const int *sd, const size_t Nn,
-    const size_t Nc, const size_t Nt, const int Nobs, const size_t dsize,
-    const size_t *irE, const size_t *jcE, const int *prE,
+    const int *u0, const int *irG, const int *jcG, const int *irN,
+    const int *jcN, const int *prN, const double *tspan, const int tlen,
+    int *U, double *data, const int *sd, const int Nn,
+    const int Nc, const int Nt, const int Nobs, const int dsize,
+    const int *irE, const int *jcE, const int *prE,
     const external_events *events,
     int report_level, int Nthreads, unsigned long int seed,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,

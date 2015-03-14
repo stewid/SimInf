@@ -58,13 +58,13 @@ typedef struct external_events
 int split_external_events(
     external_events *threads,
     const external_events *events,
-    size_t Nthread);
+    int Nthread);
 #endif
 
 /* Definition of function to handle external events. */
 int handle_external_event(
-    int event, const size_t *irE, const size_t *jcE, const int *prE,
-    const size_t Nc, const int Nobs, int *state, const int node,
+    int event, const int *irE, const int *jcE, const int *prE,
+    const int Nc, const int Nobs, int *state, const int node,
     const int dest, const int select, const int n, const double proportion,
     int *inividuals, const gsl_rng *rng);
 

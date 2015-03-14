@@ -45,11 +45,11 @@ typedef void (*ProgressFun)(double t, const double t_begin, const double t_end,
                             long int total_transitions, int report_level);
 
 int siminf_core(
-    const int *u0, const size_t *irG, const size_t *jcG, const size_t *irN,
-    const size_t *jcN, const int *prN, const double *tspan, const size_t tlen,
-    int *U, double *data, const int *sd, const size_t Nn,
-    const size_t Nc, const size_t Nt, const int Nobs, const size_t dsize,
-    const size_t *irE, const size_t *jcE, const int *prE,
+    const int *u0, const int *irG, const int *jcG, const int *irN,
+    const int *jcN, const int *prN, const double *tspan, const int tlen,
+    int *U, double *data, const int *sd, const int Nn,
+    const int Nc, const int Nt, const int Nobs, const int dsize,
+    const int *irE, const int *jcE, const int *prE,
     const external_events *events,
     int report_level, int Nthreads, unsigned long int seed,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
