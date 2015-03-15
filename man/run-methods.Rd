@@ -7,22 +7,22 @@
 \alias{run,SISe3-method}
 \title{Run siminf stochastic simulation algorithms}
 \usage{
-run(model, verbose = 0, seed = NULL, threads = 1)
+run(model, threads = 1, verbose = 0, seed = NULL)
 
-\S4method{run}{SISe3}(model, verbose = 0, seed = NULL, threads = 1)
+\S4method{run}{SISe3}(model, threads = 1, verbose = 0, seed = NULL)
 
-\S4method{run}{SISe}(model, verbose = 0, seed = NULL, threads = 1)
+\S4method{run}{SISe}(model, threads = 1, verbose = 0, seed = NULL)
 }
 \arguments{
 \item{model}{The siminf model to run.}
+
+\item{threads}{Number of threads. Default is 1.}
 
 \item{verbose}{Level of siminf feeedback during simulation. Silent
 if 0, progress if 1, progress and number of transition
 events if 2. Default is 0.}
 
 \item{seed}{Random number seed.}
-
-\item{threads}{Number of threads. Default is 1.}
 }
 \value{
 \code{siminf_model} with result from simulation.

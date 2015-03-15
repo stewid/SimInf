@@ -37,25 +37,25 @@ check_threads <- function(threads)
 ##' @rdname run-methods
 ##' @docType methods
 ##' @param model The siminf model to run.
+##' @param threads Number of threads. Default is 1.
 ##' @param verbose Level of siminf feeedback during simulation. Silent
 ##' if 0, progress if 1, progress and number of transition
 ##' events if 2. Default is 0.
 ##' @param seed Random number seed.
-##' @param threads Number of threads. Default is 1.
 ##' @return \code{siminf_model} with result from simulation.
 setGeneric("run",
            signature = "model",
            function(model,
+                    threads  = 1,
                     verbose  = 0,
-                    seed     = NULL,
-                    threads  = 1) standardGeneric("run"))
+                    seed     = NULL) standardGeneric("run"))
 
 ##' @rdname run-methods
 ##' @include SISe3.r
 ##' @export
 setMethod("run",
           signature(model = "SISe3"),
-          function(model, verbose, seed, threads)
+          function(model, threads, verbose, seed)
           {
               threads <- check_threads(threads)
 
@@ -72,7 +72,7 @@ setMethod("run",
 ##' @export
 setMethod("run",
           signature(model = "SISe"),
-          function(model, verbose, seed, threads)
+          function(model, threads, verbose, seed)
           {
               threads <- check_threads(threads)
 
