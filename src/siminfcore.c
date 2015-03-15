@@ -344,119 +344,50 @@ static void siminf_post_timestep(
  */
 
 static int siminf_core_single(
-    const int *u0, const int *irG, const int *jcG, const int *irN,
+    siminf_thread_args *ta, const int *irG, const int *jcG, const int *irN,
     const int *jcN, const int *prN, const double *tspan, const int tlen,
-    int *U, double *data, const int *sd, const int Nn,
-    const int Nc, const int Nt, const int Nobs, const int dsize,
-    const int *irE, const int *jcE, const int *prE,
-    const external_events *events,
-    int report_level, int Nthreads, const gsl_rng *rng,
-    const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
+    int *U, const int Nc, const int Nt, const int Nobs,
+    const int dsize, const int *irE, const int *jcE, const int *prE,
+    int report_level, const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
     const ProgressFun progress)
 {
     double tt = tspan[0];
-    double *sum_t_rate = NULL, *t_rate = NULL, *t_time = NULL;
-    int *xx = NULL;
-    int *individuals = NULL;
     long int total_transitions = 0;
-    int node, errcode = 0;
     int it = 0;
-    const int Ndofs = Nn * Nc;
 
     /* Variables to handle external events */
-    int ext_i                    = 0;
+    int ext_i = 0;
     double next_day = floor(tspan[0]) + 1.0;
-    int *update_node = NULL;
-
-    individuals = malloc(Nc * sizeof(int));
-    if (!individuals) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-
-    /* Setup vector to keep track of nodes that must be updated due to
-     * external events */
-    update_node = (int *) calloc(Nn, sizeof(int));
-    if (!update_node) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-
-    /* Set xx to the initial state. */
-    xx = (int *) malloc(Ndofs * sizeof(int));
-    if (!xx) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-    memcpy(xx, u0, Ndofs * sizeof(int));
-
-    /* Create transition rate matrix (Nt X Nn) and total rate
-     * vector. In t_rate we store all propensities for state
-     * transitions, and in sum_t_rate the sum of propensities
-     * in every node. */
-    t_rate = (double *) malloc(Nt * Nn * sizeof(double));
-    if (!t_rate) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-    sum_t_rate = (double *) malloc(Nn * sizeof(double));
-    if (!sum_t_rate) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-    t_time = (double *) malloc(Nn * sizeof(double));
-    if (!t_time) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-
-    /* Calculate the transition rate for every transition and every
-     * node. Store the sum of the transition rates in each node in
-     * sum_t_rate. Calculate time to next event (transition) in each
-     * node. */
-    for (node = 0; node < Nn; node++) {
-        int i;
-
-        sum_t_rate[node] = 0.0;
-        for (i = 0; i < Nt; i++) {
-            t_rate[node * Nt + i] = (*t_fun[i])(&xx[node * Nc],
-                                                tt,
-                                                &data[node * dsize],
-                                                sd[node]);
-
-            sum_t_rate[node] += t_rate[node * Nt + i];
-        }
-
-        t_time[node] = -log(1.0 - gsl_rng_uniform(rng)) / sum_t_rate[node] +
-            tspan[0];
-    }
 
     /* Main loop. */
     for (;;) {
         /* (1) Handle internal epidemiological model, continuous-time
          * Markov chain. */
         siminf_epi_model(
-            Nn, Nc, Nt, dsize, xx, data, sd, irG, jcG, irN, jcN, prN,
-            sum_t_rate, t_rate, t_time, next_day, t_fun, rng, &errcode);
+            ta->Nn, Nc, Nt, dsize, ta->state, ta->data, ta->sd, irG,
+            jcG, irN, jcN, prN, ta->sum_t_rate, ta->t_rate, ta->t_time,
+            next_day, t_fun, ta->rng, &ta->errcode);
 
-        if (errcode)
+        if (ta->errcode)
             break;
 
         /* (2) Incorporate all scheduled external events. */
         siminf_process_events(
-            Nc, Nobs, xx, events->event, events->time, events->select,
-            events->node, events->dest, events->n, events->proportion,
-            events->len, &ext_i, irE, jcE, prE, individuals,
-            update_node, tt, rng, &errcode);
+            Nc, Nobs, ta->state, ta->events->event, ta->events->time,
+            ta->events->select, ta->events->node, ta->events->dest,
+            ta->events->n, ta->events->proportion, ta->events->len,
+            &ext_i, irE, jcE, prE, ta->individuals, ta->update_node,
+            tt, ta->rng, &ta->errcode);
 
-        if (errcode)
+        if (ta->errcode)
             break;
 
         /* (3) Incorporate model specific actions after each timestep
          * e.g. update the infectious pressure variable. */
         siminf_post_timestep(
-            Nn, Nc, Nt, dsize, xx, data, sd, sum_t_rate, t_rate,
-            t_time, update_node, tt, t_fun, pts_fun, rng);
+            ta->Nn, Nc, Nt, dsize, ta->state, ta->data, ta->sd,
+            ta->sum_t_rate, ta->t_rate, ta->t_time, ta->update_node,
+            tt, t_fun, pts_fun, ta->rng);
 
         /* The global time now equals next_day. */
         tt = next_day;
@@ -469,7 +400,9 @@ static int siminf_core_single(
                     progress(tspan[it], tspan[0], tspan[tlen - 1],
                              total_transitions, report_level);
 
-                memcpy(&U[Ndofs * it], &xx[0], Ndofs * sizeof(int));
+                memcpy(
+                    &U[ta->Nn * Nc * it], &ta->state[0],
+                    ta->Nn * Nc * sizeof(int));
             }
 
             /* If the simulation has reached the final time, exit. */
@@ -480,49 +413,171 @@ static int siminf_core_single(
         next_day += 1.0;
     }
 
-cleanup:
-    if (individuals)
-        free(individuals);
-    if (t_time)
-        free(t_time);
-    if (sum_t_rate)
-        free(sum_t_rate);
-    if (t_rate)
-        free(t_rate);
-    if (xx)
-        free(xx);
-    if (update_node)
-        free(update_node);
-
-    return errcode;
+    return ta->errcode;
 }
 
 int siminf_core(
     const int *u0, const int *irG, const int *jcG, const int *irN,
     const int *jcN, const int *prN, const double *tspan, const int tlen,
-    int *U, double *data, const int *sd, const int Nn,
-    const int Nc, const int Nt, const int Nobs, const int dsize,
-    const int *irE, const int *jcE, const int *prE,
-    const external_events *events,
+    int *U, double *data, const int *sd, const int Nn, const int Nc,
+    const int Nt, const int Nobs, const int dsize, const int *irE,
+    const int *jcE, const int *prE, const external_events *events,
     int report_level, int Nthreads, unsigned long int seed,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
     const ProgressFun progress, const char *strategy)
 {
     int err = SIMINF_UNSUPPORTED_PARALLELIZATION;
-    gsl_rng *rng = NULL;
+    external_events *thread_events = NULL;
+    siminf_thread_args *ta = NULL;
+    int i;
 
-    if (strcmp(strategy, "single") == 0) {
-        rng = gsl_rng_alloc(gsl_rng_mt19937);
-        gsl_rng_set(rng, seed);
+    if (strcmp(strategy, "single") != 0) {
+        thread_events = calloc(Nthreads, sizeof(external_events));
+        if (!thread_events) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
 
-        err = siminf_core_single(
-            u0, irG, jcG, irN, jcN, prN, tspan, tlen, U, data, sd, Nn, Nc,
-            Nt, Nobs, dsize, irE, jcE, prE, events, report_level, Nthreads,
-            rng, t_fun, pts_fun, progress);
+        err = split_external_events(thread_events, events, Nthreads);
+        if (err)
+            goto cleanup;
     }
 
-    if (rng)
-        gsl_rng_free(rng);
+    ta = calloc(Nthreads, sizeof(siminf_thread_args));
+    if (!ta) {
+        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        goto cleanup;
+    }
+
+    for (i = 0; i < Nthreads; i++) {
+        int node;
+
+        ta[i].Ni = i * (Nn / Nthreads);
+        ta[i].Nn = Nn / Nthreads;
+        if (i == (Nthreads - 1))
+            ta[i].Nn += (Nn % Nthreads);
+        ta[i].data = &data[ta[i].Ni * dsize];
+        ta[i].sd = &sd[ta[i].Ni];
+
+        if (strcmp(strategy, "single") == 0) {
+            ta[i].events = events;
+        }
+
+        /* :FIXME: Make sure to seed each thread. */
+        ta[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
+        gsl_rng_set(ta[i].rng, seed);
+
+        ta[i].individuals = (int *) malloc(Nc * sizeof(int));
+        if (!ta[i].individuals) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        /* Setup vector to keep track of nodes that must be updated due to
+         * external events */
+        ta[i].update_node = (int *) calloc(ta[i].Nn, sizeof(int));
+        if (!ta[i].update_node) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        /* Set state to the initial state. */
+        ta[i].state = (int *) malloc(ta[i].Nn * Nc * sizeof(int));
+        if (!ta[i].state) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+        memcpy(ta[i].state, u0 + ta[i].Ni * Nc, ta[i].Nn * Nc * sizeof(int));
+
+        /* Create transition rate matrix (Nt X Nn) and total rate
+         * vector. In t_rate we store all propensities for state
+         * transitions, and in sum_t_rate the sum of propensities
+         * in every node. */
+        ta[i].t_rate = (double *) malloc(Nt * ta[i].Nn * sizeof(double));
+        if (!ta[i].t_rate) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+        ta[i].sum_t_rate = (double *) malloc(ta[i].Nn * sizeof(double));
+        if (!ta[i].sum_t_rate) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+        ta[i].t_time = (double *) malloc(ta[i].Nn * sizeof(double));
+        if (!ta[i].t_time) {
+            err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        /* Calculate the transition rate for every transition and every
+         * node. Store the sum of the transition rates in each node in
+         * sum_t_rate. Calculate time to next event (transition) in each
+         * node. */
+        for (node = 0; node < ta[i].Nn; node++) {
+            size_t j;
+
+            ta[i].sum_t_rate[node] = 0.0;
+            for (j = 0; j < Nt; j++) {
+                ta[i].t_rate[node * Nt + j] =
+                    (*t_fun[j])(&ta[i].state[node * Nc],
+                                tspan[0],
+                                &ta[i].data[node * dsize],
+                                ta[i].sd[node]);
+
+                ta[i].sum_t_rate[node] += ta[i].t_rate[node * Nt + j];
+            }
+
+            ta[i].t_time[node] = -log(1.0 - gsl_rng_uniform(ta[i].rng)) /
+                ta[i].sum_t_rate[node] +
+                tspan[0];
+        }
+    }
+
+    if (strcmp(strategy, "single") == 0) {
+        err = siminf_core_single(
+            ta, irG, jcG, irN, jcN, prN, tspan, tlen, U, Nc, Nt, Nobs,
+            dsize, irE, jcE, prE, report_level, t_fun, pts_fun, progress);
+    }
+
+cleanup:
+    if (ta) {
+        for (i = 0; i < Nthreads; i++) {
+            if (ta[i].individuals)
+                free(ta[i].individuals);
+            if (ta[i].t_time)
+                free(ta[i].t_time);
+            if (ta[i].sum_t_rate)
+                free(ta[i].sum_t_rate);
+            if (ta[i].t_rate)
+                free(ta[i].t_rate);
+            if (ta[i].state)
+                free(ta[i].state);
+            if (ta[i].update_node)
+                free(ta[i].update_node);
+            if (ta[i].rng)
+                gsl_rng_free(ta[i].rng);
+        }
+    }
+    if (thread_events) {
+        for (i = 0; i < Nthreads; i++) {
+            if (thread_events[i].event)
+                free(thread_events[i].event);
+            if (thread_events[i].time)
+                free(thread_events[i].time);
+            if (thread_events[i].select)
+                free(thread_events[i].select);
+            if (thread_events[i].node)
+                free(thread_events[i].node);
+            if (thread_events[i].dest)
+                free(thread_events[i].dest);
+            if (thread_events[i].n)
+                free(thread_events[i].n);
+            if (thread_events[i].proportion)
+                free(thread_events[i].proportion);
+        }
+
+        free(thread_events);
+    }
 
     return err;
 }
