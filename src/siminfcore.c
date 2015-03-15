@@ -157,7 +157,7 @@ static void siminf_epi_model(
 /**
  * Incorporate scheduled external events
  *
- * @param state Integer vector of length Nn with state in each node.
+ * @param state Integer vector of length Nn * Nc with state in each node.
  * @param event Integer vector of length len with external events.
  * @param time Integer vector of length len with the time for external
           event.
@@ -231,7 +231,7 @@ static void siminf_process_events(
  * @param Nc Number of compartments in each node.
  * @param Nt Total number of different transitions.
  * @param dsize Size of data vector sent to propensities.
- * @param state Integer vector of length Nn with state in each node.
+ * @param state Integer vector of length Nn x Nc with state in each node.
  * @param data Double vector (dsize X Nn) with data for each node.
  * @param sd Integer vector of length Nn. Each node can be assigned to
  *        a sub-domain.
