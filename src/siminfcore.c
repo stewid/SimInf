@@ -462,14 +462,14 @@ int siminf_core(
     const int *jcE, const int *prE, const external_events *events,
     int report_level, int Nthreads, unsigned long int seed,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
-    const ProgressFun progress, const char *strategy)
+    const ProgressFun progress)
 {
     int err = SIMINF_UNSUPPORTED_PARALLELIZATION;
     external_events *thread_events = NULL;
     siminf_thread_args *ta = NULL;
     int i;
 
-    if (strcmp(strategy, "single") != 0) {
+    if (Nthreads > 1) {
         thread_events = calloc(Nthreads, sizeof(external_events));
         if (!thread_events) {
             err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
@@ -497,7 +497,7 @@ int siminf_core(
         ta[i].data = &data[ta[i].Ni * dsize];
         ta[i].sd = &sd[ta[i].Ni];
 
-        if (strcmp(strategy, "single") == 0) {
+        if (Nthreads == 1) {
             ta[i].events = events;
         }
 
@@ -571,7 +571,7 @@ int siminf_core(
         }
     }
 
-    if (strcmp(strategy, "single") == 0) {
+    if (Nthreads == 1) {
         err = siminf_core_single(
             ta, irG, jcG, irN, jcN, prN, tspan, tlen, U, Nc, Nt, Nobs,
             dsize, irE, jcE, prE, report_level, t_fun, pts_fun, progress);

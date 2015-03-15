@@ -53,6 +53,6 @@ int siminf_core(
     const external_events *events,
     int report_level, int Nthreads, unsigned long int seed,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
-    const ProgressFun progress, const char *strategy);
+    const ProgressFun progress);
 
 #endif

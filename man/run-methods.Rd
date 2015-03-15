@@ -7,14 +7,11 @@
 \alias{run,SISe3-method}
 \title{Run siminf stochastic simulation algorithms}
 \usage{
-run(model, verbose = 0, seed = NULL, threads = 1, strategy = c("single",
-  "omp", "sg"))
+run(model, verbose = 0, seed = NULL, threads = 1)
 
-\S4method{run}{SISe3}(model, verbose = 0, seed = NULL, threads = 1,
-  strategy = c("single", "omp", "sg"))
+\S4method{run}{SISe3}(model, verbose = 0, seed = NULL, threads = 1)
 
-\S4method{run}{SISe}(model, verbose = 0, seed = NULL, threads = 1,
-  strategy = c("single", "omp", "sg"))
+\S4method{run}{SISe}(model, verbose = 0, seed = NULL, threads = 1)
 }
 \arguments{
 \item{model}{The siminf model to run.}
@@ -26,8 +23,6 @@ events if 2. Default is 0.}
 \item{seed}{Random number seed.}
 
 \item{threads}{Number of threads. Default is 1.}
-
-\item{strategy}{The parallelization strategy. Default is 'single'.}
 }
 \value{
 \code{siminf_model} with result from simulation.

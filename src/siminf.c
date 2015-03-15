@@ -234,7 +234,6 @@ get_sparse_matrix_int(int **ir, int **jc, int **pr, SEXP m)
  *
  * @param result The siminf_model
  * @param threads Number of threads
- * @param strategy The parallelization strategy
  * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @param t_fun Vector of function pointers to transition functions.
@@ -244,7 +243,6 @@ get_sparse_matrix_int(int **ir, int **jc, int **pr, SEXP m)
 int run_internal(
     SEXP result,
     SEXP threads,
-    SEXP strategy,
     SEXP verbose,
     SEXP seed,
     const PropensityFun *t_fun,
@@ -260,11 +258,6 @@ int run_internal(
     double *data = NULL;
     int Nn, Nc, tlen, dsize, Nt;
     unsigned long int s;
-
-    /* Check strategy argument */
-    if (R_NilValue == strategy || !isString(strategy) ||
-        1 != length(strategy) || NA_STRING == STRING_ELT(strategy, 0))
-        Rf_error("Invalid 'strategy' argument");
 
     /* number of threads */
     n_threads = get_threads(threads);
@@ -338,7 +331,7 @@ int run_internal(
         Nn, Nc, Nt, Nobs, dsize,
         irE, jcE, prE, &events,
         report_level, n_threads, s, t_fun, pts_fun,
-        &progress, CHAR(STRING_ELT(strategy, 0)));
+        &progress);
 
 cleanup:
     if (data)
@@ -368,12 +361,11 @@ cleanup:
  *
  * @param model The SISe model
  * @param threads Number of threads
- * @param strategy The parallelization strategy
  * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @return S4 class SISe with the simulated trajectory in U
  */
-SEXP SISe_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
+SEXP SISe_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 {
     int err = 0;
     SEXP result, class_name;
@@ -388,7 +380,7 @@ SEXP SISe_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
 
     result = PROTECT(duplicate(model));
 
-    err = run_internal(result, threads, strategy, verbose, seed, t_fun,
+    err = run_internal(result, threads, verbose, seed, t_fun,
                        &SISe_post_time_step);
 
     UNPROTECT(1);
@@ -404,12 +396,11 @@ SEXP SISe_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
  *
  * @param model The SISe3 model
  * @param threads Number of threads
- * @param strategy The parallelization strategy
  * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @return S4 class SISe3 with the simulated trajectory in U
  */
-SEXP SISe3_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
+SEXP SISe3_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 {
     int err = 0;
     SEXP result, class_name;
@@ -426,7 +417,7 @@ SEXP SISe3_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
 
     result = PROTECT(duplicate(model));
 
-    err = run_internal(result, threads, strategy, verbose, seed, t_fun,
+    err = run_internal(result, threads, verbose, seed, t_fun,
                        &SISe3_post_time_step);
 
     UNPROTECT(1);
@@ -439,8 +430,8 @@ SEXP SISe3_run(SEXP model, SEXP threads, SEXP strategy, SEXP verbose, SEXP seed)
 
 static const R_CallMethodDef callMethods[] =
 {
-    {"SISe_run", (DL_FUNC)&SISe_run, 5},
-    {"SISe3_run", (DL_FUNC)&SISe3_run, 5},
+    {"SISe_run", (DL_FUNC)&SISe_run, 4},
+    {"SISe3_run", (DL_FUNC)&SISe3_run, 4},
     {NULL, NULL, 0}
 };
 
