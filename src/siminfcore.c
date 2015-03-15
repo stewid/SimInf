@@ -294,7 +294,7 @@ static void siminf_post_timestep(
 }
 
 /**
- * Core siminf solver
+ * Single threaded siminf solver
  *
  * G is a sparse matrix dependency graph (Nt X Nt) in
  * compressed column format (CCS). A non-zeros entry in element i of
@@ -306,9 +306,8 @@ static void siminf_post_timestep(
  * transition, and execution of transition j amounts to adding the
  * j'th column to the state vector.
  *
- * @param u0 Initial state vector u0. Integer (Nc X Nn). Gives the
- *        initial number of individuals in each compartment in every
- *        node.
+ * @param ta Structure (siminf_thread_args) to hold thread specific
+ *        data/arguments for simulation.
  * @param irG Integer vector where irG[k] is the row of G[k].
  * @param jcG jcG[k], index to data of first non-zero element in row k.
  * @param irN Integer vector where irN[k] is the row of N[k].
@@ -319,11 +318,6 @@ static void siminf_post_timestep(
  * @param tlen Number of sampling points in time.
  * @param U The output is a matrix U ((Nn * Nc) X length(tspan)).
  *        U(:,j) contains the state of the system at tspan(j).
- * @param data Double matrix (dsize X Nn). Generalized data
- *        matrix, data(:,j) gives a data vector for node #j.
- * @param sd Integer vector of length Nn. Each node can be assigned to
- *        a sub-domain.
- * @param Nn Number of nodes.
  * @param Nc Number of compartments in each node.
  * @param Nt Total number of different transitions.
  * @param Nobs Number of observable states.
@@ -331,18 +325,14 @@ static void siminf_post_timestep(
  * @param irE Integer vector where irE[k] is the row of E[k].
  * @param jcE jcE[k], index to data of first non-zero element in row k.
  * @param prE Value of item (i, j) in E.
- * @param events Structure that represents external events.
  * @param report_level The desired degree of feedback during
  *        simulations. 0, 1, and 2 are currently supported options.
- * @param Nthread Number of threads to use during simulation. Always 1
- *        for this solver.
- * @param rng The random number generator.
  * @param t_fun Vector of function pointers to transition functions.
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  * @param progress Function pointer to report progress.
+ * @return 0 if Ok, else error code.
  */
-
 static int siminf_core_single(
     siminf_thread_args *ta, const int *irG, const int *jcG, const int *irN,
     const int *jcN, const int *prN, const double *tspan, const int tlen,
@@ -416,6 +406,54 @@ static int siminf_core_single(
     return ta->errcode;
 }
 
+/**
+ * Initialize an run siminf solver
+ *
+ * G is a sparse matrix dependency graph (Nt X Nt) in
+ * compressed column format (CCS). A non-zeros entry in element i of
+ * column j indicates that propensity i needs to be recalculated if
+ * the event j occurs.
+ *
+ * N is a stoichiometry sparse matrix (Nc X Nt) in
+ * compressed column format (CCS). Each column corresponds to a
+ * transition, and execution of transition j amounts to adding the
+ * j'th column to the state vector.
+ *
+ * @param u0 Initial state vector u0. Integer (Nc X Nn). Gives the
+ *        initial number of individuals in each compartment in every
+ *        node.
+ * @param irG Integer vector where irG[k] is the row of G[k].
+ * @param jcG jcG[k], index to data of first non-zero element in row k.
+ * @param irN Integer vector where irN[k] is the row of N[k].
+ * @param jcN jcN[k], index to data of first non-zero element in row k.
+ * @param prN Value of item (i, j) in N.
+ * @param tspan Double vector. Output times. tspan[0] is the start
+ *        time and tspan[length(tspan)-1] is the stop time.
+ * @param tlen Number of sampling points in time.
+ * @param U The output is a matrix U ((Nn * Nc) X length(tspan)).
+ *        U(:,j) contains the state of the system at tspan(j).
+ * @param data Double matrix (dsize X Nn). Generalized data
+ *        matrix, data(:,j) gives a data vector for node #j.
+ * @param sd Integer vector of length Nn. Each node can be assigned to
+ *        a sub-domain.
+ * @param Nn Number of nodes.
+ * @param Nc Number of compartments in each node.
+ * @param Nt Total number of different transitions.
+ * @param Nobs Number of observable states.
+ * @param dsize Size of data vector sent to propensities.
+ * @param irE Integer vector where irE[k] is the row of E[k].
+ * @param jcE jcE[k], index to data of first non-zero element in row k.
+ * @param prE Value of item (i, j) in E.
+ * @param events Structure that represents external events.
+ * @param report_level The desired degree of feedback during
+ *        simulations. 0, 1, and 2 are currently supported options.
+ * @param Nthread Number of threads to use during simulation.
+ * @param t_fun Vector of function pointers to transition functions.
+ * @param pts_fun Function pointer to callback after each time step
+ *        e.g. update infectious pressure.
+ * @param progress Function pointer to report progress.
+ * @return 0 if Ok, else error code.
+ */
 int siminf_core(
     const int *u0, const int *irG, const int *jcG, const int *irN,
     const int *jcN, const int *prN, const double *tspan, const int tlen,
