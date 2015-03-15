@@ -190,7 +190,11 @@ int SISe3_post_time_step(
         data[PHI] *= (1.0 - data[BETA_Q4]);
         break;
     }
-    data[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
+
+    if ((I_n + S_n) > 0.0)
+        data[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
+    else
+        data[PHI] += data[EPSILON];
 
     /* 1 if needs update */
     return tmp != data[PHI];
