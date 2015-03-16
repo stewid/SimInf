@@ -319,7 +319,7 @@ int run_internal(
     SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
 
     /* Core simulation routine. */
-    err = siminf_core(
+    err = siminf_run(
         INTEGER(GET_SLOT(result, Rf_install("u0"))),
         irG, jcG,
         irN, jcN, prN,

@@ -382,7 +382,7 @@ static void siminf_post_timestep(
  * @param progress Function pointer to report progress.
  * @return 0 if Ok, else error code.
  */
-static int siminf_core_single(
+static int siminf_single(
     siminf_thread_args *ta, const int *irG, const int *jcG, const int *irN,
     const int *jcN, const int *prN, const double *tspan, const int tlen,
     int *U, const int Nc, const int Nt, const int Nobs,
@@ -505,7 +505,7 @@ static int siminf_core_single(
  * @param progress Function pointer to report progress.
  * @return 0 if Ok, else error code.
  */
-int siminf_core(
+int siminf_run(
     const int *u0, const int *irG, const int *jcG, const int *irN,
     const int *jcN, const int *prN, const double *tspan, const int tlen,
     int *U, double *data, const int *sd, const int Nn, const int Nc,
@@ -606,7 +606,7 @@ int siminf_core(
     }
 
     if (Nthreads == 1) {
-        err = siminf_core_single(
+        err = siminf_single(
             ta, irG, jcG, irN, jcN, prN, tspan, tlen, U, Nc, Nt, Nobs,
             dsize, irE, jcE, prE, report_level, t_fun, pts_fun, progress);
     }

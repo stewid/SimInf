@@ -44,7 +44,7 @@ typedef int (*PostTimeStepFun)(const int *x, int src, double t, double *data,
 typedef void (*ProgressFun)(double t, const double t_begin, const double t_end,
                             long int total_transitions, int report_level);
 
-int siminf_core(
+int siminf_run(
     const int *u0, const int *irG, const int *jcG, const int *irN,
     const int *jcN, const int *prN, const double *tspan, const int tlen,
     int *U, double *data, const int *sd, const int Nn,
