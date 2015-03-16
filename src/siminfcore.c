@@ -56,6 +56,55 @@ typedef struct siminf_thread_args
     gsl_rng *rng;       /**< The random number generator. */
 } siminf_thread_args;
 
+
+/**
+ * Initialize transition rate and time to event.
+ *
+ * Calculate the transition rate for every transition and every
+ * node. Store the sum of the transition rates in each node in
+ * sum_t_rate. Calculate time to next event (transition) in each
+ * node.
+ *
+ * @param Nn Number of nodes.
+ * @param Nc Number of compartments in each node.
+ * @param Nt Total number of different transitions.
+ * @param dsize Size of data vector sent to propensities.
+ * @param state Integer vector of length Nn with state in each node.
+ * @param data Double vector (dsize X Nn) with data for each node.
+ * @param sd Integer vector of length Nn. Each node can be assigned to
+ *        a sub-domain.
+ * @param t0 The start time.
+ * @param sum_t_rate Double vector of length Nn with the sum of
+ *        propensities in every node.
+ * @param t_rate Transition rate matrix (Nt X Nn) with all propensities
+ *        for state transitions.
+ * @param t_time Time for next event (transition) in each node.
+ * @param t_fun Vector of function pointers to transition functions.
+ * @param rng The random number generator.
+ */
+static void siminf_init(
+    const int Nn, const int Nc, const int Nt, const int dsize,
+    const int *state, const double *data, const int *sd,
+    const double t0, double *sum_t_rate, double *t_rate,
+    double *t_time, const PropensityFun *t_fun, const gsl_rng *rng)
+{
+    int i, node;
+
+    for (node = 0; node < Nn; node++) {
+        sum_t_rate[node] = 0.0;
+        for (i = 0; i < Nt; i++) {
+            t_rate[node * Nt + i] =
+                (*t_fun[i])(
+                    &state[node * Nc], t0, &data[node * dsize], sd[node]);
+
+            sum_t_rate[node] += t_rate[node * Nt + i];
+        }
+
+        t_time[node] = -log(1.0 - gsl_rng_uniform(rng)) /
+            sum_t_rate[node] + t0;
+    }
+}
+
 /**
  * Epidemiological model
  *
