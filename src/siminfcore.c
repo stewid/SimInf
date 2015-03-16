@@ -344,8 +344,6 @@ static int siminf_core_single(
     double tt = tspan[0];
     long int total_transitions = 0;
     int it = 0;
-
-    /* Variables to handle external events */
     int ext_i = 0;
     double next_day = floor(tspan[0]) + 1.0;
 
@@ -359,7 +357,7 @@ static int siminf_core_single(
             next_day, t_fun, ta->rng, &ta->errcode);
 
         if (ta->errcode)
-            break;
+            return ta->errcode;
 
         /* (2) Incorporate all scheduled external events. */
         siminf_process_events(
@@ -370,7 +368,7 @@ static int siminf_core_single(
             tt, ta->rng, &ta->errcode);
 
         if (ta->errcode)
-            break;
+            return ta->errcode;
 
         /* (3) Incorporate model specific actions after each timestep
          * e.g. update the infectious pressure variable. */
@@ -397,13 +395,13 @@ static int siminf_core_single(
 
             /* If the simulation has reached the final time, exit. */
             if (it >= tlen)
-                break;
+                return 0;
         }
 
         next_day += 1.0;
     }
 
-    return ta->errcode;
+    return 0;
 }
 
 /**
