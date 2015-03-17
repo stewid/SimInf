@@ -26,30 +26,29 @@
 /**
  * Structure that represents external events.
  *
- * - event Integer vector of length len with external events.
- * - time Integer vector of length len with the time for external event.
- * - select Integer vector of length len. Column j in the event matrix that
-     determines the hidden states to sample from.
- * - node Integer vector of length len. The source node of the event i.
- * - dest Integer vector of length len. The dest node of the event i.
- * - n Integer vector of length len. The number of individuals in the
-     external event. n[i] >= 0.
- * - proportion Integer vector of length len. If n[i] equals zero, then the
- *   number of individuals to sample is calculated by summing the number of
- *   individuals in the hidden states determined by select[i] and multiplying
- *   with the proportion. 0 <= p[i] <= 1.
- * - len Number of scheduled external events.
  */
 typedef struct external_events
 {
-    int *event;
-    int *time;
-    int *select;
-    int *node;
-    int *dest;
-    int *n;
-    double *proportion;
-    int len;
+    int *event;         /**< Integer vector of length len with type of external
+                         *   events. */
+    int *time;          /**< Integer vector of length len with the time for
+                         *   external event. */
+    int *select;        /**< Integer vector of length len. Column j in the
+                         *   event matrix that determines the hidden states
+                         *   to sample from. */
+    int *node;          /**< Integer vector of length len. The source node of
+                         *   the event i. */
+    int *dest;          /**< Integer vector of length len. The dest node of
+                         *   the event i. */
+    int *n;             /**< Integer vector of length len. The number of
+                         *   individuals in the external event. n[i] >= 0. */
+    double *proportion; /**< Integer vector of length len. If n[i] equals zero,
+                         *   then the number of individuals to sample is
+                         *   calculated by summing the number of individuals
+                         *   in the hidden states determined by select[i] and
+                         *    multiplying with the proportion. 0 <= p[i] <= 1. */
+    int len;            /**< Number of scheduled external events. */
+    int index;          /**< Index to the next event to process. */
 } external_events;
 
 #ifdef SIMINF_OMP
