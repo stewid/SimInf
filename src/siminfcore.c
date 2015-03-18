@@ -33,7 +33,6 @@
  */
 typedef struct siminf_thread_args
 {
-    int Ni;             /**< Index to first node in thread. */
     int Nn;             /**< Number of nodes in thread. */
     double *data;       /**< Matrix (dsize X Nn). data(:,j) gives a data
                          *   vector for node #j. */
@@ -49,8 +48,6 @@ typedef struct siminf_thread_args
                          *   external events processing. Passed as function
                          *   argument to handle parallellization. */
     int errcode;        /**< The error state of the thread. 0 if ok. */
-    const external_events *events; /**< Structure that represents external
-                                    * events. */
     int *update_node;   /**< Integer vector of length Nn used to indicate
                          *   nodes for update. */
     gsl_rng *rng;       /**< The random number generator. */
