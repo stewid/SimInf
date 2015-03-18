@@ -51,14 +51,13 @@ typedef struct external_events
     int index;          /**< Index to the next event to process. */
 } external_events;
 
-#ifdef SIMINF_OMP
 /* Definition of function to split external events by number of
  * threads. */
 int split_external_events(
-    external_events *threads,
+    external_events *E1_events,
+    external_events *E2_events,
     const external_events *events,
     int Nthread);
-#endif
 
 /* Definition of function to handle external events. */
 int handle_external_event(
