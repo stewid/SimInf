@@ -41,8 +41,7 @@ typedef int (*PostTimeStepFun)(const int *x, int src, double t, double *data,
                                int sd);
 
 /* Definition of the callback function for reporting progress. */
-typedef void (*ProgressFun)(double t, const double t_begin, const double t_end,
-                            long int total_transitions, int report_level);
+typedef void (*ProgressFun)(double t, const double t_begin, const double t_end);
 
 int siminf_run(
     const int *u0, const int *irG, const int *jcG, const int *irN,

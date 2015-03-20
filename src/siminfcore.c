@@ -357,8 +357,7 @@ static void siminf_update(
  * @param irE Integer vector where irE[k] is the row of E[k].
  * @param jcE jcE[k], index to data of first non-zero element in row k.
  * @param prE Value of item (i, j) in E.
- * @param report_level The desired degree of feedback during
- *        simulations. 0, 1, and 2 are currently supported options.
+ * @param verbose Show progress during simulations.
  * @param t_fun Vector of function pointers to transition functions.
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
@@ -375,13 +374,12 @@ static int siminf_single(
     const int *prN, const double *tspan, const int tlen, int *U,
     const int *sd, const int Nn, const int Nc, const int Nt,
     const int Nobs, const int dsize, int *state, double *data,
-    const int *irE, const int *jcE, const int *prE, int report_level,
+    const int *irE, const int *jcE, const int *prE, int verbose,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
     const ProgressFun progress, unsigned long int seed, int *update_node,
     external_events *E1_events, external_events *E2_events)
 {
     double tt = tspan[0];
-    long int total_transitions = 0;
     int node, it = 0;
     int errcode = 0;
     double next_day = floor(tspan[0]) + 1.0;
@@ -471,10 +469,8 @@ static int siminf_single(
          * tspan. Report solution up to, but not including tt. */
         if (tt > tspan[it]) {
             for (; it < tlen && tt > tspan[it]; it++) {
-                if (report_level)
-                    progress(tspan[it], tspan[0], tspan[tlen - 1],
-                             total_transitions, report_level);
-
+                if (verbose)
+                    progress(tspan[it], tspan[0], tspan[tlen - 1]);
                 memcpy(&U[Nn * Nc * it], state, Nn * Nc * sizeof(int));
             }
 
@@ -539,8 +535,7 @@ cleanup:
  * @param jcE jcE[k], index to data of first non-zero element in row k.
  * @param prE Value of item (i, j) in E.
  * @param events Structure that represents external events.
- * @param report_level The desired degree of feedback during
- *        simulations. 0, 1, and 2 are currently supported options.
+ * @param verbose Show progress during simulations.
  * @param Nthread Number of threads to use during simulation.
  * @param seed Random number seed.
  * @param t_fun Vector of function pointers to transition functions.
@@ -555,7 +550,7 @@ int siminf_run(
     int *U, double *data, const int *sd, const int Nn, const int Nc,
     const int Nt, const int Nobs, const int dsize, const int *irE,
     const int *jcE, const int *prE, const external_events *events,
-    int report_level, int Nthread, unsigned long int seed,
+    const int verbose, int Nthread, unsigned long int seed,
     const PropensityFun *t_fun, const PostTimeStepFun pts_fun,
     const ProgressFun progress)
 {
@@ -598,7 +593,7 @@ int siminf_run(
     if (Nthread == 1) {
         err = siminf_single(
             irG, jcG, irN, jcN, prN, tspan, tlen, U, sd, Nn, Nc, Nt,
-            Nobs, dsize, state, data, irE, jcE, prE, report_level,
+            Nobs, dsize, state, data, irE, jcE, prE, verbose,
             t_fun, pts_fun, progress, seed, update_node,
             E1_events, E2_events);
     }

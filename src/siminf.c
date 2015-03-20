@@ -58,28 +58,10 @@ void siminf_error(int err)
  * @param t Current time of simulation.
  * @param t_begin Start time of simulation.
  * @param t_end End time of simulation.
- * @param total_transitions Total number of transition events.
- * @param report_level Level of siminf report during simulation.
- *        Silent if 0, progress if 1 and verbose if 2.
  */
-void progress(
-    double t,
-    const double t_begin,
-    const double t_end,
-    long int total_transitions,
-    int report_level)
+void progress(double t, const double t_begin, const double t_end)
 {
-    switch (report_level) {
-    case 1:
-        Rprintf("%i%% done.\n",(int)((t - t_begin) / (t_end - t_begin) * 100.0));
-        break;
-    case 2:
-        Rprintf("%i%% done.\n",(int)((t - t_begin) / (t_end - t_begin) * 100.0));
-        Rprintf("\t#Transition events = %li\n", total_transitions);
-        break;
-    default:
-        break;
-    }
+    Rprintf("%i%% done.\n",(int)((t - t_begin) / (t_end - t_begin) * 100.0));
 }
 
 /**
