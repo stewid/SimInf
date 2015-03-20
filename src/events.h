@@ -49,6 +49,9 @@ typedef struct external_events
                          *    multiplying with the proportion. 0 <= p[i] <= 1. */
     int len;            /**< Number of scheduled external events. */
     int index;          /**< Index to the next event to process. */
+    int *individuals;   /**< Vector to store the result of the sampling during
+                         *   external events processing. Passed as function
+                         *   argument to handle parallellization. */
 } external_events;
 
 /* Definition of function to split external events by number of
@@ -57,7 +60,8 @@ int split_external_events(
     external_events *E1_events,
     external_events *E2_events,
     const external_events *events,
-    int Nthread);
+    int Nthread,
+    int Nc);
 
 /* Definition of function to handle external events. */
 int handle_external_event(

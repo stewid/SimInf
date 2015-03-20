@@ -539,13 +539,15 @@ static void assign_thread_id(
  * @param E1_events external_events structure for E2 events.
  * @param thread_n Vector with number of events in each thread.
  * @param Nthread Number of threads to use during simulation.
+ * @param Nc Number of compartments in each node.
  * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
 static int allocate_thread_mem(
     external_events *E1_events,
     external_events *E2_events,
     int *thread_n,
-    int Nthread)
+    int Nthread,
+    int Nc)
 {
     int i;
 
@@ -575,6 +577,9 @@ static int allocate_thread_mem(
             E1_events[j].proportion = malloc(E1_events[j].len * sizeof(double));
             if (!E1_events[j].proportion)
                 return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            E1_events[j].individuals = malloc(Nc * sizeof(int));
+            if (!E1_events[j].individuals)
+                return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         }
     }
 
@@ -602,6 +607,9 @@ static int allocate_thread_mem(
         E2_events[0].proportion = malloc(E2_events[0].len * sizeof(double));
         if (!E2_events[0].proportion)
             return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        E2_events[0].individuals = malloc(Nc * sizeof(int));
+        if (!E2_events[0].individuals)
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
     }
 
     return 0;
@@ -626,13 +634,15 @@ static int allocate_thread_mem(
  *        splitting the external events.
  * @param events Data structure of external_events to split.
  * @param Nthread Number of threads to use during simulation.
+ * @param Nc Number of compartments in each node.
  * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
 int split_external_events(
     external_events *E1_events,
     external_events *E2_events,
     const external_events *events,
-    int Nthread)
+    int Nthread,
+    int Nc)
 {
     int err = 0;
 
@@ -665,7 +675,7 @@ int split_external_events(
         assign_thread_id(events->node, events->event, thread_id, thread_n,
                          events->len, Nthread);
 
-        err = allocate_thread_mem(E1_events, E2_events, thread_n, Nthread);
+        err = allocate_thread_mem(E1_events, E2_events, thread_n, Nthread, Nc);
         if (err)
             goto cleanup;
 

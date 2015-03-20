@@ -44,9 +44,6 @@ typedef struct siminf_thread_args
     double *t_time;     /**< Time for next event (transition) in each node. */
     int *state;         /**< Integer vector of length Nn * Nc with state in
                          *   each node. */
-    int *individuals;   /**< Vector to store the result of the sampling during
-                         *   external events processing. Passed as function
-                         *   argument to handle parallellization. */
     int errcode;        /**< The error state of the thread. 0 if ok. */
     int *update_node;   /**< Integer vector of length Nn used to indicate
                          *   nodes for update. */
@@ -390,7 +387,6 @@ static int siminf_single(
     double next_day = floor(tspan[0]) + 1.0;
     double *t_rate = NULL, *sum_t_rate = NULL, *t_time = NULL;
     gsl_rng *rng = NULL;
-    int *individuals = NULL;
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
@@ -398,12 +394,6 @@ static int siminf_single(
         goto cleanup;
     }
     gsl_rng_set(rng, seed);
-
-    individuals = (int *) malloc(Nc * sizeof(int));
-    if (!individuals) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
 
     /* Create transition rate matrix (Nt X Nn) and total rate
      * vector. In t_rate we store all propensities for state
@@ -446,7 +436,7 @@ static int siminf_single(
             Nc, Nobs, state, E1_events->event, E1_events->time,
             E1_events->select, E1_events->node, E1_events->dest,
             E1_events->n, E1_events->proportion, E1_events->len,
-            &E1_events->index, irE, jcE, prE, individuals,
+            &E1_events->index, irE, jcE, prE, E1_events->individuals,
             update_node, tt, rng, &errcode);
 
         if (errcode)
@@ -457,7 +447,7 @@ static int siminf_single(
             Nc, Nobs, state, E2_events->event, E2_events->time,
             E2_events->select, E2_events->node, E2_events->dest,
             E2_events->n, E2_events->proportion, E2_events->len,
-            &E2_events->index, irE, jcE, prE, individuals,
+            &E2_events->index, irE, jcE, prE, E2_events->individuals,
             update_node, tt, rng, &errcode);
 
         if (errcode)
@@ -498,8 +488,6 @@ static int siminf_single(
 
 
 cleanup:
-    if (individuals)
-        free(individuals);
     if (t_rate)
         free(t_rate);
     if (sum_t_rate)
@@ -603,7 +591,7 @@ int siminf_run(
         goto cleanup;
     }
 
-    err = split_external_events(E1_events, E2_events, events, Nthread);
+    err = split_external_events(E1_events, E2_events, events, Nthread, Nc);
     if (err)
         goto cleanup;
 
@@ -639,6 +627,8 @@ cleanup:
                 free(E1_events[i].n);
             if (E1_events[i].proportion)
                 free(E1_events[i].proportion);
+            if (E1_events[i].individuals)
+                free(E1_events[i].individuals);
         }
         free(E1_events);
     }
@@ -658,6 +648,8 @@ cleanup:
             free(E2_events->n);
         if (E2_events->proportion)
             free(E2_events->proportion);
+        if (E2_events->individuals)
+            free(E2_events->individuals);
         free(E2_events);
     }
 
