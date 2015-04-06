@@ -30,7 +30,8 @@ pdf: roxygen
 # Build and check package
 check: clean
 	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
-	cd .. && R CMD check --no-manual --no-vignettes --no-build-vignettes $(PKG_TAR)
+	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran \
+	--no-manual --no-vignettes --no-build-vignettes $(PKG_TAR)
 
 # Build and check package with gctorture
 check_gctorture: clean
@@ -40,7 +41,13 @@ check_gctorture: clean
 # Build and check package with valgrind
 check_valgrind: clean
 	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
-	cd .. && R CMD check --as-cran --no-manual --no-vignettes --no-build-vignettes --use-valgrind $(PKG_TAR)
+	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran \
+	--no-manual --no-vignettes --no-build-vignettes --use-valgrind $(PKG_TAR)
+
+# Run all tests with valgrind
+test_objects = $(wildcard tests/*.R)
+valgrind:
+	$(foreach var,$(test_objects),R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < $(var);)
 
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
