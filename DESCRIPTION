@@ -1,12 +1,12 @@
 Package: siminf
 Title: A Framework for Stochastic Disease Spread Simulations
-Version: 0.1
-Date: 2015-01-18
+Version: 0.2
+Date: 2015-04-06
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
     email = "stefan.widgren@sva.se"),
     person("Pavol", "Bauer", role = c("aut")),
     person("Stefan", "Engblom", role = c("aut")))
-Description: siminf, a general and flexible software framework for
+Description: A general and flexible software framework for
     stochastic disease spread simulations.
 License: GPL-3
 URL: https://github.com/stewid/siminf
