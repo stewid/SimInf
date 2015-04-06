@@ -5,7 +5,7 @@
 \title{Create a siminf model}
 \usage{
 siminf_model(G, N, tspan, events = NULL, sd = NULL, data = NULL,
-  U = NULL, Nn = NULL, u0 = NULL, init = NULL, E = NULL)
+  U = NULL, Nn = NULL, u0 = NULL, init = NULL, E = NULL, S = NULL)
 }
 \arguments{
 \item{G}{Sparse matrix (\eqn{Nt \times Nt}) of object class
@@ -41,6 +41,9 @@ initial number of individuals in each compartment in every node.}
 individuals in each compartment in every node.}
 
 \item{E}{Sparse matrix to handle external events, see
+\code{\linkS4class{external_events}}.}
+
+\item{S}{Sparse matrix to handle external events, see
 \code{\linkS4class{external_events}}.}
 }
 \value{

@@ -4,11 +4,15 @@
 \alias{external_events}
 \title{Create S4 class \code{external_events}}
 \usage{
-external_events(E = NULL, events = NULL)
+external_events(E = NULL, S = NULL, events = NULL)
 }
 \arguments{
-\item{E}{Sparse matrix (\eqn{Ncompartments \times (4 * Nselect)}) of
-object class \code{"\linkS4class{dgCMatrix}"}.}
+\item{E}{Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
+that selects the states to include for sampling in an event.}
+
+\item{S}{Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
+that determines how to shift the states in an
+\code{INTERNAL_TRANSFER_EVENT}.}
 
 \item{events}{A \code{data.frame} with events.}
 }
@@ -20,28 +24,37 @@ The argument events must be a \code{data.frame} with the following
 columns:
 \itemize{
   \item{event}{
-    The event type
+    The event type. The following four events exists;
+    \code{EXIT_EVENT = 0}, \code{ENTER_EVENT = 1},
+    \code{INTERNAL_TRANSFER_EVENT = 2}, and
+    \code{EXTERNAL_TRANSFER_EVENT = 3}.
   }
   \item{time}{
-    The time of the event
-  }
-  \item{select}{
-    The internal category of the event
+    The time of the event.
   }
   \item{node}{
-    The herd of the event
+    The node of the event
   }
   \item{dest}{
-    The destination herd of an animal movement
+    The destination node for a \code{EXTERNAL_TRANSFER_EVENT}.
   }
   \item{n}{
-    The number of individuals
+    The number of individuals in the event. n[i] >= 0.
   }
-  \item{prop}{
-    The proportion of individuals. If n[i] equals zero,
-    then the number of individuals to sample is calculated by summing
-    the number of individuals in the hidden states determined by
-    select[i] and multiplying with the proportion. 0 <= p[i] <= 1.
+  \item{proportion}{
+    If n[i] equals zero, then the number of individuals to sample
+    is calculated by summing the number of individuals in the
+    states determined by select[i] and multiplying with the
+    proportion. 0 <= proportion[i] <= 1.
+  }
+  \item{select}{
+    Column \code{j} in the event matrix \code{E} that determines
+    the states to sample from.
+  }
+  \item{shift}{
+    Column j in the shift matrix \code{S} that determines how to
+    shift the sampled states in an \code{INTERNAL_TRANSFER_EVENT}.
+    Should be \code{-1} for the other event types.
   }
 }
 }
