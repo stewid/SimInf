@@ -159,6 +159,8 @@ setClass("siminf_model",
 ##' individuals in each compartment in every node.
 ##' @param E Sparse matrix to handle external events, see
 ##' \code{\linkS4class{external_events}}.
+##' @param S Sparse matrix to handle external events, see
+##' \code{\linkS4class{external_events}}.
 ##' @return \linkS4class{siminf_model}
 ##' @export
 siminf_model <- function(G,
@@ -171,7 +173,8 @@ siminf_model <- function(G,
                          Nn     = NULL,
                          u0     = NULL,
                          init   = NULL,
-                         E      = NULL)
+                         E      = NULL,
+                         S      = NULL)
 {
     ## Check initial state
     if (all(is.null(u0), is.null(init)))
@@ -261,7 +264,7 @@ siminf_model <- function(G,
 
     ## Check events
     if (any(is.null(events), is.data.frame(events)))
-        events <- external_events(E=E, events=events)
+        events <- external_events(E = E, S = S, events = events)
 
     return(new("siminf_model",
                G            = G,

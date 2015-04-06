@@ -105,12 +105,15 @@ SISe <- function(init,
 
     init <- init[,c("id", "S", "I")]
 
-    E <- Matrix(c(1, 1, 0, 1,
-                  1, 0, 0, 1),
+    E <- Matrix(c(1, 1,
+                  0, 1),
                 nrow   = 2,
-                ncol   = 4,
+                ncol   = 2,
                 byrow  = TRUE,
                 sparse = TRUE)
+    E <- as(E, "dgCMatrix")
+
+    S <- new("dgCMatrix")
 
     G <- Matrix(c(1, 1,
                   1, 1),
@@ -216,6 +219,7 @@ SISe <- function(init,
                           N      = N,
                           init   = init,
                           E      = E,
+                          S      = S,
                           tspan  = tspan,
                           events = events,
                           data   = inf_data)
