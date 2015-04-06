@@ -25,10 +25,9 @@
 
 #include <time.h>
 
-#include "siminf.h"
+#include "siminfcore.h"
 #include "SISe.h"
 #include "SISe3.h"
-#include "events.h"
 
 /**
  * Report error
@@ -50,51 +49,6 @@ void siminf_error(int err)
     default:
         Rf_error("Unknown error code.");
     }
-}
-
-/**
- * Report progress for siminf solver
- *
- * @param t Current time of simulation.
- * @param t_begin Start time of simulation.
- * @param t_end End time of simulation.
- */
-void progress(double t, const double t_begin, const double t_end)
-{
-    Rprintf("%i%% done.\n",(int)((t - t_begin) / (t_end - t_begin) * 100.0));
-}
-
-/**
- * Get report level
- *
- * @param verbose Level of feedback from simulation
- * @return integer with report level
- */
-static int get_report_level(SEXP verbose)
-{
-    int n;
-
-    if (verbose == R_NilValue)
-        Rf_error("verbose must be specified");
-    if (LENGTH(verbose) != 1)
-        Rf_error("Invalid length of vebose vector");
-
-    if (isInteger(verbose)) {
-        if (INTEGER(verbose)[0] == NA_INTEGER)
-            Rf_error("Invalid value (NA) for verbose");
-        n = INTEGER(verbose)[0];
-    } else if (isReal(verbose)) {
-        if (REAL(verbose)[0] == NA_REAL)
-            Rf_error("Invalid value (NA) for verbose");
-        n = (int)(REAL(verbose)[0]);
-    } else {
-        Rf_error("Invalid type for verbose");
-    }
-
-    if (n < 0 || n > 2)
-        Rf_error("verbose must be a 0 <= value <= 0");
-
-    return n;
 }
 
 /**
@@ -157,8 +111,8 @@ static int get_threads(SEXP threads)
         Rf_error("Invalid type for threads");
     }
 
-    if (n < 1)
-        Rf_error("Number of threads must be a value > 0");
+    if (n < 0)
+        Rf_error("Number of threads must be a value >= 0");
 
     return n;
 }
@@ -216,7 +170,6 @@ get_sparse_matrix_int(int **ir, int **jc, int **pr, SEXP m)
  *
  * @param result The siminf_model
  * @param threads Number of threads
- * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @param t_fun Vector of function pointers to transition functions.
  * @param pts_fun Function pointer to callback after each time step
@@ -225,27 +178,21 @@ get_sparse_matrix_int(int **ir, int **jc, int **pr, SEXP m)
 int run_internal(
     SEXP result,
     SEXP threads,
-    SEXP verbose,
     SEXP seed,
-    const PropensityFun *t_fun,
-    const PostTimeStepFun pts_fun)
+    PropensityFun *t_fun,
+    PostTimeStepFun pts_fun)
 {
-    int err = 0, Nobs = 0, report_level, n_threads;
-    SEXP ext_events, E, N;
-    external_events events;
-    int *irN = NULL, *jcN = NULL;
+    int err = 0, n_threads;
+    SEXP ext_events, E, N, S;
+    int *irN = NULL, *jcN = NULL, *prN = NULL;
     int *irG = NULL, *jcG = NULL;
     int *irE = NULL, *jcE = NULL;
-    int *prE = NULL, *prN = NULL;
-    double *data = NULL;
+    int *jcS = NULL, *prS = NULL;
     int Nn, Nc, tlen, dsize, Nt;
     unsigned long int s;
 
     /* number of threads */
     n_threads = get_threads(threads);
-
-    /* report level */
-    report_level = get_report_level(verbose);
 
     /* seed */
     s = get_seed(seed);
@@ -264,38 +211,20 @@ int run_internal(
     /* External events */
     ext_events = GET_SLOT(result, Rf_install("events"));
     E = GET_SLOT(ext_events, Rf_install("E"));
-    err = get_sparse_matrix_int(&irE, &jcE, &prE, E);
+    err = get_sparse_matrix_int(&irE, &jcE, NULL, E);
     if (err)
         goto cleanup;
-    events.event      = INTEGER(GET_SLOT(ext_events, Rf_install("event")));
-    events.time       = INTEGER(GET_SLOT(ext_events, Rf_install("time")));
-    events.select     = INTEGER(GET_SLOT(ext_events, Rf_install("select")));
-    events.node       = INTEGER(GET_SLOT(ext_events, Rf_install("node")));
-    events.dest       = INTEGER(GET_SLOT(ext_events, Rf_install("dest")));
-    events.n          = INTEGER(GET_SLOT(ext_events, Rf_install("n")));
-    events.proportion = REAL(GET_SLOT(ext_events,    Rf_install("proportion")));
-    events.len        = INTEGER(GET_SLOT(ext_events, Rf_install("len")))[0];
-
-    /* data */
-    dsize = LENGTH(GET_SLOT(result, Rf_install("data")));
-    data = (double*)malloc(dsize * sizeof(double));
-    if (!data) {
-         err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-         goto cleanup;
-    }
-    memcpy(data, REAL(GET_SLOT(result, Rf_install("data"))), dsize * sizeof(double));
-    dsize = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("data")), R_DimSymbol))[0];
+    S = GET_SLOT(ext_events, Rf_install("S"));
+    err = get_sparse_matrix_int(NULL, &jcS, &prS, S);
+    if (err)
+        goto cleanup;
 
     /* Constants */
     Nn   = INTEGER(GET_SLOT(result, Rf_install("Nn")))[0];
     Nc   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[0];
     Nt   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[1];
     tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
-
-    /* Calculate number of observable states from the event
-     * matrix. Divide the number of columns by four; the number of
-     * event handlers. */
-    Nobs = INTEGER(GET_SLOT(E, Rf_install("Dim")))[1] / 4;
+    dsize = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("data")), R_DimSymbol))[0];
 
     /* Output array (to hold a single trajectory) */
     SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
@@ -308,16 +237,21 @@ int run_internal(
         REAL(GET_SLOT(result, Rf_install("tspan"))),
         tlen,
         INTEGER(GET_SLOT(result, Rf_install("U"))),
-        data,
+        REAL(GET_SLOT(result, Rf_install("data"))),
         INTEGER(GET_SLOT(result, Rf_install("sd"))),
-        Nn, Nc, Nt, Nobs, dsize,
-        irE, jcE, prE, &events,
-        report_level, n_threads, s, t_fun, pts_fun,
-        &progress);
+        Nn, Nc, Nt, dsize, irE, jcE, jcS, prS,
+        INTEGER(GET_SLOT(ext_events, Rf_install("len")))[0],
+        INTEGER(GET_SLOT(ext_events, Rf_install("event"))),
+        INTEGER(GET_SLOT(ext_events, Rf_install("time"))),
+        INTEGER(GET_SLOT(ext_events, Rf_install("node"))),
+        INTEGER(GET_SLOT(ext_events, Rf_install("dest"))),
+        INTEGER(GET_SLOT(ext_events, Rf_install("n"))),
+        REAL(GET_SLOT(ext_events,    Rf_install("proportion"))),
+        INTEGER(GET_SLOT(ext_events, Rf_install("select"))),
+        INTEGER(GET_SLOT(ext_events, Rf_install("shift"))),
+        n_threads, s, t_fun, pts_fun);
 
 cleanup:
-    if (data)
-        free(data);
     if (irG)
         free(irG);
     if (jcG)
@@ -332,8 +266,10 @@ cleanup:
         free(irE);
     if (jcE)
         free(jcE);
-    if (prE)
-        free(prE);
+    if (jcS)
+        free(jcS);
+    if (prS)
+        free(prS);
 
     return err;
 }
@@ -343,11 +279,10 @@ cleanup:
  *
  * @param model The SISe model
  * @param threads Number of threads
- * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @return S4 class SISe with the simulated trajectory in U
  */
-SEXP SISe_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
+SEXP SISe_run(SEXP model, SEXP threads, SEXP seed)
 {
     int err = 0;
     SEXP result, class_name;
@@ -362,8 +297,7 @@ SEXP SISe_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 
     result = PROTECT(duplicate(model));
 
-    err = run_internal(result, threads, verbose, seed, t_fun,
-                       &SISe_post_time_step);
+    err = run_internal(result, threads, seed, t_fun, &SISe_post_time_step);
 
     UNPROTECT(1);
 
@@ -378,11 +312,10 @@ SEXP SISe_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
  *
  * @param model The SISe3 model
  * @param threads Number of threads
- * @param verbose Level of feedback from simulation
  * @param seed Random number seed.
  * @return S4 class SISe3 with the simulated trajectory in U
  */
-SEXP SISe3_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
+SEXP SISe3_run(SEXP model, SEXP threads, SEXP seed)
 {
     int err = 0;
     SEXP result, class_name;
@@ -399,8 +332,7 @@ SEXP SISe3_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 
     result = PROTECT(duplicate(model));
 
-    err = run_internal(result, threads, verbose, seed, t_fun,
-                       &SISe3_post_time_step);
+    err = run_internal(result, threads, seed, t_fun, &SISe3_post_time_step);
 
     UNPROTECT(1);
 
@@ -412,8 +344,8 @@ SEXP SISe3_run(SEXP model, SEXP threads, SEXP verbose, SEXP seed)
 
 static const R_CallMethodDef callMethods[] =
 {
-    {"SISe_run", (DL_FUNC)&SISe_run, 4},
-    {"SISe3_run", (DL_FUNC)&SISe3_run, 4},
+    {"SISe_run", (DL_FUNC)&SISe_run, 3},
+    {"SISe3_run", (DL_FUNC)&SISe3_run, 3},
     {NULL, NULL, 0}
 };
 
