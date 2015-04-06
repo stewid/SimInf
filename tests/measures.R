@@ -32,9 +32,18 @@ model <- SISe(init    = data.frame(id = 0, S = 99, I = 1),
               beta_q4 = 1,
               epsilon = 0)
 
-result <- run(model, verbose = 0)
+result <- run(model, threads = 1)
 result
 
 stopifnot(identical(length(susceptible(result)), 1001L))
 stopifnot(identical(length(infected(result)), 1001L))
 stopifnot(identical(length(prevalence(result)), 1001L))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2)
+    result_omp
+
+    stopifnot(identical(length(susceptible(result_omp)), 1001L))
+    stopifnot(identical(length(infected(result_omp)), 1001L))
+    stopifnot(identical(length(prevalence(result_omp)), 1001L))
+}

@@ -42,8 +42,7 @@ model <- SISe(init,
               beta_q4 = 1,
               epsilon = 1)
 
-result <- run(model, verbose = 0, seed = 123L)
-
+result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@N, result@N))
 stopifnot(identical(sum(result@U), 1001L))
@@ -55,6 +54,21 @@ stopifnot(identical(model@sd, result@sd))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2, seed = 123L)
+    stopifnot(identical(model@G, result_omp@G))
+    stopifnot(identical(model@N, result_omp@N))
+    stopifnot(identical(sum(result_omp@U), 1001L))
+    stopifnot(any(result_omp@U[1,]))
+    stopifnot(any(result_omp@U[2,]))
+    stopifnot(identical(model@Nn, result_omp@Nn))
+    stopifnot(identical(model@data, result_omp@data))
+    stopifnot(identical(model@sd, result_omp@sd))
+    stopifnot(identical(model@tspan, result_omp@tspan))
+    stopifnot(identical(model@u0, result_omp@u0))
+    stopifnot(identical(model@events, result_omp@events))
+}
 
 ## 6 Nodes
 ## 3 Age categories
@@ -77,12 +91,14 @@ init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
 
 events <- structure(list(event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                          time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select     = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
                          node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+                         select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
+                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+                    .Names = c("event", "time", "node", "dest",
+                        "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
@@ -102,8 +118,7 @@ model <- SISe3(init,
                beta_q4   = 1,
                epsilon   = 1)
 
-result <- run(model, verbose = 0, seed = 123L)
-
+result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@N, result@N))
 stopifnot(all(apply(result@U[1:6,], 1, any)))
@@ -115,6 +130,21 @@ stopifnot(identical(model@sd, result@sd))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2, seed = 123L)
+    stopifnot(identical(model@G, result_omp@G))
+    stopifnot(identical(model@N, result_omp@N))
+    stopifnot(all(apply(result_omp@U[1:6,], 1, any)))
+    stopifnot(identical(sum(result_omp@U[1:6,11]), 45L))
+    stopifnot(identical(sum(result_omp@U[,1]), 45L))
+    stopifnot(identical(model@Nn, result_omp@Nn))
+    stopifnot(identical(model@data, result_omp@data))
+    stopifnot(identical(model@sd, result_omp@sd))
+    stopifnot(identical(model@tspan, result_omp@tspan))
+    stopifnot(identical(model@u0, result_omp@u0))
+    stopifnot(identical(model@events, result_omp@events))
+}
 
 ## 6 Nodes
 ## 3 Age categories
@@ -151,8 +181,7 @@ model <- SISe3(init,
                beta_q4   = 1,
                epsilon   = 1)
 
-result <- run(model, verbose = 0, seed = 123L)
-
+result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@N, result@N))
 stopifnot(all(result@U[1:6,] == 0))
@@ -164,6 +193,21 @@ stopifnot(identical(model@sd, result@sd))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2, seed = 123L)
+    stopifnot(identical(model@G, result_omp@G))
+    stopifnot(identical(model@N, result_omp@N))
+    stopifnot(all(result_omp@U[1:6,] == 0))
+    stopifnot(all(apply(result_omp@U[seq(from=8, to=36, by=2),], 1, any)))
+    stopifnot(identical(sum(result_omp@U[,11]), 45L))
+    stopifnot(identical(model@Nn, result_omp@Nn))
+    stopifnot(identical(model@data, result_omp@data))
+    stopifnot(identical(model@sd, result_omp@sd))
+    stopifnot(identical(model@tspan, result_omp@tspan))
+    stopifnot(identical(model@u0, result_omp@u0))
+    stopifnot(identical(model@events, result_omp@events))
+}
 
 ## 6 Nodes
 ## 3 Age categories
@@ -185,12 +229,14 @@ init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
 
 events <- structure(list(event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                          time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select     = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
                          node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+                         select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
+                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+                    .Names = c("event", "time", "node", "dest",
+                        "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
@@ -209,8 +255,6 @@ model <- SISe3(init,
                beta_q3   = 1,
                beta_q4   = 1,
                epsilon   = 0)
-
-result <- run(model, verbose = 0, seed = 123L)
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L,
                  0L, 2L, 0L, 2L, 0L, 3L, 0L, 3L, 0L, 3L, 0L, 4L, 0L, 4L, 0L, 4L,
@@ -240,6 +284,7 @@ U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                .Dim = c(36L, 11L))
 
+result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@N, result@N))
 stopifnot(identical(result@U, U))
@@ -249,6 +294,19 @@ stopifnot(identical(model@sd, result@sd))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2, seed = 123L)
+    stopifnot(identical(model@G, result_omp@G))
+    stopifnot(identical(model@N, result_omp@N))
+    stopifnot(identical(result_omp@U, U))
+    stopifnot(identical(model@Nn, result_omp@Nn))
+    stopifnot(identical(model@data, result_omp@data))
+    stopifnot(identical(model@sd, result_omp@sd))
+    stopifnot(identical(model@tspan, result_omp@tspan))
+    stopifnot(identical(model@u0, result_omp@u0))
+    stopifnot(identical(model@events, result_omp@events))
+}
 
 ## 6 Nodes
 ## 3 Age categories
@@ -270,12 +328,14 @@ init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
 
 events <- structure(list(event      = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
                          time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select     = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
                          node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+                         select     = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+                    .Names = c("event", "time", "node", "dest",
+                        "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
@@ -294,8 +354,6 @@ model <- SISe3(init,
                beta_q3   = 1,
                beta_q4   = 1,
                epsilon   = 0)
-
-result <- run(model, verbose = 0, seed = 123L)
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -324,6 +382,7 @@ U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                  0L, 3L, 0L, 4L, 0L, 4L, 0L, 4L, 0L, 5L, 0L, 5L, 0L, 5L, 0L),
                .Dim = c(36L, 11L))
 
+result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@N, result@N))
 stopifnot(identical(result@U, U))
@@ -333,6 +392,19 @@ stopifnot(identical(model@sd, result@sd))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2, seed = 123L)
+    stopifnot(identical(model@G, result_omp@G))
+    stopifnot(identical(model@N, result_omp@N))
+    stopifnot(identical(result_omp@U, U))
+    stopifnot(identical(model@Nn, result_omp@Nn))
+    stopifnot(identical(model@data, result_omp@data))
+    stopifnot(identical(model@sd, result_omp@sd))
+    stopifnot(identical(model@tspan, result_omp@tspan))
+    stopifnot(identical(model@u0, result_omp@u0))
+    stopifnot(identical(model@events, result_omp@events))
+}
 
 ## 6 Nodes
 ## 3 Age categories
@@ -354,12 +426,14 @@ init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
 
 events <- structure(list(event      = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          time       = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         select     = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
                          node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
                          dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+                         select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
+                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+                    .Names = c("event", "time", "node", "dest",
+                        "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
@@ -378,8 +452,6 @@ model <- SISe3(init,
                beta_q3   = 1,
                beta_q4   = 1,
                epsilon   = 0)
-
-result <- run(model, verbose = 0, seed = 123L)
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L,
                  0L, 2L, 0L, 2L, 0L, 3L, 0L, 3L, 0L, 3L, 0L, 4L, 0L, 4L, 0L, 4L,
@@ -408,6 +480,7 @@ U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                .Dim = c(36L, 11L))
 
+result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@N, result@N))
 stopifnot(identical(result@U, U))
@@ -417,6 +490,19 @@ stopifnot(identical(model@sd, result@sd))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2, seed = 123L)
+    stopifnot(identical(model@G, result_omp@G))
+    stopifnot(identical(model@N, result_omp@N))
+    stopifnot(identical(result_omp@U, U))
+    stopifnot(identical(model@Nn, result_omp@Nn))
+    stopifnot(identical(model@data, result_omp@data))
+    stopifnot(identical(model@sd, result_omp@sd))
+    stopifnot(identical(model@tspan, result_omp@tspan))
+    stopifnot(identical(model@u0, result_omp@u0))
+    stopifnot(identical(model@events, result_omp@events))
+}
 
 ## 6 Nodes
 ## 3 Age categories
@@ -439,12 +525,14 @@ init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
 
 events <- structure(list(event      = c(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
                          time       = c(3, 3, 3, 3, 3, 6, 6, 6, 6, 6),
-                         select     = c(0, 0, 0, 0, 0, 1, 1, 1, 1, 1),
                          node       = c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5),
                          dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                          n          = c(1, 2, 3, 4, 5, 2, 4, 6, 8, 10),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-                    .Names = c("event", "time", "select", "node", "dest", "n", "proportion"),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+                         select     = c(3, 3, 3, 3, 3, 4, 4, 4, 4, 4),
+                         shift      = c(0, 0, 0, 0, 0, 1, 1, 1, 1, 1)),
+                    .Names = c("event", "time", "node", "dest",
+                        "n", "proportion", "select", "shift"),
                     row.names = c(NA, -10L), class = "data.frame")
 
 model <- SISe3(init,
@@ -463,8 +551,6 @@ model <- SISe3(init,
                beta_q3   = 1,
                beta_q4   = 1,
                epsilon   = 0)
-
-result <- run(model, verbose = 0, seed = 123L)
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L,
                  0L, 2L, 0L, 2L, 0L, 3L, 0L, 3L, 0L, 3L, 0L, 4L, 0L, 4L, 0L, 4L,
@@ -494,6 +580,7 @@ U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L,
                  0L, 0L, 0L, 0L, 0L, 15L, 0L),
                .Dim = c(36L, 11L))
 
+result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@N, result@N))
 stopifnot(identical(result@U, U))
@@ -503,6 +590,19 @@ stopifnot(identical(model@sd, result@sd))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2, seed = 123L)
+    stopifnot(identical(model@G, result_omp@G))
+    stopifnot(identical(model@N, result_omp@N))
+    stopifnot(identical(result_omp@U, U))
+    stopifnot(identical(model@Nn, result_omp@Nn))
+    stopifnot(identical(model@data, result_omp@data))
+    stopifnot(identical(model@sd, result_omp@sd))
+    stopifnot(identical(model@tspan, result_omp@tspan))
+    stopifnot(identical(model@u0, result_omp@u0))
+    stopifnot(identical(model@events, result_omp@events))
+}
 
 ## 6 Nodes
 ## 3 Age categories
@@ -539,8 +639,7 @@ model <- SISe3(init,
                beta_q4   = 1,
                epsilon   = 1)
 
-result <- run(model, verbose = 0, seed = 123L)
-
+result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@N, result@N))
 stopifnot(identical(sum(result@U[1:6,]), 0L))
@@ -551,3 +650,17 @@ stopifnot(identical(model@sd, result@sd))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2, seed = 123L)
+    stopifnot(identical(model@G, result_omp@G))
+    stopifnot(identical(model@N, result_omp@N))
+    stopifnot(identical(sum(result_omp@U[1:6,]), 0L))
+    stopifnot(all(apply(result_omp@U[7:36,], 1, any)))
+    stopifnot(identical(model@Nn, result_omp@Nn))
+    stopifnot(identical(model@data, result_omp@data))
+    stopifnot(identical(model@sd, result_omp@sd))
+    stopifnot(identical(model@tspan, result_omp@tspan))
+    stopifnot(identical(model@u0, result_omp@u0))
+    stopifnot(identical(model@events, result_omp@events))
+}
