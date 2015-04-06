@@ -23,8 +23,10 @@
 ##' @keywords internal
 check_threads <- function(threads)
 {
-    if (any(is.null(threads),
-            !is.numeric(threads),
+    if (is.null(threads))
+        return(0L)
+
+    if (any(!is.numeric(threads),
             !identical(length(threads), 1L),
             !is_wholenumber(threads[1]),
             threads[1] < 1))
@@ -37,17 +39,14 @@ check_threads <- function(threads)
 ##' @rdname run-methods
 ##' @docType methods
 ##' @param model The siminf model to run.
-##' @param threads Number of threads. Default is 1.
-##' @param verbose Level of siminf feeedback during simulation. Silent
-##' if 0, progress if 1, progress and number of transition
-##' events if 2. Default is 0.
+##' @param threads Number of threads. Default is NULL, i.e. to use the
+##' number of available processors.  called.
 ##' @param seed Random number seed.
 ##' @return \code{siminf_model} with result from simulation.
 setGeneric("run",
            signature = "model",
            function(model,
-                    threads  = 1,
-                    verbose  = 0,
+                    threads  = NULL,
                     seed     = NULL) standardGeneric("run"))
 
 ##' @rdname run-methods
@@ -55,7 +54,7 @@ setGeneric("run",
 ##' @export
 setMethod("run",
           signature(model = "SISe3"),
-          function(model, threads, verbose, seed)
+          function(model, threads, seed)
           {
               threads <- check_threads(threads)
 
@@ -63,7 +62,7 @@ setMethod("run",
               ## required by the siminf solver and that they make sense
               validObject(model);
 
-              .Call(SISe3_run, model, threads, verbose, seed)
+              .Call(SISe3_run, model, threads, seed)
           }
 )
 
@@ -72,7 +71,7 @@ setMethod("run",
 ##' @export
 setMethod("run",
           signature(model = "SISe"),
-          function(model, threads, verbose, seed)
+          function(model, threads, seed)
           {
               threads <- check_threads(threads)
 
@@ -80,6 +79,6 @@ setMethod("run",
               ## required by the siminf solver and that they make sense
               validObject(model);
 
-              .Call(SISe_run, model, threads, verbose, seed)
+              .Call(SISe_run, model, threads, seed)
           }
 )
