@@ -26,27 +26,6 @@
 ##' @export
 setClass("SISe", contains = c("siminf_model"))
 
-##' Coerce a \code{siminf_model} to a \code{SISe} model
-##'
-##' @name coerce-siminf_model-SISe-method
-##' @aliases coerce,siminf_model,SISe-method
-##' @docType methods
-##' @param from The siminf_model \code{object}
-##' @return \code{SISe} model
-##' @keywords methods
-setAs(from = "siminf_model", to = "SISe", def = function(from) {
-    return(new("SISe",
-               G      = from@G,
-               N      = from@N,
-               U      = from@U,
-               Nn     = from@Nn,
-               data   = from@data,
-               sd     = from@sd,
-               tspan  = from@tspan,
-               u0     = from@u0,
-               events = from@events))
-})
-
 ##' Create a SISe model
 ##'
 ##' Create a SISe model to be used by the simulation framework.
