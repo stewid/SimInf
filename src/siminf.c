@@ -95,15 +95,17 @@ static int get_threads(SEXP threads)
     int n;
 
     if (threads == R_NilValue)
-        Rf_error("Number of threads must be specified");
-    if (LENGTH(threads) != 1)
-        Rf_error("Invalid length of threads vector");
+        return 0;
 
     if (isInteger(threads)) {
+        if (LENGTH(threads) != 1)
+            Rf_error("Invalid length of threads vector");
         if (INTEGER(threads)[0] == NA_INTEGER)
             Rf_error("Invalid value (NA) for threads");
         n = INTEGER(threads)[0];
     } else if (isReal(threads)) {
+        if (LENGTH(threads) != 1)
+            Rf_error("Invalid length of threads vector");
         if (REAL(threads)[0] == NA_REAL)
             Rf_error("Invalid value (NA) for threads");
         n = (int)(REAL(threads)[0]);
