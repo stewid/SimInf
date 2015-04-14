@@ -249,3 +249,33 @@ setMethod("prevalence",
               I / (S + I)
           }
 )
+
+##' plot,-method
+##'
+##' @param x The \code{model} to plot
+##' @param y Unused argument
+##' @param ... Additional arguments affecting the plot produced.
+##' @name plot-methods
+##' @aliases plot plot-methods plot,SISe-method
+##' @docType methods
+##' @importFrom graphics plot
+##' @export
+setMethod("plot",
+          signature(x = "SISe"),
+          function(x, ...)
+      {
+          savepar <- par(mfrow = c(3,1),
+                         mar = c(2,4,1,1),
+                         oma = c(2,1,0,0))
+          on.exit(par(savepar))
+
+          I <- colSums(infected(x))
+          S <- colSums(susceptible(x))
+
+          plot(I / (S + I), type = "l", ylab = "Prevalence")
+          plot(I, type = "l", ylab = "Infected")
+          plot(S, t = "l", ylab = "Susceptible")
+
+          title(xlab = "Day", outer = TRUE, line = 0)
+      }
+)
