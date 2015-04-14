@@ -21,6 +21,7 @@
 ##' Class to handle the SISe \code{\link{siminf_model}}.
 ##' @name SISe-class
 ##' @include siminf_model.r
+##' @include AllGenerics.R
 ##' @docType class
 ##' @keywords classes
 ##' @export
@@ -205,3 +206,46 @@ SISe <- function(init,
 
     return(as(model, "SISe"))
 }
+
+##' @rdname run-methods
+##' @export
+setMethod("run",
+          signature(model = "SISe"),
+          function(model, threads, seed)
+          {
+              ## check that siminf_model contains all data structures
+              ## required by the siminf solver and that they make sense
+              validObject(model);
+
+              .Call(SISe_run, model, threads, seed)
+          }
+)
+
+##' @rdname susceptible-methods
+##' @export
+setMethod("susceptible",
+          signature("SISe"),
+          function(model, ...) {
+              as.matrix(model@U[seq(from = 1, to = dim(model@U)[1], by = 2), , drop = FALSE])
+          }
+)
+
+##' @rdname infected-methods
+##' @export
+setMethod("infected",
+          signature("SISe"),
+          function(model, ...) {
+              as.matrix(model@U[seq(from = 2, to = dim(model@U)[1], by = 2), , drop = FALSE])
+          }
+)
+
+##' @rdname prevalence-methods
+##' @export
+setMethod("prevalence",
+          signature("SISe"),
+          function(model, ...) {
+              I <- colSums(infected(model))
+              S <- colSums(susceptible(model))
+              I / (S + I)
+          }
+)

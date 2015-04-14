@@ -21,6 +21,7 @@
 ##' Class to handle the SISe3 \code{\link{siminf_model}} model.
 ##' @name SISe3-class
 ##' @include siminf_model.r
+##' @include AllGenerics.R
 ##' @docType class
 ##' @keywords classes
 ##' @export
@@ -268,3 +269,47 @@ SISe3 <- function(init,
 
     return(as(model, "SISe3"))
 }
+
+##' @rdname run-methods
+##' @export
+setMethod("run",
+          signature(model = "SISe3"),
+          function(model, threads, seed)
+          {
+              ## check that siminf_model contains all data structures
+              ## required by the siminf solver and that they make sense
+              validObject(model);
+
+              .Call(SISe3_run, model, threads, seed)
+          }
+)
+
+##' @rdname susceptible-methods
+##' @export
+setMethod("susceptible",
+          signature("SISe3"),
+          function(model, age = c("age_1", "age_2", "age_3"), ...) {
+              age <- match.arg(age)
+              from <- switch(age,
+                             age_1 = 1,
+                             age_2 = 3,
+                             age_3 = 5)
+              to = dim(model@U)[1]
+              as.matrix(model@U[seq(from = from, to = to, by = 6), , drop = FALSE])
+          }
+)
+
+##' @rdname infected-methods
+##' @export
+setMethod("infected",
+          signature("SISe3"),
+          function(model, age = c("age_1", "age_2", "age_3"), ...) {
+              age <- match.arg(age)
+              from <- switch(age,
+                             age_1 = 2,
+                             age_2 = 4,
+                             age_3 = 6)
+              to = dim(model@U)[1]
+              as.matrix(model@U[seq(from = from, to = to, by = 6), , drop = FALSE])
+          }
+)
