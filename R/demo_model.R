@@ -22,9 +22,9 @@
 ##' @param days Number of days to model. Default is 1000.
 ##' @param model The name of the model. Default is 'SISe'.
 ##' @return A model
-##' @include external_events.r
-##' @include SISe.r
-##' @include SISe3.r
+##' @include external_events.R
+##' @include SISe.R
+##' @include SISe3.R
 ##' @export
 demo_model <- function(nodes = 1,
                        days = 1000,

@@ -20,7 +20,7 @@
 ##'
 ##' Class to handle the SISe3 \code{\link{siminf_model}} model.
 ##' @name SISe3-class
-##' @include siminf_model.r
+##' @include siminf_model.R
 ##' @include AllGenerics.R
 ##' @docType class
 ##' @keywords classes

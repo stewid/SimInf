@@ -59,7 +59,7 @@
 ##'   }
 ##' }
 ##' @name siminf_model-class
-##' @include external_events.r
+##' @include external_events.R
 ##' @docType class
 ##' @keywords classes
 ##' @keywords methods
