@@ -91,6 +91,6 @@ AC_SUBST(SIMINF_HAVE_SUPERGLUE)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LIBS)
 
-AC_CONFIG_FILES([R/dependencies.r src/Makevars])
+AC_CONFIG_FILES([R/dependencies.R src/Makevars])
 
 AC_OUTPUT
