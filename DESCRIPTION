@@ -20,13 +20,11 @@ Depends:
     Matrix,
     methods
 Collate:
-    'external_events.r'
-    'siminf_model.r'
-    'SISe.r'
-    'SISe3.r'
-    'demo_model.r'
-    'dependencies.r'
-    'measures.r'
-    'plot.r'
-    'run.r'
-    'siminf.r'
+    'AllGenerics.R'
+    'external_events.R'
+    'siminf_model.R'
+    'SISe.R'
+    'SISe3.R'
+    'demo_model.R'
+    'dependencies.R'
+    'siminf.R'
