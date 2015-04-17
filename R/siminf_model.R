@@ -267,15 +267,15 @@ siminf_model <- function(G,
         events <- external_events(E = E, S = S, events = events)
 
     return(new("siminf_model",
-               G            = G,
-               N            = N,
-               U            = U,
-               Nn           = Nn,
-               data         = data,
-               sd           = sd,
-               tspan        = as.numeric(tspan),
-               u0           = u0,
-               events       = events))
+               G      = G,
+               N      = N,
+               U      = U,
+               Nn     = Nn,
+               data   = data,
+               sd     = sd,
+               tspan  = as.numeric(tspan),
+               u0     = u0,
+               events = events))
 }
 
 ##' Plot \code{\linkS4class{siminf_model}}
