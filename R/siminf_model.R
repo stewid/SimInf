@@ -278,6 +278,52 @@ siminf_model <- function(G,
                events       = events))
 }
 
+##' Plot \code{\linkS4class{siminf_model}}
+##'
+##' @param x The \code{model} to plot
+##' @param y Unused argument
+##' @param legend The character vector to appear in the legend.
+##' @param ... Additional arguments affecting the plot produced.
+##' @name plot-methods
+##' @aliases plot plot-methods plot,siminf_model-method
+##' @docType methods
+##' @importFrom graphics plot
+##' @export
+setMethod("plot",
+          signature(x = "siminf_model"),
+          function(x, legend, ...)
+      {
+          savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
+          on.exit(par(savepar))
+
+          ## Create matrix where each row is the sum of individuals in
+          ## that state
+          m <- do.call(rbind, lapply(seq_len(dim(x@N)[1]), function(from) {
+              i <- seq(from = from, to = dim(x@U)[1], by = dim(x@N)[1])
+              colSums(as.matrix(x@U[i, , drop = FALSE]))
+          }))
+
+          ## Calculate proportion
+          m <- m / colSums(m)
+
+          ## Plot
+          plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, max(m)))
+          title(xlab = "Day", outer = TRUE, line = 0)
+          for (i in seq_len(dim(m)[1])[-1]) {
+              lines(m[i, ], type = "l", lty = i)
+          }
+
+          ## Add legend below plot
+          par(fig = c(0, 1, 0, 1),
+              oma = c(0, 0, 0, 0),
+              mar = c(0, 0, 0, 0), new = TRUE)
+          plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+          graphics::legend("bottom", inset = c(0, 0),
+                           lty = seq_len(dim(m)[1]), bty = "n",
+                           horiz = TRUE, legend = legend)
+      }
+)
+
 ##' Brief summary of \code{siminf_model}
 ##'
 ##' @aliases show,siminf_model-methods

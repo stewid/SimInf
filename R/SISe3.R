@@ -313,3 +313,19 @@ setMethod("infected",
               as.matrix(model@U[seq(from = from, to = to, by = 6), , drop = FALSE])
           }
 )
+
+##' Plot \code{linkS4class{SISe3}}
+##'
+##' @name plot-methods
+##' @aliases plot plot-methods plot,SISe3-method
+##' @docType methods
+##' @importFrom graphics plot
+##' @export
+setMethod("plot",
+          signature(x = "SISe3"),
+          function(x, ...)
+      {
+          callNextMethod(x, ...,
+                         legend = expression(S[1], I[1], S[2], I[2], S[3], I[3]))
+      }
+)
