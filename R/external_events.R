@@ -89,9 +89,6 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     \code{INTERNAL_TRANSFER_EVENT}. Should be \code{-1} for the other
 ##'     event types.
 ##'   }
-##'   \item{len}{
-##'     Number of scheduled external events.
-##'   }
 ##' }
 ##' @name external_events-class
 ##' @docType class
@@ -110,9 +107,7 @@ setClass("external_events",
                    n          = "integer",
                    proportion = "numeric",
                    select     = "integer",
-                   shift      = "integer",
-                   len        = "integer"),
-         prototype = list(len = 0L),
+                   shift      = "integer"),
          validity = function(object) {
              errors <- character()
 
@@ -125,16 +120,6 @@ setClass("external_events",
                                             length(object@select),
                                             length(object@shift)))) , 1L)) {
                  errors <- c(errors, "All external events must have equal length.")
-             }
-
-             if (!identical(length(object@len), 1L)) {
-                 errors <- c(errors,
-                             "Length of len must be equal to one.")
-             }
-
-             if (!identical(length(object@event), object@len)) {
-                 errors <- c(errors,
-                             "Length of external events must be equal to len.")
              }
 
              if (!all(object@time > 0)) {
@@ -289,8 +274,7 @@ external_events <- function(E      = NULL,
                n          = as.integer(events$n),
                proportion = as.numeric(events$proportion),
                select     = as.integer(events$select),
-               shift      = as.integer(events$shift),
-               len        = nrow(events)))
+               shift      = as.integer(events$shift)))
 }
 
 ##' Brief summary of \code{external_events}
@@ -321,12 +305,6 @@ setMethod("show",
                   cat("time: 0 x 0\n")
               }
 
-              if (length(object@select)) {
-                  cat(sprintf("select: 1 x %i\n", length(object@select)))
-              } else {
-                  cat("select: 0 x 0\n")
-              }
-
               if (length(object@node)) {
                   cat(sprintf("node: 1 x %i\n", length(object@node)))
               } else {
@@ -351,10 +329,16 @@ setMethod("show",
                   cat("proportion: 0 x 0\n")
               }
 
-              if (length(object@len)) {
-                  cat(sprintf("len: %i\n", object@len[1]))
+              if (length(object@select)) {
+                  cat(sprintf("select: 1 x %i\n", length(object@select)))
               } else {
-                  cat("len: 0\n")
+                  cat("select: 0 x 0\n")
+              }
+
+              if (length(object@shift)) {
+                  cat(sprintf("shift: 1 x %i\n", length(object@shift)))
+              } else {
+                  cat("shift: 0 x 0\n")
               }
           }
 )

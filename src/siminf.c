@@ -190,7 +190,7 @@ int run_internal(
     int *irG = NULL, *jcG = NULL;
     int *irE = NULL, *jcE = NULL;
     int *jcS = NULL, *prS = NULL;
-    int Nn, Nc, tlen, dsize, Nt;
+    int Nn, Nc, elen, tlen, dsize, Nt;
     unsigned long int s;
 
     /* number of threads */
@@ -225,6 +225,7 @@ int run_internal(
     Nn   = INTEGER(GET_SLOT(result, Rf_install("Nn")))[0];
     Nc   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[0];
     Nt   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[1];
+    elen = LENGTH(GET_SLOT(ext_events, Rf_install("event"))),
     tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
     dsize = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("data")), R_DimSymbol))[0];
 
@@ -241,8 +242,7 @@ int run_internal(
         INTEGER(GET_SLOT(result, Rf_install("U"))),
         REAL(GET_SLOT(result, Rf_install("data"))),
         INTEGER(GET_SLOT(result, Rf_install("sd"))),
-        Nn, Nc, Nt, dsize, irE, jcE, jcS, prS,
-        INTEGER(GET_SLOT(ext_events, Rf_install("len")))[0],
+        Nn, Nc, Nt, dsize, irE, jcE, jcS, prS, elen,
         INTEGER(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("time"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("node"))),

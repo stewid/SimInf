@@ -192,7 +192,6 @@ events <- new("external_events",
               n = integer(0),
               proportion = numeric(0),
               select = integer(0),
-              shift = integer(0),
-              len = 0L)
+              shift = integer(0))
 str(events)
 stopifnot(identical(external_events(), events))

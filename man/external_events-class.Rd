@@ -66,9 +66,6 @@ Class to handle the external events
     \code{INTERNAL_TRANSFER_EVENT}. Should be \code{-1} for the other
     event types.
   }
-  \item{len}{
-    Number of scheduled external events.
-  }
 }
 }
 \keyword{classes}
