@@ -2810,26 +2810,6 @@ $as_echo "$as_me: WARNING:
   -----------------------------------------------" >&2;}
 fi
 
-# Check if SuperGlue is available
-# FIXME: Add support for SuperGlue
-ac_pkg_superglue=no
-
-if test "x${ac_pkg_superglue}" = xyes; then
-        SIMINF_HAVE_SUPERGLUE=TRUE
-else
-        SIMINF_HAVE_SUPERGLUE=FALSE
-        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
-  ---------------------------------------------------
-   Unable to use SuperGlue on this system.
-   Building a version without support for SuperGlue.
-  ---------------------------------------------------" >&5
-$as_echo "$as_me: WARNING:
-  ---------------------------------------------------
-   Unable to use SuperGlue on this system.
-   Building a version without support for SuperGlue.
-  ---------------------------------------------------" >&2;}
-fi
-
 LIBS="-lm -lgsl -lgslcblas ${LIBS}"
 
 

@@ -69,21 +69,6 @@ else
   -----------------------------------------------])
 fi
 
-# Check if SuperGlue is available
-# FIXME: Add support for SuperGlue
-ac_pkg_superglue=no
-
-if test "x${ac_pkg_superglue}" = xyes; then
-        SIMINF_HAVE_SUPERGLUE=TRUE
-else
-        SIMINF_HAVE_SUPERGLUE=FALSE
-        AC_MSG_WARN([
-  ---------------------------------------------------
-   Unable to use SuperGlue on this system.
-   Building a version without support for SuperGlue.
-  ---------------------------------------------------])
-fi
-
 LIBS="-lm -lgsl -lgslcblas ${LIBS}"
 
 AC_SUBST(SIMINF_HAVE_OPENMP)
