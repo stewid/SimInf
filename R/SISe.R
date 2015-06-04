@@ -250,17 +250,14 @@ setMethod("prevalence",
           }
 )
 
-##' Plot \code{linkS4class{SISe}}
-##'
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SISe-method
-##' @docType methods
 ##' @importFrom graphics plot
 ##' @export
 setMethod("plot",
           signature(x = "SISe"),
-          function(x, ...)
+          function(x, t0 = NULL, ...)
       {
-          callNextMethod(x, ..., legend = c("S", "I"))
+          callNextMethod(x, t0 = t0, legend = c("S", "I"), ...)
       }
 )

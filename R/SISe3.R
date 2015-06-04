@@ -314,8 +314,6 @@ setMethod("infected",
           }
 )
 
-##' Plot \code{linkS4class{SISe3}}
-##'
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SISe3-method
 ##' @docType methods
@@ -323,9 +321,11 @@ setMethod("infected",
 ##' @export
 setMethod("plot",
           signature(x = "SISe3"),
-          function(x, ...)
+          function(x, t0 = NULL, ...)
       {
-          callNextMethod(x, ...,
-                         legend = expression(S[1], I[1], S[2], I[2], S[3], I[3]))
+          callNextMethod(x,
+                         t0 = t0,
+                         legend = expression(S[1], I[1], S[2], I[2], S[3], I[3]),
+                         ...)
       }
 )

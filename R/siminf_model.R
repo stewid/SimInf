@@ -283,6 +283,10 @@ siminf_model <- function(G,
 ##' @param x The \code{model} to plot
 ##' @param y Unused argument
 ##' @param legend The character vector to appear in the legend.
+##' @param t0 The first date of \code{x@@tspan} as a character string
+##' in format 'yyyy-mm-dd'. Default is NULL which prints the x-axis
+##' labels as the sequence 1:length(x@@tspan). If non-null, the labels
+##' are converted to dates.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,siminf_model-method
@@ -291,7 +295,7 @@ siminf_model <- function(G,
 ##' @export
 setMethod("plot",
           signature(x = "siminf_model"),
-          function(x, legend, ...)
+          function(x, legend, t0 = NULL, ...)
       {
           savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
           on.exit(par(savepar))
@@ -307,8 +311,18 @@ setMethod("plot",
           m <- m / colSums(m)
 
           ## Plot
-          plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, max(m)))
+          if (is.null(t0)) {
+              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, max(m)))
+          } else {
+              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, max(m)),
+                   xaxt = "n")
+          }
           title(xlab = "Day", outer = TRUE, line = 0)
+          if (!is.null(t0)) {
+              axis(side = 1, at = seq_len(dim(m)[2]),
+                   labels = as.Date(x@tspan - min(x@tspan),
+                       origin = as.Date(t0)))
+          }
           for (i in seq_len(dim(m)[1])[-1]) {
               lines(m[i, ], type = "l", lty = i)
           }
