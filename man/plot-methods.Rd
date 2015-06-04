@@ -26,8 +26,6 @@ are converted to dates.}
 \item{...}{Additional arguments affecting the plot produced.}
 
 \item{legend}{The character vector to appear in the legend.}
-
-\item{y}{Unused argument}
 }
 \description{
 Plot \code{\linkS4class{siminf_model}}

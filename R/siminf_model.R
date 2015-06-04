@@ -281,7 +281,6 @@ siminf_model <- function(G,
 ##' Plot \code{\linkS4class{siminf_model}}
 ##'
 ##' @param x The \code{model} to plot
-##' @param y Unused argument
 ##' @param legend The character vector to appear in the legend.
 ##' @param t0 The first date of \code{x@@tspan} as a character string
 ##' in format 'yyyy-mm-dd'. Default is NULL which prints the x-axis
