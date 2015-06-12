@@ -28,7 +28,7 @@
 ##' @export
 demo_model <- function(nodes = 1,
                        days = 1000,
-                       model = c("SISe"))
+                       model = c("SISe", "SISe3"))
 {
     ## Check 'nodes' argument
     if (!is.numeric(nodes))
@@ -56,18 +56,47 @@ demo_model <- function(nodes = 1,
     model <- match.arg(model)
 
     if (identical(model, "SISe")) {
-        model <- SISe(init    = data.frame(id = seq_len(nodes) - 1, S = 99, I = 1),
+        init <- data.frame(id = seq_len(nodes) - 1,
+                           S = 99,
+                           I = 1)
+
+        model <- SISe(init    = init,
                       tspan   = seq_len(days) - 1,
                       events  = NULL,
                       phi     = rep(1, nodes),
                       upsilon = 0.017,
                       gamma   = 0.1,
                       alpha   = 1,
-                      beta_q1 = -log(0.1) / 16,
-                      beta_q2 = -log(0.1) / 16,
-                      beta_q3 = -log(0.1) / 16,
-                      beta_q4 = -log(0.1) / 16,
-                      epsilon = 0)
+                      beta_q1 = 0.19,
+                      beta_q2 = 0.085,
+                      beta_q3 = 0.075,
+                      beta_q4 = 0.185,
+                      epsilon = 0.000011)
+    } else if (identical(model, "SISe3")) {
+        init <- data.frame(id = seq_len(nodes) - 1,
+                           S_1 = 10,
+                           I_1 =  0,
+                           S_2 = 20,
+                           I_2 =  0,
+                           S_3 = 70,
+                           I_3 =  0)
+
+        model <- SISe3(init      = init,
+                       tspan     = seq_len(days) - 1,
+                       events    = NULL,
+                       phi       = rep(1, nodes),
+                       upsilon_1 = 0.0357,
+                       upsilon_2 = 0.0357,
+                       upsilon_3 = 0.00935,
+                       gamma_1   = 0.1,
+                       gamma_2   = 0.1,
+                       gamma_3   = 0.1,
+                       alpha     = 1.0,
+                       beta_q1   = 0.19,
+                       beta_q2   = 0.085,
+                       beta_q3   = 0.075,
+                       beta_q4   = 0.185,
+                       epsilon   = 0.000011)
     }
 
     model
