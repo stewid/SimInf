@@ -587,7 +587,6 @@ PACKAGE_URL=''
 ac_unique_file="src/siminf.c"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-SIMINF_HAVE_SUPERGLUE
 SIMINF_HAVE_OPENMP
 OPENMP_CFLAGS
 OBJEXT
@@ -2811,7 +2810,6 @@ $as_echo "$as_me: WARNING:
 fi
 
 LIBS="-lm -lgsl -lgslcblas ${LIBS}"
-
 
 
 

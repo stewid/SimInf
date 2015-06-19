@@ -22,10 +22,3 @@ have_openmp <- function()
 {
     @SIMINF_HAVE_OPENMP@
 }
-
-##' Is SuperGlue available
-##' @keywords internal
-have_superglue <- function()
-{
-    @SIMINF_HAVE_SUPERGLUE@
-}
