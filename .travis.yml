@@ -11,7 +11,13 @@ install:
   - ./travis-tool.sh aptget_install libgsl0-dev
   - ./travis-tool.sh install_deps
 
+r_github_packages:
+  - jimhester/covr
+
 script: ./travis-tool.sh run_tests
+
+after_success:
+  - Rscript -e 'library(covr); coveralls()'
 
 on_failure:
   - ./travis-tool.sh dump_logs
