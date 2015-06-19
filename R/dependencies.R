@@ -22,10 +22,3 @@ have_openmp <- function()
 {
     FALSE
 }
-
-##' Is SuperGlue available
-##' @keywords internal
-have_superglue <- function()
-{
-    FALSE
-}
