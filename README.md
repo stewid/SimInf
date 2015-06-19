@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/stewid/siminf.svg)](https://travis-ci.org/stewid/siminf)
 [![Build status](https://ci.appveyor.com/api/projects/status/pe68xiu1anxvet2n?svg=true)](https://ci.appveyor.com/project/stewid/siminf)
+[![Coverage Status](https://coveralls.io/repos/stewid/siminf/badge.svg)](https://coveralls.io/r/stewid/siminf)
 
 # siminf
 
