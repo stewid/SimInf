@@ -155,3 +155,65 @@ tools::assertError(siminf_model(init = init, u0 = u0))
 
 ## Nn must be equal to number of nodes
 tools::assertError(siminf_model(u0 = u0, Nn = 7))
+
+## Check show method without events
+show_expected <- c("Epidemiological model:", "G: 2 x 2", "N: 2 x 2", "U: 0 x 0",
+                   "Nn: 1", "data: 9 x 1", "tspan: 1 x 1000", "u0: 2 x 1", "",
+                   "External events:", "E: 2 x 2", "S: 0 x 0", "event: 0 x 0",
+                   "time: 0 x 0", "node: 0 x 0", "dest: 0 x 0", "n: 0 x 0",
+                   "proportion: 0 x 0", "select: 0 x 0", "shift: 0 x 0")
+
+show_observed <- capture.output(show(demo_model()))
+
+stopifnot(identical(show_observed, show_expected))
+
+## Check show method with events
+init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
+                       S_1 = c(0, 1, 2, 3, 4, 5),
+                       I_1 = c(0, 0, 0, 0, 0, 0),
+                       S_2 = c(0, 1, 2, 3, 4, 5),
+                       I_2 = c(0, 0, 0, 0, 0, 0),
+                       S_3 = c(0, 1, 2, 3, 4, 5),
+                       I_3 = c(0, 0, 0, 0, 0, 0)),
+                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  row.names = c(NA, -6L),
+                  class = "data.frame")
+
+events <- structure(list(event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+                         time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+                         node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+                         dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                         n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+                         select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
+                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+                    .Names = c("event", "time", "node", "dest",
+                        "n", "proportion", "select", "shift"),
+                    row.names = c(NA, -15L), class = "data.frame")
+
+model <- SISe3(init,
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(1, 6),
+               upsilon_1 = 1,
+               upsilon_2 = 1,
+               upsilon_3 = 1,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 1,
+               beta_q1   = 1,
+               beta_q2   = 1,
+               beta_q3   = 1,
+               beta_q4   = 1,
+               epsilon   = 1)
+
+show_expected <- c("Epidemiological model:", "G: 6 x 6", "N: 6 x 6", "U: 0 x 0",
+                   "Nn: 6", "data: 13 x 6", "tspan: 1 x 11", "u0: 6 x 6", "",
+                   "External events:", "E: 6 x 6", "S: 6 x 2", "event: 1 x 15",
+                   "time: 1 x 15", "node: 1 x 15", "dest: 1 x 15", "n: 1 x 15",
+                   "proportion: 1 x 15", "select: 1 x 15", "shift: 1 x 15")
+
+show_observed <- capture.output(show(model))
+
+stopifnot(identical(show_observed, show_expected))

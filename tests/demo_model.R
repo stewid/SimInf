@@ -29,3 +29,6 @@ tools::assertError(demo_model(days = 1.1))
 tools::assertError(demo_model(days = 0))
 tools::assertError(demo_model(days = -1))
 tools::assertError(demo_model(model = "demo"))
+
+stopifnot(is(demo_model(model = "SISe"), "SISe"))
+stopifnot(is(demo_model(model = "SISe3"), "SISe3"))
