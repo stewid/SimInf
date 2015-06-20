@@ -248,7 +248,7 @@ siminf_model <- function(G,
         if (!is.integer(U)) {
             if (!all(is_wholenumber(U)))
                 stop("U must be an integer")
-            U <- as.integer(U)
+            storage.mode(U) <- "integer"
         }
 
         if (!is.matrix(U)) {

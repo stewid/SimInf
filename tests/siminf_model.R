@@ -244,3 +244,79 @@ show_expected <- c("Epidemiological model:", "G: 6 x 6", "N: 6 x 6", "U: 0 x 0",
 show_observed <- capture.output(show(model))
 
 stopifnot(identical(show_observed, show_expected))
+
+## Check U. Change storage mode of U to double.
+## Should not raise error
+U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 1L, 1L, 0L, 1L, 0L, 2L, 0L, 1L, 1L,
+                 1L, 1L, 2L, 1L, 3L, 0L, 2L, 1L, 2L, 2L, 0L, 4L, 1L, 3L, 2L, 3L,
+                 3L, 2L, 1L, 4L, 6L, 9L, 7L, 8L, 4L, 11L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 7L, 8L, 7L, 8L, 5L, 10L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 8L, 7L, 6L, 9L,
+                 8L, 7L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 5L, 10L, 4L, 11L, 6L, 9L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 7L, 8L, 5L, 10L, 7L, 8L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 4L, 11L, 5L, 10L, 3L, 12L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 8L, 7L, 5L,
+                 10L, 4L, 11L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 6L, 9L, 2L, 13L, 4L, 11L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 5L, 10L, 2L, 13L, 7L, 8L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 9L, 6L, 2L, 13L, 6L, 9L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+               .Dim = c(36L, 11L))
+
+U_double <- U
+storage.mode(U_double) <- "double"
+
+siminf_model(G     = G,
+             N     = N,
+             U     = U_double,
+             Nn    = Nn,
+             data  = matrix(rep(0, Nn), nrow = 1),
+             sd    = rep(0L, Nn),
+             tspan = as.numeric(1:10),
+             u0    = u0)
+
+## Check U. Change storage mode of U to double and change to non-integer values.
+## Should raise error
+U_double <- U
+storage.mode(U_double) <- "double"
+U_double <- U_double * 1.2
+
+tools::assertError(siminf_model(G     = G,
+                                N     = N,
+                                U     = U_double,
+                                Nn    = Nn,
+                                data  = matrix(rep(0, Nn), nrow = 1),
+                                sd    = rep(0L, Nn),
+                                tspan = as.numeric(1:10),
+                                u0    = u0))
+
+## Check U. Should not raise an error if U is an integer vector of length 0
+siminf_model(G     = G,
+             N     = N,
+             U     = integer(0),
+             Nn    = Nn,
+             data  = matrix(rep(0, Nn), nrow = 1),
+             sd    = rep(0L, Nn),
+             tspan = as.numeric(1:10),
+             u0    = u0)
+
+## Check U. Should raise error if U is an integer vector of length > 0
+tools::assertError(siminf_model(G     = G,
+                                N     = N,
+                                U     = c(1L),
+                                Nn    = Nn,
+                                data  = matrix(rep(0, Nn), nrow = 1),
+                                sd    = rep(0L, Nn),
+                                tspan = as.numeric(1:10),
+                                u0    = u0))
