@@ -722,3 +722,11 @@ plot(result, t0 = "2015-01-01")
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
+
+## Check that C SISe3 run function fails for misspecified SISe3 model
+tools::assertError(.Call(siminf:::SISe3_run, NULL, NULL, NULL))
+tools::assertError(.Call(siminf:::SISe3_run, "SISe3", NULL, NULL))
+
+setClass("DummySISe3", slots = c(a = "character"))
+model <- new("DummySISe3", a = "SISe3")
+tools::assertError(.Call(siminf:::SISe3_run, model, NULL, NULL))

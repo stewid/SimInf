@@ -402,3 +402,11 @@ plot(result)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
+
+## Check that C SISe run function fails for misspecified SISe model
+tools::assertError(.Call(siminf:::SISe_run, NULL, NULL, NULL))
+tools::assertError(.Call(siminf:::SISe_run, "SISe", NULL, NULL))
+
+setClass("DummySISe", slots = c(a = "character"))
+model <- new("DummySISe", a = "SISe")
+tools::assertError(.Call(siminf:::SISe_run, model, NULL, NULL))
