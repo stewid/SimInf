@@ -664,3 +664,54 @@ if (siminf:::have_openmp()) {
     stopifnot(identical(model@u0, result_omp@u0))
     stopifnot(identical(model@events, result_omp@events))
 }
+
+## Check extraction of seed parameter
+.Call(siminf:::SISe_run,
+      demo_model(model = "SISe"),
+      NULL,
+      NULL)
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         NULL,
+                         "1"))
+
+.Call(siminf:::SISe_run,
+      demo_model(model = "SISe"),
+      NULL,
+      numeric(0))
+
+.Call(siminf:::SISe_run,
+      demo_model(model = "SISe"),
+      NULL,
+      integer(0))
+
+.Call(siminf:::SISe_run,
+      demo_model(model = "SISe"),
+      NULL,
+      1L)
+
+.Call(siminf:::SISe_run,
+      demo_model(model = "SISe"),
+      NULL,
+      1)
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         NULL,
+                         NA_integer_))
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         NULL,
+                         NA_real_))
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         NULL,
+                         c(1L, 2L)))
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         NULL,
+                         c(1, 2)))
