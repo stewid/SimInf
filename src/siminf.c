@@ -60,24 +60,27 @@ void siminf_error(int err)
 static unsigned long int get_seed(SEXP seed)
 {
     if (seed != R_NilValue) {
-        switch (LENGTH(seed)) {
-        case 0:
-            return (unsigned long int)time(NULL);
-        case 1:
-            if (isInteger(seed)) {
-                if (INTEGER(seed)[0] == NA_INTEGER)
-                    Rf_error("Invalid value (NA) of seed");
-                return (unsigned long int)INTEGER(seed)[0];
-            } else if (isReal(seed)) {
-                if (REAL(seed)[0] == NA_REAL)
-                    Rf_error("Invalid value (NA) of seed");
-                return (unsigned long int)REAL(seed)[0];
+        if (isInteger(seed) || isReal(seed)) {
+            switch (LENGTH(seed)) {
+            case 0:
+                return (unsigned long int)time(NULL);
+            case 1:
+                if (isInteger(seed)) {
+                    if (INTEGER(seed)[0] == NA_INTEGER)
+                        Rf_error("Invalid value (NA) of seed");
+                    return (unsigned long int)INTEGER(seed)[0];
+                } else if (isReal(seed)) {
+                    if (ISNA(REAL(seed)[0]))
+                        Rf_error("Invalid value (NA) of seed");
+                    return (unsigned long int)REAL(seed)[0];
+                }
+                break;
+            default:
+                Rf_error("Invalid length of seed");
+                break;
             }
+        } else {
             Rf_error("Invalid type of seed");
-            break;
-        default:
-            Rf_error("Invalid length of seed");
-            break;
         }
     }
 
