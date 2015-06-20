@@ -81,6 +81,33 @@ tools::assertError(new("siminf_model",
                        tspan = as.numeric(1:10),
                        u0    = u0 * -1L))
 
+## Change storage mode of u0 to double.
+## Should not raise error
+u0_double <- u0
+storage.mode(u0_double) <- "double"
+siminf_model(G     = G,
+             N     = N,
+             U     = U,
+             Nn    = Nn,
+             data  = matrix(rep(0, Nn), nrow = 1),
+             sd    = rep(0L, Nn),
+             tspan = as.numeric(1:10),
+             u0    = u0_double)
+
+## Change storage mode of u0 to double and change to non-integer values.
+## Should raise error
+u0_double <- u0
+storage.mode(u0_double) <- "double"
+u0_double <- 1.2 * u0_double
+tools::assertError(siminf_model(G     = G,
+                                N     = N,
+                                U     = U,
+                                Nn    = Nn,
+                                data  = matrix(rep(0, Nn), nrow = 1),
+                                sd    = rep(0L, Nn),
+                                tspan = as.numeric(1:10),
+                                u0    = u0_double))
+
 ## Check N
 tools::assertError(new("siminf_model",
                        G     = G,
