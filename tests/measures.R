@@ -47,3 +47,20 @@ if (siminf:::have_openmp()) {
     stopifnot(identical(length(infected(result_omp)), 1001L))
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
 }
+
+## Check measures for a SISe3 model
+model <- demo_model(model = "SISe3", nodes = 10, days = 1000)
+
+result <- run(model, threads = 1)
+result
+
+stopifnot(identical(length(susceptible(result)), 10000L))
+stopifnot(identical(length(infected(result)), 10000L))
+
+if (siminf:::have_openmp()) {
+    result_omp <- run(model, threads = 2)
+    result_omp
+
+    stopifnot(identical(length(susceptible(result_omp)), 10000L))
+    stopifnot(identical(length(infected(result_omp)), 10000L))
+}
