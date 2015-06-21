@@ -69,7 +69,13 @@ else
   -----------------------------------------------])
 fi
 
-LIBS="-lm -lgsl -lgslcblas ${LIBS}"
+# Check for GSL
+AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [
+        AC_MSG_FAILURE([gsl library required])
+])
+AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [
+        AC_MSG_FAILURE([gsl library required])
+])
 
 AC_SUBST(SIMINF_HAVE_OPENMP)
 AC_SUBST(CPPFLAGS)
