@@ -109,7 +109,7 @@ static int get_threads(SEXP threads)
     } else if (isReal(threads)) {
         if (LENGTH(threads) != 1)
             Rf_error("Invalid length of threads vector");
-        if (REAL(threads)[0] == NA_REAL)
+        if (ISNA(REAL(threads)[0]))
             Rf_error("Invalid value (NA) for threads");
         n = (int)(REAL(threads)[0]);
     } else {
