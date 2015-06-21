@@ -715,3 +715,54 @@ tools::assertError(.Call(siminf:::SISe_run,
                          demo_model(model = "SISe"),
                          NULL,
                          c(1, 2)))
+
+## Check extraction of number of threads
+.Call(siminf:::SISe_run,
+      demo_model(model = "SISe"),
+      NULL,
+      NULL)
+
+.Call(siminf:::SISe_run,
+      demo_model(model = "SISe"),
+      1L,
+      NULL)
+
+.Call(siminf:::SISe_run,
+      demo_model(model = "SISe"),
+      1,
+      NULL)
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         -1L,
+                         NULL))
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         -1,
+                         NULL))
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         "1",
+                         NULL))
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         c(1L, 1L),
+                         NULL))
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         c(1, 1),
+                         NULL))
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         NA_integer_,
+                         NULL))
+
+tools::assertError(.Call(siminf:::SISe_run,
+                         demo_model(model = "SISe"),
+                         NA_real_,
+                         NULL))
