@@ -43,9 +43,6 @@ void siminf_error(int err)
     case SIMINF_ERR_ALLOC_MEMORY_BUFFER:
         Rf_error("Unable to allocate memory buffer");
         break;
-    case SIMINF_UNSUPPORTED_PARALLELIZATION:
-        Rf_error("Unsupported parallelization strategy");
-        break;
     default:
         Rf_error("Unknown error code.");
     }
