@@ -23,8 +23,8 @@ Class to handle the siminf data model
     adding the \code{j}th column to the state vector.
   }
   \item{U}{
-    The result matrix ((Nn * Nc) X length(tspan)). U(:,j) contains
-    the state of the system at tspan(j).
+    The compartment result matrix ((Nn * Nc) X length(tspan)).
+    U(:,j) contains the state of the compartments at tspan(j).
   }
   \item{Nn}{
     Number of nodes.
@@ -40,8 +40,18 @@ Class to handle the siminf data model
     to be returned.
   }
   \item{u0}{
-     Initial state vector u0. Integer (Nc X Nn). Gives the initial
+     Initial compartment state vector u0. Integer (Nc X Nn). Gives the initial
      number of individuals in each compartment in every node.
+  }
+  \item{V}{
+    The model parameter result matrix for parameters that are modelled
+    ((Nn * Number of paramters) X length(tspan)).
+    V(:,j) contains the state of the model parameters at tspan(j).
+  }
+  \item{v0}{
+     Initial model state vector v0. Double (Number of parameters X Nn).
+     Gives the initial value for model paramenters that are updated
+     during the simulation in every node.
   }
   \item{events}{
     External events \code{"\linkS4class{external_events}"}

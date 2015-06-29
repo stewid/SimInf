@@ -34,8 +34,8 @@
 ##'     adding the \code{j}th column to the state vector.
 ##'   }
 ##'   \item{U}{
-##'     The result matrix ((Nn * Nc) X length(tspan)). U(:,j) contains
-##'     the state of the system at tspan(j).
+##'     The compartment result matrix ((Nn * Nc) X length(tspan)).
+##'     U(:,j) contains the state of the compartments at tspan(j).
 ##'   }
 ##'   \item{Nn}{
 ##'     Number of nodes.
@@ -51,8 +51,18 @@
 ##'     to be returned.
 ##'   }
 ##'   \item{u0}{
-##'      Initial state vector u0. Integer (Nc X Nn). Gives the initial
+##'      Initial compartment state vector u0. Integer (Nc X Nn). Gives the initial
 ##'      number of individuals in each compartment in every node.
+##'   }
+##'   \item{V}{
+##'     The model parameter result matrix for parameters that are modelled
+##'     ((Nn * Number of paramters) X length(tspan)).
+##'     V(:,j) contains the state of the model parameters at tspan(j).
+##'   }
+##'   \item{v0}{
+##'      Initial model state vector v0. Double (Number of parameters X Nn).
+##'      Gives the initial value for model paramenters that are updated
+##'      during the simulation in every node.
 ##'   }
 ##'   \item{events}{
 ##'     External events \code{"\linkS4class{external_events}"}
@@ -74,6 +84,8 @@ setClass("siminf_model",
                    sd     = "integer",
                    tspan  = "numeric",
                    u0     = "matrix",
+                   V      = "matrix",
+                   v0     = "matrix",
                    events = "external_events"),
          validity = function(object) {
              errors <- character()
@@ -93,16 +105,26 @@ setClass("siminf_model",
 
              ## Check u0.
              if (!identical(storage.mode(object@u0), "integer")) {
-                 errors <- c(errors, "Initial state must be an integer matrix.")
+                 errors <- c(errors, "Initial state 'u0' must be an integer matrix.")
              } else if (any(object@u0 < 0L)) {
-                 errors <- c(errors, "Initial state has negative elements.")
+                 errors <- c(errors, "Initial state 'u0' has negative elements.")
              }
 
-             ## Check U
+             ## Check U.
              if (!identical(storage.mode(object@U), "integer")) {
-                 errors <- c(errors, "Output state must be an integer matrix.")
+                 errors <- c(errors, "Output state 'U' must be an integer matrix.")
              } else if (any(object@U < 0L)) {
-                 errors <- c(errors, "Output state has negative elements.")
+                 errors <- c(errors, "Output state 'U' has negative elements.")
+             }
+
+             ## Check v0.
+             if (!identical(storage.mode(object@v0), "double")) {
+                 errors <- c(errors, "Initial model state 'v0' must be a double matrix.")
+             }
+
+             ## Check V.
+             if (!identical(storage.mode(object@V), "double")) {
+                 errors <- c(errors, "Output model state 'V' must be a double matrix.")
              }
 
              ## Check N.
@@ -157,6 +179,12 @@ setClass("siminf_model",
 ##' @param events A \code{data.frame} with the scheduled events.
 ##' @param init A \code{data.frame} with the initial number of
 ##' individuals in each compartment in every node.
+##' @param V The model parameter result matrix for the parameters that
+##' are modelled ((Nn * Number of paramters) X length(tspan)).  V(:,j)
+##' contains the state of the model parameters at tspan(j).
+##' @param v0 Initial model state vector v0. Double (Number of
+##' parameters X Nn).  Gives the initial value for model paramenters
+##' that are updated during the simulation in every node.
 ##' @param E Sparse matrix to handle external events, see
 ##' \code{\linkS4class{external_events}}.
 ##' @param S Sparse matrix to handle external events, see
@@ -173,6 +201,8 @@ siminf_model <- function(G,
                          Nn     = NULL,
                          u0     = NULL,
                          init   = NULL,
+                         v0     = NULL,
+                         V      = NULL,
                          E      = NULL,
                          S      = NULL)
 {
@@ -258,6 +288,36 @@ siminf_model <- function(G,
         }
     }
 
+    ## Check v0
+    if (is.null(v0)) {
+        v0 <- matrix(nrow = 0, ncol = 0)
+        storage.mode(v0) <- "double"
+    } else {
+        if (!all(is.matrix(v0), is.numeric(v0)))
+            stop("v0 must be a numeric matrix")
+
+        if (!identical(storage.mode(v0), "double"))
+            storage.mode(v0) <- "double"
+    }
+
+    ## Check V
+    if (is.null(V)) {
+        V <- matrix(nrow = 0, ncol = 0)
+        storage.mode(V) <- "double"
+    } else {
+        if (!is.numeric(V))
+            stop("V must be numeric")
+
+        if (!identical(storage.mode(V), "double"))
+            storage.mode(V) <- "double"
+
+        if (!is.matrix(V)) {
+            if (!identical(length(V), 0L))
+                stop("V must be equal to 0 x 0 matrix")
+            dim(V) <- c(0, 0)
+        }
+    }
+
     ## Check sd
     if (is.null(sd))
         sd <- rep(0L, Nn)
@@ -275,6 +335,8 @@ siminf_model <- function(G,
                sd     = sd,
                tspan  = as.numeric(tspan),
                u0     = u0,
+               v0     = v0,
+               V      = V,
                events = events))
 }
 

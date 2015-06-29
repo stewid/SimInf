@@ -5,7 +5,8 @@
 \title{Create a siminf model}
 \usage{
 siminf_model(G, N, tspan, events = NULL, sd = NULL, data = NULL,
-  U = NULL, Nn = NULL, u0 = NULL, init = NULL, E = NULL, S = NULL)
+  U = NULL, Nn = NULL, u0 = NULL, init = NULL, v0 = NULL, V = NULL,
+  E = NULL, S = NULL)
 }
 \arguments{
 \item{G}{Sparse matrix (\eqn{Nt \times Nt}) of object class
@@ -39,6 +40,14 @@ initial number of individuals in each compartment in every node.}
 
 \item{init}{A \code{data.frame} with the initial number of
 individuals in each compartment in every node.}
+
+\item{v0}{Initial model state vector v0. Double (Number of
+parameters X Nn).  Gives the initial value for model paramenters
+that are updated during the simulation in every node.}
+
+\item{V}{The model parameter result matrix for the parameters that
+are modelled ((Nn * Number of paramters) X length(tspan)).  V(:,j)
+contains the state of the model parameters at tspan(j).}
 
 \item{E}{Sparse matrix to handle external events, see
 \code{\linkS4class{external_events}}.}
