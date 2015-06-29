@@ -21,9 +21,9 @@
 #ifndef INCLUDE_SISe_h
 #define INCLUDE_SISe_h
 
-double SISe_S_to_I(const int *x, double t, const double *data, int sd);
-double SISe_I_to_S(const int *x, double t, const double *data, int sd);
+double SISe_S_to_I(const int *u, double t, const double *data, int sd);
+double SISe_I_to_S(const int *u, double t, const double *data, int sd);
 
-int SISe_post_time_step(const int *x, int src, double t, double *data, int sd);
+int SISe_post_time_step(const int *u, int src, double t, double *data, int sd);
 
 #endif

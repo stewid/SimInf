@@ -35,35 +35,35 @@ enum {PHI,
 /**
  * susceptible to infected: S -> I
  *
- * @param x The state vector in node.
+ * @param u The compartment state vector in node.
  * @param t Current time.
  * @param data The data vector for node.
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe_S_to_I(const int *x, double t, const double *data, int sd)
+double SISe_S_to_I(const int *u, double t, const double *data, int sd)
 {
-    return data[UPSILON] * data[PHI] * x[S];
+    return data[UPSILON] * data[PHI] * u[S];
 }
 
 /**
  *  infected to susceptible: I -> S
  *
- * @param x The state vector in node.
+ * @param u The compartment state vector in node.
  * @param t Current time.
  * @param data The data vector for node.
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe_I_to_S(const int *x, double t, const double *data, int sd)
+double SISe_I_to_S(const int *u, double t, const double *data, int sd)
 {
-    return data[GAMMA] * x[I];
+    return data[GAMMA] * u[I];
 }
 
 /**
  * Update infectious pressure
  *
- * @param x The state vector in node.
+ * @param u The compartment state vector in node.
  * @param node The node.
  * @param t Current time.
  * @param data The data vector for node.
@@ -71,7 +71,7 @@ double SISe_I_to_S(const int *x, double t, const double *data, int sd)
  * @return 1 if needs update, else 0.
  */
 int SISe_post_time_step(
-    const int *x,
+    const int *u,
     int node,
     double t,
     double *data,
@@ -83,8 +83,8 @@ int SISe_post_time_step(
     double S_n, I_n;
     double tmp = data[PHI];
 
-    S_n = x[S];
-    I_n = x[I];
+    S_n = u[S];
+    I_n = u[I];
 
     /* Time dependent beta for each quarter of the year. Forward Euler step. */
     switch (((int)t % days_in_year) / days_in_quarter) {
