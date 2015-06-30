@@ -232,7 +232,7 @@ int run_internal(
 
     /* Output array (to hold a single trajectory) */
     SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
-    SET_SLOT(result, Rf_install("V"), allocMatrix(REALSXP, Nn * Np, tlen));
+    SET_SLOT(result, Rf_install("V"), allocMatrix(REALSXP, Nn * Nd, tlen));
 
     /* Core simulation routine. */
     err = siminf_run(
