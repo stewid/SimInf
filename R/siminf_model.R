@@ -415,11 +415,13 @@ setMethod("show",
               cat(sprintf("G: %i x %i\n", dim(object@G)[1], dim(object@G)[2]))
               cat(sprintf("N: %i x %i\n", dim(object@N)[1], dim(object@N)[2]))
               cat(sprintf("U: %i x %i\n", dim(object@U)[1], dim(object@U)[2]))
+              cat(sprintf("V: %i x %i\n", dim(object@V)[1], dim(object@V)[2]))
               cat(sprintf("Nn: %i\n", object@Nn))
               cat(sprintf("data: %i x %i\n", dim(object@data)[1], dim(object@data)[2]))
               cat(sprintf("sd: %i x %i\n", dim(object@sd)[1], dim(object@sd)[2]))
               cat(sprintf("tspan: 1 x %i\n", length(object@tspan)))
               cat(sprintf("u0: %i x %i\n", dim(object@u0)[1], dim(object@u0)[2]))
+              cat(sprintf("v0: %i x %i\n", dim(object@v0)[1], dim(object@v0)[2]))
 
               show(object@events)
           }
