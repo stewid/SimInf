@@ -855,6 +855,9 @@ static int siminf_solver()
  * @param u0 Initial state vector u0. Integer (Nc X Nn). Gives the
  *        initial number of individuals in each compartment in every
  *        node.
+ * @param v0 Initial continuous state vector v0. Double (Nd X Nn).
+ *        Gives the initial value of the continuous state variables
+ *        in every node.
  * @param irG Dependency graph. irG[k] is the row of G[k].
  * @param jcG Dependency graph. Index to data of first non-zero
  *        element in row k.
@@ -867,6 +870,9 @@ static int siminf_solver()
  * @param tlen Number of sampling points in time.
  * @param U The output is a matrix U ((Nn * Nc) X length(tspan)).
  *        U(:,j) contains the state of the system at tspan(j).
+ * @param V The continuous state output is a matrix V
+ *        ((Nn * Nd) X length(tspan)).
+ *        V(:,j) contains the continuous state of the system at tspan(j).
  * @param d0 Double matrix (dsize X Nn). Generalized data matrix,
  *        data(:,j) gives a data vector for node #j.
  * @param sd Integer vector of length Nn. Each node can be assigned to
@@ -874,6 +880,7 @@ static int siminf_solver()
  * @param Nn Number of nodes.
  * @param Nc Number of compartments in each node.
  * @param Nt Total number of different transitions.
+ * @param Nd Number of continuous state variables.
  * @param dsize Size of data vector sent to propensities.
  * @param irE Select matrix for events. irE[k] is the row of E[k].
  * @param jcE Select matrix for events. Index to data of first
@@ -904,12 +911,12 @@ static int siminf_solver()
  * @return 0 if Ok, else error code.
  */
 int siminf_run(
-    const int *u0, const int *irG, const int *jcG, const int *irN,
-    const int *jcN, const int *prN, const double *tspan, int tlen,
-    int *U, const double *d0, const int *sd, int Nn, int Nc, int Nt,
-    int dsize, const int *irE, const int *jcE, const int *jcS,
-    const int *prS, int len, const int *event, const int *time,
-    const int *node, const int *dest, const int *n,
+    const int *u0, const double *v0, const int *irG, const int *jcG,
+    const int *irN, const int *jcN, const int *prN, const double *tspan,
+    int tlen, int *U, double *V, const double *d0, const int *sd, int Nn,
+    int Nc, int Nt, int Nd, int dsize, const int *irE, const int *jcE,
+    const int *jcS, const int *prS, int len, const int *event,
+    const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,
     int Nthread, unsigned long int seed, PropensityFun *t_fun,
     PostTimeStepFun pts_fun)
