@@ -185,7 +185,8 @@ tools::assertError(siminf_model(u0 = u0, Nn = 7))
 
 ## Check show method without events
 show_expected <- c("Epidemiological model:", "G: 2 x 2", "N: 2 x 2", "U: 0 x 0",
-                   "Nn: 1", "data: 9 x 1", "tspan: 1 x 1000", "u0: 2 x 1", "",
+                   "V: 0 x 0", "Nn: 1", "data: 9 x 1", "tspan: 1 x 1000",
+                   "u0: 2 x 1", "v0: 0 x 0", "",
                    "External events:", "E: 2 x 2", "S: 0 x 0", "event: 0 x 0",
                    "time: 0 x 0", "node: 0 x 0", "dest: 0 x 0", "n: 0 x 0",
                    "proportion: 0 x 0", "select: 0 x 0", "shift: 0 x 0")
@@ -236,7 +237,8 @@ model <- SISe3(init,
                epsilon   = 1)
 
 show_expected <- c("Epidemiological model:", "G: 6 x 6", "N: 6 x 6", "U: 0 x 0",
-                   "Nn: 6", "data: 13 x 6", "tspan: 1 x 11", "u0: 6 x 6", "",
+                   "V: 0 x 0", "Nn: 6", "data: 13 x 6", "tspan: 1 x 11",
+                   "u0: 6 x 6", "v0: 0 x 0", "",
                    "External events:", "E: 6 x 6", "S: 6 x 2", "event: 1 x 15",
                    "time: 1 x 15", "node: 1 x 15", "dest: 1 x 15", "n: 1 x 15",
                    "proportion: 1 x 15", "select: 1 x 15", "shift: 1 x 15")
