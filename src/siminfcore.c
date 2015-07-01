@@ -131,9 +131,14 @@ typedef struct siminf_thread_args
     int it;              /**< Index to next time in tspan */
 
     /*** Data vectors ***/
-    int *U;           /**< The output is a matrix U ((Nn * Nc) X
-                       *   length(tspan)). U(:,j) contains the state
-                       *   of the system at tspan(j). */
+    int *U;           /**< The compartment output is a matrix U ((Nn *
+                       *   Nc) X length(tspan)). U(:,j) contains the
+                       *   state of the system at tspan(j). */
+    double *V;        /**< The continuous output is a matrix V ((Nn *
+                       *   Nd) X length(tspan)). V(:,j) contains the
+                       *   state of the system at tspan(j). */
+    double *v;        /**< Vector of with continuous state in each
+                       *   node in thread. */
     double *data;     /**< Matrix (dsize X Nn). data(:,j) gives a data
                        *   vector for node #j. */
     const int *sd;    /**< Each node can be assigned to a
@@ -176,6 +181,7 @@ typedef struct siminf_thread_args
 /* Shared variables */
 int n_thread = 0;
 int *state = NULL;
+double *vv = NULL;
 int *update_node = NULL;
 siminf_thread_args *sim_args = NULL;
 
@@ -938,13 +944,21 @@ int siminf_run(
     omp_set_num_threads(n_thread);
 #endif
 
-    /* Set state to the initial state. */
+    /* Set compartment state to the initial state. */
     state = malloc(Nn * Nc * sizeof(int));
     if (!state) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
     memcpy(state, u0, Nn * Nc * sizeof(int));
+
+    /* Set continuous state to the initial state in each node. */
+    vv = malloc(Nn * Nd * sizeof(double));
+    if (!vv) {
+        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        goto cleanup;
+    }
+    memcpy(vv, v0, Nn * Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * external events */
@@ -1009,6 +1023,8 @@ int siminf_run(
 
         /* Data vectors */
         sim_args[i].U = U;
+        sim_args[i].V = V;
+        sim_args[i].v = &vv[sim_args[i].Ni * Nd];
         sim_args[i].data = malloc(
             sim_args[i].Nn * sim_args[i].dsize * sizeof(double));
         if (!sim_args[i].data) {
@@ -1077,6 +1093,12 @@ cleanup:
         free(state);
         state = NULL;
     }
+
+    if (vv) {
+        free(vv);
+        vv = NULL;
+    }
+
     if (update_node) {
         free(update_node);
         update_node = NULL;
