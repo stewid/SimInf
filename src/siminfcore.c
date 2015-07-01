@@ -134,6 +134,8 @@ typedef struct siminf_thread_args
     int *U;           /**< The compartment output is a matrix U ((Nn *
                        *   Nc) X length(tspan)). U(:,j) contains the
                        *   state of the system at tspan(j). */
+    int *u;           /**< Vector with compartment state in each node
+                       *   in thread. */
     double *V;        /**< The continuous output is a matrix V ((Nn *
                        *   Nd) X length(tspan)). V(:,j) contains the
                        *   state of the system at tspan(j). */
@@ -145,9 +147,6 @@ typedef struct siminf_thread_args
                        *   sub-domain. */
     int *update_node; /**< Vector of length Nn used to indicate nodes
                        *   for update. */
-    int *state;       /**< Vector of length Nn * Nc with state in each
-                       *   node. */
-
 
     double *sum_t_rate; /**< Vector of length Nn with the sum of
                          *   propensities in every node. */
@@ -566,7 +565,7 @@ static int siminf_solver()
                 sa.sum_t_rate[node] = 0.0;
                 for (j = 0; j < sa.Nt; j++) {
                     sa.t_rate[node * sa.Nt + j] =
-                        (*sa.t_fun[j])(&sa.state[node * sa.Nc],
+                        (*sa.t_fun[j])(&sa.u[node * sa.Nc],
                                        sa.tt,
                                        &sa.data[node * sa.dsize],
                                        sa.sd[node]);
@@ -613,8 +612,8 @@ static int siminf_solver()
 
                         /* b) Update the state of the node */
                         for (j = sa.jcN[tr]; j < sa.jcN[tr + 1]; j++) {
-                            sa.state[node * sa.Nc + sa.irN[j]] += sa.prN[j];
-                            if (sa.state[node * sa.Nc + sa.irN[j]] < 0)
+                            sa.u[node * sa.Nc + sa.irN[j]] += sa.prN[j];
+                            if (sa.u[node * sa.Nc + sa.irN[j]] < 0)
                                 sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         }
 
@@ -624,7 +623,7 @@ static int siminf_solver()
                             double old = sa.t_rate[node * sa.Nt + sa.irG[j]];
                             delta += (sa.t_rate[node * sa.Nt + sa.irG[j]] =
                                       (*sa.t_fun[sa.irG[j]])(
-                                          &sa.state[node * sa.Nc],
+                                          &sa.u[node * sa.Nc],
                                           sa.t_time[node],
                                           &sa.data[node * sa.dsize],
                                           sa.sd[node])) - old;
@@ -778,7 +777,7 @@ static int siminf_solver()
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
-                    if (sa.pts_fun(&sa.state[node * sa.Nc], sa.Ni + node, sa.tt,
+                    if (sa.pts_fun(&sa.u[node * sa.Nc], sa.Ni + node, sa.tt,
                                    &sa.data[node * sa.dsize], sa.sd[node]) ||
                         sa.update_node[node])
                     {
@@ -790,7 +789,7 @@ static int siminf_solver()
                             double old = sa.t_rate[node * sa.Nt + j];
                             delta += (sa.t_rate[node * sa.Nt + j] =
                                       (*sa.t_fun[j])(
-                                          &sa.state[node * sa.Nc], sa.tt,
+                                          &sa.u[node * sa.Nc], sa.tt,
                                           &sa.data[node * sa.dsize],
                                           sa.sd[node])) - old;
                         }
@@ -824,7 +823,7 @@ static int siminf_solver()
                 if (sa.tt > sa.tspan[sa.it]) {
                     while (sa.it < sa.tlen && sa.tt > sa.tspan[sa.it])
                         memcpy(&sa.U[sa.Nc * ((sa.Ntot * sa.it++) + sa.Ni)],
-                               sa.state, sa.Nn * sa.Nc * sizeof(int));
+                               sa.u, sa.Nn * sa.Nc * sizeof(int));
                 }
 
                 *&sim_args[i] = sa;
@@ -1023,6 +1022,7 @@ int siminf_run(
 
         /* Data vectors */
         sim_args[i].U = U;
+        sim_args[i].u = &uu[sim_args[i].Ni * Nc];
         sim_args[i].V = V;
         sim_args[i].v = &vv[sim_args[i].Ni * Nd];
         sim_args[i].data = malloc(
@@ -1036,7 +1036,6 @@ int siminf_run(
 
         sim_args[i].sd = &sd[sim_args[i].Ni];
         sim_args[i].update_node = &update_node[sim_args[i].Ni];
-        sim_args[i].state = &uu[sim_args[i].Ni * Nc];
 
         /* External events */
         sim_args[i].E1 = calloc(1, sizeof(external_events));
