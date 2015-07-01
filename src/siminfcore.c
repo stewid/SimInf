@@ -137,8 +137,8 @@ typedef struct siminf_thread_args
     double *V;        /**< The continuous output is a matrix V ((Nn *
                        *   Nd) X length(tspan)). V(:,j) contains the
                        *   state of the system at tspan(j). */
-    double *v;        /**< Vector of with continuous state in each
-                       *   node in thread. */
+    double *v;        /**< Vector with continuous state in each node
+                       *   in thread. */
     double *data;     /**< Matrix (dsize X Nn). data(:,j) gives a data
                        *   vector for node #j. */
     const int *sd;    /**< Each node can be assigned to a
