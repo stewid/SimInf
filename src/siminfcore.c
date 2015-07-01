@@ -442,7 +442,7 @@ cleanup:
  * @return 0 if Ok, else error code.
  */
 static int sample_select(
-    const int *irE, const int *jcE, int Nc, const int *state,
+    const int *irE, const int *jcE, int Nc, const int *u,
     int node, int select, int n, double proportion,
     int *individuals, int *kind, int *kind_dest, gsl_rng *rng)
 {
@@ -454,7 +454,7 @@ static int sample_select(
     /* 1) Count number of states with individuals */
     /* 2) Count total number of individuals       */
     for (i = jcE[select]; i < jcE[select + 1]; i++) {
-        int nk = state[node * Nc + irE[i]];
+        int nk = u[node * Nc + irE[i]];
         if (nk > 0)
             Nkinds++;
         Nindividuals += nk;
@@ -481,7 +481,7 @@ static int sample_select(
     } else if (Nindividuals == n) {
         /* Include all individuals */
         for (i = jcE[select]; i < jcE[select + 1]; i++)
-            individuals[irE[i]] = state[node * Nc + irE[i]];
+            individuals[irE[i]] = u[node * Nc + irE[i]];
         return 0;
     } else if (Nstates == 1) {
         /* Only individuals from one state to select from. */
@@ -490,7 +490,7 @@ static int sample_select(
     } else if (Nkinds == 1) {
         /* All individuals to choose from in one state */
         for (i = jcE[select]; i < jcE[select + 1]; i++) {
-            if (state[node * Nc + irE[i]] > 0) {
+            if (u[node * Nc + irE[i]] > 0) {
                 individuals[irE[i]] = n;
                 break;
             }
@@ -504,8 +504,8 @@ static int sample_select(
         i = jcE[select];
         individuals[irE[i]] = gsl_ran_hypergeometric(
             rng,
-            state[node * Nc + irE[i]],
-            state[node * Nc + irE[i+1]],
+            u[node * Nc + irE[i]],
+            u[node * Nc + irE[i+1]],
             n);
         individuals[irE[i+1]] = n - individuals[irE[i]];
     } else {
@@ -519,8 +519,8 @@ static int sample_select(
         for (i = jcE[select], j = 0; i < jcE[select + 1]; i++) {
             int k, nk, l;
 
-            k  = irE[i];               /* The kind  */
-            nk = state[node * Nc + k]; /* N of kind */
+            k  = irE[i];           /* The kind  */
+            nk = u[node * Nc + k]; /* N of kind */
 
             /* Set kind 'k' for 'nk' individuals */
             for (l = 0; l < nk; l++)
