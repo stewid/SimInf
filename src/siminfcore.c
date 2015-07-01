@@ -180,7 +180,7 @@ typedef struct siminf_thread_args
 
 /* Shared variables */
 int n_thread = 0;
-int *state = NULL;
+int *uu = NULL;
 double *vv = NULL;
 int *update_node = NULL;
 siminf_thread_args *sim_args = NULL;
@@ -655,13 +655,13 @@ static int siminf_solver()
                         /* All individuals enter first non-zero compartment,
                          * i.e. a non-zero entry in element in the select column. */
                         if (sa.jcE[s] < sa.jcE[s + 1]) {
-                            state[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] += e1.n[j];
-                            if (state[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] < 0)
+                            uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] += e1.n[j];
+                            if (uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] < 0)
                                 sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         }
                     } else {
                         sa.errcode = sample_select(
-                            sa.irE, sa.jcE, sa.Nc, state, e1.node[j],
+                            sa.irE, sa.jcE, sa.Nc, uu, e1.node[j],
                             e1.select[j], e1.n[j], e1.proportion[j],
                             sa.individuals, sa.kind, sa.kind_dest, sa.rng);
 
@@ -671,9 +671,9 @@ static int siminf_solver()
 
                                 for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
                                     /* Remove individuals from node */
-                                    state[e1.node[j] * sa.Nc + sa.irE[ii]] -=
+                                    uu[e1.node[j] * sa.Nc + sa.irE[ii]] -=
                                         sa.individuals[sa.irE[ii]];
-                                    if (state[e1.node[j] * sa.Nc + sa.irE[ii]] < 0) {
+                                    if (uu[e1.node[j] * sa.Nc + sa.irE[ii]] < 0) {
                                         sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                         break;
                                     }
@@ -687,9 +687,9 @@ static int siminf_solver()
                                 {
                                     /* Add individuals to new
                                      * compartments in node */
-                                    state[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prS[jj]] +=
+                                    uu[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prS[jj]] +=
                                         sa.individuals[sa.irE[ii]];
-                                    if (state[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prS[jj]] < 0) {
+                                    if (uu[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prS[jj]] < 0) {
                                         sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                         break;
                                     }
@@ -697,9 +697,9 @@ static int siminf_solver()
                                     /* Remove individuals from
                                      * previous compartments in
                                      * node */
-                                    state[e1.node[j] * sa.Nc + sa.irE[ii]] -=
+                                    uu[e1.node[j] * sa.Nc + sa.irE[ii]] -=
                                         sa.individuals[sa.irE[ii]];
-                                    if (state[e1.node[j] * sa.Nc + sa.irE[ii]] < 0) {
+                                    if (uu[e1.node[j] * sa.Nc + sa.irE[ii]] < 0) {
                                         sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                         break;
                                     }
@@ -729,7 +729,7 @@ static int siminf_solver()
                        !sa.errcode)
                 {
                     sa.errcode = sample_select(
-                        sa.irE, sa.jcE, sa.Nc, state, e2.node[sa.E2_index],
+                        sa.irE, sa.jcE, sa.Nc, uu, e2.node[sa.E2_index],
                         e2.select[sa.E2_index], e2.n[sa.E2_index],
                         e2.proportion[sa.E2_index], sa.individuals,
                         sa.kind, sa.kind_dest, sa.rng);
@@ -740,17 +740,17 @@ static int siminf_solver()
                              i++)
                         {
                             /* Add individuals to dest */
-                            state[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] +=
+                            uu[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] +=
                                 sa.individuals[sa.irE[i]];
-                            if (state[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
+                            if (uu[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
                                 sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                 break;
                             }
 
                             /* Remove individuals from node */
-                            state[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] -=
+                            uu[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] -=
                                 sa.individuals[sa.irE[i]];
-                            if (state[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
+                            if (uu[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
                                 sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                 break;
                             }
@@ -945,12 +945,12 @@ int siminf_run(
 #endif
 
     /* Set compartment state to the initial state. */
-    state = malloc(Nn * Nc * sizeof(int));
-    if (!state) {
+    uu = malloc(Nn * Nc * sizeof(int));
+    if (!uu) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
-    memcpy(state, u0, Nn * Nc * sizeof(int));
+    memcpy(uu, u0, Nn * Nc * sizeof(int));
 
     /* Set continuous state to the initial state in each node. */
     vv = malloc(Nn * Nd * sizeof(double));
@@ -1036,7 +1036,7 @@ int siminf_run(
 
         sim_args[i].sd = &sd[sim_args[i].Ni];
         sim_args[i].update_node = &update_node[sim_args[i].Ni];
-        sim_args[i].state = &state[sim_args[i].Ni * Nc];
+        sim_args[i].state = &uu[sim_args[i].Ni * Nc];
 
         /* External events */
         sim_args[i].E1 = calloc(1, sizeof(external_events));
@@ -1089,9 +1089,9 @@ int siminf_run(
     errcode = siminf_solver();
 
 cleanup:
-    if (state) {
-        free(state);
-        state = NULL;
+    if (uu) {
+        free(uu);
+        uu = NULL;
     }
 
     if (vv) {
