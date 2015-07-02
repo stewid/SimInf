@@ -822,9 +822,15 @@ static int siminf_solver()
                  * in tspan. Report solution up to, but not including
                  * tt. */
                 if (sa.tt > sa.tspan[sa.it]) {
-                    while (sa.it < sa.tlen && sa.tt > sa.tspan[sa.it])
-                        memcpy(&sa.U[sa.Nc * ((sa.Ntot * sa.it++) + sa.Ni)],
+                    while (sa.it < sa.tlen && sa.tt > sa.tspan[sa.it]) {
+                        /* Copy compartment state to U */
+                        memcpy(&sa.U[sa.Nc * (sa.Ntot * sa.it + sa.Ni)],
                                sa.u, sa.Nn * sa.Nc * sizeof(int));
+
+                        /* Copy continuous state to V */
+                        memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.it++) + sa.Ni)],
+                               sa.v, sa.Nn * sa.Nd * sizeof(double));
+                    }
                 }
 
                 *&sim_args[i] = sa;
