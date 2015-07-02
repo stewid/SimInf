@@ -93,6 +93,7 @@ typedef struct siminf_thread_args
     int Nn;    /**< Number of nodes in thread. */
     int Nt;    /**< Total number of different transitions. */
     int Nc;    /**< Number of compartments in each node. */
+    int Nd;    /**< Number of continuous state variables. */
     int dsize; /**< Size of data vector sent to propensities. */
 
     /*** Sparse matrices ***/
@@ -997,6 +998,7 @@ int siminf_run(
             sim_args[i].Nn += (Nn % n_thread);
         sim_args[i].Nt = Nt;
         sim_args[i].Nc = Nc;
+        sim_args[i].Nd = Nd;
         sim_args[i].dsize = dsize;
 
         /* Sparse matrices */
