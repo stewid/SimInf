@@ -16,7 +16,9 @@ Biarch: true
 NeedsCompilation: yes
 SystemRequirements: GNU Scientific Library (GSL)
 Depends:
-    R(>= 3.0.2),
+    R(>= 3.0.2)
+Imports:
+    graphics,
     Matrix,
     methods
 Collate:
