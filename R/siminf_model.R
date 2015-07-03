@@ -352,6 +352,7 @@ siminf_model <- function(G,
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,siminf_model-method
 ##' @docType methods
+##' @importFrom graphics legend
 ##' @importFrom graphics plot
 ##' @export
 setMethod("plot",
