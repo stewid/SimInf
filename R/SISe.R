@@ -181,19 +181,21 @@ SISe <- function(init,
         stop("length of beta_q4 must either be 1 or nrow(init)")
     }
 
-    inf_data <- matrix(c(phi,
-                         upsilon,
-                         gamma,
-                         alpha,
-                         beta_q1,
-                         beta_q2,
-                         beta_q3,
-                         beta_q4,
-                         epsilon),
-                       nrow  = 9,
-                       byrow = TRUE)
+    v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
+    storage.mode(v0) <- "double"
 
-    storage.mode(inf_data) <- "double"
+    data <- matrix(c(upsilon,
+                     gamma,
+                     alpha,
+                     beta_q1,
+                     beta_q2,
+                     beta_q3,
+                     beta_q4,
+                     epsilon),
+                   nrow  = 8,
+                   byrow = TRUE)
+
+    storage.mode(data) <- "double"
 
     model <- siminf_model(G      = G,
                           N      = N,
@@ -202,7 +204,8 @@ SISe <- function(init,
                           S      = S,
                           tspan  = tspan,
                           events = events,
-                          data   = inf_data)
+                          data   = data,
+                          v0     = v0)
 
     return(as(model, "SISe"))
 }
