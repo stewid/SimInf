@@ -29,11 +29,11 @@
 
 /* Definition of the propensity function. */
 typedef double (*PropensityFun)(
-    const int *u, double t, const double *data, int sd);
+    const int *u, const double *v, const double *data, double t, int sd);
 
 /* Definition of the callback function post one time step. */
 typedef int (*PostTimeStepFun)(
-    const int *u, int src, double t, double *data, int sd);
+    const int *u, double *v, const double *data, int node, double t, int sd);
 
 /* Definition of function to initialize and run siminf solver */
 int siminf_run(

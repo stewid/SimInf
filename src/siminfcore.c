@@ -567,8 +567,9 @@ static int siminf_solver()
                 for (j = 0; j < sa.Nt; j++) {
                     sa.t_rate[node * sa.Nt + j] =
                         (*sa.t_fun[j])(&sa.u[node * sa.Nc],
-                                       sa.tt,
+                                       &sa.v[node * sa.Nd],
                                        &sa.data[node * sa.dsize],
+                                       sa.tt,
                                        sa.sd[node]);
 
                     sa.sum_t_rate[node] += sa.t_rate[node * sa.Nt + j];
@@ -625,8 +626,9 @@ static int siminf_solver()
                             delta += (sa.t_rate[node * sa.Nt + sa.irG[j]] =
                                       (*sa.t_fun[sa.irG[j]])(
                                           &sa.u[node * sa.Nc],
-                                          sa.t_time[node],
+                                          &sa.v[node * sa.Nd],
                                           &sa.data[node * sa.dsize],
+                                          sa.t_time[node],
                                           sa.sd[node])) - old;
                         }
                         sa.sum_t_rate[node] += delta;
@@ -778,8 +780,9 @@ static int siminf_solver()
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
-                    if (sa.pts_fun(&sa.u[node * sa.Nc], sa.Ni + node, sa.tt,
-                                   &sa.data[node * sa.dsize], sa.sd[node]) ||
+                    if (sa.pts_fun(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
+                                   &sa.data[node * sa.dsize], sa.Ni + node,
+                                   sa.tt, sa.sd[node]) ||
                         sa.update_node[node])
                     {
                         /* Update transition rates */
@@ -790,9 +793,10 @@ static int siminf_solver()
                             double old = sa.t_rate[node * sa.Nt + j];
                             delta += (sa.t_rate[node * sa.Nt + j] =
                                       (*sa.t_fun[j])(
-                                          &sa.u[node * sa.Nc], sa.tt,
+                                          &sa.u[node * sa.Nc],
+                                          &sa.v[node * sa.Nd],
                                           &sa.data[node * sa.dsize],
-                                          sa.sd[node])) - old;
+                                          sa.tt, sa.sd[node])) - old;
                         }
                         sa.sum_t_rate[node] += delta;
 

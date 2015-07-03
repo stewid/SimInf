@@ -18,7 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Compartments */
+/* Offset in compartment state vector */
 enum {S_1,
       I_1,
       S_2,
@@ -26,9 +26,11 @@ enum {S_1,
       S_3,
       I_3};
 
+/* Offset in model state vector */
+enum {PHI};
+
 /* Offsets in data to parameters in the model */
-enum {PHI,
-      UPSILON_1,
+enum {UPSILON_1,
       UPSILON_2,
       UPSILON_3,
       GAMMA_1,
@@ -45,69 +47,77 @@ enum {PHI,
  * In age category 1; susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param t Current time.
+ * @param v The model state vector in node.
  * @param data The data vector for node.
+ * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_S_1_to_I_1(
     const int *u,
-    double t,
+    const double *v,
     const double *data,
+    double t,
     int sd)
 {
-    return data[UPSILON_1] * data[PHI] * u[S_1];
+    return data[UPSILON_1] * v[PHI] * u[S_1];
 }
 
 /**
  * In age category 2; susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param t Current time.
+ * @param v The model state vector in node.
  * @param data The data vector for node.
+ * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_S_2_to_I_2(
     const int *u,
-    double t,
+    const double *v,
     const double *data,
+    double t,
     int sd)
 {
-    return data[UPSILON_2] * data[PHI] * u[S_2];
+    return data[UPSILON_2] * v[PHI] * u[S_2];
 }
 
 /**
  *  In age category 3; susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param t Current time.
+ * @param v The model state vector in node.
  * @param data The data vector for node.
+ * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_S_3_to_I_3(
     const int *u,
-    double t,
+    const double *v,
     const double *data,
+    double t,
     int sd)
 {
-    return data[UPSILON_3] * data[PHI] * u[S_3];
+    return data[UPSILON_3] * v[PHI] * u[S_3];
 }
 
 /**
  *  In age category 1; infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param t Current time.
+ * @param v The model state vector in node.
  * @param data The data vector for node.
+ * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_I_1_to_S_1(
     const int *u,
-    double t,
+    const double *v,
     const double *data,
+    double t,
     int sd)
 {
     return data[GAMMA_1] * u[I_1];
@@ -117,15 +127,17 @@ double SISe3_I_1_to_S_1(
  * In age category 2; infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param t Current time.
+ * @param v The model state vector in node.
  * @param data The data vector for node.
+ * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_I_2_to_S_2(
     const int *u,
-    double t,
+    const double *v,
     const double *data,
+    double t,
     int sd)
 {
     return data[GAMMA_2] * u[I_2];
@@ -135,15 +147,17 @@ double SISe3_I_2_to_S_2(
  * In age category 3; infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param t Current time.
+ * @param v The model state vector in node.
  * @param data The data vector for node.
+ * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity
  */
 double SISe3_I_3_to_S_3(
     const int *u,
-    double t,
+    const double *v,
     const double *data,
+    double t,
     int sd)
 {
     return data[GAMMA_3] * u[I_3];
@@ -153,24 +167,26 @@ double SISe3_I_3_to_S_3(
  * Update infectious pressure
  *
  * @param u The compartment state vector in node.
+ * @param v The model state vector in node.
+ * @param data The data vector for node.
  * @param node The node.
  * @param t Current time.
- * @param data The data vector for node.
  * @param sd The sub-domain of node.
  * @return 1 if needs update, else 0.
  */
 int SISe3_post_time_step(
     const int *u,
+    double *v,
+    const double *data,
     int node,
     double t,
-    double *data,
     int sd)
 {
     const int days_in_year = 365;
     const int days_in_quarter = 91;
 
     double S_n, I_n;
-    double tmp = data[PHI];
+    double tmp = v[PHI];
 
     S_n = u[S_1] + u[S_2] + u[S_3];
     I_n = u[I_1] + u[I_2] + u[I_3];
@@ -178,24 +194,24 @@ int SISe3_post_time_step(
     /* Time dependent beta for each quarter of the year. Forward Euler step. */
     switch (((int)t % days_in_year) / days_in_quarter) {
     case 0:
-        data[PHI] *= (1.0 - data[BETA_Q1]);
+        v[PHI] *= (1.0 - data[BETA_Q1]);
         break;
     case 1:
-        data[PHI] *= (1.0 - data[BETA_Q2]);
+        v[PHI] *= (1.0 - data[BETA_Q2]);
         break;
     case 2:
-        data[PHI] *= (1.0 - data[BETA_Q3]);
+        v[PHI] *= (1.0 - data[BETA_Q3]);
         break;
     default:
-        data[PHI] *= (1.0 - data[BETA_Q4]);
+        v[PHI] *= (1.0 - data[BETA_Q4]);
         break;
     }
 
     if ((I_n + S_n) > 0.0)
-        data[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
+        v[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
     else
-        data[PHI] += data[EPSILON];
+        v[PHI] += data[EPSILON];
 
     /* 1 if needs update */
-    return tmp != data[PHI];
+    return tmp != v[PHI];
 }

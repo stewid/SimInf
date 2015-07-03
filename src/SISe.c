@@ -18,12 +18,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Compartments */
+/* Offset in compartment state vector */
 enum {S, I};
 
+/* Offset in model state vector */
+enum {PHI};
+
 /* Offsets in data to parameters in the model */
-enum {PHI,
-      UPSILON,
+enum {UPSILON,
       GAMMA,
       ALPHA,
       BETA_Q1,
@@ -36,26 +38,38 @@ enum {PHI,
  * susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param t Current time.
+ * @param v The model state vector in node.
  * @param data The data vector for node.
+ * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe_S_to_I(const int *u, double t, const double *data, int sd)
+double SISe_S_to_I(
+    const int *u,
+    const double *v,
+    const double *data,
+    double t,
+    int sd)
 {
-    return data[UPSILON] * data[PHI] * u[S];
+    return data[UPSILON] * v[PHI] * u[S];
 }
 
 /**
  *  infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param t Current time.
+ * @param v The model state vector in node.
  * @param data The data vector for node.
+ * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe_I_to_S(const int *u, double t, const double *data, int sd)
+double SISe_I_to_S(
+    const int *u,
+    const double *v,
+    const double *data,
+    double t,
+    int sd)
 {
     return data[GAMMA] * u[I];
 }
@@ -64,24 +78,26 @@ double SISe_I_to_S(const int *u, double t, const double *data, int sd)
  * Update infectious pressure
  *
  * @param u The compartment state vector in node.
+ * @param v The model state vector in node.
+ * @param data The data vector for node.
  * @param node The node.
  * @param t Current time.
- * @param data The data vector for node.
  * @param sd The sub-domain of node.
  * @return 1 if needs update, else 0.
  */
 int SISe_post_time_step(
     const int *u,
+    double *v,
+    const double *data,
     int node,
     double t,
-    double *data,
     int sd)
 {
     const int days_in_year = 365;
     const int days_in_quarter = 91;
 
     double S_n, I_n;
-    double tmp = data[PHI];
+    double tmp = v[PHI];
 
     S_n = u[S];
     I_n = u[I];
@@ -89,24 +105,24 @@ int SISe_post_time_step(
     /* Time dependent beta for each quarter of the year. Forward Euler step. */
     switch (((int)t % days_in_year) / days_in_quarter) {
     case 0:
-        data[PHI] *= (1.0 - data[BETA_Q1]);
+        v[PHI] *= (1.0 - data[BETA_Q1]);
         break;
     case 1:
-        data[PHI] *= (1.0 - data[BETA_Q2]);
+        v[PHI] *= (1.0 - data[BETA_Q2]);
         break;
     case 2:
-        data[PHI] *= (1.0 - data[BETA_Q3]);
+        v[PHI] *= (1.0 - data[BETA_Q3]);
         break;
     default:
-        data[PHI] *= (1.0 - data[BETA_Q4]);
+        v[PHI] *= (1.0 - data[BETA_Q4]);
         break;
     }
 
     if ((I_n + S_n) > 0.0)
-        data[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
+        v[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
     else
-        data[PHI] += data[EPSILON];
+        v[PHI] += data[EPSILON];
 
     /* 1 if needs update */
-    return tmp != data[PHI];
+    return tmp != v[PHI];
 }
