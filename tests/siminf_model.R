@@ -323,3 +323,61 @@ tools::assertError(siminf_model(G     = G,
                                 sd    = rep(0L, Nn),
                                 tspan = as.numeric(1:10),
                                 u0    = u0))
+
+## Check V. Change storage mode of V to double.
+## Should not raise error
+V <- structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                 1, 1, 1, 1, 1, 1, 1, 1, 1),
+               .Dim = c(6L, 10L))
+
+V_integer <- V
+storage.mode(V) <- "integer"
+
+siminf_model(G     = G,
+             N     = N,
+             U     = U,
+             V     = V_integer,
+             Nn    = Nn,
+             data  = matrix(rep(0, Nn), nrow = 1),
+             sd    = rep(0L, Nn),
+             tspan = as.numeric(1:10),
+             u0    = u0)
+
+## Check V. Change storage mode of V to character
+## Should raise error
+V_character <- V
+storage.mode(V_character) <- "character"
+
+tools::assertError(siminf_model(G     = G,
+                                N     = N,
+                                U     = U,
+                                V     = V_character,
+                                Nn    = Nn,
+                                data  = matrix(rep(0, Nn), nrow = 1),
+                                sd    = rep(0L, Nn),
+                                tspan = as.numeric(1:10),
+                                u0    = u0))
+
+## Check V. Should raise error if V is a vector of length > 0
+tools::assertError(siminf_model(G     = G,
+                                N     = N,
+                                U     = U,
+                                V     = 1,
+                                Nn    = Nn,
+                                data  = matrix(rep(0, Nn), nrow = 1),
+                                sd    = rep(0L, Nn),
+                                tspan = as.numeric(1:10),
+                                u0    = u0))
+
+## Check V. Should not raise an error if V is an integer vector of length 0
+siminf_model(G     = G,
+             N     = N,
+             U     = U,
+             V     = integer(0),
+             Nn    = Nn,
+             data  = matrix(rep(0, Nn), nrow = 1),
+             sd    = rep(0L, Nn),
+             tspan = as.numeric(1:10),
+             u0    = u0)
