@@ -16,11 +16,11 @@ Biarch: true
 NeedsCompilation: yes
 SystemRequirements: GNU Scientific Library (GSL)
 Depends:
-    R(>= 3.0.2)
+    R(>= 3.0.2),
+    methods
 Imports:
     graphics,
     Matrix,
-    methods
 Collate:
     'AllGenerics.R'
     'external_events.R'
