@@ -8,3 +8,6 @@
 autom4te.cache*
 /src-i386/
 /src-x64/
+/src/openssl/
+local320.zip
+/src/gsl/
