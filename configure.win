@@ -8,7 +8,7 @@ if [ ! -e "${local}/include/gsl/gsl_rng.h" ]; then
         if [ ! -e local320.zip ]; then
             echo "  cannot find gsl files"
             echo "  attempting to download them"
-            "${R_HOME}/bin${R_ARCH_BIN}/Rscript" -e "setInternet2(); download.file('http://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local320.zip', 'local320.zip', quiet = TRUE)"
+            "${R_HOME}/bin${R_ARCH_BIN}/Rscript" -e "setInternet2(); download.file('http://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local320.zip', 'local320.zip')"
         fi
         if [ ! -e local320.zip ]; then
 	    have_gsl=no
