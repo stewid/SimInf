@@ -1,0 +1,21 @@
+# Check for gsl headers and libraries
+have_gsl=yes
+local=`"${R_HOME}/bin/R" CMD config LOCAL_SOFT`
+if [ ! -e "${local}/include/gsl/gsl_rng.h" ]; then
+    if [ ! -e src/gsl/include/gsl/gsl_rng.h ]; then
+        if [ ! -e local320.zip ]; then
+            echo "  cannot find gsl files"
+            echo "  attempting to download them"
+            "${R_HOME}/bin${R_ARCH_BIN}/Rscript" -e "setInternet2(); download.file('http://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local320.zip', 'local320.zip', quiet = TRUE)"
+        fi
+        if [ ! -e local320.zip ]; then
+	    have_gsl=no
+        else
+	    echo "  unpacking gsl files from local320.zip"
+            unzip -u local320.zip include/gsl* lib/i386/libgsl.a lib/x64/libgsl.a lib/i386/libgslcblas.a lib/x64/libgslcblas.a -d src/gsl
+            if [ ! -e src/gsl/include/gsl/gsl_rng.h ]; then
+	        have_gsl=no
+	    fi
+        fi
+    fi
+fi
