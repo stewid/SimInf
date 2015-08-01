@@ -1,9 +1,5 @@
 #!/bin/sh
 
-if [ -z "$R_HOME" ]; then
-    exit 0
-fi
-
 # Check for gsl headers and libraries
 have_gsl=yes
 local=`"${R_HOME}/bin/R" CMD config LOCAL_SOFT`
