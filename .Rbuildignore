@@ -6,3 +6,5 @@
 ^appveyor.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^local320\.zip$
+src/gsl
