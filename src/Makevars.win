@@ -1,4 +1,12 @@
+# Use gsl headers and libraries in LOCAL_SOFT
+# or from downloaded local320.zip
 SIMINF_LOCAL_SOFT=$(shell "${R_HOME}/bin/R" CMD config LOCAL_SOFT)
+ifeq ($(wildcard "${SIMINF_LOCAL_SOFT}/include/gsl/gsl_rng.h"),)
+ifneq ($(wildcard gsl/include/gsl/gsl_rng.h),)
+SIMINF_GSL_LIB = -L"gsl/lib$(R_ARCH)"
+SIMINF_GSL_INCLUDE = -Igsl/include
+endif
+endif
 
-PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS) -DSIMINF_OMP
-PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
+PKG_CFLAGS = $(SIMINF_GSL_INCLUDE) $(SHLIB_OPENMP_CFLAGS) -DSIMINF_OMP
+PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
