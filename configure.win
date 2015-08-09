@@ -21,3 +21,23 @@ if [ ! -e "${local}/include/gsl/gsl_rng.h" ]; then
         fi
     fi
 fi
+
+if [ ${have_gsl} != yes ]; then
+    echo ""
+    echo " *** ERROR: unable to find the gsl files"
+    echo ""
+    echo " They must be either in 'src/gsl' or in 'local320.zip'"
+    echo ""
+    echo " You can download local320.zip from"
+    echo " http://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local320.zip"
+    echo ""
+    echo " Another option is to configure the LOCAL_SOFT variable, see:"
+    echo "   https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Windows-packages"
+    echo "   http://www.stats.ox.ac.uk/pub/Rtools/libs.html"
+    echo ""
+    exit 1
+fi
+
+echo "  The configuration seems ok, continuing the build process."
+
+exit 0
