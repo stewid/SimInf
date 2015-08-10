@@ -27,6 +27,10 @@ roxygen:
 pdf: roxygen
 	cd .. && R CMD Rd2pdf --force $(PKG_NAME)
 
+# Generate README
+README.md: README.Rmd
+	Rscript -e "library(knitr); knit('README.Rmd')"
+
 # Build and check package
 check: clean
 	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
