@@ -71,10 +71,22 @@ fi
 
 # Check for GSL
 AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [
-        AC_MSG_FAILURE([gsl library required])
+        AC_MSG_FAILURE([
+  ---------------------------------------------
+   The GNU Scientific Library (GSL) required
+
+   Please install:
+   libgsl0-dev (deb) or gsl-devel (rpm)
+  ---------------------------------------------])
 ])
 AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [
-        AC_MSG_FAILURE([gsl library required])
+        AC_MSG_FAILURE([
+  ---------------------------------------------
+   The GNU Scientific Library (GSL) required
+
+   Please install:
+   libgsl0-dev (deb) or gsl-devel (rpm)
+  ---------------------------------------------])
 ])
 
 AC_SUBST(SIMINF_HAVE_OPENMP)

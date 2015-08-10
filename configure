@@ -2857,7 +2857,13 @@ else
 
         { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "gsl library required
+as_fn_error $? "
+  ---------------------------------------------
+   The GNU Scientific Library (GSL) required
+
+   Please install:
+   libgsl0-dev (deb) or gsl-devel (rpm)
+  ---------------------------------------------
 See \`config.log' for more details" "$LINENO" 5; }
 
 fi
@@ -2909,7 +2915,13 @@ else
 
         { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "gsl library required
+as_fn_error $? "
+  ---------------------------------------------
+   The GNU Scientific Library (GSL) required
+
+   Please install:
+   libgsl0-dev (deb) or gsl-devel (rpm)
+  ---------------------------------------------
 See \`config.log' for more details" "$LINENO" 5; }
 
 fi
