@@ -1,3 +1,5 @@
+
+
 [![Build Status](https://travis-ci.org/stewid/siminf.svg)](https://travis-ci.org/stewid/siminf)
 [![Build status](https://ci.appveyor.com/api/projects/status/pe68xiu1anxvet2n?svg=true)](https://ci.appveyor.com/project/stewid/siminf)
 [![Coverage Status](https://coveralls.io/repos/stewid/siminf/badge.svg?branch=master)](https://coveralls.io/r/stewid/siminf?branch=master)
@@ -12,6 +14,7 @@ simulations in animal populations.
 To install the development version of `siminf`, it's easiest to use
 the devtools package:
 
+
 ```r
 # install.packages("devtools")
 library(devtools)
@@ -19,6 +22,7 @@ install_github("stewid/siminf"")
 ```
 
 Another alternative is to use `git` and `make`
+
 
 ```r
 $ git clone https://github.com/stewid/siminf.git
@@ -33,12 +37,14 @@ $ make install
 Before installing `siminf` you need to install
 [The GNU Scientific Library](http://www.gnu.org/software/gsl/) (GSL).
 
-```
+
+```r
 apt-get install libgsl0-dev
 ```
 
 You may need to do:
-```
+
+```r
 sudo apt-get install libgsl0-dev
 ```
 
