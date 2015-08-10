@@ -28,27 +28,24 @@ $ make install
 
 ### Dependencies
 
+#### On a Debian based system
+
 Before installing `siminf` you need to install
 [The GNU Scientific Library](http://www.gnu.org/software/gsl/) (GSL).
 
-#### On a Debian based system
-
 ```
 apt-get install libgsl0-dev
+```
+
+You may need to do:
+```
+sudo apt-get install libgsl0-dev
 ```
 
 #### On a Windows machine
 
 * Download and install
   [Rtools](http://cran.r-project.org/bin/windows/Rtools/)
-
-* Download `local320.zip` from
-  http://www.stats.ox.ac.uk/pub/Rtools/libs.html and unpack to a
-  folder
-
-* Change `LOCAL_SOFT` in `c:/Program/R/R-3.1.2/etc/i386/Makeconf` and
-  `c:/Program/R/R-3.1.2/etc/x64/Makeconf` to the folder of the
-  unpacked `local320.zip`
 
 # Authors
 
