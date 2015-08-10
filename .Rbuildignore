@@ -1,4 +1,5 @@
 ^README\.md$
+^README\.Rmd$
 ^LICENSE$
 ^\.travis\.yml$
 ^Makefile$
