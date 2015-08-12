@@ -1,14 +1,19 @@
 #!/bin/sh
 
+# Don't use setInternet2() if R version > 3.2.1
+R_SCRIPT="${R_HOME}/bin${R_ARCH_BIN}/Rscript"
+SET_INTERNET2=`"${R_SCRIPT}" -e "cat(ifelse(compareVersion(sprintf('%s.%s', R.version['major'], R.version['minor']), '3.2.1') > 0, '', 'setInternet2();'))"`
+
 # Check for gsl headers and libraries
 have_gsl=yes
 local=`"${R_HOME}/bin/R" CMD config LOCAL_SOFT`
+LOCAL320_URL=http://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local320.zip
 if [ ! -e "${local}/include/gsl/gsl_rng.h" ]; then
     if [ ! -e src/gsl/include/gsl/gsl_rng.h ]; then
         if [ ! -e local320.zip ]; then
             echo "  cannot find gsl files"
             echo "  attempting to download them"
-            "${R_HOME}/bin${R_ARCH_BIN}/Rscript" -e "setInternet2(); download.file('http://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local320.zip', 'local320.zip')"
+            "${R_SCRIPT}" -e "${SET_INTERNET2} download.file('${LOCAL320_URL}', 'local320.zip', quiet = TRUE)"
         fi
         if [ ! -e local320.zip ]; then
 	    have_gsl=no
@@ -29,7 +34,7 @@ if [ ${have_gsl} != yes ]; then
     echo " They must be either in 'src/gsl' or in 'local320.zip'"
     echo ""
     echo " You can download local320.zip from"
-    echo " http://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local320.zip"
+    echo " ${LOCAL320_URL}"
     echo ""
     echo " Another option is to configure the LOCAL_SOFT variable, see:"
     echo "   https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Windows-packages"
