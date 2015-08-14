@@ -11,10 +11,8 @@ endif
 PKG_CFLAGS = -I. -Icore -Imodels $(SIMINF_GSL_INCLUDE) $(SHLIB_OPENMP_CFLAGS) -DSIMINF_OMP
 PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
 
+# List all model files to compile
 MODELS_SRC = $(wildcard models/*.c)
 MODELS_OBJ = $(MODELS_SRC:.c=.o)
 
-CORE_SRC = $(wildcard core/*.c)
-CORE_OBJ = $(CORE_SRC:.c=.o)
-
-OBJECTS = siminf.o $(CORE_OBJ) $(MODELS_OBJ)
+OBJECTS = siminf.o core/siminfcore.o $(MODELS_OBJ)
