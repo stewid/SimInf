@@ -21,19 +21,13 @@
 #ifndef INCLUDE_siminfcore_h
 #define INCLUDE_siminfcore_h
 
+#include "siminf.h"
+
 /* Error constants */
 #define SIMINF_ERR_NEGATIVE_STATE          1
 #define SIMINF_ERR_ALLOC_MEMORY_BUFFER     2
 #define SIMINF_ERR_SPLIT_EVENTS            3
 #define SIMINF_UNDEFINED_EVENT             4
-
-/* Definition of the propensity function. */
-typedef double (*PropensityFun)(
-    const int *u, const double *v, const double *data, double t, int sd);
-
-/* Definition of the callback function post one time step. */
-typedef int (*PostTimeStepFun)(
-    const int *u, double *v, const double *data, int node, double t, int sd);
 
 /* Definition of function to initialize and run siminf solver */
 int siminf_run(
