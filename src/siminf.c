@@ -19,12 +19,11 @@
  */
 
 #include <Rdefines.h>
-#include <R.h>
-#include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
 #include <time.h>
 
+#include "siminf.h"
 #include "siminfcore.h"
 #include "SISe.h"
 #include "SISe3.h"
@@ -278,74 +277,6 @@ cleanup:
         free(prS);
 
     return err;
-}
-
-/**
- * Run simulation for the SISe model
- *
- * @param model The SISe model
- * @param threads Number of threads
- * @param seed Random number seed.
- * @return S4 class SISe with the simulated trajectory in U
- */
-SEXP SISe_run(SEXP model, SEXP threads, SEXP seed)
-{
-    int err = 0;
-    SEXP result, class_name;
-    PropensityFun t_fun[] = {&SISe_S_to_I, &SISe_I_to_S};
-
-    if (R_NilValue == model || S4SXP != TYPEOF(model))
-        Rf_error("Invalid SISe model");
-
-    class_name = getAttrib(model, R_ClassSymbol);
-    if (strcmp(CHAR(STRING_ELT(class_name, 0)), "SISe") != 0)
-        Rf_error("Invalid SISe model: %s", CHAR(STRING_ELT(class_name, 0)));
-
-    result = PROTECT(duplicate(model));
-
-    err = run_internal(result, threads, seed, t_fun, &SISe_post_time_step);
-
-    UNPROTECT(1);
-
-    if (err)
-        siminf_error(err);
-
-    return result;
-}
-
-/**
- * Run simulation for the SISe3 model
- *
- * @param model The SISe3 model
- * @param threads Number of threads
- * @param seed Random number seed.
- * @return S4 class SISe3 with the simulated trajectory in U
- */
-SEXP SISe3_run(SEXP model, SEXP threads, SEXP seed)
-{
-    int err = 0;
-    SEXP result, class_name;
-    PropensityFun t_fun[] = {&SISe3_S_1_to_I_1, &SISe3_I_1_to_S_1,
-                             &SISe3_S_2_to_I_2, &SISe3_I_2_to_S_2,
-                             &SISe3_S_3_to_I_3, &SISe3_I_3_to_S_3};
-
-    if (R_NilValue == model || S4SXP != TYPEOF(model))
-        Rf_error("Invalid SISe3 model");
-
-    class_name = getAttrib(model, R_ClassSymbol);
-    if (strcmp(CHAR(STRING_ELT(class_name, 0)), "SISe3") != 0)
-        Rf_error("Invalid SISe3 model: %s", CHAR(STRING_ELT(class_name, 0)));
-
-    result = PROTECT(duplicate(model));
-
-    err = run_internal(result, threads, seed, t_fun, &SISe3_post_time_step);
-
-    UNPROTECT(1);
-
-    if (err)
-        siminf_error(err);
-
-    return result;
 }
 
 static const R_CallMethodDef callMethods[] =
