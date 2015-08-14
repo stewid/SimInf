@@ -18,6 +18,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "SISe.h"
+
 /* Offset in compartment state vector */
 enum {S, I};
 
@@ -125,4 +127,38 @@ int SISe_post_time_step(
 
     /* 1 if needs update */
     return tmp != v[PHI];
+}
+
+/**
+ * Run simulation for the SISe model
+ *
+ * This function is called from R with '.Call'
+ * @param model The SISe model
+ * @param threads Number of threads
+ * @param seed Random number seed.
+ * @return S4 class SISe with the simulated trajectory in U
+ */
+SEXP SISe_run(SEXP model, SEXP threads, SEXP seed)
+{
+    int err = 0;
+    SEXP result, class_name;
+    PropensityFun t_fun[] = {&SISe_S_to_I, &SISe_I_to_S};
+
+    if (R_NilValue == model || S4SXP != TYPEOF(model))
+        Rf_error("Invalid SISe model");
+
+    class_name = getAttrib(model, R_ClassSymbol);
+    if (strcmp(CHAR(STRING_ELT(class_name, 0)), "SISe") != 0)
+        Rf_error("Invalid SISe model: %s", CHAR(STRING_ELT(class_name, 0)));
+
+    result = PROTECT(duplicate(model));
+
+    err = run_internal(result, threads, seed, t_fun, &SISe_post_time_step);
+
+    UNPROTECT(1);
+
+    if (err)
+        siminf_error(err);
+
+    return result;
 }

@@ -21,13 +21,8 @@
 #ifndef INCLUDE_SISe_h
 #define INCLUDE_SISe_h
 
-double SISe_S_to_I(
-    const int *u, const double *v, const double *data, double t, int sd);
+#include "siminf.h"
 
-double SISe_I_to_S(
-    const int *u, const double *v, const double *data, double t, int sd);
-
-int SISe_post_time_step(
-    const int *u, double *v, const double *data, int node, double t, int sd);
+SEXP SISe_run(SEXP model, SEXP threads, SEXP seed);
 
 #endif
