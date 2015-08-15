@@ -244,7 +244,7 @@ SEXP SISe3_run(SEXP model, SEXP threads, SEXP seed)
 
     result = PROTECT(duplicate(model));
 
-    err = run_internal(result, threads, seed, t_fun, &SISe3_post_time_step);
+    err = siminf_run(result, threads, seed, t_fun, &SISe3_post_time_step);
 
     UNPROTECT(1);
 

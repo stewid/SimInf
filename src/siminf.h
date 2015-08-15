@@ -34,7 +34,8 @@ typedef double (*PropensityFun)(
 typedef int (*PostTimeStepFun)(
     const int *u, double *v, const double *data, int node, double t, int sd);
 
-int run_internal(
+/* Definition of function to initiate and run the simulation */
+int siminf_run(
     SEXP result,
     SEXP threads,
     SEXP seed,

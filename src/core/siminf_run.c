@@ -153,7 +153,7 @@ get_sparse_matrix_int(int **ir, int **jc, int **pr, SEXP m)
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  */
-int run_internal(
+int siminf_run(
     SEXP result,
     SEXP threads,
     SEXP seed,
