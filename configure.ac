@@ -33,6 +33,17 @@ AC_PROG_CC
 # Check for OpenMP
 AC_OPENMP
 
+# gsl include and library path
+AC_ARG_WITH([gsl-include],
+            AC_HELP_STRING([--with-gsl-include=INCLUDE_PATH],
+                           [the location of gsl header files]),
+            [gsl_include_path=$withval])
+
+AC_ARG_WITH([gsl-lib],
+            AC_HELP_STRING([--with-gsl-lib=LIB_PATH],
+                           [the location of gsl libraries]),
+            [gsl_lib_path=$withval])
+
 # Find the compiler and compiler flags to use
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
@@ -43,7 +54,13 @@ RBIN="${R_HOME}/bin/R"
 CC=`"${RBIN}" CMD config CC`
 CFLAGS=`"${RBIN}" CMD config CFLAGS`
 CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
+if test [ -n "$gsl_include_path" ] ; then
+  CPPFLAGS="${CPPFLAGS} -I${gsl_include_path}"
+fi
 LIBS="${PKG_LIBS}"
+if test [ -n "$gsl_lib_path" ] ; then
+  LIBS="-L${gsl_lib_path} ${LIBS}"
+fi
 
 # since some systems have broken OMP libraries
 # we also check that the actual package will work
