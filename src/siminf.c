@@ -214,8 +214,8 @@ int run_internal(
     SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
     SET_SLOT(result, Rf_install("V"), allocMatrix(REALSXP, Nn * Nd, tlen));
 
-    /* Core simulation routine. */
-    err = siminf_run(
+    /* Run simulation solver. */
+    err = siminf_run_solver(
         INTEGER(GET_SLOT(result, Rf_install("u0"))),
         REAL(GET_SLOT(result, Rf_install("v0"))),
         irG, jcG,

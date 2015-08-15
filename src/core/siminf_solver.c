@@ -926,7 +926,7 @@ static int siminf_solver()
  *        e.g. update infectious pressure.
  * @return 0 if Ok, else error code.
  */
-int siminf_run(
+int siminf_run_solver(
     const int *u0, const double *v0, const int *irG, const int *jcG,
     const int *irN, const int *jcN, const int *prN, const double *tspan,
     int tlen, int *U, double *V, const double *d0, const int *sd, int Nn,
