@@ -8,4 +8,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^local320\.zip$
+^gsl\.zip$
+^gsl$
 src/gsl
