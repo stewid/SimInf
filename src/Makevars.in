@@ -6,4 +6,5 @@ PKG_LIBS = @OPENMP_CFLAGS@ @LIBS@
 MODELS_SRC = $(wildcard models/*.c)
 MODELS_OBJ = $(MODELS_SRC:.c=.o)
 
-OBJECTS = siminf.o core/siminf_error.o core/siminf_solver.o $(MODELS_OBJ)
+OBJECTS = siminf.o core/siminf_error.o core/siminf_run.o core/siminf_solver.o \
+          $(MODELS_OBJ)
