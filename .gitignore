@@ -10,4 +10,6 @@ autom4te.cache*
 /src-x64/
 /src/openssl/
 local320.zip
+gsl
+gsl.zip
 /src/gsl/
