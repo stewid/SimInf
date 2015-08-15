@@ -29,25 +29,6 @@
 #include "SISe3.h"
 
 /**
- * Report error
- *
- * @param err The error code.
- */
-void siminf_error(int err)
-{
-    switch (err) {
-    case SIMINF_ERR_NEGATIVE_STATE:
-        Rf_error("Negative state detected.");
-        break;
-    case SIMINF_ERR_ALLOC_MEMORY_BUFFER:
-        Rf_error("Unable to allocate memory buffer");
-        break;
-    default:
-        Rf_error("Unknown error code.");
-    }
-}
-
-/**
  * Look for seed
  *
  * @param seed Random number seed.

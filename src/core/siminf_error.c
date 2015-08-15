@@ -18,27 +18,23 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_H
-#define INCLUDE_SIMINF_H
+#include "siminf.h"
 
-#include <R.h>
-#include <Rinternals.h>
-
-#include "siminf_error.h"
-
-/* Definition of the propensity function. */
-typedef double (*PropensityFun)(
-    const int *u, const double *v, const double *data, double t, int sd);
-
-/* Definition of the callback function post one time step. */
-typedef int (*PostTimeStepFun)(
-    const int *u, double *v, const double *data, int node, double t, int sd);
-
-int run_internal(
-    SEXP result,
-    SEXP threads,
-    SEXP seed,
-    PropensityFun *t_fun,
-    PostTimeStepFun pts_fun);
-
-#endif
+/**
+ * Report error
+ *
+ * @param err The error code.
+ */
+void siminf_error(int err)
+{
+    switch (err) {
+    case SIMINF_ERR_NEGATIVE_STATE:
+        Rf_error("Negative state detected.");
+        break;
+    case SIMINF_ERR_ALLOC_MEMORY_BUFFER:
+        Rf_error("Unable to allocate memory buffer");
+        break;
+    default:
+        Rf_error("Unknown error code.");
+    }
+}

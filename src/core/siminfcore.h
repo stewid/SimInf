@@ -23,12 +23,6 @@
 
 #include "siminf.h"
 
-/* Error constants */
-#define SIMINF_ERR_NEGATIVE_STATE          1
-#define SIMINF_ERR_ALLOC_MEMORY_BUFFER     2
-#define SIMINF_ERR_SPLIT_EVENTS            3
-#define SIMINF_UNDEFINED_EVENT             4
-
 /* Definition of function to initialize and run siminf solver */
 int siminf_run(
     const int *u0, const double *v0, const int *irG, const int *jcG,
