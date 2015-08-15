@@ -24,7 +24,7 @@
 #include <time.h>
 
 #include "siminf.h"
-#include "siminfcore.h"
+#include "siminf_solver.h"
 #include "SISe.h"
 #include "SISe3.h"
 

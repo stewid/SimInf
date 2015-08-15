@@ -18,8 +18,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_siminfcore_h
-#define INCLUDE_siminfcore_h
+#ifndef INCLUDE_SIMINF_SOLVER_H
+#define INCLUDE_SIMINF_SOLVER_H
 
 #include "siminf.h"
 
