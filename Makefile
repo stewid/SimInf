@@ -62,6 +62,7 @@ clean:
 	-rm -f config.status
 	-rm -rf autom4te.cache
 	-rm -f local320.zip
+	-rm -f gsl.zip
 	-rm -f src/Makevars
 	-rm -f src/*.o
 	-rm -f src/core/*.o
@@ -69,6 +70,7 @@ clean:
 	-rm -f src/*.so
 	-rm -rf src-x64
 	-rm -rf src-i386
+	-rm -rf gsl
 	-rm -rf src/gsl
 
 .PHONY: install roxygen pdf check check_gctorture check_valgrind clean
