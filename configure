@@ -648,6 +648,7 @@ enable_option_checking
 enable_openmp
 with_gsl_include
 with_gsl_lib
+with_gsl_build
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1278,6 +1279,9 @@ Optional Packages:
   --with-gsl-include=INCLUDE_PATH
                           the location of gsl header files
   --with-gsl-lib=LIB_PATH the location of gsl libraries
+  --with-gsl-build        Install the gsl ver 1.16 library in 'src/gsl' after
+                          building the download from
+                          http://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz
 
 Some influential environment variables:
   CC          C compiler command
@@ -2781,6 +2785,39 @@ if test "${with_gsl_lib+set}" = set; then :
 fi
 
 
+# Download and build gsl
+
+# Check whether --with-gsl-build was given.
+if test "${with_gsl_build+set}" = set; then :
+  withval=$with_gsl_build;
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Download and build gsl...this might take a while" >&5
+$as_echo "$as_me: Download and build gsl...this might take a while" >&6;}
+  have_built_gsl=no
+  rm -rf gsl
+  rm -rf src/gsl
+  mkdir -p gsl && curl -fsSL http://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz | \
+      tar xz --strip 1 -C gsl
+  mkdir -p src/gsl
+  SIMINF_GSL_INST_DIR="${PWD}/src/gsl"
+  cd gsl
+  ./configure --with-pic --disable-shared --enable-static \
+      --prefix=$SIMINF_GSL_INST_DIR && make && make install && \
+      have_built_gsl=yes
+  cd ..
+
+  if test "x${have_built_gsl}" = xno; then { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "
+  ---------------------------------------------
+        Unable to download and build the
+        GNU Scientific Library (GSL)
+  ---------------------------------------------
+See \`config.log' for more details" "$LINENO" 5; }
+  fi
+
+fi
+
+
 # Find the compiler and compiler flags to use
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
@@ -2840,6 +2877,7 @@ $as_echo "$as_me: WARNING:
 fi
 
 # Check for GSL
+have_gsl=yes
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for cblas_dgemm in -lgslcblas" >&5
 $as_echo_n "checking for cblas_dgemm in -lgslcblas... " >&6; }
 if ${ac_cv_lib_gslcblas_cblas_dgemm+:} false; then :
@@ -2884,18 +2922,7 @@ _ACEOF
   LIBS="-lgslcblas $LIBS"
 
 else
-
-        { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "
-  ---------------------------------------------
-   The GNU Scientific Library (GSL) required
-
-   Please install:
-   libgsl0-dev (deb) or gsl-devel (rpm)
-  ---------------------------------------------
-See \`config.log' for more details" "$LINENO" 5; }
-
+  have_gsl=no
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl_blas_dgemm in -lgsl" >&5
@@ -2942,8 +2969,11 @@ _ACEOF
   LIBS="-lgsl $LIBS"
 
 else
+  have_gsl=no
+fi
 
-        { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+
+if test "x${have_gsl}" = xno; then { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "
   ---------------------------------------------
@@ -2953,9 +2983,7 @@ as_fn_error $? "
    libgsl0-dev (deb) or gsl-devel (rpm)
   ---------------------------------------------
 See \`config.log' for more details" "$LINENO" 5; }
-
 fi
-
 
 
 

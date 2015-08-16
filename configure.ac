@@ -44,6 +44,36 @@ AC_ARG_WITH([gsl-lib],
                            [the location of gsl libraries]),
             [gsl_lib_path=$withval])
 
+# Download and build gsl
+AC_ARG_WITH([gsl-build],
+AC_HELP_STRING([--with-gsl-build],
+[
+  Install the gsl ver 1.16 library in 'src/gsl' after building
+  the download from http://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz
+]),
+[
+  AC_MSG_NOTICE([Download and build gsl...this might take a while])
+  have_built_gsl=no
+  rm -rf gsl
+  rm -rf src/gsl
+  mkdir -p gsl && curl -fsSL http://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz | \
+      tar xz --strip 1 -C gsl
+  mkdir -p src/gsl
+  SIMINF_GSL_INST_DIR="${PWD}/src/gsl"
+  cd gsl
+  ./configure --with-pic --disable-shared --enable-static \
+      --prefix=$SIMINF_GSL_INST_DIR && make && make install && \
+      have_built_gsl=yes
+  cd ..
+
+  if test "x${have_built_gsl}" = xno; then AC_MSG_FAILURE([
+  ---------------------------------------------
+        Unable to download and build the
+        GNU Scientific Library (GSL)
+  ---------------------------------------------])
+  fi
+])
+
 # Find the compiler and compiler flags to use
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
@@ -87,24 +117,18 @@ else
 fi
 
 # Check for GSL
-AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [
-        AC_MSG_FAILURE([
+have_gsl=yes
+AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [have_gsl=no])
+AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [have_gsl=no])
+
+if test "x${have_gsl}" = xno; then AC_MSG_FAILURE([
   ---------------------------------------------
    The GNU Scientific Library (GSL) required
 
    Please install:
    libgsl0-dev (deb) or gsl-devel (rpm)
   ---------------------------------------------])
-])
-AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [
-        AC_MSG_FAILURE([
-  ---------------------------------------------
-   The GNU Scientific Library (GSL) required
-
-   Please install:
-   libgsl0-dev (deb) or gsl-devel (rpm)
-  ---------------------------------------------])
-])
+fi
 
 AC_SUBST(SIMINF_HAVE_OPENMP)
 AC_SUBST(CPPFLAGS)
