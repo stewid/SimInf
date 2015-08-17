@@ -2876,9 +2876,33 @@ $as_echo "$as_me: WARNING:
   -----------------------------------------------" >&2;}
 fi
 
-# Check for GSL
+# Check for GSL. First check if 'src/gsl/include/gsl/gsl_rng.h'
+# exists. This happens if the package has been configured with the
+# option '--with-gsl-build'
 have_gsl=yes
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for cblas_dgemm in -lgslcblas" >&5
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/gsl/include/gsl/gsl_rng.h" >&5
+$as_echo_n "checking for src/gsl/include/gsl/gsl_rng.h... " >&6; }
+if ${ac_cv_file_src_gsl_include_gsl_gsl_rng_h+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  test "$cross_compiling" = yes &&
+  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
+if test -r "src/gsl/include/gsl/gsl_rng.h"; then
+  ac_cv_file_src_gsl_include_gsl_gsl_rng_h=yes
+else
+  ac_cv_file_src_gsl_include_gsl_gsl_rng_h=no
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file_src_gsl_include_gsl_gsl_rng_h" >&5
+$as_echo "$ac_cv_file_src_gsl_include_gsl_gsl_rng_h" >&6; }
+if test "x$ac_cv_file_src_gsl_include_gsl_gsl_rng_h" = xyes; then :
+
+    CPPFLAGS="-Igsl ${CPPFLAGS}"
+    LIBS="-Lgsl ${LIBS} -lgsl -lgslcblas"
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for cblas_dgemm in -lgslcblas" >&5
 $as_echo_n "checking for cblas_dgemm in -lgslcblas... " >&6; }
 if ${ac_cv_lib_gslcblas_cblas_dgemm+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -2925,7 +2949,7 @@ else
   have_gsl=no
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl_blas_dgemm in -lgsl" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl_blas_dgemm in -lgsl" >&5
 $as_echo_n "checking for gsl_blas_dgemm in -lgsl... " >&6; }
 if ${ac_cv_lib_gsl_gsl_blas_dgemm+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -2970,6 +2994,9 @@ _ACEOF
 
 else
   have_gsl=no
+fi
+
+
 fi
 
 

@@ -116,10 +116,18 @@ else
   -----------------------------------------------])
 fi
 
-# Check for GSL
+# Check for GSL. First check if 'src/gsl/include/gsl/gsl_rng.h'
+# exists. This happens if the package has been configured with the
+# option '--with-gsl-build'
 have_gsl=yes
-AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [have_gsl=no])
-AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [have_gsl=no])
+AC_CHECK_FILE(src/gsl/include/gsl/gsl_rng.h,
+[
+    CPPFLAGS="-Igsl ${CPPFLAGS}"
+    LIBS="-Lgsl ${LIBS} -lgsl -lgslcblas"
+],[
+    AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [have_gsl=no])
+    AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [have_gsl=no])
+])
 
 if test "x${have_gsl}" = xno; then AC_MSG_FAILURE([
   ---------------------------------------------
