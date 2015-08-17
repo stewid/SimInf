@@ -2,18 +2,21 @@
 
 # Don't use setInternet2() if R version > 3.2.1
 R_SCRIPT="${R_HOME}/bin${R_ARCH_BIN}/Rscript"
-SET_INTERNET2=`"${R_SCRIPT}" -e "cat(ifelse(compareVersion(sprintf('%s.%s', R.version['major'], R.version['minor']), '3.2.1') > 0, '', 'setInternet2();'))"`
+SET_INTERNET2=`"${R_SCRIPT}" -e "cat(ifelse(compareVersion(sprintf('%s.%s', R.version['major'], R.version['minor']), '3.2.2') > 0, '', 'setInternet2();'))"`
+
+# Use libcurl if available
+USE_LIBCURL=`"${R_SCRIPT}" -e "cat(ifelse(capabilities('libcurl'), 'method=\'libcurl\',', ''))"`
 
 # Check for gsl headers and libraries
 have_gsl=yes
 local=`"${R_HOME}/bin/R" CMD config LOCAL_SOFT`
-LOCAL320_URL=http://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local320.zip
+LOCAL320_URL=https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local320.zip
 if [ ! -e "${local}/include/gsl/gsl_rng.h" ]; then
     if [ ! -e src/gsl/include/gsl/gsl_rng.h ]; then
         if [ ! -e local320.zip ]; then
             echo "  cannot find gsl files"
             echo "  attempting to download them"
-            "${R_SCRIPT}" -e "${SET_INTERNET2} download.file('${LOCAL320_URL}', 'local320.zip', quiet = TRUE)"
+            "${R_SCRIPT}" -e "${SET_INTERNET2} download.file('${LOCAL320_URL}', 'local320.zip', ${USE_LIBCURL} quiet = TRUE)"
         fi
         if [ ! -e local320.zip ]; then
 	    have_gsl=no
