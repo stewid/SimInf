@@ -2897,8 +2897,8 @@ fi
 $as_echo "$ac_cv_file_src_gsl_include_gsl_gsl_rng_h" >&6; }
 if test "x$ac_cv_file_src_gsl_include_gsl_gsl_rng_h" = xyes; then :
 
-    CPPFLAGS="-Igsl ${CPPFLAGS}"
-    LIBS="-Lgsl ${LIBS} -lgsl -lgslcblas"
+    CPPFLAGS="-Igsl/include ${CPPFLAGS}"
+    LIBS="-Lgsl/lib ${LIBS} -lgsl -lgslcblas"
 
 else
 

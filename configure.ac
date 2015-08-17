@@ -122,8 +122,8 @@ fi
 have_gsl=yes
 AC_CHECK_FILE(src/gsl/include/gsl/gsl_rng.h,
 [
-    CPPFLAGS="-Igsl ${CPPFLAGS}"
-    LIBS="-Lgsl ${LIBS} -lgsl -lgslcblas"
+    CPPFLAGS="-Igsl/include ${CPPFLAGS}"
+    LIBS="-Lgsl/lib ${LIBS} -lgsl -lgslcblas"
 ],[
     AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [have_gsl=no])
     AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [have_gsl=no])
