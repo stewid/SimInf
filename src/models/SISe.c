@@ -77,7 +77,7 @@ double SISe_I_to_S(
 }
 
 /**
- * Update infectious pressure
+ * Update environmental infectious pressure phi
  *
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
