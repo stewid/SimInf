@@ -587,6 +587,7 @@ PACKAGE_URL=''
 ac_unique_file="src/siminf.c"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+MODELS_OBJ
 SIMINF_HAVE_OPENMP
 OPENMP_CFLAGS
 OBJEXT
@@ -2825,6 +2826,7 @@ if test -z "${R_HOME}"; then
   exit 1
 fi
 RBIN="${R_HOME}/bin/R"
+RSCRIPT="${R_HOME}/bin/Rscript"
 CC=`"${RBIN}" CMD config CC`
 CFLAGS=`"${RBIN}" CMD config CFLAGS`
 CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
@@ -3011,6 +3013,10 @@ as_fn_error $? "
   ---------------------------------------------
 See \`config.log' for more details" "$LINENO" 5; }
 fi
+
+# List all model files to compile
+MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '.c$')), collapse=' '))"`
+
 
 
 

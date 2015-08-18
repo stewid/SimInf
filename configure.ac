@@ -81,6 +81,7 @@ if test -z "${R_HOME}"; then
   exit 1
 fi
 RBIN="${R_HOME}/bin/R"
+RSCRIPT="${R_HOME}/bin/Rscript"
 CC=`"${RBIN}" CMD config CC`
 CFLAGS=`"${RBIN}" CMD config CFLAGS`
 CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
@@ -138,9 +139,13 @@ if test "x${have_gsl}" = xno; then AC_MSG_FAILURE([
   ---------------------------------------------])
 fi
 
+# List all model files to compile
+MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
+
 AC_SUBST(SIMINF_HAVE_OPENMP)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LIBS)
+AC_SUBST(MODELS_OBJ)
 
 AC_CONFIG_FILES([R/dependencies.R src/Makevars])
 
