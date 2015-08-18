@@ -26,7 +26,7 @@ enum {S, I};
 /* Offset in model state vector */
 enum {PHI};
 
-/* Offsets in data to parameters in the model */
+/* Offsets in node local data (ldata) to parameters in the model */
 enum {UPSILON,
       GAMMA,
       ALPHA,
@@ -41,7 +41,7 @@ enum {UPSILON,
  *
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
- * @param data The data vector for node.
+ * @param ldata The local data vector for the node.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
@@ -49,11 +49,11 @@ enum {UPSILON,
 double SISe_S_to_I(
     const int *u,
     const double *v,
-    const double *data,
+    const double *ldata,
     double t,
     int sd)
 {
-    return data[UPSILON] * v[PHI] * u[S];
+    return ldata[UPSILON] * v[PHI] * u[S];
 }
 
 /**
@@ -61,7 +61,7 @@ double SISe_S_to_I(
  *
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
- * @param data The data vector for node.
+ * @param ldata The local data vector for node.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
@@ -69,11 +69,11 @@ double SISe_S_to_I(
 double SISe_I_to_S(
     const int *u,
     const double *v,
-    const double *data,
+    const double *ldata,
     double t,
     int sd)
 {
-    return data[GAMMA] * u[I];
+    return ldata[GAMMA] * u[I];
 }
 
 /**
@@ -81,7 +81,7 @@ double SISe_I_to_S(
  *
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
- * @param data The data vector for node.
+ * @param ldata The local data vector for node.
  * @param node The node.
  * @param t Current time.
  * @param sd The sub-domain of node.
@@ -90,7 +90,7 @@ double SISe_I_to_S(
 int SISe_post_time_step(
     const int *u,
     double *v,
-    const double *data,
+    const double *ldata,
     int node,
     double t,
     int sd)
@@ -107,23 +107,23 @@ int SISe_post_time_step(
     /* Time dependent beta for each quarter of the year. Forward Euler step. */
     switch (((int)t % days_in_year) / days_in_quarter) {
     case 0:
-        v[PHI] *= (1.0 - data[BETA_Q1]);
+        v[PHI] *= (1.0 - ldata[BETA_Q1]);
         break;
     case 1:
-        v[PHI] *= (1.0 - data[BETA_Q2]);
+        v[PHI] *= (1.0 - ldata[BETA_Q2]);
         break;
     case 2:
-        v[PHI] *= (1.0 - data[BETA_Q3]);
+        v[PHI] *= (1.0 - ldata[BETA_Q3]);
         break;
     default:
-        v[PHI] *= (1.0 - data[BETA_Q4]);
+        v[PHI] *= (1.0 - ldata[BETA_Q4]);
         break;
     }
 
     if ((I_n + S_n) > 0.0)
-        v[PHI] += data[ALPHA] * I_n / (I_n + S_n) + data[EPSILON];
+        v[PHI] += ldata[ALPHA] * I_n / (I_n + S_n) + ldata[EPSILON];
     else
-        v[PHI] += data[EPSILON];
+        v[PHI] += ldata[EPSILON];
 
     /* 1 if needs update */
     return tmp != v[PHI];
