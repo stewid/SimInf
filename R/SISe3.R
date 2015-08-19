@@ -243,22 +243,22 @@ SISe3 <- function(init,
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
 
-    data <- matrix(c(upsilon_1,
-                     upsilon_2,
-                     upsilon_3,
-                     gamma_1,
-                     gamma_2,
-                     gamma_3,
-                     alpha,
-                     beta_q1,
-                     beta_q2,
-                     beta_q3,
-                     beta_q4,
-                     epsilon),
-                   nrow = 12,
-                   byrow = TRUE)
+    ldata <- matrix(c(upsilon_1,
+                      upsilon_2,
+                      upsilon_3,
+                      gamma_1,
+                      gamma_2,
+                      gamma_3,
+                      alpha,
+                      beta_q1,
+                      beta_q2,
+                      beta_q3,
+                      beta_q4,
+                      epsilon),
+                    nrow = 12,
+                    byrow = TRUE)
 
-    storage.mode(data) <- "double"
+    storage.mode(ldata) <- "double"
 
     model <- siminf_model(G      = G,
                           N      = N,
@@ -267,7 +267,7 @@ SISe3 <- function(init,
                           S      = S,
                           tspan  = tspan,
                           events = events,
-                          data   = data,
+                          ldata  = ldata,
                           v0     = v0)
 
     return(as(model, "SISe3"))
