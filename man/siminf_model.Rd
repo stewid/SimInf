@@ -5,8 +5,8 @@
 \title{Create a siminf model}
 \usage{
 siminf_model(G, N, tspan, events = NULL, sd = NULL, ldata = NULL,
-  U = NULL, Nn = NULL, u0 = NULL, init = NULL, v0 = NULL, V = NULL,
-  E = NULL, S = NULL)
+  gdata = NULL, U = NULL, Nn = NULL, u0 = NULL, init = NULL,
+  v0 = NULL, V = NULL, E = NULL, S = NULL)
 }
 \arguments{
 \item{G}{Sparse matrix (\eqn{Nt \times Nt}) of object class
@@ -29,6 +29,10 @@ to a sub-domain.}
 
 \item{ldata}{A matrix with local data for nodes. The column
 ldata[, j] contains the local data vector for node #j. The local
+data vector is passed as an argument to the propensities and the
+post time step function.}
+
+\item{gdata}{A vector with global data for all nodes. The global
 data vector is passed as an argument to the propensities and the
 post time step function.}
 

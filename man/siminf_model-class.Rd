@@ -34,6 +34,11 @@ Class to handle the siminf data model
     the local data vector for node #j. The local data vector is passed
     as an argument to the propensities and the post time step function.
   }
+  \item{gdata}{
+    A vector with global data for all nodes. The global data vector
+    is passed as an argument to the propensities and the post time
+    step function.
+  }
   \item{sd}{
     Integer vector of length Nn. Each node can be assigned to a sub-domain.
   }
