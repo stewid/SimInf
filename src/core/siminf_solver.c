@@ -144,8 +144,8 @@ typedef struct siminf_thread_args
                        *   state of the system at tspan(j). */
     double *v;        /**< Vector with continuous state in each node
                        *   in thread. */
-    const double *data;/**< Matrix (Nld X Nn). data(:,j) gives a data
-                       *   vector for node #j. */
+    const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
+                          *   local data vector for node #j. */
     const int *sd;    /**< Each node can be assigned to a
                        *   sub-domain. */
     int *update_node; /**< Vector of length Nn used to indicate nodes
@@ -567,7 +567,7 @@ static int siminf_solver()
                     sa.t_rate[node * sa.Nt + j] =
                         (*sa.t_fun[j])(&sa.u[node * sa.Nc],
                                        &sa.v[node * sa.Nd],
-                                       &sa.data[node * sa.Nld],
+                                       &sa.ldata[node * sa.Nld],
                                        sa.tt,
                                        sa.sd[node]);
 
@@ -626,7 +626,7 @@ static int siminf_solver()
                                       (*sa.t_fun[sa.irG[j]])(
                                           &sa.u[node * sa.Nc],
                                           &sa.v[node * sa.Nd],
-                                          &sa.data[node * sa.Nld],
+                                          &sa.ldata[node * sa.Nld],
                                           sa.t_time[node],
                                           sa.sd[node])) - old;
                         }
@@ -780,7 +780,7 @@ static int siminf_solver()
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
                     if (sa.pts_fun(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-                                   &sa.data[node * sa.Nld], sa.Ni + node,
+                                   &sa.ldata[node * sa.Nld], sa.Ni + node,
                                    sa.tt, sa.sd[node]) ||
                         sa.update_node[node])
                     {
@@ -794,7 +794,7 @@ static int siminf_solver()
                                       (*sa.t_fun[j])(
                                           &sa.u[node * sa.Nc],
                                           &sa.v[node * sa.Nd],
-                                          &sa.data[node * sa.Nld],
+                                          &sa.ldata[node * sa.Nld],
                                           sa.tt, sa.sd[node])) - old;
                         }
                         sa.sum_t_rate[node] += delta;
@@ -888,8 +888,8 @@ static int siminf_solver()
  * @param V The continuous state output is a matrix V
  *        ((Nn * Nd) X length(tspan)).
  *        V(:,j) contains the continuous state of the system at tspan(j).
- * @param d0 Double matrix (Nld X Nn). Generalized data matrix,
- *        data(:,j) gives a data vector for node #j.
+ * @param ldata Double matrix (Nld X Nn). Generalized data matrix,
+ *        data(:,j) gives a local data vector for node #j.
  * @param sd Integer vector of length Nn. Each node can be assigned to
  *        a sub-domain.
  * @param Nn Number of nodes.
@@ -930,7 +930,7 @@ static int siminf_solver()
 int siminf_run_solver(
     const int *u0, const double *v0, const int *irG, const int *jcG,
     const int *irN, const int *jcN, const int *prN, const double *tspan,
-    int tlen, int *U, double *V, const double *d0, const int *sd, int Nn,
+    int tlen, int *U, double *V, const double *ldata, const int *sd, int Nn,
     int Nc, int Nt, int Nd, int Nld, const int *irE, const int *jcE,
     const int *jcS, const int *prS, int len, const int *event,
     const int *time, const int *node, const int *dest, const int *n,
@@ -1038,7 +1038,7 @@ int siminf_run_solver(
         sim_args[i].u = &uu[sim_args[i].Ni * Nc];
         sim_args[i].V = V;
         sim_args[i].v = &vv[sim_args[i].Ni * Nd];
-        sim_args[i].data = &d0[sim_args[i].Ni * sim_args[i].Nld];
+        sim_args[i].ldata = &ldata[sim_args[i].Ni * sim_args[i].Nld];
         sim_args[i].sd = &sd[sim_args[i].Ni];
         sim_args[i].update_node = &update_node[sim_args[i].Ni];
 
