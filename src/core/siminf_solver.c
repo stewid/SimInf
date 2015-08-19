@@ -144,7 +144,7 @@ typedef struct siminf_thread_args
                        *   state of the system at tspan(j). */
     double *v;        /**< Vector with continuous state in each node
                        *   in thread. */
-    double *data;     /**< Matrix (Nld X Nn). data(:,j) gives a data
+    const double *data;/**< Matrix (Nld X Nn). data(:,j) gives a data
                        *   vector for node #j. */
     const int *sd;    /**< Each node can be assigned to a
                        *   sub-domain. */
@@ -272,9 +272,6 @@ static void siminf_free_args(siminf_thread_args *sa)
         if (sa->rng)
             gsl_rng_free(sa->rng);
         sa->rng = NULL;
-        if (sa->data)
-            free(sa->data);
-        sa->data = NULL;
         if (sa->t_rate)
             free(sa->t_rate);
         sa->t_rate = NULL;
@@ -1041,15 +1038,7 @@ int siminf_run_solver(
         sim_args[i].u = &uu[sim_args[i].Ni * Nc];
         sim_args[i].V = V;
         sim_args[i].v = &vv[sim_args[i].Ni * Nd];
-        sim_args[i].data = malloc(
-            sim_args[i].Nn * sim_args[i].Nld * sizeof(double));
-        if (!sim_args[i].data) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto cleanup;
-        }
-        memcpy(sim_args[i].data, &d0[sim_args[i].Ni * sim_args[i].Nld],
-               sim_args[i].Nn * sim_args[i].Nld * sizeof(double));
-
+        sim_args[i].data = &d0[sim_args[i].Ni * sim_args[i].Nld];
         sim_args[i].sd = &sd[sim_args[i].Ni];
         sim_args[i].update_node = &update_node[sim_args[i].Ni];
 
