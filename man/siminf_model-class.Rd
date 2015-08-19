@@ -29,8 +29,10 @@ Class to handle the siminf data model
   \item{Nn}{
     Number of nodes.
   }
-  \item{data}{
-    A data vector passed as an argument to the propensities.
+  \item{ldata}{
+    A matrix with local data for nodes. The column ldata[, j] contains
+    the local data vector for node #j. The local data vector is passed
+    as an argument to the propensities and the post time step function.
   }
   \item{sd}{
     Integer vector of length Nn. Each node can be assigned to a sub-domain.

@@ -4,7 +4,7 @@
 \alias{siminf_model}
 \title{Create a siminf model}
 \usage{
-siminf_model(G, N, tspan, events = NULL, sd = NULL, data = NULL,
+siminf_model(G, N, tspan, events = NULL, sd = NULL, ldata = NULL,
   U = NULL, Nn = NULL, u0 = NULL, init = NULL, v0 = NULL, V = NULL,
   E = NULL, S = NULL)
 }
@@ -27,8 +27,10 @@ each node is to be returned.}
 \item{sd}{Integer vector of length Nn. Each node can be assigned
 to a sub-domain.}
 
-\item{data}{A data vector passed as an argument to the
-propensities.}
+\item{ldata}{A matrix with local data for nodes. The column
+ldata[, j] contains the local data vector for node #j. The local
+data vector is passed as an argument to the propensities and the
+post time step function.}
 
 \item{U}{The result matrix ((Nn * Nc) X length(tspan)). U(:,j)
 contains the state of the system at tspan(j).}
