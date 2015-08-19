@@ -166,7 +166,7 @@ int siminf_run(
     int *irG = NULL, *jcG = NULL;
     int *irE = NULL, *jcE = NULL;
     int *jcS = NULL, *prS = NULL;
-    int Nn, Nc, Nt, Nd, elen, tlen, dsize;
+    int Nn, Nc, Nt, Nd, Nld, elen, tlen;
     unsigned long int s;
 
     /* number of threads */
@@ -202,9 +202,9 @@ int siminf_run(
     Nc   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[0];
     Nt   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[1];
     Nd   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("v0")), R_DimSymbol))[0];
+    Nld  = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("data")), R_DimSymbol))[0];
     elen = LENGTH(GET_SLOT(ext_events, Rf_install("event"))),
     tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
-    dsize = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("data")), R_DimSymbol))[0];
 
     /* Output array (to hold a single trajectory) */
     SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
@@ -222,7 +222,7 @@ int siminf_run(
         REAL(GET_SLOT(result, Rf_install("V"))),
         REAL(GET_SLOT(result, Rf_install("data"))),
         INTEGER(GET_SLOT(result, Rf_install("sd"))),
-        Nn, Nc, Nt, Nd, dsize, irE, jcE, jcS, prS, elen,
+        Nn, Nc, Nt, Nd, Nld, irE, jcE, jcS, prS, elen,
         INTEGER(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("time"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("node"))),

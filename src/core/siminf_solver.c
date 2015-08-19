@@ -94,7 +94,9 @@ typedef struct siminf_thread_args
     int Nt;    /**< Total number of different transitions. */
     int Nc;    /**< Number of compartments in each node. */
     int Nd;    /**< Number of continuous state variables. */
-    int dsize; /**< Size of data vector sent to propensities. */
+    int Nld;   /**< Length of the local data vector 'ldata' for each
+                *   node. The 'ldata' vector is sent to propensities
+                *   and the post time step function. */
 
     /*** Sparse matrices ***/
     const int *irG; /**< Dependency graph. irG[k] is the row of
@@ -142,7 +144,7 @@ typedef struct siminf_thread_args
                        *   state of the system at tspan(j). */
     double *v;        /**< Vector with continuous state in each node
                        *   in thread. */
-    double *data;     /**< Matrix (dsize X Nn). data(:,j) gives a data
+    double *data;     /**< Matrix (Nld X Nn). data(:,j) gives a data
                        *   vector for node #j. */
     const int *sd;    /**< Each node can be assigned to a
                        *   sub-domain. */
@@ -568,7 +570,7 @@ static int siminf_solver()
                     sa.t_rate[node * sa.Nt + j] =
                         (*sa.t_fun[j])(&sa.u[node * sa.Nc],
                                        &sa.v[node * sa.Nd],
-                                       &sa.data[node * sa.dsize],
+                                       &sa.data[node * sa.Nld],
                                        sa.tt,
                                        sa.sd[node]);
 
@@ -627,7 +629,7 @@ static int siminf_solver()
                                       (*sa.t_fun[sa.irG[j]])(
                                           &sa.u[node * sa.Nc],
                                           &sa.v[node * sa.Nd],
-                                          &sa.data[node * sa.dsize],
+                                          &sa.data[node * sa.Nld],
                                           sa.t_time[node],
                                           sa.sd[node])) - old;
                         }
@@ -781,7 +783,7 @@ static int siminf_solver()
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
                     if (sa.pts_fun(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-                                   &sa.data[node * sa.dsize], sa.Ni + node,
+                                   &sa.data[node * sa.Nld], sa.Ni + node,
                                    sa.tt, sa.sd[node]) ||
                         sa.update_node[node])
                     {
@@ -795,7 +797,7 @@ static int siminf_solver()
                                       (*sa.t_fun[j])(
                                           &sa.u[node * sa.Nc],
                                           &sa.v[node * sa.Nd],
-                                          &sa.data[node * sa.dsize],
+                                          &sa.data[node * sa.Nld],
                                           sa.tt, sa.sd[node])) - old;
                         }
                         sa.sum_t_rate[node] += delta;
@@ -889,7 +891,7 @@ static int siminf_solver()
  * @param V The continuous state output is a matrix V
  *        ((Nn * Nd) X length(tspan)).
  *        V(:,j) contains the continuous state of the system at tspan(j).
- * @param d0 Double matrix (dsize X Nn). Generalized data matrix,
+ * @param d0 Double matrix (Nld X Nn). Generalized data matrix,
  *        data(:,j) gives a data vector for node #j.
  * @param sd Integer vector of length Nn. Each node can be assigned to
  *        a sub-domain.
@@ -897,7 +899,9 @@ static int siminf_solver()
  * @param Nc Number of compartments in each node.
  * @param Nt Total number of different transitions.
  * @param Nd Number of continuous state variables.
- * @param dsize Size of data vector sent to propensities.
+ * @param Nld Length of the local data vector 'ldata' for each
+          node. The 'ldata' vector is sent to propensities and the
+          post time step function.
  * @param irE Select matrix for events. irE[k] is the row of E[k].
  * @param jcE Select matrix for events. Index to data of first
  *        non-zero element in row k.
@@ -930,7 +934,7 @@ int siminf_run_solver(
     const int *u0, const double *v0, const int *irG, const int *jcG,
     const int *irN, const int *jcN, const int *prN, const double *tspan,
     int tlen, int *U, double *V, const double *d0, const int *sd, int Nn,
-    int Nc, int Nt, int Nd, int dsize, const int *irE, const int *jcE,
+    int Nc, int Nt, int Nd, int Nld, const int *irE, const int *jcE,
     const int *jcS, const int *prS, int len, const int *event,
     const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,
@@ -1009,7 +1013,7 @@ int siminf_run_solver(
         sim_args[i].Nt = Nt;
         sim_args[i].Nc = Nc;
         sim_args[i].Nd = Nd;
-        sim_args[i].dsize = dsize;
+        sim_args[i].Nld = Nld;
 
         /* Sparse matrices */
         sim_args[i].irG = irG;
@@ -1038,13 +1042,13 @@ int siminf_run_solver(
         sim_args[i].V = V;
         sim_args[i].v = &vv[sim_args[i].Ni * Nd];
         sim_args[i].data = malloc(
-            sim_args[i].Nn * sim_args[i].dsize * sizeof(double));
+            sim_args[i].Nn * sim_args[i].Nld * sizeof(double));
         if (!sim_args[i].data) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
-        memcpy(sim_args[i].data, &d0[sim_args[i].Ni * sim_args[i].dsize],
-               sim_args[i].Nn * sim_args[i].dsize * sizeof(double));
+        memcpy(sim_args[i].data, &d0[sim_args[i].Ni * sim_args[i].Nld],
+               sim_args[i].Nn * sim_args[i].Nld * sizeof(double));
 
         sim_args[i].sd = &sd[sim_args[i].Ni];
         sim_args[i].update_node = &update_node[sim_args[i].Ni];
