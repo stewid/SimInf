@@ -202,7 +202,7 @@ int siminf_run(
     Nc   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[0];
     Nt   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[1];
     Nd   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("v0")), R_DimSymbol))[0];
-    Nld  = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("data")), R_DimSymbol))[0];
+    Nld  = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("ldata")), R_DimSymbol))[0];
     elen = LENGTH(GET_SLOT(ext_events, Rf_install("event"))),
     tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
 
@@ -220,7 +220,7 @@ int siminf_run(
         tlen,
         INTEGER(GET_SLOT(result, Rf_install("U"))),
         REAL(GET_SLOT(result, Rf_install("V"))),
-        REAL(GET_SLOT(result, Rf_install("data"))),
+        REAL(GET_SLOT(result, Rf_install("ldata"))),
         INTEGER(GET_SLOT(result, Rf_install("sd"))),
         Nn, Nc, Nt, Nd, Nld, irE, jcE, jcS, prS, elen,
         INTEGER(GET_SLOT(ext_events, Rf_install("event"))),

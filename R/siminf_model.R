@@ -40,8 +40,10 @@
 ##'   \item{Nn}{
 ##'     Number of nodes.
 ##'   }
-##'   \item{data}{
-##'     A data vector passed as an argument to the propensities.
+##'   \item{ldata}{
+##'     A matrix with local data for nodes. The column ldata[, j] contains
+##'     the local data vector for node #j. The local data vector is passed
+##'     as an argument to the propensities and the post time step function.
 ##'   }
 ##'   \item{sd}{
 ##'     Integer vector of length Nn. Each node can be assigned to a sub-domain.
@@ -80,7 +82,7 @@ setClass("siminf_model",
                    N      = "dgCMatrix",
                    U      = "matrix",
                    Nn     = "integer",
-                   data   = "matrix",
+                   ldata  = "matrix",
                    sd     = "integer",
                    tspan  = "numeric",
                    u0     = "matrix",
@@ -143,12 +145,12 @@ setClass("siminf_model",
                  errors <- c(errors, "Wrong size of subdomain vector.")
              }
 
-             ## Check data.
-             if (!is.double(object@data)) {
-                 errors <- c(errors, "Data matrix must be a double matrix.")
+             ## Check ldata.
+             if (!is.double(object@ldata)) {
+                 errors <- c(errors, "'ldata' matrix must be a double matrix.")
              }
-             if (!identical(dim(object@data)[2], object@Nn[1])) {
-                 errors <- c(errors, "Wrong size of data matrix.")
+             if (!identical(dim(object@ldata)[2], object@Nn[1])) {
+                 errors <- c(errors, "Wrong size of 'ldata' matrix.")
              }
 
              if (length(errors) == 0) TRUE else errors
@@ -168,8 +170,10 @@ setClass("siminf_model",
 ##' @param U The result matrix ((Nn * Nc) X length(tspan)). U(:,j)
 ##' contains the state of the system at tspan(j).
 ##' @param Nn Number of nodes.
-##' @param data A data vector passed as an argument to the
-##' propensities.
+##' @param ldata A matrix with local data for nodes. The column
+##' ldata[, j] contains the local data vector for node #j. The local
+##' data vector is passed as an argument to the propensities and the
+##' post time step function.
 ##' @param sd Integer vector of length Nn. Each node can be assigned
 ##' to a sub-domain.
 ##' @param tspan A vector of increasing time points where the state of
@@ -196,7 +200,7 @@ siminf_model <- function(G,
                          tspan,
                          events = NULL,
                          sd     = NULL,
-                         data   = NULL,
+                         ldata  = NULL,
                          U      = NULL,
                          Nn     = NULL,
                          u0     = NULL,
@@ -267,8 +271,8 @@ siminf_model <- function(G,
         G <- as(G, "dgCMatrix")
 
     ## Check data
-    if (is.null(data))
-        data <- matrix(rep(0, Nn), nrow = 1)
+    if (is.null(ldata))
+        ldata <- matrix(rep(0, Nn), nrow = 1)
 
     ## Check U
     if (is.null(U)) {
@@ -331,7 +335,7 @@ siminf_model <- function(G,
                N      = N,
                U      = U,
                Nn     = Nn,
-               data   = data,
+               ldata  = ldata,
                sd     = sd,
                tspan  = as.numeric(tspan),
                u0     = u0,
@@ -418,7 +422,7 @@ setMethod("show",
               cat(sprintf("U: %i x %i\n", dim(object@U)[1], dim(object@U)[2]))
               cat(sprintf("V: %i x %i\n", dim(object@V)[1], dim(object@V)[2]))
               cat(sprintf("Nn: %i\n", object@Nn))
-              cat(sprintf("data: %i x %i\n", dim(object@data)[1], dim(object@data)[2]))
+              cat(sprintf("ldata: %i x %i\n", dim(object@ldata)[1], dim(object@ldata)[2]))
               cat(sprintf("sd: %i x %i\n", dim(object@sd)[1], dim(object@sd)[2]))
               cat(sprintf("tspan: 1 x %i\n", length(object@tspan)))
               cat(sprintf("u0: %i x %i\n", dim(object@u0)[1], dim(object@u0)[2]))
