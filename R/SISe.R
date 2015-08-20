@@ -122,76 +122,71 @@ SISe <- function(init,
     if (any(phi < 0))
         stop("Invalid 'phi': must be numeric vector with non-negative values")
 
-    ## Check parameters for response relationship and decay
-    if (any(is.null(upsilon),
-            is.null(gamma),
-            is.null(alpha),
-            is.null(beta_q1),
-            is.null(beta_q2),
-            is.null(beta_q3),
-            is.null(beta_q4),
-            is.null(epsilon))) {
-        stop("Missing parameters to handle the infectious pressure")
-    }
+    ## Check for missing parameters
+    if (is.null(upsilon))
+        stop("'upsilon' is missing")
+    if (is.null(gamma))
+        stop("'gamma' is missing")
+    if (is.null(alpha))
+        stop("'alpha' is missing")
+    if (is.null(beta_q1))
+        stop("'beta_q1' is missing")
+    if (is.null(beta_q2))
+        stop("'beta_q2' is missing")
+    if (is.null(beta_q3))
+        stop("'beta_q3' is missing")
+    if (is.null(beta_q4))
+        stop("'beta_q4' is missing")
+    if (is.null(epsilon))
+        stop("'epsilon' is missing")
 
-    if (!all(is.numeric(upsilon),
-             is.numeric(gamma),
-             is.numeric(alpha),
-             is.numeric(beta_q1),
-             is.numeric(beta_q2),
-             is.numeric(beta_q3),
-             is.numeric(beta_q4),
-             is.numeric(epsilon))) {
-        stop("Parameters to handle the infectious pressure must be numeric")
-    }
+    # Check for non-numeric parameters
+    if (!is.numeric(upsilon))
+        stop("'upsilon' must be numeric")
+    if (!is.numeric(gamma))
+        stop("'gamma' must be numeric")
+    if (!is.numeric(alpha))
+        stop("'alpha' must be numeric")
+    if (!is.numeric(beta_q1))
+        stop("'beta_q1' must be numeric")
+    if (!is.numeric(beta_q2))
+        stop("'beta_q2' must be numeric")
+    if (!is.numeric(beta_q3))
+        stop("'beta_q3' must be numeric")
+    if (!is.numeric(beta_q4))
+        stop("'beta_q4' must be numeric")
+    if (!is.numeric(epsilon))
+        stop("'epsilon' must be numeric")
 
-    if (!all(identical(length(upsilon), 1L),
-             identical(length(gamma), 1L),
-             identical(length(alpha), 1L),
-             identical(length(epsilon), 1L))) {
-        stop("Parameters to handle the infectious pressure must be of length 1")
-    }
-
-    upsilon <- rep(upsilon, nrow(init))
-    gamma <- rep(gamma, nrow(init))
-    alpha <- rep(alpha, nrow(init))
-    epsilon <- rep(epsilon, nrow(init))
-
-    if (identical(length(beta_q1), 1L)) {
-        beta_q1 <- rep(beta_q1, nrow(init))
-    } else if (!identical(length(beta_q1), nrow(init))) {
-        stop("length of beta_q1 must either be 1 or nrow(init)")
-    }
-
-    if (identical(length(beta_q2), 1L)) {
-        beta_q2 <- rep(beta_q2, nrow(init))
-    } else if (!identical(length(beta_q2), nrow(init))) {
-        stop("length of beta_q2 must either be 1 or nrow(init)")
-    }
-
-    if (identical(length(beta_q3), 1L)) {
-        beta_q3 <- rep(beta_q3, nrow(init))
-    } else if (!identical(length(beta_q3), nrow(init))) {
-        stop("length of beta_q3 must either be 1 or nrow(init)")
-    }
-
-    if (identical(length(beta_q4), 1L)) {
-        beta_q4 <- rep(beta_q4, nrow(init))
-    } else if (!identical(length(beta_q4), nrow(init))) {
-        stop("length of beta_q4 must either be 1 or nrow(init)")
-    }
+    # Check length of parameters
+    if (!identical(length(upsilon), 1L))
+        stop("'upsilon' must be of length 1")
+    if (!identical(length(gamma), 1L))
+        stop("'gamma' must be of length 1")
+    if (!identical(length(alpha), 1L))
+        stop("'alpha' must be of length 1")
+    if (!identical(length(beta_q1), 1L))
+        stop("'beta_q1' must be of length 1")
+    if (!identical(length(beta_q2), 1L))
+        stop("'beta_q2' must be of length 1")
+    if (!identical(length(beta_q3), 1L))
+        stop("'beta_q3' must be of length 1")
+    if (!identical(length(beta_q4), 1L))
+        stop("'beta_q4' must be of length 1")
+    if (!identical(length(epsilon), 1L))
+        stop("'epsilon' must be of length 1")
 
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
 
-    ldata <- matrix(c(upsilon,
-                      gamma,
-                      alpha,
-                      beta_q1,
-                      beta_q2,
-                      beta_q3,
-                      beta_q4,
-                      epsilon),
+    ldata <- matrix(c(rep(upsilon, nrow(init)),
+                      rep(gamma, nrow(init)),
+                      rep(alpha, nrow(init)),
+                      rep(beta_q1, nrow(init)),
+                      rep(beta_q2, nrow(init)),
+                      rep(beta_q3, nrow(init)),
+                      rep(beta_q4, nrow(init)),
+                      rep(epsilon, nrow(init))),
                     nrow  = 8,
                     byrow = TRUE)
 
