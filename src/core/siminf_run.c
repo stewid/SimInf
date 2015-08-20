@@ -221,6 +221,7 @@ int siminf_run(
         INTEGER(GET_SLOT(result, Rf_install("U"))),
         REAL(GET_SLOT(result, Rf_install("V"))),
         REAL(GET_SLOT(result, Rf_install("ldata"))),
+        REAL(GET_SLOT(result, Rf_install("gdata"))),
         INTEGER(GET_SLOT(result, Rf_install("sd"))),
         Nn, Nc, Nt, Nd, Nld, irE, jcE, jcS, prS, elen,
         INTEGER(GET_SLOT(ext_events, Rf_install("event"))),

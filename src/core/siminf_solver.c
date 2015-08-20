@@ -146,6 +146,7 @@ typedef struct siminf_thread_args
                        *   in thread. */
     const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
                           *   local data vector for node #j. */
+    const double *gdata; /**< The global data vector. */
     const int *sd;    /**< Each node can be assigned to a
                        *   sub-domain. */
     int *update_node; /**< Vector of length Nn used to indicate nodes
@@ -568,6 +569,7 @@ static int siminf_solver()
                         (*sa.t_fun[j])(&sa.u[node * sa.Nc],
                                        &sa.v[node * sa.Nd],
                                        &sa.ldata[node * sa.Nld],
+                                       sa.gdata,
                                        sa.tt,
                                        sa.sd[node]);
 
@@ -627,6 +629,7 @@ static int siminf_solver()
                                           &sa.u[node * sa.Nc],
                                           &sa.v[node * sa.Nd],
                                           &sa.ldata[node * sa.Nld],
+                                          sa.gdata,
                                           sa.t_time[node],
                                           sa.sd[node])) - old;
                         }
@@ -780,8 +783,8 @@ static int siminf_solver()
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
                     if (sa.pts_fun(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-                                   &sa.ldata[node * sa.Nld], sa.Ni + node,
-                                   sa.tt, sa.sd[node]) ||
+                                   &sa.ldata[node * sa.Nld], sa.gdata,
+                                   sa.Ni + node, sa.tt, sa.sd[node]) ||
                         sa.update_node[node])
                     {
                         /* Update transition rates */
@@ -795,7 +798,7 @@ static int siminf_solver()
                                           &sa.u[node * sa.Nc],
                                           &sa.v[node * sa.Nd],
                                           &sa.ldata[node * sa.Nld],
-                                          sa.tt, sa.sd[node])) - old;
+                                          sa.gdata, sa.tt, sa.sd[node])) - old;
                         }
                         sa.sum_t_rate[node] += delta;
 
@@ -890,6 +893,7 @@ static int siminf_solver()
  *        V(:,j) contains the continuous state of the system at tspan(j).
  * @param ldata Double matrix (Nld X Nn). Generalized data matrix,
  *        data(:,j) gives a local data vector for node #j.
+ * @param gdata The global data vector.
  * @param sd Integer vector of length Nn. Each node can be assigned to
  *        a sub-domain.
  * @param Nn Number of nodes.
@@ -930,9 +934,9 @@ static int siminf_solver()
 int siminf_run_solver(
     const int *u0, const double *v0, const int *irG, const int *jcG,
     const int *irN, const int *jcN, const int *prN, const double *tspan,
-    int tlen, int *U, double *V, const double *ldata, const int *sd, int Nn,
-    int Nc, int Nt, int Nd, int Nld, const int *irE, const int *jcE,
-    const int *jcS, const int *prS, int len, const int *event,
+    int tlen, int *U, double *V, const double *ldata, const double *gdata,
+    const int *sd, int Nn, int Nc, int Nt, int Nd, int Nld, const int *irE,
+    const int *jcE, const int *jcS, const int *prS, int len, const int *event,
     const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,
     int Nthread, unsigned long int seed, PropensityFun *t_fun,
@@ -1039,6 +1043,7 @@ int siminf_run_solver(
         sim_args[i].V = V;
         sim_args[i].v = &vv[sim_args[i].Ni * Nd];
         sim_args[i].ldata = &ldata[sim_args[i].Ni * sim_args[i].Nld];
+        sim_args[i].gdata = gdata;
         sim_args[i].sd = &sd[sim_args[i].Ni];
         sim_args[i].update_node = &update_node[sim_args[i].Ni];
 
