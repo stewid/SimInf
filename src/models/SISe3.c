@@ -51,6 +51,7 @@ enum {UPSILON_1,
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for the node.
+ * @param gdata The global data vector.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
@@ -59,6 +60,7 @@ double SISe3_S_1_to_I_1(
     const int *u,
     const double *v,
     const double *ldata,
+    const double *gdata,
     double t,
     int sd)
 {
@@ -71,6 +73,7 @@ double SISe3_S_1_to_I_1(
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for the node.
+ * @param gdata The global data vector.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
@@ -79,6 +82,7 @@ double SISe3_S_2_to_I_2(
     const int *u,
     const double *v,
     const double *ldata,
+    const double *gdata,
     double t,
     int sd)
 {
@@ -91,6 +95,7 @@ double SISe3_S_2_to_I_2(
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for the node.
+ * @param gdata The global data vector.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
@@ -99,6 +104,7 @@ double SISe3_S_3_to_I_3(
     const int *u,
     const double *v,
     const double *ldata,
+    const double *gdata,
     double t,
     int sd)
 {
@@ -111,6 +117,7 @@ double SISe3_S_3_to_I_3(
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for the node.
+ * @param gdata The global data vector.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
@@ -119,6 +126,7 @@ double SISe3_I_1_to_S_1(
     const int *u,
     const double *v,
     const double *ldata,
+    const double *gdata,
     double t,
     int sd)
 {
@@ -131,6 +139,7 @@ double SISe3_I_1_to_S_1(
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for the node.
+ * @param gdata The global data vector.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
@@ -139,6 +148,7 @@ double SISe3_I_2_to_S_2(
     const int *u,
     const double *v,
     const double *ldata,
+    const double *gdata,
     double t,
     int sd)
 {
@@ -151,6 +161,7 @@ double SISe3_I_2_to_S_2(
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for the node.
+ * @param gdata The global data vector.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity
@@ -159,6 +170,7 @@ double SISe3_I_3_to_S_3(
     const int *u,
     const double *v,
     const double *ldata,
+    const double *gdata,
     double t,
     int sd)
 {
@@ -171,6 +183,7 @@ double SISe3_I_3_to_S_3(
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for the node.
+ * @param gdata The global data vector.
  * @param node The node.
  * @param t Current time.
  * @param sd The sub-domain of node.
@@ -180,6 +193,7 @@ int SISe3_post_time_step(
     const int *u,
     double *v,
     const double *ldata,
+    const double *gdata,
     int node,
     double t,
     int sd)
