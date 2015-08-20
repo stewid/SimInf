@@ -42,6 +42,7 @@ enum {UPSILON,
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for the node.
+ * @param gdata The global data vector.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
@@ -50,6 +51,7 @@ double SISe_S_to_I(
     const int *u,
     const double *v,
     const double *ldata,
+    const double *gdata,
     double t,
     int sd)
 {
@@ -62,6 +64,7 @@ double SISe_S_to_I(
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for node.
+ * @param gdata The global data vector.
  * @param t Current time.
  * @param sd The sub-domain of node.
  * @return propensity.
@@ -70,6 +73,7 @@ double SISe_I_to_S(
     const int *u,
     const double *v,
     const double *ldata,
+    const double *gdata,
     double t,
     int sd)
 {
@@ -82,6 +86,7 @@ double SISe_I_to_S(
  * @param u The compartment state vector in node.
  * @param v The model state vector in node.
  * @param ldata The local data vector for node.
+ * @param gdata The global data vector.
  * @param node The node.
  * @param t Current time.
  * @param sd The sub-domain of node.
@@ -91,6 +96,7 @@ int SISe_post_time_step(
     const int *u,
     double *v,
     const double *ldata,
+    const double *gdata,
     int node,
     double t,
     int sd)
