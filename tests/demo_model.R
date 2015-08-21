@@ -18,17 +18,49 @@
 
 library(siminf)
 
-tools::assertError(demo_model(nodes = 1:2))
-tools::assertError(demo_model(nodes = "1"))
-tools::assertError(demo_model(nodes = 1.1))
-tools::assertError(demo_model(nodes = 0))
-tools::assertError(demo_model(nodes = -1))
-tools::assertError(demo_model(days = 1:2))
-tools::assertError(demo_model(days = "1"))
-tools::assertError(demo_model(days = 1.1))
-tools::assertError(demo_model(days = 0))
-tools::assertError(demo_model(days = -1))
-tools::assertError(demo_model(model = "demo"))
+res <- tools::assertError(demo_model(nodes = 1:2))
+stopifnot(length(grep("Length of 'nodes' must be one.",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(nodes = "1"))
+stopifnot(length(grep("'nodes' must be numeric.",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(nodes = 1.1))
+stopifnot(length(grep("'nodes' must be integer",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(nodes = 0))
+stopifnot(length(grep("'nodes' must be >= 1",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(nodes = -1))
+stopifnot(length(grep("'nodes' must be >= 1",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(days = 1:2))
+stopifnot(length(grep("Length of 'days' must be one.",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(days = "1"))
+stopifnot(length(grep("'days' must be numeric.",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(days = 1.1))
+stopifnot(length(grep("'days' must be integer",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(days = 0))
+stopifnot(length(grep("'days' must be >= 1",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(days = -1))
+stopifnot(length(grep("'days' must be >= 1",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(model = "demo"))
+stopifnot(length(grep("'arg' should be one of",
+                      res[[1]]$message)) > 0)
 
 stopifnot(is(demo_model(model = "SISe"), "SISe"))
 stopifnot(is(demo_model(model = "SISe3"), "SISe3"))
