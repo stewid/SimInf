@@ -31,7 +31,7 @@ enum {S_1,
 /* Offset in model state vector */
 enum {PHI};
 
-/* Offsets in node local data (ldata) to parameters in the model */
+/* Offsets in global data (gdata) to parameters in the model */
 enum {UPSILON_1,
       UPSILON_2,
       UPSILON_3,
@@ -64,7 +64,7 @@ double SISe3_S_1_to_I_1(
     double t,
     int sd)
 {
-    return ldata[UPSILON_1] * v[PHI] * u[S_1];
+    return gdata[UPSILON_1] * v[PHI] * u[S_1];
 }
 
 /**
@@ -86,7 +86,7 @@ double SISe3_S_2_to_I_2(
     double t,
     int sd)
 {
-    return ldata[UPSILON_2] * v[PHI] * u[S_2];
+    return gdata[UPSILON_2] * v[PHI] * u[S_2];
 }
 
 /**
@@ -108,7 +108,7 @@ double SISe3_S_3_to_I_3(
     double t,
     int sd)
 {
-    return ldata[UPSILON_3] * v[PHI] * u[S_3];
+    return gdata[UPSILON_3] * v[PHI] * u[S_3];
 }
 
 /**
@@ -130,7 +130,7 @@ double SISe3_I_1_to_S_1(
     double t,
     int sd)
 {
-    return ldata[GAMMA_1] * u[I_1];
+    return gdata[GAMMA_1] * u[I_1];
 }
 
 /**
@@ -152,7 +152,7 @@ double SISe3_I_2_to_S_2(
     double t,
     int sd)
 {
-    return ldata[GAMMA_2] * u[I_2];
+    return gdata[GAMMA_2] * u[I_2];
 }
 
 /**
@@ -174,7 +174,7 @@ double SISe3_I_3_to_S_3(
     double t,
     int sd)
 {
-    return ldata[GAMMA_3] * u[I_3];
+    return gdata[GAMMA_3] * u[I_3];
 }
 
 /**
@@ -210,23 +210,23 @@ int SISe3_post_time_step(
     /* Time dependent beta for each quarter of the year. Forward Euler step. */
     switch (((int)t % days_in_year) / days_in_quarter) {
     case 0:
-        v[PHI] *= (1.0 - ldata[BETA_Q1]);
+        v[PHI] *= (1.0 - gdata[BETA_Q1]);
         break;
     case 1:
-        v[PHI] *= (1.0 - ldata[BETA_Q2]);
+        v[PHI] *= (1.0 - gdata[BETA_Q2]);
         break;
     case 2:
-        v[PHI] *= (1.0 - ldata[BETA_Q3]);
+        v[PHI] *= (1.0 - gdata[BETA_Q3]);
         break;
     default:
-        v[PHI] *= (1.0 - ldata[BETA_Q4]);
+        v[PHI] *= (1.0 - gdata[BETA_Q4]);
         break;
     }
 
     if ((I_n + S_n) > 0.0)
-        v[PHI] += ldata[ALPHA] * I_n / (I_n + S_n) + ldata[EPSILON];
+        v[PHI] += gdata[ALPHA] * I_n / (I_n + S_n) + gdata[EPSILON];
     else
-        v[PHI] += ldata[EPSILON];
+        v[PHI] += gdata[EPSILON];
 
     /* 1 if needs update */
     return tmp != v[PHI];

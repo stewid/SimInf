@@ -250,7 +250,7 @@ model <- SISe3(init,
                epsilon   = 1)
 
 show_expected <- c("Epidemiological model:", "G: 6 x 6", "N: 6 x 6", "U: 0 x 0",
-                   "V: 0 x 0", "Nn: 6", "ldata: 12 x 6", "gdata: 1 x 0",
+                   "V: 0 x 0", "Nn: 6", "ldata: 0 x 6", "gdata: 1 x 12",
                    "tspan: 1 x 11", "u0: 6 x 6", "v0: 1 x 6", "",
                    "External events:", "E: 6 x 6", "S: 6 x 2", "event: 1 x 15",
                    "time: 1 x 15", "node: 1 x 15", "dest: 1 x 15", "n: 1 x 15",
