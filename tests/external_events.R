@@ -53,10 +53,11 @@ events <- structure(list(event = c(3.1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E      = E,
-                                   S      = S,
-                                   events = events))
-
+res <- tools::assertError(external_events(E      = E,
+                                          S      = S,
+                                          events = events))
+stopifnot(length(grep("Columns in events must be integer",
+                      res[[1]]$message)) > 0)
 
 ## Check events$time not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -70,9 +71,11 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E      = E,
-                                   S      = S,
-                                   events = events))
+res <- tools::assertError(external_events(E      = E,
+                                          S      = S,
+                                          events = events))
+stopifnot(length(grep("Columns in events must be integer",
+                      res[[1]]$message)) > 0)
 
 ## Check events$select not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -86,9 +89,11 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E      = E,
-                                   S      = S,
-                                   events = events))
+res <- tools::assertError(external_events(E      = E,
+                                          S      = S,
+                                          events = events))
+stopifnot(length(grep("Columns in events must be integer",
+                      res[[1]]$message)) > 0)
 
 ## Check events$node not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -102,9 +107,11 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E      = E,
-                                   S      = S,
-                                   events = events))
+res <- tools::assertError(external_events(E      = E,
+                                          S      = S,
+                                          events = events))
+stopifnot(length(grep("Columns in events must be integer",
+                      res[[1]]$message)) > 0)
 
 ## Check events$dest not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -118,9 +125,11 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E      = E,
-                                   S      = S,
-                                   events = events))
+res <- tools::assertError(external_events(E      = E,
+                                          S      = S,
+                                          events = events))
+stopifnot(length(grep("Columns in events must be integer",
+                      res[[1]]$message)) > 0)
 
 ## Check events$n not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -134,9 +143,11 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E      = E,
-                                   S      = S,
-                                   events = events))
+res <- tools::assertError(external_events(E      = E,
+                                          S      = S,
+                                          events = events))
+stopifnot(length(grep("Columns in events must be integer",
+                      res[[1]]$message)) > 0)
 
 ## Check events$event equal to character
 events <- structure(list(event = c("3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3"),
@@ -150,9 +161,11 @@ events <- structure(list(event = c("3", "3", "3", "3", "3", "3", "3", "3", "3", 
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E      = E,
-                                   S      = S,
-                                   events = events))
+res <- tools::assertError(external_events(E      = E,
+                                          S      = S,
+                                          events = events))
+stopifnot(length(grep("Columns in events must be numeric",
+                      res[[1]]$message)) > 0)
 
 ## Check events$shift not equal to whole number
 events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -166,9 +179,11 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-tools::assertError(external_events(E      = E,
-                                   S      = S,
-                                   events = events))
+res <- tools::assertError(external_events(E      = E,
+                                          S      = S,
+                                          events = events))
+stopifnot(length(grep("Columns in events must be integer",
+                      res[[1]]$message)) > 0)
 
 ## Check E and events equal to NULL (default).
 events <- new("external_events",
