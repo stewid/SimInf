@@ -26,7 +26,7 @@ enum {S, I};
 /* Offset in model state vector */
 enum {PHI};
 
-/* Offsets in node local data (ldata) to parameters in the model */
+/* Offsets in global data (gdata) to parameters in the model */
 enum {UPSILON,
       GAMMA,
       ALPHA,
@@ -55,7 +55,7 @@ double SISe_S_to_I(
     double t,
     int sd)
 {
-    return ldata[UPSILON] * v[PHI] * u[S];
+    return gdata[UPSILON] * v[PHI] * u[S];
 }
 
 /**
@@ -77,7 +77,7 @@ double SISe_I_to_S(
     double t,
     int sd)
 {
-    return ldata[GAMMA] * u[I];
+    return gdata[GAMMA] * u[I];
 }
 
 /**
@@ -113,23 +113,23 @@ int SISe_post_time_step(
     /* Time dependent beta for each quarter of the year. Forward Euler step. */
     switch (((int)t % days_in_year) / days_in_quarter) {
     case 0:
-        v[PHI] *= (1.0 - ldata[BETA_Q1]);
+        v[PHI] *= (1.0 - gdata[BETA_Q1]);
         break;
     case 1:
-        v[PHI] *= (1.0 - ldata[BETA_Q2]);
+        v[PHI] *= (1.0 - gdata[BETA_Q2]);
         break;
     case 2:
-        v[PHI] *= (1.0 - ldata[BETA_Q3]);
+        v[PHI] *= (1.0 - gdata[BETA_Q3]);
         break;
     default:
-        v[PHI] *= (1.0 - ldata[BETA_Q4]);
+        v[PHI] *= (1.0 - gdata[BETA_Q4]);
         break;
     }
 
     if ((I_n + S_n) > 0.0)
-        v[PHI] += ldata[ALPHA] * I_n / (I_n + S_n) + ldata[EPSILON];
+        v[PHI] += gdata[ALPHA] * I_n / (I_n + S_n) + gdata[EPSILON];
     else
-        v[PHI] += ldata[EPSILON];
+        v[PHI] += gdata[EPSILON];
 
     /* 1 if needs update */
     return tmp != v[PHI];

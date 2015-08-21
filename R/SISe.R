@@ -179,18 +179,19 @@ SISe <- function(init,
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
 
-    ldata <- matrix(c(rep(upsilon, nrow(init)),
-                      rep(gamma, nrow(init)),
-                      rep(alpha, nrow(init)),
-                      rep(beta_q1, nrow(init)),
-                      rep(beta_q2, nrow(init)),
-                      rep(beta_q3, nrow(init)),
-                      rep(beta_q4, nrow(init)),
-                      rep(epsilon, nrow(init))),
-                    nrow  = 8,
-                    byrow = TRUE)
-
+    ldata <- numeric(0)
+    dim(ldata) <- c(0, nrow(init))
     storage.mode(ldata) <- "double"
+
+    gdata <- c(upsilon,
+               gamma,
+               alpha,
+               beta_q1,
+               beta_q2,
+               beta_q3,
+               beta_q4,
+               epsilon)
+    storage.mode(gdata) <- "double"
 
     model <- siminf_model(G      = G,
                           N      = N,
@@ -200,6 +201,7 @@ SISe <- function(init,
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,
+                          gdata  = gdata,
                           v0     = v0)
 
     return(as(model, "SISe"))
