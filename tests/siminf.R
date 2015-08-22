@@ -671,10 +671,12 @@ if (siminf:::have_openmp()) {
       NULL,
       NULL)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         NULL,
-                         "1"))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                NULL,
+                                "1"))
+stopifnot(length(grep("Invalid type of seed",
+                      res[[1]]$message)) > 0)
 
 .Call(siminf:::SISe_run,
       demo_model(model = "SISe"),
@@ -696,25 +698,33 @@ tools::assertError(.Call(siminf:::SISe_run,
       NULL,
       1)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         NULL,
-                         NA_integer_))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                NULL,
+                                NA_integer_))
+stopifnot(length(grep("Invalid value [(]NA[)] of seed",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         NULL,
-                         NA_real_))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                NULL,
+                                NA_real_))
+stopifnot(length(grep("Invalid value [(]NA[)] of seed",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         NULL,
-                         c(1L, 2L)))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                NULL,
+                                c(1L, 2L)))
+stopifnot(length(grep("Invalid length of seed",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         NULL,
-                         c(1, 2)))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                NULL,
+                                c(1, 2)))
+stopifnot(length(grep("Invalid length of seed",
+                      res[[1]]$message)) > 0)
 
 ## Check extraction of number of threads
 .Call(siminf:::SISe_run,
@@ -732,37 +742,51 @@ tools::assertError(.Call(siminf:::SISe_run,
       1,
       NULL)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         -1L,
-                         NULL))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                -1L,
+                                NULL))
+stopifnot(length(grep("Number of threads must be a value >= 0",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         -1,
-                         NULL))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                -1,
+                                NULL))
+stopifnot(length(grep("Number of threads must be a value >= 0",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         "1",
-                         NULL))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                "1",
+                                NULL))
+stopifnot(length(grep("Invalid type for threads",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         c(1L, 1L),
-                         NULL))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                c(1L, 1L),
+                                NULL))
+stopifnot(length(grep("Invalid length of threads vector",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         c(1, 1),
-                         NULL))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                c(1, 1),
+                                NULL))
+stopifnot(length(grep("Invalid length of threads vector",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         NA_integer_,
-                         NULL))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                NA_integer_,
+                                NULL))
+stopifnot(length(grep("Invalid value [(]NA[)] for threads",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(.Call(siminf:::SISe_run,
-                         demo_model(model = "SISe"),
-                         NA_real_,
-                         NULL))
+res <- tools::assertError(.Call(siminf:::SISe_run,
+                                demo_model(model = "SISe"),
+                                NA_real_,
+                                NULL))
+stopifnot(length(grep("Invalid value [(]NA[)] for threads",
+                      res[[1]]$message)) > 0)
