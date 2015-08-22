@@ -1,7 +1,6 @@
 Package: siminf
 Title: A Framework for Stochastic Disease Spread Simulations
 Version: 0.2
-Date: 2015-04-06
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
     email = "stefan.widgren@sva.se"),
     person("Pavol", "Bauer", role = c("aut")),
