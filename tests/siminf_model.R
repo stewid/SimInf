@@ -51,36 +51,42 @@ U <- matrix(nrow = 0, ncol = 0)
 storage.mode(U) <- "integer"
 
 ## Check tspan
-tools::assertError(new("siminf_model",
-                       G     = G,
-                       N     = N,
-                       U     = U,
-                       Nn    = Nn,
-                       ldata = matrix(rep(0, Nn), nrow = 1),
-                       sd    = rep(0L, Nn),
-                       tspan = as.numeric(1),
-                       u0    = u0))
+res <- tools::assertError(new("siminf_model",
+                              G     = G,
+                              N     = N,
+                              U     = U,
+                              Nn    = Nn,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              sd    = rep(0L, Nn),
+                              tspan = as.numeric(1),
+                              u0    = u0))
+stopifnot(length(grep("Input time-span must be an increasing vector.",
+                      res[[1]]$message)) > 0)
 
-tools::assertError(new("siminf_model",
-                       G     = G,
-                       N     = N,
-                       U     = U,
-                       Nn    = Nn,
-                       ldata = matrix(rep(0, Nn), nrow = 1),
-                       sd    = rep(0L, Nn),
-                       tspan = as.numeric(c(3, 2, 1)),
-                       u0    = u0))
+res <- tools::assertError(new("siminf_model",
+                              G     = G,
+                              N     = N,
+                              U     = U,
+                              Nn    = Nn,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              sd    = rep(0L, Nn),
+                              tspan = as.numeric(c(3, 2, 1)),
+                              u0    = u0))
+stopifnot(length(grep("Input time-span must be an increasing vector.",
+                      res[[1]]$message)) > 0)
 
 ## Check u0
-tools::assertError(new("siminf_model",
-                       G     = G,
-                       N     = N,
-                       U     = U,
-                       Nn    = Nn,
-                       ldata = matrix(rep(0, Nn), nrow = 1),
-                       sd    = rep(0L, Nn),
-                       tspan = as.numeric(1:10),
-                       u0    = u0 * -1L))
+res <- tools::assertError(new("siminf_model",
+                              G     = G,
+                              N     = N,
+                              U     = U,
+                              Nn    = Nn,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              sd    = rep(0L, Nn),
+                              tspan = as.numeric(1:10),
+                              u0    = u0 * -1L))
+stopifnot(length(grep("Initial state 'u0' has negative elements.",
+                      res[[1]]$message)) > 0)
 
 ## Change storage mode of u0 to double.
 ## Should not raise error
@@ -100,64 +106,74 @@ siminf_model(G     = G,
 u0_double <- u0
 storage.mode(u0_double) <- "double"
 u0_double <- 1.2 * u0_double
-tools::assertError(siminf_model(G     = G,
-                                N     = N,
-                                U     = U,
-                                Nn    = Nn,
-                                ldata = matrix(rep(0, Nn), nrow = 1),
-                                sd    = rep(0L, Nn),
-                                tspan = as.numeric(1:10),
-                                u0    = u0_double))
+res <- tools::assertError(siminf_model(G     = G,
+                                       N     = N,
+                                       U     = U,
+                                       Nn    = Nn,
+                                       ldata = matrix(rep(0, Nn), nrow = 1),
+                                       sd    = rep(0L, Nn),
+                                       tspan = as.numeric(1:10),
+                                       u0    = u0_double))
+stopifnot(length(grep("u0 must be an integer matrix",
+                      res[[1]]$message)) > 0)
 
 ## Check N
-tools::assertError(new("siminf_model",
-                       G     = G,
-                       N     = N * 1.1,
-                       U     = U,
-                       Nn    = Nn,
-                       ldata = matrix(rep(0, Nn), nrow = 1),
-                       sd    = rep(0L, Nn),
-                       tspan = as.numeric(1:10),
-                       u0    = u0))
+res <- tools::assertError(new("siminf_model",
+                              G     = G,
+                              N     = N * 1.1,
+                              U     = U,
+                              Nn    = Nn,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              sd    = rep(0L, Nn),
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("Stochiometric matrix must be an integer matrix.",
+                      res[[1]]$message)) > 0)
 
 ## Check G
 ## Error: Wrong size of dependency graph
-tools::assertError(new("siminf_model",
-                       G     = G[-1,],
-                       N     = N,
-                       U     = U,
-                       Nn    = Nn,
-                       ldata = matrix(rep(0, Nn), nrow = 1),
-                       sd    = rep(0L, Nn),
-                       tspan = as.numeric(1:10),
-                       u0    = u0))
+res <- tools::assertError(new("siminf_model",
+                              G     = G[-1,],
+                              N     = N,
+                              U     = U,
+                              Nn    = Nn,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              sd    = rep(0L, Nn),
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("Wrong size of dependency graph.",
+                      res[[1]]$message)) > 0)
 
 ## Check sd
 sd <- rep(0L, Nn)
 sd <- sd[1:3]
 
 ## Wrong size of subdomain vector
-tools::assertError(new("siminf_model",
-                       G     = G,
-                       N     = N,
-                       U     = U,
-                       Nn    = Nn,
-                       ldata = matrix(rep(0, Nn), nrow = 1),
-                       sd    = sd,
-                       tspan = as.numeric(1:10),
-                       u0    = u0))
+res <- tools::assertError(new("siminf_model",
+                              G     = G,
+                              N     = N,
+                              U     = U,
+                              Nn    = Nn,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              sd    = sd,
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("Wrong size of subdomain vector.",
+                      res[[1]]$message)) > 0)
 
 ## Check gdata
-tools::assertError(new("siminf_model",
-                       G     = G,
-                       N     = N,
-                       U     = U,
-                       Nn    = Nn,
-                       ldata = matrix(rep(0, Nn), nrow = 1),
-                       gdata = 1L,
-                       sd    = rep(0L, Nn),
-                       tspan = as.numeric(1:10),
-                       u0    = u0))
+res <- tools::assertError(new("siminf_model",
+                              G     = G,
+                              N     = N,
+                              U     = U,
+                              Nn    = Nn,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              gdata = 1L,
+                              sd    = rep(0L, Nn),
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("'gdata' must be a double vector.",
+                      res[[1]]$message)) > 0)
 
 ## Check ldata
 sd <- rep(0L, Nn)
@@ -166,15 +182,17 @@ ldata <- matrix(rep(0, Nn), nrow = 1)
 ldata <- ldata[, 1:3, drop = FALSE]
 
 ## Wrong size of ldata matrix
-tools::assertError(new("siminf_model",
-                       G     = G,
-                       N     = N,
-                       U     = U,
-                       Nn    = Nn,
-                       ldata = ldata,
-                       sd    = sd,
-                       tspan = as.numeric(1:10),
-                       u0    = u0))
+res <- tools::assertError(new("siminf_model",
+                              G     = G,
+                              N     = N,
+                              U     = U,
+                              Nn    = Nn,
+                              ldata = ldata,
+                              sd    = sd,
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("Wrong size of 'ldata' matrix.",
+                      res[[1]]$message)) > 0)
 
 ## Check initial state
 init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
@@ -188,13 +206,19 @@ init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
                   row.names = c(NA, -6L), class = "data.frame")
 
 ## Both u0 and init are NULL
-tools::assertError(siminf_model())
+res <- tools::assertError(siminf_model())
+stopifnot(length(grep("Both u0 and init are NULL",
+                      res[[1]]$message)) > 0)
 
 ## Both u0 and init are non NULL
-tools::assertError(siminf_model(init = init, u0 = u0))
+res <- tools::assertError(siminf_model(init = init, u0 = u0))
+stopifnot(length(grep("Both u0 and init are non NULL",
+                      res[[1]]$message)) > 0)
 
 ## Nn must be equal to number of nodes
-tools::assertError(siminf_model(u0 = u0, Nn = 7))
+res <- tools::assertError(siminf_model(u0 = u0, Nn = 7))
+stopifnot(length(grep("Nn must be equal to number of nodes",
+                      res[[1]]$message)) > 0)
 
 ## Check show method without events
 show_expected <- c("Epidemiological model:", "G: 2 x 2", "N: 2 x 2", "U: 0 x 0",
@@ -307,14 +331,16 @@ U_double <- U
 storage.mode(U_double) <- "double"
 U_double <- U_double * 1.2
 
-tools::assertError(siminf_model(G     = G,
-                                N     = N,
-                                U     = U_double,
-                                Nn    = Nn,
-                                ldata = matrix(rep(0, Nn), nrow = 1),
-                                sd    = rep(0L, Nn),
-                                tspan = as.numeric(1:10),
-                                u0    = u0))
+res <- tools::assertError(siminf_model(G     = G,
+                                       N     = N,
+                                       U     = U_double,
+                                       Nn    = Nn,
+                                       ldata = matrix(rep(0, Nn), nrow = 1),
+                                       sd    = rep(0L, Nn),
+                                       tspan = as.numeric(1:10),
+                                       u0    = u0))
+stopifnot(length(grep("U must be an integer",
+                      res[[1]]$message)) > 0)
 
 ## Check U. Should not raise an error if U is an integer vector of length 0
 siminf_model(G     = G,
@@ -327,14 +353,16 @@ siminf_model(G     = G,
              u0    = u0)
 
 ## Check U. Should raise error if U is an integer vector of length > 0
-tools::assertError(siminf_model(G     = G,
-                                N     = N,
-                                U     = c(1L),
-                                Nn    = Nn,
-                                ldata = matrix(rep(0, Nn), nrow = 1),
-                                sd    = rep(0L, Nn),
-                                tspan = as.numeric(1:10),
-                                u0    = u0))
+res <- tools::assertError(siminf_model(G     = G,
+                                       N     = N,
+                                       U     = c(1L),
+                                       Nn    = Nn,
+                                       ldata = matrix(rep(0, Nn), nrow = 1),
+                                       sd    = rep(0L, Nn),
+                                       tspan = as.numeric(1:10),
+                                       u0    = u0))
+stopifnot(length(grep("U must be equal to 0 x 0 matrix",
+                      res[[1]]$message)) > 0)
 
 ## Check V. Change storage mode of V to double.
 ## Should not raise error
@@ -362,26 +390,30 @@ siminf_model(G     = G,
 V_character <- V
 storage.mode(V_character) <- "character"
 
-tools::assertError(siminf_model(G     = G,
-                                N     = N,
-                                U     = U,
-                                V     = V_character,
-                                Nn    = Nn,
-                                ldata = matrix(rep(0, Nn), nrow = 1),
-                                sd    = rep(0L, Nn),
-                                tspan = as.numeric(1:10),
-                                u0    = u0))
+res <- tools::assertError(siminf_model(G     = G,
+                                       N     = N,
+                                       U     = U,
+                                       V     = V_character,
+                                       Nn    = Nn,
+                                       ldata = matrix(rep(0, Nn), nrow = 1),
+                                       sd    = rep(0L, Nn),
+                                       tspan = as.numeric(1:10),
+                                       u0    = u0))
+stopifnot(length(grep("V must be numeric",
+                      res[[1]]$message)) > 0)
 
 ## Check V. Should raise error if V is a vector of length > 0
-tools::assertError(siminf_model(G     = G,
-                                N     = N,
-                                U     = U,
-                                V     = 1,
-                                Nn    = Nn,
-                                ldata = matrix(rep(0, Nn), nrow = 1),
-                                sd    = rep(0L, Nn),
-                                tspan = as.numeric(1:10),
-                                u0    = u0))
+res <- tools::assertError(siminf_model(G     = G,
+                                       N     = N,
+                                       U     = U,
+                                       V     = 1,
+                                       Nn    = Nn,
+                                       ldata = matrix(rep(0, Nn), nrow = 1),
+                                       sd    = rep(0L, Nn),
+                                       tspan = as.numeric(1:10),
+                                       u0    = u0))
+stopifnot(length(grep("V must be equal to 0 x 0 matrix",
+                      res[[1]]$message)) > 0)
 
 ## Check V. Should not raise an error if V is an integer vector of length 0
 siminf_model(G     = G,
