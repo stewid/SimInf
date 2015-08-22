@@ -68,10 +68,14 @@ model <- SISe3(init,
                beta_q4   = 1,
                epsilon   = 0)
 
-tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model, threads = 1))
+stopifnot(length(grep("Negative state detected.",
+                      res[[1]]$message)) > 0)
 
 if (siminf:::have_openmp()) {
-    tools::assertError(run(model, threads = 2))
+    res <- tools::assertError(run(model, threads = 2))
+    stopifnot(length(grep("Negative state detected.",
+                          res[[1]]$message)) > 0)
 }
 
 ## 2 Nodes
@@ -121,10 +125,14 @@ model <- SISe3(init,
                beta_q4   = 1,
                epsilon   = 0)
 
-tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model, threads = 1))
+stopifnot(length(grep("Negative state detected.",
+                      res[[1]]$message)) > 0)
 
 if (siminf:::have_openmp()) {
-    tools::assertError(run(model, threads = 2))
+    res <- tools::assertError(run(model, threads = 2))
+    stopifnot(length(grep("Negative state detected.",
+                          res[[1]]$message)) > 0)
 }
 
 ## 2 Nodes
@@ -159,22 +167,24 @@ events <- structure(list(event      = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 ## We should not be able to create model with prop = 10
-tools::assertError(SISe3(init,
-                         tspan     = 0:10,
-                         events    = events,
-                         phi       = rep(0, 2),
-                         upsilon_1 = 0,
-                         upsilon_2 = 0,
-                         upsilon_3 = 0,
-                         gamma_1   = 1,
-                         gamma_2   = 1,
-                         gamma_3   = 1,
-                         alpha     = 0,
-                         beta_q1   = 1,
-                         beta_q2   = 1,
-                         beta_q3   = 1,
-                         beta_q4   = 1,
-                         epsilon   = 0))
+res <- tools::assertError(SISe3(init,
+                                tspan     = 0:10,
+                                events    = events,
+                                phi       = rep(0, 2),
+                                upsilon_1 = 0,
+                                upsilon_2 = 0,
+                                upsilon_3 = 0,
+                                gamma_1   = 1,
+                                gamma_2   = 1,
+                                gamma_3   = 1,
+                                alpha     = 0,
+                                beta_q1   = 1,
+                                beta_q2   = 1,
+                                beta_q3   = 1,
+                                beta_q4   = 1,
+                                epsilon   = 0))
+stopifnot(length(grep("prop must be in the range 0 <= prop <= 1",
+                      res[[1]]$message)) > 0)
 
 ## Replace proportion = 10 to proportion = 1
 events$proportion <- 1
@@ -199,10 +209,14 @@ model <- SISe3(init,
 ## Replace proportion = 10 to proportion = 1
 model@events@proportion <- 10
 
-tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model, threads = 1))
+stopifnot(length(grep("Negative state detected.",
+                      res[[1]]$message)) > 0)
 
 if (siminf:::have_openmp()) {
-    tools::assertError(run(model, threads = 2))
+    res <- tools::assertError(run(model, threads = 2))
+    stopifnot(length(grep("Negative state detected.",
+                          res[[1]]$message)) > 0)
 }
 
 ## 2 Nodes
@@ -237,22 +251,24 @@ events <- structure(list(event      = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 ## We should not be able to create model with proportion = -1
-tools::assertError(SISe3(init,
-                         tspan     = 0:10,
-                         events    = events,
-                         phi       = rep(0, 2),
-                         upsilon_1 = 0,
-                         upsilon_2 = 0,
-                         upsilon_3 = 0,
-                         gamma_1   = 1,
-                         gamma_2   = 1,
-                         gamma_3   = 1,
-                         alpha     = 0,
-                         beta_q1   = 1,
-                         beta_q2   = 1,
-                         beta_q3   = 1,
-                         beta_q4   = 1,
-                         epsilon   = 0))
+res <- tools::assertError(SISe3(init,
+                                tspan     = 0:10,
+                                events    = events,
+                                phi       = rep(0, 2),
+                                upsilon_1 = 0,
+                                upsilon_2 = 0,
+                                upsilon_3 = 0,
+                                gamma_1   = 1,
+                                gamma_2   = 1,
+                                gamma_3   = 1,
+                                alpha     = 0,
+                                beta_q1   = 1,
+                                beta_q2   = 1,
+                                beta_q3   = 1,
+                                beta_q4   = 1,
+                                epsilon   = 0))
+stopifnot(length(grep("prop must be in the range 0 <= prop <= 1",
+                      res[[1]]$message)) > 0)
 
 ## Replace proportion = -1 to proportion = 0
 events$proportion <- 0
@@ -277,10 +293,14 @@ model <- SISe3(init,
 ## Replace proportion = 0 to proportion = -1
 model@events@proportion <- -1
 
-tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model, threads = 1))
+stopifnot(length(grep("Negative state detected.",
+                      res[[1]]$message)) > 0)
 
 if (siminf:::have_openmp()) {
-    tools::assertError(run(model, threads = 2))
+    res <- tools::assertError(run(model, threads = 2))
+    stopifnot(length(grep("Negative state detected.",
+                          res[[1]]$message)) > 0)
 }
 
 ## 2 Nodes
