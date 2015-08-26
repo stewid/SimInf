@@ -20,7 +20,7 @@
 
 #include "SISe3.h"
 
-/* Offset in compartment state vector */
+/* Offset in integer compartment state vector */
 enum {S_1,
       I_1,
       S_2,
@@ -28,7 +28,7 @@ enum {S_1,
       S_3,
       I_3};
 
-/* Offset in model state vector */
+/* Offset in real-valued compartment state vector */
 enum {PHI};
 
 /* Offsets in global data (gdata) to parameters in the model */
