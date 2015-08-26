@@ -30,10 +30,10 @@ enum {PHI};
 enum {UPSILON,
       GAMMA,
       ALPHA,
-      BETA_Q1,
-      BETA_Q2,
-      BETA_Q3,
-      BETA_Q4,
+      BETA_T1,
+      BETA_T2,
+      BETA_T3,
+      BETA_T4,
       EPSILON};
 
 /**
@@ -110,16 +110,16 @@ int SISe_post_time_step(
     /* Time dependent beta for each quarter of the year. Forward Euler step. */
     switch (((int)t % days_in_year) / days_in_quarter) {
     case 0:
-        v[PHI] *= (1.0 - gdata[BETA_Q1]);
+        v[PHI] *= (1.0 - gdata[BETA_T1]);
         break;
     case 1:
-        v[PHI] *= (1.0 - gdata[BETA_Q2]);
+        v[PHI] *= (1.0 - gdata[BETA_T2]);
         break;
     case 2:
-        v[PHI] *= (1.0 - gdata[BETA_Q3]);
+        v[PHI] *= (1.0 - gdata[BETA_T3]);
         break;
     default:
-        v[PHI] *= (1.0 - gdata[BETA_Q4]);
+        v[PHI] *= (1.0 - gdata[BETA_T4]);
         break;
     }
 

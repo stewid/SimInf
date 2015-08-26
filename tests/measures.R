@@ -26,10 +26,10 @@ model <- SISe(init    = data.frame(id = 0, S = 99, I = 1),
               upsilon = 1,
               gamma   = 0.1,
               alpha   = 1,
-              beta_q1 = 1,
-              beta_q2 = 1,
-              beta_q3 = 1,
-              beta_q4 = 1,
+              beta_t1 = 1,
+              beta_t2 = 1,
+              beta_t3 = 1,
+              beta_t4 = 1,
               epsilon = 0)
 
 result <- run(model, threads = 1)

@@ -5,8 +5,8 @@
 \title{Create a SISe model}
 \usage{
 SISe(init, tspan, events = NULL, phi = NULL, upsilon = NULL,
-  gamma = NULL, alpha = NULL, beta_q1 = NULL, beta_q2 = NULL,
-  beta_q3 = NULL, beta_q4 = NULL, epsilon = NULL)
+  gamma = NULL, alpha = NULL, beta_t1 = NULL, beta_t2 = NULL,
+  beta_t3 = NULL, beta_t4 = NULL, epsilon = NULL)
 }
 \arguments{
 \item{init}{A \code{data.frame} with the initial state in each
@@ -29,17 +29,17 @@ to the environmental infectious pressure}
 
 \item{alpha}{The shed rate}
 
-\item{beta_q1}{The decay of the environmental infectious pressure
-in the first quarter of the year.}
+\item{beta_t1}{The decay of the environmental infectious pressure
+in the first interval of the year.}
 
-\item{beta_q2}{The decay of the environmental infectious pressure
-in the second quarter of the year.}
+\item{beta_t2}{The decay of the environmental infectious pressure
+in the second interval of the year.}
 
-\item{beta_q3}{The decay of the environmental infectious pressure
-in the third quarter of the year.}
+\item{beta_t3}{The decay of the environmental infectious pressure
+in the third interval of the year.}
 
-\item{beta_q4}{The decay of the environmental infectious pressure
-in the fourth quarter of the year.}
+\item{beta_t4}{The decay of the environmental infectious pressure
+in the fourth interval of the year.}
 
 \item{epsilon}{The background infectious pressure}
 }

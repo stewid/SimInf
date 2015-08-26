@@ -42,10 +42,10 @@ res <- tools::assertError(SISe(init    = init,
                                phi     = rep(1, nrow(init)),
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
 stopifnot(length(grep("'upsilon' is missing",
                       res[[1]]$message)) > 0)
@@ -57,10 +57,10 @@ res <- tools::assertError(SISe(init    = init,
                                phi     = rep(1, nrow(init)),
                                upsilon = 0.0357,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
 stopifnot(length(grep("'gamma' is missing",
                       res[[1]]$message)) > 0)
@@ -72,15 +72,15 @@ res <- tools::assertError(SISe(init    = init,
                                phi     = rep(1, nrow(init)),
                                upsilon = 0.0357,
                                gamma   = 0.1,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
 stopifnot(length(grep("'alpha' is missing",
                       res[[1]]$message)) > 0)
 
-## Check missing beta_q1
+## Check missing beta_t1
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -88,14 +88,14 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q1' is missing",
+stopifnot(length(grep("'beta_t1' is missing",
                       res[[1]]$message)) > 0)
 
-## Check missing beta_q2
+## Check missing beta_t2
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -103,14 +103,14 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q2' is missing",
+stopifnot(length(grep("'beta_t2' is missing",
                       res[[1]]$message)) > 0)
 
-## Check missing beta_q3
+## Check missing beta_t3
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -118,14 +118,14 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q3' is missing",
+stopifnot(length(grep("'beta_t3' is missing",
                       res[[1]]$message)) > 0)
 
-## Check missing beta_q4
+## Check missing beta_t4
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -133,11 +133,11 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q4' is missing",
+stopifnot(length(grep("'beta_t4' is missing",
                       res[[1]]$message)) > 0)
 
 ## Check missing epsilon
@@ -148,10 +148,10 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185))
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185))
 stopifnot(length(grep("'epsilon' is missing",
                       res[[1]]$message)) > 0)
 
@@ -163,10 +163,10 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = "0.0357",
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
 stopifnot(length(grep("'upsilon' must be numeric",
                       res[[1]]$message)) > 0)
@@ -179,10 +179,10 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = "0.1",
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
 stopifnot(length(grep("'gamma' must be numeric",
                       res[[1]]$message)) > 0)
@@ -195,15 +195,15 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = "1.0",
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
 stopifnot(length(grep("'alpha' must be numeric",
                       res[[1]]$message)) > 0)
 
-## Check non-numeric beta_q1
+## Check non-numeric beta_t1
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -211,15 +211,15 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = "0.19",
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = "0.19",
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q1' must be numeric",
+stopifnot(length(grep("'beta_t1' must be numeric",
                       res[[1]]$message)) > 0)
 
-## Check non-numeric beta_q2
+## Check non-numeric beta_t2
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -227,15 +227,15 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = "0.085",
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = "0.085",
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q2' must be numeric",
+stopifnot(length(grep("'beta_t2' must be numeric",
                       res[[1]]$message)) > 0)
 
-## Check non-numeric beta_q3
+## Check non-numeric beta_t3
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -243,15 +243,15 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = "0.075",
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = "0.075",
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q3' must be numeric",
+stopifnot(length(grep("'beta_t3' must be numeric",
                       res[[1]]$message)) > 0)
 
-## Check non-numeric beta_q4
+## Check non-numeric beta_t4
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -259,12 +259,12 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = "0.185",
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = "0.185",
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q4' must be numeric",
+stopifnot(length(grep("'beta_t4' must be numeric",
                       res[[1]]$message)) > 0)
 
 ## Check non-numeric epsilon
@@ -275,10 +275,10 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = "0.000011"))
 stopifnot(length(grep("'epsilon' must be numeric",
                       res[[1]]$message)) > 0)
@@ -291,10 +291,10 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = c(0.0357, 0.0357),
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
 stopifnot(length(grep("'upsilon' must be of length 1",
                       res[[1]]$message)) > 0)
@@ -307,10 +307,10 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = c(0.1, 0.1),
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
 stopifnot(length(grep("'gamma' must be of length 1",
                       res[[1]]$message)) > 0)
@@ -323,15 +323,15 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = c(1.0, 1.0),
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
 stopifnot(length(grep("'alpha' must be of length 1",
                       res[[1]]$message)) > 0)
 
-## Check that length of beta_q1 equals 1
+## Check that length of beta_t1 equals 1
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -339,15 +339,15 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = c(0.19, 0.19),
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = c(0.19, 0.19),
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q1' must be of length 1",
+stopifnot(length(grep("'beta_t1' must be of length 1",
                       res[[1]]$message)) > 0)
 
-## Check that length of beta_q2 equals 1
+## Check that length of beta_t2 equals 1
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -355,15 +355,15 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = c(0.085, 0.085),
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = c(0.085, 0.085),
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q2' must be of length 1",
+stopifnot(length(grep("'beta_t2' must be of length 1",
                       res[[1]]$message)) > 0)
 
-## Check that length of beta_q3 equals 1
+## Check that length of beta_t3 equals 1
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -371,15 +371,15 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = c(0.075, 0.075),
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = c(0.075, 0.075),
+                               beta_t4 = 0.185,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q3' must be of length 1",
+stopifnot(length(grep("'beta_t3' must be of length 1",
                       res[[1]]$message)) > 0)
 
-## Check that length of beta_q4 equals 1
+## Check that length of beta_t4 equals 1
 res <- tools::assertError(SISe(init    = init,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
@@ -387,12 +387,12 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = c(0.185, 0.185),
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = c(0.185, 0.185),
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_q4' must be of length 1",
+stopifnot(length(grep("'beta_t4' must be of length 1",
                       res[[1]]$message)) > 0)
 
 ## Check that length of epsilon equals 1
@@ -403,10 +403,10 @@ res <- tools::assertError(SISe(init    = init,
                                upsilon = 0.0357,
                                gamma   = 0.1,
                                alpha   = 1.0,
-                               beta_q1 = 0.19,
-                               beta_q2 = 0.085,
-                               beta_q3 = 0.075,
-                               beta_q4 = 0.185,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
                                epsilon = c(0.000011, 0.000011)))
 stopifnot(length(grep("'epsilon' must be of length 1",
                       res[[1]]$message)) > 0)
@@ -419,10 +419,10 @@ model <- SISe(init    = init,
               upsilon = 0.0357,
               gamma   = 0.1,
               alpha   = 1.0,
-              beta_q1 = 0.19,
-              beta_q2 = 0.085,
-              beta_q3 = 0.075,
-              beta_q4 = 0.185,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
               epsilon = 0.000011)
 
 result <- run(model)

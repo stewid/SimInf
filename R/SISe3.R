@@ -70,14 +70,14 @@ setClass("SISe3", contains = c("siminf_model"))
 ##' @param gamma_3 The recover rate from infected to
 ##' susceptible for age category 3
 ##' @param alpha The shed rate
-##' @param beta_q1 The decay of the environmental infectious pressure
-##' in the first quarter of the year.
-##' @param beta_q2 The decay of the environmental infectious pressure
-##' in the second quarter of the year.
-##' @param beta_q3 The decay of the environmental infectious pressure
-##' in the third quarter of the year.
-##' @param beta_q4 The decay of the environmental infectious pressure
-##' in the fourth quarter of the year.
+##' @param beta_t1 The decay of the environmental infectious pressure
+##' in the first interval of the year.
+##' @param beta_t2 The decay of the environmental infectious pressure
+##' in the second interval of the year.
+##' @param beta_t3 The decay of the environmental infectious pressure
+##' in the third interval of the year.
+##' @param beta_t4 The decay of the environmental infectious pressure
+##' in the fourth interval of the year.
 ##' @param epsilon The background infectious pressure
 ##' @return \code{SISe3}
 ##' @export
@@ -92,10 +92,10 @@ SISe3 <- function(init,
                   gamma_2   = NULL,
                   gamma_3   = NULL,
                   alpha     = NULL,
-                  beta_q1   = NULL,
-                  beta_q2   = NULL,
-                  beta_q3   = NULL,
-                  beta_q4   = NULL,
+                  beta_t1   = NULL,
+                  beta_t2   = NULL,
+                  beta_t3   = NULL,
+                  beta_t4   = NULL,
                   epsilon   = NULL)
 {
     ## Check init
@@ -180,14 +180,14 @@ SISe3 <- function(init,
         stop("'gamma_3' is missing")
     if (is.null(alpha))
         stop("'alpha' is missing")
-    if (is.null(beta_q1))
-        stop("'beta_q1' is missing")
-    if (is.null(beta_q2))
-        stop("'beta_q2' is missing")
-    if (is.null(beta_q3))
-        stop("'beta_q3' is missing")
-    if (is.null(beta_q4))
-        stop("'beta_q4' is missing")
+    if (is.null(beta_t1))
+        stop("'beta_t1' is missing")
+    if (is.null(beta_t2))
+        stop("'beta_t2' is missing")
+    if (is.null(beta_t3))
+        stop("'beta_t3' is missing")
+    if (is.null(beta_t4))
+        stop("'beta_t4' is missing")
     if (is.null(epsilon))
         stop("'epsilon' is missing")
 
@@ -206,14 +206,14 @@ SISe3 <- function(init,
         stop("'gamma_3' must be numeric")
     if (!is.numeric(alpha))
         stop("'alpha' must be numeric")
-    if (!is.numeric(beta_q1))
-        stop("'beta_q1' must be numeric")
-    if (!is.numeric(beta_q2))
-        stop("'beta_q2' must be numeric")
-    if (!is.numeric(beta_q3))
-        stop("'beta_q3' must be numeric")
-    if (!is.numeric(beta_q4))
-        stop("'beta_q4' must be numeric")
+    if (!is.numeric(beta_t1))
+        stop("'beta_t1' must be numeric")
+    if (!is.numeric(beta_t2))
+        stop("'beta_t2' must be numeric")
+    if (!is.numeric(beta_t3))
+        stop("'beta_t3' must be numeric")
+    if (!is.numeric(beta_t4))
+        stop("'beta_t4' must be numeric")
     if (!is.numeric(epsilon))
         stop("'epsilon' must be numeric")
 
@@ -232,14 +232,14 @@ SISe3 <- function(init,
         stop("'gamma_3' must be of length 1")
     if (!identical(length(alpha), 1L))
         stop("'alpha' must be of length 1")
-    if (!identical(length(beta_q1), 1L))
-        stop("'beta_q1' must be of length 1")
-    if (!identical(length(beta_q2), 1L))
-        stop("'beta_q2' must be of length 1")
-    if (!identical(length(beta_q3), 1L))
-        stop("'beta_q3' must be of length 1")
-    if (!identical(length(beta_q4), 1L))
-        stop("'beta_q4' must be of length 1")
+    if (!identical(length(beta_t1), 1L))
+        stop("'beta_t1' must be of length 1")
+    if (!identical(length(beta_t2), 1L))
+        stop("'beta_t2' must be of length 1")
+    if (!identical(length(beta_t3), 1L))
+        stop("'beta_t3' must be of length 1")
+    if (!identical(length(beta_t4), 1L))
+        stop("'beta_t4' must be of length 1")
     if (!identical(length(epsilon), 1L))
         stop("'epsilon' must be of length 1")
 
@@ -257,10 +257,10 @@ SISe3 <- function(init,
                gamma_2,
                gamma_3,
                alpha,
-               beta_q1,
-               beta_q2,
-               beta_q3,
-               beta_q4,
+               beta_t1,
+               beta_t2,
+               beta_t3,
+               beta_t4,
                epsilon)
     storage.mode(gdata) <- "double"
 
