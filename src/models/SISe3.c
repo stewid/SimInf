@@ -200,12 +200,9 @@ int SISe3_post_time_step(
 {
     const int days_in_year = 365;
     const int days_in_quarter = 91;
-
-    double S_n, I_n;
+    const double S_n = u[S_1] + u[S_2] + u[S_3];
+    const double I_n = u[I_1] + u[I_2] + u[I_3];
     double tmp = v[PHI];
-
-    S_n = u[S_1] + u[S_2] + u[S_3];
-    I_n = u[I_1] + u[I_2] + u[I_3];
 
     /* Time dependent beta for each quarter of the year. Forward Euler step. */
     switch (((int)t % days_in_year) / days_in_quarter) {
