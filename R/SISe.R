@@ -76,6 +76,10 @@ SISe <- function(init,
                  beta_t2 = NULL,
                  beta_t3 = NULL,
                  beta_t4 = NULL,
+                 end_t1  = NULL,
+                 end_t2  = NULL,
+                 end_t3  = NULL,
+                 end_t4  = NULL,
                  epsilon = NULL)
 {
     ## Check init
@@ -137,6 +141,14 @@ SISe <- function(init,
         stop("'beta_t3' is missing")
     if (is.null(beta_t4))
         stop("'beta_t4' is missing")
+    if (is.null(end_t1))
+        stop("'end_t1' is missing")
+    if (is.null(end_t2))
+        stop("'end_t2' is missing")
+    if (is.null(end_t3))
+        stop("'end_t3' is missing")
+    if (is.null(end_t4))
+        stop("'end_t4' is missing")
     if (is.null(epsilon))
         stop("'epsilon' is missing")
 
@@ -158,6 +170,24 @@ SISe <- function(init,
     if (!is.numeric(epsilon))
         stop("'epsilon' must be numeric")
 
+    # Check for non-integer parameters
+    if (!is.numeric(end_t1))
+        stop("'end_t1' must be integer")
+    if (!all(is_wholenumber(end_t1)))
+        stop("'end_t1' must be integer")
+    if (!is.numeric(end_t2))
+        stop("'end_t2' must be integer")
+    if (!all(is_wholenumber(end_t2)))
+        stop("'end_t2' must be integer")
+    if (!is.numeric(end_t3))
+        stop("'end_t3' must be integer")
+    if (!all(is_wholenumber(end_t3)))
+        stop("'end_t3' must be integer")
+    if (!is.numeric(end_t4))
+        stop("'end_t4' must be integer")
+    if (!all(is_wholenumber(end_t4)))
+        stop("'end_t4' must be integer")
+
     # Check length of parameters
     if (!identical(length(upsilon), 1L))
         stop("'upsilon' must be of length 1")
@@ -173,8 +203,36 @@ SISe <- function(init,
         stop("'beta_t3' must be of length 1")
     if (!identical(length(beta_t4), 1L))
         stop("'beta_t4' must be of length 1")
+    if (identical(length(end_t1), 1L))
+        end_t1 <- rep(end_t1, nrow(init))
+    if (!identical(length(end_t1), nrow(init)))
+        stop("'end_t1' must be of length 1 or 'nrow(init)'")
+    if (identical(length(end_t2), 1L))
+        end_t2 <- rep(end_t2, nrow(init))
+    if (!identical(length(end_t2), nrow(init)))
+        stop("'end_t2' must be of length 1 or 'nrow(init)'")
+    if (identical(length(end_t3), 1L))
+        end_t3 <- rep(end_t3, nrow(init))
+    if (!identical(length(end_t3), nrow(init)))
+        stop("'end_t3' must be of length 1 or 'nrow(init)'")
+    if (identical(length(end_t4), 1L))
+        end_t4 <- rep(end_t4, nrow(init))
+    if (!identical(length(end_t4), nrow(init)))
+        stop("'end_t4' must be of length 1 or 'nrow(init)'")
     if (!identical(length(epsilon), 1L))
         stop("'epsilon' must be of length 1")
+
+    ## Check endpoints of intervals
+    if (!all(0 <= end_t1))
+        stop("'end_t1' must be greater than or equal to '0'")
+    if (!all(end_t1 < end_t2))
+        stop("'end_t1' must be less than 'end_t2'")
+    if (!all(end_t2 < end_t3))
+        stop("'end_t2' must be less than 'end_t3'")
+    if (!all(0 <= end_t4))
+        stop("'end_t4' must be greater than or equal to '0'")
+    if (!all(end_t4 <= 365))
+        stop("'end_t4' must be less than or equal to '365'")
 
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
