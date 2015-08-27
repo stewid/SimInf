@@ -40,6 +40,10 @@ model <- SISe(init,
               beta_t2 = 1,
               beta_t3 = 1,
               beta_t4 = 1,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
               epsilon = 1)
 
 result <- run(model, threads = 1, seed = 123L)

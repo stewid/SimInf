@@ -30,6 +30,10 @@ model <- SISe(init    = data.frame(id = 0, S = 99, I = 1),
               beta_t2 = 1,
               beta_t3 = 1,
               beta_t4 = 1,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
               epsilon = 0)
 
 result <- run(model, threads = 1)
