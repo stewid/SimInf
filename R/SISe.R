@@ -226,7 +226,8 @@ setMethod("run",
 setMethod("susceptible",
           signature("SISe"),
           function(model, ...) {
-              as.matrix(model@U[seq(from = 1, to = dim(model@U)[1], by = 2), , drop = FALSE])
+              i <- seq(from = 1, to = dim(model@U)[1], by = 2)
+              as.matrix(model@U[i, , drop = FALSE])
           }
 )
 
@@ -235,7 +236,8 @@ setMethod("susceptible",
 setMethod("infected",
           signature("SISe"),
           function(model, ...) {
-              as.matrix(model@U[seq(from = 2, to = dim(model@U)[1], by = 2), , drop = FALSE])
+              i <- seq(from = 2, to = dim(model@U)[1], by = 2)
+              as.matrix(model@U[i, , drop = FALSE])
           }
 )
 
