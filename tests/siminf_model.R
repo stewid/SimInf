@@ -222,8 +222,8 @@ stopifnot(length(grep("Nn must be equal to number of nodes",
 
 ## Check show method without events
 show_expected <- c("Epidemiological model:", "G: 2 x 2", "N: 2 x 2", "U: 0 x 0",
-                   "V: 0 x 0", "Nn: 1", "ldata: 0 x 1", "gdata: 1 x 8", "tspan: 1 x 1000",
-                   "u0: 2 x 1", "v0: 1 x 1", "",
+                   "V: 0 x 0", "Nn: 1", "ldata: 4 x 1", "gdata: 1 x 8",
+                   "tspan: 1 x 1000", "u0: 2 x 1", "v0: 1 x 1", "",
                    "External events:", "E: 2 x 2", "S: 0 x 0", "event: 0 x 0",
                    "time: 0 x 0", "node: 0 x 0", "dest: 0 x 0", "n: 0 x 0",
                    "proportion: 0 x 0", "select: 0 x 0", "shift: 0 x 0")
