@@ -237,8 +237,9 @@ SISe <- function(init,
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
 
-    ldata <- numeric(0)
-    dim(ldata) <- c(0, nrow(init))
+    ldata <- matrix(c(end_t1, end_t2, end_t3, end_t4),
+                    nrow  = 4,
+                    byrow = TRUE)
     storage.mode(ldata) <- "double"
 
     gdata <- c(upsilon,
