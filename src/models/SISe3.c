@@ -31,6 +31,9 @@ enum {S_1,
 /* Offset in real-valued compartment state vector */
 enum {PHI};
 
+/* Offsets in node local data (ldata) to parameters in the model */
+enum {END_T1, END_T2, END_T3, END_T4};
+
 /* Offsets in global data (gdata) to parameters in the model */
 enum {UPSILON_1,
       UPSILON_2,
