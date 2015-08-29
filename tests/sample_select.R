@@ -66,6 +66,10 @@ model <- SISe3(init,
                beta_t2   = 1,
                beta_t3   = 1,
                beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
                epsilon   = 0)
 
 res <- tools::assertError(run(model, threads = 1))
@@ -123,6 +127,10 @@ model <- SISe3(init,
                beta_t2   = 1,
                beta_t3   = 1,
                beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
                epsilon   = 0)
 
 res <- tools::assertError(run(model, threads = 1))
@@ -182,6 +190,10 @@ res <- tools::assertError(SISe3(init,
                                 beta_t2   = 1,
                                 beta_t3   = 1,
                                 beta_t4   = 1,
+                                end_t1    = 91,
+                                end_t2    = 182,
+                                end_t3    = 273,
+                                end_t4    = 365,
                                 epsilon   = 0))
 stopifnot(length(grep("prop must be in the range 0 <= prop <= 1",
                       res[[1]]$message)) > 0)
@@ -204,6 +216,10 @@ model <- SISe3(init,
                beta_t2   = 1,
                beta_t3   = 1,
                beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
                epsilon   = 0)
 
 ## Replace proportion = 10 to proportion = 1
@@ -266,6 +282,10 @@ res <- tools::assertError(SISe3(init,
                                 beta_t2   = 1,
                                 beta_t3   = 1,
                                 beta_t4   = 1,
+                                end_t1    = 91,
+                                end_t2    = 182,
+                                end_t3    = 273,
+                                end_t4    = 365,
                                 epsilon   = 0))
 stopifnot(length(grep("prop must be in the range 0 <= prop <= 1",
                       res[[1]]$message)) > 0)
@@ -288,6 +308,10 @@ model <- SISe3(init,
                beta_t2   = 1,
                beta_t3   = 1,
                beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
                epsilon   = 0)
 
 ## Replace proportion = 0 to proportion = -1
@@ -348,6 +372,10 @@ model <- SISe3(init,
                beta_t2   = 1,
                beta_t3   = 1,
                beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
                epsilon   = 0)
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -423,6 +451,10 @@ model <- SISe3(init,
                beta_t2   = 1,
                beta_t3   = 1,
                beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
                epsilon   = 0)
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L,
@@ -498,8 +530,11 @@ model <- SISe3(init,
                beta_t2   = 1,
                beta_t3   = 1,
                beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
                epsilon   = 0)
-
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 0L, 0L, 0L, 0L, 0L, 1L,
                  0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L,
@@ -575,6 +610,10 @@ model <- SISe3(init,
                beta_t2   = 1,
                beta_t3   = 1,
                beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
                epsilon   = 0)
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 8L, 0L, 0L, 0L, 0L, 0L,
