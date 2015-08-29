@@ -222,17 +222,21 @@ SISe <- function(init,
     if (!identical(length(epsilon), 1L))
         stop("'epsilon' must be of length 1")
 
-    ## Check endpoints of intervals
+    ## Check interval endpoints
     if (!all(0 <= end_t1))
         stop("'end_t1' must be greater than or equal to '0'")
     if (!all(end_t1 < end_t2))
         stop("'end_t1' must be less than 'end_t2'")
     if (!all(end_t2 < end_t3))
         stop("'end_t2' must be less than 'end_t3'")
+    if (!all(end_t3 < 364))
+        stop("'end_t3' must be less than '364'")
     if (!all(0 <= end_t4))
         stop("'end_t4' must be greater than or equal to '0'")
     if (!all(end_t4 <= 365))
         stop("'end_t4' must be less than or equal to '365'")
+    if (!all((end_t4 < end_t1) | (end_t3 < end_t4)))
+        stop("'end_t4' must be less than 'end_t1' or greater than 'end_t3'")
 
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
