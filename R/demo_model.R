@@ -100,6 +100,10 @@ demo_model <- function(nodes = 1,
                        beta_t2   = 0.085,
                        beta_t3   = 0.075,
                        beta_t4   = 0.185,
+                       end_t1    = 91,
+                       end_t2    = 182,
+                       end_t3    = 273,
+                       end_t4    = 365,
                        epsilon   = 0.000011)
     }
 
