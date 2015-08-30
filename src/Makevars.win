@@ -8,7 +8,8 @@ SIMINF_GSL_INCLUDE = -Igsl/include
 endif
 endif
 
-PKG_CFLAGS = -I. -Icore -Imodels $(SIMINF_GSL_INCLUDE) $(SHLIB_OPENMP_CFLAGS) -DSIMINF_OMP
+PKG_CFLAGS = -I. -Icore -Imodels -Ievents $(SIMINF_GSL_INCLUDE) \
+             $(SHLIB_OPENMP_CFLAGS) -DSIMINF_OMP
 PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
 
 # List all model files to compile
@@ -16,4 +17,4 @@ MODELS_SRC = $(wildcard models/*.c)
 MODELS_OBJ = $(MODELS_SRC:.c=.o)
 
 OBJECTS = siminf.o core/siminf_error.o core/siminf_run.o core/siminf_solver.o \
-          $(MODELS_OBJ)
+          events/siminf_vec.o $(MODELS_OBJ)
