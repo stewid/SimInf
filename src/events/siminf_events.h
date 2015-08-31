@@ -18,17 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_ERROR_H
-#define INCLUDE_SIMINF_ERROR_H
-
-/* Error constants */
-#define SIMINF_ERR_NEGATIVE_STATE          1
-#define SIMINF_ERR_ALLOC_MEMORY_BUFFER     2
-#define SIMINF_ERR_SPLIT_EVENTS            3
-#define SIMINF_UNDEFINED_EVENT             4
-#define SIMINF_INVALID_EDGE_PROBABILITY    5
-
-/* Definition of error function */
-void siminf_error(int err);
+#ifndef INCLUDE_SIMINF_EVENTS_H
+#define INCLUDE_SIMINF_EVENTS_H
 
 #endif
