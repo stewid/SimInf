@@ -18,7 +18,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <math.h>
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
+
+#include "siminf_error.h"
 #include "siminf_events.h"
+#include "siminf_vec.h"
 
 /**
  * Create a directed random graph G_{n,p} without loops
