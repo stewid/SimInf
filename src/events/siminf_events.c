@@ -19,6 +19,7 @@
  */
 
 #include <math.h>
+#include <time.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
@@ -85,4 +86,262 @@ static int siminf_gnp(
     }
 
     return 0;
+}
+
+/* Dynamic vectors for events */
+struct siminf_events {
+    struct siminf_vec event;
+    struct siminf_vec time;
+    struct siminf_vec node;
+    struct siminf_vec dest;
+    struct siminf_vec n;
+    struct siminf_vec select;
+    struct siminf_vec shift;
+} siminf_events;
+
+#define SIMINF_EVENTS_INIT {SIMINF_VEC_INIT, \
+                            SIMINF_VEC_INIT, \
+                            SIMINF_VEC_INIT, \
+                            SIMINF_VEC_INIT, \
+                            SIMINF_VEC_INIT, \
+                            SIMINF_VEC_INIT, \
+                            SIMINF_VEC_INIT}
+
+/**
+ * Free memory for events
+ *
+ * @param events The events to free memory for
+ * @return void
+*/
+static void siminf_events_free(struct siminf_events *events)
+{
+    siminf_vec_free(&(events->event));
+    siminf_vec_free(&(events->time));
+    siminf_vec_free(&(events->node));
+    siminf_vec_free(&(events->dest));
+    siminf_vec_free(&(events->n));
+    siminf_vec_free(&(events->select));
+    siminf_vec_free(&(events->shift));
+}
+
+/**
+ * Reserves memory for events
+ *
+ * @param events The events to reserve memory for
+ * @param capacity The new capacity of the events
+ * @return 0 if Ok, else error code.
+*/
+static int siminf_events_reserve(struct siminf_events *events, size_t capacity)
+{
+    int err;
+
+    err = siminf_vec_reserve(&(events->event), capacity);
+    if (err)
+        return err;
+    err = siminf_vec_reserve(&(events->time), capacity);
+    if (err)
+        return err;
+    err = siminf_vec_reserve(&(events->node), capacity);
+    if (err)
+        return err;
+    err = siminf_vec_reserve(&(events->dest), capacity);
+    if (err)
+        return err;
+    err = siminf_vec_reserve(&(events->n), capacity);
+    if (err)
+        return err;
+    err = siminf_vec_reserve(&(events->select), capacity);
+    if (err)
+        return err;
+    err = siminf_vec_reserve(&(events->shift), capacity);
+    if (err)
+        return err;
+
+    return 0;
+}
+
+/**
+ * Create random external transfer events
+ *
+ * @param nodes Number of nodes
+ * @param p_edge Probability of edge
+ * @param mu The mean number individuals in a transfer event
+ * @param t The time of the transfer event
+ * @param events The new transfer events are added to events
+ * @param rng The random number generator
+ * @return 0 if Ok, else error code.
+*/
+static int siminf_external_transfer_events(
+    int nodes,
+    double p_edge,
+    double mu,
+    int t,
+    struct siminf_events *events,
+    gsl_rng *rng)
+{
+    int err = siminf_gnp(nodes, p_edge, &(events->node), &(events->dest), rng);
+    if (err)
+        return err;
+
+    while (events->time.size < events->node.size) {
+        int n;
+
+        err = siminf_vec_push_back(&(events->event), 3);
+        if (err)
+            return err;
+
+        err = siminf_vec_push_back(&(events->time), t);
+        if (err)
+            return err;
+
+        n = gsl_ran_poisson(rng, mu);
+        if (!n)
+            n = 1;
+        err = siminf_vec_push_back(&(events->n), n);
+        if (err)
+            return err;
+
+        err = siminf_vec_push_back(&(events->select), 0);
+        if (err)
+            return err;
+
+        err = siminf_vec_push_back(&(events->shift), -1);
+        if (err)
+            return err;
+    }
+
+    return 0;
+}
+
+/**
+ * Check integer argument
+ *
+ * @param arg The arg to check
+ * @return 0 if OK, else -1
+ */
+int siminf_arg_check_integer(SEXP arg)
+{
+    if (arg == R_NilValue || !isInteger(arg) ||
+        length(arg) != 1  || NA_INTEGER == INTEGER(arg)[0])
+        return -1;
+    return 0;
+}
+
+/**
+ * Check vector argument of type real
+ *
+ * @param arg The arg to check
+ * @param size The length of the vector
+ * @return 0 if OK, else -1
+ */
+int siminf_arg_check_real_vec(SEXP arg, size_t size)
+{
+    size_t i = 0;
+
+    if (arg == R_NilValue || !isReal(arg) || length(arg) != size)
+        return -1;
+    for (; i < size; i++) {
+        if (ISNA(REAL(arg)[i]))
+            return -1;
+    }
+
+    return 0;
+}
+
+/**
+ * Create random external events
+ *
+ * @param nodes Number of nodes
+ * @param days Number of days
+ * @param p_edge Vector of length 'days' with probabilities of
+ * edges. One value for each day.
+ * @param mu Vector of length 'days' with the mean number individuals
+ * in a transfer event. One value for each day.
+ * @return A named list of vectors
+*/
+SEXP siminf_external_events(SEXP nodes, SEXP days, SEXP p_edge, SEXP mu)
+{
+    int err;
+    SEXP result = R_NilValue;
+    SEXP names = R_NilValue;
+    SEXP item;
+    size_t i;
+    struct siminf_events events = SIMINF_EVENTS_INIT;
+    gsl_rng *rng = NULL;
+    size_t capacity = 10;
+
+    /* Check arguments */
+    if (siminf_arg_check_integer(nodes))
+        Rf_error("Invalid 'nodes' argument");
+    if (siminf_arg_check_integer(days))
+        Rf_error("Invalid 'days' argument");
+    if (siminf_arg_check_real_vec(p_edge, INTEGER(days)[0]))
+        Rf_error("Invalid 'p_edge' argument");
+    if (siminf_arg_check_real_vec(mu, INTEGER(days)[0]))
+        Rf_error("Invalid 'mu' argument");
+
+    rng = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(rng, (unsigned long int)time(NULL));
+
+    err = siminf_events_reserve(&events, capacity);
+    if (err)
+        goto cleanup;
+
+    for (i = 0; i < INTEGER(days)[0]; i++) {
+        err = siminf_external_transfer_events(
+            INTEGER(nodes)[0],
+            REAL(p_edge)[i],
+            REAL(mu)[i],
+            i,
+            &events,
+            rng);
+        if (err)
+            goto cleanup;
+    }
+
+    /* Copy the events to a named list of vectors. */
+    PROTECT(result = allocVector(VECSXP, 7));
+    setAttrib(result, R_NamesSymbol, names = allocVector(STRSXP, 7));
+
+    SET_VECTOR_ELT(result, 0, item = allocVector(INTSXP, events.event.size));
+    memcpy(INTEGER(item), events.event.buf, events.event.size * sizeof(int));
+    SET_STRING_ELT(names, 0, mkChar("event"));
+
+    SET_VECTOR_ELT(result, 1, item = allocVector(INTSXP, events.time.size));
+    memcpy(INTEGER(item), events.time.buf, events.time.size * sizeof(int));
+    SET_STRING_ELT(names, 1, mkChar("time"));
+
+    SET_VECTOR_ELT(result, 2, item = allocVector(INTSXP, events.node.size));
+    memcpy(INTEGER(item), events.node.buf, events.node.size * sizeof(int));
+    SET_STRING_ELT(names, 2, mkChar("node"));
+
+    SET_VECTOR_ELT(result, 3, item = allocVector(INTSXP, events.dest.size));
+    memcpy(INTEGER(item), events.dest.buf, events.dest.size * sizeof(int));
+    SET_STRING_ELT(names, 3, mkChar("dest"));
+
+    SET_VECTOR_ELT(result, 4, item = allocVector(INTSXP, events.n.size));
+    memcpy(INTEGER(item), events.n.buf, events.n.size * sizeof(int));
+    SET_STRING_ELT(names, 4, mkChar("n"));
+
+    SET_VECTOR_ELT(result, 5, item = allocVector(INTSXP, events.select.size));
+    memcpy(INTEGER(item), events.select.buf, events.select.size * sizeof(int));
+    SET_STRING_ELT(names, 5, mkChar("select"));
+
+    SET_VECTOR_ELT(result, 6, item = allocVector(INTSXP, events.shift.size));
+    memcpy(INTEGER(item), events.shift.buf, events.shift.size * sizeof(int));
+    SET_STRING_ELT(names, 6, mkChar("shift"));
+
+cleanup:
+    if (rng)
+        gsl_rng_free(rng);
+
+    siminf_events_free(&events);
+
+    if (result != R_NilValue)
+        UNPROTECT(1);
+
+    if (err)
+        siminf_error(err);
+
+    return result;
 }

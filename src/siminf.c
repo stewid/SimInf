@@ -20,6 +20,7 @@
 
 #include <R_ext/Rdynload.h>
 
+#include "siminf_events.h"
 #include "SISe.h"
 #include "SISe3.h"
 
@@ -28,6 +29,7 @@
 */
 static const R_CallMethodDef callMethods[] =
 {
+    {"siminf_external_events", (DL_FUNC)&siminf_external_events, 4},
     {"SISe_run", (DL_FUNC)&SISe_run, 3},
     {"SISe3_run", (DL_FUNC)&SISe3_run, 3},
     {NULL, NULL, 0}
