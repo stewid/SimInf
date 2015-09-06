@@ -241,7 +241,7 @@ int siminf_arg_check_real_vec(SEXP arg, size_t size)
     if (arg == R_NilValue || !isReal(arg) || length(arg) != size)
         return -1;
     for (; i < size; i++) {
-        if (ISNA(REAL(arg)[i]))
+        if (!R_finite(REAL(arg)[i]))
             return -1;
     }
 
