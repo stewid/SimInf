@@ -257,9 +257,15 @@ int siminf_arg_check_real_vec(SEXP arg, size_t size)
  * edges. One value for each day.
  * @param mu Vector of length 'days' with the mean number individuals
  * in a transfer event. One value for each day.
+ * @param seed Random number seed.
  * @return A named list of vectors
 */
-SEXP siminf_external_events(SEXP nodes, SEXP days, SEXP p_edge, SEXP mu)
+SEXP siminf_external_events(
+    SEXP nodes,
+    SEXP days,
+    SEXP p_edge,
+    SEXP mu,
+    SEXP seed)
 {
     int err;
     SEXP result = R_NilValue;
@@ -279,9 +285,14 @@ SEXP siminf_external_events(SEXP nodes, SEXP days, SEXP p_edge, SEXP mu)
         Rf_error("Invalid 'p_edge' argument");
     if (siminf_arg_check_real_vec(mu, INTEGER(days)[0]))
         Rf_error("Invalid 'mu' argument");
+    if ((seed != R_NilValue) && siminf_arg_check_integer(seed))
+        Rf_error("Invalid 'seed' argument");
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
-    gsl_rng_set(rng, (unsigned long int)time(NULL));
+    if (seed == R_NilValue)
+        gsl_rng_set(rng, (unsigned long int)time(NULL));
+    else
+        gsl_rng_set(rng, (unsigned long int)INTEGER(seed)[0]);
 
     err = siminf_events_reserve(&events, capacity);
     if (err)
