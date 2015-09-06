@@ -66,6 +66,7 @@ clean:
 	-rm -f src/Makevars
 	-rm -f src/*.o
 	-rm -f src/core/*.o
+	-rm -f src/events/*.o
 	-rm -f src/models/*.o
 	-rm -f src/*.so
 	-rm -rf src-x64
