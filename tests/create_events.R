@@ -105,7 +105,7 @@ res <- tools::assertError(
 stopifnot(length(grep("Invalid 'p_edge' argument",
                       res[[1]]$message)) > 0)
 
-p_edge <- c(0.1, NA_real_)
+p_edge <- c(rep(0.1, 4), NA_real_)
 res <- tools::assertError(
     .Call(siminf:::siminf_external_events, 10L, 5L, p_edge, rep(0.1, 5)))
 stopifnot(length(grep("Invalid 'p_edge' argument",
@@ -136,7 +136,7 @@ res <- tools::assertError(
 stopifnot(length(grep("Invalid 'mu' argument",
                       res[[1]]$message)) > 0)
 
-mu <- c(0.1, NA_real_)
+mu <- c(rep(0.1, 4), NA_real_)
 res <- tools::assertError(
     .Call(siminf:::siminf_external_events, 10L, 5L, rep(0.1, 5), mu))
 stopifnot(length(grep("Invalid 'mu' argument",
