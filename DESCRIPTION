@@ -9,6 +9,7 @@ Description: A general and flexible software framework for
     stochastic disease spread simulations.
 License: GPL-3
 URL: https://github.com/stewid/siminf
+BugReports: https://github.com/stewid/siminf/issues
 Type: Package
 LazyLoad: yes
 Biarch: true
