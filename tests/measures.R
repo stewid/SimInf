@@ -51,6 +51,9 @@ stopifnot(identical(
     infected(result, by = 2)))
 
 stopifnot(identical(length(prevalence(result)), 1001L))
+stopifnot(identical(
+    prevalence(result)[i],
+    prevalence(result, by = 2)))
 
 if (siminf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
@@ -68,6 +71,9 @@ if (siminf:::have_openmp()) {
         infected(result_omp, by = 2)))
 
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
+    stopifnot(identical(
+        prevalence(result_omp)[i],
+        prevalence(result_omp, by = 2)))
 }
 
 ## Check measures for a SISe3 model

@@ -310,9 +310,9 @@ setMethod("infected",
 ##' @export
 setMethod("prevalence",
           signature("SISe"),
-          function(model, ...) {
-              I <- colSums(infected(model))
-              S <- colSums(susceptible(model))
+          function(model, by = 1, ...) {
+              I <- colSums(infected(model = model, by = by))
+              S <- colSums(susceptible(model = model, by = by))
               I / (S + I)
           }
 )
