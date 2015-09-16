@@ -359,14 +359,12 @@ setMethod("run",
 ##' @export
 setMethod("susceptible",
           signature("SISe3"),
-          function(model, age = c("age_1", "age_2", "age_3"), ...) {
+          function(model, age = c("age_1", "age_2", "age_3"), by = 1, ...) {
               age <- match.arg(age)
-              from <- switch(age,
-                             age_1 = 1,
-                             age_2 = 3,
-                             age_3 = 5)
-              to = dim(model@U)[1]
-              as.matrix(model@U[seq(from = from, to = to, by = 6), , drop = FALSE])
+              from <- switch(age, age_1 = 1, age_2 = 3, age_3 = 5)
+              i <- seq(from = from, to = dim(model@U)[1], by = 6)
+              j <- seq(from = 1, to = dim(model@U)[2], by = by)
+              as.matrix(model@U[i, j, drop = FALSE])
           }
 )
 

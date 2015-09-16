@@ -40,6 +40,11 @@ result <- run(model, threads = 1)
 result
 
 stopifnot(identical(length(susceptible(result)), 1001L))
+i <- seq(from = 1, to = 1001, by = 2)
+stopifnot(identical(
+    susceptible(result)[, i, drop = FALSE],
+    susceptible(result, by = 2)))
+
 stopifnot(identical(length(infected(result)), 1001L))
 stopifnot(identical(length(prevalence(result)), 1001L))
 
@@ -48,6 +53,11 @@ if (siminf:::have_openmp()) {
     result_omp
 
     stopifnot(identical(length(susceptible(result_omp)), 1001L))
+    i <- seq(from = 1, to = 1001, by = 2)
+    stopifnot(identical(
+        susceptible(result_omp)[, i, drop = FALSE],
+        susceptible(result_omp, by = 2)))
+
     stopifnot(identical(length(infected(result_omp)), 1001L))
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
 }
@@ -59,6 +69,11 @@ result <- run(model, threads = 1)
 result
 
 stopifnot(identical(length(susceptible(result)), 10000L))
+i <- seq(from = 1, to = 1000, by = 2)
+stopifnot(identical(
+    susceptible(result, age = "age_1")[, i, drop = FALSE],
+    susceptible(result, age = "age_1", by = 2)))
+
 stopifnot(identical(length(infected(result)), 10000L))
 
 if (siminf:::have_openmp()) {
@@ -66,5 +81,10 @@ if (siminf:::have_openmp()) {
     result_omp
 
     stopifnot(identical(length(susceptible(result_omp)), 10000L))
+    i <- seq(from = 1, to = 1000, by = 2)
+    stopifnot(identical(
+        susceptible(result_omp)[, i, drop = FALSE],
+        susceptible(result_omp, by = 2)))
+
     stopifnot(identical(length(infected(result_omp)), 10000L))
 }
