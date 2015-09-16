@@ -9,14 +9,16 @@
 \usage{
 prevalence(model, ...)
 
-\S4method{prevalence}{SISe}(model, by = 1, ...)
+\S4method{prevalence}{SISe}(model, whp = FALSE, by = 1, ...)
 
-\S4method{prevalence}{SISe3}(model, by = 1, ...)
+\S4method{prevalence}{SISe3}(model, whp = FALSE, by = 1, ...)
 }
 \arguments{
 \item{model}{The \code{model} to calculated the prevalence from}
 
 \item{...}{Additional arguments affecting the measure}
+
+\item{whp}{Determine within-herd prevalence. Default is FALSE.}
 
 \item{by}{The number to increment the sequence of time points
 starting from 1. Default is 1, which gives the prevalence at every

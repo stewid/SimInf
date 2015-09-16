@@ -73,6 +73,7 @@ setGeneric("infected",
 ##' @docType methods
 ##' @param model The \code{model} to calculated the prevalence from
 ##' @param ... Additional arguments affecting the measure
+##' @param whp Determine within-herd prevalence. Default is FALSE.
 ##' @param by The number to increment the sequence of time points
 ##' starting from 1. Default is 1, which gives the prevalence at every
 ##' time point.
