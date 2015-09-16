@@ -381,6 +381,21 @@ setMethod("infected",
           }
 )
 
+##' @rdname prevalence-methods
+##' @export
+setMethod("prevalence",
+          signature("SISe3"),
+          function(model, by = 1, ...) {
+              I <- colSums(infected(model, "age_1", by)) +
+                   colSums(infected(model, "age_2", by)) +
+                   colSums(infected(model, "age_3", by))
+              S <- colSums(susceptible(model, "age_1", by)) +
+                   colSums(susceptible(model, "age_2", by)) +
+                   colSums(susceptible(model, "age_3", by))
+              I / (S + I)
+          }
+)
+
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SISe3-method
 ##' @docType methods

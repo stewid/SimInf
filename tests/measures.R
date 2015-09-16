@@ -93,6 +93,11 @@ stopifnot(identical(
     infected(result, age = "age_1")[, i, drop = FALSE],
     infected(result, age = "age_1", by = 2)))
 
+stopifnot(identical(length(prevalence(result)), 1000L))
+stopifnot(identical(
+    prevalence(result)[i],
+    prevalence(result, by = 2)))
+
 if (siminf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     result_omp
@@ -107,4 +112,9 @@ if (siminf:::have_openmp()) {
     stopifnot(identical(
         infected(result_omp)[, i, drop = FALSE],
         infected(result_omp, by = 2)))
+
+    stopifnot(identical(length(prevalence(result_omp)), 1000L))
+    stopifnot(identical(
+        prevalence(result_omp)[i],
+        prevalence(result_omp, by = 2)))
 }
