@@ -56,7 +56,11 @@ setGeneric("susceptible",
 ##' @docType methods
 ##' @param model The \code{model} to extract the infected from
 ##' @param ... Additional arguments affecting the measure
-##' @param age The age category to extract
+##' @param age For models with age categories, the age category to
+##' extract.
+##' @param by The number to increment the sequence of time points
+##' starting from 1. Default is 1, which gives the number of
+##' infected at every time point.
 ##' @keywords methods
 ##' @export
 setGeneric("infected",

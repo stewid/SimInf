@@ -299,9 +299,10 @@ setMethod("susceptible",
 ##' @export
 setMethod("infected",
           signature("SISe"),
-          function(model, ...) {
+          function(model, by = 1, ...) {
               i <- seq(from = 2, to = dim(model@U)[1], by = 2)
-              as.matrix(model@U[i, , drop = FALSE])
+              j <- seq(from = 1, to = dim(model@U)[2], by = by)
+              as.matrix(model@U[i, j, drop = FALSE])
           }
 )
 
