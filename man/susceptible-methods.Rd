@@ -9,16 +9,22 @@
 \usage{
 susceptible(model, ...)
 
-\S4method{susceptible}{SISe}(model, ...)
+\S4method{susceptible}{SISe}(model, by = 1, ...)
 
-\S4method{susceptible}{SISe3}(model, age = c("age_1", "age_2", "age_3"), ...)
+\S4method{susceptible}{SISe3}(model, age = c("age_1", "age_2", "age_3"),
+  by = 1, ...)
 }
 \arguments{
 \item{model}{The \code{model} to extract the susceptible from}
 
 \item{...}{Additional arguments affecting the measure}
 
-\item{age}{The age category to extract}
+\item{by}{The number to increment the sequence of time points
+starting from 1. Default is 1, which gives the number of
+susceptible at every time point.}
+
+\item{age}{For models with age categories, the age category to
+extract.}
 }
 \description{
 Extracts the number of susceptible

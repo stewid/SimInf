@@ -9,16 +9,22 @@
 \usage{
 infected(model, ...)
 
-\S4method{infected}{SISe}(model, ...)
+\S4method{infected}{SISe}(model, by = 1, ...)
 
-\S4method{infected}{SISe3}(model, age = c("age_1", "age_2", "age_3"), ...)
+\S4method{infected}{SISe3}(model, age = c("age_1", "age_2", "age_3"),
+  by = 1, ...)
 }
 \arguments{
 \item{model}{The \code{model} to extract the infected from}
 
 \item{...}{Additional arguments affecting the measure}
 
-\item{age}{The age category to extract}
+\item{by}{The number to increment the sequence of time points
+starting from 1. Default is 1, which gives the number of
+infected at every time point.}
+
+\item{age}{For models with age categories, the age category to
+extract.}
 }
 \description{
 Extracts the number of infected

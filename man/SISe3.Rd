@@ -7,7 +7,8 @@
 SISe3(init, tspan, events = NULL, phi = NULL, upsilon_1 = NULL,
   upsilon_2 = NULL, upsilon_3 = NULL, gamma_1 = NULL, gamma_2 = NULL,
   gamma_3 = NULL, alpha = NULL, beta_t1 = NULL, beta_t2 = NULL,
-  beta_t3 = NULL, beta_t4 = NULL, epsilon = NULL)
+  beta_t3 = NULL, beta_t4 = NULL, end_t1 = NULL, end_t2 = NULL,
+  end_t3 = NULL, end_t4 = NULL, epsilon = NULL)
 }
 \arguments{
 \item{init}{A \code{data.frame} with the initial state in each

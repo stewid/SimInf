@@ -6,7 +6,8 @@
 \usage{
 SISe(init, tspan, events = NULL, phi = NULL, upsilon = NULL,
   gamma = NULL, alpha = NULL, beta_t1 = NULL, beta_t2 = NULL,
-  beta_t3 = NULL, beta_t4 = NULL, epsilon = NULL)
+  beta_t3 = NULL, beta_t4 = NULL, end_t1 = NULL, end_t2 = NULL,
+  end_t3 = NULL, end_t4 = NULL, epsilon = NULL)
 }
 \arguments{
 \item{init}{A \code{data.frame} with the initial state in each
