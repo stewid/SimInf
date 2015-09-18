@@ -9,10 +9,9 @@
 \usage{
 susceptible(model, ...)
 
-\S4method{susceptible}{SISe}(model, by = 1, ...)
+\S4method{susceptible}{SISe}(model, id = NULL, by = 1, ...)
 
-\S4method{susceptible}{SISe3}(model, age = c("age_1", "age_2", "age_3"),
-  by = 1, ...)
+\S4method{susceptible}{SISe3}(model, age = 1:3, id = NULL, by = 1, ...)
 }
 \arguments{
 \item{model}{The \code{model} to extract the susceptible from}

@@ -288,8 +288,10 @@ setMethod("run",
 ##' @export
 setMethod("susceptible",
           signature("SISe"),
-          function(model, by = 1, ...) {
+          function(model, id = NULL, by = 1, ...) {
               i <- seq(from = 1, to = dim(model@U)[1], by = 2)
+              if (!is.null(id))
+                  i <- i[id]
               j <- seq(from = 1, to = dim(model@U)[2], by = by)
               as.matrix(model@U[i, j, drop = FALSE])
           }

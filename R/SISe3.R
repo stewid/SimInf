@@ -359,12 +359,43 @@ setMethod("run",
 ##' @export
 setMethod("susceptible",
           signature("SISe3"),
-          function(model, age = c("age_1", "age_2", "age_3"), by = 1, ...) {
-              age <- match.arg(age)
-              from <- switch(age, age_1 = 1, age_2 = 3, age_3 = 5)
-              i <- seq(from = from, to = dim(model@U)[1], by = 6)
+          function(model, age = 1:3, id = NULL, by = 1, ...)
+          {
+              stopifnot(all(age %in% 1:3))
+
+              result <- NULL
               j <- seq(from = 1, to = dim(model@U)[2], by = by)
-              as.matrix(model@U[i, j, drop = FALSE])
+
+              if (1 %in% age) {
+                  i <- seq(from = 1, to = dim(model@U)[1], by = 6)
+                  if (!is.null(id))
+                      i <- i[id]
+                  result <- as.matrix(model@U[i, j, drop = FALSE])
+              }
+
+              if (2 %in% age) {
+                  i <- seq(from = 3, to = dim(model@U)[1], by = 6)
+                  if (!is.null(id))
+                      i <- i[id]
+                  if (is.null(result)) {
+                      result <- as.matrix(model@U[i, j, drop = FALSE])
+                  } else {
+                      result <- result + as.matrix(model@U[i, j, drop = FALSE])
+                  }
+              }
+
+              if (3 %in% age) {
+                  i <- seq(from = 5, to = dim(model@U)[1], by = 6)
+                  if (!is.null(id))
+                      i <- i[id]
+                  if (is.null(result)) {
+                      result <- as.matrix(model@U[i, j, drop = FALSE])
+                  } else {
+                      result <- result + as.matrix(model@U[i, j, drop = FALSE])
+                  }
+              }
+
+              result
           }
 )
 
