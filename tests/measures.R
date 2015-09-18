@@ -89,13 +89,13 @@ result
 stopifnot(identical(length(susceptible(result)), 10000L))
 i <- seq(from = 1, to = 1000, by = 2)
 stopifnot(identical(
-    susceptible(result, age = "age_1")[, i, drop = FALSE],
-    susceptible(result, age = "age_1", by = 2)))
+    susceptible(result, age = 1)[, i, drop = FALSE],
+    susceptible(result, age = 1, by = 2)))
 
 stopifnot(identical(length(infected(result)), 10000L))
 stopifnot(identical(
-    infected(result, age = "age_1")[, i, drop = FALSE],
-    infected(result, age = "age_1", by = 2)))
+    infected(result, age = 1)[, i, drop = FALSE],
+    infected(result, age = 1, by = 2)))
 
 stopifnot(identical(length(prevalence(result)), 1000L))
 stopifnot(is.null(dim(prevalence(result))))

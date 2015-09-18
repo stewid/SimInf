@@ -1486,7 +1486,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
                         .Dim = c(6L, 10L))
 
-S_observed <- susceptible(result)
+S_observed <- susceptible(result, age = 1)
 
 stopifnot(identical(S_observed, S_expected))
 
@@ -1497,7 +1497,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
 
-I_observed <- infected(result)
+I_observed <- infected(result, age = 1)
 
 stopifnot(identical(I_observed, I_expected))
 
