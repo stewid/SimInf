@@ -51,6 +51,8 @@ stopifnot(identical(
     infected(result, by = 2)))
 
 stopifnot(identical(length(prevalence(result)), 1001L))
+stopifnot(is.null(dim(prevalence(result))))
+stopifnot(identical(dim(prevalence(result, whp = TRUE)), c(1L, 1001L)))
 stopifnot(identical(
     prevalence(result)[i],
     prevalence(result, by = 2)))
@@ -71,6 +73,8 @@ if (siminf:::have_openmp()) {
         infected(result_omp, by = 2)))
 
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
+    stopifnot(is.null(dim(prevalence(result_omp))))
+    stopifnot(identical(dim(prevalence(result_omp, whp = TRUE)), c(1L, 1001L)))
     stopifnot(identical(
         prevalence(result_omp)[i],
         prevalence(result_omp, by = 2)))
@@ -94,6 +98,8 @@ stopifnot(identical(
     infected(result, age = "age_1", by = 2)))
 
 stopifnot(identical(length(prevalence(result)), 1000L))
+stopifnot(is.null(dim(prevalence(result))))
+stopifnot(identical(dim(prevalence(result, whp = TRUE)), c(10L, 1000L)))
 stopifnot(identical(
     prevalence(result)[i],
     prevalence(result, by = 2)))
@@ -114,6 +120,8 @@ if (siminf:::have_openmp()) {
         infected(result_omp, by = 2)))
 
     stopifnot(identical(length(prevalence(result_omp)), 1000L))
+    stopifnot(is.null(dim(prevalence(result_omp))))
+    stopifnot(identical(dim(prevalence(result_omp, whp = TRUE)), c(10L, 1000L)))
     stopifnot(identical(
         prevalence(result_omp)[i],
         prevalence(result_omp, by = 2)))
