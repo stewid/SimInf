@@ -9,9 +9,10 @@
 \usage{
 prevalence(model, ...)
 
-\S4method{prevalence}{SISe}(model, whp = FALSE, by = 1, ...)
+\S4method{prevalence}{SISe}(model, whp = FALSE, id = NULL, by = 1, ...)
 
-\S4method{prevalence}{SISe3}(model, whp = FALSE, by = 1, ...)
+\S4method{prevalence}{SISe3}(model, age = 1:3, whp = FALSE, id = NULL,
+  by = 1, ...)
 }
 \arguments{
 \item{model}{The \code{model} to calculated the prevalence from}
@@ -20,9 +21,18 @@ prevalence(model, ...)
 
 \item{whp}{Determine within-herd prevalence. Default is FALSE.}
 
+\item{id}{The identifiers/indices specifying the nodes to include
+in the calculation of the prevalence. If \code{whp = TRUE}, then
+specifying which nodes to extract prevalence for. Default is NULL,
+which includes all nodes.}
+
 \item{by}{The number to increment the sequence of time points
 starting from 1. Default is 1, which gives the prevalence at every
 time point.}
+
+\item{age}{For models with age categories, either 'all' or the age
+category to include in the calculation. Default is 'all', which
+includes all age categories.}
 }
 \description{
 Calculate the proportion infected individuals
