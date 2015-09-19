@@ -33,3 +33,21 @@ check_null_arg <- function(...) {
 
     invisible(NULL)
 }
+
+##' Check numeric arguments
+##'
+##' Raise an error if any of the arguments are non-numeric.
+##' @param ... The argumens to check
+##' @keywords internal
+##' @return invisible(NULL)
+check_numeric_arg <- function(...) {
+    arg <- list(...)
+    for (i in seq_len(length(arg))) {
+        if (!is.numeric(arg[[i]]))
+            stop(paste0("'",
+                        match.call(expand.dots = FALSE)$'...'[i],
+                        "' must be numeric"))
+    }
+
+    invisible(NULL)
+}

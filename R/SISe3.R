@@ -173,30 +173,8 @@ SISe3 <- function(init,
                    end_t1, end_t2, end_t3, end_t4, epsilon)
 
     # Check for non-numeric parameters
-    if (!is.numeric(upsilon_1))
-        stop("'upsilon_1' must be numeric")
-    if (!is.numeric(upsilon_2))
-        stop("'upsilon_2' must be numeric")
-    if (!is.numeric(upsilon_3))
-        stop("'upsilon_3' must be numeric")
-    if (!is.numeric(gamma_1))
-        stop("'gamma_1' must be numeric")
-    if (!is.numeric(gamma_2))
-        stop("'gamma_2' must be numeric")
-    if (!is.numeric(gamma_3))
-        stop("'gamma_3' must be numeric")
-    if (!is.numeric(alpha))
-        stop("'alpha' must be numeric")
-    if (!is.numeric(beta_t1))
-        stop("'beta_t1' must be numeric")
-    if (!is.numeric(beta_t2))
-        stop("'beta_t2' must be numeric")
-    if (!is.numeric(beta_t3))
-        stop("'beta_t3' must be numeric")
-    if (!is.numeric(beta_t4))
-        stop("'beta_t4' must be numeric")
-    if (!is.numeric(epsilon))
-        stop("'epsilon' must be numeric")
+    check_numeric_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
+                      alpha, beta_t1, beta_t2, beta_t3, beta_t4, epsilon)
 
     # Check for non-integer parameters
     if (!is.numeric(end_t1))
