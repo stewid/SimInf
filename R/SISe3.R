@@ -359,7 +359,7 @@ setMethod("run",
 ##' @export
 setMethod("susceptible",
           signature("SISe3"),
-          function(model, age = 1:3, id = NULL, by = 1, ...)
+          function(model, age = 1:3, i = NULL, by = 1, ...)
           {
               stopifnot(all(age %in% 1:3))
 

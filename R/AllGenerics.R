@@ -41,6 +41,9 @@ setGeneric("run",
 ##' @param ... Additional arguments affecting the measure
 ##' @param age For models with age categories, the age category to
 ##' extract.
+##' @param i Indices specifying the nodes to include when extracting
+##' the number of susceptible. Default is NULL, which includes all
+##' nodes.
 ##' @param by The number to increment the sequence of time points
 ##' starting from 1. Default is 1, which gives the number of
 ##' susceptible at every time point.
