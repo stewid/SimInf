@@ -403,7 +403,7 @@ setMethod("susceptible",
 ##' @export
 setMethod("infected",
           signature("SISe3"),
-          function(model, age = 1:3, id = NULL, by = 1, ...)
+          function(model, age = 1:3, i = NULL, by = 1, ...)
           {
               stopifnot(all(age %in% 1:3))
 
@@ -411,31 +411,31 @@ setMethod("infected",
               j <- seq(from = 1, to = dim(model@U)[2], by = by)
 
               if (1 %in% age) {
-                  i <- seq(from = 2, to = dim(model@U)[1], by = 6)
-                  if (!is.null(id))
-                      i <- i[id]
-                  result <- as.matrix(model@U[i, j, drop = FALSE])
+                  ii <- seq(from = 2, to = dim(model@U)[1], by = 6)
+                  if (!is.null(i))
+                      ii <- ii[i]
+                  result <- as.matrix(model@U[ii, j, drop = FALSE])
               }
 
               if (2 %in% age) {
-                  i <- seq(from = 4, to = dim(model@U)[1], by = 6)
-                  if (!is.null(id))
-                      i <- i[id]
+                  ii <- seq(from = 4, to = dim(model@U)[1], by = 6)
+                  if (!is.null(i))
+                      ii <- ii[i]
                   if (is.null(result)) {
-                      result <- as.matrix(model@U[i, j, drop = FALSE])
+                      result <- as.matrix(model@U[ii, j, drop = FALSE])
                   } else {
-                      result <- result + as.matrix(model@U[i, j, drop = FALSE])
+                      result <- result + as.matrix(model@U[ii, j, drop = FALSE])
                   }
               }
 
               if (3 %in% age) {
-                  i <- seq(from = 6, to = dim(model@U)[1], by = 6)
-                  if (!is.null(id))
-                      i <- i[id]
+                  ii <- seq(from = 6, to = dim(model@U)[1], by = 6)
+                  if (!is.null(i))
+                      ii <- ii[i]
                   if (is.null(result)) {
-                      result <- as.matrix(model@U[i, j, drop = FALSE])
+                      result <- as.matrix(model@U[ii, j, drop = FALSE])
                   } else {
-                      result <- result + as.matrix(model@U[i, j, drop = FALSE])
+                      result <- result + as.matrix(model@U[ii, j, drop = FALSE])
                   }
               }
 
@@ -447,12 +447,12 @@ setMethod("infected",
 ##' @export
 setMethod("prevalence",
           signature("SISe3"),
-          function(model, age = 1:3, whp = FALSE, id = NULL, by = 1, ...)
+          function(model, age = 1:3, wnp = FALSE, i = NULL, by = 1, ...)
           {
-              I <- infected(model, age = age, id = id, by = by)
-              S <- susceptible(model, age = age, id = id, by = by)
+              I <- infected(model, age = age, i = i, by = by)
+              S <- susceptible(model, age = age, i = i, by = by)
 
-              if (identical(whp, FALSE)) {
+              if (identical(wnp, FALSE)) {
                   I <- colSums(I)
                   S <- colSums(S)
               }

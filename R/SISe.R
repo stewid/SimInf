@@ -314,14 +314,15 @@ setMethod("infected",
 ##' @export
 setMethod("prevalence",
           signature("SISe"),
-          function(model, whp = FALSE, id = NULL, by = 1, ...) {
-              if (identical(whp, TRUE)) {
-                  I <- infected(model = model, id = id, by = by)
-                  S <- susceptible(model = model, id = id, by = by)
-              } else {
-                  I <- colSums(infected(model = model, id = id, by = by))
-                  S <- colSums(susceptible(model = model, id = id, by = by))
+          function(model, wnp = FALSE, i = NULL, by = 1, ...) {
+              I <- infected(model = model, i = i, by = by)
+              S <- susceptible(model = model, i = i, by = by)
+
+              if (identical(wnp, FALSE)) {
+                  I <- colSums(I)
+                  S <- colSums(S)
               }
+
               I / (S + I)
           }
 )

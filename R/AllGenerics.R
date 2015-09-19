@@ -78,7 +78,14 @@ setGeneric("infected",
 ##' @docType methods
 ##' @param model The \code{model} to calculated the prevalence from
 ##' @param ... Additional arguments affecting the measure
-##' @param whp Determine within-herd prevalence. Default is FALSE.
+##' @param i Indices specifying the nodes to include in the
+##' calculation of the prevalence. If \code{wnp = TRUE}, then
+##' specifying which nodes to extract prevalence for. Default is NULL,
+##' which includes all nodes.
+##' @param age For models with age categories, the age category to
+##' include in the calculation. Default is that all age categories are
+##' included.
+##' @param wnp Determine within-node prevalence. Default is FALSE.
 ##' @param by The number to increment the sequence of time points
 ##' starting from 1. Default is 1, which gives the prevalence at every
 ##' time point.
