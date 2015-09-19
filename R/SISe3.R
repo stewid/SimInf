@@ -367,31 +367,31 @@ setMethod("susceptible",
               j <- seq(from = 1, to = dim(model@U)[2], by = by)
 
               if (1 %in% age) {
-                  i <- seq(from = 1, to = dim(model@U)[1], by = 6)
-                  if (!is.null(id))
-                      i <- i[id]
-                  result <- as.matrix(model@U[i, j, drop = FALSE])
+                  ii <- seq(from = 1, to = dim(model@U)[1], by = 6)
+                  if (!is.null(i))
+                      ii <- ii[i]
+                  result <- as.matrix(model@U[ii, j, drop = FALSE])
               }
 
               if (2 %in% age) {
-                  i <- seq(from = 3, to = dim(model@U)[1], by = 6)
-                  if (!is.null(id))
-                      i <- i[id]
+                  ii <- seq(from = 3, to = dim(model@U)[1], by = 6)
+                  if (!is.null(i))
+                      ii <- ii[i]
                   if (is.null(result)) {
-                      result <- as.matrix(model@U[i, j, drop = FALSE])
+                      result <- as.matrix(model@U[ii, j, drop = FALSE])
                   } else {
-                      result <- result + as.matrix(model@U[i, j, drop = FALSE])
+                      result <- result + as.matrix(model@U[ii, j, drop = FALSE])
                   }
               }
 
               if (3 %in% age) {
-                  i <- seq(from = 5, to = dim(model@U)[1], by = 6)
-                  if (!is.null(id))
-                      i <- i[id]
+                  ii <- seq(from = 5, to = dim(model@U)[1], by = 6)
+                  if (!is.null(i))
+                      ii <- ii[i]
                   if (is.null(result)) {
-                      result <- as.matrix(model@U[i, j, drop = FALSE])
+                      result <- as.matrix(model@U[ii, j, drop = FALSE])
                   } else {
-                      result <- result + as.matrix(model@U[i, j, drop = FALSE])
+                      result <- result + as.matrix(model@U[ii, j, drop = FALSE])
                   }
               }
 

@@ -9,14 +9,17 @@
 \usage{
 infected(model, ...)
 
-\S4method{infected}{SISe}(model, id = NULL, by = 1, ...)
+\S4method{infected}{SISe}(model, i = NULL, by = 1, ...)
 
-\S4method{infected}{SISe3}(model, age = 1:3, id = NULL, by = 1, ...)
+\S4method{infected}{SISe3}(model, age = 1:3, i = NULL, by = 1, ...)
 }
 \arguments{
 \item{model}{The \code{model} to extract the infected from}
 
 \item{...}{Additional arguments affecting the measure}
+
+\item{i}{Indices specifying the nodes to include when extracting
+the number of infected. Default is NULL, which includes all nodes.}
 
 \item{by}{The number to increment the sequence of time points
 starting from 1. Default is 1, which gives the number of

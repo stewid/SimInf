@@ -61,6 +61,8 @@ setGeneric("susceptible",
 ##' @param ... Additional arguments affecting the measure
 ##' @param age For models with age categories, the age category to
 ##' extract.
+##' @param i Indices specifying the nodes to include when extracting
+##' the number of infected. Default is NULL, which includes all nodes.
 ##' @param by The number to increment the sequence of time points
 ##' starting from 1. Default is 1, which gives the number of
 ##' infected at every time point.
