@@ -24,28 +24,25 @@ state of the system is to be returned.}
 infectious pressure in each node. Default NULL which gives 0 in
 each node.}
 
-\item{upsilon_1}{The response rate from susceptible to
-infected due to the environmental infectious pressure in age
-category 1}
+\item{upsilon_1}{Indirect transmission rate of the environmental
+infectious pressure in age category 1}
 
-\item{upsilon_2}{The response rate from susceptible to
-infected due to the environmental infectious pressure in age
-category 2}
+\item{upsilon_2}{Indirect transmission rate of the environmental
+infectious pressure in age category 2}
 
-\item{upsilon_3}{The response rate from susceptible to
-infected due to the environmental infectious pressure in age
-category 3}
+\item{upsilon_3}{Indirect transmission rate of the environmental
+infectious pressure in age category 3}
 
-\item{gamma_1}{The recover rate from infected to
-susceptible for age category 1}
+\item{gamma_1}{The recovery rate from infected to susceptible for
+age category 1}
 
-\item{gamma_2}{The recover rate from infected to
-susceptible for age category 2}
+\item{gamma_2}{The recovery rate from infected to susceptible for
+age category 2}
 
-\item{gamma_3}{The recover rate from infected to
-susceptible for age category 3}
+\item{gamma_3}{The recovery rate from infected to susceptible for
+age category 3}
 
-\item{alpha}{The shed rate}
+\item{alpha}{Shed rate from infected individuals}
 
 \item{beta_t1}{The decay of the environmental infectious pressure
 in the first interval of the year.}

@@ -54,22 +54,19 @@ setClass("SISe3", contains = c("siminf_model"))
 ##' @param phi A numeric vector with the initial environmental
 ##' infectious pressure in each node. Default NULL which gives 0 in
 ##' each node.
-##' @param upsilon_1 The response rate from susceptible to
-##' infected due to the environmental infectious pressure in age
-##' category 1
-##' @param upsilon_2 The response rate from susceptible to
-##' infected due to the environmental infectious pressure in age
-##' category 2
-##' @param upsilon_3 The response rate from susceptible to
-##' infected due to the environmental infectious pressure in age
-##' category 3
-##' @param gamma_1 The recover rate from infected to
-##' susceptible for age category 1
-##' @param gamma_2 The recover rate from infected to
-##' susceptible for age category 2
-##' @param gamma_3 The recover rate from infected to
-##' susceptible for age category 3
-##' @param alpha The shed rate
+##' @param upsilon_1 Indirect transmission rate of the environmental
+##' infectious pressure in age category 1
+##' @param upsilon_2 Indirect transmission rate of the environmental
+##' infectious pressure in age category 2
+##' @param upsilon_3 Indirect transmission rate of the environmental
+##' infectious pressure in age category 3
+##' @param gamma_1 The recovery rate from infected to susceptible for
+##' age category 1
+##' @param gamma_2 The recovery rate from infected to susceptible for
+##' age category 2
+##' @param gamma_3 The recovery rate from infected to susceptible for
+##' age category 3
+##' @param alpha Shed rate from infected individuals
 ##' @param beta_t1 The decay of the environmental infectious pressure
 ##' in the first interval of the year.
 ##' @param beta_t2 The decay of the environmental infectious pressure

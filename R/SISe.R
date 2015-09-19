@@ -50,10 +50,10 @@ setClass("SISe", contains = c("siminf_model"))
 ##' @param phi A numeric vector with the initial environmental
 ##' infectious pressure in each node. Default NULL which gives 0 in
 ##' each node.
-##' @param upsilon The response rate from susceptible to infected due
-##' to the environmental infectious pressure
-##' @param gamma The recover rate from infected to susceptible
-##' @param alpha The shed rate
+##' @param upsilon Indirect transmission rate of the environmental
+##' infectious pressure
+##' @param gamma The recovery rate from infected to susceptible
+##' @param alpha Shed rate from infected individuals
 ##' @param beta_t1 The decay of the environmental infectious pressure
 ##' in the first interval of the year.
 ##' @param beta_t2 The decay of the environmental infectious pressure

@@ -23,12 +23,12 @@ state of the system is to be returned.}
 infectious pressure in each node. Default NULL which gives 0 in
 each node.}
 
-\item{upsilon}{The response rate from susceptible to infected due
-to the environmental infectious pressure}
+\item{upsilon}{Indirect transmission rate of the environmental
+infectious pressure}
 
-\item{gamma}{The recover rate from infected to susceptible}
+\item{gamma}{The recovery rate from infected to susceptible}
 
-\item{alpha}{The shed rate}
+\item{alpha}{Shed rate from infected individuals}
 
 \item{beta_t1}{The decay of the environmental infectious pressure
 in the first interval of the year.}
