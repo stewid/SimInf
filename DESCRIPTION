@@ -25,6 +25,7 @@ Collate:
     'AllGenerics.R'
     'external_events.R'
     'siminf_model.R'
+    'check_arguments.R'
     'SISe.R'
     'SISe3.R'
     'demo_model.R'

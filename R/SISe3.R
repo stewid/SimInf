@@ -77,6 +77,7 @@ setClass("SISe3", contains = c("siminf_model"))
 ##' in the fourth interval of the year.
 ##' @param epsilon The background infectious pressure
 ##' @return \code{SISe3}
+##' @include check_arguments.R
 ##' @export
 SISe3 <- function(init,
                   tspan,
@@ -167,38 +168,9 @@ SISe3 <- function(init,
         stop("Invalid 'phi': must be numeric vector with non-negative values")
 
     ## Check for missing parameters
-    if (is.null(upsilon_1))
-        stop("'upsilon_1' is missing")
-    if (is.null(upsilon_2))
-        stop("'upsilon_2' is missing")
-    if (is.null(upsilon_3))
-        stop("'upsilon_3' is missing")
-    if (is.null(gamma_1))
-        stop("'gamma_1' is missing")
-    if (is.null(gamma_2))
-        stop("'gamma_2' is missing")
-    if (is.null(gamma_3))
-        stop("'gamma_3' is missing")
-    if (is.null(alpha))
-        stop("'alpha' is missing")
-    if (is.null(beta_t1))
-        stop("'beta_t1' is missing")
-    if (is.null(beta_t2))
-        stop("'beta_t2' is missing")
-    if (is.null(beta_t3))
-        stop("'beta_t3' is missing")
-    if (is.null(beta_t4))
-        stop("'beta_t4' is missing")
-    if (is.null(end_t1))
-        stop("'end_t1' is missing")
-    if (is.null(end_t2))
-        stop("'end_t2' is missing")
-    if (is.null(end_t3))
-        stop("'end_t3' is missing")
-    if (is.null(end_t4))
-        stop("'end_t4' is missing")
-    if (is.null(epsilon))
-        stop("'epsilon' is missing")
+    check_null_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
+                   alpha, beta_t1, beta_t2, beta_t3, beta_t4,
+                   end_t1, end_t2, end_t3, end_t4, epsilon)
 
     # Check for non-numeric parameters
     if (!is.numeric(upsilon_1))
