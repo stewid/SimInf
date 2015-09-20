@@ -167,64 +167,21 @@ SISe3 <- function(init,
     if (any(phi < 0))
         stop("Invalid 'phi': must be numeric vector with non-negative values")
 
-    ## Check for missing parameters
-    check_null_arg(end_t1, end_t2, end_t3, end_t4)
-
-    # Check 'gdata' parameters
+    ## Check 'gdata' parameters
     check_gdata_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
                     alpha, beta_t1, beta_t2, beta_t3, beta_t4, epsilon)
 
-    # Check for non-integer parameters
-    if (!is.numeric(end_t1))
-        stop("'end_t1' must be integer")
-    if (!all(is_wholenumber(end_t1)))
-        stop("'end_t1' must be integer")
-    if (!is.numeric(end_t2))
-        stop("'end_t2' must be integer")
-    if (!all(is_wholenumber(end_t2)))
-        stop("'end_t2' must be integer")
-    if (!is.numeric(end_t3))
-        stop("'end_t3' must be integer")
-    if (!all(is_wholenumber(end_t3)))
-        stop("'end_t3' must be integer")
-    if (!is.numeric(end_t4))
-        stop("'end_t4' must be integer")
-    if (!all(is_wholenumber(end_t4)))
-        stop("'end_t4' must be integer")
-
-    # Check length of parameters
+    ## Check interval endpoints
+    check_integer_arg(end_t1, end_t2, end_t3, end_t4)
     if (identical(length(end_t1), 1L))
         end_t1 <- rep(end_t1, nrow(init))
-    if (!identical(length(end_t1), nrow(init)))
-        stop("'end_t1' must be of length 1 or 'nrow(init)'")
     if (identical(length(end_t2), 1L))
         end_t2 <- rep(end_t2, nrow(init))
-    if (!identical(length(end_t2), nrow(init)))
-        stop("'end_t2' must be of length 1 or 'nrow(init)'")
     if (identical(length(end_t3), 1L))
         end_t3 <- rep(end_t3, nrow(init))
-    if (!identical(length(end_t3), nrow(init)))
-        stop("'end_t3' must be of length 1 or 'nrow(init)'")
     if (identical(length(end_t4), 1L))
         end_t4 <- rep(end_t4, nrow(init))
-    if (!identical(length(end_t4), nrow(init)))
-        stop("'end_t4' must be of length 1 or 'nrow(init)'")
-
-    ## Check interval endpoints
-    if (!all(0 <= end_t1))
-        stop("'end_t1' must be greater than or equal to '0'")
-    if (!all(end_t1 < end_t2))
-        stop("'end_t1' must be less than 'end_t2'")
-    if (!all(end_t2 < end_t3))
-        stop("'end_t2' must be less than 'end_t3'")
-    if (!all(end_t3 < 364))
-        stop("'end_t3' must be less than '364'")
-    if (!all(0 <= end_t4))
-        stop("'end_t4' must be greater than or equal to '0'")
-    if (!all(end_t4 <= 365))
-        stop("'end_t4' must be less than or equal to '365'")
-    if (!all((end_t4 < end_t1) | (end_t3 < end_t4)))
-        stop("'end_t4' must be less than 'end_t1' or greater than 'end_t3'")
+    check_end_t_arg(nrow(init), end_t1, end_t2, end_t3, end_t4)
 
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
