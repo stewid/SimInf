@@ -168,13 +168,11 @@ SISe3 <- function(init,
         stop("Invalid 'phi': must be numeric vector with non-negative values")
 
     ## Check for missing parameters
-    check_null_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
-                   alpha, beta_t1, beta_t2, beta_t3, beta_t4,
-                   end_t1, end_t2, end_t3, end_t4, epsilon)
+    check_null_arg(end_t1, end_t2, end_t3, end_t4)
 
-    # Check for non-numeric parameters
-    check_numeric_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
-                      alpha, beta_t1, beta_t2, beta_t3, beta_t4, epsilon)
+    # Check 'gdata' parameters
+    check_gdata_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
+                    alpha, beta_t1, beta_t2, beta_t3, beta_t4, epsilon)
 
     # Check for non-integer parameters
     if (!is.numeric(end_t1))
@@ -195,28 +193,6 @@ SISe3 <- function(init,
         stop("'end_t4' must be integer")
 
     # Check length of parameters
-    if (!identical(length(upsilon_1), 1L))
-        stop("'upsilon_1' must be of length 1")
-    if (!identical(length(upsilon_2), 1L))
-        stop("'upsilon_2' must be of length 1")
-    if (!identical(length(upsilon_3), 1L))
-        stop("'upsilon_3' must be of length 1")
-    if (!identical(length(gamma_1), 1L))
-        stop("'gamma_1' must be of length 1")
-    if (!identical(length(gamma_2), 1L))
-        stop("'gamma_2' must be of length 1")
-    if (!identical(length(gamma_3), 1L))
-        stop("'gamma_3' must be of length 1")
-    if (!identical(length(alpha), 1L))
-        stop("'alpha' must be of length 1")
-    if (!identical(length(beta_t1), 1L))
-        stop("'beta_t1' must be of length 1")
-    if (!identical(length(beta_t2), 1L))
-        stop("'beta_t2' must be of length 1")
-    if (!identical(length(beta_t3), 1L))
-        stop("'beta_t3' must be of length 1")
-    if (!identical(length(beta_t4), 1L))
-        stop("'beta_t4' must be of length 1")
     if (identical(length(end_t1), 1L))
         end_t1 <- rep(end_t1, nrow(init))
     if (!identical(length(end_t1), nrow(init)))
@@ -233,8 +209,6 @@ SISe3 <- function(init,
         end_t4 <- rep(end_t4, nrow(init))
     if (!identical(length(end_t4), nrow(init)))
         stop("'end_t4' must be of length 1 or 'nrow(init)'")
-    if (!identical(length(epsilon), 1L))
-        stop("'epsilon' must be of length 1")
 
     ## Check interval endpoints
     if (!all(0 <= end_t1))

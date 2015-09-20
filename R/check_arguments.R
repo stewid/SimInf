@@ -51,3 +51,34 @@ check_numeric_arg <- function(...) {
 
     invisible(NULL)
 }
+
+##' Check arguments for 'gdata'
+##'
+##' Raise an error if any of the arguments are not ok.
+##' @param ... The argumens to check
+##' @keywords internal
+##' @return invisible(NULL)
+check_gdata_arg <- function(...) {
+    arg <- list(...)
+    for (i in seq_len(length(arg))) {
+        if (is.null(arg[[i]])) {
+            stop(paste0("'",
+                        match.call(expand.dots = FALSE)$'...'[i],
+                        "' is missing"))
+        }
+
+        if (!is.numeric(arg[[i]])) {
+            stop(paste0("'",
+                        match.call(expand.dots = FALSE)$'...'[i],
+                        "' must be numeric"))
+        }
+
+        if (!identical(length(arg[[i]]), 1L)) {
+            stop(paste0("'",
+                        match.call(expand.dots = FALSE)$'...'[i],
+                        "' must be of length 1"))
+        }
+    }
+
+    invisible(NULL)
+}
