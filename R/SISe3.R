@@ -100,10 +100,34 @@ SISe3 <- function(init,
                   end_t4    = NULL,
                   epsilon   = NULL)
 {
+    ## Check arguments.
+
     ## Check init
-    if (!all(c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3") %in% names(init))) {
+    if (!all(c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3") %in% names(init)))
         stop("Missing columns in init")
-    }
+
+    ## Check initial infectious pressure
+    if (is.null(phi))
+        phi <- rep(0, nrow(init))
+    check_infectious_pressure_arg(nrow(init), phi)
+
+    ## Check 'gdata' parameters
+    check_gdata_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
+                    alpha, beta_t1, beta_t2, beta_t3, beta_t4, epsilon)
+
+    ## Check interval endpoints
+    check_integer_arg(end_t1, end_t2, end_t3, end_t4)
+    if (identical(length(end_t1), 1L))
+        end_t1 <- rep(end_t1, nrow(init))
+    if (identical(length(end_t2), 1L))
+        end_t2 <- rep(end_t2, nrow(init))
+    if (identical(length(end_t3), 1L))
+        end_t3 <- rep(end_t3, nrow(init))
+    if (identical(length(end_t4), 1L))
+        end_t4 <- rep(end_t4, nrow(init))
+    check_end_t_arg(nrow(init), end_t1, end_t2, end_t3, end_t4)
+
+    ## Arguments seems ok...go on
 
     init <- init[,c("id",
                     "S_1", "I_1",
@@ -155,27 +179,6 @@ SISe3 <- function(init,
                 sparse = TRUE)
     N <- as(N, "dgCMatrix")
 
-    ## Check initial infectious pressure
-    if (is.null(phi))
-        phi <- rep(0, nrow(init))
-    check_infectious_pressure_arg(nrow(init), phi)
-
-    ## Check 'gdata' parameters
-    check_gdata_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
-                    alpha, beta_t1, beta_t2, beta_t3, beta_t4, epsilon)
-
-    ## Check interval endpoints
-    check_integer_arg(end_t1, end_t2, end_t3, end_t4)
-    if (identical(length(end_t1), 1L))
-        end_t1 <- rep(end_t1, nrow(init))
-    if (identical(length(end_t2), 1L))
-        end_t2 <- rep(end_t2, nrow(init))
-    if (identical(length(end_t3), 1L))
-        end_t3 <- rep(end_t3, nrow(init))
-    if (identical(length(end_t4), 1L))
-        end_t4 <- rep(end_t4, nrow(init))
-    check_end_t_arg(nrow(init), end_t1, end_t2, end_t3, end_t4)
-
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
 
@@ -184,17 +187,10 @@ SISe3 <- function(init,
                     byrow = TRUE)
     storage.mode(ldata) <- "double"
 
-    gdata <- c(upsilon_1,
-               upsilon_2,
-               upsilon_3,
-               gamma_1,
-               gamma_2,
-               gamma_3,
+    gdata <- c(upsilon_1, upsilon_2, upsilon_3,
+               gamma_1, gamma_2, gamma_3,
                alpha,
-               beta_t1,
-               beta_t2,
-               beta_t3,
-               beta_t4,
+               beta_t1, beta_t2, beta_t3, beta_t4,
                epsilon)
     storage.mode(gdata) <- "double"
 
