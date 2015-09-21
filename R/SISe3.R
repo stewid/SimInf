@@ -158,14 +158,7 @@ SISe3 <- function(init,
     ## Check initial infectious pressure
     if (is.null(phi))
         phi <- rep(0, nrow(init))
-    if (!is.numeric(phi))
-        stop("Invalid 'phi': must be numeric vector")
-    if (!is.null(dim(phi)))
-        stop("Invalid 'phi': must be numeric vector")
-    if (!identical(length(phi), nrow(init)))
-        stop("Invalid 'phi': must be numeric vector with length 'nrow(init)'")
-    if (any(phi < 0))
-        stop("Invalid 'phi': must be numeric vector with non-negative values")
+    check_infectious_pressure_arg(nrow(init), phi)
 
     ## Check 'gdata' parameters
     check_gdata_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,

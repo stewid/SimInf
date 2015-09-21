@@ -19,7 +19,45 @@
 ##' Check integer arguments
 ##'
 ##' Raise an error if any of the arguments are non-integer.
-##' @param ... The argumens to check
+##' @param len Expected length of the infectious pressure vector
+##' @param ... The arguments to check
+##' @keywords internal
+##' @return invisible(NULL)
+check_infectious_pressure_arg <- function(len, ...) {
+    arg <- list(...)
+    for (i in seq_len(length(arg))) {
+        if (!is.numeric(arg[[i]])) {
+            stop(paste0("Invalid '",
+                        match.call(expand.dots = FALSE)$'...'[i],
+                        "': must be numeric vector"))
+        }
+
+        if (!is.null(dim(arg[[i]]))) {
+            stop(paste0("Invalid '",
+                        match.call(expand.dots = FALSE)$'...'[i],
+                        "': must be numeric vector"))
+        }
+
+        if (!identical(length(arg[[i]]), len)) {
+            stop(paste0("Invalid '",
+                        match.call(expand.dots = FALSE)$'...'[i],
+                        "': must be numeric vector with length 'nrow(init)'"))
+        }
+
+        if (any(arg[[i]] < 0)) {
+            stop(paste0("Invalid '",
+                        match.call(expand.dots = FALSE)$'...'[i],
+                        "': must be numeric vector with non-negative values"))
+        }
+    }
+
+    invisible(NULL)
+}
+
+##' Check integer arguments
+##'
+##' Raise an error if any of the arguments are non-integer.
+##' @param ... The arguments to check
 ##' @keywords internal
 ##' @return invisible(NULL)
 check_integer_arg <- function(...) {
@@ -50,7 +88,7 @@ check_integer_arg <- function(...) {
 ##' Check arguments for 'gdata'
 ##'
 ##' Raise an error if any of the arguments are not ok.
-##' @param ... The argumens to check
+##' @param ... The arguments to check
 ##' @keywords internal
 ##' @return invisible(NULL)
 check_gdata_arg <- function(...) {
@@ -81,7 +119,9 @@ check_gdata_arg <- function(...) {
 ##' Check arguments for interval endpoints
 ##'
 ##' Raise an error if any of the arguments are not ok.
-##' @param ... The argumens to check
+##' @param len Exprected length of each of the interval endpoint
+##' vectors
+##' @param ... The arguments to check
 ##' @keywords internal
 ##' @return invisible(NULL)
 check_end_t_arg <- function(len, ...) {
