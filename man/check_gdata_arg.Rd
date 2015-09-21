@@ -7,7 +7,7 @@
 check_gdata_arg(...)
 }
 \arguments{
-\item{...}{The argumens to check}
+\item{...}{The arguments to check}
 }
 \value{
 invisible(NULL)

@@ -7,7 +7,10 @@
 check_end_t_arg(len, ...)
 }
 \arguments{
-\item{...}{The argumens to check}
+\item{len}{Exprected length of each of the interval endpoint
+vectors}
+
+\item{...}{The arguments to check}
 }
 \value{
 invisible(NULL)
