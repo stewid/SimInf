@@ -59,11 +59,17 @@ sudo apt-get install libgsl0-dev
 * Stefan Engblom (Uppsala University, Sweden)
 * Stefan Widgren (National Veterinary Institute, Sweden) **(Maintainer)**
 
-Any suggestions, bug reports, forks and pull requests are
-appreciated. Get in touch.
+# Acknowledgment
+
+This work was financially supported by the Swedish Research Council
+within the UPMARC Linnaeus center of Excellence (Pavol Bauer and
+Stefan Engblom).
 
 # License
 
 The `siminf` package is licensed under the GPLv3.
 
 - [LICENSE](LICENSE) - `siminf` package license
+
+Any suggestions, bug reports, forks and pull requests are
+appreciated. Get in touch.
