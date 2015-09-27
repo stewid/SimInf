@@ -100,10 +100,12 @@ SISe3 <- function(init,
                   end_t4    = NULL,
                   epsilon   = NULL)
 {
+    compartments <- c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
+
     ## Check arguments.
 
     ## Check init
-    if (!all(c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3") %in% names(init)))
+    if (!all(c("id", compartments) %in% names(init)))
         stop("Missing columns in init")
 
     ## Check initial infectious pressure
@@ -129,10 +131,7 @@ SISe3 <- function(init,
 
     ## Arguments seems ok...go on
 
-    init <- init[,c("id",
-                    "S_1", "I_1",
-                    "S_2", "I_2",
-                    "S_3", "I_3")]
+    init <- init[,c("id", compartments)]
 
     E <- Matrix(c(1, 0, 0, 1, 0, 0,
                   0, 0, 0, 1, 0, 0,
@@ -144,6 +143,9 @@ SISe3 <- function(init,
                 ncol   = 6,
                 byrow  = TRUE,
                 sparse = TRUE)
+    E <- as(E, "dgCMatrix")
+    colnames(E) <- as.character(1:6)
+    rownames(E) <- compartments
 
     S <- Matrix(c(2, 0,
                   2, 0,
@@ -155,6 +157,9 @@ SISe3 <- function(init,
                 ncol   = 2,
                 byrow  = TRUE,
                 sparse = TRUE)
+    S <- as(S, "dgCMatrix")
+    colnames(S) <- as.character(1:2)
+    rownames(S) <- compartments
 
     G <- Matrix(c(1, 1, 0, 0, 0, 0,
                   1, 1, 0, 0, 0, 0,
@@ -166,6 +171,9 @@ SISe3 <- function(init,
                 ncol   = 6,
                 byrow  = TRUE,
                 sparse = TRUE)
+    G <- as(G, "dgCMatrix")
+    colnames(G) <- as.character(1:6)
+    rownames(G) <- compartments
 
     N <- Matrix(c(-1,  1,  0,  0,  0,  0,
                    1, -1,  0,  0,  0,  0,
@@ -178,6 +186,8 @@ SISe3 <- function(init,
                 byrow  = TRUE,
                 sparse = TRUE)
     N <- as(N, "dgCMatrix")
+    colnames(N) <- as.character(1:6)
+    rownames(N) <- compartments
 
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
