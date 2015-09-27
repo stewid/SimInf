@@ -83,10 +83,12 @@ SISe <- function(init,
                  end_t4  = NULL,
                  epsilon = NULL)
 {
+    compartments <- c("S", "I")
+
     ## Check arguments.
 
     ## Check init
-    if (!all(c("id", "S", "I") %in% names(init)))
+    if (!all(c("id", compartments) %in% names(init)))
         stop("Missing columns in init")
 
     ## Check initial infectious pressure
@@ -112,7 +114,7 @@ SISe <- function(init,
 
     ## Arguments seems ok...go on
 
-    init <- init[,c("id", "S", "I")]
+    init <- init[,c("id", compartments)]
 
     E <- Matrix(c(1, 1,
                   0, 1),
@@ -121,6 +123,8 @@ SISe <- function(init,
                 byrow  = TRUE,
                 sparse = TRUE)
     E <- as(E, "dgCMatrix")
+    colnames(E) <- as.character(1:2)
+    rownames(E) <- compartments
 
     S <- new("dgCMatrix")
 
@@ -130,6 +134,9 @@ SISe <- function(init,
                 ncol = 2,
                 byrow  = TRUE,
                 sparse = TRUE)
+    G <- as(G, "dgCMatrix")
+    colnames(G) <- as.character(1:2)
+    rownames(G) <- compartments
 
     N <- Matrix(c(-1,  1,
                    1, -1),
@@ -138,6 +145,8 @@ SISe <- function(init,
                 byrow  = TRUE,
                 sparse = TRUE)
     N <- as(N, "dgCMatrix")
+    colnames(N) <- as.character(1:2)
+    rownames(N) <- compartments
 
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
