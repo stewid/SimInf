@@ -264,37 +264,29 @@ setMethod("infected",
           signature("SISe3"),
           function(model, age = 1:3, i = NULL, by = 1, ...)
           {
-              stopifnot(all(age %in% 1:3))
+              age_categories <- 1:3
+              stopifnot(all(age %in% age_categories))
 
               result <- NULL
               j <- seq(from = 1, to = dim(model@U)[2], by = by)
 
-              if (1 %in% age) {
-                  ii <- seq(from = 2, to = dim(model@U)[1], by = 6)
-                  if (!is.null(i))
-                      ii <- ii[i]
-                  result <- as.matrix(model@U[ii, j, drop = FALSE])
-              }
+              for (k in age_categories) {
+                  ## Are we interested in this age category?
+                  if (k %in% age) {
+                      ## Select rows for the specific age category
+                      ii <- seq(from = k * 2, to = dim(model@U)[1], by = 6)
 
-              if (2 %in% age) {
-                  ii <- seq(from = 4, to = dim(model@U)[1], by = 6)
-                  if (!is.null(i))
-                      ii <- ii[i]
-                  if (is.null(result)) {
-                      result <- as.matrix(model@U[ii, j, drop = FALSE])
-                  } else {
-                      result <- result + as.matrix(model@U[ii, j, drop = FALSE])
-                  }
-              }
+                      ## Are we only interested in infected from
+                      ## specific nodes?
+                      if (!is.null(i))
+                          ii <- ii[i]
 
-              if (3 %in% age) {
-                  ii <- seq(from = 6, to = dim(model@U)[1], by = 6)
-                  if (!is.null(i))
-                      ii <- ii[i]
-                  if (is.null(result)) {
-                      result <- as.matrix(model@U[ii, j, drop = FALSE])
-                  } else {
-                      result <- result + as.matrix(model@U[ii, j, drop = FALSE])
+                      ## Extract infected and add to result
+                      if (is.null(result)) {
+                          result <- as.matrix(model@U[ii, j, drop = FALSE])
+                      } else {
+                          result <- result + as.matrix(model@U[ii, j, drop = FALSE])
+                      }
                   }
               }
 
