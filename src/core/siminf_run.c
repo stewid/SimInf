@@ -198,7 +198,7 @@ int siminf_run(
         goto cleanup;
 
     /* Constants */
-    Nn   = INTEGER(GET_SLOT(result, Rf_install("Nn")))[0];
+    Nn   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
     Nc   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[0];
     Nt   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[1];
     Nd   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("v0")), R_DimSymbol))[0];
