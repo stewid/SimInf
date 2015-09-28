@@ -5,8 +5,8 @@
 \title{Create a siminf model}
 \usage{
 siminf_model(G, N, tspan, events = NULL, sd = NULL, ldata = NULL,
-  gdata = NULL, U = NULL, Nn = NULL, u0 = NULL, init = NULL,
-  v0 = NULL, V = NULL, E = NULL, S = NULL)
+  gdata = NULL, U = NULL, u0 = NULL, init = NULL, v0 = NULL,
+  V = NULL, E = NULL, S = NULL)
 }
 \arguments{
 \item{G}{Sparse matrix (\eqn{Nt \times Nt}) of object class
@@ -38,8 +38,6 @@ post time step function.}
 
 \item{U}{The result matrix ((Nn * Nc) X length(tspan)). U(:,j)
 contains the state of the system at tspan(j).}
-
-\item{Nn}{Number of nodes.}
 
 \item{u0}{Initial state vector u0. Integer (Nc X Nn). Gives the
 initial number of individuals in each compartment in every node.}

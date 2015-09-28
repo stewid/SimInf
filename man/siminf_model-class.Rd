@@ -26,9 +26,6 @@ Class to handle the siminf data model
     The compartment result matrix ((Nn * Nc) X length(tspan)).
     U(:,j) contains the state of the compartments at tspan(j).
   }
-  \item{Nn}{
-    Number of nodes.
-  }
   \item{ldata}{
     A matrix with local data for nodes. The column ldata[, j] contains
     the local data vector for node #j. The local data vector is passed
