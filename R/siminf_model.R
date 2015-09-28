@@ -37,9 +37,6 @@
 ##'     The compartment result matrix ((Nn * Nc) X length(tspan)).
 ##'     U(:,j) contains the state of the compartments at tspan(j).
 ##'   }
-##'   \item{Nn}{
-##'     Number of nodes.
-##'   }
 ##'   \item{ldata}{
 ##'     A matrix with local data for nodes. The column ldata[, j] contains
 ##'     the local data vector for node #j. The local data vector is passed
@@ -86,7 +83,6 @@ setClass("siminf_model",
          slots = c(G      = "dgCMatrix",
                    N      = "dgCMatrix",
                    U      = "matrix",
-                   Nn     = "integer",
                    ldata  = "matrix",
                    gdata  = "numeric",
                    sd     = "integer",
@@ -97,11 +93,6 @@ setClass("siminf_model",
                    events = "external_events"),
          validity = function(object) {
              errors <- character()
-
-             ## Check Nn
-             if (!identical(length(object@Nn), 1L)) {
-               errors <- c(errors, "Wrong size of Nn.")
-             }
 
              ## Check tspan.
              if (!is.double(object@tspan)) {
@@ -147,7 +138,8 @@ setClass("siminf_model",
              }
 
              ## Check sd.
-             if (!identical(length(object@sd), object@Nn[1])) {
+             Nn <- dim(object@u0)[2]
+             if (!identical(length(object@sd), Nn)) {
                  errors <- c(errors, "Wrong size of subdomain vector.")
              }
 
@@ -155,7 +147,7 @@ setClass("siminf_model",
              if (!is.double(object@ldata)) {
                  errors <- c(errors, "'ldata' matrix must be a double matrix.")
              }
-             if (!identical(dim(object@ldata)[2], object@Nn[1])) {
+             if (!identical(dim(object@ldata)[2], Nn)) {
                  errors <- c(errors, "Wrong size of 'ldata' matrix.")
              }
 
@@ -180,7 +172,6 @@ setClass("siminf_model",
 ##' the \code{j}th column to the state vector.
 ##' @param U The result matrix ((Nn * Nc) X length(tspan)). U(:,j)
 ##' contains the state of the system at tspan(j).
-##' @param Nn Number of nodes.
 ##' @param ldata A matrix with local data for nodes. The column
 ##' ldata[, j] contains the local data vector for node #j. The local
 ##' data vector is passed as an argument to the propensities and the
@@ -217,7 +208,6 @@ siminf_model <- function(G,
                          ldata  = NULL,
                          gdata  = NULL,
                          U      = NULL,
-                         Nn     = NULL,
                          u0     = NULL,
                          init   = NULL,
                          v0     = NULL,
@@ -240,8 +230,6 @@ siminf_model <- function(G,
                 stop("u0 must be an integer matrix")
             storage.mode(u0) <- "integer"
         }
-        if (is.null(Nn))
-            Nn <- ncol(u0)
     }
 
     ## Check init
@@ -262,24 +250,11 @@ siminf_model <- function(G,
             stop("init$id must be a sequence from 0 to max(init$id)-1")
 
         init$id <- NULL
-        n.col <- ncol(init)
-        if (is.null(Nn))
-            Nn <- nrow(init)
-        init <- t(data.matrix(init))
-        attributes(init) <- NULL
-        dim(init) <- c(n.col, Nn)
-        u0 <- init
+        u0 <- t(data.matrix(init))
+        attributes(u0) <- NULL
+        dim(u0) <- c(ncol(init), nrow(init))
         storage.mode(u0) <- "integer"
     }
-
-    ## Check Nn
-    if (!is.integer(Nn)) {
-        if (!all(is_wholenumber(Nn)))
-            stop("Nn must be an integer")
-        Nn <- as.integer(Nn)
-    }
-    if (!identical(Nn, ncol(u0)))
-        stop("Nn must be equal to number of nodes")
 
     ## Check G
     if (class(G) == "dsCMatrix")
@@ -287,7 +262,7 @@ siminf_model <- function(G,
 
     ## Check ldata
     if (is.null(ldata))
-        ldata <- matrix(rep(0, Nn), nrow = 1)
+        ldata <- matrix(rep(0, ncol(u0)), nrow = 1)
 
     ## Check gdata
     if (is.null(gdata))
@@ -343,7 +318,7 @@ siminf_model <- function(G,
 
     ## Check sd
     if (is.null(sd))
-        sd <- rep(0L, Nn)
+        sd <- rep(0L, ncol(u0))
 
     ## Check events
     if (any(is.null(events), is.data.frame(events)))
@@ -353,7 +328,6 @@ siminf_model <- function(G,
                G      = G,
                N      = N,
                U      = U,
-               Nn     = Nn,
                ldata  = ldata,
                gdata  = gdata,
                sd     = sd,
@@ -441,7 +415,6 @@ setMethod("show",
               cat(sprintf("N: %i x %i\n", dim(object@N)[1], dim(object@N)[2]))
               cat(sprintf("U: %i x %i\n", dim(object@U)[1], dim(object@U)[2]))
               cat(sprintf("V: %i x %i\n", dim(object@V)[1], dim(object@V)[2]))
-              cat(sprintf("Nn: %i\n", object@Nn))
               cat(sprintf("ldata: %i x %i\n", dim(object@ldata)[1], dim(object@ldata)[2]))
               cat(sprintf("gdata: 1 x %i\n", length(object@gdata)))
               cat(sprintf("sd: %i x %i\n", dim(object@sd)[1], dim(object@sd)[2]))
