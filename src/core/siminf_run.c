@@ -98,26 +98,14 @@ static int get_threads(SEXP threads)
 /**
  * Extract data from a sparse integer matrix
  *
- * @param ir If non-null, allocate vector and and copy data from m.
  * @param jc If non-null, allocate vector and and copy data from m.
  * @param pr If non-null, allocate vector and and copy data from m.
  * @param m  The sparse integer matrix.
  * @return 0 on success, else error code.
  */
 static int
-get_sparse_matrix_int(int **ir, int **jc, int **pr, SEXP m)
+get_sparse_matrix_int(int **jc, int **pr, SEXP m)
 {
-    if (ir) {
-        int nir = LENGTH(GET_SLOT(m, Rf_install("i")));
-        int *xir = INTEGER(GET_SLOT(m, Rf_install("i")));
-        int i = 0;
-        *ir = (int*)malloc(nir * sizeof(int));
-        if (!(*ir))
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        for (; i < nir; i++)
-            (*ir)[i] = xir[i];
-    }
-
     if (jc) {
         int njc = LENGTH(GET_SLOT(m, Rf_install("p")));
         int *xjc = INTEGER(GET_SLOT(m, Rf_install("p")));
@@ -161,10 +149,10 @@ int siminf_run(
     PostTimeStepFun pts_fun)
 {
     int err = 0, n_threads;
-    SEXP ext_events, E, N, S;
-    int *irN = NULL, *jcN = NULL, *prN = NULL;
-    int *irG = NULL, *jcG = NULL;
-    int *irE = NULL, *jcE = NULL;
+    SEXP ext_events, E, G, N, S;
+    int *jcN = NULL, *prN = NULL;
+    int *jcG = NULL;
+    int *jcE = NULL;
     int *jcS = NULL, *prS = NULL;
     int Nn, Nc, Nt, Nd, Nld, elen, tlen;
     unsigned long int s;
@@ -176,24 +164,25 @@ int siminf_run(
     s = get_seed(seed);
 
     /* G */
-    err = get_sparse_matrix_int(&irG, &jcG, NULL, GET_SLOT(result, Rf_install("G")));
+    G = GET_SLOT(result, Rf_install("G"));
+    err = get_sparse_matrix_int(&jcG, NULL, G);
     if (err)
         goto cleanup;
 
     /* N */
     N = GET_SLOT(result, Rf_install("N"));
-    err = get_sparse_matrix_int(&irN, &jcN, &prN, N);
+    err = get_sparse_matrix_int(&jcN, &prN, N);
     if (err)
         goto cleanup;
 
     /* External events */
     ext_events = GET_SLOT(result, Rf_install("events"));
     E = GET_SLOT(ext_events, Rf_install("E"));
-    err = get_sparse_matrix_int(&irE, &jcE, NULL, E);
+    err = get_sparse_matrix_int(&jcE, NULL, E);
     if (err)
         goto cleanup;
     S = GET_SLOT(ext_events, Rf_install("S"));
-    err = get_sparse_matrix_int(NULL, &jcS, &prS, S);
+    err = get_sparse_matrix_int(&jcS, &prS, S);
     if (err)
         goto cleanup;
 
@@ -214,8 +203,10 @@ int siminf_run(
     err = siminf_run_solver(
         INTEGER(GET_SLOT(result, Rf_install("u0"))),
         REAL(GET_SLOT(result, Rf_install("v0"))),
-        irG, jcG,
-        irN, jcN, prN,
+        INTEGER(GET_SLOT(G, Rf_install("i"))),
+        jcG,
+        INTEGER(GET_SLOT(N, Rf_install("i"))),
+        jcN, prN,
         REAL(GET_SLOT(result, Rf_install("tspan"))),
         tlen,
         INTEGER(GET_SLOT(result, Rf_install("U"))),
@@ -223,7 +214,9 @@ int siminf_run(
         REAL(GET_SLOT(result, Rf_install("ldata"))),
         REAL(GET_SLOT(result, Rf_install("gdata"))),
         INTEGER(GET_SLOT(result, Rf_install("sd"))),
-        Nn, Nc, Nt, Nd, Nld, irE, jcE, jcS, prS, elen,
+        Nn, Nc, Nt, Nd, Nld,
+        INTEGER(GET_SLOT(E, Rf_install("i"))),
+        jcE, jcS, prS, elen,
         INTEGER(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("time"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("node"))),
@@ -235,18 +228,12 @@ int siminf_run(
         n_threads, s, t_fun, pts_fun);
 
 cleanup:
-    if (irG)
-        free(irG);
     if (jcG)
         free(jcG);
-    if (irN)
-        free(irN);
     if (jcN)
         free(jcN);
     if (prN)
         free(prN);
-    if (irE)
-        free(irE);
     if (jcE)
         free(jcE);
     if (jcS)
