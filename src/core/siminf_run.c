@@ -96,30 +96,6 @@ static int get_threads(SEXP threads)
 }
 
 /**
- * Extract data from a sparse integer matrix
- *
- * @param pr If non-null, allocate vector and and copy data from m.
- * @param m  The sparse integer matrix.
- * @return 0 on success, else error code.
- */
-static int
-get_sparse_matrix_int(int **pr, SEXP m)
-{
-    if (pr) {
-        int npr = LENGTH(GET_SLOT(m, Rf_install("x")));
-        double *xpr = REAL(GET_SLOT(m, Rf_install("x")));
-        int i = 0;
-        *pr = (int*)malloc(npr * sizeof(int));
-        if (!(*pr))
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        for (; i < npr; i++)
-            (*pr)[i] = (int)xpr[i];
-    }
-
-    return 0;
-}
-
-/**
  * Initiate and run the simulation
  *
  * @param result The siminf_model
@@ -137,8 +113,7 @@ int siminf_run(
     PostTimeStepFun pts_fun)
 {
     int err = 0, n_threads;
-    SEXP ext_events, E, G, N, S;
-    int *prN = NULL, *prS = NULL;
+    SEXP ext_events, E, G, N, S, prN, prS;
     int Nn, Nc, Nt, Nd, Nld, elen, tlen;
     unsigned long int s;
 
@@ -153,17 +128,13 @@ int siminf_run(
 
     /* N */
     N = GET_SLOT(result, Rf_install("N"));
-    err = get_sparse_matrix_int(&prN, N);
-    if (err)
-        goto cleanup;
+    PROTECT(prN = coerceVector(GET_SLOT(N, Rf_install("x")), INTSXP));
 
     /* External events */
     ext_events = GET_SLOT(result, Rf_install("events"));
     E = GET_SLOT(ext_events, Rf_install("E"));
     S = GET_SLOT(ext_events, Rf_install("S"));
-    err = get_sparse_matrix_int(&prS, S);
-    if (err)
-        goto cleanup;
+    PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
 
     /* Constants */
     Nn   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
@@ -186,7 +157,7 @@ int siminf_run(
         INTEGER(GET_SLOT(G, Rf_install("p"))),
         INTEGER(GET_SLOT(N, Rf_install("i"))),
         INTEGER(GET_SLOT(N, Rf_install("p"))),
-        prN,
+        INTEGER(prN),
         REAL(GET_SLOT(result, Rf_install("tspan"))),
         tlen,
         INTEGER(GET_SLOT(result, Rf_install("U"))),
@@ -198,7 +169,8 @@ int siminf_run(
         INTEGER(GET_SLOT(E, Rf_install("i"))),
         INTEGER(GET_SLOT(E, Rf_install("p"))),
         INTEGER(GET_SLOT(S, Rf_install("p"))),
-        prS, elen,
+        INTEGER(prS),
+        elen,
         INTEGER(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("time"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("node"))),
@@ -209,11 +181,7 @@ int siminf_run(
         INTEGER(GET_SLOT(ext_events, Rf_install("shift"))),
         n_threads, s, t_fun, pts_fun);
 
-cleanup:
-    if (prN)
-        free(prN);
-    if (prS)
-        free(prS);
+    UNPROTECT(2);
 
     return err;
 }
