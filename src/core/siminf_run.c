@@ -114,7 +114,7 @@ int siminf_run(
 {
     int err = 0, n_threads;
     SEXP ext_events, E, G, N, S, prN, prS;
-    int Nn, Nc, Nt, Nd, Nld, elen, tlen;
+    int Nn, Nc, Nt, Nd, Nld, tlen;
     unsigned long int s;
 
     /* number of threads */
@@ -142,7 +142,6 @@ int siminf_run(
     Nt   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[1];
     Nd   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("v0")), R_DimSymbol))[0];
     Nld  = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("ldata")), R_DimSymbol))[0];
-    elen = LENGTH(GET_SLOT(ext_events, Rf_install("event"))),
     tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
 
     /* Output array (to hold a single trajectory) */
@@ -170,7 +169,7 @@ int siminf_run(
         INTEGER(GET_SLOT(E, Rf_install("p"))),
         INTEGER(GET_SLOT(S, Rf_install("p"))),
         INTEGER(prS),
-        elen,
+        LENGTH(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("time"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("node"))),
