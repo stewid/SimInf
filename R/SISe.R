@@ -136,7 +136,7 @@ SISe <- function(init,
                 sparse = TRUE)
     G <- as(G, "dgCMatrix")
     colnames(G) <- as.character(1:2)
-    rownames(G) <- compartments
+    rownames(G) <- c("S -> I", "I -> S")
 
     N <- Matrix(c(-1,  1,
                    1, -1),
