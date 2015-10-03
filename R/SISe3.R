@@ -173,7 +173,9 @@ SISe3 <- function(init,
                 sparse = TRUE)
     G <- as(G, "dgCMatrix")
     colnames(G) <- as.character(1:6)
-    rownames(G) <- compartments
+    rownames(G) <- c("S_1 -> I_1", "I_1 -> S_1",
+                     "S_2 -> I_2", "I_2 -> S_2",
+                     "S_3 -> I_3", "I_3 -> S_3")
 
     N <- Matrix(c(-1,  1,  0,  0,  0,  0,
                    1, -1,  0,  0,  0,  0,
