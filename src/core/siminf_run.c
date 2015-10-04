@@ -27,37 +27,45 @@
 /**
  * Look for seed
  *
- * @param seed Random number seed.
- * @return seed
+ * @param out The seed value.
+ * @param seed Random number seed from R.
+ * @return 0 if Ok, else error code.
  */
-static unsigned long int get_seed(SEXP seed)
+static int get_seed(unsigned long int *out, SEXP seed)
 {
+    int err = 0;
+
     if (seed != R_NilValue) {
         if (isInteger(seed) || isReal(seed)) {
             switch (LENGTH(seed)) {
             case 0:
-                return (unsigned long int)time(NULL);
+                *out = (unsigned long int)time(NULL);
+                break;
             case 1:
                 if (isInteger(seed)) {
                     if (INTEGER(seed)[0] == NA_INTEGER)
-                        Rf_error("Invalid value (NA) of seed");
-                    return (unsigned long int)INTEGER(seed)[0];
+                        err = SIMINF_INVALID_SEED_VALUE;
+                    else
+                        *out = (unsigned long int)INTEGER(seed)[0];
                 } else if (isReal(seed)) {
                     if (ISNA(REAL(seed)[0]))
-                        Rf_error("Invalid value (NA) of seed");
-                    return (unsigned long int)REAL(seed)[0];
+                        err = SIMINF_INVALID_SEED_VALUE;
+                    else
+                        *out = (unsigned long int)REAL(seed)[0];
                 }
                 break;
             default:
-                Rf_error("Invalid length of seed");
+                err = SIMINF_INVALID_SEED_VALUE;
                 break;
             }
         } else {
-            Rf_error("Invalid type of seed");
+            err = SIMINF_INVALID_SEED_VALUE;
         }
+    } else {
+        *out = (unsigned long int)time(NULL);
     }
 
-    return (unsigned long int)time(NULL);
+    return err;
 }
 
 /**
@@ -121,7 +129,9 @@ int siminf_run(
     n_threads = get_threads(threads);
 
     /* seed */
-    s = get_seed(seed);
+    err =  get_seed(&s, seed);
+    if (err)
+        return err;
 
     /* G */
     G = GET_SLOT(result, Rf_install("G"));

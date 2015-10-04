@@ -27,6 +27,7 @@
 #define SIMINF_ERR_SPLIT_EVENTS            3
 #define SIMINF_UNDEFINED_EVENT             4
 #define SIMINF_INVALID_EDGE_PROBABILITY    5
+#define SIMINF_INVALID_SEED_VALUE          6
 
 /* Definition of error function */
 void siminf_error(int err);

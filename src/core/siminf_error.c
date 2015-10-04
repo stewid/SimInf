@@ -37,6 +37,9 @@ void siminf_error(int err)
     case SIMINF_INVALID_EDGE_PROBABILITY:
         Rf_error("Invalid 'p_edge': Must be in interval 0 < p_edge < 1");
         break;
+    case SIMINF_INVALID_SEED_VALUE:
+        Rf_error("Invalid 'seed' value");
+        break;
     default:
         Rf_error("Unknown error code.");
     }
