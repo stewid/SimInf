@@ -47,11 +47,10 @@ static int get_seed(unsigned long int *out, SEXP seed)
                         err = SIMINF_INVALID_SEED_VALUE;
                     else
                         *out = (unsigned long int)INTEGER(seed)[0];
-                } else if (isReal(seed)) {
-                    if (ISNA(REAL(seed)[0]))
-                        err = SIMINF_INVALID_SEED_VALUE;
-                    else
-                        *out = (unsigned long int)REAL(seed)[0];
+                } else if (!R_finite(REAL(seed)[0])) {
+                    err = SIMINF_INVALID_SEED_VALUE;
+                } else {
+                    *out = (unsigned long int)REAL(seed)[0];
                 }
                 break;
             default:
