@@ -762,47 +762,47 @@ res <- tools::assertError(.Call(siminf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 -1L,
                                 NULL))
-stopifnot(length(grep("Number of threads must be a value >= 0",
+stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call(siminf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 -1,
                                 NULL))
-stopifnot(length(grep("Number of threads must be a value >= 0",
+stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call(siminf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 "1",
                                 NULL))
-stopifnot(length(grep("Invalid type for threads",
+stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call(siminf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 c(1L, 1L),
                                 NULL))
-stopifnot(length(grep("Invalid length of threads vector",
+stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call(siminf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 c(1, 1),
                                 NULL))
-stopifnot(length(grep("Invalid length of threads vector",
+stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call(siminf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 NA_integer_,
                                 NULL))
-stopifnot(length(grep("Invalid value [(]NA[)] for threads",
+stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call(siminf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 NA_real_,
                                 NULL))
-stopifnot(length(grep("Invalid value [(]NA[)] for threads",
+stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
