@@ -40,6 +40,9 @@ void siminf_error(int err)
     case SIMINF_INVALID_SEED_VALUE:
         Rf_error("Invalid 'seed' value");
         break;
+    case SIMINF_INVALID_THREADS_VALUE:
+        Rf_error("Invalid 'threads' value");
+        break;
     default:
         Rf_error("Unknown error code.");
     }
