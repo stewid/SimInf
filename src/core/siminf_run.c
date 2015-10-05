@@ -25,7 +25,7 @@
 #include "siminf_solver.h"
 
 /**
- * Look for seed
+ * Get seed value
  *
  * @param out The seed value.
  * @param seed Random number seed from R.
@@ -70,36 +70,39 @@ static int get_seed(unsigned long int *out, SEXP seed)
 /**
  * Get number of threads
  *
- * @param threads Number of threads
- * @return Integer with number of threads
+ * @param out Number of threads
+ * @param threads Number of threads from R
+ * @return 0 if Ok, else error code.
  */
-static int get_threads(SEXP threads)
+static int get_threads(int *out, SEXP threads)
 {
-    int n;
+    int err = 0;
 
-    if (threads == R_NilValue)
-        return 0;
-
-    if (isInteger(threads)) {
+    if (threads == R_NilValue) {
+        *out = 0;
+    } else if (isInteger(threads)) {
         if (LENGTH(threads) != 1)
-            Rf_error("Invalid length of threads vector");
-        if (INTEGER(threads)[0] == NA_INTEGER)
-            Rf_error("Invalid value (NA) for threads");
-        n = INTEGER(threads)[0];
+            err = SIMINF_INVALID_THREADS_VALUE;
+        else if (INTEGER(threads)[0] == NA_INTEGER)
+            err = SIMINF_INVALID_THREADS_VALUE;
+        else if (INTEGER(threads)[0] < 0)
+            err = SIMINF_INVALID_THREADS_VALUE;
+        else
+            *out = INTEGER(threads)[0];
     } else if (isReal(threads)) {
         if (LENGTH(threads) != 1)
-            Rf_error("Invalid length of threads vector");
-        if (ISNA(REAL(threads)[0]))
-            Rf_error("Invalid value (NA) for threads");
-        n = (int)(REAL(threads)[0]);
+            err = SIMINF_INVALID_THREADS_VALUE;
+        else if (!R_finite(REAL(threads)[0]))
+            err = SIMINF_INVALID_THREADS_VALUE;
+        else if ((int)(REAL(threads)[0] < 0))
+            err = SIMINF_INVALID_THREADS_VALUE;
+        else
+            *out = (int)(REAL(threads)[0]);
     } else {
-        Rf_error("Invalid type for threads");
+        err = SIMINF_INVALID_THREADS_VALUE;
     }
 
-    if (n < 0)
-        Rf_error("Number of threads must be a value >= 0");
-
-    return n;
+    return err;
 }
 
 /**
@@ -125,7 +128,9 @@ int siminf_run(
     unsigned long int s;
 
     /* number of threads */
-    n_threads = get_threads(threads);
+    err = get_threads(&n_threads, threads);
+    if (err)
+        return err;
 
     /* seed */
     err =  get_seed(&s, seed);
