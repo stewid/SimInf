@@ -81,7 +81,7 @@
 ##' @import Matrix
 setClass("siminf_model",
          slots = c(G      = "dgCMatrix",
-                   N      = "dgCMatrix",
+                   S      = "dgCMatrix",
                    U      = "matrix",
                    ldata  = "matrix",
                    gdata  = "numeric",
@@ -126,13 +126,13 @@ setClass("siminf_model",
                  errors <- c(errors, "Output model state 'V' must be a double matrix.")
              }
 
-             ## Check N.
-             if (!all(is_wholenumber(object@N@x))) {
+             ## Check S.
+             if (!all(is_wholenumber(object@S@x))) {
                  stop("Stochiometric matrix must be an integer matrix.")
              }
 
              ## Check G.
-             Nt <- dim(object@N)[2]
+             Nt <- dim(object@S)[2]
              if (!identical(dim(object@G), c(Nt, Nt))) {
                  errors <- c(errors, "Wrong size of dependency graph.")
              }
@@ -201,7 +201,7 @@ setClass("siminf_model",
 ##' @return \linkS4class{siminf_model}
 ##' @export
 siminf_model <- function(G,
-                         N,
+                         S,
                          tspan,
                          events = NULL,
                          sd     = NULL,
@@ -213,7 +213,7 @@ siminf_model <- function(G,
                          v0     = NULL,
                          V      = NULL,
                          E      = NULL,
-                         S      = NULL)
+                         N      = NULL)
 {
     ## Check initial state
     if (all(is.null(u0), is.null(init)))
@@ -322,11 +322,11 @@ siminf_model <- function(G,
 
     ## Check events
     if (any(is.null(events), is.data.frame(events)))
-        events <- external_events(E = E, N = S, events = events)
+        events <- external_events(E = E, N = N, events = events)
 
     return(new("siminf_model",
                G      = G,
-               N      = N,
+               S      = S,
                U      = U,
                ldata  = ldata,
                gdata  = gdata,
@@ -362,8 +362,8 @@ setMethod("plot",
 
           ## Create matrix where each row is the sum of individuals in
           ## that state
-          m <- do.call(rbind, lapply(seq_len(dim(x@N)[1]), function(from) {
-              i <- seq(from = from, to = dim(x@U)[1], by = dim(x@N)[1])
+          m <- do.call(rbind, lapply(seq_len(dim(x@S)[1]), function(from) {
+              i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
               colSums(as.matrix(x@U[i, , drop = FALSE]))
           }))
 
@@ -412,7 +412,7 @@ setMethod("show",
           {
               cat("Epidemiological model:\n")
               cat(sprintf("G: %i x %i\n", dim(object@G)[1], dim(object@G)[2]))
-              cat(sprintf("N: %i x %i\n", dim(object@N)[1], dim(object@N)[2]))
+              cat(sprintf("S: %i x %i\n", dim(object@S)[1], dim(object@S)[2]))
               cat(sprintf("U: %i x %i\n", dim(object@U)[1], dim(object@U)[2]))
               cat(sprintf("V: %i x %i\n", dim(object@V)[1], dim(object@V)[2]))
               cat(sprintf("ldata: %i x %i\n", dim(object@ldata)[1], dim(object@ldata)[2]))

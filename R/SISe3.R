@@ -147,7 +147,7 @@ SISe3 <- function(init,
     colnames(E) <- as.character(1:6)
     rownames(E) <- compartments
 
-    S <- Matrix(c(2, 0,
+    N <- Matrix(c(2, 0,
                   2, 0,
                   0, 2,
                   0, 2,
@@ -157,9 +157,9 @@ SISe3 <- function(init,
                 ncol   = 2,
                 byrow  = TRUE,
                 sparse = TRUE)
-    S <- as(S, "dgCMatrix")
-    colnames(S) <- as.character(1:2)
-    rownames(S) <- compartments
+    N <- as(N, "dgCMatrix")
+    colnames(N) <- as.character(1:2)
+    rownames(N) <- compartments
 
     G <- Matrix(c(1, 1, 0, 0, 0, 0,
                   1, 1, 0, 0, 0, 0,
@@ -177,7 +177,7 @@ SISe3 <- function(init,
                      "S_2 -> I_2", "I_2 -> S_2",
                      "S_3 -> I_3", "I_3 -> S_3")
 
-    N <- Matrix(c(-1,  1,  0,  0,  0,  0,
+    S <- Matrix(c(-1,  1,  0,  0,  0,  0,
                    1, -1,  0,  0,  0,  0,
                    0,  0, -1,  1,  0,  0,
                    0,  0,  1, -1,  0,  0,
@@ -187,9 +187,9 @@ SISe3 <- function(init,
                 ncol   = 6,
                 byrow  = TRUE,
                 sparse = TRUE)
-    N <- as(N, "dgCMatrix")
-    colnames(N) <- as.character(1:6)
-    rownames(N) <- compartments
+    S <- as(S, "dgCMatrix")
+    colnames(S) <- as.character(1:6)
+    rownames(S) <- compartments
 
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
@@ -207,10 +207,10 @@ SISe3 <- function(init,
     storage.mode(gdata) <- "double"
 
     model <- siminf_model(G      = G,
-                          N      = N,
+                          S      = S,
                           init   = init,
                           E      = E,
-                          S      = S,
+                          N      = N,
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,

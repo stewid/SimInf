@@ -126,7 +126,7 @@ SISe <- function(init,
     colnames(E) <- as.character(1:2)
     rownames(E) <- compartments
 
-    S <- new("dgCMatrix")
+    N <- new("dgCMatrix")
 
     G <- Matrix(c(1, 1,
                   1, 1),
@@ -138,15 +138,15 @@ SISe <- function(init,
     colnames(G) <- as.character(1:2)
     rownames(G) <- c("S -> I", "I -> S")
 
-    N <- Matrix(c(-1,  1,
+    S <- Matrix(c(-1,  1,
                    1, -1),
                 nrow   = 2,
                 ncol   = 2,
                 byrow  = TRUE,
                 sparse = TRUE)
-    N <- as(N, "dgCMatrix")
-    colnames(N) <- as.character(1:2)
-    rownames(N) <- compartments
+    S <- as(S, "dgCMatrix")
+    colnames(S) <- as.character(1:2)
+    rownames(S) <- compartments
 
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
@@ -161,10 +161,10 @@ SISe <- function(init,
     storage.mode(gdata) <- "double"
 
     model <- siminf_model(G      = G,
-                          N      = N,
+                          S      = S,
                           init   = init,
                           E      = E,
-                          S      = S,
+                          N      = N,
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,

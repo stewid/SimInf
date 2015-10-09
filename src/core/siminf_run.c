@@ -141,7 +141,7 @@ int siminf_run(
     G = GET_SLOT(result, Rf_install("G"));
 
     /* N */
-    N = GET_SLOT(result, Rf_install("N"));
+    N = GET_SLOT(result, Rf_install("S"));
     PROTECT(prN = coerceVector(GET_SLOT(N, Rf_install("x")), INTSXP));
 
     /* External events */
