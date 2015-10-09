@@ -103,21 +103,21 @@ typedef struct siminf_thread_args
                      *   G[k]. */
     const int *jcG; /**< Dependency graph. Index to data of first
                      *   non-zero element in row k. */
-    const int *irN; /**< Stoichiometric matrix. irN[k] is the row of
-                     *   N[k]. */
-    const int *jcN; /**< Stoichiometric matrix. Index to data of first
+    const int *irS; /**< Stoichiometric matrix. irS[k] is the row of
+                     *   S[k]. */
+    const int *jcS; /**< Stoichiometric matrix. Index to data of first
                      *   non-zero element in row k. */
-    const int *prN; /**< Stoichiometric matrix. Value of item (i, j)
-                     *   in N. */
+    const int *prS; /**< Stoichiometric matrix. Value of item (i, j)
+                     *   in S. */
     const int *irE; /**< Select matrix for events. irE[k] is the row
                      *   of E[k]. */
     const int *jcE; /**< Select matrix for events. Index to data of
                      *   first non-zero element in row k. */
-    const int *jcS; /**< Shift matrix for internal transfer
+    const int *jcN; /**< Shift matrix for internal transfer
                      *   events. Index to data of first non-zero
                      *   element in row k. */
-    const int *prS; /**< Shift matrix for internal transfer
-                     *   events. Value of item (i, j) in S. */
+    const int *prN; /**< Shift matrix for internal transfer
+                     *   events. Value of item (i, j) in N. */
 
     /*** Callbacks ***/
     PropensityFun *t_fun;    /**< Vector of function pointers to
@@ -614,9 +614,9 @@ static int siminf_solver()
                             cum += sa.t_rate[node * sa.Nt + (++tr)];
 
                         /* b) Update the state of the node */
-                        for (j = sa.jcN[tr]; j < sa.jcN[tr + 1]; j++) {
-                            sa.u[node * sa.Nc + sa.irN[j]] += sa.prN[j];
-                            if (sa.u[node * sa.Nc + sa.irN[j]] < 0)
+                        for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
+                            sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
+                            if (sa.u[node * sa.Nc + sa.irS[j]] < 0)
                                 sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         }
 
@@ -685,15 +685,15 @@ static int siminf_solver()
                             } else { /* INTERNAL_TRANSFER_EVENT */
                                 int ii, jj;
 
-                                for (ii = sa.jcE[s], jj = sa.jcS[e1.shift[j]];
-                                     ii < sa.jcE[s + 1] && jj < sa.jcS[e1.shift[j] + 1];
+                                for (ii = sa.jcE[s], jj = sa.jcN[e1.shift[j]];
+                                     ii < sa.jcE[s + 1] && jj < sa.jcN[e1.shift[j] + 1];
                                      ii++, jj++)
                                 {
                                     /* Add individuals to new
                                      * compartments in node */
-                                    uu[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prS[jj]] +=
+                                    uu[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prN[jj]] +=
                                         sa.individuals[sa.irE[ii]];
-                                    if (uu[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prS[jj]] < 0) {
+                                    if (uu[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prN[jj]] < 0) {
                                         sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                         break;
                                     }
@@ -879,10 +879,10 @@ static int siminf_solver()
  * @param irG Dependency graph. irG[k] is the row of G[k].
  * @param jcG Dependency graph. Index to data of first non-zero
  *        element in row k.
- * @param irN Stoichiometric matrix. irN[k] is the row of N[k].
- * @param jcN Stoichiometric matrix. Index to data of first non-zero
+ * @param irS Stoichiometric matrix. irS[k] is the row of S[k].
+ * @param jcS Stoichiometric matrix. Index to data of first non-zero
  *        element in row k.
- * @param prN Stoichiometric matrix. Value of item (i, j) in N.
+ * @param prS Stoichiometric matrix. Value of item (i, j) in S.
  * @param tspan Double vector. Output times. tspan[0] is the start
  *        time and tspan[length(tspan)-1] is the stop time.
  * @param tlen Number of sampling points in time.
@@ -906,10 +906,10 @@ static int siminf_solver()
  * @param irE Select matrix for events. irE[k] is the row of E[k].
  * @param jcE Select matrix for events. Index to data of first
  *        non-zero element in row k.
- * @param jcS Shift matrix for internal transfer events. Index to data
+ * @param jcN Shift matrix for internal transfer events. Index to data
  *        of first non-zero element in row k.
- * @param prS Shift matrix for internal transfer events. Value of item
- *        (i, j) in S.
+ * @param prN Shift matrix for internal transfer events. Value of item
+ *        (i, j) in N.
  * @param len Number of events.
  * @param event The type of event i.
  * @param time The time of event i.
@@ -933,10 +933,10 @@ static int siminf_solver()
  */
 int siminf_run_solver(
     const int *u0, const double *v0, const int *irG, const int *jcG,
-    const int *irN, const int *jcN, const int *prN, const double *tspan,
+    const int *irS, const int *jcS, const int *prS, const double *tspan,
     int tlen, int *U, double *V, const double *ldata, const double *gdata,
     const int *sd, int Nn, int Nc, int Nt, int Nd, int Nld, const int *irE,
-    const int *jcE, const int *jcS, const int *prS, int len, const int *event,
+    const int *jcE, const int *jcN, const int *prN, int len, const int *event,
     const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,
     int Nthread, unsigned long int seed, PropensityFun *t_fun,
@@ -1019,13 +1019,13 @@ int siminf_run_solver(
         /* Sparse matrices */
         sim_args[i].irG = irG;
         sim_args[i].jcG = jcG;
-        sim_args[i].irN = irN;
-        sim_args[i].jcN = jcN;
-        sim_args[i].prN = prN;
-        sim_args[i].irE = irE;
-        sim_args[i].jcE = jcE;
+        sim_args[i].irS = irS;
         sim_args[i].jcS = jcS;
         sim_args[i].prS = prS;
+        sim_args[i].irE = irE;
+        sim_args[i].jcE = jcE;
+        sim_args[i].jcN = jcN;
+        sim_args[i].prN = prN;
 
         /* Callbacks */
         sim_args[i].t_fun = t_fun;
