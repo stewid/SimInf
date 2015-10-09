@@ -16,7 +16,7 @@ Class to handle the siminf data model
     \code{i} of column \code{j} indicates that propensity \code{i}
     needs to be recalculated if the transition \code{j} occurs.
   }
-  \item{N}{
+  \item{S}{
     Sparse matrix (\eqn{Nc \times Nt}) of object class
     \code{"\linkS4class{dgCMatrix}"}. Each column corresponds
     to a transition, and execution of transition \code{j} amounts to

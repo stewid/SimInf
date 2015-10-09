@@ -4,9 +4,9 @@
 \alias{siminf_model}
 \title{Create a siminf model}
 \usage{
-siminf_model(G, N, tspan, events = NULL, sd = NULL, ldata = NULL,
+siminf_model(G, S, tspan, events = NULL, sd = NULL, ldata = NULL,
   gdata = NULL, U = NULL, u0 = NULL, init = NULL, v0 = NULL,
-  V = NULL, E = NULL, S = NULL)
+  V = NULL, E = NULL, N = NULL)
 }
 \arguments{
 \item{G}{Sparse matrix (\eqn{Nt \times Nt}) of object class
@@ -14,7 +14,7 @@ siminf_model(G, N, tspan, events = NULL, sd = NULL, ldata = NULL,
 \code{i} of column \code{j} indicates that propensity \code{i}
 needs to be recalculated if the transition \code{j} occurs.}
 
-\item{N}{Sparse matrix (\eqn{Nc \times Nt}) of object class
+\item{S}{Sparse matrix (\eqn{Nc \times Nt}) of object class
 \code{"\linkS4class{dgCMatrix}"}. Each column corresponds to a
 transition, and execution of transition \code{j} amounts to adding
 the \code{j}th column to the state vector.}
@@ -56,7 +56,7 @@ contains the state of the model parameters at tspan(j).}
 \item{E}{Sparse matrix to handle external events, see
 \code{\linkS4class{external_events}}.}
 
-\item{S}{Sparse matrix to handle external events, see
+\item{N}{Sparse matrix to handle external events, see
 \code{\linkS4class{external_events}}.}
 }
 \value{

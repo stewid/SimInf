@@ -4,13 +4,13 @@
 \alias{external_events}
 \title{Create S4 class \code{external_events}}
 \usage{
-external_events(E = NULL, S = NULL, events = NULL)
+external_events(E = NULL, N = NULL, events = NULL)
 }
 \arguments{
 \item{E}{Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
 that selects the states to include for sampling in an event.}
 
-\item{S}{Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
+\item{N}{Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
 that determines how to shift the states in an
 \code{INTERNAL_TRANSFER_EVENT}.}
 
@@ -36,7 +36,7 @@ columns:
     The node of the event
   }
   \item{dest}{
-    The destination node for a \code{EXTERNAL_TRANSFER_EVENT}.
+    The destination node for an \code{EXTERNAL_TRANSFER_EVENT}.
   }
   \item{n}{
     The number of individuals in the event. n[i] >= 0.
@@ -52,9 +52,10 @@ columns:
     the states to sample from.
   }
   \item{shift}{
-    Column j in the shift matrix \code{S} that determines how to
-    shift the sampled states in an \code{INTERNAL_TRANSFER_EVENT}.
-    Should be \code{-1} for the other event types.
+    The column \code{shift[i]} in the \code{N} matrix determines
+    how to change state of a sampled individual in an
+    \code{INTERNAL_TRANSFER_EVENT}. Should be \code{-1} for the
+    other event types.
   }
 }
 }
