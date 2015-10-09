@@ -30,7 +30,7 @@ E <- Matrix(c(1, 0, 0, 1, 0, 0,
             byrow  = TRUE,
             sparse = TRUE)
 
-S <- Matrix(c(2, 0,
+N <- Matrix(c(2, 0,
               2, 0,
               0, 2,
               0, 2,
@@ -54,7 +54,7 @@ events <- structure(list(event = c(3.1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(external_events(E      = E,
-                                          S      = S,
+                                          N      = N,
                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
@@ -72,7 +72,7 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(external_events(E      = E,
-                                          S      = S,
+                                          N      = N,
                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
@@ -90,7 +90,7 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(external_events(E      = E,
-                                          S      = S,
+                                          N      = N,
                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
@@ -108,7 +108,7 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(external_events(E      = E,
-                                          S      = S,
+                                          N      = N,
                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
@@ -126,7 +126,7 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(external_events(E      = E,
-                                          S      = S,
+                                          N      = N,
                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
@@ -144,7 +144,7 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(external_events(E      = E,
-                                          S      = S,
+                                          N      = N,
                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
@@ -162,7 +162,7 @@ events <- structure(list(event = c("3", "3", "3", "3", "3", "3", "3", "3", "3", 
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(external_events(E      = E,
-                                          S      = S,
+                                          N      = N,
                                           events = events))
 stopifnot(length(grep("Columns in events must be numeric",
                       res[[1]]$message)) > 0)
@@ -180,7 +180,7 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(external_events(E      = E,
-                                          S      = S,
+                                          N      = N,
                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
@@ -194,7 +194,7 @@ events <- new("external_events",
                   Dimnames = list(NULL, NULL),
                   x = numeric(0),
                   factors = list()),
-              S = new("dgCMatrix",
+              N = new("dgCMatrix",
                   i = integer(0),
                   p = 0L,
                   Dim = c(0L, 0L),

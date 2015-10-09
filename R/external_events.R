@@ -99,7 +99,7 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##' @export
 setClass("external_events",
          slots = c(E          = "dgCMatrix",
-                   S          = "dgCMatrix",
+                   N          = "dgCMatrix",
                    event      = "integer",
                    time       = "integer",
                    node       = "integer",
@@ -194,7 +194,7 @@ setClass("external_events",
 ##' @return S4 class \code{external_events}
 ##' @export
 external_events <- function(E      = NULL,
-                            S      = NULL,
+                            N      = NULL,
                             events = NULL)
 {
     ## Check E
@@ -204,11 +204,11 @@ external_events <- function(E      = NULL,
         E <- new("dgCMatrix")
     }
 
-    ## Check S
-    if (is.null(S)) {
+    ## Check N
+    if (is.null(N)) {
         if (!is.null(events))
-            stop("events is not NULL when S is NULL")
-        S <- new("dgCMatrix")
+            stop("events is not NULL when N is NULL")
+        N <- new("dgCMatrix")
     }
 
     ## Check events
@@ -266,7 +266,7 @@ external_events <- function(E      = NULL,
 
     return(new("external_events",
                E          = E,
-               S          = S,
+               N          = N,
                event      = as.integer(events$event),
                time       = as.integer(events$time),
                node       = as.integer(events$node),
@@ -291,7 +291,7 @@ setMethod("show",
           {
               cat("\nExternal events:\n")
               cat(sprintf("E: %i x %i\n", dim(object@E)[1], dim(object@E)[2]))
-              cat(sprintf("S: %i x %i\n", dim(object@S)[1], dim(object@S)[2]))
+              cat(sprintf("N: %i x %i\n", dim(object@N)[1], dim(object@N)[2]))
 
               if (length(object@event)) {
                   cat(sprintf("event: 1 x %i\n", length(object@event)))

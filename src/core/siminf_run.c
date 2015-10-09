@@ -147,7 +147,7 @@ int siminf_run(
     /* External events */
     ext_events = GET_SLOT(result, Rf_install("events"));
     E = GET_SLOT(ext_events, Rf_install("E"));
-    S = GET_SLOT(ext_events, Rf_install("S"));
+    S = GET_SLOT(ext_events, Rf_install("N"));
     PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
 
     /* Constants */

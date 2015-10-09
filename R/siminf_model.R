@@ -322,7 +322,7 @@ siminf_model <- function(G,
 
     ## Check events
     if (any(is.null(events), is.data.frame(events)))
-        events <- external_events(E = E, S = S, events = events)
+        events <- external_events(E = E, N = S, events = events)
 
     return(new("siminf_model",
                G      = G,
