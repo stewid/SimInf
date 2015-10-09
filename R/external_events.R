@@ -44,11 +44,11 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     \code{ENTER_EVENT}, all individuals enter first non-zero compartment,
 ##'     i.e. a non-zero entry in element \code{i} of select column \code{j}.
 ##'   }
-##'   \item{S}{
+##'   \item{N}{
 ##'     For the \code{INTERNAL_TRANSFER_EVENT}, a non-zero entry in
 ##'     element \code{i} of select column \code{j} in \code{E} indicate
 ##'     the compartments to sample individuals from. The value of element
-##'     \code{i} of shift column \code{k} in \code{S} determines the
+##'     \code{i} of column \code{k} in \code{N} determines the
 ##'     target compartment. The target compartment for sampled individuals
 ##'     is given by adding the value.
 ##'   }
@@ -84,8 +84,8 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     matrix \code{E} that determines the states to sample from.
 ##'   }
 ##'   \item{shift}{
-##'     Integer vector of length \code{len}. Column j in the shift matrix
-##'     \code{S} that determines how to shift the sampled states in an
+##'     Integer vector of length \code{len}. Column j in the matrix
+##'     \code{N} that determines how to move the sampled states in an
 ##'     \code{INTERNAL_TRANSFER_EVENT}. Should be \code{-1} for the other
 ##'     event types.
 ##'   }
@@ -164,7 +164,7 @@ setClass("external_events",
 ##'     The node of the event
 ##'   }
 ##'   \item{dest}{
-##'     The destination node for a \code{EXTERNAL_TRANSFER_EVENT}.
+##'     The destination node for an \code{EXTERNAL_TRANSFER_EVENT}.
 ##'   }
 ##'   \item{n}{
 ##'     The number of individuals in the event. n[i] >= 0.
@@ -180,14 +180,16 @@ setClass("external_events",
 ##'     the states to sample from.
 ##'   }
 ##'   \item{shift}{
-##'     Column j in the shift matrix \code{S} that determines how to
-##'     shift the sampled states in an \code{INTERNAL_TRANSFER_EVENT}.
-##'     Should be \code{-1} for the other event types.
+##'     The column \code{shift[i]} in the \code{N} matrix determines
+##'     how to change state of a sampled individual in an
+##'     \code{INTERNAL_TRANSFER_EVENT}. Should be \code{-1} for the
+##'     other event types.
 ##'   }
 ##' }
+##'
 ##' @param E Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
 ##'        that selects the states to include for sampling in an event.
-##' @param S Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
+##' @param N Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
 ##'        that determines how to shift the states in an
 ##'        \code{INTERNAL_TRANSFER_EVENT}.
 ##' @param events A \code{data.frame} with events.

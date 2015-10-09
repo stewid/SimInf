@@ -27,7 +27,7 @@
 ##'     \code{i} of column \code{j} indicates that propensity \code{i}
 ##'     needs to be recalculated if the transition \code{j} occurs.
 ##'   }
-##'   \item{N}{
+##'   \item{S}{
 ##'     Sparse matrix (\eqn{Nc \times Nt}) of object class
 ##'     \code{"\linkS4class{dgCMatrix}"}. Each column corresponds
 ##'     to a transition, and execution of transition \code{j} amounts to
@@ -166,7 +166,7 @@ setClass("siminf_model",
 ##' \code{"\linkS4class{dgCMatrix}"}.  A non-zeros entry in element
 ##' \code{i} of column \code{j} indicates that propensity \code{i}
 ##' needs to be recalculated if the transition \code{j} occurs.
-##' @param N Sparse matrix (\eqn{Nc \times Nt}) of object class
+##' @param S Sparse matrix (\eqn{Nc \times Nt}) of object class
 ##' \code{"\linkS4class{dgCMatrix}"}. Each column corresponds to a
 ##' transition, and execution of transition \code{j} amounts to adding
 ##' the \code{j}th column to the state vector.
@@ -196,7 +196,7 @@ setClass("siminf_model",
 ##' that are updated during the simulation in every node.
 ##' @param E Sparse matrix to handle external events, see
 ##' \code{\linkS4class{external_events}}.
-##' @param S Sparse matrix to handle external events, see
+##' @param N Sparse matrix to handle external events, see
 ##' \code{\linkS4class{external_events}}.
 ##' @return \linkS4class{siminf_model}
 ##' @export
