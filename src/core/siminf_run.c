@@ -137,23 +137,21 @@ int siminf_run(
     if (err)
         return err;
 
-    /* G */
+    /* SimInf model */
     G = GET_SLOT(result, Rf_install("G"));
-
-    /* N */
-    N = GET_SLOT(result, Rf_install("S"));
-    PROTECT(prN = coerceVector(GET_SLOT(N, Rf_install("x")), INTSXP));
+    S = GET_SLOT(result, Rf_install("S"));
+    PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
 
     /* External events */
     ext_events = GET_SLOT(result, Rf_install("events"));
     E = GET_SLOT(ext_events, Rf_install("E"));
-    S = GET_SLOT(ext_events, Rf_install("N"));
-    PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
+    N = GET_SLOT(ext_events, Rf_install("N"));
+    PROTECT(prN = coerceVector(GET_SLOT(N, Rf_install("x")), INTSXP));
 
     /* Constants */
     Nn   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
-    Nc   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[0];
-    Nt   = INTEGER(GET_SLOT(N, Rf_install("Dim")))[1];
+    Nc   = INTEGER(GET_SLOT(S, Rf_install("Dim")))[0];
+    Nt   = INTEGER(GET_SLOT(S, Rf_install("Dim")))[1];
     Nd   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("v0")), R_DimSymbol))[0];
     Nld  = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("ldata")), R_DimSymbol))[0];
     tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
@@ -168,9 +166,9 @@ int siminf_run(
         REAL(GET_SLOT(result, Rf_install("v0"))),
         INTEGER(GET_SLOT(G, Rf_install("i"))),
         INTEGER(GET_SLOT(G, Rf_install("p"))),
-        INTEGER(GET_SLOT(N, Rf_install("i"))),
-        INTEGER(GET_SLOT(N, Rf_install("p"))),
-        INTEGER(prN),
+        INTEGER(GET_SLOT(S, Rf_install("i"))),
+        INTEGER(GET_SLOT(S, Rf_install("p"))),
+        INTEGER(prS),
         REAL(GET_SLOT(result, Rf_install("tspan"))),
         tlen,
         INTEGER(GET_SLOT(result, Rf_install("U"))),
@@ -181,8 +179,8 @@ int siminf_run(
         Nn, Nc, Nt, Nd, Nld,
         INTEGER(GET_SLOT(E, Rf_install("i"))),
         INTEGER(GET_SLOT(E, Rf_install("p"))),
-        INTEGER(GET_SLOT(S, Rf_install("p"))),
-        INTEGER(prS),
+        INTEGER(GET_SLOT(N, Rf_install("p"))),
+        INTEGER(prN),
         LENGTH(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("time"))),
