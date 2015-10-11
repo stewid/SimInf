@@ -23,6 +23,7 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
+#include "siminf_arg.h"
 #include "siminf_error.h"
 #include "siminf_events.h"
 #include "siminf_vec.h"
@@ -208,41 +209,6 @@ static int siminf_external_transfer_events(
         err = siminf_vec_push_back(&(events->shift), -1);
         if (err)
             return err;
-    }
-
-    return 0;
-}
-
-/**
- * Check integer argument
- *
- * @param arg The arg to check
- * @return 0 if OK, else -1
- */
-int siminf_arg_check_integer(SEXP arg)
-{
-    if (arg == R_NilValue || !isInteger(arg) ||
-        length(arg) != 1  || NA_INTEGER == INTEGER(arg)[0])
-        return -1;
-    return 0;
-}
-
-/**
- * Check vector argument of type real
- *
- * @param arg The arg to check
- * @param size The length of the vector
- * @return 0 if OK, else -1
- */
-int siminf_arg_check_real_vec(SEXP arg, size_t size)
-{
-    size_t i = 0;
-
-    if (arg == R_NilValue || !isReal(arg) || length(arg) != size)
-        return -1;
-    for (; i < size; i++) {
-        if (!R_finite(REAL(arg)[i]))
-            return -1;
     }
 
     return 0;
