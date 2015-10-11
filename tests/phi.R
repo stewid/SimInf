@@ -19,7 +19,7 @@
 library(siminf)
 
 ## Define a tolerance
-tol = 1e-5
+tol = 1e-8
 
 ## Expected phi
 phi_exp <- structure( c(0.810011, 0.185349185610407,
