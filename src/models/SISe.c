@@ -19,6 +19,7 @@
  */
 
 #include "SISe.h"
+#include "siminf_euler.h"
 
 /* Offset in integer compartment state vector */
 enum {S, I};
@@ -104,27 +105,17 @@ int SISe_post_time_step(
     double t,
     int sd)
 {
-    const int days_in_year = 365;
-    const int days_in_quarter = 91;
+    const int day = (int)t % 365;
     const double S_n = u[S];
     const double I_n = u[I];
-    double tmp = v[PHI];
+    const double phi = v[PHI];
 
-    /* Time dependent beta for each quarter of the year. Forward Euler step. */
-    switch (((int)t % days_in_year) / days_in_quarter) {
-    case 0:
-        v[PHI] *= (1.0 - gdata[BETA_T1]);
-        break;
-    case 1:
-        v[PHI] *= (1.0 - gdata[BETA_T2]);
-        break;
-    case 2:
-        v[PHI] *= (1.0 - gdata[BETA_T3]);
-        break;
-    default:
-        v[PHI] *= (1.0 - gdata[BETA_T4]);
-        break;
-    }
+    /* Time dependent beta in each of the four intervals of the
+     * year. Forward Euler step. */
+    v[PHI] = siminf_forward_euler(
+        phi, day,
+        ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
+        gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
     if ((I_n + S_n) > 0.0)
         v[PHI] += gdata[ALPHA] * I_n / (I_n + S_n) + gdata[EPSILON];
@@ -132,7 +123,7 @@ int SISe_post_time_step(
         v[PHI] += gdata[EPSILON];
 
     /* 1 if needs update */
-    return tmp != v[PHI];
+    return phi != v[PHI];
 }
 
 /**
