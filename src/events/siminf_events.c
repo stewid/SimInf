@@ -240,6 +240,7 @@ SEXP siminf_external_events(
     size_t i;
     struct siminf_events events = SIMINF_EVENTS_INIT;
     gsl_rng *rng = NULL;
+    unsigned long int s;
     size_t capacity = 10;
 
     /* Check arguments */
@@ -251,14 +252,11 @@ SEXP siminf_external_events(
         Rf_error("Invalid 'p_edge' argument");
     if (siminf_arg_check_real_vec(mu, INTEGER(days)[0]))
         Rf_error("Invalid 'mu' argument");
-    if ((seed != R_NilValue) && siminf_arg_check_integer(seed))
-        Rf_error("Invalid 'seed' argument");
 
+    if (siminf_get_seed(&s, seed))
+        Rf_error("Invalid 'seed' argument");
     rng = gsl_rng_alloc(gsl_rng_mt19937);
-    if (seed == R_NilValue)
-        gsl_rng_set(rng, (unsigned long int)time(NULL));
-    else
-        gsl_rng_set(rng, (unsigned long int)INTEGER(seed)[0]);
+    gsl_rng_set(rng, s);
 
     err = siminf_events_reserve(&events, capacity);
     if (err)

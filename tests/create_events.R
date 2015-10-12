@@ -167,18 +167,6 @@ stopifnot(length(grep("Invalid 'mu' argument",
                       res[[1]]$message)) > 0)
 
 ## Check 'seed' argument to C function 'siminf_external_events'
-seed <- integer(0)
-res <- tools::assertError(
-    .Call(siminf:::siminf_external_events, 10L, 10L, rep(0.1, 10), rep(0.1, 10), seed))
-stopifnot(length(grep("Invalid 'seed' argument",
-                      res[[1]]$message)) > 0)
-
-seed <- 5
-res <- tools::assertError(
-    .Call(siminf:::siminf_external_events, 10L, 10L, rep(0.1, 10), rep(0.1, 10), seed))
-stopifnot(length(grep("Invalid 'seed' argument",
-                      res[[1]]$message)) > 0)
-
 seed <- NA_integer_
 res <- tools::assertError(
     .Call(siminf:::siminf_external_events, 10L, 10L, rep(0.1, 10), rep(0.1, 10), seed))
