@@ -355,7 +355,7 @@ siminf_model <- function(G,
 ##' @export
 setMethod("plot",
           signature(x = "siminf_model"),
-          function(x, legend, t0 = NULL, ...)
+          function(x, legend, t0 = NULL, col = NULL, lty = NULL, ...)
       {
           savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
           on.exit(par(savepar))
@@ -370,12 +370,21 @@ setMethod("plot",
           ## Calculate proportion
           m <- m / colSums(m)
 
+          ## Default color is black
+          if (is.null(col))
+              col <- rep("black", dim(x@S)[1])
+
+          ## Default line type
+          if (is.null(lty))
+              lty <- seq_len(dim(m)[1])
+
           ## Plot
           if (is.null(t0)) {
-              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, max(m)))
+              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, max(m)),
+                   col = col[1], lty = lty[1], ...)
           } else {
               plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, max(m)),
-                   xaxt = "n")
+                   col = col[1], lty = lty[1], xaxt = "n")
           }
           title(xlab = "Day", outer = TRUE, line = 0)
           if (!is.null(t0)) {
@@ -384,7 +393,7 @@ setMethod("plot",
                        origin = as.Date(t0)))
           }
           for (i in seq_len(dim(m)[1])[-1]) {
-              lines(m[i, ], type = "l", lty = i)
+              lines(m[i, ], type = "l", lty = lty[i], col = col[i], ...)
           }
 
           ## Add legend below plot
@@ -393,7 +402,7 @@ setMethod("plot",
               mar = c(0, 0, 0, 0), new = TRUE)
           plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
           graphics::legend("bottom", inset = c(0, 0),
-                           lty = seq_len(dim(m)[1]), bty = "n",
+                           lty = lty, col = col, bty = "n",
                            horiz = TRUE, legend = legend)
       }
 )
