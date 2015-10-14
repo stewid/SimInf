@@ -13,7 +13,8 @@
 
 \S4method{plot}{SISe3}(x, t0 = NULL, ...)
 
-\S4method{plot}{siminf_model}(x, legend, t0 = NULL, ...)
+\S4method{plot}{siminf_model}(x, legend, t0 = NULL, col = NULL,
+  lty = NULL, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot}
