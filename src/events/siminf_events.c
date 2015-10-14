@@ -64,8 +64,8 @@ static int siminf_gnp(
         if (v == w)
             w += 1;
 
-        while  (w >= n && v < n) {
-            w = w - v;
+        while (w >= n && v < n) {
+            w = w - n;
             v = v + 1;
 
             /* Protect against loops */
