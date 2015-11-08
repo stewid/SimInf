@@ -22,7 +22,7 @@
 ##' @param days Number of days to model. Default is 1000.
 ##' @param model The name of the model. Default is 'SISe'.
 ##' @return A model
-##' @include external_events.R
+##' @include scheduled_events.R
 ##' @include SISe.R
 ##' @include SISe3.R
 ##' @export

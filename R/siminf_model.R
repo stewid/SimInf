@@ -55,8 +55,8 @@
 ##'     to be returned.
 ##'   }
 ##'   \item{u0}{
-##'      Initial compartment state vector u0. Integer (Nc X Nn). Gives the initial
-##'      number of individuals in each compartment in every node.
+##'     Initial compartment state vector u0. Integer (Nc X Nn). Gives the
+##'     initial number of individuals in each compartment in every node.
 ##'   }
 ##'   \item{V}{
 ##'     The model parameter result matrix for parameters that are modelled
@@ -69,11 +69,11 @@
 ##'      during the simulation in every node.
 ##'   }
 ##'   \item{events}{
-##'     External events \code{"\linkS4class{scheduled_events}"}
+##'     Scheduled events \code{"\linkS4class{scheduled_events}"}
 ##'   }
 ##' }
 ##' @name siminf_model-class
-##' @include external_events.R
+##' @include scheduled_events.R
 ##' @docType class
 ##' @keywords classes
 ##' @keywords methods
