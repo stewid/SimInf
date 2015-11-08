@@ -69,7 +69,7 @@
 ##'      during the simulation in every node.
 ##'   }
 ##'   \item{events}{
-##'     External events \code{"\linkS4class{external_events}"}
+##'     External events \code{"\linkS4class{scheduled_events}"}
 ##'   }
 ##' }
 ##' @name siminf_model-class
@@ -90,7 +90,7 @@ setClass("siminf_model",
                    u0     = "matrix",
                    V      = "matrix",
                    v0     = "matrix",
-                   events = "external_events"),
+                   events = "scheduled_events"),
          validity = function(object) {
              errors <- character()
 
@@ -195,9 +195,9 @@ setClass("siminf_model",
 ##' parameters X Nn).  Gives the initial value for model paramenters
 ##' that are updated during the simulation in every node.
 ##' @param E Sparse matrix to handle external events, see
-##' \code{\linkS4class{external_events}}.
+##' \code{\linkS4class{scheduled_events}}.
 ##' @param N Sparse matrix to handle external events, see
-##' \code{\linkS4class{external_events}}.
+##' \code{\linkS4class{scheduled_events}}.
 ##' @return \linkS4class{siminf_model}
 ##' @export
 siminf_model <- function(G,
@@ -322,7 +322,7 @@ siminf_model <- function(G,
 
     ## Check events
     if (any(is.null(events), is.data.frame(events)))
-        events <- external_events(E = E, N = N, events = events)
+        events <- scheduled_events(E = E, N = N, events = events)
 
     return(new("siminf_model",
                G      = G,

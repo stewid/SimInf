@@ -53,9 +53,9 @@ events <- structure(list(event = c(3.1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(external_events(E      = E,
-                                          N      = N,
-                                          events = events))
+res <- tools::assertError(scheduled_events(E      = E,
+                                           N      = N,
+                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -71,9 +71,9 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(external_events(E      = E,
-                                          N      = N,
-                                          events = events))
+res <- tools::assertError(scheduled_events(E      = E,
+                                           N      = N,
+                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -89,9 +89,9 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(external_events(E      = E,
-                                          N      = N,
-                                          events = events))
+res <- tools::assertError(scheduled_events(E      = E,
+                                           N      = N,
+                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -107,9 +107,9 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(external_events(E      = E,
-                                          N      = N,
-                                          events = events))
+res <- tools::assertError(scheduled_events(E      = E,
+                                           N      = N,
+                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -125,9 +125,9 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(external_events(E      = E,
-                                          N      = N,
-                                          events = events))
+res <- tools::assertError(scheduled_events(E      = E,
+                                           N      = N,
+                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -143,9 +143,9 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(external_events(E      = E,
-                                          N      = N,
-                                          events = events))
+res <- tools::assertError(scheduled_events(E      = E,
+                                           N      = N,
+                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -161,9 +161,9 @@ events <- structure(list(event = c("3", "3", "3", "3", "3", "3", "3", "3", "3", 
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(external_events(E      = E,
-                                          N      = N,
-                                          events = events))
+res <- tools::assertError(scheduled_events(E      = E,
+                                           N      = N,
+                                           events = events))
 stopifnot(length(grep("Columns in events must be numeric",
                       res[[1]]$message)) > 0)
 
@@ -179,14 +179,14 @@ events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                     .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(external_events(E      = E,
-                                          N      = N,
-                                          events = events))
+res <- tools::assertError(scheduled_events(E      = E,
+                                           N      = N,
+                                           events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
 ## Check E and events equal to NULL (default).
-events <- new("external_events",
+events <- new("scheduled_events",
               E = new("dgCMatrix",
                   i = integer(0),
                   p = 0L,
@@ -210,4 +210,4 @@ events <- new("external_events",
               select = integer(0),
               shift = integer(0))
 str(events)
-stopifnot(identical(external_events(), events))
+stopifnot(identical(scheduled_events(), events))

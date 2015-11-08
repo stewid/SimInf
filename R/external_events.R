@@ -28,9 +28,9 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
     abs(x - round(x)) < tol
 }
 
-##' Class \code{"external_events"}
+##' Class \code{"scheduled_events"}
 ##'
-##' Class to handle the external events
+##' Class to handle the scheduled events
 ##' @section Slots:
 ##' \describe{
 ##'   \item{E}{
@@ -53,7 +53,7 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     is given by adding the value.
 ##'   }
 ##'   \item{event}{
-##'     Integer vector of length \code{len} with external events.
+##'     Integer vector of length \code{len} with scheduled events.
 ##'     The following four events exists; \code{EXIT_EVENT = 0},
 ##'     \code{ENTER_EVENT = 1}, \code{INTERNAL_TRANSFER_EVENT = 2}, and
 ##'     \code{EXTERNAL_TRANSFER_EVENT = 3}.
@@ -90,14 +90,14 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     event types.
 ##'   }
 ##' }
-##' @name external_events-class
+##' @name scheduled_events-class
 ##' @docType class
 ##' @keywords classes
 ##' @keywords methods
 ##' @import methods
 ##' @import Matrix
 ##' @export
-setClass("external_events",
+setClass("scheduled_events",
          slots = c(E          = "dgCMatrix",
                    N          = "dgCMatrix",
                    event      = "integer",
@@ -119,7 +119,7 @@ setClass("external_events",
                                             length(object@proportion),
                                             length(object@select),
                                             length(object@shift)))) , 1L)) {
-                 errors <- c(errors, "All external events must have equal length.")
+                 errors <- c(errors, "All scheduled events must have equal length.")
              }
 
              if (!all(object@time > 0)) {
@@ -146,7 +146,7 @@ setClass("external_events",
          }
 )
 
-##' Create S4 class \code{external_events}
+##' Create S4 class \code{scheduled_events}
 ##'
 ##' The argument events must be a \code{data.frame} with the following
 ##' columns:
@@ -193,9 +193,9 @@ setClass("external_events",
 ##'        that determines how to shift the states in an
 ##'        \code{INTERNAL_TRANSFER_EVENT}.
 ##' @param events A \code{data.frame} with events.
-##' @return S4 class \code{external_events}
+##' @return S4 class \code{scheduled_events}
 ##' @export
-external_events <- function(E      = NULL,
+scheduled_events <- function(E      = NULL,
                             N      = NULL,
                             events = NULL)
 {
@@ -266,7 +266,7 @@ external_events <- function(E      = NULL,
 
     events <- events[order(events$time, events$event, events$select),]
 
-    return(new("external_events",
+    return(new("scheduled_events",
                E          = E,
                N          = N,
                event      = as.integer(events$event),
@@ -279,19 +279,19 @@ external_events <- function(E      = NULL,
                shift      = as.integer(events$shift)))
 }
 
-##' Brief summary of \code{external_events}
+##' Brief summary of \code{scheduled_events}
 ##'
-##' @aliases show,external_events-methods
+##' @aliases show,scheduled_events-methods
 ##' @docType methods
-##' @param object The external_events \code{object}
+##' @param object The scheduled_events \code{object}
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
 ##' @export
 setMethod("show",
-          signature(object = "external_events"),
+          signature(object = "scheduled_events"),
           function (object)
           {
-              cat("\nExternal events:\n")
+              cat("\nScheduled events:\n")
               cat(sprintf("E: %i x %i\n", dim(object@E)[1], dim(object@E)[2]))
               cat(sprintf("N: %i x %i\n", dim(object@N)[1], dim(object@N)[2]))
 
