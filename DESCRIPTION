@@ -24,7 +24,7 @@ Imports:
 Collate:
     'AllGenerics.R'
     'check_arguments.R'
-    'external_events.R'
+    'scheduled_events.R'
     'siminf_model.R'
     'SISe.R'
     'SISe3.R'
