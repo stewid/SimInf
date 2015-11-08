@@ -20,14 +20,15 @@ Depends:
     methods
 Imports:
     graphics,
-    Matrix,
+    Matrix
 Collate:
     'AllGenerics.R'
+    'check_arguments.R'
     'external_events.R'
     'siminf_model.R'
-    'check_arguments.R'
     'SISe.R'
     'SISe3.R'
     'demo_model.R'
     'dependencies.R'
     'siminf.R'
+RoxygenNote: 5.0.0
