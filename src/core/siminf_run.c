@@ -60,7 +60,7 @@ int siminf_run(
     S = GET_SLOT(result, Rf_install("S"));
     PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
 
-    /* External events */
+    /* Scheduled events */
     ext_events = GET_SLOT(result, Rf_install("events"));
     E = GET_SLOT(ext_events, Rf_install("E"));
     N = GET_SLOT(ext_events, Rf_install("N"));
