@@ -54,16 +54,16 @@ enum {EXIT_EVENT,
       EXTERNAL_TRANSFER_EVENT};
 
 /**
- * Structure that represents external events.
+ * Structure that represents scheduled events.
  */
-typedef struct external_events
+typedef struct scheduled_events
 {
     int len;            /**< Number of events. */
     int *event;         /**< The type of event i. */
     int *time;          /**< The time of event i. */
     int *node;          /**< The source node of event i. */
     int *dest;          /**< The dest node of event i. */
-    int *n;             /**< The number of individuals in the external
+    int *n;             /**< The number of individuals in the scheduled
                          *   event. n[i] >= 0. */
     double *proportion; /**< If n[i] equals zero, then the number of
                          *   individuals to sample is calculated by
@@ -76,7 +76,7 @@ typedef struct external_events
     int *shift;         /**< Column j in the shift matrix that
                          *   determines the shift of the internal
                          *   transfer event. */
-} external_events;
+} scheduled_events;
 
 /* Maximum number of individuals to sample from */
 #define MAX_INDIVIDUALS 10000
@@ -163,17 +163,17 @@ typedef struct siminf_thread_args
     gsl_rng *rng;       /**< The random number generator. */
 
 
-    /*** External events ***/
-    external_events *E1; /**< E1 events to process. */
-    int E1_index;        /**< Index to the next E1 event to
-                          *   process. */
-    external_events *E2; /**< E2 events to process. */
-    int E2_index;        /**< Index to the next E2 event to
-                          *   process. */
+    /*** Scheduled events ***/
+    scheduled_events *E1; /**< E1 events to process. */
+    int E1_index;         /**< Index to the next E1 event to
+                           *   process. */
+    scheduled_events *E2; /**< E2 events to process. */
+    int E2_index;         /**< Index to the next E2 event to
+                           *   process. */
 
     /*** Vectors for sampling individuals ***/
     int *individuals;               /**< Vector to store the result of
-                                     *   the sampling during external
+                                     *   the sampling during scheduled
                                      *   events processing. */
     int kind[MAX_INDIVIDUALS];      /**< Help vector for sampling
                                      *   individuals. */
@@ -189,13 +189,13 @@ int *update_node = NULL;
 siminf_thread_args *sim_args = NULL;
 
 /**
- * Allocate memory for external events
+ * Allocate memory for scheduled events
  *
- * @param e external_events structure for events.
+ * @param e scheduled_events structure for events.
  * @param n Number of events.
  * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-static int siminf_allocate_events(external_events *e, int n)
+static int siminf_allocate_events(scheduled_events *e, int n)
 {
     if (e && n > 0) {
         e->len = n;
@@ -229,11 +229,11 @@ static int siminf_allocate_events(external_events *e, int n)
 }
 
 /**
- * Free allocated memory to external events
+ * Free allocated memory to scheduled events
  *
- * @param e The external_events events to free.
+ * @param e The scheduled_events events to free.
  */
-static void siminf_free_events(external_events *e)
+static void siminf_free_events(scheduled_events *e)
 {
     if (e) {
         if (e->event)
@@ -296,7 +296,7 @@ static void siminf_free_args(siminf_thread_args *sa)
 
 
 /**
- * Split external events to E1 and E2 events by number of threads
+ * Split scheduled events to E1 and E2 events by number of threads
  * used during simulation
  *
  * Thread id 0 is the main thread. All E2 events are assigned to
@@ -304,7 +304,7 @@ static void siminf_free_args(siminf_thread_args *sa)
  *
  * All E1 events for a node are assigned to the same thread.
  *
- * @param len Number of external events.
+ * @param len Number of scheduled events.
  * @param event The type of event i.
  * @param time The time of event i.
  * @param node The source node of event i.
@@ -377,7 +377,7 @@ static int siminf_split_events(
 
     for (i = 0; i < len; i++) {
         int j, k;
-        external_events *e;
+        scheduled_events *e;
 
         switch (event[i]) {
         case EXIT_EVENT:
@@ -597,7 +597,7 @@ static int siminf_solver()
             for (i = 0; i < n_thread; i++) {
                 int node;
                 siminf_thread_args sa = *&sim_args[i];
-                external_events e1 = *sa.E1;
+                scheduled_events e1 = *sa.E1;
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
@@ -647,7 +647,7 @@ static int siminf_solver()
                     }
                 }
 
-                /* (2) Incorporate all scheduled external E1 events */
+                /* (2) Incorporate all scheduled E1 events */
                 while (sa.E1_index < e1.len &&
                        sa.tt >= e1.time[sa.E1_index] &&
                        !sa.errcode)
@@ -725,7 +725,7 @@ static int siminf_solver()
             #pragma omp master
             {
                 siminf_thread_args sa = *&sim_args[0];
-                external_events e2 = *sa.E2;
+                scheduled_events e2 = *sa.E2;
 
                 /* (3) Incorporate all scheduled E2 events */
                 while (sa.E2_index < e2.len &&
@@ -915,7 +915,7 @@ static int siminf_solver()
  * @param time The time of event i.
  * @param node The source node of event i.
  * @param dest The dest node of event i.
- * @param n The number of individuals in the external event. n[i] >= 0.
+ * @param n The number of individuals in the scheduled event. n[i] >= 0.
  * @param proportion If n[i] equals zero, then the number of
  *        individuals to sample is calculated by summing the number of
  *        individuals in the states determined by select[i] and
@@ -976,7 +976,7 @@ int siminf_run_solver(
     memcpy(vv, v0, Nn * Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
-     * external events */
+     * scheduled events */
     update_node = calloc(Nn, sizeof(int));
     if (!update_node) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
@@ -1047,15 +1047,15 @@ int siminf_run_solver(
         sim_args[i].sd = &sd[sim_args[i].Ni];
         sim_args[i].update_node = &update_node[sim_args[i].Ni];
 
-        /* External events */
-        sim_args[i].E1 = calloc(1, sizeof(external_events));
+        /* Scheduled events */
+        sim_args[i].E1 = calloc(1, sizeof(scheduled_events));
         if (!sim_args[i].E1) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
         if (i == 0) {
-            sim_args[i].E2 = calloc(1, sizeof(external_events));
+            sim_args[i].E2 = calloc(1, sizeof(scheduled_events));
             if (!sim_args[i].E2) {
                 errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
                 goto cleanup;
@@ -1089,7 +1089,7 @@ int siminf_run_solver(
         }
     }
 
-    /* Split external events into E1 and E2 events. */
+    /* Split scheduled events into E1 and E2 events. */
     errcode = siminf_split_events(
         len, event, time, node, dest, n, proportion, select, shift, Nn);
     if (errcode)
