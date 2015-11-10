@@ -53,10 +53,10 @@ that are updated during the simulation in every node.}
 are modelled ((Nn * Number of paramters) X length(tspan)).  V(:,j)
 contains the state of the model parameters at tspan(j).}
 
-\item{E}{Sparse matrix to handle external events, see
+\item{E}{Sparse matrix to handle scheduled events, see
 \code{\linkS4class{scheduled_events}}.}
 
-\item{N}{Sparse matrix to handle external events, see
+\item{N}{Sparse matrix to handle scheduled events, see
 \code{\linkS4class{scheduled_events}}.}
 }
 \value{

@@ -157,7 +157,7 @@ if (siminf:::have_openmp()) {
 ## All individuals start in susceptible state, with a probability of
 ## becoming infected.
 ##
-## No external events
+## No scheduled events
 init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
                        S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),
@@ -625,7 +625,7 @@ if (siminf:::have_openmp()) {
 ## All individuals start in susceptible state, with a probability of
 ## becoming infected and then return to susceptible.
 ##
-## No external events
+## No scheduled events
 init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
                        S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),

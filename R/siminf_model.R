@@ -194,9 +194,9 @@ setClass("siminf_model",
 ##' @param v0 Initial model state vector v0. Double (Number of
 ##' parameters X Nn).  Gives the initial value for model paramenters
 ##' that are updated during the simulation in every node.
-##' @param E Sparse matrix to handle external events, see
+##' @param E Sparse matrix to handle scheduled events, see
 ##' \code{\linkS4class{scheduled_events}}.
-##' @param N Sparse matrix to handle external events, see
+##' @param N Sparse matrix to handle scheduled events, see
 ##' \code{\linkS4class{scheduled_events}}.
 ##' @return \linkS4class{siminf_model}
 ##' @export
