@@ -196,8 +196,8 @@ setClass("scheduled_events",
 ##' @return S4 class \code{scheduled_events}
 ##' @export
 scheduled_events <- function(E      = NULL,
-                            N      = NULL,
-                            events = NULL)
+                             N      = NULL,
+                             events = NULL)
 {
     ## Check E
     if (is.null(E)) {
