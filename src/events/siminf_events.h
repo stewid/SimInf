@@ -24,7 +24,7 @@
 #include <R.h>
 #include <Rinternals.h>
 
-SEXP siminf_external_events(
+SEXP siminf_scheduled_events(
     SEXP nodes,
     SEXP days,
     SEXP p_edge,

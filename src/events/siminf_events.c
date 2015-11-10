@@ -215,7 +215,7 @@ static int siminf_external_transfer_events(
 }
 
 /**
- * Create random external events
+ * Create random scheduled events
  *
  * @param nodes Number of nodes
  * @param days Number of days
@@ -226,7 +226,7 @@ static int siminf_external_transfer_events(
  * @param seed Random number seed.
  * @return A named list of vectors
 */
-SEXP siminf_external_events(
+SEXP siminf_scheduled_events(
     SEXP nodes,
     SEXP days,
     SEXP p_edge,

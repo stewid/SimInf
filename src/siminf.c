@@ -29,7 +29,7 @@
 */
 static const R_CallMethodDef callMethods[] =
 {
-    {"siminf_external_events", (DL_FUNC)&siminf_external_events, 5},
+    {"siminf_scheduled_events", (DL_FUNC)&siminf_scheduled_events, 5},
     {"SISe_run", (DL_FUNC)&SISe_run, 3},
     {"SISe3_run", (DL_FUNC)&SISe3_run, 3},
     {NULL, NULL, 0}
