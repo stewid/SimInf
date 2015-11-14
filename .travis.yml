@@ -1,6 +1,10 @@
 language: r
 sudo: required
 
+os:
+  - linux
+  - osx
+
 apt_packages:
   - libgsl0-dev
 
