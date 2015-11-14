@@ -1,14 +1,21 @@
 language: r
 sudo: required
 
+os:
+  - linux
+  - osx
+
 apt_packages:
   - libgsl0-dev
+
+brew_packages:
+  - gsl
 
 r_github_packages:
   - jimhester/covr
 
 after_success:
-  - Rscript -e 'library(covr); coveralls()'
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then Rscript -e 'library(covr); coveralls()'; fi
 
 notifications:
   email:
