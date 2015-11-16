@@ -56,6 +56,14 @@ in the third interval of the year.}
 \item{beta_t4}{The decay of the environmental infectious pressure
 in the fourth interval of the year.}
 
+\item{end_t1}{The non-inclusive day that ends interval 1.}
+
+\item{end_t2}{The non-inclusive day that ends interval 2.}
+
+\item{end_t3}{The non-inclusive day that ends interval 3.}
+
+\item{end_t4}{The non-inclusive day that ends interval 4.}
+
 \item{epsilon}{The background infectious pressure}
 }
 \value{
@@ -77,6 +85,22 @@ must be equal to zero.}
 \item{I_2}{The number of infected in age category 2}
 \item{S_3}{The number of sucsceptible in age category 3}
 \item{I_3}{The number of infected in age category 3}
+}
+
+The time dependent beta is divided into four intervals of the year
+\preformatted{
+where 0 <= day < 365 and
+0 <= end_t1 < end_t2 < end_t3 < end_t4 <= 365
+or
+0 <= end_t4 < end_t1 < end_t2 < end_t3 < 364
+
+Case 1: end_t1 < end_t4
+INTERVAL_1  INTERVAL_2       INTERVAL_3       INTERVAL_4       INTERVAL_1
+[0, end_t1) [end_t1, end_t2) [end_t2, end_t3) [end_t3, end_t4) [end_t4, 365]
+
+Case 2: end_t4 < end_t1
+INTERVAL_4  INTERVAL_1       INTERVAL_2       INTERVAL_3       INTERVAL_4
+[0, end_t4) [end_t4, end_t1) [end_t1, end_t2) [end_t2, end_t3) [end_t3, 365)
 }
 }
 
