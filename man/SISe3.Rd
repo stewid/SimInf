@@ -86,6 +86,8 @@ must be equal to zero.}
 \item{S_3}{The number of sucsceptible in age category 3}
 \item{I_3}{The number of infected in age category 3}
 }
+}
+\section{Beta}{
 
 The time dependent beta is divided into four intervals of the year
 \preformatted{

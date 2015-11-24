@@ -68,6 +68,8 @@ must be equal to zero.}
 \item{S}{The number of sucsceptible}
 \item{I}{The number of infected}
 }
+}
+\section{Beta}{
 
 The time dependent beta is divided into four intervals of the year
 \preformatted{
