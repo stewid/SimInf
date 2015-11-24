@@ -42,21 +42,7 @@ setClass("SISe", contains = c("siminf_model"))
 ##' \item{I}{The number of infected}
 ##' }
 ##'
-##' The time dependent beta is divided into four intervals of the year
-##' \preformatted{
-##' where 0 <= day < 365 and
-##' 0 <= end_t1 < end_t2 < end_t3 < end_t4 <= 365
-##' or
-##' 0 <= end_t4 < end_t1 < end_t2 < end_t3 < 364
-##'
-##' Case 1: end_t1 < end_t4
-##' INTERVAL_1  INTERVAL_2       INTERVAL_3       INTERVAL_4       INTERVAL_1
-##' [0, end_t1) [end_t1, end_t2) [end_t2, end_t3) [end_t3, end_t4) [end_t4, 365]
-##'
-##' Case 2: end_t4 < end_t1
-##' INTERVAL_4  INTERVAL_1       INTERVAL_2       INTERVAL_3       INTERVAL_4
-##' [0, end_t4) [end_t4, end_t1) [end_t1, end_t2) [end_t2, end_t3) [end_t3, 365)
-##' }
+##' @template beta-section
 ##' @param init A \code{data.frame} with the initial state in each
 ##' node, see details.
 ##' @param tspan An increasing sequence of points in time where the
@@ -70,18 +56,7 @@ setClass("SISe", contains = c("siminf_model"))
 ##' infectious pressure
 ##' @param gamma The recovery rate from infected to susceptible
 ##' @param alpha Shed rate from infected individuals
-##' @param beta_t1 The decay of the environmental infectious pressure
-##' in the first interval of the year.
-##' @param beta_t2 The decay of the environmental infectious pressure
-##' in the second interval of the year.
-##' @param beta_t3 The decay of the environmental infectious pressure
-##' in the third interval of the year.
-##' @param beta_t4 The decay of the environmental infectious pressure
-##' in the fourth interval of the year.
-##' @param end_t1 The non-inclusive day that ends interval 1.
-##' @param end_t2 The non-inclusive day that ends interval 2.
-##' @param end_t3 The non-inclusive day that ends interval 3.
-##' @param end_t4 The non-inclusive day that ends interval 4.
+##' @template beta-param
 ##' @param epsilon The background infectious pressure
 ##' @return \code{SISe}
 ##' @include check_arguments.R
