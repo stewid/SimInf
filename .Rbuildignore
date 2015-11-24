@@ -7,6 +7,7 @@
 ^appveyor.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^man-roxygen/$
 ^local320\.zip$
 ^gsl\.zip$
 ^gsl$
