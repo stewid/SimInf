@@ -26,6 +26,13 @@ in format 'yyyy-mm-dd'. Default is NULL which prints the x-axis
 labels as the sequence 1:length(x@tspan). If non-null, the labels
 are converted to dates.}
 
+\item{col}{The plotting color for each compartment. Default is
+black.}
+
+\item{lty}{The line type for each compartment. Default is the
+sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
+6=twodash.}
+
 \item{...}{Additional arguments affecting the plot produced.}
 }
 \description{
