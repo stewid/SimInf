@@ -235,6 +235,9 @@ setMethod("susceptible",
           signature("SISe3"),
           function(model, age = 1:3, i = NULL, by = 1, ...)
           {
+              if (identical(dim(model@U), c(0L, 0L)))
+                  stop("Please run the model first, the 'U' matrix is empty")
+
               age_categories <- 1:3
               stopifnot(all(age %in% age_categories))
 
@@ -271,6 +274,9 @@ setMethod("infected",
           signature("SISe3"),
           function(model, age = 1:3, i = NULL, by = 1, ...)
           {
+              if (identical(dim(model@U), c(0L, 0L)))
+                  stop("Please run the model first, the 'U' matrix is empty")
+
               age_categories <- 1:3
               stopifnot(all(age %in% age_categories))
 

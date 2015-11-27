@@ -36,6 +36,14 @@ model <- SISe(init    = data.frame(id = 0, S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0)
 
+res <- tools::assertError(susceptible(model))
+stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(infected(model))
+stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+                      res[[1]]$message)) > 0)
+
 result <- run(model, threads = 1)
 result
 
@@ -82,6 +90,14 @@ if (siminf:::have_openmp()) {
 
 ## Check measures for a SISe3 model
 model <- demo_model(model = "SISe3", nodes = 10, days = 1000)
+
+res <- tools::assertError(susceptible(model))
+stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(infected(model))
+stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+                      res[[1]]$message)) > 0)
 
 result <- run(model, threads = 1)
 result

@@ -188,6 +188,9 @@ setMethod("run",
 setMethod("susceptible",
           signature("SISe"),
           function(model, i = NULL, by = 1, ...) {
+              if (identical(dim(model@U), c(0L, 0L)))
+                  stop("Please run the model first, the 'U' matrix is empty")
+
               ii <- seq(from = 1, to = dim(model@U)[1], by = 2)
               if (!is.null(i))
                   ii <- ii[i]
@@ -201,6 +204,9 @@ setMethod("susceptible",
 setMethod("infected",
           signature("SISe"),
           function(model, i = NULL, by = 1, ...) {
+              if (identical(dim(model@U), c(0L, 0L)))
+                  stop("Please run the model first, the 'U' matrix is empty")
+
               ii <- seq(from = 2, to = dim(model@U)[1], by = 2)
               if (!is.null(i))
                   ii <- ii[i]
