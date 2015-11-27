@@ -406,3 +406,8 @@ siminf_model(G     = G,
              sd    = rep(0L, Nn),
              tspan = as.numeric(1:10),
              u0    = u0)
+
+## Check that plot raises an error if the model hasn't run
+res <- tools::assertError(plot(demo_model()))
+stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+                      res[[1]]$message)) > 0)

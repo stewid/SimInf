@@ -361,6 +361,9 @@ setMethod("plot",
           signature(x = "siminf_model"),
           function(x, legend, t0 = NULL, col = NULL, lty = NULL, ...)
       {
+          if (identical(dim(x@U), c(0L, 0L)))
+              stop("Please run the model first, the 'U' matrix is empty")
+
           savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
           on.exit(par(savepar))
 
