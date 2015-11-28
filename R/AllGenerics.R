@@ -26,6 +26,11 @@
 ##' @param seed Random number seed. Default is NULL, i.e. to use a
 ##' time-seed.
 ##' @return \code{siminf_model} with result from simulation.
+##' @examples
+##' ## Create a demo 'SISe' model with 1 node and
+##' ## initialize it to run over 1000 days.
+##' model <- demo_model(nodes = 1, days = 1000, model = "SISe")
+##' run(model)
 setGeneric("run",
            signature = "model",
            function(model,
