@@ -192,5 +192,56 @@ setGeneric("infected",
 ##' time point.
 ##' @keywords methods
 ##' @export
+##' @examples
+##' ## Create a 'SISe' demo model with 5 nodes and initialize
+##' ## it to run over 10 days.
+##' model <- demo_model(nodes = 5, days = 10, model = "SISe")
+##'
+##' ## Run the model and save the result
+##' result <- run(model)
+##'
+##' ## Extract the prevalence of infected nodes after each time
+##' ## step in the simulation
+##' prevalence(result)
+##'
+##' ## Extract the prevalence of infected nodes after each time
+##' ## step in the simulation when including only the first,
+##' ## second and third node in the population at risk.
+##' prevalence(result, i = 1:3)
+##'
+##' ## Extract the prevalence of infected nodes after every other
+##' ## time step in the simulation when including only the first,
+##' ## second and third node in the population at risk.
+##' prevalence(result, i = 1:3, by = 2)
+##'
+##' ## Extract the within-node prevalence of infected individuals
+##' ## in each node after each time step in the simulation
+##' prevalence(result, wnp = TRUE)
+##'
+##' ## Extract the within-node prevalence of infected individuals
+##' ## in the first and third node after each time step in the
+##' ## simulation
+##' prevalence(result, wnp = TRUE, i = c(1, 3))
+##'
+##' ## Extract the within-node prevalence of infected individuals
+##' ## in the first and third node after every other time step in
+##' ## the simulation
+##' prevalence(result, wnp = TRUE, i = c(1, 3), by = 2)
+##'
+##' ## Create a 'SISe3' demo model with 5 nodes and initialize
+##' ## it to run over 10 days.
+##' model <- demo_model(nodes = 5, days = 10, model = "SISe3")
+##'
+##' ## Run the model and save the result
+##' result <- run(model)
+##'
+##' ## Extract the prevalence of infected nodes after each time
+##' ## step in the simulation
+##' prevalence(result)
+##'
+##' ## Extract the within-node prevalence of infected
+##' ## individuals in the third age category after each
+##' ## time step in the simulation
+##' prevalence(result, wnp = TRUE, age = 3)
 setGeneric("prevalence",
            function(model, ...) standardGeneric("prevalence"))
