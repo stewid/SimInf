@@ -437,6 +437,19 @@ setMethod("plot",
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
 ##' @export
+##' @examples
+##' ## Create a 'SISe' demo model with 1 node and initialize
+##' ## it to run over 1000 days.
+##' model <- demo_model(nodes = 1, days = 1000, model = "SISe")
+##'
+##' ## Brief summary of the model
+##' model
+##'
+##' ## Run the model and save the result
+##' result <- run(model)
+##'
+##' ## Brief summary of the result.
+##' result
 setMethod("show",
           signature(object = "siminf_model"),
           function (object)

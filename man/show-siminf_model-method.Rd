@@ -17,5 +17,19 @@ None (invisible 'NULL').
 \description{
 Brief summary of \code{siminf_model}
 }
+\examples{
+## Create a 'SISe' demo model with 1 node and initialize
+## it to run over 1000 days.
+model <- demo_model(nodes = 1, days = 1000, model = "SISe")
+
+## Brief summary of the model
+model
+
+## Run the model and save the result
+result <- run(model)
+
+## Brief summary of the result.
+result
+}
 \keyword{methods}
 
