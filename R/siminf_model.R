@@ -362,6 +362,16 @@ siminf_model <- function(G,
 ##' @importFrom graphics plot
 ##' @importFrom graphics title
 ##' @export
+##' @examples
+##' ## Create a 'SISe' demo model with 1 node and initialize
+##' ## it to run over 1000 days.
+##' model <- demo_model(nodes = 1, days = 1000, model = "SISe")
+##'
+##' ## Run the model and save the result
+##' result <- run(model)
+##'
+##' ## Plot the proportion susceptible and infected individuals
+##' plot(result)
 setMethod("plot",
           signature(x = "siminf_model"),
           function(x, legend, t0 = NULL, col = NULL, lty = NULL, ...)

@@ -38,4 +38,15 @@ sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 \description{
 Plot \code{\linkS4class{siminf_model}}
 }
+\examples{
+## Create a 'SISe' demo model with 1 node and initialize
+## it to run over 1000 days.
+model <- demo_model(nodes = 1, days = 1000, model = "SISe")
+
+## Run the model and save the result
+result <- run(model)
+
+## Plot the proportion susceptible and infected individuals
+plot(result)
+}
 
