@@ -1,12 +1,15 @@
 Package: siminf
 Title: A Framework for Stochastic Disease Spread Simulations
 Version: 0.2
-Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
-    email = "stefan.widgren@sva.se"),
-    person("Pavol", "Bauer", role = c("aut")),
-    person("Stefan", "Engblom", role = c("aut")))
+Author: Stefan Widgren (National Veterinary Institute, Sweden),
+        Pavol Bauer (Uppsala University, Sweden),
+        Stefan Engblom (Uppsala University, Sweden)
+Maintainer: Stefan Widgren <stefan.widgren@sva.se>
 Description: A general and flexible software framework for
     stochastic disease spread simulations.
+Acknowledgement: This work was financially supported by the Swedish
+    Research Council within the UPMARC Linnaeus center of Excellence
+    (Pavol Bauer and Stefan Engblom).
 License: GPL-3
 URL: https://github.com/stewid/siminf
 BugReports: https://github.com/stewid/siminf/issues
