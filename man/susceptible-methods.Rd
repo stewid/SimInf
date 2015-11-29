@@ -63,8 +63,8 @@ model <- demo_model(nodes = 5, days = 10, model = "SISe3")
 ## Run the model and save the result
 result <- run(model)
 
-## Extract the sum all of susceptible individuals in each age
-## category in each node after each time step in the simulation
+## Extract the sum all of susceptible individuals in all age
+## categories in each node after each time step in the simulation
 susceptible(result)
 
 ## Extract the number of susceptible individuals in the first age

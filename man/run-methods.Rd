@@ -29,7 +29,7 @@ time-seed.}
 Run siminf stochastic simulation algorithm
 }
 \examples{
-## Create a demo 'SISe' model with 1 node and
+## Create a 'SISe' demo model with 1 node and
 ## initialize it to run over 1000 days.
 model <- demo_model(nodes = 1, days = 1000, model = "SISe")
 run(model)
