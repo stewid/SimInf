@@ -1,4 +1,4 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
 ## Copyright (C) 2015  Stefan Engblom
 ## Copyright (C) 2015  Stefan Widgren
@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-library(siminf)
+library(SimInf)
 
 ## Test that sample_select in events.c works
 
@@ -76,7 +76,7 @@ res <- tools::assertError(run(model, threads = 1))
 stopifnot(length(grep("Negative state detected.",
                       res[[1]]$message)) > 0)
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
     stopifnot(length(grep("Negative state detected.",
                           res[[1]]$message)) > 0)
@@ -137,7 +137,7 @@ res <- tools::assertError(run(model, threads = 1))
 stopifnot(length(grep("Negative state detected.",
                       res[[1]]$message)) > 0)
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
     stopifnot(length(grep("Negative state detected.",
                           res[[1]]$message)) > 0)
@@ -229,7 +229,7 @@ res <- tools::assertError(run(model, threads = 1))
 stopifnot(length(grep("Negative state detected.",
                       res[[1]]$message)) > 0)
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
     stopifnot(length(grep("Negative state detected.",
                           res[[1]]$message)) > 0)
@@ -321,7 +321,7 @@ res <- tools::assertError(run(model, threads = 1))
 stopifnot(length(grep("Negative state detected.",
                       res[[1]]$message)) > 0)
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
     stopifnot(length(grep("Negative state detected.",
                           res[[1]]$message)) > 0)
@@ -392,7 +392,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -469,7 +469,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -546,7 +546,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -624,7 +624,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))

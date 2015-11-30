@@ -1,4 +1,4 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
 ## Copyright (C) 2015  Stefan Engblom
 ## Copyright (C) 2015  Stefan Widgren
@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-library(siminf)
+library(SimInf)
 
 init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
                        S_1 = c(0, 1, 2, 3, 4, 5),
@@ -1510,15 +1510,15 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SISe3 run function fails for misspecified SISe3 model
-res <- tools::assertError(.Call(siminf:::SISe3_run, NULL, NULL, NULL))
+res <- tools::assertError(.Call(SimInf:::SISe3_run, NULL, NULL, NULL))
 stopifnot(length(grep("Invalid SISe3 model",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(.Call(siminf:::SISe3_run, "SISe3", NULL, NULL))
+res <- tools::assertError(.Call(SimInf:::SISe3_run, "SISe3", NULL, NULL))
 stopifnot(length(grep("Invalid SISe3 model",
                       res[[1]]$message)) > 0)
 
 setClass("DummySISe3", slots = c(a = "character"))
 model <- new("DummySISe3", a = "SISe3")
-res <- tools::assertError(.Call(siminf:::SISe3_run, model, NULL, NULL))
+res <- tools::assertError(.Call(SimInf:::SISe3_run, model, NULL, NULL))
 stopifnot(length(grep("Invalid SISe3 model: DummySISe3",
                       res[[1]]$message)) > 0)

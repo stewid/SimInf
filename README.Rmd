@@ -7,31 +7,31 @@ knitr::opts_chunk$set(
   fig.height = 8)
 ```
 
-[![Build Status](https://travis-ci.org/stewid/siminf.svg)](https://travis-ci.org/stewid/siminf)
-[![Build status](https://ci.appveyor.com/api/projects/status/pe68xiu1anxvet2n?svg=true)](https://ci.appveyor.com/project/stewid/siminf)
-[![Coverage Status](https://coveralls.io/repos/stewid/siminf/badge.svg?branch=master)](https://coveralls.io/r/stewid/siminf?branch=master)
+[![Build Status](https://travis-ci.org/stewid/SimInf.svg)](https://travis-ci.org/stewid/SimInf)
+[![Build status](https://ci.appveyor.com/api/projects/status/pe68xiu1anxvet2n?svg=true)](https://ci.appveyor.com/project/stewid/SimInf)
+[![Coverage Status](https://coveralls.io/repos/stewid/SimInf/badge.svg?branch=master)](https://coveralls.io/r/stewid/SimInf?branch=master)
 
-# siminf
+# SimInf
 
 A flexible and efficient framework for stochastic disease spread
 simulations in animal populations.
 
 ## Installation
 
-To install the development version of `siminf`, it's easiest to use
+To install the development version of `SimInf`, it's easiest to use
 the devtools package:
 
 ```{r eval = FALSE}
 # install.packages("devtools")
 library(devtools)
-install_github("stewid/siminf"")
+install_github("stewid/SimInf"")
 ```
 
 Another alternative is to use `git` and `make`
 
 ```{r eval = FALSE}
-$ git clone https://github.com/stewid/siminf.git
-$ cd siminf
+$ git clone https://github.com/stewid/SimInf.git
+$ cd SimInf
 $ make install
 ```
 
@@ -39,7 +39,7 @@ $ make install
 
 #### On a Debian based system
 
-Before installing `siminf` you need to install
+Before installing `SimInf` you need to install
 [The GNU Scientific Library](http://www.gnu.org/software/gsl/) (GSL).
 
 ```{r eval = FALSE}
@@ -70,9 +70,9 @@ Stefan Engblom).
 
 # License
 
-The `siminf` package is licensed under the GPLv3.
+The `SimInf` package is licensed under the GPLv3.
 
-- [LICENSE](LICENSE) - `siminf` package license
+- [LICENSE](LICENSE) - `SimInf` package license
 
 Any suggestions, bug reports, forks and pull requests are
 appreciated. Get in touch.

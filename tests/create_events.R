@@ -1,4 +1,4 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
 ## Copyright (C) 2015  Stefan Engblom
 ## Copyright (C) 2015  Stefan Widgren
@@ -16,166 +16,166 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-library(siminf)
+library(SimInf)
 
 ## Check 'nodes' argument to C function 'siminf_scheduled_events'
 nodes <- NULL
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
+    .Call(SimInf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
 stopifnot(length(grep("Invalid 'nodes' argument",
                       res[[1]]$message)) > 0)
 
 nodes <- integer(0)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
+    .Call(SimInf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
 stopifnot(length(grep("Invalid 'nodes' argument",
                       res[[1]]$message)) > 0)
 
 nodes <- 5
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
+    .Call(SimInf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
 stopifnot(length(grep("Invalid 'nodes' argument",
                       res[[1]]$message)) > 0)
 
 nodes <- NA_integer_
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
+    .Call(SimInf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
 stopifnot(length(grep("Invalid 'nodes' argument",
                       res[[1]]$message)) > 0)
 
 nodes <- c(5L, 10L)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
+    .Call(SimInf:::siminf_scheduled_events, nodes, 10L, rep(0.1, 10), rep(0.1, 10), NULL))
 stopifnot(length(grep("Invalid 'nodes' argument",
                       res[[1]]$message)) > 0)
 
 ## Check 'days' argument to C function 'siminf_scheduled_events'
 days <- NULL
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
 stopifnot(length(grep("Invalid 'days' argument",
                       res[[1]]$message)) > 0)
 
 days <- integer()
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
 stopifnot(length(grep("Invalid 'days' argument",
                       res[[1]]$message)) > 0)
 
 days <- 5
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
 stopifnot(length(grep("Invalid 'days' argument",
                       res[[1]]$message)) > 0)
 
 days <- NA_integer_
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
 stopifnot(length(grep("Invalid 'days' argument",
                       res[[1]]$message)) > 0)
 
 days <- c(5L, 10L)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, days, 0.1, 0.1, NULL))
 stopifnot(length(grep("Invalid 'days' argument",
                       res[[1]]$message)) > 0)
 
 ## Check 'p_edge' argument to C function 'siminf_scheduled_events'
 p_edge <- NULL
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
 stopifnot(length(grep("Invalid 'p_edge' argument",
                       res[[1]]$message)) > 0)
 
 p_edge <- numeric(0)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
 stopifnot(length(grep("Invalid 'p_edge' argument",
                       res[[1]]$message)) > 0)
 
 p_edge <- 5
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
 stopifnot(length(grep("Invalid 'p_edge' argument",
                       res[[1]]$message)) > 0)
 
 p_edge <- NA_real_
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
 stopifnot(length(grep("Invalid 'p_edge' argument",
                       res[[1]]$message)) > 0)
 
 p_edge <- c(rep(0.1, 4), NA_real_)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
 stopifnot(length(grep("Invalid 'p_edge' argument",
                       res[[1]]$message)) > 0)
 
 p_edge <- c(rep(0.1, 4), Inf)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
 stopifnot(length(grep("Invalid 'p_edge' argument",
                       res[[1]]$message)) > 0)
 
 p_edge <- rep(0.0, 5)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
 stopifnot(length(grep("Invalid 'p_edge': Must be in interval 0 < p_edge < 1",
                       res[[1]]$message)) > 0)
 
 p_edge <- rep(1.0, 5)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, p_edge, rep(0.1, 5), NULL))
 stopifnot(length(grep("Invalid 'p_edge': Must be in interval 0 < p_edge < 1",
                       res[[1]]$message)) > 0)
 
 ## Check 'mu' argument to C function 'siminf_scheduled_events'
 mu <- NULL
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
 stopifnot(length(grep("Invalid 'mu' argument",
                       res[[1]]$message)) > 0)
 
 mu <- numeric(0)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
 stopifnot(length(grep("Invalid 'mu' argument",
                       res[[1]]$message)) > 0)
 
 mu <- 5
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
 stopifnot(length(grep("Invalid 'mu' argument",
                       res[[1]]$message)) > 0)
 
 mu <- NA_real_
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
 stopifnot(length(grep("Invalid 'mu' argument",
                       res[[1]]$message)) > 0)
 
 mu <- c(rep(0.1, 4), NA_real_)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
 stopifnot(length(grep("Invalid 'mu' argument",
                       res[[1]]$message)) > 0)
 
 mu <- c(rep(0.1, 4), Inf)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 5L, rep(0.1, 5), mu, NULL))
 stopifnot(length(grep("Invalid 'mu' argument",
                       res[[1]]$message)) > 0)
 
 ## Check 'seed' argument to C function 'siminf_scheduled_events'
 seed <- NA_integer_
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 10L, rep(0.1, 10), rep(0.1, 10), seed))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 10L, rep(0.1, 10), rep(0.1, 10), seed))
 stopifnot(length(grep("Invalid 'seed' argument",
                       res[[1]]$message)) > 0)
 
 seed <- c(5L, 10L)
 res <- tools::assertError(
-    .Call(siminf:::siminf_scheduled_events, 10L, 10L, rep(0.1, 10), rep(0.1, 10), seed))
+    .Call(SimInf:::siminf_scheduled_events, 10L, 10L, rep(0.1, 10), rep(0.1, 10), seed))
 stopifnot(length(grep("Invalid 'seed' argument",
                       res[[1]]$message)) > 0)
 
@@ -231,5 +231,5 @@ select = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
 "node", "dest", "n", "select", "shift"))
 
 events_obs <- .Call(
-    siminf:::siminf_scheduled_events, 10L, 10L, rep(0.1, 10), rep(4.25, 10), 123L)
+    SimInf:::siminf_scheduled_events, 10L, 10L, rep(0.1, 10), rep(4.25, 10), 123L)
 stopifnot(identical(events_obs, events_exp))

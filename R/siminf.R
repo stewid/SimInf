@@ -1,4 +1,4 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
 ## Copyright (C) 2015  Stefan Engblom
 ## Copyright (C) 2015  Stefan Widgren
@@ -19,9 +19,9 @@
 ##' A Framework for Stochastic Disease Spread Simulations
 ##'
 ##' @docType package
-##' @name siminf
+##' @name SimInf
 ##' @import methods
-##' @useDynLib siminf, .registration=TRUE
+##' @useDynLib SimInf, .registration=TRUE
 NULL
 
 ##' Unload hook function
@@ -31,5 +31,5 @@ NULL
 ##' @keywords internal
 .onUnload <- function (libpath)
 {
-    library.dynam.unload("siminf", libpath)
+    library.dynam.unload("SimInf", libpath)
 }

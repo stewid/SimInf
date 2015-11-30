@@ -1,4 +1,4 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
 ## Copyright (C) 2015  Stefan Engblom
 ## Copyright (C) 2015  Stefan Widgren
@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-library(siminf)
+library(SimInf)
 
 res <- tools::assertError(demo_model(nodes = 1:2))
 stopifnot(length(grep("Length of 'nodes' must be one.",

@@ -1,4 +1,4 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
 ## Copyright (C) 2015  Stefan Engblom
 ## Copyright (C) 2015  Stefan Widgren
@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-library(siminf)
+library(SimInf)
 
 ## Check measures for a SISe model
 model <- SISe(init    = data.frame(id = 0, S = 99, I = 1),
@@ -65,7 +65,7 @@ stopifnot(identical(
     prevalence(result)[i],
     prevalence(result, by = 2)))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     result_omp
 
@@ -120,7 +120,7 @@ stopifnot(identical(
     prevalence(result)[i],
     prevalence(result, by = 2)))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     result_omp
 

@@ -1,4 +1,4 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
 ## Copyright (C) 2015  Stefan Engblom
 ## Copyright (C) 2015  Stefan Widgren
@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-library(siminf)
+library(SimInf)
 
 ## 1 Node
 ## 1 Age category
@@ -58,7 +58,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -136,7 +136,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -201,7 +201,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -304,7 +304,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -404,7 +404,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -504,7 +504,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -606,7 +606,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -668,7 +668,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (siminf:::have_openmp()) {
+if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -682,60 +682,60 @@ if (siminf:::have_openmp()) {
 }
 
 ## Check extraction of seed parameter
-.Call(siminf:::SISe_run,
+.Call(SimInf:::SISe_run,
       demo_model(model = "SISe"),
       NULL,
       NULL)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 NULL,
                                 "1"))
 stopifnot(length(grep("Invalid 'seed' value",
                       res[[1]]$message)) > 0)
 
-.Call(siminf:::SISe_run,
+.Call(SimInf:::SISe_run,
       demo_model(model = "SISe"),
       NULL,
       numeric(0))
 
-.Call(siminf:::SISe_run,
+.Call(SimInf:::SISe_run,
       demo_model(model = "SISe"),
       NULL,
       integer(0))
 
-.Call(siminf:::SISe_run,
+.Call(SimInf:::SISe_run,
       demo_model(model = "SISe"),
       NULL,
       1L)
 
-.Call(siminf:::SISe_run,
+.Call(SimInf:::SISe_run,
       demo_model(model = "SISe"),
       NULL,
       1)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 NULL,
                                 NA_integer_))
 stopifnot(length(grep("Invalid 'seed' value",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 NULL,
                                 NA_real_))
 stopifnot(length(grep("Invalid 'seed' value",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 NULL,
                                 c(1L, 2L)))
 stopifnot(length(grep("Invalid 'seed' value",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 NULL,
                                 c(1, 2)))
@@ -743,64 +743,64 @@ stopifnot(length(grep("Invalid 'seed' value",
                       res[[1]]$message)) > 0)
 
 ## Check extraction of number of threads
-.Call(siminf:::SISe_run,
+.Call(SimInf:::SISe_run,
       demo_model(model = "SISe"),
       NULL,
       NULL)
 
-.Call(siminf:::SISe_run,
+.Call(SimInf:::SISe_run,
       demo_model(model = "SISe"),
       1L,
       NULL)
 
-.Call(siminf:::SISe_run,
+.Call(SimInf:::SISe_run,
       demo_model(model = "SISe"),
       1,
       NULL)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 -1L,
                                 NULL))
 stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 -1,
                                 NULL))
 stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 "1",
                                 NULL))
 stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 c(1L, 1L),
                                 NULL))
 stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 c(1, 1),
                                 NULL))
 stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 NA_integer_,
                                 NULL))
 stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call(siminf:::SISe_run,
+res <- tools::assertError(.Call(SimInf:::SISe_run,
                                 demo_model(model = "SISe"),
                                 NA_real_,
                                 NULL))

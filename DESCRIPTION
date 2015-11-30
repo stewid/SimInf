@@ -1,4 +1,4 @@
-Package: siminf
+Package: SimInf
 Title: A Framework for Stochastic Disease Spread Simulations
 Version: 0.2
 Author: Stefan Widgren (National Veterinary Institute, Sweden),
@@ -17,8 +17,8 @@ Acknowledgement: This work was financially supported by the Swedish
     Research Council within the UPMARC Linnaeus center of Excellence
     (Pavol Bauer and Stefan Engblom).
 License: GPL-3
-URL: https://github.com/stewid/siminf
-BugReports: https://github.com/stewid/siminf/issues
+URL: https://github.com/stewid/SimInf
+BugReports: https://github.com/stewid/SimInf/issues
 Type: Package
 LazyData: true
 Biarch: true
