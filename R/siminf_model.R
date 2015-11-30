@@ -74,7 +74,6 @@
 ##' }
 ##' @name siminf_model-class
 ##' @include scheduled_events.R
-##' @docType class
 ##' @keywords classes
 ##' @keywords methods
 ##' @export
