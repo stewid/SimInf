@@ -74,7 +74,6 @@
 ##' }
 ##' @name siminf_model-class
 ##' @include scheduled_events.R
-##' @keywords classes
 ##' @keywords methods
 ##' @export
 ##' @import Matrix

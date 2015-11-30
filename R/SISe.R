@@ -22,7 +22,6 @@
 ##' @name SISe-class
 ##' @include siminf_model.R
 ##' @include AllGenerics.R
-##' @keywords classes
 ##' @export
 setClass("SISe", contains = c("siminf_model"))
 

@@ -62,6 +62,5 @@ Class to handle the siminf data model
   }
 }
 }
-\keyword{classes}
 \keyword{methods}
 
