@@ -72,7 +72,6 @@
 ##'     Scheduled events \code{"\linkS4class{scheduled_events}"}
 ##'   }
 ##' }
-##' @name siminf_model-class
 ##' @include scheduled_events.R
 ##' @keywords methods
 ##' @export

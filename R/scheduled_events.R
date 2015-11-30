@@ -90,7 +90,6 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     event types.
 ##'   }
 ##' }
-##' @name scheduled_events-class
 ##' @keywords methods
 ##' @import methods
 ##' @import Matrix

@@ -19,7 +19,6 @@
 ##' Class \code{"SISe"}
 ##'
 ##' Class to handle the SISe \code{\link{siminf_model}}.
-##' @name SISe-class
 ##' @include siminf_model.R
 ##' @include AllGenerics.R
 ##' @export
