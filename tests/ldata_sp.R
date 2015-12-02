@@ -48,6 +48,13 @@ d <- new("dgCMatrix",
                1.4142135623731),
          factors = list())
 
+## Check 'distance_matrix' method
+d_obs <- distance_matrix(1:10, 1:10, 3)
+stopifnot(is(d_obs, "dgCMatrix"))
+stopifnot(identical(d_obs@i, d@i))
+stopifnot(identical(d_obs@p, d@p))
+stopifnot(all(abs(d_obs@x - d@x) < tol))
+
 ## Check 'data' argument to C function 'siminf_ldata_sp'
 res <- tools::assertError(
     .Call(SimInf:::siminf_ldata_sp, NULL, d))
