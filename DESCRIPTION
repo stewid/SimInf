@@ -2,8 +2,8 @@ Package: SimInf
 Title: A Framework for Stochastic Disease Spread Simulations
 Version: 0.2
 Author: Stefan Widgren (National Veterinary Institute, Sweden),
-        Pavol Bauer (Uppsala University, Sweden),
-        Stefan Engblom (Uppsala University, Sweden)
+    Pavol Bauer (Uppsala University, Sweden),
+    Stefan Engblom (Uppsala University, Sweden)
 Maintainer: Stefan Widgren <stefan.widgren@sva.se>
 Description: Livestock movements are important for the spread of many
     infectious diseases in animal populations. SimInf is an efficient
@@ -39,5 +39,6 @@ Collate:
     'SISe3.R'
     'demo_model.R'
     'dependencies.R'
+    'distance.R'
     'siminf.R'
 RoxygenNote: 5.0.1
