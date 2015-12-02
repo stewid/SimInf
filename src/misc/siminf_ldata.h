@@ -1,6 +1,5 @@
 /*
- *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
+ *  siminf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Stefan Engblom
  *  Copyright (C) 2015  Stefan Widgren
  *
@@ -18,32 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <R_ext/Rdynload.h>
+#ifndef INCLUDE_SIMINF_LDATA_H
+#define INCLUDE_SIMINF_LDATA_H
 
-#include "siminf_events.h"
-#include "siminf_ldata.h"
-#include "SISe.h"
-#include "SISe3.h"
+#include <Rdefines.h>
 
-/**
-* List model run functions.
-*/
-static const R_CallMethodDef callMethods[] =
-{
-    {"siminf_scheduled_events", (DL_FUNC)&siminf_scheduled_events, 5},
-    {"siminf_ldata_sp", (DL_FUNC)&siminf_ldata_sp, 2},
-    {"SISe_run", (DL_FUNC)&SISe_run, 3},
-    {"SISe3_run", (DL_FUNC)&SISe3_run, 3},
-    {NULL, NULL, 0}
-};
+SEXP siminf_ldata_sp(SEXP data, SEXP distance);
 
-/**
-* Register routines to R.
-*
-* @param info Information about the DLL being loaded
-*/
-void
-R_init_SimInf(DllInfo *info)
-{
-    R_registerRoutines(info, NULL, callMethods, NULL, NULL);
-}
+#endif
