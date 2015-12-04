@@ -37,6 +37,7 @@ Collate:
     'siminf_model.R'
     'SISe.R'
     'SISe3.R'
+    'SISe_sp.R'
     'demo_model.R'
     'dependencies.R'
     'distance.R'
