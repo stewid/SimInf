@@ -1,5 +1,5 @@
 /*
- *  siminf, a framework for stochastic disease spread simulations
+ *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
  *  Copyright (C) 2015  Stefan Engblom
  *  Copyright (C) 2015  Stefan Widgren
@@ -184,8 +184,10 @@ double SISe3_I_3_to_S_3(
 /**
  * Update environmental infectious pressure phi
  *
+ * @param v_new The continuous state vector in node after the post
+ * time step
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The current continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param node The node.
@@ -194,8 +196,9 @@ double SISe3_I_3_to_S_3(
  * @return 1 if needs update, else 0.
  */
 int SISe3_post_time_step(
+    double *v_new,
     const int *u,
-    double *v,
+    const double *v,
     const double *ldata,
     const double *gdata,
     int node,
@@ -209,18 +212,18 @@ int SISe3_post_time_step(
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */
-    v[PHI] = siminf_forward_euler(
+    v_new[PHI] = siminf_forward_euler(
         phi, day,
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
     if ((I_n + S_n) > 0.0)
-        v[PHI] += gdata[ALPHA] * I_n / (I_n + S_n) + gdata[EPSILON];
+        v_new[PHI] += gdata[ALPHA] * I_n / (I_n + S_n) + gdata[EPSILON];
     else
-        v[PHI] += gdata[EPSILON];
+        v_new[PHI] += gdata[EPSILON];
 
     /* 1 if needs update */
-    return phi != v[PHI];
+    return phi != v_new[PHI];
 }
 
 /**

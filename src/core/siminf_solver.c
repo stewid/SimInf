@@ -1,5 +1,5 @@
 /*
- *  siminf, a framework for stochastic disease spread simulations
+ *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
  *  Copyright (C) 2015  Stefan Engblom
  *  Copyright (C) 2015  Stefan Widgren
@@ -144,6 +144,8 @@ typedef struct siminf_thread_args
                        *   state of the system at tspan(j). */
     double *v;        /**< Vector with continuous state in each node
                        *   in thread. */
+    double *v_new;   /**< Vector with continuous state in each node
+                       *   in thread after post time step function. */
     const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
                           *   local data vector for node #j. */
     const double *gdata; /**< The global data vector. */
@@ -185,6 +187,7 @@ typedef struct siminf_thread_args
 int n_thread = 0;
 int *uu = NULL;
 double *vv = NULL;
+double *vv_new = NULL;
 int *update_node = NULL;
 siminf_thread_args *sim_args = NULL;
 
@@ -782,11 +785,33 @@ static int siminf_solver()
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
-                    if (sa.pts_fun(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
+                    sa.update_node[node] |=
+                        sa.pts_fun(&sa.v_new[node * sa.Nd],
+                                   &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
                                    &sa.ldata[node * sa.Nld], sa.gdata,
-                                   sa.Ni + node, sa.tt, sa.sd[node]) ||
-                        sa.update_node[node])
-                    {
+                                   sa.Ni + node, sa.tt, sa.sd[node]);
+                }
+
+                *&sim_args[i] = sa;
+            }
+
+            #pragma omp barrier
+
+            #pragma omp master
+            {
+                siminf_thread_args sa = *&sim_args[0];
+                memcpy(&sa.v[0], &sa.v_new[0], sa.Ntot * sa.Nd * sizeof(double));
+            }
+
+            #pragma omp barrier
+
+            #pragma omp for
+            for (i = 0; i < n_thread; i++) {
+                int node;
+                siminf_thread_args sa = *&sim_args[i];
+
+                for (node = 0; node < sa.Nn; node++) {
+                    if (sa.update_node[node]) {
                         /* Update transition rates */
                         int j = 0;
                         double delta = 0.0, old_t_rate = sa.sum_t_rate[node];
@@ -969,7 +994,8 @@ int siminf_run_solver(
 
     /* Set continuous state to the initial state in each node. */
     vv = malloc(Nn * Nd * sizeof(double));
-    if (!vv) {
+    vv_new = malloc(Nn * Nd * sizeof(double));
+    if (!vv || !vv_new) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
@@ -1042,6 +1068,7 @@ int siminf_run_solver(
         sim_args[i].u = &uu[sim_args[i].Ni * Nc];
         sim_args[i].V = V;
         sim_args[i].v = &vv[sim_args[i].Ni * Nd];
+        sim_args[i].v_new = &vv_new[sim_args[i].Ni * Nd];
         sim_args[i].ldata = &ldata[sim_args[i].Ni * sim_args[i].Nld];
         sim_args[i].gdata = gdata;
         sim_args[i].sd = &sd[sim_args[i].Ni];
@@ -1106,6 +1133,11 @@ cleanup:
     if (vv) {
         free(vv);
         vv = NULL;
+    }
+
+    if (vv_new) {
+        free(vv_new);
+        vv_new = NULL;
     }
 
     if (update_node) {
