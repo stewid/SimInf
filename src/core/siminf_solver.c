@@ -777,6 +777,7 @@ static int siminf_solver()
 
             #pragma omp for
             for (i = 0; i < n_thread; i++) {
+                double *v_tmp;
                 int node;
                 siminf_thread_args sa = *&sim_args[i];
 
@@ -785,33 +786,12 @@ static int siminf_solver()
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
-                    sa.update_node[node] |=
-                        sa.pts_fun(&sa.v_new[node * sa.Nd],
+                    if (sa.pts_fun(&sa.v_new[node * sa.Nd],
                                    &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
                                    &sa.ldata[node * sa.Nld], sa.gdata,
-                                   sa.Ni + node, sa.tt, sa.sd[node]);
-                }
-
-                *&sim_args[i] = sa;
-            }
-
-            #pragma omp barrier
-
-            #pragma omp master
-            {
-                siminf_thread_args sa = *&sim_args[0];
-                memcpy(&sa.v[0], &sa.v_new[0], sa.Ntot * sa.Nd * sizeof(double));
-            }
-
-            #pragma omp barrier
-
-            #pragma omp for
-            for (i = 0; i < n_thread; i++) {
-                int node;
-                siminf_thread_args sa = *&sim_args[i];
-
-                for (node = 0; node < sa.Nn; node++) {
-                    if (sa.update_node[node]) {
+                                   sa.Ni + node, sa.tt, sa.sd[node]) ||
+                        sa.update_node[node])
+                    {
                         /* Update transition rates */
                         int j = 0;
                         double delta = 0.0, old_t_rate = sa.sum_t_rate[node];
@@ -821,7 +801,7 @@ static int siminf_solver()
                             delta += (sa.t_rate[node * sa.Nt + j] =
                                       (*sa.t_fun[j])(
                                           &sa.u[node * sa.Nc],
-                                          &sa.v[node * sa.Nd],
+                                          &sa.v_new[node * sa.Nd],
                                           &sa.ldata[node * sa.Nld],
                                           sa.gdata, sa.tt, sa.sd[node])) - old;
                         }
@@ -845,7 +825,12 @@ static int siminf_solver()
                     }
                 }
 
-                /* (5) The global time now equals next_day. */
+                /* (5) The global time now equals next_day. Swap the
+                 * pointers to the continuous state variable so that
+                 * 'v' equals 'v_new'. */
+                v_tmp = sa.v;
+                sa.v = sa.v_new;
+                sa.v_new = v_tmp;
                 sa.tt = sa.next_day;
                 sa.next_day += 1.0;
 
