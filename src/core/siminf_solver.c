@@ -186,8 +186,8 @@ typedef struct siminf_thread_args
 /* Shared variables */
 int n_thread = 0;
 int *uu = NULL;
-double *vv = NULL;
-double *vv_new = NULL;
+double *vv_1 = NULL;
+double *vv_2 = NULL;
 int *update_node = NULL;
 siminf_thread_args *sim_args = NULL;
 
@@ -993,13 +993,13 @@ int siminf_run_solver(
     memcpy(uu, u0, Nn * Nc * sizeof(int));
 
     /* Set continuous state to the initial state in each node. */
-    vv = malloc(Nn * Nd * sizeof(double));
-    vv_new = malloc(Nn * Nd * sizeof(double));
-    if (!vv || !vv_new) {
+    vv_1 = malloc(Nn * Nd * sizeof(double));
+    vv_2 = malloc(Nn * Nd * sizeof(double));
+    if (!vv_1 || !vv_2) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
-    memcpy(vv, v0, Nn * Nd * sizeof(double));
+    memcpy(vv_1, v0, Nn * Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
@@ -1067,8 +1067,8 @@ int siminf_run_solver(
         sim_args[i].U = U;
         sim_args[i].u = &uu[sim_args[i].Ni * Nc];
         sim_args[i].V = V;
-        sim_args[i].v = &vv[sim_args[i].Ni * Nd];
-        sim_args[i].v_new = &vv_new[sim_args[i].Ni * Nd];
+        sim_args[i].v = &vv_1[sim_args[i].Ni * Nd];
+        sim_args[i].v_new = &vv_2[sim_args[i].Ni * Nd];
         sim_args[i].ldata = &ldata[sim_args[i].Ni * sim_args[i].Nld];
         sim_args[i].gdata = gdata;
         sim_args[i].sd = &sd[sim_args[i].Ni];
@@ -1130,14 +1130,14 @@ cleanup:
         uu = NULL;
     }
 
-    if (vv) {
-        free(vv);
-        vv = NULL;
+    if (vv_1) {
+        free(vv_1);
+        vv_1 = NULL;
     }
 
-    if (vv_new) {
-        free(vv_new);
-        vv_new = NULL;
+    if (vv_2) {
+        free(vv_2);
+        vv_2 = NULL;
     }
 
     if (update_node) {
