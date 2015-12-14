@@ -110,7 +110,7 @@ SISe_sp <- function(init,
 
     ## Check distance matrix
     if (is.null(distance))
-        stop("Missing 'distance' argument")
+        stop("'distance' is missing")
     if (!is(distance, "dgCMatrix"))
         stop("The 'distance' argument must be of type 'dgCMatrix'")
     if (any(distance < 0))
