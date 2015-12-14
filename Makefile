@@ -32,18 +32,18 @@ README.md: README.Rmd
 	Rscript -e "library(knitr); knit('README.Rmd')"
 
 # Build and check package
-check: clean
+check:
 	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
 	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran \
 	--no-manual --no-vignettes --no-build-vignettes $(PKG_TAR)
 
 # Build and check package with gctorture
-check_gctorture: clean
+check_gctorture:
 	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
 	cd .. && R CMD check --no-manual --no-vignettes --no-build-vignettes --use-gct $(PKG_TAR)
 
 # Build and check package with valgrind
-check_valgrind: clean
+check_valgrind:
 	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
 	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran \
 	--no-manual --no-vignettes --no-build-vignettes --use-valgrind $(PKG_TAR)
@@ -58,21 +58,6 @@ configure: configure.ac
 	chmod +x ./configure
 
 clean:
-	-rm -f config.log
-	-rm -f config.status
-	-rm -rf autom4te.cache
-	-rm -f local320.zip
-	-rm -f gsl.zip
-	-rm -f src/Makevars
-	-rm -f src/*.o
-	-rm -f src/core/*.o
-	-rm -f src/events/*.o
-	-rm -f src/misc/*.o
-	-rm -f src/models/*.o
-	-rm -f src/*.so
-	-rm -rf src-x64
-	-rm -rf src-i386
-	-rm -rf gsl
-	-rm -rf src/gsl
+	./cleanup
 
 .PHONY: install roxygen pdf check check_gctorture check_valgrind clean
