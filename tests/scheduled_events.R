@@ -19,6 +19,9 @@
 library(SimInf)
 library(Matrix)
 
+## For debugging
+sessionInfo()
+
 E <- Matrix(c(1, 0, 0, 1, 0, 0,
               0, 0, 0, 1, 0, 0,
               0, 1, 0, 0, 1, 0,

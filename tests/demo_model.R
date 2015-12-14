@@ -18,6 +18,9 @@
 
 library(SimInf)
 
+## For debugging
+sessionInfo()
+
 res <- tools::assertError(demo_model(nodes = 1:2))
 stopifnot(length(grep("Length of 'nodes' must be one.",
                       res[[1]]$message)) > 0)

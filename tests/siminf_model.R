@@ -19,6 +19,9 @@
 library(SimInf)
 library(Matrix)
 
+## For debugging
+sessionInfo()
+
 ## Initialize test data
 S <- Matrix(c(-1,  0,  0,
                1,  0,  0,

@@ -18,6 +18,9 @@
 
 library(SimInf)
 
+## For debugging
+sessionInfo()
+
 ## Test that sample_select in events.c works
 
 ## 2 Nodes

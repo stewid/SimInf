@@ -18,6 +18,9 @@
 
 library(SimInf)
 
+## For debugging
+sessionInfo()
+
 ## Check 'nodes' argument to C function 'siminf_scheduled_events'
 nodes <- NULL
 res <- tools::assertError(

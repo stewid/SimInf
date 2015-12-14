@@ -18,6 +18,9 @@
 
 library(SimInf)
 
+## For debugging
+sessionInfo()
+
 ## Define a tolerance
 tol = 1e-8
 

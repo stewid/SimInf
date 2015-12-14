@@ -18,6 +18,9 @@
 
 library(SimInf)
 
+## For debugging
+sessionInfo()
+
 ## Check measures for a SISe model
 model <- SISe(init    = data.frame(id = 0, S = 99, I = 1),
               tspan   = 0:1000,

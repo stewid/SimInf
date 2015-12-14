@@ -18,6 +18,9 @@
 
 library(SimInf)
 
+## For debugging
+sessionInfo()
+
 init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
                        S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),

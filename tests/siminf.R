@@ -18,6 +18,9 @@
 
 library(SimInf)
 
+## For debugging
+sessionInfo()
+
 ## 1 Node
 ## 1 Age category
 ## 2 Disease-states: Susceptible & Infected
