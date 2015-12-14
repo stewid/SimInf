@@ -777,7 +777,6 @@ static int siminf_solver()
 
             #pragma omp for
             for (i = 0; i < n_thread; i++) {
-                double *v_tmp;
                 int node;
                 siminf_thread_args sa = *&sim_args[i];
 
@@ -828,9 +827,6 @@ static int siminf_solver()
                 /* (5) The global time now equals next_day. Swap the
                  * pointers to the continuous state variable so that
                  * 'v' equals 'v_new'. */
-                v_tmp = sa.v;
-                sa.v = sa.v_new;
-                sa.v_new = v_tmp;
                 sa.tt = sa.next_day;
                 sa.next_day += 1.0;
 
@@ -845,7 +841,7 @@ static int siminf_solver()
 
                         /* Copy continuous state to V */
                         memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.it++) + sa.Ni)],
-                               sa.v, sa.Nn * sa.Nd * sizeof(double));
+                               sa.v_new, sa.Nn * sa.Nd * sizeof(double));
                     }
                 }
 
@@ -855,6 +851,9 @@ static int siminf_solver()
 
         /* Check for error. */
         for (k = 0; k < n_thread; k++) {
+            double *v_tmp = sim_args[k].v;
+            sim_args[k].v = sim_args[k].v_new;
+            sim_args[k].v_new = v_tmp;
             if (sim_args[k].errcode)
                 return sim_args[k].errcode;
         }
