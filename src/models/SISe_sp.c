@@ -21,16 +21,14 @@
 #include "siminf_euler.h"
 
 /* Offset in integer compartment state vector */
-enum {S, I, N_COMPARTMENTS};
-
-/* Offset in real-valued compartment state vector */
-enum {PHI};
+enum {S, I};
 
 /* Offsets in node local data (ldata) to parameters in the model */
 enum {END_T1, END_T2, END_T3, END_T4, NEIGHBOR};
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON, D};
+enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4,
+      EPSILON, COUPLING};
 
 /**
  * susceptible to infected: S -> I
@@ -48,10 +46,11 @@ double SISe_sp_S_to_I(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON] * v[PHI] * u[S];
+    return gdata[UPSILON] * v[node] * u[S];
 }
 
 /**
@@ -70,6 +69,7 @@ double SISe_sp_I_to_S(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
@@ -106,22 +106,22 @@ int SISe_sp_post_time_step(
     const int day = (int)t % 365;
     const double I_n = u[I];
     const double n = u[S] + I_n;
-    const double phi = v[PHI];
+    const double phi = v[node];
     int i, j;
 
     /* Time dependent decay (beta) of the environmental infectious
      * pressure in each of the four intervals of the year. Forward
      * Euler step. */
-    v_new[PHI] = siminf_forward_euler(
+    v_new[node] = siminf_forward_euler(
         phi, day,
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
     /* Add contribution from infected individuals */
     if (n > 0.0)
-        v_new[PHI] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
+        v_new[node] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
     else
-        v_new[PHI] += gdata[EPSILON];
+        v_new[node] += gdata[EPSILON];
 
     /* Coupling between neighboring farms. */
     /* i is the offset in local data to the first neighbor. */
@@ -129,9 +129,7 @@ int SISe_sp_post_time_step(
     i = NEIGHBOR;
     j = (int)ldata[i];
     while (j >= 0) {
-        const double phi_j = (&v[0] + j - node)[PHI];
-
-        v_new[PHI] += (phi_j - phi) * gdata[D] * ldata[i + 1];
+        v_new[node] += (v[j] - phi) * gdata[COUPLING] * ldata[i + 1];
 
         /* Move to next neighbor pair (index, value) */
         i += 2;
@@ -139,7 +137,7 @@ int SISe_sp_post_time_step(
     }
 
     /* 1 if needs update */
-    return phi != v_new[PHI];
+    return phi != v_new[node];
 }
 
 /**

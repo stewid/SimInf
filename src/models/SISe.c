@@ -24,21 +24,11 @@
 /* Offset in integer compartment state vector */
 enum {S, I};
 
-/* Offset in real-valued compartment state vector */
-enum {PHI};
-
 /* Offsets in node local data (ldata) to parameters in the model */
 enum {END_T1, END_T2, END_T3, END_T4};
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {UPSILON,
-      GAMMA,
-      ALPHA,
-      BETA_T1,
-      BETA_T2,
-      BETA_T3,
-      BETA_T4,
-      EPSILON};
+enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON};
 
 /**
  * susceptible to infected: S -> I
@@ -56,10 +46,11 @@ double SISe_S_to_I(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON] * v[PHI] * u[S];
+    return gdata[UPSILON] * v[node] * u[S];
 }
 
 /**
@@ -78,6 +69,7 @@ double SISe_I_to_S(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
@@ -109,24 +101,24 @@ int SISe_post_time_step(
     int sd)
 {
     const int day = (int)t % 365;
-    const double S_n = u[S];
     const double I_n = u[I];
-    const double phi = v[PHI];
+    const double n = u[S] + I_n;
+    const double phi = v[node];
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */
-    v_new[PHI] = siminf_forward_euler(
+    v_new[node] = siminf_forward_euler(
         phi, day,
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
-    if ((I_n + S_n) > 0.0)
-        v_new[PHI] += gdata[ALPHA] * I_n / (I_n + S_n) + gdata[EPSILON];
+    if (n > 0.0)
+        v_new[node] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
     else
-        v_new[PHI] += gdata[EPSILON];
+        v_new[node] += gdata[EPSILON];
 
     /* 1 if needs update */
-    return phi != v_new[PHI];
+    return phi != v_new[node];
 }
 
 /**

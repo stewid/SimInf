@@ -22,32 +22,14 @@
 #include "siminf_euler.h"
 
 /* Offset in integer compartment state vector */
-enum {S_1,
-      I_1,
-      S_2,
-      I_2,
-      S_3,
-      I_3};
-
-/* Offset in real-valued compartment state vector */
-enum {PHI};
+enum {S_1, I_1, S_2, I_2, S_3, I_3};
 
 /* Offsets in node local data (ldata) to parameters in the model */
 enum {END_T1, END_T2, END_T3, END_T4};
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {UPSILON_1,
-      UPSILON_2,
-      UPSILON_3,
-      GAMMA_1,
-      GAMMA_2,
-      GAMMA_3,
-      ALPHA,
-      BETA_T1,
-      BETA_T2,
-      BETA_T3,
-      BETA_T4,
-      EPSILON};
+enum {UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
+      ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON};
 
 /**
  * In age category 1; susceptible to infected: S -> I
@@ -65,10 +47,11 @@ double SISe3_S_1_to_I_1(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON_1] * v[PHI] * u[S_1];
+    return gdata[UPSILON_1] * v[node] * u[S_1];
 }
 
 /**
@@ -87,10 +70,11 @@ double SISe3_S_2_to_I_2(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON_2] * v[PHI] * u[S_2];
+    return gdata[UPSILON_2] * v[node] * u[S_2];
 }
 
 /**
@@ -109,10 +93,11 @@ double SISe3_S_3_to_I_3(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON_3] * v[PHI] * u[S_3];
+    return gdata[UPSILON_3] * v[node] * u[S_3];
 }
 
 /**
@@ -131,6 +116,7 @@ double SISe3_I_1_to_S_1(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
@@ -153,6 +139,7 @@ double SISe3_I_2_to_S_2(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
@@ -175,6 +162,7 @@ double SISe3_I_3_to_S_3(
     const double *v,
     const double *ldata,
     const double *gdata,
+    int node,
     double t,
     int sd)
 {
@@ -206,24 +194,24 @@ int SISe3_post_time_step(
     int sd)
 {
     const int day = (int)t % 365;
-    const double S_n = u[S_1] + u[S_2] + u[S_3];
     const double I_n = u[I_1] + u[I_2] + u[I_3];
-    const double phi = v[PHI];
+    const double n = I_n + u[S_1] + u[S_2] + u[S_3];
+    const double phi = v[node];
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */
-    v_new[PHI] = siminf_forward_euler(
+    v_new[node] = siminf_forward_euler(
         phi, day,
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
-    if ((I_n + S_n) > 0.0)
-        v_new[PHI] += gdata[ALPHA] * I_n / (I_n + S_n) + gdata[EPSILON];
+    if (n > 0.0)
+        v_new[node] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
     else
-        v_new[PHI] += gdata[EPSILON];
+        v_new[node] += gdata[EPSILON];
 
     /* 1 if needs update */
-    return phi != v_new[PHI];
+    return phi != v_new[node];
 }
 
 /**
