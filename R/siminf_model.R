@@ -22,51 +22,62 @@
 ##' @section Slots:
 ##' \describe{
 ##'   \item{G}{
-##'     Sparse matrix (\eqn{Nt \times Nt}) of object class
-##'     \code{"\linkS4class{dgCMatrix}"}.  A non-zeros entry in element
-##'     \code{i} of column \code{j} indicates that propensity \code{i}
-##'     needs to be recalculated if the transition \code{j} occurs.
+##'     Dependency graph that indicates the transition rates that need
+##'     to be updated after a given state transition has occured.
+##'     A non-zero entry in element \code{G[i, i]} indicates that transition
+##'     rate \code{i} needs to be recalculated if the state transition
+##'     \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt}) of object class
+##'     \code{"\linkS4class{dgCMatrix}"}.
 ##'   }
 ##'   \item{S}{
+##'     Each column corresponds to a transition, and execution of state
+##'     transition \code{j} amounts to adding the \code{S[, j]} to the
+##'     state vector of the node where the state transition occurred.
 ##'     Sparse matrix (\eqn{Nc \times Nt}) of object class
-##'     \code{"\linkS4class{dgCMatrix}"}. Each column corresponds
-##'     to a transition, and execution of transition \code{j} amounts to
-##'     adding the \code{j}th column to the state vector.
+##'     \code{"\linkS4class{dgCMatrix}"}.
 ##'   }
 ##'   \item{U}{
-##'     The compartment result matrix ((Nn * Nc) X length(tspan)).
-##'     U(:,j) contains the state of the compartments at tspan(j).
+##'     The result matrix with the number of individuals in each disease
+##'     state in every node (\eqn{N_n N_c \times} \code{length(tspan)}).
+##'     \code{U[, j]} contains the number of individuals in each disease
+##'     state at \code{tspan[j]}. \code{U[1:Nc, j]} contains the state
+##'     of node \code{1} at \code{tspan[j]}. \code{U[(Nc + 1):(2 * Nc), j]}
+##'     contains the state of node \code{2} at \code{tspan[j]} etc.
+##'   }
+##'   \item{V}{
+##'     The result matrix for the real-valued continous compartment state
+##'     (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times} \code{length(tspan)}).
+##'     \code{V[, j]} contains the real-valued state of the system at
+##'     \code{tspan[j]}.
 ##'   }
 ##'   \item{ldata}{
-##'     A matrix with local data for nodes. The column ldata[, j] contains
-##'     the local data vector for node #j. The local data vector is passed
-##'     as an argument to the propensities and the post time step function.
+##'     A matrix with local data for the nodes. The column \code{ldata[, j]}
+##'     contains the local data vector for the node \code{j}. The local
+##'     data vector is passed as an argument to the transition rate
+##'     functions and the post time step function.
 ##'   }
 ##'   \item{gdata}{
-##'     A vector with global data for all nodes. The global data vector
-##'     is passed as an argument to the propensities and the post time
-##'     step function.
+##'     A numeric vector with global data that is common to all nodes.
+##'     The global data vector is passed as an argument to the
+##'     transition rate functions and the post time step function.
 ##'   }
 ##'   \item{sd}{
-##'     Integer vector of length Nn. Each node can be assigned to a sub-domain.
+##'     Each node can be assigned to a sub-domain.
+##'     Integer vector of length \code{Nn}.
 ##'   }
 ##'   \item{tspan}{
 ##'     A vector of increasing time points where the state of each node is
 ##'     to be returned.
 ##'   }
 ##'   \item{u0}{
-##'     Initial compartment state vector u0. Integer (Nc X Nn). Gives the
-##'     initial number of individuals in each compartment in every node.
-##'   }
-##'   \item{V}{
-##'     The model parameter result matrix for parameters that are modelled
-##'     ((Nn * Number of paramters) X length(tspan)).
-##'     V(:,j) contains the state of the model parameters at tspan(j).
+##'     The initial state vector (\eqn{N_c \times N_n}) with
+##'     the number of individuals in each compartment in every node.
 ##'   }
 ##'   \item{v0}{
-##'      Initial model state vector v0. Double (Number of parameters X Nn).
-##'      Gives the initial value for model paramenters that are updated
-##'      during the simulation in every node.
+##'      The initial continuous state vector in every node.
+##'      (\eqn{N_N \times} \code{dim(ldata)[1]}). The continuous
+##'      state vector is updated by the specific model during the
+##'      simulation in the post time step function.
 ##'   }
 ##'   \item{events}{
 ##'     Scheduled events \code{"\linkS4class{scheduled_events}"}
@@ -157,44 +168,54 @@ setClass("siminf_model",
          }
 )
 
-##' Create a siminf model
+##' Create a \code{siminf_model}
 ##'
-##' @param G Sparse matrix (\eqn{Nt \times Nt}) of object class
-##' \code{"\linkS4class{dgCMatrix}"}.  A non-zeros entry in element
-##' \code{i} of column \code{j} indicates that propensity \code{i}
-##' needs to be recalculated if the transition \code{j} occurs.
-##' @param S Sparse matrix (\eqn{Nc \times Nt}) of object class
-##' \code{"\linkS4class{dgCMatrix}"}. Each column corresponds to a
-##' transition, and execution of transition \code{j} amounts to adding
-##' the \code{j}th column to the state vector.
-##' @param U The result matrix ((Nn * Nc) X length(tspan)). U(:,j)
-##' contains the state of the system at tspan(j).
-##' @param ldata A matrix with local data for nodes. The column
-##' ldata[, j] contains the local data vector for node #j. The local
-##' data vector is passed as an argument to the propensities and the
-##' post time step function.
-##' @param gdata A vector with global data for all nodes. The global
-##' data vector is passed as an argument to the propensities and the
-##' post time step function.
-##' @param sd Integer vector of length Nn. Each node can be assigned
-##' to a sub-domain.
+##' @param G Dependency graph that indicates the transition rates that
+##'     need to be updated after a given state transition has occured.
+##'     A non-zero entry in element \code{G[i, i]} indicates that
+##'     transition rate \code{i} needs to be recalculated if the state
+##'     transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
+##'     of object class \code{"\linkS4class{dgCMatrix}"}.
+##' @param S Each column corresponds to a transition, and execution of
+##'     state transition \code{j} amounts to adding the \code{S[, j]}
+##'     to the state vector of the node where the state transition
+##'     occurred.  Sparse matrix (\eqn{Nc \times Nt}) of object class
+##'     \code{"\linkS4class{dgCMatrix}"}.
+##' @param U The result matrix with the number of individuals in each
+##'     disease state in every node (\eqn{N_n N_c \times}
+##'     \code{length(tspan)}).  \code{U[, j]} contains the number of
+##'     individuals in each disease state at
+##'     \code{tspan[j]}. \code{U[1:Nc, j]} contains the state of node
+##'     \code{1} at \code{tspan[j]}. \code{U[(Nc + 1):(2 * Nc), j]}
+##'     contains the state of node \code{2} at \code{tspan[j]} etc.
+##' @param ldata A matrix with local data for the nodes. The column
+##'     \code{ldata[, j]} contains the local data vector for the node
+##'     \code{j}. The local data vector is passed as an argument to
+##'     the transition rate functions and the post time step function.
+##' @param gdata A numeric vector with global data that is common to
+##'     all nodes. The global data vector is passed as an argument to
+##'     the transition rate functions and the post time step function.
+##' @param sd Each node can be assigned to a sub-domain.  Integer
+##'     vector of length \code{Nn}.
 ##' @param tspan A vector of increasing time points where the state of
-##' each node is to be returned.
-##' @param u0 Initial state vector u0. Integer (Nc X Nn). Gives the
-##' initial number of individuals in each compartment in every node.
+##'     each node is to be returned.
+##' @param u0 The initial state vector (\eqn{N_c \times N_n}) with the
+##'     number of individuals in each compartment in every node.
 ##' @param events A \code{data.frame} with the scheduled events.
 ##' @param init A \code{data.frame} with the initial number of
-##' individuals in each compartment in every node.
-##' @param V The model parameter result matrix for the parameters that
-##' are modelled ((Nn * Number of paramters) X length(tspan)).  V(:,j)
-##' contains the state of the model parameters at tspan(j).
-##' @param v0 Initial model state vector v0. Double (Number of
-##' parameters X Nn).  Gives the initial value for model paramenters
-##' that are updated during the simulation in every node.
+##'     individuals in each compartment in every node.
+##' @param V The result matrix for the real-valued continous
+##'     compartment state (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
+##'     \code{length(tspan)}).  \code{V[, j]} contains the real-valued
+##'     state of the system at \code{tspan[j]}.
+##' @param v0 The initial continuous state vector in every node.
+##'     (\eqn{N_N \times} \code{dim(ldata)[1]}). The continuous state
+##'     vector is updated by the specific model during the simulation
+##'     in the post time step function.
 ##' @param E Sparse matrix to handle scheduled events, see
-##' \code{\linkS4class{scheduled_events}}.
+##'     \code{\linkS4class{scheduled_events}}.
 ##' @param N Sparse matrix to handle scheduled events, see
-##' \code{\linkS4class{scheduled_events}}.
+##'     \code{\linkS4class{scheduled_events}}.
 ##' @return \linkS4class{siminf_model}
 ##' @export
 siminf_model <- function(G,
