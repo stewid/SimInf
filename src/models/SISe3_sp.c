@@ -192,11 +192,16 @@ int SISe3_sp_post_time_step(
     double t,
     int sd)
 {
+    int i, j;
     const int day = (int)t % 365;
     const double I_n = u[I_1] + u[I_2] + u[I_3];
     const double n = u[S_1] + u[S_2] + u[S_3] + I_n;
     const double phi = v[PHI];
-    int i, j;
+    const double coupling = gdata[COUPLING];
+
+    /* Deterimine the pointer to the continuous state vector in the
+       first node. Use this to find phi at neighbours to node. */
+    const double *phi_0 = &v[-node];
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */
@@ -216,7 +221,7 @@ int SISe3_sp_post_time_step(
     i = NEIGHBOR;
     j = (int)ldata[i];
     while (j >= 0) {
-        v_new[PHI] += (v[j] - phi) * gdata[COUPLING] * ldata[i + 1];
+        v_new[PHI] += (phi_0[j] - phi) * coupling * ldata[i + 1];
 
         /* Move to next neighbor pair (index, value) */
         i += 2;
