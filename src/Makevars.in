@@ -2,7 +2,23 @@ PKG_CPPFLAGS = -I. -Icore -Ievents -Imisc -Imodels @CPPFLAGS@
 PKG_CFLAGS = @OPENMP_CFLAGS@
 PKG_LIBS = @OPENMP_CFLAGS@ @LIBS@
 
-OBJECTS = siminf.o core/siminf_run.o core/siminf_solver.o \
-          events/siminf_vec.o events/siminf_events.o \
-          misc/siminf_arg.o misc/siminf_error.o misc/siminf_euler.o \
-          misc/siminf_ldata.o @MODELS_OBJ@
+OBJECTS.core = \
+    core/siminf_run.o \
+    core/siminf_solver.o
+
+OBJECTS.events = \
+    events/siminf_vec.o \
+    events/siminf_events.o
+
+OBJECTS.misc = \
+    misc/siminf_arg.o \
+    misc/siminf_error.o \
+    misc/siminf_forward_euler_linear_decay.o \
+    misc/siminf_ldata.o
+
+OBJECTS = \
+   siminf.o \
+   $(OBJECTS.core) \
+   $(OBJECTS.events) \
+   $(OBJECTS.misc) \
+   @MODELS_OBJ@
