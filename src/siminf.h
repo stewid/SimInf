@@ -32,7 +32,6 @@ typedef double (*PropensityFun)(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd);
 

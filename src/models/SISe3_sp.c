@@ -23,6 +23,9 @@
 /* Offset in integer compartment state vector */
 enum {S_1, I_1, S_2, I_2, S_3, I_3};
 
+/* Offset in real-valued continuous state vector */
+enum {PHI};
+
 /* Offsets in node local data (ldata) to parameters in the model */
 enum {END_T1, END_T2, END_T3, END_T4, NEIGHBOR};
 
@@ -34,7 +37,7 @@ enum {UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
  * In age category 1; susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -46,18 +49,17 @@ double SISe3_sp_S_1_to_I_1(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON_1] * v[node] * u[S_1];
+    return gdata[UPSILON_1] * v[PHI] * u[S_1];
 }
 
 /**
  * In age category 2; susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -69,18 +71,17 @@ double SISe3_sp_S_2_to_I_2(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON_2] * v[node] * u[S_2];
+    return gdata[UPSILON_2] * v[PHI] * u[S_2];
 }
 
 /**
  *  In age category 3; susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -92,18 +93,17 @@ double SISe3_sp_S_3_to_I_3(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON_3] * v[node] * u[S_3];
+    return gdata[UPSILON_3] * v[PHI] * u[S_3];
 }
 
 /**
  *  In age category 1; infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -115,7 +115,6 @@ double SISe3_sp_I_1_to_S_1(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
@@ -126,7 +125,7 @@ double SISe3_sp_I_1_to_S_1(
  * In age category 2; infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -138,7 +137,6 @@ double SISe3_sp_I_2_to_S_2(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
@@ -149,7 +147,7 @@ double SISe3_sp_I_2_to_S_2(
  * In age category 3; infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -161,7 +159,6 @@ double SISe3_sp_I_3_to_S_3(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
@@ -198,20 +195,20 @@ int SISe3_sp_post_time_step(
     const int day = (int)t % 365;
     const double I_n = u[I_1] + u[I_2] + u[I_3];
     const double n = u[S_1] + u[S_2] + u[S_3] + I_n;
-    const double phi = v[node];
+    const double phi = v[PHI];
     int i, j;
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */
-    v_new[node] = siminf_forward_euler(
+    v_new[PHI] = siminf_forward_euler(
         phi, day,
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
     if (n > 0.0)
-        v_new[node] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
+        v_new[PHI] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
     else
-        v_new[node] += gdata[EPSILON];
+        v_new[PHI] += gdata[EPSILON];
 
     /* Coupling between neighboring farms. */
     /* i is the offset in local data to the first neighbor. */
@@ -219,7 +216,7 @@ int SISe3_sp_post_time_step(
     i = NEIGHBOR;
     j = (int)ldata[i];
     while (j >= 0) {
-        v_new[node] += (v[j] - phi) * gdata[COUPLING] * ldata[i + 1];
+        v_new[PHI] += (v[j] - phi) * gdata[COUPLING] * ldata[i + 1];
 
         /* Move to next neighbor pair (index, value) */
         i += 2;
@@ -227,7 +224,7 @@ int SISe3_sp_post_time_step(
     }
 
     /* 1 if needs update */
-    return phi != v_new[node];
+    return phi != v_new[PHI];
 }
 
 /**

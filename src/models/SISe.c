@@ -24,6 +24,9 @@
 /* Offset in integer compartment state vector */
 enum {S, I};
 
+/* Offset in real-valued continuous state vector */
+enum {PHI};
+
 /* Offsets in node local data (ldata) to parameters in the model */
 enum {END_T1, END_T2, END_T3, END_T4};
 
@@ -34,7 +37,7 @@ enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON};
  * susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -46,18 +49,17 @@ double SISe_S_to_I(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON] * v[node] * u[S];
+    return gdata[UPSILON] * v[PHI] * u[S];
 }
 
 /**
  *  infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -69,7 +71,6 @@ double SISe_I_to_S(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
@@ -103,22 +104,22 @@ int SISe_post_time_step(
     const int day = (int)t % 365;
     const double I_n = u[I];
     const double n = u[S] + I_n;
-    const double phi = v[node];
+    const double phi = v[PHI];
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */
-    v_new[node] = siminf_forward_euler(
+    v_new[PHI] = siminf_forward_euler(
         phi, day,
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
     if (n > 0.0)
-        v_new[node] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
+        v_new[PHI] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
     else
-        v_new[node] += gdata[EPSILON];
+        v_new[PHI] += gdata[EPSILON];
 
     /* 1 if needs update */
-    return phi != v_new[node];
+    return phi != v_new[PHI];
 }
 
 /**

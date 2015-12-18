@@ -570,10 +570,9 @@ static int siminf_solver()
                 for (j = 0; j < sa.Nt; j++) {
                     sa.t_rate[node * sa.Nt + j] =
                         (*sa.t_fun[j])(&sa.u[node * sa.Nc],
-                                       sa.v,
+                                       &sa.v[node * sa.Nd],
                                        &sa.ldata[node * sa.Nld],
                                        sa.gdata,
-                                       sa.Ni + node,
                                        sa.tt,
                                        sa.sd[node]);
 
@@ -631,10 +630,9 @@ static int siminf_solver()
                             delta += (sa.t_rate[node * sa.Nt + sa.irG[j]] =
                                       (*sa.t_fun[sa.irG[j]])(
                                           &sa.u[node * sa.Nc],
-                                          sa.v,
+                                          &sa.v[node * sa.Nd],
                                           &sa.ldata[node * sa.Nld],
                                           sa.gdata,
-                                          sa.Ni + node,
                                           sa.t_time[node],
                                           sa.sd[node])) - old;
                         }
@@ -787,7 +785,8 @@ static int siminf_solver()
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
-                    if (sa.pts_fun(sa.v_new, &sa.u[node * sa.Nc], sa.v,
+                    if (sa.pts_fun(&sa.v_new[node * sa.Nd],
+				   &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
                                    &sa.ldata[node * sa.Nld], sa.gdata,
                                    sa.Ni + node, sa.tt, sa.sd[node]) ||
                         sa.update_node[node])
@@ -801,10 +800,9 @@ static int siminf_solver()
                             delta += (sa.t_rate[node * sa.Nt + j] =
                                       (*sa.t_fun[j])(
                                           &sa.u[node * sa.Nc],
-                                          sa.v_new,
+                                          &sa.v_new[node * sa.Nd],
                                           &sa.ldata[node * sa.Nld],
-                                          sa.gdata, sa.Ni + node,
-                                          sa.tt, sa.sd[node])) - old;
+                                          sa.gdata, sa.tt, sa.sd[node])) - old;
                         }
                         sa.sum_t_rate[node] += delta;
 
@@ -843,8 +841,7 @@ static int siminf_solver()
 
                         /* Copy continuous state to V */
                         memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.it++) + sa.Ni)],
-                               &sa.v_new[sa.Ni * sa.Nd],
-                               sa.Nn * sa.Nd * sizeof(double));
+                               sa.v_new, sa.Nn * sa.Nd * sizeof(double));
                     }
                 }
 
@@ -1054,8 +1051,8 @@ int siminf_run_solver(
         sim_args[i].U = U;
         sim_args[i].u = &uu[sim_args[i].Ni * Nc];
         sim_args[i].V = V;
-        sim_args[i].v = vv_1;
-        sim_args[i].v_new = vv_2;
+        sim_args[i].v = &vv_1[sim_args[i].Ni * Nd];
+        sim_args[i].v_new = &vv_2[sim_args[i].Ni * Nd];
         sim_args[i].ldata = &ldata[sim_args[i].Ni * sim_args[i].Nld];
         sim_args[i].gdata = gdata;
         sim_args[i].sd = &sd[sim_args[i].Ni];

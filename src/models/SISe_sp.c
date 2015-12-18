@@ -23,6 +23,9 @@
 /* Offset in integer compartment state vector */
 enum {S, I};
 
+/* Offset in real-valued continuous state vector */
+enum {PHI};
+
 /* Offsets in node local data (ldata) to parameters in the model */
 enum {END_T1, END_T2, END_T3, END_T4, NEIGHBOR};
 
@@ -34,7 +37,7 @@ enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4,
  * susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param v The current continuous state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -46,18 +49,17 @@ double SISe_sp_S_to_I(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
-    return gdata[UPSILON] * v[node] * u[S];
+    return gdata[UPSILON] * v[PHI] * u[S];
 }
 
 /**
  *  infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param v The current continuous state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -69,7 +71,6 @@ double SISe_sp_I_to_S(
     const double *v,
     const double *ldata,
     const double *gdata,
-    int node,
     double t,
     int sd)
 {
@@ -103,33 +104,38 @@ int SISe_sp_post_time_step(
     double t,
     int sd)
 {
+    int i, j;
     const int day = (int)t % 365;
     const double I_n = u[I];
     const double n = u[S] + I_n;
-    const double phi = v[node];
-    int i, j;
+    const double phi = v[PHI];
+    const double coupling = gdata[COUPLING];
+
+    /* Deterimine the pointer to the continuous state vector in the
+       first node. Use this to find phi at neighbours to node. */
+    const double *phi_0 = &v[-node];
 
     /* Time dependent decay (beta) of the environmental infectious
      * pressure in each of the four intervals of the year. Forward
      * Euler step. */
-    v_new[node] = siminf_forward_euler(
+    v_new[PHI] = siminf_forward_euler(
         phi, day,
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
     /* Add contribution from infected individuals */
     if (n > 0.0)
-        v_new[node] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
+        v_new[PHI] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
     else
-        v_new[node] += gdata[EPSILON];
+        v_new[PHI] += gdata[EPSILON];
 
-    /* Coupling between neighboring farms. */
+    /* Coupling between neighboring nodes. */
     /* i is the offset in local data to the first neighbor. */
     /* j is the neighbor node or -1 to stop.  */
     i = NEIGHBOR;
     j = (int)ldata[i];
     while (j >= 0) {
-        v_new[node] += (v[j] - phi) * gdata[COUPLING] * ldata[i + 1];
+        v_new[PHI] += (phi_0[j] - phi) * coupling * ldata[i + 1];
 
         /* Move to next neighbor pair (index, value) */
         i += 2;
@@ -137,7 +143,7 @@ int SISe_sp_post_time_step(
     }
 
     /* 1 if needs update */
-    return phi != v_new[node];
+    return phi != v_new[PHI];
 }
 
 /**
