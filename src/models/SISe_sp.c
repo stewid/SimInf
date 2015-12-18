@@ -18,7 +18,7 @@
  */
 
 #include "SISe_sp.h"
-#include "siminf_euler.h"
+#include "siminf_forward_euler_linear_decay.h"
 
 /* Offset in integer compartment state vector */
 enum {S, I};
@@ -118,7 +118,7 @@ int SISe_sp_post_time_step(
     /* Time dependent decay (beta) of the environmental infectious
      * pressure in each of the four intervals of the year. Forward
      * Euler step. */
-    v_new[PHI] = siminf_forward_euler(
+    v_new[PHI] = siminf_forward_euler_linear_decay(
         phi, day,
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
