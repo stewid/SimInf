@@ -1,5 +1,5 @@
 /*
- *  siminf, a framework for stochastic disease spread simulations
+ *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
  *  Copyright (C) 2015  Stefan Engblom
  *  Copyright (C) 2015  Stefan Widgren
@@ -18,10 +18,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_EULER_H
-#define INCLUDE_SIMINF_EULER_H
+#ifndef INCLUDE_SIMINF_FORWARD_EULER_LINEAR_DECAY_H
+#define INCLUDE_SIMINF_FORWARD_EULER_LINEAR_DECAY_H
 
-double siminf_forward_euler(
+double siminf_forward_euler_linear_decay(
     double phi, int day,
     int end_t1, int end_t2, int end_t3, int end_t4,
     double beta_t1, double beta_t2, double beta_t3, double beta_t4);
