@@ -16,7 +16,22 @@ PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
 MODELS_SRC = $(wildcard models/*.c)
 MODELS_OBJ = $(MODELS_SRC:.c=.o)
 
-OBJECTS = siminf.o core/siminf_run.o core/siminf_solver.o \
-          events/siminf_vec.o events/siminf_events.o \
-          misc/siminf_arg.o misc/siminf_error.o misc/siminf_euler.o \
-          $(MODELS_OBJ)
+OBJECTS.core = \
+    core/siminf_run.o \
+    core/siminf_solver.o
+
+OBJECTS.events = \
+    events/siminf_vec.o \
+    events/siminf_events.o
+
+OBJECTS.misc = \
+    misc/siminf_arg.o \
+    misc/siminf_error.o \
+    misc/siminf_forward_euler_linear_decay.o
+
+OBJECTS = \
+   siminf.o \
+   $(OBJECTS.core) \
+   $(OBJECTS.events) \
+   $(OBJECTS.misc) \
+   $(MODELS_OBJ)
