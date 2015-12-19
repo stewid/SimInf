@@ -1,5 +1,5 @@
 /*
- *  siminf, a framework for stochastic disease spread simulations
+ *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
  *  Copyright (C) 2015  Stefan Engblom
  *  Copyright (C) 2015  Stefan Widgren
@@ -22,38 +22,23 @@
 #include "siminf_forward_euler_linear_decay.h"
 
 /* Offset in integer compartment state vector */
-enum {S_1,
-      I_1,
-      S_2,
-      I_2,
-      S_3,
-      I_3};
+enum {S_1, I_1, S_2, I_2, S_3, I_3};
 
-/* Offset in real-valued compartment state vector */
+/* Offset in real-valued continuous state vector */
 enum {PHI};
 
 /* Offsets in node local data (ldata) to parameters in the model */
 enum {END_T1, END_T2, END_T3, END_T4};
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {UPSILON_1,
-      UPSILON_2,
-      UPSILON_3,
-      GAMMA_1,
-      GAMMA_2,
-      GAMMA_3,
-      ALPHA,
-      BETA_T1,
-      BETA_T2,
-      BETA_T3,
-      BETA_T4,
-      EPSILON};
+enum {UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
+      ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON};
 
 /**
  * In age category 1; susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -75,7 +60,7 @@ double SISe3_S_1_to_I_1(
  * In age category 2; susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -97,7 +82,7 @@ double SISe3_S_2_to_I_2(
  *  In age category 3; susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -119,7 +104,7 @@ double SISe3_S_3_to_I_3(
  *  In age category 1; infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -141,7 +126,7 @@ double SISe3_I_1_to_S_1(
  * In age category 2; infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -163,7 +148,7 @@ double SISe3_I_2_to_S_2(
  * In age category 3; infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -185,7 +170,7 @@ double SISe3_I_3_to_S_3(
  * Update environmental infectious pressure phi
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param node The node.
@@ -203,8 +188,8 @@ int SISe3_post_time_step(
     int sd)
 {
     const int day = (int)t % 365;
-    const double S_n = u[S_1] + u[S_2] + u[S_3];
     const double I_n = u[I_1] + u[I_2] + u[I_3];
+    const double n = I_n + u[S_1] + u[S_2] + u[S_3];
     const double phi = v[PHI];
 
     /* Time dependent beta in each of the four intervals of the
@@ -214,8 +199,8 @@ int SISe3_post_time_step(
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
-    if ((I_n + S_n) > 0.0)
-        v[PHI] += gdata[ALPHA] * I_n / (I_n + S_n) + gdata[EPSILON];
+    if (n > 0.0)
+        v[PHI] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
     else
         v[PHI] += gdata[EPSILON];
 

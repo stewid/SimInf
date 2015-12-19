@@ -1,5 +1,5 @@
 /*
- *  siminf, a framework for stochastic disease spread simulations
+ *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
  *  Copyright (C) 2015  Stefan Engblom
  *  Copyright (C) 2015  Stefan Widgren
@@ -24,27 +24,20 @@
 /* Offset in integer compartment state vector */
 enum {S, I};
 
-/* Offset in real-valued compartment state vector */
+/* Offset in real-valued continuous state vector */
 enum {PHI};
 
 /* Offsets in node local data (ldata) to parameters in the model */
 enum {END_T1, END_T2, END_T3, END_T4};
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {UPSILON,
-      GAMMA,
-      ALPHA,
-      BETA_T1,
-      BETA_T2,
-      BETA_T3,
-      BETA_T4,
-      EPSILON};
+enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON};
 
 /**
  * susceptible to infected: S -> I
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -66,7 +59,7 @@ double SISe_S_to_I(
  *  infected to susceptible: I -> S
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for node.
  * @param gdata The global data vector.
  * @param t Current time.
@@ -88,7 +81,7 @@ double SISe_I_to_S(
  * Update environmental infectious pressure phi
  *
  * @param u The compartment state vector in node.
- * @param v The model state vector in node.
+ * @param v The continuous state vector in node.
  * @param ldata The local data vector for node.
  * @param gdata The global data vector.
  * @param node The node.
@@ -106,8 +99,8 @@ int SISe_post_time_step(
     int sd)
 {
     const int day = (int)t % 365;
-    const double S_n = u[S];
     const double I_n = u[I];
+    const double n = u[S] + I_n;
     const double phi = v[PHI];
 
     /* Time dependent beta in each of the four intervals of the
@@ -117,8 +110,8 @@ int SISe_post_time_step(
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
-    if ((I_n + S_n) > 0.0)
-        v[PHI] += gdata[ALPHA] * I_n / (I_n + S_n) + gdata[EPSILON];
+    if (n > 0.0)
+        v[PHI] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
     else
         v[PHI] += gdata[EPSILON];
 
