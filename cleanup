@@ -3,7 +3,7 @@
 rm -f config.log
 rm -f config.status
 rm -rf autom4te.cache
-rm -f local320.zip
+rm -f local.zip
 rm -f gsl.zip
 rm -f src/Makevars
 rm -f src/*.o
