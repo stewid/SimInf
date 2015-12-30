@@ -94,10 +94,20 @@ AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [have_gsl=no])
 
 if test "x${have_gsl}" = xno; then AC_MSG_FAILURE([
   ---------------------------------------------
-   The GNU Scientific Library (GSL) required
+   The GNU Scientific Library (GSL) that is
+   required to build SimInf was not found.
 
    Please install:
-   libgsl0-dev (deb) or gsl-devel (rpm)
+     libgsl0-dev (package on e.g. Debian and Ubuntu)
+     gsl-devel   (package on e.g. Fedora, CentOS and RHEL)
+   and try again.
+
+   If the GNU Scientific Library (GSL) is
+   installed on your system but the SimInf
+   configuration is unable to find it, you
+   can specify the include and lib path to
+   GSL with:
+   R CMD INSTALL --configure-args='--with-gsl-include=INCLUDE_PATH --with-gsl-lib=LIB_PATH' SimInf
   ---------------------------------------------])
 fi
 
