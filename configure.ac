@@ -1,4 +1,4 @@
-# siminf, a framework for stochastic disease spread simulations
+# SimInf, a framework for stochastic disease spread simulations
 # Copyright (C) 2015  Pavol Bauer
 # Copyright (C) 2015  Stefan Engblom
 # Copyright (C) 2015  Stefan Widgren
@@ -21,7 +21,7 @@
 # https://stat.ethz.ch/pipermail/r-devel/2010-September/058488.html
 
 AC_PREREQ([2.69])
-AC_INIT([siminf], [see.DESCRIPTION.file], [https://github.com/stewid/siminf/issues])
+AC_INIT([SimInf], [see.DESCRIPTION.file], [https://github.com/stewid/SimInf/issues])
 AC_CONFIG_SRCDIR([src/siminf.c])
 AC_CONFIG_AUX_DIR([tools])
 
@@ -33,7 +33,7 @@ AC_PROG_CC
 # Check for OpenMP
 AC_OPENMP
 
-# gsl include and library path
+# Optional GSL include and library path
 AC_ARG_WITH([gsl-include],
             AC_HELP_STRING([--with-gsl-include=INCLUDE_PATH],
                            [the location of gsl header files]),
@@ -41,7 +41,7 @@ AC_ARG_WITH([gsl-include],
 
 AC_ARG_WITH([gsl-lib],
             AC_HELP_STRING([--with-gsl-lib=LIB_PATH],
-                           [the location of gsl libraries]),
+                           [the location of gsl library]),
             [gsl_lib_path=$withval])
 
 # Find the compiler and compiler flags to use
@@ -55,13 +55,6 @@ RSCRIPT="${R_HOME}/bin/Rscript"
 CC=`"${RBIN}" CMD config CC`
 CFLAGS=`"${RBIN}" CMD config CFLAGS`
 CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
-if test [ -n "$gsl_include_path" ] ; then
-  CPPFLAGS="${CPPFLAGS} -I${gsl_include_path}"
-fi
-LIBS="${PKG_LIBS}"
-if test [ -n "$gsl_lib_path" ] ; then
-  LIBS="-L${gsl_lib_path} ${LIBS}"
-fi
 
 # since some systems have broken OMP libraries
 # we also check that the actual package will work
@@ -89,6 +82,17 @@ fi
 
 # Check for GSL.
 have_gsl=yes
+
+# Check for optional GSL include path
+if test [ -n "$gsl_include_path" ] ; then
+    CPPFLAGS="-I${gsl_include_path} ${CPPFLAGS}"
+fi
+
+# Check for optional GSL lib path
+if test [ -n "$gsl_lib_path" ] ; then
+    LIBS="-L${gsl_lib_path} ${LIBS}"
+fi
+
 AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [have_gsl=no])
 AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [have_gsl=no])
 
