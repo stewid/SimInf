@@ -52,8 +52,6 @@ if test -z "${R_HOME}"; then
 fi
 RBIN="${R_HOME}/bin/R"
 RSCRIPT="${R_HOME}/bin/Rscript"
-CC=`"${RBIN}" CMD config CC`
-CFLAGS=`"${RBIN}" CMD config CFLAGS`
 CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
 
 # since some systems have broken OMP libraries
