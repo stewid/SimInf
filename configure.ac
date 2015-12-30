@@ -47,8 +47,8 @@ AC_ARG_WITH([gsl-lib],
 # Find the compiler and compiler flags to use
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
-  echo "could not determine R_HOME"
-  exit 1
+    echo "could not determine R_HOME"
+    exit 1
 fi
 RBIN="${R_HOME}/bin/R"
 RSCRIPT="${R_HOME}/bin/Rscript"
@@ -58,20 +58,23 @@ CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
 # we also check that the actual package will work
 ac_pkg_openmp=no
 if test -n "${OPENMP_CFLAGS}"; then
-  AC_MSG_CHECKING([whether OpenMP will work in a package])
-  AC_LANG_CONFTEST(
-  [AC_LANG_PROGRAM([[#include <omp.h>]], [[ return omp_get_num_threads (); ]])])
-  PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c 1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && "$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" 1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && ac_pkg_openmp=yes
-  AC_MSG_RESULT([${ac_pkg_openmp}])
+    AC_MSG_CHECKING([whether OpenMP will work in a package])
+    AC_LANG_CONFTEST(
+    [AC_LANG_PROGRAM([[#include <omp.h>]], [[ return omp_get_num_threads (); ]])])
+    PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c \
+    1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && \
+    "$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
+    1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && ac_pkg_openmp=yes
+    AC_MSG_RESULT([${ac_pkg_openmp}])
 fi
 
 if test "x${ac_pkg_openmp}" = xyes; then
-        SIMINF_HAVE_OPENMP=TRUE
-        CPPFLAGS="${CPPFLAGS} -DSIMINF_OMP"
+    SIMINF_HAVE_OPENMP=TRUE
+    CPPFLAGS="${CPPFLAGS} -DSIMINF_OMP"
 else
-        OPENMP_CFLAGS=''
-        SIMINF_HAVE_OPENMP=FALSE
-        AC_MSG_WARN([
+    OPENMP_CFLAGS=''
+    SIMINF_HAVE_OPENMP=FALSE
+    AC_MSG_WARN([
   -----------------------------------------------
    Unable to find OpenMP on this system.
    Building a version without support for OpenMP.

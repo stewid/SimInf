@@ -2785,8 +2785,8 @@ fi
 # Find the compiler and compiler flags to use
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
-  echo "could not determine R_HOME"
-  exit 1
+    echo "could not determine R_HOME"
+    exit 1
 fi
 RBIN="${R_HOME}/bin/R"
 RSCRIPT="${R_HOME}/bin/Rscript"
@@ -2796,9 +2796,9 @@ CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
 # we also check that the actual package will work
 ac_pkg_openmp=no
 if test -n "${OPENMP_CFLAGS}"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether OpenMP will work in a package" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether OpenMP will work in a package" >&5
 $as_echo_n "checking whether OpenMP will work in a package... " >&6; }
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <omp.h>
 int
@@ -2809,18 +2809,21 @@ main ()
   return 0;
 }
 _ACEOF
-  PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c 1>&5 2>&5 && "$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" 1>&5 2>&5 && ac_pkg_openmp=yes
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${ac_pkg_openmp}" >&5
+    PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c \
+    1>&5 2>&5 && \
+    "$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
+    1>&5 2>&5 && ac_pkg_openmp=yes
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${ac_pkg_openmp}" >&5
 $as_echo "${ac_pkg_openmp}" >&6; }
 fi
 
 if test "x${ac_pkg_openmp}" = xyes; then
-        SIMINF_HAVE_OPENMP=TRUE
-        CPPFLAGS="${CPPFLAGS} -DSIMINF_OMP"
+    SIMINF_HAVE_OPENMP=TRUE
+    CPPFLAGS="${CPPFLAGS} -DSIMINF_OMP"
 else
-        OPENMP_CFLAGS=''
-        SIMINF_HAVE_OPENMP=FALSE
-        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
+    OPENMP_CFLAGS=''
+    SIMINF_HAVE_OPENMP=FALSE
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
   -----------------------------------------------
    Unable to find OpenMP on this system.
    Building a version without support for OpenMP.
