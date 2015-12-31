@@ -23,7 +23,7 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
-#ifdef SIMINF_OMP
+#ifdef _OPENMP
 #include <omp.h>
 #endif
 
@@ -945,17 +945,17 @@ int siminf_run_solver(
     int i, errcode;
     gsl_rng *rng = NULL;
 
-#if !defined(SIMINF_OMP)
-    Nthread = 1;
-#else
+#ifdef _OPENMP
     if (Nthread < 1)
         Nthread = omp_get_num_procs();
+#else
+    Nthread = 1;
 #endif
     if (Nn < Nthread)
         n_thread = Nn;
     else
         n_thread = Nthread;
-#ifdef SIMINF_OMP
+#ifdef _OPENMP
     omp_set_num_threads(n_thread);
 #endif
 

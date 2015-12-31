@@ -70,7 +70,6 @@ fi
 
 if test "x${ac_pkg_openmp}" = xyes; then
     SIMINF_HAVE_OPENMP=TRUE
-    CPPFLAGS="${CPPFLAGS} -DSIMINF_OMP"
 else
     OPENMP_CFLAGS=''
     SIMINF_HAVE_OPENMP=FALSE
@@ -120,7 +119,7 @@ fi
 MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
 AC_SUBST(SIMINF_HAVE_OPENMP)
-AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Ievents -Imisc -Imodels ${CPPFLAGS}"])
+AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Ievents -Imisc -Imodels ${OPENMP_CFLAGS} ${CPPFLAGS}"])
 AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${LIBS}"])
 AC_SUBST(MODELS_OBJ)
