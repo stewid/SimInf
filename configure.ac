@@ -104,6 +104,7 @@ if test "x${have_gsl}" = xno; then AC_MSG_FAILURE([
    Please install:
      libgsl0-dev (package on e.g. Debian and Ubuntu)
      gsl-devel   (package on e.g. Fedora, CentOS and RHEL)
+     gsl         (Homebrew package on OS X)
    and try again.
 
    If the GNU Scientific Library (GSL) is
