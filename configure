@@ -588,6 +588,9 @@ ac_unique_file="src/siminf.c"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 MODELS_OBJ
+PKG_LIBS
+PKG_CFLAGS
+PKG_CPPFLAGS
 SIMINF_HAVE_OPENMP
 OPENMP_CFLAGS
 OBJEXT
@@ -2969,7 +2972,11 @@ fi
 MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '.c$')), collapse=' '))"`
 
 
+PKG_CPPFLAGS="-I. -Icore -Ievents -Imisc -Imodels ${CPPFLAGS}"
 
+PKG_CFLAGS="${OPENMP_CFLAGS}"
+
+PKG_LIBS="${OPENMP_CFLAGS} ${LIBS}"
 
 
 

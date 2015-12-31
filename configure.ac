@@ -120,8 +120,9 @@ fi
 MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
 AC_SUBST(SIMINF_HAVE_OPENMP)
-AC_SUBST(CPPFLAGS)
-AC_SUBST(LIBS)
+AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Ievents -Imisc -Imodels ${CPPFLAGS}"])
+AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
+AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${LIBS}"])
 AC_SUBST(MODELS_OBJ)
 
 AC_CONFIG_FILES([R/dependencies.R src/Makevars])

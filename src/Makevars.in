@@ -1,6 +1,6 @@
-PKG_CPPFLAGS = -I. -Icore -Ievents -Imisc -Imodels @CPPFLAGS@
-PKG_CFLAGS = @OPENMP_CFLAGS@
-PKG_LIBS = @OPENMP_CFLAGS@ @LIBS@
+PKG_CPPFLAGS = @PKG_CPPFLAGS@
+PKG_CFLAGS = @PKG_CFLAGS@
+PKG_LIBS = @PKG_LIBS@
 
 OBJECTS.core = \
     core/siminf_run.o \
