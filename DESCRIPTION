@@ -13,7 +13,7 @@ Description: Livestock movements are important for the spread of many
     between nodes as scheduled events. The core simulation solver is
     implemented in C and uses OpenMP to divide work over multiple
     processors.
-Acknowledgement: This work was financially supported by the Swedish
+Acknowledgements: This work was financially supported by the Swedish
     Research Council within the UPMARC Linnaeus center of Excellence
     (Pavol Bauer and Stefan Engblom).
 License: GPL-3
