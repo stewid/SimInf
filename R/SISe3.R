@@ -67,7 +67,7 @@ setClass("SISe3", contains = c("siminf_model"))
 ##' age category 3
 ##' @param alpha Shed rate from infected individuals
 ##' @template beta-param
-##' @param epsilon The background infectious pressure
+##' @param epsilon The background environmental infectious pressure
 ##' @return \code{SISe3}
 ##' @include check_arguments.R
 ##' @export
