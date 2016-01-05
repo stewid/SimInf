@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
 
 [![Build Status](https://travis-ci.org/stewid/SimInf.svg)](https://travis-ci.org/stewid/SimInf)
 [![Build status](https://ci.appveyor.com/api/projects/status/pe68xiu1anxvet2n?svg=true)](https://ci.appveyor.com/project/stewid/SimInf)
-[![Coverage Status](https://coveralls.io/repos/stewid/SimInf/badge.svg?branch=master)](https://coveralls.io/r/stewid/SimInf?branch=master)
+[![Coverage Status](https://coveralls.io/repos/stewid/SimInf/badge.svg?branch=master&service=github)](https://coveralls.io/github/stewid/SimInf?branch=master)
 
 # SimInf
 
