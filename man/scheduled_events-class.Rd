@@ -31,7 +31,7 @@ Class to handle the scheduled events
   }
   \item{event}{
     Integer vector of length \code{len} with scheduled events.
-    The following four events exists; \code{EXIT_EVENT = 0},
+    The following four type events exists; \code{EXIT_EVENT = 0},
     \code{ENTER_EVENT = 1}, \code{INTERNAL_TRANSFER_EVENT = 2}, and
     \code{EXTERNAL_TRANSFER_EVENT = 3}.
   }

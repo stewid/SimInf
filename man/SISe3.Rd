@@ -64,7 +64,7 @@ in the fourth interval of the year.}
 
 \item{end_t4}{The non-inclusive day that ends interval 4.}
 
-\item{epsilon}{The background infectious pressure}
+\item{epsilon}{The background environmental infectious pressure}
 }
 \value{
 \code{SISe3}

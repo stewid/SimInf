@@ -24,7 +24,7 @@ The argument events must be a \code{data.frame} with the following
 columns:
 \itemize{
   \item{event}{
-    The event type. The following four events exists;
+    The event type. The following four type of events exists;
     \code{EXIT_EVENT = 0}, \code{ENTER_EVENT = 1},
     \code{INTERNAL_TRANSFER_EVENT = 2}, and
     \code{EXTERNAL_TRANSFER_EVENT = 3}.
