@@ -3,12 +3,11 @@
 ^LICENSE$
 ^\.travis\.yml$
 ^Makefile$
-^configure\.ac$
 ^appveyor.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^man-roxygen$
-^local320\.zip$
+^local323\.zip$
 ^gsl\.zip$
 ^gsl$
 src/gsl
