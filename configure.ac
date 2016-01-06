@@ -23,9 +23,6 @@
 AC_PREREQ([2.69])
 AC_INIT([SimInf], [see.DESCRIPTION.file], [https://github.com/stewid/SimInf/issues])
 AC_CONFIG_SRCDIR([src/siminf.c])
-AC_CONFIG_AUX_DIR([tools])
-
-AC_CANONICAL_HOST
 
 # Checks for programs.
 AC_PROG_CC
