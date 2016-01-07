@@ -6,13 +6,15 @@ Author: Stefan Widgren (National Veterinary Institute, Sweden),
         Stefan Engblom (Uppsala University, Sweden)
 Maintainer: Stefan Widgren <stefan.widgren@gmail.com>
 Description: Livestock movements are important for the spread of many
-    infectious diseases between herds. SimInf is an efficient and
-    flexible framework for stochastic disease spread modelling and
-    integrates within-herd infectious dynamics as continuous-time
-    Markov chains (Gillespie's direct method) and livestock movements
-    between herds as scheduled events. The core simulation solver is
-    implemented in C and uses OpenMP (if available) to divide work
-    over multiple processors.
+    infectious diseases between herds. The package provides an
+    efficient and flexible framework for stochastic disease spread
+    modelling that integrates within-herd disease dynamics as
+    continuous-time Markov chains using the Gillespie direct method
+    and livestock movements between herds as scheduled events. The
+    core simulation solver is implemented in C and uses 'OpenMP' (if
+    available) to divide work over multiple processors. The package
+    contains template models and can be extended with user defined
+    models.
 Acknowledgements: This work was financially supported by the Swedish
     Research Council within the UPMARC Linnaeus center of Excellence
     (Pavol Bauer and Stefan Engblom).
