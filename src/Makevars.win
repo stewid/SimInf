@@ -1,5 +1,4 @@
-# Use gsl headers and libraries in LOCAL_SOFT
-# or from downloaded local320.zip
+# Use gsl headers and libraries in LOCAL_SOFT or from downloaded gsl
 SIMINF_LOCAL_SOFT=$(shell "${R_HOME}/bin/R" CMD config LOCAL_SOFT)
 ifeq ($(wildcard "${SIMINF_LOCAL_SOFT}/include/gsl/gsl_rng.h"),)
 ifneq ($(wildcard gsl/include/gsl/gsl_rng.h),)
@@ -8,8 +7,7 @@ SIMINF_GSL_INCLUDE = -Igsl/include
 endif
 endif
 
-PKG_CFLAGS = -I. -Icore -Ievents -Imisc -Imodels $(SIMINF_GSL_INCLUDE) \
-             $(SHLIB_OPENMP_CFLAGS) -DSIMINF_OMP
+PKG_CFLAGS = -I. -Icore -Ievents -Imisc -Imodels $(SIMINF_GSL_INCLUDE) $(SHLIB_OPENMP_CFLAGS)
 PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
 
 # List all model files to compile
