@@ -7,7 +7,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^man-roxygen$
-^local323\.zip$
+^local\.zip$
 ^gsl\.zip$
 ^gsl$
 src/gsl
