@@ -11,6 +11,13 @@ simulations in animal populations.
 
 ## Installation
 
+To install the latest release on CRAN
+
+
+```r
+install.packages("SimInf")
+```
+
 To install the development version of `SimInf`, it's easiest to use
 the devtools package:
 
@@ -50,7 +57,8 @@ sudo apt-get install libgsl0-dev
 
 #### On a Windows machine
 
-* Download and install
+* To install the development version of `SimInf` you first need to
+  download and install
   [Rtools](http://cran.r-project.org/bin/windows/Rtools/)
 
 # Authors
