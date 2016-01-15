@@ -20,5 +20,5 @@
 ##' @keywords internal
 have_openmp <- function()
 {
-    FALSE
+    TRUE
 }

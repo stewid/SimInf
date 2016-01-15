@@ -4,7 +4,7 @@
 \alias{distance_matrix}
 \title{Create distance matrix}
 \usage{
-distance_matrix(x, y, cutoff)
+distance_matrix(x, y, cutoff, min_dist = NULL)
 }
 \arguments{
 \item{x}{Projected x coordinate}
@@ -12,6 +12,12 @@ distance_matrix(x, y, cutoff)
 \item{y}{Projected y coordinate}
 
 \item{cutoff}{The distance cutoff}
+
+\item{min_dist}{The minimum distance to separate two nodes if the
+coordinates for two nodes are identical. Default is NULL,
+which means that an error is raised if any two coordinates are
+identical. This is to protect against infinite values when
+calculating \eqn{1 / d^2}.}
 }
 \value{
 \code{dgCMatrix}

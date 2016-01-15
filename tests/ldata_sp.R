@@ -111,3 +111,23 @@ ldata_exp <- structure(c(91, 182, 273, 365, 1, 0.499999999999996, 2, 0.125,
 
 ldata_obs <- .Call(SimInf:::siminf_ldata_sp, l, d)
 stopifnot(all(abs(ldata_obs - ldata_exp) < tol))
+
+## Check identical coordinates
+res <- tools::assertError(
+    distance_matrix(x = c(1,10,1), y = c(1,10,1), cutoff = 20))
+stopifnot(length(grep("Identical coordinates. Please provide a minimum distance.",
+                      res[[1]]$message)) > 0)
+
+d_exp <- new("dgCMatrix",
+             i = c(1L, 2L, 0L, 2L, 0L, 1L),
+             p = c(0L, 2L, 4L, 6L),
+             Dim = c(3L, 3L),
+             Dimnames = list(NULL, NULL),
+             x = c(12.7279220613579, 2, 12.7279220613579,
+                   12.7279220613579, 2, 12.7279220613579),
+         factors = list())
+d_obs <- distance_matrix(x = c(1,10,1), y = c(1,10,1), cutoff = 20, min_dist = 2)
+stopifnot(is(d_obs, "dgCMatrix"))
+stopifnot(identical(d_obs@i, d_exp@i))
+stopifnot(identical(d_obs@p, d_exp@p))
+stopifnot(all(abs(d_obs@x - d_exp@x) < tol))
