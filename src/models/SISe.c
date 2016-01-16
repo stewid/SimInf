@@ -80,16 +80,18 @@ double SISe_I_to_S(
 /**
  * Update environmental infectious pressure phi
  *
- * @param v_new The continuous state vector in node after the post
+ * @param v_new The continuous state vector in the node after the post
  * time step
- * @param u The compartment state vector in node.
- * @param v The current continuous state vector in node.
- * @param ldata The local data vector for node.
+ * @param u The compartment state vector in the node.
+ * @param v The current continuous state vector in the node.
+ * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param node The node.
  * @param t Current time.
- * @param sd The sub-domain of node.
- * @return 1 if needs update, else 0.
+ * @param sd The sub-domain of the node.
+ * @return error code (<0), or 1 if node needs to update the
+ * transition rates, or 0 when it doesn't need to update the
+ * transition rates.
  */
 int SISe_post_time_step(
     double *v_new,
