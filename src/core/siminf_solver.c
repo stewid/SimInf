@@ -1,8 +1,8 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015  Stefan Engblom
- *  Copyright (C) 2015  Stefan Widgren
+ *  Copyright (C) 2015 - 2016 Stefan Engblom
+ *  Copyright (C) 2015 - 2016 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -824,9 +824,7 @@ static int siminf_solver()
                     }
                 }
 
-                /* (5) The global time now equals next_day. Swap the
-                 * pointers to the continuous state variable so that
-                 * 'v' equals 'v_new'. */
+                /* (5) The global time now equals next_day. */
                 sa.tt = sa.next_day;
                 sa.next_day += 1.0;
 
@@ -849,7 +847,8 @@ static int siminf_solver()
             }
         }
 
-        /* Check for error. */
+        /* Swap the pointers to the continuous state variable so that
+         * 'v' equals 'v_new'. Moreover, check for error. */
         for (k = 0; k < n_thread; k++) {
             double *v_tmp = sim_args[k].v;
             sim_args[k].v = sim_args[k].v_new;
