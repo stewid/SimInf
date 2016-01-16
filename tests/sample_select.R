@@ -73,12 +73,12 @@ model <- SISe3(init,
                epsilon   = 0)
 
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("Negative state detected.",
+stopifnot(length(grep("Unable to sample individuals for event.",
                       res[[1]]$message)) > 0)
 
 if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
-    stopifnot(length(grep("Negative state detected.",
+    stopifnot(length(grep("Unable to sample individuals for event.",
                           res[[1]]$message)) > 0)
 }
 
@@ -134,12 +134,12 @@ model <- SISe3(init,
                epsilon   = 0)
 
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("Negative state detected.",
+stopifnot(length(grep("Unable to sample individuals for event.",
                       res[[1]]$message)) > 0)
 
 if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
-    stopifnot(length(grep("Negative state detected.",
+    stopifnot(length(grep("Unable to sample individuals for event.",
                           res[[1]]$message)) > 0)
 }
 
@@ -226,12 +226,12 @@ model <- SISe3(init,
 model@events@proportion <- 10
 
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("Negative state detected.",
+stopifnot(length(grep("Unable to sample individuals for event.",
                       res[[1]]$message)) > 0)
 
 if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
-    stopifnot(length(grep("Negative state detected.",
+    stopifnot(length(grep("Unable to sample individuals for event.",
                           res[[1]]$message)) > 0)
 }
 
@@ -318,12 +318,12 @@ model <- SISe3(init,
 model@events@proportion <- -1
 
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("Negative state detected.",
+stopifnot(length(grep("Unable to sample individuals for event.",
                       res[[1]]$message)) > 0)
 
 if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
-    stopifnot(length(grep("Negative state detected.",
+    stopifnot(length(grep("Unable to sample individuals for event.",
                           res[[1]]$message)) > 0)
 }
 

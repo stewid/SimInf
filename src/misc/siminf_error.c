@@ -46,6 +46,9 @@ void siminf_error(int err)
     case SIMINF_ERR_V_IS_NOT_FINITE:
         Rf_error("The continuous state 'v' is not finite.");
         break;
+    case SIMINF_ERR_SAMPLE_SELECT:
+        Rf_error("Unable to sample individuals for event.");
+        break;
     default:
         Rf_error("Unknown error code.");
     }
