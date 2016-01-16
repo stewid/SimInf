@@ -785,12 +785,15 @@ static int siminf_solver()
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
-                    if (sa.pts_fun(&sa.v_new[node * sa.Nd],
-				   &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-                                   &sa.ldata[node * sa.Nld], sa.gdata,
-                                   sa.Ni + node, sa.tt, sa.sd[node]) ||
-                        sa.update_node[node])
-                    {
+                    int rc = sa.pts_fun(
+                        &sa.v_new[node * sa.Nd], &sa.u[node * sa.Nc],
+                        &sa.v[node * sa.Nd], &sa.ldata[node * sa.Nld],
+                        sa.gdata, sa.Ni + node, sa.tt, sa.sd[node]);
+
+                    if (rc < 0) {
+                        sa.errcode = rc;
+                        break;
+                    } else if (rc > 0 || sa.update_node[node]) {
                         /* Update transition rates */
                         int j = 0;
                         double delta = 0.0, old_t_rate = sa.sum_t_rate[node];
