@@ -21,8 +21,11 @@
 #include <R_ext/Rdynload.h>
 
 #include "siminf_events.h"
+#include "siminf_ldata.h"
 #include "SISe.h"
 #include "SISe3.h"
+#include "SISe_sp.h"
+#include "SISe3_sp.h"
 
 /**
 * List model run functions.
@@ -30,8 +33,11 @@
 static const R_CallMethodDef callMethods[] =
 {
     {"siminf_scheduled_events", (DL_FUNC)&siminf_scheduled_events, 5},
+    {"siminf_ldata_sp", (DL_FUNC)&siminf_ldata_sp, 2},
     {"SISe_run", (DL_FUNC)&SISe_run, 3},
     {"SISe3_run", (DL_FUNC)&SISe3_run, 3},
+    {"SISe_sp_run", (DL_FUNC)&SISe_sp_run, 3},
+    {"SISe3_sp_run", (DL_FUNC)&SISe3_sp_run, 3},
     {NULL, NULL, 0}
 };
 

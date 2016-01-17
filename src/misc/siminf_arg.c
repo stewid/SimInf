@@ -24,6 +24,24 @@
 #include "siminf_error.h"
 
 /**
+ * Check dgCMatrix argument
+ *
+ * @param arg The arg to check
+ * @return 0 if OK, else -1
+ */
+int siminf_arg_check_dgCMatrix(SEXP arg)
+{
+    SEXP class_name;
+
+    if (R_NilValue == arg || S4SXP != TYPEOF(arg))
+        return -1;
+    class_name = getAttrib(arg, R_ClassSymbol);
+    if (0 != strcmp(CHAR(STRING_ELT(class_name, 0)), "dgCMatrix"))
+        return -1;
+    return 0;
+}
+
+/**
  * Check integer argument
  *
  * @param arg The arg to check
@@ -33,6 +51,32 @@ int siminf_arg_check_integer(SEXP arg)
 {
     if (arg == R_NilValue || !isInteger(arg) ||
         length(arg) != 1  || NA_INTEGER == INTEGER(arg)[0])
+        return -1;
+    return 0;
+}
+
+/**
+ * Check matrix argument
+ *
+ * @param arg The arg to check
+ * @return 0 if OK, else -1
+ */
+int siminf_arg_check_matrix(SEXP arg)
+{
+    if (arg == R_NilValue || !isMatrix(arg))
+        return -1;
+    return 0;
+}
+
+/**
+ * Check real argument
+ *
+ * @param arg The arg to check
+ * @return 0 if OK, else -1
+ */
+int siminf_arg_check_real(SEXP arg)
+{
+    if (arg == R_NilValue || !isReal(arg) || length(arg) != 1 || !R_finite(REAL(arg)[0]))
         return -1;
     return 0;
 }

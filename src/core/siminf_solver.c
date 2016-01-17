@@ -1,8 +1,8 @@
 /*
- *  siminf, a framework for stochastic disease spread simulations
+ *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015  Stefan Engblom
- *  Copyright (C) 2015  Stefan Widgren
+ *  Copyright (C) 2015 - 2016 Stefan Engblom
+ *  Copyright (C) 2015 - 2016 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -144,6 +144,8 @@ typedef struct siminf_thread_args
                        *   state of the system at tspan(j). */
     double *v;        /**< Vector with continuous state in each node
                        *   in thread. */
+    double *v_new;   /**< Vector with continuous state in each node
+                       *   in thread after post time step function. */
     const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
                           *   local data vector for node #j. */
     const double *gdata; /**< The global data vector. */
@@ -184,7 +186,8 @@ typedef struct siminf_thread_args
 /* Shared variables */
 int n_thread = 0;
 int *uu = NULL;
-double *vv = NULL;
+double *vv_1 = NULL;
+double *vv_2 = NULL;
 int *update_node = NULL;
 siminf_thread_args *sim_args = NULL;
 
@@ -473,7 +476,7 @@ static int sample_select(
     if (Nstates <= 0        /* No states to sample from, we shouldn't be here. */
         || n > Nindividuals /* Can not sample this number of individuals       */
         || n < 0)           /* Can not sample negative number of individuals.  */
-        return 1;
+        return SIMINF_ERR_SAMPLE_SELECT;
 
     /* Handle cases that require no random sampling */
     if (n == 0) {
@@ -782,11 +785,15 @@ static int siminf_solver()
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
-                    if (sa.pts_fun(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-                                   &sa.ldata[node * sa.Nld], sa.gdata,
-                                   sa.Ni + node, sa.tt, sa.sd[node]) ||
-                        sa.update_node[node])
-                    {
+                    int rc = sa.pts_fun(
+                        &sa.v_new[node * sa.Nd], &sa.u[node * sa.Nc],
+                        &sa.v[node * sa.Nd], &sa.ldata[node * sa.Nld],
+                        sa.gdata, sa.Ni + node, sa.tt, sa.sd[node]);
+
+                    if (rc < 0) {
+                        sa.errcode = rc;
+                        break;
+                    } else if (rc > 0 || sa.update_node[node]) {
                         /* Update transition rates */
                         int j = 0;
                         double delta = 0.0, old_t_rate = sa.sum_t_rate[node];
@@ -796,7 +803,7 @@ static int siminf_solver()
                             delta += (sa.t_rate[node * sa.Nt + j] =
                                       (*sa.t_fun[j])(
                                           &sa.u[node * sa.Nc],
-                                          &sa.v[node * sa.Nd],
+                                          &sa.v_new[node * sa.Nd],
                                           &sa.ldata[node * sa.Nld],
                                           sa.gdata, sa.tt, sa.sd[node])) - old;
                         }
@@ -835,7 +842,7 @@ static int siminf_solver()
 
                         /* Copy continuous state to V */
                         memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.it++) + sa.Ni)],
-                               sa.v, sa.Nn * sa.Nd * sizeof(double));
+                               sa.v_new, sa.Nn * sa.Nd * sizeof(double));
                     }
                 }
 
@@ -843,8 +850,12 @@ static int siminf_solver()
             }
         }
 
-        /* Check for error. */
+        /* Swap the pointers to the continuous state variable so that
+         * 'v' equals 'v_new'. Moreover, check for error. */
         for (k = 0; k < n_thread; k++) {
+            double *v_tmp = sim_args[k].v;
+            sim_args[k].v = sim_args[k].v_new;
+            sim_args[k].v_new = v_tmp;
             if (sim_args[k].errcode)
                 return sim_args[k].errcode;
         }
@@ -968,12 +979,13 @@ int siminf_run_solver(
     memcpy(uu, u0, Nn * Nc * sizeof(int));
 
     /* Set continuous state to the initial state in each node. */
-    vv = malloc(Nn * Nd * sizeof(double));
-    if (!vv) {
+    vv_1 = malloc(Nn * Nd * sizeof(double));
+    vv_2 = malloc(Nn * Nd * sizeof(double));
+    if (!vv_1 || !vv_2) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
-    memcpy(vv, v0, Nn * Nd * sizeof(double));
+    memcpy(vv_1, v0, Nn * Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
@@ -1041,7 +1053,8 @@ int siminf_run_solver(
         sim_args[i].U = U;
         sim_args[i].u = &uu[sim_args[i].Ni * Nc];
         sim_args[i].V = V;
-        sim_args[i].v = &vv[sim_args[i].Ni * Nd];
+        sim_args[i].v = &vv_1[sim_args[i].Ni * Nd];
+        sim_args[i].v_new = &vv_2[sim_args[i].Ni * Nd];
         sim_args[i].ldata = &ldata[sim_args[i].Ni * sim_args[i].Nld];
         sim_args[i].gdata = gdata;
         sim_args[i].sd = &sd[sim_args[i].Ni];
@@ -1103,9 +1116,14 @@ cleanup:
         uu = NULL;
     }
 
-    if (vv) {
-        free(vv);
-        vv = NULL;
+    if (vv_1) {
+        free(vv_1);
+        vv_1 = NULL;
+    }
+
+    if (vv_2) {
+        free(vv_2);
+        vv_2 = NULL;
     }
 
     if (update_node) {

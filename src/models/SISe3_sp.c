@@ -1,6 +1,5 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
  *  Copyright (C) 2015 - 2016  Stefan Engblom
  *  Copyright (C) 2015 - 2016  Stefan Widgren
  *
@@ -18,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SISe3.h"
+#include "SISe3_sp.h"
 #include "siminf_forward_euler_linear_decay.h"
 
 /* Offset in integer compartment state vector */
@@ -28,11 +27,11 @@ enum {S_1, I_1, S_2, I_2, S_3, I_3};
 enum {PHI};
 
 /* Offsets in node local data (ldata) to parameters in the model */
-enum {END_T1, END_T2, END_T3, END_T4};
+enum {END_T1, END_T2, END_T3, END_T4, NEIGHBOR};
 
 /* Offsets in global data (gdata) to parameters in the model */
 enum {UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
-      ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON};
+      ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON, COUPLING};
 
 /**
  * In age category 1; susceptible to infected: S -> I
@@ -45,7 +44,7 @@ enum {UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_S_1_to_I_1(
+double SISe3_sp_S_1_to_I_1(
     const int *u,
     const double *v,
     const double *ldata,
@@ -67,7 +66,7 @@ double SISe3_S_1_to_I_1(
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_S_2_to_I_2(
+double SISe3_sp_S_2_to_I_2(
     const int *u,
     const double *v,
     const double *ldata,
@@ -89,7 +88,7 @@ double SISe3_S_2_to_I_2(
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_S_3_to_I_3(
+double SISe3_sp_S_3_to_I_3(
     const int *u,
     const double *v,
     const double *ldata,
@@ -111,7 +110,7 @@ double SISe3_S_3_to_I_3(
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_I_1_to_S_1(
+double SISe3_sp_I_1_to_S_1(
     const int *u,
     const double *v,
     const double *ldata,
@@ -133,7 +132,7 @@ double SISe3_I_1_to_S_1(
  * @param sd The sub-domain of node.
  * @return propensity.
  */
-double SISe3_I_2_to_S_2(
+double SISe3_sp_I_2_to_S_2(
     const int *u,
     const double *v,
     const double *ldata,
@@ -155,7 +154,7 @@ double SISe3_I_2_to_S_2(
  * @param sd The sub-domain of node.
  * @return propensity
  */
-double SISe3_I_3_to_S_3(
+double SISe3_sp_I_3_to_S_3(
     const int *u,
     const double *v,
     const double *ldata,
@@ -169,6 +168,8 @@ double SISe3_I_3_to_S_3(
 /**
  * Update environmental infectious pressure phi
  *
+ * Decay environmental infectious pressure phi, add contribution from
+ * infected individuals and proximity coupling.
  * @param v_new The continuous state vector in the node after the post
  * time step
  * @param u The compartment state vector in the node.
@@ -182,7 +183,7 @@ double SISe3_I_3_to_S_3(
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-int SISe3_post_time_step(
+int SISe3_sp_post_time_step(
     double *v_new,
     const int *u,
     const double *v,
@@ -192,10 +193,17 @@ int SISe3_post_time_step(
     double t,
     int sd)
 {
+    int i, j;
     const int day = (int)t % 365;
     const double I_n = u[I_1] + u[I_2] + u[I_3];
-    const double n = I_n + u[S_1] + u[S_2] + u[S_3];
+    const double n = u[S_1] + u[S_2] + u[S_3] + I_n;
     const double phi = v[PHI];
+    const double coupling = gdata[COUPLING];
+
+    /* Deterimine the pointer to the continuous state vector in the
+     * first node. Use this to find phi at neighbours to the current
+     * node. */
+    const double *phi_0 = &v[-node];
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */
@@ -209,38 +217,51 @@ int SISe3_post_time_step(
     else
         v_new[PHI] += gdata[EPSILON];
 
+    /* Coupling between neighboring farms. */
+    /* i is the offset in local data to the first neighbor. */
+    /* j is the neighbor node or -1 to stop.  */
+    i = NEIGHBOR;
+    j = (int)ldata[i];
+    while (j >= 0) {
+        v_new[PHI] += (phi_0[j] - phi) * coupling * ldata[i + 1];
+
+        /* Move to next neighbor pair (index, value) */
+        i += 2;
+        j = (int)ldata[i];
+    }
+
     if (isfinite(v_new[PHI]))
         return phi != v_new[PHI]; /* 1 if needs update */
     return SIMINF_ERR_V_IS_NOT_FINITE;
 }
 
 /**
- * Run simulation for the SISe3 model
+ * Run simulation for the SISe3_sp model
  *
  * This function is called from R with '.Call'
- * @param model The SISe3 model
+ * @param model The SISe3_sp model
  * @param threads Number of threads
  * @param seed Random number seed.
- * @return S4 class SISe3 with the simulated trajectory in U
+ * @return S4 class SISe3_sp with the simulated trajectory in U
  */
-SEXP SISe3_run(SEXP model, SEXP threads, SEXP seed)
+SEXP SISe3_sp_run(SEXP model, SEXP threads, SEXP seed)
 {
     int err = 0;
     SEXP result, class_name;
-    PropensityFun t_fun[] = {&SISe3_S_1_to_I_1, &SISe3_I_1_to_S_1,
-                             &SISe3_S_2_to_I_2, &SISe3_I_2_to_S_2,
-                             &SISe3_S_3_to_I_3, &SISe3_I_3_to_S_3};
+    PropensityFun t_fun[] = {&SISe3_sp_S_1_to_I_1, &SISe3_sp_I_1_to_S_1,
+                             &SISe3_sp_S_2_to_I_2, &SISe3_sp_I_2_to_S_2,
+                             &SISe3_sp_S_3_to_I_3, &SISe3_sp_I_3_to_S_3};
 
     if (R_NilValue == model || S4SXP != TYPEOF(model))
-        Rf_error("Invalid SISe3 model");
+        Rf_error("Invalid SISe3_sp model");
 
     class_name = getAttrib(model, R_ClassSymbol);
-    if (strcmp(CHAR(STRING_ELT(class_name, 0)), "SISe3") != 0)
-        Rf_error("Invalid SISe3 model: %s", CHAR(STRING_ELT(class_name, 0)));
+    if (strcmp(CHAR(STRING_ELT(class_name, 0)), "SISe3_sp") != 0)
+        Rf_error("Invalid SISe3_sp model: %s", CHAR(STRING_ELT(class_name, 0)));
 
     result = PROTECT(duplicate(model));
 
-    err = siminf_run(result, threads, seed, t_fun, &SISe3_post_time_step);
+    err = siminf_run(result, threads, seed, t_fun, &SISe3_sp_post_time_step);
 
     UNPROTECT(1);
 

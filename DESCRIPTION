@@ -38,7 +38,10 @@ Collate:
     'siminf_model.R'
     'SISe.R'
     'SISe3.R'
+    'SISe3_sp.R'
+    'SISe_sp.R'
     'demo_model.R'
     'dependencies.R'
+    'distance.R'
     'siminf.R'
 RoxygenNote: 5.0.1

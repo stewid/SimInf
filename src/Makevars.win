@@ -25,7 +25,8 @@ OBJECTS.events = \
 OBJECTS.misc = \
     misc/siminf_arg.o \
     misc/siminf_error.o \
-    misc/siminf_forward_euler_linear_decay.o
+    misc/siminf_forward_euler_linear_decay.o \
+    misc/siminf_ldata.o
 
 OBJECTS = \
    siminf.o \

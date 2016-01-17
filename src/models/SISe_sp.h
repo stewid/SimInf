@@ -1,6 +1,5 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
  *  Copyright (C) 2015  Stefan Engblom
  *  Copyright (C) 2015  Stefan Widgren
  *
@@ -18,40 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_H
-#define INCLUDE_SIMINF_H
+#ifndef INCLUDE_SISe_sp_h
+#define INCLUDE_SISe_sp_h
 
-#include <R.h>
-#include <Rinternals.h>
+#include "siminf.h"
 
-#include "siminf_error.h"
-
-/* Definition of the propensity function. */
-typedef double (*PropensityFun)(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t,
-    int sd);
-
-/* Definition of the callback function post one time step. */
-typedef int (*PostTimeStepFun)(
-    double *v_new,
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    int node,
-    double t,
-    int sd);
-
-/* Definition of function to initiate and run the simulation */
-int siminf_run(
-    SEXP result,
-    SEXP threads,
-    SEXP seed,
-    PropensityFun *t_fun,
-    PostTimeStepFun pts_fun);
+SEXP SISe_sp_run(SEXP model, SEXP threads, SEXP seed);
 
 #endif

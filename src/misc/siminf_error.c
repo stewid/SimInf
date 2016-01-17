@@ -1,8 +1,8 @@
 /*
- *  siminf, a framework for stochastic disease spread simulations
+ *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015  Stefan Engblom
- *  Copyright (C) 2015  Stefan Widgren
+ *  Copyright (C) 2015 - 2016  Stefan Engblom
+ *  Copyright (C) 2015 - 2016  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -42,6 +42,12 @@ void siminf_error(int err)
         break;
     case SIMINF_INVALID_THREADS_VALUE:
         Rf_error("Invalid 'threads' value");
+        break;
+    case SIMINF_ERR_V_IS_NOT_FINITE:
+        Rf_error("The continuous state 'v' is not finite.");
+        break;
+    case SIMINF_ERR_SAMPLE_SELECT:
+        Rf_error("Unable to sample individuals for event.");
         break;
     default:
         Rf_error("Unknown error code.");

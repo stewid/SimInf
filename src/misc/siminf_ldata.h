@@ -1,6 +1,5 @@
 /*
  *  siminf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
  *  Copyright (C) 2015  Stefan Engblom
  *  Copyright (C) 2015  Stefan Widgren
  *
@@ -18,17 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_ARGS_H
-#define INCLUDE_SIMINF_ARGS_H
+#ifndef INCLUDE_SIMINF_LDATA_H
+#define INCLUDE_SIMINF_LDATA_H
 
 #include <Rdefines.h>
 
-int siminf_arg_check_dgCMatrix(SEXP arg);
-int siminf_arg_check_integer(SEXP arg);
-int siminf_arg_check_matrix(SEXP arg);
-int siminf_arg_check_real(SEXP arg);
-int siminf_arg_check_real_vec(SEXP arg, size_t size);
-int siminf_get_seed(unsigned long int *out, SEXP seed);
-int siminf_get_threads(int *out, SEXP threads);
+SEXP siminf_ldata_sp(SEXP data, SEXP distance);
 
 #endif
