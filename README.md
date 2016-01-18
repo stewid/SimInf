@@ -69,10 +69,10 @@ download and install
 * Stefan Engblom (Uppsala University, Sweden)
 * Stefan Widgren (National Veterinary Institute, Sweden) **(Maintainer)**
 
-# Acknowledgment
+# Acknowledgments
 
 This work was financially supported by the Swedish Research Council
-within the UPMARC Linnaeus center of Excellence (Pavol Bauer and
+within the UPMARC Linnaeus centre of Excellence (Pavol Bauer and
 Stefan Engblom).
 
 # License
