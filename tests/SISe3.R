@@ -1525,3 +1525,29 @@ model <- new("DummySISe3", a = "SISe3")
 res <- tools::assertError(.Call(SimInf:::SISe3_run, model, NULL, NULL))
 stopifnot(length(grep("Invalid SISe3 model: DummySISe3",
                       res[[1]]$message)) > 0)
+
+## Check error non-finite v
+model <- SISe3(init      = init,
+               tspan     = seq_len(10) - 1,
+               events    = NULL,
+               phi       = rep(1, 6),
+               upsilon_1 = 0.0357,
+               upsilon_2 = 0.0357,
+               upsilon_3 = 0.00935,
+               gamma_1   = 0.1,
+               gamma_2   = 0.1,
+               gamma_3   = 0.1,
+               alpha     = 1.0,
+               beta_t1   = 0.19,
+               beta_t2   = 0.085,
+               beta_t3   = 0.075,
+               beta_t4   = 0.185,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
+               epsilon   = 0.000011)
+model@gdata <- rep(Inf, length(model@gdata))
+res <- tools::assertError(run(model))
+stopifnot(length(grep("The continuous state 'v' is not finite.",
+                      res[[1]]$message)) > 0)
