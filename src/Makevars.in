@@ -2,9 +2,7 @@ PKG_CPPFLAGS = @PKG_CPPFLAGS@
 PKG_CFLAGS = @PKG_CFLAGS@
 PKG_LIBS = @PKG_LIBS@
 
-OBJECTS.core = \
-    core/siminf_run.o \
-    core/siminf_solver.o
+OBJECTS.core = core/siminf_solver.o
 
 OBJECTS.events = \
     events/siminf_vec.o \

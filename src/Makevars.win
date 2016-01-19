@@ -14,9 +14,7 @@ PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
 MODELS_SRC = $(wildcard models/*.c)
 MODELS_OBJ = $(MODELS_SRC:.c=.o)
 
-OBJECTS.core = \
-    core/siminf_run.o \
-    core/siminf_solver.o
+OBJECTS.core = core/siminf_solver.o
 
 OBJECTS.events = \
     events/siminf_vec.o \
