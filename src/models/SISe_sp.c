@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SISe_sp.h"
+#include "siminf.h"
 #include "siminf_forward_euler_linear_decay.h"
 
 /* Offset in integer compartment state vector */

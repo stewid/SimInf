@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -159,7 +159,7 @@ SISe_sp <- function(init,
                     nrow  = 4,
                     byrow = TRUE)
     storage.mode(ldata) <- "double"
-    ldata <- .Call(siminf_ldata_sp, ldata, distance)
+    ldata <- .Call("siminf_ldata_sp", ldata, distance, PACKAGE = "SimInf")
 
     gdata <- c(upsilon, gamma, alpha, beta_t1, beta_t2, beta_t3, beta_t4,
                epsilon, coupling)
@@ -189,7 +189,7 @@ setMethod("run",
               ## required by the siminf solver and that they make sense
               validObject(model);
 
-              .Call(SISe_sp_run, model, threads, seed)
+              .Call("SISe_sp_run", model, threads, seed, PACKAGE = "SimInf")
           }
 )
 
