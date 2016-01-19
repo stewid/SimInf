@@ -57,34 +57,34 @@ stopifnot(all(abs(d_obs@x - d@x) < tol))
 
 ## Check 'data' argument to C function 'siminf_ldata_sp'
 res <- tools::assertError(
-    .Call(SimInf:::siminf_ldata_sp, NULL, d))
+    .Call("siminf_ldata_sp", NULL, d, PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid 'data' argument",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    .Call(SimInf:::siminf_ldata_sp, d, d))
+    .Call("siminf_ldata_sp", d, d, PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid 'data' argument",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    .Call(SimInf:::siminf_ldata_sp, 1:10, d))
+    .Call("siminf_ldata_sp", 1:10, d, PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid 'data' argument",
                       res[[1]]$message)) > 0)
 
 ## Check 'distance' argument to C function 'siminf_ldata_sp'
 res <- tools::assertError(
-    .Call(SimInf:::siminf_ldata_sp, l, NULL))
+    .Call("siminf_ldata_sp", l, NULL, PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid 'distance' argument",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    .Call(SimInf:::siminf_ldata_sp, l, l))
+    .Call("siminf_ldata_sp", l, l, PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid 'distance' argument",
                       res[[1]]$message)) > 0)
 
 ## Check non-equal number of nodes in 'distance' and 'data'
 res <- tools::assertError(
-    .Call(SimInf:::siminf_ldata_sp, l[, -1], d))
+    .Call("siminf_ldata_sp", l[, -1], d, PACKAGE = "SimInf"))
 stopifnot(length(grep("The number of nodes in 'data' and 'distance' are not equal",
                       res[[1]]$message)) > 0)
 
@@ -109,7 +109,7 @@ ldata_exp <- structure(c(91, 182, 273, 365, 1, 0.499999999999996, 2, 0.125,
                          0, 91, 182, 273, 365, 7, 0.125, 8, 0.499999999999996,
                          -1, 0, 0, 0, 0, 0), .Dim = c(14L, 10L))
 
-ldata_obs <- .Call(SimInf:::siminf_ldata_sp, l, d)
+ldata_obs <- .Call("siminf_ldata_sp", l, d, PACKAGE = "SimInf")
 stopifnot(all(abs(ldata_obs - ldata_exp) < tol))
 
 ## Check identical coordinates

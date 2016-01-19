@@ -1008,16 +1008,20 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SISe run function fails for misspecified SISe model
-res <- tools::assertError(.Call(SimInf:::SISe_run, NULL, NULL, NULL))
+res <- tools::assertError(
+    .Call("SISe_run", NULL, NULL, NULL, PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid SISe model",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(.Call(SimInf:::SISe_run, "SISe", NULL, NULL))
+
+res <- tools::assertError(
+    .Call("SISe_run", "SISe", NULL, NULL, PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid SISe model",
                       res[[1]]$message)) > 0)
 
 setClass("DummySISe", slots = c(a = "character"))
 model <- new("DummySISe", a = "SISe")
-res <- tools::assertError(.Call(SimInf:::SISe_run, model, NULL, NULL))
+res <- tools::assertError(
+    .Call("SISe_run", model, NULL, NULL, PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid SISe model: DummySISe",
                       res[[1]]$message)) > 0)
 
