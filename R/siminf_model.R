@@ -1,7 +1,7 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -355,6 +355,30 @@ siminf_model <- function(G,
                V      = V,
                events = events))
 }
+
+##' @rdname run-methods
+##' @export
+setMethod("run",
+          signature(model = "siminf_model"),
+          function(model, threads, seed)
+          {
+              ## check that siminf_model contains all data structures
+              ## required by the siminf solver and that they make sense
+              validObject(model);
+
+              ## The model name
+              name <- as.character(class(model))
+
+              ## The model C run function
+              run_fn <- paste0(name, "_run")
+
+              ## Create expression to parse
+              expr <- ".Call(run_fn, model, threads, seed, PACKAGE = 'SimInf')"
+
+              ## Run model
+              eval(parse(text = expr))
+          }
+)
 
 ##' Plot \code{\linkS4class{siminf_model}}
 ##'

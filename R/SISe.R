@@ -166,20 +166,6 @@ SISe <- function(init,
     return(as(model, "SISe"))
 }
 
-##' @rdname run-methods
-##' @export
-setMethod("run",
-          signature(model = "SISe"),
-          function(model, threads, seed)
-          {
-              ## check that siminf_model contains all data structures
-              ## required by the siminf solver and that they make sense
-              validObject(model);
-
-              .Call("SISe_run", model, threads, seed, PACKAGE = "SimInf")
-          }
-)
-
 ##' @rdname susceptible-methods
 ##' @export
 setMethod("susceptible",
