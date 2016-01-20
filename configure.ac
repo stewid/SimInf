@@ -1,7 +1,7 @@
 # SimInf, a framework for stochastic disease spread simulations
 # Copyright (C) 2015  Pavol Bauer
-# Copyright (C) 2015  Stefan Engblom
-# Copyright (C) 2015  Stefan Widgren
+# Copyright (C) 2015 - 2016  Stefan Engblom
+# Copyright (C) 2015 - 2016  Stefan Widgren
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ fi
 MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
 AC_SUBST(SIMINF_HAVE_OPENMP)
-AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Ievents -Imisc -Imodels ${OPENMP_CFLAGS} ${CPPFLAGS}"])
+AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Imisc -Imodels ${OPENMP_CFLAGS} ${CPPFLAGS}"])
 AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${LIBS}"])
 AC_SUBST(MODELS_OBJ)
