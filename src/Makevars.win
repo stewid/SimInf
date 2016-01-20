@@ -7,28 +7,18 @@ SIMINF_GSL_INCLUDE = -Igsl/include
 endif
 endif
 
-PKG_CFLAGS = -I. -Icore -Ievents -Imisc -Imodels $(SIMINF_GSL_INCLUDE) $(SHLIB_OPENMP_CFLAGS)
+PKG_CFLAGS = -I. -Icore -Imisc -Imodels $(SIMINF_GSL_INCLUDE) $(SHLIB_OPENMP_CFLAGS)
 PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
 
 # List all model files to compile
 MODELS_SRC = $(wildcard models/*.c)
 MODELS_OBJ = $(MODELS_SRC:.c=.o)
 
-OBJECTS.core = core/siminf_solver.o
+OBJECTS.misc = misc/siminf_arg.o \
+               misc/siminf_error.o \
+               misc/siminf_events.o \
+               misc/siminf_forward_euler_linear_decay.o \
+               misc/siminf_ldata.o \
+               misc/siminf_vec.o
 
-OBJECTS.events = \
-    events/siminf_vec.o \
-    events/siminf_events.o
-
-OBJECTS.misc = \
-    misc/siminf_arg.o \
-    misc/siminf_error.o \
-    misc/siminf_forward_euler_linear_decay.o \
-    misc/siminf_ldata.o
-
-OBJECTS = \
-   siminf.o \
-   $(OBJECTS.core) \
-   $(OBJECTS.events) \
-   $(OBJECTS.misc) \
-   $(MODELS_OBJ)
+OBJECTS = siminf.o core/siminf_solver.o $(OBJECTS.misc) $(MODELS_OBJ)

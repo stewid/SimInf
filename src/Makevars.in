@@ -2,21 +2,11 @@ PKG_CPPFLAGS = @PKG_CPPFLAGS@
 PKG_CFLAGS = @PKG_CFLAGS@
 PKG_LIBS = @PKG_LIBS@
 
-OBJECTS.core = core/siminf_solver.o
+OBJECTS.misc = misc/siminf_arg.o \
+               misc/siminf_error.o \
+               misc/siminf_events.o \
+               misc/siminf_forward_euler_linear_decay.o \
+               misc/siminf_ldata.o \
+               misc/siminf_vec.o
 
-OBJECTS.events = \
-    events/siminf_vec.o \
-    events/siminf_events.o
-
-OBJECTS.misc = \
-    misc/siminf_arg.o \
-    misc/siminf_error.o \
-    misc/siminf_forward_euler_linear_decay.o \
-    misc/siminf_ldata.o
-
-OBJECTS = \
-   siminf.o \
-   $(OBJECTS.core) \
-   $(OBJECTS.events) \
-   $(OBJECTS.misc) \
-   @MODELS_OBJ@
+OBJECTS = siminf.o core/siminf_solver.o $(OBJECTS.misc) @MODELS_OBJ@
