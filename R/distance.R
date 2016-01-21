@@ -22,11 +22,11 @@
 ##' @param x Projected x coordinate
 ##' @param y Projected y coordinate
 ##' @param cutoff The distance cutoff
-##' @param min_dist The minimum distance to separate two nodes if the
-##'     coordinates for two nodes are identical. Default is NULL,
-##'     which means that an error is raised if any two coordinates are
-##'     identical. This is to protect against infinite values when
-##'     calculating \eqn{1 / d^2}.
+##' @param min_dist The minimum distance to separate two nodes.
+##'     If the coordinates for two nodes are identical, the
+##'     min_dist must be assigned or an error is raised.
+##'     This is to protect against infinite values when
+##'     calculating \eqn{1 / d^2}. Default is NULL.
 ##' @return \code{dgCMatrix}
 ##' @export
 ##' @examples
@@ -54,6 +54,9 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL) {
                 stop("Identical coordinates. Please provide a minimum distance.")
             d <- sapply(d, max, min_dist)
         }
+
+        if (!is.null(min_dist))
+            d <- sapply(d, max, min_dist)
 
         ## Make row indices 0-based
         list(row_ind = row_ind - 1, d = d)
