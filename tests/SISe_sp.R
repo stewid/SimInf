@@ -1228,19 +1228,19 @@ unlink(pdf_file)
 ## Check that C SISe_sp run function fails for misspecified SISe_sp model
 res <- tools::assertError(
     .Call("SISe_sp_run", NULL, NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid SISe_sp model",
+stopifnot(length(grep("Invalid model.",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
     .Call("SISe_sp_run", "SISe_sp", NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid SISe_sp model",
+stopifnot(length(grep("Invalid model.",
                       res[[1]]$message)) > 0)
 
 setClass("DummySISe_sp", slots = c(a = "character"))
 model <- new("DummySISe_sp", a = "SISe_sp")
 res <- tools::assertError(
     .Call("SISe_sp_run", model, NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid SISe_sp model: DummySISe_sp",
+stopifnot(length(grep("Invalid model.",
                       res[[1]]$message)) > 0)
 
 ## Check error non-finite v
