@@ -137,20 +137,11 @@ int SISe_post_time_step(
 SEXP SISe_run(SEXP model, SEXP threads, SEXP seed)
 {
     int err = 0;
-    SEXP result, class_name;
+    SEXP result;
     PropensityFun t_fun[] = {&SISe_S_to_I, &SISe_I_to_S};
 
-    if (R_NilValue == model || S4SXP != TYPEOF(model))
-        Rf_error("Invalid SISe model");
-
-    class_name = getAttrib(model, R_ClassSymbol);
-    if (strcmp(CHAR(STRING_ELT(class_name, 0)), "SISe") != 0)
-        Rf_error("Invalid SISe model: %s", CHAR(STRING_ELT(class_name, 0)));
-
     result = PROTECT(duplicate(model));
-
     err = siminf_run(result, threads, seed, t_fun, &SISe_post_time_step);
-
     UNPROTECT(1);
 
     if (err)

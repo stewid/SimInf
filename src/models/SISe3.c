@@ -226,22 +226,13 @@ int SISe3_post_time_step(
 SEXP SISe3_run(SEXP model, SEXP threads, SEXP seed)
 {
     int err = 0;
-    SEXP result, class_name;
+    SEXP result;
     PropensityFun t_fun[] = {&SISe3_S_1_to_I_1, &SISe3_I_1_to_S_1,
                              &SISe3_S_2_to_I_2, &SISe3_I_2_to_S_2,
                              &SISe3_S_3_to_I_3, &SISe3_I_3_to_S_3};
 
-    if (R_NilValue == model || S4SXP != TYPEOF(model))
-        Rf_error("Invalid SISe3 model");
-
-    class_name = getAttrib(model, R_ClassSymbol);
-    if (strcmp(CHAR(STRING_ELT(class_name, 0)), "SISe3") != 0)
-        Rf_error("Invalid SISe3 model: %s", CHAR(STRING_ELT(class_name, 0)));
-
     result = PROTECT(duplicate(model));
-
     err = siminf_run(result, threads, seed, t_fun, &SISe3_post_time_step);
-
     UNPROTECT(1);
 
     if (err)

@@ -45,6 +45,9 @@ int siminf_run(
     int Nn, Nc, Nt, Nd, Nld, tlen;
     unsigned long int s;
 
+    if (siminf_arg_check_model(result))
+        return SIMINF_ERR_INVALID_MODEL;
+
     /* number of threads */
     err = siminf_get_threads(&n_threads, threads);
     if (err)
