@@ -49,6 +49,9 @@ void siminf_error(int err)
     case SIMINF_ERR_SAMPLE_SELECT:
         Rf_error("Unable to sample individuals for event.");
         break;
+    case SIMINF_ERR_INVALID_MODEL:
+        Rf_error("Invalid model.");
+        break;
     default:
         Rf_error("Unknown error code.");
     }
