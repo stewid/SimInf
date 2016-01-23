@@ -1018,13 +1018,6 @@ res <- tools::assertError(
 stopifnot(length(grep("Invalid model.",
                       res[[1]]$message)) > 0)
 
-setClass("DummySISe", slots = c(a = "character"))
-model <- new("DummySISe", a = "SISe")
-res <- tools::assertError(
-    .Call("SISe_run", model, NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid model.",
-                      res[[1]]$message)) > 0)
-
 ## Check error non-finite v
 model <- SISe(init    = init,
               tspan   = seq_len(10) - 1,
