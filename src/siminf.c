@@ -1,8 +1,8 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015  Stefan Engblom
- *  Copyright (C) 2015  Stefan Widgren
+ *  Copyright (C) 2015 - 2016  Stefan Engblom
+ *  Copyright (C) 2015 - 2016  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,37 +26,50 @@
 /**
  * Initiate and run the simulation
  *
- * @param result The siminf_model
+ * @param model The siminf_model
  * @param threads Number of threads
  * @param seed Random number seed.
  * @param t_fun Vector of function pointers to transition functions.
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  */
-int siminf_run(
-    SEXP result,
+SEXP siminf_run(
+    SEXP model,
     SEXP threads,
     SEXP seed,
     PropensityFun *t_fun,
     PostTimeStepFun pts_fun)
 {
     int err = 0, n_threads;
+    SEXP trajectory, names, result = R_NilValue;
     SEXP ext_events, E, G, N, S, prN, prS;
     int Nn, Nc, Nt, Nd, Nld, tlen;
     unsigned long int s;
 
-    if (siminf_arg_check_model(result))
-        return SIMINF_ERR_INVALID_MODEL;
+    /* Create a list to hold the result of the simulated trajectory. */
+    PROTECT(trajectory = allocVector(VECSXP, 2));
+    setAttrib(trajectory, R_NamesSymbol, names = allocVector(STRSXP, 2));
+    SET_STRING_ELT(names, 0, mkChar("error"));
+    SET_STRING_ELT(names, 1, mkChar("model"));
+
+    if (siminf_arg_check_model(model)) {
+        err = SIMINF_ERR_INVALID_MODEL;
+        goto cleanup;
+    }
 
     /* number of threads */
     err = siminf_get_threads(&n_threads, threads);
     if (err)
-        return err;
+        goto cleanup;
 
     /* seed */
     err =  siminf_get_seed(&s, seed);
     if (err)
-        return err;
+        goto cleanup;
+
+    /* Duplicate model and add it to the 'model' item in the
+     * trajectory list. */
+    SET_VECTOR_ELT(trajectory, 1, result = duplicate(model));
 
     /* SimInf model */
     G = GET_SLOT(result, Rf_install("G"));
@@ -113,7 +126,14 @@ int siminf_run(
         INTEGER(GET_SLOT(ext_events, Rf_install("shift"))),
         n_threads, s, t_fun, pts_fun);
 
-    UNPROTECT(2);
+cleanup:
+    if (err)
+        SET_VECTOR_ELT(trajectory, 0, ScalarInteger(err));
 
-    return err;
+    if (result == R_NilValue)
+        UNPROTECT(1);
+    else
+        UNPROTECT(3);
+
+    return trajectory;
 }
