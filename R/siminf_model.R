@@ -356,13 +356,47 @@ siminf_model <- function(G,
                events = events))
 }
 
+##' Report error
+##'
+##' @param err The error code.
+##' @keywords internal
+##' @noRd
+siminf_error <- function(err)
+{
+    if (identical(err, -1L))
+        stop("Negative state detected.")
+
+    if (identical(err, -2L))
+        stop("Unable to allocate memory buffer")
+
+    if (identical(err, -5L))
+        stop("Invalid 'p_edge': Must be in interval 0 < p_edge < 1")
+
+    if (identical(err, -6L))
+        stop("Invalid 'seed' value")
+
+    if (identical(err, -7L))
+        stop("Invalid 'threads' value")
+
+    if (identical(err, -8L))
+        stop("The continuous state 'v' is not finite.")
+
+    if (identical(err, -9L))
+        stop("Unable to sample individuals for event.")
+
+    if (identical(err, -10L))
+        stop("Invalid model.")
+
+    stop("Unknown error code.")
+}
+
 ##' @rdname run-methods
 ##' @export
 setMethod("run",
           signature(model = "siminf_model"),
           function(model, threads, seed)
           {
-              ## check that siminf_model contains all data structures
+              ## Check that siminf_model contains all data structures
               ## required by the siminf solver and that they make sense
               validObject(model);
 
@@ -376,7 +410,13 @@ setMethod("run",
               expr <- ".Call(run_fn, model, threads, seed, PACKAGE = 'SimInf')"
 
               ## Run model
-              eval(parse(text = expr))
+              result <- eval(parse(text = expr))
+
+              ## Check for error
+              if (!is.null(result$error))
+                  siminf_error(result$error)
+
+              result$model
           }
 )
 
