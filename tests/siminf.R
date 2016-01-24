@@ -691,13 +691,12 @@ if (SimInf:::have_openmp()) {
       NULL,
       PACKAGE = "SimInf")
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                NULL,
-                                "1",
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'seed' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             NULL,
+             "1",
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -6L))
 
 .Call("SISe_run",
       demo_model(model = "SISe"),
@@ -723,37 +722,33 @@ stopifnot(length(grep("Invalid 'seed' value",
       1,
       PACKAGE = "SimInf")
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                NULL,
-                                NA_integer_,
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'seed' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             NULL,
+             NA_integer_,
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -6L))
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                NULL,
-                                NA_real_,
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'seed' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             NULL,
+             NA_real_,
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -6L))
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                NULL,
-                                c(1L, 2L),
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'seed' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             NULL,
+             c(1L, 2L),
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -6L))
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                NULL,
-                                c(1, 2),
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'seed' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             NULL,
+             c(1, 2),
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -6L))
 
 ## Check extraction of number of threads
 .Call("SISe_run",
@@ -774,58 +769,51 @@ stopifnot(length(grep("Invalid 'seed' value",
       NULL,
       PACKAGE = "SimInf")
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                -1L,
-                                NULL,
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             -1L,
+             NULL,
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -7L))
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                -1,
-                                NULL,
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             -1,
+             NULL,
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -7L))
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                "1",
-                                NULL,
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             "1",
+             NULL,
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -7L))
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                c(1L, 1L),
-                                NULL,
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             c(1L, 1L),
+             NULL,
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -7L))
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                c(1, 1),
-                                NULL,
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             c(1, 1),
+             NULL,
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -7L))
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                NA_integer_,
-                                NULL,
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             NA_integer_,
+             NULL,
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -7L))
 
-res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
-                                NA_real_,
-                                NULL,
-                                PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+res <- .Call("SISe_run",
+             demo_model(model = "SISe"),
+             NA_real_,
+             NULL,
+             PACKAGE = "SimInf")
+stopifnot(identical(res$error, -7L))
