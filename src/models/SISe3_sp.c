@@ -236,28 +236,18 @@ int SISe3_sp_post_time_step(
 }
 
 /**
- * Run simulation for the SISe3_sp model
+ * Run simulation with the SISe3_sp model
  *
- * This function is called from R with '.Call'
- * @param model The SISe3_sp model
- * @param threads Number of threads
+ * @param model The SISe3_sp model.
+ * @param threads Number of threads.
  * @param seed Random number seed.
- * @return S4 class SISe3_sp with the simulated trajectory in U
+ * @return The simulated trajectory.
  */
 SEXP SISe3_sp_run(SEXP model, SEXP threads, SEXP seed)
 {
-    int err = 0;
-    SEXP result;
     PropensityFun t_fun[] = {&SISe3_sp_S_1_to_I_1, &SISe3_sp_I_1_to_S_1,
                              &SISe3_sp_S_2_to_I_2, &SISe3_sp_I_2_to_S_2,
                              &SISe3_sp_S_3_to_I_3, &SISe3_sp_I_3_to_S_3};
 
-    result = PROTECT(duplicate(model));
-    err = siminf_run(result, threads, seed, t_fun, &SISe3_sp_post_time_step);
-    UNPROTECT(1);
-
-    if (err)
-        siminf_error(err);
-
-    return result;
+    return siminf_run(model, threads, seed, t_fun, &SISe3_sp_post_time_step);
 }
