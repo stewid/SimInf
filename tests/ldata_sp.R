@@ -55,6 +55,18 @@ stopifnot(identical(d_obs@i, d@i))
 stopifnot(identical(d_obs@p, d@p))
 stopifnot(all(abs(d_obs@x - d@x) < tol))
 
+res <- tools::assertError(distance_matrix(1:10, 1:10, 3, "min_dist"))
+stopifnot(length(grep("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(distance_matrix(1:10, 1:10, 3, c(1, 2)))
+stopifnot(length(grep("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(distance_matrix(1:10, 1:10, 3, -1))
+stopifnot(length(grep("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.",
+                      res[[1]]$message)) > 0)
+
 ## Check 'data' argument to C function 'siminf_ldata_sp'
 res <- tools::assertError(
     .Call("siminf_ldata_sp", NULL, d, PACKAGE = "SimInf"))

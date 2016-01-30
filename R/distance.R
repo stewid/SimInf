@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,7 +31,17 @@
 ##' @export
 ##' @examples
 ##' distance_matrix(1:10, 1:10, 3)
-distance_matrix <- function(x, y, cutoff, min_dist = NULL) {
+distance_matrix <- function(x, y, cutoff, min_dist = NULL)
+{
+    if (!is.null(min_dist)) {
+        if (any(!is.numeric(min_dist),
+                !identical(length(min_dist), 1L),
+                min_dist[1] <= 0))
+        {
+            stop("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
+        }
+    }
+
     m <- lapply(seq_len(length(x)), function(i) {
         x0 <- x
         y0 <- y
