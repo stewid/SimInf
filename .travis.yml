@@ -6,9 +6,6 @@ os:
   - linux
   - osx
 
-before_install:
-  - echo "options(repos = c(CRAN='https://cran.rstudio.com/'))" > ~/.Rprofile
-
 apt_packages:
   - libgsl0-dev
 
