@@ -4,7 +4,6 @@ warnings_are_errors: true
 
 os:
   - linux
-  - osx
 
 apt_packages:
   - libgsl0-dev
