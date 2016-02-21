@@ -607,14 +607,14 @@ static int siminf_solver()
                 for (node = 0; node < sa.Nn && !sa.errcode; node++) {
                     while (sa.t_time[node] < sa.next_day) {
                         double cum, rand, tot_rate, delta = 0.0;
-                        int j, tr = 0;
+                        int j, tr;
 
                         /* a) Determine the transition that did occur
                          * (directSSA). */
-                        cum = sa.t_rate[node * sa.Nt];
                         rand = gsl_rng_uniform(sa.rng) * sa.sum_t_rate[node];
-                        while (tr < sa.Nt && rand > cum)
-                            cum += sa.t_rate[node * sa.Nt + (++tr)];
+                        for (tr = 0, cum = sa.t_rate[node * sa.Nt];
+                             tr < sa.Nt && rand > cum;
+                             tr++, cum += sa.t_rate[node * sa.Nt + tr]);
 
                         /* b) Update the state of the node */
                         for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
