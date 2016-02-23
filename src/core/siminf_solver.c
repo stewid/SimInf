@@ -611,8 +611,7 @@ static int siminf_solver()
 
                         /* a) Determine the transition that did occur
                          * (directSSA). */
-                        do { rand = gsl_rng_uniform(sa.rng); } while (rand <= 0);
-                        rand *= sa.sum_t_rate[node];
+                        rand = gsl_rng_uniform_pos(sa.rng) * sa.sum_t_rate[node];
                         for (tr = 0, cum = sa.t_rate[node * sa.Nt];
                              tr < sa.Nt && rand > cum;
                              tr++, cum += sa.t_rate[node * sa.Nt + tr]);
