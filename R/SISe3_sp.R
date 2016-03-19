@@ -209,6 +209,11 @@ SISe3_sp <- function(init,
                beta_t1, beta_t2, beta_t3, beta_t4,
                epsilon, coupling)
     storage.mode(gdata) <- "double"
+    names(gdata) <- c("upsilon_1", "upsilon_2", "upsilon_3",
+                      "gamma_1", "gamma_2", "gamma_3",
+                      "alpha",
+                      "beta_t1", "beta_t2", "beta_t3", "beta_t4",
+                      "epsilon", "coupling")
 
     model <- siminf_model(G      = G,
                           S      = S,

@@ -164,6 +164,9 @@ SISe_sp <- function(init,
     gdata <- c(upsilon, gamma, alpha, beta_t1, beta_t2, beta_t3, beta_t4,
                epsilon, coupling)
     storage.mode(gdata) <- "double"
+    names(gdata) <- c("upsilon", "gamma", "alpha",
+                      "beta_t1", "beta_t2", "beta_t3", "beta_t4",
+                      "epsilon", "coupling")
 
     model <- siminf_model(G      = G,
                           S      = S,
