@@ -43,5 +43,6 @@ Collate:
     'demo_model.R'
     'dependencies.R'
     'distance.R'
+    'run_outer.R'
     'siminf.R'
 RoxygenNote: 5.0.1
