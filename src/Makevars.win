@@ -15,7 +15,6 @@ MODELS_SRC = $(wildcard models/*.c)
 MODELS_OBJ = $(MODELS_SRC:.c=.o)
 
 OBJECTS.misc = misc/siminf_arg.o \
-               misc/siminf_error.o \
                misc/siminf_events.o \
                misc/siminf_forward_euler_linear_decay.o \
                misc/siminf_ldata.o \

@@ -3,7 +3,6 @@ PKG_CFLAGS = @PKG_CFLAGS@
 PKG_LIBS = @PKG_LIBS@
 
 OBJECTS.misc = misc/siminf_arg.o \
-               misc/siminf_error.o \
                misc/siminf_events.o \
                misc/siminf_forward_euler_linear_decay.o \
                misc/siminf_ldata.o \
