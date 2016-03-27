@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,6 +31,10 @@ stopifnot(length(grep("'nodes' must be numeric.",
 
 res <- tools::assertError(demo_model(nodes = 1.1))
 stopifnot(length(grep("'nodes' must be integer",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(demo_model(nodes = 3, model = "SISe_sp"))
+stopifnot(length(grep("'sqrt[(]nodes[)]' must be integer",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(demo_model(nodes = 0))
@@ -67,3 +71,4 @@ stopifnot(length(grep("'arg' should be one of",
 
 stopifnot(is(demo_model(model = "SISe"), "SISe"))
 stopifnot(is(demo_model(model = "SISe3"), "SISe3"))
+stopifnot(is(demo_model(model = "SISe_sp"), "SISe_sp"))
