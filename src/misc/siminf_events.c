@@ -1,8 +1,8 @@
 /*
- *  siminf, a framework for stochastic disease spread simulations
+ *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015  Stefan Engblom
- *  Copyright (C) 2015  Stefan Widgren
+ *  Copyright (C) 2015 - 2016  Stefan Engblom
+ *  Copyright (C) 2015 - 2016  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -224,7 +224,10 @@ static int siminf_external_transfer_events(
  * @param mu Vector of length 'days' with the mean number individuals
  * in a transfer event. One value for each day.
  * @param seed Random number seed.
- * @return A named list of vectors
+ * @return A named list of length 2. The first item 'error' contains
+ * the error code that is 0 if the function successfully generated
+ * events. The second item 'events' contains a named list of vectors
+ * with the generated events.
 */
 SEXP siminf_scheduled_events(
     SEXP nodes,
@@ -235,8 +238,7 @@ SEXP siminf_scheduled_events(
 {
     int err;
     SEXP result = R_NilValue;
-    SEXP names = R_NilValue;
-    SEXP item;
+    SEXP item, names, r_events;
     size_t i;
     struct siminf_events events = SIMINF_EVENTS_INIT;
     gsl_rng *rng = NULL;
@@ -258,6 +260,12 @@ SEXP siminf_scheduled_events(
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     gsl_rng_set(rng, s);
 
+    /* Create a list to hold the result of the scheduled events. */
+    PROTECT(result = allocVector(VECSXP, 2));
+    setAttrib(result, R_NamesSymbol, names = allocVector(STRSXP, 2));
+    SET_STRING_ELT(names, 0, mkChar("error"));
+    SET_STRING_ELT(names, 1, mkChar("events"));
+
     err = siminf_events_reserve(&events, capacity);
     if (err)
         goto cleanup;
@@ -275,34 +283,34 @@ SEXP siminf_scheduled_events(
     }
 
     /* Copy the events to a named list of vectors. */
-    PROTECT(result = allocVector(VECSXP, 7));
-    setAttrib(result, R_NamesSymbol, names = allocVector(STRSXP, 7));
+    SET_VECTOR_ELT(result, 1, r_events = allocVector(VECSXP, 7));
+    setAttrib(r_events, R_NamesSymbol, names = allocVector(STRSXP, 7));
 
-    SET_VECTOR_ELT(result, 0, item = allocVector(INTSXP, events.event.size));
+    SET_VECTOR_ELT(r_events, 0, item = allocVector(INTSXP, events.event.size));
     memcpy(INTEGER(item), events.event.buf, events.event.size * sizeof(int));
     SET_STRING_ELT(names, 0, mkChar("event"));
 
-    SET_VECTOR_ELT(result, 1, item = allocVector(INTSXP, events.time.size));
+    SET_VECTOR_ELT(r_events, 1, item = allocVector(INTSXP, events.time.size));
     memcpy(INTEGER(item), events.time.buf, events.time.size * sizeof(int));
     SET_STRING_ELT(names, 1, mkChar("time"));
 
-    SET_VECTOR_ELT(result, 2, item = allocVector(INTSXP, events.node.size));
+    SET_VECTOR_ELT(r_events, 2, item = allocVector(INTSXP, events.node.size));
     memcpy(INTEGER(item), events.node.buf, events.node.size * sizeof(int));
     SET_STRING_ELT(names, 2, mkChar("node"));
 
-    SET_VECTOR_ELT(result, 3, item = allocVector(INTSXP, events.dest.size));
+    SET_VECTOR_ELT(r_events, 3, item = allocVector(INTSXP, events.dest.size));
     memcpy(INTEGER(item), events.dest.buf, events.dest.size * sizeof(int));
     SET_STRING_ELT(names, 3, mkChar("dest"));
 
-    SET_VECTOR_ELT(result, 4, item = allocVector(INTSXP, events.n.size));
+    SET_VECTOR_ELT(r_events, 4, item = allocVector(INTSXP, events.n.size));
     memcpy(INTEGER(item), events.n.buf, events.n.size * sizeof(int));
     SET_STRING_ELT(names, 4, mkChar("n"));
 
-    SET_VECTOR_ELT(result, 5, item = allocVector(INTSXP, events.select.size));
+    SET_VECTOR_ELT(r_events, 5, item = allocVector(INTSXP, events.select.size));
     memcpy(INTEGER(item), events.select.buf, events.select.size * sizeof(int));
     SET_STRING_ELT(names, 5, mkChar("select"));
 
-    SET_VECTOR_ELT(result, 6, item = allocVector(INTSXP, events.shift.size));
+    SET_VECTOR_ELT(r_events, 6, item = allocVector(INTSXP, events.shift.size));
     memcpy(INTEGER(item), events.shift.buf, events.shift.size * sizeof(int));
     SET_STRING_ELT(names, 6, mkChar("shift"));
 
@@ -312,11 +320,11 @@ cleanup:
 
     siminf_events_free(&events);
 
-    if (result != R_NilValue)
+    if (result != R_NilValue) {
+        if (err)
+            SET_VECTOR_ELT(result, 0, ScalarInteger(err));
         UNPROTECT(1);
-
-    if (err)
-        siminf_error(err);
+    }
 
     return result;
 }

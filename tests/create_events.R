@@ -137,16 +137,16 @@ stopifnot(length(grep("Invalid 'p_edge' argument",
                       res[[1]]$message)) > 0)
 
 p_edge <- rep(0.0, 5)
-res <- tools::assertError(
-    .Call("siminf_scheduled_events", 10L, 5L, p_edge,
-          rep(0.1, 5), NULL, PACKAGE = "SimInf"))
+res <- .Call("siminf_scheduled_events", 10L, 5L, p_edge,
+             rep(0.1, 5), NULL, PACKAGE = "SimInf")
+res <- tools::assertError(SimInf:::siminf_error(res$error))
 stopifnot(length(grep("Invalid 'p_edge': Must be in interval 0 < p_edge < 1",
                       res[[1]]$message)) > 0)
 
 p_edge <- rep(1.0, 5)
-res <- tools::assertError(
-    .Call("siminf_scheduled_events", 10L, 5L, p_edge,
-          rep(0.1, 5), NULL, PACKAGE = "SimInf"))
+res <- .Call("siminf_scheduled_events", 10L, 5L, p_edge,
+             rep(0.1, 5), NULL, PACKAGE = "SimInf")
+res <- tools::assertError(SimInf:::siminf_error(res$error))
 stopifnot(length(grep("Invalid 'p_edge': Must be in interval 0 < p_edge < 1",
                       res[[1]]$message)) > 0)
 
@@ -262,4 +262,4 @@ select = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
 events_obs <- .Call(
     "siminf_scheduled_events", 10L, 10L, rep(0.1, 10),
     rep(4.25, 10), 123L, PACKAGE = "SimInf")
-stopifnot(identical(events_obs, events_exp))
+stopifnot(identical(events_obs$events, events_exp))
