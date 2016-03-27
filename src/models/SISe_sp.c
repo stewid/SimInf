@@ -159,7 +159,7 @@ int SISe_sp_post_time_step(
  */
 SEXP SISe_sp_run(SEXP model, SEXP threads, SEXP seed)
 {
-    PropensityFun t_fun[] = {&SISe_sp_S_to_I, &SISe_sp_I_to_S};
+    TRFun tr_fun[] = {&SISe_sp_S_to_I, &SISe_sp_I_to_S};
 
-    return siminf_run(model, threads, seed, t_fun, &SISe_sp_post_time_step);
+    return siminf_run(model, threads, seed, tr_fun, &SISe_sp_post_time_step);
 }

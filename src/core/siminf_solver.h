@@ -23,7 +23,7 @@
 
 #include "siminf.h"
 
-/* Definition of function to initialize and run siminf solver */
+/* Definition of the function to initialize and run the siminf solver */
 int siminf_run_solver(
     const int *u0, const double *v0, const int *irG, const int *jcG,
     const int *irS, const int *jcS, const int *prS, const double *tspan,
@@ -32,7 +32,6 @@ int siminf_run_solver(
     const int *jcE, const int *jcN, const int *prN, int len, const int *event,
     const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,
-    int Nthread, unsigned long int seed, PropensityFun *t_fun,
-    PTSFun pts_fun);
+    int Nthread, unsigned long int seed, TRFun *tr_fun, PTSFun pts_fun);
 
 #endif

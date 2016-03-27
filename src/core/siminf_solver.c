@@ -120,9 +120,9 @@ typedef struct siminf_thread_args
                      *   events. Value of item (i, j) in N. */
 
     /*** Callbacks ***/
-    PropensityFun *t_fun;    /**< Vector of function pointers to
-                              *   transition functions */
-    PTSFun pts_fun;          /**< Callback after each time step */
+    TRFun *tr_fun;  /**< Vector of function pointers to
+                     *   transition rate functions */
+    PTSFun pts_fun; /**< Callback after each time step */
 
     /*** Keep track of time ***/
     double tt;           /**< The global time. */
@@ -569,12 +569,12 @@ static int siminf_solver()
                 sa.sum_t_rate[node] = 0.0;
                 for (j = 0; j < sa.Nt; j++) {
                     sa.t_rate[node * sa.Nt + j] =
-                        (*sa.t_fun[j])(&sa.u[node * sa.Nc],
-                                       &sa.v[node * sa.Nd],
-                                       &sa.ldata[node * sa.Nld],
-                                       sa.gdata,
-                                       sa.tt,
-                                       sa.sd[node]);
+                        (*sa.tr_fun[j])(&sa.u[node * sa.Nc],
+                                        &sa.v[node * sa.Nd],
+                                        &sa.ldata[node * sa.Nld],
+                                        sa.gdata,
+                                        sa.tt,
+                                        sa.sd[node]);
 
                     sa.sum_t_rate[node] += sa.t_rate[node * sa.Nt + j];
                 }
@@ -628,7 +628,7 @@ static int siminf_solver()
                         for (j = sa.jcG[tr]; j < sa.jcG[tr + 1]; j++) {
                             double old = sa.t_rate[node * sa.Nt + sa.irG[j]];
                             delta += (sa.t_rate[node * sa.Nt + sa.irG[j]] =
-                                      (*sa.t_fun[sa.irG[j]])(
+                                      (*sa.tr_fun[sa.irG[j]])(
                                           &sa.u[node * sa.Nc],
                                           &sa.v[node * sa.Nd],
                                           &sa.ldata[node * sa.Nld],
@@ -801,7 +801,7 @@ static int siminf_solver()
                         for (; j < sa.Nt; j++) {
                             double old = sa.t_rate[node * sa.Nt + j];
                             delta += (sa.t_rate[node * sa.Nt + j] =
-                                      (*sa.t_fun[j])(
+                                      (*sa.tr_fun[j])(
                                           &sa.u[node * sa.Nc],
                                           &sa.v_new[node * sa.Nd],
                                           &sa.ldata[node * sa.Nld],
@@ -937,9 +937,9 @@ static int siminf_solver()
  *        shift of the internal transfer event.
  * @param Nthread Number of threads to use during simulation.
  * @param seed Random number seed.
- * @param t_fun Vector of function pointers to transition functions.
+ * @param tr_fun Vector of function pointers to transition rate functions.
  * @param pts_fun Function pointer to callback after each time step
- *        e.g. update infectious pressure.
+ *        e.g. to update the infectious pressure.
  * @return 0 if Ok, else error code.
  */
 int siminf_run_solver(
@@ -950,8 +950,7 @@ int siminf_run_solver(
     const int *jcE, const int *jcN, const int *prN, int len, const int *event,
     const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,
-    int Nthread, unsigned long int seed, PropensityFun *t_fun,
-    PTSFun pts_fun)
+    int Nthread, unsigned long int seed, TRFun *tr_fun, PTSFun pts_fun)
 {
     int i, errcode;
     gsl_rng *rng = NULL;
@@ -1040,7 +1039,7 @@ int siminf_run_solver(
         sim_args[i].prN = prN;
 
         /* Callbacks */
-        sim_args[i].t_fun = t_fun;
+        sim_args[i].tr_fun = tr_fun;
         sim_args[i].pts_fun = pts_fun;
 
         /* Keep track of time */

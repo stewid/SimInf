@@ -29,7 +29,7 @@
  * @param model The siminf_model
  * @param threads Number of threads
  * @param seed Random number seed.
- * @param t_fun Vector of function pointers to transition functions.
+ * @param tr_fun Vector of function pointers to transition rate functions.
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  */
@@ -37,7 +37,7 @@ SEXP siminf_run(
     SEXP model,
     SEXP threads,
     SEXP seed,
-    PropensityFun *t_fun,
+    TRFun *tr_fun,
     PTSFun pts_fun)
 {
     int err = 0, n_threads;
@@ -124,7 +124,7 @@ SEXP siminf_run(
         REAL(GET_SLOT(ext_events,    Rf_install("proportion"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("select"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("shift"))),
-        n_threads, s, t_fun, pts_fun);
+        n_threads, s, tr_fun, pts_fun);
 
 cleanup:
     if (err)

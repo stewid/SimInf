@@ -26,8 +26,8 @@
 
 #include "siminf_error.h"
 
-/* Definition of the propensity function. */
-typedef double (*PropensityFun)(
+/* Definition of the transition rate function. */
+typedef double (*TRFun)(
     const int *u,
     const double *v,
     const double *ldata,
@@ -51,7 +51,7 @@ SEXP siminf_run(
     SEXP model,
     SEXP threads,
     SEXP seed,
-    PropensityFun *t_fun,
+    TRFun *tr_fun,
     PTSFun pts_fun);
 
 #endif
