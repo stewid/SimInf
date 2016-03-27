@@ -38,7 +38,7 @@ SEXP siminf_run(
     SEXP threads,
     SEXP seed,
     PropensityFun *t_fun,
-    PostTimeStepFun pts_fun)
+    PTSFun pts_fun)
 {
     int err = 0, n_threads;
     SEXP trajectory, names, result = R_NilValue;

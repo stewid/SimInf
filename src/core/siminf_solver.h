@@ -1,8 +1,8 @@
 /*
- *  siminf, a framework for stochastic disease spread simulations
+ *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015  Stefan Engblom
- *  Copyright (C) 2015  Stefan Widgren
+ *  Copyright (C) 2015 - 2016  Stefan Engblom
+ *  Copyright (C) 2015 - 2016  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,6 +33,6 @@ int siminf_run_solver(
     const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,
     int Nthread, unsigned long int seed, PropensityFun *t_fun,
-    PostTimeStepFun pts_fun);
+    PTSFun pts_fun);
 
 #endif

@@ -35,8 +35,8 @@ typedef double (*PropensityFun)(
     double t,
     int sd);
 
-/* Definition of the callback function post one time step. */
-typedef int (*PostTimeStepFun)(
+/* Definition of the callback function post time step. */
+typedef int (*PTSFun)(
     double *v_new,
     const int *u,
     const double *v,
@@ -46,12 +46,12 @@ typedef int (*PostTimeStepFun)(
     double t,
     int sd);
 
-/* Definition of function to initiate and run the simulation */
+/* Definition of the function to initiate and run the simulation */
 SEXP siminf_run(
     SEXP model,
     SEXP threads,
     SEXP seed,
     PropensityFun *t_fun,
-    PostTimeStepFun pts_fun);
+    PTSFun pts_fun);
 
 #endif

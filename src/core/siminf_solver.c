@@ -122,7 +122,7 @@ typedef struct siminf_thread_args
     /*** Callbacks ***/
     PropensityFun *t_fun;    /**< Vector of function pointers to
                               *   transition functions */
-    PostTimeStepFun pts_fun; /**< Callback after each time step */
+    PTSFun pts_fun;          /**< Callback after each time step */
 
     /*** Keep track of time ***/
     double tt;           /**< The global time. */
@@ -951,7 +951,7 @@ int siminf_run_solver(
     const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,
     int Nthread, unsigned long int seed, PropensityFun *t_fun,
-    PostTimeStepFun pts_fun)
+    PTSFun pts_fun)
 {
     int i, errcode;
     gsl_rng *rng = NULL;
