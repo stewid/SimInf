@@ -363,6 +363,15 @@ siminf_model <- function(G,
 ##' @noRd
 siminf_error <- function(err)
 {
+    if (!is.numeric(err))
+        stop("'err' must be an integer vector of length 1")
+    if (!identical(length(err), 1L))
+        stop("'err' must be an integer vector of length 1")
+    if (!is_wholenumber(err))
+        stop("'err' must be an integer vector of length 1")
+
+    err <- as.integer(err)
+
     if (identical(err, -1L))
         stop("Negative state detected.")
 

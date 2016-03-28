@@ -817,3 +817,24 @@ res <- .Call("SISe_run",
              NULL,
              PACKAGE = "SimInf")
 stopifnot(identical(res$error, -7L))
+
+## Check error codes in siminf_error
+res <- tools::assertError(SimInf:::siminf_error("err"))
+stopifnot(length(grep("'err' must be an integer vector of length 1",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(SimInf:::siminf_error(c(-1L, -1L)))
+stopifnot(length(grep("'err' must be an integer vector of length 1",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(SimInf:::siminf_error(-1.1))
+stopifnot(length(grep("'err' must be an integer vector of length 1",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(SimInf:::siminf_error(-10))
+stopifnot(length(grep("Invalid model",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(SimInf:::siminf_error(-11))
+stopifnot(length(grep("Unknown error code",
+                      res[[1]]$message)) > 0)
