@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -37,6 +37,86 @@ stopifnot(length(grep("Missing columns in init",
 res <- tools::assertError(SISe(init = init[, c("id", "S")]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
+
+## Check phi
+res <- tools::assertError(SISe(init    = init,
+                               tspan   = seq_len(10) - 1,
+                               events  = NULL,
+                               phi     = rep("a", nrow(init)),
+                               upsilon = 0.0357,
+                               gamma   = 0.1,
+                               alpha   = 1.0,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
+                               end_t1  = 91,
+                               end_t2  = 182,
+                               end_t3  = 273,
+                               end_t4  = 365,
+                               epsilon = 0.000011))
+stopifnot(length(grep("Invalid 'phi': must be numeric vector",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(SISe(init    = init,
+                               tspan   = seq_len(10) - 1,
+                               events  = NULL,
+                               phi     = matrix(rep(1, nrow(init))),
+                               upsilon = 0.0357,
+                               gamma   = 0.1,
+                               alpha   = 1.0,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
+                               end_t1  = 91,
+                               end_t2  = 182,
+                               end_t3  = 273,
+                               end_t4  = 365,
+                               epsilon = 0.000011))
+stopifnot(length(grep("Invalid 'phi': must be numeric vector",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(SISe(init    = init,
+                               tspan   = seq_len(10) - 1,
+                               events  = NULL,
+                               phi     = rep(1, nrow(init) - 1),
+                               upsilon = 0.0357,
+                               gamma   = 0.1,
+                               alpha   = 1.0,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
+                               end_t1  = 91,
+                               end_t2  = 182,
+                               end_t3  = 273,
+                               end_t4  = 365,
+                               epsilon = 0.000011))
+stopifnot(length(
+    grep("Invalid 'phi': must be numeric vector with length 'nrow[(]init[)]'",
+                      res[[1]]$message)) > 0)
+
+res
+res <- tools::assertError(SISe(init    = init,
+                               tspan   = seq_len(10) - 1,
+                               events  = NULL,
+                               phi     = rep(-1, nrow(init)),
+                               upsilon = 0.0357,
+                               gamma   = 0.1,
+                               alpha   = 1.0,
+                               beta_t1 = 0.19,
+                               beta_t2 = 0.085,
+                               beta_t3 = 0.075,
+                               beta_t4 = 0.185,
+                               end_t1  = 91,
+                               end_t2  = 182,
+                               end_t3  = 273,
+                               end_t4  = 365,
+                               epsilon = 0.000011))
+stopifnot(length(
+    grep("Invalid 'phi': must be numeric vector with non-negative values",
+         res[[1]]$message)) > 0)
 
 ## Check missing upsilon
 res <- tools::assertError(SISe(init    = init,
