@@ -198,14 +198,9 @@ init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
                   .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
-## Both u0 and init are NULL
+## 'u0' is NULL
 res <- tools::assertError(siminf_model())
-stopifnot(length(grep("Both u0 and init are NULL",
-                      res[[1]]$message)) > 0)
-
-## Both u0 and init are non NULL
-res <- tools::assertError(siminf_model(init = init, u0 = u0))
-stopifnot(length(grep("Both u0 and init are non NULL",
+stopifnot(length(grep("'u0' is NULL",
                       res[[1]]$message)) > 0)
 
 ## Check show method without events
@@ -232,14 +227,15 @@ init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
                   row.names = c(NA, -6L),
                   class = "data.frame")
 
-events <- structure(list(event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
-                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+events <- structure(list(
+    event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
+    shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
                     .Names = c("event", "time", "node", "dest",
                         "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")

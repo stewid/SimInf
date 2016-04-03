@@ -199,11 +199,10 @@ setClass("siminf_model",
 ##'     vector of length \code{Nn}.
 ##' @param tspan A vector of increasing time points where the state of
 ##'     each node is to be returned.
-##' @param u0 The initial state vector (\eqn{N_c \times N_n}) with the
-##'     number of individuals in each compartment in every node.
-##' @param events A \code{data.frame} with the scheduled events.
-##' @param init A \code{data.frame} with the initial number of
+##' @param u0 The initial state vector. Either a matrix (\eqn{N_c
+##'     \times N_n}) or a a \code{data.frame} with the number of
 ##'     individuals in each compartment in every node.
+##' @param events A \code{data.frame} with the scheduled events.
 ##' @param V The result matrix for the real-valued continous
 ##'     compartment state (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
 ##'     \code{length(tspan)}).  \code{V[, j]} contains the real-valued
@@ -227,20 +226,36 @@ siminf_model <- function(G,
                          gdata  = NULL,
                          U      = NULL,
                          u0     = NULL,
-                         init   = NULL,
                          v0     = NULL,
                          V      = NULL,
                          E      = NULL,
                          N      = NULL)
 {
-    ## Check initial state
-    if (all(is.null(u0), is.null(init)))
-        stop("Both u0 and init are NULL")
-    if (all(!is.null(u0), !is.null(init)))
-        stop("Both u0 and init are non NULL")
-
     ## Check u0
-    if (!is.null(u0)) {
+    if (is.null(u0))
+        stop("'u0' is NULL")
+    if (is.data.frame(u0)) {
+        if (!("id" %in% names(u0)))
+            stop("u0 must contain the column id")
+        if (!is.integer(u0$id)) {
+            if (!all(is_wholenumber(u0$id)))
+                stop("u0$id must be an integer")
+            u0$id <- as.integer(u0$id)
+        }
+        u0 <- u0[order(u0$id),]
+        if (!identical(min(u0$id), 0L))
+            stop("u0$id must be zero based")
+        if (!identical(u0$id, seq_len(max(u0$id+1L))-1L))
+            stop("u0$id must be a sequence from 0 to max(u0$id)-1")
+
+        u0$id <- NULL
+        n_col <- ncol(u0)
+        n_row <- nrow(u0)
+        u0 <- t(data.matrix(u0))
+        attributes(u0) <- NULL
+        dim(u0) <- c(n_col, n_row)
+        storage.mode(u0) <- "integer"
+    } else {
         if (!all(is.matrix(u0), is.numeric(u0)))
             stop("u0 must be an integer matrix")
         if (!is.integer(u0)) {
@@ -248,30 +263,6 @@ siminf_model <- function(G,
                 stop("u0 must be an integer matrix")
             storage.mode(u0) <- "integer"
         }
-    }
-
-    ## Check init
-    if (!is.null(init)) {
-        if (!is.data.frame(init))
-            stop("init must be a data.frame")
-        if (!("id" %in% names(init)))
-            stop("init must contain the column id")
-        if (!is.integer(init$id)) {
-            if (!all(is_wholenumber(init$id)))
-                stop("init$id must be an integer")
-            init$id <- as.integer(init$id)
-        }
-        init <- init[order(init$id),]
-        if (!identical(min(init$id), 0L))
-            stop("init$id must be zero based")
-        if (!identical(init$id, seq_len(max(init$id+1L))-1L))
-            stop("init$id must be a sequence from 0 to max(init$id)-1")
-
-        init$id <- NULL
-        u0 <- t(data.matrix(init))
-        attributes(u0) <- NULL
-        dim(u0) <- c(ncol(init), nrow(init))
-        storage.mode(u0) <- "integer"
     }
 
     ## Check G

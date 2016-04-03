@@ -157,13 +157,13 @@ SISe <- function(init,
 
     model <- siminf_model(G      = G,
                           S      = S,
-                          init   = init,
                           E      = E,
                           N      = N,
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,
                           gdata  = gdata,
+                          u0     = init,
                           v0     = v0)
 
     return(as(model, "SISe"))

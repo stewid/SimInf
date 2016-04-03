@@ -5,8 +5,8 @@
 \title{Create a \code{siminf_model}}
 \usage{
 siminf_model(G, S, tspan, events = NULL, sd = NULL, ldata = NULL,
-  gdata = NULL, U = NULL, u0 = NULL, init = NULL, v0 = NULL,
-  V = NULL, E = NULL, N = NULL)
+  gdata = NULL, U = NULL, u0 = NULL, v0 = NULL, V = NULL, E = NULL,
+  N = NULL)
 }
 \arguments{
 \item{G}{Dependency graph that indicates the transition rates that
@@ -47,10 +47,8 @@ individuals in each disease state at
 \code{1} at \code{tspan[j]}. \code{U[(Nc + 1):(2 * Nc), j]}
 contains the state of node \code{2} at \code{tspan[j]} etc.}
 
-\item{u0}{The initial state vector (\eqn{N_c \times N_n}) with the
-number of individuals in each compartment in every node.}
-
-\item{init}{A \code{data.frame} with the initial number of
+\item{u0}{The initial state vector. Either a matrix (\eqn{N_c
+\times N_n}) or a a \code{data.frame} with the number of
 individuals in each compartment in every node.}
 
 \item{v0}{The initial continuous state vector in every node.
