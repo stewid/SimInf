@@ -20,10 +20,9 @@ library(SimInf)
 ## For debugging
 sessionInfo()
 
-init <- structure(list(id = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                       S  = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+init <- structure(list(S  = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
                        I  = c(0, 0, 0, 0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S", "I"),
+                  .Names = c("S", "I"),
                   row.names = c(NA, -9L), class = "data.frame")
 
 ## Place nodes in a grid
@@ -32,13 +31,10 @@ distance <- expand.grid(x = seq_len(3),
 distance <- distance_matrix(distance$x, distance$y, 2)
 
 ## Check missing columns in init
-res <- tools::assertError(SISe_sp(init = init[, c("S", "I")]))
+res <- tools::assertError(SISe_sp(init = init[, "I", drop = FALSE]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(SISe_sp(init = init[, c("id", "I")]))
-stopifnot(length(grep("Missing columns in init",
-                      res[[1]]$message)) > 0)
-res <- tools::assertError(SISe_sp(init = init[, c("id", "S")]))
+res <- tools::assertError(SISe_sp(init = init[, "S", drop = FALSE]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
 

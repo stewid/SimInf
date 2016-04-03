@@ -21,20 +21,16 @@ library(SimInf)
 ## For debugging
 sessionInfo()
 
-init <- structure(list(id = c(0, 1, 2, 3, 4, 5),
-                       S  = c(0, 1, 2, 3, 4, 5),
+init <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
                        I  = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S", "I"),
+                  .Names = c("S", "I"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 ## Check missing columns in init
-res <- tools::assertError(SISe(init = init[, c("S", "I")]))
+res <- tools::assertError(SISe(init = init[, "I", drop = FALSE]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(SISe(init = init[, c("id", "I")]))
-stopifnot(length(grep("Missing columns in init",
-                      res[[1]]$message)) > 0)
-res <- tools::assertError(SISe(init = init[, c("id", "S")]))
+res <- tools::assertError(SISe(init = init[, "S", drop = FALSE]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
 

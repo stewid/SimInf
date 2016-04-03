@@ -78,8 +78,8 @@ in the fourth interval of the year.}
 Create a SISe3_sp model to be used by the simulation framework.
 }
 \details{
-The argument init must be a \code{data.frame} with the following
-columns:
+The argument init must be a \code{data.frame} with one row for
+each node with the following columns:
 \describe{
 \item{id}{Node identifier that uniquely identifies each node. The
 node identifiers must be zero-based, i.e. the first identifier

@@ -28,8 +28,8 @@ setClass("SISe3_sp", contains = c("siminf_model"))
 ##' Create a SISe3_sp model to be used by the simulation framework.
 ##'
 ##'
-##' The argument init must be a \code{data.frame} with the following
-##' columns:
+##' The argument init must be a \code{data.frame} with one row for
+##' each node with the following columns:
 ##' \describe{
 ##' \item{id}{Node identifier that uniquely identifies each node. The
 ##' node identifiers must be zero-based, i.e. the first identifier
@@ -100,8 +100,9 @@ SISe3_sp <- function(init,
     ## Check arguments.
 
     ## Check init
-    if (!all(c("id", compartments) %in% names(init)))
+    if (!all(compartments %in% names(init)))
         stop("Missing columns in init")
+    init <- init[, compartments]
 
     ## Check initial infectious pressure
     if (is.null(phi))
@@ -133,8 +134,6 @@ SISe3_sp <- function(init,
         stop("All values in the 'distance' matrix must be >= 0")
 
     ## Arguments seems ok...go on
-
-    init <- init[,c("id", compartments)]
 
     E <- Matrix(c(1, 0, 0, 1, 0, 0,
                   0, 0, 0, 1, 0, 0,

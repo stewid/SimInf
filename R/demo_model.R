@@ -65,9 +65,8 @@ demo_model <- function(nodes = 1,
     model <- match.arg(model)
 
     if (identical(model, "SISe")) {
-        init <- data.frame(id = seq_len(nodes) - 1,
-                           S = 99,
-                           I = 1)
+        init <- data.frame(S = rep(99, nodes),
+                           I = rep(1, nodes))
 
         model <- SISe(init    = init,
                       tspan   = seq_len(days) - 1,
@@ -86,13 +85,12 @@ demo_model <- function(nodes = 1,
                       end_t4  = 365,
                       epsilon = 0.000011)
     } else if (identical(model, "SISe3")) {
-        init <- data.frame(id = seq_len(nodes) - 1,
-                           S_1 = 10,
-                           I_1 =  0,
-                           S_2 = 20,
-                           I_2 =  0,
-                           S_3 = 70,
-                           I_3 =  0)
+        init <- data.frame(S_1 = rep(10, nodes),
+                           I_1 = rep( 0, nodes),
+                           S_2 = rep(20, nodes),
+                           I_2 = rep( 0, nodes),
+                           S_3 = rep(70, nodes),
+                           I_3 = rep( 0, nodes))
 
         model <- SISe3(init      = init,
                        tspan     = seq_len(days) - 1,
@@ -123,9 +121,8 @@ demo_model <- function(nodes = 1,
                                 y = seq_len(nodes))
         distance <- distance_matrix(distance$x, distance$y, 2)
 
-        init <- data.frame(id = seq_len(nrow(distance)) - 1,
-                           S = 99,
-                           I = 1)
+        init <- data.frame(S = rep(99, nrow(distance)),
+                           I = rep( 1, nrow(distance)))
 
         model <- SISe_sp(init    = init,
                          tspan   = seq_len(days) - 1,

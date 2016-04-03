@@ -31,14 +31,13 @@ sessionInfo()
 ## probability of becoming infected.
 ##
 ## At t = 1, two individuals are moved to node = 0. This should fail.
-init <- structure(list(id  = c(0, 1),
-                       S_1 = c(0, 1),
+init <- structure(list(S_1 = c(0, 1),
                        I_1 = c(0, 0),
                        S_2 = c(0, 0),
                        I_2 = c(0, 0),
                        S_3 = c(0, 0),
                        I_3 = c(0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L),
                   class = "data.frame")
 
@@ -93,14 +92,13 @@ if (SimInf:::have_openmp()) {
 ## probability of becoming infected.
 ##
 ## At t = 1, -1 individuals are moved to node = 0. This should fail.
-init <- structure(list(id  = c(0, 1),
-                       S_1 = c(0, 1),
+init <- structure(list(S_1 = c(0, 1),
                        I_1 = c(0, 0),
                        S_2 = c(0, 0),
                        I_2 = c(0, 0),
                        S_3 = c(0, 0),
                        I_3 = c(0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
@@ -155,14 +153,13 @@ if (SimInf:::have_openmp()) {
 ##
 ## At t = 1, a proportion of 10 individuals are moved to node =
 ## 0. This should fail.
-init <- structure(list(id  = c(0, 1),
-                       S_1 = c(0, 1),
+init <- structure(list(S_1 = c(0, 1),
                        I_1 = c(0, 0),
                        S_2 = c(0, 0),
                        I_2 = c(0, 0),
                        S_3 = c(0, 0),
                        I_3 = c(0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
@@ -247,14 +244,13 @@ if (SimInf:::have_openmp()) {
 ##
 ## At t = 1, a proportion of -1 individuals are moved to node =
 ## 0. This should fail.
-init <- structure(list(id  = c(0, 1),
-                       S_1 = c(0, 1),
+init <- structure(list(S_1 = c(0, 1),
                        I_1 = c(0, 0),
                        S_2 = c(0, 0),
                        I_2 = c(0, 0),
                        S_3 = c(0, 0),
                        I_3 = c(0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
@@ -338,14 +334,13 @@ if (SimInf:::have_openmp()) {
 ## probability of becoming infected.
 ##
 ## At t = 1, a proportion of 0 individuals are moved to node = 0.
-init <- structure(list(id  = c(0, 1),
-                       S_1 = c(0, 1),
+init <- structure(list(S_1 = c(0, 1),
                        I_1 = c(0, 0),
                        S_2 = c(0, 0),
                        I_2 = c(0, 0),
                        S_3 = c(0, 0),
                        I_3  = c(0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
@@ -415,14 +410,13 @@ if (SimInf:::have_openmp()) {
 ## probability of becoming infected.
 ##
 ## At t = 1, proportion of all (1) individuals are moved to node = 0.
-init <- structure(list(id  = c(0, 1),
-                       S_1 = c(0, 1),
+init <- structure(list(S_1 = c(0, 1),
                        I_1 = c(0, 0),
                        S_2 = c(0, 0),
                        I_2 = c(0, 0),
                        S_3  = c(0, 0),
                        I_3  = c(0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
@@ -492,14 +486,13 @@ if (SimInf:::have_openmp()) {
 ## probability of becoming infected.
 ##
 ## At t = 1, Nkind = 1, one individual is moved to node = 0.
-init <- structure(list(id  = c(0, 1),
-                       S_1 = c(0, 2),
+init <- structure(list(S_1 = c(0, 2),
                        I_1 = c(0, 0),
                        S_2 = c(0, 0),
                        I_2 = c(0, 0),
                        S_3 = c(0, 0),
                        I_3  = c(0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
@@ -570,14 +563,13 @@ if (SimInf:::have_openmp()) {
 ## infected.
 ##
 ## At t = 1, Nkind = 2, one individual is moved to node = 0.
-init <- structure(list(id  = c(0, 1),
-                       S_1 = c(0, 2),
+init <- structure(list(S_1 = c(0, 2),
                        I_1 = c(0, 8),
                        S_2 = c(0, 0),
                        I_2 = c(0, 0),
                        S_3 = c(0, 0),
                        I_3 = c(0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,

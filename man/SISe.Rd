@@ -58,17 +58,6 @@ in the fourth interval of the year.}
 \description{
 Create a SISe model to be used by the simulation framework.
 }
-\details{
-The argument init must be a \code{data.frame} with the following
-columns:
-\describe{
-\item{id}{Node identifier that uniquely identifies each node. The
-node identifiers must be zero-based, i.e. the first identifier
-must be equal to zero.}
-\item{S}{The number of sucsceptible}
-\item{I}{The number of infected}
-}
-}
 \section{Beta}{
 
 The time dependent beta is divided into four intervals of the year

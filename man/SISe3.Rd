@@ -73,12 +73,9 @@ in the fourth interval of the year.}
 Create a SISe3 model to be used by the simulation framework.
 }
 \details{
-The argument init must be a \code{data.frame} with the following
-columns:
+The argument init must be a \code{data.frame} with one row for
+each node with the following columns:
 \describe{
-\item{id}{Node identifier that uniquely identifies each node. The
-node identifiers must be zero-based, i.e. the first identifier
-must be equal to zero.}
 \item{S_1}{The number of sucsceptible in age category 1}
 \item{I_1}{The number of infected in age category 1}
 \item{S_2}{The number of sucsceptible in age category 2}

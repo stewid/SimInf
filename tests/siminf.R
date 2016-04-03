@@ -27,8 +27,8 @@ sessionInfo()
 ##
 ## The individual start in the susceptible state, with a probability
 ## of becoming infected.
-init <- structure(list(id = 0, S = 1, I = 0),
-                  .Names = c("id", "S", "I"),
+init <- structure(list(S = 1, I = 0),
+                  .Names = c("S", "I"),
                   row.names = c(NA, -1L),
                   class = "data.frame")
 
@@ -83,28 +83,28 @@ if (SimInf:::have_openmp()) {
 ## becoming infected.
 ##
 ## At t = 1, all individuals are moved to node = 0.
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
-                       S_1 = c(0, 1, 2, 3, 4, 5),
+init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 1, 2, 3, 4, 5),
                        I_2 = c(0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 1, 2, 3, 4, 5),
                        I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L),
                   class = "data.frame")
 
-events <- structure(list(event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
-                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
-                    .Names = c("event", "time", "node", "dest",
-                        "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
+    shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+    .Names = c("event", "time", "node", "dest",
+               "n", "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
                tspan     = 0:10,
@@ -161,14 +161,13 @@ if (SimInf:::have_openmp()) {
 ## becoming infected.
 ##
 ## No scheduled events
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
-                       S_1 = c(0, 1, 2, 3, 4, 5),
+init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 1, 2, 3, 4, 5),
                        I_2 = c(0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 1, 2, 3, 4, 5),
                        I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 model <- SISe3(init,
@@ -226,27 +225,27 @@ if (SimInf:::have_openmp()) {
 ## of becoming infected.
 ##
 ## At t = 1, all individuals are moved to node = 0.
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
-                       S_1 = c(0, 1, 2, 3, 4, 5),
+init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 1, 2, 3, 4, 5),
                        I_2 = c(0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 1, 2, 3, 4, 5),
                        I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
-events <- structure(list(event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
-                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
-                    .Names = c("event", "time", "node", "dest",
-                        "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
+    shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+    .Names = c("event", "time", "node", "dest",
+               "n", "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
                tspan     = 0:10,
@@ -327,27 +326,27 @@ if (SimInf:::have_openmp()) {
 ##
 ## No individuals at t = 0
 ## At t = 1, all individuals enter in susceptible state
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
-                       S_1 = c(0, 0, 0, 0, 0, 0),
+init <- structure(list(S_1 = c(0, 0, 0, 0, 0, 0),
                        I_1 = c(0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 0, 0, 0, 0, 0),
                        I_2 = c(0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 0, 0, 0, 0, 0),
                        I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
-events <- structure(list(event      = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select     = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
-                    .Names = c("event", "time", "node", "dest",
-                        "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event      = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select     = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+    .Names = c("event", "time", "node", "dest",
+               "n", "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
                tspan     = 0:10,
@@ -427,27 +426,27 @@ if (SimInf:::have_openmp()) {
 ## of becoming infected.
 ##
 ## At t = 3, all individuals exit.
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
-                       S_1 = c(0, 1, 2, 3, 4, 5),
+init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 1, 2, 3, 4, 5),
                        I_2 = c(0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 1, 2, 3, 4, 5),
                        I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
-events <- structure(list(event      = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         time       = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
-                         shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
-                    .Names = c("event", "time", "node", "dest",
-                        "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event      = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    time       = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    dest       = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
+    shift      = c(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)),
+    .Names = c("event", "time", "node", "dest",
+               "n", "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 
 model <- SISe3(init,
                tspan     = 0:10,
@@ -528,14 +527,13 @@ if (SimInf:::have_openmp()) {
 ##
 ## At t = 3, all individuals in age category 1 age.
 ## At t = 6, all individuals in age category 2 age.
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
-                       S_1 = c(0, 1, 2, 3, 4, 5),
+init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 1, 2, 3, 4, 5),
                        I_2 = c(0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 1, 2, 3, 4, 5),
                        I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 events <- structure(list(event      = c(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
@@ -629,14 +627,13 @@ if (SimInf:::have_openmp()) {
 ## becoming infected and then return to susceptible.
 ##
 ## No scheduled events
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
-                       S_1 = c(0, 1, 2, 3, 4, 5),
+init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 1, 2, 3, 4, 5),
                        I_2 = c(0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 1, 2, 3, 4, 5),
                        I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 model <- SISe3(init,

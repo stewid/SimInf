@@ -235,20 +235,6 @@ siminf_model <- function(G,
     if (is.null(u0))
         stop("'u0' is NULL")
     if (is.data.frame(u0)) {
-        if (!("id" %in% names(u0)))
-            stop("u0 must contain the column id")
-        if (!is.integer(u0$id)) {
-            if (!all(is_wholenumber(u0$id)))
-                stop("u0$id must be an integer")
-            u0$id <- as.integer(u0$id)
-        }
-        u0 <- u0[order(u0$id),]
-        if (!identical(min(u0$id), 0L))
-            stop("u0$id must be zero based")
-        if (!identical(u0$id, seq_len(max(u0$id+1L))-1L))
-            stop("u0$id must be a sequence from 0 to max(u0$id)-1")
-
-        u0$id <- NULL
         n_col <- ncol(u0)
         n_row <- nrow(u0)
         u0 <- t(data.matrix(u0))

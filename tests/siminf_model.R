@@ -188,14 +188,13 @@ stopifnot(length(grep("Wrong size of 'ldata' matrix.",
                       res[[1]]$message)) > 0)
 
 ## Check initial state
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
-                       S_1 = c(0, 1, 2, 3, 4, 5),
+init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 1, 2, 3, 4, 5),
                        I_2 = c(0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 1, 2, 3, 4, 5),
                        I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L), class = "data.frame")
 
 ## 'u0' is NULL
@@ -216,14 +215,13 @@ show_observed <- capture.output(show(demo_model()))
 stopifnot(identical(show_observed, show_expected))
 
 ## Check show method with events
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5),
-                       S_1 = c(0, 1, 2, 3, 4, 5),
+init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                        I_1 = c(0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 1, 2, 3, 4, 5),
                        I_2 = c(0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 1, 2, 3, 4, 5),
                        I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -6L),
                   class = "data.frame")
 

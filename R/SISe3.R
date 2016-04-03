@@ -29,12 +29,9 @@ setClass("SISe3", contains = c("siminf_model"))
 ##' Create a SISe3 model to be used by the simulation framework.
 ##'
 ##'
-##' The argument init must be a \code{data.frame} with the following
-##' columns:
+##' The argument init must be a \code{data.frame} with one row for
+##' each node with the following columns:
 ##' \describe{
-##' \item{id}{Node identifier that uniquely identifies each node. The
-##' node identifiers must be zero-based, i.e. the first identifier
-##' must be equal to zero.}
 ##' \item{S_1}{The number of sucsceptible in age category 1}
 ##' \item{I_1}{The number of infected in age category 1}
 ##' \item{S_2}{The number of sucsceptible in age category 2}
@@ -97,8 +94,9 @@ SISe3 <- function(init,
     ## Check arguments.
 
     ## Check init
-    if (!all(c("id", compartments) %in% names(init)))
+    if (!all(compartments %in% names(init)))
         stop("Missing columns in init")
+    init <- init[, compartments]
 
     ## Check initial infectious pressure
     if (is.null(phi))
@@ -122,8 +120,6 @@ SISe3 <- function(init,
     check_end_t_arg(nrow(init), end_t1, end_t2, end_t3, end_t4)
 
     ## Arguments seems ok...go on
-
-    init <- init[,c("id", compartments)]
 
     E <- Matrix(c(1, 0, 0, 1, 0, 0,
                   0, 0, 0, 1, 0, 0,

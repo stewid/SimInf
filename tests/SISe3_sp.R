@@ -20,14 +20,13 @@ library(SimInf)
 ## For debugging
 sessionInfo()
 
-init <- structure(list(id  = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                       S_1 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
                        I_1 = c(0, 0, 0, 0, 0, 0, 0, 0, 0),
                        S_2 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
                        I_2 = c(0, 0, 0, 0, 0, 0, 0, 0, 0),
                        S_3 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
                        I_3 = c(0, 0, 0, 0, 0, 0, 0, 0, 0)),
-                  .Names = c("id", "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                   row.names = c(NA, -9L), class = "data.frame")
 
 ## Place nodes in a grid
@@ -37,37 +36,32 @@ distance <- distance_matrix(distance$x, distance$y, 2)
 
 ## Check missing columns in init
 res <- tools::assertError(
-    SISe3_sp(init = init[, c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")]))
+    SISe3_sp(init = init[, c("I_1", "S_2", "I_2", "S_3", "I_3")]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    SISe3_sp(init = init[, c("id", "I_1", "S_2", "I_2", "S_3", "I_3")]))
+    SISe3_sp(init = init[, c("S_1", "S_2", "I_2", "S_3", "I_3")]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    SISe3_sp(init = init[, c("id", "S_1", "S_2", "I_2", "S_3", "I_3")]))
+    SISe3_sp(init = init[, c("S_1", "I_1", "I_2", "S_3", "I_3")]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    SISe3_sp(init = init[, c("id", "S_1", "I_1", "I_2", "S_3", "I_3")]))
+    SISe3_sp(init = init[, c("S_1", "I_1", "S_2", "S_3", "I_3")]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    SISe3_sp(init = init[, c("id", "S_1", "I_1", "S_2", "S_3", "I_3")]))
+    SISe3_sp(init = init[, c("S_1", "I_1", "S_2", "I_2", "I_3")]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    SISe3_sp(init = init[, c("id", "S_1", "I_1", "S_2", "I_2", "I_3")]))
-stopifnot(length(grep("Missing columns in init",
-                      res[[1]]$message)) > 0)
-
-res <- tools::assertError(
-    SISe3_sp(init = init[, c("id", "S_1", "I_1", "S_2", "I_2", "S_3")]))
+    SISe3_sp(init = init[, c("S_1", "I_1", "S_2", "I_2", "S_3")]))
 stopifnot(length(grep("Missing columns in init",
                       res[[1]]$message)) > 0)
 

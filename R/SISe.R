@@ -29,14 +29,12 @@ setClass("SISe", contains = c("siminf_model"))
 ##' Create a SISe model to be used by the simulation framework.
 ##'
 ##'
-##' The argument init must be a \code{data.frame} with the following
-##' columns:
+##' The argument init must be a \code{data.frame} with one row for
+##' each node with the following columns:
 ##' \describe{
-##' \item{id}{Node identifier that uniquely identifies each node. The
-##' node identifiers must be zero-based, i.e. the first identifier
-##' must be equal to zero.}
-##' \item{S}{The number of sucsceptible}
-##' \item{I}{The number of infected}
+##' \describe{
+##' \item{S}{The number of sucsceptible in each node}
+##' \item{I}{The number of infected in each node}
 ##' }
 ##'
 ##' @template beta-section
@@ -80,8 +78,9 @@ SISe <- function(init,
     ## Check arguments.
 
     ## Check init
-    if (!all(c("id", compartments) %in% names(init)))
+    if (!all(compartments %in% names(init)))
         stop("Missing columns in init")
+    init <- init[, compartments]
 
     ## Check initial infectious pressure
     if (is.null(phi))
@@ -105,8 +104,6 @@ SISe <- function(init,
     check_end_t_arg(nrow(init), end_t1, end_t2, end_t3, end_t4)
 
     ## Arguments seems ok...go on
-
-    init <- init[,c("id", compartments)]
 
     E <- Matrix(c(1, 1,
                   0, 1),
