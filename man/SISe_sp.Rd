@@ -4,15 +4,15 @@
 \alias{SISe_sp}
 \title{Create a \code{SISe_sp} model}
 \usage{
-SISe_sp(init, tspan, events = NULL, phi = NULL, upsilon = NULL,
+SISe_sp(u0, tspan, events = NULL, phi = NULL, upsilon = NULL,
   gamma = NULL, alpha = NULL, beta_t1 = NULL, beta_t2 = NULL,
   beta_t3 = NULL, beta_t4 = NULL, end_t1 = NULL, end_t2 = NULL,
   end_t3 = NULL, end_t4 = NULL, epsilon = NULL, coupling = NULL,
   distance = NULL)
 }
 \arguments{
-\item{init}{A \code{data.frame} with the initial state in each
-node, see details.}
+\item{u0}{A \code{data.frame} with the initial state in each node,
+see details.}
 
 \item{tspan}{An increasing sequence of points in time where the
 state of the system is to be returned.}
@@ -65,12 +65,9 @@ Create a \code{SISe_sp} model to be used by the simulation
 framework.
 }
 \details{
-The argument init must be a \code{data.frame} with one row for
+The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
-\item{id}{Node identifier that uniquely identifies each node. The
-node identifiers must be zero-based, i.e. the first identifier
-must be equal to zero.}
 \item{S}{The number of sucsceptible}
 \item{I}{The number of infected}
 }

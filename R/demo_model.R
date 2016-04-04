@@ -117,10 +117,10 @@ demo_model <- function(nodes = 1,
                                 y = seq_len(nodes))
         distance <- distance_matrix(distance$x, distance$y, 2)
 
-        init <- data.frame(S = rep(99, nrow(distance)),
-                           I = rep( 1, nrow(distance)))
+        u0 <- data.frame(S = rep(99, nrow(distance)),
+                         I = rep( 1, nrow(distance)))
 
-        model <- SISe_sp(init    = init,
+        model <- SISe_sp(u0      = u0,
                          tspan   = seq_len(days) - 1,
                          events  = NULL,
                          phi     = rep(1, nrow(distance)),
