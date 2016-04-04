@@ -1,7 +1,7 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ check_infectious_pressure_arg <- function(len, ...) {
         if (!identical(length(arg[[i]]), len)) {
             stop(paste0("Invalid '",
                         match.call(expand.dots = FALSE)$'...'[i],
-                        "': must be numeric vector with length 'nrow(init)'"))
+                        "': must be numeric vector with length 'nrow(u0)'"))
         }
 
         if (any(arg[[i]] < 0)) {
@@ -132,7 +132,7 @@ check_end_t_arg <- function(len, ...) {
         if (!identical(length(arg[[i]]), len)) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$'...'[i],
-                        "' must be of length 1 or 'nrow(init)'"))
+                        "' must be of length 1 or 'nrow(u0)'"))
         }
     }
 

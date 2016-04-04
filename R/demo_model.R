@@ -65,10 +65,9 @@ demo_model <- function(nodes = 1,
     model <- match.arg(model)
 
     if (identical(model, "SISe")) {
-        init <- data.frame(S = rep(99, nodes),
-                           I = rep(1, nodes))
+        u0 <- data.frame(S = rep(99, nodes), I = rep(1, nodes))
 
-        model <- SISe(init    = init,
+        model <- SISe(u0      = u0,
                       tspan   = seq_len(days) - 1,
                       events  = NULL,
                       phi     = rep(1, nodes),
