@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -188,14 +188,14 @@ stopifnot(length(grep("Wrong size of 'ldata' matrix.",
                       res[[1]]$message)) > 0)
 
 ## Check initial state
-init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
-                       I_1 = c(0, 0, 0, 0, 0, 0),
-                       S_2 = c(0, 1, 2, 3, 4, 5),
-                       I_2 = c(0, 0, 0, 0, 0, 0),
-                       S_3 = c(0, 1, 2, 3, 4, 5),
-                       I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -6L), class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
+                     I_1 = c(0, 0, 0, 0, 0, 0),
+                     S_2 = c(0, 1, 2, 3, 4, 5),
+                     I_2 = c(0, 0, 0, 0, 0, 0),
+                     S_3 = c(0, 1, 2, 3, 4, 5),
+                     I_3 = c(0, 0, 0, 0, 0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -6L), class = "data.frame")
 
 ## 'u0' is NULL
 res <- tools::assertError(siminf_model())
@@ -215,15 +215,15 @@ show_observed <- capture.output(show(demo_model()))
 stopifnot(identical(show_observed, show_expected))
 
 ## Check show method with events
-init <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
-                       I_1 = c(0, 0, 0, 0, 0, 0),
-                       S_2 = c(0, 1, 2, 3, 4, 5),
-                       I_2 = c(0, 0, 0, 0, 0, 0),
-                       S_3 = c(0, 1, 2, 3, 4, 5),
-                       I_3 = c(0, 0, 0, 0, 0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -6L),
-                  class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
+                     I_1 = c(0, 0, 0, 0, 0, 0),
+                     S_2 = c(0, 1, 2, 3, 4, 5),
+                     I_2 = c(0, 0, 0, 0, 0, 0),
+                     S_3 = c(0, 1, 2, 3, 4, 5),
+                     I_3 = c(0, 0, 0, 0, 0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -6L),
+                class = "data.frame")
 
 events <- structure(list(
     event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
@@ -238,7 +238,7 @@ events <- structure(list(
                         "n", "proportion", "select", "shift"),
                     row.names = c(NA, -15L), class = "data.frame")
 
-model <- SISe3(init,
+model <- SISe3(u0        = u0,
                tspan     = 0:10,
                events    = events,
                phi       = rep(1, 6),

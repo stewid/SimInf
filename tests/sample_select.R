@@ -31,15 +31,15 @@ sessionInfo()
 ## probability of becoming infected.
 ##
 ## At t = 1, two individuals are moved to node = 0. This should fail.
-init <- structure(list(S_1 = c(0, 1),
-                       I_1 = c(0, 0),
-                       S_2 = c(0, 0),
-                       I_2 = c(0, 0),
-                       S_3 = c(0, 0),
-                       I_3 = c(0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -2L),
-                  class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 1),
+                     I_1 = c(0, 0),
+                     S_2 = c(0, 0),
+                     I_2 = c(0, 0),
+                     S_3 = c(0, 0),
+                     I_3 = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L),
+                class = "data.frame")
 
 events <- structure(list(event      = 3,
                          time       = 1,
@@ -53,7 +53,7 @@ events <- structure(list(event      = 3,
                         "n", "proportion", "select", "shift"),
                     row.names = c(NA, -1L), class = "data.frame")
 
-model <- SISe3(init,
+model <- SISe3(u0        = u0,
                tspan     = 0:10,
                events    = events,
                phi       = rep(0, 2),
@@ -92,14 +92,14 @@ if (SimInf:::have_openmp()) {
 ## probability of becoming infected.
 ##
 ## At t = 1, -1 individuals are moved to node = 0. This should fail.
-init <- structure(list(S_1 = c(0, 1),
-                       I_1 = c(0, 0),
-                       S_2 = c(0, 0),
-                       I_2 = c(0, 0),
-                       S_3 = c(0, 0),
-                       I_3 = c(0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -2L), class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 1),
+                     I_1 = c(0, 0),
+                     S_2 = c(0, 0),
+                     I_2 = c(0, 0),
+                     S_3 = c(0, 0),
+                     I_3 = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
                          time       = 1,
@@ -113,7 +113,7 @@ events <- structure(list(event      = 3,
                         "n", "proportion", "select", "shift"),
                     row.names = c(NA, -1L), class = "data.frame")
 
-model <- SISe3(init,
+model <- SISe3(u0        = u0,
                tspan     = 0:10,
                events    = events,
                phi       = rep(0, 2),
@@ -153,14 +153,14 @@ if (SimInf:::have_openmp()) {
 ##
 ## At t = 1, a proportion of 10 individuals are moved to node =
 ## 0. This should fail.
-init <- structure(list(S_1 = c(0, 1),
-                       I_1 = c(0, 0),
-                       S_2 = c(0, 0),
-                       I_2 = c(0, 0),
-                       S_3 = c(0, 0),
-                       I_3 = c(0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -2L), class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 1),
+                     I_1 = c(0, 0),
+                     S_2 = c(0, 0),
+                     I_2 = c(0, 0),
+                     S_3 = c(0, 0),
+                     I_3 = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
                          time       = 1,
@@ -175,7 +175,7 @@ events <- structure(list(event      = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 ## We should not be able to create model with prop = 10
-res <- tools::assertError(SISe3(init,
+res <- tools::assertError(SISe3(u0        = u0,
                                 tspan     = 0:10,
                                 events    = events,
                                 phi       = rep(0, 2),
@@ -201,7 +201,7 @@ stopifnot(length(grep("prop must be in the range 0 <= prop <= 1",
 ## Replace proportion = 10 to proportion = 1
 events$proportion <- 1
 
-model <- SISe3(init,
+model <- SISe3(u0        = u0,
                tspan     = 0:10,
                events    = events,
                phi       = rep(0, 2),
@@ -244,14 +244,14 @@ if (SimInf:::have_openmp()) {
 ##
 ## At t = 1, a proportion of -1 individuals are moved to node =
 ## 0. This should fail.
-init <- structure(list(S_1 = c(0, 1),
-                       I_1 = c(0, 0),
-                       S_2 = c(0, 0),
-                       I_2 = c(0, 0),
-                       S_3 = c(0, 0),
-                       I_3 = c(0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -2L), class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 1),
+                     I_1 = c(0, 0),
+                     S_2 = c(0, 0),
+                     I_2 = c(0, 0),
+                     S_3 = c(0, 0),
+                     I_3 = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
                          time       = 1,
@@ -266,7 +266,7 @@ events <- structure(list(event      = 3,
                     row.names = c(NA, -1L), class = "data.frame")
 
 ## We should not be able to create model with proportion = -1
-res <- tools::assertError(SISe3(init,
+res <- tools::assertError(SISe3(u0        = u0,
                                 tspan     = 0:10,
                                 events    = events,
                                 phi       = rep(0, 2),
@@ -292,7 +292,7 @@ stopifnot(length(grep("prop must be in the range 0 <= prop <= 1",
 ## Replace proportion = -1 to proportion = 0
 events$proportion <- 0
 
-model <- SISe3(init,
+model <- SISe3(u0        = u0,
                tspan     = 0:10,
                events    = events,
                phi       = rep(0, 2),
@@ -334,14 +334,14 @@ if (SimInf:::have_openmp()) {
 ## probability of becoming infected.
 ##
 ## At t = 1, a proportion of 0 individuals are moved to node = 0.
-init <- structure(list(S_1 = c(0, 1),
-                       I_1 = c(0, 0),
-                       S_2 = c(0, 0),
-                       I_2 = c(0, 0),
-                       S_3 = c(0, 0),
-                       I_3  = c(0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -2L), class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 1),
+                     I_1 = c(0, 0),
+                     S_2 = c(0, 0),
+                     I_2 = c(0, 0),
+                     S_3 = c(0, 0),
+                     I_3  = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
                          time       = 1,
@@ -355,7 +355,7 @@ events <- structure(list(event      = 3,
                         "n", "proportion", "select", "shift"),
                     row.names = c(NA, -1L), class = "data.frame")
 
-model <- SISe3(init,
+model <- SISe3(u0        = u0,
                tspan     = 0:2,
                events    = events,
                phi       = rep(0, 2),
@@ -410,14 +410,14 @@ if (SimInf:::have_openmp()) {
 ## probability of becoming infected.
 ##
 ## At t = 1, proportion of all (1) individuals are moved to node = 0.
-init <- structure(list(S_1 = c(0, 1),
-                       I_1 = c(0, 0),
-                       S_2 = c(0, 0),
-                       I_2 = c(0, 0),
-                       S_3  = c(0, 0),
-                       I_3  = c(0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -2L), class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 1),
+                     I_1 = c(0, 0),
+                     S_2 = c(0, 0),
+                     I_2 = c(0, 0),
+                     S_3  = c(0, 0),
+                     I_3  = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
                          time       = 1,
@@ -431,7 +431,7 @@ events <- structure(list(event      = 3,
                         "n", "proportion", "select", "shift"),
                     row.names = c(NA, -1L), class = "data.frame")
 
-model <- SISe3(init,
+model <- SISe3(u0        = u0,
                tspan     = 0:2,
                events    = events,
                phi       = rep(0, 2),
@@ -486,14 +486,14 @@ if (SimInf:::have_openmp()) {
 ## probability of becoming infected.
 ##
 ## At t = 1, Nkind = 1, one individual is moved to node = 0.
-init <- structure(list(S_1 = c(0, 2),
-                       I_1 = c(0, 0),
-                       S_2 = c(0, 0),
-                       I_2 = c(0, 0),
-                       S_3 = c(0, 0),
-                       I_3  = c(0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -2L), class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 2),
+                     I_1 = c(0, 0),
+                     S_2 = c(0, 0),
+                     I_2 = c(0, 0),
+                     S_3 = c(0, 0),
+                     I_3  = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
                          time       = 1,
@@ -507,7 +507,7 @@ events <- structure(list(event      = 3,
                         "n", "proportion", "select", "shift"),
                     row.names = c(NA, -1L), class = "data.frame")
 
-model <- SISe3(init,
+model <- SISe3(u0        = u0,
                tspan     = 0:2,
                events    = events,
                phi       = rep(0, 2),
@@ -563,14 +563,14 @@ if (SimInf:::have_openmp()) {
 ## infected.
 ##
 ## At t = 1, Nkind = 2, one individual is moved to node = 0.
-init <- structure(list(S_1 = c(0, 2),
-                       I_1 = c(0, 8),
-                       S_2 = c(0, 0),
-                       I_2 = c(0, 0),
-                       S_3 = c(0, 0),
-                       I_3 = c(0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -2L), class = "data.frame")
+u0 <- structure(list(S_1 = c(0, 2),
+                     I_1 = c(0, 8),
+                     S_2 = c(0, 0),
+                     I_2 = c(0, 0),
+                     S_3 = c(0, 0),
+                     I_3 = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L), class = "data.frame")
 
 events <- structure(list(event      = 3,
                          time       = 1,
@@ -584,7 +584,7 @@ events <- structure(list(event      = 3,
                         "n", "proportion", "select", "shift"),
                     row.names = c(NA, -1L), class = "data.frame")
 
-model <- SISe3(init,
+model <- SISe3(u0        = u0,
                tspan     = 0:2,
                events    = events,
                phi       = rep(0, 2),
