@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ phi_exp <- structure( c(0.810011, 0.185349185610407,
 5.94626098284664e-05, 5.94602118870071e-05 ), .Dim = c(1L, 100L))
 
 ## Check phi from the SISe model
-sis_e <- SISe(init    = data.frame(S = 100, I = 0),
+sis_e <- SISe(u0      = data.frame(S = 100, I = 0),
               tspan   = seq(from = 1, to = 700, by = 7),
               events  = NULL,
               phi     = 1,
@@ -83,7 +83,7 @@ sis_e_phi_obs <- sis_e@V[1,]
 stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
 
 ## Check phi from the SISe3 model
-sis_e3 <- SISe3(init    = data.frame(S_1 = 10, I_1 = 0,
+sis_e3 <- SISe3(u0      = data.frame(S_1 = 10, I_1 = 0,
                                      S_2 = 20, I_2 = 0,
                                      S_3 = 70, I_3 = 0),
                 tspan   = seq(from = 1, to = 700, by = 7),
