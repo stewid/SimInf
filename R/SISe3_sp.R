@@ -28,12 +28,9 @@ setClass("SISe3_sp", contains = c("siminf_model"))
 ##' Create a SISe3_sp model to be used by the simulation framework.
 ##'
 ##'
-##' The argument init must be a \code{data.frame} with one row for
+##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
-##' \item{id}{Node identifier that uniquely identifies each node. The
-##' node identifiers must be zero-based, i.e. the first identifier
-##' must be equal to zero.}
 ##' \item{S_1}{The number of sucsceptible in age category 1}
 ##' \item{I_1}{The number of infected in age category 1}
 ##' \item{S_2}{The number of sucsceptible in age category 2}
@@ -43,7 +40,7 @@ setClass("SISe3_sp", contains = c("siminf_model"))
 ##' }
 ##'
 ##' @template beta-section
-##' @param init A \code{data.frame} with the initial state in each
+##' @param u0 A \code{data.frame} with the initial state in each
 ##' node, see details.
 ##' @param tspan An increasing sequence of points in time where the
 ##' state of the system is to be returned.
@@ -72,7 +69,7 @@ setClass("SISe3_sp", contains = c("siminf_model"))
 ##' @return \code{SISe3_sp}
 ##' @include check_arguments.R
 ##' @export
-SISe3_sp <- function(init,
+SISe3_sp <- function(u0,
                      tspan,
                      events    = NULL,
                      phi       = NULL,
@@ -99,15 +96,17 @@ SISe3_sp <- function(init,
 
     ## Check arguments.
 
-    ## Check init
-    if (!all(compartments %in% names(init)))
-        stop("Missing columns in init")
-    init <- init[, compartments]
+    ## Check u0
+    if (!is.data.frame(u0))
+        stop("'u0' must be a data.frame")
+    if (!all(compartments %in% names(u0)))
+        stop("Missing columns in u0")
+    u0 <- u0[, compartments]
 
     ## Check initial infectious pressure
     if (is.null(phi))
-        phi <- rep(0, nrow(init))
-    check_infectious_pressure_arg(nrow(init), phi)
+        phi <- rep(0, nrow(u0))
+    check_infectious_pressure_arg(nrow(u0), phi)
 
     ## Check 'gdata' parameters
     check_gdata_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
@@ -116,14 +115,14 @@ SISe3_sp <- function(init,
     ## Check interval endpoints
     check_integer_arg(end_t1, end_t2, end_t3, end_t4)
     if (identical(length(end_t1), 1L))
-        end_t1 <- rep(end_t1, nrow(init))
+        end_t1 <- rep(end_t1, nrow(u0))
     if (identical(length(end_t2), 1L))
-        end_t2 <- rep(end_t2, nrow(init))
+        end_t2 <- rep(end_t2, nrow(u0))
     if (identical(length(end_t3), 1L))
-        end_t3 <- rep(end_t3, nrow(init))
+        end_t3 <- rep(end_t3, nrow(u0))
     if (identical(length(end_t4), 1L))
-        end_t4 <- rep(end_t4, nrow(init))
-    check_end_t_arg(nrow(init), end_t1, end_t2, end_t3, end_t4)
+        end_t4 <- rep(end_t4, nrow(u0))
+    check_end_t_arg(nrow(u0), end_t1, end_t2, end_t3, end_t4)
 
     ## Check distance matrix
     if (is.null(distance))
@@ -222,7 +221,7 @@ SISe3_sp <- function(init,
                           events = events,
                           ldata  = ldata,
                           gdata  = gdata,
-                          u0     = init,
+                          u0     = u0,
                           v0     = v0)
 
     return(as(model, "SISe3_sp"))
