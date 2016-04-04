@@ -84,14 +84,11 @@ demo_model <- function(nodes = 1,
                       end_t4  = 365,
                       epsilon = 0.000011)
     } else if (identical(model, "SISe3")) {
-        init <- data.frame(S_1 = rep(10, nodes),
-                           I_1 = rep( 0, nodes),
-                           S_2 = rep(20, nodes),
-                           I_2 = rep( 0, nodes),
-                           S_3 = rep(70, nodes),
-                           I_3 = rep( 0, nodes))
+        u0 <- data.frame(S_1 = rep(10, nodes), I_1 = rep( 0, nodes),
+                         S_2 = rep(20, nodes), I_2 = rep( 0, nodes),
+                         S_3 = rep(70, nodes), I_3 = rep( 0, nodes))
 
-        model <- SISe3(init      = init,
+        model <- SISe3(u0        = u0,
                        tspan     = seq_len(days) - 1,
                        events    = NULL,
                        phi       = rep(1, nodes),

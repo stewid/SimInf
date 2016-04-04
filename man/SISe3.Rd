@@ -4,14 +4,14 @@
 \alias{SISe3}
 \title{Create a SISe3 model}
 \usage{
-SISe3(init, tspan, events = NULL, phi = NULL, upsilon_1 = NULL,
+SISe3(u0, tspan, events = NULL, phi = NULL, upsilon_1 = NULL,
   upsilon_2 = NULL, upsilon_3 = NULL, gamma_1 = NULL, gamma_2 = NULL,
   gamma_3 = NULL, alpha = NULL, beta_t1 = NULL, beta_t2 = NULL,
   beta_t3 = NULL, beta_t4 = NULL, end_t1 = NULL, end_t2 = NULL,
   end_t3 = NULL, end_t4 = NULL, epsilon = NULL)
 }
 \arguments{
-\item{init}{A \code{data.frame} with the initial state in each
+\item{u0}{A \code{data.frame} with the initial state in each
 node, see details.}
 
 \item{tspan}{An increasing sequence of points in time where the
@@ -73,7 +73,7 @@ in the fourth interval of the year.}
 Create a SISe3 model to be used by the simulation framework.
 }
 \details{
-The argument init must be a \code{data.frame} with one row for
+The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
 \item{S_1}{The number of sucsceptible in age category 1}
