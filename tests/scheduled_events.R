@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -45,16 +45,18 @@ N <- Matrix(c(2, 0,
             sparse = TRUE)
 
 ## Check events$event not equal to whole number
-events <- structure(list(event = c(3.1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-                         shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
-                    .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event = c(3.1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(scheduled_events(E      = E,
                                            N      = N,
@@ -63,16 +65,18 @@ stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
 ## Check events$time not equal to whole number
-events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time = c(1.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-                         shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
-                    .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = c(1.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(scheduled_events(E      = E,
                                            N      = N,
@@ -81,16 +85,18 @@ stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
 ## Check events$select not equal to whole number
-events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select = c(0.1, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-                         shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
-                    .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(0.1, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(scheduled_events(E      = E,
                                            N      = N,
@@ -99,16 +105,18 @@ stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
 ## Check events$node not equal to whole number
-events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node = c(1.1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-                         shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
-                    .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node = c(2.2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(scheduled_events(E      = E,
                                            N      = N,
@@ -116,17 +124,39 @@ res <- tools::assertError(scheduled_events(E      = E,
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
+## Check events$node less than one
+events <- structure(list(
+    event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
+str(events)
+res <- tools::assertError(scheduled_events(E      = E,
+                                           N      = N,
+                                           events = events))
+stopifnot(length(grep("node must be greater than 1",
+                      res[[1]]$message)) > 0)
+
 ## Check events$dest not equal to whole number
-events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node = c(1.1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest = c(0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-                         shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
-                    .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(scheduled_events(E      = E,
                                            N      = N,
@@ -135,16 +165,18 @@ stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
 ## Check events$n not equal to whole number
-events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n = c(1.1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-                         shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
-                    .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n = c(1.1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(scheduled_events(E      = E,
                                            N      = N,
@@ -153,16 +185,19 @@ stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
 ## Check events$event equal to character
-events <- structure(list(event = c("3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3", "3"),
-                         time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-                         shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
-                    .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event = c("3", "3", "3", "3", "3", "3", "3", "3", "3",
+              "3", "3", "3", "3", "3", "3"),
+    time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(scheduled_events(E      = E,
                                            N      = N,
@@ -171,16 +206,18 @@ stopifnot(length(grep("Columns in events must be numeric",
                       res[[1]]$message)) > 0)
 
 ## Check events$shift not equal to whole number
-events <- structure(list(event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                         time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         node = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                         n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
-                         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                         select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-                         shift = c(0.1, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
-                    .Names = c("event", "time", "node", "dest", "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+events <- structure(list(
+    event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+    shift = c(0.1, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
 str(events)
 res <- tools::assertError(scheduled_events(E      = E,
                                            N      = N,

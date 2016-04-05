@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@ sessionInfo()
 ## 3 Age categories
 ## 2 Disease-states: Susceptible & Infected
 ##
-## One individual start in susceptible state in node = 1, with a zero
+## One individual start in susceptible state in node = 2, with a zero
 ## probability of becoming infected.
 ##
-## At t = 1, two individuals are moved to node = 0. This should fail.
+## At t = 1, two individuals are moved to node = 1. This should fail.
 u0 <- structure(list(S_1 = c(0, 1),
                      I_1 = c(0, 0),
                      S_2 = c(0, 0),
@@ -43,7 +43,7 @@ u0 <- structure(list(S_1 = c(0, 1),
 
 events <- structure(list(event      = 3,
                          time       = 1,
-                         node       = 1,
+                         node       = 2,
                          dest       = 0,
                          n          = 2,
                          proportion = 1,
@@ -88,10 +88,10 @@ if (SimInf:::have_openmp()) {
 ## 3 Age categories
 ## 2 Disease-states: Susceptible & Infected
 ##
-## One individual start in susceptible state in node = 1, with a zero
+## One individual start in susceptible state in node = 2, with a zero
 ## probability of becoming infected.
 ##
-## At t = 1, -1 individuals are moved to node = 0. This should fail.
+## At t = 1, -1 individuals are moved to node = 1. This should fail.
 u0 <- structure(list(S_1 = c(0, 1),
                      I_1 = c(0, 0),
                      S_2 = c(0, 0),
@@ -103,7 +103,7 @@ u0 <- structure(list(S_1 = c(0, 1),
 
 events <- structure(list(event      = 3,
                          time       = 1,
-                         node       = 1,
+                         node       = 2,
                          dest       = 0,
                          n          = -1,
                          proportion = 1,
@@ -148,11 +148,11 @@ if (SimInf:::have_openmp()) {
 ## 3 Age categories
 ## 2 Disease-states: Susceptible & Infected
 ##
-## One individual start in susceptible state in node = 1, with a zero
+## One individual start in susceptible state in node = 2, with a zero
 ## probability of becoming infected.
 ##
-## At t = 1, a proportion of 10 individuals are moved to node =
-## 0. This should fail.
+## At t = 1, a proportion of 10 individuals are moved to node = 1.
+## This should fail.
 u0 <- structure(list(S_1 = c(0, 1),
                      I_1 = c(0, 0),
                      S_2 = c(0, 0),
@@ -164,7 +164,7 @@ u0 <- structure(list(S_1 = c(0, 1),
 
 events <- structure(list(event      = 3,
                          time       = 1,
-                         node       = 1,
+                         node       = 2,
                          dest       = 0,
                          n          = 0,
                          proportion = 10,
@@ -239,11 +239,11 @@ if (SimInf:::have_openmp()) {
 ## 3 Age categories
 ## 2 Disease-states: Susceptible & Infected
 ##
-## One individual start in susceptible state in node = 1, with a zero
+## One individual start in susceptible state in node = 2, with a zero
 ## probability of becoming infected.
 ##
-## At t = 1, a proportion of -1 individuals are moved to node =
-## 0. This should fail.
+## At t = 1, a proportion of -1 individuals are moved to node = 1.
+## This should fail.
 u0 <- structure(list(S_1 = c(0, 1),
                      I_1 = c(0, 0),
                      S_2 = c(0, 0),
@@ -255,7 +255,7 @@ u0 <- structure(list(S_1 = c(0, 1),
 
 events <- structure(list(event      = 3,
                          time       = 1,
-                         node       = 1,
+                         node       = 2,
                          dest       = 0,
                          n          = 0,
                          proportion = -1,
@@ -330,10 +330,10 @@ if (SimInf:::have_openmp()) {
 ## 3 Age categories
 ## 2 Disease-states: Susceptible & Infected
 ##
-## One individual start in susceptible state in node = 1, with a zero
+## One individual start in susceptible state in node = 2, with a zero
 ## probability of becoming infected.
 ##
-## At t = 1, a proportion of 0 individuals are moved to node = 0.
+## At t = 1, a proportion of 0 individuals are moved to node = 1.
 u0 <- structure(list(S_1 = c(0, 1),
                      I_1 = c(0, 0),
                      S_2 = c(0, 0),
@@ -345,7 +345,7 @@ u0 <- structure(list(S_1 = c(0, 1),
 
 events <- structure(list(event      = 3,
                          time       = 1,
-                         node       = 1,
+                         node       = 2,
                          dest       = 0,
                          n          = 0,
                          proportion = 0,
@@ -406,10 +406,10 @@ if (SimInf:::have_openmp()) {
 ## 3 Age categories
 ## 2 Disease-states: Susceptible & Infected
 ##
-## One individual start in susceptible state in node = 1, with a zero
+## One individual start in susceptible state in node = 2, with a zero
 ## probability of becoming infected.
 ##
-## At t = 1, proportion of all (1) individuals are moved to node = 0.
+## At t = 1, proportion of all (1) individuals are moved to node = 1.
 u0 <- structure(list(S_1 = c(0, 1),
                      I_1 = c(0, 0),
                      S_2 = c(0, 0),
@@ -421,7 +421,7 @@ u0 <- structure(list(S_1 = c(0, 1),
 
 events <- structure(list(event      = 3,
                          time       = 1,
-                         node       = 1,
+                         node       = 2,
                          dest       = 0,
                          n          = 1,
                          proportion = 0,
@@ -482,10 +482,10 @@ if (SimInf:::have_openmp()) {
 ## 3 Age categories
 ## 2 Disease-states: Susceptible & Infected
 ##
-## Two individuals start in susceptible state in node = 1, with a zero
+## Two individuals start in susceptible state in node = 2, with a zero
 ## probability of becoming infected.
 ##
-## At t = 1, Nkind = 1, one individual is moved to node = 0.
+## At t = 1, Nkind = 1, one individual is moved to node = 1.
 u0 <- structure(list(S_1 = c(0, 2),
                      I_1 = c(0, 0),
                      S_2 = c(0, 0),
@@ -497,7 +497,7 @@ u0 <- structure(list(S_1 = c(0, 2),
 
 events <- structure(list(event      = 3,
                          time       = 1,
-                         node       = 1,
+                         node       = 2,
                          dest       = 0,
                          n          = 1,
                          proportion = 0,
@@ -559,10 +559,10 @@ if (SimInf:::have_openmp()) {
 ## 2 Disease-states: Susceptible & Infected
 ##
 ## Two individuals start in susceptible state and 8 individuals in
-## infected state in node = 1, with a zero probability of becoming
+## infected state in node = 2, with a zero probability of becoming
 ## infected.
 ##
-## At t = 1, Nkind = 2, one individual is moved to node = 0.
+## At t = 1, Nkind = 2, one individual is moved to node = 1.
 u0 <- structure(list(S_1 = c(0, 2),
                      I_1 = c(0, 8),
                      S_2 = c(0, 0),
@@ -574,7 +574,7 @@ u0 <- structure(list(S_1 = c(0, 2),
 
 events <- structure(list(event      = 3,
                          time       = 1,
-                         node       = 1,
+                         node       = 2,
                          dest       = 0,
                          n          = 1,
                          proportion = 0,

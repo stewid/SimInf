@@ -76,7 +76,7 @@ static int siminf_gnp(
         if (v < n) {
             int err;
 
-            err = siminf_vec_push_back(from, v);
+            err = siminf_vec_push_back(from, v + 1);
             if (err)
                 return err;
 

@@ -310,7 +310,7 @@ static void siminf_free_args(siminf_thread_args *sa)
  * @param len Number of scheduled events.
  * @param event The type of event i.
  * @param time The time of event i.
- * @param node The source node of event i.
+ * @param node The source node (one based) of event i.
  * @param dest The dest node of event i.
  * @param n The number of individuals in event i. n[i] >= 0.
  * @param proportion If n[i] equals zero, then the number of
@@ -349,7 +349,7 @@ static int siminf_split_events(
         case EXIT_EVENT:
         case ENTER_EVENT:
         case INTERNAL_TRANSFER_EVENT:
-            k = node[i] / chunk_size;
+            k = (node[i] - 1) / chunk_size;
             if (k >= n_thread)
                 k = n_thread - 1;
             E1_i[k]++;
@@ -386,7 +386,7 @@ static int siminf_split_events(
         case EXIT_EVENT:
         case ENTER_EVENT:
         case INTERNAL_TRANSFER_EVENT:
-            k = node[i] / chunk_size;
+            k = (node[i] - 1) / chunk_size;
             if (k >= n_thread)
                 k = n_thread - 1;
             j = E1_i[k]++;
@@ -403,7 +403,7 @@ static int siminf_split_events(
 
         e->event[j]      = event[i];
         e->time[j]       = time[i];
-        e->node[j]       = node[i];
+        e->node[j]       = node[i] - 1;
         e->dest[j]       = dest[i];
         e->n[j]          = n[i];
         e->proportion[j] = proportion[i];

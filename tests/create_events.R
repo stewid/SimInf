@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -222,13 +222,13 @@ events_exp <- structure(list(event = c(3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
 4L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L,
 5L, 6L, 6L, 6L, 6L, 6L, 6L, 6L, 7L, 7L, 7L, 7L, 7L, 7L, 7L, 7L, 7L,
 8L, 8L, 8L, 8L, 8L, 8L, 8L, 8L, 8L, 8L, 8L, 9L, 9L, 9L, 9L, 9L, 9L,
-9L, 9L, 9L, 9L, 9L, 9L, 9L, 9L), node = c(1L, 2L, 2L, 3L, 3L, 4L, 5L,
-7L, 8L, 9L, 9L, 0L, 0L, 1L, 3L, 3L, 5L, 7L, 8L, 0L, 1L, 2L, 3L, 4L,
-4L, 4L, 6L, 8L, 8L, 8L, 9L, 9L, 1L, 1L, 2L, 2L, 2L, 4L, 5L, 5L, 6L,
-7L, 8L, 9L, 0L, 2L, 4L, 4L, 5L, 5L, 6L, 6L, 7L, 8L, 9L, 0L, 0L, 2L,
-2L, 2L, 3L, 5L, 6L, 6L, 6L, 7L, 7L, 8L, 1L, 2L, 4L, 4L, 5L, 5L, 6L,
-0L, 0L, 4L, 6L, 6L, 7L, 8L, 9L, 9L, 0L, 0L, 1L, 5L, 5L, 6L, 6L, 7L,
-8L, 8L, 9L, 0L, 2L, 2L, 2L, 3L, 3L, 3L, 4L, 4L, 6L, 7L, 8L, 8L, 9L),
+9L, 9L, 9L, 9L, 9L, 9L, 9L, 9L), node = c(2L, 3L, 3L, 4L, 4L, 5L, 6L,
+8L, 9L, 10L, 10L, 1L, 1L, 2L, 4L, 4L, 6L, 8L, 9L, 1L, 2L, 3L, 4L, 5L,
+5L, 5L, 7L, 9L, 9L, 9L, 10L, 10L, 2L, 2L, 3L, 3L, 3L, 5L, 6L, 6L, 7L,
+8L, 9L, 10L, 1L, 3L, 5L, 5L, 6L, 6L, 7L, 7L, 8L, 9L, 10L, 1L, 1L, 3L,
+3L, 3L, 4L, 6L, 7L, 7L, 7L, 8L, 8L, 9L, 2L, 3L, 5L, 5L, 6L, 6L, 7L,
+1L, 1L, 5L, 7L, 7L, 8L, 9L, 10L, 10L, 1L, 1L, 2L, 6L, 6L, 7L, 7L, 8L,
+9L, 9L, 10L, 1L, 3L, 3L, 3L, 4L, 4L, 4L, 5L, 5L, 7L, 8L, 9L, 9L, 10L),
 dest = c(2L, 4L, 8L, 4L, 7L, 9L, 7L, 0L, 3L, 0L, 6L, 5L, 6L, 0L, 1L,
 7L, 1L, 3L, 5L, 2L, 3L, 1L, 9L, 1L, 2L, 6L, 0L, 2L, 5L, 7L, 0L, 7L,
 0L, 8L, 0L, 3L, 5L, 6L, 0L, 6L, 7L, 0L, 9L, 3L, 3L, 0L, 5L, 8L, 6L,
