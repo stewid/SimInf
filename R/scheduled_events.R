@@ -131,7 +131,12 @@ setClass("scheduled_events",
 
              if (any(object@node < 1)) {
                  errors <- c(errors,
-                             "node must be greater than 1")
+                             "'node' must be greater or equal to 1")
+             }
+
+             if (any(object@dest[object@event == 3] < 1)) {
+                 errors <- c(errors,
+                             "'dest' must be greater or equal to 1")
              }
 
              if (any(object@proportion < 0, object@proportion > 1)) {

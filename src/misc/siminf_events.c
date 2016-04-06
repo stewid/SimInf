@@ -80,7 +80,7 @@ static int siminf_gnp(
             if (err)
                 return err;
 
-            err = siminf_vec_push_back(to, w);
+            err = siminf_vec_push_back(to, w + 1);
             if (err)
                 return err;
         }

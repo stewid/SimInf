@@ -310,8 +310,8 @@ static void siminf_free_args(siminf_thread_args *sa)
  * @param len Number of scheduled events.
  * @param event The type of event i.
  * @param time The time of event i.
- * @param node The source node (one based) of event i.
- * @param dest The dest node of event i.
+ * @param node The source node index (one based) of event i.
+ * @param dest The dest node index (one-based) of event i.
  * @param n The number of individuals in event i. n[i] >= 0.
  * @param proportion If n[i] equals zero, then the number of
  *        individuals to sample is calculated by summing the number of
@@ -404,7 +404,7 @@ static int siminf_split_events(
         e->event[j]      = event[i];
         e->time[j]       = time[i];
         e->node[j]       = node[i] - 1;
-        e->dest[j]       = dest[i];
+        e->dest[j]       = dest[i] - 1;
         e->n[j]          = n[i];
         e->proportion[j] = proportion[i];
         e->select[j]     = select[i];
