@@ -144,9 +144,9 @@ setClass("scheduled_events",
                              "prop must be in the range 0 <= prop <= 1")
              }
 
-             if (any(object@select < 0, object@select >= dim(object@E)[2])) {
+             if (any(object@select < 1, object@select > dim(object@E)[2])) {
                  errors <- c(errors,
-                             "select must be in the range 0 <= select < Nselect")
+                             "select must be in the range 1 <= select <= Nselect")
              }
 
              if (length(errors) == 0) TRUE else errors

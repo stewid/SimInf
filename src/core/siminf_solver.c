@@ -317,8 +317,8 @@ static void siminf_free_args(siminf_thread_args *sa)
  *        individuals to sample is calculated by summing the number of
  *        individuals in the states determined by select[i] and
  *        multiplying with the proportion. 0 <= p[i] <= 1.
- * @param select Column j in the event matrix that determines the
- *        states to sample from.
+ * @param select Column j (one-based) in the event matrix that
+ *        determines the states to sample from.
  * @param shift Column j in the shift matrix S that determines the
  *        shift of the internal transfer event.
  * @param Nn Total number of nodes.
@@ -407,7 +407,7 @@ static int siminf_split_events(
         e->dest[j]       = dest[i] - 1;
         e->n[j]          = n[i];
         e->proportion[j] = proportion[i];
-        e->select[j]     = select[i];
+        e->select[j]     = select[i] - 1;
         e->shift[j]      = shift[i];
     }
 
