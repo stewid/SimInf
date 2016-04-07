@@ -53,7 +53,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
@@ -73,7 +73,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
@@ -93,7 +93,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0.1, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
@@ -113,7 +113,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
@@ -133,7 +133,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
@@ -153,7 +153,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
@@ -173,7 +173,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
@@ -193,7 +193,7 @@ events <- structure(list(
     n = c(1.1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
@@ -214,7 +214,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
@@ -234,7 +234,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(0.1, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1)),
+    shift = c(1.1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")

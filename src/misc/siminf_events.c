@@ -206,7 +206,7 @@ static int siminf_external_transfer_events(
         if (err)
             return err;
 
-        err = siminf_vec_push_back(&(events->shift), -1);
+        err = siminf_vec_push_back(&(events->shift), 0);
         if (err)
             return err;
     }

@@ -149,6 +149,11 @@ setClass("scheduled_events",
                              "select must be in the range 1 <= select <= Nselect")
              }
 
+             if (any(object@shift[object@event == 2] < 1)) {
+                 errors <- c(errors,
+                             "'shift' must be greater or equal to 1")
+             }
+
              if (length(errors) == 0) TRUE else errors
          }
 )

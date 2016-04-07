@@ -319,8 +319,8 @@ static void siminf_free_args(siminf_thread_args *sa)
  *        multiplying with the proportion. 0 <= p[i] <= 1.
  * @param select Column j (one-based) in the event matrix that
  *        determines the states to sample from.
- * @param shift Column j in the shift matrix S that determines the
- *        shift of the internal transfer event.
+ * @param shift Column j (one-based) in the shift matrix S that
+ *        determines the shift of the internal transfer event.
  * @param Nn Total number of nodes.
  * @return 0 if Ok, else error code.
  */
@@ -408,7 +408,7 @@ static int siminf_split_events(
         e->n[j]          = n[i];
         e->proportion[j] = proportion[i];
         e->select[j]     = select[i] - 1;
-        e->shift[j]      = shift[i];
+        e->shift[j]      = shift[i] - 1;
     }
 
 cleanup:
