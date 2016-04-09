@@ -15,7 +15,7 @@
 None (invisible 'NULL').
 }
 \description{
-Brief summary of \code{scheduled_events}
+Shows the number of scheduled events.
 }
 \keyword{methods}
 

@@ -293,6 +293,7 @@ scheduled_events <- function(E      = NULL,
 
 ##' Brief summary of \code{scheduled_events}
 ##'
+##' Shows the number of scheduled events.
 ##' @aliases show,scheduled_events-methods
 ##' @docType methods
 ##' @param object The scheduled_events \code{object}
@@ -303,56 +304,46 @@ setMethod("show",
           signature(object = "scheduled_events"),
           function (object)
           {
-              cat("\nScheduled events:\n")
-              cat(sprintf("E: %i x %i\n", dim(object@E)[1], dim(object@E)[2]))
-              cat(sprintf("N: %i x %i\n", dim(object@N)[1], dim(object@N)[2]))
+              cat(sprintf("Number of scheduled events: %i\n",
+                          length(object@event)))
+          }
+)
 
-              if (length(object@event)) {
-                  cat(sprintf("event: 1 x %i\n", length(object@event)))
-              } else {
-                  cat("event: 0 x 0\n")
-              }
+##' Summary of \code{scheduled_events}
+##'
+##' Shows the number of scheduled events and the number of scheduled
+##' events per event type.
+##' @aliases summary,scheduled_events-methods
+##' @docType methods
+##' @param object The \code{scheduled_events} object
+##' @param ... Additional arguments affecting the summary produced.
+##' @return None (invisible 'NULL').
+##' @keywords methods
+##' @export
+setMethod("summary",
+          signature(object = "scheduled_events"),
+          function(object, ...)
+          {
+              n <- length(object@event)
 
-              if (length(object@time)) {
-                  cat(sprintf("time: 1 x %i\n", length(object@time)))
-              } else {
-                  cat("time: 0 x 0\n")
-              }
+              n_event <- table(object@event)
+              n_exit <- n_event["0"]
+              if (is.na(n_exit))
+                  n_exit <- 0
+              n_enter <- n_event["1"]
+              if (is.na(n_enter))
+                  n_enter <- 0
+              n_internal <- n_event["2"]
+              if (is.na(n_internal))
+                  n_internal <- 0
+              n_external <- n_event["3"]
+              if (is.na(n_external))
+                  n_external <- 0
 
-              if (length(object@node)) {
-                  cat(sprintf("node: 1 x %i\n", length(object@node)))
-              } else {
-                  cat("node: 0 x 0\n")
-              }
-
-              if (length(object@dest)) {
-                  cat(sprintf("dest: 1 x %i\n", length(object@dest)))
-              } else {
-                  cat("dest: 0 x 0\n")
-              }
-
-              if (length(object@n)) {
-                  cat(sprintf("n: 1 x %i\n", length(object@n)))
-              } else {
-                  cat("n: 0 x 0\n")
-              }
-
-              if (length(object@proportion)) {
-                  cat(sprintf("proportion: 1 x %i\n", length(object@proportion)))
-              } else {
-                  cat("proportion: 0 x 0\n")
-              }
-
-              if (length(object@select)) {
-                  cat(sprintf("select: 1 x %i\n", length(object@select)))
-              } else {
-                  cat("select: 0 x 0\n")
-              }
-
-              if (length(object@shift)) {
-                  cat(sprintf("shift: 1 x %i\n", length(object@shift)))
-              } else {
-                  cat("shift: 0 x 0\n")
-              }
+              cat(sprintf("Number of scheduled events: %i\n", n))
+              cat(sprintf(" - Exit: %i\n", n_exit))
+              cat(sprintf(" - Enter: %i\n", n_enter))
+              cat(sprintf(" - Internal transfer: %i\n", n_internal))
+              cat(sprintf(" - External transfer: %i\n", n_external))
           }
 )

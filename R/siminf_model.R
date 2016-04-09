@@ -522,18 +522,45 @@ setMethod("show",
           signature(object = "siminf_model"),
           function (object)
           {
-              cat("Epidemiological model:\n")
-              cat(sprintf("G: %i x %i\n", dim(object@G)[1], dim(object@G)[2]))
-              cat(sprintf("S: %i x %i\n", dim(object@S)[1], dim(object@S)[2]))
+              ## The model name
+              cat(sprintf("Model: %s\n\n",
+                          as.character(class(object))))
+
+              cat(sprintf("Number of nodes: %i\n", dim(object@u0)[2]))
+              cat(sprintf("Number of compartments: %i\n", dim(object@S)[1]))
+              cat(sprintf("Number of transitions: %i\n", dim(object@G)[1]))
+              show(object@events)
+
+              cat("\n")
               cat(sprintf("U: %i x %i\n", dim(object@U)[1], dim(object@U)[2]))
               cat(sprintf("V: %i x %i\n", dim(object@V)[1], dim(object@V)[2]))
-              cat(sprintf("ldata: %i x %i\n", dim(object@ldata)[1], dim(object@ldata)[2]))
-              cat(sprintf("gdata: 1 x %i\n", length(object@gdata)))
-              cat(sprintf("sd: %i x %i\n", dim(object@sd)[1], dim(object@sd)[2]))
-              cat(sprintf("tspan: 1 x %i\n", length(object@tspan)))
-              cat(sprintf("u0: %i x %i\n", dim(object@u0)[1], dim(object@u0)[2]))
-              cat(sprintf("v0: %i x %i\n", dim(object@v0)[1], dim(object@v0)[2]))
+          }
+)
 
-              show(object@events)
+##' Summary of \code{siminf_model}
+##'
+##' @aliases summary,siminf_model-methods
+##' @docType methods
+##' @param object The \code{siminf_model} object
+##' @param ... Additional arguments affecting the summary produced.
+##' @return None (invisible 'NULL').
+##' @keywords methods
+##' @export
+setMethod("summary",
+          signature(object = "siminf_model"),
+          function(object, ...)
+          {
+              ## The model name
+              cat(sprintf("Model: %s\n\n",
+                          as.character(class(object))))
+
+              cat(sprintf("Number of nodes: %i\n", dim(object@u0)[2]))
+              cat(sprintf("Number of compartments: %i\n", dim(object@S)[1]))
+              cat(sprintf("Number of transitions: %i\n", dim(object@G)[1]))
+              summary(object@events)
+
+              cat("\n")
+              cat(sprintf("U: %i x %i\n", dim(object@U)[1], dim(object@U)[2]))
+              cat(sprintf("V: %i x %i\n", dim(object@V)[1], dim(object@V)[2]))
           }
 )

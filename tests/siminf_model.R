@@ -203,12 +203,15 @@ stopifnot(length(grep("'u0' is NULL",
                       res[[1]]$message)) > 0)
 
 ## Check show method without events
-show_expected <- c("Epidemiological model:", "G: 2 x 2", "S: 2 x 2", "U: 0 x 0",
-                   "V: 0 x 0", "ldata: 4 x 1", "gdata: 1 x 8",
-                   "tspan: 1 x 1000", "u0: 2 x 1", "v0: 1 x 1", "",
-                   "Scheduled events:", "E: 2 x 2", "N: 0 x 0", "event: 0 x 0",
-                   "time: 0 x 0", "node: 0 x 0", "dest: 0 x 0", "n: 0 x 0",
-                   "proportion: 0 x 0", "select: 0 x 0", "shift: 0 x 0")
+show_expected <- c("Model: SISe",
+                   "",
+                   "Number of nodes: 1",
+                   "Number of compartments: 2",
+                   "Number of transitions: 2",
+                   "Number of scheduled events: 0",
+                   "",
+                   "U: 0 x 0",
+                   "V: 0 x 0")
 
 show_observed <- capture.output(show(demo_model()))
 
@@ -259,12 +262,15 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
-show_expected <- c("Epidemiological model:", "G: 6 x 6", "S: 6 x 6", "U: 0 x 0",
-                   "V: 0 x 0", "ldata: 4 x 6", "gdata: 1 x 12",
-                   "tspan: 1 x 11", "u0: 6 x 6", "v0: 1 x 6", "",
-                   "Scheduled events:", "E: 6 x 6", "N: 6 x 2", "event: 1 x 15",
-                   "time: 1 x 15", "node: 1 x 15", "dest: 1 x 15", "n: 1 x 15",
-                   "proportion: 1 x 15", "select: 1 x 15", "shift: 1 x 15")
+show_expected <- c("Model: SISe3",
+                   "",
+                   "Number of nodes: 6",
+                   "Number of compartments: 6",
+                   "Number of transitions: 6",
+                   "Number of scheduled events: 15",
+                   "",
+                   "U: 0 x 0",
+                   "V: 0 x 0")
 
 show_observed <- capture.output(show(model))
 
