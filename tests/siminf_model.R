@@ -217,6 +217,25 @@ show_observed <- capture.output(show(demo_model()))
 
 stopifnot(identical(show_observed, show_expected))
 
+## Check summary method without events
+summary_expected <- c("Model: SISe",
+                      "",
+                      "Number of nodes: 1",
+                      "Number of compartments: 2",
+                      "Number of transitions: 2",
+                      "Number of scheduled events: 0",
+                      " - Exit: 0",
+                      " - Enter: 0",
+                      " - Internal transfer: 0",
+                      " - External transfer: 0",
+                      "",
+                      "U: 2 x 1000",
+                      "V: 1 x 1000")
+
+summary_observed <- capture.output(summary(run(demo_model())))
+
+stopifnot(identical(summary_observed, summary_expected))
+
 ## Check show method with events
 u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                      I_1 = c(0, 0, 0, 0, 0, 0),
@@ -231,11 +250,11 @@ u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
 events <- structure(list(
     event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-    node       = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    node       = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
     dest       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-    select     = c(3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5),
+    select     = c(4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6),
     shift      = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)),
                     .Names = c("event", "time", "node", "dest",
                         "n", "proportion", "select", "shift"),
@@ -275,6 +294,25 @@ show_expected <- c("Model: SISe3",
 show_observed <- capture.output(show(model))
 
 stopifnot(identical(show_observed, show_expected))
+
+## Check summary method with events
+summary_expected <- c("Model: SISe3",
+                      "",
+                      "Number of nodes: 6",
+                      "Number of compartments: 6",
+                      "Number of transitions: 6",
+                      "Number of scheduled events: 15",
+                      " - Exit: 0",
+                      " - Enter: 0",
+                      " - Internal transfer: 0",
+                      " - External transfer: 15",
+                      "",
+                      "U: 36 x 11",
+                      "V: 6 x 11")
+
+summary_observed <- capture.output(summary(run(model)))
+
+stopifnot(identical(summary_observed, summary_expected))
 
 ## Check U. Change storage mode of U to double.
 ## Should not raise error
