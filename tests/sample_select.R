@@ -630,3 +630,144 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(model@u0, result_omp@u0))
     stopifnot(identical(model@events, result_omp@events))
 }
+
+## 2 Nodes
+## 3 Age categories
+## 2 Disease-states: Susceptible & Infected
+##
+## Two individuals start in susceptible state in node = 2, with a zero
+## probability of becoming infected.
+##
+## At t = 1, one individual is moved to node = 1 using a select matrix
+## that can only select a susceptible from S_1.
+u0 <- structure(list(S_1 = c(0, 2),
+                     I_1 = c(0, 0),
+                     S_2 = c(0, 0),
+                     I_2 = c(0, 0),
+                     S_3 = c(0, 0),
+                     I_3 = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L),
+                class = "data.frame")
+
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         node       = 2,
+                         dest       = 1,
+                         n          = 1,
+                         proportion = 0,
+                         select     = 1,
+                         shift      = 0),
+                    .Names = c("event", "time", "node", "dest",
+                        "n", "proportion", "select", "shift"),
+                    row.names = c(NA, -1L), class = "data.frame")
+
+model <- SISe3(u0        = u0,
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_t1   = 1,
+               beta_t2   = 1,
+               beta_t3   = 1,
+               beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
+               epsilon   = 0)
+
+U <- structure(
+    c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L,
+      0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L,
+      0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
+      1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L,
+      0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L,
+      0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
+      1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L,
+      0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L,
+      0L, 0L, 0L, 0L),
+    .Dim = c(12L, 11L))
+
+res <- run(model, threads = 1)
+stopifnot(identical(res@U, U))
+
+if (SimInf:::have_openmp()) {
+    res <- run(model, threads = 2)
+    stopifnot(identical(res@U, U))
+}
+
+## 2 Nodes
+## 3 Age categories
+## 2 Disease-states: Susceptible & Infected
+##
+## 6 individuals start in the susceptible compartments in node = 2,
+## with a zero probability of becoming infected.
+##
+## At t = 1, three individuals are moved to node = 1 using a select
+## matrix that can select from the susceptible S_1, S_2 and S_3.
+u0 <- structure(list(S_1 = c(0, 2),
+                     I_1 = c(0, 0),
+                     S_2 = c(0, 2),
+                     I_2 = c(0, 0),
+                     S_3 = c(0, 2),
+                     I_3 = c(0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -2L),
+                class = "data.frame")
+
+events <- structure(list(event      = 3,
+                         time       = 1,
+                         node       = 2,
+                         dest       = 1,
+                         n          = 3,
+                         proportion = 0,
+                         select     = 1,
+                         shift      = 0),
+                    .Names = c("event", "time", "node", "dest",
+                        "n", "proportion", "select", "shift"),
+                    row.names = c(NA, -1L), class = "data.frame")
+
+model <- SISe3(u0        = u0,
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_t1   = 1,
+               beta_t2   = 1,
+               beta_t3   = 1,
+               beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
+               epsilon   = 0)
+
+## Add S_2 and S_3 to first column in select matrix
+model@events@E[3, 1] <- 1
+model@events@E[5, 1] <- 1
+
+S_expected <- structure(c(0L, 6L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
+                          3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
+                          3L, 3L, 3L, 3L),
+                        .Dim = c(2L, 11L))
+
+res <- run(model, threads = 1)
+stopifnot(identical(susceptible(res), S_expected))
+
+if (SimInf:::have_openmp()) {
+    res <- run(model, threads = 2)
+    stopifnot(identical(susceptible(res), S_expected))
+}
