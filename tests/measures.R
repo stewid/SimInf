@@ -91,6 +91,78 @@ if (SimInf:::have_openmp()) {
         prevalence(result_omp, by = 2)))
 }
 
+## Check measures for a SISe_sp model
+model <- SISe_sp(u0       = data.frame(S = 99, I = 1),
+                 tspan    = 0:1000,
+                 events   = NULL,
+                 phi      = 1,
+                 upsilon  = 1,
+                 gamma    = 0.1,
+                 alpha    = 1,
+                 beta_t1  = 1,
+                 beta_t2  = 1,
+                 beta_t3  = 1,
+                 beta_t4  = 1,
+                 end_t1   = 91,
+                 end_t2   = 182,
+                 end_t3   = 273,
+                 end_t4   = 365,
+                 coupling = 0,
+                 distance = distance_matrix(1, 1, 1),
+                 epsilon  = 0)
+
+res <- tools::assertError(susceptible(model))
+stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(infected(model))
+stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+                      res[[1]]$message)) > 0)
+
+result <- run(model, threads = 1)
+result
+
+stopifnot(identical(length(susceptible(result)), 1001L))
+i <- seq(from = 1, to = 1001, by = 2)
+stopifnot(identical(
+    susceptible(result)[, i, drop = FALSE],
+    susceptible(result, by = 2)))
+
+stopifnot(identical(length(infected(result)), 1001L))
+stopifnot(identical(
+    infected(result)[, i, drop = FALSE],
+    infected(result, by = 2)))
+
+stopifnot(identical(length(prevalence(result)), 1001L))
+stopifnot(is.null(dim(prevalence(result))))
+stopifnot(identical(dim(prevalence(result, wnp = TRUE)), c(1L, 1001L)))
+stopifnot(identical(
+    prevalence(result)[i],
+    prevalence(result, by = 2)))
+
+if (SimInf:::have_openmp()) {
+    result_omp <- run(model, threads = 2)
+    result_omp
+
+    stopifnot(identical(length(susceptible(result_omp)), 1001L))
+    i <- seq(from = 1, to = 1001, by = 2)
+    stopifnot(identical(
+        susceptible(result_omp)[, i, drop = FALSE],
+        susceptible(result_omp, by = 2)))
+
+    stopifnot(identical(length(infected(result_omp)), 1001L))
+    stopifnot(identical(
+        infected(result_omp)[, i, drop = FALSE],
+        infected(result_omp, by = 2)))
+
+    stopifnot(identical(length(prevalence(result_omp)), 1001L))
+    stopifnot(is.null(dim(prevalence(result_omp))))
+    stopifnot(identical(dim(prevalence(result_omp, wnp = TRUE)), c(1L, 1001L)))
+    stopifnot(identical(
+        prevalence(result_omp)[i],
+        prevalence(result_omp, by = 2)))
+}
+
 ## Check measures for a SISe3 model
 model <- demo_model(model = "SISe3", nodes = 10, days = 1000)
 
