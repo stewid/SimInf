@@ -96,7 +96,7 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##' @export
 setClass("scheduled_events",
          slots = c(E          = "dgCMatrix",
-                   N          = "dgCMatrix",
+                   N          = "matrix",
                    event      = "integer",
                    time       = "integer",
                    node       = "integer",
@@ -222,7 +222,14 @@ scheduled_events <- function(E      = NULL,
     if (is.null(N)) {
         if (!is.null(events))
             stop("events is not NULL when N is NULL")
-        N <- new("dgCMatrix")
+        N <- matrix(integer(0), nrow = 0, ncol = 0)
+    }
+    if (!all(is.matrix(N), is.numeric(N)))
+        stop("'N' must be an integer matrix")
+    if (!is.integer(N)) {
+        if (!all(is_wholenumber(N)))
+            stop("'N' must be an integer matrix")
+        storage.mode(N) <- "integer"
     }
 
     ## Check events

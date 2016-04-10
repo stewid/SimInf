@@ -33,7 +33,7 @@ E <- Matrix(c(1, 0, 0, 1, 0, 0,
             byrow  = TRUE,
             sparse = TRUE)
 
-N <- Matrix(c(2, 0,
+N <- matrix(c(2, 0,
               2, 0,
               0, 2,
               0, 2,
@@ -41,8 +41,7 @@ N <- Matrix(c(2, 0,
               0, 0),
             nrow   = 6,
             ncol   = 2,
-            byrow  = TRUE,
-            sparse = TRUE)
+            byrow  = TRUE)
 
 ## Check events$event not equal to whole number
 events <- structure(list(
@@ -254,13 +253,7 @@ events <- new("scheduled_events",
                   Dimnames = list(NULL, NULL),
                   x = numeric(0),
                   factors = list()),
-              N = new("dgCMatrix",
-                  i = integer(0),
-                  p = 0L,
-                  Dim = c(0L, 0L),
-                  Dimnames = list(NULL, NULL),
-                  x = numeric(0),
-                  factors = list()),
+              N = matrix(integer(0), nrow = 0, ncol = 0),
               event = integer(0),
               time = integer(0),
               node = integer(0),

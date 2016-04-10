@@ -103,21 +103,16 @@ typedef struct siminf_thread_args
                      *   G[k]. */
     const int *jcG; /**< Dependency graph. Index to data of first
                      *   non-zero element in row k. */
-    const int *irS; /**< Stoichiometric matrix. irS[k] is the row of
+    const int *irS; /**< State-change matrix. irS[k] is the row of
                      *   S[k]. */
-    const int *jcS; /**< Stoichiometric matrix. Index to data of first
+    const int *jcS; /**< State-change matrix. Index to data of first
                      *   non-zero element in row k. */
-    const int *prS; /**< Stoichiometric matrix. Value of item (i, j)
+    const int *prS; /**< State-change matrix. Value of item (i, j)
                      *   in S. */
     const int *irE; /**< Select matrix for events. irE[k] is the row
                      *   of E[k]. */
     const int *jcE; /**< Select matrix for events. Index to data of
                      *   first non-zero element in row k. */
-    const int *jcN; /**< Shift matrix for internal transfer
-                     *   events. Index to data of first non-zero
-                     *   element in row k. */
-    const int *prN; /**< Shift matrix for internal transfer
-                     *   events. Value of item (i, j) in N. */
 
     /*** Callbacks ***/
     TRFun *tr_fun;  /**< Vector of function pointers to
@@ -144,13 +139,15 @@ typedef struct siminf_thread_args
                        *   state of the system at tspan(j). */
     double *v;        /**< Vector with continuous state in each node
                        *   in thread. */
-    double *v_new;   /**< Vector with continuous state in each node
+    double *v_new;    /**< Vector with continuous state in each node
                        *   in thread after post time step function. */
     const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
                           *   local data vector for node #j. */
     const double *gdata; /**< The global data vector. */
     const int *sd;    /**< Each node can be assigned to a
                        *   sub-domain. */
+    const int *N;     /**< Shift matrix for internal transfer
+                       *   events. */
     int *update_node; /**< Vector of length Nn used to indicate nodes
                        *   for update. */
 
@@ -677,26 +674,28 @@ static int siminf_solver()
                                 int ii;
 
                                 for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
+                                    const int jj = sa.irE[ii];
+                                    const int kk = e1.node[j] * sa.Nc + jj;
+
                                     /* Remove individuals from node */
-                                    uu[e1.node[j] * sa.Nc + sa.irE[ii]] -=
-                                        sa.individuals[sa.irE[ii]];
-                                    if (uu[e1.node[j] * sa.Nc + sa.irE[ii]] < 0) {
+                                    uu[kk] -= sa.individuals[jj];
+                                    if (uu[kk] < 0) {
                                         sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                         break;
                                     }
                                 }
                             } else { /* INTERNAL_TRANSFER_EVENT */
-                                int ii, jj;
+                                int ii;
 
-                                for (ii = sa.jcE[s], jj = sa.jcN[e1.shift[j]];
-                                     ii < sa.jcE[s + 1] && jj < sa.jcN[e1.shift[j] + 1];
-                                     ii++, jj++)
-                                {
+                                for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
+                                    const int jj = sa.irE[ii];
+                                    const int kk = e1.node[j] * sa.Nc + jj;
+                                    const int ll = sa.N[e1.shift[j] * sa.Nc + jj];
+
                                     /* Add individuals to new
                                      * compartments in node */
-                                    uu[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prN[jj]] +=
-                                        sa.individuals[sa.irE[ii]];
-                                    if (uu[e1.node[j] * sa.Nc + sa.irE[ii] + sa.prN[jj]] < 0) {
+                                    uu[kk + ll] += sa.individuals[jj];
+                                    if (uu[kk + ll] < 0) {
                                         sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                         break;
                                     }
@@ -704,9 +703,8 @@ static int siminf_solver()
                                     /* Remove individuals from
                                      * previous compartments in
                                      * node */
-                                    uu[e1.node[j] * sa.Nc + sa.irE[ii]] -=
-                                        sa.individuals[sa.irE[ii]];
-                                    if (uu[e1.node[j] * sa.Nc + sa.irE[ii]] < 0) {
+                                    uu[kk] -= sa.individuals[jj];
+                                    if (uu[kk] < 0) {
                                         sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                         break;
                                     }
@@ -917,10 +915,7 @@ static int siminf_solver()
  * @param irE Select matrix for events. irE[k] is the row of E[k].
  * @param jcE Select matrix for events. Index to data of first
  *        non-zero element in row k.
- * @param jcN Shift matrix for internal transfer events. Index to data
- *        of first non-zero element in row k.
- * @param prN Shift matrix for internal transfer events. Value of item
- *        (i, j) in N.
+ * @param N Shift matrix for internal transfer events.
  * @param len Number of events.
  * @param event The type of event i.
  * @param time The time of event i.
@@ -947,7 +942,7 @@ int siminf_run_solver(
     const int *irS, const int *jcS, const int *prS, const double *tspan,
     int tlen, int *U, double *V, const double *ldata, const double *gdata,
     const int *sd, int Nn, int Nc, int Nt, int Nd, int Nld, const int *irE,
-    const int *jcE, const int *jcN, const int *prN, int len, const int *event,
+    const int *jcE, const int *N, int len, const int *event,
     const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,
     int Nthread, unsigned long int seed, TRFun *tr_fun, PTSFun pts_fun)
@@ -1035,8 +1030,6 @@ int siminf_run_solver(
         sim_args[i].prS = prS;
         sim_args[i].irE = irE;
         sim_args[i].jcE = jcE;
-        sim_args[i].jcN = jcN;
-        sim_args[i].prN = prN;
 
         /* Callbacks */
         sim_args[i].tr_fun = tr_fun;
@@ -1049,6 +1042,7 @@ int siminf_run_solver(
         sim_args[i].tlen = tlen;
 
         /* Data vectors */
+        sim_args[i].N = N;
         sim_args[i].U = U;
         sim_args[i].u = &uu[sim_args[i].Ni * Nc];
         sim_args[i].V = V;

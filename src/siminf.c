@@ -42,7 +42,7 @@ SEXP siminf_run(
 {
     int err = 0, n_threads;
     SEXP trajectory, names, result = R_NilValue;
-    SEXP ext_events, E, G, N, S, prN, prS;
+    SEXP ext_events, E, G, N, S, prS;
     int Nn, Nc, Nt, Nd, Nld, tlen;
     unsigned long int s;
 
@@ -80,7 +80,6 @@ SEXP siminf_run(
     ext_events = GET_SLOT(result, Rf_install("events"));
     E = GET_SLOT(ext_events, Rf_install("E"));
     N = GET_SLOT(ext_events, Rf_install("N"));
-    PROTECT(prN = coerceVector(GET_SLOT(N, Rf_install("x")), INTSXP));
 
     /* Constants */
     Nn   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
@@ -113,8 +112,7 @@ SEXP siminf_run(
         Nn, Nc, Nt, Nd, Nld,
         INTEGER(GET_SLOT(E, Rf_install("i"))),
         INTEGER(GET_SLOT(E, Rf_install("p"))),
-        INTEGER(GET_SLOT(N, Rf_install("p"))),
-        INTEGER(prN),
+        INTEGER(N),
         LENGTH(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("event"))),
         INTEGER(GET_SLOT(ext_events, Rf_install("time"))),
@@ -133,7 +131,7 @@ cleanup:
     if (result == R_NilValue)
         UNPROTECT(1);
     else
-        UNPROTECT(3);
+        UNPROTECT(2);
 
     return trajectory;
 }

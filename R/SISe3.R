@@ -137,7 +137,7 @@ SISe3 <- function(u0,
     colnames(E) <- as.character(1:6)
     rownames(E) <- compartments
 
-    N <- Matrix(c(2, 0,
+    N <- matrix(c(2, 0,
                   2, 0,
                   0, 2,
                   0, 2,
@@ -145,9 +145,7 @@ SISe3 <- function(u0,
                   0, 0),
                 nrow   = 6,
                 ncol   = 2,
-                byrow  = TRUE,
-                sparse = TRUE)
-    N <- as(N, "dgCMatrix")
+                byrow  = TRUE)
     colnames(N) <- as.character(1:2)
     rownames(N) <- compartments
 

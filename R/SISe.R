@@ -116,7 +116,7 @@ SISe <- function(u0,
     colnames(E) <- as.character(1:2)
     rownames(E) <- compartments
 
-    N <- new("dgCMatrix")
+    N <- matrix(integer(0), nrow = 0, ncol = 0)
 
     G <- Matrix(c(1, 1,
                   1, 1),
