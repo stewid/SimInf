@@ -124,7 +124,7 @@ res <- tools::assertError(new("siminf_model",
                               sd    = rep(0L, Nn),
                               tspan = as.numeric(1:10),
                               u0    = u0))
-stopifnot(length(grep("Stochiometric matrix must be an integer matrix.",
+stopifnot(length(grep("'S' matrix must be an integer matrix.",
                       res[[1]]$message)) > 0)
 
 ## Check G

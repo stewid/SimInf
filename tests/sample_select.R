@@ -222,15 +222,17 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-## Replace proportion = 10 to proportion = 1
+## Replace proportion = 1 with proportion = 10
 model@events@proportion <- 10
 
-res <- tools::assertError(run(model, threads = 1))
+res <- .Call("SISe3_run", model, 1L, NULL, PACKAGE = "SimInf")
+res <- tools::assertError(SimInf:::siminf_error(res$error))
 stopifnot(length(grep("Unable to sample individuals for event.",
                       res[[1]]$message)) > 0)
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(run(model, threads = 2))
+    res <- .Call("SISe3_run", model, 2L, NULL, PACKAGE = "SimInf")
+    res <- tools::assertError(SimInf:::siminf_error(res$error))
     stopifnot(length(grep("Unable to sample individuals for event.",
                           res[[1]]$message)) > 0)
 }
@@ -289,7 +291,7 @@ res <- tools::assertError(SISe3(u0        = u0,
 stopifnot(length(grep("prop must be in the range 0 <= prop <= 1",
                       res[[1]]$message)) > 0)
 
-## Replace proportion = -1 to proportion = 0
+## Replace proportion = -1 with proportion = 0
 events$proportion <- 0
 
 model <- SISe3(u0        = u0,
@@ -313,15 +315,17 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-## Replace proportion = 0 to proportion = -1
+## Replace proportion = 0 with proportion = -1
 model@events@proportion <- -1
 
-res <- tools::assertError(run(model, threads = 1))
+res <- .Call("SISe3_run", model, 1L, NULL, PACKAGE = "SimInf")
+res <- tools::assertError(SimInf:::siminf_error(res$error))
 stopifnot(length(grep("Unable to sample individuals for event.",
                       res[[1]]$message)) > 0)
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(run(model, threads = 2))
+    res <- .Call("SISe3_run", model, 2L, NULL, PACKAGE = "SimInf")
+    res <- tools::assertError(SimInf:::siminf_error(res$error))
     stopifnot(length(grep("Unable to sample individuals for event.",
                           res[[1]]$message)) > 0)
 }
