@@ -626,7 +626,7 @@ static int siminf_solver()
                         /* c) Recalculate sum_t_rate[node] using
                          * dependency graph. */
                         for (j = sa.jcG[tr]; j < sa.jcG[tr + 1]; j++) {
-                            double old = sa.t_rate[node * sa.Nt + sa.irG[j]];
+                            const double old = sa.t_rate[node * sa.Nt + sa.irG[j]];
                             delta += (sa.t_rate[node * sa.Nt + sa.irG[j]] =
                                       (*sa.tr_fun[sa.irG[j]])(
                                           &sa.u[node * sa.Nc],
@@ -655,8 +655,8 @@ static int siminf_solver()
                        sa.tt >= e1.time[sa.E1_index] &&
                        !sa.errcode)
                 {
-                    int j = sa.E1_index;
-                    int s = e1.select[j];
+                    const int j = sa.E1_index;
+                    const int s = e1.select[j];
 
                     if (e1.event[j] == ENTER_EVENT) {
                         /* All individuals enter first non-zero compartment,
@@ -785,7 +785,7 @@ static int siminf_solver()
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
                 for (node = 0; node < sa.Nn; node++) {
-                    int rc = sa.pts_fun(
+                    const int rc = sa.pts_fun(
                         &sa.v_new[node * sa.Nd], &sa.u[node * sa.Nc],
                         &sa.v[node * sa.Nd], &sa.ldata[node * sa.Nld],
                         sa.gdata, sa.Ni + node, sa.tt, sa.sd[node]);
@@ -799,7 +799,7 @@ static int siminf_solver()
                         double delta = 0.0, old_t_rate = sa.sum_t_rate[node];
 
                         for (; j < sa.Nt; j++) {
-                            double old = sa.t_rate[node * sa.Nt + j];
+                            const double old = sa.t_rate[node * sa.Nt + j];
                             delta += (sa.t_rate[node * sa.Nt + j] =
                                       (*sa.tr_fun[j])(
                                           &sa.u[node * sa.Nc],
@@ -853,7 +853,7 @@ static int siminf_solver()
         /* Swap the pointers to the continuous state variable so that
          * 'v' equals 'v_new'. Moreover, check for error. */
         for (k = 0; k < n_thread; k++) {
-            double *v_tmp = sim_args[k].v;
+            const double *v_tmp = sim_args[k].v;
             sim_args[k].v = sim_args[k].v_new;
             sim_args[k].v_new = v_tmp;
             if (sim_args[k].errcode)
