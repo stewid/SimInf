@@ -669,45 +669,45 @@ static int siminf_solver()
                             e1.select[j], e1.n[j], e1.proportion[j],
                             sa.individuals, sa.kind, sa.kind_dest, sa.rng);
 
-                        if (!sa.errcode) {
-                            if (e1.event[j] == EXIT_EVENT) {
-                                int ii;
+                        if (sa.errcode)
+                            break;
 
-                                for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
-                                    const int jj = sa.irE[ii];
-                                    const int kk = e1.node[j] * sa.Nc + jj;
+                        if (e1.event[j] == EXIT_EVENT) {
+                            int ii;
 
-                                    /* Remove individuals from node */
-                                    uu[kk] -= sa.individuals[jj];
-                                    if (uu[kk] < 0) {
-                                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                        break;
-                                    }
+                            for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
+                                const int jj = sa.irE[ii];
+                                const int kk = e1.node[j] * sa.Nc + jj;
+
+                                /* Remove individuals from node */
+                                uu[kk] -= sa.individuals[jj];
+                                if (uu[kk] < 0) {
+                                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                                    break;
                                 }
-                            } else { /* INTERNAL_TRANSFER_EVENT */
-                                int ii;
+                            }
+                        } else { /* INTERNAL_TRANSFER_EVENT */
+                            int ii;
 
-                                for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
-                                    const int jj = sa.irE[ii];
-                                    const int kk = e1.node[j] * sa.Nc + jj;
-                                    const int ll = sa.N[e1.shift[j] * sa.Nc + jj];
+                            for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
+                                const int jj = sa.irE[ii];
+                                const int kk = e1.node[j] * sa.Nc + jj;
+                                const int ll = sa.N[e1.shift[j] * sa.Nc + jj];
 
-                                    /* Add individuals to new
-                                     * compartments in node */
-                                    uu[kk + ll] += sa.individuals[jj];
-                                    if (uu[kk + ll] < 0) {
-                                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                        break;
-                                    }
+                                /* Add individuals to new compartments
+                                 * in node */
+                                uu[kk + ll] += sa.individuals[jj];
+                                if (uu[kk + ll] < 0) {
+                                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                                    break;
+                                }
 
-                                    /* Remove individuals from
-                                     * previous compartments in
-                                     * node */
-                                    uu[kk] -= sa.individuals[jj];
-                                    if (uu[kk] < 0) {
-                                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                        break;
-                                    }
+                                /* Remove individuals from previous
+                                 * compartments in node */
+                                uu[kk] -= sa.individuals[jj];
+                                if (uu[kk] < 0) {
+                                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                                    break;
                                 }
                             }
                         }
@@ -739,33 +739,34 @@ static int siminf_solver()
                         e2.proportion[sa.E2_index], sa.individuals,
                         sa.kind, sa.kind_dest, sa.rng);
 
-                    if (!sa.errcode) {
-                        for (i = sa.jcE[e2.select[sa.E2_index]];
-                             i < sa.jcE[e2.select[sa.E2_index] + 1];
-                             i++)
-                        {
-                            /* Add individuals to dest */
-                            uu[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] +=
-                                sa.individuals[sa.irE[i]];
-                            if (uu[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
-                                sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                break;
-                            }
+                    if (sa.errcode)
+                        break;
 
-                            /* Remove individuals from node */
-                            uu[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] -=
-                                sa.individuals[sa.irE[i]];
-                            if (uu[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
-                                sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                break;
-                            }
+                    for (i = sa.jcE[e2.select[sa.E2_index]];
+                         i < sa.jcE[e2.select[sa.E2_index] + 1];
+                         i++)
+                    {
+                        /* Add individuals to dest */
+                        uu[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] +=
+                            sa.individuals[sa.irE[i]];
+                        if (uu[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
+                            sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                            break;
                         }
 
-                        /* Indicate node and dest for update */
-                        update_node[e2.node[sa.E2_index]] = 1;
-                        update_node[e2.dest[sa.E2_index]] = 1;
-                        sa.E2_index++;
+                        /* Remove individuals from node */
+                        uu[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] -=
+                            sa.individuals[sa.irE[i]];
+                        if (uu[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
+                            sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                            break;
+                        }
                     }
+
+                    /* Indicate node and dest for update */
+                    update_node[e2.node[sa.E2_index]] = 1;
+                    update_node[e2.dest[sa.E2_index]] = 1;
+                    sa.E2_index++;
                 }
 
                 *&sim_args[0] = sa;
