@@ -852,7 +852,7 @@ static int siminf_solver()
         /* Swap the pointers to the continuous state variable so that
          * 'v' equals 'v_new'. Moreover, check for error. */
         for (k = 0; k < n_thread; k++) {
-            const double *v_tmp = sim_args[k].v;
+            double *v_tmp = sim_args[k].v;
             sim_args[k].v = sim_args[k].v_new;
             sim_args[k].v_new = v_tmp;
             if (sim_args[k].errcode)
