@@ -746,18 +746,22 @@ static int siminf_solver()
                          i < sa.jcE[e2.select[sa.E2_index] + 1];
                          i++)
                     {
+                        const int jj = sa.irE[i];
+                        const int k1 = e2.dest[sa.E2_index] * sa.Nc + jj;
+                        const int k2 = e2.node[sa.E2_index] * sa.Nc + jj;
+                        const int ll = e2.shift[sa.E2_index] < 0 ? 0 :
+                            sa.N[e2.shift[sa.E2_index] * sa.Nc + jj];
+
                         /* Add individuals to dest */
-                        uu[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] +=
-                            sa.individuals[sa.irE[i]];
-                        if (uu[e2.dest[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
+                        uu[k1 + ll] += sa.individuals[jj];
+                        if (uu[k1 + ll] < 0) {
                             sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                             break;
                         }
 
                         /* Remove individuals from node */
-                        uu[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] -=
-                            sa.individuals[sa.irE[i]];
-                        if (uu[e2.node[sa.E2_index] * sa.Nc + sa.irE[i]] < 0) {
+                        uu[k2] -= sa.individuals[jj];
+                        if (uu[k2] < 0) {
                             sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                             break;
                         }
@@ -889,10 +893,10 @@ static int siminf_solver()
  * @param irG Dependency graph. irG[k] is the row of G[k].
  * @param jcG Dependency graph. Index to data of first non-zero
  *        element in row k.
- * @param irS Stoichiometric matrix. irS[k] is the row of S[k].
- * @param jcS Stoichiometric matrix. Index to data of first non-zero
+ * @param irS State-change matrix. irS[k] is the row of S[k].
+ * @param jcS State-change matrix. Index to data of first non-zero
  *        element in row k.
- * @param prS Stoichiometric matrix. Value of item (i, j) in S.
+ * @param prS State-change matrix. Value of item (i, j) in S.
  * @param tspan Double vector. Output times. tspan[0] is the start
  *        time and tspan[length(tspan)-1] is the stop time.
  * @param tlen Number of sampling points in time.
