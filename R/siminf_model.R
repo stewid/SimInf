@@ -75,7 +75,7 @@
 ##'   }
 ##'   \item{v0}{
 ##'      The initial continuous state vector in every node.
-##'      (\eqn{N_N \times} \code{dim(ldata)[1]}). The continuous
+##'      (\code{dim(ldata)[1]} \eqn{\times N_n} ). The continuous
 ##'      state vector is updated by the specific model during the
 ##'      simulation in the post time step function.
 ##'   }
@@ -224,7 +224,7 @@ setClass("siminf_model",
 ##'     \code{length(tspan)}).  \code{V[, j]} contains the real-valued
 ##'     state of the system at \code{tspan[j]}.
 ##' @param v0 The initial continuous state vector in every node.
-##'     (\eqn{N_N \times} \code{dim(ldata)[1]}). The continuous state
+##'     (\code{dim(ldata)[1]} \eqn{N_N \times}). The continuous state
 ##'     vector is updated by the specific model during the simulation
 ##'     in the post time step function.
 ##' @param E Sparse matrix to handle scheduled events, see

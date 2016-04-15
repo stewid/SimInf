@@ -874,15 +874,15 @@ static int siminf_solver()
 /**
  * Initialize and run siminf solver
  *
- * G is a sparse matrix dependency graph (Nt X Nt) in
- * compressed column format (CCS). A non-zeros entry in element i of
- * column j indicates that propensity i needs to be recalculated if
- * the event j occurs.
+ * G is a sparse matrix dependency graph (Nt X Nt) in compressed
+ * column format (CCS). A non-zeros entry in element i of column j
+ * indicates that transition rate i needs to be recalculated if the
+ * transition j occurs.
  *
- * N is a stoichiometry sparse matrix (Nc X Nt) in
- * compressed column format (CCS). Each column corresponds to a
- * transition, and execution of transition j amounts to adding the
- * j'th column to the state vector.
+ * S is the state-changing sparse matrix (Nc X Nt) in compressed
+ * column format (CCS). Each column corresponds to a transition, and
+ * execution of transition j amounts to adding the j'th column to the
+ * state vector.
  *
  * @param u0 Initial state vector u0. Integer (Nc X Nn). Gives the
  *        initial number of individuals in each compartment in every
