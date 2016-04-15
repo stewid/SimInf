@@ -160,6 +160,97 @@ if (SimInf:::have_openmp()) {
 ## All individuals start in susceptible state, with a probability of
 ## becoming infected.
 ##
+## At t = 1, all individuals in age category 1 and 2 are moved to node
+## = 1 and age.
+u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
+                     I_1 = c(0, 0, 0, 0, 0, 0),
+                     S_2 = c(0, 1, 2, 3, 4, 5),
+                     I_2 = c(0, 0, 0, 0, 0, 0),
+                     S_3 = c(0, 1, 2, 3, 4, 5),
+                     I_3 = c(0, 0, 0, 0, 0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -6L),
+                class = "data.frame")
+
+events <- structure(list(
+    event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    node       = c(2, 2, 3, 3, 4, 4, 5, 5, 6, 6),
+    dest       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    n          = c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select     = c(4, 5, 4, 5, 4, 5, 4, 5, 4, 5),
+    shift      = c(1, 2, 1, 2, 1, 2, 1, 2, 1, 2)),
+    .Names = c("event", "time", "node", "dest",
+               "n", "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
+
+model <- SISe3(u0        = u0,
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(1, 6),
+               upsilon_1 = 1,
+               upsilon_2 = 1,
+               upsilon_3 = 1,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 1,
+               beta_t1   = 1,
+               beta_t2   = 1,
+               beta_t3   = 1,
+               beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
+               epsilon   = 1)
+
+result <- run(model, threads = 1, seed = 123L)
+stopifnot(identical(model@G, result@G))
+stopifnot(identical(model@S, result@S))
+stopifnot(identical(
+    susceptible(result, age = 2, i = 1) + infected(result, age = 2, i = 1),
+    structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
+              .Dim = c(1L, 11L))))
+stopifnot(identical(
+    susceptible(result, age = 3, i = 1) + infected(result, age = 3, i = 1),
+    structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
+              .Dim = c(1L, 11L))))
+stopifnot(identical(sum(result@U[,1]), 45L))
+stopifnot(identical(model@ldata, result@ldata))
+stopifnot(identical(model@sd, result@sd))
+stopifnot(identical(model@tspan, result@tspan))
+stopifnot(identical(model@u0, result@u0))
+stopifnot(identical(model@events, result@events))
+
+if (SimInf:::have_openmp()) {
+    result_omp <- run(model, threads = 2, seed = 123L)
+    stopifnot(identical(model@G, result_omp@G))
+    stopifnot(identical(model@S, result_omp@S))
+    stopifnot(identical(
+        susceptible(result, age = 2, i = 1) + infected(result, age = 2, i = 1),
+        structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
+                  .Dim = c(1L, 11L))))
+    stopifnot(identical(
+        susceptible(result, age = 3, i = 1) + infected(result, age = 3, i = 1),
+        structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
+                  .Dim = c(1L, 11L))))
+    stopifnot(identical(sum(result_omp@U[,1]), 45L))
+    stopifnot(identical(model@ldata, result_omp@ldata))
+    stopifnot(identical(model@sd, result_omp@sd))
+    stopifnot(identical(model@tspan, result_omp@tspan))
+    stopifnot(identical(model@u0, result_omp@u0))
+    stopifnot(identical(model@events, result_omp@events))
+}
+
+## 6 Nodes
+## 3 Age categories
+## 2 Disease-states: Susceptible & Infected
+##
+## All individuals start in susceptible state, with a probability of
+## becoming infected.
+##
 ## No scheduled events
 u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                      I_1 = c(0, 0, 0, 0, 0, 0),
