@@ -332,25 +332,54 @@ setMethod("summary",
           function(object, ...)
           {
               n <- length(object@event)
-
-              n_event <- table(object@event)
-              n_exit <- n_event["0"]
-              if (is.na(n_exit))
-                  n_exit <- 0
-              n_enter <- n_event["1"]
-              if (is.na(n_enter))
-                  n_enter <- 0
-              n_internal <- n_event["2"]
-              if (is.na(n_internal))
-                  n_internal <- 0
-              n_external <- n_event["3"]
-              if (is.na(n_external))
-                  n_external <- 0
-
               cat(sprintf("Number of scheduled events: %i\n", n))
-              cat(sprintf(" - Exit: %i\n", n_exit))
-              cat(sprintf(" - Enter: %i\n", n_enter))
-              cat(sprintf(" - Internal transfer: %i\n", n_internal))
-              cat(sprintf(" - External transfer: %i\n", n_external))
+
+              ## Summarise exit events
+              i <- which(object@event == 0L)
+              if (length(i) > 0) {
+                  cat(sprintf(" - Exit: %i (n: min = %i max = %i avg = %.1f)\n",
+                              length(i),
+                              min(object@n[i]),
+                              max(object@n[i]),
+                              mean(object@n[i])))
+              } else {
+                  cat(" - Exit: 0\n")
+              }
+
+              ## Summarise enter events
+              i <- which(object@event == 1L)
+              if (length(i) > 0) {
+                  cat(sprintf(" - Enter: %i (n: min = %i max = %i avg = %.1f)\n",
+                              length(i),
+                              min(object@n[i]),
+                              max(object@n[i]),
+                              mean(object@n[i])))
+              } else {
+                  cat(" - Enter: 0\n")
+              }
+
+              ## Summarise internal transfer events
+              i <- which(object@event == 2L)
+              if (length(i) > 0) {
+                  cat(sprintf(" - Internal transfer: %i (n: min = %i max = %i avg = %.1f)\n",
+                              length(i),
+                              min(object@n[i]),
+                              max(object@n[i]),
+                              mean(object@n[i])))
+              } else {
+                  cat(" - Internal transfer: 0\n")
+              }
+
+              ## Summarise external transfer events
+              i <- which(object@event == 3L)
+              if (length(i) > 0) {
+                  cat(sprintf(" - External transfer: %i (n: min = %i max = %i avg = %.1f)\n",
+                              length(i),
+                              min(object@n[i]),
+                              max(object@n[i]),
+                              mean(object@n[i])))
+              } else {
+                  cat(" - External transfer: 0\n")
+              }
           }
 )

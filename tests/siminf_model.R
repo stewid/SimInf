@@ -305,7 +305,7 @@ summary_expected <- c("Model: SISe3",
                       " - Exit: 0",
                       " - Enter: 0",
                       " - Internal transfer: 0",
-                      " - External transfer: 15",
+                      " - External transfer: 15 (n: min = 1 max = 5 avg = 3.0)",
                       "",
                       "U: 36 x 11",
                       "V: 6 x 11")
