@@ -298,6 +298,59 @@ scheduled_events <- function(E      = NULL,
                shift      = as.integer(events$shift)))
 }
 
+##' @rdname plot-methods
+##' @param frame.plot Draw a frame around each plot. Default is FALSE.
+##' @aliases plot plot-methods plot,scheduled_events-method
+##' @docType methods
+##' @importFrom graphics par
+##' @importFrom graphics plot
+##' @importFrom graphics mtext
+##' @importFrom stats xtabs
+##' @export
+setMethod("plot",
+          signature(x = "scheduled_events"),
+          function(x, frame.plot = FALSE, ...)
+          {
+              savepar <- graphics::par(mfrow = c(2, 2),
+                                       oma = c(1, 1, 2, 0),
+                                       mar = c(4, 3, 1, 1))
+              on.exit(par(savepar))
+
+              yy <- stats::xtabs(n ~ event + time,
+                         cbind(event = x@event, time = x@time, n = x@n))
+              xx <- as.integer(colnames(yy))
+              ylim <- c(0, max(yy))
+
+              ## Exit events
+              graphics::plot(xx, yy[1,], type = "l", ylim = ylim,
+                             xlab = "", ylab = "", frame.plot = frame.plot, ...)
+              graphics::mtext("Exit", side = 3, line = 0)
+              graphics::mtext("Individuals", side = 2, line = 2)
+              graphics::mtext("Time", side = 1, line = 2)
+
+              ## Enter events
+              graphics::plot(xx, yy[2,], type = "l", ylim = ylim,
+                             xlab = "", ylab = "", frame.plot = frame.plot, ...)
+              graphics::mtext("Enter", side = 3, line = 0)
+              graphics::mtext("Individuals", side = 2, line = 2)
+              graphics::mtext("Time", side = 1, line = 2)
+
+              ## Internal transfer events
+              graphics::plot(xx, yy[3,], type = "l", ylim = ylim,
+                             xlab = "", ylab = "", frame.plot = frame.plot, ...)
+              graphics::mtext("Internal transfer", side = 3, line = 0)
+              graphics::mtext("Individuals", side = 2, line = 2)
+              graphics::mtext("Time", side = 1, line = 2)
+
+              ## External transfer events
+              graphics::plot(xx, yy[4,], type = "l", ylim = ylim,
+                             xlab = "", ylab = "", frame.plot = frame.plot, ...)
+              graphics::mtext("External transfer", side = 3, line = 0)
+              graphics::mtext("Individuals", side = 2, line = 2)
+              graphics::mtext("Time", side = 1, line = 2)
+          }
+)
+
 ##' Brief summary of \code{scheduled_events}
 ##'
 ##' Shows the number of scheduled events.
