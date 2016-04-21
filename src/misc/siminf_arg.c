@@ -21,7 +21,7 @@
 #include <Rdefines.h>
 #include <time.h>
 
-#include "siminf_error.h"
+#include "siminf.h"
 
 /**
  * Check dgCMatrix argument

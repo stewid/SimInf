@@ -23,8 +23,8 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
+#include "siminf.h"
 #include "siminf_arg.h"
-#include "siminf_error.h"
 #include "siminf_events.h"
 #include "siminf_vec.h"
 
