@@ -40,13 +40,13 @@
  * compartment, i.e. a non-zero entry in element in the select column.
  *
  * INTERNAL_TRANSFER_EVENT (2): Internal transfer events are events
- * that change states of individuals whithin one node e.g. ageing n
- * individuals from age_1 to age_2.
+ * that change the number of individuals in the compartments whithin
+ * one node e.g. aging of n individuals from age_1 to age_2 in a model
+ * with age categories.
  *
  * EXTERNAL_TRANSFER_EVENT (3): External transfer events are events
- * that move individuals from one node to another node but keep
- * individuals in the same states e.g. moving n individuals from
- * states of age_1 in node A to the same states of age_1 in node B.
+ * that move individuals from compartments in one node to compartments
+ * in another node e.g. moving n individuals from node A to node B.
  */
 enum {EXIT_EVENT,
       ENTER_EVENT,
@@ -75,7 +75,7 @@ typedef struct scheduled_events
                          *   determines the states to sample from. */
     int *shift;         /**< Column j in the shift matrix that
                          *   determines the shift of the internal
-                         *   transfer event. */
+                         *   and external transfer event. */
 } scheduled_events;
 
 /* Maximum number of individuals to sample from */
@@ -146,8 +146,8 @@ typedef struct siminf_thread_args
     const double *gdata; /**< The global data vector. */
     const int *sd;    /**< Each node can be assigned to a
                        *   sub-domain. */
-    const int *N;     /**< Shift matrix for internal transfer
-                       *   events. */
+    const int *N;     /**< Shift matrix for internal and external
+                       *   transfer events. */
     int *update_node; /**< Vector of length Nn used to indicate nodes
                        *   for update. */
 
@@ -317,7 +317,8 @@ static void siminf_free_args(siminf_thread_args *sa)
  * @param select Column j (one-based) in the event matrix that
  *        determines the states to sample from.
  * @param shift Column j (one-based) in the shift matrix S that
- *        determines the shift of the internal transfer event.
+ *        determines the shift of the internal and external
+ *        transfer event.
  * @param Nn Total number of nodes.
  * @return 0 if Ok, else error code.
  */
@@ -656,8 +657,9 @@ static int siminf_solver()
                     const int s = e1.select[j];
 
                     if (e1.event[j] == ENTER_EVENT) {
-                        /* All individuals enter first non-zero compartment,
-                         * i.e. a non-zero entry in element in the select column. */
+                        /* All individuals enter first non-zero
+                         * compartment, i.e. a non-zero entry in
+                         * element in the select column. */
                         if (sa.jcE[s] < sa.jcE[s + 1]) {
                             uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] += e1.n[j];
                             if (uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] < 0)
@@ -934,7 +936,7 @@ static int siminf_solver()
  * @param select Column j in the event matrix E that determines the
  *        states to sample from.
  * @param shift Column j in the shift matrix S that determines the
- *        shift of the internal transfer event.
+ *        shift of the internal and external transfer event.
  * @param Nthread Number of threads to use during simulation.
  * @param seed Random number seed.
  * @param tr_fun Vector of function pointers to transition rate functions.

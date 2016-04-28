@@ -1,7 +1,7 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Stefan Engblom
- *  Copyright (C) 2015  Stefan Widgren
+ *  Copyright (C) 2015 - 2016  Stefan Engblom
+ *  Copyright (C) 2015 - 2016  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ SEXP siminf_ldata_sp(SEXP data, SEXP distance)
         for (i = 0; i < n_data; i++, k++)
             ldata[node * Nld + k] = ld[node * n_data + k];
 
-        /* Copy distance data and recalculate to k / val^2 */
+        /* Copy distance data and recalculate to 1.0 / val^2 */
         for (i = jc[node]; i < jc[node + 1]; i++) {
             ldata[node * Nld + k++] = ir[i];
             ldata[node * Nld + k++] = 1.0 / (val[i] * val[i]);
