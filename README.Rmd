@@ -7,6 +7,17 @@ knitr::opts_chunk$set(
   fig.height = 8)
 ```
 
+<h1 align="center">
+    <br>
+    <br>
+    <img src="./inst/logo.svg" alt="SimInf">
+    <br>
+    <br>
+    <br>
+</h1>
+
+> A flexible and efficient framework for data-driven stochastic disease spread simulations
+
 [![Build Status](https://travis-ci.org/stewid/SimInf.svg)](https://travis-ci.org/stewid/SimInf)
 [![Build status](https://ci.appveyor.com/api/projects/status/pe68xiu1anxvet2n?svg=true)](https://ci.appveyor.com/project/stewid/SimInf)
 [![CRAN status](http://www.r-pkg.org/badges/version/SimInf)](http://cran.r-project.org/web/packages/SimInf/index.html)
@@ -15,8 +26,14 @@ knitr::opts_chunk$set(
 
 # SimInf
 
-A flexible and efficient framework for stochastic disease spread
-simulations in animal populations.
+Livestock movements are important for the spread of many infectious
+diseases between herds. The package provides an efficient and flexible
+framework for data-driven stochastic disease spread modelling that
+integrates within-herd infection dynamics as continuous-time Markov
+chains and livestock movements between herds as scheduled events. The
+core simulation solver is implemented in C and uses OpenMP (if
+available) to divide work over multiple processors. The package
+contains template models and can be extended with user defined models.
 
 ## Installation
 
