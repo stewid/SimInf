@@ -1,11 +1,6 @@
 
 
-<h1 align="center">
-    <br>
-    <img src="./inst/logo.png" alt="SimInf">
-    <br>
-    <br>
-</h1>
+![](./inst/logo/logo.png)
 
 > A flexible and efficient framework for data-driven stochastic disease spread simulations
 
