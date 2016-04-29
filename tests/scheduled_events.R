@@ -264,3 +264,33 @@ events <- new("scheduled_events",
               shift = integer(0))
 str(events)
 stopifnot(identical(scheduled_events(), events))
+
+## Check scheduled_events plot method
+E <- Matrix(c(1, 0, 0, 1, 0, 0,
+              0, 0, 0, 1, 0, 0,
+              0, 1, 0, 0, 1, 0,
+              0, 0, 0, 0, 1, 0,
+              0, 0, 1, 0, 0, 1,
+              0, 0, 0, 0, 0, 1),
+            nrow   = 6,
+            ncol   = 6,
+            byrow  = TRUE,
+            sparse = TRUE)
+E <- as(E, "dgCMatrix")
+N <- matrix(c(2, 0,
+              2, 0,
+              0, 2,
+              0, 2,
+              0, 0,
+              0, 0),
+            nrow   = 6,
+            ncol   = 2,
+            byrow  = TRUE)
+data(events_SISe3)
+events <- scheduled_events(E = E, N = N, events = events_SISe3)
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+plot(events)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
