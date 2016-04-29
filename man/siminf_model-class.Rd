@@ -19,25 +19,28 @@ Class to handle the siminf data model
     \code{"\linkS4class{dgCMatrix}"}.
   }
   \item{S}{
-    Each column corresponds to a transition, and execution of state
-    transition \code{j} amounts to adding the \code{S[, j]} to the
-    state vector of the node where the state transition occurred.
-    Sparse matrix (\eqn{Nc \times Nt}) of object class
-    \code{"\linkS4class{dgCMatrix}"}.
+    Each column corresponds to a state transition, and execution
+    of state transition \code{j} amounts to adding the \code{S[,
+    j]} column to the state vector \code{u[, i]} of node \emph{i}
+    where the transition occurred. Sparse matrix (\eqn{Nc \times
+    Nt}) of object class \code{"\linkS4class{dgCMatrix}"}.
   }
   \item{U}{
-    The result matrix with the number of individuals in each disease
-    state in every node (\eqn{N_n N_c \times} \code{length(tspan)}).
-    \code{U[, j]} contains the number of individuals in each disease
-    state at \code{tspan[j]}. \code{U[1:Nc, j]} contains the state
-    of node \code{1} at \code{tspan[j]}. \code{U[(Nc + 1):(2 * Nc), j]}
-    contains the state of node \code{2} at \code{tspan[j]} etc.
+    The result matrix with the number of individuals in each
+    compartment in every node. \code{U[, j]} contains the number
+    of individuals in each compartment at
+    \code{tspan[j]}. \code{U[1:Nc, j]} contains the number of
+    individuals in node 1 at \code{tspan[j]}. \code{U[(Nc + 1):(2
+    * Nc), j]} contains the number of individuals in node 2 at
+    \code{tspan[j]} etc. Integer matrix (\eqn{N_n N_c \times}
+    \code{length(tspan)}).
   }
   \item{V}{
-    The result matrix for the real-valued continous compartment state
-    (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times} \code{length(tspan)}).
-    \code{V[, j]} contains the real-valued state of the system at
-    \code{tspan[j]}.
+    The result matrix for the real-valued continous
+    state. \code{V[, j]} contains the real-valued state of the
+    system at \code{tspan[j]}. Numeric matrix
+    (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
+    \code{length(tspan)}).
   }
   \item{ldata}{
     A matrix with local data for the nodes. The column \code{ldata[, j]}
@@ -63,10 +66,8 @@ Class to handle the siminf data model
     the number of individuals in each compartment in every node.
   }
   \item{v0}{
-     The initial continuous state vector in every node.
-     (\code{dim(ldata)[1]} \eqn{\times N_n} ). The continuous
-     state vector is updated by the specific model during the
-     simulation in the post time step function.
+     The initial value for the real-valued continuous state.
+     Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
   }
   \item{events}{
     Scheduled events \code{"\linkS4class{scheduled_events}"}
