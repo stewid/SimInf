@@ -2,7 +2,8 @@
 
 <h1 align="center">
     <br>
-    <img src="./inst/logo.svg" alt="SimInf">
+    <img src="./inst/logo.png" alt="SimInf">
+    <br>
     <br>
 </h1>
 
