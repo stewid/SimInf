@@ -2,10 +2,7 @@
 
 <h1 align="center">
     <br>
-    <br>
     <img src="./inst/logo.svg" alt="SimInf">
-    <br>
-    <br>
     <br>
 </h1>
 
