@@ -36,35 +36,39 @@ Class to handle the scheduled events
     \code{EXTERNAL_TRANSFER_EVENT = 3}.
   }
   \item{time}{
-    Integer vector of length \code{len} with the time for the event.
+    Time for the event. Integer vector of length \code{len}.
   }
   \item{node}{
-    Integer vector of length \code{len}. The node of the event \code{i}.
+    The node that the event operates on. Also the source node for
+    an \emph{external transfer} event.  Integer vector of length
+    \code{len}. $1 <= \code{node[i]} <= Number of nodes.
   }
   \item{dest}{
-    Integer vector of length \code{len}. The destination node for a
-    \code{EXTERNAL_TRANSFER_EVENT}.
+    The destination node for an \emph{external transfer} event.
+    Should be \code{0} for the other event types.
+    Integer vector of length \code{len}. dest[i] >= 0.
   }
   \item{n}{
-    Integer vector of length \code{len}. The number of individuals in the
-    event. n[i] >= 0.
+    The number of individuals affected by the event. Integer vector
+    of length \code{len}. n[i] >= 0.
   }
   \item{proportion}{
-    Numeric vector of length \code{len}. If n[i] equals zero,
-    then the number of individuals to sample is calculated by summing
-    the number of individuals in the states determined by
-    select[i] and multiplying with the proportion.
+    If \code{n[i]} equals zero, the number of individuals affected by
+    \code{event[i]} is calculated by summing the number of individuls
+    with \code{proportion[i]}. Numeric vector of length \code{len}.
     0 <= proportion[i] <= 1.
   }
   \item{select}{
-    Integer vector of length \code{len}. Column \code{j} in the event
-    matrix \code{E} that determines the states to sample from.
+    Column \code{j} in the event matrix \code{E} that determines
+    the compartments that the event operates on. Integer vector
+    of length \code{len}.
   }
   \item{shift}{
-    Integer vector of length \code{len}. Column j in the matrix
-    \code{N} that determines how to move the sampled states in an
-    \code{INTERNAL_TRANSFER_EVENT}. Should be \code{-1} for the other
-    event types.
+    Column \code{k} in the shift matrix \code{N} that determines
+    how individuals in \emph{internal transfer} and \emph{external
+    transfer} events are shifted to enter another compartment.
+    Should be \code{0} for the other event types.
+    Integer vector of length \code{len}.
   }
 }
 }
