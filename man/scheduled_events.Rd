@@ -24,10 +24,10 @@ The argument events must be a \code{data.frame} with the following
 columns:
 \describe{
   \item{event}{
-    The event type. The following four type of events exists;
-    \code{EXIT_EVENT = 0}, \code{ENTER_EVENT = 1},
-    \code{INTERNAL_TRANSFER_EVENT = 2}, and
-    \code{EXTERNAL_TRANSFER_EVENT = 3}.
+    Type of event: 0) \emph{exit}, 1) \emph{enter}, 2)
+    \emph{internal transfer}, and 3) \emph{external transfer}.
+    Other values are reserved for future event types and not
+    supported by the current default core solver.
   }
   \item{time}{
     Time for the event. Integer vector of length \code{len}.

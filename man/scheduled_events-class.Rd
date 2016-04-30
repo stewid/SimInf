@@ -11,15 +11,14 @@ Class to handle the scheduled events
 
 \describe{
   \item{E}{
-    Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}.
-    Each row corresponds to one state in the compartment model. The
-    non-zero entries in a column indicates the states to select and
-    include in an event.  For the events \code{EXIT_EVENT},
-    \code{INTERNAL_TRANSFER_EVENT} and \code{EXTERNAL_TRANSFER_EVENT},
-    a non-zero entry in element \code{i} of select column \code{j}
-    indicate the compartments to sample individuals from.  For the
-    \code{ENTER_EVENT}, all individuals enter first non-zero compartment,
-    i.e. a non-zero entry in element \code{i} of select column \code{j}.
+    Each row corresponds to one compartment in the model. The
+    non-zero entries in a column indicates the compartments to
+    include in an event.  For the \emph{exit}, \emph{internal
+    transfer} and \emph{external transfer} events, a non-zero
+    entry indicate the compartments to sample individuals from.
+    For the \emph{enter} event, all individuals enter first
+    non-zero compartment. Sparse matrix of object class
+    \code{"\linkS4class{dgCMatrix}"}.
   }
   \item{N}{
     For the \code{INTERNAL_TRANSFER_EVENT}, a non-zero entry in
@@ -36,39 +35,39 @@ Class to handle the scheduled events
     \code{EXTERNAL_TRANSFER_EVENT = 3}.
   }
   \item{time}{
-    Time for the event. Integer vector of length \code{len}.
+    Time for the event. Integer vector.
   }
   \item{node}{
     The node that the event operates on. Also the source node for
-    an \emph{external transfer} event.  Integer vector of length
-    \code{len}. 1 <= \code{node[i]} <= Number of nodes.
+    an \emph{external transfer} event.  Integer vector.
+    1 <= \code{node[i]} <= Number of nodes.
   }
   \item{dest}{
     The destination node for an \emph{external transfer} event.
     Should be \code{0} for the other event types.
-    Integer vector of length \code{len}. dest[i] >= 0.
+    Integer vector. dest[i] >= 0.
   }
   \item{n}{
-    The number of individuals affected by the event. Integer vector
-    of length \code{len}. n[i] >= 0.
+    The number of individuals affected by the event. Integer vector.
+    n[i] >= 0.
   }
   \item{proportion}{
     If \code{n[i]} equals zero, the number of individuals affected by
     \code{event[i]} is calculated by summing the number of individuls
-    with \code{proportion[i]}. Numeric vector of length \code{len}.
+    with \code{proportion[i]}. Numeric vector.
     0 <= proportion[i] <= 1.
   }
   \item{select}{
     The column \code{j} in the event matrix \code{E} that
     determines the compartments that the event operates
-    on. Integer vector of length \code{len}.
+    on. Integer vector.
   }
   \item{shift}{
     The column \code{k} in the shift matrix \code{N} that
     determines how individuals in \emph{internal transfer} and
     \emph{external transfer} events are shifted to enter another
     compartment.  Should be \code{0} for the other event types.
-    Integer vector of length \code{len}.
+    Integer vector.
   }
 }
 }
