@@ -83,15 +83,15 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     0 <= proportion[i] <= 1.
 ##'   }
 ##'   \item{select}{
-##'     Column \code{j} in the event matrix \code{E} that determines
-##'     the compartments that the event operates on. Integer vector
-##'     of length \code{len}.
+##'     The column \code{j} in the event matrix \code{E} that
+##'     determines the compartments that the event operates
+##'     on. Integer vector of length \code{len}.
 ##'   }
 ##'   \item{shift}{
-##'     Column \code{k} in the shift matrix \code{N} that determines
-##'     how individuals in \emph{internal transfer} and \emph{external
-##'     transfer} events are shifted to enter another compartment.
-##'     Should be \code{0} for the other event types.
+##'     The column \code{k} in the shift matrix \code{N} that
+##'     determines how individuals in \emph{internal transfer} and
+##'     \emph{external transfer} events are shifted to enter another
+##'     compartment.  Should be \code{0} for the other event types.
 ##'     Integer vector of length \code{len}.
 ##'   }
 ##' }
@@ -121,7 +121,8 @@ setClass("scheduled_events",
                                             length(object@proportion),
                                             length(object@select),
                                             length(object@shift)))) , 1L)) {
-                 errors <- c(errors, "All scheduled events must have equal length.")
+                 errors <- c(errors,
+                             "All scheduled events must have equal length.")
              }
 
              if (!all(object@time > 0)) {
@@ -163,11 +164,11 @@ setClass("scheduled_events",
          }
 )
 
-##' Create S4 class \code{scheduled_events}
+##' Create a \code{"\linkS4class{scheduled_events}"} object
 ##'
 ##' The argument events must be a \code{data.frame} with the following
 ##' columns:
-##' \itemize{
+##' \describe{
 ##'   \item{event}{
 ##'     The event type. The following four type of events exists;
 ##'     \code{EXIT_EVENT = 0}, \code{ENTER_EVENT = 1},
@@ -196,14 +197,14 @@ setClass("scheduled_events",
 ##'     with \code{proportion[i]}. 0 <= proportion[i] <= 1.
 ##'   }
 ##'   \item{select}{
-##'     Column \code{j} in the event matrix \code{E} that determines
-##'     the compartments that the event operates on.
+##'     The column \code{j} in the event matrix \code{E} that
+##'     determines the compartments that the event operates on.
 ##'   }
 ##'   \item{shift}{
-##'     Column \code{k} in the shift matrix \code{N} that determines
-##'     how individuals in \emph{internal transfer} and \emph{external
-##'     transfer} events are shifted to enter another compartment.
-##'     Should be \code{0} for the other event types.
+##'     The column \code{k} in the shift matrix \code{N} that
+##'     determines how individuals in \emph{internal transfer} and
+##'     \emph{external transfer} events are shifted to enter another
+##'     compartment.  Should be \code{0} for the other event types.
 ##'   }
 ##' }
 ##'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/scheduled_events.R
 \name{scheduled_events}
 \alias{scheduled_events}
-\title{Create S4 class \code{scheduled_events}}
+\title{Create a \code{"\linkS4class{scheduled_events}"} object}
 \usage{
 scheduled_events(E = NULL, N = NULL, events = NULL)
 }
@@ -22,7 +22,7 @@ S4 class \code{scheduled_events}
 \description{
 The argument events must be a \code{data.frame} with the following
 columns:
-\itemize{
+\describe{
   \item{event}{
     The event type. The following four type of events exists;
     \code{EXIT_EVENT = 0}, \code{ENTER_EVENT = 1},
@@ -50,14 +50,14 @@ columns:
     with \code{proportion[i]}. 0 <= proportion[i] <= 1.
   }
   \item{select}{
-    Column \code{j} in the event matrix \code{E} that determines
-    the compartments that the event operates on.
+    The column \code{j} in the event matrix \code{E} that
+    determines the compartments that the event operates on.
   }
   \item{shift}{
-    Column \code{k} in the shift matrix \code{N} that determines
-    how individuals in \emph{internal transfer} and \emph{external
-    transfer} events are shifted to enter another compartment.
-    Should be \code{0} for the other event types.
+    The column \code{k} in the shift matrix \code{N} that
+    determines how individuals in \emph{internal transfer} and
+    \emph{external transfer} events are shifted to enter another
+    compartment.  Should be \code{0} for the other event types.
   }
 }
 }

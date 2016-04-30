@@ -59,15 +59,15 @@ Class to handle the scheduled events
     0 <= proportion[i] <= 1.
   }
   \item{select}{
-    Column \code{j} in the event matrix \code{E} that determines
-    the compartments that the event operates on. Integer vector
-    of length \code{len}.
+    The column \code{j} in the event matrix \code{E} that
+    determines the compartments that the event operates
+    on. Integer vector of length \code{len}.
   }
   \item{shift}{
-    Column \code{k} in the shift matrix \code{N} that determines
-    how individuals in \emph{internal transfer} and \emph{external
-    transfer} events are shifted to enter another compartment.
-    Should be \code{0} for the other event types.
+    The column \code{k} in the shift matrix \code{N} that
+    determines how individuals in \emph{internal transfer} and
+    \emph{external transfer} events are shifted to enter another
+    compartment.  Should be \code{0} for the other event types.
     Integer vector of length \code{len}.
   }
 }
