@@ -41,7 +41,7 @@ Class to handle the scheduled events
   \item{node}{
     The node that the event operates on. Also the source node for
     an \emph{external transfer} event.  Integer vector of length
-    \code{len}. $1 <= \code{node[i]} <= Number of nodes.
+    \code{len}. 1 <= \code{node[i]} <= Number of nodes.
   }
   \item{dest}{
     The destination node for an \emph{external transfer} event.
