@@ -11,3 +11,4 @@
 ^gsl\.zip$
 ^gsl$
 src/gsl
+^logo$
