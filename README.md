@@ -1,6 +1,6 @@
 
 
-![](./inst/logo/logo.png)
+![](./logo/logo.png)
 
 > A flexible and efficient framework for data-driven stochastic disease spread simulations
 
