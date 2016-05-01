@@ -287,6 +287,8 @@ N <- matrix(c(2, 0,
             ncol   = 2,
             byrow  = TRUE)
 data(events_SISe3)
+## Save run-time by only using one year of data
+events_SISe3 <- events_SISe3[events_SISe3$time < 366,]
 events <- scheduled_events(E = E, N = N, events = events_SISe3)
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
@@ -294,3 +296,13 @@ plot(events)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
+
+## Test summary method with scheduled events
+summary_expected <-
+    c("Number of scheduled events: 195919",
+      " - Exit: 45562 (n: min = 1 max = 1 avg = 1.0)",
+      " - Enter: 45603 (n: min = 1 max = 1 avg = 1.0)",
+      " - Internal transfer: 79225 (n: min = 1 max = 4 avg = 1.1)",
+      " - External transfer: 25529 (n: min = 1 max = 1 avg = 1.0)")
+summary_observed <- capture.output(summary(events))
+stopifnot(identical(summary_observed, summary_expected))
