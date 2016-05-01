@@ -21,18 +21,15 @@ Class to handle the scheduled events
     \code{"\linkS4class{dgCMatrix}"}.
   }
   \item{N}{
-    For the \code{INTERNAL_TRANSFER_EVENT}, a non-zero entry in
-    element \code{i} of select column \code{j} in \code{E} indicate
-    the compartments to sample individuals from. The value of element
-    \code{i} of column \code{k} in \code{N} determines the
-    target compartment. The target compartment for sampled individuals
-    is given by adding the value.
+    Each row represents one compartment in the model and the
+    values determine how to move sampled individuals in
+    \emph{internal transfer} and \emph{external transfer} events.
   }
   \item{event}{
-    Integer vector of length \code{len} with scheduled events.
-    The following four type events exists; \code{EXIT_EVENT = 0},
-    \code{ENTER_EVENT = 1}, \code{INTERNAL_TRANSFER_EVENT = 2}, and
-    \code{EXTERNAL_TRANSFER_EVENT = 3}.
+    Type of event: 0) \emph{exit}, 1) \emph{enter}, 2)
+    \emph{internal transfer}, and 3) \emph{external transfer}.
+    Other values are reserved for future event types and not
+    supported by the current default core solver. Integer vector.
   }
   \item{time}{
     Time for the event. Integer vector.
