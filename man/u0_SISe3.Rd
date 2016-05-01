@@ -13,6 +13,7 @@ Synthetic init data for 1600 nodes to demonstrate the \code{SISe3}
 model.
 }
 \examples{
+\dontrun{
 data(u0_SISe3)
 data(events_SISe3)
 
@@ -43,6 +44,7 @@ plot(model@events)
 
 result <- run(model)
 plot(result)
+}
 }
 \keyword{dataset}
 

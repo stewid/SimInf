@@ -14,6 +14,7 @@ model. The data contains 783773 events for 1600 nodes over 365 * 4
 days.
 }
 \examples{
+\dontrun{
 data(u0_SISe3)
 data(events_SISe3)
 
@@ -44,6 +45,7 @@ plot(model@events)
 
 result <- run(model)
 plot(result)
+}
 }
 \keyword{dataset}
 

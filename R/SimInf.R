@@ -45,6 +45,7 @@ NULL
 ##' @format A \code{data.frame}
 ##' @keywords dataset
 ##' @examples
+##' \dontrun{
 ##' data(u0_SISe3)
 ##' data(events_SISe3)
 ##'
@@ -75,6 +76,7 @@ NULL
 ##'
 ##' result <- run(model)
 ##' plot(result)
+##' }
 NULL
 
 ##' Example data to initialize a model
@@ -87,6 +89,7 @@ NULL
 ##' @format A \code{data.frame}
 ##' @keywords dataset
 ##' @examples
+##' \dontrun{
 ##' data(u0_SISe3)
 ##' data(events_SISe3)
 ##'
@@ -117,4 +120,5 @@ NULL
 ##'
 ##' result <- run(model)
 ##' plot(result)
+##' }
 NULL
