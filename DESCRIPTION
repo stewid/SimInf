@@ -16,7 +16,9 @@ Description: Livestock movements are important for the spread of many
     can be extended with user defined models.
 Acknowledgements: This work was financially supported by the Swedish
     Research Council within the UPMARC Linnaeus center of Excellence
-    (Pavol Bauer and Stefan Engblom).
+    (Pavol Bauer and Stefan Engblom), The Swedish Research Council
+    Formas (Stefan Engblom and Stefan Widgren), and The Swedish Board
+    of Agriculture (Stefan Widgren).
 License: GPL-3
 URL: https://github.com/stewid/SimInf
 BugReports: https://github.com/stewid/SimInf/issues
