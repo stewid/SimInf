@@ -1,3 +1,45 @@
+SimInf 1.0.0.9000
+-----------------
+
+NEW FEATURES
+
+* Two new built-in models: 'SISe_sp' and 'SISe3_sp' with spatial
+  coupling.
+
+* Added the 'run_outer' method to run a model on scaled 'gdata'
+  parameters.
+
+IMPROVEMENTS
+
+* Added two synthetic datasets 'u0_SISe3' and 'events_SISe3' to
+  demonstrate how to use SimInf.
+
+* Several improvements to the documentation.
+
+* Added summary method to the siminf_model class and the
+  scheduled_events class.
+
+CHANGES
+
+* The slot N in scheduled_events is changed from dgCMatrix to matrix.
+
+* Refactoring of the 'show' method for the siminf_model class and the
+  scheduled_events class.
+
+* Renamed function prototype 'PostTimeStepFun' to 'PTSFun' and
+  'PropensityFun' to 'TRFun'.
+
+* Renamed 'init' argument to 'u0' in the 'SISe' and 'SISe3' methods.
+
+* Changed 'node', 'dest', 'select' and 'shift' to one-based indices in
+  'scheduled_events'.
+
+BUG FIXES
+
+* Changed to use 'gsl_rng_uniform_pos' instead of 'gsl_rng_uniform' to
+  avoid 0 in the direct SSA. If zero was randomly selected and the
+  first compartment empty, the simulator could enter a negative state.
+
 SimInf 1.0.0
 ------------
 
