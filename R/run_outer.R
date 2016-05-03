@@ -35,6 +35,7 @@
 ##' @param ... Optional arguments to be passed to \code{FUN}.
 ##' @return Array with dimension \code{c(dim(x), dim(y))}.
 ##' @include siminf_model.R
+##' @importFrom stats terms
 ##' @examples
 ##' \dontrun{
 ##' ## Define a function that runs the model and
@@ -78,8 +79,8 @@ setMethod("run_outer",
 
               ## Determine indices to the 'gdata' parameters to scale
               ## by 'x'
-              xx <- attr(terms(formula, allowDotAsName = TRUE), "term.labels")
-              xx <- xx[attr(terms(formula, allowDotAsName = TRUE), "order") == 1]
+              xx <- attr(stats::terms(formula, allowDotAsName = TRUE), "term.labels")
+              xx <- xx[attr(stats::terms(formula, allowDotAsName = TRUE), "order") == 1]
               if (length(xx) < 1)
                   stop("Invalid parameters on the right side of the formula")
               x_i <- match(xx, names(model@gdata))
@@ -88,10 +89,10 @@ setMethod("run_outer",
 
               ## Determine indices to the 'gdata' parameters to scale
               ## by 'y'
-              yy <- attr(terms(formula, allowDotAsName = TRUE), "response")
+              yy <- attr(stats::terms(formula, allowDotAsName = TRUE), "response")
               if (yy < 1)
                   stop("Invalid parameters on the left side of the formula")
-              vars <- attr(terms(formula, allowDotAsName = TRUE), "variables")[-1]
+              vars <- attr(stats::terms(formula, allowDotAsName = TRUE), "variables")[-1]
               yy <- as.character(vars[yy])
               yy <- unlist(strsplit(yy, "+", fixed = TRUE))
               yy <- sub("^\\s", "", sub("\\s$", "", yy))
