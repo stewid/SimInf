@@ -83,7 +83,9 @@ download and install
 
 This work was financially supported by the Swedish Research Council
 within the UPMARC Linnaeus centre of Excellence (Pavol Bauer and
-Stefan Engblom).
+Stefan Engblom), The Swedish Research Council Formas (Stefan Engblom
+and Stefan Widgren), and The Swedish Board of Agriculture (Stefan
+Widgren).
 
 # License
 
