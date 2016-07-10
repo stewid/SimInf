@@ -4,9 +4,8 @@
 \alias{siminf_model}
 \title{Create a \code{siminf_model}}
 \usage{
-siminf_model(G, S, tspan, events = NULL, sd = NULL, ldata = NULL,
-  gdata = NULL, U = NULL, u0 = NULL, v0 = NULL, V = NULL, E = NULL,
-  N = NULL)
+siminf_model(G, S, tspan, events = NULL, ldata = NULL, gdata = NULL,
+  U = NULL, u0 = NULL, v0 = NULL, V = NULL, E = NULL, N = NULL)
 }
 \arguments{
 \item{G}{Dependency graph that indicates the transition rates that
@@ -26,9 +25,6 @@ occurred.  Sparse matrix (\eqn{Nc \times Nt}) of object class
 each node is to be returned.}
 
 \item{events}{A \code{data.frame} with the scheduled events.}
-
-\item{sd}{Each node can be assigned to a sub-domain.  Integer
-vector of length \code{Nn}.}
 
 \item{ldata}{A matrix with local data for the nodes. The column
 \code{ldata[, j]} contains the local data vector for the node

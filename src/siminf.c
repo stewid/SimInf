@@ -108,7 +108,6 @@ SEXP siminf_run(
         REAL(GET_SLOT(result, Rf_install("V"))),
         REAL(GET_SLOT(result, Rf_install("ldata"))),
         REAL(GET_SLOT(result, Rf_install("gdata"))),
-        INTEGER(GET_SLOT(result, Rf_install("sd"))),
         Nn, Nc, Nt, Nd, Nld,
         INTEGER(GET_SLOT(E, Rf_install("i"))),
         INTEGER(GET_SLOT(E, Rf_install("p"))),

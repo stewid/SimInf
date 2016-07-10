@@ -1,6 +1,10 @@
 SimInf 2.0.0.9000
 -----------------
 
+CHANGES
+
+* Removed the sub-domain argument. Instead use the local data vector
+  'ldata' to pass node specific data.
 
 SimInf 2.0.0
 ------------

@@ -41,7 +41,6 @@ enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON};
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
- * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe_S_to_I(
@@ -49,8 +48,7 @@ double SISe_S_to_I(
     const double *v,
     const double *ldata,
     const double *gdata,
-    double t,
-    int sd)
+    double t)
 {
     return gdata[UPSILON] * v[PHI] * u[S];
 }
@@ -63,7 +61,6 @@ double SISe_S_to_I(
  * @param ldata The local data vector for node.
  * @param gdata The global data vector.
  * @param t Current time.
- * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe_I_to_S(
@@ -71,8 +68,7 @@ double SISe_I_to_S(
     const double *v,
     const double *ldata,
     const double *gdata,
-    double t,
-    int sd)
+    double t)
 {
     return gdata[GAMMA] * u[I];
 }
@@ -88,7 +84,6 @@ double SISe_I_to_S(
  * @param gdata The global data vector.
  * @param node The node.
  * @param t Current time.
- * @param sd The sub-domain of the node.
  * @return error code (<0), or 1 if node needs to update the
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
@@ -100,8 +95,7 @@ int SISe_post_time_step(
     const double *ldata,
     const double *gdata,
     int node,
-    double t,
-    int sd)
+    double t)
 {
     const int day = (int)t % 365;
     const double I_n = u[I];

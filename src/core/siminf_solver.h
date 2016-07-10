@@ -28,7 +28,7 @@ int siminf_run_solver(
     const int *u0, const double *v0, const int *irG, const int *jcG,
     const int *irS, const int *jcS, const int *prS, const double *tspan,
     int tlen, int *U, double *V, const double *ldata, const double *gdata,
-    const int *sd, int Nn, int Nc, int Nt, int Nd, int Nld, const int *irE,
+    int Nn, int Nc, int Nt, int Nd, int Nld, const int *irE,
     const int *jcE, const int *N, int len, const int *event,
     const int *time, const int *node, const int *dest, const int *n,
     const double *proportion, const int *select, const int *shift,

@@ -42,7 +42,6 @@ enum {UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
- * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_S_1_to_I_1(
@@ -50,8 +49,7 @@ double SISe3_S_1_to_I_1(
     const double *v,
     const double *ldata,
     const double *gdata,
-    double t,
-    int sd)
+    double t)
 {
     return gdata[UPSILON_1] * v[PHI] * u[S_1];
 }
@@ -64,7 +62,6 @@ double SISe3_S_1_to_I_1(
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
- * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_S_2_to_I_2(
@@ -72,8 +69,7 @@ double SISe3_S_2_to_I_2(
     const double *v,
     const double *ldata,
     const double *gdata,
-    double t,
-    int sd)
+    double t)
 {
     return gdata[UPSILON_2] * v[PHI] * u[S_2];
 }
@@ -86,7 +82,6 @@ double SISe3_S_2_to_I_2(
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
- * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_S_3_to_I_3(
@@ -94,8 +89,7 @@ double SISe3_S_3_to_I_3(
     const double *v,
     const double *ldata,
     const double *gdata,
-    double t,
-    int sd)
+    double t)
 {
     return gdata[UPSILON_3] * v[PHI] * u[S_3];
 }
@@ -108,7 +102,6 @@ double SISe3_S_3_to_I_3(
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
- * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_I_1_to_S_1(
@@ -116,8 +109,7 @@ double SISe3_I_1_to_S_1(
     const double *v,
     const double *ldata,
     const double *gdata,
-    double t,
-    int sd)
+    double t)
 {
     return gdata[GAMMA_1] * u[I_1];
 }
@@ -130,7 +122,6 @@ double SISe3_I_1_to_S_1(
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
- * @param sd The sub-domain of node.
  * @return propensity.
  */
 double SISe3_I_2_to_S_2(
@@ -138,8 +129,7 @@ double SISe3_I_2_to_S_2(
     const double *v,
     const double *ldata,
     const double *gdata,
-    double t,
-    int sd)
+    double t)
 {
     return gdata[GAMMA_2] * u[I_2];
 }
@@ -152,7 +142,6 @@ double SISe3_I_2_to_S_2(
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param t Current time.
- * @param sd The sub-domain of node.
  * @return propensity
  */
 double SISe3_I_3_to_S_3(
@@ -160,8 +149,7 @@ double SISe3_I_3_to_S_3(
     const double *v,
     const double *ldata,
     const double *gdata,
-    double t,
-    int sd)
+    double t)
 {
     return gdata[GAMMA_3] * u[I_3];
 }
@@ -177,7 +165,6 @@ double SISe3_I_3_to_S_3(
  * @param gdata The global data vector.
  * @param node The node.
  * @param t Current time.
- * @param sd The sub-domain of the node.
  * @return error code (<0), or 1 if node needs to update the
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
@@ -189,8 +176,7 @@ int SISe3_post_time_step(
     const double *ldata,
     const double *gdata,
     int node,
-    double t,
-    int sd)
+    double t)
 {
     const int day = (int)t % 365;
     const double I_n = u[I_1] + u[I_2] + u[I_3];

@@ -44,8 +44,7 @@ typedef double (*TRFun)(
     const double *v,
     const double *ldata,
     const double *gdata,
-    double t,
-    int sd);
+    double t);
 
 /* Definition of the callback function post time step. */
 typedef int (*PTSFun)(
@@ -55,8 +54,7 @@ typedef int (*PTSFun)(
     const double *ldata,
     const double *gdata,
     int node,
-    double t,
-    int sd);
+    double t);
 
 /* Definition of the function to initiate and run the simulation */
 SEXP siminf_run(

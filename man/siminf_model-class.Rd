@@ -53,10 +53,6 @@ Class to handle the siminf data model
     The global data vector is passed as an argument to the
     transition rate functions and the post time step function.
   }
-  \item{sd}{
-    Each node can be assigned to a sub-domain.
-    Integer vector of length \code{Nn}.
-  }
   \item{tspan}{
     A vector of increasing time points where the state of each node is
     to be returned.
