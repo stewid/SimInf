@@ -140,9 +140,11 @@ int SISe_sp_post_time_step(
         j = (int)ldata[i];
     }
 
-    if (isfinite(v_new[PHI]))
-        return phi != v_new[PHI]; /* 1 if needs update */
-    return SIMINF_ERR_V_IS_NOT_FINITE;
+    if (!isfinite(v_new[PHI]))
+        return SIMINF_ERR_V_IS_NOT_FINITE;
+    if (v_new[PHI] < 0.0)
+        return SIMINF_ERR_V_IS_NEGATIVE;
+    return phi != v_new[PHI]; /* 1 if needs update */
 }
 
 /**

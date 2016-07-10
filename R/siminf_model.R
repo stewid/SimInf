@@ -371,6 +371,9 @@ siminf_error <- function(err)
     if (identical(err, -10L))
         stop("Invalid model.")
 
+    if (identical(err, -11L))
+        stop("The continuous state 'v' is negative.")
+
     stop("Unknown error code.")
 }
 

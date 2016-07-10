@@ -905,6 +905,6 @@ res <- tools::assertError(SimInf:::siminf_error(-10))
 stopifnot(length(grep("Invalid model",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(SimInf:::siminf_error(-11))
+res <- tools::assertError(SimInf:::siminf_error(-9000))
 stopifnot(length(grep("Unknown error code",
                       res[[1]]$message)) > 0)

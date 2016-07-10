@@ -36,7 +36,8 @@ typedef enum {
     SIMINF_INVALID_THREADS_VALUE    = -7,
     SIMINF_ERR_V_IS_NOT_FINITE      = -8,
     SIMINF_ERR_SAMPLE_SELECT        = -9,
-    SIMINF_ERR_INVALID_MODEL        = -10
+    SIMINF_ERR_INVALID_MODEL        = -10,
+    SIMINF_ERR_V_IS_NEGATIVE        = -11
 } siminf_error_code;
 
 /* Definition of the transition rate function. */
