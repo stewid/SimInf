@@ -21,6 +21,7 @@
 #ifndef INCLUDE_SIMINF_H
 #define INCLUDE_SIMINF_H
 
+#include <gsl/gsl_rng.h>
 #include <R.h>
 #include <Rinternals.h>
 
@@ -54,7 +55,8 @@ typedef int (*PTSFun)(
     const double *ldata,
     const double *gdata,
     int node,
-    double t);
+    double t,
+    gsl_rng *rng);
 
 /* Definition of the function to initiate and run the simulation */
 SEXP siminf_run(

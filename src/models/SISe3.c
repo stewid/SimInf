@@ -164,7 +164,8 @@ double SISe3_I_3_to_S_3(
  * @param ldata The local data vector for the node.
  * @param gdata The global data vector.
  * @param node The node.
- * @param t Current time.
+ * @param t The current time.
+ * @param rng The random number generator.
  * @return error code (<0), or 1 if node needs to update the
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
@@ -176,7 +177,8 @@ int SISe3_post_time_step(
     const double *ldata,
     const double *gdata,
     int node,
-    double t)
+    double t,
+    gsl_rng *rng)
 {
     const int day = (int)t % 365;
     const double I_n = u[I_1] + u[I_2] + u[I_3];
