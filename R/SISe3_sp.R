@@ -197,7 +197,7 @@ SISe3_sp <- function(u0,
                     nrow  = 4,
                     byrow = TRUE)
     storage.mode(ldata) <- "double"
-    ldata <- .Call("siminf_ldata_sp", ldata, distance, PACKAGE = "SimInf")
+    ldata <- .Call("siminf_ldata_sp", ldata, distance, 2L, PACKAGE = "SimInf")
 
     gdata <- c(upsilon_1, upsilon_2, upsilon_3,
                gamma_1, gamma_2, gamma_3,

@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "siminf.h"
 #include "siminf_arg.h"
 #include "siminf_ldata.h"
 
@@ -26,27 +27,34 @@
  *
  * @param data Matrix with local model parameters for each node.
  * @param distance Sparse matrix with distances between nodes.
+ * @param metric The type of value to calculate for each neighbor:
+ *   0: degree
+ *   1: distance
+ *   2: 1 / (distance * distance)
  * @return matrix
  *
  * Format for ldata:
  * First n indicies (0, 1, ..., n-1): local model parameters followed by
  * the neighbor data, pairs of (index, value) and then a stop pair (-1, 0)
- * where 'index' is the index to the neighbor and value = 1 / distance^2
+ * where 'index' is the index to the neighbor and the value is determined
+ * by the metric argument.
  *
  * Example:
  * end_t1, end_t2, end_t3, end_t4, index, value, index, value, -1, 0.0
  */
-SEXP siminf_ldata_sp(SEXP data, SEXP distance)
+SEXP siminf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
 {
     SEXP result;
     double *val, *ldata, *ld;
-    int i, *ir, *jc, Nld, Nn, node, n_data;
+    int *degree = NULL, i, *ir, *jc, Nld, Nn, node, n_data, m;
 
     /* Check arguments */
     if (siminf_arg_check_matrix(data))
         Rf_error("Invalid 'data' argument");
     if (siminf_arg_check_dgCMatrix(distance))
         Rf_error("Invalid 'distance' argument");
+    if (siminf_arg_check_integer(metric))
+        Rf_error("Invalid 'metric' argument");
 
     /* Extract data from 'data' */
     Nn = INTEGER(GET_SLOT(data, R_DimSymbol))[1];
@@ -56,6 +64,9 @@ SEXP siminf_ldata_sp(SEXP data, SEXP distance)
     ir = INTEGER(GET_SLOT(distance, Rf_install("i")));
     jc = INTEGER(GET_SLOT(distance, Rf_install("p")));
     val = REAL(GET_SLOT(distance, Rf_install("x")));
+
+    /* Extract data from 'metric' */
+    m = INTEGER(metric)[0];
 
     /* Check that the number of nodes are equal in data and
      * distance */
@@ -67,12 +78,14 @@ SEXP siminf_ldata_sp(SEXP data, SEXP distance)
      */
 
     /* 1) Determine the maximum number of neighbors in the 'distance'
-     * matrix */
+     * matrix and the number of neighbors (degree) for each node. */
+    degree = malloc(Nn * sizeof(int));
     Nld = 0;
     for (i = 0; i < Nn; i++) {
         const int k = jc[i + 1] - jc[i];
         if (k > Nld)
             Nld = k;
+        degree[i] = k;
     }
 
     /* 2) Create one pair for each neighbor (index, value) and add one
@@ -95,10 +108,20 @@ SEXP siminf_ldata_sp(SEXP data, SEXP distance)
         for (i = 0; i < n_data; i++, k++)
             ldata[node * Nld + k] = ld[node * n_data + k];
 
-        /* Copy distance data and recalculate to 1.0 / val^2 */
+        /* Copy neighbor data */
         for (i = jc[node]; i < jc[node + 1]; i++) {
             ldata[node * Nld + k++] = ir[i];
-            ldata[node * Nld + k++] = 1.0 / (val[i] * val[i]);
+            switch (m) {
+            case 1:
+                ldata[node * Nld + k++] = val[i];
+                break;
+            case 2:
+                ldata[node * Nld + k++] = 1.0 / (val[i] * val[i]);
+                break;
+            default:
+                ldata[node * Nld + k++] = degree[ir[i]];
+                break;
+            }
         }
 
         /* Add stop */
@@ -106,6 +129,9 @@ SEXP siminf_ldata_sp(SEXP data, SEXP distance)
     }
 
     UNPROTECT(1);
+
+    if (degree)
+        free(degree);
 
     return result;
 }

@@ -22,6 +22,6 @@
 
 #include <Rdefines.h>
 
-SEXP siminf_ldata_sp(SEXP data, SEXP distance);
+SEXP siminf_ldata_sp(SEXP data, SEXP distance, SEXP metric);
 
 #endif
