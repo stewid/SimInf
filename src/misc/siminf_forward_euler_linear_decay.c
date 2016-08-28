@@ -1,8 +1,8 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015  Stefan Engblom
- *  Copyright (C) 2015  Stefan Widgren
+ *  Copyright (C) 2015 - 2016  Stefan Engblom
+ *  Copyright (C) 2015 - 2016  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,16 +22,17 @@
  * Decay of environmental infectious pressure with a forward Euler step.
  *
  * The time dependent beta is divided into four intervals of the year
- * where 0 <= day < 365 and
- * 0 <= END_1 < END_2 < END_3 < END_4 <= 365
- * or
- * 0 <= END_4 < END_1 < END_2 < END_3 < 364
+ * where 0 <= day < 365
  *
- * Case 1: END_1 < END_4
+ * Case 1: END_1 < END_2 < END_3 < END_4
  * INTERVAL_1 INTERVAL_2     INTERVAL_3     INTERVAL_4     INTERVAL_1
- * [0, END_1) [END_1, END_2) [END_2, END_3) [END_3, END_4) [END_4, 365]
+ * [0, END_1) [END_1, END_2) [END_2, END_3) [END_3, END_4) [END_4, 365)
  *
- * Case 2: END_4 < END_1
+ * Case 2: END_3 < END_4 < END_1 < END_2
+ * INTERVAL_3 INTERVAL_4     INTERVAL_1     INTERVAL_2     INTERVAL_3
+ * [0, END_3) [END_3, END_4) [END_4, END_1) [END_1, END_2) [END_2, 365)
+ *
+ * Case 3: END_4 < END_1 < END_2 < END_3
  * INTERVAL_4 INTERVAL_1     INTERVAL_2     INTERVAL_3     INTERVAL_4
  * [0, END_4) [END_4, END_1) [END_1, END_2) [END_2, END_3) [END_3, 365)
  *
@@ -52,33 +53,28 @@ double siminf_forward_euler_linear_decay(
     int end_t1, int end_t2, int end_t3, int end_t4,
     double beta_t1, double beta_t2, double beta_t3, double beta_t4)
 {
-    /* Case 1 */
-    if (end_t1 < end_t4) {
-        if (day < end_t2) {
-            if (day < end_t1)
+    if (day < end_t2) {
+        if (day < end_t1) {
+            if (end_t1 < end_t4)
                 return phi * (1.0 - beta_t1);
-            else
-                return phi * (1.0 - beta_t2);
-        } else if (day < end_t3) {
-            return phi * (1.0 - beta_t3);
-        } else if (day < end_t4) {
-            return phi * (1.0 - beta_t4);
-        } else {
+            if (day < end_t4) {
+                if (end_t4 < end_t3)
+                    return phi * (1.0 - beta_t4);
+                if (day < end_t3)
+                    return phi * (1.0 - beta_t3);
+                return phi * (1.0 - beta_t4);
+            }
             return phi * (1.0 - beta_t1);
         }
+
+        return phi * (1.0 - beta_t2);
     }
 
-    /* Case 2 */
-    if (day < end_t1) {
-        if (day < end_t4)
-            return phi * (1.0 - beta_t4);
-        else
-            return phi * (1.0 - beta_t1);
-    } else if (day < end_t2) {
-        return phi * (1.0 - beta_t2);
-    } else if (day < end_t3) {
+    if (end_t3 < end_t1 || day < end_t3)
         return phi * (1.0 - beta_t3);
-    } else {
+
+    if (end_t4 < end_t1 || day < end_t4)
         return phi * (1.0 - beta_t4);
-    }
+
+    return phi * (1.0 - beta_t1);
 }
