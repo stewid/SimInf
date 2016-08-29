@@ -19,6 +19,7 @@
 
 #include "siminf.h"
 #include "siminf_forward_euler_linear_decay.h"
+#include "siminf_local_spread.h"
 
 /* Offset in integer compartment state vector */
 enum {S_1, I_1, S_2, I_2, S_3, I_3};
@@ -181,17 +182,21 @@ int SISe3_sp_post_time_step(
     double t,
     gsl_rng *rng)
 {
-    int i, j;
     const int day = (int)t % 365;
-    const double I_n = u[I_1] + u[I_2] + u[I_3];
-    const double n = u[S_1] + u[S_2] + u[S_3] + I_n;
+    const double I_i = u[I_1] + u[I_2] + u[I_3];
+    const double N_i = u[S_1] + u[S_2] + u[S_3] + I_i;
     const double phi = v[PHI];
-    const double coupling = gdata[COUPLING];
+    const int Nc = 6;
 
     /* Deterimine the pointer to the continuous state vector in the
      * first node. Use this to find phi at neighbours to the current
      * node. */
     const double *phi_0 = &v[-node];
+
+    /* Deterimine the pointer to the compartment state vector in the
+     * first node. Use this to find the number of individuals at
+     * neighbours to the current node. */
+    const int *u_0 = &u[-Nc*node];
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */
@@ -200,22 +205,11 @@ int SISe3_sp_post_time_step(
         ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
         gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
 
-    if (n > 0.0)
-        v_new[PHI] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
-    else
-        v_new[PHI] += gdata[EPSILON];
-
-    /* Coupling between neighboring farms. */
-    /* i is the offset in local data to the first neighbor. */
-    /* j is the neighbor node or -1 to stop.  */
-    i = NEIGHBOR;
-    j = (int)ldata[i];
-    while (j >= 0) {
-        v_new[PHI] += (phi_0[j] - phi) * coupling * ldata[i + 1];
-
-        /* Move to next neighbor pair (index, value) */
-        i += 2;
-        j = (int)ldata[i];
+    /* Local spread among proximal nodes. */
+    if (N_i > 0.0) {
+        v_new[PHI] += gdata[ALPHA] * I_i / N_i +
+            siminf_local_spread(&ldata[NEIGHBOR], phi_0, u_0,
+                                N_i, phi, Nc, gdata[COUPLING]);
     }
 
     if (!isfinite(v_new[PHI]))
