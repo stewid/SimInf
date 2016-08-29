@@ -157,7 +157,7 @@ SISe_sp <- function(u0,
                     nrow  = 4,
                     byrow = TRUE)
     storage.mode(ldata) <- "double"
-    ldata <- .Call("siminf_ldata_sp", ldata, distance, 2L, PACKAGE = "SimInf")
+    ldata <- .Call("siminf_ldata_sp", ldata, distance, 1L, PACKAGE = "SimInf")
 
     gdata <- c(upsilon, gamma, alpha, beta_t1, beta_t2, beta_t3, beta_t4,
                epsilon, coupling)
