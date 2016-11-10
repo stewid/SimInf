@@ -39,6 +39,7 @@ Collate:
     'check_arguments.R'
     'scheduled_events.R'
     'siminf_model.R'
+    'SIR.R'
     'SISe.R'
     'SISe3.R'
     'SISe3_sp.R'
