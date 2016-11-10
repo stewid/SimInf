@@ -4,7 +4,8 @@
 \alias{demo_model}
 \title{Generate a model for demonstration}
 \usage{
-demo_model(nodes = 1, days = 1000, model = c("SISe", "SISe3", "SISe_sp"))
+demo_model(nodes = 1, days = 1000, model = c("SISe", "SISe3", "SISe_sp",
+  "SIR"))
 }
 \arguments{
 \item{nodes}{Number of nodes in the model. Default is 1.}

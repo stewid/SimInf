@@ -37,7 +37,7 @@
 ##' plot(result)
 demo_model <- function(nodes = 1,
                        days = 1000,
-                       model = c("SISe", "SISe3", "SISe_sp"))
+                       model = c("SISe", "SISe3", "SISe_sp", "SIR"))
 {
     ## Check 'nodes' argument
     if (!is.numeric(nodes))
@@ -138,6 +138,16 @@ demo_model <- function(nodes = 1,
                          epsilon = 0.000011,
                          distance  = distance,
                          coupling  = 0.002)
+    } else if (identical(model, "SIR")) {
+        u0 <- data.frame(S = rep(392, nodes),
+                         I = rep(8, nodes),
+                         R = rep(0, nodes))
+
+        model <- SIR(u0      = u0,
+                     tspan   = seq_len(days) - 1,
+                     events  = NULL,
+                     beta    = 0.16,
+                     gamma   = 0.077)
     }
 
     model
