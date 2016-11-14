@@ -193,9 +193,10 @@ setMethod("plot",
 ##' days.
 ##' @return A \code{data.frame}
 ##' @keywords methods
+##' @importFrom utils data
 ##' @export
 events_SIR <- function() {
-    data(events_SISe3, envir = environment())
+    utils::data(events_SISe3, envir = environment())
     events_SISe3$select[events_SISe3$event == 0] <- 2
     events_SISe3$select[events_SISe3$event == 1] <- 1
     events_SISe3 <- events_SISe3[events_SISe3$event != 2,]
@@ -209,9 +210,10 @@ events_SIR <- function() {
 ##' model.
 ##' @return A \code{data.frame}
 ##' @keywords methods
+##' @importFrom utils data
 ##' @export
 u0_SIR <- function() {
-    data(u0_SISe3, envir = environment())
+    utils::data(u0_SISe3, envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
     u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
     u0_SISe3$R <- 0

@@ -33,6 +33,7 @@ Depends:
 Imports:
     graphics,
     stats,
+    utils,
     Matrix
 Collate:
     'AllGenerics.R'
