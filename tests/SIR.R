@@ -100,7 +100,7 @@ model <- SIR(u0     = u0,
              beta   = 0,
              gamma  = 0)
 
-result <- run(model)
+result <- run(model, threads = 1)
 
 S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L,
@@ -143,6 +143,19 @@ stopifnot(identical(nrow(u0_SIR()), 1600L))
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
 plot(result)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
+## Check SIR events plot method
+model <- SIR(u0     = u0_SIR(),
+             tspan  = seq_len(365 * 4),
+             events = events_SIR(),
+             beta   = 0,
+             gamma  = 0)
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+plot(model@events)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)

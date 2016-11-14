@@ -327,29 +327,49 @@ setMethod("plot",
               ylim <- c(0, max(yy))
 
               ## Exit events
-              graphics::plot(xx, yy[1,], type = "l", ylim = ylim,
-                             xlab = "", ylab = "", frame.plot = frame.plot, ...)
+              if ("0" %in% rownames(yy)) {
+                  y <- yy["0", ]
+              } else {
+                  y <- rep(0, length(xx))
+              }
+              graphics::plot(xx, y, type = "l", ylim = ylim, xlab = "",
+                             ylab = "", frame.plot = frame.plot, ...)
               graphics::mtext("Exit", side = 3, line = 0)
               graphics::mtext("Individuals", side = 2, line = 2)
               graphics::mtext("Time", side = 1, line = 2)
 
               ## Enter events
-              graphics::plot(xx, yy[2,], type = "l", ylim = ylim,
-                             xlab = "", ylab = "", frame.plot = frame.plot, ...)
+              if ("1" %in% rownames(yy)) {
+                  y <- yy["1", ]
+              } else {
+                  y <- rep(0, length(xx))
+              }
+              graphics::plot(xx, y, type = "l", ylim = ylim, xlab = "",
+                             ylab = "", frame.plot = frame.plot, ...)
               graphics::mtext("Enter", side = 3, line = 0)
               graphics::mtext("Individuals", side = 2, line = 2)
               graphics::mtext("Time", side = 1, line = 2)
 
               ## Internal transfer events
-              graphics::plot(xx, yy[3,], type = "l", ylim = ylim,
-                             xlab = "", ylab = "", frame.plot = frame.plot, ...)
+              if ("2" %in% rownames(yy)) {
+                  y <- yy["2", ]
+              } else {
+                  y <- rep(0, length(xx))
+              }
+              graphics::plot(xx, y, type = "l", ylim = ylim, xlab = "",
+                             ylab = "", frame.plot = frame.plot, ...)
               graphics::mtext("Internal transfer", side = 3, line = 0)
               graphics::mtext("Individuals", side = 2, line = 2)
               graphics::mtext("Time", side = 1, line = 2)
 
               ## External transfer events
-              graphics::plot(xx, yy[4,], type = "l", ylim = ylim,
-                             xlab = "", ylab = "", frame.plot = frame.plot, ...)
+              if ("3" %in% rownames(yy)) {
+                  y <- yy["3", ]
+              } else {
+                  y <- rep(0, length(xx))
+              }
+              graphics::plot(xx, y, type = "l", ylim = ylim, xlab = "",
+                             ylab = "", frame.plot = frame.plot, ...)
               graphics::mtext("External transfer", side = 3, line = 0)
               graphics::mtext("Individuals", side = 2, line = 2)
               graphics::mtext("Time", side = 1, line = 2)
