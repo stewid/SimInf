@@ -135,6 +135,10 @@ R_observed <- recovered(result)
 
 stopifnot(identical(R_observed, R_expected))
 
+## Check data
+stopifnot(identical(nrow(events_SIR()), 466692L))
+stopifnot(identical(nrow(u0_SIR()), 1600L))
+
 ## Check SIR plot method
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
