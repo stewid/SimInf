@@ -303,6 +303,52 @@ scheduled_events <- function(E      = NULL,
                shift      = as.integer(events$shift)))
 }
 
+##' Plot scheduled events
+##'
+##' @param x the time points of the events.
+##' @param y the number of events over time.
+##' @param events the event type to plot.
+##' @param frame.plot a logical indicating whether a box should be
+##'     drawn around the plot.
+##' @param ... additional arguments affecting the plot.
+##' @keywords internal
+plot_scheduled_events <- function(x,
+                                  y,
+                                  events = c("Exit",
+                                             "Enter",
+                                             "Internal transfer",
+                                             "External transfer"),
+                                  frame.plot,
+                                  ...)
+{
+    events <- match.arg(events)
+    i <- switch(events,
+                "Exit" = "0",
+                "Enter" = "1",
+                "Internal transfer" = "2",
+                "External transfer" = "3")
+
+    if (length(x)) {
+        ylim <- c(0, max(y))
+
+        if (i %in% rownames(y)) {
+            y <- y[i, ]
+        } else {
+            y <- rep(0, length(x))
+        }
+
+        graphics::plot(x, y, type = "l", ylim = ylim, xlab = "",
+                       ylab = "", frame.plot = frame.plot, ...)
+    } else {
+        graphics::plot(0, 0, type = "n", xlab = "", ylab = "",
+                       frame.plot = frame.plot, ...)
+    }
+
+    graphics::mtext(events, side = 3, line = 0)
+    graphics::mtext("Individuals", side = 2, line = 2)
+    graphics::mtext("Time", side = 1, line = 2)
+}
+
 ##' @rdname plot-methods
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
 ##' @aliases plot plot-methods plot,scheduled_events-method
@@ -324,55 +370,12 @@ setMethod("plot",
               yy <- stats::xtabs(n ~ event + time,
                          cbind(event = x@event, time = x@time, n = x@n))
               xx <- as.integer(colnames(yy))
-              ylim <- c(0, max(yy))
 
-              ## Exit events
-              if ("0" %in% rownames(yy)) {
-                  y <- yy["0", ]
-              } else {
-                  y <- rep(0, length(xx))
-              }
-              graphics::plot(xx, y, type = "l", ylim = ylim, xlab = "",
-                             ylab = "", frame.plot = frame.plot, ...)
-              graphics::mtext("Exit", side = 3, line = 0)
-              graphics::mtext("Individuals", side = 2, line = 2)
-              graphics::mtext("Time", side = 1, line = 2)
-
-              ## Enter events
-              if ("1" %in% rownames(yy)) {
-                  y <- yy["1", ]
-              } else {
-                  y <- rep(0, length(xx))
-              }
-              graphics::plot(xx, y, type = "l", ylim = ylim, xlab = "",
-                             ylab = "", frame.plot = frame.plot, ...)
-              graphics::mtext("Enter", side = 3, line = 0)
-              graphics::mtext("Individuals", side = 2, line = 2)
-              graphics::mtext("Time", side = 1, line = 2)
-
-              ## Internal transfer events
-              if ("2" %in% rownames(yy)) {
-                  y <- yy["2", ]
-              } else {
-                  y <- rep(0, length(xx))
-              }
-              graphics::plot(xx, y, type = "l", ylim = ylim, xlab = "",
-                             ylab = "", frame.plot = frame.plot, ...)
-              graphics::mtext("Internal transfer", side = 3, line = 0)
-              graphics::mtext("Individuals", side = 2, line = 2)
-              graphics::mtext("Time", side = 1, line = 2)
-
-              ## External transfer events
-              if ("3" %in% rownames(yy)) {
-                  y <- yy["3", ]
-              } else {
-                  y <- rep(0, length(xx))
-              }
-              graphics::plot(xx, y, type = "l", ylim = ylim, xlab = "",
-                             ylab = "", frame.plot = frame.plot, ...)
-              graphics::mtext("External transfer", side = 3, line = 0)
-              graphics::mtext("Individuals", side = 2, line = 2)
-              graphics::mtext("Time", side = 1, line = 2)
+              ## Plot events
+              plot_scheduled_events(xx, yy, "Exit", frame.plot, ...)
+              plot_scheduled_events(xx, yy, "Enter", frame.plot, ...)
+              plot_scheduled_events(xx, yy, "Internal transfer", frame.plot, ...)
+              plot_scheduled_events(xx, yy, "External transfer", frame.plot, ...)
           }
 )
 
