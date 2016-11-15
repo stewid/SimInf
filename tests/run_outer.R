@@ -50,7 +50,7 @@ stopifnot(length(grep("Invalid parameters on the left side of the formula",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    run_outer(x, y, demo_model(), alph ~ upsilon, function(model) 1))
+    run_outer(x, y, demo_model(), dummy ~ upsilon, function(model) 1))
 stopifnot(length(grep("Unmatched parameters on the left hand side of the formula",
                       res[[1]]$message)) > 0)
 
@@ -61,8 +61,8 @@ stopifnot(length(grep("Invalid parameters on the right side of the formula",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    run_outer(x, y, demo_model(), alph ~ upsilon, function(model) 1))
-stopifnot(length(grep("Unmatched parameters on the left hand side of the formula",
+    run_outer(x, y, demo_model(), alpha ~ dummy, function(model) 1))
+stopifnot(length(grep("Unmatched parameters on the right side of the formula",
                       res[[1]]$message)) > 0)
 
 ## Check run_outer
