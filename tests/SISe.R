@@ -1055,7 +1055,7 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 0.000011)
 
-result <- run(model)
+result <- run(model, threads = 1)
 
 S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L,
@@ -1112,6 +1112,27 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 0.000011)
 model@gdata <- rep(Inf, length(model@gdata))
-res <- tools::assertError(run(model))
+res <- tools::assertError(run(model, threads = 1))
 stopifnot(length(grep("The continuous state 'v' is not finite.",
+                      res[[1]]$message)) > 0)
+
+## Check negative v
+model <- SISe(u0      = u0,
+              tspan   = seq_len(10) - 1,
+              events  = NULL,
+              phi     = rep(1, nrow(u0)),
+              upsilon = 0.0357,
+              gamma   = 0.1,
+              alpha   = 1.0,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = -10.000011)
+res <- tools::assertError(run(model, threads = 1))
+stopifnot(length(grep("The continuous state 'v' is negative.",
                       res[[1]]$message)) > 0)
