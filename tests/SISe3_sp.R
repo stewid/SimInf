@@ -1731,7 +1731,7 @@ model <- SISe3_sp(u0        = u0,
                   coupling  = 0.0005,
                   distance  = distance)
 
-result <- run(model)
+result <- run(model, threads = 1)
 
 S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
@@ -1804,6 +1804,41 @@ model <- SISe3_sp(u0        = u0,
                   coupling  = 0.0005,
                   distance  = distance)
 model@gdata <- rep(Inf, length(model@gdata))
-res <- tools::assertError(run(model))
+res <- tools::assertError(run(model, threads = 1))
 stopifnot(length(grep("The continuous state 'v' is not finite.",
+                      res[[1]]$message)) > 0)
+
+## Check negative v
+u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                       I_10 = c(10, 10, 10, 10, 10, 10, 10, 10, 10),
+                       S_2 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                       I_2 = c(10, 10, 10, 10, 10, 10, 10, 10, 10),
+                       S_3 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                       I_3 = c(10, 10, 10, 10, 10, 10, 10, 10, 10)),
+                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                  row.names = c(NA, -9L), class = "data.frame")
+model <- SISe3_sp(u0        = u0,
+                  tspan     = seq_len(10) - 1,
+                  events    = NULL,
+                  phi       = rep(1, nrow(u0)),
+                  upsilon_1 = 0,
+                  upsilon_2 = 0,
+                  upsilon_3 = 0,
+                  gamma_1   = 0,
+                  gamma_2   = 0,
+                  gamma_3   = 0,
+                  alpha     = -1.0,
+                  beta_t1   = 0.19,
+                  beta_t2   = 0.085,
+                  beta_t3   = 0.075,
+                  beta_t4   = 0.185,
+                  end_t1    = 91,
+                  end_t2    = 182,
+                  end_t3    = 273,
+                  end_t4    = 365,
+                  epsilon   = 0.000011,
+                  coupling  = 0.0005,
+                  distance  = distance)
+res <- tools::assertError(run(model, threads = 1))
+stopifnot(length(grep("The continuous state 'v' is negative.",
                       res[[1]]$message)) > 0)
