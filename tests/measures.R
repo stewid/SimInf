@@ -108,8 +108,7 @@ model <- SISe_sp(u0       = data.frame(S = 99, I = 1),
                  end_t3   = 273,
                  end_t4   = 365,
                  coupling = 0,
-                 distance = distance_matrix(1, 1, 1),
-                 epsilon  = 0)
+                 distance = distance_matrix(1, 1, 1))
 
 res <- tools::assertError(susceptible(model))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",

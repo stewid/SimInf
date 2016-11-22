@@ -135,7 +135,6 @@ demo_model <- function(nodes = 1,
                          end_t2  = 182,
                          end_t3  = 273,
                          end_t4  = 365,
-                         epsilon = 0.000011,
                          distance  = distance,
                          coupling  = 0.002)
     }

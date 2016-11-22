@@ -51,7 +51,6 @@ setClass("SISe_sp", contains = c("siminf_model"))
 ##' @param gamma The recovery rate from infected to susceptible
 ##' @param alpha Shed rate from infected individuals
 ##' @template beta-param
-##' @param epsilon The background infectious pressure
 ##' @param coupling The coupling between neighboring nodes
 ##' @param distance The distance matrix between neighboring nodes
 ##' @return \code{SISe_sp}
@@ -72,7 +71,6 @@ SISe_sp <- function(u0,
                     end_t2   = NULL,
                     end_t3   = NULL,
                     end_t4   = NULL,
-                    epsilon  = NULL,
                     coupling = NULL,
                     distance = NULL)
 {
@@ -94,7 +92,7 @@ SISe_sp <- function(u0,
 
     ## Check for non-numeric parameters
     check_gdata_arg(upsilon, gamma, alpha, beta_t1, beta_t2, beta_t3, beta_t4,
-                    epsilon, coupling)
+                    coupling)
 
     ## Check interval endpoints
     check_integer_arg(end_t1, end_t2, end_t3, end_t4)
@@ -160,11 +158,11 @@ SISe_sp <- function(u0,
     ldata <- .Call("siminf_ldata_sp", ldata, distance, 1L, PACKAGE = "SimInf")
 
     gdata <- c(upsilon, gamma, alpha, beta_t1, beta_t2, beta_t3, beta_t4,
-               epsilon, coupling)
+               coupling)
     storage.mode(gdata) <- "double"
     names(gdata) <- c("upsilon", "gamma", "alpha",
                       "beta_t1", "beta_t2", "beta_t3", "beta_t4",
-                      "epsilon", "coupling")
+                      "coupling")
 
     model <- siminf_model(G      = G,
                           S      = S,

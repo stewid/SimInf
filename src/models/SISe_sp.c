@@ -31,8 +31,7 @@ enum {PHI};
 enum {END_T1, END_T2, END_T3, END_T4, NEIGHBOR};
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4,
-      EPSILON, COUPLING};
+enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, COUPLING};
 
 /**
  * susceptible to infected: S -> I
