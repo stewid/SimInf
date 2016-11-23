@@ -32,7 +32,7 @@ enum {END_T1, END_T2, END_T3, END_T4, NEIGHBOR};
 
 /* Offsets in global data (gdata) to parameters in the model */
 enum {UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
-      ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON, COUPLING};
+      ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, COUPLING};
 
 /**
  * In age category 1; susceptible to infected: S -> I

@@ -242,8 +242,7 @@ model <- SISe3_sp(u0        = u0,
                   end_t3    = 273,
                   end_t4    = 365,
                   coupling = 0,
-                  distance = distance_matrix(1:10, 1:10, 1),
-                  epsilon   = 0)
+                  distance = distance_matrix(1:10, 1:10, 1))
 
 res <- tools::assertError(susceptible(model))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",

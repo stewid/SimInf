@@ -63,7 +63,6 @@ setClass("SISe3_sp", contains = c("siminf_model"))
 ##' age category 3
 ##' @param alpha Shed rate from infected individuals
 ##' @template beta-param
-##' @param epsilon The background infectious pressure
 ##' @param coupling The coupling between neighboring nodes
 ##' @param distance The distance matrix between neighboring nodes
 ##' @return \code{SISe3_sp}
@@ -88,7 +87,6 @@ SISe3_sp <- function(u0,
                      end_t2    = NULL,
                      end_t3    = NULL,
                      end_t4    = NULL,
-                     epsilon   = NULL,
                      distance  = NULL,
                      coupling  = NULL)
 {
@@ -110,7 +108,7 @@ SISe3_sp <- function(u0,
 
     ## Check 'gdata' parameters
     check_gdata_arg(upsilon_1, upsilon_2, upsilon_3, gamma_1, gamma_2, gamma_3,
-                    alpha, beta_t1, beta_t2, beta_t3, beta_t4, epsilon, coupling)
+                    alpha, beta_t1, beta_t2, beta_t3, beta_t4, coupling)
 
     ## Check interval endpoints
     check_integer_arg(end_t1, end_t2, end_t3, end_t4)
@@ -203,13 +201,13 @@ SISe3_sp <- function(u0,
                gamma_1, gamma_2, gamma_3,
                alpha,
                beta_t1, beta_t2, beta_t3, beta_t4,
-               epsilon, coupling)
+               coupling)
     storage.mode(gdata) <- "double"
     names(gdata) <- c("upsilon_1", "upsilon_2", "upsilon_3",
                       "gamma_1", "gamma_2", "gamma_3",
                       "alpha",
                       "beta_t1", "beta_t2", "beta_t3", "beta_t4",
-                      "epsilon", "coupling")
+                      "coupling")
 
     model <- siminf_model(G      = G,
                           S      = S,
