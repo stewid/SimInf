@@ -1,7 +1,7 @@
-## siminf, a framework for stochastic disease spread simulations
+## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015  Stefan Engblom
-## Copyright (C) 2015  Stefan Widgren
+## Copyright (C) 2015 - 2016  Stefan Engblom
+## Copyright (C) 2015 - 2016  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -171,6 +171,46 @@ setGeneric("susceptible",
 ##' infected(result, i = c(1, 3), age = 1)
 setGeneric("infected",
            function(model, ...) standardGeneric("infected"))
+
+##' Recovered
+##'
+##' Extracts the number of recovered
+##' @rdname recovered-methods
+##' @docType methods
+##' @param model The \code{model} to extract the recovered from
+##' @param ... Additional arguments affecting the measure
+##' @param i Indices specifying the nodes to include when extracting
+##' the number of recovered. Default is NULL, which includes all nodes.
+##' @param by The number to increment the sequence of time points
+##' starting from 1. Default is 1, which gives the number of
+##' recovered at every time point.
+##' @keywords methods
+##' @export
+##' @examples
+##' ## Create a 'SIR' demo model with 5 nodes and initialize
+##' ## it to run over 10 days.
+##' model <- demo_model(nodes = 5, days = 10, model = "SIR")
+##'
+##' ## Run the model and save the result
+##' result <- run(model)
+##'
+##' ## Extract the number of recovered individuals in each
+##' ## node after each time step in the simulation
+##' recovered(result)
+##'
+##' ## Extract the number of recovered individuals in the
+##' ## first node after each time step in the simulation
+##' recovered(result, i = 1)
+##'
+##' ## Extract the number of recovered individuals in the
+##' ## first and third node after each time step in the simulation
+##' recovered(result, i = c(1, 3))
+##'
+##' ## Extract the number of recovered individuals in the first
+##' ## and third node after every other time step in the simulation
+##' recovered(result, i = c(1, 3), by = 2)
+setGeneric("recovered",
+           function(model, ...) standardGeneric("recovered"))
 
 ##' Prevalence
 ##'

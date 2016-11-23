@@ -459,7 +459,7 @@ setMethod("plot",
           }))
 
           ## Calculate proportion
-          m <- m / colSums(m)
+          m <- apply(m, 2, function(x) x / sum(x))
 
           ## Default color is black
           if (is.null(col))
@@ -471,10 +471,10 @@ setMethod("plot",
 
           ## Plot
           if (is.null(t0)) {
-              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, max(m)),
+              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, 1),
                    col = col[1], lty = lty[1], ...)
           } else {
-              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, max(m)),
+              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, 1),
                    col = col[1], lty = lty[1], xaxt = "n")
           }
           title(xlab = "Day", outer = TRUE, line = 0)
