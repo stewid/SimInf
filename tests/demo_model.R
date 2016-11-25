@@ -72,3 +72,4 @@ stopifnot(length(grep("'arg' should be one of",
 stopifnot(is(demo_model(model = "SISe"), "SISe"))
 stopifnot(is(demo_model(model = "SISe3"), "SISe3"))
 stopifnot(is(demo_model(model = "SISe_sp"), "SISe_sp"))
+stopifnot(is(demo_model(model = "SIR"), "SIR"))
