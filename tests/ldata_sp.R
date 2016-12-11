@@ -97,6 +97,11 @@ res <- tools::assertError(
 stopifnot(length(grep("Invalid 'distance' argument",
                       res[[1]]$message)) > 0)
 
+res <- tools::assertError(
+    .Call("siminf_ldata_sp", l, Matrix::Diagonal(10), 0L, PACKAGE = "SimInf"))
+stopifnot(length(grep("Invalid 'distance' argument",
+                      res[[1]]$message)) > 0)
+
 ## Check 'metric' argument to C function 'siminf_ldata_sp'
 res <- tools::assertError(
     .Call("siminf_ldata_sp", l, d, NA_integer_, PACKAGE = "SimInf"))
