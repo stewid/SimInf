@@ -88,40 +88,6 @@ int siminf_arg_check_model(SEXP arg)
 }
 
 /**
- * Check real argument
- *
- * @param arg The arg to check
- * @return 0 if OK, else -1
- */
-int siminf_arg_check_real(SEXP arg)
-{
-    if (arg == R_NilValue || !isReal(arg) || length(arg) != 1 || !R_finite(REAL(arg)[0]))
-        return -1;
-    return 0;
-}
-
-/**
- * Check vector argument of type real
- *
- * @param arg The arg to check
- * @param size The length of the vector
- * @return 0 if OK, else -1
- */
-int siminf_arg_check_real_vec(SEXP arg, size_t size)
-{
-    size_t i = 0;
-
-    if (arg == R_NilValue || !isReal(arg) || length(arg) != size)
-        return -1;
-    for (; i < size; i++) {
-        if (!R_finite(REAL(arg)[i]))
-            return -1;
-    }
-
-    return 0;
-}
-
-/**
  * Get seed value
  *
  * @param out The seed value.

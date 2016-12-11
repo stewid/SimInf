@@ -27,8 +27,6 @@ int siminf_arg_check_dgCMatrix(SEXP arg);
 int siminf_arg_check_integer(SEXP arg);
 int siminf_arg_check_matrix(SEXP arg);
 int siminf_arg_check_model(SEXP arg);
-int siminf_arg_check_real(SEXP arg);
-int siminf_arg_check_real_vec(SEXP arg, size_t size);
 int siminf_get_seed(unsigned long int *out, SEXP seed);
 int siminf_get_threads(int *out, SEXP threads);
 
