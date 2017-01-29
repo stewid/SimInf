@@ -1,10 +1,22 @@
 SimInf 2.0.0.9000
 -----------------
 
+NEW FEATURES
+
+* Two new built-in models: 'SIR' and 'SEIR'.
+
 CHANGES
 
 * Removed the sub-domain argument. Instead use the local data vector
   'ldata' to pass node specific data.
+
+* Removed the unused parameter 'epsilon' from the 'SISe_sp' and
+   'SISe3_sp' models.
+
+* Refactoring of local spread in the 'SISe_sp' and 'SISe3_sp' models.
+
+* Added a parameter with a pointer to a random number generator to the
+  post time step function.
 
 SimInf 2.0.0
 ------------
