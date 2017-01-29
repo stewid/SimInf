@@ -1,5 +1,5 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -47,6 +47,17 @@ setClass("SEIR", contains = c("siminf_model"))
 ##' @return \code{SEIR}
 ##' @include check_arguments.R
 ##' @export
+##' @examples
+##' ## Create a SEIR model object.
+##' model <- SEIR(u0 = data.frame(S = 99, E = 0, I = 1, R = 0),
+##'               tspan = 1:100,
+##'               beta = 0.16,
+##'               epsilon = 0.25,
+##'               gamma = 0.077)
+##'
+##' ## Run the SEIR model and plot the result.
+##' result <- run(model, seed = 123)
+##' plot(result)
 SEIR <- function(u0,
                 tspan,
                 events  = NULL,
