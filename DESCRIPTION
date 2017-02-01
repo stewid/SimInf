@@ -52,3 +52,6 @@ Collate:
     'distance.R'
     'run_outer.R'
 RoxygenNote: 5.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
