@@ -105,7 +105,8 @@ setClass("siminf_model",
              if (!is.double(object@tspan)) {
                  errors <- c(errors, "Input time-span must be a double vector.")
              } else if (any(length(object@tspan) < 2,
-                            any(diff(object@tspan) <= 0))) {
+                            any(diff(object@tspan) <= 0),
+                            any(is.na(object@tspan)))) {
                  errors <- c(errors,
                              "Input time-span must be an increasing vector.")
              }

@@ -74,6 +74,16 @@ res <- tools::assertError(new("siminf_model",
 stopifnot(length(grep("Input time-span must be an increasing vector.",
                       res[[1]]$message)) > 0)
 
+res <- tools::assertError(new("siminf_model",
+                              G     = G,
+                              S     = S,
+                              U     = U,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              tspan = c(1, NA, 3),
+                              u0    = u0))
+stopifnot(length(grep("Input time-span must be an increasing vector.",
+                      res[[1]]$message)) > 0)
+
 ## Check u0
 res <- tools::assertError(new("siminf_model",
                               G     = G,
