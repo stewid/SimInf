@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -252,8 +252,11 @@ scheduled_events <- function(E      = NULL,
         stop("events must be a data.frame")
     if (!identical(ncol(events), 8L))
         stop("Wrong dimension of events")
-    if (!all(c("event", "time", "node", "dest", "n", "proportion", "select", "shift") %in% names(events)))
+    if (!all(c("event", "time", "node", "dest",
+               "n", "proportion", "select",
+               "shift") %in% names(events))) {
         stop("Missing columns in events")
+    }
     if (!all(sapply(events, is.numeric)))
         stop("Columns in events must be numeric")
 
