@@ -37,8 +37,7 @@ setClass("SIR", contains = c("siminf_model"))
 ##'
 ##' @param u0 A \code{data.frame} with the initial state in each node,
 ##'     see details.
-##' @param tspan An increasing sequence of points in time where the
-##'     state of the system is to be returned.
+##' @template tspan-param
 ##' @param events a \code{data.frame} with the scheduled events, see
 ##'     \code{\link{siminf_model}}.
 ##' @param beta The transmission rate from susceptible to infected.

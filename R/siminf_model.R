@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -202,8 +202,7 @@ setClass("siminf_model",
 ##' @param gdata A numeric vector with global data that is common to
 ##'     all nodes. The global data vector is passed as an argument to
 ##'     the transition rate functions and the post time step function.
-##' @param tspan A vector of increasing time points where the state of
-##'     each node is to be returned.
+##' @template tspan-param
 ##' @param u0 The initial state vector. Either a matrix (\eqn{N_c
 ##'     \times N_n}) or a a \code{data.frame} with the number of
 ##'     individuals in each compartment in every node.

@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -42,8 +42,7 @@ setClass("SISe3_sp", contains = c("siminf_model"))
 ##' @template beta-section
 ##' @param u0 A \code{data.frame} with the initial state in each
 ##' node, see details.
-##' @param tspan An increasing sequence of points in time where the
-##' state of the system is to be returned.
+##' @template tspan-param
 ##' @param events a \code{data.frame} with the scheduled events, see
 ##' \code{\link{siminf_model}}.
 ##' @param phi A numeric vector with the initial environmental
