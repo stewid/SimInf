@@ -300,6 +300,8 @@ scheduled_events <- function(E      = NULL,
 ##' @param frame.plot a logical indicating whether a box should be
 ##'     drawn around the plot.
 ##' @param ... additional arguments affecting the plot.
+##' @importFrom graphics plot
+##' @importFrom graphics mtext
 ##' @keywords internal
 plot_scheduled_events <- function(x,
                                   y,
@@ -338,13 +340,14 @@ plot_scheduled_events <- function(x,
     graphics::mtext("Time", side = 1, line = 2)
 }
 
-##' @rdname plot-methods
+##' Plot \code{\linkS4class{scheduled_events}}
+##'
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
+##' @name plot-methods
 ##' @aliases plot plot-methods plot,scheduled_events-method
 ##' @docType methods
-##' @importFrom graphics par
 ##' @importFrom graphics plot
-##' @importFrom graphics mtext
+##' @importFrom graphics par
 ##' @importFrom stats xtabs
 ##' @export
 setMethod("plot",

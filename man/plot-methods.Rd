@@ -2,10 +2,10 @@
 % Please edit documentation in R/scheduled_events.R, R/siminf_model.R, R/SEIR.R,
 %   R/SIR.R, R/SISe.R, R/SISe3.R, R/SISe3_sp.R, R/SISe_sp.R
 \docType{methods}
-\name{plot,scheduled_events-method}
-\alias{plot,scheduled_events-method}
-\alias{plot}
+\name{plot-methods}
 \alias{plot-methods}
+\alias{plot}
+\alias{plot,scheduled_events-method}
 \alias{plot-methods}
 \alias{plot}
 \alias{plot,siminf_model-method}
@@ -27,24 +27,23 @@
 \alias{plot-methods}
 \alias{plot}
 \alias{plot,SISe_sp-method}
-\title{Plot \code{\linkS4class{siminf_model}}}
+\title{Plot \code{\linkS4class{scheduled_events}}}
 \usage{
 \S4method{plot}{scheduled_events}(x, frame.plot = FALSE, ...)
 
-\S4method{plot}{siminf_model}(x, legend, t0 = NULL, col = NULL,
-  lty = NULL, ...)
+\S4method{plot}{siminf_model}(x, legend, col = NULL, lty = NULL, ...)
 
-\S4method{plot}{SEIR}(x, t0 = NULL, ...)
+\S4method{plot}{SEIR}(x, y, ...)
 
-\S4method{plot}{SIR}(x, t0 = NULL, ...)
+\S4method{plot}{SIR}(x, y, ...)
 
-\S4method{plot}{SISe}(x, t0 = NULL, ...)
+\S4method{plot}{SISe}(x, y, ...)
 
-\S4method{plot}{SISe3}(x, t0 = NULL, ...)
+\S4method{plot}{SISe3}(x, y, ...)
 
-\S4method{plot}{SISe3_sp}(x, t0 = NULL, ...)
+\S4method{plot}{SISe3_sp}(x, y, ...)
 
-\S4method{plot}{SISe_sp}(x, t0 = NULL, ...)
+\S4method{plot}{SISe_sp}(x, y, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot}
@@ -55,19 +54,18 @@
 
 \item{legend}{The character vector to appear in the legend.}
 
-\item{t0}{The first date of \code{x@tspan} as a character string
-in format 'yyyy-mm-dd'. Default is NULL which prints the x-axis
-labels as the sequence 1:length(x@tspan). If non-null, the labels
-are converted to dates.}
-
 \item{col}{The plotting color for each compartment. Default is
 black.}
 
 \item{lty}{The line type for each compartment. Default is the
 sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 6=twodash.}
+
+\item{y}{Unused.}
 }
 \description{
+Plot \code{\linkS4class{scheduled_events}}
+
 Plot \code{\linkS4class{siminf_model}}
 }
 \examples{

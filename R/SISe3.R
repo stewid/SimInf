@@ -315,10 +315,9 @@ setMethod("prevalence",
 ##' @export
 setMethod("plot",
           signature(x = "SISe3"),
-          function(x, t0 = NULL, ...)
+          function(x, ...)
       {
           callNextMethod(x,
-                         t0 = t0,
                          legend = expression(S[1], I[1], S[2], I[2], S[3], I[3]),
                          ...)
       }

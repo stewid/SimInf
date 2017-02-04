@@ -418,11 +418,8 @@ setMethod("run",
 ##' Plot \code{\linkS4class{siminf_model}}
 ##'
 ##' @param x The \code{model} to plot
+##' @param y Unused.
 ##' @param legend The character vector to appear in the legend.
-##' @param t0 The first date of \code{x@@tspan} as a character string
-##' in format 'yyyy-mm-dd'. Default is NULL which prints the x-axis
-##' labels as the sequence 1:length(x@@tspan). If non-null, the labels
-##' are converted to dates.
 ##' @param col The plotting color for each compartment. Default is
 ##' black.
 ##' @param lty The line type for each compartment. Default is the
@@ -451,7 +448,7 @@ setMethod("run",
 ##' plot(result)
 setMethod("plot",
           signature(x = "siminf_model"),
-          function(x, legend, t0 = NULL, col = NULL, lty = NULL, ...)
+          function(x, legend, col = NULL, lty = NULL, ...)
       {
           if (identical(dim(x@U), c(0L, 0L)))
               stop("Please run the model first, the 'U' matrix is empty")
@@ -478,21 +475,23 @@ setMethod("plot",
               lty <- seq_len(dim(m)[1])
 
           ## Plot
-          if (is.null(t0)) {
-              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, 1),
-                   col = col[1], lty = lty[1], ...)
+          if (is.null(names(x@tspan))) {
+              plot(m[1,], type = "l", ylab = "Proportion",
+                   ylim = c(0, 1), col = col[1], lty = lty[1], ...)
           } else {
-              plot(m[1,], type = "l", ylab = "Proportion", ylim = c(0, 1),
-                   col = col[1], lty = lty[1], xaxt = "n")
+              plot(x = as.Date(names(x@tspan)), y = m[1,], type = "l",
+                   ylab = "Proportion", ylim = c(0, 1), col = col[1],
+                   lty = lty[1], ...)
           }
-          title(xlab = "Day", outer = TRUE, line = 0)
-          if (!is.null(t0)) {
-              axis(side = 1, at = seq_len(dim(m)[2]),
-                   labels = as.Date(x@tspan - min(x@tspan),
-                       origin = as.Date(t0)))
-          }
+          title(xlab = "Time", outer = TRUE, line = 0)
           for (i in seq_len(dim(m)[1])[-1]) {
-              lines(m[i, ], type = "l", lty = lty[i], col = col[i], ...)
+              if (is.null(names(x@tspan))) {
+                  lines(m[i, ], type = "l", lty = lty[i],
+                        col = col[i], ...)
+              } else {
+                  lines(x = as.Date(names(x@tspan)), y = m[i, ],
+                        type = "l", lty = lty[i], col = col[i], ...)
+              }
           }
 
           ## Add legend below plot
@@ -500,9 +499,9 @@ setMethod("plot",
               oma = c(0, 0, 0, 0),
               mar = c(0, 0, 0, 0), new = TRUE)
           plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-          graphics::legend("bottom", inset = c(0, 0),
-                           lty = lty, col = col, bty = "n",
-                           horiz = TRUE, legend = legend)
+          graphics::legend("bottom", inset = c(0, 0), lty = lty,
+                           col = col, bty = "n", horiz = TRUE,
+                           legend = legend)
       }
 )
 

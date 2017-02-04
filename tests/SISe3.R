@@ -1506,7 +1506,7 @@ stopifnot(identical(I_observed, I_expected))
 ## Check SISe3 plot method
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
-plot(result, t0 = "2015-01-01")
+plot(result)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
