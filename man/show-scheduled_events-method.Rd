@@ -18,4 +18,3 @@ None (invisible 'NULL').
 Shows the number of scheduled events.
 }
 \keyword{methods}
-

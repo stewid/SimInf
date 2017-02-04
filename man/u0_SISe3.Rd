@@ -47,4 +47,3 @@ plot(result)
 }
 }
 \keyword{dataset}
-

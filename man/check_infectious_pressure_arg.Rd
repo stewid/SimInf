@@ -18,4 +18,3 @@ invisible(NULL)
 Raise an error if any of the arguments are non-integer.
 }
 \keyword{internal}
-

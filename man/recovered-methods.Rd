@@ -53,4 +53,3 @@ recovered(result, i = c(1, 3))
 recovered(result, i = c(1, 3), by = 2)
 }
 \keyword{methods}
-

@@ -32,4 +32,3 @@ result <- run(model)
 result
 }
 \keyword{methods}
-

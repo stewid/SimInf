@@ -18,4 +18,3 @@ logical vector
 Check that all values are wholenumbers, see example in integer {base}
 }
 \keyword{internal}
-

@@ -19,4 +19,3 @@ invisible(NULL)
 Raise an error if any of the arguments are not ok.
 }
 \keyword{internal}
-

@@ -15,4 +15,3 @@ model. The data contains 466692 events for 1600 nodes over 365 * 4
 days.
 }
 \keyword{methods}
-

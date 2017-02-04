@@ -31,4 +31,3 @@ Run siminf stochastic simulation algorithm
 model <- demo_model(nodes = 1, days = 1000, model = "SISe")
 run(model)
 }
-

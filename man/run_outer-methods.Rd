@@ -57,4 +57,3 @@ z <- run_outer(x, y, model, formula, run_f)
 filled.contour(x, y, z)
 }
 }
-

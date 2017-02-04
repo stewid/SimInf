@@ -7,4 +7,3 @@
 \description{
 Class to handle the SIR \code{\link{siminf_model}}.
 }
-

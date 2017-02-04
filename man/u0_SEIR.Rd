@@ -14,4 +14,3 @@ Synthetic init data for 1600 nodes to demonstrate the \code{SEIR}
 model.
 }
 \keyword{methods}
-

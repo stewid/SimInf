@@ -20,4 +20,3 @@ None (invisible 'NULL').
 Summary of \code{siminf_model}
 }
 \keyword{methods}
-

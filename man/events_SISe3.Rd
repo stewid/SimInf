@@ -48,4 +48,3 @@ plot(result)
 }
 }
 \keyword{dataset}
-

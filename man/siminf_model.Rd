@@ -69,4 +69,3 @@ state of the system at \code{tspan[j]}.}
 \description{
 Create a \code{siminf_model}
 }
-

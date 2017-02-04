@@ -29,4 +29,3 @@ coordinates within the cutoff.
 \examples{
 distance_matrix(1:10, 1:10, 3)
 }
-

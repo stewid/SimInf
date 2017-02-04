@@ -46,4 +46,3 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
 result <- run(model, seed = 123)
 plot(result)
 }
-

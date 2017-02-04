@@ -7,4 +7,3 @@
 \description{
 Class to handle the \code{SISe_sp} \code{\link{siminf_model}}.
 }
-

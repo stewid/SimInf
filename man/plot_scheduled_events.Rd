@@ -23,4 +23,3 @@ drawn around the plot.}
 Plot scheduled events
 }
 \keyword{internal}
-

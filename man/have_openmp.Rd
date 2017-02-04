@@ -10,4 +10,3 @@ have_openmp()
 Is OpenMP available
 }
 \keyword{internal}
-

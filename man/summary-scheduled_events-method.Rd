@@ -21,4 +21,3 @@ Shows the number of scheduled events and the number of scheduled
 events per event type.
 }
 \keyword{methods}
-

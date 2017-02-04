@@ -68,5 +68,5 @@ Class to handle the scheduled events
   }
 }
 }
-\keyword{methods}
 
+\keyword{methods}
