@@ -319,7 +319,12 @@ siminf_model <- function(G,
     if (any(is.null(events), is.data.frame(events)))
         events <- scheduled_events(E = E, N = N, events = events)
 
-    ## Coerce tspan to numeric.
+    ## Check tspan
+    if (is(tspan, "Date")) {
+        tspan_lbl <- as.character(tspan)
+        tspan <- as.numeric(tspan)
+        names(tspan) <- tspan_lbl
+    }
     storage.mode(tspan) <- "double"
 
     return(new("siminf_model",

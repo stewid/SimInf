@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -83,6 +83,21 @@ res <- tools::assertError(new("siminf_model",
                               u0    = u0))
 stopifnot(length(grep("Input time-span must be an increasing vector.",
                       res[[1]]$message)) > 0)
+
+## Check that tspan can be a Date vector
+res <- siminf_model(G     = G,
+                    S     = S,
+                    U     = U,
+                    ldata = matrix(rep(0, Nn), nrow = 1),
+                    tspan = as.Date(c("2017-01-01",
+                                      "2017-01-02",
+                                      "2017-01-03")),
+                    u0    = u0)
+stopifnot(identical(res@tspan,
+                    structure(c(17167, 17168, 17169),
+                              .Names = c("2017-01-01",
+                                         "2017-01-02",
+                                         "2017-01-03"))))
 
 ## Check u0
 res <- tools::assertError(new("siminf_model",
