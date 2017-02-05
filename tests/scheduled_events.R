@@ -83,6 +83,50 @@ res <- tools::assertError(scheduled_events(E      = E,
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
+## Check events$time equal to a Date vector
+events <- structure(list(
+    event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = structure(c(17168, 17169, 17170, 17171, 17172,
+                       17173, 17174, 17175, 17176, 17177,
+                       17178, 17179, 17180, 17181, 17182),
+                     class = "Date"),
+    node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
+res <- scheduled_events(E = E, N = N, events = events)
+stopifnot(identical(names(res@time), c("2017-01-02", "2017-01-03",
+                                       "2017-01-04", "2017-01-05",
+                                       "2017-01-06", "2017-01-07",
+                                       "2017-01-08", "2017-01-09",
+                                       "2017-01-10", "2017-01-11",
+                                       "2017-01-12", "2017-01-13",
+                                       "2017-01-14", "2017-01-15",
+                                       "2017-01-16")))
+
+## Check events$time equal to an integer vector
+events <- structure(list(
+    event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    time = c(17168, 17169, 17170, 17171, 17172,
+             17173, 17174, 17175, 17176, 17177,
+             17178, 17179, 17180, 17181, 17182),
+    node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+    dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
+res <- scheduled_events(E = E, N = N, events = events)
+stopifnot(identical(is.null(names(res@time)), TRUE))
+
 ## Check events$select not equal to whole number
 events <- structure(list(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
