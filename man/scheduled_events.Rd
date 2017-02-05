@@ -30,7 +30,11 @@ columns:
     supported by the current default core solver.
   }
   \item{time}{
-    Time for the event. Integer vector of length \code{len}.
+    Time for the event. Can be either an \code{integer}
+    or a \code{Date} vector. A \code{Date} vector is coerced to an
+    integer vector and represented as the number of days since
+    1970-01-01 and the dates are added as names to the integer
+    slot vector 'time' of the \code{scheduled_events} object.
   }
   \item{node}{
     The node that the event operates on. Also the source node for

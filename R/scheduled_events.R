@@ -172,7 +172,11 @@ setClass("scheduled_events",
 ##'     supported by the current default core solver.
 ##'   }
 ##'   \item{time}{
-##'     Time for the event. Integer vector of length \code{len}.
+##'     Time for the event. Can be either an \code{integer}
+##'     or a \code{Date} vector. A \code{Date} vector is coerced to an
+##'     integer vector and represented as the number of days since
+##'     1970-01-01 and the dates are added as names to the integer
+##'     slot vector 'time' of the \code{scheduled_events} object.
 ##'   }
 ##'   \item{node}{
 ##'     The node that the event operates on. Also the source node for
@@ -257,8 +261,19 @@ scheduled_events <- function(E      = NULL,
                "shift") %in% names(events))) {
         stop("Missing columns in events")
     }
-    if (!all(sapply(events, is.numeric)))
+
+    ## Check time
+    if (is(events$time, "Date")) {
+        events$time_lbl <- as.character(events$time)
+        events$time <- as.numeric(events$time)
+    }
+
+    if (!all(is.numeric(events$event), is.numeric(events$time),
+             is.numeric(events$node), is.numeric(events$dest),
+             is.numeric(events$n), is.numeric(events$proportion),
+             is.numeric(events$select))) {
         stop("Columns in events must be numeric")
+    }
 
     if (nrow(events)) {
         if (!all(is_wholenumber(events$event)))
@@ -279,11 +294,15 @@ scheduled_events <- function(E      = NULL,
 
     events <- events[order(events$time, events$event, events$select),]
 
+    time_vec <- as.integer(events$time)
+    if (!is.null(events$time_lbl))
+        names(time_vec) <- events$time_lbl
+
     return(new("scheduled_events",
                E          = E,
                N          = N,
                event      = as.integer(events$event),
-               time       = as.integer(events$time),
+               time       = time_vec,
                node       = as.integer(events$node),
                dest       = as.integer(events$dest),
                n          = as.integer(events$n),
