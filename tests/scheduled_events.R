@@ -43,6 +43,30 @@ N <- matrix(c(2, 0,
             ncol   = 2,
             byrow  = TRUE)
 
+## Check missing columns in events
+## Iterate over each column and rename it
+lapply(seq_len(8), function(i) {
+    events <- structure(list(
+        event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+        time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+        node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
+        dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+        n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
+        proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+        select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
+        shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
+        .Names = c("event", "time", "node", "dest", "n",
+                   "proportion", "select", "shift"),
+        row.names = c(NA, -15L), class = "data.frame")
+
+    colnames(events)[i] <- "test"
+    res <- tools::assertError(scheduled_events(E      = E,
+                                               N      = N,
+                                               events = events))
+    stopifnot(length(grep("Missing columns in events",
+                          res[[1]]$message)) > 0)
+})
+
 ## Check events$event not equal to whole number
 events <- structure(list(
     event = c(3.1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
