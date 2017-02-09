@@ -315,8 +315,9 @@ siminf_model <- function(G,
     }
 
     ## Check events
-    if (any(is.null(events), is.data.frame(events)))
-        events <- scheduled_events(E = E, N = N, events = events)
+    if (!any(is.null(events), is.data.frame(events)))
+        stop("'events' must be NULL or a data.frame")
+    events <- scheduled_events(E = E, N = N, events = events)
 
     ## Check tspan
     if (is(tspan, "Date")) {

@@ -442,3 +442,38 @@ siminf_model(G     = G,
 res <- tools::assertError(plot(demo_model()))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
+
+## Check that the siminf_model initialisation fails if the events
+## argument is not either NULL or a data.frame
+u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
+                     I_1 = c(0, 0, 0, 0, 0, 0),
+                     S_2 = c(0, 1, 2, 3, 4, 5),
+                     I_2 = c(0, 0, 0, 0, 0, 0),
+                     S_3 = c(0, 1, 2, 3, 4, 5),
+                     I_3 = c(0, 0, 0, 0, 0, 0)),
+                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                row.names = c(NA, -6L),
+                class = "data.frame")
+
+res <- tools::assertError(model <- SISe3(u0        = u0,
+                                         tspan     = 0:10,
+                                         events    = "events",
+                                         phi       = rep(1, 6),
+                                         upsilon_1 = 1,
+                                         upsilon_2 = 1,
+                                         upsilon_3 = 1,
+                                         gamma_1   = 1,
+                                         gamma_2   = 1,
+                                         gamma_3   = 1,
+                                         alpha     = 1,
+                                         beta_t1   = 1,
+                                         beta_t2   = 1,
+                                         beta_t3   = 1,
+                                         beta_t4   = 1,
+                                         end_t1    = 91,
+                                         end_t2    = 182,
+                                         end_t3    = 273,
+                                         end_t4    = 365,
+                                         epsilon   = 1))
+stopifnot(length(grep("'events' must be NULL or a data.frame",
+                      res[[1]]$message)) > 0)
