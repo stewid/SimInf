@@ -240,18 +240,18 @@ siminf_model <- function(G,
     if (is.data.frame(u0)) {
         n_col <- ncol(u0)
         n_row <- nrow(u0)
+        lbl <- colnames(u0)
         u0 <- t(data.matrix(u0))
         attributes(u0) <- NULL
         dim(u0) <- c(n_col, n_row)
-        storage.mode(u0) <- "integer"
-    } else {
-        if (!all(is.matrix(u0), is.numeric(u0)))
+        rownames(u0) <- lbl
+    }
+    if (!all(is.matrix(u0), is.numeric(u0)))
+        stop("u0 must be an integer matrix")
+    if (!is.integer(u0)) {
+        if (!all(is_wholenumber(u0)))
             stop("u0 must be an integer matrix")
-        if (!is.integer(u0)) {
-            if (!all(is_wholenumber(u0)))
-                stop("u0 must be an integer matrix")
-            storage.mode(u0) <- "integer"
-        }
+        storage.mode(u0) <- "integer"
     }
 
     ## Check G
