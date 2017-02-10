@@ -12,3 +12,4 @@
 ^gsl$
 src/gsl
 ^logo$
+^.*\.patch$
