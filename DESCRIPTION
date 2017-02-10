@@ -51,7 +51,8 @@ Collate:
     'dependencies.R'
     'distance.R'
     'run_outer.R'
-RoxygenNote: 6.0.0
-Suggests: knitr,
+RoxygenNote: 6.0.1
+Suggests:
+    knitr,
     rmarkdown
 VignetteBuilder: knitr
