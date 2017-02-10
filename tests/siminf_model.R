@@ -94,7 +94,7 @@ res <- siminf_model(G     = G,
                                       "2017-01-03")),
                     u0    = u0)
 stopifnot(identical(res@tspan,
-                    structure(c(17167, 17168, 17169),
+                    structure(c(1, 2, 3),
                               .Names = c("2017-01-01",
                                          "2017-01-02",
                                          "2017-01-03"))))

@@ -321,8 +321,13 @@ siminf_model <- function(G,
 
     ## Check tspan
     if (is(tspan, "Date")) {
+        ## Coerce the date vector to a numeric vector as days, where
+        ## tspan[1] becomes the day of the year of the first year of
+        ## the tspan date vector. The dates are added as names to the
+        ## numeric vector.
+        t0 <- as.numeric(as.Date(format(tspan[1], "%Y-01-01"))) - 1
         tspan_lbl <- as.character(tspan)
-        tspan <- as.numeric(tspan)
+        tspan <- as.numeric(tspan) - t0
         names(tspan) <- tspan_lbl
     }
     storage.mode(tspan) <- "double"
