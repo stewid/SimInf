@@ -1,7 +1,7 @@
 # SimInf, a framework for stochastic disease spread simulations
 # Copyright (C) 2015  Pavol Bauer
-# Copyright (C) 2015 - 2016  Stefan Engblom
-# Copyright (C) 2015 - 2016  Stefan Widgren
+# Copyright (C) 2015 - 2017  Stefan Engblom
+# Copyright (C) 2015 - 2017  Stefan Widgren
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,11 +65,8 @@ if test -n "${OPENMP_CFLAGS}"; then
     AC_MSG_RESULT([${ac_pkg_openmp}])
 fi
 
-if test "x${ac_pkg_openmp}" = xyes; then
-    SIMINF_HAVE_OPENMP=TRUE
-else
+if test "x${ac_pkg_openmp}" = xno; then
     OPENMP_CFLAGS=''
-    SIMINF_HAVE_OPENMP=FALSE
     AC_MSG_WARN([
   -----------------------------------------------
    Unable to find OpenMP on this system.
@@ -116,12 +113,11 @@ fi
 # List all model files to compile
 MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
-AC_SUBST(SIMINF_HAVE_OPENMP)
 AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Imisc -Imodels ${OPENMP_CFLAGS} ${CPPFLAGS}"])
 AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${LIBS}"])
 AC_SUBST(MODELS_OBJ)
 
-AC_CONFIG_FILES([R/dependencies.R src/Makevars])
+AC_CONFIG_FILES([src/Makevars])
 
 AC_OUTPUT

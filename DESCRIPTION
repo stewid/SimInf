@@ -35,7 +35,7 @@ Imports:
     stats,
     utils,
     Matrix
-Collate:
+Collate: 
     'AllGenerics.R'
     'check_arguments.R'
     'scheduled_events.R'
@@ -48,7 +48,6 @@ Collate:
     'SISe_sp.R'
     'SimInf.R'
     'demo_model.R'
-    'dependencies.R'
     'distance.R'
     'run_outer.R'
 RoxygenNote: 6.0.1
