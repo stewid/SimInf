@@ -326,7 +326,7 @@ siminf_model <- function(G,
         ## the tspan date vector. The dates are added as names to the
         ## numeric vector.
         t0 <- as.numeric(as.Date(format(tspan[1], "%Y-01-01"))) - 1
-        tspan_lbl <- as.character(tspan)
+        tspan_lbl <- format(tspan, "%Y-%m-%d")
         tspan <- as.numeric(tspan) - t0
         names(tspan) <- tspan_lbl
     }

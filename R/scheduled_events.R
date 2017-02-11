@@ -264,7 +264,7 @@ scheduled_events <- function(E      = NULL,
 
     ## Check time
     if (is(events$time, "Date")) {
-        events$time_lbl <- as.character(events$time)
+        events$time_lbl <- format(events$time, "%Y-%m-%d")
         events$time <- as.numeric(events$time)
     }
 
