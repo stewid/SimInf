@@ -419,6 +419,11 @@ setMethod("run",
               if (!is.null(result$error))
                   siminf_error(result$error)
 
+              if (!is.null(names(result$model@tspan))) {
+                  colnames(result$model@U) <- names(result$model@tspan)
+                  colnames(result$model@V) <- names(result$model@tspan)
+              }
+
               result$model
           }
 )
