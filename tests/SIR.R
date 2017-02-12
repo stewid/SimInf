@@ -1,5 +1,5 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -156,6 +156,19 @@ model <- SIR(u0     = u0,
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
 plot(model@events)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
+## Check SIR plot with tspan as Date vector
+model <- SIR(u0     = u0,
+             tspan  = as.Date(seq_len(10), origin = "2016-12-31"),
+             events = NULL,
+             beta   = 0,
+             gamma  = 0)
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+plot(run(model))
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
