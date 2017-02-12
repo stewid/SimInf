@@ -4,17 +4,24 @@
 \alias{scheduled_events}
 \title{Create a \code{"\linkS4class{scheduled_events}"} object}
 \usage{
-scheduled_events(E = NULL, N = NULL, events = NULL)
+scheduled_events(E = NULL, N = NULL, events = NULL, t0 = NULL)
 }
 \arguments{
-\item{E}{Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
-that selects the states to include for sampling in an event.}
+\item{E}{Sparse matrix of object class
+\code{"\linkS4class{dgCMatrix}"} that selects the states to
+include for sampling in an event.}
 
-\item{N}{Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
-that determines how to shift the states in an
-\code{INTERNAL_TRANSFER_EVENT}.}
+\item{N}{Sparse matrix of object class
+\code{"\linkS4class{dgCMatrix}"} that determines how to shift
+the states in an \code{INTERNAL_TRANSFER_EVENT}.}
 
 \item{events}{A \code{data.frame} with events.}
+
+\item{t0}{If \code{events$time} is a \code{Date} vector, then
+\code{t0} determines the offset to match the time of the
+events to the model \code{tspan} vector, see details. If
+\code{events$time} is a numeric vector, then \code{t0} must be
+\code{NULL}.}
 }
 \value{
 S4 class \code{scheduled_events}
@@ -30,11 +37,12 @@ columns:
     supported by the current default core solver.
   }
   \item{time}{
-    Time for the event. Can be either an \code{integer}
-    or a \code{Date} vector. A \code{Date} vector is coerced to an
-    integer vector and represented as the number of days since
-    1970-01-01 and the dates are added as names to the integer
-    slot vector 'time' of the \code{scheduled_events} object.
+    Time for the event. Can be either an \code{integer} or a
+    \code{Date} vector.  A \code{Date} vector is coerced to a
+    numeric vector as days, where \code{t0} determines the offset
+    to match the time of the events to the model \code{tspan}
+    vector.  The dates are added as names to the slot vector
+    'time' of the \code{scheduled_events} object.
   }
   \item{node}{
     The node that the event operates on. Also the source node for

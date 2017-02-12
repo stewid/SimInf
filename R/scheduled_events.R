@@ -172,11 +172,12 @@ setClass("scheduled_events",
 ##'     supported by the current default core solver.
 ##'   }
 ##'   \item{time}{
-##'     Time for the event. Can be either an \code{integer}
-##'     or a \code{Date} vector. A \code{Date} vector is coerced to an
-##'     integer vector and represented as the number of days since
-##'     1970-01-01 and the dates are added as names to the integer
-##'     slot vector 'time' of the \code{scheduled_events} object.
+##'     Time for the event. Can be either an \code{integer} or a
+##'     \code{Date} vector.  A \code{Date} vector is coerced to a
+##'     numeric vector as days, where \code{t0} determines the offset
+##'     to match the time of the events to the model \code{tspan}
+##'     vector.  The dates are added as names to the slot vector
+##'     'time' of the \code{scheduled_events} object.
 ##'   }
 ##'   \item{node}{
 ##'     The node that the event operates on. Also the source node for
@@ -208,17 +209,24 @@ setClass("scheduled_events",
 ##'   }
 ##' }
 ##'
-##' @param E Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
-##'        that selects the states to include for sampling in an event.
-##' @param N Sparse matrix of object class \code{"\linkS4class{dgCMatrix}"}
-##'        that determines how to shift the states in an
-##'        \code{INTERNAL_TRANSFER_EVENT}.
+##' @param E Sparse matrix of object class
+##'     \code{"\linkS4class{dgCMatrix}"} that selects the states to
+##'     include for sampling in an event.
+##' @param N Sparse matrix of object class
+##'     \code{"\linkS4class{dgCMatrix}"} that determines how to shift
+##'     the states in an \code{INTERNAL_TRANSFER_EVENT}.
 ##' @param events A \code{data.frame} with events.
+##' @param t0 If \code{events$time} is a \code{Date} vector, then
+##'     \code{t0} determines the offset to match the time of the
+##'     events to the model \code{tspan} vector, see details. If
+##'     \code{events$time} is a numeric vector, then \code{t0} must be
+##'     \code{NULL}.
 ##' @return S4 class \code{scheduled_events}
 ##' @export
 scheduled_events <- function(E      = NULL,
                              N      = NULL,
-                             events = NULL)
+                             events = NULL,
+                             t0     = NULL)
 {
     ## Check E
     if (is.null(E)) {
@@ -264,8 +272,14 @@ scheduled_events <- function(E      = NULL,
 
     ## Check time
     if (is(events$time, "Date")) {
+        if (is.null(t0))
+            stop("Missing 't0'")
+        if (!all(identical(length(t0), 1L), is.numeric(t0)))
+            stop("Invalid 't0'")
         events$time_lbl <- format(events$time, "%Y-%m-%d")
-        events$time <- as.numeric(events$time)
+        events$time <- as.numeric(events$time) - t0
+    } else if (!is.null(t0)) {
+        stop("Invalid 't0'")
     }
 
     if (!all(is.numeric(events$event), is.numeric(events$time),
