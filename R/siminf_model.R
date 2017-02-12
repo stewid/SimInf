@@ -314,11 +314,6 @@ siminf_model <- function(G,
         }
     }
 
-    ## Check events
-    if (!any(is.null(events), is.data.frame(events)))
-        stop("'events' must be NULL or a data.frame")
-    events <- scheduled_events(E = E, N = N, events = events)
-
     ## Check tspan
     if (is(tspan, "Date")) {
         ## Coerce the date vector to a numeric vector as days, where
@@ -329,8 +324,15 @@ siminf_model <- function(G,
         tspan_lbl <- format(tspan, "%Y-%m-%d")
         tspan <- as.numeric(tspan) - t0
         names(tspan) <- tspan_lbl
+    } else {
+        t0 <- NULL
     }
     storage.mode(tspan) <- "double"
+
+    ## Check events
+    if (!any(is.null(events), is.data.frame(events)))
+        stop("'events' must be NULL or a data.frame")
+    events <- scheduled_events(E = E, N = N, events = events, t0 = t0)
 
     return(new("siminf_model",
                G      = G,
