@@ -41,8 +41,7 @@ columns:
     \code{Date} vector.  A \code{Date} vector is coerced to a
     numeric vector as days, where \code{t0} determines the offset
     to match the time of the events to the model \code{tspan}
-    vector.  The dates are added as names to the slot vector
-    'time' of the \code{scheduled_events} object.
+    vector.
   }
   \item{node}{
     The node that the event operates on. Also the source node for

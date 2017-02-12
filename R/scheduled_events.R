@@ -176,8 +176,7 @@ setClass("scheduled_events",
 ##'     \code{Date} vector.  A \code{Date} vector is coerced to a
 ##'     numeric vector as days, where \code{t0} determines the offset
 ##'     to match the time of the events to the model \code{tspan}
-##'     vector.  The dates are added as names to the slot vector
-##'     'time' of the \code{scheduled_events} object.
+##'     vector.
 ##'   }
 ##'   \item{node}{
 ##'     The node that the event operates on. Also the source node for
@@ -271,15 +270,16 @@ scheduled_events <- function(E      = NULL,
     }
 
     ## Check time
-    if (is(events$time, "Date")) {
-        if (is.null(t0))
-            stop("Missing 't0'")
-        if (!all(identical(length(t0), 1L), is.numeric(t0)))
+    if (nrow(events)) {
+        if (is(events$time, "Date")) {
+            if (is.null(t0))
+                stop("Missing 't0'")
+            if (!all(identical(length(t0), 1L), is.numeric(t0)))
+                stop("Invalid 't0'")
+            events$time <- as.numeric(events$time) - t0
+        } else if (!is.null(t0)) {
             stop("Invalid 't0'")
-        events$time_lbl <- format(events$time, "%Y-%m-%d")
-        events$time <- as.numeric(events$time) - t0
-    } else if (!is.null(t0)) {
-        stop("Invalid 't0'")
+        }
     }
 
     if (!all(is.numeric(events$event), is.numeric(events$time),
@@ -308,15 +308,11 @@ scheduled_events <- function(E      = NULL,
 
     events <- events[order(events$time, events$event, events$select),]
 
-    time_vec <- as.integer(events$time)
-    if (!is.null(events$time_lbl))
-        names(time_vec) <- events$time_lbl
-
     return(new("scheduled_events",
                E          = E,
                N          = N,
                event      = as.integer(events$event),
-               time       = time_vec,
+               time       = as.integer(events$time),
                node       = as.integer(events$node),
                dest       = as.integer(events$dest),
                n          = as.integer(events$n),

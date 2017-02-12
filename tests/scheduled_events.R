@@ -212,15 +212,7 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 res <- scheduled_events(E = E, N = N, events = events, t0 = 17166)
-stopifnot(identical(res@time,
-                    structure(2:16, .Names = c("2017-01-02", "2017-01-03",
-                                               "2017-01-04", "2017-01-05",
-                                               "2017-01-06", "2017-01-07",
-                                               "2017-01-08", "2017-01-09",
-                                               "2017-01-10", "2017-01-11",
-                                               "2017-01-12", "2017-01-13",
-                                               "2017-01-14", "2017-01-15",
-                                               "2017-01-16"))))
+stopifnot(identical(res@time, 2:16))
 
 ## Check events$time equal to an integer vector
 events <- structure(list(
