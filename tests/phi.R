@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ sessionInfo()
 tol = 1e-8
 
 ## Expected phi
-phi_exp <- structure( c(0.810011, 0.185349185610407,
+phi_exp <- structure( c(1.0, 0.185349185610407,
 0.0424465987871056, 0.00975507058676853, 0.00227629753002237,
 0.000565394139653014, 0.000173994321933323, 8.44545979644941e-05,
 6.39707811474e-05, 5.9284740887299e-05, 5.82127251826398e-05,

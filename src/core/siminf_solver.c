@@ -1,8 +1,8 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015 - 2016 Stefan Engblom
- *  Copyright (C) 2015 - 2016 Stefan Widgren
+ *  Copyright (C) 2015 - 2017 Stefan Engblom
+ *  Copyright (C) 2015 - 2017 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -972,6 +972,7 @@ int siminf_run_solver(
         goto cleanup;
     }
     memcpy(uu, u0, Nn * Nc * sizeof(int));
+    memcpy(U, u0, Nn * Nc * sizeof(int));
 
     /* Set continuous state to the initial state in each node. */
     vv_1 = malloc(Nn * Nd * sizeof(double));
@@ -981,6 +982,7 @@ int siminf_run_solver(
         goto cleanup;
     }
     memcpy(vv_1, v0, Nn * Nd * sizeof(double));
+    memcpy(V, v0, Nn * Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
@@ -1041,6 +1043,7 @@ int siminf_run_solver(
         sim_args[i].next_day = floor(sim_args[i].tt) + 1.0;
         sim_args[i].tspan = tspan;
         sim_args[i].tlen = tlen;
+        sim_args[i].it = 1;
 
         /* Data vectors */
         sim_args[i].N = N;
