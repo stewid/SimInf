@@ -78,9 +78,6 @@ typedef struct scheduled_events
                          *   and external transfer event. */
 } scheduled_events;
 
-/* Maximum number of individuals to sample from */
-#define MAX_INDIVIDUALS 10000
-
 /**
  * Structure to hold thread specific data/arguments for simulation.
  */
@@ -169,13 +166,12 @@ typedef struct siminf_thread_args
                            *   process. */
 
     /*** Vectors for sampling individuals ***/
-    int *individuals;               /**< Vector to store the result of
-                                     *   the sampling during scheduled
-                                     *   events processing. */
-    int kind[MAX_INDIVIDUALS];      /**< Help vector for sampling
-                                     *   individuals. */
-    int kind_dest[MAX_INDIVIDUALS]; /**< Help vector for sampling
-                                     *   individuals. */
+    int *individuals;     /**< Vector to store the result of the
+                           *   sampling during scheduled events
+                           *   processing. */
+    int *u_tmp;           /**< Temporary vector with the compartment
+                           *   state in a node when sampling
+                           *   individuals for scheduled events. */
 } siminf_thread_args;
 
 /* Shared variables */
@@ -283,6 +279,9 @@ static void siminf_free_args(siminf_thread_args *sa)
         if (sa->individuals)
             free(sa->individuals);
         sa->individuals = NULL;
+        if (sa->u_tmp)
+            free(sa->u_tmp);
+        sa->u_tmp = NULL;
         if (sa->E1)
             siminf_free_events(sa->E1);
         sa->E1 = NULL;
@@ -423,7 +422,7 @@ cleanup:
  * @param jcE Select matrix for events. Index to data of first
  *        non-zero element in row k.
  * @param Nc Number of compartments in each node.
- * @param state The state vector with number of individuals in each
+ * @param u The state vector with number of individuals in each
  *        compartment at each node. The current state in each node is
  *        offset by node * Nc.
  * @param node The node to sample.
@@ -436,15 +435,14 @@ cleanup:
  *        proportion. 0 <= proportion <= 1.
  * @param individuals The result of the sampling is stored in the
  *        individuals vector.
- * @param kind Help vector for sampling individuals.
- * @param kind_des Help vector for sampling individuals.
+ * @param u_tmp Help vector for sampling individuals.
  * @param rng Random number generator.
  * @return 0 if Ok, else error code.
  */
 static int sample_select(
     const int *irE, const int *jcE, int Nc, const int *u,
     int node, int select, int n, double proportion,
-    int *individuals, int *kind, int *kind_dest, gsl_rng *rng)
+    int *individuals, int *u_tmp, gsl_rng *rng)
 {
     int i, Nstates, Nindividuals = 0, Nkinds = 0;
 
@@ -509,30 +507,25 @@ static int sample_select(
             n);
         individuals[irE[i+1]] = n - individuals[irE[i]];
     } else {
-        /* Randomly choose n individuals from a vector of
-         * Nindividudals in Nstates */
-        int j;
+        /* Randomly sample n individuals from Nindividudals in
+         * the Nstates */
+        memcpy(u_tmp, &u[node * Nc], Nc * sizeof(int));
+        while (n > 0) {
+            double cum, rand = gsl_rng_uniform_pos(rng) * Nindividuals;
 
-        /* Intialize and populate kind vector */
-        if (Nindividuals > MAX_INDIVIDUALS)
-            return 1;
-        for (i = jcE[select], j = 0; i < jcE[select + 1]; i++) {
-            int k, nk, l;
+            /* Determine from which compartment the individual was
+             * sampled from */
+            for (i = jcE[select], cum = u_tmp[irE[i]];
+                 i < jcE[select + 1] && rand > cum;
+                 i++, cum += u_tmp[irE[i]]);
 
-            k  = irE[i];           /* The kind  */
-            nk = u[node * Nc + k]; /* N of kind */
+            /* Update sampled individual */
+            u_tmp[irE[i]]--;
+            individuals[irE[i]]++;
 
-            /* Set kind 'k' for 'nk' individuals */
-            for (l = 0; l < nk; l++)
-                kind[j++] = k;
+            Nindividuals--;
+            n--;
         }
-
-        /* Randomly choose n individuals from kind vector */
-        gsl_ran_choose(rng, kind_dest, n, kind, Nindividuals, sizeof(int));
-
-        /* Count kind of the choosen individuals */
-        for (i = 0; i < n; i++)
-            individuals[kind_dest[i]]++;
     }
 
     return 0;
@@ -665,7 +658,7 @@ static int siminf_solver()
                         sa.errcode = sample_select(
                             sa.irE, sa.jcE, sa.Nc, uu, e1.node[j],
                             e1.select[j], e1.n[j], e1.proportion[j],
-                            sa.individuals, sa.kind, sa.kind_dest, sa.rng);
+                            sa.individuals, sa.u_tmp, sa.rng);
 
                         if (sa.errcode)
                             break;
@@ -735,7 +728,7 @@ static int siminf_solver()
                         sa.irE, sa.jcE, sa.Nc, uu, e2.node[sa.E2_index],
                         e2.select[sa.E2_index], e2.n[sa.E2_index],
                         e2.proportion[sa.E2_index], sa.individuals,
-                        sa.kind, sa.kind_dest, sa.rng);
+                        sa.u_tmp, sa.rng);
 
                     if (sa.errcode)
                         break;
@@ -1073,6 +1066,12 @@ int siminf_run_solver(
 
         sim_args[i].individuals = calloc(Nc, sizeof(int));
         if (!sim_args[i].individuals) {
+            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        sim_args[i].u_tmp = calloc(Nc, sizeof(int));
+        if (!sim_args[i].u_tmp) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
