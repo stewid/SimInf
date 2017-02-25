@@ -208,11 +208,11 @@ stopifnot(identical(model@S, result@S))
 stopifnot(identical(
     susceptible(result, age = 2, i = 1) + infected(result, age = 2, i = 1),
     structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
-              .Dim = c(1L, 11L))))
+              .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
 stopifnot(identical(
     susceptible(result, age = 3, i = 1) + infected(result, age = 3, i = 1),
     structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
-              .Dim = c(1L, 11L))))
+              .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
 stopifnot(identical(sum(result@U[,1]), 45L))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
@@ -226,11 +226,11 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(
         susceptible(result, age = 2, i = 1) + infected(result, age = 2, i = 1),
         structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
-                  .Dim = c(1L, 11L))))
+                  .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
     stopifnot(identical(
         susceptible(result, age = 3, i = 1) + infected(result, age = 3, i = 1),
         structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
-                  .Dim = c(1L, 11L))))
+                  .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
     stopifnot(identical(sum(result_omp@U[,1]), 45L))
     stopifnot(identical(model@ldata, result_omp@ldata))
     stopifnot(identical(model@tspan, result_omp@tspan))

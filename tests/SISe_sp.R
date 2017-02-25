@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -1076,7 +1076,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L),
-                        .Dim = 9:10)
+                        .Dim = 9:10, .Dimnames = list(NULL, NULL))
 
 S_observed <- susceptible(result)
 
@@ -1092,7 +1092,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = 9:10)
+                        .Dim = 9:10, .Dimnames = list(NULL, NULL))
 
 I_observed <- infected(result)
 

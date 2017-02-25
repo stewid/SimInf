@@ -777,7 +777,7 @@ model@events@E[5, 1] <- 1
 S_expected <- structure(c(0L, 6L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
                           3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
                           3L, 3L, 3L, 3L),
-                        .Dim = c(2L, 11L))
+                        .Dim = c(2L, 11L), .Dimnames = list(NULL, NULL))
 
 res <- run(model, threads = 1)
 stopifnot(identical(susceptible(res), S_expected))

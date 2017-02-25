@@ -147,7 +147,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L,
                           3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-                        .Dim = c(6L, 10L))
+                        .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
 
 S_observed <- susceptible(result)
 
@@ -158,7 +158,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L))
+                        .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
 
 I_observed <- infected(result)
 
@@ -169,7 +169,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L))
+                        .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
 
 R_observed <- recovered(result)
 
