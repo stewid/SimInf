@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -377,7 +377,14 @@ U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 15L, 0L, 15L, 0L, 15L, 0L, 0L, 0L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-               .Dim = c(36L, 11L))
+               .Dim = c(36L, 11L),
+               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                NULL))
 
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
@@ -475,7 +482,14 @@ U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                  0L, 4L, 0L, 4L, 0L, 5L, 0L, 5L, 0L, 5L, 0L, 0L, 0L, 0L, 0L, 0L,
                  0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L, 0L, 2L, 0L, 2L, 0L, 3L, 0L, 3L,
                  0L, 3L, 0L, 4L, 0L, 4L, 0L, 4L, 0L, 5L, 0L, 5L, 0L, 5L, 0L),
-               .Dim = c(36L, 11L))
+               .Dim = c(36L, 11L),
+               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                NULL))
 
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
@@ -573,7 +587,14 @@ U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-               .Dim = c(36L, 11L))
+               .Dim = c(36L, 11L),
+               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                NULL))
 
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
@@ -672,7 +693,14 @@ U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L,
                  15L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 3L, 0L, 0L,
                  0L, 0L, 0L, 6L, 0L, 0L, 0L, 0L, 0L, 9L, 0L, 0L, 0L, 0L, 0L, 12L,
                  0L, 0L, 0L, 0L, 0L, 15L, 0L),
-               .Dim = c(36L, 11L))
+               .Dim = c(36L, 11L),
+               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                NULL))
 
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))

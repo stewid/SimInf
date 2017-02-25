@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -382,7 +382,11 @@ model <- SISe3(u0        = u0,
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L,
                  0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
-                 0L, 1L, 0L, 0L, 0L, 0L, 0L), .Dim = c(12L, 3L))
+                 0L, 1L, 0L, 0L, 0L, 0L, 0L),
+               .Dim = c(12L, 3L),
+               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                NULL))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
@@ -456,7 +460,11 @@ model <- SISe3(u0        = u0,
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L,
                  0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L,
-                 0L, 0L, 0L, 0L, 0L, 0L, 0L), .Dim = c(12L, 3L))
+                 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+               .Dim = c(12L, 3L),
+               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                NULL))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
@@ -530,7 +538,11 @@ model <- SISe3(u0        = u0,
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 0L, 0L, 0L, 0L, 0L, 1L,
                  0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L,
-                 0L, 1L, 0L, 0L, 0L, 0L, 0L), .Dim = c(12L, 3L))
+                 0L, 1L, 0L, 0L, 0L, 0L, 0L),
+               .Dim = c(12L, 3L),
+               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                NULL))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
@@ -605,7 +617,11 @@ model <- SISe3(u0        = u0,
 
 U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 8L, 0L, 0L, 0L, 0L, 0L,
                  1L, 0L, 0L, 0L, 0L, 2L, 7L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L,
-                 0L, 2L, 7L, 0L, 0L, 0L, 0L), .Dim = c(12L, 3L))
+                 0L, 2L, 7L, 0L, 0L, 0L, 0L),
+               .Dim = c(12L, 3L),
+               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                NULL))
 
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
@@ -689,7 +705,10 @@ U <- structure(
       1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L,
       0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L,
       0L, 0L, 0L, 0L),
-    .Dim = c(12L, 11L))
+    .Dim = c(12L, 11L),
+    .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                       "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                     NULL))
 
 res <- run(model, threads = 1)
 stopifnot(identical(res@U, U))

@@ -424,6 +424,9 @@ setMethod("run",
                   colnames(result$model@V) <- names(result$model@tspan)
               }
 
+              lbl <- rep(rownames(result$model@S), dim(result$model@u0)[2])
+              rownames(result$model@U) <- lbl
+
               result$model
           }
 )
