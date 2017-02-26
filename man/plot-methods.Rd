@@ -31,7 +31,8 @@
 \usage{
 \S4method{plot}{scheduled_events}(x, frame.plot = FALSE, ...)
 
-\S4method{plot}{siminf_model}(x, legend, col = NULL, lty = NULL, ...)
+\S4method{plot}{siminf_model}(x, legend, col = NULL, lty = NULL, lwd = 2,
+  ...)
 
 \S4method{plot}{SEIR}(x, y, ...)
 
@@ -60,6 +61,8 @@ black.}
 \item{lty}{The line type for each compartment. Default is the
 sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 6=twodash.}
+
+\item{lwd}{The line width for each compartment. Default is 2.}
 
 \item{y}{Unused.}
 }

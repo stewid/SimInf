@@ -197,7 +197,8 @@ setMethod("plot",
           signature(x = "SIR"),
           function(x, ...)
       {
-          callNextMethod(x, legend = c("S", "I", "R"), ...)
+          callNextMethod(x, legend = c("S", "I", "R"),
+                         col = c("blue", "red", "darkgreen"), ...)
       }
 )
 

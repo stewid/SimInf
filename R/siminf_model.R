@@ -441,6 +441,7 @@ setMethod("run",
 ##' @param lty The line type for each compartment. Default is the
 ##' sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 ##' 6=twodash.
+##' @param lwd The line width for each compartment. Default is 2.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,siminf_model-method
@@ -464,7 +465,7 @@ setMethod("run",
 ##' plot(result)
 setMethod("plot",
           signature(x = "siminf_model"),
-          function(x, legend, col = NULL, lty = NULL, ...)
+          function(x, legend, col = NULL, lty = NULL, lwd = 2, ...)
       {
           if (identical(dim(x@U), c(0L, 0L)))
               stop("Please run the model first, the 'U' matrix is empty")
@@ -482,31 +483,38 @@ setMethod("plot",
           ## Calculate proportion
           m <- apply(m, 2, function(x) x / sum(x))
 
+          ## Default line type
+          if (is.null(lty)) {
+              if (is.null(col)) {
+                  lty <- seq_len(dim(m)[1])
+              } else {
+                  lty <- rep(1, dim(m)[1])
+              }
+          }
+
           ## Default color is black
-          if (is.null(col))
+          if (is.null(col)) {
               col <- rep("black", dim(x@S)[1])
 
-          ## Default line type
-          if (is.null(lty))
-              lty <- seq_len(dim(m)[1])
+          }
 
           ## Plot
           if (is.null(names(x@tspan))) {
               plot(m[1,], type = "l", ylab = "Proportion",
-                   ylim = c(0, 1), col = col[1], lty = lty[1], ...)
+                   ylim = c(0, 1), col = col[1], lty = lty[1], lwd = lwd, ...)
           } else {
               plot(x = as.Date(names(x@tspan)), y = m[1,], type = "l",
                    ylab = "Proportion", ylim = c(0, 1), col = col[1],
-                   lty = lty[1], ...)
+                   lty = lty[1], lwd = lwd, ...)
           }
           title(xlab = "Time", outer = TRUE, line = 0)
           for (i in seq_len(dim(m)[1])[-1]) {
               if (is.null(names(x@tspan))) {
                   lines(m[i, ], type = "l", lty = lty[i],
-                        col = col[i], ...)
+                        col = col[i], lwd = lwd, ...)
               } else {
                   lines(x = as.Date(names(x@tspan)), y = m[i, ],
-                        type = "l", lty = lty[i], col = col[i], ...)
+                        type = "l", lty = lty[i], col = col[i], lwd = lwd, ...)
               }
           }
 
@@ -517,7 +525,7 @@ setMethod("plot",
           plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
           graphics::legend("bottom", inset = c(0, 0), lty = lty,
                            col = col, bty = "n", horiz = TRUE,
-                           legend = legend)
+                           legend = legend, lwd = lwd)
       }
 )
 

@@ -238,6 +238,7 @@ setMethod("plot",
           signature(x = "SISe_sp"),
           function(x, ...)
       {
-          callNextMethod(x, legend = c("S", "I"), ...)
+          callNextMethod(x, legend = c("S", "I"),
+                         col = c("blue", "red"), ...)
       }
 )

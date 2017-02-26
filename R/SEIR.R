@@ -203,7 +203,8 @@ setMethod("plot",
           signature(x = "SEIR"),
           function(x, ...)
       {
-          callNextMethod(x, legend = c("S", "E", "I", "R"), ...)
+          callNextMethod(x, legend = c("S", "E", "I", "R"),
+                         col = c("blue", "orange", "red", "darkgreen"), ...)
       }
 )
 
