@@ -1,6 +1,30 @@
 SimInf 3.0.0.9000
 -----------------
 
+IMPROVEMENTS
+
+* Added the model compartment names to the model 'u0' and 'U' matrices
+  to facilitate inspection of data.
+
+* Removed the max node size constraint when sampling individuals for
+  scheduled events from more than two compartments (fixes issue #3).
+
+* The 'tspan' vector argument to the 'siminf_model' method can now be
+  either an 'integer' or a 'Date' vector. A 'Date' vector is
+  internally coerced to a numeric vector as days, where 'tspan[1]'
+  becomes the day of the year of the first year of the tspan
+  argument. The dates are added as names to the numeric vector.
+
+* Improved plot methods by adding colors and increase line widths.
+
+* Improved build configuration to register native routines.
+
+CHANGES
+
+* Copy 'u0' and 'v0' to first column in 'U' and 'V',
+  respectively. Prior to this change, the state was copied after the
+  first time step.
+
 SimInf 3.0.0
 ------------
 
