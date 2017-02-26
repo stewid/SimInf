@@ -113,6 +113,10 @@ fi
 # List all model files to compile
 MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
+# Generate C code to register functions to be called from R
+AC_MSG_NOTICE([creating 'src/init.c' to register functions to be called from R])
+`"${RSCRIPT}" tools/init.R`
+
 AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Imisc -Imodels ${OPENMP_CFLAGS} ${CPPFLAGS}"])
 AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${LIBS}"])
