@@ -35,7 +35,7 @@ Imports:
     stats,
     utils,
     Matrix
-Collate: 
+Collate:
     'AllGenerics.R'
     'check_arguments.R'
     'scheduled_events.R'
@@ -51,7 +51,3 @@ Collate:
     'distance.R'
     'run_outer.R'
 RoxygenNote: 6.0.1
-Suggests:
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr
