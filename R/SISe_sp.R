@@ -236,8 +236,9 @@ setMethod("prevalence",
 ##' @export
 setMethod("plot",
           signature(x = "SISe_sp"),
-          function(x, col = c("blue", "red"), ...)
+          function(x, ...)
       {
-          callNextMethod(x, legend = c("S", "I"), col = col, ...)
+          callNextMethod(x, legend = c("S", "I"),
+                         col = c("blue", "red"), ...)
       }
 )

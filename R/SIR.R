@@ -195,9 +195,10 @@ setMethod("recovered",
 ##' @export
 setMethod("plot",
           signature(x = "SIR"),
-          function(x, col = c("blue", "red", "darkgreen"), ...)
+          function(x, ...)
       {
-          callNextMethod(x, legend = c("S", "I", "R"), col = col, ...)
+          callNextMethod(x, legend = c("S", "I", "R"),
+                         col = c("blue", "red", "darkgreen"), ...)
       }
 )
 
