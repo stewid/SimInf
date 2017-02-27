@@ -327,12 +327,10 @@ setMethod("prevalence",
 ##' @export
 setMethod("plot",
           signature(x = "SISe3_sp"),
-          function(x, ...)
+          function(x, col = rep(c("blue", "red"), 3), lty = rep(1:3, each = 2), ...)
       {
           callNextMethod(x,
                          legend = expression(S[1], I[1], S[2], I[2], S[3], I[3]),
-                         col = rep(c("blue", "red"), 3),
-                         lty = rep(1:3, each = 2),
-                         ...)
+                         col = col, lty = lty, ...)
       }
 )
