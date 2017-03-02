@@ -201,11 +201,16 @@ setMethod("recovered",
 ##' @export
 setMethod("plot",
           signature(x = "SEIR"),
-          function(x, ...)
-      {
-          callNextMethod(x, legend = c("S", "E", "I", "R"),
-                         col = c("blue", "orange", "red", "darkgreen"), ...)
-      }
+          function(x,
+                   legend = c("S", "E", "I", "R"),
+                   col = c("blue", "orange", "red", "darkgreen"),
+                   lty = rep(1, 4),
+                   lwd = 2,
+                   ...)
+          {
+              callNextMethod(x, legend = legend, col = col,
+                             lty = lty, lwd = lwd, ...)
+          }
 )
 
 ##' Scheduled events example data for the \code{SEIR} model

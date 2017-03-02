@@ -434,7 +434,6 @@ setMethod("run",
 ##' Plot \code{\linkS4class{siminf_model}}
 ##'
 ##' @param x The \code{model} to plot
-##' @param y Unused.
 ##' @param legend The character vector to appear in the legend.
 ##' @param col The plotting color for each compartment. Default is
 ##' black.
@@ -465,7 +464,7 @@ setMethod("run",
 ##' plot(result)
 setMethod("plot",
           signature(x = "siminf_model"),
-          function(x, legend, col = NULL, lty = NULL, lwd = 2, ...)
+          function(x, legend, col = NULL, lty = NULL, lwd = NULL, ...)
       {
           if (identical(dim(x@U), c(0L, 0L)))
               stop("Please run the model first, the 'U' matrix is empty")
@@ -492,10 +491,13 @@ setMethod("plot",
               }
           }
 
+          ## Default line width
+          if (is.null(lwd))
+              lwd <- 2
+
           ## Default color is black
           if (is.null(col)) {
               col <- rep("black", dim(x@S)[1])
-
           }
 
           ## Plot
