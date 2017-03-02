@@ -31,20 +31,28 @@
 \usage{
 \S4method{plot}{scheduled_events}(x, frame.plot = FALSE, ...)
 
-\S4method{plot}{siminf_model}(x, legend, col = NULL, lty = NULL, lwd = 2,
-  ...)
+\S4method{plot}{siminf_model}(x, legend, col = NULL, lty = NULL,
+  lwd = NULL, ...)
 
-\S4method{plot}{SEIR}(x, y, ...)
+\S4method{plot}{SEIR}(x, legend = c("S", "E", "I", "R"), col = c("blue",
+  "orange", "red", "darkgreen"), lty = rep(1, 4), lwd = 2, ...)
 
-\S4method{plot}{SIR}(x, y, ...)
+\S4method{plot}{SIR}(x, legend = c("S", "I", "R"), col = c("blue", "red",
+  "darkgreen"), lty = rep(1, 3), lwd = 2, ...)
 
-\S4method{plot}{SISe}(x, y, ...)
+\S4method{plot}{SISe}(x, legend = c("S", "I"), col = c("blue", "red"),
+  lty = rep(1, 2), lwd = 2, ...)
 
-\S4method{plot}{SISe3}(x, y, ...)
+\S4method{plot}{SISe3}(x, legend = expression(S[1], I[1], S[2], I[2], S[3],
+  I[3]), col = rep(c("blue", "red"), 3), lty = rep(1:3, each = 2),
+  lwd = 2, ...)
 
-\S4method{plot}{SISe3_sp}(x, y, ...)
+\S4method{plot}{SISe3_sp}(x, legend = expression(S[1], I[1], S[2], I[2], S[3],
+  I[3]), col = rep(c("blue", "red"), 3), lty = rep(1:3, each = 2),
+  lwd = 2, ...)
 
-\S4method{plot}{SISe_sp}(x, y, ...)
+\S4method{plot}{SISe_sp}(x, legend = c("S", "I"), col = c("blue", "red"),
+  lty = rep(1, 2), lwd = 2, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot}
@@ -63,8 +71,6 @@ sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 6=twodash.}
 
 \item{lwd}{The line width for each compartment. Default is 2.}
-
-\item{y}{Unused.}
 }
 \description{
 Plot \code{\linkS4class{scheduled_events}}
