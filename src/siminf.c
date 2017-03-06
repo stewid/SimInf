@@ -1,8 +1,8 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015 - 2016  Stefan Engblom
- *  Copyright (C) 2015 - 2016  Stefan Widgren
+ *  Copyright (C) 2015 - 2017  Stefan Engblom
+ *  Copyright (C) 2015 - 2017  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,6 +43,11 @@ SEXP siminf_run(
     int err = 0, n_threads;
     SEXP trajectory, names, result = R_NilValue;
     SEXP ext_events, E, G, N, S, prS;
+    SEXP U_sparse, V_sparse;
+    int *U = NULL, *irU = NULL, *jcU = NULL;
+    double *prU = NULL;
+    int *irV = NULL, *jcV = NULL;
+    double *V = NULL, *prV = NULL;
     int Nn, Nc, Nt, Nd, Nld, tlen;
     unsigned long int s;
 
@@ -90,8 +95,30 @@ SEXP siminf_run(
     tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
 
     /* Output array (to hold a single trajectory) */
-    SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
-    SET_SLOT(result, Rf_install("V"), allocMatrix(REALSXP, Nn * Nd, tlen));
+    U_sparse = GET_SLOT(result, Rf_install("U_sparse"));
+    if ((INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[0] == (Nn * Nc)) &&
+        (INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[1] == tlen))
+    {
+        irU = INTEGER(GET_SLOT(U_sparse, Rf_install("i")));
+        jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
+        prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
+    } else {
+        SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
+        U = INTEGER(GET_SLOT(result, Rf_install("U")));
+    }
+
+    /* Output array (to hold a single trajectory) */
+    V_sparse = GET_SLOT(result, Rf_install("V_sparse"));
+    if ((INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[0] == (Nn * Nd)) &&
+        (INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[1] == tlen))
+    {
+        irV = INTEGER(GET_SLOT(V_sparse, Rf_install("i")));
+        jcV = INTEGER(GET_SLOT(V_sparse, Rf_install("p")));
+        prV = REAL(GET_SLOT(V_sparse, Rf_install("x")));
+    } else {
+        SET_SLOT(result, Rf_install("V"), allocMatrix(REALSXP, Nn * Nd, tlen));
+        V = REAL(GET_SLOT(result, Rf_install("V")));
+    }
 
     /* Run simulation solver. */
     err = siminf_run_solver(
@@ -104,8 +131,8 @@ SEXP siminf_run(
         INTEGER(prS),
         REAL(GET_SLOT(result, Rf_install("tspan"))),
         tlen,
-        INTEGER(GET_SLOT(result, Rf_install("U"))),
-        REAL(GET_SLOT(result, Rf_install("V"))),
+        U, irU, jcU, prU,
+        V, irV, jcV, prV,
         REAL(GET_SLOT(result, Rf_install("ldata"))),
         REAL(GET_SLOT(result, Rf_install("gdata"))),
         Nn, Nc, Nt, Nd, Nld,

@@ -123,21 +123,42 @@ typedef struct siminf_thread_args
                           *   and tspan[length(tspan)-1] is the stop
                           *   time.*/
     int tlen;            /**< Number of sampling points in time. */
-    int it;              /**< Index to next time in tspan */
+    int U_it;            /**< Index to next time in tspan */
+    int V_it;            /**< Index to next time in tspan */
 
     /*** Data vectors ***/
-    int *U;           /**< The compartment output is a matrix U ((Nn *
-                       *   Nc) X length(tspan)). U(:,j) contains the
-                       *   state of the system at tspan(j). */
-    int *u;           /**< Vector with compartment state in each node
-                       *   in thread. */
-    double *V;        /**< The continuous output is a matrix V ((Nn *
-                       *   Nd) X length(tspan)). V(:,j) contains the
-                       *   state of the system at tspan(j). */
-    double *v;        /**< Vector with continuous state in each node
-                       *   in thread. */
-    double *v_new;    /**< Vector with continuous state in each node
-                       *   in thread after post time step function. */
+    int *u;           /**< Vector with the number of individuals in
+                       *   each compartment in each node in the
+                       *   thread. */
+    int *U;           /**< If the solution is written to a dense
+                       *   matrix the compartment output is a matrix U
+                       *   ((Nn * Nc) X length(tspan)). U(:,j)
+                       *   contains the state of the system at
+                       *   tspan(j). */
+    const int *irU;   /**< If the solution is written to a sparse
+                       *   matrix, irU[k] is the row of U[k]. */
+    const int *jcU;   /**< If the solution is written to a sparse
+                       *   matrix, index to data of first non-zero
+                       *   element in row k. */
+    double    *prU;   /**< If the solution is written to a sparse
+                       *   matrix, value of item (i, j) in U. */
+    double *v;        /**< Vector with the continuous state in each
+                       *   node in the thread. */
+    double *v_new;    /**< Vector with the continuous state in each
+                       *   node in the thread after the post time step
+                       *   function. */
+    double *V;        /**< If the solution is written to a dense
+                       *   matrix the continuous output is a matrix V
+                       *   ((Nn * Nd) X length(tspan)). V(:,j)
+                       *   contains the state of the system at
+                       *   tspan(j). */
+    const int *irV;   /**< If the solution is written to a sparse
+                       *   matrix, irV[k] is the row of V[k]. */
+    const int *jcV;   /**< If the solution is written to a sparse
+                       *   matrix, index to data of first non-zero
+                       *   element in row k. */
+    double    *prV;   /**< If the solution is written to a sparse
+                       *   matrix, value of item (i, j) in V. */
     const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
                           *   local data vector for node #j. */
     const double *gdata; /**< The global data vector. */
@@ -827,21 +848,48 @@ static int siminf_solver()
 
                 /* (6) Store solution if tt has passed the next time
                  * in tspan. Report solution up to, but not including
-                 * tt. */
-                if (sa.tt > sa.tspan[sa.it]) {
-                    while (sa.it < sa.tlen && sa.tt > sa.tspan[sa.it]) {
-                        /* Copy compartment state to U */
-                        memcpy(&sa.U[sa.Nc * (sa.Ntot * sa.it + sa.Ni)],
-                               sa.u, sa.Nn * sa.Nc * sizeof(int));
-
-                        /* Copy continuous state to V */
-                        memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.it++) + sa.Ni)],
-                               sa.v_new, sa.Nn * sa.Nd * sizeof(double));
-                    }
-                }
+                 * tt. The default is to store the solution in a dense
+                 * matrix (U and/or V non-null pointers) (6a).
+                 * However, it is possible to store the solution in a
+                 * sparse matrix. In that case, the solution is stored
+                 * outside the 'pragma omp parallel' statement (6b). */
+                /* a) Handle the case where the solution is stored in
+                 * a dense matrix */
+                /* Copy compartment state to U */
+                while (sa.U && sa.U_it < sa.tlen && sa.tt > sa.tspan[sa.U_it])
+                    memcpy(&sa.U[sa.Nc * ((sa.Ntot * sa.U_it++) + sa.Ni)],
+                           sa.u, sa.Nn * sa.Nc * sizeof(int));
+                /* Copy continuous state to V */
+                while (sa.V && sa.V_it < sa.tlen && sa.tt > sa.tspan[sa.V_it])
+                    memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.V_it++) + sa.Ni)],
+                           sa.v_new, sa.Nn * sa.Nd * sizeof(double));
 
                 *&sim_args[i] = sa;
             }
+        }
+
+        /* b) Handle the case where the solution is stored in a sparse
+         * matrix */
+        while (!sim_args[0].U && sim_args[0].U_it < sim_args[0].tlen &&
+               sim_args[0].tt > sim_args[0].tspan[sim_args[0].U_it]) {
+            int j;
+
+            /* Copy compartment state to U_sparse */
+            for (j = sim_args[0].jcU[sim_args[0].U_it];
+                 j < sim_args[0].jcU[sim_args[0].U_it + 1]; j++)
+                sim_args[0].prU[j] = sim_args[0].u[sim_args[0].irU[j]];
+            sim_args[0].U_it++;
+        }
+
+        while (!sim_args[0].V && sim_args[0].V_it < sim_args[0].tlen &&
+               sim_args[0].tt > sim_args[0].tspan[sim_args[0].V_it]) {
+            int j;
+
+            /* Copy continuous state to V_sparse */
+            for (j = sim_args[0].jcV[sim_args[0].V_it];
+                 j < sim_args[0].jcV[sim_args[0].V_it + 1]; j++)
+                sim_args[0].prV[j] = sim_args[0].v_new[sim_args[0].irV[j]];
+            sim_args[0].V_it++;
         }
 
         /* Swap the pointers to the continuous state variable so that
@@ -855,7 +903,7 @@ static int siminf_solver()
         }
 
         /* If the simulation has reached the final time, exit. */
-        if (sim_args[0].it >= sim_args[0].tlen)
+        if (sim_args[0].U_it >= sim_args[0].tlen)
             break;
     }
 
@@ -891,11 +939,24 @@ static int siminf_solver()
  * @param tspan Double vector. Output times. tspan[0] is the start
  *        time and tspan[length(tspan)-1] is the stop time.
  * @param tlen Number of sampling points in time.
- * @param U The output is a matrix U ((Nn * Nc) X length(tspan)).
+ * @param U If U is non-NULL, the solution is written to a dense matrix.
+ *        The output is a matrix U ((Nn * Nc) X length(tspan)).
  *        U(:,j) contains the state of the system at tspan(j).
- * @param V The continuous state output is a matrix V
- *        ((Nn * Nd) X length(tspan)).
+ * @param irU If U is NULL, the solution is written to a sparse matrix.
+ *        irU[k] is the row of U[k].
+ * @param jcU If U is NULL, the solution is written to a sparse matrix.
+ *        Index to data of first non-zero element in row k.
+ * @param prU If U is NULL, the solution is written to a sparse matrix.
+ *        Value of item (i, j) in U.
+ * @param V If V is non-NULL, the solution is written to a dense matrix.
+ *        The continuous state output is a matrix V ((Nn * Nd) X length(tspan)).
  *        V(:,j) contains the continuous state of the system at tspan(j).
+ * @param irV If V is NULL, the solution is written to a sparse matrix.
+ *        irV[k] is the row of V[k].
+ * @param jcV If V is NULL, the solution is written to a sparse matrix.
+ *        Index to data of first non-zero element in row k.
+ * @param prV If V is NULL, the solution is written to a sparse matrix.
+ *        Value of item (i, j) in V.
  * @param ldata Double matrix (Nld X Nn). Generalized data matrix,
  *        data(:,j) gives a local data vector for node #j.
  * @param gdata The global data vector.
@@ -934,7 +995,9 @@ static int siminf_solver()
 int siminf_run_solver(
     const int *u0, const double *v0, const int *irG, const int *jcG,
     const int *irS, const int *jcS, const int *prS, const double *tspan,
-    int tlen, int *U, double *V, const double *ldata, const double *gdata,
+    int tlen, int *U, const int *irU, const int *jcU, double *prU,
+    double *V, const int *irV, const int *jcV, double *prV,
+    const double *ldata, const double *gdata,
     int Nn, int Nc, int Nt, int Nd, int Nld, const int *irE,
     const int *jcE, const int *N, int len, const int *event,
     const int *time, const int *node, const int *dest, const int *n,
@@ -965,7 +1028,14 @@ int siminf_run_solver(
         goto cleanup;
     }
     memcpy(uu, u0, Nn * Nc * sizeof(int));
-    memcpy(U, u0, Nn * Nc * sizeof(int));
+
+    /* Copy u0 to either U[, 1] or U_sparse[, 1] */
+    if (U) {
+        memcpy(U, u0, Nn * Nc * sizeof(int));
+    } else {
+        for (i = jcU[0]; i < jcU[1]; i++)
+            prU[i] = u0[irU[i]];
+    }
 
     /* Set continuous state to the initial state in each node. */
     vv_1 = malloc(Nn * Nd * sizeof(double));
@@ -975,7 +1045,14 @@ int siminf_run_solver(
         goto cleanup;
     }
     memcpy(vv_1, v0, Nn * Nd * sizeof(double));
-    memcpy(V, v0, Nn * Nd * sizeof(double));
+
+    /* Copy v0 to either V[, 1] or V_sparse[, 1] */
+    if (V) {
+        memcpy(V, v0, Nn * Nd * sizeof(double));
+    } else {
+        for (i = jcV[0]; i < jcV[1]; i++)
+            prV[i] = v0[irV[i]];
+    }
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
@@ -1036,13 +1113,26 @@ int siminf_run_solver(
         sim_args[i].next_day = floor(sim_args[i].tt) + 1.0;
         sim_args[i].tspan = tspan;
         sim_args[i].tlen = tlen;
-        sim_args[i].it = 1;
+        sim_args[i].U_it = 1;
+        sim_args[i].V_it = 1;
 
         /* Data vectors */
         sim_args[i].N = N;
-        sim_args[i].U = U;
+        if (U) {
+            sim_args[i].U = U;
+        } else if (i == 0) {
+            sim_args[i].irU = irU;
+            sim_args[i].jcU = jcU;
+            sim_args[i].prU = prU;
+        }
         sim_args[i].u = &uu[sim_args[i].Ni * Nc];
-        sim_args[i].V = V;
+        if (V) {
+            sim_args[i].V = V;
+        } else if (i == 0) {
+            sim_args[i].irV = irV;
+            sim_args[i].jcV = jcV;
+            sim_args[i].prV = prV;
+        }
         sim_args[i].v = &vv_1[sim_args[i].Ni * Nd];
         sim_args[i].v_new = &vv_2[sim_args[i].Ni * Nd];
         sim_args[i].ldata = &ldata[sim_args[i].Ni * sim_args[i].Nld];
