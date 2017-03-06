@@ -571,6 +571,36 @@ setMethod("plot",
       }
 )
 
+##' @keywords internal
+show_U <- function(object) {
+    d <- dim(object@U)
+    if (identical(d, c(0L, 0L))) {
+        d <- dim(object@U_sparse)
+        if (identical(d, c(0L, 0L))) {
+            cat("U: 0 x 0\n")
+        } else {
+            cat(sprintf("U: %i x %i (sparse)\n", d[1], d[2]))
+        }
+    } else {
+        cat(sprintf("U: %i x %i\n", d[1], d[2]))
+    }
+}
+
+##' @keywords internal
+show_V <- function(object) {
+    d <- dim(object@V)
+    if (identical(d, c(0L, 0L))) {
+        d <- dim(object@V_sparse)
+        if (identical(d, c(0L, 0L))) {
+            cat("V: 0 x 0\n")
+        } else {
+            cat(sprintf("V: %i x %i (sparse)\n", d[1], d[2]))
+        }
+    } else {
+        cat(sprintf("V: %i x %i\n", d[1], d[2]))
+    }
+}
+
 ##' Brief summary of \code{siminf_model}
 ##'
 ##' @aliases show,siminf_model-methods
@@ -606,8 +636,8 @@ setMethod("show",
               show(object@events)
 
               cat("\n")
-              cat(sprintf("U: %i x %i\n", dim(object@U)[1], dim(object@U)[2]))
-              cat(sprintf("V: %i x %i\n", dim(object@V)[1], dim(object@V)[2]))
+              show_U(object)
+              show_V(object)
           }
 )
 
@@ -634,7 +664,7 @@ setMethod("summary",
               summary(object@events)
 
               cat("\n")
-              cat(sprintf("U: %i x %i\n", dim(object@U)[1], dim(object@U)[2]))
-              cat(sprintf("V: %i x %i\n", dim(object@V)[1], dim(object@V)[2]))
+              show_U(object)
+              show_V(object)
           }
 )
