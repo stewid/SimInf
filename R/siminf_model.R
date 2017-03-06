@@ -412,8 +412,20 @@ siminf_error <- function(err)
 ##' @export
 setMethod("run",
           signature(model = "siminf_model"),
-          function(model, threads, seed)
+          function(model, threads, seed, U, V)
           {
+              if (!is.null(U)) {
+                  if (!is(U, "dgCMatrix"))
+                      stop("'U' must be a 'dgCMatrix' object")
+                  model@U_sparse = U
+              }
+
+              if (!is.null(V)) {
+                  if (!is(V, "dgCMatrix"))
+                      stop("'V' must be a 'dgCMatrix' object")
+                  model@V_sparse = V
+              }
+
               ## Check that siminf_model contains all data structures
               ## required by the siminf solver and that they make sense
               validObject(model);
@@ -435,12 +447,25 @@ setMethod("run",
                   siminf_error(result$error)
 
               if (!is.null(names(result$model@tspan))) {
-                  colnames(result$model@U) <- names(result$model@tspan)
-                  colnames(result$model@V) <- names(result$model@tspan)
+                  if (!is.null(U)) {
+                      colnames(result$model@U_sparse) <- names(result$model@tspan)
+                  } else {
+                      colnames(result$model@U) <- names(result$model@tspan)
+                  }
+
+                  if (!is.null(V)) {
+                      colnames(result$model@V_sparse) <- names(result$model@tspan)
+                  } else {
+                      colnames(result$model@V) <- names(result$model@tspan)
+                  }
               }
 
               lbl <- rep(rownames(result$model@S), dim(result$model@u0)[2])
-              rownames(result$model@U) <- lbl
+              if (!is.null(U)) {
+                  rownames(result$model@U_sparse) <- lbl
+              } else {
+                  rownames(result$model@U) <- lbl
+              }
 
               result$model
           }
