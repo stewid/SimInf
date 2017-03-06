@@ -32,6 +32,9 @@ lines <- c(
     "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
     "    R_useDynamicSymbols(info, FALSE);",
     "    R_forceSymbols(info, FALSE);",
-    "}")
+    "}",
+    "")
 
-writeLines(lines, "src/init.c")
+f <- file("src/init.c", "wb")
+writeChar(paste0(lines, collapse = "\n"), f, eos = NULL)
+close(f)
