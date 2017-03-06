@@ -4,11 +4,12 @@
 \name{run}
 \alias{run}
 \alias{run,siminf_model-method}
-\title{Run siminf stochastic simulation algorithm}
+\title{Run the SimInf stochastic simulation algorithm}
 \usage{
-run(model, threads = NULL, seed = NULL)
+run(model, threads = NULL, seed = NULL, U = NULL, V = NULL)
 
-\S4method{run}{siminf_model}(model, threads = NULL, seed = NULL)
+\S4method{run}{siminf_model}(model, threads = NULL, seed = NULL, U = NULL,
+  V = NULL)
 }
 \arguments{
 \item{model}{The siminf model to run.}
@@ -18,12 +19,26 @@ number of available processors.}
 
 \item{seed}{Random number seed. Default is NULL, i.e. to use a
 time-seed.}
+
+\item{U}{Write the number of individuals in each compartment at
+\code{tspan} to the non-zero elements in \code{U}, where
+\code{U} is a sparse matrix, \code{dgCMatrix}, with dimension
+\eqn{N_n N_c \times} \code{length(tspan)}. Default is
+\code{NULL} i.e. to write the number of inidividuals in each
+compartment in every node to a dense matrix.}
+
+\item{V}{Write the real-valued continuous state at \code{tspan} to
+the non-zero elements in \code{V}, where \code{V} is a sparse
+matrix, \code{dgCMatrix}, with dimension
+\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
+\code{length(tspan)}. Default is \code{NULL} i.e. to write the
+real-valued continuous state to a dense matrix.}
 }
 \value{
 \code{siminf_model} with result from simulation.
 }
 \description{
-Run siminf stochastic simulation algorithm
+Run the SimInf stochastic simulation algorithm
 }
 \examples{
 ## Create a 'SISe' demo model with 1 node and

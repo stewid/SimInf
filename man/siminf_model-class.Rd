@@ -35,12 +35,25 @@ Class to handle the siminf data model
     \code{tspan[j]} etc. Integer matrix (\eqn{N_n N_c \times}
     \code{length(tspan)}).
   }
+  \item{U_sparse}{
+    If the model was run to write the solution to a sparse matrix
+    (\code{dgCMatrix}) the \code{U_sparse} contains the data and
+    \code{U} is empty. The layout of the data in \code{U_sparse}
+    is identical to \code{U}. Please note that \code{U_sparse}
+    is numeric and \code{U} is integer.
+  }
   \item{V}{
-    The result matrix for the real-valued continous
+    The result matrix for the real-valued continuous
     state. \code{V[, j]} contains the real-valued state of the
     system at \code{tspan[j]}. Numeric matrix
     (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
     \code{length(tspan)}).
+  }
+  \item{V_sparse}{
+    If the model was run to write the solution to a sparse matrix
+    (\code{dgCMatrix}) the \code{V_sparse} contains the data and
+    \code{V} is empty. The layout of the data in \code{V_sparse}
+    is identical to \code{V}.
   }
   \item{ldata}{
     A matrix with local data for the nodes. The column \code{ldata[, j]}

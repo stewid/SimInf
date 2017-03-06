@@ -43,7 +43,7 @@ susceptible at every time point.}
 extract.}
 }
 \description{
-Extracts the number of susceptible
+Extracts the number of susceptible.
 }
 \examples{
 ## Create a 'SISe' demo model with 5 nodes and initialize
