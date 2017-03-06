@@ -82,6 +82,17 @@ sis_e <- run(sis_e, threads = 1)
 sis_e_phi_obs <- sis_e@V[1,]
 stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
 
+## Run with sparse V
+sis_e <- run(sis_e, threads = 1, V = as(phi_exp, "dgCMatrix"))
+sis_e_phi_obs <- sis_e@V_sparse[1,]
+stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
+
+if (SimInf:::have_openmp()) {
+    sis_e <- run(sis_e, threads = 2, V = as(phi_exp, "dgCMatrix"))
+    sis_e_phi_obs <- sis_e@V_sparse[1,]
+    stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
+}
+
 ## Check phi from the SISe3 model
 sis_e3 <- SISe3(u0      = data.frame(S_1 = 10, I_1 = 0,
                                      S_2 = 20, I_2 = 0,
@@ -109,3 +120,14 @@ sis_e3 <- SISe3(u0      = data.frame(S_1 = 10, I_1 = 0,
 sis_e3 <- run(sis_e3, threads = 1)
 sis_e3_phi_obs <- sis_e3@V[1,]
 stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
+
+## Run with sparse V
+sis_e3 <- run(sis_e3, threads = 1, V = as(phi_exp, "dgCMatrix"))
+sis_e3_phi_obs <- sis_e3@V_sparse[1,]
+stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
+
+if (SimInf:::have_openmp()) {
+    sis_e3 <- run(sis_e3, threads = 2, V = as(phi_exp, "dgCMatrix"))
+    sis_e3_phi_obs <- sis_e3@V_sparse[1,]
+    stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
+}
