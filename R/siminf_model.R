@@ -416,13 +416,13 @@ setMethod("run",
           {
               if (!is.null(U)) {
                   if (!is(U, "dgCMatrix"))
-                      stop("'U' must be a 'dgCMatrix' object")
+                      U <- as(U, "dgCMatrix")
                   model@U_sparse = U
               }
 
               if (!is.null(V)) {
                   if (!is(V, "dgCMatrix"))
-                      stop("'V' must be a 'dgCMatrix' object")
+                      V <- as(V, "dgCMatrix")
                   model@V_sparse = V
               }
 
