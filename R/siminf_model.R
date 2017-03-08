@@ -408,6 +408,21 @@ siminf_error <- function(err)
     stop("Unknown error code.")
 }
 
+## Number of nodes
+Nn <- function(model) {
+    dim(model@u0)[2]
+}
+
+## Number of compartments
+Nc <- function(model) {
+    dim(model@S)[1]
+}
+
+## Number of transitions
+Nt <- function(model) {
+    dim(model@G)[1]
+}
+
 ##' @rdname run-methods
 ##' @export
 setMethod("run",
@@ -630,9 +645,9 @@ setMethod("show",
               cat(sprintf("Model: %s\n\n",
                           as.character(class(object))))
 
-              cat(sprintf("Number of nodes: %i\n", dim(object@u0)[2]))
-              cat(sprintf("Number of compartments: %i\n", dim(object@S)[1]))
-              cat(sprintf("Number of transitions: %i\n", dim(object@G)[1]))
+              cat(sprintf("Number of nodes: %i\n", Nn(object)))
+              cat(sprintf("Number of compartments: %i\n", Nc(object)))
+              cat(sprintf("Number of transitions: %i\n", Nt(object)))
               show(object@events)
 
               cat("\n")
@@ -658,9 +673,9 @@ setMethod("summary",
               cat(sprintf("Model: %s\n\n",
                           as.character(class(object))))
 
-              cat(sprintf("Number of nodes: %i\n", dim(object@u0)[2]))
-              cat(sprintf("Number of compartments: %i\n", dim(object@S)[1]))
-              cat(sprintf("Number of transitions: %i\n", dim(object@G)[1]))
+              cat(sprintf("Number of nodes: %i\n", Nn(object)))
+              cat(sprintf("Number of compartments: %i\n", Nc(object)))
+              cat(sprintf("Number of transitions: %i\n", Nt(object)))
               summary(object@events)
 
               cat("\n")
