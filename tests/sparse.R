@@ -70,3 +70,49 @@ m <- as(sparseMatrix(numeric(0), numeric(0), dims = c(0, 11)), "dgCMatrix")
 res <- tools::assertError(run(model, V = m))
 stopifnot(length(grep("Wrong dimension of 'V'",
                       res[[1]]$message)) > 0)
+
+## Check that U is cleared. First run a model to get a dense U result
+## matrix, then run that model and check that the dense U result
+## matrix is cleared. Then run the model again and check that the
+## sparse result matrix is cleared.
+result <- run(model, threads = 1)
+m <- sparseMatrix(1:18, rep(5:10, each = 3))
+result <- run(result, threads = 1, U = m)
+stopifnot(identical(dim(result@U), c(0L, 0L)))
+stopifnot(identical(dim(result@U_sparse), c(18L, 10L)))
+result <- run(result, threads = 1)
+stopifnot(identical(dim(result@U), c(18L, 10L)))
+stopifnot(identical(dim(result@U_sparse), c(0L, 0L)))
+
+## Check that V is cleared. First run a model to get a dense V result
+## matrix, then run that model and check that the dense V result
+## matrix is cleared. Then run the model again and check that the
+## sparse result matrix is cleared.
+u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
+                     I  = c(0, 0, 0, 0, 0, 0)),
+                .Names = c("S", "I"),
+                row.names = c(NA, -6L), class = "data.frame")
+model <- SISe(u0      = u0,
+              tspan   = seq_len(10) - 1,
+              events  = NULL,
+              phi     = rep(0, nrow(u0)),
+              upsilon = 0.0357,
+              gamma   = 0.1,
+              alpha   = 1.0,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
+result <- run(model, threads = 1)
+m <- sparseMatrix(1:6, 5:10)
+result <- run(result, threads = 1, V = m)
+stopifnot(identical(dim(result@V), c(0L, 0L)))
+stopifnot(identical(dim(result@V_sparse), c(6L, 10L)))
+result <- run(result, threads = 1)
+stopifnot(identical(dim(result@V), c(6L, 10L)))
+stopifnot(identical(dim(result@V_sparse), c(0L, 0L)))
