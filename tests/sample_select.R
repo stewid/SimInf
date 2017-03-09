@@ -380,18 +380,18 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L,
-                 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
-                 0L, 1L, 0L, 0L, 0L, 0L, 0L),
-               .Dim = c(12L, 3L),
-               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
-                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                NULL))
+U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
+                          0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
+                          0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L),
+                        .Dim = c(12L, 3L),
+                        .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                           "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                         NULL))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(result@U, U))
+stopifnot(identical(U(result), U_expected))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -401,7 +401,7 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
-    stopifnot(identical(result_omp@U, U))
+    stopifnot(identical(U(result_omp), U_expected))
     stopifnot(identical(model@ldata, result_omp@ldata))
     stopifnot(identical(model@tspan, result_omp@tspan))
     stopifnot(identical(model@u0, result_omp@u0))
@@ -458,18 +458,18 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L,
-                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L,
-                 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-               .Dim = c(12L, 3L),
-               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
-                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                NULL))
+U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
+                          1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                          1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+                        .Dim = c(12L, 3L),
+                        .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                           "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                         NULL))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(result@U, U))
+stopifnot(identical(U(result), U_expected))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -479,7 +479,7 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
-    stopifnot(identical(result_omp@U, U))
+    stopifnot(identical(U(result_omp), U_expected))
     stopifnot(identical(model@ldata, result_omp@ldata))
     stopifnot(identical(model@tspan, result_omp@tspan))
     stopifnot(identical(model@u0, result_omp@u0))
@@ -536,18 +536,18 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 0L, 0L, 0L, 0L, 0L, 1L,
-                 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L,
-                 0L, 1L, 0L, 0L, 0L, 0L, 0L),
-               .Dim = c(12L, 3L),
-               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
-                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                NULL))
+U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 0L, 0L, 0L, 0L, 0L,
+                          1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
+                          1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L),
+                        .Dim = c(12L, 3L),
+                        .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                           "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                         NULL))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(result@U, U))
+stopifnot(identical(U(result), U_expected))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -557,7 +557,7 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
-    stopifnot(identical(result_omp@U, U))
+    stopifnot(identical(U(result_omp), U_expected))
     stopifnot(identical(model@ldata, result_omp@ldata))
     stopifnot(identical(model@tspan, result_omp@tspan))
     stopifnot(identical(model@u0, result_omp@u0))
@@ -615,18 +615,18 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-U <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 8L, 0L, 0L, 0L, 0L, 0L,
-                 1L, 0L, 0L, 0L, 0L, 2L, 7L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L,
-                 0L, 2L, 7L, 0L, 0L, 0L, 0L),
-               .Dim = c(12L, 3L),
-               .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
-                                  "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                NULL))
+U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 8L, 0L, 0L, 0L, 0L,
+                          0L, 1L, 0L, 0L, 0L, 0L, 2L, 7L, 0L, 0L, 0L, 0L,
+                          0L, 1L, 0L, 0L, 0L, 0L, 2L, 7L, 0L, 0L, 0L, 0L),
+                        .Dim = c(12L, 3L),
+                        .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
+                                           "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                                         NULL))
 
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(result@U, U))
+stopifnot(identical(U(result), U_expected))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -636,7 +636,7 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
-    stopifnot(identical(result_omp@U, U))
+    stopifnot(identical(U(result_omp), U_expected))
     stopifnot(identical(model@ldata, result_omp@ldata))
     stopifnot(identical(model@tspan, result_omp@tspan))
     stopifnot(identical(model@u0, result_omp@u0))
