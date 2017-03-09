@@ -423,6 +423,11 @@ Nt <- function(model) {
     dim(model@G)[1]
 }
 
+## Number of continuous state variables
+Nd <- function(model) {
+    dim(model@v0)[1]
+}
+
 ##' @rdname run-methods
 ##' @export
 setMethod("run",
@@ -432,12 +437,22 @@ setMethod("run",
               if (!is.null(U)) {
                   if (!is(U, "dgCMatrix"))
                       U <- as(U, "dgCMatrix")
+
+                  d <- c(Nn(model) * Nc(model), length(model@tspan))
+                  if (!identical(dim(U), d))
+                      stop("Wrong dimension of 'U'")
+
                   model@U_sparse = U
               }
 
               if (!is.null(V)) {
                   if (!is(V, "dgCMatrix"))
                       V <- as(V, "dgCMatrix")
+
+                  d <- c(Nn(model) * Nd(model), length(model@tspan))
+                  if (!identical(dim(V), d))
+                      stop("Wrong dimension of 'V'")
+
                   model@V_sparse = V
               }
 
