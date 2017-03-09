@@ -362,6 +362,22 @@ siminf_model <- function(G,
                events = events))
 }
 
+##' @rdname U-methods
+##' @export
+setMethod("U",
+          signature("siminf_model"),
+          function(model) {
+              d <- dim(model@U)
+              if (identical(d, c(0L, 0L))) {
+                  d <- dim(model@U_sparse)
+                  if (identical(d, c(0L, 0L)))
+                      stop("Please run the model first, the 'U' matrix is empty")
+                  return(model@U_sparse)
+              }
+              model@U
+          }
+)
+
 ##' Report error
 ##'
 ##' @param err The error code.
