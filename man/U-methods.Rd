@@ -13,6 +13,9 @@ U(model)
 \arguments{
 \item{model}{The \code{model} to extract the result matrix from.}
 }
+\value{
+The number of individuals in each compartment
+}
 \description{
 The result matrix with the number of individuals in each
 compartment in every node after running a trajectory with
