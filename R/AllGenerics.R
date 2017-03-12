@@ -67,7 +67,7 @@ setGeneric("run",
 ##' @rdname U-methods
 ##' @docType methods
 ##' @param model The \code{model} to extract the result matrix from.
-##' @return
+##' @return The number of individuals in each compartment
 ##' @keywords methods
 ##' @export
 ##' @examples
@@ -97,6 +97,59 @@ setGeneric("run",
 ##' ## time-points in tspan.
 ##' U(result)
 setGeneric("U", function(model) standardGeneric("U"))
+
+##' Extract the continuous state variables
+##'
+##' The result matrix for the real-valued continuous state. \code{V[,
+##' j]} contains the real-valued state of the system at
+##' \code{tspan[j]}. The dimension of the matrix is
+##' \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times} \code{length(tspan)}.
+##' @rdname V-methods
+##' @docType methods
+##' @param model The \code{model} to extract the result matrix from.
+##' @return The continuous state variables
+##' @keywords methods
+##' @export
+##' @examples
+##' ## Create an 'SISe' model with 6 nodes and initialize
+##' ## it to run over 10 days.
+##' u0 <- data.frame(S = 100:105, I = 1:6)
+##' model <- SISe(u0 = u0, tspan = 1:10,
+##'               phi = rep(0, 6),
+##'               upsilon = 0.017,
+##'               gamma   = 0.1,
+##'               alpha   = 1,
+##'               beta_t1 = 0.19,
+##'               beta_t2 = 0.085,
+##'               beta_t3 = 0.075,
+##'               beta_t4 = 0.185,
+##'               end_t1  = 91,
+##'               end_t2  = 182,
+##'               end_t3  = 273,
+##'               end_t4  = 365,
+##'               epsilon = 0.000011)
+##'
+##' ## Run the model
+##' result <- run(model, seed = 123)
+##'
+##' ## Extract the continuous state variables in each node at the
+##' ## time-points in tspan. In the 'SISe' model, V represent the
+##' ## environmental infectious pressure phi.
+##' V(result)
+##'
+##' ## An example with a sparse V result matrix, which can save a lot
+##' ## of memory if the model contains many nodes and time-points, but
+##' ## where only a few of the data points are of interest. First
+##' ## create a sparse matrix with non-zero entries at the locations
+##' ## in V where the continuous state variables should be written. Then
+##' ## run the model with the sparse matrix as a template for V where
+##' ## to write data.
+##' m <- Matrix::sparseMatrix(1:6, 5:10)
+##' result <- run(model, seed = 123, V = m)
+##'
+##' ## Extract the continuous state variables at the time-points in tspan.
+##' V(result)
+setGeneric("V", function(model) standardGeneric("V"))
 
 ##' Susceptible
 ##'

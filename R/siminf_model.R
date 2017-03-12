@@ -378,6 +378,22 @@ setMethod("U",
           }
 )
 
+##' @rdname V-methods
+##' @export
+setMethod("V",
+          signature("siminf_model"),
+          function(model) {
+              d <- dim(model@V)
+              if (identical(d, c(0L, 0L))) {
+                  d <- dim(model@V_sparse)
+                  if (identical(d, c(0L, 0L)))
+                      stop("Please run the model first, the 'V' matrix is empty")
+                  return(model@V_sparse)
+              }
+              model@V
+          }
+)
+
 ##' Report error
 ##'
 ##' @param err The error code.
