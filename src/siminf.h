@@ -1,8 +1,8 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015 - 2016 Stefan Engblom
- *  Copyright (C) 2015 - 2016 Stefan Widgren
+ *  Copyright (C) 2015 - 2017 Stefan Engblom
+ *  Copyright (C) 2015 - 2017 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ typedef enum {
     SIMINF_ERR_V_IS_NEGATIVE        = -11
 } siminf_error_code;
 
-/* Definition of the transition rate function. */
+/* Forward declaration of the transition rate function. */
 typedef double (*TRFun)(
     const int *u,
     const double *v,
@@ -48,7 +48,7 @@ typedef double (*TRFun)(
     const double *gdata,
     double t);
 
-/* Definition of the callback function post time step. */
+/* Forward declaration of the post time step callback function. */
 typedef int (*PTSFun)(
     double *v_new,
     const int *u,
@@ -59,7 +59,8 @@ typedef int (*PTSFun)(
     double t,
     gsl_rng *rng);
 
-/* Definition of the function to initiate and run the simulation */
+/* Forward declaration of the function to initiate and run the
+ * simulation */
 SEXP siminf_run(
     SEXP model,
     SEXP threads,
