@@ -33,19 +33,26 @@ SEXP SISe_sp_run(SEXP, SEXP, SEXP);
 SEXP siminf_ldata_sp(SEXP, SEXP, SEXP);
 SEXP siminf_have_openmp();
 
+#define CALLDEF(name, n) {#name, (DL_FUNC) &name, n}
+
 static const R_CallMethodDef callMethods[] =
 {
-    {"SEIR_run", (DL_FUNC) &SEIR_run, 3},
-    {"SIR_run", (DL_FUNC) &SIR_run, 3},
-    {"SISe_run", (DL_FUNC) &SISe_run, 3},
-    {"SISe3_run", (DL_FUNC) &SISe3_run, 3},
-    {"SISe3_sp_run", (DL_FUNC) &SISe3_sp_run, 3},
-    {"SISe_sp_run", (DL_FUNC) &SISe_sp_run, 3},
-    {"siminf_have_openmp", (DL_FUNC) &siminf_have_openmp, 0},
-    {"siminf_ldata_sp", (DL_FUNC) &siminf_ldata_sp, 3},
+    CALLDEF(SEIR_run, 3),
+    CALLDEF(SIR_run, 3),
+    CALLDEF(SISe_run, 3),
+    CALLDEF(SISe3_run, 3),
+    CALLDEF(SISe3_sp_run, 3),
+    CALLDEF(SISe_sp_run, 3),
+    CALLDEF(siminf_have_openmp, 0),
+    CALLDEF(siminf_ldata_sp, 3),
     {NULL, NULL, 0}
 };
 
+/**
+ * Register routines to R.
+ *
+ * @param info Information about the DLL being loaded
+ */
 void attribute_visible
 R_init_SimInf(DllInfo *info)
 {
