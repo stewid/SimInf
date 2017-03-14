@@ -624,7 +624,7 @@ setMethod("plot",
 
           ## Plot
           if (is.null(names(x@tspan))) {
-               plot(x = x@tspan, y = m[1,], type = "l", ylab = "Proportion",
+              plot(x = x@tspan, y = m[1,], type = "l", ylab = "Proportion",
                    ylim = c(0, 1), col = col[1], lty = lty[1], lwd = lwd, ...)
           } else {
               plot(x = as.Date(names(x@tspan)), y = m[1,], type = "l",
