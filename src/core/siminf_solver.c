@@ -27,7 +27,7 @@
 #include <omp.h>
 #endif
 
-#include "siminf.h"
+#include "SimInf.h"
 
 /**
  * Event types

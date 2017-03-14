@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "siminf.h"
+#include "SimInf.h"
 #include "siminf_forward_euler_linear_decay.h"
 #include "siminf_local_spread.h"
 

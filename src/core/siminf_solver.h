@@ -21,7 +21,7 @@
 #ifndef INCLUDE_SIMINF_SOLVER_H
 #define INCLUDE_SIMINF_SOLVER_H
 
-#include "siminf.h"
+#include "SimInf.h"
 
 /* Declaration of the function to initialize and run the siminf solver */
 int siminf_run_solver(
