@@ -61,7 +61,7 @@ typedef int (*PTSFun)(
 
 /* Forward declaration of the function to initiate and run the
  * simulation */
-SEXP siminf_run(
+SEXP SimInf_run(
     SEXP model,
     SEXP threads,
     SEXP seed,

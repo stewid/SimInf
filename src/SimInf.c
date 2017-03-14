@@ -33,7 +33,7 @@
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  */
-SEXP siminf_run(
+SEXP SimInf_run(
     SEXP model,
     SEXP threads,
     SEXP seed,

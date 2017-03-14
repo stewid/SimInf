@@ -1,7 +1,7 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015 - 2016  Stefan Engblom
- *  Copyright (C) 2015 - 2016  Stefan Widgren
+ *  Copyright (C) 2015 - 2017  Stefan Engblom
+ *  Copyright (C) 2015 - 2017  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -233,5 +233,5 @@ SEXP SISe3_sp_run(SEXP model, SEXP threads, SEXP seed)
                       &SISe3_sp_S_2_to_I_2, &SISe3_sp_I_2_to_S_2,
                       &SISe3_sp_S_3_to_I_3, &SISe3_sp_I_3_to_S_3};
 
-    return siminf_run(model, threads, seed, tr_fun, &SISe3_sp_post_time_step);
+    return SimInf_run(model, threads, seed, tr_fun, &SISe3_sp_post_time_step);
 }

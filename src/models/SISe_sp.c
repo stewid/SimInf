@@ -151,5 +151,5 @@ SEXP SISe_sp_run(SEXP model, SEXP threads, SEXP seed)
 {
     TRFun tr_fun[] = {&SISe_sp_S_to_I, &SISe_sp_I_to_S};
 
-    return siminf_run(model, threads, seed, tr_fun, &SISe_sp_post_time_step);
+    return SimInf_run(model, threads, seed, tr_fun, &SISe_sp_post_time_step);
 }

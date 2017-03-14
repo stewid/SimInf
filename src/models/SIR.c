@@ -108,5 +108,5 @@ SEXP SIR_run(SEXP model, SEXP threads, SEXP seed)
 {
     TRFun tr_fun[] = {&SIR_S_to_I, &SIR_I_to_R};
 
-    return siminf_run(model, threads, seed, tr_fun, &SIR_post_time_step);
+    return SimInf_run(model, threads, seed, tr_fun, &SIR_post_time_step);
 }
