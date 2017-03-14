@@ -624,7 +624,7 @@ setMethod("plot",
 
           ## Plot
           if (is.null(names(x@tspan))) {
-              plot(m[1,], type = "l", ylab = "Proportion",
+               plot(x = x@tspan, y = m[1,], type = "l", ylab = "Proportion",
                    ylim = c(0, 1), col = col[1], lty = lty[1], lwd = lwd, ...)
           } else {
               plot(x = as.Date(names(x@tspan)), y = m[1,], type = "l",
@@ -634,7 +634,7 @@ setMethod("plot",
           title(xlab = "Time", outer = TRUE, line = 0)
           for (i in seq_len(dim(m)[1])[-1]) {
               if (is.null(names(x@tspan))) {
-                  lines(m[i, ], type = "l", lty = lty[i],
+                  lines(x = x@tspan, y = m[i, ], type = "l", lty = lty[i],
                         col = col[i], lwd = lwd, ...)
               } else {
                   lines(x = as.Date(names(x@tspan)), y = m[i, ],
