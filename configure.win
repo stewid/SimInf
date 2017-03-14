@@ -46,9 +46,6 @@ if [ ${have_gsl} != yes ]; then
     exit 1
 fi
 
-echo "  Creating 'src/init.c' to register functions to be called from R"
-"${R_SCRIPT}" "tools/init.R"
-
 echo "  The configuration seems ok, continuing the build process."
 
 exit 0
