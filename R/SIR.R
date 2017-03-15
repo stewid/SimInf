@@ -16,11 +16,11 @@
 
 ##' Class \code{"SIR"}
 ##'
-##' Class to handle the SIR \code{\link{siminf_model}}.
+##' Class to handle the SIR \code{\link{SimInf_model}}.
 ##' @include SimInf_model.R
 ##' @include AllGenerics.R
 ##' @export
-setClass("SIR", contains = c("siminf_model"))
+setClass("SIR", contains = c("SimInf_model"))
 
 ##' Create a SIR model
 ##'
@@ -39,7 +39,7 @@ setClass("SIR", contains = c("siminf_model"))
 ##'     see details.
 ##' @template tspan-param
 ##' @param events a \code{data.frame} with the scheduled events, see
-##'     \code{\link{siminf_model}}.
+##'     \code{\link{SimInf_model}}.
 ##' @param beta The transmission rate from susceptible to infected.
 ##' @param gamma The recovery rate from infected to recovered.
 ##' @return \code{SIR}
@@ -121,7 +121,7 @@ SIR <- function(u0,
     storage.mode(gdata) <- "double"
     names(gdata) <- c("beta", "gamma")
 
-    model <- siminf_model(G      = G,
+    model <- SimInf_model(G      = G,
                           S      = S,
                           E      = E,
                           N      = N,

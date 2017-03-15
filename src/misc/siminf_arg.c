@@ -76,7 +76,7 @@ int siminf_arg_check_matrix(SEXP arg)
  */
 int siminf_arg_check_model(SEXP arg)
 {
-    static const char *valid[] = {"siminf_model", ""};
+    static const char *valid[] = {"SimInf_model", ""};
 
     if (arg == R_NilValue || !IS_S4_OBJECT(arg))
         return -1;

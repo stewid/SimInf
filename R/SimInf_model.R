@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Class \code{"siminf_model"}
+##' Class \code{"SimInf_model"}
 ##'
 ##' Class to handle the siminf data model
 ##' @section Slots:
@@ -97,7 +97,7 @@
 ##' @keywords methods
 ##' @export
 ##' @import Matrix
-setClass("siminf_model",
+setClass("SimInf_model",
          slots = c(G        = "dgCMatrix",
                    S        = "dgCMatrix",
                    U        = "matrix",
@@ -190,7 +190,7 @@ setClass("siminf_model",
          }
 )
 
-##' Create a \code{siminf_model}
+##' Create a \code{SimInf_model}
 ##'
 ##' @param G Dependency graph that indicates the transition rates that
 ##'     need to be updated after a given state transition has occured.
@@ -234,9 +234,9 @@ setClass("siminf_model",
 ##'     \code{\linkS4class{scheduled_events}}.
 ##' @param N Sparse matrix to handle scheduled events, see
 ##'     \code{\linkS4class{scheduled_events}}.
-##' @return \linkS4class{siminf_model}
+##' @return \linkS4class{SimInf_model}
 ##' @export
-siminf_model <- function(G,
+SimInf_model <- function(G,
                          S,
                          tspan,
                          events = NULL,
@@ -349,7 +349,7 @@ siminf_model <- function(G,
         stop("'events' must be NULL or a data.frame")
     events <- scheduled_events(E = E, N = N, events = events, t0 = t0)
 
-    return(new("siminf_model",
+    return(new("SimInf_model",
                G      = G,
                S      = S,
                U      = U,
@@ -365,7 +365,7 @@ siminf_model <- function(G,
 ##' @rdname U-methods
 ##' @export
 setMethod("U",
-          signature("siminf_model"),
+          signature("SimInf_model"),
           function(model) {
               d <- dim(model@U)
               if (identical(d, c(0L, 0L))) {
@@ -381,7 +381,7 @@ setMethod("U",
 ##' @rdname V-methods
 ##' @export
 setMethod("V",
-          signature("siminf_model"),
+          signature("SimInf_model"),
           function(model) {
               d <- dim(model@V)
               if (identical(d, c(0L, 0L))) {
@@ -463,7 +463,7 @@ Nd <- function(model) {
 ##' @rdname run-methods
 ##' @export
 setMethod("run",
-          signature(model = "siminf_model"),
+          signature(model = "SimInf_model"),
           function(model, threads, seed, U, V)
           {
               if (!is.null(U)) {
@@ -508,7 +508,7 @@ setMethod("run",
                                        "dgCMatrix")
               }
 
-              ## Check that siminf_model contains all data structures
+              ## Check that SimInf_model contains all data structures
               ## required by the siminf solver and that they make sense
               validObject(model);
 
@@ -553,7 +553,7 @@ setMethod("run",
           }
 )
 
-##' Plot \code{\linkS4class{siminf_model}}
+##' Plot \code{\linkS4class{SimInf_model}}
 ##'
 ##' @param x The \code{model} to plot
 ##' @param legend The character vector to appear in the legend.
@@ -565,7 +565,7 @@ setMethod("run",
 ##' @param lwd The line width for each compartment. Default is 2.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
-##' @aliases plot plot-methods plot,siminf_model-method
+##' @aliases plot plot-methods plot,SimInf_model-method
 ##' @docType methods
 ##' @importFrom graphics axis
 ##' @importFrom graphics legend
@@ -585,7 +585,7 @@ setMethod("run",
 ##' ## Plot the proportion susceptible and infected individuals
 ##' plot(result)
 setMethod("plot",
-          signature(x = "siminf_model"),
+          signature(x = "SimInf_model"),
           function(x, legend, col = NULL, lty = NULL, lwd = NULL, ...)
       {
           if (identical(dim(x@U), c(0L, 0L)))
@@ -683,11 +683,11 @@ show_V <- function(object) {
     }
 }
 
-##' Brief summary of \code{siminf_model}
+##' Brief summary of \code{SimInf_model}
 ##'
-##' @aliases show,siminf_model-methods
+##' @aliases show,SimInf_model-methods
 ##' @docType methods
-##' @param object The siminf_model \code{object}
+##' @param object The SimInf_model \code{object}
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
 ##' @export
@@ -705,7 +705,7 @@ show_V <- function(object) {
 ##' ## Brief summary of the result.
 ##' result
 setMethod("show",
-          signature(object = "siminf_model"),
+          signature(object = "SimInf_model"),
           function (object)
           {
               ## The model name
@@ -723,17 +723,17 @@ setMethod("show",
           }
 )
 
-##' Summary of \code{siminf_model}
+##' Summary of \code{SimInf_model}
 ##'
-##' @aliases summary,siminf_model-methods
+##' @aliases summary,SimInf_model-methods
 ##' @docType methods
-##' @param object The \code{siminf_model} object
+##' @param object The \code{SimInf_model} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
 ##' @export
 setMethod("summary",
-          signature(object = "siminf_model"),
+          signature(object = "SimInf_model"),
           function(object, ...)
           {
               ## The model name

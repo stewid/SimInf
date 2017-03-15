@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Run \code{siminf_model} on scaled parameters
+##' Run \code{SimInf_model} on scaled parameters
 ##'
 ##' @rdname run_outer-methods
 ##' @docType methods
@@ -66,7 +66,7 @@ setGeneric("run_outer",
 ##' @rdname run_outer-methods
 ##' @export
 setMethod("run_outer",
-          signature(x = "numeric", y = "numeric", model = "siminf_model"),
+          signature(x = "numeric", y = "numeric", model = "SimInf_model"),
           function(x, y, model, formula, FUN, ...)
           {
               if (is.null(names(model@gdata)))

@@ -17,11 +17,11 @@
 
 ##' Class \code{"SISe3_sp"}
 ##'
-##' Class to handle the SISe3_sp \code{\link{siminf_model}} model.
+##' Class to handle the SISe3_sp \code{\link{SimInf_model}} model.
 ##' @include SimInf_model.R
 ##' @include AllGenerics.R
 ##' @export
-setClass("SISe3_sp", contains = c("siminf_model"))
+setClass("SISe3_sp", contains = c("SimInf_model"))
 
 ##' Create a SISe3_sp model
 ##'
@@ -44,7 +44,7 @@ setClass("SISe3_sp", contains = c("siminf_model"))
 ##' node, see details.
 ##' @template tspan-param
 ##' @param events a \code{data.frame} with the scheduled events, see
-##' \code{\link{siminf_model}}.
+##' \code{\link{SimInf_model}}.
 ##' @param phi A numeric vector with the initial environmental
 ##' infectious pressure in each node. Default NULL which gives 0 in
 ##' each node.
@@ -208,7 +208,7 @@ SISe3_sp <- function(u0,
                       "beta_t1", "beta_t2", "beta_t3", "beta_t4",
                       "coupling")
 
-    model <- siminf_model(G      = G,
+    model <- SimInf_model(G      = G,
                           S      = S,
                           E      = E,
                           N      = N,
