@@ -19,7 +19,7 @@ of \code{tspan}. The dates are added as names to the numeric
 vector.}
 
 \item{events}{a \code{data.frame} with the scheduled events, see
-\code{\link{siminf_model}}.}
+\code{\link{SimInf_model}}.}
 
 \item{beta}{The transmission rate from susceptible to infected.}
 

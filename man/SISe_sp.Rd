@@ -22,7 +22,7 @@ of \code{tspan}. The dates are added as names to the numeric
 vector.}
 
 \item{events}{a \code{data.frame} with the scheduled events, see
-\code{\link{siminf_model}}.}
+\code{\link{SimInf_model}}.}
 
 \item{phi}{A numeric vector with the initial environmental
 infectious pressure in each node. Default NULL which gives 0

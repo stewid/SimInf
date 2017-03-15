@@ -3,12 +3,12 @@
 \docType{methods}
 \name{U}
 \alias{U}
-\alias{U,siminf_model-method}
+\alias{U,SimInf_model-method}
 \title{Extract the number of individuals in each compartment}
 \usage{
 U(model)
 
-\S4method{U}{siminf_model}(model)
+\S4method{U}{SimInf_model}(model)
 }
 \arguments{
 \item{model}{The \code{model} to extract the result matrix from.}

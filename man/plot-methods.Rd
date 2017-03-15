@@ -8,7 +8,7 @@
 \alias{plot,scheduled_events-method}
 \alias{plot-methods}
 \alias{plot}
-\alias{plot,siminf_model-method}
+\alias{plot,SimInf_model-method}
 \alias{plot-methods}
 \alias{plot}
 \alias{plot,SEIR-method}
@@ -31,7 +31,7 @@
 \usage{
 \S4method{plot}{scheduled_events}(x, frame.plot = FALSE, ...)
 
-\S4method{plot}{siminf_model}(x, legend, col = NULL, lty = NULL,
+\S4method{plot}{SimInf_model}(x, legend, col = NULL, lty = NULL,
   lwd = NULL, ...)
 
 \S4method{plot}{SEIR}(x, legend = c("S", "E", "I", "R"), col = c("blue",
@@ -75,7 +75,7 @@ sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 \description{
 Plot \code{\linkS4class{scheduled_events}}
 
-Plot \code{\linkS4class{siminf_model}}
+Plot \code{\linkS4class{SimInf_model}}
 }
 \examples{
 ## Create a 'SISe' demo model with 1 node and initialize

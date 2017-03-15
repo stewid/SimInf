@@ -3,12 +3,12 @@
 \docType{methods}
 \name{run}
 \alias{run}
-\alias{run,siminf_model-method}
+\alias{run,SimInf_model-method}
 \title{Run the SimInf stochastic simulation algorithm}
 \usage{
 run(model, threads = NULL, seed = NULL, U = NULL, V = NULL)
 
-\S4method{run}{siminf_model}(model, threads = NULL, seed = NULL, U = NULL,
+\S4method{run}{SimInf_model}(model, threads = NULL, seed = NULL, U = NULL,
   V = NULL)
 }
 \arguments{
@@ -35,7 +35,7 @@ matrix, \code{dgCMatrix}, with dimension
 real-valued continuous state to a dense matrix.}
 }
 \value{
-\code{siminf_model} with result from simulation.
+\code{SimInf_model} with result from simulation.
 }
 \description{
 Run the SimInf stochastic simulation algorithm

@@ -3,12 +3,12 @@
 \docType{methods}
 \name{run_outer}
 \alias{run_outer}
-\alias{run_outer,numeric,numeric,siminf_model-method}
-\title{Run \code{siminf_model} on scaled parameters}
+\alias{run_outer,numeric,numeric,SimInf_model-method}
+\title{Run \code{SimInf_model} on scaled parameters}
 \usage{
 run_outer(x, y, model, formula = NULL, FUN = NULL, ...)
 
-\S4method{run_outer}{numeric,numeric,siminf_model}(x, y, model,
+\S4method{run_outer}{numeric,numeric,SimInf_model}(x, y, model,
   formula = NULL, FUN = NULL, ...)
 }
 \arguments{
@@ -36,7 +36,7 @@ will be scaled by \code{x}.}
 Array with dimension \code{c(dim(x), dim(y))}.
 }
 \description{
-Run \code{siminf_model} on scaled parameters
+Run \code{SimInf_model} on scaled parameters
 }
 \examples{
 \dontrun{

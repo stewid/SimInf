@@ -5,5 +5,5 @@
 \alias{SIR-class}
 \title{Class \code{"SIR"}}
 \description{
-Class to handle the SIR \code{\link{siminf_model}}.
+Class to handle the SIR \code{\link{SimInf_model}}.
 }

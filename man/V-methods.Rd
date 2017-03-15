@@ -3,12 +3,12 @@
 \docType{methods}
 \name{V}
 \alias{V}
-\alias{V,siminf_model-method}
+\alias{V,SimInf_model-method}
 \title{Extract the continuous state variables}
 \usage{
 V(model)
 
-\S4method{V}{siminf_model}(model)
+\S4method{V}{SimInf_model}(model)
 }
 \arguments{
 \item{model}{The \code{model} to extract the result matrix from.}

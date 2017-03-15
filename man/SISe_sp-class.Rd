@@ -5,5 +5,5 @@
 \alias{SISe_sp-class}
 \title{Class \code{"SISe_sp"}}
 \description{
-Class to handle the \code{SISe_sp} \code{\link{siminf_model}}.
+Class to handle the \code{SISe_sp} \code{\link{SimInf_model}}.
 }
