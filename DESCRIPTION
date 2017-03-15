@@ -35,11 +35,11 @@ Imports:
     stats,
     utils,
     Matrix
-Collate:
+Collate: 
     'AllGenerics.R'
     'check_arguments.R'
     'scheduled_events.R'
-    'siminf_model.R'
+    'SimInf_model.R'
     'SEIR.R'
     'SIR.R'
     'SISe.R'

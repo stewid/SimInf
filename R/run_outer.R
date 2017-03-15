@@ -34,7 +34,7 @@
 ##' @param FUN A function to use on the scaled model 'gdata' parameters.
 ##' @param ... Optional arguments to be passed to \code{FUN}.
 ##' @return Array with dimension \code{c(dim(x), dim(y))}.
-##' @include siminf_model.R
+##' @include SimInf_model.R
 ##' @importFrom stats terms
 ##' @examples
 ##' \dontrun{

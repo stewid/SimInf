@@ -18,7 +18,7 @@
 ##' Class \code{"SISe_sp"}
 ##'
 ##' Class to handle the \code{SISe_sp} \code{\link{siminf_model}}.
-##' @include siminf_model.R
+##' @include SimInf_model.R
 ##' @include AllGenerics.R
 ##' @export
 setClass("SISe_sp", contains = c("siminf_model"))

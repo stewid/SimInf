@@ -17,7 +17,7 @@
 ##' Class \code{"SEIR"}
 ##'
 ##' Class to handle the SEIR \code{\link{siminf_model}}.
-##' @include siminf_model.R
+##' @include SimInf_model.R
 ##' @include AllGenerics.R
 ##' @export
 setClass("SEIR", contains = c("siminf_model"))
