@@ -542,7 +542,7 @@ setMethod("run",
                   }
               }
 
-              lbl <- rep(rownames(result$model@S), dim(result$model@u0)[2])
+              lbl <- rep(rownames(result$model@S), Nn(result$model))
               if (!is.null(U)) {
                   rownames(result$model@U_sparse) <- lbl
               } else {
