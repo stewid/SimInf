@@ -556,12 +556,13 @@ setMethod("run",
 ##' Plot \code{\linkS4class{SimInf_model}}
 ##'
 ##' @param x The \code{model} to plot
-##' @param legend The character vector to appear in the legend.
+##' @param legend The character vector to appear in the
+##'     legend. Default is to use the names of the compartments.
 ##' @param col The plotting color for each compartment. Default is
-##' black.
+##'     black.
 ##' @param lty The line type for each compartment. Default is the
-##' sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
-##' 6=twodash.
+##'     sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
+##'     6=twodash.
 ##' @param lwd The line width for each compartment. Default is 2.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
@@ -586,71 +587,75 @@ setMethod("run",
 ##' plot(result)
 setMethod("plot",
           signature(x = "SimInf_model"),
-          function(x, legend, col = NULL, lty = NULL, lwd = NULL, ...)
-      {
-          if (identical(dim(x@U), c(0L, 0L)))
-              stop("Please run the model first, the 'U' matrix is empty")
+          function(x, legend = NULL, col = NULL, lty = NULL,
+                   lwd = NULL, ...)
+          {
+              if (identical(dim(x@U), c(0L, 0L)))
+                  stop("Please run the model first, the 'U' matrix is empty")
 
-          savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
-          on.exit(par(savepar))
+              savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
+              on.exit(par(savepar))
 
-          ## Create matrix where each row is the sum of individuals in
-          ## that state
-          m <- do.call(rbind, lapply(seq_len(dim(x@S)[1]), function(from) {
-              i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
-              colSums(as.matrix(x@U[i, , drop = FALSE]))
-          }))
+              ## Create matrix where each row is the sum of individuals in
+              ## that state
+              m <- do.call(rbind, lapply(seq_len(dim(x@S)[1]), function(from) {
+                  i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
+                  colSums(as.matrix(x@U[i, , drop = FALSE]))
+              }))
 
-          ## Calculate proportion
-          m <- apply(m, 2, function(x) x / sum(x))
+              ## Calculate proportion
+              m <- apply(m, 2, function(x) x / sum(x))
 
-          ## Default line type
-          if (is.null(lty)) {
+              ## Default line type
+              if (is.null(lty)) {
+                  if (is.null(col)) {
+                      lty <- seq_len(dim(m)[1])
+                  } else {
+                      lty <- rep(1, dim(m)[1])
+                  }
+              }
+
+              ## Default line width
+              if (is.null(lwd))
+                  lwd <- 2
+
+              ## Default color is black
               if (is.null(col)) {
-                  lty <- seq_len(dim(m)[1])
-              } else {
-                  lty <- rep(1, dim(m)[1])
+                  col <- rep("black", dim(x@S)[1])
               }
-          }
 
-          ## Default line width
-          if (is.null(lwd))
-              lwd <- 2
-
-          ## Default color is black
-          if (is.null(col)) {
-              col <- rep("black", dim(x@S)[1])
-          }
-
-          ## Plot
-          if (is.null(names(x@tspan))) {
-              plot(x = x@tspan, y = m[1,], type = "l", ylab = "Proportion",
-                   ylim = c(0, 1), col = col[1], lty = lty[1], lwd = lwd, ...)
-          } else {
-              plot(x = as.Date(names(x@tspan)), y = m[1,], type = "l",
-                   ylab = "Proportion", ylim = c(0, 1), col = col[1],
-                   lty = lty[1], lwd = lwd, ...)
-          }
-          title(xlab = "Time", outer = TRUE, line = 0)
-          for (i in seq_len(dim(m)[1])[-1]) {
+              ## Plot
               if (is.null(names(x@tspan))) {
-                  lines(x = x@tspan, y = m[i, ], type = "l", lty = lty[i],
-                        col = col[i], lwd = lwd, ...)
+                  plot(x = x@tspan, y = m[1,], type = "l", ylab = "Proportion",
+                       ylim = c(0, 1), col = col[1], lty = lty[1], lwd = lwd, ...)
               } else {
-                  lines(x = as.Date(names(x@tspan)), y = m[i, ],
-                        type = "l", lty = lty[i], col = col[i], lwd = lwd, ...)
+                  plot(x = as.Date(names(x@tspan)), y = m[1,], type = "l",
+                       ylab = "Proportion", ylim = c(0, 1), col = col[1],
+                       lty = lty[1], lwd = lwd, ...)
               }
-          }
+              title(xlab = "Time", outer = TRUE, line = 0)
+              for (i in seq_len(dim(m)[1])[-1]) {
+                  if (is.null(names(x@tspan))) {
+                      lines(x = x@tspan, y = m[i, ], type = "l", lty = lty[i],
+                            col = col[i], lwd = lwd, ...)
+                  } else {
+                      lines(x = as.Date(names(x@tspan)), y = m[i, ],
+                            type = "l", lty = lty[i], col = col[i], lwd = lwd, ...)
+                  }
+              }
 
-          ## Add legend below plot
-          par(fig = c(0, 1, 0, 1),
-              oma = c(0, 0, 0, 0),
-              mar = c(0, 0, 0, 0), new = TRUE)
-          plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-          graphics::legend("bottom", inset = c(0, 0), lty = lty,
-                           col = col, bty = "n", horiz = TRUE,
-                           legend = legend, lwd = lwd)
-      }
+              ## Add legend below plot. Default legend is the names of
+              ## the compartments.
+              if (is.null(legend))
+                  legend <- rownames(x@S)
+              par(fig = c(0, 1, 0, 1),
+                  oma = c(0, 0, 0, 0),
+                  mar = c(0, 0, 0, 0), new = TRUE)
+              plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+              graphics::legend("bottom", inset = c(0, 0), lty = lty,
+                               col = col, bty = "n", horiz = TRUE,
+                               legend = legend, lwd = lwd)
+          }
 )
 
 ##' @keywords internal

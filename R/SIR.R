@@ -196,14 +196,12 @@ setMethod("recovered",
 setMethod("plot",
           signature(x = "SIR"),
           function(x,
-                   legend = c("S", "I", "R"),
                    col = c("blue", "red", "darkgreen"),
                    lty = rep(1, 3),
                    lwd = 2,
                    ...)
           {
-              callNextMethod(x, legend = legend, col = col,
-                             lty = lty, lwd = lwd, ...)
+              callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
           }
 )
 

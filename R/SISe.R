@@ -247,13 +247,11 @@ setMethod("prevalence",
 setMethod("plot",
           signature(x = "SISe"),
           function(x,
-                   legend = c("S", "I"),
                    col = c("blue", "red"),
                    lty = rep(1, 2),
                    lwd = 2,
                    ...)
           {
-              callNextMethod(x, legend = legend, col = col,
-                             lty = lty, lwd = lwd, ...)
+              callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
           }
 )

@@ -31,17 +31,17 @@
 \usage{
 \S4method{plot}{scheduled_events}(x, frame.plot = FALSE, ...)
 
-\S4method{plot}{SimInf_model}(x, legend, col = NULL, lty = NULL,
+\S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL, lty = NULL,
   lwd = NULL, ...)
 
-\S4method{plot}{SEIR}(x, legend = c("S", "E", "I", "R"), col = c("blue",
-  "orange", "red", "darkgreen"), lty = rep(1, 4), lwd = 2, ...)
+\S4method{plot}{SEIR}(x, col = c("blue", "orange", "red", "darkgreen"),
+  lty = rep(1, 4), lwd = 2, ...)
 
-\S4method{plot}{SIR}(x, legend = c("S", "I", "R"), col = c("blue", "red",
-  "darkgreen"), lty = rep(1, 3), lwd = 2, ...)
+\S4method{plot}{SIR}(x, col = c("blue", "red", "darkgreen"), lty = rep(1,
+  3), lwd = 2, ...)
 
-\S4method{plot}{SISe}(x, legend = c("S", "I"), col = c("blue", "red"),
-  lty = rep(1, 2), lwd = 2, ...)
+\S4method{plot}{SISe}(x, col = c("blue", "red"), lty = rep(1, 2), lwd = 2,
+  ...)
 
 \S4method{plot}{SISe3}(x, legend = expression(S[1], I[1], S[2], I[2], S[3],
   I[3]), col = rep(c("blue", "red"), 3), lty = rep(1:3, each = 2),
@@ -51,8 +51,8 @@
   I[3]), col = rep(c("blue", "red"), 3), lty = rep(1:3, each = 2),
   lwd = 2, ...)
 
-\S4method{plot}{SISe_sp}(x, legend = c("S", "I"), col = c("blue", "red"),
-  lty = rep(1, 2), lwd = 2, ...)
+\S4method{plot}{SISe_sp}(x, col = c("blue", "red"), lty = rep(1, 2),
+  lwd = 2, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot}
@@ -61,7 +61,8 @@
 
 \item{...}{Additional arguments affecting the plot produced.}
 
-\item{legend}{The character vector to appear in the legend.}
+\item{legend}{The character vector to appear in the
+legend. Default is to use the names of the compartments.}
 
 \item{col}{The plotting color for each compartment. Default is
 black.}
