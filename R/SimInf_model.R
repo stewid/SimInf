@@ -567,7 +567,6 @@ setMethod("run",
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SimInf_model-method
-##' @docType methods
 ##' @importFrom graphics axis
 ##' @importFrom graphics legend
 ##' @importFrom graphics lines
@@ -691,7 +690,6 @@ show_V <- function(object) {
 ##' Brief summary of \code{SimInf_model}
 ##'
 ##' @aliases show,SimInf_model-methods
-##' @docType methods
 ##' @param object The SimInf_model \code{object}
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
@@ -731,7 +729,6 @@ setMethod("show",
 ##' Summary of \code{SimInf_model}
 ##'
 ##' @aliases summary,SimInf_model-methods
-##' @docType methods
 ##' @param object The \code{SimInf_model} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').

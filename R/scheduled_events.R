@@ -374,7 +374,6 @@ plot_scheduled_events <- function(x,
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,scheduled_events-method
-##' @docType methods
 ##' @importFrom graphics plot
 ##' @importFrom graphics par
 ##' @importFrom stats xtabs
@@ -404,7 +403,6 @@ setMethod("plot",
 ##'
 ##' Shows the number of scheduled events.
 ##' @aliases show,scheduled_events-methods
-##' @docType methods
 ##' @param object The scheduled_events \code{object}
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
@@ -423,7 +421,6 @@ setMethod("show",
 ##' Shows the number of scheduled events and the number of scheduled
 ##' events per event type.
 ##' @aliases summary,scheduled_events-methods
-##' @docType methods
 ##' @param object The \code{scheduled_events} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').

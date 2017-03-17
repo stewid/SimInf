@@ -19,7 +19,6 @@
 ##' Run the SimInf stochastic simulation algorithm
 ##'
 ##' @rdname run-methods
-##' @docType methods
 ##' @param model The siminf model to run.
 ##' @param threads Number of threads. Default is NULL, i.e. to use the
 ##'     number of available processors.
@@ -65,7 +64,6 @@ setGeneric("run",
 ##' dimension of the matrix is \eqn{N_n N_c \times}
 ##' \code{length(tspan)} where \eqn{N_n} is the number of nodes.
 ##' @rdname U-methods
-##' @docType methods
 ##' @param model The \code{model} to extract the result matrix from.
 ##' @return The number of individuals in each compartment
 ##' @keywords methods
@@ -105,7 +103,6 @@ setGeneric("U", function(model) standardGeneric("U"))
 ##' \code{tspan[j]}. The dimension of the matrix is
 ##' \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times} \code{length(tspan)}.
 ##' @rdname V-methods
-##' @docType methods
 ##' @param model The \code{model} to extract the result matrix from.
 ##' @return The continuous state variables
 ##' @keywords methods
@@ -155,7 +152,6 @@ setGeneric("V", function(model) standardGeneric("V"))
 ##'
 ##' Extracts the number of susceptible.
 ##' @rdname susceptible-methods
-##' @docType methods
 ##' @param model The \code{model} to extract the susceptible from
 ##' @param ... Additional arguments affecting the measure
 ##' @param age For models with age categories, the age category to
@@ -223,7 +219,6 @@ setGeneric("susceptible",
 ##'
 ##' Extracts the number of infected
 ##' @rdname infected-methods
-##' @docType methods
 ##' @param model The \code{model} to extract the infected from
 ##' @param ... Additional arguments affecting the measure
 ##' @param age For models with age categories, the age category to
@@ -290,7 +285,6 @@ setGeneric("infected",
 ##'
 ##' Extracts the number of recovered
 ##' @rdname recovered-methods
-##' @docType methods
 ##' @param model The \code{model} to extract the recovered from
 ##' @param ... Additional arguments affecting the measure
 ##' @param i Indices specifying the nodes to include when extracting
@@ -330,7 +324,6 @@ setGeneric("recovered",
 ##'
 ##' Calculate the proportion infected individuals
 ##' @rdname prevalence-methods
-##' @docType methods
 ##' @param model The \code{model} to calculated the prevalence from
 ##' @param ... Additional arguments affecting the measure
 ##' @param i Indices specifying the nodes to include in the

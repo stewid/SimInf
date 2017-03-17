@@ -18,7 +18,6 @@
 ##' Run \code{SimInf_model} on scaled parameters
 ##'
 ##' @rdname run_outer-methods
-##' @docType methods
 ##' @param x Scale the model \code{gdata} parameter values on the
 ##'     right hand side of the formula with \code{x} before calling
 ##'     \code{FUN} with the scaled model as argument.
