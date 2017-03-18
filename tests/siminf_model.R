@@ -511,11 +511,9 @@ model <- SISe(u0 = u0, tspan = 1:10,
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-u <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
-v <- Matrix::sparseMatrix(1:6, 5:10)
-U(model) <- u
-V(model) <- v
-result <- run(model, threads = 1, U = u, V = v)
+U(model) <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
+V(model) <- Matrix::sparseMatrix(1:6, 5:10)
+result <- run(model, threads = 1)
 stopifnot(is.null(colnames(U(result))))
 stopifnot(is.null(colnames(V(result))))
 
@@ -535,10 +533,8 @@ model <- SISe(u0 = u0, tspan = tspan,
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-u <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
-v <- Matrix::sparseMatrix(1:6, 5:10)
-U(model) <- u
-V(model) <- v
-result <- run(model, threads = 1, U = u, V = v)
+U(model) <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
+V(model) <- Matrix::sparseMatrix(1:6, 5:10)
+result <- run(model, threads = 1)
 stopifnot(identical(colnames(U(result)), as.character(tspan)))
 stopifnot(identical(colnames(V(result)), as.character(tspan)))

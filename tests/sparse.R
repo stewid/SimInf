@@ -39,9 +39,8 @@ U_exp <- new("dgCMatrix",
                    94, 10, 3, 91, 13, 5, 92, 12, 7),
              factors = list())
 
-m <- sparseMatrix(1:18, rep(5:10, each = 3))
-U(model) <- m
-U_obs <- U(run(model, threads = 1, seed = 123, U = m))
+U(model) <- sparseMatrix(1:18, rep(5:10, each = 3))
+U_obs <- U(run(model, threads = 1, seed = 123))
 stopifnot(identical(U_obs, U_exp))
 
 if (SimInf:::have_openmp()) {
@@ -56,8 +55,8 @@ if (SimInf:::have_openmp()) {
                      x = c(97, 4, 0, 100, 3, 0, 97, 7, 1,
                            92, 9, 6, 98, 7, 4, 94, 9, 8),
                      factors = list())
-    U(model) <- m
-    U_obs_omp <- U(run(model, threads = 2, seed = 123, U = m))
+    U(model) <- sparseMatrix(1:18, rep(5:10, each = 3))
+    U_obs_omp <- U(run(model, threads = 2, seed = 123))
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
 
@@ -82,9 +81,8 @@ model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
              beta = 0.16,
              gamma = 0.077)
 result <- run(model, threads = 1)
-m <- sparseMatrix(1:18, rep(5:10, each = 3))
-U(result) <- m
-result <- run(result, threads = 1, U = m)
+U(result) <- sparseMatrix(1:18, rep(5:10, each = 3))
+result <- run(result, threads = 1)
 stopifnot(identical(dim(result@U), c(0L, 0L)))
 stopifnot(identical(dim(result@U_sparse), c(18L, 10L)))
 U(result) <- NULL
@@ -117,9 +115,8 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 0.000011)
 result <- run(model, threads = 1)
-m <- sparseMatrix(1:6, 5:10)
-V(result) <- m
-result <- run(result, threads = 1, V = m)
+V(result) <- sparseMatrix(1:6, 5:10)
+result <- run(result, threads = 1)
 stopifnot(identical(dim(result@V), c(0L, 0L)))
 stopifnot(identical(dim(result@V_sparse), c(6L, 10L)))
 V(result) <- NULL
