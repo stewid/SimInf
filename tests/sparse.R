@@ -40,6 +40,7 @@ U_exp <- new("dgCMatrix",
              factors = list())
 
 m <- sparseMatrix(1:18, rep(5:10, each = 3))
+U(model) <- m
 U_obs <- U(run(model, threads = 1, seed = 123, U = m))
 stopifnot(identical(U_obs, U_exp))
 
@@ -55,31 +56,38 @@ if (SimInf:::have_openmp()) {
                      x = c(97, 4, 0, 100, 3, 0, 97, 7, 1,
                            92, 9, 6, 98, 7, 4, 94, 9, 8),
                      factors = list())
+    U(model) <- m
     U_obs_omp <- U(run(model, threads = 2, seed = 123, U = m))
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
 
 ## Check wrong dimension of U
 m <- sparseMatrix(1:21, rep(5:11, each = 3))
-res <- tools::assertError(run(model, U = m))
-stopifnot(length(grep("Wrong dimension of 'U'",
+res <- tools::assertError(U(model) <- m)
+stopifnot(length(grep("Wrong dimension of 'value'",
                       res[[1]]$message)) > 0)
 
 ## Check wrong dimension of V
 m <- as(sparseMatrix(numeric(0), numeric(0), dims = c(0, 11)), "dgCMatrix")
-res <- tools::assertError(run(model, V = m))
-stopifnot(length(grep("Wrong dimension of 'V'",
+res <- tools::assertError(V(model) <- m)
+stopifnot(length(grep("Wrong dimension of 'value'",
                       res[[1]]$message)) > 0)
 
 ## Check that U is cleared. First run a model to get a dense U result
 ## matrix, then run that model and check that the dense U result
 ## matrix is cleared. Then run the model again and check that the
 ## sparse result matrix is cleared.
+model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
+             tspan = 1:10,
+             beta = 0.16,
+             gamma = 0.077)
 result <- run(model, threads = 1)
 m <- sparseMatrix(1:18, rep(5:10, each = 3))
+U(result) <- m
 result <- run(result, threads = 1, U = m)
 stopifnot(identical(dim(result@U), c(0L, 0L)))
 stopifnot(identical(dim(result@U_sparse), c(18L, 10L)))
+U(result) <- NULL
 result <- run(result, threads = 1)
 stopifnot(identical(dim(result@U), c(18L, 10L)))
 stopifnot(identical(dim(result@U_sparse), c(0L, 0L)))
@@ -110,9 +118,11 @@ model <- SISe(u0      = u0,
               epsilon = 0.000011)
 result <- run(model, threads = 1)
 m <- sparseMatrix(1:6, 5:10)
+V(result) <- m
 result <- run(result, threads = 1, V = m)
 stopifnot(identical(dim(result@V), c(0L, 0L)))
 stopifnot(identical(dim(result@V_sparse), c(6L, 10L)))
+V(result) <- NULL
 result <- run(result, threads = 1)
 stopifnot(identical(dim(result@V), c(6L, 10L)))
 stopifnot(identical(dim(result@V_sparse), c(0L, 0L)))

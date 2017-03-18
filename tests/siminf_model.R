@@ -477,3 +477,68 @@ res <- tools::assertError(model <- SISe3(u0        = u0,
                                          epsilon   = 1))
 stopifnot(length(grep("'events' must be NULL or a data.frame",
                       res[[1]]$message)) > 0)
+
+## Check that tspan names are copied to U and V colnames
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:10,
+             beta = 0.16,
+             gamma = 0.077)
+result <- run(model, threads = 1)
+stopifnot(is.null(colnames(U(result))))
+stopifnot(is.null(colnames(V(result))))
+
+tspan <- seq(as.Date("2016-01-01"), as.Date("2016-01-10"), by = 1)
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = tspan,
+             beta = 0.16,
+             gamma = 0.077)
+result <- run(model, threads = 1)
+stopifnot(identical(colnames(U(result)), as.character(tspan)))
+stopifnot(identical(colnames(V(result)), as.character(tspan)))
+
+u0 <- data.frame(S = 100:105, I = 1:6)
+model <- SISe(u0 = u0, tspan = 1:10,
+              phi = rep(0, 6),
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
+u <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
+v <- Matrix::sparseMatrix(1:6, 5:10)
+U(model) <- u
+V(model) <- v
+result <- run(model, threads = 1, U = u, V = v)
+stopifnot(is.null(colnames(U(result))))
+stopifnot(is.null(colnames(V(result))))
+
+tspan <- seq(as.Date("2016-01-01"), as.Date("2016-01-10"), by = 1)
+u0 <- data.frame(S = 100:105, I = 1:6)
+model <- SISe(u0 = u0, tspan = tspan,
+              phi = rep(0, 6),
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
+u <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
+v <- Matrix::sparseMatrix(1:6, 5:10)
+U(model) <- u
+V(model) <- v
+result <- run(model, threads = 1, U = u, V = v)
+stopifnot(identical(colnames(U(result)), as.character(tspan)))
+stopifnot(identical(colnames(V(result)), as.character(tspan)))
