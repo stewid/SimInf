@@ -544,13 +544,6 @@ setMethod("run",
               if (!is.null(result$error))
                   siminf_error(result$error)
 
-              lbl <- rep(rownames(result$model@S), Nn(result$model))
-              if (dim(result$model@U_sparse)[1] == Nc(result$model) * Nn(result$model))  {
-                  rownames(result$model@U_sparse) <- lbl
-              } else {
-                  rownames(result$model@U) <- lbl
-              }
-
               result$model
           }
 )

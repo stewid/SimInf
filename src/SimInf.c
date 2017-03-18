@@ -42,7 +42,8 @@ SEXP SimInf_run(
 {
     int err = 0, n_threads;
     SEXP trajectory, names, result = R_NilValue;
-    SEXP ext_events, E, G, N, S, prS, colnames;
+    SEXP ext_events, E, G, N, S, prS;
+    SEXP rownames, colnames;
     SEXP U_sparse, V_sparse;
     int *U = NULL, *irU = NULL, *jcU = NULL;
     double *prU = NULL;
@@ -82,6 +83,7 @@ SEXP SimInf_run(
     PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
 
     /* Dimnames */
+    rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
     colnames = Rf_getAttrib(GET_SLOT(result, Rf_install("tspan")),
                             R_NamesSymbol);
 
@@ -103,14 +105,23 @@ SEXP SimInf_run(
     if ((INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[0] == (Nn * Nc)) &&
         (INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[1] == tlen))
     {
+        int i, j;
+        SEXP U_rownames;
+
         irU = INTEGER(GET_SLOT(U_sparse, Rf_install("i")));
         jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
         prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
 
+        SET_VECTOR_ELT(GET_SLOT(U_sparse, Rf_install("Dimnames")), 0,
+                       U_rownames = allocVector(STRSXP, Nn * Nc));
+        for (i = 0; i < Nn; i++)
+            for (j = 0; j < Nc; j++)
+                SET_STRING_ELT(U_rownames, i * Nc + j, STRING_ELT(rownames, j));
         SET_VECTOR_ELT(GET_SLOT(U_sparse, Rf_install("Dimnames")), 1,
                        duplicate(colnames));
     } else {
-        SEXP U_dimnames;
+        int i, j;
+        SEXP U_dimnames, U_rownames;
 
         SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
         U = INTEGER(GET_SLOT(result, Rf_install("U")));
@@ -118,6 +129,11 @@ SEXP SimInf_run(
         setAttrib(GET_SLOT(result, Rf_install("U")),
                   R_DimNamesSymbol,
                   U_dimnames = allocVector(VECSXP, 2));
+        SET_VECTOR_ELT(U_dimnames, 0,
+                       U_rownames = allocVector(STRSXP, Nn * Nc));
+        for (i = 0; i < Nn; i++)
+            for (j = 0; j < Nc; j++)
+                SET_STRING_ELT(U_rownames, i * Nc + j, STRING_ELT(rownames, j));
         SET_VECTOR_ELT(U_dimnames, 1, duplicate(colnames));
     }
 
