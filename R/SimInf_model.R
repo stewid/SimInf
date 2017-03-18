@@ -586,20 +586,6 @@ setMethod("run",
               if (!is.null(result$error))
                   siminf_error(result$error)
 
-              if (!is.null(names(result$model@tspan))) {
-                  if (!is.null(U)) {
-                      colnames(result$model@U_sparse) <- names(result$model@tspan)
-                  } else {
-                      colnames(result$model@U) <- names(result$model@tspan)
-                  }
-
-                  if (!is.null(V)) {
-                      colnames(result$model@V_sparse) <- names(result$model@tspan)
-                  } else {
-                      colnames(result$model@V) <- names(result$model@tspan)
-                  }
-              }
-
               lbl <- rep(rownames(result$model@S), Nn(result$model))
               if (!is.null(U)) {
                   rownames(result$model@U_sparse) <- lbl

@@ -42,7 +42,7 @@ SEXP SimInf_run(
 {
     int err = 0, n_threads;
     SEXP trajectory, names, result = R_NilValue;
-    SEXP ext_events, E, G, N, S, prS;
+    SEXP ext_events, E, G, N, S, prS, colnames;
     SEXP U_sparse, V_sparse;
     int *U = NULL, *irU = NULL, *jcU = NULL;
     double *prU = NULL;
@@ -81,6 +81,10 @@ SEXP SimInf_run(
     S = GET_SLOT(result, Rf_install("S"));
     PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
 
+    /* Dimnames */
+    colnames = Rf_getAttrib(GET_SLOT(result, Rf_install("tspan")),
+                            R_NamesSymbol);
+
     /* Scheduled events */
     ext_events = GET_SLOT(result, Rf_install("events"));
     E = GET_SLOT(ext_events, Rf_install("E"));
@@ -102,9 +106,19 @@ SEXP SimInf_run(
         irU = INTEGER(GET_SLOT(U_sparse, Rf_install("i")));
         jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
         prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
+
+        SET_VECTOR_ELT(GET_SLOT(U_sparse, Rf_install("Dimnames")), 1,
+                       duplicate(colnames));
     } else {
+        SEXP U_dimnames;
+
         SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
         U = INTEGER(GET_SLOT(result, Rf_install("U")));
+
+        setAttrib(GET_SLOT(result, Rf_install("U")),
+                  R_DimNamesSymbol,
+                  U_dimnames = allocVector(VECSXP, 2));
+        SET_VECTOR_ELT(U_dimnames, 1, duplicate(colnames));
     }
 
     /* Output array (to hold a single trajectory) */
@@ -115,9 +129,19 @@ SEXP SimInf_run(
         irV = INTEGER(GET_SLOT(V_sparse, Rf_install("i")));
         jcV = INTEGER(GET_SLOT(V_sparse, Rf_install("p")));
         prV = REAL(GET_SLOT(V_sparse, Rf_install("x")));
+
+        SET_VECTOR_ELT(GET_SLOT(V_sparse, Rf_install("Dimnames")), 1,
+                       duplicate(colnames));
     } else {
+        SEXP V_dimnames;
+
         SET_SLOT(result, Rf_install("V"), allocMatrix(REALSXP, Nn * Nd, tlen));
         V = REAL(GET_SLOT(result, Rf_install("V")));
+
+        setAttrib(GET_SLOT(result, Rf_install("V")),
+                  R_DimNamesSymbol,
+                  V_dimnames = allocVector(VECSXP, 2));
+        SET_VECTOR_ELT(V_dimnames, 1, duplicate(colnames));
     }
 
     /* Run simulation solver. */
