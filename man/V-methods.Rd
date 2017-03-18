@@ -48,18 +48,5 @@ result <- run(model, seed = 123)
 ## time-points in tspan. In the 'SISe' model, V represent the
 ## environmental infectious pressure phi.
 V(result)
-
-## An example with a sparse V result matrix, which can save a lot
-## of memory if the model contains many nodes and time-points, but
-## where only a few of the data points are of interest. First
-## create a sparse matrix with non-zero entries at the locations
-## in V where the continuous state variables should be written. Then
-## run the model with the sparse matrix as a template for V where
-## to write data.
-m <- Matrix::sparseMatrix(1:6, 5:10)
-result <- run(model, seed = 123, V = m)
-
-## Extract the continuous state variables at the time-points in tspan.
-V(result)
 }
 \keyword{methods}

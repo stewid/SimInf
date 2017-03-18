@@ -40,19 +40,5 @@ result <- run(model, seed = 123)
 ## Extract the number of individuals in each compartment at the
 ## time-points in tspan.
 U(result)
-
-## An example with a sparse U result matrix, which can save a lot
-## of memory if the model contains many nodes and time-points, but
-## where only a few of the data points are of interest. First
-## create a sparse matrix with non-zero entries at the locations
-## in U where the number of individuals should be written. Then
-## run the model with the sparse matrix as a template for U where
-## to write data.
-m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
-result <- run(model, seed = 123, U = m)
-
-## Extract the number of individuals in each compartment at the
-## time-points in tspan.
-U(result)
 }
 \keyword{methods}
