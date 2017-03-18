@@ -80,6 +80,26 @@ setGeneric("run",
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in tspan.
 ##' U(result)
+setGeneric("U", function(model) standardGeneric("U"))
+
+##' Set a template for where to write the U result matrix
+##'
+##' @rdname U_set-methods
+##' @param model The \code{model} to set a template for the result
+##'     matrix \code{U}.
+##' @param value Write the number of individuals in each compartment
+##'     at \code{tspan} to the non-zero elements in \code{value},
+##'     where \code{value} is a sparse matrix, \code{dgCMatrix}, with
+##'     dimension \eqn{N_n N_c \times} \code{length(tspan)}. Default
+##'     is \code{NULL} i.e. to write the number of inidividuals in
+##'     each compartment in every node to a dense matrix.
+##' @keywords methods
+##' @export
+##' @examples
+##' ## Create an 'SIR' model with 6 nodes and initialize
+##' ## it to run over 10 days.
+##' u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
+##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## An example with a sparse U result matrix, which can save a lot
 ##' ## of memory if the model contains many nodes and time-points, but
@@ -89,12 +109,13 @@ setGeneric("run",
 ##' ## run the model with the sparse matrix as a template for U where
 ##' ## to write data.
 ##' m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
-##' result <- run(model, seed = 123, U = m)
+##' U(model) <- m
+##' result <- run(model, seed = 123)
 ##'
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in tspan.
 ##' U(result)
-setGeneric("U", function(model) standardGeneric("U"))
+setGeneric("U<-", function(model, value) standardGeneric("U<-"))
 
 ##' Extract the continuous state variables
 ##'
@@ -133,6 +154,39 @@ setGeneric("U", function(model) standardGeneric("U"))
 ##' ## time-points in tspan. In the 'SISe' model, V represent the
 ##' ## environmental infectious pressure phi.
 ##' V(result)
+setGeneric("V", function(model) standardGeneric("V"))
+
+##' Set a template for where to write the V result matrix
+##'
+##' @rdname V_set-methods
+##' @param model The \code{model} to set a template for the result
+##'     matrix \code{V}.
+##' @param value Write the real-valued continuous state at
+##'     \code{tspan} to the non-zero elements in \code{value}, where
+##'     \code{value} is a sparse matrix, \code{dgCMatrix}, with
+##'     dimension \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
+##'     \code{length(tspan)}. Default is \code{NULL} i.e. to write the
+##'     real-valued continuous state to a dense matrix.
+##' @keywords methods
+##' @export
+##' @examples
+##' ## Create an 'SISe' model with 6 nodes and initialize
+##' ## it to run over 10 days.
+##' u0 <- data.frame(S = 100:105, I = 1:6)
+##' model <- SISe(u0 = u0, tspan = 1:10,
+##'               phi = rep(0, 6),
+##'               upsilon = 0.017,
+##'               gamma   = 0.1,
+##'               alpha   = 1,
+##'               beta_t1 = 0.19,
+##'               beta_t2 = 0.085,
+##'               beta_t3 = 0.075,
+##'               beta_t4 = 0.185,
+##'               end_t1  = 91,
+##'               end_t2  = 182,
+##'               end_t3  = 273,
+##'               end_t4  = 365,
+##'               epsilon = 0.000011)
 ##'
 ##' ## An example with a sparse V result matrix, which can save a lot
 ##' ## of memory if the model contains many nodes and time-points, but
@@ -142,11 +196,12 @@ setGeneric("U", function(model) standardGeneric("U"))
 ##' ## run the model with the sparse matrix as a template for V where
 ##' ## to write data.
 ##' m <- Matrix::sparseMatrix(1:6, 5:10)
-##' result <- run(model, seed = 123, V = m)
+##' V(model) <- m
+##' result <- run(model, seed = 123)
 ##'
 ##' ## Extract the continuous state variables at the time-points in tspan.
 ##' V(result)
-setGeneric("V", function(model) standardGeneric("V"))
+setGeneric("V<-", function(model, value) standardGeneric("V<-"))
 
 ##' Susceptible
 ##'

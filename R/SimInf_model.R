@@ -378,6 +378,35 @@ setMethod("U",
           }
 )
 
+##' @rdname U_set-methods
+##' @export
+setMethod("U<-",
+          signature("SimInf_model"),
+          function(model, value) {
+              if (!is.null(value)) {
+                  if (!is(value, "dgCMatrix"))
+                      value <- as(value, "dgCMatrix")
+
+                  d <- c(Nn(model) * Nc(model), length(model@tspan))
+                  if (!identical(dim(value), d))
+                      stop("Wrong dimension of 'value'")
+
+                  ## Clear dense result matrix
+                  u <- matrix(nrow = 0, ncol = 0)
+                  storage.mode(u) <- "integer"
+                  model@U = u
+
+                  model@U_sparse = value
+              } else {
+                  ## Clear sparse result matrix
+                  model@U_sparse <- as(sparseMatrix(numeric(0), numeric(0),
+                                                    dims = c(0, 0)),
+                                       "dgCMatrix")
+              }
+              model
+          }
+)
+
 ##' @rdname V-methods
 ##' @export
 setMethod("V",
@@ -391,6 +420,35 @@ setMethod("V",
                   return(model@V_sparse)
               }
               model@V
+          }
+)
+
+##' @rdname V_set-methods
+##' @export
+setMethod("V<-",
+          signature("SimInf_model"),
+          function(model, value) {
+              if (!is.null(value)) {
+                  if (!is(value, "dgCMatrix"))
+                      value <- as(value, "dgCMatrix")
+
+                  d <- c(Nn(model) * Nd(model), length(model@tspan))
+                  if (!identical(dim(value), d))
+                      stop("Wrong dimension of 'value'")
+
+                  ## Clear dense result matrix
+                  v <- matrix(nrow = 0, ncol = 0)
+                  storage.mode(v) <- "double"
+                  model@V <- v
+
+                  model@V_sparse = value
+              } else {
+                  ## Clear sparse result matrix
+                  model@V_sparse <- as(sparseMatrix(numeric(0), numeric(0),
+                                                    dims = c(0, 0)),
+                                       "dgCMatrix")
+              }
+              model
           }
 )
 
