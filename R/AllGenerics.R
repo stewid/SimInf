@@ -24,18 +24,6 @@
 ##'     number of available processors.
 ##' @param seed Random number seed. Default is NULL, i.e. to use a
 ##'     time-seed.
-##' @param U Write the number of individuals in each compartment at
-##'     \code{tspan} to the non-zero elements in \code{U}, where
-##'     \code{U} is a sparse matrix, \code{dgCMatrix}, with dimension
-##'     \eqn{N_n N_c \times} \code{length(tspan)}. Default is
-##'     \code{NULL} i.e. to write the number of inidividuals in each
-##'     compartment in every node to a dense matrix.
-##' @param V Write the real-valued continuous state at \code{tspan} to
-##'     the non-zero elements in \code{V}, where \code{V} is a sparse
-##'     matrix, \code{dgCMatrix}, with dimension
-##'     \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
-##'     \code{length(tspan)}. Default is \code{NULL} i.e. to write the
-##'     real-valued continuous state to a dense matrix.
 ##' @return \code{SimInf_model} with result from simulation.
 ##' @examples
 ##' ## Create a 'SISe' demo model with 1 node and
@@ -46,9 +34,7 @@ setGeneric("run",
            signature = "model",
            function(model,
                     threads = NULL,
-                    seed    = NULL,
-                    U       = NULL,
-                    V       = NULL)
+                    seed    = NULL)
                standardGeneric("run"))
 
 ##' Extract the number of individuals in each compartment

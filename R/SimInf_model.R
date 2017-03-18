@@ -522,50 +522,8 @@ Nd <- function(model) {
 ##' @export
 setMethod("run",
           signature(model = "SimInf_model"),
-          function(model, threads, seed, U, V)
+          function(model, threads, seed)
           {
-              if (!is.null(U)) {
-                  if (!is(U, "dgCMatrix"))
-                      U <- as(U, "dgCMatrix")
-
-                  d <- c(Nn(model) * Nc(model), length(model@tspan))
-                  if (!identical(dim(U), d))
-                      stop("Wrong dimension of 'U'")
-
-                  ## Clear dense result matrix
-                  u <- matrix(nrow = 0, ncol = 0)
-                  storage.mode(u) <- "integer"
-                  model@U = u
-
-                  model@U_sparse = U
-              } else {
-                  ## Clear sparse result matrix
-                  model@U_sparse <- as(sparseMatrix(numeric(0), numeric(0),
-                                                    dims = c(0, 0)),
-                                       "dgCMatrix")
-              }
-
-              if (!is.null(V)) {
-                  if (!is(V, "dgCMatrix"))
-                      V <- as(V, "dgCMatrix")
-
-                  d <- c(Nn(model) * Nd(model), length(model@tspan))
-                  if (!identical(dim(V), d))
-                      stop("Wrong dimension of 'V'")
-
-                  ## Clear dense result matrix
-                  v <- matrix(nrow = 0, ncol = 0)
-                  storage.mode(v) <- "double"
-                  model@V <- v
-
-                  model@V_sparse = V
-              } else {
-                  ## Clear sparse result matrix
-                  model@V_sparse <- as(sparseMatrix(numeric(0), numeric(0),
-                                                    dims = c(0, 0)),
-                                       "dgCMatrix")
-              }
-
               ## Check that SimInf_model contains all data structures
               ## required by the siminf solver and that they make sense
               validObject(model);
