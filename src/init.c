@@ -31,7 +31,20 @@ SEXP SISe3_run(SEXP, SEXP, SEXP);
 SEXP SISe3_sp_run(SEXP, SEXP, SEXP);
 SEXP SISe_sp_run(SEXP, SEXP, SEXP);
 SEXP siminf_ldata_sp(SEXP, SEXP, SEXP);
-SEXP siminf_have_openmp();
+
+/**
+ * Is OpenMP available
+ */
+SEXP SimInf_have_openmp()
+{
+    return Rf_ScalarLogical(
+#ifdef _OPENMP
+        1
+#else
+        0
+#endif
+        );
+}
 
 #define CALLDEF(name, n) {#name, (DL_FUNC) &name, n}
 
@@ -43,7 +56,7 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SISe3_run, 3),
     CALLDEF(SISe3_sp_run, 3),
     CALLDEF(SISe_sp_run, 3),
-    CALLDEF(siminf_have_openmp, 0),
+    CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(siminf_ldata_sp, 3),
     {NULL, NULL, 0}
 };

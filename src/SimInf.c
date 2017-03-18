@@ -185,17 +185,3 @@ cleanup:
 
     return trajectory;
 }
-
-/**
- * Is OpenMP available
- */
-SEXP siminf_have_openmp()
-{
-    return Rf_ScalarLogical(
-#ifdef _OPENMP
-        1
-#else
-        0
-#endif
-        );
-}

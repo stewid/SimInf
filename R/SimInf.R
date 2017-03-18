@@ -41,7 +41,7 @@ NULL
 ##' @keywords internal
 have_openmp <- function()
 {
-    .Call("siminf_have_openmp", PACKAGE = "SimInf")
+    .Call(SimInf_have_openmp)
 }
 
 ##' Scheduled events example data
