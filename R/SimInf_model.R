@@ -109,7 +109,8 @@ setClass("SimInf_model",
                    V        = "matrix",
                    V_sparse = "dgCMatrix",
                    v0       = "matrix",
-                   events   = "scheduled_events"),
+                   events   = "scheduled_events",
+                   C_code   = "character"),
          validity = function(object) {
              ## Check events
              errors <- validObject(object@events)
