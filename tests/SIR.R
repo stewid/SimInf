@@ -187,8 +187,12 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SIR run function fails for misspecified SIR model
-res <- .Call("SIR_run", NULL, NULL, NULL, PACKAGE = "SimInf")
-stopifnot(identical(res$error, -10L))
+res <- tools::assertError(.Call("SIR_run", NULL, NULL, NULL,
+                                PACKAGE = "SimInf"))
+stopifnot(length(grep("Invalid model.",
+                      res[[1]]$message)) > 0)
 
-res <- .Call("SIR_run", "SIR", NULL, NULL, PACKAGE = "SimInf")
-stopifnot(identical(res$error, -10L))
+res <- tools::assertError(.Call("SIR_run", "SIR", NULL, NULL,
+                                PACKAGE = "SimInf"))
+stopifnot(length(grep("Invalid model.",
+                      res[[1]]$message)) > 0)
