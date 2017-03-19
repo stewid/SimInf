@@ -483,14 +483,39 @@ setMethod("run",
               ## required by the siminf solver and that they make sense
               validObject(model);
 
-              ## The model name
-              name <- as.character(class(model))
+              if (nchar(paste0(model@C_code, collapse = "\n"))) {
+                  ## Write the C code to a temporary file
+                  filename <- tempfile("SimInf-")
+                  on.exit(unlink(paste0(filename,
+                                        c(".c", ".o", .Platform$dynlib.ex))))
+                  writeLines(model@C_code, con = paste0(filename, ".c"))
 
-              ## The model C run function
-              run_fn <- paste0(name, "_run")
+                  ## Include directive for "SimInf.h"
+                  PKG_CPPFLAGS <- sprintf("PKG_CPPFLAGS=-I\"%s\"",
+                                          system.file("include",
+                                                      package = "SimInf"))
 
-              ## Create expression to parse
-              expr <- ".Call(run_fn, model, threads, seed, PACKAGE = 'SimInf')"
+                  ## Compile and load the model C code
+                  system2(command = "R",
+                          args = c("CMD", "SHLIB", paste0(filename, ".c")),
+                          stdout = NULL,
+                          env = PKG_CPPFLAGS)
+                  lib <- paste0(filename, .Platform$dynlib.ext)
+                  dll <- dyn.load(lib)
+                  on.exit(dyn.unload(lib), add = TRUE)
+
+                  ## Create expression to parse
+                  expr <- ".Call(dll$SimInf_model_run, model, threads, seed)"
+              } else {
+                  ## The model name
+                  name <- as.character(class(model))
+
+                  ## The model C run function
+                  run_fn <- paste0(name, "_run")
+
+                  ## Create expression to parse
+                  expr <- ".Call(run_fn, model, threads, seed, PACKAGE = 'SimInf')"
+              }
 
               ## Run model
               eval(parse(text = expr))
