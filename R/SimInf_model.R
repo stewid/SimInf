@@ -452,52 +452,6 @@ setMethod("V<-",
           }
 )
 
-##' Report error
-##'
-##' @param err The error code.
-##' @keywords internal
-##' @noRd
-siminf_error <- function(err)
-{
-    if (!is.numeric(err))
-        stop("'err' must be an integer vector of length 1")
-    if (!identical(length(err), 1L))
-        stop("'err' must be an integer vector of length 1")
-    if (!is_wholenumber(err))
-        stop("'err' must be an integer vector of length 1")
-
-    err <- as.integer(err)
-
-    if (identical(err, -1L))
-        stop("Negative state detected.")
-
-    if (identical(err, -2L))
-        stop("Unable to allocate memory buffer")
-
-    if (identical(err, -5L))
-        stop("Invalid 'p_edge': Must be in interval 0 < p_edge < 1")
-
-    if (identical(err, -6L))
-        stop("Invalid 'seed' value")
-
-    if (identical(err, -7L))
-        stop("Invalid 'threads' value")
-
-    if (identical(err, -8L))
-        stop("The continuous state 'v' is not finite.")
-
-    if (identical(err, -9L))
-        stop("Unable to sample individuals for event.")
-
-    if (identical(err, -10L))
-        stop("Invalid model.")
-
-    if (identical(err, -11L))
-        stop("The continuous state 'v' is negative.")
-
-    stop("Unknown error code.")
-}
-
 ## Number of nodes
 Nn <- function(model) {
     dim(model@u0)[2]
