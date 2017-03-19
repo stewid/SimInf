@@ -502,8 +502,8 @@ setMethod("run",
                                           system.file("include",
                                                       package = "SimInf"))
 
-                  ## Compile and load the model C code
-                  system2(command = "R",
+                  ## Compile and load the model C code. Use the running version of R.
+                  system2(command = file.path(R.home(component="bin"), "R"),
                           args = c("CMD", "SHLIB", paste0(filename, ".c")),
                           stdout = NULL,
                           env = PKG_CPPFLAGS)
