@@ -40,8 +40,8 @@ SEXP SimInf_run(
     TRFun *tr_fun,
     PTSFun pts_fun)
 {
-    int err = 0, n_threads;
-    SEXP trajectory, names, result = R_NilValue;
+    int err = 0, nprotect = 0, n_threads;
+    SEXP result = R_NilValue;
     SEXP ext_events, E, G, N, S, prS;
     SEXP rownames, colnames;
     SEXP U_sparse, V_sparse;
@@ -51,12 +51,6 @@ SEXP SimInf_run(
     double *V = NULL, *prV = NULL;
     int Nn, Nc, Nt, Nd, Nld, tlen;
     unsigned long int s;
-
-    /* Create a list to hold the result of the simulated trajectory. */
-    PROTECT(trajectory = allocVector(VECSXP, 2));
-    setAttrib(trajectory, R_NamesSymbol, names = allocVector(STRSXP, 2));
-    SET_STRING_ELT(names, 0, mkChar("error"));
-    SET_STRING_ELT(names, 1, mkChar("model"));
 
     if (siminf_arg_check_model(model)) {
         err = SIMINF_ERR_INVALID_MODEL;
@@ -73,14 +67,15 @@ SEXP SimInf_run(
     if (err)
         goto cleanup;
 
-    /* Duplicate model and add it to the 'model' item in the
-     * trajectory list. */
-    SET_VECTOR_ELT(trajectory, 1, result = duplicate(model));
+    /* Duplicate model. */
+    PROTECT(result = duplicate(model));
+    nprotect++;
 
     /* SimInf model */
     G = GET_SLOT(result, Rf_install("G"));
     S = GET_SLOT(result, Rf_install("S"));
     PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
+    nprotect++;
 
     /* Dimnames */
     rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
@@ -191,13 +186,42 @@ SEXP SimInf_run(
         n_threads, s, tr_fun, pts_fun);
 
 cleanup:
-    if (err)
-        SET_VECTOR_ELT(trajectory, 0, ScalarInteger(err));
+    UNPROTECT(nprotect);
 
-    if (result == R_NilValue)
-        UNPROTECT(1);
-    else
-        UNPROTECT(2);
+    if (err) {
+        switch (err) {
+        case SIMINF_ERR_NEGATIVE_STATE:
+            Rf_error("Negative state detected.");
+            break;
+        case SIMINF_ERR_ALLOC_MEMORY_BUFFER:
+            Rf_error("Unable to allocate memory buffer");
+            break;
+        case SIMINF_UNDEFINED_EVENT:
+            Rf_error("Undefined event type.");
+            break;
+        case SIMINF_INVALID_SEED_VALUE:
+            Rf_error("Invalid 'seed' value");
+            break;
+        case SIMINF_INVALID_THREADS_VALUE:
+            Rf_error("Invalid 'threads' value");
+            break;
+        case SIMINF_ERR_V_IS_NOT_FINITE:
+            Rf_error("The continuous state 'v' is not finite.");
+            break;
+        case SIMINF_ERR_SAMPLE_SELECT:
+            Rf_error("Unable to sample individuals for event.");
+            break;
+        case SIMINF_ERR_INVALID_MODEL:
+            Rf_error("Invalid model.");
+            break;
+        case SIMINF_ERR_V_IS_NEGATIVE:
+            Rf_error("The continuous state 'v' is negative.");
+            break;
+        default:
+            Rf_error("Unknown error code: %i", err);
+            break;
+        }
+    }
 
-    return trajectory;
+    return result;
 }

@@ -538,13 +538,7 @@ setMethod("run",
               expr <- ".Call(run_fn, model, threads, seed, PACKAGE = 'SimInf')"
 
               ## Run model
-              result <- eval(parse(text = expr))
-
-              ## Check for error
-              if (!is.null(result$error))
-                  siminf_error(result$error)
-
-              result$model
+              eval(parse(text = expr))
           }
 )
 
