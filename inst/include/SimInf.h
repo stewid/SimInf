@@ -29,15 +29,14 @@
 typedef enum {
     SIMINF_ERR_NEGATIVE_STATE       = -1,
     SIMINF_ERR_ALLOC_MEMORY_BUFFER  = -2,
-    SIMINF_ERR_SPLIT_EVENTS         = -3,
-    SIMINF_UNDEFINED_EVENT          = -4,
-    SIMINF_INVALID_EDGE_PROBABILITY = -5,
-    SIMINF_INVALID_SEED_VALUE       = -6,
-    SIMINF_INVALID_THREADS_VALUE    = -7,
-    SIMINF_ERR_V_IS_NOT_FINITE      = -8,
-    SIMINF_ERR_SAMPLE_SELECT        = -9,
-    SIMINF_ERR_INVALID_MODEL        = -10,
-    SIMINF_ERR_V_IS_NEGATIVE        = -11
+    SIMINF_UNDEFINED_EVENT          = -3,
+    SIMINF_INVALID_EDGE_PROBABILITY = -4,
+    SIMINF_INVALID_SEED_VALUE       = -5,
+    SIMINF_INVALID_THREADS_VALUE    = -6,
+    SIMINF_ERR_V_IS_NOT_FINITE      = -7,
+    SIMINF_ERR_SAMPLE_SELECT        = -8,
+    SIMINF_ERR_INVALID_MODEL        = -9,
+    SIMINF_ERR_V_IS_NEGATIVE        = -10
 } siminf_error_code;
 
 /* Forward declaration of the transition rate function. */
