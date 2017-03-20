@@ -803,7 +803,7 @@ static int siminf_solver()
                     const int rc = sa.pts_fun(
                         &sa.v_new[node * sa.Nd], &sa.u[node * sa.Nc],
                         &sa.v[node * sa.Nd], &sa.ldata[node * sa.Nld],
-                        sa.gdata, sa.Ni + node, sa.tt, sa.rng);
+                        sa.gdata, sa.Ni + node, sa.tt);
 
                     if (rc < 0) {
                         sa.errcode = rc;

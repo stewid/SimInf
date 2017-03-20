@@ -21,7 +21,6 @@
 #ifndef INCLUDE_SIMINF_H
 #define INCLUDE_SIMINF_H
 
-#include <gsl/gsl_rng.h>
 #include <R.h>
 #include <Rinternals.h>
 
@@ -37,7 +36,7 @@ typedef enum {
     SIMINF_ERR_SAMPLE_SELECT        = -8,
     SIMINF_ERR_INVALID_MODEL        = -9,
     SIMINF_ERR_V_IS_NEGATIVE        = -10
-} siminf_error_code;
+} SimInf_error_code;
 
 /* Forward declaration of the transition rate function. */
 typedef double (*TRFun)(
@@ -55,8 +54,7 @@ typedef int (*PTSFun)(
     const double *ldata,
     const double *gdata,
     int node,
-    double t,
-    gsl_rng *rng);
+    double t);
 
 /* Forward declaration of the function to initiate and run the
  * simulation */

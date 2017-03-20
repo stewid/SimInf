@@ -96,8 +96,7 @@ int SISe_post_time_step(
     const double *ldata,
     const double *gdata,
     int node,
-    double t,
-    gsl_rng *rng)
+    double t)
 {
     const int day = (int)t % 365;
     const double I_n = u[I];

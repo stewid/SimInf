@@ -110,8 +110,7 @@ int SEIR_post_time_step(
     const double *ldata,
     const double *gdata,
     int node,
-    double t,
-    gsl_rng *rng)
+    double t)
 {
     return 0;
 }
