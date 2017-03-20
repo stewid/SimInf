@@ -174,3 +174,131 @@ C_code_mparse <- function(transitions, rates, compartments) {
       C_ptsFun(),
       C_run(transitions))
 }
+
+## Rewrite propensity
+##
+## Rewrite the propensity by replacing all compartments by
+## \code{u[compartments[j]]} where \code{j} is the numbering in
+## compartments. On return, 'depends' contains all compartments upon
+## which the propensity depends.
+rewriteprop <- function(propensity, compartments) {
+    ## Switch to an intermediate representation using '###', replacing
+    ## larger strings first in order to avoid changing e.g., 'BA' with
+    ## '###[1]A' whenever 'B' and 'BA' are two different compartments.
+    depends <- integer(length(compartments))
+    symbols <- order(nchar(compartments), decreasing = TRUE)
+    for (i in symbols) {
+        if (length(grep(compartments[i], propensity))) {
+            depends[i] <- 1
+            propensity <- gsub(compartments[i],
+                               sprintf("###[%i]", i),
+                               propensity)
+        }
+    }
+
+    ## Final replace
+    for (i in symbols) {
+        propensity <- gsub(sprintf("###[%i]", i),
+                           sprintf("u[%s]", compartments[i]),
+                           propensity, fixed = TRUE)
+    }
+
+    list(propensity = propensity, depends = depends)
+}
+
+##' Model parser
+##'
+##' @param transitions character vector containing transitions on the
+##'     form \code{"X -> ... -> Y". The left (right) side is the
+##'     initial (final) state and the propensity is written in between
+##'     the \code{->}-signs. The special symbol \code{@} is reserved
+##'     for the empty set. For example, \code{transitions =
+##'     c("S -> k1*S*I -> I", "I -> k2*I -> R")} expresses a SIR
+##'     model.
+##' @param compartments contains the names of the involved
+##'     compartments, for example, \code{compartments = c("S", "I",
+##'     "R")}.
+##' @param ... rate-constants for the model.
+##' @return \linkS4class{SimInf_mparse}
+##' ##' @export
+##' @importFrom utils packageVersion
+mparse <- function(transitions = NULL, compartments = NULL, ...)
+{
+    rates <- list(...)
+    stopifnot(all(sapply(rates, class) == "numeric"))
+
+    if (is.null(transitions))
+        stop("'transitions' must be specified.")
+    if(!is.character(transitions))
+        stop("'transitions' must be specified in a character vector.")
+    if (is.null(compartments))
+        stop("'compartments' must be specified.")
+    if(!is.character(compartments))
+        stop("'compartments' must be specified in a character vector.")
+    if (!all(identical(length(compartments), length(unique(compartments))),
+             identical(length(names(rates)), length(unique(names(rates))))))
+        stop("'compartments' and 'rates' must consist of unique names.")
+
+    reserved = c("v_new", "u", "v", "ldata", "gdata", "node", "t", "rng")
+    if (length(intersect(compartments, reserved)))
+        stop(paste("Invalid compartment names:",
+                   paste0(intersect(compartments, reserved), collapse = ", ")))
+    if (length(intersect(names(rates), reserved)))
+        stop(paste("Invalid rate names:",
+                   paste0(intersect(names(rates), reserved), collapse = ", ")))
+
+    transitions <- lapply(strsplit(transitions, "->"), function(x) {
+        if (!identical(length(x), 3L))
+            stop(paste0("Invalid transition: '", paste0(x, collapse = "->"), "'"))
+
+        ## Remove spaces and the empty set
+        from <- gsub(" ", "", gsub("@", "", x[1]))
+        propensity <- gsub(" ", "", x[2])
+        dest <- gsub(" ", "", gsub("@", "", x[3]))
+
+        ## Split from and dest into 'compartment1 + compartment2 + ..'
+        from <- unlist(strsplit(from, "+", fixed = TRUE))
+        dest <- unlist(strsplit(dest, "+", fixed = TRUE))
+
+        ## Assign each compartment into its number according to the
+        ## ordering in compartments
+        ifrom <- match(from, compartments)
+        if (any(is.na(ifrom)))
+            stop(sprintf("Unknown compartment: '%s'.", from[is.na(ifrom)]))
+        idest <- match(dest, compartments)
+        if (any(is.na(idest)))
+            stop(sprintf("Unknown compartment: '%s'.", dest[is.na(idest)]))
+
+        ## The corresponding column in the state change matrix S is
+        ## now known.
+        S <- integer(length(compartments))
+        S[ifrom] <- -1
+        S[idest] <- 1
+
+        propensity <- rewriteprop(propensity, compartments)
+
+        list(from       = from,
+             dest       = dest,
+             propensity = propensity$propensity,
+             depends    = propensity$depends,
+             S          = S)
+    })
+
+    S <- as(do.call("cbind", lapply(transitions, function(x) x$S)), "dgCMatrix")
+    depends <- do.call("rbind", lapply(transitions, function(x) x$depends))
+    G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
+
+    colnames(G) <- as.character(seq_len(dim(G)[2]))
+    rownames(G) <- sapply(transitions, function(x) {
+        paste(ifelse(length(x$from), x$from, "@"),
+              "->",
+              ifelse(length(x$dest), x$dest, "@"))
+    })
+    colnames(S) <- as.character(seq_len(dim(S)[2]))
+    rownames(S) <- compartments
+
+    new("SimInf_mparse",
+        C_code = C_code_mparse(transitions, rates, compartments),
+        G = G,
+        S = S)
+}
