@@ -221,6 +221,19 @@ rewriteprop <- function(propensity, compartments) {
 ##' @return \linkS4class{SimInf_mparse}
 ##' @export
 ##' @importFrom utils packageVersion
+##' @examples
+##' \dontrun{
+##' ## Use the model parser to create a 'SimInf_mparse' object
+##' m <- mparse(c("S -> k1*S*I/(S+I+R) -> I", "I -> k2*I -> R"),
+##'             c("S", "I", "R"), k1 = 0.16, k2 = 0.077)
+##'
+##' ## Initialize a 'SimInf_model' from the 'SimInf_mparse' object
+##' u0 <- data.frame(S = 100, I = 1, R = 0)
+##' model <- init(m, u0 = u0, tspan = 1:100)
+##'
+##' ## Run and plot the result
+##' plot(run(model))
+##' }
 mparse <- function(transitions = NULL, compartments = NULL, ...)
 {
     rates <- list(...)
@@ -301,3 +314,42 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
         G = G,
         S = S)
 }
+
+##' @rdname init-methods
+##' @export
+setMethod("init",
+          signature(model = "SimInf_mparse"),
+          function(model, u0, tspan)
+          {
+              compartments <- rownames(model@S)
+
+              ## Check u0
+              if (!is.data.frame(u0))
+                  stop("'u0' must be a data.frame")
+              if (!all(compartments %in% names(u0)))
+                  stop("Missing columns in u0")
+              u0 <- u0[, compartments]
+
+              E <- as(matrix(integer(0), nrow = 0, ncol = 0), "dgCMatrix")
+
+              N <- matrix(integer(0), nrow = 0, ncol = 0)
+
+              v0 <- matrix(numeric(0), nrow  = 0, ncol = nrow(u0))
+              storage.mode(v0) <- "double"
+
+              ldata <- matrix(numeric(0), nrow = 0, ncol = nrow(u0))
+              storage.mode(ldata) <- "double"
+
+              SimInf_model(G      = model@G,
+                           S      = model@S,
+                           E      = E,
+                           N      = N,
+                           tspan  = tspan,
+                           events = NULL,
+                           ldata  = ldata,
+                           gdata  = numeric(),
+                           u0     = u0,
+                           v0     = v0,
+                           C_code = model@C_code)
+          }
+)

@@ -255,7 +255,8 @@ SimInf_model <- function(G,
                          v0     = NULL,
                          V      = NULL,
                          E      = NULL,
-                         N      = NULL)
+                         N      = NULL,
+                         C_code = NULL)
 {
     ## Check u0
     if (is.null(u0))
@@ -357,6 +358,10 @@ SimInf_model <- function(G,
         stop("'events' must be NULL or a data.frame")
     events <- scheduled_events(E = E, N = N, events = events, t0 = t0)
 
+    ## Check C code
+    if (is.null(C_code))
+        C_code <- character(0)
+
     return(new("SimInf_model",
                G      = G,
                S      = S,
@@ -367,7 +372,8 @@ SimInf_model <- function(G,
                u0     = u0,
                v0     = v0,
                V      = V,
-               events = events))
+               events = events,
+               C_code = C_code))
 }
 
 ##' @rdname U-methods

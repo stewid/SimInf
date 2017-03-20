@@ -16,6 +16,20 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+##' Init a \code{SimInf_mparse} object
+##'
+##' @rdname init-methods
+##' @param model The \code{SimInf_mparse} object to initialize.
+##' @param u0 A \code{data.frame} with the initial state in each node.
+##' @template tspan-param
+##' @return a \code{SimInf_model} object
+setGeneric("init",
+           signature = "model",
+           function(model,
+                    u0    = NULL,
+                    tspan = NULL)
+               standardGeneric("init"))
+
 ##' Run the SimInf stochastic simulation algorithm
 ##'
 ##' @rdname run-methods
