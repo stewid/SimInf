@@ -49,5 +49,6 @@ Collate:
     'SimInf.R'
     'demo_model.R'
     'distance.R'
+    'model_builder.R'
     'run_outer.R'
 RoxygenNote: 6.0.1
