@@ -498,16 +498,21 @@ setMethod("run",
                   writeLines(model@C_code, con = paste0(filename, ".c"))
 
                   ## Include directive for "SimInf.h"
-                  PKG_CPPFLAGS <- sprintf("PKG_CPPFLAGS=-I\"%s\"",
-                                          system.file("include",
-                                                      package = "SimInf"))
+                  include <- system.file("include", package = "SimInf")
+                  Sys.setenv(PKG_CPPFLAGS=sprintf("-I%s", shQuote(include)))
 
-                  ## Compile and load the model C code. Use the running version of R.
-                  system2(command = file.path(R.home(component="bin"), "R"),
-                          args = c("CMD", "SHLIB", paste0(filename, ".c")),
-                          stdout = NULL,
-                          env = PKG_CPPFLAGS)
+                  ## Compile the model C code using the running version of R.
+                  wd <- setwd(dirname(filename))
+                  cmd <- paste(shQuote(file.path(R.home(component="bin"), "R")),
+                               "CMD SHLIB",
+                               shQuote(paste0(basename(filename), ".c")))
+                  compiled <- system(cmd, intern = TRUE)
+                  setwd(wd)
+
+                  ## Load DLL
                   lib <- paste0(filename, .Platform$dynlib.ext)
+                  if (!file.exists(lib))
+                      stop(compiled)
                   dll <- dyn.load(lib)
                   on.exit(dyn.unload(lib), add = TRUE)
 
