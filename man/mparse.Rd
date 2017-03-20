@@ -7,6 +7,14 @@
 mparse(transitions = NULL, compartments = NULL, ...)
 }
 \arguments{
+\item{transitions}{character vector containing transitions on the
+form \code{"X -> ... -> Y"}. The left (right) side is the
+initial (final) state and the propensity is written in between
+the \code{->}-signs. The special symbol \code{@} is reserved
+for the empty set. For example, \code{transitions =
+c("S -> k1*S*I -> I", "I -> k2*I -> R")} expresses a SIR
+model.}
+
 \item{compartments}{contains the names of the involved
 compartments, for example, \code{compartments = c("S", "I",
 "R")}.}
@@ -15,7 +23,6 @@ compartments, for example, \code{compartments = c("S", "I",
 }
 \value{
 \linkS4class{SimInf_mparse}
-##' @export
 }
 \description{
 Model parser
