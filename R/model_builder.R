@@ -209,7 +209,7 @@ rewriteprop <- function(propensity, compartments) {
 ##' Model parser
 ##'
 ##' @param transitions character vector containing transitions on the
-##'     form \code{"X -> ... -> Y". The left (right) side is the
+##'     form \code{"X -> ... -> Y"}. The left (right) side is the
 ##'     initial (final) state and the propensity is written in between
 ##'     the \code{->}-signs. The special symbol \code{@} is reserved
 ##'     for the empty set. For example, \code{transitions =
@@ -220,7 +220,7 @@ rewriteprop <- function(propensity, compartments) {
 ##'     "R")}.
 ##' @param ... rate-constants for the model.
 ##' @return \linkS4class{SimInf_mparse}
-##' ##' @export
+##' @export
 ##' @importFrom utils packageVersion
 mparse <- function(transitions = NULL, compartments = NULL, ...)
 {
