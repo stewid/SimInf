@@ -328,7 +328,7 @@ setMethod("init",
                   stop("'u0' must be a data.frame")
               if (!all(compartments %in% names(u0)))
                   stop("Missing columns in u0")
-              u0 <- u0[, compartments]
+              u0 <- u0[, compartments, drop = FALSE]
 
               E <- as(matrix(integer(0), nrow = 0, ncol = 0), "dgCMatrix")
 
