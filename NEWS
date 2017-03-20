@@ -1,6 +1,33 @@
 SimInf 3.0.0.9000
 -----------------
 
+NEW FEATURES
+
+* Added the 'V' and 'U' getter/setter methods to the 'SimInf_model'.
+
+* The header file 'SimInf.h' was added to the folder 'inst/include' to
+  enable 'LinkingTo: SimInf'. A call to 'R_RegisterCCallable' was
+  added to make the 'SimInf_run' C routine available to other
+  packages.
+
+* The slots 'U_sparse' and 'V_sparse' was added to the
+  'SimInf_model'. The slots 'U_sparse' and 'V_sparse' holds the result
+  if the model was initialized to write the solution to a sparse
+  matrix.
+
+* The slot 'C_code' was added to the 'SimInf_model'. Character vector
+  with optional model C code. If non-empty, the C code is written to a
+  temporary C-file when the 'run' method is called.  The temporary
+  C-file is compiled and the resulting DLL is dynamically loaded. The
+  DLL is unloaded and the temporary files are removed after running
+  the model.
+
+* The 'mparse' model parser was added. The parser generates the model
+  matrices 'G' and 'S' and C code from a text string specification of
+  the model, for example, c("S -> k1*S*I -> I", "I -> k2*I -> R")
+  expresses a SIR model. The S4 class 'SimInf_mparse' was added to
+  support this feature.
+
 IMPROVEMENTS
 
 * Added the model compartment names to the model 'u0' and 'U' matrices
@@ -21,7 +48,9 @@ IMPROVEMENTS
 
 CHANGES
 
-* Copy 'u0' and 'v0' to first column in 'U' and 'V',
+* The S4 class 'siminf_model' was renamed to 'SimInf_model'.
+
+* Copy 'u0' and 'v0' to the first column in 'U' and 'V',
   respectively. Prior to this change, the state was copied after the
   first time step.
 
