@@ -1,6 +1,6 @@
 Package: SimInf
 Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
-Version: 4.0.0
+Version: 4.0.0.9000
 Author: Stefan Widgren (National Veterinary Institute, Sweden),
     Pavol Bauer (Uppsala University, Sweden),
     Stefan Engblom (Uppsala University, Sweden)
