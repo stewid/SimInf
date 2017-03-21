@@ -21,7 +21,7 @@
 #include <Rdefines.h>
 
 #include "siminf_arg.h"
-#include "siminf_solver.h"
+#include "SimInf_solver.h"
 
 /**
  * Initiate and run the simulation
