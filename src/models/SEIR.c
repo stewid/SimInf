@@ -43,8 +43,11 @@ double SEIR_S_to_E(
 {
     const double S_n = u[S];
     const double I_n = u[I];
+    const double n = S_n + u[E] + I_n + u[R];
 
-    return (gdata[BETA] * S_n * I_n) / (S_n + u[E] + I_n + u[R]);
+    if (n > 0.0)
+        return gdata[BETA] * S_n * I_n / n;
+    return 0.0;
 }
 
 /**
