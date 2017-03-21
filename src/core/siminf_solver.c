@@ -588,9 +588,14 @@ static int siminf_solver()
                     sa.sum_t_rate[node] += sa.t_rate[node * sa.Nt + j];
                 }
 
-                sa.t_time[node] =
-                    -log(1.0 - gsl_rng_uniform(sa.rng)) /
-                    sa.sum_t_rate[node] + sa.tt;
+                /* Compute time to next event for this node. */
+                if (sa.sum_t_rate[node] > 0.0) {
+                    sa.t_time[node] =
+                        -log(1.0 - gsl_rng_uniform(sa.rng)) /
+                        sa.sum_t_rate[node] + sa.tt;
+                } else {
+                    sa.t_time[node] = INFINITY;
+                }
             }
 
             *&sim_args[i] = sa;
