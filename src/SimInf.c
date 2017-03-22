@@ -218,7 +218,7 @@ cleanup:
             Rf_error("The continuous state 'v' is negative.");
             break;
         case SIMINF_ERR_INVALID_RATE:
-            Rf_error("Invalid rate (non-finite value or < 0.0)");
+            Rf_error("Invalid rate detected (non-finite or < 0.0)");
             break;
         default:
             Rf_error("Unknown error code: %i", err);
