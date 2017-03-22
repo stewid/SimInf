@@ -53,10 +53,6 @@ enum {EXIT_EVENT,
       INTERNAL_TRANSFER_EVENT,
       EXTERNAL_TRANSFER_EVENT};
 
-/* Define a small rate for checking the return value from a transition
- * rate function. */
-const double SMALL_RATE = 1e8*DBL_EPSILON;
-
 /**
  * Structure that represents scheduled events.
  */
@@ -591,14 +587,10 @@ static int siminf_solver()
                                         sa.gdata,
                                         sa.tt);
 
-                    if (!isfinite(rate) || rate <= -SMALL_RATE)
+                    sa.t_rate[node * sa.Nt + j] = rate;
+                    sa.sum_t_rate[node] += rate;
+                    if (!isfinite(rate) || rate < 0.0)
                         sa.errcode = SIMINF_ERR_INVALID_RATE;
-                    else if (rate < 0.0 && rate > -SMALL_RATE)
-                        sa.t_rate[node * sa.Nt + j] = 0.0;
-                    else
-                        sa.t_rate[node * sa.Nt + j] = rate;
-
-                    sa.sum_t_rate[node] += sa.t_rate[node * sa.Nt + j];
                 }
 
                 /* Compute time to next event for this node. */
@@ -664,12 +656,10 @@ static int siminf_solver()
                                 sa.gdata,
                                 sa.t_time[node]);
 
-                            if (!isfinite(rate) || rate <= -SMALL_RATE)
+                            sa.t_rate[node * sa.Nt + sa.irG[j]] = rate;
+                            delta += rate - old;
+                            if (!isfinite(rate) || rate < 0.0)
                                 sa.errcode = SIMINF_ERR_INVALID_RATE;
-                            else if (rate < 0.0 && rate > -SMALL_RATE)
-                                delta += (sa.t_rate[node * sa.Nt + sa.irG[j]] = 0.0) - old;
-                            else
-                                delta += (sa.t_rate[node * sa.Nt + sa.irG[j]] = rate) - old;
                         }
                         sa.sum_t_rate[node] += delta;
 
@@ -848,12 +838,10 @@ static int siminf_solver()
                                 &sa.ldata[node * sa.Nld],
                                 sa.gdata, sa.tt);
 
-                            if (!isfinite(rate) || rate <= -SMALL_RATE)
+                            sa.t_rate[node * sa.Nt + j] = rate;
+                            delta += rate - old;
+                            if (!isfinite(rate) || rate < 0.0)
                                 sa.errcode = SIMINF_ERR_INVALID_RATE;
-                            else if (rate < 0.0 && rate > -SMALL_RATE)
-                                delta += (sa.t_rate[node * sa.Nt + j] = 0.0) - old;
-                            else
-                                delta += (sa.t_rate[node * sa.Nt + j] = rate) - old;
                         }
                         sa.sum_t_rate[node] += delta;
 
