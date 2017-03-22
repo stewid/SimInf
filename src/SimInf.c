@@ -20,7 +20,7 @@
 
 #include <Rdefines.h>
 
-#include "siminf_arg.h"
+#include "SimInf_arg.h"
 #include "SimInf_solver.h"
 
 /**

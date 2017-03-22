@@ -18,8 +18,8 @@
  */
 
 #include "SimInf.h"
-#include "siminf_arg.h"
-#include "siminf_ldata.h"
+#include "SimInf_arg.h"
+#include "SimInf_ldata.h"
 
 /**
  * Combine local model parameters and spatial coupling to neighbors in
