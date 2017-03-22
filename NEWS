@@ -1,7 +1,11 @@
 SimInf 4.0.0.9000
 -----------------
 
+IMPROVEMENTS
 
+* The core solver now checks the return value from the transition rate
+  functions and raise an error if the return value is non-finite or
+  less than zero.
 
 SimInf 4.0.0
 ------------
