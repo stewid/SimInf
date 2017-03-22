@@ -620,12 +620,14 @@ setMethod("plot",
               if (is.null(names(x@tspan))) {
                   plot(x = x@tspan, y = m[1,], type = "l", ylab = "Proportion",
                        ylim = c(0, 1), col = col[1], lty = lty[1], lwd = lwd, ...)
+                  xlab <- "Time"
               } else {
                   plot(x = as.Date(names(x@tspan)), y = m[1,], type = "l",
                        ylab = "Proportion", ylim = c(0, 1), col = col[1],
                        lty = lty[1], lwd = lwd, ...)
+                  xlab <- "Date"
               }
-              title(xlab = "Time", outer = TRUE, line = 0)
+              title(xlab = xlab, outer = TRUE, line = 0)
               for (i in seq_len(dim(m)[1])[-1]) {
                   if (is.null(names(x@tspan))) {
                       lines(x = x@tspan, y = m[i, ], type = "l", lty = lty[i],
