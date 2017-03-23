@@ -79,7 +79,7 @@ Class to handle the siminf data model
      Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
   }
   \item{events}{
-    Scheduled events \code{"\linkS4class{scheduled_events}"}
+    Scheduled events \code{"\linkS4class{SimInf_events}"}
   }
   \item{C_code}{
     Character vector with optional model C code. If non-empty, the

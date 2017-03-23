@@ -64,10 +64,10 @@ compartment state (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
 state of the system at \code{tspan[j]}.}
 
 \item{E}{Sparse matrix to handle scheduled events, see
-\code{\linkS4class{scheduled_events}}.}
+\code{\linkS4class{SimInf_events}}.}
 
 \item{N}{Sparse matrix to handle scheduled events, see
-\code{\linkS4class{scheduled_events}}.}
+\code{\linkS4class{SimInf_events}}.}
 
 \item{C_code}{Character vector with optional model C code. If
 non-empty, the C code is written to a temporary C-file when

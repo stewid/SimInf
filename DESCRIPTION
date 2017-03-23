@@ -38,7 +38,7 @@ Imports:
 Collate:
     'AllGenerics.R'
     'check_arguments.R'
-    'scheduled_events.R'
+    'SimInf_events.R'
     'SimInf_model.R'
     'SEIR.R'
     'SIR.R'
