@@ -20,30 +20,37 @@
 ##' Class to handle the SimInf mparse data
 ##' @section Slots:
 ##' \describe{
+##'   \item{latex}{
+##'     Character vector with the model LaTeX code.
+##'   }
 ##'   \item{C_code}{
-##'     Character vector with model C code.
+##'     Character vector with the model C code.
 ##'   }
 ##'   \item{G}{
 ##'     Dependency graph that indicates the transition rates that need
-##'     to be updated after a given state transition has occured.
-##'     A non-zero entry in element \code{G[i, i]} indicates that transition
-##'     rate \code{i} needs to be recalculated if the state transition
-##'     \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt}) of object class
-##'     \code{"\linkS4class{dgCMatrix}"}.
+##'     to be updated after a given state transition has occured.  A
+##'     non-zero entry in element \code{G[i, i]} indicates that
+##'     transition rate \code{i} needs to be recalculated if the state
+##'     transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
+##'     of object class \code{"\linkS4class{dgCMatrix}"}, where
+##'     \eqn{Nt} is the number of transitions.
 ##'   }
 ##'   \item{S}{
 ##'     Each column corresponds to a state transition, and execution
 ##'     of state transition \code{j} amounts to adding the \code{S[,
 ##'     j]} column to the state vector \code{u[, i]} of node \emph{i}
 ##'     where the transition occurred. Sparse matrix (\eqn{Nc \times
-##'     Nt}) of object class \code{"\linkS4class{dgCMatrix}"}.
+##'     Nt}) of object class \code{"\linkS4class{dgCMatrix}"}, where
+##'     \eqn{Nc} is the number of transitions and \eqn{Nt} is the
+##'     number of transitions.
 ##'   }
 ##' }
 ##' @keywords methods
 ##' @export
 ##' @import Matrix
 setClass("SimInf_mparse",
-         slots = c(C_code = "character",
+         slots = c(latex  = "character",
+                   C_code = "character",
                    G      = "dgCMatrix",
                    S      = "dgCMatrix"),
          validity = function(object) {
@@ -181,6 +188,8 @@ C_code_mparse <- function(transitions, rates, compartments) {
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
 rewriteprop <- function(propensity, compartments) {
+    orig_prop <- propensity
+
     ## Switch to an intermediate representation using '###', replacing
     ## larger strings first in order to avoid changing e.g., 'BA' with
     ## '###[1]A' whenever 'B' and 'BA' are two different compartments.
@@ -202,7 +211,9 @@ rewriteprop <- function(propensity, compartments) {
                            propensity, fixed = TRUE)
     }
 
-    list(propensity = propensity, depends = depends)
+    list(orig_prop  = orig_prop,
+         propensity = propensity,
+         depends = depends)
 }
 
 ## Generate labels from the parsed transitions
@@ -222,6 +233,32 @@ as_labels <- function(transitions) {
 
         paste(from, "->", dest)
     })
+}
+
+## Generate LaTeX code from the transitions.
+LaTeX <- function(transitions)
+{
+    lbl <- as_labels(transitions)
+    lbl <- gsub("@", "\\\\emptyset", lbl)
+    propensity <- sapply(transitions, function(x) x$orig_prop)
+    lines <- c("\\begin{align}",
+               "  \\left",
+               "    \\begin{array}{rcl}")
+    for (i in seq_len(length(lbl))) {
+        tmp <- unlist(strsplit(lbl[i], "->"))
+        lines <- c(lines, paste0("      ",
+                                 tmp[1],
+                                 "& \\xrightarrow{",
+                                 propensity[i],
+                                 "} &",
+                                 tmp[2],
+                                 " \\\\"))
+    }
+
+    c(lines,
+      "    \\end{array}",
+      "  \\right\\}",
+      "\\end{align}")
 }
 
 ##' Model parser
@@ -315,6 +352,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
 
         list(from       = from,
              dest       = dest,
+             orig_prop  = propensity$orig_prop,
              propensity = propensity$propensity,
              depends    = propensity$depends,
              S          = S)
@@ -330,6 +368,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
     rownames(S) <- compartments
 
     new("SimInf_mparse",
+        latex = LaTeX(transitions),
         C_code = C_code_mparse(transitions, rates, compartments),
         G = G,
         S = S)
