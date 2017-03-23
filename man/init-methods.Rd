@@ -13,7 +13,8 @@ init(model, u0 = NULL, tspan = NULL)
 \arguments{
 \item{model}{The \code{SimInf_mparse} object to initialize.}
 
-\item{u0}{A \code{data.frame} with the initial state in each node.}
+\item{u0}{A \code{data.frame} (or an object that can be coerced to
+a \code{data.frame}) with the initial state in each node.}
 
 \item{tspan}{A vector (length >= 2) of increasing time points
 where the state of each node is to be returned. Can be either

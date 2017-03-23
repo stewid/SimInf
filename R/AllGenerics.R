@@ -20,7 +20,8 @@
 ##'
 ##' @rdname init-methods
 ##' @param model The \code{SimInf_mparse} object to initialize.
-##' @param u0 A \code{data.frame} with the initial state in each node.
+##' @param u0 A \code{data.frame} (or an object that can be coerced to
+##'     a \code{data.frame}) with the initial state in each node.
 ##' @template tspan-param
 ##' @return a \code{SimInf_model} object
 setGeneric("init",
