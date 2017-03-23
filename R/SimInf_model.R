@@ -90,7 +90,7 @@
 ##'      Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
 ##'   }
 ##'   \item{events}{
-##'     Scheduled events \code{"\linkS4class{scheduled_events}"}
+##'     Scheduled events \code{"\linkS4class{SimInf_events}"}
 ##'   }
 ##'   \item{C_code}{
 ##'     Character vector with optional model C code. If non-empty, the
@@ -116,7 +116,7 @@ setClass("SimInf_model",
                    V        = "matrix",
                    V_sparse = "dgCMatrix",
                    v0       = "matrix",
-                   events   = "scheduled_events",
+                   events   = "SimInf_events",
                    C_code   = "character"),
          validity = function(object) {
              ## Check events
@@ -239,9 +239,9 @@ setClass("SimInf_model",
 ##'     vector is updated by the specific model during the simulation
 ##'     in the post time step function.
 ##' @param E Sparse matrix to handle scheduled events, see
-##'     \code{\linkS4class{scheduled_events}}.
+##'     \code{\linkS4class{SimInf_events}}.
 ##' @param N Sparse matrix to handle scheduled events, see
-##'     \code{\linkS4class{scheduled_events}}.
+##'     \code{\linkS4class{SimInf_events}}.
 ##' @param C_code Character vector with optional model C code. If
 ##'     non-empty, the C code is written to a temporary C-file when
 ##'     the \code{run} method is called.  The temporary C-file is
@@ -362,7 +362,7 @@ SimInf_model <- function(G,
     ## Check events
     if (!any(is.null(events), is.data.frame(events)))
         stop("'events' must be NULL or a data.frame")
-    events <- scheduled_events(E = E, N = N, events = events, t0 = t0)
+    events <- SimInf_events(E = E, N = N, events = events, t0 = t0)
 
     ## Check C code
     if (is.null(C_code))

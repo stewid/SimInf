@@ -28,7 +28,7 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
     abs(x - round(x)) < tol
 }
 
-##' Class \code{"scheduled_events"}
+##' Class \code{"SimInf_events"}
 ##'
 ##' Class to handle the scheduled events
 ##' @section Slots:
@@ -95,7 +95,7 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##' @import methods
 ##' @import Matrix
 ##' @export
-setClass("scheduled_events",
+setClass("SimInf_events",
          slots = c(E          = "dgCMatrix",
                    N          = "matrix",
                    event      = "integer",
@@ -160,7 +160,7 @@ setClass("scheduled_events",
          }
 )
 
-##' Create a \code{"\linkS4class{scheduled_events}"} object
+##' Create a \code{"\linkS4class{SimInf_events}"} object
 ##'
 ##' The argument events must be a \code{data.frame} with the following
 ##' columns:
@@ -220,9 +220,9 @@ setClass("scheduled_events",
 ##'     events to the model \code{tspan} vector, see details. If
 ##'     \code{events$time} is a numeric vector, then \code{t0} must be
 ##'     \code{NULL}.
-##' @return S4 class \code{scheduled_events}
+##' @return S4 class \code{SimInf_events}
 ##' @export
-scheduled_events <- function(E      = NULL,
+SimInf_events <- function(E      = NULL,
                              N      = NULL,
                              events = NULL,
                              t0     = NULL)
@@ -308,7 +308,7 @@ scheduled_events <- function(E      = NULL,
 
     events <- events[order(events$time, events$event, events$select),]
 
-    return(new("scheduled_events",
+    return(new("SimInf_events",
                E          = E,
                N          = N,
                event      = as.integer(events$event),
@@ -332,7 +332,7 @@ scheduled_events <- function(E      = NULL,
 ##' @importFrom graphics plot
 ##' @importFrom graphics mtext
 ##' @keywords internal
-plot_scheduled_events <- function(x,
+plot_SimInf_events <- function(x,
                                   y,
                                   events = c("Exit",
                                              "Enter",
@@ -369,17 +369,17 @@ plot_scheduled_events <- function(x,
     graphics::mtext("Time", side = 1, line = 2)
 }
 
-##' Plot \code{\linkS4class{scheduled_events}}
+##' Plot \code{\linkS4class{SimInf_events}}
 ##'
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
 ##' @name plot-methods
-##' @aliases plot plot-methods plot,scheduled_events-method
+##' @aliases plot plot-methods plot,SimInf_events-method
 ##' @importFrom graphics plot
 ##' @importFrom graphics par
 ##' @importFrom stats xtabs
 ##' @export
 setMethod("plot",
-          signature(x = "scheduled_events"),
+          signature(x = "SimInf_events"),
           function(x, frame.plot = FALSE, ...)
           {
               savepar <- graphics::par(mfrow = c(2, 2),
@@ -392,23 +392,23 @@ setMethod("plot",
               xx <- as.integer(colnames(yy))
 
               ## Plot events
-              plot_scheduled_events(xx, yy, "Exit", frame.plot, ...)
-              plot_scheduled_events(xx, yy, "Enter", frame.plot, ...)
-              plot_scheduled_events(xx, yy, "Internal transfer", frame.plot, ...)
-              plot_scheduled_events(xx, yy, "External transfer", frame.plot, ...)
+              plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)
+              plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
+              plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
+              plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
           }
 )
 
-##' Brief summary of \code{scheduled_events}
+##' Brief summary of \code{SimInf_events}
 ##'
 ##' Shows the number of scheduled events.
-##' @aliases show,scheduled_events-methods
-##' @param object The scheduled_events \code{object}
+##' @aliases show,SimInf_events-methods
+##' @param object The SimInf_events \code{object}
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
 ##' @export
 setMethod("show",
-          signature(object = "scheduled_events"),
+          signature(object = "SimInf_events"),
           function (object)
           {
               cat(sprintf("Number of scheduled events: %i\n",
@@ -416,18 +416,18 @@ setMethod("show",
           }
 )
 
-##' Summary of \code{scheduled_events}
+##' Summary of \code{SimInf_events}
 ##'
 ##' Shows the number of scheduled events and the number of scheduled
 ##' events per event type.
-##' @aliases summary,scheduled_events-methods
-##' @param object The \code{scheduled_events} object
+##' @aliases summary,SimInf_events-methods
+##' @param object The \code{SimInf_events} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
 ##' @export
 setMethod("summary",
-          signature(object = "scheduled_events"),
+          signature(object = "SimInf_events"),
           function(object, ...)
           {
               n <- length(object@event)

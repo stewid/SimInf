@@ -60,9 +60,9 @@ lapply(seq_len(8), function(i) {
         row.names = c(NA, -15L), class = "data.frame")
 
     colnames(events)[i] <- "test"
-    res <- tools::assertError(scheduled_events(E      = E,
-                                               N      = N,
-                                               events = events))
+    res <- tools::assertError(SimInf_events(E      = E,
+                                            N      = N,
+                                            events = events))
     stopifnot(length(grep("Missing columns in events",
                           res[[1]]$message)) > 0)
 })
@@ -81,9 +81,9 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -101,9 +101,9 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -123,9 +123,9 @@ events <- structure(list(
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
-res <- tools::assertError(scheduled_events(E = E,
-                                           N = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E = E,
+                                        N = N,
+                                        events = events))
 stopifnot(length(grep("Missing 't0'",
                       res[[1]]$message)) > 0)
 
@@ -145,10 +145,10 @@ events <- structure(list(
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events,
-                                           t0     = c(1, 1)))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events,
+                                        t0     = c(1, 1)))
 stopifnot(length(grep("Invalid 't0'",
                       res[[1]]$message)) > 0)
 
@@ -168,10 +168,10 @@ events <- structure(list(
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events,
-                                           t0     = "1"))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events,
+                                        t0     = "1"))
 stopifnot(length(grep("Invalid 't0'",
                       res[[1]]$message)) > 0)
 
@@ -188,10 +188,10 @@ events <- structure(list(
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events,
-                                           t0     = 0))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events,
+                                        t0     = 0))
 stopifnot(length(grep("Invalid 't0'",
                       res[[1]]$message)) > 0)
 
@@ -211,7 +211,7 @@ events <- structure(list(
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
-res <- scheduled_events(E = E, N = N, events = events, t0 = 17166)
+res <- SimInf_events(E = E, N = N, events = events, t0 = 17166)
 stopifnot(identical(res@time, 2:16))
 
 ## Check events$time equal to an integer vector
@@ -229,7 +229,7 @@ events <- structure(list(
     .Names = c("event", "time", "node", "dest", "n",
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
-res <- scheduled_events(E = E, N = N, events = events)
+res <- SimInf_events(E = E, N = N, events = events)
 stopifnot(identical(is.null(names(res@time)), TRUE))
 
 ## Check events$select not equal to whole number
@@ -246,9 +246,9 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -266,9 +266,9 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -286,9 +286,9 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("'node' must be greater or equal to 1",
                       res[[1]]$message)) > 0)
 
@@ -306,9 +306,9 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -326,9 +326,9 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("'dest' must be greater or equal to 1",
                       res[[1]]$message)) > 0)
 
@@ -346,9 +346,9 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
@@ -367,9 +367,9 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("Columns in events must be numeric",
                       res[[1]]$message)) > 0)
 
@@ -387,21 +387,21 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 str(events)
-res <- tools::assertError(scheduled_events(E      = E,
-                                           N      = N,
-                                           events = events))
+res <- tools::assertError(SimInf_events(E      = E,
+                                        N      = N,
+                                        events = events))
 stopifnot(length(grep("Columns in events must be integer",
                       res[[1]]$message)) > 0)
 
 ## Check E and events equal to NULL (default).
-events <- new("scheduled_events",
+events <- new("SimInf_events",
               E = new("dgCMatrix",
-                  i = integer(0),
-                  p = 0L,
-                  Dim = c(0L, 0L),
-                  Dimnames = list(NULL, NULL),
-                  x = numeric(0),
-                  factors = list()),
+                      i = integer(0),
+                      p = 0L,
+                      Dim = c(0L, 0L),
+                      Dimnames = list(NULL, NULL),
+                      x = numeric(0),
+                      factors = list()),
               N = matrix(integer(0), nrow = 0, ncol = 0),
               event = integer(0),
               time = integer(0),
@@ -412,9 +412,9 @@ events <- new("scheduled_events",
               select = integer(0),
               shift = integer(0))
 str(events)
-stopifnot(identical(scheduled_events(), events))
+stopifnot(identical(SimInf_events(), events))
 
-## Check scheduled_events plot method
+## Check SimInf_events plot method
 E <- Matrix(c(1, 0, 0, 1, 0, 0,
               0, 0, 0, 1, 0, 0,
               0, 1, 0, 0, 1, 0,
@@ -438,7 +438,7 @@ N <- matrix(c(2, 0,
 data(events_SISe3)
 ## Save run-time by only using one year of data
 events_SISe3 <- events_SISe3[events_SISe3$time < 366,]
-events <- scheduled_events(E = E, N = N, events = events_SISe3)
+events <- SimInf_events(E = E, N = N, events = events_SISe3)
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
 plot(events)
