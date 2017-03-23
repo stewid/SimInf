@@ -205,8 +205,31 @@ rewriteprop <- function(propensity, compartments) {
     list(propensity = propensity, depends = depends)
 }
 
+## Generate labels from the parsed transitions
+as_labels <- function(transitions) {
+    sapply(transitions, function(x) {
+        if (length(x$from)) {
+            from <- paste0(x$from, collapse = " + ")
+        } else {
+            from <- "@"
+        }
+
+        if (length(x$dest)) {
+            dest <- paste0(x$dest, collapse = " + ")
+        } else {
+            dest <- "@"
+        }
+
+        paste(from, "->", dest)
+    })
+}
+
 ##' Model parser
 ##'
+##' Describe your model in a logical way in R. \code{mparse} creates a
+##' \code{\linkS4class{SimInf_mparse}} object with your model
+##' definition that is ready to be initialised with data and then
+##' \code{\link{run}}.
 ##' @param transitions character vector containing transitions on the
 ##'     form \code{"X -> ... -> Y"}. The left (right) side is the
 ##'     initial (final) state and the propensity is written in between
@@ -223,7 +246,8 @@ rewriteprop <- function(propensity, compartments) {
 ##' @importFrom utils packageVersion
 ##' @examples
 ##' \dontrun{
-##' ## Use the model parser to create a 'SimInf_mparse' object
+##' ## Use the model parser to create a 'SimInf_mparse' object that
+##' ## expresses a SIR model
 ##' m <- mparse(c("S -> k1*S*I/(S+I+R) -> I", "I -> k2*I -> R"),
 ##'             c("S", "I", "R"), k1 = 0.16, k2 = 0.077)
 ##'
@@ -281,7 +305,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
         if (any(is.na(idest)))
             stop(sprintf("Unknown compartment: '%s'.", dest[is.na(idest)]))
 
-        ## The corresponding column in the state change matrix S is
+        ## The corresponding column in the state change vector S is
         ## now known.
         S <- integer(length(compartments))
         S[ifrom] <- -1
@@ -301,11 +325,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
     G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
 
     colnames(G) <- as.character(seq_len(dim(G)[2]))
-    rownames(G) <- sapply(transitions, function(x) {
-        paste(ifelse(length(x$from), x$from, "@"),
-              "->",
-              ifelse(length(x$dest), x$dest, "@"))
-    })
+    rownames(G) <- as_labels(transitions)
     colnames(S) <- as.character(seq_len(dim(S)[2]))
     rownames(S) <- compartments
 
