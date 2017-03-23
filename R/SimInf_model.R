@@ -100,7 +100,7 @@
 ##'     the temporary files are removed after running the model.
 ##'   }
 ##' }
-##' @include scheduled_events.R
+##' @include SimInf_events.R
 ##' @keywords methods
 ##' @export
 ##' @import Matrix

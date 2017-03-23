@@ -23,7 +23,7 @@
 ##' \code{\{0, 1, ..., days - 1\}}. Default is 1000 days.
 ##' @param model The name of the model. Default is 'SISe'.
 ##' @return A model
-##' @include scheduled_events.R
+##' @include SimInf_events.R
 ##' @include SISe.R
 ##' @include SISe_sp.R
 ##' @include SISe3.R
