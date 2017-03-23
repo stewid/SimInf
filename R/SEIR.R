@@ -58,11 +58,11 @@ setClass("SEIR", contains = c("SimInf_model"))
 ##' result <- run(model, seed = 123)
 ##' plot(result)
 SEIR <- function(u0,
-                tspan,
-                events  = NULL,
-                beta    = NULL,
-                epsilon = NULL,
-                gamma   = NULL)
+                 tspan,
+                 events  = NULL,
+                 beta    = NULL,
+                 epsilon = NULL,
+                 gamma   = NULL)
 {
     compartments <- c("S", "E", "I", "R")
 
