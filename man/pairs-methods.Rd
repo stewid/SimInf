@@ -16,6 +16,6 @@
 }
 \description{
 A matrix of scatterplots with the number of individuals is
-produced. The ijth scatterplot contains ‘x[,i]’ plotted against
-‘x[,j]’.
+produced. The \code{ij}th scatterplot contains \code{x[,i]}
+plotted against \code{x[,j]}.
 }

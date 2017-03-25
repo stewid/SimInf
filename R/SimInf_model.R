@@ -578,8 +578,8 @@ setMethod("boxplot",
 ##' Scatterplot Matrices
 ##'
 ##' A matrix of scatterplots with the number of individuals is
-##' produced. The ijth scatterplot contains ‘x[,i]’ plotted against
-##' ‘x[,j]’.
+##' produced. The \code{ij}th scatterplot contains \code{x[,i]}
+##' plotted against \code{x[,j]}.
 ##' @param x The \code{model} to plot
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name pairs-methods
