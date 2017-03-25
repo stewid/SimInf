@@ -32,7 +32,7 @@
 \S4method{plot}{SimInf_events}(x, frame.plot = FALSE, ...)
 
 \S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL, lty = NULL,
-  lwd = NULL, ...)
+  lwd = 2, which = 1, ...)
 
 \S4method{plot}{SEIR}(x, col = c("blue", "orange", "red", "darkgreen"),
   lty = rep(1, 4), lwd = 2, ...)
@@ -72,6 +72,11 @@ sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 6=twodash.}
 
 \item{lwd}{The line width for each compartment. Default is 2.}
+
+\item{which}{integer with type of plot to create: \code{1}) the
+proportion of individuals in each compartment, \code{2}) the
+average number of individuals in each compartment in each
+node. Default is \code{1}.}
 }
 \description{
 Plot \code{\linkS4class{SimInf_events}}
