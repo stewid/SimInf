@@ -546,6 +546,35 @@ setMethod("run",
           }
 )
 
+##' Box Plots
+##'
+##' Produce box-and-whisker plot(s) of the number of individuals in
+##' each compartment.
+##' @param x The \code{model} to plot
+##' @param ... Additional arguments affecting the plot produced.
+##' @name boxplot-methods
+##' @aliases boxplot boxplot-methods boxplot,SimInf_model-method
+##' @importFrom graphics boxplot
+##' @export
+setMethod("boxplot",
+          signature(x = "SimInf_model"),
+          function(x, ...)
+          {
+              if (identical(dim(x@U), c(0L, 0L)))
+                  stop("Please run the model first, the 'U' matrix is empty")
+
+              ## Create a matrix where each column is the individuals
+              ## in that state
+              m <- do.call(cbind, lapply(seq_len(dim(x@S)[1]), function(from) {
+                  i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
+                  as.numeric(x@U[i, ])
+              }))
+
+              colnames(m) <- rownames(x@S)
+              boxplot(m, ...)
+          }
+)
+
 ##' Scatterplot Matrices
 ##'
 ##' A matrix of scatterplots with the number of individuals is
