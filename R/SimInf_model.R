@@ -546,6 +546,36 @@ setMethod("run",
           }
 )
 
+##' Scatterplot Matrices
+##'
+##' A matrix of scatterplots with the number of individuals is
+##' produced. The ijth scatterplot contains ‘x[,i]’ plotted against
+##' ‘x[,j]’.
+##' @param x The \code{model} to plot
+##' @param ... Additional arguments affecting the plot produced.
+##' @name pairs-methods
+##' @aliases pairs pairs-methods pairs,SimInf_model-method
+##' @importFrom graphics pairs
+##' @export
+setMethod("pairs",
+          signature(x = "SimInf_model"),
+          function(x, ...)
+          {
+              if (identical(dim(x@U), c(0L, 0L)))
+                  stop("Please run the model first, the 'U' matrix is empty")
+
+              ## Create a matrix where each column is the individuals in
+              ## that state
+              m <- do.call(cbind, lapply(seq_len(dim(x@S)[1]), function(from) {
+                  i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
+                  as.numeric(x@U[i, ])
+              }))
+
+              colnames(m) <- rownames(x@S)
+              pairs(m, ...)
+          }
+)
+
 ##' Plot \code{\linkS4class{SimInf_model}}
 ##'
 ##' @param x The \code{model} to plot
