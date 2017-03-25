@@ -609,10 +609,9 @@ setMethod("pairs",
 ##'     sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 ##'     6=twodash.
 ##' @param lwd The line width for each compartment. Default is 2.
-##' @param which integer with type of plot to create: \code{1}) the
-##'     proportion of individuals in each compartment, \code{2}) the
-##'     average number of individuals in each compartment in each
-##'     node. Default is \code{1}.
+##' @param N if \code{TRUE}, the average number of individuals in each
+##'     compartment, else the proportion of individuals in each
+##'     compartment.  Default is \code{FALSE}.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SimInf_model-method
@@ -636,7 +635,7 @@ setMethod("pairs",
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
-                   which = 1, ...)
+                   N = FALSE, ...)
           {
               if (identical(dim(x@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
@@ -648,15 +647,15 @@ setMethod("plot",
               ## that state
               m <- do.call(rbind, lapply(seq_len(dim(x@S)[1]), function(from) {
                   i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
-                  if (which == 1) {
-                      colSums(as.matrix(x@U[i, , drop = FALSE]))
-                  } else if (which == 2) {
+                  if (N) {
                       colMeans(as.matrix(x@U[i, , drop = FALSE]))
+                  } else {
+                      colSums(as.matrix(x@U[i, , drop = FALSE]))
                   }
               }))
 
               ## Calculate proportion
-              if (which == 1)
+              if (!N)
                   m <- apply(m, 2, function(x) x / sum(x))
 
               ## Default line type
@@ -673,12 +672,12 @@ setMethod("plot",
                   col <- rep("black", dim(x@S)[1])
 
               ## Plot specific settings
-              if (which == 1) {
-                  ylab <- "Proportion"
-                  ylim <- c(0, 1)
-              } else if (which == 2) {
+              if (N) {
                   ylab <- "N"
                   ylim <- c(0, max(m))
+              } else {
+                  ylab <- "Proportion"
+                  ylim <- c(0, 1)
               }
 
               ## Plot
