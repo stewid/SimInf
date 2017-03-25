@@ -546,6 +546,21 @@ setMethod("run",
           }
 )
 
+## Create a matrix where each column contains the individuals in one
+## state.
+by_compartment <- function(model) {
+    if (identical(dim(model@U), c(0L, 0L)))
+        stop("Please run the model first, the 'U' matrix is empty")
+
+    m <- do.call(cbind, lapply(seq_len(dim(model@S)[1]), function(from) {
+        i <- seq(from = from, to = dim(model@U)[1], by = dim(model@S)[1])
+        as.numeric(model@U[i, ])
+    }))
+
+    colnames(m) <- rownames(model@S)
+    m
+}
+
 ##' Box Plots
 ##'
 ##' Produce box-and-whisker plot(s) of the number of individuals in
@@ -560,18 +575,7 @@ setMethod("boxplot",
           signature(x = "SimInf_model"),
           function(x, ...)
           {
-              if (identical(dim(x@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
-
-              ## Create a matrix where each column is the individuals
-              ## in that state
-              m <- do.call(cbind, lapply(seq_len(dim(x@S)[1]), function(from) {
-                  i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
-                  as.numeric(x@U[i, ])
-              }))
-
-              colnames(m) <- rownames(x@S)
-              boxplot(m, ...)
+              boxplot(by_compartment(x), ...)
           }
 )
 
@@ -590,18 +594,7 @@ setMethod("pairs",
           signature(x = "SimInf_model"),
           function(x, ...)
           {
-              if (identical(dim(x@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
-
-              ## Create a matrix where each column is the individuals in
-              ## that state
-              m <- do.call(cbind, lapply(seq_len(dim(x@S)[1]), function(from) {
-                  i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
-                  as.numeric(x@U[i, ])
-              }))
-
-              colnames(m) <- rownames(x@S)
-              pairs(m, ...)
+              pairs(by_compartment(x), ...)
           }
 )
 
