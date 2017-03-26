@@ -1,0 +1,87 @@
+\documentclass[nojss]{jss}
+
+\author{Stefan Widgren\\National Veterinary Institute\\Sweden \And
+  Pavol Bauer\\Uppsala University\\Sweden \And
+  Stefan Engblom\\Uppsala University\\Sweden}
+
+\Plainauthor{Stefan Widgren, Pavol Bauer, Stefan Engblom}
+
+\title{\pkg{SimInf}: An \proglang{R} package for Data-driven
+  Stochastic Disease Spread Simulations}
+
+\Plaintitle{SimInf: An R package for Data-Driven Stochastic Disease
+  Spred Simulations}
+
+\Shorttitle{\pkg{SimInf}: Data-driven Stochastic Disease Spread
+  Simulations}
+
+\Abstract{
+
+  Livestock movements are critical for the spread of many infectious
+  diseases in animal populations.  The use of real livestock data
+  allows for disease spread modeling that incorporates the
+  time-varying contact network and the population demographic.  This
+  paper introduces \pkg{SimInf}, an efficient and general framework
+  for stochastic spatio-temporal disease-spread modelling over a
+  temporal network of connected nodes.  It integrates within-node
+  infection dynamics as continuous-time Markov chains and livestock
+  data as scheduled events.  The core simulation solver is implemented
+  in \proglang{C} and uses \proglang{OpenMP} to divide work over
+  multiple processors.  We provide a technical description of the
+  framework, how to use a built-in model, demonstrate a case study and
+  finally how to extend the framework with a user defined model.
+
+}
+
+\Keywords{computational epidemiology, discrete-event simulation,
+  multicore implementation, stochastic modeling}
+\Plainkeywords{computational epidemiology, discrete-event simulation,
+  multicore implementation, stochastic modeling}
+
+\Address{
+  Stefan Widgren\\
+  Department of Disease Control and Epidemiology\\
+  National Veterinary Institute\\
+  SE-751 89 Uppsala, Sweden\\
+  E-mail: \email{stefan.widgren@sva.se}\\
+  URL: \url{http://www.sva.se}\\
+  \\
+  Pavol Bauer\\
+  Division of Scientific Computing\\
+  Department of Information Technology\\
+  Uppsala University\\
+  SE-751 05 Uppsala, Sweden\\
+  E-mail: \email{pavol.bauer@it.uu.se}\\
+  \\
+  Stefan  Engblom\\
+  Division of Scientific Computing\\
+  Department of Information Technology\\
+  Uppsala University\\
+  SE-751 05 Uppsala, Sweden\\
+  E-mail: \email{stefane@it.uu.se}
+}
+
+<<echo=false, results=hide>>=
+options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
+@
+
+\begin{document}
+
+\SweaveOpts{engine=R,eps=FALSE}
+%\VignetteIndexEntry{SimInf: An R package for Data-Driven Stochastic Disease Spred Simulations}
+%\VignetteDepends{SimInf,lattice}
+%\VignetteKeywords{computational epidemiology, discrete-event simulation, multicore implementation, stochastic modeling}
+%\VignettePackage{SimInf}
+
+%**************************************************************************
+
+\section{Introduction}
+
+\section{Acknowledgements}
+
+This work was financially supported by the Swedish Research Council
+within the UPMARC Linnaeus centre of Excellence (P.~Bauer,
+S.~Engblom), The Swedish Research Council Formas (S.~Engblom,
+S.~Widgren), and The Swedish Board of Agriculture (S.~Widgren).
+
+\end{document}
