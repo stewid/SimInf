@@ -77,11 +77,53 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 
 \section{Introduction}
 
+Livestock movements are an important transmission route for many
+infectious diseases and can transfer infectious individuals between
+holdings over large distances \citep{Danon2011}.  The livestock
+movements between holdings can be represented as a temporal network
+with nodes coupled by directed edges and the time when each edge was
+active \citep{Holme2012}.  The temporal network of livestock movements
+forms a complex system with dynamical properties in the topology,
+connectivity and intensity \citep{Bajardi2011, Dutta2014}.  These
+properties are important for the disease spread \citep{Shirley2005,
+  Buettner2014}.  The use of real livestock data allows for disease
+spread modeling that incorporates the time-varying contact network and
+the population demographics.  It is also desirable to have a framework
+that allows for a flexible and extendable specification of the disease
+model to handle indirect or direct transmission routes and various
+disease states.
+
+In this work, we present an efficient and flexible framework for
+spatio-temporal disease spread modeling.  We have developed a
+discrete-event simulator, \pkg{SimInf}, that divides work among
+multiple processors available in standard computers.  The model
+integrates infection dynamics as continuous-time Markov chains and
+available data such as animal movements, births, slaughter or aging
+are incorporated as scheduled events.  One of our design goal was to
+make \pkg{SimInf} completely extendable and allow for growth in
+available models and specialized solvers through contributions from
+the community.  Using compiled \proglang{C} code, rather than
+interpreted \proglang{R} code, for the transition-rate functions
+ensures maximum efficiency when simulating the model.  To simplify the
+process of compiling the required \proglang{C} code of the models, the
+\proglang{R} package configuration automatically include these files
+for compilation during package installation.
+
+The paper is organized as follows.  In \S\ref{sec:modeling} we
+summarize the mathematical foundation for our framework.  Section
+\S\ref{sec:framework} gives a technical description of the simulation
+framework.  In \S\ref{sec:illustration} we illustrate the use of the
+package by a worked example.  Finally, in \S\ref{sec:demo} we
+demonstrate a realistic large-scale use case which also serve as an
+explanation of how to extend \pkg{SimInf} with user-defined models.
+
 \section{Acknowledgements}
 
 This work was financially supported by the Swedish Research Council
 within the UPMARC Linnaeus centre of Excellence (P.~Bauer,
 S.~Engblom), The Swedish Research Council Formas (S.~Engblom,
 S.~Widgren), and The Swedish Board of Agriculture (S.~Widgren).
+
+\bibliography{SimInf}
 
 \end{document}
