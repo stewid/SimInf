@@ -1,5 +1,20 @@
 \documentclass[nojss]{jss}
 
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+%% Macros for the 'Epidemiological modeling' section
+\newcommand{\Connect}{\mathbb{C}}
+\newcommand{\fatmu}{\boldsymbol{\mu}}
+\newcommand{\fatnu}{\boldsymbol{\nu}}
+\newcommand{\Intdom}{\mathbf{Z}}
+\newcommand{\Ncompartments}{N_{c}}
+\newcommand{\Ntransitions}{N_{t}}
+\newcommand{\Nnodes}{N_{n}}
+\newcommand{\Realdom}{\mathbf{R}}
+\newcommand{\Stoich}{\mathbb{S}}
+\newcommand{\X}{\mathbb{X}}
+
 \author{Stefan Widgren\\National Veterinary Institute\\Sweden \And
   Pavol Bauer\\Uppsala University\\Sweden \And
   Stefan Engblom\\Uppsala University\\Sweden}
@@ -116,6 +131,150 @@ framework.  In \S\ref{sec:illustration} we illustrate the use of the
 package by a worked example.  Finally, in \S\ref{sec:demo} we
 demonstrate a realistic large-scale use case which also serve as an
 explanation of how to extend \pkg{SimInf} with user-defined models.
+
+%**************************************************************************
+
+\section{Epidemiological modeling}
+\label{sec:modeling}
+
+In the following section, we give a brief overview of the
+epidemiological modeling framework employed in \pkg{SimInf} and we
+refer to \citep{Bauer2016} for further details.
+
+Below we distinguish between local dynamics, that describe the
+evolution of a single node, for example, a herd, and the global
+dynamics, which describes the system at network level.
+
+\subsection{Local dynamics}
+
+We describe the state of a single node with a \emph{state vector}
+$X_{t} = X(t) \in \Intdom_{+}^{\Ncompartments}$, which counts the
+number of individuals at each of $\Ncompartments$ compartments at time
+$t$.  The transitions between compartments are stochastic and
+described by the transition matrix $\Stoich \in
+\Intdom^{\Ncompartments \times \Ntransitions}$ as well as the
+transition intensity $R: \Intdom_{+}^{\Ncompartments} \to
+\Realdom_{+}^{\Ntransitions}$, assuming $\Ntransitions$ different
+transitions.  We can then form a \textit{random counting measure}
+$\mu_{k}(dt) = \mu(R_{k}(X(t-)); \, dt)$ that is associated with the
+Poisson process for the $k$th intensity $R_{k}(X(t-)$, which in turn
+depends on the state prior to the transition at time $t$, namely
+$X(t-)$.
+
+The local dynamics is then described by a stochastic differential
+equations (SDE) with jumps,
+\begin{align}
+  \label{eq:vectorJSDE}
+  dX_{t} &= \Stoich\fatmu(dt),
+\end{align}
+where $\fatmu(dt)$ is a vector measure built up from scalar counting
+measures $\fatmu(dt) = [\mu_{1}(dt),\ldots,$
+  $\mu_{\Ntransitions}(dt)]^\top$.
+
+As an example, the transitions between a susceptible and an infected
+compartment can be modeled as
+\begin{align}
+\label{eq:sirtrans}
+  &\left. \begin{array}{rl}
+    S+I &\xrightarrow{\beta} 2I \\
+    I &\xrightarrow{\gamma} S \\
+  \end{array} \right\}.
+  \intertext{With a state vector consisting of two compartments $X =
+    [S,I]$ we can then write the transition matrix and intensity
+    vector as}
+  \label{eq:SIRstoich}
+    \Stoich &= \left[ \begin{array}{rr}
+        -1 & 1 \\
+        1  & -1
+      \end{array} \right], \\
+    R(x) &= [\beta x_{1}x_{2},\gamma x_{2}]^\top.
+\end{align}
+
+If a transition occurs, the state vector is altered by the transition
+matrix as
+\begin{align}
+   X_{t}=X_{t-}+\Stoich_k,
+\end{align}
+assuming that $k$ is the index of the transition that occurred at time
+$t$.
+
+\subsection{Global dynamics}
+
+To extend the local dynamics to a network model consisting of
+$\Nnodes$ nodes we first define a state matrix $\X \in
+\Intdom_{+}^{\Ncompartments \times \Nnodes}$ and then extend
+Equation~\ref{eq:vectorJSDE} to
+\begin{align}
+  \label{eq:local}
+  d\X^{(i)}_{t} &= \Stoich\fatmu^{(i)}(dt),
+\end{align}
+where $i \in \{1,...,\Nnodes\}$ is the node index.
+
+We then consider $\Nnodes$ nodes being the vertices of an undirected
+graph $\mathcal{G}$ with interactions defined in terms of the counting
+measures $\fatnu^{(i,j)}$ and $\fatnu^{(j,i)}$.  Here $\fatnu^{(i,j)}$
+represents the state changes due to an inflow of individuals from node
+$i$ to node $j$, and $\fatnu^{(j,i)}$ represents an inflow of
+individuals from node $j$ to node $i$, assuming node $j$ being in the
+connected component $C(i)$ of node $i$, and vice versa.
+
+The network dynamics is then written as
+\begin{align}
+  \label{eq:global}
+  d\X^{(i)}_{t} &= -\sum_{j \in C(i)} \Connect\fatnu^{(i,j)}(dt)+
+  \sum_{j; \, i \in C(j)} \Connect\fatnu^{(j,i)}(dt),
+\end{align}
+
+which in combination with Equation~\ref{eq:local} leads to the overall
+dynamics
+\begin{align}
+  \label{eq:master}
+  d\X^{(i)}_{t} &= \Stoich\fatmu^{(i)}(dt)-
+  \sum_{j \in C(i)} \Connect\fatnu^{(i,j)}(dt)+
+  \sum_{j; \, i \in C(j)} \Connect\fatnu^{(j,i)}(dt).
+\end{align}
+
+Note that $\fatnu^{(i,j)}$ and $\fatnu^{(j,i)}$ may be equivalently
+defined for deterministic events given by external data using
+an equivalent construction in terms of Dirac measures.
+
+This general model can be further extended with continuous state
+variables that may be affected by both local and global dynamics.
+Consult \cite{Bauer2016} for further details.
+
+\subsection{Numerical method}
+
+In \pkg{SimInf}, we solve Equation~\ref{eq:master} by splitting the
+local update scheme, Equation~\ref{eq:local}, from the global update
+scheme, Equation~\ref{eq:global}, and evaluating each scheme
+individually.  As a consequence, the time is discretized as $0 = t_{0}
+< t_{1} < t_2 < \cdots$, which is practical as external data has to be
+incorporated at some finitely resolved time steps.  The numerical
+method can then be written per node $i$ as
+\begin{align}
+  \label{eq:numstep3}
+  \tilde{\X}_{n+1}^{(i)} &= \X_{n}^{(i)} + \int^{t_{n+1}}_{t_n}
+  \Stoich \fatmu^{(i)}(\tilde{\X}^{(i)}(s-); \; ds), \\
+  \label{eq:numstep4}
+  \X_{n+1}^{(i)} &= \tilde{\X}^{(i)}_{n+1}-\int^{t_{n+1}}_{t_n} \sum_{j \in C(i)}
+  \Connect\fatnu^{(i,j)}(\X^{(i)}(s-); \; ds) \\
+  \nonumber
+  &\phantom{= \tilde{\X}^{(i)}_{n+1}}+\int^{t_{n+1}}_{t_n} \sum_{j; \, i \in C(j)}
+  \Connect\fatnu^{(j,i)}(\X^{(j)}(s-); \; ds).
+\end{align}
+
+In this scheme, Equation~\ref{eq:numstep3} forms the stochastic step,
+that is in practice computed by the Gillespie method
+\citep{Gillespie1977}.  Equation~\ref{eq:numstep4} is the data step,
+where externally scheduled events are incorporated.  Note that the
+stochastic step evolves at continuous time increments in the interval
+$[t_n,t_{n+1}]$, and the data step operates only on the final state
+$\tilde{\X}$ at $t_{n+1}$.  At this point, the simulator may also
+evaluate a \textit{post-time-step} function, which triggers additional
+processing steps, as for example, the update of continuous state
+variables.
+
+%**************************************************************************
 
 \section{Acknowledgements}
 
