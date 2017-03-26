@@ -35,6 +35,8 @@ Imports:
     stats,
     utils,
     Matrix
+Suggests:
+    lattice
 Collate:
     'AllGenerics.R'
     'check_arguments.R'
