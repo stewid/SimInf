@@ -575,7 +575,7 @@ setMethod("boxplot",
           signature(x = "SimInf_model"),
           function(x, ...)
           {
-              boxplot(by_compartment(x), ...)
+              graphics::boxplot(by_compartment(x), ...)
           }
 )
 
@@ -594,7 +594,7 @@ setMethod("pairs",
           signature(x = "SimInf_model"),
           function(x, ...)
           {
-              pairs(by_compartment(x), ...)
+              graphics::pairs(by_compartment(x), ...)
           }
 )
 
@@ -615,7 +615,6 @@ setMethod("pairs",
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SimInf_model-method
-##' @importFrom graphics axis
 ##' @importFrom graphics legend
 ##' @importFrom graphics lines
 ##' @importFrom graphics par
@@ -640,8 +639,9 @@ setMethod("plot",
               if (identical(dim(x@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
 
-              savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
-              on.exit(par(savepar))
+              savepar <- graphics::par(mar = c(2,4,1,1), oma = c(4,1,0,0),
+                                       xpd = TRUE)
+              on.exit(graphics::par(savepar))
 
               ## Create matrix where each row is the sum of individuals in
               ## that state
@@ -682,24 +682,26 @@ setMethod("plot",
 
               ## Plot
               if (is.null(names(x@tspan))) {
-                  plot(x = x@tspan, y = m[1,], type = "l",
-                       ylab = ylab, ylim = ylim, col = col[1],
-                       lty = lty[1], lwd = lwd, ...)
+                  graphics::plot(x = x@tspan, y = m[1,], type = "l",
+                                 ylab = ylab, ylim = ylim, col = col[1],
+                                 lty = lty[1], lwd = lwd, ...)
                   xlab <- "Time"
               } else {
-                  plot(x = as.Date(names(x@tspan)), y = m[1,],
-                       type = "l", ylab = ylab, ylim = ylim,
-                       col = col[1], lty = lty[1], lwd = lwd, ...)
+                  graphics::plot(x = as.Date(names(x@tspan)), y = m[1,],
+                                 type = "l", ylab = ylab, ylim = ylim,
+                                 col = col[1], lty = lty[1], lwd = lwd, ...)
                   xlab <- "Date"
               }
-              title(xlab = xlab, outer = TRUE, line = 0)
+              graphics::title(xlab = xlab, outer = TRUE, line = 0)
               for (i in seq_len(dim(m)[1])[-1]) {
                   if (is.null(names(x@tspan))) {
-                      lines(x = x@tspan, y = m[i, ], type = "l", lty = lty[i],
-                            col = col[i], lwd = lwd, ...)
+                      graphics::lines(x = x@tspan, y = m[i, ], type = "l",
+                                      lty = lty[i], col = col[i], lwd = lwd,
+                                      ...)
                   } else {
-                      lines(x = as.Date(names(x@tspan)), y = m[i, ],
-                            type = "l", lty = lty[i], col = col[i], lwd = lwd, ...)
+                      graphics::lines(x = as.Date(names(x@tspan)), y = m[i, ],
+                                      type = "l", lty = lty[i], col = col[i],
+                                      lwd = lwd, ...)
                   }
               }
 
@@ -707,15 +709,14 @@ setMethod("plot",
               ## the compartments.
               if (is.null(legend))
                   legend <- rownames(x@S)
-              par(fig = c(0, 1, 0, 1),
-                  oma = c(0, 0, 0, 0),
-                  mar = c(0, 0, 0, 0), new = TRUE)
-              plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+              graphics::par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
+                            mar = c(0, 0, 0, 0), new = TRUE)
+              graphics::plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
               graphics::legend("bottom", inset = c(0, 0), lty = lty,
                                col = col, bty = "n", horiz = TRUE,
                                legend = legend, lwd = lwd)
           }
-          )
+)
 
 ##' @keywords internal
 show_U <- function(object) {
