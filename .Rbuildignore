@@ -13,3 +13,8 @@
 src/gsl
 ^logo$
 ^.*\.patch$
+vignettes/img/enter.tex
+vignettes/img/exit.tex
+vignettes/img/external.tex
+vignettes/img/external-shift.tex
+vignettes/img/internal.tex

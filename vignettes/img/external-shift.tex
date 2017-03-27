@@ -1,0 +1,228 @@
+\documentclass{standalone}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{matrix,positioning,decorations.pathreplacing}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\X}{\mathbb{X}}
+
+\begin{document}
+\pagestyle{empty}
+\begin{tikzpicture}[node distance=1ex]
+
+  \draw [decorate,decoration={brace,amplitude=10pt},rotate=-90]
+  (-2.5,-4.0) -- (-2.5,-0.2);
+
+  \node [align=center] at (-2.1,3.4) {$^\textit{i)}$Scheduled
+    \\ event};
+
+  \matrix [matrix of nodes,
+           draw,
+           column 1/.style={anchor=base west}] at (-2.5,0)
+          {
+            \code{event:} 3 \\
+            \code{time:} 4 \\
+            \code{node:} 14 \\
+            \code{dest:} 23 \\
+            \code{n:} 3 \\
+            \code{proportion:} 0$^\ddag$ \\
+            \code{select:} 5 \\
+            \code{shift:} 2 \\
+          };
+
+  \draw [decorate,decoration={brace,amplitude=10pt},rotate=-90]
+  (-2.5,0) -- (-2.5,5.1);
+
+  \node [align=center] at (2.6,3.4) {$^\textit{ii)}$Select individuals
+    \\ for sampling};
+
+  \draw [decorate,decoration={brace,amplitude=10pt},rotate=-90]
+  (-2.5,5.3) -- (-2.5,7.1);
+
+  \node [align=center] at (6.2,3.4) {$^\textit{iii)}$Random
+    \\ sampling};
+
+  \draw [decorate,decoration={brace,amplitude=10pt},rotate=-90]
+  (-2.5,7.3) -- (-2.5,10.7);
+
+  \node [align=center] at (9,3.4) {$^\textit{iv)}$Shift \\ operation};
+
+  \draw [decorate,decoration={brace,amplitude=10pt},rotate=-90]
+  (-2.5,10.9) -- (-2.5,12.8);
+
+  \node [align=center] at (11.8,3.4) {$^\textit{v)}$Updated node
+    \\ and dest};
+
+  \matrix (uNode) [matrix of math nodes,
+                 left delimiter={[},
+                 right delimiter={]},
+                 column 1/.style={anchor=base east}] at (1,0)
+          {
+            12 \\
+             3 \\
+            63 \\
+            14 \\
+            92 \\
+             2 \\
+          };
+
+          \node [above=of uNode-1-1.north] {\code{u[,14]}};
+          \node [left=of uNode-3-1.east,xshift=-1.3cm] {$\Longrightarrow$};
+          \node [left=of uNode-1-1.east,xshift=-0.7cm] {$S_1$};
+          \node [left=of uNode-2-1.east,xshift=-0.7cm] {$I_1$};
+          \node [left=of uNode-3-1.east,xshift=-0.7cm] {$S_2$};
+          \node [left=of uNode-4-1.east,xshift=-0.7cm] {$I_2$};
+          \node [left=of uNode-5-1.east,xshift=-0.7cm] {$S_3$};
+          \node [left=of uNode-6-1.east,xshift=-0.7cm] {$I_3$};
+
+  \matrix (uDest) [matrix of math nodes,
+                   left delimiter={[},
+                   right delimiter={]},
+                   column 1/.style={anchor=base east}] at (1,-4)
+          {
+            11 \\
+            18 \\
+            13 \\
+            54 \\
+            22 \\
+            72 \\
+          };
+
+          \node [above=of uDest-1-1.north] {\code{u[,23]}};
+          \node [left=of uDest-3-1.east,xshift=-1.3cm] {$\Longrightarrow$};
+          \node [left=of uDest-1-1.east,xshift=-0.7cm] {$S_1$};
+          \node [left=of uDest-2-1.east,xshift=-0.7cm] {$I_1$};
+          \node [left=of uDest-3-1.east,xshift=-0.7cm] {$S_2$};
+          \node [left=of uDest-4-1.east,xshift=-0.7cm] {$I_2$};
+          \node [left=of uDest-5-1.east,xshift=-0.7cm] {$S_3$};
+          \node [left=of uDest-6-1.east,xshift=-0.7cm] {$I_3$};
+
+  \matrix (E) [matrix of math nodes,
+               left delimiter={[},
+               right delimiter={]},
+               column 1/.style={anchor=base east}] at (3.2,0)
+          {
+            0 \\
+            0 \\
+            1 \\
+            1 \\
+            0 \\
+            0 \\
+          };
+          \node [above=of E-1-1.north] {\code{E[,5]}};
+          \node [right=of E-3-1.east,xshift=0.2cm] {$\Longrightarrow$};
+
+          \draw[->,black!30] (E-3-1.west) -- (uNode-3-1.east);
+          \node [left=of E-3-1.west,xshift=-0.2cm,yshift=0.2cm]
+                {\footnotesize{select}};
+
+          \draw[->,black!30] (E-4-1.west) -- (uNode-4-1.east);
+          \node [left=of E-4-1.west,xshift=-0.2cm,yshift=0.2cm]
+                {\footnotesize{select}};
+
+  \matrix (Selected) [matrix of math nodes,
+                      left delimiter={[},
+                      right delimiter={]},
+                      column 1/.style={anchor=base east}] at (5.2,0)
+          {
+             0 \\
+             0 \\
+            63 \\
+            14 \\
+             0 \\
+             0 \\
+          };
+
+          \node [above=of Selected-1-1.north, align=center] {Eligible
+            for \\ sampling};
+          \node [right=of Selected-3-1.east,xshift=0.2cm] {$\Longrightarrow$};
+
+  \matrix (Sampled) [matrix of math nodes,
+                      left delimiter={[},
+                      right delimiter={]},
+                      column 1/.style={anchor=base east}] at (7.2,0)
+          {
+             0 \\
+             0 \\
+             2 \\
+             1 \\
+             0 \\
+             0 \\
+          };
+
+          \node [above=of Sampled-1-1.north, align=center] {Sampled
+            \\ individuals};
+
+          \draw[->,black] (Sampled-3-1.east) --
+          ([xshift=0.5cm]Sampled-3-1.east) --
+          ([xshift=0.5cm]Sampled-5-1.east) --
+          (Sampled-5-1.east);
+
+          \draw[->,black] (Sampled-4-1.east) --
+          ([xshift=0.7cm]Sampled-4-1.east) --
+          ([xshift=0.7cm]Sampled-6-1.east) --
+          (Sampled-6-1.east);
+
+  \matrix (N) [matrix of math nodes,
+               left delimiter={[},
+               right delimiter={]},
+               column 1/.style={anchor=base east}] at (10.2,0)
+          {
+            0 \\
+            0 \\
+            2 \\
+            2 \\
+            0 \\
+            0 \\
+          };
+          \node [above=of N-1-1.north] {\code{N[,2]}};
+          \node [right=of N-3-1.east,xshift=0.2cm] {$\Longrightarrow$};
+
+          \draw[->,black!30] (N-3-1.west) --
+          ([xshift=0.7cm]Sampled-3-1.east);
+
+          \node [left=of N-3-1.west,xshift=-0.2cm,yshift=0.2cm]
+                {\footnotesize{shift $+2$}};
+
+          \draw[->,black!30] (N-4-1.west) --
+          ([xshift=0.9cm]Sampled-4-1.east);
+
+          \node [left=of N-4-1.west,xshift=-0.2cm,yshift=0.2cm]
+                {\footnotesize{shift $+2$}};
+
+  \matrix (uNodeNew) [matrix of math nodes,
+                      left delimiter={[},
+                      right delimiter={]},
+                      column 1/.style={anchor=base east}] at (12.2,0)
+          {
+            12 \\
+             3 \\
+            61 \\
+            13 \\
+            92 \\
+             2 \\
+          };
+
+          \node [above=of uNodeNew-1-1.north] {\code{u[,14]}};
+
+  \matrix (uDestNew) [matrix of math nodes,
+                     left delimiter={[},
+                     right delimiter={]},
+                     column 1/.style={anchor=base east}] at (12.2,-4)
+          {
+            11 \\
+            18 \\
+            13 \\
+            54 \\
+            24 \\
+            73 \\
+          };
+
+          \node [above=of uDestNew-1-1.north] {\code{u[,23]}};
+          \node [left=of uDestNew-3-1.east,xshift=-0.7cm] {$\Longrightarrow$};
+
+\end{tikzpicture}
+
+\end{document}
