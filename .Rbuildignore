@@ -13,6 +13,12 @@
 src/gsl
 ^logo$
 ^.*\.patch$
+vignettes/SimInf.aux
+vignettes/SimInf.bbl
+vignettes/SimInf.blg
+vignettes/SimInf.log
+vignettes/SimInf.out
+vignettes/SimInf.pdf
 vignettes/img/enter.tex
 vignettes/img/exit.tex
 vignettes/img/external.tex
