@@ -2,6 +2,9 @@
 
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{tabularx}
 
 %% Macros for the 'Epidemiological modeling' section
 \newcommand{\Connect}{\mathbb{C}}
@@ -273,6 +276,615 @@ $\tilde{\X}$ at $t_{n+1}$.  At this point, the simulator may also
 evaluate a \textit{post-time-step} function, which triggers additional
 processing steps, as for example, the update of continuous state
 variables.
+
+%**************************************************************************
+
+\section{Technical description of the simulation framework}
+\label{sec:framework}
+
+The overall design of \pkg{SimInf} was inspired and partly adapted
+from the Unstructured Mesh Reaction-Diffusion Master Equation (URDME)
+framework \citep{Engblom2009, Drawert2012}.  \pkg{SimInf} is a general
+software framework for data-driven modeling and simulation of
+stochastic disease-spread in a complex network of connected nodes.  In
+particular, the transition rates and the transition topology are
+specified using a compiled language \proglang{C} and \proglang{R}
+matrices, respectively.  The overall modular design makes extensions
+easy to handle and since the simulation engine is written in a
+compiled language, the efficiency of the simulator is very high.
+
+The \pkg{SimInf} package is available via the Comprehensive
+\proglang{R} Archive Network (CRAN) at
+\mbox{\url{https://CRAN.R-project.org/package=SimInf}} and is
+installed and loaded in \proglang{R} with the following commands
+
+\begin{Code}
+R> install.packages("SimInf")
+R> library("SimInf")
+\end{Code}
+
+\subsection{Overview}
+
+The \pkg{SimInf} \proglang{R} package uses object oriented programming
+with \code{S4} classes \citep{Chambers2008} to define objects with
+logical layers connected by well-defined interfaces for different
+modeling scenarios.  The two \code{S4} classes \code{SimInf\_model}
+and \code{SimInf\_events} are central and provide the basis for the
+flexible framework to perform efficient simulations in compiled
+\proglang{C} code of built-in or user-defined models.  The
+\code{SimInf\_model} class contains slots
+(Table~\ref{table:SimInf:model}) to data structures that define the
+disease-spread model and one slot \code{events} associated to a
+\code{SimInf\_events} object.  The \code{SimInf\_model} object also
+contains the output trajectory after running the core simulation
+solver on the disease-spread model.  The \code{SimInf\_events} class
+contains slots (Table~\ref{table:scheduled:events}) to incorporate and
+process scheduled events.
+
+All disease-spread models in \pkg{SimInf} contains the \code{S4} class
+\code{SimInf\_model}.  The built-in disease-spread models have a
+generating function \citep{Chambers2008}, with the same name as the
+model, which check parameters and initialize the necessary data
+structures for that specific model.  After the model is initialized,
+the simulation is started with a call to the \code{run} method.  To
+facilitate post-processing and visualization of output data, the
+built-in models provide several utility functions, for example,
+\code{susceptible}, \code{infected}, \code{prevalence} and
+\code{plot}.
+
+\begin{table}
+  \small
+  \begin{tabularx}{\textwidth}{l X}
+    \toprule
+    Slot & Description\\
+    \midrule
+
+    \code{S} & Each column corresponds to a state transition, and
+    execution of state transition $j$ amounts to adding the \code{S[,
+        j]} column to the state vector \code{u[, i]} of node $i$ where
+    the transition occured.  Sparse matrix ($N_c \times N_t$) of
+    object class \code{dgCMatrix}.\\
+
+    \code{G} & Dependency graph that indicates the transition rates
+    that need to be updated after a given state transition has
+    occured.  A non-zero entry in element \mbox{\code{G[i, j]}}
+    indicates that transition rate $i$ needs to be recalculated if the
+    state transition $j$ occurs.  Sparse matrix ($N_t \times N_t$) of
+    object class \code{dgCMatrix}.\\
+
+    \code{tspan} & A vector of increasing time points where the state
+    of each node is to be returned.\\
+
+    \code{U} & The result matrix with the number of individuals in
+    each compartment in every node.  \mbox{\code{U[, j]}} contains the
+    number of individuals in each compartment at \code{tspan[j]}.
+    \mbox{\code{U[1:Nc, j]}} contains the number of individuals in
+    each compartment in node $1$ at \code{tspan[j]}.
+    \mbox{\code{U[(Nc + 1):(2 * Nc), j]}} contains the number of
+    individuals in each compartment in node $2$ at \code{tspan[j]}
+    etc.  Integer matrix ($N_n N_c \times
+    \text{length}(\text{tspan})$).\\
+
+    \code{U\_sparse} & It is possible to run the simulator and write
+    the number of individuals in each compartment to the
+    \code{U\_sparse} sparse matrix (\code{dgCMatrix}), which can save
+    a lot of memory if the model contains many nodes and time-points,
+    but where only a few of the data points are of interest.  If
+    \code{U\_sparse} is non-empty when \code{run} is called, the
+    non-zero entries in \code{U\_sparse} indicates where the number of
+    individuals should be written to \code{U\_sparse}.  The layout of
+    the data in \code{U\_sparse} is identical to \code{U}.  Please
+    note that the data in \code{U\_sparse} is numeric and that the
+    data in \code{U} is integer.\\
+
+    \code{u0} & The initial number of individuals in each compartment
+    in every node.  Integer matrix ($N_c \times N_n$).\\
+
+    \code{V} & The result matrix for the real-valued contininuous
+    state.  \mbox{\code{V[, j]}} contains the real-valued state of the
+    system at \code{tspan[j]}.  Numeric matrix ($N_n N_{ld} \times
+    \text{length}(\text{tspan})$).\\
+
+    \code{V\_sparse} & It is possible to run the simulator and write
+    the real-valued continuous state to the \code{V\_sparse} sparse
+    matrix (\code{dgCMatrix}), which can save a lot of memory if the
+    model contains many nodes and time-points, but where only a few of
+    the data points are of interest.  If \code{V\_sparse} is non-empty
+    when \code{run} is called, the non-zero entries in
+    \code{V\_sparse} indicates where the real-valued continuous state
+    should be written to \code{V\_sparse}.  The layout of the data in
+    \code{V\_sparse} is identical to \code{U}.\\
+
+    \code{v0} & The initial value for the real-valued continuous
+    state.  Numeric matrix ($N_{ld} \times N_n$).\\
+
+    \code{ldata} & A numeric matrix with local data specific to each
+    node.  The column \code{ldata[, j]} contains the local data vector
+    for node $j$.  The local data vector is passed as an argument to
+    the transition rate functions and the post time step function.\\
+
+    \code{gdata} & A numeric vector with global data that is common to
+    all nodes.  The global data vector is passed as an argument to the
+    transition rate functions and the post time step function.\\
+
+    \code{events} & Scheduled events to modify the discrete state of
+    individuals in a node at a pre-defined time $t$.  \code{S4} class
+    \code{SimInf\_events}, see \S\ref{sec:events} and
+    Table~\ref{table:scheduled:events}.\\
+
+    \code{C\_code} & Character vector with optional model \proglang{C}
+    code, see \S\ref{sec:extend}.  If non-empty, the \proglang{C} code
+    is written to a temporary file when the \code{run} method is
+    called.  The temporary file is compiled and the resulting DLL is
+    dynamically loaded.  The DLL is unloaded and the temporary files
+    are removed after running the model.\\
+
+    \bottomrule
+  \end{tabularx}
+  \caption{Description of the slots in the S4 class
+    \code{SimInf\_model} that defines the epidemiological model.
+    $N_t$ is the number of state transitions in the model.  $N_c$ is
+    the number of compartments in the model.  $N_n$ is the number of
+    nodes in the model.  $N_{ld}$ is the number of local data specific
+    to each node and equals \code{dim(ldata)[1]}.}
+  \label{table:SimInf:model}
+\end{table}
+
+\subsection{Specification of an epidemiological model}
+\label{sec:model}
+
+The within-node disease spread model in \pkg{SimInf} is specified as a
+compartment model with the individuals divided into compartments
+defined by discrete disease statuses.  The model is defined by the
+slots in the \code{S4} class \code{SimInf\_model}
+(Table~\ref{table:SimInf:model}).  The compartments contains the
+number of individuals in each of the $N_c$ disease states in every
+$N_n$ nodes.
+
+The stochastic step Equation~\ref{eq:numstep3} contains $N_t$ state
+transitions and is processed using the two slots, \code{S} and
+\code{G}.  The \code{S} slot is the state-change matrix ($N_c \times
+N_t$) that determines how to change the number of individuals in the
+compartments of a node when the $j^{th}$ state transition occurs,
+where $1 \le j \le N_t$.  Each row corresponds to one compartment and
+each column to a state transition.  Let \code{u[, i]} be the number of
+individuals in each compartment in node $i$ at time $t_i$.  To move
+simulation time forward in node $i$ to $t_i = t_i + \tau_i$, the
+vector \code{u[, i]} is updated according to the $j^{th}$ transition
+by adding the state-change vector \code{S[, j]} to \code{u[, i]}.
+After updating \code{u[, i]}, the transition rates must be
+recalculated to obtain the time to the next event.  However, a state
+transition might not need all transition rates to be recalculated.
+The dependency graph \code{G} is a matrix ($N_t \times N_t$) that
+determines which transition rate that needs to be recalculated.  A
+non-zero entry in element \code{G[k, j]} indicates that transition
+rate \code{k} needs to be recalculated if the $j^{th}$ state
+transition occurs, where \mbox{$1 \le$ \code{k} $\le N_t$}.
+
+\begin{table}
+  \small
+  \begin{tabularx}{\textwidth}{l X}
+    \toprule Slot & Description\\ \midrule
+
+    \code{E} & Each row corresponds to one compartment in the model.
+    The non-zero entries in a column indicates the compartments to
+    include in an event.  Sparse matrix of object class
+    \code{dgCMatrix}.\\
+
+    \code{N} & Each row represents one compartment in the model and
+    the values determine how to move sampled individuals in
+    \textit{internal transfer} and \textit{external transfer} events.
+    Integer matrix.\\
+
+    \code{event} & Type of event: 0) \textit{exit}, 1) \textit{enter},
+    2) \textit{internal transfer}, and 3) \textit{external transfer}.
+    Other values are reserved for future event types and not supported
+    by the current default core solver.  Integer vector.\\
+
+    \code{time} & Time of the event.  Integer vector.\\
+
+    \code{node} & The node that the event operates on.  Also the
+    source node for an \textit{external transfer} event.  Integer
+    vector.  $1 \le$ \code{node[i]} $\le N_n$.\\
+
+    \code{dest} & The destination node for an \textit{external
+      transfer} event, equals $0$ for the other event types.  Integer
+    vector.\\
+
+    \code{n} & The number of individuals affected by the event.
+    Integer vector.  \code{n[i]} $\ge 0$.\\
+
+    \code{proportion} & If \code{n[i]} equals zero, the number of
+    individuals affected by \code{event[i]} is calculated by summing
+    the number of individuls in the compartments determined by
+    \code{select[i]} and multiplying with \code{proportion[i]}.
+    Numeric vector.  $0 \le$ \code{proportion[i]} $\le 1$.\\
+
+    \code{select} & Column $j$ in the event matrix $E$ that determines
+    the compartments that the event operates on.  Integer vector.\\
+
+    \code{shift} & Column $k$ in the shift matrix $N$ that determines
+    how individuals in \textit{internal transfer} and \textit{external
+      transfer} events are shifted to enter another compartment.
+    Integer vector.\\
+
+    \bottomrule
+  \end{tabularx}
+  \caption{Description of the slots in the S4 class
+    \code{SimInf\_events} that holds data to process events.  Each
+    index, \code{i}, of the vectors represent one event.  $N_n$ is the
+    number of nodes in the model.}
+  \label{table:scheduled:events}
+\end{table}
+
+Model-specific data that is passed to the transition-rate functions
+and the post time-step function are stored in the three slots:
+\code{ldata} and \code{gdata} in the \code{SimInf\_model} object.  The
+\code{ldata} matrix holds local data for each node where \code{ldata[,
+    i]} is the data vector for node $i$.  Data that is global i.e.,
+shared between nodes, is stored in the \code{gdata} vector.
+
+The \code{events} slot in the \code{SimInf\_model} holds data to
+process the scheduled events, further described in \S\ref{sec:events}.
+
+During simulation of one trajectory, the state of the system is
+written to the two matrices \code{U} and \code{V}.  This happens at
+each occasion the simulation time passes a time point in \code{tspan},
+a vector of increasing time points.  The first and last element in
+\code{tspan} determines the start- and end-point of the simulation.
+The column \code{U[, m]} contains the number of individuals in each
+compartment in every node at \code{tspan[m]}, where $1 \le$ \code{m}
+$\le$ \code{length(tspan)}.  The first $N_c$ rows in \code{U} contains
+the compartments of the first node.  The next $N_c$ rows contains the
+compartments of the second node etc.  The \code{V} matrix contains
+output from continuous state variables.  The column \code{V[, m]}
+contains the values at \code{tspan[m]}.  The rows are grouped per node
+and the number of rows per node is determined by the number of
+continuous state variables in that specific model.  It is also
+possible to configure the simulator to write the state of the system
+to the sparse matrices \code{U\_sparse} and \code{V\_sparse}, which
+can save a lot of memory if the model contains many nodes and
+time-points, but where only a few of the data points are of interest.
+In order to use this feature, call the \code{U} and \code{V} methods
+with a sparse matrix with non-zero entries where the simulator should
+write the state of the system.  The initial state in each node is
+specified by the two matrices \code{u0} and \code{v0} where \code{u0[,
+    i]} is the initial number of individuals in each compartment at
+node $i$ and \code{v0[, i]} is the initial continuous state in node
+$i$.
+
+\begin{table}
+  \small
+  \begin{tabularx}{\textwidth}{l X}
+    \toprule
+    Argument & Description\\
+    \midrule
+    \code{v\_new} & The continuous state vector in the node after the
+    post time step.  Exists only in \code{PTSFun}.\\
+    \code{u} & The compartment state vector in the node.\\
+    \code{v} & The current continuous state vector in the node.\\
+    \code{ldata} & The local data vector for the node.\\
+    \code{gdata} & The global data vector.\\
+    \code{node} & The node index.  Note the node index is zero-based
+    i.e., the first node is $0$.\\
+    \code{t} & Current time in the simulation.\\
+    \bottomrule
+  \end{tabularx}
+  \caption{Description of the arguments to the transition rate
+    functions (\code{TRFun}) and the post time step function
+    (\code{PTSFun}).}
+  \label{table:arguments}
+\end{table}
+
+\subsection{Specification of scheduled events}
+\label{sec:events}
+
+The scheduled events are used to modify the discrete state of
+individuals in a node at a pre-defined time $t$.  There are four
+different types of events; \textit{enter}, \textit{internal transfer},
+\textit{external transfer} and \textit{exit}.  The \textit{enter}
+event, adds individuals to a node, for example, due to births.  The
+\textit{internal transfer} event changes the number of individuals in
+the compartments within one node, for example, aging of individuals in
+a model with several age compartments or vaccination to move
+individuals to a vaccinated compartment.  The \textit{external
+  transfer} event moves individuals from compartments in one node to
+compartments in a destination node.  Finally, the \textit{exit} event
+removes individuals from a node, for example, due to slaughter.  The
+event types are classified into those that operate on the compartments
+of a single node $E_1 = \{\text{\textit{enter}, \textit{internal
+    transfer}, \textit{exit}}\}$ and those that operate on the
+compartments of two nodes $E_2 = \{\text{\textit{external
+    transfer}}\}$.  The parallel algorithm processes these two classes
+of events differently.  The scheduled events are processed when
+simulation time reaches the time for any of the events.  Events that
+are scheduled at the same time are processed in the following order:
+\textit{exit}, \textit{enter}, \textit{internal transfer} and
+\textit{external transfer}.
+
+The S4 class \code{SimInf\_events} contains slots with data structures
+to process events (Table~\ref{table:scheduled:events}).  The slots
+\code{event}, \code{time}, \code{node}, \code{dest}, \code{n},
+\code{proportion}, \code{select} and \code{shift}, are vectors of
+equal length.  These vectors hold data to process one event: \code{e},
+where $1 <$ \code{e} $\leq$ \code{length(event)}.  The event type and
+the time of the event are determined by \code{event[e]} and
+\code{time[e]}, respectively.  The compartments that \code{event[e]}
+operates on, are specified by \code{select[e]} together with the slot
+\code{E}.  Each row $\{1, 2, ..., N_c\}$ in the sparse matrix
+\code{E}, represents one compartment in the model.  Let \code{s <-
+  select[e]}, then each non-zero entry in the column \code{E[, s]}
+includes that compartment in the \code{event[e]} operation.
+
+\begin{table}
+  \small
+  \begin{tabular}{l c c c c c c c c}
+    \toprule
+    Action & \code{event} & \code{time} & \code{node} & \code{dest} &
+    \code{n} & \code{proportion} & \code{select} & \code{shift} \\
+    \midrule
+    Exit individuals in $S_1$ and $I_1$  & 0 & t & x & 0 & n & 0 & 4 & 0\\
+    Exit individuals in $S_2$ and $I_2$  & 0 & t & x & 0 & n & 0 & 5 & 0\\
+    Exit individuals in $S_3$ and $I_3$  & 0 & t & x & 0 & n & 0 & 6 & 0\\
+    Enter individuals in $S_1$ and $I_1$ & 1 & t & x & 0 & n & 0 & 1 & 0\\
+    Enter individuals in $S_2$ and $I_2$ & 1 & t & x & 0 & n & 0 & 2 & 0\\
+    Enter individuals in $S_3$ and $I_3$ & 1 & t & x & 0 & n & 0 & 3 & 0\\
+    Age individuals in $S_1$ and $I_1$   & 2 & t & x & 0 & n & 0 & 4 & 1\\
+    Age individuals in $S_2$ and $I_2$   & 2 & t & x & 0 & n & 0 & 5 & 2\\
+    Move individuals in $S_1$ and $I_1$  & 3 & t & x & y & n & 0 & 4 & 0\\
+    Move individuals in $S_2$ and $I_2$  & 3 & t & x & y & n & 0 & 5 & 0\\
+    Move individuals in $S_3$ and $I_3$  & 3 & t & x & y & n & 0 & 6 & 0\\
+    \bottomrule
+  \end{tabular}
+  \caption{Examples of the specification of a single row of scheduled
+    event data in the \code{SISe3} model to add, move or remove
+    individuals during the simulation.}
+  \label{table:SISe3:events}
+\end{table}
+
+\subsubsection{Processing of an enter event}
+
+The \textit{enter} event adds \code{n[e]} individuals to one
+compartment at \code{node[e]}.  The compartment is specified by a
+non-zero entry in the row for the compartment in column \code{E[, s]}.
+Please note that, if the column \code{E[, s]} contains several
+non-zero entries, the individuals are added to the compartment
+represented by the first non-zero row in column \code{E[, s]}.  The
+values of \code{dest[e]}, \code{proportion[e]} and \code{shift[e]},
+described below, are not used when processing an \textit{enter} event.
+See Figure~\ref{fig:enter} for an illustration of a scheduled
+\textit{enter} event.
+
+\subsubsection{Processing of an internal transfer event}
+
+The \textit{internal transfer} event moves \code{n[e]} individuals
+into new compartments within \code{node[e]}.  However, if \code{n[e]}
+equals zero, the number of individuals to move is calculated by
+multiplying the \code{proportion[e]} with the total number of
+individuls in the compartments represented by the non-zero entries in
+column \mbox{\code{E[, s]}}.  The individuals are then proportionally
+sampled and removed from the compartments specified by \code{E[, s]}.
+The next step is to move the sampled individuals to their new
+compartment using the matrix \code{N} and \code{shift[e]}, where
+\code{shift[e]} specifies which column in \code{N} to use.  Each row
+$\{1, 2, ..., N_c\}$ in \code{N}, represents one compartment in the
+model and the values determine how to move sampled individuals before
+adding them to \code{node[e]} again.  Let \code{q <- shift[e]}, then
+each non-zero entry in \code{N[, q]} defines the number of rows to
+move sampled individuals from that compartment i.e., sampled
+individuals from comparment \code{p} are moved to compartment
+\code{N[p, q] + p}, where $1 \leq$ \code{N[p, q] + p} $\le N_c$.  The
+value of \code{dest[e]}, described below, is not used when processing
+an \textit{internal transfer} event.  See Figure~\ref{fig:internal}
+for an illustration of a scheduled \textit{internal transfer} event.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.67\linewidth]{img/exit.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{exit} event (event = 0)
+    in the \code{SISe3} model at time = 4.  The removal of one
+    individual in the third age category $\{S_3, I_3\}$ from node 14.
+    Interpreting the figure from left to right: \textit{i)} A single
+    row of the event data operating on node 14.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{E[, 6]} is
+    the 6$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling one individual (n
+    = 1) to move from the compartments selected in step \textit{ii}.
+    \textit{iv)} The resultant state of node 14 after subtracting the
+    sampled individual in step \textit{iii} from node 14.
+    $^\dag$\code{dest} and $^\S$\code{shift} are not used in a
+    scheduled \textit{exit} event.  $^\ddag$\code{proportion} is not
+    used when $n > 0$.  \label{fig:exit}}
+\end{figure}
+
+\subsubsection{Processing of an external transfer event}
+
+The \textit{external transfer} event moves individuals from
+\code{node[e]} to \code{dest[e]}.  The sampling of individuals from
+\code{node[e]} is performed in the same way as for an \textit{internal
+  transfer} event.  The compartments at \code{node[e]} are updated by
+subtracting the sampled individuals while adding them to the
+compartments at \code{dest[e]}.  The sampled individuals are added to
+the same compartments in \code{dest[e]} as in \code{node[e]}, unless
+\code{shift[e]} $> 0$.  In that case, the sampled individuals change
+compartments according to \code{N} as described in processing an
+\textit{internal transfer} event before adding them to \code{dest[e]}.
+See figures \ref{fig:external} and \ref{fig:external:shift} for
+illustrations of scheduled \textit{external transfer} events.
+
+\subsubsection{Processing of an exit event}
+
+The \textit{exit} event removes individuals from \code{node[e]}.  The
+sampling of individuals from \code{node[e]} is performed in the same
+way as for an \textit{internal transfer} event.  The compartments at
+\code{node[e]} are updated by subtracting the sampled individuals.
+The values of \code{dest[e]} and \code{shift[e]} are not used when
+processing an \textit{exit} event.  See Figure~\ref{fig:exit} for an
+illustration of a scheduled \textit{exit} event.
+
+\subsection{Core simulation solver}
+
+The \pkg{SimInf} package uses the ability to interface compiled code
+from R \cite{Chambers2008}.  The solver is implemented in the compiled
+language \proglang{C} \citep{Kernighan1988} and is called from
+\proglang{R} using the \code{.Call()} interface \citep{Chambers2008}.
+Using compiled rather than interpreted code ensures high performance
+when running the model.  To improve performance further, the solver
+uses \proglang{OpenMP} \citep{OpenMP2008} to divide work over multiple
+processors and perform computations in parallel.  The solver uses the
+GNU Scientific Library (GSL) \citep{Gallassi2009} to generate random
+numbers for the simulation.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.6\linewidth]{img/enter.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{enter} event (event =
+    1) in the \code{SISe3} model at time = 4.  Add three susceptible
+    individuals to the first age category $\{S_1\}$ in node 14.
+    Interpreting the figure from left to right: \textit{i)} A single
+    row of the event data operating on node 14.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14.  \textit{iii)}
+    \code{E[, 1]} is the first column in the select matrix that
+    determines which compartments (age categories) the new individuals
+    are added.  \textit{iv)} The resultant state of node 14 after
+    adding the individuals in step \textit{iii}.  $^\dag$\code{dest},
+    $^\ddag$\code{proportion} and $^\S$\code{shift} are not used in a
+    scheduled \textit{enter} event.  \label{fig:enter}}
+\end{figure}
+
+\subsubsection{Function pointers}
+
+The flexibility of the solver is partly achieved by using function
+pointers \citep{Kernighan1988}.  A function pointer is a variable that
+stores the address of a function that can be used to invoke the
+function.  This provides a simple way to incorporate model specific
+functionality into the solver.  A model must define one transition
+rate function for each state transition in the model.  These functions
+are called by the solver to calculate the transition rate for each
+state transition in each node.  The output from the transition rate
+function depends only on the state of the system at the current time.
+However, the output is unique to a model and data are for that reason
+passed on to the function for the calculation.  Furthermore, a model
+must define the post time step function.  This function is called once
+for each node each time the simulation of the continuous-time Markov
+chain reaches the next day (or, more generally, the next unit of time)
+and after the $E_1$ and $E_2$ events have been proccessed.  The main
+purpose of the post time step function is to allow for a model to
+update continuous state variables in each node.
+
+The transition rate function is defined by the data type \code{TRFun}
+and the post time step function by the data type \code{PTSFun}.  These
+data types are defined in the header file \texttt{'src/SimInf.h'} and
+shown below.  The arguments \code{v\_new}, \code{u}, \code{v},
+\code{ldata}, \code{gdata}, \code{node}, and \code{t} of the functions
+are described in Table~\ref{table:arguments}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\linewidth]{img/internal.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{internal transfer}
+    event (event = 2) in the \code{SISe3} model at time = 4.  The
+    ageing of three individuals in the first age category $\{S_1,
+    I_1\}$.  Interpreting the figure from left to right: \textit{i)} A
+    single row of the event data operating on node 14.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{E[, 4]} is
+    the 4$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling three individuals
+    (n = 3) to age from the compartments selected in step \textit{ii}.
+    \textit{iv)} The shift operation applies the shift specified in
+    column 1 of the shift matrix (\code{N}) to the individuals sampled
+    in step \textit{iii}.  \textit{v)} The resultant state of node 14
+    after subtracting the sampled individuals in step \textit{iii} and
+    adding the individuals after the shift operation in step
+    \textit{iv}.  $^\dag$\code{dest} is not used in \textit{internal
+      transfers}.  $^\ddag$\code{proportion} is not used when $n >
+    0$.  \label{fig:internal}}
+\end{figure}
+
+\begin{minipage}{\linewidth}
+\begin{scriptsize}
+\begin{lstlisting}[language=C]
+  typedef double (*TRFun)(const int *u, const double *v, const double *ldata,
+                          const double *gdata, double t);
+
+  typedef int (*PTSFun)(double *v_new, const int *u, const double *v,
+                        const double *ldata, const double *gdata,
+                        int node, double t);
+\end{lstlisting}
+\end{scriptsize}
+\end{minipage}
+
+\subsubsection{Overview of the solver}
+
+Here follows an overview of the steps in the solver to run one
+trajectory, see Algorithm~\ref{alg:core} for pseudo-code and
+\texttt{'src/core/SimInf\_solver.c'} for the source code.  The
+simulation starts with a call to the \code{run} method with the model
+as the first argument and optionally the number of threads and the
+seed.  This method will first call the validity method on the model to
+perform error-checking and then call a model specific \proglang{C}
+function to initialize the function pointers to the transition rate
+functions and the post time step function of the model.  Subsequently,
+the simulation solver is called to run one trajectory using the model
+specific data, the transition rate functions, and the post time step
+function.  If the \code{C\_code} slot is non-empty, the \proglang{C}
+code is written to a temporary file when the \code{run} method is
+called.  The temporary file is compiled using \code{'R CMD SHLIB'} and
+the resulting DLL is dynamically loaded.  The DLL is unloaded and the
+temporary files are removed after running the model.  This is further
+described in \S\ref{sec:extend}.
+
+The solver simulates the trajectory in parallel if \proglang{OpenMP}
+is available.  The default is to use all available threads.  However,
+the user can specify the number of threads to use.  The solver divides
+data for the $N_n$ nodes and the $E_1$ events over the number threads.
+All $E1$ events that affect node $i$ is processed in the same thread
+as node $i$ is simulated in.  The $E_2$ events are processed in the
+main thread.
+
+The solver runs the continuous-time Markov chain for each node $i$.
+For every time step $\tau_i$, the count in the compartments at node
+$i$ is updated according to the state transition that occured
+(\S\ref{sec:model}).  The time to the next event is computed, after
+recalculating affected transition rate functions (\S\ref{sec:model}).
+When simulated time reaches the next day in node $i$ the $E_1$ events
+are processed for that node (\S\ref{sec:events}).  The $E_2$ events
+are processed when all nodes reaches the next day
+(\S\ref{sec:events}).  Thereafter, the post time step function is
+called to allow the model to incorporate model specific actions.  When
+simulated time passes the next time in \code{tspan}, the count of the
+compartments and the continuous state variables are written to
+\code{U} and \code{V}.
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=0.66\linewidth]{img/external.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{external transfer}
+    event (event = 3) in the \code{SISe3} model at time = 4.  The
+    movement of one individual in the third age category $\{S_3,
+    I_3\}$ from node 14 to destination node 23.  Interpreting the
+    figure from left to right: \textit{i)} A single row of the event
+    data operating on node 14 and destination node 23.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{u[, 23]} is
+    the current state of the destination node 23; \code{E[, 6]} is the
+    6$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling one individual (n
+    = 1) to move from the compartments selected in step \textit{ii}.
+    \textit{iv)} The resultant state of node 14 and destination node
+    23 after subtracting the sampled individuals in step \textit{iii}
+    from node 14 and adding them to destination node 23.
+    $^\dag$\code{shift} can be used in a scheduled \textit{external
+      transfer} event, see
+    Figure~\ref{fig:external:shift}. $^\ddag$\code{proportion} is not
+    used when $n > 0$.  \label{fig:external}}
+\end{figure}
 
 %**************************************************************************
 
