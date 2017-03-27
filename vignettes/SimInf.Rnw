@@ -1,7 +1,9 @@
+%% -*- mode: LaTeX; coding: utf-8; -*-
 \documentclass[nojss]{jss}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{blkarray}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{tabularx}
@@ -637,9 +639,9 @@ includes that compartment in the \code{event[e]} operation.
     \bottomrule
   \end{tabular}
   \caption{Examples of the specification of a single row of scheduled
-    event data in the \code{SISe3} model to add, move or remove
+    event data in the \code{SISe3\_sp} model to add, move or remove
     individuals during the simulation.}
-  \label{table:SISe3:events}
+  \label{table:SISe3_sp:events}
 \end{table}
 
 \subsubsection{Processing of an enter event}
@@ -683,7 +685,7 @@ for an illustration of a scheduled \textit{internal transfer} event.
     \includegraphics[width=0.67\linewidth]{img/exit.pdf}
   \end{center}
   \caption{Illustration of a scheduled \textit{exit} event (event = 0)
-    in the \code{SISe3} model at time = 4.  The removal of one
+    in the \code{SISe3\_sp} model at time = 4.  The removal of one
     individual in the third age category $\{S_3, I_3\}$ from node 14.
     Interpreting the figure from left to right: \textit{i)} A single
     row of the event data operating on node 14.  \textit{ii)}
@@ -742,10 +744,10 @@ numbers for the simulation.
     \includegraphics[width=0.6\linewidth]{img/enter.pdf}
   \end{center}
   \caption{Illustration of a scheduled \textit{enter} event (event =
-    1) in the \code{SISe3} model at time = 4.  Add three susceptible
-    individuals to the first age category $\{S_1\}$ in node 14.
-    Interpreting the figure from left to right: \textit{i)} A single
-    row of the event data operating on node 14.  \textit{ii)}
+    1) in the \code{SISe3\_sp} model at time = 4.  Add three
+    susceptible individuals to the first age category $\{S_1\}$ in
+    node 14.  Interpreting the figure from left to right: \textit{i)}
+    A single row of the event data operating on node 14.  \textit{ii)}
     \code{u[, 14]} is the current state of node 14.  \textit{iii)}
     \code{E[, 1]} is the first column in the select matrix that
     determines which compartments (age categories) the new individuals
@@ -787,7 +789,7 @@ are described in Table~\ref{table:arguments}.
     \includegraphics[width=0.8\linewidth]{img/internal.pdf}
   \end{center}
   \caption{Illustration of a scheduled \textit{internal transfer}
-    event (event = 2) in the \code{SISe3} model at time = 4.  The
+    event (event = 2) in the \code{SISe3\_sp} model at time = 4.  The
     ageing of three individuals in the first age category $\{S_1,
     I_1\}$.  Interpreting the figure from left to right: \textit{i)} A
     single row of the event data operating on node 14.  \textit{ii)}
@@ -866,7 +868,7 @@ compartments and the continuous state variables are written to
     \includegraphics[width=0.66\linewidth]{img/external.pdf}
   \end{center}
   \caption{Illustration of a scheduled \textit{external transfer}
-    event (event = 3) in the \code{SISe3} model at time = 4.  The
+    event (event = 3) in the \code{SISe3\_sp} model at time = 4.  The
     movement of one individual in the third age category $\{S_3,
     I_3\}$ from node 14 to destination node 23.  Interpreting the
     figure from left to right: \textit{i)} A single row of the event
@@ -884,6 +886,219 @@ compartments and the continuous state variables are written to
       transfer} event, see
     Figure~\ref{fig:external:shift}. $^\ddag$\code{proportion} is not
     used when $n > 0$.  \label{fig:external}}
+\end{figure}
+
+%**************************************************************************
+
+\section[Illustration: The SISe3_sp model]{Illustration: The \code{SISe3\_sp} model}
+\label{sec:illustration}
+
+This section illustrates the specification of the \code{SISe3\_sp}
+model, which is built into the \pkg{SimInf} package.  This model
+contains the two compartments susceptible (\code{S}) and infected
+(\code{I}) divided into the three age categories $j = \{1, 2, 3\}$ and
+the local environmental compartment (\code{e}) contaminated with free
+living pathogens (Figure~\ref{fig:SISe3_sp}).  Moreover, proximal
+nodes are spatially connected with local spread between nodes.  The
+transmission route of infection to susceptible individuals is indirect
+via the local environment, contaminated by infected individuals.  The
+number of individuals in each of the six compartments $\{S_1, I_1,
+S_2, I_2, S_3, I_3\}$ in node $i$ at time $t$ is \mbox{\code{u[, i]}}.
+The \code{SISe3\_sp} model has two state transitions within each of
+the three age categories,
+\begin{align}
+\label{eq:vtectrans}
+\begin{array}{rcl}
+  S_{i,j} & \xrightarrow{\eta_{i,j}} & I_{i,j}, \\
+  I_{i,j} &\xrightarrow{\gamma_{i,j}} & S_{i,j}.
+  \end{array}
+\end{align}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.66\linewidth]{img/external-shift.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{external transfer}
+    event (event = 3) in the \code{SISe3\_sp} model at time = 4.  The
+    ageing of three individuals in the second age category $\{S_2,
+    I_2\}$ that are subsequenly moved.  Interpreting the figure from
+    left to right: \textit{i)} A single row of the event data
+    operating on node 14 and destination node 23.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{u[, 23]} is
+    the current state of the destination node 23; \code{E[, 5]} is the
+    5$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling three individuals
+    (n = 3) to move from the compartments selected in step
+    \textit{ii}.  \textit{iv)} The shift operation applies the shift
+    specified in column 2 of the shift matrix (\code{N}) to the
+    individuals sampled in step \textit{iii}.  \textit{v)} The
+    resultant state of node 14 and destination node 23 after
+    subtracting the sampled individuals in step \textit{iii} from node
+    14 and adding them to the destination node 23 after the shift
+    operation in step \textit{iv}.  $^\ddag$\code{proportion} is not
+    used when $n > 0$.  \label{fig:external:shift}}
+\end{figure}
+
+The state transition from susceptible to infected depends on the
+concentration of the environmental contamination $\varphi_i(t)$ of the
+pathogen in node $i$ and the indirect transmission rate
+$\upsilon_{j}$.  The state transition from infected to susceptible
+depends on the recovery rate $\delta_{j}$,
+\begin{align}
+  \label{eq:rate_s_to_i}
+  \eta_{i,j} &= \upsilon_{j} \varphi_{i}(t) S_{i,j}(t), \\
+  \label{eq:rate_i_to_s}
+  \gamma_{i,j} &= \delta_{j} I_{i,j}(t).
+\end{align}
+Finally, the environmental infectious pressure is evolved by
+\begin{equation}
+  \label{eq:envInfPressure-local-spread}
+  \frac{d \varphi_i(t)}{dt}= \frac{\alpha I_i(t)}{N_i(t)} +
+  \sum_k{\frac{\varphi_k(t) N_k(t) - \varphi_i(t) N_i(t)}{N_i(t)}
+    \cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t)
+\end{equation}
+
+The constant $\alpha$ is the average shedding rate of the pathogen to
+the environment per infected individual.  The decay and removal of the
+pathogen is captured by $\beta$, which is allowed to vary with time.
+The model also includes a spatial component with local spread among
+proximal nodes.  Let $D$ be the rate of the local spread and $d_{ik}$
+the distance between the two holdings $i$ and $k$.  The value of the
+environmental infectious pressure $\varphi_i(t)$ in each node is saved
+to the \code{V} matrix at the time-points specified by \code{tspan}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.70\linewidth]{img/SISe3_sp.pdf}
+  \end{center}
+  \caption{Schematic representation of the \code{SISe3\_sp}
+    compartment model in two nodes.  The \code{SISe3\_sp} model is
+    defined by the two disease states susceptible (S) and infected (I)
+    in three age categories and indirect transmission via an
+    environmental infectious pressure $\varphi_i$.  \textit{i)} State
+    transitions between the $S$ and $I$ compartments are modeled as a
+    continuous-time discrete-state Markov process.  The other state
+    transitions are due to scheduled events: \textit{ii)}
+    \textit{enter} events, \textit{iii)} \textit{internal transfer}
+    events, \textit{iv)} \textit{external transfer} events, and
+    \textit{v)} \textit{exit} events.  The environmental infectious
+    pressure $\varphi_i$ is modelled with an ordinary differential
+    equation and by default evolved by the Euler forward
+    method.  \label{fig:SISe3_sp}}
+\end{figure}
+
+To illustrate the stochastic step, Equation~\ref{eq:numstep3},
+consider that the number of individuals in each compartment in node
+$i$ \code{u[, i]} at time $t$ is $\{12, 3, 63, 14, 92, 2\}$ and that
+the time to the next state transition is $\tau_i$.  Furthermore,
+assume that the next state transition is infected to susceptible in
+the first age category.  This corresponds to the second column in the
+state change matrix \code{S}.  Thus, updating the compartments
+corresponds to adding \code{S[, 2]} to \code{u[, i]}, which gives
+$\{13, 2, 63, 14, 92, 2\}$.  This also implies that the transition
+rates for the two transitions $S_{i,1} \rightarrow I_{i,1}$ and
+$I_{i,1} \rightarrow S_{i,1}$ must be recalculated according to
+\code{G[, 2]}.
+
+{\small
+\[
+\mathbf{S} =
+\begin{blockarray}{crrrrrr}
+  & 1 & 2 & 3 & 4 & 5 & 6 \\
+  \begin{block}{c(rrrrrr)}
+    S_1 & -1 &  1 &  0 &  0 &  0 &  0 \\
+    I_1 &  1 & -1 &  0 &  0 &  0 &  0 \\
+    S_2 &  0 &  0 & -1 &  1 &  0 &  0 \\
+    I_2 &  0 &  0 &  1 & -1 &  0 &  0 \\
+    S_3 &  0 &  0 &  0 &  0 & -1 &  1 \\
+    I_3 &  0 &  0 &  0 &  0 &  1 & -1 \\
+  \end{block}
+\end{blockarray} \qquad
+\mathbf{G} =
+\begin{blockarray}{ccccccc}
+  & 1 & 2 & 3 & 4 & 5 & 6 \\
+  \begin{block}{c(rrrrrr)}
+    S_1 \rightarrow I_1 & 1 & 1 & 0 & 0 & 0 & 0 \\
+    I_1 \rightarrow S_1 & 1 & 1 & 0 & 0 & 0 & 0 \\
+    S_2 \rightarrow I_2 & 0 & 0 & 1 & 1 & 0 & 0 \\
+    I_2 \rightarrow S_2 & 0 & 0 & 1 & 1 & 0 & 0 \\
+    S_3 \rightarrow I_3 & 0 & 0 & 0 & 0 & 1 & 1 \\
+    I_3 \rightarrow S_3 & 0 & 0 & 0 & 0 & 1 & 1 \\
+  \end{block}
+\end{blockarray}
+\]
+}
+
+\subsection[Specification of scheduled events in the SISe3_sp model]{Specification of scheduled events in the \code{SISe3\_sp} model}
+
+The select matrix \code{E} and the shift matrix \code{N} in the
+\code{SISe3\_sp} model are specified to handle births, imports,
+ageing, moving and exits of individuals
+(Table~\ref{table:SISe3_sp:events}).  All individuals entering the
+model are added to the susceptible state, specified by the age
+category of the individuals.  These three states are selected with the
+columns 1, 2 and 3 in \code{E}.  The columns 4, 5 and 6 in \code{E}
+are used to sample individuals from the susceptible and infected
+states of the three ages catgories.  To move the sampled individuals
+in a \textit{internal transfer} event from age category 1 to age
+category 2, the susceptible and infected states should shift two steps
+to the corresponding state in age category 2, as specified in
+\code{N[, 1]} In the same way, \code{N[, 2]} move susceptible and
+infected individuals in age category 2 to age category 3.
+
+{\small
+\[
+\mathbf{E} =
+\begin{blockarray}{crrrrrr}
+  & 1 & 2 & 3 & 4 & 5 & 6 \\
+  \begin{block}{c(rrrrrr)}
+    S_1 & 1 & 0 & 0 & 1 & 0 & 0 \\
+    I_1 & 0 & 1 & 0 & 1 & 0 & 0 \\
+    S_2 & 0 & 0 & 1 & 0 & 1 & 0 \\
+    I_2 & 0 & 0 & 0 & 0 & 1 & 0 \\
+    S_3 & 0 & 0 & 0 & 0 & 0 & 1 \\
+    I_3 & 0 & 0 & 0 & 0 & 0 & 1 \\
+  \end{block}
+\end{blockarray} \qquad
+\mathbf{N} =
+\begin{blockarray}{ccc}
+  & 1 & 2 \\
+  \begin{block}{c(rr)}
+    S_1 & 2 & 0 \\
+    I_1 & 2 & 0 \\
+    S_2 & 0 & 2 \\
+    I_2 & 0 & 2 \\
+    S_3 & 0 & 0 \\
+    I_3 & 0 & 0 \\
+  \end{block}
+\end{blockarray}
+\]
+}
+
+\subsection[C code for the SISe3_sp model]{\proglang{C} code for the \code{SISe3\_sp} model}
+
+The \proglang{C} code for the \code{SISe3\_sp} model is defined in the
+source file \texttt{'src/models/SISe3\_sp.c'}.  This file contains the
+\code{SISe3\_sp\_run} function to initialize the core solver
+(Listing~\ref{lst:SISe3_sp_run} in the appendix), the transition rate
+functions (Listing~\ref{lst:trSISe3_sp} in the appendix) and the post
+time step function to update the local environmental infectious
+pressure $\varphi$ (Listing~\ref{lst:ptsSISe3_sp} in the appendix).
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\linewidth]{img/events_SISe3.pdf}
+  \end{center}
+  \caption{The distribution of the synthetic scheduled events dataset
+    \code{events\_SISe3}, that is ditributed with the \pkg{SimInf}
+    package.  The \textit{enter} event, adds individuals to a node.
+    The \textit{internal transfer} event, changes the number of
+    individuals in the compartments within one node.  The
+    \textit{external transfer} event, moves individuals from
+    compartments in one node to compartments in a destination node.
+    Finally, the \textit{exit} event removes individuals from a node.}
+  \label{fig:events_SISe3_sp}
 \end{figure}
 
 %**************************************************************************
