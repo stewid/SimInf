@@ -26,11 +26,14 @@ pdf: roxygen
 README.md: README.Rmd
 	Rscript -e "library(knitr); knit('README.Rmd')"
 
+# Generate vignette
+vignette:
+	cd vignettes && Rscript -e "Sweave('SimInf'); tools::texi2pdf('SimInf.tex')"
+
 # Build and check package
 check: clean
-	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
-	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran \
-	--no-manual --no-vignettes --no-build-vignettes $(PKG_TAR)
+	cd .. && R CMD build $(PKG_NAME)
+	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran $(PKG_TAR)
 
 # Build and check package with gctorture
 check_gctorture:
@@ -55,4 +58,4 @@ configure: configure.ac
 clean:
 	./cleanup
 
-.PHONY: install roxygen pdf check check_gctorture check_valgrind clean
+.PHONY: install roxygen pdf check check_gctorture check_valgrind clean vignette
