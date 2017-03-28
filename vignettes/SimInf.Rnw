@@ -297,13 +297,12 @@ compiled language, the efficiency of the simulator is very high.
 
 The \pkg{SimInf} package is available via the Comprehensive
 \proglang{R} Archive Network (CRAN) at
-\mbox{\url{https://CRAN.R-project.org/package=SimInf}} and is
-installed and loaded in \proglang{R} with the following commands
+\mbox{\url{https://CRAN.R-project.org/package=SimInf}} and is loaded
+in \proglang{R} with the following command
 
-\begin{Code}
-R> install.packages("SimInf")
-R> library("SimInf")
-\end{Code}
+<<load-SimInf>>=
+library("SimInf")
+@
 
 \subsection{Overview}
 
