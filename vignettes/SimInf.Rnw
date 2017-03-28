@@ -1085,20 +1085,20 @@ functions (Listing~\ref{lst:trSISe3_sp} in the appendix) and the post
 time step function to update the local environmental infectious
 pressure $\varphi$ (Listing~\ref{lst:ptsSISe3_sp} in the appendix).
 
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.8\linewidth]{img/events_SISe3.pdf}
-  \end{center}
-  \caption{The distribution of the synthetic scheduled events dataset
-    \code{events\_SISe3}, that is ditributed with the \pkg{SimInf}
-    package.  The \textit{enter} event, adds individuals to a node.
-    The \textit{internal transfer} event, changes the number of
-    individuals in the compartments within one node.  The
-    \textit{external transfer} event, moves individuals from
-    compartments in one node to compartments in a destination node.
-    Finally, the \textit{exit} event removes individuals from a node.}
-  \label{fig:events_SISe3_sp}
-\end{figure}
+%% \begin{figure}
+%%   \begin{center}
+%%     \includegraphics[width=0.8\linewidth]{img/events_SISe3.pdf}
+%%   \end{center}
+%%   \caption{The distribution of the synthetic scheduled events dataset
+%%     \code{events\_SISe3}, that is ditributed with the \pkg{SimInf}
+%%     package.  The \textit{enter} event, adds individuals to a node.
+%%     The \textit{internal transfer} event, changes the number of
+%%     individuals in the compartments within one node.  The
+%%     \textit{external transfer} event, moves individuals from
+%%     compartments in one node to compartments in a destination node.
+%%     Finally, the \textit{exit} event removes individuals from a node.}
+%%   \label{fig:events_SISe3_sp}
+%% \end{figure}
 
 %**************************************************************************
 
