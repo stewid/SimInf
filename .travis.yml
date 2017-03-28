@@ -6,6 +6,9 @@ os:
   - linux
   - osx
 
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then tlmgr install blkarray; fi
+
 apt_packages:
   - libgsl0-dev
 
