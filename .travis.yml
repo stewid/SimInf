@@ -7,7 +7,7 @@ os:
   - osx
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then tlmgr install blkarray; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install blkarray; fi
 
 apt_packages:
   - libgsl0-dev
