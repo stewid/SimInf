@@ -16,3 +16,9 @@ rm -rf src-x64
 rm -rf src-i386
 rm -rf gsl
 rm -rf src/gsl
+rm vignettes/SimInf.aux
+rm vignettes/SimInf.bbl
+rm vignettes/SimInf.blg
+rm vignettes/SimInf.log
+rm vignettes/SimInf.out
+rm vignettes/SimInf.pdf
