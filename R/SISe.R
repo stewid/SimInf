@@ -201,6 +201,7 @@ setMethod("susceptible",
               j <- seq(from = 1, to = dim(model@U)[2], by = by)
               result <- as.matrix(model@U[ii, j, drop = FALSE])
               rownames(result) <- NULL
+              colnames(result) <- NULL
               result
           }
 )
@@ -219,6 +220,7 @@ setMethod("infected",
               j <- seq(from = 1, to = dim(model@U)[2], by = by)
               result <- as.matrix(model@U[ii, j, drop = FALSE])
               rownames(result) <- NULL
+              colnames(result) <- NULL
               result
           }
 )

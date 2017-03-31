@@ -248,6 +248,7 @@ setMethod("susceptible",
               }
 
               rownames(result) <- NULL
+              colnames(result) <- NULL
               result
           }
 )
@@ -288,6 +289,7 @@ setMethod("infected",
               }
 
               rownames(result) <- NULL
+              colnames(result) <- NULL
               result
           }
 )

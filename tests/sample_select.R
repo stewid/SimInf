@@ -386,7 +386,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                         .Dim = c(12L, 3L),
                         .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
                                            "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                         NULL))
+                                         c("0", "1", "2")))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
@@ -464,7 +464,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                         .Dim = c(12L, 3L),
                         .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
                                            "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                         NULL))
+                                         c("0", "1", "2")))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
@@ -542,7 +542,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 0L, 0L, 0L, 0L, 0L,
                         .Dim = c(12L, 3L),
                         .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
                                            "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                         NULL))
+                                         c("0", "1", "2")))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
@@ -621,7 +621,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 8L, 0L, 0L, 0L, 0L,
                         .Dim = c(12L, 3L),
                         .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
                                            "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                         NULL))
+                                         c("0", "1", "2")))
 
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
@@ -708,7 +708,7 @@ U <- structure(
     .Dim = c(12L, 11L),
     .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
                        "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                     NULL))
+                     c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")))
 
 res <- run(model, threads = 1)
 stopifnot(identical(res@U, U))

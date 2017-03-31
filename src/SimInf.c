@@ -40,10 +40,11 @@ SEXP SimInf_run(
     TRFun *tr_fun,
     PTSFun pts_fun)
 {
-    int err = 0, nprotect = 0, n_threads;
+    int i, j, err = 0, nprotect = 0, n_threads;
     SEXP result = R_NilValue;
     SEXP ext_events, E, G, N, S, prS;
-    SEXP rownames, colnames;
+    SEXP tspan, rownames, colnames;
+    SEXP U_dimnames, U_rownames, V_dimnames;
     SEXP U_sparse, V_sparse;
     int *U = NULL, *irU = NULL, *jcU = NULL;
     double *prU = NULL;
@@ -79,8 +80,8 @@ SEXP SimInf_run(
 
     /* Dimnames */
     rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
-    colnames = Rf_getAttrib(GET_SLOT(result, Rf_install("tspan")),
-                            R_NamesSymbol);
+    tspan = GET_SLOT(result, Rf_install("tspan"));
+    colnames = Rf_getAttrib(tspan , R_NamesSymbol);
 
     /* Scheduled events */
     ext_events = GET_SLOT(result, Rf_install("events"));
@@ -100,24 +101,13 @@ SEXP SimInf_run(
     if ((INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[0] == (Nn * Nc)) &&
         (INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[1] == tlen))
     {
-        int i, j;
-        SEXP U_rownames;
-
         irU = INTEGER(GET_SLOT(U_sparse, Rf_install("i")));
         jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
         prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
 
-        SET_VECTOR_ELT(GET_SLOT(U_sparse, Rf_install("Dimnames")), 0,
-                       U_rownames = allocVector(STRSXP, Nn * Nc));
-        for (i = 0; i < Nn; i++)
-            for (j = 0; j < Nc; j++)
-                SET_STRING_ELT(U_rownames, i * Nc + j, STRING_ELT(rownames, j));
-        SET_VECTOR_ELT(GET_SLOT(U_sparse, Rf_install("Dimnames")), 1,
-                       duplicate(colnames));
+        U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames"));
+        SET_VECTOR_ELT(U_dimnames, 0, U_rownames = allocVector(STRSXP, Nn * Nc));
     } else {
-        int i, j;
-        SEXP U_dimnames, U_rownames;
-
         SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
         U = INTEGER(GET_SLOT(result, Rf_install("U")));
 
@@ -126,11 +116,19 @@ SEXP SimInf_run(
                   U_dimnames = allocVector(VECSXP, 2));
         SET_VECTOR_ELT(U_dimnames, 0,
                        U_rownames = allocVector(STRSXP, Nn * Nc));
-        for (i = 0; i < Nn; i++)
-            for (j = 0; j < Nc; j++)
-                SET_STRING_ELT(U_rownames, i * Nc + j, STRING_ELT(rownames, j));
-        SET_VECTOR_ELT(U_dimnames, 1, duplicate(colnames));
     }
+
+    /* Add rownames to U */
+    for (i = 0; i < Nn; i++)
+        for (j = 0; j < Nc; j++)
+            SET_STRING_ELT(U_rownames, i * Nc + j, STRING_ELT(rownames, j));
+
+    /* Add colnames to U. Use the the values of 'tspan' if the
+     * colnames of 'tspan' is null. */
+    if (colnames == R_NilValue)
+        SET_VECTOR_ELT(U_dimnames, 1, coerceVector(tspan, STRSXP));
+    else
+        SET_VECTOR_ELT(U_dimnames, 1, duplicate(colnames));
 
     /* Output array (to hold a single trajectory) */
     V_sparse = GET_SLOT(result, Rf_install("V_sparse"));
@@ -141,19 +139,22 @@ SEXP SimInf_run(
         jcV = INTEGER(GET_SLOT(V_sparse, Rf_install("p")));
         prV = REAL(GET_SLOT(V_sparse, Rf_install("x")));
 
-        SET_VECTOR_ELT(GET_SLOT(V_sparse, Rf_install("Dimnames")), 1,
-                       duplicate(colnames));
+        V_dimnames = GET_SLOT(V_sparse, Rf_install("Dimnames"));
     } else {
-        SEXP V_dimnames;
-
         SET_SLOT(result, Rf_install("V"), allocMatrix(REALSXP, Nn * Nd, tlen));
         V = REAL(GET_SLOT(result, Rf_install("V")));
 
         setAttrib(GET_SLOT(result, Rf_install("V")),
                   R_DimNamesSymbol,
                   V_dimnames = allocVector(VECSXP, 2));
-        SET_VECTOR_ELT(V_dimnames, 1, duplicate(colnames));
     }
+
+    /* Add colnames to V. Use the the values of 'tspan' if the
+     * colnames of 'tspan' is null. */
+    if (colnames == R_NilValue)
+        SET_VECTOR_ELT(V_dimnames, 1, coerceVector(tspan, STRSXP));
+    else
+        SET_VECTOR_ELT(V_dimnames, 1, duplicate(colnames));
 
     /* Run simulation solver. */
     err = siminf_run_solver(
