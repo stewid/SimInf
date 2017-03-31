@@ -612,6 +612,9 @@ setMethod("pairs",
 ##' @param N if \code{TRUE}, the average number of individuals in each
 ##'     compartment, else the proportion of individuals in each
 ##'     compartment.  Default is \code{FALSE}.
+##' @param compartments Character vector with the compartments in the
+##'     model to include in the plot. Default is \code{NULL}
+##'     i.e. include all compartments in the model.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SimInf_model-method
@@ -634,10 +637,15 @@ setMethod("pairs",
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
-                   N = FALSE, ...)
+                   N = FALSE, compartments = NULL, ...)
           {
               if (identical(dim(x@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
+
+              if (!is.null(compartments)) {
+                  if (!(all(compartments %in% rownames(x@S))))
+                      stop("'compartments' must exist in the model")
+              }
 
               savepar <- graphics::par(mar = c(2,4,1,1), oma = c(4,1,0,0),
                                        xpd = TRUE)
@@ -658,23 +666,30 @@ setMethod("plot",
               if (!N)
                   m <- apply(m, 2, function(x) x / sum(x))
 
+              ## Determine the compartments to include in the plot
+              if (is.null(compartments)) {
+                  compartments <- seq_len(dim(x@S)[1])
+              } else {
+                  compartments <- match(compartments, rownames(x@S))
+              }
+
               ## Default line type
               if (is.null(lty)) {
                   if (is.null(col)) {
-                      lty <- seq_len(dim(m)[1])
+                      lty <- seq_len(length(compartments))
                   } else {
-                      lty <- rep(1, dim(m)[1])
+                      lty <- rep(1, length(compartments))
                   }
               }
 
               ## Default color is black
               if (is.null(col))
-                  col <- rep("black", dim(x@S)[1])
+                  col <- rep("black", length(compartments))
 
               ## Plot specific settings
               if (N) {
                   ylab <- "N"
-                  ylim <- c(0, max(m))
+                  ylim <- c(0, max(m[compartments, ]))
               } else {
                   ylab <- "Proportion"
                   ylim <- c(0, 1)
@@ -688,26 +703,31 @@ setMethod("plot",
                   xx <- as.Date(names(x@tspan))
                   xlab <- "Date"
               }
-              graphics::plot(x = xx, y = m[1,], type = "l",
-                             ylab = ylab, ylim = ylim, col = col[1],
-                             lty = lty[1], lwd = lwd, ...)
+
+              ## Plot first line to get a new plot window
+              graphics::plot(x = xx, y = m[compartments[1], ], type = "l",
+                             ylab = ylab, ylim = ylim, col = col[compartments[1]],
+                             lty = lty[compartments[1]], lwd = lwd, ...)
               graphics::title(xlab = xlab, outer = TRUE, line = 0)
-              for (i in seq_len(dim(m)[1])[-1]) {
+
+              ## Add the rest of the lines to the plot
+              for (i in compartments[-1]) {
                   graphics::lines(x = xx, y = m[i, ], type = "l",
                                   lty = lty[i], col = col[i], lwd = lwd,
                                   ...)
               }
 
-              ## Add legend below plot. Default legend is the names of
-              ## the compartments.
+              ## Add the legend below plot. The default legend is the
+              ## names of the compartments.
               if (is.null(legend))
-                  legend <- rownames(x@S)
+                  legend <- rownames(x@S)[compartments]
               graphics::par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
                             mar = c(0, 0, 0, 0), new = TRUE)
               graphics::plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
               graphics::legend("bottom", inset = c(0, 0), lty = lty,
-                               col = col, bty = "n", horiz = TRUE,
-                               legend = legend, lwd = lwd)
+                               col = col[compartments], bty = "n",
+                               horiz = TRUE, legend = legend,
+                               lwd = lwd)
           }
 )
 
