@@ -682,27 +682,20 @@ setMethod("plot",
 
               ## Plot
               if (is.null(names(x@tspan))) {
-                  graphics::plot(x = x@tspan, y = m[1,], type = "l",
-                                 ylab = ylab, ylim = ylim, col = col[1],
-                                 lty = lty[1], lwd = lwd, ...)
+                  xx <- x@tspan
                   xlab <- "Time"
               } else {
-                  graphics::plot(x = as.Date(names(x@tspan)), y = m[1,],
-                                 type = "l", ylab = ylab, ylim = ylim,
-                                 col = col[1], lty = lty[1], lwd = lwd, ...)
+                  xx <- as.Date(names(x@tspan))
                   xlab <- "Date"
               }
+              graphics::plot(x = xx, y = m[1,], type = "l",
+                             ylab = ylab, ylim = ylim, col = col[1],
+                             lty = lty[1], lwd = lwd, ...)
               graphics::title(xlab = xlab, outer = TRUE, line = 0)
               for (i in seq_len(dim(m)[1])[-1]) {
-                  if (is.null(names(x@tspan))) {
-                      graphics::lines(x = x@tspan, y = m[i, ], type = "l",
-                                      lty = lty[i], col = col[i], lwd = lwd,
-                                      ...)
-                  } else {
-                      graphics::lines(x = as.Date(names(x@tspan)), y = m[i, ],
-                                      type = "l", lty = lty[i], col = col[i],
-                                      lwd = lwd, ...)
-                  }
+                  graphics::lines(x = xx, y = m[i, ], type = "l",
+                                  lty = lty[i], col = col[i], lwd = lwd,
+                                  ...)
               }
 
               ## Add legend below plot. Default legend is the names of
