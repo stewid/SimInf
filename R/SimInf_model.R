@@ -625,15 +625,28 @@ setMethod("pairs",
 ##' @importFrom graphics title
 ##' @export
 ##' @examples
-##' ## Create a 'SISe' demo model with 1 node and initialize
-##' ## it to run over 1000 days.
-##' model <- demo_model(nodes = 1, days = 1000, model = "SISe")
+##' ## Create an 'SIR' model with 10 nodes and initialise
+##' ## it to run over 100 days.
+##' model <- SIR(u0 = data.frame(S = rep(99, 10),
+##'                              I = rep(1, 10),
+##'                              R = rep(0, 10)),
+##'              tspan = 1:100,
+##'              beta = 0.16,
+##'              gamma = 0.077)
 ##'
-##' ## Run the model and save the result
+##' ## Run the model and save the result.
 ##' result <- run(model)
 ##'
-##' ## Plot the proportion susceptible and infected individuals
+##' ## Plot the proportion of susceptible, infected and recovered
+##' ## individuals.
 ##' plot(result)
+##'
+##' ## Plot the number of susceptible, infected and recovered
+##' ## individuals.
+##' plot(result, N = TRUE)
+##'
+##' ## Plot the number of infected individuals.
+##' plot(result, compartments = "I", N = TRUE)
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
