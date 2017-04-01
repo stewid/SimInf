@@ -655,9 +655,13 @@ setMethod("plot",
               if (identical(dim(x@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
 
-              if (!is.null(compartments)) {
+              ## Determine the compartments to include in the plot
+              if (is.null(compartments)) {
+                  compartments <- seq_len(Nc(x))
+              } else {
                   if (!(all(compartments %in% rownames(x@S))))
                       stop("'compartments' must exist in the model")
+                  compartments <- match(compartments, rownames(x@S))
               }
 
               savepar <- graphics::par(mar = c(2,4,1,1), oma = c(4,1,0,0),
@@ -666,7 +670,7 @@ setMethod("plot",
 
               ## Create matrix where each row is the sum of individuals in
               ## that state
-              m <- do.call(rbind, lapply(seq_len(dim(x@S)[1]), function(from) {
+              m <- do.call(rbind, lapply(seq_len(Nc(x)), function(from) {
                   i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
                   if (N) {
                       colMeans(as.matrix(x@U[i, , drop = FALSE]))
@@ -678,13 +682,6 @@ setMethod("plot",
               ## Calculate proportion
               if (!N)
                   m <- apply(m, 2, function(x) x / sum(x))
-
-              ## Determine the compartments to include in the plot
-              if (is.null(compartments)) {
-                  compartments <- seq_len(dim(x@S)[1])
-              } else {
-                  compartments <- match(compartments, rownames(x@S))
-              }
 
               ## Default line type
               if (is.null(lty)) {
