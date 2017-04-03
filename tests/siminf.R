@@ -827,14 +827,30 @@ if (SimInf:::have_openmp()) {
 }
 
 ## Check extraction of seed parameter
+model <- SISe(u0      = data.frame(S = 99, I = 1),
+              tspan   = seq_len(1000) - 1,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
 .Call("SISe_run",
-      demo_model(model = "SISe"),
+      model,
       NULL,
       NULL,
       PACKAGE = "SimInf")
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 NULL,
                                 "1",
                                 PACKAGE = "SimInf"))
@@ -842,31 +858,31 @@ stopifnot(length(grep("Invalid 'seed' value",
                       res[[1]]$message)) > 0)
 
 .Call("SISe_run",
-      demo_model(model = "SISe"),
+      model,
       NULL,
       numeric(0),
       PACKAGE = "SimInf")
 
 .Call("SISe_run",
-      demo_model(model = "SISe"),
+      model,
       NULL,
       integer(0),
       PACKAGE = "SimInf")
 
 .Call("SISe_run",
-      demo_model(model = "SISe"),
+      model,
       NULL,
       1L,
       PACKAGE = "SimInf")
 
 .Call("SISe_run",
-      demo_model(model = "SISe"),
+      model,
       NULL,
       1,
       PACKAGE = "SimInf")
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 NULL,
                                 NA_integer_,
                                 PACKAGE = "SimInf"))
@@ -874,7 +890,7 @@ stopifnot(length(grep("Invalid 'seed' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 NULL,
                                 NA_real_,
                                 PACKAGE = "SimInf"))
@@ -882,7 +898,7 @@ stopifnot(length(grep("Invalid 'seed' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 NULL,
                                 c(1L, 2L),
                                 PACKAGE = "SimInf"))
@@ -890,7 +906,7 @@ stopifnot(length(grep("Invalid 'seed' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 NULL,
                                 c(1, 2),
                                 PACKAGE = "SimInf"))
@@ -899,25 +915,25 @@ stopifnot(length(grep("Invalid 'seed' value",
 
 ## Check extraction of number of threads
 .Call("SISe_run",
-      demo_model(model = "SISe"),
+      model,
       NULL,
       NULL,
       PACKAGE = "SimInf")
 
 .Call("SISe_run",
-      demo_model(model = "SISe"),
+      model,
       1L,
       NULL,
       PACKAGE = "SimInf")
 
 .Call("SISe_run",
-      demo_model(model = "SISe"),
+      model,
       1,
       NULL,
       PACKAGE = "SimInf")
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 -1L,
                                 NULL,
                                 PACKAGE = "SimInf"))
@@ -925,7 +941,7 @@ stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 -1,
                                 NULL,
                                 PACKAGE = "SimInf"))
@@ -933,7 +949,7 @@ stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 "1",
                                 NULL,
                                 PACKAGE = "SimInf"))
@@ -941,7 +957,7 @@ stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 c(1L, 1L),
                                 NULL,
                                 PACKAGE = "SimInf"))
@@ -949,7 +965,7 @@ stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 c(1, 1),
                                 NULL,
                                 PACKAGE = "SimInf"))
@@ -957,7 +973,7 @@ stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 NA_integer_,
                                 NULL,
                                 PACKAGE = "SimInf"))
@@ -965,7 +981,7 @@ stopifnot(length(grep("Invalid 'threads' value",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(.Call("SISe_run",
-                                demo_model(model = "SISe"),
+                                model,
                                 NA_real_,
                                 NULL,
                                 PACKAGE = "SimInf"))

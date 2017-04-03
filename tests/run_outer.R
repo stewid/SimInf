@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -26,42 +26,121 @@ x = seq(from = 0.95, to = 1.05, by = 0.01)
 y = seq(from = 0.95, to = 1.05, by = 0.01)
 
 ## Check gdata names
-model <- demo_model()
+model <- SISe(u0      = data.frame(S = 99, I = 1),
+              tspan   = seq_len(1000) - 1,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
 names(model@gdata) <- NULL
 res <- tools::assertError(
-    run_outer(x, y, model, alpha ~ upsilon, function(model) 1))
+    run_outer(x, y, model, alpha ~ upsilon, function(m) 1))
 stopifnot(length(grep("'names[(]model@gdata[)]' is NULL",
                       res[[1]]$message)) > 0)
 
 ## Check formula argument
-res <- tools::assertError(run_outer(x, y, demo_model(), NULL, function(model) 1))
+model <- SISe(u0      = data.frame(S = 99, I = 1),
+              tspan   = seq_len(1000) - 1,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
+res <- tools::assertError(run_outer(x, y, model, NULL, function(m) 1))
 stopifnot(length(grep("'formula' argument is NULL",
                       res[[1]]$message)) > 0)
 
 ## Check FUN argument
-res <- tools::assertError(run_outer(x, y, demo_model(), a ~ b, NULL))
+model <- SISe(u0      = data.frame(S = 99, I = 1),
+              tspan   = seq_len(1000) - 1,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
+res <- tools::assertError(run_outer(x, y, model, a ~ b, NULL))
 stopifnot(length(grep("'FUN' argument is NULL",
                       res[[1]]$message)) > 0)
 
 ## Check lhs
+model <- SISe(u0      = data.frame(S = 99, I = 1),
+              tspan   = seq_len(1000) - 1,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
 res <- tools::assertError(
-    run_outer(x, y, demo_model(),  ~ upsilon, function(model) 1))
+    run_outer(x, y, model,  ~ upsilon, function(m) 1))
 stopifnot(length(grep("Invalid parameters on the left side of the formula",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    run_outer(x, y, demo_model(), dummy ~ upsilon, function(model) 1))
+    run_outer(x, y, model, dummy ~ upsilon, function(m) 1))
 stopifnot(length(grep("Unmatched parameters on the left hand side of the formula",
                       res[[1]]$message)) > 0)
 
 ## Check rhs
+model <- SISe(u0      = data.frame(S = 99, I = 1),
+              tspan   = seq_len(1000) - 1,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
 res <- tools::assertError(
-    run_outer(x, y, demo_model(), alpha ~ upsilon:alpha, function(model) 1))
+    run_outer(x, y, model, alpha ~ upsilon:alpha, function(m) 1))
 stopifnot(length(grep("Invalid parameters on the right side of the formula",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
-    run_outer(x, y, demo_model(), alpha ~ dummy, function(model) 1))
+    run_outer(x, y, model, alpha ~ dummy, function(m) 1))
 stopifnot(length(grep("Unmatched parameters on the right side of the formula",
                       res[[1]]$message)) > 0)
 
@@ -95,9 +174,25 @@ z_exp <- structure(
 
 x = seq(from = 0.95, to = 1.05, by = 0.01)
 y = seq(from = 0.95, to = 1.05, by = 0.01)
-run_f <- function(model, N) {
-    model@gdata["upsilon"] * model@gdata["beta_t1"] * N
+run_f <- function(m, N) {
+    m@gdata["upsilon"] * m@gdata["beta_t1"] * N
 }
-z_obs <- run_outer(x, y, demo_model(), upsilon ~ beta_t1, run_f, N = 3)
+model <- SISe(u0      = data.frame(S = 99, I = 1),
+              tspan   = seq_len(1000) - 1,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
+z_obs <- run_outer(x, y, model, upsilon ~ beta_t1, run_f, N = 3)
 
 stopifnot(all(abs(z_obs - z_exp) < tol))

@@ -201,6 +201,23 @@ stopifnot(length(grep("'u0' is NULL",
                       res[[1]]$message)) > 0)
 
 ## Check show method without events
+model <- SISe(u0      = data.frame(S = 99, I = 1),
+              tspan   = seq_len(1000) - 1,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
+
 show_expected <- c("Model: SISe",
                    "",
                    "Number of nodes: 1",
@@ -211,7 +228,7 @@ show_expected <- c("Model: SISe",
                    "U: 0 x 0",
                    "V: 0 x 0")
 
-show_observed <- capture.output(show(demo_model()))
+show_observed <- capture.output(show(model))
 
 stopifnot(identical(show_observed, show_expected))
 
@@ -230,7 +247,7 @@ summary_expected <- c("Model: SISe",
                       "U: 2 x 1000",
                       "V: 1 x 1000")
 
-summary_observed <- capture.output(summary(run(demo_model())))
+summary_observed <- capture.output(summary(run(model)))
 
 stopifnot(identical(summary_observed, summary_expected))
 
@@ -439,7 +456,23 @@ SimInf_model(G     = G,
              u0    = u0)
 
 ## Check that plot raises an error if the model hasn't run
-res <- tools::assertError(plot(demo_model()))
+model <- SISe(u0      = data.frame(S = 99, I = 1),
+              tspan   = seq_len(1000) - 1,
+              events  = NULL,
+              phi     = 1,
+              upsilon = 0.017,
+              gamma   = 0.1,
+              alpha   = 1,
+              beta_t1 = 0.19,
+              beta_t2 = 0.085,
+              beta_t3 = 0.075,
+              beta_t4 = 0.185,
+              end_t1  = 91,
+              end_t2  = 182,
+              end_t3  = 273,
+              end_t4  = 365,
+              epsilon = 0.000011)
+res <- tools::assertError(plot(model))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
