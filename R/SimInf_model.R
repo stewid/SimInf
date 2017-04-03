@@ -615,6 +615,8 @@ setMethod("pairs",
 ##' @param compartments Character vector with the compartments in the
 ##'     model to include in the plot. Default is \code{NULL}
 ##'     i.e. include all compartments in the model.
+##' @param spaghetti Plot one line for each node. Default is
+##'     \code{FALSE}.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SimInf_model-method
@@ -650,7 +652,8 @@ setMethod("pairs",
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
-                   N = FALSE, compartments = NULL, ...)
+                   N = FALSE, compartments = NULL, spaghetti = FALSE,
+                   ...)
           {
               if (identical(dim(x@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
@@ -668,20 +671,41 @@ setMethod("plot",
                                        xpd = TRUE)
               on.exit(graphics::par(savepar))
 
-              ## Create matrix where each row is the sum of individuals in
-              ## that state
-              m <- do.call(rbind, lapply(seq_len(Nc(x)), function(from) {
-                  i <- seq(from = from, to = dim(x@U)[1], by = dim(x@S)[1])
-                  if (N) {
-                      colMeans(as.matrix(x@U[i, , drop = FALSE]))
-                  } else {
-                      colSums(as.matrix(x@U[i, , drop = FALSE]))
-                  }
-              }))
+              ## Create a matrix with one row for each line in the
+              ## plot.
+              if (identical(spaghetti, TRUE)) {
+                  i <- sort(as.numeric(sapply(compartments, "+",
+                  (seq_len(Nn(x)) - 1) * Nc(x))))
+                  m <- x@U[i, , drop = FALSE]
 
-              ## Calculate proportion
-              if (!N)
-                  m <- apply(m, 2, function(x) x / sum(x))
+                  if (!identical(N, TRUE)) {
+                      ## Calculate the proportion of individuals in
+                      ## each compartment within each node.
+                      for (i in (seq_len(Nn(x)) - 1)) {
+                          n <- colSums(x@U[i * Nc(x) + seq_len(Nc(x)), ,
+                                           drop = FALSE])
+                          j <- i * length(compartments) +
+                              seq_len(length(compartments))
+                          m[j, ] <- m[j, , drop = FALSE] / n
+                      }
+                  }
+              } else {
+                  m <- matrix(0, nrow = length(compartments),
+                              ncol = length(x@tspan))
+                  for (i in seq_len(length(compartments))) {
+                      j <- seq(from = compartments[i], to = dim(x@U)[1],
+                               by = Nc(x))
+                      if (N) {
+                          m[i, ] <- colMeans(as.matrix(x@U[j, , drop = FALSE]))
+                      } else {
+                          m[i, ] <- colSums(as.matrix(x@U[j, , drop = FALSE]))
+                      }
+                  }
+
+                  ## Calculate proportion
+                  if (!identical(N, TRUE))
+                      m <- apply(m, 2, function(x) x / sum(x))
+              }
 
               ## Default line type
               if (is.null(lty)) {
@@ -691,21 +715,26 @@ setMethod("plot",
                       lty <- rep(1, length(compartments))
                   }
               }
+              lty <- rep(lty, length.out = dim(m)[1])
 
               ## Default color is black
-              if (is.null(col))
+              if (is.null(col)) {
                   col <- rep("black", length(compartments))
+              } else {
+                  col <- col[compartments]
+              }
+              col <- rep(col, length.out = dim(m)[1])
 
-              ## Plot specific settings
-              if (N) {
+              ## Settings for the y-axis.
+              if (identical(N, TRUE)) {
                   ylab <- "N"
-                  ylim <- c(0, max(m[compartments, ]))
+                  ylim <- c(0, max(m))
               } else {
                   ylab <- "Proportion"
                   ylim <- c(0, 1)
               }
 
-              ## Plot
+              ## Settings for the x-axis
               if (is.null(names(x@tspan))) {
                   xx <- x@tspan
                   xlab <- "Time"
@@ -715,13 +744,13 @@ setMethod("plot",
               }
 
               ## Plot first line to get a new plot window
-              graphics::plot(x = xx, y = m[compartments[1], ], type = "l",
-                             ylab = ylab, ylim = ylim, col = col[compartments[1]],
-                             lty = lty[compartments[1]], lwd = lwd, ...)
+              graphics::plot(x = xx, y = m[1, ], type = "l",
+                             ylab = ylab, ylim = ylim, col = col[1],
+                             lty = lty[1], lwd = lwd, ...)
               graphics::title(xlab = xlab, outer = TRUE, line = 0)
 
               ## Add the rest of the lines to the plot
-              for (i in compartments[-1]) {
+              for (i in seq_len(dim(m)[1])[-1]) {
                   graphics::lines(x = xx, y = m[i, ], type = "l",
                                   lty = lty[i], col = col[i], lwd = lwd,
                                   ...)
@@ -734,10 +763,11 @@ setMethod("plot",
               graphics::par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
                             mar = c(0, 0, 0, 0), new = TRUE)
               graphics::plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-              graphics::legend("bottom", inset = c(0, 0), lty = lty,
-                               col = col[compartments], bty = "n",
-                               horiz = TRUE, legend = legend,
-                               lwd = lwd)
+              graphics::legend("bottom", inset = c(0, 0),
+                               lty = lty[seq_len(length(compartments))],
+                               col = col[seq_len(length(compartments))],
+                               bty = "n", horiz = TRUE,
+                               legend = legend, lwd = lwd)
           }
 )
 

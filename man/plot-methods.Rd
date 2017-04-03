@@ -32,7 +32,7 @@
 \S4method{plot}{SimInf_events}(x, frame.plot = FALSE, ...)
 
 \S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL, lty = NULL,
-  lwd = 2, N = FALSE, compartments = NULL, ...)
+  lwd = 2, N = FALSE, compartments = NULL, spaghetti = FALSE, ...)
 
 \S4method{plot}{SEIR}(x, col = c("blue", "orange", "red", "darkgreen"),
   lty = rep(1, 4), lwd = 2, ...)
@@ -80,6 +80,9 @@ compartment.  Default is \code{FALSE}.}
 \item{compartments}{Character vector with the compartments in the
 model to include in the plot. Default is \code{NULL}
 i.e. include all compartments in the model.}
+
+\item{spaghetti}{Plot one line for each node. Default is
+\code{FALSE}.}
 }
 \description{
 Plot \code{\linkS4class{SimInf_events}}
