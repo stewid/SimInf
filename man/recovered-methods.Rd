@@ -9,9 +9,9 @@
 \usage{
 recovered(model, ...)
 
-\S4method{recovered}{SEIR}(model, i = NULL, by = 1, ...)
+\S4method{recovered}{SEIR}(model, i = NULL, ...)
 
-\S4method{recovered}{SIR}(model, i = NULL, by = 1, ...)
+\S4method{recovered}{SIR}(model, i = NULL, ...)
 }
 \arguments{
 \item{model}{The \code{model} to extract the recovered from}
@@ -20,18 +20,15 @@ recovered(model, ...)
 
 \item{i}{Indices specifying the nodes to include when extracting
 the number of recovered. Default is NULL, which includes all nodes.}
-
-\item{by}{The number to increment the sequence of time points
-starting from 1. Default is 1, which gives the number of
-recovered at every time point.}
 }
 \description{
 Extracts the number of recovered
 }
 \examples{
-## Create a 'SIR' demo model with 5 nodes and initialize
+## Create an 'SIR' model with 5 nodes and initialize
 ## it to run over 10 days.
-model <- demo_model(nodes = 5, days = 10, model = "SIR")
+u0 <- data.frame(S = rep(99, 5), I = rep(1, 5), R = rep(0, 5))
+model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 
 ## Run the model and save the result
 result <- run(model)
@@ -47,9 +44,5 @@ recovered(result, i = 1)
 ## Extract the number of recovered individuals in the
 ## first and third node after each time step in the simulation
 recovered(result, i = c(1, 3))
-
-## Extract the number of recovered individuals in the first
-## and third node after every other time step in the simulation
-recovered(result, i = c(1, 3), by = 2)
 }
 \keyword{methods}

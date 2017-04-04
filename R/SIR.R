@@ -158,14 +158,14 @@ setMethod("susceptible",
 ##' @export
 setMethod("infected",
           signature("SIR"),
-          function(model, i = NULL, by = 1, ...) {
+          function(model, i = NULL, ...) {
               if (identical(dim(model@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
 
               ii <- seq(from = 2, to = dim(model@U)[1], by = 3)
               if (!is.null(i))
                   ii <- ii[i]
-              j <- seq(from = 1, to = dim(model@U)[2], by = by)
+              j <- seq(from = 1, to = dim(model@U)[2], by = 1)
               result <- as.matrix(model@U[ii, j, drop = FALSE])
               rownames(result) <- NULL
               colnames(result) <- NULL
@@ -177,14 +177,14 @@ setMethod("infected",
 ##' @export
 setMethod("recovered",
           signature("SIR"),
-          function(model, i = NULL, by = 1, ...) {
+          function(model, i = NULL, ...) {
               if (identical(dim(model@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
 
               ii <- seq(from = 3, to = dim(model@U)[1], by = 3)
               if (!is.null(i))
                   ii <- ii[i]
-              j <- seq(from = 1, to = dim(model@U)[2], by = by)
+              j <- seq(from = 1, to = dim(model@U)[2], by = 1)
               result <- as.matrix(model@U[ii, j, drop = FALSE])
               rownames(result) <- NULL
               colnames(result) <- NULL

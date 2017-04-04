@@ -267,7 +267,7 @@ setMethod("susceptible",
 ##' @export
 setMethod("infected",
           signature("SISe3_sp"),
-          function(model, age = 1:3, i = NULL, by = 1, ...)
+          function(model, age = 1:3, i = NULL, ...)
           {
               if (identical(dim(model@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
@@ -276,7 +276,7 @@ setMethod("infected",
               stopifnot(all(age %in% age_categories))
 
               result <- NULL
-              j <- seq(from = 1, to = dim(model@U)[2], by = by)
+              j <- seq(from = 1, to = dim(model@U)[2], by = 1)
 
               for (k in age_categories) {
                   ## Are we interested in this age category?
@@ -308,10 +308,10 @@ setMethod("infected",
 ##' @export
 setMethod("prevalence",
           signature("SISe3_sp"),
-          function(model, age = 1:3, wnp = FALSE, i = NULL, by = 1, ...)
+          function(model, age = 1:3, wnp = FALSE, i = NULL, ...)
           {
-              I <- infected(model, age = age, i = i, by = by)
-              S <- susceptible(model, age = age, i = i, by = by)
+              I <- infected(model, age = age, i = i)
+              S <- susceptible(model, age = age, i = i)
 
               if (identical(wnp, FALSE)) {
                   I <- colSums(I)
