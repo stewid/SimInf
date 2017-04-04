@@ -146,8 +146,7 @@ setMethod("susceptible",
               ii <- seq(from = 1, to = dim(model@U)[1], by = 3)
               if (!is.null(i))
                   ii <- ii[i]
-              j <- seq(from = 1, to = dim(model@U)[2], by = 1)
-              result <- as.matrix(model@U[ii, j, drop = FALSE])
+              result <- as.matrix(model@U[ii, , drop = FALSE])
               rownames(result) <- NULL
               colnames(result) <- NULL
               result
@@ -165,8 +164,7 @@ setMethod("infected",
               ii <- seq(from = 2, to = dim(model@U)[1], by = 3)
               if (!is.null(i))
                   ii <- ii[i]
-              j <- seq(from = 1, to = dim(model@U)[2], by = 1)
-              result <- as.matrix(model@U[ii, j, drop = FALSE])
+              result <- as.matrix(model@U[ii, , drop = FALSE])
               rownames(result) <- NULL
               colnames(result) <- NULL
               result
@@ -184,8 +182,7 @@ setMethod("recovered",
               ii <- seq(from = 3, to = dim(model@U)[1], by = 3)
               if (!is.null(i))
                   ii <- ii[i]
-              j <- seq(from = 1, to = dim(model@U)[2], by = 1)
-              result <- as.matrix(model@U[ii, j, drop = FALSE])
+              result <- as.matrix(model@U[ii, , drop = FALSE])
               rownames(result) <- NULL
               colnames(result) <- NULL
               result

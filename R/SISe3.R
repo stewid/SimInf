@@ -225,7 +225,6 @@ setMethod("susceptible",
               stopifnot(all(age %in% age_categories))
 
               result <- NULL
-              j <- seq(from = 1, to = dim(model@U)[2], by = 1)
 
               for (k in age_categories) {
                   ## Are we interested in this age category?
@@ -240,9 +239,9 @@ setMethod("susceptible",
 
                       ## Extract susceptible and add to result
                       if (is.null(result)) {
-                          result <- as.matrix(model@U[ii, j, drop = FALSE])
+                          result <- as.matrix(model@U[ii, , drop = FALSE])
                       } else {
-                          result <- result + as.matrix(model@U[ii, j, drop = FALSE])
+                          result <- result + as.matrix(model@U[ii, , drop = FALSE])
                       }
                   }
               }
@@ -266,7 +265,6 @@ setMethod("infected",
               stopifnot(all(age %in% age_categories))
 
               result <- NULL
-              j <- seq(from = 1, to = dim(model@U)[2], by = 1)
 
               for (k in age_categories) {
                   ## Are we interested in this age category?
@@ -281,9 +279,9 @@ setMethod("infected",
 
                       ## Extract infected and add to result
                       if (is.null(result)) {
-                          result <- as.matrix(model@U[ii, j, drop = FALSE])
+                          result <- as.matrix(model@U[ii, , drop = FALSE])
                       } else {
-                          result <- result + as.matrix(model@U[ii, j, drop = FALSE])
+                          result <- result + as.matrix(model@U[ii, , drop = FALSE])
                       }
                   }
               }
