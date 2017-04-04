@@ -49,7 +49,6 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
-    'demo_model.R'
     'distance.R'
     'model_builder.R'
     'run_outer.R'
