@@ -226,7 +226,7 @@ SISe3_sp <- function(u0,
 ##' @export
 setMethod("susceptible",
           signature("SISe3_sp"),
-          function(model, age = 1:3, i = NULL, by = 1, ...)
+          function(model, age = 1:3, i = NULL, ...)
           {
               if (identical(dim(model@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
@@ -235,7 +235,7 @@ setMethod("susceptible",
               stopifnot(all(age %in% age_categories))
 
               result <- NULL
-              j <- seq(from = 1, to = dim(model@U)[2], by = by)
+              j <- seq(from = 1, to = dim(model@U)[2], by = 1)
 
               for (k in age_categories) {
                   ## Are we interested in this age category?

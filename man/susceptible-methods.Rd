@@ -14,17 +14,17 @@
 \usage{
 susceptible(model, ...)
 
-\S4method{susceptible}{SEIR}(model, i = NULL, by = 1, ...)
+\S4method{susceptible}{SEIR}(model, i = NULL, ...)
 
-\S4method{susceptible}{SIR}(model, i = NULL, by = 1, ...)
+\S4method{susceptible}{SIR}(model, i = NULL, ...)
 
-\S4method{susceptible}{SISe}(model, i = NULL, by = 1, ...)
+\S4method{susceptible}{SISe}(model, i = NULL, ...)
 
-\S4method{susceptible}{SISe3}(model, age = 1:3, i = NULL, by = 1, ...)
+\S4method{susceptible}{SISe3}(model, age = 1:3, i = NULL, ...)
 
-\S4method{susceptible}{SISe3_sp}(model, age = 1:3, i = NULL, by = 1, ...)
+\S4method{susceptible}{SISe3_sp}(model, age = 1:3, i = NULL, ...)
 
-\S4method{susceptible}{SISe_sp}(model, i = NULL, by = 1, ...)
+\S4method{susceptible}{SISe_sp}(model, i = NULL, ...)
 }
 \arguments{
 \item{model}{The \code{model} to extract the susceptible from}
@@ -35,10 +35,6 @@ susceptible(model, ...)
 the number of susceptible. Default is NULL, which includes all
 nodes.}
 
-\item{by}{The number to increment the sequence of time points
-starting from 1. Default is 1, which gives the number of
-susceptible at every time point.}
-
 \item{age}{For models with age categories, the age category to
 extract.}
 }
@@ -46,9 +42,10 @@ extract.}
 Extracts the number of susceptible.
 }
 \examples{
-## Create a 'SISe' demo model with 5 nodes and initialize
+## Create an 'SIR' model with 5 nodes and initialize
 ## it to run over 10 days.
-model <- demo_model(nodes = 5, days = 10, model = "SISe")
+u0 <- data.frame(S = rep(99, 5), I = rep(1, 5), R = rep(0, 5))
+model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 
 ## Run the model and save the result
 result <- run(model)
@@ -64,34 +61,5 @@ susceptible(result, i = 1)
 ## Extract the number of susceptible individuals in the
 ## first and third node after each time step in the simulation
 susceptible(result, i = c(1, 3))
-
-## Extract the number of susceptible individuals in the first
-## and third node after every other time step in the simulation
-susceptible(result, i = c(1, 3), by = 2)
-
-## Create a 'SISe3' demo model with 5 nodes and initialize
-## it to run over 10 days.
-model <- demo_model(nodes = 5, days = 10, model = "SISe3")
-
-## Run the model and save the result
-result <- run(model)
-
-## Extract the sum all of susceptible individuals in all age
-## categories in each node after each time step in the simulation
-susceptible(result)
-
-## Extract the number of susceptible individuals in the first age
-## category in each node after each time step in the simulation
-susceptible(result, age = 1)
-
-## Extract the sum of susceptible individuals in the first and
-## second age category in each node after each time step in
-## the simulation
-susceptible(result, age = c(1, 2))
-
-## Extract the number of susceptible individuals in the first age
-## category in the first and third node after each time step in
-## the simulation
-susceptible(result, i = c(1, 3), age = 1)
 }
 \keyword{methods}
