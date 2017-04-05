@@ -182,16 +182,7 @@ SISe_sp <- function(u0,
 setMethod("susceptible",
           signature("SISe_sp"),
           function(model, i = NULL, ...) {
-              if (identical(dim(model@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
-
-              ii <- seq(from = 1, to = dim(model@U)[1], by = 2)
-              if (!is.null(i))
-                  ii <- ii[i]
-              result <- as.matrix(model@U[ii, , drop = FALSE])
-              rownames(result) <- NULL
-              colnames(result) <- NULL
-              result
+              extract_U(model, "S", i)
           }
 )
 
@@ -200,16 +191,7 @@ setMethod("susceptible",
 setMethod("infected",
           signature("SISe_sp"),
           function(model, i = NULL, ...) {
-              if (identical(dim(model@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
-
-              ii <- seq(from = 2, to = dim(model@U)[1], by = 2)
-              if (!is.null(i))
-                  ii <- ii[i]
-              result <- as.matrix(model@U[ii, , drop = FALSE])
-              rownames(result) <- NULL
-              colnames(result) <- NULL
-              result
+              extract_U(model, "I", i)
           }
 )
 
