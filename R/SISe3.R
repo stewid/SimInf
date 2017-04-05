@@ -218,37 +218,8 @@ setMethod("susceptible",
           signature("SISe3"),
           function(model, age = 1:3, i = NULL, ...)
           {
-              if (identical(dim(model@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
-
-              age_categories <- 1:3
-              stopifnot(all(age %in% age_categories))
-
-              result <- NULL
-
-              for (k in age_categories) {
-                  ## Are we interested in this age category?
-                  if (k %in% age) {
-                      ## Select rows for the specific age category
-                      ii <- seq(from = 1 + (k - 1) * 2, to = dim(model@U)[1], by = 6)
-
-                      ## Are we only interested in susceptible from
-                      ## specific nodes?
-                      if (!is.null(i))
-                          ii <- ii[i]
-
-                      ## Extract susceptible and add to result
-                      if (is.null(result)) {
-                          result <- as.matrix(model@U[ii, , drop = FALSE])
-                      } else {
-                          result <- result + as.matrix(model@U[ii, , drop = FALSE])
-                      }
-                  }
-              }
-
-              rownames(result) <- NULL
-              colnames(result) <- NULL
-              result
+              stopifnot(all(age %in% 1:3))
+              extract_U(model, paste0("S_", age), i)
           }
 )
 
@@ -258,37 +229,8 @@ setMethod("infected",
           signature("SISe3"),
           function(model, age = 1:3, i = NULL, ...)
           {
-              if (identical(dim(model@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
-
-              age_categories <- 1:3
-              stopifnot(all(age %in% age_categories))
-
-              result <- NULL
-
-              for (k in age_categories) {
-                  ## Are we interested in this age category?
-                  if (k %in% age) {
-                      ## Select rows for the specific age category
-                      ii <- seq(from = k * 2, to = dim(model@U)[1], by = 6)
-
-                      ## Are we only interested in infected from
-                      ## specific nodes?
-                      if (!is.null(i))
-                          ii <- ii[i]
-
-                      ## Extract infected and add to result
-                      if (is.null(result)) {
-                          result <- as.matrix(model@U[ii, , drop = FALSE])
-                      } else {
-                          result <- result + as.matrix(model@U[ii, , drop = FALSE])
-                      }
-                  }
-              }
-
-              rownames(result) <- NULL
-              colnames(result) <- NULL
-              result
+              stopifnot(all(age %in% 1:3))
+              extract_U(model, paste0("I_", age), i)
           }
 )
 

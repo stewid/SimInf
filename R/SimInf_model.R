@@ -394,10 +394,19 @@ extract_U <- function(model = NULL, compartments = NULL, i = NULL) {
     if (identical(dim(model@U), c(0L, 0L)))
         stop("Please run the model first, the 'U' matrix is empty")
 
-    ii <- seq(from = compartments[1], to = dim(model@U)[1], by = Nc(model))
-    if (!is.null(i))
-        ii <- ii[i]
-    result <- as.matrix(model@U[ii, , drop = FALSE])
+    result <- NULL
+    for (k in compartments) {
+        ii <- seq(from = k, to = dim(model@U)[1], by = Nc(model))
+        if (!is.null(i))
+            ii <- ii[i]
+
+        if (is.null(result)) {
+            result <- as.matrix(model@U[ii, , drop = FALSE])
+        } else {
+            result <- result + as.matrix(model@U[ii, , drop = FALSE])
+        }
+    }
+
     rownames(result) <- NULL
     colnames(result) <- NULL
     result
