@@ -162,6 +162,15 @@ setMethod("recovered",
           }
 )
 
+##' @rdname prevalence-methods
+##' @export
+setMethod("prevalence",
+          signature("SIR"),
+          function(model, wnp = FALSE, i = NULL, ...) {
+              calc_prevalence(model, "I", c("S", "I", "R"), wnp, i)
+          }
+)
+
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SIR-method
 ##' @importFrom graphics plot
