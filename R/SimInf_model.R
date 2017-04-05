@@ -382,6 +382,27 @@ SimInf_model <- function(G,
                C_code = C_code))
 }
 
+## Internal function to extract compartments from U
+extract_U <- function(model = NULL, compartments = NULL, i = NULL) {
+    if (is.null(model))
+        stop("Missing 'model' argument")
+    if (is.null(compartments))
+        stop("Missing 'compartments' argument")
+    if (!(all(compartments %in% rownames(model@S))))
+        stop("'compartments' must exist in the model")
+    compartments <- match(compartments, rownames(model@S))
+    if (identical(dim(model@U), c(0L, 0L)))
+        stop("Please run the model first, the 'U' matrix is empty")
+
+    ii <- seq(from = compartments[1], to = dim(model@U)[1], by = Nc(model))
+    if (!is.null(i))
+        ii <- ii[i]
+    result <- as.matrix(model@U[ii, , drop = FALSE])
+    rownames(result) <- NULL
+    colnames(result) <- NULL
+    result
+}
+
 ##' @rdname U-methods
 ##' @export
 setMethod("U",

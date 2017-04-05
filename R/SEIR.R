@@ -146,16 +146,7 @@ SEIR <- function(u0,
 setMethod("susceptible",
           signature("SEIR"),
           function(model, i = NULL, ...) {
-              if (identical(dim(model@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
-
-              ii <- seq(from = 1, to = dim(model@U)[1], by = 4)
-              if (!is.null(i))
-                  ii <- ii[i]
-              result <- as.matrix(model@U[ii, , drop = FALSE])
-              rownames(result) <- NULL
-              colnames(result) <- NULL
-              result
+              extract_U(model, "S", i)
           }
 )
 
@@ -164,16 +155,7 @@ setMethod("susceptible",
 setMethod("infected",
           signature("SEIR"),
           function(model, i = NULL, ...) {
-              if (identical(dim(model@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
-
-              ii <- seq(from = 3, to = dim(model@U)[1], by = 4)
-              if (!is.null(i))
-                  ii <- ii[i]
-              result <- as.matrix(model@U[ii, , drop = FALSE])
-              rownames(result) <- NULL
-              colnames(result) <- NULL
-              result
+              extract_U(model, "I", i)
           }
 )
 
@@ -182,16 +164,7 @@ setMethod("infected",
 setMethod("recovered",
           signature("SEIR"),
           function(model, i = NULL, ...) {
-              if (identical(dim(model@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
-
-              ii <- seq(from = 4, to = dim(model@U)[1], by = 4)
-              if (!is.null(i))
-                  ii <- ii[i]
-              result <- as.matrix(model@U[ii, , drop = FALSE])
-              rownames(result) <- NULL
-              colnames(result) <- NULL
-              result
+              extract_U(model, "R", i)
           }
 )
 
