@@ -187,7 +187,8 @@ SEXP SimInf_run(
         n_threads, s, tr_fun, pts_fun);
 
 cleanup:
-    UNPROTECT(nprotect);
+    if (nprotect)
+        UNPROTECT(nprotect);
 
     if (err) {
         switch (err) {
