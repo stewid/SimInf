@@ -382,6 +382,22 @@ SimInf_model <- function(G,
                C_code = C_code))
 }
 
+## Internal function to calculate prevalence from U
+calc_prevalence <- function(model = NULL, numerator = NULL,
+                            denominator = NULL, wnp = FALSE,
+                            i = NULL)
+{
+    numerator <- extract_U(model, numerator, i)
+    denominator <- extract_U(model, denominator, i)
+
+    if (identical(wnp, FALSE)) {
+        numerator <- colSums(numerator)
+        denominator <- colSums(denominator)
+    }
+
+    numerator / denominator
+}
+
 ## Internal function to extract compartments from U
 extract_U <- function(model = NULL, compartments = NULL, i = NULL) {
     if (is.null(model))

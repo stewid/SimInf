@@ -240,15 +240,10 @@ setMethod("prevalence",
           signature("SISe3"),
           function(model, age = 1:3, wnp = FALSE, i = NULL, ...)
           {
-              I <- infected(model, age = age, i = i)
-              S <- susceptible(model, age = age, i = i)
-
-              if (identical(wnp, FALSE)) {
-                  I <- colSums(I)
-                  S <- colSums(S)
-              }
-
-              I / (S + I)
+              stopifnot(all(age %in% 1:3))
+              numerator <- paste0("I_", age)
+              denominator <- c(paste0("S_", age), paste0("I_", age))
+              calc_prevalence(model, numerator, denominator, wnp, i)
           }
 )
 

@@ -218,15 +218,7 @@ setMethod("infected",
 setMethod("prevalence",
           signature("SISe_sp"),
           function(model, wnp = FALSE, i = NULL, ...) {
-              I <- infected(model = model, i = i)
-              S <- susceptible(model = model, i = i)
-
-              if (identical(wnp, FALSE)) {
-                  I <- colSums(I)
-                  S <- colSums(S)
-              }
-
-              I / (S + I)
+              calc_prevalence(model, "I", c("S", "I"), wnp, i)
           }
 )
 
