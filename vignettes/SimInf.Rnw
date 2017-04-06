@@ -889,8 +889,155 @@ compartments and the continuous state variables are written to
 
 %**************************************************************************
 
-\section[Illustration: The SISe3_sp model]{Illustration: The \code{SISe3\_sp} model}
-\label{sec:illustration}
+\section[Model construction and data analysis: Simple examples]{Model construction and data analysis: Simple examples}
+
+\subsection[A first example: The SIR model]{A first example: The \code{SIR} model}
+\label{sec:example-SIR}
+
+This section illustrates the specification of the built-in \code{SIR}
+model, which contains the three compartments susceptible (\code{S}),
+infected (\code{I}) and recovered (\code{R}), where $\{S, I, R\}$
+represents the number of individuals in each of the three
+compartments, respectively.  The transmission route of infection to
+susceptible individuals is direct via contact between susceptible and
+infected individuals.  The \code{SIR} model has two state transitions
+in each node $i$,
+\begin{align}
+\label{eq:SIR}
+\begin{array}{rcl}
+  S_i & \xrightarrow{\beta S_i I_i / (S_i+I_i+R_i)} & I_i, \\
+  I_i &\xrightarrow{\gamma I_i} & S_i,
+  \end{array}
+\end{align}
+
+where $\beta$ is the transmission rate and $\gamma$ is the recovery
+rate.  The state change matrix \code{S} and the dependency graph
+\code{G} for the \code{SIR} model are defined as follows
+
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[width=1.0\linewidth]{img/SIR.pdf}
+  \end{center}
+  \caption{Schematic representation of the \code{SIR} compartment
+    model in two nodes.  The \code{SIR} model is defined by the three
+    disease states susceptible (S), infected (I), and recovered (R).
+    \textit{i)} State transitions between the $S$, $I$, and $R$
+    compartments are modeled as a continuous-time discrete-state
+    Markov process.  The other state transitions are due to scheduled
+    events: \textit{ii)} \textit{enter} events, \textit{iii)}
+    \textit{exit} events, and \textit{iv)} \textit{external transfer}
+    events.  \label{fig:SIR-model}}
+\end{figure}
+
+{\small
+\[
+\mathbf{S} =
+\begin{blockarray}{crr}
+  & 1 & 2 \\
+  \begin{block}{c(rr)}
+    S & -1 &  0 \\
+    I &  1 & -1 \\
+    R &  0 &  1 \\
+  \end{block}
+\end{blockarray} \qquad
+\mathbf{G} =
+\begin{blockarray}{ccc}
+  & 1 & 2 \\
+  \begin{block}{c(rr)}
+    S \rightarrow I & 1 & 1 \\
+    I \rightarrow R & 1 & 1 \\
+  \end{block}
+\end{blockarray}
+\]
+}
+
+The first step in creating an \code{SIR} model object is to define
+\code{u0}, a \code{data.frame} with the initial condition i.e., the
+number individuals in each compartmant.  We will start in a node with
+100 individuals of which 1 is infected.
+
+<<SIR-u0>>=
+u0 <- data.frame(S = 99, I = 1, R = 0)
+@
+
+Next, we define the time period, over which we want to simulate the
+disease spread.  This is a vector of integers in units of time or a
+vector of dates.  You specify those time points in the vector that you
+wish the model to return results for.  The model itself does not run
+in discret time steps, but continuous time, so this vector affects
+only the start and end points of the simulation and the results that
+you receive from the model, not the internal calculations of disease
+transitions through time.  Simulate for 6 months returning results
+every 7th day
+
+<<SIR-tspan>>=
+tspan <- seq(1, 6 * 30, by = 7)
+@
+
+Before we can simulate from the model, we need to specify the
+transmission rate, $\beta$, and the recovery rate, $\gamma$.
+
+<<SIR-model>>=
+model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
+@
+
+We are now ready to run the model with these parameters and simulate
+data.  We use the \code{threads} and \code{seed} arguments for
+reproducibility.
+
+<<SIR-run>>=
+result <- run(model, threads = 1, seed = 123)
+@
+
+The \code{result} object contains the number of individuals in each
+compartment at the time points specified in \code{tspan} and can be
+extracted using the \code{U} method.  The row names indicate the
+compartments in the model and the colnames are the time points in
+\code{tspan}.  The \code{U} matrix is truncated here for readability.
+
+<<SIR-U>>=
+U(result)[, 1:10]
+@
+
+And then plot the results of the disease simulation in the single node
+using
+
+\begin{figure}[htb]
+  \begin{center}
+<<SIR-plot-proportion, fig=TRUE>>=
+plot(result)
+@
+  \end{center}
+  \caption{Example of simulated data from one realisation of the
+    \code{SIR} model (Equation~\ref{eq:SIR}) in one node, starting
+    with 99 susceptible, 1 infected, and 0 recovered
+    individuals. \label{fig:SIR-proportion}}
+\end{figure}
+
+In order to run a simulation with multiple nodes we need to just add
+those nodes to the initial \code{u0} \code{data.frame} that we
+generate to start the model.  If you were doing your own modelling of
+many nodes, you would have a \code{data.frame} of your node population
+that you read from for example a spreadsheet.  For now we will just
+add another nodes to the \code{data.frame} here in \proglang{R}.
+
+<<SIR-multiple-nodes>>=
+u0 <- data.frame(S = c(99, 90), I = c( 1,  2), R = c( 0,  0))
+model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
+result <- run(model, threads = 1, seed = 123)
+@
+
+Inspect the \code{U} matrix of the result.  Note that is includes
+results from 2 nodes above one another for each time point in the
+\code{tspan} vector.  The \code{U} matrix is truncated here for
+readability.
+
+<<SIR-U-multiple-nodes>>=
+U(result)[, 1:10]
+@
+
+\subsection[A second example: The SISe3_sp model]{A second example: The \code{SISe3\_sp} model}
+\label{sec:example-SISe3_sp}
 
 This section illustrates the specification of the \code{SISe3\_sp}
 model, which is built into the \pkg{SimInf} package.  This model
