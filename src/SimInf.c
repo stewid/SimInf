@@ -45,11 +45,11 @@ SEXP SimInf_run(
     SEXP ext_events, E, G, N, S, prS;
     SEXP tspan, rownames, colnames;
     SEXP U_dimnames, U_rownames, V_dimnames;
-    SEXP U_sparse, V_sparse;
-    int *U = NULL, *irU = NULL, *jcU = NULL;
+    SEXP U, V, U_sparse, V_sparse;
+    int *U_ptr = NULL, *irU = NULL, *jcU = NULL;
     double *prU = NULL;
     int *irV = NULL, *jcV = NULL;
-    double *V = NULL, *prV = NULL;
+    double *V_ptr = NULL, *prV = NULL;
     int Nn, Nc, Nt, Nd, Nld, tlen;
     unsigned long int s;
 
@@ -108,8 +108,10 @@ SEXP SimInf_run(
         U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames"));
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames = allocVector(STRSXP, Nn * Nc));
     } else {
-        SET_SLOT(result, Rf_install("U"), allocMatrix(INTSXP, Nn * Nc, tlen));
-        U = INTEGER(GET_SLOT(result, Rf_install("U")));
+        PROTECT(U = allocMatrix(INTSXP, Nn * Nc, tlen));
+        nprotect++;
+        SET_SLOT(result, Rf_install("U"), U);
+        U_ptr = INTEGER(GET_SLOT(result, Rf_install("U")));
 
         setAttrib(GET_SLOT(result, Rf_install("U")),
                   R_DimNamesSymbol,
@@ -141,8 +143,10 @@ SEXP SimInf_run(
 
         V_dimnames = GET_SLOT(V_sparse, Rf_install("Dimnames"));
     } else {
-        SET_SLOT(result, Rf_install("V"), allocMatrix(REALSXP, Nn * Nd, tlen));
-        V = REAL(GET_SLOT(result, Rf_install("V")));
+        PROTECT(V = allocMatrix(REALSXP, Nn * Nd, tlen));
+        nprotect++;
+        SET_SLOT(result, Rf_install("V"), V);
+        V_ptr = REAL(GET_SLOT(result, Rf_install("V")));
 
         setAttrib(GET_SLOT(result, Rf_install("V")),
                   R_DimNamesSymbol,
@@ -167,8 +171,8 @@ SEXP SimInf_run(
         INTEGER(prS),
         REAL(GET_SLOT(result, Rf_install("tspan"))),
         tlen,
-        U, irU, jcU, prU,
-        V, irV, jcV, prV,
+        U_ptr, irU, jcU, prU,
+        V_ptr, irV, jcV, prV,
         REAL(GET_SLOT(result, Rf_install("ldata"))),
         REAL(GET_SLOT(result, Rf_install("gdata"))),
         Nn, Nc, Nt, Nd, Nld,
