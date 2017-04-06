@@ -54,7 +54,8 @@ stopifnot(identical(length(susceptible(result)), 1001L))
 stopifnot(identical(length(infected(result)), 1001L))
 stopifnot(identical(length(prevalence(result)), 1001L))
 stopifnot(is.null(dim(prevalence(result))))
-stopifnot(identical(dim(prevalence(result, wnp = TRUE)), c(1L, 1001L)))
+stopifnot(identical(dim(prevalence(result, type = "wnp")),
+                    c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
@@ -64,7 +65,7 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(infected(result_omp)), 1001L))
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
     stopifnot(is.null(dim(prevalence(result_omp))))
-    stopifnot(identical(dim(prevalence(result_omp, wnp = TRUE)), c(1L, 1001L)))
+    stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(1L, 1001L)))
 }
 
 ## Check measures for a SISe_sp model
@@ -101,7 +102,7 @@ stopifnot(identical(length(susceptible(result)), 1001L))
 stopifnot(identical(length(infected(result)), 1001L))
 stopifnot(identical(length(prevalence(result)), 1001L))
 stopifnot(is.null(dim(prevalence(result))))
-stopifnot(identical(dim(prevalence(result, wnp = TRUE)), c(1L, 1001L)))
+stopifnot(identical(dim(prevalence(result, type = "wnp")), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
@@ -111,7 +112,7 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(infected(result_omp)), 1001L))
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
     stopifnot(is.null(dim(prevalence(result_omp))))
-    stopifnot(identical(dim(prevalence(result_omp, wnp = TRUE)), c(1L, 1001L)))
+    stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(1L, 1001L)))
 }
 
 ## Check 'susceptible' and 'infected' methods for a SISe3 model
@@ -154,7 +155,7 @@ stopifnot(identical(length(susceptible(result)), 10000L))
 stopifnot(identical(length(infected(result)), 10000L))
 stopifnot(identical(length(prevalence(result)), 1000L))
 stopifnot(is.null(dim(prevalence(result))))
-stopifnot(identical(dim(prevalence(result, wnp = TRUE)), c(10L, 1000L)))
+stopifnot(identical(dim(prevalence(result, type = "wnp")), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
@@ -164,7 +165,7 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(infected(result_omp)), 10000L))
     stopifnot(identical(length(prevalence(result_omp)), 1000L))
     stopifnot(is.null(dim(prevalence(result_omp))))
-    stopifnot(identical(dim(prevalence(result_omp, wnp = TRUE)), c(10L, 1000L)))
+    stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(10L, 1000L)))
 }
 
 ## Check measures with a SISe3_sp model
@@ -209,7 +210,7 @@ stopifnot(identical(length(susceptible(result)), 10000L))
 stopifnot(identical(length(infected(result)), 10000L))
 stopifnot(identical(length(prevalence(result)), 1000L))
 stopifnot(is.null(dim(prevalence(result))))
-stopifnot(identical(dim(prevalence(result, wnp = TRUE)), c(10L, 1000L)))
+stopifnot(identical(dim(prevalence(result, type = "wnp")), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
@@ -219,5 +220,5 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(infected(result_omp)), 10000L))
     stopifnot(identical(length(prevalence(result_omp)), 1000L))
     stopifnot(is.null(dim(prevalence(result_omp))))
-    stopifnot(identical(dim(prevalence(result_omp, wnp = TRUE)), c(10L, 1000L)))
+    stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(10L, 1000L)))
 }

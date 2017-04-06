@@ -321,19 +321,28 @@ setGeneric("recovered",
 
 ##' Prevalence
 ##'
-##' Calculate the proportion infected individuals
+##' Calculate the proportion of individuals with disease, or the
+##' proportion of nodes with individuals with disease, or the
+##' proportion of individuals with disease in each node.
 ##' @rdname prevalence-methods
-##' @param model The \code{model} to calculated the prevalence from
+##' @param model The \code{model} to calculated the prevalence from.
+##' @param type The type of prevalence measure to calculate:
+##'     \code{'pop'} (default) calcalates the proportion of the
+##'     individuals in the population that have disease (model
+##'     specific) at each time point in \code{tspan}, \code{'bnp'}
+##'     calculates the between-node prevalence, and \code{'wnp'}
+##'     calculates the within-node prevalence.
 ##' @param ... Additional arguments affecting the measure
 ##' @param i Indices specifying the nodes to include in the
-##' calculation of the prevalence. If \code{wnp = TRUE}, then
-##' specifying which nodes to extract prevalence for. Default is NULL,
-##' which includes all nodes.
+##'     calculation of the prevalence. Default is \code{NULL}, which
+##'     includes all nodes.
 ##' @param age For models with age categories, the age category to
-##' include in the calculation. Default is that all age categories are
-##' included.
-##' @param wnp Determine within-node prevalence. Default is FALSE.
+##'     include in the calculation. Default is that all age categories
+##'     are included.
+##' @return Vector when type equals \code{'pop'} or \code{'bnp'} and
+##'     matrix when type equals \code{'wnp'}.
 ##' @keywords methods
 ##' @export
 setGeneric("prevalence",
-           function(model, ...) standardGeneric("prevalence"))
+           function(model, type = c("pop", "bnp", "wnp"), i = NULL,
+                    ...) standardGeneric("prevalence"))

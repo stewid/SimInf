@@ -199,8 +199,8 @@ setMethod("infected",
 ##' @export
 setMethod("prevalence",
           signature("SISe_sp"),
-          function(model, wnp = FALSE, i = NULL, ...) {
-              calc_prevalence(model, "I", c("S", "I"), wnp, i)
+          function(model, type, i, ...) {
+              calc_prevalence(model, "I", c("S", "I"), type, i)
           }
 )
 

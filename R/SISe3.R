@@ -238,12 +238,12 @@ setMethod("infected",
 ##' @export
 setMethod("prevalence",
           signature("SISe3"),
-          function(model, age = 1:3, wnp = FALSE, i = NULL, ...)
+          function(model, type, i, age = 1:3, ...)
           {
               stopifnot(all(age %in% 1:3))
               numerator <- paste0("I_", age)
               denominator <- c(paste0("S_", age), paste0("I_", age))
-              calc_prevalence(model, numerator, denominator, wnp, i)
+              calc_prevalence(model, numerator, denominator, type, i)
           }
 )
 

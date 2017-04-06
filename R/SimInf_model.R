@@ -384,15 +384,19 @@ SimInf_model <- function(G,
 
 ## Internal function to calculate prevalence from U
 calc_prevalence <- function(model = NULL, numerator = NULL,
-                            denominator = NULL, wnp = FALSE,
-                            i = NULL)
+                            denominator = NULL,
+                            type = c("pop", "bnp", "wnp"), i = NULL)
 {
     numerator <- extract_U(model, numerator, i)
     denominator <- extract_U(model, denominator, i)
 
-    if (identical(wnp, FALSE)) {
+    type <- match.arg(type)
+    if (identical(type, "pop")) {
         numerator <- colSums(numerator)
         denominator <- colSums(denominator)
+    } else if (identical(type, "bnp")) {
+        numerator <- colSums(numerator > 0)
+        denominator <- dim(denominator)[1]
     }
 
     numerator / denominator

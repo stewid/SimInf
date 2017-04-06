@@ -166,8 +166,8 @@ setMethod("recovered",
 ##' @export
 setMethod("prevalence",
           signature("SIR"),
-          function(model, wnp = FALSE, i = NULL, ...) {
-              calc_prevalence(model, "I", c("S", "I", "R"), wnp, i)
+          function(model, type, i, ...) {
+              calc_prevalence(model, "I", c("S", "I", "R"), type, i)
           }
 )
 
