@@ -73,7 +73,7 @@
   SE-751 05 Uppsala, Sweden\\
   E-mail: \email{pavol.bauer@it.uu.se}\\
   \\
-  Stefan  Engblom\\
+  Stefan Engblom\\
   Division of Scientific Computing\\
   Department of Information Technology\\
   Uppsala University\\
@@ -87,7 +87,7 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 
 \begin{document}
 
-\SweaveOpts{engine=R,eps=FALSE}
+\SweaveOpts{engine=R,eps=FALSE,height=5,width=10}
 %\VignetteIndexEntry{SimInf: An R package for Data-Driven Stochastic Disease Spred Simulations}
 %\VignetteDepends{SimInf,lattice}
 %\VignetteKeywords{computational epidemiology, discrete-event simulation, multicore implementation, stochastic modeling}
