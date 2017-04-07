@@ -106,18 +106,22 @@ SEXP SimInf_run(
         prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
 
         U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames"));
-        SET_VECTOR_ELT(U_dimnames, 0, U_rownames = allocVector(STRSXP, Nn * Nc));
+        PROTECT(U_rownames = allocVector(STRSXP, Nn * Nc));
+        nprotect++;
+        SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     } else {
         PROTECT(U = allocMatrix(INTSXP, Nn * Nc, tlen));
         nprotect++;
         SET_SLOT(result, Rf_install("U"), U);
         U_ptr = INTEGER(GET_SLOT(result, Rf_install("U")));
 
+        PROTECT(U_dimnames = allocVector(VECSXP, 2));
+        nprotect++;
         setAttrib(GET_SLOT(result, Rf_install("U")),
-                  R_DimNamesSymbol,
-                  U_dimnames = allocVector(VECSXP, 2));
-        SET_VECTOR_ELT(U_dimnames, 0,
-                       U_rownames = allocVector(STRSXP, Nn * Nc));
+                  R_DimNamesSymbol, U_dimnames);
+        PROTECT(U_rownames = allocVector(STRSXP, Nn * Nc));
+        nprotect++;
+        SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     }
 
     /* Add rownames to U */
@@ -148,9 +152,10 @@ SEXP SimInf_run(
         SET_SLOT(result, Rf_install("V"), V);
         V_ptr = REAL(GET_SLOT(result, Rf_install("V")));
 
+        PROTECT(V_dimnames = allocVector(VECSXP, 2));
+        nprotect++;
         setAttrib(GET_SLOT(result, Rf_install("V")),
-                  R_DimNamesSymbol,
-                  V_dimnames = allocVector(VECSXP, 2));
+                  R_DimNamesSymbol, V_dimnames);
     }
 
     /* Add colnames to V. Use the the values of 'tspan' if the
@@ -191,9 +196,6 @@ SEXP SimInf_run(
         n_threads, s, tr_fun, pts_fun);
 
 cleanup:
-    if (nprotect)
-        UNPROTECT(nprotect);
-
     if (err) {
         switch (err) {
         case SIMINF_ERR_NEGATIVE_STATE:
@@ -231,6 +233,9 @@ cleanup:
             break;
         }
     }
+
+    if (nprotect)
+        UNPROTECT(nprotect);
 
     return result;
 }
