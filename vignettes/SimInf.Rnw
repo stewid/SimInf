@@ -1,6 +1,8 @@
 %% -*- mode: LaTeX; coding: utf-8; -*-
 \documentclass[nojss]{jss}
 
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{blkarray}
@@ -1443,5 +1445,87 @@ S.~Engblom), The Swedish Research Council Formas (S.~Engblom,
 S.~Widgren), and The Swedish Board of Agriculture (S.~Widgren).
 
 \bibliography{SimInf}
+
+\clearpage
+
+\section{Appendix}
+
+\begin{algorithm}
+  \caption{Pseudo-code for the core simulation solver}
+  \label{alg:core}
+  {\fontsize{10}{10}\selectfont
+  \begin{algorithmic}[1]
+    \STATE{\textit{Run trajectory:} Dispatch to model specific
+      \code{run} method.}
+
+    \STATE{\textit{\proglang{C} interface:} Initialize model
+      transition rate functions and post time step function.}
+
+    \renewcommand{\algorithmicdo}{\textbf{do in parallel}}
+    \FORALL{nodes i=1 \TO $N_n$}
+
+    \STATE{Compute transition rates for all transitions
+      $\omega_{i,j}$, $j=1, \ldots ,N_t$.}
+
+    \STATE{Compute sum of transition rates $\lambda_i =
+      \sum_{j=1}^{N_t}\omega_{i,j}$ }
+
+    \STATE{Sample time to next stochastic event $t_i =
+      -log(\mbox{rand})/ \lambda_i$} where \textit{rand} is a
+    uniformly distributed random number in the range (0, 1)
+
+    \ENDFOR
+
+    \renewcommand{\algorithmicdo}{\textbf{do}}
+    \WHILE{$t < T_{\text{End}}$}
+
+    \renewcommand{\algorithmicdo}{\textbf{do in parallel}}
+    \FORALL{nodes i=1 \TO $N_n$}
+
+    \renewcommand{\algorithmicdo}{\textbf{do}}
+    \WHILE{$t_i < T_{\text{Next day}}$}
+
+    \STATE{Determine which state transition happened; by inversion,
+      find $n$ such that \\$\sum_{j=1}^{n-1} \omega_{i,j} < \lambda \,
+      \mbox{rand} \le \sum_{j=1}^n \omega_{i,j}$} where \textit{rand}
+    is a uniformly distributed random number in the range (0, 1)
+
+    \STATE{Update the compartments \code{u[, i]} using the
+      state-change vector \code{S[, n]}}
+
+    \STATE{Use the dependency graph \code{G[, n]} to recalculate
+      affected transition rates $\omega_{i,j}$}
+
+    \STATE{Compute sum of transition rates $\lambda_i =
+      \sum_{j=1}^{N_t}\omega_{i,j}$ }
+
+    \STATE{Sample time to next stochastic event $\tau_i =
+      -log(\text{\mbox{rand}})/ \lambda_i$} where \textit{rand} is a
+    uniformly distributed random number in the range (0, 1)
+
+    \STATE{Move simulated time forward $t_i = t_i + \tau_i$}
+
+    \ENDWHILE
+
+    \STATE{Process $E_1$ events}
+
+    \ENDFOR
+
+    \STATE{Process $E_2$ events}
+
+    \FORALL{nodes i=1 \TO $N_n$}
+
+    \STATE{Call post time step function and update the continuous
+      state variable \code{v[ ,i]}.}
+
+    \ENDFOR
+
+    \STATE{$T_{\text{Next day}} = T_{\text{Next day}} + 1$}
+
+    \ENDWHILE
+  \end{algorithmic}}
+\end{algorithm}
+
+\clearpage
 
 \end{document}
