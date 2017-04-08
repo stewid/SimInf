@@ -1036,6 +1036,57 @@ readability.
 U(result)[, 1:10]
 @
 
+Because of the high performance of the simulator, we can easily expand
+the model to include several hundreds or thousands of nodes, and still
+run the simulations efficiently.  Let's explore the dynamics of the
+population- and between-node prevalence in 500 nodes after 75 days,
+when perturbating the model parameters.  This can be achieved, using
+the built-in \code{run\_outer} method.  It takes a
+\code{SimInf\_model}, a \code{formula} specifying the model
+\code{gdata} parameters to perturbate, \code{x} and \code{y} arrays
+with values of how much to perturbate the parameters, and a callback
+function \code{FUN}.  The model \code{gdata} parameters on the
+right-hand-side of the formula are scaled with \code{y}.  Similarily,
+the \code{gdata} parameters on the left-hand-side of the formula are
+scaled with \code{x}.  For each combination of \code{x} and \code{y},
+the model parameters are scaled and the function \code{FUN} called
+with the perturbated model.
+
+<<SIR-run-outer>>=
+u0 <- data.frame(S = rep(99, 500), I = rep(1, 500), R = rep(0, 500))
+model <- SIR(u0, 1:75, beta = 0.16, gamma = 0.077)
+x <- seq(from = 0.2, to = 1.8, by = 0.05)
+y <- seq(from = 0.2, to = 1.1, by = 0.05)
+pop <- run_outer(x, y, model, gamma ~ beta,
+function(model) {prevalence(run(model), "pop")[75]})
+bnp <- run_outer(x, y, model, gamma ~ beta,
+function(model) {prevalence(run(model), "bnp")[75]})
+@
+
+\begin{figure}[htb]
+  \begin{center}
+<<SIR-run-outer-plot, fig=TRUE, echo=FALSE>>=
+opar <- par(mfrow = c(1, 2), oma = c(1, 1, 3, 0), mar = c(4, 3, 1, 1))
+contour(x * model@gdata["beta"], y * model@gdata["gamma"],
+        pop, method = "edge", bty = "l")
+title("Population prevalence")
+mtext(expression(beta), side = 1, line = 3)
+mtext(expression(gamma), side = 2, line = 2)
+contour(x * model@gdata["beta"], y * model@gdata["gamma"],
+bnp, method = "edge", bty = "l")
+title("Between-node prevalence")
+mtext(expression(beta), side = 1, line = 3)
+mtext(expression(gamma), side = 2, line = 2)
+par(opar)
+@
+  \end{center}
+  \caption{Contour plot of the population- and between-node prevalence
+    after simulating 75 days of an \code{SIR} model in 500 nodes,
+    starting with 99 susceptible, 1 infected, and 0 recovered
+    individuals in each node at the first
+    day. \label{fig:SIR-run-outer}}
+\end{figure}
+
 \subsection[A second example: The SISe3_sp model]{A second example: The \code{SISe3\_sp} model}
 \label{sec:example-SISe3_sp}
 
