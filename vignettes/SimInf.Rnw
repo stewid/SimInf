@@ -1050,7 +1050,8 @@ right-hand-side of the formula are scaled with \code{y}.  Similarily,
 the \code{gdata} parameters on the left-hand-side of the formula are
 scaled with \code{x}.  For each combination of \code{x} and \code{y},
 the model parameters are scaled and the function \code{FUN} called
-with the perturbated model.
+with the perturbated model.  See Figure~\ref{fig:SIR-run-outer} for
+the result of the operation below.
 
 <<SIR-run-outer>>=
 u0 <- data.frame(S = rep(99, 500), I = rep(1, 500), R = rep(0, 500))
@@ -1085,6 +1086,140 @@ par(opar)
     starting with 99 susceptible, 1 infected, and 0 recovered
     individuals in each node at the first
     day. \label{fig:SIR-run-outer}}
+\end{figure}
+
+\subsubsection[Specification of scheduled events in the SIR model]{Specification of scheduled events in the \code{SIR} model}
+
+In this example, we will continue to work with the built-in \code{SIR}
+model to explore a within node disease spread similar to the first SIR
+example but with the additional feature that individuals enter and
+exit the simulation and that disease can spread between nodes via
+movements of infected individuals between nodes.
+
+We will start with the inclusion of a set of individuals that are
+moved between nodes in the network (\textit{external transfer}
+events). These events are predefined prior to the simulation and are
+applied during the simulation process. For example, if your simulation
+time is in days, then after each day, SimInf will apply the events in
+the data and move individuals between nodes.
+
+In the following example we have 5 nodes with movements between
+nodes. To illustrate the movements themselves, we have only started
+with 30 individuals in the 1st nodes and the other 4 are empty, and
+we'll run the simulation for 5 timesteps:
+
+<<SIR-u0-multiple-nodes>>=
+u0 <- data.frame(S = c(10, 0, 0, 0, 0), I = c(10, 0, 0, 0, 0),
+R = c(10, 0, 0, 0, 0))
+@
+
+Now we'll define 6 scheduled events to include in the simulation.
+Below is a \code{data.frame}, that contains the events.  Interpret it
+as follows:
+
+\begin{enumerate}
+\item In time step 2 we add 2 susceptible individuals to node 2
+\item In time step 3 we move 2 individuals from node 1 to node 3
+\item In time step 4 we remove 1 individual from node 2
+\item In time step 4 we move 1 individual from node 1 to node 3
+\item In time step 4 we move 1 individual from node 1 to node 4
+\item In time step 5 we move 2 individuals from node 1 to node 5
+\end{enumerate}
+
+<<SIR-events, echo=FALSE>>=
+events <- structure(list(
+    event      = c(1, 3, 0, 3, 3, 3),
+    time       = c(2, 3, 4, 4, 4, 5),
+    node       = c(2, 1, 2, 1, 1, 1),
+    dest       = c(0, 3, 0, 3, 4, 5),
+    n          = c(2, 1, 1, 1, 1, 2),
+    proportion = c(0, 0, 0, 0, 0, 0),
+    select     = c(1, 2, 2, 2, 2, 2),
+    shift      = c(0, 0, 0, 0, 0, 0)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -6L), class = "data.frame")
+@
+
+<<SIR-events-show>>=
+events
+@
+
+Now we are ready to run the simulation using the events and the
+disease spread model as we did in earlier examples:
+
+<<U-model-events>>=
+model <- SIR(u0, 1:5, events = events, beta = 0.16, gamma = 0.077)
+U(run(model, threads = 1, seed = 2))
+@
+
+If you inspect the result of this very simple simulation, you will see
+that 2 individuals were added to node 2, of which one individual was
+later removed, and that some individuals were removed from node 1 and
+placed in nodes 3, 4, and 5.  So far this isn't really
+earth-shattering, but if we do this again with a few more individuals
+then we can see how disease can spread from an infected node to a
+non-infected one. We'll start with 5 nodes again, but node 1 is
+infected and nodes 2--5 now each have 100 susceptibles and the
+simulation will run for 75 days:
+
+<<SIR-u0-multiple-nodes-II>>=
+u0 <- data.frame(S = c(90, 100, 100, 100, 100), I = c(10, 0, 0, 0, 0),
+R = c(0, 0, 0, 0, 0))
+@
+
+And then we have a few movements of individuals from node 1 to the others:
+
+<<SIR-events-II, echo=FALSE>>=
+events <- structure(list(
+    event      = c(3, 3, 3, 3),
+    time       = c(3, 25, 5, 10),
+    node       = c(1, 1, 1, 1),
+    dest       = c(3, 2, 3, 3),
+    n          = c(1, 9, 1, 5),
+    proportion = c(0, 0, 0, 0),
+    select     = c(2, 2, 2, 2),
+    shift      = c(0, 0, 0, 0)),
+                    .Names = c("event", "time", "node", "dest",
+                        "n", "proportion", "select", "shift"),
+    row.names = c(NA, -4L), class = "data.frame")
+@
+
+<<SIR-events-II-show>>=
+events
+@
+
+Initialise and run the model
+
+<<SIR-events-II-run>>=
+model <- SIR(u0, 1:75, events = events, beta = 0.16, gamma = 0.077)
+result <- run(model, threads = 1, seed = 1)
+@
+
+And plot the result of the model (Figure~\ref{fig:SIR-spaghetti}).
+Note the time that it takes for node 2 to become positive relative to
+the movements.  On day 25, 10 individuals are moved to the herd
+causing the outbreak.  Also despite the fact that we moved inividuals
+from node 1 to node 3, there was no outbreak in node 3.  This is
+because of the random selection process that happened to select
+susceptible, infected or recovered individuals to move between the
+nodes.
+
+<<SIR-spaghetti-I, eval=FALSE>>=
+plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
+@
+
+\begin{figure}[htb]
+  \begin{center}
+<<SIR-spaghetti-II, echo=FALSE, fig=TRUE>>=
+plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
+@
+  \end{center}
+  \caption{The number of infected individuals in each node when
+    simulating 75 days of an \code{SIR} model in 5 nodes, starting
+    with 90 susceptible and 10 infected individuals in node 1 and 100
+    suceptible individuals in nodes 2--5, and moving individuals from
+    node 1 to nodes 2 and 3. \label{fig:SIR-spaghetti}}
 \end{figure}
 
 \subsection[A second example: The SISe3_sp model]{A second example: The \code{SISe3\_sp} model}
