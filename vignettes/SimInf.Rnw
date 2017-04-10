@@ -901,14 +901,14 @@ model, which contains the three compartments susceptible (\code{S}),
 infected (\code{I}) and recovered (\code{R}), where $\{S, I, R\}$
 represents the number of individuals in each of the three
 compartments, respectively.  The transmission route of infection to
-susceptible individuals is direct via contact between susceptible and
-infected individuals.  The \code{SIR} model has two state transitions
-in each node $i$,
+susceptible individuals is through direct contact between susceptible
+and infected individuals.  The \code{SIR} model has two state
+transitions in each node $i$,
 \begin{align}
 \label{eq:SIR}
 \begin{array}{rcl}
   S_i & \xrightarrow{\beta S_i I_i / (S_i+I_i+R_i)} & I_i, \\
-  I_i &\xrightarrow{\gamma I_i} & S_i,
+  I_i &\xrightarrow{\gamma I_i} & R_i,
   \end{array}
 \end{align}
 
@@ -955,8 +955,8 @@ rate.  The state change matrix \code{S} and the dependency graph
 
 The first step in creating an \code{SIR} model object is to define
 \code{u0}, a \code{data.frame} with the initial condition i.e., the
-number individuals in each compartmant.  We will start in a node with
-100 individuals of which 1 is infected.
+number individuals in each compartmant when the simulation starts.  We
+will start in a node with 100 individuals of which 1 is infected.
 
 <<SIR-u0>>=
 u0 <- data.frame(S = 99, I = 1, R = 0)
@@ -969,8 +969,8 @@ wish the model to return results for.  The model itself does not run
 in discret time steps, but continuous time, so this vector affects
 only the start and end points of the simulation and the results that
 you receive from the model, not the internal calculations of disease
-transitions through time.  Simulate for 6 months returning results
-every 7th day
+transitions through time.  In this example we simulate for 6 months
+returning results every 7th day
 
 <<SIR-tspan>>=
 tspan <- seq(1, 6 * 30, by = 7)
@@ -995,7 +995,8 @@ The \code{result} object contains the number of individuals in each
 compartment at the time points specified in \code{tspan} and can be
 extracted using the \code{U} method.  The row names indicate the
 compartments in the model and the colnames are the time points in
-\code{tspan}.  The \code{U} matrix is truncated here for readability.
+\code{tspan}.  Please note that the \code{U} matrix is truncated here
+for readability.
 
 <<SIR-U>>=
 U(result)[, 1:10]
@@ -1029,9 +1030,9 @@ model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
 result <- run(model, threads = 1, seed = 123)
 @
 
-Inspect the \code{U} matrix of the result.  Note that is includes
-results from 2 nodes above one another for each time point in the
-\code{tspan} vector.  The \code{U} matrix is truncated here for
+Inspect the \code{U} matrix, which now includes results from 2 nodes
+above one another for each time point in the \code{tspan} vector.
+Please note that the \code{U} matrix is truncated here for
 readability.
 
 <<SIR-U-multiple-nodes>>=
@@ -1207,13 +1208,13 @@ because of the random selection process that happened to select
 susceptible, infected or recovered individuals to move between the
 nodes.
 
-<<SIR-spaghetti-I, eval=FALSE>>=
+<<SIR-spaghetti, eval=FALSE>>=
 plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
 @
 
 \begin{figure}[htb]
   \begin{center}
-<<SIR-spaghetti-II, echo=FALSE, fig=TRUE>>=
+<<SIR-spaghetti-plot, echo=FALSE, fig=TRUE>>=
 plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
 @
   \end{center}
