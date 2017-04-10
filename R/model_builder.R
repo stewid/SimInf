@@ -181,6 +181,71 @@ C_code_mparse <- function(transitions, rates, compartments) {
       C_run(transitions))
 }
 
+## Split the propensity in order to separate preprocessor and
+## punctuator tokens from identifiers, for example:
+##
+## > tokens(" bR * R ")
+## [1] "bR" "*"  "R"
+tokens <- function(propensity) {
+    ## List of valid preprocessor operator or punctuator tokens.
+    operators <- c("...", "<<=", ">>=", "!=", "%=", "##", "&&", "&=", "*=",
+                   "++", "+=", "--", "-=", "->", "/=", "<<", "<=", "==",
+                   ">=", ">>", "^=", "|=", "||", "!", "~", "%", "&", "(",
+                   ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=",
+                   ">", "?", "[", "]", "^", "{", "|", "}", "#")
+
+    ## Create a matrix (1 x 2) of the propensity, where the first
+    ## column is the token and the second column indicates if the
+    ## token is one of the operators (indicated with 'op').
+    propensity <- cbind(token = propensity, type = "")
+
+    ## Iterate over each operator and try to split each row in the
+    ## propensity in smaller pieces.
+    for (op in operators) {
+        propensity <- lapply(seq_len(nrow(propensity)), function(i) {
+            x <- propensity[i, , drop = FALSE]
+
+            ## Is it a non-operator token that we could split?
+            if (nchar(x[1, 2]) == 0) {
+                m <- gregexpr(op, x[1, 1], fixed = TRUE)[[1]]
+                if (m[1] != -1) {
+                    ## The operator exists in the token. Split the
+                    ## token in smaller pieces. The cut-points are
+                    ## deterimined by the position and length of op
+                    ## e.g. "A op B" -> "A", "op", "B".
+                    x <- as.character(x[1, 1])
+                    j <- 1
+                    xx <- NULL
+                    for (i in seq_len(length(m))) {
+                        if (m[i] > j)
+                            xx <- c(xx, substr(x, j, m[i] - 1))
+                        j <- m[i] + attr(m, "match.length")[i]
+                        xx <- c(xx, substr(x, m[i], j - 1))
+                    }
+
+                    ## Make sure last sub-string is copied.
+                    if (j <= nchar(x))
+                        xx <- c(xx, substr(x, j, nchar(x)))
+
+                    ## Remove leading and trailing whitespace and drop
+                    ## empty strings
+                    xx <- gsub("(^\\s+)|(\\s+$)", "", xx)
+                    xx <- xx[nchar(xx) > 0]
+
+                    ## Create a 2-column matrix from all sub-strings
+                    x <- cbind(token = xx, type = ifelse(xx == op, "op", ""))
+                }
+            }
+
+            x
+        })
+
+        propensity <- do.call("rbind", propensity)
+    }
+
+    propensity[, 1]
+}
+
 ## Rewrite propensity
 ##
 ## Rewrite the propensity by replacing all compartments by
@@ -189,27 +254,16 @@ C_code_mparse <- function(transitions, rates, compartments) {
 ## which the propensity depends.
 rewriteprop <- function(propensity, compartments) {
     orig_prop <- propensity
-
-    ## Switch to an intermediate representation using '###', replacing
-    ## larger strings first in order to avoid changing e.g., 'BA' with
-    ## '###[1]A' whenever 'B' and 'BA' are two different compartments.
+    propensity <- tokens(propensity)
     depends <- integer(length(compartments))
-    symbols <- order(nchar(compartments), decreasing = TRUE)
-    for (i in symbols) {
-        if (length(grep(compartments[i], propensity))) {
-            depends[i] <- 1
-            propensity <- gsub(compartments[i],
-                               sprintf("###[%i]", i),
-                               propensity)
-        }
-    }
-
-    ## Final replace
-    for (i in symbols) {
-        propensity <- gsub(sprintf("###[%i]", i),
-                           sprintf("u[%s]", compartments[i]),
-                           propensity, fixed = TRUE)
-    }
+    i <- match(propensity, compartments)
+    propensity <- ifelse(is.na(i),
+                         propensity,
+                         sprintf("u[%s]", compartments[i]))
+    propensity <- paste0(propensity, collapse = "")
+    i <- i[!is.na(i)]
+    if (length(i))
+        depends[i] <- 1
 
     list(orig_prop  = orig_prop,
          propensity = propensity,

@@ -117,3 +117,14 @@ C_code <- c(
     "}",
     "")
 stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
+
+stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
+                    c("beta", "*", "S", "*", "I", "/", "(", "S", "+",
+                      "I", "+", "R", ")")))
+
+stopifnot(
+    identical(SimInf:::rewriteprop("beta*S*I/(S+I+R)", c("S", "I", "R")),
+              structure(list(orig_prop = "beta*S*I/(S+I+R)",
+                             propensity = "beta*u[S]*u[I]/(u[S]+u[I]+u[R])",
+                             depends = c(1, 1, 1)),
+                        .Names = c("orig_prop", "propensity", "depends"))))
