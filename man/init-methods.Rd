@@ -4,17 +4,21 @@
 \name{init}
 \alias{init}
 \alias{init,SimInf_mparse-method}
-\title{Init a \code{SimInf_mparse} object}
+\title{Init a \code{SimInf_mparse} object with data}
 \usage{
-init(model, u0 = NULL, tspan = NULL)
+init(model, u0 = NULL, tspan = NULL, events = NULL, E = NULL,
+  N = NULL)
 
-\S4method{init}{SimInf_mparse}(model, u0 = NULL, tspan = NULL)
+\S4method{init}{SimInf_mparse}(model, u0 = NULL, tspan = NULL,
+  events = NULL, E = NULL, N = NULL)
 }
 \arguments{
-\item{model}{The \code{SimInf_mparse} object to initialize.}
+\item{model}{The \code{\linkS4class{SimInf_mparse}} object to
+initialize.}
 
 \item{u0}{A \code{data.frame} (or an object that can be coerced to
-a \code{data.frame}) with the initial state in each node.}
+a \code{data.frame} with \code{as.data.frame}) with the
+initial state in each node.}
 
 \item{tspan}{A vector (length >= 2) of increasing time points
 where the state of each node is to be returned. Can be either
@@ -23,10 +27,41 @@ vector is coerced to a numeric vector as days, where
 \code{tspan[1]} becomes the day of the year of the first year
 of \code{tspan}. The dates are added as names to the numeric
 vector.}
+
+\item{events}{A \code{data.frame} with the scheduled
+events. Default is \code{NULL} i.e. no scheduled events in the
+model.}
+
+\item{E}{Sparse matrix to handle scheduled events, see
+\code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+i.e. no scheduled events in the model.}
+
+\item{N}{Sparse matrix to handle scheduled events, see
+\code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+i.e. no scheduled events in the model.}
 }
 \value{
-a \code{SimInf_model} object
+a \code{\linkS4class{SimInf_model}} object
 }
 \description{
-Init a \code{SimInf_mparse} object
+A \code{SimInf_mparse} object must be initialised with data to
+create a \code{SimInf_model} that can be used to simulate from the
+model.
+}
+\examples{
+\dontrun{
+## Use the model parser to create a 'SimInf_mparse' object that
+## expresses a SIR model, where 'b' is the transmission rate and
+## 'g' is the recovery rate.
+m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+            c("S", "I", "R"), b = 0.16, g = 0.077)
+
+## Initialize a 'SimInf_model' from the 'SimInf_mparse' object
+u0 <- data.frame(S = 100, I = 1, R = 0)
+model <- init(m, u0 = u0, tspan = 1:100)
+
+## Run and plot the result
+result <- run(model, threads = 1, seed = 123)
+plot(result)
+}
 }

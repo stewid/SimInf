@@ -33,15 +33,17 @@ definition that is ready to be initialised with data and then
 \examples{
 \dontrun{
 ## Use the model parser to create a 'SimInf_mparse' object that
-## expresses a SIR model
-m <- mparse(c("S -> k1*S*I/(S+I+R) -> I", "I -> k2*I -> R"),
-            c("S", "I", "R"), k1 = 0.16, k2 = 0.077)
+## expresses a SIR model, where 'b' is the transmission rate and
+## 'g' is the recovery rate.
+m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+            c("S", "I", "R"), b = 0.16, g = 0.077)
 
 ## Initialize a 'SimInf_model' from the 'SimInf_mparse' object
 u0 <- data.frame(S = 100, I = 1, R = 0)
 model <- init(m, u0 = u0, tspan = 1:100)
 
 ## Run and plot the result
-plot(run(model))
+result <- run(model, threads = 1, seed = 123)
+plot(result)
 }
 }
