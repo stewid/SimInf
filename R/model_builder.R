@@ -432,7 +432,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
 ##' @export
 setMethod("init",
           signature(model = "SimInf_mparse"),
-          function(model, u0, tspan)
+          function(model, u0, tspan, events, E, N)
           {
               compartments <- rownames(model@S)
 
@@ -443,9 +443,11 @@ setMethod("init",
                   stop("Missing columns in u0")
               u0 <- u0[, compartments, drop = FALSE]
 
-              E <- as(matrix(integer(0), nrow = 0, ncol = 0), "dgCMatrix")
+              if (is.null(E))
+                  E <- as(matrix(integer(0), nrow = 0, ncol = 0), "dgCMatrix")
 
-              N <- matrix(integer(0), nrow = 0, ncol = 0)
+              if (is.null(N))
+                  N <- matrix(integer(0), nrow = 0, ncol = 0)
 
               v0 <- matrix(numeric(0), nrow  = 0, ncol = nrow(u0))
               storage.mode(v0) <- "double"
@@ -458,7 +460,7 @@ setMethod("init",
                            E      = E,
                            N      = N,
                            tspan  = tspan,
-                           events = NULL,
+                           events = events,
                            ldata  = ldata,
                            gdata  = numeric(),
                            u0     = u0,

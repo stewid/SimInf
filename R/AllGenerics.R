@@ -16,19 +16,40 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Init a \code{SimInf_mparse} object
+##' Init a \code{SimInf_mparse} object with data
 ##'
+##' A \code{SimInf_mparse} object must be initialised with data to
+##' create a \code{SimInf_model} that can be used to simulate from the
+##' model.
 ##' @rdname init-methods
-##' @param model The \code{SimInf_mparse} object to initialize.
+##' @param model The \code{\linkS4class{SimInf_mparse}} object to
+##'     initialize.
 ##' @param u0 A \code{data.frame} (or an object that can be coerced to
-##'     a \code{data.frame}) with the initial state in each node.
+##'     a \code{data.frame} with \code{as.data.frame}) with the
+##'     initial state in each node.
 ##' @template tspan-param
-##' @return a \code{SimInf_model} object
+##' @param events A \code{data.frame} with the scheduled
+##'     events. Default is \code{NULL} i.e. no scheduled events in the
+##'     model.
+##' @param E Sparse matrix to handle scheduled events, see
+##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+##'     i.e. no scheduled events in the model.
+##' @param N Sparse matrix to handle scheduled events, see
+##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+##'     i.e. no scheduled events in the model.
+##' @return a \code{\linkS4class{SimInf_model}} object
+##' @examples
+##' \dontrun{
+##' @template mparse-example
+##' }
 setGeneric("init",
            signature = "model",
            function(model,
-                    u0    = NULL,
-                    tspan = NULL)
+                    u0     = NULL,
+                    tspan  = NULL,
+                    events = NULL,
+                    E      = NULL,
+                    N      = NULL)
                standardGeneric("init"))
 
 ##' Run the SimInf stochastic simulation algorithm
