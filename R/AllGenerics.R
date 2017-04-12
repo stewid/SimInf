@@ -38,10 +38,7 @@
 ##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
 ##'     i.e. no scheduled events in the model.
 ##' @return a \code{\linkS4class{SimInf_model}} object
-##' @examples
-##' \dontrun{
 ##' @template mparse-example
-##' }
 setGeneric("init",
            signature = "model",
            function(model,
