@@ -81,7 +81,8 @@ SEXP SimInf_run(
     /* Dimnames */
     rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
     tspan = GET_SLOT(result, Rf_install("tspan"));
-    colnames = Rf_getAttrib(tspan , R_NamesSymbol);
+    PROTECT(colnames = Rf_getAttrib(tspan , R_NamesSymbol));
+    nprotect++;
 
     /* Scheduled events */
     ext_events = GET_SLOT(result, Rf_install("events"));
