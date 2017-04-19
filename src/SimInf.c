@@ -132,7 +132,7 @@ SEXP SimInf_run(
 
     /* Add colnames to U. Use the the values of 'tspan' if the
      * colnames of 'tspan' is null. */
-    if (colnames == R_NilValue)
+    if (isNull(colnames))
         SET_VECTOR_ELT(U_dimnames, 1, coerceVector(tspan, STRSXP));
     else
         SET_VECTOR_ELT(U_dimnames, 1, duplicate(colnames));
@@ -161,7 +161,7 @@ SEXP SimInf_run(
 
     /* Add colnames to V. Use the the values of 'tspan' if the
      * colnames of 'tspan' is null. */
-    if (colnames == R_NilValue)
+    if (isNull(colnames))
         SET_VECTOR_ELT(V_dimnames, 1, coerceVector(tspan, STRSXP));
     else
         SET_VECTOR_ELT(V_dimnames, 1, duplicate(colnames));
