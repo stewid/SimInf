@@ -1,7 +1,7 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015 - 2016  Stefan Engblom
- *  Copyright (C) 2015 - 2016  Stefan Widgren
+ *  Copyright (C) 2015 - 2017  Stefan Engblom
+ *  Copyright (C) 2015 - 2017  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
  * pressure phi among proximal nodes.
  * @return The contribution from neighbors to phi in node i
  */
-double siminf_local_spread(
+double SimInf_local_spread(
     const double *neighbors,
     const double *phi,
     const int *u,

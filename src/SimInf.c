@@ -53,18 +53,18 @@ SEXP SimInf_run(
     int Nn, Nc, Nt, Nd, Nld, tlen;
     unsigned long int s;
 
-    if (siminf_arg_check_model(model)) {
+    if (SimInf_arg_check_model(model)) {
         err = SIMINF_ERR_INVALID_MODEL;
         goto cleanup;
     }
 
     /* number of threads */
-    err = siminf_get_threads(&n_threads, threads);
+    err = SimInf_get_threads(&n_threads, threads);
     if (err)
         goto cleanup;
 
     /* seed */
-    err =  siminf_get_seed(&s, seed);
+    err =  SimInf_get_seed(&s, seed);
     if (err)
         goto cleanup;
 
@@ -167,7 +167,7 @@ SEXP SimInf_run(
         SET_VECTOR_ELT(V_dimnames, 1, duplicate(colnames));
 
     /* Run simulation solver. */
-    err = siminf_run_solver(
+    err = SimInf_run_solver(
         INTEGER(GET_SLOT(result, Rf_install("u0"))),
         REAL(GET_SLOT(result, Rf_install("v0"))),
         INTEGER(GET_SLOT(G, Rf_install("i"))),

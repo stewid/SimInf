@@ -29,7 +29,7 @@
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int siminf_arg_check_dgCMatrix(SEXP arg)
+int SimInf_arg_check_dgCMatrix(SEXP arg)
 {
     SEXP class_name;
 
@@ -47,7 +47,7 @@ int siminf_arg_check_dgCMatrix(SEXP arg)
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int siminf_arg_check_integer(SEXP arg)
+int SimInf_arg_check_integer(SEXP arg)
 {
     if (arg == R_NilValue || !isInteger(arg) ||
         length(arg) != 1  || NA_INTEGER == INTEGER(arg)[0])
@@ -61,7 +61,7 @@ int siminf_arg_check_integer(SEXP arg)
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int siminf_arg_check_matrix(SEXP arg)
+int SimInf_arg_check_matrix(SEXP arg)
 {
     if (arg == R_NilValue || !isMatrix(arg))
         return -1;
@@ -74,7 +74,7 @@ int siminf_arg_check_matrix(SEXP arg)
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int siminf_arg_check_model(SEXP arg)
+int SimInf_arg_check_model(SEXP arg)
 {
     static const char *valid[] = {"SimInf_model", ""};
 
@@ -94,7 +94,7 @@ int siminf_arg_check_model(SEXP arg)
  * @param seed Random number seed from R.
  * @return 0 if Ok, else error code.
  */
-int siminf_get_seed(unsigned long int *out, SEXP seed)
+int SimInf_get_seed(unsigned long int *out, SEXP seed)
 {
     int err = 0;
 
@@ -137,7 +137,7 @@ int siminf_get_seed(unsigned long int *out, SEXP seed)
  * @param threads Number of threads from R
  * @return 0 if Ok, else error code.
  */
-int siminf_get_threads(int *out, SEXP threads)
+int SimInf_get_threads(int *out, SEXP threads)
 {
     int err = 0;
 

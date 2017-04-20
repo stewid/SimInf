@@ -24,7 +24,7 @@
 #include "SimInf.h"
 
 /* Declaration of the function to initialize and run the siminf solver */
-int siminf_run_solver(
+int SimInf_run_solver(
     const int *u0, const double *v0, const int *irG, const int *jcG,
     const int *irS, const int *jcS, const int *prS, const double *tspan,
     int tlen, int *U, const int *irU, const int *jcU, double *prU,

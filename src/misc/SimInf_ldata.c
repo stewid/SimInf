@@ -42,18 +42,18 @@
  * Example:
  * end_t1, end_t2, end_t3, end_t4, index, value, index, value, -1, 0.0
  */
-SEXP siminf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
+SEXP SimInf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
 {
     SEXP result;
     double *val, *ldata, *ld;
     int *degree = NULL, i, *ir, *jc, Nld, Nn, node, n_data, m;
 
     /* Check arguments */
-    if (siminf_arg_check_matrix(data))
+    if (SimInf_arg_check_matrix(data))
         Rf_error("Invalid 'data' argument");
-    if (siminf_arg_check_dgCMatrix(distance))
+    if (SimInf_arg_check_dgCMatrix(distance))
         Rf_error("Invalid 'distance' argument");
-    if (siminf_arg_check_integer(metric))
+    if (SimInf_arg_check_integer(metric))
         Rf_error("Invalid 'metric' argument");
 
     /* Extract data from 'data' */
