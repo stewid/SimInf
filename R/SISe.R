@@ -229,3 +229,36 @@ setMethod("plot",
               callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
           }
 )
+
+##' Scheduled events example data for the \code{SISe} model
+##'
+##' Synthetic scheduled events data to demonstrate the \code{SISe}
+##' model. The data contains 466692 events for 1600 nodes over 365 * 4
+##' days.
+##' @return A \code{data.frame}
+##' @keywords methods
+##' @importFrom utils data
+##' @export
+events_SISe <- function() {
+    utils::data(events_SISe3, envir = environment())
+    events_SISe3$select[events_SISe3$event == 0] <- 2
+    events_SISe3$select[events_SISe3$event == 1] <- 1
+    events_SISe3 <- events_SISe3[events_SISe3$event != 2, ]
+    events_SISe3$select[events_SISe3$event == 3] <- 2
+    events_SISe3
+}
+
+##' Example data to initialize the \code{SISe} model
+##'
+##' Synthetic init data for 1600 nodes to demonstrate the \code{SISe}
+##' model.
+##' @return A \code{data.frame}
+##' @keywords methods
+##' @importFrom utils data
+##' @export
+u0_SISe <- function() {
+    utils::data(u0_SISe3, envir = environment())
+    u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
+    u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
+    u0_SISe3[, c("S", "I")]
+}

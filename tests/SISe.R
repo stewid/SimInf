@@ -1143,3 +1143,7 @@ model <- SISe(u0      = u0,
 res <- tools::assertError(run(model, threads = 1))
 stopifnot(length(grep("The continuous state 'v' is negative.",
                       res[[1]]$message)) > 0)
+
+## Check data
+stopifnot(identical(nrow(events_SISe()), 466692L))
+stopifnot(identical(nrow(u0_SISe()), 1600L))
