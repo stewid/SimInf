@@ -132,3 +132,19 @@ NULL
 ##' plot(result)
 ##' }
 NULL
+
+##' Example data with spatial distribution of nodes
+##'
+##' Synthetic data with spatial distribution of 1600 nodes to
+##' demonstrate various models.
+##' @name nodes
+##' @docType data
+##' @usage data(nodes)
+##' @format A \code{data.frame}
+##' @keywords dataset
+##' @examples
+##' \dontrun{
+##' data(nodes)
+##' plot(y ~ x, nodes)
+##' }
+NULL
