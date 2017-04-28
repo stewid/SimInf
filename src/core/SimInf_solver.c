@@ -81,7 +81,7 @@ typedef struct scheduled_events
 /**
  * Structure to hold thread specific data/arguments for simulation.
  */
-typedef struct siminf_thread_args
+typedef struct SimInf_thread_args
 {
     /*** Constants ***/
     int Ntot;  /**< Total number of nodes. */
@@ -193,7 +193,7 @@ typedef struct siminf_thread_args
     int *u_tmp;           /**< Temporary vector with the compartment
                            *   state in a node when sampling
                            *   individuals for scheduled events. */
-} siminf_thread_args;
+} SimInf_thread_args;
 
 /* Shared variables */
 int n_thread = 0;
@@ -201,7 +201,7 @@ int *uu = NULL;
 double *vv_1 = NULL;
 double *vv_2 = NULL;
 int *update_node = NULL;
-siminf_thread_args *sim_args = NULL;
+SimInf_thread_args *sim_args = NULL;
 
 /**
  * Allocate memory for scheduled events
@@ -210,7 +210,7 @@ siminf_thread_args *sim_args = NULL;
  * @param n Number of events.
  * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-static int siminf_allocate_events(scheduled_events *e, int n)
+static int SimInf_allocate_events(scheduled_events *e, int n)
 {
     if (e && n > 0) {
         e->len = n;
@@ -248,7 +248,7 @@ static int siminf_allocate_events(scheduled_events *e, int n)
  *
  * @param e The scheduled_events events to free.
  */
-static void siminf_free_events(scheduled_events *e)
+static void SimInf_free_events(scheduled_events *e)
 {
     if (e) {
         if (e->event)
@@ -282,7 +282,7 @@ static void siminf_free_events(scheduled_events *e)
 /**
  * Free allocated memory to siminf thread arguments
  */
-static void siminf_free_args(siminf_thread_args *sa)
+static void SimInf_free_args(SimInf_thread_args *sa)
 {
     if (sa) {
         if (sa->rng)
@@ -304,10 +304,10 @@ static void siminf_free_args(siminf_thread_args *sa)
             free(sa->u_tmp);
         sa->u_tmp = NULL;
         if (sa->E1)
-            siminf_free_events(sa->E1);
+            SimInf_free_events(sa->E1);
         sa->E1 = NULL;
         if (sa->E2)
-            siminf_free_events(sa->E2);
+            SimInf_free_events(sa->E2);
         sa->E2 = NULL;
     }
 }
@@ -340,7 +340,7 @@ static void siminf_free_args(siminf_thread_args *sa)
  * @param Nn Total number of nodes.
  * @return 0 if Ok, else error code.
  */
-static int siminf_split_events(
+static int SimInf_split_events(
     int len, const int *event, const int *time, const int *node,
     const int *dest, const int *n, const double *proportion,
     const int *select, const int *shift, int Nn)
@@ -381,13 +381,13 @@ static int siminf_split_events(
 
     /* Allocate memory for E1 and E2 events. */
     for (i = 0; i < n_thread; i++) {
-        errcode = siminf_allocate_events(sim_args[i].E1, E1_i[i]);
+        errcode = SimInf_allocate_events(sim_args[i].E1, E1_i[i]);
         if (errcode)
             goto cleanup;
         E1_i[i] = 0;
 
         if (i == 0) {
-            errcode = siminf_allocate_events(sim_args[0].E2, E2_i);
+            errcode = SimInf_allocate_events(sim_args[0].E2, E2_i);
             if (errcode)
                 goto cleanup;
             E2_i = 0;
@@ -557,7 +557,7 @@ static int sample_select(
  *
  * @return 0 if Ok, else error code.
  */
-static int siminf_solver()
+static int SimInf_solver()
 {
     int k;
 
@@ -568,7 +568,7 @@ static int siminf_solver()
         #pragma omp for
         for (i = 0; i < n_thread; i++) {
             int node;
-            siminf_thread_args sa = *&sim_args[i];
+            SimInf_thread_args sa = *&sim_args[i];
 
             /* Initialize transition rate and time to event. Calculate
              * the transition rate for every transition and every
@@ -621,7 +621,7 @@ static int siminf_solver()
             #pragma omp for
             for (i = 0; i < n_thread; i++) {
                 int node;
-                siminf_thread_args sa = *&sim_args[i];
+                SimInf_thread_args sa = *&sim_args[i];
                 scheduled_events e1 = *sa.E1;
 
                 /* (1) Handle internal epidemiological model,
@@ -754,7 +754,7 @@ static int siminf_solver()
 
             #pragma omp master
             {
-                siminf_thread_args sa = *&sim_args[0];
+                SimInf_thread_args sa = *&sim_args[0];
                 scheduled_events e2 = *sa.E2;
 
                 /* (3) Incorporate all scheduled E2 events */
@@ -810,7 +810,7 @@ static int siminf_solver()
             #pragma omp for
             for (i = 0; i < n_thread; i++) {
                 int node;
-                siminf_thread_args sa = *&sim_args[i];
+                SimInf_thread_args sa = *&sim_args[i];
 
                 /* (4) Incorporate model specific actions after each
                  * timestep e.g. update the infectious pressure
@@ -1090,7 +1090,7 @@ int SimInf_run_solver(
     }
     gsl_rng_set(rng, seed);
 
-    sim_args = calloc(n_thread, sizeof(siminf_thread_args));
+    sim_args = calloc(n_thread, sizeof(SimInf_thread_args));
     if (!sim_args) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
@@ -1209,12 +1209,12 @@ int SimInf_run_solver(
     }
 
     /* Split scheduled events into E1 and E2 events. */
-    errcode = siminf_split_events(
+    errcode = SimInf_split_events(
         len, event, time, node, dest, n, proportion, select, shift, Nn);
     if (errcode)
         goto cleanup;
 
-    errcode = siminf_solver();
+    errcode = SimInf_solver();
 
 cleanup:
     if (uu) {
@@ -1242,7 +1242,7 @@ cleanup:
 
     if (sim_args) {
         for (i = 0; i < n_thread; i++)
-            siminf_free_args(&sim_args[i]);
+            SimInf_free_args(&sim_args[i]);
         free(sim_args);
         sim_args = NULL;
     }
