@@ -396,7 +396,8 @@ calc_prevalence <- function(model = NULL, numerator = NULL,
         denominator <- colSums(denominator)
     } else if (identical(type, "bnp")) {
         numerator <- colSums(numerator > 0)
-        denominator <- dim(denominator)[1]
+        ## Include only nodes with individuals
+        denominator <- colSums(denominator > 0)
     }
 
     numerator / denominator
