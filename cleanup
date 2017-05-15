@@ -22,3 +22,11 @@ rm -f vignettes/SimInf.blg
 rm -f vignettes/SimInf.log
 rm -f vignettes/SimInf.out
 rm -f vignettes/SimInf.pdf
+rm -f vignettes/SimInf.tex
+rm -f vignettes/SimInf-SIR-mparse-IV.pdf
+rm -f vignettes/SimInf-SIR-mparse-incidence-plot.pdf
+rm -f vignettes/SimInf-SIR-plot-proportion.pdf
+rm -f vignettes/SimInf-SIR-run-outer-plot.pdf
+rm -f vignettes/SimInf-SIR-spaghetti-plot.pdf
+rm -f vignettes/SimInf-mparse-predator-prey-pairs.pdf
+rm -f vignettes/SimInf-mparse-predator-prey-plot.pdf
