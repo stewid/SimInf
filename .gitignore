@@ -15,3 +15,17 @@ gsl
 gsl.zip
 /src/gsl/
 inst/doc
+/vignettes/SimInf-SIR-mparse-IV.pdf
+/vignettes/SimInf-SIR-mparse-incidence-plot.pdf
+/vignettes/SimInf-SIR-plot-proportion.pdf
+/vignettes/SimInf-SIR-run-outer-plot.pdf
+/vignettes/SimInf-SIR-spaghetti-plot.pdf
+/vignettes/SimInf-mparse-predator-prey-pairs.pdf
+/vignettes/SimInf-mparse-predator-prey-plot.pdf
+/vignettes/SimInf.aux
+/vignettes/SimInf.bbl
+/vignettes/SimInf.blg
+/vignettes/SimInf.log
+/vignettes/SimInf.out
+/vignettes/SimInf.pdf
+/vignettes/SimInf.tex
