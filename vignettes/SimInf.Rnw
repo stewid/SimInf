@@ -22,6 +22,10 @@
 \newcommand{\Stoich}{\mathbb{S}}
 \newcommand{\X}{\mathbb{X}}
 
+% *** use this command to write comments; it is easy to spot in the text!
+\newcommand{\comment}[1]{\textcolor{blue}{\{#1\}}}
+\newcommand{\margincomment}[1]{{\textcolor{blue}*} \marginpar{\textcolor{blue}{*\{#1\}}}}
+
 \author{Stefan Widgren\\National Veterinary Institute\\Sweden \And
   Pavol Bauer\\Uppsala University\\Sweden \And
   Stefan Engblom\\Uppsala University\\Sweden}
@@ -1041,7 +1045,7 @@ U(result)[, 1:10]
 
 Because of the high performance of the simulator, we can easily expand
 the model to include several hundreds or thousands of nodes, and still
-run the simulations efficiently.  Let's explore the dynamics of the
+run the simulations efficiently.  Let us explore the dynamics of the
 population- and between-node prevalence in 500 nodes after 75 days,
 when perturbating the model parameters.  This can be achieved, using
 the built-in \code{run\_outer} method.  It takes a
@@ -1201,12 +1205,11 @@ result <- run(model, threads = 1, seed = 1)
 
 And plot the result of the model (Figure~\ref{fig:SIR-spaghetti}).
 Note the time that it takes for node 2 to become positive relative to
-the movements.  On day 25, 10 individuals are moved to the herd
+the movements.  On day 25, 10 individuals are moved to the node
 causing the outbreak.  Also despite the fact that we moved inividuals
 from node 1 to node 3, there was no outbreak in node 3.  This is
-because of the random selection process that happened to select
-susceptible, infected or recovered individuals to move between the
-nodes.
+because of the random selection process that select susceptible,
+infected or recovered individuals to move between the nodes.
 
 <<SIR-spaghetti, eval=FALSE>>=
 plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
@@ -1229,23 +1232,24 @@ plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
 \label{sec:example-SISe3_sp}
 
 This section illustrates the specification of the \code{SISe3\_sp}
-model, which is built into the \pkg{SimInf} package.  This model
+model, which is also built into the \pkg{SimInf} package.  This model
 contains the two compartments susceptible (\code{S}) and infected
 (\code{I}) divided into the three age categories $j = \{1, 2, 3\}$ and
 the local environmental compartment (\code{e}) contaminated with free
-living pathogens (Figure~\ref{fig:SISe3_sp}).  Moreover, proximal
-nodes are spatially connected with local spread between nodes.  The
-transmission route of infection to susceptible individuals is indirect
-via the local environment, contaminated by infected individuals.  The
-number of individuals in each of the six compartments $\{S_1, I_1,
-S_2, I_2, S_3, I_3\}$ in node $i$ at time $t$ is \mbox{\code{u[, i]}}.
-The \code{SISe3\_sp} model has two state transitions within each of
-the three age categories,
+living pathogens (Figure~\ref{fig:SISe3_sp}).  Moreover, nodes are
+spatially connected with local spread of the contaminated
+environmental compartment among proximal nodes.  The transmission
+route of infection to susceptible individuals is indirect via the
+local environment, contaminated by infected individuals.  The number
+of individuals in each of the six compartments $\{S_1, I_1, S_2, I_2,
+S_3, I_3\}$ in node $i$ at time $t$ is \mbox{\code{u[, i]}}.  The
+\code{SISe3\_sp} model has two state transitions within each of the
+three age categories,
 \begin{align}
 \label{eq:vtectrans}
 \begin{array}{rcl}
-  S_{i,j} & \xrightarrow{\eta_{i,j}} & I_{i,j}, \\
-  I_{i,j} &\xrightarrow{\gamma_{i,j}} & S_{i,j}.
+  S_{ij} & \xrightarrow{\upsilon_j \varphi_i} & I_{ij}, \\
+  I_{ij} & \xrightarrow{\gamma_j} & S_{ij},
   \end{array}
 \end{align}
 
@@ -1275,31 +1279,27 @@ the three age categories,
     used when $n > 0$.  \label{fig:external:shift}}
 \end{figure}
 
-The state transition from susceptible to infected depends on the
+where the state transition from susceptible to infected depends on the
 concentration of the environmental contamination $\varphi_i(t)$ of the
-pathogen in node $i$ and the indirect transmission rate
-$\upsilon_{j}$.  The state transition from infected to susceptible
-depends on the recovery rate $\delta_{j}$,
-\begin{align}
-  \label{eq:rate_s_to_i}
-  \eta_{i,j} &= \upsilon_{j} \varphi_{i}(t) S_{i,j}(t), \\
-  \label{eq:rate_i_to_s}
-  \gamma_{i,j} &= \delta_{j} I_{i,j}(t).
-\end{align}
-Finally, the environmental infectious pressure is evolved by
+pathogen in node $i$ and the indirect transmission rate $\upsilon_j$.
+The state transition from infected to susceptible depends on the
+recovery rate $\gamma_j$.  Finally, the environmental infectious
+pressure is evolved by
 \begin{equation}
   \label{eq:envInfPressure-local-spread}
   \frac{d \varphi_i(t)}{dt}= \frac{\alpha I_i(t)}{N_i(t)} +
   \sum_k{\frac{\varphi_k(t) N_k(t) - \varphi_i(t) N_i(t)}{N_i(t)}
-    \cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t)
+    \cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t),
 \end{equation}
 
-The constant $\alpha$ is the average shedding rate of the pathogen to
-the environment per infected individual.  The decay and removal of the
-pathogen is captured by $\beta$, which is allowed to vary with time.
-The model also includes a spatial component with local spread among
-proximal nodes.  Let $D$ be the rate of the local spread and $d_{ik}$
-the distance between the two holdings $i$ and $k$.  The value of the
+where the constant $\alpha$ is the average shedding rate of the
+pathogen to the environment per infected individual, and $N_i = S_i +
+I_i$ the size of node $i$.  The decay and removal of the pathogen is
+captured by $\beta$, which is allowed to vary with time.  The model
+also includes a spatial component with local spread among proximal
+nodes.  Let $D$ be the rate of the local spread and $d_{ik}$ the
+distance between the two holdings $i$ and $k$.  When running a
+trajectory of the \code{SISe3\_sp} model the value of the
 environmental infectious pressure $\varphi_i(t)$ in each node is saved
 to the \code{V} matrix at the time-points specified by \code{tspan}.
 
@@ -1447,11 +1447,6 @@ desribes the relevant steps to implement a new model.  Since both ways
 require that \proglang{C} code can be compiled, you will first need to
 install a compiler.
 
-We suggest to first draw a schematic representation of the model that
-includes all compartments and arrows for all state transitions and
-scheduled events.  List the compartments in the order they should
-appear in the \code{U} matrix and in the transition rate functions.
-
 \subsection{Using the model parser to define a new model}
 \label{sec:mparse}
 
@@ -1463,7 +1458,10 @@ generates \proglang{C} code for the model and the two matrices
 '\code{->}'-sign is the initial state, the right hand side of the
 second '\code{->}'-sign is the final state, and the propensity is
 written between the '\code{->}'-signs.  The special symbol '\code{@}'
-is reserved for the empty set $\emptyset$.  For example,
+is reserved for the empty set $\emptyset$.  We suggest to first draw a
+schematic representation of the model that includes all compartments
+and arrows for all state transitions.  Then list the compartments in
+the order they should appear in the \code{U} matrix.  For example,
 \code{transitions <- c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R")}
 expresses an SIR model in a closed population, where \code{b} is the
 transmission rate, and \code{g} is the recovery rate.  We also need to
@@ -1478,7 +1476,7 @@ We can now use the transitions and compartments, together with the
 constants \code{b} and \code{g} to build an object of class
 \code{'SimInf\_mparse'} via a call to \code{mparse}.  Before we can
 simulate from the model, it needs to be initialised with the initial
-condition, \code{u0}, and \code{tspan}.
+condition \code{u0} and \code{tspan}.
 
 <<SIR-mparse-II>>=
 m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
@@ -1507,7 +1505,7 @@ plot(result)
 \end{figure}
 
 The flexibility of the \code{mparse} approach allows for quick
-prototyping of new models or features.  Let's elaborate on the
+prototyping of new models or features.  Let us elaborate on the
 previous example and explore the incidence cases per day.  This can
 easily be done by adding one compartment \code{'Icum'} whose sole
 purpose is to keep track of how many individuals who become infected
