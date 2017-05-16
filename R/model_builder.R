@@ -455,3 +455,45 @@ setMethod("init",
                            C_code = model@C_code)
           }
 )
+
+##' @rdname C_code-methods
+##' @export
+setMethod("C_code",
+          signature(model = "SimInf_mparse", pkg = "missing"),
+          function(model)
+          {
+              model@C_code
+          }
+)
+
+##' @rdname C_code-methods
+##' @export
+setMethod("C_code",
+          signature(model = "SimInf_mparse", pkg = "character"),
+          function(model, pkg)
+          {
+              stopifnot(identical(length(pkg), 1L), nchar(pkg[1]) > 0)
+
+              lines <- model@C_code
+
+              lines <- c(
+                  lines[1:2],
+                  "#include <R_ext/Visibility.h>",
+                  lines[-(1:2)],
+                  "static const R_CallMethodDef callMethods[] =",
+                  "{",
+                  "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",
+                  "    {NULL, NULL, 0}",
+                  "};",
+                  "",
+                  paste0("void attribute_visible R_init_", pkg, "(DllInfo *info)"),
+                  "{",
+                  "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
+                  "    R_useDynamicSymbols(info, FALSE);",
+                  "    R_forceSymbols(info, TRUE);",
+                  "}",
+                  "")
+
+              lines
+          }
+)
