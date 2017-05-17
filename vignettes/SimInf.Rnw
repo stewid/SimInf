@@ -553,12 +553,12 @@ to the sparse matrices \code{U\_sparse} and \code{V\_sparse}, which
 can save a lot of memory if the model contains many nodes and
 time-points, but where only a few of the data points are of interest.
 In order to use this feature, call the \code{U} and \code{V} methods
-with a sparse matrix with non-zero entries where the simulator should
-write the state of the system.  The initial state in each node is
-specified by the two matrices \code{u0} and \code{v0} where \code{u0[,
-    i]} is the initial number of individuals in each compartment at
-node $i$ and \code{v0[, i]} is the initial continuous state in node
-$i$.
+(before running a trajectory) with a sparse matrix with non-zero
+entries where the simulator should write the state of the system.  The
+initial state in each node is specified by the two matrices \code{u0}
+and \code{v0} where \code{u0[, i]} is the initial number of
+individuals in each compartment at node $i$ and \code{v0[, i]} is the
+initial continuous state in node $i$.
 
 \begin{table}
   \small
@@ -1025,7 +1025,7 @@ In order to run a simulation with multiple nodes we need to just add
 those nodes to the initial \code{u0} \code{data.frame} that we
 generate to start the model.  If you were doing your own modelling of
 many nodes, you would have a \code{data.frame} of your node population
-that you read from for example a spreadsheet.  For now we will just
+that you read from, for example, a spreadsheet.  For now we will just
 add another nodes to the \code{data.frame} here in \proglang{R}.
 
 <<SIR-multiple-nodes>>=
@@ -1045,11 +1045,11 @@ U(result)[, 1:10]
 
 Because of the high performance of the simulator, we can easily expand
 the model to include several hundreds or thousands of nodes, and still
-run the simulations efficiently.  Let us explore the dynamics of the
-population- and between-node prevalence in 500 nodes after 75 days,
-when perturbating the model parameters.  This can be achieved, using
-the built-in \code{run\_outer} method.  It takes a
-\code{SimInf\_model}, a \code{formula} specifying the model
+run the simulations efficiently.  We will illustrate this by exploring
+the dynamics, when perturbating the model parameters, of the
+population- and between-node prevalence in 500 nodes after 75 days.
+This can be achieved, using the built-in \code{run\_outer} method.  It
+takes a \code{SimInf\_model}, a \code{formula} specifying the model
 \code{gdata} parameters to perturbate, \code{x} and \code{y} arrays
 with values of how much to perturbate the parameters, and a callback
 function \code{FUN}.  The model \code{gdata} parameters on the
@@ -1057,8 +1057,7 @@ right-hand-side of the formula are scaled with \code{y}.  Similarily,
 the \code{gdata} parameters on the left-hand-side of the formula are
 scaled with \code{x}.  For each combination of \code{x} and \code{y},
 the model parameters are scaled and the function \code{FUN} called
-with the perturbated model.  See Figure~\ref{fig:SIR-run-outer} for
-the result of the operation below.
+with the perturbated model.
 
 <<SIR-run-outer>>=
 u0 <- data.frame(S = rep(99, 500), I = rep(1, 500), R = rep(0, 500))
@@ -1070,6 +1069,12 @@ function(model) {prevalence(run(model), "pop")[75]})
 bnp <- run_outer(x, y, model, gamma ~ beta,
 function(model) {prevalence(run(model), "bnp")[75]})
 @
+
+This illustrates that the between-node prevalence increases for
+increasing values of the transmission rate $\beta$, but decreases for
+increasing values of the recovery rate $\gamma$
+(Figure~\ref{fig:SIR-run-outer}).  The relationship is more complex
+for the population prevalence.
 
 \begin{figure}[htb]
   \begin{center}
@@ -1108,19 +1113,18 @@ moved between nodes in the network (\textit{external transfer}
 events). These events are predefined prior to the simulation and are
 applied during the simulation process. For example, if your simulation
 time is in days, then after each day, SimInf will apply the events in
-the data and move individuals between nodes.
-
-In the following example we have 5 nodes with movements between
-nodes. To illustrate the movements themselves, we have only started
-with 30 individuals in the 1st nodes and the other 4 are empty, and
-we'll run the simulation for 5 timesteps:
+the data and move individuals between nodes.  In the following example
+we have five nodes with movements between nodes. To illustrate the
+movements themselves, we have only started with 30 individuals in the
+first node and the other four are empty, and we will run the
+simulation for five timesteps:
 
 <<SIR-u0-multiple-nodes>>=
 u0 <- data.frame(S = c(10, 0, 0, 0, 0), I = c(10, 0, 0, 0, 0),
 R = c(10, 0, 0, 0, 0))
 @
 
-Now we'll define 6 scheduled events to include in the simulation.
+Now we will define 6 scheduled events to include in the simulation.
 Below is a \code{data.frame}, that contains the events.  Interpret it
 as follows:
 
