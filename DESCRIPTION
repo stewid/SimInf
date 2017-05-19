@@ -37,7 +37,7 @@ Imports:
     Matrix
 Suggests:
     lattice
-Collate:
+Collate: 
     'AllGenerics.R'
     'check_arguments.R'
     'SimInf_events.R'
@@ -51,5 +51,6 @@ Collate:
     'SimInf.R'
     'distance.R'
     'model_builder.R'
+    'package_skeleton.R'
     'run_outer.R'
 RoxygenNote: 6.0.1
