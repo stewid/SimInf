@@ -884,7 +884,7 @@ setMethod("show",
               cat(sprintf("Number of nodes: %i\n", Nn(object)))
               cat(sprintf("Number of compartments: %i\n", Nc(object)))
               cat(sprintf("Number of transitions: %i\n", Nt(object)))
-              show(object@events)
+              methods::show(object@events)
 
               cat("\n")
               show_U(object)
