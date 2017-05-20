@@ -30,9 +30,8 @@ create_DESCRIPTION_file <- function(path, name, author, maintainer,
                paste0("    to the 'SimInf' package for the '", name, "' model."),
                paste0("License: ", license),
                "NeedsCompilation: yes",
-               "Depends:",
-               "    methods,",
-               "    SimInf",
+               "Depends: SimInf",
+               "Imports: methods",
                "LinkingTo: SimInf",
                "Collate:",
                "    'model.R'")
@@ -42,6 +41,8 @@ create_DESCRIPTION_file <- function(path, name, author, maintainer,
     invisible(NULL)
 }
 
+##' Create a NAMESPACE file for the package skeleton
+##' @noRd
 create_NAMESPACE_file <- function(path, name)
 {
     lines <- c(paste0("export(", name, ")"),
@@ -108,7 +109,7 @@ create_model_R_object <- function(model, name)
       "",
       S,
       "",
-      "    E <- as(matrix(integer(0), nrow = 0, ncol = 0), \"dgCMatrix\")",
+      "    E <- methods::as(matrix(integer(0), nrow = 0, ncol = 0), \"dgCMatrix\")",
       "",
       "    N <- matrix(integer(0), nrow = 0, ncol = 0)",
       "",
@@ -132,7 +133,7 @@ create_model_R_object <- function(model, name)
       "                          u0     = u0,",
       "                          v0     = v0)",
       "",
-      paste0("    as(model, \"", name, "\")"),
+      paste0("    methods::as(model, \"", name, "\")"),
       "}")
 }
 
@@ -153,7 +154,7 @@ create_model_run_fn <- function(name)
       paste0("    signature(model = \"", name, "\"),"),
       "    function(model, threads, seed)",
       "    {",
-      "        validObject(model)",
+      "        methods::validObject(model)",
       paste0("       .Call(SimInf_model_run, model, threads, seed, PACKAGE = \"",
              name, "\")"),
       "    })")
