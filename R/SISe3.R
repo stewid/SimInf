@@ -132,7 +132,7 @@ SISe3 <- function(u0,
                 ncol   = 6,
                 byrow  = TRUE,
                 sparse = TRUE)
-    E <- as(E, "dgCMatrix")
+    E <- methods::as(E, "dgCMatrix")
     colnames(E) <- as.character(1:6)
     rownames(E) <- compartments
 
@@ -158,7 +158,7 @@ SISe3 <- function(u0,
                 ncol   = 6,
                 byrow  = TRUE,
                 sparse = TRUE)
-    G <- as(G, "dgCMatrix")
+    G <- methods::as(G, "dgCMatrix")
     colnames(G) <- as.character(1:6)
     rownames(G) <- c("S_1 -> I_1", "I_1 -> S_1",
                      "S_2 -> I_2", "I_2 -> S_2",
@@ -174,7 +174,7 @@ SISe3 <- function(u0,
                 ncol   = 6,
                 byrow  = TRUE,
                 sparse = TRUE)
-    S <- as(S, "dgCMatrix")
+    S <- methods::as(S, "dgCMatrix")
     colnames(S) <- as.character(1:6)
     rownames(S) <- compartments
 
@@ -209,7 +209,7 @@ SISe3 <- function(u0,
                           u0     = u0,
                           v0     = v0)
 
-    return(as(model, "SISe3"))
+    methods::as(model, "SISe3")
 }
 
 ##' @rdname susceptible-methods

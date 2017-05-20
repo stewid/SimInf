@@ -286,7 +286,7 @@ SimInf_model <- function(G,
 
     ## Check G
     if (class(G) == "dsCMatrix")
-        G <- as(G, "dgCMatrix")
+        G <- methods::as(G, "dgCMatrix")
 
     ## Check ldata
     if (is.null(ldata))
@@ -456,7 +456,7 @@ setMethod("U<-",
           function(model, value) {
               if (!is.null(value)) {
                   if (!is(value, "dgCMatrix"))
-                      value <- as(value, "dgCMatrix")
+                      value <- methods::as(value, "dgCMatrix")
 
                   d <- c(Nn(model) * Nc(model), length(model@tspan))
                   if (!identical(dim(value), d))
@@ -470,9 +470,10 @@ setMethod("U<-",
                   model@U_sparse = value
               } else {
                   ## Clear sparse result matrix
-                  model@U_sparse <- as(sparseMatrix(numeric(0), numeric(0),
-                                                    dims = c(0, 0)),
-                                       "dgCMatrix")
+                  model@U_sparse <- methods::as(sparseMatrix(numeric(0),
+                                                             numeric(0),
+                                                             dims = c(0, 0)),
+                                                "dgCMatrix")
               }
               model
           }
@@ -501,7 +502,7 @@ setMethod("V<-",
           function(model, value) {
               if (!is.null(value)) {
                   if (!is(value, "dgCMatrix"))
-                      value <- as(value, "dgCMatrix")
+                      value <- methods::as(value, "dgCMatrix")
 
                   d <- c(Nn(model) * Nd(model), length(model@tspan))
                   if (!identical(dim(value), d))
@@ -515,9 +516,10 @@ setMethod("V<-",
                   model@V_sparse = value
               } else {
                   ## Clear sparse result matrix
-                  model@V_sparse <- as(sparseMatrix(numeric(0), numeric(0),
-                                                    dims = c(0, 0)),
-                                       "dgCMatrix")
+                  model@V_sparse <- methods::as(sparseMatrix(numeric(0),
+                                                             numeric(0),
+                                                             dims = c(0, 0)),
+                                                "dgCMatrix")
               }
               model
           }

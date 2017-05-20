@@ -398,9 +398,9 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
              S          = S)
     })
 
-    S <- as(do.call("cbind", lapply(transitions, function(x) x$S)), "dgCMatrix")
+    S <- methods::as(do.call("cbind", lapply(transitions, function(x) x$S)), "dgCMatrix")
     depends <- do.call("rbind", lapply(transitions, function(x) x$depends))
-    G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
+    G <- methods::as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
 
     colnames(G) <- as.character(seq_len(dim(G)[2]))
     rownames(G) <- as_labels(transitions)
@@ -428,7 +428,10 @@ setMethod("init",
               u0 <- u0[, compartments, drop = FALSE]
 
               if (is.null(E))
-                  E <- as(matrix(integer(0), nrow = 0, ncol = 0), "dgCMatrix")
+                  E <- methods::as(matrix(integer(0),
+                                          nrow = 0,
+                                          ncol = 0),
+                                   "dgCMatrix")
 
               if (is.null(N))
                   N <- matrix(integer(0), nrow = 0, ncol = 0)

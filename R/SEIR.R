@@ -88,7 +88,7 @@ SEIR <- function(u0,
                 ncol   = 2,
                 byrow  = TRUE,
                 sparse = TRUE)
-    E <- as(E, "dgCMatrix")
+    E <- methods::as(E, "dgCMatrix")
     colnames(E) <- as.character(1:2)
     rownames(E) <- compartments
 
@@ -101,7 +101,7 @@ SEIR <- function(u0,
                 ncol = 3,
                 byrow  = TRUE,
                 sparse = TRUE)
-    G <- as(G, "dgCMatrix")
+    G <- methods::as(G, "dgCMatrix")
     colnames(G) <- as.character(1:3)
     rownames(G) <- c("S -> E", "E -> I", "I -> R")
 
@@ -113,7 +113,7 @@ SEIR <- function(u0,
                 ncol   = 3,
                 byrow  = TRUE,
                 sparse = TRUE)
-    S <- as(S, "dgCMatrix")
+    S <- methods::as(S, "dgCMatrix")
     colnames(S) <- as.character(1:3)
     rownames(S) <- compartments
 
@@ -138,7 +138,7 @@ SEIR <- function(u0,
                           u0     = u0,
                           v0     = v0)
 
-    return(as(model, "SEIR"))
+    methods::as(model, "SEIR")
 }
 
 ##' @rdname susceptible-methods
