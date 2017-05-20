@@ -120,7 +120,7 @@ setClass("SimInf_model",
                    C_code   = "character"),
          validity = function(object) {
              ## Check events
-             errors <- validObject(object@events)
+             errors <- methods::validObject(object@events)
              if (identical(errors, TRUE))
                  errors <- character()
 
