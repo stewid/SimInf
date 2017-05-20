@@ -103,6 +103,7 @@
 ##' @include SimInf_events.R
 ##' @keywords methods
 ##' @export
+##' @importClassesFrom Matrix dgCMatrix
 setClass("SimInf_model",
          slots = c(G        = "dgCMatrix",
                    S        = "dgCMatrix",

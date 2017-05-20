@@ -20,7 +20,6 @@
 ##'
 ##' @docType package
 ##' @name SimInf
-##' @import methods
 ##' @useDynLib SimInf, .registration=TRUE
 NULL
 
