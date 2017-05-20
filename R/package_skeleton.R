@@ -48,9 +48,7 @@ create_NAMESPACE_file <- function(path, name)
                paste0("exportClasses(", name, ")"),
                "exportMethods(run)",
                "import(SimInf)",
-               "importFrom(methods,as)",
-               "importFrom(methods,new)",
-               "importFrom(methods,validObject)",
+               "import(methods)",
                "useDynLib(asf, .registration=TRUE)")
 
     writeLines(lines, con = file.path(path, "NAMESPACE"))
@@ -77,11 +75,11 @@ create_model_R_object <- function(model, name)
 {
     rows <- paste0(rownames(model@S), collapse = "\", \"")
 
-    G <- capture.output(dput(model@G))
+    G <- utils::capture.output(dput(model@G))
     G <- c(paste0("G <- ", G[1]), G[-1])
     G <- paste0("    ", G)
 
-    S <- capture.output(dput(model@S))
+    S <- utils::capture.output(dput(model@S))
     S <- c(paste0("S <- ", S[1]), S[-1])
     S <- paste0("    ", S)
 
@@ -92,7 +90,7 @@ create_model_R_object <- function(model, name)
       "##' @param tspan A vector (length >= 2) of increasing time points",
       "##'     where the state of each node is to be returned.",
       "##' @import SimInf",
-      "##' @importFrom methods as new validObject",
+      "##' @import methods",
       "##' @export",
       "##' @examples",
       "##' ## Please add example(s) how to use the model",
