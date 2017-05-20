@@ -124,7 +124,7 @@ SISe3_sp <- function(u0,
     ## Check distance matrix
     if (is.null(distance))
         stop("'distance' is missing")
-    if (!is(distance, "dgCMatrix"))
+    if (!methods::is(distance, "dgCMatrix"))
         stop("The 'distance' argument must be of type 'dgCMatrix'")
     if (any(distance < 0))
         stop("All values in the 'distance' matrix must be >= 0")

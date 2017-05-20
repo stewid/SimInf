@@ -271,7 +271,7 @@ SimInf_events <- function(E      = NULL,
 
     ## Check time
     if (nrow(events)) {
-        if (is(events$time, "Date")) {
+        if (methods::is(events$time, "Date")) {
             if (is.null(t0))
                 stop("Missing 't0'")
             if (!all(identical(length(t0), 1L), is.numeric(t0)))

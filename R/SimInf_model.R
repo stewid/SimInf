@@ -345,7 +345,7 @@ SimInf_model <- function(G,
     }
 
     ## Check tspan
-    if (is(tspan, "Date")) {
+    if (methods::is(tspan, "Date")) {
         ## Coerce the date vector to a numeric vector as days, where
         ## tspan[1] becomes the day of the year of the first year of
         ## the tspan date vector. The dates are added as names to the
@@ -455,7 +455,7 @@ setMethod("U<-",
           signature("SimInf_model"),
           function(model, value) {
               if (!is.null(value)) {
-                  if (!is(value, "dgCMatrix"))
+                  if (!methods::is(value, "dgCMatrix"))
                       value <- methods::as(value, "dgCMatrix")
 
                   d <- c(Nn(model) * Nc(model), length(model@tspan))
@@ -501,7 +501,7 @@ setMethod("V<-",
           signature("SimInf_model"),
           function(model, value) {
               if (!is.null(value)) {
-                  if (!is(value, "dgCMatrix"))
+                  if (!methods::is(value, "dgCMatrix"))
                       value <- methods::as(value, "dgCMatrix")
 
                   d <- c(Nn(model) * Nd(model), length(model@tspan))
