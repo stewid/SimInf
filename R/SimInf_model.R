@@ -553,7 +553,7 @@ setMethod("run",
           {
               ## Check that SimInf_model contains all data structures
               ## required by the siminf solver and that they make sense
-              validObject(model);
+              methods::validObject(model);
 
               if (nchar(paste0(model@C_code, collapse = "\n"))) {
                   ## Write the C code to a temporary file
