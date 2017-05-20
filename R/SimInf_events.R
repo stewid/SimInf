@@ -400,6 +400,7 @@ setMethod("plot",
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
 ##' @export
+##' @importFrom methods show
 setMethod("show",
           signature(object = "SimInf_events"),
           function (object)

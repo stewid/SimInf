@@ -854,6 +854,7 @@ show_V <- function(object) {
 ##' @return None (invisible 'NULL').
 ##' @keywords methods
 ##' @export
+##' @importFrom methods show
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it to run over 100 days.
