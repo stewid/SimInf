@@ -47,7 +47,6 @@
 ##' }
 ##' @keywords methods
 ##' @export
-##' @import Matrix
 setClass("SimInf_mparse",
          slots = c(latex  = "character",
                    C_code = "character",

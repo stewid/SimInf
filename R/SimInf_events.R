@@ -92,8 +92,6 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'   }
 ##' }
 ##' @keywords methods
-##' @import methods
-##' @import Matrix
 ##' @export
 setClass("SimInf_events",
          slots = c(E          = "dgCMatrix",
