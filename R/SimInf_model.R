@@ -620,7 +620,6 @@ by_compartment <- function(model) {
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name boxplot-methods
 ##' @aliases boxplot boxplot-methods boxplot,SimInf_model-method
-##' @importFrom graphics boxplot
 ##' @export
 setMethod("boxplot",
           signature(x = "SimInf_model"),
@@ -639,7 +638,6 @@ setMethod("boxplot",
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name pairs-methods
 ##' @aliases pairs pairs-methods pairs,SimInf_model-method
-##' @importFrom graphics pairs
 ##' @export
 setMethod("pairs",
           signature(x = "SimInf_model"),
