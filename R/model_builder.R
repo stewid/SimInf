@@ -407,11 +407,9 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
     colnames(S) <- as.character(seq_len(dim(S)[2]))
     rownames(S) <- compartments
 
-    new("SimInf_mparse",
-        latex = LaTeX(transitions),
-        C_code = C_code_mparse(transitions, rates, compartments),
-        G = G,
-        S = S)
+    methods::new("SimInf_mparse", latex = LaTeX(transitions),
+                 C_code = C_code_mparse(transitions, rates, compartments),
+                 G = G, S = S)
 }
 
 ##' @rdname init-methods

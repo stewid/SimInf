@@ -78,5 +78,6 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL)
     col_ind <- as.integer(c(0, cumsum(sapply(m, function(x) length(x$row_ind)))))
 
     ## Create a new sparse matrix
-    new("dgCMatrix", x = d, i = row_ind, p = col_ind, Dim = rep(length(x), 2))
+    methods::new("dgCMatrix", x = d, i = row_ind, p = col_ind,
+                 Dim = rep(length(x), 2))
 }

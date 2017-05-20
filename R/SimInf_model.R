@@ -368,18 +368,18 @@ SimInf_model <- function(G,
     if (is.null(C_code))
         C_code <- character(0)
 
-    return(new("SimInf_model",
-               G      = G,
-               S      = S,
-               U      = U,
-               ldata  = ldata,
-               gdata  = gdata,
-               tspan  = tspan,
-               u0     = u0,
-               v0     = v0,
-               V      = V,
-               events = events,
-               C_code = C_code))
+    return(methods::new("SimInf_model",
+                        G      = G,
+                        S      = S,
+                        U      = U,
+                        ldata  = ldata,
+                        gdata  = gdata,
+                        tspan  = tspan,
+                        u0     = u0,
+                        v0     = v0,
+                        V      = V,
+                        events = events,
+                        C_code = C_code))
 }
 
 ## Internal function to calculate prevalence from U
