@@ -131,16 +131,16 @@ SISe3_sp <- function(u0,
 
     ## Arguments seems ok...go on
 
-    E <- Matrix(c(1, 0, 0, 1, 0, 0,
-                  0, 0, 0, 1, 0, 0,
-                  0, 1, 0, 0, 1, 0,
-                  0, 0, 0, 0, 1, 0,
-                  0, 0, 1, 0, 0, 1,
-                  0, 0, 0, 0, 0, 1),
-                nrow   = 6,
-                ncol   = 6,
-                byrow  = TRUE,
-                sparse = TRUE)
+    E <- Matrix::Matrix(c(1, 0, 0, 1, 0, 0,
+                          0, 0, 0, 1, 0, 0,
+                          0, 1, 0, 0, 1, 0,
+                          0, 0, 0, 0, 1, 0,
+                          0, 0, 1, 0, 0, 1,
+                          0, 0, 0, 0, 0, 1),
+                        nrow   = 6,
+                        ncol   = 6,
+                        byrow  = TRUE,
+                        sparse = TRUE)
     E <- methods::as(E, "dgCMatrix")
     colnames(E) <- as.character(1:6)
     rownames(E) <- compartments
@@ -157,32 +157,32 @@ SISe3_sp <- function(u0,
     colnames(N) <- as.character(1:2)
     rownames(N) <- compartments
 
-    G <- Matrix(c(1, 1, 0, 0, 0, 0,
-                  1, 1, 0, 0, 0, 0,
-                  0, 0, 1, 1, 0, 0,
-                  0, 0, 1, 1, 0, 0,
-                  0, 0, 0, 0, 1, 1,
-                  0, 0, 0, 0, 1, 1),
-                nrow   = 6,
-                ncol   = 6,
-                byrow  = TRUE,
-                sparse = TRUE)
+    G <- Matrix::Matrix(c(1, 1, 0, 0, 0, 0,
+                          1, 1, 0, 0, 0, 0,
+                          0, 0, 1, 1, 0, 0,
+                          0, 0, 1, 1, 0, 0,
+                          0, 0, 0, 0, 1, 1,
+                          0, 0, 0, 0, 1, 1),
+                        nrow   = 6,
+                        ncol   = 6,
+                        byrow  = TRUE,
+                        sparse = TRUE)
     G <- methods::as(G, "dgCMatrix")
     colnames(G) <- as.character(1:6)
     rownames(G) <- c("S_1 -> I_1", "I_1 -> S_1",
                      "S_2 -> I_2", "I_2 -> S_2",
                      "S_3 -> I_3", "I_3 -> S_3")
 
-    S <- Matrix(c(-1,  1,  0,  0,  0,  0,
-                   1, -1,  0,  0,  0,  0,
-                   0,  0, -1,  1,  0,  0,
-                   0,  0,  1, -1,  0,  0,
-                   0,  0,  0,  0, -1,  1,
-                   0,  0,  0,  0,  1, -1),
-                nrow   = 6,
-                ncol   = 6,
-                byrow  = TRUE,
-                sparse = TRUE)
+    S <- Matrix::Matrix(c(-1,  1,  0,  0,  0,  0,
+                           1, -1,  0,  0,  0,  0,
+                           0,  0, -1,  1,  0,  0,
+                           0,  0,  1, -1,  0,  0,
+                           0,  0,  0,  0, -1,  1,
+                           0,  0,  0,  0,  1, -1),
+                        nrow   = 6,
+                        ncol   = 6,
+                        byrow  = TRUE,
+                        sparse = TRUE)
     S <- methods::as(S, "dgCMatrix")
     colnames(S) <- as.character(1:6)
     rownames(S) <- compartments

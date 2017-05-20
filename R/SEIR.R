@@ -80,39 +80,39 @@ SEIR <- function(u0,
 
     ## Arguments seems ok...go on
 
-    E <- Matrix(c(1, 1,
-                  0, 1,
-                  0, 1,
-                  0, 1),
-                nrow   = 4,
-                ncol   = 2,
-                byrow  = TRUE,
-                sparse = TRUE)
+    E <- Matrix::Matrix(c(1, 1,
+                          0, 1,
+                          0, 1,
+                          0, 1),
+                        nrow   = 4,
+                        ncol   = 2,
+                        byrow  = TRUE,
+                        sparse = TRUE)
     E <- methods::as(E, "dgCMatrix")
     colnames(E) <- as.character(1:2)
     rownames(E) <- compartments
 
     N <- matrix(integer(0), nrow = 0, ncol = 0)
 
-    G <- Matrix(c(1, 1, 1,
-                  1, 1, 1,
-                  1, 1, 1),
-                nrow = 3,
-                ncol = 3,
-                byrow  = TRUE,
-                sparse = TRUE)
+    G <- Matrix::Matrix(c(1, 1, 1,
+                          1, 1, 1,
+                          1, 1, 1),
+                        nrow = 3,
+                        ncol = 3,
+                        byrow  = TRUE,
+                        sparse = TRUE)
     G <- methods::as(G, "dgCMatrix")
     colnames(G) <- as.character(1:3)
     rownames(G) <- c("S -> E", "E -> I", "I -> R")
 
-    S <- Matrix(c(-1,  0,  0,
-                   1, -1,  0,
-                   0,  1, -1,
-                   0,  0,  1),
-                nrow   = 4,
-                ncol   = 3,
-                byrow  = TRUE,
-                sparse = TRUE)
+    S <- Matrix::Matrix(c(-1,  0,  0,
+                           1, -1,  0,
+                           0,  1, -1,
+                           0,  0,  1),
+                        nrow   = 4,
+                        ncol   = 3,
+                        byrow  = TRUE,
+                        sparse = TRUE)
     S <- methods::as(S, "dgCMatrix")
     colnames(S) <- as.character(1:3)
     rownames(S) <- compartments
