@@ -470,9 +470,9 @@ setMethod("U<-",
                   model@U_sparse = value
               } else {
                   ## Clear sparse result matrix
-                  model@U_sparse <- methods::as(sparseMatrix(numeric(0),
-                                                             numeric(0),
-                                                             dims = c(0, 0)),
+                  model@U_sparse <- methods::as(Matrix::sparseMatrix(numeric(0),
+                                                                     numeric(0),
+                                                                     dims = c(0, 0)),
                                                 "dgCMatrix")
               }
               model
@@ -516,9 +516,9 @@ setMethod("V<-",
                   model@V_sparse = value
               } else {
                   ## Clear sparse result matrix
-                  model@V_sparse <- methods::as(sparseMatrix(numeric(0),
-                                                             numeric(0),
-                                                             dims = c(0, 0)),
+                  model@V_sparse <- methods::as(Matrix::sparseMatrix(numeric(0),
+                                                                     numeric(0),
+                                                                     dims = c(0, 0)),
                                                 "dgCMatrix")
               }
               model
