@@ -179,7 +179,7 @@ setMethod("plot",
                    lwd = 2,
                    ...)
           {
-              callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
+              methods::callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
           }
 )
 

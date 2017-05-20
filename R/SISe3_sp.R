@@ -269,7 +269,7 @@ setMethod("plot",
                    lwd = 2,
                    ...)
           {
-              callNextMethod(x, legend = legend, col = col,
-                             lty = lty, lwd = lwd, ...)
+              methods::callNextMethod(x, legend = legend, col = col,
+                                      lty = lty, lwd = lwd, ...)
           }
 )
