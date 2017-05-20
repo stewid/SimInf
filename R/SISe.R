@@ -216,7 +216,6 @@ setMethod("prevalence",
 
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SISe-method
-##' @importFrom graphics plot
 ##' @export
 setMethod("plot",
           signature(x = "SISe"),
@@ -237,7 +236,6 @@ setMethod("plot",
 ##' days.
 ##' @return A \code{data.frame}
 ##' @keywords methods
-##' @importFrom utils data
 ##' @export
 events_SISe <- function() {
     utils::data(events_SISe3, envir = environment())
@@ -254,7 +252,6 @@ events_SISe <- function() {
 ##' model.
 ##' @return A \code{data.frame}
 ##' @keywords methods
-##' @importFrom utils data
 ##' @export
 u0_SISe <- function() {
     utils::data(u0_SISe3, envir = environment())

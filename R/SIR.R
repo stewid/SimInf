@@ -173,7 +173,6 @@ setMethod("prevalence",
 
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SIR-method
-##' @importFrom graphics plot
 ##' @export
 setMethod("plot",
           signature(x = "SIR"),
@@ -194,7 +193,6 @@ setMethod("plot",
 ##' days.
 ##' @return A \code{data.frame}
 ##' @keywords methods
-##' @importFrom utils data
 ##' @export
 events_SIR <- function() {
     utils::data(events_SISe3, envir = environment())
@@ -211,7 +209,6 @@ events_SIR <- function() {
 ##' model.
 ##' @return A \code{data.frame}
 ##' @keywords methods
-##' @importFrom utils data
 ##' @export
 u0_SIR <- function() {
     utils::data(u0_SISe3, envir = environment())

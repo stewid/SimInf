@@ -259,7 +259,6 @@ setMethod("prevalence",
 
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SISe3_sp-method
-##' @importFrom graphics plot
 ##' @export
 setMethod("plot",
           signature(x = "SISe3_sp"),

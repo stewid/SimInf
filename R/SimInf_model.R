@@ -669,11 +669,6 @@ setMethod("pairs",
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SimInf_model-method
-##' @importFrom graphics legend
-##' @importFrom graphics lines
-##' @importFrom graphics par
-##' @importFrom graphics plot
-##' @importFrom graphics title
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise

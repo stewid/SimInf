@@ -170,7 +170,6 @@ setMethod("recovered",
 
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SEIR-method
-##' @importFrom graphics plot
 ##' @export
 setMethod("plot",
           signature(x = "SEIR"),
@@ -191,7 +190,6 @@ setMethod("plot",
 ##' days.
 ##' @return A \code{data.frame}
 ##' @keywords methods
-##' @importFrom utils data
 ##' @export
 events_SEIR <- function() {
     utils::data(events_SISe3, envir = environment())
@@ -208,7 +206,6 @@ events_SEIR <- function() {
 ##' model.
 ##' @return A \code{data.frame}
 ##' @keywords methods
-##' @importFrom utils data
 ##' @export
 u0_SEIR <- function() {
     utils::data(u0_SISe3, envir = environment())

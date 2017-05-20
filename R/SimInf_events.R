@@ -329,8 +329,6 @@ SimInf_events <- function(E      = NULL,
 ##' @param frame.plot a logical indicating whether a box should be
 ##'     drawn around the plot.
 ##' @param ... additional arguments affecting the plot.
-##' @importFrom graphics plot
-##' @importFrom graphics mtext
 ##' @keywords internal
 plot_SimInf_events <- function(x,
                                   y,
@@ -374,9 +372,6 @@ plot_SimInf_events <- function(x,
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
 ##' @name plot-methods
 ##' @aliases plot plot-methods plot,SimInf_events-method
-##' @importFrom graphics plot
-##' @importFrom graphics par
-##' @importFrom stats xtabs
 ##' @export
 setMethod("plot",
           signature(x = "SimInf_events"),
@@ -385,7 +380,7 @@ setMethod("plot",
               savepar <- graphics::par(mfrow = c(2, 2),
                                        oma = c(1, 1, 2, 0),
                                        mar = c(4, 3, 1, 1))
-              on.exit(par(savepar))
+              on.exit(graphics::par(savepar))
 
               yy <- stats::xtabs(n ~ event + time,
                          cbind(event = x@event, time = x@time, n = x@n))

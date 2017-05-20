@@ -334,7 +334,6 @@ LaTeX <- function(transitions)
 ##' @param ... rate-constants for the model.
 ##' @return \linkS4class{SimInf_mparse}
 ##' @export
-##' @importFrom utils packageVersion
 ##' @template mparse-example
 mparse <- function(transitions = NULL, compartments = NULL, ...)
 {
