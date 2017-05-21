@@ -13,11 +13,11 @@ run(model, threads = NULL, seed = NULL)
 \arguments{
 \item{model}{The siminf model to run.}
 
-\item{threads}{Number of threads. Default is NULL, i.e. to use the
-number of available processors.}
+\item{threads}{Number of threads. Default is NULL, i.e. to use all
+available processors.}
 
-\item{seed}{Random number seed. Default is NULL, i.e. to use a
-time-seed.}
+\item{seed}{Random number seed. Default is NULL, i.e. the
+simulator uses time to seed the random number generator.}
 }
 \value{
 \code{SimInf_model} with result from simulation.

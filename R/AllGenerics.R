@@ -78,10 +78,10 @@ setGeneric("C_code", function(model, pkg) standardGeneric("C_code"))
 ##'
 ##' @rdname run-methods
 ##' @param model The siminf model to run.
-##' @param threads Number of threads. Default is NULL, i.e. to use the
-##'     number of available processors.
-##' @param seed Random number seed. Default is NULL, i.e. to use a
-##'     time-seed.
+##' @param threads Number of threads. Default is NULL, i.e. to use all
+##'     available processors.
+##' @param seed Random number seed. Default is NULL, i.e. the
+##'     simulator uses time to seed the random number generator.
 ##' @return \code{SimInf_model} with result from simulation.
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
