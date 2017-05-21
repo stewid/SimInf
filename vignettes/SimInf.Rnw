@@ -704,6 +704,73 @@ for an illustration of a scheduled \textit{internal transfer} event.
     $^\dag$\code{dest} and $^\S$\code{shift} are not used in a
     scheduled \textit{exit} event.  $^\ddag$\code{proportion} is not
     used when $n > 0$.  \label{fig:exit}}
+
+  \vspace*{\floatsep}
+
+  \begin{center}
+    \includegraphics[width=0.6\linewidth]{img/enter.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{enter} event (event =
+    1) in the \code{SISe3\_sp} model at time = 4.  Add three
+    susceptible individuals to the first age category $\{S_1\}$ in
+    node 14.  Interpreting the figure from left to right: \textit{i)}
+    A single row of the event data operating on node 14.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14.  \textit{iii)}
+    \code{E[, 1]} is the first column in the select matrix that
+    determines which compartments (age categories) the new individuals
+    are added.  \textit{iv)} The resultant state of node 14 after
+    adding the individuals in step \textit{iii}.  $^\dag$\code{dest},
+    $^\ddag$\code{proportion} and $^\S$\code{shift} are not used in a
+    scheduled \textit{enter} event.  \label{fig:enter}}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\linewidth]{img/internal.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{internal transfer}
+    event (event = 2) in the \code{SISe3\_sp} model at time = 4.  The
+    ageing of three individuals in the first age category $\{S_1,
+    I_1\}$.  Interpreting the figure from left to right: \textit{i)} A
+    single row of the event data operating on node 14.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{E[, 4]} is
+    the 4$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling three individuals
+    (n = 3) to age from the compartments selected in step \textit{ii}.
+    \textit{iv)} The shift operation applies the shift specified in
+    column 1 of the shift matrix (\code{N}) to the individuals sampled
+    in step \textit{iii}.  \textit{v)} The resultant state of node 14
+    after subtracting the sampled individuals in step \textit{iii} and
+    adding the individuals after the shift operation in step
+    \textit{iv}.  $^\dag$\code{dest} is not used in \textit{internal
+      transfers}.  $^\ddag$\code{proportion} is not used when $n >
+    0$.  \label{fig:internal}}
+
+  \vspace*{\floatsep}
+
+  \begin{center}
+    \includegraphics[width=0.66\linewidth]{img/external.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{external transfer}
+    event (event = 3) in the \code{SISe3\_sp} model at time = 4.  The
+    movement of one individual in the third age category $\{S_3,
+    I_3\}$ from node 14 to destination node 23.  Interpreting the
+    figure from left to right: \textit{i)} A single row of the event
+    data operating on node 14 and destination node 23.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{u[, 23]} is
+    the current state of the destination node 23; \code{E[, 6]} is the
+    6$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling one individual (n
+    = 1) to move from the compartments selected in step \textit{ii}.
+    \textit{iv)} The resultant state of node 14 and destination node
+    23 after subtracting the sampled individuals in step \textit{iii}
+    from node 14 and adding them to destination node 23.
+    $^\dag$\code{shift} can be used in a scheduled \textit{external
+      transfer} event, see
+    Figure~\ref{fig:external:shift}. $^\ddag$\code{proportion} is not
+    used when $n > 0$.  \label{fig:external}}
 \end{figure}
 
 \subsubsection{Processing of an external transfer event}
@@ -744,24 +811,6 @@ processors and perform computations in parallel.  The solver uses the
 GNU Scientific Library (GSL) \citep{Gallassi2009} to generate random
 numbers for the simulation.
 
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.6\linewidth]{img/enter.pdf}
-  \end{center}
-  \caption{Illustration of a scheduled \textit{enter} event (event =
-    1) in the \code{SISe3\_sp} model at time = 4.  Add three
-    susceptible individuals to the first age category $\{S_1\}$ in
-    node 14.  Interpreting the figure from left to right: \textit{i)}
-    A single row of the event data operating on node 14.  \textit{ii)}
-    \code{u[, 14]} is the current state of node 14.  \textit{iii)}
-    \code{E[, 1]} is the first column in the select matrix that
-    determines which compartments (age categories) the new individuals
-    are added.  \textit{iv)} The resultant state of node 14 after
-    adding the individuals in step \textit{iii}.  $^\dag$\code{dest},
-    $^\ddag$\code{proportion} and $^\S$\code{shift} are not used in a
-    scheduled \textit{enter} event.  \label{fig:enter}}
-\end{figure}
-
 \subsubsection{Function pointers}
 
 The flexibility of the solver is partly achieved by using function
@@ -788,30 +837,6 @@ data types are defined in the header file \texttt{'src/SimInf.h'} and
 shown below.  The arguments \code{v\_new}, \code{u}, \code{v},
 \code{ldata}, \code{gdata}, \code{node}, and \code{t} of the functions
 are described in Table~\ref{table:arguments}.
-
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.8\linewidth]{img/internal.pdf}
-  \end{center}
-  \caption{Illustration of a scheduled \textit{internal transfer}
-    event (event = 2) in the \code{SISe3\_sp} model at time = 4.  The
-    ageing of three individuals in the first age category $\{S_1,
-    I_1\}$.  Interpreting the figure from left to right: \textit{i)} A
-    single row of the event data operating on node 14.  \textit{ii)}
-    \code{u[, 14]} is the current state of node 14; \code{E[, 4]} is
-    the 4$^{th}$ column in the select matrix that determines which
-    compartments (age categories) that are eligible for sampling.
-    \textit{iii)} The operation of randomly sampling three individuals
-    (n = 3) to age from the compartments selected in step \textit{ii}.
-    \textit{iv)} The shift operation applies the shift specified in
-    column 1 of the shift matrix (\code{N}) to the individuals sampled
-    in step \textit{iii}.  \textit{v)} The resultant state of node 14
-    after subtracting the sampled individuals in step \textit{iii} and
-    adding the individuals after the shift operation in step
-    \textit{iv}.  $^\dag$\code{dest} is not used in \textit{internal
-      transfers}.  $^\ddag$\code{proportion} is not used when $n >
-    0$.  \label{fig:internal}}
-\end{figure}
 
 \begin{minipage}{\linewidth}
 \begin{scriptsize}
@@ -867,31 +892,6 @@ called to allow the model to incorporate model specific actions.  When
 simulated time passes the next time in \code{tspan}, the count of the
 compartments and the continuous state variables are written to
 \code{U} and \code{V}.
-
-\begin{figure}
-\begin{center}
-    \includegraphics[width=0.66\linewidth]{img/external.pdf}
-  \end{center}
-  \caption{Illustration of a scheduled \textit{external transfer}
-    event (event = 3) in the \code{SISe3\_sp} model at time = 4.  The
-    movement of one individual in the third age category $\{S_3,
-    I_3\}$ from node 14 to destination node 23.  Interpreting the
-    figure from left to right: \textit{i)} A single row of the event
-    data operating on node 14 and destination node 23.  \textit{ii)}
-    \code{u[, 14]} is the current state of node 14; \code{u[, 23]} is
-    the current state of the destination node 23; \code{E[, 6]} is the
-    6$^{th}$ column in the select matrix that determines which
-    compartments (age categories) that are eligible for sampling.
-    \textit{iii)} The operation of randomly sampling one individual (n
-    = 1) to move from the compartments selected in step \textit{ii}.
-    \textit{iv)} The resultant state of node 14 and destination node
-    23 after subtracting the sampled individuals in step \textit{iii}
-    from node 14 and adding them to destination node 23.
-    $^\dag$\code{shift} can be used in a scheduled \textit{external
-      transfer} event, see
-    Figure~\ref{fig:external:shift}. $^\ddag$\code{proportion} is not
-    used when $n > 0$.  \label{fig:external}}
-\end{figure}
 
 %**************************************************************************
 
