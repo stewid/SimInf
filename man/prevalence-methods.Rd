@@ -47,7 +47,7 @@ include in the calculation. Default is that all age categories
 are included.}
 }
 \value{
-Vector when type equals \code{'pop'} or \code{'bnp'} and
+Vector when type equals \code{'pop'} or \code{'bnp'} but
     matrix when type equals \code{'wnp'}.
 }
 \description{

@@ -18,7 +18,7 @@ C_code(model, pkg)
 
 \item{pkg}{Character vector. If the C could should be used in a
 package named \code{pkg}, the function modifies the C code to
-facilitate adding the code to the package. Default is not to
+facilitate adding the code to the package. Default is to not
 use this argument and return the C code unmodified.}
 }
 \value{

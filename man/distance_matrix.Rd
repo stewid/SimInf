@@ -13,17 +13,17 @@ distance_matrix(x, y, cutoff, min_dist = NULL)
 
 \item{cutoff}{The distance cutoff}
 
-\item{min_dist}{The minimum distance to separate two nodes.
-If the coordinates for two nodes are identical, the
-min_dist must be assigned or an error is raised.
-This is to protect against infinite values when
-calculating \eqn{1 / d^2}. Default is NULL.}
+\item{min_dist}{The minimum distance to separate two nodes.  If
+the coordinates for two nodes are identical, the min_dist must
+be assigned or an error is raised.  This is to protect against
+infinite values when calculating \eqn{1 / d^2}. Default is
+NULL.}
 }
 \value{
 \code{dgCMatrix}
 }
 \description{
-Calculate the euclidian distances beween coordinates for
+Calculate the euclidian distances beween coordinates for all
 coordinates within the cutoff.
 }
 \examples{
