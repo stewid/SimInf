@@ -30,7 +30,9 @@ README.md: README.Rmd
 
 # Generate vignette
 vignette:
-	cd vignettes && Rscript -e "Sweave('SimInf'); tools::texi2pdf('SimInf.tex')"
+	cd vignettes && Rscript -e "library('methods')" \
+                                -e "Sweave('SimInf')" \
+                                -e "tools::texi2pdf('SimInf.tex')"
 
 # Build and check package
 check: clean
