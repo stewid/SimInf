@@ -1207,13 +1207,14 @@ model <- SIR(u0, 1:75, events = events, beta = 0.16, gamma = 0.077)
 result <- run(model, threads = 1, seed = 1)
 @
 
-And plot the result of the model (Figure~\ref{fig:SIR-spaghetti}).
-Note the time that it takes for node 2 to become positive relative to
-the movements.  On day 25, 10 individuals are moved to the node
-causing the outbreak.  Also despite the fact that we moved inividuals
-from node 1 to node 3, there was no outbreak in node 3.  This is
-because of the random selection process that select susceptible,
-infected or recovered individuals to move between the nodes.
+And then plot the result of the model
+(Figure~\ref{fig:SIR-spaghetti}).  Note the time that it takes for
+node 2 to become positive relative to the movements.  On day 25, 10
+individuals are moved to the node causing the outbreak.  Also despite
+the fact that we moved inividuals from node 1 to node 3, there was no
+outbreak in node 3.  This is because of the random selection process
+that select susceptible, infected or recovered individuals to move
+between the nodes.
 
 <<SIR-spaghetti, eval=FALSE>>=
 plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
@@ -1236,19 +1237,22 @@ plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
 \label{sec:example-SISe3_sp}
 
 This section illustrates the specification of the \code{SISe3\_sp}
-model, which is also built into the \pkg{SimInf} package.  This model
-contains the two compartments susceptible (\code{S}) and infected
-(\code{I}) divided into the three age categories $j = \{1, 2, 3\}$ and
-the local environmental compartment (\code{e}) contaminated with free
-living pathogens (Figure~\ref{fig:SISe3_sp}).  Moreover, nodes are
-spatially connected with local spread of the contaminated
-environmental compartment among proximal nodes.  The transmission
-route of infection to susceptible individuals is indirect via the
-local environment, contaminated by infected individuals.  The number
-of individuals in each of the six compartments $\{S_1, I_1, S_2, I_2,
-S_3, I_3\}$ in node $i$ at time $t$ is \mbox{\code{u[, i]}}.  The
-\code{SISe3\_sp} model has two state transitions within each of the
-three age categories,
+model, which is also built into the \pkg{SimInf} package.  In this
+example we will demonstrate two additional features compared to the
+\code{SIR} model: ageing of individuals by \textit{internal transfer}
+events, and the real valued continuous state $V$.  The
+\code{SISe3\_sp} model contains the two compartments susceptible
+(\code{S}) and infected (\code{I}) divided into the three age
+categories $j = \{1, 2, 3\}$ and the local environmental compartment
+(\code{e}) contaminated with free living pathogens
+(Figure~\ref{fig:SISe3_sp}).  Moreover, nodes are spatially connected
+with local spread of the contaminated environmental compartment among
+proximal nodes.  The transmission route of infection to susceptible
+individuals is indirect via the local environment, contaminated by
+infected individuals.  The number of individuals in each of the six
+compartments $\{S_1, I_1, S_2, I_2, S_3, I_3\}$ in node $i$ at time
+$t$ is \mbox{\code{u[, i]}}.  The \code{SISe3\_sp} model has two state
+transitions within each of the three age categories,
 \begin{align}
 \label{eq:vtectrans}
 \begin{array}{rcl}
@@ -1256,32 +1260,6 @@ three age categories,
   I_{ij} & \xrightarrow{\gamma_j} & S_{ij},
   \end{array}
 \end{align}
-
-\begin{figure}[htb]
-  \begin{center}
-    \includegraphics[width=0.66\linewidth]{img/external-shift.pdf}
-  \end{center}
-  \caption{Illustration of a scheduled \textit{external transfer}
-    event (event = 3) in the \code{SISe3\_sp} model at time = 4.  The
-    ageing of three individuals in the second age category $\{S_2,
-    I_2\}$ that are subsequenly moved.  Interpreting the figure from
-    left to right: \textit{i)} A single row of the event data
-    operating on node 14 and destination node 23.  \textit{ii)}
-    \code{u[, 14]} is the current state of node 14; \code{u[, 23]} is
-    the current state of the destination node 23; \code{E[, 5]} is the
-    5$^{th}$ column in the select matrix that determines which
-    compartments (age categories) that are eligible for sampling.
-    \textit{iii)} The operation of randomly sampling three individuals
-    (n = 3) to move from the compartments selected in step
-    \textit{ii}.  \textit{iv)} The shift operation applies the shift
-    specified in column 2 of the shift matrix (\code{N}) to the
-    individuals sampled in step \textit{iii}.  \textit{v)} The
-    resultant state of node 14 and destination node 23 after
-    subtracting the sampled individuals in step \textit{iii} from node
-    14 and adding them to the destination node 23 after the shift
-    operation in step \textit{iv}.  $^\ddag$\code{proportion} is not
-    used when $n > 0$.  \label{fig:external:shift}}
-\end{figure}
 
 where the state transition from susceptible to infected depends on the
 concentration of the environmental contamination $\varphi_i(t)$ of the
@@ -1369,22 +1347,23 @@ $I_{i,1} \rightarrow S_{i,1}$ must be recalculated according to
 \]
 }
 
-\subsection[Specification of scheduled events in the SISe3_sp model]{Specification of scheduled events in the \code{SISe3\_sp} model}
+\subsubsection[Specification of scheduled events in the SISe3_sp model]{Specification of scheduled events in the \code{SISe3\_sp} model}
 
 The select matrix \code{E} and the shift matrix \code{N} in the
 \code{SISe3\_sp} model are specified to handle births, imports,
 ageing, moving and exits of individuals
-(Table~\ref{table:SISe3_sp:events}).  All individuals entering the
-model are added to the susceptible state, specified by the age
-category of the individuals.  These three states are selected with the
-columns 1, 2 and 3 in \code{E}.  The columns 4, 5 and 6 in \code{E}
-are used to sample individuals from the susceptible and infected
-states of the three ages catgories.  To move the sampled individuals
-in a \textit{internal transfer} event from age category 1 to age
-category 2, the susceptible and infected states should shift two steps
-to the corresponding state in age category 2, as specified in
-\code{N[, 1]} In the same way, \code{N[, 2]} move susceptible and
-infected individuals in age category 2 to age category 3.
+(Table~\ref{table:SISe3_sp:events}).  When individuals enter the model
+(births, imports), they are added to the susceptible state of a age
+category, where the age category is specified by column 1, 2 or 3 in
+\code{E}.  The columns 4, 5 and 6 in \code{E} are used for the other
+events (ageing, moving, exit) to sample individuals from the
+susceptible and infected states from each of the three ages catgories.
+To move the sampled individuals in a \textit{internal transfer} event
+(ageing) from age category 1 to age category 2, the susceptible and
+infected states should shift two steps to the corresponding state in
+age category 2, as specified in \code{N[, 1]} In the same way,
+\code{N[, 2]} move susceptible and infected individuals in age
+category 2 to age category 3.
 
 {\small
 \[
