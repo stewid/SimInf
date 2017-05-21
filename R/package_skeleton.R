@@ -145,8 +145,8 @@ create_model_run_fn <- function(name)
       "##' @param model The model to run.",
       "##' @param threads Number of threads. Default is NULL, i.e. to use all",
       "##'     available processors.",
-      "##' @param seed Random number seed. Default is NULL, i.e. it uses time",
-      "##'     to seed the random number generation.",
+      "##' @param seed Random number seed. Default is NULL, i.e. the",
+      "##'     simulator uses time to seed the random number generator.",
       "##' @return model with result from simulation.",
       "##' @export",
       paste0("##' @useDynLib ", name, ", .registration=TRUE"),
@@ -247,3 +247,62 @@ create_model_run_man_file <- function(path, name)
 
     invisible(NULL)
 }
+
+##' @rdname package_skeleton-methods
+##' @export
+setMethod("package_skeleton",
+          signature(model = "SimInf_mparse"),
+          function(model, name = NULL, path = ".", author = NULL,
+                   email = NULL, maintainer = NULL, license = "GPL-3")
+{
+    stopifnot(!is.null(name), is.character(name), length(name) == 1,
+              nchar(name) > 0)
+    stopifnot(!is.null(path), is.character(path), length(path) == 1,
+              nchar(path) > 0)
+    path <- file.path(path, name)
+    if (dir.exists(path))
+        stop(paste0("'", path, "' already exists"))
+
+    if (is.null(author)) {
+        author <- "Your Name"
+    } else {
+        stopifnot(is.character(author), length(author) == 1, nchar(author) > 0)
+    }
+
+    if (is.null(email)) {
+        email <- "your@email.com"
+    } else {
+        stopifnot(is.character(email), length(email) == 1, nchar(email) > 0)
+    }
+
+    if (is.null(maintainer)) {
+        maintainer <- author
+    } else {
+        stopifnot(is.character(maintainer), length(maintainer) == 1,
+                  nchar(maintainer) > 0)
+    }
+
+    ## Create folder structure
+    message("Creating directories ...", domain = NA)
+    dir.create(path, recursive = TRUE)
+    dir.create(file.path(path, "man"))
+    dir.create(file.path(path, "src"))
+    dir.create(file.path(path, "R"))
+
+    ## Create files
+    message("Creating DESCRIPTION ...", domain = NA)
+    create_DESCRIPTION_file(path, name, author, maintainer, email,
+                            license)
+    message("Creating NAMESPACE ...", domain = NA)
+    create_NAMESPACE_file(path, name)
+    message("Creating C file ...", domain = NA)
+    create_model_C_file(path, model, name)
+    message("Creating R file ...", domain = NA)
+    create_model_R_file(path, model, name)
+    message("Creating help files ...", domain = NA)
+    create_model_man_file(path, name)
+    create_model_class_man_file(path, name)
+    create_model_run_man_file(path, name)
+
+    invisible(NULL)
+})
