@@ -30,3 +30,5 @@ rm -f vignettes/SimInf-SIR-run-outer-plot.pdf
 rm -f vignettes/SimInf-SIR-spaghetti-plot.pdf
 rm -f vignettes/SimInf-mparse-predator-prey-pairs.pdf
 rm -f vignettes/SimInf-mparse-predator-prey-plot.pdf
+rm -f vignettes/SimInf-display-population-dynamics.pdf
+rm -f vignettes/SimInf-display-SISe3sp-model.pdf
