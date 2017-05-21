@@ -322,16 +322,16 @@ flexible framework to perform efficient simulations in compiled
 \code{SimInf\_model} class contains slots
 (Table~\ref{table:SimInf:model}) to data structures that define the
 disease-spread model and one slot \code{events} associated to a
-\code{SimInf\_events} object.  The \code{SimInf\_model} object also
+\code{SimInf\_events} object, which contains slots
+(Table~\ref{table:scheduled:events}) to incorporate and process
+scheduled events.  Furthermore, the \code{SimInf\_model} object also
 contains the output trajectory after running the core simulation
-solver on the disease-spread model.  The \code{SimInf\_events} class
-contains slots (Table~\ref{table:scheduled:events}) to incorporate and
-process scheduled events.
+solver on the disease-spread model.
 
 All disease-spread models in \pkg{SimInf} contains the \code{S4} class
-\code{SimInf\_model}.  The built-in disease-spread models have a
-generating function \citep{Chambers2008}, with the same name as the
-model, which check parameters and initialize the necessary data
+\code{SimInf\_model}.  Moreover, the built-in disease-spread models
+have a generating function \citep{Chambers2008}, with the same name as
+the model, which check parameters and initialize the necessary data
 structures for that specific model.  After the model is initialized,
 the simulation is started with a call to the \code{run} method.  To
 facilitate post-processing and visualization of output data, the
@@ -1232,6 +1232,15 @@ plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
     suceptible individuals in nodes 2--5, and moving individuals from
     node 1 to nodes 2 and 3. \label{fig:SIR-spaghetti}}
 \end{figure}
+
+\subsubsection[C code for the SIR model]{\proglang{C} code for the \code{SIR} model}
+
+The \proglang{C} code for the \code{SIR} model is defined in the
+source file \texttt{'src/models/SIR.c'}.  This file contains the
+\code{SIR_run} function to initialize the core solver
+(Listing~\ref{lst:SIRrun} in the appendix), the transition rate
+functions (Listing~\ref{lst:trSIR} in the appendix) and the post time
+step function (Listing~\ref{lst:ptsSIR} in the appendix).
 
 \subsection[A second example: The SISe3_sp model]{A second example: The \code{SISe3\_sp} model}
 \label{sec:example-SISe3_sp}
