@@ -1626,4 +1626,77 @@ Swedish strategic research program eSSENCE (S.~Widgren).
 
 \clearpage
 
+\begin{minipage}{\linewidth}
+\begin{scriptsize}
+  \begin{lstlisting}[
+      language=C, caption={Implementation of the function to init and
+        run a simulation with the \code{SIR} model},
+      label={lst:SIRrun}, frame=single]
+  SEXP SIR_run(SEXP model, SEXP threads, SEXP seed)
+  {
+      TRFun tr_fun[] = {&SIR_S_to_I, &SIR_I_to_S};
+
+      return SimInf_run(model, threads, seed, tr_fun, &SISe3_post_time_step);
+  }
+\end{lstlisting}
+\end{scriptsize}
+\end{minipage}
+
+\begin{minipage}{\linewidth}
+\begin{scriptsize}
+\begin{lstlisting}[
+    language=C, caption={Implementation of the transition rate
+      functions in the \code{SIR} model for the transitions in
+      Equation~\ref{eq:SIR} between the susceptible and infected
+      compartments.  The enumeration declarations are used to name the
+      variable offsets and facilitate extraction of the values from
+      the various data vectors.}, label={lst:trSIR} , frame=single]
+
+  /* Offset in integer compartment state vector */
+  enum {S, I, R};
+
+  /* Offsets in global data (gdata) to parameters in the model */
+  enum {BETA, GAMMA};
+
+  /* susceptible to infected: S -> I */
+  double SIR_S_to_I(const int *u, const double *v, const double *ldata,
+                    const double *gdata, double t)
+  {
+      const double S_n = u[S];
+      const double I_n = u[I];
+      const double n = S_n + I_n + u[R];
+
+      if (n > 0.0)
+          return (gdata[BETA] * S_n * I_n) / n;
+      return 0.0;
+  }
+
+  /* infected to susceptible: I -> S */
+  double SIR_I_to_S(const int *u, const double *v, const double *ldata,
+                    const double *gdata, double t)
+  {
+      return gdata[GAMMA] * u[I];
+  }
+\end{lstlisting}
+
+\begin{lstlisting}[
+      language=C, caption={Implementation of the post time step
+        function in the \code{SIR} model.  The function returns a
+        value $>0$ if the node needs to recalculate the transition
+        rates else $0$.  However, if an error is detected the function
+        returns an error code $<0$.}, label={lst:ptsSIR}
+      ,frame=single]
+
+  int SIR_post_time_step(double *v_new, const int *u, const double *v,
+                         const double *ldata, const double *gdata,
+                         int node, double t)
+  {
+      return 0;
+  }
+\end{lstlisting}
+\end{scriptsize}
+\end{minipage}
+
+\clearpage
+
 \end{document}
