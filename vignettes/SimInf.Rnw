@@ -1534,19 +1534,86 @@ main = "", xlab = "Time [days]", ylab = "Number of cases",
 do.points = FALSE)
 @
   \end{center}
-  \caption{Epidemic curve displaying the number of incident cases in a
-    node when simulating 180 days of the \code{mparse} \code{SIR}
-    model (Equation~\ref{eq:SIR}), starting with 99 susceptible, 1
-    infected and 0 recovered
+  \caption{One realisation of an epidemic curve displaying the number
+    of incident cases per day in a node when simulating 180 days of
+    the \code{mparse} \code{SIR} model (Equation~\ref{eq:SIR}),
+    starting with 99 susceptible, 1 infected and 0 recovered
     individuals.  \label{fig:SIR-mparse-incidence}}
 \end{figure}
+
+While \pkg{SimInf} was designed to study disease spread over temporal
+networks, it is not limited to that use case but can also be used to
+study the dynamics of other systems.  In a final \code{mparse} example
+we will illustrate the Rosenzweig-MacArthur predator-prey model
+demonstrated in the \pkg{GillespieSSA} package \citep{Rosenzweig1963,
+  Pineda-Krch2008}.  The model has a density-dependent growth in the
+prey and and a nonlinear Type-2 functional response in the predator
+\citep{Rosenzweig1963}.  Let $R$ and $F$ denote the number of prey and
+predators, respectively.  The model consists of five transitions
+(Equation~\ref{eq:predator-prey}): \textit{i)} prey birth,
+\textit{ii)} prey death due to non-predatory events, \textit{iii)}
+prey death due to predation, \textit{iv)} predator birth, and
+\textit{v)} predator death
+
+\begin{align}
+  \label{eq:predator-prey}
+  \left.
+     \begin{array}{rcl}
+      \emptyset & \xrightarrow{b_R \cdot R} & R \\
+      R & \xrightarrow{(d_R+(b_R-d_R) \cdot R/K) \cdot R} & \emptyset \\
+      R & \xrightarrow{\alpha/(1+w \cdot R) \cdot R \cdot F} & \emptyset \\
+      \emptyset & \xrightarrow{b_F \cdot \alpha/(1+w \cdot R) \cdot R \cdot F} & F \\
+      F & \xrightarrow{d_F \cdot F} & \emptyset \\
+    \end{array}
+  \right\},
+\end{align}
+
+where $b_R$, $d_R$, $b_F$, and $d_F$ are the per capita birth and
+death rate of the prey and predator, respectively.  Furthermore, $K$
+is the carrying capacity of the prey, $\alpha$ is the predation
+efficiency, and $w$ is the degree of predator saturation
+\citep{Pineda-Krch2008}.  Using parameter values from
+\cite{Pineda-Krch2008}, we define the model as
+
+<<mparse-predator-prey, eval=FALSE>>=
+m <- mparse(transitions = c("@ -> bR*R -> R",
+"R -> (dR+(bR-dR)*R/K)*R -> @", "R -> alpha/(1+w*R)*R*F -> @",
+"@ -> bF*alpha/(1+w*R)*R*F -> F", "F -> dF*F -> @"),
+compartments = c("R", "F"), bR = 2, bF = 2, dR = 1, K = 1000,
+alpha = 0.007, w = 0.0035, dF = 2)
+model <- init(m, cbind(R = 1000, F = 100), 1:100)
+result <- run(model, threads = 1, seed = 7)
+plot(result, N = TRUE)
+@
+
+\begin{figure}[htb]
+  \begin{center}
+<<mparse-predator-prey-plot, echo=FALSE, fig=TRUE>>=
+m <- mparse(transitions = c("@ -> bR*R -> R",
+"R -> (dR+(bR-dR)*R/K)*R -> @", "R -> alpha/(1+w*R)*R*F -> @",
+"@ -> bF*alpha/(1+w*R)*R*F -> F", "F -> dF*F -> @"),
+compartments = c("R", "F"), bR = 2, bF = 2, dR = 1, K = 1000,
+alpha = 0.007, w = 0.0035, dF = 2)
+model <- init(m, cbind(R = 1000, F = 100), 1:100)
+result <- run(model, threads = 1, seed = 7)
+plot(result, N = TRUE)
+@
+  \end{center}
+  \caption{One realisation of the \code{mparse} Rosenzweig-MacArthur
+    predator-prey model.  In this trajectory, the predator (\code{F})
+    go extinct after about 50 days while the prey (\code{R}) then
+    fluctuates around a plateu of 1000
+    individuals.  \label{fig:mparse-predator-prey}}
+\end{figure}
+
+\clearpage
 
 %**************************************************************************
 
 \subsection[Use the SimInf solver from another package]{Use the \pkg{SimInf} solver from another package}
 \label{sec:linking-to}
 
-Another possibility in extending \pkg{SimInf} is to create an
+Another possibility is to extend \pkg{SimInf} by creating an
 \proglang{R} add-on package that uses \pkg{SimInf} by linking to its
 core solver native routine, and this section describes the relevant
 steps to achieve this.  To read more about creating \proglang{R}
@@ -1555,6 +1622,61 @@ add-on packages in general, the \texttt{'Writing R extensions'}
 manual is the official guide and describes in detail the process.
 Another useful resource is the \texttt{'R packages'} book by
 \cite{Hadley2015} (\url{http://r-pkgs.had.co.nz/}).
+
+Consider we wish to create a new add-on package \pkg{PredatorPrey}
+based on the Rosenzweig-MacArthur predator-prey model from the
+previous section.  To facilitate this, the \pkg{SimInf} package
+includes a method (\code{package_skeleton}) that automates some of the
+setup for a new source package.  It creates directories, saves
+\proglang{R} and \proglang{C} code files to appropriate places, and
+creates skeleton help files.
+
+<<package-skeleton, eval=FALSE>>=
+package_skeleton(m, "PredatorPrey")
+@
+
+The generated \proglang{R} file (\texttt{'R/models.R'}) defines the
+\code{S4} class \code{PredatorPrey} that contains the
+\code{SimInf\_model} and a generating function to create a new object
+of the \code{PredatorPrey} model.  The generating function is a
+template that might need to be updated to meet the specific
+requirements of the model, e.g.\ if the model should handle scheduled
+events, then \code{E} must be specified to select the subset of
+compartments involved in each specific event.  Furthermore, if one of
+the events is an \textit{internal transfer} event, \code{N} must be
+specified to shift individuals between compartments within one
+holding.  It is also possible to define parameters that are either
+local (\code{ldata}) to each node or shared (\code{gdata}) between all
+nodes.
+
+The \proglang{C} file (\texttt{'src/models.c'}) defines one function
+for each state transition, the post time step function and the model
+specific run function, and is automatically compiled when installing
+the package.  The header file \code{'SimInf.h'} contains the
+neccessary definitions and declarations for these functions and should
+be included.  The \code{SimInf_model_run} function is the interface
+from \proglang{R} to the core solver in \proglang{C} and list all
+function pointers to the transition rate functions in a vector in the
+order the state transitions appear in the dependency graph \code{G},
+see Listing~\ref{lst:SIRrun} in the appendix for an example from the
+\code{SIR} model and the use of the address of operator \code{'\&'} to
+obtain the address of a function.  The \code{SimInf_model_run}
+function must return the result from the call to the core solver with
+\code{SimInf_run}.  The arguments to \code{SimInf_run} are the
+arguments passed to the \code{SimInd_model_run} function plus the
+vector of function pointers to the transition rate functions and the
+function pointer to the post time step function.  To facilitate
+extraction of specific values from the data structures passed as
+arguments to the transition rate functions and the post time step
+function, we recommend using enumeration declarations to name the
+values, see Listing~\ref{lst:trSIR} in the appendix for an example.
+
+The add-on \pkg{PredatorPrey} source package can now be built and
+installed from the terminal with
+
+\begin{Code}
+$ R CMD INSTALL PredatorPrey
+\end{Code}
 
 %**************************************************************************
 
