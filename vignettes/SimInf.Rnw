@@ -893,6 +893,8 @@ simulated time passes the next time in \code{tspan}, the count of the
 compartments and the continuous state variables are written to
 \code{U} and \code{V}.
 
+\clearpage
+
 %**************************************************************************
 
 \section[Model construction and data analysis: Simple examples]{Model construction and data analysis: Simple examples}
@@ -1242,6 +1244,8 @@ source file \texttt{'src/models/SIR.c'}.  This file contains the
 functions (Listing~\ref{lst:trSIR} in the appendix) and the post time
 step function (Listing~\ref{lst:ptsSIR} in the appendix).
 
+\clearpage
+
 \subsection[A second example: The SISe3_sp model]{A second example: The \code{SISe3\_sp} model}
 \label{sec:example-SISe3_sp}
 
@@ -1249,7 +1253,7 @@ This section illustrates the specification of the \code{SISe3\_sp}
 model, which is also built into the \pkg{SimInf} package.  In this
 example we will demonstrate two additional features compared to the
 \code{SIR} model: ageing of individuals by \textit{internal transfer}
-events, and the real valued continuous state $V$.  The
+events, and usage of the real valued continuous state $V$.  The
 \code{SISe3\_sp} model contains the two compartments susceptible
 (\code{S}) and infected (\code{I}) divided into the three age
 categories $j = \{1, 2, 3\}$ and the local environmental compartment
@@ -1286,9 +1290,9 @@ pressure is evolved by
 where the constant $\alpha$ is the average shedding rate of the
 pathogen to the environment per infected individual, and $N_i = S_i +
 I_i$ the size of node $i$.  The decay and removal of the pathogen is
-captured by $\beta$, which is allowed to vary with time.  The model
-also includes a spatial component with local spread among proximal
-nodes.  Let $D$ be the rate of the local spread and $d_{ik}$ the
+captured by $\beta$, which is allowed to vary with time.  A spatial
+component with local spread among proximal nodes is also included in
+the model, where $D$ is the rate of the local spread and $d_{ik}$ the
 distance between the two holdings $i$ and $k$.  When running a
 trajectory of the \code{SISe3\_sp} model the value of the
 environmental infectious pressure $\varphi_i(t)$ in each node is saved
@@ -1313,6 +1317,8 @@ to the \code{V} matrix at the time-points specified by \code{tspan}.
     equation and by default evolved by the Euler forward
     method.  \label{fig:SISe3_sp}}
 \end{figure}
+
+\subsubsection[Illustration of the stochastic step in the SISe3_sp model]{Illustration of the stochastic step in the \code{SISe3\_sp} model}
 
 To illustrate the stochastic step, Equation~\ref{eq:numstep3},
 consider that the number of individuals in each compartment in node
@@ -1637,23 +1643,26 @@ setup for a new source package.  It creates directories, saves
 \proglang{R} and \proglang{C} code files to appropriate places, and
 creates skeleton help files.
 
-<<package-skeleton, eval=FALSE>>=
-package_skeleton(m, "PredatorPrey")
+<<create-package-skeleton, eval=FALSE>>=
+path = tempdir()
+package_skeleton(m, "PredatorPrey", path = path)
 @
 
-The generated \proglang{R} file (\texttt{'R/models.R'}) defines the
-\code{S4} class \code{PredatorPrey} that contains the
-\code{SimInf\_model} and a generating function to create a new object
-of the \code{PredatorPrey} model.  The generating function is a
-template that might need to be updated to meet the specific
-requirements of the model, e.g.\ if the model should handle scheduled
-events, then \code{E} must be specified to select the subset of
-compartments involved in each specific event.  Furthermore, if one of
-the events is an \textit{internal transfer} event, \code{N} must be
-specified to shift individuals between compartments within one
-holding.  It is also possible to define parameters that are either
-local (\code{ldata}) to each node or shared (\code{gdata}) between all
-nodes.
+where the first argument is the result (\code{SimInf_mparse} object)
+from the \code{mparse} method, and the second argument is the name of
+the package to create a skeleton for.  The created \proglang{R} file
+(\texttt{'R/models.R'}) defines the \code{S4} class
+\code{PredatorPrey} that contains the \code{SimInf\_model} and a
+generating function to create a new object of the \code{PredatorPrey}
+model.  The generating function is a template that might need to be
+updated to meet the specific requirements of the model, e.g.\ if the
+model should handle scheduled events, then \code{E} must be specified
+to select the subset of compartments involved in each specific event.
+Furthermore, if one of the events is an \textit{internal transfer}
+event, \code{N} must be specified to shift individuals between
+compartments within one holding.  It is also possible to define
+parameters that are either local (\code{ldata}) to each node or shared
+(\code{gdata}) between all nodes.
 
 The \proglang{C} file (\texttt{'src/models.c'}) defines one function
 for each state transition, the post time step function and the model
@@ -1678,11 +1687,11 @@ function, we recommend using enumeration declarations to name the
 values, see Listing~\ref{lst:trSIR} in the appendix for an example.
 
 The add-on \pkg{PredatorPrey} source package can now be built and
-installed from the terminal with
+installed with
 
-\begin{Code}
-$ R CMD INSTALL PredatorPrey
-\end{Code}
+<<install-package-skeleton, eval=FALSE>>=
+install.packages(file.path(path, "PredatorPrey"), repos = NULL)
+@
 
 %**************************************************************************
 
