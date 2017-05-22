@@ -1543,6 +1543,21 @@ do.points = FALSE)
 
 %**************************************************************************
 
+\subsection[Use the SimInf solver from another package]{Use the \pkg{SimInf} solver from another package}
+\label{sec:linking-to}
+
+Another possibility in extending \pkg{SimInf} is to create an
+\proglang{R} add-on package that uses \pkg{SimInf} by linking to its
+core solver native routine, and this section describes the relevant
+steps to achieve this.  To read more about creating \proglang{R}
+add-on packages in general, the \texttt{'Writing R extensions'}
+(\url{https://cran.r-project.org/doc/manuals/r-release/R-exts.html})
+manual is the official guide and describes in detail the process.
+Another useful resource is the \texttt{'R packages'} book by
+\cite{Hadley2015} (\url{http://r-pkgs.had.co.nz/}).
+
+%**************************************************************************
+
 \section{Acknowledgements}
 
 This work was financially supported by the Swedish Research Council
