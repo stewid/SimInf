@@ -1073,8 +1073,8 @@ function(model) {prevalence(run(model), "bnp")[75]})
 This illustrates that the between-node prevalence increases for
 increasing values of the transmission rate $\beta$, but decreases for
 increasing values of the recovery rate $\gamma$
-(Figure~\ref{fig:SIR-run-outer}).  The relationship is more complex
-for the population prevalence.
+(Figure~\ref{fig:SIR-run-outer}).  As can be seen in the figure, the
+relationship is more complex for the population prevalence.
 
 \begin{figure}[htb]
   \begin{center}
@@ -1403,15 +1403,21 @@ category 2 to age category 3.
 \]
 }
 
-\subsection[C code for the SISe3_sp model]{\proglang{C} code for the \code{SISe3\_sp} model}
+\subsubsection[Case study using the SISe3_sp model]{Case study using the \code{SISe3\_sp} model}
 
-The \proglang{C} code for the \code{SISe3\_sp} model is defined in the
-source file \texttt{'src/models/SISe3\_sp.c'}.  This file contains the
-\code{SISe3\_sp\_run} function to initialize the core solver
-(Listing~\ref{lst:SISe3_sp_run} in the appendix), the transition rate
-functions (Listing~\ref{lst:trSISe3_sp} in the appendix) and the post
-time step function to update the local environmental infectious
-pressure $\varphi$ (Listing~\ref{lst:ptsSISe3_sp} in the appendix).
+In this section we will demonstrate how to construct and use the
+\code{SISe3\_sp} model together with synthetic cattle event and
+population data included with the package.  The data includes the
+initial population divided into three age categories (0 days $\le$
+\textit{age 1} $<$ 120 days, 120 days $\le$ \textit{age 2} $<$ 365
+days and \textit{age 3} $\ge$ 365 days) in 1600 nodes and scheduled
+events over $4 \times 365$ days.  The movements between nodes are
+random.  The two datasets are loaded with
+
+<<load-SISe3sp-events>>=
+data("u0_SISe3")
+data("events_SISe3")
+@
 
 %% \begin{figure}
 %%   \begin{center}
