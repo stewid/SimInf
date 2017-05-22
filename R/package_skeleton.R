@@ -50,7 +50,7 @@ create_NAMESPACE_file <- function(path, name)
                "exportMethods(run)",
                "import(SimInf)",
                "import(methods)",
-               "useDynLib(asf, .registration=TRUE)")
+               paste0("useDynLib(", name, ", .registration=TRUE)"))
 
     writeLines(lines, con = file.path(path, "NAMESPACE"))
 
