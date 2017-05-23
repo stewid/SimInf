@@ -421,3 +421,12 @@ setGeneric("package_skeleton",
            function(model, name = NULL, path = ".", author = NULL,
                     email = NULL, maintainer = NULL,
                     license = "GPL-3") standardGeneric("package_skeleton"))
+
+##' Extract the events from a \code{SimInf_model} object
+##'
+##' @rdname events-methods
+##' @param model The \code{model} to extract the events from.
+##' @return \code{SimInf_events} object.
+##' @keywords methods
+##' @export
+setGeneric("events", function(model) standardGeneric("events"))

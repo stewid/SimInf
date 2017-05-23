@@ -919,3 +919,12 @@ setMethod("summary",
               show_V(object)
           }
 )
+
+##' @rdname events-methods
+##' @export
+setMethod("events",
+          signature("SimInf_model"),
+          function(model) {
+              model@events
+          }
+)
