@@ -294,8 +294,8 @@ The overall design of \pkg{SimInf} was inspired and partly adapted
 from the Unstructured Mesh Reaction-Diffusion Master Equation (URDME)
 framework \citep{Engblom2009, Drawert2012}.  \pkg{SimInf} is a general
 software framework for data-driven modeling and simulation of
-stochastic disease-spread in a complex network of connected nodes.  In
-particular, the transition rates and the transition topology are
+stochastic disease-spread in a temporal network of connected nodes.
+In particular, the transition rates and the transition topology are
 specified using a compiled language \proglang{C} and \proglang{R}
 matrices, respectively.  The overall modular design makes extensions
 easy to handle and since the simulation engine is written in a
@@ -525,7 +525,7 @@ transition occurs, where \mbox{$1 \le$ \code{k} $\le N_t$}.
 \end{table}
 
 Model-specific data that is passed to the transition-rate functions
-and the post time-step function are stored in the three slots:
+and the post time-step function are stored in the two slots:
 \code{ldata} and \code{gdata} in the \code{SimInf\_model} object.  The
 \code{ldata} matrix holds local data for each node where \code{ldata[,
     i]} is the data vector for node $i$.  Data that is global i.e.,
@@ -1250,22 +1250,23 @@ step function (Listing~\ref{lst:ptsSIR} in the appendix).
 \label{sec:example-SISe3_sp}
 
 This section illustrates the specification of the \code{SISe3\_sp}
-model, which is also built into the \pkg{SimInf} package.  In this
-example we will demonstrate two additional features compared to the
-\code{SIR} model: ageing of individuals by \textit{internal transfer}
-events, and usage of the real valued continuous state $V$.  The
-\code{SISe3\_sp} model contains the two compartments susceptible
-(\code{S}) and infected (\code{I}) divided into the three age
-categories $j = \{1, 2, 3\}$ and the local environmental compartment
-(\code{e}) contaminated with free living pathogens
-(Figure~\ref{fig:SISe3_sp}).  Moreover, nodes are spatially connected
-with local spread of the contaminated environmental compartment among
-proximal nodes.  The transmission route of infection to susceptible
-individuals is indirect via the local environment, contaminated by
-infected individuals.  The number of individuals in each of the six
-compartments $\{S_1, I_1, S_2, I_2, S_3, I_3\}$ in node $i$ at time
-$t$ is \mbox{\code{u[, i]}}.  The \code{SISe3\_sp} model has two state
-transitions within each of the three age categories,
+model, which is also built into the \pkg{SimInf} package.  Two
+additional features, compared to the \code{SIR} model, are
+demonstrated in this example: ageing of individuals by
+\textit{internal transfer} events, and usage of the real valued
+continuous state $V$.  The \code{SISe3\_sp} model contains the two
+compartments susceptible (\code{S}) and infected (\code{I}) divided
+into the three age categories $j = \{1, 2, 3\}$ and the local
+environmental compartment (\code{e}) contaminated with free living
+pathogens (Figure~\ref{fig:SISe3_sp}).  Moreover, nodes are spatially
+connected with local spread of the contaminated environmental
+compartment among proximal nodes.  The transmission route of infection
+to susceptible individuals is indirect via the local environment,
+contaminated by infected individuals.  The number of individuals in
+each of the six compartments $\{S_1, I_1, S_2, I_2, S_3, I_3\}$ in
+node $i$ at time $t$ is \mbox{\code{u[, i]}}.  The \code{SISe3\_sp}
+model has two state transitions within each of the three age
+categories,
 \begin{align}
 \label{eq:vtectrans}
 \begin{array}{rcl}
@@ -1365,7 +1366,7 @@ $I_{i,1} \rightarrow S_{i,1}$ must be recalculated according to
 \subsubsection[Specification of scheduled events in the SISe3_sp model]{Specification of scheduled events in the \code{SISe3\_sp} model}
 
 The select matrix \code{E} and the shift matrix \code{N} in the
-\code{SISe3\_sp} model are specified to handle births, imports,
+\code{SISe3\_sp} model have been specified to handle births, imports,
 ageing, moving and exits of individuals
 (Table~\ref{table:SISe3_sp:events}).  When individuals enter the model
 (births, imports), they are added to the susceptible state of a age
@@ -1412,33 +1413,116 @@ category 2 to age category 3.
 \subsubsection[Case study using the SISe3_sp model]{Case study using the \code{SISe3\_sp} model}
 
 In this section we will demonstrate how to construct and use the
-\code{SISe3\_sp} model together with synthetic cattle event and
-population data included with the package.  The data includes the
+\code{SISe3\_sp} model together with synthetic cattle events and
+population data included with the package.  The data defines the
 initial population divided into three age categories (0 days $\le$
 \textit{age 1} $<$ 120 days, 120 days $\le$ \textit{age 2} $<$ 365
 days and \textit{age 3} $\ge$ 365 days) in 1600 nodes and scheduled
-events over $4 \times 365$ days.  The movements between nodes are
-random.  The two datasets are loaded with
-
+events over $4 \times 365$ days.  The scheduled events i.e.\ the
+data-driven part of the model are loaded with
 <<load-SISe3sp-events>>=
-data("u0_SISe3")
-data("events_SISe3")
+data("u0_SISe3", package = "SimInf")
+data("events_SISe3", package = "SimInf")
+@
+To model local spread of the environmental infectious pressure among
+proximal nodes, we have to generate a distance matrix.  Let us
+consider a synthetic dataset (\code{nodes}) included in the
+\pkg{SimInf} package, with a cattle population consisting of 1600
+herds located in a 50 square kilometer region, and define proximal
+neighbors as neighbors within 2500m.
+<<load-nodes>>=
+data(nodes, package = "SimInf")
+d <- distance_matrix(x = nodes$x, y = nodes$y, cutoff = 2500)
+@
+Next we define \code{tspan} to simulate for 4 consecutive years
+returning the results every $7^{th}$ day
+<<create-SISe3sp-tspan>>=
+tspan <- seq(1, 4 * 365, by = 7)
+@
+We are now ready to define the model and build an \code{SISe3_sp}
+object with a call to the \code{SISe3_sp} generating method.  The
+parameters for this example have been chosen such that the
+between-node prevalence for a sample trajectory have a seasonal
+pattern around 10\%.  We assume that the average duration of infection
+is 10 days in all age categories, such that the recovery rate
+$\gamma_{1,2,3} = 0.1$ per animal per day, and assume the indirect
+transmission rate of the environmental infectious pressure, $\gamma$,
+is equal in all age categories.  Moreover, we fix the average shedding
+rate $\alpha = 1$ and allow the decay of the bacteria to vary in four
+seasonal intervals, $\beta_1, ..., \beta_4$ over the year. The end
+point (day of the year) for each season \texttt{beta\_t1}, ...,
+\texttt{beta\_t4} is determined by \texttt{end\_t1}, ...,
+\texttt{end\_t4}, respectively. We let the local environmental
+infectious pressure $\varphi_i = 0$ at the beginning of the simulation
+and let 10\% of herds start with 5\% infected individuals.
+<<create-SISe3sp-u0>>=
+set.seed(123)
+i <- sample(1:1600, 160)
+u0_SISe3$I_1[i] <- as.integer(u0_SISe3$S_1[i] * 0.05)
+u0_SISe3$I_2[i] <- as.integer(u0_SISe3$S_2[i] * 0.05)
+u0_SISe3$I_3[i] <- as.integer(u0_SISe3$S_3[i] * 0.05)
+u0_SISe3$S_1[i] <- u0_SISe3$S_1[i] - u0_SISe3$I_1[i]
+u0_SISe3$S_2[i] <- u0_SISe3$S_2[i] - u0_SISe3$I_2[i]
+u0_SISe3$S_3[i] <- u0_SISe3$S_3[i] - u0_SISe3$I_3[i]
+@
+Let us now construct an \code{SISe3\_sp} model object.
+<<create-SISe3sp>>=
+model <- SISe3_sp(u0 = u0_SISe3, tspan = tspan, phi = rep(0, 1600),
+events = events_SISe3, upsilon_1 = 0.013, upsilon_2 = 0.013, upsilon_3
+= 0.013, gamma_1 = 0.1, gamma_2 = 0.1, gamma_3 = 0.1, alpha = 1,
+beta_t1 = 0.095, beta_t2 = 0.12, beta_t3 = 0.10, beta_t4 = 0.15,
+end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365, distance = d,
+coupling = 0.1)
 @
 
-%% \begin{figure}
-%%   \begin{center}
-%%     \includegraphics[width=0.8\linewidth]{img/events_SISe3.pdf}
-%%   \end{center}
-%%   \caption{The distribution of the synthetic scheduled events dataset
-%%     \code{events\_SISe3}, that is ditributed with the \pkg{SimInf}
-%%     package.  The \textit{enter} event, adds individuals to a node.
-%%     The \textit{internal transfer} event, changes the number of
-%%     individuals in the compartments within one node.  The
-%%     \textit{external transfer} event, moves individuals from
-%%     compartments in one node to compartments in a destination node.
-%%     Finally, the \textit{exit} event removes individuals from a node.}
-%%   \label{fig:events_SISe3_sp}
-%% \end{figure}
+The model can be summarized with the \code{summary} method, which
+displays the model name, the number of nodes $N_n$, the number of
+compartments $N_c$, the number of transitions $N_t$, and the total
+number of scheduled events and information regarding each event type.
+If the model has not yet been run, the size of \code{U} and \code{V}
+is \code{0 x 0}.
+<<SISe3sp-model-summary>>=
+summary(model)
+@
+Furthermore, we can display the distribution of the scheduled events
+over time.
+\begin{figure}[!htb]
+  \begin{center}
+<<display-SISe3sp-model, fig=TRUE, height=4>>=
+plot(model@events)
+@
+  \end{center}
+  \caption{The distribution of the synthetic scheduled events dataset
+    \code{events\_SISe3}, that is ditributed with the \pkg{SimInf}
+    package.  The \textit{enter} event, adds individuals to a node.
+    The \textit{internal transfer} event, changes the number of
+    individuals in the compartments within one node.  The
+    \textit{external transfer} event, moves individuals from
+    compartments in one node to compartments in a destination node.
+    Finally, the \textit{exit} event removes individuals from a node.}
+  \label{fig:scheduled-events-SISe3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+<<display-population-dynamics, fig=TRUE>>=
+library("lattice")
+result <- run(model, seed = 321)
+wnp <- prevalence(result, type = "wnp")
+i <- which(rowSums(wnp) > 0)[1:12]
+wnp <- data.frame(Node = factor(paste0("Node: ", i), levels = paste0(
+"Node: ", i)), Days = rep(result@tspan, each = length(i)),Prevalence =
+as.numeric(wnp[i, ]))
+xyplot(Prevalence ~ Days | Node, data = wnp, type = "l", col =
+"black", layout = c(6, 2))
+@
+  \end{center}
+  \caption{The within-node prevalence in twelve nodes after running
+    one trajectory over $4 \times 365$ days of the \code{SISe3\_sp}
+    model using the scheduled events data contained in the
+    \pkg{SimInf} package.}
+  \label{fig:within-node-prevalence}
+\end{figure}
 
 %**************************************************************************
 
