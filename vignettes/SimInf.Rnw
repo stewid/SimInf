@@ -8,6 +8,7 @@
 \usepackage{blkarray}
 \usepackage{booktabs}
 \usepackage{listings}
+\usepackage{subcaption}
 \usepackage{tabularx}
 
 %% Macros for the 'Epidemiological modeling' section
@@ -921,8 +922,6 @@ simulated time passes the next time in \code{tspan}, the count of the
 compartments and the continuous state variables are written to
 \code{U} and \code{V}.
 
-\clearpage
-
 %**************************************************************************
 
 \section[Model construction and data analysis: Simple examples]{Model construction and data analysis: Simple examples}
@@ -1036,12 +1035,18 @@ for readability.
 U(result)[, 1:10]
 @
 
-And then plot the results of the disease simulation in the single node
-using
+The package \pkg{SimInf} has a \code{plot} method for objects of class
+\code{SimInf_model}, such as the object \code{result}, which we can
+use to display the outcome of the disease simulation in the single
+node (Figure~\ref{fig:SIR-proportion}).
+
+<<eval=FALSE>>=
+plot(result)
+@
 
 \begin{figure}[htb]
   \begin{center}
-<<SIR-plot-proportion, fig=TRUE>>=
+<<SIR-plot-proportion, echo=FALSE,fig=TRUE>>=
 plot(result)
 @
   \end{center}
@@ -1272,8 +1277,6 @@ source file \texttt{'src/models/SIR.c'}.  This file contains the
 functions (Listing~\ref{lst:trSIR} in the appendix) and the post time
 step function (Listing~\ref{lst:ptsSIR} in the appendix).
 
-\clearpage
-
 \subsection[A second example: The SISe3_sp model]{A second example: The \code{SISe3\_sp} model}
 \label{sec:example-SISe3_sp}
 
@@ -1448,41 +1451,48 @@ initial population divided into three age categories (0 days $\le$
 days and \textit{age 3} $\ge$ 365 days) in 1600 nodes and scheduled
 events over $4 \times 365$ days.  The scheduled events i.e.\ the
 data-driven part of the model are loaded with
+
 <<load-SISe3sp-events>>=
 data("u0_SISe3", package = "SimInf")
 data("events_SISe3", package = "SimInf")
 @
+
 To model local spread of the environmental infectious pressure among
-proximal nodes, we have to generate a distance matrix.  Let us
-consider a synthetic dataset (\code{nodes}) included in the
-\pkg{SimInf} package, with a cattle population consisting of 1600
-herds located in a 50 square kilometer region, and define proximal
-neighbors as neighbors within 2500m.
+proximal nodes, we have to generate a distance matrix.  Let us use the
+synthetic dataset (\code{nodes}) included in the \pkg{SimInf} package,
+wich define a cattle population consisting of 1600 herds located in a
+50 square kilometer region, and let proximal neighbors be defined as
+neighbors within 2500m.
+
 <<load-nodes>>=
 data(nodes, package = "SimInf")
 d <- distance_matrix(x = nodes$x, y = nodes$y, cutoff = 2500)
 @
+
 Next we define \code{tspan} to simulate for 4 consecutive years
 returning the results every $7^{th}$ day
+
 <<create-SISe3sp-tspan>>=
 tspan <- seq(1, 4 * 365, by = 7)
 @
-We are now ready to define the model and build an \code{SISe3_sp}
-object with a call to the \code{SISe3_sp} generating method.  The
-parameters for this example have been chosen such that the
-between-node prevalence for a sample trajectory have a seasonal
-pattern around 10\%.  We assume that the average duration of infection
-is 10 days in all age categories, such that the recovery rate
-$\gamma_{1,2,3} = 0.1$ per animal per day, and assume the indirect
-transmission rate of the environmental infectious pressure, $\gamma$,
-is equal in all age categories.  Moreover, we fix the average shedding
-rate $\alpha = 1$ and allow the decay of the bacteria to vary in four
-seasonal intervals, $\beta_1, ..., \beta_4$ over the year. The end
-point (day of the year) for each season \texttt{beta\_t1}, ...,
-\texttt{beta\_t4} is determined by \texttt{end\_t1}, ...,
-\texttt{end\_t4}, respectively. We let the local environmental
-infectious pressure $\varphi_i = 0$ at the beginning of the simulation
-and let 10\% of herds start with 5\% infected individuals.
+
+We are now ready to create an \code{SISe3_sp} object using the
+\code{SISe3_sp} generating method.  The parameters for this example
+have been chosen such that the between-node prevalence for a sample
+trajectory have a seasonal pattern around 10\%.  We assume that the
+average duration of infection is 10 days in all age categories, such
+that the recovery rate $\gamma_{1,2,3} = 0.1$ per animal per day, and
+assume the indirect transmission rate of the environmental infectious
+pressure, $\gamma$, is equal in all age categories.  Moreover, we fix
+the average shedding rate $\alpha = 1$ and allow the decay of the
+bacteria to vary in four seasonal intervals, $\beta_1, ..., \beta_4$
+over the year. The end point (day of the year) for each season
+\texttt{beta\_t1}, ..., \texttt{beta\_t4} is determined by
+\texttt{end\_t1}, ..., \texttt{end\_t4}, respectively. We let the
+local environmental infectious pressure $\varphi_i = 0$ at the
+beginning of the simulation and let 10\% of the herds start with 5\%
+infected individuals.
+
 <<create-SISe3sp-u0>>=
 set.seed(123)
 i <- sample(1:1600, 160)
@@ -1493,7 +1503,9 @@ u0_SISe3$S_1[i] <- u0_SISe3$S_1[i] - u0_SISe3$I_1[i]
 u0_SISe3$S_2[i] <- u0_SISe3$S_2[i] - u0_SISe3$I_2[i]
 u0_SISe3$S_3[i] <- u0_SISe3$S_3[i] - u0_SISe3$I_3[i]
 @
+
 Let us now construct an \code{SISe3\_sp} model object.
+
 <<create-SISe3sp>>=
 model <- SISe3_sp(u0 = u0_SISe3, tspan = tspan, phi = rep(0, 1600),
 events = events_SISe3, upsilon_1 = 0.013, upsilon_2 = 0.013, upsilon_3
@@ -1503,20 +1515,32 @@ end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365, distance = d,
 coupling = 0.1)
 @
 
-The model can be summarized with the \code{summary} method, which
+The package \pkg{SimInf} has a \code{summary} method for objects of
+class \code{SimInf_model}, such as the object \code{model}, which
 displays the model name, the number of nodes $N_n$, the number of
 compartments $N_c$, the number of transitions $N_t$, and the total
 number of scheduled events and information regarding each event type.
 If the model has not yet been run, the size of \code{U} and \code{V}
 is \code{0 x 0}.
+
 <<SISe3sp-model-summary>>=
 summary(model)
 @
+
 Furthermore, we can display the distribution of the scheduled events
-over time.
+over time.  Note that the synthetic events have been generated to
+illustrate features of the \pkg{SimInf} package and not to incorporate
+the full complexity of population demographics and a temporal network.
+The synthetic data mimics seasonality in real livestock data
+\cite{Bajardi2011, Dutta2014, Widgren2016}, such that the number of
+scheduled events varies over time, see
+Figure~\ref{fig:scheduled-events-SISe3}.  However, the between-node
+movements (\textit{external transfer}) have been generated from random
+connections, which is probably not realistic for real livestock data.
+
 \begin{figure}[!htb]
   \begin{center}
-<<display-SISe3sp-model, fig=TRUE, height=4>>=
+<<display-SISe3sp-model, fig=TRUE>>=
 plot(events(model))
 @
   \end{center}
@@ -1531,30 +1555,99 @@ plot(events(model))
   \label{fig:scheduled-events-SISe3}
 \end{figure}
 
-\begin{figure}
-  \begin{center}
-<<display-population-dynamics, fig=TRUE>>=
-library("lattice")
-result <- run(model, threads = 1, seed = 123)
-wnp <- prevalence(result, type = "wnp")
-i <- which(rowSums(wnp) > 0)[1:12]
-wnp <- data.frame(Node = factor(paste0("Node: ", i), levels = paste0(
-"Node: ", i)), Days = rep(result@tspan, each = length(i)),Prevalence =
-as.numeric(wnp[i, ]))
-xyplot(Prevalence ~ Days | Node, data = wnp, type = "l", col =
-"black", layout = c(6, 2))
+We might now be interested in exploring how various changes to the
+model could influence the spread of infection in the population of
+interconnected nodes.
+
+<<plot-infected-nodes>>=
+plot_nodes <- function(x) {
+    wnp <- prevalence(x, type = "wnp") > 0
+    opar <- par(mfrow = c(3, 6), mar = c(2, 0.3, 0.3, 0.3))
+    on.exit(opar)
+    for(i in seq(1, dim(wnp)[2], length.out = 18)) {
+        Si <- which(!wnp[, i])
+        Ii <- which(wnp[, i])
+        plot(nodes$x[Si], nodes$y[Si], col = "yellow", pch = 20,
+             xlab = "", ylab = "", xaxt = "n", yaxt = "n",
+             ann = FALSE)
+        day <- 7 * as.integer(i - 1) + 1
+        mtext(sprintf("Day: %i", day), side = 1, line = 0.5)
+        points(nodes$x[Ii], nodes$y[Ii], col = "blue", pch = 20)
+    }
+}
 @
+
+\begin{figure}
+  \captionsetup[subfigure]{justification=centering}
+  \begin{center}
+    \begin{subfigure}[b]{1.0\textwidth}
+      \begin{center}
+<<plot-SISe3sp-I, echo=FALSE, fig=TRUE>>=
+plot_nodes(run(model, threads = 1, seed = 1))
+@
+        \caption{Between-node disease-spread by both movements of\\
+          infected individuals and local spread among proximal nodes.}
+        \label{fig:SISe3sp-movements-and-local-spred}
+      \end{center}
+    \end{subfigure}
+    \begin{subfigure}[b]{1.0\textwidth}
+      \begin{center}
+<<plot-SISe3sp-II, echo=FALSE, fig=TRUE>>=
+model@gdata["coupling"] <- 0
+plot_nodes(run(model, threads = 1, seed = 1))
+@
+        \caption{Between-node disease-spread by movements of infected
+          individuals.}
+        \label{fig:SISe3sp-movements}
+      \end{center}
+    \end{subfigure}
+    \begin{subfigure}[b]{1.0\textwidth}
+      \begin{center}
+<<plot-SISe3sp-III, echo=FALSE, fig=TRUE>>=
+model@gdata["coupling"] <- 0.1
+model@events@N <- cbind(model@events@N,
+"3" = c(0L, -1L, 0L, -1L, 0L, -1L))
+i <- which(model@events@event == 3)
+model@events@shift[i] <- 3L
+plot_nodes(run(model, threads = 1, seed = 1))
+@
+        \caption{Between-node disease-spread by local spread among
+          proximal nodes.}
+        \label{fig:SISe3sp-local-spred}
+      \end{center}
+    \end{subfigure}
+    \caption{The distribution of infected nodes at evenly spaced time
+      points from one realisation of the \code{SISe3\_sp} model over
+      $4 \times 365$ days using synthetic data included in the
+      \pkg{SimInf} package.}
   \end{center}
-  \caption{The within-node prevalence in twelve nodes after running
-    one trajectory over $4 \times 365$ days of the \code{SISe3\_sp}
-    model using the scheduled events data contained in the
-    \pkg{SimInf} package.}
-  \label{fig:within-node-prevalence}
 \end{figure}
 
-%**************************************************************************
+We would also like to explore the effect on the disease-spread when
+considering local spread only.  However, removing all the
+\textit{external transfer} events could potentially set a node in a
+state where the other event types cannot be handled due to too few
+animals in the node.  Another approach to solve this is to shift all
+infected animals to the susceptible state during an \textit{external
+  transfer} event so that infection is not tranfered, even though an
+animal is moved.  This can be achieved in \pkg{SimInf} by adding one
+column to the shift matrix \code{N} and use that column for the
+\textit{external transfer} events.
+Figure~\ref{fig:SISe3sp-local-spred} shows the result from running one
+trajectory with the modified model.
+
+<<eval=FALSE>>=
+model@gdata["coupling"] <- 0.1
+model@events@N <- cbind(model@events@N,
+"3" = c(0L, -1L, 0L, -1L, 0L, -1L))
+i <- which(model@events@event == 3)
+model@events@shift[i] <- 3L
+plot_nodes(run(model, threads = 1, seed = 1))
+@
 
 \clearpage
+
+%**************************************************************************
 
 \section[Extending SimInf: New models]{Extending \pkg{SimInf}: New models}
 \label{sec:extend}
@@ -1729,8 +1822,6 @@ plot(result, N = TRUE)
     fluctuates around a plateu of 1000
     individuals.  \label{fig:mparse-predator-prey}}
 \end{figure}
-
-\clearpage
 
 %**************************************************************************
 
