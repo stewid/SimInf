@@ -1003,7 +1003,7 @@ in discret time steps, but continuous time, so this vector affects
 only the start and end points of the simulation and the results that
 you receive from the model, not the internal calculations of disease
 transitions through time.  In this example we simulate for 6 months
-returning results every 7th day
+returning results every $7^{th}$ day
 
 <<SIR-tspan>>=
 tspan <- seq(1, 6 * 30, by = 7)
@@ -1445,12 +1445,12 @@ category 2 to age category 3.
 
 In this section we will demonstrate how to construct and use the
 \code{SISe3\_sp} model together with synthetic cattle events and
-population data included with the package.  The data defines the
-initial population divided into three age categories (0 days $\le$
-\textit{age 1} $<$ 120 days, 120 days $\le$ \textit{age 2} $<$ 365
-days and \textit{age 3} $\ge$ 365 days) in 1600 nodes and scheduled
-events over $4 \times 365$ days.  The scheduled events i.e.\ the
-data-driven part of the model are loaded with
+population data included with the package \pkg{SimInf}.  The data
+defines the initial population divided into three age categories (0
+days $\le$ \textit{age 1} $<$ 120 days, 120 days $\le$ \textit{age 2}
+$<$ 365 days and \textit{age 3} $\ge$ 365 days) in 1600 nodes and
+scheduled events over $4 \times 365$ days.  The two datasets for the
+model are loaded with
 
 <<load-SISe3sp-events>>=
 data("u0_SISe3", package = "SimInf")
@@ -1479,15 +1479,15 @@ tspan <- seq(1, 4 * 365, by = 7)
 We are now ready to create an \code{SISe3_sp} object using the
 \code{SISe3_sp} generating method.  The parameters for this example
 have been chosen such that the between-node prevalence for a sample
-trajectory have a seasonal pattern around 10\%.  We assume that the
-average duration of infection is 10 days in all age categories, such
-that the recovery rate $\gamma_{1,2,3} = 0.1$ per animal per day, and
-assume the indirect transmission rate of the environmental infectious
-pressure, $\gamma$, is equal in all age categories.  Moreover, we fix
-the average shedding rate $\alpha = 1$ and allow the decay of the
-bacteria to vary in four seasonal intervals, $\beta_1, ..., \beta_4$
-over the year. The end point (day of the year) for each season
-\texttt{beta\_t1}, ..., \texttt{beta\_t4} is determined by
+trajectory is around 10\% and have a seasonal pattern.  We assume that
+the average duration of infection is 10 days in all age categories,
+such that the recovery rate $\gamma_{1,2,3} = 0.1$ per animal per day,
+and assume that the indirect transmission rate of the environmental
+infectious pressure $\gamma$ is equal in all age categories.
+Moreover, we fix the average shedding rate $\alpha = 1$ and allow the
+decay of the bacteria to vary in four seasonal intervals, $\beta_1,
+..., \beta_4$ over the year. The end point (day of the year) for each
+season \texttt{beta\_t1}, ..., \texttt{beta\_t4} is determined by
 \texttt{end\_t1}, ..., \texttt{end\_t4}, respectively. We let the
 local environmental infectious pressure $\varphi_i = 0$ at the
 beginning of the simulation and let 10\% of the herds start with 5\%
@@ -1894,6 +1894,14 @@ installed with
 
 <<install-package-skeleton, eval=FALSE>>=
 install.packages(file.path(path, "PredatorPrey"), repos = NULL)
+@
+
+If the installation was successful, the newly installed package
+\pkg{PredatorPrey} can be loaded in \proglang{R} with the following
+command.
+
+<<load-package-skeleton, eval=FALSE>>=
+library("PredatorPrey")
 @
 
 %**************************************************************************
