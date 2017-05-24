@@ -32,3 +32,6 @@ rm -f vignettes/SimInf-mparse-predator-prey-pairs.pdf
 rm -f vignettes/SimInf-mparse-predator-prey-plot.pdf
 rm -f vignettes/SimInf-display-population-dynamics.pdf
 rm -f vignettes/SimInf-display-SISe3sp-model.pdf
+rm -f vignettes/SimInf-plot-SISe3sp-I.pdf
+rm -f vignettes/SimInf-plot-SISe3sp-II.pdf
+rm -f vignettes/SimInf-plot-SISe3sp-III.pdf
