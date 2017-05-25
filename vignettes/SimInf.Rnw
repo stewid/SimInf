@@ -592,23 +592,22 @@ individuals in a node at a pre-defined time $t$.  There are four
 different types of events; \textit{enter}, \textit{internal transfer},
 \textit{external transfer} and \textit{exit}.  The \textit{enter}
 event, adds individuals to a node, for example, due to births.  The
-\textit{internal transfer} event changes the number of individuals in
-the compartments within one node, for example, aging of individuals in
-a model with several age compartments or vaccination to move
-individuals to a vaccinated compartment.  The \textit{external
-  transfer} event moves individuals from compartments in one node to
-compartments in a destination node.  Finally, the \textit{exit} event
-removes individuals from a node, for example, due to slaughter.  The
-event types are classified into those that operate on the compartments
-of a single node $E_1 = \{\text{\textit{enter}, \textit{internal
-    transfer}, \textit{exit}}\}$ and those that operate on the
-compartments of two nodes $E_2 = \{\text{\textit{external
-    transfer}}\}$.  The parallel algorithm processes these two classes
-of events differently.  The scheduled events are processed when
-simulation time reaches the time for any of the events.  Events that
-are scheduled at the same time are processed in the following order:
-\textit{exit}, \textit{enter}, \textit{internal transfer} and
-\textit{external transfer}.
+\textit{internal transfer} event moves individuals between
+compartments within one node, for example, aging of individuals in a
+model with several age compartments or vaccination to move individuals
+to a vaccinated compartment.  The \textit{external transfer} event
+moves individuals from compartments in one node to compartments in a
+destination node.  Finally, the \textit{exit} event removes
+individuals from a node, for example, due to slaughter.  The event
+types are classified into those that operate on the compartments of a
+single node $E_1 = \{\text{\textit{enter}, \textit{internal transfer},
+  \textit{exit}}\}$ and those that operate on the compartments of two
+nodes $E_2 = \{\text{\textit{external transfer}}\}$.  The parallel
+algorithm processes these two classes of events differently.  The
+scheduled events are processed when simulation time reaches the time
+for any of the events.  Events that are scheduled at the same time are
+processed in the following order: \textit{exit}, \textit{enter},
+\textit{internal transfer} and \textit{external transfer}.
 
 The S4 class \code{SimInf\_events} contains slots with data structures
 to process events (Table~\ref{table:scheduled:events}).  The slots
@@ -1069,9 +1068,9 @@ model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
 result <- run(model, threads = 1, seed = 123)
 @
 
-Inspect the \code{U} matrix, which now includes results from 2 nodes
-above one another for each time point in the \code{tspan} vector.
-Please note that the \code{U} matrix is truncated here for
+If we inspect the \code{U} matrix, it now includes results from two
+nodes above one another for each time point in the \code{tspan}
+vector.  Please note that the \code{U} matrix is truncated here for
 readability.
 
 <<SIR-U-multiple-nodes>>=
@@ -1205,7 +1204,7 @@ later removed, and that some individuals were removed from node 1 and
 placed in nodes 3, 4, and 5.  So far this isn't really
 earth-shattering, but if we do this again with a few more individuals
 then we can see how disease can spread from an infected node to a
-non-infected one. We'll start with 5 nodes again, but node 1 is
+non-infected one. We will start with 5 nodes again, but node 1 is
 infected and nodes 2--5 now each have 100 susceptibles and the
 simulation will run for 75 days:
 
@@ -1242,14 +1241,14 @@ model <- SIR(u0, 1:75, events = events, beta = 0.16, gamma = 0.077)
 result <- run(model, threads = 1, seed = 1)
 @
 
-And then plot the result of the model
-(Figure~\ref{fig:SIR-spaghetti}).  Note the time that it takes for
-node 2 to become positive relative to the movements.  On day 25, 10
-individuals are moved to the node causing the outbreak.  Also despite
-the fact that we moved inividuals from node 1 to node 3, there was no
-outbreak in node 3.  This is because of the random selection process
-that select susceptible, infected or recovered individuals to move
-between the nodes.
+Figure~\ref{fig:SIR-spaghetti} shows the result from running the
+model.  Note the time that it takes for node 2 to become positive
+relative to the movements.  On day 25, 10 individuals are moved to the
+node causing the outbreak.  Also despite the fact that we moved
+inividuals from node 1 to node 3, there was no outbreak in node 3.
+This is because of the random selection process that select
+susceptible, infected or recovered individuals to move between the
+nodes.
 
 <<SIR-spaghetti, eval=FALSE>>=
 plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
@@ -1282,22 +1281,21 @@ step function (Listing~\ref{lst:ptsSIR} in the appendix).
 
 This section illustrates the specification of the \code{SISe3\_sp}
 model, which is also built into the \pkg{SimInf} package.  Two
-additional features, compared to the \code{SIR} model, are
-demonstrated in this example: ageing of individuals by
-\textit{internal transfer} events, and usage of the real valued
-continuous state $V$.  The \code{SISe3\_sp} model contains the two
-compartments susceptible (\code{S}) and infected (\code{I}) divided
-into the three age categories $j = \{1, 2, 3\}$ and the local
-environmental compartment (\code{e}) contaminated with free living
-pathogens (Figure~\ref{fig:SISe3_sp}).  Moreover, nodes are spatially
-connected with local spread of the contaminated environmental
-compartment among proximal nodes.  The transmission route of infection
-to susceptible individuals is indirect via the local environment,
-contaminated by infected individuals.  The number of individuals in
-each of the six compartments $\{S_1, I_1, S_2, I_2, S_3, I_3\}$ in
-node $i$ at time $t$ is \mbox{\code{u[, i]}}.  The \code{SISe3\_sp}
-model has two state transitions within each of the three age
-categories,
+additional features, compared to the \code{SIR} model, are used by the
+\code{SISe3\_sp} model: ageing of individuals by \textit{internal
+  transfer} events, and usage of the real valued continuous state $V$.
+The \code{SISe3\_sp} model contains the two compartments susceptible
+(\code{S}) and infected (\code{I}) divided into the three age
+categories $j = \{1, 2, 3\}$ and the local environmental compartment
+(\code{e}) contaminated with free living pathogens
+(Figure~\ref{fig:SISe3_sp}).  Moreover, nodes are connected spatially
+with local spread of the contaminated environmental compartment among
+proximal nodes.  The transmission route of infection to susceptible
+individuals is indirect via the local environment, contaminated by
+infected individuals.  The number of individuals in each of the six
+compartments $\{S_1, I_1, S_2, I_2, S_3, I_3\}$ in node $i$ at time
+$t$ is \mbox{\code{u[, i]}}.  The \code{SISe3\_sp} model has two state
+transitions within each of the three age categories,
 \begin{align}
 \label{eq:vtectrans}
 \begin{array}{rcl}
@@ -1352,12 +1350,12 @@ to the \code{V} matrix at the time-points specified by \code{tspan}.
 
 \subsubsection[Illustration of the stochastic step in the SISe3_sp model]{Illustration of the stochastic step in the \code{SISe3\_sp} model}
 
-To illustrate the stochastic step, Equation~\ref{eq:numstep3},
+To illustrate the stochastic step in Equation~\ref{eq:numstep3},
 consider that the number of individuals in each compartment in node
 $i$ \code{u[, i]} at time $t$ is $\{12, 3, 63, 14, 92, 2\}$ and that
 the time to the next state transition is $\tau_i$.  Furthermore,
 assume that the next state transition is infected to susceptible in
-the first age category.  This corresponds to the second column in the
+the first age category which corresponds to the second column in the
 state change matrix \code{S}.  Thus, updating the compartments
 corresponds to adding \code{S[, 2]} to \code{u[, i]}, which gives
 $\{13, 2, 63, 14, 92, 2\}$.  This also implies that the transition
@@ -1400,17 +1398,16 @@ The select matrix \code{E} and the shift matrix \code{N} in the
 \code{SISe3\_sp} model have been specified to handle births, imports,
 ageing, moving and exits of individuals
 (Table~\ref{table:SISe3_sp:events}).  When individuals enter the model
-(births, imports), they are added to the susceptible state of a age
-category, where the age category is specified by column 1, 2 or 3 in
-\code{E}.  The columns 4, 5 and 6 in \code{E} are used for the other
-events (ageing, moving, exit) to sample individuals from the
-susceptible and infected states from each of the three ages catgories.
-To move the sampled individuals in a \textit{internal transfer} event
-(ageing) from age category 1 to age category 2, the susceptible and
-infected states should shift two steps to the corresponding state in
-age category 2, as specified in \code{N[, 1]} In the same way,
-\code{N[, 2]} move susceptible and infected individuals in age
-category 2 to age category 3.
+(births, imports), they are added to the susceptible state in the age
+category specified by column 1, 2 or 3 in \code{E}.  The columns 4, 5
+and 6 in \code{E} are used for the other events (ageing, moving, exit)
+to sample individuals from the susceptible and infected states from
+each of the three ages catgories.  To move the sampled individuals in
+a \textit{internal transfer} event (ageing) from age category 1 to age
+category 2, the susceptible and infected states should shift two steps
+to the corresponding state in age category 2, as specified in
+\code{N[, 1]}.  Similarly, \code{N[, 2]} move susceptible and infected
+individuals from age category 2 to age category 3.
 
 {\small
 \[
@@ -1460,7 +1457,7 @@ data("events_SISe3", package = "SimInf")
 To model local spread of the environmental infectious pressure among
 proximal nodes, we have to generate a distance matrix.  Let us use the
 synthetic dataset (\code{nodes}) included in the \pkg{SimInf} package,
-wich define a cattle population consisting of 1600 herds located in a
+wich defines a cattle population consisting of 1600 herds located in a
 50 square kilometer region, and let proximal neighbors be defined as
 neighbors within 2500m.
 
@@ -1758,19 +1755,19 @@ do.points = FALSE)
     individuals.  \label{fig:SIR-mparse-incidence}}
 \end{figure}
 
-While \pkg{SimInf} was designed to study disease spread over temporal
-networks, it is not limited to that use case but can also be used to
-study the dynamics of other systems.  In a final \code{mparse} example
-we will illustrate the Rosenzweig-MacArthur predator-prey model
-demonstrated in the \pkg{GillespieSSA} package \citep{Rosenzweig1963,
-  Pineda-Krch2008}.  The model has a density-dependent growth in the
-prey and and a nonlinear Type-2 functional response in the predator
-\citep{Rosenzweig1963}.  Let $R$ and $F$ denote the number of prey and
-predators, respectively.  The model consists of five transitions
-(Equation~\ref{eq:predator-prey}): \textit{i)} prey birth,
-\textit{ii)} prey death due to non-predatory events, \textit{iii)}
-prey death due to predation, \textit{iv)} predator birth, and
-\textit{v)} predator death
+Although \pkg{SimInf} was designed to study disease spread over
+temporal networks, it is not limited to that use case but can also be
+used to study the dynamics of other systems.  In a final \code{mparse}
+example we will illustrate the Rosenzweig-MacArthur predator-prey
+model demonstrated in the \pkg{GillespieSSA} package
+\citep{Rosenzweig1963, Pineda-Krch2008}.  The model has a
+density-dependent growth in the prey and and a nonlinear Type-2
+functional response in the predator \citep{Rosenzweig1963}.  Let $R$
+and $F$ denote the number of prey and predators, respectively.  The
+model consists of five transitions (Equation~\ref{eq:predator-prey}):
+\textit{i)} prey birth, \textit{ii)} prey death due to non-predatory
+events, \textit{iii)} prey death due to predation, \textit{iv)}
+predator birth, and \textit{v)} predator death
 
 \begin{align}
   \label{eq:predator-prey}
@@ -2065,10 +2062,12 @@ Swedish strategic research program eSSENCE (S.~Widgren).
 
 \begin{lstlisting}[
       language=C, caption={Implementation of the post time step
-        function in the \code{SIR} model.  The function returns a
-        value $>0$ if the node needs to recalculate the transition
-        rates else $0$.  However, if an error is detected the function
-        returns an error code $<0$.}, label={lst:ptsSIR}
+        function in the \code{SIR} model.  The post time step function
+        should return a value $>0$ if the node needs to recalculate
+        the transition rates for the node, a value (error code) $<0$
+        if an error is detected, or otherwise $0$.  Since the post
+        time step function for the \code{SIR} model does not make any
+        changes to a node, it always return $0$.}, label={lst:ptsSIR}
       ,frame=single]
 
   int SIR_post_time_step(double *v_new, const int *u, const double *v,
