@@ -603,11 +603,13 @@ types are classified into those that operate on the compartments of a
 single node $E_1 = \{\text{\textit{enter}, \textit{internal transfer},
   \textit{exit}}\}$ and those that operate on the compartments of two
 nodes $E_2 = \{\text{\textit{external transfer}}\}$.  The parallel
-algorithm processes these two classes of events differently.  The
-scheduled events are processed when simulation time reaches the time
-for any of the events.  Events that are scheduled at the same time are
-processed in the following order: \textit{exit}, \textit{enter},
-\textit{internal transfer} and \textit{external transfer}.
+algorithm processes these two classes of events differently, see
+Algorithm~\ref{alg:core} in the appendix with pseudo-code for the core
+simulation solver.  The scheduled events are processed when simulation
+time reaches the time for any of the events.  Events that are
+scheduled at the same time are processed in the following order:
+\textit{exit}, \textit{enter}, \textit{internal transfer} and
+\textit{external transfer}.
 
 The S4 class \code{SimInf\_events} contains slots with data structures
 to process events (Table~\ref{table:scheduled:events}).  The slots
@@ -652,7 +654,7 @@ includes that compartment in the \code{event[e]} operation.
 \subsubsection{Processing of an enter event}
 
 The \textit{enter} event adds \code{n[e]} individuals to one
-compartment at \code{node[e]}.  The compartment is specified by a
+compartment at \code{node[e]}, where the compartment is specified by a
 non-zero entry in the row for the compartment in column \code{E[, s]}.
 Please note that, if the column \code{E[, s]} contains several
 non-zero entries, the individuals are added to the compartment
@@ -1542,14 +1544,63 @@ plot(events(model))
 @
   \end{center}
   \caption{The distribution of the synthetic scheduled events dataset
-    \code{events\_SISe3}, that is ditributed with the \pkg{SimInf}
-    package.  The \textit{enter} event, adds individuals to a node.
-    The \textit{internal transfer} event, changes the number of
+    \code{events\_SISe3}, that is distributed with the \pkg{SimInf}
+    package.  The \textit{enter} event adds individuals to a node.
+    The \textit{internal transfer} event changes the number of
     individuals in the compartments within one node.  The
-    \textit{external transfer} event, moves individuals from
+    \textit{external transfer} event moves individuals from
     compartments in one node to compartments in a destination node.
     Finally, the \textit{exit} event removes individuals from a node.}
   \label{fig:scheduled-events-SISe3}
+\end{figure}
+
+The scheduled events give rise to a seasoanal variation of the
+population size in each age category that can be explored using data
+in the \code{U} matrix.  The \code{susceptible} and \code{infected}
+methods take an \code{age} argument that can be used to determine the
+population size by age category. Let us first run a trajectory to
+generate data in \code{U}, and then plot the number of individuals in
+each age category (Figure~\ref{fig:population}).
+
+<<eval=FALSE>>=
+library(lattice)
+result <- run(model, threads = 1, seed = 1)
+N1 <- colSums(susceptible(result, age = 1) + infected(result, age = 1))
+N2 <- colSums(susceptible(result, age = 2) + infected(result, age = 2))
+N3 <- colSums(susceptible(result, age = 3) + infected(result, age = 3))
+Age1 <- rep("0 <= Age < 120 days", length(N1))
+Age2 <- rep("120 <= Age < 356 days", length(N2))
+Age3 <- rep("365 <= Age days", length(N3))
+Days <- rep(result@tspan, 3)
+population <- data.frame(Individuals = c(N1, N2, N3), Days = Days,
+Age = c(Age1, Age2, Age3))
+xyplot(Individuals ~ Days | Age, data = population, type = "l",
+scales = list(relation="free"), layout = c(1, 3))
+@
+
+\begin{figure}
+  \begin{center}
+<<population-size, echo=FALSE, fig=TRUE>>=
+library(lattice)
+result <- run(model, threads = 1, seed = 1)
+N1 <- colSums(susceptible(result, age = 1) + infected(result, age = 1))
+N2 <- colSums(susceptible(result, age = 2) + infected(result, age = 2))
+N3 <- colSums(susceptible(result, age = 3) + infected(result, age = 3))
+Age1 <- rep("0 <= Age < 120 days", length(N1))
+Age2 <- rep("120 <= Age < 356 days", length(N2))
+Age3 <- rep("365 <= Age days", length(N3))
+Days <- rep(result@tspan, 3)
+population <- data.frame(Individuals = c(N1, N2, N3), Days = Days,
+Age = c(Age1, Age2, Age3))
+xyplot(Individuals ~ Days | Age, data = population, type = "l",
+scales = list(relation="free"), layout = c(1, 3))
+@
+  \end{center}
+  \caption{The population dynamics after running one trajectory over
+    $4 \times 365$ days of the \code{SISe3} model using the scheduled
+    events data contained in the \pkg{SimInf} package.  Please note
+    that the y-axis do not start at zero and have different scales.}
+  \label{fig:population}
 \end{figure}
 
 We might now be interested in exploring how various changes to the
