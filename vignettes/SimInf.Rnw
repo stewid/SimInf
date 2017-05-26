@@ -449,7 +449,7 @@ slots in the \code{S4} class \code{SimInf\_model}
 number of individuals in each of the $N_c$ disease states in every
 $N_n$ nodes.
 
-The stochastic step Equation~\ref{eq:numstep3} contains $N_t$ state
+Equation~\ref{eq:numstep3}, the stochastic step, contains $N_t$ state
 transitions and is processed using the two slots, \code{S} and
 \code{G}.  The \code{S} slot is the state-change matrix ($N_c \times
 N_t$) that determines how to change the number of individuals in the
@@ -1203,7 +1203,7 @@ U(run(model, threads = 1, seed = 2))
 If you inspect the result of this very simple simulation, you will see
 that 2 individuals were added to node 2, of which one individual was
 later removed, and that some individuals were removed from node 1 and
-placed in nodes 3, 4, and 5.  So far this isn't really
+placed in nodes 3, 4, and 5.  So far this is not really
 earth-shattering, but if we do this again with a few more individuals
 then we can see how disease can spread from an infected node to a
 non-infected one. We will start with 5 nodes again, but node 1 is
@@ -1396,9 +1396,8 @@ $I_{i,1} \rightarrow S_{i,1}$ must be recalculated according to
 
 \subsubsection[Specification of scheduled events in the SISe3_sp model]{Specification of scheduled events in the \code{SISe3\_sp} model}
 
-The select matrix \code{E} and the shift matrix \code{N} in the
-\code{SISe3\_sp} model have been specified to handle births, imports,
-ageing, moving and exits of individuals
+The \code{SISe3\_sp} model have been specified to handle births,
+imports, ageing, moving and exits of individuals
 (Table~\ref{table:SISe3_sp:events}).  When individuals enter the model
 (births, imports), they are added to the susceptible state in the age
 category specified by column 1, 2 or 3 in \code{E}.  The columns 4, 5
@@ -1910,13 +1909,13 @@ parameters that are either local (\code{ldata}) to each node or shared
 The \proglang{C} file (\texttt{'src/models.c'}) defines one function
 for each state transition, the post time step function and the model
 specific run function, and is automatically compiled when installing
-the package.  The header file \code{'SimInf.h'} contains the
-neccessary definitions and declarations for these functions and should
-be included.  The \code{SimInf_model_run} function is the interface
-from \proglang{R} to the core solver in \proglang{C} and list all
-function pointers to the transition rate functions in a vector in the
-order the state transitions appear in the dependency graph \code{G},
-see Listing~\ref{lst:SIRrun} in the appendix for an example from the
+the package.  The header file \code{"SimInf.h"} contains the
+declarations for these functions and should be included.  The
+\code{SimInf_model_run} function is the interface from \proglang{R} to
+the core solver in \proglang{C} and list all function pointers to the
+transition rate functions in a vector in the order the state
+transitions appear in the dependency graph \code{G}, see
+Listing~\ref{lst:SIRrun} in the appendix for an example from the
 \code{SIR} model and the use of the address of operator \code{'\&'} to
 obtain the address of a function.  The \code{SimInf_model_run}
 function must return the result from the call to the core solver with
