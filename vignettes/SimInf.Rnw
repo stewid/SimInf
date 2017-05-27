@@ -1630,9 +1630,12 @@ options(continue = "+    ")
   \begin{center}
     \begin{subfigure}[b]{1.0\textwidth}
       \begin{center}
-<<plot-SISe3sp-I, echo=FALSE, fig=TRUE>>=
+<<plot-SISe3sp-I, echo=FALSE, results=hide>>=
+png("SimInf-plot-SISe3sp-I.png", height = 480, width = 960)
 plot_nodes(run(model, threads = 1, seed = 1))
+dev.off()
 @
+        \includegraphics{SimInf-plot-SISe3sp-I.png}
         \caption{Between-node disease-spread by both movements of\\
           infected individuals and local spread among proximal nodes.}
         \label{fig:SISe3sp-movements-and-local-spred}
@@ -1640,10 +1643,13 @@ plot_nodes(run(model, threads = 1, seed = 1))
     \end{subfigure}
     \begin{subfigure}[b]{1.0\textwidth}
       \begin{center}
-<<plot-SISe3sp-II, echo=FALSE, fig=TRUE>>=
+<<plot-SISe3sp-II, echo=FALSE, results=hide>>=
 model@gdata["coupling"] <- 0
+png("SimInf-plot-SISe3sp-II.png", height = 480, width = 960)
 plot_nodes(run(model, threads = 1, seed = 1))
+dev.off()
 @
+        \includegraphics{SimInf-plot-SISe3sp-II.png}
         \caption{Between-node disease-spread by movements of infected
           individuals.}
         \label{fig:SISe3sp-movements}
@@ -1651,14 +1657,17 @@ plot_nodes(run(model, threads = 1, seed = 1))
     \end{subfigure}
     \begin{subfigure}[b]{1.0\textwidth}
       \begin{center}
-<<plot-SISe3sp-III, echo=FALSE, fig=TRUE>>=
+<<plot-SISe3sp-III, echo=FALSE, results=hide>>=
 model@gdata["coupling"] <- 0.1
 model@events@N <- cbind(model@events@N,
 "3" = c(0L, -1L, 0L, -1L, 0L, -1L))
 i <- which(model@events@event == 3)
 model@events@shift[i] <- 3L
+png("SimInf-plot-SISe3sp-III.png", height = 480, width = 960)
 plot_nodes(run(model, threads = 1, seed = 1))
+dev.off()
 @
+        \includegraphics{SimInf-plot-SISe3sp-III.png}
         \caption{Between-node disease-spread by local spread among
           proximal nodes.}
         \label{fig:SISe3sp-local-spred}
