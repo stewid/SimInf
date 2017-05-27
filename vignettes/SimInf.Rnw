@@ -89,7 +89,7 @@
 }
 
 <<echo=false, results=hide>>=
-options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
+options(prompt = "R> ", continue = "+    ", width = 74, useFancyQuotes = FALSE)
 @
 
 \begin{document}
@@ -1463,7 +1463,7 @@ wich defines a cattle population consisting of 1600 herds located in a
 neighbors within 2500m.
 
 <<load-nodes>>=
-data(nodes, package = "SimInf")
+data("nodes", package = "SimInf")
 d <- distance_matrix(x = nodes$x, y = nodes$y, cutoff = 2500)
 @
 
@@ -1600,22 +1600,29 @@ We might now be interested in exploring how various changes to the
 model could influence the spread of infection in the population of
 interconnected nodes.
 
+<<echo=false, results=hide>>=
+options(continue = "+  ")
+@
+
 <<plot-infected-nodes>>=
 plot_nodes <- function(x) {
-    wnp <- prevalence(x, type = "wnp") > 0
-    opar <- par(mfrow = c(3, 6), mar = c(2, 0.3, 0.3, 0.3))
-    on.exit(opar)
-    for(i in seq(1, dim(wnp)[2], length.out = 18)) {
-        Si <- which(!wnp[, i])
-        Ii <- which(wnp[, i])
-        plot(nodes$x[Si], nodes$y[Si], col = "yellow", pch = 20,
-             xlab = "", ylab = "", xaxt = "n", yaxt = "n",
-             ann = FALSE)
-        day <- 7 * as.integer(i - 1) + 1
-        mtext(sprintf("Day: %i", day), side = 1, line = 0.5)
-        points(nodes$x[Ii], nodes$y[Ii], col = "blue", pch = 20)
-    }
+  wnp <- prevalence(x, type = "wnp") > 0
+  opar <- par(mfrow = c(3, 6), mar = c(2, 0.3, 0.3, 0.3))
+  on.exit(opar)
+  for(i in seq(1, dim(wnp)[2], length.out = 18)) {
+    Si <- which(!wnp[, i])
+    Ii <- which(wnp[, i])
+    plot(nodes$x[Si], nodes$y[Si], col = "yellow", pch = 20, xlab = "",
+      ylab = "", xaxt = "n", yaxt = "n", ann = FALSE)
+    day <- 7 * as.integer(i - 1) + 1
+    mtext(sprintf("Day: %i", day), side = 1, line = 0.5)
+    points(nodes$x[Ii], nodes$y[Ii], col = "blue", pch = 20)
+  }
 }
+@
+
+<<echo=false, results=hide>>=
+options(continue = "+    ")
 @
 
 \begin{figure}
