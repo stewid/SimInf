@@ -36,7 +36,7 @@ vignette:
 
 # Build and check package
 check: clean
-	cd .. && R CMD build $(PKG_NAME)
+	cd .. && R CMD build --compact-vignettes=both $(PKG_NAME)
 	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran $(PKG_TAR)
 
 # Build and check package with gctorture
