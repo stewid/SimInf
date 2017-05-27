@@ -94,7 +94,7 @@ options(prompt = "R> ", continue = "+    ", width = 74, useFancyQuotes = FALSE)
 
 \begin{document}
 
-\SweaveOpts{engine=R,eps=FALSE,height=5,width=10,prefix.string=img/SimInf}
+\SweaveOpts{engine=R,eps=FALSE,height=5,width=10}
 %\VignetteIndexEntry{SimInf: An R package for Data-Driven Stochastic Disease Spred Simulations}
 %\VignetteDepends{SimInf,lattice}
 %\VignetteKeywords{computational epidemiology, discrete-event simulation, multicore implementation, stochastic modeling}
