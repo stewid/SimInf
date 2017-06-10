@@ -104,7 +104,7 @@ options(prompt = "R> ", continue = "+    ", width = 74, useFancyQuotes = FALSE)
 \begin{document}
 
 \SweaveOpts{engine=R,eps=FALSE,height=5,width=10}
-%\VignetteIndexEntry{SimInf: An R package for Data-Driven Stochastic Disease Spred Simulations}
+%\VignetteIndexEntry{SimInf: An R package for Data-Driven Stochastic Disease Spread Simulations}
 %\VignetteDepends{SimInf}
 %\VignetteKeywords{computational epidemiology, discrete-event simulation, multicore implementation, stochastic modeling}
 %\VignettePackage{SimInf}
@@ -1053,7 +1053,7 @@ add another nodes to the \code{data.frame} here in \proglang{R}.
 <<SIR-multiple-nodes>>=
 u0 <- data.frame(S = c(99, 90), I = c( 1,  2), R = c( 0,  0))
 model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
-result <- run(model, threads = 1, seed = 123)
+result <- run(model, threads = 1, seed = 22)
 @
 
 If we inspect the \code{U} matrix, it now includes results from two
@@ -1268,7 +1268,7 @@ step function (Listing~\ref{lst:ptsSIR} in the appendix).
 \label{sec:example-SISe3_sp}
 
 This section illustrates the specification of the \code{SISe3\_sp}
-model, which is also built into the \pkg{SimInf} package.  Two
+model, which is also predefined in the \pkg{SimInf} package.  Two
 additional features, compared to the \code{SIR} model, are used by the
 \code{SISe3\_sp} model: ageing of individuals by \textit{internal
   transfer} events, and usage of the real valued continuous state $V$.
@@ -1473,11 +1473,11 @@ infectious pressure $\gamma$ is equal in all age categories.
 Moreover, we fix the average shedding rate $\alpha = 1$ and allow the
 decay of the bacteria to vary in four seasonal intervals, $\beta_1,
 ..., \beta_4$ over the year. The end point (day of the year) for each
-season \texttt{beta\_t1}, ..., \texttt{beta\_t4} is determined by
-\texttt{end\_t1}, ..., \texttt{end\_t4}, respectively. We let the
-local environmental infectious pressure $\varphi_i = 0$ at the
-beginning of the simulation and let 10\% of the herds start with 5\%
-infected individuals.
+season \code{beta\_t1}, ..., \code{beta\_t4} is determined by
+\code{end\_t1}, ..., \code{end\_t4}, respectively. We let the local
+environmental infectious pressure $\varphi_i = 0$ at the beginning of
+the simulation and let 10\% of the herds start with 5\% infected
+individuals.
 
 <<create-SISe3sp-u0>>=
 set.seed(123)
@@ -1500,6 +1500,11 @@ beta_t1 = 0.095, beta_t2 = 0.12, beta_t3 = 0.10, beta_t4 = 0.15,
 end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365, distance = d,
 coupling = 0.1)
 @
+
+where \code{phi}, \code{beta\_t1}, ..., \code{beta\_t4},
+\code{end\_t1}, ..., \code{end\_t4}, and \code{distance} is local data
+to each node, and passed to the transition rate functions and the
+post-time step function in the \code{ldata} parameter.
 
 The package \pkg{SimInf} has a \code{summary} method for objects of
 class \code{SimInf_model}, such as the object \code{model}, which
@@ -1620,8 +1625,14 @@ plot_nodes <- function(x) {
 options(continue = "+    ")
 @
 
-To remove local spread, we have only to set the \texttt{coupling}
-parameter to zero and run the model.
+To remove local spread, we have only to set the \code{coupling}
+parameter to zero and run the model
+(Figure~\ref{fig:SISe3sp-movements}).
+
+<<eval=FALSE>>=
+model@gdata["coupling"] <- 0
+plot_nodes(run(model, threads = 1, seed = 1))
+@
 
 \begin{figure}
   \captionsetup[subfigure]{justification=centering}
@@ -1668,7 +1679,7 @@ dev.off()
         \includegraphics{SimInf-plot-SISe3sp-III.png}
         \caption{Between-node disease-spread by local spread among
           proximal nodes.}
-        \label{fig:SISe3sp-local-spred}
+        \label{fig:SISe3sp-local-spread}
       \end{center}
     \end{subfigure}
     \caption{The distribution of infected nodes (among 1600 nodes
@@ -1676,6 +1687,7 @@ dev.off()
       points from one realization of the \code{SISe3\_sp} model over
       $4 \times 365$ days using synthetic data included in the
       \pkg{SimInf} package.}
+    \label{fig:SISe3sp-spread-in-population}
   \end{center}
 \end{figure}
 
@@ -1689,8 +1701,8 @@ infected animals to the susceptible state during an \textit{external
 animal is moved.  This can be achieved in \pkg{SimInf} by adding one
 column to the shift matrix \code{N} and use that column for the
 \textit{external transfer} events.
-Figure~\ref{fig:SISe3sp-local-spred} shows the result from running one
-trajectory with the modified model.
+Figure~\ref{fig:SISe3sp-local-spread} shows the result from running
+one trajectory with the modified model.
 
 <<eval=FALSE>>=
 model@gdata["coupling"] <- 0.1
@@ -1702,7 +1714,8 @@ plot_nodes(run(model, threads = 1, seed = 1))
 @
 
 In this example, removing either local spread or animal movements was
-not sufficient to eradicate the disease.
+not sufficient to eradicate the disease
+(Figure~\ref{fig:SISe3sp-spread-in-population}).
 
 %**************************************************************************
 
