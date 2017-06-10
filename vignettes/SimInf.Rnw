@@ -1222,7 +1222,7 @@ events <- structure(list(
 events
 @
 
-Initialise and run the model
+Initialize and run the model
 
 <<SIR-events-II-run>>=
 model <- SIR(u0, 1:75, events = events, beta = 0.16, gamma = 0.077)
@@ -1619,6 +1619,9 @@ plot_nodes <- function(x) {
 <<echo=false, results=hide>>=
 options(continue = "+    ")
 @
+
+To remove local spread, we have only to set the \texttt{coupling}
+parameter to zero and run the model.
 
 \begin{figure}
   \captionsetup[subfigure]{justification=centering}
