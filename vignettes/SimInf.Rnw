@@ -1758,14 +1758,14 @@ used to run one trajectory of the model.  Once the simulator
 completes, the DLL is unloaded and the temporary files are removed.
 
 <<SIR-mparse-III, eval=FALSE>>=
-result <- run(model, threads = 1, seed = 123)
+result <- run(model, threads = 1, seed = 22)
 plot(result)
 @
 
 \begin{figure}[htb]
   \begin{center}
 <<SIR-mparse-IV, echo=FALSE, fig=TRUE>>=
-result <- run(model, threads = 1, seed = 123)
+result <- run(model, threads = 1, seed = 22)
 plot(result)
 @
   \caption{Example of simulated data from one realisation of the
@@ -1788,7 +1788,7 @@ time-point in \code{'Icum'} and plot the result as an epidemic curve
 m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
 c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
 model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
-result <- run(model, threads = 1, seed = 123)
+result <- run(model, threads = 1, seed = 22)
 plot(stepfun(result@tspan[-1], diff(c(0, U(result)["Icum",]))),
 main = "", xlab = "Time [days]", ylab = "Number of cases",
 do.points = FALSE)
@@ -1800,7 +1800,7 @@ do.points = FALSE)
 m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
 c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
 model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
-result <- run(model, threads = 1, seed = 123)
+result <- run(model, threads = 1, seed = 22)
 plot(stepfun(result@tspan[-1], diff(c(0, U(result)["Icum",]))),
 main = "", xlab = "Time [days]", ylab = "Number of cases",
 do.points = FALSE)
@@ -1985,10 +1985,15 @@ Swedish strategic research program eSSENCE (S.~Widgren).
 
 \clearpage
 
+%**************************************************************************
+
 \section{Appendix}
 
+\subsection{Pseudo-code for the core simulation solve}
+
 \begin{algorithm}
-  \caption{Pseudo-code for the core simulation solver}
+  \caption{Pseudo-code for the core simulation solver using direct
+    SSA}
   \label{alg:core}
   {\fontsize{10}{10}\selectfont
   \begin{algorithmic}[1]
@@ -1999,17 +2004,10 @@ Swedish strategic research program eSSENCE (S.~Widgren).
       transition rate functions and post time step function.}
 
     \renewcommand{\algorithmicdo}{\textbf{do in parallel}}
-    \FORALL{nodes i=1 \TO $N_n$}
+    \FORALL{nodes i=1 \TO $\Nnodes$}
 
     \STATE{Compute transition rates for all transitions
-      $\omega_{i,j}$, $j=1, \ldots ,N_t$.}
-
-    \STATE{Compute sum of transition rates $\lambda_i =
-      \sum_{j=1}^{N_t}\omega_{i,j}$ }
-
-    \STATE{Sample time to next stochastic event $t_i =
-      -log(\mbox{rand})/ \lambda_i$} where \textit{rand} is a
-    uniformly distributed random number in the range (0, 1)
+      $\omega_{i,j}$, $j=1, \ldots ,\Ntransitions$.}
 
     \ENDFOR
 
@@ -2017,15 +2015,29 @@ Swedish strategic research program eSSENCE (S.~Widgren).
     \WHILE{$t < T_{\text{End}}$}
 
     \renewcommand{\algorithmicdo}{\textbf{do in parallel}}
-    \FORALL{nodes i=1 \TO $N_n$}
+    \FORALL{nodes i=1 \TO $\Nnodes$}
 
     \renewcommand{\algorithmicdo}{\textbf{do}}
-    \WHILE{$t_i < T_{\text{Next day}}$}
+    \LOOP
+
+    \STATE{Compute sum of transition rates $\lambda_i =
+      \sum_{j=1}^{\Ntransitions}\omega_{i,j}$ }
+
+    \STATE{Sample time to next stochastic event $\tau_i = -\log(r_1)/
+      \lambda_i$} where $r_1$ is a uniformly distributed random number
+    in the range (0, 1)
+
+    \IF{$\tau_i + t_i >= T_{\text{Next day}}$}
+    \STATE{Move simulated time forward $t_i = T_{\text{Next day}}$}
+    \STATE{go to \ref{E1}}
+    \ENDIF
+
+    \STATE{Move simulated time forward $t_i = t_i + \tau_i$}
 
     \STATE{Determine which state transition happened; by inversion,
-      find $n$ such that \\$\sum_{j=1}^{n-1} \omega_{i,j} < \lambda \,
-      \mbox{rand} \le \sum_{j=1}^n \omega_{i,j}$} where \textit{rand}
-    is a uniformly distributed random number in the range (0, 1)
+      find $n$ such that \\$\sum_{j=1}^{n-1} \omega_{i,j} < \lambda
+      r_2 \le \sum_{j=1}^n \omega_{i,j}$} where $r_2$ is a uniformly
+    distributed random number in the range (0, 1)
 
     \STATE{Update the compartments \code{u[, i]} using the
       state-change vector \code{S[, n]}}
@@ -2033,24 +2045,15 @@ Swedish strategic research program eSSENCE (S.~Widgren).
     \STATE{Use the dependency graph \code{G[, n]} to recalculate
       affected transition rates $\omega_{i,j}$}
 
-    \STATE{Compute sum of transition rates $\lambda_i =
-      \sum_{j=1}^{N_t}\omega_{i,j}$ }
+    \ENDLOOP
 
-    \STATE{Sample time to next stochastic event $\tau_i =
-      -log(\text{\mbox{rand}})/ \lambda_i$} where \textit{rand} is a
-    uniformly distributed random number in the range (0, 1)
-
-    \STATE{Move simulated time forward $t_i = t_i + \tau_i$}
-
-    \ENDWHILE
-
-    \STATE{Process $E_1$ events}
+    \STATE{Process $E_1$ events}{\label{E1}}
 
     \ENDFOR
 
     \STATE{Process $E_2$ events}
 
-    \FORALL{nodes i=1 \TO $N_n$}
+    \FORALL{nodes i=1 \TO $\Nnodes$}
 
     \STATE{Call post time step function and update the continuous
       state variable \code{v[ ,i]}.}
@@ -2064,6 +2067,8 @@ Swedish strategic research program eSSENCE (S.~Widgren).
 \end{algorithm}
 
 \clearpage
+
+\subsection[C code for the SIR model]{\proglang{C} code for the \code{SIR} model}
 
 \begin{minipage}{\linewidth}
 \begin{scriptsize}
@@ -2086,7 +2091,7 @@ Swedish strategic research program eSSENCE (S.~Widgren).
 \begin{lstlisting}[
     language=C, caption={Implementation of the transition rate
       functions in the \code{SIR} model for the transitions in
-      Equation~\ref{eq:SIR} between the susceptible and infected
+      Eq.~\eqref{eq:SIR} between the susceptible and infected
       compartments.  The enumeration declarations are used to name the
       variable offsets and facilitate extraction of the values from
       the various data vectors.}, label={lst:trSIR} , frame=single]
@@ -2140,4 +2145,154 @@ Swedish strategic research program eSSENCE (S.~Widgren).
 
 \clearpage
 
+\subsection{Illustration of scheduled events}
+
+This section illustrates how the scheduled events for the
+\code{SISe3\_sp} model are specified
+(Table~\ref{table:SISe3_sp:events}) and how each event type is
+executed
+Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\ref{fig:external:shift}
+
+\begin{table}[!ht]
+  \small
+  \begin{tabular}{l c c c c c c c c}
+    \toprule
+    Action & \code{event} & \code{time} & \code{node} & \code{dest} &
+    \code{n} & \code{proportion} & \code{select} & \code{shift} \\
+    \midrule
+    Exit individuals in $S_1$ and $I_1$  & 0 & t & x & 0 & n & 0 & 4 & 0\\
+    Exit individuals in $S_2$ and $I_2$  & 0 & t & x & 0 & n & 0 & 5 & 0\\
+    Exit individuals in $S_3$ and $I_3$  & 0 & t & x & 0 & n & 0 & 6 & 0\\
+    Enter individuals in $S_1$ and $I_1$ & 1 & t & x & 0 & n & 0 & 1 & 0\\
+    Enter individuals in $S_2$ and $I_2$ & 1 & t & x & 0 & n & 0 & 2 & 0\\
+    Enter individuals in $S_3$ and $I_3$ & 1 & t & x & 0 & n & 0 & 3 & 0\\
+    Age individuals in $S_1$ and $I_1$   & 2 & t & x & 0 & n & 0 & 4 & 1\\
+    Age individuals in $S_2$ and $I_2$   & 2 & t & x & 0 & n & 0 & 5 & 2\\
+    Move individuals in $S_1$ and $I_1$  & 3 & t & x & y & n & 0 & 4 & 0\\
+    Move individuals in $S_2$ and $I_2$  & 3 & t & x & y & n & 0 & 5 & 0\\
+    Move individuals in $S_3$ and $I_3$  & 3 & t & x & y & n & 0 & 6 & 0\\
+    \bottomrule
+  \end{tabular}
+  \caption{Examples of the specification of a single row of scheduled
+    event data in the \code{SISe3\_sp} model to add, move or remove
+    individuals during the simulation.}
+  \label{table:SISe3_sp:events}
+\end{table}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.67\linewidth]{img/exit.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{exit} event (event = 0)
+    in the \code{SISe3\_sp} model at time = 4.  The removal of one
+    individual in the third age category $\{S_3, I_3\}$ from node 14.
+    Interpreting the figure from left to right: \textit{i)} A single
+    row of the event data operating on node 14.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{E[, 6]} is
+    the 6$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling one individual (n
+    = 1) to move from the compartments selected in step \textit{ii}.
+    \textit{iv)} The resultant state of node 14 after subtracting the
+    sampled individual in step \textit{iii} from node 14.
+    $^\dag$\code{dest} and $^\S$\code{shift} are not used in a
+    scheduled \textit{exit} event.  $^\ddag$\code{proportion} is not
+    used when $n > 0$.  \label{fig:exit}}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.6\linewidth]{img/enter.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{enter} event (event =
+    1) in the \code{SISe3\_sp} model at time = 4.  Add three
+    susceptible individuals to the first age category $\{S_1\}$ in
+    node 14.  Interpreting the figure from left to right: \textit{i)}
+    A single row of the event data operating on node 14.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14.  \textit{iii)}
+    \code{E[, 1]} is the first column in the select matrix that
+    determines which compartments (age categories) the new individuals
+    are added.  \textit{iv)} The resultant state of node 14 after
+    adding the individuals in step \textit{iii}.  $^\dag$\code{dest},
+    $^\ddag$\code{proportion} and $^\S$\code{shift} are not used in a
+    scheduled \textit{enter} event.  \label{fig:enter}}
+
+  \vspace*{\floatsep}
+
+  \begin{center}
+    \includegraphics[width=0.66\linewidth]{img/external.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{external transfer}
+    event (event = 3) in the \code{SISe3\_sp} model at time = 4.  The
+    movement of one individual in the third age category $\{S_3,
+    I_3\}$ from node 14 to destination node 23.  Interpreting the
+    figure from left to right: \textit{i)} A single row of the event
+    data operating on node 14 and destination node 23.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{u[, 23]} is
+    the current state of the destination node 23; \code{E[, 6]} is the
+    6$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling one individual (n
+    = 1) to move from the compartments selected in step \textit{ii}.
+    \textit{iv)} The resultant state of node 14 and destination node
+    23 after subtracting the sampled individuals in step \textit{iii}
+    from node 14 and adding them to destination node 23.
+    $^\dag$\code{shift} can be used in a scheduled \textit{external
+      transfer} event, see
+    Figure~\ref{fig:external:shift}. $^\ddag$\code{proportion} is not
+    used when $n > 0$.  \label{fig:external}}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.8\linewidth]{img/internal.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{internal transfer}
+    event (event = 2) in the \code{SISe3\_sp} model at time = 4.  The
+    ageing of three individuals in the first age category $\{S_1,
+    I_1\}$.  Interpreting the figure from left to right: \textit{i)} A
+    single row of the event data operating on node 14.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{E[, 4]} is
+    the 4$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling three individuals
+    (n = 3) to age from the compartments selected in step \textit{ii}.
+    \textit{iv)} The shift operation applies the shift specified in
+    column 1 of the shift matrix (\code{N}) to the individuals sampled
+    in step \textit{iii}.  \textit{v)} The resultant state of node 14
+    after subtracting the sampled individuals in step \textit{iii} and
+    adding the individuals after the shift operation in step
+    \textit{iv}.  $^\dag$\code{dest} is not used in \textit{internal
+      transfers}.  $^\ddag$\code{proportion} is not used when $n >
+    0$.  \label{fig:internal}}
+
+  \vspace*{\floatsep}
+
+  \begin{center}
+    \includegraphics[width=0.66\linewidth]{img/external-shift.pdf}
+  \end{center}
+  \caption{Illustration of a scheduled \textit{external transfer}
+    event (event = 3) in the \code{SISe3} model at time = 4.  The
+    ageing of three individuals in the second age category $\{S_2,
+    I_2\}$ that are subsequently moved.  Interpreting the figure from
+    left to right: \textit{i)} A single row of the event data
+    operating on node 14 and destination node 23.  \textit{ii)}
+    \code{u[, 14]} is the current state of node 14; \code{u[, 23]} is
+    the current state of the destination node 23; \code{E[, 5]} is the
+    5$^{th}$ column in the select matrix that determines which
+    compartments (age categories) that are eligible for sampling.
+    \textit{iii)} The operation of randomly sampling three individuals
+    (n = 3) to move from the compartments selected in step
+    \textit{ii}.  \textit{iv)} The shift operation applies the shift
+    specified in column 2 of the shift matrix (\code{N}) to the
+    individuals sampled in step \textit{iii}.  \textit{v)} The
+    resultant state of node 14 and destination node 23 after
+    subtracting the sampled individuals in step \textit{iii} from node
+    14 and adding them to the destination node 23 after the shift
+    operation in step \textit{iv}.  $^\ddag$\code{proportion} is not
+    used when $n > 0$.  \label{fig:external:shift}}
+\end{figure}
+
 \end{document}
+
+%**************************************************************************
