@@ -1183,7 +1183,7 @@ disease spread model as we did in earlier examples:
 
 <<U-model-events>>=
 model <- SIR(u0, 1:5, events = events, beta = 0.16, gamma = 0.077)
-U(run(model, threads = 1, seed = 2))
+U(run(model, threads = 1, seed = 22))
 @
 
 If you inspect the result of this very simple simulation, you will see
@@ -1226,7 +1226,7 @@ Initialize and run the model
 
 <<SIR-events-II-run>>=
 model <- SIR(u0, 1:75, events = events, beta = 0.16, gamma = 0.077)
-result <- run(model, threads = 1, seed = 1)
+result <- run(model, threads = 1, seed = 5)
 @
 
 Figure~\ref{fig:SIR-spaghetti} shows the result from running the
