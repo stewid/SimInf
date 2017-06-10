@@ -570,22 +570,18 @@ static int SimInf_solver()
             int node;
             SimInf_thread_args sa = *&sim_args[i];
 
-            /* Initialize transition rate and time to event. Calculate
-             * the transition rate for every transition and every
-             * node. Store the sum of the transition rates in each
-             * node in sum_t_rate. Calculate time to next event
-             * (transition) in each node. */
+            /* Initialize the transition rate for every transition and
+             * every node. Store the sum of the transition rates in
+             * each node in sum_t_rate. Moreover, initialize time in
+             * each node. */
             for (node = 0; node < sa.Nn; node++) {
                 int j;
 
                 sa.sum_t_rate[node] = 0.0;
                 for (j = 0; j < sa.Nt; j++) {
-                    const double rate =
-                        (*sa.tr_fun[j])(&sa.u[node * sa.Nc],
-                                        &sa.v[node * sa.Nd],
-                                        &sa.ldata[node * sa.Nld],
-                                        sa.gdata,
-                                        sa.tt);
+                    const double rate = (*sa.tr_fun[j])(
+                            &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
+                            &sa.ldata[node * sa.Nld], sa.gdata, sa.tt);
 
                     sa.t_rate[node * sa.Nt + j] = rate;
                     sa.sum_t_rate[node] += rate;
@@ -593,14 +589,7 @@ static int SimInf_solver()
                         sa.errcode = SIMINF_ERR_INVALID_RATE;
                 }
 
-                /* Compute time to next event for this node. */
-                if (sa.sum_t_rate[node] > 0.0) {
-                    sa.t_time[node] =
-                        -log(1.0 - gsl_rng_uniform(sa.rng)) /
-                        sa.sum_t_rate[node] + sa.tt;
-                } else {
-                    sa.t_time[node] = INFINITY;
-                }
+                sa.t_time[node] = sa.tt;
             }
 
             *&sim_args[i] = sa;
@@ -627,33 +616,45 @@ static int SimInf_solver()
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
                 for (node = 0; node < sa.Nn && !sa.errcode; node++) {
-                    while (sa.t_time[node] < sa.next_day) {
-                        double cum, rand, tot_rate, delta = 0.0;
+                    for (;;) {
+                        double cum, rand, tau, delta = 0.0;
                         int j, tr;
 
-                        /* a) Determine the transition that did occur
-                         * (directSSA). */
+                        /* 1a) Compute time to next event for this
+                         * node. */
+                        if (sa.sum_t_rate[node] <= 0.0) {
+                            sa.t_time[node] = sa.next_day;
+                            break;
+                        }
+                        tau = -log(gsl_rng_uniform_pos(sa.rng)) /
+                            sa.sum_t_rate[node];
+                        if ((tau + sa.t_time[node]) >= sa.next_day) {
+                            sa.t_time[node] = sa.next_day;
+                            break;
+                        }
+                        sa.t_time[node] += tau;
+
+                        /* 1b) Determine the transition that did occur
+                         * (direct SSA). */
                         rand = gsl_rng_uniform_pos(sa.rng) * sa.sum_t_rate[node];
                         for (tr = 0, cum = sa.t_rate[node * sa.Nt];
                              tr < sa.Nt && rand > cum;
                              tr++, cum += sa.t_rate[node * sa.Nt + tr]);
 
-                        /* b) Update the state of the node */
+                        /* 1c) Update the state of the node */
                         for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
                             sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
                             if (sa.u[node * sa.Nc + sa.irS[j]] < 0)
                                 sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         }
 
-                        /* c) Recalculate sum_t_rate[node] using
+                        /* 1d) Recalculate sum_t_rate[node] using
                          * dependency graph. */
                         for (j = sa.jcG[tr]; j < sa.jcG[tr + 1]; j++) {
                             const double old = sa.t_rate[node * sa.Nt + sa.irG[j]];
                             const double rate = (*sa.tr_fun[sa.irG[j]])(
-                                &sa.u[node * sa.Nc],
-                                &sa.v[node * sa.Nd],
-                                &sa.ldata[node * sa.Nld],
-                                sa.gdata,
+                                &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
+                                &sa.ldata[node * sa.Nld], sa.gdata,
                                 sa.t_time[node]);
 
                             sa.t_rate[node * sa.Nt + sa.irG[j]] = rate;
@@ -662,16 +663,6 @@ static int SimInf_solver()
                                 sa.errcode = SIMINF_ERR_INVALID_RATE;
                         }
                         sa.sum_t_rate[node] += delta;
-
-                        /* d) Compute time to new event for this node. */
-                        tot_rate = sa.sum_t_rate[node];
-                        if (tot_rate > 0.0) {
-                            sa.t_time[node] =
-                                -log(1.0 - gsl_rng_uniform(sa.rng)) /
-                                tot_rate + sa.t_time[node];
-                        } else {
-                            sa.t_time[node] = INFINITY;
-                        }
                     }
                 }
 
@@ -833,10 +824,8 @@ static int SimInf_solver()
                         for (; j < sa.Nt; j++) {
                             const double old = sa.t_rate[node * sa.Nt + j];
                             const double rate = (*sa.tr_fun[j])(
-                                &sa.u[node * sa.Nc],
-                                &sa.v_new[node * sa.Nd],
-                                &sa.ldata[node * sa.Nld],
-                                sa.gdata, sa.tt);
+                                &sa.u[node * sa.Nc], &sa.v_new[node * sa.Nd],
+                                &sa.ldata[node * sa.Nld], sa.gdata, sa.tt);
 
                             sa.t_rate[node * sa.Nt + j] = rate;
                             delta += rate - old;
@@ -844,20 +833,6 @@ static int SimInf_solver()
                                 sa.errcode = SIMINF_ERR_INVALID_RATE;
                         }
                         sa.sum_t_rate[node] += delta;
-
-                        if (sa.sum_t_rate[node] > 0.0) {
-                            if (old_t_rate > 0.0 && !isinf(old_t_rate)) {
-                                sa.t_time[node] =
-                                    old_t_rate / sa.sum_t_rate[node]
-                                    * (sa.t_time[node] - sa.tt) + sa.tt;
-                            } else {
-                                sa.t_time[node] =
-                                    -log(1.0 - gsl_rng_uniform(sa.rng)) /
-                                    sa.sum_t_rate[node] + sa.tt;
-                            }
-                        } else {
-                            sa.t_time[node] = INFINITY;
-                        }
 
                         sa.update_node[node] = 0;
                     }
@@ -874,7 +849,7 @@ static int SimInf_solver()
                  * However, it is possible to store the solution in a
                  * sparse matrix. In that case, the solution is stored
                  * outside the 'pragma omp parallel' statement (6b). */
-                /* a) Handle the case where the solution is stored in
+                /* 6a) Handle the case where the solution is stored in
                  * a dense matrix */
                 /* Copy compartment state to U */
                 while (sa.U && sa.U_it < sa.tlen && sa.tt > sa.tspan[sa.U_it])
@@ -889,7 +864,7 @@ static int SimInf_solver()
             }
         }
 
-        /* b) Handle the case where the solution is stored in a sparse
+        /* 6b) Handle the case where the solution is stored in a sparse
          * matrix */
         while (!sim_args[0].U && sim_args[0].U_it < sim_args[0].tlen &&
                sim_args[0].tt > sim_args[0].tspan[sim_args[0].U_it]) {
