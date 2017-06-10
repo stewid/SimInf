@@ -1790,7 +1790,7 @@ c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
 model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
 result <- run(model, threads = 1, seed = 22)
 plot(stepfun(result@tspan[-1], diff(c(0, U(result)["Icum",]))),
-main = "", xlab = "Time [days]", ylab = "Number of cases",
+main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
 @
 
@@ -1802,7 +1802,7 @@ c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
 model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
 result <- run(model, threads = 1, seed = 22)
 plot(stepfun(result@tspan[-1], diff(c(0, U(result)["Icum",]))),
-main = "", xlab = "Time [days]", ylab = "Number of cases",
+main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
 @
   \end{center}
@@ -1854,7 +1854,7 @@ m <- mparse(transitions = c("@ -> bR*R -> R",
 compartments = c("R", "F"), bR = 2, bF = 2, dR = 1, K = 1000,
 alpha = 0.007, w = 0.0035, dF = 2)
 model <- init(m, cbind(R = 1000, F = 100), 1:100)
-result <- run(model, threads = 1, seed = 7)
+result <- run(model, threads = 1, seed = 1)
 plot(result, N = TRUE)
 @
 
@@ -1867,14 +1867,14 @@ m <- mparse(transitions = c("@ -> bR*R -> R",
 compartments = c("R", "F"), bR = 2, bF = 2, dR = 1, K = 1000,
 alpha = 0.007, w = 0.0035, dF = 2)
 model <- init(m, cbind(R = 1000, F = 100), 1:100)
-result <- run(model, threads = 1, seed = 7)
+result <- run(model, threads = 1, seed = 1)
 plot(result, N = TRUE)
 @
   \end{center}
   \caption{One realization of the \code{mparse} Rosenzweig-MacArthur
     predator-prey model.  In this trajectory, the predator (\code{F})
-    go extinct after about 50 days while the prey (\code{R}) then
-    fluctuates around a plateu of 1000
+    go extinct after about 25 time steps while the prey (\code{R})
+    then fluctuates around a plateu of 1000
     individuals.  \label{fig:mparse-predator-prey}}
 \end{figure}
 
