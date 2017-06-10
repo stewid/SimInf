@@ -1490,7 +1490,7 @@ u0_SISe3$S_2[i] <- u0_SISe3$S_2[i] - u0_SISe3$I_2[i]
 u0_SISe3$S_3[i] <- u0_SISe3$S_3[i] - u0_SISe3$I_3[i]
 @
 
-Let us now construct an \code{SISe3\_sp} model object.
+Let us now construct an \code{SISe3\_sp} model object
 
 <<create-SISe3sp>>=
 model <- SISe3_sp(u0 = u0_SISe3, tspan = tspan, phi = rep(0, 1600),
@@ -1524,7 +1524,7 @@ Figure~\ref{fig:scheduled-events-SISe3}.  However, the between-node
 movements (\textit{external transfer}) have been generated from random
 connections, which is probably not realistic for real livestock data.
 
-\begin{figure}[!htb]
+\begin{figure}
   \begin{center}
 <<display-SISe3sp-model, fig=TRUE>>=
 plot(events(model))
@@ -1768,15 +1768,15 @@ result <- run(model, threads = 1, seed = 22)
 plot(result)
 @
 
-\begin{figure}[htb]
+\begin{figure}
   \begin{center}
 <<SIR-mparse-IV, echo=FALSE, fig=TRUE>>=
 result <- run(model, threads = 1, seed = 22)
 plot(result)
 @
-  \caption{Example of simulated data from one realisation of the
-    \code{mparse} \code{SIR} model (Equation~\ref{eq:SIR}) in one
-    node, starting with 99 susceptible, 1 infected, and 0 recovered
+  \caption{Example of simulated data from one realization of the
+    \code{mparse} \code{SIR} model (Eq.~\eqref{eq:SIR}) in one node,
+    starting with 99 susceptible, 1 infected, and 0 recovered
     individuals. \label{fig:SIR-mparse-proportion}}
   \end{center}
 \end{figure}
@@ -1800,7 +1800,7 @@ main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
 @
 
-\begin{figure}[htb]
+\begin{figure}
   \begin{center}
 <<SIR-mparse-incidence-plot, echo=FALSE, fig=TRUE>>=
 m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
@@ -1812,7 +1812,7 @@ main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
 @
   \end{center}
-  \caption{One realisation of an epidemic curve displaying the number
+  \caption{One realization of an epidemic curve displaying the number
     of incident cases per day in a node when simulating 180 days of
     the \code{mparse} \code{SIR} model (Eq.~\eqref{eq:SIR}), starting
     with 99 susceptible, 1 infected and 0 recovered
@@ -1864,7 +1864,7 @@ result <- run(model, threads = 1, seed = 1)
 plot(result, N = TRUE)
 @
 
-\begin{figure}[htb]
+\begin{figure}
   \begin{center}
 <<mparse-predator-prey-plot, echo=FALSE, fig=TRUE>>=
 m <- mparse(transitions = c("@ -> bR*R -> R",
@@ -1892,20 +1892,13 @@ plot(result, N = TRUE)
 Another possibility is to extend \pkg{SimInf} by creating an
 \proglang{R} add-on package that uses \pkg{SimInf} by linking to its
 core solver native routine, and this section describes the relevant
-steps to achieve this.  To read more about creating \proglang{R}
-add-on packages in general, the \texttt{'Writing R extensions'}
-(\url{https://cran.r-project.org/doc/manuals/r-release/R-exts.html})
-manual is the official guide and describes in detail the process.
-Another useful resource is the \texttt{'R packages'} book by
-\cite{Hadley2015} (\url{http://r-pkgs.had.co.nz/}).
-
-Consider we wish to create a new add-on package \pkg{PredatorPrey}
-based on the Rosenzweig-MacArthur predator-prey model from the
-previous section.  To facilitate this, the \pkg{SimInf} package
-includes a method (\code{package_skeleton}) that automates some of the
-setup for a new source package.  It creates directories, saves
-\proglang{R} and \proglang{C} code files to appropriate places, and
-creates skeleton help files.
+steps to achieve this.  Consider we wish to create a new add-on
+package \pkg{PredatorPrey} based on the Rosenzweig-MacArthur
+predator-prey model from the previous section.  To facilitate this,
+the \pkg{SimInf} package includes a method (\code{package_skeleton})
+that automates some of the setup for a new source package.  It creates
+directories, saves \proglang{R} and \proglang{C} code files to
+appropriate places, and creates skeleton help files.
 
 <<create-package-skeleton, eval=FALSE>>=
 path = tempdir()
