@@ -1997,8 +1997,8 @@ development driven predominantly by actual use cases.
 
 This work was financially supported by the Swedish Research Council
 within the UPMARC Linnaeus centre of Excellence (P.~Bauer,
-S.~Engblom), The Swedish Research Council Formas (S.~Engblom,
-S.~Widgren), The Swedish Board of Agriculture (S.~Widgren), and by the
+S.~Engblom), the Swedish Research Council Formas (S.~Engblom,
+S.~Widgren), the Swedish Board of Agriculture (S.~Widgren), and by the
 Swedish strategic research program eSSENCE (S.~Widgren).
 
 \bibliography{SimInf}
