@@ -1,11 +1,40 @@
 SimInf 4.0.0.9000
 -----------------
 
+NEW FEATURES
+
+* Added a vignette that provide a technical description of the
+  framework, how to use a predefined model in SimInf, demonstrate a
+  case study, and finally show how to extend the framework with a user
+  defined model.
+
+* Added the 'pairs' and 'boxplot' methods to visualise the number of
+  individuals in each compartment.
+
+* Added 'spaghetti' argument to the plot method to draw one line for
+  each node.
+
+* Added the method 'package_skeleton' to create a package skeleton for
+  a model depending on SimInf.
+
+CHANGES
+
+* Renamed 'plot' argument 'which' to 'N'.
+
 IMPROVEMENTS
 
 * The core solver now checks the return value from the transition rate
   functions and raise an error if the return value is non-finite or
   less than zero.
+
+* Added example data ('nodes') with a population of 1600 nodes within
+  a 50 square kilometer region to facilitate illustration of various
+  models.
+
+BUG FIXES
+
+* Added missing call to 'PROTECT' to protect newly created matrices (R
+  objects) from the garbage collector.
 
 SimInf 4.0.0
 ------------
