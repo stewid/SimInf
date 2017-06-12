@@ -95,25 +95,3 @@ INTERVAL_4 INTERVAL_1     INTERVAL_2     INTERVAL_3     INTERVAL_4
 }
 }
 
-\examples{
-## Create an SISe model object.
-model <- SISe(u0 = data.frame(S = 99, I = 1),
-              tspan = 1:1000,
-              phi = 0,
-              upsilon = 0.017,
-              gamma   = 0.1,
-              alpha   = 1,
-              beta_t1 = 0.19,
-              beta_t2 = 0.085,
-              beta_t3 = 0.075,
-              beta_t4 = 0.185,
-              end_t1  = 91,
-              end_t2  = 182,
-              end_t3  = 273,
-              end_t4  = 365,
-              epsilon = 0.000011)
-
-## Run the SISe model and plot the result.
-result <- run(model, seed = 4)
-plot(result)
-}

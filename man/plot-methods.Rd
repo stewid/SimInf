@@ -91,7 +91,8 @@ Plot \code{\linkS4class{SimInf_model}}
 }
 \examples{
 ## Create an 'SIR' model with 10 nodes and initialise
-## it to run over 100 days.
+## it with 99 susceptible individuals and one infected
+## individual. Let the model run over 100 days.
 model <- SIR(u0 = data.frame(S = rep(99, 10),
                              I = rep(1, 10),
                              R = rep(0, 10)),
@@ -100,7 +101,7 @@ model <- SIR(u0 = data.frame(S = rep(99, 10),
              gamma = 0.077)
 
 ## Run the model and save the result.
-result <- run(model)
+result <- run(model, threads = 1, seed = 1)
 
 ## Plot the proportion of susceptible, infected and recovered
 ## individuals.

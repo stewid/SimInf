@@ -28,20 +28,10 @@ Set a template for where to write the V result matrix
 ## Create an 'SISe' model with 6 nodes and initialize
 ## it to run over 10 days.
 u0 <- data.frame(S = 100:105, I = 1:6)
-model <- SISe(u0 = u0, tspan = 1:10,
-              phi = rep(0, 6),
-              upsilon = 0.017,
-              gamma   = 0.1,
-              alpha   = 1,
-              beta_t1 = 0.19,
-              beta_t2 = 0.085,
-              beta_t3 = 0.075,
-              beta_t4 = 0.185,
-              end_t1  = 91,
-              end_t2  = 182,
-              end_t3  = 273,
-              end_t4  = 365,
-              epsilon = 0.000011)
+model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
+    upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5
+    beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
+    end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4  = 365)
 
 ## An example with a sparse V result matrix, which can save a lot
 ## of memory if the model contains many nodes and time-points, but
@@ -52,7 +42,7 @@ model <- SISe(u0 = u0, tspan = 1:10,
 ## to write data.
 m <- Matrix::sparseMatrix(1:6, 5:10)
 V(model) <- m
-result <- run(model, seed = 123)
+result <- run(model, threads = 1, seed = 7)
 
 ## Extract the continuous state variables at the time-points in tspan.
 V(result)

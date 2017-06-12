@@ -35,7 +35,7 @@ u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 
 ## Run the model
-result <- run(model, seed = 123)
+result <- run(model, threads = 1, seed = 22)
 
 ## Extract the number of individuals in each compartment at the
 ## time-points in tspan.

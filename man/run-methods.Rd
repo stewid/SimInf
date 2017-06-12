@@ -36,7 +36,7 @@ model <- SIR(u0 = data.frame(S = rep(99, 10),
              gamma = 0.077)
 
 ## Run the model and save the result.
-result <- run(model)
+result <- run(model, threads = 1, seed = 1)
 
 ## Plot the proportion of susceptible, infected and recovered
 ## individuals.

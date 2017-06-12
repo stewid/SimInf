@@ -40,20 +40,29 @@ Run \code{SimInf_model} on scaled parameters
 }
 \examples{
 \dontrun{
-## Define a function that runs the model and
-## returns the prevalence at the last day.
-run_f <- function(model) {prevalence(run(model))[length(model@tspan)]}
+## Create an SIR-model with 500 nodes of 99 susceptible individuals
+## and one infected individuals.
+u0 <- data.frame(S = rep(99, 500), I = rep(1, 500), R = rep(0, 500))
+model <- SIR(u0, 1:75, beta = 0.16, gamma = 0.077)
 
 ## Define scaling parameters
-x = seq(from = 0.95, to = 1.05, by = 0.01)
-y = seq(from = 0.95, to = 1.05, by = 0.01)
+x <- seq(from = 0.2, to = 1.8, by = 0.05)
+y <- seq(from = 0.2, to = 1.1, by = 0.05)
 
-## Run model
-model <- demo_model(nodes = 10)
-formula <- upsilon ~ beta_t1 + beta_t2 + beta_t3 + beta_t4
-z <- run_outer(x, y, model, formula, run_f)
+## Run the model and determine the population prevalence
+pop <- run_outer(x, y, model, gamma ~ beta,
+                 function(model) {prevalence(run(model), "pop")[75]})
 
-## Plot
-filled.contour(x, y, z)
+## Plot result
+contour(x * model@gdata["beta"], y * model@gdata["gamma"],
+        pop, method = "edge", bty = "l")
+
+## Run the model and determine the between-node prevalence
+bnp <- run_outer(x, y, model, gamma ~ beta,
+                 function(model) {prevalence(run(model), "bnp")[75]})
+
+## Plot result
+contour(x * model@gdata["beta"], y * model@gdata["gamma"],
+        bnp, method = "edge", bty = "l")
 }
 }

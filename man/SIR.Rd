@@ -48,6 +48,6 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              gamma = 0.077)
 
 ## Run the SIR model and plot the result.
-result <- run(model, seed = 123)
+result <- run(model, threads = 1, seed = 22)
 plot(result)
 }

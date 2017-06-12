@@ -39,7 +39,7 @@ model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ## to write data.
 m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
 U(model) <- m
-result <- run(model, seed = 123)
+result <- run(model, threads = 1, seed = 22)
 
 ## Extract the number of individuals in each compartment at the
 ## time-points in tspan.

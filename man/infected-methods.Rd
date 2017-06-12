@@ -47,7 +47,7 @@ u0 <- data.frame(S = rep(99, 5), I = rep(1, 5), R = rep(0, 5))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 
 ## Run the model and save the result
-result <- run(model)
+result <- run(model, threads = 1, seed = 1)
 
 ## Extract the number of infected individuals in each
 ## node after each time step in the simulation
@@ -58,7 +58,7 @@ infected(result)
 infected(result, i = 1)
 
 ## Extract the number of infected individuals in the
-## first and third node after each time step in the simulation
-infected(result, i = c(1, 3))
+## first and fifth node after each time step in the simulation
+infected(result, i = c(1, 5))
 }
 \keyword{methods}
