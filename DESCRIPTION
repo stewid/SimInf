@@ -17,8 +17,9 @@ Description: Livestock movements are important for the spread of many
 Acknowledgements: This work was financially supported by the Swedish
     Research Council within the UPMARC Linnaeus center of Excellence
     (Pavol Bauer and Stefan Engblom), the Swedish Research Council
-    Formas (Stefan Engblom and Stefan Widgren), and the Swedish Board
-    of Agriculture (Stefan Widgren).
+    Formas (Stefan Engblom and Stefan Widgren), the Swedish Board of
+    Agriculture (Stefan Widgren), and by the Swedish strategic
+    research program eSSENCE (Stefan Widgren).
 License: GPL-3
 URL: https://github.com/stewid/SimInf
 BugReports: https://github.com/stewid/SimInf/issues
