@@ -53,7 +53,7 @@ setClass("SIR", contains = c("SimInf_model"))
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the SIR model and plot the result.
-##' result <- run(model, seed = 123)
+##' result <- run(model, threads = 1, seed = 22)
 ##' plot(result)
 SIR <- function(u0,
                 tspan,

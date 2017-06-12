@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2016  Stefan Engblom
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Engblom
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -24,9 +24,8 @@
 ##' @param cutoff The distance cutoff
 ##' @param min_dist The minimum distance to separate two nodes.  If
 ##'     the coordinates for two nodes are identical, the min_dist must
-##'     be assigned or an error is raised.  This is to protect against
-##'     infinite values when calculating \eqn{1 / d^2}. Default is
-##'     NULL.
+##'     be assigned or an error is raised.  Default is NULL i.e. to
+##'     raise an error.
 ##' @return \code{dgCMatrix}
 ##' @export
 ##' @examples

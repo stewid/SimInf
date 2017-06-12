@@ -94,7 +94,7 @@ setGeneric("C_code", function(model, pkg) standardGeneric("C_code"))
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the model and save the result.
-##' result <- run(model)
+##' result <- run(model, threads = 1, seed = 1)
 ##'
 ##' ## Plot the proportion of susceptible, infected and recovered
 ##' ## individuals.
@@ -130,7 +130,7 @@ setGeneric("run",
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Run the model
-##' result <- run(model, seed = 123)
+##' result <- run(model, threads = 1, seed = 22)
 ##'
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in tspan.
@@ -165,7 +165,7 @@ setGeneric("U", function(model) standardGeneric("U"))
 ##' ## to write data.
 ##' m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
 ##' U(model) <- m
-##' result <- run(model, seed = 123)
+##' result <- run(model, threads = 1, seed = 22)
 ##'
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in tspan.
@@ -187,23 +187,13 @@ setGeneric("U<-", function(model, value) standardGeneric("U<-"))
 ##' ## Create an 'SISe' model with 6 nodes and initialize
 ##' ## it to run over 10 days.
 ##' u0 <- data.frame(S = 100:105, I = 1:6)
-##' model <- SISe(u0 = u0, tspan = 1:10,
-##'               phi = rep(0, 6),
-##'               upsilon = 0.017,
-##'               gamma   = 0.1,
-##'               alpha   = 1,
-##'               beta_t1 = 0.19,
-##'               beta_t2 = 0.085,
-##'               beta_t3 = 0.075,
-##'               beta_t4 = 0.185,
-##'               end_t1  = 91,
-##'               end_t2  = 182,
-##'               end_t3  = 273,
-##'               end_t4  = 365,
-##'               epsilon = 0.000011)
+##' model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
+##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5
+##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
+##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4  = 365)
 ##'
 ##' ## Run the model
-##' result <- run(model, seed = 123)
+##' result <- run(model, threads = 1, seed = 7)
 ##'
 ##' ## Extract the continuous state variables in each node at the
 ##' ## time-points in tspan. In the 'SISe' model, V represent the
@@ -228,20 +218,10 @@ setGeneric("V", function(model) standardGeneric("V"))
 ##' ## Create an 'SISe' model with 6 nodes and initialize
 ##' ## it to run over 10 days.
 ##' u0 <- data.frame(S = 100:105, I = 1:6)
-##' model <- SISe(u0 = u0, tspan = 1:10,
-##'               phi = rep(0, 6),
-##'               upsilon = 0.017,
-##'               gamma   = 0.1,
-##'               alpha   = 1,
-##'               beta_t1 = 0.19,
-##'               beta_t2 = 0.085,
-##'               beta_t3 = 0.075,
-##'               beta_t4 = 0.185,
-##'               end_t1  = 91,
-##'               end_t2  = 182,
-##'               end_t3  = 273,
-##'               end_t4  = 365,
-##'               epsilon = 0.000011)
+##' model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
+##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5
+##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
+##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4  = 365)
 ##'
 ##' ## An example with a sparse V result matrix, which can save a lot
 ##' ## of memory if the model contains many nodes and time-points, but
@@ -252,7 +232,7 @@ setGeneric("V", function(model) standardGeneric("V"))
 ##' ## to write data.
 ##' m <- Matrix::sparseMatrix(1:6, 5:10)
 ##' V(model) <- m
-##' result <- run(model, seed = 123)
+##' result <- run(model, threads = 1, seed = 7)
 ##'
 ##' ## Extract the continuous state variables at the time-points in tspan.
 ##' V(result)
@@ -313,7 +293,7 @@ setGeneric("susceptible",
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Run the model and save the result
-##' result <- run(model)
+##' result <- run(model, threads = 1, seed = 1)
 ##'
 ##' ## Extract the number of infected individuals in each
 ##' ## node after each time step in the simulation
@@ -324,8 +304,8 @@ setGeneric("susceptible",
 ##' infected(result, i = 1)
 ##'
 ##' ## Extract the number of infected individuals in the
-##' ## first and third node after each time step in the simulation
-##' infected(result, i = c(1, 3))
+##' ## first and fifth node after each time step in the simulation
+##' infected(result, i = c(1, 5))
 setGeneric("infected",
            function(model, ...) standardGeneric("infected"))
 
@@ -346,7 +326,7 @@ setGeneric("infected",
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Run the model and save the result
-##' result <- run(model)
+##' result <- run(model, threads = 1, seed = 1)
 ##'
 ##' ## Extract the number of recovered individuals in each
 ##' ## node after each time step in the simulation
@@ -429,4 +409,19 @@ setGeneric("package_skeleton",
 ##' @return \code{SimInf_events} object.
 ##' @keywords methods
 ##' @export
+##' @examples
+##' ## Create an SIR model that includes scheduled events.
+##' model <- SIR(u0     = gu0_SIR(),
+##'              tspan  = 1:(4 * 365),
+##'              events = events_SIR(),
+##'              beta   = 0.16,
+##'              gamma  = 0.077)
+##'
+##' ## Extract the scheduled events from the model and
+##' ## display summary
+##' summary(events(model))
+##'
+##' ## Extract the scheduled events from the model and
+##' ## plot summary
+##' plot(events(model))
 setGeneric("events", function(model) standardGeneric("events"))

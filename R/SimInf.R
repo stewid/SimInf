@@ -53,39 +53,6 @@ have_openmp <- function()
 ##' @usage data(events_SISe3)
 ##' @format A \code{data.frame}
 ##' @keywords dataset
-##' @examples
-##' \dontrun{
-##' data(u0_SISe3)
-##' data(events_SISe3)
-##'
-##' ## Initialize a model with 1600 nodes. Randomly select nodes to be
-##' ## infected with a probability equal to 0.1.
-##' model <- SISe3(u0        = u0_SISe3,
-##'                tspan     = seq(0, 1460, by = 7),
-##'                phi       = sample(0:1, 1600, TRUE, c(0.9, 0.1)),
-##'                events    = events_SISe3,
-##'                upsilon_1 = 0.04,
-##'                upsilon_2 = 0.04,
-##'                upsilon_3 = 0.01,
-##'                gamma_1   = 0.1,
-##'                gamma_2   = 0.1,
-##'                gamma_3   = 0.1,
-##'                alpha     = 1,
-##'                beta_t1   = 0.15,
-##'                beta_t2   = 0.10,
-##'                beta_t3   = 0.10,
-##'                beta_t4   = 0.15,
-##'                end_t1    = 91,
-##'                end_t2    = 182,
-##'                end_t3    = 273,
-##'                end_t4    = 365,
-##'                epsilon   = 0)
-##'
-##' plot(model@events)
-##'
-##' result <- run(model)
-##' plot(result)
-##' }
 NULL
 
 ##' Example data to initialize a model
@@ -97,39 +64,6 @@ NULL
 ##' @usage data(u0_SISe3)
 ##' @format A \code{data.frame}
 ##' @keywords dataset
-##' @examples
-##' \dontrun{
-##' data(u0_SISe3)
-##' data(events_SISe3)
-##'
-##' ## Initialize a model with 1600 nodes. Randomly select nodes to be
-##' ## infected with a probability equal to 0.1.
-##' model <- SISe3(u0        = u0_SISe3,
-##'                tspan     = seq(0, 1460, by = 7),
-##'                phi       = sample(0:1, 1600, TRUE, c(0.9, 0.1)),
-##'                events    = events_SISe3,
-##'                upsilon_1 = 0.04,
-##'                upsilon_2 = 0.04,
-##'                upsilon_3 = 0.01,
-##'                gamma_1   = 0.1,
-##'                gamma_2   = 0.1,
-##'                gamma_3   = 0.1,
-##'                alpha     = 1,
-##'                beta_t1   = 0.15,
-##'                beta_t2   = 0.10,
-##'                beta_t3   = 0.10,
-##'                beta_t4   = 0.15,
-##'                end_t1    = 91,
-##'                end_t2    = 182,
-##'                end_t3    = 273,
-##'                end_t4    = 365,
-##'                epsilon   = 0)
-##'
-##' plot(model@events)
-##'
-##' result <- run(model)
-##' plot(result)
-##' }
 NULL
 
 ##' Example data with spatial distribution of nodes

@@ -55,7 +55,7 @@ setClass("SEIR", contains = c("SimInf_model"))
 ##'               gamma = 0.077)
 ##'
 ##' ## Run the SEIR model and plot the result.
-##' result <- run(model, seed = 123)
+##' result <- run(model, threads = 1, seed = 3)
 ##' plot(result)
 SEIR <- function(u0,
                  tspan,
