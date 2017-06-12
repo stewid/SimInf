@@ -27,9 +27,9 @@ j]} contains the real-valued state of the system at
 ## it to run over 10 days.
 u0 <- data.frame(S = 100:105, I = 1:6)
 model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
-    upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5
+    upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5,
     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
-    end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4  = 365)
+    end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 
 ## Run the model
 result <- run(model, threads = 1, seed = 7)

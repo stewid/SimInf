@@ -188,9 +188,9 @@ setGeneric("U<-", function(model, value) standardGeneric("U<-"))
 ##' ## it to run over 10 days.
 ##' u0 <- data.frame(S = 100:105, I = 1:6)
 ##' model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
-##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5
+##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5,
 ##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
-##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4  = 365)
+##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 ##'
 ##' ## Run the model
 ##' result <- run(model, threads = 1, seed = 7)
@@ -219,9 +219,9 @@ setGeneric("V", function(model) standardGeneric("V"))
 ##' ## it to run over 10 days.
 ##' u0 <- data.frame(S = 100:105, I = 1:6)
 ##' model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
-##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5
+##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5,
 ##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
-##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4  = 365)
+##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 ##'
 ##' ## An example with a sparse V result matrix, which can save a lot
 ##' ## of memory if the model contains many nodes and time-points, but
@@ -411,7 +411,7 @@ setGeneric("package_skeleton",
 ##' @export
 ##' @examples
 ##' ## Create an SIR model that includes scheduled events.
-##' model <- SIR(u0     = gu0_SIR(),
+##' model <- SIR(u0     = u0_SIR(),
 ##'              tspan  = 1:(4 * 365),
 ##'              events = events_SIR(),
 ##'              beta   = 0.16,

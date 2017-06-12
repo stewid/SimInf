@@ -21,7 +21,7 @@ Extract the events from a \code{SimInf_model} object
 }
 \examples{
 ## Create an SIR model that includes scheduled events.
-model <- SIR(u0     = gu0_SIR(),
+model <- SIR(u0     = u0_SIR(),
              tspan  = 1:(4 * 365),
              events = events_SIR(),
              beta   = 0.16,
