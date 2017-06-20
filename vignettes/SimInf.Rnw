@@ -390,9 +390,9 @@ numerical method of \pkg{SimInf} can then be written per node $i$ as
 
 In this scheme, \eqref{eq:numstep1} forms the local stochastic step,
 that is in practice simulated by the Gillespie method
-\citep{Gillespie1977}. Eq.~\eqref{eq:numstep2} is the data step, where
-externally scheduled events are incorporated. Note that the stochastic
-step evolves at continuous time increments in the interval
+\citep{Gillespie1977}. Equation~\ref{eq:numstep2} is the data step,
+where externally scheduled events are incorporated. Note that the
+stochastic step evolves at continuous time increments in the interval
 $[t_n,t_{n+1}]$, and the data step operates only on the final state
 $\tilde{\X}$ at $t_{n+1}$. The final step \eqref{eq:numstep3} is just
 the Euler forward method in time with time-step $\Delta t_{n} =
@@ -562,29 +562,29 @@ slots in the \code{S4} class \code{SimInf\_model}
 number of individuals in each of the $\Ncompartments$ disease states
 in every $\Nnodes$ nodes.
 
-Eq.~\eqref{eq:numstep3}, the stochastic step, contains $\Ntransitions$
-state transitions and is processed using the two slots, \code{S} and
-\code{G}.  The \code{S} slot is the state-change matrix
-($\Ncompartments \times \Ntransitions$) that determines how to change
-the number of individuals in the compartments of a node when the
-$j^{th}$ state transition occurs, where $1 \le j \le \Ntransitions$.
-Each row corresponds to one compartment and each column to a state
-transition.  Let \code{u[, i]} be the number of individuals in each
-compartment in node $i$ at time $t_i$.  To move simulation time
-forward in node $i$ to $t_i = t_i + \tau_i$, the vector \code{u[, i]}
-is updated according to the $j^{th}$ transition by adding the
-state-change vector \code{S[, j]} to \code{u[, i]}.  After updating
-\code{u[, i]}, the transition rates must be recalculated to obtain the
-time to the next event.  However, a state transition might not need
-all transition rates to be recalculated.  The dependency graph
-\code{G} is a matrix ($\Ntransitions \times \Ntransitions$) that
-determines which transition rates that need to be recalculated.  A
-non-zero entry in element \code{G[k, j]} indicates that transition
-rate \code{k} needs to be recalculated if the $j^{th}$ state
-transition occurs, where \mbox{$1 \le$ \code{k} $\le \Ntransitions$}.
-Furthermore, the final step \eqref{eq:numstep3} is incorporated using
-a model specific post time step callback to allow update of the
-concentration variable $\Y$.
+Equation~\ref{eq:numstep3}, the stochastic step, contains
+$\Ntransitions$ state transitions and is processed using the two
+slots, \code{S} and \code{G}.  The \code{S} slot is the state-change
+matrix ($\Ncompartments \times \Ntransitions$) that determines how to
+change the number of individuals in the compartments of a node when
+the $j^{th}$ state transition occurs, where $1 \le j \le
+\Ntransitions$.  Each row corresponds to one compartment and each
+column to a state transition.  Let \code{u[, i]} be the number of
+individuals in each compartment in node $i$ at time $t_i$.  To move
+simulation time forward in node $i$ to $t_i = t_i + \tau_i$, the
+vector \code{u[, i]} is updated according to the $j^{th}$ transition
+by adding the state-change vector \code{S[, j]} to \code{u[, i]}.
+After updating \code{u[, i]}, the transition rates must be
+recalculated to obtain the time to the next event.  However, a state
+transition might not need all transition rates to be recalculated.
+The dependency graph \code{G} is a matrix ($\Ntransitions \times
+\Ntransitions$) that determines which transition rates that need to be
+recalculated.  A non-zero entry in element \code{G[k, j]} indicates
+that transition rate \code{k} needs to be recalculated if the $j^{th}$
+state transition occurs, where \mbox{$1 \le$ \code{k} $\le
+  \Ntransitions$}.  Furthermore, the final step \eqref{eq:numstep3} is
+incorporated using a model specific post time step callback to allow
+update of the concentration variable $\Y$.
 
 \begin{table}[!ht]
   \small
@@ -724,12 +724,12 @@ node $E_1 = \{\text{\textit{enter}, \textit{internal transfer},
   \textit{exit}}\}$ and those that operate on the compartments of two
 nodes $E_2 = \{\text{\textit{external transfer}}\}$.  The parallel
 algorithm processes these two classes of events differently, see
-Algorithm~\ref{alg:core} in the appendix with pseudo-code for the core
-simulation solver.  The scheduled events are processed when simulation
-time reaches the time for any of the events.  Events that are
-scheduled at the same time are processed in the following order:
-\textit{exit}, \textit{enter}, \textit{internal transfer} and
-\textit{external transfer}.
+Algorithm~\ref{alg:core} in Appendix~\ref{sec:pseudo-code} with
+pseudo-code for the core simulation solver.  The scheduled events are
+processed when simulation time reaches the time for any of the events.
+Events that are scheduled at the same time are processed in the
+following order: \textit{exit}, \textit{enter}, \textit{internal
+  transfer} and \textit{external transfer}.
 
 The S4 class \code{SimInf\_events} contains slots with data structures
 to process events (Table~\ref{table:scheduled:events}).  The slots
@@ -748,7 +748,7 @@ definitions of all of these operations are a bit involved and to
 quickly get an overview, schematic pictures illustrating all of them
 have been prepared, we refer to
 Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\ref{fig:external:shift}
-in the appendix.
+in Appendix~\ref{sec:illustration-scheduled-events}.
 
 \subsubsection{Processing of an enter event}
 
@@ -760,8 +760,9 @@ non-zero entries, the individuals are added to the compartment
 represented by the first non-zero row in column \code{E[, s]}.  The
 values of \code{dest[e]}, \code{proportion[e]} and \code{shift[e]},
 described below, are not used when processing an \textit{enter} event.
-See Figure~\ref{fig:enter} in the appendix for an illustration of a
-scheduled \textit{enter} event.
+See Figure~\ref{fig:enter} in
+Appendix~\ref{sec:illustration-scheduled-events} for an illustration
+of a scheduled \textit{enter} event.
 
 \subsubsection{Processing of an internal transfer event}
 
@@ -784,8 +785,9 @@ sampled individuals from compartment \code{p} are moved to compartment
 \code{N[p, q] + p}, where $1 \leq$ \code{N[p, q] + p} $\le
 \Ncompartments$.  The value of \code{dest[e]}, described below, is not
 used when processing an \textit{internal transfer} event.  See
-Figure~\ref{fig:internal} in the appendix for an illustration of a
-scheduled \textit{internal transfer} event.
+Figure~\ref{fig:internal} in
+Appendix~\ref{sec:illustration-scheduled-events} for an illustration
+of a scheduled \textit{internal transfer} event.
 
 \subsubsection{Processing of an external transfer event}
 
@@ -799,9 +801,9 @@ the same compartments in \code{dest[e]} as in \code{node[e]}, unless
 \code{shift[e]} $> 0$.  In that case, the sampled individuals change
 compartments according to \code{N} as described in processing an
 \textit{internal transfer} event before adding them to \code{dest[e]}.
-See Figures \ref{fig:external} and \ref{fig:external:shift} in the
-appendix for illustrations of scheduled \textit{external transfer}
-events.
+See Figures \ref{fig:external} and \ref{fig:external:shift} in
+Appendix~\ref{sec:illustration-scheduled-events} for illustrations of
+scheduled \textit{external transfer} events.
 
 \subsubsection{Processing of an exit event}
 
@@ -810,8 +812,9 @@ sampling of individuals from \code{node[e]} is performed in the same
 way as for an \textit{internal transfer} event.  The compartments at
 \code{node[e]} are updated by subtracting the sampled individuals.
 The values of \code{dest[e]} and \code{shift[e]} are not used when
-processing an \textit{exit} event.  See Figure~\ref{fig:exit} in the
-appendix for an illustration of a scheduled \textit{exit} event.
+processing an \textit{exit} event.  See Figure~\ref{fig:exit} in
+Appendix~\ref{sec:illustration-scheduled-events} for an illustration
+of a scheduled \textit{exit} event.
 
 \subsection{Core simulation solver}
 
@@ -911,7 +914,7 @@ compartments and the continuous state variables are written to
 
 %**************************************************************************
 
-\section[Model construction and data analysis: basic examples]{Model construction and data analysis: basic examples}
+\section[Model construction and data analysis: Basic examples]{Model construction and data analysis: Basic examples}
 \label{sec:examples}
 
 \subsection[A first example: The SIR model]{A first example: The \code{SIR} model}
@@ -1038,8 +1041,8 @@ plot(result)
 @
   \end{center}
   \caption{Example of simulated data from one realization of the
-    \code{SIR} model (Eq.~\eqref{eq:SIR}) in one node, starting with
-    99 susceptible, 1 infected, and 0 recovered
+    \code{SIR} model (Equation~\ref{eq:SIR}) in one node, starting
+    with 99 susceptible, 1 infected, and 0 recovered
     individuals. \label{fig:SIR-proportion}}
 \end{figure}
 
@@ -1260,9 +1263,10 @@ plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
 The \proglang{C} code for the \code{SIR} model is defined in the
 source file \texttt{'src/models/SIR.c'}.  This file contains the
 \code{SIR_run} function to initialize the core solver
-(Listing~\ref{lst:SIRrun} in the appendix), the transition rate
-functions (Listing~\ref{lst:trSIR} in the appendix) and the post time
-step function (Listing~\ref{lst:ptsSIR} in the appendix).
+(Listing~\ref{lst:SIRrun} in Appendix~\ref{sec:C-code-SIR}), the
+transition rate functions (Listing~\ref{lst:trSIR} in
+Appendix~\ref{sec:C-code-SIR}) and the post time step function
+(Listing~\ref{lst:ptsSIR} in Appendix~\ref{sec:C-code-SIR}).
 
 \subsection[A second example: The SISe3_sp model]{A second example: The \code{SISe3\_sp} model}
 \label{sec:example-SISe3_sp}
@@ -1340,17 +1344,18 @@ saved to the \code{V} matrix at the time-points specified by
 
 \subsubsection[Illustration of the stochastic step in the SISe3_sp model]{Illustration of the stochastic step in the \code{SISe3\_sp} model}
 
-To illustrate the stochastic step in Eq.~\eqref{eq:numstep3}, consider
-that the number of individuals in each compartment in node $i$
-\code{u[, i]} at time $t$ is $\{12, 3, 63, 14, 92, 2\}$ and that the
-time to the next state transition is $\tau_i$.  Furthermore, assume
-that the next state transition is infected to susceptible in the first
-age category which corresponds to the second column in the state
-change matrix \code{S}.  Thus, updating the compartments corresponds
-to adding \code{S[, 2]} to \code{u[, i]}, which gives $\{13, 2, 63,
-14, 92, 2\}$.  This also implies that the transition rates for the two
-transitions $S_{i,1} \rightarrow I_{i,1}$ and $I_{i,1} \rightarrow
-S_{i,1}$ must be recalculated according to \code{G[, 2]}.
+To illustrate the stochastic step in Equation~\ref{eq:numstep3},
+consider that the number of individuals in each compartment in node
+$i$ \code{u[, i]} at time $t$ is $\{12, 3, 63, 14, 92, 2\}$ and that
+the time to the next state transition is $\tau_i$.  Furthermore,
+assume that the next state transition is infected to susceptible in
+the first age category which corresponds to the second column in the
+state change matrix \code{S}.  Thus, updating the compartments
+corresponds to adding \code{S[, 2]} to \code{u[, i]}, which gives
+$\{13, 2, 63, 14, 92, 2\}$.  This also implies that the transition
+rates for the two transitions $S_{i,1} \rightarrow I_{i,1}$ and
+$I_{i,1} \rightarrow S_{i,1}$ must be recalculated according to
+\code{G[, 2]}.
 
 {\small
 \[
@@ -1385,7 +1390,8 @@ S_{i,1}$ must be recalculated according to \code{G[, 2]}.
 
 The \code{SISe3\_sp} model have been specified to handle births,
 imports, ageing, moving and exits of individuals
-(Table~\ref{table:SISe3_sp:events} in the appendix).  When individuals
+(Table~\ref{table:SISe3_sp:events} in
+Appendix~\ref{sec:illustration-scheduled-events}).  When individuals
 enter the model (births, imports), they are added to the susceptible
 state in the age category specified by column 1, 2 or 3 in \code{E}.
 The columns 4, 5 and 6 in \code{E} are used for the other events
@@ -1791,8 +1797,8 @@ result <- run(model, threads = 1, seed = 22)
 plot(result)
 @
   \caption{Example of simulated data from one realization of the
-    \code{mparse} \code{SIR} model (Eq.~\eqref{eq:SIR}) in one node,
-    starting with 99 susceptible, 1 infected, and 0 recovered
+    \code{mparse} \code{SIR} model (Equation~\ref{eq:SIR}) in one
+    node, starting with 99 susceptible, 1 infected, and 0 recovered
     individuals. \label{fig:SIR-mparse-proportion}}
   \end{center}
 \end{figure}
@@ -1830,8 +1836,8 @@ do.points = FALSE)
   \end{center}
   \caption{One realization of an epidemic curve displaying the number
     of incident cases per day in a node when simulating 180 days of
-    the \code{mparse} \code{SIR} model (Eq.~\eqref{eq:SIR}), starting
-    with 99 susceptible, 1 infected and 0 recovered
+    the \code{mparse} \code{SIR} model (Equation~\ref{eq:SIR}),
+    starting with 99 susceptible, 1 infected and 0 recovered
     individuals.  \label{fig:SIR-mparse-incidence}}
 \end{figure}
 
@@ -1844,7 +1850,7 @@ model demonstrated in the \pkg{GillespieSSA} package
 density-dependent growth in the prey and and a nonlinear Type-2
 functional response in the predator \citep{Rosenzweig1963}.  Let $R$
 and $F$ denote the number of prey and predators, respectively.  The
-model consists of five transitions (Eq.~\eqref{eq:predator-prey}):
+model consists of five transitions (Equation~\ref{eq:predator-prey}):
 \textit{i)} prey birth, \textit{ii)} prey death due to non-predatory
 events, \textit{iii)} prey death due to predation, \textit{iv)}
 predator birth, and \textit{v)} predator death
@@ -1928,14 +1934,14 @@ the package to create a skeleton for.  The created \proglang{R} file
 \code{PredatorPrey} that contains the \code{SimInf\_model} and a
 generating function to create a new object of the \code{PredatorPrey}
 model.  The generating function is a template that might need to be
-updated to meet the specific requirements of the model, e.g.\ if the
-model should handle scheduled events, then \code{E} must be specified
-to select the subset of compartments involved in each specific event.
-Furthermore, if one of the events is an \textit{internal transfer}
-event, \code{N} must be specified to shift individuals between
-compartments within one holding.  It is also possible to define
-parameters that are either local (\code{ldata}) to each node or shared
-(\code{gdata}) between all nodes.
+updated to meet the specific requirements of the model, for example,
+if the model should handle scheduled events, then \code{E} must be
+specified to select the subset of compartments involved in each
+specific event.  Furthermore, if one of the events is an
+\textit{internal transfer} event, \code{N} must be specified to shift
+individuals between compartments within one holding.  It is also
+possible to define parameters that are either local (\code{ldata}) to
+each node or shared (\code{gdata}) between all nodes.
 
 The \proglang{C} file (\texttt{'src/models.c'}) defines one function
 for each state transition, the post time step function and the model
@@ -1946,18 +1952,20 @@ declarations for these functions and should be included.  The
 the core solver in \proglang{C} and list all function pointers to the
 transition rate functions in a vector in the order the state
 transitions appear in the dependency graph \code{G}, see
-Listing~\ref{lst:SIRrun} in the appendix for an example from the
-\code{SIR} model and the use of the address of operator \code{'\&'} to
-obtain the address of a function.  The \code{SimInf_model_run}
-function must return the result from the call to the core solver with
-\code{SimInf_run}.  The arguments to \code{SimInf_run} are the
-arguments passed to the \code{SimInd_model_run} function plus the
-vector of function pointers to the transition rate functions and the
-function pointer to the post time step function.  To facilitate
-extraction of specific values from the data structures passed as
-arguments to the transition rate functions and the post time step
-function, we recommend using enumeration declarations to name the
-values, see Listing~\ref{lst:trSIR} in the appendix for an example.
+Listing~\ref{lst:SIRrun} in Appendix~\ref{sec:C-code-SIR} for an
+example from the \code{SIR} model and the use of the address of
+operator \code{'\&'} to obtain the address of a function.  The
+\code{SimInf_model_run} function must return the result from the call
+to the core solver with \code{SimInf_run}.  The arguments to
+\code{SimInf_run} are the arguments passed to the
+\code{SimInd_model_run} function plus the vector of function pointers
+to the transition rate functions and the function pointer to the post
+time step function.  To facilitate extraction of specific values from
+the data structures passed as arguments to the transition rate
+functions and the post time step function, we recommend using
+enumeration declarations to name the values, see
+Listing~\ref{lst:trSIR} in Appendix~\ref{sec:C-code-SIR} for an
+example.
 
 The add-on \pkg{PredatorPrey} source package can now be built and
 installed with
@@ -2001,15 +2009,18 @@ S.~Engblom), the Swedish Research Council Formas (S.~Engblom,
 S.~Widgren), the Swedish Board of Agriculture (S.~Widgren), and by the
 Swedish strategic research program eSSENCE (S.~Widgren).
 
+\clearpage
+
 \bibliography{SimInf}
 
 \clearpage
 
 %**************************************************************************
 
-\section{Appendix}
+\appendix
 
-\subsection{Pseudo-code for the core simulation solve}
+\section{Pseudo-code for the core simulation solve}
+\label{sec:pseudo-code}
 
 \begin{algorithm}
   \caption{Pseudo-code for the core simulation solver using direct
@@ -2088,84 +2099,8 @@ Swedish strategic research program eSSENCE (S.~Widgren).
 
 \clearpage
 
-\subsection[C code for the SIR model]{\proglang{C} code for the \code{SIR} model}
-
-\begin{minipage}{\linewidth}
-\begin{scriptsize}
-  \begin{lstlisting}[
-      language=C, caption={Implementation of the function to init and
-        run a simulation with the \code{SIR} model},
-      label={lst:SIRrun}, frame=single]
-  SEXP SIR_run(SEXP model, SEXP threads, SEXP seed)
-  {
-      TRFun tr_fun[] = {&SIR_S_to_I, &SIR_I_to_S};
-
-      return SimInf_run(model, threads, seed, tr_fun, &SISe3_post_time_step);
-  }
-\end{lstlisting}
-\end{scriptsize}
-\end{minipage}
-
-\begin{minipage}{\linewidth}
-\begin{scriptsize}
-\begin{lstlisting}[
-    language=C, caption={Implementation of the transition rate
-      functions in the \code{SIR} model for the transitions in
-      Eq.~\eqref{eq:SIR} between the susceptible and infected
-      compartments.  The enumeration declarations are used to name the
-      variable offsets and facilitate extraction of the values from
-      the various data vectors.}, label={lst:trSIR} , frame=single]
-
-  /* Offset in integer compartment state vector */
-  enum {S, I, R};
-
-  /* Offsets in global data (gdata) to parameters in the model */
-  enum {BETA, GAMMA};
-
-  /* susceptible to infected: S -> I */
-  double SIR_S_to_I(const int *u, const double *v, const double *ldata,
-                    const double *gdata, double t)
-  {
-      const double S_n = u[S];
-      const double I_n = u[I];
-      const double n = S_n + I_n + u[R];
-
-      if (n > 0.0)
-          return (gdata[BETA] * S_n * I_n) / n;
-      return 0.0;
-  }
-
-  /* infected to susceptible: I -> S */
-  double SIR_I_to_S(const int *u, const double *v, const double *ldata,
-                    const double *gdata, double t)
-  {
-      return gdata[GAMMA] * u[I];
-  }
-\end{lstlisting}
-
-\begin{lstlisting}[
-      language=C, caption={Implementation of the post time step
-        function in the \code{SIR} model.  The post time step function
-        should return a value $>0$ if the node needs to recalculate
-        the transition rates for the node, a value (error code) $<0$
-        if an error is detected, or otherwise $0$.  Since the post
-        time step function for the \code{SIR} model does not make any
-        changes to a node, it always return $0$.}, label={lst:ptsSIR}
-      ,frame=single]
-
-  int SIR_post_time_step(double *v_new, const int *u, const double *v,
-                         const double *ldata, const double *gdata,
-                         int node, double t)
-  {
-      return 0;
-  }
-\end{lstlisting}
-\end{scriptsize}
-\end{minipage}
-
-\clearpage
-
-\subsection{Illustration of scheduled events}
+\section{Illustration of scheduled events}
+\label{sec:illustration-scheduled-events}
 
 This section illustrates how the scheduled events for the
 \code{SISe3\_sp} model are specified
@@ -2312,6 +2247,84 @@ Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\re
     operation in step \textit{iv}.  $^\ddag$\code{proportion} is not
     used when $n > 0$.  \label{fig:external:shift}}
 \end{figure}
+
+\clearpage
+
+\section[C code for the SIR model]{\proglang{C} code for the \code{SIR} model}
+\label{sec:C-code-SIR}
+
+\begin{minipage}{\linewidth}
+\begin{scriptsize}
+  \begin{lstlisting}[
+      language=C, caption={Implementation of the function to init and
+        run a simulation with the \code{SIR} model},
+      label={lst:SIRrun}, frame=single]
+  SEXP SIR_run(SEXP model, SEXP threads, SEXP seed)
+  {
+      TRFun tr_fun[] = {&SIR_S_to_I, &SIR_I_to_S};
+
+      return SimInf_run(model, threads, seed, tr_fun, &SISe3_post_time_step);
+  }
+\end{lstlisting}
+\end{scriptsize}
+\end{minipage}
+
+\begin{minipage}{\linewidth}
+\begin{scriptsize}
+\begin{lstlisting}[
+    language=C, caption={Implementation of the transition rate
+      functions in the \code{SIR} model for the transitions in
+      Equation~\ref{eq:SIR} between the susceptible and infected
+      compartments.  The enumeration declarations are used to name the
+      variable offsets and facilitate extraction of the values from
+      the various data vectors.}, label={lst:trSIR} , frame=single]
+
+  /* Offset in integer compartment state vector */
+  enum {S, I, R};
+
+  /* Offsets in global data (gdata) to parameters in the model */
+  enum {BETA, GAMMA};
+
+  /* susceptible to infected: S -> I */
+  double SIR_S_to_I(const int *u, const double *v, const double *ldata,
+                    const double *gdata, double t)
+  {
+      const double S_n = u[S];
+      const double I_n = u[I];
+      const double n = S_n + I_n + u[R];
+
+      if (n > 0.0)
+          return (gdata[BETA] * S_n * I_n) / n;
+      return 0.0;
+  }
+
+  /* infected to susceptible: I -> S */
+  double SIR_I_to_S(const int *u, const double *v, const double *ldata,
+                    const double *gdata, double t)
+  {
+      return gdata[GAMMA] * u[I];
+  }
+\end{lstlisting}
+
+\begin{lstlisting}[
+      language=C, caption={Implementation of the post time step
+        function in the \code{SIR} model.  The post time step function
+        should return a value $>0$ if the node needs to recalculate
+        the transition rates for the node, a value (error code) $<0$
+        if an error is detected, or otherwise $0$.  Since the post
+        time step function for the \code{SIR} model does not make any
+        changes to a node, it always return $0$.}, label={lst:ptsSIR}
+      ,frame=single]
+
+  int SIR_post_time_step(double *v_new, const int *u, const double *v,
+                         const double *ldata, const double *gdata,
+                         int node, double t)
+  {
+      return 0;
+  }
+\end{lstlisting}
+\end{scriptsize}
+\end{minipage}
 
 \end{document}
 
