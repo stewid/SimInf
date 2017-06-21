@@ -1614,7 +1614,7 @@ options(continue = "+  ")
 plot_nodes <- function(x) {
   wnp <- prevalence(x, type = "wnp") > 0
   opar <- par(mfrow = c(3, 6), mar = c(2, 0.3, 0.3, 0.3))
-  on.exit(opar)
+  on.exit(par(opar))
   for(i in seq(1, dim(wnp)[2], length.out = 18)) {
     Si <- which(!wnp[, i])
     Ii <- which(wnp[, i])
