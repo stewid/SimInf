@@ -139,7 +139,7 @@ infections that are transferred by direct contact between individuals
 
 In this work, we present an efficient and flexible framework for
 data-driven spatio-temporal disease spread modeling, designed to
-efficiently incorporate large volumes of population demographics- and
+efficiently incorporate large volumes of population demographics and
 temporal network data.  This allows the user to asses the spread of,
 for example, endemic diseases in the cattle population, in national
 scale simulations \citep{Bauer2016}.  We have developed the
