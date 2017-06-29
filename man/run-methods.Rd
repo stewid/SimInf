@@ -41,4 +41,5 @@ result <- run(model, threads = 1, seed = 1)
 ## Plot the proportion of susceptible, infected and recovered
 ## individuals.
 plot(result)
+## we are in the new version
 }

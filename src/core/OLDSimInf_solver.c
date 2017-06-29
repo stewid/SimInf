@@ -28,7 +28,6 @@
 #endif
 
 #include "SimInf.h"
-#include "binheap.h"
 
 /**
  * Event types
@@ -178,8 +177,6 @@ typedef struct SimInf_thread_args
                          *   ok. */
     gsl_rng *rng;       /**< The random number generator. */
 
-    int *reactHeap;      /**< The reaction heap */
-    int reactHeapSize;
 
     /*** Scheduled events ***/
     scheduled_events *E1; /**< E1 events to process. */
@@ -535,7 +532,7 @@ static int sample_select(
          * the Nstates */
         memcpy(u_tmp, &u[node * Nc], Nc * sizeof(int));
         while (n > 0) {
-	    double cum, rand = gsl_rng_uniform_pos(rng) * Nindividuals;
+            double cum, rand = gsl_rng_uniform_pos(rng) * Nindividuals;
 
             /* Determine from which compartment the individual was
              * sampled from */
@@ -553,48 +550,6 @@ static int sample_select(
     }
 
     return 0;
-}
-
-/**
- * Calculate update of waiting times, including sleeping times.
- *
- * @param time, time vector.
- * @param infTime, vector of with information about time before rate was set to zero.
- * @param tt, time until next time step.
- * @param old_rate, rate before recalibration.
- * @param new_rate, rate after event.
- * @param seed, current value of seed in heap.
- */
-void calcTimes(double* time, double* infTime, double tt, double old_rate,
-	       double new_rate, seeds seed)
-{
-  double oldtime = time[0];
-
-  if (isinf(oldtime)) {
-
-    if (infTime[0] == 0) { // Waking up first time
-      time[0] = -log(1.0 - erand48(seed)) / new_rate + tt; // erand48 -> gsl_rng
-    } else { // Waking up the 2nd..nth time
-      if (new_rate > 0.0) {
-	time[0] = tt + (infTime[0] / new_rate);
-      }
-    }
-    wakeups++;
-  }
-  else {
-    if (new_rate >= DBL_MIN) {
-      if (time[0] == tt) // Regular update of current event
-	time[0] = -log(1.0 - erand48(seed)) / new_rate + tt;
-      else
-	// Regular update of dependent events (rescaling)
-	time[0] = ((old_rate / new_rate) * (time[0] - tt)) + tt;
-      updates++;
-    } else { // Next event time set to infinity
-
-      infTime[0] = (oldtime - tt) * old_rate;
-      time[0] = INFINITY;
-    }
-  }
 }
 
 /**
@@ -1105,46 +1060,44 @@ int SimInf_run_solver(
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
-      errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-      goto cleanup;
+        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        goto cleanup;
     }
     gsl_rng_set(rng, seed);
 
     sim_args = calloc(n_thread, sizeof(SimInf_thread_args));
     if (!sim_args) {
-      errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-      goto cleanup;
+        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        goto cleanup;
     }
 
-
     for (i = 0; i < n_thread; i++) {
-       /* Random number generator */
-       sim_args[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
-       if (!sim_args[i].rng) {
-           errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-           goto cleanup;
-       }
-       gsl_rng_set(sim_args[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
-    
-       /* Constants */
-       sim_args[i].Ntot = Nn;
-       sim_args[i].Ni = i * (Nn / n_thread);
-       sim_args[i].Nn = Nn / n_thread;
-       if (i == (n_thread - 1))
-           sim_args[i].Nn += (Nn % n_thread);
-       sim_args[i].Nt = Nt;
-       sim_args[i].Nc = Nc;
-       sim_args[i].Nd = Nd;
-       sim_args[i].Nld = Nld;
-       
+        /* Random number generator */
+        sim_args[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
+        if (!sim_args[i].rng) {
+            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+        gsl_rng_set(sim_args[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
 
-      /* Sparse matrices */
-      sim_args[i].irG = irG;
-      sim_args[i].jcG = jcG;
-      sim_args[i].irS = irS;
-      sim_args[i].jcS = jcS;
-      sim_args[i].prS = prS;
-      sim_args[i].irE = irE;
+        /* Constants */
+        sim_args[i].Ntot = Nn;
+        sim_args[i].Ni = i * (Nn / n_thread);
+        sim_args[i].Nn = Nn / n_thread;
+        if (i == (n_thread - 1))
+            sim_args[i].Nn += (Nn % n_thread);
+        sim_args[i].Nt = Nt;
+        sim_args[i].Nc = Nc;
+        sim_args[i].Nd = Nd;
+        sim_args[i].Nld = Nld;
+
+        /* Sparse matrices */
+        sim_args[i].irG = irG;
+        sim_args[i].jcG = jcG;
+        sim_args[i].irS = irS;
+        sim_args[i].jcS = jcS;
+        sim_args[i].prS = prS;
+        sim_args[i].irE = irE;
         sim_args[i].jcE = jcE;
 
         /* Callbacks */
