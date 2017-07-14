@@ -114,7 +114,7 @@ typedef struct SimInf_thread_args
 
     /*** Callbacks ***/
     TRFun *tr_fun;  /**< Vector of function pointers to
-                     *   transition rate functions */
+                    n *   transition rate functions */
     PTSFun pts_fun; /**< Callback after each time step */
 
     /*** Keep track of time ***/
@@ -176,10 +176,20 @@ typedef struct SimInf_thread_args
                          *   node. */
     int errcode;        /**< The error state of the thread. 0 if
                          *   ok. */
-    gsl_rng *rng;       /**< The random number generator. */
 
-    int *reactHeap;      /**< The reaction heap */
-    int reactHeapSize;
+  gsl_rng *rng_samples;
+  /* right now it's rng[-][-], therefor it need to be pointer to pointer to pointer */
+  gsl_rng ***rng;       /**< The random number generator. (when using AEM, this is a vector and SEEDS!)*/
+
+  /*** AEM solver specific ***/
+  int **reactHeap;      /**< The reaction heap (AEM solver) */
+  int reactHeapSize;
+
+  int **reactNode;
+
+  double **reactTimes, **reactInf; /**< holds the times (AEM) */
+    
+
 
     /*** Scheduled events ***/
     scheduled_events *E1; /**< E1 events to process. */
@@ -288,8 +298,9 @@ static void SimInf_free_events(scheduled_events *e)
 static void SimInf_free_args(SimInf_thread_args *sa)
 {
     if (sa) {
-        if (sa->rng)
-            gsl_rng_free(sa->rng);
+      if (sa->rng_samples){ /* needs to be re-done, because we fill multiple rngs in each thread, not only one. */
+            gsl_rng_free(sa->rng_samples);
+      }
         sa->rng = NULL;
         if (sa->t_rate)
             free(sa->t_rate);
@@ -312,6 +323,20 @@ static void SimInf_free_args(SimInf_thread_args *sa)
         if (sa->E2)
             SimInf_free_events(sa->E2);
         sa->E2 = NULL;
+	/* TODO! */
+	/*if(sa->reactHeap)
+	  free(sa->reactHeap);
+	sa->reactHeap = NULL;
+	if(sa->reactInf)
+	  free(reactInf);
+	sa->reactInf = NULL;
+	if(sa->reactNode)
+	  free(reactNode);
+	sa->reactNode = NULL;
+	if(sa->reactTimes)
+	  free(reactTimes);
+	sa->reactTimes = NULL;
+	*/
     }
 }
 
@@ -396,7 +421,7 @@ static int SimInf_split_events(
             E2_i = 0;
         }
     }
-
+    
     for (i = 0; i < len; i++) {
         int j, k;
         scheduled_events *e;
@@ -563,32 +588,32 @@ static int sample_select(
  * @param tt, time until next time step.
  * @param old_rate, rate before recalibration.
  * @param new_rate, rate after event.
- * @param seed, current value of seed in heap.
+ * @param rng, current value of rng in heap.
  */
 void calcTimes(double* time, double* infTime, double tt, double old_rate,
-	       double new_rate, seeds seed)
+	       double new_rate, gsl_rng* rng)
 {
   double oldtime = time[0];
 
   if (isinf(oldtime)) {
 
     if (infTime[0] == 0) { // Waking up first time
-      time[0] = -log(1.0 - erand48(seed)) / new_rate + tt; // erand48 -> gsl_rng
+      time[0] = -log(gsl_rng_uniform_pos(rng)) / new_rate + tt; // erand48 -> gsl_rng
     } else { // Waking up the 2nd..nth time
       if (new_rate > 0.0) {
 	time[0] = tt + (infTime[0] / new_rate);
       }
     }
-    wakeups++;
+    //wakeups++; //debuggin purposes 
   }
   else {
     if (new_rate >= DBL_MIN) {
       if (time[0] == tt) // Regular update of current event
-	time[0] = -log(1.0 - erand48(seed)) / new_rate + tt;
+	time[0] = -log(gsl_rng_uniform_pos(rng)) / new_rate + tt;
       else
 	// Regular update of dependent events (rescaling)
 	time[0] = ((old_rate / new_rate) * (time[0] - tt)) + tt;
-      updates++;
+      //updates++; // same, debuggin ...
     } else { // Next event time set to infinity
 
       infTime[0] = (oldtime - tt) * old_rate;
@@ -619,25 +644,58 @@ static int SimInf_solver()
              * every node. Store the sum of the transition rates in
              * each node in sum_t_rate. Moreover, initialize time in
              * each node. */
-            for (node = 0; node < sa.Nn; node++) {
-                int j;
+            /* for (node = 0; node < sa.Nn; node++) { */
+            /*     int j; */
 
-                sa.sum_t_rate[node] = 0.0;
-                for (j = 0; j < sa.Nt; j++) {
-                    const double rate = (*sa.tr_fun[j])(
-                            &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-                            &sa.ldata[node * sa.Nld], sa.gdata, sa.tt);
+            /*     sa.sum_t_rate[node] = 0.0; */
+            /*     for (j = 0; j < sa.Nt; j++) { */
+            /*         const double rate = (*sa.tr_fun[j])( */
+            /*                 &sa.u[node * sa.Nc], &sa.v[node * sa.Nd], */
+            /*                 &sa.ldata[node * sa.Nld], sa.gdata, sa.tt); */
 
-                    sa.t_rate[node * sa.Nt + j] = rate;
-                    sa.sum_t_rate[node] += rate;
-                    if (!isfinite(rate) || rate < 0.0)
-                        sa.errcode = SIMINF_ERR_INVALID_RATE;
-                }
+            /*         sa.t_rate[node * sa.Nt + j] = rate; */
+            /*         sa.sum_t_rate[node] += rate; */
+            /*         if (!isfinite(rate) || rate < 0.0) */
+            /*             sa.errcode = SIMINF_ERR_INVALID_RATE; */
+            /*     } */
 
-                sa.t_time[node] = sa.tt;
-            }
+                
 
-            *&sim_args[i] = sa;
+	    /* Calculate the propensity for every reaction 
+	       Store the sum of the reaction intensities in each
+	       subvolume in srrate. */
+	    for (node = 0; node < sa.Nn; node++) {
+	      int j;
+
+	      sa.sum_t_rate[node] = 0.0;
+	      for (j = 0; j < sa.Nt; j++){
+		const double rate = (*sa.tr_fun[j])(&sa.u[node * sa.Nc],
+						    &sa.v[node * sa.Nd],
+						    &sa.ldata[node * sa.Nld],
+						    sa.gdata,
+						    sa.tt);
+
+		sa.t_rate[node * sa.Nt + j] = rate;
+		sa.sum_t_rate[node] += rate;
+		if(!isfinite(rate) || rate < 0.0)
+		  sa.errcode = SIMINF_ERR_INVALID_RATE;
+
+		/* Calculate times to next reaction event */
+		sa.reactTimes[node][j] = -log(gsl_rng_uniform_pos(sa.rng[node][j]))/rate + sa.tt;
+
+		if(sa.reactTimes[node][j] <= 0.0)
+		  sa.reactTimes[node][j] = INFINITY;
+
+		sa.reactHeap[node][j] = sa.reactNode[node][j] = j; /* not sure if this one is correct */
+	      }
+
+	      /* Initialize reaction heap */
+	      initialize_heap(sa.reactTimes[node], sa.reactNode[node], sa.reactHeap[node], sa.reactHeapSize);
+		
+	    }
+	    sa.t_time[node] = sa.tt;
+
+	    *&sim_args[i] = sa;
         }
     }
 
@@ -661,55 +719,106 @@ static int SimInf_solver()
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
                 for (node = 0; node < sa.Nn && !sa.errcode; node++) {
-                    for (;;) {
-                        double cum, rand, tau, delta = 0.0;
-                        int j, tr;
+		  for (;;) {
+		    int j,tr; /*tr <- re in urdme:aem.c */
 
-                        /* 1a) Compute time to next event for this
-                         * node. */
-                        if (sa.sum_t_rate[node] <= 0.0) {
-                            sa.t_time[node] = sa.next_day;
-                            break;
-                        }
-                        tau = -log(gsl_rng_uniform_pos(sa.rng)) /
-                            sa.sum_t_rate[node];
-                        if ((tau + sa.t_time[node]) >= sa.next_day) {
-                            sa.t_time[node] = sa.next_day;
-                            break;
-                        }
-                        sa.t_time[node] += tau;
+		    /* AEM solver */
+		    
+		    /* determine next event */
+		    sa.tt = sa.reactTimes[node][0];
+		    if(sa.tt >= sa.next_day || isinf(sa.tt)){
+		      sa.t_time[node] = sa.next_day;
+		      break;
+		    }
 
-                        /* 1b) Determine the transition that did occur
-                         * (direct SSA). */
-                        rand = gsl_rng_uniform_pos(sa.rng) * sa.sum_t_rate[node];
-                        for (tr = 0, cum = sa.t_rate[node * sa.Nt];
-                             tr < sa.Nt && rand > cum;
-                             tr++, cum += sa.t_rate[node * sa.Nt + tr]);
+		    sa.t_time[node] = sa.tt;
 
-                        /* 1c) Update the state of the node */
-                        for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
-                            sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
-                            if (sa.u[node * sa.Nc + sa.irS[j]] < 0)
-                                sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                        }
+		    /* extract reaction re */
+		    tr = sa.reactNode[node][0]%sa.Nt;
+		    
+		    /* Update the state of the node */
+		    /* 1c) Update the state of the node */
+		    for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
+		      sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
+		      if (sa.u[node * sa.Nc + sa.irS[j]] < 0)
+			sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+		    }
+		    
+		    /* 1d) Recalculate sum_t_rate[node] using
+		     * dependency graph. */
+		    for (j = sa.jcG[tr]; j < sa.jcG[tr + 1]; j++) {
+		      const double old = sa.t_rate[node * sa.Nt + sa.irG[j]];
+		      const double rate = (*sa.tr_fun[sa.irG[j]])(
+								  &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
+								  &sa.ldata[node * sa.Nld], sa.gdata,
+								  sa.t_time[node]);
+		      
+		      sa.t_rate[node * sa.Nt + sa.irG[j]] = rate;
+		      //delta += rate - old;
+		      if (!isfinite(rate) || rate < 0.0)
+			sa.errcode = SIMINF_ERR_INVALID_RATE;
+		      /* update times and reorder the heap */
+		      calcTimes(&sa.reactTimes[node][sa.reactHeap[node][j]],
+				&sa.reactInf[node][j],
+				sa.tt,
+				old,
+				rate,
+				sa.rng[node][j]);
+		      update(sa.reactHeap[node][j], sa.reactTimes[node], sa.reactNode[node],
+			     sa.reactHeap[node], sa.reactHeapSize);
+		      
+		    }
+		    /* END AEM solver */
 
-                        /* 1d) Recalculate sum_t_rate[node] using
-                         * dependency graph. */
-                        for (j = sa.jcG[tr]; j < sa.jcG[tr + 1]; j++) {
-                            const double old = sa.t_rate[node * sa.Nt + sa.irG[j]];
-                            const double rate = (*sa.tr_fun[sa.irG[j]])(
-                                &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-                                &sa.ldata[node * sa.Nld], sa.gdata,
-                                sa.t_time[node]);
+		    /* double cum, rand, tau, delta = 0.0; */
+		    /* //int j, tr; */
+		    
+                    /*     /\* 1a) Compute time to next event for this */
+                    /*      * node. *\/ */
+                    /*     if (sa.sum_t_rate[node] <= 0.0) { */
+                    /*         sa.t_time[node] = sa.next_day; */
+                    /*         break; */
+                    /*     } */
+                    /*     tau = -log(gsl_rng_uniform_pos(sa.rng)) / */
+                    /*         sa.sum_t_rate[node]; */
+                    /*     if ((tau + sa.t_time[node]) >= sa.next_day) { */
+                    /*         sa.t_time[node] = sa.next_day; */
+                    /*         break; */
+                    /*     } */
+                    /*     sa.t_time[node] += tau; */
 
-                            sa.t_rate[node * sa.Nt + sa.irG[j]] = rate;
-                            delta += rate - old;
-                            if (!isfinite(rate) || rate < 0.0)
-                                sa.errcode = SIMINF_ERR_INVALID_RATE;
-                        }
-                        sa.sum_t_rate[node] += delta;
-                    }
-                }
+                    /*     /\* 1b) Determine the transition that did occur */
+                    /*      * (direct SSA). *\/ */
+                    /*     rand = gsl_rng_uniform_pos(sa.rng) * sa.sum_t_rate[node]; */
+                    /*     for (tr = 0, cum = sa.t_rate[node * sa.Nt]; */
+                    /*          tr < sa.Nt && rand > cum; */
+                    /*          tr++, cum += sa.t_rate[node * sa.Nt + tr]); */
+
+                    /*     /\* 1c) Update the state of the node *\/ */
+                    /*     for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) { */
+                    /*         sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j]; */
+                    /*         if (sa.u[node * sa.Nc + sa.irS[j]] < 0) */
+                    /*             sa.errcode = SIMINF_ERR_NEGATIVE_STATE; */
+                    /*     } */
+
+                    /*     /\* 1d) Recalculate sum_t_rate[node] using */
+                    /*      * dependency graph. *\/ */
+                    /*     for (j = sa.jcG[tr]; j < sa.jcG[tr + 1]; j++) { */
+                    /*         const double old = sa.t_rate[node * sa.Nt + sa.irG[j]]; */
+                    /*         const double rate = (*sa.tr_fun[sa.irG[j]])( */
+                    /*             &sa.u[node * sa.Nc], &sa.v[node * sa.Nd], */
+                    /*             &sa.ldata[node * sa.Nld], sa.gdata, */
+                    /*             sa.t_time[node]); */
+
+                    /*         sa.t_rate[node * sa.Nt + sa.irG[j]] = rate; */
+                    /*         delta += rate - old; */
+                    /*         if (!isfinite(rate) || rate < 0.0) */
+                    /*             sa.errcode = SIMINF_ERR_INVALID_RATE; */
+                    /*     } */
+                    /*    sa.sum_t_rate[node] += delta; */
+                    /*}*/
+		  }
+		}
 
                 /* (2) Incorporate all scheduled E1 events */
                 while (sa.E1_index < e1.len &&
@@ -732,7 +841,7 @@ static int SimInf_solver()
                         sa.errcode = sample_select(
                             sa.irE, sa.jcE, sa.Nc, uu, e1.node[j],
                             e1.select[j], e1.n[j], e1.proportion[j],
-                            sa.individuals, sa.u_tmp, sa.rng);
+                            sa.individuals, sa.u_tmp, sa.rng_samples);
 
                         if (sa.errcode)
                             break;
@@ -771,8 +880,8 @@ static int SimInf_solver()
                                  * compartments in node */
                                 uu[kk] -= sa.individuals[jj];
                                 if (uu[kk] < 0) {
-                                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                    break;
+				  sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+				  break;
                                 }
                             }
                         }
@@ -784,7 +893,8 @@ static int SimInf_solver()
                 }
 
                 *&sim_args[i] = sa;
-            }
+	    }
+	    
 
             #pragma omp barrier
 
@@ -802,7 +912,7 @@ static int SimInf_solver()
                         sa.irE, sa.jcE, sa.Nc, uu, e2.node[sa.E2_index],
                         e2.select[sa.E2_index], e2.n[sa.E2_index],
                         e2.proportion[sa.E2_index], sa.individuals,
-                        sa.u_tmp, sa.rng);
+                        sa.u_tmp, sa.rng_samples);
 
                     if (sa.errcode)
                         break;
@@ -1045,8 +1155,8 @@ int SimInf_run_solver(
     const double *proportion, const int *select, const int *shift,
     int Nthread, unsigned long int seed, TRFun *tr_fun, PTSFun pts_fun)
 {
-    int i, errcode;
-    gsl_rng *rng = NULL;
+  int i,errcode;
+  gsl_rng *rng = NULL;
 
 #ifdef _OPENMP
     if (Nthread < 1)
@@ -1108,7 +1218,8 @@ int SimInf_run_solver(
       errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
       goto cleanup;
     }
-    gsl_rng_set(rng, seed);
+    gsl_rng_set(rng,seed);
+
 
     sim_args = calloc(n_thread, sizeof(SimInf_thread_args));
     if (!sim_args) {
@@ -1118,36 +1229,73 @@ int SimInf_run_solver(
 
 
     for (i = 0; i < n_thread; i++) {
-       /* Random number generator */
-       sim_args[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
-       if (!sim_args[i].rng) {
-           errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-           goto cleanup;
-       }
-       gsl_rng_set(sim_args[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
-    
-       /* Constants */
-       sim_args[i].Ntot = Nn;
-       sim_args[i].Ni = i * (Nn / n_thread);
-       sim_args[i].Nn = Nn / n_thread;
-       if (i == (n_thread - 1))
-           sim_args[i].Nn += (Nn % n_thread);
-       sim_args[i].Nt = Nt;
-       sim_args[i].Nc = Nc;
-       sim_args[i].Nd = Nd;
-       sim_args[i].Nld = Nld;
+
+      
+      sim_args[i].rng_samples = gsl_rng_alloc(gsl_rng_mt19937);
+      if (!sim_args[i].rng_samples) {
+	errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+	goto cleanup;
+      }
+      gsl_rng_set(sim_args[i].rng_samples, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+      
+
+
+      /* Constants */
+      sim_args[i].Ntot = Nn;
+      sim_args[i].Ni = i * (Nn / n_thread);
+      sim_args[i].Nn = Nn / n_thread;
+      if (i == (n_thread - 1))
+	sim_args[i].Nn += (Nn % n_thread);
+      sim_args[i].Nt = Nt;
+      sim_args[i].Nc = Nc;
+      sim_args[i].Nd = Nd;
+      sim_args[i].Nld = Nld;
+
+      /* AEM heaps */	  
+      /* Binary heap storing all reaction events */
+      sim_args[i].reactHeapSize = Nt; /* we have one for each node. Heap is thus only the size of the # transitions */
+
+      /* making them 2d, first init for thread, then for each node */
+      sim_args[i].reactNode = (int **)malloc(sim_args[i].Nn*sizeof(int*));
+      sim_args[i].reactHeap = (int **)malloc(sim_args[i].Nn*sizeof(int*));
+      sim_args[i].reactTimes = (double **)malloc(sim_args[i].Nn*sizeof(double*));
+      sim_args[i].reactInf = (double **)malloc(sim_args[i].Nn*sizeof(double*));
+
+      // seeds in aem.c /urdme
+      sim_args[i].rng = (gsl_rng ***)malloc(sim_args[i].Nn*sizeof(gsl_rng**));
        
+      for(int node = 0; node < sim_args[i].Nn; node++){
+	/* init node level */
+	sim_args[i].reactNode[node] = (int *)malloc(Nt*sizeof(int));
+	sim_args[i].reactHeap[node] = (int *)malloc(Nt*sizeof(int));
+	sim_args[i].reactTimes[node] = (double *)malloc(Nt*sizeof(double));
+	sim_args[i].reactInf[node] = (double *)calloc(Nt,sizeof(double)); /* init with zero in elements */
+	
+	sim_args[i].rng[node] = (gsl_rng **)malloc(Nt*sizeof(gsl_rng*));
+	for(int trans = 0; trans < Nt; trans++){
+	  /* Random number generator */
+	  sim_args[i].rng[node][trans] = gsl_rng_alloc(gsl_rng_mt19937);
+	  if (!sim_args[i].rng[node][trans]) {
+	    errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+	    goto cleanup;
+	  }
+	  gsl_rng_set(sim_args[i].rng[node][trans], gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+	}
+      }
+    
 
-      /* Sparse matrices */
-      sim_args[i].irG = irG;
-      sim_args[i].jcG = jcG;
-      sim_args[i].irS = irS;
-      sim_args[i].jcS = jcS;
-      sim_args[i].prS = prS;
-      sim_args[i].irE = irE;
-        sim_args[i].jcE = jcE;
+       /* end of new AEM definitions */
 
-        /* Callbacks */
+       /* Sparse matrices */
+       sim_args[i].irG = irG;
+       sim_args[i].jcG = jcG;
+       sim_args[i].irS = irS;
+       sim_args[i].jcS = jcS;
+       sim_args[i].prS = prS;
+       sim_args[i].irE = irE;
+       sim_args[i].jcE = jcE;
+
+       /* Callbacks */
         sim_args[i].tr_fun = tr_fun;
         sim_args[i].pts_fun = pts_fun;
 
@@ -1238,36 +1386,39 @@ int SimInf_run_solver(
 
     errcode = SimInf_solver();
 
-cleanup:
+ cleanup:
     if (uu) {
-        free(uu);
-        uu = NULL;
+      free(uu);
+      uu = NULL;
     }
 
     if (vv_1) {
-        free(vv_1);
-        vv_1 = NULL;
+      free(vv_1);
+      vv_1 = NULL;
     }
 
     if (vv_2) {
-        free(vv_2);
-        vv_2 = NULL;
+      free(vv_2);
+      vv_2 = NULL;
     }
 
     if (update_node) {
-        free(update_node);
-        update_node = NULL;
+      free(update_node);
+      update_node = NULL;
     }
 
     if (rng)
-        gsl_rng_free(rng);
+      gsl_rng_free(rng);
 
     if (sim_args) {
-        for (i = 0; i < n_thread; i++)
-            SimInf_free_args(&sim_args[i]);
-        free(sim_args);
-        sim_args = NULL;
+      for (i = 0; i < n_thread; i++)
+	SimInf_free_args(&sim_args[i]);
+      free(sim_args);
+      sim_args = NULL;
     }
 
     return errcode;
 }
+
+
+

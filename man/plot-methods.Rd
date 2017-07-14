@@ -90,6 +90,8 @@ Plot \code{\linkS4class{SimInf_events}}
 Plot \code{\linkS4class{SimInf_model}}
 }
 \examples{
+## AEM version ##
+
 ## Create an 'SIR' model with 10 nodes and initialise
 ## it with 99 susceptible individuals and one infected
 ## individual. Let the model run over 100 days.
