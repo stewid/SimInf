@@ -55,6 +55,10 @@ test_objects = $(wildcard tests/*.R)
 valgrind:
 	$(foreach var,$(test_objects),R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < $(var);)
 
+# Temporary test file
+valgrind2:
+	R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < tests/aemTest.R
+
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
 	chmod +x ./configure

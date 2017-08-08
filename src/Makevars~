@@ -1,0 +1,10 @@
+PKG_CPPFLAGS = -I. -Icore -Imisc -Imodels -fopenmp 
+PKG_CFLAGS = -fopenmp -Wall
+PKG_LIBS = -fopenmp -lgsl -lgslcblas 
+
+OBJECTS.misc = misc/SimInf_arg.o \
+               misc/SimInf_forward_euler_linear_decay.o \
+               misc/SimInf_ldata.o \
+               misc/SimInf_local_spread.o
+
+OBJECTS = init.o SimInf.o core/SimInf_solver.o $(OBJECTS.misc) models/SEIR.o models/SIR.o models/SISe.o models/SISe3.o models/SISe3_sp.o models/SISe_sp.o

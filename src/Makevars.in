@@ -1,5 +1,5 @@
 PKG_CPPFLAGS = @PKG_CPPFLAGS@
-PKG_CFLAGS = @PKG_CFLAGS@
+PKG_CFLAGS = @PKG_CFLAGS@ -Wall
 PKG_LIBS = @PKG_LIBS@
 
 OBJECTS.misc = misc/SimInf_arg.o \
@@ -7,4 +7,4 @@ OBJECTS.misc = misc/SimInf_arg.o \
                misc/SimInf_ldata.o \
                misc/SimInf_local_spread.o
 
-OBJECTS = init.o SimInf.o core/SimInf_solver.o $(OBJECTS.misc) @MODELS_OBJ@
+OBJECTS = init.o SimInf.o core/SimInf_solver.o $(OBJECTS.misc) @MODELS_OBJ@ core/binheap.o

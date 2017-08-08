@@ -177,7 +177,7 @@ typedef struct SimInf_thread_args
     int errcode;        /**< The error state of the thread. 0 if
                          *   ok. */
 
-  gsl_rng *rng_samples;
+  gsl_rng **rng_samples;
   /* right now it's rng[-][-], therefor it need to be pointer to pointer to pointer */
   gsl_rng ***rng;       /**< The random number generator. (when using AEM, this is a vector and SEEDS!)*/
 
@@ -1258,13 +1258,7 @@ int SimInf_run_solver(
     for (i = 0; i < n_thread; i++) {
 
       
-      sim_args[i].rng_samples = gsl_rng_alloc(gsl_rng_mt19937);
-      if (!sim_args[i].rng_samples) {
-	errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-	goto cleanup;
-      }
-      gsl_rng_set(sim_args[i].rng_samples, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
-      
+    
 
 
       /* Constants */
@@ -1288,11 +1282,25 @@ int SimInf_run_solver(
       sim_args[i].reactTimes = (double **)malloc(sim_args[i].Nn*sizeof(double*));
       sim_args[i].reactInf = (double **)malloc(sim_args[i].Nn*sizeof(double*));
 
-      // seeds in aem.c /urdme
+
+      /* random generator for sample select (1 per node) */
+      sim_args[i].rng_samples = (gsl_rng **)malloc(sim_args[i].Nn*sizeof(gsl_rng*));
+      /* seeds in aem.c /urdme */
       sim_args[i].rng = (gsl_rng ***)malloc(sim_args[i].Nn*sizeof(gsl_rng**));
        
       for(int node = 0; node < sim_args[i].Nn; node++){
 	/* init node level */
+
+	sim_args[i].rng_samples[node] = gsl_rng_alloc(gsl_rng_mt19937);
+	if (!sim_args[i].rng_samples[node]) {
+	  errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+	  goto cleanup;
+	}
+	gsl_rng_set(sim_args[i].rng_samples[node], gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+      
+
+
+	
 	sim_args[i].reactNode[node] = (int *)malloc(sim_args[i].Nt*sizeof(int));
 	sim_args[i].reactHeap[node] = (int *)malloc(sim_args[i].Nt*sizeof(int));
 	sim_args[i].reactTimes[node] = (double *)malloc(sim_args[i].Nt*sizeof(double));

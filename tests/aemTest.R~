@@ -1,0 +1,81 @@
+library(SimInf)
+
+SIRdemo <- function(inits = c(99,1,0),beta = 0.16, gamma = 0.077, seed = 22, threads = 1, plotResult = F){
+    u0 <- data.frame(S=inits[1], I = inits[2], R = inits[3])
+    tspan <-  seq(1,6*30,by=7)
+    model <- SIR(u0 = u0, tspan = tspan, beta = beta, gamma = gamma)
+    ##model <- demo_model(nodes = 1, days = 1000, model = "SISe")
+    
+    result <- run(model,threads = threads, seed = seed)
+
+    if(plotResult)
+        plot(result, N  =TRUE, spaghetti = TRUE, compartments = c("S","I","R"))
+
+    return(result)
+}
+
+
+SISe3spDemo <- function(){
+    ## load data
+    data("u0_SISe3",package = "SimInf")
+    data("events_SISe3", package = "SimInf")
+    data("nodes", package = "SimInf")
+
+    ## distance matrix
+    d <- distance_matrix(x = nodes$x, y = nodes$y, cutoff = 2500)
+
+    ## tspan
+    tspan <- seq(1,4*365, by= 7)
+
+    ## initialize 
+    set.seed(123)
+    i <- sample(1:1600,160)
+
+    u0_SISe3$I_1[i] <- as.integer(u0_SISe3$S_1[i] * 0.05)
+    u0_SISe3$I_2[i] <- as.integer(u0_SISe3$S_2[i] * 0.05)
+    u0_SISe3$I_3[i] <- as.integer(u0_SISe3$S_3[i] * 0.05)
+    u0_SISe3$S_1[i] <- u0_SISe3$S_1[i] - u0_SISe3$I_1[i]
+    u0_SISe3$S_2[i] <- u0_SISe3$S_2[i] - u0_SISe3$I_2[i]
+    u0_SISe3$S_3[i] <- u0_SISe3$S_3[i] - u0_SISe3$I_3[i]
+
+    ## construct SISe3_sp model object
+    model <- SISe3_sp(u0 = u0_SISe3, tspan = tspan, phi = rep(0,1600),
+                      events = events_SISe3, upsilon_1 = 0.013, upsilon_2 = 0.013,
+                      upsilon_3 = 0.013, gamma_1 = 0.1, gamma_2 = 0.1, gamma_3 = 0.1, alpha = 1,
+                      beta_t1 = 0.095, beta_t2 = 0.012, beta_t3 = 0.1, beta_t4 = 0.15,
+                      end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365, distance = d,
+                      coupling = 0.1)
+
+    return(model)
+    ## run model
+    ##result <- run(model, threads = 1, seed = 1)
+
+    
+
+
+}
+
+SISe3spPlotN <- function(result){
+    N1 <- colSums(susceptible(result, age = 1) + infected(result, age = 1))
+    N2 <- colSums(susceptible(result, age = 2) + infected(result, age = 2))
+    N3 <- colSums(susceptible(result, age = 3) + infected(result, age = 3))
+    opar <- par(mfrow = c(3,1), mar = c(2,5,1,1))
+    plot(N3 ~tspan, ylab = "N", type = "l", bty = "l", lty = 1)
+    plot(N2 ~tspan, ylab = "N", type = "l", bty = "l", lty = 2)
+    plot(N1 ~tspan, ylab = "N", type = "l", bty = "l", lty = 3)
+    mtext("Day", side = 1, line = 1, at = 750)
+    par(opar)
+}
+
+modelParser <- function(){
+    transitions <-  c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R")
+    compartments <- c("S","I","R")
+
+    m <- mparse(transitions, compartments, b= 0.16, g= 0.077)
+    model <- init(m, u0 = cbind(S = 99, I = 1, R = 0), tspan = 1:180)
+
+    result <- run(model, threads = 1, seed = 22)
+    return(list(model,result))
+}
+
+SIRdemo()

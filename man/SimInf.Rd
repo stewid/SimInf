@@ -6,5 +6,6 @@
 \alias{SimInf-package}
 \title{A Framework for Stochastic Disease Spread Simulations}
 \description{
+AEM. v.0.1 
 A Framework for Stochastic Disease Spread Simulations
 }
