@@ -1,6 +1,6 @@
 library(SimInf)
-library(ggplot2)
-library(reshape2)
+##library(ggplot2)
+##library(reshape2)
 
 SIRresult <- function(inits = c(99,1,0),beta = 0.16, gamma = 0.077, seed = 22, threads = 1, plotResult = F){
     u0 <- data.frame(S=inits[1], I = inits[2], R = inits[3])
@@ -103,4 +103,10 @@ modelParser <- function(){
 }
 
 
+## test script
+#SIRresult()
+
+runmodel(1)
+## runmodel(2)
+## runmodel()
 

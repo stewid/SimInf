@@ -177,7 +177,7 @@ typedef struct SimInf_thread_args
     int errcode;        /**< The error state of the thread. 0 if
                          *   ok. */
 
-  gsl_rng *rng_samples;
+  //gsl_rng **rng_samples;
   /* right now it's rng[-][-], therefor it need to be pointer to pointer to pointer */
   gsl_rng ***rng;       /**< The random number generator. (when using AEM, this is a vector and SEEDS!)*/
 
@@ -298,10 +298,7 @@ static void SimInf_free_events(scheduled_events *e)
 static void SimInf_free_args(SimInf_thread_args *sa)
 {
     if (sa) {
-      if (sa->rng_samples){ /* needs to be re-done, because we fill multiple rngs in each thread, not only one. */
-            gsl_rng_free(sa->rng_samples);
-      }
-        sa->rng = NULL;
+
         if (sa->t_rate)
             free(sa->t_rate);
         sa->t_rate = NULL;
@@ -324,21 +321,47 @@ static void SimInf_free_args(SimInf_thread_args *sa)
             SimInf_free_events(sa->E2);
         sa->E2 = NULL;
 	/* TODO! */
-	/*if(sa->reactHeap)
+	int N = sa->Nn;
+	int Nt = sa->Nt;
+	//if (sa->rng_samples){
+	//  for(int i = 0; i < N; i++)
+	//    gsl_rng_free(sa->rng_samples[i]);
+	//  free(sa->rng_samples);
+	//}
+	if(sa->rng){
+	  gsl_rng_free(sa->rng[0][0]);
+	  for(int i = 1; i<N+1; i++)
+	    for(int j = 0; j<Nt; j++)
+	      gsl_rng_free(sa->rng[i][j]);
+	  free(sa->rng);
+	}
+	if(sa->reactHeap){
+	  for(int i = 0; i < N; i++)
+	    free(sa->reactHeap[i]);
 	  free(sa->reactHeap);
-	sa->reactHeap = NULL;
-	if(sa->reactInf)
-	  free(reactInf);
-	sa->reactInf = NULL;
-	if(sa->reactNode)
-	  free(reactNode);
-	sa->reactNode = NULL;
-	if(sa->reactTimes)
-	  free(reactTimes);
-	sa->reactTimes = NULL;
-	*/
+	  sa->reactHeap = NULL;		  
+	}
+	if(sa->reactInf){
+	  for(int i = 0; i < N; i++)
+	    free(sa->reactInf[i]);
+	  free(sa->reactInf);
+	  sa->reactInf = NULL;		  
+	}
+	if(sa->reactNode){
+	  for(int i = 0; i < N; i++)
+	    free(sa->reactNode[i]);
+	  free(sa->reactNode);
+	  sa->reactNode = NULL;		  
+	}
+	if(sa->reactTimes){
+	  for(int i = 0; i < N; i++)
+	    free(sa->reactTimes[i]);
+	  free(sa->reactTimes);
+	  sa->reactTimes = NULL;		  
+	}       
     }
 }
+
 
 
 /**
@@ -485,7 +508,7 @@ cleanup:
  * @param individuals The result of the sampling is stored in the
  *        individuals vector.
  * @param u_tmp Help vector for sampling individuals.
- * @param rng Random number generator.
+ * @param rng Random number generator.  || vector dependent on "nodes" ||
  * @return 0 if Ok, else error code.
  */
 static int sample_select(
@@ -681,7 +704,7 @@ static int SimInf_solver()
 		  sa.errcode = SIMINF_ERR_INVALID_RATE;
 
 		/* Calculate times to next reaction event */
-		sa.reactTimes[node][j] = -log(gsl_rng_uniform_pos(sa.rng[node][j]))/rate + sa.tt;
+		sa.reactTimes[node][j] = -log(gsl_rng_uniform_pos(sa.rng[node+1][j]))/rate + sa.tt;
 
 		if(sa.reactTimes[node][j] <= 0.0)
 		  sa.reactTimes[node][j] = INFINITY;
@@ -767,7 +790,7 @@ static int SimInf_solver()
 				  sa.tt,
 				  old_t_rate,
 				  sa.t_rate[node * sa.Nt + j],
-				  sa.rng[node][j]);
+				  sa.rng[node+1][j]); /* node+1 because of +1 shift of elements */
 			update(sa.reactHeap[node][j], sa.reactTimes[node], sa.reactNode[node],
 			       sa.reactHeap[node], sa.reactHeapSize);
 		      
@@ -790,7 +813,7 @@ static int SimInf_solver()
 				sa.tt,
 				old_t_rate,
 				sa.t_rate[node * sa.Nt + j],
-				sa.rng[node][j]);
+				sa.rng[node+1][j]);
 		      update(sa.reactHeap[node][j], sa.reactTimes[node], sa.reactNode[node],
 			     sa.reactHeap[node], sa.reactHeapSize);
 		    }
@@ -868,7 +891,7 @@ static int SimInf_solver()
                         sa.errcode = sample_select(
                             sa.irE, sa.jcE, sa.Nc, uu, e1.node[j],
                             e1.select[j], e1.n[j], e1.proportion[j],
-                            sa.individuals, sa.u_tmp, sa.rng_samples);
+                            sa.individuals, sa.u_tmp, sa.rng[0][0]);
 
                         if (sa.errcode)
                             break;
@@ -939,7 +962,7 @@ static int SimInf_solver()
                         sa.irE, sa.jcE, sa.Nc, uu, e2.node[sa.E2_index],
                         e2.select[sa.E2_index], e2.n[sa.E2_index],
                         e2.proportion[sa.E2_index], sa.individuals,
-                        sa.u_tmp, sa.rng_samples);
+                        sa.u_tmp, sa.rng[0][0]);
 
                     if (sa.errcode)
                         break;
@@ -1001,7 +1024,7 @@ static int SimInf_solver()
                     } else if (rc > 0 || sa.update_node[node]) {
                         /* Update transition rates */
                         int j = 0;
-                        double delta = 0.0, old_t_rate = sa.sum_t_rate[node];
+                        double delta = 0.0;//LEGACY, old_t_rate = sa.sum_t_rate[node];
 
                         for (; j < sa.Nt; j++) {
                             const double old = sa.t_rate[node * sa.Nt + j];
@@ -1256,17 +1279,6 @@ int SimInf_run_solver(
 
 
     for (i = 0; i < n_thread; i++) {
-
-      
-      sim_args[i].rng_samples = gsl_rng_alloc(gsl_rng_mt19937);
-      if (!sim_args[i].rng_samples) {
-	errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-	goto cleanup;
-      }
-      gsl_rng_set(sim_args[i].rng_samples, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
-      
-
-
       /* Constants */
       sim_args[i].Ntot = Nn;
       sim_args[i].Ni = i * (Nn / n_thread);
@@ -1288,29 +1300,51 @@ int SimInf_run_solver(
       sim_args[i].reactTimes = (double **)malloc(sim_args[i].Nn*sizeof(double*));
       sim_args[i].reactInf = (double **)malloc(sim_args[i].Nn*sizeof(double*));
 
-      // seeds in aem.c /urdme
-      sim_args[i].rng = (gsl_rng ***)malloc(sim_args[i].Nn*sizeof(gsl_rng**));
-       
+
+      /* random generator for sample select (1 per node) */
+      //sim_args[i].rng_samples = (gsl_rng **)malloc(sim_args[i].Nn*sizeof(gsl_rng*));
+      /* seeds in aem.c /urdme */
+      sim_args[i].rng = (gsl_rng ***)malloc((1+sim_args[i].Nn)*sizeof(gsl_rng**));
+      
+      /* Reserve 1 element for random samling of induvidual movement */
+      sim_args[i].rng[0] = (gsl_rng **)malloc(sizeof(gsl_rng*));
+      sim_args[i].rng[0][0] = gsl_rng_alloc(gsl_rng_mt19937);
+      if(!sim_args[i].rng[0][0]){
+	errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+	goto cleanup;
+      }
+      gsl_rng_set(sim_args[i].rng[0][0], gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+	
       for(int node = 0; node < sim_args[i].Nn; node++){
 	/* init node level */
+
+	/*
+	  sim_args[i].rng_samples[node] = gsl_rng_alloc(gsl_rng_mt19937);
+	  if (!sim_args[i].rng_samples[node]) {
+	  errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+	  goto cleanup;
+	  }
+	  gsl_rng_set(sim_args[i].rng_samples[node], gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+      	*/
+	
 	sim_args[i].reactNode[node] = (int *)malloc(sim_args[i].Nt*sizeof(int));
 	sim_args[i].reactHeap[node] = (int *)malloc(sim_args[i].Nt*sizeof(int));
 	sim_args[i].reactTimes[node] = (double *)malloc(sim_args[i].Nt*sizeof(double));
 	sim_args[i].reactInf[node] = (double *)malloc(sim_args[i].Nt*sizeof(double));
 	
-	
-	sim_args[i].rng[node] = (gsl_rng **)malloc(Nt*sizeof(gsl_rng*));
+	/* the first element in the random number generator is used in sample_select */
+	sim_args[i].rng[node+1] = (gsl_rng **)malloc(Nt*sizeof(gsl_rng*));
 	for(int trans = 0; trans < Nt; trans++){
 	  /* init reactInf with zero elements */
 	  sim_args[i].reactInf[node][trans] = 0.0;
 
 	  /* Random number generator */
-	  sim_args[i].rng[node][trans] = gsl_rng_alloc(gsl_rng_mt19937);
-	  if (!sim_args[i].rng[node][trans]) {
+	  sim_args[i].rng[node+1][trans] = gsl_rng_alloc(gsl_rng_mt19937);
+	  if (!sim_args[i].rng[node+1][trans]) {
 	    errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
 	    goto cleanup;
 	  }
-	  gsl_rng_set(sim_args[i].rng[node][trans], gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+	  gsl_rng_set(sim_args[i].rng[node+1][trans], gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
 	}
       }
     

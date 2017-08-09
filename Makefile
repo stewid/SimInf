@@ -57,7 +57,7 @@ valgrind:
 
 # Temporary test file
 valgrind2:
-	R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < tests/aemTest.R
+	R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < tests/valgrindAEM.R
 
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
