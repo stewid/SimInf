@@ -328,6 +328,7 @@ static void SimInf_free_args(SimInf_thread_args *sa)
 	//    gsl_rng_free(sa->rng_samples[i]);
 	//  free(sa->rng_samples);
 	//}
+	/*
 	if(sa->rng){
 	  gsl_rng_free(sa->rng[0][0]);
 	  for(int i = 1; i<N+1; i++)
@@ -335,6 +336,7 @@ static void SimInf_free_args(SimInf_thread_args *sa)
 	      gsl_rng_free(sa->rng[i][j]);
 	  free(sa->rng);
 	}
+	*/
 	if(sa->reactHeap){
 	  for(int i = 0; i < N; i++)
 	    free(sa->reactHeap[i]);
@@ -517,7 +519,7 @@ static int sample_select(
     int *individuals, int *u_tmp, gsl_rng *rng)
 {
     int i, Nstates, Nindividuals = 0, Nkinds = 0;
-
+    
     /* Clear vector with number of sampled individuals */
     memset(individuals, 0, Nc * sizeof(int));
 
@@ -684,13 +686,11 @@ static int SimInf_solver()
 
                 
 
-	    /* Calculate the propensity for every reaction 
-	       Store the sum of the reaction intensities in each
-	       subvolume in srrate. */
+	    /* Calculate the propensity for every reaction*/
 	    for (node = 0; node < sa.Nn; node++) {
 	      int j;
 
-	      sa.sum_t_rate[node] = 0.0;
+	      //sa.sum_t_rate[node] = 0.0;
 	      for (j = 0; j < sa.Nt; j++){
 		const double rate = (*sa.tr_fun[j])(&sa.u[node * sa.Nc],
 						    &sa.v[node * sa.Nd],
@@ -699,7 +699,7 @@ static int SimInf_solver()
 						    sa.tt);
 
 		sa.t_rate[node * sa.Nt + j] = rate;
-		sa.sum_t_rate[node] += rate;
+		//sa.sum_t_rate[node] += rate;
 		if(!isfinite(rate) || rate < 0.0)
 		  sa.errcode = SIMINF_ERR_INVALID_RATE;
 
@@ -747,36 +747,39 @@ static int SimInf_solver()
 		    double old_t_rate,rate;
 
 
+
 		    /* AEM solver */
 		    
-		    /* determine next event */
-		    sa.tt = sa.reactTimes[node][0];
-		    if(sa.tt >= sa.next_day || isinf(sa.tt)){
+		    /* time until next reaction */
+		    // sa.tt = sa.reactTimes[node][0];
+		    sa.t_time[node] = sa.reactTimes[node][0];
+
+		    /* If time is past next day break */
+		    if(sa.t_time[node] >= sa.next_day || isinf(sa.t_time[node])){
 		      sa.t_time[node] = sa.next_day;
 		      break;
 		    }
 
-		    sa.t_time[node] = sa.tt;
+		    //sa.t_time[node] = sa.tt;
 
-		    /* extract reaction re */
+		    /* Determine which transistion that occur */
 		    tr = sa.reactNode[node][0]%sa.Nt;
 		    
-		    /* Update the state of the node */
+
 		    /* 1c) Update the state of the node */
-		    for (i = sa.jcS[tr]; i < sa.jcS[tr + 1]; i++) {
-		      sa.u[node * sa.Nc + sa.irS[i]] += sa.prS[i];
-		      if (sa.u[node * sa.Nc + sa.irS[i]] < 0)
+		    for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
+		      sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
+		      if (sa.u[node * sa.Nc + sa.irS[j]] < 0)
 			sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
 		    }
-		    
-		    /* 1d) Recalculate sum_t_rate[node] using
-		     * dependency graph. */
+	        
+		    /* 1d) update dependent transitions events. */
 		    for (i = sa.jcG[tr]; i < sa.jcG[tr + 1]; i++) {
 		      j = sa.irG[i];
 		      if(j != tr) { /*see code underneath */
 			old_t_rate = sa.t_rate[node * sa.Nt + j];
 			/* const double rate */
-			rate = (*sa.tr_fun[sa.irG[j]])(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
+			rate = (*sa.tr_fun[j])(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
 						       &sa.ldata[node * sa.Nld], sa.gdata,
 						       sa.t_time[node]);
 			
@@ -787,7 +790,7 @@ static int SimInf_solver()
 			/* update times and reorder the heap */
 			calcTimes(&sa.reactTimes[node][sa.reactHeap[node][j]],
 				  &sa.reactInf[node][j],
-				  sa.tt,
+				  sa.t_time[node],
 				  old_t_rate,
 				  sa.t_rate[node * sa.Nt + j],
 				  sa.rng[node+1][j]); /* node+1 because of +1 shift of elements */
@@ -795,80 +798,39 @@ static int SimInf_solver()
 			       sa.reactHeap[node], sa.reactHeapSize);
 		      
 		      }
-		      /* finish with j = re (the one that just happened), which need
-			 not be in the dependency graph but must be updated 
-			 nevertheless */
-		      j = tr;
-		      old_t_rate = sa.t_rate[node * sa.Nt + j];
-		      rate = (*sa.tr_fun[sa.irG[j]])(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-						     &sa.ldata[node * sa.Nld], sa.gdata,
-						     sa.t_time[node]);
-		      sa.t_rate[node * sa.Nt + j] = rate;
-		      //delta += rate - old;
-		      if (!isfinite(rate) || rate < 0.0)
-			sa.errcode = SIMINF_ERR_INVALID_RATE;
-		      /* update times and reorder the heap */
-		      calcTimes(&sa.reactTimes[node][sa.reactHeap[node][j]],
-				&sa.reactInf[node][j],
-				sa.tt,
-				old_t_rate,
-				sa.t_rate[node * sa.Nt + j],
-				sa.rng[node+1][j]);
-		      update(sa.reactHeap[node][j], sa.reactTimes[node], sa.reactNode[node],
-			     sa.reactHeap[node], sa.reactHeapSize);
 		    }
-		  
-		    /* END AEM solver */
+		    /* finish with j = re (the one that just happened), which need
+		       not be in the dependency graph but must be updated 
 
-		    /* double cum, rand, tau, delta = 0.0; */
-		    /* //int j, tr; */
-		    
-                    /*     /\* 1a) Compute time to next event for this */
-                    /*      * node. *\/ */
-                    /*     if (sa.sum_t_rate[node] <= 0.0) { */
-                    /*         sa.t_time[node] = sa.next_day; */
-                    /*         break; */
-                    /*     } */
-                    /*     tau = -log(gsl_rng_uniform_pos(sa.rng)) / */
-                    /*         sa.sum_t_rate[node]; */
-                    /*     if ((tau + sa.t_time[node]) >= sa.next_day) { */
-                    /*         sa.t_time[node] = sa.next_day; */
-                    /*         break; */
-                    /*     } */
-                    /*     sa.t_time[node] += tau; */
+		       nevertheless */
+		    j = tr;
+		    old_t_rate = sa.t_rate[node * sa.Nt + j];
+		    rate = (*sa.tr_fun[j])(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
+		    				   &sa.ldata[node * sa.Nld], sa.gdata,
+		    				   sa.t_time[node]);
+		    sa.t_rate[node * sa.Nt + j] = rate;
+		    //delta += rate - old;
+		    if (!isfinite(rate) || rate < 0.0)
+		      sa.errcode = SIMINF_ERR_INVALID_RATE;
+		    /* update times and reorder the heap */
+		    calcTimes(&sa.reactTimes[node][sa.reactHeap[node][j]],
+			      &sa.reactInf[node][j],
+			      sa.t_time[node],
+			      old_t_rate,
+			      sa.t_rate[node * sa.Nt + j],
+			      sa.rng[node+1][j]);
+		    update(sa.reactHeap[node][j], sa.reactTimes[node], sa.reactNode[node],
+			   sa.reactHeap[node], sa.reactHeapSize);
 
-                    /*     /\* 1b) Determine the transition that did occur */
-                    /*      * (direct SSA). *\/ */
-                    /*     rand = gsl_rng_uniform_pos(sa.rng) * sa.sum_t_rate[node]; */
-                    /*     for (tr = 0, cum = sa.t_rate[node * sa.Nt]; */
-                    /*          tr < sa.Nt && rand > cum; */
-                    /*          tr++, cum += sa.t_rate[node * sa.Nt + tr]); */
-
-                    /*     /\* 1c) Update the state of the node *\/ */
-                    /*     for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) { */
-                    /*         sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j]; */
-                    /*         if (sa.u[node * sa.Nc + sa.irS[j]] < 0) */
-                    /*             sa.errcode = SIMINF_ERR_NEGATIVE_STATE; */
-                    /*     } */
-
-                    /*     /\* 1d) Recalculate sum_t_rate[node] using */
-                    /*      * dependency graph. *\/ */
-                    /*     for (j = sa.jcG[tr]; j < sa.jcG[tr + 1]; j++) { */
-                    /*         const double old = sa.t_rate[node * sa.Nt + sa.irG[j]]; */
-                    /*         const double rate = (*sa.tr_fun[sa.irG[j]])( */
-                    /*             &sa.u[node * sa.Nc], &sa.v[node * sa.Nd], */
-                    /*             &sa.ldata[node * sa.Nld], sa.gdata, */
-                    /*             sa.t_time[node]); */
-
-                    /*         sa.t_rate[node * sa.Nt + sa.irG[j]] = rate; */
-                    /*         delta += rate - old; */
-                    /*         if (!isfinite(rate) || rate < 0.0) */
-                    /*             sa.errcode = SIMINF_ERR_INVALID_RATE; */
-                    /*     } */
-                    /*    sa.sum_t_rate[node] += delta; */
-                    /*}*/
 		  }
+		  
+		    /* END AEM solver */		 
 		}
+		/* All nodes are now same time. (next day)
+		   set global time.
+		*/
+		sa.tt = sa.t_time[0];
+	    
 
                 /* (2) Incorporate all scheduled E1 events */
                 while (sa.E1_index < e1.len &&

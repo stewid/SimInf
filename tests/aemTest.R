@@ -102,5 +102,20 @@ modelParser <- function(){
     return(list(model,result))
 }
 
+SIRextended <- function(){
+    u0 <- data.frame(S = c(90,100,100,100,100), I = c(10,0,0,0,0), R = c(0,0,0,0,0))
+    events <- data.frame(event      = c(3,3,3,3),
+                         time       = c(3,25,5,10),
+                         node       = c(1,1,1,1),
+                         dest       = c(3,2,3,3),
+                         n          = c(1,9,1,5),
+                         proportion = c(0,0,0,0),
+                         select     = c(2,2,2,2),
+                         shift      = c(0,0,0,0))
+    model <- SIR(u0, 1:75, events = events, beta = 0.16, gamma = 0.077)
+    res <- run(model,threads = 1, seed = 5)
+}
+    
+
 
 
