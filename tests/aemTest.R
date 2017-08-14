@@ -16,6 +16,24 @@ SIRresult <- function(inits = c(99,1,0),beta = 0.16, gamma = 0.077, seed = 22, t
     return(result)
 }
 
+SISresult <- function(inits = c(99,1), upsilon = 0.0013, gamma = 0.1, seed = 22, threads = 1, plotResult = FALSE){
+    u0 <-  data.frame(S=inits[1], I = inits[2])
+    tspan <- seq(1,6*30, by = 7)
+
+    transitions <-  c("S -> y*S*I/(S+I) -> I", "I -> g*I -> S")
+    compartments <- c("S","I")
+
+    m <- mparse(transitions, compartments, y = upsilon, g= gamma)
+    model <- init(m, u0 = cbind(u0), tspan = tspan)
+
+    result <- run(model, threads = threads, seed = seed)
+
+    if(plotResult)
+        plot(result, N  =TRUE, spaghetti = TRUE, compartments = c("S","I"))
+
+    return(result)
+}
+
 ### Plot the difference between two runs, where one parameter is
 ### assumed to be pertubed by a small amount delta.
 AEMdiff <- function(run1, run2){
