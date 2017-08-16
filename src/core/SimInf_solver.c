@@ -691,9 +691,9 @@ static int SimInf_solver()
 
 	      /* Initialize reaction heap */
 	      initialize_heap(sa.reactTimes[node], sa.reactNode[node], sa.reactHeap[node], sa.reactHeapSize);
-		
+	      sa.t_time[node] = sa.tt;	
 	    }
-	    sa.t_time[node] = sa.tt;
+	    
 	    *&sim_args[i] = sa;
         }
     }
