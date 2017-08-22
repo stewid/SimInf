@@ -819,7 +819,7 @@ static int SimInf_solver()
                     } else if (rc > 0 || sa.update_node[node]) {
                         /* Update transition rates */
                         int j = 0;
-                        double delta = 0.0, old_t_rate = sa.sum_t_rate[node];
+                        double delta = 0.0;
 
                         for (; j < sa.Nt; j++) {
                             const double old = sa.t_rate[node * sa.Nt + j];
