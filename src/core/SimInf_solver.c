@@ -641,6 +641,25 @@ static int SimInf_solver()
                              tr < sa.Nt && rand > cum;
                              tr++, cum += sa.t_rate[node * sa.Nt + tr]);
 
+                        /* Elaborate floating point fix: */
+                        if (tr >= sa.Nt)
+                            tr = sa.Nt - 1;
+                        if (sa.t_rate[node * sa.Nt + tr] == 0.0) {
+                            /* Go backwards and try to find first
+                             * nonzero transition rate */
+                            for ( ; tr > 0 && sa.t_rate[node * sa.Nt + tr] == 0.0; tr--);
+
+                            /* No nonzero rate found, but a transition
+                               was sampled. This can happen due to
+                               floating point errors in the iterated
+                               recalculated rates. */
+                            if (sa.t_rate[node * sa.Nt + tr] == 0.0) {
+                                /* nil event: zero out and move on */
+                                sa.sum_t_rate[node] = 0.0;
+                                break;
+                            }
+                        }
+
                         /* 1c) Update the state of the node */
                         for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
                             sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
