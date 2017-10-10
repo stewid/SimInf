@@ -29,6 +29,7 @@
  * @param model The siminf_model
  * @param threads Number of threads
  * @param seed Random number seed.
+ * @param solver The numerical solver.
  * @param tr_fun Vector of function pointers to transition rate functions.
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
@@ -37,10 +38,14 @@ SEXP SimInf_run(
     SEXP model,
     SEXP threads,
     SEXP seed,
+    SEXP solver,
     TRFun *tr_fun,
     PTSFun pts_fun)
 {
     int i, j, err = 0, nprotect = 0, n_threads;
+    /* To be added 
+     * int solver_id;
+     */
     SEXP result = R_NilValue;
     SEXP ext_events, E, G, N, S, prS;
     SEXP tspan, rownames, colnames;
@@ -68,6 +73,12 @@ SEXP SimInf_run(
     if (err)
         goto cleanup;
 
+    /* solver */
+    /* err = SimInf_get_solver(&solver_id, solver);
+     * if (err)
+     *   goto cleanup;  
+     */
+    
     /* Duplicate model. */
     PROTECT(result = duplicate(model));
     nprotect++;
@@ -214,6 +225,9 @@ cleanup:
         case SIMINF_INVALID_THREADS_VALUE:
             Rf_error("Invalid 'threads' value");
             break;
+	case SIMINF_ERR_INVALID_SOLVER:
+	    Rf_error("Invalid 'solver' value");
+	    break;
         case SIMINF_ERR_V_IS_NOT_FINITE:
             Rf_error("The continuous state 'v' is not finite.");
             break;

@@ -167,3 +167,25 @@ int SimInf_get_threads(int *out, SEXP threads)
 
     return err;
 }
+
+/**
+ * Get the solver
+ *
+ * @param out The solver name
+ * @param solver The solver name from R
+ * @return 0 if Ok, else error code.
+ */
+int SimInf_get_solver(int *out, SEXP solver)
+{
+    int err = 0;
+
+    if(solver == R_NilValue) {
+        *out = 0;
+    } else {
+        err = SIMINF_ERR_INVALID_SOLVER;
+    }
+
+    return err;
+}
+	
+	

@@ -24,13 +24,13 @@
 #include "SimInf.h"
 
 /* Declare functions to register */
-SEXP SEIR_run(SEXP, SEXP, SEXP);
-SEXP SIR_run(SEXP, SEXP, SEXP);
-SEXP SISe_run(SEXP, SEXP, SEXP);
-SEXP SISe3_run(SEXP, SEXP, SEXP);
-SEXP SISe3_sp_run(SEXP, SEXP, SEXP);
-SEXP SISe_sp_run(SEXP, SEXP, SEXP);
-SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
+SEXP SEIR_run(SEXP, SEXP, SEXP, SEXP);
+SEXP SIR_run(SEXP, SEXP, SEXP, SEXP);
+SEXP SISe_run(SEXP, SEXP, SEXP, SEXP);
+SEXP SISe3_run(SEXP, SEXP, SEXP, SEXP);
+SEXP SISe3_sp_run(SEXP, SEXP, SEXP, SEXP);
+SEXP SISe_sp_run(SEXP, SEXP, SEXP, SEXP);
+SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP, SEXP);
 
 /**
  * Is OpenMP available
@@ -50,12 +50,12 @@ SEXP SimInf_have_openmp()
 
 static const R_CallMethodDef callMethods[] =
 {
-    CALLDEF(SEIR_run, 3),
-    CALLDEF(SIR_run, 3),
-    CALLDEF(SISe_run, 3),
-    CALLDEF(SISe3_run, 3),
-    CALLDEF(SISe3_sp_run, 3),
-    CALLDEF(SISe_sp_run, 3),
+    CALLDEF(SEIR_run, 4),
+    CALLDEF(SIR_run, 4),
+    CALLDEF(SISe_run, 4),
+    CALLDEF(SISe3_run, 4),
+    CALLDEF(SISe3_sp_run, 4),
+    CALLDEF(SISe_sp_run, 4),
     CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(SimInf_ldata_sp, 3),
     {NULL, NULL, 0}
