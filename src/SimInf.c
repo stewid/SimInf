@@ -90,8 +90,10 @@ SEXP SimInf_run(
     /* Scheduled events */
     PROTECT(ext_events = GET_SLOT(result, Rf_install("events")));
     nprotect++;
-    E = GET_SLOT(ext_events, Rf_install("E"));
-    N = GET_SLOT(ext_events, Rf_install("N"));
+    PROTECT(E = GET_SLOT(ext_events, Rf_install("E")));
+    nprotect++;
+    PROTECT(N = GET_SLOT(ext_events, Rf_install("N")));
+    nprotect++;
 
     /* Constants */
     Nn   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
