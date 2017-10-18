@@ -73,7 +73,8 @@ SEXP SimInf_run(
     nprotect++;
 
     /* SimInf model */
-    G = GET_SLOT(result, Rf_install("G"));
+    PROTECT(G = GET_SLOT(result, Rf_install("G")));
+    nprotect++;
     S = GET_SLOT(result, Rf_install("S"));
     PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
     nprotect++;
