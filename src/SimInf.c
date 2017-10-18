@@ -113,7 +113,8 @@ SEXP SimInf_run(
         jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
         prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
 
-        U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames"));
+        PROTECT(U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames")));
+        nprotect++;
         PROTECT(U_rownames = allocVector(STRSXP, Nn * Nc));
         nprotect++;
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
