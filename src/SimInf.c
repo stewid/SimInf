@@ -84,21 +84,29 @@ SEXP SimInf_run(
     nprotect++;
 
     /* SimInf model */
-    G = GET_SLOT(result, Rf_install("G"));
-    S = GET_SLOT(result, Rf_install("S"));
+    PROTECT(G = GET_SLOT(result, Rf_install("G")));
+    nprotect++;
+
+    PROTECT(S = GET_SLOT(result, Rf_install("S")));
+    nprotect++;
+
     PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
     nprotect++;
 
     /* Dimnames */
     rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
-    tspan = GET_SLOT(result, Rf_install("tspan"));
+    PROTECT(tspan = GET_SLOT(result, Rf_install("tspan")));
+    nprotect++;
     PROTECT(colnames = Rf_getAttrib(tspan , R_NamesSymbol));
     nprotect++;
 
     /* Scheduled events */
-    ext_events = GET_SLOT(result, Rf_install("events"));
-    E = GET_SLOT(ext_events, Rf_install("E"));
-    N = GET_SLOT(ext_events, Rf_install("N"));
+    PROTECT(ext_events = GET_SLOT(result, Rf_install("events")));
+    nprotect++;
+    PROTECT(E = GET_SLOT(ext_events, Rf_install("E")));
+    nprotect++;
+    PROTECT(N = GET_SLOT(ext_events, Rf_install("N")));
+    nprotect++;
 
     /* Constants */
     Nn   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
@@ -109,7 +117,8 @@ SEXP SimInf_run(
     tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
 
     /* Output array (to hold a single trajectory) */
-    U_sparse = GET_SLOT(result, Rf_install("U_sparse"));
+    PROTECT(U_sparse = GET_SLOT(result, Rf_install("U_sparse")));
+    nprotect++;
     if ((INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[0] == (Nn * Nc)) &&
         (INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[1] == tlen))
     {
@@ -117,7 +126,8 @@ SEXP SimInf_run(
         jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
         prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
 
-        U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames"));
+        PROTECT(U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames")));
+        nprotect++;
         PROTECT(U_rownames = allocVector(STRSXP, Nn * Nc));
         nprotect++;
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
@@ -149,7 +159,8 @@ SEXP SimInf_run(
         SET_VECTOR_ELT(U_dimnames, 1, duplicate(colnames));
 
     /* Output array (to hold a single trajectory) */
-    V_sparse = GET_SLOT(result, Rf_install("V_sparse"));
+    PROTECT(V_sparse = GET_SLOT(result, Rf_install("V_sparse")));
+    nprotect++;
     if ((INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[0] == (Nn * Nd)) &&
         (INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[1] == tlen))
     {
