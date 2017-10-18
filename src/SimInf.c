@@ -88,7 +88,8 @@ SEXP SimInf_run(
     nprotect++;
 
     /* Scheduled events */
-    ext_events = GET_SLOT(result, Rf_install("events"));
+    PROTECT(ext_events = GET_SLOT(result, Rf_install("events")));
+    nprotect++;
     E = GET_SLOT(ext_events, Rf_install("E"));
     N = GET_SLOT(ext_events, Rf_install("N"));
 
