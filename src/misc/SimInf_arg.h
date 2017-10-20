@@ -29,5 +29,6 @@ int SimInf_arg_check_matrix(SEXP arg);
 int SimInf_arg_check_model(SEXP arg);
 int SimInf_get_seed(unsigned long int *out, SEXP seed);
 int SimInf_get_threads(int *out, SEXP threads);
+int SimInf_get_solver(int *out, SEXP solver);
 
 #endif

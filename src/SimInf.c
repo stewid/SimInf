@@ -29,6 +29,7 @@
  * @param model The siminf_model
  * @param threads Number of threads
  * @param seed Random number seed.
+ * @param solver The numerical solver.
  * @param tr_fun Vector of function pointers to transition rate functions.
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
@@ -37,6 +38,7 @@ SEXP SimInf_run(
     SEXP model,
     SEXP threads,
     SEXP seed,
+    SEXP solver,
     TRFun *tr_fun,
     PTSFun pts_fun)
 {
@@ -75,8 +77,10 @@ SEXP SimInf_run(
     /* SimInf model */
     PROTECT(G = GET_SLOT(result, Rf_install("G")));
     nprotect++;
+
     PROTECT(S = GET_SLOT(result, Rf_install("S")));
     nprotect++;
+
     PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
     nprotect++;
 

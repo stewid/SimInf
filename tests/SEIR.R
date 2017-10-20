@@ -216,12 +216,12 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SEIR run function fails for a misspecified SEIR model
-res <- tools::assertError(.Call("SEIR_run", NULL, NULL, NULL,
+res <- tools::assertError(.Call("SEIR_run", NULL, NULL, NULL, NULL,
                                 PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid model.",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(.Call("SEIR_run", "SEIR", NULL, NULL,
+res <- tools::assertError(.Call("SEIR_run", "SEIR", NULL, NULL, NULL,
                                 PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid model.",
                       res[[1]]$message)) > 0)
