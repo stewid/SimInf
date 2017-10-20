@@ -28,6 +28,7 @@
 #endif
 
 #include "SimInf.h"
+#include "SimInf_solver.h"
 
 /**
  * Event types
@@ -928,150 +929,64 @@ static int SimInf_solver()
 /**
  * Initialize and run siminf solver
  *
- * G is a sparse matrix dependency graph (Nt X Nt) in compressed
- * column format (CCS). A non-zeros entry in element i of column j
- * indicates that transition rate i needs to be recalculated if the
- * transition j occurs.
- *
- * S is the state-changing sparse matrix (Nc X Nt) in compressed
- * column format (CCS). Each column corresponds to a transition, and
- * execution of transition j amounts to adding the j'th column to the
- * state vector.
- *
- * @param u0 Initial state vector u0. Integer (Nc X Nn). Gives the
- *        initial number of individuals in each compartment in every
- *        node.
- * @param v0 Initial continuous state vector v0. Double (Nd X Nn).
- *        Gives the initial value of the continuous state variables
- *        in every node.
- * @param irG Dependency graph. irG[k] is the row of G[k].
- * @param jcG Dependency graph. Index to data of first non-zero
- *        element in row k.
- * @param irS State-change matrix. irS[k] is the row of S[k].
- * @param jcS State-change matrix. Index to data of first non-zero
- *        element in row k.
- * @param prS State-change matrix. Value of item (i, j) in S.
- * @param tspan Double vector. Output times. tspan[0] is the start
- *        time and tspan[length(tspan)-1] is the stop time.
- * @param tlen Number of sampling points in time.
- * @param U If U is non-NULL, the solution is written to a dense matrix.
- *        The output is a matrix U ((Nn * Nc) X length(tspan)).
- *        U(:,j) contains the state of the system at tspan(j).
- * @param irU If U is NULL, the solution is written to a sparse matrix.
- *        irU[k] is the row of U[k].
- * @param jcU If U is NULL, the solution is written to a sparse matrix.
- *        Index to data of first non-zero element in row k.
- * @param prU If U is NULL, the solution is written to a sparse matrix.
- *        Value of item (i, j) in U.
- * @param V If V is non-NULL, the solution is written to a dense matrix.
- *        The continuous state output is a matrix V ((Nn * Nd) X length(tspan)).
- *        V(:,j) contains the continuous state of the system at tspan(j).
- * @param irV If V is NULL, the solution is written to a sparse matrix.
- *        irV[k] is the row of V[k].
- * @param jcV If V is NULL, the solution is written to a sparse matrix.
- *        Index to data of first non-zero element in row k.
- * @param prV If V is NULL, the solution is written to a sparse matrix.
- *        Value of item (i, j) in V.
- * @param ldata Double matrix (Nld X Nn). Generalized data matrix,
- *        data(:,j) gives a local data vector for node #j.
- * @param gdata The global data vector.
- * @param Nn Number of nodes.
- * @param Nc Number of compartments in each node.
- * @param Nt Total number of different transitions.
- * @param Nd Number of continuous state variables.
- * @param Nld Length of the local data vector 'ldata' for each
-          node. The 'ldata' vector is sent to propensities and the
-          post time step function.
- * @param irE Select matrix for events. irE[k] is the row of E[k].
- * @param jcE Select matrix for events. Index to data of first
- *        non-zero element in row k.
- * @param N Shift matrix for internal transfer events.
- * @param len Number of events.
- * @param event The type of event i.
- * @param time The time of event i.
- * @param node The source node of event i.
- * @param dest The dest node of event i.
- * @param n The number of individuals in the scheduled event. n[i] >= 0.
- * @param proportion If n[i] equals zero, then the number of
- *        individuals to sample is calculated by summing the number of
- *        individuals in the states determined by select[i] and
- *        multiplying with the proportion. 0 <= p[i] <= 1.
- * @param select Column j in the event matrix E that determines the
- *        states to sample from.
- * @param shift Column j in the shift matrix S that determines the
- *        shift of the internal and external transfer event.
- * @param Nthread Number of threads to use during simulation.
- * @param seed Random number seed.
- * @param tr_fun Vector of function pointers to transition rate functions.
- * @param pts_fun Function pointer to callback after each time step
- *        e.g. to update the infectious pressure.
+ * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-int SimInf_run_solver(
-    const int *u0, const double *v0, const int *irG, const int *jcG,
-    const int *irS, const int *jcS, const int *prS, const double *tspan,
-    int tlen, int *U, const int *irU, const int *jcU, double *prU,
-    double *V, const int *irV, const int *jcV, double *prV,
-    const double *ldata, const double *gdata,
-    int Nn, int Nc, int Nt, int Nd, int Nld, const int *irE,
-    const int *jcE, const int *N, int len, const int *event,
-    const int *time, const int *node, const int *dest, const int *n,
-    const double *proportion, const int *select, const int *shift,
-    int Nthread, unsigned long int seed, TRFun *tr_fun, PTSFun pts_fun)
+int SimInf_run_solver(SimInf_solver_args *args)
 {
     int i, errcode;
     gsl_rng *rng = NULL;
 
 #ifdef _OPENMP
-    if (Nthread < 1)
-        Nthread = omp_get_num_procs();
+    if (args->Nthread < 1)
+        args->Nthread = omp_get_num_procs();
 #else
-    Nthread = 1;
+    args->Nthread = 1;
 #endif
-    if (Nn < Nthread)
-        n_thread = Nn;
+    if (args->Nn < args->Nthread)
+        n_thread = args->Nn;
     else
-        n_thread = Nthread;
+        n_thread = args->Nthread;
 #ifdef _OPENMP
     omp_set_num_threads(n_thread);
 #endif
 
     /* Set compartment state to the initial state. */
-    uu = malloc(Nn * Nc * sizeof(int));
+    uu = malloc(args->Nn * args->Nc * sizeof(int));
     if (!uu) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
-    memcpy(uu, u0, Nn * Nc * sizeof(int));
+    memcpy(uu, args->u0, args->Nn * args->Nc * sizeof(int));
 
     /* Copy u0 to either U[, 1] or U_sparse[, 1] */
-    if (U) {
-        memcpy(U, u0, Nn * Nc * sizeof(int));
+    if (args->U) {
+        memcpy(args->U, args->u0, args->Nn * args->Nc * sizeof(int));
     } else {
-        for (i = jcU[0]; i < jcU[1]; i++)
-            prU[i] = u0[irU[i]];
+        for (i = args->jcU[0]; i < args->jcU[1]; i++)
+            args->prU[i] = args->u0[args->irU[i]];
     }
 
     /* Set continuous state to the initial state in each node. */
-    vv_1 = malloc(Nn * Nd * sizeof(double));
-    vv_2 = malloc(Nn * Nd * sizeof(double));
+    vv_1 = malloc(args->Nn * args->Nd * sizeof(double));
+    vv_2 = malloc(args->Nn * args->Nd * sizeof(double));
     if (!vv_1 || !vv_2) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
-    memcpy(vv_1, v0, Nn * Nd * sizeof(double));
+    memcpy(vv_1, args->v0, args->Nn * args->Nd * sizeof(double));
 
     /* Copy v0 to either V[, 1] or V_sparse[, 1] */
-    if (V) {
-        memcpy(V, v0, Nn * Nd * sizeof(double));
+    if (args->V) {
+        memcpy(args->V, args->v0, args->Nn * args->Nd * sizeof(double));
     } else {
-        for (i = jcV[0]; i < jcV[1]; i++)
-            prV[i] = v0[irV[i]];
+        for (i = args->jcV[0]; i < args->jcV[1]; i++)
+            args->prV[i] = args->v0[args->irV[i]];
     }
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
-    update_node = calloc(Nn, sizeof(int));
+    update_node = calloc(args->Nn, sizeof(int));
     if (!update_node) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
@@ -1082,7 +997,7 @@ int SimInf_run_solver(
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
-    gsl_rng_set(rng, seed);
+    gsl_rng_set(rng, args->seed);
 
     sim_args = calloc(n_thread, sizeof(SimInf_thread_args));
     if (!sim_args) {
@@ -1100,58 +1015,58 @@ int SimInf_run_solver(
         gsl_rng_set(sim_args[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
 
         /* Constants */
-        sim_args[i].Ntot = Nn;
-        sim_args[i].Ni = i * (Nn / n_thread);
-        sim_args[i].Nn = Nn / n_thread;
+        sim_args[i].Ntot = args->Nn;
+        sim_args[i].Ni = i * (args->Nn / n_thread);
+        sim_args[i].Nn = args->Nn / n_thread;
         if (i == (n_thread - 1))
-            sim_args[i].Nn += (Nn % n_thread);
-        sim_args[i].Nt = Nt;
-        sim_args[i].Nc = Nc;
-        sim_args[i].Nd = Nd;
-        sim_args[i].Nld = Nld;
+            sim_args[i].Nn += (args->Nn % n_thread);
+        sim_args[i].Nt = args->Nt;
+        sim_args[i].Nc = args->Nc;
+        sim_args[i].Nd = args->Nd;
+        sim_args[i].Nld = args->Nld;
 
         /* Sparse matrices */
-        sim_args[i].irG = irG;
-        sim_args[i].jcG = jcG;
-        sim_args[i].irS = irS;
-        sim_args[i].jcS = jcS;
-        sim_args[i].prS = prS;
-        sim_args[i].irE = irE;
-        sim_args[i].jcE = jcE;
+        sim_args[i].irG = args->irG;
+        sim_args[i].jcG = args->jcG;
+        sim_args[i].irS = args->irS;
+        sim_args[i].jcS = args->jcS;
+        sim_args[i].prS = args->prS;
+        sim_args[i].irE = args->irE;
+        sim_args[i].jcE = args->jcE;
 
         /* Callbacks */
-        sim_args[i].tr_fun = tr_fun;
-        sim_args[i].pts_fun = pts_fun;
+        sim_args[i].tr_fun = args->tr_fun;
+        sim_args[i].pts_fun = args->pts_fun;
 
         /* Keep track of time */
-        sim_args[i].tt = tspan[0];
+        sim_args[i].tt = args->tspan[0];
         sim_args[i].next_day = floor(sim_args[i].tt) + 1.0;
-        sim_args[i].tspan = tspan;
-        sim_args[i].tlen = tlen;
+        sim_args[i].tspan = args->tspan;
+        sim_args[i].tlen = args->tlen;
         sim_args[i].U_it = 1;
         sim_args[i].V_it = 1;
 
         /* Data vectors */
-        sim_args[i].N = N;
-        if (U) {
-            sim_args[i].U = U;
+        sim_args[i].N = args->N;
+        if (args->U) {
+            sim_args[i].U = args->U;
         } else if (i == 0) {
-            sim_args[i].irU = irU;
-            sim_args[i].jcU = jcU;
-            sim_args[i].prU = prU;
+            sim_args[i].irU = args->irU;
+            sim_args[i].jcU = args->jcU;
+            sim_args[i].prU = args->prU;
         }
-        sim_args[i].u = &uu[sim_args[i].Ni * Nc];
-        if (V) {
-            sim_args[i].V = V;
+        sim_args[i].u = &uu[sim_args[i].Ni * args->Nc];
+        if (args->V) {
+            sim_args[i].V = args->V;
         } else if (i == 0) {
-            sim_args[i].irV = irV;
-            sim_args[i].jcV = jcV;
-            sim_args[i].prV = prV;
+            sim_args[i].irV = args->irV;
+            sim_args[i].jcV = args->jcV;
+            sim_args[i].prV = args->prV;
         }
-        sim_args[i].v = &vv_1[sim_args[i].Ni * Nd];
-        sim_args[i].v_new = &vv_2[sim_args[i].Ni * Nd];
-        sim_args[i].ldata = &ldata[sim_args[i].Ni * sim_args[i].Nld];
-        sim_args[i].gdata = gdata;
+        sim_args[i].v = &vv_1[sim_args[i].Ni * args->Nd];
+        sim_args[i].v_new = &vv_2[sim_args[i].Ni * args->Nd];
+        sim_args[i].ldata = &(args->ldata[sim_args[i].Ni * sim_args[i].Nld]);
+        sim_args[i].gdata = args->gdata;
         sim_args[i].update_node = &update_node[sim_args[i].Ni];
 
         /* Scheduled events */
@@ -1169,13 +1084,13 @@ int SimInf_run_solver(
             }
         }
 
-        sim_args[i].individuals = calloc(Nc, sizeof(int));
+        sim_args[i].individuals = calloc(args->Nc, sizeof(int));
         if (!sim_args[i].individuals) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
-        sim_args[i].u_tmp = calloc(Nc, sizeof(int));
+        sim_args[i].u_tmp = calloc(args->Nc, sizeof(int));
         if (!sim_args[i].u_tmp) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
@@ -1185,7 +1100,7 @@ int SimInf_run_solver(
          * vector. In t_rate we store all propensities for state
          * transitions, and in sum_t_rate the sum of propensities
          * in every node. */
-        sim_args[i].t_rate = malloc(Nt * sim_args[i].Nn * sizeof(double));
+        sim_args[i].t_rate = malloc(args->Nt * sim_args[i].Nn * sizeof(double));
         if (!sim_args[i].t_rate) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
@@ -1204,7 +1119,8 @@ int SimInf_run_solver(
 
     /* Split scheduled events into E1 and E2 events. */
     errcode = SimInf_split_events(
-        len, event, time, node, dest, n, proportion, select, shift, Nn);
+        args->len, args->event, args->time, args->node, args->dest, args->n,
+        args->proportion, args->select, args->shift, args->Nn);
     if (errcode)
         goto cleanup;
 

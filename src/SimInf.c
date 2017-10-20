@@ -42,18 +42,13 @@ SEXP SimInf_run(
     TRFun *tr_fun,
     PTSFun pts_fun)
 {
-    int i, j, err = 0, nprotect = 0, n_threads;
+    int i, j, err = 0, nprotect = 0;
     SEXP result = R_NilValue;
     SEXP ext_events, E, G, N, S, prS;
     SEXP tspan, rownames, colnames;
     SEXP U_dimnames, U_rownames, V_dimnames;
     SEXP U, V, U_sparse, V_sparse;
-    int *U_ptr = NULL, *irU = NULL, *jcU = NULL;
-    double *prU = NULL;
-    int *irV = NULL, *jcV = NULL;
-    double *V_ptr = NULL, *prV = NULL;
-    int Nn, Nc, Nt, Nd, Nld, tlen;
-    unsigned long int s;
+    SimInf_solver_args args = {NULL};
 
     if (SimInf_arg_check_model(model)) {
         err = SIMINF_ERR_INVALID_MODEL;
@@ -61,12 +56,12 @@ SEXP SimInf_run(
     }
 
     /* number of threads */
-    err = SimInf_get_threads(&n_threads, threads);
+    err = SimInf_get_threads(&(args.Nthread), threads);
     if (err)
         goto cleanup;
 
     /* seed */
-    err =  SimInf_get_seed(&s, seed);
+    err =  SimInf_get_seed(&(args.seed), seed);
     if (err)
         goto cleanup;
 
@@ -74,73 +69,93 @@ SEXP SimInf_run(
     PROTECT(result = duplicate(model));
     nprotect++;
 
-    /* SimInf model */
+    /* Dependency graph */
     PROTECT(G = GET_SLOT(result, Rf_install("G")));
     nprotect++;
+    args.irG = INTEGER(GET_SLOT(G, Rf_install("i")));
+    args.jcG = INTEGER(GET_SLOT(G, Rf_install("p")));
 
+    /* State change matrix */
     PROTECT(S = GET_SLOT(result, Rf_install("S")));
     nprotect++;
-
     PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
     nprotect++;
+    args.irS = INTEGER(GET_SLOT(S, Rf_install("i")));
+    args.jcS = INTEGER(GET_SLOT(S, Rf_install("p")));
+    args.prS = INTEGER(prS);
+
+    /* tspan */
+    PROTECT(tspan = GET_SLOT(result, Rf_install("tspan")));
+    nprotect++;
+    args.tspan = REAL(GET_SLOT(result, Rf_install("tspan")));
 
     /* Dimnames */
     rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
-    PROTECT(tspan = GET_SLOT(result, Rf_install("tspan")));
-    nprotect++;
     PROTECT(colnames = Rf_getAttrib(tspan , R_NamesSymbol));
     nprotect++;
 
     /* Scheduled events */
     PROTECT(ext_events = GET_SLOT(result, Rf_install("events")));
     nprotect++;
+    args.len = LENGTH(GET_SLOT(ext_events, Rf_install("event")));
+    args.event = INTEGER(GET_SLOT(ext_events, Rf_install("event")));
+    args.time = INTEGER(GET_SLOT(ext_events, Rf_install("time")));
+    args.node = INTEGER(GET_SLOT(ext_events, Rf_install("node")));
+    args.dest = INTEGER(GET_SLOT(ext_events, Rf_install("dest")));
+    args.n = INTEGER(GET_SLOT(ext_events, Rf_install("n")));
+    args.proportion = REAL(GET_SLOT(ext_events, Rf_install("proportion")));
+    args.select = INTEGER(GET_SLOT(ext_events, Rf_install("select")));
+    args.shift = INTEGER(GET_SLOT(ext_events, Rf_install("shift")));
     PROTECT(E = GET_SLOT(ext_events, Rf_install("E")));
     nprotect++;
+    args.irE = INTEGER(GET_SLOT(E, Rf_install("i")));
+    args.jcE = INTEGER(GET_SLOT(E, Rf_install("p")));
     PROTECT(N = GET_SLOT(ext_events, Rf_install("N")));
     nprotect++;
+    args.N = INTEGER(N);
 
     /* Constants */
-    Nn   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
-    Nc   = INTEGER(GET_SLOT(S, Rf_install("Dim")))[0];
-    Nt   = INTEGER(GET_SLOT(S, Rf_install("Dim")))[1];
-    Nd   = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("v0")), R_DimSymbol))[0];
-    Nld  = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("ldata")), R_DimSymbol))[0];
-    tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
+    args.Nn = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
+    args.Nc = INTEGER(GET_SLOT(S, Rf_install("Dim")))[0];
+    args.Nt = INTEGER(GET_SLOT(S, Rf_install("Dim")))[1];
+    args.Nd = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("v0")), R_DimSymbol))[0];
+    args.Nld = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("ldata")), R_DimSymbol))[0];
+    args.tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
 
     /* Output array (to hold a single trajectory) */
     PROTECT(U_sparse = GET_SLOT(result, Rf_install("U_sparse")));
     nprotect++;
-    if ((INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[0] == (Nn * Nc)) &&
-        (INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[1] == tlen))
+    if ((INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[0] == (args.Nn * args.Nc)) &&
+        (INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[1] == args.tlen))
     {
-        irU = INTEGER(GET_SLOT(U_sparse, Rf_install("i")));
-        jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
-        prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
+        args.irU = INTEGER(GET_SLOT(U_sparse, Rf_install("i")));
+        args.jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
+        args.prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
 
         PROTECT(U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames")));
         nprotect++;
-        PROTECT(U_rownames = allocVector(STRSXP, Nn * Nc));
+        PROTECT(U_rownames = allocVector(STRSXP, args.Nn * args.Nc));
         nprotect++;
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     } else {
-        PROTECT(U = allocMatrix(INTSXP, Nn * Nc, tlen));
+        PROTECT(U = allocMatrix(INTSXP, args.Nn * args.Nc, args.tlen));
         nprotect++;
         SET_SLOT(result, Rf_install("U"), U);
-        U_ptr = INTEGER(GET_SLOT(result, Rf_install("U")));
+        args.U = INTEGER(GET_SLOT(result, Rf_install("U")));
 
         PROTECT(U_dimnames = allocVector(VECSXP, 2));
         nprotect++;
         setAttrib(GET_SLOT(result, Rf_install("U")),
                   R_DimNamesSymbol, U_dimnames);
-        PROTECT(U_rownames = allocVector(STRSXP, Nn * Nc));
+        PROTECT(U_rownames = allocVector(STRSXP, args.Nn * args.Nc));
         nprotect++;
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     }
 
     /* Add rownames to U */
-    for (i = 0; i < Nn; i++)
-        for (j = 0; j < Nc; j++)
-            SET_STRING_ELT(U_rownames, i * Nc + j, STRING_ELT(rownames, j));
+    for (i = 0; i < args.Nn; i++)
+        for (j = 0; j < args.Nc; j++)
+            SET_STRING_ELT(U_rownames, i * args.Nc + j, STRING_ELT(rownames, j));
 
     /* Add colnames to U. Use the the values of 'tspan' if the
      * colnames of 'tspan' is null. */
@@ -152,19 +167,19 @@ SEXP SimInf_run(
     /* Output array (to hold a single trajectory) */
     PROTECT(V_sparse = GET_SLOT(result, Rf_install("V_sparse")));
     nprotect++;
-    if ((INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[0] == (Nn * Nd)) &&
-        (INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[1] == tlen))
+    if ((INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[0] == (args.Nn * args.Nd)) &&
+        (INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[1] == args.tlen))
     {
-        irV = INTEGER(GET_SLOT(V_sparse, Rf_install("i")));
-        jcV = INTEGER(GET_SLOT(V_sparse, Rf_install("p")));
-        prV = REAL(GET_SLOT(V_sparse, Rf_install("x")));
+        args.irV = INTEGER(GET_SLOT(V_sparse, Rf_install("i")));
+        args.jcV = INTEGER(GET_SLOT(V_sparse, Rf_install("p")));
+        args.prV = REAL(GET_SLOT(V_sparse, Rf_install("x")));
 
         V_dimnames = GET_SLOT(V_sparse, Rf_install("Dimnames"));
     } else {
-        PROTECT(V = allocMatrix(REALSXP, Nn * Nd, tlen));
+        PROTECT(V = allocMatrix(REALSXP, args.Nn * args.Nd, args.tlen));
         nprotect++;
         SET_SLOT(result, Rf_install("V"), V);
-        V_ptr = REAL(GET_SLOT(result, Rf_install("V")));
+        args.V = REAL(GET_SLOT(result, Rf_install("V")));
 
         PROTECT(V_dimnames = allocVector(VECSXP, 2));
         nprotect++;
@@ -179,35 +194,20 @@ SEXP SimInf_run(
     else
         SET_VECTOR_ELT(V_dimnames, 1, duplicate(colnames));
 
+    /* Initial state */
+    args.u0 = INTEGER(GET_SLOT(result, Rf_install("u0")));
+    args.v0 = REAL(GET_SLOT(result, Rf_install("v0")));
+
+    /* global and local data */
+    args.ldata = REAL(GET_SLOT(result, Rf_install("ldata")));
+    args.gdata = REAL(GET_SLOT(result, Rf_install("gdata")));
+
+    /* Function pointers */
+    args.tr_fun = tr_fun;
+    args.pts_fun = pts_fun;
+
     /* Run simulation solver. */
-    err = SimInf_run_solver(
-        INTEGER(GET_SLOT(result, Rf_install("u0"))),
-        REAL(GET_SLOT(result, Rf_install("v0"))),
-        INTEGER(GET_SLOT(G, Rf_install("i"))),
-        INTEGER(GET_SLOT(G, Rf_install("p"))),
-        INTEGER(GET_SLOT(S, Rf_install("i"))),
-        INTEGER(GET_SLOT(S, Rf_install("p"))),
-        INTEGER(prS),
-        REAL(GET_SLOT(result, Rf_install("tspan"))),
-        tlen,
-        U_ptr, irU, jcU, prU,
-        V_ptr, irV, jcV, prV,
-        REAL(GET_SLOT(result, Rf_install("ldata"))),
-        REAL(GET_SLOT(result, Rf_install("gdata"))),
-        Nn, Nc, Nt, Nd, Nld,
-        INTEGER(GET_SLOT(E, Rf_install("i"))),
-        INTEGER(GET_SLOT(E, Rf_install("p"))),
-        INTEGER(N),
-        LENGTH(GET_SLOT(ext_events, Rf_install("event"))),
-        INTEGER(GET_SLOT(ext_events, Rf_install("event"))),
-        INTEGER(GET_SLOT(ext_events, Rf_install("time"))),
-        INTEGER(GET_SLOT(ext_events, Rf_install("node"))),
-        INTEGER(GET_SLOT(ext_events, Rf_install("dest"))),
-        INTEGER(GET_SLOT(ext_events, Rf_install("n"))),
-        REAL(GET_SLOT(ext_events,    Rf_install("proportion"))),
-        INTEGER(GET_SLOT(ext_events, Rf_install("select"))),
-        INTEGER(GET_SLOT(ext_events, Rf_install("shift"))),
-        n_threads, s, tr_fun, pts_fun);
+    err = SimInf_run_solver(&args);
 
 cleanup:
     if (err) {

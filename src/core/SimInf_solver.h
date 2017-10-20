@@ -187,16 +187,6 @@ typedef struct SimInf_solver_args
 } SimInf_solver_args;
 
 /* Declaration of the function to initialize and run the siminf solver */
-int SimInf_run_solver(
-    const int *u0, const double *v0, const int *irG, const int *jcG,
-    const int *irS, const int *jcS, const int *prS, const double *tspan,
-    int tlen, int *U, const int *irU, const int *jcU, double *prU,
-    double *V, const int *irV, const int *jcV, double *prV,
-    const double *ldata, const double *gdata,
-    int Nn, int Nc, int Nt, int Nd, int Nld, const int *irE,
-    const int *jcE, const int *N, int len, const int *event,
-    const int *time, const int *node, const int *dest, const int *n,
-    const double *proportion, const int *select, const int *shift,
-    int Nthread, unsigned long int seed, TRFun *tr_fun, PTSFun pts_fun);
+int SimInf_run_solver(SimInf_solver_args *args);
 
 #endif
