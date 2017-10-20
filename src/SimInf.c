@@ -43,7 +43,7 @@ SEXP SimInf_run(
     PTSFun pts_fun)
 {
     int i, j, err = 0, nprotect = 0, n_threads;
-    /* To be added 
+    /* To be added
      * int solver_id;
      */
     SEXP result = R_NilValue;
@@ -73,12 +73,6 @@ SEXP SimInf_run(
     if (err)
         goto cleanup;
 
-    /* solver */
-    /* err = SimInf_get_solver(&solver_id, solver);
-     * if (err)
-     *   goto cleanup;  
-     */
-    
     /* Duplicate model. */
     PROTECT(result = duplicate(model));
     nprotect++;
@@ -236,9 +230,6 @@ cleanup:
         case SIMINF_INVALID_THREADS_VALUE:
             Rf_error("Invalid 'threads' value");
             break;
-	case SIMINF_ERR_INVALID_SOLVER:
-	    Rf_error("Invalid 'solver' value");
-	    break;
         case SIMINF_ERR_V_IS_NOT_FINITE:
             Rf_error("The continuous state 'v' is not finite.");
             break;
