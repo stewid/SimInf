@@ -43,9 +43,6 @@ SEXP SimInf_run(
     PTSFun pts_fun)
 {
     int i, j, err = 0, nprotect = 0, n_threads;
-    /* To be added
-     * int solver_id;
-     */
     SEXP result = R_NilValue;
     SEXP ext_events, E, G, N, S, prS;
     SEXP tspan, rownames, colnames;
