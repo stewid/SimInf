@@ -16,6 +16,7 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ##' Create a DESCRIPTION file for the package skeleton
+##' @importFrom utils packageVersion
 ##' @noRd
 create_DESCRIPTION_file <- function(path, name, author, maintainer,
                                     email, license)
