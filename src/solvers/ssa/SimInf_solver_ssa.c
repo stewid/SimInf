@@ -931,7 +931,7 @@ static int SimInf_solver()
  * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-int SimInf_run_solver(SimInf_solver_args *args)
+int SimInf_run_solver_ssa(SimInf_solver_args *args)
 {
     int i, errcode;
     gsl_rng *rng = NULL;

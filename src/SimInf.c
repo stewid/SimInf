@@ -26,6 +26,7 @@
 #endif
 
 #include "SimInf_arg.h"
+#include "solvers/SimInf_solver.h"
 #include "solvers/ssa/SimInf_solver_ssa.h"
 
 /**
@@ -240,9 +241,9 @@ SEXP SimInf_run(
 
     /* Run the simulation solver. */
     if (solver == R_NilValue)
-        err = SimInf_run_solver(&args);
+        err = SimInf_run_solver_ssa(&args);
     else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssa") == 0)
-        err = SimInf_run_solver(&args);
+        err = SimInf_run_solver_ssa(&args);
     else
         err = SIMINF_ERR_UNKNOWN_SOLVER;
 
