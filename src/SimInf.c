@@ -20,6 +20,10 @@
 
 #include <Rdefines.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include "SimInf_arg.h"
 #include "SimInf_solver.h"
 
@@ -206,7 +210,21 @@ SEXP SimInf_run(
     args.tr_fun = tr_fun;
     args.pts_fun = pts_fun;
 
-    /* Run simulation solver. */
+    /* Specify the number of threads to use. Make sure to not use more
+     * threads than the number of nodes in the model. */
+#ifdef _OPENMP
+    if (args.Nthread < 1)
+        args.Nthread = omp_get_num_procs();
+#else
+    args.Nthread = 1;
+#endif
+    if (args.Nn < args.Nthread)
+        args.Nthread = args.Nn;
+#ifdef _OPENMP
+    omp_set_num_threads(args.Nthread);
+#endif
+
+    /* Run the simulation solver. */
     err = SimInf_run_solver(&args);
 
 cleanup:

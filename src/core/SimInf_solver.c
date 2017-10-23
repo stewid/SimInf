@@ -313,7 +313,6 @@ static void SimInf_free_args(SimInf_thread_args *sa)
     }
 }
 
-
 /**
  * Split scheduled events to E1 and E2 events by number of threads
  * used during simulation
@@ -937,19 +936,7 @@ int SimInf_run_solver(SimInf_solver_args *args)
     int i, errcode;
     gsl_rng *rng = NULL;
 
-#ifdef _OPENMP
-    if (args->Nthread < 1)
-        args->Nthread = omp_get_num_procs();
-#else
-    args->Nthread = 1;
-#endif
-    if (args->Nn < args->Nthread)
-        n_thread = args->Nn;
-    else
-        n_thread = args->Nthread;
-#ifdef _OPENMP
-    omp_set_num_threads(n_thread);
-#endif
+    n_thread = args->Nthread;
 
     /* Set compartment state to the initial state. */
     uu = malloc(args->Nn * args->Nc * sizeof(int));
