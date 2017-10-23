@@ -36,7 +36,8 @@ typedef enum {
     SIMINF_ERR_SAMPLE_SELECT        = -8,
     SIMINF_ERR_INVALID_MODEL        = -9,
     SIMINF_ERR_V_IS_NEGATIVE        = -10,
-    SIMINF_ERR_INVALID_RATE         = -11
+    SIMINF_ERR_INVALID_RATE         = -11,
+    SIMINF_ERR_UNKNOWN_SOLVER       = -12
 } SimInf_error_code;
 
 /* Forward declaration of the transition rate function. */

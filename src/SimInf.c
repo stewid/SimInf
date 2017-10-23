@@ -1,6 +1,7 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
+ *  Copyright (C) 2017  Robin Eriksson
  *  Copyright (C) 2015 - 2017  Stefan Engblom
  *  Copyright (C) 2015 - 2017  Stefan Widgren
  *
@@ -57,6 +58,19 @@ SEXP SimInf_run(
     if (SimInf_arg_check_model(model)) {
         err = SIMINF_ERR_INVALID_MODEL;
         goto cleanup;
+    }
+
+    /* Check solver argument */
+    if (!isNull(solver)) {
+        if (!isString(solver)) {
+            err = SIMINF_ERR_UNKNOWN_SOLVER;
+            goto cleanup;
+        }
+
+        if (length(solver) != 1 || STRING_ELT(solver, 0) == NA_STRING) {
+            err = SIMINF_ERR_UNKNOWN_SOLVER;
+            goto cleanup;
+        }
     }
 
     /* number of threads */
@@ -225,7 +239,12 @@ SEXP SimInf_run(
 #endif
 
     /* Run the simulation solver. */
-    err = SimInf_run_solver(&args);
+    if (solver == R_NilValue)
+        err = SimInf_run_solver(&args);
+    else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssa") == 0)
+        err = SimInf_run_solver(&args);
+    else
+        err = SIMINF_ERR_UNKNOWN_SOLVER;
 
 cleanup:
     if (err) {
@@ -259,6 +278,9 @@ cleanup:
             break;
         case SIMINF_ERR_INVALID_RATE:
             Rf_error("Invalid rate detected (non-finite or < 0.0)");
+            break;
+        case SIMINF_ERR_UNKNOWN_SOLVER:
+            Rf_error("Invalid 'solver' value.");
             break;
         default:
             Rf_error("Unknown error code: %i", err);
