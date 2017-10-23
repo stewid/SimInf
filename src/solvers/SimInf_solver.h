@@ -22,6 +22,8 @@
 #ifndef INCLUDE_SIMINF_SOLVER_H
 #define INCLUDE_SIMINF_SOLVER_H
 
+#include <gsl/gsl_rng.h>
+
 #include "SimInf.h"
 
 /* Structure to hold data/arguments to a SimInf solver.
@@ -211,5 +213,10 @@ typedef struct SimInf_scheduled_events
                          *   determines the shift of the internal
                          *   and external transfer event. */
 } SimInf_scheduled_events;
+
+int SimInf_sample_select(
+    const int *irE, const int *jcE, int Nc, const int *u,
+    int node, int select, int n, double proportion,
+    int *individuals, int *u_tmp, gsl_rng *rng);
 
 #endif
