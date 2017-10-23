@@ -28,7 +28,7 @@
 #endif
 
 #include "SimInf.h"
-#include "SimInf_solver.h"
+#include "SimInf_solver_ssa.h"
 
 /**
  * Event types

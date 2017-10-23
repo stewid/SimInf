@@ -25,7 +25,7 @@
 #endif
 
 #include "SimInf_arg.h"
-#include "SimInf_solver.h"
+#include "solvers/ssa/SimInf_solver_ssa.h"
 
 /**
  * Initiate and run the simulation
