@@ -55,31 +55,6 @@ enum {EXIT_EVENT,
       EXTERNAL_TRANSFER_EVENT};
 
 /**
- * Structure that represents scheduled events.
- */
-typedef struct SimInf_scheduled_events
-{
-    int len;            /**< Number of events. */
-    int *event;         /**< The type of event i. */
-    int *time;          /**< The time of event i. */
-    int *node;          /**< The source node of event i. */
-    int *dest;          /**< The dest node of event i. */
-    int *n;             /**< The number of individuals in the scheduled
-                         *   event. n[i] >= 0. */
-    double *proportion; /**< If n[i] equals zero, then the number of
-                         *   individuals to sample is calculated by
-                         *   summing the number of individuals in the
-                         *   states determined by select[i] and
-                         *   multiplying with the proportion.
-                         *   0 <= p[i] <= 1. */
-    int *select;        /**< Column j in the event matrix that
-                         *   determines the states to sample from. */
-    int *shift;         /**< Column j in the shift matrix that
-                         *   determines the shift of the internal
-                         *   and external transfer event. */
-} SimInf_scheduled_events;
-
-/**
  * Structure to hold thread specific data/arguments for simulation.
  */
 typedef struct SimInf_thread_args
