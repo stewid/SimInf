@@ -57,7 +57,7 @@ enum {EXIT_EVENT,
 /**
  * Structure that represents scheduled events.
  */
-typedef struct scheduled_events
+typedef struct SimInf_scheduled_events
 {
     int len;            /**< Number of events. */
     int *event;         /**< The type of event i. */
@@ -77,7 +77,7 @@ typedef struct scheduled_events
     int *shift;         /**< Column j in the shift matrix that
                          *   determines the shift of the internal
                          *   and external transfer event. */
-} scheduled_events;
+} SimInf_scheduled_events;
 
 /**
  * Structure to hold thread specific data/arguments for simulation.
@@ -180,10 +180,10 @@ typedef struct SimInf_thread_args
 
 
     /*** Scheduled events ***/
-    scheduled_events *E1; /**< E1 events to process. */
+    SimInf_scheduled_events *E1; /**< E1 events to process. */
     int E1_index;         /**< Index to the next E1 event to
                            *   process. */
-    scheduled_events *E2; /**< E2 events to process. */
+    SimInf_scheduled_events *E2; /**< E2 events to process. */
     int E2_index;         /**< Index to the next E2 event to
                            *   process. */
 
@@ -211,7 +211,7 @@ SimInf_thread_args *sim_args = NULL;
  * @param n Number of events.
  * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-static int SimInf_allocate_events(scheduled_events *e, int n)
+static int SimInf_allocate_events(SimInf_scheduled_events *e, int n)
 {
     if (e && n > 0) {
         e->len = n;
@@ -249,7 +249,7 @@ static int SimInf_allocate_events(scheduled_events *e, int n)
  *
  * @param e The scheduled_events events to free.
  */
-static void SimInf_free_events(scheduled_events *e)
+static void SimInf_free_events(SimInf_scheduled_events *e)
 {
     if (e) {
         if (e->event)
@@ -396,7 +396,7 @@ static int SimInf_split_events(
 
     for (i = 0; i < len; i++) {
         int j, k;
-        scheduled_events *e;
+        SimInf_scheduled_events *e;
 
         switch (event[i]) {
         case EXIT_EVENT:
@@ -611,7 +611,7 @@ static int SimInf_solver()
             for (i = 0; i < n_thread; i++) {
                 int node;
                 SimInf_thread_args sa = *&sim_args[i];
-                scheduled_events e1 = *sa.E1;
+                SimInf_scheduled_events e1 = *sa.E1;
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
@@ -765,7 +765,7 @@ static int SimInf_solver()
             #pragma omp master
             {
                 SimInf_thread_args sa = *&sim_args[0];
-                scheduled_events e2 = *sa.E2;
+                SimInf_scheduled_events e2 = *sa.E2;
 
                 /* (3) Incorporate all scheduled E2 events */
                 while (sa.E2_index < e2.len &&
@@ -1057,14 +1057,14 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
         sim_args[i].update_node = &update_node[sim_args[i].Ni];
 
         /* Scheduled events */
-        sim_args[i].E1 = calloc(1, sizeof(scheduled_events));
+        sim_args[i].E1 = calloc(1, sizeof(SimInf_scheduled_events));
         if (!sim_args[i].E1) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
         if (i == 0) {
-            sim_args[i].E2 = calloc(1, sizeof(scheduled_events));
+            sim_args[i].E2 = calloc(1, sizeof(SimInf_scheduled_events));
             if (!sim_args[i].E2) {
                 errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
                 goto cleanup;
