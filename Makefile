@@ -44,7 +44,7 @@ check: build
 
 # Check package (without vignettes)
 check_quick: clean
-	cd .. && R CMD build --no-build-vignettes  $(PKG_NAME)	
+	cd .. && R CMD build --no-build-vignettes  $(PKG_NAME)
 	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-vignettes --as-cran $(PKG_TAR)
 
 # Build and check package with gctorture
@@ -62,10 +62,6 @@ check_valgrind:
 test_objects = $(wildcard tests/*.R)
 valgrind:
 	$(foreach var,$(test_objects),R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < $(var);)
-
-# Temporary test file
-valgrind2:
-	R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < tests/valgrindAEM.R
 
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
