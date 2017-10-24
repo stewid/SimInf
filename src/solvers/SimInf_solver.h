@@ -214,6 +214,123 @@ typedef struct SimInf_scheduled_events
                          *   and external transfer event. */
 } SimInf_scheduled_events;
 
+/**
+ * Structure to hold thread specific data/arguments for simulation.
+ */
+typedef struct SimInf_thread_args
+{
+    /*** Constants ***/
+    int Ntot;  /**< Total number of nodes. */
+    int Ni;    /**< Index to first node in thread in the global set of
+                 *  of nodes. */
+    int Nn;    /**< Number of nodes in thread. */
+    int Nt;    /**< Total number of different transitions. */
+    int Nc;    /**< Number of compartments in each node. */
+    int Nd;    /**< Number of continuous state variables. */
+    int Nld;   /**< Length of the local data vector 'ldata' for each
+                *   node. The 'ldata' vector is sent to propensities
+                *   and the post time step function. */
+
+    /*** Sparse matrices ***/
+    const int *irG; /**< Dependency graph. irG[k] is the row of
+                     *   G[k]. */
+    const int *jcG; /**< Dependency graph. Index to data of first
+                     *   non-zero element in row k. */
+    const int *irS; /**< State-change matrix. irS[k] is the row of
+                     *   S[k]. */
+    const int *jcS; /**< State-change matrix. Index to data of first
+                     *   non-zero element in row k. */
+    const int *prS; /**< State-change matrix. Value of item (i, j)
+                     *   in S. */
+    const int *irE; /**< Select matrix for events. irE[k] is the row
+                     *   of E[k]. */
+    const int *jcE; /**< Select matrix for events. Index to data of
+                     *   first non-zero element in row k. */
+
+    /*** Callbacks ***/
+    TRFun *tr_fun;  /**< Vector of function pointers to
+                     *   transition rate functions */
+    PTSFun pts_fun; /**< Callback after each time step */
+
+    /*** Keep track of time ***/
+    double tt;           /**< The global time. */
+    double next_day;     /**< The global time of next day. */
+    const double *tspan; /**< Output times. tspan[0] is the start time
+                          *   and tspan[length(tspan)-1] is the stop
+                          *   time.*/
+    int tlen;            /**< Number of sampling points in time. */
+    int U_it;            /**< Index to next time in tspan */
+    int V_it;            /**< Index to next time in tspan */
+
+    /*** Data vectors ***/
+    int *u;           /**< Vector with the number of individuals in
+                       *   each compartment in each node in the
+                       *   thread. */
+    int *U;           /**< If the solution is written to a dense
+                       *   matrix the compartment output is a matrix U
+                       *   ((Nn * Nc) X length(tspan)). U(:,j)
+                       *   contains the state of the system at
+                       *   tspan(j). */
+    const int *irU;   /**< If the solution is written to a sparse
+                       *   matrix, irU[k] is the row of U[k]. */
+    const int *jcU;   /**< If the solution is written to a sparse
+                       *   matrix, index to data of first non-zero
+                       *   element in row k. */
+    double    *prU;   /**< If the solution is written to a sparse
+                       *   matrix, value of item (i, j) in U. */
+    double *v;        /**< Vector with the continuous state in each
+                       *   node in the thread. */
+    double *v_new;    /**< Vector with the continuous state in each
+                       *   node in the thread after the post time step
+                       *   function. */
+    double *V;        /**< If the solution is written to a dense
+                       *   matrix the continuous output is a matrix V
+                       *   ((Nn * Nd) X length(tspan)). V(:,j)
+                       *   contains the state of the system at
+                       *   tspan(j). */
+    const int *irV;   /**< If the solution is written to a sparse
+                       *   matrix, irV[k] is the row of V[k]. */
+    const int *jcV;   /**< If the solution is written to a sparse
+                       *   matrix, index to data of first non-zero
+                       *   element in row k. */
+    double    *prV;   /**< If the solution is written to a sparse
+                       *   matrix, value of item (i, j) in V. */
+    const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
+                          *   local data vector for node #j. */
+    const double *gdata; /**< The global data vector. */
+    const int *N;     /**< Shift matrix for internal and external
+                       *   transfer events. */
+    int *update_node; /**< Vector of length Nn used to indicate nodes
+                       *   for update. */
+
+    double *sum_t_rate; /**< Vector of length Nn with the sum of
+                         *   propensities in every node. */
+    double *t_rate;     /**< Transition rate matrix (Nt X Nn) with all
+                         *   propensities for state transitions. */
+    double *t_time;     /**< Time for next event (transition) in each
+                         *   node. */
+    int errcode;        /**< The error state of the thread. 0 if
+                         *   ok. */
+    gsl_rng *rng;       /**< The random number generator. */
+
+
+    /*** Scheduled events ***/
+    SimInf_scheduled_events *E1; /**< E1 events to process. */
+    int E1_index;         /**< Index to the next E1 event to
+                           *   process. */
+    SimInf_scheduled_events *E2; /**< E2 events to process. */
+    int E2_index;         /**< Index to the next E2 event to
+                           *   process. */
+
+    /*** Vectors for sampling individuals ***/
+    int *individuals;     /**< Vector to store the result of the
+                           *   sampling during scheduled events
+                           *   processing. */
+    int *u_tmp;           /**< Temporary vector with the compartment
+                           *   state in a node when sampling
+                           *   individuals for scheduled events. */
+} SimInf_thread_args;
+
 int SimInf_sample_select(
     const int *irE, const int *jcE, int Nc, const int *u,
     int node, int select, int n, double proportion,
