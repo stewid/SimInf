@@ -1,6 +1,24 @@
-SimInf 5.0.0.9000
+SimInf 5.1.0.9000
 -----------------
 
+
+
+SimInf 5.1.0
+------------
+
+BUG FIXES
+
+* Added missing calls to 'PROTECT' to protect newly created R objects
+  in C code from the garbage collector.
+
+* Protect against invalid transition index in direct SSA.
+
+SimInf 5.0.1
+------------
+
+IMPROVEMENTS
+
+* Improvements in the vignette.
 
 SimInf 5.0.0
 ------------

@@ -6,9 +6,10 @@
 \alias{run,SimInf_model-method}
 \title{Run the SimInf stochastic simulation algorithm}
 \usage{
-run(model, threads = NULL, seed = NULL)
+run(model, threads = NULL, seed = NULL, solver = NULL)
 
-\S4method{run}{SimInf_model}(model, threads = NULL, seed = NULL)
+\S4method{run}{SimInf_model}(model, threads = NULL, seed = NULL,
+  solver = NULL)
 }
 \arguments{
 \item{model}{The siminf model to run.}
@@ -18,6 +19,9 @@ available processors.}
 
 \item{seed}{Random number seed. Default is NULL, i.e. the
 simulator uses time to seed the random number generator.}
+
+\item{solver}{Which numerical solver to utilize. Default is Null, i.e.
+SSA is the default solver.}
 }
 \value{
 \code{SimInf_model} with result from simulation.

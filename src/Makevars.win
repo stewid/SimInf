@@ -19,4 +19,7 @@ OBJECTS.misc = misc/SimInf_arg.o \
                misc/SimInf_ldata.o \
                misc/SimInf_local_spread.o
 
-OBJECTS = init.o SimInf.o core/SimInf_solver.o $(OBJECTS.misc) $(MODELS_OBJ)
+OBJECTS.solvers = solvers/SimInf_solver.o \
+                  solvers/ssa/SimInf_solver_ssa.o
+
+OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)

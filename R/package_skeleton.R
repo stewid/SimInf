@@ -16,6 +16,7 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ##' Create a DESCRIPTION file for the package skeleton
+##' @importFrom utils packageVersion
 ##' @noRd
 create_DESCRIPTION_file <- function(path, name, author, maintainer,
                                     email, license)
@@ -30,7 +31,7 @@ create_DESCRIPTION_file <- function(path, name, author, maintainer,
                paste0("    to the 'SimInf' package for the '", name, "' model."),
                paste0("License: ", license),
                "NeedsCompilation: yes",
-               "Depends: SimInf",
+               paste0("Depends: SimInf(>= ", packageVersion("SimInf"), ")"),
                "Imports: methods",
                "LinkingTo: SimInf",
                "Collate:",
@@ -147,15 +148,16 @@ create_model_run_fn <- function(name)
       "##'     available processors.",
       "##' @param seed Random number seed. Default is NULL, i.e. the",
       "##'     simulator uses time to seed the random number generator.",
+      "##' @param solver Which numerical solver to utilize. Default is 'ssa'.",
       "##' @return model with result from simulation.",
       "##' @export",
       paste0("##' @useDynLib ", name, ", .registration=TRUE"),
       "setMethod(\"run\",",
       paste0("    signature(model = \"", name, "\"),"),
-      "    function(model, threads, seed)",
+      "    function(model, threads, seed, solver)",
       "    {",
       "        methods::validObject(model)",
-      paste0("       .Call(SimInf_model_run, model, threads, seed, PACKAGE = \"",
+      paste0("       .Call(SimInf_model_run, model, threads, seed, solver, PACKAGE = \"",
              name, "\")"),
       "    })")
 }
@@ -225,7 +227,7 @@ create_model_run_man_file <- function(path, name)
                paste0("\\alias{run,", name, "-method}"),
                "\\title{Run the model}",
                "\\usage{",
-               paste0("\\S4method{run}{", name, "}(model, threads = NULL, seed = NULL)"),
+               paste0("\\S4method{run}{", name, "}(model, threads = NULL, seed = NULL, solver = 'ssa')"),
                "}",
                "\\arguments{",
                "\\item{model}{The model to run.}",
@@ -235,6 +237,8 @@ create_model_run_man_file <- function(path, name)
                "",
                "\\item{seed}{Random number seed. Default is NULL, i.e. the",
                "simulator uses time to seed the random number generator.}",
+               "",
+               "\\item{solver}{Which numerical solver to utilize. Default is 'ssa'.}",
                "}",
                "\\value{",
                "model with result from simulation.",

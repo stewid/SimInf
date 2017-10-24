@@ -18,17 +18,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_ARGS_H
-#define INCLUDE_SIMINF_ARGS_H
+#ifndef INCLUDE_SIMINF_SOLVER_SSA_H
+#define INCLUDE_SIMINF_SOLVER_SSA_H
 
-#include <Rdefines.h>
+#include "solvers/SimInf_solver.h"
 
-int SimInf_arg_check_dgCMatrix(SEXP arg);
-int SimInf_arg_check_integer(SEXP arg);
-int SimInf_arg_check_matrix(SEXP arg);
-int SimInf_arg_check_model(SEXP arg);
-int SimInf_get_seed(unsigned long int *out, SEXP seed);
-int SimInf_get_threads(int *out, SEXP threads);
-int SimInf_get_solver(int *out, SEXP solver);
+/* Declaration of the function to initialize and run the SimInf ssa
+ * solver */
+int SimInf_run_solver_ssa(SimInf_solver_args *args);
 
 #endif

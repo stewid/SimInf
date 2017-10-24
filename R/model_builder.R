@@ -159,12 +159,12 @@ C_ptsFun <- function() {
 
 ## C code: SimInf model run function.
 C_run <- function(transitions) {
-    c("SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP seed)",
+    c("SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP seed, SEXP solver)",
       "{",
       sprintf("    TRFun tr_fun[] = {%s};",
               paste0("&trFun", seq_len(length(transitions)), collapse = ", ")),
       "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
-      "    return SimInf_run(model, threads, seed, tr_fun, &ptsFun);",
+      "    return SimInf_run(model, threads, seed, solver, tr_fun, &ptsFun);",
       "}",
       "")
 }
@@ -481,7 +481,7 @@ setMethod("C_code",
                   lines[-(1:2)],
                   "static const R_CallMethodDef callMethods[] =",
                   "{",
-                  "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",
+                  "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 4},",
                   "    {NULL, NULL, 0}",
                   "};",
                   "",

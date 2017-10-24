@@ -82,6 +82,8 @@ setGeneric("C_code", function(model, pkg) standardGeneric("C_code"))
 ##'     available processors.
 ##' @param seed Random number seed. Default is NULL, i.e. the
 ##'     simulator uses time to seed the random number generator.
+##' @param solver Which numerical solver to utilize. Default is Null, i.e.
+##'     SSA is the default solver.
 ##' @return \code{SimInf_model} with result from simulation.
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
@@ -103,7 +105,8 @@ setGeneric("run",
            signature = "model",
            function(model,
                     threads = NULL,
-                    seed    = NULL)
+                    seed    = NULL,
+                    solver  = NULL)
                standardGeneric("run"))
 
 ##' Extract the number of individuals in each compartment

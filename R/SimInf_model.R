@@ -549,7 +549,7 @@ Nd <- function(model) {
 ##' @export
 setMethod("run",
           signature(model = "SimInf_model"),
-          function(model, threads, seed)
+          function(model, threads, seed, solver)
           {
               ## Check that SimInf_model contains all data structures
               ## required by the siminf solver and that they make sense
@@ -582,7 +582,7 @@ setMethod("run",
                   on.exit(dyn.unload(lib), add = TRUE)
 
                   ## Create expression to parse
-                  expr <- ".Call(dll$SimInf_model_run, model, threads, seed)"
+                  expr <- ".Call(dll$SimInf_model_run, model, threads, seed, solver)"
               } else {
                   ## The model name
                   name <- as.character(class(model))
@@ -591,7 +591,7 @@ setMethod("run",
                   run_fn <- paste0(name, "_run")
 
                   ## Create expression to parse
-                  expr <- ".Call(run_fn, model, threads, seed, PACKAGE = 'SimInf')"
+                  expr <- ".Call(run_fn, model, threads, seed, solver, PACKAGE = 'SimInf')"
               }
 
               ## Run model
