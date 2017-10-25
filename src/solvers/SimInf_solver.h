@@ -329,6 +329,14 @@ typedef struct SimInf_thread_args
     int *u_tmp;           /**< Temporary vector with the compartment
                            *   state in a node when sampling
                            *   individuals for scheduled events. */
+    /*** AEM specific variables ***/
+    gsl_rng **rng_vec;   /**< The random number generator. */
+
+    int *reactHeap;      /**< Binary heap storing all reaction events */
+    int *reactNode;
+    double *reactTimes;
+    double *reactInf;
+    int reactHeapSize;
 } SimInf_thread_args;
 
 int SimInf_allocate_events(SimInf_scheduled_events *e, int n);

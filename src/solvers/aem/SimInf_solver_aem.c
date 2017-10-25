@@ -56,133 +56,7 @@ enum {EXIT_EVENT,
       INTERNAL_TRANSFER_EVENT,
       EXTERNAL_TRANSFER_EVENT};
 
-/**
- * Structure to hold thread specific data/arguments for simulation.
- */
-typedef struct SimInf_thread_args
-{
-    /*** Constants ***/
-    int Ntot;  /**< Total number of nodes. */
-    int Ni;    /**< Index to first node in thread in the global set of
-                *  of nodes. */
-    int Nn;    /**< Number of nodes in thread. */
-    int Nt;    /**< Total number of different transitions. */
-    int Nc;    /**< Number of compartments in each node. */
-    int Nd;    /**< Number of continuous state variables. */
-    int Nld;   /**< Length of the local data vector 'ldata' for each
-                *   node. The 'ldata' vector is sent to propensities
-                *   and the post time step function. */
 
-    /*** Sparse matrices ***/
-    const int *irG; /**< Dependency graph. irG[k] is the row of
-                     *   G[k]. */
-    const int *jcG; /**< Dependency graph. Index to data of first
-                     *   non-zero element in row k. */
-    const int *irS; /**< State-change matrix. irS[k] is the row of
-                     *   S[k]. */
-    const int *jcS; /**< State-change matrix. Index to data of first
-                     *   non-zero element in row k. */
-    const int *prS; /**< State-change matrix. Value of item (i, j)
-                     *   in S. */
-    const int *irE; /**< Select matrix for events. irE[k] is the row
-                     *   of E[k]. */
-    const int *jcE; /**< Select matrix for events. Index to data of
-                     *   first non-zero element in row k. */
-
-    /*** Callbacks ***/
-    TRFun *tr_fun;  /**< Vector of function pointers to
-                       n *   transition rate functions */
-    PTSFun pts_fun; /**< Callback after each time step */
-
-    /*** Keep track of time ***/
-    double tt;           /**< The global time. */
-    double next_day;     /**< The global time of next day. */
-    const double *tspan; /**< Output times. tspan[0] is the start time
-                          *   and tspan[length(tspan)-1] is the stop
-                          *   time.*/
-    int tlen;            /**< Number of sampling points in time. */
-    int U_it;            /**< Index to next time in tspan */
-    int V_it;            /**< Index to next time in tspan */
-
-    /*** Data vectors ***/
-    int *u;           /**< Vector with the number of individuals in
-                       *   each compartment in each node in the
-                       *   thread. */
-    int *U;           /**< If the solution is written to a dense
-                       *   matrix the compartment output is a matrix U
-                       *   ((Nn * Nc) X length(tspan)). U(:,j)
-                       *   contains the state of the system at
-                       *   tspan(j). */
-    const int *irU;   /**< If the solution is written to a sparse
-                       *   matrix, irU[k] is the row of U[k]. */
-    const int *jcU;   /**< If the solution is written to a sparse
-                       *   matrix, index to data of first non-zero
-                       *   element in row k. */
-    double    *prU;   /**< If the solution is written to a sparse
-                       *   matrix, value of item (i, j) in U. */
-    double *v;        /**< Vector with the continuous state in each
-                       *   node in the thread. */
-    double *v_new;    /**< Vector with the continuous state in each
-                       *   node in the thread after the post time step
-                       *   function. */
-    double *V;        /**< If the solution is written to a dense
-                       *   matrix the continuous output is a matrix V
-                       *   ((Nn * Nd) X length(tspan)). V(:,j)
-                       *   contains the state of the system at
-                       *   tspan(j). */
-    const int *irV;   /**< If the solution is written to a sparse
-                       *   matrix, irV[k] is the row of V[k]. */
-    const int *jcV;   /**< If the solution is written to a sparse
-                       *   matrix, index to data of first non-zero
-                       *   element in row k. */
-    double    *prV;   /**< If the solution is written to a sparse
-                       *   matrix, value of item (i, j) in V. */
-    const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
-                          *   local data vector for node #j. */
-    const double *gdata; /**< The global data vector. */
-    const int *N;     /**< Shift matrix for internal and external
-                       *   transfer events. */
-    int *update_node; /**< Vector of length Nn used to indicate nodes
-                       *   for update. */
-
-    double *sum_t_rate; /**< Vector of length Nn with the sum of
-                         *   propensities in every node. */
-    double *t_rate;     /**< Transition rate matrix (Nt X Nn) with all
-                         *   propensities for state transitions. */
-    double *t_time;     /**< Time for next event (transition) in each
-                         *   node. */
-    int errcode;        /**< The error state of the thread. 0 if
-                         *   ok. */
-    gsl_rng *rng;       /**< The random number generator. */
-
-    /*** Scheduled events ***/
-    SimInf_scheduled_events *E1; /**< E1 events to process. */
-    int E1_index;         /**< Index to the next E1 event to
-                           *   process. */
-    SimInf_scheduled_events *E2; /**< E2 events to process. */
-    int E2_index;         /**< Index to the next E2 event to
-                           *   process. */
-
-    /*** Vectors for sampling individuals ***/
-    int *individuals;     /**< Vector to store the result of the
-                           *   sampling during scheduled events
-                           *   processing. */
-    int *u_tmp;           /**< Temporary vector with the compartment
-                           *   state in a node when sampling
-                           *   individuals for scheduled events. */
-
-    /* (START) AEM specific variables */
-    gsl_rng **rng_vec;       /**< The random number generator. */
-
-    int *reactHeap;      /**< The reaction heap (AEM solver). */
-    int reactHeapSize;
-
-    int *reactNode;
-
-    double *reactTimes, *reactInf; /**< holds the times (AEM) */
-    /* (END) AEM specific variables */
-
-} SimInf_thread_args;
 
 /* Shared variables */
 int n_thread_aem = 0;
@@ -191,135 +65,6 @@ double *vv_1_aem = NULL;
 double *vv_2_aem = NULL;
 int *update_node_aem = NULL;
 SimInf_thread_args *sim_args_aem = NULL;
-
-/**
- * Allocate memory for scheduled events
- *
- * @param e SimInf_scheduled_events structure for events.
- * @param n Number of events.
- * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
- */
-static int SimInf_allocate_events(SimInf_scheduled_events *e, int n)
-{
-    if (e && n > 0) {
-        e->len = n;
-        e->event = malloc(n * sizeof(int));
-        if (!e->event)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->time = malloc(n * sizeof(int));
-        if (!e->time)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->node = malloc(n * sizeof(int));
-        if (!e->node)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->dest = malloc(n * sizeof(int));
-        if (!e->dest)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->n = malloc(n * sizeof(int));
-        if (!e->n)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->proportion = malloc(n * sizeof(double));
-        if (!e->proportion)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->select = malloc(n * sizeof(int));
-        if (!e->select)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->shift = malloc(n * sizeof(int));
-        if (!e->shift)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-    }
-
-    return 0;
-}
-
-/**
- * Free allocated memory to scheduled events
- *
- * @param e The SimInf_scheduled_events events to free.
- */
-static void SimInf_free_events(SimInf_scheduled_events *e)
-{
-    if (e) {
-        if (e->event)
-            free(e->event);
-        e->event = NULL;
-        if (e->time)
-            free(e->time);
-        e->time = NULL;
-        if (e->node)
-            free(e->node);
-        e->node = NULL;
-        if (e->dest)
-            free(e->dest);
-        e->dest = NULL;
-        if (e->n)
-            free(e->n);
-        e->n = NULL;
-        if (e->proportion)
-            free(e->proportion);
-        e->proportion = NULL;
-        if (e->select)
-            free(e->select);
-        e->select = NULL;
-        if (e->shift)
-            free(e->shift);
-        e->shift = NULL;
-        free(e);
-    }
-}
-
-/**
- * Free allocated memory to siminf thread arguments
- */
-static void SimInf_free_args(SimInf_thread_args *sa)
-{
-    if (sa) {
-        if (sa->rng)
-            gsl_rng_free(sa->rng);
-        sa->rng = NULL;
-        if (sa->t_rate)
-            free(sa->t_rate);
-        sa->t_rate = NULL;
-        if (sa->sum_t_rate)
-            free(sa->sum_t_rate);
-        sa->sum_t_rate = NULL;
-        if (sa->t_time)
-            free(sa->t_time);
-        sa->t_time = NULL;
-        if (sa->individuals)
-            free(sa->individuals);
-        sa->individuals = NULL;
-        if (sa->u_tmp)
-            free(sa->u_tmp);
-        sa->u_tmp = NULL;
-        if (sa->E1)
-            SimInf_free_events(sa->E1);
-        sa->E1 = NULL;
-        if (sa->E2)
-            SimInf_free_events(sa->E2);
-        sa->E2 = NULL;
-        /* AEM variables */
-	if(sa->rng_vec){
-            for(int i = 0; i < (sa->Nn)*(sa->Nt); i++)
-                gsl_rng_free(sa->rng_vec[i]);
-        }
-        sa->rng_vec = NULL;
-	if(sa->reactHeap)
-            free(sa->reactHeap);
-        sa->reactHeap = NULL;
-	if(sa->reactInf)
-            free(sa->reactInf);
-        sa->reactInf = NULL;
-	if(sa->reactNode)
-            free(sa->reactNode);
-        sa->reactNode = NULL;
-	if(sa->reactTimes)
-            free(sa->reactTimes);
-        sa->reactTimes = NULL;
-    }
-}
-
-
 
 /**
  * Split scheduled events to E1 and E2 events by number of threads
@@ -487,15 +232,15 @@ void calcTimes(double* time, double* infTime, double tt, double old_rate,
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver()
+static int SimInf_solver_aem()
 {
     int k;
 
-#pragma omp parallel
+    #pragma omp parallel
     {
         int i;
 
-#pragma omp for
+        #pragma omp for
         for (i = 0; i < n_thread_aem; i++) {
             int node;
             SimInf_thread_args sa = *&sim_args_aem[i];
@@ -542,11 +287,11 @@ static int SimInf_solver()
 
     /* Main loop. */
     for (;;) {
-#pragma omp parallel
+        #pragma omp parallel
         {
             int i;
 
-#pragma omp for
+            #pragma omp for
             for (i = 0; i < n_thread_aem; i++) {
                 int node;
                 SimInf_thread_args sa = *&sim_args_aem[i];
@@ -708,9 +453,9 @@ static int SimInf_solver()
 	    }
 
 
-#pragma omp barrier
+            #pragma omp barrier
 
-#pragma omp master
+            #pragma omp master
             {
                 SimInf_thread_args sa = *&sim_args_aem[0];
                 SimInf_scheduled_events e2 = *sa.E2;
@@ -763,9 +508,9 @@ static int SimInf_solver()
                 *&sim_args_aem[0] = sa;
             }
 
-#pragma omp barrier
+            #pragma omp barrier
 
-#pragma omp for
+            #pragma omp for
             for (i = 0; i < n_thread_aem; i++) {
                 int node;
                 SimInf_thread_args sa = *&sim_args_aem[i];
@@ -1099,7 +844,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     if (errcode)
         goto cleanup;
 
-    errcode = SimInf_solver();
+    errcode = SimInf_solver_aem();
 
 cleanup:
     if (uu_aem) {
