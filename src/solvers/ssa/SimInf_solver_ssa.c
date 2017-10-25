@@ -188,7 +188,7 @@ cleanup:
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver()
+static int SimInf_solver_ssa()
 {
     int k;
 
@@ -742,7 +742,7 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     if (errcode)
         goto cleanup;
 
-    errcode = SimInf_solver();
+    errcode = SimInf_solver_ssa();
 
 cleanup:
     if (uu) {
