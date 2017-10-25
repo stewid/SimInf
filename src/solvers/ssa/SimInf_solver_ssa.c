@@ -63,46 +63,6 @@ int *update_node = NULL;
 SimInf_thread_args *sim_args = NULL;
 
 /**
- * Allocate memory for scheduled events
- *
- * @param e scheduled_events structure for events.
- * @param n Number of events.
- * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
- */
-static int SimInf_allocate_events(SimInf_scheduled_events *e, int n)
-{
-    if (e && n > 0) {
-        e->len = n;
-        e->event = malloc(n * sizeof(int));
-        if (!e->event)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->time = malloc(n * sizeof(int));
-        if (!e->time)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->node = malloc(n * sizeof(int));
-        if (!e->node)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->dest = malloc(n * sizeof(int));
-        if (!e->dest)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->n = malloc(n * sizeof(int));
-        if (!e->n)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->proportion = malloc(n * sizeof(double));
-        if (!e->proportion)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->select = malloc(n * sizeof(int));
-        if (!e->select)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->shift = malloc(n * sizeof(int));
-        if (!e->shift)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-    }
-
-    return 0;
-}
-
-/**
  * Free allocated memory to scheduled events
  *
  * @param e The scheduled_events events to free.
