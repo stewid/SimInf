@@ -63,42 +63,6 @@ int *update_node = NULL;
 SimInf_thread_args *sim_args = NULL;
 
 /**
- * Free allocated memory to scheduled events
- *
- * @param e The scheduled_events events to free.
- */
-static void SimInf_free_events(SimInf_scheduled_events *e)
-{
-    if (e) {
-        if (e->event)
-            free(e->event);
-        e->event = NULL;
-        if (e->time)
-            free(e->time);
-        e->time = NULL;
-        if (e->node)
-            free(e->node);
-        e->node = NULL;
-        if (e->dest)
-            free(e->dest);
-        e->dest = NULL;
-        if (e->n)
-            free(e->n);
-        e->n = NULL;
-        if (e->proportion)
-            free(e->proportion);
-        e->proportion = NULL;
-        if (e->select)
-            free(e->select);
-        e->select = NULL;
-        if (e->shift)
-            free(e->shift);
-        e->shift = NULL;
-        free(e);
-    }
-}
-
-/**
  * Split scheduled events to E1 and E2 events by number of threads
  * used during simulation
  *

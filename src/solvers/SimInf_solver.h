@@ -335,6 +335,8 @@ int SimInf_allocate_events(SimInf_scheduled_events *e, int n);
 
 void SimInf_free_args(SimInf_thread_args *sa);
 
+void SimInf_free_events(SimInf_scheduled_events *e);
+
 int SimInf_sample_select(
     const int *irE, const int *jcE, int Nc, const int *u,
     int node, int select, int n, double proportion,

@@ -216,3 +216,39 @@ void SimInf_free_args(SimInf_thread_args *sa)
         sa->E2 = NULL;
     }
 }
+
+/**
+ * Free allocated memory to scheduled events
+ *
+ * @param e The scheduled_events events to free.
+ */
+void SimInf_free_events(SimInf_scheduled_events *e)
+{
+    if (e) {
+        if (e->event)
+            free(e->event);
+        e->event = NULL;
+        if (e->time)
+            free(e->time);
+        e->time = NULL;
+        if (e->node)
+            free(e->node);
+        e->node = NULL;
+        if (e->dest)
+            free(e->dest);
+        e->dest = NULL;
+        if (e->n)
+            free(e->n);
+        e->n = NULL;
+        if (e->proportion)
+            free(e->proportion);
+        e->proportion = NULL;
+        if (e->select)
+            free(e->select);
+        e->select = NULL;
+        if (e->shift)
+            free(e->shift);
+        e->shift = NULL;
+        free(e);
+    }
+}
