@@ -183,3 +183,36 @@ int SimInf_allocate_events(SimInf_scheduled_events *e, int n)
 
     return 0;
 }
+
+/**
+ * Free allocated memory to siminf thread arguments
+ */
+void SimInf_free_args(SimInf_thread_args *sa)
+{
+    if (sa) {
+        if (sa->rng)
+            gsl_rng_free(sa->rng);
+        sa->rng = NULL;
+        if (sa->t_rate)
+            free(sa->t_rate);
+        sa->t_rate = NULL;
+        if (sa->sum_t_rate)
+            free(sa->sum_t_rate);
+        sa->sum_t_rate = NULL;
+        if (sa->t_time)
+            free(sa->t_time);
+        sa->t_time = NULL;
+        if (sa->individuals)
+            free(sa->individuals);
+        sa->individuals = NULL;
+        if (sa->u_tmp)
+            free(sa->u_tmp);
+        sa->u_tmp = NULL;
+        if (sa->E1)
+            SimInf_free_events(sa->E1);
+        sa->E1 = NULL;
+        if (sa->E2)
+            SimInf_free_events(sa->E2);
+        sa->E2 = NULL;
+    }
+}
