@@ -55,7 +55,6 @@ enum {EXIT_EVENT,
       EXTERNAL_TRANSFER_EVENT};
 
 /* Shared variables */
-int n_thread = 0;
 int *uu = NULL;
 double *vv_1 = NULL;
 double *vv_2 = NULL;
@@ -92,16 +91,16 @@ SimInf_thread_args *sim_args = NULL;
 static int SimInf_split_events(
     int len, const int *event, const int *time, const int *node,
     const int *dest, const int *n, const double *proportion,
-    const int *select, const int *shift, int Nn)
+    const int *select, const int *shift, int Nn, int Nthread)
 {
     int i;
     int errcode = 0;
-    int chunk_size = Nn / n_thread;
+    int chunk_size = Nn / Nthread;
     int *E1_i = NULL;
     int E2_i = 0;
 
     /* Split events to each thread */
-    E1_i = calloc(n_thread, sizeof(int));
+    E1_i = calloc(Nthread, sizeof(int));
     if (!E1_i) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
@@ -115,8 +114,8 @@ static int SimInf_split_events(
         case ENTER_EVENT:
         case INTERNAL_TRANSFER_EVENT:
             k = (node[i] - 1) / chunk_size;
-            if (k >= n_thread)
-                k = n_thread - 1;
+            if (k >= Nthread)
+                k = Nthread - 1;
             E1_i[k]++;
             break;
         case EXTERNAL_TRANSFER_EVENT:
@@ -129,7 +128,7 @@ static int SimInf_split_events(
     }
 
     /* Allocate memory for E1 and E2 events. */
-    for (i = 0; i < n_thread; i++) {
+    for (i = 0; i < Nthread; i++) {
         errcode = SimInf_allocate_events(sim_args[i].E1, E1_i[i]);
         if (errcode)
             goto cleanup;
@@ -152,8 +151,8 @@ static int SimInf_split_events(
         case ENTER_EVENT:
         case INTERNAL_TRANSFER_EVENT:
             k = (node[i] - 1) / chunk_size;
-            if (k >= n_thread)
-                k = n_thread - 1;
+            if (k >= Nthread)
+                k = Nthread - 1;
             j = E1_i[k]++;
             e = sim_args[k].E1;
             break;
@@ -188,7 +187,7 @@ cleanup:
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver_ssa()
+static int SimInf_solver_ssa(int Nthread)
 {
     int k;
 
@@ -197,7 +196,7 @@ static int SimInf_solver_ssa()
         int i;
 
         #pragma omp for
-        for (i = 0; i < n_thread; i++) {
+        for (i = 0; i < Nthread; i++) {
             int node;
             SimInf_thread_args sa = *&sim_args[i];
 
@@ -228,7 +227,7 @@ static int SimInf_solver_ssa()
     }
 
     /* Check for error during initialization. */
-    for (k = 0; k < n_thread; k++)
+    for (k = 0; k < Nthread; k++)
         if (sim_args[k].errcode)
             return sim_args[k].errcode;
 
@@ -239,7 +238,7 @@ static int SimInf_solver_ssa()
             int i;
 
             #pragma omp for
-            for (i = 0; i < n_thread; i++) {
+            for (i = 0; i < Nthread; i++) {
                 int node;
                 SimInf_thread_args sa = *&sim_args[i];
                 SimInf_scheduled_events e1 = *sa.E1;
@@ -449,7 +448,7 @@ static int SimInf_solver_ssa()
             #pragma omp barrier
 
             #pragma omp for
-            for (i = 0; i < n_thread; i++) {
+            for (i = 0; i < Nthread; i++) {
                 int node;
                 SimInf_thread_args sa = *&sim_args[i];
 
@@ -540,7 +539,7 @@ static int SimInf_solver_ssa()
 
         /* Swap the pointers to the continuous state variable so that
          * 'v' equals 'v_new'. Moreover, check for error. */
-        for (k = 0; k < n_thread; k++) {
+        for (k = 0; k < Nthread; k++) {
             double *v_tmp = sim_args[k].v;
             sim_args[k].v = sim_args[k].v_new;
             sim_args[k].v_new = v_tmp;
@@ -566,8 +565,6 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
 {
     int i, errcode;
     gsl_rng *rng = NULL;
-
-    n_thread = args->Nthread;
 
     /* Set compartment state to the initial state. */
     uu = malloc(args->Nn * args->Nc * sizeof(int));
@@ -617,13 +614,13 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     }
     gsl_rng_set(rng, args->seed);
 
-    sim_args = calloc(n_thread, sizeof(SimInf_thread_args));
+    sim_args = calloc(args->Nthread, sizeof(SimInf_thread_args));
     if (!sim_args) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
 
-    for (i = 0; i < n_thread; i++) {
+    for (i = 0; i < args->Nthread; i++) {
         /* Random number generator */
         sim_args[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
         if (!sim_args[i].rng) {
@@ -634,10 +631,10 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
 
         /* Constants */
         sim_args[i].Ntot = args->Nn;
-        sim_args[i].Ni = i * (args->Nn / n_thread);
-        sim_args[i].Nn = args->Nn / n_thread;
-        if (i == (n_thread - 1))
-            sim_args[i].Nn += (args->Nn % n_thread);
+        sim_args[i].Ni = i * (args->Nn / args->Nthread);
+        sim_args[i].Nn = args->Nn / args->Nthread;
+        if (i == (args->Nthread - 1))
+            sim_args[i].Nn += (args->Nn % args->Nthread);
         sim_args[i].Nt = args->Nt;
         sim_args[i].Nc = args->Nc;
         sim_args[i].Nd = args->Nd;
@@ -738,11 +735,11 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     /* Split scheduled events into E1 and E2 events. */
     errcode = SimInf_split_events(
         args->len, args->event, args->time, args->node, args->dest, args->n,
-        args->proportion, args->select, args->shift, args->Nn);
+        args->proportion, args->select, args->shift, args->Nn, args->Nthread);
     if (errcode)
         goto cleanup;
 
-    errcode = SimInf_solver_ssa();
+    errcode = SimInf_solver_ssa(args->Nthread);
 
 cleanup:
     if (uu) {
@@ -769,7 +766,7 @@ cleanup:
         gsl_rng_free(rng);
 
     if (sim_args) {
-        for (i = 0; i < n_thread; i++)
+        for (i = 0; i < args->Nthread; i++)
             SimInf_free_args(&sim_args[i]);
         free(sim_args);
         sim_args = NULL;
