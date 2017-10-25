@@ -174,12 +174,12 @@ typedef struct SimInf_thread_args
     /* (START) AEM specific variables */
     gsl_rng **rng_vec;       /**< The random number generator. */
 
-    int **reactHeap;      /**< The reaction heap (AEM solver). */
+    int *reactHeap;      /**< The reaction heap (AEM solver). */
     int reactHeapSize;
 
-    int **reactNode;
+    int *reactNode;
 
-    double **reactTimes, **reactInf; /**< holds the times (AEM) */
+    double *reactTimes, *reactInf; /**< holds the times (AEM) */
     /* (END) AEM specific variables */
 
 } SimInf_thread_args;
@@ -298,41 +298,24 @@ static void SimInf_free_args(SimInf_thread_args *sa)
         if (sa->E2)
             SimInf_free_events(sa->E2);
         sa->E2 = NULL;
-
-	/* Implement a better solution. Not sure if clean up is perfect. */
-	int N = sa->Nn;
-	int Nt = sa->Nt;
+        /* AEM variables */
 	if(sa->rng_vec){
-            for(int i = 0; i<N; i++)
-                for(int j = 0; j<Nt; j++)
-                    gsl_rng_free(sa->rng_vec[N*i+j]);
-            free(sa->rng_vec);
-	}
-
-	if(sa->reactHeap){
-            for(int i = 0; i < N; i++)
-                free(sa->reactHeap[i]);
+            for(int i = 0; i < (sa->Nn)*(sa->Nt); i++)
+                gsl_rng_free(sa->rng_vec[i]);
+        }
+        sa->rng_vec = NULL;
+	if(sa->reactHeap)
             free(sa->reactHeap);
-            sa->reactHeap = NULL;
-	}
-	if(sa->reactInf){
-            for(int i = 0; i < N; i++)
-                free(sa->reactInf[i]);
+        sa->reactHeap = NULL;
+	if(sa->reactInf)
             free(sa->reactInf);
-            sa->reactInf = NULL;
-	}
-	if(sa->reactNode){
-            for(int i = 0; i < N; i++)
-                free(sa->reactNode[i]);
+        sa->reactInf = NULL;
+	if(sa->reactNode)
             free(sa->reactNode);
-            sa->reactNode = NULL;
-	}
-	if(sa->reactTimes){
-            for(int i = 0; i < N; i++)
-                free(sa->reactTimes[i]);
+        sa->reactNode = NULL;
+	if(sa->reactTimes)
             free(sa->reactTimes);
-            sa->reactTimes = NULL;
-	}
+        sa->reactTimes = NULL;
     }
 }
 
@@ -535,16 +518,16 @@ static int SimInf_solver()
                         sa.errcode = SIMINF_ERR_INVALID_RATE;
 
                     /* calculate time until next transition j event */
-                    sa.reactTimes[node][j] =  -log(1.0-gsl_rng_uniform_pos(sa.rng_vec[sa.Nt*node+j]))/rate + sa.tt;
+                    sa.reactTimes[sa.Nt*node+j] =  -log(1.0-gsl_rng_uniform_pos(sa.rng_vec[sa.Nt*node+j]))/rate + sa.tt;
+                    if(sa.reactTimes[sa.Nt*node+j] <= 0.0)
+                        sa.reactTimes[sa.Nt*node+j] = INFINITY;
 
-                    if(sa.reactTimes[node][j] <= 0.0)
-                        sa.reactTimes[node][j] = INFINITY;
-
-                    sa.reactHeap[node][j] = sa.reactNode[node][j] = j;
+                    sa.reactHeap[sa.Nt*node+j] = sa.reactNode[sa.Nt*node+j] = j;
                 }
 
                 /* Initialize reaction heap */
-                initialize_heap(sa.reactTimes[node], sa.reactNode[node], sa.reactHeap[node], sa.reactHeapSize);
+                initialize_heap(&sa.reactTimes[sa.Nt*node], &sa.reactNode[sa.Nt*node],
+                                &sa.reactHeap[sa.Nt*node], sa.reactHeapSize);
                 sa.t_time[node] = sa.tt;
 	    }
 
@@ -581,7 +564,7 @@ static int SimInf_solver()
                         /* AEM solver */
 
                         /* 1a) Step time forward until next event */
-                        sa.t_time[node] = sa.reactTimes[node][0];
+                        sa.t_time[node] = sa.reactTimes[sa.Nt*node];
 
                         /* If time is past next day break */
                         if(sa.t_time[node] >= sa.next_day || isinf(sa.t_time[node])){
@@ -590,7 +573,7 @@ static int SimInf_solver()
                         }
 
                         /* 1b) Determine which transistion that occur */
-                        tr = sa.reactNode[node][0]%sa.Nt;
+                        tr = sa.reactNode[sa.Nt*node]%sa.Nt;
 
                         /* 1c) Update the state of the node */
                         for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
@@ -615,14 +598,14 @@ static int SimInf_solver()
                                 if (!isfinite(rate) || rate < 0.0)
                                     sa.errcode = SIMINF_ERR_INVALID_RATE;
                                 /* update times and reorder the heap */
-                                calcTimes(&sa.reactTimes[node][sa.reactHeap[node][j]],
-                                          &sa.reactInf[node][j],
+                                calcTimes(&sa.reactTimes[sa.Nt*node + sa.reactHeap[sa.Nt*node+j]],
+                                          &sa.reactInf[sa.Nt*node+j],
                                           sa.t_time[node],
                                           old_t_rate,
                                           sa.t_rate[node * sa.Nt + j],
                                           sa.rng_vec[sa.Nt*node+j]);
-                                update(sa.reactHeap[node][j], sa.reactTimes[node], sa.reactNode[node],
-                                       sa.reactHeap[node], sa.reactHeapSize);
+                                update(sa.reactHeap[sa.Nt*node+j], &sa.reactTimes[sa.Nt*node],
+                                       &sa.reactNode[sa.Nt*node], &sa.reactHeap[sa.Nt*node], sa.reactHeapSize);
                             }
                         }
                         /* finish with j = re (the one that just happened), which need
@@ -638,14 +621,14 @@ static int SimInf_solver()
                             sa.errcode = SIMINF_ERR_INVALID_RATE;
 
                         /* update times and reorder the heap */
-                        calcTimes(&sa.reactTimes[node][sa.reactHeap[node][j]],
-                                  &sa.reactInf[node][j],
+                        calcTimes(&sa.reactTimes[sa.Nt*node + sa.reactHeap[sa.Nt*node+j]],
+                                  &sa.reactInf[sa.Nt*node+j],
                                   sa.t_time[node],
                                   old_t_rate,
                                   sa.t_rate[node * sa.Nt + j],
                                   sa.rng_vec[sa.Nt*node+j]);
-                        update(sa.reactHeap[node][j], sa.reactTimes[node], sa.reactNode[node],
-                               sa.reactHeap[node], sa.reactHeapSize);
+                        update(sa.reactHeap[sa.Nt*node+j], &sa.reactTimes[sa.Nt*node],
+                               &sa.reactNode[sa.Nt*node], &sa.reactHeap[sa.Nt*node], sa.reactHeapSize);
                     }
 		}
 
@@ -815,15 +798,15 @@ static int SimInf_solver()
                                 sa.errcode = SIMINF_ERR_INVALID_RATE;
 
 			    /* Update times and reorder heap */
-			    calcTimes(&sa.reactTimes[node][sa.reactHeap[node][j]],
-				      &sa.reactInf[node][j],
+			    calcTimes(&sa.reactTimes[sa.Nt*node + sa.reactHeap[sa.Nt*node+j]],
+				      &sa.reactInf[sa.Nt*node+j],
 				      sa.t_time[node],
 				      old,
 				      sa.t_rate[node * sa.Nt + j],
 				      sa.rng_vec[sa.Nt*node+j]);
 
-			    update(sa.reactHeap[node][j], sa.reactTimes[node], sa.reactNode[node],
-				   sa.reactHeap[node], sa.reactHeapSize);
+			    update(sa.reactHeap[sa.Nt*node+j], &sa.reactTimes[sa.Nt*node],
+                                   &sa.reactNode[sa.Nt*node], &sa.reactHeap[sa.Nt*node], sa.reactHeapSize);
                         }
 
                         sa.update_node[node] = 0;
@@ -1013,27 +996,18 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
         /* we have one for each node. Heap is thus only the size of the # transitions */
         sim_args_aem[i].reactHeapSize = sim_args_aem[i].Nt;
 
-        sim_args_aem[i].reactNode = (int **)malloc(sim_args_aem[i].Nn*sizeof(int*));
-        sim_args_aem[i].reactHeap = (int **)malloc(sim_args_aem[i].Nn*sizeof(int*));
-        sim_args_aem[i].reactTimes = (double **)malloc(sim_args_aem[i].Nn*sizeof(double*));
-        sim_args_aem[i].reactInf = (double **)malloc(sim_args_aem[i].Nn*sizeof(double*));
-
+        sim_args_aem[i].reactNode = (int *)malloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt*sizeof(int));
+        sim_args_aem[i].reactHeap = (int *)malloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt*sizeof(int));
+        sim_args_aem[i].reactTimes = (double *)malloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt*sizeof(double));
+        /* Initialize with zero elements */
+        sim_args_aem[i].reactInf = (double *)calloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt,sizeof(double));
 
         /* random generator for sample select with 1 per transition in each node */
-        sim_args_aem[i].rng_vec = (gsl_rng **)malloc(sim_args_aem[i].Nn*sim_args_aem[i].Nn*sizeof(gsl_rng*));
+        sim_args_aem[i].rng_vec = (gsl_rng **)malloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt*sizeof(gsl_rng*));
 
         for(int node = 0; node < sim_args_aem[i].Nn; node++){
-            /* init node level */
-            sim_args_aem[i].reactNode[node] = (int *)malloc(sim_args_aem[i].Nt*sizeof(int));
-            sim_args_aem[i].reactHeap[node] = (int *)malloc(sim_args_aem[i].Nt*sizeof(int));
-            sim_args_aem[i].reactTimes[node] = (double *)malloc(sim_args_aem[i].Nt*sizeof(double));
-            sim_args_aem[i].reactInf[node] = (double *)malloc(sim_args_aem[i].Nt*sizeof(double));
-
             /* sim_args_aem[i].rng_vec[node] = (gsl_rng **)malloc(sim_args_aem[i].Nt*sizeof(gsl_rng*)); */
             for(int trans = 0; trans < sim_args_aem[i].Nt; trans++){
-                /* init reactInf with zero elements */
-                sim_args_aem[i].reactInf[node][trans] = 0.0;
-
                 /* Random number generator */
                 sim_args_aem[i].rng_vec[sim_args_aem[i].Nt*node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
                 if (!sim_args_aem[i].rng_vec[sim_args_aem[i].Nt*node + trans]) {
