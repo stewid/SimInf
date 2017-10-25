@@ -55,7 +55,7 @@ enum {EXIT_EVENT,
       EXTERNAL_TRANSFER_EVENT};
 
 /* Shared variables */
-int *uu = NULL;
+/* int *uu = NULL; */
 double *vv_1 = NULL;
 double *vv_2 = NULL;
 int *update_node = NULL;
@@ -187,7 +187,7 @@ cleanup:
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver_ssa(SimInf_thread_args *sim_args, int Nthread)
+static int SimInf_solver_ssa(SimInf_thread_args *sim_args, int *uu, int Nthread)
 {
     int k;
 
@@ -566,6 +566,7 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     int i, errcode;
     gsl_rng *rng = NULL;
     SimInf_thread_args *sim_args = NULL;
+    int *uu = NULL;
 
     /* Set compartment state to the initial state. */
     uu = malloc(args->Nn * args->Nc * sizeof(int));
@@ -740,13 +741,11 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     if (errcode)
         goto cleanup;
 
-    errcode = SimInf_solver_ssa(sim_args, args->Nthread);
+    errcode = SimInf_solver_ssa(sim_args, uu, args->Nthread);
 
 cleanup:
-    if (uu) {
+    if (uu)
         free(uu);
-        uu = NULL;
-    }
 
     if (vv_1) {
         free(vv_1);
