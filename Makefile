@@ -44,7 +44,7 @@ check: build
 
 # Check package (without vignettes)
 check_quick: clean
-	cd .. && R CMD build --no-build-vignettes  $(PKG_NAME)	
+	cd .. && R CMD build --no-build-vignettes  $(PKG_NAME)
 	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-vignettes --as-cran $(PKG_TAR)
 
 # Build and check package with gctorture
