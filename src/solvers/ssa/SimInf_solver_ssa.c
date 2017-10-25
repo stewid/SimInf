@@ -59,7 +59,6 @@ int *uu = NULL;
 double *vv_1 = NULL;
 double *vv_2 = NULL;
 int *update_node = NULL;
-SimInf_thread_args *sim_args = NULL;
 
 /**
  * Split scheduled events to E1 and E2 events by number of threads
@@ -89,6 +88,7 @@ SimInf_thread_args *sim_args = NULL;
  * @return 0 if Ok, else error code.
  */
 static int SimInf_split_events(
+    SimInf_thread_args *sim_args,
     int len, const int *event, const int *time, const int *node,
     const int *dest, const int *n, const double *proportion,
     const int *select, const int *shift, int Nn, int Nthread)
@@ -187,7 +187,7 @@ cleanup:
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver_ssa(int Nthread)
+static int SimInf_solver_ssa(SimInf_thread_args *sim_args, int Nthread)
 {
     int k;
 
@@ -565,6 +565,7 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
 {
     int i, errcode;
     gsl_rng *rng = NULL;
+    SimInf_thread_args *sim_args = NULL;
 
     /* Set compartment state to the initial state. */
     uu = malloc(args->Nn * args->Nc * sizeof(int));
@@ -733,13 +734,13 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     }
 
     /* Split scheduled events into E1 and E2 events. */
-    errcode = SimInf_split_events(
+    errcode = SimInf_split_events(sim_args,
         args->len, args->event, args->time, args->node, args->dest, args->n,
         args->proportion, args->select, args->shift, args->Nn, args->Nthread);
     if (errcode)
         goto cleanup;
 
-    errcode = SimInf_solver_ssa(args->Nthread);
+    errcode = SimInf_solver_ssa(sim_args, args->Nthread);
 
 cleanup:
     if (uu) {
