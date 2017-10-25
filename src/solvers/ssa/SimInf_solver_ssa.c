@@ -54,12 +54,6 @@ enum {EXIT_EVENT,
       INTERNAL_TRANSFER_EVENT,
       EXTERNAL_TRANSFER_EVENT};
 
-/* Shared variables */
-/* int *uu = NULL; */
-double *vv_1 = NULL;
-double *vv_2 = NULL;
-int *update_node = NULL;
-
 /**
  * Split scheduled events to E1 and E2 events by number of threads
  * used during simulation
@@ -187,7 +181,8 @@ cleanup:
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver_ssa(SimInf_thread_args *sim_args, int *uu, int Nthread)
+static int SimInf_solver_ssa(
+    SimInf_thread_args *sim_args, int *uu, int *update_node, int Nthread)
 {
     int k;
 
@@ -566,7 +561,8 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     int i, errcode;
     gsl_rng *rng = NULL;
     SimInf_thread_args *sim_args = NULL;
-    int *uu = NULL;
+    int *uu = NULL, *update_node = NULL;
+    double *vv_1 = NULL, *vv_2 = NULL;
 
     /* Set compartment state to the initial state. */
     uu = malloc(args->Nn * args->Nc * sizeof(int));
@@ -741,26 +737,20 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     if (errcode)
         goto cleanup;
 
-    errcode = SimInf_solver_ssa(sim_args, uu, args->Nthread);
+    errcode = SimInf_solver_ssa(sim_args, uu, update_node, args->Nthread);
 
 cleanup:
     if (uu)
         free(uu);
 
-    if (vv_1) {
+    if (vv_1)
         free(vv_1);
-        vv_1 = NULL;
-    }
 
-    if (vv_2) {
+    if (vv_2)
         free(vv_2);
-        vv_2 = NULL;
-    }
 
-    if (update_node) {
+    if (update_node)
         free(update_node);
-        update_node = NULL;
-    }
 
     if (rng)
         gsl_rng_free(rng);
