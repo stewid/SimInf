@@ -21,7 +21,7 @@ OBJECTS.misc = misc/SimInf_arg.o \
 
 OBJECTS.solvers = solvers/SimInf_solver.o \
                   solvers/ssa/SimInf_solver_ssa.o \
-		  solvers/aem/SimInf_solver_aem.o \
-		  solvers/aem/binheap.o
+                  solvers/aem/SimInf_solver_aem.o \
+                  solvers/aem/binheap.o
 
 OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)

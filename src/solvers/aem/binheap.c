@@ -92,33 +92,3 @@ void update(int node,double *data,int *INDEX,int *INDEX2,int N)
   else
     percolate_down(node,data,INDEX,INDEX2,N);
 }
-/*----------------------------------------------------------------------*/
-/* For debug. */
-int test_heap_prty(double *data,int *INDEX,int N)
-{
-  int i;
-  for(i=0; i<(N-1)/2; i++)
-    if(data[i]>data[2*i+1] || data[i]>data[2*i+2])
-      return -1;
-  return 0;
-}
-/* /\*----------------------------------------------------------------------*\/ */
-/* void print_heap(double *data,int N) */
-/* {	 */
-/*   int i; */
-/*   printf("\n"); */
-/*   for(i=0; i<(N-1)/2; i++) */
-/*     printf("%.10f %.10f %.10f\n",data[i],data[2*i+1],data[2*i+2]); */
-/* } */
-/* /\*----------------------------------------------------------------------*\/ */
-/* void test_min_prty(double *data,int N) */
-/* { */
-/*   int i; */
-/*   double min=data[0]; */
-/*   for(i=1;i<N;i++) */
-/*     if(data[i]<min){ */
-/*       printf("Min propery violated\n");	 */
-/*       break; */
-/*     } */
-/* } */
-/* /\*----------------------------------------------------------------------*\/ */
