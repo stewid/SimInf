@@ -214,6 +214,24 @@ void SimInf_free_args(SimInf_thread_args *sa)
         if (sa->E2)
             SimInf_free_events(sa->E2);
         sa->E2 = NULL;
+        /* AEM variables */
+	if(sa->rng_vec){
+            for(int i = 0; i < (sa->Nn)*(sa->Nt); i++)
+                gsl_rng_free(sa->rng_vec[i]);
+        }
+        sa->rng_vec = NULL;
+	if(sa->reactHeap)
+            free(sa->reactHeap);
+        sa->reactHeap = NULL;
+	if(sa->reactInf)
+            free(sa->reactInf);
+        sa->reactInf = NULL;
+	if(sa->reactNode)
+            free(sa->reactNode);
+        sa->reactNode = NULL;
+	if(sa->reactTimes)
+            free(sa->reactTimes);
+        sa->reactTimes = NULL;
     }
 }
 

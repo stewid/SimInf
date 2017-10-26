@@ -76,14 +76,15 @@ download and install
 # Authors
 
 * Pavol Bauer (Uppsala University, Sweden)
+* Robin Eriksson (Uppsala University, Sweden)
 * Stefan Engblom (Uppsala University, Sweden)
 * Stefan Widgren (National Veterinary Institute, Sweden) **(Maintainer)**
 
 # Acknowledgments
 
 This work was financially supported by the Swedish Research Council
-within the UPMARC Linnaeus centre of Excellence (Pavol Bauer and
-Stefan Engblom), the Swedish Research Council Formas (Stefan Engblom
+within the UPMARC Linnaeus centre of Excellence (Pavol Bauer, Robin Eriksson,
+and Stefan Engblom), the Swedish Research Council Formas (Stefan Engblom
 and Stefan Widgren), the Swedish Board of Agriculture (Stefan
 Widgren), and by the Swedish strategic research program eSSENCE
 (Stefan Widgren).

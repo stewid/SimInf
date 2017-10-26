@@ -28,6 +28,7 @@
 #include "SimInf_arg.h"
 #include "solvers/SimInf_solver.h"
 #include "solvers/ssa/SimInf_solver_ssa.h"
+#include "solvers/aem/SimInf_solver_aem.h"
 
 /**
  * Initiate and run the simulation
@@ -244,6 +245,8 @@ SEXP SimInf_run(
         err = SimInf_run_solver_ssa(&args);
     else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssa") == 0)
         err = SimInf_run_solver_ssa(&args);
+    else if (strcmp(CHAR(STRING_ELT(solver, 0)), "aem") == 0)
+        err = SimInf_run_solver_aem(&args);
     else
         err = SIMINF_ERR_UNKNOWN_SOLVER;
 
