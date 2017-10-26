@@ -220,16 +220,16 @@ void SimInf_free_args(SimInf_thread_args *sa)
                 gsl_rng_free(sa->rng_vec[i]);
         }
         sa->rng_vec = NULL;
-	if(sa->reactHeap)
+        if(sa->reactHeap)
             free(sa->reactHeap);
         sa->reactHeap = NULL;
-	if(sa->reactInf)
+        if(sa->reactInf)
             free(sa->reactInf);
         sa->reactInf = NULL;
-	if(sa->reactNode)
+        if(sa->reactNode)
             free(sa->reactNode);
         sa->reactNode = NULL;
-	if(sa->reactTimes)
+        if(sa->reactTimes)
             free(sa->reactTimes);
         sa->reactTimes = NULL;
     }
