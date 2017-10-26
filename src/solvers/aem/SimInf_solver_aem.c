@@ -33,161 +33,6 @@
 #include "binheap.h"
 
 /**
- * Event types
- *
- * EXIT_EVENT (0): Exit events are events that remove individuals from
- * a node.
- *
- * ENTER_EVENT (1): Enter events are events that introduce new
- * individuals into a node. All individuals enter first non-zero
- * compartment, i.e. a non-zero entry in element in the select column.
- *
- * INTERNAL_TRANSFER_EVENT (2): Internal transfer events are events
- * that change the number of individuals in the compartments whithin
- * one node e.g. aging of n individuals from age_1 to age_2 in a model
- * with age categories.
- *
- * EXTERNAL_TRANSFER_EVENT (3): External transfer events are events
- * that move individuals from compartments in one node to compartments
- * in another node e.g. moving n individuals from node A to node B.
- */
-enum {EXIT_EVENT,
-      ENTER_EVENT,
-      INTERNAL_TRANSFER_EVENT,
-      EXTERNAL_TRANSFER_EVENT};
-
-
-
-/* Shared variables */
-int n_thread_aem = 0;
-int *uu_aem = NULL;
-double *vv_1_aem = NULL;
-double *vv_2_aem = NULL;
-int *update_node_aem = NULL;
-SimInf_thread_args *sim_args_aem = NULL;
-
-/**
- * Split scheduled events to E1 and E2 events by number of threads
- * used during simulation
- *
- * Thread id 0 is the main thread. All E2 events are assigned to
- * thread id 0.
- *
- * All E1 events for a node are assigned to the same thread.
- *
- * @param len Number of scheduled events.
- * @param event The type of event i.
- * @param time The time of event i.
- * @param node The source node index (one based) of event i.
- * @param dest The dest node index (one-based) of event i.
- * @param n The number of individuals in event i. n[i] >= 0.
- * @param proportion If n[i] equals zero, then the number of
- *        individuals to sample is calculated by summing the number of
- *        individuals in the states determined by select[i] and
- *        multiplying with the proportion. 0 <= p[i] <= 1.
- * @param select Column j (one-based) in the event matrix that
- *        determines the states to sample from.
- * @param shift Column j (one-based) in the shift matrix S that
- *        determines the shift of the internal and external
- *        transfer event.
- * @param Nn Total number of nodes.
- * @return 0 if Ok, else error code.
- */
-static int SimInf_split_events(
-    int len, const int *event, const int *time, const int *node,
-    const int *dest, const int *n, const double *proportion,
-    const int *select, const int *shift, int Nn)
-{
-    int i;
-    int errcode = 0;
-    int chunk_size = Nn / n_thread_aem;
-    int *E1_i = NULL;
-    int E2_i = 0;
-
-    /* Split events to each thread */
-    E1_i = calloc(n_thread_aem, sizeof(int));
-    if (!E1_i) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-
-    for (i = 0; i < len; i++) {
-        int k;
-
-        switch (event[i]) {
-        case EXIT_EVENT:
-        case ENTER_EVENT:
-        case INTERNAL_TRANSFER_EVENT:
-            k = (node[i] - 1) / chunk_size;
-            if (k >= n_thread_aem)
-                k = n_thread_aem - 1;
-            E1_i[k]++;
-            break;
-        case EXTERNAL_TRANSFER_EVENT:
-            E2_i++;
-            break;
-        default:
-            errcode = SIMINF_UNDEFINED_EVENT;
-            goto cleanup;
-        }
-    }
-
-    /* Allocate memory for E1 and E2 events. */
-    for (i = 0; i < n_thread_aem; i++) {
-        errcode = SimInf_allocate_events(sim_args_aem[i].E1, E1_i[i]);
-        if (errcode)
-            goto cleanup;
-        E1_i[i] = 0;
-
-        if (i == 0) {
-            errcode = SimInf_allocate_events(sim_args_aem[0].E2, E2_i);
-            if (errcode)
-                goto cleanup;
-            E2_i = 0;
-        }
-    }
-
-    for (i = 0; i < len; i++) {
-        int j, k;
-        SimInf_scheduled_events *e;
-
-        switch (event[i]) {
-        case EXIT_EVENT:
-        case ENTER_EVENT:
-        case INTERNAL_TRANSFER_EVENT:
-            k = (node[i] - 1) / chunk_size;
-            if (k >= n_thread_aem)
-                k = n_thread_aem - 1;
-            j = E1_i[k]++;
-            e = sim_args_aem[k].E1;
-            break;
-        case EXTERNAL_TRANSFER_EVENT:
-            j = E2_i++;
-            e = sim_args_aem[0].E2;
-            break;
-        default:
-            errcode = SIMINF_UNDEFINED_EVENT;
-            goto cleanup;
-        }
-
-        e->event[j]      = event[i];
-        e->time[j]       = time[i];
-        e->node[j]       = node[i] - 1;
-        e->dest[j]       = dest[i] - 1;
-        e->n[j]          = n[i];
-        e->proportion[j] = proportion[i];
-        e->select[j]     = select[i] - 1;
-        e->shift[j]      = shift[i] - 1;
-    }
-
-cleanup:
-    if (E1_i)
-        free(E1_i);
-
-    return errcode;
-}
-
-/**
  * Calculate update of waiting times, including sleeping times.
  *
  * @param time, time vector.
@@ -232,7 +77,8 @@ void calcTimes(double* time, double* infTime, double tt, double old_rate,
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver_aem()
+static int SimInf_solver_aem(
+        SimInf_thread_args *sim_args, int *uu, int *update_node, int Nthread)
 {
     int k;
 
@@ -241,9 +87,9 @@ static int SimInf_solver_aem()
         int i;
 
         #pragma omp for
-        for (i = 0; i < n_thread_aem; i++) {
+        for (i = 0; i < Nthread; i++) {
             int node;
-            SimInf_thread_args sa = *&sim_args_aem[i];
+            SimInf_thread_args sa = *&sim_args[i];
 
             /* Initialize the transition rate for every transition and
              * every node. */
@@ -276,14 +122,14 @@ static int SimInf_solver_aem()
                 sa.t_time[node] = sa.tt;
 	    }
 
-	    *&sim_args_aem[i] = sa;
+	    *&sim_args[i] = sa;
         }
     }
 
     /* Check for error during initialization. */
-    for (k = 0; k < n_thread_aem; k++)
-        if (sim_args_aem[k].errcode)
-            return sim_args_aem[k].errcode;
+    for (k = 0; k < Nthread; k++)
+        if (sim_args[k].errcode)
+            return sim_args[k].errcode;
 
     /* Main loop. */
     for (;;) {
@@ -292,9 +138,9 @@ static int SimInf_solver_aem()
             int i;
 
             #pragma omp for
-            for (i = 0; i < n_thread_aem; i++) {
+            for (i = 0; i < Nthread; i++) {
                 int node;
-                SimInf_thread_args sa = *&sim_args_aem[i];
+                SimInf_thread_args sa = *&sim_args[i];
                 SimInf_scheduled_events e1 = *sa.E1;
 
                 /* (1) Handle internal epidemiological model,
@@ -390,13 +236,13 @@ static int SimInf_solver_aem()
                          * compartment, i.e. a non-zero entry in
                          * element in the select column. */
                         if (sa.jcE[s] < sa.jcE[s + 1]) {
-                            uu_aem[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] += e1.n[j];
-                            if (uu_aem[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] < 0)
+                            uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] += e1.n[j];
+                            if (uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] < 0)
                                 sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         }
                     } else {
                         sa.errcode = SimInf_sample_select(
-                            sa.irE, sa.jcE, sa.Nc, uu_aem, e1.node[j],
+                            sa.irE, sa.jcE, sa.Nc, uu, e1.node[j],
                             e1.select[j], e1.n[j], e1.proportion[j],
                             sa.individuals, sa.u_tmp, sa.rng);
 
@@ -411,8 +257,8 @@ static int SimInf_solver_aem()
                                 const int kk = e1.node[j] * sa.Nc + jj;
 
                                 /* Remove individuals from node */
-                                uu_aem[kk] -= sa.individuals[jj];
-                                if (uu_aem[kk] < 0) {
+                                uu[kk] -= sa.individuals[jj];
+                                if (uu[kk] < 0) {
                                     sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                     break;
                                 }
@@ -427,16 +273,16 @@ static int SimInf_solver_aem()
 
                                 /* Add individuals to new compartments
                                  * in node */
-                                uu_aem[kk + ll] += sa.individuals[jj];
-                                if (uu_aem[kk + ll] < 0) {
+                                uu[kk + ll] += sa.individuals[jj];
+                                if (uu[kk + ll] < 0) {
                                     sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                     break;
                                 }
 
                                 /* Remove individuals from previous
                                  * compartments in node */
-                                uu_aem[kk] -= sa.individuals[jj];
-                                if (uu_aem[kk] < 0) {
+                                uu[kk] -= sa.individuals[jj];
+                                if (uu[kk] < 0) {
                                     sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                                     break;
                                 }
@@ -445,11 +291,11 @@ static int SimInf_solver_aem()
                     }
 
                     /* Indicate node for update */
-                    update_node_aem[e1.node[j]] = 1;
+                    update_node[e1.node[j]] = 1;
                     sa.E1_index++;
                 }
 
-                *&sim_args_aem[i] = sa;
+                *&sim_args[i] = sa;
 	    }
 
 
@@ -457,7 +303,7 @@ static int SimInf_solver_aem()
 
             #pragma omp master
             {
-                SimInf_thread_args sa = *&sim_args_aem[0];
+                SimInf_thread_args sa = *&sim_args[0];
                 SimInf_scheduled_events e2 = *sa.E2;
 
                 /* (3) Incorporate all scheduled E2 events */
@@ -466,7 +312,7 @@ static int SimInf_solver_aem()
                        !sa.errcode)
                 {
                     sa.errcode = SimInf_sample_select(
-                        sa.irE, sa.jcE, sa.Nc, uu_aem, e2.node[sa.E2_index],
+                        sa.irE, sa.jcE, sa.Nc, uu, e2.node[sa.E2_index],
                         e2.select[sa.E2_index], e2.n[sa.E2_index],
                         e2.proportion[sa.E2_index], sa.individuals,
                         sa.u_tmp, sa.rng);
@@ -485,35 +331,35 @@ static int SimInf_solver_aem()
                             sa.N[e2.shift[sa.E2_index] * sa.Nc + jj];
 
                         /* Add individuals to dest */
-                        uu_aem[k1 + ll] += sa.individuals[jj];
-                        if (uu_aem[k1 + ll] < 0) {
+                        uu[k1 + ll] += sa.individuals[jj];
+                        if (uu[k1 + ll] < 0) {
                             sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                             break;
                         }
 
                         /* Remove individuals from node */
-                        uu_aem[k2] -= sa.individuals[jj];
-                        if (uu_aem[k2] < 0) {
+                        uu[k2] -= sa.individuals[jj];
+                        if (uu[k2] < 0) {
                             sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
                             break;
                         }
                     }
 
                     /* Indicate node and dest for update */
-                    update_node_aem[e2.node[sa.E2_index]] = 1;
-                    update_node_aem[e2.dest[sa.E2_index]] = 1;
+                    update_node[e2.node[sa.E2_index]] = 1;
+                    update_node[e2.dest[sa.E2_index]] = 1;
                     sa.E2_index++;
                 }
 
-                *&sim_args_aem[0] = sa;
+                *&sim_args[0] = sa;
             }
 
             #pragma omp barrier
 
             #pragma omp for
-            for (i = 0; i < n_thread_aem; i++) {
+            for (i = 0; i < Nthread; i++) {
                 int node;
-                SimInf_thread_args sa = *&sim_args_aem[i];
+                SimInf_thread_args sa = *&sim_args[i];
 
                 /* (4) Incorporate model specific actions after each
                  * timestep e.g. update the infectious pressure
@@ -580,46 +426,46 @@ static int SimInf_solver_aem()
                     memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.V_it++) + sa.Ni)],
                            sa.v_new, sa.Nn * sa.Nd * sizeof(double));
 
-                *&sim_args_aem[i] = sa;
+                *&sim_args[i] = sa;
             }
         }
 
         /* 6b) Handle the case where the solution is stored in a sparse
          * matrix */
-        while (!sim_args_aem[0].U && sim_args_aem[0].U_it < sim_args_aem[0].tlen &&
-               sim_args_aem[0].tt > sim_args_aem[0].tspan[sim_args_aem[0].U_it]) {
+        while (!sim_args[0].U && sim_args[0].U_it < sim_args[0].tlen &&
+               sim_args[0].tt > sim_args[0].tspan[sim_args[0].U_it]) {
             int j;
 
             /* Copy compartment state to U_sparse */
-            for (j = sim_args_aem[0].jcU[sim_args_aem[0].U_it];
-                 j < sim_args_aem[0].jcU[sim_args_aem[0].U_it + 1]; j++)
-                sim_args_aem[0].prU[j] = sim_args_aem[0].u[sim_args_aem[0].irU[j]];
-            sim_args_aem[0].U_it++;
+            for (j = sim_args[0].jcU[sim_args[0].U_it];
+                 j < sim_args[0].jcU[sim_args[0].U_it + 1]; j++)
+                sim_args[0].prU[j] = sim_args[0].u[sim_args[0].irU[j]];
+            sim_args[0].U_it++;
         }
 
-        while (!sim_args_aem[0].V && sim_args_aem[0].V_it < sim_args_aem[0].tlen &&
-               sim_args_aem[0].tt > sim_args_aem[0].tspan[sim_args_aem[0].V_it]) {
+        while (!sim_args[0].V && sim_args[0].V_it < sim_args[0].tlen &&
+               sim_args[0].tt > sim_args[0].tspan[sim_args[0].V_it]) {
             int j;
 
             /* Copy continuous state to V_sparse */
-            for (j = sim_args_aem[0].jcV[sim_args_aem[0].V_it];
-                 j < sim_args_aem[0].jcV[sim_args_aem[0].V_it + 1]; j++)
-                sim_args_aem[0].prV[j] = sim_args_aem[0].v_new[sim_args_aem[0].irV[j]];
-            sim_args_aem[0].V_it++;
+            for (j = sim_args[0].jcV[sim_args[0].V_it];
+                 j < sim_args[0].jcV[sim_args[0].V_it + 1]; j++)
+                sim_args[0].prV[j] = sim_args[0].v_new[sim_args[0].irV[j]];
+            sim_args[0].V_it++;
         }
 
         /* Swap the pointers to the continuous state variable so that
          * 'v' equals 'v_new'. Moreover, check for error. */
-        for (k = 0; k < n_thread_aem; k++) {
-            double *v_tmp = sim_args_aem[k].v;
-            sim_args_aem[k].v = sim_args_aem[k].v_new;
-            sim_args_aem[k].v_new = v_tmp;
-            if (sim_args_aem[k].errcode)
-                return sim_args_aem[k].errcode;
+        for (k = 0; k < Nthread; k++) {
+            double *v_tmp = sim_args[k].v;
+            sim_args[k].v = sim_args[k].v_new;
+            sim_args[k].v_new = v_tmp;
+            if (sim_args[k].errcode)
+                return sim_args[k].errcode;
         }
 
         /* If the simulation has reached the final time, exit. */
-        if (sim_args_aem[0].U_it >= sim_args_aem[0].tlen)
+        if (sim_args[0].U_it >= sim_args[0].tlen)
             break;
     }
 
@@ -636,16 +482,17 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
 {
     int i, errcode;
     gsl_rng *rng = NULL;
-
-    n_thread_aem = args->Nthread;
+    SimInf_thread_args *sim_args = NULL;
+    int *uu = NULL, *update_node = NULL;
+    double *vv_1 = NULL, *vv_2 = NULL;
 
     /* Set compartment state to the initial state. */
-    uu_aem = malloc(args->Nn * args->Nc * sizeof(int));
-    if (!uu_aem) {
+    uu = malloc(args->Nn * args->Nc * sizeof(int));
+    if (!uu) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
-    memcpy(uu_aem, args->u0, args->Nn * args->Nc * sizeof(int));
+    memcpy(uu, args->u0, args->Nn * args->Nc * sizeof(int));
 
     /* Copy u0 to either U[, 1] or U_sparse[, 1] */
     if (args->U) {
@@ -656,13 +503,13 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     }
 
     /* Set continuous state to the initial state in each node. */
-    vv_1_aem = malloc(args->Nn * args->Nd * sizeof(double));
-    vv_2_aem = malloc(args->Nn * args->Nd * sizeof(double));
-    if (!vv_1_aem || !vv_2_aem) {
+    vv_1 = malloc(args->Nn * args->Nd * sizeof(double));
+    vv_2 = malloc(args->Nn * args->Nd * sizeof(double));
+    if (!vv_1 || !vv_2) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
-    memcpy(vv_1_aem, args->v0, args->Nn * args->Nd * sizeof(double));
+    memcpy(vv_1, args->v0, args->Nn * args->Nd * sizeof(double));
 
     /* Copy v0 to either V[, 1] or V_sparse[, 1] */
     if (args->V) {
@@ -674,8 +521,8 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
-    update_node_aem = calloc(args->Nn, sizeof(int));
-    if (!update_node_aem) {
+    update_node = calloc(args->Nn, sizeof(int));
+    if (!update_node) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
@@ -687,79 +534,79 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     }
     gsl_rng_set(rng, args->seed);
 
-    sim_args_aem = calloc(n_thread_aem, sizeof(SimInf_thread_args));
-    if (!sim_args_aem) {
+    sim_args = calloc(args->Nthread, sizeof(SimInf_thread_args));
+    if (!sim_args) {
         errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
 
 
-    for (i = 0; i < n_thread_aem; i++) {
+    for (i = 0; i < args->Nthread; i++) {
         /* Random number generator */
-        sim_args_aem[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
-        if (!sim_args_aem[i].rng) {
+        sim_args[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
+        if (!sim_args[i].rng) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
-        gsl_rng_set(sim_args_aem[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+        gsl_rng_set(sim_args[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
 
         /* Constants */
-        sim_args_aem[i].Ntot = args->Nn;
-        sim_args_aem[i].Ni = i * (args->Nn / n_thread_aem);
-        sim_args_aem[i].Nn = args->Nn / n_thread_aem;
-        if (i == (n_thread_aem - 1))
-            sim_args_aem[i].Nn += (args->Nn % n_thread_aem);
-        sim_args_aem[i].Nt = args->Nt;
-        sim_args_aem[i].Nc = args->Nc;
-        sim_args_aem[i].Nd = args->Nd;
-        sim_args_aem[i].Nld = args->Nld;
+        sim_args[i].Ntot = args->Nn;
+        sim_args[i].Ni = i * (args->Nn / args->Nthread);
+        sim_args[i].Nn = args->Nn / args->Nthread;
+        if (i == (args->Nthread - 1))
+            sim_args[i].Nn += (args->Nn % args->Nthread);
+        sim_args[i].Nt = args->Nt;
+        sim_args[i].Nc = args->Nc;
+        sim_args[i].Nd = args->Nd;
+        sim_args[i].Nld = args->Nld;
 
         /* Sparse matrices */
-        sim_args_aem[i].irG = args->irG;
-        sim_args_aem[i].jcG = args->jcG;
-        sim_args_aem[i].irS = args->irS;
-        sim_args_aem[i].jcS = args->jcS;
-        sim_args_aem[i].prS = args->prS;
-        sim_args_aem[i].irE = args->irE;
-        sim_args_aem[i].jcE = args->jcE;
+        sim_args[i].irG = args->irG;
+        sim_args[i].jcG = args->jcG;
+        sim_args[i].irS = args->irS;
+        sim_args[i].jcS = args->jcS;
+        sim_args[i].prS = args->prS;
+        sim_args[i].irE = args->irE;
+        sim_args[i].jcE = args->jcE;
 
         /* Callbacks */
-        sim_args_aem[i].tr_fun = args->tr_fun;
-        sim_args_aem[i].pts_fun = args->pts_fun;
+        sim_args[i].tr_fun = args->tr_fun;
+        sim_args[i].pts_fun = args->pts_fun;
 
         /* Keep track of time */
-        sim_args_aem[i].tt = args->tspan[0];
-        sim_args_aem[i].next_day = floor(sim_args_aem[i].tt) + 1.0;
-        sim_args_aem[i].tspan = args->tspan;
-        sim_args_aem[i].tlen = args->tlen;
-        sim_args_aem[i].U_it = 1;
-        sim_args_aem[i].V_it = 1;
+        sim_args[i].tt = args->tspan[0];
+        sim_args[i].next_day = floor(sim_args[i].tt) + 1.0;
+        sim_args[i].tspan = args->tspan;
+        sim_args[i].tlen = args->tlen;
+        sim_args[i].U_it = 1;
+        sim_args[i].V_it = 1;
 
         /* start AEM specific
          */
         /* Binary heap storing all reaction events */
         /* we have one for each node. Heap is thus only the size of the # transitions */
-        sim_args_aem[i].reactHeapSize = sim_args_aem[i].Nt;
+        sim_args[i].reactHeapSize = sim_args[i].Nt;
 
-        sim_args_aem[i].reactNode = (int *)malloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt*sizeof(int));
-        sim_args_aem[i].reactHeap = (int *)malloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt*sizeof(int));
-        sim_args_aem[i].reactTimes = (double *)malloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt*sizeof(double));
+        sim_args[i].reactNode = (int *)malloc(sim_args[i].Nn*sim_args[i].Nt*sizeof(int));
+        sim_args[i].reactHeap = (int *)malloc(sim_args[i].Nn*sim_args[i].Nt*sizeof(int));
+        sim_args[i].reactTimes = (double *)malloc(sim_args[i].Nn*sim_args[i].Nt*sizeof(double));
         /* Initialize with zero elements */
-        sim_args_aem[i].reactInf = (double *)calloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt,sizeof(double));
+        sim_args[i].reactInf = (double *)calloc(sim_args[i].Nn*sim_args[i].Nt,sizeof(double));
 
         /* random generator for sample select with 1 per transition in each node */
-        sim_args_aem[i].rng_vec = (gsl_rng **)malloc(sim_args_aem[i].Nn*sim_args_aem[i].Nt*sizeof(gsl_rng*));
+        sim_args[i].rng_vec = (gsl_rng **)malloc(sim_args[i].Nn*sim_args[i].Nt*sizeof(gsl_rng*));
 
-        for(int node = 0; node < sim_args_aem[i].Nn; node++){
-            /* sim_args_aem[i].rng_vec[node] = (gsl_rng **)malloc(sim_args_aem[i].Nt*sizeof(gsl_rng*)); */
-            for(int trans = 0; trans < sim_args_aem[i].Nt; trans++){
+        for(int node = 0; node < sim_args[i].Nn; node++){
+            /* sim_args[i].rng_vec[node] = (gsl_rng **)malloc(sim_args[i].Nt*sizeof(gsl_rng*)); */
+            for(int trans = 0; trans < sim_args[i].Nt; trans++){
                 /* Random number generator */
-                sim_args_aem[i].rng_vec[sim_args_aem[i].Nt*node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
-                if (!sim_args_aem[i].rng_vec[sim_args_aem[i].Nt*node + trans]) {
+                sim_args[i].rng_vec[sim_args[i].Nt*node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
+                if (!sim_args[i].rng_vec[sim_args[i].Nt*node + trans]) {
                     errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
                     goto cleanup;
                 }
-                gsl_rng_set(sim_args_aem[i].rng_vec[sim_args_aem[i].Nt*node + trans],
+                gsl_rng_set(sim_args[i].rng_vec[sim_args[i].Nt*node + trans],
                             gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
             }
         }
@@ -767,51 +614,51 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
          */
 
         /* Data vectors */
-        sim_args_aem[i].N = args->N;
+        sim_args[i].N = args->N;
         if (args->U) {
-            sim_args_aem[i].U = args->U;
+            sim_args[i].U = args->U;
         } else if (i == 0) {
-            sim_args_aem[i].irU = args->irU;
-            sim_args_aem[i].jcU = args->jcU;
-            sim_args_aem[i].prU = args->prU;
+            sim_args[i].irU = args->irU;
+            sim_args[i].jcU = args->jcU;
+            sim_args[i].prU = args->prU;
         }
-        sim_args_aem[i].u = &uu_aem[sim_args_aem[i].Ni * args->Nc];
+        sim_args[i].u = &uu[sim_args[i].Ni * args->Nc];
         if (args->V) {
-            sim_args_aem[i].V = args->V;
+            sim_args[i].V = args->V;
         } else if (i == 0) {
-            sim_args_aem[i].irV = args->irV;
-            sim_args_aem[i].jcV = args->jcV;
-            sim_args_aem[i].prV = args->prV;
+            sim_args[i].irV = args->irV;
+            sim_args[i].jcV = args->jcV;
+            sim_args[i].prV = args->prV;
         }
-        sim_args_aem[i].v = &vv_1_aem[sim_args_aem[i].Ni * args->Nd];
-        sim_args_aem[i].v_new = &vv_2_aem[sim_args_aem[i].Ni * args->Nd];
-        sim_args_aem[i].ldata = &(args->ldata[sim_args_aem[i].Ni * sim_args_aem[i].Nld]);
-        sim_args_aem[i].gdata = args->gdata;
-        sim_args_aem[i].update_node = &update_node_aem[sim_args_aem[i].Ni];
+        sim_args[i].v = &vv_1[sim_args[i].Ni * args->Nd];
+        sim_args[i].v_new = &vv_2[sim_args[i].Ni * args->Nd];
+        sim_args[i].ldata = &(args->ldata[sim_args[i].Ni * sim_args[i].Nld]);
+        sim_args[i].gdata = args->gdata;
+        sim_args[i].update_node = &update_node[sim_args[i].Ni];
 
         /* Scheduled events */
-        sim_args_aem[i].E1 = calloc(1, sizeof(SimInf_scheduled_events));
-        if (!sim_args_aem[i].E1) {
+        sim_args[i].E1 = calloc(1, sizeof(SimInf_scheduled_events));
+        if (!sim_args[i].E1) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
         if (i == 0) {
-            sim_args_aem[i].E2 = calloc(1, sizeof(SimInf_scheduled_events));
-            if (!sim_args_aem[i].E2) {
+            sim_args[i].E2 = calloc(1, sizeof(SimInf_scheduled_events));
+            if (!sim_args[i].E2) {
                 errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
                 goto cleanup;
             }
         }
 
-        sim_args_aem[i].individuals = calloc(args->Nc, sizeof(int));
-        if (!sim_args_aem[i].individuals) {
+        sim_args[i].individuals = calloc(args->Nc, sizeof(int));
+        if (!sim_args[i].individuals) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
-        sim_args_aem[i].u_tmp = calloc(args->Nc, sizeof(int));
-        if (!sim_args_aem[i].u_tmp) {
+        sim_args[i].u_tmp = calloc(args->Nc, sizeof(int));
+        if (!sim_args[i].u_tmp) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
@@ -820,61 +667,61 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
          * vector. In t_rate we store all propensities for state
          * transitions, and in sum_t_rate the sum of propensities
          * in every node. */
-        sim_args_aem[i].t_rate = malloc(args->Nt * sim_args_aem[i].Nn * sizeof(double));
-        if (!sim_args_aem[i].t_rate) {
+        sim_args[i].t_rate = malloc(args->Nt * sim_args[i].Nn * sizeof(double));
+        if (!sim_args[i].t_rate) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
-        sim_args_aem[i].sum_t_rate = malloc(sim_args_aem[i].Nn * sizeof(double));
-        if (!sim_args_aem[i].sum_t_rate) {
+        sim_args[i].sum_t_rate = malloc(sim_args[i].Nn * sizeof(double));
+        if (!sim_args[i].sum_t_rate) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
-        sim_args_aem[i].t_time = malloc(sim_args_aem[i].Nn * sizeof(double));
-        if (!sim_args_aem[i].t_time) {
+        sim_args[i].t_time = malloc(sim_args[i].Nn * sizeof(double));
+        if (!sim_args[i].t_time) {
             errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
     }
 
     /* Split scheduled events into E1 and E2 events. */
-    errcode = SimInf_split_events(
+    errcode = SimInf_split_events(sim_args,
         args->len, args->event, args->time, args->node, args->dest, args->n,
-        args->proportion, args->select, args->shift, args->Nn);
+        args->proportion, args->select, args->shift, args->Nn, args->Nthread);
     if (errcode)
         goto cleanup;
 
-    errcode = SimInf_solver_aem();
+    errcode = SimInf_solver_aem(sim_args, uu, update_node, args->Nthread);
 
 cleanup:
-    if (uu_aem) {
-        free(uu_aem);
-        uu_aem = NULL;
+    if (uu) {
+        free(uu);
+        uu = NULL;
     }
 
-    if (vv_1_aem) {
-        free(vv_1_aem);
-        vv_1_aem = NULL;
+    if (vv_1) {
+        free(vv_1);
+        vv_1 = NULL;
     }
 
-    if (vv_2_aem) {
-        free(vv_2_aem);
-        vv_2_aem = NULL;
+    if (vv_2) {
+        free(vv_2);
+        vv_2 = NULL;
     }
 
-    if (update_node_aem) {
-        free(update_node_aem);
-        update_node_aem = NULL;
+    if (update_node) {
+        free(update_node);
+        update_node = NULL;
     }
 
     if (rng)
         gsl_rng_free(rng);
 
-    if (sim_args_aem) {
-        for (i = 0; i < n_thread_aem; i++)
-            SimInf_free_args(&sim_args_aem[i]);
-        free(sim_args_aem);
-        sim_args_aem = NULL;
+    if (sim_args) {
+        for (i = 0; i < args->Nthread; i++)
+            SimInf_free_args(&sim_args[i]);
+        free(sim_args);
+        sim_args = NULL;
     }
 
     return errcode;
