@@ -90,7 +90,6 @@ static int SimInf_solver_ssa(
             for (i = 0; i < Nthread; i++) {
                 int node;
                 SimInf_thread_args sa = *&sim_args[i];
-                SimInf_scheduled_events e1 = *sa.E1;
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
