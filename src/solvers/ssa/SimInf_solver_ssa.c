@@ -164,79 +164,10 @@ static int SimInf_solver_ssa(
                     }
                 }
 
-                /* (2) Incorporate all scheduled E1 events */
-                while (sa.E1_index < e1.len &&
-                       sa.tt >= e1.time[sa.E1_index] &&
-                       !sa.errcode)
-                {
-                    const int j = sa.E1_index;
-                    const int s = e1.select[j];
-
-                    if (e1.event[j] == ENTER_EVENT) {
-                        /* All individuals enter first non-zero
-                         * compartment, i.e. a non-zero entry in
-                         * element in the select column. */
-                        if (sa.jcE[s] < sa.jcE[s + 1]) {
-                            uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] += e1.n[j];
-                            if (uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] < 0)
-                                sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                        }
-                    } else {
-                        sa.errcode = SimInf_sample_select(
-                            sa.irE, sa.jcE, sa.Nc, uu, e1.node[j],
-                            e1.select[j], e1.n[j], e1.proportion[j],
-                            sa.individuals, sa.u_tmp, sa.rng);
-
-                        if (sa.errcode)
-                            break;
-
-                        if (e1.event[j] == EXIT_EVENT) {
-                            int ii;
-
-                            for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
-                                const int jj = sa.irE[ii];
-                                const int kk = e1.node[j] * sa.Nc + jj;
-
-                                /* Remove individuals from node */
-                                uu[kk] -= sa.individuals[jj];
-                                if (uu[kk] < 0) {
-                                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                    break;
-                                }
-                            }
-                        } else { /* INTERNAL_TRANSFER_EVENT */
-                            int ii;
-
-                            for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
-                                const int jj = sa.irE[ii];
-                                const int kk = e1.node[j] * sa.Nc + jj;
-                                const int ll = sa.N[e1.shift[j] * sa.Nc + jj];
-
-                                /* Add individuals to new compartments
-                                 * in node */
-                                uu[kk + ll] += sa.individuals[jj];
-                                if (uu[kk + ll] < 0) {
-                                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                    break;
-                                }
-
-                                /* Remove individuals from previous
-                                 * compartments in node */
-                                uu[kk] -= sa.individuals[jj];
-                                if (uu[kk] < 0) {
-                                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    /* Indicate node for update */
-                    update_node[e1.node[j]] = 1;
-                    sa.E1_index++;
-                }
-
                 *&sim_args[i] = sa;
+
+                /* (2) Incorporate all scheduled E1 events */
+                SimInf_process_E1_events(&sim_args[i], uu, update_node);
             }
 
             #pragma omp barrier
