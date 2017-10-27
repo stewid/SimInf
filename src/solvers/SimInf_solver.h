@@ -386,4 +386,6 @@ int SimInf_split_events(
     const int *dest, const int *n, const double *proportion,
     const int *select, const int *shift, int Nn, int Nthread);
 
+void SimInf_store_solution_sparse(SimInf_thread_args *sim_args);
+
 #endif

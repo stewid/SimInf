@@ -247,27 +247,7 @@ static int SimInf_solver_ssa(
 
         /* 6b) Handle the case where the solution is stored in a sparse
          * matrix */
-        while (!sim_args[0].U && sim_args[0].U_it < sim_args[0].tlen &&
-               sim_args[0].tt > sim_args[0].tspan[sim_args[0].U_it]) {
-            int j;
-
-            /* Copy compartment state to U_sparse */
-            for (j = sim_args[0].jcU[sim_args[0].U_it];
-                 j < sim_args[0].jcU[sim_args[0].U_it + 1]; j++)
-                sim_args[0].prU[j] = sim_args[0].u[sim_args[0].irU[j]];
-            sim_args[0].U_it++;
-        }
-
-        while (!sim_args[0].V && sim_args[0].V_it < sim_args[0].tlen &&
-               sim_args[0].tt > sim_args[0].tspan[sim_args[0].V_it]) {
-            int j;
-
-            /* Copy continuous state to V_sparse */
-            for (j = sim_args[0].jcV[sim_args[0].V_it];
-                 j < sim_args[0].jcV[sim_args[0].V_it + 1]; j++)
-                sim_args[0].prV[j] = sim_args[0].v_new[sim_args[0].irV[j]];
-            sim_args[0].V_it++;
-        }
+        SimInf_store_solution_sparse(sim_args);
 
         /* Swap the pointers to the continuous state variable so that
          * 'v' equals 'v_new'. Moreover, check for error. */
