@@ -48,9 +48,9 @@ void calcTimes(double* time, double* infTime, double tt, double old_rate,
     double oldtime = time[0];
 
     if (isinf(oldtime)) {
-        if (infTime[0] == 0.0) { // Waking up first time
+        if (infTime[0] == 0.0) // Waking up first time
             time[0] = -log(gsl_rng_uniform_pos(rng)) / new_rate + tt;
-        } else if (new_rate > 0.0)  // Waking up the 2nd..nth time
+        else if (new_rate > 0.0)  // Waking up the 2nd..nth time
             time[0] = tt + (infTime[0] / new_rate);
     } else if (new_rate >= DBL_MIN) {
         if (oldtime == tt) // Regular update of current event
