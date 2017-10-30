@@ -21,11 +21,6 @@ library(SimInf)
 ## For debugging
 sessionInfo()
 
-
-
-
-## NEW!
-
 ## Check invalid u0
 res <- tools::assertError(SISe(u0 = "u0"))
 stopifnot(length(grep("'u0' must be a data.frame",
@@ -44,7 +39,7 @@ res <- tools::assertError(SISe(u0 = u0[, "S", drop = FALSE]))
 stopifnot(length(grep("Missing columns in u0",
                       res[[1]]$message)) > 0)
 
-## Check 'suscpetible' and 'infected' methods
+## Check 'susceptible' and 'infected' methods
 ## no events
 model <- SISe(u0      = u0,
               tspan   = seq_len(10) - 1,
@@ -89,15 +84,6 @@ I_observed <- infected(result)
 stopifnot(identical(I_observed, I_expected))
 
 ## test with events.
-
-## 6 Nodes
-## 3 Age categories
-## 2 Disease-states: Susceptible & Infected
-##
-## All individuals start in susceptible state, with a probability of
-## becoming infected.
-##
-## At t = 1, all individuals are moved to node = 1.
 u0 <- structure(list(S = c(10, 9),
                      I = c(0, 1)),
                 .Names = c("S", "I"),
@@ -164,8 +150,6 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(prevalence(result_omp)), 10L))
     stopifnot(is.null(dim(prevalence(result_omp))))
     stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(2L, 10L)))
-
-
 }
 
 ## Check solver argument
