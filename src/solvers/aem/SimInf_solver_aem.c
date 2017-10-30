@@ -73,11 +73,11 @@ static int SimInf_solver_aem(
 {
     int k;
 
-#pragma omp parallel
+    #pragma omp parallel
     {
         int i;
 
-#pragma omp for
+        #pragma omp for
         for (i = 0; i < Nthread; i++) {
             int node;
             SimInf_thread_args sa = *&sim_args[i];
@@ -124,11 +124,11 @@ static int SimInf_solver_aem(
 
     /* Main loop. */
     for (;;) {
-#pragma omp parallel
+        #pragma omp parallel
         {
             int i;
 
-#pragma omp for
+            #pragma omp for
             for (i = 0; i < Nthread; i++) {
                 int node;
                 SimInf_thread_args sa = *&sim_args[i];
