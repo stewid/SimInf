@@ -369,6 +369,12 @@ void SimInf_free_args(SimInf_thread_args *sa);
 
 void SimInf_free_events(SimInf_scheduled_events *e);
 
+void SimInf_process_E1_events(
+    SimInf_thread_args *sim_args, int *uu, int *update_node);
+
+void SimInf_process_E2_events(
+    SimInf_thread_args *sim_args, int *uu, int *update_node);
+
 int SimInf_sample_select(
     const int *irE, const int *jcE, int Nc, const int *u,
     int node, int select, int n, double proportion,
@@ -379,5 +385,7 @@ int SimInf_split_events(
     int len, const int *event, const int *time, const int *node,
     const int *dest, const int *n, const double *proportion,
     const int *select, const int *shift, int Nn, int Nthread);
+
+void SimInf_store_solution_sparse(SimInf_thread_args *sim_args);
 
 #endif

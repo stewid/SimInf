@@ -1163,18 +1163,10 @@ as follows:
 \end{enumerate}
 
 <<SIR-events, echo=FALSE>>=
-events <- structure(list(
-    event      = c(1, 3, 0, 3, 3, 3),
-    time       = c(2, 3, 4, 4, 4, 5),
-    node       = c(2, 1, 2, 1, 1, 1),
-    dest       = c(0, 3, 0, 3, 4, 5),
-    n          = c(2, 1, 1, 1, 1, 2),
-    proportion = c(0, 0, 0, 0, 0, 0),
-    select     = c(1, 2, 2, 2, 2, 2),
-    shift      = c(0, 0, 0, 0, 0, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -6L), class = "data.frame")
+events <- data.frame(event = c(1, 3, 0, 3, 3, 3), time = c(2, 3, 4, 4, 4, 5),
+node = c(2, 1, 2, 1, 1, 1), dest = c(0, 3, 0, 3, 4, 5),
+n = c(2, 1, 1, 1, 1, 2), proportion = c(0, 0, 0, 0, 0, 0),
+select = c(1, 2, 2, 2, 2, 2), shift = c(0, 0, 0, 0, 0, 0))
 @
 
 <<SIR-events-show>>=
@@ -1207,18 +1199,9 @@ R = c(0, 0, 0, 0, 0))
 And then we have a few movements of individuals from node 1 to the others:
 
 <<SIR-events-II, echo=FALSE>>=
-events <- structure(list(
-    event      = c(3, 3, 3, 3),
-    time       = c(3, 25, 5, 10),
-    node       = c(1, 1, 1, 1),
-    dest       = c(3, 2, 3, 3),
-    n          = c(1, 9, 1, 5),
-    proportion = c(0, 0, 0, 0),
-    select     = c(2, 2, 2, 2),
-    shift      = c(0, 0, 0, 0)),
-                    .Names = c("event", "time", "node", "dest",
-                        "n", "proportion", "select", "shift"),
-    row.names = c(NA, -4L), class = "data.frame")
+events <- data.frame(event = c(3, 3, 3, 3), time = c(3, 25, 5, 10),
+node = c(1, 1, 1, 1), dest = c(3, 2, 3, 3), n = c(1, 9, 1, 5),
+proportion = c(0, 0, 0, 0), select = c(2, 2, 2, 2), shift = c(0, 0, 0, 0))
 @
 
 <<SIR-events-II-show>>=

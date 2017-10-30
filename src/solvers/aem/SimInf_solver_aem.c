@@ -132,7 +132,6 @@ static int SimInf_solver_aem(
             for (i = 0; i < Nthread; i++) {
                 int node;
                 SimInf_thread_args sa = *&sim_args[i];
-                SimInf_scheduled_events e1 = *sa.E1;
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
@@ -212,134 +211,18 @@ static int SimInf_solver_aem(
                     }
                 }
 
-                /* (2) Incorporate all scheduled E1 events */
-                while (sa.E1_index < e1.len &&
-                       sa.tt >= e1.time[sa.E1_index] &&
-                       !sa.errcode)
-                {
-                    const int j = sa.E1_index;
-                        const int s = e1.select[j];
-
-                        if (e1.event[j] == ENTER_EVENT) {
-                            /* All individuals enter first non-zero
-                             * compartment, i.e. a non-zero entry in
-                             * element in the select column. */
-                            if (sa.jcE[s] < sa.jcE[s + 1]) {
-                                uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] += e1.n[j];
-                                if (uu[e1.node[j] * sa.Nc + sa.irE[sa.jcE[s]]] < 0)
-                                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                    }
-                        } else {
-                            sa.errcode = SimInf_sample_select(
-                                sa.irE, sa.jcE, sa.Nc, uu, e1.node[j],
-                                e1.select[j], e1.n[j], e1.proportion[j],
-                                sa.individuals, sa.u_tmp, sa.rng);
-
-                            if (sa.errcode)
-                                break;
-
-                            if (e1.event[j] == EXIT_EVENT) {
-                                int ii;
-
-                                for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
-                                    const int jj = sa.irE[ii];
-                                    const int kk = e1.node[j] * sa.Nc + jj;
-
-                                    /* Remove individuals from node */
-                                    uu[kk] -= sa.individuals[jj];
-                                    if (uu[kk] < 0) {
-                                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                        break;
-                                    }
-                                }
-                            } else { /* INTERNAL_TRANSFER_EVENT */
-                                int ii;
-
-                                for (ii = sa.jcE[s]; ii < sa.jcE[s + 1]; ii++) {
-                                    const int jj = sa.irE[ii];
-                                    const int kk = e1.node[j] * sa.Nc + jj;
-                                    const int ll = sa.N[e1.shift[j] * sa.Nc + jj];
-
-                                    /* Add individuals to new compartments
-                                     * in node */
-                                    uu[kk + ll] += sa.individuals[jj];
-                                    if (uu[kk + ll] < 0) {
-                                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                        break;
-                                    }
-
-                                    /* Remove individuals from previous
-                                     * compartments in node */
-                                    uu[kk] -= sa.individuals[jj];
-                                    if (uu[kk] < 0) {
-                                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        /* Indicate node for update */
-                        update_node[e1.node[j]] = 1;
-                        sa.E1_index++;
-                }
-
                 *&sim_args[i] = sa;
+
+                /* (2) Incorporate all scheduled E1 events */
+                SimInf_process_E1_events(&sim_args[i], uu, update_node);
 	    }
 
             #pragma omp barrier
 
             #pragma omp master
             {
-                SimInf_thread_args sa = *&sim_args[0];
-                SimInf_scheduled_events e2 = *sa.E2;
-
                 /* (3) Incorporate all scheduled E2 events */
-                while (sa.E2_index < e2.len &&
-                       sa.tt >= e2.time[sa.E2_index] &&
-                       !sa.errcode)
-                {
-                    sa.errcode = SimInf_sample_select(
-                        sa.irE, sa.jcE, sa.Nc, uu, e2.node[sa.E2_index],
-                        e2.select[sa.E2_index], e2.n[sa.E2_index],
-                        e2.proportion[sa.E2_index], sa.individuals,
-                        sa.u_tmp, sa.rng);
-
-                    if (sa.errcode)
-                        break;
-
-                    for (i = sa.jcE[e2.select[sa.E2_index]];
-                         i < sa.jcE[e2.select[sa.E2_index] + 1];
-                         i++)
-                    {
-                        const int jj = sa.irE[i];
-                        const int k1 = e2.dest[sa.E2_index] * sa.Nc + jj;
-                        const int k2 = e2.node[sa.E2_index] * sa.Nc + jj;
-                        const int ll = e2.shift[sa.E2_index] < 0 ? 0 :
-                            sa.N[e2.shift[sa.E2_index] * sa.Nc + jj];
-
-                        /* Add individuals to dest */
-                        uu[k1 + ll] += sa.individuals[jj];
-                        if (uu[k1 + ll] < 0) {
-                            sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                            break;
-                        }
-
-                        /* Remove individuals from node */
-                        uu[k2] -= sa.individuals[jj];
-                        if (uu[k2] < 0) {
-                            sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
-                            break;
-                        }
-                    }
-
-                    /* Indicate node and dest for update */
-                    update_node[e2.node[sa.E2_index]] = 1;
-                    update_node[e2.dest[sa.E2_index]] = 1;
-                    sa.E2_index++;
-                }
-
-                *&sim_args[0] = sa;
+                SimInf_process_E2_events(sim_args, uu, update_node);
             }
 
             #pragma omp barrier
@@ -420,27 +303,7 @@ static int SimInf_solver_aem(
 
         /* 6b) Handle the case where the solution is stored in a sparse
          * matrix */
-        while (!sim_args[0].U && sim_args[0].U_it < sim_args[0].tlen &&
-               sim_args[0].tt > sim_args[0].tspan[sim_args[0].U_it]) {
-            int j;
-
-            /* Copy compartment state to U_sparse */
-            for (j = sim_args[0].jcU[sim_args[0].U_it];
-                 j < sim_args[0].jcU[sim_args[0].U_it + 1]; j++)
-                sim_args[0].prU[j] = sim_args[0].u[sim_args[0].irU[j]];
-            sim_args[0].U_it++;
-        }
-
-        while (!sim_args[0].V && sim_args[0].V_it < sim_args[0].tlen &&
-               sim_args[0].tt > sim_args[0].tspan[sim_args[0].V_it]) {
-            int j;
-
-            /* Copy continuous state to V_sparse */
-            for (j = sim_args[0].jcV[sim_args[0].V_it];
-                 j < sim_args[0].jcV[sim_args[0].V_it + 1]; j++)
-                sim_args[0].prV[j] = sim_args[0].v_new[sim_args[0].irV[j]];
-            sim_args[0].V_it++;
-        }
+        SimInf_store_solution_sparse(sim_args);
 
         /* Swap the pointers to the continuous state variable so that
          * 'v' equals 'v_new'. Moreover, check for error. */

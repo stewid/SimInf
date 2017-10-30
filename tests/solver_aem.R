@@ -167,3 +167,17 @@ if (SimInf:::have_openmp()) {
 
 
 }
+
+## Check solver argument
+res <- tools::assertError(run(model, threads = 1, solver = 1))
+stopifnot(length(grep("Invalid 'solver' value.",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(run(model, threads = 1, solver = c("ssa", "aem")))
+stopifnot(length(grep("Invalid 'solver' value.",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(run(model, threads = 1, solver = NA_character_))
+stopifnot(length(grep("Invalid 'solver' value.",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(run(model, threads = 1, solver = "non-existing-solver"))
+stopifnot(length(grep("Invalid 'solver' value.",
+                      res[[1]]$message)) > 0)
