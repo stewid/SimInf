@@ -393,6 +393,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
 
 
     for (i = 0; i < args->Nthread; i++) {
+        int node;
         /* Random number generator */
         sim_args[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
         if (!sim_args[i].rng) {
@@ -437,18 +438,46 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
         /* Binary heap storing all reaction events */
         /* we have one for each node. Heap is thus only the size of the # transitions */
         sim_args[i].reactHeapSize = sim_args[i].Nt;
-        sim_args[i].reactNode = (int *)malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(int));
-        sim_args[i].reactHeap = (int *)malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(int));
-        sim_args[i].reactTimes = (double *)malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(double));
-        /* Initialize with zero elements */
-        sim_args[i].reactInf = (double *)calloc(sim_args[i].Nn * sim_args[i].Nt, sizeof(double));
+        sim_args[i].reactNode = malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(int));
+        if (!sim_args[i].reactNode) {
+            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        sim_args[i].reactHeap = malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(int));
+        if (!sim_args[i].reactHeap) {
+            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        sim_args[i].reactTimes = malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(double));
+        if (!sim_args[i].reactTimes) {
+            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
+
+        sim_args[i].reactInf = calloc(sim_args[i].Nn * sim_args[i].Nt, sizeof(double));
+        if (!sim_args[i].reactInf) {
+            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
 
         /* random generator for sample select with 1 per transition in each node */
-        sim_args[i].rng_vec = (gsl_rng **)malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(gsl_rng*));
+        sim_args[i].rng_vec = malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(gsl_rng*));
+        if (!sim_args[i].rng_vec) {
+            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto cleanup;
+        }
 
-        for (int node = 0; node < sim_args[i].Nn; node++) {
-            for (int trans = 0; trans < sim_args[i].Nt; trans++) {/* Random number generator */
+        for (node = 0; node < sim_args[i].Nn; node++) {
+            int trans;
+            for (trans = 0; trans < sim_args[i].Nt; trans++) {
+                /* Random number generator */
                 sim_args[i].rng_vec[sim_args[i].Nt * node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
+                if (!sim_args[i].rng_vec[sim_args[i].Nt * node + trans]) {
+                    errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+                    goto cleanup;
+                }
                 if (!sim_args[i].rng_vec[sim_args[i].Nt * node + trans]) {
                     errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
                     goto cleanup;
