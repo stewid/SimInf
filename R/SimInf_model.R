@@ -721,8 +721,8 @@ by_compartment <- function(model) {
 ##' each compartment.
 ##' @param x The \code{model} to plot
 ##' @param ... Additional arguments affecting the plot produced.
-##' @name boxplot-methods
-##' @aliases boxplot boxplot-methods boxplot,SimInf_model-method
+##' @name boxplot-method
+##' @aliases boxplot,SimInf_model-method
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
@@ -755,8 +755,8 @@ setMethod("boxplot",
 ##' plotted against \code{x[,j]}.
 ##' @param x The \code{model} to plot
 ##' @param ... Additional arguments affecting the plot produced.
-##' @name pairs-methods
-##' @aliases pairs pairs-methods pairs,SimInf_model-method
+##' @name pairs-method
+##' @aliases pairs,SimInf_model-method
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise

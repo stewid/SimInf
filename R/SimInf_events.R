@@ -367,9 +367,11 @@ plot_SimInf_events <- function(x,
 
 ##' Plot \code{\linkS4class{SimInf_events}}
 ##'
+##' @param x The events data to plot.
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
-##' @name plot-methods
-##' @aliases plot plot-methods plot,SimInf_events-method
+##' @param ... Additional arguments affecting the plot
+##' @name plot-method
+##' @aliases plot,SimInf_events-method
 ##' @export
 setMethod("plot",
           signature(x = "SimInf_events"),
