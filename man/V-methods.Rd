@@ -6,20 +6,31 @@
 \alias{V,SimInf_model-method}
 \title{Extract the continuous state variables}
 \usage{
-V(model)
+V(model, as.is = FALSE)
 
-\S4method{V}{SimInf_model}(model)
+\S4method{V}{SimInf_model}(model, as.is = FALSE)
 }
 \arguments{
 \item{model}{The \code{model} to extract the result matrix from.}
+
+\item{as.is}{the default (\code{as.is = FALSE}) is to generate a
+\code{data.frame} with one row per node and time-step with the
+value of continuous state variables. Using \code{as.is = TRUE}
+returns the result as a matrix, which is the internal format
+(see \sQuote{Details}).}
 }
 \value{
 The continuous state variables
 }
 \description{
-The result matrix for the real-valued continuous state. \code{V[,
-j]} contains the real-valued state of the system at
-\code{tspan[j]}. The dimension of the matrix is
+The continuous state variables in every node after running a
+trajectory with \code{\link{run}}.
+}
+\details{
+Description of the layout of the matrix that is returned if
+\code{as.is = TRUE}. The result matrix for the real-valued
+continuous state. \code{V[, j]} contains the real-valued state of
+the system at \code{tspan[j]}. The dimension of the matrix is
 \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times} \code{length(tspan)}.
 }
 \examples{

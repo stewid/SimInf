@@ -23,9 +23,8 @@ format (see \sQuote{Details}).}
 The number of individuals in each compartment
 }
 \description{
-The result matrix with the number of individuals in each
-compartment in every node after running a trajectory with
-\code{\link{run}}.
+The number of individuals in each compartment in every node after
+running a trajectory with \code{\link{run}}.
 }
 \details{
 Description of the layout of the matrix that is returned if
