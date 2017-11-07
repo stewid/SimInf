@@ -1024,7 +1024,6 @@ setMethod("show",
 
 ##' Summary of \code{SimInf_model}
 ##'
-##' @aliases summary,SimInf_model-methods
 ##' @param object The \code{SimInf_model} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').

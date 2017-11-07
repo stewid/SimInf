@@ -3,7 +3,6 @@
 \docType{methods}
 \name{summary,SimInf_events-method}
 \alias{summary,SimInf_events-method}
-\alias{summary,SimInf_events-methods}
 \title{Summary of \code{SimInf_events}}
 \usage{
 \S4method{summary}{SimInf_events}(object, ...)

@@ -414,7 +414,6 @@ setMethod("show",
 ##'
 ##' Shows the number of scheduled events and the number of scheduled
 ##' events per event type.
-##' @aliases summary,SimInf_events-methods
 ##' @param object The \code{SimInf_events} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
