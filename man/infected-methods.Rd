@@ -61,4 +61,3 @@ infected(result, i = 1)
 ## first and fifth node after each time step in the simulation
 infected(result, i = c(1, 5))
 }
-\keyword{methods}

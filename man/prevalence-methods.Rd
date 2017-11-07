@@ -55,4 +55,3 @@ Calculate the proportion of individuals with disease, or the
 proportion of nodes with individuals with disease, or the
 proportion of individuals with disease in each node.
 }
-\keyword{methods}

@@ -91,4 +91,3 @@ Class to handle the siminf data model
 }
 }
 
-\keyword{methods}

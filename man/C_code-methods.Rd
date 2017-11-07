@@ -40,4 +40,3 @@ C_code(m)
 ## Modify the C code for a package named "XYZ"
 C_code(m, "XYZ")
 }
-\keyword{methods}

@@ -13,4 +13,3 @@ A \code{data.frame}
 Synthetic init data for 1600 nodes to demonstrate the \code{SISe}
 model.
 }
-\keyword{methods}

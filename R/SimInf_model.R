@@ -101,7 +101,6 @@
 ##'   }
 ##' }
 ##' @include SimInf_events.R
-##' @keywords methods
 ##' @export
 ##' @importClassesFrom Matrix dgCMatrix
 setClass("SimInf_model",
@@ -983,7 +982,6 @@ show_V <- function(object) {
 ##' @aliases show,SimInf_model-methods
 ##' @param object The SimInf_model \code{object}
 ##' @return None (invisible 'NULL').
-##' @keywords methods
 ##' @export
 ##' @importFrom methods show
 ##' @examples
@@ -1030,7 +1028,6 @@ setMethod("show",
 ##' @param object The \code{SimInf_model} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
-##' @keywords methods
 ##' @export
 setMethod("summary",
           signature(object = "SimInf_model"),

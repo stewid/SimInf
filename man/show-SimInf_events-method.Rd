@@ -17,4 +17,3 @@ None (invisible 'NULL').
 \description{
 Shows the number of scheduled events.
 }
-\keyword{methods}

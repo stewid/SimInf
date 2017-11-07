@@ -91,7 +91,6 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     Integer vector.
 ##'   }
 ##' }
-##' @keywords methods
 ##' @export
 setClass("SimInf_events",
          slots = c(E          = "dgCMatrix",
@@ -400,7 +399,6 @@ setMethod("plot",
 ##' @aliases show,SimInf_events-methods
 ##' @param object The SimInf_events \code{object}
 ##' @return None (invisible 'NULL').
-##' @keywords methods
 ##' @export
 ##' @importFrom methods show
 setMethod("show",
@@ -420,7 +418,6 @@ setMethod("show",
 ##' @param object The \code{SimInf_events} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
-##' @keywords methods
 ##' @export
 setMethod("summary",
           signature(object = "SimInf_events"),

@@ -37,4 +37,3 @@ Class to handle the SimInf mparse data
 }
 }
 
-\keyword{methods}

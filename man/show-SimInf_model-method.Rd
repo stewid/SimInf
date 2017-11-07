@@ -37,4 +37,3 @@ result <- run(model, threads = 1, seed = 1)
 ## non-empty after running the model.
 result
 }
-\keyword{methods}

@@ -52,4 +52,3 @@ Once you have created a \emph{source} package you need to install
 it: see the \emph{R Installation and Administration} manual,
 \code{\link{INSTALL}} and \code{\link{install.packages}}.
 }
-\keyword{methods}

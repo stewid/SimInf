@@ -189,7 +189,6 @@ setMethod("plot",
 ##' model. The data contains 466692 events for 1600 nodes over 365 * 4
 ##' days.
 ##' @return A \code{data.frame}
-##' @keywords methods
 ##' @export
 events_SEIR <- function() {
     utils::data(events_SISe3, envir = environment())
@@ -205,7 +204,6 @@ events_SEIR <- function() {
 ##' Synthetic init data for 1600 nodes to demonstrate the \code{SEIR}
 ##' model.
 ##' @return A \code{data.frame}
-##' @keywords methods
 ##' @export
 u0_SEIR <- function() {
     utils::data(u0_SISe3, envir = environment())

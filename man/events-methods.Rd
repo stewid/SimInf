@@ -35,4 +35,3 @@ summary(events(model))
 ## plot summary
 plot(events(model))
 }
-\keyword{methods}

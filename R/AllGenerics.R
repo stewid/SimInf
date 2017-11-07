@@ -58,7 +58,6 @@ setGeneric("init",
 ##'     facilitate adding the code to the package. Default is to not
 ##'     use this argument and return the C code unmodified.
 ##' @return Character vector with C code for the model.
-##' @keywords methods
 ##' @export
 ##' @examples
 ##' ## Use the model parser to create a 'SimInf_mparse' object that
@@ -131,7 +130,6 @@ setGeneric("run",
 ##'     TRUE} returns the result as a matrix, which is the internal
 ##'     format (see \sQuote{Details}).
 ##' @return The number of individuals in each compartment
-##' @keywords methods
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize
@@ -158,7 +156,6 @@ setGeneric("U", function(model, as.is = FALSE) standardGeneric("U"))
 ##'     dimension \eqn{N_n N_c \times} \code{length(tspan)}. Default
 ##'     is \code{NULL} i.e. to write the number of inidividuals in
 ##'     each compartment in every node to a dense matrix.
-##' @keywords methods
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize
@@ -200,7 +197,6 @@ setGeneric("U<-", function(model, value) standardGeneric("U<-"))
 ##'     returns the result as a matrix, which is the internal format
 ##'     (see \sQuote{Details}).
 ##' @return The continuous state variables
-##' @keywords methods
 ##' @export
 ##' @examples
 ##' ## Create an 'SISe' model with 6 nodes and initialize
@@ -231,7 +227,6 @@ setGeneric("V", function(model, as.is = FALSE) standardGeneric("V"))
 ##'     dimension \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
 ##'     \code{length(tspan)}. Default is \code{NULL} i.e. to write the
 ##'     real-valued continuous state to a dense matrix.
-##' @keywords methods
 ##' @export
 ##' @examples
 ##' ## Create an 'SISe' model with 6 nodes and initialize
@@ -268,7 +263,6 @@ setGeneric("V<-", function(model, value) standardGeneric("V<-"))
 ##' @param i Indices specifying the nodes to include when extracting
 ##'     the number of susceptible. Default is NULL, which includes all
 ##'     nodes.
-##' @keywords methods
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 5 nodes and initialize
@@ -303,7 +297,6 @@ setGeneric("susceptible",
 ##' extract.
 ##' @param i Indices specifying the nodes to include when extracting
 ##' the number of infected. Default is NULL, which includes all nodes.
-##' @keywords methods
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 5 nodes and initialize
@@ -336,7 +329,6 @@ setGeneric("infected",
 ##' @param ... Additional arguments affecting the measure
 ##' @param i Indices specifying the nodes to include when extracting
 ##' the number of recovered. Default is NULL, which includes all nodes.
-##' @keywords methods
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 5 nodes and initialize
@@ -383,7 +375,6 @@ setGeneric("recovered",
 ##'     are included.
 ##' @return Vector when type equals \code{'pop'} or \code{'bnp'} but
 ##'     matrix when type equals \code{'wnp'}.
-##' @keywords methods
 ##' @export
 setGeneric("prevalence",
            function(model, type = c("pop", "bnp", "wnp"), i = NULL,
@@ -408,7 +399,6 @@ setGeneric("prevalence",
 ##' @param maintainer Maintainer of the package.
 ##' @param license License of the package. Default is 'GPL-3'.
 ##' @return invisible \code{NULL}.
-##' @keywords methods
 ##' @export
 ##' @references Read the \emph{Writing R Extensions} manual for more
 ##'     details.
@@ -426,7 +416,6 @@ setGeneric("package_skeleton",
 ##' @rdname events-methods
 ##' @param model The \code{model} to extract the events from.
 ##' @return \code{SimInf_events} object.
-##' @keywords methods
 ##' @export
 ##' @examples
 ##' ## Create an SIR model that includes scheduled events.

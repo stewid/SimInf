@@ -62,4 +62,3 @@ susceptible(result, i = 1)
 ## first and third node after each time step in the simulation
 susceptible(result, i = c(1, 3))
 }
-\keyword{methods}

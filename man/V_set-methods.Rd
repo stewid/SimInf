@@ -47,4 +47,3 @@ result <- run(model, threads = 1, seed = 7)
 ## Extract the continuous state variables at the time-points in tspan.
 V(result)
 }
-\keyword{methods}

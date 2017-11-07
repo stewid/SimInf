@@ -19,4 +19,3 @@ None (invisible 'NULL').
 \description{
 Summary of \code{SimInf_model}
 }
-\keyword{methods}

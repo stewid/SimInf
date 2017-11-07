@@ -50,4 +50,3 @@ result <- run(model, threads = 1, seed = 7)
 ## environmental infectious pressure phi.
 V(result)
 }
-\keyword{methods}

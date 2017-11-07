@@ -45,7 +45,6 @@
 ##'     number of transitions.
 ##'   }
 ##' }
-##' @keywords methods
 ##' @export
 setClass("SimInf_mparse",
          slots = c(latex  = "character",

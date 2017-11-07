@@ -50,4 +50,3 @@ result <- run(model, threads = 1, seed = 22)
 ## time-points in tspan.
 U(result)
 }
-\keyword{methods}
