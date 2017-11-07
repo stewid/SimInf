@@ -111,9 +111,8 @@ setGeneric("run",
 
 ##' Extract the number of individuals in each compartment
 ##'
-##' The result matrix with the number of individuals in each
-##' compartment in every node after running a trajectory with
-##' \code{\link{run}}.
+##' The number of individuals in each compartment in every node after
+##' running a trajectory with \code{\link{run}}.
 ##'
 ##' Description of the layout of the matrix that is returned if
 ##' \code{as.is = TRUE}. \code{U[, j]} contains the number of
@@ -185,12 +184,21 @@ setGeneric("U<-", function(model, value) standardGeneric("U<-"))
 
 ##' Extract the continuous state variables
 ##'
-##' The result matrix for the real-valued continuous state. \code{V[,
-##' j]} contains the real-valued state of the system at
-##' \code{tspan[j]}. The dimension of the matrix is
+##' The continuous state variables in every node after running a
+##' trajectory with \code{\link{run}}.
+##'
+##' Description of the layout of the matrix that is returned if
+##' \code{as.is = TRUE}. The result matrix for the real-valued
+##' continuous state. \code{V[, j]} contains the real-valued state of
+##' the system at \code{tspan[j]}. The dimension of the matrix is
 ##' \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times} \code{length(tspan)}.
 ##' @rdname V-methods
 ##' @param model The \code{model} to extract the result matrix from.
+##' @param as.is the default (\code{as.is = FALSE}) is to generate a
+##'     \code{data.frame} with one row per node and time-step with the
+##'     value of continuous state variables. Using \code{as.is = TRUE}
+##'     returns the result as a matrix, which is the internal format
+##'     (see \sQuote{Details}).
 ##' @return The continuous state variables
 ##' @keywords methods
 ##' @export
@@ -210,7 +218,7 @@ setGeneric("U<-", function(model, value) standardGeneric("U<-"))
 ##' ## time-points in tspan. In the 'SISe' model, V represent the
 ##' ## environmental infectious pressure phi.
 ##' V(result)
-setGeneric("V", function(model) standardGeneric("V"))
+setGeneric("V", function(model, as.is = FALSE) standardGeneric("V"))
 
 ##' Set a template for where to write the V result matrix
 ##'

@@ -518,7 +518,7 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              gamma = 0.077)
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(U(result, as.is = TRUE)), as.character(1:10)))
-stopifnot(identical(colnames(V(result)), as.character(1:10)))
+stopifnot(identical(colnames(V(result, as.is = TRUE)), as.character(1:10)))
 
 tspan <- seq(as.Date("2016-01-01"), as.Date("2016-01-10"), by = 1)
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
@@ -527,7 +527,7 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              gamma = 0.077)
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(U(result, as.is = TRUE)), as.character(tspan)))
-stopifnot(identical(colnames(V(result)), as.character(tspan)))
+stopifnot(identical(colnames(V(result, as.is = TRUE)), as.character(tspan)))
 
 u0 <- data.frame(S = 100:105, I = 1:6)
 model <- SISe(u0 = u0, tspan = 1:10,
@@ -548,7 +548,7 @@ U(model) <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
 V(model) <- Matrix::sparseMatrix(1:6, 5:10)
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(U(result, as.is = TRUE)), as.character(1:10)))
-stopifnot(identical(colnames(V(result)), as.character(1:10)))
+stopifnot(identical(colnames(V(result, as.is = TRUE)), as.character(1:10)))
 
 tspan <- seq(as.Date("2016-01-01"), as.Date("2016-01-10"), by = 1)
 u0 <- data.frame(S = 100:105, I = 1:6)
@@ -570,4 +570,4 @@ U(model) <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
 V(model) <- Matrix::sparseMatrix(1:6, 5:10)
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(U(result, as.is = TRUE)), as.character(tspan)))
-stopifnot(identical(colnames(V(result)), as.character(tspan)))
+stopifnot(identical(colnames(V(result, as.is = TRUE)), as.character(tspan)))

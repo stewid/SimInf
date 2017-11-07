@@ -433,6 +433,52 @@ extract_U <- function(model = NULL, compartments = NULL, i = NULL) {
     result
 }
 
+##' Coerce a sparse matrix to a data.frame
+##'
+##' Utility function to coerce a sparse matrix (U_sparse or V_sparse)
+##' to a data.frame.
+##' @param m sparse matrix to coerce.
+##' @param n number of rows per node.
+##' @param tspan time points in trajectory.
+##' @param lbl labels for data e.g. compartments.
+##' @param value default value.
+##' @return \code{data.frame}
+##' @noRd
+sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
+    ## Determine nodes and time-points with output.
+    Node <- as.integer(ceiling((m@i + 1) / n))
+    Time <- names(tspan)
+    if (is.null(Time))
+        Time <- as.integer(tspan)
+    Time <- cbind(Time, diff(m@p))
+    Time <- unlist(apply(Time, 1, function(x) rep(x[1], x[2])))
+
+    ## Determine unique combinations of Node and Time
+    i <- !duplicated(cbind(Node, Time))
+    Node <- Node[i]
+    Time <- Time[i]
+
+    ## Use Node and Time to determine the required size
+    ## of a matrix to hold all output data and fill it
+    ## with NA values.
+    values <- matrix(value, nrow = sum(i), ncol = n)
+    colnames(values) <- lbl
+
+    ## And then update non-NA items with values from m.
+    i <- cumsum(i)
+    j <- m@i %% n + 1
+    if (is.integer(value)) {
+        values[matrix(c(i, j), ncol = 2)] <- as.integer(m@x)
+    } else {
+        values[matrix(c(i, j), ncol = 2)] <- m@x
+    }
+
+    cbind(Node = Node,
+          Time = Time,
+          as.data.frame(values),
+          stringsAsFactors = FALSE)
+}
+
 ##' @rdname U-methods
 ##' @export
 setMethod("U",
@@ -451,36 +497,10 @@ setMethod("U",
                   ## data.frame with one row per node and time-point
                   ## with the number of individuals in each
                   ## compartment.
-
-                  ## Determine nodes and time-points with output.
-                  Node <- as.integer(ceiling((model@U_sparse@i + 1) / Nc(model)))
-                  Time <- names(model@tspan)
-                  if (is.null(Time))
-                      Time <- as.integer(model@tspan)
-                  Time <- cbind(Time, diff(model@U_sparse@p))
-                  Time <- unlist(apply(Time, 1, function(x) rep(x[1], x[2])))
-
-                  ## Determine unique combinations of Node and Time
-                  i <- !duplicated(cbind(Node, Time))
-                  Node <- Node[i]
-                  Time <- Time[i]
-
-                  ## Use Node and Time to determine the required size
-                  ## of a matrix to hold all output data and fill it
-                  ## with NA values.
-                  m <- matrix(NA_integer_, nrow = sum(i), ncol = Nc(model))
-                  colnames(m) <- rownames(model@S)
-
-                  ## And then update non-NA items with values from
-                  ## U_sparse.
-                  i <- cumsum(i)
-                  j <- model@U_sparse@i %% Nc(model) + 1
-                  m[matrix(c(i, j), ncol = 2)] <- as.integer(model@U_sparse@x)
-
-                  return(cbind(Node = Node,
-                               Time = Time,
-                               as.data.frame(m),
-                               stringsAsFactors = FALSE))
+                  return(sparse2df(model@U_sparse,
+                                   Nc(model),
+                                   model@tspan,
+                                   rownames(model@S)))
               }
 
               if (isTRUE(as.is))
@@ -536,15 +556,43 @@ setMethod("U<-",
 ##' @export
 setMethod("V",
           signature("SimInf_model"),
-          function(model) {
+          function(model, as.is) {
               d <- dim(model@V)
               if (identical(d, c(0L, 0L))) {
                   d <- dim(model@V_sparse)
                   if (identical(d, c(0L, 0L)))
                       stop("Please run the model first, the 'V' matrix is empty")
-                  return(model@V_sparse)
+
+                  if (isTRUE(as.is))
+                      return(model@V_sparse)
+
+                  ## Coerce the sparse 'V_sparse' matrix to a
+                  ## data.frame with one row per node and time-point
+                  ## with the values of the continuous state
+                  ## variables.
+                  return(sparse2df(model@V_sparse,
+                                   Nd(model),
+                                   model@tspan,
+                                   paste0("V", seq_len(Nd(model))),
+                                   NA_real_))
               }
-              model@V
+
+              if (isTRUE(as.is))
+                  return(model@V)
+
+              ## Coerce the dense 'V' matrix to a data.frame with one
+              ## row per node and time-point with the values of the
+              ## continuous state variables.
+              m <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
+              colnames(m) <- paste0("V", seq_len(Nd(model)))
+              Time <- names(model@tspan)
+              if (is.null(Time))
+                  Time <- as.integer(model@tspan)
+
+              cbind(Node = seq_len(Nn(model)),
+                    Time = rep(Time, each = Nn(model)),
+                    as.data.frame(m),
+                    stringsAsFactors = FALSE)
           }
 )
 
