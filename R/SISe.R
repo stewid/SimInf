@@ -193,8 +193,8 @@ setMethod("prevalence",
           }
 )
 
-##' @name plot-methods
-##' @aliases plot plot-methods plot,SISe-method
+##' @rdname plot
+##' @aliases plot,SISe-method
 ##' @export
 setMethod("plot",
           signature(x = "SISe"),

@@ -798,8 +798,8 @@ setMethod("pairs",
 ##' @param spaghetti Plot one line for each node. Default is
 ##'     \code{FALSE}.
 ##' @param ... Additional arguments affecting the plot produced.
-##' @name plot-methods
-##' @aliases plot plot-methods plot,SimInf_model-method
+##' @rdname plot
+##' @aliases plot,SimInf_model-method
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise

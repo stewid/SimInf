@@ -168,8 +168,8 @@ setMethod("recovered",
           }
 )
 
-##' @name plot-methods
-##' @aliases plot plot-methods plot,SEIR-method
+##' @rdname plot
+##' @aliases plot,SEIR-method
 ##' @export
 setMethod("plot",
           signature(x = "SEIR"),

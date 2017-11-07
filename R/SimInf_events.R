@@ -369,7 +369,6 @@ plot_SimInf_events <- function(x,
 ##' @param x The events data to plot.
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
 ##' @param ... Additional arguments affecting the plot
-##' @name plot-method
 ##' @aliases plot,SimInf_events-method
 ##' @export
 setMethod("plot",

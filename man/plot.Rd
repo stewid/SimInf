@@ -2,27 +2,13 @@
 % Please edit documentation in R/SimInf_model.R, R/SEIR.R, R/SIR.R, R/SISe.R,
 %   R/SISe3.R, R/SISe3_sp.R, R/SISe_sp.R
 \docType{methods}
-\name{plot-methods}
-\alias{plot-methods}
-\alias{plot}
+\name{plot,SimInf_model-method}
 \alias{plot,SimInf_model-method}
-\alias{plot-methods}
-\alias{plot}
 \alias{plot,SEIR-method}
-\alias{plot-methods}
-\alias{plot}
 \alias{plot,SIR-method}
-\alias{plot-methods}
-\alias{plot}
 \alias{plot,SISe-method}
-\alias{plot-methods}
-\alias{plot}
 \alias{plot,SISe3-method}
-\alias{plot-methods}
-\alias{plot}
 \alias{plot,SISe3_sp-method}
-\alias{plot-methods}
-\alias{plot}
 \alias{plot,SISe_sp-method}
 \title{Plot \code{\linkS4class{SimInf_model}}}
 \usage{

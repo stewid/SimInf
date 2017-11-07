@@ -171,8 +171,8 @@ setMethod("prevalence",
           }
 )
 
-##' @name plot-methods
-##' @aliases plot plot-methods plot,SIR-method
+##' @rdname plot
+##' @aliases plot,SIR-method
 ##' @export
 setMethod("plot",
           signature(x = "SIR"),
