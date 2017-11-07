@@ -113,7 +113,10 @@ setGeneric("run",
 ##'
 ##' The result matrix with the number of individuals in each
 ##' compartment in every node after running a trajectory with
-##' \code{\link{run}}. \code{U[, j]} contains the number of
+##' \code{\link{run}}.
+##'
+##' Description of the layout of the matrix that is returned if
+##' \code{as.is = TRUE}. \code{U[, j]} contains the number of
 ##' individuals in each compartment at \code{tspan[j]}. \code{U[1:Nc,
 ##' j]} contains the number of individuals in node 1 at
 ##' \code{tspan[j]}. \code{U[(Nc + 1):(2 * Nc), j]} contains the
@@ -122,7 +125,12 @@ setGeneric("run",
 ##' dimension of the matrix is \eqn{N_n N_c \times}
 ##' \code{length(tspan)} where \eqn{N_n} is the number of nodes.
 ##' @rdname U-methods
-##' @param model The \code{model} to extract the result matrix from.
+##' @param model the \code{model} to extract the result from.
+##' @param as.is the default (\code{as.is = FALSE}) is to generate a
+##'     \code{data.frame} with one row per node and time-step with the
+##'     number of individuals in each compartment. Using \code{as.is =
+##'     TRUE} returns the result as a matrix, which is the internal
+##'     format (see \sQuote{Details}).
 ##' @return The number of individuals in each compartment
 ##' @keywords methods
 ##' @export
@@ -138,7 +146,7 @@ setGeneric("run",
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in tspan.
 ##' U(result)
-setGeneric("U", function(model) standardGeneric("U"))
+setGeneric("U", function(model, as.is = FALSE) standardGeneric("U"))
 
 ##' Set a template for where to write the U result matrix
 ##'

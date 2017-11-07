@@ -41,7 +41,7 @@ U_exp <- new("dgCMatrix",
              factors = list())
 
 U(model) <- sparseMatrix(1:18, rep(5:10, each = 3))
-U_obs <- U(run(model, threads = 1, seed = 123))
+U_obs <- U(run(model, threads = 1, seed = 123), as.is = TRUE)
 stopifnot(identical(U_obs, U_exp))
 
 if (SimInf:::have_openmp()) {
@@ -58,7 +58,7 @@ if (SimInf:::have_openmp()) {
                            99, 6, 2, 98, 3, 8, 95, 12, 4),
                      factors = list())
     U(model) <- sparseMatrix(1:18, rep(5:10, each = 3))
-    U_obs_omp <- U(run(model, threads = 2, seed = 123))
+    U_obs_omp <- U(run(model, threads = 2, seed = 123), as.is = TRUE)
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
 
@@ -125,3 +125,67 @@ V(result) <- NULL
 result <- run(result, threads = 1)
 stopifnot(identical(dim(result@V), c(6L, 10L)))
 stopifnot(identical(dim(result@V_sparse), c(0L, 0L)))
+
+## Check data.frame output from sparse matrix. Create an 'SIR' model
+## with 6 nodes and initialize it to run over 10 days. Then create a
+## sparse matrix with non-zero entries at the locations in U where the
+## number of individuals should be written. Run the model with the
+## sparse matrix as a template for U where to write data.
+u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
+model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+m <- Matrix::sparseMatrix(1:12, rep(5:10, each = 2), dims = c(18, 10))
+U(model) <- m
+result <- run(model, threads = 1, seed = 22)
+U_exp <- structure(list(Node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
+                        Time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
+                        S = c(98L, NA, 100L, NA, 96L, NA, 101L, NA),
+                        I = c(3L, NA, NA, 3L, 7L, NA, NA, 3L),
+                        R = c(NA, 0L, NA, 1L, NA, 3L, NA, 3L)),
+                   .Names = c("Node", "Time", "S", "I", "R"),
+                   row.names = c(NA, -8L),
+                   class = "data.frame")
+stopifnot(identical(U(result), U_exp))
+
+## Similar test case, but without NA-values
+m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
+U(model) <- m
+result <- run(model, threads = 1, seed = 22)
+U_exp <- structure(list(Node = 1:6,
+                        Time = 5:10,
+                        S = c(98L, 100L, 97L, 101L, 87L, 93L),
+                        I = c(3L, 2L, 6L, 3L, 15L, 16L),
+                        R = c(0L, 1L, 2L, 3L, 7L, 2L)),
+                   .Names = c("Node", "Time", "S", "I", "R"),
+                   row.names = c(NA, -6L),
+                   class = "data.frame")
+stopifnot(identical(U(result), U_exp))
+
+## Test that it also works to remove the sparse matrix output
+U(model) <- NULL
+result <- run(model, threads = 1, seed = 22)
+U_exp <- structure(list(
+    Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+             5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
+             3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
+             1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,  5L, 6L),
+    Time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L,
+             3L, 3L, 4L, 4L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 5L, 5L, 6L, 6L,
+             6L, 6L, 6L, 6L, 7L, 7L, 7L, 7L, 7L, 7L, 8L, 8L, 8L, 8L, 8L, 8L,
+             9L, 9L, 9L, 9L, 9L, 9L, 10L, 10L, 10L, 10L, 10L, 10L),
+    S = c(100L, 101L, 102L, 103L, 104L, 105L, 99L, 101L, 102L, 102L, 102L,
+          105L, 98L, 101L, 102L, 101L, 100L, 105L, 98L, 101L, 99L, 101L, 97L,
+          104L, 98L, 100L, 99L, 101L, 97L, 102L, 98L, 100L, 98L, 101L, 95L,
+          99L, 98L, 99L, 97L, 101L, 93L, 98L, 98L, 97L, 96L, 101L, 92L, 95L,
+          97L, 96L, 95L, 101L, 87L, 94L, 97L, 95L, 95L, 101L, 86L, 93L),
+    I = c(1L, 2L, 3L, 4L, 5L, 6L, 2L, 2L, 3L, 5L, 7L, 6L, 3L, 2L, 3L, 6L, 8L,
+          6L, 3L, 1L, 4L, 3L, 8L, 7L, 3L, 2L, 4L, 3L, 8L, 9L, 3L, 2L, 5L, 3L,
+          8L, 11L, 3L, 3L, 6L, 3L, 9L, 12L, 2L, 5L, 7L, 3L, 10L, 15L, 3L, 6L,
+          7L, 3L, 15L, 15L, 3L, 6L, 4L, 3L, 13L, 16L),
+    R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 1L,
+          0L, 0L, 1L, 2L, 3L, 4L, 0L, 0L, 1L, 2L, 3L, 4L, 0L, 0L, 1L, 2L, 3L,
+          6L, 1L, 0L, 1L, 2L, 3L, 7L, 1L, 1L, 1L, 2L, 3L, 7L, 1L, 1L, 1L, 3L,
+          3L, 7L, 2L, 1L, 2L, 6L, 3L, 10L, 2L)),
+    .Names = c("Node", "Time", "S", "I", "R"),
+    row.names = c(NA, -60L),
+    class = "data.frame")
+stopifnot(identical(U(result), U_exp))

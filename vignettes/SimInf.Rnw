@@ -1022,7 +1022,7 @@ compartments in the model and the colnames are the time points in
 for readability.
 
 <<SIR-U>>=
-U(result)[, 1:10]
+U(result)[1:10 ,]
 @
 
 The package \pkg{SimInf} has a \code{plot} method for objects of class
@@ -1065,7 +1065,7 @@ vector.  Please note that the \code{U} matrix is truncated here for
 readability.
 
 <<SIR-U-multiple-nodes>>=
-U(result)[, 1:10]
+U(result)[1:10, ]
 @
 
 Thanks to the high performance of the simulator, we can easily expand
@@ -1800,7 +1800,7 @@ m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
 c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
 model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
 result <- run(model, threads = 1, seed = 22)
-plot(stepfun(result@tspan[-1], diff(c(0, U(result)["Icum",]))),
+plot(stepfun(result@tspan[-1], diff(c(0, U(result)[, "Icum"]))),
 main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
 @
@@ -1812,7 +1812,7 @@ m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
 c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
 model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
 result <- run(model, threads = 1, seed = 22)
-plot(stepfun(result@tspan[-1], diff(c(0, U(result)["Icum",]))),
+plot(stepfun(result@tspan[-1], diff(c(0, U(result)[, "Icum"]))),
 main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
 @
