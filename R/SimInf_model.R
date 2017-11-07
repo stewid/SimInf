@@ -979,7 +979,6 @@ show_V <- function(object) {
 
 ##' Brief summary of \code{SimInf_model}
 ##'
-##' @aliases show,SimInf_model-methods
 ##' @param object The SimInf_model \code{object}
 ##' @return None (invisible 'NULL').
 ##' @export

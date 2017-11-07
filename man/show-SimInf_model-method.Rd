@@ -3,7 +3,6 @@
 \docType{methods}
 \name{show,SimInf_model-method}
 \alias{show,SimInf_model-method}
-\alias{show,SimInf_model-methods}
 \title{Brief summary of \code{SimInf_model}}
 \usage{
 \S4method{show}{SimInf_model}(object)

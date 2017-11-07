@@ -396,7 +396,6 @@ setMethod("plot",
 ##' Brief summary of \code{SimInf_events}
 ##'
 ##' Shows the number of scheduled events.
-##' @aliases show,SimInf_events-methods
 ##' @param object The SimInf_events \code{object}
 ##' @return None (invisible 'NULL').
 ##' @export
