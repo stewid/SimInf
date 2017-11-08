@@ -153,15 +153,6 @@ setMethod("infected",
           }
 )
 
-##' @rdname recovered-methods
-##' @export
-setMethod("recovered",
-          signature("SIR"),
-          function(model, i = NULL, ...) {
-              extract_U(model, "R", i)
-          }
-)
-
 ##' @rdname prevalence-methods
 ##' @export
 setMethod("prevalence",

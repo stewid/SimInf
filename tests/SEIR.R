@@ -1,5 +1,5 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2016  Stefan Widgren
+## Copyright (C) 2015 - 2017  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-library(SimInf)
+library("SimInf")
 
 ## For debugging
 sessionInfo()
@@ -132,7 +132,8 @@ res <- tools::assertError(SEIR(u0      = u0,
 stopifnot(length(grep("'gamma' must be of length 1",
                       res[[1]]$message)) > 0)
 
-## Check 'suscpetible', 'infected' and 'recovered' methods
+## Check extraction of data from 'suscpetible', 'infected' and
+## 'recovered' compartments
 model <- SEIR(u0      = u0,
               tspan   = seq_len(10) - 1,
               events  = NULL,
@@ -170,9 +171,66 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
+R_observed <- U(result, compartments = "R", as.is = TRUE)
+stopifnot(identical(R_observed, R_expected))
 
-R_observed <- recovered(result)
+R_expected <- structure(list(
+    Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+             5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
+             3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
+             1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+             5L, 6L),
+    Time = c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 1L, 1L, 1L, 1L,
+             1L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 3L, 3L, 4L, 4L, 4L,
+             4L, 4L, 4L, 5L, 5L, 5L, 5L, 5L, 5L, 6L, 6L, 6L, 6L, 6L, 6L, 7L,
+             7L, 7L, 7L, 7L, 7L, 8L, 8L, 8L, 8L, 8L, 8L, 9L, 9L, 9L, 9L, 9L,
+             9L),
+    R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
+    .Names = c("Node",  "Time", "R"),
+    class = "data.frame", row.names = c(NA, -60L))
+R_observed <- U(result, compartments = "R")
+stopifnot(identical(R_observed, R_expected))
 
+## Extract the number of recovered individuals in the first node after
+## each time step in the simulation
+R_expected <- structure(list(
+    Node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
+    Time = 0:9L,
+    R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
+    .Names = c("Node", "Time", "R"),
+    row.names = c(NA, -10L),
+    class = "data.frame")
+R_observed <- U(result, compartments = "R", i = 1)
+stopifnot(identical(R_observed, R_expected))
+
+R_expected <-structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+                       .Dim = c(1L, 10L), .Dimnames = list(NULL, NULL))
+R_observed <- U(result, compartments = "R", i = 1, as.is = TRUE)
+stopifnot(identical(R_observed, R_expected))
+
+## Extract the number of recovered individuals in the first and third
+## node after each time step in the simulation
+R_expected <- structure(list(
+    Node = c(1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L,
+             1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L),
+    Time = c(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L,
+             5L, 5L, 6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L),
+    R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
+    .Names = c("Node", "Time", "R"),
+    row.names = c(NA, -20L),
+    class = "data.frame")
+R_observed <- U(result, compartments = "R", i = c(1, 3))
+stopifnot(identical(R_observed, R_expected))
+
+R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+                          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+                        .Dim = c(2L, 10L),
+                        .Dimnames = list(NULL, NULL))
+R_observed <- U(result, compartments = "R", i = c(1, 3), as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
 ## Check data

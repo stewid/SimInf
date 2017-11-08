@@ -159,15 +159,6 @@ setMethod("infected",
           }
 )
 
-##' @rdname recovered-methods
-##' @export
-setMethod("recovered",
-          signature("SEIR"),
-          function(model, i = NULL, ...) {
-              extract_U(model, "R", i)
-          }
-)
-
 ##' @rdname plot
 ##' @aliases plot,SEIR-method
 ##' @export

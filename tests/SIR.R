@@ -14,7 +14,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-library(SimInf)
+library("SimInf")
 
 ## For debugging
 sessionInfo()
@@ -93,7 +93,8 @@ res <- tools::assertError(SIR(u0      = u0,
 stopifnot(length(grep("'gamma' must be of length 1",
                       res[[1]]$message)) > 0)
 
-## Check 'suscpetible', 'infected' and 'recovered' methods
+## Extract data from the 'suscpetible', 'infected' and 'recovered'
+## compartments
 model <- SIR(u0     = u0,
              tspan  = seq_len(10) - 1,
              events = NULL,
@@ -131,7 +132,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
 
-R_observed <- recovered(result)
+R_observed <- U(result, compartments = "R", as.is = TRUE)
 
 stopifnot(identical(R_observed, R_expected))
 
