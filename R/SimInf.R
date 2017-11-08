@@ -27,7 +27,7 @@ NULL
 ##'
 ##' @param libpath A character string giving the complete path to the
 ##' package.
-##' @keywords internal
+##' @noRd
 .onUnload <- function (libpath)
 {
     library.dynam.unload("SimInf", libpath)
@@ -37,7 +37,7 @@ NULL
 ##'
 ##' @return TRUE if SimInf was built with support for OpenMP, else
 ##'     FALSE.
-##' @keywords internal
+##' @noRd
 have_openmp <- function()
 {
     .Call(SimInf_have_openmp)
