@@ -1906,7 +1906,7 @@ directories, saves \proglang{R} and \proglang{C} code files to
 appropriate places, and creates skeleton help files.
 
 <<create-package-skeleton, eval=FALSE>>=
-path = tempdir()
+path <- tempdir()
 package_skeleton(m, "PredatorPrey", path = path)
 @
 
@@ -1954,7 +1954,8 @@ The add-on \pkg{PredatorPrey} source package can now be built and
 installed with
 
 <<install-package-skeleton, eval=FALSE>>=
-install.packages(file.path(path, "PredatorPrey"), repos = NULL)
+pkg <- file.path(path, "PredatorPrey")
+install.packages(pkg, repos = NULL, type = "source")
 @
 
 If the installation was successful, the newly installed package
