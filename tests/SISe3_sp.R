@@ -1621,8 +1621,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = 9:10, .Dimnames = list(NULL, NULL))
 
-I_observed <- infected(result, age = 1)
-
+I_observed <- U(result, compartments = "I_1", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 ## Check SISe3_sp plot method

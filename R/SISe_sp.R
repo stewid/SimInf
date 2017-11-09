@@ -177,15 +177,6 @@ SISe_sp <- function(u0,
     methods::as(model, "SISe_sp")
 }
 
-##' @rdname infected-methods
-##' @export
-setMethod("infected",
-          signature("SISe_sp"),
-          function(model, i = NULL, ...) {
-              extract_U(model, "I", i)
-          }
-)
-
 ##' @rdname prevalence-methods
 ##' @export
 setMethod("prevalence",

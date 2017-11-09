@@ -77,8 +77,7 @@ I_expected <- structure(c(1L, 1L, 1L, 1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 0L, 1L,
                           0L, 0L, 2L, 0L, 4L, 2L, 0L, 0L),
                         .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
 
-I_observed <- infected(result)
-
+I_observed <- U(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 ## test with events.
@@ -132,8 +131,7 @@ I_expected <- structure(c(0L, 1L, 0L, 3L, 0L, 3L, 1L, 4L, 1L, 4L, 0L, 4L,
                           0L, 4L, 0L, 4L, 0L, 5L, 0L, 5L),
                         .Dim = c(2L, 10L), .Dimnames = list(NULL, NULL))
 
-I_observed <- infected(result)
-
+I_observed <- U(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 ## run with AEM using multiple threads
@@ -142,7 +140,7 @@ if (SimInf:::have_openmp()) {
     result_omp
 
     stopifnot(identical(length(U(result_omp, compartments = "S", as.is = TRUE)), 20L))
-    stopifnot(identical(length(infected(result_omp)), 20L))
+    stopifnot(identical(length(U(result_omp, compartments = "I", as.is = TRUE)), 20L))
     stopifnot(identical(length(prevalence(result_omp)), 10L))
     stopifnot(is.null(dim(prevalence(result_omp))))
     stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(2L, 10L)))

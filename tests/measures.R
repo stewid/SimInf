@@ -43,7 +43,7 @@ res <- tools::assertError(U(model, compartments = "S", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(infected(model))
+res <- tools::assertError(U(model, compartments = "I", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
@@ -51,7 +51,7 @@ result <- run(model, threads = 1)
 result
 
 stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
-stopifnot(identical(length(infected(result)), 1001L))
+stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
 stopifnot(identical(length(prevalence(result)), 1001L))
 stopifnot(is.null(dim(prevalence(result))))
 stopifnot(identical(dim(prevalence(result, type = "wnp")),
@@ -62,7 +62,7 @@ if (SimInf:::have_openmp()) {
     result_omp
 
     stopifnot(identical(length(U(result_omp, compartments = "S", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(infected(result_omp)), 1001L))
+    stopifnot(identical(length(U(result_omp, compartments = "I", as.is = TRUE)), 1001L))
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
     stopifnot(is.null(dim(prevalence(result_omp))))
     stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(1L, 1001L)))
@@ -91,7 +91,7 @@ res <- tools::assertError(U(model, compartments = "S", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(infected(model))
+res <- tools::assertError(U(model, compartments = "I", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
@@ -99,7 +99,7 @@ result <- run(model, threads = 1)
 result
 
 stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
-stopifnot(identical(length(infected(result)), 1001L))
+stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
 stopifnot(identical(length(prevalence(result)), 1001L))
 stopifnot(is.null(dim(prevalence(result))))
 stopifnot(identical(dim(prevalence(result, type = "wnp")), c(1L, 1001L)))
@@ -109,7 +109,7 @@ if (SimInf:::have_openmp()) {
     result_omp
 
     stopifnot(identical(length(U(result_omp, compartments = "S", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(infected(result_omp)), 1001L))
+    stopifnot(identical(length(U(result_omp, compartments = "I", as.is = TRUE)), 1001L))
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
     stopifnot(is.null(dim(prevalence(result_omp))))
     stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(1L, 1001L)))
@@ -144,7 +144,7 @@ res <- tools::assertError(U(model, compartments = "S_1", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(infected(model))
+res <- tools::assertError(U(model, compartments = "I_1", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
@@ -152,7 +152,7 @@ result <- run(model, threads = 1)
 result
 
 stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
-stopifnot(identical(length(infected(result)), 10000L))
+stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
 stopifnot(identical(length(prevalence(result)), 1000L))
 stopifnot(is.null(dim(prevalence(result))))
 stopifnot(identical(dim(prevalence(result, type = "wnp")), c(10L, 1000L)))
@@ -162,7 +162,7 @@ if (SimInf:::have_openmp()) {
     result_omp
 
     stopifnot(identical(length(U(result_omp, compartments = "S_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(infected(result_omp)), 10000L))
+    stopifnot(identical(length(U(result_omp, compartments = "I_1", as.is = TRUE)), 10000L))
     stopifnot(identical(length(prevalence(result_omp)), 1000L))
     stopifnot(is.null(dim(prevalence(result_omp))))
     stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(10L, 1000L)))
@@ -199,7 +199,7 @@ res <- tools::assertError(U(model, compartments = "S_1", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(infected(model))
+res <- tools::assertError(U(model, compartments = "I_1", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
@@ -207,7 +207,7 @@ result <- run(model, threads = 1)
 result
 
 stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
-stopifnot(identical(length(infected(result)), 10000L))
+stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
 stopifnot(identical(length(prevalence(result)), 1000L))
 stopifnot(is.null(dim(prevalence(result))))
 stopifnot(identical(dim(prevalence(result, type = "wnp")), c(10L, 1000L)))
@@ -217,7 +217,7 @@ if (SimInf:::have_openmp()) {
     result_omp
 
     stopifnot(identical(length(U(result_omp, compartments = "S_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(infected(result_omp)), 10000L))
+    stopifnot(identical(length(U(result_omp, compartments = "I_1", as.is = TRUE)), 10000L))
     stopifnot(identical(length(prevalence(result_omp)), 1000L))
     stopifnot(is.null(dim(prevalence(result_omp))))
     stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(10L, 1000L)))

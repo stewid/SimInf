@@ -1074,8 +1074,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
 
-I_observed <- infected(result)
-
+I_observed <- U(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 ## Check SISe plot method

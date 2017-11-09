@@ -141,15 +141,6 @@ SEIR <- function(u0,
     methods::as(model, "SEIR")
 }
 
-##' @rdname infected-methods
-##' @export
-setMethod("infected",
-          signature("SEIR"),
-          function(model, i = NULL, ...) {
-              extract_U(model, "I", i)
-          }
-)
-
 ##' @rdname plot
 ##' @aliases plot,SEIR-method
 ##' @export

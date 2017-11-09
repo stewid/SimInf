@@ -135,15 +135,6 @@ SIR <- function(u0,
     methods::as(model, "SIR")
 }
 
-##' @rdname infected-methods
-##' @export
-setMethod("infected",
-          signature("SIR"),
-          function(model, i = NULL, ...) {
-              extract_U(model, "I", i)
-          }
-)
-
 ##' @rdname prevalence-methods
 ##' @export
 setMethod("prevalence",

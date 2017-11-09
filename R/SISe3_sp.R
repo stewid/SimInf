@@ -222,17 +222,6 @@ SISe3_sp <- function(u0,
     methods::as(model, "SISe3_sp")
 }
 
-##' @rdname infected-methods
-##' @export
-setMethod("infected",
-          signature("SISe3_sp"),
-          function(model, age = 1:3, i = NULL, ...)
-          {
-              stopifnot(all(age %in% 1:3))
-              extract_U(model, paste0("I_", age), i)
-          }
-)
-
 ##' @rdname prevalence-methods
 ##' @export
 setMethod("prevalence",
