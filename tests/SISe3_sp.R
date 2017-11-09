@@ -1606,8 +1606,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L),
                         .Dim = 9:10, .Dimnames = list(NULL, NULL))
 
-S_observed <- susceptible(result, age = 1)
-
+S_observed <- U(result, compartments = "S_1", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,

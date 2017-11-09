@@ -252,41 +252,6 @@ setGeneric("V", function(model, as.is = FALSE) standardGeneric("V"))
 ##' V(result)
 setGeneric("V<-", function(model, value) standardGeneric("V<-"))
 
-##' Susceptible
-##'
-##' Extracts the number of susceptible.
-##' @rdname susceptible-methods
-##' @param model The \code{model} to extract the susceptible from
-##' @param ... Additional arguments affecting the measure
-##' @param age For models with age categories, the age category to
-##'     extract.
-##' @param i Indices specifying the nodes to include when extracting
-##'     the number of susceptible. Default is NULL, which includes all
-##'     nodes.
-##' @export
-##' @examples
-##' ## Create an 'SIR' model with 5 nodes and initialize
-##' ## it to run over 10 days.
-##' u0 <- data.frame(S = rep(99, 5), I = rep(1, 5), R = rep(0, 5))
-##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-##'
-##' ## Run the model and save the result
-##' result <- run(model)
-##'
-##' ## Extract the number of susceptible individuals in each
-##' ## node after each time step in the simulation
-##' susceptible(result)
-##'
-##' ## Extract the number of susceptible individuals in the
-##' ## first node after each time step in the simulation
-##' susceptible(result, i = 1)
-##'
-##' ## Extract the number of susceptible individuals in the
-##' ## first and third node after each time step in the simulation
-##' susceptible(result, i = c(1, 3))
-setGeneric("susceptible",
-           function(model, ...) standardGeneric("susceptible"))
-
 ##' Infected
 ##'
 ##' Extracts the number of infected

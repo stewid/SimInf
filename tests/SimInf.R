@@ -206,11 +206,13 @@ result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(
-    susceptible(result, age = 2, i = 1) + infected(result, age = 2, i = 1),
+    U(result, compartments = "S_2", i = 1, as.is = TRUE) +
+    U(result, compartments = "I_2", i = 1, as.is = TRUE),
     structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
               .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
 stopifnot(identical(
-    susceptible(result, age = 3, i = 1) + infected(result, age = 3, i = 1),
+    U(result, compartments = "S_3", i = 1, as.is = TRUE) +
+    U(result, compartments = "I_3", i = 1, as.is = TRUE),
     structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
               .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
 stopifnot(identical(sum(U(result, as.is = TRUE)[,1]), 45L))
@@ -224,11 +226,13 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(
-        susceptible(result, age = 2, i = 1) + infected(result, age = 2, i = 1),
+        U(result, compartments = "S_2", i = 1, as.is = TRUE) +
+        U(result, compartments = "I_2", i = 1, as.is = TRUE),
         structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
                   .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
     stopifnot(identical(
-        susceptible(result, age = 3, i = 1) + infected(result, age = 3, i = 1),
+        U(result, compartments = "S_3", i = 1, as.is = TRUE) +
+        U(result, compartments = "I_3", i = 1, as.is = TRUE),
         structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
                   .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
     stopifnot(identical(sum(result_omp@U[,1]), 45L))

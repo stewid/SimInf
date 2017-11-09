@@ -39,7 +39,7 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0)
 
-res <- tools::assertError(susceptible(model))
+res <- tools::assertError(U(model, compartments = "S", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
@@ -50,7 +50,7 @@ stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
 result <- run(model, threads = 1)
 result
 
-stopifnot(identical(length(susceptible(result)), 1001L))
+stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
 stopifnot(identical(length(infected(result)), 1001L))
 stopifnot(identical(length(prevalence(result)), 1001L))
 stopifnot(is.null(dim(prevalence(result))))
@@ -61,7 +61,7 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     result_omp
 
-    stopifnot(identical(length(susceptible(result_omp)), 1001L))
+    stopifnot(identical(length(U(result_omp, compartments = "S", as.is = TRUE)), 1001L))
     stopifnot(identical(length(infected(result_omp)), 1001L))
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
     stopifnot(is.null(dim(prevalence(result_omp))))
@@ -87,7 +87,7 @@ model <- SISe_sp(u0       = data.frame(S = 99, I = 1),
                  coupling = 0,
                  distance = distance_matrix(1, 1, 1))
 
-res <- tools::assertError(susceptible(model))
+res <- tools::assertError(U(model, compartments = "S", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
@@ -98,7 +98,7 @@ stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
 result <- run(model, threads = 1)
 result
 
-stopifnot(identical(length(susceptible(result)), 1001L))
+stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
 stopifnot(identical(length(infected(result)), 1001L))
 stopifnot(identical(length(prevalence(result)), 1001L))
 stopifnot(is.null(dim(prevalence(result))))
@@ -108,7 +108,7 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     result_omp
 
-    stopifnot(identical(length(susceptible(result_omp)), 1001L))
+    stopifnot(identical(length(U(result_omp, compartments = "S", as.is = TRUE)), 1001L))
     stopifnot(identical(length(infected(result_omp)), 1001L))
     stopifnot(identical(length(prevalence(result_omp)), 1001L))
     stopifnot(is.null(dim(prevalence(result_omp))))
@@ -140,7 +140,7 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0.000011)
 
-res <- tools::assertError(susceptible(model))
+res <- tools::assertError(U(model, compartments = "S_1", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
@@ -151,7 +151,7 @@ stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
 result <- run(model, threads = 1)
 result
 
-stopifnot(identical(length(susceptible(result)), 10000L))
+stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
 stopifnot(identical(length(infected(result)), 10000L))
 stopifnot(identical(length(prevalence(result)), 1000L))
 stopifnot(is.null(dim(prevalence(result))))
@@ -161,7 +161,7 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     result_omp
 
-    stopifnot(identical(length(susceptible(result_omp)), 10000L))
+    stopifnot(identical(length(U(result_omp, compartments = "S_1", as.is = TRUE)), 10000L))
     stopifnot(identical(length(infected(result_omp)), 10000L))
     stopifnot(identical(length(prevalence(result_omp)), 1000L))
     stopifnot(is.null(dim(prevalence(result_omp))))
@@ -195,7 +195,7 @@ model <- SISe3_sp(u0        = u0,
                   coupling = 0,
                   distance = distance_matrix(1:10, 1:10, 1))
 
-res <- tools::assertError(susceptible(model))
+res <- tools::assertError(U(model, compartments = "S_1", as.is = TRUE))
 stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
                       res[[1]]$message)) > 0)
 
@@ -206,7 +206,7 @@ stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
 result <- run(model, threads = 1)
 result
 
-stopifnot(identical(length(susceptible(result)), 10000L))
+stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
 stopifnot(identical(length(infected(result)), 10000L))
 stopifnot(identical(length(prevalence(result)), 1000L))
 stopifnot(is.null(dim(prevalence(result))))
@@ -216,7 +216,7 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2)
     result_omp
 
-    stopifnot(identical(length(susceptible(result_omp)), 10000L))
+    stopifnot(identical(length(U(result_omp, compartments = "S_1", as.is = TRUE)), 10000L))
     stopifnot(identical(length(infected(result_omp)), 10000L))
     stopifnot(identical(length(prevalence(result_omp)), 1000L))
     stopifnot(is.null(dim(prevalence(result_omp))))

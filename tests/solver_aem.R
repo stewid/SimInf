@@ -39,7 +39,7 @@ res <- tools::assertError(SISe(u0 = u0[, "S", drop = FALSE]))
 stopifnot(length(grep("Missing columns in u0",
                       res[[1]]$message)) > 0)
 
-## Check 'susceptible' and 'infected' methods
+## Check 'susceptible' and 'infected' compartments
 ## no events
 model <- SISe(u0      = u0,
               tspan   = seq_len(10) - 1,
@@ -60,7 +60,6 @@ model <- SISe(u0      = u0,
 
 result <- run(model, seed = 22, threads = 1, solver = "aem")
 
-
 S_expected <- structure(c(9L, 9L, 9L, 9L, 9L, 10L, 9L, 10L, 9L, 9L, 10L, 10L,
                           9L, 10L, 9L, 9L, 10L, 10L, 9L, 10L, 9L, 9L, 10L, 10L,
                           9L, 10L, 9L, 9L, 10L, 10L, 9L, 10L, 9L, 9L, 10L, 10L,
@@ -68,8 +67,7 @@ S_expected <- structure(c(9L, 9L, 9L, 9L, 9L, 10L, 9L, 10L, 9L, 9L, 10L, 10L,
                           9L, 10L, 6L, 9L, 10L, 10L, 8L, 10L, 6L, 8L, 10L, 10L),
                         .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
 
-S_observed <- susceptible(result)
-
+S_observed <- U(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(1L, 1L, 1L, 1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 0L, 1L,
@@ -123,13 +121,11 @@ model <- SISe(u0  = u0,
 
 result <- run(model, threads = 1, seed = 123L, solver = "aem")
 
-
 S_expected <- structure(c(10L, 9L, 8L, 9L, 8L, 9L, 7L, 8L, 7L, 8L, 10L,
                           6L, 10L, 6L, 10L, 6L, 10L, 5L, 10L, 5L),
                         .Dim = c(2L, 10L), .Dimnames = list(NULL, NULL))
 
-S_observed <- susceptible(result)
-
+S_observed <- U(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 1L, 0L, 3L, 0L, 3L, 1L, 4L, 1L, 4L, 0L, 4L,
@@ -145,7 +141,7 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 123L, solver = "aem")
     result_omp
 
-    stopifnot(identical(length(susceptible(result_omp)), 20L))
+    stopifnot(identical(length(U(result_omp, compartments = "S", as.is = TRUE)), 20L))
     stopifnot(identical(length(infected(result_omp)), 20L))
     stopifnot(identical(length(prevalence(result_omp)), 10L))
     stopifnot(is.null(dim(prevalence(result_omp))))

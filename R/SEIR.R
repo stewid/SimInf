@@ -141,15 +141,6 @@ SEIR <- function(u0,
     methods::as(model, "SEIR")
 }
 
-##' @rdname susceptible-methods
-##' @export
-setMethod("susceptible",
-          signature("SEIR"),
-          function(model, i = NULL, ...) {
-              extract_U(model, "S", i)
-          }
-)
-
 ##' @rdname infected-methods
 ##' @export
 setMethod("infected",

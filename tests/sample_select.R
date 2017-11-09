@@ -780,9 +780,11 @@ S_expected <- structure(c(0L, 6L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
                         .Dim = c(2L, 11L), .Dimnames = list(NULL, NULL))
 
 res <- run(model, threads = 1)
-stopifnot(identical(susceptible(res), S_expected))
+stopifnot(identical(U(res, compartments = c("S_1", "S_2", "S_3"), as.is = TRUE),
+                    S_expected))
 
 if (SimInf:::have_openmp()) {
     res <- run(model, threads = 2)
-    stopifnot(identical(susceptible(res), S_expected))
+    stopifnot(identical(U(res, compartments = c("S_1", "S_2", "S_3"), as.is = TRUE),
+                        S_expected))
 }
