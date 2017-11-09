@@ -1545,9 +1545,9 @@ each age category (Figure~\ref{fig:population}).
 
 <<eval=FALSE>>=
 result <- run(model, threads = 1, seed = 1)
-N1 <- colSums(susceptible(result, age = 1) + infected(result, age = 1))
-N2 <- colSums(susceptible(result, age = 2) + infected(result, age = 2))
-N3 <- colSums(susceptible(result, age = 3) + infected(result, age = 3))
+N1 <- colSums(U(result, compartments = c("S_1", "I_1"), as.is = TRUE))
+N2 <- colSums(U(result, compartments = c("S_2", "I_2"), as.is = TRUE))
+N3 <- colSums(U(result, compartments = c("S_3", "I_3"), as.is = TRUE))
 opar <- par(mfrow = c(3, 1), mar = c(2, 5, 1, 1))
 plot(N3 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 1)
 plot(N2 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 2)
@@ -1560,9 +1560,9 @@ par(opar)
   \begin{center}
 <<population-size, echo=FALSE, fig=TRUE>>=
 result <- run(model, threads = 1, seed = 1)
-N1 <- colSums(susceptible(result, age = 1) + infected(result, age = 1))
-N2 <- colSums(susceptible(result, age = 2) + infected(result, age = 2))
-N3 <- colSums(susceptible(result, age = 3) + infected(result, age = 3))
+N1 <- colSums(U(result, compartments = c("S_1", "I_1"), as.is = TRUE))
+N2 <- colSums(U(result, compartments = c("S_2", "I_2"), as.is = TRUE))
+N3 <- colSums(U(result, compartments = c("S_3", "I_3"), as.is = TRUE))
 opar <- par(mfrow = c(3, 1), mar = c(2, 5, 1, 1))
 plot(N3 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 1)
 plot(N2 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 2)
