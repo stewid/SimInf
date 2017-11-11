@@ -212,16 +212,15 @@ SISe3 <- function(u0,
     methods::as(model, "SISe3")
 }
 
-##' @rdname prevalence-methods
+##' @describeIn prevalence Prevalence \eqn{= (I_1 + I_2 + I_3) / (S_1 + S_2 + S_3 + I_1 + I_2 + I_3)}
 ##' @export
 setMethod("prevalence",
-          signature("SISe3"),
-          function(model, type, i, age = 1:3, ...)
+          signature("SISe3", "missing", "missing"),
+          function(model, type, i)
           {
-              stopifnot(all(age %in% 1:3))
-              numerator <- paste0("I_", age)
-              denominator <- c(paste0("S_", age), paste0("I_", age))
-              calc_prevalence(model, numerator, denominator, type, i)
+              prevalence(model = model, numerator = c("I_1", "I_2", "I_3"),
+                         denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
+                         type = type, i = i)
           }
 )
 

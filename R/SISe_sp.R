@@ -177,12 +177,14 @@ SISe_sp <- function(u0,
     methods::as(model, "SISe_sp")
 }
 
-##' @rdname prevalence-methods
+##' @describeIn prevalence Prevalence \eqn{= I / (S + I)}
 ##' @export
 setMethod("prevalence",
-          signature("SISe_sp"),
-          function(model, type, i, ...) {
-              calc_prevalence(model, "I", c("S", "I"), type, i)
+          signature("SISe_sp", "missing", "missing"),
+          function(model, type, i) {
+              prevalence(model = model, numerator = "I",
+                         denominator = c("S", "I"),
+                         type = type, i = i)
           }
 )
 

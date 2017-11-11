@@ -381,26 +381,27 @@ SimInf_model <- function(G,
                         C_code = C_code))
 }
 
-## Internal function to calculate prevalence from U
-calc_prevalence <- function(model = NULL, numerator = NULL,
-                            denominator = NULL,
-                            type = c("pop", "bnp", "wnp"), i = NULL)
-{
-    numerator <- extract_U(model, numerator, i)
-    denominator <- extract_U(model, denominator, i)
+##' @rdname prevalence
+##' @export
+setMethod("prevalence",
+          signature("SimInf_model", "character", "character"),
+          function(model, numerator, denominator, type, i) {
+              numerator <- extract_U(model, numerator, i)
+              denominator <- extract_U(model, denominator, i)
 
-    type <- match.arg(type)
-    if (identical(type, "pop")) {
-        numerator <- colSums(numerator)
-        denominator <- colSums(denominator)
-    } else if (identical(type, "bnp")) {
-        numerator <- colSums(numerator > 0)
-        ## Include only nodes with individuals
-        denominator <- colSums(denominator > 0)
-    }
+              type <- match.arg(type)
+              if (identical(type, "pop")) {
+                  numerator <- colSums(numerator)
+                  denominator <- colSums(denominator)
+              } else if (identical(type, "bnp")) {
+                  numerator <- colSums(numerator > 0)
+                  ## Include only nodes with individuals
+                  denominator <- colSums(denominator > 0)
+              }
 
-    numerator / denominator
-}
+              numerator / denominator
+          }
+)
 
 ## Internal function to extract compartments from U
 extract_U <- function(model = NULL, compartments = NULL, i = NULL) {

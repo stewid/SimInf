@@ -113,27 +113,30 @@ setGeneric("run",
 ##' Calculate the proportion of individuals with disease, or the
 ##' proportion of nodes with individuals with disease, or the
 ##' proportion of individuals with disease in each node.
-##' @rdname prevalence-methods
-##' @param model The \code{model} to calculated the prevalence from.
+##' @name prevalence
+##' @param model The \code{model} to calculate the prevalence from.
+##' @param numerator The compartments in the population with a disease
+##'     or a condition.
+##' @param denominator The compartments that define the entire
+##'     population of interest.
 ##' @param type The type of prevalence measure to calculate:
 ##'     \code{'pop'} (default) calcalates the proportion of the
 ##'     individuals in the population that have disease (model
 ##'     specific) at each time point in \code{tspan}, \code{'bnp'}
 ##'     calculates the between-node prevalence, and \code{'wnp'}
 ##'     calculates the within-node prevalence.
-##' @param ... Additional arguments affecting the measure
 ##' @param i Indices specifying the nodes to include in the
 ##'     calculation of the prevalence. Default is \code{NULL}, which
 ##'     includes all nodes.
-##' @param age For models with age categories, the age category to
-##'     include in the calculation. Default is that all age categories
-##'     are included.
 ##' @return Vector when type equals \code{'pop'} or \code{'bnp'} but
 ##'     matrix when type equals \code{'wnp'}.
 ##' @export
 setGeneric("prevalence",
-           function(model, type = c("pop", "bnp", "wnp"), i = NULL,
-                    ...) standardGeneric("prevalence"))
+           signature = c("model", "numerator", "denominator"),
+           function(model, numerator, denominator,
+                    type = c("pop", "bnp", "wnp"),
+                    i = NULL)
+               standardGeneric("prevalence"))
 
 ##' Describe your model in a logical way in R. \code{mparse} creates a
 ##' \code{\linkS4class{SimInf_mparse}} object with your model
