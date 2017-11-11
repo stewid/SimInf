@@ -684,82 +684,150 @@ U <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
     model
 }
 
-##' @rdname V-methods
+##' Extract the continuous state variables
+##'
+##' The continuous state variables in every node after running a
+##' trajectory with \code{\link{run}}.
+##'
+##' Description of the layout of the matrix that is returned if
+##' \code{as.is = TRUE}. The result matrix for the real-valued
+##' continuous state. \code{V[, j]} contains the real-valued state of
+##' the system at \code{tspan[j]}. The dimension of the matrix is
+##' \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times} \code{length(tspan)}.
+##' @param model The \code{model} to extract the result matrix from.
+##' @param as.is the default (\code{as.is = FALSE}) is to generate a
+##'     \code{data.frame} with one row per node and time-step with the
+##'     value of continuous state variables. Using \code{as.is = TRUE}
+##'     returns the result as a matrix, which is the internal format
+##'     (see \sQuote{Details}).
+##' @return The continuous state variables
 ##' @export
-setMethod("V",
-          signature("SimInf_model"),
-          function(model, as.is) {
-              if (all(!isTRUE(as.is), Nd(model) < 1))
-                  stop("No continuous variables defined in 'model'")
+##' @importFrom methods is
+##' @examples
+##' ## Create an 'SISe' model with 6 nodes and initialize
+##' ## it to run over 10 days.
+##' u0 <- data.frame(S = 100:105, I = 1:6)
+##' model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
+##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5,
+##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
+##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
+##'
+##' ## Run the model
+##' result <- run(model, threads = 1, seed = 7)
+##'
+##' ## Extract the continuous state variables in each node at the
+##' ## time-points in tspan. In the 'SISe' model, V represent the
+##' ## environmental infectious pressure phi.
+##' V(result)
+V <- function(model, as.is = FALSE)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
 
-              d <- dim(model@V)
-              if (identical(d, c(0L, 0L))) {
-                  d <- dim(model@V_sparse)
-                  if (identical(d, c(0L, 0L)))
-                      stop("Please run the model first, the 'V' matrix is empty")
+    if (all(!isTRUE(as.is), Nd(model) < 1))
+        stop("No continuous variables defined in 'model'")
 
-                  if (isTRUE(as.is))
-                      return(model@V_sparse)
+    d <- dim(model@V)
+    if (identical(d, c(0L, 0L))) {
+        d <- dim(model@V_sparse)
+        if (identical(d, c(0L, 0L)))
+            stop("Please run the model first, the 'V' matrix is empty")
 
-                  ## Coerce the sparse 'V_sparse' matrix to a
-                  ## data.frame with one row per node and time-point
-                  ## with the values of the continuous state
-                  ## variables.
-                  return(sparse2df(model@V_sparse,
-                                   Nd(model),
-                                   model@tspan,
-                                   paste0("V", seq_len(Nd(model))),
-                                   NA_real_))
-              }
+        if (isTRUE(as.is))
+            return(model@V_sparse)
 
-              if (isTRUE(as.is))
-                  return(model@V)
+        ## Coerce the sparse 'V_sparse' matrix to a data.frame with
+        ## one row per node and time-point with the values of the
+        ## continuous state variables.
+        return(sparse2df(model@V_sparse,
+                         Nd(model),
+                         model@tspan,
+                         paste0("V", seq_len(Nd(model))),
+                         NA_real_))
+    }
 
-              ## Coerce the dense 'V' matrix to a data.frame with one
-              ## row per node and time-point with the values of the
-              ## continuous state variables.
-              m <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
-              colnames(m) <- paste0("V", seq_len(Nd(model)))
-              Time <- names(model@tspan)
-              if (is.null(Time))
-                  Time <- as.integer(model@tspan)
+    if (isTRUE(as.is))
+        return(model@V)
 
-              cbind(Node = seq_len(Nn(model)),
-                    Time = rep(Time, each = Nn(model)),
-                    as.data.frame(m),
-                    stringsAsFactors = FALSE)
-          }
-)
+    ## Coerce the dense 'V' matrix to a data.frame with one row per
+    ## node and time-point with the values of the continuous state
+    ## variables.
+    m <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
+    colnames(m) <- paste0("V", seq_len(Nd(model)))
+    Time <- names(model@tspan)
+    if (is.null(Time))
+        Time <- as.integer(model@tspan)
 
-##' @rdname V_set-methods
+    cbind(Node = seq_len(Nn(model)),
+          Time = rep(Time, each = Nn(model)),
+          as.data.frame(m),
+          stringsAsFactors = FALSE)
+}
+
+##' Set a template for where to write the V result matrix
+##'
+##' @param model The \code{model} to set a template for the result
+##'     matrix \code{V}.
+##' @param value Write the real-valued continuous state at
+##'     \code{tspan} to the non-zero elements in \code{value}, where
+##'     \code{value} is a sparse matrix, \code{dgCMatrix}, with
+##'     dimension \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
+##'     \code{length(tspan)}. Default is \code{NULL} i.e. to write the
+##'     real-valued continuous state to a dense matrix.
 ##' @export
-setMethod("V<-",
-          signature("SimInf_model"),
-          function(model, value) {
-              if (!is.null(value)) {
-                  if (!methods::is(value, "dgCMatrix"))
-                      value <- methods::as(value, "dgCMatrix")
+##' @importFrom methods is
+##' @importFrom methods as
+##' @importFrom Matrix sparseMatrix
+##' @examples
+##' ## Create an 'SISe' model with 6 nodes and initialize
+##' ## it to run over 10 days.
+##' u0 <- data.frame(S = 100:105, I = 1:6)
+##' model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
+##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5,
+##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
+##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
+##'
+##' ## An example with a sparse V result matrix, which can save a lot
+##' ## of memory if the model contains many nodes and time-points, but
+##' ## where only a few of the data points are of interest. First
+##' ## create a sparse matrix with non-zero entries at the locations
+##' ## in V where the continuous state variables should be written. Then
+##' ## run the model with the sparse matrix as a template for V where
+##' ## to write data.
+##' m <- Matrix::sparseMatrix(1:6, 5:10)
+##' V(model) <- m
+##' result <- run(model, threads = 1, seed = 7)
+##'
+##' ## Extract the continuous state variables at the time-points in tspan.
+##' V(result)
+"V<-" <- function(model, value)
+{
+    if (!is.null(value)) {
+        if (!is(value, "dgCMatrix"))
+            value <- as(value, "dgCMatrix")
 
-                  d <- c(Nn(model) * Nd(model), length(model@tspan))
-                  if (!identical(dim(value), d))
-                      stop("Wrong dimension of 'value'")
+        d <- c(Nn(model) * Nd(model), length(model@tspan))
+        if (!identical(dim(value), d))
+            stop("Wrong dimension of 'value'")
 
-                  ## Clear dense result matrix
-                  v <- matrix(nrow = 0, ncol = 0)
-                  storage.mode(v) <- "double"
-                  model@V <- v
+        ## Clear dense result matrix
+        v <- matrix(nrow = 0, ncol = 0)
+        storage.mode(v) <- "double"
+        model@V <- v
 
-                  model@V_sparse = value
-              } else {
-                  ## Clear sparse result matrix
-                  model@V_sparse <- methods::as(Matrix::sparseMatrix(numeric(0),
-                                                                     numeric(0),
-                                                                     dims = c(0, 0)),
-                                                "dgCMatrix")
-              }
-              model
-          }
-)
+        model@V_sparse = value
+    } else {
+        ## Clear sparse result matrix
+        model@V_sparse <- as(sparseMatrix(numeric(0),
+                                          numeric(0),
+                                          dims = c(0, 0)),
+                             "dgCMatrix")
+    }
+    model
+}
 
 ## Number of nodes
 Nn <- function(model) {
