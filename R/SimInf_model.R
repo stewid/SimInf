@@ -483,6 +483,28 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 setMethod("U",
           signature("SimInf_model"),
           function(model, compartments, i, as.is) {
+              ## Check 'compartments' argument
+              if (!is.null(compartments)) {
+                  compartments <- as.character(compartments)
+                  j <- !(compartments %in% rownames(model@S))
+                  if (any(j)) {
+                      stop("Non-existing compartment(s) in model: ",
+                           paste0("'", compartments[j], "'", collapse = ", "))
+                  }
+              }
+
+              ## Check 'i' argument
+              if (!is.null(i)) {
+                  if (!is.numeric(i))
+                      stop("'i' must be integer")
+                  if (!all(is_wholenumber(i)))
+                      stop("'i' must be integer")
+                  if (min(i) < 1)
+                      stop("'i' must be integer > 0")
+                  if (max(i) > Nn(model))
+                      stop("'i' must be integer <= number of nodes")
+              }
+
               d <- dim(model@U)
               if (identical(d, c(0L, 0L))) {
                   d <- dim(model@U_sparse)
@@ -515,6 +537,7 @@ setMethod("U",
                   m <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
                   colnames(m) <- rownames(model@S)
               } else {
+                  ## Extract subset of data
                   if (is.null(compartments))
                       compartments <- rownames(model@S)
                   compartments <- sort(match(compartments, rownames(model@S)))

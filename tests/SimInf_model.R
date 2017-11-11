@@ -16,8 +16,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-library(SimInf)
-library(Matrix)
+library("SimInf")
+library("Matrix")
 
 ## For debugging
 sessionInfo()
@@ -571,3 +571,23 @@ V(model) <- Matrix::sparseMatrix(1:6, 5:10)
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(U(result, as.is = TRUE)), as.character(tspan)))
 stopifnot(identical(colnames(V(result, as.is = TRUE)), as.character(tspan)))
+
+## Check arguments to 'U' method
+u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
+model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+result <- run(model, threads = 1, seed = 22)
+res <- tools::assertError(U(result, compartments = c("A", "S")))
+stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(U(result, i = c("A", "S")))
+stopifnot(length(grep("'i' must be integer",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(U(result, i = 3.4))
+stopifnot(length(grep("'i' must be integer",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(U(result, i = 0))
+stopifnot(length(grep("'i' must be integer > 0",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(U(result, i = 10))
+stopifnot(length(grep("'i' must be integer <= number of nodes",
+                      res[[1]]$message)) > 0)
