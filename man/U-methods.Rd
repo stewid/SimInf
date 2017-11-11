@@ -6,12 +6,20 @@
 \alias{U,SimInf_model-method}
 \title{Extract the number of individuals in each compartment}
 \usage{
-U(model, as.is = FALSE)
+U(model, compartments = NULL, i = NULL, as.is = FALSE)
 
-\S4method{U}{SimInf_model}(model, as.is = FALSE)
+\S4method{U}{SimInf_model}(model, compartments = NULL, i = NULL,
+  as.is = FALSE)
 }
 \arguments{
 \item{model}{the \code{model} to extract the result from.}
+
+\item{compartments}{specify the compartments to extract the number
+of individuals from. Default (\code{compartments=NULL}) is to
+extract data from all compartments in the model.}
+
+\item{i}{indices specifying the nodes to include when extracting
+data. Default is \code{NULL}, which includes all nodes.}
 
 \item{as.is}{the default (\code{as.is = FALSE}) is to generate a
 \code{data.frame} with one row per node and time-step with the
@@ -49,4 +57,12 @@ result <- run(model, threads = 1, seed = 22)
 ## Extract the number of individuals in each compartment at the
 ## time-points in tspan.
 U(result)
+
+## Extract the number of recovered individuals in the first node
+## after each time step in the simulation.
+U(result, compartments = "R", i = 1)
+
+## Extract the number of recovered individuals in the first and
+## third node after each time step in the simulation.
+U(result, compartments = "R", i = c(1, 3))
 }
