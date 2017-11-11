@@ -478,128 +478,211 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
           stringsAsFactors = FALSE)
 }
 
-##' @rdname U-methods
+##' Extract the number of individuals in each compartment
+##'
+##' The number of individuals in each compartment in every node after
+##' running a trajectory with \code{\link{run}}.
+##'
+##' Description of the layout of the matrix that is returned if
+##' \code{as.is = TRUE}. \code{U[, j]} contains the number of
+##' individuals in each compartment at \code{tspan[j]}. \code{U[1:Nc,
+##' j]} contains the number of individuals in node 1 at
+##' \code{tspan[j]}. \code{U[(Nc + 1):(2 * Nc), j]} contains the
+##' number of individuals in node 2 at \code{tspan[j]} etc, where
+##' \code{Nc} is the number of compartments in the model. The
+##' dimension of the matrix is \eqn{N_n N_c \times}
+##' \code{length(tspan)} where \eqn{N_n} is the number of nodes.
+##' @param model the \code{model} to extract the result from.
+##' @param compartments specify the compartments to extract the number
+##'     of individuals from. Default (\code{compartments=NULL}) is to
+##'     extract data from all compartments in the model.
+##' @param i indices specifying the nodes to include when extracting
+##'     data. Default is \code{NULL}, which includes all nodes.
+##' @param as.is the default (\code{as.is = FALSE}) is to generate a
+##'     \code{data.frame} with one row per node and time-step with the
+##'     number of individuals in each compartment. Using \code{as.is =
+##'     TRUE} returns the result as a matrix, which is the internal
+##'     format (see \sQuote{Details}).
+##' @return The number of individuals in each compartment
 ##' @export
-setMethod("U",
-          signature("SimInf_model"),
-          function(model, compartments, i, as.is) {
-              ## Check 'compartments' argument
-              if (!is.null(compartments)) {
-                  compartments <- as.character(compartments)
-                  j <- !(compartments %in% rownames(model@S))
-                  if (any(j)) {
-                      stop("Non-existing compartment(s) in model: ",
-                           paste0("'", compartments[j], "'", collapse = ", "))
-                  }
-              }
+##' @importFrom methods is
+##' @examples
+##' ## Create an 'SIR' model with 6 nodes and initialize
+##' ## it to run over 10 days.
+##' u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
+##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##'
+##' ## Run the model
+##' result <- run(model, threads = 1, seed = 22)
+##'
+##' ## Extract the number of individuals in each compartment at the
+##' ## time-points in tspan.
+##' U(result)
+##'
+##' ## Extract the number of recovered individuals in the first node
+##' ## after each time step in the simulation.
+##' U(result, compartments = "R", i = 1)
+##'
+##' ## Extract the number of recovered individuals in the first and
+##' ## third node after each time step in the simulation.
+##' U(result, compartments = "R", i = c(1, 3))
+U <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
 
-              ## Check 'i' argument
-              if (!is.null(i)) {
-                  if (!is.numeric(i))
-                      stop("'i' must be integer")
-                  if (!all(is_wholenumber(i)))
-                      stop("'i' must be integer")
-                  if (min(i) < 1)
-                      stop("'i' must be integer > 0")
-                  if (max(i) > Nn(model))
-                      stop("'i' must be integer <= number of nodes")
-              }
+    ## Check 'compartments' argument
+    if (!is.null(compartments)) {
+        compartments <- as.character(compartments)
+        j <- !(compartments %in% rownames(model@S))
+        if (any(j)) {
+            stop("Non-existing compartment(s) in model: ",
+                 paste0("'", compartments[j], "'", collapse = ", "))
+        }
+    }
 
-              d <- dim(model@U)
-              if (identical(d, c(0L, 0L))) {
-                  d <- dim(model@U_sparse)
-                  if (identical(d, c(0L, 0L)))
-                      stop("Please run the model first, the 'U' matrix is empty")
+    ## Check 'i' argument
+    if (!is.null(i)) {
+        if (!is.numeric(i))
+            stop("'i' must be integer")
+        if (!all(is_wholenumber(i)))
+            stop("'i' must be integer")
+        if (min(i) < 1)
+            stop("'i' must be integer > 0")
+        if (max(i) > Nn(model))
+            stop("'i' must be integer <= number of nodes")
+    }
 
-                  if (isTRUE(as.is))
-                      return(model@U_sparse)
+    d <- dim(model@U)
+    if (identical(d, c(0L, 0L))) {
+        d <- dim(model@U_sparse)
+        if (identical(d, c(0L, 0L)))
+            stop("Please run the model first, the 'U' matrix is empty")
 
-                  ## Coerce the sparse 'U_sparse' matrix to a
-                  ## data.frame with one row per node and time-point
-                  ## with the number of individuals in each
-                  ## compartment.
-                  return(sparse2df(model@U_sparse,
-                                   Nc(model),
+        if (isTRUE(as.is))
+            return(model@U_sparse)
+
+        ## Coerce the sparse 'U_sparse' matrix to a data.frame with
+        ## one row per node and time-point with the number of
+        ## individuals in each compartment.
+        return(sparse2df(model@U_sparse,
+                         Nc(model),
                                    model@tspan,
                                    rownames(model@S)))
-              }
+    }
 
-              if (isTRUE(as.is)) {
-                  if (all(is.null(compartments), is.null(i)))
-                      return(model@U)
-                  return(extract_U(model, compartments, i))
-              }
+    if (isTRUE(as.is)) {
+        if (all(is.null(compartments), is.null(i)))
+            return(model@U)
+        return(extract_U(model, compartments, i))
+    }
 
-              ## Coerce the dense 'U' matrix to a data.frame with one
-              ## row per node and time-point with the number of
-              ## individuals in each compartment.
-              if (all(is.null(compartments), is.null(i))) {
-                  m <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
-                  colnames(m) <- rownames(model@S)
-              } else {
-                  ## Extract subset of data
-                  if (is.null(compartments))
-                      compartments <- rownames(model@S)
-                  compartments <- sort(match(compartments, rownames(model@S)))
-                  if (is.null(i))
-                      i <- seq_len(Nn(model))
-                  j <- rep(compartments, length(i))
-                  j <- j + rep((i - 1) * Nc(model), each = length(compartments))
-                  k <- (seq_len(length(model@tspan)) - 1) * Nc(model) * Nn(model)
-                  k <- rep(k, each = length(j))
-                  j <- rep(j, length(model@tspan))
-                  j <- j + k
-                  m <- matrix(as.integer(model@U[j]),
-                              ncol = length(compartments),
-                              byrow = TRUE)
-                  colnames(m) <- rownames(model@S)[compartments]
-              }
+    ## Coerce the dense 'U' matrix to a data.frame with one row per
+    ## node and time-point with the number of individuals in each
+    ## compartment.
+    if (all(is.null(compartments), is.null(i))) {
+        m <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
+        colnames(m) <- rownames(model@S)
+    } else {
+        ## Extract subset of data
+        if (is.null(compartments))
+            compartments <- rownames(model@S)
+        compartments <- sort(match(compartments, rownames(model@S)))
+        if (is.null(i))
+            i <- seq_len(Nn(model))
+        j <- rep(compartments, length(i))
+        j <- j + rep((i - 1) * Nc(model), each = length(compartments))
+        k <- (seq_len(length(model@tspan)) - 1) * Nc(model) * Nn(model)
+        k <- rep(k, each = length(j))
+        j <- rep(j, length(model@tspan))
+        j <- j + k
+        m <- matrix(as.integer(model@U[j]),
+                    ncol = length(compartments),
+                    byrow = TRUE)
+        colnames(m) <- rownames(model@S)[compartments]
+    }
 
-              Node = seq_len(Nn(model))
-              if (!is.null(i))
-                 Node <- Node[i]
+    Node = seq_len(Nn(model))
+    if (!is.null(i))
+        Node <- Node[i]
 
-              Time <- names(model@tspan)
-              if (is.null(Time))
-                  Time <- as.integer(model@tspan)
-              Time <- rep(Time, each = length(Node))
+    Time <- names(model@tspan)
+    if (is.null(Time))
+        Time <- as.integer(model@tspan)
+    Time <- rep(Time, each = length(Node))
 
-              cbind(Node = Node,
-                    Time = Time,
-                    as.data.frame(m),
-                    stringsAsFactors = FALSE)
-          }
-)
+    cbind(Node = Node,
+          Time = Time,
+          as.data.frame(m),
+          stringsAsFactors = FALSE)
+}
 
-##' @rdname U_set-methods
+##' Set a template for where to write the U result matrix
+##'
+##' @param model The \code{model} to set a template for the result
+##'     matrix \code{U}.
+##' @param value Write the number of individuals in each compartment
+##'     at \code{tspan} to the non-zero elements in \code{value},
+##'     where \code{value} is a sparse matrix, \code{dgCMatrix}, with
+##'     dimension \eqn{N_n N_c \times} \code{length(tspan)}. Default
+##'     is \code{NULL} i.e. to write the number of inidividuals in
+##'     each compartment in every node to a dense matrix.
 ##' @export
-setMethod("U<-",
-          signature("SimInf_model"),
-          function(model, value) {
-              if (!is.null(value)) {
-                  if (!methods::is(value, "dgCMatrix"))
-                      value <- methods::as(value, "dgCMatrix")
+##' @importFrom methods is
+##' @examples
+##' ## Create an 'SIR' model with 6 nodes and initialize
+##' ## it to run over 10 days.
+##' u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
+##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##'
+##' ## An example with a sparse U result matrix, which can save a lot
+##' ## of memory if the model contains many nodes and time-points, but
+##' ## where only a few of the data points are of interest. First
+##' ## create a sparse matrix with non-zero entries at the locations
+##' ## in U where the number of individuals should be written. Then
+##' ## run the model with the sparse matrix as a template for U where
+##' ## to write data.
+##' m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
+##' U(model) <- m
+##' result <- run(model, threads = 1, seed = 22)
+##'
+##' ## Extract the number of individuals in each compartment at the
+##' ## time-points in tspan.
+##' U(result)
+"U<-" <- function(model, value)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
 
-                  d <- c(Nn(model) * Nc(model), length(model@tspan))
-                  if (!identical(dim(value), d))
-                      stop("Wrong dimension of 'value'")
+    if (!is.null(value)) {
+        if (!methods::is(value, "dgCMatrix"))
+            value <- methods::as(value, "dgCMatrix")
 
-                  ## Clear dense result matrix
-                  u <- matrix(nrow = 0, ncol = 0)
-                  storage.mode(u) <- "integer"
-                  model@U = u
+        d <- c(Nn(model) * Nc(model), length(model@tspan))
+        if (!identical(dim(value), d))
+            stop("Wrong dimension of 'value'")
 
-                  model@U_sparse = value
-              } else {
-                  ## Clear sparse result matrix
-                  model@U_sparse <- methods::as(Matrix::sparseMatrix(numeric(0),
-                                                                     numeric(0),
-                                                                     dims = c(0, 0)),
-                                                "dgCMatrix")
-              }
-              model
-          }
-)
+        ## Clear dense result matrix
+        u <- matrix(nrow = 0, ncol = 0)
+        storage.mode(u) <- "integer"
+        model@U = u
+
+        model@U_sparse = value
+    } else {
+        ## Clear sparse result matrix
+        model@U_sparse <- methods::as(Matrix::sparseMatrix(numeric(0),
+                                                           numeric(0),
+                                                           dims = c(0, 0)),
+                                      "dgCMatrix")
+    }
+    model
+}
 
 ##' @rdname V-methods
 ##' @export
