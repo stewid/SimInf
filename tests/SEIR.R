@@ -321,6 +321,11 @@ U_expected <-structure(list(
 U_observed <- U(result, compartments = c("E", "R"), i = c(2, 4))
 stopifnot(identical(U_observed, U_expected))
 
+## Check 'V'
+res <- tools::assertError(V(result))
+stopifnot(length(grep("No continuous variables defined in 'model'",
+                      res[[1]]$message)) > 0)
+
 ## Check data
 stopifnot(identical(nrow(events_SEIR()), 466692L))
 stopifnot(identical(nrow(u0_SEIR()), 1600L))

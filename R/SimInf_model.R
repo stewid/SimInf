@@ -606,6 +606,9 @@ setMethod("U<-",
 setMethod("V",
           signature("SimInf_model"),
           function(model, as.is) {
+              if (Nd(model) < 1)
+                  stop("No continuous variables defined in 'model'")
+
               d <- dim(model@V)
               if (identical(d, c(0L, 0L))) {
                   d <- dim(model@V_sparse)
