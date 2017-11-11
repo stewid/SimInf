@@ -124,6 +124,11 @@ setGeneric("run",
 ##' \code{length(tspan)} where \eqn{N_n} is the number of nodes.
 ##' @rdname U-methods
 ##' @param model the \code{model} to extract the result from.
+##' @param compartments specify the compartments to extract the number
+##'     of individuals from. Default (\code{compartments=NULL}) is to
+##'     extract data from all compartments in the model.
+##' @param i indices specifying the nodes to include when extracting
+##'     data. Default is \code{NULL}, which includes all nodes.
 ##' @param as.is the default (\code{as.is = FALSE}) is to generate a
 ##'     \code{data.frame} with one row per node and time-step with the
 ##'     number of individuals in each compartment. Using \code{as.is =
@@ -143,7 +148,16 @@ setGeneric("run",
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in tspan.
 ##' U(result)
-setGeneric("U", function(model, as.is = FALSE) standardGeneric("U"))
+##'
+##' ## Extract the number of recovered individuals in the first node
+##' ## after each time step in the simulation.
+##' U(result, compartments = "R", i = 1)
+##'
+##' ## Extract the number of recovered individuals in the first and
+##' ## third node after each time step in the simulation.
+##' U(result, compartments = "R", i = c(1, 3))
+setGeneric("U", function(model, compartments = NULL, i = NULL, as.is = FALSE)
+    standardGeneric("U"))
 
 ##' Set a template for where to write the U result matrix
 ##'

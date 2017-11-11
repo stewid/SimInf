@@ -482,7 +482,7 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##' @export
 setMethod("U",
           signature("SimInf_model"),
-          function(model, as.is) {
+          function(model, compartments, i, as.is) {
               d <- dim(model@U)
               if (identical(d, c(0L, 0L))) {
                   d <- dim(model@U_sparse)
@@ -502,20 +502,47 @@ setMethod("U",
                                    rownames(model@S)))
               }
 
-              if (isTRUE(as.is))
-                  return(model@U)
+              if (isTRUE(as.is)) {
+                  if (all(is.null(compartments), is.null(i)))
+                      return(model@U)
+                  return(extract_U(model, compartments, i))
+              }
 
               ## Coerce the dense 'U' matrix to a data.frame with one
               ## row per node and time-point with the number of
               ## individuals in each compartment.
-              m <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
-              colnames(m) <- rownames(model@S)
+              if (all(is.null(compartments), is.null(i))) {
+                  m <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
+                  colnames(m) <- rownames(model@S)
+              } else {
+                  if (is.null(compartments))
+                      compartments <- rownames(model@S)
+                  compartments <- sort(match(compartments, rownames(model@S)))
+                  if (is.null(i))
+                      i <- seq_len(Nn(model))
+                  j <- rep(compartments, length(i))
+                  j <- j + rep((i - 1) * Nc(model), each = length(compartments))
+                  k <- (seq_len(length(model@tspan)) - 1) * Nc(model) * Nn(model)
+                  k <- rep(k, each = length(j))
+                  j <- rep(j, length(model@tspan))
+                  j <- j + k
+                  m <- matrix(as.integer(model@U[j]),
+                              ncol = length(compartments),
+                              byrow = TRUE)
+                  colnames(m) <- rownames(model@S)[compartments]
+              }
+
+              Node = seq_len(Nn(model))
+              if (!is.null(i))
+                 Node <- Node[i]
+
               Time <- names(model@tspan)
               if (is.null(Time))
                   Time <- as.integer(model@tspan)
+              Time <- rep(Time, each = length(Node))
 
-              cbind(Node = seq_len(Nn(model)),
-                    Time = rep(Time, each = Nn(model)),
+              cbind(Node = Node,
+                    Time = Time,
                     as.data.frame(m),
                     stringsAsFactors = FALSE)
           }
