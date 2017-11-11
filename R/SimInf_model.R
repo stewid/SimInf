@@ -606,7 +606,7 @@ setMethod("U<-",
 setMethod("V",
           signature("SimInf_model"),
           function(model, as.is) {
-              if (Nd(model) < 1)
+              if (all(!isTRUE(as.is), Nd(model) < 1))
                   stop("No continuous variables defined in 'model'")
 
               d <- dim(model@V)
