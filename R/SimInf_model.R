@@ -381,27 +381,47 @@ SimInf_model <- function(G,
                         C_code = C_code))
 }
 
-##' @rdname prevalence
+##' Prevalence
+##'
+##' Calculate the proportion of individuals with disease, or the
+##' proportion of nodes with individuals with disease, or the
+##' proportion of individuals with disease in each node.
+##' @param model The \code{model} to calculate the prevalence from.
+##' @param numerator The compartments in the population with a disease
+##'     or a condition.
+##' @param denominator The compartments that define the entire
+##'     population of interest.
+##' @param type The type of prevalence measure to calculate:
+##'     \code{'pop'} (default) calcalates the proportion of the
+##'     individuals in the population that have disease (model
+##'     specific) at each time point in \code{tspan}, \code{'bnp'}
+##'     calculates the between-node prevalence, and \code{'wnp'}
+##'     calculates the within-node prevalence.
+##' @param i Indices specifying the nodes to include in the
+##'     calculation of the prevalence. Default is \code{NULL}, which
+##'     includes all nodes.
+##' @return Vector when type equals \code{'pop'} or \code{'bnp'} but
+##'     matrix when type equals \code{'wnp'}.
 ##' @export
-setMethod("prevalence",
-          signature("SimInf_model", "character", "character"),
-          function(model, numerator, denominator, type, i) {
-              numerator <- extract_U(model, numerator, i)
-              denominator <- extract_U(model, denominator, i)
+prevalence <- function(model, numerator, denominator,
+                       type = c("pop", "bnp", "wnp"),
+                       i = NULL)
+{
+    numerator <- extract_U(model, numerator, i)
+    denominator <- extract_U(model, denominator, i)
 
-              type <- match.arg(type)
-              if (identical(type, "pop")) {
-                  numerator <- colSums(numerator)
-                  denominator <- colSums(denominator)
-              } else if (identical(type, "bnp")) {
-                  numerator <- colSums(numerator > 0)
-                  ## Include only nodes with individuals
-                  denominator <- colSums(denominator > 0)
-              }
+    type <- match.arg(type)
+    if (identical(type, "pop")) {
+        numerator <- colSums(numerator)
+        denominator <- colSums(denominator)
+    } else if (identical(type, "bnp")) {
+        numerator <- colSums(numerator > 0)
+        ## Include only nodes with individuals
+        denominator <- colSums(denominator > 0)
+    }
 
-              numerator / denominator
-          }
-)
+    numerator / denominator
+}
 
 ## Internal function to extract compartments from U
 extract_U <- function(model = NULL, compartments = NULL, i = NULL) {

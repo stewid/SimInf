@@ -136,14 +136,18 @@ stopifnot(identical(I_observed, I_expected))
 
 ## run with AEM using multiple threads
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 123L, solver = "aem")
-    result_omp
+    result <- run(model, threads = 123L, solver = "aem")
+    result
 
-    stopifnot(identical(length(U(result_omp, compartments = "S", as.is = TRUE)), 20L))
-    stopifnot(identical(length(U(result_omp, compartments = "I", as.is = TRUE)), 20L))
-    stopifnot(identical(length(prevalence(result_omp)), 10L))
-    stopifnot(is.null(dim(prevalence(result_omp))))
-    stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(2L, 10L)))
+    stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 20L))
+    stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 20L))
+
+    p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+    stopifnot(identical(length(p), 10L))
+    stopifnot(is.null(dim(p)))
+
+    p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+    stopifnot(identical(dim(p), c(2L, 10L)))
 }
 
 ## Check solver argument

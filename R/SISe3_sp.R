@@ -222,18 +222,6 @@ SISe3_sp <- function(u0,
     methods::as(model, "SISe3_sp")
 }
 
-##' @describeIn prevalence Prevalence \eqn{= (I_1 + I_2 + I_3) / (S_1 + S_2 + S_3 + I_1 + I_2 + I_3)}
-##' @export
-setMethod("prevalence",
-          signature("SISe3_sp", "missing", "missing"),
-          function(model, type, i)
-          {
-              prevalence(model = model, numerator = c("I_1", "I_2", "I_3"),
-                         denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
-                         type = type, i = i)
-          }
-)
-
 ##' @rdname plot
 ##' @aliases plot,SISe3_sp-method
 ##' @export

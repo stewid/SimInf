@@ -166,17 +166,6 @@ SISe <- function(u0,
     methods::as(model, "SISe")
 }
 
-##' @describeIn prevalence Prevalence \eqn{= I / (S + I)}
-##' @export
-setMethod("prevalence",
-          signature("SISe", "missing", "missing"),
-          function(model, type, i) {
-              prevalence(model = model, numerator = "I",
-                         denominator = c("S", "I"),
-                         type = type, i = i)
-          }
-)
-
 ##' @rdname plot
 ##' @aliases plot,SISe-method
 ##' @export

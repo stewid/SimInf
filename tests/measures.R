@@ -52,20 +52,27 @@ result
 
 stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
 stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
-stopifnot(identical(length(prevalence(result)), 1001L))
-stopifnot(is.null(dim(prevalence(result))))
-stopifnot(identical(dim(prevalence(result, type = "wnp")),
-                    c(1L, 1001L)))
+
+p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+stopifnot(identical(length(p), 1001L))
+stopifnot(is.null(dim(p)))
+
+p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
-    result_omp
+    result <- run(model, threads = 2)
+    result
 
-    stopifnot(identical(length(U(result_omp, compartments = "S", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(U(result_omp, compartments = "I", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(prevalence(result_omp)), 1001L))
-    stopifnot(is.null(dim(prevalence(result_omp))))
-    stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(1L, 1001L)))
+    stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
+    stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
+
+    p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+    stopifnot(identical(length(p), 1001L))
+    stopifnot(is.null(dim(p)))
+
+    p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+    stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
 ## Check measures for a SISe_sp model
@@ -100,19 +107,27 @@ result
 
 stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
 stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
-stopifnot(identical(length(prevalence(result)), 1001L))
-stopifnot(is.null(dim(prevalence(result))))
-stopifnot(identical(dim(prevalence(result, type = "wnp")), c(1L, 1001L)))
+
+p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+stopifnot(identical(length(p), 1001L))
+stopifnot(is.null(dim(p)))
+
+p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
-    result_omp
+    result <- run(model, threads = 2)
+    result
 
-    stopifnot(identical(length(U(result_omp, compartments = "S", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(U(result_omp, compartments = "I", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(prevalence(result_omp)), 1001L))
-    stopifnot(is.null(dim(prevalence(result_omp))))
-    stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(1L, 1001L)))
+    stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
+    stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
+
+    p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+    stopifnot(identical(length(p), 1001L))
+    stopifnot(is.null(dim(p)))
+
+    p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+    stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
 ## Check 'susceptible' and 'infected' methods for a SISe3 model
@@ -153,19 +168,33 @@ result
 
 stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
 stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
-stopifnot(identical(length(prevalence(result)), 1000L))
-stopifnot(is.null(dim(prevalence(result))))
-stopifnot(identical(dim(prevalence(result, type = "wnp")), c(10L, 1000L)))
+
+p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
+                denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"))
+stopifnot(identical(length(p), 1000L))
+stopifnot(is.null(dim(p)))
+
+p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
+                denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
+                type = "wnp")
+stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
-    result_omp
+    result <- run(model, threads = 2)
+    result
 
-    stopifnot(identical(length(U(result_omp, compartments = "S_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(U(result_omp, compartments = "I_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(prevalence(result_omp)), 1000L))
-    stopifnot(is.null(dim(prevalence(result_omp))))
-    stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(10L, 1000L)))
+    stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
+    stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
+
+    p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
+                    denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"))
+    stopifnot(identical(length(p), 1000L))
+    stopifnot(is.null(dim(p)))
+
+    p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
+                    denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
+                    type = "wnp")
+    stopifnot(identical(dim(p), c(10L, 1000L)))
 }
 
 ## Check measures with a SISe3_sp model
@@ -208,17 +237,31 @@ result
 
 stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
 stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
-stopifnot(identical(length(prevalence(result)), 1000L))
-stopifnot(is.null(dim(prevalence(result))))
-stopifnot(identical(dim(prevalence(result, type = "wnp")), c(10L, 1000L)))
+
+p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
+                denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"))
+stopifnot(identical(length(p), 1000L))
+stopifnot(is.null(dim(p)))
+
+p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
+                denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
+                type = "wnp")
+stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
-    result_omp
+    result <- run(model, threads = 2)
+    result
 
-    stopifnot(identical(length(U(result_omp, compartments = "S_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(U(result_omp, compartments = "I_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(prevalence(result_omp)), 1000L))
-    stopifnot(is.null(dim(prevalence(result_omp))))
-    stopifnot(identical(dim(prevalence(result_omp, type = "wnp")), c(10L, 1000L)))
+    stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
+    stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
+
+    p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
+                    denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"))
+    stopifnot(identical(length(p), 1000L))
+    stopifnot(is.null(dim(p)))
+
+    p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
+                    denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
+                    type = "wnp")
+    stopifnot(identical(dim(p), c(10L, 1000L)))
 }

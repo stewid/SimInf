@@ -135,17 +135,6 @@ SIR <- function(u0,
     methods::as(model, "SIR")
 }
 
-##' @describeIn prevalence Prevalence \eqn{= I / (S + I + R)}
-##' @export
-setMethod("prevalence",
-          signature("SIR", "missing", "missing"),
-          function(model, type, i) {
-              prevalence(model, numerator = "I",
-                         denominator = c("S", "I", "R"),
-                         type = type, i = i)
-          }
-)
-
 ##' @rdname plot
 ##' @aliases plot,SIR-method
 ##' @export
