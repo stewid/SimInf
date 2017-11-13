@@ -53,13 +53,13 @@
 ##' contour(x * model@gdata["beta"], y * model@gdata["gamma"],
 ##'         pop, method = "edge", bty = "l")
 ##'
-##' ## Run the model and determine the between-node prevalence
-##' bnp <- run_outer(x, y, model, gamma ~ beta,
-##'                  function(model) {prevalence(run(model), "bnp")[75]})
+##' ## Run the model and determine the node prevalence
+##' nop <- run_outer(x, y, model, gamma ~ beta,
+##'                  function(model) {prevalence(run(model), "nop")[75]})
 ##'
 ##' ## Plot result
 ##' contour(x * model@gdata["beta"], y * model@gdata["gamma"],
-##'         bnp, method = "edge", bty = "l")
+##'         nop, method = "edge", bty = "l")
 ##' }
 setGeneric("run_outer",
            signature = c("x", "y", "model"),

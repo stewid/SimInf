@@ -387,70 +387,124 @@ SimInf_model <- function(G,
 ##' proportion of nodes with individuals with disease, or the
 ##' proportion of individuals with disease in each node.
 ##' @param model The \code{model} to calculate the prevalence from.
-##' @param numerator The compartments in the population with a disease
-##'     or a condition.
-##' @param denominator The compartments that define the entire
-##'     population of interest.
+##' @param cases The compartments in the population with a disease or
+##'     a condition.
+##' @param pop The compartments that define the entire population of
+##'     interest.
 ##' @param type The type of prevalence measure to calculate:
 ##'     \code{'pop'} (default) calcalates the proportion of the
 ##'     individuals in the population that have disease (model
-##'     specific) at each time point in \code{tspan}, \code{'bnp'}
-##'     calculates the between-node prevalence, and \code{'wnp'}
-##'     calculates the within-node prevalence.
+##'     specific) at each time point in \code{tspan}, \code{'nop'}
+##'     calculates the node prevalence, and \code{'wnp'} calculates
+##'     the within-node prevalence.
 ##' @param i Indices specifying the nodes to include in the
 ##'     calculation of the prevalence. Default is \code{NULL}, which
 ##'     includes all nodes.
-##' @return Vector when type equals \code{'pop'} or \code{'bnp'} but
+##' @param as.is The default (\code{as.is = FALSE}) is to generate a
+##'     \code{data.frame} with one row per time-step with the
+##'     prevalence. Using \code{as.is = TRUE} returns the result as a
+##'     matrix, which is the internal format.
+##' @return Vector when type equals \code{'pop'} or \code{'nop'} but
 ##'     matrix when type equals \code{'wnp'}.
 ##' @export
-prevalence <- function(model, numerator, denominator,
-                       type = c("pop", "bnp", "wnp"),
-                       i = NULL)
+prevalence <- function(model = NULL,
+                       cases = NULL,
+                       pop = NULL,
+                       type = c("pop", "nop", "wnp"),
+                       i = NULL,
+                       as.is = FALSE)
 {
-    numerator <- extract_U(model, numerator, i)
-    denominator <- extract_U(model, denominator, i)
-
-    type <- match.arg(type)
-    if (identical(type, "pop")) {
-        numerator <- colSums(numerator)
-        denominator <- colSums(denominator)
-    } else if (identical(type, "bnp")) {
-        numerator <- colSums(numerator > 0)
-        ## Include only nodes with individuals
-        denominator <- colSums(denominator > 0)
-    }
-
-    numerator / denominator
-}
-
-## Internal function to extract compartments from U
-extract_U <- function(model = NULL, compartments = NULL, i = NULL) {
+    ## Check model argument
     if (is.null(model))
         stop("Missing 'model' argument")
-    if (is.null(compartments))
-        stop("Missing 'compartments' argument")
-    if (!(all(compartments %in% rownames(model@S))))
-        stop("'compartments' must exist in the model")
-    compartments <- match(compartments, rownames(model@S))
-    if (identical(dim(model@U), c(0L, 0L)))
-        stop("Please run the model first, the 'U' matrix is empty")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
 
-    result <- NULL
-    for (k in compartments) {
-        ii <- seq(from = k, to = dim(model@U)[1], by = Nc(model))
-        if (!is.null(i))
-            ii <- ii[i]
-
-        if (is.null(result)) {
-            result <- as.matrix(model@U[ii, , drop = FALSE])
-        } else {
-            result <- result + as.matrix(model@U[ii, , drop = FALSE])
-        }
+    ## Check 'cases' argument
+    cases <- as.character(cases)
+    if (!length(cases))
+        stop("'cases' is empty")
+    j <- !(cases %in% rownames(model@S))
+    if (any(j)) {
+        stop("Non-existing compartment(s) in model: ",
+             paste0("'", cases[j], "'", collapse = ", "))
     }
 
-    rownames(result) <- NULL
-    colnames(result) <- NULL
-    result
+    ## Check 'pop' argument
+    pop <- as.character(pop)
+    if (!length(pop))
+        stop("'pop' is empty")
+    j <- !(pop %in% rownames(model@S))
+    if (any(j)) {
+        stop("Non-existing compartment(s) in model: ",
+             paste0("'", pop[j], "'", collapse = ", "))
+    }
+
+    ## Check 'i' argument
+    if (!is.null(i)) {
+        if (!is.numeric(i))
+            stop("'i' must be integer")
+        if (!all(is_wholenumber(i)))
+            stop("'i' must be integer")
+        if (min(i) < 1)
+            stop("'i' must be integer > 0")
+        if (max(i) > Nn(model))
+            stop("'i' must be integer <= number of nodes")
+    }
+
+    ## Check 'type' argument
+    type <- match.arg(type)
+
+    ## Sum all individuals in 'cases' compartments in a matrix with
+    ## one row per node X length(tspan)
+    cm <- NULL
+    for (compartment in cases) {
+        if (is.null(cm)) {
+            cm <- U(model, compartments = compartment, i = i, as.is = TRUE)
+        } else {
+            cm <- cm + U(model, compartments = compartment, i = i, as.is = TRUE)
+        }
+    }
+    dimnames(cm) <- NULL
+
+    ## Sum all individuals in 'pop' compartments in a matrix with one
+    ## row per node X length(tspan)
+    pm <- NULL
+    for (compartment in pop) {
+        if (is.null(pm)) {
+            pm <- U(model, compartments = compartment, i = i, as.is = TRUE)
+        } else {
+            pm <- pm + U(model, compartments = compartment, i = i, as.is = TRUE)
+        }
+    }
+    dimnames(pm) <- NULL
+
+    if (identical(type, "pop")) {
+        cm <- colSums(cm)
+        pm <- colSums(pm)
+    } else if (identical(type, "nop")) {
+        cm <- colSums(cm > 0)
+        ## Only include nodes with individuals
+        pm <- colSums(pm > 0)
+    }
+
+    if (isTRUE(as.is))
+        return(cm / pm)
+
+    Time <- names(model@tspan)
+    if (is.null(Time))
+        Time <- model@tspan
+    if (type %in% c("pop", "nop"))
+        return(data.frame(Time = Time, Prevalence = cm / pm))
+
+    Node = seq_len(Nn(model))
+    if (!is.null(i))
+        Node <- Node[i]
+
+    data.frame(Node = Node,
+               Time = rep(Time, each = length(Node)),
+               Prevalence = as.numeric(cm / pm),
+               stringsAsFactors = FALSE)
 }
 
 ##' Coerce a sparse matrix to a data.frame

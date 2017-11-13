@@ -53,11 +53,11 @@ result
 stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
 stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
 
-p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
 stopifnot(identical(length(p), 1001L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+p <- prevalence(result, cases = "I", pop = c("S", "I"), type = "wnp", as.is = TRUE)
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
@@ -67,11 +67,11 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
     stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
 
-    p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+    p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
     stopifnot(identical(length(p), 1001L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+    p <- prevalence(result, cases = "I", pop = c("S", "I"), type = "wnp", as.is = TRUE)
     stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
@@ -108,11 +108,11 @@ result
 stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
 stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
 
-p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
 stopifnot(identical(length(p), 1001L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+p <- prevalence(result, cases = "I", pop = c("S", "I"), type = "wnp", as.is = TRUE)
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
@@ -122,11 +122,11 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
     stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
 
-    p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+    p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
     stopifnot(identical(length(p), 1001L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+    p <- prevalence(result, cases = "I", pop = c("S", "I"), type = "wnp", as.is = TRUE)
     stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
@@ -169,14 +169,14 @@ result
 stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
 stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
 
-p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
-                denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"))
+p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
+                pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"), as.is = TRUE)
 stopifnot(identical(length(p), 1000L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
-                denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
-                type = "wnp")
+p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
+                pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
+                type = "wnp", as.is = TRUE)
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
@@ -186,14 +186,14 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
     stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
 
-    p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
-                    denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"))
+    p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
+                    pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"), as.is = TRUE)
     stopifnot(identical(length(p), 1000L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
-                    denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
-                    type = "wnp")
+    p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
+                    pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
+                    type = "wnp", as.is = TRUE)
     stopifnot(identical(dim(p), c(10L, 1000L)))
 }
 
@@ -238,14 +238,14 @@ result
 stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
 stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
 
-p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
-                denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"))
+p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
+                pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"), as.is = TRUE)
 stopifnot(identical(length(p), 1000L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
-                denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
-                type = "wnp")
+p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
+                pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
+                type = "wnp", as.is = TRUE)
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
@@ -255,13 +255,13 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
     stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
 
-    p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
-                    denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"))
+    p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
+                    pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"), as.is = TRUE)
     stopifnot(identical(length(p), 1000L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, numerator = c("I_1", "I_2", "I_3"),
-                    denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
-                    type = "wnp")
+    p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
+                    pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"),
+                    type = "wnp", as.is = TRUE)
     stopifnot(identical(dim(p), c(10L, 1000L)))
 }

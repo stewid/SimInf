@@ -347,6 +347,86 @@ U_expected <- structure(
 U_observed <- U(result, compartments = c("E", "R"), i = c(2, 4), as.is = TRUE)
 stopifnot(identical(U_observed, U_expected))
 
+## Check prevalence
+
+## Define a tolerance
+tol = 1e-8
+
+p_expected <- structure(list(
+    Time = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+    Prevalence = c(0.253333333333333, 0.253324468085106, 0.253315649867374,
+                   0.253306878306878, 0.253298153034301, 0.253289473684211,
+                   0.253280839895013, 0.253272251308901, 0.253263707571802,
+                   0.253255208333333)),
+    .Names = c("Time", "Prevalence"),
+    row.names = c(NA, -10L),
+    class = "data.frame")
+p_observed <- prevalence(result, "I", c("S", "E", "I", "R"))
+stopifnot(identical(p_observed$Time, p_expected$Time))
+stopifnot(all(abs(p_observed$Prevalence - p_expected$Prevalence) < tol))
+
+p_expected <- structure(
+    list(Time = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+         Prevalence = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
+    .Names = c("Time", "Prevalence"),
+    row.names = c(NA, -10L),
+    class = "data.frame")
+p_observed <- prevalence(result, "I", c("S", "E", "I", "R"), type = "nop")
+stopifnot(identical(p_observed, p_expected))
+
+p_expected <- structure(
+    list(Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+                  5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
+                  3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
+                  1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+                  5L, 6L),
+         Time = c(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2,
+                  2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5,
+                  6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9,
+                  9, 9, 9),
+         Prevalence = c(0.26, 0.255555555555556, 0.253846153846154,
+                        0.252941176470588, 0.252380952380952, 0.252, 0.259920634920635,
+                        0.255530973451327, 0.253834355828221, 0.252934272300469, 0.252376425855513,
+                        0.251996805111821, 0.259842519685039, 0.255506607929515, 0.253822629969419,
+                        0.252927400468384, 0.252371916508539, 0.251993620414673, 0.259765625,
+                        0.255482456140351, 0.253810975609756, 0.252920560747664, 0.252367424242424,
+                        0.251990445859873, 0.25968992248062, 0.255458515283843, 0.253799392097264,
+                        0.252913752913753, 0.252362948960302, 0.251987281399046, 0.259615384615385,
+                        0.255434782608696, 0.253787878787879, 0.252906976744186, 0.252358490566038,
+                        0.251984126984127, 0.259541984732824, 0.255411255411255, 0.253776435045317,
+                        0.252900232018561, 0.252354048964218, 0.251980982567353, 0.259469696969697,
+                        0.255387931034483, 0.253765060240964, 0.252893518518519, 0.25234962406015,
+                        0.251977848101266, 0.259398496240602, 0.255364806866953, 0.253753753753754,
+                        0.252886836027714, 0.25234521575985, 0.251974723538705, 0.259328358208955,
+                        0.25534188034188, 0.25374251497006, 0.252880184331797, 0.252340823970037,
+                        0.251971608832808)),
+    .Names = c("Node", "Time", "Prevalence"),
+    row.names = c(NA, -60L),
+    class = "data.frame")
+p_observed <- prevalence(result, "I", c("S", "E", "I", "R"), type = "wnp")
+stopifnot(identical(p_observed$Node, p_expected$Node))
+stopifnot(identical(p_observed$Time, p_expected$Time))
+stopifnot(all(abs(p_observed$Prevalence - p_expected$Prevalence) < tol))
+
+p_expected <- structure(
+    list(Node = c(2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L,
+                  2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L),
+         Time = c(0, 0, 1, 1,
+                  2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9),
+         Prevalence = c(0.255555555555556,
+                        0.253846153846154, 0.255530973451327, 0.253834355828221, 0.255506607929515,
+                        0.253822629969419, 0.255482456140351, 0.253810975609756, 0.255458515283843,
+                        0.253799392097264, 0.255434782608696, 0.253787878787879, 0.255411255411255,
+                        0.253776435045317, 0.255387931034483, 0.253765060240964, 0.255364806866953,
+                        0.253753753753754, 0.25534188034188, 0.25374251497006)),
+    .Names = c("Node", "Time", "Prevalence"),
+    row.names = c(NA, -20L),
+    class = "data.frame")
+p_observed <- prevalence(result, "I", c("S", "E", "I", "R"), type = "wnp", i = 2:3)
+stopifnot(identical(p_observed$Node, p_expected$Node))
+stopifnot(identical(p_observed$Time, p_expected$Time))
+stopifnot(all(abs(p_observed$Prevalence - p_expected$Prevalence) < tol))
+
 ## Check 'V'
 res <- tools::assertError(V(result))
 stopifnot(length(grep("No continuous variables defined in 'model'",

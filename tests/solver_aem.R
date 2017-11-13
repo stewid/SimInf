@@ -153,11 +153,11 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 20L))
     stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 20L))
 
-    p <- prevalence(result, numerator = "I", denominator = c("S", "I"))
+    p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
     stopifnot(identical(length(p), 10L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, numerator = "I", denominator = c("S", "I"), type = "wnp")
+    p <- prevalence(result, cases = "I", pop = c("S", "I"), type = "wnp", as.is = TRUE)
     stopifnot(identical(dim(p), c(2L, 10L)))
 }
 

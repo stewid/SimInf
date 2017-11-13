@@ -591,3 +591,40 @@ stopifnot(length(grep("'i' must be integer > 0",
 res <- tools::assertError(U(result, i = 10))
 stopifnot(length(grep("'i' must be integer <= number of nodes",
                       res[[1]]$message)) > 0)
+
+## Check arguments to 'prevalence' method
+u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
+model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+result <- run(model, threads = 1, seed = 22)
+res <- tools::assertError(prevalence(result, cases = c("A", "S"),
+                                     pop = "S"))
+stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(prevalence(result, cases = c("S"),
+                                     pop = c("A", "S")))
+stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(prevalence(result,
+                                     cases = c("I"),
+                                     pop = c("S", "I", "R"),
+                                     i = c("A", "S")))
+stopifnot(length(grep("'i' must be integer",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(prevalence(result,
+                                     cases = c("I"),
+                                     pop = c("S", "I", "R"),
+                                     i = 3.4))
+stopifnot(length(grep("'i' must be integer",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(prevalence(result,
+                                     cases = c("I"),
+                                     pop = c("S", "I", "R"),
+                                     i = 0))
+stopifnot(length(grep("'i' must be integer > 0",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(prevalence(result,
+                                     cases = c("I"),
+                                     pop = c("S", "I", "R"),
+                                     i = 10))
+stopifnot(length(grep("'i' must be integer <= number of nodes",
+                      res[[1]]$message)) > 0)
