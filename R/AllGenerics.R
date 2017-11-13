@@ -50,34 +50,3 @@ setGeneric("run",
                     seed    = NULL,
                     solver  = NULL)
                standardGeneric("run"))
-
-##' Describe your model in a logical way in R. \code{mparse} creates a
-##' \code{\linkS4class{SimInf_mparse}} object with your model
-##' definition that is ready to be initialised with data and then
-##' \code{\link{run}}.
-
-##' Create a package skeleton for a model depending on SimInf
-##'
-##' @rdname package_skeleton-methods
-##' @param model The \code{model} \code{\linkS4class{SimInf_mparse}}
-##'     object with your model to create the package skeleton from.
-##' @param name Character string: the package name and directory name
-##'     for your package.
-##' @param path Path to put the package directory in. Default is '.'
-##'     i.e. the current directory.
-##' @param author Author of the package.
-##' @param email Email of the package maintainer.
-##' @param maintainer Maintainer of the package.
-##' @param license License of the package. Default is 'GPL-3'.
-##' @return invisible \code{NULL}.
-##' @export
-##' @references Read the \emph{Writing R Extensions} manual for more
-##'     details.
-##'
-##' Once you have created a \emph{source} package you need to install
-##' it: see the \emph{R Installation and Administration} manual,
-##' \code{\link{INSTALL}} and \code{\link{install.packages}}.
-setGeneric("package_skeleton",
-           function(model, name = NULL, path = ".", author = NULL,
-                    email = NULL, maintainer = NULL,
-                    license = "GPL-3") standardGeneric("package_skeleton"))

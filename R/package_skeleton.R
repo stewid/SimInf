@@ -252,13 +252,39 @@ create_model_run_man_file <- function(path, name)
     invisible(NULL)
 }
 
-##' @rdname package_skeleton-methods
+##' Create a package skeleton for a \code{SimInf_model}
+##'
+##' Describe your model in a logical way in R, then \code{mparse}
+##' creates a \code{\linkS4class{SimInf_mparse}} object with your
+##' model definition that can be installed as an add-on R package.
+##' @param model The \code{model} \code{\linkS4class{SimInf_mparse}}
+##'     object with your model to create the package skeleton from.
+##' @param name Character string: the package name and directory name
+##'     for your package.
+##' @param path Path to put the package directory in. Default is '.'
+##'     i.e. the current directory.
+##' @param author Author of the package.
+##' @param email Email of the package maintainer.
+##' @param maintainer Maintainer of the package.
+##' @param license License of the package. Default is 'GPL-3'.
+##' @return invisible \code{NULL}.
 ##' @export
-setMethod("package_skeleton",
-          signature(model = "SimInf_mparse"),
-          function(model, name = NULL, path = ".", author = NULL,
-                   email = NULL, maintainer = NULL, license = "GPL-3")
+##' @references Read the \emph{Writing R Extensions} manual for more
+##'     details.
+##'
+##' Once you have created a \emph{source} package you need to install
+##' it: see the \emph{R Installation and Administration} manual,
+##' \code{\link{INSTALL}} and \code{\link{install.packages}}.
+package_skeleton <- function(model, name = NULL, path = ".",
+                             author = NULL, email = NULL,
+                             maintainer = NULL, license = "GPL-3")
 {
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_mparse"))
+        stop("'model' argument is not a 'SimInf_mparse' object")
+
     stopifnot(!is.null(name), is.character(name), length(name) == 1,
               nchar(name) > 0)
     stopifnot(!is.null(path), is.character(path), length(path) == 1,
@@ -309,4 +335,4 @@ setMethod("package_skeleton",
     create_model_run_man_file(path, name)
 
     invisible(NULL)
-})
+}
