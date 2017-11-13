@@ -454,44 +454,60 @@ setMethod("init",
           }
 )
 
-##' @rdname C_code-methods
+##' Extract the C code from an \code{mparse} object
+##'
+##' @param model The \code{mparse} object to extract the C code from.
+##' @param pkg Character vector. If the C could should be used in a
+##'     package named \code{pkg}, the function modifies the C code to
+##'     facilitate adding the code to the package. Default is to not
+##'     use this argument and return the C code unmodified.
+##' @return Character vector with C code for the model.
 ##' @export
-setMethod("C_code",
-          signature(model = "SimInf_mparse", pkg = "missing"),
-          function(model)
-          {
-              model@C_code
-          }
-)
+##' @examples
+##' ## Use the model parser to create a 'SimInf_mparse' object that
+##' ## expresses an SIR model, where 'b' is the transmission rate and
+##' ## 'g' is the recovery rate.
+##' m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+##'             c("S", "I", "R"), b = 0.16, g = 0.077)
+##'
+##' ## View the C code.
+##' C_code(m)
+##'
+##' ## Modify the C code for a package named "XYZ"
+##' C_code(m, "XYZ")
+C_code <- function(model, pkg = NULL)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_mparse"))
+        stop("'model' argument is not a 'SimInf_mparse' object")
 
-##' @rdname C_code-methods
-##' @export
-setMethod("C_code",
-          signature(model = "SimInf_mparse", pkg = "character"),
-          function(model, pkg)
-          {
-              stopifnot(identical(length(pkg), 1L), nchar(pkg[1]) > 0)
+    if (is.null(pkg))
+        return(model@C_code)
 
-              lines <- model@C_code
+    pkg <- as.character(pkg)
+    stopifnot(identical(length(pkg), 1L), nchar(pkg[1]) > 0)
 
-              lines <- c(
-                  lines[1:2],
-                  "#include <R_ext/Visibility.h>",
-                  lines[-(1:2)],
-                  "static const R_CallMethodDef callMethods[] =",
-                  "{",
-                  "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 4},",
-                  "    {NULL, NULL, 0}",
-                  "};",
-                  "",
-                  paste0("void attribute_visible R_init_", pkg, "(DllInfo *info)"),
-                  "{",
-                  "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
-                  "    R_useDynamicSymbols(info, FALSE);",
-                  "    R_forceSymbols(info, TRUE);",
-                  "}",
-                  "")
+    lines <- model@C_code
 
-              lines
-          }
-)
+    lines <- c(
+        lines[1:2],
+        "#include <R_ext/Visibility.h>",
+        lines[-(1:2)],
+        "static const R_CallMethodDef callMethods[] =",
+        "{",
+        "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 4},",
+        "    {NULL, NULL, 0}",
+        "};",
+        "",
+        paste0("void attribute_visible R_init_", pkg, "(DllInfo *info)"),
+        "{",
+        "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
+        "    R_useDynamicSymbols(info, FALSE);",
+        "    R_forceSymbols(info, TRUE);",
+        "}",
+        "")
+
+    lines
+}

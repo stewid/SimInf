@@ -49,30 +49,6 @@ setGeneric("init",
                     N      = NULL)
                standardGeneric("init"))
 
-##' Extract the C code from an \code{mparse} object
-##'
-##' @rdname C_code-methods
-##' @param model The \code{mparse} object to extract the C code from.
-##' @param pkg Character vector. If the C could should be used in a
-##'     package named \code{pkg}, the function modifies the C code to
-##'     facilitate adding the code to the package. Default is to not
-##'     use this argument and return the C code unmodified.
-##' @return Character vector with C code for the model.
-##' @export
-##' @examples
-##' ## Use the model parser to create a 'SimInf_mparse' object that
-##' ## expresses an SIR model, where 'b' is the transmission rate and
-##' ## 'g' is the recovery rate.
-##' m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-##'             c("S", "I", "R"), b = 0.16, g = 0.077)
-##'
-##' ## View the C code.
-##' C_code(m)
-##'
-##' ## Modify the C code for a package named "XYZ"
-##' C_code(m, "XYZ")
-setGeneric("C_code", function(model, pkg) standardGeneric("C_code"))
-
 ##' Run the SimInf stochastic simulation algorithm
 ##'
 ##' @rdname run-methods
