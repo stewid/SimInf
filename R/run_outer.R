@@ -17,7 +17,6 @@
 
 ##' Run \code{SimInf_model} on scaled parameters
 ##'
-##' @rdname run_outer-methods
 ##' @param x Scale the model \code{gdata} parameter values on the
 ##'     right hand side of the formula with \code{x} before calling
 ##'     \code{FUN} with the scaled model as argument.
@@ -34,6 +33,7 @@
 ##' @param ... Optional arguments to be passed to \code{FUN}.
 ##' @return Array with dimension \code{c(dim(x), dim(y))}.
 ##' @include SimInf_model.R
+##' @export
 ##' @examples
 ##' \dontrun{
 ##' ## Create an SIR-model with 500 nodes of 99 susceptible individuals
@@ -61,62 +61,64 @@
 ##' contour(x * model@gdata["beta"], y * model@gdata["gamma"],
 ##'         nop, method = "edge", bty = "l")
 ##' }
-setGeneric("run_outer",
-           signature = c("x", "y", "model"),
-           function(x,
-                    y,
-                    model,
-                    formula = NULL,
-                    FUN     = NULL,
-                    ...) standardGeneric("run_outer"))
+run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...)
+{
+    ## Check 'x'
+    if (missing(x))
+        stop("Missing 'x' argument")
+    if (!is.numeric(x))
+        stop("'x' argument is not numeric")
 
-##' @rdname run_outer-methods
-##' @export
-setMethod("run_outer",
-          signature(x = "numeric", y = "numeric", model = "SimInf_model"),
-          function(x, y, model, formula, FUN, ...)
-          {
-              if (is.null(names(model@gdata)))
-                  stop("'names(model@gdata)' is NULL")
-              if (is.null(formula))
-                  stop("'formula' argument is NULL")
-              if (is.null(FUN))
-                  stop("'FUN' argument is NULL")
-              FUN <- match.fun(FUN)
+    ## Check 'y'
+    if (missing(y))
+        stop("Missing 'y' argument")
+    if (!is.numeric(y))
+        stop("'y' argument is not numeric")
 
-              ## Determine indices to the 'gdata' parameters to scale
-              ## by 'x'
-              xx <- attr(stats::terms(formula, allowDotAsName = TRUE), "term.labels")
-              xx <- xx[attr(stats::terms(formula, allowDotAsName = TRUE), "order") == 1]
-              if (length(xx) < 1)
-                  stop("Invalid parameters on the right side of the formula")
-              x_i <- match(xx, names(model@gdata))
-              if (any(is.na(x_i)))
-                  stop("Unmatched parameters on the right side of the formula")
+    ## Check 'model' argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
 
-              ## Determine indices to the 'gdata' parameters to scale
-              ## by 'y'
-              yy <- attr(stats::terms(formula, allowDotAsName = TRUE), "response")
-              if (yy < 1)
-                  stop("Invalid parameters on the left side of the formula")
-              vars <- attr(stats::terms(formula, allowDotAsName = TRUE), "variables")[-1]
-              yy <- as.character(vars[yy])
-              yy <- unlist(strsplit(yy, "+", fixed = TRUE))
-              yy <- sub("^\\s", "", sub("\\s$", "", yy))
-              y_i <- match(yy, names(model@gdata))
-              if (any(is.na(y_i)))
-                  stop("Unmatched parameters on the left hand side of the formula")
+    if (is.null(names(model@gdata)))
+        stop("'names(model@gdata)' is NULL")
+    if (is.null(formula))
+        stop("'formula' argument is NULL")
+    if (is.null(FUN))
+        stop("'FUN' argument is NULL")
+    FUN <- match.fun(FUN)
 
-              outer(x, y, function(x, y, ...) {
-                  run_internal <- function(x, y, x_i, y_i, model, ...) {
-                      model@gdata[x_i] <- model@gdata[x_i] * x
-                      model@gdata[y_i] <- model@gdata[y_i] * y
-                      FUN(model, ...)
-                  }
+    ## Determine indices to the 'gdata' parameters to scale by 'x'
+    xx <- attr(stats::terms(formula, allowDotAsName = TRUE), "term.labels")
+    xx <- xx[attr(stats::terms(formula, allowDotAsName = TRUE), "order") == 1]
+    if (length(xx) < 1)
+        stop("Invalid parameters on the right side of the formula")
+    x_i <- match(xx, names(model@gdata))
+    if (any(is.na(x_i)))
+        stop("Unmatched parameters on the right side of the formula")
 
-                  sapply(seq_len(length(x)), function(i, ...) {
-                      run_internal(x[i], y[i], x_i, y_i, model, ...)
-                  }, ...)
-              }, ...)
-          }
-)
+    ## Determine indices to the 'gdata' parameters to scale by 'y'
+    yy <- attr(stats::terms(formula, allowDotAsName = TRUE), "response")
+    if (yy < 1)
+        stop("Invalid parameters on the left side of the formula")
+    vars <- attr(stats::terms(formula, allowDotAsName = TRUE), "variables")[-1]
+    yy <- as.character(vars[yy])
+    yy <- unlist(strsplit(yy, "+", fixed = TRUE))
+    yy <- sub("^\\s", "", sub("\\s$", "", yy))
+    y_i <- match(yy, names(model@gdata))
+    if (any(is.na(y_i)))
+        stop("Unmatched parameters on the left hand side of the formula")
+
+    outer(x, y, function(x, y, ...) {
+        run_internal <- function(x, y, x_i, y_i, model, ...) {
+            model@gdata[x_i] <- model@gdata[x_i] * x
+            model@gdata[y_i] <- model@gdata[y_i] * y
+            FUN(model, ...)
+        }
+
+        sapply(seq_len(length(x)), function(i, ...) {
+            run_internal(x[i], y[i], x_i, y_i, model, ...)
+        }, ...)
+    }, ...)
+}
