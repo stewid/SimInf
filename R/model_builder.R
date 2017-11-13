@@ -410,49 +410,78 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
                  G = G, S = S)
 }
 
-##' @rdname init-methods
+##' Init a \code{SimInf_mparse} object with data
+##'
+##' A \code{SimInf_mparse} object must be initialised with data to
+##' create a \code{SimInf_model} that can be used to simulate from the
+##' model.
+##' @param model The \code{\linkS4class{SimInf_mparse}} object to
+##'     initialize.
+##' @param u0 A \code{data.frame} (or an object that can be coerced to
+##'     a \code{data.frame} with \code{as.data.frame}) with the
+##'     initial state in each node.
+##' @template tspan-param
+##' @param events A \code{data.frame} with the scheduled
+##'     events. Default is \code{NULL} i.e. no scheduled events in the
+##'     model.
+##' @param E Sparse matrix to handle scheduled events, see
+##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+##'     i.e. no scheduled events in the model.
+##' @param N Sparse matrix to handle scheduled events, see
+##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+##'     i.e. no scheduled events in the model.
+##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
-setMethod("init",
-          signature(model = "SimInf_mparse"),
-          function(model, u0, tspan, events, E, N)
-          {
-              compartments <- rownames(model@S)
+##' @template mparse-example
+init <- function(model,
+                 u0     = NULL,
+                 tspan  = NULL,
+                 events = NULL,
+                 E      = NULL,
+                 N      = NULL)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_mparse"))
+        stop("'model' argument is not a 'SimInf_mparse' object")
 
-              ## Check u0
-              if (!is.data.frame(u0))
-                  u0 <- as.data.frame(u0)
-              if (!all(compartments %in% names(u0)))
-                  stop("Missing columns in u0")
-              u0 <- u0[, compartments, drop = FALSE]
+    compartments <- rownames(model@S)
 
-              if (is.null(E))
-                  E <- methods::as(matrix(integer(0),
-                                          nrow = 0,
-                                          ncol = 0),
-                                   "dgCMatrix")
+    ## Check u0
+    if (!is.data.frame(u0))
+        u0 <- as.data.frame(u0)
+    if (!all(compartments %in% names(u0)))
+        stop("Missing columns in u0")
+    u0 <- u0[, compartments, drop = FALSE]
 
-              if (is.null(N))
-                  N <- matrix(integer(0), nrow = 0, ncol = 0)
+    if (is.null(E))
+        E <- methods::as(matrix(integer(0),
+                                nrow = 0,
+                                ncol = 0),
+                         "dgCMatrix")
 
-              v0 <- matrix(numeric(0), nrow  = 0, ncol = nrow(u0))
-              storage.mode(v0) <- "double"
+    if (is.null(N))
+        N <- matrix(integer(0), nrow = 0, ncol = 0)
 
-              ldata <- matrix(numeric(0), nrow = 0, ncol = nrow(u0))
-              storage.mode(ldata) <- "double"
+    v0 <- matrix(numeric(0), nrow  = 0, ncol = nrow(u0))
+    storage.mode(v0) <- "double"
 
-              SimInf_model(G      = model@G,
-                           S      = model@S,
-                           E      = E,
-                           N      = N,
-                           tspan  = tspan,
-                           events = events,
-                           ldata  = ldata,
-                           gdata  = numeric(),
-                           u0     = u0,
-                           v0     = v0,
-                           C_code = model@C_code)
-          }
-)
+    ldata <- matrix(numeric(0), nrow = 0, ncol = nrow(u0))
+    storage.mode(ldata) <- "double"
+
+    SimInf_model(G      = model@G,
+                 S      = model@S,
+                 E      = E,
+                 N      = N,
+                 tspan  = tspan,
+                 events = events,
+                 ldata  = ldata,
+                 gdata  = numeric(),
+                 u0     = u0,
+                 v0     = v0,
+                 C_code = model@C_code)
+}
 
 ##' Extract the C code from an \code{mparse} object
 ##'
