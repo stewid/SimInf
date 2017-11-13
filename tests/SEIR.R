@@ -148,7 +148,10 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L,
                           3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-                        .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
+                        .Dim = c(6L, 10L),
+                        .Dimnames = list(c("S", "S", "S", "S", "S", "S"),
+                                         c("0", "1", "2", "3", "4", "5",
+                                           "6", "7", "8", "9")))
 
 S_observed <- U(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
@@ -158,7 +161,10 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
+                        .Dim = c(6L, 10L),
+                        .Dimnames = list(c("I", "I", "I", "I", "I", "I"),
+                                         c("0", "1", "2", "3", "4", "5",
+                                           "6", "7", "8", "9")))
 
 I_observed <- U(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
@@ -168,7 +174,11 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L), .Dimnames = list(NULL, NULL))
+                        .Dim = c(6L, 10L),
+                        .Dimnames = list(c("R", "R", "R", "R", "R", "R"),
+                                         c("0", "1", "2", "3", "4", "5",
+                                           "6", "7", "8", "9")))
+
 R_observed <- U(result, compartments = "R", as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
@@ -205,7 +215,10 @@ R_observed <- U(result, compartments = "R", i = 1)
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <-structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                       .Dim = c(1L, 10L), .Dimnames = list(NULL, NULL))
+                       .Dim = c(1L, 10L),
+                       .Dimnames = list(c("R"),
+                                        c("0", "1", "2", "3", "4", "5",
+                                          "6", "7", "8", "9")))
 R_observed <- U(result, compartments = "R", i = 1, as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
@@ -227,7 +240,9 @@ stopifnot(identical(R_observed, R_expected))
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(2L, 10L),
-                        .Dimnames = list(NULL, NULL))
+                        .Dimnames = list(c("R", "R"),
+                                         c("0", "1", "2", "3", "4", "5",
+                                           "6", "7", "8", "9")))
 R_observed <- U(result, compartments = "R", i = c(1, 3), as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
@@ -319,6 +334,17 @@ U_expected <-structure(list(
     .Names = c("Node", "Time", "E", "R"), row.names = c(NA, -20L),
     class = "data.frame")
 U_observed <- U(result, compartments = c("E", "R"), i = c(2, 4))
+stopifnot(identical(U_observed, U_expected))
+
+U_expected <- structure(
+    c(220L, 240L, 420L, 440L, 221L, 241L, 421L, 441L, 222L,
+      242L, 422L, 442L, 223L, 243L, 423L, 443L, 224L, 244L, 424L, 444L,
+      225L, 245L, 425L, 445L, 226L, 246L, 426L, 446L, 227L, 247L, 427L,
+      447L, 228L, 248L, 428L, 448L, 229L, 249L, 429L, 449L),
+    .Dim = c(4L, 10L),
+    .Dimnames = list(c("E", "R", "E", "R"),
+                     c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
+U_observed <- U(result, compartments = c("E", "R"), i = c(2, 4), as.is = TRUE)
 stopifnot(identical(U_observed, U_expected))
 
 ## Check 'V'

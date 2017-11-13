@@ -589,16 +589,23 @@ U <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         ## Coerce the sparse 'U_sparse' matrix to a data.frame with
         ## one row per node and time-point with the number of
         ## individuals in each compartment.
-        return(sparse2df(model@U_sparse,
-                         Nc(model),
-                                   model@tspan,
-                                   rownames(model@S)))
+        return(sparse2df(model@U_sparse, Nc(model),
+                         model@tspan, rownames(model@S)))
     }
 
     if (isTRUE(as.is)) {
         if (all(is.null(compartments), is.null(i)))
             return(model@U)
-        return(extract_U(model, compartments, i))
+
+        ## Extract subset of data
+        if (is.null(compartments))
+            compartments <- rownames(model@S)
+        compartments <- sort(match(compartments, rownames(model@S)))
+        if (is.null(i))
+            i <- seq_len(Nn(model))
+        j <- rep(compartments, length(i))
+        j <- j + rep((i - 1) * Nc(model), each = length(compartments))
+        return(model@U[j, , drop = FALSE])
     }
 
     ## Coerce the dense 'U' matrix to a data.frame with one row per

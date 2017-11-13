@@ -205,16 +205,21 @@ model <- SISe3(u0        = u0,
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(
-    U(result, compartments = "S_2", i = 1, as.is = TRUE) +
-    U(result, compartments = "I_2", i = 1, as.is = TRUE),
-    structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
-              .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
-stopifnot(identical(
-    U(result, compartments = "S_3", i = 1, as.is = TRUE) +
-    U(result, compartments = "I_3", i = 1, as.is = TRUE),
-    structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
-              .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
+
+m <- U(result, compartments = "S_2", i = 1, as.is = TRUE) +
+    U(result, compartments = "I_2", i = 1, as.is = TRUE)
+dimnames(m) <- NULL
+stopifnot(identical(m,
+                    structure(c(0L, 15L, 15L, 15L, 15L,
+                                15L, 15L, 15L, 15L, 15L, 15L),
+                              .Dim = c(1L, 11L))))
+m <- U(result, compartments = "S_3", i = 1, as.is = TRUE) +
+    U(result, compartments = "I_3", i = 1, as.is = TRUE)
+dimnames(m) <- NULL
+stopifnot(identical(m,
+                    structure(c(0L, 15L, 15L, 15L, 15L,
+                                15L, 15L, 15L, 15L, 15L, 15L),
+                              .Dim = c(1L, 11L))))
 stopifnot(identical(sum(U(result, as.is = TRUE)[,1]), 45L))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
@@ -225,16 +230,20 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
-    stopifnot(identical(
-        U(result, compartments = "S_2", i = 1, as.is = TRUE) +
-        U(result, compartments = "I_2", i = 1, as.is = TRUE),
-        structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
-                  .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
-    stopifnot(identical(
-        U(result, compartments = "S_3", i = 1, as.is = TRUE) +
-        U(result, compartments = "I_3", i = 1, as.is = TRUE),
-        structure(c(0L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L, 15L),
-                  .Dim = c(1L, 11L), .Dimnames = list(NULL, NULL))))
+    m <- U(result, compartments = "S_2", i = 1, as.is = TRUE) +
+        U(result, compartments = "I_2", i = 1, as.is = TRUE)
+    dimnames(m) <- NULL
+    stopifnot(identical(m,
+                        structure(c(0L, 15L, 15L, 15L, 15L,
+                                    15L, 15L, 15L, 15L, 15L, 15L),
+                                  .Dim = c(1L, 11L))))
+    m <- U(result, compartments = "S_3", i = 1, as.is = TRUE) +
+        U(result, compartments = "I_3", i = 1, as.is = TRUE)
+    dimnames(m) <- NULL
+    stopifnot(identical(m,
+                        structure(c(0L, 15L, 15L, 15L, 15L,
+                                    15L, 15L, 15L, 15L, 15L, 15L),
+                                  .Dim = c(1L, 11L))))
     stopifnot(identical(sum(result_omp@U[,1]), 45L))
     stopifnot(identical(model@ldata, result_omp@ldata))
     stopifnot(identical(model@tspan, result_omp@tspan))

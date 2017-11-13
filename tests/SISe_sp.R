@@ -1045,7 +1045,8 @@ res <- tools::assertError(SISe_sp(u0       = u0,
 stopifnot(length(grep("The 'distance' argument must be of type 'dgCMatrix'",
                       res[[1]]$message)) > 0)
 
-## Check 'suscpetible' and 'infected' methods
+## Check extraction of data from 'suscpetible', and 'infected'
+## compartments
 model <- SISe_sp(u0       = u0,
                  tspan    = seq_len(10) - 1,
                  events   = NULL,
@@ -1076,8 +1077,10 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L),
-                        .Dim = 9:10, .Dimnames = list(NULL, NULL))
-
+                        .Dim = 9:10,
+                        .Dimnames = list(
+                            c("S", "S", "S", "S", "S", "S", "S", "S", "S"),
+                            c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
 S_observed <- U(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
@@ -1091,8 +1094,10 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = 9:10, .Dimnames = list(NULL, NULL))
-
+                        .Dim = 9:10,
+                        .Dimnames = list(
+                            c("I", "I", "I", "I", "I", "I", "I", "I", "I"),
+                            c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
 I_observed <- U(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
