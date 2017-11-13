@@ -1090,9 +1090,9 @@ model <- SIR(u0, 1:75, beta = 0.16, gamma = 0.077)
 x <- seq(from = 0.2, to = 1.8, by = 0.05)
 y <- seq(from = 0.2, to = 1.1, by = 0.05)
 pop <- run_outer(x, y, model, gamma ~ beta,
-function(model) {prevalence(run(model), numerator = "I", denominator = c("S", "I", "R"), type = "pop")[75]})
-bnp <- run_outer(x, y, model, gamma ~ beta,
-function(model) {prevalence(run(model), numerator = "I", denominator = c("S", "I", "R"), type = "bnp")[75]})
+function(model) {prevalence(run(model), cases = "I", pop = c("S", "I", "R"), type = "pop", as.is = TRUE)[75]})
+nop <- run_outer(x, y, model, gamma ~ beta,
+function(model) {prevalence(run(model), cases = "I", pop = c("S", "I", "R"), type = "nop", as.is = TRUE)[75]})
 @
 
 This illustrates that the between-node prevalence increases for
@@ -1111,18 +1111,17 @@ title("Population prevalence")
 mtext(expression(beta), side = 1, line = 3)
 mtext(expression(gamma), side = 2, line = 2)
 contour(x * model@gdata["beta"], y * model@gdata["gamma"],
-bnp, method = "edge", bty = "l")
-title("Between-node prevalence")
+nop, method = "edge", bty = "l")
+title("Node prevalence")
 mtext(expression(beta), side = 1, line = 3)
 mtext(expression(gamma), side = 2, line = 2)
 par(opar)
 @
   \end{center}
-  \caption{Contour plot of the population- and between-node prevalence
-    after simulating 75 days of an \code{SIR} model in 500 nodes,
-    starting with 99 susceptible, 1 infected, and 0 recovered
-    individuals in each node at the first
-    day. \label{fig:SIR-run-outer}}
+  \caption{Contour plot of the population- and node prevalence after
+    simulating 75 days of an \code{SIR} model in 500 nodes, starting
+    with 99 susceptible, 1 infected, and 0 recovered individuals in
+    each node at the first day. \label{fig:SIR-run-outer}}
 \end{figure}
 
 \subsubsection[Specification of scheduled events in the SIR model]{Specification of scheduled events in the \code{SIR} model}
@@ -1595,9 +1594,9 @@ options(continue = "+  ")
 
 <<plot-infected-nodes>>=
 plot_nodes <- function(x) {
-  numerator = c("I_1", "I_2", "I_3")
-  denominator = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3")
-  wnp <- prevalence(x, numerator, denominator, type = "wnp") > 0
+  cases = c("I_1", "I_2", "I_3")
+  pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3")
+  wnp <- prevalence(x, cases, pop, type = "wnp", as.is = TRUE) > 0
   opar <- par(mfrow = c(3, 6), mar = c(2, 0.3, 0.3, 0.3))
   on.exit(par(opar))
   for(i in seq(1, dim(wnp)[2], length.out = 18)) {
