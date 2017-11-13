@@ -4,31 +4,36 @@
 \alias{prevalence}
 \title{Prevalence}
 \usage{
-prevalence(model, numerator, denominator, type = c("pop", "bnp", "wnp"),
-  i = NULL)
+prevalence(model = NULL, cases = NULL, pop = NULL, type = c("pop",
+  "nop", "wnp"), i = NULL, as.is = FALSE)
 }
 \arguments{
 \item{model}{The \code{model} to calculate the prevalence from.}
 
-\item{numerator}{The compartments in the population with a disease
-or a condition.}
+\item{cases}{The compartments in the population with a disease or
+a condition.}
 
-\item{denominator}{The compartments that define the entire
-population of interest.}
+\item{pop}{The compartments that define the entire population of
+interest.}
 
 \item{type}{The type of prevalence measure to calculate:
 \code{'pop'} (default) calcalates the proportion of the
 individuals in the population that have disease (model
-specific) at each time point in \code{tspan}, \code{'bnp'}
-calculates the between-node prevalence, and \code{'wnp'}
-calculates the within-node prevalence.}
+specific) at each time point in \code{tspan}, \code{'nop'}
+calculates the node prevalence, and \code{'wnp'} calculates
+the within-node prevalence.}
 
 \item{i}{Indices specifying the nodes to include in the
 calculation of the prevalence. Default is \code{NULL}, which
 includes all nodes.}
+
+\item{as.is}{The default (\code{as.is = FALSE}) is to generate a
+\code{data.frame} with one row per time-step with the
+prevalence. Using \code{as.is = TRUE} returns the result as a
+matrix, which is the internal format.}
 }
 \value{
-Vector when type equals \code{'pop'} or \code{'bnp'} but
+Vector when type equals \code{'pop'} or \code{'nop'} but
     matrix when type equals \code{'wnp'}.
 }
 \description{
