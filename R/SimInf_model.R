@@ -1332,11 +1332,32 @@ setMethod("summary",
           }
 )
 
-##' @rdname events-methods
+##' Extract the events from a \code{SimInf_model} object
+##'
+##' @param model The \code{model} to extract the events from.
+##' @return \code{SimInf_events} object.
 ##' @export
-setMethod("events",
-          signature("SimInf_model"),
-          function(model) {
-              model@events
-          }
-)
+##' @examples
+##' ## Create an SIR model that includes scheduled events.
+##' model <- SIR(u0     = u0_SIR(),
+##'              tspan  = 1:(4 * 365),
+##'              events = events_SIR(),
+##'              beta   = 0.16,
+##'              gamma  = 0.077)
+##'
+##' ## Extract the scheduled events from the model and
+##' ## display summary
+##' summary(events(model))
+##'
+##' ## Extract the scheduled events from the model and
+##' ## plot them
+##' plot(events(model))
+events <- function(model)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+    model@events
+}

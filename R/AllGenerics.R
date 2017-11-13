@@ -114,26 +114,3 @@ setGeneric("package_skeleton",
            function(model, name = NULL, path = ".", author = NULL,
                     email = NULL, maintainer = NULL,
                     license = "GPL-3") standardGeneric("package_skeleton"))
-
-##' Extract the events from a \code{SimInf_model} object
-##'
-##' @rdname events-methods
-##' @param model The \code{model} to extract the events from.
-##' @return \code{SimInf_events} object.
-##' @export
-##' @examples
-##' ## Create an SIR model that includes scheduled events.
-##' model <- SIR(u0     = u0_SIR(),
-##'              tspan  = 1:(4 * 365),
-##'              events = events_SIR(),
-##'              beta   = 0.16,
-##'              gamma  = 0.077)
-##'
-##' ## Extract the scheduled events from the model and
-##' ## display summary
-##' summary(events(model))
-##'
-##' ## Extract the scheduled events from the model and
-##' ## plot summary
-##' plot(events(model))
-setGeneric("events", function(model) standardGeneric("events"))
