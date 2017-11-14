@@ -182,7 +182,7 @@ setMethod("plot",
           }
 )
 
-##' Scheduled events example data for the \code{SISe} model
+##' Example data with scheduled events for the \code{SISe} model
 ##'
 ##' Synthetic scheduled events data to demonstrate the \code{SISe}
 ##' model. The data contains 466692 events for 1600 nodes over 365 * 4

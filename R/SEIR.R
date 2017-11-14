@@ -156,7 +156,7 @@ setMethod("plot",
           }
 )
 
-##' Scheduled events example data for the \code{SEIR} model
+##' Example data with scheduled events for the \code{SEIR} model
 ##'
 ##' Synthetic scheduled events data to demonstrate the \code{SEIR}
 ##' model. The data contains 466692 events for 1600 nodes over 365 * 4

@@ -151,7 +151,7 @@ setMethod("plot",
           }
 )
 
-##' Scheduled events example data for the \code{SIR} model
+##' Example data with scheduled events for the \code{SIR} model
 ##'
 ##' Synthetic scheduled events data to demonstrate the \code{SIR}
 ##' model. The data contains 466692 events for 1600 nodes over 365 * 4

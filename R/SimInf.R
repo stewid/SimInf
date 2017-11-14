@@ -55,7 +55,7 @@ have_openmp <- function()
 ##' @keywords dataset
 NULL
 
-##' Example data to initialize a model
+##' Example data to initialize the \code{SISe3} model
 ##'
 ##' Synthetic init data for 1600 nodes to demonstrate the \code{SISe3}
 ##' model.

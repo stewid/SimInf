@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEIR.R
 \name{events_SEIR}
 \alias{events_SEIR}
-\title{Scheduled events example data for the \code{SEIR} model}
+\title{Example data with scheduled events for the \code{SEIR} model}
 \usage{
 events_SEIR()
 }

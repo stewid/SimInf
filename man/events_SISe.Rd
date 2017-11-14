@@ -2,7 +2,7 @@
 % Please edit documentation in R/SISe.R
 \name{events_SISe}
 \alias{events_SISe}
-\title{Scheduled events example data for the \code{SISe} model}
+\title{Example data with scheduled events for the \code{SISe} model}
 \usage{
 events_SISe()
 }
