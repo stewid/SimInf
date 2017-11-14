@@ -164,7 +164,7 @@ setMethod("plot",
 ##' @return A \code{data.frame}
 ##' @export
 events_SEIR <- function() {
-    utils::data(events_SISe3, envir = environment())
+    utils::data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == 0] <- 2
     events_SISe3$select[events_SISe3$event == 1] <- 1
     events_SISe3 <- events_SISe3[events_SISe3$event != 2,]
@@ -179,7 +179,7 @@ events_SEIR <- function() {
 ##' @return A \code{data.frame}
 ##' @export
 u0_SEIR <- function() {
-    utils::data(u0_SISe3, envir = environment())
+    utils::data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
     u0_SISe3$E <- 0
     u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
