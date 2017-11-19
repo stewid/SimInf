@@ -1339,12 +1339,55 @@ setMethod("summary",
               }
               cat("\n")
 
-              cat(sprintf("Number of compartments: %i\n", Nc(object)))
               summary(object@events)
-
               cat("\n")
-              show_U(object)
-              show_V(object)
+
+              ## Continuous state variables
+              cat("Continuous state variables:\n")
+              if (Nd(object) > 0) {
+                  d <- dim(object@V)
+                  if (identical(d, c(0L, 0L)))
+                      d <- dim(object@V_sparse)
+                  if (identical(d, c(0L, 0L))) {
+                      cat(" - None, please run the model first\n")
+                  } else {
+                      qq <- lapply(seq_len(Nd(object)), function(i) {
+                          i <- seq(from = i, by = Nd(object),
+                                   length.out = Nn(object))
+                          v <- as.numeric(object@V[i, ])
+                          qq <- stats::quantile(v)
+                          qq <- c(qq[1L:3L], mean(v), qq[4L:5L])
+                      })
+                      qq <- do.call("rbind", qq)
+                      colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                                        "Mean", "3rd Qu.", "Max.")
+                      rownames(qq) <- paste0("V", seq_len(Nd(object)))
+                      print.table(qq, digits = 3)
+                  }
+              } else {
+                  cat(" - None\n")
+              }
+              cat("\n")
+
+              ## Compartments
+              cat("Compartments:\n")
+              d <- dim(object@U)
+              if (identical(d, c(0L, 0L)))
+                  d <- dim(object@U_sparse)
+              if (identical(d, c(0L, 0L))) {
+                  cat(" - None, please run the model first\n")
+              } else {
+                  qq <- lapply(rownames(object@S), function(i) {
+                      x <- as.numeric(U(object, i, as.is = TRUE))
+                      qq <- stats::quantile(x)
+                      qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
+                  })
+                  qq <- do.call("rbind", qq)
+                  colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                                    "Mean", "3rd Qu.", "Max.")
+                  rownames(qq) <- paste0(" ", rownames(object@S))
+                  print.table(qq, digits = 3)
+              }
           }
 )
 
