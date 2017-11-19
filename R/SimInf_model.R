@@ -1321,9 +1321,25 @@ setMethod("summary",
               cat(sprintf("Model: %s\n\n",
                           as.character(class(object))))
 
-              cat(sprintf("Number of nodes: %i\n", Nn(object)))
+              ## Nodes
+              cat(sprintf("Number of nodes: %i\n\n", Nn(object)))
+
+              ## Transitions
+              cat("Transitions:\n")
+              cat(paste0(" ", rownames(object@G), collapse = "\n"), "\n\n")
+
+              ## Global model parameters
+              cat("Global model parameters:\n")
+              gdata <- data.frame(Parameter = names(object@gdata),
+                                  Value = object@gdata)
+              if (nrow(gdata) > 0) {
+                  print.data.frame(gdata, right = FALSE, row.names = FALSE)
+              } else {
+                  cat(" - None\n")
+              }
+              cat("\n")
+
               cat(sprintf("Number of compartments: %i\n", Nc(object)))
-              cat(sprintf("Number of transitions: %i\n", Nt(object)))
               summary(object@events)
 
               cat("\n")

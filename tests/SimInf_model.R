@@ -233,23 +233,7 @@ show_observed <- capture.output(show(model))
 stopifnot(identical(show_observed, show_expected))
 
 ## Check summary method without events
-summary_expected <- c("Model: SISe",
-                      "",
-                      "Number of nodes: 1",
-                      "Number of compartments: 2",
-                      "Number of transitions: 2",
-                      "Number of scheduled events: 0",
-                      " - Exit: 0",
-                      " - Enter: 0",
-                      " - Internal transfer: 0",
-                      " - External transfer: 0",
-                      "",
-                      "U: 2 x 1000",
-                      "V: 1 x 1000")
-
-summary_observed <- capture.output(summary(run(model)))
-
-stopifnot(identical(summary_observed, summary_expected))
+summary(run(model))
 
 ## Check show method with events
 u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
@@ -311,23 +295,7 @@ show_observed <- capture.output(show(model))
 stopifnot(identical(show_observed, show_expected))
 
 ## Check summary method with events
-summary_expected <- c("Model: SISe3",
-                      "",
-                      "Number of nodes: 6",
-                      "Number of compartments: 6",
-                      "Number of transitions: 6",
-                      "Number of scheduled events: 15",
-                      " - Exit: 0",
-                      " - Enter: 0",
-                      " - Internal transfer: 0",
-                      " - External transfer: 15 (n: min = 1 max = 5 avg = 3.0)",
-                      "",
-                      "U: 36 x 11",
-                      "V: 6 x 11")
-
-summary_observed <- capture.output(summary(run(model)))
-
-stopifnot(identical(summary_observed, summary_expected))
+summary(run(model))
 
 ## Check U. Change storage mode of U to double.
 ## Should not raise error
