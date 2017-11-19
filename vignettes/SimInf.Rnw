@@ -448,8 +448,7 @@ necessary data structures for that specific model.  After the model is
 initialized, the simulation is started with a call to the \code{run}
 method.  To facilitate post-processing and visualization of output
 data, the predefined models in \pkg{SimInf} provide several utility
-functions, for example, \code{susceptible}, \code{infected},
-\code{prevalence} and \code{plot}.
+functions, for example, \code{prevalence} and \code{plot}.
 
 \begin{table}
   \small
@@ -1536,9 +1535,9 @@ plot(events(model))
 
 The scheduled events give rise to a seasonal variation of the
 population size in each age category that can be explored using data
-in the \code{U} matrix.  The \code{susceptible} and \code{infected}
-methods take an \code{age} argument that can be used to determine the
-population size by age category. Let us first run a trajectory to
+in the \code{U} matrix.  The \code{U} method take a
+\code{compartments} argument that can be used to determine the
+population size by age category.  Let us first run a trajectory to
 generate data in \code{U}, and then plot the number of individuals in
 each age category (Figure~\ref{fig:population}).
 
