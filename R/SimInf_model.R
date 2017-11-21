@@ -1233,7 +1233,7 @@ setMethod("plot",
           }
 )
 
-##' @keywords internal
+##' @noRd
 show_U <- function(object) {
     d <- dim(object@U)
     if (identical(d, c(0L, 0L))) {
@@ -1248,7 +1248,7 @@ show_U <- function(object) {
     }
 }
 
-##' @keywords internal
+##' @noRd
 show_V <- function(object) {
     d <- dim(object@V)
     if (identical(d, c(0L, 0L))) {

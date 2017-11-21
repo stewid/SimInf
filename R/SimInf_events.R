@@ -22,7 +22,7 @@
 ##' @param x Value to check
 ##' @param tol Tolerance of the check
 ##' @return logical vector
-##' @keywords internal
+##' @noRd
 is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 {
     abs(x - round(x)) < tol
@@ -326,7 +326,7 @@ SimInf_events <- function(E      = NULL,
 ##' @param frame.plot a logical indicating whether a box should be
 ##'     drawn around the plot.
 ##' @param ... additional arguments affecting the plot.
-##' @keywords internal
+##' @noRd
 plot_SimInf_events <- function(x,
                                   y,
                                   events = c("Exit",

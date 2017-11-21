@@ -21,8 +21,8 @@
 ##' Raise an error if any of the arguments are non-integer.
 ##' @param len Expected length of the infectious pressure vector
 ##' @param ... The arguments to check
-##' @keywords internal
 ##' @return invisible(NULL)
+##' @noRd
 check_infectious_pressure_arg <- function(len, ...) {
     arg <- list(...)
     for (i in seq_len(length(arg))) {
@@ -58,8 +58,8 @@ check_infectious_pressure_arg <- function(len, ...) {
 ##'
 ##' Raise an error if any of the arguments are non-integer.
 ##' @param ... The arguments to check
-##' @keywords internal
 ##' @return invisible(NULL)
+##' @noRd
 check_integer_arg <- function(...) {
     arg <- list(...)
     for (i in seq_len(length(arg))) {
@@ -89,8 +89,8 @@ check_integer_arg <- function(...) {
 ##'
 ##' Raise an error if any of the arguments are not ok.
 ##' @param ... The arguments to check
-##' @keywords internal
 ##' @return invisible(NULL)
+##' @noRd
 check_gdata_arg <- function(...) {
     arg <- list(...)
     for (i in seq_len(length(arg))) {
@@ -122,8 +122,8 @@ check_gdata_arg <- function(...) {
 ##' @param len Exprected length of each of the interval endpoint
 ##' vectors
 ##' @param ... The arguments to check
-##' @keywords internal
 ##' @return invisible(NULL)
+##' @noRd
 check_end_t_arg <- function(len, ...) {
     arg <- list(...)
     names(arg) <- match.call(expand.dots = FALSE)$'...'
