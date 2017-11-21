@@ -931,7 +931,40 @@ Nd <- function(model) {
     dim(model@v0)[1]
 }
 
-##' @rdname run-methods
+##' Run the SimInf stochastic simulation algorithm
+##'
+##' @param model The siminf model to run.
+##' @param threads Number of threads. Default is NULL, i.e. to use all
+##'     available processors.
+##' @param seed Random number seed. Default is NULL, i.e. the
+##'     simulator uses time to seed the random number generator.
+##' @param solver Which numerical solver to utilize. Default is Null, i.e.
+##'     SSA is the default solver.
+##' @return \code{SimInf_model} with result from simulation.
+##' @examples
+##' ## Create an 'SIR' model with 10 nodes and initialise
+##' ## it to run over 100 days.
+##' model <- SIR(u0 = data.frame(S = rep(99, 10),
+##'                              I = rep(1, 10),
+##'                              R = rep(0, 10)),
+##'              tspan = 1:100,
+##'              beta = 0.16,
+##'              gamma = 0.077)
+##'
+##' ## Run the model and save the result.
+##' result <- run(model, threads = 1, seed = 1)
+##'
+##' ## Plot the proportion of susceptible, infected and recovered
+##' ## individuals.
+##' plot(result)
+setGeneric("run",
+           signature = "model",
+           function(model,
+                    threads = NULL,
+                    seed    = NULL,
+                    solver  = NULL)
+               standardGeneric("run"))
+
 ##' @export
 setMethod("run",
           signature(model = "SimInf_model"),
