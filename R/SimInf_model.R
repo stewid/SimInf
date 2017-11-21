@@ -1263,6 +1263,55 @@ show_V <- function(object) {
     }
 }
 
+summary_U <- function(object)
+{
+    cat("Discrete state variables (U):\n")
+    d <- dim(object@U)
+    if (identical(d, c(0L, 0L)))
+        d <- dim(object@U_sparse)
+    if (identical(d, c(0L, 0L))) {
+        cat(" - Empty, please run the model first\n")
+    } else {
+        qq <- lapply(rownames(object@S), function(i) {
+            x <- as.numeric(U(object, i, as.is = TRUE))
+            qq <- stats::quantile(x)
+            qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
+        })
+        qq <- do.call("rbind", qq)
+        colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                          "Mean", "3rd Qu.", "Max.")
+        rownames(qq) <- paste0(" ", rownames(object@S))
+        print.table(qq, digits = 3)
+    }
+}
+
+summary_V <- function(object)
+{
+    cat("Continuous state variables (V):\n")
+    if (Nd(object) > 0) {
+        d <- dim(object@V)
+        if (identical(d, c(0L, 0L)))
+            d <- dim(object@V_sparse)
+        if (identical(d, c(0L, 0L))) {
+            cat(" - Empty, please run the model first\n")
+        } else {
+            qq <- lapply(seq_len(Nd(object)), function(i) {
+                i <- seq(from = i, by = Nd(object), length.out = Nn(object))
+                v <- as.numeric(object@V[i, ])
+                qq <- stats::quantile(v)
+                qq <- c(qq[1L:3L], mean(v), qq[4L:5L])
+            })
+            qq <- do.call("rbind", qq)
+            colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                              "Mean", "3rd Qu.", "Max.")
+            rownames(qq) <- paste0(" V", seq_len(Nd(object)))
+            print.table(qq, digits = 3)
+        }
+    } else {
+        cat(" - None\n")
+    }
+}
+
 ##' Brief summary of \code{SimInf_model}
 ##'
 ##' @param object The SimInf_model \code{object}
@@ -1329,7 +1378,7 @@ setMethod("summary",
               cat(paste0(" ", rownames(object@G), collapse = "\n"), "\n\n")
 
               ## Global model parameters
-              cat("Global model parameters:\n")
+              cat("Global model parameters (gdata):\n")
               gdata <- data.frame(Parameter = names(object@gdata),
                                   Value = object@gdata)
               if (nrow(gdata) > 0) {
@@ -1342,52 +1391,9 @@ setMethod("summary",
               summary(object@events)
               cat("\n")
 
-              ## Continuous state variables
-              cat("Continuous state variables:\n")
-              if (Nd(object) > 0) {
-                  d <- dim(object@V)
-                  if (identical(d, c(0L, 0L)))
-                      d <- dim(object@V_sparse)
-                  if (identical(d, c(0L, 0L))) {
-                      cat(" - None, please run the model first\n")
-                  } else {
-                      qq <- lapply(seq_len(Nd(object)), function(i) {
-                          i <- seq(from = i, by = Nd(object),
-                                   length.out = Nn(object))
-                          v <- as.numeric(object@V[i, ])
-                          qq <- stats::quantile(v)
-                          qq <- c(qq[1L:3L], mean(v), qq[4L:5L])
-                      })
-                      qq <- do.call("rbind", qq)
-                      colnames(qq) <- c("Min.", "1st Qu.", "Median",
-                                        "Mean", "3rd Qu.", "Max.")
-                      rownames(qq) <- paste0("V", seq_len(Nd(object)))
-                      print.table(qq, digits = 3)
-                  }
-              } else {
-                  cat(" - None\n")
-              }
+              summary_V(object)
               cat("\n")
-
-              ## Compartments
-              cat("Compartments:\n")
-              d <- dim(object@U)
-              if (identical(d, c(0L, 0L)))
-                  d <- dim(object@U_sparse)
-              if (identical(d, c(0L, 0L))) {
-                  cat(" - None, please run the model first\n")
-              } else {
-                  qq <- lapply(rownames(object@S), function(i) {
-                      x <- as.numeric(U(object, i, as.is = TRUE))
-                      qq <- stats::quantile(x)
-                      qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
-                  })
-                  qq <- do.call("rbind", qq)
-                  colnames(qq) <- c("Min.", "1st Qu.", "Median",
-                                    "Mean", "3rd Qu.", "Max.")
-                  rownames(qq) <- paste0(" ", rownames(object@S))
-                  print.table(qq, digits = 3)
-              }
+              summary_U(object)
           }
 )
 
