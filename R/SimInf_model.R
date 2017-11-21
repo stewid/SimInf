@@ -1312,6 +1312,18 @@ summary_V <- function(object)
     }
 }
 
+summary_gdata <- function(object)
+{
+    ## Global model parameters
+    cat("Global model parameters (gdata):\n")
+    gdata <- data.frame(Parameter = names(object@gdata), Value = object@gdata)
+    if (nrow(gdata) > 0) {
+        print.data.frame(gdata, right = FALSE, row.names = FALSE)
+    } else {
+        cat(" - None\n")
+    }
+}
+
 ##' Brief summary of \code{SimInf_model}
 ##'
 ##' @param object The SimInf_model \code{object}
@@ -1377,20 +1389,10 @@ setMethod("summary",
               cat("Transitions:\n")
               cat(paste0(" ", rownames(object@G), collapse = "\n"), "\n\n")
 
-              ## Global model parameters
-              cat("Global model parameters (gdata):\n")
-              gdata <- data.frame(Parameter = names(object@gdata),
-                                  Value = object@gdata)
-              if (nrow(gdata) > 0) {
-                  print.data.frame(gdata, right = FALSE, row.names = FALSE)
-              } else {
-                  cat(" - None\n")
-              }
+              summary_gdata(object)
               cat("\n")
-
               summary(object@events)
               cat("\n")
-
               summary_V(object)
               cat("\n")
               summary_U(object)
