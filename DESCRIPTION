@@ -39,7 +39,6 @@ Imports:
     utils,
     Matrix
 Collate:
-    'AllGenerics.R'
     'check_arguments.R'
     'SimInf_events.R'
     'SimInf_model.R'
