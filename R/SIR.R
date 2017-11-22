@@ -18,7 +18,6 @@
 ##'
 ##' Class to handle the SIR \code{\link{SimInf_model}}.
 ##' @include SimInf_model.R
-##' @include AllGenerics.R
 ##' @export
 setClass("SIR", contains = c("SimInf_model"))
 

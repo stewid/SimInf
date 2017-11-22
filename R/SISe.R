@@ -20,7 +20,6 @@
 ##'
 ##' Class to handle the SISe \code{\link{SimInf_model}}.
 ##' @include SimInf_model.R
-##' @include AllGenerics.R
 ##' @export
 setClass("SISe", contains = c("SimInf_model"))
 
