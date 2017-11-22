@@ -965,6 +965,7 @@ setGeneric("run",
                     solver  = NULL)
                standardGeneric("run"))
 
+##' @rdname run
 ##' @export
 setMethod("run",
           signature(model = "SimInf_model"),
