@@ -39,19 +39,19 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0)
 
-res <- tools::assertError(U(model, compartments = "S", as.is = TRUE))
-stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+res <- tools::assertError(trajectory(model, compartments = "S", as.is = TRUE))
+stopifnot(length(grep("Please run the model first, the trajectory is empty",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(U(model, compartments = "I", as.is = TRUE))
-stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+res <- tools::assertError(trajectory(model, compartments = "I", as.is = TRUE))
+stopifnot(length(grep("Please run the model first, the trajectory is empty",
                       res[[1]]$message)) > 0)
 
 result <- run(model, threads = 1)
 result
 
-stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
-stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
+stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
+stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 1001L))
 
 p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
 stopifnot(identical(length(p), 1001L))
@@ -64,8 +64,8 @@ if (SimInf:::have_openmp()) {
     result <- run(model, threads = 2)
     result
 
-    stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
+    stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
+    stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 1001L))
 
     p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
     stopifnot(identical(length(p), 1001L))
@@ -94,19 +94,19 @@ model <- SISe_sp(u0       = data.frame(S = 99, I = 1),
                  coupling = 0,
                  distance = distance_matrix(1, 1, 1))
 
-res <- tools::assertError(U(model, compartments = "S", as.is = TRUE))
-stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+res <- tools::assertError(trajectory(model, compartments = "S", as.is = TRUE))
+stopifnot(length(grep("Please run the model first, the trajectory is empty",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(U(model, compartments = "I", as.is = TRUE))
-stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+res <- tools::assertError(trajectory(model, compartments = "I", as.is = TRUE))
+stopifnot(length(grep("Please run the model first, the trajectory is empty",
                       res[[1]]$message)) > 0)
 
 result <- run(model, threads = 1)
 result
 
-stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
-stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
+stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
+stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 1001L))
 
 p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
 stopifnot(identical(length(p), 1001L))
@@ -119,8 +119,8 @@ if (SimInf:::have_openmp()) {
     result <- run(model, threads = 2)
     result
 
-    stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 1001L))
+    stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
+    stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 1001L))
 
     p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
     stopifnot(identical(length(p), 1001L))
@@ -155,19 +155,19 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0.000011)
 
-res <- tools::assertError(U(model, compartments = "S_1", as.is = TRUE))
-stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+res <- tools::assertError(trajectory(model, compartments = "S_1", as.is = TRUE))
+stopifnot(length(grep("Please run the model first, the trajectory is empty",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(U(model, compartments = "I_1", as.is = TRUE))
-stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+res <- tools::assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
+stopifnot(length(grep("Please run the model first, the trajectory is empty",
                       res[[1]]$message)) > 0)
 
 result <- run(model, threads = 1)
 result
 
-stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
-stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
+stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
+stopifnot(identical(length(trajectory(result, compartments = "I_1", as.is = TRUE)), 10000L))
 
 p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
                 pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"), as.is = TRUE)
@@ -183,8 +183,8 @@ if (SimInf:::have_openmp()) {
     result <- run(model, threads = 2)
     result
 
-    stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
+    stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
+    stopifnot(identical(length(trajectory(result, compartments = "I_1", as.is = TRUE)), 10000L))
 
     p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
                     pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"), as.is = TRUE)
@@ -224,19 +224,19 @@ model <- SISe3_sp(u0        = u0,
                   coupling = 0,
                   distance = distance_matrix(1:10, 1:10, 1))
 
-res <- tools::assertError(U(model, compartments = "S_1", as.is = TRUE))
-stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+res <- tools::assertError(trajectory(model, compartments = "S_1", as.is = TRUE))
+stopifnot(length(grep("Please run the model first, the trajectory is empty",
                       res[[1]]$message)) > 0)
 
-res <- tools::assertError(U(model, compartments = "I_1", as.is = TRUE))
-stopifnot(length(grep("Please run the model first, the 'U' matrix is empty",
+res <- tools::assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
+stopifnot(length(grep("Please run the model first, the trajectory is empty",
                       res[[1]]$message)) > 0)
 
 result <- run(model, threads = 1)
 result
 
-stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
-stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
+stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
+stopifnot(identical(length(trajectory(result, compartments = "I_1", as.is = TRUE)), 10000L))
 
 p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
                 pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"), as.is = TRUE)
@@ -252,8 +252,8 @@ if (SimInf:::have_openmp()) {
     result <- run(model, threads = 2)
     result
 
-    stopifnot(identical(length(U(result, compartments = "S_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(U(result, compartments = "I_1", as.is = TRUE)), 10000L))
+    stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
+    stopifnot(identical(length(trajectory(result, compartments = "I_1", as.is = TRUE)), 10000L))
 
     p <- prevalence(result, cases = c("I_1", "I_2", "I_3"),
                     pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3"), as.is = TRUE)

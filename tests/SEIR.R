@@ -153,7 +153,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                                          c("0", "1", "2", "3", "4", "5",
                                            "6", "7", "8", "9")))
 
-S_observed <- U(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -166,7 +166,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                                          c("0", "1", "2", "3", "4", "5",
                                            "6", "7", "8", "9")))
 
-I_observed <- U(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -179,7 +179,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                                          c("0", "1", "2", "3", "4", "5",
                                            "6", "7", "8", "9")))
 
-R_observed <- U(result, compartments = "R", as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(list(
@@ -199,7 +199,7 @@ R_expected <- structure(list(
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
     .Names = c("Node",  "Time", "R"),
     class = "data.frame", row.names = c(NA, -60L))
-R_observed <- U(result, compartments = "R")
+R_observed <- trajectory(result, compartments = "R")
 stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first node after
@@ -211,7 +211,7 @@ R_expected <- structure(list(
     .Names = c("Node", "Time", "R"),
     row.names = c(NA, -10L),
     class = "data.frame")
-R_observed <- U(result, compartments = "R", i = 1)
+R_observed <- trajectory(result, compartments = "R", i = 1)
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <-structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
@@ -219,7 +219,7 @@ R_expected <-structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                        .Dimnames = list(c("R"),
                                         c("0", "1", "2", "3", "4", "5",
                                           "6", "7", "8", "9")))
-R_observed <- U(result, compartments = "R", i = 1, as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", i = 1, as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first and third
@@ -234,7 +234,7 @@ R_expected <- structure(list(
     .Names = c("Node", "Time", "R"),
     row.names = c(NA, -20L),
     class = "data.frame")
-R_observed <- U(result, compartments = "R", i = c(1, 3))
+R_observed <- trajectory(result, compartments = "R", i = c(1, 3))
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -243,7 +243,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                         .Dimnames = list(c("R", "R"),
                                          c("0", "1", "2", "3", "4", "5",
                                            "6", "7", "8", "9")))
-R_observed <- U(result, compartments = "R", i = c(1, 3), as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", i = c(1, 3), as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
 ## A more complex test to extract data from U from a trajectory of 6
@@ -309,9 +309,9 @@ U_expected <- structure(list(
     row.names = c(NA, -60L),
     class = "data.frame")
 
-U_observed <- U(result)
+U_observed <- trajectory(result)
 stopifnot(identical(U_observed, U_expected))
-U_observed <- U(result, compartments = c("S", "E", "I", "R"), i = 1:6)
+U_observed <- trajectory(result, compartments = c("S", "E", "I", "R"), i = 1:6)
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- structure(list(
@@ -319,7 +319,7 @@ U_expected <- structure(list(
     Time = 0:9, S = 110:119, I = 130:139),
     .Names = c("Node", "Time", "S", "I"),
     row.names = c(NA, -10L), class = "data.frame")
-U_observed <- U(result, compartments = c("S", "I"), i = 1)
+U_observed <- trajectory(result, compartments = c("S", "I"), i = 1)
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <-structure(list(
@@ -333,7 +333,7 @@ U_expected <-structure(list(
           245L, 445L, 246L, 446L, 247L, 447L, 248L, 448L, 249L, 449L)),
     .Names = c("Node", "Time", "E", "R"), row.names = c(NA, -20L),
     class = "data.frame")
-U_observed <- U(result, compartments = c("E", "R"), i = c(2, 4))
+U_observed <- trajectory(result, compartments = c("E", "R"), i = c(2, 4))
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- structure(
@@ -344,7 +344,7 @@ U_expected <- structure(
     .Dim = c(4L, 10L),
     .Dimnames = list(c("E", "R", "E", "R"),
                      c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
-U_observed <- U(result, compartments = c("E", "R"), i = c(2, 4), as.is = TRUE)
+U_observed <- trajectory(result, compartments = c("E", "R"), i = c(2, 4), as.is = TRUE)
 stopifnot(identical(U_observed, U_expected))
 
 ## Check prevalence
@@ -428,8 +428,8 @@ stopifnot(identical(p_observed$Time, p_expected$Time))
 stopifnot(all(abs(p_observed$Prevalence - p_expected$Prevalence) < tol))
 
 ## Check 'V'
-res <- tools::assertError(V(result))
-stopifnot(length(grep("No continuous variables defined in 'model'",
+res <- tools::assertError(trajectory(result, "V1"))
+stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'V1'",
                       res[[1]]$message)) > 0)
 
 ## Check data

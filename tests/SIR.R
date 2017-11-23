@@ -113,7 +113,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                                          c("0", "1", "2", "3", "4", "5",
                                            "6", "7", "8", "9")))
 
-S_observed <- U(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -126,7 +126,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                                          c("0", "1", "2", "3", "4", "5",
                                            "6", "7", "8", "9")))
 
-I_observed <- U(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -139,7 +139,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                                          c("0", "1", "2", "3", "4", "5",
                                            "6", "7", "8", "9")))
 
-R_observed <- U(result, compartments = "R", as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
 
 stopifnot(identical(R_observed, R_expected))
 

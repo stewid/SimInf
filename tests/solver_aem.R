@@ -70,7 +70,7 @@ S_expected <- structure(c(9L, 9L, 9L, 9L, 9L, 10L, 9L, 10L, 9L, 9L, 10L, 10L,
                                          c("0", "1", "2", "3", "4",
                                            "5", "6", "7", "8", "9")))
 
-S_observed <- U(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(1L, 1L, 1L, 1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 0L, 1L,
@@ -83,7 +83,7 @@ I_expected <- structure(c(1L, 1L, 1L, 1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 0L, 1L,
                                          c("0", "1", "2", "3", "4",
                                            "5", "6", "7", "8", "9")))
 
-I_observed <- U(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 ## test with events.
@@ -132,7 +132,7 @@ S_expected <- structure(c(10L, 9L, 8L, 9L, 8L, 9L, 7L, 8L, 7L, 8L, 10L,
                             c("S", "S"),
                             c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
 
-S_observed <- U(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 1L, 0L, 3L, 0L, 3L, 1L, 4L, 1L, 4L, 0L, 4L,
@@ -142,7 +142,7 @@ I_expected <- structure(c(0L, 1L, 0L, 3L, 0L, 3L, 1L, 4L, 1L, 4L, 0L, 4L,
                             c("I", "I"),
                             c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
 
-I_observed <- U(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 ## run with AEM using multiple threads
@@ -150,8 +150,8 @@ if (SimInf:::have_openmp()) {
     result <- run(model, threads = 123L, solver = "aem")
     result
 
-    stopifnot(identical(length(U(result, compartments = "S", as.is = TRUE)), 20L))
-    stopifnot(identical(length(U(result, compartments = "I", as.is = TRUE)), 20L))
+    stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 20L))
+    stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 20L))
 
     p <- prevalence(result, cases = "I", pop = c("S", "I"), as.is = TRUE)
     stopifnot(identical(length(p), 10L))

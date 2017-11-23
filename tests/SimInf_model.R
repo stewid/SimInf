@@ -485,8 +485,8 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              beta = 0.16,
              gamma = 0.077)
 result <- run(model, threads = 1)
-stopifnot(identical(colnames(U(result, as.is = TRUE)), as.character(1:10)))
-stopifnot(identical(colnames(V(result, as.is = TRUE)), as.character(1:10)))
+stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(1:10)))
+stopifnot(identical(colnames(result@V), as.character(1:10)))
 
 tspan <- seq(as.Date("2016-01-01"), as.Date("2016-01-10"), by = 1)
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
@@ -494,8 +494,8 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              beta = 0.16,
              gamma = 0.077)
 result <- run(model, threads = 1)
-stopifnot(identical(colnames(U(result, as.is = TRUE)), as.character(tspan)))
-stopifnot(identical(colnames(V(result, as.is = TRUE)), as.character(tspan)))
+stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(tspan)))
+stopifnot(identical(colnames(result@V), as.character(tspan)))
 
 u0 <- data.frame(S = 100:105, I = 1:6)
 model <- SISe(u0 = u0, tspan = 1:10,
@@ -515,8 +515,8 @@ model <- SISe(u0 = u0, tspan = 1:10,
 U(model) <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
 V(model) <- Matrix::sparseMatrix(1:6, 5:10)
 result <- run(model, threads = 1)
-stopifnot(identical(colnames(U(result, as.is = TRUE)), as.character(1:10)))
-stopifnot(identical(colnames(V(result, as.is = TRUE)), as.character(1:10)))
+stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(1:10)))
+stopifnot(identical(colnames(trajectory(result, "V1", as.is = TRUE)), as.character(1:10)))
 
 tspan <- seq(as.Date("2016-01-01"), as.Date("2016-01-10"), by = 1)
 u0 <- data.frame(S = 100:105, I = 1:6)
@@ -537,26 +537,26 @@ model <- SISe(u0 = u0, tspan = tspan,
 U(model) <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
 V(model) <- Matrix::sparseMatrix(1:6, 5:10)
 result <- run(model, threads = 1)
-stopifnot(identical(colnames(U(result, as.is = TRUE)), as.character(tspan)))
-stopifnot(identical(colnames(V(result, as.is = TRUE)), as.character(tspan)))
+stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(tspan)))
+stopifnot(identical(colnames(trajectory(result, "V1", as.is = TRUE)), as.character(tspan)))
 
 ## Check arguments to 'U' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 result <- run(model, threads = 1, seed = 22)
-res <- tools::assertError(U(result, compartments = c("A", "S")))
+res <- tools::assertError(trajectory(result, compartments = c("A", "S")))
 stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(U(result, i = c("A", "S")))
+res <- tools::assertError(trajectory(result, i = c("A", "S")))
 stopifnot(length(grep("'i' must be integer",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(U(result, i = 3.4))
+res <- tools::assertError(trajectory(result, i = 3.4))
 stopifnot(length(grep("'i' must be integer",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(U(result, i = 0))
+res <- tools::assertError(trajectory(result, i = 0))
 stopifnot(length(grep("'i' must be integer > 0",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(U(result, i = 10))
+res <- tools::assertError(trajectory(result, i = 10))
 stopifnot(length(grep("'i' must be integer <= number of nodes",
                       res[[1]]$message)) > 0)
 

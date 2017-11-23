@@ -79,24 +79,24 @@ sis_e <- SISe(u0      = data.frame(S = 100, I = 0),
               epsilon = 0.000011)
 
 sis_e <- run(sis_e, threads = 1)
-sis_e_phi_obs <- V(sis_e, as.is = TRUE)[1,]
+sis_e_phi_obs <- trajectory(sis_e, "V1", as.is = TRUE)[1,]
 stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
-sis_e_phi_obs <- V(sis_e)$V1
+sis_e_phi_obs <- trajectory(sis_e, "V1")$V1
 stopifnot(all(abs(sis_e_phi_obs - as.numeric(phi_exp)) < tol))
 
 ## Run with sparse V
 V(sis_e) <- as(phi_exp, "dgCMatrix")
 sis_e <- run(sis_e, threads = 1)
-sis_e_phi_obs <- V(sis_e, as.is = TRUE)[1,]
+sis_e_phi_obs <- trajectory(sis_e, "V1", as.is = TRUE)[1,]
 stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
-sis_e_phi_obs <- V(sis_e)$V1
+sis_e_phi_obs <- trajectory(sis_e, "V1")$V1
 stopifnot(all(abs(sis_e_phi_obs - as.numeric(phi_exp)) < tol))
 
 if (SimInf:::have_openmp()) {
     sis_e <- run(sis_e, threads = 2)
-    sis_e_phi_obs <- V(sis_e, as.is = TRUE)[1,]
+    sis_e_phi_obs <- trajectory(sis_e, "V1", as.is = TRUE)[1,]
     stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
-    sis_e_phi_obs <- V(sis_e)$V1
+    sis_e_phi_obs <- trajectory(sis_e, "V1")$V1
     stopifnot(all(abs(sis_e_phi_obs - as.numeric(phi_exp)) < tol))
 }
 
@@ -125,23 +125,23 @@ sis_e3 <- SISe3(u0      = data.frame(S_1 = 10, I_1 = 0,
                 epsilon   = 0.000011)
 
 sis_e3 <- run(sis_e3, threads = 1)
-sis_e3_phi_obs <- V(sis_e3, as.is = TRUE)[1,]
+sis_e3_phi_obs <- trajectory(sis_e3, "V1", as.is = TRUE)[1,]
 stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
-sis_e3_phi_obs <- V(sis_e3)$V1
+sis_e3_phi_obs <- trajectory(sis_e3, "V1")$V1
 stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))
 
 ## Run with sparse V
 V(sis_e3) <- as(phi_exp, "dgCMatrix")
 sis_e3 <- run(sis_e3, threads = 1)
-sis_e3_phi_obs <- V(sis_e3, as.is = TRUE)[1,]
+sis_e3_phi_obs <- trajectory(sis_e3, "V1", as.is = TRUE)[1,]
 stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
-sis_e3_phi_obs <- V(sis_e3)$V1
+sis_e3_phi_obs <- trajectory(sis_e3, "V1")$V1
 stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))
 
 if (SimInf:::have_openmp()) {
     sis_e3 <- run(sis_e3, threads = 2)
-    sis_e3_phi_obs <- V(sis_e3, as.is = TRUE)[1,]
+    sis_e3_phi_obs <- trajectory(sis_e3, "V1", as.is = TRUE)[1,]
     stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
-    sis_e3_phi_obs <- V(sis_e3)$V1
+    sis_e3_phi_obs <- trajectory(sis_e3, "V1")$V1
     stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))
 }

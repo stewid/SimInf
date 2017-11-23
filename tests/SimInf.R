@@ -52,9 +52,9 @@ model <- SISe(u0      = u0,
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(sum(U(result, as.is = TRUE)), 1001L))
-stopifnot(any(U(result, as.is = TRUE)[1,]))
-stopifnot(any(U(result, as.is = TRUE)[2,]))
+stopifnot(identical(sum(trajectory(result, as.is = TRUE)), 1001L))
+stopifnot(any(trajectory(result, as.is = TRUE)[1,]))
+stopifnot(any(trajectory(result, as.is = TRUE)[2,]))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -128,9 +128,9 @@ model <- SISe3(u0        = u0,
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(all(apply(U(result, as.is = TRUE)[1:6,], 1, any)))
-stopifnot(identical(sum(U(result, as.is = TRUE)[1:6,11]), 45L))
-stopifnot(identical(sum(U(result, as.is = TRUE)[,1]), 45L))
+stopifnot(all(apply(trajectory(result, as.is = TRUE)[1:6,], 1, any)))
+stopifnot(identical(sum(trajectory(result, as.is = TRUE)[1:6,11]), 45L))
+stopifnot(identical(sum(trajectory(result, as.is = TRUE)[,1]), 45L))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -206,21 +206,21 @@ result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 
-m <- U(result, compartments = "S_2", i = 1, as.is = TRUE) +
-    U(result, compartments = "I_2", i = 1, as.is = TRUE)
+m <- trajectory(result, compartments = "S_2", i = 1, as.is = TRUE) +
+    trajectory(result, compartments = "I_2", i = 1, as.is = TRUE)
 dimnames(m) <- NULL
 stopifnot(identical(m,
                     structure(c(0L, 15L, 15L, 15L, 15L,
                                 15L, 15L, 15L, 15L, 15L, 15L),
                               .Dim = c(1L, 11L))))
-m <- U(result, compartments = "S_3", i = 1, as.is = TRUE) +
-    U(result, compartments = "I_3", i = 1, as.is = TRUE)
+m <- trajectory(result, compartments = "S_3", i = 1, as.is = TRUE) +
+    trajectory(result, compartments = "I_3", i = 1, as.is = TRUE)
 dimnames(m) <- NULL
 stopifnot(identical(m,
                     structure(c(0L, 15L, 15L, 15L, 15L,
                                 15L, 15L, 15L, 15L, 15L, 15L),
                               .Dim = c(1L, 11L))))
-stopifnot(identical(sum(U(result, as.is = TRUE)[,1]), 45L))
+stopifnot(identical(sum(trajectory(result, as.is = TRUE)[,1]), 45L))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -230,15 +230,15 @@ if (SimInf:::have_openmp()) {
     result_omp <- run(model, threads = 2, seed = 123L)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
-    m <- U(result, compartments = "S_2", i = 1, as.is = TRUE) +
-        U(result, compartments = "I_2", i = 1, as.is = TRUE)
+    m <- trajectory(result, compartments = "S_2", i = 1, as.is = TRUE) +
+        trajectory(result, compartments = "I_2", i = 1, as.is = TRUE)
     dimnames(m) <- NULL
     stopifnot(identical(m,
                         structure(c(0L, 15L, 15L, 15L, 15L,
                                     15L, 15L, 15L, 15L, 15L, 15L),
                                   .Dim = c(1L, 11L))))
-    m <- U(result, compartments = "S_3", i = 1, as.is = TRUE) +
-        U(result, compartments = "I_3", i = 1, as.is = TRUE)
+    m <- trajectory(result, compartments = "S_3", i = 1, as.is = TRUE) +
+        trajectory(result, compartments = "I_3", i = 1, as.is = TRUE)
     dimnames(m) <- NULL
     stopifnot(identical(m,
                         structure(c(0L, 15L, 15L, 15L, 15L,
@@ -292,9 +292,9 @@ model <- SISe3(u0        = u0,
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(all(U(result, as.is = TRUE)[1:6,] == 0))
-stopifnot(all(apply(U(result, as.is = TRUE)[seq(from=8, to=36, by=2),], 1, any)))
-stopifnot(identical(sum(U(result, as.is = TRUE)[,11]), 45L))
+stopifnot(all(trajectory(result, as.is = TRUE)[1:6,] == 0))
+stopifnot(all(apply(trajectory(result, as.is = TRUE)[seq(from=8, to=36, by=2),], 1, any)))
+stopifnot(identical(sum(trajectory(result, as.is = TRUE)[,11]), 45L))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -413,7 +413,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(U(result, as.is = TRUE), U_expected))
+stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -529,7 +529,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(U(result, as.is = TRUE), U_expected))
+stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -645,7 +645,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(U(result, as.is = TRUE), U_expected))
+stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -762,7 +762,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(U(result, as.is = TRUE), U_expected))
+stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
@@ -820,8 +820,8 @@ model <- SISe3(u0        = u0,
 result <- run(model, threads = 1, seed = 123L)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
-stopifnot(identical(sum(U(result, as.is = TRUE)[1:6,]), 0L))
-stopifnot(all(apply(U(result, as.is = TRUE)[7:36,], 1, any)))
+stopifnot(identical(sum(trajectory(result, as.is = TRUE)[1:6,]), 0L))
+stopifnot(all(apply(trajectory(result, as.is = TRUE)[7:36,], 1, any)))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))

@@ -1490,7 +1490,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                         .Dim = c(6L, 10L),
                         .Dimnames = list(c("S_1", "S_1", "S_1", "S_1", "S_1", "S_1"),
                                          c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
-S_observed <- U(result, compartments = "S_1", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S_1", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -1501,7 +1501,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                         .Dim = c(6L, 10L),
                         .Dimnames = list(c("I_1", "I_1", "I_1", "I_1", "I_1", "I_1"),
                                          c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
-I_observed <- U(result, compartments = "I_1", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I_1", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 ## Check SISe3 plot method

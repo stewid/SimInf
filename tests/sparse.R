@@ -41,7 +41,7 @@ U_exp <- new("dgCMatrix",
              factors = list())
 
 U(model) <- sparseMatrix(1:18, rep(5:10, each = 3))
-U_obs <- U(run(model, threads = 1, seed = 123), as.is = TRUE)
+U_obs <- trajectory(run(model, threads = 1, seed = 123), as.is = TRUE)
 stopifnot(identical(U_obs, U_exp))
 
 if (SimInf:::have_openmp()) {
@@ -58,7 +58,7 @@ if (SimInf:::have_openmp()) {
                            99, 6, 2, 98, 3, 8, 95, 12, 4),
                      factors = list())
     U(model) <- sparseMatrix(1:18, rep(5:10, each = 3))
-    U_obs_omp <- U(run(model, threads = 2, seed = 123), as.is = TRUE)
+    U_obs_omp <- trajectory(run(model, threads = 2, seed = 123), as.is = TRUE)
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
 
@@ -144,7 +144,7 @@ U_exp <- structure(list(Node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
                    .Names = c("Node", "Time", "S", "I", "R"),
                    row.names = c(NA, -8L),
                    class = "data.frame")
-stopifnot(identical(U(result), U_exp))
+stopifnot(identical(trajectory(result), U_exp))
 
 ## Similar test case, but without NA-values
 m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
@@ -158,7 +158,7 @@ U_exp <- structure(list(Node = 1:6,
                    .Names = c("Node", "Time", "S", "I", "R"),
                    row.names = c(NA, -6L),
                    class = "data.frame")
-stopifnot(identical(U(result), U_exp))
+stopifnot(identical(trajectory(result), U_exp))
 
 ## Test that it also works to remove the sparse matrix output
 U(model) <- NULL
@@ -188,4 +188,4 @@ U_exp <- structure(list(
     .Names = c("Node", "Time", "S", "I", "R"),
     row.names = c(NA, -60L),
     class = "data.frame")
-stopifnot(identical(U(result), U_exp))
+stopifnot(identical(trajectory(result), U_exp))
