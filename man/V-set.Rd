@@ -40,6 +40,6 @@ m <- Matrix::sparseMatrix(1:6, 5:10)
 V(model) <- m
 result <- run(model, threads = 1, seed = 7)
 
-## Extract the continuous state variables at the time-points in tspan.
-V(result)
+## Extract the continuous state variable 'V1' at the time-points in tspan.
+trajectory(result, compartments = "V1")
 }

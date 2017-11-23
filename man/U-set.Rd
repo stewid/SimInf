@@ -39,5 +39,5 @@ result <- run(model, threads = 1, seed = 22)
 
 ## Extract the number of individuals in each compartment at the
 ## time-points in tspan.
-U(result)
+trajectory(result)
 }
