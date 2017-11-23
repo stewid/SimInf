@@ -1015,13 +1015,13 @@ result <- run(model, threads = 1, seed = 22)
 
 The \code{result} object contains the number of individuals in each
 compartment at the time points specified in \code{tspan} and can be
-extracted using the \code{U} method.  The row names indicate the
-compartments in the model and the colnames are the time points in
+extracted using the \code{trajectory} method.  The row names indicate
+the compartments in the model and the colnames are the time points in
 \code{tspan}.  Please note that the \code{U} matrix is truncated here
 for readability.
 
 <<SIR-U>>=
-U(result)[1:10 ,]
+trajectory(result)[1:10 ,]
 @
 
 The package \pkg{SimInf} has a \code{plot} method for objects of class
@@ -1064,7 +1064,7 @@ vector.  Please note that the \code{U} matrix is truncated here for
 readability.
 
 <<SIR-U-multiple-nodes>>=
-U(result)[1:10, ]
+trajectory(result)[1:10, ]
 @
 
 Thanks to the high performance of the simulator, we can easily expand
@@ -1176,7 +1176,7 @@ disease spread model as we did in earlier examples:
 
 <<U-model-events>>=
 model <- SIR(u0, 1:5, events = events, beta = 0.16, gamma = 0.077)
-U(run(model, threads = 1, seed = 22))
+trajectory(run(model, threads = 1, seed = 22))
 @
 
 If you inspect the result of this very simple simulation, you will see
@@ -1543,9 +1543,9 @@ each age category (Figure~\ref{fig:population}).
 
 <<eval=FALSE>>=
 result <- run(model, threads = 1, seed = 1)
-N1 <- colSums(U(result, compartments = c("S_1", "I_1"), as.is = TRUE))
-N2 <- colSums(U(result, compartments = c("S_2", "I_2"), as.is = TRUE))
-N3 <- colSums(U(result, compartments = c("S_3", "I_3"), as.is = TRUE))
+N1 <- colSums(trajectory(result, compartments = c("S_1", "I_1"), as.is = TRUE))
+N2 <- colSums(trajectory(result, compartments = c("S_2", "I_2"), as.is = TRUE))
+N3 <- colSums(trajectory(result, compartments = c("S_3", "I_3"), as.is = TRUE))
 opar <- par(mfrow = c(3, 1), mar = c(2, 5, 1, 1))
 plot(N3 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 1)
 plot(N2 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 2)
@@ -1558,9 +1558,9 @@ par(opar)
   \begin{center}
 <<population-size, echo=FALSE, fig=TRUE>>=
 result <- run(model, threads = 1, seed = 1)
-N1 <- colSums(U(result, compartments = c("S_1", "I_1"), as.is = TRUE))
-N2 <- colSums(U(result, compartments = c("S_2", "I_2"), as.is = TRUE))
-N3 <- colSums(U(result, compartments = c("S_3", "I_3"), as.is = TRUE))
+N1 <- colSums(trajectory(result, compartments = c("S_1", "I_1"), as.is = TRUE))
+N2 <- colSums(trajectory(result, compartments = c("S_2", "I_2"), as.is = TRUE))
+N3 <- colSums(trajectory(result, compartments = c("S_3", "I_3"), as.is = TRUE))
 opar <- par(mfrow = c(3, 1), mar = c(2, 5, 1, 1))
 plot(N3 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 1)
 plot(N2 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 2)
@@ -1800,7 +1800,7 @@ m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
 c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
 model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
 result <- run(model, threads = 1, seed = 22)
-plot(stepfun(result@tspan[-1], diff(c(0, U(result)[, "Icum"]))),
+plot(stepfun(result@tspan[-1], diff(c(0, trajectory(result)[, "Icum"]))),
 main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
 @
@@ -1812,7 +1812,7 @@ m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
 c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
 model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
 result <- run(model, threads = 1, seed = 22)
-plot(stepfun(result@tspan[-1], diff(c(0, U(result)[, "Icum"]))),
+plot(stepfun(result@tspan[-1], diff(c(0, trajectory(result)[, "Icum"]))),
 main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
 @
