@@ -460,9 +460,9 @@ prevalence <- function(model = NULL,
     cm <- NULL
     for (compartment in cases) {
         if (is.null(cm)) {
-            cm <- U(model, compartments = compartment, i = i, as.is = TRUE)
+            cm <- trajectory(model, compartments = compartment, i = i, as.is = TRUE)
         } else {
-            cm <- cm + U(model, compartments = compartment, i = i, as.is = TRUE)
+            cm <- cm + trajectory(model, compartments = compartment, i = i, as.is = TRUE)
         }
     }
     dimnames(cm) <- NULL
@@ -472,9 +472,9 @@ prevalence <- function(model = NULL,
     pm <- NULL
     for (compartment in pop) {
         if (is.null(pm)) {
-            pm <- U(model, compartments = compartment, i = i, as.is = TRUE)
+            pm <- trajectory(model, compartments = compartment, i = i, as.is = TRUE)
         } else {
-            pm <- pm + U(model, compartments = compartment, i = i, as.is = TRUE)
+            pm <- pm + trajectory(model, compartments = compartment, i = i, as.is = TRUE)
         }
     }
     dimnames(pm) <- NULL
@@ -553,10 +553,11 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
           stringsAsFactors = FALSE)
 }
 
-##' Extract the number of individuals in each compartment
+##' Extract data from a simulated trajectory
 ##'
-##' The number of individuals in each compartment in every node after
-##' running a trajectory with \code{\link{run}}.
+##' Extract the number of individuals in each compartment the number
+##' of individuals in each compartment in every node after running a
+##' trajectory with \code{\link{run}}.
 ##'
 ##' Description of the layout of the matrix that is returned if
 ##' \code{as.is = TRUE}. \code{U[, j]} contains the number of
@@ -592,34 +593,94 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##'
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in tspan.
-##' U(result)
+##' trajectory(result)
 ##'
 ##' ## Extract the number of recovered individuals in the first node
 ##' ## after each time step in the simulation.
-##' U(result, compartments = "R", i = 1)
+##' trajectory(result, compartments = "R", i = 1)
 ##'
 ##' ## Extract the number of recovered individuals in the first and
 ##' ## third node after each time step in the simulation.
-##' U(result, compartments = "R", i = c(1, 3))
-U <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
+##' trajectory(result, compartments = "R", i = c(1, 3))
+##'
+##' ## Create an 'SISe' model with 6 nodes and initialize
+##' ## it to run over 10 days.
+##' u0 <- data.frame(S = 100:105, I = 1:6)
+##' model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
+##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5,
+##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
+##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
+##'
+##' ## Run the model
+##' result <- run(model, threads = 1, seed = 7)
+##'
+##' ## Extract the continuous state variable 'V1' in each node at the
+##' ## time-points in tspan. In the 'SISe' model, 'V1' represents the
+##' ## environmental infectious pressure 'phi'.
+##' trajectory(result, "V1")
+trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 {
+    ## Check that the arguments are ok...
+
     ## Check model argument
     if (missing(model))
         stop("Missing 'model' argument")
     if (!is(model, "SimInf_model"))
         stop("'model' argument is not a 'SimInf_model'")
 
-    ## Check 'compartments' argument
+    if (all(identical(dim(model@U), c(0L, 0L)),
+            identical(dim(model@U_sparse), c(0L, 0L)),
+            identical(dim(model@V), c(0L, 0L)),
+            identical(dim(model@V_sparse), c(0L, 0L)))) {
+        stop("Please run the model first, the trajectory is empty")
+    }
+
+    ## Split the 'compartments' argument to match the compartments in
+    ## U and V.
+    compartments_U <- NULL
+    compartments_V <- NULL
     if (!is.null(compartments)) {
         compartments <- as.character(compartments)
-        j <- !(compartments %in% rownames(model@S))
-        if (any(j)) {
+
+        ## Match compartments in U
+        lbl <- rownames(model@S)
+        compartments_U <- compartments[compartments %in% lbl]
+        if (length(compartments_U) > 0) {
+            compartments <- setdiff(compartments, compartments_U)
+        } else {
+            compartments_U <- NULL
+        }
+
+        ## Match compartments in V
+        if (length(compartments) > 0) {
+            if (Nd(model) > 0) {
+                lbl <- paste0("V", seq_len(Nd(model)))
+                compartments_V <- compartments[compartments %in% lbl]
+                if (length(compartments_V) > 0) {
+                    compartments <- setdiff(compartments, compartments_V)
+                } else {
+                    compartments_V <- NULL
+                }
+            }
+        }
+
+        if (length(compartments) > 0) {
             stop("Non-existing compartment(s) in model: ",
-                 paste0("'", compartments[j], "'", collapse = ", "))
+                 paste0("'", compartments, "'", collapse = ", "))
+        }
+
+        ## Cannot combine data from U and V when as.is = TRUE or when
+        ## both U and V are sparse.
+        if (all(!is.null(compartments_U), !is.null(compartments_V))) {
+            if (isTRUE(as.is))
+                stop("Select either continuous or discrete compartments")
+            if (all(!identical(dim(model@U_sparse), c(0L, 0L)),
+                    !identical(dim(model@V_sparse), c(0L, 0L))))
+                stop("Select either continuous or discrete compartments")
         }
     }
 
-    ## Check 'i' argument
+    ## Check the 'i' argument
     if (!is.null(i)) {
         if (!is.numeric(i))
             stop("'i' must be integer")
@@ -631,12 +692,24 @@ U <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
             stop("'i' must be integer <= number of nodes")
     }
 
-    d <- dim(model@U)
-    if (identical(d, c(0L, 0L))) {
-        d <- dim(model@U_sparse)
-        if (identical(d, c(0L, 0L)))
-            stop("Please run the model first, the 'U' matrix is empty")
+    ## The arguments seem ok...go on and extract the trajectory
 
+    ## Check to extract sparse data from V
+    if (!identical(dim(model@V_sparse), c(0L, 0L))) {
+        if (!is.null(compartments_V)) {
+            if (isTRUE(as.is))
+                return(model@V_sparse)
+
+            ## Coerce the sparse 'V_sparse' matrix to a data.frame with
+            ## one row per node and time-point with the values of the
+            ## continuous state variables.
+            return(sparse2df(model@V_sparse, Nd(model), model@tspan,
+                             paste0("V", seq_len(Nd(model))), NA_real_))
+        }
+    }
+
+    ## Check to extract sparse data from U
+    if (!identical(dim(model@U_sparse), c(0L, 0L))) {
         if (isTRUE(as.is))
             return(model@U_sparse)
 
@@ -647,44 +720,116 @@ U <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
                          model@tspan, rownames(model@S)))
     }
 
+    ## Check to extract data in internal matrix format
     if (isTRUE(as.is)) {
-        if (all(is.null(compartments), is.null(i)))
-            return(model@U)
+        if (is.null(i)) {
+            if (is.null(compartments_U)) {
+                if (is.null(compartments_V))
+                    return(model@U)
+                if (identical(length(compartments_V), Nd(model)))
+                    return(model@V)
+            } else if (identical(length(compartments_U), Nc(model))) {
+                return(model@U)
+            }
+        }
 
-        ## Extract subset of data
-        if (is.null(compartments))
-            compartments <- rownames(model@S)
-        compartments <- sort(match(compartments, rownames(model@S)))
         if (is.null(i))
             i <- seq_len(Nn(model))
-        j <- rep(compartments, length(i))
-        j <- j + rep((i - 1) * Nc(model), each = length(compartments))
+
+        if (all(is.null(compartments_U), is.null(compartments_V)))
+            compartments_U <- rownames(model@S)
+
+        if (is.null(compartments_U)) {
+            ## Extract subset of data from V
+            lbl <- paste0("V", seq_len(Nd(model)))
+            compartments_V <- sort(match(compartments_V, lbl))
+            j <- rep(compartments_V, length(i))
+            j <- j + rep((i - 1) * Nd(model), each = length(compartments_V))
+            return(model@V[j, , drop = FALSE])
+        }
+
+        ## Extract subset of data from U
+        compartments_U <- sort(match(compartments_U, rownames(model@S)))
+        j <- rep(compartments_U, length(i))
+        j <- j + rep((i - 1) * Nc(model), each = length(compartments_U))
         return(model@U[j, , drop = FALSE])
     }
 
-    ## Coerce the dense 'U' matrix to a data.frame with one row per
-    ## node and time-point with the number of individuals in each
-    ## compartment.
-    if (all(is.null(compartments), is.null(i))) {
-        m <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
-        colnames(m) <- rownames(model@S)
-    } else {
-        ## Extract subset of data
-        if (is.null(compartments))
-            compartments <- rownames(model@S)
-        compartments <- sort(match(compartments, rownames(model@S)))
+    ## Coerce the dense 'U' and 'V' matrices to a data.frame with one
+    ## row per node and time-point with data from the specified
+    ## discrete and continuous states.
+    mU <- NULL
+    mV <- NULL
+
+    ## Handle first cases where all data in U and/or V are extracted,
+    ## where 'all' indicates that all compartments in U or V are
+    ## specified.
+    ##
+    ## compartments_U compartments_V output
+    ##     NULL           NULL         U
+    ##     NULL            all         V
+    ##      all           NULL         U
+    ##      all            all        U+V
+    if (is.null(i)) {
+        if (is.null(compartments_U)) {
+            if (is.null(compartments_V)) {
+                mU <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
+            } else if (identical(length(compartments_V), Nd(model))) {
+                mV <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
+            }
+        } else if (identical(length(compartments_U), Nc(model))) {
+            if (is.null(compartments_V)) {
+                mU <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
+            } else if (identical(length(compartments_V), Nd(model))) {
+                mU <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
+                mV <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
+            }
+        }
+
+        if (!is.null(mU))
+            colnames(mU) <- rownames(model@S)
+        if (!is.null(mV))
+            colnames(mV) <- paste0("V", seq_len(Nd(model)))
+    }
+
+    ## Handle cases where a subset of data in U and/or V are
+    ## extracted.
+    if (all(is.null(mU), is.null(mV))) {
         if (is.null(i))
             i <- seq_len(Nn(model))
-        j <- rep(compartments, length(i))
-        j <- j + rep((i - 1) * Nc(model), each = length(compartments))
-        k <- (seq_len(length(model@tspan)) - 1) * Nc(model) * Nn(model)
-        k <- rep(k, each = length(j))
-        j <- rep(j, length(model@tspan))
-        j <- j + k
-        m <- matrix(as.integer(model@U[j]),
-                    ncol = length(compartments),
-                    byrow = TRUE)
-        colnames(m) <- rownames(model@S)[compartments]
+
+        if (all(is.null(compartments_U), is.null(compartments_V)))
+            compartments_U <- rownames(model@S)
+
+        if (!is.null(compartments_U)) {
+            ## Extract a subset of data from U
+            compartments_U <- sort(match(compartments_U, rownames(model@S)))
+            j <- rep(compartments_U, length(i))
+            j <- j + rep((i - 1) * Nc(model), each = length(compartments_U))
+            k <- (seq_len(length(model@tspan)) - 1) * Nc(model) * Nn(model)
+            k <- rep(k, each = length(j))
+            j <- rep(j, length(model@tspan))
+            j <- j + k
+            mU <- matrix(as.integer(model@U[j]),
+                         ncol = length(compartments_U),
+                         byrow = TRUE)
+            colnames(mU) <- rownames(model@S)[compartments_U]
+        }
+
+        if (!is.null(compartments_V)) {
+            ## Extract a subset of data from V
+            compartments_V <- sort(match(compartments_V, paste0("V", seq_len(Nd(model)))))
+            j <- rep(compartments_V, length(i))
+            j <- j + rep((i - 1) * Nd(model), each = length(compartments_V))
+            k <- (seq_len(length(model@tspan)) - 1) * Nd(model) * Nn(model)
+            k <- rep(k, each = length(j))
+            j <- rep(j, length(model@tspan))
+            j <- j + k
+            mV <- matrix(as.integer(model@V[j]),
+                         ncol = length(compartments_V),
+                         byrow = TRUE)
+            colnames(mV) <- paste0("V", seq_len(Nd(model)))[compartments_V]
+        }
     }
 
     Node = seq_len(Nn(model))
@@ -696,10 +841,14 @@ U <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         Time <- as.integer(model@tspan)
     Time <- rep(Time, each = length(Node))
 
-    cbind(Node = Node,
-          Time = Time,
-          as.data.frame(m),
-          stringsAsFactors = FALSE)
+    result <- data.frame(Node = Node, Time = Time, stringsAsFactors = FALSE)
+    if (!is.null(mU))
+        result <- cbind(result, as.data.frame(mU))
+
+    if (!is.null(mV))
+        result <- cbind(result, as.data.frame(mV))
+
+    result
 }
 
 ##' Set a template for where to write the U result matrix
@@ -733,7 +882,7 @@ U <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##'
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in tspan.
-##' U(result)
+##' trajectory(result)
 "U<-" <- function(model, value)
 {
     ## Check model argument
@@ -764,89 +913,6 @@ U <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
                                       "dgCMatrix")
     }
     model
-}
-
-##' Extract the continuous state variables
-##'
-##' The continuous state variables in every node after running a
-##' trajectory with \code{\link{run}}.
-##'
-##' Description of the layout of the matrix that is returned if
-##' \code{as.is = TRUE}. The result matrix for the real-valued
-##' continuous state. \code{V[, j]} contains the real-valued state of
-##' the system at \code{tspan[j]}. The dimension of the matrix is
-##' \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times} \code{length(tspan)}.
-##' @param model The \code{model} to extract the result matrix from.
-##' @param as.is the default (\code{as.is = FALSE}) is to generate a
-##'     \code{data.frame} with one row per node and time-step with the
-##'     value of continuous state variables. Using \code{as.is = TRUE}
-##'     returns the result as a matrix, which is the internal format
-##'     (see \sQuote{Details}).
-##' @return The continuous state variables
-##' @export
-##' @importFrom methods is
-##' @examples
-##' ## Create an 'SISe' model with 6 nodes and initialize
-##' ## it to run over 10 days.
-##' u0 <- data.frame(S = 100:105, I = 1:6)
-##' model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
-##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5,
-##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
-##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
-##'
-##' ## Run the model
-##' result <- run(model, threads = 1, seed = 7)
-##'
-##' ## Extract the continuous state variables in each node at the
-##' ## time-points in tspan. In the 'SISe' model, V represent the
-##' ## environmental infectious pressure phi.
-##' V(result)
-V <- function(model, as.is = FALSE)
-{
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
-
-    if (all(!isTRUE(as.is), Nd(model) < 1))
-        stop("No continuous variables defined in 'model'")
-
-    d <- dim(model@V)
-    if (identical(d, c(0L, 0L))) {
-        d <- dim(model@V_sparse)
-        if (identical(d, c(0L, 0L)))
-            stop("Please run the model first, the 'V' matrix is empty")
-
-        if (isTRUE(as.is))
-            return(model@V_sparse)
-
-        ## Coerce the sparse 'V_sparse' matrix to a data.frame with
-        ## one row per node and time-point with the values of the
-        ## continuous state variables.
-        return(sparse2df(model@V_sparse,
-                         Nd(model),
-                         model@tspan,
-                         paste0("V", seq_len(Nd(model))),
-                         NA_real_))
-    }
-
-    if (isTRUE(as.is))
-        return(model@V)
-
-    ## Coerce the dense 'V' matrix to a data.frame with one row per
-    ## node and time-point with the values of the continuous state
-    ## variables.
-    m <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
-    colnames(m) <- paste0("V", seq_len(Nd(model)))
-    Time <- names(model@tspan)
-    if (is.null(Time))
-        Time <- as.integer(model@tspan)
-
-    cbind(Node = seq_len(Nn(model)),
-          Time = rep(Time, each = Nn(model)),
-          as.data.frame(m),
-          stringsAsFactors = FALSE)
 }
 
 ##' Set a template for where to write the V result matrix
@@ -883,8 +949,8 @@ V <- function(model, as.is = FALSE)
 ##' V(model) <- m
 ##' result <- run(model, threads = 1, seed = 7)
 ##'
-##' ## Extract the continuous state variables at the time-points in tspan.
-##' V(result)
+##' ## Extract the continuous state variable 'V1' at the time-points in tspan.
+##' trajectory(result, compartments = "V1")
 "V<-" <- function(model, value)
 {
     if (!is.null(value)) {
@@ -1306,8 +1372,8 @@ summary_U <- function(object)
     if (identical(d, c(0L, 0L))) {
         cat(" - Empty, please run the model first\n")
     } else {
-        qq <- lapply(rownames(object@S), function(i) {
-            x <- as.numeric(U(object, i, as.is = TRUE))
+        qq <- lapply(rownames(object@S), function(compartment) {
+            x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
             qq <- stats::quantile(x)
             qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
         })
@@ -1329,11 +1395,11 @@ summary_V <- function(object)
         if (identical(d, c(0L, 0L))) {
             cat(" - Empty, please run the model first\n")
         } else {
-            qq <- lapply(seq_len(Nd(object)), function(i) {
-                i <- seq(from = i, by = Nd(object), length.out = Nn(object))
-                v <- as.numeric(object@V[i, ])
-                qq <- stats::quantile(v)
-                qq <- c(qq[1L:3L], mean(v), qq[4L:5L])
+            qq <- lapply(seq_len(Nd(object)), function(compartment) {
+                compartment <- paste0("V", compartment)
+                x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
+                qq <- stats::quantile(x)
+                qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
             })
             qq <- do.call("rbind", qq)
             colnames(qq) <- c("Min.", "1st Qu.", "Median",
