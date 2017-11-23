@@ -1085,21 +1085,6 @@ setMethod("run",
           }
 )
 
-## Create a matrix where each column contains the individuals in one
-## state.
-by_compartment <- function(model) {
-    if (identical(dim(model@U), c(0L, 0L)))
-        stop("Please run the model first, the 'U' matrix is empty")
-
-    m <- do.call(cbind, lapply(seq_len(dim(model@S)[1]), function(from) {
-        i <- seq(from = from, to = dim(model@U)[1], by = dim(model@S)[1])
-        as.numeric(model@U[i, ])
-    }))
-
-    colnames(m) <- rownames(model@S)
-    m
-}
-
 ##' Box plot of number of individuals in each compartment
 ##'
 ##' Produce box-and-whisker plot(s) of the number of individuals in
@@ -1128,7 +1113,7 @@ setMethod("boxplot",
           signature(x = "SimInf_model"),
           function(x, ...)
           {
-              graphics::boxplot(by_compartment(x), ...)
+              graphics::boxplot(trajectory(x)[-(1:2)], ...)
           }
 )
 
@@ -1160,7 +1145,7 @@ setMethod("pairs",
           signature(x = "SimInf_model"),
           function(x, ...)
           {
-              graphics::pairs(by_compartment(x), ...)
+              graphics::pairs(trajectory(x)[-(1:2)], ...)
           }
 )
 

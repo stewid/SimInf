@@ -444,6 +444,22 @@ dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
+## Check SEIR boxplot method
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+boxplot(result)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
+## Check SEIR pairs plot method
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+pairs(result)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
 ## Check SEIR events plot with no events
 model <- SEIR(u0      = u0,
               tspan   = seq_len(10) - 1,
