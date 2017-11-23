@@ -956,10 +956,10 @@ rate.  The state change matrix \code{S} and the dependency graph
 \[
 \mathbf{S} =
 \bordermatrix{
-      &  1 &  2 \cr
-    S & -1 &  0 \cr
-    I &  1 & -1 \cr
-    R &  0 &  1} \qquad
+    & \enspace 1 & \enspace 2 \cr
+  S & -1 & \hphantom{-}0 \cr
+  I & \hphantom{-}1 & -1 \cr
+  R & \hphantom{-}0 & \hphantom{-}1} \qquad
 \mathbf{G} =
 \bordermatrix{
                   & 1 & 2 \cr
@@ -1335,13 +1335,13 @@ $I_{i,1} \rightarrow S_{i,1}$ must be recalculated according to
 \[
 \mathbf{S} =
 \bordermatrix{
-      &  1 &  2 &  3 &  4 &  5 &  6 \cr
-  S_1 & -1 &  1 &  0 &  0 &  0 &  0 \cr
-  I_1 &  1 & -1 &  0 &  0 &  0 &  0 \cr
-  S_2 &  0 &  0 & -1 &  1 &  0 &  0 \cr
-  I_2 &  0 &  0 &  1 & -1 &  0 &  0 \cr
-  S_3 &  0 &  0 &  0 &  0 & -1 &  1 \cr
-  I_3 &  0 &  0 &  0 &  0 &  1 & -1 } \qquad
+      & \enspace 1 & \enspace 2 & \enspace 3 & \enspace 4 & \enspace 5 & \enspace 6 \cr
+  S_1 & -1 & \hphantom{-}1 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 \cr
+  I_1 & \hphantom{-}1 & -1 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 \cr
+  S_2 & \hphantom{-}0 & \hphantom{-}0 & -1 & \hphantom{-}1 & \hphantom{-}0 & \hphantom{-}0 \cr
+  I_2 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}1 & -1 & \hphantom{-}0 & \hphantom{-}0 \cr
+  S_3 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & -1 & \hphantom{-}1 \cr
+  I_3 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}1 & -1 } \qquad
 \mathbf{G} =
 \bordermatrix{
                       & 1 & 2 & 3 & 4 & 5 & 6 \cr
