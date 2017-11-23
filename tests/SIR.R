@@ -204,3 +204,19 @@ res <- tools::assertError(.Call("SIR_run", "SIR", NULL, NULL, NULL,
                                 PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid model.",
                       res[[1]]$message)) > 0)
+
+## Check events method
+res <- tools::assertError(events())
+stopifnot(length(grep("Missing 'model' argument",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(events(5))
+stopifnot(length(grep("'model' argument is not a 'SimInf_model",
+                      res[[1]]$message)) > 0)
+
+model <- SIR(u0     = u0_SIR(),
+             tspan  = seq_len(365 * 4),
+             events = events_SIR(),
+             beta   = 0,
+             gamma  = 0)
+stopifnot(is(events(model), "SimInf_events"))
