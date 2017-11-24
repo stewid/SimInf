@@ -1113,6 +1113,7 @@ stopifnot(identical(trajectory(result, c("S", "S", "V1", "V1"))[, -4], traj_expe
 stopifnot(identical(trajectory(result, c("V1", "V1", "S", "S"))[, -4], traj_expected[, -4]))
 stopifnot(all(abs(trajectory(result, c("V1", "V1", "S", "S"))[, 4] - traj_expected$V1) < 1e-8))
 
+## Check extracting a subset of nodes
 traj_expected <- structure(list(
     Node = c(2L, 5L, 2L, 5L),
     Time = c(1L, 1L, 2L, 2L),
@@ -1125,6 +1126,18 @@ stopifnot(identical(trajectory(result, c("S", "S", "V1", "V1"), i = c(5, 2))[, -
 stopifnot(identical(trajectory(result, c("V1", "V1", "S", "S"), i = c(5, 2))[, -4], traj_expected[, -4]))
 stopifnot(all(abs(trajectory(result, c("V1", "V1", "S", "S"), i = c(5, 2))[, 4] - traj_expected$V1) < 1e-8))
 stopifnot(identical(trajectory(result, c("S", "V1"), i = c(5, 2)), traj_expected))
+
+## Check extracting all compartments in U
+stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
+
+## Check extracting all compartments of U in internal format
+stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
+
+## Check extracting a subset compartments of V in internal format
+traj_observed <- trajectory(result, "V1", i = c(5, 2), as.is = TRUE)
+stopifnot(identical(dim(traj_observed), c(2L, 2L)))
+stopifnot(all(abs(traj_observed[1, ] - 0.1) < 1e-8))
+stopifnot(all(abs(traj_observed[2, ] - 0.4) < 1e-8))
 
 ## Check SISe plot method
 pdf_file <- tempfile(fileext = ".pdf")
