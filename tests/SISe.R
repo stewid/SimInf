@@ -1147,12 +1147,12 @@ traj_expected <- data.frame(Node = c(2L, 5L, 2L, 5L),
 stopifnot(identical(trajectory(result, c("S", "I"), i = c(5, 2)), traj_expected))
 
 ## Check extracting all compartments in U and V as a data.frame
-traj_expected <- data.frame(Node = c(2L, 5L, 2L, 5L),
-                            Time = c(1L, 1L, 2L, 2L),
-                            S = c(1L, 4L, 1L, 4L),
-                            I = c(0L, 0L, 0L, 0L),
-                            V1 = c(0.1, 0.4, 0.1, 0.4))
-traj_observed <- trajectory(result, c("S", "I", "V1"), i = c(5, 2))
+traj_expected <- data.frame(Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
+                            Time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
+                            S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
+                            I = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+                            V1 = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0, 0.1, 0.2, 0.3, 0.4, 0.5))
+traj_observed <- trajectory(result, c("S", "I", "V1"))
 stopifnot(identical(traj_observed[, -5], traj_expected[, -5]))
 stopifnot(all(abs(traj_observed[, 5] - traj_expected$V1) < 1e-8))
 
