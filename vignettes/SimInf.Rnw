@@ -1987,7 +1987,7 @@ Swedish strategic research program eSSENCE (S.~Widgren).
 
 \appendix
 
-\section{Pseudo-code for the core simulation solve}
+\section{Pseudo-code for the core simulation solver}
 \label{sec:pseudo-code}
 
 \begin{table*}[!ht]
