@@ -640,7 +640,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
     compartments_U <- NULL
     compartments_V <- NULL
     if (!is.null(compartments)) {
-        compartments <- as.character(compartments)
+        compartments <- unique(as.character(compartments))
 
         ## Match compartments in U
         lbl <- rownames(model@S)
@@ -825,7 +825,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
             k <- rep(k, each = length(j))
             j <- rep(j, length(model@tspan))
             j <- j + k
-            mV <- matrix(as.integer(model@V[j]),
+            mV <- matrix(as.numeric(model@V[j]),
                          ncol = length(compartments_V),
                          byrow = TRUE)
             colnames(mV) <- paste0("V", seq_len(Nd(model)))[compartments_V]

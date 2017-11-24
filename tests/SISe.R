@@ -1054,7 +1054,7 @@ model <- SISe(u0      = u0,
               end_t2  = 182,
               end_t3  = 273,
               end_t4  = 365,
-              epsilon = 0.000011)
+              epsilon = 0)
 
 result <- run(model, threads = 1)
 
@@ -1081,6 +1081,25 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                                            "6", "7", "8", "9")))
 I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
+
+## Check output from trajectory method
+model@tspan <- c(1,2)
+result <- run(model, threads = 1)
+res <- tools::assertError(trajectory(result, c("S", "V1"), as.is = TRUE))
+stopifnot(length(grep("Select either continuous or discrete compartments",
+                      res[[1]]$message)) > 0)
+
+stopifnot(identical(class(trajectory(result, c("S", "V1"))$V1), "numeric"))
+stopifnot(identical(class(trajectory(result, c("V1"))$V1), "numeric"))
+
+traj_expected <- structure(list(
+    Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
+    Time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
+    S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L)),
+    .Names = c("Node", "Time", "S"),
+    row.names = c(NA, -12L),
+    class = "data.frame")
+stopifnot(identical(trajectory(result, c("S", "S")), traj_expected))
 
 ## Check SISe plot method
 pdf_file <- tempfile(fileext = ".pdf")
