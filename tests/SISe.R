@@ -1042,14 +1042,14 @@ stopifnot(length(grep(
 model <- SISe(u0      = u0,
               tspan   = seq_len(10) - 1,
               events  = NULL,
-              phi     = rep(0, nrow(u0)),
-              upsilon = 0.0357,
+              phi     = seq(0, by = 0.1, length.out = nrow(u0)),
+              upsilon = 0,
               gamma   = 0.1,
               alpha   = 1.0,
-              beta_t1 = 0.19,
-              beta_t2 = 0.085,
-              beta_t3 = 0.075,
-              beta_t4 = 0.185,
+              beta_t1 = 0,
+              beta_t2 = 0,
+              beta_t3 = 0,
+              beta_t4 = 0,
               end_t1  = 91,
               end_t2  = 182,
               end_t3  = 273,
@@ -1100,6 +1100,31 @@ traj_expected <- structure(list(
     row.names = c(NA, -12L),
     class = "data.frame")
 stopifnot(identical(trajectory(result, c("S", "S")), traj_expected))
+
+traj_expected <- structure(list(
+    Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
+    Time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
+    S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
+    V1 = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0, 0.1, 0.2, 0.3, 0.4, 0.5)),
+    .Names = c("Node", "Time", "S", "V1"),
+    row.names = c(NA, -12L),
+    class = "data.frame")
+stopifnot(identical(trajectory(result, c("S", "S", "V1", "V1"))[, -4], traj_expected[, -4]))
+stopifnot(identical(trajectory(result, c("V1", "V1", "S", "S"))[, -4], traj_expected[, -4]))
+stopifnot(all(abs(trajectory(result, c("V1", "V1", "S", "S"))[, 4] - traj_expected$V1) < 1e-8))
+
+traj_expected <- structure(list(
+    Node = c(2L, 5L, 2L, 5L),
+    Time = c(1L, 1L, 2L, 2L),
+    S = c(1L, 4L, 1L, 4L),
+    V1 = c(0.1, 0.4, 0.1, 0.4)),
+    .Names = c("Node", "Time", "S", "V1"),
+    row.names = c(NA, -4L),
+    class = "data.frame")
+stopifnot(identical(trajectory(result, c("S", "S", "V1", "V1"), i = c(5, 2))[, -4], traj_expected[, -4]))
+stopifnot(identical(trajectory(result, c("V1", "V1", "S", "S"), i = c(5, 2))[, -4], traj_expected[, -4]))
+stopifnot(all(abs(trajectory(result, c("V1", "V1", "S", "S"), i = c(5, 2))[, 4] - traj_expected$V1) < 1e-8))
+stopifnot(identical(trajectory(result, c("S", "V1"), i = c(5, 2)), traj_expected))
 
 ## Check SISe plot method
 pdf_file <- tempfile(fileext = ".pdf")

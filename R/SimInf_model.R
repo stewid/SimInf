@@ -690,6 +690,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
             stop("'i' must be integer > 0")
         if (max(i) > Nn(model))
             stop("'i' must be integer <= number of nodes")
+        i <- sort(i)
     }
 
     ## The arguments seem ok...go on and extract the trajectory
