@@ -1139,12 +1139,20 @@ stopifnot(identical(dim(traj_observed), c(2L, 2L)))
 stopifnot(all(abs(traj_observed[1, ] - 0.1) < 1e-8))
 stopifnot(all(abs(traj_observed[2, ] - 0.4) < 1e-8))
 
-## Check extracting all compartments of U as a data.frame
+## Check extracting all compartments in a subset of U as a data.frame
 traj_expected <- data.frame(Node = c(2L, 5L, 2L, 5L),
                             Time = c(1L, 1L, 2L, 2L),
                             S = c(1L, 4L, 1L, 4L),
                             I = c(0L, 0L, 0L, 0L))
 stopifnot(identical(trajectory(result, c("S", "I"), i = c(5, 2)), traj_expected))
+
+## Check extracting all compartments in U as a data.frame
+traj_expected <- data.frame(Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
+                            Time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
+                            S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
+                            I = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
+traj_observed <- trajectory(result, c("S", "I"))
+stopifnot(identical(traj_observed, traj_expected))
 
 ## Check extracting all compartments in U and V as a data.frame
 traj_expected <- data.frame(Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
