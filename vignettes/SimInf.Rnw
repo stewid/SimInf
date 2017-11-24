@@ -1,8 +1,6 @@
 %% -*- mode: LaTeX; coding: utf-8; -*-
 \documentclass[nojss]{jss}
 
-\usepackage{algorithm}
-\usepackage{algorithmic}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
@@ -722,12 +720,12 @@ node $E_1 = \{\text{\textit{enter}, \textit{internal transfer},
   \textit{exit}}\}$ and those that operate on the compartments of two
 nodes $E_2 = \{\text{\textit{external transfer}}\}$.  The parallel
 algorithm processes these two classes of events differently, see
-Algorithm~\ref{alg:core} in Appendix~\ref{sec:pseudo-code} with
-pseudo-code for the core simulation solver.  The scheduled events are
-processed when simulation time reaches the time for any of the events.
-Events that are scheduled at the same time are processed in the
-following order: \textit{exit}, \textit{enter}, \textit{internal
-  transfer} and \textit{external transfer}.
+Appendix~\ref{sec:pseudo-code} for pseudo-code of the core simulation
+solver.  The scheduled events are processed when simulation time
+reaches the time for any of the events.  Events that are scheduled at
+the same time are processed in the following order: \textit{exit},
+\textit{enter}, \textit{internal transfer} and \textit{external
+  transfer}.
 
 The S4 class \code{SimInf\_events} contains slots with data structures
 to process events (Table~\ref{table:scheduled:events}).  The slots
@@ -870,23 +868,23 @@ are described in Table~\ref{table:arguments}.
 \subsubsection{Overview of the solver}
 
 Here follows an overview of the steps in the solver to run one
-trajectory, see Algorithm~\ref{alg:core} for pseudo-code and
-\texttt{'src/core/SimInf\_solver.c'} for the source code.  The
-simulation starts with a call to the \code{run} method with the model
-as the first argument and optionally the number of threads to use and
-a seed for the random number generator.  This method will first call
-the validity method on the model to perform error-checking and then
-call a model specific \proglang{C} function to initialize the function
-pointers to the transition rate functions and the post time step
-function of the model.  Subsequently, the simulation solver is called
-to run one trajectory using the model specific data, the transition
-rate functions, and the post time step function.  If the
-\code{C\_code} slot is non-empty, the \proglang{C} code is written to
-a temporary file when the \code{run} method is called.  The temporary
-file is compiled using \code{'R CMD SHLIB'} and the resulting DLL is
-dynamically loaded.  The DLL is unloaded and the temporary files are
-removed after running the model.  This is further described in
-\S\ref{sec:extend}.
+trajectory, see Appendix~\ref{sec:pseudo-code} for pseudo-code of the
+core simulation solver and \texttt{'src/core/SimInf\_solver.c'} for
+the source code.  The simulation starts with a call to the \code{run}
+method with the model as the first argument and optionally the number
+of threads to use and a seed for the random number generator.  This
+method will first call the validity method on the model to perform
+error-checking and then call a model specific \proglang{C} function to
+initialize the function pointers to the transition rate functions and
+the post time step function of the model.  Subsequently, the
+simulation solver is called to run one trajectory using the model
+specific data, the transition rate functions, and the post time step
+function.  If the \code{C\_code} slot is non-empty, the \proglang{C}
+code is written to a temporary file when the \code{run} method is
+called.  The temporary file is compiled using \code{'R CMD SHLIB'} and
+the resulting DLL is dynamically loaded.  The DLL is unloaded and the
+temporary files are removed after running the model.  This is further
+described in \S\ref{sec:extend}.
 
 The solver simulates the trajectory in parallel if \proglang{OpenMP}
 is available.  The default is to use all available threads.  However,
@@ -1992,80 +1990,93 @@ Swedish strategic research program eSSENCE (S.~Widgren).
 \section{Pseudo-code for the core simulation solve}
 \label{sec:pseudo-code}
 
-\begin{algorithm}
-  \caption{Pseudo-code for the core simulation solver using direct
-    SSA}
-  \label{alg:core}
-  {\fontsize{10}{10}\selectfont
-  \begin{algorithmic}[1]
-    \STATE{\textit{Run trajectory:} Dispatch to model specific
-      \code{run} method.}
+\begin{table*}[!ht]
+  \small
+  \begin{tabular}{r l}
+    \toprule
+    & \textbf{Algorithm} Pseudo-code for the core simulation solver
+    using direct SSA \\
+    \midrule
 
-    \STATE{\textit{\proglang{C} interface:} Initialize model
-      transition rate functions and post time step function.}
+    \texttt{1:} & \textit{Run trajectory:} Dispatch to model specific
+    \code{run} method. \\
 
-    \renewcommand{\algorithmicdo}{\textbf{do in parallel}}
-    \FORALL{nodes i=1 \TO $\Nnodes$}
+    \texttt{2:} & \textit{\proglang{C} interface:} Initialize model
+    transition rate functions and post time step function. \\
 
-    \STATE{Compute transition rates for all transitions
-      $\omega_{i,j}$, $j=1, \ldots ,\Ntransitions$.}
+    \texttt{3:} & \textbf{for all} nodes $i=1$ \textbf{to} $\Nnodes$
+    \textbf{do in parallel} \\
 
-    \ENDFOR
+    \texttt{4:} & \quad Compute transition rates for all transitions
+    $\omega_{i,j}$, $j=1, \ldots ,\Ntransitions$. \\
 
-    \renewcommand{\algorithmicdo}{\textbf{do}}
-    \WHILE{$t < T_{\text{End}}$}
+    \texttt{5:} & \textbf{end for} \\
 
-    \renewcommand{\algorithmicdo}{\textbf{do in parallel}}
-    \FORALL{nodes i=1 \TO $\Nnodes$}
+    \texttt{6:} & \textbf{while} $t < T_{\text{End}}$ \textbf{do} \\
 
-    \renewcommand{\algorithmicdo}{\textbf{do}}
-    \LOOP
+    \texttt{7:} & \quad \textbf{for all} nodes $i=1$ \textbf{to}
+    $\Nnodes$ \textbf{do in parallel} \\
 
-    \STATE{Compute sum of transition rates $\lambda_i =
-      \sum_{j=1}^{\Ntransitions}\omega_{i,j}$ }
+    \texttt{8:} & \quad \quad \textbf{loop} \\
 
-    \STATE{Sample time to next stochastic event $\tau_i = -\log(r_1)/
-      \lambda_i$} where $r_1$ is a uniformly distributed random number
-    in the range (0, 1)
+    \texttt{9:} & \quad \quad \quad Compute sum of transition rates
+    $\lambda_i = \sum_{j=1}^{\Ntransitions}\omega_{i,j}$ \\
 
-    \IF{$\tau_i + t_i >= T_{\text{Next day}}$}
-    \STATE{Move simulated time forward $t_i = T_{\text{Next day}}$}
-    \STATE{go to \ref{E1}}
-    \ENDIF
+    \texttt{10:} & \quad \quad \quad Sample time to next stochastic
+    event $\tau_i = -\log(r_1)/ \lambda_i$ where $r_1$ \\ & \quad
+    \quad \quad is a uniformly distributed random number in the range
+    (0, 1) \\
 
-    \STATE{Move simulated time forward $t_i = t_i + \tau_i$}
+    \texttt{11:} & \quad \quad \quad \textbf{if} $\tau_i + t_i >=
+    T_{\text{Next day}}$ \textbf{then} \\
 
-    \STATE{Determine which state transition happened; by inversion,
-      find $n$ such that \\$\sum_{j=1}^{n-1} \omega_{i,j} < \lambda
-      r_2 \le \sum_{j=1}^n \omega_{i,j}$} where $r_2$ is a uniformly
-    distributed random number in the range (0, 1)
+    \texttt{12:} & \quad \quad \quad \quad Move simulated time forward
+    $t_i = T_{\text{Next day}}$ \\
 
-    \STATE{Update the compartments \code{u[, i]} using the
-      state-change vector \code{S[, n]}}
+    \texttt{13:} & \quad \quad \quad \quad go to \texttt{20} \\ % E1
 
-    \STATE{Use the dependency graph \code{G[, n]} to recalculate
-      affected transition rates $\omega_{i,j}$}
+    \texttt{14:} & \quad \quad \quad \textbf{end if} \\
 
-    \ENDLOOP
+    \texttt{15:} & \quad \quad \quad Move simulated time forward $t_i
+    = t_i + \tau_i$ \\
 
-    \STATE{Process $E_1$ events}{\label{E1}}
+    \texttt{16:} & \quad \quad \quad Determine which state transition
+    happened; by inversion, \\ & \quad \quad \quad find $n$ such that
+    $\sum_{j=1}^{n-1} \omega_{i,j} < \lambda r_2 \le \sum_{j=1}^n
+    \omega_{i,j}$ where $r_2$ \\ & \quad \quad \quad is a uniformly
+    distributed random number in the range (0, 1) \\
 
-    \ENDFOR
+    \texttt{17:} & \quad \quad \quad Update the compartments \code{u[,
+        i]} using the state-change vector \code{S[, n]} \\
 
-    \STATE{Process $E_2$ events}
+    \texttt{18:} & \quad \quad \quad Use the dependency graph
+    \code{G[, n]} to recalculate affected transition rates
+    $\omega_{i,j}$ \\
 
-    \FORALL{nodes i=1 \TO $\Nnodes$}
+    \texttt{19:} & \quad \quad \textbf{end loop} \\
 
-    \STATE{Call post time step function and update the continuous
-      state variable \code{v[ ,i]}.}
+    \texttt{20:} & \quad \quad Process $E_1$ events \\
 
-    \ENDFOR
+    \texttt{21:} & \quad \textbf{end for} \\
 
-    \STATE{$T_{\text{Next day}} = T_{\text{Next day}} + 1$}
+    \texttt{22:} & \quad Process $E_2$ events \\
 
-    \ENDWHILE
-  \end{algorithmic}}
-\end{algorithm}
+    \texttt{23:} & \quad \textbf{for all} nodes $i=1$ \textbf{to}
+    $\Nnodes$ \textbf{do in parallel} \\
+
+    \texttt{24:} & \quad \quad Call post time step function and update
+    the continuous state variable \code{v[ ,i]}. \\
+
+    \texttt{25:} & \quad \textbf{end for} \\
+
+    \texttt{26:} & \quad $T_{\text{Next day}} = T_{\text{Next day}} +
+    1$ \\
+
+    \texttt{27:} & \textbf{end while} \\
+
+    \bottomrule
+  \end{tabular}
+\end{table*}
 
 \clearpage
 
@@ -2104,7 +2115,7 @@ Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\re
   \label{table:SISe3_sp:events}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[!h]
   \begin{center}
     \includegraphics[width=0.67\linewidth]{img/exit.pdf}
   \end{center}
@@ -2125,7 +2136,7 @@ Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\re
     used when $n > 0$.  \label{fig:exit}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!h]
   \begin{center}
     \includegraphics[width=0.6\linewidth]{img/enter.pdf}
   \end{center}
@@ -2168,7 +2179,7 @@ Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\re
     used when $n > 0$.  \label{fig:external}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!h]
   \begin{center}
     \includegraphics[width=0.8\linewidth]{img/internal.pdf}
   \end{center}
