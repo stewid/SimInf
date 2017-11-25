@@ -1080,9 +1080,9 @@ model <- SIR(u0, 1:75, beta = 0.16, gamma = 0.077)
 x <- seq(from = 0.2, to = 1.8, by = 0.05)
 y <- seq(from = 0.2, to = 1.1, by = 0.05)
 pop <- run_outer(x, y, model, gamma ~ beta,
-function(model) {prevalence(run(model), cases = "I", pop = c("S", "I", "R"), type = "pop", as.is = TRUE)[75]})
+function(model) {prevalence(run(model), I~., type = "pop", as.is = TRUE)[75]})
 nop <- run_outer(x, y, model, gamma ~ beta,
-function(model) {prevalence(run(model), cases = "I", pop = c("S", "I", "R"), type = "nop", as.is = TRUE)[75]})
+function(model) {prevalence(run(model), I~., type = "nop", as.is = TRUE)[75]})
 @
 
 This illustrates that the between-node prevalence increases for
@@ -1572,9 +1572,7 @@ options(continue = "+  ")
 
 <<plot-infected-nodes>>=
 plot_nodes <- function(x) {
-  cases = c("I_1", "I_2", "I_3")
-  pop = c("S_1", "S_2", "S_3", "I_1", "I_2", "I_3")
-  wnp <- prevalence(x, cases, pop, type = "wnp", as.is = TRUE) > 0
+  wnp <- prevalence(x, I_1+I_2+I_3~., type = "wnp", as.is = TRUE) > 0
   opar <- par(mfrow = c(3, 6), mar = c(2, 0.3, 0.3, 0.3))
   on.exit(par(opar))
   for(i in seq(1, dim(wnp)[2], length.out = 18)) {
