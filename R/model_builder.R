@@ -313,7 +313,7 @@ LaTeX <- function(transitions)
       "\\end{align}")
 }
 
-##' Model parser
+##' Model parser to define new models to run in \code{SimInf}
 ##'
 ##' Describe your model in a logical way in R. \code{mparse} creates a
 ##' \code{\linkS4class{SimInf_mparse}} object with your model

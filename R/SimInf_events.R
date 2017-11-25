@@ -364,7 +364,7 @@ plot_SimInf_events <- function(x,
     graphics::mtext("Time", side = 1, line = 2)
 }
 
-##' Plot \code{\linkS4class{SimInf_events}}
+##' Display the distribution of scheduled events over time
 ##'
 ##' @param x The events data to plot.
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
@@ -408,7 +408,7 @@ setMethod("show",
           }
 )
 
-##' Summary of \code{SimInf_events}
+##' Detailed summary of a \code{SimInf_events} object
 ##'
 ##' Shows the number of scheduled events and the number of scheduled
 ##' events per event type.

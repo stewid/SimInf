@@ -43,7 +43,7 @@ have_openmp <- function()
     .Call(SimInf_have_openmp)
 }
 
-##' Scheduled events example data
+##' Example data with scheduled events for the \code{SISe3} model
 ##'
 ##' Synthetic scheduled events data to demonstrate the \code{SISe3}
 ##' model. The data contains 783773 events for 1600 nodes over 365 * 4

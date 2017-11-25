@@ -381,7 +381,7 @@ SimInf_model <- function(G,
                         C_code = C_code))
 }
 
-##' Prevalence
+##' Calculate the prevalence of disease found in a trajectory
 ##'
 ##' Calculate the proportion of individuals with disease, or the
 ##' proportion of nodes with individuals with disease, or the
@@ -1150,7 +1150,7 @@ setMethod("pairs",
           }
 )
 
-##' Plot \code{\linkS4class{SimInf_model}}
+##' Display the outcome from a simulated trajectory
 ##'
 ##' @param x The \code{model} to plot
 ##' @param legend The character vector to appear in the
@@ -1454,7 +1454,7 @@ setMethod("show",
           }
 )
 
-##' Summary of \code{SimInf_model}
+##' Detailed summary of a \code{SimInf_model} object
 ##'
 ##' @param object The \code{SimInf_model} object
 ##' @param ... Additional arguments affecting the summary produced.

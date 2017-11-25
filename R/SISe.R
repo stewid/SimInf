@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Class \code{"SISe"}
+##' Definition of the \code{SISe} model
 ##'
 ##' Class to handle the SISe \code{\link{SimInf_model}}.
 ##' @include SimInf_model.R

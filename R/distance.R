@@ -15,7 +15,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Create distance matrix
+##' Create a distance matrix between nodes for spatial models
 ##'
 ##' Calculate the euclidian distances beween coordinates for all
 ##' coordinates within the cutoff.

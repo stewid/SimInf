@@ -14,7 +14,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Class \code{"SIR"}
+##' Definition of the \code{SIR} model
 ##'
 ##' Class to handle the SIR \code{\link{SimInf_model}}.
 ##' @include SimInf_model.R
