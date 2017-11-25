@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance.R
 \name{distance_matrix}
 \alias{distance_matrix}
-\title{Create distance matrix}
+\title{Create a distance matrix between nodes for spatial models}
 \usage{
 distance_matrix(x, y, cutoff, min_dist = NULL)
 }

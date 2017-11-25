@@ -3,7 +3,7 @@
 \docType{data}
 \name{events_SISe3}
 \alias{events_SISe3}
-\title{Scheduled events example data}
+\title{Example data with scheduled events for the \code{SISe3} model}
 \format{A \code{data.frame}}
 \usage{
 data(events_SISe3)

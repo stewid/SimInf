@@ -3,7 +3,7 @@
 \docType{methods}
 \name{plot,SimInf_events-method}
 \alias{plot,SimInf_events-method}
-\title{Plot \code{\linkS4class{SimInf_events}}}
+\title{Display the distribution of scheduled events over time}
 \usage{
 \S4method{plot}{SimInf_events}(x, frame.plot = FALSE, ...)
 }
@@ -15,5 +15,5 @@
 \item{...}{Additional arguments affecting the plot}
 }
 \description{
-Plot \code{\linkS4class{SimInf_events}}
+Display the distribution of scheduled events over time
 }

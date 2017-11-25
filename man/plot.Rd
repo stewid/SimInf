@@ -10,7 +10,7 @@
 \alias{plot,SISe3-method}
 \alias{plot,SISe3_sp-method}
 \alias{plot,SISe_sp-method}
-\title{Plot \code{\linkS4class{SimInf_model}}}
+\title{Display the outcome from a simulated trajectory}
 \usage{
 \S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL, lty = NULL,
   lwd = 2, N = FALSE, compartments = NULL, spaghetti = FALSE, ...)
@@ -64,7 +64,7 @@ i.e. include all compartments in the model.}
 \item{...}{Additional arguments affecting the plot produced.}
 }
 \description{
-Plot \code{\linkS4class{SimInf_model}}
+Display the outcome from a simulated trajectory
 }
 \examples{
 ## Create an 'SIR' model with 10 nodes and initialise

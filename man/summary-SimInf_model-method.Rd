@@ -3,7 +3,7 @@
 \docType{methods}
 \name{summary,SimInf_model-method}
 \alias{summary,SimInf_model-method}
-\title{Summary of \code{SimInf_model}}
+\title{Detailed summary of a \code{SimInf_model} object}
 \usage{
 \S4method{summary}{SimInf_model}(object, ...)
 }
@@ -16,5 +16,5 @@
 None (invisible 'NULL').
 }
 \description{
-Summary of \code{SimInf_model}
+Detailed summary of a \code{SimInf_model} object
 }

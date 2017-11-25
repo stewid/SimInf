@@ -2,7 +2,7 @@
 % Please edit documentation in R/SimInf_model.R
 \name{prevalence}
 \alias{prevalence}
-\title{Prevalence}
+\title{Calculate the prevalence of disease found in a trajectory}
 \usage{
 prevalence(model = NULL, cases = NULL, pop = NULL, type = c("pop",
   "nop", "wnp"), i = NULL, as.is = FALSE)

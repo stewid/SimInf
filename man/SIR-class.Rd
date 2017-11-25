@@ -3,7 +3,7 @@
 \docType{class}
 \name{SIR-class}
 \alias{SIR-class}
-\title{Class \code{"SIR"}}
+\title{Definition of the \code{SIR} model}
 \description{
 Class to handle the SIR \code{\link{SimInf_model}}.
 }

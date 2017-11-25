@@ -2,7 +2,7 @@
 % Please edit documentation in R/model_builder.R
 \name{mparse}
 \alias{mparse}
-\title{Model parser}
+\title{Model parser to define new models to run in \code{SimInf}}
 \usage{
 mparse(transitions = NULL, compartments = NULL, ...)
 }
