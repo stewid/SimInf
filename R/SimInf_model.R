@@ -637,6 +637,23 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 
     ## Split the 'compartments' argument to match the compartments in
     ## U and V.
+    if (is(compartments, "formula")) {
+        j <- attr(stats::terms(compartments, allowDotAsName = TRUE), "term.labels")
+        j <- j[attr(stats::terms(compartments, allowDotAsName = TRUE), "order") == 1]
+        if (length(j) < 1)
+            stop("Invalid formula specification of 'compartments'")
+        compartments <- unlist(sapply(j, function(jj) {
+            ## Replace '.' with all compartments (discrete and
+            ## continuous) in the model.
+            if (identical(jj, ".")) {
+                jj <- rownames(model@S)
+                if (Nd(model) > 0)
+                    jj <- c(jj, paste0("V", seq_len(Nd(model))))
+            }
+            jj
+        }))
+    }
+
     compartments_U <- NULL
     compartments_V <- NULL
     if (!is.null(compartments)) {

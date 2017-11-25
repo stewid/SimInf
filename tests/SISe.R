@@ -1164,6 +1164,16 @@ traj_observed <- trajectory(result, c("S", "I", "V1"))
 stopifnot(identical(traj_observed[, -5], traj_expected[, -5]))
 stopifnot(all(abs(traj_observed[, 5] - traj_expected$V1) < 1e-8))
 
+## Use formula notation
+traj_observed <- trajectory(result, ~.)
+stopifnot(identical(traj_observed[, -5], traj_expected[, -5]))
+stopifnot(all(abs(traj_observed[, 5] - traj_expected$V1) < 1e-8))
+
+## Specify invalid formula
+res <- tools::assertError(trajectory(result, ~1))
+stopifnot(length(grep("Invalid formula specification of 'compartments'",
+                      res[[1]]$message)) > 0)
+
 ## Check SISe plot method
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
