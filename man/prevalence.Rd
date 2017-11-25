@@ -2,26 +2,33 @@
 % Please edit documentation in R/SimInf_model.R
 \name{prevalence}
 \alias{prevalence}
-\title{Calculate the prevalence of disease found in a trajectory}
+\title{Calculate prevalence from data in a trajectory}
 \usage{
-prevalence(model = NULL, cases = NULL, pop = NULL, type = c("pop",
-  "nop", "wnp"), i = NULL, as.is = FALSE)
+prevalence(model, cases, type = c("pop", "nop", "wnp"), i = NULL,
+  as.is = FALSE)
 }
 \arguments{
-\item{model}{The \code{model} to calculate the prevalence from.}
+\item{model}{The \code{model} with trajectory data to calculate
+the prevalence from.}
 
-\item{cases}{The compartments in the population with a disease or
-a condition.}
+\item{cases}{A formula that specify the compartments in the
+population with a disease or a condition (numerator), and the
+compartments that define the entire population of interest
+(denominator). The left hand side of the formula defines the
+cases, and the right hand side defines the population, for
+example, \code{'I~S+I+R'} in a \sQuote{SIR} model (see
+\sQuote{Examples}). The \code{'.'}  (dot) is expanded to all
+compartments, for example, \code{I~.}  is expanded to
+\code{I~S+I+R} in a \sQuote{SIR} model (see
+\sQuote{Examples}).}
 
-\item{pop}{The compartments that define the entire population of
-interest.}
-
-\item{type}{The type of prevalence measure to calculate:
-\code{'pop'} (default) calcalates the proportion of the
-individuals in the population that have disease (model
-specific) at each time point in \code{tspan}, \code{'nop'}
-calculates the node prevalence, and \code{'wnp'} calculates
-the within-node prevalence.}
+\item{type}{The type of prevalence measure to calculate at each
+time point in \code{tspan}: \code{'pop'} (population
+prevalence) calculates the proportion of the individuals
+(cases) in the population, \code{'nop'} (node prevalence)
+calculates the proportion of nodes with at least one case, and
+\code{'wnp'} (within-node prevalence) calculates the
+proportion of cases within each node. Default is \code{'pop'}.}
 
 \item{i}{Indices specifying the nodes to include in the
 calculation of the prevalence. Default is \code{NULL}, which
@@ -33,11 +40,36 @@ prevalence. Using \code{as.is = TRUE} returns the result as a
 matrix, which is the internal format.}
 }
 \value{
-Vector when type equals \code{'pop'} or \code{'nop'} but
-    matrix when type equals \code{'wnp'}.
+A \code{data.frame} if \code{as.is = FALSE}, else a
+    matrix.
 }
 \description{
-Calculate the proportion of individuals with disease, or the
-proportion of nodes with individuals with disease, or the
-proportion of individuals with disease in each node.
+Calculate the proportion of individuals with disease in the
+population, or the proportion of nodes with at least one diseased
+individual, or the proportion of individuals with disease in each
+node.
+}
+\examples{
+## Create an 'SIR' model with 6 nodes and initialize
+## it to run over 10 days.
+u0 <- data.frame(S = 100:105, I = c(0, 1, 0, 2, 0, 3), R = rep(0, 6))
+model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+
+## Run the model to generate a single stochastic trajectory.
+result <- run(model, threads = 1, seed = 22)
+
+## Determine the proportion of infected individuals (cases)
+## in the population at the time-points in 'tspan'.
+prevalence(result, I~S+I+R)
+
+## Identical result is obtained with the shorthand 'I~.'
+prevalence(result, I~.)
+
+## Determine the proportion of nodes with infected individuals at
+## the time-points in 'tspan'.
+prevalence(result, I~S+I+R, type = "nop")
+
+## Determine the proportion of infected individuals in each node
+## at the time-points in 'tspan'.
+prevalence(result, I~S+I+R, type = "wnp")
 }

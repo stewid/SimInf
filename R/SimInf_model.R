@@ -381,22 +381,31 @@ SimInf_model <- function(G,
                         C_code = C_code))
 }
 
-##' Calculate the prevalence of disease found in a trajectory
+##' Calculate prevalence from data in a trajectory
 ##'
-##' Calculate the proportion of individuals with disease, or the
-##' proportion of nodes with individuals with disease, or the
-##' proportion of individuals with disease in each node.
-##' @param model The \code{model} to calculate the prevalence from.
-##' @param cases The compartments in the population with a disease or
-##'     a condition.
-##' @param pop The compartments that define the entire population of
-##'     interest.
-##' @param type The type of prevalence measure to calculate:
-##'     \code{'pop'} (default) calcalates the proportion of the
-##'     individuals in the population that have disease (model
-##'     specific) at each time point in \code{tspan}, \code{'nop'}
-##'     calculates the node prevalence, and \code{'wnp'} calculates
-##'     the within-node prevalence.
+##' Calculate the proportion of individuals with disease in the
+##' population, or the proportion of nodes with at least one diseased
+##' individual, or the proportion of individuals with disease in each
+##' node.
+##' @param model The \code{model} with trajectory data to calculate
+##'     the prevalence from.
+##' @param cases A formula that specify the compartments in the
+##'     population with a disease or a condition (numerator), and the
+##'     compartments that define the entire population of interest
+##'     (denominator). The left hand side of the formula defines the
+##'     cases, and the right hand side defines the population, for
+##'     example, \code{'I~S+I+R'} in a \sQuote{SIR} model (see
+##'     \sQuote{Examples}). The \code{'.'}  (dot) is expanded to all
+##'     compartments, for example, \code{I~.}  is expanded to
+##'     \code{I~S+I+R} in a \sQuote{SIR} model (see
+##'     \sQuote{Examples}).
+##' @param type The type of prevalence measure to calculate at each
+##'     time point in \code{tspan}: \code{'pop'} (population
+##'     prevalence) calculates the proportion of the individuals
+##'     (cases) in the population, \code{'nop'} (node prevalence)
+##'     calculates the proportion of nodes with at least one case, and
+##'     \code{'wnp'} (within-node prevalence) calculates the
+##'     proportion of cases within each node. Default is \code{'pop'}.
 ##' @param i Indices specifying the nodes to include in the
 ##'     calculation of the prevalence. Default is \code{NULL}, which
 ##'     includes all nodes.
@@ -404,9 +413,32 @@ SimInf_model <- function(G,
 ##'     \code{data.frame} with one row per time-step with the
 ##'     prevalence. Using \code{as.is = TRUE} returns the result as a
 ##'     matrix, which is the internal format.
-##' @return Vector when type equals \code{'pop'} or \code{'nop'} but
-##'     matrix when type equals \code{'wnp'}.
+##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
+##'     matrix.
 ##' @export
+##' @examples
+##' ## Create an 'SIR' model with 6 nodes and initialize
+##' ## it to run over 10 days.
+##' u0 <- data.frame(S = 100:105, I = c(0, 1, 0, 2, 0, 3), R = rep(0, 6))
+##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##'
+##' ## Run the model to generate a single stochastic trajectory.
+##' result <- run(model, threads = 1, seed = 22)
+##'
+##' ## Determine the proportion of infected individuals (cases)
+##' ## in the population at the time-points in 'tspan'.
+##' prevalence(result, I~S+I+R)
+##'
+##' ## Identical result is obtained with the shorthand 'I~.'
+##' prevalence(result, I~.)
+##'
+##' ## Determine the proportion of nodes with infected individuals at
+##' ## the time-points in 'tspan'.
+##' prevalence(result, I~S+I+R, type = "nop")
+##'
+##' ## Determine the proportion of infected individuals in each node
+##' ## at the time-points in 'tspan'.
+##' prevalence(result, I~S+I+R, type = "wnp")
 prevalence <- function(model,
                        cases,
                        type = c("pop", "nop", "wnp"),
