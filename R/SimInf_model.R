@@ -234,7 +234,7 @@ setClass("SimInf_model",
 ##'     \code{length(tspan)}).  \code{V[, j]} contains the real-valued
 ##'     state of the system at \code{tspan[j]}.
 ##' @param v0 The initial continuous state vector in every node.
-##'     (\code{dim(ldata)[1]} \eqn{N_N \times}). The continuous state
+##'     (\code{dim(ldata)[1]} \eqn{\times N_N}). The continuous state
 ##'     vector is updated by the specific model during the simulation
 ##'     in the post time step function.
 ##' @param E Sparse matrix to handle scheduled events, see
@@ -555,31 +555,49 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 
 ##' Extract data from a simulated trajectory
 ##'
-##' Extract the number of individuals in each compartment the number
-##' of individuals in each compartment in every node after running a
-##' trajectory with \code{\link{run}}.
+##' Extract the number of individuals in each compartment in every
+##' node after generating a single stochastic trajectory with
+##' \code{\link{run}}.
 ##'
-##' Description of the layout of the matrix that is returned if
-##' \code{as.is = TRUE}. \code{U[, j]} contains the number of
-##' individuals in each compartment at \code{tspan[j]}. \code{U[1:Nc,
-##' j]} contains the number of individuals in node 1 at
-##' \code{tspan[j]}. \code{U[(Nc + 1):(2 * Nc), j]} contains the
-##' number of individuals in node 2 at \code{tspan[j]} etc, where
-##' \code{Nc} is the number of compartments in the model. The
-##' dimension of the matrix is \eqn{N_n N_c \times}
-##' \code{length(tspan)} where \eqn{N_n} is the number of nodes.
+##' @section Internal format of the discrete state variables:
+##'     Description of the layout of the internal matrix (\code{U})
+##'     that is returned if \code{as.is = TRUE}. \code{U[, j]}
+##'     contains the number of individuals in each compartment at
+##'     \code{tspan[j]}. \code{U[1:Nc, j]} contains the number of
+##'     individuals in node 1 at \code{tspan[j]}. \code{U[(Nc + 1):(2
+##'     * Nc), j]} contains the number of individuals in node 2 at
+##'     \code{tspan[j]} etc, where \code{Nc} is the number of
+##'     compartments in the model. The dimension of the matrix is
+##'     \eqn{N_n N_c \times} \code{length(tspan)} where \eqn{N_n} is
+##'     the number of nodes.
+##' @section Internal format of the continuous state variables:
+##'     Description of the layout of the matrix that is returned if
+##'     \code{as.is = TRUE}. The result matrix for the real-valued
+##'     continuous state. \code{V[, j]} contains the real-valued state
+##'     of the system at \code{tspan[j]}. The dimension of the matrix
+##'     is \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
+##'     \code{length(tspan)}.
 ##' @param model the \code{model} to extract the result from.
-##' @param compartments specify the compartments to extract the number
-##'     of individuals from. Default (\code{compartments=NULL}) is to
-##'     extract data from all compartments in the model.
+##' @param compartments specify the names of the compartments to
+##'     extract data from. The compartments can be specified as a
+##'     character vector e.g. \code{compartments = c('S', 'I', 'R')},
+##'     or as a formula e.g. \code{compartments = ~S+I+R} (see
+##'     \sQuote{Examples}). Default (\code{compartments=NULL}) is to
+##'     extract the number of individuals in each compartment i.e. the
+##'     data from all discrete state compartments in the model. In
+##'     models that also have continuous state variables e.g. the
+##'     \code{SISe} model, use \code{~.} instead of \code{NULL} to
+##'     also include these.
 ##' @param i indices specifying the nodes to include when extracting
-##'     data. Default is \code{NULL}, which includes all nodes.
+##'     data. Default (\code{i = NULL}) is to extract data from all
+##'     nodes.
 ##' @param as.is the default (\code{as.is = FALSE}) is to generate a
 ##'     \code{data.frame} with one row per node and time-step with the
 ##'     number of individuals in each compartment. Using \code{as.is =
 ##'     TRUE} returns the result as a matrix, which is the internal
 ##'     format (see \sQuote{Details}).
-##' @return The number of individuals in each compartment
+##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
+##'     matrix.
 ##' @export
 ##' @importFrom methods is
 ##' @examples
@@ -588,19 +606,19 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##' u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
-##' ## Run the model
+##' ## Run the model to generate a single stochastic trajectory.
 ##' result <- run(model, threads = 1, seed = 22)
 ##'
 ##' ## Extract the number of individuals in each compartment at the
-##' ## time-points in tspan.
+##' ## time-points in 'tspan'.
 ##' trajectory(result)
 ##'
 ##' ## Extract the number of recovered individuals in the first node
-##' ## after each time step in the simulation.
+##' ## at the time-points in 'tspan'.
 ##' trajectory(result, compartments = "R", i = 1)
 ##'
 ##' ## Extract the number of recovered individuals in the first and
-##' ## third node after each time step in the simulation.
+##' ## third node at the time-points in 'tspan'.
 ##' trajectory(result, compartments = "R", i = c(1, 3))
 ##'
 ##' ## Create an 'SISe' model with 6 nodes and initialize
@@ -615,7 +633,7 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##' result <- run(model, threads = 1, seed = 7)
 ##'
 ##' ## Extract the continuous state variable 'V1' in each node at the
-##' ## time-points in tspan. In the 'SISe' model, 'V1' represents the
+##' ## time-points in 'tspan'. In the 'SISe' model, 'V1' represents the
 ##' ## environmental infectious pressure 'phi'.
 ##' trajectory(result, "V1")
 trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
