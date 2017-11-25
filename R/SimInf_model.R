@@ -407,31 +407,39 @@ SimInf_model <- function(G,
 ##' @return Vector when type equals \code{'pop'} or \code{'nop'} but
 ##'     matrix when type equals \code{'wnp'}.
 ##' @export
-prevalence <- function(model = NULL,
-                       cases = NULL,
-                       pop = NULL,
+prevalence <- function(model,
+                       cases,
                        type = c("pop", "nop", "wnp"),
                        i = NULL,
                        as.is = FALSE)
 {
     ## Check model argument
-    if (is.null(model))
+    if (missing(model))
         stop("Missing 'model' argument")
     if (!is(model, "SimInf_model"))
         stop("'model' argument is not a 'SimInf_model'")
 
     ## Check 'cases' argument
-    cases <- as.character(cases)
-    if (!length(cases))
-        stop("'cases' is empty")
-    j <- !(cases %in% rownames(model@S))
-    if (any(j)) {
-        stop("Non-existing compartment(s) in model: ",
-             paste0("'", cases[j], "'", collapse = ", "))
-    }
+    if (missing(cases))
+        stop("Missing 'cases' argument")
+    if (!is(cases, "formula"))
+        stop("'cases' argument is not a 'formula'")
 
-    ## Check 'pop' argument
-    pop <- as.character(pop)
+    ## Check 'type' argument
+    type <- match.arg(type)
+
+    ## Determine compartments for population
+    j <- attr(stats::terms(cases, allowDotAsName = TRUE), "term.labels")
+    j <- j[attr(stats::terms(cases, allowDotAsName = TRUE), "order") == 1]
+    if (length(j) < 1)
+        stop("Invalid formula specification of population")
+    pop <- unlist(sapply(j, function(jj) {
+        ## Replace '.' with all discrete compartments in the model.
+        if (identical(jj, "."))
+            jj <- rownames(model@S)
+        jj
+    }))
+    pop <- unique(as.character(pop))
     if (!length(pop))
         stop("'pop' is empty")
     j <- !(pop %in% rownames(model@S))
@@ -440,20 +448,28 @@ prevalence <- function(model = NULL,
              paste0("'", pop[j], "'", collapse = ", "))
     }
 
-    ## Check 'i' argument
-    if (!is.null(i)) {
-        if (!is.numeric(i))
-            stop("'i' must be integer")
-        if (!all(is_wholenumber(i)))
-            stop("'i' must be integer")
-        if (min(i) < 1)
-            stop("'i' must be integer > 0")
-        if (max(i) > Nn(model))
-            stop("'i' must be integer <= number of nodes")
+    ## Determine compartments for cases
+    j <- attr(stats::terms(cases, allowDotAsName = TRUE), "response")
+    if (j < 1)
+        stop("Invalid formula specification of 'cases'")
+    cases <- attr(stats::terms(cases, allowDotAsName = TRUE), "variables")[-1]
+    j <- as.character(cases[j])
+    j <- unlist(strsplit(j, "+", fixed = TRUE))
+    j <- sub("^\\s", "", sub("\\s$", "", j))
+    cases <- unlist(sapply(j, function(jj) {
+        ## Replace '.' with all discrete compartments in the model.
+        if (identical(jj, "."))
+            jj <- rownames(model@S)
+        jj
+    }))
+    cases <- unique(as.character(cases))
+    if (!length(cases))
+        stop("'cases' is empty")
+    j <- !(cases %in% rownames(model@S))
+    if (any(j)) {
+        stop("Non-existing compartment(s) in model: ",
+             paste0("'", cases[j], "'", collapse = ", "))
     }
-
-    ## Check 'type' argument
-    type <- match.arg(type)
 
     ## Sum all individuals in 'cases' compartments in a matrix with
     ## one row per node X length(tspan)
