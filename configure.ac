@@ -87,8 +87,21 @@ if test [ -n "$gsl_lib_path" ] ; then
     LIBS="-L${gsl_lib_path} ${LIBS}"
 fi
 
-AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [have_gsl=no])
-AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [have_gsl=no])
+# Check for gsl
+have_gsl=no
+AC_PATH_PROG([GSL_CONFIG], [gsl-config])
+if test "x${GSL_CONFIG}" != x; then
+    # Check for gsl using gsl-config
+    GSL_CFLAGS=`${GSL_CONFIG} --cflags`
+    GSL_LIBS=`${GSL_CONFIG} --libs`
+    have_gsl=yes
+else
+    # Check for gsl using autoconf macros
+    # https://www.gnu.org/software/gsl/manual/html_node/Autoconf-Macros.html
+    AC_CHECK_LIB([m],[cos])
+    AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [have_gsl=no])
+    AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [have_gsl=no])
+fi
 
 if test "x${have_gsl}" = xno; then AC_MSG_FAILURE([
   ---------------------------------------------
@@ -96,7 +109,7 @@ if test "x${have_gsl}" = xno; then AC_MSG_FAILURE([
    required to build SimInf was not found.
 
    Please install:
-     libgsl0-dev (package on e.g. Debian and Ubuntu)
+        libgsl0-dev (package on e.g. Debian and Ubuntu)
      gsl-devel   (package on e.g. Fedora, CentOS and RHEL)
      gsl         (Homebrew package on OS X)
    and try again.
@@ -113,11 +126,22 @@ fi
 # List all model files to compile
 MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
-AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Imisc -Imodels ${OPENMP_CFLAGS} ${CPPFLAGS}"])
+AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS}"])
 AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
-AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${LIBS}"])
+AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"])
 AC_SUBST(MODELS_OBJ)
 
 AC_CONFIG_FILES([src/Makevars])
+
+echo "
+  ---- Results for the SimInf package configure ----
+
+    PKG_CPPFLAGS..............: -I. -Icore -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS}
+    PKG_LIBS..................: ${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}
+    PKG_CFLAGS................: ${OPENMP_CFLAGS}
+    Have support for OpenMP...: ${ac_pkg_openmp}
+
+  --------------------------------------------------
+"
 
 AC_OUTPUT
