@@ -41,7 +41,7 @@ is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 ##'     entry indicate the compartments to sample individuals from.
 ##'     For the \emph{enter} event, all individuals enter first
 ##'     non-zero compartment. Sparse matrix of object class
-##'     \code{"\linkS4class{dgCMatrix}"}.
+##'     \code{\linkS4class{dgCMatrix}}.
 ##'   }
 ##'   \item{N}{
 ##'     Each row represents one compartment in the model and the
@@ -157,7 +157,7 @@ setClass("SimInf_events",
          }
 )
 
-##' Create a \code{"\linkS4class{SimInf_events}"} object
+##' Create a \code{\linkS4class{SimInf_events}} object
 ##'
 ##' The argument events must be a \code{data.frame} with the following
 ##' columns:
@@ -206,10 +206,10 @@ setClass("SimInf_events",
 ##' }
 ##'
 ##' @param E Sparse matrix of object class
-##'     \code{"\linkS4class{dgCMatrix}"} that selects the states to
+##'     \code{\linkS4class{dgCMatrix}} that selects the states to
 ##'     include for sampling in an event.
 ##' @param N Sparse matrix of object class
-##'     \code{"\linkS4class{dgCMatrix}"} that determines how to shift
+##'     \code{\linkS4class{dgCMatrix}} that determines how to shift
 ##'     the states in an \code{INTERNAL_TRANSFER_EVENT}.
 ##' @param events A \code{data.frame} with events.
 ##' @param t0 If \code{events$time} is a \code{Date} vector, then

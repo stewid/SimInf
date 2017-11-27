@@ -16,16 +16,17 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Definition of the \code{SISe3} model
+##' Definition of the \sQuote{SISe3} model
 ##'
 ##' Class to handle the SISe3 \code{\link{SimInf_model}} model.
 ##' @include SimInf_model.R
 ##' @export
 setClass("SISe3", contains = c("SimInf_model"))
 
-##' Create a SISe3 model
+##' Create a \sQuote{SISe3} model
 ##'
-##' Create a SISe3 model to be used by the simulation framework.
+##' Create a \sQuote{SISe3} model to be used by the simulation
+##' framework.
 ##'
 ##'
 ##' The argument \code{u0} must be a \code{data.frame} with one row for

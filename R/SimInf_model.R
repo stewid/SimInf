@@ -27,14 +27,14 @@
 ##'     A non-zero entry in element \code{G[i, i]} indicates that transition
 ##'     rate \code{i} needs to be recalculated if the state transition
 ##'     \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt}) of object class
-##'     \code{"\linkS4class{dgCMatrix}"}.
+##'     \code{\linkS4class{dgCMatrix}}.
 ##'   }
 ##'   \item{S}{
 ##'     Each column corresponds to a state transition, and execution
 ##'     of state transition \code{j} amounts to adding the \code{S[,
 ##'     j]} column to the state vector \code{u[, i]} of node \emph{i}
 ##'     where the transition occurred. Sparse matrix (\eqn{Nc \times
-##'     Nt}) of object class \code{"\linkS4class{dgCMatrix}"}.
+##'     Nt}) of object class \code{\linkS4class{dgCMatrix}}.
 ##'   }
 ##'   \item{U}{
 ##'     The result matrix with the number of individuals in each
@@ -90,7 +90,7 @@
 ##'      Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
 ##'   }
 ##'   \item{events}{
-##'     Scheduled events \code{"\linkS4class{SimInf_events}"}
+##'     Scheduled events \code{\linkS4class{SimInf_events}}
 ##'   }
 ##'   \item{C_code}{
 ##'     Character vector with optional model C code. If non-empty, the
@@ -204,12 +204,12 @@ setClass("SimInf_model",
 ##'     A non-zero entry in element \code{G[i, i]} indicates that
 ##'     transition rate \code{i} needs to be recalculated if the state
 ##'     transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
-##'     of object class \code{"\linkS4class{dgCMatrix}"}.
+##'     of object class \code{\linkS4class{dgCMatrix}}.
 ##' @param S Each column corresponds to a transition, and execution of
 ##'     state transition \code{j} amounts to adding the \code{S[, j]}
 ##'     to the state vector of the node where the state transition
 ##'     occurred.  Sparse matrix (\eqn{Nc \times Nt}) of object class
-##'     \code{"\linkS4class{dgCMatrix}"}.
+##'     \code{\linkS4class{dgCMatrix}}.
 ##' @param U The result matrix with the number of individuals in each
 ##'     disease state in every node (\eqn{N_n N_c \times}
 ##'     \code{length(tspan)}).  \code{U[, j]} contains the number of
@@ -389,23 +389,23 @@ SimInf_model <- function(G,
 ##' node.
 ##' @param model The \code{model} with trajectory data to calculate
 ##'     the prevalence from.
-##' @param cases A formula that specify the compartments in the
-##'     population with a disease or a condition (numerator), and the
+##' @param cases A formula that specify the compartments that define
+##'     the cases with a disease or a condition (numerator), and the
 ##'     compartments that define the entire population of interest
 ##'     (denominator). The left hand side of the formula defines the
 ##'     cases, and the right hand side defines the population, for
-##'     example, \code{'I~S+I+R'} in a \sQuote{SIR} model (see
-##'     \sQuote{Examples}). The \code{'.'}  (dot) is expanded to all
+##'     example, \code{I~S+I+R} in a \sQuote{SIR} model (see
+##'     \sQuote{Examples}). The \code{.}  (dot) is expanded to all
 ##'     compartments, for example, \code{I~.}  is expanded to
 ##'     \code{I~S+I+R} in a \sQuote{SIR} model (see
 ##'     \sQuote{Examples}).
 ##' @param type The type of prevalence measure to calculate at each
-##'     time point in \code{tspan}: \code{'pop'} (population
-##'     prevalence) calculates the proportion of the individuals
-##'     (cases) in the population, \code{'nop'} (node prevalence)
-##'     calculates the proportion of nodes with at least one case, and
-##'     \code{'wnp'} (within-node prevalence) calculates the
-##'     proportion of cases within each node. Default is \code{'pop'}.
+##'     time point in \code{tspan}: \code{pop} (population prevalence)
+##'     calculates the proportion of the individuals (cases) in the
+##'     population, \code{nop} (node prevalence) calculates the
+##'     proportion of nodes with at least one case, and \code{wnp}
+##'     (within-node prevalence) calculates the proportion of cases
+##'     within each node. Default is \code{pop}.
 ##' @param i Indices specifying the nodes to include in the
 ##'     calculation of the prevalence. Default is \code{NULL}, which
 ##'     includes all nodes.
