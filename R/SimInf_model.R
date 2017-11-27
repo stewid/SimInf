@@ -1434,7 +1434,9 @@ show_V <- function(object) {
 
 summary_U <- function(object)
 {
-    cat("Discrete state variables (U):\n")
+    cat("Discrete state variables\n")
+    cat("------------------------\n")
+
     d <- dim(object@U)
     if (identical(d, c(0L, 0L)))
         d <- dim(object@U_sparse)
@@ -1456,7 +1458,9 @@ summary_U <- function(object)
 
 summary_V <- function(object)
 {
-    cat("Continuous state variables (V):\n")
+    cat("Continuous state variables\n")
+    cat("--------------------------\n")
+
     if (Nd(object) > 0) {
         d <- dim(object@V)
         if (identical(d, c(0L, 0L)))
@@ -1484,13 +1488,67 @@ summary_V <- function(object)
 summary_gdata <- function(object)
 {
     ## Global model parameters
-    cat("Global model parameters (gdata):\n")
+    cat("Global model parameters\n")
+    cat("-----------------------\n")
+
     gdata <- data.frame(Parameter = names(object@gdata), Value = object@gdata)
     if (nrow(gdata) > 0) {
         print.data.frame(gdata, right = FALSE, row.names = FALSE)
     } else {
         cat(" - None\n")
     }
+}
+
+summary_events <- function(object)
+{
+    cat("Scheduled events\n")
+    cat("----------------\n")
+
+    ## Summarise exit events
+    i <- which(object@events@event == 0L)
+    cat(sprintf(" Exit: %i\n", length(i)))
+
+    ## Summarise enter events
+    i <- which(object@events@event == 1L)
+    cat(sprintf(" Enter: %i\n", length(i)))
+
+    ## Summarise internal transfer events
+    i <- which(object@events@event == 2L)
+    cat(sprintf(" Internal transfer: %i\n", length(i)))
+
+    ## Summarise external transfer events
+    i <- which(object@events@event == 3L)
+    cat(sprintf(" External transfer: %i\n", length(i)))
+    if (length(i) > 0) {
+        ## First add nodes with no in/out-degree.
+        id <- rep(0, Nn(object) - length(unique(object@events@dest[i])))
+        od <- rep(0, Nn(object) - length(unique(object@events@node[i])))
+
+        ## Then add in/out-degree for nodes with ingoing and
+        ## outgoing movements.
+        id <- c(id, tapply(object@events@node[i], object@events@dest[i],
+                           function(x) {length(unique(x))}))
+        od <- c(od, tapply(object@events@dest[i], object@events@node[i],
+                           function(x) {length(unique(x))}))
+
+        qq_id <- stats::quantile(id)
+        qq_id <- c(qq_id[1L:3L], mean(id), qq_id[4L:5L])
+        qq_od <- stats::quantile(od)
+        qq_od <- c(qq_od[1L:3L], mean(od), qq_od[4L:5L])
+        qq <- rbind(qq_id, qq_od)
+        colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                          "Mean", "3rd Qu.", "Max.")
+        rownames(qq) <- c("  Indegree:", "  Outdegree:")
+        print.table(qq, digits = 3)
+    }
+}
+
+summary_transitions <- function(object)
+{
+    cat("Transitions\n")
+    cat("-----------\n")
+
+    cat(paste0(" ", rownames(object@G), collapse = "\n"), "\n")
 }
 
 ##' Brief summary of \code{SimInf_model}
@@ -1554,13 +1612,11 @@ setMethod("summary",
               ## Nodes
               cat(sprintf("Number of nodes: %i\n\n", Nn(object)))
 
-              ## Transitions
-              cat("Transitions:\n")
-              cat(paste0(" ", rownames(object@G), collapse = "\n"), "\n\n")
-
+              summary_transitions(object)
+              cat("\n")
               summary_gdata(object)
               cat("\n")
-              summary(object@events)
+              summary_events(object)
               cat("\n")
               summary_V(object)
               cat("\n")
