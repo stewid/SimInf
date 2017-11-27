@@ -11,24 +11,24 @@ prevalence(model, cases, type = c("pop", "nop", "wnp"), i = NULL,
 \item{model}{The \code{model} with trajectory data to calculate
 the prevalence from.}
 
-\item{cases}{A formula that specify the compartments in the
-population with a disease or a condition (numerator), and the
+\item{cases}{A formula that specify the compartments that define
+the cases with a disease or a condition (numerator), and the
 compartments that define the entire population of interest
 (denominator). The left hand side of the formula defines the
 cases, and the right hand side defines the population, for
-example, \code{'I~S+I+R'} in a \sQuote{SIR} model (see
-\sQuote{Examples}). The \code{'.'}  (dot) is expanded to all
+example, \code{I~S+I+R} in a \sQuote{SIR} model (see
+\sQuote{Examples}). The \code{.}  (dot) is expanded to all
 compartments, for example, \code{I~.}  is expanded to
 \code{I~S+I+R} in a \sQuote{SIR} model (see
 \sQuote{Examples}).}
 
 \item{type}{The type of prevalence measure to calculate at each
-time point in \code{tspan}: \code{'pop'} (population
-prevalence) calculates the proportion of the individuals
-(cases) in the population, \code{'nop'} (node prevalence)
-calculates the proportion of nodes with at least one case, and
-\code{'wnp'} (within-node prevalence) calculates the
-proportion of cases within each node. Default is \code{'pop'}.}
+time point in \code{tspan}: \code{pop} (population prevalence)
+calculates the proportion of the individuals (cases) in the
+population, \code{nop} (node prevalence) calculates the
+proportion of nodes with at least one case, and \code{wnp}
+(within-node prevalence) calculates the proportion of cases
+within each node. Default is \code{pop}.}
 
 \item{i}{Indices specifying the nodes to include in the
 calculation of the prevalence. Default is \code{NULL}, which

@@ -2,17 +2,17 @@
 % Please edit documentation in R/SimInf_events.R
 \name{SimInf_events}
 \alias{SimInf_events}
-\title{Create a \code{"\linkS4class{SimInf_events}"} object}
+\title{Create a \code{\linkS4class{SimInf_events}} object}
 \usage{
 SimInf_events(E = NULL, N = NULL, events = NULL, t0 = NULL)
 }
 \arguments{
 \item{E}{Sparse matrix of object class
-\code{"\linkS4class{dgCMatrix}"} that selects the states to
+\code{\linkS4class{dgCMatrix}} that selects the states to
 include for sampling in an event.}
 
 \item{N}{Sparse matrix of object class
-\code{"\linkS4class{dgCMatrix}"} that determines how to shift
+\code{\linkS4class{dgCMatrix}} that determines how to shift
 the states in an \code{INTERNAL_TRANSFER_EVENT}.}
 
 \item{events}{A \code{data.frame} with events.}

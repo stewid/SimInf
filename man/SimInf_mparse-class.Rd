@@ -3,7 +3,7 @@
 \docType{class}
 \name{SimInf_mparse-class}
 \alias{SimInf_mparse-class}
-\title{Class \code{"SimInf_mparse"}}
+\title{Class \code{SimInf_mparse}}
 \description{
 Class to handle the SimInf mparse data
 }
@@ -22,7 +22,7 @@ Class to handle the SimInf mparse data
     non-zero entry in element \code{G[i, i]} indicates that
     transition rate \code{i} needs to be recalculated if the state
     transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
-    of object class \code{"\linkS4class{dgCMatrix}"}, where
+    of object class \code{\linkS4class{dgCMatrix}}, where
     \eqn{Nt} is the number of transitions.
   }
   \item{S}{
@@ -30,7 +30,7 @@ Class to handle the SimInf mparse data
     of state transition \code{j} amounts to adding the \code{S[,
     j]} column to the state vector \code{u[, i]} of node \emph{i}
     where the transition occurred. Sparse matrix (\eqn{Nc \times
-    Nt}) of object class \code{"\linkS4class{dgCMatrix}"}, where
+    Nt}) of object class \code{\linkS4class{dgCMatrix}}, where
     \eqn{Nc} is the number of transitions and \eqn{Nt} is the
     number of transitions.
   }

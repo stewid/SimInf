@@ -2,7 +2,7 @@
 % Please edit documentation in R/SISe3.R
 \name{SISe3}
 \alias{SISe3}
-\title{Create a SISe3 model}
+\title{Create a \sQuote{SISe3} model}
 \usage{
 SISe3(u0, tspan, events = NULL, phi = NULL, upsilon_1 = NULL,
   upsilon_2 = NULL, upsilon_3 = NULL, gamma_1 = NULL, gamma_2 = NULL,
@@ -79,7 +79,8 @@ in interval 4.}
 \code{SISe3}
 }
 \description{
-Create a SISe3 model to be used by the simulation framework.
+Create a \sQuote{SISe3} model to be used by the simulation
+framework.
 }
 \details{
 The argument \code{u0} must be a \code{data.frame} with one row for

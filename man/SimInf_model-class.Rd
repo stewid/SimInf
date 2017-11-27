@@ -16,14 +16,14 @@ Class to handle the siminf data model
     A non-zero entry in element \code{G[i, i]} indicates that transition
     rate \code{i} needs to be recalculated if the state transition
     \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt}) of object class
-    \code{"\linkS4class{dgCMatrix}"}.
+    \code{\linkS4class{dgCMatrix}}.
   }
   \item{S}{
     Each column corresponds to a state transition, and execution
     of state transition \code{j} amounts to adding the \code{S[,
     j]} column to the state vector \code{u[, i]} of node \emph{i}
     where the transition occurred. Sparse matrix (\eqn{Nc \times
-    Nt}) of object class \code{"\linkS4class{dgCMatrix}"}.
+    Nt}) of object class \code{\linkS4class{dgCMatrix}}.
   }
   \item{U}{
     The result matrix with the number of individuals in each
@@ -79,7 +79,7 @@ Class to handle the siminf data model
      Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
   }
   \item{events}{
-    Scheduled events \code{"\linkS4class{SimInf_events}"}
+    Scheduled events \code{\linkS4class{SimInf_events}}
   }
   \item{C_code}{
     Character vector with optional model C code. If non-empty, the

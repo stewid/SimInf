@@ -3,7 +3,7 @@
 \docType{class}
 \name{SEIR-class}
 \alias{SEIR-class}
-\title{Definition of the \code{SEIR} model}
+\title{Definition of the \sQuote{SEIR} model}
 \description{
 Class to handle the SEIR \code{\link{SimInf_model}}.
 }

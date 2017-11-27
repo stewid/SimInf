@@ -18,7 +18,7 @@ Class to handle the scheduled events
     entry indicate the compartments to sample individuals from.
     For the \emph{enter} event, all individuals enter first
     non-zero compartment. Sparse matrix of object class
-    \code{"\linkS4class{dgCMatrix}"}.
+    \code{\linkS4class{dgCMatrix}}.
   }
   \item{N}{
     Each row represents one compartment in the model and the

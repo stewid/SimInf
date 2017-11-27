@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIR.R
 \name{u0_SIR}
 \alias{u0_SIR}
-\title{Example data to initialize the \code{SIR} model}
+\title{Example data to initialize the \sQuote{SIR} model}
 \usage{
 u0_SIR()
 }
@@ -10,6 +10,24 @@ u0_SIR()
 A \code{data.frame}
 }
 \description{
-Synthetic init data for 1600 nodes to demonstrate the \code{SIR}
+Synthetic init data for 1600 nodes to demonstrate the \sQuote{SIR}
 model.
+}
+\examples{
+## Create an 'SIR' model with 1600 nodes and initialize
+## it to run over 4*365 days.
+u0 <- u0_SIR()
+u0$I[1] <- 1
+tspan <- seq(from = 1, to = 4*365, by = 1)
+model <- SIR(u0     = u0,
+             tspan  = tspan,
+             events = events_SIR(),
+             beta   = 0.16,
+             gamma  = 0.077)
+
+## Run the model to generate a single stochastic trajectory.
+result <- run(model, threads = 1, seed = 22)
+
+## Summarize trajectory
+summary(result)
 }
