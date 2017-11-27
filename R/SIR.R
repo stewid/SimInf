@@ -166,12 +166,29 @@ events_SIR <- function() {
     events_SISe3
 }
 
-##' Example data to initialize the \code{SIR} model
+##' Example data to initialize the \sQuote{SIR} model
 ##'
-##' Synthetic init data for 1600 nodes to demonstrate the \code{SIR}
+##' Synthetic init data for 1600 nodes to demonstrate the \sQuote{SIR}
 ##' model.
 ##' @return A \code{data.frame}
 ##' @export
+##' @examples
+##' ## Create an 'SIR' model with 1600 nodes and initialize
+##' ## it to run over 4*365 days.
+##' u0 <- u0_SIR()
+##' u0$I[1] <- 1
+##' tspan <- seq(from = 1, to = 4*365, by = 1)
+##' model <- SIR(u0     = u0,
+##'              tspan  = tspan,
+##'              events = events_SIR(),
+##'              beta   = 0.16,
+##'              gamma  = 0.077)
+##'
+##' ## Run the model to generate a single stochastic trajectory.
+##' result <- run(model, threads = 1, seed = 22)
+##'
+##' ## Summarize trajectory
+##' summary(result)
 u0_SIR <- function() {
     utils::data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
