@@ -1499,6 +1499,36 @@ summary_gdata <- function(object)
     }
 }
 
+indegree <- function(model) {
+    ## Default indegree is 0
+    id <- integer(Nn(model))
+
+    ## Determine indegree from data
+    i <- which(model@events@event == 3L)
+    if (length(i) > 0) {
+        idd <- tapply(model@events@node[i], model@events@dest[i],
+                      function(x) {length(unique(x))})
+        id[as.integer(dimnames(idd)[[1]])] <- idd
+    }
+
+    id
+}
+
+outdegree <- function(model) {
+    ## Default outdegree is 0
+    od <- integer(Nn(model))
+
+    ## Determine oudegree from data
+    i <- which(model@events@event == 3L)
+    if (length(i) > 0) {
+        odd <- tapply(model@events@dest[i], model@events@node[i],
+                      function(x) {length(unique(x))})
+        od[as.integer(dimnames(odd)[[1]])] <- odd
+    }
+
+    od
+}
+
 summary_events <- function(object)
 {
     cat("Scheduled events\n")
@@ -1520,17 +1550,8 @@ summary_events <- function(object)
     i <- which(object@events@event == 3L)
     cat(sprintf(" External transfer: %i\n", length(i)))
     if (length(i) > 0) {
-        ## First add nodes with no in/out-degree.
-        id <- rep(0, Nn(object) - length(unique(object@events@dest[i])))
-        od <- rep(0, Nn(object) - length(unique(object@events@node[i])))
-
-        ## Then add in/out-degree for nodes with ingoing and
-        ## outgoing movements.
-        id <- c(id, tapply(object@events@node[i], object@events@dest[i],
-                           function(x) {length(unique(x))}))
-        od <- c(od, tapply(object@events@dest[i], object@events@node[i],
-                           function(x) {length(unique(x))}))
-
+        id <- indegree(object)
+        od <- outdegree(object)
         qq_id <- stats::quantile(id)
         qq_id <- c(qq_id[1L:3L], mean(id), qq_id[4L:5L])
         qq_od <- stats::quantile(od)
