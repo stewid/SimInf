@@ -29,7 +29,16 @@
 ##' @return \code{dgCMatrix}
 ##' @export
 ##' @examples
-##' distance_matrix(1:10, 1:10, 3)
+##' ## Generate a grid 10 x 10 and place one node in each cell
+##' ## separated by 100m.
+##' nodes <- expand.grid(x = (0:9) * 100, y = (0:9) * 100)
+##' plot(y ~ x, nodes)
+##'
+##' ## Define the cutoff to only include neighbors within 300m.
+##' d <- distance_matrix(x = nodes$x, y = nodes$y, cutoff = 301)
+##'
+##' ## View the first 10 rows and columns in the distance matrix
+##' d[1:10, 1:10]
 distance_matrix <- function(x, y, cutoff, min_dist = NULL)
 {
     if (!is.null(min_dist)) {
