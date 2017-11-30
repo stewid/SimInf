@@ -171,12 +171,36 @@ events_SEIR <- function() {
     events_SISe3
 }
 
-##' Example data to initialize the \code{SEIR} model
+##' Example data to initialize the \sQuote{SEIR} model
 ##'
-##' Synthetic init data for 1600 nodes to demonstrate the \code{SEIR}
-##' model.
+##' Example data to initialize a population of 1600 nodes and
+##' demonstrate the \code{\linkS4class{SEIR}} model.
+##'
+##' A \code{data.frame} with the number of individuals in the
+##' \sQuote{S}, \sQuote{E}, \sQuote{I} and \sQuote{R} compartments in
+##' 1600 nodes. Note that the \sQuote{E}, \sQuote{I} and \sQuote{R}
+##' compartments are zero.
 ##' @return A \code{data.frame}
 ##' @export
+##' @examples
+##' ## Create an 'SEIR' model with 1600 nodes and initialize it to
+##' ## run over 4*365 days and record data at weekly time-points.
+##' ## Add ten infected individuals to the first node.
+##' u0 <- u0_SEIR()
+##' u0$I[1] <- 10
+##' tspan <- seq(from = 1, to = 4*365, by = 7)
+##' model <- SEIR(u0      = u0,
+##'               tspan   = tspan,
+##'               events  = events_SEIR(),
+##'               beta    = 0.16,
+##'               epsilon = 0.25,
+##'               gamma   = 0.077)
+##'
+##' ## Run the model to generate a single stochastic trajectory.
+##' result <- run(model, threads = 1, seed = 22)
+##'
+##' ## Summarize trajectory
+##' summary(result)
 u0_SEIR <- function() {
     utils::data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
