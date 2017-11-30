@@ -1063,21 +1063,41 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 
 ## Number of nodes
 Nn <- function(model) {
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
     dim(model@u0)[2]
 }
 
 ## Number of compartments
 Nc <- function(model) {
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
     dim(model@S)[1]
 }
 
 ## Number of transitions
 Nt <- function(model) {
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
     dim(model@G)[1]
 }
 
 ## Number of continuous state variables
 Nd <- function(model) {
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
     dim(model@v0)[1]
 }
 
