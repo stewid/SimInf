@@ -1062,7 +1062,8 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 }
 
 ## Number of nodes
-Nn <- function(model) {
+Nn <- function(model)
+{
     ## Check model argument
     if (missing(model))
         stop("Missing 'model' argument")
@@ -1072,7 +1073,8 @@ Nn <- function(model) {
 }
 
 ## Number of compartments
-Nc <- function(model) {
+Nc <- function(model)
+{
     ## Check model argument
     if (missing(model))
         stop("Missing 'model' argument")
@@ -1082,7 +1084,8 @@ Nc <- function(model) {
 }
 
 ## Number of transitions
-Nt <- function(model) {
+Nt <- function(model)
+{
     ## Check model argument
     if (missing(model))
         stop("Missing 'model' argument")
@@ -1092,7 +1095,8 @@ Nt <- function(model) {
 }
 
 ## Number of continuous state variables
-Nd <- function(model) {
+Nd <- function(model)
+{
     ## Check model argument
     if (missing(model))
         stop("Missing 'model' argument")
@@ -1423,7 +1427,8 @@ setMethod("plot",
 )
 
 ##' @noRd
-show_U <- function(object) {
+show_U <- function(object)
+{
     d <- dim(object@U)
     if (identical(d, c(0L, 0L))) {
         d <- dim(object@U_sparse)
@@ -1438,7 +1443,8 @@ show_U <- function(object) {
 }
 
 ##' @noRd
-show_V <- function(object) {
+show_V <- function(object)
+{
     d <- dim(object@V)
     if (identical(d, c(0L, 0L))) {
         d <- dim(object@V_sparse)
@@ -1519,7 +1525,8 @@ summary_gdata <- function(object)
     }
 }
 
-indegree <- function(model) {
+indegree <- function(model)
+{
     ## Default indegree is 0
     id <- integer(Nn(model))
 
@@ -1534,7 +1541,8 @@ indegree <- function(model) {
     id
 }
 
-outdegree <- function(model) {
+outdegree <- function(model)
+{
     ## Default outdegree is 0
     od <- integer(Nn(model))
 
