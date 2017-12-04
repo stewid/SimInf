@@ -1037,6 +1037,12 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##' trajectory(result, compartments = "V1")
 "V<-" <- function(model, value)
 {
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+
     if (!is.null(value)) {
         if (!is(value, "dgCMatrix"))
             value <- as(value, "dgCMatrix")
