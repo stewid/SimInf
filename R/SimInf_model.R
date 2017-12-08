@@ -937,35 +937,70 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 
 ##' Set a template for where to write the U result matrix
 ##'
+##' Using a sparse U result matrix can save a lot of memory if the
+##' model contains many nodes and time-points, but where only a few of
+##' the data points are of interest.
+##'
+##'
+##' Using a sparse U result matrix can save a lot of memory if the
+##' model contains many nodes and time-points, but where only a few of
+##' the data points are of interest. To use this feature, a template
+##' has to be defined for which data points to record. This is done
+##' using a \code{data.frame} that specifies the time-points (column
+##' \sQuote{Time}) and nodes (column \sQuote{Node}) to record the
+##' state of the compartments, see \sQuote{Examples}. The specified
+##' time-points, nodes and compartments must exist in the model, or an
+##' error is raised. Note that specifying a template only affects
+##' which data-points are recorded for post-processing, it does not
+##' affect how the solver simulates the trajectory.
 ##' @param model The \code{model} to set a template for the result
 ##'     matrix \code{U}.
-##' @param value Write the number of individuals in each compartment
-##'     at \code{tspan} to the non-zero elements in \code{value},
-##'     where \code{value} is a sparse matrix, \code{dgCMatrix}, with
-##'     dimension \eqn{N_n N_c \times} \code{length(tspan)}. Default
-##'     is \code{NULL} i.e. to write the number of inidividuals in
-##'     each compartment in every node to a dense matrix.
+##' @param value A \code{data.frame} that specify the nodes,
+##'     time-points and compartments to record the number of
+##'     individuals at \code{tspan}. Use \code{NULL} to write the
+##'     number of inidividuals in each compartment in every node to a
+##'     dense matrix.
 ##' @export
-##' @importFrom methods is
+##' @importFrom methods as
+##' @importFrom Matrix sparseMatrix
 ##' @examples
-##' ## Create an 'SIR' model with 6 nodes and initialize
-##' ## it to run over 10 days.
+##' ## Create an 'SIR' model with 6 nodes and initialize it to run over 10 days.
 ##' u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
-##' ## An example with a sparse U result matrix, which can save a lot
-##' ## of memory if the model contains many nodes and time-points, but
-##' ## where only a few of the data points are of interest. First
-##' ## create a sparse matrix with non-zero entries at the locations
-##' ## in U where the number of individuals should be written. Then
-##' ## run the model with the sparse matrix as a template for U where
-##' ## to write data.
-##' m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
-##' U(model) <- m
+##' ## Run the model.
 ##' result <- run(model, threads = 1, seed = 22)
 ##'
-##' ## Extract the number of individuals in each compartment at the
-##' ## time-points in tspan.
+##' ## Display the trajectory with data for every node at each
+##' ## time-point in tspan.
+##' trajectory(result)
+##'
+##' ## Assume we are only interested in nodes '2' and '4' at the
+##' ## time-points '3' and '5'
+##' df <- data.frame(Time = c(3, 5, 3, 5),
+##'                  Node = c(2, 2, 4, 4),
+##'                  S = c(TRUE, TRUE, TRUE, TRUE),
+##'                  I = c(TRUE, TRUE, TRUE, TRUE),
+##'                  R = c(TRUE, TRUE, TRUE, TRUE))
+##' U(model) <- df
+##' result <- run(model, threads = 1, seed = 22)
+##' trajectory(result)
+##'
+##' ## We can also specify to record only some of the compartments in
+##' ## each time-step.
+##' df <- data.frame(Time = c(3, 5, 3, 5),
+##'                  Node = c(2, 2, 4, 4),
+##'                  S = c(FALSE, TRUE, TRUE, TRUE),
+##'                  I = c(TRUE, FALSE, TRUE, FALSE),
+##'                  R = c(TRUE, FALSE, TRUE, TRUE))
+##' U(model) <- df
+##' result <- run(model, threads = 1, seed = 22)
+##' trajectory(result)
+##'
+##' ## Use 'NULL' to reset the model to record data for every node at
+##' ## each time-point in tspan.
+##' U(model) <- NULL
+##' result <- run(model, threads = 1, seed = 22)
 ##' trajectory(result)
 "U<-" <- function(model, value)
 {
@@ -976,12 +1011,40 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         stop("'model' argument is not a 'SimInf_model'")
 
     if (!is.null(value)) {
-        if (!methods::is(value, "dgCMatrix"))
-            value <- methods::as(value, "dgCMatrix")
+        if (!is.data.frame(value))
+            stop("'value' argument is not a 'data.frame'")
 
+        ## Sort the data.frame by time and node.
+        value <- value[order(value$Time, value$Node),
+                       c("Time", "Node", rownames(model@S))]
+
+        ## Match nodes and for each matched node create an index to
+        ## all of its compartments in the U matrix.
+        i <- match(value$Node, seq_len(Nn(model)))
+        if (any(is.na(i)))
+            stop("Unable to match all nodes")
+        i <- rep((i - 1) * Nc(model), each = Nc(model)) + seq_len(Nc(model))
+
+        ## Match time-points to tspan and repeat each time-point for
+        ## every compartment in the model.
+        j <- match(value$Time, model@tspan)
+        if (any(is.na(j)))
+            stop("Unable to match all time-points to tspan")
+        j <- rep(j, each = Nc(model))
+
+        ## Coerce the compartments part of the data.frame to a logical
+        ## vector that match the rows of compartments in the U matrix.
+        value <- as.logical(t(as.matrix(value[, -(1:2)])))
+        value[is.na(value)] <- FALSE
+
+        ## Keep only the compartments and time-points that are marked
+        ## with TRUE
+        i <- i[value]
+        j <- j[value]
+
+        ## Create sparse template
         d <- c(Nn(model) * Nc(model), length(model@tspan))
-        if (!identical(dim(value), d))
-            stop("Wrong dimension of 'value'")
+        value <- as(sparseMatrix(i = i, j = j, dims = d), "dgCMatrix")
 
         ## Clear dense result matrix
         u <- matrix(nrow = 0, ncol = 0)
@@ -996,6 +1059,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
                                                            dims = c(0, 0)),
                                       "dgCMatrix")
     }
+
     model
 }
 
@@ -1681,8 +1745,9 @@ setMethod("summary",
 
 ##' Extract the events from a \code{SimInf_model} object
 ##'
+##' Extract the scheduled events from a \code{SimInf_model} object.
 ##' @param model The \code{model} to extract the events from.
-##' @return \code{SimInf_events} object.
+##' @return \code{\linkS4class{SimInf_events}} object.
 ##' @export
 ##' @examples
 ##' ## Create an SIR model that includes scheduled events.
@@ -1692,12 +1757,10 @@ setMethod("summary",
 ##'              beta   = 0.16,
 ##'              gamma  = 0.077)
 ##'
-##' ## Extract the scheduled events from the model and
-##' ## display summary
+##' ## Extract the scheduled events from the model and display summary
 ##' summary(events(model))
 ##'
-##' ## Extract the scheduled events from the model and
-##' ## plot them
+##' ## Extract the scheduled events from the model and plot them
 ##' plot(events(model))
 events <- function(model)
 {
