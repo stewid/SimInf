@@ -10,10 +10,10 @@ events(model)
 \item{model}{The \code{model} to extract the events from.}
 }
 \value{
-\code{SimInf_events} object.
+\code{\linkS4class{SimInf_events}} object.
 }
 \description{
-Extract the events from a \code{SimInf_model} object
+Extract the scheduled events from a \code{SimInf_model} object.
 }
 \examples{
 ## Create an SIR model that includes scheduled events.
@@ -23,11 +23,9 @@ model <- SIR(u0     = u0_SIR(),
              beta   = 0.16,
              gamma  = 0.077)
 
-## Extract the scheduled events from the model and
-## display summary
+## Extract the scheduled events from the model and display summary
 summary(events(model))
 
-## Extract the scheduled events from the model and
-## plot them
+## Extract the scheduled events from the model and plot them
 plot(events(model))
 }

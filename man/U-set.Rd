@@ -10,34 +10,67 @@ U(model) <- value
 \item{model}{The \code{model} to set a template for the result
 matrix \code{U}.}
 
-\item{value}{Write the number of individuals in each compartment
-at \code{tspan} to the non-zero elements in \code{value},
-where \code{value} is a sparse matrix, \code{dgCMatrix}, with
-dimension \eqn{N_n N_c \times} \code{length(tspan)}. Default
-is \code{NULL} i.e. to write the number of inidividuals in
-each compartment in every node to a dense matrix.}
+\item{value}{A \code{data.frame} that specify the nodes,
+time-points and compartments to record the number of
+individuals at \code{tspan}. Use \code{NULL} to write the
+number of inidividuals in each compartment in every node to a
+dense matrix.}
 }
 \description{
-Set a template for where to write the U result matrix
+Using a sparse U result matrix can save a lot of memory if the
+model contains many nodes and time-points, but where only a few of
+the data points are of interest.
+}
+\details{
+Using a sparse U result matrix can save a lot of memory if the
+model contains many nodes and time-points, but where only a few of
+the data points are of interest. To use this feature, a template
+has to be defined for which data points to record. This is done
+using a \code{data.frame} that specifies the time-points (column
+\sQuote{Time}) and nodes (column \sQuote{Node}) to record the
+state of the compartments, see \sQuote{Examples}. The specified
+time-points, nodes and compartments must exist in the model, or an
+error is raised. Note that specifying a template only affects
+which data-points are recorded for post-processing, it does not
+affect how the solver simulates the trajectory.
 }
 \examples{
-## Create an 'SIR' model with 6 nodes and initialize
-## it to run over 10 days.
+## Create an 'SIR' model with 6 nodes and initialize it to run over 10 days.
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 
-## An example with a sparse U result matrix, which can save a lot
-## of memory if the model contains many nodes and time-points, but
-## where only a few of the data points are of interest. First
-## create a sparse matrix with non-zero entries at the locations
-## in U where the number of individuals should be written. Then
-## run the model with the sparse matrix as a template for U where
-## to write data.
-m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
-U(model) <- m
+## Run the model.
 result <- run(model, threads = 1, seed = 22)
 
-## Extract the number of individuals in each compartment at the
-## time-points in tspan.
+## Display the trajectory with data for every node at each
+## time-point in tspan.
+trajectory(result)
+
+## Assume we are only interested in nodes '2' and '4' at the
+## time-points '3' and '5'
+df <- data.frame(Time = c(3, 5, 3, 5),
+                 Node = c(2, 2, 4, 4),
+                 S = c(TRUE, TRUE, TRUE, TRUE),
+                 I = c(TRUE, TRUE, TRUE, TRUE),
+                 R = c(TRUE, TRUE, TRUE, TRUE))
+U(model) <- df
+result <- run(model, threads = 1, seed = 22)
+trajectory(result)
+
+## We can also specify to record only some of the compartments in
+## each time-step.
+df <- data.frame(Time = c(3, 5, 3, 5),
+                 Node = c(2, 2, 4, 4),
+                 S = c(FALSE, TRUE, TRUE, TRUE),
+                 I = c(TRUE, FALSE, TRUE, FALSE),
+                 R = c(TRUE, FALSE, TRUE, TRUE))
+U(model) <- df
+result <- run(model, threads = 1, seed = 22)
+trajectory(result)
+
+## Use 'NULL' to reset the model to record data for every node at
+## each time-point in tspan.
+U(model) <- NULL
+result <- run(model, threads = 1, seed = 22)
 trajectory(result)
 }
