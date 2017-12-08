@@ -512,7 +512,11 @@ model <- SISe(u0 = u0, tspan = 1:10,
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-U(model) <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
+
+U(model) <- data.frame(Time = c(5, 6, 7, 8, 9, 10),
+                       Node = c(1, 1, 2, 2, 3, 3),
+                       S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
+                       I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
 V(model) <- Matrix::sparseMatrix(1:6, 5:10)
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(1:10)))
@@ -534,7 +538,11 @@ model <- SISe(u0 = u0, tspan = tspan,
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-U(model) <- Matrix::sparseMatrix(1:6, 5:10, dims = c(12, 10))
+
+U(model) <- data.frame(Time = c(5, 6, 7, 8, 9, 10),
+                       Node = c(1, 1, 2, 2, 3, 3),
+                       S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
+                       I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
 V(model) <- Matrix::sparseMatrix(1:6, 5:10)
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(tspan)))

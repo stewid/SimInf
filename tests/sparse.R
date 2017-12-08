@@ -40,7 +40,14 @@ U_exp <- new("dgCMatrix",
                    88, 11, 10, 101, 5, 5),
              factors = list())
 
-U(model) <- sparseMatrix(1:18, rep(5:10, each = 3))
+U(model) <- structure(list(Node = c(1L, 2L, 3L, 4L, 5L, 6L),
+                           Time = c(5L, 6L, 7L, 8L, 9L, 10L),
+                           S = rep(TRUE, 6),
+                           I = rep(TRUE, 6),
+                           R = rep(TRUE, 6)),
+                      .Names = c("Node", "Time", "S", "I", "R"),
+                      row.names = c(NA, -6L),
+                      class = "data.frame")
 U_obs <- trajectory(run(model, threads = 1, seed = 123), as.is = TRUE)
 stopifnot(identical(U_obs, U_exp))
 
@@ -57,16 +64,9 @@ if (SimInf:::have_openmp()) {
                      x = c(96, 5, 0, 101, 1, 1, 102, 1, 2,
                            99, 6, 2, 98, 3, 8, 95, 12, 4),
                      factors = list())
-    U(model) <- sparseMatrix(1:18, rep(5:10, each = 3))
     U_obs_omp <- trajectory(run(model, threads = 2, seed = 123), as.is = TRUE)
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
-
-## Check wrong dimension of U
-m <- sparseMatrix(1:21, rep(5:11, each = 3))
-res <- tools::assertError(U(model) <- m)
-stopifnot(length(grep("Wrong dimension of 'value'",
-                      res[[1]]$message)) > 0)
 
 ## Check wrong dimension of V
 m <- as(sparseMatrix(numeric(0), numeric(0), dims = c(0, 11)), "dgCMatrix")
@@ -83,7 +83,14 @@ model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
              beta = 0.16,
              gamma = 0.077)
 result <- run(model, threads = 1)
-U(result) <- sparseMatrix(1:18, rep(5:10, each = 3))
+U(result) <- structure(list(Node = c(1L, 2L, 3L, 4L, 5L, 6L),
+                            Time = c(5L, 6L, 7L, 8L, 9L, 10L),
+                            S = rep(TRUE, 6),
+                            I = rep(TRUE, 6),
+                            R = rep(TRUE, 6)),
+                       .Names = c("Node", "Time", "S", "I", "R"),
+                       row.names = c(NA, -6L),
+                       class = "data.frame")
 result <- run(result, threads = 1)
 stopifnot(identical(dim(result@U), c(0L, 0L)))
 stopifnot(identical(dim(result@U_sparse), c(18L, 10L)))
@@ -133,8 +140,14 @@ stopifnot(identical(dim(result@V_sparse), c(0L, 0L)))
 ## sparse matrix as a template for U where to write data.
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-m <- Matrix::sparseMatrix(1:12, rep(5:10, each = 2), dims = c(18, 10))
-U(model) <- m
+U(model) <- structure(list(Node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
+                           Time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
+                           S = c(TRUE, NA, TRUE, NA, TRUE, NA, TRUE, NA),
+                           I = c(TRUE, NA, NA, TRUE, TRUE, NA, NA, TRUE),
+                           R = c(NA, TRUE, NA, TRUE, NA, TRUE, NA, TRUE)),
+                      .Names = c("Node", "Time", "S", "I", "R"),
+                      row.names = c(NA, -8L),
+                      class = "data.frame")
 result <- run(model, threads = 1, seed = 22)
 U_exp <- structure(list(Node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
                         Time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
@@ -147,8 +160,14 @@ U_exp <- structure(list(Node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
 stopifnot(identical(trajectory(result), U_exp))
 
 ## Similar test case, but without NA-values
-m <- Matrix::sparseMatrix(1:18, rep(5:10, each = 3))
-U(model) <- m
+U(model) <- structure(list(Node = 1:6,
+                           Time = 5:10,
+                           S = rep(TRUE, 6),
+                           I = rep(TRUE, 6),
+                           R = rep(TRUE, 6)),
+                      .Names = c("Node", "Time", "S", "I", "R"),
+                      row.names = c(NA, -6L),
+                      class = "data.frame")
 result <- run(model, threads = 1, seed = 22)
 U_exp <- structure(list(Node = 1:6,
                         Time = 5:10,
