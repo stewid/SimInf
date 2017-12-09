@@ -517,7 +517,9 @@ U(model) <- data.frame(Time = c(5, 6, 7, 8, 9, 10),
                        Node = c(1, 1, 2, 2, 3, 3),
                        S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
                        I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
-V(model) <- Matrix::sparseMatrix(1:6, 5:10)
+V(model) <- data.frame(Time = 5:10,
+                       Node = 1:6,
+                       V1 = rep(TRUE, 6))
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(1:10)))
 stopifnot(identical(colnames(trajectory(result, "V1", as.is = TRUE)), as.character(1:10)))
@@ -543,7 +545,12 @@ U(model) <- data.frame(Time = c(5, 6, 7, 8, 9, 10),
                        Node = c(1, 1, 2, 2, 3, 3),
                        S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
                        I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
-V(model) <- Matrix::sparseMatrix(1:6, 5:10)
+V(model) <- data.frame(Time = 5:10,
+                       Node = 1:6,
+                       V1 = rep(TRUE, 6))
+V(model) <- data.frame(Time = 5:10,
+                       Node = 1:6,
+                       V1 = rep(TRUE, 6))
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(tspan)))
 stopifnot(identical(colnames(trajectory(result, "V1", as.is = TRUE)), as.character(tspan)))

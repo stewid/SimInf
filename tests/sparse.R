@@ -68,12 +68,6 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
 
-## Check wrong dimension of V
-m <- as(sparseMatrix(numeric(0), numeric(0), dims = c(0, 11)), "dgCMatrix")
-res <- tools::assertError(V(model) <- m)
-stopifnot(length(grep("Wrong dimension of 'value'",
-                      res[[1]]$message)) > 0)
-
 ## Check that U is cleared. First run a model to get a dense U result
 ## matrix, then run that model and check that the dense U result
 ## matrix is cleared. Then run the model again and check that the
@@ -124,7 +118,7 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 0.000011)
 result <- run(model, threads = 1)
-V(result) <- sparseMatrix(1:6, 5:10)
+V(result) <- data.frame(Time = 4:9, Node = 1:6, V1 = TRUE)
 result <- run(result, threads = 1)
 stopifnot(identical(dim(result@V), c(0L, 0L)))
 stopifnot(identical(dim(result@V_sparse), c(6L, 10L)))

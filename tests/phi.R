@@ -85,7 +85,9 @@ sis_e_phi_obs <- trajectory(sis_e, "V1")$V1
 stopifnot(all(abs(sis_e_phi_obs - as.numeric(phi_exp)) < tol))
 
 ## Run with sparse V
-V(sis_e) <- as(phi_exp, "dgCMatrix")
+V(sis_e) <- data.frame(Time = seq(from = 1, to = 700, by = 7),
+                       Node = 1,
+                       V1 = TRUE)
 sis_e <- run(sis_e, threads = 1)
 sis_e_phi_obs <- trajectory(sis_e, "V1", as.is = TRUE)[1,]
 stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
@@ -131,7 +133,9 @@ sis_e3_phi_obs <- trajectory(sis_e3, "V1")$V1
 stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))
 
 ## Run with sparse V
-V(sis_e3) <- as(phi_exp, "dgCMatrix")
+V(sis_e3) <- data.frame(Time = seq(from = 1, to = 700, by = 7),
+                        Node = 1,
+                        V1 = TRUE)
 sis_e3 <- run(sis_e3, threads = 1)
 sis_e3_phi_obs <- trajectory(sis_e3, "V1", as.is = TRUE)[1,]
 stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
