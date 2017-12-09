@@ -10,15 +10,30 @@ V(model) <- value
 \item{model}{The \code{model} to set a template for the result
 matrix \code{V}.}
 
-\item{value}{Write the real-valued continuous state at
-\code{tspan} to the non-zero elements in \code{value}, where
-\code{value} is a sparse matrix, \code{dgCMatrix}, with
-dimension \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
-\code{length(tspan)}. Default is \code{NULL} i.e. to write the
-real-valued continuous state to a dense matrix.}
+\item{value}{A \code{data.frame} that specify the nodes,
+time-points and compartments of when to record the real-valued
+continuous state at \code{tspan}. Use \code{NULL} to reset the
+model to record the real-valued continuous state in every node
+at each time-point in tspan.}
 }
 \description{
-Set a template for where to write the V result matrix
+Using a sparse V result matrix can save a lot of memory if the
+model contains many nodes and time-points, but where only a few of
+the data points are of interest for post-processing.
+}
+\details{
+Using a sparse V result matrix can save a lot of memory if the
+model contains many nodes and time-points, but where only a few of
+the data points are of interest for post-processing. To use this
+feature, a template has to be defined for which data points to
+record. This is done using a \code{data.frame} that specifies the
+time-points (column \sQuote{Time}) and nodes (column
+\sQuote{Node}) to record the state of the continuous state
+compartments, see \sQuote{Examples}. The specified time-points,
+nodes and compartments must exist in the model, or an error is
+raised. Note that specifying a template only affects which
+data-points are recorded for post-processing, it does not affect
+how the solver simulates the trajectory.
 }
 \examples{
 ## Create an 'SISe' model with 6 nodes and initialize
@@ -29,17 +44,25 @@ model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 
-## An example with a sparse V result matrix, which can save a lot
-## of memory if the model contains many nodes and time-points, but
-## where only a few of the data points are of interest. First
-## create a sparse matrix with non-zero entries at the locations
-## in V where the continuous state variables should be written. Then
-## run the model with the sparse matrix as a template for V where
-## to write data.
-m <- Matrix::sparseMatrix(1:6, 5:10)
-V(model) <- m
+## Run the model
 result <- run(model, threads = 1, seed = 7)
 
-## Extract the continuous state variable 'V1' at the time-points in tspan.
+## Display the continuous state variable 'V1' for every node at
+## each time-point in tspan.
+trajectory(result, compartments = "V1")
+
+## Assume we are only interested in nodes '2' and '4' at the
+## time-points '3' and '5'
+df <- data.frame(Time = c(3, 5, 3, 5),
+                 Node = c(2, 2, 4, 4),
+                 V1 = c(TRUE, TRUE, TRUE, TRUE))
+V(model) <- df
+result <- run(model, threads = 1, seed = 7)
+trajectory(result, compartments = "V1")
+
+## Use 'NULL' to reset the model to record data for every node at
+## each time-point in tspan.
+V(model) <- NULL
+result <- run(model, threads = 1, seed = 7)
 trajectory(result, compartments = "V1")
 }

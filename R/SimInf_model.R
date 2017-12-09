@@ -939,27 +939,27 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##'
 ##' Using a sparse U result matrix can save a lot of memory if the
 ##' model contains many nodes and time-points, but where only a few of
-##' the data points are of interest.
-##'
+##' the data points are of interest for post-processing.
 ##'
 ##' Using a sparse U result matrix can save a lot of memory if the
 ##' model contains many nodes and time-points, but where only a few of
-##' the data points are of interest. To use this feature, a template
-##' has to be defined for which data points to record. This is done
-##' using a \code{data.frame} that specifies the time-points (column
-##' \sQuote{Time}) and nodes (column \sQuote{Node}) to record the
-##' state of the compartments, see \sQuote{Examples}. The specified
-##' time-points, nodes and compartments must exist in the model, or an
-##' error is raised. Note that specifying a template only affects
-##' which data-points are recorded for post-processing, it does not
-##' affect how the solver simulates the trajectory.
+##' the data points are of interest for post-processing. To use this
+##' feature, a template has to be defined for which data points to
+##' record. This is done using a \code{data.frame} that specifies the
+##' time-points (column \sQuote{Time}) and nodes (column
+##' \sQuote{Node}) to record the state of the compartments, see
+##' \sQuote{Examples}. The specified time-points, nodes and
+##' compartments must exist in the model, or an error is raised. Note
+##' that specifying a template only affects which data-points are
+##' recorded for post-processing, it does not affect how the solver
+##' simulates the trajectory.
 ##' @param model The \code{model} to set a template for the result
 ##'     matrix \code{U}.
 ##' @param value A \code{data.frame} that specify the nodes,
 ##'     time-points and compartments to record the number of
-##'     individuals at \code{tspan}. Use \code{NULL} to write the
-##'     number of inidividuals in each compartment in every node to a
-##'     dense matrix.
+##'     individuals at \code{tspan}. Use \code{NULL} to reset the
+##'     model to record the number of inidividuals in each compartment
+##'     in every node at each time-point in tspan.
 ##' @export
 ##' @importFrom methods as
 ##' @importFrom Matrix sparseMatrix
