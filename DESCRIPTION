@@ -49,8 +49,8 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
+    'SimInf_mparse.R'
     'distance.R'
-    'model_builder.R'
     'package_skeleton.R'
     'run_outer.R'
 RoxygenNote: 6.0.1
