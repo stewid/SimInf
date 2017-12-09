@@ -1065,16 +1065,30 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 
 ##' Set a template for where to write the V result matrix
 ##'
+##' Using a sparse V result matrix can save a lot of memory if the
+##' model contains many nodes and time-points, but where only a few of
+##' the data points are of interest for post-processing.
+##'
+##' Using a sparse V result matrix can save a lot of memory if the
+##' model contains many nodes and time-points, but where only a few of
+##' the data points are of interest for post-processing. To use this
+##' feature, a template has to be defined for which data points to
+##' record. This is done using a \code{data.frame} that specifies the
+##' time-points (column \sQuote{Time}) and nodes (column
+##' \sQuote{Node}) to record the state of the continuous state
+##' compartments, see \sQuote{Examples}. The specified time-points,
+##' nodes and compartments must exist in the model, or an error is
+##' raised. Note that specifying a template only affects which
+##' data-points are recorded for post-processing, it does not affect
+##' how the solver simulates the trajectory.
 ##' @param model The \code{model} to set a template for the result
 ##'     matrix \code{V}.
-##' @param value Write the real-valued continuous state at
-##'     \code{tspan} to the non-zero elements in \code{value}, where
-##'     \code{value} is a sparse matrix, \code{dgCMatrix}, with
-##'     dimension \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
-##'     \code{length(tspan)}. Default is \code{NULL} i.e. to write the
-##'     real-valued continuous state to a dense matrix.
+##' @param value A \code{data.frame} that specify the nodes,
+##'     time-points and compartments of when to record the real-valued
+##'     continuous state at \code{tspan}. Use \code{NULL} to reset the
+##'     model to record the real-valued continuous state in every node
+##'     at each time-point in tspan.
 ##' @export
-##' @importFrom methods is
 ##' @importFrom methods as
 ##' @importFrom Matrix sparseMatrix
 ##' @examples
@@ -1086,18 +1100,26 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
 ##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 ##'
-##' ## An example with a sparse V result matrix, which can save a lot
-##' ## of memory if the model contains many nodes and time-points, but
-##' ## where only a few of the data points are of interest. First
-##' ## create a sparse matrix with non-zero entries at the locations
-##' ## in V where the continuous state variables should be written. Then
-##' ## run the model with the sparse matrix as a template for V where
-##' ## to write data.
-##' m <- Matrix::sparseMatrix(1:6, 5:10)
-##' V(model) <- m
+##' ## Run the model
 ##' result <- run(model, threads = 1, seed = 7)
 ##'
-##' ## Extract the continuous state variable 'V1' at the time-points in tspan.
+##' ## Display the continuous state variable 'V1' for every node at
+##' ## each time-point in tspan.
+##' trajectory(result, compartments = "V1")
+##'
+##' ## Assume we are only interested in nodes '2' and '4' at the
+##' ## time-points '3' and '5'
+##' df <- data.frame(Time = c(3, 5, 3, 5),
+##'                  Node = c(2, 2, 4, 4),
+##'                  V1 = c(TRUE, TRUE, TRUE, TRUE))
+##' V(model) <- df
+##' result <- run(model, threads = 1, seed = 7)
+##' trajectory(result, compartments = "V1")
+##'
+##' ## Use 'NULL' to reset the model to record data for every node at
+##' ## each time-point in tspan.
+##' V(model) <- NULL
+##' result <- run(model, threads = 1, seed = 7)
 ##' trajectory(result, compartments = "V1")
 "V<-" <- function(model, value)
 {
@@ -1108,12 +1130,41 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         stop("'model' argument is not a 'SimInf_model'")
 
     if (!is.null(value)) {
-        if (!is(value, "dgCMatrix"))
-            value <- as(value, "dgCMatrix")
+        if (!is.data.frame(value))
+            stop("'value' argument is not a 'data.frame'")
 
+        ## Sort the data.frame by time and node.
+        value <- value[order(value$Time, value$Node),
+                       c("Time", "Node", paste0("V", seq_len(Nd(model))))]
+
+        ## Match nodes and for each matched node create an index to
+        ## all of its continuous state compartments in the V matrix.
+        i <- match(value$Node, seq_len(Nn(model)))
+        if (any(is.na(i)))
+            stop("Unable to match all nodes")
+        i <- rep((i - 1) * Nd(model), each = Nd(model)) + seq_len(Nd(model))
+
+        ## Match time-points to tspan and repeat each time-point for
+        ## every continuous state compartment in the model.
+        j <- match(value$Time, model@tspan)
+        if (any(is.na(j)))
+            stop("Unable to match all time-points to tspan")
+        j <- rep(j, each = Nd(model))
+
+        ## Coerce the compartments part of the data.frame to a logical
+        ## vector that match the rows of continuous state compartments
+        ## in the V matrix.
+        value <- as.logical(t(as.matrix(value[, -(1:2)])))
+        value[is.na(value)] <- FALSE
+
+        ## Keep only the compartments and time-points that are marked
+        ## with TRUE
+        i <- i[value]
+        j <- j[value]
+
+        ## Create sparse template
         d <- c(Nn(model) * Nd(model), length(model@tspan))
-        if (!identical(dim(value), d))
-            stop("Wrong dimension of 'value'")
+        value <- as(sparseMatrix(i = i, j = j, dims = d), "dgCMatrix")
 
         ## Clear dense result matrix
         v <- matrix(nrow = 0, ncol = 0)
@@ -1128,6 +1179,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
                                           dims = c(0, 0)),
                              "dgCMatrix")
     }
+
     model
 }
 
