@@ -545,12 +545,12 @@ prevalence <- function(model,
     if (type %in% c("pop", "nop"))
         return(data.frame(Time = Time, Prevalence = cm / pm))
 
-    Node = seq_len(Nn(model))
+    node = seq_len(Nn(model))
     if (!is.null(i))
-        Node <- Node[i]
+        node <- node[i]
 
-    data.frame(Node = Node,
-               Time = rep(Time, each = length(Node)),
+    data.frame(node = node,
+               Time = rep(Time, each = length(node)),
                Prevalence = as.numeric(cm / pm),
                stringsAsFactors = FALSE)
 }
@@ -568,19 +568,19 @@ prevalence <- function(model,
 ##' @noRd
 sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
     ## Determine nodes and time-points with output.
-    Node <- as.integer(ceiling((m@i + 1) / n))
+    node <- as.integer(ceiling((m@i + 1) / n))
     Time <- names(tspan)
     if (is.null(Time))
         Time <- as.integer(tspan)
     Time <- cbind(Time, diff(m@p))
     Time <- unlist(apply(Time, 1, function(x) rep(x[1], x[2])))
 
-    ## Determine unique combinations of Node and Time
-    i <- !duplicated(cbind(Node, Time))
-    Node <- Node[i]
+    ## Determine unique combinations of node and Time
+    i <- !duplicated(cbind(node, Time))
+    node <- node[i]
     Time <- Time[i]
 
-    ## Use Node and Time to determine the required size
+    ## Use node and Time to determine the required size
     ## of a matrix to hold all output data and fill it
     ## with NA values.
     values <- matrix(value, nrow = sum(i), ncol = n)
@@ -595,7 +595,7 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
         values[matrix(c(i, j), ncol = 2)] <- m@x
     }
 
-    cbind(Node = Node,
+    cbind(node = node,
           Time = Time,
           as.data.frame(values),
           stringsAsFactors = FALSE)
@@ -916,16 +916,16 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         }
     }
 
-    Node = seq_len(Nn(model))
+    node = seq_len(Nn(model))
     if (!is.null(i))
-        Node <- Node[i]
+        node <- node[i]
 
     Time <- names(model@tspan)
     if (is.null(Time))
         Time <- as.integer(model@tspan)
-    Time <- rep(Time, each = length(Node))
+    Time <- rep(Time, each = length(node))
 
-    result <- data.frame(Node = Node, Time = Time, stringsAsFactors = FALSE)
+    result <- data.frame(node = node, Time = Time, stringsAsFactors = FALSE)
     if (!is.null(mU))
         result <- cbind(result, as.data.frame(mU))
 
@@ -947,7 +947,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##' feature, a template has to be defined for which data points to
 ##' record. This is done using a \code{data.frame} that specifies the
 ##' time-points (column \sQuote{Time}) and nodes (column
-##' \sQuote{Node}) to record the state of the compartments, see
+##' \sQuote{node}) to record the state of the compartments, see
 ##' \sQuote{Examples}. The specified time-points, nodes and
 ##' compartments must exist in the model, or an error is raised. Note
 ##' that specifying a template only affects which data-points are
@@ -978,7 +978,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##' ## Assume we are only interested in nodes '2' and '4' at the
 ##' ## time-points '3' and '5'
 ##' df <- data.frame(Time = c(3, 5, 3, 5),
-##'                  Node = c(2, 2, 4, 4),
+##'                  node = c(2, 2, 4, 4),
 ##'                  S = c(TRUE, TRUE, TRUE, TRUE),
 ##'                  I = c(TRUE, TRUE, TRUE, TRUE),
 ##'                  R = c(TRUE, TRUE, TRUE, TRUE))
@@ -989,7 +989,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##' ## We can also specify to record only some of the compartments in
 ##' ## each time-step.
 ##' df <- data.frame(Time = c(3, 5, 3, 5),
-##'                  Node = c(2, 2, 4, 4),
+##'                  node = c(2, 2, 4, 4),
 ##'                  S = c(FALSE, TRUE, TRUE, TRUE),
 ##'                  I = c(TRUE, FALSE, TRUE, FALSE),
 ##'                  R = c(TRUE, FALSE, TRUE, TRUE))
@@ -1015,12 +1015,12 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
             stop("'value' argument is not a 'data.frame'")
 
         ## Sort the data.frame by time and node.
-        value <- value[order(value$Time, value$Node),
-                       c("Time", "Node", rownames(model@S))]
+        value <- value[order(value$Time, value$node),
+                       c("Time", "node", rownames(model@S))]
 
         ## Match nodes and for each matched node create an index to
         ## all of its compartments in the U matrix.
-        i <- match(value$Node, seq_len(Nn(model)))
+        i <- match(value$node, seq_len(Nn(model)))
         if (any(is.na(i)))
             stop("Unable to match all nodes")
         i <- rep((i - 1) * Nc(model), each = Nc(model)) + seq_len(Nc(model))
@@ -1075,7 +1075,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##' feature, a template has to be defined for which data points to
 ##' record. This is done using a \code{data.frame} that specifies the
 ##' time-points (column \sQuote{Time}) and nodes (column
-##' \sQuote{Node}) to record the state of the continuous state
+##' \sQuote{node}) to record the state of the continuous state
 ##' compartments, see \sQuote{Examples}. The specified time-points,
 ##' nodes and compartments must exist in the model, or an error is
 ##' raised. Note that specifying a template only affects which
@@ -1110,7 +1110,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##' ## Assume we are only interested in nodes '2' and '4' at the
 ##' ## time-points '3' and '5'
 ##' df <- data.frame(Time = c(3, 5, 3, 5),
-##'                  Node = c(2, 2, 4, 4),
+##'                  node = c(2, 2, 4, 4),
 ##'                  V1 = c(TRUE, TRUE, TRUE, TRUE))
 ##' V(model) <- df
 ##' result <- run(model, threads = 1, seed = 7)
@@ -1134,12 +1134,12 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
             stop("'value' argument is not a 'data.frame'")
 
         ## Sort the data.frame by time and node.
-        value <- value[order(value$Time, value$Node),
-                       c("Time", "Node", paste0("V", seq_len(Nd(model))))]
+        value <- value[order(value$Time, value$node),
+                       c("Time", "node", paste0("V", seq_len(Nd(model))))]
 
         ## Match nodes and for each matched node create an index to
         ## all of its continuous state compartments in the V matrix.
-        i <- match(value$Node, seq_len(Nn(model)))
+        i <- match(value$node, seq_len(Nn(model)))
         if (any(is.na(i)))
             stop("Unable to match all nodes")
         i <- rep((i - 1) * Nd(model), each = Nd(model)) + seq_len(Nd(model))

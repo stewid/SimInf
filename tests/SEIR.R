@@ -183,7 +183,7 @@ R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(list(
-    Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+    node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
              3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
              1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
@@ -197,7 +197,7 @@ R_expected <- structure(list(
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
-    .Names = c("Node",  "Time", "R"),
+    .Names = c("node",  "Time", "R"),
     class = "data.frame", row.names = c(NA, -60L))
 R_observed <- trajectory(result, compartments = "R")
 stopifnot(identical(R_observed, R_expected))
@@ -205,10 +205,10 @@ stopifnot(identical(R_observed, R_expected))
 ## Extract the number of recovered individuals in the first node after
 ## each time step in the simulation
 R_expected <- structure(list(
-    Node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
+    node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
     Time = 0:9L,
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
-    .Names = c("Node", "Time", "R"),
+    .Names = c("node", "Time", "R"),
     row.names = c(NA, -10L),
     class = "data.frame")
 R_observed <- trajectory(result, compartments = "R", i = 1)
@@ -225,13 +225,13 @@ stopifnot(identical(R_observed, R_expected))
 ## Extract the number of recovered individuals in the first and third
 ## node after each time step in the simulation
 R_expected <- structure(list(
-    Node = c(1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L,
+    node = c(1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L,
              1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L),
     Time = c(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L,
              5L, 5L, 6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L),
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
-    .Names = c("Node", "Time", "R"),
+    .Names = c("node", "Time", "R"),
     row.names = c(NA, -20L),
     class = "data.frame")
 R_observed <- trajectory(result, compartments = "R", i = c(1, 3))
@@ -269,7 +269,7 @@ model@events@select <- rep(1:4, length.out = length(model@events@select))
 result <- run(model, threads = 1)
 
 U_expected <- structure(list(
-    Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+    node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
              3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
              1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
@@ -305,7 +305,7 @@ U_expected <- structure(list(
           446L, 546L, 646L, 147L, 247L, 347L, 447L, 547L, 647L, 148L,
           248L, 348L, 448L, 548L, 648L, 149L, 249L, 349L, 449L, 549L,
           649L)),
-    .Names = c("Node", "Time", "S", "E", "I", "R"),
+    .Names = c("node", "Time", "S", "E", "I", "R"),
     row.names = c(NA, -60L),
     class = "data.frame")
 
@@ -315,15 +315,15 @@ U_observed <- trajectory(result, compartments = c("S", "E", "I", "R"), i = 1:6)
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- structure(list(
-    Node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
+    node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
     Time = 0:9, S = 110:119, I = 130:139),
-    .Names = c("Node", "Time", "S", "I"),
+    .Names = c("node", "Time", "S", "I"),
     row.names = c(NA, -10L), class = "data.frame")
 U_observed <- trajectory(result, compartments = c("S", "I"), i = 1)
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <-structure(list(
-    Node = c(2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L,
+    node = c(2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L,
              2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L),
     Time = c(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L,
              5L, 5L, 6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L),
@@ -331,7 +331,7 @@ U_expected <-structure(list(
           225L, 425L, 226L, 426L, 227L, 427L, 228L, 428L, 229L, 429L),
     R = c(240L, 440L, 241L, 441L, 242L, 442L, 243L, 443L, 244L, 444L,
           245L, 445L, 246L, 446L, 247L, 447L, 248L, 448L, 249L, 449L)),
-    .Names = c("Node", "Time", "E", "R"), row.names = c(NA, -20L),
+    .Names = c("node", "Time", "E", "R"), row.names = c(NA, -20L),
     class = "data.frame")
 U_observed <- trajectory(result, compartments = c("E", "R"), i = c(2, 4))
 stopifnot(identical(U_observed, U_expected))
@@ -380,7 +380,7 @@ p_observed <- prevalence(result, I~., type = "nop")
 stopifnot(identical(p_observed, p_expected))
 
 p_expected <- structure(
-    list(Node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+    list(node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
                   5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
                   3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
                   1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
@@ -405,20 +405,20 @@ p_expected <- structure(
                         0.252886836027714, 0.25234521575985, 0.251974723538705, 0.259328358208955,
                         0.25534188034188, 0.25374251497006, 0.252880184331797, 0.252340823970037,
                         0.251971608832808)),
-    .Names = c("Node", "Time", "Prevalence"),
+    .Names = c("node", "Time", "Prevalence"),
     row.names = c(NA, -60L),
     class = "data.frame")
 p_observed <- prevalence(result, I~., type = "wnp")
-stopifnot(identical(p_observed$Node, p_expected$Node))
+stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$Time, p_expected$Time))
 stopifnot(all(abs(p_observed$Prevalence - p_expected$Prevalence) < tol))
 p_observed <- prevalence(result, I~S+E+I+R, type = "wnp")
-stopifnot(identical(p_observed$Node, p_expected$Node))
+stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$Time, p_expected$Time))
 stopifnot(all(abs(p_observed$Prevalence - p_expected$Prevalence) < tol))
 
 p_expected <- structure(
-    list(Node = c(2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L,
+    list(node = c(2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L,
                   2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L),
          Time = c(0, 0, 1, 1,
                   2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9),
@@ -428,15 +428,15 @@ p_expected <- structure(
                         0.253799392097264, 0.255434782608696, 0.253787878787879, 0.255411255411255,
                         0.253776435045317, 0.255387931034483, 0.253765060240964, 0.255364806866953,
                         0.253753753753754, 0.25534188034188, 0.25374251497006)),
-    .Names = c("Node", "Time", "Prevalence"),
+    .Names = c("node", "Time", "Prevalence"),
     row.names = c(NA, -20L),
     class = "data.frame")
 p_observed <- prevalence(result, I~., type = "wnp", i = 2:3)
-stopifnot(identical(p_observed$Node, p_expected$Node))
+stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$Time, p_expected$Time))
 stopifnot(all(abs(p_observed$Prevalence - p_expected$Prevalence) < tol))
 p_observed <- prevalence(result, I~S+E+I+R, type = "wnp", i = 2:3)
-stopifnot(identical(p_observed$Node, p_expected$Node))
+stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$Time, p_expected$Time))
 stopifnot(all(abs(p_observed$Prevalence - p_expected$Prevalence) < tol))
 
