@@ -27,8 +27,8 @@ model contains many nodes and time-points, but where only a few of
 the data points are of interest for post-processing. To use this
 feature, a template has to be defined for which data points to
 record. This is done using a \code{data.frame} that specifies the
-time-points (column \sQuote{Time}) and nodes (column
-\sQuote{Node}) to record the state of the compartments, see
+time-points (column \sQuote{time}) and nodes (column
+\sQuote{node}) to record the state of the compartments, see
 \sQuote{Examples}. The specified time-points, nodes and
 compartments must exist in the model, or an error is raised. Note
 that specifying a template only affects which data-points are
@@ -49,8 +49,8 @@ trajectory(result)
 
 ## Assume we are only interested in nodes '2' and '4' at the
 ## time-points '3' and '5'
-df <- data.frame(Time = c(3, 5, 3, 5),
-                 Node = c(2, 2, 4, 4),
+df <- data.frame(time = c(3, 5, 3, 5),
+                 node = c(2, 2, 4, 4),
                  S = c(TRUE, TRUE, TRUE, TRUE),
                  I = c(TRUE, TRUE, TRUE, TRUE),
                  R = c(TRUE, TRUE, TRUE, TRUE))
@@ -60,8 +60,8 @@ trajectory(result)
 
 ## We can also specify to record only some of the compartments in
 ## each time-step.
-df <- data.frame(Time = c(3, 5, 3, 5),
-                 Node = c(2, 2, 4, 4),
+df <- data.frame(time = c(3, 5, 3, 5),
+                 node = c(2, 2, 4, 4),
                  S = c(FALSE, TRUE, TRUE, TRUE),
                  I = c(TRUE, FALSE, TRUE, FALSE),
                  R = c(TRUE, FALSE, TRUE, TRUE))

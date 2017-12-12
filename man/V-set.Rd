@@ -27,8 +27,8 @@ model contains many nodes and time-points, but where only a few of
 the data points are of interest for post-processing. To use this
 feature, a template has to be defined for which data points to
 record. This is done using a \code{data.frame} that specifies the
-time-points (column \sQuote{Time}) and nodes (column
-\sQuote{Node}) to record the state of the continuous state
+time-points (column \sQuote{time}) and nodes (column
+\sQuote{node}) to record the state of the continuous state
 compartments, see \sQuote{Examples}. The specified time-points,
 nodes and compartments must exist in the model, or an error is
 raised. Note that specifying a template only affects which
@@ -53,8 +53,8 @@ trajectory(result, compartments = "V1")
 
 ## Assume we are only interested in nodes '2' and '4' at the
 ## time-points '3' and '5'
-df <- data.frame(Time = c(3, 5, 3, 5),
-                 Node = c(2, 2, 4, 4),
+df <- data.frame(time = c(3, 5, 3, 5),
+                 node = c(2, 2, 4, 4),
                  V1 = c(TRUE, TRUE, TRUE, TRUE))
 V(model) <- df
 result <- run(model, threads = 1, seed = 7)
