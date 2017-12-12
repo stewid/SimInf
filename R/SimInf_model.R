@@ -1136,52 +1136,55 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         if (!is.data.frame(value))
             stop("'value' argument is not a 'data.frame'")
 
-        ## Sort the data.frame by time and node.
-        value <- value[order(value$time, value$node),
-                       c("time", "node", paste0("V", seq_len(Nd(model))))]
+        if (nrow(value) > 0) {
+            ## Sort the data.frame by time and node.
+            value <- value[order(value$time, value$node),
+                           c("time", "node", paste0("V", seq_len(Nd(model))))]
 
-        ## Match nodes and for each matched node create an index to
-        ## all of its continuous state compartments in the V matrix.
-        i <- match(value$node, seq_len(Nn(model)))
-        if (any(is.na(i)))
-            stop("Unable to match all nodes")
-        i <- rep((i - 1) * Nd(model), each = Nd(model)) + seq_len(Nd(model))
+            ## Match nodes and for each matched node create an index
+            ## to all of its continuous state compartments in the V
+            ## matrix.
+            i <- match(value$node, seq_len(Nn(model)))
+            if (any(is.na(i)))
+                stop("Unable to match all nodes")
+            i <- rep((i - 1) * Nd(model), each = Nd(model)) + seq_len(Nd(model))
 
-        ## Match time-points to tspan and repeat each time-point for
-        ## every continuous state compartment in the model.
-        j <- match(value$time, model@tspan)
-        if (any(is.na(j)))
-            stop("Unable to match all time-points to tspan")
-        j <- rep(j, each = Nd(model))
+            ## Match time-points to tspan and repeat each time-point
+            ## for every continuous state compartment in the model.
+            j <- match(value$time, model@tspan)
+            if (any(is.na(j)))
+                stop("Unable to match all time-points to tspan")
+            j <- rep(j, each = Nd(model))
 
-        ## Coerce the compartments part of the data.frame to a logical
-        ## vector that match the rows of continuous state compartments
-        ## in the V matrix.
-        value <- as.logical(t(as.matrix(value[, -(1:2)])))
-        value[is.na(value)] <- FALSE
+            ## Coerce the compartments part of the data.frame to a
+            ## logical vector that match the rows of continuous state
+            ## compartments in the V matrix.
+            value <- as.logical(t(as.matrix(value[, -(1:2)])))
+            value[is.na(value)] <- FALSE
 
-        ## Keep only the compartments and time-points that are marked
-        ## with TRUE
-        i <- i[value]
-        j <- j[value]
+            ## Keep only the compartments and time-points that are
+            ## marked with TRUE
+            i <- i[value]
+            j <- j[value]
+        } else {
+            i <- numeric(0)
+            j <- numeric(0)
+        }
 
-        ## Create sparse template
+        ## Specify dimension.
         d <- c(Nn(model) * Nd(model), length(model@tspan))
-        value <- as(sparseMatrix(i = i, j = j, dims = d), "dgCMatrix")
 
         ## Clear dense result matrix
-        v <- matrix(nrow = 0, ncol = 0)
-        storage.mode(v) <- "double"
-        model@V <- v
-
-        model@V_sparse = value
+        model@V <- matrix(numeric(0), nrow = 0, ncol = 0)
     } else {
         ## Clear sparse result matrix
-        model@V_sparse <- as(sparseMatrix(numeric(0),
-                                          numeric(0),
-                                          dims = c(0, 0)),
-                             "dgCMatrix")
+        i <- numeric(0)
+        j <- numeric(0)
+        d <- c(0, 0)
     }
+
+    ## Create sparse template
+    model@V_sparse <- as(sparseMatrix(i = i, j = j, dims = d), "dgCMatrix")
 
     model
 }
