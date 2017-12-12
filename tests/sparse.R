@@ -41,11 +41,11 @@ U_exp <- new("dgCMatrix",
              factors = list())
 
 U(model) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
-                           Time = c(5L, 6L, 7L, 8L, 9L, 10L),
+                           time = c(5L, 6L, 7L, 8L, 9L, 10L),
                            S = rep(TRUE, 6),
                            I = rep(TRUE, 6),
                            R = rep(TRUE, 6)),
-                      .Names = c("node", "Time", "S", "I", "R"),
+                      .Names = c("node", "time", "S", "I", "R"),
                       row.names = c(NA, -6L),
                       class = "data.frame")
 U_obs <- trajectory(run(model, threads = 1, seed = 123), as.is = TRUE)
@@ -78,11 +78,11 @@ model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
              gamma = 0.077)
 result <- run(model, threads = 1)
 U(result) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
-                            Time = c(5L, 6L, 7L, 8L, 9L, 10L),
+                            time = c(5L, 6L, 7L, 8L, 9L, 10L),
                             S = rep(TRUE, 6),
                             I = rep(TRUE, 6),
                             R = rep(TRUE, 6)),
-                       .Names = c("node", "Time", "S", "I", "R"),
+                       .Names = c("node", "time", "S", "I", "R"),
                        row.names = c(NA, -6L),
                        class = "data.frame")
 result <- run(result, threads = 1)
@@ -118,7 +118,7 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 0.000011)
 result <- run(model, threads = 1)
-V(result) <- data.frame(Time = 4:9, node = 1:6, V1 = TRUE)
+V(result) <- data.frame(time = 4:9, node = 1:6, V1 = TRUE)
 result <- run(result, threads = 1)
 stopifnot(identical(dim(result@V), c(0L, 0L)))
 stopifnot(identical(dim(result@V_sparse), c(6L, 10L)))
@@ -135,40 +135,40 @@ stopifnot(identical(dim(result@V_sparse), c(0L, 0L)))
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 U(model) <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
-                           Time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
+                           time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
                            S = c(TRUE, NA, TRUE, NA, TRUE, NA, TRUE, NA),
                            I = c(TRUE, NA, NA, TRUE, TRUE, NA, NA, TRUE),
                            R = c(NA, TRUE, NA, TRUE, NA, TRUE, NA, TRUE)),
-                      .Names = c("node", "Time", "S", "I", "R"),
+                      .Names = c("node", "time", "S", "I", "R"),
                       row.names = c(NA, -8L),
                       class = "data.frame")
 result <- run(model, threads = 1, seed = 22)
 U_exp <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
-                        Time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
+                        time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
                         S = c(98L, NA, 100L, NA, 96L, NA, 101L, NA),
                         I = c(3L, NA, NA, 3L, 7L, NA, NA, 3L),
                         R = c(NA, 0L, NA, 1L, NA, 3L, NA, 3L)),
-                   .Names = c("node", "Time", "S", "I", "R"),
+                   .Names = c("node", "time", "S", "I", "R"),
                    row.names = c(NA, -8L),
                    class = "data.frame")
 stopifnot(identical(trajectory(result), U_exp))
 
 ## Similar test case, but without NA-values
 U(model) <- structure(list(node = 1:6,
-                           Time = 5:10,
+                           time = 5:10,
                            S = rep(TRUE, 6),
                            I = rep(TRUE, 6),
                            R = rep(TRUE, 6)),
-                      .Names = c("node", "Time", "S", "I", "R"),
+                      .Names = c("node", "time", "S", "I", "R"),
                       row.names = c(NA, -6L),
                       class = "data.frame")
 result <- run(model, threads = 1, seed = 22)
 U_exp <- structure(list(node = 1:6,
-                        Time = 5:10,
+                        time = 5:10,
                         S = c(98L, 100L, 97L, 101L, 87L, 93L),
                         I = c(3L, 2L, 6L, 3L, 15L, 16L),
                         R = c(0L, 1L, 2L, 3L, 7L, 2L)),
-                   .Names = c("node", "Time", "S", "I", "R"),
+                   .Names = c("node", "time", "S", "I", "R"),
                    row.names = c(NA, -6L),
                    class = "data.frame")
 stopifnot(identical(trajectory(result), U_exp))
@@ -181,7 +181,7 @@ U_exp <- structure(list(
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
              3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
              1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,  5L, 6L),
-    Time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L,
+    time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L,
              3L, 3L, 4L, 4L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 5L, 5L, 6L, 6L,
              6L, 6L, 6L, 6L, 7L, 7L, 7L, 7L, 7L, 7L, 8L, 8L, 8L, 8L, 8L, 8L,
              9L, 9L, 9L, 9L, 9L, 9L, 10L, 10L, 10L, 10L, 10L, 10L),
@@ -198,7 +198,7 @@ U_exp <- structure(list(
           0L, 0L, 1L, 2L, 3L, 4L, 0L, 0L, 1L, 2L, 3L, 4L, 0L, 0L, 1L, 2L, 3L,
           6L, 1L, 0L, 1L, 2L, 3L, 7L, 1L, 1L, 1L, 2L, 3L, 7L, 1L, 1L, 1L, 3L,
           3L, 7L, 2L, 1L, 2L, 6L, 3L, 10L, 2L)),
-    .Names = c("node", "Time", "S", "I", "R"),
+    .Names = c("node", "time", "S", "I", "R"),
     row.names = c(NA, -60L),
     class = "data.frame")
 stopifnot(identical(trajectory(result), U_exp))

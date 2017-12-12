@@ -513,11 +513,11 @@ model <- SISe(u0 = u0, tspan = 1:10,
               end_t4  = 365,
               epsilon = 0.000011)
 
-U(model) <- data.frame(Time = c(5, 6, 7, 8, 9, 10),
+U(model) <- data.frame(time = c(5, 6, 7, 8, 9, 10),
                        node = c(1, 1, 2, 2, 3, 3),
                        S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
                        I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
-V(model) <- data.frame(Time = 5:10,
+V(model) <- data.frame(time = 5:10,
                        node = 1:6,
                        V1 = rep(TRUE, 6))
 result <- run(model, threads = 1)
@@ -541,14 +541,14 @@ model <- SISe(u0 = u0, tspan = tspan,
               end_t4  = 365,
               epsilon = 0.000011)
 
-U(model) <- data.frame(Time = c(5, 6, 7, 8, 9, 10),
+U(model) <- data.frame(time = c(5, 6, 7, 8, 9, 10),
                        node = c(1, 1, 2, 2, 3, 3),
                        S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
                        I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
-V(model) <- data.frame(Time = 5:10,
+V(model) <- data.frame(time = 5:10,
                        node = 1:6,
                        V1 = rep(TRUE, 6))
-V(model) <- data.frame(Time = 5:10,
+V(model) <- data.frame(time = 5:10,
                        node = 1:6,
                        V1 = rep(TRUE, 6))
 result <- run(model, threads = 1)
