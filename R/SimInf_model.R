@@ -543,7 +543,7 @@ prevalence <- function(model,
     if (is.null(time))
         time <- model@tspan
     if (type %in% c("pop", "nop"))
-        return(data.frame(time = time, Prevalence = cm / pm))
+        return(data.frame(time = time, prevalence = cm / pm))
 
     node = seq_len(Nn(model))
     if (!is.null(i))
@@ -551,7 +551,7 @@ prevalence <- function(model,
 
     data.frame(node = node,
                time = rep(time, each = length(node)),
-               Prevalence = as.numeric(cm / pm),
+               prevalence = as.numeric(cm / pm),
                stringsAsFactors = FALSE)
 }
 
