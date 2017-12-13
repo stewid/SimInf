@@ -69,6 +69,12 @@ U(model) <- df
 result <- run(model, threads = 1, seed = 22)
 trajectory(result)
 
+## It is possible to use an empty 'data.frame' to specify
+## that no data-points should be recorded for the trajectory.
+U(model) <- data.frame()
+result <- run(model, threads = 1, seed = 22)
+trajectory(result)
+
 ## Use 'NULL' to reset the model to record data for every node at
 ## each time-point in tspan.
 U(model) <- NULL
