@@ -997,6 +997,12 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##' result <- run(model, threads = 1, seed = 22)
 ##' trajectory(result)
 ##'
+##' ## It is possible to use an empty 'data.frame' to specify
+##' ## that no data-points should be recorded for the trajectory.
+##' U(model) <- data.frame()
+##' result <- run(model, threads = 1, seed = 22)
+##' trajectory(result)
+##'
 ##' ## Use 'NULL' to reset the model to record data for every node at
 ##' ## each time-point in tspan.
 ##' U(model) <- NULL
@@ -1116,6 +1122,12 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##'                  node = c(2, 2, 4, 4),
 ##'                  V1 = c(TRUE, TRUE, TRUE, TRUE))
 ##' V(model) <- df
+##' result <- run(model, threads = 1, seed = 7)
+##' trajectory(result, compartments = "V1")
+##'
+##' ## It is possible to use an empty 'data.frame' to specify
+##' ## that no data-points should be recorded for the trajectory.
+##' V(model) <- data.frame()
 ##' result <- run(model, threads = 1, seed = 7)
 ##' trajectory(result, compartments = "V1")
 ##'
