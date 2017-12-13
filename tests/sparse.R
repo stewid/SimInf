@@ -173,6 +173,27 @@ U_exp <- structure(list(node = 1:6,
                    class = "data.frame")
 stopifnot(identical(trajectory(result), U_exp))
 
+## Test to specify empty data.frame
+U(model) <- data.frame()
+result <- run(model, threads = 1, seed = 22)
+U_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(18, 10),
+                      dimnames = list(c("S", "I", "R", "S", "I", "R",
+                                        "S", "I", "R", "S", "I", "R",
+                                        "S", "I", "R", "S", "I", "R"),
+                                      c("1", "2", "3", "4", "5",
+                                        "6", "7", "8", "9", "10")))
+U_exp <- as(U_exp, "dgCMatrix")
+stopifnot(identical(result@U_sparse, U_exp))
+
+V(model) <- data.frame()
+result <- run(model, threads = 1, seed = 22)
+V_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(0, 10),
+                      dimnames = list(NULL,
+                                      c("1", "2", "3", "4", "5",
+                                        "6", "7", "8", "9", "10")))
+V_exp <- as(V_exp, "dgCMatrix")
+stopifnot(identical(result@V_sparse, V_exp))
+
 ## Test that it also works to remove the sparse matrix output
 U(model) <- NULL
 result <- run(model, threads = 1, seed = 22)
