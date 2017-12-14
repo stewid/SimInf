@@ -431,6 +431,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
 ##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
 ##'     i.e. no scheduled events in the model.
 ##' @return a \code{\linkS4class{SimInf_model}} object
+##' @importFrom methods as
 ##' @export
 ##' @template mparse-example
 init <- function(model,
@@ -456,19 +457,11 @@ init <- function(model,
     u0 <- u0[, compartments, drop = FALSE]
 
     if (is.null(E))
-        E <- methods::as(matrix(integer(0),
-                                nrow = 0,
-                                ncol = 0),
-                         "dgCMatrix")
-
+        E <- as(matrix(integer(0), nrow = 0, ncol = 0), "dgCMatrix")
     if (is.null(N))
         N <- matrix(integer(0), nrow = 0, ncol = 0)
-
     v0 <- matrix(numeric(0), nrow  = 0, ncol = nrow(u0))
-    storage.mode(v0) <- "double"
-
     ldata <- matrix(numeric(0), nrow = 0, ncol = nrow(u0))
-    storage.mode(ldata) <- "double"
 
     SimInf_model(G      = model@G,
                  S      = model@S,
