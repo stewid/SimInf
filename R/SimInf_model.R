@@ -542,8 +542,11 @@ prevalence <- function(model,
     time <- names(model@tspan)
     if (is.null(time))
         time <- model@tspan
-    if (type %in% c("pop", "nop"))
-        return(data.frame(time = time, prevalence = cm / pm))
+    if (type %in% c("pop", "nop")) {
+        return(data.frame(time = time,
+                          prevalence = cm / pm,
+                          stringsAsFactors = FALSE))
+    }
 
     node = seq_len(Nn(model))
     if (!is.null(i))
