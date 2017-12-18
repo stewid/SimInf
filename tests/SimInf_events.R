@@ -455,3 +455,30 @@ summary_expected <-
       " - External transfer: 25529 (n: min = 1 max = 1 avg = 1.0)")
 summary_observed <- capture.output(summary(events))
 stopifnot(identical(summary_observed, summary_expected))
+
+## Check if converting events to data.frame results in the same as the
+## events data submitted to the SimInf_events function
+
+events <- structure(list(
+    event = c(3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
+              3L, 3L, 3L, 3L, 3L, 3L),
+    time = c(17168L, 17169L, 17170L, 17171L, 17172L,
+             17173L, 17174L, 17175L, 17176L, 17177L,
+             17178L, 17179L, 17180L, 17181L, 17182L),
+    node = c(2L, 2L, 2L, 3L, 3L, 3L, 4L, 4L, 4L,
+             5L, 5L, 5L, 6L, 6L, 6L),
+    dest = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L,
+             1L, 1L, 1L, 1L, 1L, 1L),
+    n = c(1L, 1L, 1L, 2L, 2L, 2L, 3L, 3L, 3L, 4L,
+          4L, 4L, 5L, 5L, 5L),
+    proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                   1, 1, 1, 1, 1),
+    select = c(1L, 1L, 2L, 1L, 1L, 2L, 1L, 1L,
+               2L, 1L, 1L, 2L, 1L, 1L, 2L),
+    shift = c(1L, 2L, 0L, 1L, 2L, 0L, 1L, 2L, 0L,
+              1L, 2L, 0L, 1L, 2L, 0L)),
+    .Names = c("event", "time", "node", "dest", "n",
+               "proportion", "select", "shift"),
+    row.names = c(NA, -15L), class = "data.frame")
+res <- SimInf_events(E = E, N = N, events = events)
+stopifnot(identical(as(res, "data.frame"), events))

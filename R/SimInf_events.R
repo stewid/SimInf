@@ -318,6 +318,21 @@ SimInf_events <- function(E      = NULL,
                         shift      = as.integer(events$shift)))
 }
 
+setAs(from = "SimInf_events",
+      to = "data.frame",
+      def = function(from)
+      {
+          data.frame(event = from@event,
+                     time = from@time,
+                     node = from@node,
+                     dest = from@dest,
+                     n = from@n,
+                     proportion = from@proportion,
+                     select = from@select,
+                     shift = from@shift)
+      }
+)
+
 ##' Plot scheduled events
 ##'
 ##' @param x the time points of the events.
