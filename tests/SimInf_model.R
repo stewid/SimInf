@@ -33,6 +33,7 @@ S <- Matrix(c(-1,  0,  0,
             ncol   = 3,
             byrow  = TRUE,
             sparse = TRUE)
+rownames(S) <- LETTERS[1:6]
 
 Nn <- 6L
 
@@ -200,7 +201,7 @@ res <- tools::assertError(SimInf_model())
 stopifnot(length(grep("'u0' is NULL",
                       res[[1]]$message)) > 0)
 
-## Check show method without events
+## Check first lines of show method without events
 model <- SISe(u0      = data.frame(S = 99, I = 1),
               tspan   = seq_len(1000) - 1,
               events  = NULL,
@@ -224,18 +225,16 @@ show_expected <- c("Model: SISe",
                    "Number of compartments: 2",
                    "Number of transitions: 2",
                    "Number of scheduled events: 0",
-                   "",
-                   "U: 0 x 0",
-                   "V: 0 x 0")
+                   "")
 
 show_observed <- capture.output(show(model))
 
-stopifnot(identical(show_observed, show_expected))
+stopifnot(identical(show_observed[1:7], show_expected))
 
 ## Check summary method without events
 summary(run(model))
 
-## Check show method with events
+## Check first lines of show method with events
 u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
                      I_1 = c(0, 0, 0, 0, 0, 0),
                      S_2 = c(0, 1, 2, 3, 4, 5),
@@ -286,13 +285,11 @@ show_expected <- c("Model: SISe3",
                    "Number of compartments: 6",
                    "Number of transitions: 6",
                    "Number of scheduled events: 15",
-                   "",
-                   "U: 0 x 0",
-                   "V: 0 x 0")
+                   "")
 
 show_observed <- capture.output(show(model))
 
-stopifnot(identical(show_observed, show_expected))
+stopifnot(identical(show_observed[1:7], show_expected))
 
 ## Check summary method with events
 summary(run(model))

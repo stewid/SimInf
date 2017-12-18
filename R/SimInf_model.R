@@ -1569,38 +1569,6 @@ setMethod("plot",
           }
 )
 
-##' @noRd
-show_U <- function(object)
-{
-    d <- dim(object@U)
-    if (identical(d, c(0L, 0L))) {
-        d <- dim(object@U_sparse)
-        if (identical(d, c(0L, 0L))) {
-            cat("U: 0 x 0\n")
-        } else {
-            cat(sprintf("U: %i x %i (sparse)\n", d[1], d[2]))
-        }
-    } else {
-        cat(sprintf("U: %i x %i\n", d[1], d[2]))
-    }
-}
-
-##' @noRd
-show_V <- function(object)
-{
-    d <- dim(object@V)
-    if (identical(d, c(0L, 0L))) {
-        d <- dim(object@V_sparse)
-        if (identical(d, c(0L, 0L))) {
-            cat("V: 0 x 0\n")
-        } else {
-            cat(sprintf("V: %i x %i (sparse)\n", d[1], d[2]))
-        }
-    } else {
-        cat(sprintf("V: %i x %i\n", d[1], d[2]))
-    }
-}
-
 summary_U <- function(object)
 {
     cat("Discrete state variables\n")
@@ -1611,6 +1579,8 @@ summary_U <- function(object)
         d <- dim(object@U_sparse)
     if (identical(d, c(0L, 0L))) {
         cat(" - Empty, please run the model first\n")
+    } else if (is.null(rownames(object@S))) {
+        stop("Undefined model compartments")
     } else {
         qq <- lapply(rownames(object@S), function(compartment) {
             x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
@@ -1779,11 +1749,14 @@ setMethod("show",
               cat(sprintf("Number of nodes: %i\n", Nn(object)))
               cat(sprintf("Number of compartments: %i\n", Nc(object)))
               cat(sprintf("Number of transitions: %i\n", Nt(object)))
-              methods::show(object@events)
+              show(object@events)
 
+              if (Nd(object) > 0) {
+                  cat("\n")
+                  summary_V(object)
+              }
               cat("\n")
-              show_U(object)
-              show_V(object)
+              summary_U(object)
           }
 )
 
