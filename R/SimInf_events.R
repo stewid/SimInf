@@ -318,6 +318,21 @@ SimInf_events <- function(E      = NULL,
                         shift      = as.integer(events$shift)))
 }
 
+setAs(from = "SimInf_events",
+      to = "data.frame",
+      def = function(from)
+      {
+          data.frame(event = from@event,
+                     time = from@time,
+                     node = from@node,
+                     dest = from@dest,
+                     n = from@n,
+                     proportion = from@proportion,
+                     select = from@select,
+                     shift = from@shift)
+      }
+)
+
 ##' Plot scheduled events
 ##'
 ##' @param x the time points of the events.
@@ -470,23 +485,5 @@ setMethod("summary",
               } else {
                   cat(" - External transfer: 0\n")
               }
-          }
-)
-
-##' Coerce a SimInf_events object to a data.frame
-##'
-##' @param x The events data to convert
-##' @export
-setMethod("as.data.frame",
-          signature(x = "SimInf_events"),
-          function(x) {
-              data.frame(event = x@event,
-                         time = x@time,
-                         node = x@node,
-                         dest = x@dest,
-                         n = x@n,
-                         proportion = x@proportion,
-                         select = x@select,
-                         shift = x@shift)
           }
 )

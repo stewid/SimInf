@@ -458,6 +458,7 @@ stopifnot(identical(summary_observed, summary_expected))
 
 ## Check if converting events to data.frame results in the same as the
 ## events data submitted to the SimInf_events function
+
 events <- structure(list(
     event = c(3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
               3L, 3L, 3L, 3L, 3L, 3L),
@@ -480,4 +481,4 @@ events <- structure(list(
                "proportion", "select", "shift"),
     row.names = c(NA, -15L), class = "data.frame")
 res <- SimInf_events(E = E, N = N, events = events)
-stopifnot(isTRUE(identical(as.data.frame(res), events)))
+stopifnot(identical(as(res, "data.frame"), events))
