@@ -472,3 +472,21 @@ setMethod("summary",
               }
           }
 )
+
+##' Coerce a SimInf_events object to a data.frame
+##'
+##' @param x The events data to convert
+##' @export
+setMethod("as.data.frame",
+          signature(x = "SimInf_events"),
+          function(x) {
+              data.frame(event = x@event,
+                         time = x@time,
+                         node = x@node,
+                         dest = x@dest,
+                         n = x@n,
+                         proportion = x@proportion,
+                         select = x@select,
+                         shift = x@shift)
+          }
+)
