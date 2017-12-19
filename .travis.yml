@@ -1,13 +1,18 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
 language: r
-sudo: required
+sudo: false
+cache: packages
 warnings_are_errors: true
 
 os:
   - linux
   - osx
 
-apt_packages:
-  - libgsl0-dev
+addons:
+  apt:
+    packages:
+      - libgsl0-dev
 
 brew_packages:
   - gsl
@@ -15,14 +20,16 @@ brew_packages:
 r_packages:
   - covr
 
-after_failure:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cat /home/travis/build/stewid/SimInf/SimInf.Rcheck/00install.out; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cat /Users/travis/build/stewid/SimInf/SimInf.Rcheck/00install.out; fi
+r:
+  - 3.1
+  - 3.2
+  - oldrel
+  - release
+  - devel
 
+# Only report coverage for the release version
 after_success:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then Rscript -e 'library(covr); coveralls()'; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cat /home/travis/build/stewid/SimInf/SimInf.Rcheck/00install.out; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cat /Users/travis/build/stewid/SimInf/SimInf.Rcheck/00install.out; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$TRAVIS_R_VERSION_STRING" == "release" ]; then Rscript -e 'library(covr); coveralls()'; fi
 
 notifications:
   email:
