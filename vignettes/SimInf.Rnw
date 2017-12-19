@@ -1706,20 +1706,25 @@ Another useful resource is the \texttt{'R packages'} book by
 
 The easiest way to define a new model for \pkg{SimInf} is to use the
 model parser method \code{mparse}.  It takes a character vector of
-transitions in the form of \code{"X -> propensity -> Y"} and generates
-both \proglang{C} code for the model and the two matrices \code{S} and
-\code{G}.  The left hand side of the first '\code{->}'-sign is the
-initial state, the right hand side of the last '\code{->}'-sign is the
-final state, and the propensity is written between the
-'\code{->}'-signs.  The special symbol '\code{@}' is reserved for the
-empty set $\emptyset$.  We suggest to first draw a schematic
-representation of the model that includes all compartments and arrows
-for all state transitions.  Then list the compartments in the order
-they should appear in the \code{U} matrix.  For example,
-\code{transitions <- c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R")}
-expresses an SIR model in a closed population, where \code{b} is the
-transmission rate, and \code{g} is the recovery rate.  We also need to
-specify the compartments that defines the model.
+transitions in the form of \code{"X -> propensity -> Y"} and
+generates: the \proglang{C} code for the model, the state-change
+matrix \code{S}, and the dependency graph \code{G}.  The left hand
+side of the first '\code{->}'-sign is the initial state, the right
+hand side of the last '\code{->}'-sign is the final state, and the
+propensity is written between the '\code{->}'-signs.  The special
+symbol '\code{@}' is reserved for the empty set $\emptyset$.  We
+suggest to first draw a schematic representation of the model that
+includes all compartments and arrows for all state transitions.  Then
+list the compartments in the order they should appear in the \code{U}
+matrix.
+
+\subsubsection[Introductory examples of using mparse]{Introductory examples of using \code{mparse}}
+\label{sec:mparse-introductory-examples}
+
+In a first example we will consider the SIR model in a closed
+population i.e., no births or deaths.  If we let \code{b} denote the
+transmission rate and \code{g} the recovery rate, the model can be
+described as,
 
 <<SIR-mparse-I>>=
 transitions <- c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R")
@@ -1727,10 +1732,10 @@ compartments <- c("S", "I", "R")
 @
 
 We can now use the \code{transitions} and \code{compartments}
-variables, together with constants \code{b} and \code{g} to build an
-object of class \code{'SimInf\_mparse'} via a call to \code{mparse}.
-Before we can simulate from the model, it needs to be initialized with
-the initial condition \code{u0} and \code{tspan}.
+variables, together with the constants \code{b} and \code{g} to build
+an object of class \code{'SimInf\_mparse'} via a call to
+\code{mparse}.  Before we can simulate from the model, it needs to be
+initialized with the initial condition \code{u0} and \code{tspan}.
 
 <<SIR-mparse-II>>=
 m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
@@ -1805,6 +1810,9 @@ do.points = FALSE)
     starting with 99 susceptible, 1 infected and 0 recovered
     individuals.  \label{fig:SIR-mparse-incidence}}
 \end{figure}
+
+\subsubsection{Predator-prey model}
+\label{sec:mparse-predator-prey}
 
 Although \pkg{SimInf} was designed to study disease spread over
 temporal networks, it is not limited to that use case but can also be
