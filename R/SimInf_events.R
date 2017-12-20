@@ -219,16 +219,21 @@ setClass("SimInf_events",
 ##'     \code{NULL}.
 ##' @return S4 class \code{SimInf_events}
 ##' @export
+##' @importFrom methods as
+##' @importFrom methods is
+##' @importFrom methods new
 SimInf_events <- function(E      = NULL,
-                             N      = NULL,
-                             events = NULL,
-                             t0     = NULL)
+                          N      = NULL,
+                          events = NULL,
+                          t0     = NULL)
 {
     ## Check E
     if (is.null(E)) {
         if (!is.null(events))
             stop("events is not NULL when E is NULL")
-        E <- methods::new("dgCMatrix")
+        E <- new("dgCMatrix")
+    } else if (!is(E, "dgCMatrix")) {
+        E <- as(E, "dgCMatrix")
     }
 
     ## Check N
@@ -268,7 +273,7 @@ SimInf_events <- function(E      = NULL,
 
     ## Check time
     if (nrow(events)) {
-        if (methods::is(events$time, "Date")) {
+        if (is(events$time, "Date")) {
             if (is.null(t0))
                 stop("Missing 't0'")
             if (!all(identical(length(t0), 1L), is.numeric(t0)))
@@ -305,17 +310,17 @@ SimInf_events <- function(E      = NULL,
 
     events <- events[order(events$time, events$event, events$select),]
 
-    return(methods::new("SimInf_events",
-                        E          = E,
-                        N          = N,
-                        event      = as.integer(events$event),
-                        time       = as.integer(events$time),
-                        node       = as.integer(events$node),
-                        dest       = as.integer(events$dest),
-                        n          = as.integer(events$n),
-                        proportion = as.numeric(events$proportion),
-                        select     = as.integer(events$select),
-                        shift      = as.integer(events$shift)))
+    return(new("SimInf_events",
+               E          = E,
+               N          = N,
+               event      = as.integer(events$event),
+               time       = as.integer(events$time),
+               node       = as.integer(events$node),
+               dest       = as.integer(events$dest),
+               n          = as.integer(events$n),
+               proportion = as.numeric(events$proportion),
+               select     = as.integer(events$select),
+               shift      = as.integer(events$shift)))
 }
 
 setAs(from = "SimInf_events",
