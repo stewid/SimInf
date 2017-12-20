@@ -290,7 +290,7 @@ package_skeleton <- function(model, name = NULL, path = ".",
     stopifnot(!is.null(path), is.character(path), length(path) == 1,
               nchar(path) > 0)
     path <- file.path(path, name)
-    if (dir.exists(path))
+    if (!is.na(file.info(path)$size))
         stop(paste0("'", path, "' already exists"))
 
     if (is.null(author)) {
