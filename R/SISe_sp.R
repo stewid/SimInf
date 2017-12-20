@@ -114,15 +114,8 @@ SISe_sp <- function(u0,
 
     ## Arguments seems ok...go on
 
-    E <- Matrix::Matrix(c(1, 1,
-                          0, 1),
-                        nrow   = 2,
-                        ncol   = 2,
-                        byrow  = TRUE,
-                        sparse = TRUE)
-    E <- methods::as(E, "dgCMatrix")
-    colnames(E) <- as.character(1:2)
-    rownames(E) <- compartments
+    E <- matrix(c(1, 0, 1, 1), nrow = 2, ncol = 2,
+                dimnames = list(compartments, c("1", "2")))
 
     N <- matrix(integer(0), nrow = 0, ncol = 0)
 

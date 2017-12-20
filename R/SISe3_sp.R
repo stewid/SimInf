@@ -130,19 +130,10 @@ SISe3_sp <- function(u0,
 
     ## Arguments seems ok...go on
 
-    E <- Matrix::Matrix(c(1, 0, 0, 1, 0, 0,
-                          0, 0, 0, 1, 0, 0,
-                          0, 1, 0, 0, 1, 0,
-                          0, 0, 0, 0, 1, 0,
-                          0, 0, 1, 0, 0, 1,
-                          0, 0, 0, 0, 0, 1),
-                        nrow   = 6,
-                        ncol   = 6,
-                        byrow  = TRUE,
-                        sparse = TRUE)
-    E <- methods::as(E, "dgCMatrix")
-    colnames(E) <- as.character(1:6)
-    rownames(E) <- compartments
+    E <- matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1,
+                  0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),
+                nrow = 6, ncol = 6,
+                dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
 
     N <- matrix(c(2, 0,
                   2, 0,
