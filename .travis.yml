@@ -5,10 +5,6 @@ sudo: false
 cache: packages
 warnings_are_errors: true
 
-os:
-  - linux
-  - osx
-
 addons:
   apt:
     packages:
@@ -20,14 +16,21 @@ brew_packages:
 r_packages:
   - covr
 
-r:
-  - 3.1
-  - 3.2
-  - oldrel
-  - release
-  - devel
+matrix:
+  include:
+    - os: linux
+      r:
+        - 3.1
+        - 3.2
+        - oldrel
+        - release
+        - devel
+    - os: osx
+      r:
+        - oldrel
+        - release
 
-# Only report coverage for the release version
+# Only report coverage for the release version on linux
 after_success:
   - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$TRAVIS_R_VERSION_STRING" == "release" ]; then Rscript -e 'library(covr); coveralls()'; fi
 
