@@ -27,11 +27,11 @@ vector.}
 events. Default is \code{NULL} i.e. no scheduled events in the
 model.}
 
-\item{E}{Sparse matrix to handle scheduled events, see
+\item{E}{matrix to handle scheduled events, see
 \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
 i.e. no scheduled events in the model.}
 
-\item{N}{Sparse matrix to handle scheduled events, see
+\item{N}{matrix to handle scheduled events, see
 \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
 i.e. no scheduled events in the model.}
 }
