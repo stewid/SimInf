@@ -297,24 +297,17 @@ package_skeleton <- function(model, name = NULL, path = ".",
     if (!is.na(file.info(path)$size))
         stop(paste0("'", path, "' already exists"))
 
-    if (is.null(author)) {
+    if (is.null(author))
         author <- "Your Name"
-    } else {
-        stopifnot(is.character(author), length(author) == 1, nchar(author) > 0)
-    }
+    stopifnot(is.character(author), length(author) == 1, nchar(author) > 0)
 
-    if (is.null(email)) {
+    if (is.null(email))
         email <- "your@email.com"
-    } else {
-        stopifnot(is.character(email), length(email) == 1, nchar(email) > 0)
-    }
+    stopifnot(is.character(email), length(email) == 1, nchar(email) > 0)
 
-    if (is.null(maintainer)) {
+    if (is.null(maintainer))
         maintainer <- author
-    } else {
-        stopifnot(is.character(maintainer), length(maintainer) == 1,
-                  nchar(maintainer) > 0)
-    }
+    stopifnot(is.character(maintainer), length(maintainer) == 1, nchar(maintainer) > 0)
 
     ## Create folder structure
     message("Creating directories ...", domain = NA)
