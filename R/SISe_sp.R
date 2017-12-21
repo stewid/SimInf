@@ -54,6 +54,8 @@ setClass("SISe_sp", contains = c("SimInf_model"))
 ##' @return \code{SISe_sp}
 ##' @include check_arguments.R
 ##' @export
+##' @importFrom methods as
+##' @importFrom methods is
 SISe_sp <- function(u0,
                     tspan,
                     events   = NULL,
