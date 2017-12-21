@@ -249,6 +249,9 @@ setClass("SimInf_model",
 ##'     the model.
 ##' @return \linkS4class{SimInf_model}
 ##' @export
+##' @importFrom methods as
+##' @importFrom methods is
+##' @importFrom methods new
 SimInf_model <- function(G,
                          S,
                          tspan,
@@ -284,8 +287,10 @@ SimInf_model <- function(G,
     }
 
     ## Check G
-    if (class(G) == "dsCMatrix")
-        G <- methods::as(G, "dgCMatrix")
+    if (!is.null(G)) {
+        if (!is(G, "dgCMatrix"))
+            G <- as(G, "dgCMatrix")
+    }
 
     ## Check ldata
     if (is.null(ldata))
@@ -297,8 +302,7 @@ SimInf_model <- function(G,
 
     ## Check U
     if (is.null(U)) {
-        U <- matrix(nrow = 0, ncol = 0)
-        storage.mode(U) <- "integer"
+        U <- matrix(integer(0), nrow = 0, ncol = 0)
     } else {
         if (!is.integer(U)) {
             if (!all(is_wholenumber(U)))
@@ -315,8 +319,7 @@ SimInf_model <- function(G,
 
     ## Check v0
     if (is.null(v0)) {
-        v0 <- matrix(nrow = 0, ncol = 0)
-        storage.mode(v0) <- "double"
+        v0 <- matrix(numeric(0), nrow = 0, ncol = 0)
     } else {
         if (!all(is.matrix(v0), is.numeric(v0)))
             stop("v0 must be a numeric matrix")
@@ -327,8 +330,7 @@ SimInf_model <- function(G,
 
     ## Check V
     if (is.null(V)) {
-        V <- matrix(nrow = 0, ncol = 0)
-        storage.mode(V) <- "double"
+        V <- matrix(numeric(0), nrow = 0, ncol = 0)
     } else {
         if (!is.numeric(V))
             stop("V must be numeric")
@@ -367,18 +369,18 @@ SimInf_model <- function(G,
     if (is.null(C_code))
         C_code <- character(0)
 
-    return(methods::new("SimInf_model",
-                        G      = G,
-                        S      = S,
-                        U      = U,
-                        ldata  = ldata,
-                        gdata  = gdata,
-                        tspan  = tspan,
-                        u0     = u0,
-                        v0     = v0,
-                        V      = V,
-                        events = events,
-                        C_code = C_code))
+    new("SimInf_model",
+        G      = G,
+        S      = S,
+        U      = U,
+        ldata  = ldata,
+        gdata  = gdata,
+        tspan  = tspan,
+        u0     = u0,
+        v0     = v0,
+        V      = V,
+        events = events,
+        C_code = C_code)
 }
 
 ##' Calculate prevalence from data in a trajectory
