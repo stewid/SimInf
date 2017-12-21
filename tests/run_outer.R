@@ -196,3 +196,39 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
 z_obs <- run_outer(x, y, model, upsilon ~ beta_t1, run_f, N = 3)
 
 stopifnot(all(abs(z_obs - z_exp) < tol))
+
+## Check missing 'x'
+res <- tools::assertError(
+    run_outer(y = y, model = model, formula = alpha ~ upsilon, FUN = run_f, N = 3))
+stopifnot(length(grep("Missing 'x' argument",
+                      res[[1]]$message)) > 0)
+
+## Check non-numeric 'x'
+res <- tools::assertError(
+    run_outer(x = "x", y = y, model = model, formula = alpha ~ upsilon, FUN = run_f, N = 3))
+stopifnot(length(grep("'x' argument is not numeric",
+                      res[[1]]$message)) > 0)
+
+## Check missing 'y'
+res <- tools::assertError(
+    run_outer(x = x, model = model, formula = alpha ~ upsilon, FUN = run_f, N = 3))
+stopifnot(length(grep("Missing 'y' argument",
+                      res[[1]]$message)) > 0)
+
+## Check non-numeric 'y'
+res <- tools::assertError(
+    run_outer(x = x, y = "y", model = model, formula = alpha ~ upsilon, FUN = run_f, N = 3))
+stopifnot(length(grep("'y' argument is not numeric",
+                      res[[1]]$message)) > 0)
+
+## Check missing 'model'
+res <- tools::assertError(
+    run_outer(x = x, y = y, formula = alpha ~ upsilon, FUN = run_f, N = 3))
+stopifnot(length(grep("Missing 'model' argument",
+                      res[[1]]$message)) > 0)
+
+## Check non-SimInf_model 'model'
+res <- tools::assertError(
+    run_outer(x = x, y = y, model = "model", formula = alpha ~ upsilon, FUN = run_f, N = 3))
+stopifnot(length(grep("'model' argument is not a 'SimInf_model'",
+                      res[[1]]$message)) > 0)
