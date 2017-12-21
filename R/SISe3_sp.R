@@ -95,10 +95,10 @@ SISe3_sp <- function(u0,
 
     ## Check u0
     if (!is.data.frame(u0))
-        stop("'u0' must be a data.frame")
+        u0 <- as.data.frame(u0)
     if (!all(compartments %in% names(u0)))
         stop("Missing columns in u0")
-    u0 <- u0[, compartments]
+    u0 <- u0[, compartments, drop = FALSE]
 
     ## Check initial infectious pressure
     if (is.null(phi))

@@ -22,7 +22,7 @@ sessionInfo()
 
 ## Check invalid u0
 res <- tools::assertError(SISe3_sp(u0 = "u0"))
-stopifnot(length(grep("'u0' must be a data.frame",
+stopifnot(length(grep("Missing columns in u0",
                       res[[1]]$message)) > 0)
 
 u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
