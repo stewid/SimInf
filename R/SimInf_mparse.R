@@ -460,26 +460,16 @@ init <- function(model,
         stop("Missing columns in u0")
     u0 <- u0[, compartments, drop = FALSE]
 
-    if (is.null(E)) {
-        E <- as(matrix(integer(0), nrow = 0, ncol = 0), "dgCMatrix")
-    } else if (!is(E, "dgCMatrix")) {
-        E <- as(E, "dgCMatrix")
-    }
-    if (is.null(N))
-        N <- matrix(integer(0), nrow = 0, ncol = 0)
-    v0 <- matrix(numeric(0), nrow  = 0, ncol = nrow(u0))
-    ldata <- matrix(numeric(0), nrow = 0, ncol = nrow(u0))
-
     SimInf_model(G      = model@G,
                  S      = model@S,
                  E      = E,
                  N      = N,
                  tspan  = tspan,
                  events = events,
-                 ldata  = ldata,
-                 gdata  = numeric(),
+                 ldata  = NULL,
+                 gdata  = NULL,
                  u0     = u0,
-                 v0     = v0,
+                 v0     = NULL,
                  C_code = model@C_code)
 }
 
