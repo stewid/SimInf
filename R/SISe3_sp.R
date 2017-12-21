@@ -147,21 +147,13 @@ SISe3_sp <- function(u0,
     colnames(N) <- as.character(1:2)
     rownames(N) <- compartments
 
-    G <- Matrix::Matrix(c(1, 1, 0, 0, 0, 0,
-                          1, 1, 0, 0, 0, 0,
-                          0, 0, 1, 1, 0, 0,
-                          0, 0, 1, 1, 0, 0,
-                          0, 0, 0, 0, 1, 1,
-                          0, 0, 0, 0, 1, 1),
-                        nrow   = 6,
-                        ncol   = 6,
-                        byrow  = TRUE,
-                        sparse = TRUE)
-    G <- methods::as(G, "dgCMatrix")
-    colnames(G) <- as.character(1:6)
-    rownames(G) <- c("S_1 -> I_1", "I_1 -> S_1",
-                     "S_2 -> I_2", "I_2 -> S_2",
-                     "S_3 -> I_3", "I_3 -> S_3")
+    G <- matrix(c(1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0,
+                  0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1),
+                nrow   = 6, ncol   = 6,
+                dimnames = list(c("S_1 -> I_1", "I_1 -> S_1",
+                                  "S_2 -> I_2", "I_2 -> S_2",
+                                  "S_3 -> I_3", "I_3 -> S_3"),
+                                c("1", "2", "3", "4", "5", "6")))
 
     S <- Matrix::Matrix(c(-1,  1,  0,  0,  0,  0,
                            1, -1,  0,  0,  0,  0,
@@ -209,7 +201,7 @@ SISe3_sp <- function(u0,
                           u0     = u0,
                           v0     = v0)
 
-    methods::as(model, "SISe3_sp")
+    as(model, "SISe3_sp")
 }
 
 ##' @rdname plot

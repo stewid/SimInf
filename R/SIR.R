@@ -84,15 +84,9 @@ SIR <- function(u0,
 
     N <- matrix(integer(0), nrow = 0, ncol = 0)
 
-    G <- Matrix::Matrix(c(1, 1,
-                          1, 1),
-                        nrow = 2,
-                        ncol = 2,
-                        byrow  = TRUE,
-                        sparse = TRUE)
-    G <- methods::as(G, "dgCMatrix")
-    colnames(G) <- as.character(1:2)
-    rownames(G) <- c("S -> I", "I -> R")
+    G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
+                dimnames = list(c("S -> I", "I -> R"),
+                                c("1", "2")))
 
     S <- Matrix::Matrix(c(-1,  0,
                            1, -1,

@@ -84,16 +84,9 @@ SEIR <- function(u0,
 
     N <- matrix(integer(0), nrow = 0, ncol = 0)
 
-    G <- Matrix::Matrix(c(1, 1, 1,
-                          1, 1, 1,
-                          1, 1, 1),
-                        nrow = 3,
-                        ncol = 3,
-                        byrow  = TRUE,
-                        sparse = TRUE)
-    G <- methods::as(G, "dgCMatrix")
-    colnames(G) <- as.character(1:3)
-    rownames(G) <- c("S -> E", "E -> I", "I -> R")
+    G <- matrix(c(1, 1, 1, 1, 1, 1, 1, 1, 1), nrow = 3, ncol = 3,
+                dimnames = list(c("S -> E", "E -> I", "I -> R"),
+                                c("1", "2", "3")))
 
     S <- Matrix::Matrix(c(-1,  0,  0,
                            1, -1,  0,
