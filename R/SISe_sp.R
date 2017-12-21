@@ -123,22 +123,12 @@ SISe_sp <- function(u0,
                 dimnames = list(c("S -> I", "I -> S"),
                                 c("1", "2")))
 
-    S <- Matrix::Matrix(c(-1,  1,
-                           1, -1),
-                        nrow   = 2,
-                        ncol   = 2,
-                        byrow  = TRUE,
-                        sparse = TRUE)
-    S <- methods::as(S, "dgCMatrix")
-    colnames(S) <- as.character(1:2)
-    rownames(S) <- compartments
+    S <- matrix(c(-1,  1, 1, -1), nrow = 2, ncol = 2,
+                dimnames = list(compartments, c("1", "2")))
 
-    v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
-    storage.mode(v0) <- "double"
+    v0 <- matrix(as.numeric(phi), nrow  = 1, byrow = TRUE)
 
-    ldata <- matrix(c(end_t1, end_t2, end_t3, end_t4),
-                    nrow  = 4,
-                    byrow = TRUE)
+    ldata <- matrix(c(end_t1, end_t2, end_t3, end_t4), nrow = 4, byrow = TRUE)
     storage.mode(ldata) <- "double"
     ldata <- .Call("SimInf_ldata_sp", ldata, distance, 1L, PACKAGE = "SimInf")
 
@@ -160,7 +150,7 @@ SISe_sp <- function(u0,
                           u0     = u0,
                           v0     = v0)
 
-    methods::as(model, "SISe_sp")
+    as(model, "SISe_sp")
 }
 
 ##' @rdname plot

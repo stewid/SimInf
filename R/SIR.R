@@ -85,28 +85,16 @@ SIR <- function(u0,
     N <- matrix(integer(0), nrow = 0, ncol = 0)
 
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
-                dimnames = list(c("S -> I", "I -> R"),
-                                c("1", "2")))
+                dimnames = list(c("S -> I", "I -> R"), c("1", "2")))
 
-    S <- Matrix::Matrix(c(-1,  0,
-                           1, -1,
-                           0,  1),
-                        nrow   = 3,
-                        ncol   = 2,
-                        byrow  = TRUE,
-                        sparse = TRUE)
-    S <- methods::as(S, "dgCMatrix")
-    colnames(S) <- as.character(1:2)
-    rownames(S) <- compartments
+    S <- matrix(c(-1, 1, 0, 0, -1, 1), nrow = 3, ncol = 2,
+                dimnames = list(compartments, c("1", "2")))
 
     v0 <- matrix(numeric(0), nrow  = 0, ncol = nrow(u0))
-    storage.mode(v0) <- "double"
 
     ldata <- matrix(numeric(0), nrow = 0, ncol = nrow(u0))
-    storage.mode(ldata) <- "double"
 
-    gdata <- c(beta, gamma)
-    storage.mode(gdata) <- "double"
+    gdata <- as.numeric(c(beta, gamma))
     names(gdata) <- c("beta", "gamma")
 
     model <- SimInf_model(G      = G,
@@ -120,7 +108,7 @@ SIR <- function(u0,
                           u0     = u0,
                           v0     = v0)
 
-    methods::as(model, "SIR")
+    as(model, "SIR")
 }
 
 ##' @rdname plot

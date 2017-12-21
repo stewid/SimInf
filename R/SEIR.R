@@ -88,23 +88,12 @@ SEIR <- function(u0,
                 dimnames = list(c("S -> E", "E -> I", "I -> R"),
                                 c("1", "2", "3")))
 
-    S <- Matrix::Matrix(c(-1,  0,  0,
-                           1, -1,  0,
-                           0,  1, -1,
-                           0,  0,  1),
-                        nrow   = 4,
-                        ncol   = 3,
-                        byrow  = TRUE,
-                        sparse = TRUE)
-    S <- methods::as(S, "dgCMatrix")
-    colnames(S) <- as.character(1:3)
-    rownames(S) <- compartments
+    S <- matrix(c(-1, 1, 0, 0, 0, -1, 1, 0, 0, 0, -1, 1), nrow = 4, ncol = 3,
+                dimnames = list(compartments, c("1", "2", "3")))
 
     v0 <- matrix(numeric(0), nrow  = 0, ncol = nrow(u0))
-    storage.mode(v0) <- "double"
 
     ldata <- matrix(numeric(0), nrow = 0, ncol = nrow(u0))
-    storage.mode(ldata) <- "double"
 
     gdata <- c(beta, epsilon, gamma)
     storage.mode(gdata) <- "double"
@@ -121,7 +110,7 @@ SEIR <- function(u0,
                           u0     = u0,
                           v0     = v0)
 
-    methods::as(model, "SEIR")
+    as(model, "SEIR")
 }
 
 ##' @rdname plot

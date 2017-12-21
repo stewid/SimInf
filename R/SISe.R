@@ -110,18 +110,10 @@ SISe <- function(u0,
     N <- matrix(integer(0), nrow = 0, ncol = 0)
 
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
-                dimnames = list(c("S -> I", "I -> S"),
-                                c("1", "2")))
+                dimnames = list(c("S -> I", "I -> S"), c("1", "2")))
 
-    S <- Matrix::Matrix(c(-1,  1,
-                           1, -1),
-                        nrow   = 2,
-                        ncol   = 2,
-                        byrow  = TRUE,
-                        sparse = TRUE)
-    S <- methods::as(S, "dgCMatrix")
-    colnames(S) <- as.character(1:2)
-    rownames(S) <- compartments
+    S <- matrix(c(-1,  1, 1, -1), nrow = 2, ncol = 2,
+                dimnames = list(compartments, c("1", "2")))
 
     v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
     storage.mode(v0) <- "double"
