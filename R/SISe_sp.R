@@ -109,7 +109,7 @@ SISe_sp <- function(u0,
     ## Check distance matrix
     if (is.null(distance))
         stop("'distance' is missing")
-    if (!methods::is(distance, "dgCMatrix"))
+    if (!is(distance, "dgCMatrix"))
         stop("The 'distance' argument must be of type 'dgCMatrix'")
     if (any(distance < 0))
         stop("All values in the 'distance' matrix must be >= 0")
@@ -157,6 +157,7 @@ SISe_sp <- function(u0,
 
 ##' @rdname plot
 ##' @aliases plot,SISe_sp-method
+##' @importFrom methods callNextMethod
 setMethod("plot",
           signature(x = "SISe_sp"),
           function(x,
@@ -165,7 +166,6 @@ setMethod("plot",
                    lwd = 2,
                    ...)
           {
-              methods::callNextMethod(x, col = col, lty = lty,
-                                      lwd = lwd, ...)
+              callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
           }
 )

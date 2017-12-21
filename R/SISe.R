@@ -53,6 +53,7 @@ setClass("SISe", contains = c("SimInf_model"))
 ##' @return \code{SISe}
 ##' @include check_arguments.R
 ##' @export
+##' @importFrom methods as
 SISe <- function(u0,
                  tspan,
                  events  = NULL,
@@ -141,12 +142,13 @@ SISe <- function(u0,
                           u0     = u0,
                           v0     = v0)
 
-    methods::as(model, "SISe")
+    as(model, "SISe")
 }
 
 ##' @rdname plot
 ##' @aliases plot,SISe-method
 ##' @export
+##' @importFrom methods callNextMethod
 setMethod("plot",
           signature(x = "SISe"),
           function(x,
@@ -155,8 +157,7 @@ setMethod("plot",
                    lwd = 2,
                    ...)
           {
-              methods::callNextMethod(x, col = col, lty = lty,
-                                      lwd = lwd, ...)
+              callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
           }
 )
 
@@ -178,6 +179,7 @@ setMethod("plot",
 ##' a model.
 ##' @return A \code{data.frame}
 ##' @export
+##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SISe' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
@@ -203,7 +205,7 @@ setMethod("plot",
 ##' ## events by event type.
 ##' summary(result)
 events_SISe <- function() {
-    utils::data("events_SISe3", package = "SimInf", envir = environment())
+    data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == 0] <- 2
     events_SISe3$select[events_SISe3$event == 1] <- 1
     events_SISe3 <- events_SISe3[events_SISe3$event != 2, ]
@@ -221,6 +223,7 @@ events_SISe <- function() {
 ##' the \sQuote{I} compartment is zero.
 ##' @return A \code{data.frame}
 ##' @export
+##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SISe' model with 1600 nodes and initialize it to
 ##' ## run over 4*365 days and record data at weekly time-points.
@@ -256,7 +259,7 @@ events_SISe <- function() {
 ##' ## individual.
 ##' plot(prevalence(result, I~S+I, "nop"), type = "l")
 u0_SISe <- function() {
-    utils::data("u0_SISe3", package = "SimInf", envir = environment())
+    data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
     u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
     u0_SISe3[, c("S", "I")]

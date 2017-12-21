@@ -114,6 +114,7 @@ SIR <- function(u0,
 ##' @rdname plot
 ##' @aliases plot,SIR-method
 ##' @export
+##' @importFrom methods callNextMethod
 setMethod("plot",
           signature(x = "SIR"),
           function(x,
@@ -122,8 +123,7 @@ setMethod("plot",
                    lwd = 2,
                    ...)
           {
-              methods::callNextMethod(x, col = col, lty = lty,
-                                      lwd = lwd, ...)
+              callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
           }
 )
 
@@ -145,6 +145,7 @@ setMethod("plot",
 ##' a model.
 ##' @return A \code{data.frame}
 ##' @export
+##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SIR' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
@@ -169,7 +170,7 @@ setMethod("plot",
 ##' ## events by event type.
 ##' summary(result)
 events_SIR <- function() {
-    utils::data("events_SISe3", package = "SimInf", envir = environment())
+    data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == 0] <- 2
     events_SISe3$select[events_SISe3$event == 1] <- 1
     events_SISe3 <- events_SISe3[events_SISe3$event != 2,]
@@ -188,6 +189,7 @@ events_SIR <- function() {
 ##' zero.
 ##' @return A \code{data.frame}
 ##' @export
+##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SIR' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
@@ -207,7 +209,7 @@ events_SIR <- function() {
 ##' ## Summarize trajectory
 ##' summary(result)
 u0_SIR <- function() {
-    utils::data("u0_SISe3", package = "SimInf", envir = environment())
+    data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
     u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
     u0_SISe3$R <- 0

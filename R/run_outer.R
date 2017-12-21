@@ -34,6 +34,7 @@
 ##' @return Array with dimension \code{c(dim(x), dim(y))}.
 ##' @include SimInf_model.R
 ##' @export
+##' @importFrom stats terms
 ##' @examples
 ##' \dontrun{
 ##' ## Create an SIR-model with 500 nodes of 99 susceptible individuals
@@ -90,8 +91,8 @@ run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...)
     FUN <- match.fun(FUN)
 
     ## Determine indices to the 'gdata' parameters to scale by 'x'
-    xx <- attr(stats::terms(formula, allowDotAsName = TRUE), "term.labels")
-    xx <- xx[attr(stats::terms(formula, allowDotAsName = TRUE), "order") == 1]
+    xx <- attr(terms(formula, allowDotAsName = TRUE), "term.labels")
+    xx <- xx[attr(terms(formula, allowDotAsName = TRUE), "order") == 1]
     if (length(xx) < 1)
         stop("Invalid parameters on the right side of the formula")
     x_i <- match(xx, names(model@gdata))
@@ -99,10 +100,10 @@ run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...)
         stop("Unmatched parameters on the right side of the formula")
 
     ## Determine indices to the 'gdata' parameters to scale by 'y'
-    yy <- attr(stats::terms(formula, allowDotAsName = TRUE), "response")
+    yy <- attr(terms(formula, allowDotAsName = TRUE), "response")
     if (yy < 1)
         stop("Invalid parameters on the left side of the formula")
-    vars <- attr(stats::terms(formula, allowDotAsName = TRUE), "variables")[-1]
+    vars <- attr(terms(formula, allowDotAsName = TRUE), "variables")[-1]
     yy <- as.character(vars[yy])
     yy <- unlist(strsplit(yy, "+", fixed = TRUE))
     yy <- sub("^\\s", "", sub("\\s$", "", yy))

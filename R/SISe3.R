@@ -186,6 +186,7 @@ SISe3 <- function(u0,
 ##' @rdname plot
 ##' @aliases plot,SISe3-method
 ##' @export
+##' @importFrom methods callNextMethod
 setMethod("plot",
           signature(x = "SISe3"),
           function(x,
@@ -195,8 +196,8 @@ setMethod("plot",
                    lwd = 2,
                    ...)
           {
-              methods::callNextMethod(x, legend = legend, col = col,
-                                      lty = lty, lwd = lwd, ...)
+              callNextMethod(x, legend = legend, col = col,
+                             lty = lty, lwd = lwd, ...)
           }
 )
 

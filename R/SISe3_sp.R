@@ -66,6 +66,7 @@ setClass("SISe3_sp", contains = c("SimInf_model"))
 ##' @return \code{SISe3_sp}
 ##' @include check_arguments.R
 ##' @export
+##' @importFrom methods is
 SISe3_sp <- function(u0,
                      tspan,
                      events    = NULL,
@@ -123,7 +124,7 @@ SISe3_sp <- function(u0,
     ## Check distance matrix
     if (is.null(distance))
         stop("'distance' is missing")
-    if (!methods::is(distance, "dgCMatrix"))
+    if (!is(distance, "dgCMatrix"))
         stop("The 'distance' argument must be of type 'dgCMatrix'")
     if (any(distance < 0))
         stop("All values in the 'distance' matrix must be >= 0")
@@ -195,6 +196,7 @@ SISe3_sp <- function(u0,
 ##' @rdname plot
 ##' @aliases plot,SISe3_sp-method
 ##' @export
+##' @importFrom methods callNextMethod
 setMethod("plot",
           signature(x = "SISe3_sp"),
           function(x,
@@ -204,7 +206,7 @@ setMethod("plot",
                    lwd = 2,
                    ...)
           {
-              methods::callNextMethod(x, legend = legend, col = col,
-                                      lty = lty, lwd = lwd, ...)
+              callNextMethod(x, legend = legend, col = col,
+                             lty = lty, lwd = lwd, ...)
           }
 )

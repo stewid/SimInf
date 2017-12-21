@@ -102,6 +102,7 @@
 ##' }
 ##' @include SimInf_events.R
 ##' @export
+##' @importFrom methods validObject
 ##' @importClassesFrom Matrix dgCMatrix
 setClass("SimInf_model",
          slots = c(G        = "dgCMatrix",
@@ -119,7 +120,7 @@ setClass("SimInf_model",
                    C_code   = "character"),
          validity = function(object) {
              ## Check events
-             errors <- methods::validObject(object@events)
+             errors <- validObject(object@events)
              if (identical(errors, TRUE))
                  errors <- character()
 
@@ -660,6 +661,7 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##'     matrix.
 ##' @export
 ##' @importFrom methods is
+##' @importFrom stats terms
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize
 ##' ## it to run over 10 days.
@@ -716,8 +718,8 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
     ## Split the 'compartments' argument to match the compartments in
     ## U and V.
     if (is(compartments, "formula")) {
-        j <- attr(stats::terms(compartments, allowDotAsName = TRUE), "term.labels")
-        j <- j[attr(stats::terms(compartments, allowDotAsName = TRUE), "order") == 1]
+        j <- attr(terms(compartments, allowDotAsName = TRUE), "term.labels")
+        j <- j[attr(terms(compartments, allowDotAsName = TRUE), "order") == 1]
         if (length(j) < 1)
             stop("Invalid formula specification of 'compartments'")
         compartments <- unlist(sapply(j, function(jj) {
@@ -1293,13 +1295,14 @@ setGeneric("run",
 
 ##' @rdname run
 ##' @export
+##' @importFrom methods validObject
 setMethod("run",
           signature(model = "SimInf_model"),
           function(model, threads, seed, solver)
           {
               ## Check that SimInf_model contains all data structures
               ## required by the siminf solver and that they make sense
-              methods::validObject(model);
+              validObject(model);
 
               if (nchar(paste0(model@C_code, collapse = "\n"))) {
                   ## Write the C code to a temporary file
@@ -1353,6 +1356,7 @@ setMethod("run",
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @aliases boxplot,SimInf_model-method
 ##' @export
+##' @importFrom graphics boxplot
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it with 99 susceptible individuals and one infected
@@ -1373,7 +1377,8 @@ setMethod("boxplot",
           signature(x = "SimInf_model"),
           function(x, ...)
           {
-              graphics::boxplot(trajectory(x)[-(1:2)], ...)
+              ## Remove the first two columns node and time
+              boxplot(trajectory(x)[-(1:2)], ...)
           }
 )
 
@@ -1385,6 +1390,7 @@ setMethod("boxplot",
 ##' @param x The \code{model} to plot
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @export
+##' @importFrom graphics pairs
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it with 99 susceptible individuals and one infected
@@ -1405,7 +1411,8 @@ setMethod("pairs",
           signature(x = "SimInf_model"),
           function(x, ...)
           {
-              graphics::pairs(trajectory(x)[-(1:2)], ...)
+              ## Remove the first two columns node and time
+              pairs(trajectory(x)[-(1:2)], ...)
           }
 )
 
@@ -1432,6 +1439,11 @@ setMethod("pairs",
 ##' @rdname plot
 ##' @aliases plot,SimInf_model-method
 ##' @export
+##' @importFrom graphics legend
+##' @importFrom graphics lines
+##' @importFrom graphics par
+##' @importFrom graphics plot
+##' @importFrom graphics title
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it with 99 susceptible individuals and one infected
@@ -1474,9 +1486,8 @@ setMethod("plot",
                   compartments <- match(compartments, rownames(x@S))
               }
 
-              savepar <- graphics::par(mar = c(2,4,1,1), oma = c(4,1,0,0),
-                                       xpd = TRUE)
-              on.exit(graphics::par(savepar))
+              savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
+              on.exit(par(savepar))
 
               ## Create a matrix with one row for each line in the
               ## plot.
@@ -1551,33 +1562,32 @@ setMethod("plot",
               }
 
               ## Plot first line to get a new plot window
-              graphics::plot(x = xx, y = m[1, ], type = "l",
-                             ylab = ylab, ylim = ylim, col = col[1],
-                             lty = lty[1], lwd = lwd, ...)
-              graphics::title(xlab = xlab, outer = TRUE, line = 0)
+              plot(x = xx, y = m[1, ], type = "l", ylab = ylab, ylim = ylim,
+                   col = col[1], lty = lty[1], lwd = lwd, ...)
+              title(xlab = xlab, outer = TRUE, line = 0)
 
               ## Add the rest of the lines to the plot
               for (i in seq_len(dim(m)[1])[-1]) {
-                  graphics::lines(x = xx, y = m[i, ], type = "l",
-                                  lty = lty[i], col = col[i], lwd = lwd,
-                                  ...)
+                  lines(x = xx, y = m[i, ], type = "l", lty = lty[i],
+                        col = col[i], lwd = lwd, ...)
               }
 
               ## Add the legend below plot. The default legend is the
               ## names of the compartments.
               if (is.null(legend))
                   legend <- rownames(x@S)[compartments]
-              graphics::par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
-                            mar = c(0, 0, 0, 0), new = TRUE)
-              graphics::plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-              graphics::legend("bottom", inset = c(0, 0),
-                               lty = lty[seq_len(length(compartments))],
-                               col = col[seq_len(length(compartments))],
-                               bty = "n", horiz = TRUE,
-                               legend = legend, lwd = lwd)
+              par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
+                  mar = c(0, 0, 0, 0), new = TRUE)
+              plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+              legend("bottom", inset = c(0, 0),
+                     lty = lty[seq_len(length(compartments))],
+                     col = col[seq_len(length(compartments))],
+                     bty = "n", horiz = TRUE, legend = legend, lwd = lwd)
           }
 )
 
+##' @importFrom stats quantile
+##' @noRd
 summary_U <- function(object)
 {
     cat("Discrete state variables\n")
@@ -1593,7 +1603,7 @@ summary_U <- function(object)
     } else {
         qq <- lapply(rownames(object@S), function(compartment) {
             x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
-            qq <- stats::quantile(x)
+            qq <- quantile(x)
             qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
         })
         qq <- do.call("rbind", qq)
@@ -1604,6 +1614,8 @@ summary_U <- function(object)
     }
 }
 
+##' @importFrom stats quantile
+##' @noRd
 summary_V <- function(object)
 {
     cat("Continuous state variables\n")
@@ -1619,7 +1631,7 @@ summary_V <- function(object)
             qq <- lapply(seq_len(Nd(object)), function(compartment) {
                 compartment <- paste0("V", compartment)
                 x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
-                qq <- stats::quantile(x)
+                qq <- quantile(x)
                 qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
             })
             qq <- do.call("rbind", qq)
@@ -1679,6 +1691,8 @@ outdegree <- function(model)
     od
 }
 
+##' @importFrom stats quantile
+##' @noRd
 summary_events <- function(object)
 {
     cat("Scheduled events\n")
@@ -1702,9 +1716,9 @@ summary_events <- function(object)
     if (length(i) > 0) {
         id <- indegree(object)
         od <- outdegree(object)
-        qq_id <- stats::quantile(id)
+        qq_id <- quantile(id)
         qq_id <- c(qq_id[1L:3L], mean(id), qq_id[4L:5L])
-        qq_od <- stats::quantile(od)
+        qq_od <- quantile(od)
         qq_od <- c(qq_od[1L:3L], mean(od), qq_od[4L:5L])
         qq <- rbind(qq_id, qq_od)
         colnames(qq) <- c("Min.", "1st Qu.", "Median",

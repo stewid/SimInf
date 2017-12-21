@@ -346,6 +346,8 @@ setAs(from = "SimInf_events",
 ##' @param frame.plot a logical indicating whether a box should be
 ##'     drawn around the plot.
 ##' @param ... additional arguments affecting the plot.
+##' @importFrom graphics plot
+##' @importFrom graphics mtext
 ##' @noRd
 plot_SimInf_events <- function(x,
                                   y,
@@ -372,16 +374,16 @@ plot_SimInf_events <- function(x,
             y <- rep(0, length(x))
         }
 
-        graphics::plot(x, y, type = "l", ylim = ylim, xlab = "",
-                       ylab = "", frame.plot = frame.plot, ...)
+        plot(x, y, type = "l", ylim = ylim, xlab = "",
+             ylab = "", frame.plot = frame.plot, ...)
     } else {
-        graphics::plot(0, 0, type = "n", xlab = "", ylab = "",
-                       frame.plot = frame.plot, ...)
+        plot(0, 0, type = "n", xlab = "", ylab = "",
+             frame.plot = frame.plot, ...)
     }
 
-    graphics::mtext(events, side = 3, line = 0)
-    graphics::mtext("Individuals", side = 2, line = 2)
-    graphics::mtext("Time", side = 1, line = 2)
+    mtext(events, side = 3, line = 0)
+    mtext("Individuals", side = 2, line = 2)
+    mtext("Time", side = 1, line = 2)
 }
 
 ##' Display the distribution of scheduled events over time
@@ -391,17 +393,19 @@ plot_SimInf_events <- function(x,
 ##' @param ... Additional arguments affecting the plot
 ##' @aliases plot,SimInf_events-method
 ##' @export
+##' @importFrom graphics par
+##' @importFrom stats xtabs
 setMethod("plot",
           signature(x = "SimInf_events"),
           function(x, frame.plot = FALSE, ...)
           {
-              savepar <- graphics::par(mfrow = c(2, 2),
-                                       oma = c(1, 1, 2, 0),
-                                       mar = c(4, 3, 1, 1))
-              on.exit(graphics::par(savepar))
+              savepar <- par(mfrow = c(2, 2),
+                             oma = c(1, 1, 2, 0),
+                             mar = c(4, 3, 1, 1))
+              on.exit(par(savepar))
 
-              yy <- stats::xtabs(n ~ event + time,
-                         cbind(event = x@event, time = x@time, n = x@n))
+              yy <- xtabs(n ~ event + time,
+                          cbind(event = x@event, time = x@time, n = x@n))
               xx <- as.integer(colnames(yy))
 
               ## Plot events
