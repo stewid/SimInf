@@ -389,7 +389,7 @@ SimInf_model <- function(G,
         C_code = C_code)
 }
 
-##' Calculate prevalence from data in a trajectory
+##' Calculate prevalence from a model object with trajectory data
 ##'
 ##' Calculate the proportion of individuals with disease in the
 ##' population, or the proportion of nodes with at least one diseased
@@ -397,7 +397,7 @@ SimInf_model <- function(G,
 ##' node.
 ##' @param model The \code{model} with trajectory data to calculate
 ##'     the prevalence from.
-##' @param cases A formula that specify the compartments that define
+##' @param formula A formula that specify the compartments that define
 ##'     the cases with a disease or a condition (numerator), and the
 ##'     compartments that define the entire population of interest
 ##'     (denominator). The left hand side of the formula defines the
@@ -424,6 +424,7 @@ SimInf_model <- function(G,
 ##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
 ##'     matrix.
 ##' @export
+##' @importFrom stats terms
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize
 ##' ## it to run over 10 days.
@@ -448,7 +449,7 @@ SimInf_model <- function(G,
 ##' ## at the time-points in 'tspan'.
 ##' prevalence(result, I~S+I+R, type = "wnp")
 prevalence <- function(model,
-                       cases,
+                       formula,
                        type = c("pop", "nop", "wnp"),
                        i = NULL,
                        as.is = FALSE)
@@ -459,18 +460,18 @@ prevalence <- function(model,
     if (!is(model, "SimInf_model"))
         stop("'model' argument is not a 'SimInf_model'")
 
-    ## Check 'cases' argument
-    if (missing(cases))
-        stop("Missing 'cases' argument")
-    if (!is(cases, "formula"))
-        stop("'cases' argument is not a 'formula'")
+    ## Check 'formula' argument
+    if (missing(formula))
+        stop("Missing 'formula' argument")
+    if (!is(formula, "formula"))
+        stop("'formula' argument is not a 'formula'")
 
     ## Check 'type' argument
     type <- match.arg(type)
 
     ## Determine compartments for population
-    j <- attr(stats::terms(cases, allowDotAsName = TRUE), "term.labels")
-    j <- j[attr(stats::terms(cases, allowDotAsName = TRUE), "order") == 1]
+    j <- attr(terms(formula, allowDotAsName = TRUE), "term.labels")
+    j <- j[attr(terms(formula, allowDotAsName = TRUE), "order") == 1]
     if (length(j) < 1)
         stop("Invalid formula specification of population")
     pop <- unlist(sapply(j, function(jj) {
@@ -489,10 +490,10 @@ prevalence <- function(model,
     }
 
     ## Determine compartments for cases
-    j <- attr(stats::terms(cases, allowDotAsName = TRUE), "response")
+    j <- attr(terms(formula, allowDotAsName = TRUE), "response")
     if (j < 1)
         stop("Invalid formula specification of 'cases'")
-    cases <- attr(stats::terms(cases, allowDotAsName = TRUE), "variables")[-1]
+    cases <- attr(terms(formula, allowDotAsName = TRUE), "variables")[-1]
     j <- as.character(cases[j])
     j <- unlist(strsplit(j, "+", fixed = TRUE))
     j <- sub("^\\s", "", sub("\\s$", "", j))
