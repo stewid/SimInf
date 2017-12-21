@@ -122,8 +122,8 @@ SISe3 <- function(u0,
 
     ## Arguments seems ok...go on
 
-    E <- matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1,
-                  0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),
+    E <- matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+                  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),
                 nrow = 6, ncol = 6,
                 dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
 
@@ -139,69 +139,61 @@ SISe3 <- function(u0,
     colnames(N) <- as.character(1:2)
     rownames(N) <- compartments
 
-                G <- Matrix::Matrix(c(1, 1, 0, 0, 0, 0,
-                                      1, 1, 0, 0, 0, 0,
-                                      0, 0, 1, 1, 0, 0,
-                                      0, 0, 1, 1, 0, 0,
-                                      0, 0, 0, 0, 1, 1,
-                                      0, 0, 0, 0, 1, 1),
-                                    nrow   = 6,
-                                    ncol   = 6,
-                                    byrow  = TRUE,
-                                    sparse = TRUE)
-                G <- methods::as(G, "dgCMatrix")
-                colnames(G) <- as.character(1:6)
-                rownames(G) <- c("S_1 -> I_1", "I_1 -> S_1",
-                                 "S_2 -> I_2", "I_2 -> S_2",
-                                 "S_3 -> I_3", "I_3 -> S_3")
+    G <- matrix(c(1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0,
+                  0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1),
+                nrow   = 6, ncol   = 6,
+                dimnames = list(c("S_1 -> I_1", "I_1 -> S_1",
+                                  "S_2 -> I_2", "I_2 -> S_2",
+                                  "S_3 -> I_3", "I_3 -> S_3"),
+                                c("1", "2", "3", "4", "5", "6")))
 
-                S <- Matrix::Matrix(c(-1,  1,  0,  0,  0,  0,
-                                      1, -1,  0,  0,  0,  0,
-                                      0,  0, -1,  1,  0,  0,
-                                      0,  0,  1, -1,  0,  0,
-                                      0,  0,  0,  0, -1,  1,
-                                      0,  0,  0,  0,  1, -1),
-                                    nrow   = 6,
-                                    ncol   = 6,
-                                    byrow  = TRUE,
-                                    sparse = TRUE)
-                S <- methods::as(S, "dgCMatrix")
-                colnames(S) <- as.character(1:6)
-                rownames(S) <- compartments
+    S <- Matrix::Matrix(c(-1,  1,  0,  0,  0,  0,
+                          1, -1,  0,  0,  0,  0,
+                          0,  0, -1,  1,  0,  0,
+                          0,  0,  1, -1,  0,  0,
+                          0,  0,  0,  0, -1,  1,
+                          0,  0,  0,  0,  1, -1),
+                        nrow   = 6,
+                        ncol   = 6,
+                        byrow  = TRUE,
+                        sparse = TRUE)
+    S <- methods::as(S, "dgCMatrix")
+    colnames(S) <- as.character(1:6)
+    rownames(S) <- compartments
 
-                v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
-                storage.mode(v0) <- "double"
+    v0 <- matrix(phi, nrow  = 1, byrow = TRUE)
+    storage.mode(v0) <- "double"
 
-                ldata <- matrix(c(end_t1, end_t2, end_t3, end_t4),
-                                nrow  = 4,
-                                byrow = TRUE)
-                storage.mode(ldata) <- "double"
+    ldata <- matrix(c(end_t1, end_t2, end_t3, end_t4),
+                    nrow  = 4,
+                    byrow = TRUE)
+    storage.mode(ldata) <- "double"
 
-                gdata <- c(upsilon_1, upsilon_2, upsilon_3,
-                           gamma_1, gamma_2, gamma_3,
-                           alpha,
-                           beta_t1, beta_t2, beta_t3, beta_t4,
-                           epsilon)
-                storage.mode(gdata) <- "double"
-                names(gdata) <- c("upsilon_1", "upsilon_2", "upsilon_3",
-                                  "gamma_1", "gamma_2", "gamma_3",
-                                  "alpha",
-                                  "beta_t1", "beta_t2", "beta_t3", "beta_t4",
-                                  "epsilon")
+    gdata <- c(upsilon_1, upsilon_2, upsilon_3,
+               gamma_1, gamma_2, gamma_3,
+               alpha,
+               beta_t1, beta_t2, beta_t3, beta_t4,
+               epsilon)
+    storage.mode(gdata) <- "double"
+    names(gdata) <- c("upsilon_1", "upsilon_2", "upsilon_3",
+                      "gamma_1", "gamma_2", "gamma_3",
+                      "alpha",
+                      "beta_t1", "beta_t2", "beta_t3", "beta_t4",
+                      "epsilon")
 
-                model <- SimInf_model(G      = G,
-                                      S      = S,
-                                      E      = E,
-                                      N      = N,
-                                      tspan  = tspan,
-                                      events = events,
-                                      ldata  = ldata,
-                                      gdata  = gdata,
-                                      u0     = u0,
-                                      v0     = v0)
+    model <- SimInf_model(G      = G,
+                          S      = S,
+                          E      = E,
+                          N      = N,
+                          tspan  = tspan,
+                          events = events,
+                          ldata  = ldata,
+                          gdata  = gdata,
+                          u0     = u0,
+                          v0     = v0)
 
-                methods::as(model, "SISe3")
-    }
+    as(model, "SISe3")
+}
 
 ##' @rdname plot
 ##' @aliases plot,SISe3-method
