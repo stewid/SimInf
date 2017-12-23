@@ -145,8 +145,8 @@ SISe3 <- function(u0,
 
     v0 <- matrix(as.numeric(phi), nrow  = 1, byrow = TRUE)
 
-    ldata <- matrix(c(end_t1, end_t2, end_t3, end_t4), nrow = 4, byrow = TRUE)
-    storage.mode(ldata) <- "double"
+    ldata <- matrix(as.numeric(c(end_t1, end_t2, end_t3, end_t4)),
+                    nrow = 4, byrow = TRUE)
 
     gdata <- as.numeric(c(upsilon_1, upsilon_2, upsilon_3,
                           gamma_1, gamma_2, gamma_3, alpha,

@@ -130,8 +130,8 @@ SISe_sp <- function(u0,
 
     v0 <- matrix(as.numeric(phi), nrow  = 1, byrow = TRUE)
 
-    ldata <- matrix(c(end_t1, end_t2, end_t3, end_t4), nrow = 4, byrow = TRUE)
-    storage.mode(ldata) <- "double"
+    ldata <- matrix(as.numeric(c(end_t1, end_t2, end_t3, end_t4)),
+                    nrow = 4, byrow = TRUE)
     ldata <- .Call("SimInf_ldata_sp", ldata, distance, 1L, PACKAGE = "SimInf")
 
     gdata <- as.numeric(c(upsilon, gamma, alpha, beta_t1, beta_t2,
