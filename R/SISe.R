@@ -123,12 +123,10 @@ SISe <- function(u0,
                     byrow = TRUE)
     storage.mode(ldata) <- "double"
 
-    gdata <- c(upsilon, gamma, alpha, beta_t1, beta_t2, beta_t3, beta_t4,
-               epsilon)
-    storage.mode(gdata) <- "double"
-    names(gdata) <- c("upsilon", "gamma", "alpha",
-                      "beta_t1", "beta_t2", "beta_t3", "beta_t4",
-                      "epsilon")
+    gdata <- as.numeric(c(upsilon, gamma, alpha, beta_t1, beta_t2,
+                          beta_t3, beta_t4, epsilon))
+    names(gdata) <- c("upsilon", "gamma", "alpha", "beta_t1", "beta_t2",
+                      "beta_t3", "beta_t4", "epsilon")
 
     model <- SimInf_model(G      = G,
                           S      = S,

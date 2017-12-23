@@ -158,17 +158,12 @@ SISe3_sp <- function(u0,
     storage.mode(ldata) <- "double"
     ldata <- .Call("SimInf_ldata_sp", ldata, distance, 1L, PACKAGE = "SimInf")
 
-    gdata <- c(upsilon_1, upsilon_2, upsilon_3,
-               gamma_1, gamma_2, gamma_3,
-               alpha,
-               beta_t1, beta_t2, beta_t3, beta_t4,
-               coupling)
-    storage.mode(gdata) <- "double"
+    gdata <- as.numeric(c(upsilon_1, upsilon_2, upsilon_3,
+                          gamma_1, gamma_2, gamma_3, alpha,
+                          beta_t1, beta_t2, beta_t3, beta_t4, coupling))
     names(gdata) <- c("upsilon_1", "upsilon_2", "upsilon_3",
-                      "gamma_1", "gamma_2", "gamma_3",
-                      "alpha",
-                      "beta_t1", "beta_t2", "beta_t3", "beta_t4",
-                      "coupling")
+                      "gamma_1", "gamma_2", "gamma_3", "alpha",
+                      "beta_t1", "beta_t2", "beta_t3", "beta_t4", "coupling")
 
     model <- SimInf_model(G      = G,
                           S      = S,

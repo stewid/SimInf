@@ -148,17 +148,12 @@ SISe3 <- function(u0,
     ldata <- matrix(c(end_t1, end_t2, end_t3, end_t4), nrow = 4, byrow = TRUE)
     storage.mode(ldata) <- "double"
 
-    gdata <- c(upsilon_1, upsilon_2, upsilon_3,
-               gamma_1, gamma_2, gamma_3,
-               alpha,
-               beta_t1, beta_t2, beta_t3, beta_t4,
-               epsilon)
-    storage.mode(gdata) <- "double"
+    gdata <- as.numeric(c(upsilon_1, upsilon_2, upsilon_3,
+                          gamma_1, gamma_2, gamma_3, alpha,
+                          beta_t1, beta_t2, beta_t3, beta_t4, epsilon))
     names(gdata) <- c("upsilon_1", "upsilon_2", "upsilon_3",
-                      "gamma_1", "gamma_2", "gamma_3",
-                      "alpha",
-                      "beta_t1", "beta_t2", "beta_t3", "beta_t4",
-                      "epsilon")
+                      "gamma_1", "gamma_2", "gamma_3", "alpha",
+                      "beta_t1", "beta_t2", "beta_t3", "beta_t4", "epsilon")
 
     model <- SimInf_model(G      = G,
                           S      = S,

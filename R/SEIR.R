@@ -95,8 +95,7 @@ SEIR <- function(u0,
 
     ldata <- matrix(numeric(0), nrow = 0, ncol = nrow(u0))
 
-    gdata <- c(beta, epsilon, gamma)
-    storage.mode(gdata) <- "double"
+    gdata <- as.numeric(c(beta, epsilon, gamma))
     names(gdata) <- c("beta", "epsilon", "gamma")
 
     model <- SimInf_model(G      = G,
