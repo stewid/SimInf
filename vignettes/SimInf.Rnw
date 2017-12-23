@@ -411,10 +411,31 @@ matrices, respectively.  The overall modular design makes extensions
 easy to handle and since the simulation engine is written in a
 compiled language, the efficiency of the simulator is very high.
 
-The \pkg{SimInf} package is available via CRAN at
-\mbox{\url{https://CRAN.R-project.org/package=SimInf}} and is loaded
-in \proglang{R} with the following command
-
+The \pkg{SimInf} package is available on CRAN
+(\url{https://CRAN.R-project.org/package=SimInf}) and may, depending
+on your platform, be available in source form or compiled binary form.
+A binary form of \pkg{SimInf} for macOS or Windows can be installed
+directly from CRAN.  However, if you install \pkg{SimInf} from source
+(from CRAN or a \code{.tar.gz} file), the installation process
+requires a \proglang{C} compiler, and that the GNU Scientific Library
+(GSL) \citep{Gallassi2009} is installed on your system and is in the
+path.  Note that GSL (\url{https://www.gnu.org/software/gsl/}) is not
+an \proglang{R} add-on package, but needs to be installed separately,
+for example, from a terminal using: \code{'sudo apt-get install
+  libgsl0-dev'} on Debian and Ubuntu, \code{'sudo yum install
+  gsl-devel'} on Fedora, CentOS or RHEL, or \code{'brew install gsl'}
+on macOS with the Homebrew package manager.  Furthermore, when you
+install \pkg{SimInf} from source, depending on features of the
+compiler, the package is compiled with support for \proglang{OpenMP}
+\citep{OpenMP2008} to divide work over multiple processors and perform
+computations in parallel.  To read more about installing \proglang{R}
+add-on packages in general, the \texttt{'R Installation and
+  Administration'} (\url{https://cran.r-project.org/manuals.html})
+manual describes the process in detail. After installing the package
+<<install-SimInf, eval=FALSE>>=
+install.packages("SimInf")
+@
+it is loaded in \proglang{R} with the following command
 <<load-SimInf>>=
 library("SimInf")
 @
