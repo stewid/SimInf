@@ -79,11 +79,11 @@ create_model_R_object <- function(model, name)
 {
     rows <- paste0(rownames(model@S), collapse = "\", \"")
 
-    G <- capture.output(dput(model@G))
+    G <- capture.output(dput(as.matrix(model@G)))
     G <- c(paste0("G <- ", G[1]), G[-1])
     G <- paste0("    ", G)
 
-    S <- capture.output(dput(model@S))
+    S <- capture.output(dput(as.matrix(model@S)))
     S <- c(paste0("S <- ", S[1]), S[-1])
     S <- paste0("    ", S)
 
