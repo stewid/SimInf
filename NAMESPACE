@@ -3,6 +3,7 @@
 export("U<-")
 export("V<-")
 export(C_code)
+export(Nn)
 export(SEIR)
 export(SIR)
 export(SISe)
