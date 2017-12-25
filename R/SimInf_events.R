@@ -310,17 +310,17 @@ SimInf_events <- function(E      = NULL,
 
     events <- events[order(events$time, events$event, events$select),]
 
-    return(new("SimInf_events",
-               E          = E,
-               N          = N,
-               event      = as.integer(events$event),
-               time       = as.integer(events$time),
-               node       = as.integer(events$node),
-               dest       = as.integer(events$dest),
-               n          = as.integer(events$n),
-               proportion = as.numeric(events$proportion),
-               select     = as.integer(events$select),
-               shift      = as.integer(events$shift)))
+    new("SimInf_events",
+        E          = E,
+        N          = N,
+        event      = as.integer(events$event),
+        time       = as.integer(events$time),
+        node       = as.integer(events$node),
+        dest       = as.integer(events$dest),
+        n          = as.integer(events$n),
+        proportion = as.numeric(events$proportion),
+        select     = as.integer(events$select),
+        shift      = as.integer(events$shift))
 }
 
 setAs(from = "SimInf_events",
