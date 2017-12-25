@@ -237,11 +237,8 @@ SimInf_events <- function(E      = NULL,
     }
 
     ## Check N
-    if (is.null(N)) {
-        if (!is.null(events))
-            stop("events is not NULL when N is NULL")
+    if (is.null(N))
         N <- matrix(integer(0), nrow = 0, ncol = 0)
-    }
     if (!all(is.matrix(N), is.numeric(N)))
         stop("'N' must be an integer matrix")
     if (!is.integer(N)) {
