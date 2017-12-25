@@ -129,7 +129,7 @@ SISe3_sp <- function(u0,
     if (any(distance < 0))
         stop("All values in the 'distance' matrix must be >= 0")
 
-    ## Arguments seems ok...go on
+    ## Arguments seem ok...go on
 
     E <- matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
                   1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),

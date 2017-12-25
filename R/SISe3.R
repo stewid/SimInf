@@ -120,7 +120,7 @@ SISe3 <- function(u0,
         end_t4 <- rep(end_t4, nrow(u0))
     check_end_t_arg(nrow(u0), end_t1, end_t2, end_t3, end_t4)
 
-    ## Arguments seems ok...go on
+    ## Arguments seem ok...go on
 
     E <- matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
                   1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),
