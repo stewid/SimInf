@@ -77,12 +77,10 @@ SEIR <- function(u0,
     ## Check for non-numeric parameters
     check_gdata_arg(beta, epsilon, gamma)
 
-    ## Arguments seems ok...go on
+    ## Arguments seem ok...go on
 
     E <- matrix(c(1, 0, 0, 0, 1, 1, 1, 1), nrow = 4, ncol = 2,
                 dimnames = list(compartments, c("1", "2")))
-
-    N <- matrix(integer(0), nrow = 0, ncol = 0)
 
     G <- matrix(c(1, 1, 1, 1, 1, 1, 1, 1, 1), nrow = 3, ncol = 3,
                 dimnames = list(c("S -> E", "E -> I", "I -> R"),
@@ -91,23 +89,16 @@ SEIR <- function(u0,
     S <- matrix(c(-1, 1, 0, 0, 0, -1, 1, 0, 0, 0, -1, 1), nrow = 4, ncol = 3,
                 dimnames = list(compartments, c("1", "2", "3")))
 
-    v0 <- matrix(numeric(0), nrow  = 0, ncol = nrow(u0))
-
-    ldata <- matrix(numeric(0), nrow = 0, ncol = nrow(u0))
-
     gdata <- as.numeric(c(beta, epsilon, gamma))
     names(gdata) <- c("beta", "epsilon", "gamma")
 
     model <- SimInf_model(G      = G,
                           S      = S,
                           E      = E,
-                          N      = N,
                           tspan  = tspan,
                           events = events,
-                          ldata  = ldata,
                           gdata  = gdata,
-                          u0     = u0,
-                          v0     = v0)
+                          u0     = u0)
 
     as(model, "SEIR")
 }

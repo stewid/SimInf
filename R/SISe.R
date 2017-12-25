@@ -103,12 +103,10 @@ SISe <- function(u0,
         end_t4 <- rep(end_t4, nrow(u0))
     check_end_t_arg(nrow(u0), end_t1, end_t2, end_t3, end_t4)
 
-    ## Arguments seems ok...go on
+    ## Arguments seem ok...go on
 
     E <- matrix(c(1, 0, 1, 1), nrow = 2, ncol = 2,
                 dimnames = list(compartments, c("1", "2")))
-
-    N <- matrix(integer(0), nrow = 0, ncol = 0)
 
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
                 dimnames = list(c("S -> I", "I -> S"), c("1", "2")))
@@ -129,7 +127,6 @@ SISe <- function(u0,
     model <- SimInf_model(G      = G,
                           S      = S,
                           E      = E,
-                          N      = N,
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,

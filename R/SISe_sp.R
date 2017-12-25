@@ -114,12 +114,10 @@ SISe_sp <- function(u0,
     if (any(distance < 0))
         stop("All values in the 'distance' matrix must be >= 0")
 
-    ## Arguments seems ok...go on
+    ## Arguments seem ok...go on
 
     E <- matrix(c(1, 0, 1, 1), nrow = 2, ncol = 2,
                 dimnames = list(compartments, c("1", "2")))
-
-    N <- matrix(integer(0), nrow = 0, ncol = 0)
 
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
                 dimnames = list(c("S -> I", "I -> S"),
@@ -142,7 +140,6 @@ SISe_sp <- function(u0,
     model <- SimInf_model(G      = G,
                           S      = S,
                           E      = E,
-                          N      = N,
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,
