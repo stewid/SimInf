@@ -430,10 +430,10 @@ on macOS with the Homebrew package manager.  Furthermore, when you
 install \pkg{SimInf} from source, depending on features of the
 compiler, the package is compiled with support for \proglang{OpenMP}
 \citep{OpenMP2008} to divide work over multiple processors and perform
-computations in parallel.  To read more about installing \proglang{R}
-add-on packages in general, the \texttt{'R Installation and
-  Administration'} (\url{https://cran.r-project.org/manuals.html})
-manual describes the process in detail. After installing the package
+computations in parallel.  To find out more about installing
+\proglang{R} add-on packages in general, the \texttt{'R Installation
+  and Administration'} (\url{https://cran.r-project.org/manuals.html})
+manual describes the process in detail.  After installing the package
 
 <<install-SimInf, eval=FALSE>>=
 install.packages("SimInf")
@@ -846,10 +846,9 @@ language \proglang{C} \citep{Kernighan1988} and is called from
 \proglang{R} using the \code{.Call()} interface \citep{Chambers2008}.
 Using compiled rather than interpreted code ensures high performance
 when running the model.  To improve performance further, the solver
-uses \proglang{OpenMP} \citep{OpenMP2008} to divide work over multiple
-processors and perform computations in parallel.  The solver uses the
-GNU Scientific Library (GSL) \citep{Gallassi2009} to generate random
-numbers for the simulation.
+uses \proglang{OpenMP} to divide work over multiple processors and
+perform computations in parallel.  The solver uses GSL to generate
+random numbers for the simulation.
 
 \subsubsection{Function pointers}
 
@@ -1728,7 +1727,7 @@ Another useful resource is the \texttt{'R packages'} book by
 \subsection{Using the model parser to define a new model}
 \label{sec:mparse}
 
-The easiest way to define a new model for \pkg{SimInf} is to use the
+The simplest way to define a new model for \pkg{SimInf} is to use the
 model parser method \code{mparse}.  It takes a character vector of
 transitions in the form of \code{"X -> propensity -> Y"} and
 generates: the \proglang{C} code for the model, the state-change
@@ -1835,6 +1834,28 @@ do.points = FALSE)
     individuals.  \label{fig:SIR-mparse-incidence}}
 \end{figure}
 
+\subsubsection[Incorporate scheduled events in an mparse model]{Incorporate scheduled events in an \code{mparse} model}
+\label{sec:mparse-network}
+
+Let us expand on the previous example to illustrate how models
+generated using \code{mparse} can incorporate scheduled events.
+Consider an epidemic in a population consisting of 1600 nodes, for
+example, cattle herds, that are connected to each other by livestock
+movements.  Assume the outbreak is detected on day twenty-one after
+introduction and that we wish to explore how vaccination could limit
+the outbreak, if resources for vaccination can handle 50 herds per day
+and 80\% of the animals in each herd.  Let us add one compartment $V$
+to the model, to represent vaccinated individuals, so that the model
+now contains the $\{S, I, I_{cum}, R, V \}$ compartments.  We assume,
+for the sake of simplicity, that vaccinated individuals become immune
+and non-infectious immediately.
+
+<<mparse-network>>=
+transitions <- c("S -> b*S*I/(S+I+R+V) -> I", "I -> g*I -> R")
+compartments <- c("S", "I", "Icum", "R", "V")
+m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
+@
+
 \subsubsection{Predator-prey model}
 \label{sec:mparse-predator-prey}
 
@@ -1905,7 +1926,7 @@ plot(result, N = TRUE)
 
 %**************************************************************************
 
-\subsection[Use the SimInf solver from another package]{Use the \pkg{SimInf} solver from another package}
+\subsection[Use the SimInf framework from another package]{Use the \pkg{SimInf} framework from another package}
 \label{sec:linking-to}
 
 Another possibility is to extend \pkg{SimInf} by creating an
