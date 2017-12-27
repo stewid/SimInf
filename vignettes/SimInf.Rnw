@@ -1856,6 +1856,35 @@ compartments <- c("S", "I", "Icum", "R", "V")
 m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
 @
 
+{\small
+\[
+\mathbf{E} =
+\bordermatrix{
+         & 1 & 2 & 3 \cr
+  S      & 1 & 1 & 1 \cr
+  I      & 0 & 1 & 1 \cr
+  I_{cum} & 0 & 0 & 0 \cr
+  R      & 0 & 1 & 1 \cr
+  V      & 0 & 1 & 0} \qquad
+\mathbf{N} =
+\bordermatrix{
+         & 1 \cr
+  S      & 4 \cr
+  I      & 3 \cr
+  I_{cum} & 0 \cr
+  R      & 1 \cr
+  V      & 0}
+\]
+}
+
+<<mparse-network-E>>=
+E <- matrix(c(1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0), nrow = 5,
+ncol = 3, dimnames = list(c("S", "I", "Icum", "R", "V"),
+c("1", "2", "3")))
+N <- matrix(c(4, 3, 0, 1, 0), nrow = 5, ncol = 1,
+dimnames = list(c("S", "I", "Icum", "R", "V"), "1"))
+@
+
 \subsubsection{Predator-prey model}
 \label{sec:mparse-predator-prey}
 
