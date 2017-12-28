@@ -613,15 +613,15 @@ update of the concentration variable $\Y$.
   \begin{tabularx}{\textwidth}{l X}
     \toprule Slot & Description\\ \midrule
 
-    \code{E} & Each row corresponds to one compartment in the model.
-    The non-zero entries in a column indicates the compartments to
-    include in an event.  Sparse matrix of object class
-    \code{dgCMatrix}.\\
+    \code{E} & Event matrix.  Each row corresponds to one compartment
+    in the model.  The non-zero entries in a column indicates the
+    compartments to include in an event.  Sparse matrix of object
+    class \code{dgCMatrix}.\\
 
-    \code{N} & Each row represents one compartment in the model and
-    the values determine how to move sampled individuals in
-    \textit{internal transfer} and \textit{external transfer} events.
-    Integer matrix.\\
+    \code{N} & Shift matrix.  Each row represents one compartment in
+    the model and the values determine how to move sampled individuals
+    in \textit{internal transfer} and \textit{external transfer}
+    events.  Integer matrix.\\
 
     \code{event} & Type of event: 0) \textit{exit}, 1) \textit{enter},
     2) \textit{internal transfer}, and 3) \textit{external transfer}.
@@ -1835,7 +1835,7 @@ do.points = FALSE)
 \end{figure}
 
 \subsubsection[Incorporate scheduled events in an mparse model]{Incorporate scheduled events in an \code{mparse} model}
-\label{sec:mparse-network}
+\label{sec:mparse-scheduled-events}
 
 Let us expand on the previous example to illustrate how models
 generated using \code{mparse} can incorporate scheduled events.
@@ -1850,10 +1850,21 @@ now contains the $\{S, I, I_{cum}, R, V \}$ compartments.  We assume,
 for the sake of simplicity, that vaccinated individuals become immune
 and non-infectious immediately.
 
-<<mparse-network>>=
+<<mparse-scheduled-events>>=
 transitions <- c("S -> b*S*I/(S+I+R+V) -> I", "I -> g*I -> R")
 compartments <- c("S", "I", "Icum", "R", "V")
 m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
+@
+
+Load example data of a population of 1600 nodes (cattle herds) and
+scheduled events (births, deaths, and livestock movements) contained
+in the package.  Let $I_{cum} = 0$ and $R = 0$.
+
+<<mparse-scheduled-events-data>>=
+u0 <- u0_SIR()
+u0$Icum <- 0
+u0$V <- 0
+events <- events_SIR()
 @
 
 {\small
