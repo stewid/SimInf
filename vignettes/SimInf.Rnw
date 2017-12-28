@@ -1883,6 +1883,17 @@ node = 1:1600, dest = 0, n = 0, proportion = 0.8, select = 3,
 shift = 1)
 @
 
+To simulate from this model, we have to define the event matrix $E$
+and the shift matrix $N$, to handle which compartments to sample from
+when processing scheduled events.  Let us first define $E$, where the
+first column is for \textit{enter} events (births); add newborn
+animals to the susceptible compartment $S$.  The second column is for
+\textit{exit} events (deaths) and \textit{external transfer} events
+(livestock movements); sample animals from the $S$, $I$, $R$ or $V$
+compartments.  Finally, the third column is for \textit{internal
+  transfer} events; sample individuals from the $S$, $I$ or $R$
+compartments for vaccination.
+
 {\small
 \[
 \mathbf{E} =
