@@ -1846,9 +1846,9 @@ introduction and that we wish to explore how vaccination could limit
 the outbreak, if resources for vaccination can handle 50 herds per day
 and 80\% of the animals in each herd.  Let us add one compartment $V$
 to the model, to represent vaccinated individuals, so that the model
-now contains the $\{S, I, I_{cum}, R, V \}$ compartments.  We assume,
-for the sake of simplicity, that vaccinated individuals become immune
-and non-infectious immediately.
+now contains the $\{S, I, I_{cum}, R, V \}$ compartments.  As before,
+let \code{b} denote the transmission rate and \code{g} the recovery
+rate.
 
 <<mparse-scheduled-events>>=
 transitions <- c("S -> b*S*I/(S+I+R+V) -> I", "I -> g*I -> R")
@@ -1856,15 +1856,31 @@ compartments <- c("S", "I", "Icum", "R", "V")
 m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
 @
 
-Load example data of a population of 1600 nodes (cattle herds) and
-scheduled events (births, deaths, and livestock movements) contained
-in the package.  Let $I_{cum} = 0$ and $R = 0$.
+Load the example data for an \code{SIR} model in a population of 1600
+nodes (cattle herds) with its associated scheduled events: births,
+deaths, and livestock movements.  Let $I_{cum} = 0$ and $R = 0$.
 
 <<mparse-scheduled-events-data>>=
 u0 <- u0_SIR()
 u0$Icum <- 0
 u0$V <- 0
 events <- events_SIR()
+@
+
+Now generate vaccination events i.e., \textit{internal transfer}
+events (\code{event = 2}).  Use \code{select = 3} and \code{shift = 1}
+to move animals from the susceptible, infectious and recovered
+compartments to the vaccinated compartment, see the definitions of $E$
+and $N$ below.  Let us start the vaccinations in nodes 1--50 on day
+twenty-one, and continue until all herds are vaccinated on day
+fifty-two, and use \code{proportion = 0.8} to vaccinate 80\% of the
+animals in each herd.  We assume, for the sake of simplicity, that
+vaccinated individuals become immune and non-infectious immediately.
+
+<<mparse-scheduled-events-vaccination>>=
+vaccination <- data.frame(event = 2, time = rep(21:52, each = 50),
+node = 1:1600, dest = 0, n = 0, proportion = 0.8, select = 3,
+shift = 1)
 @
 
 {\small
