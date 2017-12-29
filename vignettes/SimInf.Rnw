@@ -1915,13 +1915,66 @@ compartments for vaccination.
 \]
 }
 
-<<mparse-network-E>>=
+<<mparse-scheduled-events-E-N>>=
 E <- matrix(c(1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0), nrow = 5,
 ncol = 3, dimnames = list(c("S", "I", "Icum", "R", "V"),
 c("1", "2", "3")))
 N <- matrix(c(4, 3, 0, 1, 0), nrow = 5, ncol = 1,
 dimnames = list(c("S", "I", "Icum", "R", "V"), "1"))
 @
+
+First move all infected individuals to the susceptible compartment to
+clear the node where infection was randomly introduced with one
+infected individual in the previous trajectory.  Then sample one node
+in the population to seed infection with one infected individual.  Run
+the model and accumulate \code{Icum}.  For effiency, use \code{as.is =
+  TRUE}, the internal matrix format, to extract \code{Icum} for every
+node at each time-point in tspan, and then summarise \code{Icum} at
+each time-point.
+
+<<echo=false, results=hide>>=
+options(continue = "+  ")
+@
+
+<<mparse-scheduled-events-epicurve>>=
+epicurve <- function(model, n = 100) {
+  Icum <- numeric(length(model@tspan))
+  for (i in seq_len(n)) {
+    model@u0["S", ] <- model@u0["S", ] + model@u0["I", ]
+    model@u0["I", ] <- 0L
+    j <- sample(seq_len(Nn(model)), 1)
+    model@u0["I", j] <- 1L
+    model@u0["S", j] <- model@u0["S", j] - 1L
+    result <- run(model)
+    Icum <- Icum + colSums(trajectory(result, "Icum", as.is = TRUE))
+  }
+  stepfun(model@tspan[-1], diff(c(0, Icum / n)))
+}
+@
+
+<<echo=false, results=hide>>=
+options(continue = "+    ")
+@
+
+Create a new model object with the events, $E$ and $N$ defined.
+
+<<mparse-network-model>>=
+tspan <- seq(from = 1, to = 4*365, by = 7)
+model <- init(m, u0 = u0, tspan = tspan, events = events, E = E, N = N)
+@
+
+%% \begin{figure}
+%%   \begin{center}
+%% <<mparse-mparse-plot, echo=FALSE, fig=TRUE>>=
+%% cases <- stepfun(model@tspan[-1], diff(c(0, Icum / N)))
+%% plot(cases, main = "", xlim = c(0, 300), xlab = "Time",
+%% ylab = "Number of cases", do.points = FALSE)
+%% @
+%%   \end{center}
+%%   \caption{FIXME.  \label{fig:mparse-network}}
+%% \end{figure}
+
+\clearpage
 
 \subsubsection{Predator-prey model}
 \label{sec:mparse-predator-prey}
