@@ -220,16 +220,14 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               epsilon = 0.000011)
 
 show_expected <- c("Model: SISe",
-                   "",
                    "Number of nodes: 1",
-                   "Number of compartments: 2",
                    "Number of transitions: 2",
                    "Number of scheduled events: 0",
                    "")
 
 show_observed <- capture.output(show(model))
 
-stopifnot(identical(show_observed[1:7], show_expected))
+stopifnot(identical(show_observed[1:5], show_expected))
 
 ## Check summary method without events
 summary(run(model))
@@ -280,16 +278,14 @@ model <- SISe3(u0        = u0,
                epsilon   = 1)
 
 show_expected <- c("Model: SISe3",
-                   "",
                    "Number of nodes: 6",
-                   "Number of compartments: 6",
                    "Number of transitions: 6",
                    "Number of scheduled events: 15",
                    "")
 
 show_observed <- capture.output(show(model))
 
-stopifnot(identical(show_observed[1:7], show_expected))
+stopifnot(identical(show_observed[1:5], show_expected))
 
 ## Check summary method with events
 summary(run(model))
