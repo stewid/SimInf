@@ -1851,7 +1851,7 @@ let \code{b} denote the transmission rate and \code{g} the recovery
 rate.
 
 <<mparse-scheduled-events>>=
-transitions <- c("S -> b*S*I/(S+I+R+V) -> I", "I -> g*I -> R")
+transitions <- c("S -> b*S*I/(S+I+R+V) -> I + Icum", "I -> g*I -> R")
 compartments <- c("S", "I", "Icum", "R", "V")
 m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
 @
@@ -1923,21 +1923,23 @@ N <- matrix(c(4, 3, 0, 1, 0), nrow = 5, ncol = 1,
 dimnames = list(c("S", "I", "Icum", "R", "V"), "1"))
 @
 
-First move all infected individuals to the susceptible compartment to
-clear the node where infection was randomly introduced with one
-infected individual in the previous trajectory.  Then sample one node
-in the population to seed infection with one infected individual.  Run
-the model and accumulate \code{Icum}.  For effiency, use \code{as.is =
-  TRUE}, the internal matrix format, to extract \code{Icum} for every
-node at each time-point in tspan, and then summarise \code{Icum} at
-each time-point.
+Now let us create an \code{epicurve} function to estimate the average
+number of new cases per day from \code{n = 1000} realizations of a
+\code{model} object in a \code{for} loop.  To clear infection that was
+introduced in the previous trajectory, animals are first moved to the
+susceptible compartment.  Note that we use the 'L' suffix to create an
+integer value rather than a numeric value.  Then, one infected
+individual is introduced into a randomly sampled node from the
+population.  Run the model and accumulate \code{Icum}, for efficiency,
+use \code{as.is = TRUE}, the internal matrix format, to extract
+\code{Icum} in every node at each time-point in \code{tspan}.
 
 <<echo=false, results=hide>>=
 options(continue = "+  ")
 @
 
 <<mparse-scheduled-events-epicurve>>=
-epicurve <- function(model, n = 100) {
+epicurve <- function(model, n = 1000) {
   Icum <- numeric(length(model@tspan))
   for (i in seq_len(n)) {
     model@u0["S", ] <- model@u0["S", ] + model@u0["I", ]
