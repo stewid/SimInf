@@ -2413,11 +2413,11 @@ Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\re
       language=C, caption={Implementation of the function to init and
         run a simulation with the \code{SIR} model},
       label={lst:SIRrun}, frame=single]
-  SEXP SIR_run(SEXP model, SEXP threads, SEXP seed)
+  SEXP SIR_run(SEXP model, SEXP threads, SEXP seed, SEXP solver)
   {
       TRFun tr_fun[] = {&SIR_S_to_I, &SIR_I_to_S};
 
-      return SimInf_run(model, threads, seed, tr_fun, &SISe3_post_time_step);
+      return SimInf_run(model, threads, seed, solver, tr_fun, &SIR_post_time_step);
   }
 \end{lstlisting}
 \end{scriptsize}
