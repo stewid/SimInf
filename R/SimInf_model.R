@@ -1727,7 +1727,11 @@ summary_events <- function(object)
     ## Summarise external transfer events
     i <- which(object@events@event == 3L)
     cat(sprintf(" External transfer: %i\n", length(i)))
+
     if (length(i) > 0) {
+        ## Summarise network
+        cat("\nNetwork summary\n")
+        cat("---------------\n")
         id <- indegree(object)
         od <- outdegree(object)
         qq_id <- quantile(id)
@@ -1737,7 +1741,7 @@ summary_events <- function(object)
         qq <- rbind(qq_id, qq_od)
         colnames(qq) <- c("Min.", "1st Qu.", "Median",
                           "Mean", "3rd Qu.", "Max.")
-        rownames(qq) <- c("  Indegree:", "  Outdegree:")
+        rownames(qq) <- c(" Indegree:", " Outdegree:")
         print.table(qq, digits = 3)
     }
 }
@@ -1780,11 +1784,8 @@ setMethod("show",
           function (object)
           {
               ## The model name
-              cat(sprintf("Model: %s\n\n",
-                          as.character(class(object))))
-
+              cat(sprintf("Model: %s\n", as.character(class(object))))
               cat(sprintf("Number of nodes: %i\n", Nn(object)))
-              cat(sprintf("Number of compartments: %i\n", Nc(object)))
               cat(sprintf("Number of transitions: %i\n", Nt(object)))
               show(object@events)
 
@@ -1808,8 +1809,7 @@ setMethod("summary",
           function(object, ...)
           {
               ## The model name
-              cat(sprintf("Model: %s\n\n",
-                          as.character(class(object))))
+              cat(sprintf("Model: %s\n", as.character(class(object))))
 
               ## Nodes
               cat(sprintf("Number of nodes: %i\n\n", Nn(object)))
@@ -1819,8 +1819,10 @@ setMethod("summary",
               summary_gdata(object)
               cat("\n")
               summary_events(object)
-              cat("\n")
-              summary_V(object)
+              if (Nd(object) > 0) {
+                  cat("\n")
+                  summary_V(object)
+              }
               cat("\n")
               summary_U(object)
           }
