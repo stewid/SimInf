@@ -106,6 +106,14 @@ setClass("SimInf_events",
          validity = function(object) {
              errors <- character()
 
+             ## Check that E and N have identical compartments
+             if ((dim(object@E)[1] > 0) && (dim(object@N)[1] > 0)) {
+                 if (!identical(rownames(object@E), rownames(object@N))) {
+                     errors <- c(errors,
+                                 "'E' and 'N' must have identical compartments")
+                 }
+             }
+
              if (!identical(length(unique(c(length(object@event),
                                             length(object@time),
                                             length(object@node),
