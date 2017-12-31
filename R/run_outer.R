@@ -46,17 +46,37 @@
 ##' x <- seq(from = 0.2, to = 1.8, by = 0.05)
 ##' y <- seq(from = 0.2, to = 1.1, by = 0.05)
 ##'
-##' ## Run the model and determine the population prevalence
-##' pop <- run_outer(x, y, model, gamma ~ beta,
-##'                  function(model) {prevalence(run(model), "pop")[75]})
+##' ## Utility function to run the model and estimate the population
+##' ## prevalence on day 75.
+##' pop_prev <- function(model) {
+##'     result <- run(model)
+##'     prevalence(result, I~., type = "pop", as.is = TRUE)[75]
+##' }
+##'
+##' ## Scale 'gamma' with 'y' and 'beta' with 'x' and
+##' ## run the model and determine the population prevalence on day
+##' ## 500. For each combination of 'x' and 'y', the model parameters
+##' ## are scaled and the function 'pop_prev' called with the
+##' ## perturbed model.
+##' pop <- run_outer(x, y, model, gamma ~ beta, pop_prev)
 ##'
 ##' ## Plot result
 ##' contour(x * model@gdata["beta"], y * model@gdata["gamma"],
 ##'         pop, method = "edge", bty = "l")
 ##'
-##' ## Run the model and determine the node prevalence
-##' nop <- run_outer(x, y, model, gamma ~ beta,
-##'                  function(model) {prevalence(run(model), "nop")[75]})
+##' ## Utility function to run the model and estimate the node
+##' ## prevalence on day 75.
+##' node_prev <- function(model) {
+##'     result <- run(model)
+##'     prevalence(result, I~., type = "nop", as.is = TRUE)[75]
+##' }
+##'
+##' ## Scale 'gamma' with 'y' and 'beta' with 'x' and
+##' ## run the model and determine the node prevalence on day
+##' ## 500. For each combination of 'x' and 'y', the model parameters
+##' ## are scaled and the function 'node_prev' called with the
+##' ## perturbed model.
+##' nop <- run_outer(x, y, model, gamma ~ beta, node_prev)
 ##'
 ##' ## Plot result
 ##' contour(x * model@gdata["beta"], y * model@gdata["gamma"],
