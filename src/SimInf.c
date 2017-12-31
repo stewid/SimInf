@@ -241,7 +241,7 @@ SEXP SimInf_run(
 #endif
 
     /* Run the simulation solver. */
-    if (solver == R_NilValue)
+    if (isNull(solver))
         err = SimInf_run_solver_ssa(&args);
     else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssa") == 0)
         err = SimInf_run_solver_ssa(&args);
