@@ -98,7 +98,7 @@ int SimInf_get_seed(unsigned long int *out, SEXP seed)
 {
     int err = 0;
 
-    if (seed != R_NilValue) {
+    if (!isNull(seed)) {
         if (isInteger(seed) || isReal(seed)) {
             switch (LENGTH(seed)) {
             case 0:
@@ -141,7 +141,7 @@ int SimInf_get_threads(int *out, SEXP threads)
 {
     int err = 0;
 
-    if (threads == R_NilValue) {
+    if (isNull(threads)) {
         *out = 0;
     } else if (isInteger(threads)) {
         if (LENGTH(threads) != 1)
