@@ -33,7 +33,7 @@ int SimInf_arg_check_dgCMatrix(SEXP arg)
 {
     SEXP class_name;
 
-    if (isNull(arg) || S4SXP != TYPEOF(arg))
+    if (isNull(arg) || !isS4(arg))
         return -1;
     class_name = getAttrib(arg, R_ClassSymbol);
     if (0 != strcmp(CHAR(STRING_ELT(class_name, 0)), "dgCMatrix"))
@@ -78,7 +78,7 @@ int SimInf_arg_check_model(SEXP arg)
 {
     static const char *valid[] = {"SimInf_model", ""};
 
-    if (isNull(arg) || !IS_S4_OBJECT(arg))
+    if (isNull(arg) || !isS4(arg))
         return -1;
 
     if (R_check_class_etc(arg, valid) < 0)
