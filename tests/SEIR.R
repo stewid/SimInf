@@ -266,6 +266,13 @@ model <- SEIR(u0 = data.frame(S = c(110, 210, 310, 410, 510, 610),
               epsilon = 0, gamma   = 0)
 model@events@E <- as(diag(4), "dgCMatrix")
 model@events@select <- rep(1:4, length.out = length(model@events@select))
+
+# Check that this fails because rownames (compartments) are missing
+res <- tools::assertError(run(model, threads = 1))
+stopifnot(length(grep("'S' and 'E' must have identical compartments",
+                      res[[1]]$message)) > 0)
+
+rownames(model@events@E) <- c("S", "E", "I", "R")
 result <- run(model, threads = 1)
 
 U_expected <- structure(list(

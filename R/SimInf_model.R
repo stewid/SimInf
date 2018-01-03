@@ -170,6 +170,15 @@ setClass("SimInf_model",
                              "'S' matrix must be an integer matrix.")
              }
 
+             ## Check that S and events@E have identical compartments
+             if ((dim(object@S)[1] > 0) && (dim(object@events@E)[1] > 0)) {
+                 if (!identical(rownames(object@S), rownames(object@events@E))) {
+                     errors <- c(errors,
+                                 "'S' and 'E' must have identical compartments")
+                 }
+             }
+
+
              ## Check G.
              Nt <- dim(object@S)[2]
              if (!identical(dim(object@G), c(Nt, Nt))) {
