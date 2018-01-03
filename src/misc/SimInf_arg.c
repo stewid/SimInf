@@ -33,7 +33,7 @@ int SimInf_arg_check_dgCMatrix(SEXP arg)
 {
     SEXP class_name;
 
-    if (isNull(arg) || !isS4(arg))
+    if (!isS4(arg))
         return -1;
     class_name = getAttrib(arg, R_ClassSymbol);
     if (0 != strcmp(CHAR(STRING_ELT(class_name, 0)), "dgCMatrix"))
@@ -49,8 +49,7 @@ int SimInf_arg_check_dgCMatrix(SEXP arg)
  */
 int SimInf_arg_check_integer(SEXP arg)
 {
-    if (isNull(arg) || !isInteger(arg) ||
-        length(arg) != 1  || NA_INTEGER == INTEGER(arg)[0])
+    if (!isInteger(arg) || length(arg) != 1 || NA_INTEGER == INTEGER(arg)[0])
         return -1;
     return 0;
 }
@@ -63,7 +62,7 @@ int SimInf_arg_check_integer(SEXP arg)
  */
 int SimInf_arg_check_matrix(SEXP arg)
 {
-    if (isNull(arg) || !isMatrix(arg))
+    if (!isMatrix(arg))
         return -1;
     return 0;
 }
@@ -78,10 +77,7 @@ int SimInf_arg_check_model(SEXP arg)
 {
     static const char *valid[] = {"SimInf_model", ""};
 
-    if (isNull(arg) || !isS4(arg))
-        return -1;
-
-    if (R_check_class_etc(arg, valid) < 0)
+    if (!isS4(arg) || R_check_class_etc(arg, valid) < 0)
         return -1;
 
     return 0;
