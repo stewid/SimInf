@@ -7,22 +7,23 @@ SET_INTERNET2=`"${R_SCRIPT}" -e "cat(ifelse(compareVersion(sprintf('%s.%s', R.ve
 # Use libcurl if available
 USE_LIBCURL=`"${R_SCRIPT}" -e "cat(ifelse(capabilities('libcurl'), 'method=\'libcurl\',', ''))"`
 
-# Check for gsl headers and libraries
+# Check for gsl headers and library
 have_gsl=yes
 local=`"${R_HOME}/bin/R" CMD config LOCAL_SOFT`
-LOCAL_URL=https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local323.zip
+GSL_VER=2.4
+GSL_URL=https://github.com/rwinlib/gsl/archive/v${GSL_VER}.zip
 if [ ! -e "${local}/include/gsl/gsl_rng.h" ]; then
     if [ ! -e src/gsl/include/gsl/gsl_rng.h ]; then
-        if [ ! -e local.zip ]; then
+        if [ ! -e gsl.zip ]; then
             echo "  cannot find gsl files"
             echo "  attempting to download them"
-            "${R_SCRIPT}" -e "${SET_INTERNET2} download.file('${LOCAL_URL}', 'local.zip', ${USE_LIBCURL} quiet = TRUE)"
+            "${R_SCRIPT}" -e "${SET_INTERNET2} download.file('${GSL_URL}', 'gsl.zip', ${USE_LIBCURL} quiet = TRUE)"
         fi
-        if [ ! -e local.zip ]; then
+        if [ ! -e gsl.zip ]; then
 	    have_gsl=no
         else
-	    echo "  unpacking gsl files from local.zip"
-            unzip -u local.zip include/gsl* lib/i386/libgsl.a lib/x64/libgsl.a lib/i386/libgslcblas.a lib/x64/libgslcblas.a -d src/gsl
+	    echo "  unpacking gsl files from 'gsl.zip'"
+            "${R_SCRIPT}" -e "unzip('gsl.zip', exdir = 'src'); file.rename('src/gsl-${GSL_VER}', 'src/gsl')"
             if [ ! -e src/gsl/include/gsl/gsl_rng.h ]; then
 	        have_gsl=no
 	    fi
@@ -34,10 +35,10 @@ if [ ${have_gsl} != yes ]; then
     echo ""
     echo " *** ERROR: unable to find the gsl files"
     echo ""
-    echo " They must be either in 'src/gsl' or in 'local.zip'"
+    echo " They must be either in 'src/gsl' or in 'gsl.zip'"
     echo ""
-    echo " You can download external software from (save as 'local.zip')"
-    echo " ${LOCAL_URL}"
+    echo " You can download the gsl headers and library from (save as 'gsl.zip')"
+    echo " ${GSL_URL}"
     echo ""
     echo " Another option is to configure the LOCAL_SOFT variable, see:"
     echo "   https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Windows-packages"
