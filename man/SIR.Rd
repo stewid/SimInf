@@ -39,7 +39,7 @@ recovered (R).  Moreover, it has two state transitions,
 \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{S -- beta S I / N --> I}
 \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-recovery rate, and \eqn{N=S+I}.
+recovery rate, and \eqn{N=S+I+R}.
 
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
