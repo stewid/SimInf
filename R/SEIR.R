@@ -21,10 +21,24 @@
 ##' @export
 setClass("SEIR", contains = c("SimInf_model"))
 
-##' Create a SEIR model
+##' Create an \acronym{SEIR} model
 ##'
-##' Create a SEIR model to be used by the simulation framework.
+##' Create an \acronym{SEIR} model to be used by the simulation
+##' framework.
 ##'
+##' The \acronym{SEIR} model contains four compartments; number of
+##' susceptible (S), number of exposed (E) (those who have been
+##' infected but are not yet infectious), number of infectious (I),
+##' and number of recovered (R).  Moreover, it has three state
+##' transitions,
+##'
+##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{S -- beta S I / N --> E}
+##' \deqn{E \stackrel{\epsilon E}{\longrightarrow} I}{E -- epsilon E --> I}
+##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
+##'
+##' where \eqn{\beta} is the transmission rate, \eqn{\epsilon} is the
+##' incubation rate, \eqn{\gamma} is the recovery rate, and
+##' \eqn{N=S+E+I+R}.
 ##'
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
