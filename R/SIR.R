@@ -60,8 +60,7 @@ setClass("SIR", contains = c("SimInf_model"))
 ##' \item{R}{The number of recovered in each node}
 ##' }
 ##'
-##' @param u0 A \code{data.frame} with the initial state in each node,
-##'     see details.
+##' @template u0-param
 ##' @template tspan-param
 ##' @param events a \code{data.frame} with the scheduled events, see
 ##'     \code{\link{SimInf_model}}.

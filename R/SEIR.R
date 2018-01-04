@@ -30,12 +30,12 @@ setClass("SEIR", contains = c("SimInf_model"))
 ##' each node with the following columns:
 ##' \describe{
 ##' \item{S}{The number of sucsceptible in each node}
+##' \item{E}{The number of exposed in each node}
 ##' \item{I}{The number of infected in each node}
 ##' \item{R}{The number of recovered in each node}
 ##' }
 ##'
-##' @param u0 A \code{data.frame} with the initial state in each node,
-##'     see details.
+##' @template u0-param
 ##' @template tspan-param
 ##' @param events a \code{data.frame} with the scheduled events, see
 ##'     \code{\link{SimInf_model}}.

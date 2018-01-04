@@ -41,8 +41,7 @@ setClass("SISe3", contains = c("SimInf_model"))
 ##' }
 ##'
 ##' @template beta-section
-##' @param u0 A \code{data.frame} with the initial state in each
-##' node, see details.
+##' @template u0-param
 ##' @template tspan-param
 ##' @param events a \code{data.frame} with the scheduled events, see
 ##' \code{\link{SimInf_model}}.
