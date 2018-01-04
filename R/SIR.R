@@ -62,8 +62,7 @@ setClass("SIR", contains = c("SimInf_model"))
 ##'
 ##' @template u0-param
 ##' @template tspan-param
-##' @param events a \code{data.frame} with the scheduled events, see
-##'     \code{\link{SimInf_model}}.
+##' @template events-param
 ##' @param beta The transmission rate from susceptible to infected.
 ##' @param gamma The recovery rate from infected to recovered.
 ##' @return A \code{\link{SimInf_model}} of class \code{SIR}

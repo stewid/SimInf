@@ -38,8 +38,7 @@ setClass("SISe", contains = c("SimInf_model"))
 ##' @template beta-section
 ##' @template u0-param
 ##' @template tspan-param
-##' @param events a \code{data.frame} with the scheduled events, see
-##'     \code{\link{SimInf_model}}.
+##' @template events-param
 ##' @param phi A numeric vector with the initial environmental
 ##'     infectious pressure in each node. Default NULL which gives 0
 ##'     in each node.
