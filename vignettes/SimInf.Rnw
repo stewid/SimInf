@@ -1682,7 +1682,7 @@ propensity is written between the '\code{->}'-signs.  The special
 symbol '\code{@}' is reserved for the empty set $\emptyset$.  We
 suggest to first draw a schematic representation of the model that
 includes all compartments and arrows for all state transitions.  Then
-list the compartments in the order they should appear in the \code{U}
+list the compartments in the order they should appear in the \code{S}
 matrix.
 
 \subsubsection[Introductory examples of using mparse]{Introductory examples of using \code{mparse}}
