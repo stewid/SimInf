@@ -7,8 +7,8 @@
 SIR(u0, tspan, events = NULL, beta = NULL, gamma = NULL)
 }
 \arguments{
-\item{u0}{A \code{data.frame} with the initial state in each node,
-see details.}
+\item{u0}{A \code{data.frame} with the initial state in each node
+(see \sQuote{Details}).}
 
 \item{tspan}{A vector (length >= 2) of increasing time points
 where the state of each node is to be returned. Can be either

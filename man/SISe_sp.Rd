@@ -10,8 +10,8 @@ SISe_sp(u0, tspan, events = NULL, phi = NULL, upsilon = NULL,
   end_t3 = NULL, end_t4 = NULL, coupling = NULL, distance = NULL)
 }
 \arguments{
-\item{u0}{A \code{data.frame} with the initial state in each node,
-see details.}
+\item{u0}{A \code{data.frame} with the initial state in each node
+(see \sQuote{Details}).}
 
 \item{tspan}{A vector (length >= 2) of increasing time points
 where the state of each node is to be returned. Can be either
