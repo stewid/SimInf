@@ -45,6 +45,7 @@ G <- as(Matrix(c(1, 0, 0,
                byrow  = TRUE,
                sparse = TRUE),
         "dgCMatrix")
+rownames(G) <- c("A -> B", "C -> D", "E -> F")
 
 u0 <- structure(c(0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 2, 0, 2, 0, 2,
                   0, 3, 0, 3, 0, 3, 0, 4, 0, 4, 0, 4, 0, 5, 0, 5, 0, 5, 0),
@@ -158,6 +159,63 @@ res <- tools::assertError(new("SimInf_model",
                               u0    = u0))
 stopifnot(length(grep("Wrong size of dependency graph.",
                       res[[1]]$message)) > 0)
+
+## Check specication of transition
+rownames(G) <- NULL
+res <- tools::assertError(new("SimInf_model",
+                              G     = G,
+                              S     = S,
+                              U     = U,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("'G' must have rownames that specify transitions.",
+                      res[[1]]$message)) > 0)
+
+rownames(G) <- c("", "  ", "E -> F")
+res <- tools::assertError(new("SimInf_model",
+                              G     = G,
+                              S     = S,
+                              U     = U,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("'G' must have rownames that specify transitions.",
+                      res[[1]]$message)) > 0)
+
+rownames(G) <- c("A -> B", "C -> D", "E ->")
+res <- tools::assertError(new("SimInf_model",
+                              G     = G,
+                              S     = S,
+                              U     = U,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("'G' rownames have invalid transitions.",
+                      res[[1]]$message)) > 0)
+
+rownames(G) <- c("A -> B", "C -> D", "E ->")
+res <- tools::assertError(new("SimInf_model",
+                              G     = G,
+                              S     = S,
+                              U     = U,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("'G' rownames have invalid transitions.",
+                      res[[1]]$message)) > 0)
+
+rownames(G) <- c("A -> B", "C -> D", "E -> G")
+res <- tools::assertError(new("SimInf_model",
+                              G     = G,
+                              S     = S,
+                              U     = U,
+                              ldata = matrix(rep(0, Nn), nrow = 1),
+                              tspan = as.numeric(1:10),
+                              u0    = u0))
+stopifnot(length(grep("'G' and 'S' must have identical compartments",
+                      res[[1]]$message)) > 0)
+rownames(G) <- c("A -> B", "C -> D", "E -> F")
 
 ## Check gdata
 res <- tools::assertError(new("SimInf_model",

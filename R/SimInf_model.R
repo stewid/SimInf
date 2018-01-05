@@ -168,6 +168,30 @@ setClass("SimInf_model",
              if (!identical(dim(object@G), c(Nt, Nt)))
                  return("Wrong size of dependency graph.")
 
+             ## Check that transitions exist in G.
+             transitions <- rownames(object@G)
+             if (is.null(transitions))
+                 return("'G' must have rownames that specify transitions.")
+             transitions <- sub("^[[:space:]]*", "", sub("[[:space:]]*$", "", transitions))
+             if (!all(nchar(transitions) > 0))
+                 return("'G' must have rownames that specify transitions.")
+
+             ## Check that the format of transitions are valid.
+             ## "X1 + X2 + ... + Xn -> Y1 + Y2 + ... + Yn"
+             ## is expected, where X2, ..., Xn and Y2, ..., Yn are optional.
+             transitions <- strsplit(transitions, split = "->", fixed = TRUE)
+             if (!all(sapply(transitions, length) == 2))
+                 return("'G' rownames have invalid transitions.")
+
+             ## Check that transitions and S have identical compartments
+             transitions <- unlist(transitions)
+             transitions <- unlist(strsplit(transitions, split = "+", fixed = TRUE))
+             transitions <- sub("^[[:space:]]*", "", sub("[[:space:]]*$", "", transitions))
+             transitions <- unique(transitions)
+             transitions <- transitions[transitions != "@"]
+             if (!all(transitions %in% rownames(object@S)))
+                 return("'G' and 'S' must have identical compartments")
+
              ## Check ldata.
              if (!is.double(object@ldata))
                  return("'ldata' matrix must be a double matrix.")
