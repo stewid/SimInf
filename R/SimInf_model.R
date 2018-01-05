@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2018  Stefan Engblom
+## Copyright (C) 2015 - 2018  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -121,89 +121,65 @@ setClass("SimInf_model",
          validity = function(object) {
              ## Check events
              errors <- validObject(object@events)
-             if (identical(errors, TRUE))
-                 errors <- character()
+             if (!isTRUE(errors))
+                 return(errors)
 
              ## Check tspan.
              if (!is.double(object@tspan)) {
-                 errors <- c(errors, "Input time-span must be a double vector.")
+                 return("Input time-span must be a double vector.")
              } else if (any(length(object@tspan) < 2,
                             any(diff(object@tspan) <= 0),
                             any(is.na(object@tspan)))) {
-                 errors <- c(errors,
-                             "Input time-span must be an increasing vector.")
+                 return("Input time-span must be an increasing vector.")
              }
 
              ## Check u0.
-             if (!identical(storage.mode(object@u0), "integer")) {
-                 errors <- c(errors,
-                             "Initial state 'u0' must be an integer matrix.")
-             } else if (any(object@u0 < 0L)) {
-                 errors <- c(errors,
-                             "Initial state 'u0' has negative elements.")
-             }
+             if (!identical(storage.mode(object@u0), "integer"))
+                 return("Initial state 'u0' must be an integer matrix.")
+             if (any(object@u0 < 0L))
+                 return("Initial state 'u0' has negative elements.")
 
              ## Check U.
-             if (!identical(storage.mode(object@U), "integer")) {
-                 errors <- c(errors,
-                             "Output state 'U' must be an integer matrix.")
-             } else if (any(object@U < 0L)) {
-                 errors <- c(errors,
-                             "Output state 'U' has negative elements.")
-             }
+             if (!identical(storage.mode(object@U), "integer"))
+                 return("Output state 'U' must be an integer matrix.")
+             if (any(object@U < 0L))
+                 return("Output state 'U' has negative elements.")
 
              ## Check v0.
-             if (!identical(storage.mode(object@v0), "double")) {
-                 errors <- c(errors,
-                             "Initial model state 'v0' must be a double matrix.")
-             }
+             if (!identical(storage.mode(object@v0), "double"))
+                 return("Initial model state 'v0' must be a double matrix.")
 
              ## Check V.
-             if (!identical(storage.mode(object@V), "double")) {
-                 errors <- c(errors,
-                             "Output model state 'V' must be a double matrix.")
-             }
+             if (!identical(storage.mode(object@V), "double"))
+                 return("Output model state 'V' must be a double matrix.")
 
              ## Check S.
-             if (!all(is_wholenumber(object@S@x))) {
-                 errors <- c(errors,
-                             "'S' matrix must be an integer matrix.")
-             }
+             if (!all(is_wholenumber(object@S@x)))
+                 return("'S' matrix must be an integer matrix.")
 
              ## Check that S and events@E have identical compartments
              if ((dim(object@S)[1] > 0) && (dim(object@events@E)[1] > 0)) {
-                 if (!identical(rownames(object@S), rownames(object@events@E))) {
-                     errors <- c(errors,
-                                 "'S' and 'E' must have identical compartments")
-                 }
+                 if (!identical(rownames(object@S), rownames(object@events@E)))
+                     return("'S' and 'E' must have identical compartments")
              }
-
 
              ## Check G.
              Nt <- dim(object@S)[2]
-             if (!identical(dim(object@G), c(Nt, Nt))) {
-                 errors <- c(errors,
-                             "Wrong size of dependency graph.")
-             }
+             if (!identical(dim(object@G), c(Nt, Nt)))
+                 return("Wrong size of dependency graph.")
 
              ## Check ldata.
-             if (!is.double(object@ldata)) {
-                 errors <- c(errors,
-                             "'ldata' matrix must be a double matrix.")
-             }
+             if (!is.double(object@ldata))
+                 return("'ldata' matrix must be a double matrix.")
              Nn <- dim(object@u0)[2]
-             if (!identical(dim(object@ldata)[2], Nn)) {
-                 errors <- c(errors,
-                             "Wrong size of 'ldata' matrix.")
-             }
+             if (!identical(dim(object@ldata)[2], Nn))
+                 return("Wrong size of 'ldata' matrix.")
 
              ## Check gdata.
-             if (!is.double(object@gdata)) {
-                 errors <- c(errors,
-                             "'gdata' must be a double vector.")
-             }
+             if (!is.double(object@gdata))
+                 return("'gdata' must be a double vector.")
 
-             if (length(errors) == 0) TRUE else errors
+             TRUE
          }
 )
 
