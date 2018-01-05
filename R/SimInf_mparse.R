@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2018  Stefan Engblom
+## Copyright (C) 2015 - 2018  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -52,29 +52,22 @@ setClass("SimInf_mparse",
                    G      = "dgCMatrix",
                    S      = "dgCMatrix"),
          validity = function(object) {
-             errors <- character()
-
              ## Check C code
-             if (nchar(paste0(object@C_code, collapse = "\n")) == 0L) {
-                 errors <- c(errors, "'C_code' is empty.")
-             }
+             if (nchar(paste0(object@C_code, collapse = "\n")) == 0L)
+                 return("'C_code' is empty.")
 
              ## Check S.
-             if (identical(dim(object@S), c(0L, 0L))) {
-                 errors <- c(errors, "'S' is empty.")
-             } else if (!all(is_wholenumber(object@S@x))) {
-                 errors <- c(errors,
-                             "'S' matrix must be an integer matrix.")
-             }
+             if (identical(dim(object@S), c(0L, 0L)))
+                 return("'S' is empty.")
+             if (!all(is_wholenumber(object@S@x)))
+                 return("'S' matrix must be an integer matrix.")
 
              ## Check G.
              Nt <- dim(object@S)[2]
-             if (!identical(dim(object@G), c(Nt, Nt))) {
-                 errors <- c(errors,
-                             "Wrong size of dependency graph 'G'.")
-             }
+             if (!identical(dim(object@G), c(Nt, Nt)))
+                 return("Wrong size of dependency graph 'G'.")
 
-             if (length(errors) == 0) TRUE else errors
+             TRUE
          }
 )
 
