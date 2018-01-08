@@ -1,9 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2017  Robin Eriksson
- *  Copyright (C) 2015 - 2017  Stefan Engblom
- *  Copyright (C) 2015 - 2017  Stefan Widgren
+ *  Copyright (C) 2017 - 2018  Robin Eriksson
+ *  Copyright (C) 2015 - 2018  Stefan Engblom
+ *  Copyright (C) 2015 - 2018  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -237,6 +237,30 @@ typedef struct SimInf_scheduled_events
                          *   determines the shift of the internal
                          *   and external transfer event. */
 } SimInf_scheduled_events;
+
+/**
+ * Structure with data to process scheduled events.
+ */
+typedef struct SimInf_model_events
+{
+    /*** Scheduled events ***/
+    SimInf_scheduled_events *E1; /**< E1 events to process. */
+    int E1_index;         /**< Index to the next E1 event to
+                           *   process. */
+    SimInf_scheduled_events *E2; /**< E2 events to process. */
+    int E2_index;         /**< Index to the next E2 event to
+                           *   process. */
+
+    /*** Vectors for sampling individuals ***/
+    int *individuals;     /**< Vector to store the result of the
+                           *   sampling during scheduled events
+                           *   processing. */
+    int *u_tmp;           /**< Temporary vector with the compartment
+                           *   state in a node when sampling
+                           *   individuals for scheduled events. */
+    gsl_rng *rng;         /**< The random number generator for
+                           *   sampling. */
+} SimInf_model_events;
 
 /**
  * Structure to hold thread specific data/arguments for simulation.
