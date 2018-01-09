@@ -1,8 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015 - 2017 Stefan Engblom
- *  Copyright (C) 2015 - 2017 Stefan Widgren
+ *  Copyright (C) 2015 Pavol Bauer
+ *  Copyright (C) 2017 - 2018 Robin Eriksson
+ *  Copyright (C) 2015 - 2018 Stefan Engblom
+ *  Copyright (C) 2015 - 2018 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -185,6 +186,68 @@ int SimInf_allocate_events(SimInf_scheduled_events *e, int n)
 }
 
 /**
+ * Free allocated memory for scheduled events
+ *
+ * @param e SimInf_scheduled_events to free
+ */
+static void SimInf_free_events(SimInf_scheduled_events *e)
+{
+    if (e) {
+        if (e->event)
+            free(e->event);
+        e->event = NULL;
+        if (e->time)
+            free(e->time);
+        e->time = NULL;
+        if (e->node)
+            free(e->node);
+        e->node = NULL;
+        if (e->dest)
+            free(e->dest);
+        e->dest = NULL;
+        if (e->n)
+            free(e->n);
+        e->n = NULL;
+        if (e->proportion)
+            free(e->proportion);
+        e->proportion = NULL;
+        if (e->select)
+            free(e->select);
+        e->select = NULL;
+        if (e->shift)
+            free(e->shift);
+        e->shift = NULL;
+        free(e);
+    }
+}
+
+/**
+ * Free allocated memory to process events
+ *
+ * @param e SimInf_model_events to free
+ */
+void SimInf_free_model_events(SimInf_model_events *e)
+{
+    if (e) {
+        if (e->E1)
+            SimInf_free_events(e->E1);
+        e->E1 = NULL;
+        if (e->E2)
+            SimInf_free_events(e->E2);
+        e->E2 = NULL;
+        if (e->individuals)
+            free(e->individuals);
+        e->individuals = NULL;
+        if (e->u_tmp)
+            free(e->u_tmp);
+        e->u_tmp = NULL;
+        if (e->rng)
+            gsl_rng_free(e->rng);
+        e->rng = NULL;
+    }
+}
+
+/**
  * Free allocated memory to siminf thread arguments
  */
 void SimInf_free_args(SimInf_thread_args *sa)
@@ -232,42 +295,6 @@ void SimInf_free_args(SimInf_thread_args *sa)
         if(sa->reactTimes)
             free(sa->reactTimes);
         sa->reactTimes = NULL;
-    }
-}
-
-/**
- * Free allocated memory to scheduled events
- *
- * @param e The scheduled_events events to free.
- */
-void SimInf_free_events(SimInf_scheduled_events *e)
-{
-    if (e) {
-        if (e->event)
-            free(e->event);
-        e->event = NULL;
-        if (e->time)
-            free(e->time);
-        e->time = NULL;
-        if (e->node)
-            free(e->node);
-        e->node = NULL;
-        if (e->dest)
-            free(e->dest);
-        e->dest = NULL;
-        if (e->n)
-            free(e->n);
-        e->n = NULL;
-        if (e->proportion)
-            free(e->proportion);
-        e->proportion = NULL;
-        if (e->select)
-            free(e->select);
-        e->select = NULL;
-        if (e->shift)
-            free(e->shift);
-        e->shift = NULL;
-        free(e);
     }
 }
 

@@ -390,8 +390,7 @@ typedef struct SimInf_thread_args
 int SimInf_allocate_events(SimInf_scheduled_events *e, int n);
 
 void SimInf_free_args(SimInf_thread_args *sa);
-
-void SimInf_free_events(SimInf_scheduled_events *e);
+void SimInf_free_model_events(SimInf_model_events *e);
 
 void SimInf_process_E1_events(
     SimInf_thread_args *sim_args, int *uu, int *update_node);
