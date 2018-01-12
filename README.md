@@ -4,7 +4,7 @@
 
 > A flexible and efficient framework for data-driven stochastic disease spread simulations
 
-[![Build Status](https://travis-ci.org/stewid/SimInf.svg)](https://travis-ci.org/stewid/SimInf)
+[![Build Status](https://travis-ci.org/stewid/SimInf.svg?branch=master)](https://travis-ci.org/stewid/SimInf)
 [![Build status](https://ci.appveyor.com/api/projects/status/pe68xiu1anxvet2n?svg=true)](https://ci.appveyor.com/project/stewid/SimInf)
 [![CRAN status](http://www.r-pkg.org/badges/version/SimInf)](http://cran.r-project.org/web/packages/SimInf/index.html)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/last-month/SimInf)](http://cran.r-project.org/web/packages/SimInf/index.html)
