@@ -1,9 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2017  Robin Eriksson
- *  Copyright (C) 2015 - 2017 Stefan Engblom
- *  Copyright (C) 2015 - 2017 Stefan Widgren
+ *  Copyright (C) 2015 Pavol Bauer
+ *  Copyright (C) 2017 - 2018 Robin Eriksson
+ *  Copyright (C) 2015 - 2018 Stefan Engblom
+ *  Copyright (C) 2015 - 2018 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -69,7 +69,8 @@ void calcTimes(double* time, double* infTime, double tt, double old_rate,
  * @return 0 if Ok, else error code.
  */
 static int SimInf_solver_aem(
-    SimInf_thread_args *sim_args, int *uu, int *update_node, int Nthread)
+    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    int *uu, int *update_node, int Nthread)
 {
     int k;
 
@@ -333,6 +334,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
 {
     int i, errcode;
     gsl_rng *rng = NULL;
+    SimInf_model_events *events = NULL;
     SimInf_thread_args *sim_args = NULL;
     int *uu = NULL, *update_node = NULL;
     double *vv_1 = NULL, *vv_2 = NULL;
@@ -391,6 +393,11 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
         goto cleanup;
     }
 
+    events = calloc(args->Nthread, sizeof(SimInf_model_events));
+    if (!events) {
+        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        goto cleanup;
+    }
 
     for (i = 0; i < args->Nthread; i++) {
         int node;
@@ -566,7 +573,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     if (errcode)
         goto cleanup;
 
-    errcode = SimInf_solver_aem(sim_args, uu, update_node, args->Nthread);
+    errcode = SimInf_solver_aem(sim_args, events, uu, update_node, args->Nthread);
 
 cleanup:
     if (uu) {
@@ -591,6 +598,13 @@ cleanup:
 
     if (rng)
         gsl_rng_free(rng);
+
+    if (events) {
+        for (i = 0; i < args->Nthread; i++)
+            SimInf_free_model_events(&events[i]);
+        free(events);
+        events = NULL;
+    }
 
     if (sim_args) {
         for (i = 0; i < args->Nthread; i++)
