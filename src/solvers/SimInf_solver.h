@@ -243,6 +243,14 @@ typedef struct SimInf_scheduled_events
  */
 typedef struct SimInf_model_events
 {
+    /*** Matrices to process events ***/
+    const int *irE;       /**< Select matrix for events. irE[k] is the
+                           *   row of E[k]. */
+    const int *jcE;       /**< Select matrix for events. Index to data
+                           *   of first non-zero element in row k. */
+    const int *N;         /**< Shift matrix for internal and external
+                           *   transfer events. */
+
     /*** Scheduled events ***/
     SimInf_scheduled_events *E1; /**< E1 events to process. */
     int E1_index;         /**< Index to the next E1 event to
