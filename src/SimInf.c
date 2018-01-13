@@ -64,7 +64,7 @@ SEXP SimInf_run(
 
     /* Check solver argument */
     if (!Rf_isNull(solver)) {
-        if (!isString(solver)) {
+        if (!Rf_isString(solver)) {
             err = SIMINF_ERR_UNKNOWN_SOLVER;
             goto cleanup;
         }
