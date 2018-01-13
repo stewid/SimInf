@@ -165,8 +165,8 @@ SEXP SimInf_run(
 
         PROTECT(U_dimnames = allocVector(VECSXP, 2));
         nprotect++;
-        setAttrib(GET_SLOT(result, Rf_install("U")),
-                  R_DimNamesSymbol, U_dimnames);
+        Rf_setAttrib(GET_SLOT(result, Rf_install("U")),
+                     R_DimNamesSymbol, U_dimnames);
         PROTECT(U_rownames = allocVector(STRSXP, args.Nn * args.Nc));
         nprotect++;
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
@@ -203,8 +203,8 @@ SEXP SimInf_run(
 
         PROTECT(V_dimnames = allocVector(VECSXP, 2));
         nprotect++;
-        setAttrib(GET_SLOT(result, Rf_install("V")),
-                  R_DimNamesSymbol, V_dimnames);
+        Rf_setAttrib(GET_SLOT(result, Rf_install("V")),
+                     R_DimNamesSymbol, V_dimnames);
     }
 
     /* Add colnames to V. Use the the values of 'tspan' if the
