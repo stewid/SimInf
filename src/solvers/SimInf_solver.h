@@ -404,6 +404,9 @@ int SimInf_compartment_model_create(
 void SimInf_free_args(SimInf_thread_args *sa);
 void SimInf_free_model_events(SimInf_model_events *e);
 
+int SimInf_model_events_create(
+    SimInf_model_events **out, SimInf_solver_args *args, gsl_rng *rng);
+
 void SimInf_process_E1_events(
     SimInf_thread_args *sim_args, int *uu, int *update_node);
 
