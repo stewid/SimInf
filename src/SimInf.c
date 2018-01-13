@@ -1,9 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2017  Robin Eriksson
- *  Copyright (C) 2015 - 2017  Stefan Engblom
- *  Copyright (C) 2015 - 2017  Stefan Widgren
+ *  Copyright (C) 2015 Pavol Bauer
+ *  Copyright (C) 2017 - 2018 Robin Eriksson
+ *  Copyright (C) 2015 - 2018 Stefan Engblom
+ *  Copyright (C) 2015 - 2018 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ SEXP SimInf_run(
     }
 
     /* Check solver argument */
-    if (!isNull(solver)) {
+    if (!Rf_isNull(solver)) {
         if (!isString(solver)) {
             err = SIMINF_ERR_UNKNOWN_SOLVER;
             goto cleanup;
@@ -179,7 +179,7 @@ SEXP SimInf_run(
 
     /* Add colnames to U. Use the the values of 'tspan' if the
      * colnames of 'tspan' is null. */
-    if (isNull(colnames))
+    if (Rf_isNull(colnames))
         SET_VECTOR_ELT(U_dimnames, 1, coerceVector(tspan, STRSXP));
     else
         SET_VECTOR_ELT(U_dimnames, 1, duplicate(colnames));
@@ -209,7 +209,7 @@ SEXP SimInf_run(
 
     /* Add colnames to V. Use the the values of 'tspan' if the
      * colnames of 'tspan' is null. */
-    if (isNull(colnames))
+    if (Rf_isNull(colnames))
         SET_VECTOR_ELT(V_dimnames, 1, coerceVector(tspan, STRSXP));
     else
         SET_VECTOR_ELT(V_dimnames, 1, duplicate(colnames));
@@ -241,7 +241,7 @@ SEXP SimInf_run(
 #endif
 
     /* Run the simulation solver. */
-    if (isNull(solver))
+    if (Rf_isNull(solver))
         err = SimInf_run_solver_ssa(&args);
     else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssa") == 0)
         err = SimInf_run_solver_ssa(&args);
