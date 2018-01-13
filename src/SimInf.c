@@ -69,7 +69,7 @@ SEXP SimInf_run(
             goto cleanup;
         }
 
-        if (length(solver) != 1 || STRING_ELT(solver, 0) == NA_STRING) {
+        if (Rf_length(solver) != 1 || STRING_ELT(solver, 0) == NA_STRING) {
             err = SIMINF_ERR_UNKNOWN_SOLVER;
             goto cleanup;
         }
