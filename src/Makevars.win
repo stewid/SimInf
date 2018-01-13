@@ -7,7 +7,7 @@ SIMINF_GSL_INCLUDE = -Igsl/include
 endif
 endif
 
-PKG_CFLAGS = -I. -Icore -Imisc -Imodels $(SIMINF_GSL_INCLUDE) $(SHLIB_OPENMP_CFLAGS)
+PKG_CFLAGS = -I. -Icore -Imisc -Imodels $(SIMINF_GSL_INCLUDE) $(SHLIB_OPENMP_CFLAGS) -DR_NO_REMAP
 PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
 
 # List all model files to compile
