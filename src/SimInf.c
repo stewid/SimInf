@@ -86,7 +86,7 @@ SEXP SimInf_run(
         goto cleanup;
 
     /* Duplicate model. */
-    PROTECT(result = duplicate(model));
+    PROTECT(result = Rf_duplicate(model));
     nprotect++;
 
     /* Dependency graph */
@@ -182,7 +182,7 @@ SEXP SimInf_run(
     if (Rf_isNull(colnames))
         SET_VECTOR_ELT(U_dimnames, 1, coerceVector(tspan, STRSXP));
     else
-        SET_VECTOR_ELT(U_dimnames, 1, duplicate(colnames));
+        SET_VECTOR_ELT(U_dimnames, 1, Rf_duplicate(colnames));
 
     /* Output array (to hold a single trajectory) */
     PROTECT(V_sparse = GET_SLOT(result, Rf_install("V_sparse")));
@@ -212,7 +212,7 @@ SEXP SimInf_run(
     if (Rf_isNull(colnames))
         SET_VECTOR_ELT(V_dimnames, 1, coerceVector(tspan, STRSXP));
     else
-        SET_VECTOR_ELT(V_dimnames, 1, duplicate(colnames));
+        SET_VECTOR_ELT(V_dimnames, 1, Rf_duplicate(colnames));
 
     /* Initial state */
     args.u0 = INTEGER(GET_SLOT(result, Rf_install("u0")));
