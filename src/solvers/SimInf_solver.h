@@ -397,6 +397,10 @@ typedef struct SimInf_thread_args
 
 int SimInf_allocate_events(SimInf_scheduled_events *e, int n);
 
+int SimInf_compartment_model_create(
+    SimInf_thread_args **out, SimInf_solver_args *args, gsl_rng *rng,
+    int *uu, double *vv_1, double *vv_2, int *update_node);
+
 void SimInf_free_args(SimInf_thread_args *sa);
 void SimInf_free_model_events(SimInf_model_events *e);
 

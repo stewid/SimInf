@@ -586,3 +586,159 @@ void SimInf_store_solution_sparse(SimInf_thread_args *sim_args)
         sim_args[0].V_it++;
     }
 }
+
+/**
+ * Create and initialize data for an epidemiological compartment
+ * model. The generated model must be freed by the user.
+ *
+ * @param out the resulting data structure.
+ * @param args structure with data for the solver.
+ * @param rng random number generator.
+ * @return 0 or an error code
+ */
+int SimInf_compartment_model_create(
+    SimInf_thread_args **out, SimInf_solver_args *args, gsl_rng *rng,
+    int *uu, double *vv_1, double *vv_2, int *update_node)
+{
+    int error = 0, i;
+    SimInf_thread_args *model = NULL;
+
+    model = calloc(args->Nthread, sizeof(SimInf_thread_args));
+    if (!model) {
+        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        goto on_error;
+    }
+
+    for (i = 0; i < args->Nthread; i++) {
+        /* Random number generator */
+        model[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
+        if (!model[i].rng) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto on_error;
+        }
+        gsl_rng_set(model[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+
+        /* Constants */
+        model[i].Ntot = args->Nn;
+        model[i].Ni = i * (args->Nn / args->Nthread);
+        model[i].Nn = args->Nn / args->Nthread;
+        if (i == (args->Nthread - 1))
+            model[i].Nn += (args->Nn % args->Nthread);
+        model[i].Nt = args->Nt;
+        model[i].Nc = args->Nc;
+        model[i].Nd = args->Nd;
+        model[i].Nld = args->Nld;
+
+        /* Sparse matrices */
+        model[i].irG = args->irG;
+        model[i].jcG = args->jcG;
+        model[i].irS = args->irS;
+        model[i].jcS = args->jcS;
+        model[i].prS = args->prS;
+        model[i].irE = args->irE;
+        model[i].jcE = args->jcE;
+
+        /* Callbacks */
+        model[i].tr_fun = args->tr_fun;
+        model[i].pts_fun = args->pts_fun;
+
+        /* Keep track of time */
+        model[i].tt = args->tspan[0];
+        model[i].next_day = floor(model[i].tt) + 1.0;
+        model[i].tspan = args->tspan;
+        model[i].tlen = args->tlen;
+        model[i].U_it = 1;
+        model[i].V_it = 1;
+
+        /* Data vectors */
+        model[i].N = args->N;
+        if (args->U) {
+            model[i].U = args->U;
+        } else if (i == 0) {
+            model[i].irU = args->irU;
+            model[i].jcU = args->jcU;
+            model[i].prU = args->prU;
+        }
+        model[i].u = &uu[model[i].Ni * args->Nc];
+        if (args->V) {
+            model[i].V = args->V;
+        } else if (i == 0) {
+            model[i].irV = args->irV;
+            model[i].jcV = args->jcV;
+            model[i].prV = args->prV;
+        }
+        model[i].v = &vv_1[model[i].Ni * args->Nd];
+        model[i].v_new = &vv_2[model[i].Ni * args->Nd];
+        model[i].ldata = &(args->ldata[model[i].Ni * model[i].Nld]);
+        model[i].gdata = args->gdata;
+        model[i].update_node = &update_node[model[i].Ni];
+
+        /* Scheduled events */
+        model[i].E1 = calloc(1, sizeof(SimInf_scheduled_events));
+        if (!model[i].E1) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto on_error;
+        }
+
+        if (i == 0) {
+            model[i].E2 = calloc(1, sizeof(SimInf_scheduled_events));
+            if (!model[i].E2) {
+                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+                goto on_error;
+            }
+        }
+
+        model[i].individuals = calloc(args->Nc, sizeof(int));
+        if (!model[i].individuals) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto on_error;
+        }
+
+        model[i].u_tmp = calloc(args->Nc, sizeof(int));
+        if (!model[i].u_tmp) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto on_error;
+        }
+
+        /* Create transition rate matrix (Nt X Nn) and total rate
+         * vector. In t_rate we store all propensities for state
+         * transitions, and in sum_t_rate the sum of propensities in
+         * every node. */
+        model[i].t_rate = malloc(args->Nt * model[i].Nn * sizeof(double));
+        if (!model[i].t_rate) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto on_error;
+        }
+        model[i].sum_t_rate = malloc(model[i].Nn * sizeof(double));
+        if (!model[i].sum_t_rate) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto on_error;
+        }
+        model[i].t_time = malloc(model[i].Nn * sizeof(double));
+        if (!model[i].t_time) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto on_error;
+        }
+    }
+
+    /* Split scheduled events into E1 and E2 events. */
+    error = SimInf_split_events(
+        model, args->len, args->event, args->time, args->node,
+        args->dest, args->n, args->proportion, args->select,
+        args->shift, args->Nn, args->Nthread);
+    if (error)
+        goto on_error;
+
+    *out = model;
+
+    return 0;
+
+on_error:
+    if (model) {
+        for (i = 0; i < args->Nthread; i++)
+            SimInf_free_args(&model[i]);
+        free(model);
+    }
+
+    return error;
+}
