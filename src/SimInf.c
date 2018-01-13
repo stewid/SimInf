@@ -154,20 +154,20 @@ SEXP SimInf_run(
 
         PROTECT(U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames")));
         nprotect++;
-        PROTECT(U_rownames = allocVector(STRSXP, args.Nn * args.Nc));
+        PROTECT(U_rownames = Rf_allocVector(STRSXP, args.Nn * args.Nc));
         nprotect++;
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     } else {
-        PROTECT(U = allocMatrix(INTSXP, args.Nn * args.Nc, args.tlen));
+        PROTECT(U = Rf_allocMatrix(INTSXP, args.Nn * args.Nc, args.tlen));
         nprotect++;
         SET_SLOT(result, Rf_install("U"), U);
         args.U = INTEGER(GET_SLOT(result, Rf_install("U")));
 
-        PROTECT(U_dimnames = allocVector(VECSXP, 2));
+        PROTECT(U_dimnames = Rf_allocVector(VECSXP, 2));
         nprotect++;
         Rf_setAttrib(GET_SLOT(result, Rf_install("U")),
                      R_DimNamesSymbol, U_dimnames);
-        PROTECT(U_rownames = allocVector(STRSXP, args.Nn * args.Nc));
+        PROTECT(U_rownames = Rf_allocVector(STRSXP, args.Nn * args.Nc));
         nprotect++;
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     }
@@ -196,12 +196,12 @@ SEXP SimInf_run(
 
         V_dimnames = GET_SLOT(V_sparse, Rf_install("Dimnames"));
     } else {
-        PROTECT(V = allocMatrix(REALSXP, args.Nn * args.Nd, args.tlen));
+        PROTECT(V = Rf_allocMatrix(REALSXP, args.Nn * args.Nd, args.tlen));
         nprotect++;
         SET_SLOT(result, Rf_install("V"), V);
         args.V = REAL(GET_SLOT(result, Rf_install("V")));
 
-        PROTECT(V_dimnames = allocVector(VECSXP, 2));
+        PROTECT(V_dimnames = Rf_allocVector(VECSXP, 2));
         nprotect++;
         Rf_setAttrib(GET_SLOT(result, Rf_install("V")),
                      R_DimNamesSymbol, V_dimnames);
