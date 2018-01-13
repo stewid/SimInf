@@ -98,7 +98,7 @@ SEXP SimInf_run(
     /* State change matrix */
     PROTECT(S = GET_SLOT(result, Rf_install("S")));
     nprotect++;
-    PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
+    PROTECT(prS = Rf_coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
     nprotect++;
     args.irS = INTEGER(GET_SLOT(S, Rf_install("i")));
     args.jcS = INTEGER(GET_SLOT(S, Rf_install("p")));
@@ -180,7 +180,7 @@ SEXP SimInf_run(
     /* Add colnames to U. Use the the values of 'tspan' if the
      * colnames of 'tspan' is null. */
     if (Rf_isNull(colnames))
-        SET_VECTOR_ELT(U_dimnames, 1, coerceVector(tspan, STRSXP));
+        SET_VECTOR_ELT(U_dimnames, 1, Rf_coerceVector(tspan, STRSXP));
     else
         SET_VECTOR_ELT(U_dimnames, 1, Rf_duplicate(colnames));
 
@@ -210,7 +210,7 @@ SEXP SimInf_run(
     /* Add colnames to V. Use the the values of 'tspan' if the
      * colnames of 'tspan' is null. */
     if (Rf_isNull(colnames))
-        SET_VECTOR_ELT(V_dimnames, 1, coerceVector(tspan, STRSXP));
+        SET_VECTOR_ELT(V_dimnames, 1, Rf_coerceVector(tspan, STRSXP));
     else
         SET_VECTOR_ELT(V_dimnames, 1, Rf_duplicate(colnames));
 
