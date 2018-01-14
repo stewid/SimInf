@@ -761,6 +761,65 @@ void SimInf_process_E2_events(SimInf_thread_args *sim_args, int *uu, int *update
     *&sim_args[0] = sa;
 }
 
+void SimInf_process_E2_events_dev(
+    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    int *uu, int *update_node)
+{
+    SimInf_thread_args sa = *&sim_args[0];
+    SimInf_model_events e = *&events[0];
+    SimInf_scheduled_events e2 = *e.E2;
+
+    /* Incorporate all scheduled E2 events */
+    while (e.E2_index < e2.len &&
+           sa.tt >= e2.time[e.E2_index] &&
+           !sa.errcode)
+    {
+        int i;
+
+        sa.errcode = SimInf_sample_select(
+            e.irE, e.jcE, sa.Nc, uu, e2.node[e.E2_index],
+            e2.select[e.E2_index], e2.n[e.E2_index],
+            e2.proportion[e.E2_index], e.individuals,
+            e.u_tmp, sa.rng);
+
+        if (sa.errcode)
+            break;
+
+        for (i = e.jcE[e2.select[e.E2_index]];
+             i < e.jcE[e2.select[e.E2_index] + 1];
+             i++)
+        {
+            const int jj = e.irE[i];
+            const int k1 = e2.dest[e.E2_index] * sa.Nc + jj;
+            const int k2 = e2.node[e.E2_index] * sa.Nc + jj;
+            const int ll = e2.shift[e.E2_index] < 0 ? 0 :
+                e.N[e2.shift[e.E2_index] * sa.Nc + jj];
+
+            /* Add individuals to dest */
+            uu[k1 + ll] += e.individuals[jj];
+            if (uu[k1 + ll] < 0) {
+                sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                break;
+            }
+
+            /* Remove individuals from node */
+            uu[k2] -= e.individuals[jj];
+            if (uu[k2] < 0) {
+                sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                break;
+            }
+        }
+
+        /* Indicate node and dest for update */
+        update_node[e2.node[e.E2_index]] = 1;
+        update_node[e2.dest[e.E2_index]] = 1;
+        e.E2_index++;
+    }
+
+    *&events[0] = e;
+    *&sim_args[0] = sa;
+}
+
 /**
  * Handle the case where the solution is stored in a sparse matrix
  *
