@@ -250,7 +250,7 @@ void SimInf_free_model_events(SimInf_model_events *e)
 /**
  * Free allocated memory to siminf thread arguments
  */
-void SimInf_free_args(SimInf_thread_args *sa)
+void SimInf_free_args(SimInf_compartment_model *sa)
 {
     if (sa) {
         if (sa->rng)
@@ -320,7 +320,7 @@ void SimInf_free_args(SimInf_thread_args *sa)
  * @return 0 if Ok, else error code.
  */
 int SimInf_split_events(
-    SimInf_thread_args *sim_args,
+    SimInf_compartment_model *sim_args,
     int len, const int *event, const int *time, const int *node,
     const int *dest, const int *n, const double *proportion,
     const int *select, const int *shift, int Nn, int Nthread)
@@ -623,10 +623,10 @@ on_error:
 }
 
 void SimInf_process_E1_events(
-    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *sim_args, SimInf_model_events *events,
     int *uu, int *update_node)
 {
-    SimInf_thread_args sa = *&sim_args[0];
+    SimInf_compartment_model sa = *&sim_args[0];
     SimInf_model_events e = *&events[0];
     SimInf_scheduled_events e1 = *sa.E1;
 
@@ -705,10 +705,10 @@ void SimInf_process_E1_events(
 }
 
 void SimInf_process_E2_events(
-    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *sim_args, SimInf_model_events *events,
     int *uu, int *update_node)
 {
-    SimInf_thread_args sa = *&sim_args[0];
+    SimInf_compartment_model sa = *&sim_args[0];
     SimInf_model_events e = *&events[0];
     SimInf_scheduled_events e2 = *e.E2;
 
@@ -769,10 +769,10 @@ void SimInf_process_E2_events(
  * Store solution if tt has passed the next time in tspan. Report
  * solution up to, but not including tt.
  *
- * @param SimInf_thread_args *sim_args Data structure with thread
+ * @param SimInf_compartment_model *sim_args Data structure with thread
  *        specific data/arguments for simulation.
  */
-void SimInf_store_solution_sparse(SimInf_thread_args *sim_args)
+void SimInf_store_solution_sparse(SimInf_compartment_model *sim_args)
 {
     while (!sim_args[0].U && sim_args[0].U_it < sim_args[0].tlen &&
            sim_args[0].tt > sim_args[0].tspan[sim_args[0].U_it]) {
@@ -807,13 +807,13 @@ void SimInf_store_solution_sparse(SimInf_thread_args *sim_args)
  * @return 0 or an error code
  */
 int SimInf_compartment_model_create(
-    SimInf_thread_args **out, SimInf_solver_args *args, gsl_rng *rng,
+    SimInf_compartment_model **out, SimInf_solver_args *args, gsl_rng *rng,
     int *uu, double *vv_1, double *vv_2, int *update_node)
 {
     int error = 0, i;
-    SimInf_thread_args *model = NULL;
+    SimInf_compartment_model *model = NULL;
 
-    model = calloc(args->Nthread, sizeof(SimInf_thread_args));
+    model = calloc(args->Nthread, sizeof(SimInf_compartment_model));
     if (!model) {
         error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto on_error;

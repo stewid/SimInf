@@ -273,7 +273,7 @@ typedef struct SimInf_model_events
 /**
  * Structure to hold thread specific data/arguments for simulation.
  */
-typedef struct SimInf_thread_args
+typedef struct SimInf_compartment_model
 {
     /*** Constants ***/
     int Ntot;  /**< Total number of nodes. */
@@ -376,26 +376,26 @@ typedef struct SimInf_thread_args
     double *reactTimes;
     double *reactInf;
     int reactHeapSize;
-} SimInf_thread_args;
+} SimInf_compartment_model;
 
 int SimInf_allocate_events(SimInf_scheduled_events *e, int n);
 
 int SimInf_compartment_model_create(
-    SimInf_thread_args **out, SimInf_solver_args *args, gsl_rng *rng,
+    SimInf_compartment_model **out, SimInf_solver_args *args, gsl_rng *rng,
     int *uu, double *vv_1, double *vv_2, int *update_node);
 
-void SimInf_free_args(SimInf_thread_args *sa);
+void SimInf_free_args(SimInf_compartment_model *sa);
 void SimInf_free_model_events(SimInf_model_events *e);
 
 int SimInf_model_events_create(
     SimInf_model_events **out, SimInf_solver_args *args, gsl_rng *rng);
 
 void SimInf_process_E1_events(
-    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *sim_args, SimInf_model_events *events,
     int *uu, int *update_node);
 
 void SimInf_process_E2_events(
-    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *sim_args, SimInf_model_events *events,
     int *uu, int *update_node);
 
 int SimInf_sample_select(
@@ -404,11 +404,11 @@ int SimInf_sample_select(
     int *individuals, int *u_tmp, gsl_rng *rng);
 
 int SimInf_split_events(
-    SimInf_thread_args *sim_args,
+    SimInf_compartment_model *sim_args,
     int len, const int *event, const int *time, const int *node,
     const int *dest, const int *n, const double *proportion,
     const int *select, const int *shift, int Nn, int Nthread);
 
-void SimInf_store_solution_sparse(SimInf_thread_args *sim_args);
+void SimInf_store_solution_sparse(SimInf_compartment_model *sim_args);
 
 #endif

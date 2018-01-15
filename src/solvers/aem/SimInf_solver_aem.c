@@ -69,7 +69,7 @@ void calcTimes(double* time, double* infTime, double tt, double old_rate,
  * @return 0 if Ok, else error code.
  */
 static int SimInf_solver_aem(
-    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *sim_args, SimInf_model_events *events,
     int *uu, int *update_node, int Nthread)
 {
     int k;
@@ -81,7 +81,7 @@ static int SimInf_solver_aem(
         #pragma omp for
         for (i = 0; i < Nthread; i++) {
             int node;
-            SimInf_thread_args sa = *&sim_args[i];
+            SimInf_compartment_model sa = *&sim_args[i];
 
             /* Initialize the transition rate for every transition and
              * every node. */
@@ -132,7 +132,7 @@ static int SimInf_solver_aem(
             #pragma omp for
             for (i = 0; i < Nthread; i++) {
                 int node;
-                SimInf_thread_args sa = *&sim_args[i];
+                SimInf_compartment_model sa = *&sim_args[i];
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
@@ -231,7 +231,7 @@ static int SimInf_solver_aem(
             #pragma omp for
             for (i = 0; i < Nthread; i++) {
                 int node;
-                SimInf_thread_args sa = *&sim_args[i];
+                SimInf_compartment_model sa = *&sim_args[i];
 
                 /* (4) Incorporate model specific actions after each
                  * timestep e.g. update the infectious pressure
@@ -335,7 +335,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     int i, error;
     gsl_rng *rng = NULL;
     SimInf_model_events *events = NULL;
-    SimInf_thread_args *sim_args = NULL;
+    SimInf_compartment_model *sim_args = NULL;
     int *uu = NULL, *update_node = NULL;
     double *vv_1 = NULL, *vv_2 = NULL;
 
