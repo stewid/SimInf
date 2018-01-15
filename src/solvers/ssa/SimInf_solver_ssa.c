@@ -168,7 +168,7 @@ static int SimInf_solver_ssa(
                 *&sim_args[i] = sa;
 
                 /* (2) Incorporate all scheduled E1 events */
-                SimInf_process_E1_events(&sim_args[i], uu, update_node);
+                SimInf_process_E1_events_dev(&sim_args[i], &events[i], uu, update_node);
             }
 
             #pragma omp barrier
@@ -176,7 +176,7 @@ static int SimInf_solver_ssa(
             #pragma omp master
             {
                 /* (3) Incorporate all scheduled E2 events */
-                SimInf_process_E2_events(sim_args, uu, update_node);
+                SimInf_process_E2_events_dev(sim_args, events, uu, update_node);
             }
 
             #pragma omp barrier
@@ -334,6 +334,10 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
 
     error = SimInf_compartment_model_create(
         &sim_args, args, rng, uu, vv_1, vv_2, update_node);
+    if (error)
+        goto cleanup;
+
+    error = SimInf_model_events_create(&events, args, rng);
     if (error)
         goto cleanup;
 
