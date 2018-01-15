@@ -410,8 +410,16 @@ int SimInf_model_events_create(
 void SimInf_process_E1_events(
     SimInf_thread_args *sim_args, int *uu, int *update_node);
 
+void SimInf_process_E1_events_dev(
+    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    int *uu, int *update_node);
+
 void SimInf_process_E2_events(
     SimInf_thread_args *sim_args, int *uu, int *update_node);
+
+void SimInf_process_E2_events_dev(
+    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    int *uu, int *update_node);
 
 int SimInf_sample_select(
     const int *irE, const int *jcE, int Nc, const int *u,

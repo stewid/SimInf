@@ -598,12 +598,12 @@ int SimInf_model_events_create(
         }
 
         /* Random number generator */
-        events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
-        if (!events[i].rng) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto on_error;
-        }
-        gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+        /* events[i].rng = gsl_rng_alloc(gsl_rng_mt19937); */
+        /* if (!events[i].rng) { */
+        /*     error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; */
+        /*     goto on_error; */
+        /* } */
+        /* gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng))); */
     }
 
     /* Split scheduled events into E1 and E2 events. */
@@ -703,6 +703,88 @@ void SimInf_process_E1_events(SimInf_thread_args *sim_args, int *uu, int *update
         sa.E1_index++;
     }
 
+    *&sim_args[0] = sa;
+}
+
+void SimInf_process_E1_events_dev(
+    SimInf_thread_args *sim_args, SimInf_model_events *events,
+    int *uu, int *update_node)
+{
+    SimInf_thread_args sa = *&sim_args[0];
+    SimInf_model_events e = *&events[0];
+    SimInf_scheduled_events e1 = *sa.E1;
+
+    while (e.E1_index < e1.len &&
+           sa.tt >= e1.time[e.E1_index] &&
+           !sa.errcode)
+    {
+        const int j = e.E1_index;
+        const int s = e1.select[j];
+
+        if (e1.event[j] == ENTER_EVENT) {
+            /* All individuals enter first non-zero compartment,
+             * i.e. a non-zero entry in element in the select
+             * column. */
+            if (e.jcE[s] < e.jcE[s + 1]) {
+                uu[e1.node[j] * sa.Nc + e.irE[e.jcE[s]]] += e1.n[j];
+                if (uu[e1.node[j] * sa.Nc + e.irE[e.jcE[s]]] < 0)
+                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+            }
+        } else {
+            sa.errcode = SimInf_sample_select(
+                e.irE, e.jcE, sa.Nc, uu, e1.node[j],
+                e1.select[j], e1.n[j], e1.proportion[j],
+                e.individuals, e.u_tmp, sa.rng);
+
+            if (sa.errcode)
+                break;
+
+            if (e1.event[j] == EXIT_EVENT) {
+                int ii;
+
+                for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
+                    const int jj = e.irE[ii];
+                    const int kk = e1.node[j] * sa.Nc + jj;
+
+                    /* Remove individuals from node */
+                    uu[kk] -= e.individuals[jj];
+                    if (uu[kk] < 0) {
+                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                        break;
+                    }
+                }
+            } else { /* INTERNAL_TRANSFER_EVENT */
+                int ii;
+
+                for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
+                    const int jj = e.irE[ii];
+                    const int kk = e1.node[j] * sa.Nc + jj;
+                    const int ll = e.N[e1.shift[j] * sa.Nc + jj];
+
+                    /* Add individuals to new compartments in node */
+                    uu[kk + ll] += e.individuals[jj];
+                    if (uu[kk + ll] < 0) {
+                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                        break;
+                    }
+
+                    /* Remove individuals from previous compartments
+                     * in node */
+                    uu[kk] -= e.individuals[jj];
+                    if (uu[kk] < 0) {
+                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                        break;
+                    }
+                }
+            }
+        }
+
+        /* Indicate node for update */
+        update_node[e1.node[j]] = 1;
+        e.E1_index++;
+    }
+
+    *&events[0] = e;
     *&sim_args[0] = sa;
 }
 
