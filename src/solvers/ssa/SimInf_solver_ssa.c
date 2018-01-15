@@ -168,7 +168,7 @@ static int SimInf_solver_ssa(
                 *&sim_args[i] = sa;
 
                 /* (2) Incorporate all scheduled E1 events */
-                SimInf_process_E1_events_dev(&sim_args[i], &events[i], uu, update_node);
+                SimInf_process_E1_events(&sim_args[i], &events[i], uu, update_node);
             }
 
             #pragma omp barrier
@@ -176,7 +176,7 @@ static int SimInf_solver_ssa(
             #pragma omp master
             {
                 /* (3) Incorporate all scheduled E2 events */
-                SimInf_process_E2_events_dev(sim_args, events, uu, update_node);
+                SimInf_process_E2_events(sim_args, events, uu, update_node);
             }
 
             #pragma omp barrier

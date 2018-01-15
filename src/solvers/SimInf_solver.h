@@ -408,16 +408,10 @@ int SimInf_model_events_create(
     SimInf_model_events **out, SimInf_solver_args *args, gsl_rng *rng);
 
 void SimInf_process_E1_events(
-    SimInf_thread_args *sim_args, int *uu, int *update_node);
-
-void SimInf_process_E1_events_dev(
     SimInf_thread_args *sim_args, SimInf_model_events *events,
     int *uu, int *update_node);
 
 void SimInf_process_E2_events(
-    SimInf_thread_args *sim_args, int *uu, int *update_node);
-
-void SimInf_process_E2_events_dev(
     SimInf_thread_args *sim_args, SimInf_model_events *events,
     int *uu, int *update_node);
 
