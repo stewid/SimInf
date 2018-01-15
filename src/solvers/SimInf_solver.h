@@ -298,10 +298,6 @@ typedef struct SimInf_thread_args
                      *   non-zero element in row k. */
     const int *prS; /**< State-change matrix. Value of item (i, j)
                      *   in S. */
-    const int *irE; /**< Select matrix for events. irE[k] is the row
-                     *   of E[k]. */
-    const int *jcE; /**< Select matrix for events. Index to data of
-                     *   first non-zero element in row k. */
 
     /*** Callbacks ***/
     TRFun *tr_fun;  /**< Vector of function pointers to
@@ -354,8 +350,6 @@ typedef struct SimInf_thread_args
     const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
                           *   local data vector for node #j. */
     const double *gdata; /**< The global data vector. */
-    const int *N;     /**< Shift matrix for internal and external
-                       *   transfer events. */
     int *update_node; /**< Vector of length Nn used to indicate nodes
                        *   for update. */
 
@@ -372,19 +366,8 @@ typedef struct SimInf_thread_args
 
     /*** Scheduled events ***/
     SimInf_scheduled_events *E1; /**< E1 events to process. */
-    int E1_index;         /**< Index to the next E1 event to
-                           *   process. */
     SimInf_scheduled_events *E2; /**< E2 events to process. */
-    int E2_index;         /**< Index to the next E2 event to
-                           *   process. */
 
-    /*** Vectors for sampling individuals ***/
-    int *individuals;     /**< Vector to store the result of the
-                           *   sampling during scheduled events
-                           *   processing. */
-    int *u_tmp;           /**< Temporary vector with the compartment
-                           *   state in a node when sampling
-                           *   individuals for scheduled events. */
     /*** AEM specific variables ***/
     gsl_rng **rng_vec;   /**< The random number generator. */
 

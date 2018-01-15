@@ -265,12 +265,6 @@ void SimInf_free_args(SimInf_thread_args *sa)
         if (sa->t_time)
             free(sa->t_time);
         sa->t_time = NULL;
-        if (sa->individuals)
-            free(sa->individuals);
-        sa->individuals = NULL;
-        if (sa->u_tmp)
-            free(sa->u_tmp);
-        sa->u_tmp = NULL;
         if (sa->E1)
             SimInf_free_events(sa->E1);
         sa->E1 = NULL;
@@ -851,8 +845,6 @@ int SimInf_compartment_model_create(
         model[i].irS = args->irS;
         model[i].jcS = args->jcS;
         model[i].prS = args->prS;
-        model[i].irE = args->irE;
-        model[i].jcE = args->jcE;
 
         /* Callbacks */
         model[i].tr_fun = args->tr_fun;
@@ -867,7 +859,6 @@ int SimInf_compartment_model_create(
         model[i].V_it = 1;
 
         /* Data vectors */
-        model[i].N = args->N;
         if (args->U) {
             model[i].U = args->U;
         } else if (i == 0) {
@@ -902,18 +893,6 @@ int SimInf_compartment_model_create(
                 error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
                 goto on_error;
             }
-        }
-
-        model[i].individuals = calloc(args->Nc, sizeof(int));
-        if (!model[i].individuals) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto on_error;
-        }
-
-        model[i].u_tmp = calloc(args->Nc, sizeof(int));
-        if (!model[i].u_tmp) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto on_error;
         }
 
         /* Create transition rate matrix (Nt X Nn) and total rate
