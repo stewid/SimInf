@@ -215,7 +215,7 @@ static int SimInf_solver_aem(
                 *&sim_args[i] = sa;
 
                 /* (2) Incorporate all scheduled E1 events */
-                SimInf_process_E1_events(&sim_args[i], uu, update_node);
+                SimInf_process_E1_events_dev(&sim_args[i], &events[i], uu, update_node);
 	    }
 
             #pragma omp barrier
@@ -223,7 +223,7 @@ static int SimInf_solver_aem(
             #pragma omp master
             {
                 /* (3) Incorporate all scheduled E2 events */
-                SimInf_process_E2_events(sim_args, uu, update_node);
+                SimInf_process_E2_events_dev(sim_args, events, uu, update_node);
             }
 
             #pragma omp barrier
@@ -332,7 +332,7 @@ static int SimInf_solver_aem(
  */
 int SimInf_run_solver_aem(SimInf_solver_args *args)
 {
-    int i, errcode;
+    int i, error;
     gsl_rng *rng = NULL;
     SimInf_model_events *events = NULL;
     SimInf_thread_args *sim_args = NULL;
@@ -342,7 +342,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     /* Set compartment state to the initial state. */
     uu = malloc(args->Nn * args->Nc * sizeof(int));
     if (!uu) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
     memcpy(uu, args->u0, args->Nn * args->Nc * sizeof(int));
@@ -359,7 +359,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     vv_1 = malloc(args->Nn * args->Nd * sizeof(double));
     vv_2 = malloc(args->Nn * args->Nd * sizeof(double));
     if (!vv_1 || !vv_2) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
     memcpy(vv_1, args->v0, args->Nn * args->Nd * sizeof(double));
@@ -376,204 +376,88 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
      * scheduled events */
     update_node = calloc(args->Nn, sizeof(int));
     if (!update_node) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto cleanup;
     }
     gsl_rng_set(rng, args->seed);
 
-    sim_args = calloc(args->Nthread, sizeof(SimInf_thread_args));
-    if (!sim_args) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+    error = SimInf_compartment_model_create(
+        &sim_args, args, rng, uu, vv_1, vv_2, update_node);
+    if (error)
         goto cleanup;
-    }
 
-    events = calloc(args->Nthread, sizeof(SimInf_model_events));
-    if (!events) {
-        errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+    error = SimInf_model_events_create(&events, args, rng);
+    if (error)
         goto cleanup;
-    }
 
     for (i = 0; i < args->Nthread; i++) {
         int node;
-        /* Random number generator */
-        sim_args[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
-        if (!sim_args[i].rng) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto cleanup;
-        }
-        gsl_rng_set(sim_args[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
-
-        /* Constants */
-        sim_args[i].Ntot = args->Nn;
-        sim_args[i].Ni = i * (args->Nn / args->Nthread);
-        sim_args[i].Nn = args->Nn / args->Nthread;
-        if (i == (args->Nthread - 1))
-            sim_args[i].Nn += (args->Nn % args->Nthread);
-        sim_args[i].Nt = args->Nt;
-        sim_args[i].Nc = args->Nc;
-        sim_args[i].Nd = args->Nd;
-        sim_args[i].Nld = args->Nld;
-
-        /* Sparse matrices */
-        sim_args[i].irG = args->irG;
-        sim_args[i].jcG = args->jcG;
-        sim_args[i].irS = args->irS;
-        sim_args[i].jcS = args->jcS;
-        sim_args[i].prS = args->prS;
-        sim_args[i].irE = args->irE;
-        sim_args[i].jcE = args->jcE;
-
-        /* Callbacks */
-        sim_args[i].tr_fun = args->tr_fun;
-        sim_args[i].pts_fun = args->pts_fun;
-
-        /* Keep track of time */
-        sim_args[i].tt = args->tspan[0];
-        sim_args[i].next_day = floor(sim_args[i].tt) + 1.0;
-        sim_args[i].tspan = args->tspan;
-        sim_args[i].tlen = args->tlen;
-        sim_args[i].U_it = 1;
-        sim_args[i].V_it = 1;
 
         /* start AEM specific */
         /* Binary heap storing all reaction events */
         /* we have one for each node. Heap is thus only the size of the # transitions */
-        sim_args[i].reactHeapSize = sim_args[i].Nt;
-        sim_args[i].reactNode = malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(int));
+        sim_args[i].reactHeapSize = args->Nt;
+        sim_args[i].reactNode = malloc(args->Nn * args->Nt * sizeof(int));
         if (!sim_args[i].reactNode) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
-        sim_args[i].reactHeap = malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(int));
+        sim_args[i].reactHeap = malloc(args->Nn * args->Nt * sizeof(int));
         if (!sim_args[i].reactHeap) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
-        sim_args[i].reactTimes = malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(double));
+        sim_args[i].reactTimes = malloc(args->Nn * args->Nt * sizeof(double));
         if (!sim_args[i].reactTimes) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
-        sim_args[i].reactInf = calloc(sim_args[i].Nn * sim_args[i].Nt, sizeof(double));
+        sim_args[i].reactInf = calloc(args->Nn * args->Nt, sizeof(double));
         if (!sim_args[i].reactInf) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
         /* random generator for sample select with 1 per transition in each node */
-        sim_args[i].rng_vec = malloc(sim_args[i].Nn * sim_args[i].Nt * sizeof(gsl_rng*));
+        sim_args[i].rng_vec = malloc(args->Nn * args->Nt * sizeof(gsl_rng*));
         if (!sim_args[i].rng_vec) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto cleanup;
         }
 
-        for (node = 0; node < sim_args[i].Nn; node++) {
+        for (node = 0; node < args->Nn; node++) {
             int trans;
-            for (trans = 0; trans < sim_args[i].Nt; trans++) {
+            for (trans = 0; trans < sim_args->Nt; trans++) {
                 /* Random number generator */
-                sim_args[i].rng_vec[sim_args[i].Nt * node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
-                if (!sim_args[i].rng_vec[sim_args[i].Nt * node + trans]) {
-                    errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+                sim_args[i].rng_vec[args->Nt * node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
+                if (!sim_args[i].rng_vec[args->Nt * node + trans]) {
+                    error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
                     goto cleanup;
                 }
-                if (!sim_args[i].rng_vec[sim_args[i].Nt * node + trans]) {
-                    errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+                if (!sim_args[i].rng_vec[args->Nt * node + trans]) {
+                    error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
                     goto cleanup;
                 }
-                gsl_rng_set(sim_args[i].rng_vec[sim_args[i].Nt * node + trans],
+                gsl_rng_set(sim_args[i].rng_vec[args->Nt * node + trans],
                             gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
             }
         }
         /* end AEM specific */
 
-        /* Data vectors */
-        sim_args[i].N = args->N;
-        if (args->U) {
-            sim_args[i].U = args->U;
-        } else if (i == 0) {
-            sim_args[i].irU = args->irU;
-            sim_args[i].jcU = args->jcU;
-            sim_args[i].prU = args->prU;
-        }
-        sim_args[i].u = &uu[sim_args[i].Ni * args->Nc];
-        if (args->V) {
-            sim_args[i].V = args->V;
-        } else if (i == 0) {
-            sim_args[i].irV = args->irV;
-            sim_args[i].jcV = args->jcV;
-            sim_args[i].prV = args->prV;
-        }
-        sim_args[i].v = &vv_1[sim_args[i].Ni * args->Nd];
-        sim_args[i].v_new = &vv_2[sim_args[i].Ni * args->Nd];
-        sim_args[i].ldata = &(args->ldata[sim_args[i].Ni * sim_args[i].Nld]);
-        sim_args[i].gdata = args->gdata;
-        sim_args[i].update_node = &update_node[sim_args[i].Ni];
-
-        /* Scheduled events */
-        sim_args[i].E1 = calloc(1, sizeof(SimInf_scheduled_events));
-        if (!sim_args[i].E1) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto cleanup;
-        }
-
-        if (i == 0) {
-            sim_args[i].E2 = calloc(1, sizeof(SimInf_scheduled_events));
-            if (!sim_args[i].E2) {
-                errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-                goto cleanup;
-            }
-        }
-
-        sim_args[i].individuals = calloc(args->Nc, sizeof(int));
-        if (!sim_args[i].individuals) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto cleanup;
-        }
-
-        sim_args[i].u_tmp = calloc(args->Nc, sizeof(int));
-        if (!sim_args[i].u_tmp) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto cleanup;
-        }
-
-	/* Create transition rate matrix (Nt X Nn) and total rate
-         * vector. In t_rate we store all propensities for state
-         * transitions, and in sum_t_rate the sum of propensities
-         * in every node. */
-        sim_args[i].t_rate = malloc(args->Nt * sim_args[i].Nn * sizeof(double));
-        if (!sim_args[i].t_rate) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto cleanup;
-        }
-        sim_args[i].sum_t_rate = malloc(sim_args[i].Nn * sizeof(double));
-        if (!sim_args[i].sum_t_rate) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto cleanup;
-        }
-        sim_args[i].t_time = malloc(sim_args[i].Nn * sizeof(double));
-        if (!sim_args[i].t_time) {
-            errcode = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto cleanup;
-        }
     }
-
-    /* Split scheduled events into E1 and E2 events. */
-    errcode = SimInf_split_events(sim_args,
-        args->len, args->event, args->time, args->node, args->dest, args->n,
-        args->proportion, args->select, args->shift, args->Nn, args->Nthread);
-    if (errcode)
+    if (error)
         goto cleanup;
 
-    errcode = SimInf_solver_aem(sim_args, events, uu, update_node, args->Nthread);
+    error = SimInf_solver_aem(sim_args, events, uu, update_node, args->Nthread);
 
 cleanup:
     if (uu) {
@@ -613,5 +497,5 @@ cleanup:
         sim_args = NULL;
     }
 
-    return errcode;
+    return error;
 }
