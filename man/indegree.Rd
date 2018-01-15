@@ -18,7 +18,7 @@ each node.
 }
 \examples{
 ## Create an 'SIR' model with 1600 nodes and initialize
-## with example data.
+## it with example data.
 model <- SIR(u0 = u0_SIR(), tspan = 1:1460, events = events_SIR(),
              beta   = 0.16, gamma  = 0.077)
 

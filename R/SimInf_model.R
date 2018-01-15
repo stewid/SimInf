@@ -1691,7 +1691,7 @@ summary_gdata <- function(object)
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 1600 nodes and initialize
-##' ## with example data.
+##' ## it with example data.
 ##' model <- SIR(u0 = u0_SIR(), tspan = 1:1460, events = events_SIR(),
 ##'              beta   = 0.16, gamma  = 0.077)
 ##'
@@ -1713,6 +1713,21 @@ indegree <- function(model)
     id
 }
 
+##' Determine out-degree for each node in a model
+##'
+##' The number nodes that are connected with \emph{external transfer}
+##' events from each node.
+##' @param model determine out-degree for each node in the model.
+##' @return vector with out-degree for each node.
+##' @export
+##' @examples
+##' ## Create an 'SIR' model with 1600 nodes and initialize
+##' ## it with example data.
+##' model <- SIR(u0 = u0_SIR(), tspan = 1:1460, events = events_SIR(),
+##'              beta   = 0.16, gamma  = 0.077)
+##'
+##' ## Display outdegree for each node in the model.
+##' plot(outdegree(model))
 outdegree <- function(model)
 {
     ## Default outdegree is 0
