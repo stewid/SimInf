@@ -1682,6 +1682,21 @@ summary_gdata <- function(object)
     }
 }
 
+##' Determine in-degree for each node in a model
+##'
+##' The number of nodes with inward \emph{external transfer} events to
+##' each node.
+##' @param model determine in-degree for each node in the model.
+##' @return vector with in-degree for each node.
+##' @export
+##' @examples
+##' ## Create an 'SIR' model with 1600 nodes and initialize
+##' ## with example data.
+##' model <- SIR(u0 = u0_SIR(), tspan = 1:1460, events = events_SIR(),
+##'              beta   = 0.16, gamma  = 0.077)
+##'
+##' ## Display indegree for each node in the model.
+##' plot(indegree(model))
 indegree <- function(model)
 {
     ## Default indegree is 0
