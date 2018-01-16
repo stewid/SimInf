@@ -372,8 +372,6 @@ typedef struct SimInf_compartment_model
     int reactHeapSize;
 } SimInf_compartment_model;
 
-int SimInf_allocate_events(SimInf_scheduled_events *e, int n);
-
 int SimInf_compartment_model_create(
     SimInf_compartment_model **out, SimInf_solver_args *args, gsl_rng *rng,
     int *uu, double *vv_1, double *vv_2, int *update_node);
@@ -391,17 +389,6 @@ void SimInf_process_E1_events(
 void SimInf_process_E2_events(
     SimInf_compartment_model *sim_args, SimInf_model_events *events,
     int *uu, int *update_node);
-
-int SimInf_sample_select(
-    const int *irE, const int *jcE, int Nc, const int *u,
-    int node, int select, int n, double proportion,
-    int *individuals, int *u_tmp, gsl_rng *rng);
-
-int SimInf_split_events(
-    SimInf_compartment_model *sim_args,
-    int len, const int *event, const int *time, const int *node,
-    const int *dest, const int *n, const double *proportion,
-    const int *select, const int *shift, int Nn, int Nthread);
 
 void SimInf_store_solution_sparse(SimInf_compartment_model *sim_args);
 
