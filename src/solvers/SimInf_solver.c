@@ -265,12 +265,6 @@ void SimInf_free_args(SimInf_compartment_model *sa)
         if (sa->t_time)
             free(sa->t_time);
         sa->t_time = NULL;
-        if (sa->E1)
-            SimInf_free_events(sa->E1);
-        sa->E1 = NULL;
-        if (sa->E2)
-            SimInf_free_events(sa->E2);
-        sa->E2 = NULL;
         /* AEM variables */
 	if(sa->rng_vec){
             for(int i = 0; i < (sa->Nn)*(sa->Nt); i++)
@@ -628,7 +622,7 @@ void SimInf_process_E1_events(
 {
     SimInf_compartment_model sa = *&sim_args[0];
     SimInf_model_events e = *&events[0];
-    SimInf_scheduled_events e1 = *sa.E1;
+    SimInf_scheduled_events e1 = *e.E1;
 
     while (e.E1_index < e1.len &&
            sa.tt >= e1.time[e.E1_index] &&
@@ -880,21 +874,6 @@ int SimInf_compartment_model_create(
         model[i].gdata = args->gdata;
         model[i].update_node = &update_node[model[i].Ni];
 
-        /* Scheduled events */
-        model[i].E1 = calloc(1, sizeof(SimInf_scheduled_events));
-        if (!model[i].E1) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-            goto on_error;
-        }
-
-        if (i == 0) {
-            model[i].E2 = calloc(1, sizeof(SimInf_scheduled_events));
-            if (!model[i].E2) {
-                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-                goto on_error;
-            }
-        }
-
         /* Create transition rate matrix (Nt X Nn) and total rate
          * vector. In t_rate we store all propensities for state
          * transitions, and in sum_t_rate the sum of propensities in
@@ -915,14 +894,6 @@ int SimInf_compartment_model_create(
             goto on_error;
         }
     }
-
-    /* Split scheduled events into E1 and E2 events. */
-    error = SimInf_split_events(
-        model, args->len, args->event, args->time, args->node,
-        args->dest, args->n, args->proportion, args->select,
-        args->shift, args->Nn, args->Nthread);
-    if (error)
-        goto on_error;
 
     *out = model;
 

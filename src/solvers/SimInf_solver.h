@@ -363,11 +363,6 @@ typedef struct SimInf_compartment_model
                          *   ok. */
     gsl_rng *rng;       /**< The random number generator. */
 
-
-    /*** Scheduled events ***/
-    SimInf_scheduled_events *E1; /**< E1 events to process. */
-    SimInf_scheduled_events *E2; /**< E2 events to process. */
-
     /*** AEM specific variables ***/
     gsl_rng **rng_vec;   /**< The random number generator. */
 
