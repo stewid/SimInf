@@ -676,28 +676,24 @@ void SimInf_store_solution_sparse(SimInf_compartment_model *sim_args)
  * @param out the resulting data structure.
  * @param args structure with data for the solver.
  * @param rng random number generator.
- * @return 0 or an error code
+ * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
 int SimInf_compartment_model_create(
     SimInf_compartment_model **out, SimInf_solver_args *args, gsl_rng *rng,
     int *uu, double *vv_1, double *vv_2, int *update_node)
 {
-    int error = 0, i;
+    int i;
     SimInf_compartment_model *model = NULL;
 
     model = calloc(args->Nthread, sizeof(SimInf_compartment_model));
-    if (!model) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+    if (!model)
         goto on_error;
-    }
 
     for (i = 0; i < args->Nthread; i++) {
         /* Random number generator */
         model[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
-        if (!model[i].rng) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!model[i].rng)
             goto on_error;
-        }
         gsl_rng_set(model[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
 
         /* Constants */
@@ -757,20 +753,14 @@ int SimInf_compartment_model_create(
          * transitions, and in sum_t_rate the sum of propensities in
          * every node. */
         model[i].t_rate = malloc(args->Nt * model[i].Nn * sizeof(double));
-        if (!model[i].t_rate) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!model[i].t_rate)
             goto on_error;
-        }
         model[i].sum_t_rate = malloc(model[i].Nn * sizeof(double));
-        if (!model[i].sum_t_rate) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!model[i].sum_t_rate)
             goto on_error;
-        }
         model[i].t_time = malloc(model[i].Nn * sizeof(double));
-        if (!model[i].t_time) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!model[i].t_time)
             goto on_error;
-        }
     }
 
     *out = model;
@@ -778,11 +768,9 @@ int SimInf_compartment_model_create(
     return 0;
 
 on_error:
-    if (model) {
-        for (i = 0; i < args->Nthread; i++)
-            SimInf_free_args(&model[i]);
-        free(model);
-    }
+    for (i = 0; model && i < args->Nthread; i++)
+        SimInf_free_args(&model[i]);
+    free(model);
 
-    return error;
+    return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
 }
