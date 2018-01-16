@@ -492,16 +492,17 @@ on_error:
 }
 
 void SimInf_process_E1_events(
-    SimInf_compartment_model *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *model,
+    SimInf_model_events *events,
     int *uu, int *update_node)
 {
-    SimInf_compartment_model sa = *&sim_args[0];
+    SimInf_compartment_model m = *&model[0];
     SimInf_model_events e = *&events[0];
     SimInf_scheduled_events e1 = *e.E1;
 
     while (e.E1_index < e1.len &&
-           sa.tt >= e1.time[e.E1_index] &&
-           !sa.errcode)
+           m.tt >= e1.time[e.E1_index] &&
+           !m.errcode)
     {
         const int j = e.E1_index;
         const int s = e1.select[j];
@@ -511,17 +512,17 @@ void SimInf_process_E1_events(
              * i.e. a non-zero entry in element in the select
              * column. */
             if (e.jcE[s] < e.jcE[s + 1]) {
-                uu[e1.node[j] * sa.Nc + e.irE[e.jcE[s]]] += e1.n[j];
-                if (uu[e1.node[j] * sa.Nc + e.irE[e.jcE[s]]] < 0)
-                    sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                uu[e1.node[j] * m.Nc + e.irE[e.jcE[s]]] += e1.n[j];
+                if (uu[e1.node[j] * m.Nc + e.irE[e.jcE[s]]] < 0)
+                    m.errcode = SIMINF_ERR_NEGATIVE_STATE;
             }
         } else {
-            sa.errcode = SimInf_sample_select(
-                e.irE, e.jcE, sa.Nc, uu, e1.node[j],
+            m.errcode = SimInf_sample_select(
+                e.irE, e.jcE, m.Nc, uu, e1.node[j],
                 e1.select[j], e1.n[j], e1.proportion[j],
                 e.individuals, e.u_tmp, e.rng);
 
-            if (sa.errcode)
+            if (m.errcode)
                 break;
 
             if (e1.event[j] == EXIT_EVENT) {
@@ -529,12 +530,12 @@ void SimInf_process_E1_events(
 
                 for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
                     const int jj = e.irE[ii];
-                    const int kk = e1.node[j] * sa.Nc + jj;
+                    const int kk = e1.node[j] * m.Nc + jj;
 
                     /* Remove individuals from node */
                     uu[kk] -= e.individuals[jj];
                     if (uu[kk] < 0) {
-                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                        m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         break;
                     }
                 }
@@ -543,13 +544,13 @@ void SimInf_process_E1_events(
 
                 for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
                     const int jj = e.irE[ii];
-                    const int kk = e1.node[j] * sa.Nc + jj;
-                    const int ll = e.N[e1.shift[j] * sa.Nc + jj];
+                    const int kk = e1.node[j] * m.Nc + jj;
+                    const int ll = e.N[e1.shift[j] * m.Nc + jj];
 
                     /* Add individuals to new compartments in node */
                     uu[kk + ll] += e.individuals[jj];
                     if (uu[kk + ll] < 0) {
-                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                        m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         break;
                     }
 
@@ -557,7 +558,7 @@ void SimInf_process_E1_events(
                      * in node */
                     uu[kk] -= e.individuals[jj];
                     if (uu[kk] < 0) {
-                        sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                        m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         break;
                     }
                 }
@@ -570,31 +571,32 @@ void SimInf_process_E1_events(
     }
 
     *&events[0] = e;
-    *&sim_args[0] = sa;
+    *&model[0] = m;
 }
 
 void SimInf_process_E2_events(
-    SimInf_compartment_model *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *model,
+    SimInf_model_events *events,
     int *uu, int *update_node)
 {
-    SimInf_compartment_model sa = *&sim_args[0];
+    SimInf_compartment_model m = *&model[0];
     SimInf_model_events e = *&events[0];
     SimInf_scheduled_events e2 = *e.E2;
 
     /* Incorporate all scheduled E2 events */
     while (e.E2_index < e2.len &&
-           sa.tt >= e2.time[e.E2_index] &&
-           !sa.errcode)
+           m.tt >= e2.time[e.E2_index] &&
+           !m.errcode)
     {
         int i;
 
-        sa.errcode = SimInf_sample_select(
-            e.irE, e.jcE, sa.Nc, uu, e2.node[e.E2_index],
+        m.errcode = SimInf_sample_select(
+            e.irE, e.jcE, m.Nc, uu, e2.node[e.E2_index],
             e2.select[e.E2_index], e2.n[e.E2_index],
             e2.proportion[e.E2_index], e.individuals,
             e.u_tmp, e.rng);
 
-        if (sa.errcode)
+        if (m.errcode)
             break;
 
         for (i = e.jcE[e2.select[e.E2_index]];
@@ -602,22 +604,22 @@ void SimInf_process_E2_events(
              i++)
         {
             const int jj = e.irE[i];
-            const int k1 = e2.dest[e.E2_index] * sa.Nc + jj;
-            const int k2 = e2.node[e.E2_index] * sa.Nc + jj;
+            const int k1 = e2.dest[e.E2_index] * m.Nc + jj;
+            const int k2 = e2.node[e.E2_index] * m.Nc + jj;
             const int ll = e2.shift[e.E2_index] < 0 ? 0 :
-                e.N[e2.shift[e.E2_index] * sa.Nc + jj];
+                e.N[e2.shift[e.E2_index] * m.Nc + jj];
 
             /* Add individuals to dest */
             uu[k1 + ll] += e.individuals[jj];
             if (uu[k1 + ll] < 0) {
-                sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                 break;
             }
 
             /* Remove individuals from node */
             uu[k2] -= e.individuals[jj];
             if (uu[k2] < 0) {
-                sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                 break;
             }
         }
@@ -629,7 +631,7 @@ void SimInf_process_E2_events(
     }
 
     *&events[0] = e;
-    *&sim_args[0] = sa;
+    *&model[0] = m;
 }
 
 /**
