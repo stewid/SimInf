@@ -669,6 +669,23 @@ void SimInf_store_solution_sparse(SimInf_compartment_model *sim_args)
 }
 
 /**
+ * Free allocated memory for an epidemiological compartment
+ * model.
+ *
+ * @param model the data structure to free.
+ * @param Nthread number of threads that was used during simulation.
+ */
+void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
+{
+    if (model) {
+        int i;
+        for (i = 0; i < Nthread; i++)
+            SimInf_free_args(&model[i]);
+        free(model);
+    }
+}
+
+/**
  * Create and initialize data for an epidemiological compartment
  * model. The generated model must be freed by the user.
  *
@@ -761,9 +778,6 @@ int SimInf_compartment_model_create(
     return 0;
 
 on_error:
-    for (i = 0; model && i < args->Nthread; i++)
-        SimInf_free_args(&model[i]);
-    free(model);
-
+    SimInf_compartment_model_free(model, args->Nthread);
     return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
 }
