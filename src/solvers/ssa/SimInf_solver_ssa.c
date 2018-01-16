@@ -335,7 +335,7 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     gsl_rng_set(rng, args->seed);
 
     error = SimInf_compartment_model_create(
-        &model, args, rng, uu, vv_1, vv_2, update_node);
+        &model, args, uu, vv_1, vv_2, update_node);
     if (error)
         goto cleanup;
 

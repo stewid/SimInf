@@ -695,7 +695,7 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
 int SimInf_compartment_model_create(
-    SimInf_compartment_model **out, SimInf_solver_args *args, gsl_rng *rng,
+    SimInf_compartment_model **out, SimInf_solver_args *args,
     int *uu, double *vv_1, double *vv_2, int *update_node)
 {
     int i;
