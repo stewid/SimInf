@@ -361,7 +361,6 @@ typedef struct SimInf_compartment_model
                          *   node. */
     int errcode;        /**< The error state of the thread. 0 if
                          *   ok. */
-    gsl_rng *rng;       /**< The random number generator. */
 
     /*** AEM specific variables ***/
     gsl_rng **rng_vec;   /**< The random number generator. */

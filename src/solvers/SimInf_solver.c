@@ -253,9 +253,6 @@ void SimInf_free_model_events(SimInf_model_events *e)
 void SimInf_free_args(SimInf_compartment_model *sa)
 {
     if (sa) {
-        if (sa->rng)
-            gsl_rng_free(sa->rng);
-        sa->rng = NULL;
         if (sa->t_rate)
             free(sa->t_rate);
         sa->t_rate = NULL;
@@ -464,12 +461,12 @@ int SimInf_model_events_create(
         }
 
         /* Random number generator */
-        /* events[i].rng = gsl_rng_alloc(gsl_rng_mt19937); */
-        /* if (!events[i].rng) { */
-        /*     error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; */
-        /*     goto on_error; */
-        /* } */
-        /* gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng))); */
+        events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
+        if (!events[i].rng) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            goto on_error;
+        }
+        gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
     }
 
     /* Split scheduled events into E1 and E2 events. */
@@ -522,7 +519,7 @@ void SimInf_process_E1_events(
             sa.errcode = SimInf_sample_select(
                 e.irE, e.jcE, sa.Nc, uu, e1.node[j],
                 e1.select[j], e1.n[j], e1.proportion[j],
-                e.individuals, e.u_tmp, sa.rng);
+                e.individuals, e.u_tmp, e.rng);
 
             if (sa.errcode)
                 break;
@@ -595,7 +592,7 @@ void SimInf_process_E2_events(
             e.irE, e.jcE, sa.Nc, uu, e2.node[e.E2_index],
             e2.select[e.E2_index], e2.n[e.E2_index],
             e2.proportion[e.E2_index], e.individuals,
-            e.u_tmp, sa.rng);
+            e.u_tmp, e.rng);
 
         if (sa.errcode)
             break;
@@ -690,12 +687,6 @@ int SimInf_compartment_model_create(
         goto on_error;
 
     for (i = 0; i < args->Nthread; i++) {
-        /* Random number generator */
-        model[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
-        if (!model[i].rng)
-            goto on_error;
-        gsl_rng_set(model[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
-
         /* Constants */
         model[i].Ntot = args->Nn;
         model[i].Ni = i * (args->Nn / args->Nthread);

@@ -91,6 +91,7 @@ static int SimInf_solver_ssa(
             #pragma omp for
             for (i = 0; i < Nthread; i++) {
                 int node;
+                SimInf_model_events e = *&events[i];
                 SimInf_compartment_model sa = *&sim_args[i];
 
                 /* (1) Handle internal epidemiological model,
@@ -106,7 +107,7 @@ static int SimInf_solver_ssa(
                             sa.t_time[node] = sa.next_day;
                             break;
                         }
-                        tau = -log(gsl_rng_uniform_pos(sa.rng)) /
+                        tau = -log(gsl_rng_uniform_pos(e.rng)) /
                             sa.sum_t_rate[node];
                         if ((tau + sa.t_time[node]) >= sa.next_day) {
                             sa.t_time[node] = sa.next_day;
@@ -116,7 +117,7 @@ static int SimInf_solver_ssa(
 
                         /* 1b) Determine the transition that did occur
                          * (direct SSA). */
-                        rand = gsl_rng_uniform_pos(sa.rng) * sa.sum_t_rate[node];
+                        rand = gsl_rng_uniform_pos(e.rng) * sa.sum_t_rate[node];
                         for (tr = 0, cum = sa.t_rate[node * sa.Nt];
                              tr < sa.Nt && rand > cum;
                              tr++, cum += sa.t_rate[node * sa.Nt + tr]);
@@ -165,6 +166,7 @@ static int SimInf_solver_ssa(
                     }
                 }
 
+                *&events[i] = e;
                 *&sim_args[i] = sa;
 
                 /* (2) Incorporate all scheduled E1 events */
