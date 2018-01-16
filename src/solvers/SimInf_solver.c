@@ -53,7 +53,7 @@
  * @param rng Random number generator.
  * @return 0 if Ok, else error code.
  */
-int SimInf_sample_select(
+static int SimInf_sample_select(
     const int *irE, const int *jcE, int Nc, const int *u,
     int node, int select, int n, double proportion,
     int *individuals, int *u_tmp, gsl_rng *rng)
@@ -152,7 +152,7 @@ int SimInf_sample_select(
  * @param n Number of events.
  * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-int SimInf_allocate_events(SimInf_scheduled_events *e, int n)
+static int SimInf_allocate_events(SimInf_scheduled_events *e, int n)
 {
     if (e && n > 0) {
         e->len = n;
@@ -311,7 +311,7 @@ void SimInf_free_args(SimInf_compartment_model *sa)
  * @param Nthread Number of threads to use during simulation.
  * @return 0 if Ok, else error code.
  */
-static int SimInf_split_events_dev(
+static int SimInf_split_events(
     SimInf_model_events *out,
     int len, const int *event, const int *time, const int *node,
     const int *dest, const int *n, const double *proportion,
@@ -470,7 +470,7 @@ int SimInf_model_events_create(
     }
 
     /* Split scheduled events into E1 and E2 events. */
-    error = SimInf_split_events_dev(
+    error = SimInf_split_events(
         events, args->len, args->event, args->time, args->node,
         args->dest, args->n, args->proportion, args->select,
         args->shift, args->Nn, args->Nthread);
