@@ -611,31 +611,30 @@ void SimInf_process_E2_events(
  * Store solution if tt has passed the next time in tspan. Report
  * solution up to, but not including tt.
  *
- * @param SimInf_compartment_model *sim_args Data structure with thread
- *        specific data/arguments for simulation.
+ * @param SimInf_compartment_model *model data to store.
  */
-void SimInf_store_solution_sparse(SimInf_compartment_model *sim_args)
+void SimInf_store_solution_sparse(SimInf_compartment_model *model)
 {
-    while (!sim_args[0].U && sim_args[0].U_it < sim_args[0].tlen &&
-           sim_args[0].tt > sim_args[0].tspan[sim_args[0].U_it]) {
+    while (!model[0].U && model[0].U_it < model[0].tlen &&
+           model[0].tt > model[0].tspan[model[0].U_it]) {
         int j;
 
         /* Copy compartment state to U_sparse */
-        for (j = sim_args[0].jcU[sim_args[0].U_it];
-             j < sim_args[0].jcU[sim_args[0].U_it + 1]; j++)
-            sim_args[0].prU[j] = sim_args[0].u[sim_args[0].irU[j]];
-        sim_args[0].U_it++;
+        for (j = model[0].jcU[model[0].U_it];
+             j < model[0].jcU[model[0].U_it + 1]; j++)
+            model[0].prU[j] = model[0].u[model[0].irU[j]];
+        model[0].U_it++;
     }
 
-    while (!sim_args[0].V && sim_args[0].V_it < sim_args[0].tlen &&
-           sim_args[0].tt > sim_args[0].tspan[sim_args[0].V_it]) {
+    while (!model[0].V && model[0].V_it < model[0].tlen &&
+           model[0].tt > model[0].tspan[model[0].V_it]) {
         int j;
 
         /* Copy continuous state to V_sparse */
-        for (j = sim_args[0].jcV[sim_args[0].V_it];
-             j < sim_args[0].jcV[sim_args[0].V_it + 1]; j++)
-            sim_args[0].prV[j] = sim_args[0].v_new[sim_args[0].irV[j]];
-        sim_args[0].V_it++;
+        for (j = model[0].jcV[model[0].V_it];
+             j < model[0].jcV[model[0].V_it + 1]; j++)
+            model[0].prV[j] = model[0].v_new[model[0].irV[j]];
+        model[0].V_it++;
     }
 }
 
