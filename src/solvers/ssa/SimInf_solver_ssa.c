@@ -37,7 +37,7 @@
  * @return 0 if Ok, else error code.
  */
 static int SimInf_solver_ssa(
-    SimInf_compartment_model *model, SimInf_model_events *events,
+    SimInf_compartment_model *model, SimInf_scheduled_events *events,
     int *uu, int *update_node, int Nthread)
 {
     int k;
@@ -91,7 +91,7 @@ static int SimInf_solver_ssa(
             #pragma omp for
             for (i = 0; i < Nthread; i++) {
                 int node;
-                SimInf_model_events e = *&events[i];
+                SimInf_scheduled_events e = *&events[i];
                 SimInf_compartment_model m = *&model[i];
 
                 /* (1) Handle internal epidemiological model,
@@ -281,7 +281,7 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
 {
     int error = 0, i;
     gsl_rng *rng = NULL;
-    SimInf_model_events *events = NULL;
+    SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;
     int *uu = NULL, *update_node = NULL;
     double *vv_1 = NULL, *vv_2 = NULL;
@@ -339,7 +339,7 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     if (error)
         goto cleanup;
 
-    error = SimInf_model_events_create(&events, args, rng);
+    error = SimInf_scheduled_events_create(&events, args, rng);
     if (error)
         goto cleanup;
 
@@ -361,13 +361,7 @@ cleanup:
     if (rng)
         gsl_rng_free(rng);
 
-    if (events) {
-        for (i = 0; i < args->Nthread; i++)
-            SimInf_free_model_events(&events[i]);
-        free(events);
-        events = NULL;
-    }
-
+    SimInf_scheduled_events_free(events, args->Nthread);
     SimInf_compartment_model_free(model, args->Nthread);
 
     return error;

@@ -69,7 +69,7 @@ void calcTimes(double* time, double* infTime, double tt, double old_rate,
  * @return 0 if Ok, else error code.
  */
 static int SimInf_solver_aem(
-    SimInf_compartment_model *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *sim_args, SimInf_scheduled_events *events,
     int *uu, int *update_node, int Nthread)
 {
     int k;
@@ -334,7 +334,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
 {
     int i, error;
     gsl_rng *rng = NULL;
-    SimInf_model_events *events = NULL;
+    SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *sim_args = NULL;
     int *uu = NULL, *update_node = NULL;
     double *vv_1 = NULL, *vv_2 = NULL;
@@ -392,7 +392,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     if (error)
         goto cleanup;
 
-    error = SimInf_model_events_create(&events, args, rng);
+    error = SimInf_scheduled_events_create(&events, args, rng);
     if (error)
         goto cleanup;
 
@@ -483,13 +483,7 @@ cleanup:
     if (rng)
         gsl_rng_free(rng);
 
-    if (events) {
-        for (i = 0; i < args->Nthread; i++)
-            SimInf_free_model_events(&events[i]);
-        free(events);
-        events = NULL;
-    }
-
+    SimInf_scheduled_events_free(events, args->Nthread);
     SimInf_compartment_model_free(sim_args, args->Nthread);
 
     return error;

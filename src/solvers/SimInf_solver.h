@@ -241,7 +241,7 @@ typedef struct SimInf_scheduled_events_data
 /**
  * Structure with data to process scheduled events.
  */
-typedef struct SimInf_model_events
+typedef struct SimInf_scheduled_events
 {
     /*** Matrices to process events ***/
     const int *irE;       /**< Select matrix for events. irE[k] is the
@@ -268,7 +268,7 @@ typedef struct SimInf_model_events
                            *   individuals for scheduled events. */
     gsl_rng *rng;         /**< The random number generator for
                            *   sampling. */
-} SimInf_model_events;
+} SimInf_scheduled_events;
 
 /**
  * Structure to hold thread specific data/arguments for simulation.
@@ -379,19 +379,20 @@ int SimInf_compartment_model_create(
 void SimInf_compartment_model_free(
     SimInf_compartment_model *model, int Nthread);
 
-void SimInf_free_model_events(SimInf_model_events *e);
+int SimInf_scheduled_events_create(
+    SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng);
 
-int SimInf_model_events_create(
-    SimInf_model_events **out, SimInf_solver_args *args, gsl_rng *rng);
+void SimInf_scheduled_events_free(
+    SimInf_scheduled_events *events, int Nthread);
 
 void SimInf_process_E1_events(
-    SimInf_compartment_model *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *model, SimInf_scheduled_events *events,
     int *uu, int *update_node);
 
 void SimInf_process_E2_events(
-    SimInf_compartment_model *sim_args, SimInf_model_events *events,
+    SimInf_compartment_model *model, SimInf_scheduled_events *events,
     int *uu, int *update_node);
 
-void SimInf_store_solution_sparse(SimInf_compartment_model *sim_args);
+void SimInf_store_solution_sparse(SimInf_compartment_model *model);
 
 #endif

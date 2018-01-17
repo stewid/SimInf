@@ -186,68 +186,6 @@ static int SimInf_allocate_events(SimInf_scheduled_events_data *e, int n)
 }
 
 /**
- * Free allocated memory for scheduled events
- *
- * @param e SimInf_scheduled_events_data to free
- */
-static void SimInf_free_events(SimInf_scheduled_events_data *e)
-{
-    if (e) {
-        if (e->event)
-            free(e->event);
-        e->event = NULL;
-        if (e->time)
-            free(e->time);
-        e->time = NULL;
-        if (e->node)
-            free(e->node);
-        e->node = NULL;
-        if (e->dest)
-            free(e->dest);
-        e->dest = NULL;
-        if (e->n)
-            free(e->n);
-        e->n = NULL;
-        if (e->proportion)
-            free(e->proportion);
-        e->proportion = NULL;
-        if (e->select)
-            free(e->select);
-        e->select = NULL;
-        if (e->shift)
-            free(e->shift);
-        e->shift = NULL;
-        free(e);
-    }
-}
-
-/**
- * Free allocated memory to process events
- *
- * @param e SimInf_model_events to free
- */
-void SimInf_free_model_events(SimInf_model_events *e)
-{
-    if (e) {
-        if (e->E1)
-            SimInf_free_events(e->E1);
-        e->E1 = NULL;
-        if (e->E2)
-            SimInf_free_events(e->E2);
-        e->E2 = NULL;
-        if (e->individuals)
-            free(e->individuals);
-        e->individuals = NULL;
-        if (e->u_tmp)
-            free(e->u_tmp);
-        e->u_tmp = NULL;
-        if (e->rng)
-            gsl_rng_free(e->rng);
-        e->rng = NULL;
-    }
-}
-
-/**
  * Split scheduled events to E1 and E2 events by number of threads
  * used during simulation
  *
@@ -276,7 +214,7 @@ void SimInf_free_model_events(SimInf_model_events *e)
  * @return 0 if Ok, else error code.
  */
 static int SimInf_split_events(
-    SimInf_model_events *out,
+    SimInf_scheduled_events *out,
     int len, const int *event, const int *time, const int *node,
     const int *dest, const int *n, const double *proportion,
     const int *select, const int *shift, int Nn, int Nthread)
@@ -379,13 +317,13 @@ cleanup:
  * @param rng random number generator
  * @return 0 or an error code
  */
-int SimInf_model_events_create(
-    SimInf_model_events **out, SimInf_solver_args *args, gsl_rng *rng)
+int SimInf_scheduled_events_create(
+    SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng)
 {
     int error = 0, i;
-    SimInf_model_events *events = NULL;
+    SimInf_scheduled_events *events = NULL;
 
-    events = calloc(args->Nthread, sizeof(SimInf_model_events));
+    events = calloc(args->Nthread, sizeof(SimInf_scheduled_events));
     if (!events) {
         error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
         goto on_error;
@@ -442,26 +380,95 @@ int SimInf_model_events_create(
         goto on_error;
 
     *out = events;
-
     return 0;
 
 on_error:
+    SimInf_scheduled_events_free(events, args->Nthread);
+    return error;
+}
+
+/**
+ * Free allocated memory for scheduled events data
+ *
+ * @param e SimInf_scheduled_events_data to free
+ */
+static void SimInf_scheduled_events_data_free(
+    SimInf_scheduled_events_data *events)
+{
     if (events) {
-        for (i = 0; i < args->Nthread; i++)
-            SimInf_free_model_events(&events[i]);
+        if (events->event)
+            free(events->event);
+        events->event = NULL;
+        if (events->time)
+            free(events->time);
+        events->time = NULL;
+        if (events->node)
+            free(events->node);
+        events->node = NULL;
+        if (events->dest)
+            free(events->dest);
+        events->dest = NULL;
+        if (events->n)
+            free(events->n);
+        events->n = NULL;
+        if (events->proportion)
+            free(events->proportion);
+        events->proportion = NULL;
+        if (events->select)
+            free(events->select);
+        events->select = NULL;
+        if (events->shift)
+            free(events->shift);
+        events->shift = NULL;
         free(events);
     }
+}
 
-    return error;
+/**
+ * Free allocated memory to process events
+ *
+ * @param events SimInf_scheduled_events to free
+ * @param Nthread number of threads that was used during simulation.
+ */
+void SimInf_scheduled_events_free(
+    SimInf_scheduled_events *events, int Nthread)
+{
+    if (events) {
+        int i;
+
+        for (i = 0; i < Nthread; i++) {
+            SimInf_scheduled_events *e = &events[i];
+
+            if (e) {
+                if (e->E1)
+                    SimInf_scheduled_events_data_free(e->E1);
+                e->E1 = NULL;
+                if (e->E2)
+                    SimInf_scheduled_events_data_free(e->E2);
+                e->E2 = NULL;
+                if (e->individuals)
+                    free(e->individuals);
+                e->individuals = NULL;
+                if (e->u_tmp)
+                    free(e->u_tmp);
+                e->u_tmp = NULL;
+                if (e->rng)
+                    gsl_rng_free(e->rng);
+                e->rng = NULL;
+            }
+        }
+
+        free(events);
+    }
 }
 
 void SimInf_process_E1_events(
     SimInf_compartment_model *model,
-    SimInf_model_events *events,
+    SimInf_scheduled_events *events,
     int *uu, int *update_node)
 {
     SimInf_compartment_model m = *&model[0];
-    SimInf_model_events e = *&events[0];
+    SimInf_scheduled_events e = *&events[0];
     SimInf_scheduled_events_data e1 = *e.E1;
 
     while (e.E1_index < e1.len &&
@@ -540,11 +547,11 @@ void SimInf_process_E1_events(
 
 void SimInf_process_E2_events(
     SimInf_compartment_model *model,
-    SimInf_model_events *events,
+    SimInf_scheduled_events *events,
     int *uu, int *update_node)
 {
     SimInf_compartment_model m = *&model[0];
-    SimInf_model_events e = *&events[0];
+    SimInf_scheduled_events e = *&events[0];
     SimInf_scheduled_events_data e2 = *e.E2;
 
     /* Incorporate all scheduled E2 events */
