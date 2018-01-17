@@ -216,7 +216,7 @@ typedef struct SimInf_solver_args
 /**
  * Structure that represents scheduled events.
  */
-typedef struct SimInf_scheduled_events
+typedef struct SimInf_scheduled_events_data
 {
     int len;            /**< Number of events. */
     int *event;         /**< The type of event i. */
@@ -236,7 +236,7 @@ typedef struct SimInf_scheduled_events
     int *shift;         /**< Column j in the shift matrix that
                          *   determines the shift of the internal
                          *   and external transfer event. */
-} SimInf_scheduled_events;
+} SimInf_scheduled_events_data;
 
 /**
  * Structure with data to process scheduled events.
@@ -252,10 +252,10 @@ typedef struct SimInf_model_events
                            *   transfer events. */
 
     /*** Scheduled events ***/
-    SimInf_scheduled_events *E1; /**< E1 events to process. */
+    SimInf_scheduled_events_data *E1; /**< E1 events to process. */
     int E1_index;         /**< Index to the next E1 event to
                            *   process. */
-    SimInf_scheduled_events *E2; /**< E2 events to process. */
+    SimInf_scheduled_events_data *E2; /**< E2 events to process. */
     int E2_index;         /**< Index to the next E2 event to
                            *   process. */
 

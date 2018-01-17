@@ -152,7 +152,7 @@ static int SimInf_sample_select(
  * @param n Number of events.
  * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-static int SimInf_allocate_events(SimInf_scheduled_events *e, int n)
+static int SimInf_allocate_events(SimInf_scheduled_events_data *e, int n)
 {
     if (e && n > 0) {
         e->len = n;
@@ -188,9 +188,9 @@ static int SimInf_allocate_events(SimInf_scheduled_events *e, int n)
 /**
  * Free allocated memory for scheduled events
  *
- * @param e SimInf_scheduled_events to free
+ * @param e SimInf_scheduled_events_data to free
  */
-static void SimInf_free_events(SimInf_scheduled_events *e)
+static void SimInf_free_events(SimInf_scheduled_events_data *e)
 {
     if (e) {
         if (e->event)
@@ -332,7 +332,7 @@ static int SimInf_split_events(
 
     for (i = 0; i < len; i++) {
         int j, k;
-        SimInf_scheduled_events *e;
+        SimInf_scheduled_events_data *e;
 
         switch (event[i]) {
         case EXIT_EVENT:
@@ -398,14 +398,14 @@ int SimInf_model_events_create(
         events[i].N = args->N;
 
         /* Scheduled events */
-        events[i].E1 = calloc(1, sizeof(SimInf_scheduled_events));
+        events[i].E1 = calloc(1, sizeof(SimInf_scheduled_events_data));
         if (!events[i].E1) {
             error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
             goto on_error;
         }
 
         if (i == 0) {
-            events[i].E2 = calloc(1, sizeof(SimInf_scheduled_events));
+            events[i].E2 = calloc(1, sizeof(SimInf_scheduled_events_data));
             if (!events[i].E2) {
                 error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
                 goto on_error;
@@ -462,7 +462,7 @@ void SimInf_process_E1_events(
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_model_events e = *&events[0];
-    SimInf_scheduled_events e1 = *e.E1;
+    SimInf_scheduled_events_data e1 = *e.E1;
 
     while (e.E1_index < e1.len &&
            m.tt >= e1.time[e.E1_index] &&
@@ -545,7 +545,7 @@ void SimInf_process_E2_events(
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_model_events e = *&events[0];
-    SimInf_scheduled_events e2 = *e.E2;
+    SimInf_scheduled_events_data e2 = *e.E2;
 
     /* Incorporate all scheduled E2 events */
     while (e.E2_index < e2.len &&
