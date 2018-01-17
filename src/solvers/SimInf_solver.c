@@ -248,42 +248,6 @@ void SimInf_free_model_events(SimInf_model_events *e)
 }
 
 /**
- * Free allocated memory to siminf thread arguments
- */
-void SimInf_free_args(SimInf_compartment_model *sa)
-{
-    if (sa) {
-        if (sa->t_rate)
-            free(sa->t_rate);
-        sa->t_rate = NULL;
-        if (sa->sum_t_rate)
-            free(sa->sum_t_rate);
-        sa->sum_t_rate = NULL;
-        if (sa->t_time)
-            free(sa->t_time);
-        sa->t_time = NULL;
-        /* AEM variables */
-	if(sa->rng_vec){
-            for(int i = 0; i < (sa->Nn)*(sa->Nt); i++)
-                gsl_rng_free(sa->rng_vec[i]);
-        }
-        sa->rng_vec = NULL;
-        if(sa->reactHeap)
-            free(sa->reactHeap);
-        sa->reactHeap = NULL;
-        if(sa->reactInf)
-            free(sa->reactInf);
-        sa->reactInf = NULL;
-        if(sa->reactNode)
-            free(sa->reactNode);
-        sa->reactNode = NULL;
-        if(sa->reactTimes)
-            free(sa->reactTimes);
-        sa->reactTimes = NULL;
-    }
-}
-
-/**
  * Split scheduled events to E1 and E2 events by number of threads
  * used during simulation
  *
@@ -679,8 +643,42 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
 {
     if (model) {
         int i;
-        for (i = 0; i < Nthread; i++)
-            SimInf_free_args(&model[i]);
+
+        for (i = 0; i < Nthread; i++) {
+            SimInf_compartment_model *m = &model[i];
+
+            if (m) {
+                if (m->t_rate)
+                    free(m->t_rate);
+                m->t_rate = NULL;
+                if (m->sum_t_rate)
+                    free(m->sum_t_rate);
+                m->sum_t_rate = NULL;
+                if (m->t_time)
+                    free(m->t_time);
+                m->t_time = NULL;
+
+                /* AEM variables */
+                if(m->rng_vec){
+                    for(int i = 0; i < (m->Nn)*(m->Nt); i++)
+                        gsl_rng_free(m->rng_vec[i]);
+                }
+                m->rng_vec = NULL;
+                if(m->reactHeap)
+                    free(m->reactHeap);
+                m->reactHeap = NULL;
+                if(m->reactInf)
+                    free(m->reactInf);
+                m->reactInf = NULL;
+                if(m->reactNode)
+                    free(m->reactNode);
+                m->reactNode = NULL;
+                if(m->reactTimes)
+                    free(m->reactTimes);
+                m->reactTimes = NULL;
+            }
+        }
+
         free(model);
     }
 }

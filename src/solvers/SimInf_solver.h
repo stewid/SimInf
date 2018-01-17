@@ -376,7 +376,9 @@ int SimInf_compartment_model_create(
     SimInf_compartment_model **out, SimInf_solver_args *args,
     int *uu, double *vv_1, double *vv_2, int *update_node);
 
-void SimInf_free_args(SimInf_compartment_model *sa);
+void SimInf_compartment_model_free(
+    SimInf_compartment_model *model, int Nthread);
+
 void SimInf_free_model_events(SimInf_model_events *e);
 
 int SimInf_model_events_create(

@@ -490,12 +490,7 @@ cleanup:
         events = NULL;
     }
 
-    if (sim_args) {
-        for (i = 0; i < args->Nthread; i++)
-            SimInf_free_args(&sim_args[i]);
-        free(sim_args);
-        sim_args = NULL;
-    }
+    SimInf_compartment_model_free(sim_args, args->Nthread);
 
     return error;
 }
