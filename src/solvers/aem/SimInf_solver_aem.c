@@ -491,22 +491,6 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     }
     memcpy(uu, args->u0, args->Nn * args->Nc * sizeof(int));
 
-    /* Copy u0 to either U[, 1] or U_sparse[, 1] */
-    if (args->U) {
-        memcpy(args->U, args->u0, args->Nn * args->Nc * sizeof(int));
-    } else {
-        for (i = args->jcU[0]; i < args->jcU[1]; i++)
-            args->prU[i] = args->u0[args->irU[i]];
-    }
-
-    /* Copy v0 to either V[, 1] or V_sparse[, 1] */
-    if (args->V) {
-        memcpy(args->V, args->v0, args->Nn * args->Nd * sizeof(double));
-    } else {
-        for (i = args->jcV[0]; i < args->jcV[1]; i++)
-            args->prV[i] = args->v0[args->irV[i]];
-    }
-
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
     update_node = calloc(args->Nn, sizeof(int));
