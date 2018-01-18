@@ -663,25 +663,6 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
                 if (m->t_time)
                     free(m->t_time);
                 m->t_time = NULL;
-
-                /* AEM variables */
-                if(m->rng_vec){
-                    for(int i = 0; i < (m->Nn)*(m->Nt); i++)
-                        gsl_rng_free(m->rng_vec[i]);
-                }
-                m->rng_vec = NULL;
-                if(m->reactHeap)
-                    free(m->reactHeap);
-                m->reactHeap = NULL;
-                if(m->reactInf)
-                    free(m->reactInf);
-                m->reactInf = NULL;
-                if(m->reactNode)
-                    free(m->reactNode);
-                m->reactNode = NULL;
-                if(m->reactTimes)
-                    free(m->reactTimes);
-                m->reactTimes = NULL;
             }
         }
 

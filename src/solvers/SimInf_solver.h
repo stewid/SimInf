@@ -361,15 +361,6 @@ typedef struct SimInf_compartment_model
                          *   node. */
     int errcode;        /**< The error state of the thread. 0 if
                          *   ok. */
-
-    /*** AEM specific variables ***/
-    gsl_rng **rng_vec;   /**< The random number generator. */
-
-    int *reactHeap;      /**< Binary heap storing all reaction events */
-    int *reactNode;
-    double *reactTimes;
-    double *reactInf;
-    int reactHeapSize;
 } SimInf_compartment_model;
 
 int SimInf_compartment_model_create(
