@@ -38,7 +38,6 @@
  */
 typedef struct SimInf_aem_arguments
 {
-     /*** AEM specific variables ***/
     gsl_rng **rng_vec;   /**< The random number generator. */
 
     int *reactHeap;      /**< Binary heap storing all reaction events */
@@ -122,7 +121,7 @@ static int SimInf_solver_aem(
                         sa.errcode = SIMINF_ERR_INVALID_RATE;
 
                     /* calculate time until next transition j event */
-                    ma.reactTimes[sa.Nt*node+j] =  -log(gsl_rng_uniform_pos(sa.rng_vec[sa.Nt*node+j]))/rate + sa.tt;
+                    ma.reactTimes[sa.Nt*node+j] =  -log(gsl_rng_uniform_pos(ma.rng_vec[sa.Nt*node+j]))/rate + sa.tt;
                     if (ma.reactTimes[sa.Nt*node+j] <= 0.0)
                         ma.reactTimes[sa.Nt*node+j] = INFINITY;
 
@@ -357,7 +356,8 @@ static int SimInf_solver_aem(
  * Free allocated memory for an epidemiological compartment
  * model.
  *
- * @param model the data structure to free.
+ * @param method the data structure to free
+ * @param model structure with data about the model
  * @param Nthread number of threads that was used during simulation.
  */
 static void SimInf_aem_arguments_free(
@@ -371,16 +371,6 @@ static void SimInf_aem_arguments_free(
             SimInf_compartment_model *mod = &model[i];
 
             if (m) {
-                /* if (m->t_rate) */
-                /*     free(m->t_rate); */
-                /* m->t_rate = NULL; */
-                /* if (m->sum_t_rate) */
-                /*     free(m->sum_t_rate); */
-                /* m->sum_t_rate = NULL; */
-                /* if (m->t_time) */
-                /*     free(m->t_time); */
-                /* m->t_time = NULL; */
-
                 /* AEM variables */
                 if(m->rng_vec){
                     for(int i = 0; i < mod->Nn * mod->Nt; i++)
@@ -401,7 +391,6 @@ static void SimInf_aem_arguments_free(
                 m->reactTimes = NULL;
             }
         }
-
         free(method);
     }
 }
@@ -411,7 +400,8 @@ static void SimInf_aem_arguments_free(
  * model. The generated model must be freed by the user.
  *
  * @param out the resulting data structure.
- * @param args structure with data for the solver.
+ * @param model structure with data about the model
+ * @param Nthread the number of threads available
  * @param rng random number generator.
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
