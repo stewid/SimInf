@@ -482,7 +482,6 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     SimInf_compartment_model *model = NULL;
     SimInf_aem_arguments *method = NULL;
     int *uu = NULL, *update_node = NULL;
-    double *vv_1 = NULL, *vv_2 = NULL;
 
     /* Set compartment state to the initial state. */
     uu = malloc(args->Nn * args->Nc * sizeof(int));
@@ -499,15 +498,6 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
         for (i = args->jcU[0]; i < args->jcU[1]; i++)
             args->prU[i] = args->u0[args->irU[i]];
     }
-
-    /* Set continuous state to the initial state in each node. */
-    vv_1 = malloc(args->Nn * args->Nd * sizeof(double));
-    vv_2 = malloc(args->Nn * args->Nd * sizeof(double));
-    if (!vv_1 || !vv_2) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-    memcpy(vv_1, args->v0, args->Nn * args->Nd * sizeof(double));
 
     /* Copy v0 to either V[, 1] or V_sparse[, 1] */
     if (args->V) {
@@ -533,7 +523,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     gsl_rng_set(rng, args->seed);
 
     error = SimInf_compartment_model_create(
-        &model, args, uu, vv_1, vv_2, update_node);
+        &model, args, uu, update_node);
     if (error)
         goto cleanup;
 
@@ -551,16 +541,6 @@ cleanup:
     if (uu) {
         free(uu);
         uu = NULL;
-    }
-
-    if (vv_1) {
-        free(vv_1);
-        vv_1 = NULL;
-    }
-
-    if (vv_2) {
-        free(vv_2);
-        vv_2 = NULL;
     }
 
     if (update_node) {

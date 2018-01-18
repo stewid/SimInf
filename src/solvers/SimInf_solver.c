@@ -654,18 +654,19 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
             SimInf_compartment_model *m = &model[i];
 
             if (m) {
-                if (m->t_rate)
-                    free(m->t_rate);
+                free(m->t_rate);
                 m->t_rate = NULL;
-                if (m->sum_t_rate)
-                    free(m->sum_t_rate);
+                free(m->sum_t_rate);
                 m->sum_t_rate = NULL;
-                if (m->t_time)
-                    free(m->t_time);
+                free(m->t_time);
                 m->t_time = NULL;
             }
         }
 
+        free(model[0].v);
+        model[0].v = NULL;
+        free(model[0].v_new);
+        model[0].v_new = NULL;
         free(model);
     }
 }
@@ -681,14 +682,27 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
  */
 int SimInf_compartment_model_create(
     SimInf_compartment_model **out, SimInf_solver_args *args,
-    int *uu, double *vv_1, double *vv_2, int *update_node)
+    int *uu, int *update_node)
 {
     int i;
     SimInf_compartment_model *model = NULL;
 
+    /* Allocate memory for the compartment model. */
     model = calloc(args->Nthread, sizeof(SimInf_compartment_model));
     if (!model)
         goto on_error;
+
+    /* Allocate memory to keep track of the continuous state in each
+     * node. */
+    model[0].v = malloc(args->Nn * args->Nd * sizeof(double));
+    if (!model[0].v)
+        goto on_error;
+    model[0].v_new = malloc(args->Nn * args->Nd * sizeof(double));
+    if (!model[0].v_new)
+        goto on_error;
+
+    /* Set continuous state to the initial state in each node. */
+    memcpy(model[0].v, args->v0, args->Nn * args->Nd * sizeof(double));
 
     for (i = 0; i < args->Nthread; i++) {
         /* Constants */
@@ -737,8 +751,12 @@ int SimInf_compartment_model_create(
             model[i].jcV = args->jcV;
             model[i].prV = args->prV;
         }
-        model[i].v = &vv_1[model[i].Ni * args->Nd];
-        model[i].v_new = &vv_2[model[i].Ni * args->Nd];
+
+        if (i > 0) {
+            model[i].v = &model[0].v[model[i].Ni * args->Nd];
+            model[i].v_new = &model[0].v_new[model[i].Ni * args->Nd];
+        }
+
         model[i].ldata = &(args->ldata[model[i].Ni * model[i].Nld]);
         model[i].gdata = args->gdata;
         model[i].update_node = &update_node[model[i].Ni];
