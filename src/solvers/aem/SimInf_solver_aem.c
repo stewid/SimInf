@@ -408,7 +408,7 @@ static void SimInf_aem_arguments_free(
 static int SimInf_aem_arguments_create(
     SimInf_aem_arguments **out, SimInf_compartment_model *model, int Nthread, gsl_rng *rng)
 {
-    int i, error;
+    int i;
     SimInf_aem_arguments *method = NULL;
 
     method = calloc(Nthread, sizeof(SimInf_aem_arguments));
@@ -422,49 +422,37 @@ static int SimInf_aem_arguments_create(
         /* we have one for each node. Heap is thus only the size of the # transitions */
         method[i].reactHeapSize = m->Nt;
         method[i].reactNode = malloc(m->Nn * m->Nt * sizeof(int));
-        if (!method[i].reactNode) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!method[i].reactNode)
             goto on_error;
-        }
 
         method[i].reactHeap = malloc(m->Nn * m->Nt * sizeof(int));
-        if (!method[i].reactHeap) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!method[i].reactHeap)
             goto on_error;
-        }
 
         method[i].reactTimes = malloc(m->Nn * m->Nt * sizeof(double));
-        if (!method[i].reactTimes) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!method[i].reactTimes)
             goto on_error;
-        }
 
         method[i].reactInf = calloc(m->Nn * m->Nt, sizeof(double));
-        if (!method[i].reactInf) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!method[i].reactInf)
             goto on_error;
-        }
 
         /* random generator for sample select with 1 per transition in each node */
         method[i].rng_vec = malloc(m->Nn * m->Nt * sizeof(gsl_rng*));
-        if (!method[i].rng_vec) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!method[i].rng_vec)
             goto on_error;
-        }
 
         for (node = 0; node < m->Nn; node++) {
             int trans;
             for (trans = 0; trans < m->Nt; trans++) {
                 /* Random number generator */
                 method[i].rng_vec[m->Nt * node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
-                if (!method[i].rng_vec[m->Nt * node + trans]) {
-                    error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+                if (!method[i].rng_vec[m->Nt * node + trans])
                     goto on_error;
-                }
-                if (!method[i].rng_vec[m->Nt * node + trans]) {
-                    error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+
+                if (!method[i].rng_vec[m->Nt * node + trans])
                     goto on_error;
-                }
+
                 gsl_rng_set(method[i].rng_vec[m->Nt * node + trans],
                             gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
             }
