@@ -300,6 +300,12 @@ cleanup:
         case SIMINF_ERR_UNKNOWN_SOLVER:
             Rf_error("Invalid 'solver' value.");
             break;
+        case SIMINF_ERR_DEST_OUT_OF_BOUNDS:
+            Rf_error("'dest' is out of bounds.");
+            break;
+        case SIMINF_ERR_NODE_OUT_OF_BOUNDS:
+            Rf_error("'node' is out of bounds.");
+            break;
         default:
             Rf_error("Unknown error code: %i", err);
             break;

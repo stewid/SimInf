@@ -1,8 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015 - 2017 Stefan Engblom
- *  Copyright (C) 2015 - 2017 Stefan Widgren
+ *  Copyright (C) 2015 Pavol Bauer
+ *  Copyright (C) 2017 - 2018 Robin Eriksson
+ *  Copyright (C) 2015 - 2018 Stefan Engblom
+ *  Copyright (C) 2015 - 2018 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,7 +38,9 @@ typedef enum {
     SIMINF_ERR_INVALID_MODEL        = -9,
     SIMINF_ERR_V_IS_NEGATIVE        = -10,
     SIMINF_ERR_INVALID_RATE         = -11,
-    SIMINF_ERR_UNKNOWN_SOLVER       = -12
+    SIMINF_ERR_UNKNOWN_SOLVER       = -12,
+    SIMINF_ERR_DEST_OUT_OF_BOUNDS   = -13,
+    SIMINF_ERR_NODE_OUT_OF_BOUNDS   = -14
 } SimInf_error_code;
 
 /* Forward declaration of the transition rate function. */

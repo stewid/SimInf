@@ -560,9 +560,21 @@ void SimInf_process_E2_events(
            !m.errcode)
     {
         int i;
+        const int dest = e2.dest[e.E2_index];
+        const int node = e2.node[e.E2_index];
+
+        if (dest < 0 || dest >= m.Ntot) {
+            m.errcode = SIMINF_ERR_DEST_OUT_OF_BOUNDS;
+            break;
+        }
+
+        if (node < 0 || node >= m.Ntot) {
+            m.errcode = SIMINF_ERR_NODE_OUT_OF_BOUNDS;
+            break;
+        }
 
         m.errcode = SimInf_sample_select(
-            e.irE, e.jcE, m.Nc, uu, e2.node[e.E2_index],
+            e.irE, e.jcE, m.Nc, uu, node,
             e2.select[e.E2_index], e2.n[e.E2_index],
             e2.proportion[e.E2_index], e.individuals,
             e.u_tmp, e.rng);
@@ -575,8 +587,8 @@ void SimInf_process_E2_events(
              i++)
         {
             const int jj = e.irE[i];
-            const int k1 = e2.dest[e.E2_index] * m.Nc + jj;
-            const int k2 = e2.node[e.E2_index] * m.Nc + jj;
+            const int k1 = dest * m.Nc + jj;
+            const int k2 = node * m.Nc + jj;
             const int ll = e2.shift[e.E2_index] < 0 ? 0 :
                 e.N[e2.shift[e.E2_index] * m.Nc + jj];
 
@@ -596,8 +608,8 @@ void SimInf_process_E2_events(
         }
 
         /* Indicate node and dest for update */
-        update_node[e2.node[e.E2_index]] = 1;
-        update_node[e2.dest[e.E2_index]] = 1;
+        update_node[node] = 1;
+        update_node[dest] = 1;
         e.E2_index++;
     }
 
