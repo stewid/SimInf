@@ -279,7 +279,7 @@ static int SimInf_solver_ssa(
  */
 int SimInf_run_solver_ssa(SimInf_solver_args *args)
 {
-    int error = 0, i;
+    int error = 0;
     gsl_rng *rng = NULL;
     SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;

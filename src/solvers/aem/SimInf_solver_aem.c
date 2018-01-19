@@ -476,7 +476,7 @@ on_error:
  */
 int SimInf_run_solver_aem(SimInf_solver_args *args)
 {
-    int i, error;
+    int error = 0;
     gsl_rng *rng = NULL;
     SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;
