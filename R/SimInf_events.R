@@ -249,8 +249,6 @@ SimInf_events <- function(E      = NULL,
     }
     if (!is.data.frame(events))
         stop("events must be a data.frame")
-    if (!identical(ncol(events), 8L))
-        stop("Wrong dimension of events")
     if (!all(c("event", "time", "node", "dest",
                "n", "proportion", "select",
                "shift") %in% names(events))) {
