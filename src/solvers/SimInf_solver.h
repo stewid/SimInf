@@ -364,8 +364,7 @@ typedef struct SimInf_compartment_model
 } SimInf_compartment_model;
 
 int SimInf_compartment_model_create(
-    SimInf_compartment_model **out, SimInf_solver_args *args,
-    int *uu, int *update_node);
+    SimInf_compartment_model **out, SimInf_solver_args *args, int *uu);
 
 void SimInf_compartment_model_free(
     SimInf_compartment_model *model, int Nthread);
@@ -377,12 +376,10 @@ void SimInf_scheduled_events_free(
     SimInf_scheduled_events *events, int Nthread);
 
 void SimInf_process_E1_events(
-    SimInf_compartment_model *model, SimInf_scheduled_events *events,
-    int *uu, int *update_node);
+    SimInf_compartment_model *model, SimInf_scheduled_events *events, int *uu);
 
 void SimInf_process_E2_events(
-    SimInf_compartment_model *model, SimInf_scheduled_events *events,
-    int *uu, int *update_node);
+    SimInf_compartment_model *model, SimInf_scheduled_events *events, int *uu);
 
 void SimInf_store_solution_sparse(SimInf_compartment_model *model);
 

@@ -465,7 +465,7 @@ void SimInf_scheduled_events_free(
 void SimInf_process_E1_events(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events,
-    int *uu, int *update_node)
+    int *uu)
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_scheduled_events e = *&events[0];
@@ -477,19 +477,20 @@ void SimInf_process_E1_events(
     {
         const int j = e.E1_index;
         const int s = e1.select[j];
+        const int node = e1.node[j];
 
         if (e1.event[j] == ENTER_EVENT) {
             /* All individuals enter first non-zero compartment,
              * i.e. a non-zero entry in element in the select
              * column. */
             if (e.jcE[s] < e.jcE[s + 1]) {
-                uu[e1.node[j] * m.Nc + e.irE[e.jcE[s]]] += e1.n[j];
-                if (uu[e1.node[j] * m.Nc + e.irE[e.jcE[s]]] < 0)
+                uu[node * m.Nc + e.irE[e.jcE[s]]] += e1.n[j];
+                if (uu[node * m.Nc + e.irE[e.jcE[s]]] < 0)
                     m.errcode = SIMINF_ERR_NEGATIVE_STATE;
             }
         } else {
             m.errcode = SimInf_sample_select(
-                e.irE, e.jcE, m.Nc, uu, e1.node[j],
+                e.irE, e.jcE, m.Nc, uu, node,
                 e1.select[j], e1.n[j], e1.proportion[j],
                 e.individuals, e.u_tmp, e.rng);
 
@@ -501,7 +502,7 @@ void SimInf_process_E1_events(
 
                 for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
                     const int jj = e.irE[ii];
-                    const int kk = e1.node[j] * m.Nc + jj;
+                    const int kk = node * m.Nc + jj;
 
                     /* Remove individuals from node */
                     uu[kk] -= e.individuals[jj];
@@ -515,7 +516,7 @@ void SimInf_process_E1_events(
 
                 for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
                     const int jj = e.irE[ii];
-                    const int kk = e1.node[j] * m.Nc + jj;
+                    const int kk = node * m.Nc + jj;
                     const int ll = e.N[e1.shift[j] * m.Nc + jj];
 
                     /* Add individuals to new compartments in node */
@@ -537,7 +538,7 @@ void SimInf_process_E1_events(
         }
 
         /* Indicate node for update */
-        update_node[e1.node[j]] = 1;
+        m.update_node[node - m.Ni] = 1;
         e.E1_index++;
     }
 
@@ -548,7 +549,7 @@ void SimInf_process_E1_events(
 void SimInf_process_E2_events(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events,
-    int *uu, int *update_node)
+    int *uu)
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_scheduled_events e = *&events[0];
@@ -608,8 +609,8 @@ void SimInf_process_E2_events(
         }
 
         /* Indicate node and dest for update */
-        update_node[node] = 1;
-        update_node[dest] = 1;
+        m.update_node[node] = 1;
+        m.update_node[dest] = 1;
         e.E2_index++;
     }
 
@@ -679,6 +680,8 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
         model[0].v = NULL;
         free(model[0].v_new);
         model[0].v_new = NULL;
+        free(model[0].update_node);
+        model[0].update_node = NULL;
         free(model);
     }
 }
@@ -693,8 +696,7 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
 int SimInf_compartment_model_create(
-    SimInf_compartment_model **out, SimInf_solver_args *args,
-    int *uu, int *update_node)
+    SimInf_compartment_model **out, SimInf_solver_args *args, int *uu)
 {
     int i;
     SimInf_compartment_model *model = NULL;
@@ -715,6 +717,12 @@ int SimInf_compartment_model_create(
 
     /* Set continuous state to the initial state in each node. */
     memcpy(model[0].v, args->v0, args->Nn * args->Nd * sizeof(double));
+
+    /* Setup vector to keep track of nodes that must be updated due to
+     * scheduled events */
+    model[0].update_node = calloc(args->Nn, sizeof(int));
+    if (!model[0].update_node)
+        goto on_error;
 
     for (i = 0; i < args->Nthread; i++) {
         /* Constants */
@@ -767,11 +775,11 @@ int SimInf_compartment_model_create(
         if (i > 0) {
             model[i].v = &model[0].v[model[i].Ni * args->Nd];
             model[i].v_new = &model[0].v_new[model[i].Ni * args->Nd];
+            model[i].update_node = &model[0].update_node[model[i].Ni];
         }
 
         model[i].ldata = &(args->ldata[model[i].Ni * model[i].Nld]);
         model[i].gdata = args->gdata;
-        model[i].update_node = &update_node[model[i].Ni];
 
         /* Create transition rate matrix (Nt X Nn) and total rate
          * vector. In t_rate we store all propensities for state

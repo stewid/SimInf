@@ -89,7 +89,7 @@ static int SimInf_solver_aem(
     SimInf_compartment_model *model,
     SimInf_aem_arguments *method,
     SimInf_scheduled_events *events,
-    int *uu, int *update_node, int Nthread)
+    int *uu, int Nthread)
 {
     int k;
 
@@ -238,7 +238,7 @@ static int SimInf_solver_aem(
                 *&method[i] = ma;
 
                 /* (2) Incorporate all scheduled E1 events */
-                SimInf_process_E1_events(&model[i], &events[i], uu, update_node);
+                SimInf_process_E1_events(&model[i], &events[i], uu);
 	    }
 
             #pragma omp barrier
@@ -246,7 +246,7 @@ static int SimInf_solver_aem(
             #pragma omp master
             {
                 /* (3) Incorporate all scheduled E2 events */
-                SimInf_process_E2_events(model, events, uu, update_node);
+                SimInf_process_E2_events(model, events, uu);
             }
 
             #pragma omp barrier
@@ -481,7 +481,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;
     SimInf_aem_arguments *method = NULL;
-    int *uu = NULL, *update_node = NULL;
+    int *uu = NULL;
 
     /* Set compartment state to the initial state. */
     uu = malloc(args->Nn * args->Nc * sizeof(int));
@@ -491,14 +491,6 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     }
     memcpy(uu, args->u0, args->Nn * args->Nc * sizeof(int));
 
-    /* Setup vector to keep track of nodes that must be updated due to
-     * scheduled events */
-    update_node = calloc(args->Nn, sizeof(int));
-    if (!update_node) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
         error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
@@ -506,8 +498,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     }
     gsl_rng_set(rng, args->seed);
 
-    error = SimInf_compartment_model_create(
-        &model, args, uu, update_node);
+    error = SimInf_compartment_model_create(&model, args, uu);
     if (error)
         goto cleanup;
 
@@ -519,17 +510,12 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     if (error)
         goto cleanup;
 
-    error = SimInf_solver_aem(model, method, events, uu, update_node, args->Nthread);
+    error = SimInf_solver_aem(model, method, events, uu, args->Nthread);
 
 cleanup:
     if (uu) {
         free(uu);
         uu = NULL;
-    }
-
-    if (update_node) {
-        free(update_node);
-        update_node = NULL;
     }
 
     if (rng)
@@ -538,7 +524,6 @@ cleanup:
     SimInf_scheduled_events_free(events, args->Nthread);
     SimInf_aem_arguments_free(method, model, args->Nthread);
     SimInf_compartment_model_free(model, args->Nthread);
-
 
     return error;
 }
