@@ -89,7 +89,7 @@ static int SimInf_solver_aem(
     SimInf_compartment_model *model,
     SimInf_aem_arguments *method,
     SimInf_scheduled_events *events,
-    int *uu, int Nthread)
+    int Nthread)
 {
     int k;
 
@@ -510,7 +510,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     if (error)
         goto cleanup;
 
-    error = SimInf_solver_aem(model, method, events, uu, args->Nthread);
+    error = SimInf_solver_aem(model, method, events, args->Nthread);
 
 cleanup:
     if (uu) {

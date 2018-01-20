@@ -37,8 +37,9 @@
  * @return 0 if Ok, else error code.
  */
 static int SimInf_solver_ssa(
-    SimInf_compartment_model *model, SimInf_scheduled_events *events,
-    int *uu, int Nthread)
+    SimInf_compartment_model *model,
+    SimInf_scheduled_events *events,
+    int Nthread)
 {
     int k;
 
@@ -308,7 +309,7 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     if (error)
         goto cleanup;
 
-    error = SimInf_solver_ssa(model, events, uu, args->Nthread);
+    error = SimInf_solver_ssa(model, events, args->Nthread);
 
 cleanup:
     if (uu)
