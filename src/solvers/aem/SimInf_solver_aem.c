@@ -118,7 +118,7 @@ static int SimInf_solver_aem(
                     sa.t_rate[node * sa.Nt + j] = rate;
 
                     if (!isfinite(rate) || rate < 0.0)
-                        sa.errcode = SIMINF_ERR_INVALID_RATE;
+                        sa.error = SIMINF_ERR_INVALID_RATE;
 
                     /* calculate time until next transition j event */
                     ma.reactTimes[sa.Nt*node+j] =  -log(gsl_rng_uniform_pos(ma.rng_vec[sa.Nt*node+j]))/rate + sa.tt;
@@ -141,8 +141,8 @@ static int SimInf_solver_aem(
 
     /* Check for error during initialization. */
     for (k = 0; k < Nthread; k++)
-        if (model[k].errcode)
-            return model[k].errcode;
+        if (model[k].error)
+            return model[k].error;
 
     /* Main loop. */
     for (;;) {
@@ -158,7 +158,7 @@ static int SimInf_solver_aem(
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
-                for (node = 0; node < sa.Nn && !sa.errcode; node++) {
+                for (node = 0; node < sa.Nn && !sa.error; node++) {
                     for (;;) {
                         int ii,j,tr;
                         double old_t_rate,rate;
@@ -179,7 +179,7 @@ static int SimInf_solver_aem(
                         for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
                             sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
                             if (sa.u[node * sa.Nc + sa.irS[j]] < 0)
-                                sa.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                                sa.error = SIMINF_ERR_NEGATIVE_STATE;
                         }
 
 
@@ -197,7 +197,7 @@ static int SimInf_solver_aem(
                                 sa.t_rate[node * sa.Nt + j] = rate;
 
                                 if (!isfinite(rate) || rate < 0.0)
-                                    sa.errcode = SIMINF_ERR_INVALID_RATE;
+                                    sa.error = SIMINF_ERR_INVALID_RATE;
                                 /* update times and reorder the heap */
                                 calcTimes(&ma.reactTimes[sa.Nt * node + ma.reactHeap[sa.Nt * node + j]],
                                           &ma.reactInf[sa.Nt * node + j],
@@ -219,7 +219,7 @@ static int SimInf_solver_aem(
                         sa.t_rate[node * sa.Nt + j] = rate;
 
                         if (!isfinite(rate) || rate < 0.0)
-                            sa.errcode = SIMINF_ERR_INVALID_RATE;
+                            sa.error = SIMINF_ERR_INVALID_RATE;
 
                         /* update times and reorder the heap */
                         calcTimes(&ma.reactTimes[sa.Nt * node + ma.reactHeap[sa.Nt * node + j]],
@@ -268,7 +268,7 @@ static int SimInf_solver_aem(
                         sa.gdata, sa.Ni + node, sa.tt);
 
                     if (rc < 0) {
-                        sa.errcode = rc;
+                        sa.error = rc;
                         break;
                     } else if (rc > 0 || sa.update_node[node]) {
                         /* Update transition rates */
@@ -282,7 +282,7 @@ static int SimInf_solver_aem(
                             sa.t_rate[node * sa.Nt + j] = rate;
 
                             if (!isfinite(rate) || rate < 0.0)
-                                sa.errcode = SIMINF_ERR_INVALID_RATE;
+                                sa.error = SIMINF_ERR_INVALID_RATE;
 
 			    /* Update times and reorder heap */
 			    calcTimes(&ma.reactTimes[sa.Nt * node + ma.reactHeap[sa.Nt * node + j]],
@@ -337,8 +337,8 @@ static int SimInf_solver_aem(
             double *v_tmp = model[k].v;
             model[k].v = model[k].v_new;
             model[k].v_new = v_tmp;
-            if (model[k].errcode)
-                return model[k].errcode;
+            if (model[k].error)
+                return model[k].error;
         }
 
         /* If the simulation has reached the final time, exit. */

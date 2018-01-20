@@ -68,7 +68,7 @@ static int SimInf_solver_ssa(
                     m.t_rate[node * m.Nt + j] = rate;
                     m.sum_t_rate[node] += rate;
                     if (!isfinite(rate) || rate < 0.0)
-                        m.errcode = SIMINF_ERR_INVALID_RATE;
+                        m.error = SIMINF_ERR_INVALID_RATE;
                 }
 
                 m.t_time[node] = m.tt;
@@ -80,8 +80,8 @@ static int SimInf_solver_ssa(
 
     /* Check for error during initialization. */
     for (k = 0; k < Nthread; k++)
-        if (model[k].errcode)
-            return model[k].errcode;
+        if (model[k].error)
+            return model[k].error;
 
     /* Main loop. */
     for (;;) {
@@ -97,7 +97,7 @@ static int SimInf_solver_ssa(
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
-                for (node = 0; node < m.Nn && !m.errcode; node++) {
+                for (node = 0; node < m.Nn && !m.error; node++) {
                     for (;;) {
                         double cum, rand, tau, delta = 0.0;
                         int j, tr;
@@ -146,7 +146,7 @@ static int SimInf_solver_ssa(
                         for (j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
                             m.u[node * m.Nc + m.irS[j]] += m.prS[j];
                             if (m.u[node * m.Nc + m.irS[j]] < 0)
-                                m.errcode = SIMINF_ERR_NEGATIVE_STATE;
+                                m.error = SIMINF_ERR_NEGATIVE_STATE;
                         }
 
                         /* 1d) Recalculate sum_t_rate[node] using
@@ -161,7 +161,7 @@ static int SimInf_solver_ssa(
                             m.t_rate[node * m.Nt + m.irG[j]] = rate;
                             delta += rate - old;
                             if (!isfinite(rate) || rate < 0.0)
-                                m.errcode = SIMINF_ERR_INVALID_RATE;
+                                m.error = SIMINF_ERR_INVALID_RATE;
                         }
                         m.sum_t_rate[node] += delta;
                     }
@@ -200,7 +200,7 @@ static int SimInf_solver_ssa(
                         m.gdata, m.Ni + node, m.tt);
 
                     if (rc < 0) {
-                        m.errcode = rc;
+                        m.error = rc;
                         break;
                     } else if (rc > 0 || m.update_node[node]) {
                         /* Update transition rates */
@@ -216,7 +216,7 @@ static int SimInf_solver_ssa(
                             m.t_rate[node * m.Nt + j] = rate;
                             delta += rate - old;
                             if (!isfinite(rate) || rate < 0.0)
-                                m.errcode = SIMINF_ERR_INVALID_RATE;
+                                m.error = SIMINF_ERR_INVALID_RATE;
                         }
                         m.sum_t_rate[node] += delta;
 
@@ -260,8 +260,8 @@ static int SimInf_solver_ssa(
             double *v_tmp = model[k].v;
             model[k].v = model[k].v_new;
             model[k].v_new = v_tmp;
-            if (model[k].errcode)
-                return model[k].errcode;
+            if (model[k].error)
+                return model[k].error;
         }
 
         /* If the simulation has reached the final time, exit. */

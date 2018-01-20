@@ -359,7 +359,7 @@ typedef struct SimInf_compartment_model
                          *   propensities for state transitions. */
     double *t_time;     /**< Time for next event (transition) in each
                          *   node. */
-    int errcode;        /**< The error state of the thread. 0 if
+    int error;          /**< The error state of the thread. 0 if
                          *   ok. */
 } SimInf_compartment_model;
 

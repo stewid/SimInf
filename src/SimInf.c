@@ -33,7 +33,7 @@
 /**
  * Initiate and run the simulation
  *
- * @param model The siminf_model
+ * @param model The SimInf_model
  * @param threads Number of threads
  * @param seed Random number seed.
  * @param solver The numerical solver.
@@ -49,7 +49,7 @@ SEXP SimInf_run(
     TRFun *tr_fun,
     PTSFun pts_fun)
 {
-    int i, j, err = 0, nprotect = 0;
+    int i, j, error = 0, nprotect = 0;
     SEXP result = R_NilValue;
     SEXP ext_events, E, G, N, S, prS;
     SEXP tspan, rownames, colnames;
@@ -58,31 +58,31 @@ SEXP SimInf_run(
     SimInf_solver_args args = {NULL};
 
     if (SimInf_arg_check_model(model)) {
-        err = SIMINF_ERR_INVALID_MODEL;
+        error = SIMINF_ERR_INVALID_MODEL;
         goto cleanup;
     }
 
     /* Check solver argument */
     if (!Rf_isNull(solver)) {
         if (!Rf_isString(solver)) {
-            err = SIMINF_ERR_UNKNOWN_SOLVER;
+            error = SIMINF_ERR_UNKNOWN_SOLVER;
             goto cleanup;
         }
 
         if (Rf_length(solver) != 1 || STRING_ELT(solver, 0) == NA_STRING) {
-            err = SIMINF_ERR_UNKNOWN_SOLVER;
+            error = SIMINF_ERR_UNKNOWN_SOLVER;
             goto cleanup;
         }
     }
 
     /* number of threads */
-    err = SimInf_get_threads(&(args.Nthread), threads);
-    if (err)
+    error = SimInf_get_threads(&(args.Nthread), threads);
+    if (error)
         goto cleanup;
 
     /* seed */
-    err =  SimInf_get_seed(&(args.seed), seed);
-    if (err)
+    error =  SimInf_get_seed(&(args.seed), seed);
+    if (error)
         goto cleanup;
 
     /* Duplicate model. */
@@ -256,17 +256,17 @@ SEXP SimInf_run(
 
     /* Run the simulation solver. */
     if (Rf_isNull(solver))
-        err = SimInf_run_solver_ssa(&args);
+        error = SimInf_run_solver_ssa(&args);
     else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssa") == 0)
-        err = SimInf_run_solver_ssa(&args);
+        error = SimInf_run_solver_ssa(&args);
     else if (strcmp(CHAR(STRING_ELT(solver, 0)), "aem") == 0)
-        err = SimInf_run_solver_aem(&args);
+        error = SimInf_run_solver_aem(&args);
     else
-        err = SIMINF_ERR_UNKNOWN_SOLVER;
+        error = SIMINF_ERR_UNKNOWN_SOLVER;
 
 cleanup:
-    if (err) {
-        switch (err) {
+    if (error) {
+        switch (error) {
         case SIMINF_ERR_NEGATIVE_STATE:
             Rf_error("Negative state detected.");
             break;
@@ -307,7 +307,7 @@ cleanup:
             Rf_error("'node' is out of bounds.");
             break;
         default:
-            Rf_error("Unknown error code: %i", err);
+            Rf_error("Unknown error code: %i", error);
             break;
         }
     }

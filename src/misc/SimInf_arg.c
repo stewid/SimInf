@@ -93,7 +93,7 @@ int SimInf_arg_check_model(SEXP arg)
  */
 int SimInf_get_seed(unsigned long int *out, SEXP seed)
 {
-    int err = 0;
+    int error = 0;
 
     if (!Rf_isNull(seed)) {
         if (Rf_isInteger(seed) || Rf_isReal(seed)) {
@@ -104,27 +104,27 @@ int SimInf_get_seed(unsigned long int *out, SEXP seed)
             case 1:
                 if (Rf_isInteger(seed)) {
                     if (INTEGER(seed)[0] == NA_INTEGER)
-                        err = SIMINF_INVALID_SEED_VALUE;
+                        error = SIMINF_INVALID_SEED_VALUE;
                     else
                         *out = (unsigned long int)INTEGER(seed)[0];
                 } else if (!R_finite(REAL(seed)[0])) {
-                    err = SIMINF_INVALID_SEED_VALUE;
+                    error = SIMINF_INVALID_SEED_VALUE;
                 } else {
                     *out = (unsigned long int)REAL(seed)[0];
                 }
                 break;
             default:
-                err = SIMINF_INVALID_SEED_VALUE;
+                error = SIMINF_INVALID_SEED_VALUE;
                 break;
             }
         } else {
-            err = SIMINF_INVALID_SEED_VALUE;
+            error = SIMINF_INVALID_SEED_VALUE;
         }
     } else {
         *out = (unsigned long int)time(NULL);
     }
 
-    return err;
+    return error;
 }
 
 /**
@@ -136,31 +136,31 @@ int SimInf_get_seed(unsigned long int *out, SEXP seed)
  */
 int SimInf_get_threads(int *out, SEXP threads)
 {
-    int err = 0;
+    int error = 0;
 
     if (Rf_isNull(threads)) {
         *out = 0;
     } else if (Rf_isInteger(threads)) {
         if (LENGTH(threads) != 1)
-            err = SIMINF_INVALID_THREADS_VALUE;
+            error = SIMINF_INVALID_THREADS_VALUE;
         else if (INTEGER(threads)[0] == NA_INTEGER)
-            err = SIMINF_INVALID_THREADS_VALUE;
+            error = SIMINF_INVALID_THREADS_VALUE;
         else if (INTEGER(threads)[0] < 0)
-            err = SIMINF_INVALID_THREADS_VALUE;
+            error = SIMINF_INVALID_THREADS_VALUE;
         else
             *out = INTEGER(threads)[0];
     } else if (Rf_isReal(threads)) {
         if (LENGTH(threads) != 1)
-            err = SIMINF_INVALID_THREADS_VALUE;
+            error = SIMINF_INVALID_THREADS_VALUE;
         else if (!R_finite(REAL(threads)[0]))
-            err = SIMINF_INVALID_THREADS_VALUE;
+            error = SIMINF_INVALID_THREADS_VALUE;
         else if ((int)(REAL(threads)[0] < 0))
-            err = SIMINF_INVALID_THREADS_VALUE;
+            error = SIMINF_INVALID_THREADS_VALUE;
         else
             *out = (int)(REAL(threads)[0]);
     } else {
-        err = SIMINF_INVALID_THREADS_VALUE;
+        error = SIMINF_INVALID_THREADS_VALUE;
     }
 
-    return err;
+    return error;
 }
