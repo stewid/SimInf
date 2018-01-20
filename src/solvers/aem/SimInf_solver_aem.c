@@ -481,15 +481,6 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;
     SimInf_aem_arguments *method = NULL;
-    int *uu = NULL;
-
-    /* Set compartment state to the initial state. */
-    uu = malloc(args->Nn * args->Nc * sizeof(int));
-    if (!uu) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
-    memcpy(uu, args->u0, args->Nn * args->Nc * sizeof(int));
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
@@ -498,7 +489,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     }
     gsl_rng_set(rng, args->seed);
 
-    error = SimInf_compartment_model_create(&model, args, uu);
+    error = SimInf_compartment_model_create(&model, args);
     if (error)
         goto cleanup;
 
@@ -513,11 +504,6 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     error = SimInf_solver_aem(model, method, events, args->Nthread);
 
 cleanup:
-    if (uu) {
-        free(uu);
-        uu = NULL;
-    }
-
     if (rng)
         gsl_rng_free(rng);
 

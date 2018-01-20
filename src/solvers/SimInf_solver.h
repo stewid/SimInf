@@ -364,7 +364,7 @@ typedef struct SimInf_compartment_model
 } SimInf_compartment_model;
 
 int SimInf_compartment_model_create(
-    SimInf_compartment_model **out, SimInf_solver_args *args, int *uu);
+    SimInf_compartment_model **out, SimInf_solver_args *args);
 
 void SimInf_compartment_model_free(
     SimInf_compartment_model *model, int Nthread);

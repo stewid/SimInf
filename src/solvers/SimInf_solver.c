@@ -679,6 +679,8 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
             }
         }
 
+        free(model[0].u);
+        model[0].u = NULL;
         free(model[0].v);
         model[0].v = NULL;
         free(model[0].v_new);
@@ -695,11 +697,10 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
  *
  * @param out the resulting data structure.
  * @param args structure with data for the solver.
- * @param rng random number generator.
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
 int SimInf_compartment_model_create(
-    SimInf_compartment_model **out, SimInf_solver_args *args, int *uu)
+    SimInf_compartment_model **out, SimInf_solver_args *args)
 {
     int i;
     SimInf_compartment_model *model = NULL;
@@ -726,6 +727,13 @@ int SimInf_compartment_model_create(
     model[0].update_node = calloc(args->Nn, sizeof(int));
     if (!model[0].update_node)
         goto on_error;
+
+    /* Allocate memory for compartment state and set compartment state
+     * to the initial state. */
+    model[0].u = malloc(args->Nn * args->Nc * sizeof(int));
+    if (!model[0].u)
+        goto on_error;
+    memcpy(model[0].u, args->u0, args->Nn * args->Nc * sizeof(int));
 
     for (i = 0; i < args->Nthread; i++) {
         /* Constants */
@@ -766,7 +774,7 @@ int SimInf_compartment_model_create(
             model[i].jcU = args->jcU;
             model[i].prU = args->prU;
         }
-        model[i].u = &uu[model[i].Ni * args->Nc];
+
         if (args->V) {
             model[i].V = args->V;
         } else if (i == 0) {
@@ -776,6 +784,7 @@ int SimInf_compartment_model_create(
         }
 
         if (i > 0) {
+            model[i].u = &model[0].u[model[i].Ni * args->Nc];
             model[i].v = &model[0].v[model[i].Ni * args->Nd];
             model[i].v_new = &model[0].v_new[model[i].Ni * args->Nd];
             model[i].update_node = &model[0].update_node[model[i].Ni];
