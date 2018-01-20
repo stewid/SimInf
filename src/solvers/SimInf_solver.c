@@ -479,6 +479,11 @@ void SimInf_process_E1_events(
         const int s = e1.select[j];
         const int node = e1.node[j];
 
+        if (e1.node[j] < 0 || e1.node[j] >= m.Ntot) {
+            m.errcode = SIMINF_ERR_NODE_OUT_OF_BOUNDS;
+            break;
+        }
+
         if (e1.event[j] == ENTER_EVENT) {
             /* All individuals enter first non-zero compartment,
              * i.e. a non-zero entry in element in the select
