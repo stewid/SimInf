@@ -1,9 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2017  Robin Eriksson
- *  Copyright (C) 2015 - 2017  Stefan Engblom
- *  Copyright (C) 2015 - 2017  Stefan Widgren
+ *  Copyright (C) 2017 - 2018  Robin Eriksson
+ *  Copyright (C) 2015 - 2018  Stefan Engblom
+ *  Copyright (C) 2015 - 2018  Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ typedef struct SimInf_solver_args
 /**
  * Structure that represents scheduled events.
  */
-typedef struct SimInf_scheduled_events
+typedef struct SimInf_scheduled_events_data
 {
     int len;            /**< Number of events. */
     int *event;         /**< The type of event i. */
@@ -236,12 +236,44 @@ typedef struct SimInf_scheduled_events
     int *shift;         /**< Column j in the shift matrix that
                          *   determines the shift of the internal
                          *   and external transfer event. */
+} SimInf_scheduled_events_data;
+
+/**
+ * Structure with data to process scheduled events.
+ */
+typedef struct SimInf_scheduled_events
+{
+    /*** Matrices to process events ***/
+    const int *irE;       /**< Select matrix for events. irE[k] is the
+                           *   row of E[k]. */
+    const int *jcE;       /**< Select matrix for events. Index to data
+                           *   of first non-zero element in row k. */
+    const int *N;         /**< Shift matrix for internal and external
+                           *   transfer events. */
+
+    /*** Scheduled events ***/
+    SimInf_scheduled_events_data *E1; /**< E1 events to process. */
+    int E1_index;         /**< Index to the next E1 event to
+                           *   process. */
+    SimInf_scheduled_events_data *E2; /**< E2 events to process. */
+    int E2_index;         /**< Index to the next E2 event to
+                           *   process. */
+
+    /*** Vectors for sampling individuals ***/
+    int *individuals;     /**< Vector to store the result of the
+                           *   sampling during scheduled events
+                           *   processing. */
+    int *u_tmp;           /**< Temporary vector with the compartment
+                           *   state in a node when sampling
+                           *   individuals for scheduled events. */
+    gsl_rng *rng;         /**< The random number generator for
+                           *   sampling. */
 } SimInf_scheduled_events;
 
 /**
  * Structure to hold thread specific data/arguments for simulation.
  */
-typedef struct SimInf_thread_args
+typedef struct SimInf_compartment_model
 {
     /*** Constants ***/
     int Ntot;  /**< Total number of nodes. */
@@ -266,10 +298,6 @@ typedef struct SimInf_thread_args
                      *   non-zero element in row k. */
     const int *prS; /**< State-change matrix. Value of item (i, j)
                      *   in S. */
-    const int *irE; /**< Select matrix for events. irE[k] is the row
-                     *   of E[k]. */
-    const int *jcE; /**< Select matrix for events. Index to data of
-                     *   first non-zero element in row k. */
 
     /*** Callbacks ***/
     TRFun *tr_fun;  /**< Vector of function pointers to
@@ -322,8 +350,6 @@ typedef struct SimInf_thread_args
     const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
                           *   local data vector for node #j. */
     const double *gdata; /**< The global data vector. */
-    const int *N;     /**< Shift matrix for internal and external
-                       *   transfer events. */
     int *update_node; /**< Vector of length Nn used to indicate nodes
                        *   for update. */
 
@@ -335,57 +361,26 @@ typedef struct SimInf_thread_args
                          *   node. */
     int errcode;        /**< The error state of the thread. 0 if
                          *   ok. */
-    gsl_rng *rng;       /**< The random number generator. */
+} SimInf_compartment_model;
 
+int SimInf_compartment_model_create(
+    SimInf_compartment_model **out, SimInf_solver_args *args);
 
-    /*** Scheduled events ***/
-    SimInf_scheduled_events *E1; /**< E1 events to process. */
-    int E1_index;         /**< Index to the next E1 event to
-                           *   process. */
-    SimInf_scheduled_events *E2; /**< E2 events to process. */
-    int E2_index;         /**< Index to the next E2 event to
-                           *   process. */
+void SimInf_compartment_model_free(
+    SimInf_compartment_model *model, int Nthread);
 
-    /*** Vectors for sampling individuals ***/
-    int *individuals;     /**< Vector to store the result of the
-                           *   sampling during scheduled events
-                           *   processing. */
-    int *u_tmp;           /**< Temporary vector with the compartment
-                           *   state in a node when sampling
-                           *   individuals for scheduled events. */
-    /*** AEM specific variables ***/
-    gsl_rng **rng_vec;   /**< The random number generator. */
+int SimInf_scheduled_events_create(
+    SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng);
 
-    int *reactHeap;      /**< Binary heap storing all reaction events */
-    int *reactNode;
-    double *reactTimes;
-    double *reactInf;
-    int reactHeapSize;
-} SimInf_thread_args;
-
-int SimInf_allocate_events(SimInf_scheduled_events *e, int n);
-
-void SimInf_free_args(SimInf_thread_args *sa);
-
-void SimInf_free_events(SimInf_scheduled_events *e);
+void SimInf_scheduled_events_free(
+    SimInf_scheduled_events *events, int Nthread);
 
 void SimInf_process_E1_events(
-    SimInf_thread_args *sim_args, int *uu, int *update_node);
+    SimInf_compartment_model *model, SimInf_scheduled_events *events);
 
 void SimInf_process_E2_events(
-    SimInf_thread_args *sim_args, int *uu, int *update_node);
+    SimInf_compartment_model *model, SimInf_scheduled_events *events);
 
-int SimInf_sample_select(
-    const int *irE, const int *jcE, int Nc, const int *u,
-    int node, int select, int n, double proportion,
-    int *individuals, int *u_tmp, gsl_rng *rng);
-
-int SimInf_split_events(
-    SimInf_thread_args *sim_args,
-    int len, const int *event, const int *time, const int *node,
-    const int *dest, const int *n, const double *proportion,
-    const int *select, const int *shift, int Nn, int Nthread);
-
-void SimInf_store_solution_sparse(SimInf_thread_args *sim_args);
+void SimInf_store_solution_sparse(SimInf_compartment_model *model);
 
 #endif
