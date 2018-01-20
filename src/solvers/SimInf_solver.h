@@ -243,6 +243,9 @@ typedef struct SimInf_scheduled_events_data
  */
 typedef struct SimInf_scheduled_events
 {
+    /*** Constants ***/
+    int Nthread;          /**< Number of threads. */
+
     /*** Matrices to process events ***/
     const int *irE;       /**< Select matrix for events. irE[k] is the
                            *   row of E[k]. */
@@ -276,6 +279,7 @@ typedef struct SimInf_scheduled_events
 typedef struct SimInf_compartment_model
 {
     /*** Constants ***/
+    int Nthread; /**< Number of threads. */
     int Ntot;  /**< Total number of nodes. */
     int Ni;    /**< Index to first node in thread in the global set of
                  *  of nodes. */
@@ -368,13 +372,13 @@ int SimInf_compartment_model_create(
     SimInf_compartment_model **out, SimInf_solver_args *args);
 
 void SimInf_compartment_model_free(
-    SimInf_compartment_model *model, int Nthread);
+    SimInf_compartment_model *model);
 
 int SimInf_scheduled_events_create(
     SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng);
 
 void SimInf_scheduled_events_free(
-    SimInf_scheduled_events *events, int Nthread);
+    SimInf_scheduled_events *events);
 
 void SimInf_process_E1_events(
     SimInf_compartment_model *model, SimInf_scheduled_events *events);

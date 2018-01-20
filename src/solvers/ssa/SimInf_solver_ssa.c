@@ -38,9 +38,9 @@
  */
 static int SimInf_solver_ssa(
     SimInf_compartment_model *model,
-    SimInf_scheduled_events *events,
-    int Nthread)
+    SimInf_scheduled_events *events)
 {
+    int Nthread = model->Nthread;
     int k;
 
     #pragma omp parallel
@@ -300,12 +300,12 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     if (error)
         goto cleanup;
 
-    error = SimInf_solver_ssa(model, events, args->Nthread);
+    error = SimInf_solver_ssa(model, events);
 
 cleanup:
     gsl_rng_free(rng);
-    SimInf_scheduled_events_free(events, args->Nthread);
-    SimInf_compartment_model_free(model, args->Nthread);
+    SimInf_scheduled_events_free(events);
+    SimInf_compartment_model_free(model);
 
     return error;
 }

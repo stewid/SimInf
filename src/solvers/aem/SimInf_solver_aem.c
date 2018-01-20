@@ -496,9 +496,9 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
 
 cleanup:
     gsl_rng_free(rng);
-    SimInf_scheduled_events_free(events, args->Nthread);
+    SimInf_scheduled_events_free(events);
     SimInf_aem_arguments_free(method, model, args->Nthread);
-    SimInf_compartment_model_free(model, args->Nthread);
+    SimInf_compartment_model_free(model);
 
     return error;
 }

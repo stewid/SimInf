@@ -327,6 +327,9 @@ int SimInf_scheduled_events_create(
         goto on_error;
 
     for (i = 0; i < args->Nthread; i++) {
+        /*** Constants ***/
+        events[i].Nthread = args->Nthread;
+
         /* Matrices to process events */
         events[i].irE = args->irE;
         events[i].jcE = args->jcE;
@@ -370,7 +373,7 @@ int SimInf_scheduled_events_create(
     return 0;
 
 on_error:
-    SimInf_scheduled_events_free(events, args->Nthread);
+    SimInf_scheduled_events_free(events);
     return error;
 }
 
@@ -410,12 +413,12 @@ static void SimInf_scheduled_events_data_free(
  * @param Nthread number of threads that was used during simulation.
  */
 void SimInf_scheduled_events_free(
-    SimInf_scheduled_events *events, int Nthread)
+    SimInf_scheduled_events *events)
 {
     if (events) {
         int i;
 
-        for (i = 0; i < Nthread; i++) {
+        for (i = 0; i < events->Nthread; i++) {
             SimInf_scheduled_events *e = &events[i];
 
             if (e) {
@@ -635,12 +638,12 @@ void SimInf_store_solution_sparse(SimInf_compartment_model *model)
  * @param model the data structure to free.
  * @param Nthread number of threads that was used during simulation.
  */
-void SimInf_compartment_model_free(SimInf_compartment_model *model, int Nthread)
+void SimInf_compartment_model_free(SimInf_compartment_model *model)
 {
     if (model) {
         int i;
 
-        for (i = 0; i < Nthread; i++) {
+        for (i = 0; i < model->Nthread; i++) {
             SimInf_compartment_model *m = &model[i];
 
             if (m) {
@@ -711,6 +714,7 @@ int SimInf_compartment_model_create(
 
     for (i = 0; i < args->Nthread; i++) {
         /* Constants */
+        model[i].Nthread = args->Nthread;
         model[i].Ntot = args->Nn;
         model[i].Ni = i * (args->Nn / args->Nthread);
         model[i].Nn = args->Nn / args->Nthread;
@@ -786,6 +790,6 @@ int SimInf_compartment_model_create(
     return 0;
 
 on_error:
-    SimInf_compartment_model_free(model, args->Nthread);
+    SimInf_compartment_model_free(model);
     return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
 }
