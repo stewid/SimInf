@@ -166,9 +166,9 @@ static int SimInf_solver_aem(
                         /* 1a) Step time forward until next event */
                         sa.t_time[node] = ma.reactTimes[sa.Nt * node];
 
-                        /* If time is past next day break */
-                        if (isinf(sa.t_time[node]) || sa.t_time[node] >= sa.next_day) {
-                            sa.t_time[node] = sa.next_day;
+                        /* Break if time is past next unit of time */
+                        if (isinf(sa.t_time[node]) || sa.t_time[node] >= sa.next_unit_of_time) {
+                            sa.t_time[node] = sa.next_unit_of_time;
                             break;
                         }
 
@@ -300,9 +300,9 @@ static int SimInf_solver_aem(
                     }
                 }
 
-                /* (5) The global time now equals next_day. */
-                sa.tt = sa.next_day;
-                sa.next_day += 1.0;
+                /* (5) The global time now equals next unit of time. */
+                sa.tt = sa.next_unit_of_time;
+                sa.next_unit_of_time += 1.0;
 
                 /* (6) Store solution if tt has passed the next time
                  * in tspan. Report solution up to, but not including

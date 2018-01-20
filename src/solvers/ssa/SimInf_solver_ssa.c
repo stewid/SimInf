@@ -105,13 +105,13 @@ static int SimInf_solver_ssa(
                         /* 1a) Compute time to next event for this
                          * node. */
                         if (m.sum_t_rate[node] <= 0.0) {
-                            m.t_time[node] = m.next_day;
+                            m.t_time[node] = m.next_unit_of_time;
                             break;
                         }
                         tau = -log(gsl_rng_uniform_pos(e.rng)) /
                             m.sum_t_rate[node];
-                        if ((tau + m.t_time[node]) >= m.next_day) {
-                            m.t_time[node] = m.next_day;
+                        if ((tau + m.t_time[node]) >= m.next_unit_of_time) {
+                            m.t_time[node] = m.next_unit_of_time;
                             break;
                         }
                         m.t_time[node] += tau;
@@ -224,9 +224,9 @@ static int SimInf_solver_ssa(
                     }
                 }
 
-                /* (5) The global time now equals next_day. */
-                m.tt = m.next_day;
-                m.next_day += 1.0;
+                /* (5) The global time now equals next unit of time. */
+                m.tt = m.next_unit_of_time;
+                m.next_unit_of_time += 1.0;
 
                 /* (6) Store solution if tt has passed the next time
                  * in tspan. Report solution up to, but not including

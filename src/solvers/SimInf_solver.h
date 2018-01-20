@@ -306,7 +306,8 @@ typedef struct SimInf_compartment_model
 
     /*** Keep track of time ***/
     double tt;           /**< The global time. */
-    double next_day;     /**< The global time of next day. */
+    double next_unit_of_time; /**< The global time of next unit of
+                               * time. */
     const double *tspan; /**< Output times. tspan[0] is the start time
                           *   and tspan[length(tspan)-1] is the stop
                           *   time.*/

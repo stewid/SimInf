@@ -748,7 +748,7 @@ int SimInf_compartment_model_create(
 
         /* Keep track of time */
         model[i].tt = args->tspan[0];
-        model[i].next_day = floor(model[i].tt) + 1.0;
+        model[i].next_unit_of_time = floor(model[i].tt) + 1.0;
         model[i].tspan = args->tspan;
         model[i].tlen = args->tlen;
         model[i].U_it = 1;
