@@ -302,8 +302,7 @@ static int SimInf_split_events(
     }
 
 cleanup:
-    if (E1_i)
-        free(E1_i);
+    free(E1_i);
 
     return error;
 }
@@ -384,29 +383,21 @@ static void SimInf_scheduled_events_data_free(
     SimInf_scheduled_events_data *events)
 {
     if (events) {
-        if (events->event)
-            free(events->event);
+        free(events->event);
         events->event = NULL;
-        if (events->time)
-            free(events->time);
+        free(events->time);
         events->time = NULL;
-        if (events->node)
-            free(events->node);
+        free(events->node);
         events->node = NULL;
-        if (events->dest)
-            free(events->dest);
+        free(events->dest);
         events->dest = NULL;
-        if (events->n)
-            free(events->n);
+        free(events->n);
         events->n = NULL;
-        if (events->proportion)
-            free(events->proportion);
+        free(events->proportion);
         events->proportion = NULL;
-        if (events->select)
-            free(events->select);
+        free(events->select);
         events->select = NULL;
-        if (events->shift)
-            free(events->shift);
+        free(events->shift);
         events->shift = NULL;
         free(events);
     }
@@ -428,20 +419,15 @@ void SimInf_scheduled_events_free(
             SimInf_scheduled_events *e = &events[i];
 
             if (e) {
-                if (e->E1)
-                    SimInf_scheduled_events_data_free(e->E1);
+                SimInf_scheduled_events_data_free(e->E1);
                 e->E1 = NULL;
-                if (e->E2)
-                    SimInf_scheduled_events_data_free(e->E2);
+                SimInf_scheduled_events_data_free(e->E2);
                 e->E2 = NULL;
-                if (e->individuals)
-                    free(e->individuals);
+                free(e->individuals);
                 e->individuals = NULL;
-                if (e->u_tmp)
-                    free(e->u_tmp);
+                free(e->u_tmp);
                 e->u_tmp = NULL;
-                if (e->rng)
-                    gsl_rng_free(e->rng);
+                gsl_rng_free(e->rng);
                 e->rng = NULL;
             }
         }
@@ -797,7 +783,6 @@ int SimInf_compartment_model_create(
     }
 
     *out = model;
-
     return 0;
 
 on_error:

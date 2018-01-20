@@ -303,9 +303,7 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     error = SimInf_solver_ssa(model, events, args->Nthread);
 
 cleanup:
-    if (rng)
-        gsl_rng_free(rng);
-
+    gsl_rng_free(rng);
     SimInf_scheduled_events_free(events, args->Nthread);
     SimInf_compartment_model_free(model, args->Nthread);
 

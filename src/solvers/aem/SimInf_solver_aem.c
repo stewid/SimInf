@@ -32,7 +32,6 @@
 #include "SimInf_solver_aem.h"
 #include "binheap.h"
 
-
 /**
  * Structure to hold AEM solver specific data/arguments for simulation.
  */
@@ -47,7 +46,6 @@ typedef struct SimInf_aem_arguments
     int reactHeapSize;
 
 } SimInf_aem_arguments;
-
 
 /**
  * Calculate update of waiting times, including sleeping times.
@@ -349,9 +347,6 @@ static int SimInf_solver_aem(
     return 0;
 }
 
-
-
-
 /**
  * Free allocated memory for an epidemiological compartment
  * model.
@@ -377,17 +372,13 @@ static void SimInf_aem_arguments_free(
                         gsl_rng_free(m->rng_vec[i]);
                 }
                 m->rng_vec = NULL;
-                if(m->reactHeap)
-                    free(m->reactHeap);
+                free(m->reactHeap);
                 m->reactHeap = NULL;
-                if(m->reactInf)
-                    free(m->reactInf);
+                free(m->reactInf);
                 m->reactInf = NULL;
-                if(m->reactNode)
-                    free(m->reactNode);
+                free(m->reactNode);
                 m->reactNode = NULL;
-                if(m->reactTimes)
-                    free(m->reactTimes);
+                free(m->reactTimes);
                 m->reactTimes = NULL;
             }
         }
@@ -504,9 +495,7 @@ int SimInf_run_solver_aem(SimInf_solver_args *args)
     error = SimInf_solver_aem(model, method, events, args->Nthread);
 
 cleanup:
-    if (rng)
-        gsl_rng_free(rng);
-
+    gsl_rng_free(rng);
     SimInf_scheduled_events_free(events, args->Nthread);
     SimInf_aem_arguments_free(method, model, args->Nthread);
     SimInf_compartment_model_free(model, args->Nthread);
