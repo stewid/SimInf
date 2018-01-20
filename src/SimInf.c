@@ -1,9 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2017  Robin Eriksson
- *  Copyright (C) 2015 - 2017  Stefan Engblom
- *  Copyright (C) 2015 - 2017  Stefan Widgren
+ *  Copyright (C) 2015 Pavol Bauer
+ *  Copyright (C) 2017 - 2018 Robin Eriksson
+ *  Copyright (C) 2015 - 2018 Stefan Engblom
+ *  Copyright (C) 2015 - 2018 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -63,13 +63,13 @@ SEXP SimInf_run(
     }
 
     /* Check solver argument */
-    if (!isNull(solver)) {
-        if (!isString(solver)) {
+    if (!Rf_isNull(solver)) {
+        if (!Rf_isString(solver)) {
             err = SIMINF_ERR_UNKNOWN_SOLVER;
             goto cleanup;
         }
 
-        if (length(solver) != 1 || STRING_ELT(solver, 0) == NA_STRING) {
+        if (Rf_length(solver) != 1 || STRING_ELT(solver, 0) == NA_STRING) {
             err = SIMINF_ERR_UNKNOWN_SOLVER;
             goto cleanup;
         }
@@ -86,7 +86,7 @@ SEXP SimInf_run(
         goto cleanup;
 
     /* Duplicate model. */
-    PROTECT(result = duplicate(model));
+    PROTECT(result = Rf_duplicate(model));
     nprotect++;
 
     /* Dependency graph */
@@ -98,7 +98,7 @@ SEXP SimInf_run(
     /* State change matrix */
     PROTECT(S = GET_SLOT(result, Rf_install("S")));
     nprotect++;
-    PROTECT(prS = coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
+    PROTECT(prS = Rf_coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
     nprotect++;
     args.irS = INTEGER(GET_SLOT(S, Rf_install("i")));
     args.jcS = INTEGER(GET_SLOT(S, Rf_install("p")));
@@ -154,20 +154,20 @@ SEXP SimInf_run(
 
         PROTECT(U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames")));
         nprotect++;
-        PROTECT(U_rownames = allocVector(STRSXP, args.Nn * args.Nc));
+        PROTECT(U_rownames = Rf_allocVector(STRSXP, args.Nn * args.Nc));
         nprotect++;
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     } else {
-        PROTECT(U = allocMatrix(INTSXP, args.Nn * args.Nc, args.tlen));
+        PROTECT(U = Rf_allocMatrix(INTSXP, args.Nn * args.Nc, args.tlen));
         nprotect++;
         SET_SLOT(result, Rf_install("U"), U);
         args.U = INTEGER(GET_SLOT(result, Rf_install("U")));
 
-        PROTECT(U_dimnames = allocVector(VECSXP, 2));
+        PROTECT(U_dimnames = Rf_allocVector(VECSXP, 2));
         nprotect++;
-        setAttrib(GET_SLOT(result, Rf_install("U")),
-                  R_DimNamesSymbol, U_dimnames);
-        PROTECT(U_rownames = allocVector(STRSXP, args.Nn * args.Nc));
+        Rf_setAttrib(GET_SLOT(result, Rf_install("U")),
+                     R_DimNamesSymbol, U_dimnames);
+        PROTECT(U_rownames = Rf_allocVector(STRSXP, args.Nn * args.Nc));
         nprotect++;
         SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     }
@@ -179,10 +179,10 @@ SEXP SimInf_run(
 
     /* Add colnames to U. Use the the values of 'tspan' if the
      * colnames of 'tspan' is null. */
-    if (isNull(colnames))
-        SET_VECTOR_ELT(U_dimnames, 1, coerceVector(tspan, STRSXP));
+    if (Rf_isNull(colnames))
+        SET_VECTOR_ELT(U_dimnames, 1, Rf_coerceVector(tspan, STRSXP));
     else
-        SET_VECTOR_ELT(U_dimnames, 1, duplicate(colnames));
+        SET_VECTOR_ELT(U_dimnames, 1, Rf_duplicate(colnames));
 
     /* Output array (to hold a single trajectory) */
     PROTECT(V_sparse = GET_SLOT(result, Rf_install("V_sparse")));
@@ -196,27 +196,41 @@ SEXP SimInf_run(
 
         V_dimnames = GET_SLOT(V_sparse, Rf_install("Dimnames"));
     } else {
-        PROTECT(V = allocMatrix(REALSXP, args.Nn * args.Nd, args.tlen));
+        PROTECT(V = Rf_allocMatrix(REALSXP, args.Nn * args.Nd, args.tlen));
         nprotect++;
         SET_SLOT(result, Rf_install("V"), V);
         args.V = REAL(GET_SLOT(result, Rf_install("V")));
 
-        PROTECT(V_dimnames = allocVector(VECSXP, 2));
+        PROTECT(V_dimnames = Rf_allocVector(VECSXP, 2));
         nprotect++;
-        setAttrib(GET_SLOT(result, Rf_install("V")),
-                  R_DimNamesSymbol, V_dimnames);
+        Rf_setAttrib(GET_SLOT(result, Rf_install("V")),
+                     R_DimNamesSymbol, V_dimnames);
     }
 
     /* Add colnames to V. Use the the values of 'tspan' if the
      * colnames of 'tspan' is null. */
-    if (isNull(colnames))
-        SET_VECTOR_ELT(V_dimnames, 1, coerceVector(tspan, STRSXP));
+    if (Rf_isNull(colnames))
+        SET_VECTOR_ELT(V_dimnames, 1, Rf_coerceVector(tspan, STRSXP));
     else
-        SET_VECTOR_ELT(V_dimnames, 1, duplicate(colnames));
+        SET_VECTOR_ELT(V_dimnames, 1, Rf_duplicate(colnames));
 
-    /* Initial state */
+    /* Initial state. Copy u0 to either U[, 1] or U_sparse[, 1] */
     args.u0 = INTEGER(GET_SLOT(result, Rf_install("u0")));
+    if (args.U) {
+        memcpy(args.U, args.u0, args.Nn * args.Nc * sizeof(int));
+    } else {
+        for (i = args.jcU[0]; i < args.jcU[1]; i++)
+            args.prU[i] = args.u0[args.irU[i]];
+    }
+
+    /* Initial state.. Copy v0 to either V[, 1] or V_sparse[, 1] */
     args.v0 = REAL(GET_SLOT(result, Rf_install("v0")));
+    if (args.V) {
+        memcpy(args.V, args.v0, args.Nn * args.Nd * sizeof(double));
+    } else {
+        for (i = args.jcV[0]; i < args.jcV[1]; i++)
+            args.prV[i] = args.v0[args.irV[i]];
+    }
 
     /* global and local data */
     args.ldata = REAL(GET_SLOT(result, Rf_install("ldata")));
@@ -241,7 +255,7 @@ SEXP SimInf_run(
 #endif
 
     /* Run the simulation solver. */
-    if (isNull(solver))
+    if (Rf_isNull(solver))
         err = SimInf_run_solver_ssa(&args);
     else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssa") == 0)
         err = SimInf_run_solver_ssa(&args);
@@ -285,6 +299,12 @@ cleanup:
             break;
         case SIMINF_ERR_UNKNOWN_SOLVER:
             Rf_error("Invalid 'solver' value.");
+            break;
+        case SIMINF_ERR_DEST_OUT_OF_BOUNDS:
+            Rf_error("'dest' is out of bounds.");
+            break;
+        case SIMINF_ERR_NODE_OUT_OF_BOUNDS:
+            Rf_error("'node' is out of bounds.");
             break;
         default:
             Rf_error("Unknown error code: %i", err);

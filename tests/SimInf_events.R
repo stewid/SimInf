@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2018  Stefan Engblom
+## Copyright (C) 2015 - 2018  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -482,3 +482,22 @@ events <- structure(list(
     row.names = c(NA, -15L), class = "data.frame")
 res <- SimInf_events(E = E, N = N, events = events)
 stopifnot(identical(as(res, "data.frame"), events))
+
+## Check that it fails when dest is out of bounds.
+u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
+events <- data.frame(event = 3, time = 2, node = 1, dest = 3,
+                     n = 1, proportion = 0, select = 2, shift = 0)
+model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16, gamma = 0.077)
+res <- tools::assertError(run(model))
+stopifnot(length(grep("'dest' is out of bounds.",
+                      res[[1]]$message)) > 0)
+
+## Check that it fails when node is out of bounds.
+u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
+events <- data.frame(event = 3, time = 2, node = 1, dest = 2,
+                     n = 1, proportion = 0, select = 2, shift = 0)
+model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16, gamma = 0.077)
+model@events@node <- -1L
+res <- tools::assertError(.Call("SIR_run", model, NULL, NULL, NULL))
+stopifnot(length(grep("'node' is out of bounds.",
+                      res[[1]]$message)) > 0)

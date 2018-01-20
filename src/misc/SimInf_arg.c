@@ -1,8 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015 - 2017  Stefan Engblom
- *  Copyright (C) 2015 - 2017  Stefan Widgren
+ *  Copyright (C) 2015 Pavol Bauer
+ *  Copyright (C) 2017 - 2018 Robin Eriksson
+ *  Copyright (C) 2015 - 2018 Stefan Engblom
+ *  Copyright (C) 2015 - 2018 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,9 +34,9 @@ int SimInf_arg_check_dgCMatrix(SEXP arg)
 {
     SEXP class_name;
 
-    if (!isS4(arg))
+    if (!Rf_isS4(arg))
         return -1;
-    class_name = getAttrib(arg, R_ClassSymbol);
+    class_name = Rf_getAttrib(arg, R_ClassSymbol);
     if (0 != strcmp(CHAR(STRING_ELT(class_name, 0)), "dgCMatrix"))
         return -1;
     return 0;
@@ -49,7 +50,7 @@ int SimInf_arg_check_dgCMatrix(SEXP arg)
  */
 int SimInf_arg_check_integer(SEXP arg)
 {
-    if (!isInteger(arg) || length(arg) != 1 || NA_INTEGER == INTEGER(arg)[0])
+    if (!Rf_isInteger(arg) || Rf_length(arg) != 1 || NA_INTEGER == INTEGER(arg)[0])
         return -1;
     return 0;
 }
@@ -62,7 +63,7 @@ int SimInf_arg_check_integer(SEXP arg)
  */
 int SimInf_arg_check_matrix(SEXP arg)
 {
-    if (!isMatrix(arg))
+    if (!Rf_isMatrix(arg))
         return -1;
     return 0;
 }
@@ -77,7 +78,7 @@ int SimInf_arg_check_model(SEXP arg)
 {
     static const char *valid[] = {"SimInf_model", ""};
 
-    if (!isS4(arg) || R_check_class_etc(arg, valid) < 0)
+    if (!Rf_isS4(arg) || R_check_class_etc(arg, valid) < 0)
         return -1;
 
     return 0;
@@ -94,14 +95,14 @@ int SimInf_get_seed(unsigned long int *out, SEXP seed)
 {
     int err = 0;
 
-    if (!isNull(seed)) {
-        if (isInteger(seed) || isReal(seed)) {
+    if (!Rf_isNull(seed)) {
+        if (Rf_isInteger(seed) || Rf_isReal(seed)) {
             switch (LENGTH(seed)) {
             case 0:
                 *out = (unsigned long int)time(NULL);
                 break;
             case 1:
-                if (isInteger(seed)) {
+                if (Rf_isInteger(seed)) {
                     if (INTEGER(seed)[0] == NA_INTEGER)
                         err = SIMINF_INVALID_SEED_VALUE;
                     else
@@ -137,9 +138,9 @@ int SimInf_get_threads(int *out, SEXP threads)
 {
     int err = 0;
 
-    if (isNull(threads)) {
+    if (Rf_isNull(threads)) {
         *out = 0;
-    } else if (isInteger(threads)) {
+    } else if (Rf_isInteger(threads)) {
         if (LENGTH(threads) != 1)
             err = SIMINF_INVALID_THREADS_VALUE;
         else if (INTEGER(threads)[0] == NA_INTEGER)
@@ -148,7 +149,7 @@ int SimInf_get_threads(int *out, SEXP threads)
             err = SIMINF_INVALID_THREADS_VALUE;
         else
             *out = INTEGER(threads)[0];
-    } else if (isReal(threads)) {
+    } else if (Rf_isReal(threads)) {
         if (LENGTH(threads) != 1)
             err = SIMINF_INVALID_THREADS_VALUE;
         else if (!R_finite(REAL(threads)[0]))

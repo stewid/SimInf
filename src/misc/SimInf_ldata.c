@@ -1,7 +1,8 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015 - 2017  Stefan Engblom
- *  Copyright (C) 2015 - 2017  Stefan Widgren
+ *  Copyright (C) 2017 - 2018 Robin Eriksson
+ *  Copyright (C) 2015 - 2018 Stefan Engblom
+ *  Copyright (C) 2015 - 2018 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -97,7 +98,7 @@ SEXP SimInf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
     Nld += n_data;
 
     /* Allocate and initialize memory for ldata */
-    PROTECT(result = allocMatrix(REALSXP, Nld, Nn));
+    PROTECT(result = Rf_allocMatrix(REALSXP, Nld, Nn));
     memset(REAL(result), 0, Nn * Nld * sizeof(double));
     ldata = REAL(result);
 
