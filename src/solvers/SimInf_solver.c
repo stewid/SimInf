@@ -320,14 +320,12 @@ cleanup:
 int SimInf_scheduled_events_create(
     SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng)
 {
-    int error = 0, i;
+    int error = SIMINF_ERR_ALLOC_MEMORY_BUFFER, i;
     SimInf_scheduled_events *events = NULL;
 
     events = calloc(args->Nthread, sizeof(SimInf_scheduled_events));
-    if (!events) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+    if (!events)
         goto on_error;
-    }
 
     for (i = 0; i < args->Nthread; i++) {
         /* Matrices to process events */
@@ -337,37 +335,27 @@ int SimInf_scheduled_events_create(
 
         /* Scheduled events */
         events[i].E1 = calloc(1, sizeof(SimInf_scheduled_events_data));
-        if (!events[i].E1) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!events[i].E1)
             goto on_error;
-        }
 
         if (i == 0) {
             events[i].E2 = calloc(1, sizeof(SimInf_scheduled_events_data));
-            if (!events[i].E2) {
-                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            if (!events[i].E2)
                 goto on_error;
-            }
         }
 
         events[i].individuals = calloc(args->Nc, sizeof(int));
-        if (!events[i].individuals) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!events[i].individuals)
             goto on_error;
-        }
 
         events[i].u_tmp = calloc(args->Nc, sizeof(int));
-        if (!events[i].u_tmp) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!events[i].u_tmp)
             goto on_error;
-        }
 
         /* Random number generator */
         events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
-        if (!events[i].rng) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!events[i].rng)
             goto on_error;
-        }
         gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
     }
 
@@ -474,34 +462,34 @@ void SimInf_process_E1_events(
            m.tt >= e1.time[e.E1_index] &&
            !m.errcode)
     {
-        const int j = e.E1_index;
-        const int s = e1.select[j];
-        const int node = e1.node[j] - m.Ni;
+        const int i = e.E1_index;
+        const int s = e1.select[i];
+        const int node = e1.node[i] - m.Ni;
 
-        if (e1.node[j] < 0 || e1.node[j] >= m.Ntot) {
+        if (e1.node[i] < 0 || e1.node[i] >= m.Ntot) {
             m.errcode = SIMINF_ERR_NODE_OUT_OF_BOUNDS;
             break;
         }
 
-        if (e1.event[j] == ENTER_EVENT) {
+        if (e1.event[i] == ENTER_EVENT) {
             /* All individuals enter first non-zero compartment,
              * i.e. a non-zero entry in element in the select
              * column. */
             if (e.jcE[s] < e.jcE[s + 1]) {
-                m.u[node * m.Nc + e.irE[e.jcE[s]]] += e1.n[j];
+                m.u[node * m.Nc + e.irE[e.jcE[s]]] += e1.n[i];
                 if (m.u[node * m.Nc + e.irE[e.jcE[s]]] < 0)
                     m.errcode = SIMINF_ERR_NEGATIVE_STATE;
             }
         } else {
             m.errcode = SimInf_sample_select(
                 e.irE, e.jcE, m.Nc, m.u, node,
-                e1.select[j], e1.n[j], e1.proportion[j],
+                e1.select[i], e1.n[i], e1.proportion[i],
                 e.individuals, e.u_tmp, e.rng);
 
             if (m.errcode)
                 break;
 
-            if (e1.event[j] == EXIT_EVENT) {
+            if (e1.event[i] == EXIT_EVENT) {
                 int ii;
 
                 for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
@@ -521,7 +509,7 @@ void SimInf_process_E1_events(
                 for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
                     const int jj = e.irE[ii];
                     const int kk = node * m.Nc + jj;
-                    const int ll = e.N[e1.shift[j] * m.Nc + jj];
+                    const int ll = e.N[e1.shift[i] * m.Nc + jj];
 
                     /* Add individuals to new compartments in node */
                     m.u[kk + ll] += e.individuals[jj];
