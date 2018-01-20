@@ -238,7 +238,7 @@ static int SimInf_solver_aem(
                 *&method[i] = ma;
 
                 /* (2) Incorporate all scheduled E1 events */
-                SimInf_process_E1_events(&model[i], &events[i], uu);
+                SimInf_process_E1_events(&model[i], &events[i]);
 	    }
 
             #pragma omp barrier
@@ -246,7 +246,7 @@ static int SimInf_solver_aem(
             #pragma omp master
             {
                 /* (3) Incorporate all scheduled E2 events */
-                SimInf_process_E2_events(model, events, uu);
+                SimInf_process_E2_events(model, events);
             }
 
             #pragma omp barrier

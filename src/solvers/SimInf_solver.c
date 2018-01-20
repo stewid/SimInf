@@ -464,8 +464,7 @@ void SimInf_scheduled_events_free(
 
 void SimInf_process_E1_events(
     SimInf_compartment_model *model,
-    SimInf_scheduled_events *events,
-    int *uu)
+    SimInf_scheduled_events *events)
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_scheduled_events e = *&events[0];
@@ -477,7 +476,7 @@ void SimInf_process_E1_events(
     {
         const int j = e.E1_index;
         const int s = e1.select[j];
-        const int node = e1.node[j];
+        const int node = e1.node[j] - m.Ni;
 
         if (e1.node[j] < 0 || e1.node[j] >= m.Ntot) {
             m.errcode = SIMINF_ERR_NODE_OUT_OF_BOUNDS;
@@ -489,13 +488,13 @@ void SimInf_process_E1_events(
              * i.e. a non-zero entry in element in the select
              * column. */
             if (e.jcE[s] < e.jcE[s + 1]) {
-                uu[node * m.Nc + e.irE[e.jcE[s]]] += e1.n[j];
-                if (uu[node * m.Nc + e.irE[e.jcE[s]]] < 0)
+                m.u[node * m.Nc + e.irE[e.jcE[s]]] += e1.n[j];
+                if (m.u[node * m.Nc + e.irE[e.jcE[s]]] < 0)
                     m.errcode = SIMINF_ERR_NEGATIVE_STATE;
             }
         } else {
             m.errcode = SimInf_sample_select(
-                e.irE, e.jcE, m.Nc, uu, node,
+                e.irE, e.jcE, m.Nc, m.u, node,
                 e1.select[j], e1.n[j], e1.proportion[j],
                 e.individuals, e.u_tmp, e.rng);
 
@@ -510,8 +509,8 @@ void SimInf_process_E1_events(
                     const int kk = node * m.Nc + jj;
 
                     /* Remove individuals from node */
-                    uu[kk] -= e.individuals[jj];
-                    if (uu[kk] < 0) {
+                    m.u[kk] -= e.individuals[jj];
+                    if (m.u[kk] < 0) {
                         m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         break;
                     }
@@ -525,16 +524,16 @@ void SimInf_process_E1_events(
                     const int ll = e.N[e1.shift[j] * m.Nc + jj];
 
                     /* Add individuals to new compartments in node */
-                    uu[kk + ll] += e.individuals[jj];
-                    if (uu[kk + ll] < 0) {
+                    m.u[kk + ll] += e.individuals[jj];
+                    if (m.u[kk + ll] < 0) {
                         m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         break;
                     }
 
                     /* Remove individuals from previous compartments
                      * in node */
-                    uu[kk] -= e.individuals[jj];
-                    if (uu[kk] < 0) {
+                    m.u[kk] -= e.individuals[jj];
+                    if (m.u[kk] < 0) {
                         m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                         break;
                     }
@@ -543,7 +542,7 @@ void SimInf_process_E1_events(
         }
 
         /* Indicate node for update */
-        m.update_node[node - m.Ni] = 1;
+        m.update_node[node] = 1;
         e.E1_index++;
     }
 
@@ -553,8 +552,7 @@ void SimInf_process_E1_events(
 
 void SimInf_process_E2_events(
     SimInf_compartment_model *model,
-    SimInf_scheduled_events *events,
-    int *uu)
+    SimInf_scheduled_events *events)
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_scheduled_events e = *&events[0];
@@ -580,7 +578,7 @@ void SimInf_process_E2_events(
         }
 
         m.errcode = SimInf_sample_select(
-            e.irE, e.jcE, m.Nc, uu, node,
+            e.irE, e.jcE, m.Nc, m.u, node,
             e2.select[e.E2_index], e2.n[e.E2_index],
             e2.proportion[e.E2_index], e.individuals,
             e.u_tmp, e.rng);
@@ -599,15 +597,15 @@ void SimInf_process_E2_events(
                 e.N[e2.shift[e.E2_index] * m.Nc + jj];
 
             /* Add individuals to dest */
-            uu[k1 + ll] += e.individuals[jj];
-            if (uu[k1 + ll] < 0) {
+            m.u[k1 + ll] += e.individuals[jj];
+            if (m.u[k1 + ll] < 0) {
                 m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                 break;
             }
 
             /* Remove individuals from node */
-            uu[k2] -= e.individuals[jj];
-            if (uu[k2] < 0) {
+            m.u[k2] -= e.individuals[jj];
+            if (m.u[k2] < 0) {
                 m.errcode = SIMINF_ERR_NEGATIVE_STATE;
                 break;
             }

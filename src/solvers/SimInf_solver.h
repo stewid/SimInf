@@ -376,10 +376,10 @@ void SimInf_scheduled_events_free(
     SimInf_scheduled_events *events, int Nthread);
 
 void SimInf_process_E1_events(
-    SimInf_compartment_model *model, SimInf_scheduled_events *events, int *uu);
+    SimInf_compartment_model *model, SimInf_scheduled_events *events);
 
 void SimInf_process_E2_events(
-    SimInf_compartment_model *model, SimInf_scheduled_events *events, int *uu);
+    SimInf_compartment_model *model, SimInf_scheduled_events *events);
 
 void SimInf_store_solution_sparse(SimInf_compartment_model *model);
 
