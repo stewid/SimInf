@@ -320,14 +320,12 @@ cleanup:
 int SimInf_scheduled_events_create(
     SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng)
 {
-    int error = 0, i;
+    int error = SIMINF_ERR_ALLOC_MEMORY_BUFFER, i;
     SimInf_scheduled_events *events = NULL;
 
     events = calloc(args->Nthread, sizeof(SimInf_scheduled_events));
-    if (!events) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+    if (!events)
         goto on_error;
-    }
 
     for (i = 0; i < args->Nthread; i++) {
         /* Matrices to process events */
@@ -337,37 +335,27 @@ int SimInf_scheduled_events_create(
 
         /* Scheduled events */
         events[i].E1 = calloc(1, sizeof(SimInf_scheduled_events_data));
-        if (!events[i].E1) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!events[i].E1)
             goto on_error;
-        }
 
         if (i == 0) {
             events[i].E2 = calloc(1, sizeof(SimInf_scheduled_events_data));
-            if (!events[i].E2) {
-                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+            if (!events[i].E2)
                 goto on_error;
-            }
         }
 
         events[i].individuals = calloc(args->Nc, sizeof(int));
-        if (!events[i].individuals) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!events[i].individuals)
             goto on_error;
-        }
 
         events[i].u_tmp = calloc(args->Nc, sizeof(int));
-        if (!events[i].u_tmp) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!events[i].u_tmp)
             goto on_error;
-        }
 
         /* Random number generator */
         events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
-        if (!events[i].rng) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        if (!events[i].rng)
             goto on_error;
-        }
         gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
     }
 
