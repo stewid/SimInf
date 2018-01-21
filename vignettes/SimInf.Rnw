@@ -1835,8 +1835,13 @@ animals to the susceptible compartment $S$.  The second column is for
 \textit{exit} events (deaths) and \textit{external transfer} events
 (livestock movements); sample animals from the $S$, $I$, $R$ or $V$
 compartments.  Finally, the third column is for \textit{internal
-  transfer} events; sample individuals from the $S$, $I$ or $R$
-compartments for vaccination.
+  transfer} events (vaccination); sample individuals from the $S$, $I$
+or $R$ compartments.  Then define the shift matrix $N$ to process
+\textit{internal transfer} events (vaccination); move sampled animals
+from the $S$ compartment four steps forward to the $V$ compartment.
+Similarly, move sampled animals from the $I$ compartment three steps
+forward to the $V$ compartment, and finally, move sampled individuals
+from the $R$ compartment one step forward.
 
 {\small
 \[
