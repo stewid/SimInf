@@ -29,7 +29,7 @@
 #endif
 
 #include "SimInf.h"
-#include "SimInf_solver_ssa.h"
+#include "SimInf_solver_ssm.h"
 
 /**
  * Siminf solver
