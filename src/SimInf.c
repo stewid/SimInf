@@ -27,7 +27,7 @@
 
 #include "SimInf_arg.h"
 #include "solvers/SimInf_solver.h"
-#include "solvers/ssa/SimInf_solver_ssa.h"
+#include "solvers/ssm/SimInf_solver_ssm.h"
 #include "solvers/aem/SimInf_solver_aem.h"
 
 /**
