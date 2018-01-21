@@ -1,7 +1,14 @@
 SimInf 5.1.0.9000
 -----------------
 
+BREAKING CHANGES
 
+* Removed the following methods: 'U', 'V', 'recovered', 'susceptible',
+  and 'infected'. Use the new 'trajectory' method instead, see the
+  documentation.
+
+* Renamed the type option 'bnp' to 'nop' in the 'prevalence' method to
+  calculate the proportion of nodes with at least one case.
 
 SimInf 5.1.0
 ------------
