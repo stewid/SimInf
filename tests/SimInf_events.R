@@ -498,6 +498,16 @@ events <- data.frame(event = 3, time = 2, node = 1, dest = 2,
                      n = 1, proportion = 0, select = 2, shift = 0)
 model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16, gamma = 0.077)
 model@events@node <- -1L
-res <- tools::assertError(.Call("SIR_run", model, NULL, NULL, NULL))
+res <- tools::assertError(.Call(SimInf:::SIR_run, model, NULL, NULL, NULL))
 stopifnot(length(grep("'node' is out of bounds.",
+                      res[[1]]$message)) > 0)
+
+## Check that it fails for an invalid event type.
+u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
+events <- data.frame(event = 0, time = 2, node = 1, dest = 0,
+                     n = 1, proportion = 0, select = 2, shift = 0)
+model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16, gamma = 0.077)
+model@events@event <- 4L
+res <- tools::assertError(.Call(SimInf:::SIR_run, model, NULL, NULL, NULL))
+stopifnot(length(grep("Undefined event type.",
                       res[[1]]$message)) > 0)
