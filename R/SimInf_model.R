@@ -1366,8 +1366,11 @@ setMethod("run",
                   expr <- ".Call(run_fn, model, threads, seed, solver, PACKAGE = 'SimInf')"
               }
 
-              ## Run model
-              eval(parse(text = expr))
+              ## Run the model. Re-throw any error without the call
+              ## included in the error message to make it cleaner.
+              tryCatch(eval(parse(text = expr)), error = function(e) {
+                  stop(e$message, call. = FALSE)
+              })
           }
 )
 
