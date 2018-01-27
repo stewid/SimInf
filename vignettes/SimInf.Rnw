@@ -471,7 +471,8 @@ necessary data structures for that specific model.  After the model is
 initialized, the simulation is started with a call to the \code{run}
 method.  To facilitate post-processing and visualization of output
 data, the predefined models in \pkg{SimInf} provide several utility
-functions, for example, \code{prevalence} and \code{plot}.
+functions, for example, \code{trajectory}, \code{prevalence} and
+\code{plot}.
 
 \begin{table}
   \small
