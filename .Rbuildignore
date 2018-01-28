@@ -22,3 +22,5 @@ src/gsl
 ^vignettes/img/internal\.tex$
 ^vignettes/img/SIR\.tex$
 ^vignettes/img/SISe3_sp\.tex$
+^vignettes/img/temporal-networks\.svg$
+^vignettes/img/temporal-networks\.tex$
