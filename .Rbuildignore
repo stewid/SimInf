@@ -15,12 +15,5 @@ src/gsl
 ^vignettes/SimInf\.blg$
 ^vignettes/SimInf\.log$
 ^vignettes/SimInf\.out$
-^vignettes/img/enter\.tex$
-^vignettes/img/exit\.tex$
-^vignettes/img/external\.tex$
-^vignettes/img/external-shift\.tex$
-^vignettes/img/internal\.tex$
-^vignettes/img/SIR\.tex$
-^vignettes/img/SISe3_sp\.tex$
-^vignettes/img/temporal-networks\.svg$
-^vignettes/img/temporal-networks\.tex$
+^vignettes/img/[^.]+\.svg$
+^vignettes/img/[^.]+\.tex$
