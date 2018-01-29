@@ -1,6 +1,11 @@
 SimInf 5.1.0.9000
 -----------------
 
+IMPROVEMENTS
+
+* Added the 'trajectory' method to facilitate post-processing of
+  simulation data. See documentation.
+
 BREAKING CHANGES
 
 * Removed the following methods: 'U', 'V', 'recovered', 'susceptible',
