@@ -6,8 +6,8 @@
 
 \begin{document}
 
-\definecolor{burntorange}{cmyk}{0,0.52,1,0}
 \tikzstyle{holding}=[draw,circle,orange!60, fill=orange!20, text=black, minimum size=4ex]
+\tikzstyle{infected-holding}=[draw,rectangle, blue!60, fill=blue!20, text=black, minimum size=4ex]
 
 \begin{tikzpicture}
   \sffamily
@@ -26,7 +26,7 @@
     \node[holding] (a) at (0,0) {a};
     \node[holding] (b) at (-1,1) {b};
     \node[holding] (c) at (0,2) {c};
-    \node[holding] (d) at (1,2) {d};
+    \node[infected-holding] (d) at (1,2) {d};
     \node[holding] (e) at (1,1) {e};
     \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (a) -- (b)
       node[midway, right] {\footnotesize 2};
@@ -39,7 +39,7 @@
     \node[holding] (a) at (4,0) {a};
     \node[holding] (b) at (3,1) {b};
     \node[holding] (c) at (4,2) {c};
-    \node[holding] (d) at (5,2) {d};
+    \node[infected-holding] (d) at (5,2) {d};
     \node[holding] (e) at (5,1) {e};
     \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (c) -- (a)
       node[midway, left] {\footnotesize 4};
@@ -54,7 +54,7 @@
     \node[holding] (a) at (8,0) {a};
     \node[holding] (b) at (7,1) {b};
     \node[holding] (c) at (8,2) {c};
-    \node[holding] (d) at (9,2) {d};
+    \node[infected-holding] (d) at (9,2) {d};
     \node[holding] (e) at (9,1) {e};
     \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (d) -- (c)
       node[midway, above] {\footnotesize 3};
