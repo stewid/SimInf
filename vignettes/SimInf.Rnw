@@ -206,12 +206,14 @@ numerical approach underlying \pkg{SimInf} is described in
   \begin{center}
     \includegraphics[width=0.8\linewidth]{img/temporal-network.pdf}
   \end{center}
-  \caption{Illustration of three snapshots of movements in a temporal
-    network.  Each snapshot illustrates movements during one time
-    unit, for example, one day.  The network has $N = 5$ nodes
-    ($a$--$e$) and arrows represent movements of individuals from a
-    source node to a destination node (labels denote the size of each
-    shipment).
+  \caption{Illustration of three snapshots in a temporal network.
+    Each snapshot illustrates movements during one time unit, for
+    example, during one day.  The network has $N = 5$ nodes ($a$--$e$)
+    where the rectangle illustrate an infected node and circles
+    non-infected nodes.  Furthermore, arrows indicate movements from a
+    source node to a destination node, where labels denote size of the
+    shipment.  In this example, infection can only spread from $d$ to
+    $c$ at $t_{n+2}$.
     \label{fig:temporal-network}}
 \end{figure}
 
