@@ -710,12 +710,12 @@ to write the state of the system to the sparse matrices
 if the model contains many nodes and time-points, but where only a few
 of the data points are of interest.  In order to use this feature,
 call the \code{U} and \code{V} methods (before running a trajectory)
-with a sparse matrix with non-zero entries where the simulator should
-write the state of the system.  The initial state in each node is
-specified by the two matrices \code{u0} and \code{v0} where \code{u0[,
-    i]} is the initial number of individuals in each compartment at
-node $i$ and \code{v0[, i]} is the initial continuous state in node
-$i$.
+with a \code{data.frame} that specify the nodes, time-points and
+compartments where the simulator should write the state of the system.
+The initial state in each node is specified by the two matrices
+\code{u0} and \code{v0} where \code{u0[, i]} is the initial number of
+individuals in each compartment at node $i$ and \code{v0[, i]} is the
+initial continuous state in node $i$.
 
 \begin{table}[!ht]
   \small
