@@ -2,66 +2,59 @@
 \documentclass[tikz]{standalone}
 
 \usepackage{tikz}
-\usetikzlibrary{arrows,shapes}
+\usetikzlibrary{arrows,positioning,shapes}
 
 \begin{document}
 
 \tikzstyle{holding}=[draw,circle,orange!60, fill=orange!20, text=black, minimum size=4ex]
-\tikzstyle{infected-holding}=[draw,rectangle, blue!60, fill=blue!20, text=black, minimum size=4ex]
+\tikzstyle{infected-holding}=[draw,circle, blue!60, fill=blue!20, text=black, minimum size=4ex]
 
 \begin{tikzpicture}
   \sffamily
 
   \draw[>=stealth,->] (-1,-0.7) -- (9,-0.7);
-  \node at (0,-0.9) {\tiny $t_n$};
+  \node at (0,-0.9) {\tiny $1$};
   \draw (0,-.65) -- (0,-0.75);
-  \node at (4,-0.9) {\tiny $t_{n+1}$};
+  \node at (4,-0.9) {\tiny $2$};
   \draw (4,-.65) -- (4,-0.75);
-  \node at (8,-0.9) {\tiny $t_{n+2}$};
+  \node at (8,-0.9) {\tiny $3$};
   \draw (8,-.65) -- (8,-0.75);
   \node at (4,-1.2) {\tiny Time};
 
-  \begin{scope}[name prefix = t0-]
+  \begin{scope}[name prefix = t1-, node distance=0.7cm]
     \draw[gray, rounded corners] (-1.5,-0.5) rectangle (1.5,2.5);
-    \node[holding] (a) at (0,0) {a};
-    \node[holding] (b) at (-1,1) {b};
-    \node[holding] (c) at (0,2) {c};
-    \node[infected-holding] (d) at (1,2) {d};
-    \node[holding] (e) at (1,1) {e};
-    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (a) -- (b)
-      node[midway, right] {\footnotesize 2};
-    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (a) -- (d)
-      node[midway, left] {\footnotesize 9};
+    \node[holding] (3) at (0,0) {3};
+    \node[holding] (4) [above left=of 3] {4};
+    \node[infected-holding] (1) [above =1.4cm of 3] {1};
+    \node[holding] (2) [above right=of 3] {2};
+    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (3) -- (2)
+      node[midway, left] {\footnotesize $9$};
+    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (3) -- (4)
+      node[midway, right] {\footnotesize $2$};
   \end{scope}
 
-  \begin{scope}[name prefix = t1-]
+  \begin{scope}[name prefix = t2-, node distance=0.7cm]
     \draw[gray,rounded corners] (2.5,-0.5) rectangle (5.5,2.5);
-    \node[holding] (a) at (4,0) {a};
-    \node[holding] (b) at (3,1) {b};
-    \node[holding] (c) at (4,2) {c};
-    \node[infected-holding] (d) at (5,2) {d};
-    \node[holding] (e) at (5,1) {e};
-    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (c) -- (a)
-      node[midway, left] {\footnotesize 4};
-    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (c) -- (b)
-      node[midway, right] {\footnotesize 5};
-    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (c) -- (e)
-      node[midway, left] {\footnotesize 7};
+    \node[holding] (3) at (4,0) {3};
+    \node[holding] (4) [above left=of 3] {4};
+    \node[infected-holding] (1) [above =1.4cm of 3] {1};
+    \node[holding] (2) [above right=of 3] {2};
+    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (1) -- (3)
+      node[midway, right] {\footnotesize $8$};
+    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (4) -- (3)
+      node[midway, above] {\footnotesize $3$};
   \end{scope}
 
-  \begin{scope}[name prefix = t2-]
+  \begin{scope}[name prefix = t3-, node distance=0.7cm]
     \draw[gray,rounded corners] (6.5,-0.5) rectangle (9.5,2.5);
-    \node[holding] (a) at (8,0) {a};
-    \node[holding] (b) at (7,1) {b};
-    \node[holding] (c) at (8,2) {c};
-    \node[infected-holding] (d) at (9,2) {d};
-    \node[holding] (e) at (9,1) {e};
-    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (d) -- (c)
-      node[midway, above] {\footnotesize 3};
-    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (c) -- (b)
-      node[midway, right] {\footnotesize 1};
-    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (a) -- (e)
-      node[midway, left] {\footnotesize 8};
+    \node[holding] (3) at (8,0) {3};
+    \node[holding] (4) [above left=of 3] {4};
+    \node[infected-holding] (1) [above =1.4cm of 3] {1};
+    \node[holding] (2) [above right=of 3] {2};
+    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (3) -- (2)
+      node[midway, left] {\footnotesize $5$};
+    \draw[>=stealth,shorten <=2pt, shorten >=2pt,->] (4) -- (2)
+      node[midway, above] {\footnotesize $4$};
   \end{scope}
 
 \end{tikzpicture}
