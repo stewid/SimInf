@@ -2,12 +2,14 @@
 \documentclass[tikz]{standalone}
 
 \usepackage{tikz}
-\usetikzlibrary{arrows,positioning,shapes}
+\usetikzlibrary{arrows,patterns,positioning,shapes}
 
 \begin{document}
 
 \tikzstyle{holding}=[draw,circle,orange!60, fill=orange!20, text=black, minimum size=4ex]
 \tikzstyle{infected-holding}=[draw,circle, blue!60, fill=blue!20, text=black, minimum size=4ex]
+\tikzstyle{maybe-infected-holding}=[draw,circle,orange!60, text=black, minimum size=4ex,
+  preaction={fill, orange!20}, pattern=north east lines, pattern color=blue!30]
 
 \begin{tikzpicture}
   \sffamily
@@ -47,7 +49,7 @@
 
   \begin{scope}[name prefix = t3-, node distance=0.7cm]
     \draw[gray,rounded corners] (6.5,-0.5) rectangle (9.5,2.5);
-    \node[holding] (3) at (8,0) {3};
+    \node[maybe-infected-holding] (3) at (8,0) {3};
     \node[holding] (4) [above left=of 3] {4};
     \node[infected-holding] (1) [above =1.4cm of 3] {1};
     \node[holding] (2) [above right=of 3] {2};
