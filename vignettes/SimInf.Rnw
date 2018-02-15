@@ -223,16 +223,15 @@ numerical approach underlying \pkg{SimInf} is described in
       \end{center}
     \end{subfigure}
   \caption{Illustration of livestock movements in a temporal network.
-    (a) Each snapshot illustrates movements during one time unit, for
-    example, during one day.  The network has $N = 4$ nodes where
-    ($1$) is an infected node and ($2$--$4$) are non-infected nodes.
-    Arrows indicate animal movements from a source node to a
-    destination node, where labels denote the size of the shipment.
-    In this example, infection may spread through livestock movements
-    from $1 \rightarrow 3$ at $t=2$ (indicated by blue lines in $3$ at
-    $t=3$) and then from $3 \rightarrow 2$ at $t=3$.  (b) The
-    livestock movements represented as events $(\mathit{source},
-    \mathit{destination}, t, n)$.
+    (a) Each snapshot depicts movements during one time unit, for
+    example, a day.  The network has $N = 4$ nodes where node $1$ is
+    infected and $2$--$4$ are non-infected nodes.  Arrows indicate
+    animal movements from a source node to a destination node, where
+    labels denote the size of the shipment.  In this example,
+    infection may spread by livestock movements from $1$ to $3$ at
+    $t=2$ (indicated by blue lines in node $3$ at $t=3$) and then from
+    $3$ to $2$ at $t=3$.  (b) The livestock movements represented as
+    events $(\mathit{source}, \mathit{destination}, t, n)$.
     \label{fig:temporal-network}}
 \end{figure}
 
