@@ -1,7 +1,8 @@
 # SimInf, a framework for stochastic disease spread simulations
 # Copyright (C) 2015  Pavol Bauer
-# Copyright (C) 2015 - 2017  Stefan Engblom
-# Copyright (C) 2015 - 2017  Stefan Widgren
+# Copyright (C) 2017 - 2018  Robin Eriksson
+# Copyright (C) 2015 - 2018  Stefan Engblom
+# Copyright (C) 2015 - 2018  Stefan Widgren
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -127,7 +128,7 @@ fi
 MODELS_OBJ=`"${RSCRIPT}" -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
 AC_SUBST([PKG_CPPFLAGS], ["-I. -Icore -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS}"])
-AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS} -DR_NO_REMAP"])
+AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"])
 AC_SUBST(MODELS_OBJ)
 
@@ -138,7 +139,7 @@ echo "
 
     PKG_CPPFLAGS..............: -I. -Icore -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS}
     PKG_LIBS..................: ${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}
-    PKG_CFLAGS................: ${OPENMP_CFLAGS} -DR_NO_REMAP
+    PKG_CFLAGS................: ${OPENMP_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS
     Have support for OpenMP...: ${ac_pkg_openmp}
 
   --------------------------------------------------
