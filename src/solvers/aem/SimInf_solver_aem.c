@@ -19,6 +19,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <float.h>
 #include <string.h>
 #include <math.h>
 #include <gsl/gsl_rng.h>
