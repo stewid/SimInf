@@ -256,9 +256,9 @@ SEXP SimInf_run(
 
     /* Run the simulation solver. */
     if (Rf_isNull(solver))
-        error = SimInf_run_solver_ssa(&args);
-    else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssa") == 0)
-        error = SimInf_run_solver_ssa(&args);
+        error = SimInf_run_solver_ssm(&args);
+    else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssm") == 0)
+        error = SimInf_run_solver_ssm(&args);
     else if (strcmp(CHAR(STRING_ELT(solver, 0)), "aem") == 0)
         error = SimInf_run_solver_aem(&args);
     else

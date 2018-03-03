@@ -36,7 +36,7 @@
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver_ssa(
+static int SimInf_solver_ssm(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events)
 {
@@ -278,7 +278,7 @@ static int SimInf_solver_ssa(
  * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-int SimInf_run_solver_ssa(SimInf_solver_args *args)
+int SimInf_run_solver_ssm(SimInf_solver_args *args)
 {
     int error = 0;
     gsl_rng *rng = NULL;
@@ -300,7 +300,7 @@ int SimInf_run_solver_ssa(SimInf_solver_args *args)
     if (error)
         goto cleanup;
 
-    error = SimInf_solver_ssa(model, events);
+    error = SimInf_solver_ssm(model, events);
 
 cleanup:
     gsl_rng_free(rng);

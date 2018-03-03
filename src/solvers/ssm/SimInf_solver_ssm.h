@@ -1,8 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015 - 2017  Stefan Engblom
- *  Copyright (C) 2015 - 2017  Stefan Widgren
+ *  Copyright (C) 2015 Pavol Bauer
+ *  Copyright (C) 2017 - 2018 Robin Eriksson
+ *  Copyright (C) 2015 - 2017 Stefan Engblom
+ *  Copyright (C) 2015 - 2017 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,13 +19,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_SOLVER_SSA_H
-#define INCLUDE_SIMINF_SOLVER_SSA_H
+#ifndef INCLUDE_SIMINF_SOLVER_SSM_H
+#define INCLUDE_SIMINF_SOLVER_SSM_H
 
 #include "solvers/SimInf_solver.h"
 
-/* Declaration of the function to initialize and run the SimInf ssa
+/* Declaration of the function to initialize and run the SimInf ssm
  * solver */
-int SimInf_run_solver_ssa(SimInf_solver_args *args);
+int SimInf_run_solver_ssm(SimInf_solver_args *args);
 
 #endif
