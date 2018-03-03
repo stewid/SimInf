@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2017  Robin Eriksson
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2017 - 2018  Robin Eriksson
+## Copyright (C) 2015 - 2018  Stefan Engblom
+## Copyright (C) 2015 - 2018  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -162,15 +162,7 @@ if (SimInf:::have_openmp()) {
 }
 
 ## Check solver argument
-res <- tools::assertError(run(model, threads = 1, solver = 1))
-stopifnot(length(grep("Invalid 'solver' value.",
-                      res[[1]]$message)) > 0)
-res <- tools::assertError(run(model, threads = 1, solver = c("ssa", "aem")))
-stopifnot(length(grep("Invalid 'solver' value.",
-                      res[[1]]$message)) > 0)
-res <- tools::assertError(run(model, threads = 1, solver = NA_character_))
-stopifnot(length(grep("Invalid 'solver' value.",
-                      res[[1]]$message)) > 0)
-res <- tools::assertError(run(model, threads = 1, solver = "non-existing-solver"))
-stopifnot(length(grep("Invalid 'solver' value.",
-                      res[[1]]$message)) > 0)
+tools::assertError(run(model, threads = 1, solver = 1))
+tools::assertError(run(model, threads = 1, solver = c("ssa", "aem")))
+tools::assertError(run(model, threads = 1, solver = NA_character_))
+tools::assertError(run(model, threads = 1, solver = "non-existing-solver"))
