@@ -24,6 +24,7 @@
 
 #include <gsl/gsl_rng.h>
 
+#include "kvec.h"
 #include "SimInf.h"
 
 /**
@@ -214,29 +215,30 @@ typedef struct SimInf_solver_args
 } SimInf_solver_args;
 
 /**
- * Structure that represents scheduled events.
+ * Structure with data for a scheduled event.
  */
-typedef struct SimInf_scheduled_events_data
+typedef struct SimInf_scheduled_event
 {
-    int len;            /**< Number of events. */
-    int *event;         /**< The type of event i. */
-    int *time;          /**< The time of event i. */
-    int *node;          /**< The source node of event i. */
-    int *dest;          /**< The dest node of event i. */
-    int *n;             /**< The number of individuals in the scheduled
-                         *   event. n[i] >= 0. */
-    double *proportion; /**< If n[i] equals zero, then the number of
-                         *   individuals to sample is calculated by
-                         *   summing the number of individuals in the
-                         *   states determined by select[i] and
-                         *   multiplying with the proportion.
-                         *   0 <= p[i] <= 1. */
-    int *select;        /**< Column j in the event matrix that
-                         *   determines the states to sample from. */
-    int *shift;         /**< Column j in the shift matrix that
-                         *   determines the shift of the internal
-                         *   and external transfer event. */
-} SimInf_scheduled_events_data;
+    int event;         /**< The type of the event. */
+    int time;          /**< The time for the event. */
+    int node;          /**< The source node of the event. */
+    int dest;          /**< The dest node of the event. */
+    int n;             /**< The number of individuals in the scheduled
+                        *   event. n >= 0. */
+    double proportion; /**< If n equals zero, then the number of
+                        *   individuals to sample is calculated by
+                        *   summing the number of individuals in the
+                        *   states determined by select and
+                        *   multiplying with the proportion.  0 <=
+                        *   proportion <= 1. */
+    int select;        /**< Column j in the event matrix that
+                        *   determines the states to sample from. */
+    int shift;         /**< Column j in the shift matrix that
+                        *   determines the shift of the internal
+                        *   and external transfer event. */
+} SimInf_scheduled_event;
+
+typedef kvec_t(SimInf_scheduled_event) SimInf_events_t;
 
 /**
  * Structure with data to process scheduled events.
@@ -255,10 +257,10 @@ typedef struct SimInf_scheduled_events
                            *   transfer events. */
 
     /*** Scheduled events ***/
-    SimInf_scheduled_events_data *E1; /**< E1 events to process. */
+    SimInf_events_t E1;   /**< E1 events to process. */
     int E1_index;         /**< Index to the next E1 event to
                            *   process. */
-    SimInf_scheduled_events_data *E2; /**< E2 events to process. */
+    SimInf_events_t E2;   /**< E2 events to process. */
     int E2_index;         /**< Index to the next E2 event to
                            *   process. */
 

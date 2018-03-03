@@ -146,46 +146,6 @@ static int SimInf_sample_select(
 }
 
 /**
- * Allocate memory for scheduled events
- *
- * @param e scheduled_events structure for events.
- * @param n Number of events.
- * @return 0 on success else SIMINF_ERR_ALLOC_MEMORY_BUFFER
- */
-static int SimInf_allocate_events(SimInf_scheduled_events_data *e, int n)
-{
-    if (e && n > 0) {
-        e->len = n;
-        e->event = malloc(n * sizeof(int));
-        if (!e->event)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->time = malloc(n * sizeof(int));
-        if (!e->time)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->node = malloc(n * sizeof(int));
-        if (!e->node)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->dest = malloc(n * sizeof(int));
-        if (!e->dest)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->n = malloc(n * sizeof(int));
-        if (!e->n)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->proportion = malloc(n * sizeof(double));
-        if (!e->proportion)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->select = malloc(n * sizeof(int));
-        if (!e->select)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        e->shift = malloc(n * sizeof(int));
-        if (!e->shift)
-            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-    }
-
-    return 0;
-}
-
-/**
  * Split scheduled events to E1 and E2 events by number of threads
  * used during simulation
  *
@@ -220,91 +180,32 @@ static int SimInf_split_events(
     const int *select, const int *shift, int Nn, int Nthread)
 {
     int i;
-    int error = 0;
     int chunk_size = Nn / Nthread;
-    int *E1_i = NULL;
-    int E2_i = 0;
-
-    /* Split events to each thread */
-    E1_i = calloc(Nthread, sizeof(int));
-    if (!E1_i) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
-    }
 
     for (i = 0; i < len; i++) {
-        int k;
+        int j;
+        const SimInf_scheduled_event e = {event[i], time[i], node[i] - 1,
+                                          dest[i] - 1, n[i], proportion[i],
+                                          select[i] - 1, shift[i] - 1};
 
         switch (event[i]) {
         case EXIT_EVENT:
         case ENTER_EVENT:
         case INTERNAL_TRANSFER_EVENT:
-            k = (node[i] - 1) / chunk_size;
-            if (k >= Nthread)
-                k = Nthread - 1;
-            E1_i[k]++;
+            j = (node[i] - 1) / chunk_size;
+            if (j >= Nthread)
+                j = Nthread - 1;
+            kv_push(SimInf_scheduled_event, out[j].E1, e);
             break;
         case EXTERNAL_TRANSFER_EVENT:
-            E2_i++;
+            kv_push(SimInf_scheduled_event, out[0].E2, e);
             break;
         default:
-            error = SIMINF_UNDEFINED_EVENT;
-            goto cleanup;
+            return SIMINF_UNDEFINED_EVENT;
         }
     }
 
-    /* Allocate memory for E1 and E2 events. */
-    for (i = 0; i < Nthread; i++) {
-        error = SimInf_allocate_events(out[i].E1, E1_i[i]);
-        if (error)
-            goto cleanup;
-        E1_i[i] = 0;
-
-        if (i == 0) {
-            error = SimInf_allocate_events(out[0].E2, E2_i);
-            if (error)
-                goto cleanup;
-            E2_i = 0;
-        }
-    }
-
-    for (i = 0; i < len; i++) {
-        int j, k;
-        SimInf_scheduled_events_data *e;
-
-        switch (event[i]) {
-        case EXIT_EVENT:
-        case ENTER_EVENT:
-        case INTERNAL_TRANSFER_EVENT:
-            k = (node[i] - 1) / chunk_size;
-            if (k >= Nthread)
-                k = Nthread - 1;
-            j = E1_i[k]++;
-            e = out[k].E1;
-            break;
-        case EXTERNAL_TRANSFER_EVENT:
-            j = E2_i++;
-            e = out[0].E2;
-            break;
-        default:
-            error = SIMINF_UNDEFINED_EVENT;
-            goto cleanup;
-        }
-
-        e->event[j]      = event[i];
-        e->time[j]       = time[i];
-        e->node[j]       = node[i] - 1;
-        e->dest[j]       = dest[i] - 1;
-        e->n[j]          = n[i];
-        e->proportion[j] = proportion[i];
-        e->select[j]     = select[i] - 1;
-        e->shift[j]      = shift[i] - 1;
-    }
-
-cleanup:
-    free(E1_i);
-
-    return error;
+    return 0;
 }
 
 /**
@@ -336,15 +237,8 @@ int SimInf_scheduled_events_create(
         events[i].N = args->N;
 
         /* Scheduled events */
-        events[i].E1 = calloc(1, sizeof(SimInf_scheduled_events_data));
-        if (!events[i].E1)
-            goto on_error;
-
-        if (i == 0) {
-            events[i].E2 = calloc(1, sizeof(SimInf_scheduled_events_data));
-            if (!events[i].E2)
-                goto on_error;
-        }
+	kv_init(events[i].E1);
+	kv_init(events[i].E2);
 
         events[i].individuals = calloc(args->Nc, sizeof(int));
         if (!events[i].individuals)
@@ -378,35 +272,6 @@ on_error:
 }
 
 /**
- * Free allocated memory for scheduled events data
- *
- * @param e SimInf_scheduled_events_data to free
- */
-static void SimInf_scheduled_events_data_free(
-    SimInf_scheduled_events_data *events)
-{
-    if (events) {
-        free(events->event);
-        events->event = NULL;
-        free(events->time);
-        events->time = NULL;
-        free(events->node);
-        events->node = NULL;
-        free(events->dest);
-        events->dest = NULL;
-        free(events->n);
-        events->n = NULL;
-        free(events->proportion);
-        events->proportion = NULL;
-        free(events->select);
-        events->select = NULL;
-        free(events->shift);
-        events->shift = NULL;
-        free(events);
-    }
-}
-
-/**
  * Free allocated memory to process events
  *
  * @param events SimInf_scheduled_events to free
@@ -422,10 +287,8 @@ void SimInf_scheduled_events_free(
             SimInf_scheduled_events *e = &events[i];
 
             if (e) {
-                SimInf_scheduled_events_data_free(e->E1);
-                e->E1 = NULL;
-                SimInf_scheduled_events_data_free(e->E2);
-                e->E2 = NULL;
+                kv_destroy(e->E1);
+                kv_destroy(e->E2);
                 free(e->individuals);
                 e->individuals = NULL;
                 free(e->u_tmp);
@@ -445,45 +308,41 @@ void SimInf_process_E1_events(
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_scheduled_events e = *&events[0];
-    SimInf_scheduled_events_data e1 = *e.E1;
 
-    while (e.E1_index < e1.len &&
-           m.tt >= e1.time[e.E1_index] &&
-           !m.error)
-    {
-        const int i = e.E1_index;
-        const int s = e1.select[i];
-        const int node = e1.node[i] - m.Ni;
+    while (e.E1_index < kv_size(e.E1) && !m.error) {
+        const SimInf_scheduled_event e1 = kv_A(e.E1, e.E1_index);
 
-        if (e1.node[i] < 0 || e1.node[i] >= m.Ntot) {
+        if (e1.time > m.tt)
+            break;
+
+        if (e1.node < 0 || e1.node >= m.Ntot) {
             m.error = SIMINF_ERR_NODE_OUT_OF_BOUNDS;
             break;
         }
 
-        if (e1.event[i] == ENTER_EVENT) {
+        if (e1.event == ENTER_EVENT) {
             /* All individuals enter first non-zero compartment,
              * i.e. a non-zero entry in element in the select
              * column. */
-            if (e.jcE[s] < e.jcE[s + 1]) {
-                m.u[node * m.Nc + e.irE[e.jcE[s]]] += e1.n[i];
-                if (m.u[node * m.Nc + e.irE[e.jcE[s]]] < 0)
+            if (e.jcE[e1.select] < e.jcE[e1.select + 1]) {
+                m.u[(e1.node - m.Ni) * m.Nc + e.irE[e.jcE[e1.select]]] += e1.n;
+                if (m.u[(e1.node - m.Ni) * m.Nc + e.irE[e.jcE[e1.select]]] < 0)
                     m.error = SIMINF_ERR_NEGATIVE_STATE;
             }
         } else {
             m.error = SimInf_sample_select(
-                e.irE, e.jcE, m.Nc, m.u, node,
-                e1.select[i], e1.n[i], e1.proportion[i],
-                e.individuals, e.u_tmp, e.rng);
+                e.irE, e.jcE, m.Nc, m.u, e1.node - m.Ni, e1.select,
+                e1.n, e1.proportion, e.individuals, e.u_tmp, e.rng);
 
             if (m.error)
                 break;
 
-            if (e1.event[i] == EXIT_EVENT) {
+            if (e1.event == EXIT_EVENT) {
                 int ii;
 
-                for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
+                for (ii = e.jcE[e1.select]; ii < e.jcE[e1.select + 1]; ii++) {
                     const int jj = e.irE[ii];
-                    const int kk = node * m.Nc + jj;
+                    const int kk = (e1.node - m.Ni) * m.Nc + jj;
 
                     /* Remove individuals from node */
                     m.u[kk] -= e.individuals[jj];
@@ -495,10 +354,10 @@ void SimInf_process_E1_events(
             } else { /* INTERNAL_TRANSFER_EVENT */
                 int ii;
 
-                for (ii = e.jcE[s]; ii < e.jcE[s + 1]; ii++) {
+                for (ii = e.jcE[e1.select]; ii < e.jcE[e1.select + 1]; ii++) {
                     const int jj = e.irE[ii];
-                    const int kk = node * m.Nc + jj;
-                    const int ll = e.N[e1.shift[i] * m.Nc + jj];
+                    const int kk = (e1.node - m.Ni) * m.Nc + jj;
+                    const int ll = e.N[e1.shift * m.Nc + jj];
 
                     /* Add individuals to new compartments in node */
                     m.u[kk + ll] += e.individuals[jj];
@@ -519,7 +378,7 @@ void SimInf_process_E1_events(
         }
 
         /* Indicate node for update */
-        m.update_node[node] = 1;
+        m.update_node[e1.node - m.Ni] = 1;
         e.E1_index++;
     }
 
@@ -533,45 +392,37 @@ void SimInf_process_E2_events(
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_scheduled_events e = *&events[0];
-    SimInf_scheduled_events_data e2 = *e.E2;
 
     /* Incorporate all scheduled E2 events */
-    while (e.E2_index < e2.len &&
-           m.tt >= e2.time[e.E2_index] &&
-           !m.error)
-    {
+    while (e.E2_index < kv_size(e.E2) && !m.error) {
+        const SimInf_scheduled_event e2 = kv_A(e.E2, e.E2_index);
         int i;
-        const int dest = e2.dest[e.E2_index];
-        const int node = e2.node[e.E2_index];
 
-        if (dest < 0 || dest >= m.Ntot) {
+        if (e2.time > m.tt)
+            break;
+
+        if (e2.dest < 0 || e2.dest >= m.Ntot) {
             m.error = SIMINF_ERR_DEST_OUT_OF_BOUNDS;
             break;
         }
 
-        if (node < 0 || node >= m.Ntot) {
+        if (e2.node < 0 || e2.node >= m.Ntot) {
             m.error = SIMINF_ERR_NODE_OUT_OF_BOUNDS;
             break;
         }
 
         m.error = SimInf_sample_select(
-            e.irE, e.jcE, m.Nc, m.u, node,
-            e2.select[e.E2_index], e2.n[e.E2_index],
-            e2.proportion[e.E2_index], e.individuals,
-            e.u_tmp, e.rng);
+            e.irE, e.jcE, m.Nc, m.u, e2.node, e2.select, e2.n,
+            e2.proportion, e.individuals, e.u_tmp, e.rng);
 
         if (m.error)
             break;
 
-        for (i = e.jcE[e2.select[e.E2_index]];
-             i < e.jcE[e2.select[e.E2_index] + 1];
-             i++)
-        {
+        for (i = e.jcE[e2.select]; i < e.jcE[e2.select + 1]; i++) {
             const int jj = e.irE[i];
-            const int k1 = dest * m.Nc + jj;
-            const int k2 = node * m.Nc + jj;
-            const int ll = e2.shift[e.E2_index] < 0 ? 0 :
-                e.N[e2.shift[e.E2_index] * m.Nc + jj];
+            const int k1 = e2.dest * m.Nc + jj;
+            const int k2 = e2.node * m.Nc + jj;
+            const int ll = e2.shift < 0 ? 0 : e.N[e2.shift * m.Nc + jj];
 
             /* Add individuals to dest */
             m.u[k1 + ll] += e.individuals[jj];
@@ -589,8 +440,8 @@ void SimInf_process_E2_events(
         }
 
         /* Indicate node and dest for update */
-        m.update_node[node] = 1;
-        m.update_node[dest] = 1;
+        m.update_node[e2.node] = 1;
+        m.update_node[e2.dest] = 1;
         e.E2_index++;
     }
 
