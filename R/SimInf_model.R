@@ -1289,9 +1289,14 @@ Nd <- function(model)
 ##'     available processors.
 ##' @param seed Random number seed. Default is NULL, i.e. the
 ##'     simulator uses time to seed the random number generator.
-##' @param solver Which numerical solver to utilize. Default is Null, i.e.
-##'     SSA is the default solver.
+##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @return \code{SimInf_model} with result from simulation.
+##' @references \itemize{
+##'   \item Bauer P, Engblom S, Widgren S
+##'   (2016) "Fast Event-Based Epidemiological Simulations on National Scales"
+##'   International Journal of High Performance Computing
+##'   Applications, 30(4), 438-453. doi:10.1177/1094342016635723
+##' }
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it to run over 100 days.
@@ -1313,7 +1318,7 @@ setGeneric("run",
            function(model,
                     threads = NULL,
                     seed    = NULL,
-                    solver  = NULL)
+                    solver  = c("ssm", "aem"))
                standardGeneric("run"))
 
 ##' @rdname run

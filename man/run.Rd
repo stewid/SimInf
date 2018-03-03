@@ -6,10 +6,10 @@
 \alias{run,SimInf_model-method}
 \title{Run the SimInf stochastic simulation algorithm}
 \usage{
-run(model, threads = NULL, seed = NULL, solver = NULL)
+run(model, threads = NULL, seed = NULL, solver = c("ssm", "aem"))
 
 \S4method{run}{SimInf_model}(model, threads = NULL, seed = NULL,
-  solver = NULL)
+  solver = c("ssm", "aem"))
 }
 \arguments{
 \item{model}{The siminf model to run.}
@@ -20,8 +20,7 @@ available processors.}
 \item{seed}{Random number seed. Default is NULL, i.e. the
 simulator uses time to seed the random number generator.}
 
-\item{solver}{Which numerical solver to utilize. Default is Null, i.e.
-SSA is the default solver.}
+\item{solver}{Which numerical solver to utilize. Default is 'ssm'.}
 }
 \value{
 \code{SimInf_model} with result from simulation.
@@ -45,4 +44,12 @@ result <- run(model, threads = 1, seed = 1)
 ## Plot the proportion of susceptible, infected and recovered
 ## individuals.
 plot(result)
+}
+\references{
+\itemize{
+  \item Bauer P, Engblom S, Widgren S
+  (2016) "Fast Event-Based Epidemiological Simulations on National Scales"
+  International Journal of High Performance Computing
+  Applications, 30(4), 438-453. doi:10.1177/1094342016635723
+}
 }
