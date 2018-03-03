@@ -195,10 +195,10 @@ static int SimInf_split_events(
             j = (node[i] - 1) / chunk_size;
             if (j >= Nthread)
                 j = Nthread - 1;
-            kv_push(SimInf_scheduled_event, out[j].E1, e);
+            kv_push(SimInf_scheduled_event, out[j].events, e);
             break;
         case EXTERNAL_TRANSFER_EVENT:
-            kv_push(SimInf_scheduled_event, out[0].E2, e);
+            kv_push(SimInf_scheduled_event, out[0].events, e);
             break;
         default:
             return SIMINF_UNDEFINED_EVENT;
@@ -237,8 +237,7 @@ int SimInf_scheduled_events_create(
         events[i].N = args->N;
 
         /* Scheduled events */
-	kv_init(events[i].E1);
-	kv_init(events[i].E2);
+	kv_init(events[i].events);
 
         events[i].individuals = calloc(args->Nc, sizeof(int));
         if (!events[i].individuals)
@@ -287,8 +286,7 @@ void SimInf_scheduled_events_free(
             SimInf_scheduled_events *e = &events[i];
 
             if (e) {
-                kv_destroy(e->E1);
-                kv_destroy(e->E2);
+                kv_destroy(e->events);
                 free(e->individuals);
                 e->individuals = NULL;
                 free(e->u_tmp);
@@ -302,149 +300,188 @@ void SimInf_scheduled_events_free(
     }
 }
 
-void SimInf_process_E1_events(
+void SimInf_process_events(
     SimInf_compartment_model *model,
-    SimInf_scheduled_events *events)
+    SimInf_scheduled_events *events,
+    int process_E2)
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_scheduled_events e = *&events[0];
 
-    while (e.E1_index < kv_size(e.E1) && !m.error) {
-        const SimInf_scheduled_event e1 = kv_A(e.E1, e.E1_index);
+    /* Process events */
+    while (e.events_index < kv_size(e.events) && !m.error) {
+        int i;
+        const SimInf_scheduled_event ee = kv_A(e.events, e.events_index);
 
-        if (e1.time > m.tt)
-            break;
+        if (ee.time > m.tt)
+            goto done;
 
-        if (e1.node < 0 || e1.node >= m.Ntot) {
+        if (ee.node < 0 || ee.node >= m.Ntot) {
             m.error = SIMINF_ERR_NODE_OUT_OF_BOUNDS;
-            break;
+            goto done;
         }
 
-        if (e1.event == ENTER_EVENT) {
+        switch (ee.event) {
+        case EXIT_EVENT:
+            m.error = SimInf_sample_select(
+                e.irE, e.jcE, m.Nc, m.u, ee.node - m.Ni, ee.select,
+                ee.n, ee.proportion, e.individuals, e.u_tmp, e.rng);
+
+            if (m.error)
+                goto done;
+
+            for (i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+                const int jj = e.irE[i];
+                const int kn = (ee.node - m.Ni) * m.Nc + jj;
+
+                /* Remove individuals from node */
+                m.u[kn] -= e.individuals[jj];
+                if (m.u[kn] < 0) {
+                    m.error = SIMINF_ERR_NEGATIVE_STATE;
+                    goto done;
+                }
+            }
+            break;
+
+        case ENTER_EVENT:
             /* All individuals enter first non-zero compartment,
              * i.e. a non-zero entry in element in the select
              * column. */
-            if (e.jcE[e1.select] < e.jcE[e1.select + 1]) {
-                m.u[(e1.node - m.Ni) * m.Nc + e.irE[e.jcE[e1.select]]] += e1.n;
-                if (m.u[(e1.node - m.Ni) * m.Nc + e.irE[e.jcE[e1.select]]] < 0)
+            if (e.jcE[ee.select] < e.jcE[ee.select + 1]) {
+                m.u[(ee.node - m.Ni) * m.Nc + e.irE[e.jcE[ee.select]]] += ee.n;
+                if (m.u[(ee.node - m.Ni) * m.Nc + e.irE[e.jcE[ee.select]]] < 0)
                     m.error = SIMINF_ERR_NEGATIVE_STATE;
             }
-        } else {
+            break;
+
+        case INTERNAL_TRANSFER_EVENT:
+            if (!e.N) {
+                /* Not possible to shift when N is not defined. */
+                m.error = SIMINF_ERR_EVENTS_N;
+                goto done;
+            }
+
+            if (ee.shift < 0) {
+                /* Invalid shift parameter. */
+                m.error = SIMINF_ERR_EVENT_SHIFT;
+                goto done;
+            }
+
             m.error = SimInf_sample_select(
-                e.irE, e.jcE, m.Nc, m.u, e1.node - m.Ni, e1.select,
-                e1.n, e1.proportion, e.individuals, e.u_tmp, e.rng);
+                e.irE, e.jcE, m.Nc, m.u, ee.node - m.Ni, ee.select,
+                ee.n, ee.proportion, e.individuals, e.u_tmp, e.rng);
 
             if (m.error)
-                break;
+                goto done;
 
-            if (e1.event == EXIT_EVENT) {
-                int ii;
+            for (i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+                const int jj = e.irE[i];
+                const int kn = (ee.node - m.Ni) * m.Nc + jj;
+                const int ll = e.N[ee.shift * m.Nc + jj];
 
-                for (ii = e.jcE[e1.select]; ii < e.jcE[e1.select + 1]; ii++) {
-                    const int jj = e.irE[ii];
-                    const int kk = (e1.node - m.Ni) * m.Nc + jj;
-
-                    /* Remove individuals from node */
-                    m.u[kk] -= e.individuals[jj];
-                    if (m.u[kk] < 0) {
-                        m.error = SIMINF_ERR_NEGATIVE_STATE;
-                        break;
-                    }
+                /* Check that the index to the new compartment is not
+                 * out of bounds. */
+                if (jj + ll < 0 || jj + ll >= m.Nc) {
+                    m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
+                    goto done;
                 }
-            } else { /* INTERNAL_TRANSFER_EVENT */
-                int ii;
 
-                for (ii = e.jcE[e1.select]; ii < e.jcE[e1.select + 1]; ii++) {
-                    const int jj = e.irE[ii];
-                    const int kk = (e1.node - m.Ni) * m.Nc + jj;
-                    const int ll = e.N[e1.shift * m.Nc + jj];
+                /* Add individuals to new compartments in node */
+                m.u[kn + ll] += e.individuals[jj];
+                if (m.u[kn + ll] < 0) {
+                    m.error = SIMINF_ERR_NEGATIVE_STATE;
+                    goto done;
+                }
 
-                    /* Add individuals to new compartments in node */
-                    m.u[kk + ll] += e.individuals[jj];
-                    if (m.u[kk + ll] < 0) {
-                        m.error = SIMINF_ERR_NEGATIVE_STATE;
-                        break;
-                    }
-
-                    /* Remove individuals from previous compartments
-                     * in node */
-                    m.u[kk] -= e.individuals[jj];
-                    if (m.u[kk] < 0) {
-                        m.error = SIMINF_ERR_NEGATIVE_STATE;
-                        break;
-                    }
+                /* Remove individuals from previous compartments in
+                 * node */
+                m.u[kn] -= e.individuals[jj];
+                if (m.u[kn] < 0) {
+                    m.error = SIMINF_ERR_NEGATIVE_STATE;
+                    goto done;
                 }
             }
+            break;
+
+        case EXTERNAL_TRANSFER_EVENT:
+            /* Check if we are done because we only want to process E1
+             * events. */
+            if (!process_E2)
+                goto done;
+
+            if (ee.dest < 0 || ee.dest >= m.Ntot) {
+                m.error = SIMINF_ERR_DEST_OUT_OF_BOUNDS;
+                goto done;
+            }
+
+            m.error = SimInf_sample_select(
+                e.irE, e.jcE, m.Nc, m.u, ee.node, ee.select, ee.n,
+                ee.proportion, e.individuals, e.u_tmp, e.rng);
+
+            if (m.error)
+                goto done;
+
+            for (i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+                const int jj = e.irE[i];
+                const int kd = ee.dest * m.Nc + jj;
+                const int kn = ee.node * m.Nc + jj;
+
+                if (ee.shift < 0) {
+                    /* Add individuals to dest without shifting
+                     * compartments */
+                    m.u[kd] += e.individuals[jj];
+                    if (m.u[kd] < 0) {
+                        m.error = SIMINF_ERR_NEGATIVE_STATE;
+                        goto done;
+                    }
+                } else if (!e.N) {
+                    /* Not possible to shift when N is not defined. */
+                    m.error = SIMINF_ERR_EVENTS_N;
+                    goto done;
+                } else {
+                    /* Process a movement event that also involves a
+                     * shift between compartments. */
+                    const int ll = e.N[ee.shift * m.Nc + jj];
+
+                    /* Check that the index to the new compartment is
+                     * not out of bounds. */
+                    if (jj + ll < 0 || jj + ll >= m.Nc) {
+                        m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
+                        goto done;
+                    }
+
+                    /* Add individuals to dest */
+                    m.u[kd + ll] += e.individuals[jj];
+                    if (m.u[kd + ll] < 0) {
+                        m.error = SIMINF_ERR_NEGATIVE_STATE;
+                        goto done;
+                    }
+                }
+
+                /* Remove individuals from node */
+                m.u[kn] -= e.individuals[jj];
+                if (m.u[kn] < 0) {
+                    m.error = SIMINF_ERR_NEGATIVE_STATE;
+                    goto done;
+                }
+            }
+
+            /* Indicate dest for update */
+            m.update_node[ee.dest] = 1;
+            break;
+
+        default:
+            m.error = SIMINF_UNDEFINED_EVENT;
+            break;
         }
 
         /* Indicate node for update */
-        m.update_node[e1.node - m.Ni] = 1;
-        e.E1_index++;
+        m.update_node[ee.node - m.Ni] = 1;
+
+        e.events_index++;
     }
 
-    *&events[0] = e;
-    *&model[0] = m;
-}
-
-void SimInf_process_E2_events(
-    SimInf_compartment_model *model,
-    SimInf_scheduled_events *events)
-{
-    SimInf_compartment_model m = *&model[0];
-    SimInf_scheduled_events e = *&events[0];
-
-    /* Incorporate all scheduled E2 events */
-    while (e.E2_index < kv_size(e.E2) && !m.error) {
-        const SimInf_scheduled_event e2 = kv_A(e.E2, e.E2_index);
-        int i;
-
-        if (e2.time > m.tt)
-            break;
-
-        if (e2.dest < 0 || e2.dest >= m.Ntot) {
-            m.error = SIMINF_ERR_DEST_OUT_OF_BOUNDS;
-            break;
-        }
-
-        if (e2.node < 0 || e2.node >= m.Ntot) {
-            m.error = SIMINF_ERR_NODE_OUT_OF_BOUNDS;
-            break;
-        }
-
-        m.error = SimInf_sample_select(
-            e.irE, e.jcE, m.Nc, m.u, e2.node, e2.select, e2.n,
-            e2.proportion, e.individuals, e.u_tmp, e.rng);
-
-        if (m.error)
-            break;
-
-        for (i = e.jcE[e2.select]; i < e.jcE[e2.select + 1]; i++) {
-            const int jj = e.irE[i];
-            const int k1 = e2.dest * m.Nc + jj;
-            const int k2 = e2.node * m.Nc + jj;
-            const int ll = e2.shift < 0 ? 0 : e.N[e2.shift * m.Nc + jj];
-
-            /* Add individuals to dest */
-            m.u[k1 + ll] += e.individuals[jj];
-            if (m.u[k1 + ll] < 0) {
-                m.error = SIMINF_ERR_NEGATIVE_STATE;
-                break;
-            }
-
-            /* Remove individuals from node */
-            m.u[k2] -= e.individuals[jj];
-            if (m.u[k2] < 0) {
-                m.error = SIMINF_ERR_NEGATIVE_STATE;
-                break;
-            }
-        }
-
-        /* Indicate node and dest for update */
-        m.update_node[e2.node] = 1;
-        m.update_node[e2.dest] = 1;
-        e.E2_index++;
-    }
-
+done:
     *&events[0] = e;
     *&model[0] = m;
 }

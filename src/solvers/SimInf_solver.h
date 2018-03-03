@@ -257,12 +257,9 @@ typedef struct SimInf_scheduled_events
                            *   transfer events. */
 
     /*** Scheduled events ***/
-    SimInf_events_t E1;   /**< E1 events to process. */
-    int E1_index;         /**< Index to the next E1 event to
-                           *   process. */
-    SimInf_events_t E2;   /**< E2 events to process. */
-    int E2_index;         /**< Index to the next E2 event to
-                           *   process. */
+    SimInf_events_t events; /**< Events to process. */
+    int events_index;       /**< Index to the next event to
+                             *   process. */
 
     /*** Vectors for sampling individuals ***/
     int *individuals;     /**< Vector to store the result of the
@@ -382,11 +379,10 @@ int SimInf_scheduled_events_create(
 void SimInf_scheduled_events_free(
     SimInf_scheduled_events *events);
 
-void SimInf_process_E1_events(
-    SimInf_compartment_model *model, SimInf_scheduled_events *events);
-
-void SimInf_process_E2_events(
-    SimInf_compartment_model *model, SimInf_scheduled_events *events);
+void SimInf_process_events(
+    SimInf_compartment_model *model,
+    SimInf_scheduled_events *events,
+    int process_E2);
 
 void SimInf_store_solution_sparse(SimInf_compartment_model *model);
 
