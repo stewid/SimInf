@@ -306,6 +306,15 @@ cleanup:
         case SIMINF_ERR_NODE_OUT_OF_BOUNDS:
             Rf_error("'node' is out of bounds.");
             break;
+        case SIMINF_ERR_EVENTS_N:
+            Rf_error("'N' is invalid.");
+            break;
+        case SIMINF_ERR_EVENT_SHIFT:
+            Rf_error("'shift' is invalid.");
+            break;
+        case SIMINF_ERR_SHIFT_OUT_OF_BOUNDS:
+            Rf_error("'shift' is out of bounds.");
+            break;
         default:
             Rf_error("Unknown error code: %i", error);
             break;

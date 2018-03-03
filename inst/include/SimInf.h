@@ -40,7 +40,10 @@ typedef enum {
     SIMINF_ERR_INVALID_RATE         = -11,
     SIMINF_ERR_UNKNOWN_SOLVER       = -12,
     SIMINF_ERR_DEST_OUT_OF_BOUNDS   = -13,
-    SIMINF_ERR_NODE_OUT_OF_BOUNDS   = -14
+    SIMINF_ERR_NODE_OUT_OF_BOUNDS   = -14,
+    SIMINF_ERR_EVENTS_N             = -15,
+    SIMINF_ERR_EVENT_SHIFT          = -16,
+    SIMINF_ERR_SHIFT_OUT_OF_BOUNDS  = -17
 } SimInf_error_code;
 
 /* Forward declaration of the transition rate function. */
