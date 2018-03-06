@@ -6,6 +6,11 @@ IMPROVEMENTS
 * Added the 'trajectory' method to facilitate post-processing of
   simulation data. See documentation.
 
+* The event type, when specifying the scheduled events from a
+  data.frame, can now be coded either as a numerical value or as a
+  character string, see the documentataion for the 'SimInf_events'
+  method.
+
 BREAKING CHANGES
 
 * Removed the following methods: 'U', 'V', 'recovered', 'susceptible',

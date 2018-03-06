@@ -370,7 +370,7 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-stopifnot(length(grep("Columns in events must be numeric",
+stopifnot(length(grep("'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'",
                       res[[1]]$message)) > 0)
 
 ## Check events$shift not equal to whole number

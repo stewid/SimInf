@@ -255,6 +255,24 @@ SimInf_events <- function(E      = NULL,
         stop("Missing columns in events")
     }
 
+    ## Do we have to recode the event type as a numerical value
+    if (is.character(events$event) || is.factor(events$event)) {
+        if (!all(events$event %in% c("enter", "exit", "extTrans", "intTrans")))
+            stop("'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'")
+
+        ## Find indices to 'enter', 'internal transfer' and 'external
+        ## transfer' events.
+        i_enter <- which(events$event == "enter")
+        i_intTrans <- which(events$event == "intTrans")
+        i_extTrans <- which(events$event == "extTrans")
+
+        ## Replace the character event type with a numerical value.
+        events$event <- rep(0L, nrow(events))
+        events$event[i_enter] <- 1L
+        events$event[i_intTrans] <- 2L
+        events$event[i_extTrans] <- 3L
+    }
+
     ## Check time
     if (nrow(events)) {
         if (is(events$time, "Date")) {
