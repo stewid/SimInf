@@ -196,10 +196,10 @@ setMethod("plot",
 ##' summary(result)
 events_SISe <- function() {
     data("events_SISe3", package = "SimInf", envir = environment())
-    events_SISe3$select[events_SISe3$event == 0] <- 2
-    events_SISe3$select[events_SISe3$event == 1] <- 1
-    events_SISe3 <- events_SISe3[events_SISe3$event != 2, ]
-    events_SISe3$select[events_SISe3$event == 3] <- 2
+    events_SISe3$select[events_SISe3$event == "exit"] <- 2
+    events_SISe3$select[events_SISe3$event == "enter"] <- 1
+    events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
+    events_SISe3$select[events_SISe3$event == "extTrans"] <- 2
     events_SISe3
 }
 
