@@ -1144,6 +1144,7 @@ Below is a \code{data.frame}, that contains the events.  Interpret it
 as follows:
 
 \begin{enumerate}
+\itemsep0em
 \item In time step 2 we add 2 susceptible individuals to node 2
 \item In time step 3 we move 2 individuals from node 1 to node 3
 \item In time step 4 we remove 1 individual from node 2
@@ -1153,10 +1154,12 @@ as follows:
 \end{enumerate}
 
 <<SIR-events, echo=FALSE>>=
-events <- data.frame(event = c(1, 3, 0, 3, 3, 3), time = c(2, 3, 4, 4, 4, 5),
-node = c(2, 1, 2, 1, 1, 1), dest = c(0, 3, 0, 3, 4, 5),
-n = c(2, 1, 1, 1, 1, 2), proportion = c(0, 0, 0, 0, 0, 0),
-select = c(1, 2, 2, 2, 2, 2), shift = c(0, 0, 0, 0, 0, 0))
+events <- data.frame(
+event = c("enter", "extTrans", "exit", "extTrans", "extTrans", "extTrans"),
+time = c(2, 3, 4, 4, 4, 5), node = c(2, 1, 2, 1, 1, 1),
+dest = c(0, 3, 0, 3, 4, 5), n = c(2, 1, 1, 1, 1, 2),
+proportion = c(0, 0, 0, 0, 0, 0), select = c(1, 2, 2, 2, 2, 2),
+shift = c(0, 0, 0, 0, 0, 0))
 @
 
 <<SIR-events-show>>=
@@ -1189,9 +1192,10 @@ R = c(0, 0, 0, 0, 0))
 And then we have a few movements of individuals from node 1 to the others:
 
 <<SIR-events-II, echo=FALSE>>=
-events <- data.frame(event = c(3, 3, 3, 3), time = c(3, 25, 5, 10),
-node = c(1, 1, 1, 1), dest = c(3, 2, 3, 3), n = c(1, 9, 1, 5),
-proportion = c(0, 0, 0, 0), select = c(2, 2, 2, 2), shift = c(0, 0, 0, 0))
+events <- data.frame(event = c("extTrans", "extTrans", "extTrans", "extTrans"),
+time = c(3, 25, 5, 10), node = c(1, 1, 1, 1), dest = c(3, 2, 3, 3),
+n = c(1, 9, 1, 5), proportion = c(0, 0, 0, 0), select = c(2, 2, 2, 2),
+shift = c(0, 0, 0, 0))
 @
 
 <<SIR-events-II-show>>=
