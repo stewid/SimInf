@@ -5,7 +5,8 @@
 \alias{SimInf_events-class}
 \title{Class \code{"SimInf_events"}}
 \description{
-Class to handle the scheduled events
+Class to hold data for scheduled events to modify the discrete
+state of individuals in a node at a pre-defined time t.
 }
 \section{Slots}{
 
@@ -17,22 +18,31 @@ Class to handle the scheduled events
     transfer} and \emph{external transfer} events, a non-zero
     entry indicate the compartments to sample individuals from.
     For the \emph{enter} event, all individuals enter first
-    non-zero compartment. Sparse matrix of object class
+    non-zero compartment. \code{E} is sparse matrix of class
     \code{\linkS4class{dgCMatrix}}.
   }
   \item{N}{
-    Each row represents one compartment in the model and the
-    values determine how to move sampled individuals in
-    \emph{internal transfer} and \emph{external transfer} events.
+     Determines how individuals in \emph{internal transfer} and
+     \emph{external transfer} events are shifted to enter another
+     compartment.  Each row corresponds to one compartment in the
+     model.  The values in a column are added to the current
+     compartment of sampled individuals to specify the destination
+     compartment, for example, a value of \code{1} in an entry
+     means that sampled individuals in this compartment are moved
+     to the next compartment.  Which column to use for each event
+     is specified by the \code{shift} vector (see below).
+     \code{N} is an integer matrix.
   }
   \item{event}{
     Type of event: 0) \emph{exit}, 1) \emph{enter}, 2)
     \emph{internal transfer}, and 3) \emph{external transfer}.
     Other values are reserved for future event types and not
-    supported by the current default core solver. Integer vector.
+    supported by the current solvers. Integer vector.
   }
   \item{time}{
-    Time for the event. Integer vector.
+    Time of when the event occurs i.e., the event is processed
+    when time is reached in the simulation.  \code{time} is an
+    integer vector.
   }
   \item{node}{
     The node that the event operates on. Also the source node for
@@ -40,9 +50,11 @@ Class to handle the scheduled events
     1 <= \code{node[i]} <= Number of nodes.
   }
   \item{dest}{
-    The destination node for an \emph{external transfer} event.
-    Should be \code{0} for the other event types.
-    Integer vector. dest[i] >= 0.
+    The destination node for an \emph{external transfer} event
+    i.e., individuals are moved from \code{node} to \code{dest},
+    where 1 <= \code{dest[i]} <= Number of nodes.  Set \code{event
+    = 0} for the other event types.  \code{dest} is an integer
+    vector.
   }
   \item{n}{
     The number of individuals affected by the event. Integer vector.
@@ -55,16 +67,23 @@ Class to handle the scheduled events
     0 <= proportion[i] <= 1.
   }
   \item{select}{
-    The column \code{j} in the event matrix \code{E} that
-    determines the compartments that the event operates
-    on. Integer vector.
+    To process \code{event[i]}, the compartments affected by the
+    event are specified with \code{select[i]} together with the
+    matrix \code{E}, where \code{select[i]} determines which
+    column in \code{E} to use.  The specific individuals affected
+    by the event are proportionally sampled from the compartments
+    corresponding to the non-zero entries in the specified column
+    in \code{E[, select[i]]}, where \code{select} is an integer
+    vector.
   }
   \item{shift}{
-    The column \code{k} in the shift matrix \code{N} that
-    determines how individuals in \emph{internal transfer} and
+    Determines how individuals in \emph{internal transfer} and
     \emph{external transfer} events are shifted to enter another
-    compartment.  Should be \code{0} for the other event types.
-    Integer vector.
+    compartment.  The sampled individuals are shifted according to
+    column \code{shift[i]} in matrix \code{N} i.e., \code{N[,
+    shift[i]]}, where \code{shift} is an integer vector.  See
+    above for a description of \code{N}. Unsued for the other
+    event types.
   }
 }
 }
