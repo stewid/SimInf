@@ -11,6 +11,18 @@ IMPROVEMENTS
   character string, see the documentataion for the 'SimInf_events'
   method.
 
+* Now SimInf also includes the All Events Method (AEM) solver (Bauer
+  P., Engblom S. (2015) Sensitivity Estimation and Inverse Problems in
+  Spatial Stochastic Models of Chemical Kinetics. In: Abdulle A.,
+  Deparis S., Kressner D., Nobile F., Picasso M. (eds) Numerical
+  Mathematics and Advanced Applications - ENUMATH 2013. Lecture Notes
+  in Computational Science and Engineering, vol 103. Springer,
+  Cham. Doi: 10.1007/978-3-319-10705-9_51).  A core feature of the AEM
+  solver is that reaction events are carried out in channels which
+  access private streams of random numbers, in contrast to the
+  Gillespie next-reaction method where one use only one stream for all
+  events. We have added a new 'solver' argument to the 'run' method.
+
 BREAKING CHANGES
 
 * Removed the following methods: 'U', 'V', 'recovered', 'susceptible',
