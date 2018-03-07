@@ -997,11 +997,16 @@ compartments and the continuous state variables are written to
 
 %**************************************************************************
 
-\section[Model construction and data analysis: Basic examples]{Model construction and data analysis: Basic examples}
+\section[Model construction and data analysis: Basic examples]{%
+  Model construction and data analysis: Basic examples}
 \label{sec:examples}
 
-\subsection[A first example: The SIR model]{A first example: The \code{SIR} model}
+\subsection[A first example: The SIR model]{%
+  A first example: The \code{SIR} model}
 \label{sec:example-SIR}
+
+\subsubsection[Specification of the SIR model without scheduled events]{%
+  Specification of the \code{SIR} model without scheduled events}
 
 This section illustrates the specification of the predefined
 \code{SIR} model, which contains the three compartments susceptible
@@ -1143,7 +1148,8 @@ from two nodes above one another for each time point in the
 head(trajectory(result))
 @
 
-\subsubsection[Specification of scheduled events in the SIR model]{Specification of scheduled events in the \code{SIR} model}
+\subsubsection[Specification of scheduled events in the SIR model]{%
+  Specification of scheduled events in the \code{SIR} model}
 
 In this example, we will continue to work with the predefined
 \code{SIR} model to explore a within node disease spread similar to
@@ -1263,7 +1269,8 @@ plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
     node 1 to nodes 2 and 3. \label{fig:SIR-spaghetti}}
 \end{figure}
 
-\subsubsection[C code for the SIR model]{\proglang{C} code for the \code{SIR} model}
+\subsubsection[C code for the SIR model]{%
+  \proglang{C} code for the \code{SIR} model}
 
 The \proglang{C} code for the \code{SIR} model is defined in the
 source file \texttt{'src/models/SIR.c'}.  This file contains the
@@ -1273,7 +1280,8 @@ transition rate functions (Listing~\ref{lst:trSIR} in
 Appendix~\ref{sec:C-code-SIR}) and the post time step function
 (Listing~\ref{lst:ptsSIR} in Appendix~\ref{sec:C-code-SIR}).
 
-\subsection[A second example: The SISe3_sp model]{A second example: The \code{SISe3\_sp} model}
+\subsection[A second example: The SISe3_sp model]{%
+  A second example: The \code{SISe3\_sp} model}
 \label{sec:example-SISe3_sp}
 
 This section illustrates the specification of the \code{SISe3\_sp}
@@ -1347,7 +1355,8 @@ saved to the \code{V} matrix at the time-points specified by
     method.  \label{fig:SISe3_sp}}
 \end{figure}
 
-\subsubsection[Illustration of the stochastic step in the SISe3_sp model]{Illustration of the stochastic step in the \code{SISe3\_sp} model}
+\subsubsection[Illustration of the stochastic step in the SISe3_sp model]{%
+  Illustration of the stochastic step in the \code{SISe3\_sp} model}
 
 To illustrate the stochastic step in Equation~\ref{eq:numstep3},
 consider that the number of individuals in each compartment in node
@@ -1385,7 +1394,8 @@ $I_{i,1} \rightarrow S_{i,1}$ must be recalculated according to
 \]
 }
 
-\subsubsection[Specification of scheduled events in the SISe3_sp model]{Specification of scheduled events in the \code{SISe3\_sp} model}
+\subsubsection[Specification of scheduled events in the SISe3_sp model]{%
+  Specification of scheduled events in the \code{SISe3\_sp} model}
 
 The \code{SISe3\_sp} model have been specified to handle births,
 imports, ageing, moving and exits of individuals
@@ -1426,7 +1436,8 @@ category 3.
 \]
 }
 
-\subsubsection[Case study using the SISe3_sp model]{Case study using the \code{SISe3\_sp} model}
+\subsubsection[Case study using the SISe3_sp model]{%
+  Case study using the \code{SISe3\_sp} model}
 
 In this section we will demonstrate how to construct and use the
 \code{SISe3\_sp} model together with synthetic cattle events and
@@ -1750,7 +1761,8 @@ includes all compartments and arrows for all state transitions.  Then
 list the compartments in the order they should appear in the \code{S}
 matrix.
 
-\subsubsection[Introductory examples of using mparse]{Introductory examples of using \code{mparse}}
+\subsubsection[Introductory examples of using mparse]{%
+  Introductory examples of using \code{mparse}}
 \label{sec:mparse-introductory-examples}
 
 In a first example we will consider the SIR model in a closed
@@ -1843,7 +1855,8 @@ do.points = FALSE)
     individuals.  \label{fig:SIR-mparse-incidence}}
 \end{figure}
 
-\subsubsection[Incorporate scheduled events in an mparse model]{Incorporate scheduled events in an \code{mparse} model}
+\subsubsection[Incorporate scheduled events in an mparse model]{%
+  Incorporate scheduled events in an \code{mparse} model}
 \label{sec:mparse-scheduled-events}
 
 Let us expand on the previous example to illustrate how models
@@ -2084,7 +2097,8 @@ plot(result, N = TRUE)
 
 %**************************************************************************
 
-\subsection[Use the SimInf framework from another package]{Use the \pkg{SimInf} framework from another package}
+\subsection[Use the SimInf framework from another package]{%
+  Use the \pkg{SimInf} framework from another package}
 \label{sec:linking-to}
 
 Another possibility is to extend \pkg{SimInf} by creating an
