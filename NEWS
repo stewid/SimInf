@@ -3,6 +3,10 @@ SimInf 5.1.0.9000
 
 IMPROVEMENTS
 
+* The 'print' and 'summary' methods have been improved to include a
+  summary of the data in the model and the number of individuals in
+  each compartment.
+
 * Added the 'trajectory' method to facilitate post-processing of
   simulation data. See documentation.
 
@@ -22,6 +26,14 @@ IMPROVEMENTS
   access private streams of random numbers, in contrast to the
   Gillespie next-reaction method where one use only one stream for all
   events. We have added a new 'solver' argument to the 'run' method.
+
+* The 'package_skeleton' method have been updated to handle the new
+  'solver' argument.
+
+* The event type, when specifying the scheduled events from a
+  data.frame, can now be coded either as a numerical value or as a
+  character string, see the documentataion for the 'SimInf_events'
+  method.
 
 BREAKING CHANGES
 
