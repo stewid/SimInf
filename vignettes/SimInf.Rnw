@@ -647,54 +647,82 @@ update of the concentration variable $\Y$.
   \begin{tabularx}{\textwidth}{l X}
     \toprule Slot & Description\\ \midrule
 
-    \code{E} & Event matrix.  Each row corresponds to one compartment
-    in the model.  The non-zero entries in a column indicates the
-    compartments to include in an event.  Sparse matrix of object
-    class \code{dgCMatrix}.\\
+    \code{E} & Each row corresponds to one compartment in the model.
+    The non-zero entries in a column indicate which compartments to
+    sample individuals from when processing an event.  Which column to
+    use for each event is specified by the \code{select} vector (see
+    below).  \code{E} is a sparse matrix of class \code{dgCMatrix}.\\
 
-    \code{N} & Shift matrix.  Each row represents one compartment in
-    the model and the values determine how to move sampled individuals
-    in \textit{internal transfer} and \textit{external transfer}
-    events.  Integer matrix.\\
+    \code{N} & Determines how individuals in \textit{internal
+      transfer} and \textit{external transfer} events are shifted to
+    enter another compartment.  Each row corresponds to one
+    compartment in the model.  The values in a column are added to the
+    current compartment of sampled individuals to specify the
+    destination compartment, for example, a value of \code{1} in an
+    entry means that sampled individuals in this compartment are moved
+    to the next compartment.  Which column to use for each event is
+    specified by the \code{shift} vector (see below).  \code{N} is an
+    integer matrix.\\
 
-    \code{event} & Type of event: 0) \textit{exit}, 1) \textit{enter},
-    2) \textit{internal transfer}, and 3) \textit{external transfer}.
-    Other values are reserved for future event types and not supported
-    by the current default core solver.  Integer vector.\\
+    \code{event} & Four event types are supported by the current
+    solvers: \textit{exit}, \textit{enter}, \textit{internal
+      transfer}, and \textit{external transfer}.  When assigning the
+    events from a \code{data.frame}, they can either be coded as a
+    numerical value or a character string: \textit{exit;} \code{0} or
+    \code{'exit'}, \textit{enter;} \code{1} or \code{'enter'},
+    \textit{internal transfer;} \code{2} or \code{'intTrans'}, and
+    \textit{external transfer;} \code{3} or \code{'extTrans'}.
+    Internally in \pkg{SimInf}, the event type is coded as a numerical
+    value.\\
 
-    \code{time} & Time of the event.  Integer vector.\\
+    \code{time} & Time of when the event occurs i.e., the event is
+    processed when time is reached in the simulation.  \code{time} is
+    an integer vector.\\
 
     \code{node} & The node that the event operates on.  Also the
-    source node for an \textit{external transfer} event.  Integer
-    vector.  $1 \le$ \code{node[i]} $\le \Nnodes$.\\
+    source node for an \textit{external transfer} event.  \code{node}
+    is an integer vector, where $1 \le$ \code{node[i]} $\le
+    \Nnodes$.\\
 
     \code{dest} & The destination node for an \textit{external
-      transfer} event, equals $0$ for the other event types.  Integer
-    vector.\\
+      transfer} event i.e., individuals are moved from \code{node} to
+    \code{dest}, where $1 \le$ \code{dest[i]} $\le \Nnodes$.  Set
+    \code{event = 0} for the other event types.  \code{dest} is an
+    integer vector.\\
 
     \code{n} & The number of individuals affected by the event.
-    Integer vector.  \code{n[i]} $\ge 0$.\\
+    \code{n} is an integer vector, where \code{n[i]} $\ge 0$.\\
 
     \code{proportion} & If \code{n[i]} equals zero, the number of
     individuals affected by \code{event[i]} is calculated by summing
     the number of individuals in the compartments determined by
     \code{select[i]} and multiplying with \code{proportion[i]}.
-    Numeric vector.  $0 \le$ \code{proportion[i]} $\le 1$.\\
+    \code{proportion} is a numeric vector, where $0 \le$
+    \code{proportion[i]} $\le 1$.\\
 
-    \code{select} & Column $j$ in the event matrix $E$ that determines
-    the compartments that the event operates on.  Integer vector.\\
+    \code{select} & To process an \code{event[i]}, the compartments
+    affected by the event are specified with \code{select[i]} together
+    with the matrix \code{E}, where \code{select[i]} determines which
+    column in \code{E} to use.  The specific individuals affected by
+    the event are proportionally sampled from the compartments
+    corresponding to the non-zero entries in the specified column in
+    \code{E[, select[i]]}, where \code{select} is an integer vector.\\
 
-    \code{shift} & Column $k$ in the shift matrix $N$ that determines
-    how individuals in \textit{internal transfer} and \textit{external
-      transfer} events are shifted to enter another compartment.
-    Integer vector.\\
+    \code{shift} & Determines how individuals in \textit{internal
+      transfer} and \textit{external transfer} events are shifted to
+    enter another compartment.  The sampled individuals are shifted
+    according to column \code{shift[i]} in matrix \code{N} i.e.,
+    \code{N[, shift[i]]}, where \code{shift} is an integer vector.
+    See above for a description of \code{N}.\\
 
     \bottomrule
   \end{tabularx}
   \caption{Description of the slots in the S4 class
-    \code{SimInf\_events} that holds data to process events.  Each
-    index, \code{i}, of the vectors represent one event.  $\Nnodes$ is
-    the number of nodes in the model.}
+    \code{SimInf\_events} that holds data to process scheduled events
+    to modify the discrete state of individuals in a node at a
+    pre-defined time $t$.  Each index, \code{i}, of the vectors
+    represent one event.  $\Nnodes$ is the number of nodes in the
+    model.}
   \label{table:scheduled:events}
 \end{table}
 
@@ -1434,21 +1462,20 @@ tspan <- seq(1, 4 * 365, by = 7)
 @
 
 We are now ready to create an \code{SISe3_sp} object using the
-\code{SISe3_sp} generating method.  The parameters for this example
-have been chosen such that the between-node prevalence for a sample
-trajectory is around 10\% and have a seasonal pattern.  We assume that
-the average duration of infection is 10 days in all age categories,
-such that the recovery rate $\gamma_{1,2,3} = 0.1$ per animal per day,
-and assume that the indirect transmission rate of the environmental
-infectious pressure $\gamma$ is equal in all age categories.
-Moreover, we fix the average shedding rate $\alpha = 1$ and allow the
-decay of the bacteria to vary in four seasonal intervals, $\beta_1,
-..., \beta_4$ over the year. The end point (day of the year) for each
-season \code{beta\_t1}, ..., \code{beta\_t4} is determined by
-\code{end\_t1}, ..., \code{end\_t4}, respectively. We let the local
-environmental infectious pressure $\varphi_i = 0$ at the beginning of
-the simulation and let 10\% of the herds start with 5\% infected
-individuals.
+\code{SISe3_sp} generating method.  The parameters in the example were
+chosen such that the proportion of infected nodes in a trajectory is
+about 10\% and have a seasonal pattern.  We assume that the average
+duration of infection is 10 days in all age categories, such that the
+recovery rate $\gamma_{1,2,3} = 0.1$ per animal per day, and assume
+that the indirect transmission rate of the environmental infectious
+pressure $\gamma$ is equal in all age categories.  Moreover, we fix
+the average shedding rate $\alpha = 1$ and allow the decay of the
+bacteria to vary in four seasonal intervals, $\beta_1, ..., \beta_4$
+over the year. The end point (day of the year) for each season
+\code{beta\_t1}, ..., \code{beta\_t4} is determined by \code{end\_t1},
+..., \code{end\_t4}, respectively. We let the local environmental
+infectious pressure $\varphi_i = 0$ at the beginning of the simulation
+and let 10\% of the herds start with 5\% infected individuals.
 
 <<create-SISe3sp-u0>>=
 set.seed(123)
