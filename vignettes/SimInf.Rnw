@@ -1459,9 +1459,9 @@ data("events_SISe3", package = "SimInf")
 
 To model local spread of the environmental infectious pressure among
 proximal nodes, we have to generate a distance matrix.  Let us use the
-synthetic data set (\code{nodes}) included in the \pkg{SimInf} package,
-which defines a cattle population consisting of 1600 herds located in a
-50 square kilometer region, and let proximal neighbors be defined as
+synthetic data set \code{nodes} included in the \pkg{SimInf} package,
+which defines a cattle population consisting of 1600 herds located in
+a 50 square kilometer region, and let proximal neighbors be defined as
 neighbors within 2500m.
 
 <<load-nodes>>=
@@ -1521,14 +1521,12 @@ post-time step function in the \code{ldata} parameter.
 
 The package \pkg{SimInf} has a \code{summary} method for objects of
 class \code{SimInf_model}, such as the object \code{model}, which
-displays the model name, the number of nodes $\Nnodes$, the number of
-compartments $\Ncompartments$, the number of transitions
-$\Ntransitions$, and the total number of scheduled events and
-information regarding each event type.  If the model has not yet been
-run, the size of \code{U} and \code{V} is \code{0 x 0}.
+generates a detailed summary of various data in the model and the
+simulated trajectory.  Let us run a trajectory to illustrate this.
 
 <<SISe3sp-model-summary>>=
-summary(model)
+result <- run(model = model, threads = 1, seed = 1)
+summary(result)
 @
 
 Furthermore, we can display the distribution of the scheduled events
