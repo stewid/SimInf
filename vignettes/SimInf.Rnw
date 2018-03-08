@@ -1078,7 +1078,7 @@ transitions through time.  In this example we simulate for 6 months
 returning results every $7^{th}$ day
 
 <<SIR-tspan>>=
-tspan <- seq(1, 6 * 30, by = 7)
+tspan <- seq(from = 1, to = 6 * 30, by = 7)
 @
 
 Before we can simulate from the model, we need to specify the
@@ -1093,7 +1093,7 @@ data.  We use the \code{threads} and \code{seed} arguments for
 reproducibility.
 
 <<SIR-run>>=
-result <- run(model, threads = 1, seed = 22)
+result <- run(model = model, threads = 1, seed = 22)
 @
 
 The \code{result} object contains the number of individuals in each
@@ -1103,7 +1103,7 @@ Each line in the \code{data.frame} represents the information from one
 node and time-point.  Below is an excerpt of the trajectory data
 
 <<SIR-U>>=
-head(trajectory(result))
+head(trajectory(model = result))
 @
 
 The package \pkg{SimInf} has a \code{plot} method for objects of class
@@ -1137,7 +1137,7 @@ add another nodes to the \code{data.frame} here in \proglang{R}.
 <<SIR-multiple-nodes>>=
 u0 <- data.frame(S = c(99, 90), I = c( 1,  2), R = c( 0,  0))
 model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
-result <- run(model, threads = 1, seed = 22)
+result <- run(model = model, threads = 1, seed = 22)
 @
 
 If we inspect an excerpt of the trajectory, it now includes results
@@ -1145,7 +1145,7 @@ from two nodes above one another for each time point in the
 \code{tspan} vector.
 
 <<SIR-U-multiple-nodes>>=
-head(trajectory(result))
+head(trajectory(model = result))
 @
 
 \subsubsection[Specification of scheduled events in the SIR model]{%
@@ -1204,8 +1204,10 @@ Now we are ready to run the simulation using the events and the
 disease spread model as we did in earlier examples:
 
 <<U-model-events>>=
-model <- SIR(u0, 1:5, events = events, beta = 0.16, gamma = 0.077)
-trajectory(run(model, threads = 1, seed = 22))
+model <- SIR(u0 = u0, tspan = 1:5, events = events, beta = 0.16,
+gamma = 0.077)
+result <- run(model = model, threads = 1, seed = 22)
+trajectory(model = result)
 @
 
 If you inspect the result of this very simple simulation, you will see
@@ -1239,8 +1241,9 @@ events
 Initialize and run the model
 
 <<SIR-events-II-run>>=
-model <- SIR(u0, 1:75, events = events, beta = 0.16, gamma = 0.077)
-result <- run(model, threads = 1, seed = 5)
+model <- SIR(u0 = u0, tspan = 1:75, events = events, beta = 0.16,
+gamma = 0.077)
+result <- run(model = model, threads = 1, seed = 5)
 @
 
 Figure~\ref{fig:SIR-spaghetti} shows the result from running the
@@ -1469,7 +1472,7 @@ Next we define \code{tspan} to simulate for 4 consecutive years
 returning the results every $7^{th}$ day
 
 <<create-SISe3sp-tspan>>=
-tspan <- seq(1, 4 * 365, by = 7)
+tspan <- seq(from = 1, to = 4 * 365, by = 7)
 @
 
 We are now ready to create an \code{SISe3_sp} object using the
@@ -1490,7 +1493,7 @@ and let 10\% of the herds start with 5\% infected individuals.
 
 <<create-SISe3sp-u0>>=
 set.seed(123)
-i <- sample(1:1600, 160)
+i <- sample(x = 1:1600, size = 160)
 u0_SISe3$I_1[i] <- as.integer(u0_SISe3$S_1[i] * 0.05)
 u0_SISe3$I_2[i] <- as.integer(u0_SISe3$S_2[i] * 0.05)
 u0_SISe3$I_3[i] <- as.integer(u0_SISe3$S_3[i] * 0.05)
@@ -1560,11 +1563,11 @@ population size in each age category that can be explored using data
 in the \code{U} matrix.  The \code{U} method take a
 \code{compartments} argument that can be used to determine the
 population size by age category.  Let us first run a trajectory to
-generate data in \code{U}, and then plot the number of individuals in
-each age category (Figure~\ref{fig:population}).
+generate data, and then plot the number of individuals in each age
+category (Figure~\ref{fig:population}).
 
 <<eval=FALSE>>=
-result <- run(model, threads = 1, seed = 1)
+result <- run(model = model, threads = 1, seed = 1)
 N1 <- colSums(trajectory(result, compartments = c("S_1", "I_1"), as.is = TRUE))
 N2 <- colSums(trajectory(result, compartments = c("S_2", "I_2"), as.is = TRUE))
 N3 <- colSums(trajectory(result, compartments = c("S_3", "I_3"), as.is = TRUE))
@@ -1579,7 +1582,7 @@ par(opar)
 \begin{figure}
   \begin{center}
 <<population-size, echo=FALSE, fig=TRUE>>=
-result <- run(model, threads = 1, seed = 1)
+result <- run(model = model, threads = 1, seed = 1)
 N1 <- colSums(trajectory(result, compartments = c("S_1", "I_1"), as.is = TRUE))
 N2 <- colSums(trajectory(result, compartments = c("S_2", "I_2"), as.is = TRUE))
 N3 <- colSums(trajectory(result, compartments = c("S_3", "I_3"), as.is = TRUE))
@@ -1640,7 +1643,7 @@ parameter to zero and run the model
 
 <<eval=FALSE>>=
 model@gdata["coupling"] <- 0
-plot_nodes(run(model, threads = 1, seed = 1))
+plot_nodes(run(model = model, threads = 1, seed = 1))
 @
 
 \begin{figure}
@@ -1650,7 +1653,7 @@ plot_nodes(run(model, threads = 1, seed = 1))
       \begin{center}
 <<plot-SISe3sp-I, echo=FALSE, results=hide>>=
 png("SimInf-plot-SISe3sp-I.png", height = 480, width = 960)
-plot_nodes(run(model, threads = 1, seed = 1))
+plot_nodes(run(model = model, threads = 1, seed = 1))
 dev.off()
 @
         \includegraphics{SimInf-plot-SISe3sp-I.png}
@@ -1664,7 +1667,7 @@ dev.off()
 <<plot-SISe3sp-II, echo=FALSE, results=hide>>=
 model@gdata["coupling"] <- 0
 png("SimInf-plot-SISe3sp-II.png", height = 480, width = 960)
-plot_nodes(run(model, threads = 1, seed = 1))
+plot_nodes(run(model = model, threads = 1, seed = 1))
 dev.off()
 @
         \includegraphics{SimInf-plot-SISe3sp-II.png}
@@ -1682,7 +1685,7 @@ model@events@N <- cbind(model@events@N,
 i <- which(model@events@event == 3)
 model@events@shift[i] <- 3L
 png("SimInf-plot-SISe3sp-III.png", height = 480, width = 960)
-plot_nodes(run(model, threads = 1, seed = 1))
+plot_nodes(run(model = model, threads = 1, seed = 1))
 dev.off()
 @
         \includegraphics{SimInf-plot-SISe3sp-III.png}
@@ -1719,7 +1722,7 @@ model@events@N <- cbind(model@events@N,
 "3" = c(0L, -1L, 0L, -1L, 0L, -1L))
 i <- which(model@events@event == 3)
 model@events@shift[i] <- 3L
-plot_nodes(run(model, threads = 1, seed = 1))
+plot_nodes(run(model = model, threads = 1, seed = 1))
 @
 
 In this example, removing either local spread or animal movements was
@@ -1795,14 +1798,14 @@ used to run one trajectory of the model.  Once the simulator
 completes, the DLL is unloaded and the temporary files are removed.
 
 <<SIR-mparse-III, eval=FALSE>>=
-result <- run(model, threads = 1, seed = 22)
+result <- run(model = model, threads = 1, seed = 22)
 plot(result)
 @
 
 \begin{figure}
   \begin{center}
 <<SIR-mparse-IV, echo=FALSE, fig=TRUE>>=
-result <- run(model, threads = 1, seed = 22)
+result <- run(model = model, threads = 1, seed = 22)
 plot(result)
 @
   \caption{Example of simulated data from one realization of the
