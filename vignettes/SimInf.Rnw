@@ -1265,11 +1265,12 @@ plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
 plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
 @
   \end{center}
-  \caption{The number of infected individuals in each node when
-    simulating 75 days of an \code{SIR} model in 5 nodes, starting
-    with 90 susceptible and 10 infected individuals in node 1 and 100
-    susceptible individuals in nodes 2--5, and moving individuals from
-    node 1 to nodes 2 and 3. \label{fig:SIR-spaghetti}}
+  \caption{One realization of the number of infected individuals in
+    each node when simulating 75 days of an \code{SIR} model in 5
+    nodes, starting with 90 susceptible and 10 infected individuals in
+    node 1 and 100 susceptible individuals in nodes 2--5, and moving
+    individuals from node 1 to nodes 2 and
+    3. \label{fig:SIR-spaghetti}}
 \end{figure}
 
 \subsubsection[C code for the SIR model]{%
