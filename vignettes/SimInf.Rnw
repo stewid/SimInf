@@ -143,7 +143,7 @@ scale simulations \citep{Bauer2016}.  We have developed the
 \proglang{R} \citep{R} package \pkg{SimInf}, a discrete-event
 simulator that divides work among multiple processors available in
 standard computers.  The model integrates infection dynamics as
-continuous-time Markov chains and available data such as animal
+continuous-time Markov chains (CTMC) and available data such as animal
 movements, births, slaughter or aging are incorporated as scheduled
 events.  One of our design goal was to make \pkg{SimInf} completely
 extendable and allow for growth in available models and specialized
@@ -1558,18 +1558,21 @@ plot(events(model))
 \end{figure}
 
 The scheduled events give rise to a seasonal variation of the
-population size in each age category that can be explored using data
-in the \code{U} matrix.  The \code{U} method take a
+population size in each age category that can be explored from
+simulated data.  The \code{trajectory} method takes a
 \code{compartments} argument that can be used to determine the
-population size by age category.  Let us first run a trajectory to
-generate data, and then plot the number of individuals in each age
-category (Figure~\ref{fig:population}).
+population size by age category.  We use \code{as.is = TRUE} to get
+the result as a matrix (the internal format in \pkg{SimInf}), instead
+of as \code{data.frame}.  Let us plot the number of individuals in
+each age category (Figure~\ref{fig:population}).
 
 <<eval=FALSE>>=
-result <- run(model = model, threads = 1, seed = 1)
-N1 <- colSums(trajectory(result, compartments = c("S_1", "I_1"), as.is = TRUE))
-N2 <- colSums(trajectory(result, compartments = c("S_2", "I_2"), as.is = TRUE))
-N3 <- colSums(trajectory(result, compartments = c("S_3", "I_3"), as.is = TRUE))
+N1 <- colSums(trajectory(result, compartments = c("S_1", "I_1"),
+as.is = TRUE))
+N2 <- colSums(trajectory(result, compartments = c("S_2", "I_2"),
+as.is = TRUE))
+N3 <- colSums(trajectory(result, compartments = c("S_3", "I_3"),
+as.is = TRUE))
 opar <- par(mfrow = c(3, 1), mar = c(2, 5, 1, 1))
 plot(N3 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 1)
 plot(N2 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 2)
@@ -1902,7 +1905,7 @@ animals in each herd.  We assume, for the sake of simplicity, that
 vaccinated individuals become immune and non-infectious immediately.
 
 <<mparse-scheduled-events-vaccination>>=
-vaccination <- data.frame(event = 2, time = rep(21:52, each = 50),
+vaccination <- data.frame(event = "intTrans", time = rep(21:52, each = 50),
 node = 1:1600, dest = 0, n = 0, proportion = 0.8, select = 3,
 shift = 1)
 @
