@@ -1913,3 +1913,68 @@ events <- function(model)
         stop("'model' argument is not a 'SimInf_model'")
     model@events
 }
+
+##' Extract the select matrix from a \code{SimInf_model} object
+##'
+##' Utility function to extract \code{events@@E} from a
+##' \code{SimInf_model} object, see \code{\linkS4class{SimInf_events}}
+##' @param model The \code{model} to extract the select matrix
+##'     \code{E} from.
+##' @return \code{\linkS4class{dgCMatrix}} object.
+##' @export
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Extract the select matrix from the model
+##' select_matrix(model)
+select_matrix <- function(model)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+    model@events@E
+}
+
+##' Set the select matrix for a \code{SimInf_model} object
+##'
+##' Utility function to set \code{events@@E} in a \code{SimInf_model}
+##' object, see \code{\linkS4class{SimInf_events}}
+##' @param model The \code{model} to set the select matrix for.
+##' @param value A matrix.
+##' @export
+##' @importFrom methods as
+##' @importFrom methods is
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Set the select matrix
+##' select_matrix(model) <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 3)
+##'
+##' ## Extract the select matrix from the model
+##' select_matrix(model)
+"select_matrix<-" <- function(model, value)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+
+    if (!is(value, "dgCMatrix"))
+        value <- as(value, "dgCMatrix")
+
+    if (!identical(Nc(model), dim(value)[1]))
+        stop("'value' must have one row for each compartment in the model")
+
+    dimnames(value) <- list(rownames(model@events@E),
+                            as.character(seq_len(dim(value)[2])))
+    model@events@E <- value
+
+    model
+}

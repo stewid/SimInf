@@ -511,3 +511,23 @@ model@events@event <- 4L
 res <- tools::assertError(.Call(SimInf:::SIR_run, model, NULL, NULL, NULL))
 stopifnot(length(grep("Undefined event type.",
                       res[[1]]$message)) > 0)
+
+## Check get/set select_matrix
+model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
+
+## Set the select matrix
+select_matrix(model) <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 3)
+
+E_expected <- new("dgCMatrix", i = c(0L, 0L, 1L, 2L, 2L), p = c(0L, 1L, 4L, 5L),
+                  Dim = c(3L, 3L), Dimnames = list(c("S", "I", "R"), c("1", "2", "3")) ,
+                  x = c(1, 1, 1, 1, 1), factors = list())
+
+## Extract the select matrix from the model
+E_observed <- select_matrix(model)
+
+stopifnot(identical(E_expected, E_observed))
+
+m <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 2)
+res <- tools::assertError(select_matrix(model) <- m)
+stopifnot(length(grep("'value' must have one row for each compartment in the model",
+                      res[[1]]$message)) > 0)

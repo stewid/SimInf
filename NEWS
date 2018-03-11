@@ -35,6 +35,9 @@ IMPROVEMENTS
   character string, see the documentataion for the 'SimInf_events'
   method.
 
+* Added the utility function 'select_matrix' to get/set the E matrix
+  of the events slot of a SimInf_model object.
+
 BREAKING CHANGES
 
 * Removed the following methods: 'U', 'V', 'recovered', 'susceptible',
