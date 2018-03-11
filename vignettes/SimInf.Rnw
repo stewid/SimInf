@@ -1567,16 +1567,19 @@ of as \code{data.frame}.  Let us plot the number of individuals in
 each age category (Figure~\ref{fig:population}).
 
 <<eval=FALSE>>=
-N1 <- colSums(trajectory(result, compartments = c("S_1", "I_1"),
+N1 <- colSums(trajectory(model = result, compartments = c("S_1", "I_1"),
 as.is = TRUE))
-N2 <- colSums(trajectory(result, compartments = c("S_2", "I_2"),
+N2 <- colSums(trajectory(model = result, compartments = c("S_2", "I_2"),
 as.is = TRUE))
-N3 <- colSums(trajectory(result, compartments = c("S_3", "I_3"),
+N3 <- colSums(trajectory(model = result, compartments = c("S_3", "I_3"),
 as.is = TRUE))
 opar <- par(mfrow = c(3, 1), mar = c(2, 5, 1, 1))
 plot(N3 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 1)
+mtext("Age: 3", side = 3, line = 0)
 plot(N2 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 2)
+mtext("Age: 2", side = 3, line = 0)
 plot(N1 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 3)
+mtext("Age: 2", side = 3, line = 0)
 mtext("Day", side = 1, line = 1, at = 750)
 par(opar)
 @
@@ -1585,13 +1588,19 @@ par(opar)
   \begin{center}
 <<population-size, echo=FALSE, fig=TRUE>>=
 result <- run(model = model, threads = 1, seed = 1)
-N1 <- colSums(trajectory(result, compartments = c("S_1", "I_1"), as.is = TRUE))
-N2 <- colSums(trajectory(result, compartments = c("S_2", "I_2"), as.is = TRUE))
-N3 <- colSums(trajectory(result, compartments = c("S_3", "I_3"), as.is = TRUE))
+N1 <- colSums(trajectory(model = result, compartments = c("S_1", "I_1"),
+as.is = TRUE))
+N2 <- colSums(trajectory(model = result, compartments = c("S_2", "I_2"),
+as.is = TRUE))
+N3 <- colSums(trajectory(model = result, compartments = c("S_3", "I_3"),
+as.is = TRUE))
 opar <- par(mfrow = c(3, 1), mar = c(2, 5, 1, 1))
 plot(N3 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 1)
+mtext("Age: 3", side = 3, line = 0)
 plot(N2 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 2)
+mtext("Age: 2", side = 3, line = 0)
 plot(N1 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 3)
+mtext("Age: 1", side = 3, line = 0)
 mtext("Day", side = 1, line = 1, at = 750)
 par(opar)
 @
@@ -1788,7 +1797,7 @@ initialized with the initial condition \code{u0} and \code{tspan}.
 
 <<SIR-mparse-II>>=
 m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
-model <- init(m, u0 = cbind(S = 99, I = 1, R = 0), tspan = 1:180)
+model <- init(model = m, u0 = cbind(S = 99, I = 1, R = 0), tspan = 1:180)
 @
 
 As in earlier examples, the \code{model} object can now be used to
@@ -1832,9 +1841,9 @@ in \code{'Icum'} and plot the result as an epidemic curve
 <<SIR-mparse-incidence, eval=FALSE>>=
 m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
 c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
-model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
-result <- run(model, threads = 1, seed = 22)
-Icum <- trajectory(result)$Icum
+model <- init(model = m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
+result <- run(model = model, threads = 1, seed = 22)
+Icum <- trajectory(model = result)$Icum
 cases <- stepfun(result@tspan[-1], diff(c(0, Icum)))
 plot(cases, main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
@@ -1845,9 +1854,9 @@ do.points = FALSE)
 <<SIR-mparse-incidence-plot, echo=FALSE, fig=TRUE>>=
 m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
 c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
-model <- init(m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
-result <- run(model, threads = 1, seed = 22)
-Icum <- trajectory(result)$Icum
+model <- init(model = m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
+result <- run(model = model, threads = 1, seed = 22)
+Icum <- trajectory(model = result)$Icum
 cases <- stepfun(result@tspan[-1], diff(c(0, Icum)))
 plot(cases, main = "", xlab = "Time", ylab = "Number of cases",
 do.points = FALSE)
@@ -1979,8 +1988,9 @@ epicurve <- function(model, n = 1000) {
     j <- sample(seq_len(Nn(model)), 1)
     model@u0["I", j] <- 1L
     model@u0["S", j] <- model@u0["S", j] - 1L
-    result <- run(model)
-    Icum <- Icum + colSums(trajectory(result, "Icum", as.is = TRUE))
+    result <- run(model = model)
+    traj <- trajectory(model = result, "Icum", as.is = TRUE)
+    Icum <- Icum + colSums(traj)
   }
   stepfun(model@tspan[-1], diff(c(0, Icum / n)))
 }
