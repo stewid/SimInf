@@ -459,7 +459,11 @@ Note that GSL (\url{https://www.gnu.org/software/gsl/}) is not an
 example, from a terminal using: \code{'sudo apt-get install
   libgsl0-dev'} on Debian and Ubuntu, \code{'sudo yum install
   gsl-devel'} on Fedora, CentOS or RHEL, or \code{'brew install gsl'}
-on macOS with the Homebrew package manager.  Furthermore, when you
+on macOS with the Homebrew package manager.  On a Windows machine you
+first need to download and install Rtools from
+\url{https://cran.r-project.org/bin/windows/Rtools}.  The GSL files
+are downloaded, if needed, from \url{https://github.com/rwinlib/gsl}
+during the installation of \pkg{SimInf}.  Furthermore, when you
 install \pkg{SimInf} from source, depending on features of the
 compiler, the package is compiled with support for \proglang{OpenMP}
 \citep{OpenMP2008} to divide work over multiple processors and perform
