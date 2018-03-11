@@ -531,3 +531,32 @@ m <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 2)
 res <- tools::assertError(select_matrix(model) <- m)
 stopifnot(length(grep("'value' must have one row for each compartment in the model",
                       res[[1]]$message)) > 0)
+
+## Check get/set shift_matrix
+model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
+
+## Set the shift matrix
+shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
+
+N_expected <- structure(c(2L, 1L, 0L), .Dim = c(3L, 1L),
+                        .Dimnames = list(c("S", "I", "R"), "1"))
+
+## Extract the shift matrix from the model
+N_observed <- shift_matrix(model)
+
+stopifnot(identical(N_expected, N_observed))
+
+m <- matrix(c(1, 0), nrow = 2)
+res <- tools::assertError(select_matrix(model) <- m)
+stopifnot(length(grep("'value' must have one row for each compartment in the model",
+                      res[[1]]$message)) > 0)
+
+m <- matrix(c("1", "0", "0"), nrow = 3)
+res <- tools::assertError(shift_matrix(model) <- m)
+stopifnot(length(grep("'value' must be an integer matrix",
+                      res[[1]]$message)) > 0)
+
+m <- matrix(c(1.3, 0, 0), nrow = 3)
+res <- tools::assertError(shift_matrix(model) <- m)
+stopifnot(length(grep("'value' must be an integer matrix",
+                      res[[1]]$message)) > 0)

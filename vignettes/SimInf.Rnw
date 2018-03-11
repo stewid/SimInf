@@ -786,8 +786,6 @@ initial continuous state in node $i$.
   \label{table:arguments}
 \end{table}
 
-\newpage
-
 \subsection{Specification of scheduled events}
 \label{sec:events}
 
@@ -1691,10 +1689,10 @@ dev.off()
       \begin{center}
 <<plot-SISe3sp-III, echo=FALSE, results=hide>>=
 gdata(model, "coupling") <- 0.1
-model@events@N <- cbind(model@events@N,
-"3" = c(0L, -1L, 0L, -1L, 0L, -1L))
+m <- cbind(shift_matrix(model), c(0L, -1L, 0L, -1L, 0L, -1L))
+shift_matrix(model) <- m
 i <- which(model@events@event == 3)
-model@events@shift[i] <- 3L
+model@events@shift[i] <- ncol(m)
 png("SimInf-plot-SISe3sp-III.png", height = 480, width = 960)
 plot_nodes(run(model = model, threads = 1, seed = 1))
 dev.off()
@@ -1723,16 +1721,16 @@ infected animals to the susceptible state during an \textit{external
   transfer} event so that infection is not transferred, even though an
 animal is moved.  This can be achieved in \pkg{SimInf} by adding one
 column to the shift matrix \code{N} and use that column for the
-\textit{external transfer} events.
+\textit{external transfer} events (event type = 3).
 Figure~\ref{fig:SISe3sp-local-spread} shows the result from running
 one trajectory with the modified model.
 
 <<eval=FALSE>>=
 gdata(model, "coupling") <- 0.1
-model@events@N <- cbind(model@events@N,
-"3" = c(0L, -1L, 0L, -1L, 0L, -1L))
+m <- cbind(shift_matrix(model), c(0L, -1L, 0L, -1L, 0L, -1L))
+shift_matrix(model) <- m
 i <- which(model@events@event == 3)
-model@events@shift[i] <- 3L
+model@events@shift[i] <- ncol(m)
 plot_nodes(run(model = model, threads = 1, seed = 1))
 @
 
@@ -1839,9 +1837,11 @@ in \code{'Icum'} and plot the result as an epidemic curve
 (Figure~\ref{fig:SIR-mparse-incidence}).
 
 <<SIR-mparse-incidence, eval=FALSE>>=
-m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
-c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
-model <- init(model = m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
+transitions <- c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R")
+compartments <- c("S", "I", "Icum", "R")
+m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
+model <- init(model = m, u0 = cbind(S = 99, I = 1, Icum = 0, R = 0),
+tspan = 1:180)
 result <- run(model = model, threads = 1, seed = 22)
 Icum <- trajectory(model = result)$Icum
 cases <- stepfun(result@tspan[-1], diff(c(0, Icum)))
@@ -1852,9 +1852,11 @@ do.points = FALSE)
 \begin{figure}
   \begin{center}
 <<SIR-mparse-incidence-plot, echo=FALSE, fig=TRUE>>=
-m <- mparse(c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R"),
-c("S", "I", "Icum", "R"), b = 0.16, g = 0.077)
-model <- init(model = m, cbind(S = 99, I = 1, Icum = 0, R = 0), 1:180)
+transitions <- c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R")
+compartments <- c("S", "I", "Icum", "R")
+m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
+model <- init(model = m, u0 = cbind(S = 99, I = 1, Icum = 0, R = 0),
+tspan = 1:180)
 result <- run(model = model, threads = 1, seed = 22)
 Icum <- trajectory(model = result)$Icum
 cases <- stepfun(result@tspan[-1], diff(c(0, Icum)))

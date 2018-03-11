@@ -1914,6 +1914,80 @@ events <- function(model)
     model@events
 }
 
+##' Extract the shift matrix from a \code{SimInf_model} object
+##'
+##' Utility function to extract the shift matrix \code{events@@N} from
+##' a \code{SimInf_model} object, see
+##' \code{\linkS4class{SimInf_events}}
+##' @param model The \code{model} to extract the shift matrix
+##'     \code{events@@N} from.
+##' @return A mtrix.
+##' @export
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Extract the shift matrix from the model
+##' shift_matrix(model)
+shift_matrix <- function(model)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+    model@events@N
+}
+
+##' Set the shift matrix for a \code{SimInf_model} object
+##'
+##' Utility function to set \code{events@@N} in a \code{SimInf_model}
+##' object, see \code{\linkS4class{SimInf_events}}
+##' @param model The \code{model} to set the shift matrix
+##'     \code{events@@N}.
+##' @param value A matrix.
+##' @return \code{SimInf_model} object
+##' @export
+##' @importFrom methods is
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Set the shift matrix
+##' shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
+##'
+##' ## Extract the shift matrix from the model
+##' shift_matrix(model)
+"shift_matrix<-" <- function(model, value)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+
+    ## Check value
+    if (is.null(value))
+        value <- matrix(integer(0), nrow = 0, ncol = 0)
+    if (!all(is.matrix(value), is.numeric(value)))
+        stop("'value' must be an integer matrix")
+    if (!is.integer(value)) {
+        if (!all(is_wholenumber(value)))
+            stop("'value' must be an integer matrix")
+        storage.mode(value) <- "integer"
+    }
+    if (!identical(Nc(model), dim(value)[1]))
+        stop("'value' must have one row for each compartment in the model")
+
+    dimnames(value) <- list(rownames(model@events@E),
+                            as.character(seq_len(dim(value)[2])))
+    model@events@N <- value
+
+    model
+}
+
 ##' Extract the select matrix from a \code{SimInf_model} object
 ##'
 ##' Utility function to extract \code{events@@E} from a
