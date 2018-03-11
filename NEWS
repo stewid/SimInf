@@ -38,6 +38,10 @@ IMPROVEMENTS
 * Added the utility function 'select_matrix' to get/set the E matrix
   of the events slot of a SimInf_model object.
 
+* Added the utility function 'gdata' to get/set parameters in the
+  global data vector that is common to all nodes in a SimInf_model
+  object.
+
 BREAKING CHANGES
 
 * Removed the following methods: 'U', 'V', 'recovered', 'susceptible',

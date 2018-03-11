@@ -774,7 +774,7 @@ initial continuous state in node $i$.
     \code{u} & The compartment state vector in the node.\\
     \code{v} & The current continuous state vector in the node.\\
     \code{ldata} & The local data vector for the node.\\
-    \code{gdata} & The global data vector.\\
+    \code{gdata} & The global data vector that is common to all nodes.\\
     \code{node} & The node index.  Note the node index is zero-based,
     i.e., the first node is $0$.\\
     \code{t} & Current time in the simulation.\\
@@ -829,7 +829,7 @@ matrix \code{E}, represents one compartment in the model.  Let \code{s
   <- select[e]}, then each non-zero entry in the column \code{E[, s]}
 includes that compartment in the \code{event[e]} operation.  The
 definitions of all of these operations are a bit involved and to
-quickly get an overview, schematic pictures illustrating all of them
+quickly get an overview, schematic diagrams illustrating all of them
 have been prepared, we refer to
 Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\ref{fig:external:shift}
 in Appendix~\ref{sec:illustration-scheduled-events}.
@@ -1579,7 +1579,7 @@ mtext("Age: 3", side = 3, line = 0)
 plot(N2 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 2)
 mtext("Age: 2", side = 3, line = 0)
 plot(N1 ~ tspan, ylab = "N", type = "l", bty = "l", lty = 3)
-mtext("Age: 2", side = 3, line = 0)
+mtext("Age: 1", side = 3, line = 0)
 mtext("Day", side = 1, line = 1, at = 750)
 par(opar)
 @
@@ -1648,12 +1648,12 @@ plot_nodes <- function(x) {
 options(continue = "+    ")
 @
 
-To remove local spread, we have only to set the \code{coupling}
-parameter to zero and run the model
-(Figure~\ref{fig:SISe3sp-movements}).
+To remove local spread, we have only to use the \code{gdata} function
+to set the global model parameter \code{coupling} to zero and then run
+the model (Figure~\ref{fig:SISe3sp-movements}).
 
 <<eval=FALSE>>=
-model@gdata["coupling"] <- 0
+gdata(model, "coupling") <- 0
 plot_nodes(run(model = model, threads = 1, seed = 1))
 @
 
@@ -1676,7 +1676,7 @@ dev.off()
     \begin{subfigure}[b]{1.0\textwidth}
       \begin{center}
 <<plot-SISe3sp-II, echo=FALSE, results=hide>>=
-model@gdata["coupling"] <- 0
+gdata(model, "coupling") <- 0
 png("SimInf-plot-SISe3sp-II.png", height = 480, width = 960)
 plot_nodes(run(model = model, threads = 1, seed = 1))
 dev.off()
@@ -1690,7 +1690,7 @@ dev.off()
     \begin{subfigure}[b]{1.0\textwidth}
       \begin{center}
 <<plot-SISe3sp-III, echo=FALSE, results=hide>>=
-model@gdata["coupling"] <- 0.1
+gdata(model, "coupling") <- 0.1
 model@events@N <- cbind(model@events@N,
 "3" = c(0L, -1L, 0L, -1L, 0L, -1L))
 i <- which(model@events@event == 3)
@@ -1728,7 +1728,7 @@ Figure~\ref{fig:SISe3sp-local-spread} shows the result from running
 one trajectory with the modified model.
 
 <<eval=FALSE>>=
-model@gdata["coupling"] <- 0.1
+gdata(model, "coupling") <- 0.1
 model@events@N <- cbind(model@events@N,
 "3" = c(0L, -1L, 0L, -1L, 0L, -1L))
 i <- which(model@events@event == 3)

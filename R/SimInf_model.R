@@ -1978,3 +1978,77 @@ select_matrix <- function(model)
 
     model
 }
+
+##' Extract the global data parameters from a \code{SimInf_model} object
+##'
+##' The global data is a numeric vector that is common to all nodes.
+##' The global data vector is passed as an argument to the transition
+##' rate functions and the post time step function.
+##' @param model The \code{model} to get global model parameters from.
+##' @return a numeric vector
+##' @export
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Set 'beta' to a new value
+##' gdata(model, "beta") <- 2
+##'
+##' ## Extract the global data vector that is common to all nodes
+##' gdata(model)
+gdata <- function(model)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+
+    model@gdata
+}
+
+##' Set a global data parameter for a \code{SimInf_model} object
+##'
+##' The global data is a numeric vector that is common to all nodes.
+##' The global data vector is passed as an argument to the transition
+##' rate functions and the post time step function.
+##' @param model The \code{model} to set a global model parameter for.
+##' @param parameter The name of the parameter to set.
+##' @param value A numeric value.
+##' @return a \code{SimInf_model} object
+##' @export
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Set 'beta' to a new value
+##' gdata(model, "beta") <- 2
+##'
+##' ## Extract the global data vector that is common to all nodes
+##' gdata(model)
+"gdata<-" <- function(model, parameter, value)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+
+    ## Check paramter argument
+    if (missing(parameter))
+        stop("Missing 'parameter' argument")
+    if (!is.character(parameter))
+        stop("'parameter' argument must be a character")
+
+    ## Check value argument
+    if (missing(value))
+        stop("Missing 'value' argument")
+    if (!is.numeric(value))
+        stop("'value' argument must be a numeric")
+
+    model@gdata[parameter] <- value
+
+    model
+}

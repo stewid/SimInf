@@ -648,3 +648,13 @@ stopifnot(length(grep("'i' must be integer > 0",
 res <- tools::assertError(prevalence(result, I~S+I+R, i = 10))
 stopifnot(length(grep("'i' must be integer <= number of nodes",
                       res[[1]]$message)) > 0)
+
+## Check 'gdata'
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:5, beta = 2, gamma = 4)
+
+stopifnot(identical(gdata(model), structure(c(2, 4), .Names = c("beta", "gamma"))))
+gdata(model, "beta") <- 6
+stopifnot(identical(gdata(model), structure(c(6, 4), .Names = c("beta", "gamma"))))
+tools::assertError(gdata(model) <- 6)
+tools::assertError(gdata(model, "beta") <- "6")
