@@ -1769,37 +1769,41 @@ summary_events <- function(object)
     cat("Scheduled events\n")
     cat("----------------\n")
 
-    ## Summarise exit events
-    i <- which(object@events@event == 0L)
-    cat(sprintf(" Exit: %i\n", length(i)))
+    if (length(object@events@event) > 0) {
+        ## Summarise exit events
+        i <- which(object@events@event == 0L)
+        cat(sprintf(" Exit: %i\n", length(i)))
 
-    ## Summarise enter events
-    i <- which(object@events@event == 1L)
-    cat(sprintf(" Enter: %i\n", length(i)))
+        ## Summarise enter events
+        i <- which(object@events@event == 1L)
+        cat(sprintf(" Enter: %i\n", length(i)))
 
-    ## Summarise internal transfer events
-    i <- which(object@events@event == 2L)
-    cat(sprintf(" Internal transfer: %i\n", length(i)))
+        ## Summarise internal transfer events
+        i <- which(object@events@event == 2L)
+        cat(sprintf(" Internal transfer: %i\n", length(i)))
 
-    ## Summarise external transfer events
-    i <- which(object@events@event == 3L)
-    cat(sprintf(" External transfer: %i\n", length(i)))
+        ## Summarise external transfer events
+        i <- which(object@events@event == 3L)
+        cat(sprintf(" External transfer: %i\n", length(i)))
 
-    if (length(i) > 0) {
-        ## Summarise network
-        cat("\nNetwork summary\n")
-        cat("---------------\n")
-        id <- indegree(object)
-        od <- outdegree(object)
-        qq_id <- quantile(id)
-        qq_id <- c(qq_id[1L:3L], mean(id), qq_id[4L:5L])
-        qq_od <- quantile(od)
-        qq_od <- c(qq_od[1L:3L], mean(od), qq_od[4L:5L])
-        qq <- rbind(qq_id, qq_od)
-        colnames(qq) <- c("Min.", "1st Qu.", "Median",
-                          "Mean", "3rd Qu.", "Max.")
-        rownames(qq) <- c(" Indegree:", " Outdegree:")
-        print.table(qq, digits = 3)
+        if (length(i) > 0) {
+            ## Summarise network
+            cat("\nNetwork summary\n")
+            cat("---------------\n")
+            id <- indegree(object)
+            od <- outdegree(object)
+            qq_id <- quantile(id)
+            qq_id <- c(qq_id[1L:3L], mean(id), qq_id[4L:5L])
+            qq_od <- quantile(od)
+            qq_od <- c(qq_od[1L:3L], mean(od), qq_od[4L:5L])
+            qq <- rbind(qq_id, qq_od)
+            colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                              "Mean", "3rd Qu.", "Max.")
+            rownames(qq) <- c(" Indegree:", " Outdegree:")
+            print.table(qq, digits = 3)
+        }
+    } else {
+        cat(" - None\n")
     }
 }
 
@@ -1808,7 +1812,7 @@ summary_transitions <- function(object)
     cat("Transitions\n")
     cat("-----------\n")
 
-    cat(paste0(" ", rownames(object@G), collapse = "\n"), "\n")
+    cat(paste0(" ", rownames(object@G), collapse = "\n"), sep = "\n")
 }
 
 ##' Brief summary of \code{SimInf_model}
