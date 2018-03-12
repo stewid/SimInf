@@ -300,6 +300,17 @@ void SimInf_scheduled_events_free(
     }
 }
 
+/**
+ * Process all scheduled E1 and E2 events where time is less or equal
+ * to the global time in the simulation.
+ *
+ * @param model The compartment model with information for each node
+ * and the global time.
+ * @param events Data with events to process.
+ * @param process_E2 Process only E1 events (process_E2 = 0), else
+ * process both E1 and E2 events.
+ * @return 0 if Ok, else error code.
+ */
 void SimInf_process_events(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events,
