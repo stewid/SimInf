@@ -1850,8 +1850,8 @@ m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
 Since there are no between-node movements in this example, the
 stochastic process in one node does not affect any other node in the
 model.  It is therefore straightforward to run many realizations of
-this model, simply by replicating a node in \code{u0}, for example, $n
-= 1000$ times.
+this model, simply by replicating a node in the initial condition
+\code{u0}, for example, $n = 1000$ times.
 
 <<SIR-mparse-incidence-run, eval=FALSE>>=
 n <- 1000
@@ -1861,10 +1861,10 @@ model <- init(model = m, u0 = u0, tspan = 1:150)
 result <- run(model = model, threads = 1, seed = 22)
 @
 
-Let us compare the incidence cases in the first node with the average
-incidence cases among all realizations.  This is done by extracting
-the trajectory and calculate successive differences at each time-point
-of \code{'Icum'}.
+Let us post-process the simulated trajectory to compare the incidence
+cases in the first node with the average incidence cases among all
+realizations.  This is done by extracting the trajectory and calculate
+successive differences at each time-point of \code{'Icum'}.
 
 <<SIR-mparse-incidence-trajectory, eval=FALSE>>=
 traj <- trajectory(model = result, compartments = "Icum")
@@ -1873,7 +1873,9 @@ avg_cases <- c(0, diff(by(traj, traj$time, function(x) sum(x$Icum))) / n)
 @
 
 Finally, plot the result as an epidemic curve
-(Figure~\ref{fig:SIR-mparse-incidence}).
+(Figure~\ref{fig:SIR-mparse-incidence}).  In this example, the number
+of incident cases in the first node exceeds what is observed on
+average.
 
 <<SIR-mparse-incidence-plot, eval=FALSE>>=
 plot(cases, main = "", xlab = "Time", ylab = "Number of cases",
@@ -1959,7 +1961,7 @@ node = 1:1600, dest = 0, n = 0, proportion = 0.8, select = 3,
 shift = 1)
 @
 
-To simulate from this model, we have to define the event matrix $E$
+To simulate from this model, we have to define the select matrix $E$
 and the shift matrix $N$, to handle which compartments to sample from
 when processing scheduled events.  Let us first define $E$, where the
 first column is for \textit{enter} events (births); add newborn
@@ -2011,7 +2013,7 @@ introduced in the previous trajectory, animals are first moved to the
 susceptible compartment.  Then, one infected individual is introduced
 into a randomly sampled node from the population.  Note that we use
 the 'L' suffix to create an integer value rather than a numeric value.
-Run the model and accumulate \code{Icum}, for efficiency, use
+Run the model and accumulate \code{Icum}.  For efficiency, use
 \code{as.is = TRUE}, the internal matrix format, to extract
 \code{Icum} in every node at each time-point in \code{tspan}.
 
