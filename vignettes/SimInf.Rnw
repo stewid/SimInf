@@ -222,7 +222,7 @@ numerical approach underlying \pkg{SimInf} is described in
         \caption{Events}
       \end{center}
     \end{subfigure}
-  \caption{Illustration of livestock movements in a temporal network.
+  \caption{Illustration of livestock movements as a temporal network.
     (a) Each snapshot depicts movements during one time unit, for
     example, a day.  The network has $N = 4$ nodes where node $1$ is
     infected and $2$--$4$ are non-infected nodes.  Arrows indicate
@@ -231,7 +231,8 @@ numerical approach underlying \pkg{SimInf} is described in
     infection may spread by livestock movements from $1$ to $3$ at
     $t=2$ (indicated by blue lines in node $3$ at $t=3$) and then from
     $3$ to $2$ at $t=3$.  (b) The livestock movements represented as
-    events $(\mathit{source}, \mathit{destination}, t, n)$.
+    events where each event contains $(\mathit{source},
+    \mathit{destination}, t, n)$.
     \label{fig:temporal-network}}
 \end{figure}
 
@@ -506,9 +507,11 @@ in \pkg{SimInf} have a generating function \citep{Chambers2008}, with
 the same name as the model, which check parameters and initialize the
 necessary data structures for that specific model.  After the model is
 initialized, the simulation is started with a call to the \code{run}
-method.  To facilitate post-processing and visualization of output
-data, the predefined models in \pkg{SimInf} provide several utility
-functions, for example, \code{trajectory}, \code{prevalence} and
+method and if execution of the core solver is successful, it returns a
+modified \code{SimInf\_model} object with a single stochastic solution
+trajectory attached to it.  \pkg{SimInf} provides several utility
+functions to facilitate post-processing and visualization of simulated
+data, for example, \code{trajectory}, \code{prevalence} and
 \code{plot}.
 
 \begin{table}
