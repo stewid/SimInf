@@ -92,19 +92,6 @@ C_include <- function() {
       "")
 }
 
-## C code: compartments
-C_compartments <- function(compartments) {
-    lines <- character(0)
-    if (length(compartments)) {
-        lines <- c("/* Compartments */",
-                   paste0("enum{",
-                          paste0(compartments, collapse = ", "),
-                          "};"),
-                   "")
-    }
-    lines
-}
-
 ## C code: rate constants
 C_rate_constants <- function(rates) {
     lines <- character(0)
