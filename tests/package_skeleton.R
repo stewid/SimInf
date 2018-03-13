@@ -21,7 +21,7 @@ library("SimInf")
 sessionInfo()
 
 m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-            c("S", "I", "R"), b = 0.16, g = 0.077)
+            c("S", "I", "R"), list(b = 0.16, g = 0.077))
 
 path <- tempdir()
 package_skeleton(m, name = "SIR", path = path)

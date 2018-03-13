@@ -92,21 +92,6 @@ C_include <- function() {
       "")
 }
 
-## C code: rate constants
-C_rate_constants <- function(rates) {
-    lines <- character(0)
-    if (length(rates)) {
-        lines <- "/* Rate constants */"
-        for (i in seq_len(length(rates))) {
-            lines <- c(lines, sprintf("const double %s = %g;",
-                                      names(rates)[i],
-                                      rates[[i]]))
-        }
-        lines <- c(lines, "")
-    }
-    lines
-}
-
 ## C code: transition rate functions.
 C_trFun <- function(transitions) {
     lines <- character(0)
@@ -158,7 +143,6 @@ C_run <- function(transitions) {
 C_code_mparse <- function(transitions, rates, compartments) {
     c(C_heading(),
       C_include(),
-      C_rate_constants(rates),
       C_trFun(transitions),
       C_ptsFun(),
       C_run(transitions))
@@ -235,22 +219,25 @@ tokens <- function(propensity) {
 ## \code{u[compartments[j]]} where \code{j} is the numbering in
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
-rewriteprop <- function(propensity, compartments) {
+rewriteprop <- function(propensity, compartments, gdata) {
     orig_prop <- propensity
     propensity <- tokens(propensity)
     depends <- integer(length(compartments))
+
+    ## Find compartments in propensity
     i <- match(propensity, compartments)
-    propensity <- ifelse(is.na(i),
-                         propensity,
-                         sprintf("u[%i]", i-1L))
-    propensity <- paste0(propensity, collapse = "")
+    propensity <- ifelse(is.na(i), propensity, sprintf("u[%i]", i-1L))
     i <- i[!is.na(i)]
     if (length(i))
         depends[i] <- 1
 
+    ## Find gdata in propensity
+    i <- match(propensity, gdata)
+    propensity <- ifelse(is.na(i), propensity, sprintf("gdata[%i]", i-1L))
+
     list(orig_prop  = orig_prop,
-         propensity = propensity,
-         depends = depends)
+         propensity = paste0(propensity, collapse = ""),
+         depends    = depends)
 }
 
 ## Generate labels from the parsed transitions
@@ -314,37 +301,45 @@ LaTeX <- function(transitions)
 ##' @param compartments contains the names of the involved
 ##'     compartments, for example, \code{compartments = c("S", "I",
 ##'     "R")}.
-##' @param ... rate-constants for the model.
+##' @param gdata list with rate-constants for the model.
 ##' @return \linkS4class{SimInf_mparse}
 ##' @export
 ##' @importFrom methods as
 ##' @importFrom methods new
 ##' @importFrom utils packageVersion
 ##' @template mparse-example
-mparse <- function(transitions = NULL, compartments = NULL, ...)
+mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL)
 {
-    rates <- list(...)
-    stopifnot(all(sapply(rates, class) == "numeric"))
-
     if (is.null(transitions))
         stop("'transitions' must be specified.")
     if(!is.character(transitions))
         stop("'transitions' must be specified in a character vector.")
+
     if (is.null(compartments))
         stop("'compartments' must be specified.")
     if(!is.character(compartments))
         stop("'compartments' must be specified in a character vector.")
+
+    if (is.null(gdata))
+        stop("'gdata' must be specified.")
+    if (!is.list(gdata))
+        stop("'gdata' must be a list.")
+    if (!all(sapply(gdata, is.numeric)))
+        stop("'gdata' parameters must be numeric")
+    if (!all(sapply(gdata, length) == 1L))
+        stop("each 'gdata' parameter must be of length one")
+
     if (!all(identical(length(compartments), length(unique(compartments))),
-             identical(length(names(rates)), length(unique(names(rates))))))
-        stop("'compartments' and 'rates' must consist of unique names.")
+             identical(length(names(gdata)), length(unique(names(gdata))))))
+        stop("'compartments' and 'gdata' must consist of unique names.")
 
     reserved = c("v_new", "u", "v", "ldata", "gdata", "node", "t", "rng")
     if (length(intersect(compartments, reserved)))
         stop(paste("Invalid compartment names:",
                    paste0(intersect(compartments, reserved), collapse = ", ")))
-    if (length(intersect(names(rates), reserved)))
-        stop(paste("Invalid rate names:",
-                   paste0(intersect(names(rates), reserved), collapse = ", ")))
+    if (length(intersect(names(gdata), reserved)))
+        stop(paste("Invalid gdata names:",
+                   paste0(intersect(names(gdata), reserved), collapse = ", ")))
 
     transitions <- lapply(strsplit(transitions, "->"), function(x) {
         if (!identical(length(x), 3L))
@@ -374,7 +369,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
         S[ifrom] <- -1
         S[idest] <- 1
 
-        propensity <- rewriteprop(propensity, compartments)
+        propensity <- rewriteprop(propensity, compartments, names(gdata))
 
         list(from       = from,
              dest       = dest,
@@ -394,8 +389,8 @@ mparse <- function(transitions = NULL, compartments = NULL, ...)
     rownames(S) <- compartments
 
     new("SimInf_mparse", latex = LaTeX(transitions),
-        C_code = C_code_mparse(transitions, rates, compartments),
-        G = G, S = S)
+        C_code = C_code_mparse(transitions, gdata, compartments),
+        G = G, S = S, gdata = unlist(gdata))
 }
 
 ##' Init a \code{SimInf_mparse} object with data
@@ -471,8 +466,9 @@ init <- function(model,
 ##' ## Use the model parser to create a 'SimInf_mparse' object that
 ##' ## expresses an SIR model, where 'b' is the transmission rate and
 ##' ## 'g' is the recovery rate.
-##' m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-##'             c("S", "I", "R"), b = 0.16, g = 0.077)
+##' m <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+##'             compartments = c("S", "I", "R"),
+##'             gdata = list(b = 0.16, g = 0.077))
 ##'
 ##' ## View the C code.
 ##' C_code(m)

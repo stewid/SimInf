@@ -24,7 +24,7 @@ sessionInfo()
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                             "D+W->c3*D*W->W+W","W->c4*W->@"),
             compartments = c("D","W"),
-            c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6)
+            gdata = list(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6))
 
 latex <- c("\\begin{align}",
            "  \\left",
@@ -64,12 +64,6 @@ C_code <- c(
     "#include <R_ext/Rdynload.h>",
     "#include \"SimInf.h\"",
     "",
-    "/* Rate constants */",
-    "const double c1 = 0.5;",
-    "const double c2 = 1;",
-    "const double c3 = 0.005;",
-    "const double c4 = 0.6;",
-    "",
     "double trFun1(",
     "    const int *u,",
     "    const double *v,",
@@ -77,7 +71,7 @@ C_code <- c(
     "    const double *gdata,",
     "    double t)",
     "{",
-    "    return c1;",
+    "    return gdata[0];",
     "}",
     "",
     "double trFun2(",
@@ -87,7 +81,7 @@ C_code <- c(
     "    const double *gdata,",
     "    double t)",
     "{",
-    "    return c2*u[0];",
+    "    return gdata[1]*u[0];",
     "}",
     "",
     "double trFun3(",
@@ -97,7 +91,7 @@ C_code <- c(
     "    const double *gdata,",
     "    double t)",
     "{",
-    "    return c3*u[0]*u[1];",
+    "    return gdata[2]*u[0]*u[1];",
     "}",
     "",
     "double trFun4(",
@@ -107,7 +101,7 @@ C_code <- c(
     "    const double *gdata,",
     "    double t)",
     "{",
-    "    return c4*u[1];",
+    "    return gdata[3]*u[1];",
     "}",
     "",
     "int ptsFun(",
@@ -136,24 +130,20 @@ stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
                       "I", "+", "R", ")")))
 
 stopifnot(
-    identical(SimInf:::rewriteprop("beta*S*I/(S+I+R)", c("S", "I", "R")),
+    identical(SimInf:::rewriteprop("beta*S*I/(S+I+R)", c("S", "I", "R"), "beta"),
               structure(list(orig_prop = "beta*S*I/(S+I+R)",
-                             propensity = "beta*u[0]*u[1]/(u[0]+u[1]+u[2])",
+                             propensity = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
                              depends = c(1, 1, 1)),
                         .Names = c("orig_prop", "propensity", "depends"))))
 
 ## Check init function
 m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-            c("S", "I", "R"), b = 0.16, g = 0.077)
+            c("S", "I", "R"), list(b = 0.16, g = 0.077))
 model <- init(m, u0 = data.frame(S = 100, I = 1, R = 0), tspan = 1:10)
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",
     "#include \"SimInf.h\"",
-    "",
-    "/* Rate constants */",
-    "const double b = 0.16;",
-    "const double g = 0.077;",
     "",
     "double trFun1(",
     "    const int *u,",
@@ -162,7 +152,7 @@ C_code <- c(
     "    const double *gdata,",
     "    double t)",
     "{",
-    "    return b*u[0]*u[1]/(u[0]+u[1]+u[2]);",
+    "    return gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2]);",
     "}",
     "",
     "double trFun2(",
@@ -172,7 +162,7 @@ C_code <- c(
     "    const double *gdata,",
     "    double t)",
     "{",
-    "    return g*u[1];",
+    "    return gdata[1]*u[1];",
     "}",
     "",
     "int ptsFun(",
