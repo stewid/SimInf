@@ -165,7 +165,6 @@ C_run <- function(transitions) {
 C_code_mparse <- function(transitions, rates, compartments) {
     c(C_heading(),
       C_include(),
-      C_compartments(compartments),
       C_rate_constants(rates),
       C_trFun(transitions),
       C_ptsFun(),
@@ -250,7 +249,7 @@ rewriteprop <- function(propensity, compartments) {
     i <- match(propensity, compartments)
     propensity <- ifelse(is.na(i),
                          propensity,
-                         sprintf("u[%s]", compartments[i]))
+                         sprintf("u[%i]", i-1L))
     propensity <- paste0(propensity, collapse = "")
     i <- i[!is.na(i)]
     if (length(i))
