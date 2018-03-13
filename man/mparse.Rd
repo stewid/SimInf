@@ -4,7 +4,7 @@
 \alias{mparse}
 \title{Model parser to define new models to run in \code{SimInf}}
 \usage{
-mparse(transitions = NULL, compartments = NULL, ...)
+mparse(transitions = NULL, compartments = NULL, gdata = NULL)
 }
 \arguments{
 \item{transitions}{character vector containing transitions on the
@@ -19,7 +19,7 @@ model.}
 compartments, for example, \code{compartments = c("S", "I",
 "R")}.}
 
-\item{...}{rate-constants for the model.}
+\item{gdata}{list with rate-constants for the model.}
 }
 \value{
 \linkS4class{SimInf_mparse}
@@ -35,8 +35,9 @@ definition that is ready to be initialised with data and then
 ## Use the model parser to create a 'SimInf_mparse' object that
 ## expresses a SIR model, where 'b' is the transmission rate and
 ## 'g' is the recovery rate.
-m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-            c("S", "I", "R"), b = 0.16, g = 0.077)
+m <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+            compartments = c("S", "I", "R"),
+            gdata = list(b = 0.16, g = 0.077))
 
 ## Initialize a 'SimInf_model' from the 'SimInf_mparse' object
 u0 <- data.frame(S = 100, I = 1, R = 0)

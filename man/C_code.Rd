@@ -24,8 +24,9 @@ Extract the C code from an \code{mparse} object
 ## Use the model parser to create a 'SimInf_mparse' object that
 ## expresses an SIR model, where 'b' is the transmission rate and
 ## 'g' is the recovery rate.
-m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-            c("S", "I", "R"), b = 0.16, g = 0.077)
+m <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+            compartments = c("S", "I", "R"),
+            gdata = list(b = 0.16, g = 0.077))
 
 ## View the C code.
 C_code(m)
