@@ -1796,14 +1796,14 @@ compartments <- c("S", "I", "R")
 
 We can now use the \code{transitions} and \code{compartments}
 variables, together with the constants \code{b} and \code{g} to build
-an object of class \code{'SimInf\_mparse'} via a call to
-\code{mparse}.  Before we can simulate from the model, it needs to be
-initialized with the initial condition \code{u0} and \code{tspan}.
+an object of class \code{'SimInf\_model'} via a call to \code{mparse}.
+It also needs to be initialized with the initial condition \code{u0}
+and \code{tspan}.
 
 <<SIR-mparse-II>>=
-m <- mparse(transitions = transitions, compartments = compartments,
-gdata = list(b = 0.16, g = 0.077))
-model <- init(model = m, u0 = cbind(S = 99, I = 1, R = 0), tspan = 1:180)
+model <- mparse(transitions = transitions, compartments = compartments,
+gdata = c(b = 0.16, g = 0.077), u0 = cbind(S = 99, I = 1, R = 0),
+tspan = 1:180)
 @
 
 As in earlier examples, the \code{model} object can now be used to
@@ -1845,8 +1845,6 @@ happens.
 <<SIR-mparse-incidence, eval=FALSE>>=
 transitions <- c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R")
 compartments <- c("S", "I", "Icum", "R")
-m <- mparse(transitions = transitions, compartments = compartments,
-gdata = list(b = 0.16, g = 0.077))
 @
 
 Since there are no between-node movements in this example, the
@@ -1859,14 +1857,15 @@ this model, simply by replicating a node in the initial condition
 n <- 1000
 u0 <- data.frame(S = rep(99, n), I = rep(1, n), Icum = rep(0, n),
 R = rep(0, n))
-model <- init(model = m, u0 = u0, tspan = 1:150)
+model <- mparse(transitions = transitions, compartments = compartments,
+gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:150)
 result <- run(model = model, threads = 1, seed = 22)
 @
 
 Let us post-process the simulated trajectory to compare the incidence
 cases in the first node with the average incidence cases among all
-realizations.  This is done by extracting the trajectory and calculate
-successive differences at each time-point of \code{'Icum'}.
+realizations.  Extract the trajectory and calculate successive
+differences at each time-point of \code{'Icum'}.
 
 <<SIR-mparse-incidence-trajectory, eval=FALSE>>=
 traj <- trajectory(model = result, compartments = "Icum")
@@ -1890,12 +1889,11 @@ lines(avg_cases, col = "blue", lwd = 2, lty = 2)
 <<SIR-mparse-incidence-plot, echo=FALSE, fig=TRUE>>=
 transitions <- c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R")
 compartments <- c("S", "I", "Icum", "R")
-m <- mparse(transitions = transitions, compartments = compartments,
-gdata = list(b = 0.16, g = 0.077))
 n <- 1000
 u0 <- data.frame(S = rep(99, n), I = rep(1, n), Icum = rep(0, n),
 R = rep(0, n))
-model <- init(model = m, u0 = u0, tspan = 1:150)
+model <- mparse(transitions = transitions, compartments = compartments,
+gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:150)
 result <- run(model = model, threads = 1, seed = 22)
 traj <- trajectory(model = result, compartments = "Icum")
 cases <- stepfun(result@tspan[-1], diff(c(0, traj$Icum[traj$node == 1])))
@@ -1934,8 +1932,6 @@ rate and \code{g} the recovery rate.
 <<mparse-scheduled-events>>=
 transitions <- c("S -> b*S*I/(S+I+R+V) -> I + Icum", "I -> g*I -> R")
 compartments <- c("S", "I", "Icum", "R", "V")
-m <- mparse(transitions = transitions, compartments = compartments,
-gdata = list(b = 0.16, g = 0.077))
 @
 
 Load the example data for an \code{SIR} model in a population of 1600
@@ -2035,7 +2031,7 @@ epicurve <- function(model, n = 1000) {
     model@u0["I", j] <- 1L
     model@u0["S", j] <- model@u0["S", j] - 1L
     result <- run(model = model)
-    traj <- trajectory(model = result, "Icum", as.is = TRUE)
+    traj <- trajectory(model = result, compartments = "Icum", as.is = TRUE)
     Icum <- Icum + colSums(traj)
   }
   stepfun(model@tspan[-1], diff(c(0, Icum / n)))
@@ -2050,8 +2046,9 @@ Generate an epicurve with the average number of cases per day for the
 first three hundred days of the epidemic without vaccination.
 
 <<mparse-scheduled-events-model-no-vac, eval=FALSE>>=
-model_no_vac <- init(m, u0 = u0, tspan = 1:300, events = events,
-E = E, N = N)
+model_no_vac <- mparse(transitions = transitions,
+compartments = compartments, gdata = c(b = 0.16, g = 0.077),
+u0 = u0, tspan = 1:300, events = events, E = E, N = N)
 cases_no_vac <- epicurve(model_no_vac)
 @
 
@@ -2126,12 +2123,13 @@ efficiency, and $w$ is the degree of predator saturation
 \cite{Pineda-Krch2008}, we define the model as
 
 <<mparse-predator-prey, eval=FALSE>>=
-m <- mparse(transitions = c("@ -> bR*R -> R",
-"R -> (dR+(bR-dR)*R/K)*R -> @", "R -> alpha/(1+w*R)*R*F -> @",
-"@ -> bF*alpha/(1+w*R)*R*F -> F", "F -> dF*F -> @"),
-compartments = c("R", "F"), gdata = list(bR = 2, bF = 2, dR = 1,
-K = 1000, alpha = 0.007, w = 0.0035, dF = 2))
-model <- init(m, cbind(R = 1000, F = 100), 1:100)
+transitions <- c("@ -> bR*R -> R", "R -> (dR+(bR-dR)*R/K)*R -> @",
+"R -> alpha/(1+w*R)*R*F -> @", "@ -> bF*alpha/(1+w*R)*R*F -> F",
+"F -> dF*F -> @")
+compartments <- c("R", "F")
+m <- mparse(transitions = transitions, compartments = compartments,
+gdata = c(bR = 2, bF = 2, dR = 1, K = 1000, alpha = 0.007,
+w = 0.0035, dF = 2), u0 = cbind(R = 1000, F = 100), tspan = 1:100)
 result <- run(model, threads = 1, seed = 1)
 plot(result, N = TRUE)
 @
@@ -2139,12 +2137,13 @@ plot(result, N = TRUE)
 \begin{figure}
   \begin{center}
 <<mparse-predator-prey-plot, echo=FALSE, fig=TRUE>>=
-m <- mparse(transitions = c("@ -> bR*R -> R",
-"R -> (dR+(bR-dR)*R/K)*R -> @", "R -> alpha/(1+w*R)*R*F -> @",
-"@ -> bF*alpha/(1+w*R)*R*F -> F", "F -> dF*F -> @"),
-compartments = c("R", "F"), gdata = list(bR = 2, bF = 2, dR = 1,
-K = 1000, alpha = 0.007, w = 0.0035, dF = 2))
-model <- init(m, cbind(R = 1000, F = 100), 1:100)
+transitions <- c("@ -> bR*R -> R", "R -> (dR+(bR-dR)*R/K)*R -> @",
+"R -> alpha/(1+w*R)*R*F -> @", "@ -> bF*alpha/(1+w*R)*R*F -> F",
+"F -> dF*F -> @")
+compartments <- c("R", "F")
+m <- mparse(transitions = transitions, compartments = compartments,
+gdata = c(bR = 2, bF = 2, dR = 1, K = 1000, alpha = 0.007,
+w = 0.0035, dF = 2), u0 = cbind(R = 1000, F = 100), tspan = 1:100)
 result <- run(model, threads = 1, seed = 1)
 plot(result, N = TRUE)
 @
