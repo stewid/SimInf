@@ -2174,7 +2174,7 @@ appropriate places, and creates skeleton help files.
 
 <<create-package-skeleton, eval=FALSE>>=
 path <- tempdir()
-package_skeleton(m, "PredatorPrey", path = path)
+package_skeleton(model, "PredatorPrey", path = path)
 @
 
 where the first argument is the result (\code{SimInf_mparse} object)
