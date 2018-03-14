@@ -235,12 +235,12 @@ create_model_run_man_file <- function(path, name)
     invisible(NULL)
 }
 
-##' Create a package skeleton for a \code{SimInf_model}
+##' Create a package skeleton from a \code{SimInf_model}
 ##'
 ##' Describe your model in a logical way in R, then \code{mparse}
-##' creates a \code{\linkS4class{SimInf_mparse}} object with your
-##' model definition that can be installed as an add-on R package.
-##' @param model The \code{model} \code{\linkS4class{SimInf_mparse}}
+##' creates a \code{\linkS4class{SimInf_model}} object with your model
+##' definition that can be installed as an add-on R package.
+##' @param model The \code{model} \code{\linkS4class{SimInf_model}}
 ##'     object with your model to create the package skeleton from.
 ##' @param name Character string: the package name and directory name
 ##'     for your package.
@@ -265,8 +265,8 @@ package_skeleton <- function(model, name = NULL, path = ".",
     ## Check model argument
     if (missing(model))
         stop("Missing 'model' argument")
-    if (!is(model, "SimInf_mparse"))
-        stop("'model' argument is not a 'SimInf_mparse' object")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model' object")
 
     stopifnot(!is.null(name), is.character(name), length(name) == 1,
               nchar(name) > 0)
