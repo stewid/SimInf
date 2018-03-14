@@ -1801,7 +1801,8 @@ an object of class \code{'SimInf\_mparse'} via a call to
 initialized with the initial condition \code{u0} and \code{tspan}.
 
 <<SIR-mparse-II>>=
-m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
+m <- mparse(transitions = transitions, compartments = compartments,
+gdata = list(b = 0.16, g = 0.077))
 model <- init(model = m, u0 = cbind(S = 99, I = 1, R = 0), tspan = 1:180)
 @
 
@@ -1844,7 +1845,8 @@ happens.
 <<SIR-mparse-incidence, eval=FALSE>>=
 transitions <- c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R")
 compartments <- c("S", "I", "Icum", "R")
-m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
+m <- mparse(transitions = transitions, compartments = compartments,
+gdata = list(b = 0.16, g = 0.077))
 @
 
 Since there are no between-node movements in this example, the
@@ -1888,7 +1890,8 @@ lines(avg_cases, col = "blue", lwd = 2, lty = 2)
 <<SIR-mparse-incidence-plot, echo=FALSE, fig=TRUE>>=
 transitions <- c("S -> b*S*I/(S+I+R) -> I + Icum", "I -> g*I -> R")
 compartments <- c("S", "I", "Icum", "R")
-m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
+m <- mparse(transitions = transitions, compartments = compartments,
+gdata = list(b = 0.16, g = 0.077))
 n <- 1000
 u0 <- data.frame(S = rep(99, n), I = rep(1, n), Icum = rep(0, n),
 R = rep(0, n))
@@ -1931,7 +1934,8 @@ rate and \code{g} the recovery rate.
 <<mparse-scheduled-events>>=
 transitions <- c("S -> b*S*I/(S+I+R+V) -> I + Icum", "I -> g*I -> R")
 compartments <- c("S", "I", "Icum", "R", "V")
-m <- mparse(transitions, compartments, b = 0.16, g = 0.077)
+m <- mparse(transitions = transitions, compartments = compartments,
+gdata = list(b = 0.16, g = 0.077))
 @
 
 Load the example data for an \code{SIR} model in a population of 1600
@@ -2125,8 +2129,8 @@ efficiency, and $w$ is the degree of predator saturation
 m <- mparse(transitions = c("@ -> bR*R -> R",
 "R -> (dR+(bR-dR)*R/K)*R -> @", "R -> alpha/(1+w*R)*R*F -> @",
 "@ -> bF*alpha/(1+w*R)*R*F -> F", "F -> dF*F -> @"),
-compartments = c("R", "F"), bR = 2, bF = 2, dR = 1, K = 1000,
-alpha = 0.007, w = 0.0035, dF = 2)
+compartments = c("R", "F"), gdata = list(bR = 2, bF = 2, dR = 1,
+K = 1000, alpha = 0.007, w = 0.0035, dF = 2))
 model <- init(m, cbind(R = 1000, F = 100), 1:100)
 result <- run(model, threads = 1, seed = 1)
 plot(result, N = TRUE)
@@ -2138,8 +2142,8 @@ plot(result, N = TRUE)
 m <- mparse(transitions = c("@ -> bR*R -> R",
 "R -> (dR+(bR-dR)*R/K)*R -> @", "R -> alpha/(1+w*R)*R*F -> @",
 "@ -> bF*alpha/(1+w*R)*R*F -> F", "F -> dF*F -> @"),
-compartments = c("R", "F"), bR = 2, bF = 2, dR = 1, K = 1000,
-alpha = 0.007, w = 0.0035, dF = 2)
+compartments = c("R", "F"), gdata = list(bR = 2, bF = 2, dR = 1,
+K = 1000, alpha = 0.007, w = 0.0035, dF = 2))
 model <- init(m, cbind(R = 1000, F = 100), 1:100)
 result <- run(model, threads = 1, seed = 1)
 plot(result, N = TRUE)
