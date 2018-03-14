@@ -20,8 +20,11 @@ library("SimInf")
 ## For debugging
 sessionInfo()
 
-m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-            c("S", "I", "R"), list(b = 0.16, g = 0.077))
+m <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+            compartments = c("S", "I", "R"),
+            gdata = c(b = 0.16, g = 0.077),
+            u0 = data.frame(S = 99, I = 1, R = 0),
+            tspan = 1:10)
 
 path <- tempdir()
 package_skeleton(m, name = "SIR", path = path)
