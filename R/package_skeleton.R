@@ -78,6 +78,7 @@ create_model_R_class <- function(name)
 create_model_R_object <- function(model, name)
 {
     rows <- paste0(rownames(model@S), collapse = "\", \"")
+    parameters <- paste0(names(model@gdata), collapse = "\", \"")
 
     G <- capture.output(dput(as.matrix(model@G)))
     G <- c(paste0("G <- ", G[1]), G[-1])
@@ -93,13 +94,16 @@ create_model_R_object <- function(model, name)
       "##' @param u0 A data.frame with the initial state in each node.",
       "##' @param tspan A vector (length >= 2) of increasing time points",
       "##'     where the state of each node is to be returned.",
+      "##' @param gdata A named numeric vector with rate-constants for the",
+      "##'     model.",
       "##' @import SimInf",
       "##' @import methods",
       "##' @export",
       "##' @examples",
       "##' ## Please add example(s) how to use the model",
-      paste0(name, " <- function(u0, tspan) {"),
+      paste0(name, " <- function(u0, tspan, gdata) {"),
       paste0("    compartments <- c(\"", rows, "\")"),
+      paste0("    parameters <- c(\"", parameters, "\")"),
       "",
       "    ## Check u0",
       "    if (!is.data.frame(u0))",
@@ -108,11 +112,20 @@ create_model_R_object <- function(model, name)
       "        stop(\"Missing columns in u0\")",
       "    u0 <- u0[, compartments, drop = FALSE]",
       "",
+      "    ## Check gdata",
+      "    if (is.null(gdata))",
+      "        stop(\"'gdata' must be specified.\")",
+      "    if (!is.numeric(gdata))",
+      "        stop(\"'gdata' must be a named numeric vector.\")",
+      "    if (!all(parameters %in% names(gdata)))",
+      "        stop(\"Missing parameters in 'gdata'\")",
+      "    gdata <- gdata[parameters]",
+      "",
       G,
       "",
       S,
       "",
-      "    model <- SimInf_model(G = G, S = S, tspan = tspan, u0 = u0)",
+      "    model <- SimInf_model(G = G, S = S, tspan = tspan, u0 = u0, gdata = gdata)",
       "",
       paste0("    as(model, \"", name, "\")"),
       "}")
