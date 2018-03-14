@@ -447,7 +447,7 @@ init <- function(model,
                  tspan  = tspan,
                  events = events,
                  ldata  = NULL,
-                 gdata  = NULL,
+                 gdata  = model@gdata,
                  u0     = u0,
                  v0     = NULL,
                  C_code = model@C_code)
