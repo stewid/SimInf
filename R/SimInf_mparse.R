@@ -463,25 +463,27 @@ init <- function(model,
 ##' @return Character vector with C code for the model.
 ##' @export
 ##' @examples
-##' ## Use the model parser to create a 'SimInf_mparse' object that
+##' ## Use the model parser to create a 'SimInf_model' object that
 ##' ## expresses an SIR model, where 'b' is the transmission rate and
 ##' ## 'g' is the recovery rate.
-##' m <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-##'             compartments = c("S", "I", "R"),
-##'             gdata = list(b = 0.16, g = 0.077))
+##' model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+##'                 compartments = c("S", "I", "R"),
+##'                 gdata = c(b = 0.16, g = 0.077),
+##'                 u0 = data.frame(S = 99, I = 1, R = 0),
+##'                 tspan = 1:10)
 ##'
 ##' ## View the C code.
-##' C_code(m)
+##' C_code(model)
 ##'
 ##' ## Modify the C code for a package named "XYZ"
-##' C_code(m, "XYZ")
+##' C_code(model, "XYZ")
 C_code <- function(model, pkg = NULL)
 {
     ## Check model argument
     if (missing(model))
         stop("Missing 'model' argument")
-    if (!is(model, "SimInf_mparse"))
-        stop("'model' argument is not a 'SimInf_mparse' object")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model' object")
 
     if (is.null(pkg))
         return(model@C_code)
