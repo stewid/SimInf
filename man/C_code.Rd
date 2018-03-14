@@ -2,12 +2,13 @@
 % Please edit documentation in R/SimInf_mparse.R
 \name{C_code}
 \alias{C_code}
-\title{Extract the C code from an \code{mparse} object}
+\title{Extract the C code from a \code{SimInf_model} object}
 \usage{
 C_code(model, pkg = NULL)
 }
 \arguments{
-\item{model}{The \code{mparse} object to extract the C code from.}
+\item{model}{The \code{SimInf_model} object to extract the C code
+from.}
 
 \item{pkg}{Character vector. If the C could should be used in a
 package named \code{pkg}, the function modifies the C code to
@@ -18,19 +19,21 @@ use this argument and return the C code unmodified.}
 Character vector with C code for the model.
 }
 \description{
-Extract the C code from an \code{mparse} object
+Extract the C code from a \code{SimInf_model} object
 }
 \examples{
-## Use the model parser to create a 'SimInf_mparse' object that
+## Use the model parser to create a 'SimInf_model' object that
 ## expresses an SIR model, where 'b' is the transmission rate and
 ## 'g' is the recovery rate.
-m <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-            compartments = c("S", "I", "R"),
-            gdata = list(b = 0.16, g = 0.077))
+model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+                compartments = c("S", "I", "R"),
+                gdata = c(b = 0.16, g = 0.077),
+                u0 = data.frame(S = 99, I = 1, R = 0),
+                tspan = 1:10)
 
 ## View the C code.
-C_code(m)
+C_code(model)
 
 ## Modify the C code for a package named "XYZ"
-C_code(m, "XYZ")
+C_code(model, "XYZ")
 }

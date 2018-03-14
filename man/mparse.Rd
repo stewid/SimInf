@@ -4,7 +4,8 @@
 \alias{mparse}
 \title{Model parser to define new models to run in \code{SimInf}}
 \usage{
-mparse(transitions = NULL, compartments = NULL, gdata = NULL)
+mparse(transitions = NULL, compartments = NULL, gdata = NULL, u0 = NULL,
+  tspan = NULL, events = NULL, E = NULL, N = NULL)
 }
 \arguments{
 \item{transitions}{character vector containing transitions on the
@@ -19,29 +20,52 @@ model.}
 compartments, for example, \code{compartments = c("S", "I",
 "R")}.}
 
-\item{gdata}{list with rate-constants for the model.}
+\item{gdata}{named numeric vector with rate-constants for the
+model.}
+
+\item{u0}{A \code{data.frame} (or an object that can be coerced to
+a \code{data.frame} with \code{as.data.frame}) with the
+initial state in each node.}
+
+\item{tspan}{A vector (length >= 2) of increasing time points
+where the state of each node is to be returned. Can be either
+an \code{integer} or a \code{Date} vector. A \code{Date}
+vector is coerced to a numeric vector as days, where
+\code{tspan[1]} becomes the day of the year of the first year
+of \code{tspan}. The dates are added as names to the numeric
+vector.}
+
+\item{events}{A \code{data.frame} with the scheduled
+events. Default is \code{NULL} i.e. no scheduled events in the
+model.}
+
+\item{E}{matrix to handle scheduled events, see
+\code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+i.e. no scheduled events in the model.}
+
+\item{N}{matrix to handle scheduled events, see
+\code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+i.e. no scheduled events in the model.}
 }
 \value{
-\linkS4class{SimInf_mparse}
+a \code{\linkS4class{SimInf_model}} object
 }
 \description{
 Describe your model in a logical way in R. \code{mparse} creates a
-\code{\linkS4class{SimInf_mparse}} object with your model
-definition that is ready to be initialised with data and then
-\code{\link{run}}.
+\code{\linkS4class{SimInf_model}} object with your model
+definition that is ready to \code{\link{run}}.
 }
 \examples{
 \dontrun{
-## Use the model parser to create a 'SimInf_mparse' object that
+## Use the model parser to create a 'SimInf_model' object that
 ## expresses a SIR model, where 'b' is the transmission rate and
 ## 'g' is the recovery rate.
-m <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-            compartments = c("S", "I", "R"),
-            gdata = list(b = 0.16, g = 0.077))
-
-## Initialize a 'SimInf_model' from the 'SimInf_mparse' object
-u0 <- data.frame(S = 100, I = 1, R = 0)
-model <- init(m, u0 = u0, tspan = 1:100)
+model  <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
+                                 "I -> g*I -> R"),
+                 compartments = c("S", "I", "R"),
+                 gdata = c(b = 0.16, g = 0.077),
+                 u0 = data.frame(S = 100, I = 1, R = 0),
+                 tspan = 1:100)
 
 ## Run and plot the result
 result <- run(model, threads = 1, seed = 22)

@@ -2,13 +2,13 @@
 % Please edit documentation in R/package_skeleton.R
 \name{package_skeleton}
 \alias{package_skeleton}
-\title{Create a package skeleton for a \code{SimInf_model}}
+\title{Create a package skeleton from a \code{SimInf_model}}
 \usage{
 package_skeleton(model, name = NULL, path = ".", author = NULL,
   email = NULL, maintainer = NULL, license = "GPL-3")
 }
 \arguments{
-\item{model}{The \code{model} \code{\linkS4class{SimInf_mparse}}
+\item{model}{The \code{model} \code{\linkS4class{SimInf_model}}
 object with your model to create the package skeleton from.}
 
 \item{name}{Character string: the package name and directory name
@@ -30,8 +30,8 @@ invisible \code{NULL}.
 }
 \description{
 Describe your model in a logical way in R, then \code{mparse}
-creates a \code{\linkS4class{SimInf_mparse}} object with your
-model definition that can be installed as an add-on R package.
+creates a \code{\linkS4class{SimInf_model}} object with your model
+definition that can be installed as an add-on R package.
 }
 \references{
 Read the \emph{Writing R Extensions} manual for more
