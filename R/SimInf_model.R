@@ -1850,6 +1850,9 @@ setMethod("show",
               cat(sprintf("Number of transitions: %i\n", Nt(object)))
               show(object@events)
 
+              cat("\n")
+              summary_gdata(object)
+
               if (Nd(object) > 0) {
                   cat("\n")
                   summary_V(object)
