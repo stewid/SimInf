@@ -288,9 +288,8 @@ LaTeX <- function(transitions)
 ##' Model parser to define new models to run in \code{SimInf}
 ##'
 ##' Describe your model in a logical way in R. \code{mparse} creates a
-##' \code{\linkS4class{SimInf_mparse}} object with your model
-##' definition that is ready to be initialised with data and then
-##' \code{\link{run}}.
+##' \code{\linkS4class{SimInf_model}} object with your model
+##' definition that is ready to \code{\link{run}}.
 ##' @param transitions character vector containing transitions on the
 ##'     form \code{"X -> ... -> Y"}. The left (right) side is the
 ##'     initial (final) state and the propensity is written in between
@@ -301,14 +300,29 @@ LaTeX <- function(transitions)
 ##' @param compartments contains the names of the involved
 ##'     compartments, for example, \code{compartments = c("S", "I",
 ##'     "R")}.
-##' @param gdata list with rate-constants for the model.
-##' @return \linkS4class{SimInf_mparse}
+##' @param gdata named numeric vector with rate-constants for the
+##'     model.
+##' @param u0 A \code{data.frame} (or an object that can be coerced to
+##'     a \code{data.frame} with \code{as.data.frame}) with the
+##'     initial state in each node.
+##' @template tspan-param
+##' @param events A \code{data.frame} with the scheduled
+##'     events. Default is \code{NULL} i.e. no scheduled events in the
+##'     model.
+##' @param E matrix to handle scheduled events, see
+##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+##'     i.e. no scheduled events in the model.
+##' @param N matrix to handle scheduled events, see
+##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
+##'     i.e. no scheduled events in the model.
+##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
 ##' @importFrom methods as
 ##' @importFrom methods new
 ##' @importFrom utils packageVersion
 ##' @template mparse-example
-mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL)
+mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
+                   u0 = NULL, tspan = NULL, events = NULL, E = NULL, N = NULL)
 {
     if (is.null(transitions))
         stop("'transitions' must be specified.")
@@ -322,12 +336,8 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL)
 
     if (is.null(gdata))
         stop("'gdata' must be specified.")
-    if (!is.list(gdata))
-        stop("'gdata' must be a list.")
-    if (!all(sapply(gdata, is.numeric)))
-        stop("'gdata' parameters must be numeric")
-    if (!all(sapply(gdata, length) == 1L))
-        stop("each 'gdata' parameter must be of length one")
+    if (!is.numeric(gdata))
+        stop("'gdata' must be a named numeric vector.")
 
     if (!all(identical(length(compartments), length(unique(compartments))),
              identical(length(names(gdata)), length(unique(names(gdata))))))
@@ -388,9 +398,24 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL)
     colnames(S) <- as.character(seq_len(dim(S)[2]))
     rownames(S) <- compartments
 
-    new("SimInf_mparse", latex = LaTeX(transitions),
-        C_code = C_code_mparse(transitions, gdata, compartments),
-        G = G, S = S, gdata = unlist(gdata))
+    ## Check u0
+    if (!is.data.frame(u0))
+        u0 <- as.data.frame(u0)
+    if (!all(compartments %in% names(u0)))
+        stop("Missing columns in u0")
+    u0 <- u0[, compartments, drop = FALSE]
+
+    SimInf_model(G      = G,
+                 S      = S,
+                 E      = E,
+                 N      = N,
+                 tspan  = tspan,
+                 events = events,
+                 ldata  = NULL,
+                 gdata  = gdata,
+                 u0     = u0,
+                 v0     = NULL,
+                 C_code = C_code_mparse(transitions, gdata, compartments))
 }
 
 ##' Init a \code{SimInf_mparse} object with data
@@ -453,9 +478,10 @@ init <- function(model,
                  C_code = model@C_code)
 }
 
-##' Extract the C code from an \code{mparse} object
+##' Extract the C code from a \code{SimInf_model} object
 ##'
-##' @param model The \code{mparse} object to extract the C code from.
+##' @param model The \code{SimInf_model} object to extract the C code
+##'     from.
 ##' @param pkg Character vector. If the C could should be used in a
 ##'     package named \code{pkg}, the function modifies the C code to
 ##'     facilitate adding the code to the package. Default is to not
