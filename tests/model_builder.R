@@ -24,19 +24,8 @@ sessionInfo()
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                             "D+W->c3*D*W->W+W","W->c4*W->@"),
             compartments = c("D","W"),
-            gdata = list(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6))
-
-latex <- c("\\begin{align}",
-           "  \\left",
-           "    \\begin{array}{rcl}",
-           "      \\emptyset & \\xrightarrow{c1} & D \\\\",
-           "      D & \\xrightarrow{c2*D} & D + D \\\\",
-           "      D + W & \\xrightarrow{c3*D*W} & W + W \\\\",
-           "      W & \\xrightarrow{c4*W} & \\emptyset \\\\",
-           "    \\end{array}",
-           "  \\right\\}",
-           "\\end{align}")
-stopifnot(identical(m@latex, latex))
+            gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+            u0 = data.frame(D = 10, W = 10), tspan = 1:5)
 
 G <- new("dgCMatrix",
          i = c(1L, 2L, 1L, 2L, 1L, 2L, 3L, 2L, 3L),
@@ -137,9 +126,12 @@ stopifnot(
                         .Names = c("orig_prop", "propensity", "depends"))))
 
 ## Check init function
-m <- mparse(c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
-            c("S", "I", "R"), list(b = 0.16, g = 0.077))
-model <- init(m, u0 = data.frame(S = 100, I = 1, R = 0), tspan = 1:10)
+model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
+                                "I -> g*I -> R"),
+                compartments = c("S", "I", "R"),
+                gdata = c(b = 0.16, g = 0.077),
+                u0 = data.frame(S = 100, I = 1, R = 0),
+                tspan = 1:10)
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",

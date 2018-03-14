@@ -197,32 +197,6 @@ as_labels <- function(transitions) {
     })
 }
 
-## Generate LaTeX code from the transitions.
-LaTeX <- function(transitions)
-{
-    lbl <- as_labels(transitions)
-    lbl <- gsub("@", "\\\\emptyset", lbl)
-    propensity <- sapply(transitions, function(x) x$orig_prop)
-    lines <- c("\\begin{align}",
-               "  \\left",
-               "    \\begin{array}{rcl}")
-    for (i in seq_len(length(lbl))) {
-        tmp <- unlist(strsplit(lbl[i], "->"))
-        lines <- c(lines, paste0("      ",
-                                 tmp[1],
-                                 "& \\xrightarrow{",
-                                 propensity[i],
-                                 "} &",
-                                 tmp[2],
-                                 " \\\\"))
-    }
-
-    c(lines,
-      "    \\end{array}",
-      "  \\right\\}",
-      "\\end{align}")
-}
-
 ##' Model parser to define new models to run in \code{SimInf}
 ##'
 ##' Describe your model in a logical way in R. \code{mparse} creates a
@@ -354,66 +328,6 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
                  u0     = u0,
                  v0     = NULL,
                  C_code = C_code_mparse(transitions, gdata, compartments))
-}
-
-##' Init a \code{SimInf_mparse} object with data
-##'
-##' A \code{SimInf_mparse} object must be initialised with data to
-##' create a \code{SimInf_model} that can be used to simulate from the
-##' model.
-##' @param model The \code{\linkS4class{SimInf_mparse}} object to
-##'     initialize.
-##' @param u0 A \code{data.frame} (or an object that can be coerced to
-##'     a \code{data.frame} with \code{as.data.frame}) with the
-##'     initial state in each node.
-##' @template tspan-param
-##' @param events A \code{data.frame} with the scheduled
-##'     events. Default is \code{NULL} i.e. no scheduled events in the
-##'     model.
-##' @param E matrix to handle scheduled events, see
-##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
-##'     i.e. no scheduled events in the model.
-##' @param N matrix to handle scheduled events, see
-##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
-##'     i.e. no scheduled events in the model.
-##' @return a \code{\linkS4class{SimInf_model}} object
-##' @importFrom methods as
-##' @importFrom methods is
-##' @export
-##' @template mparse-example
-init <- function(model,
-                 u0     = NULL,
-                 tspan  = NULL,
-                 events = NULL,
-                 E      = NULL,
-                 N      = NULL)
-{
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_mparse"))
-        stop("'model' argument is not a 'SimInf_mparse' object")
-
-    compartments <- rownames(model@S)
-
-    ## Check u0
-    if (!is.data.frame(u0))
-        u0 <- as.data.frame(u0)
-    if (!all(compartments %in% names(u0)))
-        stop("Missing columns in u0")
-    u0 <- u0[, compartments, drop = FALSE]
-
-    SimInf_model(G      = model@G,
-                 S      = model@S,
-                 E      = E,
-                 N      = N,
-                 tspan  = tspan,
-                 events = events,
-                 ldata  = NULL,
-                 gdata  = model@gdata,
-                 u0     = u0,
-                 v0     = NULL,
-                 C_code = model@C_code)
 }
 
 ##' Extract the C code from a \code{SimInf_model} object
