@@ -80,13 +80,25 @@ create_model_R_object <- function(model, name)
     rows <- paste0(rownames(model@S), collapse = "\", \"")
     parameters <- paste0(names(model@gdata), collapse = "\", \"")
 
+    ## Dependency graph
     G <- capture.output(dput(as.matrix(model@G)))
     G <- c(paste0("G <- ", G[1]), G[-1])
     G <- paste0("    ", G)
 
+    ## State change matrix
     S <- capture.output(dput(as.matrix(model@S)))
     S <- c(paste0("S <- ", S[1]), S[-1])
     S <- paste0("    ", S)
+
+    ## Select matrix
+    E <- capture.output(dput(as.matrix(model@events@E)))
+    E <- c(paste0("E <- ", E[1]), E[-1])
+    E <- paste0("    ", E)
+
+    ## Shift matrix
+    N <- capture.output(dput(as.matrix(model@events@N)))
+    N <- c(paste0("N <- ", N[1]), N[-1])
+    N <- paste0("    ", N)
 
     c("##' Create a model for the SimInf framework",
       "##'",
@@ -94,6 +106,7 @@ create_model_R_object <- function(model, name)
       "##' @param u0 A data.frame with the initial state in each node.",
       "##' @param tspan A vector (length >= 2) of increasing time points",
       "##'     where the state of each node is to be returned.",
+      "##' @param events A data.frame with scheduled events.",
       "##' @param gdata A named numeric vector with rate-constants for the",
       "##'     model.",
       "##' @import SimInf",
@@ -101,11 +114,13 @@ create_model_R_object <- function(model, name)
       "##' @export",
       "##' @examples",
       "##' ## Please add example(s) how to use the model",
-      paste0(name, " <- function(u0, tspan, gdata) {"),
+      paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL, gdata = NULL) {"),
       paste0("    compartments <- c(\"", rows, "\")"),
       paste0("    parameters <- c(\"", parameters, "\")"),
       "",
       "    ## Check u0",
+      "    if (is.null(u0))",
+      "        stop(\"'u0' must be specified.\")",
       "    if (!is.data.frame(u0))",
       "        u0 <- as.data.frame(u0)",
       "    if (!all(compartments %in% names(u0)))",
@@ -125,7 +140,12 @@ create_model_R_object <- function(model, name)
       "",
       S,
       "",
-      "    model <- SimInf_model(G = G, S = S, tspan = tspan, u0 = u0, gdata = gdata)",
+      E,
+      "",
+      N,
+      "",
+      "    model <- SimInf_model(G = G, S = S, E = E, N = N, tspan = tspan,",
+      "                          events = events, u0 = u0, gdata = gdata)",
       "",
       paste0("    as(model, \"", name, "\")"),
       "}")
