@@ -1768,9 +1768,8 @@ Another useful resource is the \texttt{'R packages'} book by
 
 The simplest way to define a new model for \pkg{SimInf} is to use the
 model parser method \code{mparse}.  It takes a character vector of
-transitions in the form of \code{"X -> propensity -> Y"} and
-generates: the \proglang{C} code for the model, the state-change
-matrix \code{S}, and the dependency graph \code{G}.  The left hand
+transitions in the form of \code{"X -> propensity -> Y"} and generates
+the \proglang{C} and \proglang{R} code for the model.  The left hand
 side of the first '\code{->}'-sign is the initial state, the right
 hand side of the last '\code{->}'-sign is the final state, and the
 propensity is written between the '\code{->}'-signs.  The special
@@ -1835,7 +1834,7 @@ plot(result)
 The flexibility of the \code{mparse} approach allows for quick
 prototyping of new models or features.  Let us elaborate on the
 previous example and explore the incidence cases per day.  This can
-easily be done by adding one compartment \code{'Icum'} whose sole
+easily be done by adding a new compartment \code{'Icum'} whose sole
 purpose is to keep track of how many individuals who become infected
 over time.  The right hand side \code{'I + Icum'} of the transition
 \code{'S -> b*S*I/(S+I+R) -> I + Icum'}, means that both \code{'I'}
@@ -1848,7 +1847,7 @@ compartments <- c("S", "I", "Icum", "R")
 @
 
 Since there are no between-node movements in this example, the
-stochastic process in one node does not affect any other node in the
+stochastic process in one node does not affect any other nodes in the
 model.  It is therefore straightforward to run many realizations of
 this model, simply by replicating a node in the initial condition
 \code{u0}, for example, $n = 1000$ times.
@@ -1865,7 +1864,7 @@ result <- run(model = model, threads = 1, seed = 22)
 Let us post-process the simulated trajectory to compare the incidence
 cases in the first node with the average incidence cases among all
 realizations.  Extract the trajectory and calculate successive
-differences at each time-point of \code{'Icum'}.
+differences of \code{'Icum'} at each time-point.
 
 <<SIR-mparse-incidence-trajectory, eval=FALSE>>=
 traj <- trajectory(model = result, compartments = "Icum")
@@ -1875,7 +1874,7 @@ avg_cases <- c(0, diff(by(traj, traj$time, function(x) sum(x$Icum))) / n)
 
 Finally, plot the result as an epidemic curve
 (Figure~\ref{fig:SIR-mparse-incidence}).  In this example, the number
-of incident cases in the first node exceeds what is observed on
+of incident cases in the first node exceeds what is expected on
 average.
 
 <<SIR-mparse-incidence-plot, eval=FALSE>>=
@@ -1921,13 +1920,13 @@ To illustrate how models generated using \code{mparse} can incorporate
 scheduled events, consider an epidemic in a population consisting of
 1600 nodes, for example, cattle herds, that are connected to each
 other by livestock movements.  Assume an outbreak is detected on day
-twenty-one after introduction and that we wish to explore how
-vaccination could limit the outbreak, if resources for vaccination can
-handle 50 herds per day and 80\% of the animals in each herd.  Let us
-add one compartment $V$ to the model, to represent vaccinated
-individuals, so that the model now contains the $\{S, I, I_{cum}, R, V
-\}$ compartments.  As before, let \code{b} denote the transmission
-rate and \code{g} the recovery rate.
+twenty-one after introduction of an infection in one node and that we
+wish to explore how vaccination could limit the outbreak, if resources
+for vaccination can handle 50 herds per day and 80\% of the animals in
+each herd.  Let us add a new compartment $V$ to the model to represent
+vaccinated individuals, so that the model now contains the $\{S, I,
+I_{cum}, R, V \}$ compartments.  As before, let \code{b} denote the
+transmission rate and \code{g} the recovery rate.
 
 <<mparse-scheduled-events>>=
 transitions <- c("S -> b*S*I/(S+I+R+V) -> I + Icum", "I -> g*I -> R")
@@ -1936,7 +1935,8 @@ compartments <- c("S", "I", "Icum", "R", "V")
 
 Load the example data for an \code{SIR} model in a population of 1600
 nodes (cattle herds) with its associated scheduled events: births,
-deaths, and livestock movements.  Let $I_{cum} = 0$ and $R = 0$.
+deaths, and livestock movements.  Moreover, let $I_{cum} = 0$ and $R =
+0$.
 
 <<mparse-scheduled-events-data>>=
 u0 <- u0_SIR()
@@ -1950,10 +1950,10 @@ events.  Use \code{select = 3} and \code{shift = 1} to move animals
 from the susceptible, infectious and recovered compartments to the
 vaccinated compartment, see the definitions of $E$ and $N$ below.  Let
 us start the vaccinations in nodes 1--50 on day twenty-one, and
-continue until all herds are vaccinated on day fifty-two, and use
-\code{proportion = 0.8} to vaccinate 80\% of the animals in each herd.
-We assume, for the sake of simplicity, that vaccinated individuals
-become immune and non-infectious immediately.
+continue until all herds are vaccinated on day fifty-two.  Moreover,
+use \code{proportion = 0.8} to vaccinate 80\% of the animals in each
+herd.  We assume, for the sake of simplicity, that vaccinated
+individuals become immune and non-infectious immediately.
 
 <<mparse-scheduled-events-vaccination>>=
 vaccination <- data.frame(event = "intTrans", time = rep(21:52, each = 50),
@@ -2007,15 +2007,16 @@ dimnames = list(c("S", "I", "Icum", "R", "V"), "1"))
 @
 
 Now let us create an \code{epicurve} function to estimate the average
-number of new cases per day from \code{n = 1000} realizations of a
-\code{model} object in a \code{for} loop.  To clear infection that was
-introduced in the previous trajectory, animals are first moved to the
-susceptible compartment.  Then, one infected individual is introduced
-into a randomly sampled node from the population.  Note that we use
-the 'L' suffix to create an integer value rather than a numeric value.
-Run the model and accumulate \code{Icum}.  For efficiency, use
-\code{as.is = TRUE}, the internal matrix format, to extract
-\code{Icum} in every node at each time-point in \code{tspan}.
+number of new cases per day from \code{n = 1000} realizations in a
+\code{for}-loop and simulate a trajectory at a time.  To clear
+infection that was introduced in the previous trajectory, animals are
+first moved to the susceptible compartment.  Then, one infected
+individual is introduced into a randomly sampled node from the
+population.  Note that we use the 'L' suffix to create an integer
+value rather than a numeric value.  Run the model and accumulate
+\code{Icum}.  For efficiency, use \code{as.is = TRUE}, the internal
+matrix format, to extract \code{Icum} in every node at each time-point
+in \code{tspan}.
 
 <<echo=false, results=hide>>=
 options(continue = "+  ")
@@ -2031,7 +2032,8 @@ epicurve <- function(model, n = 1000) {
     model@u0["I", j] <- 1L
     model@u0["S", j] <- model@u0["S", j] - 1L
     result <- run(model = model)
-    traj <- trajectory(model = result, compartments = "Icum", as.is = TRUE)
+    traj <- trajectory(model = result, compartments = "Icum",
+      as.is = TRUE)
     Icum <- Icum + colSums(traj)
   }
   stepfun(model@tspan[-1], diff(c(0, Icum / n)))
@@ -2056,8 +2058,10 @@ Similarly, generate an epicurve after incorporating the
 \code{vaccination} events.
 
 <<mparse-scheduled-events-model-vac, eval=FALSE>>=
-model_vac <- init(m, u0 = u0, tspan = 1:300, events =
-rbind(events, vaccination), E = E, N = N)
+model_vac <- mparse(transitions = transitions,
+compartments = compartments, gdata = c(b = 0.16, g = 0.077),
+u0 = u0, tspan = 1:300, events = rbind(events, vaccination),
+E = E, N = N)
 cases_vac <- epicurve(model_vac)
 @
 
@@ -2085,22 +2089,34 @@ col = c("black", "blue"), lty = 1:2)
     initiated.  \label{fig:mparse-epicurve}}
 \end{figure}
 
-\subsubsection{Predator-prey model}
-\label{sec:mparse-predator-prey}
+%**************************************************************************
+
+\subsection[Use the SimInf framework from another package]{%
+  Use the \pkg{SimInf} framework from another package}
+\label{sec:linking-to}
+
+Another possibility is to extend \pkg{SimInf} by creating an
+\proglang{R} add-on package that uses \pkg{SimInf} by linking to its
+core solver native routine.  To facilitate this, the \pkg{SimInf}
+package includes the \code{package_skeleton} method to automate some
+of the setup for a new source package.  It creates directories, saves
+\proglang{R} and \proglang{C} code files to appropriate places, and
+creates skeleton help files.
 
 Although \pkg{SimInf} was designed to study disease spread over
 temporal networks, it is not limited to that use case but can also be
-used to study the dynamics of other systems.  In a final \code{mparse}
-example we will illustrate the Rosenzweig-MacArthur predator-prey
-model demonstrated in the \pkg{GillespieSSA} package
-\citep{Rosenzweig1963, Pineda-Krch2008}.  The model has a
-density-dependent growth in the prey and and a nonlinear Type-2
-functional response in the predator \citep{Rosenzweig1963}.  Let $R$
-and $F$ denote the number of prey and predators, respectively.  The
-model consists of five transitions (Equation~\ref{eq:predator-prey}):
-\textit{i)} prey birth, \textit{ii)} prey death due to non-predatory
-events, \textit{iii)} prey death due to predation, \textit{iv)}
-predator birth, and \textit{v)} predator death
+used to study the dynamics of other systems.  Consider we wish to
+create a new add-on package \pkg{PredatorPrey} based on the
+Rosenzweig-MacArthur predator-prey model demonstrated in the
+\pkg{GillespieSSA} package \citep{Rosenzweig1963, Pineda-Krch2008}.
+The model has a density-dependent growth in the prey and and a
+nonlinear Type-2 functional response in the predator
+\citep{Rosenzweig1963}.  Let $R$ and $F$ denote the number of prey and
+predators, respectively.  The model consists of five transitions
+(Equation~\ref{eq:predator-prey}): \textit{i)} prey birth,
+\textit{ii)} prey death due to non-predatory events, \textit{iii)}
+prey death due to predation, \textit{iv)} predator birth, and
+\textit{v)} predator death
 
 \begin{align}
   \label{eq:predator-prey}
@@ -2122,76 +2138,48 @@ efficiency, and $w$ is the degree of predator saturation
 \citep{Pineda-Krch2008}.  Using parameter values from
 \cite{Pineda-Krch2008}, we define the model as
 
-<<mparse-predator-prey, eval=FALSE>>=
+<<mparse-predator-prey-I>>=
 transitions <- c("@ -> bR*R -> R", "R -> (dR+(bR-dR)*R/K)*R -> @",
 "R -> alpha/(1+w*R)*R*F -> @", "@ -> bF*alpha/(1+w*R)*R*F -> F",
 "F -> dF*F -> @")
 compartments <- c("R", "F")
-model <- mparse(transitions = transitions, compartments = compartments,
-gdata = c(bR = 2, bF = 2, dR = 1, K = 1000, alpha = 0.007,
-w = 0.0035, dF = 2), u0 = cbind(R = 1000, F = 100), tspan = 1:100)
-result <- run(model, threads = 1, seed = 1)
-plot(result, N = TRUE)
+parameters <- c(bR = 2, bF = 2, dR = 1, K = 1000, alpha = 0.007,
+w = 0.0035, dF = 2)
 @
 
-\begin{figure}
-  \begin{center}
-<<mparse-predator-prey-plot, echo=FALSE, fig=TRUE>>=
-transitions <- c("@ -> bR*R -> R", "R -> (dR+(bR-dR)*R/K)*R -> @",
-"R -> alpha/(1+w*R)*R*F -> @", "@ -> bF*alpha/(1+w*R)*R*F -> F",
-"F -> dF*F -> @")
-compartments <- c("R", "F")
+Assume the initial population, u0, consists of $R = 1000$ prey and $F
+= 100$ predators and we are interested in simulating $n = 1000$
+replicates over 100 days.  Since there are no between-node movements
+in this example, we can generate replicates of the model simply by
+starting with $n$ identical nodes.
+
+<<mparse-predator-prey-II>>=
+n <- 1000
+u0 = data.frame(R = rep(1000, n), F = rep(100, n))
 model <- mparse(transitions = transitions, compartments = compartments,
-gdata = c(bR = 2, bF = 2, dR = 1, K = 1000, alpha = 0.007,
-w = 0.0035, dF = 2), u0 = cbind(R = 1000, F = 100), tspan = 1:100)
-result <- run(model, threads = 1, seed = 1)
-plot(result, N = TRUE)
+gdata = parameters, u0 = u0, tspan = 1:100)
 @
-  \end{center}
-  \caption{One realization of the \code{mparse} Rosenzweig-MacArthur
-    predator-prey model.  In this trajectory, the predator (\code{F})
-    go extinct after about 25 time steps while the prey (\code{R})
-    then fluctuates around a plateu of 1000
-    individuals.  \label{fig:mparse-predator-prey}}
-\end{figure}
 
-%**************************************************************************
-
-\subsection[Use the SimInf framework from another package]{%
-  Use the \pkg{SimInf} framework from another package}
-\label{sec:linking-to}
-
-Another possibility is to extend \pkg{SimInf} by creating an
-\proglang{R} add-on package that uses \pkg{SimInf} by linking to its
-core solver native routine, and this section describes the relevant
-steps to achieve this.  Consider we wish to create a new add-on
-package \pkg{PredatorPrey} based on the Rosenzweig-MacArthur
-predator-prey model from the previous section.  To facilitate this,
-the \pkg{SimInf} package includes a method (\code{package_skeleton})
-that automates some of the setup for a new source package.  It creates
-directories, saves \proglang{R} and \proglang{C} code files to
-appropriate places, and creates skeleton help files.
+Now instead of running the model to generate data, let us use it to
+create an \proglang{R} add-on package.
 
 <<create-package-skeleton, eval=FALSE>>=
 path <- tempdir()
-package_skeleton(model, "PredatorPrey", path = path)
+package_skeleton(model = model, name = "PredatorPrey", path = path)
 @
 
-where the first argument is the result (\code{SimInf_mparse} object)
-from the \code{mparse} method, and the second argument is the name of
-the package to create a skeleton for.  The created \proglang{R} file
-(\texttt{'R/models.R'}) defines the \code{S4} class
-\code{PredatorPrey} that contains the \code{SimInf\_model} and a
-generating function to create a new object of the \code{PredatorPrey}
-model.  The generating function is a template that might need to be
-updated to meet the specific requirements of the model, for example,
-if the model should handle scheduled events, then \code{E} must be
-specified to select the subset of compartments involved in each
-specific event.  Furthermore, if one of the events is an
-\textit{internal transfer} event, \code{N} must be specified to shift
-individuals between compartments within one holding.  It is also
-possible to define parameters that are either local (\code{ldata}) to
-each node or shared (\code{gdata}) between all nodes.
+Where the first argument is the model object generated by the
+\code{mparse} method, the second argument is the name of the package
+to create a skeleton for and the third argument is the path to the new
+package. Note that a temporary directory is used here for illustration
+of the functionality.  We refer to the \pkg{SimInf} documentation for
+other arguments that can be supplied to the \code{package_skeleton}
+method.  The created \proglang{R} file (\texttt{'R/models.R'}) defines
+the \code{S4} class \code{PredatorPrey} that contains the
+\code{SimInf\_model} and a generating function to create a new object
+of the \code{PredatorPrey} model.  The generating function is a
+template that might need to be updated to meet the specific
+requirements of the model.
 
 The \proglang{C} file (\texttt{'src/models.c'}) defines one function
 for each state transition, the post time step function and the model
@@ -2201,36 +2189,99 @@ declarations for these functions and should be included.  The
 \code{SimInf_model_run} function is the interface from \proglang{R} to
 the core solver in \proglang{C} and list all function pointers to the
 transition rate functions in a vector in the order the state
-transitions appear in the dependency graph \code{G}, see
-Listing~\ref{lst:SIRrun} in Appendix~\ref{sec:C-code-SIR} for an
-example from the \code{SIR} model and the use of the address of
-operator \code{'\&'} to obtain the address of a function.  The
-\code{SimInf_model_run} function must return the result from the call
-to the core solver with \code{SimInf_run}.  The arguments to
-\code{SimInf_run} are the arguments passed to the
-\code{SimInd_model_run} function plus the vector of function pointers
-to the transition rate functions and the function pointer to the post
-time step function.  To facilitate extraction of specific values from
-the data structures passed as arguments to the transition rate
-functions and the post time step function, we recommend using
-enumeration declarations to name the values, see
-Listing~\ref{lst:trSIR} in Appendix~\ref{sec:C-code-SIR} for an
-example.
-
-The add-on \pkg{PredatorPrey} source package can now be built and
-installed with
+transitions appear in the dependency graph \code{G}, see Listings
+\ref{lst:SIRrun} and \ref{lst:trSIR} in Appendix~\ref{sec:C-code-SIR}
+for an example from the predefined \code{SIR} model in \pkg{SimInf}
+and the use of the address of operator \code{'\&'} to obtain the
+address of a function.  The \code{SimInf_model_run} function must
+return the result from the call to the core solver with
+\code{SimInf_run}.  The arguments to \code{SimInf_run} are the
+arguments passed to the \code{SimInf_model_run} function plus the
+vector of function pointers to the transition rate functions and the
+function pointer to the post time step function. The add-on
+\pkg{PredatorPrey} source package can now be built and installed with
+the following commands.
 
 <<install-package-skeleton, eval=FALSE>>=
 pkg <- file.path(path, "PredatorPrey")
 install.packages(pkg, repos = NULL, type = "source")
 @
 
-If the installation was successful, the newly installed package
-\pkg{PredatorPrey} can be loaded in \proglang{R} with the following
-command.
+\begin{figure}
+  \begin{center}
+    \includegraphics{img/predator-prey.png}
+  \end{center}
+  \caption{Left: Phase plane trajectories from 1000 realizations of
+    the Rosenzweig-MacArthur predator-prey model. Right: One
+    realization of the Rosenzweig-MacArthur predator-prey model, where
+    the predator go extinct after about 25 time steps while the prey
+    then fluctuates around a plateu of 1000
+    individuals.  \label{fig:predator-prey}}
+\end{figure}
 
-<<load-package-skeleton, eval=FALSE>>=
+Here we let \code{repos = NULL} to install from local files and use
+\code{type = "source"} to compile the files.  If the installation was
+successful, the newly installed package \pkg{PredatorPrey} can be
+loaded in \proglang{R} with the following command.
+
+<<load-predator-prey, eval=TRUE>>=
 library("PredatorPrey")
+@
+
+Now create a model and run it to generate data.
+
+<<create-predator-prey-model, eval=FALSE>>=
+model <- PredatorPrey(u0 = u0, tspan = 1:100, gdata = parameters)
+result <- run(model, threads = 1, seed = 1)
+@
+
+Because the \code{PredatorPrey} model contains the \code{SimInf_model}
+class, it can make use of utility functions provided in the
+\pkg{SimInf} package, for example, \code{show}.
+
+\begin{Schunk}
+\begin{Sinput}
+R> result
+\end{Sinput}
+\begin{Soutput}
+Model: PredatorPrey
+Number of nodes: 1000
+Number of transitions: 5
+Number of scheduled events: 0
+
+Global model parameters
+-----------------------
+ Parameter Value
+ bR        2.0e+00
+ bF        2.0e+00
+ dR        1.0e+00
+ K         1.0e+03
+ alpha     7.0e-03
+ w         3.5e-03
+ dF        2.0e+00
+
+Discrete state variables
+------------------------
+   Min. 1st Qu. Median Mean 3rd Qu. Max.
+ R   10     241    628  607     978 1172
+ F    0       0     31  110     154  830
+\end{Soutput}
+\end{Schunk}
+
+Or the \code{trajectory} method, for example, to plot the phase plane
+from 1000 realizations and to extract the simulated data from the
+sixth node (use \code{i = 6}) to illustrate stochastic extinction of
+the predators (Figure~\ref{fig:predator-prey}).
+
+<<predator-prey-plot, eval=FALSE>>=
+opar <- par(mfrow = c(1, 2))
+plot(R ~ F, trajectory(model = result), cex = 0.3, pch = 20,
+xlab = "Predator", ylab = "Prey", col = rgb(0, 0, 0, alpha = 0.1))
+plot(R ~ time, trajectory(model = result, i = 6), type = "l",
+xlab = "Time", ylab = "N")
+lines(F ~ time, trajectory(model = result, i = 6), type = "l", lty = 2)
+legend("right", c("Prey", "Predator"), lty = 1:2)
+par(opar)
 @
 
 %**************************************************************************
