@@ -47,6 +47,9 @@ IMPROVEMENTS
 
 BREAKING CHANGES
 
+* We have changed 'mparse' method to make it even easier to specify a
+  new model for the Siminf framework, see the documentation.
+
 * Removed the following methods: 'U', 'V', 'recovered', 'susceptible',
   and 'infected'. Use the new 'trajectory' method instead, see the
   documentation.
