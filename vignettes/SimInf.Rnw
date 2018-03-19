@@ -2224,7 +2224,7 @@ Here we let \code{repos = NULL} to install from local files and use
 successful, the newly installed package \pkg{PredatorPrey} can be
 loaded in \proglang{R} with the following command.
 
-<<load-predator-prey, eval=TRUE>>=
+<<load-predator-prey, eval=FALSE>>=
 library("PredatorPrey")
 @
 
@@ -2276,7 +2276,8 @@ the predators (Figure~\ref{fig:predator-prey}).
 <<predator-prey-plot, eval=FALSE>>=
 opar <- par(mfrow = c(1, 2))
 plot(R ~ F, trajectory(model = result), cex = 0.3, pch = 20,
-xlab = "Predator", ylab = "Prey", col = rgb(0, 0, 0, alpha = 0.1))
+xlab = "Number of predators", ylab = "Number of prey",
+col = rgb(0, 0, 0, alpha = 0.1))
 plot(R ~ time, trajectory(model = result, i = 6), type = "l",
 xlab = "Time", ylab = "N")
 lines(F ~ time, trajectory(model = result, i = 6), type = "l", lty = 2)
