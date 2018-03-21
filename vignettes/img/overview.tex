@@ -1,0 +1,57 @@
+%% -*- mode: LaTeX; coding: utf-8; -*-
+\documentclass[tikz]{standalone}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,patterns,positioning,shapes}
+
+\let\code=\texttt
+\let\proglang=\textsf
+\newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}}
+
+\begin{document}
+
+\tikzstyle{cell}=[draw,rounded corners, rectangle,blue!60, fill=blue!20,
+  text=black, minimum height=1cm, minimum width=3.2cm, align=left]
+
+\begin{tikzpicture}
+
+  % Split between R and C interface
+  \node at (-1, 0.3) {\proglang{R} code};
+  \draw[dashed] (-2,0) -- (15,0);
+  \node at (-1, -0.3) {\proglang{C} code};
+
+  % Numerical solver
+  \node[cell] (numerical-solver) at (8, -1) {Numerical solver};
+
+  % Split between package linking to SimInf and SimInf package
+  \node at (2, 6) {\underline{Package linking to \pkg{SimInf}}};
+  \draw[dashed] (5,6) -- (5,-2);
+  \node at (10, 6) {\underline{\pkg{SimInf} package}};
+
+  \node[cell] (mparse) at (8,5) {Define new model \\
+    \code{mparse}};
+  \node[cell] (predefined-models) at (13, 5) {Pre-defined models \\
+    e.g.\ \code{SIR} or \code{SEIR}};
+  \node[cell] (SimInf-model) at (8, 3) {\code{SimInf\_model}};
+  \node[cell, minimum height=3cm] (post-process) at (13, 2)
+       {Post-process data \\
+         \code{trajectory} \\ \code{prevalence} \\ \code{show} \\
+         \code{summary} \\ \code{plot}};
+  \node[cell] (run) at (8, 1) {\code{run}};
+  \draw[->, line width=1mm, black!50] (mparse) -- (SimInf-model);
+  \draw[->, line width=1mm, black!50] (predefined-models) -- (SimInf-model);
+  \draw[->, line width=1mm, black!50] (SimInf-model) -- (run);
+  \draw[->, line width=1mm, black!50] (run) -- (numerical-solver);
+  \draw[->, line width=1mm, black!50] (numerical-solver) -- (13,-1) -- (post-process);
+
+  % Package linking to SimInf
+  \node[cell] (create-pkg) at (2, 3)
+       {Create package \\ \code{package\_skeleton}};
+  \node[cell] (pkg-run) at (2, 1) {\code{run}};
+  \draw[->, line width=1mm, black!50] (SimInf-model) -- (create-pkg);
+  \draw[->, line width=1mm, black!50] (create-pkg) -- (pkg-run);
+  \draw[->, line width=1mm, black!50] (pkg-run) -- (2,-1) -- (numerical-solver);
+
+\end{tikzpicture}
+
+\end{document}
