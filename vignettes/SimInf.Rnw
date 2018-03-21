@@ -440,12 +440,12 @@ t_{n+1}-t_{n}$ for the concentration variable $\Y$.
     \code{Simlnf\_model} which contains the specification and data for
     a model.  To create a new model object, use \code{mparse} or a
     pre-defined template, for example, \code{SIR} or \code{SEIR}.  A
-    stochastic trajectory is simulated from a model by calling
-    \code{run}.  For computational efficiency, the numerical solvers
-    are implemented in \proglang{C} code.  There are several functions
-    to facilitate post-processing and analysing simulated data, for
-    example, \code{trajectory}, \code{prevalence} and \code{plot}.
-    \pkg{SimInf} was designed to support usage of the numerical
+    stochastic trajectory is simulated from a model using \code{run}.
+    For computational efficiency, the numerical solvers are
+    implemented in \proglang{C} code.  There are several functions in
+    \pkg{SimInf} to facilitate analysis and post-processing of
+    simulated data, for example, \code{trajectory}, \code{prevalence}
+    and \code{plot}.  \pkg{SimInf} supports usage of the numerical
     solvers from other \proglang{R} packages via the \emph{LinkingTo}
     feature in \proglang{R}. \label{fig:overview}}
 \end{figure}
@@ -463,6 +463,8 @@ specified using a compiled language \proglang{C} and \proglang{R}
 matrices, respectively.  The overall modular design makes extensions
 easy to handle and since the simulation engine is written in a
 compiled language, the efficiency of the simulator is very high.
+Figure~\ref{fig:overview} shows a schematic overview of the
+functionality in \pkg{SimInf}.
 
 The most recent stable version of \pkg{SimInf} is distributed via CRAN
 (\url{https://CRAN.R-project.org/package=SimInf}) and may, depending
