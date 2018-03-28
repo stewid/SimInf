@@ -1115,11 +1115,11 @@ model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
 @
 
 We are now ready to run the model with these parameters and simulate
-data.  We use the \code{threads} and \code{seed} arguments for
-reproducibility.
+data.  We use \code{threads = 1} and set the seed for reproducibility.
 
 <<SIR-run>>=
-result <- run(model = model, threads = 1, seed = 22)
+set.seed(123)
+result <- run(model = model)
 @
 
 The \code{result} object contains the number of individuals in each
@@ -1163,7 +1163,8 @@ add another nodes to the \code{data.frame} here in \proglang{R}.
 <<SIR-multiple-nodes>>=
 u0 <- data.frame(S = c(99, 90), I = c( 1,  2), R = c( 0,  0))
 model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
-result <- run(model = model, threads = 1, seed = 22)
+set.seed(123)
+result <- run(model = model, threads = 1)
 @
 
 If we inspect an excerpt of the trajectory, it now includes results
@@ -1232,7 +1233,8 @@ disease spread model as we did in earlier examples:
 <<U-model-events>>=
 model <- SIR(u0 = u0, tspan = 1:5, events = events, beta = 0.16,
 gamma = 0.077)
-result <- run(model = model, threads = 1, seed = 22)
+set.seed(123)
+result <- run(model = model, threads = 1)
 trajectory(model = result)
 @
 
@@ -1269,7 +1271,8 @@ Initialize and run the model
 <<SIR-events-II-run>>=
 model <- SIR(u0 = u0, tspan = 1:75, events = events, beta = 0.16,
 gamma = 0.077)
-result <- run(model = model, threads = 1, seed = 5)
+set.seed(123)
+result <- run(model = model, threads = 1)
 @
 
 Figure~\ref{fig:SIR-spaghetti} shows the result from running the
@@ -1551,7 +1554,8 @@ generates a detailed summary of various data in the model and the
 simulated trajectory.  Let us run a trajectory to illustrate this.
 
 <<SISe3sp-model-summary>>=
-result <- run(model = model, threads = 1, seed = 1)
+set.seed(123)
+result <- run(model = model, threads = 1)
 summary(result)
 @
 
@@ -1613,7 +1617,7 @@ par(opar)
 \begin{figure}
   \begin{center}
 <<population-size, echo=FALSE, fig=TRUE>>=
-result <- run(model = model, threads = 1, seed = 1)
+result <- run(model = model, threads = 1)
 N1 <- colSums(trajectory(model = result, compartments = c("S_1", "I_1"),
 as.is = TRUE))
 N2 <- colSums(trajectory(model = result, compartments = c("S_2", "I_2"),
@@ -1680,7 +1684,8 @@ the model (Figure~\ref{fig:SISe3sp-movements}).
 
 <<eval=FALSE>>=
 gdata(model, "coupling") <- 0
-plot_nodes(run(model = model, threads = 1, seed = 1))
+set.seed(123)
+plot_nodes(run(model = model, threads = 1))
 @
 
 \begin{figure}
@@ -1690,7 +1695,8 @@ plot_nodes(run(model = model, threads = 1, seed = 1))
       \begin{center}
 <<plot-SISe3sp-I, echo=FALSE, results=hide>>=
 png("SimInf-plot-SISe3sp-I.png", height = 480, width = 960)
-plot_nodes(run(model = model, threads = 1, seed = 1))
+set.seed(123)
+plot_nodes(run(model = model, threads = 1))
 dev.off()
 @
         \includegraphics{SimInf-plot-SISe3sp-I.png}
@@ -1704,7 +1710,8 @@ dev.off()
 <<plot-SISe3sp-II, echo=FALSE, results=hide>>=
 gdata(model, "coupling") <- 0
 png("SimInf-plot-SISe3sp-II.png", height = 480, width = 960)
-plot_nodes(run(model = model, threads = 1, seed = 1))
+set.seed(123)
+plot_nodes(run(model = model, threads = 1))
 dev.off()
 @
         \includegraphics{SimInf-plot-SISe3sp-II.png}
@@ -1722,7 +1729,8 @@ shift_matrix(model) <- m
 i <- which(model@events@event == 3)
 model@events@shift[i] <- ncol(m)
 png("SimInf-plot-SISe3sp-III.png", height = 480, width = 960)
-plot_nodes(run(model = model, threads = 1, seed = 1))
+set.seed(123)
+plot_nodes(run(model = model, threads = 1))
 dev.off()
 @
         \includegraphics{SimInf-plot-SISe3sp-III.png}
@@ -1759,7 +1767,8 @@ m <- cbind(shift_matrix(model), c(0L, -1L, 0L, -1L, 0L, -1L))
 shift_matrix(model) <- m
 i <- which(model@events@event == 3)
 model@events@shift[i] <- ncol(m)
-plot_nodes(run(model = model, threads = 1, seed = 1))
+set.seed(123)
+plot_nodes(run(model = model, threads = 1))
 @
 
 In this example, removing either local spread or animal movements was
@@ -1835,14 +1844,16 @@ used to run one trajectory of the model.  Once the simulator
 completes, the DLL is unloaded and the temporary files are removed.
 
 <<SIR-mparse-III, eval=FALSE>>=
-result <- run(model = model, threads = 1, seed = 22)
+set.seed(123)
+result <- run(model = model, threads = 1)
 plot(result)
 @
 
 \begin{figure}
   \begin{center}
 <<SIR-mparse-IV, echo=FALSE, fig=TRUE>>=
-result <- run(model = model, threads = 1, seed = 22)
+set.seed(123)
+result <- run(model = model, threads = 1)
 plot(result)
 @
   \caption{Example of simulated data from one realization of the
@@ -1879,7 +1890,8 @@ u0 <- data.frame(S = rep(99, n), I = rep(1, n), Icum = rep(0, n),
 R = rep(0, n))
 model <- mparse(transitions = transitions, compartments = compartments,
 gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:150)
-result <- run(model = model, threads = 1, seed = 22)
+set.seed(123)
+result <- run(model = model, threads = 1)
 @
 
 Let us post-process the simulated trajectory to compare the incidence
@@ -1914,7 +1926,8 @@ u0 <- data.frame(S = rep(99, n), I = rep(1, n), Icum = rep(0, n),
 R = rep(0, n))
 model <- mparse(transitions = transitions, compartments = compartments,
 gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:150)
-result <- run(model = model, threads = 1, seed = 22)
+set.seed(123)
+result <- run(model = model, threads = 1)
 traj <- trajectory(model = result, compartments = "Icum")
 cases <- stepfun(result@tspan[-1], diff(c(0, traj$Icum[traj$node == 1])))
 avg_cases <- c(0, diff(by(traj, traj$time, function(x) sum(x$Icum))) / n)
@@ -2253,7 +2266,8 @@ Now create a model and run it to generate data.
 
 <<create-predator-prey-model, eval=FALSE>>=
 model <- PredatorPrey(u0 = u0, tspan = 1:100, gdata = parameters)
-result <- run(model, threads = 1, seed = 1)
+set.seed(123)
+result <- run(model, threads = 1)
 @
 
 Because the \code{PredatorPrey} model contains the \code{SimInf_model}
@@ -2284,14 +2298,14 @@ Global model parameters
 Discrete state variables
 ------------------------
    Min. 1st Qu. Median Mean 3rd Qu. Max.
- R   10     241    628  607     978 1172
- F    0       0     31  110     154  830
+ R    8     236    607  598     975 1195
+ F    0       0     35  112     161  851
 \end{Soutput}
 \end{Schunk}
 
 Or the \code{trajectory} method, for example, to plot the phase plane
 from 1000 realizations and to extract the simulated data from the
-sixth node (use \code{i = 6}) to illustrate stochastic extinction of
+sixth node (use \code{i = 4}) to illustrate stochastic extinction of
 the predators (Figure~\ref{fig:predator-prey}).
 
 <<predator-prey-plot, eval=FALSE>>=
@@ -2299,9 +2313,9 @@ opar <- par(mfrow = c(1, 2))
 plot(R ~ F, trajectory(model = result), cex = 0.3, pch = 20,
 xlab = "Number of predators", ylab = "Number of prey",
 col = rgb(0, 0, 0, alpha = 0.1))
-plot(R ~ time, trajectory(model = result, i = 6), type = "l",
+plot(R ~ time, trajectory(model = result, i = 4), type = "l",
 xlab = "Time", ylab = "N")
-lines(F ~ time, trajectory(model = result, i = 6), type = "l", lty = 2)
+lines(F ~ time, trajectory(model = result, i = 4), type = "l", lty = 2)
 legend("right", c("Prey", "Predator"), lty = 1:2)
 par(opar)
 @
