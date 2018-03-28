@@ -35,7 +35,6 @@
  *
  * @param model The SimInf_model
  * @param threads Number of threads
- * @param seed Random number seed.
  * @param solver The numerical solver.
  * @param tr_fun Vector of function pointers to transition rate functions.
  * @param pts_fun Function pointer to callback after each time step
@@ -44,7 +43,6 @@
 SEXP SimInf_run(
     SEXP model,
     SEXP threads,
-    SEXP seed,
     SEXP solver,
     TRFun *tr_fun,
     PTSFun pts_fun)

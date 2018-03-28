@@ -143,13 +143,12 @@ int SISe_sp_post_time_step(
  *
  * @param model The SISe_sp model.
  * @param threads Number of threads.
- * @param seed Random number seed.
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-SEXP SISe_sp_run(SEXP model, SEXP threads, SEXP seed, SEXP solver)
+SEXP SISe_sp_run(SEXP model, SEXP threads, SEXP solver)
 {
     TRFun tr_fun[] = {&SISe_sp_S_to_I, &SISe_sp_I_to_S};
 
-    return SimInf_run(model, threads, seed, solver, tr_fun, &SISe_sp_post_time_step);
+    return SimInf_run(model, threads, solver, tr_fun, &SISe_sp_post_time_step);
 }

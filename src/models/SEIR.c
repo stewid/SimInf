@@ -123,13 +123,12 @@ int SEIR_post_time_step(
  *
  * @param model The SIR model.
  * @param threads Number of threads.
- * @param seed Random number seed.
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-SEXP SEIR_run(SEXP model, SEXP threads, SEXP seed, SEXP solver)
+SEXP SEIR_run(SEXP model, SEXP threads, SEXP solver)
 {
     TRFun tr_fun[] = {&SEIR_S_to_E, &SEIR_E_to_I, &SEIR_I_to_R};
 
-    return SimInf_run(model, threads, seed, solver, tr_fun, &SEIR_post_time_step);
+    return SimInf_run(model, threads, solver, tr_fun, &SEIR_post_time_step);
 }

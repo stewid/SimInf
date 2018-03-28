@@ -69,7 +69,6 @@ typedef int (*PTSFun)(
 SEXP SimInf_run(
     SEXP model,
     SEXP threads,
-    SEXP seed,
     SEXP solver,
     TRFun *tr_fun,
     PTSFun pts_fun);

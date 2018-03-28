@@ -1,8 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015  Pavol Bauer
- *  Copyright (C) 2015 - 2017  Stefan Engblom
- *  Copyright (C) 2015 - 2017  Stefan Widgren
+ *  Copyright (C) 2015 Pavol Bauer
+ *  Copyright (C) 2017 - 2018 Robin Eriksson
+ *  Copyright (C) 2015 - 2018 Stefan Engblom
+ *  Copyright (C) 2015 - 2018 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,12 +25,12 @@
 #include "SimInf.h"
 
 /* Declare functions to register */
-SEXP SEIR_run(SEXP, SEXP, SEXP, SEXP);
-SEXP SIR_run(SEXP, SEXP, SEXP, SEXP);
-SEXP SISe_run(SEXP, SEXP, SEXP, SEXP);
-SEXP SISe3_run(SEXP, SEXP, SEXP, SEXP);
-SEXP SISe3_sp_run(SEXP, SEXP, SEXP, SEXP);
-SEXP SISe_sp_run(SEXP, SEXP, SEXP, SEXP);
+SEXP SEIR_run(SEXP, SEXP, SEXP);
+SEXP SIR_run(SEXP, SEXP, SEXP);
+SEXP SISe_run(SEXP, SEXP, SEXP);
+SEXP SISe3_run(SEXP, SEXP, SEXP);
+SEXP SISe3_sp_run(SEXP, SEXP, SEXP);
+SEXP SISe_sp_run(SEXP, SEXP, SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP, SEXP);
 
 /**
@@ -50,12 +51,12 @@ SEXP SimInf_have_openmp()
 
 static const R_CallMethodDef callMethods[] =
 {
-    CALLDEF(SEIR_run, 4),
-    CALLDEF(SIR_run, 4),
-    CALLDEF(SISe_run, 4),
-    CALLDEF(SISe3_run, 4),
-    CALLDEF(SISe3_sp_run, 4),
-    CALLDEF(SISe_sp_run, 4),
+    CALLDEF(SEIR_run, 3),
+    CALLDEF(SIR_run, 3),
+    CALLDEF(SISe_run, 3),
+    CALLDEF(SISe3_run, 3),
+    CALLDEF(SISe3_sp_run, 3),
+    CALLDEF(SISe_sp_run, 3),
     CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(SimInf_ldata_sp, 3),
     {NULL, NULL, 0}

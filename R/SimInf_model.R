@@ -1369,7 +1369,7 @@ setMethod("run",
                   on.exit(dyn.unload(lib), add = TRUE)
 
                   ## Create expression to parse
-                  expr <- ".Call(dll$SimInf_model_run, model, threads, seed, solver)"
+                  expr <- ".Call(dll$SimInf_model_run, model, threads, solver)"
               } else {
                   ## The model name
                   name <- as.character(class(model))
@@ -1378,7 +1378,7 @@ setMethod("run",
                   run_fn <- paste0(name, "_run")
 
                   ## Create expression to parse
-                  expr <- ".Call(run_fn, model, threads, seed, solver, PACKAGE = 'SimInf')"
+                  expr <- ".Call(run_fn, model, threads, solver, PACKAGE = 'SimInf')"
               }
 
               ## Run the model. Re-throw any error without the call
