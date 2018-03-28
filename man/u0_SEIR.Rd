@@ -31,10 +31,11 @@ model <- SEIR(u0      = u0,
               events  = events_SEIR(),
               beta    = 0.16,
               epsilon = 0.25,
-              gamma   = 0.077)
+              gamma   = 0.01)
 
 ## Run the model to generate a single stochastic trajectory.
-result <- run(model, threads = 1, seed = 22)
+result <- run(model, threads = 1)
+plot(result)
 
 ## Summarize trajectory
 summary(result)

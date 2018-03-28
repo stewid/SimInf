@@ -68,6 +68,7 @@ model <- SEIR(u0 = data.frame(S = 99, E = 0, I = 1, R = 0),
               gamma = 0.077)
 
 ## Run the SEIR model and plot the result.
-result <- run(model, threads = 1, seed = 3)
+set.seed(3)
+result <- run(model)
 plot(result)
 }

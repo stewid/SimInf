@@ -46,7 +46,7 @@ model <- SISe3(u0 = u0, tspan = tspan, events = events,
                end_t2 = 182, end_t3 = 273, end_t4 = 365, epsilon = 0)
 
 ## Run the model to generate a single stochastic trajectory.
-result <- run(model, threads = 1, seed = 22)
+result <- run(model, threads = 1)
 
 ## Summarize trajectory
 summary(result)

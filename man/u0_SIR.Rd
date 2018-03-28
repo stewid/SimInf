@@ -30,10 +30,11 @@ model <- SIR(u0     = u0,
              tspan  = tspan,
              events = events_SIR(),
              beta   = 0.16,
-             gamma  = 0.077)
+             gamma  = 0.01)
 
 ## Run the model to generate a single stochastic trajectory.
-result <- run(model, threads = 1, seed = 22)
+result <- run(model, threads = 1)
+plot(result)
 
 ## Summarize trajectory
 summary(result)

@@ -37,14 +37,15 @@ model <- SIR(u0     = u0,
              tspan  = tspan,
              events = events_SIR(),
              beta   = 0.16,
-             gamma  = 0.077)
+             gamma  = 0.01)
 
 ## Display the number of individuals affected by each event type
 ## per day.
 plot(events(model))
 
 ## Run the model to generate a single stochastic trajectory.
-result <- run(model, threads = 1, seed = 22)
+result <- run(model, threads = 1)
+plot(result)
 
 ## Summarize the trajectory. The summary includes the number of
 ## events by event type.

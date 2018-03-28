@@ -47,7 +47,7 @@ model <- SISe3(u0 = u0_SISe3, tspan = tspan, events = events_SISe3,
 plot(events(model))
 
 ## Run the model to generate a single stochastic trajectory.
-result <- run(model, threads = 1, seed = 3)
+result <- run(model, threads = 1)
 
 ## Summarize the trajectory. The summary includes the number of
 ## events by event type.

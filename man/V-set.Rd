@@ -45,7 +45,7 @@ model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 
 ## Run the model
-result <- run(model, threads = 1, seed = 7)
+result <- run(model, threads = 1)
 
 ## Display the continuous state variable 'V1' for every node at
 ## each time-point in tspan.
@@ -57,18 +57,18 @@ df <- data.frame(time = c(3, 5, 3, 5),
                  node = c(2, 2, 4, 4),
                  V1 = c(TRUE, TRUE, TRUE, TRUE))
 V(model) <- df
-result <- run(model, threads = 1, seed = 7)
+result <- run(model, threads = 1)
 trajectory(result, compartments = "V1")
 
 ## It is possible to use an empty 'data.frame' to specify
 ## that no data-points should be recorded for the trajectory.
 V(model) <- data.frame()
-result <- run(model, threads = 1, seed = 7)
+result <- run(model, threads = 1)
 trajectory(result, compartments = "V1")
 
 ## Use 'NULL' to reset the model to record data for every node at
 ## each time-point in tspan.
 V(model) <- NULL
-result <- run(model, threads = 1, seed = 7)
+result <- run(model, threads = 1)
 trajectory(result, compartments = "V1")
 }
