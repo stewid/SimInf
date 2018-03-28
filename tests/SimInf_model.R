@@ -609,7 +609,7 @@ stopifnot(identical(colnames(trajectory(result, "V1", as.is = TRUE)), as.charact
 ## Check arguments to 'U' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-result <- run(model, threads = 1, seed = 22)
+result <- run(model, threads = 1)
 res <- tools::assertError(trajectory(result, compartments = c("A", "S")))
 stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
                       res[[1]]$message)) > 0)
@@ -629,7 +629,7 @@ stopifnot(length(grep("'i' must be integer <= number of nodes",
 ## Check arguments to 'prevalence' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-result <- run(model, threads = 1, seed = 22)
+result <- run(model, threads = 1)
 res <- tools::assertError(prevalence(result, A+S~S))
 stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
                       res[[1]]$message)) > 0)

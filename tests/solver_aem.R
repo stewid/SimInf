@@ -58,13 +58,14 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 0.000011)
 
-result <- run(model, seed = 22, threads = 1, solver = "aem")
+set.seed(22)
+result <- run(model, threads = 1, solver = "aem")
 
-S_expected <- structure(c(9L, 9L, 9L, 9L, 9L, 10L, 9L, 10L, 9L, 9L, 10L, 10L,
-                          9L, 10L, 9L, 9L, 10L, 10L, 9L, 10L, 9L, 9L, 10L, 10L,
-                          9L, 10L, 9L, 9L, 10L, 10L, 9L, 10L, 9L, 9L, 10L, 10L,
-                          9L, 10L, 8L, 9L, 10L, 10L, 9L, 10L, 7L, 9L, 10L, 10L,
-                          9L, 10L, 6L, 9L, 10L, 10L, 8L, 10L, 6L, 8L, 10L, 10L),
+S_expected <- structure(c(9L, 9L, 9L, 9L, 9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L,
+                          9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L, 8L, 10L, 9L, 9L,
+                          10L, 9L, 8L, 10L, 9L, 8L, 10L, 9L, 8L, 10L, 9L, 8L, 10L,
+                          10L, 8L, 10L, 9L, 8L, 10L, 10L, 7L, 10L, 10L, 7L, 10L,
+                          10L, 7L, 10L, 10L, 7L, 10L, 10L, 7L, 10L),
                         .Dim = c(6L, 10L),
                         .Dimnames = list(c("S", "S", "S", "S", "S", "S"),
                                          c("0", "1", "2", "3", "4",
@@ -73,11 +74,11 @@ S_expected <- structure(c(9L, 9L, 9L, 9L, 9L, 10L, 9L, 10L, 9L, 9L, 10L, 10L,
 S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
-I_expected <- structure(c(1L, 1L, 1L, 1L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 0L, 1L,
-                          0L, 1L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 0L, 0L, 1L, 0L,
-                          1L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 0L, 0L, 1L, 0L, 2L,
-                          1L, 0L, 0L, 1L, 0L, 3L, 1L, 0L, 0L, 1L, 0L, 4L, 1L,
-                          0L, 0L, 2L, 0L, 4L, 2L, 0L, 0L),
+I_expected <- structure(c(1L, 1L, 1L, 1L, 1L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 1L,
+                          1L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 1L, 2L, 0L, 1L, 1L,
+                          0L, 1L, 2L, 0L, 1L, 2L, 0L, 1L, 2L, 0L, 1L, 2L, 0L,
+                          0L, 2L, 0L, 1L, 2L, 0L, 0L, 3L, 0L, 0L, 3L, 0L, 0L,
+                          3L, 0L, 0L, 3L, 0L, 0L, 3L, 0L),
                         .Dim = c(6L, 10L),
                         .Dimnames = list(c("I", "I", "I", "I", "I", "I"),
                                          c("0", "1", "2", "3", "4",
@@ -123,10 +124,11 @@ model <- SISe(u0  = u0,
               end_t4  = 365,
               epsilon = 0.000011)
 
-result <- run(model, threads = 1, seed = 123L, solver = "aem")
+set.seed(123)
+result <- run(model, threads = 1, solver = "aem")
 
-S_expected <- structure(c(10L, 9L, 8L, 9L, 8L, 9L, 7L, 8L, 7L, 8L, 10L,
-                          6L, 10L, 6L, 10L, 6L, 10L, 5L, 10L, 5L),
+S_expected <- structure(c(10L, 9L, 8L, 9L, 7L, 10L, 6L, 10L, 6L, 10L, 8L, 6L,
+                          7L, 7L, 7L, 7L, 7L, 7L, 7L, 9L),
                         .Dim = c(2L, 10L),
                         .Dimnames = list(
                             c("S", "S"),
@@ -135,8 +137,8 @@ S_expected <- structure(c(10L, 9L, 8L, 9L, 8L, 9L, 7L, 8L, 7L, 8L, 10L,
 S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
-I_expected <- structure(c(0L, 1L, 0L, 3L, 0L, 3L, 1L, 4L, 1L, 4L, 0L, 4L,
-                          0L, 4L, 0L, 4L, 0L, 5L, 0L, 5L),
+I_expected <- structure(c(0L, 1L, 0L, 3L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 4L, 3L,
+                          3L, 3L, 3L, 3L, 3L, 3L, 1L),
                         .Dim = c(2L, 10L),
                         .Dimnames = list(
                             c("I", "I"),

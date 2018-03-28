@@ -49,7 +49,7 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 1)
 
-result <- run(model, threads = 1, seed = 123L)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(sum(trajectory(result, as.is = TRUE)), 1001L))
@@ -61,7 +61,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(sum(result_omp@U), 1001L))
@@ -125,7 +125,7 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
-result <- run(model, threads = 1, seed = 123L)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(all(apply(trajectory(result, as.is = TRUE)[1:6,], 1, any)))
@@ -137,7 +137,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(all(apply(result_omp@U[1:6,], 1, any)))
@@ -202,7 +202,7 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
-result <- run(model, threads = 1, seed = 123L)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 
@@ -227,7 +227,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     m <- trajectory(result, compartments = "S_2", i = 1, as.is = TRUE) +
@@ -289,7 +289,7 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
-result <- run(model, threads = 1, seed = 123L)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(all(trajectory(result, as.is = TRUE)[1:6,] == 0))
@@ -301,7 +301,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(all(result_omp@U[1:6,] == 0))
@@ -410,7 +410,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
                                            "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                                          c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")))
 
-result <- run(model, threads = 1, seed = 123L)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -420,7 +420,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(result_omp@U, U_expected))
@@ -526,7 +526,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                                            "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                                          c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")))
 
-result <- run(model, threads = 1, seed = 123L)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -536,7 +536,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(result_omp@U, U_expected))
@@ -642,7 +642,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
                                            "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                                          c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")))
 
-result <- run(model, threads = 1, seed = 123L)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -652,7 +652,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(result_omp@U, U_expected))
@@ -759,7 +759,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
                                            "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                                          c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")))
 
-result <- run(model, threads = 1, seed = 123L)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -769,7 +769,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(result_omp@U, U_expected))
@@ -817,7 +817,7 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
-result <- run(model, threads = 1, seed = 123L)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(sum(trajectory(result, as.is = TRUE)[1:6,]), 0L))
@@ -828,7 +828,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(sum(result_omp@U[1:6,]), 0L))

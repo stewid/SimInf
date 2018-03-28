@@ -619,7 +619,8 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 8L, 0L, 0L, 0L, 0L,
                                            "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                                          c("0", "1", "2")))
 
-result <- run(model, threads = 1, seed = 123L)
+set.seed(1)
+result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -629,7 +630,8 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2, seed = 123L)
+    set.seed(1)
+    result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(trajectory(result_omp, as.is = TRUE), U_expected))
