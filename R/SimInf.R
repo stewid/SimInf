@@ -66,7 +66,7 @@ have_openmp <- function()
 ##'              gamma  = 0.077)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1, seed = 22)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Determine nodes with one or more infected individuals in the
 ##' ## trajectory. Extract the 'I' compartment and check for any

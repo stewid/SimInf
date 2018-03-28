@@ -442,7 +442,7 @@ SimInf_model <- function(G,
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1, seed = 22)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Determine the proportion of infected individuals (cases)
 ##' ## in the population at the time-points in 'tspan'.
@@ -678,7 +678,7 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1, seed = 22)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in 'tspan'.
@@ -701,7 +701,7 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 ##'
 ##' ## Run the model
-##' result <- run(model, threads = 1, seed = 7)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Extract the continuous state variable 'V1' in each node at the
 ##' ## time-points in 'tspan'. In the 'SISe' model, 'V1' represents the
@@ -992,7 +992,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Run the model.
-##' result <- run(model, threads = 1, seed = 22)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Display the trajectory with data for every node at each
 ##' ## time-point in tspan.
@@ -1006,7 +1006,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##'                  I = c(TRUE, TRUE, TRUE, TRUE),
 ##'                  R = c(TRUE, TRUE, TRUE, TRUE))
 ##' U(model) <- df
-##' result <- run(model, threads = 1, seed = 22)
+##' result <- run(model, threads = 1)
 ##' trajectory(result)
 ##'
 ##' ## We can also specify to record only some of the compartments in
@@ -1017,19 +1017,19 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##'                  I = c(TRUE, FALSE, TRUE, FALSE),
 ##'                  R = c(TRUE, FALSE, TRUE, TRUE))
 ##' U(model) <- df
-##' result <- run(model, threads = 1, seed = 22)
+##' result <- run(model, threads = 1)
 ##' trajectory(result)
 ##'
 ##' ## It is possible to use an empty 'data.frame' to specify
 ##' ## that no data-points should be recorded for the trajectory.
 ##' U(model) <- data.frame()
-##' result <- run(model, threads = 1, seed = 22)
+##' result <- run(model, threads = 1)
 ##' trajectory(result)
 ##'
 ##' ## Use 'NULL' to reset the model to record data for every node at
 ##' ## each time-point in tspan.
 ##' U(model) <- NULL
-##' result <- run(model, threads = 1, seed = 22)
+##' result <- run(model, threads = 1)
 ##' trajectory(result)
 "U<-" <- function(model, value)
 {
@@ -1133,7 +1133,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 ##'
 ##' ## Run the model
-##' result <- run(model, threads = 1, seed = 7)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Display the continuous state variable 'V1' for every node at
 ##' ## each time-point in tspan.
@@ -1145,19 +1145,19 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##'                  node = c(2, 2, 4, 4),
 ##'                  V1 = c(TRUE, TRUE, TRUE, TRUE))
 ##' V(model) <- df
-##' result <- run(model, threads = 1, seed = 7)
+##' result <- run(model, threads = 1)
 ##' trajectory(result, compartments = "V1")
 ##'
 ##' ## It is possible to use an empty 'data.frame' to specify
 ##' ## that no data-points should be recorded for the trajectory.
 ##' V(model) <- data.frame()
-##' result <- run(model, threads = 1, seed = 7)
+##' result <- run(model, threads = 1)
 ##' trajectory(result, compartments = "V1")
 ##'
 ##' ## Use 'NULL' to reset the model to record data for every node at
 ##' ## each time-point in tspan.
 ##' V(model) <- NULL
-##' result <- run(model, threads = 1, seed = 7)
+##' result <- run(model, threads = 1)
 ##' trajectory(result, compartments = "V1")
 "V<-" <- function(model, value)
 {
@@ -1314,7 +1314,7 @@ Nd <- function(model)
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the model and save the result.
-##' result <- run(model, threads = 1, seed = 1)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Plot the proportion of susceptible, infected and recovered
 ##' ## individuals.
@@ -1407,7 +1407,7 @@ setMethod("run",
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the model and save the result.
-##' result <- run(model, threads = 1, seed = 1)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Create a boxplot
 ##' boxplot(result)
@@ -1441,7 +1441,7 @@ setMethod("boxplot",
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the model and save the result.
-##' result <- run(model, threads = 1, seed = 1)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Create a scatter plot
 ##' pairs(result)
@@ -1494,7 +1494,7 @@ setMethod("pairs",
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the model and save the result.
-##' result <- run(model, threads = 1, seed = 1)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Plot the proportion of susceptible, infected and recovered
 ##' ## individuals.
@@ -1832,7 +1832,7 @@ summary_transitions <- function(object)
 ##' model
 ##'
 ##' ## Run the model and save the result
-##' result <- run(model, threads = 1, seed = 1)
+##' result <- run(model, threads = 1)
 ##'
 ##' ## Brief summary of the result. Note that 'U' and 'V' are
 ##' ## non-empty after running the model.

@@ -67,7 +67,8 @@ setClass("SEIR", contains = c("SimInf_model"))
 ##'               gamma = 0.077)
 ##'
 ##' ## Run the SEIR model and plot the result.
-##' result <- run(model, threads = 1, seed = 3)
+##' set.seed(3)
+##' result <- run(model)
 ##' plot(result)
 SEIR <- function(u0,
                  tspan,
@@ -163,14 +164,15 @@ setMethod("plot",
 ##'               events  = events_SEIR(),
 ##'               beta    = 0.16,
 ##'               epsilon = 0.25,
-##'               gamma   = 0.077)
+##'               gamma   = 0.01)
 ##'
 ##' ## Display the number of individuals affected by each event type
 ##' ## per day.
 ##' plot(events(model))
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1, seed = 3)
+##' result <- run(model, threads = 1)
+##' plot(result)
 ##'
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
@@ -208,10 +210,11 @@ events_SEIR <- function() {
 ##'               events  = events_SEIR(),
 ##'               beta    = 0.16,
 ##'               epsilon = 0.25,
-##'               gamma   = 0.077)
+##'               gamma   = 0.01)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1, seed = 22)
+##' result <- run(model, threads = 1)
+##' plot(result)
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
