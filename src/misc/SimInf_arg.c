@@ -20,7 +20,6 @@
  */
 
 #include <Rdefines.h>
-#include <time.h>
 
 #include "SimInf.h"
 
@@ -82,49 +81,6 @@ int SimInf_arg_check_model(SEXP arg)
         return -1;
 
     return 0;
-}
-
-/**
- * Get seed value
- *
- * @param out The seed value.
- * @param seed Random number seed from R.
- * @return 0 if Ok, else error code.
- */
-int SimInf_get_seed(unsigned long int *out, SEXP seed)
-{
-    int error = 0;
-
-    if (!Rf_isNull(seed)) {
-        if (Rf_isInteger(seed) || Rf_isReal(seed)) {
-            switch (LENGTH(seed)) {
-            case 0:
-                *out = (unsigned long int)time(NULL);
-                break;
-            case 1:
-                if (Rf_isInteger(seed)) {
-                    if (INTEGER(seed)[0] == NA_INTEGER)
-                        error = SIMINF_INVALID_SEED_VALUE;
-                    else
-                        *out = (unsigned long int)INTEGER(seed)[0];
-                } else if (!R_finite(REAL(seed)[0])) {
-                    error = SIMINF_INVALID_SEED_VALUE;
-                } else {
-                    *out = (unsigned long int)REAL(seed)[0];
-                }
-                break;
-            default:
-                error = SIMINF_INVALID_SEED_VALUE;
-                break;
-            }
-        } else {
-            error = SIMINF_INVALID_SEED_VALUE;
-        }
-    } else {
-        *out = (unsigned long int)time(NULL);
-    }
-
-    return error;
 }
 
 /**

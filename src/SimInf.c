@@ -81,9 +81,9 @@ SEXP SimInf_run(
         goto cleanup;
 
     /* seed */
-    error =  SimInf_get_seed(&(args.seed), seed);
-    if (error)
-        goto cleanup;
+    GetRNGstate();
+    args.seed = (unsigned long int)(unif_rand() * UINT_MAX);
+    PutRNGstate();
 
     /* Duplicate model. */
     PROTECT(result = Rf_duplicate(model));
