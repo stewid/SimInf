@@ -225,14 +225,12 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 1 with proportion = 10
 model@events@proportion <- 10
 
-res <- tools::assertError(.Call("SISe3_run", model, 1L, NULL, NULL,
-                                PACKAGE = "SimInf"))
+res <- tools::assertError(.Call("SISe3_run", model, 1L, NULL, PACKAGE = "SimInf"))
 stopifnot(length(grep("Unable to sample individuals for event.",
                       res[[1]]$message)) > 0)
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(.Call("SISe3_run", model, 2L, NULL, NULL,
-                                    PACKAGE = "SimInf"))
+    res <- tools::assertError(.Call("SISe3_run", model, 2L, NULL, PACKAGE = "SimInf"))
     stopifnot(length(grep("Unable to sample individuals for event.",
                           res[[1]]$message)) > 0)
 }
@@ -318,14 +316,12 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 0 with proportion = -1
 model@events@proportion <- -1
 
-res <- tools::assertError(.Call("SISe3_run", model, 1L, NULL, NULL,
-                                PACKAGE = "SimInf"))
+res <- tools::assertError(.Call("SISe3_run", model, 1L, NULL, PACKAGE = "SimInf"))
 stopifnot(length(grep("Unable to sample individuals for event.",
                       res[[1]]$message)) > 0)
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(.Call("SISe3_run", model, 2L, NULL, NULL,
-                                    PACKAGE = "SimInf"))
+    res <- tools::assertError(.Call("SISe3_run", model, 2L, NULL, PACKAGE = "SimInf"))
     stopifnot(length(grep("Unable to sample individuals for event.",
                           res[[1]]$message)) > 0)
 }

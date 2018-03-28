@@ -105,11 +105,11 @@ C_code <- c(
     "    return 0;",
     "}",
     "",
-    "SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP seed, SEXP solver)",
+    "SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
     "{",
     "    TRFun tr_fun[] = {&trFun1, &trFun2, &trFun3, &trFun4};",
     "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
-    "    return SimInf_run(model, threads, seed, solver, tr_fun, &ptsFun);",
+    "    return SimInf_run(model, threads, solver, tr_fun, &ptsFun);",
     "}",
     "")
 stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
@@ -169,11 +169,11 @@ C_code <- c(
     "    return 0;",
     "}",
     "",
-    "SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP seed, SEXP solver)",
+    "SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
     "{",
     "    TRFun tr_fun[] = {&trFun1, &trFun2};",
     "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
-    "    return SimInf_run(model, threads, seed, solver, tr_fun, &ptsFun);",
+    "    return SimInf_run(model, threads, solver, tr_fun, &ptsFun);",
     "}",
     "")
 stopifnot(identical(model@C_code[-1], C_code)) ## Skip first line that contains time
