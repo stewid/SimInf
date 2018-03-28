@@ -1287,8 +1287,6 @@ Nd <- function(model)
 ##' @param model The siminf model to run.
 ##' @param threads Number of threads. Default is NULL, i.e. to use all
 ##'     available processors.
-##' @param seed Random number seed. Default is NULL, i.e. the
-##'     simulator uses time to seed the random number generator.
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @return \code{SimInf_model} with result from simulation.
 ##' @references \itemize{
@@ -1325,7 +1323,6 @@ setGeneric("run",
            signature = "model",
            function(model,
                     threads = NULL,
-                    seed    = NULL,
                     solver  = c("ssm", "aem"))
                standardGeneric("run"))
 
@@ -1334,7 +1331,7 @@ setGeneric("run",
 ##' @importFrom methods validObject
 setMethod("run",
           signature(model = "SimInf_model"),
-          function(model, threads, seed, solver)
+          function(model, threads, solver)
           {
               solver <- match.arg(solver)
 
