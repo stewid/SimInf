@@ -570,10 +570,10 @@ U(model) <- data.frame(time = c(5, 6, 7, 8, 9, 10),
                        I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
 V(model) <- data.frame(time = 5:10,
                        node = 1:6,
-                       V1 = rep(TRUE, 6))
+                       phi = rep(TRUE, 6))
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(1:10)))
-stopifnot(identical(colnames(trajectory(result, "V1", as.is = TRUE)), as.character(1:10)))
+stopifnot(identical(colnames(trajectory(result, "phi", as.is = TRUE)), as.character(1:10)))
 
 tspan <- seq(as.Date("2016-01-01"), as.Date("2016-01-10"), by = 1)
 u0 <- data.frame(S = 100:105, I = 1:6)
@@ -598,13 +598,13 @@ U(model) <- data.frame(time = c(5, 6, 7, 8, 9, 10),
                        I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
 V(model) <- data.frame(time = 5:10,
                        node = 1:6,
-                       V1 = rep(TRUE, 6))
+                       phi = rep(TRUE, 6))
 V(model) <- data.frame(time = 5:10,
                        node = 1:6,
-                       V1 = rep(TRUE, 6))
+                       phi = rep(TRUE, 6))
 result <- run(model, threads = 1)
 stopifnot(identical(colnames(trajectory(result, as.is = TRUE)), as.character(tspan)))
-stopifnot(identical(colnames(trajectory(result, "V1", as.is = TRUE)), as.character(tspan)))
+stopifnot(identical(colnames(trajectory(result, "phi", as.is = TRUE)), as.character(tspan)))
 
 ## Check arguments to 'U' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))

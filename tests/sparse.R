@@ -120,7 +120,7 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 0.000011)
 result <- run(model, threads = 1)
-V(result) <- data.frame(time = 4:9, node = 1:6, V1 = TRUE)
+V(result) <- data.frame(time = 4:9, node = 1:6, phi = TRUE)
 result <- run(result, threads = 1)
 stopifnot(identical(dim(result@V), c(0L, 0L)))
 stopifnot(identical(dim(result@V_sparse), c(6L, 10L)))

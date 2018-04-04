@@ -448,8 +448,8 @@ stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 
 ## Check 'V'
-res <- tools::assertError(trajectory(result, "V1"))
-stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'V1'",
+res <- tools::assertError(trajectory(result, "phi"))
+stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'phi'",
                       res[[1]]$message)) > 0)
 
 ## Check data
