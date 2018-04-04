@@ -95,8 +95,7 @@ model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
 ## Run the model
 result <- run(model, threads = 1)
 
-## Extract the continuous state variable 'V1' in each node at the
-## time-points in 'tspan'. In the 'SISe' model, 'V1' represents the
-## environmental infectious pressure 'phi'.
-trajectory(result, "V1")
+## Extract the continuous state variable 'phi' which represents
+## the environmental infectious pressure.
+trajectory(result, "phi")
 }
