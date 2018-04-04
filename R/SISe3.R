@@ -141,7 +141,8 @@ SISe3 <- function(u0,
                 nrow = 6, ncol = 6,
                 dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
 
-    v0 <- matrix(as.numeric(phi), nrow  = 1, byrow = TRUE)
+    v0 <- matrix(as.numeric(phi), nrow  = 1, byrow = TRUE,
+                 dimnames = list("phi"))
 
     ldata <- matrix(as.numeric(c(end_t1, end_t2, end_t3, end_t4)),
                     nrow = 4, byrow = TRUE)

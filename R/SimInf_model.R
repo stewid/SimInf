@@ -148,6 +148,8 @@ setClass("SimInf_model",
              ## Check v0.
              if (!identical(storage.mode(object@v0), "double"))
                  return("Initial model state 'v0' must be a double matrix.")
+             if ((dim(object@v0)[1] > 0) && is.null(rownames(object@v0)))
+                 return("'v0' must have rownames")
 
              ## Check V.
              if (!identical(storage.mode(object@V), "double"))
@@ -703,10 +705,9 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##' ## Run the model
 ##' result <- run(model, threads = 1)
 ##'
-##' ## Extract the continuous state variable 'V1' in each node at the
-##' ## time-points in 'tspan'. In the 'SISe' model, 'V1' represents the
-##' ## environmental infectious pressure 'phi'.
-##' trajectory(result, "V1")
+##' ## Extract the continuous state variable 'phi' which represents
+##' ## the environmental infectious pressure.
+##' trajectory(result, "phi")
 trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 {
     ## Check that the arguments are ok...
@@ -1665,6 +1666,8 @@ summary_V <- function(object)
             d <- dim(object@V_sparse)
         if (identical(d, c(0L, 0L))) {
             cat(" - Empty, please run the model first\n")
+        } else if (is.null(rownames(object@v0))) {
+            stop("Undefined continuous state variables")
         } else {
             qq <- lapply(seq_len(Nd(object)), function(compartment) {
                 compartment <- paste0("V", compartment)
@@ -1675,7 +1678,7 @@ summary_V <- function(object)
             qq <- do.call("rbind", qq)
             colnames(qq) <- c("Min.", "1st Qu.", "Median",
                               "Mean", "3rd Qu.", "Max.")
-            rownames(qq) <- paste0(" V", seq_len(Nd(object)))
+            rownames(qq) <- rownames(object@v0)
             print.table(qq, digits = 3)
         }
     } else {
