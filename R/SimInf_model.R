@@ -1526,12 +1526,12 @@ setMethod("plot",
 
               ## Create a matrix with one row for each line in the
               ## plot.
-              if (identical(spaghetti, TRUE)) {
+              if (isTRUE(spaghetti)) {
                   i <- sort(as.numeric(sapply(compartments, "+",
                   (seq_len(Nn(x)) - 1) * Nc(x))))
                   m <- x@U[i, , drop = FALSE]
 
-                  if (!identical(N, TRUE)) {
+                  if (!isTRUE(N)) {
                       ## Calculate the proportion of individuals in
                       ## each compartment within each node.
                       for (i in (seq_len(Nn(x)) - 1)) {
@@ -1548,7 +1548,7 @@ setMethod("plot",
                   for (i in seq_len(length(compartments))) {
                       j <- seq(from = compartments[i], to = dim(x@U)[1],
                                by = Nc(x))
-                      if (N) {
+                      if (isTRUE(N)) {
                           m[i, ] <- colMeans(as.matrix(x@U[j, , drop = FALSE]))
                       } else {
                           m[i, ] <- colSums(as.matrix(x@U[j, , drop = FALSE]))
@@ -1556,7 +1556,7 @@ setMethod("plot",
                   }
 
                   ## Calculate proportion
-                  if (!identical(N, TRUE))
+                  if (!isTRUE(N))
                       m <- apply(m, 2, function(x) x / sum(x))
               }
 
@@ -1579,7 +1579,7 @@ setMethod("plot",
               col <- rep(col, length.out = dim(m)[1])
 
               ## Settings for the y-axis.
-              if (identical(N, TRUE)) {
+              if (isTRUE(N)) {
                   ylab <- "N"
                   ylim <- c(0, max(m))
               } else {
