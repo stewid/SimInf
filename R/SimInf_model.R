@@ -735,11 +735,8 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         compartments <- unlist(sapply(j, function(jj) {
             ## Replace '.' with all compartments (discrete and
             ## continuous) in the model.
-            if (identical(jj, ".")) {
-                jj <- rownames(model@S)
-                if (Nd(model) > 0)
-                    jj <- c(jj, paste0("V", seq_len(Nd(model))))
-            }
+            if (identical(jj, "."))
+                jj <- c(rownames(model@S), rownames(model@v0))
             jj
         }))
     }
@@ -761,7 +758,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         ## Match compartments in V
         if (length(compartments) > 0) {
             if (Nd(model) > 0) {
-                lbl <- paste0("V", seq_len(Nd(model)))
+                lbl <- rownames(model@v0)
                 compartments_V <- compartments[compartments %in% lbl]
                 if (length(compartments_V) > 0) {
                     compartments <- setdiff(compartments, compartments_V)
@@ -812,7 +809,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
             ## one row per node and time-point with the values of the
             ## continuous state variables.
             return(sparse2df(model@V_sparse, Nd(model), model@tspan,
-                             paste0("V", seq_len(Nd(model))), NA_real_))
+                             rownames(model@v0), NA_real_))
         }
     }
 
@@ -849,8 +846,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 
         if (is.null(compartments_U)) {
             ## Extract subset of data from V
-            lbl <- paste0("V", seq_len(Nd(model)))
-            compartments_V <- sort(match(compartments_V, lbl))
+            compartments_V <- sort(match(compartments_V, rownames(model@v0)))
             j <- rep(compartments_V, length(i))
             j <- j + rep((i - 1) * Nd(model), each = length(compartments_V))
             return(model@V[j, , drop = FALSE])
@@ -897,7 +893,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         if (!is.null(mU))
             colnames(mU) <- rownames(model@S)
         if (!is.null(mV))
-            colnames(mV) <- paste0("V", seq_len(Nd(model)))
+            colnames(mV) <- rownames(model@v0)
     }
 
     ## Handle cases where a subset of data in U and/or V are
@@ -926,7 +922,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 
         if (!is.null(compartments_V)) {
             ## Extract a subset of data from V
-            compartments_V <- sort(match(compartments_V, paste0("V", seq_len(Nd(model)))))
+            compartments_V <- sort(match(compartments_V, rownames(model@v0)))
             j <- rep(compartments_V, length(i))
             j <- j + rep((i - 1) * Nd(model), each = length(compartments_V))
             k <- (seq_len(length(model@tspan)) - 1) * Nd(model) * Nn(model)
@@ -936,7 +932,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
             mV <- matrix(as.numeric(model@V[j]),
                          ncol = length(compartments_V),
                          byrow = TRUE)
-            colnames(mV) <- paste0("V", seq_len(Nd(model)))[compartments_V]
+            colnames(mV) <- rownames(model@v0)[compartments_V]
         }
     }
 
