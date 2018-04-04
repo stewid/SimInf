@@ -1132,30 +1132,30 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 ##' ## Run the model
 ##' result <- run(model, threads = 1)
 ##'
-##' ## Display the continuous state variable 'V1' for every node at
+##' ## Display the continuous state variable 'phi' for every node at
 ##' ## each time-point in tspan.
-##' trajectory(result, compartments = "V1")
+##' trajectory(result, compartments = "phi")
 ##'
 ##' ## Assume we are only interested in nodes '2' and '4' at the
 ##' ## time-points '3' and '5'
 ##' df <- data.frame(time = c(3, 5, 3, 5),
 ##'                  node = c(2, 2, 4, 4),
-##'                  V1 = c(TRUE, TRUE, TRUE, TRUE))
+##'                  phi = c(TRUE, TRUE, TRUE, TRUE))
 ##' V(model) <- df
 ##' result <- run(model, threads = 1)
-##' trajectory(result, compartments = "V1")
+##' trajectory(result, compartments = "phi")
 ##'
 ##' ## It is possible to use an empty 'data.frame' to specify
 ##' ## that no data-points should be recorded for the trajectory.
 ##' V(model) <- data.frame()
 ##' result <- run(model, threads = 1)
-##' trajectory(result, compartments = "V1")
+##' trajectory(result, compartments = "phi")
 ##'
 ##' ## Use 'NULL' to reset the model to record data for every node at
 ##' ## each time-point in tspan.
 ##' V(model) <- NULL
 ##' result <- run(model, threads = 1)
-##' trajectory(result, compartments = "V1")
+##' trajectory(result, compartments = "phi")
 "V<-" <- function(model, value)
 {
     ## Check model argument
@@ -1171,7 +1171,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         if (nrow(value) > 0) {
             ## Sort the data.frame by time and node.
             value <- value[order(value$time, value$node),
-                           c("time", "node", paste0("V", seq_len(Nd(model))))]
+                           c("time", "node", rownames(model@v0))]
 
             ## Match nodes and for each matched node create an index
             ## to all of its continuous state compartments in the V
@@ -1665,8 +1665,7 @@ summary_V <- function(object)
         } else if (is.null(rownames(object@v0))) {
             stop("Undefined continuous state variables")
         } else {
-            qq <- lapply(seq_len(Nd(object)), function(compartment) {
-                compartment <- paste0("V", compartment)
+            qq <- lapply(rownames(object@v0), function(compartment) {
                 x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
                 qq <- quantile(x)
                 qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
