@@ -57,6 +57,9 @@ BREAKING CHANGES
 * Renamed the type option 'bnp' to 'nop' in the 'prevalence' method to
   calculate the proportion of nodes with at least one case.
 
+* Removed the 'seed' argument from the 'run' method. Use 'set.seed'
+  instead.
+
 SimInf 5.1.0
 ------------
 
