@@ -1482,7 +1482,9 @@ setMethod("pairs",
 ##' @importFrom graphics lines
 ##' @importFrom graphics par
 ##' @importFrom graphics plot
+##' @importFrom graphics polygon
 ##' @importFrom graphics title
+##' @importFrom grDevices adjustcolor
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it with 99 susceptible individuals and one infected
@@ -1610,7 +1612,7 @@ setMethod("plot",
                    col = col[1], lty = lty[1], lwd = lwd, ...)
               if (isTRUE(range)) {
                   polygon(x = c(xx, rev(xx)), y = c(mu[1, ], rev(ml[1, ])),
-                          col = adjustcolor(col[1], alpha = 0.1), border = NA)
+                          col = adjustcolor(col[1], alpha.f = 0.1), border = NA)
               }
               title(xlab = xlab, outer = TRUE, line = 0)
 
@@ -1620,7 +1622,7 @@ setMethod("plot",
                         col = col[j], lwd = lwd, ...)
                   if (isTRUE(range)) {
                       polygon(x = c(xx, rev(xx)), y = c(mu[j, ], rev(ml[j, ])),
-                              col = adjustcolor(col[j], alpha = 0.1), border = NA)
+                              col = adjustcolor(col[j], alpha.f = 0.1), border = NA)
                   }
               }
 

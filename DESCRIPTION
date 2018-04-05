@@ -37,6 +37,7 @@ Depends:
     R(>= 3.1)
 Imports:
     graphics,
+    grDevices,
     methods,
     stats,
     utils,
