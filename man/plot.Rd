@@ -13,7 +13,7 @@
 \title{Display the outcome from a simulated trajectory}
 \usage{
 \S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL, lty = NULL,
-  lwd = 2, N = FALSE, compartments = NULL, spaghetti = FALSE, ...)
+  lwd = 2, compartments = NULL, spaghetti = FALSE, ...)
 
 \S4method{plot}{SEIR}(x, col = c("blue", "orange", "red", "darkgreen"),
   lty = rep(1, 4), lwd = 2, ...)
@@ -50,10 +50,6 @@ sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 
 \item{lwd}{The line width for each compartment. Default is 2.}
 
-\item{N}{if \code{TRUE}, the average number of individuals in each
-compartment, else the proportion of individuals in each
-compartment.  Default is \code{FALSE}.}
-
 \item{compartments}{Character vector with the compartments in the
 model to include in the plot. Default is \code{NULL}
 i.e. include all compartments in the model.}
@@ -80,14 +76,10 @@ model <- SIR(u0 = data.frame(S = rep(99, 10),
 ## Run the model and save the result.
 result <- run(model, threads = 1)
 
-## Plot the proportion of susceptible, infected and recovered
-## individuals.
+## Plot the average number of susceptible, infected
+## and recovered individuals.
 plot(result)
 
-## Plot the number of susceptible, infected and recovered
-## individuals.
-plot(result, N = TRUE)
-
-## Plot the number of infected individuals.
-plot(result, compartments = "I", N = TRUE)
+## Plot the average number of infected individuals.
+plot(result, compartments = "I")
 }
