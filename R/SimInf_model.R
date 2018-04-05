@@ -1529,10 +1529,10 @@ setMethod("plot",
               if (is.null(i)) {
                   m <- matrix(0, nrow = length(compartments),
                               ncol = length(x@tspan))
-                  for (i in seq_len(length(compartments))) {
-                      j <- seq(from = compartments[i], to = dim(x@U)[1],
+                  for (j in seq_len(length(compartments))) {
+                      k <- seq(from = compartments[j], to = dim(x@U)[1],
                                by = Nc(x))
-                      m[i, ] <- colMeans(as.matrix(x@U[j, , drop = FALSE]))
+                      m[j, ] <- colMeans(as.matrix(x@U[k, , drop = FALSE]))
                   }
               } else {
                   ## Check the 'i' argument
@@ -1587,9 +1587,9 @@ setMethod("plot",
               title(xlab = xlab, outer = TRUE, line = 0)
 
               ## Add the rest of the lines to the plot
-              for (i in seq_len(dim(m)[1])[-1]) {
-                  lines(x = xx, y = m[i, ], type = "l", lty = lty[i],
-                        col = col[i], lwd = lwd, ...)
+              for (j in seq_len(dim(m)[1])[-1]) {
+                  lines(x = xx, y = m[j, ], type = "l", lty = lty[j],
+                        col = col[j], lwd = lwd, ...)
               }
 
               ## Add the legend below plot. The default legend is the
