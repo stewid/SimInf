@@ -1465,8 +1465,9 @@ setMethod("pairs",
 ##' @param compartments Character vector with the compartments in the
 ##'     model to include in the plot. Default is \code{NULL}
 ##'     i.e. include all compartments in the model.
-##' @param spaghetti Plot one line for each node. Default is
-##'     \code{FALSE}.
+##' @param i indices specifying the nodes to include when plotting
+##'     data. Plot one line for each node. Default (\code{i = NULL})
+##'     is to extract data from all nodes and plot averages.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @rdname plot
 ##' @aliases plot,SimInf_model-method
@@ -1496,10 +1497,17 @@ setMethod("pairs",
 ##'
 ##' ## Plot the average number of infected individuals.
 ##' plot(result, compartments = "I")
+##'
+##' ## Plot the number of susceptible, infected
+##' ## and recovered individuals in the first node.
+##' plot(result, i = 1)
+##'
+##' ## Plot the number of infected individuals in the first node.
+##' plot(result, compartments = "I", i = 1)
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
-                   compartments = NULL, spaghetti = FALSE, ...)
+                   compartments = NULL, i = NULL, ...)
           {
               if (identical(dim(x@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
@@ -1518,11 +1526,7 @@ setMethod("plot",
 
               ## Create a matrix with one row for each line in the
               ## plot.
-              if (isTRUE(spaghetti)) {
-                  i <- sort(as.numeric(sapply(compartments, "+",
-                  (seq_len(Nn(x)) - 1) * Nc(x))))
-                  m <- x@U[i, , drop = FALSE]
-              } else {
+              if (is.null(i)) {
                   m <- matrix(0, nrow = length(compartments),
                               ncol = length(x@tspan))
                   for (i in seq_len(length(compartments))) {
@@ -1530,6 +1534,20 @@ setMethod("plot",
                                by = Nc(x))
                       m[i, ] <- colMeans(as.matrix(x@U[j, , drop = FALSE]))
                   }
+              } else {
+                  ## Check the 'i' argument
+                  if (!is.numeric(i))
+                      stop("'i' must be valid node indices")
+                  if (!length(i))
+                      stop("'i' must be valid node indices")
+                  if (!all(i %in% seq_len(Nn(x))))
+                      stop("'i' must be valid node indices")
+                  i <- sort(unique(i))
+
+                  ## Extract subset of data from U
+                  j <- rep(compartments, length(i))
+                  j <- j + rep((i - 1) * Nc(x), each = length(compartments))
+                  m <- x@U[j, , drop = FALSE]
               }
 
               ## Default line type

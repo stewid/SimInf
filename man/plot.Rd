@@ -13,7 +13,7 @@
 \title{Display the outcome from a simulated trajectory}
 \usage{
 \S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL, lty = NULL,
-  lwd = 2, compartments = NULL, spaghetti = FALSE, ...)
+  lwd = 2, compartments = NULL, i = NULL, ...)
 
 \S4method{plot}{SEIR}(x, col = c("blue", "orange", "red", "darkgreen"),
   lty = rep(1, 4), lwd = 2, ...)
@@ -54,8 +54,9 @@ sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 model to include in the plot. Default is \code{NULL}
 i.e. include all compartments in the model.}
 
-\item{spaghetti}{Plot one line for each node. Default is
-\code{FALSE}.}
+\item{i}{indices specifying the nodes to include when plotting
+data. Plot one line for each node. Default (\code{i = NULL})
+is to extract data from all nodes and plot averages.}
 
 \item{...}{Additional arguments affecting the plot produced.}
 }
@@ -82,4 +83,11 @@ plot(result)
 
 ## Plot the average number of infected individuals.
 plot(result, compartments = "I")
+
+## Plot the number of susceptible, infected
+## and recovered individuals in the first node.
+plot(result, i = 1)
+
+## Plot the number of infected individuals in the first node.
+plot(result, compartments = "I", i = 1)
 }
