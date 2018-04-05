@@ -6,7 +6,7 @@
 \title{Display the outcome from a simulated trajectory}
 \usage{
 \S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL, lty = NULL,
-  lwd = 2, compartments = NULL, i = NULL, ...)
+  lwd = 2, compartments = NULL, i = NULL, range = 0.5, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot}
@@ -30,6 +30,13 @@ i.e. include all compartments in the model.}
 \item{i}{indices specifying the nodes to include when plotting
 data. Plot one line for each node. Default (\code{i = NULL})
 is to extract data from all nodes and plot averages.}
+
+\item{range}{show the quantile range of the count in each
+compartment. Default is to show the interquartile range
+i.e. the middle 50\% of the count in transparent color. The
+median value is shown in the same color. Use \code{range =
+0.95} to show the middle 95\% of the count. To display
+individual lines for each node, specify \code{range = FALSE}.}
 
 \item{...}{Additional arguments affecting the plot produced.}
 }

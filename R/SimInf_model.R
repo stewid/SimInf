@@ -1468,6 +1468,12 @@ setMethod("pairs",
 ##' @param i indices specifying the nodes to include when plotting
 ##'     data. Plot one line for each node. Default (\code{i = NULL})
 ##'     is to extract data from all nodes and plot averages.
+##' @param range show the quantile range of the count in each
+##'     compartment. Default is to show the interquartile range
+##'     i.e. the middle 50\% of the count in transparent color. The
+##'     median value is shown in the same color. Use \code{range =
+##'     0.95} to show the middle 95\% of the count. To display
+##'     individual lines for each node, specify \code{range = FALSE}.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @rdname plot
 ##' @aliases plot,SimInf_model-method
@@ -1507,7 +1513,7 @@ setMethod("pairs",
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
-                   compartments = NULL, i = NULL, ...)
+                   compartments = NULL, i = NULL, range = 0.5, ...)
           {
               if (identical(dim(x@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
@@ -1521,33 +1527,47 @@ setMethod("plot",
                   compartments <- match(compartments, rownames(x@S))
               }
 
+              ## Check the 'i' argument
+              if (is.null(i))
+                  i <- seq_len(Nn(x))
+              if (!is.numeric(i))
+                  stop("'i' must be valid node indices")
+              if (!length(i))
+                  stop("'i' must be valid node indices")
+              if (!all(i %in% seq_len(Nn(x))))
+                  stop("'i' must be valid node indices")
+              i <- sort(unique(i))
+
               savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
               on.exit(par(savepar))
 
               ## Create a matrix with one row for each line in the
               ## plot.
-              if (is.null(i)) {
-                  m <- matrix(0, nrow = length(compartments),
-                              ncol = length(x@tspan))
-                  for (j in seq_len(length(compartments))) {
-                      k <- seq(from = compartments[j], to = dim(x@U)[1],
-                               by = Nc(x))
-                      m[j, ] <- colMeans(as.matrix(x@U[k, , drop = FALSE]))
-                  }
-              } else {
-                  ## Check the 'i' argument
-                  if (!is.numeric(i))
-                      stop("'i' must be valid node indices")
-                  if (!length(i))
-                      stop("'i' must be valid node indices")
-                  if (!all(i %in% seq_len(Nn(x))))
-                      stop("'i' must be valid node indices")
-                  i <- sort(unique(i))
-
+              if (identical(range, FALSE)) {
                   ## Extract subset of data from U
                   j <- rep(compartments, length(i))
                   j <- j + rep((i - 1) * Nc(x), each = length(compartments))
                   m <- x@U[j, , drop = FALSE]
+              } else {
+                  m <- matrix(0, nrow = length(compartments),
+                              ncol = length(x@tspan))
+
+                  ## Matrices for quantile range
+                  mu <- m
+                  ml <- m
+
+                  for (j in seq_len(length(compartments))) {
+                      k <- seq(from = compartments[j], to = dim(x@U)[1],
+                               by = Nc(x))
+                      u <- apply(x@U[k[i], , drop = FALSE], 2,
+                                 quantile,
+                                 probs = c(range / 2, 0.5, 1 - range / 2))
+                      ml[j, ] <- u[1, ]
+                      m[j, ] <- u[2, ]
+                      mu[j, ] <- u[3, ]
+                  }
+
+                  range <- TRUE
               }
 
               ## Default line type
@@ -1570,7 +1590,11 @@ setMethod("plot",
 
               ## Settings for the y-axis.
               ylab <- "N"
-              ylim <- c(0, max(m))
+              if (isTRUE(range)) {
+                  ylim <- c(0, max(mu))
+              } else {
+                  ylim <- c(0, max(m))
+              }
 
               ## Settings for the x-axis
               if (is.null(names(x@tspan))) {
@@ -1584,12 +1608,20 @@ setMethod("plot",
               ## Plot first line to get a new plot window
               plot(x = xx, y = m[1, ], type = "l", ylab = ylab, ylim = ylim,
                    col = col[1], lty = lty[1], lwd = lwd, ...)
+              if (isTRUE(range)) {
+                  polygon(x = c(xx, rev(xx)), y = c(mu[1, ], rev(ml[1, ])),
+                          col = adjustcolor(col[1], alpha = 0.1), border = NA)
+              }
               title(xlab = xlab, outer = TRUE, line = 0)
 
               ## Add the rest of the lines to the plot
               for (j in seq_len(dim(m)[1])[-1]) {
                   lines(x = xx, y = m[j, ], type = "l", lty = lty[j],
                         col = col[j], lwd = lwd, ...)
+                  if (isTRUE(range)) {
+                      polygon(x = c(xx, rev(xx)), y = c(mu[j, ], rev(ml[j, ])),
+                              col = adjustcolor(col[j], alpha = 0.1), border = NA)
+                  }
               }
 
               ## Add the legend below plot. The default legend is the
