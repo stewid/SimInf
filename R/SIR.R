@@ -125,22 +125,6 @@ SIR <- function(u0,
     as(model, "SIR")
 }
 
-##' @rdname plot
-##' @aliases plot,SIR-method
-##' @export
-##' @importFrom methods callNextMethod
-setMethod("plot",
-          signature(x = "SIR"),
-          function(x,
-                   col = c("blue", "red", "darkgreen"),
-                   lty = rep(1, 3),
-                   lwd = 2,
-                   ...)
-          {
-              callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
-          }
-)
-
 ##' Example data to initialize events for the \sQuote{SIR} model
 ##'
 ##' Example data to initialize scheduled events for a population of

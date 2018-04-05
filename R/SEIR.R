@@ -117,22 +117,6 @@ SEIR <- function(u0,
     as(model, "SEIR")
 }
 
-##' @rdname plot
-##' @aliases plot,SEIR-method
-##' @export
-##' @importFrom methods callNextMethod
-setMethod("plot",
-          signature(x = "SEIR"),
-          function(x,
-                   col = c("blue", "orange", "red", "darkgreen"),
-                   lty = rep(1, 4),
-                   lwd = 2,
-                   ...)
-          {
-              callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
-          }
-)
-
 ##' Example data to initialize events for the \sQuote{SEIR} model
 ##'
 ##' Example data to initialize scheduled events for a population of

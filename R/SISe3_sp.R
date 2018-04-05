@@ -177,21 +177,3 @@ SISe3_sp <- function(u0,
 
     as(model, "SISe3_sp")
 }
-
-##' @rdname plot
-##' @aliases plot,SISe3_sp-method
-##' @export
-##' @importFrom methods callNextMethod
-setMethod("plot",
-          signature(x = "SISe3_sp"),
-          function(x,
-                   legend = expression(S[1], I[1], S[2], I[2], S[3], I[3]),
-                   col = rep(c("blue", "red"), 3),
-                   lty = rep(1:3, each = 2),
-                   lwd = 2,
-                   ...)
-          {
-              callNextMethod(x, legend = legend, col = col,
-                             lty = lty, lwd = lwd, ...)
-          }
-)

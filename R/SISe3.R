@@ -168,24 +168,6 @@ SISe3 <- function(u0,
     as(model, "SISe3")
 }
 
-##' @rdname plot
-##' @aliases plot,SISe3-method
-##' @export
-##' @importFrom methods callNextMethod
-setMethod("plot",
-          signature(x = "SISe3"),
-          function(x,
-                   legend = expression(S[1], I[1], S[2], I[2], S[3], I[3]),
-                   col = rep(c("blue", "red"), 3),
-                   lty = rep(1:3, each = 2),
-                   lwd = 2,
-                   ...)
-          {
-              callNextMethod(x, legend = legend, col = col,
-                             lty = lty, lwd = lwd, ...)
-          }
-)
-
 ##' Example data to initialize events for the \sQuote{SISe3} model
 ##'
 ##' Example data to initialize scheduled events for a population of

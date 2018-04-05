@@ -148,18 +148,3 @@ SISe_sp <- function(u0,
 
     as(model, "SISe_sp")
 }
-
-##' @rdname plot
-##' @aliases plot,SISe_sp-method
-##' @importFrom methods callNextMethod
-setMethod("plot",
-          signature(x = "SISe_sp"),
-          function(x,
-                   col = c("blue", "red"),
-                   lty = rep(1, 2),
-                   lwd = 2,
-                   ...)
-          {
-              callNextMethod(x, col = col, lty = lty, lwd = lwd, ...)
-          }
-)
