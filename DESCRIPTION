@@ -1,12 +1,15 @@
 Package: SimInf
 Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
 Version: 5.1.0.9000
-Author: Stefan Widgren (National Veterinary Institute, Sweden and
-    Uppsala University, Sweden),
-    Pavol Bauer (Uppsala University, Sweden),
-    Stefan Engblom (Uppsala University, Sweden),
-    Robin Eriksson (Uppsala University, Sweden)
-Maintainer: Stefan Widgren <stefan.widgren@gmail.com>
+Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
+                    email = "stefan.widgren@gmail.com",
+                    comment = c(ORCID = "0000-0001-5745-2284")),
+             person("Robin", "Eriksson", role = "aut",
+                    comment = c(ORCID = "0000-0002-4291-712X")),
+             person("Stefan", "Engblom", role = "aut",
+                    comment = c(ORCID = "0000-0002-3614-1732")),
+             person("Pavol", "Bauer", role = "aut",
+                    comment = c(ORCID = "0000-0003-4328-7171")))
 Description: Livestock movements are important for the spread of many
     infectious diseases between herds. The package provides an
     efficient and flexible framework for stochastic disease spread
@@ -18,10 +21,10 @@ Description: Livestock movements are important for the spread of many
     can be extended with user defined models.
 Acknowledgements: This work was financially supported by the Swedish
     Research Council within the UPMARC Linnaeus center of Excellence
-    (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the Swedish Research Council
-    Formas (Stefan Engblom and Stefan Widgren), the Swedish Board of
-    Agriculture (Stefan Widgren), and by the Swedish strategic
-    research program eSSENCE (Stefan Widgren).
+    (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the Swedish
+    Research Council Formas (Stefan Engblom and Stefan Widgren), the
+    Swedish Board of Agriculture (Stefan Widgren), and by the Swedish
+    strategic research program eSSENCE (Stefan Widgren).
 License: GPL-3
 URL: https://github.com/stewid/SimInf
 BugReports: https://github.com/stewid/SimInf/issues
