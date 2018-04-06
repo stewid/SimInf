@@ -1485,6 +1485,7 @@ setMethod("pairs",
 ##' @importFrom graphics polygon
 ##' @importFrom graphics title
 ##' @importFrom grDevices adjustcolor
+##' @importFrom grDevices rainbow
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it with 99 susceptible individuals and one infected
