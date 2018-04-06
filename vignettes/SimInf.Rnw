@@ -45,20 +45,27 @@
 
 \Abstract{
 
-  Livestock movements are critical for the spread of many infectious
-  diseases in animal populations.  The use of real livestock data
-  allows for disease spread modeling that incorporates the
-  time-varying contact network and the population demographic.  This
-  paper introduces \pkg{SimInf}, an efficient and general framework
-  for stochastic spatio-temporal disease-spread modeling over a
-  temporal network of connected nodes.  It integrates within-node
-  infection dynamics as continuous-time Markov chains and livestock
-  data as scheduled events.  The core simulation solver is implemented
-  in \proglang{C} and uses \proglang{OpenMP} to divide work over
-  multiple processors.  We provide a technical description of the
-  framework, how to use a predefined model in \pkg{SimInf},
-  demonstrate a case study, and finally show how to extend the
-  framework with a user defined model.
+  Livestock are partioned into spatially segregated subpopulations
+  (farms).  Thus demography within each subpopulation and interactions
+  between subpopulations, for example, by livestock movements, can
+  affect transmission dynamics of a contagion.  The \proglang{R}
+  package \pkg{SimInf} provides an efficient and very flexible
+  framework to exploit rich livestock data in realistic large scale
+  disease spread simulations.  The framework integrates infection
+  dynamics in each subpopulation as continuous-time Markov chains
+  using the Gillespie stochastic simulation algorithm and incorporates
+  available data such as births, slaughter and livestock movements as
+  scheduled events.  A scheduled event is used to modify the state of
+  a subpopulation at a predefined time-point.  Using \proglang{C} code
+  for the numerical solvers and \proglang{OpenMP} to divide work over
+  multiple processors ensures high performance when simulating a
+  trajectory.  One of our design goal was to make \pkg{SimInf}
+  extendable and enable usage of the numerical solvers from other
+  \proglang{R} extension packages in order to facilitate complex
+  epidemiological research.  In this paper, we provide a technical
+  description of the framework and demonstrate some basic toy
+  examples.  We also discuss how to specify and extend the framework
+  with user-defined models.
 
 }
 
