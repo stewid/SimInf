@@ -1551,6 +1551,13 @@ setMethod("plot",
                   j <- j + rep((i - 1) * Nc(x), each = length(compartments))
                   m <- x@U[j, , drop = FALSE]
               } else {
+                  ## Check range argument
+                  if (!is.numeric(range) || !identical(length(range), 1L) ||
+                      range < 0 || range > 1) {
+                      stop("'range' must be FALSE or a value between 0 and 1")
+                  }
+                  range <- (1 - range) / 2
+
                   m <- matrix(0, nrow = length(compartments),
                               ncol = length(x@tspan))
 
@@ -1563,7 +1570,7 @@ setMethod("plot",
                                by = Nc(x))
                       u <- apply(x@U[k[i], , drop = FALSE], 2,
                                  quantile,
-                                 probs = c(range / 2, 0.5, 1 - range / 2))
+                                 probs = c(range, 0.5, 1 - range))
                       ml[j, ] <- u[1, ]
                       m[j, ] <- u[2, ]
                       mu[j, ] <- u[3, ]
