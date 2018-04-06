@@ -1453,6 +1453,9 @@ setMethod("pairs",
 
 ##' Display the outcome from a simulated trajectory
 ##'
+##' Plot either the median and the quantile range for the count in
+##' each compartment, or a spaghetti plot with the individual lines
+##' of the counts in each compartment.
 ##' @param x The \code{model} to plot
 ##' @param legend The character vector to appear in the
 ##'     legend. Default is to use the names of the compartments.
@@ -1487,12 +1490,13 @@ setMethod("pairs",
 ##' @importFrom grDevices adjustcolor
 ##' @importFrom grDevices rainbow
 ##' @examples
-##' ## Create an 'SIR' model with 10 nodes and initialise
-##' ## it with 99 susceptible individuals and one infected
-##' ## individual. Let the model run over 100 days.
-##' model <- SIR(u0 = data.frame(S = rep(99, 10),
-##'                              I = rep(1, 10),
-##'                              R = rep(0, 10)),
+##' \dontrun{
+##' ## Create an 'SIR' model with 100 nodes and initialise
+##' ## it with 990 susceptible individuals and 10 infected
+##' ## individuals in each node. Run the model over 100 days.
+##' model <- SIR(u0 = data.frame(S = rep(990, 100),
+##'                              I = rep(10, 100),
+##'                              R = rep(0, 100)),
 ##'              tspan = 1:100,
 ##'              beta = 0.16,
 ##'              gamma = 0.077)
@@ -1500,19 +1504,26 @@ setMethod("pairs",
 ##' ## Run the model and save the result.
 ##' result <- run(model, threads = 1)
 ##'
-##' ## Plot the average number of susceptible, infected
-##' ## and recovered individuals.
+##' ## Plot the median and interquartile range of the number
+##' ## of susceptible, infected and recovered individuals.
 ##' plot(result)
 ##'
-##' ## Plot the average number of infected individuals.
+##' ## Plot the median and the middle 95\% quantile range of the
+##' ## number of susceptible, infected and recovered individuals.
+##' plot(result, range = 0.95)
+##'
+##' ## Plot the median and interquartile range of the  number
+##' ## of infected individuals.
 ##' plot(result, compartments = "I")
 ##'
 ##' ## Plot the number of susceptible, infected
-##' ## and recovered individuals in the first node.
-##' plot(result, i = 1)
+##' ## and recovered individuals in the first
+##' ## three nodes.
+##' plot(result, i = 1:3, range = FALSE)
 ##'
 ##' ## Plot the number of infected individuals in the first node.
-##' plot(result, compartments = "I", i = 1)
+##' plot(result, compartments = "I", i = 1, range = FALSE)
+##' }
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
