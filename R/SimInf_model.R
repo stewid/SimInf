@@ -1589,11 +1589,20 @@ setMethod("plot",
               }
               lty <- rep(lty, length.out = dim(m)[1])
 
-              ## Default color is black
+              ## Settings for color
               if (is.null(col)) {
-                  col <- rep("black", length(compartments))
+                  if (length(compartments) > 9) {
+                      col <- rainbow(length(compartments))
+                  } else if (length(compartments) > 1) {
+                      col <- rep(c("#e41a1c", "#377eb8", "#4daf4a",
+                                   "#984ea3", "#ff7f00", "#ffff33",
+                                   "#a65628", "#f781bf", "#999999"),
+                                 length.out = length(compartments))
+                  } else {
+                      col = "black"
+                  }
               } else {
-                  col <- col[compartments]
+                  col <- rep(col, length.out = length(compartments))
               }
               col <- rep(col, length.out = dim(m)[1])
 
