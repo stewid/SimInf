@@ -1579,13 +1579,11 @@ setMethod("plot",
                   range <- TRUE
               }
 
-              ## Default line type
+              ## Settings for line type
               if (is.null(lty)) {
-                  if (is.null(col)) {
-                      lty <- seq_len(length(compartments))
-                  } else {
-                      lty <- rep(1, length(compartments))
-                  }
+                  lty <- seq_len(length(compartments))
+              } else {
+                  lty <- rep(lty, length.out = length(compartments))
               }
               lty <- rep(lty, length.out = dim(m)[1])
 
