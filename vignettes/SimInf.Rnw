@@ -560,29 +560,23 @@ with \code{S4} classes \citep{Chambers2008} to define objects with
 logical layers connected by well-defined interfaces for different
 modeling scenarios.  The two \code{S4} classes \code{SimInf\_model}
 and \code{SimInf\_events} are central and provide the basis for the
-flexible framework to perform efficient simulations in compiled
-\proglang{C} code of the predefined models in \pkg{SimInf} or
-user-defined models.  The \code{SimInf\_model} class contains slots
-(Table~\ref{table:SimInf:model}) to data structures that define the
-disease-spread model and one slot \code{events} associated to a
-\code{SimInf\_events} object, which contains slots
-(Table~\ref{table:scheduled:events}) to incorporate and process
-scheduled events.  Furthermore, the \code{SimInf\_model} object also
-contains the output trajectory after running the core simulation
-solver on the disease-spread model.
-
-All disease-spread models in \pkg{SimInf} contains the \code{S4} class
-\code{SimInf\_model}.  Moreover, the predefined disease-spread models
-in \pkg{SimInf} have a generating function \citep{Chambers2008}, with
-the same name as the model, which check parameters and initialize the
-necessary data structures for that specific model.  After the model is
-initialized, the simulation is started with a call to the \code{run}
-method and if execution of the core solver is successful, it returns a
-modified \code{SimInf\_model} object with a single stochastic solution
-trajectory attached to it.  \pkg{SimInf} provides several utility
-functions to facilitate post-processing and visualization of simulated
-data, for example, \code{trajectory}, \code{prevalence} and
-\code{plot}.
+framework.  The \code{SimInf\_model} class contains data structures
+that define a compartment model and one slot \code{events} associated
+to a \code{SimInf\_events} object that handle scheduled events.  The
+predefined disease-spread models in \pkg{SimInf} have a generating
+function \citep{Chambers2008}, with the same name as the model, to
+initialize data structures for that specific model, see examples in
+\S\ref{sec:examples}.  A model can also be created from a model
+specification using the \code{mparse} method, further described in
+\S\ref{sec:extend}.  After a model is created, a simulation is started
+with a call to the \code{run} method and if execution is successful,
+it returns a modified \code{SimInf\_model} object with a single
+stochastic solution trajectory attached to it.  \pkg{SimInf} provides
+several utility functions to inspect simulated data, for example,
+\code{show}, \code{summary} and \code{plot}.  To facilitate custom
+analysis, \pkg{SimInf} provides the \code{trajectory} and
+\code{prevalence} methods that both return a \code{data.frame} with
+simulated data.
 
 \begin{table}
   \small
