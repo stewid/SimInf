@@ -9,7 +9,9 @@ Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
              person("Stefan", "Engblom", role = "aut",
                     comment = c(ORCID = "0000-0002-3614-1732")),
              person("Pavol", "Bauer", role = "aut",
-                    comment = c(ORCID = "0000-0003-4328-7171")))
+                    comment = c(ORCID = "0000-0003-4328-7171")),
+             person("Attractive Chaos", role = "cph",
+                    comment = "Author of 'kvec.h', a generic dynamic array"))
 Description: Livestock movements are important for the spread of many
     infectious diseases between herds. The package provides an
     efficient and flexible framework for stochastic disease spread
