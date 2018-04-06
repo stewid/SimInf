@@ -125,50 +125,65 @@ options(prompt = "R> ", continue = "+    ", width = 74, useFancyQuotes = FALSE)
 
 \section{Introduction}
 
-Livestock movements are an important transmission route for many
-infectious diseases and can transfer infectious individuals between
-holdings over large distances \citep{Danon2011}.  The livestock
-movements between holdings can be represented as a temporal network
-with nodes coupled by directed edges and the time when each edge was
-active \citep{Holme2012}.  The temporal network of livestock movements
-forms a complex dynamic system in the topology, connectivity and
-intensity \citep{Bajardi2011, Dutta2014}, and these properties affect
-how various diseases spread in a network \citep{Shirley2005,
-  Buettner2014}.  European Union legislation requires member states to
-keep a registry of all bovine animals in national databases
-\citep{EC-No-1760-2000, EC-No-911-2004}, which makes it possible to
-use real data for the time-varying contact network and the population
-demographics for large scale disease spread simulations, to better
-understand transmission and explore control strategies.  However,
-incorporating large amount of network data in simulations is
-computationally challenging and require efficient algorithms.
-Furthermore, specifying realistic models for disease transmission is a
-complicated process since various diseases have fundamentally
-different transmission routes. Compare, for example, fecal-oral
-pathogens with indirect transmission routes via the environment with
-infections that are transferred by direct contact between individuals
-\citep{BrooksPollock2014}.
+Many diseases have a zoonotic origin, i.e., are naturally transmitted
+from animals to humans, for instance through direct contact with
+infected animals or by consumption of contaminated food or water.  In
+the European Union (EU), over 350,000 human cases of zoonoses are
+reported annually \citep{EUzoonoses}.  Cattle can act as a reservoir
+for \textit{Salmonella} and Verotoxin-producing \textit{Escherichia
+  coli} (VTEC), two important examples of zoonotic food-borne
+pathogens.  Therefore, a better understanding of how such diseases
+spread in the cattle population is necessary in order to develop
+effective strategies for control \citep{Newell2010}.  European Union
+legislation requires member states to keep a registry of all bovine
+animals in national databases \citep{EC-No-1760-2000, EC-No-911-2004}
+with information on births, movements and slaugther.  Consequently,
+detailed spatiotemporal demographic data and the transportation
+network are available and can be used to quantify the effect of, for
+example, seasonal forcing \citep{Kao2006} and population age-structure
+\citep{Brooks-Pollock2013} on the infection dynamics.  Since cattle
+are aggregated into spatially segregated farms, it is natural to use a
+metapopulation framework and partition the cattle population into
+interacting subpopulations \citep{Fulford2002, Keeling2010}.  To
+better understand spread and control at regional and national level,
+available data could be used for epidemiologically relevant factors
+when simulating the infection process within each subpopulation,
+coupled with spread among subpopulations governed by spatial proximity
+and livestock movements.  However, incorporating large amounts of data
+in simulations is computationally challenging and requires efficient
+algorithms.
 
-In this work, we present an efficient and flexible framework for
-data-driven spatio-temporal disease spread modeling, designed to
-efficiently incorporate large volumes of population demographics and
-temporal network data.  This allows the user to asses the spread of,
-for example, endemic diseases in the cattle population, in national
-scale simulations \citep{Bauer2016}.  We have developed the
-\proglang{R} \citep{R} package \pkg{SimInf}, a discrete-event
-simulator that divides work among multiple processors available in
-standard computers.  The model integrates infection dynamics as
-continuous-time Markov chains (CTMC) and available data such as animal
-movements, births, slaughter or aging are incorporated as scheduled
-events.  One of our design goal was to make \pkg{SimInf} completely
-extendable and allow for growth in available models and specialized
-solvers through contributions from the community.  Using compiled
+In this work, we present the \proglang{R} \citep{R} package
+\pkg{SimInf}, a flexible framework for data-driven spatio-temporal
+disease spread modeling, designed to efficiently handle population
+demographics and network data.  This allows the user to study
+transmission in realistic large scale disease spread models.  The
+framework integrates infection dynamics in each subpopulation as
+continuous-time Markov chains (CTMC) using the Gillespie stochastic
+simulation algorithm (SSA) \citep{Gillespie1977} and incorporates
+available data such as livestock movements, births, slaughter or aging
+as scheduled events.  A scheduled event is used to modify the state of
+a subpopulation at a predefined time-point.  Using compiled
 \proglang{C} code, rather than interpreted \proglang{R} code, for the
-transition-rate functions ensures maximum efficiency when simulating
-the model.  To simplify the process of generating the required
-\proglang{C} code for models, the \pkg{SimInf} package include
-functionality to automatically create \proglang{C} code from a model
-specification.
+numerical solvers ensures high performance when simulating a model.
+To further improve performance, \proglang{OpenMP} \citep{OpenMP2008}
+is used to divide work over multiple processors and perform
+computations in parallel.  Furthermore, the framework has a
+well-defined interface to incorporate data that is shared among all
+subpopulations (global) and data that is specific to each
+subpopulation (local), allowing sophisticated models to be
+straightforwardly formulated.  The proposed approach was used to study
+spread and control of VTEC in the complete Swedish cattle population,
+incorporating over eight years of scheduled events data in a network
+of 37221 premises \citep{Bauer2016, Widgren2016, Widgren2018}.  Even
+if development of \pkg{SimInf} was inspired by zoonotic diseases and
+models driven by livestock data, the design is of completely general
+character and applies to arbitrary metapopulation models.  One of our
+design goal was to make \pkg{SimInf} extendable and enable usage of
+the numerical solvers from other \proglang{R} extension packages in
+order to facilitate complex epidemiological research.  To support
+this, \pkg{SimInf} has functionality to generate the required
+\proglang{C} and \proglang{R} code from a model specification.
 
 There exists several related \proglang{R} packages for epidemiological
 modeling on the Comprehensive \proglang{R} Archive Network (CRAN) that
@@ -183,18 +198,37 @@ framework for modeling spread of diseases on networks.  However, they
 differ in how the data is generated for the modeling: the network data
 in \pkg{EpiModel} is simulated using \pkg{statnet} \citep{statnet},
 while \pkg{SimInf} was designed to incorporate available network data.
-The are also similarities between the \proglang{R} package
-\pkg{GillespieSSA} \citep{Pineda-Krch2008} and \pkg{SimInf}, in that
-both uses the Gillespie stochastic simulation algorithm (SSA)
-\citep{Gillespie1977}.  However, for computational efficiency, the
-algorithm is implemented using \proglang{C} code in \pkg{SimInf}.
+Moreover, \pkg{SimInf} simulates the infection process in
+subpopulations that are coupled to form a larger system, whereas
+\pkg{EpiModel} uses the individual as the epidemiological unit and
+simulates spread between individuals through a contact network.
 
-The paper is organized as follows.  In \S\ref{sec:modeling} we
-summarize the mathematical foundation for our framework.  Section
-\S\ref{sec:framework} gives a technical description of the simulation
-framework.  In \S\ref{sec:examples} we illustrate the use of the
-package by some worked examples.  Finally, in \S\ref{sec:extend} we
-demonstrate how to extend \pkg{SimInf} with user-defined models.
+Various packages in the CRAN repository implement SSA to simulate a
+continuous-time stochastic process.  The \pkg{GillespieSSA} package
+\citep{Pineda-Krch2008}, on CRAN since 2007, but appears not actively
+maintained after 2012, implements both the direct method and three
+approximate methods.  The \pkg{hybridModels} package
+\citep{hybridModels} uses \pkg{GillespieSSA} internally to simulate
+infections using a metapopulation model coupled with spread among
+subpopulations.  Since each outcome of a stochastic process is
+different, it is (generally) necessary to study many realisations of
+the process to see the distribution of outcomes consistent with the
+model structure and parameterization.  Therefore, performance of the
+simulator becomes critical when using these methods in an applied
+context.  Because the algorithms in \pkg{GillespieSSA} are implemented
+in \proglang{R}, the computational efficiency is limited in comparison
+with implementations in a compiled language, for example, \proglang{C}
+or \proglang{C++}. The \pkg{adaptivetau} package \citep{adaptivetau}
+uses \proglang{C++} to implement the direct method and adaptive tau
+leaping \citep{Cao2007}.
+
+The remainder of this paper is organized as follows.  In
+\S\ref{sec:modeling} we summarize the mathematical foundation for our
+framework.  Section \S\ref{sec:framework} gives a technical
+description of the simulation framework.  In \S\ref{sec:examples} we
+illustrate the use of the package by some worked examples.  Finally,
+in \S\ref{sec:extend} we demonstrate how to extend \pkg{SimInf} with
+user-defined models.
 
 %**************************************************************************
 
