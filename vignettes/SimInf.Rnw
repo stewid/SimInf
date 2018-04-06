@@ -28,7 +28,8 @@
 
 \author{Stefan Widgren\\National Veterinary Institute\\
   and Uppsala University\\Sweden\And
-  Pavol Bauer\\Uppsala University\\Sweden\And
+  Pavol Bauer\\Uppsala University\\Sweden\AND
+  Robin Eriksson\\Uppsala University\\Sweden\And
   Stefan Engblom\\Uppsala University\\Sweden}
 
 \Plainauthor{Stefan Widgren, Pavol Bauer, Stefan Engblom}
@@ -85,6 +86,13 @@
   Uppsala University\\
   SE-751 05 Uppsala, Sweden\\
   E-mail: \email{pavol.bauer@it.uu.se}\\
+  \\
+  Robin Eriksson\\
+  Division of Scientific Computing\\
+  Department of Information Technology\\
+  Uppsala University\\
+  SE-751 05 Uppsala, Sweden\\
+  E-mail: \email{robin.eriksson@it.uu.se}\\
   \\
   Stefan Engblom\\
   Division of Scientific Computing\\
@@ -2343,9 +2351,10 @@ development driven predominantly by actual use cases.
 
 This work was financially supported by the Swedish Research Council
 within the UPMARC Linnaeus centre of Excellence (P.~Bauer,
-S.~Engblom), the Swedish Research Council Formas (S.~Engblom,
-S.~Widgren), the Swedish Board of Agriculture (S.~Widgren), and by the
-Swedish strategic research program eSSENCE (S.~Widgren).
+R.~Eriksson, S.~Engblom), the Swedish Research Council Formas
+(S.~Engblom, S.~Widgren), the Swedish Board of Agriculture
+(S.~Widgren), and by the Swedish strategic research program eSSENCE
+(S.~Widgren).
 
 \clearpage
 
