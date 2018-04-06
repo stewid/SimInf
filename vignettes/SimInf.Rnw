@@ -185,24 +185,6 @@ order to facilitate complex epidemiological research.  To support
 this, \pkg{SimInf} has functionality to generate the required
 \proglang{C} and \proglang{R} code from a model specification.
 
-There exists several related \proglang{R} packages for epidemiological
-modeling on the Comprehensive \proglang{R} Archive Network (CRAN) that
-we would like to mention here.  The package \pkg{amei} \citep{amei} is
-designed for parameter estimation of epidemic models and finding
-optimal intervention strategies, for example, vaccination, to control
-disease spread.  Another package is \pkg{surveillance}, a framework
-for monitoring, modeling, and regression analysis of infectious
-diseases, \citep{surveillance}.  \pkg{EpiModel} \citep{EpiModel} is an
-\proglang{R} package that, similar to \pkg{SimInf}, includes a
-framework for modeling spread of diseases on networks.  However, they
-differ in how the data is generated for the modeling: the network data
-in \pkg{EpiModel} is simulated using \pkg{statnet} \citep{statnet},
-while \pkg{SimInf} was designed to incorporate available network data.
-Moreover, \pkg{SimInf} simulates the infection process in
-subpopulations that are coupled to form a larger system, whereas
-\pkg{EpiModel} uses the individual as the epidemiological unit and
-simulates spread between individuals through a contact network.
-
 Various packages in the CRAN repository implement SSA to simulate a
 continuous-time stochastic process.  The \pkg{GillespieSSA} package
 \citep{Pineda-Krch2008}, on CRAN since 2007, but appears not actively
@@ -221,6 +203,24 @@ with implementations in a compiled language, for example, \proglang{C}
 or \proglang{C++}. The \pkg{adaptivetau} package \citep{adaptivetau}
 uses \proglang{C++} to implement the direct method and adaptive tau
 leaping \citep{Cao2007}.
+
+There exists several related \proglang{R} packages for epidemiological
+modeling on the Comprehensive \proglang{R} Archive Network (CRAN) that
+we would like to mention here.  The package \pkg{amei} \citep{amei} is
+designed for parameter estimation of epidemic models and finding
+optimal intervention strategies, for example, vaccination, to control
+disease spread.  Another package is \pkg{surveillance}, a framework
+for monitoring, modeling, and regression analysis of infectious
+diseases, \citep{surveillance}.  \pkg{EpiModel} \citep{EpiModel} is an
+\proglang{R} package that, similar to \pkg{SimInf}, includes a
+framework for modeling spread of diseases on networks.  However, they
+differ in how the data is generated for the modeling: the network data
+in \pkg{EpiModel} is simulated using \pkg{statnet} \citep{statnet},
+while \pkg{SimInf} was designed to incorporate available network data.
+Moreover, \pkg{SimInf} simulates the infection process in
+subpopulations that are coupled to form a larger system, whereas
+\pkg{EpiModel} uses the individual as the epidemiological unit and
+simulates spread between individuals through a contact network.
 
 The remainder of this paper is organized as follows.  In
 \S\ref{sec:modeling} we summarize the mathematical foundation for our
