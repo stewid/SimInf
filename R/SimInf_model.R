@@ -1453,9 +1453,8 @@ setMethod("pairs",
 
 ##' Display the outcome from a simulated trajectory
 ##'
-##' Plot either the median and the quantile range for the count in
-##' each compartment, or a spaghetti plot with the individual lines
-##' of the counts in each compartment.
+##' Plot either the median and the quantile range of the counts in all
+##' nodes, or plot the counts in specified nodes.
 ##' @param x The \code{model} to plot
 ##' @param legend The character vector to appear in the
 ##'     legend. Default is to use the names of the compartments.
@@ -1468,9 +1467,10 @@ setMethod("pairs",
 ##' @param compartments Character vector with the compartments in the
 ##'     model to include in the plot. Default is \code{NULL}
 ##'     i.e. include all compartments in the model.
-##' @param i indices specifying the nodes to include when plotting
-##'     data. Plot one line for each node. Default (\code{i = NULL})
-##'     is to extract data from all nodes and plot averages.
+##' @param node indices specifying the nodes to include when plotting
+##'     data. Plot one line for each node. Default (\code{node =
+##'     NULL}) is to extract data from all nodes and plot the median
+##'     count for the specified compartments.
 ##' @param range show the quantile range of the count in each
 ##'     compartment. Default is to show the interquartile range
 ##'     i.e. the middle 50\% of the count in transparent color. The
@@ -1502,7 +1502,7 @@ setMethod("pairs",
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the model and save the result.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Plot the median and interquartile range of the number
 ##' ## of susceptible, infected and recovered individuals.
@@ -1519,15 +1519,15 @@ setMethod("pairs",
 ##' ## Plot the number of susceptible, infected
 ##' ## and recovered individuals in the first
 ##' ## three nodes.
-##' plot(result, i = 1:3, range = FALSE)
+##' plot(result, node = 1:3, range = FALSE)
 ##'
 ##' ## Plot the number of infected individuals in the first node.
-##' plot(result, compartments = "I", i = 1, range = FALSE)
+##' plot(result, compartments = "I", node = 1, range = FALSE)
 ##' }
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
-                   compartments = NULL, i = NULL, range = 0.5, ...)
+                   compartments = NULL, node = NULL, range = 0.5, ...)
           {
               if (identical(dim(x@U), c(0L, 0L)))
                   stop("Please run the model first, the 'U' matrix is empty")
@@ -1541,16 +1541,16 @@ setMethod("plot",
                   compartments <- match(compartments, rownames(x@S))
               }
 
-              ## Check the 'i' argument
-              if (is.null(i))
-                  i <- seq_len(Nn(x))
-              if (!is.numeric(i))
-                  stop("'i' must be valid node indices")
-              if (!length(i))
-                  stop("'i' must be valid node indices")
-              if (!all(i %in% seq_len(Nn(x))))
-                  stop("'i' must be valid node indices")
-              i <- sort(unique(i))
+              ## Check the 'node' argument
+              if (is.null(node))
+                  node <- seq_len(Nn(x))
+              if (!is.numeric(node))
+                  stop("'node' must be valid node indices")
+              if (!length(node))
+                  stop("'node' must be valid node indices")
+              if (!all(node %in% seq_len(Nn(x))))
+                  stop("'node' must be valid node indices")
+              node <- sort(unique(node))
 
               savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
               on.exit(par(savepar))
@@ -1559,8 +1559,8 @@ setMethod("plot",
               ## plot.
               if (identical(range, FALSE)) {
                   ## Extract subset of data from U
-                  j <- rep(compartments, length(i))
-                  j <- j + rep((i - 1) * Nc(x), each = length(compartments))
+                  j <- rep(compartments, length(node))
+                  j <- j + rep((node - 1) * Nc(x), each = length(compartments))
                   m <- x@U[j, , drop = FALSE]
               } else {
                   ## Check range argument
@@ -1580,7 +1580,7 @@ setMethod("plot",
                   for (j in seq_len(length(compartments))) {
                       k <- seq(from = compartments[j], to = dim(x@U)[1],
                                by = Nc(x))
-                      u <- apply(x@U[k[i], , drop = FALSE], 2,
+                      u <- apply(x@U[k[node], , drop = FALSE], 2,
                                  quantile,
                                  probs = c(range, 0.5, 1 - range))
                       ml[j, ] <- u[1, ]

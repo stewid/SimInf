@@ -6,7 +6,7 @@
 \title{Display the outcome from a simulated trajectory}
 \usage{
 \S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL, lty = NULL,
-  lwd = 2, compartments = NULL, i = NULL, range = 0.5, ...)
+  lwd = 2, compartments = NULL, node = NULL, range = 0.5, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot}
@@ -27,9 +27,10 @@ sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
 model to include in the plot. Default is \code{NULL}
 i.e. include all compartments in the model.}
 
-\item{i}{indices specifying the nodes to include when plotting
-data. Plot one line for each node. Default (\code{i = NULL})
-is to extract data from all nodes and plot averages.}
+\item{node}{indices specifying the nodes to include when plotting
+data. Plot one line for each node. Default (\code{node =
+NULL}) is to extract data from all nodes and plot the median
+count for the specified compartments.}
 
 \item{range}{show the quantile range of the count in each
 compartment. Default is to show the interquartile range
@@ -41,9 +42,8 @@ individual lines for each node, specify \code{range = FALSE}.}
 \item{...}{Additional arguments affecting the plot produced.}
 }
 \description{
-Plot either the median and the quantile range for the count in
-each compartment, or a spaghetti plot with the individual lines
-of the counts in each compartment.
+Plot either the median and the quantile range of the counts in all
+nodes, or plot the counts in specified nodes.
 }
 \examples{
 \dontrun{
@@ -58,7 +58,7 @@ model <- SIR(u0 = data.frame(S = rep(990, 100),
              gamma = 0.077)
 
 ## Run the model and save the result.
-result <- run(model, threads = 1)
+result <- run(model)
 
 ## Plot the median and interquartile range of the number
 ## of susceptible, infected and recovered individuals.
@@ -75,9 +75,9 @@ plot(result, compartments = "I")
 ## Plot the number of susceptible, infected
 ## and recovered individuals in the first
 ## three nodes.
-plot(result, i = 1:3, range = FALSE)
+plot(result, node = 1:3, range = FALSE)
 
 ## Plot the number of infected individuals in the first node.
-plot(result, compartments = "I", i = 1, range = FALSE)
+plot(result, compartments = "I", node = 1, range = FALSE)
 }
 }
