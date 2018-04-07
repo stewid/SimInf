@@ -164,26 +164,27 @@ simulation algorithm (SSA) \citep{Gillespie1977} and incorporates
 available data such as livestock movements, births, slaughter or aging
 as scheduled events.  A scheduled event is used to modify the state of
 a subpopulation at a predefined time-point.  Using compiled
-\proglang{C} code, rather than interpreted \proglang{R} code, for the
-numerical solvers ensures high performance when simulating a model.
-To further improve performance, \proglang{OpenMP} \citep{OpenMP2008}
-is used to divide work over multiple processors and perform
-computations in parallel.  Furthermore, the framework has a
-well-defined interface to incorporate data that is shared among all
-subpopulations (global) and data that is specific to each
-subpopulation (local), allowing sophisticated models to be
-straightforwardly formulated.  The proposed approach was used to study
-spread and control of VTEC in the complete Swedish cattle population,
-incorporating over eight years of scheduled events data in a network
-of 37221 premises \citep{Bauer2016, Widgren2016, Widgren2018}.  Even
-if development of \pkg{SimInf} was inspired by zoonotic diseases and
-models driven by livestock data, the design is of completely general
-character and applies to arbitrary metapopulation models.  One of our
-design goal was to make \pkg{SimInf} extendable and enable usage of
-the numerical solvers from other \proglang{R} extension packages in
-order to facilitate complex epidemiological research.  To support
-this, \pkg{SimInf} has functionality to generate the required
-\proglang{C} and \proglang{R} code from a model specification.
+\proglang{C} \citep{Kernighan1988} code, rather than interpreted
+\proglang{R} code, for the numerical solvers ensures high performance
+when simulating a model.  To further improve performance,
+\proglang{OpenMP} \citep{OpenMP2008} is used to divide work over
+multiple processors and perform computations in parallel.
+Furthermore, the framework has a well-defined interface to incorporate
+data that is shared among all subpopulations (global) and data that is
+specific to each subpopulation (local), allowing sophisticated models
+to be straightforwardly formulated.  The proposed approach was used to
+study spread and control of VTEC in the complete Swedish cattle
+population, incorporating over eight years of scheduled events data in
+a network of 37221 premises \citep{Bauer2016, Widgren2016,
+  Widgren2018}.  Even if development of \pkg{SimInf} was inspired by
+zoonotic diseases and models driven by livestock data, the design is
+of completely general character and applies to arbitrary
+metapopulation models.  One of our design goal was to make
+\pkg{SimInf} extendable and enable usage of the numerical solvers from
+other \proglang{R} extension packages in order to facilitate complex
+epidemiological research.  To support this, \pkg{SimInf} has
+functionality to generate the required \proglang{C} and \proglang{R}
+code from a model specification.
 
 Various packages in the CRAN repository implement SSA to simulate a
 continuous-time stochastic process.  The \pkg{GillespieSSA} package
@@ -488,7 +489,7 @@ t_{n+1}-t_{n}$ for the concentration variable $\Y$.
     \pkg{SimInf}. The central object is the S4 class
     \code{Simlnf\_model} which contains the specification and data for
     a model.  A new model object is created using \code{mparse} or a
-    pre-defined template, for example, \code{SIR} or \code{SEIR}.  A
+    predefined template, for example, \code{SIR} or \code{SEIR}.  A
     stochastic trajectory is simulated from a model using \code{run}.
     For computational efficiency, the numerical solvers are
     implemented in \proglang{C} code.  There are several functions in
@@ -504,16 +505,36 @@ t_{n+1}-t_{n}$ for the concentration variable $\Y$.
 
 The overall design of \pkg{SimInf} was inspired and partly adapted
 from the Unstructured Mesh Reaction-Diffusion Master Equation (URDME)
-framework \citep{Engblom2009, Drawert2012}.  \pkg{SimInf} is a general
-software framework for data-driven modeling and simulation of
-stochastic disease-spread in a temporal network of connected nodes.
-In particular, the transition rates and the transition topology are
-specified using a compiled language \proglang{C} and \proglang{R}
-matrices, respectively.  The overall modular design makes extensions
-easy to handle and since the simulation engine is written in a
-compiled language, the efficiency of the simulator is very high.
-Figure~\ref{fig:overview} shows a schematic overview of the
-functionality in \pkg{SimInf}.
+framework \citep{Engblom2009, Drawert2012}.  \pkg{SimInf} uses object
+oriented programming and the \code{S4} class \citep{Chambers2008}
+\code{SimInf\_model} is central and provide the basis for the
+framework.  A \code{SimInf\_model} object supplies the state-change
+matrix, the dependency graph, the scheduled events, and the initial
+state of the system.  Briefly, the state-change matrix defines the
+effect of the disease transitions on the state of the system while the
+dependency graph indicates the transition rates that need to be
+updated after a given disease transition.  Additionally, model
+specific code written in \proglang{C} specifies the transition rate
+functions for the disease transitions in the system.  All predefined
+models in \pkg{SimInf} have a generating function
+\citep{Chambers2008}, with the same name as the model, to initialize
+the data structures for that specific model, see the examples in
+\S\ref{sec:examples}.  A model can also be created from a model
+specification using the \code{mparse} method, further described in
+\S\ref{sec:extend}.  After a model is created, a simulation is started
+with a call to the \code{run} method and if execution is successful,
+it returns a modified \code{SimInf\_model} object with a single
+stochastic solution trajectory attached to it.  \pkg{SimInf} provides
+several utility functions to inspect simulated data, for example,
+\code{show}, \code{summary} and \code{plot}.  To facilitate custom
+analysis, \pkg{SimInf} provides the \code{trajectory} and
+\code{prevalence} methods that both return a \code{data.frame} with
+simulated data.  Figure~\ref{fig:overview} shows a schematic overview
+of the functionality in \pkg{SimInf}.  The overall modular design
+makes extensions easy to handle.
+
+\subsection{Installation}
+\label{sec:installation}
 
 The most recent stable version of \pkg{SimInf} is distributed via CRAN
 (\url{https://CRAN.R-project.org/package=SimInf}) and may, depending
@@ -552,31 +573,6 @@ it is loaded in \proglang{R} with the following command
 <<load-SimInf>>=
 library("SimInf")
 @
-
-\subsection{Overview}
-
-The \pkg{SimInf} \proglang{R} package uses object oriented programming
-with \code{S4} classes \citep{Chambers2008} to define objects with
-logical layers connected by well-defined interfaces for different
-modeling scenarios.  The two \code{S4} classes \code{SimInf\_model}
-and \code{SimInf\_events} are central and provide the basis for the
-framework.  The \code{SimInf\_model} class contains data structures
-that define a compartment model and one slot \code{events} associated
-to a \code{SimInf\_events} object that handle scheduled events.  The
-predefined disease-spread models in \pkg{SimInf} have a generating
-function \citep{Chambers2008}, with the same name as the model, to
-initialize data structures for that specific model, see examples in
-\S\ref{sec:examples}.  A model can also be created from a model
-specification using the \code{mparse} method, further described in
-\S\ref{sec:extend}.  After a model is created, a simulation is started
-with a call to the \code{run} method and if execution is successful,
-it returns a modified \code{SimInf\_model} object with a single
-stochastic solution trajectory attached to it.  \pkg{SimInf} provides
-several utility functions to inspect simulated data, for example,
-\code{show}, \code{summary} and \code{plot}.  To facilitate custom
-analysis, \pkg{SimInf} provides the \code{trajectory} and
-\code{prevalence} methods that both return a \code{data.frame} with
-simulated data.
 
 \begin{table}
   \small
