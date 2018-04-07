@@ -1670,8 +1670,8 @@ setMethod("plot",
 ##' @noRd
 summary_U <- function(object)
 {
-    cat("Discrete state variables\n")
-    cat("------------------------\n")
+    cat("Compartments\n")
+    cat("------------\n")
 
     d <- dim(object@U)
     if (identical(d, c(0L, 0L)))
