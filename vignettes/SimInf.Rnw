@@ -507,7 +507,7 @@ The overall design of \pkg{SimInf} was inspired and partly adapted
 from the Unstructured Mesh Reaction-Diffusion Master Equation (URDME)
 framework \citep{Engblom2009, Drawert2012}.  \pkg{SimInf} uses object
 oriented programming and the \code{S4} class \citep{Chambers2008}
-\code{SimInf\_model} is central and provide the basis for the
+\code{SimInf\_model} is central and provides the basis for the
 framework.  A \code{SimInf\_model} object supplies the state-change
 matrix, the dependency graph, the scheduled events, and the initial
 state of the system.  Briefly, the state-change matrix defines the
@@ -1066,21 +1066,17 @@ compartments and the continuous state variables are written to
   Model construction and data analysis: Basic examples}
 \label{sec:examples}
 
-\subsection[A first example: The SIR model]{%
-  A first example: The \code{SIR} model}
+\subsection[A first example: The SIR model without scheduled events]{%
+  A first example: The \code{SIR} model without using scheduled
+  events}
 \label{sec:example-SIR}
-
-\subsubsection[Specification of the SIR model without scheduled events]{%
-  Specification of the \code{SIR} model without scheduled events}
 
 This section illustrates the specification of the predefined
 \code{SIR} model, which contains the three compartments susceptible
-(\code{S}), infected (\code{I}) and recovered (\code{R}), where $\{S,
-I, R\}$ represents the number of individuals in each of the three
-compartments, respectively.  The transmission route of infection to
-susceptible individuals is through direct contact between susceptible
-and infected individuals.  The \code{SIR} model has two state
-transitions in each node $i$,
+(\code{S}), infected (\code{I}) and recovered (\code{R}).  The
+transmission route of infection to susceptible individuals is through
+direct contact between susceptible and infected individuals.  The
+\code{SIR} model has two state transitions in each node $i$,
 \begin{align}
 \label{eq:SIR}
 \begin{array}{rcl}
@@ -1091,21 +1087,6 @@ transitions in each node $i$,
 where $\beta$ is the transmission rate and $\gamma$ is the recovery
 rate.  The state change matrix \code{S} and the dependency graph
 \code{G} for the \code{SIR} model are defined as follows
-
-\begin{figure}[t]
-  \begin{center}
-    \includegraphics[width=1.0\linewidth]{img/SIR.pdf}
-  \end{center}
-  \caption{Schematic representation of the \code{SIR} compartment
-    model in two nodes.  The \code{SIR} model is defined by the three
-    disease states susceptible (S), infected (I), and recovered (R).
-    \textit{i)} State transitions between the $S$, $I$, and $R$
-    compartments are modeled as a continuous-time discrete-state
-    Markov process.  The other state transitions are due to scheduled
-    events: \textit{ii)} \textit{enter} events, \textit{iii)}
-    \textit{exit} events, and \textit{iv)} \textit{external transfer}
-    events.  \label{fig:SIR-model}}
-\end{figure}
 
 {\small
 \[
@@ -1123,223 +1104,110 @@ rate.  The state change matrix \code{S} and the dependency graph
 \]
 }
 
-The first step in creating an \code{SIR} model object is to define
-\code{u0}, a \code{data.frame} with the initial condition, i.e., the
-number individuals in each compartment when the simulation starts.  We
-will start in a node with 100 individuals of which 1 is infected.
+To create an \code{SIR} model object, we need to define \code{u0}, a
+\code{data.frame} with the initial number individuals in each
+compartment when the simulation starts.  Let us consider a node with
+999 susceptible, 1 infected and 0 recoverd individuals.  Since there
+are no between-node interactions in this example, the stochastic
+process in one node does not affect any other nodes in the model.
+Consequently, it is straightforward to run many realizations of this
+model, simply by replicating a node in \code{u0}, for example, \code{n
+  = 1000} times.
 
 <<SIR-u0>>=
-u0 <- data.frame(S = 99, I = 1, R = 0)
+n <- 1000
+u0 <- data.frame(S = rep(999, n), I = rep(1, n), R = rep(0, n))
 @
 
 Next, we define the time period over which we want to simulate the
 disease spread.  This is a vector of integers in units of time or a
-vector of dates.  You specify those time points in the vector that you
-wish the model to return results for.  The model itself does not run
-in discrete time steps, but continuous time, so this vector affects
-only the start and end points of the simulation and the results that
-you receive from the model, not the internal calculations of disease
-transitions through time.  In this example we simulate for 6 months
-returning results every $7^{th}$ day
+vector of dates.  You specify those time points that you wish the
+model to return results for.  The model itself does not run in
+discrete time steps, but in continuous time, so this does not affect
+the internal calculations of disease transitions through time.  In
+this example we will assume that the unit of time is one day and
+simulate over 180 days returning results every $7^{th}$ day.
 
 <<SIR-tspan>>=
-tspan <- seq(from = 1, to = 6 * 30, by = 7)
+tspan <- seq(from = 1, to = 180, by = 7)
 @
 
-Before we can simulate from the model, we need to specify the
-transmission rate, $\beta$, and the recovery rate, $\gamma$.
-
-<<SIR-model>>=
-model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
-@
-
-We are now ready to run the model with these parameters and simulate
-data.  We use \code{threads = 1} and set the seed for reproducibility.
+We are now ready to create an \code{SIR} model and then use the
+\code{run()} routine to simulate data from it.  For reproducibility,
+we first call the \code{set.seed()} function and also specify the
+number of threads to use for the simulation.  To use all available
+threads, you only have to remove the threads argument.
 
 <<SIR-run>>=
-set.seed(123)
-result <- run(model = model)
-@
-
-The \code{result} object contains the number of individuals in each
-compartment at the time points specified in \code{tspan} and can be
-extracted using the \code{trajectory} method as a \code{data.frame}.
-Each line in the \code{data.frame} represents the information from one
-node and time-point.  Below is an excerpt of the trajectory data
-
-<<SIR-U>>=
-head(trajectory(model = result))
-@
-
-The package \pkg{SimInf} has a \code{plot} method for objects of class
-\code{SimInf_model}, such as the object \code{result}, which we can
-use to display the outcome of the disease simulation in the single
-node (Figure~\ref{fig:SIR-proportion}).
-
-<<eval=FALSE>>=
-plot(result)
-@
-
-\begin{figure}
-  \begin{center}
-<<SIR-plot-proportion, echo=FALSE,fig=TRUE>>=
-plot(result)
-@
-  \end{center}
-  \caption{Example of simulated data from one realization of the
-    \code{SIR} model (Equation~\ref{eq:SIR}) in one node, starting
-    with 99 susceptible, 1 infected, and 0 recovered
-    individuals. \label{fig:SIR-proportion}}
-\end{figure}
-
-In order to run a simulation with multiple nodes we need to just add
-those nodes to the initial \code{u0} \code{data.frame} that we
-generate to start the model. If you were doing your own modeling of
-many nodes, you would have a \code{data.frame} of your node population
-that you read from, for example, a spreadsheet.  For now we will just
-add another nodes to the \code{data.frame} here in \proglang{R}.
-
-<<SIR-multiple-nodes>>=
-u0 <- data.frame(S = c(99, 90), I = c( 1,  2), R = c( 0,  0))
 model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
 set.seed(123)
 result <- run(model = model, threads = 1)
 @
 
-If we inspect an excerpt of the trajectory, it now includes results
-from two nodes above one another for each time point in the
-\code{tspan} vector.
+The return value from \code{run()} is a \code{SimInf_model} object
+with a single stochastic solution trajectory attached to it.  The
+\code{print} method of the \code{SimInf_model} class shows some basic
+information about the model, such as the name and value of global data
+parameters shared among nodes and the extremes, the mean and the
+quartiles of the count in each compartment across all nodes.
 
-<<SIR-U-multiple-nodes>>=
-head(trajectory(model = result))
+<<SIR-show>>=
+result
 @
 
-\subsubsection[Specification of scheduled events in the SIR model]{%
-  Specification of scheduled events in the \code{SIR} model}
+The \code{plot} method of the \code{SimInf_model} class can be used to
+visualize the simulated trajectory.  The default plot will display the
+median count in each compartment across nodes as a colored line
+together with the inter-quartile range using the same color, but with
+transparency.  To display the outcome for individual nodes, use the
+\code{node} parameter to specify the subset of nodes to plot and set
+\code{range = FALSE}.  In this example, an outbreak is likely to occur
+in an infected node, but sometimes the infectious disease goes extinct
+before it causes an epidemic, as shown in Figure~\ref{fig:SIR-model}.
 
-In this example, we will continue to work with the predefined
-\code{SIR} model to explore a within node disease spread similar to
-the first SIR example but with the additional feature that individuals
-enter and exit the simulation and that the disease can spread between
-nodes via movements of infected individuals between nodes.
-
-We will start with the inclusion of a set of individuals that are
-moved between nodes in the network (\textit{external transfer}
-events). These events are predefined prior to the simulation and are
-applied during the simulation process. For example, if your simulation
-time is in days, then after each day, \pkg{SimInf} will apply the
-events in the data and move individuals between nodes.  In the
-following example we have five nodes with movements between nodes. To
-illustrate the movements themselves, we have only started with 30
-individuals in the first node and the other four are empty, and we
-will run the simulation for five time steps:
-
-<<SIR-u0-multiple-nodes>>=
-u0 <- data.frame(S = c(10, 0, 0, 0, 0), I = c(10, 0, 0, 0, 0),
-R = c(10, 0, 0, 0, 0))
+<<SIR-plot, eval=FALSE>>=
+plot(result)
+plot(result, node = 1:10, range = FALSE)
 @
 
-Now we will define 6 scheduled events to include in the simulation.
-Below is a \code{data.frame}, that contains the events.  Interpret it
-as follows:
-
-\begin{enumerate}
-\itemsep0em
-\item In time step 2 we add 2 susceptible individuals to node 2
-\item In time step 3 we move 2 individuals from node 1 to node 3
-\item In time step 4 we remove 1 individual from node 2
-\item In time step 4 we move 1 individual from node 1 to node 3
-\item In time step 4 we move 1 individual from node 1 to node 4
-\item In time step 5 we move 2 individuals from node 1 to node 5
-\end{enumerate}
-
-<<SIR-events, echo=FALSE>>=
-events <- data.frame(
-event = c("enter", "extTrans", "exit", "extTrans", "extTrans", "extTrans"),
-time = c(2, 3, 4, 4, 4, 5), node = c(2, 1, 2, 1, 1, 1),
-dest = c(0, 3, 0, 3, 4, 5), n = c(2, 1, 1, 1, 1, 2),
-proportion = c(0, 0, 0, 0, 0, 0), select = c(1, 2, 2, 2, 2, 2),
-shift = c(0, 0, 0, 0, 0, 0))
+<<SIR-I, echo=FALSE, results=hide>>=
+pdf("SimInf-SIR-I.pdf", width = 10, height = 5)
+plot(result)
+dev.off()
 @
 
-<<SIR-events-show>>=
-events
-@
-
-Now we are ready to run the simulation using the events and the
-disease spread model as we did in earlier examples:
-
-<<U-model-events>>=
-model <- SIR(u0 = u0, tspan = 1:5, events = events, beta = 0.16,
-gamma = 0.077)
-set.seed(123)
-result <- run(model = model, threads = 1)
-trajectory(model = result)
-@
-
-If you inspect the result of this very simple simulation, you will see
-that 2 individuals were added to node 2, of which one individual was
-later removed, and that some individuals were removed from node 1 and
-placed in nodes 3, 4, and 5.  So far this is not really
-earth-shattering, but if we do this again with a few more individuals
-then we can see how disease can spread from an infected node to a
-non-infected one. We will start with 5 nodes again, but node 1 is
-infected and nodes 2--5 now each have 100 susceptible and the
-simulation will run for 75 days:
-
-<<SIR-u0-multiple-nodes-II>>=
-u0 <- data.frame(S = c(90, 100, 100, 100, 100), I = c(10, 0, 0, 0, 0),
-R = c(0, 0, 0, 0, 0))
-@
-
-And then we have a few movements of individuals from node 1 to the others:
-
-<<SIR-events-II, echo=FALSE>>=
-events <- data.frame(event = c("extTrans", "extTrans", "extTrans", "extTrans"),
-time = c(3, 25, 5, 10), node = c(1, 1, 1, 1), dest = c(3, 2, 3, 3),
-n = c(1, 9, 1, 5), proportion = c(0, 0, 0, 0), select = c(2, 2, 2, 2),
-shift = c(0, 0, 0, 0))
-@
-
-<<SIR-events-II-show>>=
-events
-@
-
-Initialize and run the model
-
-<<SIR-events-II-run>>=
-model <- SIR(u0 = u0, tspan = 1:75, events = events, beta = 0.16,
-gamma = 0.077)
-set.seed(123)
-result <- run(model = model, threads = 1)
-@
-
-Figure~\ref{fig:SIR-spaghetti} shows the result from running the
-model.  Note the time that it takes for node 2 to become positive
-relative to the movements.  On day 25, 10 individuals are moved to the
-node causing the outbreak.  Also despite the fact that we moved
-individuals from node 1 to node 3, there was no outbreak in node 3.
-This is because of the random selection process that select
-susceptible, infected or recovered individuals to move between the
-nodes.
-
-<<SIR-spaghetti, eval=FALSE>>=
-plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
+<<SIR-II, echo=FALSE, results=hide>>=
+pdf("SimInf-SIR-II.pdf", width = 10, height = 5)
+plot(result, node = 1:10, range = FALSE)
+dev.off()
 @
 
 \begin{figure}
   \begin{center}
-<<SIR-spaghetti-plot, echo=FALSE, fig=TRUE>>=
-plot(result, N = TRUE, spaghetti = TRUE, compartments = "I")
-@
+  \includegraphics[width=0.49\linewidth]{SimInf-SIR-I.pdf}
+  \includegraphics[width=0.49\linewidth]{SimInf-SIR-II.pdf}
   \end{center}
-  \caption{One realization of the number of infected individuals in
-    each node when simulating 75 days of an \code{SIR} model in 5
-    nodes, starting with 90 susceptible and 10 infected individuals in
-    node 1 and 100 susceptible individuals in nodes 2--5, and moving
-    individuals from node 1 to nodes 2 and
-    3. \label{fig:SIR-spaghetti}}
+  \caption{Output from a stochastic \code{SIR} model in 1000 nodes
+    starting with 999 susceptible, 1 infected and 0 recovered
+    individuals in each node ($\beta = 0.16$, $\gamma = 0.077$).
+    Left: The default plot shows the median and inter-quartile range
+    of the count in each compartment through time across all nodes.
+    Right: Realizations from a subset of 10
+    nodes.  \label{fig:SIR-model}}
 \end{figure}
+
+Most modeling and simulation studies require custom data analysis once
+the simulation data has been generated. To facilitate this,
+\pkg{SimInf} provides the \code{trajectory()} method to extract the
+number of individuals in each compartment at the time points specified
+in \code{tspan} as a \code{data.frame}.  Below is an excerpt of the
+trajectory data in the first node.  To extract all data from all
+nodes, you only have to remove the node argument.  Consult the help
+page for other \code{trajectory} parameter options.
+
+<<SIR-U>>=
+head(trajectory(model = result, node = 1))
+@
 
 \subsubsection[C code for the SIR model]{%
   \proglang{C} code for the \code{SIR} model}
