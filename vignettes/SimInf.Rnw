@@ -1198,12 +1198,13 @@ dev.off()
 
 Most modeling and simulation studies require custom data analysis once
 the simulation data has been generated. To facilitate this,
-\pkg{SimInf} provides the \code{trajectory()} method to extract the
-number of individuals in each compartment at the time points specified
-in \code{tspan} as a \code{data.frame}.  Below is an excerpt of the
-trajectory data in the first node.  To extract all data from all
-nodes, you only have to remove the node argument.  Consult the help
-page for other \code{trajectory} parameter options.
+\pkg{SimInf} provides the \code{trajectory()} method to extract a
+\code{data.frame} with the number of individuals in each compartment
+at the time points specified in \code{tspan}.  Below is an excerpt of
+the trajectory data from the first node that clearly shows there was
+an outbreak there.  To extract all data from every node, you only have
+to remove the node argument.  Consult the help page for other
+\code{trajectory} parameter options.
 
 <<SIR-U>>=
 head(trajectory(model = result, node = 1))
@@ -1366,13 +1367,13 @@ category 3.
   I_3 & 0 & 0 & 0 & 0 & 0 & 1 } \qquad
 \mathbf{N} =
 \bordermatrix{
-      & 1 & 2 \cr
-  S_1 & 2 & 0 \cr
-  I_1 & 2 & 0 \cr
-  S_2 & 0 & 2 \cr
-  I_2 & 0 & 2 \cr
-  S_3 & 0 & 0 \cr
-  I_3 & 0 & 0 }
+      & \enspace 1 & \enspace 2 & \enspace 3 \cr
+  S_1 & \hphantom{-}2 & \hphantom{-}0 &  \hphantom{-}0  \cr
+  I_1 & \hphantom{-}2 & \hphantom{-}0 & -1 \cr
+  S_2 & \hphantom{-}0 & \hphantom{-}2 &  \hphantom{-}0 \cr
+  I_2 & \hphantom{-}0 & \hphantom{-}2 & -1 \cr
+  S_3 & \hphantom{-}0 & \hphantom{-}0 &  \hphantom{-}0 \cr
+  I_3 & \hphantom{-}0 & \hphantom{-}0 & -1 }
 \]
 }
 
