@@ -134,8 +134,9 @@ SISe3_sp <- function(u0,
                 nrow = 6, ncol = 6,
                 dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
 
-    N <- matrix(c(2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0), nrow = 6, ncol = 2,
-                dimnames = list(compartments, c("1", "2")))
+    N <- matrix(c(2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, -1, 0, -1, 0, -1),
+                nrow = 6, ncol = 3,
+                dimnames = list(compartments, c("1", "2", "3")))
 
     G <- matrix(c(1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0,
                   0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1),
