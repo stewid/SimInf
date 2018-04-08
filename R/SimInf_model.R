@@ -1729,8 +1729,8 @@ summary_V <- function(object)
 summary_gdata <- function(object)
 {
     ## Global model parameters
-    cat("Global model parameters\n")
-    cat("-----------------------\n")
+    cat("Global data\n")
+    cat("-----------\n")
 
     gdata <- data.frame(Parameter = names(object@gdata), Value = object@gdata)
     if (nrow(gdata) > 0) {
