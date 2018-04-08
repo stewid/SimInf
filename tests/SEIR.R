@@ -438,11 +438,11 @@ p_expected <- structure(
     .Names = c("node", "time", "prevalence"),
     row.names = c(NA, -20L),
     class = "data.frame")
-p_observed <- prevalence(result, I~., type = "wnp", i = 2:3)
+p_observed <- prevalence(result, I~., type = "wnp", node = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I~S+E+I+R, type = "wnp", i = 2:3)
+p_observed <- prevalence(result, I~S+E+I+R, type = "wnp", node = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))

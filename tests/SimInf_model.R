@@ -636,16 +636,16 @@ stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
 res <- tools::assertError(prevalence(result, S~A+S))
 stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(prevalence(result, I~S+I+R, i = c("A", "S")))
+res <- tools::assertError(prevalence(result, I~S+I+R, node = c("A", "S")))
 stopifnot(length(grep("'node' must be integer",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(prevalence(result, I~S+I+R, i = 3.4))
+res <- tools::assertError(prevalence(result, I~S+I+R, node = 3.4))
 stopifnot(length(grep("'node' must be integer",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(prevalence(result, I~S+I+R, i = 0))
+res <- tools::assertError(prevalence(result, I~S+I+R, node = 0))
 stopifnot(length(grep("'node' must be integer > 0",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(prevalence(result, I~S+I+R, i = 10))
+res <- tools::assertError(prevalence(result, I~S+I+R, node = 10))
 stopifnot(length(grep("'node' must be integer <= number of nodes",
                       res[[1]]$message)) > 0)
 

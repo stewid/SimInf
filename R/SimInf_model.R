@@ -426,7 +426,7 @@ SimInf_model <- function(G,
 ##'     proportion of nodes with at least one case, and \code{wnp}
 ##'     (within-node prevalence) calculates the proportion of cases
 ##'     within each node. Default is \code{pop}.
-##' @param i Indices specifying the nodes to include in the
+##' @param node Indices specifying the subset nodes to include in the
 ##'     calculation of the prevalence. Default is \code{NULL}, which
 ##'     includes all nodes.
 ##' @param as.is The default (\code{as.is = FALSE}) is to generate a
@@ -463,7 +463,7 @@ SimInf_model <- function(G,
 prevalence <- function(model,
                        formula,
                        type = c("pop", "nop", "wnp"),
-                       i = NULL,
+                       node = NULL,
                        as.is = FALSE)
 {
     ## Check model argument
@@ -480,6 +480,19 @@ prevalence <- function(model,
 
     ## Check 'type' argument
     type <- match.arg(type)
+
+    ## Check the 'node' argument
+    if (!is.null(node)) {
+        if (!is.numeric(node))
+            stop("'node' must be integer")
+        if (!all(is_wholenumber(node)))
+            stop("'node' must be integer")
+        if (min(node) < 1)
+            stop("'node' must be integer > 0")
+        if (max(node) > Nn(model))
+            stop("'node' must be integer <= number of nodes")
+        node <- as.integer(sort(unique(node)))
+    }
 
     ## Determine compartments for population
     j <- attr(terms(formula, allowDotAsName = TRUE), "term.labels")
@@ -529,9 +542,11 @@ prevalence <- function(model,
     cm <- NULL
     for (compartment in cases) {
         if (is.null(cm)) {
-            cm <- trajectory(model, compartments = compartment, node = i, as.is = TRUE)
+            cm <- trajectory(model, compartments = compartment,
+                             node = node, as.is = TRUE)
         } else {
-            cm <- cm + trajectory(model, compartments = compartment, node = i, as.is = TRUE)
+            cm <- cm + trajectory(model, compartments = compartment,
+                                  node = node, as.is = TRUE)
         }
     }
     dimnames(cm) <- NULL
@@ -541,9 +556,11 @@ prevalence <- function(model,
     pm <- NULL
     for (compartment in pop) {
         if (is.null(pm)) {
-            pm <- trajectory(model, compartments = compartment, node = i, as.is = TRUE)
+            pm <- trajectory(model, compartments = compartment,
+                             node = node, as.is = TRUE)
         } else {
-            pm <- pm + trajectory(model, compartments = compartment, node = i, as.is = TRUE)
+            pm <- pm + trajectory(model, compartments = compartment,
+                                  node = node, as.is = TRUE)
         }
     }
     dimnames(pm) <- NULL
@@ -569,9 +586,8 @@ prevalence <- function(model,
                           stringsAsFactors = FALSE))
     }
 
-    node = seq_len(Nn(model))
-    if (!is.null(i))
-        node <- node[i]
+    if (is.null(node))
+        node = seq_len(Nn(model))
 
     data.frame(node = node,
                time = rep(time, each = length(node)),
