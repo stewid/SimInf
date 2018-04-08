@@ -4,7 +4,7 @@
 \alias{trajectory}
 \title{Extract data from a simulated trajectory}
 \usage{
-trajectory(model, compartments = NULL, i = NULL, as.is = FALSE)
+trajectory(model, compartments = NULL, node = NULL, as.is = FALSE)
 }
 \arguments{
 \item{model}{the \code{model} to extract the result from.}
@@ -20,9 +20,9 @@ models that also have continuous state variables e.g. the
 \code{SISe} model, use \code{~.} instead of \code{NULL} to
 also include these.}
 
-\item{i}{indices specifying the nodes to include when extracting
-data. Default (\code{i = NULL}) is to extract data from all
-nodes.}
+\item{node}{indices specifying the subset of nodes to include when
+extracting data. Default (\code{node = NULL}) is to extract data
+from all nodes.}
 
 \item{as.is}{the default (\code{as.is = FALSE}) is to generate a
 \code{data.frame} with one row per node and time-step with the
@@ -78,11 +78,11 @@ trajectory(result)
 
 ## Extract the number of recovered individuals in the first node
 ## at the time-points in 'tspan'.
-trajectory(result, compartments = "R", i = 1)
+trajectory(result, compartments = "R", node = 1)
 
 ## Extract the number of recovered individuals in the first and
 ## third node at the time-points in 'tspan'.
-trajectory(result, compartments = "R", i = c(1, 3))
+trajectory(result, compartments = "R", node = c(1, 3))
 
 ## Create an 'SISe' model with 6 nodes and initialize
 ## it to run over 10 days.

@@ -4,7 +4,7 @@
 \alias{prevalence}
 \title{Calculate prevalence from a model object with trajectory data}
 \usage{
-prevalence(model, formula, type = c("pop", "nop", "wnp"), i = NULL,
+prevalence(model, formula, type = c("pop", "nop", "wnp"), node = NULL,
   as.is = FALSE)
 }
 \arguments{
@@ -30,7 +30,7 @@ proportion of nodes with at least one case, and \code{wnp}
 (within-node prevalence) calculates the proportion of cases
 within each node. Default is \code{pop}.}
 
-\item{i}{Indices specifying the nodes to include in the
+\item{node}{Indices specifying the subset nodes to include in the
 calculation of the prevalence. Default is \code{NULL}, which
 includes all nodes.}
 
