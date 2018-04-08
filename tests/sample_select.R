@@ -777,11 +777,11 @@ S_expected <- structure(c(0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
                                    "5", "6", "7", "8", "9", "10"))
 
 res <- run(model, threads = 1)
-S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"), i = 1, as.is = TRUE))
+S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"), node = 1, as.is = TRUE))
 stopifnot(identical(S_observed, S_expected))
 
 if (SimInf:::have_openmp()) {
     res <- run(model, threads = 2)
-    S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"), i = 1, as.is = TRUE))
+    S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"), node = 1, as.is = TRUE))
     stopifnot(identical(S_observed, S_expected))
 }

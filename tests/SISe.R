@@ -1122,10 +1122,10 @@ traj_expected <- structure(list(
     .Names = c("node", "time", "S", "phi"),
     row.names = c(NA, -4L),
     class = "data.frame")
-stopifnot(identical(trajectory(result, c("S", "S", "phi", "phi"), i = c(5, 2))[, -4], traj_expected[, -4]))
-stopifnot(identical(trajectory(result, c("phi", "phi", "S", "S"), i = c(5, 2))[, -4], traj_expected[, -4]))
-stopifnot(all(abs(trajectory(result, c("phi", "phi", "S", "S"), i = c(5, 2))[, 4] - traj_expected$phi) < 1e-8))
-stopifnot(identical(trajectory(result, c("S", "phi"), i = c(5, 2)), traj_expected))
+stopifnot(identical(trajectory(result, c("S", "S", "phi", "phi"), node = c(5, 2))[, -4], traj_expected[, -4]))
+stopifnot(identical(trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, -4], traj_expected[, -4]))
+stopifnot(all(abs(trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, 4] - traj_expected$phi) < 1e-8))
+stopifnot(identical(trajectory(result, c("S", "phi"), node = c(5, 2)), traj_expected))
 
 ## Check extracting all compartments in U
 stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
@@ -1134,7 +1134,7 @@ stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
 stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
 
 ## Check extracting a subset compartments of V in internal format
-traj_observed <- trajectory(result, "phi", i = c(5, 2), as.is = TRUE)
+traj_observed <- trajectory(result, "phi", node = c(5, 2), as.is = TRUE)
 stopifnot(identical(dim(traj_observed), c(2L, 2L)))
 stopifnot(all(abs(traj_observed[1, ] - 0.1) < 1e-8))
 stopifnot(all(abs(traj_observed[2, ] - 0.4) < 1e-8))
@@ -1144,7 +1144,7 @@ traj_expected <- data.frame(node = c(2L, 5L, 2L, 5L),
                             time = c(1L, 1L, 2L, 2L),
                             S = c(1L, 4L, 1L, 4L),
                             I = c(0L, 0L, 0L, 0L))
-stopifnot(identical(trajectory(result, c("S", "I"), i = c(5, 2)), traj_expected))
+stopifnot(identical(trajectory(result, c("S", "I"), node = c(5, 2)), traj_expected))
 
 ## Check extracting all compartments in U as a data.frame
 traj_expected <- data.frame(node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),

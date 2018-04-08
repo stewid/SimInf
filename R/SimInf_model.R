@@ -529,9 +529,9 @@ prevalence <- function(model,
     cm <- NULL
     for (compartment in cases) {
         if (is.null(cm)) {
-            cm <- trajectory(model, compartments = compartment, i = i, as.is = TRUE)
+            cm <- trajectory(model, compartments = compartment, node = i, as.is = TRUE)
         } else {
-            cm <- cm + trajectory(model, compartments = compartment, i = i, as.is = TRUE)
+            cm <- cm + trajectory(model, compartments = compartment, node = i, as.is = TRUE)
         }
     }
     dimnames(cm) <- NULL
@@ -541,9 +541,9 @@ prevalence <- function(model,
     pm <- NULL
     for (compartment in pop) {
         if (is.null(pm)) {
-            pm <- trajectory(model, compartments = compartment, i = i, as.is = TRUE)
+            pm <- trajectory(model, compartments = compartment, node = i, as.is = TRUE)
         } else {
-            pm <- pm + trajectory(model, compartments = compartment, i = i, as.is = TRUE)
+            pm <- pm + trajectory(model, compartments = compartment, node = i, as.is = TRUE)
         }
     }
     dimnames(pm) <- NULL
@@ -660,9 +660,9 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##'     models that also have continuous state variables e.g. the
 ##'     \code{SISe} model, use \code{~.} instead of \code{NULL} to
 ##'     also include these.
-##' @param i indices specifying the nodes to include when extracting
-##'     data. Default (\code{i = NULL}) is to extract data from all
-##'     nodes.
+##' @param node indices specifying the subset of nodes to include when
+##'     extracting data. Default (\code{node = NULL}) is to extract data
+##'     from all nodes.
 ##' @param as.is the default (\code{as.is = FALSE}) is to generate a
 ##'     \code{data.frame} with one row per node and time-step with the
 ##'     number of individuals in each compartment. Using \code{as.is =
@@ -688,11 +688,11 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##'
 ##' ## Extract the number of recovered individuals in the first node
 ##' ## at the time-points in 'tspan'.
-##' trajectory(result, compartments = "R", i = 1)
+##' trajectory(result, compartments = "R", node = 1)
 ##'
 ##' ## Extract the number of recovered individuals in the first and
 ##' ## third node at the time-points in 'tspan'.
-##' trajectory(result, compartments = "R", i = c(1, 3))
+##' trajectory(result, compartments = "R", node = c(1, 3))
 ##'
 ##' ## Create an 'SISe' model with 6 nodes and initialize
 ##' ## it to run over 10 days.
@@ -708,7 +708,7 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##' ## Extract the continuous state variable 'phi' which represents
 ##' ## the environmental infectious pressure.
 ##' trajectory(result, "phi")
-trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
+trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 {
     ## Check that the arguments are ok...
 
@@ -784,17 +784,17 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         }
     }
 
-    ## Check the 'i' argument
-    if (!is.null(i)) {
-        if (!is.numeric(i))
-            stop("'i' must be integer")
-        if (!all(is_wholenumber(i)))
-            stop("'i' must be integer")
-        if (min(i) < 1)
-            stop("'i' must be integer > 0")
-        if (max(i) > Nn(model))
-            stop("'i' must be integer <= number of nodes")
-        i <- sort(i)
+    ## Check the 'node' argument
+    if (!is.null(node)) {
+        if (!is.numeric(node))
+            stop("'node' must be integer")
+        if (!all(is_wholenumber(node)))
+            stop("'node' must be integer")
+        if (min(node) < 1)
+            stop("'node' must be integer > 0")
+        if (max(node) > Nn(model))
+            stop("'node' must be integer <= number of nodes")
+        node <- as.integer(sort(unique(node)))
     }
 
     ## The arguments seem ok...go on and extract the trajectory
@@ -827,7 +827,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
 
     ## Check to extract data in internal matrix format
     if (isTRUE(as.is)) {
-        if (is.null(i)) {
+        if (is.null(node)) {
             if (is.null(compartments_U)) {
                 if (is.null(compartments_V))
                     return(model@U)
@@ -838,8 +838,8 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
             }
         }
 
-        if (is.null(i))
-            i <- seq_len(Nn(model))
+        if (is.null(node))
+            node <- seq_len(Nn(model))
 
         if (all(is.null(compartments_U), is.null(compartments_V)))
             compartments_U <- rownames(model@S)
@@ -847,15 +847,15 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         if (is.null(compartments_U)) {
             ## Extract subset of data from V
             compartments_V <- sort(match(compartments_V, rownames(model@v0)))
-            j <- rep(compartments_V, length(i))
-            j <- j + rep((i - 1) * Nd(model), each = length(compartments_V))
+            j <- rep(compartments_V, length(node))
+            j <- j + rep((node - 1) * Nd(model), each = length(compartments_V))
             return(model@V[j, , drop = FALSE])
         }
 
         ## Extract subset of data from U
         compartments_U <- sort(match(compartments_U, rownames(model@S)))
-        j <- rep(compartments_U, length(i))
-        j <- j + rep((i - 1) * Nc(model), each = length(compartments_U))
+        j <- rep(compartments_U, length(node))
+        j <- j + rep((node - 1) * Nc(model), each = length(compartments_U))
         return(model@U[j, , drop = FALSE])
     }
 
@@ -874,7 +874,7 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
     ##     NULL            all         V
     ##      all           NULL         U
     ##      all            all        U+V
-    if (is.null(i)) {
+    if (is.null(node)) {
         if (is.null(compartments_U)) {
             if (is.null(compartments_V)) {
                 mU <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
@@ -899,8 +899,8 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
     ## Handle cases where a subset of data in U and/or V are
     ## extracted.
     if (all(is.null(mU), is.null(mV))) {
-        if (is.null(i))
-            i <- seq_len(Nn(model))
+        if (is.null(node))
+            node <- seq_len(Nn(model))
 
         if (all(is.null(compartments_U), is.null(compartments_V)))
             compartments_U <- rownames(model@S)
@@ -908,8 +908,8 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         if (!is.null(compartments_U)) {
             ## Extract a subset of data from U
             compartments_U <- sort(match(compartments_U, rownames(model@S)))
-            j <- rep(compartments_U, length(i))
-            j <- j + rep((i - 1) * Nc(model), each = length(compartments_U))
+            j <- rep(compartments_U, length(node))
+            j <- j + rep((node - 1) * Nc(model), each = length(compartments_U))
             k <- (seq_len(length(model@tspan)) - 1) * Nc(model) * Nn(model)
             k <- rep(k, each = length(j))
             j <- rep(j, length(model@tspan))
@@ -923,8 +923,8 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         if (!is.null(compartments_V)) {
             ## Extract a subset of data from V
             compartments_V <- sort(match(compartments_V, rownames(model@v0)))
-            j <- rep(compartments_V, length(i))
-            j <- j + rep((i - 1) * Nd(model), each = length(compartments_V))
+            j <- rep(compartments_V, length(node))
+            j <- j + rep((node - 1) * Nd(model), each = length(compartments_V))
             k <- (seq_len(length(model@tspan)) - 1) * Nd(model) * Nn(model)
             k <- rep(k, each = length(j))
             j <- rep(j, length(model@tspan))
@@ -936,9 +936,8 @@ trajectory <- function(model, compartments = NULL, i = NULL, as.is = FALSE)
         }
     }
 
-    node = seq_len(Nn(model))
-    if (!is.null(i))
-        node <- node[i]
+    if (is.null(node))
+        node = seq_len(Nn(model))
 
     time <- names(model@tspan)
     if (is.null(time))

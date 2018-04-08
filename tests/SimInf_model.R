@@ -613,17 +613,17 @@ result <- run(model, threads = 1)
 res <- tools::assertError(trajectory(result, compartments = c("A", "S")))
 stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(trajectory(result, i = c("A", "S")))
-stopifnot(length(grep("'i' must be integer",
+res <- tools::assertError(trajectory(result, node = c("A", "S")))
+stopifnot(length(grep("'node' must be integer",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(trajectory(result, i = 3.4))
-stopifnot(length(grep("'i' must be integer",
+res <- tools::assertError(trajectory(result, node = 3.4))
+stopifnot(length(grep("'node' must be integer",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(trajectory(result, i = 0))
-stopifnot(length(grep("'i' must be integer > 0",
+res <- tools::assertError(trajectory(result, node = 0))
+stopifnot(length(grep("'node' must be integer > 0",
                       res[[1]]$message)) > 0)
-res <- tools::assertError(trajectory(result, i = 10))
-stopifnot(length(grep("'i' must be integer <= number of nodes",
+res <- tools::assertError(trajectory(result, node = 10))
+stopifnot(length(grep("'node' must be integer <= number of nodes",
                       res[[1]]$message)) > 0)
 
 ## Check arguments to 'prevalence' method
@@ -637,16 +637,16 @@ res <- tools::assertError(prevalence(result, S~A+S))
 stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'A'",
                       res[[1]]$message)) > 0)
 res <- tools::assertError(prevalence(result, I~S+I+R, i = c("A", "S")))
-stopifnot(length(grep("'i' must be integer",
+stopifnot(length(grep("'node' must be integer",
                       res[[1]]$message)) > 0)
 res <- tools::assertError(prevalence(result, I~S+I+R, i = 3.4))
-stopifnot(length(grep("'i' must be integer",
+stopifnot(length(grep("'node' must be integer",
                       res[[1]]$message)) > 0)
 res <- tools::assertError(prevalence(result, I~S+I+R, i = 0))
-stopifnot(length(grep("'i' must be integer > 0",
+stopifnot(length(grep("'node' must be integer > 0",
                       res[[1]]$message)) > 0)
 res <- tools::assertError(prevalence(result, I~S+I+R, i = 10))
-stopifnot(length(grep("'i' must be integer <= number of nodes",
+stopifnot(length(grep("'node' must be integer <= number of nodes",
                       res[[1]]$message)) > 0)
 
 ## Check 'gdata'
