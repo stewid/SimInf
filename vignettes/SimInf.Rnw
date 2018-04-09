@@ -1066,10 +1066,11 @@ compartments and the continuous state variables are written to
   Model construction and data analysis: Basic examples}
 \label{sec:examples}
 
-\subsection[A first example: The SIR model without scheduled events]{%
-  A first example: The \code{SIR} model without using scheduled
-  events}
-\label{sec:example-SIR}
+\subsection[A first example: The SIR model]{%
+  A first example: The \code{SIR} model}
+
+\subsubsection[Specification of the SIR model without scheduled events]{%
+  Specification of the \code{SIR} model without scheduled events}
 
 This section illustrates the specification of the predefined
 \code{SIR} model, which contains the three compartments susceptible
@@ -1147,9 +1148,9 @@ result <- run(model = model, threads = 1)
 The return value from \code{run()} is a \code{SimInf_model} object
 with a single stochastic solution trajectory attached to it.  The
 \code{show} method of the \code{SimInf_model} class prints some basic
-information about the model, such as global data parameters and the
-extremes, the mean and the quartiles of the count in each compartment
-across all nodes.
+information about the model, such as the global data parameters and
+the extremes, the mean and the quartiles of the count in each
+compartment across all nodes.
 
 <<SIR-show>>=
 result
@@ -1197,18 +1198,70 @@ dev.off()
 \end{figure}
 
 Most modeling and simulation studies require custom data analysis once
-the simulation data has been generated. To facilitate this,
-\pkg{SimInf} provides the \code{trajectory()} method to extract a
-\code{data.frame} with the number of individuals in each compartment
-at the time points specified in \code{tspan}.  Below is an excerpt of
-the trajectory data from the first node that clearly shows there was
-an outbreak there.  To extract all data from every node, you only have
-to remove the node argument.  Consult the help page for other
-\code{trajectory} parameter options.
+the simulation data has been generated.  To support this, \pkg{SimInf}
+provides the \code{trajectory()} method to obtain a \code{data.frame}
+with the number of individuals in each compartment at the time points
+specified in \code{tspan}.  Below is an excerpt of the simulated data
+from the first node that clearly shows there was an outbreak there.
+To extract all data from every node, you only have to remove the node
+argument.  Consult the help page for other \code{trajectory()}
+parameter options.
 
 <<SIR-U>>=
 head(trajectory(model = result, node = 1))
 @
+
+\subsubsection[Specification of scheduled events in the SIR model]{%
+  Specification of scheduled events in the \code{SIR} model}
+
+In this example, we will continue to work with the predefined
+\code{SIR} model to illustrate how demographic data can be
+incorporated into the simulation.  In order to process a scheduled
+event, the compartments that are involved must be defined in the
+select matrix \code{E}.  Moreover, all events must specify the column
+to use in \code{E}, where the non-zero entries in the specified column
+define involved compartments.  For the predefined \code{SIR} model,
+\code{E} is defined as
+
+{\small
+\[
+\mathbf{E} =
+\bordermatrix{
+    & 1 & 2 & 3 & 4 \cr
+  S & 1 & 0 & 0 & 1 \cr
+  I & 0 & 1 & 0 & 1 \cr
+  R & 0 & 0 & 1 & 1 }
+\]
+}
+
+This means that we can specify a scheduled event to operate on a
+single compartment (S, I or R) as well as an event that involves all
+three compartments.  Consider we have 4 scheduled events to include in
+a simulation.  Below is a \code{data.frame}, that contains the events.
+
+<<SIR-events, echo=FALSE>>=
+events <- data.frame(
+event = c("enter", "extTrans", "exit", "enter"),
+time = c(2, 3, 4, 4), node = c(3, 1, 2, 1),
+dest = c(0, 3, 0, 3), n = c(5, 7, 3, 1),
+proportion = c(0, 0, 0, 0), select = c(1, 4, 4, 2),
+shift = c(0, 0, 0, 0))
+@
+
+<<SIR-events-show>>=
+events
+@
+Interpret it as follows:
+\begin{enumerate}
+\itemsep0em
+\item In time step 2 we add 5 susceptible individuals to node 3
+\item In time step 3 we sample 7 individuals among the S, I and R
+  compartments in node 1 and move them to the corresponding
+  compartments in node 3
+\item In time step 4 we sample 3 individuals among the S, I and R
+  compartments in node 2 and remove them from node 2.
+\item In time step 4 we add 1 infected individual to node 2
+\end{enumerate}
 
 \subsubsection[C code for the SIR model]{%
   \proglang{C} code for the \code{SIR} model}
