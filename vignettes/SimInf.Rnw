@@ -1146,10 +1146,10 @@ result <- run(model = model, threads = 1)
 
 The return value from \code{run()} is a \code{SimInf_model} object
 with a single stochastic solution trajectory attached to it.  The
-\code{print} method of the \code{SimInf_model} class shows some basic
-information about the model, such as the name and value of global data
-parameters shared among nodes and the extremes, the mean and the
-quartiles of the count in each compartment across all nodes.
+\code{show} method of the \code{SimInf_model} class prints some basic
+information about the model, such as global data parameters and the
+extremes, the mean and the quartiles of the count in each compartment
+across all nodes.
 
 <<SIR-show>>=
 result
@@ -1360,10 +1360,10 @@ category 3.
 \bordermatrix{
       & 1 & 2 & 3 & 4 & 5 & 6 \cr
   S_1 & 1 & 0 & 0 & 1 & 0 & 0 \cr
-  I_1 & 0 & 1 & 0 & 1 & 0 & 0 \cr
-  S_2 & 0 & 0 & 1 & 0 & 1 & 0 \cr
+  I_1 & 0 & 0 & 0 & 1 & 0 & 0 \cr
+  S_2 & 0 & 1 & 0 & 0 & 1 & 0 \cr
   I_2 & 0 & 0 & 0 & 0 & 1 & 0 \cr
-  S_3 & 0 & 0 & 0 & 0 & 0 & 1 \cr
+  S_3 & 0 & 0 & 1 & 0 & 0 & 1 \cr
   I_3 & 0 & 0 & 0 & 0 & 0 & 1 } \qquad
 \mathbf{N} =
 \bordermatrix{
@@ -2045,8 +2045,8 @@ of the setup for a new source package.  It creates directories, saves
 \proglang{R} and \proglang{C} code files to appropriate places, and
 creates skeleton help files.
 
-Although \pkg{SimInf} was designed to study disease spread over
-temporal networks, it is not limited to that use case but can also be
+Although \pkg{SimInf} was designed to study disease spread using
+demographic data, it is not limited to that use case but can also be
 used to study the dynamics of other systems.  Consider we wish to
 create a new add-on package \pkg{PredatorPrey} based on the
 Rosenzweig-MacArthur predator-prey model demonstrated in the
@@ -2127,7 +2127,7 @@ The \proglang{C} file (\texttt{'src/models.c'}) defines one function
 for each state transition, the post time step function and the model
 specific run function, and is automatically compiled when installing
 the package.  The header file \code{"SimInf.h"} contains the
-declarations for these functions and should be included.  The
+declarations for these functions and must be included.  The
 \code{SimInf_model_run} function is the interface from \proglang{R} to
 the core solver in \proglang{C} and list all function pointers to the
 transition rate functions in a vector in the order the state
@@ -2156,9 +2156,8 @@ install.packages(pkg, repos = NULL, type = "source")
   \caption{Left: Phase plane trajectories from 1000 realizations of
     the Rosenzweig-MacArthur predator-prey model. Right: One
     realization of the Rosenzweig-MacArthur predator-prey model, where
-    the predator go extinct after about 25 time steps while the prey
-    then fluctuates around a plateu of 1000
-    individuals.  \label{fig:predator-prey}}
+    the predators go extinct and then the prey population fluctuates
+    around a plateu of 1000 individuals.  \label{fig:predator-prey}}
 \end{figure}
 
 Here we let \code{repos = NULL} to install from local files and use
@@ -2192,8 +2191,8 @@ Number of nodes: 1000
 Number of transitions: 5
 Number of scheduled events: 0
 
-Global model parameters
------------------------
+Global data
+-----------
  Parameter Value
  bR        2.0e+00
  bF        2.0e+00
@@ -2203,8 +2202,8 @@ Global model parameters
  w         3.5e-03
  dF        2.0e+00
 
-Discrete state variables
-------------------------
+Compartments
+------------
    Min. 1st Qu. Median Mean 3rd Qu. Max.
  R    8     236    607  598     975 1195
  F    0       0     35  112     161  851
@@ -2213,7 +2212,7 @@ Discrete state variables
 
 Or the \code{trajectory} method, for example, to plot the phase plane
 from 1000 realizations and to extract the simulated data from the
-sixth node (use \code{i = 4}) to illustrate stochastic extinction of
+fourh node (use \code{node = 4}) to illustrate stochastic extinction of
 the predators (Figure~\ref{fig:predator-prey}).
 
 <<predator-prey-plot, eval=FALSE>>=
@@ -2221,9 +2220,9 @@ opar <- par(mfrow = c(1, 2))
 plot(R ~ F, trajectory(model = result), cex = 0.3, pch = 20,
 xlab = "Number of predators", ylab = "Number of prey",
 col = rgb(0, 0, 0, alpha = 0.1))
-plot(R ~ time, trajectory(model = result, i = 4), type = "l",
+plot(R ~ time, trajectory(model = result, node = 4), type = "l",
 xlab = "Time", ylab = "N")
-lines(F ~ time, trajectory(model = result, i = 4), type = "l", lty = 2)
+lines(F ~ time, trajectory(model = result, node = 4), type = "l", lty = 2)
 legend("right", c("Prey", "Predator"), lty = 1:2)
 par(opar)
 @
