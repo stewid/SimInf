@@ -1106,7 +1106,7 @@ rate.  The state change matrix \code{S} and the dependency graph
 }
 
 To create an \code{SIR} model object, we need to define \code{u0}, a
-\code{data.frame} with the initial number individuals in each
+\code{data.frame} with the initial number of individuals in each
 compartment when the simulation starts.  Let us consider a node with
 999 susceptible, 1 infected and 0 recoverd individuals.  Since there
 are no between-node interactions in this example, the stochastic
@@ -1147,21 +1147,21 @@ result <- run(model = model, threads = 1)
 
 The return value from \code{run()} is a \code{SimInf_model} object
 with a single stochastic solution trajectory attached to it.  The
-\code{show} method of the \code{SimInf_model} class prints some basic
-information about the model, such as the global data parameters and
-the extremes, the mean and the quartiles of the count in each
+\code{show()} method of the \code{SimInf_model} class prints some
+basic information about the model, such as the global data parameters
+and the extremes, the mean and the quartiles of the count in each
 compartment across all nodes.
 
 <<SIR-show>>=
 result
 @
 
-The \code{plot} method of the \code{SimInf_model} class can be used to
-visualize the simulated trajectory.  The default plot will display the
-median count in each compartment across nodes as a colored line
+The \code{plot()} method of the \code{SimInf_model} class can be used
+to visualize the simulated trajectory.  The default plot will display
+the median count in each compartment across nodes as a colored line
 together with the inter-quartile range using the same color, but with
-transparency.  To display the outcome for individual nodes, use the
-\code{node} parameter to specify the subset of nodes to plot and set
+transparency.  To display the outcome for individual nodes, specify
+the subset of nodes to plot using the \code{node} parameter and set
 \code{range = FALSE}.  In this example, an outbreak is likely to occur
 in an infected node, but sometimes the infectious disease goes extinct
 before it causes an epidemic, as shown in Figure~\ref{fig:SIR-model}.
@@ -1219,9 +1219,9 @@ In this example, we will continue to work with the predefined
 incorporated into the simulation.  In order to process a scheduled
 event, the compartments that are involved must be defined in the
 select matrix \code{E}.  Moreover, all events must specify the column
-to use in \code{E}, where the non-zero entries in the specified column
-define involved compartments.  For the predefined \code{SIR} model,
-\code{E} is defined as
+to \code{select} in \code{E}, where the non-zero entries in the
+specified column define the involved compartments.  For the predefined
+\code{SIR} model, \code{E} is defined as
 
 {\small
 \[
@@ -1243,7 +1243,7 @@ a simulation.  Below is a \code{data.frame}, that contains the events.
 events <- data.frame(
 event = c("enter", "extTrans", "exit", "enter"),
 time = c(2, 3, 4, 4), node = c(3, 1, 2, 1),
-dest = c(0, 3, 0, 3), n = c(5, 7, 3, 1),
+dest = c(0, 3, 0, 0), n = c(5, 7, 3, 1),
 proportion = c(0, 0, 0, 0), select = c(1, 4, 4, 2),
 shift = c(0, 0, 0, 0))
 @
