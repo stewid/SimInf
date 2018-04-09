@@ -102,8 +102,9 @@ SIR <- function(u0,
 
     ## Arguments seem ok...go on
 
-    E <- matrix(c(1, 0, 0, 1, 1, 1), nrow = 3, ncol = 2,
-                dimnames = list(compartments, c("1", "2")))
+    E <- matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1),
+                nrow = 3, ncol = 4,
+                dimnames = list(compartments, c("1", "2", "3", "4")))
 
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
                 dimnames = list(c("S -> I", "I -> R"), c("1", "2")))
@@ -170,10 +171,10 @@ SIR <- function(u0,
 ##' summary(result)
 events_SIR <- function() {
     data("events_SISe3", package = "SimInf", envir = environment())
-    events_SISe3$select[events_SISe3$event == "exit"] <- 2
+    events_SISe3$select[events_SISe3$event == "exit"] <- 4
     events_SISe3$select[events_SISe3$event == "enter"] <- 1
     events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
-    events_SISe3$select[events_SISe3$event == "extTrans"] <- 2
+    events_SISe3$select[events_SISe3$event == "extTrans"] <- 4
     events_SISe3
 }
 
