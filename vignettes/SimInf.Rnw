@@ -1192,10 +1192,10 @@ dev.off()
   \caption{Output from a stochastic \code{SIR} model in 1000 nodes
     starting with 999 susceptible, 1 infected and 0 recovered
     individuals in each node ($\beta = 0.16$, $\gamma = 0.077$).
-    Left: The default plot shows the median and inter-quartile range
-    of the count in each compartment through time across all nodes.
-    Right: Realizations from a subset of 10
-    nodes.  \label{fig:SIR-model}}
+    There are no between-node interactions.  Left: The default plot
+    shows the median and inter-quartile range of the count in each
+    compartment through time across all nodes.  Right: Realizations
+    from a subset of 10 nodes.  \label{fig:SIR-model}}
 \end{figure}
 
 Most modeling and simulation studies require custom data analysis once
@@ -1208,7 +1208,7 @@ To extract all data from every node, you only have to remove the node
 argument.  Consult the help page for other \code{trajectory()}
 parameter options.
 
-<<SIR-U>>=
+<<SIR-head-trajectory>>=
 head(trajectory(model = result, node = 1))
 @
 
@@ -1220,7 +1220,7 @@ In this example, we will continue to work with the predefined
 incorporated into a simulation.  In order for the numerical solver to
 process a scheduled event, the compartments that are involved in the
 event must be specified.  This is done by each event specifies one
-column in the select matrix \code{E} with the \code{select} attribute
+column in the select matrix \code{E} using the \code{select} attribute
 of the event.  The non-zero entries in the selected column in \code{E}
 specify the involved compartments.  For the predefined \code{SIR}
 model, \code{E} is defined as
@@ -1242,7 +1242,7 @@ three compartments.  If more than one compartment is involved in an
 event, the individuals affected by the event will be sampled without
 replacment from the specified compartments.  The numerical solver will
 perform an extensive error checking of the event before it is
-processed.  An error will be raised if the event is invalid, for
+processed.  And an error will be raised if the event is invalid, for
 example, if the event tries to move more individuals than exists in
 the specified compartments.
 
@@ -1273,20 +1273,62 @@ Interpret it as follows:
 \item In time step 4 we sample 20\% of all individuals without
   replacement among the S, I and R compartments in node 2 and remove
   them from node 2.
-\item In time step 4 we add 1 infected individual to node 2.
+\item In time step 4 we add 1 infected individual to node 1.
 \end{enumerate}
 
-<<fig=TRUE>>=
+Now, let us illustrate in a small example, consisting only of five
+nodes, how scheduled events can alter the composition of individual
+nodes during simulation.  Let us start with five empty nodes and then
+create some \textit{enter} events to add susceptible individuals to
+each node during the first ten time-steps.
+
+<<SIR-u0-add>>=
+u0 <- data.frame(S = rep(0, 5), I = rep(0, 5), R = rep(0, 5))
 add <- data.frame(event = "enter", time = rep(1:10, each = 5),
 node = 1:5, dest = 0, n = 1:5, proportion = 0, select = 1, shift = 0)
+@
+
+We then introduce one infected individual to node five at $t = 25$.
+
+<<SIR-infect>>=
 infect <- data.frame(event = "enter", time = 25, node = 5,
 dest = 0, n = 1, proportion = 0, select = 2, shift = 0)
+@
+
+Additionally, we create interactions among nodes with some movements
+during $t = 35$ to $t = 45$.  Each shipment contains $n = 5$
+individuals.
+
+<<SIR-move>>=
 move <- data.frame(event = "extTrans", time = 35:45,
 node = c(5, 5, 5, 5, 4, 4, 4, 3, 3, 2, 1), dest = c(4, 3, 3, 1, 3,
 2, 1, 2, 1, 1, 2), n = 5, proportion = 0, select = 4, shift = 0)
+@
+
+Finally, we remove 20\% of the individuals from each node at $t = 70$
+and $t = 110$.
+
+<<SIR-remove>>=
 remove <- data.frame(event = "exit", time = c(70, 110),
 node = rep(1:5, each = 2), dest = 0, n = 0, proportion = 0.2,
 select = 4, shift = 0)
+@
+
+Figure~\ref{fig:SIR-events} shows one realization after combining the
+events.
+
+<<eval=FALSE>>=
+events = rbind(add, infect, move, remove)
+model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
+gamma = 0.077)
+set.seed(3)
+result <- run(model, threads = 1)
+plot(result, node = 1:5, range = FALSE)
+@
+
+\begin{figure}
+  \begin{center}
+<<SIR-events, echo=FALSE, fig=TRUE>>=
 events = rbind(add, infect, move, remove)
 u0 <- data.frame(S = rep(0, 5), I = rep(0, 5), R = rep(0, 5))
 model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
@@ -1295,6 +1337,11 @@ set.seed(3)
 result <- run(model, threads = 1)
 plot(result, node = 1:5, range = FALSE)
 @
+  \end{center}
+  \caption{FIXME}
+  \label{fig:SIR-events}
+\end{figure}
+
 
 \subsubsection[C code for the SIR model]{%
   \proglang{C} code for the \code{SIR} model}
