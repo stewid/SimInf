@@ -1280,7 +1280,7 @@ Now, let us illustrate in a small example, consisting only of five
 nodes, how scheduled events can alter the composition of individual
 nodes during simulation.  Let us start with five empty nodes and then
 create some \textit{enter} events to add susceptible individuals to
-each node during the first ten time-steps.
+the nodes during the first ten time-steps.
 
 <<SIR-u0-add>>=
 u0 <- data.frame(S = rep(0, 5), I = rep(0, 5), R = rep(0, 5))
@@ -1288,15 +1288,16 @@ add <- data.frame(event = "enter", time = rep(1:10, each = 5),
 node = 1:5, dest = 0, n = 1:5, proportion = 0, select = 1, shift = 0)
 @
 
-We then introduce one infected individual to node five at $t = 25$.
+We then introduce one infected individual to the 5$^{th}$ node at $t =
+25$.
 
 <<SIR-infect>>=
 infect <- data.frame(event = "enter", time = 25, node = 5,
 dest = 0, n = 1, proportion = 0, select = 2, shift = 0)
 @
 
-Additionally, we create interactions among nodes with some movements
-during $t = 35$ to $t = 45$.  Each shipment contains $n = 5$
+Additionally, we create interactions among the nodes with some
+movements during $t = 35$ to $t = 45$.  Each shipment contains $n = 5$
 individuals.
 
 <<SIR-move>>=
@@ -1338,10 +1339,22 @@ result <- run(model, threads = 1)
 plot(result, node = 1:5, range = FALSE)
 @
   \end{center}
-  \caption{FIXME}
+  \caption{One realization of a stochastic \code{SIR} model
+    incorporating scheduled events.  One infected individual was
+    introduced at $t = 25$.}
   \label{fig:SIR-events}
 \end{figure}
 
+We can use \code{replicate} (or similar) to generate many realizations
+from the model, together with some custom analysis of each trajectory.
+Here, we find that infection spread from the 5$^{th}$ node in about
+half of the trajectories.
+
+<<SIR-replicate>>=
+set.seed(123)
+mean(replicate(1000, sum(trajectory(run(model, threads = 1),
+node = 1:4)$I) > 0))
+@
 
 \subsubsection[C code for the SIR model]{%
   \proglang{C} code for the \code{SIR} model}
