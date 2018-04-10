@@ -32,7 +32,8 @@
   Robin Eriksson\\Uppsala University\\Sweden\And
   Stefan Engblom\\Uppsala University\\Sweden}
 
-\Plainauthor{Stefan Widgren, Pavol Bauer, Stefan Engblom}
+\Plainauthor{Stefan Widgren, Pavol Bauer, Robin Eriksson, Stefan
+  Engblom}
 
 \title{\pkg{SimInf}: An \proglang{R} package for Data-driven
   Stochastic Disease Spread Simulations}
@@ -335,7 +336,7 @@ between a susceptible and an infected compartment can be written as
     I &\xrightarrow{\gamma} S \\
   \end{array} \right\}.
   \intertext{With a state vector consisting of two compartments $X =
-    [\#S,\#I]$, i.e., the number of susceptible and infected
+    [S,I]$, i.e., the number of susceptible and infected
     individuals, respectively, we can then write the transition matrix
     and intensity vector as}
   \label{eq:SIRstoich}
@@ -1216,12 +1217,13 @@ head(trajectory(model = result, node = 1))
 
 In this example, we will continue to work with the predefined
 \code{SIR} model to illustrate how demographic data can be
-incorporated into the simulation.  In order to process a scheduled
-event, the compartments that are involved must be defined in the
-select matrix \code{E}.  Moreover, all events must specify the column
-to \code{select} in \code{E}, where the non-zero entries in the
-specified column define the involved compartments.  For the predefined
-\code{SIR} model, \code{E} is defined as
+incorporated into a simulation.  In order for the numerical solver to
+process a scheduled event, the compartments that are involved in the
+event must be specified.  This is done by each event specifies one
+column in the select matrix \code{E} with the \code{select} attribute
+of the event.  The non-zero entries in the selected column in \code{E}
+specify the involved compartments.  For the predefined \code{SIR}
+model, \code{E} is defined as
 
 {\small
 \[
@@ -1236,32 +1238,63 @@ specified column define the involved compartments.  For the predefined
 
 This means that we can specify a scheduled event to operate on a
 single compartment (S, I or R) as well as an event that involves all
-three compartments.  Consider we have 4 scheduled events to include in
-a simulation.  Below is a \code{data.frame}, that contains the events.
+three compartments.  If more than one compartment is involved in an
+event, the individuals affected by the event will be sampled without
+replacment from the specified compartments.  The numerical solver will
+perform an extensive error checking of the event before it is
+processed.  An error will be raised if the event is invalid, for
+example, if the event tries to move more individuals than exists in
+the specified compartments.
+
+Consider we have 4 scheduled events to include in a simulation.  Below
+is a \code{data.frame}, that contains the events.
 
 <<SIR-events, echo=FALSE>>=
 events <- data.frame(
 event = c("enter", "extTrans", "exit", "enter"),
 time = c(2, 3, 4, 4), node = c(3, 1, 2, 1),
-dest = c(0, 3, 0, 0), n = c(5, 7, 3, 1),
-proportion = c(0, 0, 0, 0), select = c(1, 4, 4, 2),
+dest = c(0, 3, 0, 0), n = c(5, 7, 0, 1),
+proportion = c(0, 0, 0.2, 0), select = c(1, 4, 4, 2),
 shift = c(0, 0, 0, 0))
 @
 
 <<SIR-events-show>>=
 events
 @
+
 Interpret it as follows:
+
 \begin{enumerate}
 \itemsep0em
-\item In time step 2 we add 5 susceptible individuals to node 3
-\item In time step 3 we sample 7 individuals among the S, I and R
-  compartments in node 1 and move them to the corresponding
-  compartments in node 3
-\item In time step 4 we sample 3 individuals among the S, I and R
-  compartments in node 2 and remove them from node 2.
-\item In time step 4 we add 1 infected individual to node 2
+\item In time step 2 we add 5 susceptible individuals to node 3.
+\item In time step 3 we sample 7 individuals without replacement among
+  the S, I and R compartments in node 1 and move them to the
+  corresponding compartments in node 3.
+\item In time step 4 we sample 20\% of all individuals without
+  replacement among the S, I and R compartments in node 2 and remove
+  them from node 2.
+\item In time step 4 we add 1 infected individual to node 2.
 \end{enumerate}
+
+<<fig=TRUE>>=
+add <- data.frame(event = "enter", time = rep(1:10, each = 5),
+node = 1:5, dest = 0, n = 1:5, proportion = 0, select = 1, shift = 0)
+infect <- data.frame(event = "enter", time = 25, node = 5,
+dest = 0, n = 1, proportion = 0, select = 2, shift = 0)
+move <- data.frame(event = "extTrans", time = 35:45,
+node = c(5, 5, 5, 5, 4, 4, 4, 3, 3, 2, 1), dest = c(4, 3, 3, 1, 3,
+2, 1, 2, 1, 1, 2), n = 5, proportion = 0, select = 4, shift = 0)
+remove <- data.frame(event = "exit", time = c(70, 110),
+node = rep(1:5, each = 2), dest = 0, n = 0, proportion = 0.2,
+select = 4, shift = 0)
+events = rbind(add, infect, move, remove)
+u0 <- data.frame(S = rep(0, 5), I = rep(0, 5), R = rep(0, 5))
+model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
+gamma = 0.077)
+set.seed(3)
+result <- run(model, threads = 1)
+plot(result, node = 1:5, range = FALSE)
+@
 
 \subsubsection[C code for the SIR model]{%
   \proglang{C} code for the \code{SIR} model}
