@@ -1238,7 +1238,7 @@ model, \code{E} is defined as
 
 This means that we can specify a scheduled event to operate on a
 single compartment (S, I or R) as well as an event that involves all
-three compartments.  If more than one compartment is involved in an
+three compartments.  When several compartments are involved in an
 event, the individuals affected by the event will be sampled without
 replacment from the specified compartments.  The numerical solver will
 perform an extensive error checking of the event before it is
@@ -1277,10 +1277,10 @@ Interpret it as follows:
 \end{enumerate}
 
 Now, let us illustrate in a small example, consisting only of five
-nodes, how scheduled events can alter the composition of individual
-nodes during simulation.  Let us start with five empty nodes and then
-create some \textit{enter} events to add susceptible individuals to
-the nodes during the first ten time-steps.
+nodes, how scheduled events can alter the composition within nodes
+during simulation.  Let us start with five empty nodes and then create
+some \textit{enter} events to add susceptible individuals to the nodes
+during the first ten time-steps.
 
 <<SIR-u0-add>>=
 u0 <- data.frame(S = rep(0, 5), I = rep(0, 5), R = rep(0, 5))
@@ -1315,8 +1315,13 @@ node = rep(1:5, each = 2), dest = 0, n = 0, proportion = 0.2,
 select = 4, shift = 0)
 @
 
-Figure~\ref{fig:SIR-events} shows one realization after combining the
-events.
+Figure~\ref{fig:SIR-events} shows one realization of a model
+incorporating the events.  Here we observe two transmission processes
+on different scales.  First, the stochastic transmission process
+within each node.  Secondly, the between-node transmission due to
+movements.  Also stochastic, because of the random selection process
+that select susceptible, infected or recovered individuals to move
+between the nodes.
 
 <<eval=FALSE>>=
 events = rbind(add, infect, move, remove)
@@ -1327,33 +1332,63 @@ result <- run(model, threads = 1)
 plot(result, node = 1:5, range = FALSE)
 @
 
-\begin{figure}
-  \begin{center}
-<<SIR-events, echo=FALSE, fig=TRUE>>=
+<<SIR-events-I, echo=FALSE, results=hide>>=
 events = rbind(add, infect, move, remove)
-u0 <- data.frame(S = rep(0, 5), I = rep(0, 5), R = rep(0, 5))
 model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
 gamma = 0.077)
 set.seed(3)
 result <- run(model, threads = 1)
+pdf("SimInf-SIR-events-I.pdf", width = 10, height = 5)
 plot(result, node = 1:5, range = FALSE)
+dev.off()
 @
+
+<<SIR-events-II, echo=FALSE, results=hide>>=
+model_no_infected <- SIR(u0 = u0, tspan = 1:180,
+events = rbind(add, move, remove), beta = 0.16,
+gamma = 0.077)
+set.seed(3)
+result_no_infected <- run(model_no_infected, threads = 1)
+pdf("SimInf-SIR-events-II.pdf", width = 10, height = 5)
+plot(result_no_infected, node = 1:5, range = FALSE)
+dev.off()
+@
+
+\begin{figure}
+  \begin{center}
+  \includegraphics[width=0.49\linewidth]{SimInf-SIR-events-I.pdf}
+  \includegraphics[width=0.49\linewidth]{SimInf-SIR-events-II.pdf}
   \end{center}
-  \caption{One realization of a stochastic \code{SIR} model
-    incorporating scheduled events.  One infected individual was
-    introduced at $t = 25$.}
+  \caption{An \code{SIR} model in five nodes with scheduled events.
+    Left: One realization where susceptible individuals were added
+    during the first ten time-steps.  Then, one infected individual
+    was introduced at $t = 25$.  Further, some between-node movements
+    occurred between $t = 35$ and $t = 45$.  Finally, at $t = 70$ and
+    $t = 110$, twenty percent of the individuals were removed.  Right:
+    For comparison, the deterministic dynamics when not introducing an
+    infected individual.}
   \label{fig:SIR-events}
 \end{figure}
 
 We can use \code{replicate} (or similar) to generate many realizations
-from the model, together with some custom analysis of each trajectory.
-Here, we find that infection spread from the 5$^{th}$ node in about
-half of the trajectories.
+from a \code{SimInf_model} object, together with some custom analysis
+of each trajectory.  Here, we find that infection spread from the
+5$^{th}$ node in about half of \code{n = 1000} trajectories.
+
+<<echo=false, results=hide>>=
+options(continue = "+  ")
+@
 
 <<SIR-replicate>>=
 set.seed(123)
-mean(replicate(1000, sum(trajectory(run(model, threads = 1),
-node = 1:4)$I) > 0))
+mean(replicate(n = 1000, {
+  nI <- trajectory(run(model = model, threads = 1), node = 1:4)$I
+  sum(nI) > 0
+}))
+@
+
+<<echo=false, results=hide>>=
+options(continue = "+    ")
 @
 
 \subsubsection[C code for the SIR model]{%
