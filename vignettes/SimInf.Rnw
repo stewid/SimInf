@@ -46,27 +46,23 @@
 
 \Abstract{
 
-  Livestock are partioned into spatially segregated subpopulations
-  (farms).  Thus demography within each subpopulation and interactions
-  between subpopulations, for example, by livestock movements, can
-  affect transmission dynamics of a contagion.  The \proglang{R}
-  package \pkg{SimInf} provides an efficient and very flexible
-  framework to exploit rich livestock data in realistic large scale
-  disease spread simulations.  The framework integrates infection
-  dynamics in each subpopulation as continuous-time Markov chains
-  using the Gillespie stochastic simulation algorithm and incorporates
-  available data such as births, slaughter and livestock movements as
-  scheduled events.  A scheduled event is used to modify the state of
-  a subpopulation at a predefined time-point.  Using \proglang{C} code
-  for the numerical solvers and \proglang{OpenMP} to divide work over
-  multiple processors ensures high performance when simulating a
-  trajectory.  One of our design goal was to make \pkg{SimInf}
-  extendable and enable usage of the numerical solvers from other
-  \proglang{R} extension packages in order to facilitate complex
-  epidemiological research.  In this paper, we provide a technical
-  description of the framework and demonstrate some basic toy
-  examples.  We also discuss how to specify and extend the framework
-  with user-defined models.
+  We present the \proglang{R} package \pkg{SimInf} which provides an
+  efficient and very flexible framework to conduct data-driven
+  epidemiological modeling in realistic large scale disease spread
+  simulations. The framework integrates infection dynamics in
+  subpopulations as continuous-time Markov chains using the Gillespie
+  stochastic simulation algorithm and incorporates available data such
+  as births, slaughter and individual movements as scheduled events at
+  predefined time-points. Using \proglang{C} code for the numerical
+  solvers and \proglang{OpenMP} to divide work over multiple
+  processors ensures high performance when simulating a sample
+  outcomes. One of our design goal was to make \pkg{SimInf} extendable
+  and enable usage of the numerical solvers from other \proglang{R}
+  extension packages in order to facilitate complex epidemiological
+  research. In this paper, we provide a technical description of the
+  framework and demonstrate its use on some basic examples. We also
+  discuss how to specify and extend the framework with user-defined
+  models.
 
 }
 
