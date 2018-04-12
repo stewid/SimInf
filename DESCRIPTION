@@ -12,15 +12,20 @@ Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0003-4328-7171")),
              person("Attractive Chaos", role = "cph",
                     comment = "Author of 'kvec.h', a generic dynamic array"))
-Description: Livestock movements are important for the spread of many
-    infectious diseases between herds. The package provides an
-    efficient and flexible framework for stochastic disease spread
-    modelling that integrates within-herd disease dynamics as
-    continuous-time Markov chains and livestock movements between
-    herds as scheduled events. The core simulation solver is
-    implemented in C and uses 'OpenMP' (if available) to divide work
-    over multiple processors. The package contains template models and
-    can be extended with user defined models.
+Description: The package provides an efficient and very flexible
+    framework to conduct data-driven epidemiological modeling in
+    realistic large scale disease spread simulations. The framework
+    integrates infection dynamics in subpopulations as continuous-time
+    Markov chains using the Gillespie stochastic simulation algorithm
+    and incorporates available data such as births, slaughter and
+    individual movements as scheduled events at predefined
+    time-points. Using C code for the numerical solvers and 'OpenMP'
+    (if available) to divide work over multiple processors ensures
+    high performance when simulating a sample outcomes. One of our
+    design goal was to make the package extendable and enable usage of
+    the numerical solvers from other R extension packages in order to
+    facilitate complex epidemiological research. The package contains
+    template models and can be extended with user-defined models.
 Acknowledgements: This work was financially supported by the Swedish
     Research Council within the UPMARC Linnaeus center of Excellence
     (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the Swedish
