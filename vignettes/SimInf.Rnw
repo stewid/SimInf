@@ -1236,7 +1236,7 @@ This means that we can specify a scheduled event to operate on a
 single compartment (S, I or R) as well as an event that involves all
 three compartments.  When several compartments are involved in an
 event, the individuals affected by the event will be sampled without
-replacment from the specified compartments.  The numerical solver will
+replacement from the specified compartments.  The numerical solver will
 perform an extensive error checking of the event before it is
 processed.  And an error will be raised if the event is invalid, for
 example, if the event tries to move more individuals than exists in
@@ -1272,10 +1272,10 @@ Interpret it as follows:
 \item In time step 4 we add 1 infected individual to node 1.
 \end{enumerate}
 
-Now, let us illustrate in a small example, consisting only of five
+Now, let us illustrate with a small example, consisting only of five
 nodes, how scheduled events can alter the composition within nodes
-during simulation.  Let us start with five empty nodes and then create
-some \textit{enter} events to add susceptible individuals to the nodes
+during simulation.  Let us start with empty nodes and then create some
+\textit{enter} events to add susceptible individuals to each node
 during the first ten time-steps.
 
 <<SIR-u0-add>>=
@@ -1284,17 +1284,17 @@ add <- data.frame(event = "enter", time = rep(1:10, each = 5),
 node = 1:5, dest = 0, n = 1:5, proportion = 0, select = 1, shift = 0)
 @
 
-We then introduce one infected individual to the 5$^{th}$ node at $t =
-25$.
+We then create one \textit{enter} event to introduce an infected
+individual to the 5$^{th}$ node at $t = 25$.
 
 <<SIR-infect>>=
 infect <- data.frame(event = "enter", time = 25, node = 5,
 dest = 0, n = 1, proportion = 0, select = 2, shift = 0)
 @
 
-Additionally, we create interactions among the nodes with some
-movements during $t = 35$ to $t = 45$.  Each shipment contains $n = 5$
-individuals.
+Additionally, we create some \textit{external transfer} events to form
+interactions among the nodes with movements during $t = 35$ to $t =
+45$.  Each shipment contains $n = 5$ individuals.
 
 <<SIR-move>>=
 move <- data.frame(event = "extTrans", time = 35:45,
@@ -1302,8 +1302,8 @@ node = c(5, 5, 5, 5, 4, 4, 4, 3, 3, 2, 1), dest = c(4, 3, 3, 1, 3,
 2, 1, 2, 1, 1, 2), n = 5, proportion = 0, select = 4, shift = 0)
 @
 
-Finally, we remove 20\% of the individuals from each node at $t = 70$
-and $t = 110$.
+Finally, we create \textit{exit} events to remove 20\% of the
+individuals from each node at $t = 70$ and $t = 110$.
 
 <<SIR-remove>>=
 remove <- data.frame(event = "exit", time = c(70, 110),
@@ -1315,9 +1315,9 @@ Figure~\ref{fig:SIR-events} shows one realization of a model
 incorporating the events.  Here we observe two transmission processes
 on different scales.  First, the stochastic transmission process
 within each node.  Secondly, the between-node transmission due to
-movements.  Also stochastic, because of the random selection process
-that select susceptible, infected or recovered individuals to move
-between the nodes.
+movements.  Also stochastic, because of the sampling process that
+select susceptible, infected or recovered individuals to move between
+the nodes.
 
 <<eval=FALSE>>=
 events = rbind(add, infect, move, remove)
@@ -1358,10 +1358,10 @@ dev.off()
   \caption{An \code{SIR} model in five nodes with scheduled events.
     Left: One realization where susceptible individuals were added
     during the first ten time-steps.  Then, one infected individual
-    was introduced at $t = 25$.  Further, some between-node movements
-    occurred between $t = 35$ and $t = 45$.  Finally, at $t = 70$ and
-    $t = 110$, twenty percent of the individuals were removed.  Right:
-    For comparison, the deterministic dynamics when not introducing an
+    was introduced at $t = 25$.  Further, some movements occurred
+    between $t = 35$ and $t = 45$.  Finally, at $t = 70$ and $t =
+    110$, twenty percent of the individuals were removed.  Right: For
+    comparison, the deterministic dynamics when not introducing an
     infected individual.}
   \label{fig:SIR-events}
 \end{figure}
