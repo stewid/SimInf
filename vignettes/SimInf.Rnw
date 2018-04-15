@@ -543,23 +543,22 @@ However, if you install \pkg{SimInf} from source (from CRAN or a
 \code{.tar.gz} file), the installation process requires a \proglang{C}
 compiler, and that the GNU Scientific Library (GSL)
 \citep{Gallassi2009} is installed on your system and is in the path.
-Note that GSL (\url{https://www.gnu.org/software/gsl/}) is not an
-\proglang{R} add-on package, but needs to be installed separately, for
-example, from a terminal using: \code{'sudo apt-get install
-  libgsl0-dev'} on Debian and Ubuntu, \code{'sudo yum install
-  gsl-devel'} on Fedora, CentOS or RHEL, or \code{'brew install gsl'}
-on macOS with the Homebrew package manager.  On a Windows machine you
-first need to download and install Rtools from
-\url{https://cran.r-project.org/bin/windows/Rtools}.  The GSL files
-are downloaded, if needed, from \url{https://github.com/rwinlib/gsl}
-during the installation of \pkg{SimInf}.  Furthermore, when you
-install \pkg{SimInf} from source, depending on features of the
-compiler, the package is compiled with support for \proglang{OpenMP}
-\citep{OpenMP2008} to divide work over multiple processors and perform
-computations in parallel.  To find out more about installing
-\proglang{R} add-on packages in general, the \texttt{'R Installation
-  and Administration'} (\url{https://cran.r-project.org/manuals.html})
-manual describes the process in detail.  After installing the package
+On a Windows machine you first need to download and install Rtools
+from \url{https://cran.r-project.org/bin/windows/Rtools}.  Note that
+GSL (\url{https://www.gnu.org/software/gsl/}) is not an \proglang{R}
+add-on package, but needs to be installed separately, for example,
+from a terminal using: \code{'sudo apt-get install libgsl0-dev'} on
+Debian and Ubuntu, \code{'sudo yum install gsl-devel'} on Fedora,
+CentOS or RHEL, or \code{'brew install gsl'} on macOS with the
+Homebrew package manager.  On Windows, the GSL files are downloaded,
+if needed, from \url{https://github.com/rwinlib/gsl} during the
+installation of \pkg{SimInf}.  Furthermore, when you install
+\pkg{SimInf} from source, depending on features of the compiler, the
+package is compiled with support for \proglang{OpenMP}.  To find out
+more about installing \proglang{R} add-on packages in general, the
+\texttt{'R Installation and Administration'}
+(\url{https://cran.r-project.org/manuals.html}) manual describes the
+process in detail.  After installing the package
 
 <<install-SimInf, eval=FALSE>>=
 install.packages("SimInf")
