@@ -1082,24 +1082,7 @@ direct contact between susceptible and infected individuals.  The
   \end{array}
 \end{align}
 where $\beta$ is the transmission rate and $\gamma$ is the recovery
-rate.  The state change matrix \code{S} and the dependency graph
-\code{G} for the \code{SIR} model are defined as follows
-
-{\small
-\[
-\mathbf{S} =
-\bordermatrix{
-    & \enspace 1 & \enspace 2 \cr
-  S & -1 & \hphantom{-}0 \cr
-  I & \hphantom{-}1 & -1 \cr
-  R & \hphantom{-}0 & \hphantom{-}1} \qquad
-\mathbf{G} =
-\bordermatrix{
-                  & 1 & 2 \cr
-  S \rightarrow I & 1 & 1 \cr
-  I \rightarrow R & 1 & 1}
-\]
-}
+rate.
 
 To create an \code{SIR} model object, we need to define \code{u0}, a
 \code{data.frame} with the initial number of individuals in each
