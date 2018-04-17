@@ -575,7 +575,7 @@ The development version is available on GitHub
 However, if you install \pkg{SimInf} from source (from CRAN or a
 \code{.tar.gz} file), the installation process requires a \proglang{C}
 compiler, and that the GNU Scientific Library (GSL)
-\citep{Gallassi2009} is installed on your system and is in the path.
+\citep{Gallassi2009} is installed on your system and is on the path.
 On a Windows machine you first need to download and install Rtools
 from \url{https://cran.r-project.org/bin/windows/Rtools}.  Note that
 GSL (\url{https://www.gnu.org/software/gsl/}) is not an \proglang{R}
@@ -1115,17 +1115,15 @@ direct contact between susceptible and infected individuals.  The
   \end{array}
 \end{align}
 where $\beta$ is the transmission rate and $\gamma$ is the recovery
-rate.
-
-To create an \code{SIR} model object, we need to define \code{u0}, a
-\code{data.frame} with the initial number of individuals in each
-compartment when the simulation starts.  Let us consider a node with
-999 susceptible, 1 infected and 0 recoverd individuals.  Since there
-are no between-node interactions in this example, the stochastic
-process in one node does not affect any other nodes in the model.
-Consequently, it is straightforward to run many realizations of this
-model, simply by replicating a node in \code{u0}, for example, \code{n
-  = 1000} times.
+rate.  To create an \code{SIR} model object, we need to define
+\code{u0}, a \code{data.frame} with the initial number of individuals
+in each compartment when the simulation starts.  Let us consider a
+node with 999 susceptible, 1 infected and 0 recoverd individuals.
+Since there are no between-node interactions in this example, the
+stochastic process in one node does not affect any other nodes in the
+model.  Consequently, it is straightforward to run many realizations
+of this model, simply by replicating a node in \code{u0}, for example,
+\code{n = 1000} times.
 
 <<SIR-u0>>=
 n <- 1000
@@ -1465,10 +1463,9 @@ holdings $i$ and $k$.  The seasonal decay and removal of the pathogen
 is captured by $\beta$.  When running a trajectory of the
 \code{SISe3\_sp} model, the environmental infectious pressure
 $\varphi_i(t)$ in each node is evolved in the post-time-step function
-by the Euler forward method.  We refer to 'src/models/SISe3\_sp.c' in
-the package for the \proglang{C} code.  The value of $\varphi_i(t)$ is
-saved to the \code{V} matrix at the time-points specified by
-\code{tspan}.
+by the Euler forward method (see the file 'src/models/SISe3\_sp.c' for
+the \proglang{C} code).  The value of $\varphi_i(t)$ is saved to the
+\code{V} matrix at the time-points specified by \code{tspan}.
 
 \begin{figure}
   \begin{center}
@@ -1489,45 +1486,6 @@ saved to the \code{V} matrix at the time-points specified by
     equation and by default evolved by the Euler forward
     method.  \label{fig:SISe3_sp}}
 \end{figure}
-
-\subsubsection[Illustration of the stochastic step in the SISe3_sp model]{%
-  Illustration of the stochastic step in the \code{SISe3\_sp} model}
-
-To illustrate the stochastic step in Equation~\ref{eq:numstep3},
-consider that the number of individuals in each compartment in node
-$i$ \code{u[, i]} at time $t$ is $\{12, 3, 63, 14, 92, 2\}$ and that
-the time to the next state transition is $\tau_i$.  Furthermore,
-assume that the next state transition is infected to susceptible in
-the first age category which corresponds to the second column in the
-state change matrix \code{S}.  Thus, updating the compartments
-corresponds to adding \code{S[, 2]} to \code{u[, i]}, which gives
-$\{13, 2, 63, 14, 92, 2\}$.  This also implies that the transition
-rates for the two transitions $S_{i,1} \rightarrow I_{i,1}$ and
-$I_{i,1} \rightarrow S_{i,1}$ must be recalculated according to
-\code{G[, 2]}.
-
-{\small
-\[
-\mathbf{S} =
-\bordermatrix{
-      & \enspace 1 & \enspace 2 & \enspace 3 & \enspace 4 & \enspace 5 & \enspace 6 \cr
-  S_1 & -1 & \hphantom{-}1 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 \cr
-  I_1 & \hphantom{-}1 & -1 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 \cr
-  S_2 & \hphantom{-}0 & \hphantom{-}0 & -1 & \hphantom{-}1 & \hphantom{-}0 & \hphantom{-}0 \cr
-  I_2 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}1 & -1 & \hphantom{-}0 & \hphantom{-}0 \cr
-  S_3 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & -1 & \hphantom{-}1 \cr
-  I_3 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}0 & \hphantom{-}1 & -1 } \qquad
-\mathbf{G} =
-\bordermatrix{
-                      & 1 & 2 & 3 & 4 & 5 & 6 \cr
-  S_1 \rightarrow I_1 & 1 & 1 & 0 & 0 & 0 & 0 \cr
-  I_1 \rightarrow S_1 & 1 & 1 & 0 & 0 & 0 & 0 \cr
-  S_2 \rightarrow I_2 & 0 & 0 & 1 & 1 & 0 & 0 \cr
-  I_2 \rightarrow S_2 & 0 & 0 & 1 & 1 & 0 & 0 \cr
-  S_3 \rightarrow I_3 & 0 & 0 & 0 & 0 & 1 & 1 \cr
-  I_3 \rightarrow S_3 & 0 & 0 & 0 & 0 & 1 & 1 }
-\]
-}
 
 \subsubsection[Specification of scheduled events in the SISe3_sp model]{%
   Specification of scheduled events in the \code{SISe3\_sp} model}
