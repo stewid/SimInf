@@ -26,8 +26,9 @@ vector.}
 \code{\link{SimInf_model}}.}
 
 \item{phi}{A numeric vector with the initial environmental
-infectious pressure in each node. Default NULL which gives 0 in
-each node.}
+infectious pressure in each node. Will be repeated to the
+length of nrow(u0). Default is NULL which gives 0 in each
+node.}
 
 \item{upsilon_1}{Indirect transmission rate of the environmental
 infectious pressure in age category 1}

@@ -39,9 +39,7 @@ setClass("SISe", contains = c("SimInf_model"))
 ##' @template u0-param
 ##' @template tspan-param
 ##' @template events-param
-##' @param phi A numeric vector with the initial environmental
-##'     infectious pressure in each node. Default NULL which gives 0
-##'     in each node.
+##' @template phi-param
 ##' @param upsilon Indirect transmission rate of the environmental
 ##'     infectious pressure
 ##' @param gamma The recovery rate from infected to susceptible
@@ -82,7 +80,8 @@ SISe <- function(u0,
 
     ## Check initial infectious pressure
     if (is.null(phi))
-        phi <- rep(0, nrow(u0))
+        phi <- 0
+    phi <- rep(phi, length.out = nrow(u0))
     check_infectious_pressure_arg(nrow(u0), phi)
 
     ## Check for non-numeric parameters
