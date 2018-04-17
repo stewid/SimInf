@@ -1249,8 +1249,8 @@ This means that we can specify a scheduled event to operate on a
 single compartment (S, I or R) as well as an event that involves all
 three compartments.  When several compartments are involved in an
 event, the individuals affected by the event will be sampled without
-replacement from the specified compartments.  The numerical solver will
-perform an extensive error checking of the event before it is
+replacement from the specified compartments.  The numerical solver
+performs an extensive error checking of the event before it is
 processed.  And an error will be raised if the event is invalid, for
 example, if the event tries to move more individuals than exists in
 the specified compartments.
@@ -1417,24 +1417,24 @@ Appendix~\ref{sec:C-code-SIR}) and the post time step function
 
 Here we will present an example to illustrate how local data and
 \textit{internal transfer} events can be used to formulate more
-complex models.  Furthermore, we will also introduce the
-\code{prevalence()} method, another important function to post-process
-trajectories.  For this, we will use the predefined \code{SISe3\_sp}
-model that was developed to study spread of VTEC in cattle
-\citep{Widgren2018}.  Briefly, a VTEC infection in cattle can be
-formulated as a susceptible-infected-susceptible (SIS) model.
-However, previous modeling of VTEC in a cattle has shown that it is
-important to consider age structure \citep{Turner2006}, within and
-between-node transmission via the environment \citep{Ayscue2009,
-  Zhang2010}, ambient temperature \citep{Gautam2011}, herd size and
-between-herd spread from livestock movements \citep{Zhang2010}.
-Therefore, the SIS model was divided into three age categories $j =
-\{1, 2, 3\}$.  Additionally, an environmental compartment (\code{e})
-was added to model the contamination of VTEC in each node from
-infected cattle shedding the pathogen into the environment.  Moreover,
-to have between-node spread unrelated to moving infected animals, a
-spatial coupling of the environmental contamination among proximal
-nodes was included (\code{sp}).  Consequently, the model has two state
+complex models.  Moreover, we will introduce the \code{prevalence()}
+method, another important function for post-processing trajectories.
+For this, we will use the predefined \code{SISe3\_sp} model that was
+developed to study spread of VTEC in cattle \citep{Widgren2018}.
+Briefly, a VTEC infection in cattle can be formulated as a
+susceptible-infected-susceptible (SIS) model.  However, previous
+modeling of VTEC in a cattle has shown that it is important to
+consider age structure \citep{Turner2006}, within and between-node
+transmission via the environment \citep{Ayscue2009, Zhang2010},
+ambient temperature \citep{Gautam2011}, herd size and between-herd
+spread from livestock movements \citep{Zhang2010}.  Therefore, the SIS
+model was divided into three age categories $j = \{1, 2, 3\}$.
+Additionally, an environmental compartment (\code{e}) was added to
+model the contamination of VTEC in each node from infected cattle
+shedding the pathogen into the environment.  Moreover, to have
+between-node spread unrelated to moving infected animals, a spatial
+coupling of the environmental contamination among proximal nodes was
+included (\code{sp}).  Consequently, the model has two state
 transitions within each of the three age categories,
 \begin{align}
 \label{eq:vtectrans}
@@ -1792,15 +1792,15 @@ shift = 1)
 @
 
 To simulate from this model, we have to define the select matrix $E$
-and the shift matrix $N$, to handle which compartments to sample from
-when processing scheduled events.  Let us first define $E$, where the
-first column is for \textit{enter} events (births); add newborn
-animals to the susceptible compartment $S$.  The second column is for
-\textit{exit} events (deaths) and \textit{external transfer} events
-(livestock movements); sample animals from the $S$, $I$, $R$ or $V$
-compartments.  Finally, the third column is for \textit{internal
-  transfer} events (vaccination); sample individuals from the $S$, $I$
-or $R$ compartments.  Then define the shift matrix $N$ to process
+to specify which compartments to operate on when processing a
+scheduled event.  The first column is for \textit{enter} events
+(births); add newborn animals to the susceptible compartment $S$.  The
+second column is for \textit{exit} events (deaths) and
+\textit{external transfer} events (livestock movements); sample
+animals from the $S$, $I$, $R$ or $V$ compartments.  Finally, the
+third column is for \textit{internal transfer} events (vaccination);
+sample individuals from the $S$, $I$ or $R$ compartments.
+Furthermore, we define the shift matrix $N$ to process
 \textit{internal transfer} events (vaccination); move sampled animals
 from the $S$ compartment four steps forward to the $V$ compartment.
 Similarly, move sampled animals from the $I$ compartment three steps
@@ -1838,7 +1838,7 @@ dimnames = list(c("S", "I", "Icum", "R", "V"), "1"))
 
 Now let us create an \code{epicurve} function to estimate the average
 number of new cases per day from \code{n = 1000} realizations in a
-\code{for}-loop and simulate a trajectory at a time.  To clear
+\code{for}-loop and simulate one trajectory at a time.  To clear
 infection that was introduced in the previous trajectory, animals are
 first moved to the susceptible compartment.  Then, one infected
 individual is introduced into a randomly sampled node from the
@@ -2065,9 +2065,9 @@ set.seed(123)
 result <- run(model, threads = 1)
 @
 
-Because the \code{PredatorPrey} model contains the \code{SimInf_model}
-class, it can make use of utility functions provided in the
-\pkg{SimInf} package, for example, \code{show}.
+Because a \code{PredatorPrey} object contains the \code{SimInf_model}
+class, it can make use of all utility functions provided in the
+\pkg{SimInf} package, for example, \code{show()}.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -2098,10 +2098,9 @@ Compartments
 \end{Soutput}
 \end{Schunk}
 
-Or the \code{trajectory} method, for example, to plot the phase plane
-from 1000 realizations and to extract the simulated data from the
-fourh node (use \code{node = 4}) to illustrate stochastic extinction of
-the predators (Figure~\ref{fig:predator-prey}).
+Or the \code{trajectory()} method, for example, to plot the phase
+plane from 1000 realizations or to illustrate stochastic extinction of
+the predators in the fourth node (Figure~\ref{fig:predator-prey}).
 
 <<predator-prey-plot, eval=FALSE>>=
 opar <- par(mfrow = c(1, 2))
