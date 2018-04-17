@@ -47,17 +47,21 @@ in interval 3.}
 \item{beta_t4}{The decay of the environmental infectious pressure
 in interval 4.}
 
-\item{end_t1}{The non-inclusive day of the year that ends interval
-1.}
+\item{end_t1}{vector with the non-inclusive day of the year that
+ends interval 1 in each node. Will be repeated to the length
+of nrow(u0).}
 
-\item{end_t2}{The non-inclusive day of the year that ends interval
-2.}
+\item{end_t2}{vector with the non-inclusive day of the year that
+ends interval 2 in each node. Will be repeated to the length
+of nrow(u0).}
 
-\item{end_t3}{The non-inclusive day of the year that ends interval
-3.}
+\item{end_t3}{vector with the non-inclusive day of the year that
+ends interval 3 in each node. Will be repeated to the length
+of nrow(u0).}
 
-\item{end_t4}{The non-inclusive day of the year that ends interval
-4.}
+\item{end_t4}{vector with the non-inclusive day of the year that
+ends interval 4 in each node. Will be repeated to the length
+of nrow(u0).}
 
 \item{coupling}{The coupling between neighboring nodes}
 

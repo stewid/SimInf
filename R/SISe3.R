@@ -108,14 +108,10 @@ SISe3 <- function(u0,
 
     ## Check interval endpoints
     check_integer_arg(end_t1, end_t2, end_t3, end_t4)
-    if (identical(length(end_t1), 1L))
-        end_t1 <- rep(end_t1, nrow(u0))
-    if (identical(length(end_t2), 1L))
-        end_t2 <- rep(end_t2, nrow(u0))
-    if (identical(length(end_t3), 1L))
-        end_t3 <- rep(end_t3, nrow(u0))
-    if (identical(length(end_t4), 1L))
-        end_t4 <- rep(end_t4, nrow(u0))
+    end_t1 <- rep(end_t1, length.out = nrow(u0))
+    end_t2 <- rep(end_t2, length.out = nrow(u0))
+    end_t3 <- rep(end_t3, length.out = nrow(u0))
+    end_t4 <- rep(end_t4, length.out = nrow(u0))
     check_end_t_arg(nrow(u0), end_t1, end_t2, end_t3, end_t4)
 
     ## Arguments seem ok...go on
