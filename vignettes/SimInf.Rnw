@@ -222,11 +222,13 @@ simulates spread between individuals through a contact network.
 
 The remainder of this paper is organized as follows.  In
 \S\ref{sec:modeling} we summarize the mathematical foundation for our
-framework.  Section \S\ref{sec:framework} gives a technical
-description of the simulation framework.  In \S\ref{sec:examples} we
-illustrate the use of the package by some worked examples.  Finally,
-in \S\ref{sec:extend} we demonstrate how to extend \pkg{SimInf} with
-user-defined models.
+framework. Section \S\ref{sec:framework} gives a technical description
+of the simulation framework. In \S\ref{sec:examples} we illustrate the
+use of the package by some worked examples. In \S\ref{sec:extend} we
+demonstrate how to extend \pkg{SimInf} with user-defined models.
+Finally, in \S\ref{sec:benchmark} we provide a small benchmark between
+various \proglang{R} packages of the run-time to simulate SSA
+trajectories.
 
 %**************************************************************************
 
@@ -1424,9 +1426,9 @@ developed to study spread of VTEC in cattle \citep{Widgren2018}.
 Briefly, a VTEC infection in cattle can be formulated as a
 susceptible-infected-susceptible (SIS) model.  However, previous
 modeling of VTEC in a cattle has shown that it is important to
-consider age structure \citep{Turner2006}, within and between-node
+consider age structure \citep{Turner2006}, within and between-farm
 transmission via the environment \citep{Ayscue2009, Zhang2010},
-ambient temperature \citep{Gautam2011}, herd size and between-herd
+ambient temperature \citep{Gautam2011}, herd size and between-farm
 spread from livestock movements \citep{Zhang2010}.  Therefore, the SIS
 model was divided into three age categories $j = \{1, 2, 3\}$.
 Additionally, an environmental compartment (\code{e}) was added to
@@ -2113,6 +2115,50 @@ lines(F ~ time, trajectory(model = result, node = 4), type = "l", lty = 2)
 legend("right", c("Prey", "Predator"), lty = 1:2)
 par(opar)
 @
+
+%**************************************************************************
+
+\section{Benchmark}
+\label{sec:benchmark}
+
+A comprehensive analysis of the performance of the numerical solver in
+\pkg{SimInf} is presented by \citet{Bauer2016}.  Here, we provide a
+small benchmark of the run-time of an SIR model using three
+\proglang{R} packages on CRAN.  The measurements were obtained on a
+ThinkPad T460p, Intel core i7-6700HQ quad-core at 2.6GHz , 8GB 2133MHz
+RAM, running Fedora 27 and using \proglang{R} version 3.4.3.  Ten
+replicates were performed and average run-time was estimated to
+generate 1,000 realizations of an SIR model with parameters $\beta =
+0.16$ and $\gamma = 0.077$ and initial conditions $S = 1000$, $I = 10$
+and $R = 0$.  As shown in Table~\ref{table:benchmark}, the
+implementation in \pkg{SimInf} appears to run over ten times faster
+than \pkg{adaptivtau}.  This difference probably depends on
+\pkg{adaptivetau} using a hybrid \proglang{R}/\proglang{C++}
+implementation with \proglang{R} code for the transition rate
+functions while \pkg{SimInf} uses \proglang{C} code.  To reduce
+run-time further, \pkg{SimInf} has built-in support to perform
+computations in parallel.  As expected, \pkg{GillespieSSA} has the
+longest run-time since it has an implementation in pure \proglang{R}.
+
+\begin{table*}[!ht]
+  \small
+  \center
+  \begin{tabular}{l l c r}
+    \toprule \proglang{R} package & Method & Threads & Time [ms]\\
+    \midrule
+    \pkg{SimInf} & Direct SSA & 4 &  57 \\
+    \pkg{SimInf} & Direct SSA & 2 & 106 \\
+    \pkg{SimInf} & Direct SSA & 1 & 198 \\
+    \pkg{adaptivetau} & Tau-leaping & 1 & 2840 \\
+    \pkg{adaptivetau} & Direct SSA & 1 & 9032 \\
+    \pkg{GillespieSSA} & Tau-leaping & 1 & 30681 \\
+    \pkg{GillespieSSA} & Direct SSA & 1 & 106091 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Comparison of the average run-time for generating 1000
+    realizations of an SIR model.}
+  \label{table:benchmark}
+\end{table*}
 
 %**************************************************************************
 
