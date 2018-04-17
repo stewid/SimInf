@@ -125,6 +125,7 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
+set.seed(123)
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
@@ -137,6 +138,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
+    set.seed(123)
     result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
@@ -817,6 +819,7 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
+set.seed(123)
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
@@ -828,6 +831,7 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
+    set.seed(123)
     result_omp <- run(model, threads = 2)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
