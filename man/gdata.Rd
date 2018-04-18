@@ -2,12 +2,12 @@
 % Please edit documentation in R/SimInf_model.R
 \name{gdata}
 \alias{gdata}
-\title{Extract the global data parameters from a \code{SimInf_model} object}
+\title{Extract global data from a \code{SimInf_model} object}
 \usage{
 gdata(model)
 }
 \arguments{
-\item{model}{The \code{model} to get global model parameters from.}
+\item{model}{The \code{model} to get global data from.}
 }
 \value{
 a numeric vector

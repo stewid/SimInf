@@ -2115,12 +2115,12 @@ select_matrix <- function(model)
     model
 }
 
-##' Extract the global data parameters from a \code{SimInf_model} object
+##' Extract global data from a \code{SimInf_model} object
 ##'
 ##' The global data is a numeric vector that is common to all nodes.
 ##' The global data vector is passed as an argument to the transition
 ##' rate functions and the post time step function.
-##' @param model The \code{model} to get global model parameters from.
+##' @param model The \code{model} to get global data from.
 ##' @return a numeric vector
 ##' @export
 ##' @examples
@@ -2187,4 +2187,41 @@ gdata <- function(model)
     model@gdata[parameter] <- value
 
     model
+}
+
+##' Extract local data from a node
+##'
+##' The local data is a numeric vector that is specific to a node.
+##' The local data vector is passed as an argument to the transition
+##' rate functions and the post time step function.
+##' @param model The \code{model} to get local data from.
+##' @param node index to node to extract local data from.
+##' @return a numeric vector
+##' @export
+##' @examples
+##' ## Create an 'SISe' model with 1600 nodes.
+##' model <- SISe(u0 = u0_SISe(), tspan = 1:100, events = events_SISe(),
+##'               phi = 0, upsilon = 1.8e-2, gamma = 0.1, alpha = 1,
+##'               beta_t1 = 1.0e-1, beta_t2 = 1.0e-1, beta_t3 = 1.25e-1,
+##'               beta_t4 = 1.25e-1, end_t1 = c(91, 101), end_t2 = c(182, 185),
+##'               end_t3 = c(273, 275), end_t4 = c(365, 360), epsilon = 0)
+##'
+##' ## Display local data from the first two nodes.
+##' ldata(model, node = 1)
+##' ldata(model, node = 2)
+ldata <- function(model, node)
+{
+    ## Check model argument
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+
+    ## Check node argument
+    if (missing(node))
+        stop("Missing 'node' argument")
+    if (!is.numeric(node) || !identical(length(node), 1L) || node < 1)
+        stop("Invalid 'node' argument")
+
+    model@ldata[, node]
 }

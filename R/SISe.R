@@ -158,9 +158,8 @@ SISe <- function(u0,
 ##' u0$I[1] <- 1
 ##' tspan <- seq(from = 1, to = 4*365, by = 1)
 ##' model <- SISe(u0 = u0, tspan = tspan, events = events_SISe(),
-##'               phi = rep(0, nrow(u0)), upsilon = 1.8e-2,
-##'               gamma = 0.1, alpha = 1, beta_t1 = 1.0e-1,
-##'               beta_t2 = 1.0e-1, beta_t3 = 1.25e-1,
+##'               phi = 0, upsilon = 1.8e-2, gamma = 0.1, alpha = 1,
+##'               beta_t1 = 1.0e-1, beta_t2 = 1.0e-1, beta_t3 = 1.25e-1,
 ##'               beta_t4 = 1.25e-1, end_t1 = 91, end_t2 = 182,
 ##'               end_t3 = 273, end_t4 = 365, epsilon = 0)
 ##'
@@ -211,11 +210,10 @@ events_SISe <- function() {
 ##' ## deaths and between-node movements of individuals.
 ##' events <- events_SISe()
 ##'
-##' ## Create a 'SISe' model
-##' model <- SISe(u0 = u0, tspan = tspan, events = events,
-##'               phi = rep(0, nrow(u0)), upsilon = 1.8e-2,
-##'               gamma = 0.1, alpha = 1, beta_t1 = 1.0e-1,
-##'               beta_t2 = 1.0e-1, beta_t3 = 1.25e-1,
+##' ## Create an 'SISe' model
+##' model <- SISe(u0 = u0, tspan = tspan, events = events_SISe(),
+##'               phi = 0, upsilon = 1.8e-2, gamma = 0.1, alpha = 1,
+##'               beta_t1 = 1.0e-1, beta_t2 = 1.0e-1, beta_t3 = 1.25e-1,
 ##'               beta_t4 = 1.25e-1, end_t1 = 91, end_t2 = 182,
 ##'               end_t3 = 273, end_t4 = 365, epsilon = 0)
 ##'
