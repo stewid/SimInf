@@ -1394,44 +1394,41 @@ transition rate functions (Listing~\ref{lst:trSIR} in
 Appendix~\ref{sec:C-code-SIR}) and the post time step function
 (Listing~\ref{lst:ptsSIR} in Appendix~\ref{sec:C-code-SIR}).
 
-\subsection[A second example: The SISe3_sp model]{%
-  A second example: The \code{SISe3\_sp} model}
-\label{sec:example-SISe3_sp}
+\subsection[A second example: The SISe_sp model]{%
+  A second example: The \code{SISe\_sp} model}
+\label{sec:example-SISe_sp}
 
-Here we will present an example to illustrate how local data and
-\textit{internal transfer} events can be used to formulate more
-complex models.  Moreover, we will introduce the \code{prevalence()}
-method, another important function for post-processing trajectories.
-For this, we will use the predefined \code{SISe3\_sp} model that was
-developed to study spread of VTEC in cattle \citep{Widgren2018}.
-Briefly, a VTEC infection in cattle can be formulated as a
-susceptible-infected-susceptible (SIS) model.  However, previous
-modeling of VTEC in a cattle has shown that it is important to
-consider age structure \citep{Turner2006}, within and between-farm
-transmission via the environment \citep{Ayscue2009, Zhang2010},
-ambient temperature \citep{Gautam2011}, herd size and between-farm
-spread from livestock movements \citep{Zhang2010}.  Therefore, the SIS
-model was divided into three age categories $j = \{1, 2, 3\}$.
-Additionally, an environmental compartment (\code{e}) was added to
-model the contamination of VTEC in each node from infected cattle
-shedding the pathogen into the environment.  Moreover, to have
-between-node spread unrelated to moving infected animals, a spatial
-coupling of the environmental contamination among proximal nodes was
-included (\code{sp}).  Consequently, the model has two state
-transitions within each of the three age categories,
+Here we will illustrate the use of local data (\code{ldata}) and
+continuous state variables (\code{V}) to formulate a more complex
+model with variables obeying ODEs.  Moreover, we will introduce the
+\code{prevalence()} method, another important function for
+post-processing trajectories.  Let us consider VTEC in cattle for this
+example. Briefly, a VTEC infection in cattle can be formulated as a
+susceptible-infected-susceptible (SIS) compartment model.  However,
+previous modeling has shown that it is important to consider within
+and between-farm transmission via the environment \citep{Ayscue2009,
+  Zhang2010}, ambient temperature \citep{Gautam2011}, herd size and
+between-farm spread from livestock movements \citep{Zhang2010}.
+Therefore, let us use the predefined \code{SISe\_sp} model.  It
+contains an environmental compartment to model shedding of a pathogen
+to the environment.  Moreover, it also includes a spatial coupling of
+the environmental contamination among proximal nodes to capture
+between-node spread unrelated to moving infected individuals.
+Consequently, the model has two state transitions,
 \begin{align}
 \label{eq:vtectrans}
 \begin{array}{rcl}
-  S_{ij} & \xrightarrow{\upsilon_j \varphi_i} & I_{ij}, \\
-  I_{ij} & \xrightarrow{\gamma_j} & S_{ij},
+  S_i & \xrightarrow{\upsilon \varphi_i} & I_i, \\
+  I_i & \xrightarrow{\gamma} & S_i,
   \end{array}
 \end{align}
-where the state transition from susceptible to infected depends on the
-concentration of the environmental contamination $\varphi_i(t)$ of the
-pathogen in node $i$ and the indirect transmission rate $\upsilon_j$.
-Moreover, the state transition from infected to susceptible depends on
-the recovery rate $\gamma_j$.  Finally, the environmental infectious
-pressure is evolved by
+where the state transition per unit of time from susceptible to
+infected depends on the concentration of the environmental
+contamination $\varphi_i(t)$ in node $i$ and the indirect transmission
+rate $\upsilon$.  Moreover, the state transition from infected to
+susceptible depends on the recovery rate $\gamma$ per individual and
+unit of time.  Finally, the environmental infectious pressure is
+evolved by
 \begin{equation}
   \label{eq:envInfPressure-local-spread}
   \frac{d \varphi_i(t)}{dt}= \frac{\alpha I_i(t)}{N_i(t)} +
