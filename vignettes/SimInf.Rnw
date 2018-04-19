@@ -1436,120 +1436,150 @@ evolved by
     \cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t),
 \end{equation}
 where the $\alpha$ is the average shedding rate of the pathogen to the
-environment per infected individual, and $N_i = S_i + I_i$ the size of
+environment per infected individual and $N_i = S_i + I_i$ the size of
 node $i$.  Next comes the spatial coupling among proximal nodes, where
 $D$ is the rate of the local spread and $d_{ik}$ the distance between
 holdings $i$ and $k$.  The seasonal decay and removal of the pathogen
-is captured by $\beta$.  When running a trajectory of the
-\code{SISe3\_sp} model, the environmental infectious pressure
+is captured by $\beta(t)$.  The environmental infectious pressure
 $\varphi_i(t)$ in each node is evolved in the post-time-step function
-by the Euler forward method (see the file 'src/models/SISe3\_sp.c' for
+by the Euler forward method (see the file 'src/models/SISe\_sp.c' for
 the \proglang{C} code).  The value of $\varphi_i(t)$ is saved to the
 \code{V} matrix at the time-points specified by \code{tspan}.
 
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.70\linewidth]{img/SISe3_sp.pdf}
-  \end{center}
-  \caption{Schematic representation of the \code{SISe3\_sp}
-    compartment model in two nodes.  The \code{SISe3\_sp} model is
-    defined by the two disease states susceptible (S) and infected (I)
-    in three age categories and indirect transmission via an
-    environmental infectious pressure $\varphi_i$.  \textit{i)} State
-    transitions between the $S$ and $I$ compartments are modeled as a
-    continuous-time discrete-state Markov process.  The other state
-    transitions are due to scheduled events: \textit{ii)}
-    \textit{enter} events, \textit{iii)} \textit{internal transfer}
-    events, \textit{iv)} \textit{external transfer} events, and
-    \textit{v)} \textit{exit} events.  The environmental infectious
-    pressure $\varphi_i$ is modeled with an ordinary differential
-    equation and by default evolved by the Euler forward
-    method.  \label{fig:SISe3_sp}}
-\end{figure}
+Let us use a synthetic dataset of 1600 farms located within a 50
+square kilometer region.  Load the data with the following commands
 
-\subsubsection[Specification of scheduled events in the SISe3_sp model]{%
-  Specification of scheduled events in the \code{SISe3\_sp} model}
-
-The \code{SISe3\_sp} model have been specified to handle births,
-imports, ageing, moving and exits of individuals
-(Table~\ref{table:SISe3_sp:events} in
-Appendix~\ref{sec:illustration-scheduled-events}).  When individuals
-enter the model (births, imports), they are added to the susceptible
-state in the age category specified by column 1, 2 or 3 in \code{E}.
-The columns 4, 5 and 6 in \code{E} are used for the other events
-(ageing, moving, exit) to sample individuals from the susceptible and
-infected states from each of the three ages categories.  To move the
-sampled individuals in a \textit{internal transfer} event (ageing)
-from age category 1 to age category 2, the susceptible and infected
-states should shift two steps to the corresponding state in age
-category 2, as specified in \code{N[, 1]}.  Similarly, \code{N[, 2]}
-move susceptible and infected individuals from age category 2 to age
-category 3.
-
-{\small
-\[
-\mathbf{E} =
-\bordermatrix{
-      & 1 & 2 & 3 & 4 & 5 & 6 \cr
-  S_1 & 1 & 0 & 0 & 1 & 0 & 0 \cr
-  I_1 & 0 & 0 & 0 & 1 & 0 & 0 \cr
-  S_2 & 0 & 1 & 0 & 0 & 1 & 0 \cr
-  I_2 & 0 & 0 & 0 & 0 & 1 & 0 \cr
-  S_3 & 0 & 0 & 1 & 0 & 0 & 1 \cr
-  I_3 & 0 & 0 & 0 & 0 & 0 & 1 } \qquad
-\mathbf{N} =
-\bordermatrix{
-      & \enspace 1 & \enspace 2 & \enspace 3 \cr
-  S_1 & \hphantom{-}2 & \hphantom{-}0 &  \hphantom{-}0  \cr
-  I_1 & \hphantom{-}2 & \hphantom{-}0 & -1 \cr
-  S_2 & \hphantom{-}0 & \hphantom{-}2 &  \hphantom{-}0 \cr
-  I_2 & \hphantom{-}0 & \hphantom{-}2 & -1 \cr
-  S_3 & \hphantom{-}0 & \hphantom{-}0 &  \hphantom{-}0 \cr
-  I_3 & \hphantom{-}0 & \hphantom{-}0 & -1 }
-\]
-}
-
-\subsubsection[Case study using the SISe3_sp model]{%
-  Case study using the \code{SISe3\_sp} model}
-
-Let us now demonstrate how to construct and use the \code{SISe3\_sp}
-model using a synthetic dataset of 1600 farms located in a 50 square
-kilometer region.  Load the \code{data.frame} data with the following
-commands
-
-<<load-SISe3sp-data>>=
+<<load-SISe_sp-data>>=
 data("nodes", package = "SimInf")
-data("u0_SISe3", package = "SimInf")
-data("events_SISe3", package = "SimInf")
+u0 <- u0_SISe()
+events <- events_SISe()
 @
 
-where the location of each farm is in \code{nodes} , \code{u0\_SISe3}
-defines the initial cattle population divided into three age
-categories (0 days $\le S_1,I_1 <$ 120 days, 120 days $\le S_2,I_2 <$
-365 days and $S_3, I_3 \ge$ 365 days) and finally,
-\code{events\_SISe3} contains four years of scheduled events data.
-Let proximal neighbors in
-Equation~\ref{eq:envInfPressure-local-spread} be defined as neighbors
-within 2500m and use the utility function \code{distance\_matrix()} to
-estimate the distance between nodes within that cutoff.
+where the location of each farm is in \code{nodes}, \code{u0} defines
+the initial cattle population and \code{events} contains four years of
+scheduled events data (births, deaths and movements).  Moreover, let us
+define proximal neighbors as neighbors within 2500m and use the
+utility function \code{distance\_matrix()} to estimate the distance
+between farms within that cutoff.
 
-<<load-nodes>>=
+<<distance-matrix>>=
 d_ik <- distance_matrix(x = nodes$x, y = nodes$y, cutoff = 2500)
 @
 
-Assume 10\% of the farms have 5\% infected cattle at the beginning of
-the simulation.
+Here, we assume that 10\% of the farms have 5\% infected cattle at the
+beginning of the simulation.
 
-<<create-SISe3sp-u0>>=
+<<create-SISesp-u0>>=
 set.seed(123)
 i <- sample(x = 1:1600, size = 160)
-u0_SISe3$I_1[i] <- as.integer(u0_SISe3$S_1[i] * 0.05)
-u0_SISe3$I_2[i] <- as.integer(u0_SISe3$S_2[i] * 0.05)
-u0_SISe3$I_3[i] <- as.integer(u0_SISe3$S_3[i] * 0.05)
-u0_SISe3$S_1[i] <- u0_SISe3$S_1[i] - u0_SISe3$I_1[i]
-u0_SISe3$S_2[i] <- u0_SISe3$S_2[i] - u0_SISe3$I_2[i]
-u0_SISe3$S_3[i] <- u0_SISe3$S_3[i] - u0_SISe3$I_3[i]
+u0$I[i] <- as.integer(u0$S[i] * 0.05)
+u0$S[i] <- u0$S[i] - u0$I[i]
 @
+
+The \code{SISe\_sp} model contains parameters on a global and local
+scale. Here, the parameter values were chosen such that the proportion
+of infected nodes in a trajectory is about 10\% and display a seasonal
+pattern.  The global parameters are: the spatial \code{coupling = 0.2}
+($D$ in Equation~\ref{eq:envInfPressure-local-spread}), the shedding
+rate \code{alpha = 1}, the recovery rate \code{gamma = 0.1} and the
+indirect transmission rate \code{upsilon = 0.012}.  Moreover, the
+global parameter $\beta(t)$ captures decay of the pathogen in four
+seasons: \code{beta\_t1 = 0.1}, \code{beta\_t2 = 0.12}, \code{beta\_t3
+  = 0.12} and \code{beta\_t4 = 0.1}.  However, the duration of each
+season is local and is specified as the day of the year the season
+ends.  Here, for simplicity, we let \code{end\_t1 = 91}, \code{end\_t2
+  = 182}, \code{end\_t3 = 273} and \code{end\_t4 = 365} be identical
+and recycled in all nodes.  Furthermore, the distances between nodes
+are local data and are extracted from \code{distance = d\_ik}.
+Finally, we let \code{phi = 0} at the beginning of the simulation
+(becomes \code{v0} in the model object).  Let us now construct an
+\code{SISe\_sp} object to simulate over four years.
+
+<<create-SISesp-model>>=
+model <- SISe_sp(u0 = u0, tspan = 1:1460, events = events, phi = 0,
+upsilon = 0.012, gamma = 0.1, alpha = 1, beta_t1 = 0.10,
+beta_t2 = 0.12, beta_t3 = 0.12, beta_t4 = 0.10, end_t1 = 91,
+end_t2 = 182, end_t3 = 273, end_t4 = 365, distance = d_ik,
+coupling = 0.2)
+@
+
+Let us use the \code{prevalence()} method to explore the proportion of
+infected nodes through time.  It takes a model object and a formula
+specification, where the left hand side of the formula specifies the
+compartments representing cases i.e., have an attribute or a disease.
+The right hand side of the formula specifies the compartments at risk.
+Here, we are interested in the proportion of nodes with at least one
+infected individual, therefore, we let \code{formula = I ~ S + I} and
+specify \code{type = "nop"}.  Consult the help page for other
+\code{prevalence()} parameter options.
+
+<<echo=false, results=hide>>=
+options(continue = "+  ")
+@
+
+<<eval=FALSE>>=
+plot(NULL, xlim = c(0, 1500), ylim = c(0, 0.18),
+ylab = "Prevalance", xlab = "Time")
+set.seed(123)
+replicate(5, {
+    result <- run(model = model, threads = 1)
+    lines(prevalence(model = result, formula = I ~ S + I, type = "nop"))
+})
+@
+
+Assume there exists some sort of treatment by which the
+\code{coupling} can be reduced by 50\%. Is that sufficient for
+controlling the disease?  We use the utility function \code{gdata()}
+to change the \code{coupling} parameter and then run some more
+trajectories.
+
+<<eval=FALSE>>=
+gdata(model, "coupling") <- 0.1
+replicate(5, {
+    result <- run(model = model, threads = 1)
+    lines(prevalence(model = result, formula = I ~ S + I, type = "nop"),
+          col = "blue", lty = 2)
+})
+@
+
+<<echo=false, results=hide>>=
+options(continue = "+    ")
+@
+
+<<SISe_sp-prevalence, echo=FALSE, results=hide>>=
+pdf("SimInf-SISe_sp-prevalence.pdf", width = 10, height = 5)
+plot(NULL, xlim = c(0, 1500), ylim = c(0, 0.18),
+ylab = "Prevalance", xlab = "Time")
+set.seed(123)
+replicate(5, {
+  r <- run(model, threads = 1)
+  lines(prevalence(r, I ~ S + I, "nop"))
+})
+gdata(model, "coupling") <- 0.1
+replicate(5, {
+  r <- run(model, threads = 1)
+  lines(prevalence(r, I ~ S + I, "nop"), col = "blue", lty = 2)
+})
+dev.off()
+@
+
+\begin{figure}
+  \begin{center}
+  \includegraphics{SimInf-SISe_sp-prevalence.pdf}
+  \end{center}
+  \caption{Exploring options for reducing disease spread. Reference
+    trajectories showing the proportion infected nodes (black solid
+    lines).  The proportion infected nodes after reducing the spatial
+    coupling with 50\% (blue dotted lines).}
+  \label{fig:SISe_sp}
+\end{figure}
+
+The results in Figure~\ref{fig:SISe_sp} indicate that reducing the
+spatial coupling $D$ with 50\% is not sufficient to eradicate the
+infection from this synthetic cattle population.  Nevertheless this
+short example serves as a template for using the \pkg{SimInf}
+computational framework when implementing large scale data-driven
+disease spread models and exploring options for control.
 
 %**************************************************************************
 
@@ -1606,9 +1636,10 @@ It also needs to be initialized with the initial condition \code{u0}
 and \code{tspan}.
 
 <<SIR-mparse-II>>=
+n <- 1000
+u0 = cbind(S = rep(99, n), I = rep(5, n), R = rep(0, n))
 model <- mparse(transitions = transitions, compartments = compartments,
-gdata = c(b = 0.16, g = 0.077), u0 = cbind(S = 99, I = 1, R = 0),
-tspan = 1:180)
+gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:180)
 @
 
 As in earlier examples, the \code{model} object can now be used to
