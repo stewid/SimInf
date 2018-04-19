@@ -45,6 +45,9 @@ IMPROVEMENTS
   global data vector that is common to all nodes in a SimInf_model
   object.
 
+* Added the utility function 'ldata' to get the local data vector of
+  a node in a SimInf_model object.
+
 BREAKING CHANGES
 
 * We have changed 'mparse' method to make it even easier to specify a
