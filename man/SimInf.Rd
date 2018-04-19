@@ -4,7 +4,44 @@
 \name{SimInf}
 \alias{SimInf}
 \alias{SimInf-package}
-\title{A Framework for Stochastic Disease Spread Simulations}
+\title{A Framework for Data-Driven Stochastic Disease Spread Simulations}
 \description{
-A Framework for Stochastic Disease Spread Simulations
+The SimInf package provides a flexible framework for data-driven
+spatio-temporal disease spread modeling, designed to efficiently
+handle population demographics and network data. The framework
+integrates infection dynamics in each subpopulation as
+continuous-time Markov chains (CTMC) using the Gillespie
+stochastic simulation algorithm (SSA) and incorporates available
+data such as births, deaths or movements as scheduled events. A
+scheduled event is used to modify the state of a subpopulation at
+a predefined time-point.
+}
+\details{
+The \code{\linkS4class{SimInf_model}} is central and provides the
+basis for the framework. A \code{\linkS4class{SimInf_model}}
+object supplies the state-change matrix, the dependency graph, the
+scheduled events, and the initial state of the system.
+
+All predefined models in SimInf have a generating function, with
+the same name as the model, for example \code{\link{SIR}}.
+
+A model can also be created from a model specification using the
+\code{\link{mparse}} method.
+
+After a model is created, a simulation is started with a call to
+the \code{\link{run}} method and if execution is successful, it
+returns a modified \code{\linkS4class{SimInf_model}} object with a
+single stochastic solution trajectory attached to it.
+
+SimInf provides several utility functions to inspect simulated
+data, for example, \code{show}, \code{summary} and \code{plot}.
+To facilitate custom analysis, it provides the
+\code{\link{trajectory}} and \code{\link{prevalence}} methods.
+
+One of our design goal was to make SimInf extendable and enable
+usage of the numerical solvers from other R extension packages in
+order to facilitate complex epidemiological research.  To support
+this, SimInf has functionality to generate the required C and R
+code from a model specification, see
+\code{\link{package_skeleton}}
 }
