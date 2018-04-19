@@ -261,7 +261,7 @@ infectious individuals between farms over large distances
 interactions among farms that can be represented as a directed
 temporal network \citep{Kempe2002, Bajardi2011, Dutta2014}.  In
 network terminology, each farm is represented by a \textit{node} (also
-called a vertice).  Moreover, each movement forms an \textit{edge}
+called a vertex).  Moreover, each movement forms an \textit{edge}
 (also called a link) between two nodes and following all edges through
 time, an infection may ``flow'' in the network and spread from node to
 node. Let $\Nnodes$ denote the number of nodes in a population, and
@@ -648,7 +648,7 @@ library("SimInf")
     when \code{run} is called, the non-zero entries in
     \code{V\_sparse} indicates where the real-valued continuous state
     should be written to \code{V\_sparse}.  The layout of the data in
-    \code{V\_sparse} is identical to \code{U}.\\
+    \code{V\_sparse} is identical to \code{V}.\\
 
     \code{v0} & The initial value for the real-valued continuous
     state.  Numeric matrix ($N_{ld} \times \Nnodes$).\\
