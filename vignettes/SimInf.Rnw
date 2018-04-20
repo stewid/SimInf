@@ -1525,59 +1525,35 @@ infected individual, therefore, we let \code{formula = I ~ S + I} and
 specify \code{type = "nop"}.  Consult the help page for other
 \code{prevalence()} parameter options.
 
-<<echo=false, results=hide>>=
-options(continue = "+  ")
-@
-
 <<eval=FALSE>>=
 plot(NULL, xlim = c(0, 1500), ylim = c(0, 0.18),
 ylab = "Prevalance", xlab = "Time")
 set.seed(123)
 replicate(5, {
-    result <- run(model = model, threads = 1)
-    lines(prevalence(model = result, formula = I ~ S + I, type = "nop"))
+  result <- run(model = model, threads = 1)
+  p <- prevalence(model = result, formula = I ~ S + I, type = "nop")
+  lines(p)
 })
 @
 
 Assume there exists some sort of treatment by which the
 \code{coupling} can be reduced by 50\%. Is that sufficient for
-controlling the disease?  We use the utility function \code{gdata()}
-to change the \code{coupling} parameter and then run some more
+controlling the disease?  We can use the function \code{gdata()} to
+change the global \code{coupling} parameter and then run some more
 trajectories.
 
 <<eval=FALSE>>=
 gdata(model, "coupling") <- 0.1
 replicate(5, {
-    result <- run(model = model, threads = 1)
-    lines(prevalence(model = result, formula = I ~ S + I, type = "nop"),
-          col = "blue", lty = 2)
+  result <- run(model = model, threads = 1)
+  p <- prevalence(model = result, formula = I ~ S + I, type = "nop")
+  lines(p, col = "blue", lty = 2)
 })
-@
-
-<<echo=false, results=hide>>=
-options(continue = "+    ")
-@
-
-<<SISe_sp-prevalence, echo=FALSE, results=hide>>=
-pdf("SimInf-SISe_sp-prevalence.pdf", width = 10, height = 5)
-plot(NULL, xlim = c(0, 1500), ylim = c(0, 0.18),
-ylab = "Prevalance", xlab = "Time")
-set.seed(123)
-replicate(5, {
-  r <- run(model, threads = 1)
-  lines(prevalence(r, I ~ S + I, "nop"))
-})
-gdata(model, "coupling") <- 0.1
-replicate(5, {
-  r <- run(model, threads = 1)
-  lines(prevalence(r, I ~ S + I, "nop"), col = "blue", lty = 2)
-})
-dev.off()
 @
 
 \begin{figure}
   \begin{center}
-  \includegraphics{SimInf-SISe_sp-prevalence.pdf}
+  \includegraphics{img/SISe_sp-prevalence.pdf}
   \end{center}
   \caption{Exploring options for reducing disease spread. Reference
     trajectories showing the proportion infected nodes (black solid
@@ -1623,9 +1599,7 @@ hand side of the last '\code{->}'-sign is the final state, and the
 propensity is written between the '\code{->}'-signs.  The special
 symbol '\code{@}' is reserved for the empty set $\emptyset$.  We
 suggest to first draw a schematic representation of the model that
-includes all compartments and arrows for all state transitions.  Then
-list the compartments in the order they should appear in the \code{S}
-matrix.
+includes all compartments and arrows for all state transitions.
 
 \subsubsection[Introductory examples of using mparse]{%
   Introductory examples of using \code{mparse}}
@@ -1649,7 +1623,7 @@ and \code{tspan}.
 
 <<SIR-mparse-II>>=
 n <- 1000
-u0 = cbind(S = rep(99, n), I = rep(5, n), R = rep(0, n))
+u0 <- data.frame(S = rep(99, n), I = rep(5, n), R = rep(0, n))
 model <- mparse(transitions = transitions, compartments = compartments,
 gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:180)
 @
@@ -1715,8 +1689,8 @@ result <- run(model = model, threads = 1)
 
 Let us post-process the simulated trajectory to compare the incidence
 cases in the first node with the average incidence cases among all
-realizations.  Extract the trajectory and calculate successive
-differences of \code{'Icum'} at each time-point.
+realizations by extracting the trajectory data and calculate
+successive differences of \code{'Icum'} at each time-point.
 
 <<SIR-mparse-incidence-trajectory, eval=FALSE>>=
 traj <- trajectory(model = result, compartments = "Icum")
@@ -1757,12 +1731,11 @@ lines(avg_cases, col = "blue", lwd = 2, lty = 2)
   \end{center}
   \caption{(black solid line) One realization of an epidemic curve
     displaying the number of incident cases per day in a node when
-    simulating 150 days of an \code{mparse} \code{SIR} model, with
-    transmission rate $\beta = 0.16$ and recovery rate $\gamma =
-    0.077$ (Equation~\ref{eq:SIR}).  The simulation starts with 99
-    susceptible, 1 infected and 0 recovered individuals.  (blue dashed
-    line) Average number of incident cases per day from 1000
-    realizations of the model.  \label{fig:SIR-mparse-incidence}}
+    simulating 150 days of an \code{mparse} \code{SIR} model ($\beta =
+    0.16, \gamma = 0.077$), starting with 99 susceptible, 1 infected
+    and 0 recovered individuals.  (blue dashed line) Average number of
+    incident cases per day from 1000 realizations of the
+    model.  \label{fig:SIR-mparse-incidence}}
 \end{figure}
 
 \subsubsection[Incorporate scheduled events in an mparse model]{%
@@ -1815,20 +1788,20 @@ shift = 1)
 @
 
 To simulate from this model, we have to define the select matrix $E$
-to specify which compartments to operate on when processing a
-scheduled event.  The first column is for \textit{enter} events
-(births); add newborn animals to the susceptible compartment $S$.  The
-second column is for \textit{exit} events (deaths) and
+to handle which compartments to sample from when processing a
+scheduled event.  Let the first column in $E$ handle \textit{enter}
+events (births); add newborn animals to the susceptible compartment
+$S$.  The second column is for \textit{exit} events (deaths) and
 \textit{external transfer} events (livestock movements); sample
-animals from the $S$, $I$, $R$ or $V$ compartments.  Finally, the
+animals from the $S$, $I$, $R$ and $V$ compartments.  Finally, the
 third column is for \textit{internal transfer} events (vaccination);
-sample individuals from the $S$, $I$ or $R$ compartments.
-Furthermore, we define the shift matrix $N$ to process
-\textit{internal transfer} events (vaccination); move sampled animals
-from the $S$ compartment four steps forward to the $V$ compartment.
-Similarly, move sampled animals from the $I$ compartment three steps
-forward to the $V$ compartment, and finally, move sampled individuals
-from the $R$ compartment one step forward.
+sample individuals from the $S$, $I$ and $R$ compartments.  We must
+also define the shift matrix $N$ to process \textit{internal transfer}
+events (vaccination); move sampled animals from the $S$ compartment
+four steps forward to the $V$ compartment.  Similarly, move sampled
+animals from the $I$ compartment three steps forward to the $V$
+compartment, and finally, move sampled individuals from the $R$
+compartment one step forward.
 
 {\small
 \[
@@ -1956,17 +1929,17 @@ of the setup for a new source package.  It creates directories, saves
 \proglang{R} and \proglang{C} code files to appropriate places, and
 creates skeleton help files.
 
-Although \pkg{SimInf} was designed to study disease spread using
-demographic data, it is not limited to that use case but can also be
-used to study the dynamics of other systems.  Consider we wish to
-create a new add-on package \pkg{PredatorPrey} based on the
-Rosenzweig-MacArthur predator-prey model demonstrated in the
-\pkg{GillespieSSA} package \citep{Rosenzweig1963, Pineda-Krch2008}.
-The model has a density-dependent growth in the prey and and a
-nonlinear Type-2 functional response in the predator
-\citep{Rosenzweig1963}.  Let $R$ and $F$ denote the number of prey and
-predators, respectively.  The model consists of five transitions
-(Equation~\ref{eq:predator-prey}): \textit{i)} prey birth,
+Even if \pkg{SimInf} was designed to study the dynamics of infectious
+diseases, it is not limited to that use case but can be used to study
+the dynamics of other systems.  Consider we wish to create a new
+add-on package \pkg{PredatorPrey} based on the Rosenzweig-MacArthur
+predator-prey model demonstrated in the \pkg{GillespieSSA} package
+\citep{Rosenzweig1963, Pineda-Krch2008}.  The model has a
+density-dependent growth in the prey and and a nonlinear Type-2
+functional response in the predator \citep{Rosenzweig1963}.  Let $R$
+and $F$ denote the number of prey and predators, respectively.  The
+model consists of five transitions
+(Equation~\eqref{eq:predator-prey}): \textit{i)} prey birth,
 \textit{ii)} prey death due to non-predatory events, \textit{iii)}
 prey death due to predation, \textit{iv)} predator birth, and
 \textit{v)} predator death
@@ -1985,8 +1958,8 @@ prey death due to predation, \textit{iv)} predator birth, and
 \end{align}
 
 where $b_R$, $d_R$, $b_F$, and $d_F$ are the per capita birth and
-death rate of the prey and predator, respectively.  Furthermore, $K$
-is the carrying capacity of the prey, $\alpha$ is the predation
+death rate of the prey and predator, respectively.  Moreover, $K$ is
+the carrying capacity of the prey, $\alpha$ is the predation
 efficiency, and $w$ is the degree of predator saturation
 \citep{Pineda-Krch2008}.  Using parameter values from
 \cite{Pineda-Krch2008}, we define the model as
@@ -2000,11 +1973,11 @@ parameters <- c(bR = 2, bF = 2, dR = 1, K = 1000, alpha = 0.007,
 w = 0.0035, dF = 2)
 @
 
-Assume the initial population, u0, consists of $R = 1000$ prey and $F
-= 100$ predators and we are interested in simulating $n = 1000$
+Assume the initial population consists of $R = 1000$ prey and $F =
+100$ predators and we are interested in simulating $n = 1000$
 replicates over 100 days.  Since there are no between-node movements
-in this example, we can generate replicates of the model simply by
-starting with $n$ identical nodes.
+in this example, we can generate replicates simply by starting with
+$n$ identical nodes.
 
 <<mparse-predator-prey-II>>=
 n <- 1000
@@ -2021,24 +1994,24 @@ path <- tempdir()
 package_skeleton(model = model, name = "PredatorPrey", path = path)
 @
 
-Where the first argument is the model object generated by the
-\code{mparse} method, the second argument is the name of the package
-to create a skeleton for and the third argument is the path to the new
-package. Note that a temporary directory is used here for illustration
-of the functionality.  We refer to the \pkg{SimInf} documentation for
-other arguments that can be supplied to the \code{package_skeleton}
-method.  The created \proglang{R} file (\texttt{'R/models.R'}) defines
-the \code{S4} class \code{PredatorPrey} that contains the
-\code{SimInf\_model} and a generating function to create a new object
-of the \code{PredatorPrey} model.  The generating function is a
-template that might need to be updated to meet the specific
-requirements of the model.
+Where the first argument is the \code{SimInf\_model} object generated
+by the \code{mparse} method, the second argument is the name of the
+package to create a skeleton for and the third argument is the path to
+the new package. Note that a temporary directory is used here for
+illustration of the functionality.  We refer to the \pkg{SimInf}
+documentation for other arguments that can be supplied to the
+\code{package_skeleton} method.  The created \proglang{R} file
+(\texttt{'R/models.R'}) defines the \code{S4} class
+\code{PredatorPrey} that contains the \code{SimInf\_model} and a
+generating function to create a new object of the \code{PredatorPrey}
+model.  The generating function is a template that might need to be
+extended to meet the specific requirements for the model.
 
 The \proglang{C} file (\texttt{'src/models.c'}) defines one function
 for each state transition, the post time step function and the model
-specific run function, and is automatically compiled when installing
-the package.  The header file \code{"SimInf.h"} contains the
-declarations for these functions and must be included.  The
+specific run function. The file is automatically compiled when
+installing the package.  The header file \code{"SimInf.h"} contains
+the declarations for these functions and must be included.  The
 \code{SimInf_model_run} function is the interface from \proglang{R} to
 the core solver in \proglang{C} and list all function pointers to the
 transition rate functions in a vector in the order the state
@@ -2207,9 +2180,9 @@ within the UPMARC Linnaeus centre of Excellence (P.~Bauer,
 R.~Eriksson, S.~Engblom), the Swedish Research Council Formas
 (S.~Engblom, S.~Widgren), the Swedish Board of Agriculture
 (S.~Widgren), and by the Swedish strategic research program eSSENCE
-(S.~Widgren).
-
-\clearpage
+(S.~Widgren).  The authors also thank two anonymous reviewers for
+their helpful suggestions and comments, which greatly improved the
+quality of both the software package and this manuscript.
 
 \bibliography{SimInf}
 
@@ -2219,14 +2192,14 @@ R.~Eriksson, S.~Engblom), the Swedish Research Council Formas
 
 \appendix
 
-\section{Pseudo-code for the core simulation solver}
+\section{Pseudo-code for the default simulation solver}
 \label{sec:pseudo-code}
 
 \begin{table*}[!ht]
   \small
   \begin{tabular}{r l}
     \toprule
-    & \textbf{Algorithm} Pseudo-code for the core simulation solver
+    & \textbf{Algorithm} Pseudo-code for the default simulation solver
     using direct SSA \\
     \midrule
 
