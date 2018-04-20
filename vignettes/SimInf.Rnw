@@ -190,16 +190,16 @@ uses a hybrid \proglang{R}/\proglang{C++} strategy to implement the
 direct method and adaptive tau leaping \citep{Cao2007}.
 
 There exists several related \proglang{R} packages for epidemiological
-analysis on the Comprehensive \proglang{R} Archive Network (CRAN) that
-we would like to mention here.  The package \pkg{amei} \citep{amei} is
-designed for finding optimal intervention strategies to minimize total
-expected cost to control a disease outbreak.  Another package is
-\pkg{surveillance}, a framework for monitoring, modeling, and
-regression analysis of infectious diseases, \citep{surveillance}.
-\pkg{EpiModel} \citep{EpiModel} is an \proglang{R} package that,
-includes a framework for modeling spread of diseases on networks.  In
-\pkg{EpiModel} the individual is the unit and transmission between
-individuals is modelled through a contact network in discrete time.
+analysis on the Comprehensive \proglang{R} Archive Network (CRAN).
+For example, the package \pkg{amei} \citep{amei}, designed for finding
+optimal intervention strategies to minimize total expected cost to
+control a disease outbreak.  Another package is \pkg{surveillance}, a
+framework for monitoring, modeling, and regression analysis of
+infectious diseases, \citep{surveillance}.  \pkg{EpiModel}
+\citep{EpiModel} is an \proglang{R} package that, includes a framework
+for modeling spread of diseases on networks.  In \pkg{EpiModel} the
+individual is the unit and transmission between individuals is
+modelled through a contact network in discrete time.
 
 The remainder of this paper is organized as follows.  In
 \S\ref{sec:modeling} we summarize the mathematical foundation for our
@@ -697,31 +697,31 @@ slots in the \code{S4} class \code{SimInf\_model}
 number of individuals in each of the $\Ncompartments$ disease states
 in every $\Nnodes$ nodes.
 
-Equation~\ref{eq:numstep3}, the stochastic step, contains
-$\Ntransitions$ state transitions and is processed using the two
-slots, \code{S} and \code{G}.  The \code{S} slot is the state-change
-matrix ($\Ncompartments \times \Ntransitions$) that determines how to
-change the number of individuals in the compartments of a node when
-the $j^{th}$ state transition occurs, where $1 \le j \le
-\Ntransitions$.  Each row corresponds to one compartment and each
-column to a state transition.  Let \code{u[, i]} be the number of
-individuals in each compartment in node $i$ at time $t_i$.  To move
-simulation time forward in node $i$ to $t_i = t_i + \tau_i$, the
-vector \code{u[, i]} is updated according to the $j^{th}$ transition
-by adding the state-change vector \code{S[, j]} to \code{u[, i]}.
-After updating \code{u[, i]}, the transition rates must be
-recalculated to obtain the time to the next event.  However, a state
-transition might not need all transition rates to be recalculated.
-The dependency graph \code{G} is a matrix ($\Ntransitions \times
-\Ntransitions$) that determines which transition rates that need to be
-recalculated.  A non-zero entry in element \code{G[k, j]} indicates
-that transition rate \code{k} needs to be recalculated if the $j^{th}$
-state transition occurs, where \mbox{$1 \le$ \code{k} $\le
-  \Ntransitions$}.  Furthermore, the final step \eqref{eq:numstep3} is
-incorporated using a model specific post time step callback to allow
-update of the concentration variable $\Y$.
+Equation~\eqref{eq:numstep3}, the stochastic step, contains
+$\Ntransitions$ state transitions and is processed using the two slots
+\code{S} and \code{G}.  The \code{S} slot is the state-change matrix
+($\Ncompartments \times \Ntransitions$) that determines how to change
+the number of individuals in the compartments of a node when the
+$j^{th}$ state transition occurs, where $1 \le j \le \Ntransitions$.
+Each row corresponds to one compartment and each column to a state
+transition.  Let \code{u[, i]} be the number of individuals in each
+compartment in node $i$ at time $t_i$.  To move simulation time
+forward in node $i$ to $t_i = t_i + \tau_i$, the vector \code{u[, i]}
+is updated according to the $j^{th}$ transition by adding the
+state-change vector \code{S[, j]} to \code{u[, i]}.  After updating
+\code{u[, i]}, the transition rates must be recalculated to obtain the
+time to the next event.  However, a state transition might not need
+all transition rates to be recalculated.  The dependency graph
+\code{G} is a matrix ($\Ntransitions \times \Ntransitions$) that
+determines which transition rates that need to be recalculated.  A
+non-zero entry in element \code{G[k, j]} indicates that transition
+rate \code{k} needs to be recalculated if the $j^{th}$ state
+transition occurs, where \mbox{$1 \le$ \code{k} $\le \Ntransitions$}.
+Furthermore, the final step \eqref{eq:numstep3} is incorporated using
+a model specific post time step callback to allow update of the
+concentration variable $\Y$.
 
-\begin{table}[!ht]
+\begin{table}
   \small
   \begin{tabularx}{\textwidth}{l X}
     \toprule Slot & Description\\ \midrule
@@ -806,10 +806,10 @@ update of the concentration variable $\Y$.
 \end{table}
 
 Model-specific data that is passed to the transition-rate functions
-and the post time-step function are stored in the two slots:
+and the post time-step function are stored in the two slots
 \code{ldata} and \code{gdata} in the \code{SimInf\_model} object.  The
 \code{ldata} matrix holds local data for each node where \code{ldata[,
-    i]} is the data vector for node $i$.  Data that is global, i.e.,
+  i]} is the data vector for node $i$.  Data that is global, i.e.,
 shared between nodes, is stored in the \code{gdata} vector.
 
 The \code{events} slot in the \code{SimInf\_model} holds data to
@@ -842,14 +842,15 @@ The initial state in each node is specified by the two matrices
 individuals in each compartment at node $i$ and \code{v0[, i]} is the
 initial continuous state in node $i$.
 
-\begin{table}[!ht]
+\begin{table}
   \small
   \begin{tabularx}{\textwidth}{l X}
     \toprule
     Argument & Description\\
     \midrule
-    \code{v\_new} & The continuous state vector in the node after the
-    post time step.  Exists only in \code{PTSFun}.\\
+    \code{v\_new} & If a continuous state vector is used by a model,
+    this is the new continuous state vector in the node after the post
+    time step.  Exists only in \code{PTSFun}.\\
     \code{u} & The compartment state vector in the node.\\
     \code{v} & The current continuous state vector in the node.\\
     \code{ldata} & The local data vector for the node.\\
@@ -874,23 +875,24 @@ different types of events; \textit{enter}, \textit{internal transfer},
 \textit{external transfer} and \textit{exit}. The \textit{enter} event
 adds individuals to a node, for example, due to births. The
 \textit{internal transfer} event moves individuals between
-compartments within one node, for example, ageing of individuals in a
-model with several age compartments or vaccination to move individuals
-to a vaccinated compartment. The \textit{external transfer} event
-moves individuals from compartments in one node to compartments in a
-destination node. Finally, the \textit{exit} event removes individuals
-from a node, for example, due to slaughter. The event types are
-classified into those that operate on the compartments of a single
-node $E_1 = \{\text{\textit{enter}, \textit{internal transfer},
-  \textit{exit}}\}$ and those that operate on the compartments of two
-nodes $E_2 = \{\text{\textit{external transfer}}\}$.  The parallel
-algorithm processes these two classes of events differently, see
-Appendix~\ref{sec:pseudo-code} for pseudo-code of the core simulation
-solver.  The scheduled events are processed when simulation time
-reaches the time for any of the events.  Events that are scheduled at
-the same time are processed in the following order: \textit{exit},
-\textit{enter}, \textit{internal transfer} and \textit{external
-  transfer}.
+compartments within one node.  For example, to simulate vaccination
+and move individuals to a vaccinated compartment (see example in
+\S\ref{sec:mparse-scheduled-events}).  Or ageing according to birth
+records in an age-structured model \citep{Widgren2016}.  The
+\textit{external transfer} event moves individuals from compartments
+in one node to compartments in a destination node. Finally, the
+\textit{exit} event removes individuals from a node, for example, due
+to death. The event types are classified into those that operate on
+the compartments of a single node $E_1 = \{\text{\textit{enter},
+  \textit{internal transfer}, \textit{exit}}\}$ and those that operate
+on the compartments of two nodes $E_2 = \{\text{\textit{external
+    transfer}}\}$.  The parallel algorithm processes these two classes
+of events differently, see Appendix~\ref{sec:pseudo-code} for
+pseudo-code of the core simulation solver.  The scheduled events are
+processed when simulation time reaches the time for any of the events.
+Events that are scheduled at the same time are processed in the
+following order: \textit{exit}, \textit{enter}, \textit{internal
+  transfer} and \textit{external transfer}.
 
 The S4 class \code{SimInf\_events} contains slots with data structures
 to process events (Table~\ref{table:scheduled:events}).  The slots
@@ -977,17 +979,27 @@ processing an \textit{exit} event.  See Figure~\ref{fig:exit} in
 Appendix~\ref{sec:illustration-scheduled-events} for an illustration
 of a scheduled \textit{exit} event.
 
-\subsection{Core simulation solver}
+\subsection{Core simulation solvers}
 
 The \pkg{SimInf} package uses the ability to interface compiled code
-from R \cite{Chambers2008}.  The solver is implemented in the compiled
-language \proglang{C} \citep{Kernighan1988} and is called from
-\proglang{R} using the \code{.Call()} interface \citep{Chambers2008}.
-Using compiled rather than interpreted code ensures high performance
-when running the model.  To improve performance further, the solver
-uses \proglang{OpenMP} to divide work over multiple processors and
-perform computations in parallel.  The solver uses GSL to generate
-random numbers for the simulation.
+from R \cite{Chambers2008}.  The solvers are implemented in the
+compiled language \proglang{C} and is called from \proglang{R} using
+the \code{.Call()} interface \citep{Chambers2008}.  Using \proglang{C}
+code rather than interpreted \proglang{R} code ensures high
+performance when running the model.  To improve performance further,
+the numerical solvers use \proglang{OpenMP} to divide work over
+multiple processors and perform computations in parallel.  Two
+numerical solvers are currently supported.  The default solver is a
+split-step method named \code{'ssm'}, that uses direct SSA, but once
+every unit of time, it also processes scheduled events and calls the
+post time step function.  The other solver implements an \textit{``all
+  events method''} \citep{Bauer2015} and is named \code{'aem'}.
+Similarly, it also processes scheduled events and calls the post time
+step function once every unit of time.  A core feature of the
+\code{'aem'} solver is that transition events are carried out in
+channels which access private streams of random numbers, in contrast
+to the \code{'ssm'} solver where one uses only one stream for all
+events.
 
 \subsubsection{Function pointers}
 
@@ -1029,26 +1041,26 @@ are described in Table~\ref{table:arguments}.
 \end{scriptsize}
 \end{minipage}
 
-\subsubsection{Overview of the solver}
+\subsubsection{Overview of the solvers}
 
-Here follows an overview of the steps in the solver to run one
-trajectory, see Appendix~\ref{sec:pseudo-code} for pseudo-code of the
-core simulation solver and \texttt{'src/core/SimInf\_solver.c'} for
-the source code.  The simulation starts with a call to the \code{run}
-method with the model as the first argument and optionally the number
-of threads to use and a seed for the random number generator.  This
-method will first call the validity method on the model to perform
-error-checking and then call a model specific \proglang{C} function to
-initialize the function pointers to the transition rate functions and
-the post time step function of the model.  Subsequently, the
-simulation solver is called to run one trajectory using the model
-specific data, the transition rate functions, and the post time step
-function.  If the \code{C\_code} slot is non-empty, the \proglang{C}
-code is written to a temporary file when the \code{run} method is
-called.  The temporary file is compiled using \code{'R CMD SHLIB'} and
-the resulting DLL is dynamically loaded.  The DLL is unloaded and the
-temporary files are removed after running the model.  This is further
-described in \S\ref{sec:extend}.
+Here follows an overview of the steps a solver performs to run a
+trajectory, see Appendix~\ref{sec:pseudo-code} for pseudo-code for the
+\code{'ssm'} solver and \texttt{'src/solvers/ssm/SimInf\_solver.c'}
+for the source code.  The simulation starts with a call to the
+\code{run} method with the model as the first argument and optionally
+the number of threads to use.  This method will first call the
+validity method on the model to perform error-checking and then call a
+model specific \proglang{C} function to initialize the function
+pointers to the transition rate functions and the post time step
+function of the model.  Subsequently, the simulation solver is called
+to run one trajectory using the model specific data, the transition
+rate functions, and the post time step function.  If the
+\code{C\_code} slot is non-empty, the \proglang{C} code is written to
+a temporary file when the \code{run} method is called.  The temporary
+file is compiled using \code{'R CMD SHLIB'} and the resulting DLL is
+dynamically loaded.  The DLL is unloaded and the temporary files are
+removed after running the model.  This is further described in
+\S\ref{sec:extend}.
 
 The solver simulates the trajectory in parallel if \proglang{OpenMP}
 is available.  The default is to use all available threads.  However,
@@ -1156,8 +1168,9 @@ together with the inter-quartile range using the same color, but with
 transparency.  To display the outcome for individual nodes, specify
 the subset of nodes to plot using the \code{node} parameter and set
 \code{range = FALSE}.  In this example, an outbreak is likely to occur
-in an infected node, but sometimes the infectious disease goes extinct
-before it causes an epidemic, as shown in Figure~\ref{fig:SIR-model}.
+in an infected node, but sometimes the infectious disease will become
+extinct before it causes an epidemic, as shown in
+Figure~\ref{fig:SIR-model}.
 
 <<SIR-plot, eval=FALSE>>=
 plot(result)
