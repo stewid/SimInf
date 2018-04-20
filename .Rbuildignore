@@ -17,3 +17,5 @@ src/gsl
 ^vignettes/SimInf\.out$
 ^vignettes/img/[^.]+\.svg$
 ^vignettes/img/[^.]+\.tex$
+^vignettes/img/SIR.pdf$
+^vignettes/img/SISe3_sp.pdf$
