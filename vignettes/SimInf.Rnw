@@ -1832,6 +1832,13 @@ N <- matrix(c(4, 3, 0, 1, 0), nrow = 5, ncol = 1,
 dimnames = list(c("S", "I", "Icum", "R", "V"), "1"))
 @
 
+Additionally, we have to redefine the \code{select} column in the
+events, since the data is from the predefined \code{SIR} model with
+another $E$ matrix.  Let us change \code{select} for movements.
+<<mparse-recode-events>>=
+events$select[events$select == 4] <- 2
+@
+
 Now let us create an \code{epicurve} function to estimate the average
 number of new cases per day from \code{n = 1000} realizations in a
 \code{for}-loop and simulate one trajectory at a time.  To clear
