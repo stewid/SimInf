@@ -24,7 +24,7 @@ IMPROVEMENTS
   Cham. Doi: 10.1007/978-3-319-10705-9_51).  A core feature of the AEM
   solver is that reaction events are carried out in channels which
   access private streams of random numbers, in contrast to the
-  Gillespie next-reaction method where one use only one stream for all
+  Gillespie direct method where one use only one stream for all
   events. We have added a new 'solver' argument to the 'run' method.
 
 * The 'package_skeleton' method have been updated to handle the new
