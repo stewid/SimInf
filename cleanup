@@ -30,7 +30,7 @@ rm -f vignettes/SimInf-SIR-run-outer-plot.pdf
 rm -f vignettes/SimInf-SIR-spaghetti-plot.pdf
 rm -f vignettes/SimInf-mparse-predator-prey-plot.pdf
 rm -f vignettes/SimInf-display-SISe3sp-model.pdf
-rm -f vignettes/SimInf-plot-SISe3sp-I.png
-rm -f vignettes/SimInf-plot-SISe3sp-II.png
-rm -f vignettes/SimInf-plot-SISe3sp-III.png
-rm -f vignettes/SimInf-population-size.pdf
+rm -f vignettes/SimInf-SIR-I.pdf
+rm -f vignettes/SimInf-SIR-II.pdf
+rm -f vignettes/SimInf-SIR-events-I.pdf
+rm -f vignettes/SimInf-SIR-events-II.pdf
