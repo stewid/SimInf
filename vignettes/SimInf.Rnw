@@ -1302,7 +1302,7 @@ dest = 0, n = 1, proportion = 0, select = 2, shift = 0)
 @
 
 Additionally, we create some \textit{external transfer} events to form
-interactions among the nodes with movements during $t = 35$ to $t =
+interactions among the nodes with movements between $t = 35$ and $t =
 45$.  Each shipment contains $n = 5$ individuals.
 
 <<SIR-move>>=
@@ -1435,20 +1435,19 @@ Consequently, the model has two state transitions,
   I_i & \xrightarrow{\gamma} & S_i,
   \end{array}
 \end{align}
-where the state transition per unit of time from susceptible to
-infected depends on the concentration of the environmental
-contamination $\varphi_i(t)$ in node $i$ and the indirect transmission
-rate $\upsilon$.  Moreover, the state transition from infected to
-susceptible depends on the recovery rate $\gamma$ per individual and
-unit of time.  Finally, the environmental infectious pressure is
-evolved by
+where the transition rate per unit of time from susceptible to
+infected is proportional to the concentration of the environmental
+contamination $\varphi_i(t)$ in node $i$.  Moreover, the transition
+rate from infected to susceptible is the recovery rate $\gamma$,
+measured per individual and per unit of time.  Finally, the
+environmental infectious pressure is evolved by
 \begin{equation}
   \label{eq:envInfPressure-local-spread}
   \frac{d \varphi_i(t)}{dt}= \frac{\alpha I_i(t)}{N_i(t)} +
   \sum_k{\frac{\varphi_k(t) N_k(t) - \varphi_i(t) N_i(t)}{N_i(t)}
     \cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t),
 \end{equation}
-where the $\alpha$ is the average shedding rate of the pathogen to the
+where $\alpha$ is the average shedding rate of the pathogen to the
 environment per infected individual and $N_i = S_i + I_i$ the size of
 node $i$.  Next comes the spatial coupling among proximal nodes, where
 $D$ is the rate of the local spread and $d_{ik}$ the distance between
@@ -1469,17 +1468,17 @@ events <- events_SISe()
 @
 
 where the location of each farm is in \code{nodes}, \code{u0} defines
-the initial cattle population and \code{events} contains four years of
-scheduled events data (births, deaths and movements).  Moreover, let us
-define proximal neighbors as neighbors within 2500m and use the
-utility function \code{distance\_matrix()} to estimate the distance
-between farms within that cutoff.
+the initial cattle population and \code{events} contains four years
+(1460 days) of scheduled events data (births, deaths and movements).
+Moreover, let us define proximal neighbors as neighbors within 2500m
+and use the utility function \code{distance\_matrix()} to estimate the
+distance between farms within that cutoff.
 
 <<distance-matrix>>=
 d_ik <- distance_matrix(x = nodes$x, y = nodes$y, cutoff = 2500)
 @
 
-Here, we assume that 10\% of the farms have 5\% infected cattle at the
+Let us assume that 10\% of the farms have 5\% infected cattle at the
 beginning of the simulation.
 
 <<create-SISesp-u0>>=
@@ -1489,24 +1488,24 @@ u0$I[i] <- as.integer(u0$S[i] * 0.05)
 u0$S[i] <- u0$S[i] - u0$I[i]
 @
 
-The \code{SISe\_sp} model contains parameters on a global and local
-scale. Here, the parameter values were chosen such that the proportion
-of infected nodes in a trajectory is about 10\% and display a seasonal
-pattern.  The global parameters are: the spatial \code{coupling = 0.2}
-($D$ in Equation~\ref{eq:envInfPressure-local-spread}), the shedding
-rate \code{alpha = 1}, the recovery rate \code{gamma = 0.1} and the
+The \code{SISe\_sp} model contains parameters at a global and local
+scale.  Here, the parameter values were chosen such that the
+proportion of infected nodes in a trajectory is about 10\% and
+displays a seasonal pattern.  The global parameters are: the spatial
+\code{coupling = 0.2} ($D$ in
+Equation~\eqref{eq:envInfPressure-local-spread}), the shedding rate
+\code{alpha = 1}, the recovery rate \code{gamma = 0.1} and the
 indirect transmission rate \code{upsilon = 0.012}.  Moreover, the
 global parameter $\beta(t)$ captures decay of the pathogen in four
 seasons: \code{beta\_t1 = 0.1}, \code{beta\_t2 = 0.12}, \code{beta\_t3
   = 0.12} and \code{beta\_t4 = 0.1}.  However, the duration of each
-season is local and is specified as the day of the year the season
-ends.  Here, for simplicity, we let \code{end\_t1 = 91}, \code{end\_t2
-  = 182}, \code{end\_t3 = 273} and \code{end\_t4 = 365} be identical
-and recycled in all nodes.  Furthermore, the distances between nodes
-are local data and are extracted from \code{distance = d\_ik}.
-Finally, we let \code{phi = 0} at the beginning of the simulation
-(becomes \code{v0} in the model object).  Let us now construct an
-\code{SISe\_sp} object to simulate over four years.
+season is local to a node and is specified as the day of the year each
+season ends.  Here, for simplicity, we let \code{end\_t1 = 91},
+\code{end\_t2 = 182}, \code{end\_t3 = 273} and \code{end\_t4 = 365} in
+all nodes.  Furthermore, the distances between nodes are local data
+extracted from \code{distance = d\_ik}.  Finally, we let \code{phi =
+  0} at the beginning of the simulation (becomes \code{v0} in the
+model object).
 
 <<create-SISesp-model>>=
 model <- SISe_sp(u0 = u0, tspan = 1:1460, events = events, phi = 0,
@@ -1676,10 +1675,10 @@ set.seed(123)
 result <- run(model = model, threads = 1)
 plot(result)
 @
-  \caption{Example of simulated data from one realization of the
-    \code{mparse} \code{SIR} model (Equation~\ref{eq:SIR}) in one
-    node, starting with 99 susceptible, 1 infected, and 0 recovered
-    individuals. \label{fig:SIR-mparse-proportion}}
+  \caption{Showing the median and inter-quartile range from 1000
+    realizations of an \code{mparse} \code{SIR} model ($\beta = 0.16$,
+    $\gamma = 0.077$), starting with 99 susceptible, 5 infected, and 0
+    recovered individuals. \label{fig:SIR-mparse-proportion}}
   \end{center}
 \end{figure}
 
