@@ -2117,6 +2117,10 @@ legend("right", c("Prey", "Predator"), lty = 1:2)
 par(opar)
 @
 
+This example illustrated how \pkg{SimInf} supports usage of the
+numerical solvers from other \proglang{R} packages via the
+\emph{LinkingTo} feature in \proglang{R}.
+
 %**************************************************************************
 
 \section{Benchmark}
@@ -2171,12 +2175,12 @@ spatio-temporal networks. The package offers a very efficient and
 highly flexible tool to incorporate real data in simulations at
 realistic scales.
 
-We hope that our package will facilitate incorporating large volumes
-of available data, for example, livestock data, in network epidemic
-models to better understand disease transmission in a temporal network
-and improve design of intervention strategies for endemic and emerging
-threats.  Future efforts will be concentrated on a software
-development driven predominantly by actual use cases.
+We hope that our package will facilitate incorporating available data,
+for example, livestock data, in network epidemic models to better
+understand disease transmission in a temporal network and improve
+design of intervention strategies for endemic and emerging threats.
+Future efforts will be concentrated on a software development driven
+predominantly by actual use cases.
 
 %**************************************************************************
 
