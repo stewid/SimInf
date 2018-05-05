@@ -148,8 +148,11 @@ setClass("SimInf_model",
              ## Check v0.
              if (!identical(storage.mode(object@v0), "double"))
                  return("Initial model state 'v0' must be a double matrix.")
-             if ((dim(object@v0)[1] > 0) && is.null(rownames(object@v0)))
-                 return("'v0' must have rownames")
+             if ((dim(object@v0)[1] > 0)) {
+                 r <- rownames(object@v0)
+                 if (is.null(r) || any(nchar(r) == 0))
+                     return("'v0' must have rownames")
+             }
 
              ## Check V.
              if (!identical(storage.mode(object@V), "double"))
