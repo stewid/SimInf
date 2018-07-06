@@ -14,6 +14,9 @@ addons:
     packages:
       - libgsl0-dev
 
+brew_packages:
+  - gsl
+
 matrix:
   include:
     - r: 3.1
