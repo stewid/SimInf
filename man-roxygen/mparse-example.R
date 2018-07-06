@@ -11,6 +11,7 @@
 ##'                  tspan = 1:100)
 ##'
 ##' ## Run and plot the result
-##' result <- run(model, threads = 1, seed = 22)
+##' set.seed(22)
+##' result <- run(model, threads = 1)
 ##' plot(result)
 ##' }
