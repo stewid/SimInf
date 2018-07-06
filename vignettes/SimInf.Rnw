@@ -56,7 +56,7 @@
   time-points.  Using \proglang{C} code for the numerical solvers and
   \proglang{OpenMP} to divide work over multiple processors ensures
   high performance when simulating a sample outcome.  One of our
-  design goal was to make \pkg{SimInf} extendable and enable usage of
+  design goals was to make \pkg{SimInf} extendable and enable usage of
   the numerical solvers from other \proglang{R} extension packages in
   order to facilitate complex epidemiological research.  In this
   paper, we provide a technical description of the framework and
@@ -163,7 +163,7 @@ a network of about 40,000 subpopulations \citep{Bauer2016,
   Widgren2016, Widgren2018}.  Even if development of \pkg{SimInf} was
 inspired by livestock diseases and models driven by available data,
 the design is of completely general character and applies to arbitrary
-metapopulation models.  One of our design goal was to make
+metapopulation models.  One of our design goals was to make
 \pkg{SimInf} extendable and enable usage of the numerical solvers from
 other \proglang{R} extension packages in order to facilitate complex
 epidemiological research.  To support this, \pkg{SimInf} has
@@ -196,7 +196,7 @@ optimal intervention strategies to minimize total expected cost to
 control a disease outbreak.  Another package is \pkg{surveillance}, a
 framework for monitoring, modeling, and regression analysis of
 infectious diseases, \citep{surveillance}.  \pkg{EpiModel}
-\citep{EpiModel} is an \proglang{R} package that, includes a framework
+\citep{EpiModel} is an \proglang{R} package that includes a framework
 for modeling spread of diseases on networks.  In \pkg{EpiModel} the
 individual is the unit and transmission between individuals is
 modelled through a contact network in discrete time.
