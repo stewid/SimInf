@@ -66,7 +66,7 @@ static int SimInf_sample_select(
     /* 1) Count number of states with individuals */
     /* 2) Count total number of individuals       */
     for (i = jcE[select]; i < jcE[select + 1]; i++) {
-        int nk = u[node * Nc + irE[i]];
+        const int nk = u[node * Nc + irE[i]];
         if (nk > 0)
             Nkinds++;
         Nindividuals += nk;
@@ -82,8 +82,8 @@ static int SimInf_sample_select(
 
     /* Error checking. */
     if (Nstates <= 0 ||     /* No states to sample from, we shouldn't be here. */
-        n > Nindividuals || /* Can not sample this number of individuals       */
-        n < 0)              /* Can not sample negative number of individuals.  */
+        n > Nindividuals || /* Cannot sample this number of individuals.       */
+        n < 0)              /* Cannot sample negative number of individuals.   */
         return SIMINF_ERR_SAMPLE_SELECT;
 
     /* Handle cases that require no random sampling */
