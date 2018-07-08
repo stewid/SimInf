@@ -21,8 +21,8 @@ data such as births, deaths and movements as scheduled events at
 predefined time-points. Using C code for the numerical solvers and
 'OpenMP' (if available) to divide work over multiple processors
 ensures high performance when simulating a sample outcome. One of our
-design goal was to make the package extendable and enable usage of the
-numerical solvers from other R extension packages in order to
+design goals was to make the package extendable and enable usage of
+the numerical solvers from other R extension packages in order to
 facilitate complex epidemiological research. The package contains
 template models and can be extended with user-defined models.
 
