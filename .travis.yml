@@ -27,9 +27,13 @@ matrix:
       env: R_CODECOV=true
     - r: devel
 
+after_failure:
+  - cat "${RCHECK_DIR}/00install.out"
+
 # Only report coverage for the release version on linux
 after_success:
   - test $R_CODECOV && Rscript -e "covr::coveralls()"
+  - cat "${RCHECK_DIR}/00install.out"
 
 notifications:
   email:
