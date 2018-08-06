@@ -1,6 +1,15 @@
 SimInf 6.0.0.9000
 -----------------
 
+IMPROVEMENTS
+
+* Print better error message when processing scheduleed events to
+  facilitate debugging.
+
+BUG FIXES
+
+* Fixed broken mparse example.
+
 SimInf 6.0.0
 ------------
 
