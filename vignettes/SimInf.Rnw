@@ -2303,7 +2303,7 @@ This section illustrates how the scheduled events for the
 \code{SISe3\_sp} model are specified
 (Table~\ref{table:SISe3_sp:events}) and how each event type is
 executed
-Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\ref{fig:external:shift}
+(Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\ref{fig:external:shift})
 
 \begin{table}[!ht]
   \small
