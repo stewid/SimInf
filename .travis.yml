@@ -5,17 +5,10 @@ sudo: false
 cache: packages
 warnings_are_errors: true
 
-os:
-  - linux
-  - osx
-
 addons:
   apt:
     packages:
       - libgsl0-dev
-
-brew_packages:
-  - gsl
 
 matrix:
   include:
@@ -26,6 +19,8 @@ matrix:
     - r: release
       env: R_CODECOV=true
     - r: devel
+    - os: osx
+      brew_packages: gsl
 
 after_failure:
   - cat "${RCHECK_DIR}/00install.out"
