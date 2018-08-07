@@ -54,14 +54,14 @@
   stochastic simulation algorithm and incorporates available data such
   as births, deaths and movements as scheduled events at predefined
   time-points.  Using \proglang{C} code for the numerical solvers and
-  \proglang{OpenMP} to divide work over multiple processors ensures
-  high performance when simulating a sample outcome.  One of our
-  design goals was to make \pkg{SimInf} extendable and enable usage of
-  the numerical solvers from other \proglang{R} extension packages in
-  order to facilitate complex epidemiological research.  In this
-  paper, we provide a technical description of the framework and
-  demonstrate its use on some basic examples.  We also discuss how to
-  specify and extend the framework with user-defined models.
+  divide work over multiple processors ensures high performance when
+  simulating a sample outcome.  One of our design goals was to make
+  \pkg{SimInf} extendable and enable usage of the numerical solvers
+  from other \proglang{R} extension packages in order to facilitate
+  complex epidemiological research.  In this paper, we provide a
+  technical description of the framework and demonstrate its use on
+  some basic examples.  We also discuss how to specify and extend the
+  framework with user-defined models.
 
 }
 
