@@ -35,13 +35,13 @@
 \Plainauthor{Stefan Widgren, Pavol Bauer, Robin Eriksson, Stefan
   Engblom}
 
-\title{\pkg{SimInf}: An \proglang{R} package for Data-driven
+\title{\pkg{SimInf}: An \proglang{R} Package for Data-Driven
   Stochastic Disease Spread Simulations}
 
-\Plaintitle{SimInf: An R package for Data-Driven Stochastic Disease
+\Plaintitle{SimInf: An R Package for Data-Driven Stochastic Disease
   Spread Simulations}
 
-\Shorttitle{\pkg{SimInf}: Data-driven Stochastic Disease Spread
+\Shorttitle{\pkg{SimInf}: Data-Driven Stochastic Disease Spread
   Simulations}
 
 \Abstract{
