@@ -122,7 +122,7 @@ options(prompt = "R> ", continue = "+    ", width = 74, useFancyQuotes = FALSE)
 \section{Introduction}
 
 Cattle can act as a reservoir for \textit{Salmonella} and
-Verotoxin-producing \textit{Escherichia coli} (VTEC), two important
+verotoxin-producing \textit{Escherichia coli} (VTEC), two important
 examples of zoonotic food-borne pathogens.  In order to develop
 effective control strategies, it is necessary to understand the spread
 of zoonotic diseases in the cattle population \citep{Newell2010}.
