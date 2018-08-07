@@ -106,7 +106,7 @@
 }
 
 <<echo=false, results=hide>>=
-options(prompt = "R> ", continue = "+    ", width = 74, useFancyQuotes = FALSE)
+options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 @
 
 \begin{document}
