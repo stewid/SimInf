@@ -170,36 +170,36 @@ epidemiological research.  To support this, \pkg{SimInf} has
 functionality to generate the required \proglang{C} and \proglang{R}
 code from a model specification.
 
-Various packages in the CRAN repository implement SSA to simulate a
-continuous-time stochastic process.  The \pkg{GillespieSSA} package
-\citep{Pineda-Krch2008}, on CRAN since 2007, but apparently not
-actively maintained after 2012, implements both the direct method and
-three approximate methods.  The \pkg{hybridModels} package
-\citep{hybridModels} uses \pkg{GillespieSSA} internally to simulate
-infections using a metapopulation model coupled with spread among
-subpopulations. Since each outcome of a stochastic process is
-different, it is (generally) necessary to study many realisations of
-the process to see the distribution of outcomes consistent with the
-model structure and parameterization.  Therefore, performance of the
-simulator becomes critical when using these methods in an applied
-context.  Because the algorithms in \pkg{GillespieSSA} are implemented
-in \proglang{R}, the computational efficiency is limited in comparison
-with implementations in a compiled language, for example, \proglang{C}
-or \proglang{C++}. The \pkg{adaptivetau} package \citep{adaptivetau}
-uses a hybrid \proglang{R}/\proglang{C++} strategy to implement the
-direct method and adaptive tau leaping \citep{Cao2007}.
+Various packages available at the Comprehensive \proglang{R} Archive
+Network (CRAN) implement SSA to simulate a continuous-time stochastic
+process.  The \pkg{GillespieSSA} package \citep{Pineda-Krch2008}, on
+CRAN since 2007, but apparently not actively maintained after 2012,
+implements both the direct method and three approximate methods.  The
+\pkg{hybridModels} package \citep{hybridModels} uses
+\pkg{GillespieSSA} internally to simulate infections using a
+metapopulation model coupled with spread among subpopulations. Since
+each outcome of a stochastic process is different, it is (generally)
+necessary to study many realisations of the process to see the
+distribution of outcomes consistent with the model structure and
+parameterization.  Therefore, performance of the simulator becomes
+critical when using these methods in an applied context.  Because the
+algorithms in \pkg{GillespieSSA} are implemented in \proglang{R}, the
+computational efficiency is limited in comparison with implementations
+in a compiled language, for example, \proglang{C} or
+\proglang{C++}. The \pkg{adaptivetau} package \citep{adaptivetau} uses
+a hybrid \proglang{R}/\proglang{C++} strategy to implement the direct
+method and adaptive tau leaping \citep{Cao2007}.
 
 There exists several related \proglang{R} packages for epidemiological
-analysis on the Comprehensive \proglang{R} Archive Network (CRAN).
-For example, the package \pkg{amei} \citep{amei}, designed for finding
-optimal intervention strategies to minimize total expected cost to
-control a disease outbreak.  Another package is \pkg{surveillance}, a
-framework for monitoring, modeling, and regression analysis of
-infectious diseases, \citep{surveillance}.  \pkg{EpiModel}
-\citep{EpiModel} is an \proglang{R} package that includes a framework
-for modeling spread of diseases on networks.  In \pkg{EpiModel} the
-individual is the unit and transmission between individuals is
-modelled through a contact network in discrete time.
+analysis on CRAN.  For example, the package \pkg{amei} \citep{amei},
+designed for finding optimal intervention strategies to minimize total
+expected cost to control a disease outbreak.  Another package is
+\pkg{surveillance}, a framework for monitoring, modeling, and
+regression analysis of infectious diseases, \citep{surveillance}.
+\pkg{EpiModel} \citep{EpiModel} is an \proglang{R} package that
+includes a framework for modeling spread of diseases on networks.  In
+\pkg{EpiModel} the individual is the unit and transmission between
+individuals is modelled through a contact network in discrete time.
 
 The remainder of this paper is organized as follows.  In
 \S\ref{sec:modeling} we summarize the mathematical foundation for our
