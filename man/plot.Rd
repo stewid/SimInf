@@ -5,8 +5,9 @@
 \alias{plot,SimInf_model-method}
 \title{Display the outcome from a simulated trajectory}
 \usage{
-\S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL, lty = NULL,
-  lwd = 2, compartments = NULL, node = NULL, range = 0.5, ...)
+\S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL,
+  lty = NULL, lwd = 2, compartments = NULL, node = NULL,
+  range = 0.5, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot}
