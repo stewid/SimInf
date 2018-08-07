@@ -76,7 +76,7 @@
   National Veterinary Institute\\
   SE-751 89 Uppsala, Sweden\\
   E-mail: \email{stefan.widgren@sva.se}\\
-  \textit{and}\\
+  and\\
   Division of Scientific Computing\\
   Department of Information Technology\\
   Uppsala University\\
@@ -260,8 +260,8 @@ infectious individuals between farms over large distances
 \citep{Danon2011}.  The livestock movements create complex dynamic
 interactions among farms that can be represented as a directed
 temporal network \citep{Kempe2002, Bajardi2011, Dutta2014}.  In
-network terminology, each farm is represented by a \textit{node} (also
-called a vertex).  Moreover, each movement forms an \textit{edge}
+network terminology, each farm is represented by a node (also
+called a vertex).  Moreover, each movement forms an edge
 (also called a link) between two nodes and following all edges through
 time, an infection may ``flow'' in the network and spread from node to
 node. Let $\Nnodes$ denote the number of nodes in a population, and
@@ -303,7 +303,7 @@ described by the transition matrix $\Stoich \in
 \Intdom^{\Ncompartments \times \Ntransitions}$ and the transition
 intensities $R: \Intdom_{+}^{\Ncompartments} \to
 \Realdom_{+}^{\Ntransitions}$, assuming $\Ntransitions$ different
-transitions. We then form a \textit{random counting measure}
+transitions. We then form a random counting measure
 $\mu_{k}(dt) = \mu(R_{k}(X(t-)); \, dt)$ that is associated with a
 Poisson process for the $k$th intensity $R_{k}(X(t-)$, which in turn
 depends on the state prior to any transition at time $t$, that is,
@@ -732,8 +732,8 @@ concentration variable $\Y$.
     use for each event is specified by the \code{select} vector (see
     below).  \code{E} is a sparse matrix of class \code{dgCMatrix}.\\
 
-    \code{N} & Determines how individuals in \textit{internal
-      transfer} and \textit{external transfer} events are shifted to
+    \code{N} & Determines how individuals in internal
+      transfer and external transfer events are shifted to
     enter another compartment.  Each row corresponds to one
     compartment in the model.  The values in a column are added to the
     current compartment of sampled individuals to specify the
@@ -744,13 +744,13 @@ concentration variable $\Y$.
     integer matrix.\\
 
     \code{event} & Four event types are supported by the current
-    solvers: \textit{exit}, \textit{enter}, \textit{internal
-      transfer}, and \textit{external transfer}.  When assigning the
+    solvers: exit, enter, internal
+      transfer, and external transfer.  When assigning the
     events from a \code{data.frame}, they can either be coded as a
-    numerical value or a character string: \textit{exit;} \code{0} or
-    \code{'exit'}, \textit{enter;} \code{1} or \code{'enter'},
-    \textit{internal transfer;} \code{2} or \code{'intTrans'}, and
-    \textit{external transfer;} \code{3} or \code{'extTrans'}.
+    numerical value or a character string: exit; \code{0} or
+    \code{'exit'}, enter; \code{1} or \code{'enter'},
+    internal transfer; \code{2} or \code{'intTrans'}, and
+    external transfer; \code{3} or \code{'extTrans'}.
     Internally in \pkg{SimInf}, the event type is coded as a numerical
     value.\\
 
@@ -759,12 +759,12 @@ concentration variable $\Y$.
     an integer vector.\\
 
     \code{node} & The node that the event operates on.  Also the
-    source node for an \textit{external transfer} event.  \code{node}
+    source node for an external transfer event.  \code{node}
     is an integer vector, where $1 \le$ \code{node[i]} $\le
     \Nnodes$.\\
 
-    \code{dest} & The destination node for an \textit{external
-      transfer} event i.e., individuals are moved from \code{node} to
+    \code{dest} & The destination node for an external
+      transfer event i.e., individuals are moved from \code{node} to
     \code{dest}, where $1 \le$ \code{dest[i]} $\le \Nnodes$.  Set
     \code{event = 0} for the other event types.  \code{dest} is an
     integer vector.\\
@@ -787,8 +787,8 @@ concentration variable $\Y$.
     corresponding to the non-zero entries in the specified column in
     \code{E[, select[i]]}, where \code{select} is an integer vector.\\
 
-    \code{shift} & Determines how individuals in \textit{internal
-      transfer} and \textit{external transfer} events are shifted to
+    \code{shift} & Determines how individuals in internal
+      transfer and external transfer events are shifted to
     enter another compartment.  The sampled individuals are shifted
     according to column \code{shift[i]} in matrix \code{N} i.e.,
     \code{N[, shift[i]]}, where \code{shift} is an integer vector.
@@ -871,28 +871,28 @@ initial continuous state in node $i$.
 
 The scheduled events are used to modify the discrete state of
 individuals in a node at a pre-defined time $t$.  There are four
-different types of events; \textit{enter}, \textit{internal transfer},
-\textit{external transfer} and \textit{exit}. The \textit{enter} event
+different types of events; enter, internal transfer,
+external transfer and exit. The enter event
 adds individuals to a node, for example, due to births. The
-\textit{internal transfer} event moves individuals between
+internal transfer event moves individuals between
 compartments within one node.  For example, to simulate vaccination
 and move individuals to a vaccinated compartment (see example in
 \S\ref{sec:mparse-scheduled-events}).  Or ageing according to birth
 records in an age-structured model \citep{Widgren2016}.  The
-\textit{external transfer} event moves individuals from compartments
+external transfer event moves individuals from compartments
 in one node to compartments in a destination node. Finally, the
-\textit{exit} event removes individuals from a node, for example, due
+exit event removes individuals from a node, for example, due
 to death. The event types are classified into those that operate on
-the compartments of a single node $E_1 = \{\text{\textit{enter},
-  \textit{internal transfer}, \textit{exit}}\}$ and those that operate
-on the compartments of two nodes $E_2 = \{\text{\textit{external
-    transfer}}\}$.  The parallel algorithm processes these two classes
+the compartments of a single node $E_1 = \{\text{enter,
+  internal transfer, exit}\}$ and those that operate
+on the compartments of two nodes $E_2 = \{\text{external
+    transfer}\}$.  The parallel algorithm processes these two classes
 of events differently, see Appendix~\ref{sec:pseudo-code} for
 pseudo-code of the core simulation solver.  The scheduled events are
 processed when simulation time reaches the time for any of the events.
 Events that are scheduled at the same time are processed in the
-following order: \textit{exit}, \textit{enter}, \textit{internal
-  transfer} and \textit{external transfer}.
+following order: exit, enter, internal
+  transfer and external transfer.
 
 The S4 class \code{SimInf\_events} contains slots with data structures
 to process events (Table~\ref{table:scheduled:events}).  The slots
@@ -915,21 +915,21 @@ in Appendix~\ref{sec:illustration-scheduled-events}.
 
 \subsubsection{Processing of an enter event}
 
-The \textit{enter} event adds \code{n[e]} individuals to one
+The enter event adds \code{n[e]} individuals to one
 compartment at \code{node[e]}, where the compartment is specified by a
 non-zero entry in the row for the compartment in column \code{E[, s]}.
 Please note that, if the column \code{E[, s]} contains several
 non-zero entries, the individuals are added to the compartment
 represented by the first non-zero row in column \code{E[, s]}.  The
 values of \code{dest[e]}, \code{proportion[e]} and \code{shift[e]},
-described below, are not used when processing an \textit{enter} event.
+described below, are not used when processing an enter event.
 See Figure~\ref{fig:enter} in
 Appendix~\ref{sec:illustration-scheduled-events} for an illustration
-of a scheduled \textit{enter} event.
+of a scheduled enter event.
 
 \subsubsection{Processing of an internal transfer event}
 
-The \textit{internal transfer} event moves \code{n[e]} individuals
+The internal transfer event moves \code{n[e]} individuals
 into new compartments within \code{node[e]}.  However, if \code{n[e]}
 equals zero, the number of individuals to move is calculated by
 multiplying the \code{proportion[e]} with the total number of
@@ -947,37 +947,37 @@ number of rows to move sampled individuals from that compartment i.e.,
 sampled individuals from compartment \code{p} are moved to compartment
 \code{N[p, q] + p}, where $1 \leq$ \code{N[p, q] + p} $\le
 \Ncompartments$.  The value of \code{dest[e]}, described below, is not
-used when processing an \textit{internal transfer} event.  See
+used when processing an internal transfer event.  See
 Figure~\ref{fig:internal} in
 Appendix~\ref{sec:illustration-scheduled-events} for an illustration
-of a scheduled \textit{internal transfer} event.
+of a scheduled internal transfer event.
 
 \subsubsection{Processing of an external transfer event}
 
-The \textit{external transfer} event moves individuals from
+The external transfer event moves individuals from
 \code{node[e]} to \code{dest[e]}.  The sampling of individuals from
-\code{node[e]} is performed in the same way as for an \textit{internal
-  transfer} event.  The compartments at \code{node[e]} are updated by
+\code{node[e]} is performed in the same way as for an internal
+  transfer event.  The compartments at \code{node[e]} are updated by
 subtracting the sampled individuals while adding them to the
 compartments at \code{dest[e]}.  The sampled individuals are added to
 the same compartments in \code{dest[e]} as in \code{node[e]}, unless
 \code{shift[e]} $> 0$.  In that case, the sampled individuals change
 compartments according to \code{N} as described in processing an
-\textit{internal transfer} event before adding them to \code{dest[e]}.
+internal transfer event before adding them to \code{dest[e]}.
 See Figures \ref{fig:external} and \ref{fig:external:shift} in
 Appendix~\ref{sec:illustration-scheduled-events} for illustrations of
-scheduled \textit{external transfer} events.
+scheduled external transfer events.
 
 \subsubsection{Processing of an exit event}
 
-The \textit{exit} event removes individuals from \code{node[e]}.  The
+The exit event removes individuals from \code{node[e]}.  The
 sampling of individuals from \code{node[e]} is performed in the same
-way as for an \textit{internal transfer} event.  The compartments at
+way as for an internal transfer event.  The compartments at
 \code{node[e]} are updated by subtracting the sampled individuals.
 The values of \code{dest[e]} and \code{shift[e]} are not used when
-processing an \textit{exit} event.  See Figure~\ref{fig:exit} in
+processing an exit event.  See Figure~\ref{fig:exit} in
 Appendix~\ref{sec:illustration-scheduled-events} for an illustration
-of a scheduled \textit{exit} event.
+of a scheduled exit event.
 
 \subsection{Core simulation solvers}
 
@@ -992,8 +992,8 @@ multiple processors and perform computations in parallel.  Two
 numerical solvers are currently supported.  The default solver is a
 split-step method named \code{'ssm'}, that uses direct SSA, but once
 every unit of time, it also processes scheduled events and calls the
-post time step function.  The other solver implements an \textit{``all
-  events method''} \citep{Bauer2015} and is named \code{'aem'}.
+post time step function.  The other solver implements an ``all
+  events method'' \citep{Bauer2015} and is named \code{'aem'}.
 Similarly, it also processes scheduled events and calls the post time
 step function once every unit of time.  A core feature of the
 \code{'aem'} solver is that transition events are carried out in
@@ -1284,7 +1284,7 @@ Interpret it as follows:
 Now, let us illustrate with a small example, consisting only of five
 nodes, how scheduled events can alter the composition within nodes
 during simulation.  Let us start with empty nodes and then create some
-\textit{enter} events to add susceptible individuals to each node
+enter events to add susceptible individuals to each node
 during the first ten time-steps.
 
 <<SIR-u0-add>>=
@@ -1293,7 +1293,7 @@ add <- data.frame(event = "enter", time = rep(1:10, each = 5),
 node = 1:5, dest = 0, n = 1:5, proportion = 0, select = 1, shift = 0)
 @
 
-We then create one \textit{enter} event to introduce an infected
+We then create one enter event to introduce an infected
 individual to the 5$^{th}$ node at $t = 25$.
 
 <<SIR-infect>>=
@@ -1301,7 +1301,7 @@ infect <- data.frame(event = "enter", time = 25, node = 5,
 dest = 0, n = 1, proportion = 0, select = 2, shift = 0)
 @
 
-Additionally, we create some \textit{external transfer} events to form
+Additionally, we create some external transfer events to form
 interactions among the nodes with movements between $t = 35$ and $t =
 45$.  Each shipment contains $n = 5$ individuals.
 
@@ -1311,7 +1311,7 @@ node = c(5, 5, 5, 5, 4, 4, 4, 3, 3, 2, 1), dest = c(4, 3, 3, 1, 3,
 2, 1, 2, 1, 1, 2), n = 5, proportion = 0, select = 4, shift = 0)
 @
 
-Finally, we create \textit{exit} events to remove 20\% of the
+Finally, we create exit events to remove 20\% of the
 individuals from each node at $t = 70$ and $t = 110$.
 
 <<SIR-remove>>=
@@ -1771,7 +1771,7 @@ u0$V <- 0
 events <- events_SIR()
 @
 
-Now generate vaccination events i.e., \textit{internal transfer}
+Now generate vaccination events i.e., internal transfer
 events.  Use \code{select = 3} and \code{shift = 1} to move animals
 from the susceptible, infectious and recovered compartments to the
 vaccinated compartment, see the definitions of $E$ and $N$ below.  Let
@@ -1789,14 +1789,14 @@ shift = 1)
 
 To simulate from this model, we have to define the select matrix $E$
 to handle which compartments to sample from when processing a
-scheduled event.  Let the first column in $E$ handle \textit{enter}
+scheduled event.  Let the first column in $E$ handle enter
 events (births); add newborn animals to the susceptible compartment
-$S$.  The second column is for \textit{exit} events (deaths) and
-\textit{external transfer} events (livestock movements); sample
+$S$.  The second column is for exit events (deaths) and
+external transfer events (livestock movements); sample
 animals from the $S$, $I$, $R$ and $V$ compartments.  Finally, the
-third column is for \textit{internal transfer} events (vaccination);
+third column is for internal transfer events (vaccination);
 sample individuals from the $S$, $I$ and $R$ compartments.  We must
-also define the shift matrix $N$ to process \textit{internal transfer}
+also define the shift matrix $N$ to process internal transfer
 events (vaccination); move sampled animals from the $S$ compartment
 four steps forward to the $V$ compartment.  Similarly, move sampled
 animals from the $I$ compartment three steps forward to the $V$
@@ -1946,10 +1946,10 @@ density-dependent growth in the prey and and a nonlinear Type-2
 functional response in the predator \citep{Rosenzweig1963}.  Let $R$
 and $F$ denote the number of prey and predators, respectively.  The
 model consists of five transitions
-(Equation~\eqref{eq:predator-prey}): \textit{i)} prey birth,
-\textit{ii)} prey death due to non-predatory events, \textit{iii)}
-prey death due to predation, \textit{iv)} predator birth, and
-\textit{v)} predator death
+(Equation~\eqref{eq:predator-prey}): i) prey birth,
+ii) prey death due to non-predatory events, iii)
+prey death due to predation, iv) predator birth, and
+v) predator death
 
 \begin{align}
   \label{eq:predator-prey}
@@ -2337,20 +2337,20 @@ executed
   \begin{center}
     \includegraphics[width=0.67\linewidth]{img/exit.pdf}
   \end{center}
-  \caption{Illustration of a scheduled \textit{exit} event in the
+  \caption{Illustration of a scheduled exit event in the
     \code{SISe3\_sp} model at time = 4.  The removal of one individual
     in the third age category $\{S_3, I_3\}$ from node 14.
-    Interpreting the figure from left to right: \textit{i)} A single
-    row of the event data operating on node 14.  \textit{ii)}
+    Interpreting the figure from left to right: i) A single
+    row of the event data operating on node 14.  ii)
     \code{u[, 14]} is the current state of node 14; \code{E[, 6]} is
     the 6$^{th}$ column in the select matrix that determines which
     compartments (age categories) that are eligible for sampling.
-    \textit{iii)} The operation of randomly sampling one individual (n
-    = 1) to move from the compartments selected in step \textit{ii}.
-    \textit{iv)} The resultant state of node 14 after subtracting the
-    sampled individual in step \textit{iii} from node 14.
+    iii) The operation of randomly sampling one individual (n
+    = 1) to move from the compartments selected in step ii).
+    iv) The resultant state of node 14 after subtracting the
+    sampled individual in step iii from node 14.
     $^\dag$\code{dest} and $^\S$\code{shift} are not used in a
-    scheduled \textit{exit} event.  $^\ddag$\code{proportion} is not
+    scheduled exit event.  $^\ddag$\code{proportion} is not
     used when $n > 0$.  \label{fig:exit}}
 \end{figure}
 
@@ -2358,40 +2358,40 @@ executed
   \begin{center}
     \includegraphics[width=0.6\linewidth]{img/enter.pdf}
   \end{center}
-  \caption{Illustration of a scheduled \textit{enter} event in the
+  \caption{Illustration of a scheduled enter event in the
     \code{SISe3\_sp} model at time = 4.  Add three susceptible
     individuals to the first age category $\{S_1\}$ in node 14.
-    Interpreting the figure from left to right: \textit{i)} A single
-    row of the event data operating on node 14.  \textit{ii)}
-    \code{u[, 14]} is the current state of node 14.  \textit{iii)}
+    Interpreting the figure from left to right: i) A single
+    row of the event data operating on node 14.  ii)
+    \code{u[, 14]} is the current state of node 14.  iii)
     \code{E[, 1]} is the first column in the select matrix that
     determines which compartments (age categories) the new individuals
-    are added.  \textit{iv)} The resultant state of node 14 after
-    adding the individuals in step \textit{iii}.  $^\dag$\code{dest},
+    are added.  iv) The resultant state of node 14 after
+    adding the individuals in step iii).  $^\dag$\code{dest},
     $^\ddag$\code{proportion} and $^\S$\code{shift} are not used in a
-    scheduled \textit{enter} event.  \label{fig:enter}}
+    scheduled enter event.  \label{fig:enter}}
 
   \vspace*{\floatsep}
 
   \begin{center}
     \includegraphics[width=0.66\linewidth]{img/external.pdf}
   \end{center}
-  \caption{Illustration of a scheduled \textit{external transfer}
+  \caption{Illustration of a scheduled external transfer
     event in the \code{SISe3\_sp} model at time = 4.  The movement of
     one individual in the third age category $\{S_3, I_3\}$ from node
     14 to destination node 23.  Interpreting the figure from left to
-    right: \textit{i)} A single row of the event data operating on
-    node 14 and destination node 23.  \textit{ii)} \code{u[, 14]} is
+    right: i) A single row of the event data operating on
+    node 14 and destination node 23.  ii) \code{u[, 14]} is
     the current state of node 14; \code{u[, 23]} is the current state
     of the destination node 23; \code{E[, 6]} is the 6$^{th}$ column
     in the select matrix that determines which compartments (age
-    categories) that are eligible for sampling.  \textit{iii)} The
+    categories) that are eligible for sampling.  iii) The
     operation of randomly sampling one individual (n = 1) to move from
-    the compartments selected in step \textit{ii}.  \textit{iv)} The
+    the compartments selected in step ii).  iv) The
     resultant state of node 14 and destination node 23 after
-    subtracting the sampled individuals in step \textit{iii} from node
+    subtracting the sampled individuals in step iii) from node
     14 and adding them to destination node 23.  $^\dag$\code{shift}
-    can be used in a scheduled \textit{external transfer} event, see
+    can be used in a scheduled external transfer event, see
     Figure~\ref{fig:external:shift}. $^\ddag$\code{proportion} is not
     used when $n > 0$.  \label{fig:external}}
 \end{figure}
@@ -2400,23 +2400,23 @@ executed
   \begin{center}
     \includegraphics[width=0.8\linewidth]{img/internal.pdf}
   \end{center}
-  \caption{Illustration of a scheduled \textit{internal transfer}
+  \caption{Illustration of a scheduled internal transfer
     event in the \code{SISe3\_sp} model at time = 4.  The ageing of
     three individuals in the first age category $\{S_1, I_1\}$.
-    Interpreting the figure from left to right: \textit{i)} A single
-    row of the event data operating on node 14.  \textit{ii)}
+    Interpreting the figure from left to right: i) A single
+    row of the event data operating on node 14.  ii)
     \code{u[, 14]} is the current state of node 14; \code{E[, 4]} is
     the 4$^{th}$ column in the select matrix that determines which
     compartments (age categories) that are eligible for sampling.
-    \textit{iii)} The operation of randomly sampling three individuals
-    (n = 3) to age from the compartments selected in step \textit{ii}.
-    \textit{iv)} The shift operation applies the shift specified in
+    iii) The operation of randomly sampling three individuals
+    (n = 3) to age from the compartments selected in step ii).
+    iv) The shift operation applies the shift specified in
     column 1 of the shift matrix (\code{N}) to the individuals sampled
-    in step \textit{iii}.  \textit{v)} The resultant state of node 14
-    after subtracting the sampled individuals in step \textit{iii} and
+    in step iii).  v) The resultant state of node 14
+    after subtracting the sampled individuals in step iii) and
     adding the individuals after the shift operation in step
-    \textit{iv}.  $^\dag$\code{dest} is not used in \textit{internal
-      transfers}.  $^\ddag$\code{proportion} is not used when $n >
+    iv).  $^\dag$\code{dest} is not used in internal
+      transfers.  $^\ddag$\code{proportion} is not used when $n >
     0$.  \label{fig:internal}}
 
   \vspace*{\floatsep}
@@ -2424,24 +2424,24 @@ executed
   \begin{center}
     \includegraphics[width=0.66\linewidth]{img/external-shift.pdf}
   \end{center}
-  \caption{Illustration of a scheduled \textit{external transfer}
+  \caption{Illustration of a scheduled external transfer
     event in the \code{SISe3} model at time = 4.  The ageing of three
     individuals in the second age category $\{S_2, I_2\}$ that are
     subsequently moved.  Interpreting the figure from left to right:
-    \textit{i)} A single row of the event data operating on node 14
-    and destination node 23.  \textit{ii)} \code{u[, 14]} is the
+    i) A single row of the event data operating on node 14
+    and destination node 23.  ii) \code{u[, 14]} is the
     current state of node 14; \code{u[, 23]} is the current state of
     the destination node 23; \code{E[, 5]} is the 5$^{th}$ column in
     the select matrix that determines which compartments (age
-    categories) that are eligible for sampling.  \textit{iii)} The
+    categories) that are eligible for sampling.  iii) The
     operation of randomly sampling three individuals (n = 3) to move
-    from the compartments selected in step \textit{ii}.  \textit{iv)}
+    from the compartments selected in step ii).  iv)
     The shift operation applies the shift specified in column 2 of the
     shift matrix (\code{N}) to the individuals sampled in step
-    \textit{iii}.  \textit{v)} The resultant state of node 14 and
+    iii).  v) The resultant state of node 14 and
     destination node 23 after subtracting the sampled individuals in
-    step \textit{iii} from node 14 and adding them to the destination
-    node 23 after the shift operation in step \textit{iv}.
+    step iii) from node 14 and adding them to the destination
+    node 23 after the shift operation in step iv).
     $^\ddag$\code{proportion} is not used when $n >
     0$.  \label{fig:external:shift}}
 \end{figure}
