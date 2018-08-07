@@ -325,7 +325,7 @@ occurs, then the state vector is updated according to
 with $\Stoich_k$ the $k$th column of $\Stoich$.  In
 \eqref{eq:vectorJSDE} the $\Ntransitions$ different epidemiological
 state transitions are competing in the sense of independent Poisson
-processes.  The `winning' process decides what event happens and
+processes.  The ``winning'' process decides what event happens and
 changes the state according to \eqref{eq:eventupdate}.  The simulation
 then proceeds under the Markov assumption where previous events are
 remembered via the state variable $X$ only.
