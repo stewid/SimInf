@@ -1278,7 +1278,7 @@ first ten time-steps.
 <<SIR-u0-add>>=
 u0 <- data.frame(S = rep(0, 5), I = rep(0, 5), R = rep(0, 5))
 add <- data.frame(event = "enter", time = rep(1:10, each = 5),
-node = 1:5, dest = 0, n = 1:5, proportion = 0, select = 1, shift = 0)
+  node = 1:5, dest = 0, n = 1:5, proportion = 0, select = 1, shift = 0)
 @
 
 We then create one enter event to introduce an infected
@@ -1286,7 +1286,7 @@ individual to the 5$^{th}$ node at $t = 25$.
 
 <<SIR-infect>>=
 infect <- data.frame(event = "enter", time = 25, node = 5,
-dest = 0, n = 1, proportion = 0, select = 2, shift = 0)
+  dest = 0, n = 1, proportion = 0, select = 2, shift = 0)
 @
 
 Additionally, we create some external transfer events to form
@@ -1294,9 +1294,9 @@ interactions among the nodes with movements between $t = 35$ and $t =
 45$.  Each shipment contains $n = 5$ individuals.
 
 <<SIR-move>>=
-move <- data.frame(event = "extTrans", time = 35:45,
-node = c(5, 5, 5, 5, 4, 4, 4, 3, 3, 2, 1), dest = c(4, 3, 3, 1, 3,
-2, 1, 2, 1, 1, 2), n = 5, proportion = 0, select = 4, shift = 0)
+move <- data.frame(event = "extTrans", time = 35:45, node = c(5, 5, 5,
+  5, 4, 4, 4, 3, 3, 2, 1), dest = c(4, 3, 3, 1, 3, 2, 1, 2, 1, 1, 2),
+  n = 5, proportion = 0, select = 4, shift = 0)
 @
 
 Finally, we create exit events to remove 20\% of the individuals from
@@ -1304,8 +1304,8 @@ each node at $t = 70$ and $t = 110$.
 
 <<SIR-remove>>=
 remove <- data.frame(event = "exit", time = c(70, 110),
-node = rep(1:5, each = 2), dest = 0, n = 0, proportion = 0.2,
-select = 4, shift = 0)
+  node = rep(1:5, each = 2), dest = 0, n = 0, proportion = 0.2,
+  select = 4, shift = 0)
 @
 
 Figure~\ref{fig:SIR-events} shows one realization of a model
@@ -1319,7 +1319,7 @@ the nodes.
 <<eval=FALSE>>=
 events = rbind(add, infect, move, remove)
 model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
-gamma = 0.077)
+  gamma = 0.077)
 set.seed(3)
 result <- run(model, threads = 1)
 plot(result, node = 1:5, range = FALSE)
@@ -1368,20 +1368,12 @@ from a \code{SimInf_model} object, together with some custom analysis
 of each trajectory.  Here, we find that infection spread from the
 5$^{th}$ node in about half of \code{n = 1000} trajectories.
 
-<<echo=false, results=hide>>=
-options(continue = "+  ")
-@
-
 <<SIR-replicate>>=
 set.seed(123)
 mean(replicate(n = 1000, {
   nI <- trajectory(run(model = model, threads = 1), node = 1:4)$I
   sum(nI) > 0
 }))
-@
-
-<<echo=false, results=hide>>=
-options(continue = "+    ")
 @
 
 \subsubsection[C code for the SIR model]{%
@@ -1497,10 +1489,10 @@ model object).
 
 <<create-SISesp-model>>=
 model <- SISe_sp(u0 = u0, tspan = 1:1460, events = events, phi = 0,
-upsilon = 0.012, gamma = 0.1, alpha = 1, beta_t1 = 0.10,
-beta_t2 = 0.12, beta_t3 = 0.12, beta_t4 = 0.10, end_t1 = 91,
-end_t2 = 182, end_t3 = 273, end_t4 = 365, distance = d_ik,
-coupling = 0.2)
+  upsilon = 0.012, gamma = 0.1, alpha = 1, beta_t1 = 0.10,
+  beta_t2 = 0.12, beta_t3 = 0.12, beta_t4 = 0.10, end_t1 = 91,
+  end_t2 = 182, end_t3 = 273, end_t4 = 365, distance = d_ik,
+  coupling = 0.2)
 @
 
 Let us use the \code{prevalence()} method to explore the proportion of
@@ -1514,8 +1506,8 @@ specify \code{type = "nop"}.  Consult the help page for other
 \code{prevalence()} parameter options.
 
 <<eval=FALSE>>=
-plot(NULL, xlim = c(0, 1500), ylim = c(0, 0.18),
-ylab = "Prevalance", xlab = "Time")
+plot(NULL, xlim = c(0, 1500), ylim = c(0, 0.18), ylab = "Prevalance",
+  xlab = "Time")
 set.seed(123)
 replicate(5, {
   result <- run(model = model, threads = 1)
@@ -1613,7 +1605,7 @@ and \code{tspan}.
 n <- 1000
 u0 <- data.frame(S = rep(99, n), I = rep(5, n), R = rep(0, n))
 model <- mparse(transitions = transitions, compartments = compartments,
-gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:180)
+  gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:180)
 @
 
 As in earlier examples, the \code{model} object can now be used to
@@ -1668,9 +1660,9 @@ this model, simply by replicating a node in the initial condition
 <<SIR-mparse-incidence-run, eval=FALSE>>=
 n <- 1000
 u0 <- data.frame(S = rep(99, n), I = rep(1, n), Icum = rep(0, n),
-R = rep(0, n))
+  R = rep(0, n))
 model <- mparse(transitions = transitions, compartments = compartments,
-gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:150)
+  gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:150)
 set.seed(123)
 result <- run(model = model, threads = 1)
 @
@@ -1693,7 +1685,7 @@ average.
 
 <<SIR-mparse-incidence-plot, eval=FALSE>>=
 plot(cases, main = "", xlab = "Time", ylab = "Number of cases",
-do.points = FALSE)
+  do.points = FALSE)
 lines(avg_cases, col = "blue", lwd = 2, lty = 2)
 @
 
@@ -1770,9 +1762,9 @@ We assume, for the sake of simplicity, that vaccinated individuals
 become immune and non-infectious immediately.
 
 <<mparse-scheduled-events-vaccination>>=
-vaccination <- data.frame(event = "intTrans", time = rep(21:52, each = 50),
-node = 1:1600, dest = 0, n = 0, proportion = 0.8, select = 3,
-shift = 1)
+vaccination <- data.frame(event = "intTrans", time = rep(21:52,
+  each = 50), node = 1:1600, dest = 0, n = 0, proportion = 0.8,
+  select = 3, shift = 1)
 @
 
 To simulate from this model, we have to define the select matrix $E$
@@ -1813,10 +1805,10 @@ $R$ compartment one step forward.
 
 <<mparse-scheduled-events-E-N>>=
 E <- matrix(c(1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0), nrow = 5,
-ncol = 3, dimnames = list(c("S", "I", "Icum", "R", "V"),
-c("1", "2", "3")))
+  ncol = 3, dimnames = list(c("S", "I", "Icum", "R", "V"),
+  c("1", "2", "3")))
 N <- matrix(c(4, 3, 0, 1, 0), nrow = 5, ncol = 1,
-dimnames = list(c("S", "I", "Icum", "R", "V"), "1"))
+  dimnames = list(c("S", "I", "Icum", "R", "V"), "1"))
 @
 
 Additionally, we have to redefine the \code{select} column in the
@@ -1838,10 +1830,6 @@ value rather than a numeric value.  Run the model and accumulate
 matrix format, to extract \code{Icum} in every node at each time-point
 in \code{tspan}.
 
-<<echo=false, results=hide>>=
-options(continue = "+  ")
-@
-
 <<mparse-scheduled-events-epicurve>>=
 epicurve <- function(model, n = 1000) {
   Icum <- numeric(length(model@tspan))
@@ -1860,17 +1848,13 @@ epicurve <- function(model, n = 1000) {
 }
 @
 
-<<echo=false, results=hide>>=
-options(continue = "+    ")
-@
-
 Generate an epicurve with the average number of cases per day for the
 first three hundred days of the epidemic without vaccination.
 
 <<mparse-scheduled-events-model-no-vac, eval=FALSE>>=
 model_no_vac <- mparse(transitions = transitions,
-compartments = compartments, gdata = c(b = 0.16, g = 0.077),
-u0 = u0, tspan = 1:300, events = events, E = E, N = N)
+  compartments = compartments, gdata = c(b = 0.16, g = 0.077),
+  u0 = u0, tspan = 1:300, events = events, E = E, N = N)
 cases_no_vac <- epicurve(model_no_vac)
 @
 
@@ -1879,9 +1863,9 @@ Similarly, generate an epicurve after incorporating the
 
 <<mparse-scheduled-events-model-vac, eval=FALSE>>=
 model_vac <- mparse(transitions = transitions,
-compartments = compartments, gdata = c(b = 0.16, g = 0.077),
-u0 = u0, tspan = 1:300, events = rbind(events, vaccination),
-E = E, N = N)
+  compartments = compartments, gdata = c(b = 0.16, g = 0.077),
+  u0 = u0, tspan = 1:300, events = rbind(events, vaccination),
+  E = E, N = N)
 cases_vac <- epicurve(model_vac)
 @
 
@@ -1891,11 +1875,11 @@ population (Figure~\ref{fig:mparse-epicurve}).
 
 <<mparse-scheduled-events-plot, eval=FALSE>>=
 plot(cases_no_vac, main = "", xlim = c(0, 300), xlab = "Time",
-ylab = "Number of cases", do.points = FALSE)
+  ylab = "Number of cases", do.points = FALSE)
 lines(cases_vac, col = "blue", do.points = FALSE, lty = 2)
 abline(v = 21, col = "red", lty = 3)
 legend("topright", c("No vaccination", "Vaccination"),
-col = c("black", "blue"), lty = 1:2)
+  col = c("black", "blue"), lty = 1:2)
 @
 
 \begin{figure}
@@ -1959,11 +1943,11 @@ efficiency, and $w$ is the degree of predator saturation
 
 <<mparse-predator-prey-I>>=
 transitions <- c("@ -> bR*R -> R", "R -> (dR+(bR-dR)*R/K)*R -> @",
-"R -> alpha/(1+w*R)*R*F -> @", "@ -> bF*alpha/(1+w*R)*R*F -> F",
-"F -> dF*F -> @")
+  "R -> alpha/(1+w*R)*R*F -> @", "@ -> bF*alpha/(1+w*R)*R*F -> F",
+  "F -> dF*F -> @")
 compartments <- c("R", "F")
 parameters <- c(bR = 2, bF = 2, dR = 1, K = 1000, alpha = 0.007,
-w = 0.0035, dF = 2)
+  w = 0.0035, dF = 2)
 @
 
 Assume the initial population consists of $R = 1000$ prey and $F =
@@ -1976,7 +1960,7 @@ $n$ identical nodes.
 n <- 1000
 u0 = data.frame(R = rep(1000, n), F = rep(100, n))
 model <- mparse(transitions = transitions, compartments = compartments,
-gdata = parameters, u0 = u0, tspan = 1:100)
+  gdata = parameters, u0 = u0, tspan = 1:100)
 @
 
 Now instead of running the model to generate data, let us use it to
@@ -2094,10 +2078,10 @@ the predators in the fourth node (Figure~\ref{fig:predator-prey}).
 <<predator-prey-plot, eval=FALSE>>=
 opar <- par(mfrow = c(1, 2))
 plot(R ~ F, trajectory(model = result), cex = 0.3, pch = 20,
-xlab = "Number of predators", ylab = "Number of prey",
-col = rgb(0, 0, 0, alpha = 0.1))
+  xlab = "Number of predators", ylab = "Number of prey",
+  col = rgb(0, 0, 0, alpha = 0.1))
 plot(R ~ time, trajectory(model = result, node = 4), type = "l",
-xlab = "Time", ylab = "N")
+  xlab = "Time", ylab = "N")
 lines(F ~ time, trajectory(model = result, node = 4), type = "l", lty = 2)
 legend("right", c("Prey", "Predator"), lty = 1:2)
 par(opar)
