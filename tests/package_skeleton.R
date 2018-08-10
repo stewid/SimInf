@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2018  Stefan Engblom
+## Copyright (C) 2015 - 2018  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,6 +20,15 @@ library("SimInf")
 ## For debugging
 sessionInfo()
 
+## Check missing and invalid model argument
+res <- tools::assertError(package_skeleton())
+stopifnot(length(grep("Missing 'model' argument",
+                      res[[1]]$message)) > 0)
+res <- tools::assertError(package_skeleton(5))
+stopifnot(length(grep("'model' argument is not a 'SimInf_model' object",
+                      res[[1]]$message)) > 0)
+
+## Chack package_skeleton
 m <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
             compartments = c("S", "I", "R"),
             gdata = c(b = 0.16, g = 0.077),
@@ -36,3 +45,11 @@ stopifnot(file.exists(file.path(path, "SIR", "man", "SIR.Rd")))
 stopifnot(file.exists(file.path(path, "SIR", "man", "run-methods.Rd")))
 stopifnot(file.exists(file.path(path, "SIR", "R", "model.R")))
 stopifnot(file.exists(file.path(path, "SIR", "src", "model.c")))
+
+## Check that it fails if path exists
+res <- tools::assertError(package_skeleton(m, name = "SIR", path = path))
+stopifnot(length(grep("already exists",
+                      res[[1]]$message)) > 0)
+
+## Cleanup
+unlink(path, recursive=TRUE)
