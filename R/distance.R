@@ -71,11 +71,11 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL)
         if (any(d == 0)) {
             if (is.null(min_dist))
                 stop("Identical coordinates. Please provide a minimum distance.")
-            d <- sapply(d, max, min_dist)
+            d <- pmax(d, min_dist)
         }
 
         if (!is.null(min_dist))
-            d <- sapply(d, max, min_dist)
+            d <- pmax(d, min_dist)
 
         ## Make row indices 0-based
         list(row_ind = row_ind - 1, d = d)
