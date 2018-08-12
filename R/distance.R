@@ -82,9 +82,9 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL)
     })
 
     ## Create vectors for all distances, row indices and column indices.
-    d <- as.numeric(unlist(sapply(m, "[[", "d")))
-    row_ind <- as.integer(unlist(sapply(m, "[[", "row_ind")))
-    col_ind <- as.integer(c(0, cumsum(sapply(m, function(x) length(x$row_ind)))))
+    d <- as.numeric(unlist(lapply(m, "[[", "d")))
+    row_ind <- as.integer(unlist(lapply(m, "[[", "row_ind")))
+    col_ind <- c(0L, cumsum(vapply(m, function(x) {length(x$row_ind)}, integer(1))))
 
     ## Create a new sparse matrix
     new("dgCMatrix", x = d, i = row_ind, p = col_ind, Dim = rep(length(x), 2))
