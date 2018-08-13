@@ -508,7 +508,7 @@ t_{n+1}-t_{n}$ for the concentration variable $\Y$.
     \pkg{SimInf} to facilitate analysis and post-processing of
     simulated data, for example, \code{trajectory}, \code{prevalence}
     and \code{plot}.  \pkg{SimInf} supports usage of the numerical
-    solvers from other \proglang{R} packages via the \emph{LinkingTo}
+    solvers from other \proglang{R} packages via the \code{LinkingTo}
     feature in \proglang{R}. \label{fig:overview}}
 \end{figure}
 
@@ -2091,7 +2091,7 @@ par(opar)
 
 This example illustrated how \pkg{SimInf} supports usage of the
 numerical solvers from other \proglang{R} packages via the
-\emph{LinkingTo} feature in \proglang{R}.
+\code{LinkingTo} feature in \proglang{R}.
 
 %**************************************************************************
 
