@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2018  Stefan Engblom
+## Copyright (C) 2015 - 2018  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -77,6 +77,26 @@ res <- tools::assertError(
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6, c1 = 2),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 stopifnot(length(grep("'compartments' and 'gdata' must consist of unique names.",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                         compartments = c("v_new", "u", "v", "ldata", "gdata",
+                                          "node", "t", "rng"),
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = 10, W = 10), tspan = 1:5))
+stopifnot(length(grep("Invalid compartment names: v_new, u, v, ldata, gdata, node, t, rng",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                         compartments = c("D","W"),
+                         gdata = c(v_new = 0.5, u = 1, v = 0.005, ldata = 0.6,
+                                   gdata = 2, node = 3, t = 4, rng = 5),
+                         u0 = data.frame(D = 10, W = 10), tspan = 1:5))
+stopifnot(length(grep("Invalid gdata names: v_new, u, v, ldata, gdata, node, t, rng",
                       res[[1]]$message)) > 0)
 
 ## Check mparse

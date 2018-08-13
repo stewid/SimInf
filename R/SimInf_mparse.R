@@ -257,11 +257,11 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
 
     reserved = c("v_new", "u", "v", "ldata", "gdata", "node", "t", "rng")
     if (length(intersect(compartments, reserved)))
-        stop(paste("Invalid compartment names:",
-                   paste0(intersect(compartments, reserved), collapse = ", ")))
+        stop("Invalid compartment names: ",
+             paste0(intersect(compartments, reserved), collapse = ", "))
     if (length(intersect(names(gdata), reserved)))
-        stop(paste("Invalid gdata names:",
-                   paste0(intersect(names(gdata), reserved), collapse = ", ")))
+        stop("Invalid gdata names: ",
+             paste0(intersect(names(gdata), reserved), collapse = ", "))
 
     transitions <- lapply(strsplit(transitions, "->"), function(x) {
         if (!identical(length(x), 3L))
