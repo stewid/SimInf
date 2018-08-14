@@ -197,6 +197,46 @@ as_labels <- function(transitions) {
     })
 }
 
+parse_transitions <- function(transitions, compartments, gdata) {
+    lapply(strsplit(transitions, "->"), function(x) {
+        if (!identical(length(x), 3L))
+            stop("Invalid transition: '", paste0(x, collapse = "->"), "'")
+
+        ## Remove spaces and the empty set
+        from <- gsub(" ", "", gsub("@", "", x[1]))
+        propensity <- gsub(" ", "", x[2])
+        dest <- gsub(" ", "", gsub("@", "", x[3]))
+
+        ## Split from and dest into 'compartment1 + compartment2 + ..'
+        from <- unlist(strsplit(from, "+", fixed = TRUE))
+        dest <- unlist(strsplit(dest, "+", fixed = TRUE))
+
+        ## Assign each compartment into its number according to the
+        ## ordering in compartments
+        ifrom <- match(from, compartments)
+        if (any(is.na(ifrom)))
+            stop(sprintf("Unknown compartment: '%s'.", from[is.na(ifrom)]))
+        idest <- match(dest, compartments)
+        if (any(is.na(idest)))
+            stop(sprintf("Unknown compartment: '%s'.", dest[is.na(idest)]))
+
+        ## The corresponding column in the state change vector S is
+        ## now known.
+        S <- integer(length(compartments))
+        S[ifrom] <- -1
+        S[idest] <- 1
+
+        propensity <- rewriteprop(propensity, compartments, gdata)
+
+        list(from       = from,
+             dest       = dest,
+             orig_prop  = propensity$orig_prop,
+             propensity = propensity$propensity,
+             depends    = propensity$depends,
+             S          = S)
+    })
+}
+
 ##' Model parser to define new models to run in \code{SimInf}
 ##'
 ##' Describe your model in a logical way in R. \code{mparse} creates a
@@ -263,43 +303,7 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
         stop("Invalid gdata names: ",
              paste0(intersect(names(gdata), reserved), collapse = ", "))
 
-    transitions <- lapply(strsplit(transitions, "->"), function(x) {
-        if (!identical(length(x), 3L))
-            stop(paste0("Invalid transition: '", paste0(x, collapse = "->"), "'"))
-
-        ## Remove spaces and the empty set
-        from <- gsub(" ", "", gsub("@", "", x[1]))
-        propensity <- gsub(" ", "", x[2])
-        dest <- gsub(" ", "", gsub("@", "", x[3]))
-
-        ## Split from and dest into 'compartment1 + compartment2 + ..'
-        from <- unlist(strsplit(from, "+", fixed = TRUE))
-        dest <- unlist(strsplit(dest, "+", fixed = TRUE))
-
-        ## Assign each compartment into its number according to the
-        ## ordering in compartments
-        ifrom <- match(from, compartments)
-        if (any(is.na(ifrom)))
-            stop(sprintf("Unknown compartment: '%s'.", from[is.na(ifrom)]))
-        idest <- match(dest, compartments)
-        if (any(is.na(idest)))
-            stop(sprintf("Unknown compartment: '%s'.", dest[is.na(idest)]))
-
-        ## The corresponding column in the state change vector S is
-        ## now known.
-        S <- integer(length(compartments))
-        S[ifrom] <- -1
-        S[idest] <- 1
-
-        propensity <- rewriteprop(propensity, compartments, names(gdata))
-
-        list(from       = from,
-             dest       = dest,
-             orig_prop  = propensity$orig_prop,
-             propensity = propensity$propensity,
-             depends    = propensity$depends,
-             S          = S)
-    })
+    transitions <- parse_transitions(transitions, compartments, names(gdata))
 
     S <- as(do.call("cbind", lapply(transitions, function(x) x$S)), "dgCMatrix")
     depends <- do.call("rbind", lapply(transitions, function(x) x$depends))
