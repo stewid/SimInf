@@ -277,9 +277,8 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
                    u0 = NULL, tspan = NULL, events = NULL, E = NULL, N = NULL)
 {
     ## Check transitions
-    if (is.null(transitions))
-        stop("'transitions' must be specified.")
-    if(!is.character(transitions))
+    if (!is.atomic(transitions) || !is.character(transitions) ||
+        any(nchar(transitions) == 0))
         stop("'transitions' must be specified in a character vector.")
 
     ## Reserved names that cannot be used for compartment names or

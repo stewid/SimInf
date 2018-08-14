@@ -25,8 +25,8 @@ res <- tools::assertError(
                   mparse(compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'transitions' must be specified.",
-                      res[[1]]$message)) > 0)
+stopifnot(length(grep("'transitions' must be specified in a character vector.",
+                      res[[1]]$message, fixed = TRUE)) > 0)
 
 res <- tools::assertError(
                   mparse(transitions = 5,
@@ -34,7 +34,7 @@ res <- tools::assertError(
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 stopifnot(length(grep("'transitions' must be specified in a character vector.",
-                      res[[1]]$message)) > 0)
+                      res[[1]]$message, fixed = TRUE)) > 0)
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
