@@ -305,14 +305,15 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
 
     transitions <- parse_transitions(transitions, compartments, names(gdata))
 
-    S <- as(do.call("cbind", lapply(transitions, function(x) x$S)), "dgCMatrix")
-    depends <- do.call("rbind", lapply(transitions, function(x) x$depends))
-    G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
-
-    colnames(G) <- as.character(seq_len(dim(G)[2]))
-    rownames(G) <- as_labels(transitions)
+    S <- do.call("cbind", lapply(transitions, "[[", "S"))
+    S <- as(S, "dgCMatrix")
     colnames(S) <- as.character(seq_len(dim(S)[2]))
     rownames(S) <- compartments
+
+    depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
+    G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
+    colnames(G) <- as.character(seq_len(dim(G)[2]))
+    rownames(G) <- as_labels(transitions)
 
     ## Check u0
     if (!is.data.frame(u0))
