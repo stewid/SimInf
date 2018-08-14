@@ -78,7 +78,7 @@ C_run <- function(transitions) {
 }
 
 ## C code: Generate C code for mparse.
-C_code_mparse <- function(transitions, rates, compartments) {
+C_code_mparse <- function(transitions) {
     c(C_heading(),
       C_include(),
       C_trFun(transitions),
@@ -332,7 +332,7 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
                  gdata  = gdata,
                  u0     = u0,
                  v0     = NULL,
-                 C_code = C_code_mparse(transitions, gdata, compartments))
+                 C_code = C_code_mparse(transitions))
 }
 
 ##' Extract the C code from a \code{SimInf_model} object
