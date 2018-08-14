@@ -57,18 +57,10 @@ res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                                          "D+W->c3*D*W->W+W","W->c4*W->@"),
                          compartments = c("D","W"),
-                         u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'gdata' must be specified.",
-                      res[[1]]$message)) > 0)
-
-res <- tools::assertError(
-                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
                          gdata = letters,
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'gdata' must be a named numeric vector.",
-                      res[[1]]$message)) > 0)
+stopifnot(length(grep("'gdata' must be a named numeric vector with unique names.",
+                      res[[1]]$message, fixed = TRUE)) > 0)
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -77,7 +69,7 @@ res <- tools::assertError(
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 stopifnot(length(grep("'compartments' must consist of unique names.",
-                      res[[1]]$message)) > 0)
+                      res[[1]]$message, fixed = TRUE)) > 0)
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -85,8 +77,8 @@ res <- tools::assertError(
                          compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6, c1 = 2),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'gdata' must consist of unique names.",
-                      res[[1]]$message)) > 0)
+stopifnot(length(grep("'gdata' must be a named numeric vector with unique names.",
+                      res[[1]]$message, fixed = TRUE)) > 0)
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",

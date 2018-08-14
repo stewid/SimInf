@@ -298,15 +298,14 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
              paste0(intersect(compartments, reserved), collapse = ", "))
 
     ## Check gdata
-    if (is.null(gdata))
-        stop("'gdata' must be specified.")
-    if (!is.numeric(gdata))
-        stop("'gdata' must be a named numeric vector.")
-    if (!identical(length(names(gdata)), length(unique(names(gdata)))))
-        stop("'gdata' must consist of unique names.")
-    if (length(intersect(names(gdata), reserved)))
-        stop("Invalid gdata names: ",
-             paste0(intersect(names(gdata), reserved), collapse = ", "))
+    if (!is.null(gdata)) {
+        if (!is.atomic(gdata) || !is.numeric(gdata) || is.null(names(gdata)) ||
+            any(duplicated(names(gdata))) || any(nchar(names(gdata)) == 0))
+            stop("'gdata' must be a named numeric vector with unique names.")
+        if (length(intersect(names(gdata), reserved)))
+            stop("Invalid gdata names: ",
+                 paste0(intersect(names(gdata), reserved), collapse = ", "))
+    }
 
     ## Check u0
     if (!is.data.frame(u0))
