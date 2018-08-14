@@ -287,12 +287,9 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
     reserved = c("v_new", "u", "v", "ldata", "gdata", "node", "t", "rng")
 
     ## Check compartments
-    if (is.null(compartments))
-        stop("'compartments' must be specified.")
-    if(!is.character(compartments))
+    if (!is.atomic(compartments) || !is.character(compartments) ||
+        any(duplicated(compartments)) || any(nchar(compartments) == 0))
         stop("'compartments' must be specified in a character vector.")
-    if (!identical(length(compartments), length(unique(compartments))))
-        stop("'compartments' must consist of unique names.")
     if (length(intersect(compartments, reserved)))
         stop("Invalid compartment names: ",
              paste0(intersect(compartments, reserved), collapse = ", "))
