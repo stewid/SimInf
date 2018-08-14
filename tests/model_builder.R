@@ -99,6 +99,33 @@ res <- tools::assertError(
 stopifnot(length(grep("Invalid gdata names: v_new, u, v, ldata, gdata, node, t, rng",
                       res[[1]]$message)) > 0)
 
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W"),
+                         compartments = c("D","W"),
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = 10, W = 10), tspan = 1:5))
+stopifnot(length(grep("Invalid transition: 'W->c4[*]W'",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(
+                  mparse(transitions = c("A->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                         compartments = c("D","W"),
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = 10, W = 10), tspan = 1:5))
+stopifnot(length(grep("Unknown compartment: 'A'[.]",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->B"),
+                         compartments = c("D","W"),
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = 10, W = 10), tspan = 1:5))
+stopifnot(length(grep("Unknown compartment: 'B'[.]",
+                      res[[1]]$message)) > 0)
+
 ## Check mparse
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                             "D+W->c3*D*W->W+W","W->c4*W->@"),
