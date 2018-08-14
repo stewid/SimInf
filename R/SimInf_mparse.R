@@ -157,7 +157,7 @@ tokens <- function(propensity) {
 ## \code{u[compartments[j]]} where \code{j} is the numbering in
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
-rewriteprop <- function(propensity, compartments, gdata) {
+rewriteprop <- function(propensity, compartments, parameters) {
     orig_prop <- propensity
     propensity <- tokens(propensity)
     depends <- integer(length(compartments))
@@ -169,8 +169,8 @@ rewriteprop <- function(propensity, compartments, gdata) {
     if (length(i))
         depends[i] <- 1
 
-    ## Find gdata in propensity
-    i <- match(propensity, gdata)
+    ## Find parameters in propensity
+    i <- match(propensity, parameters)
     propensity <- ifelse(is.na(i), propensity, sprintf("gdata[%i]", i-1L))
 
     list(orig_prop  = orig_prop,
@@ -197,7 +197,7 @@ as_labels <- function(transitions) {
     })
 }
 
-parse_transitions <- function(transitions, compartments, gdata) {
+parse_transitions <- function(transitions, compartments, parameters) {
     lapply(strsplit(transitions, "->"), function(x) {
         if (!identical(length(x), 3L))
             stop("Invalid transition: '", paste0(x, collapse = "->"), "'")
@@ -226,7 +226,7 @@ parse_transitions <- function(transitions, compartments, gdata) {
         S[ifrom] <- -1
         S[idest] <- 1
 
-        propensity <- rewriteprop(propensity, compartments, gdata)
+        propensity <- rewriteprop(propensity, compartments, parameters)
 
         list(from       = from,
              dest       = dest,
