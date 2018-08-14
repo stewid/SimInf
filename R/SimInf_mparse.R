@@ -276,44 +276,37 @@ parse_transitions <- function(transitions, compartments, gdata) {
 mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
                    u0 = NULL, tspan = NULL, events = NULL, E = NULL, N = NULL)
 {
+    ## Check transitions
     if (is.null(transitions))
         stop("'transitions' must be specified.")
     if(!is.character(transitions))
         stop("'transitions' must be specified in a character vector.")
 
+    ## Reserved names that cannot be used for compartment names or
+    ## parameter names.
+    reserved = c("v_new", "u", "v", "ldata", "gdata", "node", "t", "rng")
+
+    ## Check compartments
     if (is.null(compartments))
         stop("'compartments' must be specified.")
     if(!is.character(compartments))
         stop("'compartments' must be specified in a character vector.")
+    if (!identical(length(compartments), length(unique(compartments))))
+        stop("'compartments' must consist of unique names.")
+    if (length(intersect(compartments, reserved)))
+        stop("Invalid compartment names: ",
+             paste0(intersect(compartments, reserved), collapse = ", "))
 
+    ## Check gdata
     if (is.null(gdata))
         stop("'gdata' must be specified.")
     if (!is.numeric(gdata))
         stop("'gdata' must be a named numeric vector.")
-
-    if (!all(identical(length(compartments), length(unique(compartments))),
-             identical(length(names(gdata)), length(unique(names(gdata))))))
-        stop("'compartments' and 'gdata' must consist of unique names.")
-
-    reserved = c("v_new", "u", "v", "ldata", "gdata", "node", "t", "rng")
-    if (length(intersect(compartments, reserved)))
-        stop("Invalid compartment names: ",
-             paste0(intersect(compartments, reserved), collapse = ", "))
+    if (!identical(length(names(gdata)), length(unique(names(gdata)))))
+        stop("'gdata' must consist of unique names.")
     if (length(intersect(names(gdata), reserved)))
         stop("Invalid gdata names: ",
              paste0(intersect(names(gdata), reserved), collapse = ", "))
-
-    transitions <- parse_transitions(transitions, compartments, names(gdata))
-
-    S <- do.call("cbind", lapply(transitions, "[[", "S"))
-    S <- as(S, "dgCMatrix")
-    colnames(S) <- as.character(seq_len(dim(S)[2]))
-    rownames(S) <- compartments
-
-    depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
-    G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
-    colnames(G) <- as.character(seq_len(dim(G)[2]))
-    rownames(G) <- as_labels(transitions)
 
     ## Check u0
     if (!is.data.frame(u0))
@@ -321,6 +314,21 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
     if (!all(compartments %in% names(u0)))
         stop("Missing columns in u0")
     u0 <- u0[, compartments, drop = FALSE]
+
+    ## Parse transitions
+    transitions <- parse_transitions(transitions, compartments, names(gdata))
+
+    ## Create the state-change matrix S
+    S <- do.call("cbind", lapply(transitions, "[[", "S"))
+    S <- as(S, "dgCMatrix")
+    colnames(S) <- as.character(seq_len(dim(S)[2]))
+    rownames(S) <- compartments
+
+    ## Create the dependency graph G
+    depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
+    G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
+    colnames(G) <- as.character(seq_len(dim(G)[2]))
+    rownames(G) <- as_labels(transitions)
 
     SimInf_model(G      = G,
                  S      = S,
