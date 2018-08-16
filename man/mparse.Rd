@@ -4,8 +4,9 @@
 \alias{mparse}
 \title{Model parser to define new models to run in \code{SimInf}}
 \usage{
-mparse(transitions = NULL, compartments = NULL, gdata = NULL,
-  u0 = NULL, tspan = NULL, events = NULL, E = NULL, N = NULL)
+mparse(transitions = NULL, compartments = NULL, ldata = NULL,
+  gdata = NULL, u0 = NULL, tspan = NULL, events = NULL, E = NULL,
+  N = NULL)
 }
 \arguments{
 \item{transitions}{character vector containing transitions on the
@@ -20,8 +21,18 @@ model.}
 compartments, for example, \code{compartments = c("S", "I",
 "R")}.}
 
-\item{gdata}{named numeric vector with rate-constants for the
-model.}
+\item{ldata}{an optional numeric matrix with local data for the
+nodes. The column \code{ldata[, j]} contains the local data
+vector for the node \code{j}. The local data vector is passed
+as an argument to the transition rate functions and the post
+time step function. The matrix must have row names to identify
+the parameters in the transitions.}
+
+\item{gdata}{an optional named numeric vector with parameters that
+are common to all nodes in the model. The names are used to
+identify the parameters in the transitions. The global data
+vector is passed as an argument to the transition rate
+functions and the post time step function.}
 
 \item{u0}{A \code{data.frame} (or an object that can be coerced to
 a \code{data.frame} with \code{as.data.frame}) with the

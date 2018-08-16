@@ -157,7 +157,7 @@ tokens <- function(propensity) {
 ## \code{u[compartments[j]]} where \code{j} is the numbering in
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
-rewriteprop <- function(propensity, compartments, gdata) {
+rewriteprop <- function(propensity, compartments, ldata, gdata) {
     orig_prop <- propensity
     propensity <- tokens(propensity)
     depends <- integer(length(compartments))
@@ -168,6 +168,10 @@ rewriteprop <- function(propensity, compartments, gdata) {
     i <- i[!is.na(i)]
     if (length(i))
         depends[i] <- 1
+
+    ## Find ldata in propensity
+    i <- match(propensity, ldata)
+    propensity <- ifelse(is.na(i), propensity, sprintf("ldata[%i]", i-1L))
 
     ## Find gdata in propensity
     i <- match(propensity, gdata)
@@ -197,7 +201,7 @@ as_labels <- function(transitions) {
     })
 }
 
-parse_transitions <- function(transitions, compartments, gdata) {
+parse_transitions <- function(transitions, compartments, ldata, gdata) {
     lapply(strsplit(transitions, "->"), function(x) {
         if (!identical(length(x), 3L))
             stop("Invalid transition: '", paste0(x, collapse = "->"), "'")
@@ -226,7 +230,7 @@ parse_transitions <- function(transitions, compartments, gdata) {
         S[ifrom] <- -1
         S[idest] <- 1
 
-        propensity <- rewriteprop(propensity, compartments, gdata)
+        propensity <- rewriteprop(propensity, compartments, ldata, gdata)
 
         list(from       = from,
              dest       = dest,
@@ -252,8 +256,17 @@ parse_transitions <- function(transitions, compartments, gdata) {
 ##' @param compartments contains the names of the involved
 ##'     compartments, for example, \code{compartments = c("S", "I",
 ##'     "R")}.
-##' @param gdata named numeric vector with rate-constants for the
-##'     model.
+##' @param ldata an optional numeric matrix with local data for the
+##'     nodes. The column \code{ldata[, j]} contains the local data
+##'     vector for the node \code{j}. The local data vector is passed
+##'     as an argument to the transition rate functions and the post
+##'     time step function. The matrix must have row names to identify
+##'     the parameters in the transitions.
+##' @param gdata an optional named numeric vector with parameters that
+##'     are common to all nodes in the model. The names are used to
+##'     identify the parameters in the transitions. The global data
+##'     vector is passed as an argument to the transition rate
+##'     functions and the post time step function.
 ##' @param u0 A \code{data.frame} (or an object that can be coerced to
 ##'     a \code{data.frame} with \code{as.data.frame}) with the
 ##'     initial state in each node.
@@ -273,8 +286,9 @@ parse_transitions <- function(transitions, compartments, gdata) {
 ##' @importFrom methods new
 ##' @importFrom utils packageVersion
 ##' @template mparse-example
-mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
-                   u0 = NULL, tspan = NULL, events = NULL, E = NULL, N = NULL)
+mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
+                   gdata = NULL, u0 = NULL, tspan = NULL, events = NULL,
+                   E = NULL, N = NULL)
 {
     ## Check transitions
     if (!is.atomic(transitions) || !is.character(transitions) ||
@@ -293,14 +307,29 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
         stop("Invalid compartment names: ",
              paste0(intersect(compartments, reserved), collapse = ", "))
 
+    ## Check ldata
+    if (!is.null(ldata)) {
+        if (!is.matrix(ldata) || !is.numeric(ldata) || is.null(rownames(ldata)) ||
+            any(duplicated(rownames(ldata))) || any(nchar(rownames(ldata)) == 0))
+            stop("'ldata' must be a numeric matrix with non-duplicated rownames.")
+        if (length(intersect(rownames(ldata), reserved)))
+            stop("Invalid 'ldata' rownames: ",
+                 paste0(intersect(rownames(ldata), reserved), collapse = ", "))
+    }
+
     ## Check gdata
     if (!is.null(gdata)) {
         if (!is.atomic(gdata) || !is.numeric(gdata) || is.null(names(gdata)) ||
             any(duplicated(names(gdata))) || any(nchar(names(gdata)) == 0))
             stop("'gdata' must be a named numeric vector with unique names.")
         if (length(intersect(names(gdata), reserved)))
-            stop("Invalid gdata names: ",
+            stop("Invalid 'gdata' names: ",
                  paste0(intersect(names(gdata), reserved), collapse = ", "))
+
+        if (!is.null(ldata)) {
+            if (length(intersect(names(gdata), rownames(ldata))))
+                stop("'gdata' names and 'ldata' rownames have elements in common.")
+        }
     }
 
     ## Check u0
@@ -311,7 +340,8 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
     u0 <- u0[, compartments, drop = FALSE]
 
     ## Parse transitions
-    transitions <- parse_transitions(transitions, compartments, names(gdata))
+    transitions <- parse_transitions(transitions, compartments,
+                                     rownames(ldata), names(gdata))
 
     ## Create the state-change matrix S
     S <- do.call("cbind", lapply(transitions, "[[", "S"))
@@ -331,7 +361,7 @@ mparse <- function(transitions = NULL, compartments = NULL, gdata = NULL,
                  N      = N,
                  tspan  = tspan,
                  events = events,
-                 ldata  = NULL,
+                 ldata  = ldata,
                  gdata  = gdata,
                  u0     = u0,
                  v0     = NULL,

@@ -97,7 +97,7 @@ res <- tools::assertError(
                          gdata = c(v_new = 0.5, u = 1, v = 0.005, ldata = 0.6,
                                    gdata = 2, node = 3, t = 4, rng = 5),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("Invalid gdata names: v_new, u, v, ldata, gdata, node, t, rng",
+stopifnot(length(grep("Invalid 'gdata' names: v_new, u, v, ldata, gdata, node, t, rng",
                       res[[1]]$message)) > 0)
 
 res <- tools::assertError(
@@ -136,6 +136,37 @@ res <- tools::assertError(
                                      dimnames = list(NULL, c("A", "W"))),
                          tspan = 1:5))
 stopifnot(length(grep("Missing columns in u0",
+                      res[[1]]$message)) > 0)
+
+
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                         compartments = c("D","W"),
+                         ldata = 1:5,
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
+stopifnot(length(grep("'ldata' must be a numeric matrix with non-duplicated rownames.",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                         compartments = c("D","W"),
+                         ldata = matrix(1:5,, nrow = 1, dimnames = list("u", NULL)),
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
+stopifnot(length(grep("Invalid 'ldata' rownames: u",
+                      res[[1]]$message)) > 0)
+
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                         compartments = c("D","W"),
+                         ldata = matrix(1:5,, nrow = 1, dimnames = list("c4", NULL)),
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
+stopifnot(length(grep("'gdata' names and 'ldata' rownames have elements in common.",
                       res[[1]]$message)) > 0)
 
 ## Check mparse
@@ -232,12 +263,86 @@ C_code <- c(
     "")
 stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
 
+## Check mparse with both gdata and ldata
+m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                            "D+W->c3*D*W->W+W","W->c4*W->@"),
+            compartments = c("D","W"),
+            ldata = matrix(rep(0.6, 5), nrow = 1, dimnames = list("c4", NULL)),
+            gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005),
+            u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5)
+
+C_code <- c(
+    "",
+    "#include <R_ext/Rdynload.h>",
+    "#include \"SimInf.h\"",
+    "",
+    "double trFun1(",
+    "    const int *u,",
+    "    const double *v,",
+    "    const double *ldata,",
+    "    const double *gdata,",
+    "    double t)",
+    "{",
+    "    return gdata[0];",
+    "}",
+    "",
+    "double trFun2(",
+    "    const int *u,",
+    "    const double *v,",
+    "    const double *ldata,",
+    "    const double *gdata,",
+    "    double t)",
+    "{",
+    "    return gdata[1]*u[0];",
+    "}",
+    "",
+    "double trFun3(",
+    "    const int *u,",
+    "    const double *v,",
+    "    const double *ldata,",
+    "    const double *gdata,",
+    "    double t)",
+    "{",
+    "    return gdata[2]*u[0]*u[1];",
+    "}",
+    "",
+    "double trFun4(",
+    "    const int *u,",
+    "    const double *v,",
+    "    const double *ldata,",
+    "    const double *gdata,",
+    "    double t)",
+    "{",
+    "    return ldata[0]*u[1];",
+    "}",
+    "",
+    "int ptsFun(",
+    "    double *v_new,",
+    "    const int *u,",
+    "    const double *v,",
+    "    const double *ldata,",
+    "    const double *gdata,",
+    "    int node,",
+    "    double t)",
+    "{",
+    "    return 0;",
+    "}",
+    "",
+    "SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    "{",
+    "    TRFun tr_fun[] = {&trFun1, &trFun2, &trFun3, &trFun4};",
+    "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
+    "    return SimInf_run(model, threads, solver, tr_fun, &ptsFun);",
+    "}",
+    "")
+stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
+
 stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
                     c("beta", "*", "S", "*", "I", "/", "(", "S", "+",
                       "I", "+", "R", ")")))
 
 stopifnot(
-    identical(SimInf:::rewriteprop("beta*S*I/(S+I+R)", c("S", "I", "R"), "beta"),
+    identical(SimInf:::rewriteprop("beta*S*I/(S+I+R)", c("S", "I", "R"), NULL, "beta"),
               structure(list(orig_prop = "beta*S*I/(S+I+R)",
                              propensity = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
                              depends = c(1, 1, 1)),
