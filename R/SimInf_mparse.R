@@ -262,11 +262,12 @@ parse_transitions <- function(transitions, compartments, ldata, gdata) {
 ##'     as an argument to the transition rate functions and the post
 ##'     time step function. The matrix must have row names to identify
 ##'     the parameters in the transitions.
-##' @param gdata an optional named numeric vector with parameters that
-##'     are common to all nodes in the model. The names are used to
-##'     identify the parameters in the transitions. The global data
-##'     vector is passed as an argument to the transition rate
-##'     functions and the post time step function.
+##' @param gdata optional data that are common to all nodes in the
+##'     model. Can be specified either as a named numeric vector or as
+##'     as a one-row data.frame. The names are used to identify the
+##'     parameters in the transitions. The global data vector is
+##'     passed as an argument to the transition rate functions and the
+##'     post time step function.
 ##' @param u0 A \code{data.frame} (or an object that can be coerced to
 ##'     a \code{data.frame} with \code{as.data.frame}) with the
 ##'     initial state in each node.
@@ -319,6 +320,12 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
 
     ## Check gdata
     if (!is.null(gdata)) {
+        if (is.data.frame(gdata)) {
+            if (!identical(nrow(gdata), 1L))
+                stop("When 'gdata' is a data.frame, it must have one row")
+            gdata <- unlist(gdata)
+        }
+
         if (!is.atomic(gdata) || !is.numeric(gdata) || is.null(names(gdata)) ||
             any(duplicated(names(gdata))) || any(nchar(names(gdata)) == 0))
             stop("'gdata' must be a named numeric vector with unique names.")

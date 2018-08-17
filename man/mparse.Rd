@@ -28,11 +28,12 @@ as an argument to the transition rate functions and the post
 time step function. The matrix must have row names to identify
 the parameters in the transitions.}
 
-\item{gdata}{an optional named numeric vector with parameters that
-are common to all nodes in the model. The names are used to
-identify the parameters in the transitions. The global data
-vector is passed as an argument to the transition rate
-functions and the post time step function.}
+\item{gdata}{optional data that are common to all nodes in the
+model. Can be specified either as a named numeric vector or as
+as a one-row data.frame. The names are used to identify the
+parameters in the transitions. The global data vector is
+passed as an argument to the transition rate functions and the
+post time step function.}
 
 \item{u0}{A \code{data.frame} (or an object that can be coerced to
 a \code{data.frame} with \code{as.data.frame}) with the
