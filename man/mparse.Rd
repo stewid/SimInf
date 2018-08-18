@@ -21,12 +21,16 @@ model.}
 compartments, for example, \code{compartments = c("S", "I",
 "R")}.}
 
-\item{ldata}{an optional numeric matrix with local data for the
-nodes. The column \code{ldata[, j]} contains the local data
-vector for the node \code{j}. The local data vector is passed
-as an argument to the transition rate functions and the post
-time step function. The matrix must have row names to identify
-the parameters in the transitions.}
+\item{ldata}{optional data for the nodes. Can be specified either
+as an numeric matrix where column \code{ldata[, j]} contains
+the local data vector for the node \code{j} or as data.frame
+with one row per node. If it's specified as a matrix, it must
+have row names to identify the parameters in the
+transitions. If it's specified as a data.frame, each column is
+one parameter. The local data vector is passed as an argument
+to the transition rate functions and the post time step
+function. The matrix must have row names to identify the
+parameters in the transitions.}
 
 \item{gdata}{optional data that are common to all nodes in the
 model. Can be specified either as a named numeric vector or as

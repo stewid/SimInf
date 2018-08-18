@@ -256,12 +256,16 @@ parse_transitions <- function(transitions, compartments, ldata, gdata) {
 ##' @param compartments contains the names of the involved
 ##'     compartments, for example, \code{compartments = c("S", "I",
 ##'     "R")}.
-##' @param ldata an optional numeric matrix with local data for the
-##'     nodes. The column \code{ldata[, j]} contains the local data
-##'     vector for the node \code{j}. The local data vector is passed
-##'     as an argument to the transition rate functions and the post
-##'     time step function. The matrix must have row names to identify
-##'     the parameters in the transitions.
+##' @param ldata optional data for the nodes. Can be specified either
+##'     as an numeric matrix where column \code{ldata[, j]} contains
+##'     the local data vector for the node \code{j} or as data.frame
+##'     with one row per node. If it's specified as a matrix, it must
+##'     have row names to identify the parameters in the
+##'     transitions. If it's specified as a data.frame, each column is
+##'     one parameter. The local data vector is passed as an argument
+##'     to the transition rate functions and the post time step
+##'     function. The matrix must have row names to identify the
+##'     parameters in the transitions.
 ##' @param gdata optional data that are common to all nodes in the
 ##'     model. Can be specified either as a named numeric vector or as
 ##'     as a one-row data.frame. The names are used to identify the
@@ -308,11 +312,33 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
         stop("Invalid compartment names: ",
              paste0(intersect(compartments, reserved), collapse = ", "))
 
+    ## Check u0
+    if (!is.data.frame(u0))
+        u0 <- as.data.frame(u0)
+    if (!all(compartments %in% names(u0)))
+        stop("Missing columns in u0")
+    u0 <- u0[, compartments, drop = FALSE]
+
     ## Check ldata
     if (!is.null(ldata)) {
+        if (is.data.frame(ldata)) {
+            if (!identical(nrow(ldata), nrow(u0)))
+                stop("'ldata' and 'u0' must have the same number of rows.")
+
+            ## Coerce the data.frame to a matrix
+            n_col <- ncol(ldata)
+            n_row <- nrow(ldata)
+            lbl <- colnames(ldata)
+            ldata <- t(data.matrix(ldata))
+            attributes(ldata) <- NULL
+            dim(ldata) <- c(n_col, n_row)
+            rownames(ldata) <- lbl
+        }
+
         if (!is.matrix(ldata) || !is.numeric(ldata) || is.null(rownames(ldata)) ||
             any(duplicated(rownames(ldata))) || any(nchar(rownames(ldata)) == 0))
             stop("'ldata' must be a numeric matrix with non-duplicated rownames.")
+
         if (length(intersect(rownames(ldata), reserved)))
             stop("Invalid 'ldata' rownames: ",
                  paste0(intersect(rownames(ldata), reserved), collapse = ", "))
@@ -329,6 +355,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
         if (!is.atomic(gdata) || !is.numeric(gdata) || is.null(names(gdata)) ||
             any(duplicated(names(gdata))) || any(nchar(names(gdata)) == 0))
             stop("'gdata' must be a named numeric vector with unique names.")
+
         if (length(intersect(names(gdata), reserved)))
             stop("Invalid 'gdata' names: ",
                  paste0(intersect(names(gdata), reserved), collapse = ", "))
@@ -338,13 +365,6 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                 stop("'gdata' names and 'ldata' rownames have elements in common.")
         }
     }
-
-    ## Check u0
-    if (!is.data.frame(u0))
-        u0 <- as.data.frame(u0)
-    if (!all(compartments %in% names(u0)))
-        stop("Missing columns in u0")
-    u0 <- u0[, compartments, drop = FALSE]
 
     ## Parse transitions
     transitions <- parse_transitions(transitions, compartments,
