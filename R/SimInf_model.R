@@ -212,6 +212,18 @@ setClass("SimInf_model",
          }
 )
 
+## Utility function to coerce the data.frame to a transposed matrix.
+as_t_matrix <- function(x) {
+    n_col <- ncol(x)
+    n_row <- nrow(x)
+    lbl <- colnames(x)
+    x <- t(data.matrix(x))
+    attributes(x) <- NULL
+    dim(x) <- c(n_col, n_row)
+    rownames(x) <- lbl
+    x
+}
+
 ##' Create a \code{SimInf_model}
 ##'
 ##' @param G Dependency graph that indicates the transition rates that
@@ -284,15 +296,8 @@ SimInf_model <- function(G,
     ## Check u0
     if (is.null(u0))
         stop("'u0' is NULL")
-    if (is.data.frame(u0)) {
-        n_col <- ncol(u0)
-        n_row <- nrow(u0)
-        lbl <- colnames(u0)
-        u0 <- t(data.matrix(u0))
-        attributes(u0) <- NULL
-        dim(u0) <- c(n_col, n_row)
-        rownames(u0) <- lbl
-    }
+    if (is.data.frame(u0))
+        u0 <- as_t_matrix(u0)
     if (!all(is.matrix(u0), is.numeric(u0)))
         stop("u0 must be an integer matrix")
     if (!is.integer(u0)) {

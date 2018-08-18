@@ -326,13 +326,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                 stop("'ldata' and 'u0' must have the same number of rows.")
 
             ## Coerce the data.frame to a matrix
-            n_col <- ncol(ldata)
-            n_row <- nrow(ldata)
-            lbl <- colnames(ldata)
-            ldata <- t(data.matrix(ldata))
-            attributes(ldata) <- NULL
-            dim(ldata) <- c(n_col, n_row)
-            rownames(ldata) <- lbl
+            ldata <- as_t_matrix(ldata)
         }
 
         if (!is.matrix(ldata) || !is.numeric(ldata) || is.null(rownames(ldata)) ||
