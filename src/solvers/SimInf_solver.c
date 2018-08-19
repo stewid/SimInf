@@ -837,3 +837,53 @@ on_error:
     SimInf_compartment_model_free(model);
     return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
 }
+
+/**
+ * Print node status/information to facilitate debugging.
+ *
+ * @param Nc Number of compartments in each node.
+ * @param u The state vector with number of individuals in each
+ *        compartment at each node. The current state in each node is
+ *        offset by node * Nc.
+ * @param node Zero-based index to node in u.
+ * @param tt The global time.
+ * @param rate The propensity. Only reported if it's infinite or less
+ *        than zero.
+ * @param transition Zero-based index with the state transition.
+ */
+void SimInf_print_status(
+    const int Nc,
+    const int *u,
+    const int node,
+    const double tt,
+    const double rate,
+    const int transition)
+{
+    #pragma omp critical
+    {
+        if (u && (node >= 0)) {
+            int i;
+
+            Rprintf("Status:\n");
+            Rprintf("-------\n");
+
+            Rprintf("Time: %g\n", tt);
+            Rprintf("Node: %i\n", node + 1); /* One based in R */
+
+            Rprintf("Current state in node: {");
+            for (i = 0; i < Nc; i++) {
+                Rprintf("%i", u[node * Nc + i]);
+                if (i < (Nc - 1))
+                    Rprintf(", ");
+            }
+            Rprintf("}\n");
+
+            Rprintf("Transition: %i\n", transition + 1); /* One based in R */
+
+            if (!isfinite(rate) || rate < 0.0)
+                Rprintf("Rate: %g\n", rate);
+
+            Rprintf("\n");
+        }
+    }
+}

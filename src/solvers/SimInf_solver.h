@@ -386,4 +386,12 @@ void SimInf_process_events(
 
 void SimInf_store_solution_sparse(SimInf_compartment_model *model);
 
+void SimInf_print_status(
+    const int Nc,
+    const int *u,
+    const int node,
+    const double tt,
+    const double rate,
+    const int transition);
+
 #endif
