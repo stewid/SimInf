@@ -884,6 +884,8 @@ void SimInf_print_status(
                 Rprintf("Rate: %g\n", rate);
 
             Rprintf("\n");
+
+            R_FlushConsole();
         }
     }
 }
