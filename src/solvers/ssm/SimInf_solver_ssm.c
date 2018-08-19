@@ -163,8 +163,12 @@ static int SimInf_solver_ssm(
 
                             m.t_rate[node * m.Nt + m.irG[j]] = rate;
                             delta += rate - old;
-                            if (!isfinite(rate) || rate < 0.0)
+                            if (!isfinite(rate) || rate < 0.0) {
+                                SimInf_print_status(m.Nc, &m.u[node * m.Nc],
+                                                    m.Ni + node, m.t_time[node],
+                                                    rate, m.irG[j]);
                                 m.error = SIMINF_ERR_INVALID_RATE;
+                            }
                         }
                         m.sum_t_rate[node] += delta;
                     }
@@ -218,8 +222,11 @@ static int SimInf_solver_ssm(
 
                             m.t_rate[node * m.Nt + j] = rate;
                             delta += rate - old;
-                            if (!isfinite(rate) || rate < 0.0)
+                            if (!isfinite(rate) || rate < 0.0) {
+                                SimInf_print_status(m.Nc, &m.u[node * m.Nc],
+                                                    m.Ni + node, m.tt, rate, j);
                                 m.error = SIMINF_ERR_INVALID_RATE;
+                            }
                         }
                         m.sum_t_rate[node] += delta;
 

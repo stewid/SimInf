@@ -1,5 +1,5 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2018  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -516,3 +516,17 @@ stopifnot(length(grep("Invalid model.",
 res <- tools::assertError(.Call("SEIR_run", "SEIR", NULL, NULL, PACKAGE = "SimInf"))
 stopifnot(length(grep("Invalid model.",
                       res[[1]]$message)) > 0)
+
+## Check that an invalid rate error is raised during the simulation.
+model <- SEIR(u0 = data.frame(S = rep(10, 2), E = 0, I = 10, R = 0),
+              tspan = 1:100,
+              beta = 0.16,
+              epsilon = -0.3,
+              gamma = 0.077)
+set.seed(123)
+res <- tools::assertError(run(model, solver = "ssm"))
+stopifnot(length(grep("Invalid rate detected (non-finite or < 0.0)",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+res <- tools::assertError(run(model, solver = "aem"))
+stopifnot(length(grep("Invalid rate detected (non-finite or < 0.0)",
+                      res[[1]]$message, fixed = TRUE)) > 0)

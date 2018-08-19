@@ -845,10 +845,9 @@ on_error:
  *
  * @param Nc Number of compartments in each node.
  * @param u The state vector with number of individuals in each
- *        compartment at each node. The current state in each node is
- *        offset by node * Nc.
- * @param node Zero-based index to node in u.
- * @param tt The global time.
+ *        compartment in the node.
+ * @param node Zero-based index to node.
+ * @param tt The current time in node.
  * @param rate The propensity. Only reported if it's infinite or less
  *        than zero.
  * @param transition Zero-based index with the state transition.

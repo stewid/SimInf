@@ -198,8 +198,13 @@ static int SimInf_solver_aem(
 
                                 sa.t_rate[node * sa.Nt + j] = rate;
 
-                                if (!isfinite(rate) || rate < 0.0)
+                                if (!isfinite(rate) || rate < 0.0) {
+                                    SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                                        sa.Ni + node, sa.t_time[node],
+                                                        rate, j);
                                     sa.error = SIMINF_ERR_INVALID_RATE;
+                                }
+
                                 /* update times and reorder the heap */
                                 calcTimes(&ma.reactTimes[sa.Nt * node + ma.reactHeap[sa.Nt * node + j]],
                                           &ma.reactInf[sa.Nt * node + j],
@@ -220,8 +225,12 @@ static int SimInf_solver_aem(
                                                sa.t_time[node]);
                         sa.t_rate[node * sa.Nt + j] = rate;
 
-                        if (!isfinite(rate) || rate < 0.0)
+                        if (!isfinite(rate) || rate < 0.0) {
+                            SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                                sa.Ni + node, sa.t_time[node],
+                                                rate, j);
                             sa.error = SIMINF_ERR_INVALID_RATE;
+                        }
 
                         /* update times and reorder the heap */
                         calcTimes(&ma.reactTimes[sa.Nt * node + ma.reactHeap[sa.Nt * node + j]],
@@ -283,8 +292,11 @@ static int SimInf_solver_aem(
 
                             sa.t_rate[node * sa.Nt + j] = rate;
 
-                            if (!isfinite(rate) || rate < 0.0)
+                            if (!isfinite(rate) || rate < 0.0) {
+                                SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                                    sa.Ni + node, sa.tt, rate, j);
                                 sa.error = SIMINF_ERR_INVALID_RATE;
+                            }
 
 			    /* Update times and reorder heap */
 			    calcTimes(&ma.reactTimes[sa.Nt * node + ma.reactHeap[sa.Nt * node + j]],
