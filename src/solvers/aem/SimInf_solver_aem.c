@@ -118,7 +118,7 @@ static int SimInf_solver_aem(
 
                     if (!isfinite(rate) || rate < 0.0) {
                         SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
-                                            node, sa.tt, rate, j);
+                                            sa.Ni + node, sa.tt, rate, j);
                         sa.error = SIMINF_ERR_INVALID_RATE;
                     }
 
