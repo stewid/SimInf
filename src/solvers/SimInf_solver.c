@@ -874,7 +874,7 @@ void SimInf_print_status(
 
             REprintf("Current state in node: {");
             for (i = 0; i < Nc; i++) {
-                REprintf("%i", u[node * Nc + i]);
+                REprintf("%i", u[i]);
                 if (i < (Nc - 1))
                     REprintf(", ");
             }
