@@ -347,69 +347,71 @@ static void SimInf_print_event(
                 n = round(e->proportion * Nindividuals);
 
             if (n > Nindividuals)
-                Rprintf("Cannot sample %i for event from %i individuals.\n",
+                REprintf("Cannot sample %i for event from %i individuals.\n",
                         n, Nindividuals);
 
             if (n < 0)
-                Rprintf("Cannot sample %i individuals for event.\n", n);
+                REprintf("Cannot sample %i individuals for event.\n", n);
 
-            Rprintf("\n");
+            REprintf("\n");
         }
 
         if (u && (node >= 0)) {
-            Rprintf("Current state in node\n");
-            Rprintf("---------------------\n");
+            REprintf("Current state in node\n");
+            REprintf("---------------------\n");
 
-            Rprintf("{");
+            REprintf("{");
             for (i = 0; i < Nc; i++) {
-                Rprintf("%i", u[node * Nc + i]);
+                REprintf("%i", u[node * Nc + i]);
                 if (i < (Nc - 1))
-                    Rprintf(", ");
+                    REprintf(", ");
             }
-            Rprintf("}\n\n");
+            REprintf("}\n\n");
         }
 
         if (u && (dest >= 0)) {
-            Rprintf("Current state in dest\n");
-            Rprintf("---------------------\n");
+            REprintf("Current state in dest\n");
+            REprintf("---------------------\n");
 
-            Rprintf("{");
+            REprintf("{");
             for (i = 0; i < Nc; i++) {
-                Rprintf("%i", u[dest * Nc + i]);
+                REprintf("%i", u[dest * Nc + i]);
                 if (i < (Nc - 1))
-                    Rprintf(", ");
+                    REprintf(", ");
             }
-            Rprintf("}\n\n");
+            REprintf("}\n\n");
         }
 
-        Rprintf("Scheduled event\n");
-        Rprintf("---------------\n");
+        REprintf("Scheduled event\n");
+        REprintf("---------------\n");
 
         switch (e->event) {
         case EXIT_EVENT:
-            Rprintf("event: %i (exit event)\n", e->event);
+            REprintf("event: %i (exit event)\n", e->event);
             break;
         case ENTER_EVENT:
-            Rprintf("event: %i (enter event)\n", e->event);
+            REprintf("event: %i (enter event)\n", e->event);
             break;
         case INTERNAL_TRANSFER_EVENT:
-            Rprintf("event: %i (internal transfer event)\n", e->event);
+            REprintf("event: %i (internal transfer event)\n", e->event);
             break;
         case EXTERNAL_TRANSFER_EVENT:
-            Rprintf("event: %i (external transfer event)\n", e->event);
+            REprintf("event: %i (external transfer event)\n", e->event);
             break;
         default:
-            Rprintf("event: %i (undefined event)\n", e->event);
+            REprintf("event: %i (undefined event)\n", e->event);
             break;
         }
 
-        Rprintf("time: %i\n", e->time);
-        Rprintf("node: %i\n", e->node + 1); /* One based in events data */
-        Rprintf("dest: %i\n", e->dest + 1); /* One based in events data */
-        Rprintf("n: %i\n", e->n);
-        Rprintf("proportion: %g\n", e->proportion);
-        Rprintf("select: %i\n", e->select + 1); /* One based in events data */
-        Rprintf("shift: %i\n\n", e->shift + 1); /* One based in events data */
+        REprintf("time: %i\n", e->time);
+        REprintf("node: %i\n", e->node + 1); /* One based in events data */
+        REprintf("dest: %i\n", e->dest + 1); /* One based in events data */
+        REprintf("n: %i\n", e->n);
+        REprintf("proportion: %g\n", e->proportion);
+        REprintf("select: %i\n", e->select + 1); /* One based in events data */
+        REprintf("shift: %i\n\n", e->shift + 1); /* One based in events data */
+
+        R_FlushConsole();
     }
 }
 
