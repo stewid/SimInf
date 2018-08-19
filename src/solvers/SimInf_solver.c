@@ -864,26 +864,26 @@ void SimInf_print_status(
         if (u && (node >= 0)) {
             int i;
 
-            Rprintf("Status:\n");
-            Rprintf("-------\n");
+            REprintf("Status:\n");
+            REprintf("-------\n");
 
-            Rprintf("Time: %g\n", tt);
-            Rprintf("Node: %i\n", node + 1); /* One based in R */
+            REprintf("Time: %g\n", tt);
+            REprintf("Node: %i\n", node + 1); /* One based in R */
 
-            Rprintf("Current state in node: {");
+            REprintf("Current state in node: {");
             for (i = 0; i < Nc; i++) {
-                Rprintf("%i", u[node * Nc + i]);
+                REprintf("%i", u[node * Nc + i]);
                 if (i < (Nc - 1))
-                    Rprintf(", ");
+                    REprintf(", ");
             }
-            Rprintf("}\n");
+            REprintf("}\n");
 
-            Rprintf("Transition: %i\n", transition + 1); /* One based in R */
+            REprintf("Transition: %i\n", transition + 1); /* One based in R */
 
             if (!isfinite(rate) || rate < 0.0)
-                Rprintf("Rate: %g\n", rate);
+                REprintf("Rate: %g\n", rate);
 
-            Rprintf("\n");
+            REprintf("\n");
 
             R_FlushConsole();
         }
