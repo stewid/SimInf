@@ -218,3 +218,15 @@ model <- SIR(u0     = u0_SIR(),
              beta   = 0,
              gamma  = 0)
 stopifnot(is(events(model), "SimInf_events"))
+
+## Check that initialisation raises an invalid rate error.
+model <- SIR(u0 = data.frame(S = rep(99, 2), I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = -0.077)
+res <- tools::assertError(run(model, solver = "ssm"))
+stopifnot(length(grep("Invalid rate detected (non-finite or < 0.0)",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+res <- tools::assertError(run(model, solver = "aem"))
+stopifnot(length(grep("Invalid rate detected (non-finite or < 0.0)",
+                      res[[1]]$message, fixed = TRUE)) > 0)

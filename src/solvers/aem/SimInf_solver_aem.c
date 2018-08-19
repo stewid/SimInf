@@ -116,8 +116,11 @@ static int SimInf_solver_aem(
                                                         sa.tt);
                     sa.t_rate[node * sa.Nt + j] = rate;
 
-                    if (!isfinite(rate) || rate < 0.0)
+                    if (!isfinite(rate) || rate < 0.0) {
+                        SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                            node, sa.tt, rate, j);
                         sa.error = SIMINF_ERR_INVALID_RATE;
+                    }
 
                     /* calculate time until next transition j event */
                     ma.reactTimes[sa.Nt*node+j] =  -log(gsl_rng_uniform_pos(ma.rng_vec[sa.Nt*node+j]))/rate + sa.tt;
