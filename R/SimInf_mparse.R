@@ -416,11 +416,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
 ##' C_code(model, "XYZ")
 C_code <- function(model, pkg = NULL)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model' object")
+    check_model_argument(model)
 
     if (is.null(pkg))
         return(model@C_code)

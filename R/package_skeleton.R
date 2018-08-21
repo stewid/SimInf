@@ -294,11 +294,7 @@ package_skeleton <- function(model, name = NULL, path = ".",
                              author = NULL, email = NULL,
                              maintainer = NULL, license = "GPL-3")
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model' object")
+    check_model_argument(model)
 
     stopifnot(!is.null(name), is.character(name), length(name) == 1,
               nchar(name) > 0)

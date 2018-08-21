@@ -25,7 +25,7 @@ res <- tools::assertError(package_skeleton())
 stopifnot(length(grep("Missing 'model' argument",
                       res[[1]]$message)) > 0)
 res <- tools::assertError(package_skeleton(5))
-stopifnot(length(grep("'model' argument is not a 'SimInf_model' object",
+stopifnot(length(grep("'model' argument is not a 'SimInf_model'",
                       res[[1]]$message)) > 0)
 
 ## Chack package_skeleton

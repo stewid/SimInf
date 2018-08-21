@@ -96,11 +96,7 @@ run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...)
     if (!is.numeric(y))
         stop("'y' argument is not numeric")
 
-    ## Check 'model' argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
 
     if (is.null(names(model@gdata)))
         stop("'names(model@gdata)' is NULL")

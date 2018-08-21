@@ -474,11 +474,7 @@ prevalence <- function(model,
                        node = NULL,
                        as.is = FALSE)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
 
     ## Check 'formula' argument
     if (missing(formula))
@@ -736,11 +732,7 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 {
     ## Check that the arguments are ok...
 
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
 
     if (all(identical(dim(model@U), c(0L, 0L)),
             identical(dim(model@U_sparse), c(0L, 0L)),
@@ -1053,11 +1045,7 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 ##' trajectory(result)
 "U<-" <- function(model, value)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
 
     if (!is.null(value)) {
         if (!is.data.frame(value))
@@ -1181,11 +1169,7 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 ##' trajectory(result, compartments = "phi")
 "V<-" <- function(model, value)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
 
     if (!is.null(value)) {
         if (!is.data.frame(value))
@@ -1261,44 +1245,28 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 ##' Nn(model)
 Nn <- function(model)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
     dim(model@u0)[2]
 }
 
 ## Number of compartments
 Nc <- function(model)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
     dim(model@S)[1]
 }
 
 ## Number of transitions
 Nt <- function(model)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
     dim(model@G)[1]
 }
 
 ## Number of continuous state variables
 Nd <- function(model)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
     dim(model@v0)[1]
 }
 
@@ -1986,11 +1954,7 @@ setMethod("summary",
 ##' plot(events(model))
 events <- function(model)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
     model@events
 }
 
@@ -2012,11 +1976,7 @@ events <- function(model)
 ##' shift_matrix(model)
 shift_matrix <- function(model)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
     model@events@N
 }
 
@@ -2042,11 +2002,7 @@ shift_matrix <- function(model)
 ##' shift_matrix(model)
 "shift_matrix<-" <- function(model, value)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
 
     ## Check value
     if (is.null(value))
@@ -2085,11 +2041,7 @@ shift_matrix <- function(model)
 ##' select_matrix(model)
 select_matrix <- function(model)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
     model@events@E
 }
 
@@ -2114,11 +2066,7 @@ select_matrix <- function(model)
 ##' select_matrix(model)
 "select_matrix<-" <- function(model, value)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
 
     if (!is(value, "dgCMatrix"))
         value <- as(value, "dgCMatrix")
@@ -2153,12 +2101,7 @@ select_matrix <- function(model)
 ##' gdata(model)
 gdata <- function(model)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
-
+    check_model_argument(model)
     model@gdata
 }
 
@@ -2184,11 +2127,7 @@ gdata <- function(model)
 ##' gdata(model)
 "gdata<-" <- function(model, parameter, value)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
 
     ## Check paramter argument
     if (missing(parameter))
@@ -2229,11 +2168,7 @@ gdata <- function(model)
 ##' ldata(model, node = 2)
 ldata <- function(model, node)
 {
-    ## Check model argument
-    if (missing(model))
-        stop("Missing 'model' argument")
-    if (!is(model, "SimInf_model"))
-        stop("'model' argument is not a 'SimInf_model'")
+    check_model_argument(model)
 
     ## Check node argument
     if (missing(node))

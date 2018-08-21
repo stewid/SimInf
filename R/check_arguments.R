@@ -154,3 +154,18 @@ check_end_t_arg <- function(len, ...) {
 
     invisible(NULL)
 }
+
+##' Check model argument
+##'
+##' Raise an error if the model argument is not ok.
+##' @param model the model to check.
+##' @return invisible(NULL)
+##' @noRd
+check_model_argument <- function(model) {
+    if (missing(model))
+        stop("Missing 'model' argument")
+    if (!is(model, "SimInf_model"))
+        stop("'model' argument is not a 'SimInf_model'")
+
+    invisible(NULL)
+}
