@@ -99,32 +99,25 @@
 ##'     resulting DLL is dynamically loaded. The DLL is unloaded and
 ##'     the temporary files are removed after running the model.
 ##'   }
-##'   \item{comp_name}{
-##'     Character vector of length 1 containing name of shared library.
-##'     This is used internally to deal with models that have been 
-##'     compiled using \code{compile_model}.
-##'   }
 ##' }
 ##' @include SimInf_events.R
 ##' @export
 ##' @importFrom methods validObject
 ##' @importClassesFrom Matrix dgCMatrix
 setClass("SimInf_model",
-         slots = c(G         = "dgCMatrix",
-                   S         = "dgCMatrix",
-                   U         = "matrix",
-                   U_sparse  = "dgCMatrix",
-                   ldata     = "matrix",
-                   gdata     = "numeric",
-                   tspan     = "numeric",
-                   u0        = "matrix",
-                   V         = "matrix",
-                   V_sparse  = "dgCMatrix",
-                   v0        = "matrix",
-                   events    = "SimInf_events",
-                   C_code    = "character",
-                   comp_name = "character"),
-         prototype = list(comp_name = character()),
+         slots = c(G        = "dgCMatrix",
+                   S        = "dgCMatrix",
+                   U        = "matrix",
+                   U_sparse = "dgCMatrix",
+                   ldata    = "matrix",
+                   gdata    = "numeric",
+                   tspan    = "numeric",
+                   u0       = "matrix",
+                   V        = "matrix",
+                   V_sparse = "dgCMatrix",
+                   v0       = "matrix",
+                   events   = "SimInf_events",
+                   C_code   = "character"),
          validity = function(object) {
              ## Check events
              errors <- validObject(object@events)
@@ -214,13 +207,6 @@ setClass("SimInf_model",
              ## Check gdata.
              if (!is.double(object@gdata))
                  return("'gdata' must be a double vector.")
-                 
-             ## check comp_name
-             if (length(object@comp_name) > 0) {
-                if (!is.character(object@comp_name) | length(object@comp_name) != 1) {
-                    return("'comp_name' is not a character of length 1 or an empty character vector")
-                }
-             }
 
              TRUE
          }
@@ -1371,22 +1357,13 @@ setMethod("run",
                   expr <- ".Call(dll$SimInf_model_run, model, threads, solver)"
               } else {
                   ## The model name
-                  if(length(model@comp_name) == 0) {
-                      name <- as.character(class(model))
-                      run_fn <- paste0(name, "_run")
-                      ## Create expression to parse
-                      expr <- ".Call(run_fn, model, threads, solver, PACKAGE = 'SimInf')"
-                  } else {
-                      name <- as.character(model@comp_name)
-                      lib <- paste0(name, .Platform$dynlib.ext)
-                      if (!file.exists(lib)){
-                          stop(paste("No shared library called", lib, "available"))
-                      }
-                      dll <- dyn.load(lib)
-                      on.exit(dyn.unload(lib), add = TRUE)
-                      ## Create expression to parse
-                      expr <- ".Call(dll$SimInf_model_run, model, threads, solver)"
-                  }
+                  name <- as.character(class(model))
+
+                  ## The model C run function
+                  run_fn <- paste0(name, "_run")
+
+                  ## Create expression to parse
+                  expr <- ".Call(run_fn, model, threads, solver, PACKAGE = 'SimInf')"
               }
 
               ## Run the model. Re-throw any error without the call

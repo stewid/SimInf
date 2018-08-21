@@ -88,11 +88,6 @@ Class to handle the siminf data model
     resulting DLL is dynamically loaded. The DLL is unloaded and
     the temporary files are removed after running the model.
   }
-  \item{comp_name}{
-    Character vector of length 1 containing name of shared library.
-    This is used internally to deal with models that have been 
-    compiled using \code{compile_model}.
-  }
 }
 }
 

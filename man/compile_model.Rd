@@ -4,17 +4,17 @@
 \alias{compile_model}
 \title{Function to compile custom \code{\link{SimInf_model}}.}
 \usage{
-compile_model(model, name)
+compile_model(model, filename)
 }
 \arguments{
 \item{model}{An object of class \code{\link{SimInf_model}}.}
 
-\item{name}{A character specifying the name of the shared library that 
+\item{filename}{A character specifying the name of the shared library that 
 will be created. This is prefixed with "SimInf-" once the
 function has been run.}
 }
 \value{
-A \code{\link{SimInf_model}}.
+\linkS4class{SimInf_model_dll}
 }
 \description{
 This function compiles a model specified using \code{\link{mparse}}
