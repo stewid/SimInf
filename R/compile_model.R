@@ -17,18 +17,17 @@
 ##' Function to compile custom \code{\link{SimInf_model}}.
 ##'
 ##' This function compiles a model specified using \code{\link{mparse}}
-##' function, and produces a customised named \code{\link{SimInf_model}}
-##' object that can be run in the usual way. This is useful for routines
-##' that require multiple calls to the \code{run} method for 
-##' \code{\link{SimInf_model}} objects, since it avoids the need to re-compile
-##' the model each time \code{run} is called.
+##' function, and produces a \code{\link{SimInf_model}} object with an
+##' internal link to a shared library file that can be run in the usual way. 
+##' This is useful for routines that require multiple calls to the \code{run}
+##' method for \code{\link{SimInf_model}} objects, since it avoids the need
+##' to re-compile the model each time \code{run} is called.
 ##' @param model An object of class \code{\link{SimInf_model}}.
-##' @param name  A character specifying the name of the custom class that 
+##' @param name  A character specifying the name of the shared library that 
 ##'              will be created. This is prefixed with "SimInf-" once the
 ##'              function has been run.
 ##' @include SimInf_model.R
-##' @return A \code{\link{SimInf_model}} of class \code{SimInf-name}, where
-##'         \code{name} is given by the input argument \code{name}. 
+##' @return A \code{\link{SimInf_model}}. 
 ##' @export
 ##' @importFrom methods setClass
 ##' @examples
@@ -95,11 +94,14 @@ compile_model <- function(model, name) {
                 
         ## update C_code slot
         model@C_code <- character()
+        
+        ## update comp_name slot
+        model@comp_name <- filename
     } else {
         stop("No C code to compile")
     }
-    ## output new class and model
-    setClass(filename, contains = c("SimInf_model"), where = topenv(parent.frame()))
-    as(model, filename)
+    
+    ## output revised model
+    model
 }
 

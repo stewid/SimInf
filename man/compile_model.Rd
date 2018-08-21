@@ -9,21 +9,20 @@ compile_model(model, name)
 \arguments{
 \item{model}{An object of class \code{\link{SimInf_model}}.}
 
-\item{name}{A character specifying the name of the custom class that 
+\item{name}{A character specifying the name of the shared library that 
 will be created. This is prefixed with "SimInf-" once the
 function has been run.}
 }
 \value{
-A \code{\link{SimInf_model}} of class \code{SimInf-name}, where
-        \code{name} is given by the input argument \code{name}.
+A \code{\link{SimInf_model}}.
 }
 \description{
 This function compiles a model specified using \code{\link{mparse}}
-function, and produces a customised named \code{\link{SimInf_model}}
-object that can be run in the usual way. This is useful for routines
-that require multiple calls to the \code{run} method for 
-\code{\link{SimInf_model}} objects, since it avoids the need to re-compile
-the model each time \code{run} is called.
+function, and produces a \code{\link{SimInf_model}} object with an
+internal link to a shared library file that can be run in the usual way. 
+This is useful for routines that require multiple calls to the \code{run}
+method for \code{\link{SimInf_model}} objects, since it avoids the need
+to re-compile the model each time \code{run} is called.
 }
 \examples{
 ## Create an SIR model object using mparse.
