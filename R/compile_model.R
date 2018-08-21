@@ -20,31 +20,41 @@
 ##' function, and produces a customised named \code{\link{SimInf_model}}
 ##' object that can be run in the usual way. This is useful for routines
 ##' that require multiple calls to the \code{run} method for 
-##' \code{\link{SimInf_model}} objects created using \code{\link{mparse}},
-##' which avoids the need to re-compile the model each time \code{run} is
-##' called.
+##' \code{\link{SimInf_model}} objects, since it avoids the need to re-compile
+##' the model each time \code{run} is called.
+##' @param model An object of class \code{\link{SimInf_model}}.
+##' @param name  A character specifying the name of the custom class that 
+##'              will be created. This is prefixed with "SimInf-" once the
+##'              function has been run.
 ##' @include SimInf_model.R
+##' @return A \code{\link{SimInf_model}} of class \code{SimInf-name}, where
+##'         \code{name} is given by the input argument \code{name}. 
 ##' @export
+##' @importFrom methods setClass
 ##' @examples
-##' ## Create an SIR model object using \code{mparse}.
+##' ## Create an SIR model object using mparse.
 ##' transitions <- c("S -> beta*S*I -> I", "I -> gamma*I -> R")
 ##' compartments <- c("S", "I", "R")
 ##' u0 <- data.frame(S = 99, I = 1, R = 0)
-##' model <- mparse(transitions = transitions, compartments = compartments,
-##'     gdata = c(beta = 0.16, gamma = 0.077), u0 = u0, tspan = 1:100)
+##' model <- mparse(transitions = transitions, 
+##'     compartments = compartments,
+##'     gdata = c(beta = 0.16, gamma = 0.077), 
+##'     u0 = u0, tspan = 1:100)
 ##'
 ##' ## Run the SIR model and plot the result.
+##' ## This recompiles the model when run()
+##' ## is called
 ##' set.seed(22)
 ##' result <- run(model)
 ##' plot(result)
 ##' 
-##' ## compile the model first and then re-run
-##' ## and plot the result
+##' ## Compile the model first and then re-run
 ##' set.seed(22)
-##' model <- compile_mparse(model, "SIR")
+##' model <- compile_model(model, "SIR")
+##' class(model)
 ##' result <- run(model)
 ##' plot(result)
-compile_mparse <- function(model, name) {
+compile_model <- function(model, name) {
 
     ## Check that SimInf_model contains all data structures
     ## required by the siminf solver and that they make sense

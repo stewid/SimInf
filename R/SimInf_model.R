@@ -1392,7 +1392,7 @@ setMethod("run",
                   name <- as.character(class(model))
 
                   ## The model C run function
-                  if(startsWith(name, "SimInf-")) {
+                  if(substr(name, 1, 7) == "SimInf-") {
                       lib <- paste0(name, .Platform$dynlib.ext)
                       if (!file.exists(lib)){
                           stop("No compiled file available")
