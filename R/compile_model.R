@@ -14,23 +14,78 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+##' Class to handle a compiled custom \code{\link{SimInf_model}}
+##'
+##' @section Slots:
+##' \describe{
+##'   \item{filename}{
+##'     Character vector of length 1 containing name of shared library.
+##'   }
+##' }
+##' @include SimInf_model.R
+##' @export
+setClass("SimInf_model_dll",
+         contains = c("SimInf_model"),
+         slots = c(filename = "character"),
+         validity = function(object) {
+             ## check filename
+             if (!is.character(object@filename) | length(object@filename) != 1) 
+                return("'filename' is not a character of length 1")
+             
+             TRUE
+         }
+)
+
+##' @rdname run
+##' @value \code{\link{SimInf_model_dll}} with result from simulation.
+##' @export
+setMethod("run",
+          signature(model = "SimInf_model_dll"),
+          function(model, threads, solver)
+          {
+              solver <- match.arg(solver)
+
+              ## Check that SimInf_model contains all data structures
+              ## required by the siminf solver and that they make sense
+              validObject(model);
+              
+              ## check whether shared library exists
+              lib <- paste0(model@filename, .Platform$dynlib.ext)
+              if (!file.exists(lib)) {
+                  stop(paste("No shared library called", lib, "available, rerun 'compile_model()'"))
+              }
+              dll <- dyn.load(lib)
+              on.exit(dyn.unload(lib), add = TRUE)
+
+              ## Create expression to parse
+              expr <- ".Call(dll$SimInf_model_run, model, threads, solver)"
+
+              ## Run the model. Re-throw any error without the call
+              ## included in the error message to make it cleaner.
+              tryCatch(eval(parse(text = expr)), error = function(e) {
+                  stop(e$message, call. = FALSE)
+              })
+          }
+)
+
 ##' Function to compile custom \code{\link{SimInf_model}}.
 ##'
 ##' This function compiles a model specified using \code{\link{mparse}}
-##' function, and produces a customised named \code{\link{SimInf_model}}
-##' object that can be run in the usual way. This is useful for routines
-##' that require multiple calls to the \code{run} method for 
-##' \code{\link{SimInf_model}} objects, since it avoids the need to re-compile
-##' the model each time \code{run} is called.
-##' @param model An object of class \code{\link{SimInf_model}}.
-##' @param name  A character specifying the name of the custom class that 
-##'              will be created. This is prefixed with "SimInf-" once the
-##'              function has been run.
+##' function, and produces a \code{\link{SimInf_model}} object with an
+##' internal link to a shared library file that can be run in the usual way. 
+##' This is useful for routines that require multiple calls to the \code{run}
+##' method for \code{\link{SimInf_model}} objects, since it avoids the need
+##' to re-compile the model each time \code{run} is called.
+##' @param model     An object of class \code{\link{SimInf_model}}.
+##' @param filename  A character specifying the name of the shared library that 
+##'                  will be created. This is prefixed with "SimInf-" once the
+##'                  function has been run.
 ##' @include SimInf_model.R
-##' @return A \code{\link{SimInf_model}} of class \code{SimInf-name}, where
-##'         \code{name} is given by the input argument \code{name}. 
+##' @return \linkS4class{SimInf_model_dll}
 ##' @export
-##' @importFrom methods setClass
+##' @importFrom methods as
+##' @importFrom methods is
+##' @importFrom methods new
 ##' @examples
 ##' ## Create an SIR model object using mparse.
 ##' transitions <- c("S -> beta*S*I -> I", "I -> gamma*I -> R")
@@ -54,25 +109,25 @@
 ##' class(model)
 ##' result <- run(model)
 ##' plot(result)
-compile_model <- function(model, name) {
+compile_model <- function(model, filename) {
 
     ## Check that SimInf_model contains all data structures
     ## required by the siminf solver and that they make sense
     validObject(model)
     
-    if(missing(name)) {
-        stop("No 'name' argument provided")
+    if(missing(filename)) {
+        stop("No 'filename' argument provided")
     }
-    if(!is.character(name)) {
-        stop("'name' is not character")
+    if(!is.character(filename)) {
+        stop("'filename' is not character")
     }
-    if(length(name) != 1) {
-        stop("'name' not character of length 1")
+    if(length(filename) != 1) {
+        stop("'filename' not character of length 1")
     }
 
     if (nchar(paste0(model@C_code, collapse = "\n"))) {
         ## Write the C code to a temporary file
-        filename <- paste0("SimInf-", name)
+        filename <- paste0("SimInf-", filename)
         unlink(paste0(filename,
                             c(".c", ".o", .Platform$dynlib.ex)))
         writeLines(model@C_code, con = paste0(filename, ".c"))
@@ -92,14 +147,13 @@ compile_model <- function(model, name) {
         if (!file.exists(lib)) {
             stop(compiled)
         }
-                
-        ## update C_code slot
-        model@C_code <- character()
     } else {
         stop("No C code to compile")
     }
-    ## output new class and model
-    setClass(filename, contains = c("SimInf_model"), where = topenv(parent.frame()))
-    as(model, filename)
+    
+    ## output revised model
+    model <- as(model, "SimInf_model_dll")
+    model@filename <- filename
+    model
 }
 

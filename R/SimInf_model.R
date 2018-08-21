@@ -1360,20 +1360,10 @@ setMethod("run",
                   name <- as.character(class(model))
 
                   ## The model C run function
-                  if(substr(name, 1, 7) == "SimInf-") {
-                      lib <- paste0(name, .Platform$dynlib.ext)
-                      if (!file.exists(lib)){
-                          stop("No compiled file available")
-                      }
-                      dll <- dyn.load(lib)
-                      on.exit(dyn.unload(lib), add = TRUE)
-                      ## Create expression to parse
-                      expr <- ".Call(dll$SimInf_model_run, model, threads, solver)"
-                  } else {
-                      run_fn <- paste0(name, "_run")
-                      ## Create expression to parse
-                      expr <- ".Call(run_fn, model, threads, solver, PACKAGE = 'SimInf')"
-                  }
+                  run_fn <- paste0(name, "_run")
+
+                  ## Create expression to parse
+                  expr <- ".Call(run_fn, model, threads, solver, PACKAGE = 'SimInf')"
               }
 
               ## Run the model. Re-throw any error without the call
