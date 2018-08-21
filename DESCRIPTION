@@ -49,7 +49,7 @@ Imports:
     stats,
     utils,
     Matrix
-Collate:
+Collate: 
     'check_arguments.R'
     'SimInf_events.R'
     'SimInf_model.R'
@@ -61,6 +61,7 @@ Collate:
     'SISe_sp.R'
     'SimInf.R'
     'SimInf_mparse.R'
+    'compile_model.R'
     'distance.R'
     'package_skeleton.R'
     'run_outer.R'
