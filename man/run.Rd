@@ -12,8 +12,8 @@ run(model, threads = NULL, solver = c("ssm", "aem"))
 \S4method{run}{SimInf_model}(model, threads = NULL, solver = c("ssm",
   "aem"))
 
-\S4method{run}{SimInf_model_dll}(model, threads = NULL, solver = c("ssm",
-  "aem"))
+\S4method{run}{SimInf_model_dll}(model, threads = NULL,
+  solver = c("ssm", "aem"))
 }
 \arguments{
 \item{model}{The siminf model to run.}

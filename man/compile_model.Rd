@@ -9,7 +9,7 @@ compile_model(model, filename)
 \arguments{
 \item{model}{An object of class \code{\link{SimInf_model}}.}
 
-\item{filename}{A character specifying the name of the shared library that 
+\item{filename}{A character specifying the name of the shared library that
 will be created. This is prefixed with "SimInf-" once the
 function has been run.}
 }
@@ -19,7 +19,7 @@ function has been run.}
 \description{
 This function compiles a model specified using \code{\link{mparse}}
 function, and produces a \code{\link{SimInf_model}} object with an
-internal link to a shared library file that can be run in the usual way. 
+internal link to a shared library file that can be run in the usual way.
 This is useful for routines that require multiple calls to the \code{run}
 method for \code{\link{SimInf_model}} objects, since it avoids the need
 to re-compile the model each time \code{run} is called.
@@ -29,9 +29,9 @@ to re-compile the model each time \code{run} is called.
 transitions <- c("S -> beta*S*I -> I", "I -> gamma*I -> R")
 compartments <- c("S", "I", "R")
 u0 <- data.frame(S = 99, I = 1, R = 0)
-model <- mparse(transitions = transitions, 
+model <- mparse(transitions = transitions,
     compartments = compartments,
-    gdata = c(beta = 0.16, gamma = 0.077), 
+    gdata = c(beta = 0.16, gamma = 0.077),
     u0 = u0, tspan = 1:100)
 
 ## Run the SIR model and plot the result.
