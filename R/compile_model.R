@@ -48,14 +48,9 @@ setMethod("run",
               ## Check that SimInf_model contains all data structures
               ## required by the siminf solver and that they make sense
               validObject(model);
-              
-              ## check whether shared library exists
-              lib <- paste0(model@filename, .Platform$dynlib.ext)
-              if (!file.exists(lib)) {
-                  stop(paste("No shared library called", lib, "available, rerun 'compile_model()'"))
-              }
-              dll <- dyn.load(lib)
-              on.exit(dyn.unload(lib), add = TRUE)
+
+              dll <- dyn.load(model@filename)
+              on.exit(dyn.unload(model@filename), add = TRUE)
 
               ## Create expression to parse
               expr <- ".Call(dll$SimInf_model_run, model, threads, solver)"
