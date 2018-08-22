@@ -120,14 +120,13 @@ compile_model <- function(model, filename) {
         stop("'filename' not character of length 1")
     }
 
-    if (nchar(paste0(model@C_code, collapse = "\n"))) {
-        ## Write the C code to a temporary file
-        filename <- paste0("SimInf-", filename)
-        unlink(paste0(filename, c(".c", ".o", .Platform$dynlib.ex)))
-        writeLines(model@C_code, con = paste0(filename, ".c"))
-    } else {
+    if (!contains_C_code(model))
         stop("No C code to compile")
-    }
+
+    ## Write the C code to a temporary file
+    filename <- paste0("SimInf-", filename)
+    unlink(paste0(filename, c(".c", ".o", .Platform$dynlib.ex)))
+    writeLines(model@C_code, con = paste0(filename, ".c"))
 
     ## output revised model
     model <- as(model, "SimInf_model_dll")
