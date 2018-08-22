@@ -128,32 +128,14 @@ compile_model <- function(model, filename) {
     if (nchar(paste0(model@C_code, collapse = "\n"))) {
         ## Write the C code to a temporary file
         filename <- paste0("SimInf-", filename)
-        unlink(paste0(filename,
-                            c(".c", ".o", .Platform$dynlib.ex)))
+        unlink(paste0(filename, c(".c", ".o", .Platform$dynlib.ex)))
         writeLines(model@C_code, con = paste0(filename, ".c"))
-
-        ## Include directive for "SimInf.h"
-        include <- system.file("include", package = "SimInf")
-        Sys.setenv(PKG_CPPFLAGS=sprintf("-I%s", shQuote(include)))
-
-        ## Compile the model C code using the running version of R.
-        cmd <- paste(shQuote(file.path(R.home(component = "bin"), "R")),
-                   "CMD SHLIB",
-                   shQuote(paste0(basename(filename), ".c")))
-        compiled <- system(cmd, intern = TRUE)
-
-        ## check compilation
-        lib <- paste0(filename, .Platform$dynlib.ext)
-        if (!file.exists(lib)) {
-            stop(compiled)
-        }
     } else {
         stop("No C code to compile")
     }
-    
+
     ## output revised model
     model <- as(model, "SimInf_model_dll")
-    model@filename <- filename
+    model@filename <- do_compile_model(filename)
     model
 }
-

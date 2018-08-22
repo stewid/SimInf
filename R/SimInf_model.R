@@ -1270,6 +1270,28 @@ Nd <- function(model)
     dim(model@v0)[1]
 }
 
+## Use 'R CMD SHLIB' to compile the C code for the model.
+do_compile_model <- function(filename)
+{
+    ## Include directive for "SimInf.h"
+    include <- system.file("include", package = "SimInf")
+    Sys.setenv(PKG_CPPFLAGS=sprintf("-I%s", shQuote(include)))
+
+    ## Compile the model C code using the running version of R.
+    wd <- setwd(dirname(filename))
+    cmd <- paste(shQuote(file.path(R.home(component="bin"), "R")),
+                 "CMD SHLIB",
+                 shQuote(paste0(basename(filename), ".c")))
+    compiled <- system(cmd, intern = TRUE)
+    setwd(wd)
+
+    lib <- paste0(filename, .Platform$dynlib.ext)
+    if (!file.exists(lib))
+        stop(compiled)
+
+    lib
+}
+
 ##' Run the SimInf stochastic simulation algorithm
 ##'
 ##' @param model The siminf model to run.
@@ -1334,22 +1356,7 @@ setMethod("run",
                                         c(".c", ".o", .Platform$dynlib.ex))))
                   writeLines(model@C_code, con = paste0(filename, ".c"))
 
-                  ## Include directive for "SimInf.h"
-                  include <- system.file("include", package = "SimInf")
-                  Sys.setenv(PKG_CPPFLAGS=sprintf("-I%s", shQuote(include)))
-
-                  ## Compile the model C code using the running version of R.
-                  wd <- setwd(dirname(filename))
-                  cmd <- paste(shQuote(file.path(R.home(component="bin"), "R")),
-                               "CMD SHLIB",
-                               shQuote(paste0(basename(filename), ".c")))
-                  compiled <- system(cmd, intern = TRUE)
-                  setwd(wd)
-
-                  ## Load DLL
-                  lib <- paste0(filename, .Platform$dynlib.ext)
-                  if (!file.exists(lib))
-                      stop(compiled)
+                  lib <- do_compile_model(filename)
                   dll <- dyn.load(lib)
                   on.exit(dyn.unload(lib), add = TRUE)
 
