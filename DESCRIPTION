@@ -49,7 +49,7 @@ Imports:
     stats,
     utils,
     Matrix
-Collate: 
+Collate:
     'check_arguments.R'
     'SimInf_events.R'
     'SimInf_model.R'

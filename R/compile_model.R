@@ -29,9 +29,9 @@ setClass("SimInf_model_dll",
          slots = c(filename = "character"),
          validity = function(object) {
              ## check filename
-             if (!is.character(object@filename) | length(object@filename) != 1) 
+             if (!is.character(object@filename) | length(object@filename) != 1)
                 return("'filename' is not a character of length 1")
-             
+
              TRUE
          }
 )
@@ -67,12 +67,12 @@ setMethod("run",
 ##'
 ##' This function compiles a model specified using \code{\link{mparse}}
 ##' function, and produces a \code{\link{SimInf_model}} object with an
-##' internal link to a shared library file that can be run in the usual way. 
+##' internal link to a shared library file that can be run in the usual way.
 ##' This is useful for routines that require multiple calls to the \code{run}
 ##' method for \code{\link{SimInf_model}} objects, since it avoids the need
 ##' to re-compile the model each time \code{run} is called.
 ##' @param model     An object of class \code{\link{SimInf_model}}.
-##' @param filename  A character specifying the name of the shared library that 
+##' @param filename  A character specifying the name of the shared library that
 ##'                  will be created. This is prefixed with "SimInf-" once the
 ##'                  function has been run.
 ##' @include SimInf_model.R
@@ -86,9 +86,9 @@ setMethod("run",
 ##' transitions <- c("S -> beta*S*I -> I", "I -> gamma*I -> R")
 ##' compartments <- c("S", "I", "R")
 ##' u0 <- data.frame(S = 99, I = 1, R = 0)
-##' model <- mparse(transitions = transitions, 
+##' model <- mparse(transitions = transitions,
 ##'     compartments = compartments,
-##'     gdata = c(beta = 0.16, gamma = 0.077), 
+##'     gdata = c(beta = 0.16, gamma = 0.077),
 ##'     u0 = u0, tspan = 1:100)
 ##'
 ##' ## Run the SIR model and plot the result.
@@ -97,7 +97,7 @@ setMethod("run",
 ##' set.seed(22)
 ##' result <- run(model)
 ##' plot(result)
-##' 
+##'
 ##' ## Compile the model first and then re-run
 ##' set.seed(22)
 ##' model <- compile_model(model, "SIR")
@@ -109,7 +109,7 @@ compile_model <- function(model, filename) {
     ## Check that SimInf_model contains all data structures
     ## required by the siminf solver and that they make sense
     validObject(model)
-    
+
     if(missing(filename)) {
         stop("No 'filename' argument provided")
     }
