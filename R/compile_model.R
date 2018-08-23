@@ -72,15 +72,13 @@ setMethod("run",
 ##' method for \code{\link{SimInf_model}} objects, since it avoids the need
 ##' to re-compile the model each time \code{run} is called.
 ##' @param model     An object of class \code{\link{SimInf_model}}.
-##' @param filename  A character specifying the name of the shared library that
-##'                  will be created. This is prefixed with "SimInf-" once the
-##'                  function has been run.
+##' @param filename A character specifying the name of the shared
+##'     library that will be created. Default is NULL, i.e. to use a
+##'     temporary file.
 ##' @include SimInf_model.R
 ##' @return \linkS4class{SimInf_model_dll}
 ##' @export
 ##' @importFrom methods as
-##' @importFrom methods is
-##' @importFrom methods new
 ##' @examples
 ##' ## Create an SIR model object using mparse.
 ##' transitions <- c("S -> beta*S*I -> I", "I -> gamma*I -> R")
@@ -104,25 +102,19 @@ setMethod("run",
 ##' class(model)
 ##' result <- run(model)
 ##' plot(result)
-compile_model <- function(model, filename)
+compile_model <- function(model, filename = NULL)
 {
     check_model_argument(model)
 
-    if(missing(filename)) {
-        stop("No 'filename' argument provided")
-    }
-    if(!is.character(filename)) {
-        stop("'filename' is not character")
-    }
-    if(length(filename) != 1) {
+    if (is.null(filename))
+        filename <- tempfile("SimInf-")
+    if (!is.character(filename) || length(filename) != 1)
         stop("'filename' not character of length 1")
-    }
 
     if (!contains_C_code(model))
         stop("No C code to compile")
 
     ## Write the C code to a temporary file
-    filename <- paste0("SimInf-", filename)
     unlink(paste0(filename, c(".c", ".o", .Platform$dynlib.ex)))
     writeLines(model@C_code, con = paste0(filename, ".c"))
 

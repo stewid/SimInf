@@ -4,14 +4,14 @@
 \alias{compile_model}
 \title{Function to compile custom \code{\link{SimInf_model}}.}
 \usage{
-compile_model(model, filename)
+compile_model(model, filename = NULL)
 }
 \arguments{
 \item{model}{An object of class \code{\link{SimInf_model}}.}
 
-\item{filename}{A character specifying the name of the shared library that
-will be created. This is prefixed with "SimInf-" once the
-function has been run.}
+\item{filename}{A character specifying the name of the shared
+library that will be created. Default is NULL, i.e. to use a
+temporary file.}
 }
 \value{
 \linkS4class{SimInf_model_dll}
