@@ -104,11 +104,9 @@ setMethod("run",
 ##' class(model)
 ##' result <- run(model)
 ##' plot(result)
-compile_model <- function(model, filename) {
-
-    ## Check that SimInf_model contains all data structures
-    ## required by the siminf solver and that they make sense
-    validObject(model)
+compile_model <- function(model, filename)
+{
+    check_model_argument(model)
 
     if(missing(filename)) {
         stop("No 'filename' argument provided")
