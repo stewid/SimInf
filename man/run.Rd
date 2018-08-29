@@ -24,7 +24,7 @@ available processors.}
 \item{solver}{Which numerical solver to utilize. Default is 'ssm'.}
 }
 \value{
-\code{SimInf_model} with result from simulation.
+\code{SimInf_model} or \code{\link{SimInf_model_dll}} object with result from simulation.
 }
 \description{
 Run the SimInf stochastic simulation algorithm

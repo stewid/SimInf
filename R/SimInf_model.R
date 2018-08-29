@@ -1306,7 +1306,7 @@ contains_C_code <- function(model)
 ##' @param threads Number of threads. Default is NULL, i.e. to use all
 ##'     available processors.
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.
-##' @return \code{SimInf_model} with result from simulation.
+##' @return \code{SimInf_model} or \code{\link{SimInf_model_dll}} object with result from simulation.
 ##' @references \itemize{
 ##'   \item Bauer P, Engblom S, Widgren S
 ##'   (2016) "Fast Event-Based Epidemiological Simulations on National Scales"
