@@ -37,7 +37,6 @@ setClass("SimInf_model_dll",
 )
 
 ##' @rdname run
-##' @value \code{\link{SimInf_model_dll}} with result from simulation.
 ##' @export
 setMethod("run",
           signature(model = "SimInf_model_dll"),
