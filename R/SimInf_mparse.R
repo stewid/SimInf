@@ -226,9 +226,9 @@ parse_transitions <- function(transitions, compartments, ldata, gdata) {
 
         ## The corresponding column in the state change vector S is
         ## now known.
-        S <- integer(length(compartments))
-        S[ifrom] <- -1
-        S[idest] <- 1
+        ifrom <- tabulate(ifrom, length(compartments))
+        idest <- tabulate(idest, length(compartments))
+        S <- as.integer(idest - ifrom)
 
         propensity <- rewriteprop(propensity, compartments, ldata, gdata)
 

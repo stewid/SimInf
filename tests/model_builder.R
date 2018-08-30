@@ -446,3 +446,54 @@ res <- tools::assertError(
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
 stopifnot(length(grep("'ldata' and 'u0' must have the same number of rows.",
                       res[[1]]$message)) > 0)
+
+## Check 'S + S -> mu -> @'
+m  <- mparse(transitions = "S + S -> mu -> @",
+             compartments = c("S", "I"),
+             gdata = c(mu = 1),
+             u0 = data.frame(S = 100, I = 100),
+             tspan = 1:100)
+
+S <- new("dgCMatrix", i = 0L, p = 0:1, Dim = 2:1,
+         Dimnames = list(c("S", "I"), "1"),
+         x = -2, factors = list())
+stopifnot(identical(m@S, S))
+
+G <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
+         Dim = c(1L, 1L), Dimnames = list("S + S -> @", "1"),
+         x = numeric(0), factors = list())
+stopifnot(identical(m@G, G))
+
+## Check 'S + S -> mu -> S + S'
+m  <- mparse(transitions = "S + S -> mu -> S + S",
+             compartments = c("S", "I"),
+             gdata = c(mu = 1),
+             u0 = data.frame(S = 100, I = 100),
+             tspan = 1:100)
+
+S <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
+         Dim = 2:1, Dimnames = list(c("S", "I"), "1"),
+         x = numeric(0), factors = list())
+stopifnot(identical(m@S, S))
+
+G <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
+         Dim = c(1L, 1L), Dimnames = list("S + S -> S + S", "1"),
+         x = numeric(0), factors = list())
+stopifnot(identical(m@G, G))
+
+## Check '@ -> mu-> S + S'
+m  <- mparse(transitions = "@ -> mu-> S + S",
+             compartments = c("S", "I"),
+             gdata = c(mu = 1),
+             u0 = data.frame(S = 100, I = 100),
+             tspan = 1:100)
+
+S <- new("dgCMatrix", i = 0L, p = 0:1, Dim = 2:1,
+         Dimnames = list(c("S", "I"), "1"),
+         x = 2, factors = list())
+stopifnot(identical(m@S, S))
+
+G <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
+         Dim = c(1L, 1L), Dimnames = list("@ -> S + S", "1"),
+         x = numeric(0), factors = list())
+stopifnot(identical(m@G, G))
