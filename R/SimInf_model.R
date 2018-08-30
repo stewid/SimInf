@@ -200,8 +200,9 @@ setClass("SimInf_model",
              ## Check ldata.
              if (!is.double(object@ldata))
                  return("'ldata' matrix must be a double matrix.")
-             Nn <- dim(object@u0)[2]
-             if (!identical(dim(object@ldata)[2], Nn))
+             Nn_ldata <- dim(object@ldata)[2]
+             Nn_u0 <- dim(object@u0)[2]
+             if (Nn_ldata > 0 && !identical(Nn_ldata, Nn_u0))
                  return("Wrong size of 'ldata' matrix.")
 
              ## Check gdata.
@@ -320,7 +321,7 @@ SimInf_model <- function(G,
 
     ## Check ldata
     if (is.null(ldata))
-        ldata <- matrix(rep(0, ncol(u0)), nrow = 1)
+        ldata <- matrix(numeric(0), nrow = 0, ncol = 0)
 
     ## Check gdata
     if (is.null(gdata))

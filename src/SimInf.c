@@ -55,6 +55,14 @@ SEXP SimInf_run(
     SEXP U, V, U_sparse, V_sparse;
     SimInf_solver_args args = {NULL};
 
+    /* If the model ldata is a 0x0 matrix, i.e. Nld == 0, then use
+     * ldata_tmp in the transition rate functions. This is to make
+     * &ldata[node * Nld] work in the solvers. The reason for INFINITY
+     * is to facilitate for the solvers to detect and raise an error
+     * if a model C code uses ldata[0] in the transition rate
+     * functions. */
+    const double ldata_tmp[1] = {INFINITY};
+
     if (SimInf_arg_check_model(model)) {
         error = SIMINF_ERR_INVALID_MODEL;
         goto cleanup;
@@ -221,7 +229,7 @@ SEXP SimInf_run(
             args.prU[i] = args.u0[args.irU[i]];
     }
 
-    /* Initial state.. Copy v0 to either V[, 1] or V_sparse[, 1] */
+    /* Initial state. Copy v0 to either V[, 1] or V_sparse[, 1] */
     args.v0 = REAL(GET_SLOT(result, Rf_install("v0")));
     if (args.V) {
         memcpy(args.V, args.v0, args.Nn * args.Nd * sizeof(double));
@@ -230,8 +238,13 @@ SEXP SimInf_run(
             args.prV[i] = args.v0[args.irV[i]];
     }
 
-    /* global and local data */
-    args.ldata = REAL(GET_SLOT(result, Rf_install("ldata")));
+    /* Local data */
+    if (args.Nld > 0)
+        args.ldata = REAL(GET_SLOT(result, Rf_install("ldata")));
+    else
+        args.ldata = ldata_tmp;
+
+    /* Global data */
     args.gdata = REAL(GET_SLOT(result, Rf_install("gdata")));
 
     /* Function pointers */
