@@ -284,7 +284,6 @@ parse_transitions <- function(transitions, compartments, ldata, gdata) {
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
 ##' @importFrom methods as
-##' @importFrom methods new
 ##' @importFrom utils packageVersion
 ##' @template mparse-example
 mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
