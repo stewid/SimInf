@@ -158,7 +158,6 @@ tokens <- function(propensity) {
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
 rewriteprop <- function(propensity, compartments, ldata, gdata) {
-    orig_prop <- propensity
     propensity <- tokens(propensity)
     depends <- integer(length(compartments))
 
@@ -177,9 +176,7 @@ rewriteprop <- function(propensity, compartments, ldata, gdata) {
     i <- match(propensity, gdata)
     propensity <- ifelse(is.na(i), propensity, sprintf("gdata[%i]", i-1L))
 
-    list(orig_prop  = orig_prop,
-         propensity = paste0(propensity, collapse = ""),
-         depends    = depends)
+    list(propensity = paste0(propensity, collapse = ""), depends = depends)
 }
 
 ## Generate labels from the parsed transitions
@@ -234,7 +231,6 @@ parse_transitions <- function(transitions, compartments, ldata, gdata) {
 
         list(from       = from,
              dest       = dest,
-             orig_prop  = propensity$orig_prop,
              propensity = propensity$propensity,
              depends    = propensity$depends,
              S          = S)
