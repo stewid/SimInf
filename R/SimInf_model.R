@@ -194,6 +194,7 @@ setClass("SimInf_model",
              transitions <- sub("^[[:space:]]*", "", sub("[[:space:]]*$", "", transitions))
              transitions <- unique(transitions)
              transitions <- transitions[transitions != "@"]
+             transitions <- sub("^[[:digit:]]+[*]", "", transitions)
              if (!all(transitions %in% rownames(object@S)))
                  return("'G' and 'S' must have identical compartments")
 

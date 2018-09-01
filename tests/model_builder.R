@@ -180,8 +180,8 @@ G <- new("dgCMatrix",
          i = c(1L, 2L, 1L, 2L, 1L, 2L, 3L, 2L, 3L),
          p = c(0L, 2L, 4L, 7L, 9L),
          Dim = c(4L, 4L),
-         Dimnames = list(c("@ -> D", "D -> D + D",
-                           "D + W -> W + W", "W -> @"),
+         Dimnames = list(c("@ -> D", "@ -> D",
+                           "D -> W", "W -> @"),
                          c("1", "2", "3", "4")),
          x = c(1, 1, 1, 1, 1, 1, 1, 1, 1),
          factors = list())
@@ -459,7 +459,7 @@ S <- new("dgCMatrix", i = 0L, p = 0:1, Dim = 2:1,
 stopifnot(identical(m@S, S))
 
 G <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
-         Dim = c(1L, 1L), Dimnames = list("S + S -> @", "1"),
+         Dim = c(1L, 1L), Dimnames = list("2*S -> @", "1"),
          x = numeric(0), factors = list())
 stopifnot(identical(m@G, G))
 
@@ -476,7 +476,7 @@ S <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
 stopifnot(identical(m@S, S))
 
 G <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
-         Dim = c(1L, 1L), Dimnames = list("S + S -> S + S", "1"),
+         Dim = c(1L, 1L), Dimnames = list("@ -> @", "1"),
          x = numeric(0), factors = list())
 stopifnot(identical(m@G, G))
 
@@ -493,6 +493,6 @@ S <- new("dgCMatrix", i = 0L, p = 0:1, Dim = 2:1,
 stopifnot(identical(m@S, S))
 
 G <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
-         Dim = c(1L, 1L), Dimnames = list("@ -> S + S", "1"),
+         Dim = c(1L, 1L), Dimnames = list("@ -> 2*S", "1"),
          x = numeric(0), factors = list())
 stopifnot(identical(m@G, G))

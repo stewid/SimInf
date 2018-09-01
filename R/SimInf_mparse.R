@@ -179,23 +179,28 @@ rewriteprop <- function(propensity, compartments, ldata, gdata) {
     list(propensity = paste0(propensity, collapse = ""), depends = depends)
 }
 
-## Generate labels from the parsed transitions
-as_labels <- function(transitions) {
-    sapply(transitions, function(x) {
-        if (length(x$from)) {
-            from <- paste0(x$from, collapse = " + ")
-        } else {
-            from <- "@"
-        }
+## Generate the 'from' or 'dest' labels in the G rownames.
+G_label <- function(x)
+{
+    if (length(x) == 0)
+        return("@")
 
-        if (length(x$dest)) {
-            dest <- paste0(x$dest, collapse = " + ")
-        } else {
-            dest <- "@"
-        }
+    ## Prefix compartments if more than one unit, e.g., '2*S'.
+    lbl <- ifelse(abs(x) > 1, paste0(abs(x), "*"), "")
+    lbl <- paste0(lbl, names(x))
 
+    ## Combine all compartments, e.g., 'S + I'
+    paste0(lbl, collapse = " + ")
+}
+
+## Generate rownames from the parsed transitions
+G_rownames <- function(S)
+{
+    as.character(apply(S, 2, function(x) {
+        from  <- G_label(x[which(x < 0)])
+        dest  <- G_label(x[which(x > 0)])
         paste(from, "->", dest)
-    })
+    }))
 }
 
 parse_transitions <- function(transitions, compartments, ldata, gdata) {
@@ -229,9 +234,7 @@ parse_transitions <- function(transitions, compartments, ldata, gdata) {
 
         propensity <- rewriteprop(propensity, compartments, ldata, gdata)
 
-        list(from       = from,
-             dest       = dest,
-             propensity = propensity$propensity,
+        list(propensity = propensity$propensity,
              depends    = propensity$depends,
              S          = S)
     })
@@ -369,7 +372,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
     G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
     colnames(G) <- as.character(seq_len(dim(G)[2]))
-    rownames(G) <- as_labels(transitions)
+    rownames(G) <- G_rownames(S)
 
     SimInf_model(G      = G,
                  S      = S,
