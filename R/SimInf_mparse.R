@@ -157,7 +157,7 @@ tokens <- function(propensity) {
 ## \code{u[compartments[j]]} where \code{j} is the numbering in
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
-rewriteprop <- function(propensity, compartments, ldata, gdata) {
+rewrite_propensity <- function(propensity, compartments, ldata, gdata) {
     propensity <- tokens(propensity)
     depends <- integer(length(compartments))
 
@@ -203,36 +203,37 @@ G_rownames <- function(S)
     }))
 }
 
+parse_compartments <- function(x, compartments) {
+    ## Remove spaces and the empty set
+    x <- gsub(" ", "", gsub("@", "", x))
+
+    ## Split into 'compartment1 + compartment2 + ..'
+    x <- unlist(strsplit(x, "+", fixed = TRUE))
+
+    ## Assign each compartment into its number according to the
+    ## ordering in compartments
+    i <- match(x, compartments)
+    if (any(is.na(i)))
+        stop(sprintf("Unknown compartment: '%s'.", x[is.na(i)]))
+
+    tabulate(i, length(compartments))
+}
+
 parse_transitions <- function(transitions, compartments, ldata, gdata) {
     lapply(strsplit(transitions, "->"), function(x) {
         if (!identical(length(x), 3L))
             stop("Invalid transition: '", paste0(x, collapse = "->"), "'")
 
-        ## Remove spaces and the empty set
-        from <- gsub(" ", "", gsub("@", "", x[1]))
+        ## Remove spaces
         propensity <- gsub(" ", "", x[2])
-        dest <- gsub(" ", "", gsub("@", "", x[3]))
 
-        ## Split from and dest into 'compartment1 + compartment2 + ..'
-        from <- unlist(strsplit(from, "+", fixed = TRUE))
-        dest <- unlist(strsplit(dest, "+", fixed = TRUE))
+        ## Determine the corresponding column in the state change
+        ## vector S.
+        from <- parse_compartments(x[1], compartments)
+        dest <- parse_compartments(x[3], compartments)
+        S <- dest - from
 
-        ## Assign each compartment into its number according to the
-        ## ordering in compartments
-        ifrom <- match(from, compartments)
-        if (any(is.na(ifrom)))
-            stop(sprintf("Unknown compartment: '%s'.", from[is.na(ifrom)]))
-        idest <- match(dest, compartments)
-        if (any(is.na(idest)))
-            stop(sprintf("Unknown compartment: '%s'.", dest[is.na(idest)]))
-
-        ## The corresponding column in the state change vector S is
-        ## now known.
-        ifrom <- tabulate(ifrom, length(compartments))
-        idest <- tabulate(idest, length(compartments))
-        S <- as.integer(idest - ifrom)
-
-        propensity <- rewriteprop(propensity, compartments, ldata, gdata)
+        propensity <- rewrite_propensity(propensity, compartments, ldata, gdata)
 
         list(propensity = propensity$propensity,
              depends    = propensity$depends,

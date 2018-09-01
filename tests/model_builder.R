@@ -342,7 +342,8 @@ stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
                       "I", "+", "R", ")")))
 
 stopifnot(
-    identical(SimInf:::rewriteprop("beta*S*I/(S+I+R)", c("S", "I", "R"), NULL, "beta"),
+    identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", c("S", "I", "R"),
+                                          NULL, "beta"),
               structure(list(propensity = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
                              depends = c(1, 1, 1)),
                         .Names = c("propensity", "depends"))))
