@@ -210,6 +210,20 @@ parse_compartments <- function(x, compartments) {
     ## Split into 'compartment1 + compartment2 + ..'
     x <- unlist(strsplit(x, "+", fixed = TRUE))
 
+    ## Replace 'n*compartment' with n replicates of 'compartment'
+    x <- unlist(sapply(x, function(xx) {
+        m <- regexpr("^[[:digit:]]+[*]", xx)
+        if (m != 1)
+            return(xx)
+
+        ## Determine number of replicates and remove 'n*'
+        n <- regmatches(xx, m)
+        xx <- sub(n, "", xx, fixed = TRUE)
+        n <- as.integer(substr(n, 1, nchar(n) - 1))
+
+        rep(xx, n)
+    }))
+
     ## Assign each compartment into its number according to the
     ## ordering in compartments
     i <- match(x, compartments)

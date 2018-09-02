@@ -497,3 +497,7 @@ G <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
          Dim = c(1L, 1L), Dimnames = list("@ -> 2*S", "1"),
          x = numeric(0), factors = list())
 stopifnot(identical(m@G, G))
+
+## Check parsing replicates of compartments
+stopifnot(identical(SimInf:::parse_compartments("S + 2*S", c("S", "I")),
+                    c(3L, 0L)))
