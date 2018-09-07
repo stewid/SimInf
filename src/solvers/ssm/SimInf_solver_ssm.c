@@ -148,8 +148,12 @@ static int SimInf_solver_ssm(
                         /* 1c) Update the state of the node */
                         for (j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
                             m.u[node * m.Nc + m.irS[j]] += m.prS[j];
-                            if (m.u[node * m.Nc + m.irS[j]] < 0)
+                            if (m.u[node * m.Nc + m.irS[j]] < 0) {
+                                SimInf_print_status(m.Nc, &m.u[node * m.Nc],
+                                                    m.Ni + node, m.t_time[node],
+                                                    0, tr);
                                 m.error = SIMINF_ERR_NEGATIVE_STATE;
+                            }
                         }
 
                         /* 1d) Recalculate sum_t_rate[node] using

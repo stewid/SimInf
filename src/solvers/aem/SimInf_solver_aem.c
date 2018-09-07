@@ -180,8 +180,12 @@ static int SimInf_solver_aem(
                         /* 1c) Update the state of the node */
                         for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
                             sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
-                            if (sa.u[node * sa.Nc + sa.irS[j]] < 0)
+                            if (sa.u[node * sa.Nc + sa.irS[j]] < 0) {
+                                SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                                    sa.Ni + node, sa.t_time[node],
+                                                    0, tr);
                                 sa.error = SIMINF_ERR_NEGATIVE_STATE;
+                            }
                         }
 
 
