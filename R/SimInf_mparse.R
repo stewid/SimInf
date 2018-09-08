@@ -336,22 +336,23 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     u0 <- u0[, compartments, drop = FALSE]
 
     ## Check ldata
+    ldata_names <- NULL
     if (!is.null(ldata)) {
         if (is.data.frame(ldata)) {
-            if (!identical(nrow(ldata), nrow(u0)))
-                stop("'ldata' and 'u0' must have the same number of rows.")
-
-            ## Coerce the data.frame to a matrix
-            ldata <- as_t_matrix(ldata)
+            ldata_names <- colnames(ldata)
+        } else if (is.matrix(ldata)) {
+            ldata_names <-rownames(ldata)
+        } else {
+            stop("'ldata' must either be a 'data.frame' or a 'matrix'.")
         }
 
-        if (!is.matrix(ldata) || !is.numeric(ldata) || is.null(rownames(ldata)) ||
-            any(duplicated(rownames(ldata))) || any(nchar(rownames(ldata)) == 0))
-            stop("'ldata' must be a numeric matrix with non-duplicated rownames.")
+        if (is.null(rownames(ldata)) || any(duplicated(ldata_names)) ||
+            any(nchar(ldata_names) == 0))
+            stop("'ldata' must have non-duplicated parameter names.")
 
-        if (length(intersect(rownames(ldata), reserved)))
-            stop("Invalid 'ldata' rownames: ",
-                 paste0(intersect(rownames(ldata), reserved), collapse = ", "))
+        if (length(intersect(ldata_names, reserved)))
+            stop("Invalid 'ldata' parameter names: ",
+                 paste0(intersect(ldata_names, reserved), collapse = ", "))
     }
 
     ## Check gdata
@@ -367,18 +368,18 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
             stop("'gdata' must be a named numeric vector with unique names.")
 
         if (length(intersect(names(gdata), reserved)))
-            stop("Invalid 'gdata' names: ",
+            stop("Invalid 'gdata' parameter names: ",
                  paste0(intersect(names(gdata), reserved), collapse = ", "))
 
-        if (!is.null(ldata)) {
-            if (length(intersect(names(gdata), rownames(ldata))))
-                stop("'gdata' names and 'ldata' rownames have elements in common.")
+        if (!is.null(ldata_names)) {
+            if (length(intersect(names(gdata), ldata_names)))
+                stop("'gdata' and 'ldata' parameter names have elements in common.")
         }
     }
 
     ## Parse transitions
     transitions <- parse_transitions(transitions, compartments,
-                                     rownames(ldata), names(gdata))
+                                     ldata_names, names(gdata))
 
     ## Create the state-change matrix S
     S <- do.call("cbind", lapply(transitions, "[[", "S"))

@@ -323,6 +323,8 @@ SimInf_model <- function(G,
     ## Check ldata
     if (is.null(ldata))
         ldata <- matrix(numeric(0), nrow = 0, ncol = 0)
+    if (is.data.frame(ldata))
+        ldata <- as_t_matrix(ldata)
 
     ## Check gdata
     if (is.null(gdata))
