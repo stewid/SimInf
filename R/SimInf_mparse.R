@@ -316,17 +316,10 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
         any(nchar(transitions) == 0))
         stop("'transitions' must be specified in a character vector.")
 
-    ## Reserved names that cannot be used for compartment names or
-    ## parameter names.
-    reserved = c("v_new", "u", "v", "ldata", "gdata", "node", "t", "rng")
-
     ## Check compartments
     if (!is.atomic(compartments) || !is.character(compartments) ||
         any(duplicated(compartments)) || any(nchar(compartments) == 0))
         stop("'compartments' must be specified in a character vector.")
-    if (length(intersect(compartments, reserved)))
-        stop("Invalid compartment names: ",
-             paste0(intersect(compartments, reserved), collapse = ", "))
 
     ## Check u0
     if (!is.data.frame(u0))
@@ -349,10 +342,6 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
         if (is.null(ldata_names) || any(duplicated(ldata_names)) ||
             any(nchar(ldata_names) == 0))
             stop("'ldata' must have non-duplicated parameter names.")
-
-        if (length(intersect(ldata_names, reserved)))
-            stop("Invalid 'ldata' parameter names: ",
-                 paste0(intersect(ldata_names, reserved), collapse = ", "))
     }
 
     ## Check gdata
@@ -369,10 +358,6 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
         if (is.null(gdata_names) || any(duplicated(gdata_names)) ||
             any(nchar(gdata_names) == 0))
             stop("'gdata' must have non-duplicated parameter names.")
-
-        if (length(intersect(gdata_names, reserved)))
-            stop("Invalid 'gdata' parameter names: ",
-                 paste0(intersect(gdata_names, reserved), collapse = ", "))
 
         if (!is.null(ldata_names) && length(intersect(gdata_names, ldata_names)))
             stop("'gdata' and 'ldata' parameter names have elements in common.")

@@ -82,26 +82,6 @@ stopifnot(length(grep("'gdata' must have non-duplicated parameter names.",
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("v_new", "u", "v", "ldata", "gdata",
-                                          "node", "t", "rng"),
-                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
-                         u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("Invalid compartment names: v_new, u, v, ldata, gdata, node, t, rng",
-                      res[[1]]$message)) > 0)
-
-res <- tools::assertError(
-                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
-                         gdata = c(v_new = 0.5, u = 1, v = 0.005, ldata = 0.6,
-                                   gdata = 2, node = 3, t = 4, rng = 5),
-                         u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("Invalid 'gdata' parameter names: v_new, u, v, ldata, gdata, node, t, rng",
-                      res[[1]]$message, fixed = TRUE)) > 0)
-
-res <- tools::assertError(
-                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                                          "D+W->c3*D*W->W+W","W->c4*W"),
                          compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
@@ -157,16 +137,6 @@ res <- tools::assertError(
                          gdata = c(c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
 stopifnot(length(grep("'ldata' must have non-duplicated parameter names.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
-
-res <- tools::assertError(
-                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
-                         ldata = matrix(1:5,, nrow = 1, dimnames = list("u", NULL)),
-                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
-                         u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("Invalid 'ldata' parameter names: u",
                       res[[1]]$message, fixed = TRUE)) > 0)
 
 res <- tools::assertError(
