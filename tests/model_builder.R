@@ -59,7 +59,7 @@ res <- tools::assertError(
                          compartments = c("D","W"),
                          gdata = letters,
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'gdata' must be a named numeric vector with unique names.",
+stopifnot(length(grep("'gdata' must either be a 'data.frame' or a 'numeric' vector.",
                       res[[1]]$message, fixed = TRUE)) > 0)
 
 res <- tools::assertError(
@@ -77,7 +77,7 @@ res <- tools::assertError(
                          compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6, c1 = 2),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'gdata' must be a named numeric vector with unique names.",
+stopifnot(length(grep("'gdata' must have non-duplicated parameter names.",
                       res[[1]]$message, fixed = TRUE)) > 0)
 
 res <- tools::assertError(

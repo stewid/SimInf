@@ -329,6 +329,11 @@ SimInf_model <- function(G,
     ## Check gdata
     if (is.null(gdata))
         gdata <- numeric(0)
+    if (is.data.frame(gdata)) {
+        if (!identical(nrow(gdata), 1L))
+            stop("When 'gdata' is a data.frame, it must have one row.")
+        gdata <- unlist(gdata)
+    }
 
     ## Check U
     if (is.null(U)) {
