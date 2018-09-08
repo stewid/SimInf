@@ -157,7 +157,8 @@ tokens <- function(propensity) {
 ## \code{u[compartments[j]]} where \code{j} is the numbering in
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
-rewrite_propensity <- function(propensity, compartments, ldata, gdata) {
+rewrite_propensity <- function(propensity, compartments, ldata_names, gdata_names)
+{
     propensity <- tokens(propensity)
     depends <- integer(length(compartments))
 
@@ -168,12 +169,12 @@ rewrite_propensity <- function(propensity, compartments, ldata, gdata) {
     if (length(i))
         depends[i] <- 1
 
-    ## Find ldata in propensity
-    i <- match(propensity, ldata)
+    ## Find ldata parameters in the propensity
+    i <- match(propensity, ldata_names)
     propensity <- ifelse(is.na(i), propensity, sprintf("ldata[%i]", i-1L))
 
-    ## Find gdata in propensity
-    i <- match(propensity, gdata)
+    ## Find gdata parameters in the propensity
+    i <- match(propensity, gdata_names)
     propensity <- ifelse(is.na(i), propensity, sprintf("gdata[%i]", i-1L))
 
     list(propensity = paste0(propensity, collapse = ""), depends = depends)
@@ -233,7 +234,8 @@ parse_compartments <- function(x, compartments) {
     tabulate(i, length(compartments))
 }
 
-parse_transitions <- function(transitions, compartments, ldata, gdata) {
+parse_transitions <- function(transitions, compartments, ldata_names, gdata_names)
+{
     lapply(strsplit(transitions, "->"), function(x) {
         if (!identical(length(x), 3L))
             stop("Invalid transition: '", paste0(x, collapse = "->"), "'")
@@ -247,7 +249,8 @@ parse_transitions <- function(transitions, compartments, ldata, gdata) {
         dest <- parse_compartments(x[3], compartments)
         S <- dest - from
 
-        propensity <- rewrite_propensity(propensity, compartments, ldata, gdata)
+        propensity <- rewrite_propensity(propensity, compartments,
+                                         ldata_names, gdata_names)
 
         list(propensity = propensity$propensity,
              depends    = propensity$depends,
