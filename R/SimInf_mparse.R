@@ -361,7 +361,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     }
 
     if (any(duplicated(c(compartments, gdata_names, ldata_names))))
-        stop("'compartments', 'gdata' and 'ldata' have names in common.")
+        stop("'u0', 'gdata' and 'ldata' have names in common.")
 
     ## Parse transitions
     transitions <- parse_transitions(transitions, compartments,
