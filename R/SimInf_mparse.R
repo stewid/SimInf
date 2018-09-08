@@ -358,10 +358,10 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
         if (is.null(gdata_names) || any(duplicated(gdata_names)) ||
             any(nchar(gdata_names) == 0))
             stop("'gdata' must have non-duplicated parameter names.")
-
-        if (!is.null(ldata_names) && length(intersect(gdata_names, ldata_names)))
-            stop("'gdata' and 'ldata' parameter names have elements in common.")
     }
+
+    if (any(duplicated(c(compartments, gdata_names, ldata_names))))
+        stop("'compartments', 'gdata' and 'ldata' have names in common.")
 
     ## Parse transitions
     transitions <- parse_transitions(transitions, compartments,

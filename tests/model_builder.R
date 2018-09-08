@@ -146,7 +146,7 @@ res <- tools::assertError(
                          ldata = matrix(1:5,, nrow = 1, dimnames = list("c4", NULL)),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("'gdata' and 'ldata' parameter names have elements in common.",
+stopifnot(length(grep("'compartments', 'gdata' and 'ldata' have names in common.",
                       res[[1]]$message, fixed = TRUE)) > 0)
 
 ## Check mparse
