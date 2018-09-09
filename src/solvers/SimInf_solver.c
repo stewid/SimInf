@@ -744,6 +744,7 @@ int SimInf_compartment_model_create(
 
     /* Set continuous state to the initial state in each node. */
     memcpy(model[0].v, args->v0, args->Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v_new, args->v0, args->Nn * args->Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
