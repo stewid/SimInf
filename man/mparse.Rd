@@ -5,8 +5,8 @@
 \title{Model parser to define new models to run in \code{SimInf}}
 \usage{
 mparse(transitions = NULL, compartments = NULL, ldata = NULL,
-  gdata = NULL, u0 = NULL, tspan = NULL, events = NULL, E = NULL,
-  N = NULL)
+  gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
+  events = NULL, E = NULL, N = NULL)
 }
 \arguments{
 \item{transitions}{character vector containing transitions on the
@@ -22,15 +22,14 @@ compartments, for example, \code{compartments = c("S", "I",
 "R")}.}
 
 \item{ldata}{optional data for the nodes. Can be specified either
-as an numeric matrix where column \code{ldata[, j]} contains
-the local data vector for the node \code{j} or as data.frame
-with one row per node. If it's specified as a matrix, it must
-have row names to identify the parameters in the
-transitions. If it's specified as a data.frame, each column is
-one parameter. The local data vector is passed as an argument
-to the transition rate functions and the post time step
-function. The matrix must have row names to identify the
-parameters in the transitions.}
+as a numeric matrix where column \code{ldata[, j]} contains
+the local data vector for the node \code{j} or as a
+\code{data.frame} with one row per node. If it's specified as
+a matrix, it must have row names to identify the parameters in
+the transitions. If it's specified as a data.frame, each
+column is one parameter. The local data vector is passed as an
+argument to the transition rate functions and the post time
+step function.}
 
 \item{gdata}{optional data that are common to all nodes in the
 model. Can be specified either as a named numeric vector or as
@@ -41,7 +40,19 @@ post time step function.}
 
 \item{u0}{A \code{data.frame} (or an object that can be coerced to
 a \code{data.frame} with \code{as.data.frame}) with the
-initial state in each node.}
+initial state i.e. the number of individuals in each
+compartment in each node when the simulation starts..}
+
+\item{v0}{optional data with the initial continuous state in each
+node. Can be specified either as a \code{data.frame} with one
+row per node or as a numeric matrix where column \code{ldata[,
+j]} contains the local data vector for the node \code{j}. If
+\code{v0} is specified as a \code{data.frame}, each column is
+one parameter. If \code{v0} is specified as a matrix, the row
+names identify the parameters. The 'v' vector is passed as an
+argument to the transition rate functions and the post time
+step function. The continuous state can be updated in the post
+time step function.}
 
 \item{tspan}{A vector (length >= 2) of increasing time points
 where the state of each node is to be returned. Can be either

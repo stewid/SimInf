@@ -146,7 +146,7 @@ res <- tools::assertError(
                          ldata = matrix(1:5,, nrow = 1, dimnames = list("c4", NULL)),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("'u0', 'gdata' and 'ldata' have names in common.",
+stopifnot(length(grep("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
                       res[[1]]$message, fixed = TRUE)) > 0)
 
 ## Check mparse
@@ -323,7 +323,7 @@ stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
 
 stopifnot(
     identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", c("S", "I", "R"),
-                                          NULL, "beta"),
+                                          NULL, "beta", NULL),
               structure(list(propensity = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
                              depends = c(1, 1, 1)),
                         .Names = c("propensity", "depends"))))

@@ -157,7 +157,8 @@ tokens <- function(propensity) {
 ## \code{u[compartments[j]]} where \code{j} is the numbering in
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
-rewrite_propensity <- function(propensity, compartments, ldata_names, gdata_names)
+rewrite_propensity <- function(propensity, compartments, ldata_names,
+                               gdata_names, v0_names)
 {
     propensity <- tokens(propensity)
     depends <- integer(length(compartments))
@@ -176,6 +177,10 @@ rewrite_propensity <- function(propensity, compartments, ldata_names, gdata_name
     ## Find gdata parameters in the propensity
     i <- match(propensity, gdata_names)
     propensity <- ifelse(is.na(i), propensity, sprintf("gdata[%i]", i-1L))
+
+    ## Find v0 parameters in the propensity
+    i <- match(propensity, v0_names)
+    propensity <- ifelse(is.na(i), propensity, sprintf("v[%i]", i-1L))
 
     list(propensity = paste0(propensity, collapse = ""), depends = depends)
 }
@@ -234,7 +239,8 @@ parse_compartments <- function(x, compartments) {
     tabulate(i, length(compartments))
 }
 
-parse_transitions <- function(transitions, compartments, ldata_names, gdata_names)
+parse_transitions <- function(transitions, compartments, ldata_names,
+                              gdata_names, v0_names)
 {
     lapply(strsplit(transitions, "->"), function(x) {
         if (!identical(length(x), 3L))
@@ -250,7 +256,8 @@ parse_transitions <- function(transitions, compartments, ldata_names, gdata_name
         S <- dest - from
 
         propensity <- rewrite_propensity(propensity, compartments,
-                                         ldata_names, gdata_names)
+                                         ldata_names, gdata_names,
+                                         v0_names)
 
         list(propensity = propensity$propensity,
              depends    = propensity$depends,
@@ -274,15 +281,14 @@ parse_transitions <- function(transitions, compartments, ldata_names, gdata_name
 ##'     compartments, for example, \code{compartments = c("S", "I",
 ##'     "R")}.
 ##' @param ldata optional data for the nodes. Can be specified either
-##'     as an numeric matrix where column \code{ldata[, j]} contains
-##'     the local data vector for the node \code{j} or as data.frame
-##'     with one row per node. If it's specified as a matrix, it must
-##'     have row names to identify the parameters in the
-##'     transitions. If it's specified as a data.frame, each column is
-##'     one parameter. The local data vector is passed as an argument
-##'     to the transition rate functions and the post time step
-##'     function. The matrix must have row names to identify the
-##'     parameters in the transitions.
+##'     as a numeric matrix where column \code{ldata[, j]} contains
+##'     the local data vector for the node \code{j} or as a
+##'     \code{data.frame} with one row per node. If it's specified as
+##'     a matrix, it must have row names to identify the parameters in
+##'     the transitions. If it's specified as a data.frame, each
+##'     column is one parameter. The local data vector is passed as an
+##'     argument to the transition rate functions and the post time
+##'     step function.
 ##' @param gdata optional data that are common to all nodes in the
 ##'     model. Can be specified either as a named numeric vector or as
 ##'     as a one-row data.frame. The names are used to identify the
@@ -291,7 +297,18 @@ parse_transitions <- function(transitions, compartments, ldata_names, gdata_name
 ##'     post time step function.
 ##' @param u0 A \code{data.frame} (or an object that can be coerced to
 ##'     a \code{data.frame} with \code{as.data.frame}) with the
-##'     initial state in each node.
+##'     initial state i.e. the number of individuals in each
+##'     compartment in each node when the simulation starts..
+##' @param v0 optional data with the initial continuous state in each
+##'     node. Can be specified either as a \code{data.frame} with one
+##'     row per node or as a numeric matrix where column \code{ldata[,
+##'     j]} contains the local data vector for the node \code{j}. If
+##'     \code{v0} is specified as a \code{data.frame}, each column is
+##'     one parameter. If \code{v0} is specified as a matrix, the row
+##'     names identify the parameters. The 'v' vector is passed as an
+##'     argument to the transition rate functions and the post time
+##'     step function. The continuous state can be updated in the post
+##'     time step function.
 ##' @template tspan-param
 ##' @param events A \code{data.frame} with the scheduled
 ##'     events. Default is \code{NULL} i.e. no scheduled events in the
@@ -308,8 +325,8 @@ parse_transitions <- function(transitions, compartments, ldata_names, gdata_name
 ##' @importFrom utils packageVersion
 ##' @template mparse-example
 mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
-                   gdata = NULL, u0 = NULL, tspan = NULL, events = NULL,
-                   E = NULL, N = NULL)
+                   gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
+                   events = NULL, E = NULL, N = NULL)
 {
     ## Check transitions
     if (!is.atomic(transitions) || !is.character(transitions) ||
@@ -360,12 +377,29 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
             stop("'gdata' must have non-duplicated parameter names.")
     }
 
-    if (any(duplicated(c(compartments, gdata_names, ldata_names))))
-        stop("'u0', 'gdata' and 'ldata' have names in common.")
+    ## Check v0
+    v0_names <- NULL
+    if (!is.null(v0)) {
+        if (is.data.frame(v0)) {
+            v0_names <- colnames(v0)
+        } else if (is.matrix(v0)) {
+            v0_names <- rownames(v0)
+        } else {
+            stop("'v0' must either be a 'data.frame' or a 'matrix'.")
+        }
+
+        if (is.null(v0_names) || any(duplicated(v0_names)) ||
+            any(nchar(v0_names) == 0))
+            stop("'v0' must have non-duplicated parameter names.")
+    }
+
+    if (any(duplicated(c(compartments, gdata_names, ldata_names, v0_names))))
+        stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.")
 
     ## Parse transitions
     transitions <- parse_transitions(transitions, compartments,
-                                     ldata_names, gdata_names)
+                                     ldata_names, gdata_names,
+                                     v0_names)
 
     ## Create the state-change matrix S
     S <- do.call("cbind", lapply(transitions, "[[", "S"))
@@ -388,7 +422,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                  ldata  = ldata,
                  gdata  = gdata,
                  u0     = u0,
-                 v0     = NULL,
+                 v0     = v0,
                  C_code = C_code_mparse(transitions))
 }
 
