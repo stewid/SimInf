@@ -424,7 +424,7 @@ res <- tools::assertError(
                          ldata = data.frame(c4 = c(0.2, 0.3, 0.4, 0.5)),
                          gdata = data.frame(c1 = 0.5, c2 = 1, c3 = 0.005),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("Wrong size of 'ldata' matrix.",
+stopifnot(length(grep("The number of nodes in 'u0' and 'ldata' must match.",
                       res[[1]]$message, fixed = TRUE)) > 0)
 
 ## Check 'S + S -> mu -> @'

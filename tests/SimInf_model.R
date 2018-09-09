@@ -241,8 +241,8 @@ res <- tools::assertError(new("SimInf_model",
                               ldata = ldata,
                               tspan = as.numeric(1:10),
                               u0    = u0))
-stopifnot(length(grep("Wrong size of 'ldata' matrix.",
-                      res[[1]]$message)) > 0)
+stopifnot(length(grep("The number of nodes in 'u0' and 'ldata' must match.",
+                      res[[1]]$message, fixed = TRUE)) > 0)
 
 ## Check initial state
 u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),

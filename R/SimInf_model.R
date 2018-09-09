@@ -138,6 +138,7 @@ setClass("SimInf_model",
                  return("Initial state 'u0' must be an integer matrix.")
              if (any(object@u0 < 0L))
                  return("Initial state 'u0' has negative elements.")
+             Nn_u0 <- dim(object@u0)[2]
 
              ## Check U.
              if (!identical(storage.mode(object@U), "integer"))
@@ -152,6 +153,8 @@ setClass("SimInf_model",
                  r <- rownames(object@v0)
                  if (is.null(r) || any(nchar(r) == 0))
                      return("'v0' must have rownames")
+                 if (!identical(dim(object@v0)[2], Nn_u0))
+                     return("The number of nodes in 'u0' and 'v0' must match.")
              }
 
              ## Check V.
@@ -202,9 +205,8 @@ setClass("SimInf_model",
              if (!is.double(object@ldata))
                  return("'ldata' matrix must be a double matrix.")
              Nn_ldata <- dim(object@ldata)[2]
-             Nn_u0 <- dim(object@u0)[2]
              if (Nn_ldata > 0 && !identical(Nn_ldata, Nn_u0))
-                 return("Wrong size of 'ldata' matrix.")
+                 return("The number of nodes in 'u0' and 'ldata' must match.")
 
              ## Check gdata.
              if (!is.double(object@gdata))
@@ -356,6 +358,8 @@ SimInf_model <- function(G,
     if (is.null(v0)) {
         v0 <- matrix(numeric(0), nrow = 0, ncol = 0)
     } else {
+        if (is.data.frame(v0))
+            v0 <- as_t_matrix(v0)
         if (!all(is.matrix(v0), is.numeric(v0)))
             stop("v0 must be a numeric matrix")
 
