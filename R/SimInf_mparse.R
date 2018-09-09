@@ -50,7 +50,11 @@ C_trFun <- function(transitions) {
 }
 
 ## C code: post time step function.
-C_ptsFun <- function() {
+C_ptsFun <- function(pts_fun)
+{
+    if (is.null(pts_fun))
+        pts_fun <- "    return 0;"
+
     c("int ptsFun(",
       "    double *v_new,",
       "    const int *u,",
@@ -60,7 +64,7 @@ C_ptsFun <- function() {
       "    int node,",
       "    double t)",
       "{",
-      "    return 0;",
+           pts_fun,
       "}",
       "")
 }
@@ -78,11 +82,11 @@ C_run <- function(transitions) {
 }
 
 ## C code: Generate C code for mparse.
-C_code_mparse <- function(transitions) {
+C_code_mparse <- function(transitions, pts_fun) {
     c(C_heading(),
       C_include(),
       C_trFun(transitions),
-      C_ptsFun(),
+      C_ptsFun(pts_fun),
       C_run(transitions))
 }
 
@@ -319,6 +323,10 @@ parse_transitions <- function(transitions, compartments, ldata_names,
 ##' @param N matrix to handle scheduled events, see
 ##'     \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
 ##'     i.e. no scheduled events in the model.
+##' @param pts_fun optional character vector with C code for the post
+##'     time step function. The C code should contain only the body of
+##'     the function i.e. the code between the opening and closing
+##'     curly brackets.
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
 ##' @importFrom methods as
@@ -326,7 +334,7 @@ parse_transitions <- function(transitions, compartments, ldata_names,
 ##' @template mparse-example
 mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                    gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
-                   events = NULL, E = NULL, N = NULL)
+                   events = NULL, E = NULL, N = NULL, pts_fun = NULL)
 {
     ## Check transitions
     if (!is.atomic(transitions) || !is.character(transitions) ||
@@ -423,7 +431,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                  gdata  = gdata,
                  u0     = u0,
                  v0     = v0,
-                 C_code = C_code_mparse(transitions))
+                 C_code = C_code_mparse(transitions, pts_fun))
 }
 
 ##' Extract the C code from a \code{SimInf_model} object

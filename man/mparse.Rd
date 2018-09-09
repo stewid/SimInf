@@ -6,7 +6,7 @@
 \usage{
 mparse(transitions = NULL, compartments = NULL, ldata = NULL,
   gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
-  events = NULL, E = NULL, N = NULL)
+  events = NULL, E = NULL, N = NULL, pts_fun = NULL)
 }
 \arguments{
 \item{transitions}{character vector containing transitions on the
@@ -73,6 +73,11 @@ i.e. no scheduled events in the model.}
 \item{N}{matrix to handle scheduled events, see
 \code{\linkS4class{SimInf_events}}. Default is \code{NULL}
 i.e. no scheduled events in the model.}
+
+\item{pts_fun}{optional character vector with C code for the post
+time step function. The C code should contain only the body of
+the function i.e. the code between the opening and closing
+curly brackets.}
 }
 \value{
 a \code{\linkS4class{SimInf_model}} object
