@@ -73,6 +73,24 @@ create_model_R_class <- function(name)
       paste0("setClass(\"", name, "\", contains = \"SimInf_model\")"))
 }
 
+create_model_R_roxygen <- function()
+{
+    c("##' Create a model for the SimInf framework",
+      "##'",
+      "##' Create a model to be used by the SimInf framework.",
+      "##' @param u0 A data.frame with the initial state in each node.",
+      "##' @param tspan A vector (length >= 2) of increasing time points",
+      "##'     where the state of each node is to be returned.",
+      "##' @param events A data.frame with scheduled events.",
+      "##' @param gdata A named numeric vector with rate-constants for the",
+      "##'     model.",
+      "##' @import SimInf",
+      "##' @import methods",
+      "##' @export",
+      "##' @examples",
+      "##' ## Please add example(s) how to use the model")
+}
+
 ##' @importFrom utils capture.output
 ##' @noRd
 create_model_R_object <- function(model, name)
@@ -100,20 +118,7 @@ create_model_R_object <- function(model, name)
     N <- c(paste0("N <- ", N[1]), N[-1])
     N <- paste0("    ", N)
 
-    c("##' Create a model for the SimInf framework",
-      "##'",
-      "##' Create a model to be used by the SimInf framework.",
-      "##' @param u0 A data.frame with the initial state in each node.",
-      "##' @param tspan A vector (length >= 2) of increasing time points",
-      "##'     where the state of each node is to be returned.",
-      "##' @param events A data.frame with scheduled events.",
-      "##' @param gdata A named numeric vector with rate-constants for the",
-      "##'     model.",
-      "##' @import SimInf",
-      "##' @import methods",
-      "##' @export",
-      "##' @examples",
-      "##' ## Please add example(s) how to use the model",
+    c(create_model_R_roxygen(),
       paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL, gdata = NULL) {"),
       paste0("    compartments <- c(\"", rows, "\")"),
       paste0("    parameters <- c(\"", parameters, "\")"),
