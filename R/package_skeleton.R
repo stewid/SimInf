@@ -91,32 +91,44 @@ create_model_R_roxygen <- function()
       "##' ## Please add example(s) how to use the model")
 }
 
+## Dependency graph
+create_model_R_object_G <- function(model)
+{
+    G <- capture.output(dput(as.matrix(model@G)))
+    G <- c(paste0("G <- ", G[1]), G[-1])
+    paste0("    ", G)
+}
+
+## State change matrix
+create_model_R_object_S <- function(model)
+{
+    S <- capture.output(dput(as.matrix(model@S)))
+    S <- c(paste0("S <- ", S[1]), S[-1])
+    paste0("    ", S)
+}
+
+## Select matrix
+create_model_R_object_E <- function(model)
+{
+    E <- capture.output(dput(as.matrix(model@events@E)))
+    E <- c(paste0("E <- ", E[1]), E[-1])
+    paste0("    ", E)
+}
+
+## Shift matrix
+create_model_R_object_N <- function(model)
+{
+    N <- capture.output(dput(as.matrix(model@events@N)))
+    N <- c(paste0("N <- ", N[1]), N[-1])
+    paste0("    ", N)
+}
+
 ##' @importFrom utils capture.output
 ##' @noRd
 create_model_R_object <- function(model, name)
 {
     rows <- paste0(rownames(model@S), collapse = "\", \"")
     parameters <- paste0(names(model@gdata), collapse = "\", \"")
-
-    ## Dependency graph
-    G <- capture.output(dput(as.matrix(model@G)))
-    G <- c(paste0("G <- ", G[1]), G[-1])
-    G <- paste0("    ", G)
-
-    ## State change matrix
-    S <- capture.output(dput(as.matrix(model@S)))
-    S <- c(paste0("S <- ", S[1]), S[-1])
-    S <- paste0("    ", S)
-
-    ## Select matrix
-    E <- capture.output(dput(as.matrix(model@events@E)))
-    E <- c(paste0("E <- ", E[1]), E[-1])
-    E <- paste0("    ", E)
-
-    ## Shift matrix
-    N <- capture.output(dput(as.matrix(model@events@N)))
-    N <- c(paste0("N <- ", N[1]), N[-1])
-    N <- paste0("    ", N)
 
     c(create_model_R_roxygen(),
       paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL, gdata = NULL) {"),
@@ -141,13 +153,13 @@ create_model_R_object <- function(model, name)
       "        stop(\"Missing parameters in 'gdata'\")",
       "    gdata <- gdata[parameters]",
       "",
-      G,
+      create_model_R_object_G(model),
       "",
-      S,
+      create_model_R_object_S(model),
       "",
-      E,
+      create_model_R_object_E(model),
       "",
-      N,
+      create_model_R_object_N(model),
       "",
       "    model <- SimInf_model(G = G, S = S, E = E, N = N, tspan = tspan,",
       "                          events = events, u0 = u0, gdata = gdata)",
