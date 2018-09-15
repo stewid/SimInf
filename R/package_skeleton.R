@@ -73,7 +73,7 @@ create_model_R_class <- function(name)
       paste0("setClass(\"", name, "\", contains = \"SimInf_model\")"))
 }
 
-create_model_R_roxygen <- function()
+create_model_R_object_roxygen <- function()
 {
     c("##' Create a model for the SimInf framework",
       "##'",
@@ -130,7 +130,7 @@ create_model_R_object <- function(model, name)
     rows <- paste0(rownames(model@S), collapse = "\", \"")
     parameters <- paste0(names(model@gdata), collapse = "\", \"")
 
-    c(create_model_R_roxygen(),
+    c(create_model_R_object_roxygen(),
       paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL, gdata = NULL) {"),
       paste0("    compartments <- c(\"", rows, "\")"),
       paste0("    parameters <- c(\"", parameters, "\")"),
@@ -153,12 +153,9 @@ create_model_R_object <- function(model, name)
       "        stop(\"Missing parameters in 'gdata'\")",
       "    gdata <- gdata[parameters]",
       "",
-      create_model_R_object_G(model),
-      "",
-      create_model_R_object_S(model),
-      "",
-      create_model_R_object_E(model),
-      "",
+      create_model_R_object_G(model), "",
+      create_model_R_object_S(model), "",
+      create_model_R_object_E(model), "",
       create_model_R_object_N(model),
       "",
       "    model <- SimInf_model(G = G, S = S, E = E, N = N, tspan = tspan,",
