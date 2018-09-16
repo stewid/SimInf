@@ -91,6 +91,30 @@ create_model_R_object_roxygen <- function()
       "##' ## Please add example(s) how to use the model")
 }
 
+create_model_R_object_u0 <- function()
+{
+    c("    ## Check gdata",
+      "    if (is.null(gdata))",
+      "        stop(\"'gdata' must be specified.\")",
+      "    if (!is.numeric(gdata))",
+      "        stop(\"'gdata' must be a named numeric vector.\")",
+      "    if (!all(parameters %in% names(gdata)))",
+      "        stop(\"Missing parameters in 'gdata'\")",
+      "    gdata <- gdata[parameters]")
+}
+
+create_model_R_object_gdata <- function()
+{
+    c("    ## Check gdata",
+      "    if (is.null(gdata))",
+      "        stop(\"'gdata' must be specified.\")",
+      "    if (!is.numeric(gdata))",
+      "        stop(\"'gdata' must be a named numeric vector.\")",
+      "    if (!all(parameters %in% names(gdata)))",
+      "        stop(\"Missing parameters in 'gdata'\")",
+      "    gdata <- gdata[parameters]")
+}
+
 ## Dependency graph
 create_model_R_object_G <- function(model)
 {
@@ -135,24 +159,8 @@ create_model_R_object <- function(model, name)
       paste0("    compartments <- c(\"", rows, "\")"),
       paste0("    parameters <- c(\"", parameters, "\")"),
       "",
-      "    ## Check u0",
-      "    if (is.null(u0))",
-      "        stop(\"'u0' must be specified.\")",
-      "    if (!is.data.frame(u0))",
-      "        u0 <- as.data.frame(u0)",
-      "    if (!all(compartments %in% names(u0)))",
-      "        stop(\"Missing columns in u0\")",
-      "    u0 <- u0[, compartments, drop = FALSE]",
-      "",
-      "    ## Check gdata",
-      "    if (is.null(gdata))",
-      "        stop(\"'gdata' must be specified.\")",
-      "    if (!is.numeric(gdata))",
-      "        stop(\"'gdata' must be a named numeric vector.\")",
-      "    if (!all(parameters %in% names(gdata)))",
-      "        stop(\"Missing parameters in 'gdata'\")",
-      "    gdata <- gdata[parameters]",
-      "",
+      create_model_R_object_u0(), "",
+      create_model_R_object_gdata(), "",
       create_model_R_object_G(model), "",
       create_model_R_object_S(model), "",
       create_model_R_object_E(model), "",
