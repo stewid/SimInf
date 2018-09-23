@@ -1918,6 +1918,7 @@ setMethod("show",
               }
               cat("\n")
               summary_U(object)
+              invisible(object)
           }
 )
 

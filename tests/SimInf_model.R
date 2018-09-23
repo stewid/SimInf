@@ -283,6 +283,7 @@ show_expected <- c("Model: SISe",
                    "Number of scheduled events: 0",
                    "")
 
+stopifnot(identical(show(model), model))
 show_observed <- capture.output(show(model))
 
 stopifnot(identical(show_observed[1:5], show_expected))

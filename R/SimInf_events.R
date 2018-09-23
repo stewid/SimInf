@@ -479,6 +479,7 @@ setMethod("show",
           {
               cat(sprintf("Number of scheduled events: %i\n",
                           length(object@event)))
+              invisible(object)
           }
 )
 

@@ -439,6 +439,7 @@ data(events_SISe3)
 ## Save run-time by only using one year of data
 events_SISe3 <- events_SISe3[events_SISe3$time < 366,]
 events <- SimInf_events(E = E, N = N, events = events_SISe3)
+stopifnot(identical(events, show(events)))
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
 plot(events)
