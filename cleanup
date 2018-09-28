@@ -6,6 +6,7 @@ rm -rf autom4te.cache
 rm -f gsl.zip
 rm -f src/Makevars
 rm -f src/*.o
+rm -f src/controllers/*.o
 rm -f src/solvers/*.o
 rm -f src/solvers/ssm/*.o
 rm -f src/solvers/aem/*.o
