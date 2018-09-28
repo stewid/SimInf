@@ -19,14 +19,21 @@
 ##' Class to handle a SimInf controller. The goal of the controller is
 ##' to make it possible to interact and probe data when running a
 ##' trajectory with a solver.
-##' @section Slots: \describe{ \item{model}{ The
-##'     \code{linkS4class{SimInf_model}} object to apply the
-##'     controller on.  } \item{C_code}{ Character vector with
-##'     optional controller C code. If non-empty, the C code is
-##'     written to a temporary C-file when the \code{run} method is
-##'     called.  The temporary C-file is compiled and the resulting
-##'     DLL is dynamically loaded. The DLL is unloaded and the
-##'     temporary files are removed after running the controller.  } }
+##' @section Slots:
+##' \describe{
+##'   \item{model}{
+##'     The \code{linkS4class{SimInf_model}} object to apply the
+##'     controller on.
+##'   }
+##'   \item{C_code}{
+##'     Character vector with optional controller C code. If
+##'     non-empty, the C code is written to a temporary C-file when
+##'     the \code{run} method is called.  The temporary C-file is
+##'     compiled and the resulting DLL is dynamically loaded. The DLL
+##'     is unloaded and the temporary files are removed after running
+##'     the controller.
+##'   }
+##' }
 ##' @export
 ##' @importFrom methods validObject
 setClass("SimInf_controller",

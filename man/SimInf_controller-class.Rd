@@ -6,7 +6,8 @@
 \title{Class \code{"SimInf_controller"}}
 \description{
 Class to handle a SimInf controller. The goal of the controller is
-to make it possible to interact with a solver when it's running
+to make it possible to interact and probe data when running a
+trajectory with a solver.
 }
 \section{Slots}{
 
