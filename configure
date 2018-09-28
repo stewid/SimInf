@@ -588,6 +588,7 @@ ac_unique_file="src/SimInf.c"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 MODELS_OBJ
+CONTROLLERS_OBJ
 PKG_LIBS
 PKG_CFLAGS
 PKG_CPPFLAGS
@@ -2913,6 +2914,9 @@ as_fn_error $? "
 See \`config.log' for more details" "$LINENO" 5; }
 fi
 
+# List all controller files to compile
+CONTROLLERS_OBJ=`"${RSCRIPT}" --slave --vanilla -e "cat(paste0('controllers/', sub('c$', 'o', list.files('src/controllers', '.c$')), collapse=' '))"`
+
 # List all model files to compile
 MODELS_OBJ=`"${RSCRIPT}" --slave --vanilla -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '.c$')), collapse=' '))"`
 
@@ -2921,6 +2925,7 @@ PKG_CPPFLAGS="-I. -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS}"
 PKG_CFLAGS="${OPENMP_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"
 
 PKG_LIBS="${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"
+
 
 
 

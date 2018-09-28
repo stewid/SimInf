@@ -12,6 +12,10 @@ PKG_CFLAGS = -I. -Imisc -Imodels $(SIMINF_GSL_INCLUDE) \
 
 PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
 
+# List all controller files to compile
+CONTROLLERS_SRC = $(wildcard controllers/*.c)
+CONTROLLERS_OBJ = $(CONTROLLERS_SRC:.c=.o)
+
 # List all model files to compile
 MODELS_SRC = $(wildcard models/*.c)
 MODELS_OBJ = $(MODELS_SRC:.c=.o)
@@ -26,4 +30,5 @@ OBJECTS.solvers = solvers/SimInf_solver.o \
                   solvers/aem/SimInf_solver_aem.o \
                   solvers/aem/binheap.o
 
-OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)
+OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) \
+          $(CONTROLLERS_OBJ) $(MODELS_OBJ)
