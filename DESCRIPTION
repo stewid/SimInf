@@ -60,6 +60,7 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
+    'SimInf_controller.R'
     'SimInf_mparse.R'
     'compile_model.R'
     'distance.R'
