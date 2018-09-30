@@ -83,9 +83,9 @@ setMethod("run",
               if (contains_C_code(model@model)) {
                   ## Write the model C code to a temporary file
                   filename <- tempfile("SimInf-")
-                  on.exit(unlink(paste0(filename, ".c")), add = TRUE)
-                  on.exit(unlink(paste0(filename, ".o")), add = TRUE)
-                  on.exit(unlink(paste0(filename, .Platform$dynlib.ex)), add = TRUE)
+                  files_model <- paste0(filename,
+                                        c(".c", ".o", .Platform$dynlib.ex))
+                  on.exit(unlink(files_model), add = TRUE)
                   writeLines(model@model@C_code, con = paste0(filename, ".c"))
 
                   lib_model <- do_compile_model(filename)
@@ -108,9 +108,9 @@ setMethod("run",
               if (contains_C_code(model)) {
                   ## Write the controller C code to a temporary file
                   filename <- tempfile("SimInf-")
-                  on.exit(unlink(paste0(filename, ".c")), add = TRUE)
-                  on.exit(unlink(paste0(filename, ".o")), add = TRUE)
-                  on.exit(unlink(paste0(filename, .Platform$dynlib.ex)), add = TRUE)
+                  files_controller <- paste0(filename,
+                                             c(".c", ".o", .Platform$dynlib.ex))
+                  on.exit(unlink(files_controller), add = TRUE)
                   writeLines(model@C_code, con = paste0(filename, ".c"))
 
                   lib_controller <- do_compile_model(filename)
