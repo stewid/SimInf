@@ -80,40 +80,63 @@ setMethod("run",
               ## structures and that they make sense.
               validObject(model);
 
-              if (!contains_C_code(model@model))
-                  stop("The 'model' object must contain C code")
-              if (!contains_C_code(model))
-                  stop("The 'controller' object must contain C code")
+              if (contains_C_code(model@model)) {
+                  ## Write the model C code to a temporary file
+                  filename <- tempfile("SimInf-")
+                  on.exit(unlink(paste0(filename, ".c")), add = TRUE)
+                  on.exit(unlink(paste0(filename, ".o")), add = TRUE)
+                  on.exit(unlink(paste0(filename, .Platform$dynlib.ex)), add = TRUE)
+                  writeLines(model@model@C_code, con = paste0(filename, ".c"))
 
-              ## Write the model C code to a temporary file
-              filename <- tempfile("SimInf-")
-              on.exit(unlink(paste0(filename, ".c")), add = TRUE)
-              on.exit(unlink(paste0(filename, ".o")), add = TRUE)
-              on.exit(unlink(paste0(filename, .Platform$dynlib.ex)), add = TRUE)
-              writeLines(model@model@C_code, con = paste0(filename, ".c"))
+                  lib_model <- do_compile_model(filename)
+                  dll_model <- dyn.load(lib_model)
+                  on.exit(dyn.unload(lib_model), add = TRUE)
 
-              lib_model <- do_compile_model(filename)
-              dll_model <- dyn.load(lib_model)
-              on.exit(dyn.unload(lib_model), add = TRUE)
+                  expr_model <- "dll_model$SimInf_model_run$address"
+              } else {
+                  ## The model name
+                  name <- as.character(class(model@model))
 
-              ## Write the controller C code to a temporary file
-              filename <- tempfile("SimInf-")
-              on.exit(unlink(paste0(filename, ".c")), add = TRUE)
-              on.exit(unlink(paste0(filename, ".o")), add = TRUE)
-              on.exit(unlink(paste0(filename, .Platform$dynlib.ex)), add = TRUE)
-              writeLines(model@C_code, con = paste0(filename, ".c"))
+                  ## The model C run function
+                  run_fn <- paste0(name, "_run")
 
-              lib_controller <- do_compile_model(filename)
-              dll_controller <- dyn.load(lib_controller)
-              on.exit(dyn.unload(lib_controller), add = TRUE)
+                  expr_model <- paste0("getNativeSymbolInfo(",
+                                       "\"", run_fn, "\", ",
+                                       "\"SimInf\")$address")
+              }
+
+              if (contains_C_code(model)) {
+                  ## Write the controller C code to a temporary file
+                  filename <- tempfile("SimInf-")
+                  on.exit(unlink(paste0(filename, ".c")), add = TRUE)
+                  on.exit(unlink(paste0(filename, ".o")), add = TRUE)
+                  on.exit(unlink(paste0(filename, .Platform$dynlib.ex)), add = TRUE)
+                  writeLines(model@C_code, con = paste0(filename, ".c"))
+
+                  lib_controller <- do_compile_model(filename)
+                  dll_controller <- dyn.load(lib_controller)
+                  on.exit(dyn.unload(lib_controller), add = TRUE)
+
+                  expr_controller <- "dll_controller$SimInf_controller_run"
+                  expr_pkg <- ""
+              } else {
+                  ## The controller name
+                  name <- as.character(class(model))
+
+                  ## The controller C run function in SimInf
+                  expr_controller <- paste0("SimInf_", name, "_run")
+                  expr_pkg <- ", PACKAGE = \"SimInf\""
+              }
 
               ## Create expression to parse
               expr <- paste0(".Call(",
-                             "dll_controller$SimInf_controller_run, ",
-                             "dll_model$SimInf_model_run$address, ",
+                             expr_controller, ", ",
+                             expr_model, ", ",
                              "model@model, ",
                              "threads, ",
-                             "solver)")
+                             "solver",
+                             expr_pkg,
+                             ")")
 
               ## Run controller and model.
               eval(parse(text = expr))
