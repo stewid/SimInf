@@ -128,7 +128,7 @@ setMethod("run",
                   expr_pkg <- ", PACKAGE = \"SimInf\""
               }
 
-              ## Create expression to parse
+              ## Create the expression to parse
               expr <- paste0(".Call(",
                              expr_controller, ", ",
                              expr_model, ", ",
@@ -142,3 +142,14 @@ setMethod("run",
               eval(parse(text = expr))
           }
 )
+
+##' Definition of the \code{NULL_controller} object for testing
+##' @export
+setClass("NULL_controller", contains = c("SimInf_controller"))
+
+##' Create a \code{NULL_controller} object for testing
+##' @export
+NULL_controller <- function(model)
+{
+    as(SimInf_controller(model, character(0)), "NULL_controller")
+}
