@@ -148,6 +148,9 @@ setMethod("run",
 setClass("NULL_controller", contains = c("SimInf_controller"))
 
 ##' Create a \code{NULL_controller} object for testing
+##'
+##' @param model The \code{linkS4class{SimInf_model}} object to apply
+##'     the controller on.
 ##' @export
 NULL_controller <- function(model)
 {

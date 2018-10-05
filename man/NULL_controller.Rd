@@ -6,6 +6,10 @@
 \usage{
 NULL_controller(model)
 }
+\arguments{
+\item{model}{The \code{linkS4class{SimInf_model}} object to apply
+the controller on.}
+}
 \description{
 Create a \code{NULL_controller} object for testing
 }
