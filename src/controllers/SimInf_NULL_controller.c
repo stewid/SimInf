@@ -19,6 +19,7 @@
 #include "SimInf.h"
 
 SEXP SimInf_NULL_controller_run(
+    SEXP controller,
     SEXP run_fn,
     SEXP model,
     SEXP threads,

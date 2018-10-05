@@ -32,7 +32,7 @@ SEXP SISe3_run(SEXP, SEXP, SEXP);
 SEXP SISe3_sp_run(SEXP, SEXP, SEXP);
 SEXP SISe_sp_run(SEXP, SEXP, SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP, SEXP);
-SEXP SimInf_NULL_controller_run(SEXP, SEXP, SEXP, SEXP);
+SEXP SimInf_NULL_controller_run(SEXP, SEXP, SEXP, SEXP, SEXP);
 
 /**
  * Is OpenMP available
@@ -60,7 +60,7 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SISe_sp_run, 3),
     CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(SimInf_ldata_sp, 3),
-    CALLDEF(SimInf_NULL_controller_run, 4),
+    CALLDEF(SimInf_NULL_controller_run, 5),
     {NULL, NULL, 0}
 };
 

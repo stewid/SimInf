@@ -131,6 +131,7 @@ setMethod("run",
               ## Create the expression to parse
               expr <- paste0(".Call(",
                              expr_controller, ", ",
+                             "model, ",
                              expr_model, ", ",
                              "model@model, ",
                              "threads, ",
