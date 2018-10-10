@@ -1745,6 +1745,26 @@ summary_V <- function(object)
     }
 }
 
+summary_ldata <- function(object)
+{
+    ## Local model parameters
+    cat("Local data\n")
+    cat("----------\n")
+
+    if (dim(object@ldata)[1] > 0) {
+        qq <- t(apply(object@ldata, 1, function(x) {
+            qq <- quantile(x)
+            c(qq[1L:3L], mean(x), qq[4L:5L])
+        }))
+        colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                          "Mean", "3rd Qu.", "Max.")
+        rownames(qq) <- paste0(" ", rownames(object@ldata))
+        print.table(qq, digits = 3)
+    } else {
+        cat(" - None\n")
+    }
+}
+
 summary_gdata <- function(object)
 {
     ## Global model parameters
@@ -1912,12 +1932,19 @@ setMethod("show",
               cat("\n")
               summary_gdata(object)
 
+              if (!is.null(rownames(object@ldata))) {
+                  cat("\n")
+                  summary_ldata(object)
+              }
+
               if (Nd(object) > 0) {
                   cat("\n")
                   summary_V(object)
               }
+
               cat("\n")
               summary_U(object)
+
               invisible(object)
           }
 )
@@ -1939,14 +1966,23 @@ setMethod("summary",
               cat(sprintf("Number of nodes: %i\n\n", Nn(object)))
 
               summary_transitions(object)
+
               cat("\n")
               summary_gdata(object)
+
+              if (!is.null(rownames(object@ldata))) {
+                  cat("\n")
+                  summary_ldata(object)
+              }
+
               cat("\n")
               summary_events(object)
+
               if (Nd(object) > 0) {
                   cat("\n")
                   summary_V(object)
               }
+
               cat("\n")
               summary_U(object)
           }
