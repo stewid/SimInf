@@ -525,8 +525,8 @@ model <- SEIR(u0 = data.frame(S = rep(100, 2), E = 0, I = 10, R = 0),
               gamma = 0.077)
 set.seed(1)
 res <- tools::assertError(run(model, solver = "ssm"))
-stopifnot(length(grep("Invalid rate detected (non-finite or < 0.0)",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+stopifnot(identical("Invalid rate detected (non-finite or < 0.0)",
+                    res[[1]]$message))
 res <- tools::assertError(run(model, solver = "aem"))
-stopifnot(length(grep("Invalid rate detected (non-finite or < 0.0)",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+stopifnot(identical("Invalid rate detected (non-finite or < 0.0)",
+                    res[[1]]$message))
