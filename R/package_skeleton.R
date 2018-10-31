@@ -110,9 +110,9 @@ create_model_R_object_gdata <- function()
       "        stop(\"'gdata' must be specified.\")",
       "    if (!is.numeric(gdata))",
       "        stop(\"'gdata' must be a named numeric vector.\")",
-      "    if (!all(parameters %in% names(gdata)))",
+      "    if (!all(gdata_names %in% names(gdata)))",
       "        stop(\"Missing parameters in 'gdata'\")",
-      "    gdata <- gdata[parameters]")
+      "    gdata <- gdata[gdata_names]")
 }
 
 ## Dependency graph
@@ -160,12 +160,12 @@ create_model_R_object_SimInf_model <- function(name)
 create_model_R_object <- function(model, name)
 {
     rows <- paste0(rownames(model@S), collapse = "\", \"")
-    parameters <- paste0(names(model@gdata), collapse = "\", \"")
+    gdata_names <- paste0(names(model@gdata), collapse = "\", \"")
 
     c(create_model_R_object_roxygen(),
       paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL, gdata = NULL) {"),
       paste0("    compartments <- c(\"", rows, "\")"),
-      paste0("    parameters <- c(\"", parameters, "\")"),
+      paste0("    gdata_names <- c(\"", gdata_names, "\")"),
       "",
       create_model_R_object_u0(), "",
       create_model_R_object_gdata(), "",
