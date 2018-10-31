@@ -58,6 +58,21 @@ check_valgrind:
 	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran \
 	--no-manual --no-vignettes --no-build-vignettes --use-valgrind $(PKG_TAR)
 
+# Check to create a package with 'package_skeleton' and then run 'R
+# CMD check' on that package.
+check_pkg_skeleton:
+	cd .. && rm -rf pkg
+	cd .. && Rscript \
+            -e "library('SimInf')" \
+            -e "model <- mparse(transitions = c('S->b*S*I->I', 'I->g*I->R')," \
+            -e "    compartments = c('S', 'I', 'R')," \
+            -e "    gdata = c(b = 0.16, g = 0.077)," \
+            -e "    u0 = data.frame(S = 100, I = 1, R = 0)," \
+            -e "    tspan = 1:100)" \
+            -e "package_skeleton(model = model, name = 'pkg')" \
+        && R CMD build pkg \
+        && R CMD check pkg_1.0.tar.gz
+
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)
 valgrind:
@@ -70,4 +85,4 @@ configure: configure.ac
 clean:
 	./cleanup
 
-.PHONY: install roxygen pdf build check check_quick check_gctorture check_valgrind clean vignette
+.PHONY: install roxygen pdf build check check_quick check_gctorture check_valgrind check_pkg_skeleton clean vignette
