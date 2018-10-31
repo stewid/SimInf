@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2018  Stefan Engblom
+## Copyright (C) 2015 - 2018  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -73,22 +73,30 @@ create_model_R_class <- function(name)
       paste0("setClass(\"", name, "\", contains = \"SimInf_model\")"))
 }
 
-create_model_R_object_roxygen <- function()
+create_model_R_object_roxygen <- function(model)
 {
-    c("##' Create a model for the SimInf framework",
-      "##'",
-      "##' Create a model to be used by the SimInf framework.",
-      "##' @param u0 A data.frame with the initial state in each node.",
-      "##' @param tspan A vector (length >= 2) of increasing time points",
-      "##'     where the state of each node is to be returned.",
-      "##' @param events A data.frame with scheduled events.",
-      "##' @param gdata A named numeric vector with rate-constants for the",
-      "##'     model.",
-      "##' @import SimInf",
-      "##' @import methods",
-      "##' @export",
-      "##' @examples",
-      "##' ## Please add example(s) how to use the model")
+    lines <- c("##' Create a model for the SimInf framework",
+               "##'",
+               "##' Create a model to be used by the SimInf framework.",
+               "##' @param u0 A data.frame with the initial state in each node.",
+               "##' @param tspan A vector (length >= 2) of increasing time points",
+               "##'     where the state of each node is to be returned.",
+               "##' @param events A data.frame with scheduled events.")
+
+    if (length(names(model@gdata)) > 0) {
+        lines <- c(lines,
+                   "##' @param gdata A named numeric vector with rate-constants for the",
+                   "##'     model.")
+    }
+
+    lines <- c(lines,
+               "##' @import SimInf",
+               "##' @import methods",
+               "##' @export",
+               "##' @examples",
+               "##' ## Please add example(s) how to use the model")
+
+    lines
 }
 
 create_model_R_object_u0 <- function()
