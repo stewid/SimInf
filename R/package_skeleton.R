@@ -147,6 +147,14 @@ create_model_R_object_N <- function(model)
     paste0("    ", N)
 }
 
+create_model_R_object_SimInf_model <- function(name)
+{
+    c("    model <- SimInf_model(G = G, S = S, E = E, N = N, tspan = tspan,",
+      "                          events = events, u0 = u0, gdata = gdata)",
+      "",
+      paste0("    as(model, \"", name, "\")"))
+}
+
 ##' @importFrom utils capture.output
 ##' @noRd
 create_model_R_object <- function(model, name)
@@ -164,12 +172,8 @@ create_model_R_object <- function(model, name)
       create_model_R_object_G(model), "",
       create_model_R_object_S(model), "",
       create_model_R_object_E(model), "",
-      create_model_R_object_N(model),
-      "",
-      "    model <- SimInf_model(G = G, S = S, E = E, N = N, tspan = tspan,",
-      "                          events = events, u0 = u0, gdata = gdata)",
-      "",
-      paste0("    as(model, \"", name, "\")"),
+      create_model_R_object_N(model), "",
+      create_model_R_object_SimInf_model(name),
       "}")
 }
 
