@@ -103,8 +103,11 @@ create_model_R_object_u0 <- function()
       "    u0 <- u0[, compartments, drop = FALSE]")
 }
 
-create_model_R_object_gdata <- function()
+create_model_R_object_gdata <- function(model)
 {
+    if (length(names(model@gdata)) == 0)
+        return(NULL)
+
     c("    ## Check gdata",
       "    if (is.null(gdata))",
       "        stop(\"'gdata' must be specified.\")",
@@ -112,7 +115,8 @@ create_model_R_object_gdata <- function()
       "        stop(\"'gdata' must be a named numeric vector.\")",
       "    if (!all(gdata_names %in% names(gdata)))",
       "        stop(\"Missing parameters in 'gdata'\")",
-      "    gdata <- gdata[gdata_names]")
+      "    gdata <- gdata[gdata_names]",
+      "")
 }
 
 ## Dependency graph
@@ -160,21 +164,34 @@ create_model_R_object_SimInf_model <- function(name)
 create_model_R_object <- function(model, name)
 {
     rows <- paste0(rownames(model@S), collapse = "\", \"")
-    gdata_names <- paste0(names(model@gdata), collapse = "\", \"")
 
-    c(create_model_R_object_roxygen(),
-      paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL, gdata = NULL) {"),
-      paste0("    compartments <- c(\"", rows, "\")"),
-      paste0("    gdata_names <- c(\"", gdata_names, "\")"),
-      "",
-      create_model_R_object_u0(), "",
-      create_model_R_object_gdata(), "",
-      create_model_R_object_G(model), "",
-      create_model_R_object_S(model), "",
-      create_model_R_object_E(model), "",
-      create_model_R_object_N(model), "",
-      create_model_R_object_SimInf_model(name),
-      "}")
+    fn <- paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL")
+    if (length(names(model@gdata)) > 0)
+        fn <- paste0(fn, ", gdata = NULL")
+    fn <- paste0(fn, ")")
+
+    lines <- c(create_model_R_object_roxygen(),
+               fn,
+               "{",
+               paste0("    compartments <- c(\"", rows, "\")"))
+
+    if (length(names(model@gdata)) > 0) {
+        gdata_names <- paste0(names(model@gdata), collapse = "\", \"")
+        lines <- c(lines, paste0("    gdata_names <- c(\"", gdata_names, "\")"))
+    }
+
+    lines <- c(lines,
+               "",
+               create_model_R_object_u0(), "",
+               create_model_R_object_gdata(model),
+               create_model_R_object_G(model), "",
+               create_model_R_object_S(model), "",
+               create_model_R_object_E(model), "",
+               create_model_R_object_N(model), "",
+               create_model_R_object_SimInf_model(name),
+               "}")
+
+   lines
 }
 
 create_model_run_fn <- function(name)
@@ -234,7 +251,7 @@ create_model_class_man_file <- function(path, name)
     invisible(NULL)
 }
 
-create_model_man_file <- function(path, name)
+create_model_man_file <- function(path, model, name)
 {
     lines <- c(paste0("\\name{", name, "}"),
                paste0("\\alias{", name, "}"),
@@ -244,12 +261,17 @@ create_model_man_file <- function(path, name)
                "}",
                "\\arguments{",
                "\\item{u0}{A \\code{data.frame} with the initial state in each node.}",
-               "",
                "\\item{tspan}{A vector (length >= 2) of increasing time points",
                "where the state of each node is to be returned.}",
-               "\\item{events}{A data.frame with scheduled events.}",
-               "\\item{gdata}{A named numeric vector with rate-constants for the",
-               "model.}",
+               "\\item{events}{A data.frame with scheduled events.}")
+
+    if (length(names(model@gdata)) > 0) {
+        lines <- c(lines,
+                   "\\item{gdata}{A named numeric vector with rate-constants for the",
+                   "model.}")
+    }
+
+    lines <- c(lines,
                "}",
                "\\description{",
                "Create a model to be used by the SimInf framework.",
@@ -360,7 +382,7 @@ package_skeleton <- function(model, name = NULL, path = ".",
     message("Creating R file ...", domain = NA)
     create_model_R_file(path, model, name)
     message("Creating help files ...", domain = NA)
-    create_model_man_file(path, name)
+    create_model_man_file(path, model, name)
     create_model_class_man_file(path, name)
     create_model_run_man_file(path, name)
 
