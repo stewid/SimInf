@@ -178,7 +178,7 @@ create_model_R_object <- function(model, name)
         fn <- paste0(fn, ", gdata = NULL")
     fn <- paste0(fn, ")")
 
-    lines <- c(create_model_R_object_roxygen(),
+    lines <- c(create_model_R_object_roxygen(model),
                fn,
                "{",
                paste0("    compartments <- c(\"", rows, "\")"))
