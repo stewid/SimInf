@@ -198,7 +198,6 @@ create_model_R_object <- function(model, name)
     lines <- c(lines, fn, "{")
 
     lines <- c(lines,
-               "",
                create_model_R_object_u0(), "",
                create_model_R_object_gdata(model),
                create_model_R_object_G(model), "",
