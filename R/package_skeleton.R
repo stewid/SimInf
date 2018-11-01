@@ -102,7 +102,11 @@ create_model_R_object_roxygen <- function(model)
 
 create_model_R_object_u0 <- function()
 {
+    compartments <- paste0(rownames(model@S), collapse = "\", \"")
+    compartments <- paste0("    compartments <- c(\"", compartments, "\")")
+
     c("    ## Check u0",
+      compartments,
       "    if (is.null(u0))",
       "        stop(\"'u0' must be specified.\")",
       "    if (!is.data.frame(u0))",
@@ -114,10 +118,14 @@ create_model_R_object_u0 <- function()
 
 create_model_R_object_gdata <- function(model)
 {
-    if (length(names(model@gdata)) == 0)
+    if (length(names(model@gdata)) < 1)
         return(NULL)
 
+    gdata_names <- paste0(names(model@gdata), collapse = "\", \"")
+    gdata_names <- paste0("    gdata_names <- c(\"", gdata_names, "\")")
+
     c("    ## Check gdata",
+      gdata_names,
       "    if (is.data.frame(gdata)) {",
       "        if (!all(gdata_names %in% colnames(gdata)))",
       "            stop(\"Missing parameter(s) in 'gdata'\")",
@@ -188,14 +196,6 @@ create_model_R_object <- function(model, name)
         fn <- paste0(fn, ", gdata = NULL")
     fn <- paste0(fn, ")")
     lines <- c(lines, fn, "{")
-
-    rows <- paste0(rownames(model@S), collapse = "\", \"")
-    lines <- c(lines, paste0("    compartments <- c(\"", rows, "\")"))
-
-    if (length(names(model@gdata)) > 0) {
-        gdata_names <- paste0(names(model@gdata), collapse = "\", \"")
-        lines <- c(lines, paste0("    gdata_names <- c(\"", gdata_names, "\")"))
-    }
 
     lines <- c(lines,
                "",
