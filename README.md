@@ -6,8 +6,8 @@
 
 [![Build Status](https://travis-ci.org/stewid/SimInf.svg?branch=master)](https://travis-ci.org/stewid/SimInf)
 [![Build status](https://ci.appveyor.com/api/projects/status/pe68xiu1anxvet2n?svg=true)](https://ci.appveyor.com/project/stewid/SimInf)
-[![CRAN status](http://www.r-pkg.org/badges/version/SimInf)](http://cran.r-project.org/web/packages/SimInf/index.html)
-[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/last-month/SimInf)](http://cran.r-project.org/web/packages/SimInf/index.html)
+[![CRAN status](http://www.r-pkg.org/badges/version/SimInf)](https://CRAN.R-project.org/package=SimInf)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/last-month/SimInf)](https://CRAN.R-project.org/package=SimInf)
 [![Coverage Status](https://coveralls.io/repos/stewid/SimInf/badge.svg?branch=master&service=github)](https://coveralls.io/github/stewid/SimInf?branch=master)
 
 # SimInf
@@ -28,30 +28,21 @@ template models and can be extended with user-defined models.
 
 ## Installation
 
-To install the latest release on CRAN
+You can install the released version of `SimInf` from
+[CRAN](https://CRAN.R-project.org/package=SimInf)
 
 
 ```r
 install.packages("SimInf")
 ```
 
-To install the development version of `SimInf`, it's easiest to use
-the devtools package:
+or use the `remotes` package to install the development version from
+[GitHub](https://github.com/stewid/SimInf)
 
 
 ```r
-# install.packages("devtools")
-library(devtools)
-install_github("stewid/SimInf"")
-```
-
-Another alternative is to use `git` and `make`
-
-
-```r
-$ git clone https://github.com/stewid/SimInf.git
-$ cd SimInf
-$ make install
+# install.packages("remotes")
+remotes::install_github("stewid/SimInf"")
 ```
 
 ### Dependencies
