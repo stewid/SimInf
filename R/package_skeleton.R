@@ -164,7 +164,7 @@ create_model_R_object_N <- function(model)
     paste0("    ", N)
 }
 
-create_model_R_object_SimInf_model <- function(name)
+create_model_R_object_SimInf_model <- function(model, name)
 {
     lines <- "    model <- SimInf_model("
     if (length(names(model@gdata)) > 0)
@@ -205,7 +205,7 @@ create_model_R_object <- function(model, name)
                create_model_R_object_S(model), "",
                create_model_R_object_E(model), "",
                create_model_R_object_N(model), "",
-               create_model_R_object_SimInf_model(name),
+               create_model_R_object_SimInf_model(model, name),
                "}")
 
    lines
