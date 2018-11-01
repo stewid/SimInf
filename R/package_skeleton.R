@@ -166,10 +166,15 @@ create_model_R_object_N <- function(model)
 
 create_model_R_object_SimInf_model <- function(name)
 {
-    c("    model <- SimInf_model(G = G, S = S, E = E, N = N, tspan = tspan,",
-      "                          events = events, u0 = u0, gdata = gdata)",
-      "",
-      paste0("    as(model, \"", name, "\")"))
+    lines <- "    model <- SimInf_model("
+    if (length(names(model@gdata)) > 0)
+        lines <- paste0(lines, "gdata = gdata, ")
+    lines <- paste0(lines, "G = G, S = S, E = E, N = N,")
+    lines <- c(lines,
+               "                          tspan = tspan, events = events, u0 = u0)",
+               "",
+               paste0("    as(model, \"", name, "\")"))
+    lines
 }
 
 ##' @importFrom utils capture.output
@@ -268,8 +273,15 @@ create_model_man_file <- function(path, model, name)
     lines <- c(paste0("\\name{", name, "}"),
                paste0("\\alias{", name, "}"),
                "\\title{Create a model for the SimInf framework}",
-               "\\usage{",
-               paste0(name, "(u0 = NULL, tspan = NULL, events = NULL, gdata = NULL)"),
+               "\\usage{")
+
+    fn <- paste0(name, "(u0 = NULL, tspan = NULL, events = NULL")
+    if (length(names(model@gdata)) > 0)
+        fn <- paste0(fn, ", gdata = NULL")
+    fn <- paste0(fn, ")")
+    lines <- c(lines, fn)
+
+    lines <- c(lines,
                "}",
                "\\arguments{",
                "\\item{u0}{A \\code{data.frame} with the initial state in each node.}",
