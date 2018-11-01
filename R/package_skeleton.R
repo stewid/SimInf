@@ -171,17 +171,16 @@ create_model_R_object_SimInf_model <- function(name)
 ##' @noRd
 create_model_R_object <- function(model, name)
 {
-    rows <- paste0(rownames(model@S), collapse = "\", \"")
+    lines <- c(create_model_R_object_roxygen(model))
 
     fn <- paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL")
     if (length(names(model@gdata)) > 0)
         fn <- paste0(fn, ", gdata = NULL")
     fn <- paste0(fn, ")")
+    lines <- c(lines, fn, "{")
 
-    lines <- c(create_model_R_object_roxygen(model),
-               fn,
-               "{",
-               paste0("    compartments <- c(\"", rows, "\")"))
+    rows <- paste0(rownames(model@S), collapse = "\", \"")
+    lines <- c(lines, paste0("    compartments <- c(\"", rows, "\")"))
 
     if (length(names(model@gdata)) > 0) {
         gdata_names <- paste0(names(model@gdata), collapse = "\", \"")
