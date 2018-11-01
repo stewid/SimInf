@@ -85,8 +85,9 @@ create_model_R_object_roxygen <- function(model)
 
     if (length(names(model@gdata)) > 0) {
         lines <- c(lines,
-                   "##' @param gdata A named numeric vector with rate-constants for the",
-                   "##'     model.")
+                   "##' @param gdata Data that are common to all nodes in the model.",
+                   "##'     Can be specified either as a named numeric vector or as",
+                   "##'     a one-row data.frame.")
     }
 
     lines <- c(lines,
@@ -117,13 +118,17 @@ create_model_R_object_gdata <- function(model)
         return(NULL)
 
     c("    ## Check gdata",
-      "    if (is.null(gdata))",
-      "        stop(\"'gdata' must be specified.\")",
-      "    if (!is.numeric(gdata))",
-      "        stop(\"'gdata' must be a named numeric vector.\")",
-      "    if (!all(gdata_names %in% names(gdata)))",
-      "        stop(\"Missing parameters in 'gdata'\")",
-      "    gdata <- gdata[gdata_names]",
+      "    if (is.data.frame(gdata)) {",
+      "        if (!all(gdata_names %in% colnames(gdata)))",
+      "            stop(\"Missing parameter(s) in 'gdata'\")",
+      "        gdata <- gdata[, gdata_names, drop = FALSE]",
+      "    } else if (is.atomic(gdata) && is.numeric(gdata)) {",
+      "        if (!all(gdata_names %in% names(gdata)))",
+      "            stop(\"Missing parameter(s) in 'gdata'\")",
+      "        gdata <- gdata[gdata_names]",
+      "    } else {",
+      "        stop(\"'gdata' must either be a 'data.frame' or a 'numeric' vector.\")",
+      "    }",
       "")
 }
 
@@ -274,8 +279,9 @@ create_model_man_file <- function(path, model, name)
 
     if (length(names(model@gdata)) > 0) {
         lines <- c(lines,
-                   "\\item{gdata}{A named numeric vector with rate-constants for the",
-                   "model.}")
+                   "\\item{gdata}{Data that are common to all nodes in the model.",
+                   "Can be specified either as a named numeric vector or as a",
+                   "one-row data.frame.}")
     }
 
     lines <- c(lines,
