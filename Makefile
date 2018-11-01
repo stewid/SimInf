@@ -39,7 +39,7 @@ build: clean
 # Check package
 check: build
 	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
-        --no-stop-on-test-error --as-cran $(PKG_TAR)
+        --no-stop-on-test-error --as-cran --run-dontrun $(PKG_TAR)
 
 # Check package (without manual and vignettes)
 check_quick: clean
