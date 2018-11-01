@@ -100,7 +100,7 @@ create_model_R_object_roxygen <- function(model)
     lines
 }
 
-create_model_R_object_u0 <- function()
+create_model_R_object_u0 <- function(model)
 {
     compartments <- paste0(rownames(model@S), collapse = "\", \"")
     compartments <- paste0("    compartments <- c(\"", compartments, "\")")
@@ -113,7 +113,8 @@ create_model_R_object_u0 <- function()
       "        u0 <- as.data.frame(u0)",
       "    if (!all(compartments %in% names(u0)))",
       "        stop(\"Missing columns in u0\")",
-      "    u0 <- u0[, compartments, drop = FALSE]")
+      "    u0 <- u0[, compartments, drop = FALSE]",
+      "")
 }
 
 create_model_R_object_gdata <- function(model)
@@ -198,7 +199,7 @@ create_model_R_object <- function(model, name)
     lines <- c(lines, fn, "{")
 
     lines <- c(lines,
-               create_model_R_object_u0(), "",
+               create_model_R_object_u0(model),
                create_model_R_object_gdata(model),
                create_model_R_object_G(model), "",
                create_model_R_object_S(model), "",
