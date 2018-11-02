@@ -100,6 +100,14 @@ create_model_R_object_roxygen <- function(model)
     lines
 }
 
+create_model_R_object_function <- function(model, name)
+{
+    fn <- paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL")
+    if (length(names(model@gdata)) > 0)
+        fn <- paste0(fn, ", gdata = NULL")
+    paste0(fn, ")")
+}
+
 create_model_R_object_u0 <- function(model)
 {
     compartments <- paste0(rownames(model@S), collapse = "\", \"")
@@ -146,7 +154,7 @@ create_model_R_object_G <- function(model)
 {
     G <- capture.output(dput(as.matrix(model@G)))
     G <- c(paste0("G <- ", G[1]), G[-1])
-    paste0("    ", G)
+    c(paste0("    ", G), "")
 }
 
 ## State change matrix
@@ -154,7 +162,7 @@ create_model_R_object_S <- function(model)
 {
     S <- capture.output(dput(as.matrix(model@S)))
     S <- c(paste0("S <- ", S[1]), S[-1])
-    paste0("    ", S)
+    c(paste0("    ", S), "")
 }
 
 ## Select matrix
@@ -162,7 +170,7 @@ create_model_R_object_E <- function(model)
 {
     E <- capture.output(dput(as.matrix(model@events@E)))
     E <- c(paste0("E <- ", E[1]), E[-1])
-    paste0("    ", E)
+    c(paste0("    ", E), "")
 }
 
 ## Shift matrix
@@ -170,7 +178,7 @@ create_model_R_object_N <- function(model)
 {
     N <- capture.output(dput(as.matrix(model@events@N)))
     N <- c(paste0("N <- ", N[1]), N[-1])
-    paste0("    ", N)
+    c(paste0("    ", N), "")
 }
 
 create_model_R_object_SimInf_model <- function(model, name)
@@ -190,25 +198,17 @@ create_model_R_object_SimInf_model <- function(model, name)
 ##' @noRd
 create_model_R_object <- function(model, name)
 {
-    lines <- c(create_model_R_object_roxygen(model))
-
-    fn <- paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL")
-    if (length(names(model@gdata)) > 0)
-        fn <- paste0(fn, ", gdata = NULL")
-    fn <- paste0(fn, ")")
-    lines <- c(lines, fn, "{")
-
-    lines <- c(lines,
-               create_model_R_object_u0(model),
-               create_model_R_object_gdata(model),
-               create_model_R_object_G(model), "",
-               create_model_R_object_S(model), "",
-               create_model_R_object_E(model), "",
-               create_model_R_object_N(model), "",
-               create_model_R_object_SimInf_model(model, name),
-               "}")
-
-   lines
+    c(create_model_R_object_roxygen(model),
+      create_model_R_object_function(model, name),
+      "{",
+      create_model_R_object_u0(model),
+      create_model_R_object_gdata(model),
+      create_model_R_object_G(model),
+      create_model_R_object_S(model),
+      create_model_R_object_E(model),
+      create_model_R_object_N(model),
+      create_model_R_object_SimInf_model(model, name),
+      "}")
 }
 
 create_model_run_fn <- function(name)
