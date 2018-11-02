@@ -45,14 +45,14 @@ compartment in each node when the simulation starts..}
 
 \item{v0}{optional data with the initial continuous state in each
 node. Can be specified either as a \code{data.frame} with one
-row per node or as a numeric matrix where column \code{ldata[,
-j]} contains the local data vector for the node \code{j}. If
-\code{v0} is specified as a \code{data.frame}, each column is
-one parameter. If \code{v0} is specified as a matrix, the row
-names identify the parameters. The 'v' vector is passed as an
-argument to the transition rate functions and the post time
-step function. The continuous state can be updated in the post
-time step function.}
+row per node or as a numeric matrix where column \code{v0[,
+j]} contains the initial state vector for the node
+\code{j}. If \code{v0} is specified as a \code{data.frame},
+each column is one parameter. If \code{v0} is specified as a
+matrix, the row names identify the parameters. The 'v' vector
+is passed as an argument to the transition rate functions and
+the post time step function. The continuous state can be
+updated in the post time step function.}
 
 \item{tspan}{A vector (length >= 2) of increasing time points
 where the state of each node is to be returned. Can be either
