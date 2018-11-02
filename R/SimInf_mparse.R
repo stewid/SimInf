@@ -312,14 +312,14 @@ parse_transitions <- function(transitions, compartments, ldata_names,
 ##'     compartment in each node when the simulation starts..
 ##' @param v0 optional data with the initial continuous state in each
 ##'     node. Can be specified either as a \code{data.frame} with one
-##'     row per node or as a numeric matrix where column \code{ldata[,
-##'     j]} contains the local data vector for the node \code{j}. If
-##'     \code{v0} is specified as a \code{data.frame}, each column is
-##'     one parameter. If \code{v0} is specified as a matrix, the row
-##'     names identify the parameters. The 'v' vector is passed as an
-##'     argument to the transition rate functions and the post time
-##'     step function. The continuous state can be updated in the post
-##'     time step function.
+##'     row per node or as a numeric matrix where column \code{v0[,
+##'     j]} contains the initial state vector for the node
+##'     \code{j}. If \code{v0} is specified as a \code{data.frame},
+##'     each column is one parameter. If \code{v0} is specified as a
+##'     matrix, the row names identify the parameters. The 'v' vector
+##'     is passed as an argument to the transition rate functions and
+##'     the post time step function. The continuous state can be
+##'     updated in the post time step function.
 ##' @template tspan-param
 ##' @param events A \code{data.frame} with the scheduled
 ##'     events. Default is \code{NULL} i.e. no scheduled events in the
