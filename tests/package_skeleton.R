@@ -28,7 +28,16 @@ res <- tools::assertError(package_skeleton(5))
 stopifnot(length(grep("'model' argument is not a 'SimInf_model'",
                       res[[1]]$message)) > 0)
 
-## Chack package_skeleton
+## Check missing 'ldata', 'gdata' and 'v0' parameters
+m <- mparse(transitions = "@ -> 1 -> S",
+            compartments = "S",
+            u0 = data.frame(S = 0),
+            tspan = 1:10)
+stopifnot(is.null(SimInf:::create_model_R_object_ldata(m)))
+stopifnot(is.null(SimInf:::create_model_R_object_gdata(m)))
+stopifnot(is.null(SimInf:::create_model_R_object_v0(m)))
+
+## Check package_skeleton
 m <- mparse(transitions = c("@ -> a -> S",
                             "S -> b*S*I/(S+I+R) -> I",
                             "I -> g*I -> R"),
