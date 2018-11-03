@@ -93,7 +93,7 @@ res <- SISe(u0      = u0,
             end_t2  = 182,
             end_t3  = 273,
             end_t4  = 365,
-            epsilon = 0.000011))
+            epsilon = 0.000011)
 stopifnot(identical(res@v0,
                     structure(c(0, 0, 0, 0, 0, 0),
                               .Dim = c(1L, 6L),
