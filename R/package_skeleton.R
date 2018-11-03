@@ -78,11 +78,7 @@ create_model_R_object_roxygen <- function(model)
 {
     lines <- c("##' Create a model for the SimInf framework",
                "##'",
-               "##' Create a model to be used by the SimInf framework.",
-               "##' @param u0 A data.frame with the initial state in each node.",
-               "##' @param tspan A vector (length >= 2) of increasing time points",
-               "##'     where the state of each node is to be returned.",
-               "##' @param events A data.frame with scheduled events.")
+               "##' Create a model to be used by the SimInf framework.")
 
     if (length(rownames(model@ldata)) > 0) {
         lines <- c(lines,
@@ -100,6 +96,9 @@ create_model_R_object_roxygen <- function(model)
                    "##'     a one-row data.frame.")
     }
 
+    lines <- c(lines,
+               "##' @param u0 A data.frame with the initial state in each node.")
+
     if (length(rownames(model@v0)) > 0) {
         lines <- c(lines,
                    "##' @param v0 Data with the initial continuous state in each",
@@ -110,6 +109,9 @@ create_model_R_object_roxygen <- function(model)
     }
 
     lines <- c(lines,
+               "##' @param tspan A vector (length >= 2) of increasing time points",
+               "##'     where the state of each node is to be returned.",
+               "##' @param events A data.frame with scheduled events.",
                "##' @import SimInf",
                "##' @import methods",
                "##' @export",
@@ -121,14 +123,15 @@ create_model_R_object_roxygen <- function(model)
 
 create_model_R_object_function <- function(model, name)
 {
-    fn <- paste0(name, " <- function(u0 = NULL, tspan = NULL, events = NULL")
+    fn <- paste0(name, " <- function(")
     if (length(rownames(model@ldata)) > 0)
-        fn <- paste0(fn, ", ldata = NULL")
+        fn <- paste0(fn, "ldata = NULL, ")
     if (length(names(model@gdata)) > 0)
-        fn <- paste0(fn, ", gdata = NULL")
+        fn <- paste0(fn, "gdata = NULL, ")
+    fn <- paste0(fn, "u0 = NULL, ")
     if (length(rownames(model@v0)) > 0)
-        fn <- paste0(fn, ", v0 = NULL")
-    paste0(fn, ")")
+        fn <- paste0(fn, "v0 = NULL, ")
+    fn <- paste0(fn, "tspan = NULL, events = NULL)")
 }
 
 create_model_R_object_u0 <- function(model)
@@ -276,9 +279,9 @@ create_model_R_object <- function(model, name)
     c(create_model_R_object_roxygen(model),
       create_model_R_object_function(model, name),
       "{",
-      create_model_R_object_u0(model),
       create_model_R_object_ldata(model),
       create_model_R_object_gdata(model),
+      create_model_R_object_u0(model),
       create_model_R_object_v0(model),
       create_model_R_object_G(model),
       create_model_R_object_S(model),
@@ -356,23 +359,20 @@ create_model_man_file <- function(path, model, name)
                "\\title{Create a model for the SimInf framework}",
                "\\usage{")
 
-    fn <- paste0(name, "(u0 = NULL, tspan = NULL, events = NULL")
+    fn <- paste0(name, "(")
     if (length(rownames(model@ldata)) > 0)
-        fn <- paste0(fn, ", ldata = NULL")
+        fn <- paste0(fn, "ldata = NULL, ")
     if (length(names(model@gdata)) > 0)
-        fn <- paste0(fn, ", gdata = NULL")
+        fn <- paste0(fn, "gdata = NULL, ")
+    fn <- paste0(fn, "u0 = NULL, ")
     if (length(rownames(model@v0)) > 0)
-        fn <- paste0(fn, ", v0 = NULL")
-    fn <- paste0(fn, ")")
-    lines <- c(lines, fn)
+        fn <- paste0(fn, "v0 = NULL, ")
+    fn <- paste0(fn, "tspan = NULL, events = NULL)")
 
     lines <- c(lines,
+               fn,
                "}",
-               "\\arguments{",
-               "\\item{u0}{A \\code{data.frame} with the initial state in each node.}",
-               "\\item{tspan}{A vector (length >= 2) of increasing time points",
-               "where the state of each node is to be returned.}",
-               "\\item{events}{A data.frame with scheduled events.}")
+               "\\arguments{")
 
     if (length(rownames(model@ldata)) > 0) {
         lines <- c(lines,
@@ -390,6 +390,9 @@ create_model_man_file <- function(path, model, name)
                    "one-row data.frame.}")
     }
 
+    lines <- c(lines,
+               "\\item{u0}{A \\code{data.frame} with the initial state in each node.}")
+
     if (length(rownames(model@v0)) > 0) {
         lines <- c(lines,
                    "\\item{v0}{Data with the initial continuous state in each",
@@ -400,6 +403,9 @@ create_model_man_file <- function(path, model, name)
     }
 
     lines <- c(lines,
+               "\\item{tspan}{A vector (length >= 2) of increasing time points",
+               "where the state of each node is to be returned.}",
+               "\\item{events}{A data.frame with scheduled events.}",
                "}",
                "\\description{",
                "Create a model to be used by the SimInf framework.",
