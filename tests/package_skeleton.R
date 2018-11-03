@@ -29,10 +29,14 @@ stopifnot(length(grep("'model' argument is not a 'SimInf_model'",
                       res[[1]]$message)) > 0)
 
 ## Chack package_skeleton
-m <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
+m <- mparse(transitions = c("@ -> a -> S",
+                            "S -> b*S*I/(S+I+R) -> I",
+                            "I -> g*I -> R"),
             compartments = c("S", "I", "R"),
-            gdata = c(b = 0.16, g = 0.077),
+            ldata = data.frame(a = 1),
+            gdata = c(b = 0.16),
             u0 = data.frame(S = 99, I = 1, R = 0),
+            v0 = data.frame(g = 0.077),
             tspan = 1:10)
 
 path <- tempdir()
