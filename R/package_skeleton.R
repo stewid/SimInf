@@ -90,7 +90,7 @@ create_model_R_object_roxygen <- function(model)
                    "##'     Can be specified either as a numeric matrix where",
                    "##'     column \\code{ldata[, j]} contains the local data",
                    "##'     vector for the node \\code{j} or as a",
-                   "##'     \\code{data.frame} with one row per node.}")
+                   "##'     \\code{data.frame} with one row per node.")
     }
 
     if (length(names(model@gdata)) > 0) {
@@ -98,6 +98,15 @@ create_model_R_object_roxygen <- function(model)
                    "##' @param gdata Data that are common to all nodes in the model.",
                    "##'     Can be specified either as a named numeric vector or as",
                    "##'     a one-row data.frame.")
+    }
+
+    if (length(rownames(model@v0)) > 0) {
+        lines <- c(lines,
+                   "##' @param v0 Data with the initial continuous state in each",
+                   "##'     node. Can be specified either as a \\code{data.frame}",
+                   "##'     with one row per node or as a numeric matrix where",
+                   "##'     column \\code{v0[, j]} contains the initial state",
+                   "##'     vector for the node \\code{j}.")
     }
 
     lines <- c(lines,
@@ -117,6 +126,8 @@ create_model_R_object_function <- function(model, name)
         fn <- paste0(fn, ", ldata = NULL")
     if (length(names(model@gdata)) > 0)
         fn <- paste0(fn, ", gdata = NULL")
+    if (length(rownames(model@v0)) > 0)
+        fn <- paste0(fn, ", v0 = NULL")
     paste0(fn, ")")
 }
 
@@ -185,6 +196,30 @@ create_model_R_object_gdata <- function(model)
       "")
 }
 
+create_model_R_object_v0 <- function(model)
+{
+    if (length(rownames(model@v0)) < 1)
+        return(NULL)
+
+    v0_names <- paste0(rownames(model@v0), collapse = "\", \"")
+    v0_names <- paste0("    v0_names <- c(\"", v0_names, "\")")
+
+    c("    ## Check v0",
+      v0_names,
+      "    if (is.data.frame(v0)) {",
+      "        if (!all(v0_names %in% colnames(v0)))",
+      "            stop(\"Missing parameter(s) in 'v0'\")",
+      "        v0 <- v0[, v0_names, drop = FALSE]",
+      "    } else if (is.matrix(v0)) {",
+      "        if (!all(v0_names %in% rownames(v0)))",
+      "            stop(\"Missing parameter(s) in 'v0'\")",
+      "        v0 <- v0[v0_names, , drop = FALSE]",
+      "    } else {",
+      "        stop(\"'v0' must either be a 'data.frame' or a 'matrix'.\")",
+      "    }",
+      "")
+}
+
 ## Dependency graph
 create_model_R_object_G <- function(model)
 {
@@ -224,6 +259,8 @@ create_model_R_object_SimInf_model <- function(model, name)
         lines <- paste0(lines, "ldata = ldata, ")
     if (length(names(model@gdata)) > 0)
         lines <- paste0(lines, "gdata = gdata, ")
+    if (length(rownames(model@v0)) > 0)
+        lines <- paste0(lines, "v0 = v0, ")
     lines <- paste0(lines, "G = G, S = S, E = E, N = N,")
     lines <- c(lines,
                "                          tspan = tspan, events = events, u0 = u0)",
@@ -242,6 +279,7 @@ create_model_R_object <- function(model, name)
       create_model_R_object_u0(model),
       create_model_R_object_ldata(model),
       create_model_R_object_gdata(model),
+      create_model_R_object_v0(model),
       create_model_R_object_G(model),
       create_model_R_object_S(model),
       create_model_R_object_E(model),
@@ -323,6 +361,8 @@ create_model_man_file <- function(path, model, name)
         fn <- paste0(fn, ", ldata = NULL")
     if (length(names(model@gdata)) > 0)
         fn <- paste0(fn, ", gdata = NULL")
+    if (length(rownames(model@v0)) > 0)
+        fn <- paste0(fn, ", v0 = NULL")
     fn <- paste0(fn, ")")
     lines <- c(lines, fn)
 
@@ -348,6 +388,15 @@ create_model_man_file <- function(path, model, name)
                    "\\item{gdata}{Data that are common to all nodes in the model.",
                    "Can be specified either as a named numeric vector or as a",
                    "one-row data.frame.}")
+    }
+
+    if (length(rownames(model@v0)) > 0) {
+        lines <- c(lines,
+                   "\\item{v0}{Data with the initial continuous state in each",
+                   "node. Can be specified either as a \\code{data.frame} with",
+                   "one row per node or as a numeric matrix where column",
+                   "\\code{v0[, j]} contains the initial state vector for the",
+                   "node \\code{j}.}")
     }
 
     lines <- c(lines,
