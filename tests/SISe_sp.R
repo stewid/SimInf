@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2018  Stefan Engblom
+## Copyright (C) 2015 - 2018  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -296,6 +296,27 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005))
 stopifnot(length(grep("'distance' is missing",
+                      res[[1]]$message)) > 0)
+
+## Check negative distance
+res <- tools::assertError(SISe_sp(u0       = u0,
+                                  tspan    = seq_len(10) - 1,
+                                  events   = NULL,
+                                  phi      = rep(1, nrow(u0)),
+                                  upsilon  = 0.0357,
+                                  gamma    = 0.1,
+                                  alpha    = 1.0,
+                                  beta_t1  = 0.19,
+                                  beta_t2  = 0.085,
+                                  beta_t3  = 0.075,
+                                  beta_t4  = 0.185,
+                                  end_t1   = 91,
+                                  end_t2   = 182,
+                                  end_t3   = 273,
+                                  end_t4   = 365,
+                                  coupling = 0.0005,
+                                  distance = -distance))
+stopifnot(length(grep("All values in the 'distance' matrix must be >= 0",
                       res[[1]]$message)) > 0)
 
 ## Check non-numeric upsilon
