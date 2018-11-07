@@ -1,6 +1,24 @@
 SimInf 6.1.0.9000
 -----------------
 
+IMPROVEMENTS
+
+* The 'mparse' model builder functionality has been improved to be
+  able to generate models that contain node specific local data and
+  continuous state variables. It is also possible to pass the C code
+  of the post time step function to 'mparse'. See documentation.
+
+* The package skeleton method has been updated to handle the the
+  improved functionlity of 'mparse'.
+
+* Print summary of the local data when the 'ldata' matrix in the model
+  has row names.
+
+* It's now possible to pass 'gdata', 'ldata' and 'v0' as data.frames
+  to the 'SimInf_model' function.
+
+* Better error message when an invalid rate or a negative state is
+  detected during a simulation.
 
 SimInf 6.1.0
 ------------
