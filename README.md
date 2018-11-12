@@ -42,32 +42,12 @@ or use the `remotes` package to install the development version from
 
 ```r
 # install.packages("remotes")
-remotes::install_github("stewid/SimInf"")
+remotes::install_github("stewid/SimInf")
 ```
 
-### Dependencies
-
-#### On a Debian based system
-
-Before installing `SimInf` you need to install
-[The GNU Scientific Library](http://www.gnu.org/software/gsl/) (GSL).
-
-
-```r
-apt-get install libgsl0-dev
-```
-
-You may need to do:
-
-```r
-sudo apt-get install libgsl0-dev
-```
-
-#### On a Windows machine
-
-To install the development version of `SimInf` you first need to
-download and install
-[Rtools](http://cran.r-project.org/bin/windows/Rtools/)
+We refer to section 3.1 in the
+[vignette](https://CRAN.R-project.org/web/packages/SimInf/vignettes/SimInf.pdf)
+for detailed installation instructions.
 
 # Authors
 
