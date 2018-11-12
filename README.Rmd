@@ -76,4 +76,4 @@ eSSENCE (Stefan Widgren).
 # License
 
 The `SimInf` package is licensed under the
-[GPLv3](https://github.com/stewid/SimInf/LICENSE)
+[GPLv3](https://github.com/stewid/SimInf/blob/master/LICENSE).
