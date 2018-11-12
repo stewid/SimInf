@@ -41,8 +41,8 @@ or use the `remotes` package to install the development version from
 
 
 ```r
-# install.packages("remotes")
-remotes::install_github("stewid/SimInf")
+library(remotes)
+install_github("stewid/SimInf")
 ```
 
 We refer to section 3.1 in the
@@ -56,6 +56,9 @@ for detailed installation instructions.
 * Stefan Engblom (Uppsala University, Sweden)
 * Stefan Widgren (National Veterinary Institute, Sweden) **(Maintainer)**
 
+Any suggestions, bug reports, forks and pull requests are
+appreciated. Get in touch.
+
 # Acknowledgments
 
 This work was financially supported by the Swedish Research Council
@@ -67,9 +70,5 @@ eSSENCE (Stefan Widgren).
 
 # License
 
-The `SimInf` package is licensed under the GPLv3.
-
-- [LICENSE](LICENSE) - `SimInf` package license
-
-Any suggestions, bug reports, forks and pull requests are
-appreciated. Get in touch.
+The `SimInf` package is licensed under the
+[GPLv3](https://github.com/stewid/SimInf/LICENSE)
