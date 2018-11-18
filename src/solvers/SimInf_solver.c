@@ -175,41 +175,30 @@ static int SimInf_sample_select(
  *        transfer event.
  * @param Nn Total number of nodes.
  * @param Nthread Number of threads to use during simulation.
- * @return 0 if Ok, else error code.
  */
-static int SimInf_split_events(
+static void SimInf_split_events(
     SimInf_scheduled_events *out,
     int len, const int *event, const int *time, const int *node,
     const int *dest, const int *n, const double *proportion,
     const int *select, const int *shift, int Nn, int Nthread)
 {
     int i;
-    int chunk_size = Nn / Nthread;
+    const int chunk_size = Nn / Nthread;
 
     for (i = 0; i < len; i++) {
-        int j;
         const SimInf_scheduled_event e = {event[i], time[i], node[i] - 1,
                                           dest[i] - 1, n[i], proportion[i],
                                           select[i] - 1, shift[i] - 1};
 
-        switch (event[i]) {
-        case EXIT_EVENT:
-        case ENTER_EVENT:
-        case INTERNAL_TRANSFER_EVENT:
-            j = (node[i] - 1) / chunk_size;
+        if (event[i] == EXTERNAL_TRANSFER_EVENT) {
+            kv_push(SimInf_scheduled_event, out[0].events, e);
+        } else {
+            int j = (node[i] - 1) / chunk_size;
             if (j >= Nthread)
                 j = Nthread - 1;
             kv_push(SimInf_scheduled_event, out[j].events, e);
-            break;
-        case EXTERNAL_TRANSFER_EVENT:
-            kv_push(SimInf_scheduled_event, out[0].events, e);
-            break;
-        default:
-            return SIMINF_UNDEFINED_EVENT;
         }
     }
-
-    return 0;
 }
 
 /**
@@ -259,12 +248,10 @@ int SimInf_scheduled_events_create(
     }
 
     /* Split scheduled events into E1 and E2 events. */
-    error = SimInf_split_events(
+    SimInf_split_events(
         events, args->len, args->event, args->time, args->node,
         args->dest, args->n, args->proportion, args->select,
         args->shift, args->Nn, args->Nthread);
-    if (error)
-        goto on_error;
 
     *out = events;
     return 0;
