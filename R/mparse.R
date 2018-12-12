@@ -61,6 +61,10 @@ C_ptsFun <- function(pts_fun)
     if (!is.character(pts_fun))
         stop("'pts_fun' must be a character vector.")
 
+    f <- textConnection(pts_fun)
+    lines <- readLines(f)
+    close(f)
+
     c("int ptsFun(",
       "    double *v_new,",
       "    const int *u,",
@@ -70,7 +74,7 @@ C_ptsFun <- function(pts_fun)
       "    int node,",
       "    double t)",
       "{",
-           readLines(textConnection(pts_fun)),
+           lines,
       "}",
       "")
 }
