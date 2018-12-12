@@ -42,7 +42,7 @@ if [ ${have_gsl} != yes ]; then
     echo ""
     echo " Another option is to configure the LOCAL_SOFT variable, see:"
     echo "   https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Windows-packages"
-    echo "   http://www.stats.ox.ac.uk/pub/Rtools/libs.html"
+    echo "   https://www.stats.ox.ac.uk/pub/Rtools/libs.html"
     echo ""
     exit 1
 fi
