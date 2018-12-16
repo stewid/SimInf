@@ -8,10 +8,10 @@ citEntry(entry = "Article",
   title        = "SimInf: An R Package for Data-Driven Stochastic Disease Spread Simulations",
   journal      = "arXiv preprint arXiv:1605.01421 [q-bio.PE]",
   year         = "2018",
-  url          = "http://arxiv.org/abs/1605.01421",
+  url          = "https://arxiv.org/abs/1605.01421",
   textVersion  =
   paste("Widgren S., Bauer P., Eriksson R., Engblom S. (2018).",
         "\"SimInf: An R Package for Data-Driven Stochastic Disease Spread Simulations.\"",
         "arXiv preprint arXiv:1605.01421 [q-bio.PE], ",
-        "URL http://arxiv.org/abs/1605.01421")
+        "URL https://arxiv.org/abs/1605.01421")
 )
