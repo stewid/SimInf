@@ -338,7 +338,7 @@ static int SimInf_solver_aem(
                 /* Copy continuous state to V */
                 while (sa.V && sa.V_it < sa.tlen && sa.tt > sa.tspan[sa.V_it])
                     memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.V_it++) + sa.Ni)],
-                           sa.v_new, sa.Nn * sa.Nd * sizeof(double));
+                           sa.v, sa.Nn * sa.Nd * sizeof(double));
 
                 *&model[i] = sa;
                 *&method[i] = ma;

@@ -1,6 +1,11 @@
 SimInf 6.2.0.9000
 -----------------
 
+BUG FIXES
+
+* Fix storing solution of the continuous state vector v up to time t,
+  but not including t, when t has passed the next time in
+  tspan.
 
 SimInf 6.2.0
 ------------

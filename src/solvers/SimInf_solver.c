@@ -659,7 +659,7 @@ void SimInf_store_solution_sparse(SimInf_compartment_model *model)
         /* Copy continuous state to V_sparse */
         for (j = model[0].jcV[model[0].V_it];
              j < model[0].jcV[model[0].V_it + 1]; j++)
-            model[0].prV[j] = model[0].v_new[model[0].irV[j]];
+            model[0].prV[j] = model[0].v[model[0].irV[j]];
         model[0].V_it++;
     }
 }
