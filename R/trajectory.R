@@ -108,6 +108,7 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
 ##'     matrix.
 ##' @include SimInf_model.R
+##' @include check_arguments.R
 ##' @export
 ##' @importFrom methods is
 ##' @importFrom stats terms
