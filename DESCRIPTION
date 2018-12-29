@@ -65,5 +65,6 @@ Collate:
     'package_skeleton.R'
     'plot.R'
     'run_outer.R'
+    'trajectory.R'
 Encoding: UTF-8
 RoxygenNote: 6.1.1
