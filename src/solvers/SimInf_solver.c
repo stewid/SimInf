@@ -53,14 +53,13 @@
  *        proportion. 0 <= proportion <= 1.
  * @param individuals The result of the sampling is stored in the
  *        individuals vector.
- * @param u_tmp Help vector for sampling individuals.
  * @param rng Random number generator.
  * @return 0 if Ok, else error code.
  */
 static int SimInf_sample_select(
     const int *irE, const int *jcE, int Nc, const int *u,
     int node, int select, int n, double proportion,
-    int *individuals, int *u_tmp, gsl_rng *rng)
+    int *individuals, gsl_rng *rng)
 {
     int i, Nstates, Nindividuals = 0, Nkinds = 0;
 
@@ -114,37 +113,23 @@ static int SimInf_sample_select(
         return 0;
     }
 
-    /* Handle cases that require random sampling */
-    if (Nstates == 2) {
-        /* Sample from the hypergeometric distribution */
-        i = jcE[select];
+    /* Sample from the hypergeometric distribution. For a multivariate
+     * hypergeometric distribution, use the algortihm described by
+     * James E. Gentle (2003, page 206) in 'Random Number Generation
+     * and Monte Carlo Methods'.*/
+    for (i = jcE[select]; i < jcE[select + 1] - 1; i++) {
+        if (n == 0)
+            break;
+
         individuals[irE[i]] = gsl_ran_hypergeometric(
-            rng,
-            u[node * Nc + irE[i]],
-            u[node * Nc + irE[i+1]],
-            n);
-        individuals[irE[i+1]] = n - individuals[irE[i]];
-    } else {
-        /* Randomly sample n individuals from Nindividudals in
-         * the Nstates */
-        memcpy(u_tmp, &u[node * Nc], Nc * sizeof(int));
-        while (n > 0) {
-            double cum, rand = gsl_rng_uniform_pos(rng) * Nindividuals;
+            rng, u[node * Nc + irE[i]],
+            Nindividuals - u[node * Nc + irE[i]], n);
 
-            /* Determine from which compartment the individual was
-             * sampled from */
-            for (i = jcE[select], cum = u_tmp[irE[i]];
-                 i < jcE[select + 1] && rand > cum;
-                 i++, cum += u_tmp[irE[i]]);
-
-            /* Update sampled individual */
-            u_tmp[irE[i]]--;
-            individuals[irE[i]]++;
-
-            Nindividuals--;
-            n--;
-        }
+        Nindividuals -= u[node * Nc + irE[i]];
+        n -= individuals[irE[i]];
     }
+
+    individuals[irE[i]] = n;
 
     return 0;
 }
@@ -236,10 +221,6 @@ int SimInf_scheduled_events_create(
         if (!events[i].individuals)
             goto on_error;
 
-        events[i].u_tmp = calloc(args->Nc, sizeof(int));
-        if (!events[i].u_tmp)
-            goto on_error;
-
         /* Random number generator */
         events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
         if (!events[i].rng)
@@ -280,8 +261,6 @@ void SimInf_scheduled_events_free(
                 kv_destroy(e->events);
                 free(e->individuals);
                 e->individuals = NULL;
-                free(e->u_tmp);
-                e->u_tmp = NULL;
                 gsl_rng_free(e->rng);
                 e->rng = NULL;
             }
@@ -439,7 +418,7 @@ void SimInf_process_events(
         case EXIT_EVENT:
             m.error = SimInf_sample_select(
                 e.irE, e.jcE, m.Nc, m.u, ee.node - m.Ni, ee.select,
-                ee.n, ee.proportion, e.individuals, e.u_tmp, e.rng);
+                ee.n, ee.proportion, e.individuals, e.rng);
 
             if (m.error) {
                 SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
@@ -493,7 +472,7 @@ void SimInf_process_events(
 
             m.error = SimInf_sample_select(
                 e.irE, e.jcE, m.Nc, m.u, ee.node - m.Ni, ee.select,
-                ee.n, ee.proportion, e.individuals, e.u_tmp, e.rng);
+                ee.n, ee.proportion, e.individuals, e.rng);
 
             if (m.error) {
                 SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
@@ -549,7 +528,7 @@ void SimInf_process_events(
 
             m.error = SimInf_sample_select(
                 e.irE, e.jcE, m.Nc, m.u, ee.node, ee.select, ee.n,
-                ee.proportion, e.individuals, e.u_tmp, e.rng);
+                ee.proportion, e.individuals, e.rng);
 
             if (m.error) {
                 SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,

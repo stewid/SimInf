@@ -265,9 +265,6 @@ typedef struct SimInf_scheduled_events
     int *individuals;     /**< Vector to store the result of the
                            *   sampling during scheduled events
                            *   processing. */
-    int *u_tmp;           /**< Temporary vector with the compartment
-                           *   state in a node when sampling
-                           *   individuals for scheduled events. */
     gsl_rng *rng;         /**< The random number generator for
                            *   sampling. */
 } SimInf_scheduled_events;
