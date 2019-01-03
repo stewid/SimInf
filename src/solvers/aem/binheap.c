@@ -11,7 +11,7 @@
 */
 
 /*----------------------------------------------------------------------*/
-void percolate_down(int n1,double *data,int *INDEX,int *INDEX2,int N)
+static void percolate_down(int n1,double *data,int *INDEX,int *INDEX2,int N)
 /*** ? ***/
 {
   int child;
@@ -40,7 +40,7 @@ void percolate_down(int n1,double *data,int *INDEX,int *INDEX2,int N)
   INDEX2[j]=node;
 }
 /*----------------------------------------------------------------------*/
-void percolate_up(int node,double *data,int *INDEX,int *INDEX2,int N)
+static void percolate_up(int node,double *data,int *INDEX,int *INDEX2,int N)
 /*** ? ***/
 {
   int parent;
