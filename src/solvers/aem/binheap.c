@@ -5,25 +5,11 @@
 
 /* Binary heap needed by the NRM and NSM. */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include "binheap.h"
-
-
 /* This is an indexed heap. If node is the index of an element in
    "data", the place in the heap is given by INDEX[node]. The place in
    the "data" held by node n in the heap is given by INDEX2[INDEX[n]].
 */
 
-/*----------------------------------------------------------------------*/
-void initialize_heap(double *data,int *INDEX,int *INDEX2,int N)
-/*** ? ***/
-{
-  int i;
-  for (i=(N-1)>>1; i>=0; i--)
-    percolate_down(i,data,INDEX,INDEX2,N);
-}
 /*----------------------------------------------------------------------*/
 void percolate_down(int n1,double *data,int *INDEX,int *INDEX2,int N)
 /*** ? ***/
@@ -80,6 +66,14 @@ void percolate_up(int node,double *data,int *INDEX,int *INDEX2,int N)
   data[node]=key;
   INDEX[node]=j;
   INDEX2[j]=node;
+}
+/*----------------------------------------------------------------------*/
+void initialize_heap(double *data,int *INDEX,int *INDEX2,int N)
+/*** ? ***/
+{
+  int i;
+  for (i=(N-1)>>1; i>=0; i--)
+    percolate_down(i,data,INDEX,INDEX2,N);
 }
 /*----------------------------------------------------------------------*/
 void update(int node,double *data,int *INDEX,int *INDEX2,int N)
