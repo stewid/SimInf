@@ -60,6 +60,7 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
+    'degree.R'
     'distance.R'
     'mparse.R'
     'package_skeleton.R'
