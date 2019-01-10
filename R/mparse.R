@@ -357,7 +357,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
 
     ## Check compartments
     if (!is.atomic(compartments) || !is.character(compartments) ||
-        any(duplicated(compartments)) || any(nchar(compartments) == 0))
+        !identical(compartments, make.names(compartments, unique = TRUE)))
         stop("'compartments' must be specified in a character vector.")
 
     ## Check u0
