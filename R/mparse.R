@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -110,10 +110,10 @@ C_code_mparse <- function(transitions, pts_fun)
 tokens <- function(propensity)
 {
     ## List of valid preprocessor operator or punctuator tokens.
-    operators <- c("...", "<<=", ">>=", "!=", "%=", "##", "&&", "&=", "*=",
+    operators <- c("<<=", ">>=", "!=", "%=", "##", "&&", "&=", "*=",
                    "++", "+=", "--", "-=", "->", "/=", "<<", "<=", "==",
                    ">=", ">>", "^=", "|=", "||", "!", "~", "%", "&", "(",
-                   ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=",
+                   ")", "*", "+", ",", "-", "/", ":", ";", "<", "=",
                    ">", "?", "[", "]", "^", "{", "|", "}", "#")
 
     ## Create a matrix (1 x 2) of the propensity, where the first

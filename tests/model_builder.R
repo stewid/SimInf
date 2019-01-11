@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -481,3 +481,11 @@ stopifnot(identical(m@G, G))
 ## Check parsing replicates of compartments
 stopifnot(identical(SimInf:::parse_compartments("S + 2*S", c("S", "I")),
                     c(3L, 0L)))
+
+## Check mparse with a compartment name that contains '.', for
+## example, '.S.S' (this is a valid column name in a data.frame).
+m  <- mparse(transitions = ".S.S -> 1.2*.S.S -> @",
+             compartments = c(".S.S"),
+             u0 = data.frame(.S.S = 100),
+             tspan = 1:100)
+stopifnot(identical(m@C_code[13], "    return 1.2*u[0];"))
