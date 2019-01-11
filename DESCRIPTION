@@ -66,6 +66,7 @@ Collate:
     'package_skeleton.R'
     'plot.R'
     'prevalence.R'
+    'print.R'
     'run_outer.R'
     'trajectory.R'
 Encoding: UTF-8
