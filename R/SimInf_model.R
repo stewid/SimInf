@@ -402,15 +402,15 @@ SimInf_model <- function(G,
         C_code = C_code)
 }
 
-##' Set a template for where to write the U result matrix
+##' Set a template for where to record result during a simualtion
 ##'
-##' Using a sparse U result matrix can save a lot of memory if the
-##' model contains many nodes and time-points, but where only a few of
-##' the data points are of interest for post-processing.
+##' Using a sparse result matrix can save a lot of memory if the model
+##' contains many nodes and time-points, but where only a few of the
+##' data points are of interest for post-processing.
 ##'
-##' Using a sparse U result matrix can save a lot of memory if the
-##' model contains many nodes and time-points, but where only a few of
-##' the data points are of interest for post-processing. To use this
+##' Using a sparse result matrix can save a lot of memory if the model
+##' contains many nodes and time-points, but where only a few of the
+##' data points are of interest for post-processing. To use this
 ##' feature, a template has to be defined for which data points to
 ##' record. This is done using a \code{data.frame} that specifies the
 ##' time-points (column \sQuote{time}) and nodes (column
@@ -420,8 +420,8 @@ SimInf_model <- function(G,
 ##' that specifying a template only affects which data-points are
 ##' recorded for post-processing, it does not affect how the solver
 ##' simulates the trajectory.
-##' @param model The \code{model} to set a template for the result
-##'     matrix \code{U}.
+##' @param model The \code{model} to set a template for where to
+##'     record result.
 ##' @param value A \code{data.frame} that specify the nodes,
 ##'     time-points and compartments to record the number of
 ##'     individuals at \code{tspan}. Use \code{NULL} to reset the
@@ -479,183 +479,84 @@ SimInf_model <- function(G,
 {
     check_model_argument(model)
 
-    if (!is.null(value)) {
-        if (!is.data.frame(value))
-            stop("'value' argument is not a 'data.frame'")
+    if (is.null(value)) {
+        ## Create sparse templates.
+        template <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(0, 0))
+        model@U_sparse <- as(template, "dgCMatrix")
+        model@V_sparse <- as(template, "dgCMatrix")
 
-        if (nrow(value) > 0) {
-            ## Sort the data.frame by time and node.
-            value <- value[order(value$time, value$node),
-                           c("time", "node", rownames(model@S))]
-
-            ## Match nodes and for each matched node create an index
-            ## to all of its compartments in the U matrix.
-            i <- match(value$node, seq_len(Nn(model)))
-            if (any(is.na(i)))
-                stop("Unable to match all nodes")
-            i <- rep((i - 1) * Nc(model), each = Nc(model)) + seq_len(Nc(model))
-
-            ## Match time-points to tspan and repeat each time-point
-            ## for every compartment in the model.
-            j <- match(value$time, model@tspan)
-            if (any(is.na(j)))
-                stop("Unable to match all time-points to tspan")
-            j <- rep(j, each = Nc(model))
-
-            ## Coerce the compartments part of the data.frame to a
-            ## logical vector that match the rows of compartments in
-            ## the U matrix.
-            value <- as.logical(t(as.matrix(value[, -(1:2)])))
-            value[is.na(value)] <- FALSE
-
-            ## Keep only compartments and time-points that are marked
-            ## with TRUE.
-            i <- i[value]
-            j <- j[value]
-        } else {
-            i <- numeric(0)
-            j <- numeric(0)
-        }
-
-        ## Specify dimension.
-        d <- c(Nn(model) * Nc(model), length(model@tspan))
-
-        ## Clear dense result matrix.
-        model@U = matrix(integer(0), nrow = 0, ncol = 0)
-    } else {
-        ## Clear sparse result matrix.
-        i <- numeric(0)
-        j <- numeric(0)
-        d <- c(0, 0)
+        return(model)
     }
 
-    ## Create sparse template.
-    model@U_sparse <- as(sparseMatrix(i, j, dims = d), "dgCMatrix")
+    if (!is.data.frame(value))
+        stop("'value' argument is not a 'data.frame'")
 
-    model
-}
+    ## Clear dense result matrices.
+    model@U <- matrix(data = integer(0), nrow = 0, ncol = 0)
+    model@V <- matrix(data = numeric(0), nrow = 0, ncol = 0)
 
-##' Set a template for where to write the V result matrix
-##'
-##' Using a sparse V result matrix can save a lot of memory if the
-##' model contains many nodes and time-points, but where only a few of
-##' the data points are of interest for post-processing.
-##'
-##' Using a sparse V result matrix can save a lot of memory if the
-##' model contains many nodes and time-points, but where only a few of
-##' the data points are of interest for post-processing. To use this
-##' feature, a template has to be defined for which data points to
-##' record. This is done using a \code{data.frame} that specifies the
-##' time-points (column \sQuote{time}) and nodes (column
-##' \sQuote{node}) to record the state of the continuous state
-##' compartments, see \sQuote{Examples}. The specified time-points,
-##' nodes and compartments must exist in the model, or an error is
-##' raised. Note that specifying a template only affects which
-##' data-points are recorded for post-processing, it does not affect
-##' how the solver simulates the trajectory.
-##' @param model The \code{model} to set a template for the result
-##'     matrix \code{V}.
-##' @param value A \code{data.frame} that specify the nodes,
-##'     time-points and compartments of when to record the real-valued
-##'     continuous state at \code{tspan}. Use \code{NULL} to reset the
-##'     model to record the real-valued continuous state in every node
-##'     at each time-point in tspan.
-##' @export
-##' @importFrom methods as
-##' @importFrom Matrix sparseMatrix
-##' @examples
-##' ## Create an 'SISe' model with 6 nodes and initialize
-##' ## it to run over 10 days.
-##' u0 <- data.frame(S = 100:105, I = 1:6)
-##' model <- SISe(u0 = u0, tspan = 1:10, phi = rep(0, 6),
-##'     upsilon = 0.02, gamma = 0.1, alpha = 1, epsilon = 1.1e-5,
-##'     beta_t1 = 0.15, beta_t2 = 0.15, beta_t3 = 0.15, beta_t4 = 0.15,
-##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
-##'
-##' ## Run the model
-##' result <- run(model, threads = 1)
-##'
-##' ## Display the continuous state variable 'phi' for every node at
-##' ## each time-point in tspan.
-##' trajectory(result, compartments = "phi")
-##'
-##' ## Assume we are only interested in nodes '2' and '4' at the
-##' ## time-points '3' and '5'
-##' df <- data.frame(time = c(3, 5, 3, 5),
-##'                  node = c(2, 2, 4, 4),
-##'                  phi = c(TRUE, TRUE, TRUE, TRUE))
-##' V(model) <- df
-##' result <- run(model, threads = 1)
-##' trajectory(result, compartments = "phi")
-##'
-##' ## It is possible to use an empty 'data.frame' to specify
-##' ## that no data-points should be recorded for the trajectory.
-##' V(model) <- data.frame()
-##' result <- run(model, threads = 1)
-##' trajectory(result, compartments = "phi")
-##'
-##' ## Use 'NULL' to reset the model to record data for every node at
-##' ## each time-point in tspan.
-##' V(model) <- NULL
-##' result <- run(model, threads = 1)
-##' trajectory(result, compartments = "phi")
-"V<-" <- function(model, value)
-{
-    check_model_argument(model)
+    dimU <- c(Nn(model) * Nc(model), length(model@tspan))
+    dimV <- c(Nn(model) * Nd(model), length(model@tspan))
+    iU <- numeric(0)
+    jU <- numeric(0)
+    iV <- numeric(0)
+    jV <- numeric(0)
 
-    if (!is.null(value)) {
-        if (!is.data.frame(value))
-            stop("'value' argument is not a 'data.frame'")
+    if (nrow(value) == 0) {
+        ## Create sparse templates.
+        model@U_sparse <- as(sparseMatrix(i = iU, j = jU, dims = dimU), "dgCMatrix")
+        model@V_sparse <- as(sparseMatrix(i = iV, j = jV, dims = dimV), "dgCMatrix")
 
-        if (nrow(value) > 0) {
-            ## Sort the data.frame by time and node.
-            value <- value[order(value$time, value$node),
-                           c("time", "node", rownames(model@v0))]
-
-            ## Match nodes and for each matched node create an index
-            ## to all of its continuous state compartments in the V
-            ## matrix.
-            i <- match(value$node, seq_len(Nn(model)))
-            if (any(is.na(i)))
-                stop("Unable to match all nodes")
-            i <- rep((i - 1) * Nd(model), each = Nd(model)) + seq_len(Nd(model))
-
-            ## Match time-points to tspan and repeat each time-point
-            ## for every continuous state compartment in the model.
-            j <- match(value$time, model@tspan)
-            if (any(is.na(j)))
-                stop("Unable to match all time-points to tspan")
-            j <- rep(j, each = Nd(model))
-
-            ## Coerce the compartments part of the data.frame to a
-            ## logical vector that match the rows of continuous state
-            ## compartments in the V matrix.
-            value <- as.logical(t(as.matrix(value[, -(1:2)])))
-            value[is.na(value)] <- FALSE
-
-            ## Keep only the compartments and time-points that are
-            ## marked with TRUE
-            i <- i[value]
-            j <- j[value]
-        } else {
-            i <- numeric(0)
-            j <- numeric(0)
-        }
-
-        ## Specify dimension.
-        d <- c(Nn(model) * Nd(model), length(model@tspan))
-
-        ## Clear dense result matrix
-        model@V <- matrix(numeric(0), nrow = 0, ncol = 0)
-    } else {
-        ## Clear sparse result matrix
-        i <- numeric(0)
-        j <- numeric(0)
-        d <- c(0, 0)
+        return(model)
     }
 
-    ## Create sparse template
-    model@V_sparse <- as(sparseMatrix(i = i, j = j, dims = d), "dgCMatrix")
+    ## Sort the data.frame by time and node.
+    value <- value[order(value$time, value$node), ]
+
+    ## Match nodes and time-points with the model.
+    i <- match(value$node, seq_len(Nn(model)))
+    if (any(is.na(i)))
+        stop("Unable to match all nodes")
+    j <- match(value$time, model@tspan)
+    if (any(is.na(j)))
+        stop("Unable to match all time-points to tspan")
+
+    ## Coerce the compartments part of the data.frame to a logical
+    ## vector that match the rows of compartments in the U matrix.
+    if (any(colnames(value) %in% rownames(model@S))) {
+        valueU <- value[, c("time", "node", rownames(model@S))]
+        valueU <- as.logical(t(as.matrix(valueU[, -(1:2)])))
+        valueU[is.na(valueU)] <- FALSE
+
+        ## Create an index to all of its compartments in the U
+        ## matrix. Keep only compartments and time-points that are
+        ## marked with TRUE.
+        iU <- rep((i - 1) * Nc(model), each = Nc(model)) + seq_len(Nc(model))
+        jU <- rep(j, each = Nc(model))
+        iU <- iU[valueU]
+        jU <- jU[valueU]
+    }
+
+    ## Coerce the compartments part of the data.frame to a logical
+    ## vector that match the rows of continuous state compartments in
+    ## the V matrix.
+    if (any(colnames(value) %in% rownames(model@v0))) {
+        valueV <- value[, c("time", "node", rownames(model@v0))]
+        valueV <- as.logical(t(as.matrix(valueV[, -(1:2)])))
+        valueV[is.na(valueV)] <- FALSE
+
+        ## Create an index to all of its compartments in the V
+        ## matrix. Keep only compartments and time-points that are
+        ## marked with TRUE.
+        iV <- rep((i - 1) * Nd(model), each = Nd(model)) + seq_len(Nd(model))
+        jV <- rep(j, each = Nd(model))
+        iV <- iV[valueV]
+        jV <- jV[valueV]
+    }
+
+    ## Create sparse templates.
+    model@U_sparse <- as(sparseMatrix(i = iU, j = jU, dims = dimU), "dgCMatrix")
+    model@V_sparse <- as(sparseMatrix(i = iV, j = jV, dims = dimV), "dgCMatrix")
 
     model
 }

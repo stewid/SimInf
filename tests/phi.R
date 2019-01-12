@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -84,9 +84,9 @@ sis_e_phi_obs <- trajectory(sis_e, "phi")$phi
 stopifnot(all(abs(sis_e_phi_obs - as.numeric(phi_exp)) < tol))
 
 ## Run with sparse V
-V(sis_e) <- data.frame(time = seq(from = 1, to = 700, by = 7),
-                       node = 1,
-                       phi = TRUE)
+punchcard(sis_e) <- data.frame(time = seq(from = 1, to = 700, by = 7),
+                               node = 1,
+                               phi = TRUE)
 sis_e <- run(sis_e, threads = 1)
 sis_e_phi_obs <- trajectory(sis_e, "phi", as.is = TRUE)[1,]
 stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
@@ -132,9 +132,9 @@ sis_e3_phi_obs <- trajectory(sis_e3, "phi")$phi
 stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))
 
 ## Run with sparse V
-V(sis_e3) <- data.frame(time = seq(from = 1, to = 700, by = 7),
-                        node = 1,
-                        phi = TRUE)
+punchcard(sis_e3) <- data.frame(time = seq(from = 1, to = 700, by = 7),
+                                node = 1,
+                                phi = TRUE)
 sis_e3 <- run(sis_e3, threads = 1)
 sis_e3_phi_obs <- trajectory(sis_e3, "phi", as.is = TRUE)[1,]
 stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
