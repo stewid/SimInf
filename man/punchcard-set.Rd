@@ -2,13 +2,13 @@
 % Please edit documentation in R/SimInf_model.R
 \name{punchcard<-}
 \alias{punchcard<-}
-\title{Set a template for where to write the U result matrix}
+\title{Set a template for where to record result during a simualtion}
 \usage{
 punchcard(model) <- value
 }
 \arguments{
-\item{model}{The \code{model} to set a template for the result
-matrix \code{U}.}
+\item{model}{The \code{model} to set a template for where to
+record result.}
 
 \item{value}{A \code{data.frame} that specify the nodes,
 time-points and compartments to record the number of
@@ -17,14 +17,14 @@ model to record the number of inidividuals in each compartment
 in every node at each time-point in tspan.}
 }
 \description{
-Using a sparse U result matrix can save a lot of memory if the
-model contains many nodes and time-points, but where only a few of
-the data points are of interest for post-processing.
+Using a sparse result matrix can save a lot of memory if the model
+contains many nodes and time-points, but where only a few of the
+data points are of interest for post-processing.
 }
 \details{
-Using a sparse U result matrix can save a lot of memory if the
-model contains many nodes and time-points, but where only a few of
-the data points are of interest for post-processing. To use this
+Using a sparse result matrix can save a lot of memory if the model
+contains many nodes and time-points, but where only a few of the
+data points are of interest for post-processing. To use this
 feature, a template has to be defined for which data points to
 record. This is done using a \code{data.frame} that specifies the
 time-points (column \sQuote{time}) and nodes (column
