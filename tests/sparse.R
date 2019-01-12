@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -40,14 +40,14 @@ U_exp <- new("dgCMatrix",
                    94, 10, 5, 98, 8, 5),
              factors = list())
 
-U(model) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
-                           time = c(5L, 6L, 7L, 8L, 9L, 10L),
-                           S = rep(TRUE, 6),
-                           I = rep(TRUE, 6),
-                           R = rep(TRUE, 6)),
-                      .Names = c("node", "time", "S", "I", "R"),
-                      row.names = c(NA, -6L),
-                      class = "data.frame")
+punchcard(model) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
+                                   time = c(5L, 6L, 7L, 8L, 9L, 10L),
+                                   S = rep(TRUE, 6),
+                                   I = rep(TRUE, 6),
+                                   R = rep(TRUE, 6)),
+                              .Names = c("node", "time", "S", "I", "R"),
+                              row.names = c(NA, -6L),
+                              class = "data.frame")
 set.seed(123)
 U_obs <- trajectory(run(model, threads = 1), as.is = TRUE)
 stopifnot(identical(U_obs, U_exp))
@@ -79,18 +79,18 @@ model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
              beta = 0.16,
              gamma = 0.077)
 result <- run(model, threads = 1)
-U(result) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
-                            time = c(5L, 6L, 7L, 8L, 9L, 10L),
-                            S = rep(TRUE, 6),
-                            I = rep(TRUE, 6),
-                            R = rep(TRUE, 6)),
-                       .Names = c("node", "time", "S", "I", "R"),
-                       row.names = c(NA, -6L),
-                       class = "data.frame")
+punchcard(result) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
+                                    time = c(5L, 6L, 7L, 8L, 9L, 10L),
+                                    S = rep(TRUE, 6),
+                                    I = rep(TRUE, 6),
+                                    R = rep(TRUE, 6)),
+                               .Names = c("node", "time", "S", "I", "R"),
+                               row.names = c(NA, -6L),
+                               class = "data.frame")
 result <- run(result, threads = 1)
 stopifnot(identical(dim(result@U), c(0L, 0L)))
 stopifnot(identical(dim(result@U_sparse), c(18L, 10L)))
-U(result) <- NULL
+punchcard(result) <- NULL
 result <- run(result, threads = 1)
 stopifnot(identical(dim(result@U), c(18L, 10L)))
 stopifnot(identical(dim(result@U_sparse), c(0L, 0L)))
@@ -136,14 +136,14 @@ stopifnot(identical(dim(result@V_sparse), c(0L, 0L)))
 ## sparse matrix as a template for U where to write data.
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-U(model) <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
-                           time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
-                           S = c(TRUE, NA, TRUE, NA, TRUE, NA, TRUE, NA),
-                           I = c(TRUE, NA, NA, TRUE, TRUE, NA, NA, TRUE),
-                           R = c(NA, TRUE, NA, TRUE, NA, TRUE, NA, TRUE)),
-                      .Names = c("node", "time", "S", "I", "R"),
-                      row.names = c(NA, -8L),
-                      class = "data.frame")
+punchcard(model) <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
+                                   time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
+                                   S = c(TRUE, NA, TRUE, NA, TRUE, NA, TRUE, NA),
+                                   I = c(TRUE, NA, NA, TRUE, TRUE, NA, NA, TRUE),
+                                   R = c(NA, TRUE, NA, TRUE, NA, TRUE, NA, TRUE)),
+                              .Names = c("node", "time", "S", "I", "R"),
+                              row.names = c(NA, -8L),
+                              class = "data.frame")
 set.seed(22)
 result <- run(model, threads = 1)
 U_exp <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
@@ -157,14 +157,14 @@ U_exp <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
 stopifnot(identical(trajectory(result), U_exp))
 
 ## Similar test case, but without NA-values
-U(model) <- structure(list(node = 1:6,
-                           time = 5:10,
-                           S = rep(TRUE, 6),
-                           I = rep(TRUE, 6),
-                           R = rep(TRUE, 6)),
-                      .Names = c("node", "time", "S", "I", "R"),
-                      row.names = c(NA, -6L),
-                      class = "data.frame")
+punchcard(model) <- structure(list(node = 1:6,
+                                   time = 5:10,
+                                   S = rep(TRUE, 6),
+                                   I = rep(TRUE, 6),
+                                   R = rep(TRUE, 6)),
+                              .Names = c("node", "time", "S", "I", "R"),
+                              row.names = c(NA, -6L),
+                              class = "data.frame")
 set.seed(22)
 result <- run(model, threads = 1)
 U_exp <- structure(list(node = 1:6,
@@ -178,7 +178,7 @@ U_exp <- structure(list(node = 1:6,
 stopifnot(identical(trajectory(result), U_exp))
 
 ## Test to specify empty data.frame
-U(model) <- data.frame()
+punchcard(model) <- data.frame()
 result <- run(model, threads = 1)
 U_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(18, 10),
                       dimnames = list(c("S", "I", "R", "S", "I", "R",
@@ -199,7 +199,7 @@ V_exp <- as(V_exp, "dgCMatrix")
 stopifnot(identical(result@V_sparse, V_exp))
 
 ## Test that it also works to remove the sparse matrix output
-U(model) <- NULL
+punchcard(model) <- NULL
 set.seed(22)
 result <- run(model, threads = 1)
 U_exp <- structure(list(

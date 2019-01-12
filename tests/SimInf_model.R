@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -565,10 +565,10 @@ model <- SISe(u0 = u0, tspan = 1:10,
               end_t4  = 365,
               epsilon = 0.000011)
 
-U(model) <- data.frame(time = c(5, 6, 7, 8, 9, 10),
-                       node = c(1, 1, 2, 2, 3, 3),
-                       S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
-                       I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
+punchcard(model) <- data.frame(time = c(5, 6, 7, 8, 9, 10),
+                               node = c(1, 1, 2, 2, 3, 3),
+                               S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
+                               I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
 V(model) <- data.frame(time = 5:10,
                        node = 1:6,
                        phi = rep(TRUE, 6))
@@ -593,10 +593,10 @@ model <- SISe(u0 = u0, tspan = tspan,
               end_t4  = 365,
               epsilon = 0.000011)
 
-U(model) <- data.frame(time = c(5, 6, 7, 8, 9, 10),
-                       node = c(1, 1, 2, 2, 3, 3),
-                       S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
-                       I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
+punchcard(model) <- data.frame(time = c(5, 6, 7, 8, 9, 10),
+                               node = c(1, 1, 2, 2, 3, 3),
+                               S = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
+                               I = c(FALSE, TRUE, FALSE, TRUE, FALSE, TRUE))
 V(model) <- data.frame(time = 5:10,
                        node = 1:6,
                        phi = rep(TRUE, 6))

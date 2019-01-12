@@ -449,7 +449,7 @@ SimInf_model <- function(G,
 ##'                  S = c(TRUE, TRUE, TRUE, TRUE),
 ##'                  I = c(TRUE, TRUE, TRUE, TRUE),
 ##'                  R = c(TRUE, TRUE, TRUE, TRUE))
-##' U(model) <- df
+##' punchcard(model) <- df
 ##' result <- run(model, threads = 1)
 ##' trajectory(result)
 ##'
@@ -460,22 +460,22 @@ SimInf_model <- function(G,
 ##'                  S = c(FALSE, TRUE, TRUE, TRUE),
 ##'                  I = c(TRUE, FALSE, TRUE, FALSE),
 ##'                  R = c(TRUE, FALSE, TRUE, TRUE))
-##' U(model) <- df
+##' punchcard(model) <- df
 ##' result <- run(model, threads = 1)
 ##' trajectory(result)
 ##'
 ##' ## It is possible to use an empty 'data.frame' to specify
 ##' ## that no data-points should be recorded for the trajectory.
-##' U(model) <- data.frame()
+##' punchcard(model) <- data.frame()
 ##' result <- run(model, threads = 1)
 ##' trajectory(result)
 ##'
 ##' ## Use 'NULL' to reset the model to record data for every node at
 ##' ## each time-point in tspan.
-##' U(model) <- NULL
+##' punchcard(model) <- NULL
 ##' result <- run(model, threads = 1)
 ##' trajectory(result)
-"U<-" <- function(model, value)
+"punchcard<-" <- function(model, value)
 {
     check_model_argument(model)
 
