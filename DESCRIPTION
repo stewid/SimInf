@@ -67,6 +67,7 @@ Collate:
     'plot.R'
     'prevalence.R'
     'print.R'
+    'punchcard.R'
     'run_outer.R'
     'trajectory.R'
 Encoding: UTF-8
