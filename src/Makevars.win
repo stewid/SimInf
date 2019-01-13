@@ -19,11 +19,11 @@ MODELS_OBJ = $(MODELS_SRC:.c=.o)
 OBJECTS.misc = misc/SimInf_arg.o \
                misc/SimInf_forward_euler_linear_decay.o \
                misc/SimInf_ldata.o \
-               misc/SimInf_local_spread.o
+               misc/SimInf_local_spread.o \
+               misc/binheap.o
 
 OBJECTS.solvers = solvers/SimInf_solver.o \
                   solvers/ssm/SimInf_solver_ssm.o \
-                  solvers/aem/SimInf_solver_aem.o \
-                  solvers/aem/binheap.o
+                  solvers/aem/SimInf_solver_aem.o
 
 OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)
