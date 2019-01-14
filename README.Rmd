@@ -56,18 +56,15 @@ for detailed installation instructions.
 
 # Authors
 
-* Pavol Bauer [![ORCID
-  iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0003-4328-7171)
-
-* Robin Eriksson [![ORCID
-  iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0002-4291-712X)
-
-* Stefan Engblom [![ORCID
-  iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0002-3614-1732)
-
-* Stefan Widgren [![ORCID
-  iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0001-5745-2284)
-  **(Maintainer)**
+Pavol Bauer [![ORCID
+iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0003-4328-7171),
+Robin Eriksson [![ORCID
+iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0002-4291-712X),
+Stefan Engblom [![ORCID
+iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0002-3614-1732),
+and Stefan Widgren [![ORCID
+iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0001-5745-2284)
+**(Maintainer)**
 
 Any suggestions, bug reports, forks and pull requests are
 appreciated. Get in touch.
