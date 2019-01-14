@@ -51,10 +51,29 @@ for detailed installation instructions.
 
 # Authors
 
-* Pavol Bauer (Uppsala University, Sweden)
-* Robin Eriksson (Uppsala University, Sweden)
-* Stefan Engblom (Uppsala University, Sweden)
-* Stefan Widgren (National Veterinary Institute, Sweden) **(Maintainer)**
+* Pavol Bauer <a href="https://orcid.org/0000-0003-4328-7171"><img
+  alt="ORCID iD"
+  src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg"
+  style="width:16px; height:16px; margin-left:4px; margin-right:4px;
+  vertical-align:middle" /></a>
+
+* Robin Eriksson <a href="https://orcid.org/0000-0002-4291-712X"><img
+  alt="ORCID iD"
+  src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg"
+  style="width:16px; height:16px; margin-left:4px; margin-right:4px;
+  vertical-align:middle" /></a>
+
+* Stefan Engblom <a href="https://orcid.org/0000-0002-3614-1732"><img
+  alt="ORCID iD"
+  src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg"
+  style="width:16px; height:16px; margin-left:4px; margin-right:4px;
+  vertical-align:middle" /></a>
+
+* Stefan Widgren <a href="https://orcid.org/0000-0001-5745-2284"><img
+  alt="ORCID iD"
+  src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg"
+  style="width:16px; height:16px; margin-left:4px; margin-right:4px;
+  vertical-align:middle" /></a> **(Maintainer)**
 
 Any suggestions, bug reports, forks and pull requests are
 appreciated. Get in touch.
