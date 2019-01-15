@@ -260,17 +260,17 @@ parse_compartments <- function(x, compartments)
 parse_transitions <- function(transitions, compartments, ldata_names,
                               gdata_names, v0_names)
 {
-    lapply(strsplit(transitions, "->"), function(x) {
-        if (!identical(length(x), 3L))
+    lapply(strsplit(transitions, "->", fixed = TRUE), function(x) {
+        if (length(x) < 3)
             stop("Invalid transition: '", paste0(x, collapse = "->"), "'")
 
         ## Remove spaces
-        propensity <- gsub(" ", "", x[2])
+        propensity <- gsub(" ", "", x[c(-1, -length(x))])
 
         ## Determine the corresponding column in the state change
         ## vector S.
         from <- parse_compartments(x[1], compartments)
-        dest <- parse_compartments(x[3], compartments)
+        dest <- parse_compartments(x[length(x)], compartments)
         S <- dest - from
 
         propensity <- rewrite_propensity(propensity, compartments,
