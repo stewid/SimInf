@@ -97,7 +97,9 @@ SEIR <- function(u0,
                 dimnames = list(compartments, c("1", "2")))
 
     G <- matrix(c(1, 1, 1, 1, 1, 1, 1, 1, 1), nrow = 3, ncol = 3,
-                dimnames = list(c("S -> E", "E -> I", "I -> R"),
+                dimnames = list(c("S -> beta*S*I/(S+E+I+R) -> E",
+                                  "E -> epsilon*E -> I",
+                                  "I -> gamma*I -> R"),
                                 c("1", "2", "3")))
 
     S <- matrix(c(-1, 1, 0, 0, 0, -1, 1, 0, 0, 0, -1, 1), nrow = 4, ncol = 3,

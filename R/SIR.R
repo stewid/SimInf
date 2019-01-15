@@ -107,7 +107,9 @@ SIR <- function(u0,
                 dimnames = list(compartments, c("1", "2", "3", "4")))
 
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
-                dimnames = list(c("S -> I", "I -> R"), c("1", "2")))
+                dimnames = list(c("S -> beta*S*I/(S+I+R) -> I",
+                                  "I -> gamma*I -> R"),
+                                c("1", "2")))
 
     S <- matrix(c(-1, 1, 0, 0, -1, 1), nrow = 3, ncol = 2,
                 dimnames = list(compartments, c("1", "2")))
