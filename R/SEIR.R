@@ -161,7 +161,8 @@ SEIR <- function(u0,
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
 ##' summary(result)
-events_SEIR <- function() {
+events_SEIR <- function()
+{
     data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 2
     events_SISe3$select[events_SISe3$event == "enter"] <- 1
@@ -202,7 +203,8 @@ events_SEIR <- function() {
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
-u0_SEIR <- function() {
+u0_SEIR <- function()
+{
     data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
     u0_SISe3$E <- 0

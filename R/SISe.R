@@ -173,7 +173,8 @@ SISe <- function(u0,
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
 ##' summary(result)
-events_SISe <- function() {
+events_SISe <- function()
+{
     data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 2
     events_SISe3$select[events_SISe3$event == "enter"] <- 1
@@ -226,7 +227,8 @@ events_SISe <- function() {
 ##' ## Plot the proportion of nodes with at least one infected
 ##' ## individual.
 ##' plot(prevalence(result, I~S+I, "nop"), type = "l")
-u0_SISe <- function() {
+u0_SISe <- function()
+{
     data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
     u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
