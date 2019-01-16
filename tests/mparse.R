@@ -489,3 +489,11 @@ m  <- mparse(transitions = ".S.S -> 1.2*.S.S -> @",
              u0 = data.frame(.S.S = 100),
              tspan = 1:100)
 stopifnot(identical(m@C_code[13], "    return 1.2*u[0];"))
+
+## Check mparse with a propensity that contains '->' to handle a case
+## where a pointer is used in the propensity.
+m  <- mparse(transitions = "S -> a->data[2]*1.2*S -> @",
+             compartments = c("S"),
+             u0 = data.frame(S = 100),
+             tspan = 1:100)
+stopifnot(identical(m@C_code[13], "    return a->data[2]*1.2*u[0];"))

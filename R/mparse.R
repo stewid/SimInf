@@ -266,6 +266,7 @@ parse_transitions <- function(transitions, compartments, ldata_names,
 
         ## Remove spaces
         propensity <- gsub(" ", "", x[c(-1, -length(x))])
+        propensity <- paste0(propensity, collapse = "->")
 
         ## Determine the corresponding column in the state change
         ## vector S.
