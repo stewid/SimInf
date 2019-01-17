@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -15,17 +15,6 @@
 ##
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-##' Check if wholenumbers
-##'
-##' Check that all values are wholenumbers, see example in integer {base}
-##' @param x Value to check
-##' @param tol Tolerance of the check
-##' @return logical vector
-##' @noRd
-is_wholenumber <- function(x, tol = .Machine$double.eps^0.5) {
-    abs(x - round(x)) < tol
-}
 
 ##' Class \code{"SimInf_events"}
 ##'
@@ -255,6 +244,7 @@ setClass("SimInf_events",
 ##'     \code{events$time} is a numeric vector, then \code{t0} must be
 ##'     \code{NULL}.
 ##' @return S4 class \code{SimInf_events}
+##' @include check_arguments.R
 ##' @export
 ##' @importFrom methods as
 ##' @importFrom methods is
