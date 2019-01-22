@@ -178,6 +178,7 @@ rewrite_propensity <- function(propensity, compartments, ldata_names,
                                gdata_names, v0_names)
 {
     propensity <- tokens(propensity)
+    G_rowname <- paste0(propensity, collapse = "")
     depends <- integer(length(compartments))
 
     ## Find compartments in propensity
@@ -199,7 +200,9 @@ rewrite_propensity <- function(propensity, compartments, ldata_names,
     i <- match(propensity, v0_names)
     propensity <- ifelse(is.na(i), propensity, sprintf("v[%i]", i-1L))
 
-    list(propensity = paste0(propensity, collapse = ""), depends = depends)
+    list(propensity = paste0(propensity, collapse = ""),
+         depends    = depends,
+         G_rowname  = G_rowname)
 }
 
 ## Generate the 'from' or 'dest' labels in the G rownames.
@@ -217,13 +220,9 @@ G_label <- function(x)
 }
 
 ## Generate rownames from the parsed transitions
-G_rownames <- function(S)
+G_rownames <- function(transitions)
 {
-    as.character(apply(S, 2, function(x) {
-        from  <- G_label(x[which(x < 0)])
-        dest  <- G_label(x[which(x > 0)])
-        paste(from, "->", dest)
-    }))
+    as.character(do.call("rbind", lapply(transitions, "[[", "G_rowname")))
 }
 
 parse_compartments <- function(x, compartments)
@@ -278,9 +277,17 @@ parse_transitions <- function(transitions, compartments, ldata_names,
                                          ldata_names, gdata_names,
                                          v0_names)
 
+        ## Determine the G rowname
+        names(from) <- compartments
+        names(dest) <- compartments
+        from <- G_label(from[which(from > 0)])
+        dest <- G_label(dest[which(dest > 0)])
+        G_rowname <- paste(from, "->", propensity$G_rowname, "->", dest)
+
         list(propensity = propensity$propensity,
              depends    = propensity$depends,
-             S          = S)
+             S          = S,
+             G_rowname  = G_rowname)
     })
 }
 
@@ -434,7 +441,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
     G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
     colnames(G) <- as.character(seq_len(dim(G)[2]))
-    rownames(G) <- G_rownames(S)
+    rownames(G) <- G_rownames(transitions)
 
     SimInf_model(G      = G,
                  S      = S,
