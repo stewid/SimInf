@@ -149,6 +149,16 @@ res <- tools::assertError(
 stopifnot(length(grep("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
                       res[[1]]$message, fixed = TRUE)) > 0)
 
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                         compartments = c("D","W"),
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = 10, W = 10), tspan = 1:5,
+                         pts_fun = 5))
+stopifnot(length(grep("'pts_fun' must be a character vector.",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
 ## Check mparse
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                             "D+W->c3*D*W->W+W","W->c4*W->@"),
