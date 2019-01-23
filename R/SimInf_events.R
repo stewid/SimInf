@@ -109,49 +109,54 @@ setClass("SimInf_events",
                    n          = "integer",
                    proportion = "numeric",
                    select     = "integer",
-                   shift      = "integer"),
-         validity = function(object) {
-             ## Check that E and N have identical compartments
-             if ((dim(object@E)[1] > 0) && (dim(object@N)[1] > 0)) {
-                 if (!identical(rownames(object@E), rownames(object@N)))
-                     return("'E' and 'N' must have identical compartments")
-             }
+                   shift      = "integer"))
 
-             if (!identical(length(unique(c(length(object@event),
-                                            length(object@time),
-                                            length(object@node),
-                                            length(object@dest),
-                                            length(object@n),
-                                            length(object@proportion),
-                                            length(object@select),
-                                            length(object@shift)))) , 1L)) {
-                 return("All scheduled events must have equal length.")
-             }
+## Check if the SimInf_events object is valid.
+valid_SimInf_events_object <- function(object)
+{
+    ## Check that E and N have identical compartments
+    if ((dim(object@E)[1] > 0) && (dim(object@N)[1] > 0)) {
+        if (!identical(rownames(object@E), rownames(object@N)))
+            return("'E' and 'N' must have identical compartments")
+    }
 
-             if (!all(object@time > 0))
-                 return("time must be greater than 0")
+    if (!identical(length(unique(c(length(object@event),
+                                   length(object@time),
+                                   length(object@node),
+                                   length(object@dest),
+                                   length(object@n),
+                                   length(object@proportion),
+                                   length(object@select),
+                                   length(object@shift)))) , 1L)) {
+        return("All scheduled events must have equal length.")
+    }
 
-             if (any(object@event < 0, object@event > 3))
-                 return("event must be in the range 0 <= event <= 3")
+    if (!all(object@time > 0))
+        return("time must be greater than 0")
 
-             if (any(object@node < 1))
-                 return("'node' must be greater or equal to 1")
+    if (any(object@event < 0, object@event > 3))
+        return("event must be in the range 0 <= event <= 3")
 
-             if (any(object@dest[object@event == 3] < 1))
-                 return("'dest' must be greater or equal to 1")
+    if (any(object@node < 1))
+        return("'node' must be greater or equal to 1")
 
-             if (any(object@proportion < 0, object@proportion > 1))
-                 return("prop must be in the range 0 <= prop <= 1")
+    if (any(object@dest[object@event == 3] < 1))
+        return("'dest' must be greater or equal to 1")
 
-             if (any(object@select < 1, object@select > dim(object@E)[2]))
-                 return("select must be in the range 1 <= select <= Nselect")
+    if (any(object@proportion < 0, object@proportion > 1))
+        return("prop must be in the range 0 <= prop <= 1")
 
-             if (any(object@shift[object@event == 2] < 1))
-                 return("'shift' must be greater or equal to 1")
+    if (any(object@select < 1, object@select > dim(object@E)[2]))
+        return("select must be in the range 1 <= select <= Nselect")
 
-             TRUE
-         }
-)
+    if (any(object@shift[object@event == 2] < 1))
+        return("'shift' must be greater or equal to 1")
+
+    TRUE
+}
+
+## Assign the function as the validity method for the class.
+setValidity("SimInf_events", valid_SimInf_events_object)
 
 ##' Create a \code{\linkS4class{SimInf_events}} object
 ##'
