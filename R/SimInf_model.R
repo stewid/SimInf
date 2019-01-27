@@ -117,107 +117,112 @@ setClass("SimInf_model",
                    V_sparse = "dgCMatrix",
                    v0       = "matrix",
                    events   = "SimInf_events",
-                   C_code   = "character"),
-         validity = function(object) {
-             ## Check events
-             errors <- validObject(object@events)
-             if (!isTRUE(errors))
-                 return(errors)
+                   C_code   = "character"))
 
-             ## Check tspan.
-             if (!is.double(object@tspan)) {
-                 return("Input time-span must be a double vector.")
-             } else if (any(length(object@tspan) < 2,
-                            any(diff(object@tspan) <= 0),
-                            any(is.na(object@tspan)))) {
-                 return("Input time-span must be an increasing vector.")
-             }
+## Check if the SimInf_model object is valid.
+valid_SimInf_model_object <- function(object)
+{
+    ## Check events
+    errors <- validObject(object@events)
+    if (!isTRUE(errors))
+        return(errors)
 
-             ## Check u0.
-             if (!identical(storage.mode(object@u0), "integer"))
-                 return("Initial state 'u0' must be an integer matrix.")
-             if (any(object@u0 < 0L))
-                 return("Initial state 'u0' has negative elements.")
-             Nn_u0 <- dim(object@u0)[2]
+    ## Check tspan.
+    if (!is.double(object@tspan)) {
+        return("Input time-span must be a double vector.")
+    } else if (any(length(object@tspan) < 2,
+                   any(diff(object@tspan) <= 0),
+                   any(is.na(object@tspan)))) {
+        return("Input time-span must be an increasing vector.")
+    }
 
-             ## Check U.
-             if (!identical(storage.mode(object@U), "integer"))
-                 return("Output state 'U' must be an integer matrix.")
-             if (any(object@U < 0L))
-                 return("Output state 'U' has negative elements.")
+    ## Check u0.
+    if (!identical(storage.mode(object@u0), "integer"))
+        return("Initial state 'u0' must be an integer matrix.")
+    if (any(object@u0 < 0L))
+        return("Initial state 'u0' has negative elements.")
+    Nn_u0 <- dim(object@u0)[2]
 
-             ## Check v0.
-             if (!identical(storage.mode(object@v0), "double"))
-                 return("Initial model state 'v0' must be a double matrix.")
-             if ((dim(object@v0)[1] > 0)) {
-                 r <- rownames(object@v0)
-                 if (is.null(r) || any(nchar(r) == 0))
-                     return("'v0' must have rownames")
-                 if (!identical(dim(object@v0)[2], Nn_u0))
-                     return("The number of nodes in 'u0' and 'v0' must match.")
-             }
+    ## Check U.
+    if (!identical(storage.mode(object@U), "integer"))
+        return("Output state 'U' must be an integer matrix.")
+    if (any(object@U < 0L))
+        return("Output state 'U' has negative elements.")
 
-             ## Check V.
-             if (!identical(storage.mode(object@V), "double"))
-                 return("Output model state 'V' must be a double matrix.")
+    ## Check v0.
+    if (!identical(storage.mode(object@v0), "double"))
+        return("Initial model state 'v0' must be a double matrix.")
+    if ((dim(object@v0)[1] > 0)) {
+        r <- rownames(object@v0)
+        if (is.null(r) || any(nchar(r) == 0))
+            return("'v0' must have rownames")
+        if (!identical(dim(object@v0)[2], Nn_u0))
+            return("The number of nodes in 'u0' and 'v0' must match.")
+    }
 
-             ## Check S.
-             if (!all(is_wholenumber(object@S@x)))
-                 return("'S' matrix must be an integer matrix.")
+    ## Check V.
+    if (!identical(storage.mode(object@V), "double"))
+        return("Output model state 'V' must be a double matrix.")
 
-             ## Check that S and events@E have identical compartments
-             if ((dim(object@S)[1] > 0) && (dim(object@events@E)[1] > 0)) {
-                 if (!identical(rownames(object@S), rownames(object@events@E)))
-                     return("'S' and 'E' must have identical compartments")
-             }
+    ## Check S.
+    if (!all(is_wholenumber(object@S@x)))
+        return("'S' matrix must be an integer matrix.")
 
-             ## Check G.
-             Nt <- dim(object@S)[2]
-             if (!identical(dim(object@G), c(Nt, Nt)))
-                 return("Wrong size of dependency graph.")
+    ## Check that S and events@E have identical compartments
+    if ((dim(object@S)[1] > 0) && (dim(object@events@E)[1] > 0)) {
+        if (!identical(rownames(object@S), rownames(object@events@E)))
+            return("'S' and 'E' must have identical compartments")
+    }
 
-             ## Check that transitions exist in G.
-             transitions <- rownames(object@G)
-             if (is.null(transitions))
-                 return("'G' must have rownames that specify transitions.")
-             transitions <- sub("^[[:space:]]*", "", sub("[[:space:]]*$", "", transitions))
-             if (!all(nchar(transitions) > 0))
-                 return("'G' must have rownames that specify transitions.")
+    ## Check G.
+    Nt <- dim(object@S)[2]
+    if (!identical(dim(object@G), c(Nt, Nt)))
+        return("Wrong size of dependency graph.")
 
-             ## Check that the format of transitions are valid:
-             ## "X1 + X2 + ... + Xn -> Y1 + Y2 + ... + Yn" or
-             ## "X1 + X2 + ... + Xn -> propensity -> Y1 + Y2 + ... + Yn"
-             ## is expected, where X2, ..., Xn and Y2, ..., Yn are optional.
-             transitions <- strsplit(transitions, split = "->", fixed = TRUE)
-             if (any(sapply(transitions, length) < 2))
-                 return("'G' rownames have invalid transitions.")
+    ## Check that transitions exist in G.
+    transitions <- rownames(object@G)
+    if (is.null(transitions))
+        return("'G' must have rownames that specify transitions.")
+    transitions <- sub("^[[:space:]]*", "", sub("[[:space:]]*$", "", transitions))
+    if (!all(nchar(transitions) > 0))
+        return("'G' must have rownames that specify transitions.")
 
-             ## Check that transitions and S have identical compartments.
-             transitions <- unlist(lapply(transitions, function(x) {
-                 c(x[1], x[length(x)])
-             }))
-             transitions <- unlist(strsplit(transitions, split = "+", fixed = TRUE))
-             transitions <- sub("^[[:space:]]*", "", sub("[[:space:]]*$", "", transitions))
-             transitions <- unique(transitions)
-             transitions <- transitions[transitions != "@"]
-             transitions <- sub("^[[:digit:]]+[*]", "", transitions)
-             if (!all(transitions %in% rownames(object@S)))
-                 return("'G' and 'S' must have identical compartments")
+    ## Check that the format of transitions are valid:
+    ## "X1 + X2 + ... + Xn -> Y1 + Y2 + ... + Yn" or
+    ## "X1 + X2 + ... + Xn -> propensity -> Y1 + Y2 + ... + Yn"
+    ## is expected, where X2, ..., Xn and Y2, ..., Yn are optional.
+    transitions <- strsplit(transitions, split = "->", fixed = TRUE)
+    if (any(sapply(transitions, length) < 2))
+        return("'G' rownames have invalid transitions.")
 
-             ## Check ldata.
-             if (!is.double(object@ldata))
-                 return("'ldata' matrix must be a double matrix.")
-             Nn_ldata <- dim(object@ldata)[2]
-             if (Nn_ldata > 0 && !identical(Nn_ldata, Nn_u0))
-                 return("The number of nodes in 'u0' and 'ldata' must match.")
+    ## Check that transitions and S have identical compartments.
+    transitions <- unlist(lapply(transitions, function(x) {
+        c(x[1], x[length(x)])
+    }))
+    transitions <- unlist(strsplit(transitions, split = "+", fixed = TRUE))
+    transitions <- sub("^[[:space:]]*", "", sub("[[:space:]]*$", "", transitions))
+    transitions <- unique(transitions)
+    transitions <- transitions[transitions != "@"]
+    transitions <- sub("^[[:digit:]]+[*]", "", transitions)
+    if (!all(transitions %in% rownames(object@S)))
+        return("'G' and 'S' must have identical compartments")
 
-             ## Check gdata.
-             if (!is.double(object@gdata))
-                 return("'gdata' must be a double vector.")
+    ## Check ldata.
+    if (!is.double(object@ldata))
+        return("'ldata' matrix must be a double matrix.")
+    Nn_ldata <- dim(object@ldata)[2]
+    if (Nn_ldata > 0 && !identical(Nn_ldata, Nn_u0))
+        return("The number of nodes in 'u0' and 'ldata' must match.")
 
-             TRUE
-         }
-)
+    ## Check gdata.
+    if (!is.double(object@gdata))
+        return("'gdata' must be a double vector.")
+
+    TRUE
+}
+
+## Assign the function as the validity method for the class.
+setValidity("SimInf_model", valid_SimInf_model_object)
 
 ## Utility function to coerce the data.frame to a transposed matrix.
 as_t_matrix <- function(x) {
