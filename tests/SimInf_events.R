@@ -510,6 +510,17 @@ summary_expected <-
 summary_observed <- capture.output(summary(events))
 stopifnot(identical(summary_observed, summary_expected))
 
+## Test summary method with no scheduled events
+events <- SimInf_events(E = E, N = N)
+summary_expected <-
+    c("Number of scheduled events: 0",
+      " - Exit: 0",
+      " - Enter: 0",
+      " - Internal transfer: 0",
+      " - External transfer: 0")
+summary_observed <- capture.output(summary(events))
+stopifnot(identical(summary_observed, summary_expected))
+
 ## Check if converting the events to a data.frame results in the same
 ## as the events data submitted to the SimInf_events function.
 events <- structure(list(
