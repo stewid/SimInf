@@ -51,6 +51,71 @@ N <- matrix(c(2, 0,
 events <- SimInf_events(E = E, N = N)
 stopifnot(isTRUE(SimInf:::valid_SimInf_events_object(events)))
 
+rownames(events@E) <- tolower(rownames(events@E))
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "'E' and 'N' must have identical compartments."))
+rownames(events@E) <- NULL
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "'E' and 'N' must have rownames matching the compartments."))
+
+events <- SimInf_events(E = E, N = N)
+events@event <- 3L
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "All scheduled events must have equal length."))
+
+events@event <- 3L
+events@time <- 1L
+events@node <- 2L
+events@dest <- 1L
+events@n <- 1L
+events@proportion <- 0
+events@select <- 1L
+events@shift <- 1L
+
+events@time <- 0L
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "time must be greater than 0"))
+events@time <- 1L
+
+events@event <- -1L
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "event must be in the range 0 <= event <= 3"))
+events@event <- 4L
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "event must be in the range 0 <= event <= 3"))
+events@event <- 3L
+
+events@node <- 0L
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "'node' must be greater or equal to 1"))
+events@node <- 2L
+
+events@dest <- 0L
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "'dest' must be greater or equal to 1"))
+events@dest <- 1L
+
+events@proportion <- -1
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "prop must be in the range 0 <= prop <= 1"))
+events@proportion <- 2
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "prop must be in the range 0 <= prop <= 1"))
+events@proportion <- 0
+
+events@select <- 0L
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "select must be in the range 1 <= select <= Nselect"))
+events@select <- 7L
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "select must be in the range 1 <= select <= Nselect"))
+events@select <- 1L
+
+events@event <- 2L
+events@shift <- 0L
+stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
+                    "'shift' must be greater or equal to 1"))
+
 ## Check missing columns in events
 ## Iterate over each column and rename it
 lapply(seq_len(8), function(i) {
