@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,7 +31,9 @@ E <- Matrix(c(1, 0, 0, 1, 0, 0,
             nrow   = 6,
             ncol   = 6,
             byrow  = TRUE,
-            sparse = TRUE)
+            sparse = TRUE,
+            dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                            c("1", "2", "3", "4", "5", "6")))
 
 N <- matrix(c(2, 0,
               2, 0,
@@ -41,7 +43,13 @@ N <- matrix(c(2, 0,
               0, 0),
             nrow   = 6,
             ncol   = 2,
-            byrow  = TRUE)
+            byrow  = TRUE,
+            dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
+                            c("1", "2")))
+
+## Check valid_SimInf_events_object
+events <- SimInf_events(E = E, N = N)
+stopifnot(isTRUE(SimInf:::valid_SimInf_events_object(events)))
 
 ## Check missing columns in events
 ## Iterate over each column and rename it
@@ -414,29 +422,9 @@ events <- new("SimInf_events",
 str(events)
 stopifnot(identical(SimInf_events(), events))
 
-## Check SimInf_events plot method
-E <- Matrix(c(1, 0, 0, 1, 0, 0,
-              0, 0, 0, 1, 0, 0,
-              0, 1, 0, 0, 1, 0,
-              0, 0, 0, 0, 1, 0,
-              0, 0, 1, 0, 0, 1,
-              0, 0, 0, 0, 0, 1),
-            nrow   = 6,
-            ncol   = 6,
-            byrow  = TRUE,
-            sparse = TRUE)
-E <- as(E, "dgCMatrix")
-N <- matrix(c(2, 0,
-              2, 0,
-              0, 2,
-              0, 2,
-              0, 0,
-              0, 0),
-            nrow   = 6,
-            ncol   = 2,
-            byrow  = TRUE)
+## Check the SimInf_events plot method. Reduce the run-time by only
+## using one year of data
 data(events_SISe3)
-## Save run-time by only using one year of data
 events_SISe3 <- events_SISe3[events_SISe3$time < 366,]
 events <- SimInf_events(E = E, N = N, events = events_SISe3)
 stopifnot(identical(events, show(events)))
@@ -457,9 +445,8 @@ summary_expected <-
 summary_observed <- capture.output(summary(events))
 stopifnot(identical(summary_observed, summary_expected))
 
-## Check if converting events to data.frame results in the same as the
-## events data submitted to the SimInf_events function
-
+## Check if converting the events to a data.frame results in the same
+## as the events data submitted to the SimInf_events function.
 events <- structure(list(
     event = c(3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
               3L, 3L, 3L, 3L, 3L, 3L),
