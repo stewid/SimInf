@@ -55,6 +55,13 @@ storage.mode(u0) <- "integer"
 U <- matrix(nrow = 0, ncol = 0)
 storage.mode(U) <- "integer"
 
+## Check valid_SimInf_model_object
+m <- SISe(u0 = data.frame(S = 10, I = 0), tspan = 1:10, phi = 0, upsilon = 0.1,
+          gamma = 0.1, alpha = 1.0, beta_t1 = 0.1, beta_t2 = 0.1, beta_t3 = 0.1,
+          beta_t4 = 0.1, end_t1  = 91, end_t2  = 182, end_t3  = 273, end_t4  = 365,
+          epsilon = 0.1)
+stopifnot(isTRUE(SimInf:::valid_SimInf_model_object(m)))
+
 ## Check tspan
 res <- tools::assertError(new("SimInf_model",
                               G     = G,
