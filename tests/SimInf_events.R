@@ -116,6 +116,37 @@ events@shift <- 0L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
                     "'shift' must be greater or equal to 1"))
 
+## Check that an error is raised when E is NULL and events is
+## non-NULL.
+events <- data.frame(event = 3, time = 1, node = 2, dest = 1, n = 1,
+                     proportion = 1, select = 0, shift = 1)
+res <- tools::assertError(SimInf_events(events = events))
+stopifnot(length(grep("events is not NULL when E is NULL",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
+## Check that an error is raised when N is not an integer matrix.
+res <- tools::assertError(SimInf_events(N = c("a", "b")))
+stopifnot(length(grep("'N' must be an integer matrix",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
+## Check that an error is raised when N is not an integer matrix.
+res <- tools::assertError(SimInf_events(N = matrix(c(1.5, 1.5), nrow = 2)))
+stopifnot(length(grep("'N' must be an integer matrix",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
+## Check that an error is raised when events is not a data.frame.
+res <- tools::assertError(SimInf_events(E = E, events = c("a", "b")))
+stopifnot(length(grep("events must be a data.frame",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
+## Check that an error is raised when events contains a non-numeric
+## value.
+events <- data.frame(event = 3, time = 1, node = 2, dest = 1, n = 1,
+                     proportion = "1", select = 0, shift = 1)
+res <- tools::assertError(SimInf_events(E = E, events = events))
+stopifnot(length(grep("Columns in events must be numeric",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
 ## Check missing columns in events
 ## Iterate over each column and rename it
 lapply(seq_len(8), function(i) {
