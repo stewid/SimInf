@@ -62,6 +62,16 @@ m <- SISe(u0 = data.frame(S = 10, I = 0), tspan = 1:10, phi = 0, upsilon = 0.1,
           epsilon = 0.1)
 stopifnot(isTRUE(SimInf:::valid_SimInf_model_object(m)))
 
+## Check valid_SimInf_model_object with invalid tspan.
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+m@tspan <- 1L
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "Input time-span must be a double vector."))
+m@tspan <- 1
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "Input time-span must be an increasing vector."))
+
 ## Check tspan
 res <- tools::assertError(new("SimInf_model",
                               G     = G,
