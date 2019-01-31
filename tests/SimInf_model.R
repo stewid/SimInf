@@ -84,6 +84,18 @@ m@u0[1, 1] <- -1L
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "Initial state 'u0' has negative elements."))
 
+## Check valid_SimInf_model_object with invalid U.
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+storage.mode(m@U) <- "double"
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "Output state 'U' must be an integer matrix."))
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+m@U <- matrix(-1L)
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "Output state 'U' has negative elements."))
+
 ## Check tspan
 res <- tools::assertError(new("SimInf_model",
                               G     = G,
