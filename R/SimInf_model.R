@@ -123,9 +123,7 @@ setClass("SimInf_model",
 valid_SimInf_model_object <- function(object)
 {
     ## Check events
-    errors <- validObject(object@events)
-    if (!isTRUE(errors))
-        return(errors)
+    validObject(object@events)
 
     ## Check tspan.
     if (!is.double(object@tspan)) {
