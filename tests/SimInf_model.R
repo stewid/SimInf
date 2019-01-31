@@ -96,6 +96,20 @@ m@U <- matrix(-1L)
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "Output state 'U' has negative elements."))
 
+## Check valid_SimInf_model_object with invalid v0.
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+m@v0 <- matrix(1L)
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "Initial model state 'v0' must be a double matrix."))
+m@v0 <- matrix(1)
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'v0' must have rownames"))
+m@v0 <- matrix(c(1, 1), ncol = 2)
+rownames(m@v0) <- "test"
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "The number of nodes in 'u0' and 'v0' must match."))
+
 ## Check tspan
 res <- tools::assertError(new("SimInf_model",
                               G     = G,
