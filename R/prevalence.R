@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -15,6 +15,29 @@
 ##
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+## Determine the compartments in the formula item and split
+## 'compartment1 + compartment2 + ...'. Moreover, trim whitespace and
+## replace '.' with all compartments in the model.
+parse_formula_item <- function(x, compartments)
+{
+    x <- unlist(strsplit(x, "+", fixed = TRUE))
+    x <- sub("^\\s", "", sub("\\s$", "", x))
+    x <- unlist(sapply(x, function(y) {
+        if (identical(y, "."))
+            y <- compartments
+        y
+    }))
+    x <- unique(as.character(x))
+    if (!length(x))
+        stop("No compartments in formula specification.")
+    i <- !(x %in% compartments)
+    if (any(i)) {
+        stop("Non-existing compartment(s) in model: ",
+             paste0("'", x[i], "'", collapse = ", "))
+    }
+    x
+}
 
 ##' Calculate prevalence from a model object with trajectory data
 ##'
@@ -90,6 +113,9 @@ prevalence <- function(model,
         stop("Missing 'formula' argument")
     if (!is(formula, "formula"))
         stop("'formula' argument is not a 'formula'")
+    formula <- as.character(formula)
+    if (!identical(length(formula), 3L))
+        stop("Invalid formula specification.")
 
     ## Check 'type' argument
     type <- match.arg(type)
@@ -107,48 +133,11 @@ prevalence <- function(model,
         node <- as.integer(sort(unique(node)))
     }
 
-    ## Determine compartments for population
-    j <- attr(terms(formula, allowDotAsName = TRUE), "term.labels")
-    j <- j[attr(terms(formula, allowDotAsName = TRUE), "order") == 1]
-    if (length(j) < 1)
-        stop("Invalid formula specification of population")
-    pop <- unlist(sapply(j, function(jj) {
-        ## Replace '.' with all discrete compartments in the model.
-        if (identical(jj, "."))
-            jj <- rownames(model@S)
-        jj
-    }))
-    pop <- unique(as.character(pop))
-    if (!length(pop))
-        stop("'pop' is empty")
-    j <- !(pop %in% rownames(model@S))
-    if (any(j)) {
-        stop("Non-existing compartment(s) in model: ",
-             paste0("'", pop[j], "'", collapse = ", "))
-    }
+    ## Determine the compartments for the population.
+    pop <- parse_formula_item(formula[3], rownames(model@S))
 
-    ## Determine compartments for cases
-    j <- attr(terms(formula, allowDotAsName = TRUE), "response")
-    if (j < 1)
-        stop("Invalid formula specification of 'cases'")
-    cases <- attr(terms(formula, allowDotAsName = TRUE), "variables")[-1]
-    j <- as.character(cases[j])
-    j <- unlist(strsplit(j, "+", fixed = TRUE))
-    j <- sub("^\\s", "", sub("\\s$", "", j))
-    cases <- unlist(sapply(j, function(jj) {
-        ## Replace '.' with all discrete compartments in the model.
-        if (identical(jj, "."))
-            jj <- rownames(model@S)
-        jj
-    }))
-    cases <- unique(as.character(cases))
-    if (!length(cases))
-        stop("'cases' is empty")
-    j <- !(cases %in% rownames(model@S))
-    if (any(j)) {
-        stop("Non-existing compartment(s) in model: ",
-             paste0("'", cases[j], "'", collapse = ", "))
-    }
+    ## Determine the compartments for the cases.
+    cases <- parse_formula_item(formula[2], rownames(model@S))
 
     ## Sum all individuals in 'cases' compartments in a matrix with
     ## one row per node X length(tspan)
