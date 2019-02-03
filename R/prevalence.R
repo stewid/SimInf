@@ -57,6 +57,39 @@ sum_individuals <- function(model, compartments, node)
     m
 }
 
+evaluate_condition <- function(condition, model, node)
+{
+    if (all(identical(dim(model@U), c(0L, 0L)),
+            identical(dim(model@U_sparse), c(0L, 0L)),
+            identical(dim(model@V), c(0L, 0L)),
+            identical(dim(model@V_sparse), c(0L, 0L)))) {
+        stop("Please run the model first, the trajectory is empty")
+    }
+
+    ## Iterate over each time step.
+    sapply(seq_len(ncol(model@U)), function(i) {
+        ## Restructure the data from the time step in a matrix with
+        ## one column for each compartment.
+        m <- matrix(model@U[, i], ncol = Nc(model), byrow = TRUE)
+        colnames(m) <- rownames(model@S)
+        if (!is.null(node))
+            m <- m[node, , drop = FALSE]
+
+        ## Create an environment with the data from the time step.
+        e <- new.env(parent = baseenv())
+        for (j in seq_len(ncol(m))) {
+            assign(x = rownames(model@S)[j], value = m[, j], pos = e)
+        }
+
+        ## Evaluate the condition on the data for the time step.
+        e$condition <- condition
+        k <- evalq(eval(parse(text = condition)), envir = e)
+        if (!is.logical(k) || !identical(nrow(m), length(k)))
+            stop("The condition must be either 'TRUE' or 'FALSE' for every node")
+        k
+    })
+}
+
 ##' Calculate prevalence from a model object with trajectory data
 ##'
 ##' Calculate the proportion of individuals with disease in the
@@ -143,12 +176,27 @@ prevalence <- function(model,
 
     ## Determine the compartments for the cases and the population.
     cases <- parse_formula_item(formula[2], rownames(model@S))
-    population <- parse_formula_item(formula[3], rownames(model@S))
+    population <- unlist(strsplit(formula[3], "|", fixed = TRUE))
+    if (length(population) > 2) {
+        stop("Invalid formula specification.")
+    } else if (identical(length(population), 2L)) {
+        condition <- evaluate_condition(population[2], model, node)
+        population <- parse_formula_item(population[1], rownames(model@S))
+    } else {
+        condition <- NULL
+        population <- parse_formula_item(population, rownames(model@S))
+    }
 
     ## Sum all individuals in the 'cases' and 'population'
     ## compartments in a matrix with one row per node X length(tspan)
     cases <- sum_individuals(model, cases, node)
     population <- sum_individuals(model, population, node)
+
+    ## Apply condition
+    if (!is.null(condition)) {
+        cases <- cases * condition
+        population <- population * condition
+    }
 
     if (identical(type, "pop")) {
         cases <- colSums(cases)

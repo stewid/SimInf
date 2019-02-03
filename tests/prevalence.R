@@ -1,0 +1,63 @@
+## SimInf, a framework for stochastic disease spread simulations
+## Copyright (C) 2015 - 2019  Stefan Widgren
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+library("SimInf")
+
+## For debugging
+sessionInfo()
+
+## Define a tolerance
+tol = 1e-8
+
+model <- SIR(u0 = data.frame(S = c(8, 5, 0), I = c(0, 1, 0), R = c(0, 0, 4)),
+             tspan = 1:5, beta = 0.1, gamma = 0.1)
+
+res <- tools::assertError(prevalence(model, I~.|R == 0))
+stopifnot(length(grep("Please run the model first, the trajectory is empty",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
+model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
+                    0L, 0L, 0L, 0L, 0L,
+                    0L, 0L, 0L, 0L, 0L,
+                    5L, 4L, 3L, 2L, 1L,
+                    1L, 2L, 3L, 3L, 3L,
+                    0L, 0L, 0L, 1L, 2L,
+                    0L, 0L, 0L, 0L, 0L,
+                    0L, 0L, 0L, 0L, 0L,
+                    4L, 4L, 4L, 4L, 4L),
+                  ncol = 5,
+                  byrow = TRUE,
+                  dimnames = list(c("S", "I", "R", "S", "I", "R", "S", "I", "R"),
+                                  c("1", "2", "3", "4", "5")))
+
+p <- prevalence(model, I~.)$prevalence
+stopifnot(all(abs(p - c(1/18, 2/18, 3/18, 3/18, 3/18)) < tol))
+
+p <- prevalence(model, I~.|R == 0)$prevalence
+stopifnot(all(abs(p - c(1/14, 2/14, 3/14, 0/8, 0/8)) < tol))
+
+p <- prevalence(model, I~.|R > 0)$prevalence
+stopifnot(all(abs(p - c(0/4, 0/4, 0/4, 3/10, 3/10)) < tol))
+
+stopifnot(all(is.nan(prevalence(model, I~.|R == 5)$prevalence)))
+
+res <- tools::assertError(prevalence(model, I~.|TRUE == 0))
+stopifnot(length(grep("The condition must be either 'TRUE' or 'FALSE' for every node",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
+res <- tools::assertError(prevalence(model, I~.| S == 0 | R == 0))
+stopifnot(length(grep("Invalid formula specification.",
+                      res[[1]]$message, fixed = TRUE)) > 0)
