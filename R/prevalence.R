@@ -121,17 +121,7 @@ prevalence <- function(model,
     type <- match.arg(type)
 
     ## Check the 'node' argument
-    if (!is.null(node)) {
-        if (!is.numeric(node))
-            stop("'node' must be integer")
-        if (!all(is_wholenumber(node)))
-            stop("'node' must be integer")
-        if (min(node) < 1)
-            stop("'node' must be integer > 0")
-        if (max(node) > Nn(model))
-            stop("'node' must be integer <= number of nodes")
-        node <- as.integer(sort(unique(node)))
-    }
+    node <- check_node_argument(model, node)
 
     ## Determine the compartments for the population.
     pop <- parse_formula_item(formula[3], rownames(model@S))

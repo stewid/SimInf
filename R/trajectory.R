@@ -215,17 +215,7 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     }
 
     ## Check the 'node' argument
-    if (!is.null(node)) {
-        if (!is.numeric(node))
-            stop("'node' must be integer")
-        if (!all(is_wholenumber(node)))
-            stop("'node' must be integer")
-        if (min(node) < 1)
-            stop("'node' must be integer > 0")
-        if (max(node) > Nn(model))
-            stop("'node' must be integer <= number of nodes")
-        node <- as.integer(sort(unique(node)))
-    }
+    node <- check_node_argument(model, node)
 
     ## The arguments seem ok...go on and extract the trajectory
 

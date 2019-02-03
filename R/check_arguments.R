@@ -180,3 +180,27 @@ check_model_argument <- function(model) {
 is_wholenumber <- function(x, tol = .Machine$double.eps^0.5) {
     abs(x - round(x)) < tol
 }
+
+##' Check the 'node' argument
+##'
+##' Raise an error if the node argument is not ok.
+##' @param model the model with nodes.
+##' @param node the node vector to check
+##' @return the node vector with unique nodes sorted in order.
+##' @noRd
+check_node_argument <- function(model, node)
+{
+    if (is.null(node))
+        return(NULL)
+
+    if (!is.numeric(node))
+        stop("'node' must be integer")
+    if (!all(is_wholenumber(node)))
+        stop("'node' must be integer")
+    if (min(node) < 1)
+        stop("'node' must be integer > 0")
+    if (max(node) > Nn(model))
+        stop("'node' must be integer <= number of nodes")
+
+    node <- as.integer(sort(unique(node)))
+}
