@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -109,6 +109,7 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
 ##'     matrix.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
+##' @include prevalence.R
 ##' @export
 ##' @importFrom methods is
 ##' @importFrom stats terms
@@ -163,17 +164,11 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     ## Split the 'compartments' argument to match the compartments in
     ## U and V.
     if (is(compartments, "formula")) {
-        j <- attr(terms(compartments, allowDotAsName = TRUE), "term.labels")
-        j <- j[attr(terms(compartments, allowDotAsName = TRUE), "order") == 1]
-        if (length(j) < 1)
+        compartments <- as.character(compartments)
+        if (!identical(length(compartments), 2L))
             stop("Invalid formula specification of 'compartments'")
-        compartments <- unlist(sapply(j, function(jj) {
-            ## Replace '.' with all compartments (discrete and
-            ## continuous) in the model.
-            if (identical(jj, "."))
-                jj <- c(rownames(model@S), rownames(model@v0))
-            jj
-        }))
+        compartments <- parse_formula_item(
+            compartments[2], c(rownames(model@S), rownames(model@v0)))
     }
 
     compartments_U <- NULL
