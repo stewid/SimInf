@@ -141,16 +141,14 @@ prevalence <- function(model,
     ## Check the 'node' argument
     node <- check_node_argument(model, node)
 
-    ## Determine the compartments for the population.
-    pop <- parse_formula_item(formula[3], rownames(model@S))
-
-    ## Determine the compartments for the cases.
+    ## Determine the compartments for the cases and the population.
     cases <- parse_formula_item(formula[2], rownames(model@S))
+    population <- parse_formula_item(formula[3], rownames(model@S))
 
-    ## Sum all individuals in 'cases' and 'pop' compartments in a
-    ## matrix with one row per node X length(tspan)
+    ## Sum all individuals in the 'cases' and 'population'
+    ## compartments in a matrix with one row per node X length(tspan)
     cm <- sum_individuals(model, cases, node)
-    pm <- sum_individuals(model, pop, node)
+    pm <- sum_individuals(model, population, node)
 
     if (identical(type, "pop")) {
         cm <- colSums(cm)
