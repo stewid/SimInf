@@ -39,6 +39,24 @@ parse_formula_item <- function(x, compartments)
     x
 }
 
+## Sum all individuals in compartments in a matrix with one row per
+## node X length(tspan)
+sum_individuals <- function(model, compartments, node)
+{
+    m <- NULL
+    for (compartment in compartments) {
+        if (is.null(m)) {
+            m <- trajectory(model, compartments = compartment,
+                            node = node, as.is = TRUE)
+        } else {
+            m <- m + trajectory(model, compartments = compartment,
+                                node = node, as.is = TRUE)
+        }
+    }
+    dimnames(m) <- NULL
+    m
+}
+
 ##' Calculate prevalence from a model object with trajectory data
 ##'
 ##' Calculate the proportion of individuals with disease in the
@@ -129,33 +147,10 @@ prevalence <- function(model,
     ## Determine the compartments for the cases.
     cases <- parse_formula_item(formula[2], rownames(model@S))
 
-    ## Sum all individuals in 'cases' compartments in a matrix with
-    ## one row per node X length(tspan)
-    cm <- NULL
-    for (compartment in cases) {
-        if (is.null(cm)) {
-            cm <- trajectory(model, compartments = compartment,
-                             node = node, as.is = TRUE)
-        } else {
-            cm <- cm + trajectory(model, compartments = compartment,
-                                  node = node, as.is = TRUE)
-        }
-    }
-    dimnames(cm) <- NULL
-
-    ## Sum all individuals in 'pop' compartments in a matrix with one
-    ## row per node X length(tspan)
-    pm <- NULL
-    for (compartment in pop) {
-        if (is.null(pm)) {
-            pm <- trajectory(model, compartments = compartment,
-                             node = node, as.is = TRUE)
-        } else {
-            pm <- pm + trajectory(model, compartments = compartment,
-                                  node = node, as.is = TRUE)
-        }
-    }
-    dimnames(pm) <- NULL
+    ## Sum all individuals in 'cases' and 'pop' compartments in a
+    ## matrix with one row per node X length(tspan)
+    cm <- sum_individuals(model, cases, node)
+    pm <- sum_individuals(model, pop, node)
 
     if (identical(type, "pop")) {
         cm <- colSums(cm)
