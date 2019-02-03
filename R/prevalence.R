@@ -147,27 +147,29 @@ prevalence <- function(model,
 
     ## Sum all individuals in the 'cases' and 'population'
     ## compartments in a matrix with one row per node X length(tspan)
-    cm <- sum_individuals(model, cases, node)
-    pm <- sum_individuals(model, population, node)
+    cases <- sum_individuals(model, cases, node)
+    population <- sum_individuals(model, population, node)
 
     if (identical(type, "pop")) {
-        cm <- colSums(cm)
-        pm <- colSums(pm)
+        cases <- colSums(cases)
+        population <- colSums(population)
     } else if (identical(type, "nop")) {
-        cm <- colSums(cm > 0)
+        cases <- colSums(cases > 0)
         ## Only include nodes with individuals
-        pm <- colSums(pm > 0)
+        population <- colSums(population > 0)
     }
 
+    prevalence <- cases / population
+
     if (isTRUE(as.is))
-        return(cm / pm)
+        return(prevalence)
 
     time <- names(model@tspan)
     if (is.null(time))
         time <- model@tspan
     if (type %in% c("pop", "nop")) {
         return(data.frame(time = time,
-                          prevalence = cm / pm,
+                          prevalence = prevalence,
                           stringsAsFactors = FALSE))
     }
 
@@ -176,6 +178,6 @@ prevalence <- function(model,
 
     data.frame(node = node,
                time = rep(time, each = length(node)),
-               prevalence = as.numeric(cm / pm),
+               prevalence = as.numeric(prevalence),
                stringsAsFactors = FALSE)
 }
