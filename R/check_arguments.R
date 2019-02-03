@@ -23,7 +23,8 @@
 ##' @param ... The arguments to check
 ##' @return invisible(NULL)
 ##' @noRd
-check_infectious_pressure_arg <- function(len, ...) {
+check_infectious_pressure_arg <- function(len, ...)
+{
     arg <- list(...)
     for (i in seq_len(length(arg))) {
         if (!is.numeric(arg[[i]])) {
@@ -60,7 +61,8 @@ check_infectious_pressure_arg <- function(len, ...) {
 ##' @param ... The arguments to check
 ##' @return invisible(NULL)
 ##' @noRd
-check_integer_arg <- function(...) {
+check_integer_arg <- function(...)
+{
     arg <- list(...)
     for (i in seq_len(length(arg))) {
         if (is.null(arg[[i]])) {
@@ -91,7 +93,8 @@ check_integer_arg <- function(...) {
 ##' @param ... The arguments to check
 ##' @return invisible(NULL)
 ##' @noRd
-check_gdata_arg <- function(...) {
+check_gdata_arg <- function(...)
+{
     arg <- list(...)
     for (i in seq_len(length(arg))) {
         if (is.null(arg[[i]])) {
@@ -124,7 +127,8 @@ check_gdata_arg <- function(...) {
 ##' @param ... The arguments to check
 ##' @return invisible(NULL)
 ##' @noRd
-check_end_t_arg <- function(len, ...) {
+check_end_t_arg <- function(len, ...)
+{
     arg <- list(...)
     names(arg) <- match.call(expand.dots = FALSE)$'...'
 
@@ -161,7 +165,8 @@ check_end_t_arg <- function(len, ...) {
 ##' @param model the model to check.
 ##' @return invisible(NULL)
 ##' @noRd
-check_model_argument <- function(model) {
+check_model_argument <- function(model)
+{
     if (missing(model))
         stop("Missing 'model' argument")
     if (!is(model, "SimInf_model"))
@@ -177,7 +182,8 @@ check_model_argument <- function(model) {
 ##' @param tol Tolerance of the check
 ##' @return logical vector
 ##' @noRd
-is_wholenumber <- function(x, tol = .Machine$double.eps^0.5) {
+is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
+{
     abs(x - round(x)) < tol
 }
 
