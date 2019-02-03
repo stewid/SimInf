@@ -51,7 +51,7 @@ for detailed installation instructions.
 
 # Authors
 
-Pavol Bauer [![ORCID
+In alpabetical order: Pavol Bauer [![ORCID
 iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0003-4328-7171),
 Robin Eriksson [![ORCID
 iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0002-4291-712X),
