@@ -174,17 +174,17 @@ prevalence <- function(model,
     ## Check the 'node' argument
     node <- check_node_argument(model, node)
 
-    ## Determine the compartments for the cases and the population.
+    ## Determine the compartments for the cases and the
+    ## population. Check if the formula contains a condition.
     cases <- parse_formula_item(formula[2], rownames(model@S))
-    population <- unlist(strsplit(formula[3], "|", fixed = TRUE))
-    if (length(population) > 2) {
-        stop("Invalid formula specification.")
-    } else if (identical(length(population), 2L)) {
-        condition <- evaluate_condition(population[2], model, node)
-        population <- parse_formula_item(population[1], rownames(model@S))
+    if (regexpr("|", formula[3], fixed = TRUE) > 1) {
+        condition <- sub("(^[^|]+)([|]?)(.*)$", "\\3", formula[3])
+        condition <- evaluate_condition(condition, model, node)
+        population <- sub("(^[^|]+)([|]?)(.*)$", "\\1", formula[3])
+        population <- parse_formula_item(population, rownames(model@S))
     } else {
         condition <- NULL
-        population <- parse_formula_item(population, rownames(model@S))
+        population <- parse_formula_item(formula[3], rownames(model@S))
     }
 
     ## Sum all individuals in the 'cases' and 'population'

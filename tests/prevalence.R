@@ -58,6 +58,5 @@ res <- tools::assertError(prevalence(model, I~.|TRUE == 0))
 stopifnot(length(grep("The condition must be either 'TRUE' or 'FALSE' for every node",
                       res[[1]]$message, fixed = TRUE)) > 0)
 
-res <- tools::assertError(prevalence(model, I~.| S == 0 | R == 0))
-stopifnot(length(grep("Invalid formula specification.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+p <- prevalence(model, I~.| S == 0 | R == 0)$prevalence
+stopifnot(all(abs(p - c(1/18, 2/18, 3/18, 0/12, 0/12)) < tol))
