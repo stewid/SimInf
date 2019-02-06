@@ -43,6 +43,22 @@ model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
                   dimnames = list(c("S", "I", "R", "S", "I", "R", "S", "I", "R"),
                                   c("1", "2", "3", "4", "5")))
 
+res <- tools::assertError(prevalence(model))
+stopifnot("Missing 'formula' argument"
+          == res[[1]]$message)
+
+res <- tools::assertError(prevalence(model, "I~."))
+stopifnot("'formula' argument is not a 'formula'"
+          == res[[1]]$message)
+
+res <- tools::assertError(prevalence(model, ~I))
+stopifnot("Invalid formula specification."
+          == res[[1]]$message)
+
+res <- tools::assertError(SimInf:::parse_formula_item("", "S"))
+stopifnot("No compartments in formula specification."
+          == res[[1]]$message)
+
 p <- prevalence(model, I~.)$prevalence
 stopifnot(all(abs(p - c(1/18, 2/18, 3/18, 3/18, 3/18)) < tol))
 
