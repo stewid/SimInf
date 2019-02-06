@@ -59,35 +59,28 @@ sum_individuals <- function(model, compartments, node)
 
 evaluate_condition <- function(condition, model, node)
 {
-    if (all(identical(dim(model@U), c(0L, 0L)),
-            identical(dim(model@U_sparse), c(0L, 0L)),
-            identical(dim(model@V), c(0L, 0L)),
-            identical(dim(model@V_sparse), c(0L, 0L)))) {
-        stop("Please run the model first, the trajectory is empty")
+    ## Create an environment to hold the trajectory data with one
+    ## column for each compartment.
+    e <- new.env(parent = baseenv())
+    for (compartment in rownames(model@S)) {
+        assign(x = compartment,
+               value = as.integer(trajectory(
+                   model,
+                   compartments = compartment,
+                   node = node,
+                   as.is = TRUE)),
+               pos = e)
     }
 
-    ## Iterate over each time step.
-    sapply(seq_len(ncol(model@U)), function(i) {
-        ## Restructure the data from the time step in a matrix with
-        ## one column for each compartment.
-        m <- matrix(model@U[, i], ncol = Nc(model), byrow = TRUE)
-        colnames(m) <- rownames(model@S)
-        if (!is.null(node))
-            m <- m[node, , drop = FALSE]
+    ## Then evaluate the condition using the data in the environment.
+    e$".condition" <- condition
+    k <- evalq(eval(parse(text = .condition)), envir = e)
+    if (!is.logical(k) ||
+        length(k) != (length(model@tspan) * ifelse(is.null(node), Nn(model), length(node)))) {
+        stop("The condition must be either 'TRUE' or 'FALSE' for every node and time step.")
+    }
 
-        ## Create an environment with the data from the time step.
-        e <- new.env(parent = baseenv())
-        for (j in seq_len(ncol(m))) {
-            assign(x = rownames(model@S)[j], value = m[, j], pos = e)
-        }
-
-        ## Evaluate the condition on the data for the time step.
-        e$condition <- condition
-        k <- evalq(eval(parse(text = condition)), envir = e)
-        if (!is.logical(k) || !identical(nrow(m), length(k)))
-            stop("The condition must be either 'TRUE' or 'FALSE' for every node")
-        k
-    })
+    matrix(k, ncol = length(model@tspan))
 }
 
 ##' Calculate prevalence from a model object with trajectory data
