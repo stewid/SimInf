@@ -168,6 +168,24 @@ rownames(m@G)[1] <- "Z -> beta*Z*I/(S+I+R) -> I"
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "'G' and 'S' must have identical compartments"))
 
+## Check valid_SimInf_model_object with invalid ldata.
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+m@ldata <- matrix(1L)
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'ldata' matrix must be a double matrix."))
+m@ldata <- matrix(c(1, 2), ncol = 2)
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "The number of nodes in 'u0' and 'ldata' must match."))
+
+## Check valid_SimInf_model_object with invalid gdata.
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+m@gdata <- as.integer(m@gdata)
+names(m@gdata) <- c("beta", "gamma")
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'gdata' must be a double vector."))
+
 ## Check tspan
 res <- tools::assertError(new("SimInf_model",
                               G     = G,
