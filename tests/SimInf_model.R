@@ -110,6 +110,20 @@ rownames(m@v0) <- "test"
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "The number of nodes in 'u0' and 'v0' must match."))
 
+## Check valid_SimInf_model_object with invalid V.
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+storage.mode(m@V) <- "integer"
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "Output model state 'V' must be a double matrix."))
+
+## Check valid_SimInf_model_object with invalid S.
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+m@S@x <- m@S@x * 0.5
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'S' matrix must be an integer matrix."))
+
 ## Check tspan
 res <- tools::assertError(new("SimInf_model",
                               G     = G,
