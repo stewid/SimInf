@@ -124,6 +124,50 @@ m@S@x <- m@S@x * 0.5
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "'S' matrix must be an integer matrix."))
 
+## Check valid_SimInf_model_object with different rownames in S and E.
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1,
+         events = data.frame(event = 1, node = 1, n = 1, time = 1, dest = 0,
+                             proportion = 0, select = 1, shift = 0))
+rownames(m@events@E) <- NULL
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'S' and 'E' must have rownames matching the compartments."))
+rownames(m@events@E) <- rownames(m@S)
+rownames(m@events@E)[1] <- "Z"
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'S' and 'E' must have identical compartments"))
+
+## Check valid_SimInf_model_object with invalid G.
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+m@G <- m@G[1, , drop = FALSE]
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "Wrong size of dependency graph."))
+
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+rownames(m@G) <- NULL
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'G' must have rownames that specify transitions."))
+
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+rownames(m@G)[1] <- ""
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'G' must have rownames that specify transitions."))
+
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+rownames(m@G)[1] <- "A"
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'G' rownames have invalid transitions."))
+
+m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
+         tspan = 1:10, beta = 0.1, gamma = 0.1)
+rownames(m@G)[1] <- "Z -> beta*Z*I/(S+I+R) -> I"
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'G' and 'S' must have identical compartments"))
+
 ## Check tspan
 res <- tools::assertError(new("SimInf_model",
                               G     = G,

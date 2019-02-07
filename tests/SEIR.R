@@ -269,7 +269,7 @@ model@events@select <- rep(1:4, length.out = length(model@events@select))
 
 # Check that this fails because rownames (compartments) are missing
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("'S' and 'E' must have identical compartments",
+stopifnot(length(grep("'S' and 'E' must have rownames matching the compartments.",
                       res[[1]]$message)) > 0)
 
 rownames(model@events@E) <- c("S", "E", "I", "R")

@@ -168,6 +168,8 @@ valid_SimInf_model_object <- function(object)
 
     ## Check that S and events@E have identical compartments
     if ((dim(object@S)[1] > 0) && (dim(object@events@E)[1] > 0)) {
+        if (any(is.null(rownames(object@S)), is.null(rownames(object@events@E))))
+            return("'S' and 'E' must have rownames matching the compartments.")
         if (!identical(rownames(object@S), rownames(object@events@E)))
             return("'S' and 'E' must have identical compartments")
     }
