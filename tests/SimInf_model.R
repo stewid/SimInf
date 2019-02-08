@@ -268,6 +268,15 @@ res <- tools::assertError(SimInf_model(G     = G,
 stopifnot(length(grep("u0 must be an integer matrix",
                       res[[1]]$message)) > 0)
 
+## Change u0 to vector. Should raise an error.
+res <- tools::assertError(SimInf_model(G     = G,
+                                       S     = S,
+                                       U     = U,
+                                       ldata = matrix(rep(0, Nn), nrow = 1),
+                                       tspan = as.numeric(1:10),
+                                       u0    = as.numeric(u0)))
+stopifnot(res[[1]]$message == "u0 must be an integer matrix")
+
 ## Check S
 res <- tools::assertError(new("SimInf_model",
                               G     = G,
@@ -787,3 +796,19 @@ gdata(model, "beta") <- 6
 stopifnot(identical(gdata(model), structure(c(6, 4), .Names = c("beta", "gamma"))))
 tools::assertError(gdata(model) <- 6)
 tools::assertError(gdata(model, "beta") <- "6")
+tools::assertError(gdata(model, 5) <- 6)
+tools::assertError("gdata<-"(model, "beta"))
+
+## Check 'ldata'
+model@ldata <- matrix(1, dimnames = list("test", NULL))
+res <- tools::assertError(ldata(5))
+stopifnot(res[[1]]$message == "'model' argument is not a 'SimInf_model'")
+res <- tools::assertError(ldata(model))
+stopifnot(res[[1]]$message == "Missing 'node' argument")
+res <- tools::assertError(ldata(model, "0"))
+stopifnot(res[[1]]$message == "Invalid 'node' argument")
+res <- tools::assertError(ldata(model, 0))
+stopifnot(res[[1]]$message == "Invalid 'node' argument")
+res <- tools::assertError(ldata(model, c(0, 0)))
+stopifnot(res[[1]]$message == "Invalid 'node' argument")
+ldata(model, 1)
