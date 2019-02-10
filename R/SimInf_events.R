@@ -536,3 +536,143 @@ setMethod("summary",
               }
           }
 )
+
+##' Extract the events from a \code{SimInf_model} object
+##'
+##' Extract the scheduled events from a \code{SimInf_model} object.
+##' @param model The \code{model} to extract the events from.
+##' @return \code{\linkS4class{SimInf_events}} object.
+##' @export
+##' @examples
+##' ## Create an SIR model that includes scheduled events.
+##' model <- SIR(u0     = u0_SIR(),
+##'              tspan  = 1:(4 * 365),
+##'              events = events_SIR(),
+##'              beta   = 0.16,
+##'              gamma  = 0.077)
+##'
+##' ## Extract the scheduled events from the model and display summary
+##' summary(events(model))
+##'
+##' ## Extract the scheduled events from the model and plot them
+##' plot(events(model))
+events <- function(model)
+{
+    check_model_argument(model)
+    model@events
+}
+
+##' Extract the shift matrix from a \code{SimInf_model} object
+##'
+##' Utility function to extract the shift matrix \code{events@@N} from
+##' a \code{SimInf_model} object, see
+##' \code{\linkS4class{SimInf_events}}
+##' @param model The \code{model} to extract the shift matrix
+##'     \code{events@@N} from.
+##' @return A mtrix.
+##' @export
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Extract the shift matrix from the model
+##' shift_matrix(model)
+shift_matrix <- function(model)
+{
+    check_model_argument(model)
+    model@events@N
+}
+
+##' Set the shift matrix for a \code{SimInf_model} object
+##'
+##' Utility function to set \code{events@@N} in a \code{SimInf_model}
+##' object, see \code{\linkS4class{SimInf_events}}
+##' @param model The \code{model} to set the shift matrix
+##'     \code{events@@N}.
+##' @param value A matrix.
+##' @return \code{SimInf_model} object
+##' @export
+##' @importFrom methods is
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Set the shift matrix
+##' shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
+##'
+##' ## Extract the shift matrix from the model
+##' shift_matrix(model)
+"shift_matrix<-" <- function(model, value)
+{
+    check_model_argument(model)
+
+    model@events@N <- check_N(value)
+
+    if (nrow(model@events@N) > 0 && is.null(rownames(model@events@N)))
+        rownames(model@events@N) <- rownames(model@events@E)
+    if (ncol(model@events@N))
+        colnames(model@events@N) <- as.character(seq_len(ncol(model@events@N)))
+
+    validObject(model)
+
+    model
+}
+
+##' Extract the select matrix from a \code{SimInf_model} object
+##'
+##' Utility function to extract \code{events@@E} from a
+##' \code{SimInf_model} object, see \code{\linkS4class{SimInf_events}}
+##' @param model The \code{model} to extract the select matrix
+##'     \code{E} from.
+##' @return \code{\linkS4class{dgCMatrix}} object.
+##' @export
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Extract the select matrix from the model
+##' select_matrix(model)
+select_matrix <- function(model)
+{
+    check_model_argument(model)
+    model@events@E
+}
+
+##' Set the select matrix for a \code{SimInf_model} object
+##'
+##' Utility function to set \code{events@@E} in a \code{SimInf_model}
+##' object, see \code{\linkS4class{SimInf_events}}
+##' @param model The \code{model} to set the select matrix for.
+##' @param value A matrix.
+##' @export
+##' @importFrom methods as
+##' @importFrom methods is
+##' @examples
+##' ## Create an SIR model
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##'
+##' ## Set the select matrix
+##' select_matrix(model) <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 3)
+##'
+##' ## Extract the select matrix from the model
+##' select_matrix(model)
+"select_matrix<-" <- function(model, value)
+{
+    check_model_argument(model)
+
+    if (!is(value, "dgCMatrix"))
+        value <- as(value, "dgCMatrix")
+
+    if (!identical(Nc(model), dim(value)[1]))
+        stop("'value' must have one row for each compartment in the model")
+
+    dimnames(value) <- list(rownames(model@events@E),
+                            as.character(seq_len(dim(value)[2])))
+    model@events@E <- value
+
+    model
+}
