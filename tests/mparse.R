@@ -143,6 +143,27 @@ res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                                          "D+W->c3*D*W->W+W","W->c4*W->@"),
                          compartments = c("D","W"),
+                         v0 = 1:5,
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
+stopifnot(length(grep("'v0' must either be a 'data.frame' or a 'matrix'.",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                         compartments = c("D","W"),
+                         v0 = matrix(rep(0, 10), nrow = 2, ncol = 5,
+                                     dimnames = list(c("c1", "c1"))),
+                         gdata = c(c2 = 1, c3 = 0.005, c4 = 0.6),
+                         u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
+stopifnot(length(grep("'v0' must have non-duplicated parameter names.",
+                      res[[1]]$message, fixed = TRUE)) > 0)
+
+res <- tools::assertError(
+                  mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
+                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                         compartments = c("D","W"),
                          ldata = matrix(1:5,, nrow = 1, dimnames = list("c4", NULL)),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
@@ -252,6 +273,7 @@ C_code <- c(
     "}",
     "")
 stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
+stopifnot(identical(m@C_code, C_code(m)))
 
 ## Check mparse with both gdata and ldata
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
