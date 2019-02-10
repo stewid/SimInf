@@ -208,5 +208,29 @@ check_node_argument <- function(model, node)
     if (max(node) > Nn(model))
         stop("'node' must be integer <= number of nodes")
 
-    node <- as.integer(sort(unique(node)))
+    as.integer(sort(unique(node)))
+}
+
+##' Check the shift matrix 'N'
+##'
+##' Raise an error if the 'N' argument is not ok.
+##' @param model the model with nodes.
+##' @param N the shift matrix to check
+##' @return the shift matrix.
+##' @noRd
+check_N <- function(N)
+{
+    if (is.null(N))
+        return(matrix(integer(0), nrow = 0, ncol = 0))
+
+    if (!all(is.matrix(N), is.numeric(N)))
+        stop("'N' must be an integer matrix")
+
+    if (!is.integer(N)) {
+        if (!all(is_wholenumber(N)))
+            stop("'N' must be an integer matrix")
+        storage.mode(N) <- "integer"
+    }
+
+    N
 }

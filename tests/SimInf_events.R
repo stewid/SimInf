@@ -641,17 +641,21 @@ N_observed <- shift_matrix(model)
 
 stopifnot(identical(N_expected, N_observed))
 
-m <- matrix(c(1, 0), nrow = 2)
+shift_matrix(model) <- NULL
+stopifnot(identical(shift_matrix(model),
+                    matrix(integer(0), nrow = 0, ncol = 0)))
+
+m <- matrix(c(1, 0), nrow = 2, dimnames = list(c("S", "I")))
 res <- tools::assertError(select_matrix(model) <- m)
 stopifnot(length(grep("'value' must have one row for each compartment in the model",
                       res[[1]]$message)) > 0)
 
 m <- matrix(c("1", "0", "0"), nrow = 3)
 res <- tools::assertError(shift_matrix(model) <- m)
-stopifnot(length(grep("'value' must be an integer matrix",
+stopifnot(length(grep("'N' must be an integer matrix",
                       res[[1]]$message)) > 0)
 
 m <- matrix(c(1.3, 0, 0), nrow = 3)
 res <- tools::assertError(shift_matrix(model) <- m)
-stopifnot(length(grep("'value' must be an integer matrix",
+stopifnot(length(grep("'N' must be an integer matrix",
                       res[[1]]$message)) > 0)

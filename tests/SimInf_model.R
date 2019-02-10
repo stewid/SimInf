@@ -186,6 +186,24 @@ names(m@gdata) <- c("beta", "gamma")
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "'gdata' must be a double vector."))
 
+## Check v0
+res <- tools::assertError(SimInf_model(G     = G,
+                                       S     = S,
+                                       U     = U,
+                                       ldata = matrix(rep(0, Nn), nrow = 1),
+                                       tspan = c(1, 2),
+                                       u0    = u0,
+                                       v0    = 1))
+stopifnot(res[[1]]$message == "v0 must be a numeric matrix")
+res <- SimInf_model(G     = G,
+                    S     = S,
+                    U     = U,
+                    ldata = matrix(rep(0, Nn), nrow = 1),
+                    tspan = c(1, 2),
+                    u0    = u0,
+                    v0    = matrix(rep(1L, Nn), nrow = 1,
+                                   dimnames = list("phi")))
+
 ## Check tspan
 res <- tools::assertError(new("SimInf_model",
                               G     = G,

@@ -523,22 +523,14 @@ shift_matrix <- function(model)
 {
     check_model_argument(model)
 
-    ## Check value
-    if (is.null(value))
-        value <- matrix(integer(0), nrow = 0, ncol = 0)
-    if (!all(is.matrix(value), is.numeric(value)))
-        stop("'value' must be an integer matrix")
-    if (!is.integer(value)) {
-        if (!all(is_wholenumber(value)))
-            stop("'value' must be an integer matrix")
-        storage.mode(value) <- "integer"
-    }
-    if (!identical(Nc(model), dim(value)[1]))
-        stop("'value' must have one row for each compartment in the model")
+    model@events@N <- check_N(value)
 
-    dimnames(value) <- list(rownames(model@events@E),
-                            as.character(seq_len(dim(value)[2])))
-    model@events@N <- value
+    if (nrow(model@events@N) > 0 && is.null(rownames(model@events@N)))
+        rownames(model@events@N) <- rownames(model@events@E)
+    if (ncol(model@events@N))
+        colnames(model@events@N) <- as.character(seq_len(ncol(model@events@N)))
+
+    validObject(model)
 
     model
 }
