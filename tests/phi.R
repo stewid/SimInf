@@ -148,3 +148,68 @@ if (SimInf:::have_openmp()) {
     sis_e3_phi_obs <- trajectory(sis_e3, "phi")$phi
     stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))
 }
+
+## Check decay of phi for various configurations of the intervals.
+## [1, 2)  1*0.97
+## [2, 3)  1*0.97*0.97
+## [3, 4)  1*0.97*0.97*0.95
+## [4, 5)  1*0.97*0.97*0.95*0.95
+## [5, 6)  1*0.97*0.97*0.95*0.95*0.93
+## [6, 7)  1*0.97*0.97*0.95*0.95*0.93*0.93
+## [7, 8)  1*0.97*0.97*0.95*0.95*0.93*0.93*0.91
+## [8, 9)  1*0.97*0.97*0.95*0.95*0.93*0.93*0.91*0.91
+## [9, 10) 1*0.97*0.97*0.95*0.95*0.93*0.93*0.91*0.91*0.97
+phi <- c(1, 0.97, 0.9409, 0.893855, 0.84916225,
+         0.7897208925, 0.734440430025, 0.66834079132275,
+         0.608190120103702, 0.589944416500591)
+
+model <- SISe(u0 = data.frame(S = 1, I = 0),
+              tspan = 1:10,
+              phi = 1,
+              upsilon = 0,
+              gamma = 0,
+              alpha = 0,
+              beta_t1 = 0.03,
+              beta_t2 = 0.05,
+              beta_t3 = 0.07,
+              beta_t4 = 0.09,
+              end_t1 = 3,
+              end_t2 = 5,
+              end_t3 = 7,
+              end_t4 = 9,
+              epsilon = 0)
+stopifnot(all(abs(phi - trajectory(run(model), ~phi)$phi) < tol))
+
+model <- SISe(u0 = data.frame(S = 1, I = 0),
+              tspan = 1:10,
+              phi = 1,
+              upsilon = 0,
+              gamma = 0,
+              alpha = 0,
+              beta_t1 = 0.05,
+              beta_t2 = 0.07,
+              beta_t3 = 0.09,
+              beta_t4 = 0.03,
+              end_t1 = 5,
+              end_t2 = 7,
+              end_t3 = 9,
+              end_t4 = 3,
+              epsilon = 0)
+stopifnot(all(abs(phi - trajectory(run(model), ~phi)$phi) < tol))
+
+model <- SISe(u0 = data.frame(S = 1, I = 0),
+              tspan = 1:10,
+              phi = 1,
+              upsilon = 0,
+              gamma = 0,
+              alpha = 0,
+              beta_t1 = 0.07,
+              beta_t2 = 0.09,
+              beta_t3 = 0.03,
+              beta_t4 = 0.05,
+              end_t1 = 7,
+              end_t2 = 9,
+              end_t3 = 3,
+              end_t4 = 5,
+              epsilon = 0)
+stopifnot(all(abs(phi - trajectory(run(model), ~phi)$phi) < tol))
