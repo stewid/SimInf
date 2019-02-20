@@ -100,7 +100,7 @@
         template <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(0, 0))
         model@U_sparse <- as(template, "dgCMatrix")
         model@V_sparse <- as(template, "dgCMatrix")
-
+        validObject(model)
         return(model)
     }
 
@@ -122,14 +122,14 @@
         ## Create sparse templates.
         model@U_sparse <- as(sparseMatrix(i = iU, j = jU, dims = dimU), "dgCMatrix")
         model@V_sparse <- as(sparseMatrix(i = iV, j = jV, dims = dimV), "dgCMatrix")
-
+        validObject(model)
         return(model)
     }
 
     ## Check the content in 'value'
     if (!all(c("node", "time") %in% names(value)))
         stop("'value' must have the columns 'time' and 'node'.")
-    if (is.factor(value$time))
+    if (!is.numeric(value$time))
         value$time <- as.character(value$time)
     if (is.character(value$time))
         value$time <- model@tspan[match(value$time, names(model@tspan))]
@@ -181,8 +181,6 @@
     ## Create sparse templates.
     model@U_sparse <- as(sparseMatrix(i = iU, j = jU, dims = dimU), "dgCMatrix")
     model@V_sparse <- as(sparseMatrix(i = iV, j = jV, dims = dimV), "dgCMatrix")
-
     validObject(model)
-
     model
 }

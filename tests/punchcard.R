@@ -267,3 +267,17 @@ stopifnot(identical(trajectory(run(model)),
                                    I = c(NA_integer_, NA_integer_),
                                    R = c(NA_integer_, NA_integer_)),
                               class = "data.frame", row.names = c(NA, -2L))))
+
+punchcard(model) <- data.frame(node = c(1, 1),
+                               time = as.Date(c("2016-01-01", "2016-01-02")),
+                               S = c(TRUE, TRUE),
+                               I = c(FALSE, FALSE),
+                               R = c(FALSE, FALSE))
+
+stopifnot(identical(trajectory(run(model)),
+                    structure(list(node = c(1L, 1L),
+                                   time = c("2016-01-01", "2016-01-02"),
+                                   S = c(100L, 100L),
+                                   I = c(NA_integer_, NA_integer_),
+                                   R = c(NA_integer_, NA_integer_)),
+                              class = "data.frame", row.names = c(NA, -2L))))
