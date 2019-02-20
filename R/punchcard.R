@@ -126,10 +126,18 @@
         return(model)
     }
 
+    ## Check the content in 'value'
+    if (!all(c("node", "time") %in% names(value)))
+        stop("'value' must have the columns 'time' and 'node'.")
+    if (is.factor(value$time))
+        value$time <- as.character(value$time)
+    if (is.character(value$time))
+        value$time <- model@tspan[match(value$time, names(model@tspan))]
+
     ## Sort the data.frame by time and node.
     value <- value[order(value$time, value$node), ]
 
-    ## Match nodes and time-points with the model.
+    ## Match the nodes and time-points with the model.
     i <- match(value$node, seq_len(Nn(model)))
     if (any(is.na(i)))
         stop("Unable to match all nodes")
@@ -173,6 +181,8 @@
     ## Create sparse templates.
     model@U_sparse <- as(sparseMatrix(i = iU, j = jU, dims = dimU), "dgCMatrix")
     model@V_sparse <- as(sparseMatrix(i = iV, j = jV, dims = dimV), "dgCMatrix")
+
+    validObject(model)
 
     model
 }

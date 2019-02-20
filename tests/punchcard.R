@@ -242,3 +242,28 @@ U_exp <- structure(list(
     row.names = c(NA, -60L),
     class = "data.frame")
 stopifnot(identical(trajectory(result), U_exp))
+
+## Check that it fails with mis-specified columns.
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:10, beta = 0.16, gamma = 0.077)
+res <- tools::assertError(punchcard(model) <- data.frame(a = 3, b = 11))
+stopifnot(res[[1]]$message == "'value' must have the columns 'time' and 'node'.")
+
+## Check that it works to specify the time-points as dates
+model <- SIR(u0 = data.frame(S = 100, I = 0, R = 0),
+             tspan = seq(as.Date("2016-01-01"), as.Date("2016-01-10"), by = 1),
+             beta = 0.16, gamma = 0.077)
+
+punchcard(model) <- data.frame(node = c(1, 1),
+                               time = c("2016-01-01", "2016-01-02"),
+                               S = c(TRUE, TRUE),
+                               I = c(FALSE, FALSE),
+                               R = c(FALSE, FALSE))
+
+stopifnot(identical(trajectory(run(model)),
+                    structure(list(node = c(1L, 1L),
+                                   time = c("2016-01-01", "2016-01-02"),
+                                   S = c(100L, 100L),
+                                   I = c(NA_integer_, NA_integer_),
+                                   R = c(NA_integer_, NA_integer_)),
+                              class = "data.frame", row.names = c(NA, -2L))))
