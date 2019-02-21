@@ -80,6 +80,14 @@
 ##' result <- run(model, threads = 1)
 ##' trajectory(result)
 ##'
+##' ## A shortcut to specify to record all of the compartments in
+##' ## each time-step is to only inlude node and time.
+##' df <- data.frame(time = c(3, 5, 3, 5),
+##'                  node = c(2, 2, 4, 4))
+##' punchcard(model) <- df
+##' result <- run(model, threads = 1)
+##' trajectory(result)
+##'
 ##' ## It is possible to use an empty 'data.frame' to specify
 ##' ## that no data-points should be recorded for the trajectory.
 ##' punchcard(model) <- data.frame()
@@ -145,9 +153,17 @@
     if (any(is.na(j)))
         stop("Unable to match all time-points to tspan")
 
+    compartments <- setdiff(colnames(value), c("time", "node"))
+    if (length(compartments) == 0) {
+        ## Only node and time specified, add all compartments and mark
+        ## them as TRUE.
+        compartments <- c(rownames(model@S), rownames(model@v0))
+        value[, compartments] <- TRUE
+    }
+
     ## Coerce the compartments part of the data.frame to a logical
     ## vector that match the rows of compartments in the U matrix.
-    if (any(colnames(value) %in% rownames(model@S))) {
+    if (any(compartments %in% rownames(model@S))) {
         valueU <- value[, c("time", "node", rownames(model@S))]
         valueU <- as.logical(t(as.matrix(valueU[, -(1:2)])))
         valueU[is.na(valueU)] <- FALSE
@@ -164,7 +180,7 @@
     ## Coerce the compartments part of the data.frame to a logical
     ## vector that match the rows of continuous state compartments in
     ## the V matrix.
-    if (any(colnames(value) %in% rownames(model@v0))) {
+    if (any(compartments %in% rownames(model@v0))) {
         valueV <- value[, c("time", "node", rownames(model@v0))]
         valueV <- as.logical(t(as.matrix(valueV[, -(1:2)])))
         valueV[is.na(valueV)] <- FALSE
