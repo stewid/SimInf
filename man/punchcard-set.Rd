@@ -69,6 +69,14 @@ punchcard(model) <- df
 result <- run(model, threads = 1)
 trajectory(result)
 
+## A shortcut to specify to record all of the compartments in
+## each time-step is to only inlude node and time.
+df <- data.frame(time = c(3, 5, 3, 5),
+                 node = c(2, 2, 4, 4))
+punchcard(model) <- df
+result <- run(model, threads = 1)
+trajectory(result)
+
 ## It is possible to use an empty 'data.frame' to specify
 ## that no data-points should be recorded for the trajectory.
 punchcard(model) <- data.frame()
