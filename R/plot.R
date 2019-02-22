@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -169,24 +169,16 @@ setMethod("plot",
                   stop("Please run the model first, the 'U' matrix is empty")
 
               ## Determine the compartments to include in the plot
-              if (is.null(compartments)) {
-                  compartments <- seq_len(Nc(x))
-              } else {
-                  if (!(all(compartments %in% rownames(x@S))))
-                      stop("'compartments' must exist in the model")
-                  compartments <- match(compartments, rownames(x@S))
-              }
+              if (is.null(compartments))
+                  compartments <- rownames(x@S)
+              if (!(all(compartments %in% rownames(x@S))))
+                  stop("'compartments' must exist in the model")
+              compartments <- match(compartments, rownames(x@S))
 
               ## Check the 'node' argument
+              node <- check_node_argument(x, node)
               if (is.null(node))
                   node <- seq_len(Nn(x))
-              if (!is.numeric(node))
-                  stop("'node' must be valid node indices")
-              if (!length(node))
-                  stop("'node' must be valid node indices")
-              if (!all(node %in% seq_len(Nn(x))))
-                  stop("'node' must be valid node indices")
-              node <- sort(unique(node))
 
               savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
               on.exit(par(savepar))
