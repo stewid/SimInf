@@ -103,11 +103,18 @@
 {
     check_model_argument(model)
 
+    dimU <- c(Nn(model) * Nc(model), length(model@tspan))
+    dimV <- c(Nn(model) * Nd(model), length(model@tspan))
+    iU <- numeric(0)
+    jU <- numeric(0)
+    iV <- numeric(0)
+    jV <- numeric(0)
+    x <- NA_integer_
+
     if (is.null(value)) {
         ## Create sparse templates.
-        template <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(0, 0))
-        model@U_sparse <- as(template, "dgCMatrix")
-        model@V_sparse <- as(template, "dgCMatrix")
+        model@U_sparse <- sparseMatrix(i = iU, j = jU, x = x, dims = c(0, 0))
+        model@V_sparse <- sparseMatrix(i = iV, j = jV, x = x, dims = c(0, 0))
         validObject(model)
         return(model)
     }
@@ -119,17 +126,10 @@
     model@U <- matrix(data = integer(0), nrow = 0, ncol = 0)
     model@V <- matrix(data = numeric(0), nrow = 0, ncol = 0)
 
-    dimU <- c(Nn(model) * Nc(model), length(model@tspan))
-    dimV <- c(Nn(model) * Nd(model), length(model@tspan))
-    iU <- numeric(0)
-    jU <- numeric(0)
-    iV <- numeric(0)
-    jV <- numeric(0)
-
     if (nrow(value) == 0) {
         ## Create sparse templates.
-        model@U_sparse <- as(sparseMatrix(i = iU, j = jU, dims = dimU), "dgCMatrix")
-        model@V_sparse <- as(sparseMatrix(i = iV, j = jV, dims = dimV), "dgCMatrix")
+        model@U_sparse <- sparseMatrix(i = iU, j = jU, x = x, dims = dimU)
+        model@V_sparse <- sparseMatrix(i = iV, j = jV, x = x, dims = dimV)
         validObject(model)
         return(model)
     }
@@ -195,8 +195,8 @@
     }
 
     ## Create sparse templates.
-    model@U_sparse <- as(sparseMatrix(i = iU, j = jU, dims = dimU), "dgCMatrix")
-    model@V_sparse <- as(sparseMatrix(i = iV, j = jV, dims = dimV), "dgCMatrix")
+    model@U_sparse <- sparseMatrix(i = iU, j = jU, x = x, dims = dimU)
+    model@V_sparse <- sparseMatrix(i = iV, j = jV, x = x, dims = dimV)
     validObject(model)
     model
 }
