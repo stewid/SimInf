@@ -62,6 +62,23 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
           stringsAsFactors = FALSE)
 }
 
+##' Determine if the trajectory is empty.
+##' @noRd
+is_trajectory_empty <- function(model)
+{
+    if (all(identical(dim(model@U), c(0L, 0L)),
+            identical(dim(model@U_sparse), c(0L, 0L)),
+            identical(dim(model@V), c(0L, 0L)),
+            identical(dim(model@V_sparse), c(0L, 0L)))) {
+        return(TRUE)
+    }
+
+    if (any(is.na(model@U_sparse@x)) || any(is.na(model@V_sparse@x)))
+        return(TRUE)
+
+    FALSE
+}
+
 ##' Extract data from a simulated trajectory
 ##'
 ##' Extract the number of individuals in each compartment in every
@@ -154,12 +171,8 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 
     check_model_argument(model)
 
-    if (all(identical(dim(model@U), c(0L, 0L)),
-            identical(dim(model@U_sparse), c(0L, 0L)),
-            identical(dim(model@V), c(0L, 0L)),
-            identical(dim(model@V_sparse), c(0L, 0L)))) {
+    if (is_trajectory_empty(model))
         stop("Please run the model first, the trajectory is empty")
-    }
 
     ## Split the 'compartments' argument to match the compartments in
     ## U and V.

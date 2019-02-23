@@ -23,13 +23,8 @@ summary_U <- function(object)
     cat("Compartments\n")
     cat("------------\n")
 
-    d <- dim(object@U)
-    if (identical(d, c(0L, 0L)))
-        d <- dim(object@U_sparse)
-    if (identical(d, c(0L, 0L))) {
+    if (is_trajectory_empty(object)) {
         cat(" - Empty, please run the model first\n")
-    } else if (is.null(rownames(object@S))) {
-        stop("Undefined model compartments")
     } else {
         qq <- lapply(rownames(object@S), function(compartment) {
             x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
@@ -52,13 +47,8 @@ summary_V <- function(object)
     cat("--------------------------\n")
 
     if (Nd(object) > 0) {
-        d <- dim(object@V)
-        if (identical(d, c(0L, 0L)))
-            d <- dim(object@V_sparse)
-        if (identical(d, c(0L, 0L))) {
+        if (is_trajectory_empty(object)) {
             cat(" - Empty, please run the model first\n")
-        } else if (is.null(rownames(object@v0))) {
-            stop("Undefined continuous state variables")
         } else {
             qq <- lapply(rownames(object@v0), function(compartment) {
                 x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
