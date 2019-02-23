@@ -260,6 +260,8 @@ punchcard(model) <- data.frame(node = c(1, 1),
                                I = c(FALSE, FALSE),
                                R = c(FALSE, FALSE))
 
+stopifnot(SimInf:::is_trajectory_empty(model))
+
 stopifnot(identical(trajectory(run(model)),
                     structure(list(node = c(1L, 1L),
                                    time = c("2016-01-01", "2016-01-02"),
