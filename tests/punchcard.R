@@ -293,3 +293,33 @@ stopifnot(identical(trajectory(run(model)),
                                    I = c(0L, 0L),
                                    R = c(0L, 0L)),
                               class = "data.frame", row.names = c(NA, -2L))))
+
+## Check to extract trajectory with sparse U and V.
+model <- SISe(u0 = data.frame(S = c(100, 100), I = c(0, 0)),
+              tspan = 1:10, events = NULL, phi = c(1, 2),
+              upsilon = 0, gamma = 0, alpha = 1, epsilon = 0,
+              beta_t1 = 0, beta_t2 = 0, beta_t3 = 0, beta_t4 = 0,
+              end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
+punchcard(model) <- data.frame(node = c(1, 1), time = c(4, 6))
+stopifnot(identical(trajectory(run(model), ~.),
+                    structure(list(node = c(1L, 1L),
+                                   time = c(4L, 6L),
+                                   S = c(100L, 100L),
+                                   I = c(0L, 0L),
+                                   phi = c(1, 1)),
+                              row.names = c(NA, -2L),
+                              class = "data.frame")))
+
+punchcard(model) <- data.frame(node = c(1, 1, 2, 2),
+                               time = c(2, 4, 6, 8),
+                               S = c(TRUE, TRUE, FALSE, FALSE),
+                               I = c(TRUE, TRUE, FALSE, FALSE),
+                               phi = c(FALSE, FALSE, TRUE, TRUE))
+stopifnot(identical(trajectory(run(model), ~.),
+                    structure(list(node = c(1L, 1L, 2L, 2L),
+                                   time = c(2L, 4L, 6L, 8L),
+                                   S = c(100L, 100L, NA, NA),
+                                   I = c(0L, 0L, NA, NA),
+                                   phi = c(NA, NA, 2, 2)),
+                              row.names = c(NA, -4L),
+                              class = "data.frame")))

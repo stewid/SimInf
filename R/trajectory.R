@@ -216,15 +216,9 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
                  paste0("'", compartments, "'", collapse = ", "))
         }
 
-        ## Cannot combine data from U and V when as.is = TRUE or when
-        ## both U and V are sparse.
-        if (all(!is.null(compartments_U), !is.null(compartments_V))) {
-            if (isTRUE(as.is))
-                stop("Select either continuous or discrete compartments")
-            if (all(!identical(dim(model@U_sparse), c(0L, 0L)),
-                    !identical(dim(model@V_sparse), c(0L, 0L))))
-                stop("Select either continuous or discrete compartments")
-        }
+        ## Cannot combine data from U and V when as.is = TRUE.
+        if (!is.null(compartments_U) && !is.null(compartments_V) && isTRUE(as.is))
+            stop("Select either continuous or discrete compartments")
     }
 
     ## Check the 'node' argument
@@ -241,8 +235,17 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
             ## Coerce the sparse 'V_sparse' matrix to a data.frame with
             ## one row per node and time-point with the values of the
             ## continuous state variables.
-            return(sparse2df(model@V_sparse, Nd(model), model@tspan,
-                             rownames(model@v0), NA_real_))
+            dfV <- sparse2df(model@V_sparse, Nd(model), model@tspan,
+                             rownames(model@v0), NA_real_)
+
+            if (!identical(dim(model@U_sparse), c(0L, 0L))) {
+                dfU <- sparse2df(model@U_sparse, Nc(model),
+                                 model@tspan, rownames(model@S))
+
+                return(merge(dfU, dfV, all = TRUE))
+            }
+
+            return(dfV)
         }
     }
 
