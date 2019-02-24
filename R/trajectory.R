@@ -79,6 +79,50 @@ is_trajectory_empty <- function(model)
     FALSE
 }
 
+##' Extract data in internal matrix format.
+##' @noRd
+trajectory_as_is <- function(model, compartments_U, compartments_V, node)
+{
+    if (!identical(dim(model@V_sparse), c(0L, 0L))) {
+        if (!is.null(compartments_V))
+            return(model@V_sparse)
+    }
+
+    if (!identical(dim(model@U_sparse), c(0L, 0L)))
+        return(model@U_sparse)
+
+    if (is.null(node)) {
+        if (is.null(compartments_U)) {
+            if (is.null(compartments_V))
+                return(model@U)
+            if (identical(length(compartments_V), Nd(model)))
+                return(model@V)
+        } else if (identical(length(compartments_U), Nc(model))) {
+            return(model@U)
+        }
+    }
+
+    if (is.null(node))
+        node <- seq_len(Nn(model))
+
+    if (all(is.null(compartments_U), is.null(compartments_V)))
+        compartments_U <- rownames(model@S)
+
+    if (is.null(compartments_U)) {
+        ## Extract subset of data from V
+        compartments_V <- sort(match(compartments_V, rownames(model@v0)))
+        i <- rep(compartments_V, length(node))
+        i <- i + rep((node - 1) * Nd(model), each = length(compartments_V))
+        return(model@V[i, , drop = FALSE])
+    }
+
+    ## Extract subset of data from U
+    compartments_U <- sort(match(compartments_U, rownames(model@S)))
+    i <- rep(compartments_U, length(node))
+    i <- i + rep((node - 1) * Nc(model), each = length(compartments_U))
+    model@U[i, , drop = FALSE]
+}
+
 ##' Extract data from a simulated trajectory
 ##'
 ##' Extract the number of individuals in each compartment in every
@@ -226,12 +270,13 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 
     ## The arguments seem ok...go on and extract the trajectory
 
+    ## Check to extract data in internal matrix format
+    if (isTRUE(as.is))
+        return(trajectory_as_is(model, compartments_U, compartments_V, node))
+
     ## Check to extract sparse data from V
     if (!identical(dim(model@V_sparse), c(0L, 0L))) {
         if (!is.null(compartments_V)) {
-            if (isTRUE(as.is))
-                return(model@V_sparse)
-
             ## Coerce the sparse 'V_sparse' matrix to a data.frame with
             ## one row per node and time-point with the values of the
             ## continuous state variables.
@@ -251,48 +296,11 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 
     ## Check to extract sparse data from U
     if (!identical(dim(model@U_sparse), c(0L, 0L))) {
-        if (isTRUE(as.is))
-            return(model@U_sparse)
-
         ## Coerce the sparse 'U_sparse' matrix to a data.frame with
         ## one row per node and time-point with the number of
         ## individuals in each compartment.
         return(sparse2df(model@U_sparse, Nc(model),
                          model@tspan, rownames(model@S)))
-    }
-
-    ## Check to extract data in internal matrix format
-    if (isTRUE(as.is)) {
-        if (is.null(node)) {
-            if (is.null(compartments_U)) {
-                if (is.null(compartments_V))
-                    return(model@U)
-                if (identical(length(compartments_V), Nd(model)))
-                    return(model@V)
-            } else if (identical(length(compartments_U), Nc(model))) {
-                return(model@U)
-            }
-        }
-
-        if (is.null(node))
-            node <- seq_len(Nn(model))
-
-        if (all(is.null(compartments_U), is.null(compartments_V)))
-            compartments_U <- rownames(model@S)
-
-        if (is.null(compartments_U)) {
-            ## Extract subset of data from V
-            compartments_V <- sort(match(compartments_V, rownames(model@v0)))
-            j <- rep(compartments_V, length(node))
-            j <- j + rep((node - 1) * Nd(model), each = length(compartments_V))
-            return(model@V[j, , drop = FALSE])
-        }
-
-        ## Extract subset of data from U
-        compartments_U <- sort(match(compartments_U, rownames(model@S)))
-        j <- rep(compartments_U, length(node))
-        j <- j + rep((node - 1) * Nc(model), each = length(compartments_U))
-        return(model@U[j, , drop = FALSE])
     }
 
     ## Coerce the dense 'U' and 'V' matrices to a data.frame with one
