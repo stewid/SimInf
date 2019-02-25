@@ -62,76 +62,50 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
           stringsAsFactors = FALSE)
 }
 
-denseU2df <- function(model, compartments, node)
+dense2df <- function(m, nc, nn, tspan, lbl, compartments, node, as_integer)
 {
-    mU <- NULL
+    x <- NULL
     if (is.null(node)) {
-        if (length(compartments) == Nc(model)) {
-            mU <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
-            colnames(mU) <- rownames(model@S)
+        if (length(compartments) == nc) {
+            if (isTRUE(as_integer)) {
+                x <- as.integer(m)
+            } else {
+                x <- as.numeric(m)
+            }
+            x <- matrix(x, ncol = nc, byrow = TRUE)
+            colnames(x) <- lbl
         }
 
-        node <- seq_len(Nn(model))
+        node <- seq_len(nn)
     }
 
-    if (is.null(mU)) {
-        ## Extract a subset of data from U
-        compartments <- sort(match(compartments, rownames(model@S)))
+    if (is.null(x)) {
+        ## Extract a subset of data.
+        compartments <- sort(match(compartments, lbl))
         i <- rep(compartments, length(node))
-        i <- i + rep((node - 1) * Nc(model), each = length(compartments))
-        j <- (seq_len(length(model@tspan)) - 1) * Nc(model) * Nn(model)
+        i <- i + rep((node - 1) * nc, each = length(compartments))
+        j <- (seq_len(length(tspan)) - 1) * nc * nn
         j <- rep(j, each = length(i))
-        i <- rep(i, length(model@tspan))
+        i <- rep(i, length(tspan))
         i <- i + j
-        mU <- matrix(as.integer(model@U[i]),
-                     ncol = length(compartments),
-                     byrow = TRUE)
-        colnames(mU) <- rownames(model@S)[compartments]
+
+        if (isTRUE(as_integer)) {
+            x <- as.integer(m[i])
+        } else {
+            x <- as.numeric(m[i])
+        }
+
+        x <- matrix(x, ncol = length(compartments), byrow = TRUE)
+        colnames(x) <- lbl[compartments]
     }
 
-    time <- names(model@tspan)
+    time <- names(tspan)
     if (is.null(time))
-        time <- as.integer(model@tspan)
+        time <- as.integer(tspan)
     time <- rep(time, each = length(node))
 
     cbind(data.frame(node = node, time = time, stringsAsFactors = FALSE),
-          as.data.frame(mU))
-}
-
-denseV2df <- function(model, compartments, node)
-{
-    mV <- NULL
-    if (is.null(node)) {
-        if (length(compartments) == Nd(model)) {
-            mV <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
-            colnames(mV) <- rownames(model@v0)
-        }
-
-        node <- seq_len(Nn(model))
-    }
-
-    if (is.null(mV)) {
-        ## Extract a subset of data from V
-        compartments <- sort(match(compartments, rownames(model@v0)))
-        i <- rep(compartments, length(node))
-        i <- i + rep((node - 1) * Nd(model), each = length(compartments))
-        j <- (seq_len(length(model@tspan)) - 1) * Nd(model) * Nn(model)
-        j <- rep(j, each = length(i))
-        i <- rep(i, length(model@tspan))
-        i <- i + j
-        mV <- matrix(as.numeric(model@V[i]),
-                     ncol = length(compartments),
-                     byrow = TRUE)
-        colnames(mV) <- rownames(model@v0)[compartments]
-    }
-
-    time <- names(model@tspan)
-    if (is.null(time))
-        time <- as.integer(model@tspan)
-    time <- rep(time, each = length(node))
-
-    cbind(data.frame(node = node, time = time, stringsAsFactors = FALSE),
-          as.data.frame(mV))
+          as.data.frame(x))
 }
 
 ##' Determine if the trajectory is empty.
@@ -356,7 +330,8 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     dfV <- NULL
     if (!is.null(compartments_V)) {
         if (identical(dim(model@V_sparse), c(0L, 0L))) {
-            dfV <- denseV2df(model, compartments_V, node)
+            dfV <- dense2df(model@V, Nd(model), Nn(model), model@tspan,
+                            rownames(model@v0), compartments_V, node, FALSE)
         } else {
             dfV <- sparse2df(model@V_sparse, Nd(model), model@tspan,
                              rownames(model@v0), NA_real_)
@@ -366,7 +341,8 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     dfU <- NULL
     if (!is.null(compartments_U)) {
         if (identical(dim(model@U_sparse), c(0L, 0L))) {
-            dfU <- denseU2df(model, compartments_U, node)
+            dfU <- dense2df(model@U, Nc(model), Nn(model), model@tspan,
+                            rownames(model@S), compartments_U, node, TRUE)
         } else {
             dfU <- sparse2df(model@U_sparse, Nc(model),
                              model@tspan, rownames(model@S))
