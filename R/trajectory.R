@@ -62,6 +62,78 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
           stringsAsFactors = FALSE)
 }
 
+denseU2df <- function(model, compartments, node)
+{
+    mU <- NULL
+    if (is.null(node)) {
+        if (length(compartments) == Nc(model)) {
+            mU <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
+            colnames(mU) <- rownames(model@S)
+        }
+
+        node <- seq_len(Nn(model))
+    }
+
+    if (is.null(mU)) {
+        ## Extract a subset of data from U
+        compartments <- sort(match(compartments, rownames(model@S)))
+        i <- rep(compartments, length(node))
+        i <- i + rep((node - 1) * Nc(model), each = length(compartments))
+        j <- (seq_len(length(model@tspan)) - 1) * Nc(model) * Nn(model)
+        j <- rep(j, each = length(i))
+        i <- rep(i, length(model@tspan))
+        i <- i + j
+        mU <- matrix(as.integer(model@U[i]),
+                     ncol = length(compartments),
+                     byrow = TRUE)
+        colnames(mU) <- rownames(model@S)[compartments]
+    }
+
+    time <- names(model@tspan)
+    if (is.null(time))
+        time <- as.integer(model@tspan)
+    time <- rep(time, each = length(node))
+
+    cbind(data.frame(node = node, time = time, stringsAsFactors = FALSE),
+          as.data.frame(mU))
+}
+
+denseV2df <- function(model, compartments, node)
+{
+    mV <- NULL
+    if (is.null(node)) {
+        if (length(compartments) == Nd(model)) {
+            mV <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
+            colnames(mV) <- rownames(model@v0)
+        }
+
+        node <- seq_len(Nn(model))
+    }
+
+    if (is.null(mV)) {
+        ## Extract a subset of data from V
+        compartments <- sort(match(compartments, rownames(model@v0)))
+        i <- rep(compartments, length(node))
+        i <- i + rep((node - 1) * Nd(model), each = length(compartments))
+        j <- (seq_len(length(model@tspan)) - 1) * Nd(model) * Nn(model)
+        j <- rep(j, each = length(i))
+        i <- rep(i, length(model@tspan))
+        i <- i + j
+        mV <- matrix(as.numeric(model@V[i]),
+                     ncol = length(compartments),
+                     byrow = TRUE)
+        colnames(mV) <- rownames(model@v0)[compartments]
+    }
+
+    time <- names(model@tspan)
+    if (is.null(time))
+        time <- as.integer(model@tspan)
+    time <- rep(time, each = length(node))
+
+    cbind(data.frame(node = node, time = time, stringsAsFactors = FALSE),
+          as.data.frame(mV))
+}
+
 ##' Determine if the trajectory is empty.
 ##' @noRd
 is_trajectory_empty <- function(model)
@@ -265,6 +337,9 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
             stop("Select either continuous or discrete compartments")
     }
 
+    if (is.null(compartments_U) && is.null(compartments_V))
+        compartments_U <- rownames(model@S)
+
     ## Check the 'node' argument
     node <- check_node_argument(model, node)
 
@@ -274,126 +349,33 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     if (isTRUE(as.is))
         return(trajectory_as_is(model, compartments_U, compartments_V, node))
 
-    ## Check to extract sparse data from V
-    if (!identical(dim(model@V_sparse), c(0L, 0L))) {
-        if (!is.null(compartments_V)) {
-            ## Coerce the sparse 'V_sparse' matrix to a data.frame with
-            ## one row per node and time-point with the values of the
-            ## continuous state variables.
+    ## Coerce the dense/sparse 'U' and 'V' matrices to a data.frame
+    ## with one row per node and time-point with data from the
+    ## specified discrete and continuous states.
+
+    dfV <- NULL
+    if (!is.null(compartments_V)) {
+        if (identical(dim(model@V_sparse), c(0L, 0L))) {
+            dfV <- denseV2df(model, compartments_V, node)
+        } else {
             dfV <- sparse2df(model@V_sparse, Nd(model), model@tspan,
                              rownames(model@v0), NA_real_)
-
-            if (!identical(dim(model@U_sparse), c(0L, 0L))) {
-                dfU <- sparse2df(model@U_sparse, Nc(model),
-                                 model@tspan, rownames(model@S))
-
-                return(merge(dfU, dfV, all = TRUE))
-            }
-
-            return(dfV)
         }
     }
 
-    ## Check to extract sparse data from U
-    if (!identical(dim(model@U_sparse), c(0L, 0L))) {
-        ## Coerce the sparse 'U_sparse' matrix to a data.frame with
-        ## one row per node and time-point with the number of
-        ## individuals in each compartment.
-        return(sparse2df(model@U_sparse, Nc(model),
-                         model@tspan, rownames(model@S)))
-    }
-
-    ## Coerce the dense 'U' and 'V' matrices to a data.frame with one
-    ## row per node and time-point with data from the specified
-    ## discrete and continuous states.
-    mU <- NULL
-    mV <- NULL
-
-    ## Handle first cases where all data in U and/or V are extracted,
-    ## where 'all' indicates that all compartments in U or V are
-    ## specified.
-    ##
-    ## compartments_U compartments_V output
-    ##     NULL           NULL         U
-    ##     NULL            all         V
-    ##      all           NULL         U
-    ##      all            all        U+V
-    if (is.null(node)) {
-        if (is.null(compartments_U)) {
-            if (is.null(compartments_V)) {
-                mU <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
-            } else if (identical(length(compartments_V), Nd(model))) {
-                mV <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
-            }
-        } else if (identical(length(compartments_U), Nc(model))) {
-            if (is.null(compartments_V)) {
-                mU <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
-            } else if (identical(length(compartments_V), Nd(model))) {
-                mU <- matrix(as.integer(model@U), ncol = Nc(model), byrow = TRUE)
-                mV <- matrix(as.numeric(model@V), ncol = Nd(model), byrow = TRUE)
-            }
-        }
-
-        if (!is.null(mU))
-            colnames(mU) <- rownames(model@S)
-        if (!is.null(mV))
-            colnames(mV) <- rownames(model@v0)
-    }
-
-    ## Handle cases where a subset of data in U and/or V are
-    ## extracted.
-    if (all(is.null(mU), is.null(mV))) {
-        if (is.null(node))
-            node <- seq_len(Nn(model))
-
-        if (all(is.null(compartments_U), is.null(compartments_V)))
-            compartments_U <- rownames(model@S)
-
-        if (!is.null(compartments_U)) {
-            ## Extract a subset of data from U
-            compartments_U <- sort(match(compartments_U, rownames(model@S)))
-            j <- rep(compartments_U, length(node))
-            j <- j + rep((node - 1) * Nc(model), each = length(compartments_U))
-            k <- (seq_len(length(model@tspan)) - 1) * Nc(model) * Nn(model)
-            k <- rep(k, each = length(j))
-            j <- rep(j, length(model@tspan))
-            j <- j + k
-            mU <- matrix(as.integer(model@U[j]),
-                         ncol = length(compartments_U),
-                         byrow = TRUE)
-            colnames(mU) <- rownames(model@S)[compartments_U]
-        }
-
-        if (!is.null(compartments_V)) {
-            ## Extract a subset of data from V
-            compartments_V <- sort(match(compartments_V, rownames(model@v0)))
-            j <- rep(compartments_V, length(node))
-            j <- j + rep((node - 1) * Nd(model), each = length(compartments_V))
-            k <- (seq_len(length(model@tspan)) - 1) * Nd(model) * Nn(model)
-            k <- rep(k, each = length(j))
-            j <- rep(j, length(model@tspan))
-            j <- j + k
-            mV <- matrix(as.numeric(model@V[j]),
-                         ncol = length(compartments_V),
-                         byrow = TRUE)
-            colnames(mV) <- rownames(model@v0)[compartments_V]
+    dfU <- NULL
+    if (!is.null(compartments_U)) {
+        if (identical(dim(model@U_sparse), c(0L, 0L))) {
+            dfU <- denseU2df(model, compartments_U, node)
+        } else {
+            dfU <- sparse2df(model@U_sparse, Nc(model),
+                             model@tspan, rownames(model@S))
         }
     }
 
-    if (is.null(node))
-        node = seq_len(Nn(model))
-
-    time <- names(model@tspan)
-    if (is.null(time))
-        time <- as.integer(model@tspan)
-    time <- rep(time, each = length(node))
-
-    result <- data.frame(node = node, time = time, stringsAsFactors = FALSE)
-    if (!is.null(mU))
-        result <- cbind(result, as.data.frame(mU))
-
-    if (!is.null(mV))
-        result <- cbind(result, as.data.frame(mV))
-
-    result
+    if (is.null(dfV))
+        return(dfU)
+    if (is.null(dfU))
+        return(dfV)
+    merge(dfU, dfV, all = TRUE, sort = FALSE)
 }
