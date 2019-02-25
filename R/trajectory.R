@@ -280,27 +280,18 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
         compartments <- unique(as.character(compartments))
 
         ## Match compartments in U
-        lbl <- rownames(model@S)
-        compartments_U <- compartments[compartments %in% lbl]
-        if (length(compartments_U) > 0) {
-            compartments <- setdiff(compartments, compartments_U)
-        } else {
-            compartments_U <- NULL
-        }
+        i <- compartments %in% rownames(model@S)
+        if (any(i))
+            compartments_U <- compartments[i]
 
         ## Match compartments in V
-        if (length(compartments) > 0) {
-            if (Nd(model) > 0) {
-                lbl <- rownames(model@v0)
-                compartments_V <- compartments[compartments %in% lbl]
-                if (length(compartments_V) > 0) {
-                    compartments <- setdiff(compartments, compartments_V)
-                } else {
-                    compartments_V <- NULL
-                }
-            }
+        if (Nd(model) > 0) {
+            i <- compartments %in% rownames(model@v0)
+            if (any(i))
+                compartments_V <- compartments[i]
         }
 
+        compartments <- setdiff(compartments, c(compartments_U, compartments_V))
         if (length(compartments) > 0) {
             stop("Non-existing compartment(s) in model: ",
                  paste0("'", compartments, "'", collapse = ", "))
