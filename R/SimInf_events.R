@@ -674,5 +674,7 @@ select_matrix <- function(model)
                             as.character(seq_len(dim(value)[2])))
     model@events@E <- value
 
+    validObject(model)
+
     model
 }
