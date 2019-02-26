@@ -136,44 +136,19 @@ is_trajectory_sparse <- function(x)
 
 ##' Extract data in internal matrix format.
 ##' @noRd
-trajectory_as_is <- function(model, compartments_U, compartments_V, node)
+trajectory_as_is <- function(m, nc, nn, lbl, compartments, node)
 {
-    if (!is.null(compartments_V) && is_trajectory_sparse(model@V_sparse))
-        return(model@V_sparse)
-
-    if (!is.null(compartments_U) && is_trajectory_sparse(model@U_sparse))
-        return(model@U_sparse)
-
     if (is.null(node)) {
-        if (is.null(compartments_U)) {
-            if (is.null(compartments_V))
-                return(model@U)
-            if (identical(length(compartments_V), Nd(model)))
-                return(model@V)
-        } else if (identical(length(compartments_U), Nc(model))) {
-            return(model@U)
-        }
+        if (length(compartments) == nc)
+            return(m)
+        node <- seq_len(nn)
     }
 
-    if (is.null(node))
-        node <- seq_len(Nn(model))
-
-    if (all(is.null(compartments_U), is.null(compartments_V)))
-        compartments_U <- rownames(model@S)
-
-    if (is.null(compartments_U)) {
-        ## Extract subset of data from V
-        compartments_V <- sort(match(compartments_V, rownames(model@v0)))
-        i <- rep(compartments_V, length(node))
-        i <- i + rep((node - 1) * Nd(model), each = length(compartments_V))
-        return(model@V[i, , drop = FALSE])
-    }
-
-    ## Extract subset of data from U
-    compartments_U <- sort(match(compartments_U, rownames(model@S)))
-    i <- rep(compartments_U, length(node))
-    i <- i + rep((node - 1) * Nc(model), each = length(compartments_U))
-    model@U[i, , drop = FALSE]
+    ## Extract subset of data.
+    compartments <- sort(match(compartments, lbl))
+    i <- rep(compartments, length(node))
+    i <- i + rep((node - 1) * nc, each = length(compartments))
+    m[i, , drop = FALSE]
 }
 
 ##' Extract data from a simulated trajectory
@@ -318,8 +293,23 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     ## The arguments seem ok...go on and extract the trajectory
 
     ## Check to extract data in internal matrix format
-    if (isTRUE(as.is))
-        return(trajectory_as_is(model, compartments_U, compartments_V, node))
+    if (isTRUE(as.is)) {
+        if (!is.null(compartments_V)) {
+            if (is_trajectory_sparse(model@V_sparse))
+                return(trajectory_as_is(model@V_sparse, Nd(model), Nn(model),
+                                        rownames(model@v0), compartments_V, node))
+
+            return(trajectory_as_is(model@V, Nd(model), Nn(model),
+                                    rownames(model@v0), compartments_V, node))
+        }
+
+        if (is_trajectory_sparse(model@U_sparse))
+            return(trajectory_as_is(model@U_sparse, Nc(model), Nn(model),
+                                    rownames(model@S), compartments_U, node))
+
+        return(trajectory_as_is(model@U, Nc(model), Nn(model),
+                                rownames(model@S), compartments_U, node))
+    }
 
     ## Coerce the dense/sparse 'U' and 'V' matrices to a data.frame
     ## with one row per node and time-point with data from the
