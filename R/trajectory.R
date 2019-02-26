@@ -125,16 +125,23 @@ is_trajectory_empty <- function(model)
     FALSE
 }
 
+##' Determine if the trajectory is sparse.
+##' @noRd
+is_trajectory_sparse <- function(x)
+{
+    if (identical(dim(x), c(0L, 0L)))
+        return(FALSE)
+    TRUE
+}
+
 ##' Extract data in internal matrix format.
 ##' @noRd
 trajectory_as_is <- function(model, compartments_U, compartments_V, node)
 {
-    if (!identical(dim(model@V_sparse), c(0L, 0L))) {
-        if (!is.null(compartments_V))
-            return(model@V_sparse)
-    }
+    if (!is.null(compartments_V) && is_trajectory_sparse(model@V_sparse))
+        return(model@V_sparse)
 
-    if (!identical(dim(model@U_sparse), c(0L, 0L)))
+    if (!is.null(compartments_U) && is_trajectory_sparse(model@U_sparse))
         return(model@U_sparse)
 
     if (is.null(node)) {
@@ -320,23 +327,23 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 
     dfV <- NULL
     if (!is.null(compartments_V)) {
-        if (identical(dim(model@V_sparse), c(0L, 0L))) {
-            dfV <- dense2df(model@V, Nd(model), Nn(model), model@tspan,
-                            rownames(model@v0), compartments_V, node, FALSE)
-        } else {
+        if (is_trajectory_sparse(model@V_sparse)) {
             dfV <- sparse2df(model@V_sparse, Nd(model), model@tspan,
                              rownames(model@v0), NA_real_)
+        } else {
+            dfV <- dense2df(model@V, Nd(model), Nn(model), model@tspan,
+                            rownames(model@v0), compartments_V, node, FALSE)
         }
     }
 
     dfU <- NULL
     if (!is.null(compartments_U)) {
-        if (identical(dim(model@U_sparse), c(0L, 0L))) {
-            dfU <- dense2df(model@U, Nc(model), Nn(model), model@tspan,
-                            rownames(model@S), compartments_U, node, TRUE)
-        } else {
+        if (is_trajectory_sparse(model@U_sparse)) {
             dfU <- sparse2df(model@U_sparse, Nc(model),
                              model@tspan, rownames(model@S))
+        } else {
+            dfU <- dense2df(model@U, Nc(model), Nn(model), model@tspan,
+                            rownames(model@S), compartments_U, node, TRUE)
         }
     }
 
