@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -102,7 +102,9 @@ SISe <- function(u0,
                 dimnames = list(compartments, c("1", "2")))
 
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
-                dimnames = list(c("S -> I", "I -> S"), c("1", "2")))
+                dimnames = list(c("S -> upsilon*phi*S -> I",
+                                  "I -> gamma*I -> S"),
+                                c("1", "2")))
 
     S <- matrix(c(-1,  1, 1, -1), nrow = 2, ncol = 2,
                 dimnames = list(compartments, c("1", "2")))
