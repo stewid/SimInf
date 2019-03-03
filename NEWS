@@ -1,6 +1,17 @@
 SimInf 6.2.0.9000
 -----------------
 
+IMPROVEMENTS
+
+* The 'prevalence' function now supports an additional condition in
+  the formula specification to further control the population to
+  include in the calculation, see the documentation.
+
+BREAKING CHANGES
+
+* Removed the 'U<-' and 'V<-' methods. Use the new 'punchcard<-'
+  method instead, see the documentation.
+
 BUG FIXES
 
 * Fix storing solution of the continuous state vector v up to time t,
