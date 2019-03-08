@@ -291,6 +291,42 @@ parse_transitions <- function(transitions, compartments, ldata_names,
     })
 }
 
+##' Extract variable names from data
+##'
+##' @param x data to extract the variable names from.
+##' @param is_vector_ok TRUE if x can be a numeric vector, else FALSE.
+##' @noRd
+variable_names <- function(x, is_vector_ok) {
+    if (is.null(x))
+        return(NULL)
+
+    if (is.data.frame(x)) {
+        lbl <- colnames(x)
+    } else if (isTRUE(is_vector_ok)) {
+        if (is.atomic(x) && is.numeric(x)) {
+            lbl <- names(x)
+        } else {
+            stop(paste0("'",
+                        as.character(substitute(x)),
+                        "' must either be a 'data.frame' or a 'numeric' vector."))
+        }
+    } else if (is.matrix(x)) {
+        lbl <- rownames(x)
+    } else {
+        stop(paste0("'",
+                    as.character(substitute(x)),
+                    "' must either be a 'data.frame' or a 'matrix'."))
+    }
+
+    if (any(duplicated(lbl)) || any(nchar(lbl) == 0)) {
+        stop(paste0("'",
+                    as.character(substitute(x)),
+                    "' must have non-duplicated parameter names."))
+    }
+
+    lbl
+}
+
 ##' Model parser to define new models to run in \code{SimInf}
 ##'
 ##' Describe your model in a logical way in R. \code{mparse} creates a
@@ -375,53 +411,10 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
         stop("Missing columns in u0")
     u0 <- u0[, compartments, drop = FALSE]
 
-    ## Check ldata
-    ldata_names <- NULL
-    if (!is.null(ldata)) {
-        if (is.data.frame(ldata)) {
-            ldata_names <- colnames(ldata)
-        } else if (is.matrix(ldata)) {
-            ldata_names <- rownames(ldata)
-        } else {
-            stop("'ldata' must either be a 'data.frame' or a 'matrix'.")
-        }
-
-        if (is.null(ldata_names) || any(duplicated(ldata_names)) ||
-            any(nchar(ldata_names) == 0))
-            stop("'ldata' must have non-duplicated parameter names.")
-    }
-
-    ## Check gdata
-    gdata_names <- NULL
-    if (!is.null(gdata)) {
-        if (is.data.frame(gdata)) {
-            gdata_names <- colnames(gdata)
-        } else if (is.atomic(gdata) && is.numeric(gdata)) {
-            gdata_names <- names(gdata)
-        } else {
-            stop("'gdata' must either be a 'data.frame' or a 'numeric' vector.")
-        }
-
-        if (is.null(gdata_names) || any(duplicated(gdata_names)) ||
-            any(nchar(gdata_names) == 0))
-            stop("'gdata' must have non-duplicated parameter names.")
-    }
-
-    ## Check v0
-    v0_names <- NULL
-    if (!is.null(v0)) {
-        if (is.data.frame(v0)) {
-            v0_names <- colnames(v0)
-        } else if (is.matrix(v0)) {
-            v0_names <- rownames(v0)
-        } else {
-            stop("'v0' must either be a 'data.frame' or a 'matrix'.")
-        }
-
-        if (is.null(v0_names) || any(duplicated(v0_names)) ||
-            any(nchar(v0_names) == 0))
-            stop("'v0' must have non-duplicated parameter names.")
-    }
+    ## Extract variable names from data.
+    ldata_names <- variable_names(ldata, FALSE)
+    gdata_names <- variable_names(gdata, TRUE)
+    v0_names <- variable_names(v0, FALSE)
 
     if (any(duplicated(c(compartments, gdata_names, ldata_names, v0_names))))
         stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.")
