@@ -399,17 +399,8 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
         any(nchar(transitions) == 0))
         stop("'transitions' must be specified in a character vector.")
 
-    ## Check compartments
-    if (!is.atomic(compartments) || !is.character(compartments) ||
-        !identical(compartments, make.names(compartments, unique = TRUE)))
-        stop("'compartments' must be specified in a character vector.")
-
-    ## Check u0
-    if (!is.data.frame(u0))
-        u0 <- as.data.frame(u0)
-    if (!all(compartments %in% names(u0)))
-        stop("Missing columns in u0")
-    u0 <- u0[, compartments, drop = FALSE]
+    ## Check u0 and compartments
+    u0 <- check_u0(u0, compartments)
 
     ## Extract variable names from data.
     ldata_names <- variable_names(ldata, FALSE)

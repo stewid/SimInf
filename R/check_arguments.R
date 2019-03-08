@@ -234,3 +234,27 @@ check_N <- function(N)
 
     N
 }
+
+##' Check u0
+##'
+##' Raise an error if any of the 'u0' or 'compartments' arguments are
+##' invalid.
+##' @param u0 the initial state for the model.
+##' @param compartments the compartments in u0.
+##' @return u0 with columns ordered by the compartments.
+##' @noRd
+check_u0 <- function(u0, compartments)
+{
+    ## Check compartments
+    if (!is.atomic(compartments) || !is.character(compartments) ||
+        !identical(compartments, make.names(compartments, unique = TRUE)))
+        stop("'compartments' must be specified in a character vector.")
+
+    ## Check u0
+    if (!is.data.frame(u0))
+        u0 <- as.data.frame(u0)
+    if (!all(compartments %in% names(u0)))
+        stop("Missing columns in u0")
+
+    u0[, compartments, drop = FALSE]
+}
