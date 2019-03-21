@@ -1,9 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015 Pavol Bauer
- *  Copyright (C) 2017 - 2018 Robin Eriksson
- *  Copyright (C) 2015 - 2018 Stefan Engblom
- *  Copyright (C) 2015 - 2018 Stefan Widgren
+ *  Copyright (C) 2017 - 2019 Robin Eriksson
+ *  Copyright (C) 2015 - 2019 Stefan Engblom
+ *  Copyright (C) 2015 - 2019 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -266,9 +266,7 @@ SEXP SimInf_run(
 #endif
 
     /* Run the simulation solver. */
-    if (Rf_isNull(solver))
-        error = SimInf_run_solver_ssm(&args);
-    else if (strcmp(CHAR(STRING_ELT(solver, 0)), "ssm") == 0)
+    if (Rf_isNull(solver) || (strcmp(CHAR(STRING_ELT(solver, 0)), "ssm") == 0))
         error = SimInf_run_solver_ssm(&args);
     else if (strcmp(CHAR(STRING_ELT(solver, 0)), "aem") == 0)
         error = SimInf_run_solver_aem(&args);
