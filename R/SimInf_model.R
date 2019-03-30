@@ -144,7 +144,7 @@ valid_SimInf_model_object <- function(object)
     ## Check U.
     if (!identical(storage.mode(object@U), "integer"))
         return("Output state 'U' must be an integer matrix.")
-    if (any(object@U < 0L))
+    if (any(object@U < 0L) || any(object@U_sparse < 0, na.rm = TRUE))
         return("Output state 'U' has negative elements.")
 
     ## Check v0.

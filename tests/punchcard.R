@@ -63,6 +63,10 @@ set.seed(123)
 U_obs <- trajectory(run(model, threads = 1), as.is = TRUE)
 stopifnot(identical(U_obs, U_exp))
 
+model@U_sparse[1, 5] <- -1
+stopifnot(identical(SimInf:::valid_SimInf_model_object(model),
+                    "Output state 'U' has negative elements."))
+
 if (SimInf:::have_openmp()) {
     U_exp_omp <- new("dgCMatrix",
                      i = 0:17,
