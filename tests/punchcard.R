@@ -63,10 +63,6 @@ set.seed(123)
 U_obs <- trajectory(run(model, threads = 1), as.is = TRUE)
 stopifnot(identical(U_obs, U_exp))
 
-model@U_sparse[1, 5] <- -1
-stopifnot(identical(SimInf:::valid_SimInf_model_object(model),
-                    "Output state 'U' has negative elements."))
-
 if (SimInf:::have_openmp()) {
     U_exp_omp <- new("dgCMatrix",
                      i = 0:17,
@@ -84,6 +80,12 @@ if (SimInf:::have_openmp()) {
     U_obs_omp <- trajectory(run(model, threads = 2), as.is = TRUE)
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
+
+## Check that an error is raised if U_sparse contains a negative
+## element.
+model@U_sparse[1, 5] <- -1
+stopifnot(identical(SimInf:::valid_SimInf_model_object(model),
+                    "Output state 'U' has negative elements."))
 
 ## Check that U is cleared. First run a model to get a dense U result
 ## matrix, then run that model and check that the dense U result
