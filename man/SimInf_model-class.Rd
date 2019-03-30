@@ -36,9 +36,9 @@ Class to handle the siminf data model
     \code{length(tspan)}).
   }
   \item{U_sparse}{
-    If the model was run to write the solution to a sparse matrix
-    (\code{dgCMatrix}) the \code{U_sparse} contains the data and
-    \code{U} is empty. The layout of the data in \code{U_sparse}
+    If the model was configured to write the solution to a sparse
+    matrix (\code{dgCMatrix}) the \code{U_sparse} contains the data
+    and \code{U} is empty. The layout of the data in \code{U_sparse}
     is identical to \code{U}. Please note that \code{U_sparse}
     is numeric and \code{U} is integer.
   }
@@ -50,9 +50,9 @@ Class to handle the siminf data model
     \code{length(tspan)}).
   }
   \item{V_sparse}{
-    If the model was run to write the solution to a sparse matrix
-    (\code{dgCMatrix}) the \code{V_sparse} contains the data and
-    \code{V} is empty. The layout of the data in \code{V_sparse}
+    If the model was configured to write the solution to a sparse
+    matrix (\code{dgCMatrix}) the \code{V_sparse} contains the data
+    and \code{V} is empty. The layout of the data in \code{V_sparse}
     is identical to \code{V}.
   }
   \item{ldata}{
