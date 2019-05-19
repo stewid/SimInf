@@ -31,7 +31,7 @@ SEXP SISe_run(SEXP, SEXP, SEXP);
 SEXP SISe3_run(SEXP, SEXP, SEXP);
 SEXP SISe3_sp_run(SEXP, SEXP, SEXP);
 SEXP SISe_sp_run(SEXP, SEXP, SEXP);
-SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP, SEXP);
+SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
 
 /**
  * Is OpenMP available
