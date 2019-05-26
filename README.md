@@ -1,6 +1,6 @@
 
 
-![](./logo/logo.png)
+![](https://raw.githubusercontent.com/stewid/SimInf/master/logo/logo.png)
 
 > A flexible and efficient framework for data-driven stochastic disease spread simulations
 
