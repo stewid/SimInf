@@ -7,6 +7,13 @@ IMPROVEMENTS
   the formula specification to further control the population to
   include in the calculation, see the documentation.
 
+* It is now possible to write the C code snippet of the 'pts_fun'
+  argument to 'mparse' as a text string with line breaks instead of as
+  a vector of character lines.
+
+* The summary function of a model generated with the 'mparse'
+  functionality now includes the propensity of each transition.
+
 BREAKING CHANGES
 
 * Removed the 'U<-' and 'V<-' methods. Use the new 'punchcard<-'
@@ -17,6 +24,9 @@ BUG FIXES
 * Fix storing solution of the continuous state vector v up to time t,
   but not including t, when t has passed the next time in
   tspan.
+
+* Fix a link-type optimization type mismatch in the internal C
+  function 'SimInf_ldata_sp' (detected by the CRAN checks).
 
 SimInf 6.2.0
 ------------
