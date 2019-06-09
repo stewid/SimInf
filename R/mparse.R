@@ -417,13 +417,12 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
 
     ## Create the state-change matrix S
     S <- do.call("cbind", lapply(transitions, "[[", "S"))
-    S <- as(S, "dgCMatrix")
     colnames(S) <- as.character(seq_len(dim(S)[2]))
     rownames(S) <- compartments
 
     ## Create the dependency graph G
     depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
-    G <- as(((depends %*% abs(S)) > 0) * 1, "dgCMatrix")
+    G <- ((depends %*% abs(S)) > 0) * 1
     colnames(G) <- as.character(seq_len(dim(G)[2]))
     rownames(G) <- G_rownames(transitions)
 
