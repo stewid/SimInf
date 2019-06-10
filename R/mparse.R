@@ -327,6 +327,25 @@ variable_names <- function(x, is_vector_ok) {
     lbl
 }
 
+## Create the state-change matrix S
+state_change_matrix <- function(transitions, compartments)
+{
+    S <- do.call("cbind", lapply(transitions, "[[", "S"))
+    colnames(S) <- as.character(seq_len(dim(S)[2]))
+    rownames(S) <- compartments
+    S
+}
+
+## Create the dependency graph G
+dependency_graph <- function(transitions, depends, S)
+{
+    depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
+    G <- ((depends %*% abs(S)) > 0) * 1
+    colnames(G) <- as.character(seq_len(dim(G)[2]))
+    rownames(G) <- G_rownames(transitions)
+    G
+}
+
 ##' Model parser to define new models to run in \code{SimInf}
 ##'
 ##' Describe your model in a logical way in R. \code{mparse} creates a
@@ -415,16 +434,8 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                                      ldata_names, gdata_names,
                                      v0_names)
 
-    ## Create the state-change matrix S
-    S <- do.call("cbind", lapply(transitions, "[[", "S"))
-    colnames(S) <- as.character(seq_len(dim(S)[2]))
-    rownames(S) <- compartments
-
-    ## Create the dependency graph G
-    depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
-    G <- ((depends %*% abs(S)) > 0) * 1
-    colnames(G) <- as.character(seq_len(dim(G)[2]))
-    rownames(G) <- G_rownames(transitions)
+    S <- state_change_matrix(transitions, compartments)
+    G <- dependency_graph(transitions, depends, S)
 
     SimInf_model(G      = G,
                  S      = S,
