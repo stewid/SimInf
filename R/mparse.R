@@ -337,7 +337,7 @@ state_change_matrix <- function(transitions, compartments)
 }
 
 ## Create the dependency graph G
-dependency_graph <- function(transitions, depends, S)
+dependency_graph <- function(transitions, S)
 {
     depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
     G <- ((depends %*% abs(S)) > 0) * 1
@@ -435,7 +435,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                                      v0_names)
 
     S <- state_change_matrix(transitions, compartments)
-    G <- dependency_graph(transitions, depends, S)
+    G <- dependency_graph(transitions, S)
 
     SimInf_model(G      = G,
                  S      = S,
