@@ -315,6 +315,8 @@ SimInf_model <- function(G,
         ldata <- matrix(numeric(0), nrow = 0, ncol = 0)
     if (is.data.frame(ldata))
         ldata <- as_t_matrix(ldata)
+    if (is.integer(ldata))
+        storage.mode(ldata) <- "double"
 
     ## Check gdata
     if (is.null(gdata))
