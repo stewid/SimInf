@@ -16,6 +16,17 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+parse_formula <- function(model, compartments)
+{
+    compartments <- as.character(compartments)
+    if (!identical(length(compartments), 2L))
+        stop("Invalid formula specification of 'compartments'")
+
+    parse_formula_item(
+        compartments[2],
+        c(rownames(model@S), rownames(model@v0)))
+}
+
 ##' Coerce a sparse matrix to a data.frame
 ##'
 ##' Utility function to coerce a sparse matrix (U_sparse or V_sparse)
@@ -248,13 +259,8 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 
     ## Split the 'compartments' argument to match the compartments in
     ## U and V.
-    if (is(compartments, "formula")) {
-        compartments <- as.character(compartments)
-        if (!identical(length(compartments), 2L))
-            stop("Invalid formula specification of 'compartments'")
-        compartments <- parse_formula_item(
-            compartments[2], c(rownames(model@S), rownames(model@v0)))
-    }
+    if (is(compartments, "formula"))
+        compartments <- parse_formula(model, compartments)
 
     compartments_U <- NULL
     compartments_V <- NULL
