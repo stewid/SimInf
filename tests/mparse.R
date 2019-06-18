@@ -530,3 +530,27 @@ m  <- mparse(transitions = "S -> a->data[2]*1.2*S -> @",
              u0 = data.frame(S = 100),
              tspan = 1:100)
 stopifnot(identical(m@C_code[13], "    return a->data[2]*1.2*u[0];"))
+
+if (identical(Sys.getenv("NOT_CRAN"), "true")) {
+    run_model <- function(model) {
+        ## The environmental variable "R_TEST" must be unset inside
+        ## "R CMD check" in order to successfully change the working
+        ## directory to a tempdir and then run "R CMD SHLIB".
+        R_TESTS <- Sys.getenv("R_TESTS", unset = NA)
+        if (!is.na(R_TESTS)) {
+            Sys.unsetenv("R_TESTS")
+            on.exit(Sys.setenv(R_TESTS = R_TESTS), add = TRUE)
+        }
+
+        run(model, threads = 1, solver = "ssm")
+    }
+
+    model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
+                                    "I -> gamma*I -> R"),
+                    compartments = c("S", "I", "R"),
+                    gdata = c(beta = 0.16, gamma = 0.077),
+                    u0 = data.frame(S = 99, I = 1, R = 0),
+                    tspan = 1:10)
+
+    result <- run_model(model)
+}

@@ -38,14 +38,14 @@ build: clean
 
 # Check package
 check: build
-	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
+	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE NOT_CRAN=true R CMD check \
         --no-stop-on-test-error --as-cran --run-dontrun $(PKG_TAR)
 
 # Check package (without manual and vignettes)
 check_quick: clean
 	cd .. && R CMD build --no-build-vignettes --no-manual $(PKG_NAME)
-	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-stop-on-test-error \
-        --no-vignettes --no-manual --as-cran $(PKG_TAR)
+	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE NOT_CRAN=true R CMD check \
+        --no-stop-on-test-error --no-vignettes --no-manual --as-cran $(PKG_TAR)
 
 # Build and check package with gctorture
 check_gctorture:
