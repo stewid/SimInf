@@ -16,6 +16,45 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+## Split the 'compartments' argument to match the compartments in U
+## and V.
+match_compartments <- function(model, compartments, as.is)
+{
+    compartments_U <- NULL
+    compartments_V <- NULL
+
+    if (!is.null(compartments)) {
+        compartments <- unique(as.character(compartments))
+
+        ## Match compartments in U
+        i <- compartments %in% rownames(model@S)
+        if (any(i))
+            compartments_U <- compartments[i]
+
+        ## Match compartments in V
+        if (Nd(model) > 0) {
+            i <- compartments %in% rownames(model@v0)
+            if (any(i))
+                compartments_V <- compartments[i]
+        }
+
+        compartments <- setdiff(compartments, c(compartments_U, compartments_V))
+        if (length(compartments) > 0) {
+            stop("Non-existing compartment(s) in model: ",
+                 paste0("'", compartments, "'", collapse = ", "))
+        }
+
+        ## Cannot combine data from U and V when as.is = TRUE.
+        if (!is.null(compartments_U) && !is.null(compartments_V) && isTRUE(as.is))
+            stop("Select either continuous or discrete compartments")
+    }
+
+    if (is.null(compartments_U) && is.null(compartments_V))
+        compartments_U <- rownames(model@S)
+
+    list(U = compartments_U, V = compartments_V)
+}
+
 parse_formula <- function(model, compartments)
 {
     compartments <- as.character(compartments)
@@ -250,71 +289,36 @@ trajectory_as_is <- function(m, nc, nn, lbl, compartments, node)
 ##' trajectory(result, "phi")
 trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 {
-    ## Check that the arguments are ok...
-
     check_model_argument(model)
 
     if (is_trajectory_empty(model))
         stop("Please run the model first, the trajectory is empty")
 
-    ## Split the 'compartments' argument to match the compartments in
-    ## U and V.
     if (is(compartments, "formula"))
         compartments <- parse_formula(model, compartments)
 
-    compartments_U <- NULL
-    compartments_V <- NULL
-    if (!is.null(compartments)) {
-        compartments <- unique(as.character(compartments))
-
-        ## Match compartments in U
-        i <- compartments %in% rownames(model@S)
-        if (any(i))
-            compartments_U <- compartments[i]
-
-        ## Match compartments in V
-        if (Nd(model) > 0) {
-            i <- compartments %in% rownames(model@v0)
-            if (any(i))
-                compartments_V <- compartments[i]
-        }
-
-        compartments <- setdiff(compartments, c(compartments_U, compartments_V))
-        if (length(compartments) > 0) {
-            stop("Non-existing compartment(s) in model: ",
-                 paste0("'", compartments, "'", collapse = ", "))
-        }
-
-        ## Cannot combine data from U and V when as.is = TRUE.
-        if (!is.null(compartments_U) && !is.null(compartments_V) && isTRUE(as.is))
-            stop("Select either continuous or discrete compartments")
-    }
-
-    if (is.null(compartments_U) && is.null(compartments_V))
-        compartments_U <- rownames(model@S)
+    compartments <- match_compartments(model, compartments, as.is)
 
     ## Check the 'node' argument
     node <- check_node_argument(model, node)
 
-    ## The arguments seem ok...go on and extract the trajectory
-
     ## Check to extract data in internal matrix format
     if (isTRUE(as.is)) {
-        if (!is.null(compartments_V)) {
+        if (!is.null(compartments$V)) {
             if (is_trajectory_sparse(model@V_sparse))
                 return(trajectory_as_is(model@V_sparse, Nd(model), Nn(model),
-                                        rownames(model@v0), compartments_V, node))
+                                        rownames(model@v0), compartments$V, node))
 
             return(trajectory_as_is(model@V, Nd(model), Nn(model),
-                                    rownames(model@v0), compartments_V, node))
+                                    rownames(model@v0), compartments$V, node))
         }
 
         if (is_trajectory_sparse(model@U_sparse))
             return(trajectory_as_is(model@U_sparse, Nc(model), Nn(model),
-                                    rownames(model@S), compartments_U, node))
+                                    rownames(model@S), compartments$U, node))
 
         return(trajectory_as_is(model@U, Nc(model), Nn(model),
-                                rownames(model@S), compartments_U, node))
+                                rownames(model@S), compartments$U, node))
     }
 
     ## Coerce the dense/sparse 'U' and 'V' matrices to a data.frame
@@ -322,24 +326,24 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     ## specified discrete and continuous states.
 
     dfV <- NULL
-    if (!is.null(compartments_V)) {
+    if (!is.null(compartments$V)) {
         if (is_trajectory_sparse(model@V_sparse)) {
             dfV <- sparse2df(model@V_sparse, Nd(model), model@tspan,
                              rownames(model@v0), NA_real_)
         } else {
             dfV <- dense2df(model@V, Nd(model), Nn(model), model@tspan,
-                            rownames(model@v0), compartments_V, node, FALSE)
+                            rownames(model@v0), compartments$V, node, FALSE)
         }
     }
 
     dfU <- NULL
-    if (!is.null(compartments_U)) {
+    if (!is.null(compartments$U)) {
         if (is_trajectory_sparse(model@U_sparse)) {
             dfU <- sparse2df(model@U_sparse, Nc(model),
                              model@tspan, rownames(model@S))
         } else {
             dfU <- dense2df(model@U, Nc(model), Nn(model), model@tspan,
-                            rownames(model@S), compartments_U, node, TRUE)
+                            rownames(model@S), compartments$U, node, TRUE)
         }
     }
 
