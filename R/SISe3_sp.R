@@ -110,13 +110,7 @@ SISe3_sp <- function(u0,
     end_t4 <- rep(end_t4, length.out = nrow(u0))
     check_end_t_arg(nrow(u0), end_t1, end_t2, end_t3, end_t4)
 
-    ## Check distance matrix
-    if (is.null(distance))
-        stop("'distance' is missing", call. = FALSE)
-    if (!is(distance, "dgCMatrix"))
-        stop("The 'distance' argument must be of type 'dgCMatrix'", call. = FALSE)
-    if (any(distance < 0))
-        stop("All values in the 'distance' matrix must be >= 0", call. = FALSE)
+    check_distance_matrix(distance)
 
     ## Arguments seem ok...go on
 

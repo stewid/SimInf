@@ -276,3 +276,21 @@ check_u0 <- function(u0, compartments)
 
     u0[, compartments, drop = FALSE]
 }
+
+##' Check distance matrix
+##'
+##' Raise an error if the distance argument is not ok.
+##' @param distance The distance matrix between neighboring nodes
+##' @return invisible(NULL)
+##' @noRd
+check_distance_matrix <- function(distance)
+{
+    if (is.null(distance))
+        stop("'distance' is missing", call. = FALSE)
+    if (!is(distance, "dgCMatrix"))
+        stop("The 'distance' argument must be of type 'dgCMatrix'", call. = FALSE)
+    if (any(distance < 0))
+        stop("All values in the 'distance' matrix must be >= 0", call. = FALSE)
+
+    invisible(NULL)
+}
