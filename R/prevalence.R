@@ -30,11 +30,12 @@ parse_formula_item <- function(x, compartments)
     }))
     x <- unique(as.character(x))
     if (!length(x))
-        stop("No compartments in formula specification.")
+        stop("No compartments in formula specification.", call. = FALSE)
     i <- !(x %in% compartments)
     if (any(i)) {
         stop("Non-existing compartment(s) in model: ",
-             paste0("'", x[i], "'", collapse = ", "))
+             paste0("'", x[i], "'", collapse = ", "),
+             call. = FALSE)
     }
     x
 }
@@ -76,8 +77,10 @@ evaluate_condition <- function(condition, model, node)
     e$condition <- condition
     k <- evalq(eval(parse(text = condition)), envir = e)
     if (!is.logical(k) ||
-        length(k) != (length(model@tspan) * ifelse(is.null(node), Nn(model), length(node)))) {
-        stop("The condition must be either 'TRUE' or 'FALSE' for every node and time step.")
+        length(k) != (length(model@tspan) * ifelse(is.null(node), Nn(model), length(node))))
+    {
+        stop("The condition must be either 'TRUE' or 'FALSE' for every node and time step.",
+             call. = FALSE)
     }
 
     matrix(k, ncol = length(model@tspan))
@@ -167,12 +170,12 @@ prevalence <- function(model,
 
     ## Check 'formula' argument
     if (missing(formula))
-        stop("Missing 'formula' argument")
+        stop("Missing 'formula' argument", call. = FALSE)
     if (!is(formula, "formula"))
-        stop("'formula' argument is not a 'formula'")
+        stop("'formula' argument is not a 'formula'", call. = FALSE)
     formula <- as.character(formula)
     if (!identical(length(formula), 3L))
-        stop("Invalid formula specification.")
+        stop("Invalid formula specification.", call. = FALSE)
 
     ## Check 'type' argument
     type <- match.arg(type)

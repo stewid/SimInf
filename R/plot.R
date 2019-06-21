@@ -165,14 +165,16 @@ setMethod("plot",
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
                    compartments = NULL, node = NULL, range = 0.5, ...)
           {
-              if (identical(dim(x@U), c(0L, 0L)))
-                  stop("Please run the model first, the 'U' matrix is empty")
+              if (identical(dim(x@U), c(0L, 0L))) {
+                  stop("Please run the model first, the 'U' matrix is empty",
+                       call. = FALSE)
+              }
 
               ## Determine the compartments to include in the plot
               if (is.null(compartments))
                   compartments <- rownames(x@S)
               if (!(all(compartments %in% rownames(x@S))))
-                  stop("'compartments' must exist in the model")
+                  stop("'compartments' must exist in the model", call. = FALSE)
               compartments <- match(compartments, rownames(x@S))
 
               ## Check the 'node' argument
@@ -193,8 +195,10 @@ setMethod("plot",
               } else {
                   ## Check range argument
                   if (!is.numeric(range) || !identical(length(range), 1L) ||
-                      range < 0 || range > 1) {
-                      stop("'range' must be FALSE or a value between 0 and 1")
+                      range < 0 || range > 1)
+                  {
+                      stop("'range' must be FALSE or a value between 0 and 1",
+                           call. = FALSE)
                   }
                   range <- (1 - range) / 2
 

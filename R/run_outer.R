@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -86,46 +86,48 @@ run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...)
 {
     ## Check 'x'
     if (missing(x))
-        stop("Missing 'x' argument")
+        stop("Missing 'x' argument", call. = FALSE)
     if (!is.numeric(x))
-        stop("'x' argument is not numeric")
+        stop("'x' argument is not numeric", call. = FALSE)
 
     ## Check 'y'
     if (missing(y))
-        stop("Missing 'y' argument")
+        stop("Missing 'y' argument", call. = FALSE)
     if (!is.numeric(y))
-        stop("'y' argument is not numeric")
+        stop("'y' argument is not numeric", call. = FALSE)
 
     check_model_argument(model)
 
     if (is.null(names(model@gdata)))
-        stop("'names(model@gdata)' is NULL")
+        stop("'names(model@gdata)' is NULL", call. = FALSE)
     if (is.null(formula))
-        stop("'formula' argument is NULL")
+        stop("'formula' argument is NULL", call. = FALSE)
     if (is.null(FUN))
-        stop("'FUN' argument is NULL")
+        stop("'FUN' argument is NULL", call. = FALSE)
     FUN <- match.fun(FUN)
 
     ## Determine indices to the 'gdata' parameters to scale by 'x'
     xx <- attr(terms(formula, allowDotAsName = TRUE), "term.labels")
     xx <- xx[attr(terms(formula, allowDotAsName = TRUE), "order") == 1]
     if (length(xx) < 1)
-        stop("Invalid parameters on the right side of the formula")
+        stop("Invalid parameters on the right side of the formula", call. = FALSE)
     x_i <- match(xx, names(model@gdata))
     if (any(is.na(x_i)))
-        stop("Unmatched parameters on the right side of the formula")
+        stop("Unmatched parameters on the right side of the formula", call. = FALSE)
 
     ## Determine indices to the 'gdata' parameters to scale by 'y'
     yy <- attr(terms(formula, allowDotAsName = TRUE), "response")
     if (yy < 1)
-        stop("Invalid parameters on the left side of the formula")
+        stop("Invalid parameters on the left side of the formula", call. = FALSE)
     vars <- attr(terms(formula, allowDotAsName = TRUE), "variables")[-1]
     yy <- as.character(vars[yy])
     yy <- unlist(strsplit(yy, "+", fixed = TRUE))
     yy <- sub("^\\s", "", sub("\\s$", "", yy))
     y_i <- match(yy, names(model@gdata))
-    if (any(is.na(y_i)))
-        stop("Unmatched parameters on the left hand side of the formula")
+    if (any(is.na(y_i))) {
+        stop("Unmatched parameters on the left hand side of the formula",
+             call. = FALSE)
+    }
 
     outer(x, y, function(x, y, ...) {
         run_internal <- function(x, y, x_i, y_i, model, ...) {

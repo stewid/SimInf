@@ -120,7 +120,7 @@
     }
 
     if (!is.data.frame(value))
-        stop("'value' argument is not a 'data.frame'")
+        stop("'value' argument is not a 'data.frame'", call. = FALSE)
 
     ## Clear dense result matrices.
     model@U <- matrix(data = integer(0), nrow = 0, ncol = 0)
@@ -136,7 +136,7 @@
 
     ## Check the content in 'value'
     if (!all(c("node", "time") %in% names(value)))
-        stop("'value' must have the columns 'time' and 'node'.")
+        stop("'value' must have the columns 'time' and 'node'.", call. = FALSE)
     if (!is.numeric(value$time))
         value$time <- as.character(value$time)
     if (is.character(value$time))
@@ -148,10 +148,10 @@
     ## Match the nodes and time-points with the model.
     i <- match(value$node, seq_len(Nn(model)))
     if (any(is.na(i)))
-        stop("Unable to match all nodes")
+        stop("Unable to match all nodes", call. = FALSE)
     j <- match(value$time, model@tspan)
     if (any(is.na(j)))
-        stop("Unable to match all time-points to tspan")
+        stop("Unable to match all time-points to tspan", call. = FALSE)
 
     compartments <- setdiff(colnames(value), c("time", "node"))
     if (length(compartments) == 0) {

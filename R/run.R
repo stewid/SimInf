@@ -33,7 +33,7 @@ do_compile_model <- function(filename)
 
     lib <- paste0(filename, .Platform$dynlib.ext)
     if (!file.exists(lib))
-        stop(compiled)
+        stop(compiled, call. = FALSE)
 
     lib
 }

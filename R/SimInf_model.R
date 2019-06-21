@@ -287,14 +287,14 @@ SimInf_model <- function(G,
 {
     ## Check u0
     if (is.null(u0))
-        stop("'u0' is NULL")
+        stop("'u0' is NULL", call. = FALSE)
     if (is.data.frame(u0))
         u0 <- as_t_matrix(u0)
     if (!all(is.matrix(u0), is.numeric(u0)))
-        stop("u0 must be an integer matrix")
+        stop("u0 must be an integer matrix", call. = FALSE)
     if (!is.integer(u0)) {
         if (!all(is_wholenumber(u0)))
-            stop("u0 must be an integer matrix")
+            stop("u0 must be an integer matrix", call. = FALSE)
         storage.mode(u0) <- "integer"
     }
 
@@ -322,8 +322,10 @@ SimInf_model <- function(G,
     if (is.null(gdata))
         gdata <- numeric(0)
     if (is.data.frame(gdata)) {
-        if (!identical(nrow(gdata), 1L))
-            stop("When 'gdata' is a data.frame, it must have one row.")
+        if (!identical(nrow(gdata), 1L)) {
+            stop("When 'gdata' is a data.frame, it must have one row.",
+                 call. = FALSE)
+        }
         gdata <- unlist(gdata)
     }
 
@@ -333,13 +335,13 @@ SimInf_model <- function(G,
     } else {
         if (!is.integer(U)) {
             if (!all(is_wholenumber(U)))
-                stop("U must be an integer")
+                stop("U must be an integer", call. = FALSE)
             storage.mode(U) <- "integer"
         }
 
         if (!is.matrix(U)) {
             if (!identical(length(U), 0L))
-                stop("U must be equal to 0 x 0 matrix")
+                stop("U must be equal to 0 x 0 matrix", call. = FALSE)
             dim(U) <- c(0, 0)
         }
     }
@@ -351,7 +353,7 @@ SimInf_model <- function(G,
         if (is.data.frame(v0))
             v0 <- as_t_matrix(v0)
         if (!all(is.matrix(v0), is.numeric(v0)))
-            stop("v0 must be a numeric matrix")
+            stop("v0 must be a numeric matrix", call. = FALSE)
 
         if (!identical(storage.mode(v0), "double"))
             storage.mode(v0) <- "double"
@@ -369,7 +371,7 @@ SimInf_model <- function(G,
 
         if (!is.matrix(V)) {
             if (!identical(length(V), 0L))
-                stop("V must be equal to 0 x 0 matrix")
+                stop("V must be equal to 0 x 0 matrix", call. = FALSE)
             dim(V) <- c(0, 0)
         }
     }
@@ -391,7 +393,7 @@ SimInf_model <- function(G,
 
     ## Check events
     if (!any(is.null(events), is.data.frame(events)))
-        stop("'events' must be NULL or a data.frame")
+        stop("'events' must be NULL or a data.frame", call. = FALSE)
     events <- SimInf_events(E = E, N = N, events = events, t0 = t0)
 
     ## Check C code
@@ -504,15 +506,15 @@ gdata <- function(model)
 
     ## Check paramter argument
     if (missing(parameter))
-        stop("Missing 'parameter' argument")
+        stop("Missing 'parameter' argument", call. = FALSE)
     if (!is.character(parameter))
-        stop("'parameter' argument must be a character")
+        stop("'parameter' argument must be a character", call. = FALSE)
 
     ## Check value argument
     if (missing(value))
-        stop("Missing 'value' argument")
+        stop("Missing 'value' argument", call. = FALSE)
     if (!is.numeric(value))
-        stop("'value' argument must be a numeric")
+        stop("'value' argument must be a numeric", call. = FALSE)
 
     model@gdata[parameter] <- value
 
@@ -545,9 +547,9 @@ ldata <- function(model, node)
 
     ## Check node argument
     if (missing(node))
-        stop("Missing 'node' argument")
+        stop("Missing 'node' argument", call. = FALSE)
     if (!is.numeric(node) || !identical(length(node), 1L) || node < 1)
-        stop("Invalid 'node' argument")
+        stop("Invalid 'node' argument", call. = FALSE)
 
     model@ldata[, node]
 }

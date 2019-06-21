@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -484,7 +484,7 @@ package_skeleton <- function(model, name = NULL, path = ".",
               nchar(path) > 0)
     path <- file.path(path, name)
     if (!is.na(file.info(path)$size))
-        stop(paste0("'", path, "' already exists"))
+        stop(paste0("'", path, "' already exists"), call. = FALSE)
 
     if (is.null(author))
         author <- "Your Name"

@@ -41,12 +41,15 @@ match_compartments <- function(model, compartments, as.is)
         compartments <- setdiff(compartments, c(U, V))
         if (length(compartments) > 0) {
             stop("Non-existing compartment(s) in model: ",
-                 paste0("'", compartments, "'", collapse = ", "))
+                 paste0("'", compartments, "'", collapse = ", "),
+                 call. = FALSE)
         }
 
         ## Cannot combine data from U and V when as.is = TRUE.
-        if (!is.null(U) && !is.null(V) && isTRUE(as.is))
-            stop("Select either continuous or discrete compartments")
+        if (!is.null(U) && !is.null(V) && isTRUE(as.is)) {
+            stop("Select either continuous or discrete compartments",
+                 call. = FALSE)
+        }
     }
 
     if (is.null(U) && is.null(V))
@@ -59,7 +62,7 @@ parse_formula <- function(model, compartments)
 {
     compartments <- as.character(compartments)
     if (!identical(length(compartments), 2L))
-        stop("Invalid formula specification of 'compartments'")
+        stop("Invalid formula specification of 'compartments'", call. = FALSE)
 
     parse_formula_item(
         compartments[2],
@@ -291,8 +294,10 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 {
     check_model_argument(model)
 
-    if (is_trajectory_empty(model))
-        stop("Please run the model first, the trajectory is empty")
+    if (is_trajectory_empty(model)) {
+        stop("Please run the model first, the trajectory is empty",
+             call. = FALSE)
+    }
 
     if (is(compartments, "formula"))
         compartments <- parse_formula(model, compartments)

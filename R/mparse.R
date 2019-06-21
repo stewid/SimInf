@@ -59,7 +59,7 @@ C_ptsFun <- function(pts_fun)
         pts_fun <- "    return 0;"
 
     if (!is.character(pts_fun))
-        stop("'pts_fun' must be a character vector.")
+        stop("'pts_fun' must be a character vector.", call. = FALSE)
 
     f <- textConnection(pts_fun)
     lines <- readLines(f)
@@ -251,7 +251,7 @@ parse_compartments <- function(x, compartments)
     ## ordering in compartments
     i <- match(x, compartments)
     if (any(is.na(i)))
-        stop(sprintf("Unknown compartment: '%s'.", x[is.na(i)]))
+        stop(sprintf("Unknown compartment: '%s'.", x[is.na(i)]), call. = FALSE)
 
     tabulate(i, length(compartments))
 }
@@ -260,8 +260,12 @@ parse_transitions <- function(transitions, compartments, ldata_names,
                               gdata_names, v0_names)
 {
     lapply(strsplit(transitions, "->", fixed = TRUE), function(x) {
-        if (length(x) < 3)
-            stop("Invalid transition: '", paste0(x, collapse = "->"), "'")
+        if (length(x) < 3) {
+            stop("Invalid transition: '",
+                 paste0(x, collapse = "->"),
+                 "'",
+                 call. = FALSE)
+        }
 
         ## Remove spaces
         propensity <- gsub(" ", "", x[c(-1, -length(x))])
@@ -308,20 +312,23 @@ variable_names <- function(x, is_vector_ok) {
         } else {
             stop(paste0("'",
                         as.character(substitute(x)),
-                        "' must either be a 'data.frame' or a 'numeric' vector."))
+                        "' must either be a 'data.frame' or a 'numeric' vector."),
+                 call. = FALSE)
         }
     } else if (is.matrix(x)) {
         lbl <- rownames(x)
     } else {
         stop(paste0("'",
                     as.character(substitute(x)),
-                    "' must either be a 'data.frame' or a 'matrix'."))
+                    "' must either be a 'data.frame' or a 'matrix'."),
+             call. = FALSE)
     }
 
     if (any(duplicated(lbl)) || any(nchar(lbl) == 0)) {
         stop(paste0("'",
                     as.character(substitute(x)),
-                    "' must have non-duplicated parameter names."))
+                    "' must have non-duplicated parameter names."),
+             call. = FALSE)
     }
 
     lbl
@@ -414,9 +421,13 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                    events = NULL, E = NULL, N = NULL, pts_fun = NULL)
 {
     ## Check transitions
-    if (!is.atomic(transitions) || !is.character(transitions) ||
+    if (!is.atomic(transitions) ||
+        !is.character(transitions) ||
         any(nchar(transitions) == 0))
-        stop("'transitions' must be specified in a character vector.")
+    {
+        stop("'transitions' must be specified in a character vector.",
+             call. = FALSE)
+    }
 
     ## Check u0 and compartments
     u0 <- check_u0(u0, compartments)
@@ -426,8 +437,10 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     gdata_names <- variable_names(gdata, TRUE)
     v0_names <- variable_names(v0, FALSE)
 
-    if (any(duplicated(c(compartments, gdata_names, ldata_names, v0_names))))
-        stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.")
+    if (any(duplicated(c(compartments, gdata_names, ldata_names, v0_names)))) {
+        stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
+             call. = FALSE)
+    }
 
     ## Parse transitions
     transitions <- parse_transitions(transitions, compartments,
