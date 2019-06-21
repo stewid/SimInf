@@ -20,8 +20,8 @@
 ## and V.
 match_compartments <- function(model, compartments, as.is)
 {
-    compartments_U <- NULL
-    compartments_V <- NULL
+    U <- NULL
+    V <- NULL
 
     if (!is.null(compartments)) {
         compartments <- unique(as.character(compartments))
@@ -29,30 +29,30 @@ match_compartments <- function(model, compartments, as.is)
         ## Match compartments in U
         i <- compartments %in% rownames(model@S)
         if (any(i))
-            compartments_U <- compartments[i]
+            U <- compartments[i]
 
         ## Match compartments in V
         if (Nd(model) > 0) {
             i <- compartments %in% rownames(model@v0)
             if (any(i))
-                compartments_V <- compartments[i]
+                V <- compartments[i]
         }
 
-        compartments <- setdiff(compartments, c(compartments_U, compartments_V))
+        compartments <- setdiff(compartments, c(U, V))
         if (length(compartments) > 0) {
             stop("Non-existing compartment(s) in model: ",
                  paste0("'", compartments, "'", collapse = ", "))
         }
 
         ## Cannot combine data from U and V when as.is = TRUE.
-        if (!is.null(compartments_U) && !is.null(compartments_V) && isTRUE(as.is))
+        if (!is.null(U) && !is.null(V) && isTRUE(as.is))
             stop("Select either continuous or discrete compartments")
     }
 
-    if (is.null(compartments_U) && is.null(compartments_V))
-        compartments_U <- rownames(model@S)
+    if (is.null(U) && is.null(V))
+        U <- rownames(model@S)
 
-    list(U = compartments_U, V = compartments_V)
+    list(U = U, V = V)
 }
 
 parse_formula <- function(model, compartments)
