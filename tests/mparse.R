@@ -80,7 +80,7 @@ res <- tools::assertError(
                          compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-check_error(res, "Invalid transition: 'W->c4*W'")
+check_error(res, "Invalid transition: 'W->c4*W'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("A->c1->D", "D->c2*D->D+D",
@@ -106,7 +106,7 @@ res <- tools::assertError(
                          u0 = matrix(c(10, 10), nrow = 1, ncol = 2,
                                      dimnames = list(NULL, c("A", "W"))),
                          tspan = 1:5))
-check_error(res, "Missing columns in u0")
+check_error(res, "Missing columns in u0.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",

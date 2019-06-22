@@ -33,10 +33,10 @@ distance <- distance_matrix(distance$x, distance$y, 2)
 
 ## Check missing columns in u0
 res <- tools::assertError(SISe_sp(u0 = u0[, "I", drop = FALSE]))
-check_error(res, "Missing columns in u0")
+check_error(res, "Missing columns in u0.")
 
 res <- tools::assertError(SISe_sp(u0 = u0[, "S", drop = FALSE]))
-check_error(res, "Missing columns in u0")
+check_error(res, "Missing columns in u0.")
 
 ## Check default phi
 res <- SISe_sp(u0       = u0,
@@ -77,7 +77,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'upsilon' is missing")
+check_error(res, "'upsilon' is missing.")
 
 ## Check missing gamma
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -96,7 +96,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'gamma' is missing")
+check_error(res, "'gamma' is missing.")
 
 ## Check missing alpha
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -115,7 +115,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'alpha' is missing")
+check_error(res, "'alpha' is missing.")
 
 ## Check missing beta_t1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -134,7 +134,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t1' is missing")
+check_error(res, "'beta_t1' is missing.")
 
 ## Check missing beta_t2
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -153,7 +153,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t2' is missing")
+check_error(res, "'beta_t2' is missing.")
 
 ## Check missing beta_t3
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -172,7 +172,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t3' is missing")
+check_error(res, "'beta_t3' is missing.")
 
 ## Check missing beta_t4
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -191,7 +191,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t4' is missing")
+check_error(res, "'beta_t4' is missing.")
 
 ## Check missing end_t1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -210,7 +210,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t1' is missing")
+check_error(res, "'end_t1' is missing.")
 
 ## Check missing end_t2
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -229,7 +229,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t2' is missing")
+check_error(res, "'end_t2' is missing.")
 
 ## Check missing end_t3
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -248,7 +248,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t3' is missing")
+check_error(res, "'end_t3' is missing.")
 
 ## Check missing end_t4
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -267,7 +267,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t3   = 273,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t4' is missing")
+check_error(res, "'end_t4' is missing.")
 
 ## Check missing coupling
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -286,7 +286,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t3   = 273,
                                   end_t4   = 365,
                                   distance = distance))
-check_error(res, "'coupling' is missing")
+check_error(res, "'coupling' is missing.")
 
 ## Check missing distance
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -305,7 +305,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t3   = 273,
                                   end_t4   = 365,
                                   coupling = 0.0005))
-check_error(res, "'distance' is missing")
+check_error(res, "'distance' is missing.")
 
 ## Check negative distance
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -325,7 +325,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = -distance))
-check_error(res, "All values in the 'distance' matrix must be >= 0")
+check_error(res, "All values in the 'distance' matrix must be >= 0.")
 
 ## Check non-numeric upsilon
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -345,7 +345,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'upsilon' must be numeric")
+check_error(res, "'upsilon' must be numeric.")
 
 ## Check non-numeric gamma
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -365,7 +365,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'gamma' must be numeric")
+check_error(res, "'gamma' must be numeric.")
 
 ## Check non-numeric alpha
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -385,7 +385,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'alpha' must be numeric")
+check_error(res, "'alpha' must be numeric.")
 
 ## Check non-numeric beta_t1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -405,7 +405,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t1' must be numeric")
+check_error(res, "'beta_t1' must be numeric.")
 
 ## Check non-numeric beta_t2
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -425,7 +425,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t2' must be numeric")
+check_error(res, "'beta_t2' must be numeric.")
 
 ## Check non-numeric beta_t3
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -445,7 +445,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t3' must be numeric")
+check_error(res, "'beta_t3' must be numeric.")
 
 ## Check non-numeric beta_t4
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -465,7 +465,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t4' must be numeric")
+check_error(res, "'beta_t4' must be numeric.")
 
 ## Check non-integer end_t1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -485,7 +485,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t1' must be integer")
+check_error(res, "'end_t1' must be integer.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -504,7 +504,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t1' must be integer")
+check_error(res, "'end_t1' must be integer.")
 
 ## Check non-integer end_t2
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -524,7 +524,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t2' must be integer")
+check_error(res, "'end_t2' must be integer.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -543,7 +543,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t2' must be integer")
+check_error(res, "'end_t2' must be integer.")
 
 ## Check non-integer end_t3
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -563,7 +563,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t3' must be integer")
+check_error(res, "'end_t3' must be integer.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -582,7 +582,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t3' must be integer")
+check_error(res, "'end_t3' must be integer.")
 
 ## Check non-integer end_t4
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -602,7 +602,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = "365",
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t4' must be integer")
+check_error(res, "'end_t4' must be integer.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -621,7 +621,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365.5,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t4' must be integer")
+check_error(res, "'end_t4' must be integer.")
 
 ## Check non-numeric coupling
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -641,7 +641,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = "0.0005",
                                   distance = distance))
-check_error(res, "'coupling' must be numeric")
+check_error(res, "'coupling' must be numeric.")
 
 ## Check that length of upsilon equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -661,7 +661,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'upsilon' must be of length 1")
+check_error(res, "'upsilon' must be of length 1.")
 
 ## Check that length of gamma equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -681,7 +681,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'gamma' must be of length 1")
+check_error(res, "'gamma' must be of length 1.")
 
 ## Check that length of alpha equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -701,7 +701,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'alpha' must be of length 1")
+check_error(res, "'alpha' must be of length 1.")
 
 ## Check that length of beta_t1 equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -721,7 +721,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t1' must be of length 1")
+check_error(res, "'beta_t1' must be of length 1.")
 
 ## Check that length of beta_t2 equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -741,7 +741,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t2' must be of length 1")
+check_error(res, "'beta_t2' must be of length 1.")
 
 ## Check that length of beta_t3 equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -761,7 +761,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t3' must be of length 1")
+check_error(res, "'beta_t3' must be of length 1.")
 
 ## Check that length of beta_t4 equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -781,7 +781,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t4' must be of length 1")
+check_error(res, "'beta_t4' must be of length 1.")
 
 ## Check that length of coupling equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -801,7 +801,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = c(0.0005, 0.0005),
                                   distance = distance))
-check_error(res, "'coupling' must be of length 1")
+check_error(res, "'coupling' must be of length 1.")
 
 ## Check interval endpoints
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -821,7 +821,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t1' must be greater than or equal to '0'")
+check_error(res, "'end_t1' must be greater than or equal to '0'.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -840,7 +840,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t1' must be less than 'end_t2'")
+check_error(res, "'end_t1' must be less than 'end_t2'.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -859,7 +859,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'")
+check_error(res, "'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -878,7 +878,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t3' must be less than '364'")
+check_error(res, "'end_t3' must be less than '364'.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -897,7 +897,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = -1,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t4' must be greater than or equal to '0'")
+check_error(res, "'end_t4' must be greater than or equal to '0'.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -916,7 +916,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 366,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t4' must be less than or equal to '365'")
+check_error(res, "'end_t4' must be less than or equal to '365'.")
 
 res <- tools::assertError(SISe_sp(u0       = u0,
                                   tspan    = seq_len(10) - 1,
@@ -935,7 +935,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = c(2, 11:18),
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'end_t4' must be less than 'end_t1' or greater than 'end_t3'")
+check_error(res, "'end_t4' must be less than 'end_t1' or greater than 'end_t3'.")
 
 ## Check distance matrix
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -955,7 +955,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = as.matrix(distance)))
-check_error(res, "The 'distance' argument must be of type 'dgCMatrix'")
+check_error(res, "The 'distance' argument must be of type 'dgCMatrix'.")
 
 ## Check that non-data.frame u0 works
 SISe_sp(u0       = cbind(S = 0:8, I = rep(0, 9)),

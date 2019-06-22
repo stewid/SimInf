@@ -23,5 +23,8 @@ check_error <- function(current, target, exact = TRUE) {
         stopifnot(length(grep(target, current[[1]]$message)) > 0)
     }
 
+    ## Check that the error message ends with '.'
+    stopifnot(length(grep("[.]$", current[[1]]$message)) > 0)
+
     invisible(NULL)
 }

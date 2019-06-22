@@ -23,10 +23,10 @@ sessionInfo()
 
 ## Check missing and invalid model argument
 res <- tools::assertError(package_skeleton())
-check_error(res, "Missing 'model' argument")
+check_error(res, "Missing 'model' argument.")
 
 res <- tools::assertError(package_skeleton(5))
-check_error(res, "'model' argument is not a 'SimInf_model'")
+check_error(res, "'model' argument is not a 'SimInf_model'.")
 
 ## Check missing 'ldata', 'gdata' and 'v0' parameters
 m <- mparse(transitions = "@ -> 1 -> S",
@@ -61,7 +61,7 @@ stopifnot(file.exists(file.path(path, "SIR", "src", "model.c")))
 
 ## Check that it fails if path exists
 res <- tools::assertError(package_skeleton(m, name = "SIR", path = path))
-check_error(res, "already exists", FALSE)
+check_error(res, "already exists.", FALSE)
 
 ## Cleanup
 unlink(path, recursive=TRUE)

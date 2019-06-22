@@ -867,22 +867,22 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
 .Call("SISe_run", model, 1, NULL, PACKAGE = "SimInf")
 
 res <- tools::assertError(.Call("SISe_run", model, -1L, NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value")
+check_error(res, "Invalid 'threads' value.")
 
 res <- tools::assertError(.Call("SISe_run", model, -1, NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value")
+check_error(res, "Invalid 'threads' value.")
 
 res <- tools::assertError(.Call("SISe_run", model, "1", NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value")
+check_error(res, "Invalid 'threads' value.")
 
 res <- tools::assertError(.Call("SISe_run", model, c(1L, 1L), NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value")
+check_error(res, "Invalid 'threads' value.")
 
 res <- tools::assertError(.Call("SISe_run", model, c(1, 1), NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value")
+check_error(res, "Invalid 'threads' value.")
 
 res <- tools::assertError(.Call("SISe_run", model, NA_integer_, NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value")
+check_error(res, "Invalid 'threads' value.")
 
 res <- tools::assertError(.Call("SISe_run", model, NA_real_, NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value")
+check_error(res, "Invalid 'threads' value.")

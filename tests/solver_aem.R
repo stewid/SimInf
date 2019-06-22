@@ -24,7 +24,7 @@ sessionInfo()
 
 ## Check invalid u0
 res <- tools::assertError(SISe(u0 = "u0"))
-check_error(res, "Missing columns in u0")
+check_error(res, "Missing columns in u0.")
 
 u0 <- structure(list(S  = c(9, 9, 9, 9, 9, 10),
                      I  = c(1, 1, 1, 1, 1, 0)),
@@ -33,10 +33,10 @@ u0 <- structure(list(S  = c(9, 9, 9, 9, 9, 10),
 
 ## Check missing columns in u0
 res <- tools::assertError(SISe(u0 = u0[, "I", drop = FALSE]))
-check_error(res, "Missing columns in u0")
+check_error(res, "Missing columns in u0.")
 
 res <- tools::assertError(SISe(u0 = u0[, "S", drop = FALSE]))
-check_error(res, "Missing columns in u0")
+check_error(res, "Missing columns in u0.")
 
 ## Check 'susceptible' and 'infected' compartments
 ## no events

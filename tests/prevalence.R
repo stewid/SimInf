@@ -27,7 +27,7 @@ model <- SIR(u0 = data.frame(S = c(8, 5, 0), I = c(0, 1, 0), R = c(0, 0, 4)),
              tspan = 1:5, beta = 0.1, gamma = 0.1)
 
 res <- tools::assertError(prevalence(model, I~.|R == 0))
-check_error(res, "Please run the model first, the trajectory is empty")
+check_error(res, "Please run the model first, the trajectory is empty.")
 
 model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
                     0L, 0L, 0L, 0L, 0L,
@@ -44,10 +44,10 @@ model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
                                   c("1", "2", "3", "4", "5")))
 
 res <- tools::assertError(prevalence(model))
-check_error(res, "Missing 'formula' argument")
+check_error(res, "Missing 'formula' argument.")
 
 res <- tools::assertError(prevalence(model, "I~."))
-check_error(res, "'formula' argument is not a 'formula'")
+check_error(res, "'formula' argument is not a 'formula'.")
 
 res <- tools::assertError(prevalence(model, ~I))
 check_error(res, "Invalid formula specification.")

@@ -75,73 +75,73 @@ events@shift <- 1L
 
 events@time <- 0L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "time must be greater than 0"))
+                    "time must be greater than 0."))
 events@time <- 1L
 
 events@event <- -1L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "event must be in the range 0 <= event <= 3"))
+                    "event must be in the range 0 <= event <= 3."))
 events@event <- 4L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "event must be in the range 0 <= event <= 3"))
+                    "event must be in the range 0 <= event <= 3."))
 events@event <- 3L
 
 events@node <- 0L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "'node' must be greater or equal to 1"))
+                    "'node' must be greater or equal to 1."))
 events@node <- 2L
 
 events@dest <- 0L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "'dest' must be greater or equal to 1"))
+                    "'dest' must be greater or equal to 1."))
 events@dest <- 1L
 
 events@proportion <- -1
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "prop must be in the range 0 <= prop <= 1"))
+                    "prop must be in the range 0 <= prop <= 1."))
 events@proportion <- 2
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "prop must be in the range 0 <= prop <= 1"))
+                    "prop must be in the range 0 <= prop <= 1."))
 events@proportion <- 0
 
 events@select <- 0L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "select must be in the range 1 <= select <= Nselect"))
+                    "select must be in the range 1 <= select <= Nselect."))
 events@select <- 7L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "select must be in the range 1 <= select <= Nselect"))
+                    "select must be in the range 1 <= select <= Nselect."))
 events@select <- 1L
 
 events@event <- 2L
 events@shift <- 0L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "'shift' must be greater or equal to 1"))
+                    "'shift' must be greater or equal to 1."))
 
 ## Check that an error is raised when E is NULL and events is
 ## non-NULL.
 events <- data.frame(event = 3, time = 1, node = 2, dest = 1, n = 1,
                      proportion = 1, select = 0, shift = 1)
 res <- tools::assertError(SimInf_events(events = events))
-check_error(res, "events is not NULL when E is NULL")
+check_error(res, "events is not NULL when E is NULL.")
 
 ## Check that an error is raised when N is not an integer matrix.
 res <- tools::assertError(SimInf_events(N = c("a", "b")))
-check_error(res, "'N' must be an integer matrix")
+check_error(res, "'N' must be an integer matrix.")
 
 ## Check that an error is raised when N is not an integer matrix.
 res <- tools::assertError(SimInf_events(N = matrix(c(1.5, 1.5), nrow = 2)))
-check_error(res, "'N' must be an integer matrix")
+check_error(res, "'N' must be an integer matrix.")
 
 ## Check that an error is raised when events is not a data.frame.
 res <- tools::assertError(SimInf_events(E = E, events = c("a", "b")))
-check_error(res, "events must be a data.frame")
+check_error(res, "events must be a data.frame.")
 
 ## Check that an error is raised when events contains a non-numeric
 ## value.
 events <- data.frame(event = 3, time = 1, node = 2, dest = 1, n = 1,
                      proportion = "1", select = 0, shift = 1)
 res <- tools::assertError(SimInf_events(E = E, events = events))
-check_error(res, "Columns in events must be numeric")
+check_error(res, "Columns in events must be numeric.")
 
 ## Check missing columns in events
 ## Iterate over each column and rename it
@@ -163,7 +163,7 @@ lapply(seq_len(8), function(i) {
     res <- tools::assertError(SimInf_events(E      = E,
                                             N      = N,
                                             events = events))
-    check_error(res, "Missing columns in events")
+    check_error(res, "Missing columns in events.")
 })
 
 ## Check events$event not equal to whole number
@@ -183,7 +183,7 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-check_error(res, "Columns in events must be integer")
+check_error(res, "Columns in events must be integer.")
 
 ## Check events$time not equal to whole number
 events <- structure(list(
@@ -202,7 +202,7 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-check_error(res, "Columns in events must be integer")
+check_error(res, "Columns in events must be integer.")
 
 ## Check missing t0 when events$time is a Date vector
 events <- structure(list(
@@ -223,7 +223,7 @@ events <- structure(list(
 res <- tools::assertError(SimInf_events(E = E,
                                         N = N,
                                         events = events))
-check_error(res, "Missing 't0'")
+check_error(res, "Missing 't0'.")
 
 ## Check invalid t0 (length != 1) when events$time is a Date vector
 events <- structure(list(
@@ -245,7 +245,7 @@ res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events,
                                         t0     = c(1, 1)))
-check_error(res, "Invalid 't0'")
+check_error(res, "Invalid 't0'.")
 
 ## Check invalid t0 (!numeric) when events$time is a Date vector
 events <- structure(list(
@@ -267,7 +267,7 @@ res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events,
                                         t0     = "1"))
-check_error(res, "Invalid 't0'")
+check_error(res, "Invalid 't0'.")
 
 ## Check invalid t0 (!NULL) when events$time is not a Date vector
 events <- structure(list(
@@ -286,7 +286,7 @@ res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events,
                                         t0     = 0))
-check_error(res, "Invalid 't0'")
+check_error(res, "Invalid 't0'.")
 
 ## Check events$time equal to a Date vector
 events <- structure(list(
@@ -342,7 +342,7 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-check_error(res, "Columns in events must be integer")
+check_error(res, "Columns in events must be integer.")
 
 ## Check events$node not equal to whole number
 events <- structure(list(
@@ -361,7 +361,7 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-check_error(res, "Columns in events must be integer")
+check_error(res, "Columns in events must be integer.")
 
 ## Check events$node less than one
 events <- structure(list(
@@ -399,7 +399,7 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-check_error(res, "Columns in events must be integer")
+check_error(res, "Columns in events must be integer.")
 
 ## Check events$dest less than 1
 events <- structure(list(
@@ -437,7 +437,7 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-check_error(res, "Columns in events must be integer")
+check_error(res, "Columns in events must be integer.")
 
 ## Check events$event equal to character
 events <- structure(list(
@@ -457,7 +457,7 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-check_error(res, "'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'")
+check_error(res, "'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'.")
 
 ## Check events$shift not equal to whole number
 events <- structure(list(
@@ -476,7 +476,7 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-check_error(res, "Columns in events must be integer")
+check_error(res, "Columns in events must be integer.")
 
 ## Check E and events equal to NULL (default).
 events <- new("SimInf_events",
@@ -602,7 +602,7 @@ stopifnot(identical(E_expected, E_observed))
 
 m <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0), nrow = 2)
 res <- tools::assertError(select_matrix(model) <- m)
-check_error(res, "'value' must have one row for each compartment in the model")
+check_error(res, "'value' must have one row for each compartment in the model.")
 
 ## Check get/set shift_matrix
 model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
@@ -624,12 +624,12 @@ stopifnot(identical(shift_matrix(model),
 
 m <- matrix(c(1, 0), nrow = 2, dimnames = list(c("S", "I")))
 res <- tools::assertError(select_matrix(model) <- m)
-check_error(res, "'value' must have one row for each compartment in the model")
+check_error(res, "'value' must have one row for each compartment in the model.")
 
 m <- matrix(c("1", "0", "0"), nrow = 3)
 res <- tools::assertError(shift_matrix(model) <- m)
-check_error(res, "'N' must be an integer matrix")
+check_error(res, "'N' must be an integer matrix.")
 
 m <- matrix(c(1.3, 0, 0), nrow = 3)
 res <- tools::assertError(shift_matrix(model) <- m)
-check_error(res, "'N' must be an integer matrix")
+check_error(res, "'N' must be an integer matrix.")

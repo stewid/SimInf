@@ -30,13 +30,13 @@ model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
 
 ## Check invalid value
 res <- tools::assertError(punchcard(model) <- 5)
-check_error(res, "'value' argument is not a 'data.frame'")
+check_error(res, "'value' argument is not a 'data.frame'.")
 
 res <- tools::assertError(punchcard(model) <- data.frame(node = 10, time = 3))
-check_error(res, "Unable to match all nodes")
+check_error(res, "Unable to match all nodes.")
 
 res <- tools::assertError(punchcard(model) <- data.frame(node = 3, time = 11))
-check_error(res, "Unable to match all time-points to tspan")
+check_error(res, "Unable to match all time-points to tspan.")
 
 ## Check sparse U
 U_exp <- new("dgCMatrix",
