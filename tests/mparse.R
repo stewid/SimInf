@@ -16,6 +16,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library("SimInf")
+source("util/check.R")
 
 ## For debugging
 sessionInfo()
@@ -25,24 +26,21 @@ res <- tools::assertError(
                   mparse(compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'transitions' must be specified in a character vector.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'transitions' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = 5,
                          compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'transitions' must be specified in a character vector.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'transitions' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                                          "D+W->c3*D*W->W+W","W->c4*W->@"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'compartments' must be specified in a character vector.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'compartments' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -50,8 +48,7 @@ res <- tools::assertError(
                          compartments = 5,
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'compartments' must be specified in a character vector.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'compartments' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -59,8 +56,7 @@ res <- tools::assertError(
                          compartments = c("D","W"),
                          gdata = letters,
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'gdata' must either be a 'data.frame' or a 'numeric' vector.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'gdata' must either be a 'data.frame' or a 'numeric' vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -68,8 +64,7 @@ res <- tools::assertError(
                          compartments = c("D", "W", "D"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'compartments' must be specified in a character vector.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'compartments' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -77,8 +72,7 @@ res <- tools::assertError(
                          compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6, c1 = 2),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("'gdata' must have non-duplicated parameter names.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'gdata' must have non-duplicated parameter names.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -86,8 +80,7 @@ res <- tools::assertError(
                          compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("Invalid transition: 'W->c4[*]W'",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid transition: 'W->c4*W'")
 
 res <- tools::assertError(
                   mparse(transitions = c("A->c1->D", "D->c2*D->D+D",
@@ -95,8 +88,7 @@ res <- tools::assertError(
                          compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("Unknown compartment: 'A'[.]",
-                      res[[1]]$message)) > 0)
+check_error(res, "Unknown compartment: 'A'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -104,8 +96,7 @@ res <- tools::assertError(
                          compartments = c("D","W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
-stopifnot(length(grep("Unknown compartment: 'B'[.]",
-                      res[[1]]$message)) > 0)
+check_error(res, "Unknown compartment: 'B'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -115,8 +106,7 @@ res <- tools::assertError(
                          u0 = matrix(c(10, 10), nrow = 1, ncol = 2,
                                      dimnames = list(NULL, c("A", "W"))),
                          tspan = 1:5))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+check_error(res, "Missing columns in u0")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -125,8 +115,7 @@ res <- tools::assertError(
                          ldata = 1:5,
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("'ldata' must either be a 'data.frame' or a 'matrix'.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'ldata' must either be a 'data.frame' or a 'matrix'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -136,8 +125,7 @@ res <- tools::assertError(
                                         dimnames = list(c("c1", "c1"))),
                          gdata = c(c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("'ldata' must have non-duplicated parameter names.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'ldata' must have non-duplicated parameter names.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -146,8 +134,7 @@ res <- tools::assertError(
                          v0 = 1:5,
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("'v0' must either be a 'data.frame' or a 'matrix'.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'v0' must either be a 'data.frame' or a 'matrix'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -157,8 +144,7 @@ res <- tools::assertError(
                                      dimnames = list(c("c1", "c1"))),
                          gdata = c(c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("'v0' must have non-duplicated parameter names.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'v0' must have non-duplicated parameter names.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -167,8 +153,7 @@ res <- tools::assertError(
                          ldata = matrix(1:5,, nrow = 1, dimnames = list("c4", NULL)),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'u0', 'gdata', 'ldata' and 'v0' have names in common.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -177,8 +162,7 @@ res <- tools::assertError(
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5,
                          pts_fun = 5))
-stopifnot(length(grep("'pts_fun' must be a character vector.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "'pts_fun' must be a character vector.")
 
 ## Check mparse
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -445,8 +429,7 @@ res <- tools::assertError(
                          ldata = matrix(rep(0.6, 5), nrow = 1, dimnames = list("c4", NULL)),
                          gdata = data.frame(c1 = rep(0.5, 2), c2 = 1, c3 = 0.005),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("When 'gdata' is a data.frame, it must have one row",
-                      res[[1]]$message)) > 0)
+check_error(res, "When 'gdata' is a data.frame, it must have one row.")
 
 ## Check mparse fails with ldata as data.frames and nrow(ldata) !=
 ## nrow(u0)
@@ -457,8 +440,7 @@ res <- tools::assertError(
                          ldata = data.frame(c4 = c(0.2, 0.3, 0.4, 0.5)),
                          gdata = data.frame(c1 = 0.5, c2 = 1, c3 = 0.005),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
-stopifnot(length(grep("The number of nodes in 'u0' and 'ldata' must match.",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "The number of nodes in 'u0' and 'ldata' must match.", FALSE)
 
 ## Check 'S + S -> mu -> @'
 m  <- mparse(transitions = "S + S -> mu -> @",

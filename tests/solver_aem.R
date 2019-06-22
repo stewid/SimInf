@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2017 - 2018  Robin Eriksson
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2017 - 2019  Robin Eriksson
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library("SimInf")
+source("util/check.R")
 
 ## For debugging
 sessionInfo()
 
 ## Check invalid u0
 res <- tools::assertError(SISe(u0 = "u0"))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+check_error(res, "Missing columns in u0")
 
 u0 <- structure(list(S  = c(9, 9, 9, 9, 9, 10),
                      I  = c(1, 1, 1, 1, 1, 0)),
@@ -33,11 +33,10 @@ u0 <- structure(list(S  = c(9, 9, 9, 9, 9, 10),
 
 ## Check missing columns in u0
 res <- tools::assertError(SISe(u0 = u0[, "I", drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+check_error(res, "Missing columns in u0")
+
 res <- tools::assertError(SISe(u0 = u0[, "S", drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+check_error(res, "Missing columns in u0")
 
 ## Check 'susceptible' and 'infected' compartments
 ## no events

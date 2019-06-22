@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,17 +16,17 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library("SimInf")
+source("util/check.R")
 
 ## For debugging
 sessionInfo()
 
 ## Check missing and invalid model argument
 res <- tools::assertError(package_skeleton())
-stopifnot(length(grep("Missing 'model' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Missing 'model' argument")
+
 res <- tools::assertError(package_skeleton(5))
-stopifnot(length(grep("'model' argument is not a 'SimInf_model'",
-                      res[[1]]$message)) > 0)
+check_error(res, "'model' argument is not a 'SimInf_model'")
 
 ## Check missing 'ldata', 'gdata' and 'v0' parameters
 m <- mparse(transitions = "@ -> 1 -> S",
@@ -61,8 +61,7 @@ stopifnot(file.exists(file.path(path, "SIR", "src", "model.c")))
 
 ## Check that it fails if path exists
 res <- tools::assertError(package_skeleton(m, name = "SIR", path = path))
-stopifnot(length(grep("already exists",
-                      res[[1]]$message)) > 0)
+check_error(res, "already exists", FALSE)
 
 ## Cleanup
 unlink(path, recursive=TRUE)

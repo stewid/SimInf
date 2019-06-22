@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library("SimInf")
+source("util/check.R")
 
 ## For debugging
 sessionInfo()
@@ -75,13 +76,11 @@ model <- SISe3(u0        = u0,
                epsilon   = 0)
 
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("Unable to sample individuals for event.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
-    stopifnot(length(grep("Unable to sample individuals for event.",
-                          res[[1]]$message)) > 0)
+    check_error(res, "Unable to sample individuals for event.")
 }
 
 ## 2 Nodes
@@ -135,13 +134,11 @@ model <- SISe3(u0        = u0,
                epsilon   = 0)
 
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("Unable to sample individuals for event.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
     res <- tools::assertError(run(model, threads = 2))
-    stopifnot(length(grep("Unable to sample individuals for event.",
-                          res[[1]]$message)) > 0)
+    check_error(res, "Unable to sample individuals for event.")
 }
 
 ## 2 Nodes
@@ -195,8 +192,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0))
-stopifnot(length(grep("prop must be in the range 0 <= prop <= 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "prop must be in the range 0 <= prop <= 1", FALSE)
 
 ## Replace proportion = 10 to proportion = 1
 events$proportion <- 1
@@ -226,13 +222,11 @@ model <- SISe3(u0        = u0,
 model@events@proportion <- 10
 
 res <- tools::assertError(.Call("SISe3_run", model, 1L, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Unable to sample individuals for event.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
     res <- tools::assertError(.Call("SISe3_run", model, 2L, NULL, PACKAGE = "SimInf"))
-    stopifnot(length(grep("Unable to sample individuals for event.",
-                          res[[1]]$message)) > 0)
+    check_error(res, "Unable to sample individuals for event.")
 }
 
 ## 2 Nodes
@@ -286,8 +280,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0))
-stopifnot(length(grep("prop must be in the range 0 <= prop <= 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "prop must be in the range 0 <= prop <= 1", FALSE)
 
 ## Replace proportion = -1 with proportion = 0
 events$proportion <- 0
@@ -317,13 +310,11 @@ model <- SISe3(u0        = u0,
 model@events@proportion <- -1
 
 res <- tools::assertError(.Call("SISe3_run", model, 1L, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Unable to sample individuals for event.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
     res <- tools::assertError(.Call("SISe3_run", model, 2L, NULL, PACKAGE = "SimInf"))
-    stopifnot(length(grep("Unable to sample individuals for event.",
-                          res[[1]]$message)) > 0)
+    check_error(res, "Unable to sample individuals for event.")
 }
 
 ## 2 Nodes
