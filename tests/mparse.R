@@ -513,26 +513,55 @@ m  <- mparse(transitions = "S -> a->data[2]*1.2*S -> @",
              tspan = 1:100)
 stopifnot(identical(m@C_code[13], "    return a->data[2]*1.2*u[0];"))
 
-if (identical(Sys.getenv("NOT_CRAN"), "true")) {
-    run_model <- function(model) {
-        ## The environmental variable "R_TEST" must be unset inside
-        ## "R CMD check" in order to successfully change the working
-        ## directory to a tempdir and then run "R CMD SHLIB".
-        R_TESTS <- Sys.getenv("R_TESTS", unset = NA)
-        if (!is.na(R_TESTS)) {
-            Sys.unsetenv("R_TESTS")
-            on.exit(Sys.setenv(R_TESTS = R_TESTS), add = TRUE)
-        }
-
-        run(model, threads = 1, solver = "ssm")
+run_model <- function(model) {
+    ## The environmental variable "R_TEST" must be unset inside "R CMD
+    ## check" in order to successfully change the working directory to
+    ## a tempdir and then run "R CMD SHLIB".
+    R_TESTS <- Sys.getenv("R_TESTS", unset = NA)
+    if (!is.na(R_TESTS)) {
+        Sys.unsetenv("R_TESTS")
+        on.exit(Sys.setenv(R_TESTS = R_TESTS), add = TRUE)
     }
 
-    model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
-                                    "I -> gamma*I -> R"),
-                    compartments = c("S", "I", "R"),
-                    gdata = c(beta = 0.16, gamma = 0.077),
-                    u0 = data.frame(S = 99, I = 1, R = 0),
-                    tspan = 1:10)
-
-    result <- run_model(model)
+    run(model, threads = 1, solver = "ssm")
 }
+
+model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
+                                "I -> gamma*I -> R"),
+                compartments = c("S", "I", "R"),
+                gdata = c(beta = 0.16, gamma = 0.077),
+                u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
+                tspan = 1:10)
+
+set.seed(22)
+result <- run_model(model)
+
+U_exp <- structure(list(
+    node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+             5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
+             3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
+             1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,  5L, 6L),
+    time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L,
+             3L, 3L, 4L, 4L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 5L, 5L, 6L, 6L,
+             6L, 6L, 6L, 6L, 7L, 7L, 7L, 7L, 7L, 7L, 8L, 8L, 8L, 8L, 8L, 8L,
+             9L, 9L, 9L, 9L, 9L, 9L, 10L, 10L, 10L, 10L, 10L, 10L),
+    S = c(100L, 101L, 102L, 103L, 104L, 105L, 100L, 101L,
+          101L, 103L, 99L, 103L, 100L, 101L, 101L, 103L, 98L, 102L, 100L,
+          101L, 101L, 103L, 98L, 100L, 100L, 100L, 100L, 102L, 98L, 99L,
+          100L, 100L, 100L, 102L, 98L, 97L, 100L, 100L, 99L, 102L, 96L,
+          96L, 100L, 100L, 99L, 102L, 92L, 94L, 100L, 99L, 98L, 102L, 91L,
+          94L, 100L, 99L, 98L, 102L, 87L, 94L),
+    I = c(1L, 2L, 3L, 4L, 5L,
+          6L, 1L, 1L, 4L, 3L, 9L, 4L, 0L, 1L, 4L, 3L, 9L, 5L, 0L, 1L, 4L,
+          3L, 9L, 7L, 0L, 2L, 5L, 4L, 8L, 8L, 0L, 2L, 4L, 4L, 8L, 9L, 0L,
+          1L, 5L, 3L, 10L, 10L, 0L, 1L, 4L, 3L, 12L, 11L, 0L, 2L, 4L, 3L,
+          13L, 11L, 0L, 2L, 4L, 2L, 14L, 10L),
+    R = c(0L, 0L, 0L, 0L, 0L,
+          0L, 0L, 1L, 0L, 1L, 1L, 4L, 1L, 1L, 0L, 1L, 2L, 4L, 1L, 1L, 0L,
+          1L, 2L, 4L, 1L, 1L, 0L, 1L, 3L, 4L, 1L, 1L, 1L, 1L, 3L, 5L, 1L,
+          2L, 1L, 2L, 3L, 5L, 1L, 2L, 2L, 2L, 5L, 6L, 1L, 2L, 3L, 2L, 5L,
+          6L, 1L, 2L, 3L, 3L, 8L, 7L)),
+    .Names = c("node", "time", "S", "I", "R"),
+    row.names = c(NA, -60L),
+    class = "data.frame")
+stopifnot(identical(trajectory(result), U_exp))
