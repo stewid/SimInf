@@ -1,7 +1,7 @@
 ## SimInf, a framework for stochastic disease spread simulations
 ## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library("SimInf")
+source("util/check.R")
 
 ## For debugging
 sessionInfo()
@@ -866,29 +867,22 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
 .Call("SISe_run", model, 1, NULL, PACKAGE = "SimInf")
 
 res <- tools::assertError(.Call("SISe_run", model, -1L, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'threads' value")
 
 res <- tools::assertError(.Call("SISe_run", model, -1, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'threads' value")
 
 res <- tools::assertError(.Call("SISe_run", model, "1", NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'threads' value")
 
 res <- tools::assertError(.Call("SISe_run", model, c(1L, 1L), NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'threads' value")
 
 res <- tools::assertError(.Call("SISe_run", model, c(1, 1), NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'threads' value")
 
 res <- tools::assertError(.Call("SISe_run", model, NA_integer_, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'threads' value")
 
 res <- tools::assertError(.Call("SISe_run", model, NA_real_, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'threads' value",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'threads' value")

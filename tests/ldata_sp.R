@@ -1,6 +1,6 @@
 ## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## Copyright (C) 2015 - 2019  Stefan Engblom
+## Copyright (C) 2015 - 2019  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library("SimInf")
+source("util/check.R")
 
 ## For debugging
 sessionInfo()
@@ -59,75 +60,61 @@ stopifnot(identical(d_obs@p, d@p))
 stopifnot(all(abs(d_obs@x - d@x) < tol))
 
 res <- tools::assertError(distance_matrix(1:10, 1:10, 3, "min_dist"))
-stopifnot(length(grep("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
 res <- tools::assertError(distance_matrix(1:10, 1:10, 3, c(1, 2)))
-stopifnot(length(grep("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
 res <- tools::assertError(distance_matrix(1:10, 1:10, 3, -1))
-stopifnot(length(grep("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
 ## Check 'data' argument to C function 'SimInf_ldata_sp'
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", NULL, d, 0L, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'data' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'data' argument")
 
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", d, d, 0L, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'data' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'data' argument")
 
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", 1:10, d, 0L, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'data' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'data' argument")
 
 ## Check 'distance' argument to C function 'SimInf_ldata_sp'
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", l, NULL, 0L, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'distance' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'distance' argument")
 
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", l, l, 0L, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'distance' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'distance' argument")
 
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", l, Matrix::Diagonal(10), 0L, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'distance' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'distance' argument")
 
 ## Check 'metric' argument to C function 'SimInf_ldata_sp'
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", l, d, NA_integer_, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'metric' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'metric' argument")
 
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", l, d, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'metric' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'metric' argument")
 
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", l, d, 0.0, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'metric' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'metric' argument")
 
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", l, d, c(0L, 0L), PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid 'metric' argument",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'metric' argument")
 
 ## Check non-equal number of nodes in 'distance' and 'data'
 res <- tools::assertError(
     .Call("SimInf_ldata_sp", l[, -1], d, 0L, PACKAGE = "SimInf"))
-stopifnot(length(grep("The number of nodes in 'data' and 'distance' are not equal",
-                      res[[1]]$message)) > 0)
+check_error(res, "The number of nodes in 'data' and 'distance' are not equal")
 
 ## Check 'ldata' with metric equal to degree
 ldata_exp <- structure(c(91, 182, 273, 365, 1, 3, 2, 4, -1, 0, 0, 0, 0, 0,
@@ -203,8 +190,7 @@ stopifnot(all(abs(ldata_obs - ldata_exp) < tol))
 ## Check identical coordinates
 res <- tools::assertError(
     distance_matrix(x = c(1,10,1), y = c(1,10,1), cutoff = 20))
-stopifnot(length(grep("Identical coordinates. Please provide a minimum distance.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Identical coordinates. Please provide a minimum distance.")
 
 d_exp <- new("dgCMatrix",
              i = c(1L, 2L, 0L, 2L, 0L, 1L),
