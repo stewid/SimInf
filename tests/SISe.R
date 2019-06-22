@@ -21,10 +21,14 @@ library("SimInf")
 ## For debugging
 sessionInfo()
 
+## Raise an error if the error message doesn't match.
+check_error <- function(current, target) {
+    stopifnot(identical(current[[1]]$message, target))
+}
+
 ## Check invalid u0
 res <- tools::assertError(SISe(u0 = "u0"))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+check_error(res, "Missing columns in u0")
 
 u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
                      I  = c(0, 0, 0, 0, 0, 0)),
@@ -33,11 +37,10 @@ u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
 
 ## Check missing columns in u0
 res <- tools::assertError(SISe(u0 = u0[, "I", drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+check_error(res, "Missing columns in u0")
+
 res <- tools::assertError(SISe(u0 = u0[, "S", drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+check_error(res, "Missing columns in u0")
 
 ## Check phi
 res <- tools::assertError(SISe(u0      = u0,
@@ -56,8 +59,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("Invalid 'phi': must be numeric vector",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid 'phi': must be numeric vector")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -75,9 +77,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(
-    grep("Invalid 'phi': must be numeric vector with non-negative values",
-         res[[1]]$message)) > 0)
+check_error(res, "Invalid 'phi': must be numeric vector with non-negative values")
 
 res <- SISe(u0      = u0,
             tspan   = seq_len(10) - 1,
@@ -115,8 +115,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'upsilon' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'upsilon' is missing")
 
 ## Check missing gamma
 res <- tools::assertError(SISe(u0      = u0,
@@ -134,8 +133,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'gamma' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'gamma' is missing")
 
 ## Check missing alpha
 res <- tools::assertError(SISe(u0      = u0,
@@ -153,8 +151,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'alpha' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'alpha' is missing")
 
 ## Check missing beta_t1
 res <- tools::assertError(SISe(u0      = u0,
@@ -172,8 +169,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t1' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t1' is missing")
 
 ## Check missing beta_t2
 res <- tools::assertError(SISe(u0      = u0,
@@ -191,8 +187,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t2' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t2' is missing")
 
 ## Check missing beta_t3
 res <- tools::assertError(SISe(u0      = u0,
@@ -210,8 +205,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t3' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t3' is missing")
 
 ## Check missing beta_t4
 res <- tools::assertError(SISe(u0      = u0,
@@ -229,8 +223,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t4' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t4' is missing")
 
 ## Check missing end_t1
 res <- tools::assertError(SISe(u0      = u0,
@@ -248,8 +241,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t1' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t1' is missing")
 
 ## Check missing end_t2
 res <- tools::assertError(SISe(u0      = u0,
@@ -267,8 +259,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t2' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t2' is missing")
 
 ## Check missing end_t3
 res <- tools::assertError(SISe(u0      = u0,
@@ -286,8 +277,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t2  = 182,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t3' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t3' is missing")
 
 ## Check missing end_t4
 res <- tools::assertError(SISe(u0      = u0,
@@ -305,8 +295,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t2  = 182,
                                end_t3  = 273,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t4' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t4' is missing")
 
 ## Check missing epsilon
 res <- tools::assertError(SISe(u0      = u0,
@@ -324,8 +313,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t2  = 182,
                                end_t3  = 273,
                                end_t4  = 365))
-stopifnot(length(grep("'epsilon' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'epsilon' is missing")
 
 ## Check non-numeric upsilon
 res <- tools::assertError(SISe(u0      = u0,
@@ -344,8 +332,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'upsilon' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'upsilon' must be numeric")
 
 ## Check non-numeric gamma
 res <- tools::assertError(SISe(u0      = u0,
@@ -364,8 +351,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'gamma' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'gamma' must be numeric")
 
 ## Check non-numeric alpha
 res <- tools::assertError(SISe(u0      = u0,
@@ -384,8 +370,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'alpha' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'alpha' must be numeric")
 
 ## Check non-numeric beta_t1
 res <- tools::assertError(SISe(u0      = u0,
@@ -404,8 +389,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t1' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t1' must be numeric")
 
 ## Check non-numeric beta_t2
 res <- tools::assertError(SISe(u0      = u0,
@@ -424,8 +408,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t2' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t2' must be numeric")
 
 ## Check non-numeric beta_t3
 res <- tools::assertError(SISe(u0      = u0,
@@ -444,8 +427,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t3' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t3' must be numeric")
 
 ## Check non-numeric beta_t4
 res <- tools::assertError(SISe(u0      = u0,
@@ -464,8 +446,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t4' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t4' must be numeric")
 
 ## Check non-integer end_t1
 res <- tools::assertError(SISe(u0      = u0,
@@ -484,8 +465,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t1' must be integer",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t1' must be integer")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -503,8 +483,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t1' must be integer",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t1' must be integer")
 
 ## Check non-integer end_t2
 res <- tools::assertError(SISe(u0      = u0,
@@ -523,8 +502,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t2' must be integer",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t2' must be integer")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -542,8 +520,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t2' must be integer",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t2' must be integer")
 
 ## Check non-integer end_t3
 res <- tools::assertError(SISe(u0      = u0,
@@ -562,8 +539,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = "273",
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t3' must be integer",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t3' must be integer")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -581,8 +557,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273.5,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t3' must be integer",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t3' must be integer")
 
 ## Check non-integer end_t4
 res <- tools::assertError(SISe(u0      = u0,
@@ -601,8 +576,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = "365",
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t4' must be integer",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t4' must be integer")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -620,8 +594,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365.5,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t4' must be integer",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t4' must be integer")
 
 ## Check non-numeric epsilon
 res <- tools::assertError(SISe(u0      = u0,
@@ -640,8 +613,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = "0.000011"))
-stopifnot(length(grep("'epsilon' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'epsilon' must be numeric")
 
 ## Check that length of upsilon equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -660,8 +632,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'upsilon' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'upsilon' must be of length 1")
 
 ## Check that length of gamma equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -680,8 +651,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'gamma' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'gamma' must be of length 1")
 
 ## Check that length of alpha equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -700,8 +670,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'alpha' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'alpha' must be of length 1")
 
 ## Check that length of beta_t1 equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -720,8 +689,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t1' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t1' must be of length 1")
 
 ## Check that length of beta_t2 equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -740,8 +708,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t2' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t2' must be of length 1")
 
 ## Check that length of beta_t3 equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -760,8 +727,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t3' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t3' must be of length 1")
 
 ## Check that length of beta_t4 equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -780,8 +746,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'beta_t4' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta_t4' must be of length 1")
 
 ## Check that length of epsilon equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -800,8 +765,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = c(0.000011, 0.000011)))
-stopifnot(length(grep("'epsilon' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'epsilon' must be of length 1")
 
 ## Check interval endpoints
 res <- tools::assertError(SISe(u0      = u0,
@@ -820,8 +784,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t1' must be greater than or equal to '0'",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t1' must be greater than or equal to '0'")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -839,8 +802,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t1' must be less than 'end_t2'",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t1' must be less than 'end_t2'")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -858,8 +820,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 173,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t2' must be less than 'end_t3'",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -877,8 +838,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 365,
                                end_t4  = 365,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t3' must be less than '364'",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t3' must be less than '364'")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -896,8 +856,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = -1,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t4' must be greater than or equal to '0'",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t4' must be greater than or equal to '0'")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -915,8 +874,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 366,
                                epsilon = 0.000011))
-stopifnot(length(grep("'end_t4' must be less than or equal to '365'",
-                      res[[1]]$message)) > 0)
+check_error(res, "'end_t4' must be less than or equal to '365'")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -934,9 +892,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = c(8:12, 16),
                                end_t4  = c(2, 11:15),
                                epsilon = 0.000011))
-stopifnot(length(grep(
-    "'end_t4' must be less than 'end_t1' or greater than 'end_t3'",
-    res[[1]]$message)) > 0)
+check_error(res, "'end_t4' must be less than 'end_t1' or greater than 'end_t3'")
 
 ## Check extraction of data from 'suscpetible', and 'infected'
 ## compartments
@@ -987,8 +943,7 @@ stopifnot(identical(I_observed, I_expected))
 model@tspan <- c(1,2)
 result <- run(model, threads = 1)
 res <- tools::assertError(trajectory(result, c("S", "phi"), as.is = TRUE))
-stopifnot(length(grep("Select either continuous or discrete compartments",
-                      res[[1]]$message)) > 0)
+check_error(res, "Select either continuous or discrete compartments")
 
 stopifnot(identical(class(trajectory(result, c("S", "phi"))$phi), "numeric"))
 stopifnot(identical(class(trajectory(result, c("phi"))$phi), "numeric"))
@@ -1072,8 +1027,7 @@ stopifnot(all(abs(traj_observed[, 5] - traj_expected$phi) < 1e-8))
 
 ## Specify invalid formula
 res <- tools::assertError(trajectory(result, ~1))
-stopifnot(length(grep("Non-existing compartment(s) in model: '1'",
-                      res[[1]]$message, fixed = TRUE)) > 0)
+check_error(res, "Non-existing compartment(s) in model: '1'")
 
 ## Check SISe plot method
 pdf_file <- tempfile(fileext = ".pdf")
@@ -1085,12 +1039,10 @@ unlink(pdf_file)
 
 ## Check that C SISe run function fails for misspecified SISe model
 res <- tools::assertError(.Call("SISe_run", NULL, NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid model.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid model.")
 
 res <- tools::assertError(.Call("SISe_run", "SISe", NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid model.",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid model.")
 
 ## Check error non-finite v
 model <- SISe(u0      = u0,
@@ -1114,8 +1066,7 @@ model@gdata["beta_t2"] <- Inf
 model@gdata["beta_t3"] <- Inf
 model@gdata["beta_t4"] <- Inf
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("The continuous state 'v' is not finite.",
-                      res[[1]]$message)) > 0)
+check_error(res, "The continuous state 'v' is not finite.")
 
 ## Check negative v
 model <- SISe(u0      = u0,
@@ -1135,8 +1086,7 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = -10.000011)
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("The continuous state 'v' is negative.",
-                      res[[1]]$message)) > 0)
+check_error(res, "The continuous state 'v' is negative.")
 
 ## Check data
 stopifnot(identical(nrow(events_SISe()), 466692L))
