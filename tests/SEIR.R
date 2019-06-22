@@ -15,20 +15,10 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library("SimInf")
+source("util/check.R")
 
 ## For debugging
 sessionInfo()
-
-## Raise an error if the error message doesn't match.
-check_error <- function(current, target, exact = TRUE) {
-    if (isTRUE(exact)) {
-        stopifnot(identical(current[[1]]$message, target))
-    } else {
-        stopifnot(length(grep(target, current[[1]]$message)) > 0)
-    }
-
-    invisible(NULL)
-}
 
 ## Check invalid u0
 res <- tools::assertError(SEIR(u0 = "u0"))
