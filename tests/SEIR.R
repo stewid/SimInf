@@ -258,8 +258,9 @@ model@events@select <- rep(1:4, length.out = length(model@events@select))
 
 # Check that this fails because rownames (compartments) are missing
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(identical("'S' and 'E' must have rownames matching the compartments.",
-                    res[[1]]$message))
+stopifnot(identical(
+    "invalid class “SEIR” object: 'S' and 'E' must have rownames matching the compartments.",
+    res[[1]]$message))
 
 rownames(model@events@E) <- c("S", "E", "I", "R")
 result <- run(model, threads = 1)
@@ -438,7 +439,7 @@ stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 
 ## Check 'V'
 res <- tools::assertError(trajectory(result, "phi"))
-stopifnot(identical("Non-existing compartment[(]s[)] in model: 'phi'",
+stopifnot(identical("Non-existing compartment(s) in model: 'phi'",
                     res[[1]]$message))
 
 ## Check data
