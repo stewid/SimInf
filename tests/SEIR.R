@@ -21,8 +21,7 @@ sessionInfo()
 
 ## Check invalid u0
 res <- tools::assertError(SEIR(u0 = "u0"))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("Missing columns in u0", res[[1]]$message))
 
 u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
                      E  = c(0, 0, 0, 0, 0, 0),
@@ -33,17 +32,16 @@ u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
 
 ## Check missing columns in u0
 res <- tools::assertError(SEIR(u0 = u0[, c("E", "I", "R"), drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("Missing columns in u0", res[[1]]$message))
+
 res <- tools::assertError(SEIR(u0 = u0[, c("S", "I", "R"), drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("Missing columns in u0", res[[1]]$message))
+
 res <- tools::assertError(SEIR(u0 = u0[, c("S", "E", "R"), drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("Missing columns in u0", res[[1]]$message))
+
 res <- tools::assertError(SEIR(u0 = u0[, c("S", "E", "I"), drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("Missing columns in u0", res[[1]]$message))
 
 ## Check missing beta
 res <- tools::assertError(SEIR(u0      = u0,
@@ -51,8 +49,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                events  = NULL,
                                epsilon = 0.5,
                                gamma   = 0.5))
-stopifnot(length(grep("'beta' is missing",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'beta' is missing", res[[1]]$message))
 
 ## Check missing epsilon
 res <- tools::assertError(SEIR(u0      = u0,
@@ -60,8 +57,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                events  = NULL,
                                beta    = 0.5,
                                gamma   = 0.5))
-stopifnot(length(grep("'epsilon' is missing",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'epsilon' is missing", res[[1]]$message))
 
 ## Check missing gamma
 res <- tools::assertError(SEIR(u0      = u0,
@@ -69,8 +65,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                events  = NULL,
                                beta    = 0.5,
                                epsilon = 0.5))
-stopifnot(length(grep("'gamma' is missing",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'gamma' is missing", res[[1]]$message))
 
 ## Check non-numeric beta
 res <- tools::assertError(SEIR(u0      = u0,
@@ -79,8 +74,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = "0.5",
                                epsilon = 0.3,
                                gamma   = 0.1))
-stopifnot(length(grep("'beta' must be numeric",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'beta' must be numeric", res[[1]]$message))
 
 ## Check non-numeric epsilon
 res <- tools::assertError(SEIR(u0      = u0,
@@ -89,8 +83,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = "0.3",
                                gamma   = 0.1))
-stopifnot(length(grep("'epsilon' must be numeric",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'epsilon' must be numeric", res[[1]]$message))
 
 ## Check non-numeric gamma
 res <- tools::assertError(SEIR(u0      = u0,
@@ -99,8 +92,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = 0.3,
                                gamma   = "0.1"))
-stopifnot(length(grep("'gamma' must be numeric",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'gamma' must be numeric", res[[1]]$message))
 
 ## Check that length of beta equals 1
 res <- tools::assertError(SEIR(u0      = u0,
@@ -109,8 +101,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = c(0.5, 0.5),
                                epsilon = 0.3,
                                gamma   = 0.1))
-stopifnot(length(grep("'beta' must be of length 1",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'beta' must be of length 1", res[[1]]$message))
 
 ## Check that length of epsilon equals 1
 res <- tools::assertError(SEIR(u0      = u0,
@@ -119,8 +110,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = c(0.3, 0.3),
                                gamma   = 0.1))
-stopifnot(length(grep("'epsilon' must be of length 1",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'epsilon' must be of length 1", res[[1]]$message))
 
 ## Check that length of gamma equals 1
 res <- tools::assertError(SEIR(u0      = u0,
@@ -129,8 +119,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = 0.3,
                                gamma   = c(0.1, 0.1)))
-stopifnot(length(grep("'gamma' must be of length 1",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'gamma' must be of length 1", res[[1]]$message))
 
 ## Check extraction of data from 'suscpetible', 'infected' and
 ## 'recovered' compartments
@@ -269,8 +258,8 @@ model@events@select <- rep(1:4, length.out = length(model@events@select))
 
 # Check that this fails because rownames (compartments) are missing
 res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("'S' and 'E' must have rownames matching the compartments.",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("'S' and 'E' must have rownames matching the compartments.",
+                    res[[1]]$message))
 
 rownames(model@events@E) <- c("S", "E", "I", "R")
 result <- run(model, threads = 1)
@@ -449,8 +438,8 @@ stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 
 ## Check 'V'
 res <- tools::assertError(trajectory(result, "phi"))
-stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'phi'",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("Non-existing compartment[(]s[)] in model: 'phi'",
+                    res[[1]]$message))
 
 ## Check data
 stopifnot(identical(nrow(events_SEIR()), 466692L))
@@ -510,12 +499,10 @@ unlink(pdf_file)
 
 ## Check that C SEIR run function fails for a misspecified SEIR model
 res <- tools::assertError(.Call("SEIR_run", NULL, NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid model.",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("Invalid model.", res[[1]]$message))
 
 res <- tools::assertError(.Call("SEIR_run", "SEIR", NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid model.",
-                      res[[1]]$message)) > 0)
+stopifnot(identical("Invalid model.", res[[1]]$message))
 
 ## Check that an invalid rate error is raised during the simulation.
 model <- SEIR(u0 = data.frame(S = rep(100, 2), E = 0, I = 10, R = 0),
