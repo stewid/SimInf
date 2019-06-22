@@ -115,6 +115,10 @@ check_pkg_skeleton:
             -e "stopifnot(identical(result_gdata, result_v0))"
 	R CMD REMOVE pkggdata pkgldata pkgv0
 
+# Build and check package on R-hub
+rhub: clean check
+	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', rhub::platforms()[['name']], show_status = FALSE)"
+
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)
 valgrind:
@@ -127,4 +131,4 @@ configure: configure.ac
 clean:
 	./cleanup
 
-.PHONY: install roxygen pdf build check check_quick check_gctorture check_valgrind check_pkg_skeleton clean vignette
+.PHONY: install roxygen pdf build check check_quick check_gctorture check_valgrind check_pkg_skeleton rhub clean vignette
