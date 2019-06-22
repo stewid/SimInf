@@ -280,16 +280,16 @@ cleanup:
             Rf_error("Negative state detected.");
             break;
         case SIMINF_ERR_ALLOC_MEMORY_BUFFER:
-            Rf_error("Unable to allocate memory buffer");
+            Rf_error("Unable to allocate memory buffer.");
             break;
         case SIMINF_UNDEFINED_EVENT:
             Rf_error("Undefined event type.");
             break;
         case SIMINF_INVALID_SEED_VALUE:
-            Rf_error("Invalid 'seed' value");
+            Rf_error("Invalid 'seed' value.");
             break;
         case SIMINF_INVALID_THREADS_VALUE:
-            Rf_error("Invalid 'threads' value");
+            Rf_error("Invalid 'threads' value.");
             break;
         case SIMINF_ERR_V_IS_NOT_FINITE:
             Rf_error("The continuous state 'v' is not finite.");
@@ -304,7 +304,7 @@ cleanup:
             Rf_error("The continuous state 'v' is negative.");
             break;
         case SIMINF_ERR_INVALID_RATE:
-            Rf_error("Invalid rate detected (non-finite or < 0.0)");
+            Rf_error("Invalid rate detected (non-finite or < 0.0).");
             break;
         case SIMINF_ERR_UNKNOWN_SOLVER:
             Rf_error("Invalid 'solver' value.");
@@ -325,7 +325,7 @@ cleanup:
             Rf_error("'shift' is out of bounds.");
             break;
         default:
-            Rf_error("Unknown error code: %i", error);
+            Rf_error("Unknown error code: %i.", error);
             break;
         }
     }

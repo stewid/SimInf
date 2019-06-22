@@ -263,7 +263,7 @@ parse_transitions <- function(transitions, compartments, ldata_names,
         if (length(x) < 3) {
             stop("Invalid transition: '",
                  paste0(x, collapse = "->"),
-                 "'",
+                 "'.",
                  call. = FALSE)
         }
 

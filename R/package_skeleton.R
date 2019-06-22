@@ -146,7 +146,7 @@ create_model_R_object_u0 <- function(model)
       "    if (!is.data.frame(u0))",
       "        u0 <- as.data.frame(u0)",
       "    if (!all(compartments %in% names(u0)))",
-      "        stop(\"Missing columns in u0\")",
+      "        stop(\"Missing columns in u0.\")",
       "    u0 <- u0[, compartments, drop = FALSE]",
       "")
 }
@@ -163,11 +163,11 @@ create_model_R_object_ldata <- function(model)
       ldata_names,
       "    if (is.data.frame(ldata)) {",
       "        if (!all(ldata_names %in% colnames(ldata)))",
-      "            stop(\"Missing parameter(s) in 'ldata'\")",
+      "            stop(\"Missing parameter(s) in 'ldata'.\")",
       "        ldata <- ldata[, ldata_names, drop = FALSE]",
       "    } else if (is.matrix(ldata)) {",
       "        if (!all(ldata_names %in% rownames(ldata)))",
-      "            stop(\"Missing parameter(s) in 'ldata'\")",
+      "            stop(\"Missing parameter(s) in 'ldata'.\")",
       "        ldata <- ldata[ldata_names, , drop = FALSE]",
       "    } else {",
       "        stop(\"'ldata' must either be a 'data.frame' or a 'matrix'.\")",
@@ -484,7 +484,7 @@ package_skeleton <- function(model, name = NULL, path = ".",
               nchar(path) > 0)
     path <- file.path(path, name)
     if (!is.na(file.info(path)$size))
-        stop(paste0("'", path, "' already exists"), call. = FALSE)
+        stop(paste0("'", path, "' already exists."), call. = FALSE)
 
     if (is.null(author))
         author <- "Your Name"

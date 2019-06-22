@@ -34,7 +34,7 @@ parse_formula_item <- function(x, compartments)
     i <- !(x %in% compartments)
     if (any(i)) {
         stop("Non-existing compartment(s) in model: ",
-             paste0("'", x[i], "'", collapse = ", "),
+             paste0("'", x[i], "'.", collapse = ", "),
              call. = FALSE)
     }
     x
@@ -170,9 +170,9 @@ prevalence <- function(model,
 
     ## Check 'formula' argument
     if (missing(formula))
-        stop("Missing 'formula' argument", call. = FALSE)
+        stop("Missing 'formula' argument.", call. = FALSE)
     if (!is(formula, "formula"))
-        stop("'formula' argument is not a 'formula'", call. = FALSE)
+        stop("'formula' argument is not a 'formula'.", call. = FALSE)
     formula <- as.character(formula)
     if (!identical(length(formula), 3L))
         stop("Invalid formula specification.", call. = FALSE)

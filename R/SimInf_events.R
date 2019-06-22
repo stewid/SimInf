@@ -134,25 +134,25 @@ valid_SimInf_events_object <- function(object)
     }
 
     if (!all(object@time > 0))
-        return("time must be greater than 0")
+        return("time must be greater than 0.")
 
     if (any(object@event < 0, object@event > 3))
-        return("event must be in the range 0 <= event <= 3")
+        return("event must be in the range 0 <= event <= 3.")
 
     if (any(object@node < 1))
-        return("'node' must be greater or equal to 1")
+        return("'node' must be greater or equal to 1.")
 
     if (any(object@dest[object@event == 3] < 1))
-        return("'dest' must be greater or equal to 1")
+        return("'dest' must be greater or equal to 1.")
 
     if (any(object@proportion < 0, object@proportion > 1))
-        return("prop must be in the range 0 <= prop <= 1")
+        return("prop must be in the range 0 <= prop <= 1.")
 
     if (any(object@select < 1, object@select > dim(object@E)[2]))
-        return("select must be in the range 1 <= select <= Nselect")
+        return("select must be in the range 1 <= select <= Nselect.")
 
     if (any(object@shift[object@event == 2] < 1))
-        return("'shift' must be greater or equal to 1")
+        return("'shift' must be greater or equal to 1.")
 
     TRUE
 }
@@ -264,7 +264,7 @@ SimInf_events <- function(E      = NULL,
     ## Check E
     if (is.null(E)) {
         if (!is.null(events))
-            stop("events is not NULL when E is NULL", call. = FALSE)
+            stop("events is not NULL when E is NULL.", call. = FALSE)
         E <- new("dgCMatrix")
     } else if (!is(E, "dgCMatrix")) {
         E <- as(E, "dgCMatrix")
@@ -285,17 +285,17 @@ SimInf_events <- function(E      = NULL,
                              shift      = as.integer())
     }
     if (!is.data.frame(events))
-        stop("events must be a data.frame", call. = FALSE)
+        stop("events must be a data.frame.", call. = FALSE)
     if (!all(c("event", "time", "node", "dest",
                "n", "proportion", "select",
                "shift") %in% names(events))) {
-        stop("Missing columns in events", call. = FALSE)
+        stop("Missing columns in events.", call. = FALSE)
     }
 
     ## Do we have to recode the event type as a numerical value
     if (is.character(events$event) || is.factor(events$event)) {
         if (!all(events$event %in% c("enter", "exit", "extTrans", "intTrans"))) {
-            stop("'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'",
+            stop("'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'.",
                  call. = FALSE)
         }
 
@@ -316,12 +316,12 @@ SimInf_events <- function(E      = NULL,
     if (nrow(events)) {
         if (is(events$time, "Date")) {
             if (is.null(t0))
-                stop("Missing 't0'", call. = FALSE)
+                stop("Missing 't0'.", call. = FALSE)
             if (!all(identical(length(t0), 1L), is.numeric(t0)))
-                stop("Invalid 't0'", call. = FALSE)
+                stop("Invalid 't0'.", call. = FALSE)
             events$time <- as.numeric(events$time) - t0
         } else if (!is.null(t0)) {
-            stop("Invalid 't0'", call. = FALSE)
+            stop("Invalid 't0'.", call. = FALSE)
         }
     }
 
@@ -329,24 +329,24 @@ SimInf_events <- function(E      = NULL,
              is.numeric(events$node), is.numeric(events$dest),
              is.numeric(events$n), is.numeric(events$proportion),
              is.numeric(events$select))) {
-        stop("Columns in events must be numeric", call. = FALSE)
+        stop("Columns in events must be numeric.", call. = FALSE)
     }
 
     if (nrow(events)) {
         if (!all(is_wholenumber(events$event)))
-            stop("Columns in events must be integer", call. = FALSE)
+            stop("Columns in events must be integer.", call. = FALSE)
         if (!all(is_wholenumber(events$time)))
-            stop("Columns in events must be integer", call. = FALSE)
+            stop("Columns in events must be integer.", call. = FALSE)
         if (!all(is_wholenumber(events$node)))
-            stop("Columns in events must be integer", call. = FALSE)
+            stop("Columns in events must be integer.", call. = FALSE)
         if (!all(is_wholenumber(events$dest)))
-            stop("Columns in events must be integer", call. = FALSE)
+            stop("Columns in events must be integer.", call. = FALSE)
         if (!all(is_wholenumber(events$n)))
-            stop("Columns in events must be integer", call. = FALSE)
+            stop("Columns in events must be integer.", call. = FALSE)
         if (!all(is_wholenumber(events$select)))
-            stop("Columns in events must be integer", call. = FALSE)
+            stop("Columns in events must be integer.", call. = FALSE)
         if (!all(is_wholenumber(events$shift)))
-            stop("Columns in events must be integer", call. = FALSE)
+            stop("Columns in events must be integer.", call. = FALSE)
     }
 
     events <- events[order(events$time, events$event, events$select),]
@@ -670,7 +670,7 @@ select_matrix <- function(model)
         value <- as(value, "dgCMatrix")
 
     if (!identical(Nc(model), dim(value)[1])) {
-        stop("'value' must have one row for each compartment in the model",
+        stop("'value' must have one row for each compartment in the model.",
              call. = FALSE)
     }
 

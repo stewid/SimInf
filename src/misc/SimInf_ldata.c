@@ -50,11 +50,11 @@ SEXP SimInf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
 
     /* Check arguments */
     if (SimInf_arg_check_matrix(data))
-        Rf_error("Invalid 'data' argument");
+        Rf_error("Invalid 'data' argument.");
     if (SimInf_arg_check_dgCMatrix(distance))
-        Rf_error("Invalid 'distance' argument");
+        Rf_error("Invalid 'distance' argument.");
     if (SimInf_arg_check_integer(metric))
-        Rf_error("Invalid 'metric' argument");
+        Rf_error("Invalid 'metric' argument.");
 
     /* Extract data from 'data' */
     Nn = INTEGER(GET_SLOT(data, R_DimSymbol))[1];
@@ -71,7 +71,7 @@ SEXP SimInf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
     /* Check that the number of nodes are equal in data and
      * distance */
     if (Nn != (LENGTH(GET_SLOT(distance, Rf_install("p"))) - 1))
-        Rf_error("The number of nodes in 'data' and 'distance' are not equal");
+        Rf_error("The number of nodes in 'data' and 'distance' are not equal.");
 
     /* Calculate length of 'Nld' in 'ldata' for each node in the
      * following three steps: 1), 2), and 3).

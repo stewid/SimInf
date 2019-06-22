@@ -153,7 +153,7 @@ valid_SimInf_model_object <- function(object)
     if ((dim(object@v0)[1] > 0)) {
         r <- rownames(object@v0)
         if (is.null(r) || any(nchar(r) == 0))
-            return("'v0' must have rownames")
+            return("'v0' must have rownames.")
         if (!identical(dim(object@v0)[2], Nn_u0))
             return("The number of nodes in 'u0' and 'v0' must match.")
     }
@@ -171,7 +171,7 @@ valid_SimInf_model_object <- function(object)
         if (any(is.null(rownames(object@S)), is.null(rownames(object@events@E))))
             return("'S' and 'E' must have rownames matching the compartments.")
         if (!identical(rownames(object@S), rownames(object@events@E)))
-            return("'S' and 'E' must have identical compartments")
+            return("'S' and 'E' must have identical compartments.")
     }
 
     ## Check G.
@@ -205,7 +205,7 @@ valid_SimInf_model_object <- function(object)
     transitions <- transitions[transitions != "@"]
     transitions <- sub("^[[:digit:]]+[*]", "", transitions)
     if (!all(transitions %in% rownames(object@S)))
-        return("'G' and 'S' must have identical compartments")
+        return("'G' and 'S' must have identical compartments.")
 
     ## Check ldata.
     if (!is.double(object@ldata))
@@ -287,14 +287,14 @@ SimInf_model <- function(G,
 {
     ## Check u0
     if (is.null(u0))
-        stop("'u0' is NULL", call. = FALSE)
+        stop("'u0' is NULL.", call. = FALSE)
     if (is.data.frame(u0))
         u0 <- as_t_matrix(u0)
     if (!all(is.matrix(u0), is.numeric(u0)))
-        stop("u0 must be an integer matrix", call. = FALSE)
+        stop("u0 must be an integer matrix.", call. = FALSE)
     if (!is.integer(u0)) {
         if (!all(is_wholenumber(u0)))
-            stop("u0 must be an integer matrix", call. = FALSE)
+            stop("u0 must be an integer matrix.", call. = FALSE)
         storage.mode(u0) <- "integer"
     }
 
@@ -335,13 +335,13 @@ SimInf_model <- function(G,
     } else {
         if (!is.integer(U)) {
             if (!all(is_wholenumber(U)))
-                stop("U must be an integer", call. = FALSE)
+                stop("U must be an integer.", call. = FALSE)
             storage.mode(U) <- "integer"
         }
 
         if (!is.matrix(U)) {
             if (!identical(length(U), 0L))
-                stop("U must be equal to 0 x 0 matrix", call. = FALSE)
+                stop("U must be equal to 0 x 0 matrix.", call. = FALSE)
             dim(U) <- c(0, 0)
         }
     }
@@ -353,7 +353,7 @@ SimInf_model <- function(G,
         if (is.data.frame(v0))
             v0 <- as_t_matrix(v0)
         if (!all(is.matrix(v0), is.numeric(v0)))
-            stop("v0 must be a numeric matrix", call. = FALSE)
+            stop("v0 must be a numeric matrix.", call. = FALSE)
 
         if (!identical(storage.mode(v0), "double"))
             storage.mode(v0) <- "double"
@@ -364,14 +364,14 @@ SimInf_model <- function(G,
         V <- matrix(numeric(0), nrow = 0, ncol = 0)
     } else {
         if (!is.numeric(V))
-            stop("V must be numeric")
+            stop("V must be numeric.")
 
         if (!identical(storage.mode(V), "double"))
             storage.mode(V) <- "double"
 
         if (!is.matrix(V)) {
             if (!identical(length(V), 0L))
-                stop("V must be equal to 0 x 0 matrix", call. = FALSE)
+                stop("V must be equal to 0 x 0 matrix.", call. = FALSE)
             dim(V) <- c(0, 0)
         }
     }
@@ -393,7 +393,7 @@ SimInf_model <- function(G,
 
     ## Check events
     if (!any(is.null(events), is.data.frame(events)))
-        stop("'events' must be NULL or a data.frame", call. = FALSE)
+        stop("'events' must be NULL or a data.frame.", call. = FALSE)
     events <- SimInf_events(E = E, N = N, events = events, t0 = t0)
 
     ## Check C code
@@ -547,9 +547,9 @@ ldata <- function(model, node)
 
     ## Check node argument
     if (missing(node))
-        stop("Missing 'node' argument", call. = FALSE)
+        stop("Missing 'node' argument.", call. = FALSE)
     if (!is.numeric(node) || !identical(length(node), 1L) || node < 1)
-        stop("Invalid 'node' argument", call. = FALSE)
+        stop("Invalid 'node' argument.", call. = FALSE)
 
     model@ldata[, node]
 }

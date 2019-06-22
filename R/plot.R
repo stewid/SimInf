@@ -166,7 +166,7 @@ setMethod("plot",
                    compartments = NULL, node = NULL, range = 0.5, ...)
           {
               if (identical(dim(x@U), c(0L, 0L))) {
-                  stop("Please run the model first, the 'U' matrix is empty",
+                  stop("Please run the model first, the 'U' matrix is empty.",
                        call. = FALSE)
               }
 
@@ -174,7 +174,7 @@ setMethod("plot",
               if (is.null(compartments))
                   compartments <- rownames(x@S)
               if (!(all(compartments %in% rownames(x@S))))
-                  stop("'compartments' must exist in the model", call. = FALSE)
+                  stop("'compartments' must exist in the model.", call. = FALSE)
               compartments <- match(compartments, rownames(x@S))
 
               ## Check the 'node' argument
@@ -197,7 +197,7 @@ setMethod("plot",
                   if (!is.numeric(range) || !identical(length(range), 1L) ||
                       range < 0 || range > 1)
                   {
-                      stop("'range' must be FALSE or a value between 0 and 1",
+                      stop("'range' must be FALSE or a value between 0 and 1.",
                            call. = FALSE)
                   }
                   range <- (1 - range) / 2
