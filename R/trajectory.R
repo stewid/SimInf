@@ -115,49 +115,62 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_) {
           stringsAsFactors = FALSE)
 }
 
-dense2df <- function(m, nc, nn, tspan, lbl, compartments, node, as_integer)
+##' Convert the trajectory from a matrix to a data.frame
+##'
+##' Internally, the simulated data is stored in a matrix.
+##' @param m simulated data to convert to a data.frame.
+##' @param tspan  time points in the trajectory.
+##' @param ac available compartments in the simulated data.
+##' @param sc selected compartments to extract from the simulated data
+##'     and include in the data.frame. If NULL, all available
+##'     compartments are included.
+##' @param i subset of nodes to extract data from. If NULL, all
+##'     available nodes are included.
+##' @return a \code{data.frame}
+##' @noRd
+dense2df <- function(m, tspan, ac, sc, i)
 {
     x <- NULL
-    if (is.null(node)) {
-        if (length(compartments) == nc) {
-            if (isTRUE(as_integer)) {
+    if (is.null(i)) {
+        if (length(sc) == length(ac)) {
+            if (storage.mode(m) == "integer") {
                 x <- as.integer(m)
             } else {
                 x <- as.numeric(m)
             }
-            x <- matrix(x, ncol = nc, byrow = TRUE)
-            colnames(x) <- lbl
+            x <- matrix(x, ncol = length(ac), byrow = TRUE)
+            colnames(x) <- ac
         }
 
-        node <- seq_len(nn)
+        i <- seq_len(nrow(m) %/% length(ac))
     }
 
     if (is.null(x)) {
         ## Extract a subset of data.
-        compartments <- sort(match(compartments, lbl))
-        i <- rep(compartments, length(node))
-        i <- i + rep((node - 1) * nc, each = length(compartments))
-        j <- (seq_len(length(tspan)) - 1) * nc * nn
-        j <- rep(j, each = length(i))
-        i <- rep(i, length(tspan))
-        i <- i + j
+        sc <- sort(match(sc, ac))
+        j <- rep(sc, length(i))
+        j <- j + rep((i - 1) * length(ac), each = length(sc))
+        k <- (seq_len(length(tspan)) - 1) * nrow(m)
+        k <- rep(k, each = length(j))
+        j <- rep(j, length(tspan))
+        j <- j + k
 
-        if (isTRUE(as_integer)) {
-            x <- as.integer(m[i])
+        if (storage.mode(m) == "integer") {
+            x <- as.integer(m[j])
         } else {
-            x <- as.numeric(m[i])
+            x <- as.numeric(m[j])
         }
 
-        x <- matrix(x, ncol = length(compartments), byrow = TRUE)
-        colnames(x) <- lbl[compartments]
+        x <- matrix(x, ncol = length(sc), byrow = TRUE)
+        colnames(x) <- ac[sc]
     }
 
     time <- names(tspan)
     if (is.null(time))
         time <- as.integer(tspan)
-    time <- rep(time, each = length(node))
+    time <- rep(time, each = length(i))
 
-    cbind(data.frame(node = node, time = time, stringsAsFactors = FALSE),
+    cbind(data.frame(node = i, time = time, stringsAsFactors = FALSE),
           as.data.frame(x))
 }
 
@@ -336,8 +349,8 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
             dfV <- sparse2df(model@V_sparse, Nd(model), model@tspan,
                              rownames(model@v0), NA_real_)
         } else {
-            dfV <- dense2df(model@V, Nd(model), Nn(model), model@tspan,
-                            rownames(model@v0), compartments$V, node, FALSE)
+            dfV <- dense2df(model@V, model@tspan, rownames(model@v0),
+                            compartments$V, node)
         }
     }
 
@@ -347,8 +360,8 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
             dfU <- sparse2df(model@U_sparse, Nc(model),
                              model@tspan, rownames(model@S))
         } else {
-            dfU <- dense2df(model@U, Nc(model), Nn(model), model@tspan,
-                            rownames(model@S), compartments$U, node, TRUE)
+            dfU <- dense2df(model@U, model@tspan, rownames(model@S),
+                            compartments$U, node)
         }
     }
 
