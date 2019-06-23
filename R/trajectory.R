@@ -69,21 +69,21 @@ parse_formula <- function(model, compartments)
         c(rownames(model@S), rownames(model@v0)))
 }
 
-##' Coerce a sparse matrix to a data.frame
+##' Convert the trajectory from a matrix to a data.frame
 ##'
 ##' Utility function to coerce a sparse matrix (U_sparse or V_sparse)
 ##' to a data.frame.
 ##' @param m sparse matrix to coerce.
-##' @param n number of rows per node.
 ##' @param tspan time points in trajectory.
-##' @param lbl labels for data e.g. compartments.
+##' @param ac available compartments in the simulated data.
 ##' @param value default value.
-##' @return \code{data.frame}
+##' @param id name of the identifier column.
+##' @return a \code{data.frame}
 ##' @noRd
-sparse2df <- function(m, n, tspan, lbl, value = NA_integer_)
+sparse2df <- function(m, tspan, ac, value, id)
 {
     ## Determine nodes and time-points with output.
-    node <- as.integer(ceiling((m@i + 1) / n))
+    i <- as.integer(ceiling((m@i + 1) / length(ac)))
     time <- names(tspan)
     if (is.null(time))
         time <- as.integer(tspan)
@@ -91,29 +91,28 @@ sparse2df <- function(m, n, tspan, lbl, value = NA_integer_)
     time <- unlist(apply(time, 1, function(x) rep(x[1], x[2])))
 
     ## Determine unique combinations of node and time
-    i <- !duplicated(cbind(node, time))
-    node <- node[i]
-    time <- time[i]
+    j <- !duplicated(cbind(i, time))
+    i <- i[j]
+    time <- time[j]
 
     ## Use node and time to determine the required size
     ## of a matrix to hold all output data and fill it
     ## with NA values.
-    values <- matrix(value, nrow = sum(i), ncol = n)
-    colnames(values) <- lbl
+    x <- matrix(value, nrow = sum(j), ncol = length(ac))
+    colnames(x) <- ac
 
     ## And then update non-NA items with values from m.
-    i <- cumsum(i)
-    j <- m@i %% n + 1
+    j <- cumsum(j)
+    k <- m@i %% length(ac) + 1
     if (is.integer(value)) {
-        values[matrix(c(i, j), ncol = 2)] <- as.integer(m@x)
+        x[matrix(c(j, k), ncol = 2)] <- as.integer(m@x)
     } else {
-        values[matrix(c(i, j), ncol = 2)] <- m@x
+        x[matrix(c(j, k), ncol = 2)] <- m@x
     }
 
-    cbind(node = node,
-          time = time,
-          as.data.frame(values),
-          stringsAsFactors = FALSE)
+    df <- cbind(i = i, time = time, as.data.frame(x), stringsAsFactors = FALSE)
+    colnames(df)[1] <- id
+    df
 }
 
 ##' Convert the trajectory from a matrix to a data.frame
@@ -351,8 +350,8 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     dfV <- NULL
     if (!is.null(compartments$V)) {
         if (is_trajectory_sparse(model@V_sparse)) {
-            dfV <- sparse2df(model@V_sparse, Nd(model), model@tspan,
-                             rownames(model@v0), NA_real_)
+            dfV <- sparse2df(model@V_sparse, model@tspan,
+                             rownames(model@v0), NA_real_, "node")
         } else {
             dfV <- dense2df(model@V, model@tspan, rownames(model@v0),
                             compartments$V, node, "node")
@@ -362,8 +361,8 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     dfU <- NULL
     if (!is.null(compartments$U)) {
         if (is_trajectory_sparse(model@U_sparse)) {
-            dfU <- sparse2df(model@U_sparse, Nc(model),
-                             model@tspan, rownames(model@S))
+            dfU <- sparse2df(model@U_sparse, model@tspan,
+                             rownames(model@S), NA_integer_, "node")
         } else {
             dfU <- dense2df(model@U, model@tspan, rownames(model@S),
                             compartments$U, node, "node")
