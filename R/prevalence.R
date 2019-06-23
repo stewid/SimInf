@@ -34,8 +34,8 @@ parse_formula_item <- function(x, compartments)
     i <- !(x %in% compartments)
     if (any(i)) {
         stop("Non-existing compartment(s) in model: ",
-             paste0("'", x[i], "'.", collapse = ", "),
-             call. = FALSE)
+             paste0("'", x[i], "'", collapse = ", "),
+             ".", call. = FALSE)
     }
     x
 }

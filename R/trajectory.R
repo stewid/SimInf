@@ -32,17 +32,15 @@ match_compartments <- function(model, compartments, as.is)
             U <- compartments[i]
 
         ## Match compartments in V
-        if (Nd(model) > 0) {
-            i <- compartments %in% rownames(model@v0)
-            if (any(i))
-                V <- compartments[i]
-        }
+        i <- compartments %in% rownames(model@v0)
+        if (any(i))
+            V <- compartments[i]
 
         compartments <- setdiff(compartments, c(U, V))
         if (length(compartments) > 0) {
             stop("Non-existing compartment(s) in model: ",
-                 paste0("'", compartments, "'.", collapse = ", "),
-                 call. = FALSE)
+                 paste0("'", compartments, "'", collapse = ", "),
+                 ".", call. = FALSE)
         }
 
         ## Cannot combine data from U and V when as.is = TRUE.
