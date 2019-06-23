@@ -1,6 +1,15 @@
 SimInf 6.3.0.9000
 -----------------
 
+CHANGES
+
+* The name of the internal function that generated the error has been
+  removed from the error message (use 'traceback' to print the call
+  stack of the last uncaught error). Additionally, all error messages
+  now ends with a '.' (full stop).
+
+BUG FIXES
+
 SimInf 6.3.0
 ------------
 
