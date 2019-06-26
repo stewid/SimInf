@@ -220,7 +220,7 @@ SEXP SimInf_run(
     else
         SET_VECTOR_ELT(V_dimnames, 1, Rf_duplicate(colnames));
 
-    /* Initial state.
+    /* Initial state. */
     args.u0 = INTEGER(GET_SLOT(result, Rf_install("u0")));
     args.v0 = REAL(GET_SLOT(result, Rf_install("v0")));
 
