@@ -754,8 +754,8 @@ int SimInf_compartment_model_create(
         model[i].next_unit_of_time = floor(model[i].tt) + 1.0;
         model[i].tspan = args->tspan;
         model[i].tlen = args->tlen;
-        model[i].U_it = 1;
-        model[i].V_it = 1;
+        model[i].U_it = 0;
+        model[i].V_it = 0;
 
         /* Data vectors */
         if (args->U) {

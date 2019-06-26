@@ -10,6 +10,10 @@ CHANGES
 
 BUG FIXES
 
+* Fix storing solution of the state vectors of the first time point
+  until after simulated time has passed the the first time point in
+  tspan.
+
 SimInf 6.3.0
 ------------
 
