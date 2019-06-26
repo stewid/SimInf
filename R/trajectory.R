@@ -75,10 +75,9 @@ parse_formula <- function(model, compartments)
 ##' @param tspan time points in trajectory.
 ##' @param ac available compartments in the simulated data.
 ##' @param value default value.
-##' @param id name of the identifier column.
 ##' @return a \code{data.frame}
 ##' @noRd
-sparse2df <- function(m, tspan, ac, value, id)
+sparse2df <- function(m, tspan, ac, value)
 {
     ## Determine nodes and time-points with output.
     i <- as.integer(ceiling((m@i + 1) / length(ac)))
@@ -108,9 +107,7 @@ sparse2df <- function(m, tspan, ac, value, id)
         x[matrix(c(j, k), ncol = 2)] <- m@x
     }
 
-    df <- cbind(i = i, time = time, as.data.frame(x), stringsAsFactors = FALSE)
-    colnames(df)[1] <- id
-    df
+    cbind(node = i, time = time, as.data.frame(x), stringsAsFactors = FALSE)
 }
 
 ##' Convert the trajectory from a matrix to a data.frame
@@ -124,10 +121,9 @@ sparse2df <- function(m, tspan, ac, value, id)
 ##'     and include in the data.frame.
 ##' @param i subset of nodes to extract data from. If NULL, all
 ##'     available nodes are included.
-##' @param id name of the identifier column.
 ##' @return a \code{data.frame}
 ##' @noRd
-dense2df <- function(m, tspan, ac, sc, i, id)
+dense2df <- function(m, tspan, ac, sc, i)
 {
     x <- NULL
     if (is.null(i)) {
@@ -169,10 +165,8 @@ dense2df <- function(m, tspan, ac, sc, i, id)
         time <- as.integer(tspan)
     time <- rep(time, each = length(i))
 
-    df <- cbind(data.frame(i = i, time = time, stringsAsFactors = FALSE),
-                as.data.frame(x))
-    colnames(df)[1] <- id
-    df
+    cbind(data.frame(node = i, time = time, stringsAsFactors = FALSE),
+          as.data.frame(x))
 }
 
 ##' Determine if the trajectory is empty.
@@ -354,10 +348,10 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     if (!is.null(compartments$V)) {
         if (is_trajectory_sparse(model@V_sparse)) {
             dfV <- sparse2df(model@V_sparse, model@tspan,
-                             rownames(model@v0), NA_real_, "node")
+                             rownames(model@v0), NA_real_)
         } else {
             dfV <- dense2df(model@V, model@tspan, rownames(model@v0),
-                            compartments$V, node, "node")
+                            compartments$V, node)
         }
     }
 
@@ -365,10 +359,10 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     if (!is.null(compartments$U)) {
         if (is_trajectory_sparse(model@U_sparse)) {
             dfU <- sparse2df(model@U_sparse, model@tspan,
-                             rownames(model@S), NA_integer_, "node")
+                             rownames(model@S), NA_integer_)
         } else {
             dfU <- dense2df(model@U, model@tspan, rownames(model@S),
-                            compartments$U, node, "node")
+                            compartments$U, node)
         }
     }
 
