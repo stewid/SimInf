@@ -506,15 +506,15 @@ gdata <- function(model)
 
     ## Check paramter argument
     if (missing(parameter))
-        stop("Missing 'parameter' argument", call. = FALSE)
+        stop("Missing 'parameter' argument.", call. = FALSE)
     if (!is.character(parameter))
-        stop("'parameter' argument must be a character", call. = FALSE)
+        stop("'parameter' argument must be a character.", call. = FALSE)
 
     ## Check value argument
     if (missing(value))
-        stop("Missing 'value' argument", call. = FALSE)
+        stop("Missing 'value' argument.", call. = FALSE)
     if (!is.numeric(value))
-        stop("'value' argument must be a numeric", call. = FALSE)
+        stop("'value' argument must be a numeric.", call. = FALSE)
 
     model@gdata[parameter] <- value
 

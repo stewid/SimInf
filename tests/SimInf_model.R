@@ -781,21 +781,34 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
 stopifnot(identical(gdata(model), structure(c(2, 4), .Names = c("beta", "gamma"))))
 gdata(model, "beta") <- 6
 stopifnot(identical(gdata(model), structure(c(6, 4), .Names = c("beta", "gamma"))))
-tools::assertError(gdata(model) <- 6)
-tools::assertError(gdata(model, "beta") <- "6")
-tools::assertError(gdata(model, 5) <- 6)
-tools::assertError("gdata<-"(model, "beta"))
+
+res <- tools::assertError(gdata(model) <- 6)
+check_error(res, "Missing 'parameter' argument.")
+
+res <- tools::assertError(gdata(model, "beta") <- "6")
+check_error(res, "'value' argument must be a numeric.")
+
+res <- tools::assertError(gdata(model, 5) <- 6)
+check_error(res, "'parameter' argument must be a character.")
+
+res <- tools::assertError("gdata<-"(model, "beta"))
+check_error(res, "Missing 'value' argument.")
 
 ## Check 'ldata'
 model@ldata <- matrix(1, dimnames = list("test", NULL))
 res <- tools::assertError(ldata(5))
 check_error(res, "'model' argument is not a 'SimInf_model'.")
+
 res <- tools::assertError(ldata(model))
 check_error(res, "Missing 'node' argument.")
+
 res <- tools::assertError(ldata(model, "0"))
 check_error(res, "Invalid 'node' argument.")
+
 res <- tools::assertError(ldata(model, 0))
 check_error(res, "Invalid 'node' argument.")
+
 res <- tools::assertError(ldata(model, c(0, 0)))
 check_error(res, "Invalid 'node' argument.")
+
 ldata(model, 1)
