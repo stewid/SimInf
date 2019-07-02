@@ -267,9 +267,6 @@ cleanup:
         case SIMINF_UNDEFINED_EVENT:
             Rf_error("Undefined event type.");
             break;
-        case SIMINF_INVALID_SEED_VALUE:
-            Rf_error("Invalid 'seed' value.");
-            break;
         case SIMINF_INVALID_THREADS_VALUE:
             Rf_error("Invalid 'threads' value.");
             break;
