@@ -120,3 +120,19 @@ int SimInf_get_threads(int *out, SEXP threads)
 
     return error;
 }
+
+/**
+ * Check if the trajectory data is stored in a sparse matrix.
+ *
+ * @param m sparse matrix
+ * @param i number of rows in the matrix if data is stored
+ *        in a sparse matrix.
+ * @param j number of columsn in the matrix if data is stored
+ *        in a sparse matrix.
+ * @return 1 if data is stored in the sparse matrix, else 0.
+ */
+int SimInf_sparse(SEXP m, R_xlen_t i, R_xlen_t j)
+{
+    int *d = INTEGER(GET_SLOT(m, Rf_install("Dim")));
+    return d[0] == i && d[1] == j;
+}

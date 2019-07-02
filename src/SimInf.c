@@ -151,9 +151,7 @@ SEXP SimInf_run(
     /* Output array (to hold a single trajectory) */
     PROTECT(U_sparse = GET_SLOT(result, Rf_install("U_sparse")));
     nprotect++;
-    if ((INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[0] == (args.Nn * args.Nc)) &&
-        (INTEGER(GET_SLOT(U_sparse, Rf_install("Dim")))[1] == args.tlen))
-    {
+    if (SimInf_sparse(U_sparse, args.Nn * args.Nc, args.tlen)) {
         args.irU = INTEGER(GET_SLOT(U_sparse, Rf_install("i")));
         args.jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
         args.prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
@@ -193,9 +191,7 @@ SEXP SimInf_run(
     /* Output array (to hold a single trajectory) */
     PROTECT(V_sparse = GET_SLOT(result, Rf_install("V_sparse")));
     nprotect++;
-    if ((INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[0] == (args.Nn * args.Nd)) &&
-        (INTEGER(GET_SLOT(V_sparse, Rf_install("Dim")))[1] == args.tlen))
-    {
+    if (SimInf_sparse(V_sparse, args.Nn * args.Nd, args.tlen)) {
         args.irV = INTEGER(GET_SLOT(V_sparse, Rf_install("i")));
         args.jcV = INTEGER(GET_SLOT(V_sparse, Rf_install("p")));
         args.prV = REAL(GET_SLOT(V_sparse, Rf_install("x")));
