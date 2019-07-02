@@ -11,7 +11,7 @@ Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
              person("Pavol", "Bauer", role = "aut",
                     comment = c(ORCID = "0000-0003-4328-7171")),
              person("Attractive Chaos", role = "cph",
-                    comment = "Author of 'kvec.h', a generic dynamic array"))
+                    comment = "Author of 'kbtree.h' and 'kvec.h'."))
 Description: Provides an efficient and very flexible framework to
     conduct data-driven epidemiological modeling in realistic large
     scale disease spread simulations. The framework integrates
