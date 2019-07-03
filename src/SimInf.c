@@ -47,11 +47,10 @@ SEXP SimInf_run(
     TRFun *tr_fun,
     PTSFun pts_fun)
 {
-    int i, j, error = 0, nprotect = 0;
+    int error = 0, nprotect = 0;
     SEXP result = R_NilValue;
     SEXP ext_events, E, G, N, S, prS;
-    SEXP tspan, rownames, colnames;
-    SEXP U_dimnames, U_rownames, V_dimnames;
+    SEXP tspan;
     SEXP U, V, U_sparse, V_sparse;
     SimInf_solver_args args = {NULL};
 
@@ -115,11 +114,6 @@ SEXP SimInf_run(
     nprotect++;
     args.tspan = REAL(tspan);
 
-    /* Dimnames */
-    rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
-    PROTECT(colnames = Rf_getAttrib(tspan , R_NamesSymbol));
-    nprotect++;
-
     /* Scheduled events */
     PROTECT(ext_events = GET_SLOT(result, Rf_install("events")));
     nprotect++;
@@ -155,38 +149,12 @@ SEXP SimInf_run(
         args.irU = INTEGER(GET_SLOT(U_sparse, Rf_install("i")));
         args.jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
         args.prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
-
-        PROTECT(U_dimnames = GET_SLOT(U_sparse, Rf_install("Dimnames")));
-        nprotect++;
-        PROTECT(U_rownames = Rf_allocVector(STRSXP, args.Nn * args.Nc));
-        nprotect++;
-        SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     } else {
         PROTECT(U = Rf_allocMatrix(INTSXP, args.Nn * args.Nc, args.tlen));
         nprotect++;
         SET_SLOT(result, Rf_install("U"), U);
         args.U = INTEGER(GET_SLOT(result, Rf_install("U")));
-
-        PROTECT(U_dimnames = Rf_allocVector(VECSXP, 2));
-        nprotect++;
-        Rf_setAttrib(GET_SLOT(result, Rf_install("U")),
-                     R_DimNamesSymbol, U_dimnames);
-        PROTECT(U_rownames = Rf_allocVector(STRSXP, args.Nn * args.Nc));
-        nprotect++;
-        SET_VECTOR_ELT(U_dimnames, 0, U_rownames);
     }
-
-    /* Add rownames to U */
-    for (i = 0; i < args.Nn; i++)
-        for (j = 0; j < args.Nc; j++)
-            SET_STRING_ELT(U_rownames, i * args.Nc + j, STRING_ELT(rownames, j));
-
-    /* Add colnames to U. Use the the values of 'tspan' if the
-     * colnames of 'tspan' is null. */
-    if (Rf_isNull(colnames))
-        SET_VECTOR_ELT(U_dimnames, 1, Rf_coerceVector(tspan, STRSXP));
-    else
-        SET_VECTOR_ELT(U_dimnames, 1, Rf_duplicate(colnames));
 
     /* Output array (to hold a single trajectory) */
     PROTECT(V_sparse = GET_SLOT(result, Rf_install("V_sparse")));
@@ -195,26 +163,12 @@ SEXP SimInf_run(
         args.irV = INTEGER(GET_SLOT(V_sparse, Rf_install("i")));
         args.jcV = INTEGER(GET_SLOT(V_sparse, Rf_install("p")));
         args.prV = REAL(GET_SLOT(V_sparse, Rf_install("x")));
-
-        V_dimnames = GET_SLOT(V_sparse, Rf_install("Dimnames"));
     } else {
         PROTECT(V = Rf_allocMatrix(REALSXP, args.Nn * args.Nd, args.tlen));
         nprotect++;
         SET_SLOT(result, Rf_install("V"), V);
         args.V = REAL(GET_SLOT(result, Rf_install("V")));
-
-        PROTECT(V_dimnames = Rf_allocVector(VECSXP, 2));
-        nprotect++;
-        Rf_setAttrib(GET_SLOT(result, Rf_install("V")),
-                     R_DimNamesSymbol, V_dimnames);
     }
-
-    /* Add colnames to V. Use the the values of 'tspan' if the
-     * colnames of 'tspan' is null. */
-    if (Rf_isNull(colnames))
-        SET_VECTOR_ELT(V_dimnames, 1, Rf_coerceVector(tspan, STRSXP));
-    else
-        SET_VECTOR_ELT(V_dimnames, 1, Rf_duplicate(colnames));
 
     /* Initial state. */
     args.u0 = INTEGER(GET_SLOT(result, Rf_install("u0")));

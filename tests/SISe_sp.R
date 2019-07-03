@@ -1008,10 +1008,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L),
-                        .Dim = 9:10,
-                        .Dimnames = list(
-                            c("S", "S", "S", "S", "S", "S", "S", "S", "S"),
-                            c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
+                        .Dim = 9:10)
 S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
 
@@ -1025,10 +1022,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = 9:10,
-                        .Dimnames = list(
-                            c("I", "I", "I", "I", "I", "I", "I", "I", "I"),
-                            c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
+                        .Dim = 9:10)
 I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 

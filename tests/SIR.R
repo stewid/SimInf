@@ -101,10 +101,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L,
                           3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-                        .Dim = c(6L, 10L),
-                        .Dimnames = list(c("S", "S", "S", "S", "S", "S"),
-                                         c("0", "1", "2", "3", "4", "5",
-                                           "6", "7", "8", "9")))
+                        .Dim = c(6L, 10L))
 
 S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
@@ -114,10 +111,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L),
-                        .Dimnames = list(c("I", "I", "I", "I", "I", "I"),
-                                         c("0", "1", "2", "3", "4", "5",
-                                           "6", "7", "8", "9")))
+                        .Dim = c(6L, 10L))
 
 I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
@@ -127,10 +121,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L),
-                        .Dimnames = list(c("R", "R", "R", "R", "R", "R"),
-                                         c("0", "1", "2", "3", "4", "5",
-                                           "6", "7", "8", "9")))
+                        .Dim = c(6L, 10L))
 
 R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
 

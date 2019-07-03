@@ -370,10 +370,7 @@ model <- SISe3(u0        = u0,
 U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(12L, 3L),
-                        .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
-                                           "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                         c("0", "1", "2")))
+                        .Dim = c(12L, 3L))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
@@ -448,10 +445,7 @@ model <- SISe3(u0        = u0,
 U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(12L, 3L),
-                        .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
-                                           "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                         c("0", "1", "2")))
+                        .Dim = c(12L, 3L))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
@@ -526,10 +520,7 @@ model <- SISe3(u0        = u0,
 U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(12L, 3L),
-                        .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
-                                           "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                         c("0", "1", "2")))
+                        .Dim = c(12L, 3L))
 
 result <- run(model, threads = 1)
 stopifnot(identical(model@G, result@G))
@@ -605,10 +596,7 @@ model <- SISe3(u0        = u0,
 U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 8L, 0L, 0L, 0L, 0L,
                           0L, 1L, 0L, 0L, 0L, 0L, 2L, 7L, 0L, 0L, 0L, 0L,
                           0L, 1L, 0L, 0L, 0L, 0L, 2L, 7L, 0L, 0L, 0L, 0L),
-                        .Dim = c(12L, 3L),
-                        .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
-                                           "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                                         c("0", "1", "2")))
+                        .Dim = c(12L, 3L))
 
 set.seed(1)
 result <- run(model, threads = 1)
@@ -694,10 +682,7 @@ U <- structure(
       1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L,
       0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L,
       0L, 0L, 0L, 0L),
-    .Dim = c(12L, 11L),
-    .Dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3",
-                       "S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                     c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")))
+    .Dim = c(12L, 11L))
 
 res <- run(model, threads = 1)
 stopifnot(identical(res@U, U))
@@ -763,9 +748,7 @@ model <- SISe3(u0        = u0,
 model@events@E[3, 1] <- 1
 model@events@E[5, 1] <- 1
 
-S_expected <- structure(c(0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-                        .Names = c("0", "1", "2", "3", "4",
-                                   "5", "6", "7", "8", "9", "10"))
+S_expected <- c(0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
 
 res <- run(model, threads = 1)
 S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"), node = 1, as.is = TRUE))

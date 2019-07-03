@@ -8,6 +8,9 @@ CHANGES
   stack of the last uncaught error). Additionally, all error messages
   now ends with a '.' (full stop).
 
+* Removed the row and column names from the internal matrices U and V
+  because they were not used anywhere in the code.
+
 BUG FIXES
 
 * Fix storing solution of the state vectors of the first time point

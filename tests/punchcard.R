@@ -43,11 +43,6 @@ U_exp <- new("dgCMatrix",
              i = 0:17,
              p = c(0L, 0L, 0L, 0L, 0L, 3L, 6L, 9L, 12L, 15L, 18L),
              Dim = c(18L, 10L),
-             Dimnames = list(c("S", "I", "R", "S", "I", "R",
-                               "S", "I", "R", "S", "I", "R",
-                               "S", "I", "R", "S", "I", "R"),
-                             c("1", "2", "3", "4", "5",
-                               "6", "7", "8", "9", "10")),
              x = c(98, 3, 0, 101, 2, 0, 100, 5, 0, 92, 8, 7,
                    94, 10, 5, 98, 8, 5),
              factors = list())
@@ -69,11 +64,6 @@ if (SimInf:::have_openmp()) {
                      i = 0:17,
                      p = c(0L, 0L, 0L, 0L, 0L, 3L, 6L, 9L, 12L, 15L, 18L),
                      Dim = c(18L, 10L),
-                     Dimnames = list(c("S", "I", "R", "S", "I", "R",
-                                       "S", "I", "R", "S", "I", "R",
-                                       "S", "I", "R", "S", "I", "R"),
-                                     c("1", "2", "3", "4", "5",
-                                       "6", "7", "8", "9", "10")),
                      x = c(98, 3, 0, 100, 3, 0, 100, 4, 1, 93, 11,
                            3, 94, 7, 8, 101, 5, 5),
                      factors = list())
@@ -198,21 +188,13 @@ stopifnot(identical(trajectory(result), U_exp))
 ## Test to specify empty data.frame
 punchcard(model) <- data.frame()
 result <- run(model, threads = 1)
-U_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(18, 10),
-                      dimnames = list(c("S", "I", "R", "S", "I", "R",
-                                        "S", "I", "R", "S", "I", "R",
-                                        "S", "I", "R", "S", "I", "R"),
-                                      c("1", "2", "3", "4", "5",
-                                        "6", "7", "8", "9", "10")))
+U_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(18, 10))
 U_exp <- as(U_exp, "dgCMatrix")
 stopifnot(identical(result@U_sparse, U_exp))
 
 punchcard(model) <- data.frame()
 result <- run(model, threads = 1)
-V_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(0, 10),
-                      dimnames = list(NULL,
-                                      c("1", "2", "3", "4", "5",
-                                        "6", "7", "8", "9", "10")))
+V_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(0, 10))
 V_exp <- as(V_exp, "dgCMatrix")
 stopifnot(identical(result@V_sparse, V_exp))
 
