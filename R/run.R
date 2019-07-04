@@ -78,7 +78,7 @@ contains_C_code <- function(model)
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the model and save the result.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Plot the proportion of susceptible, infected and recovered
 ##' ## individuals.

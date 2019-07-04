@@ -153,7 +153,7 @@ SEIR <- function(u0,
 ##' plot(events(model))
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' plot(result)
 ##'
 ##' ## Summarize the trajectory. The summary includes the number of
@@ -196,7 +196,7 @@ events_SEIR <- function()
 ##'               gamma   = 0.01)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' plot(result)
 ##'
 ##' ## Summarize trajectory

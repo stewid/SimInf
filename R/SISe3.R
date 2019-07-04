@@ -206,7 +206,7 @@ SISe3 <- function(u0,
 ##' plot(events(model))
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
@@ -255,7 +255,7 @@ NULL
 ##'                end_t2 = 182, end_t3 = 273, end_t4 = 365, epsilon = 0)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)

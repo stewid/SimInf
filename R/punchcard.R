@@ -52,7 +52,7 @@
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Run the model.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Display the trajectory with data for every node at each
 ##' ## time-point in tspan.
@@ -66,7 +66,7 @@
 ##'                  I = c(TRUE, TRUE, TRUE, TRUE),
 ##'                  R = c(TRUE, TRUE, TRUE, TRUE))
 ##' punchcard(model) <- df
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' trajectory(result)
 ##'
 ##' ## We can also specify to record only some of the compartments in
@@ -77,7 +77,7 @@
 ##'                  I = c(TRUE, FALSE, TRUE, FALSE),
 ##'                  R = c(TRUE, FALSE, TRUE, TRUE))
 ##' punchcard(model) <- df
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' trajectory(result)
 ##'
 ##' ## A shortcut to specify to record all of the compartments in
@@ -85,19 +85,19 @@
 ##' df <- data.frame(time = c(3, 5, 3, 5),
 ##'                  node = c(2, 2, 4, 4))
 ##' punchcard(model) <- df
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' trajectory(result)
 ##'
 ##' ## It is possible to use an empty 'data.frame' to specify
 ##' ## that no data-points should be recorded for the trajectory.
 ##' punchcard(model) <- data.frame()
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' trajectory(result)
 ##'
 ##' ## Use 'NULL' to reset the model to record data for every node at
 ##' ## each time-point in tspan.
 ##' punchcard(model) <- NULL
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' trajectory(result)
 "punchcard<-" <- function(model, value)
 {

@@ -178,7 +178,7 @@ summary_transitions <- function(object)
 ##' model
 ##'
 ##' ## Run the model and save the result
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Brief summary of the result. Note that 'U' and 'V' are
 ##' ## non-empty after running the model.

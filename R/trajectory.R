@@ -276,7 +276,7 @@ trajectory_as_is <- function(m, ac, sc, i)
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Extract the number of individuals in each compartment at the
 ##' ## time-points in 'tspan'.
@@ -299,7 +299,7 @@ trajectory_as_is <- function(m, ac, sc, i)
 ##'     end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 ##'
 ##' ## Run the model
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Extract the continuous state variable 'phi' which represents
 ##' ## the environmental infectious pressure.

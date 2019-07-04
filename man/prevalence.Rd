@@ -64,7 +64,7 @@ u0 <- data.frame(S = 100:105, I = c(0, 1, 0, 2, 0, 3), R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 
 ## Run the model to generate a single stochastic trajectory.
-result <- run(model, threads = 1)
+result <- run(model)
 
 ## Determine the proportion of infected individuals (cases)
 ## in the population at the time-points in 'tspan'.

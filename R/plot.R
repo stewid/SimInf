@@ -38,7 +38,7 @@
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the model and save the result.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Create a boxplot
 ##' boxplot(result)
@@ -73,7 +73,7 @@ setMethod("boxplot",
 ##'              gamma = 0.077)
 ##'
 ##' ## Run the model and save the result.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Create a scatter plot
 ##' pairs(result)

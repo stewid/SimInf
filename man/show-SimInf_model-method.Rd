@@ -30,7 +30,7 @@ model <- SIR(u0 = data.frame(S = rep(99, 10),
 model
 
 ## Run the model and save the result
-result <- run(model, threads = 1)
+result <- run(model)
 
 ## Brief summary of the result. Note that 'U' and 'V' are
 ## non-empty after running the model.
