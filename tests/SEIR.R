@@ -17,6 +17,9 @@
 library("SimInf")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -131,7 +134,7 @@ model <- SEIR(u0      = u0,
               epsilon = 0,
               gamma   = 0)
 
-result <- run(model, threads = 1)
+result <- run(model)
 
 S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L,
@@ -243,11 +246,11 @@ model@events@E <- as(diag(4), "dgCMatrix")
 model@events@select <- rep(1:4, length.out = length(model@events@select))
 
 # Check that this fails because rownames (compartments) are missing
-res <- tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model))
 check_error(res, "'S' and 'E' must have rownames matching the compartments.", FALSE)
 
 rownames(model@events@E) <- c("S", "E", "I", "R")
-result <- run(model, threads = 1)
+result <- run(model)
 
 U_expected <- structure(list(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,

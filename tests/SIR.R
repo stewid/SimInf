@@ -17,6 +17,9 @@
 library("SimInf")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -94,7 +97,7 @@ model <- SIR(u0     = u0,
              beta   = 0,
              gamma  = 0)
 
-result <- run(model, threads = 1)
+result <- run(model)
 
 S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L,

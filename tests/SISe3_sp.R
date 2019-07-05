@@ -18,6 +18,9 @@
 library("SimInf")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -1479,7 +1482,7 @@ model <- SISe3_sp(u0        = u0,
                   coupling  = 0.0005,
                   distance  = distance)
 
-result <- run(model, threads = 1)
+result <- run(model)
 
 S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
@@ -1550,7 +1553,7 @@ model@gdata["beta_t1"] <- Inf
 model@gdata["beta_t2"] <- Inf
 model@gdata["beta_t3"] <- Inf
 model@gdata["beta_t4"] <- Inf
-res <- tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model))
 check_error(res, "The continuous state 'v' is not finite.")
 
 ## Check negative v
@@ -1583,5 +1586,5 @@ model <- SISe3_sp(u0        = u0,
                   end_t4    = 365,
                   coupling  = 0.0005,
                   distance  = distance)
-res <- tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model))
 check_error(res, "The continuous state 'v' is negative.")

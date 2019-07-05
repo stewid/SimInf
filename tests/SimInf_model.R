@@ -20,6 +20,9 @@ library("SimInf")
 library("Matrix")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -672,7 +675,7 @@ check_error(res, "'events' must be NULL or a data.frame.")
 ## Check arguments to 'U' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-result <- run(model, threads = 1)
+result <- run(model)
 res <- tools::assertError(trajectory(result, compartments = c("A", "S")))
 check_error(res, "Non-existing compartment(s) in model: 'A'.")
 res <- tools::assertError(trajectory(result, node = c("A", "S")))
@@ -687,7 +690,7 @@ check_error(res, "'node' must be integer <= number of nodes.")
 ## Check arguments to 'prevalence' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-result <- run(model, threads = 1)
+result <- run(model)
 res <- tools::assertError(prevalence(result, A+S~S))
 check_error(res, "Non-existing compartment(s) in model: 'A'.")
 res <- tools::assertError(prevalence(result, S~A+S))

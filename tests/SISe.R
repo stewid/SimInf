@@ -19,6 +19,9 @@
 library("SimInf")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -909,7 +912,7 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 0)
 
-result <- run(model, threads = 1)
+result <- run(model)
 
 S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L,
@@ -931,7 +934,7 @@ stopifnot(identical(I_observed, I_expected))
 
 ## Check output from trajectory method
 model@tspan <- c(1,2)
-result <- run(model, threads = 1)
+result <- run(model)
 res <- tools::assertError(trajectory(result, c("S", "phi"), as.is = TRUE))
 check_error(res, "Select either continuous or discrete compartments.")
 
@@ -1055,7 +1058,7 @@ model@gdata["beta_t1"] <- Inf
 model@gdata["beta_t2"] <- Inf
 model@gdata["beta_t3"] <- Inf
 model@gdata["beta_t4"] <- Inf
-res <- tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model))
 check_error(res, "The continuous state 'v' is not finite.")
 
 ## Check negative v
@@ -1075,7 +1078,7 @@ model <- SISe(u0      = u0,
               end_t3  = 273,
               end_t4  = 365,
               epsilon = -10.000011)
-res <- tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model))
 check_error(res, "The continuous state 'v' is negative.")
 
 ## Check data

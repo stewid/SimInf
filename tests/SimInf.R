@@ -19,6 +19,9 @@
 library("SimInf")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -50,7 +53,7 @@ model <- SISe(u0      = u0,
               end_t4  = 365,
               epsilon = 1)
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(sum(trajectory(result, as.is = TRUE)), 1001L))
@@ -62,7 +65,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(sum(result_omp@U), 1001L))
@@ -127,7 +132,7 @@ model <- SISe3(u0        = u0,
                epsilon   = 1)
 
 set.seed(123)
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(all(apply(trajectory(result, as.is = TRUE)[1:6,], 1, any)))
@@ -140,7 +145,9 @@ stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
     set.seed(123)
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(all(apply(result_omp@U[1:6,], 1, any)))
@@ -205,7 +212,7 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 
@@ -230,7 +237,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     m <- trajectory(result, compartments = "S_2", node = 1, as.is = TRUE) +
@@ -292,7 +301,7 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(all(trajectory(result, as.is = TRUE)[1:6,] == 0))
@@ -304,7 +313,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(all(result_omp@U[1:6,] == 0))
@@ -406,7 +417,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(36L, 11L))
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -416,7 +427,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(result_omp@U, U_expected))
@@ -515,7 +528,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 4L, 0L, 4L, 0L, 5L, 0L, 5L, 0L, 5L, 0L),
                         .Dim = c(36L, 11L))
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -525,7 +538,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(result_omp@U, U_expected))
@@ -624,7 +639,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(36L, 11L))
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -634,7 +649,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(result_omp@U, U_expected))
@@ -734,7 +751,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
                           15L, 0L),
                         .Dim = c(36L, 11L))
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -744,7 +761,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(result_omp@U, U_expected))
@@ -793,7 +812,7 @@ model <- SISe3(u0        = u0,
                epsilon   = 1)
 
 set.seed(123)
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(sum(trajectory(result, as.is = TRUE)[1:6,]), 0L))
@@ -805,7 +824,9 @@ stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
     set.seed(123)
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(sum(result_omp@U[1:6,]), 0L))
@@ -838,23 +859,23 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
 .Call("SISe_run", model, 1L, NULL, PACKAGE = "SimInf")
 .Call("SISe_run", model, 1, NULL, PACKAGE = "SimInf")
 
-res <- tools::assertError(.Call("SISe_run", model, -1L, NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value.")
+res <- tools::assertError(set_num_threads(-1L))
+check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(.Call("SISe_run", model, -1, NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value.")
+res <- tools::assertError(set_num_threads(-1))
+check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(.Call("SISe_run", model, "1", NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value.")
+res <- tools::assertError(set_num_threads("1"))
+check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(.Call("SISe_run", model, c(1L, 1L), NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value.")
+res <- tools::assertError(set_num_threads(c(1L, 1L)))
+check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(.Call("SISe_run", model, c(1, 1), NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value.")
+res <- tools::assertError(set_num_threads(c(1, 1)))
+check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(.Call("SISe_run", model, NA_integer_, NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value.")
+res <- tools::assertError(set_num_threads(NA_integer_))
+check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(.Call("SISe_run", model, NA_real_, NULL, PACKAGE = "SimInf"))
-check_error(res, "Invalid 'threads' value.")
+res <- tools::assertError(set_num_threads(NA_real_))
+check_error(res, "'threads' must be an integer >= 1.")

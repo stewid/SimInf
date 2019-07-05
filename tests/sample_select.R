@@ -19,6 +19,9 @@
 library("SimInf")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -75,11 +78,13 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-res <- tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(run(model, threads = 2))
+    set_num_threads(2)
+    res <- tools::assertError(run(model))
+    set_num_threads(1)
     check_error(res, "Unable to sample individuals for event.")
 }
 
@@ -133,11 +138,13 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-res <- tools::assertError(run(model, threads = 1))
+res <- tools::assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(run(model, threads = 2))
+    set_num_threads(2)
+    res <- tools::assertError(run(model))
+    set_num_threads(1)
     check_error(res, "Unable to sample individuals for event.")
 }
 
@@ -372,7 +379,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(12L, 3L))
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -382,7 +389,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(trajectory(result_omp, as.is = TRUE), U_expected))
@@ -447,7 +456,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(12L, 3L))
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -457,7 +466,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(trajectory(result_omp, as.is = TRUE), U_expected))
@@ -522,7 +533,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(12L, 3L))
 
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -532,7 +543,9 @@ stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(trajectory(result_omp, as.is = TRUE), U_expected))
@@ -599,7 +612,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 8L, 0L, 0L, 0L, 0L,
                         .Dim = c(12L, 3L))
 
 set.seed(1)
-result <- run(model, threads = 1)
+result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(identical(trajectory(result, as.is = TRUE), U_expected))
@@ -610,7 +623,9 @@ stopifnot(identical(model@events, result@events))
 
 if (SimInf:::have_openmp()) {
     set.seed(1)
-    result_omp <- run(model, threads = 2)
+    set_num_threads(2)
+    result_omp <- run(model)
+    set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(identical(trajectory(result_omp, as.is = TRUE), U_expected))
@@ -684,11 +699,13 @@ U <- structure(
       0L, 0L, 0L, 0L),
     .Dim = c(12L, 11L))
 
-res <- run(model, threads = 1)
+res <- run(model)
 stopifnot(identical(res@U, U))
 
 if (SimInf:::have_openmp()) {
-    res <- run(model, threads = 2)
+    set_num_threads(2)
+    res <- run(model)
+    set_num_threads(1)
     stopifnot(identical(res@U, U))
 }
 
@@ -750,12 +767,14 @@ model@events@E[5, 1] <- 1
 
 S_expected <- c(0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
 
-res <- run(model, threads = 1)
+res <- run(model)
 S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"), node = 1, as.is = TRUE))
 stopifnot(identical(S_observed, S_expected))
 
 if (SimInf:::have_openmp()) {
-    res <- run(model, threads = 2)
+    set_num_threads(2)
+    res <- run(model)
+    set_num_threads(1)
     S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"), node = 1, as.is = TRUE))
     stopifnot(identical(S_observed, S_expected))
 }

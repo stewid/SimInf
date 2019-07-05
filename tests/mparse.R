@@ -18,6 +18,9 @@
 library("SimInf")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -523,7 +526,7 @@ run_model <- function(model) {
         on.exit(Sys.setenv(R_TESTS = R_TESTS), add = TRUE)
     }
 
-    run(model, threads = 1, solver = "ssm")
+    run(model)
 }
 
 model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",

@@ -19,6 +19,9 @@
 library("SimInf")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -46,7 +49,7 @@ check_error(res, "Please run the model first, the trajectory is empty.")
 res <- tools::assertError(trajectory(model, compartments = "I", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-result <- run(model, threads = 1)
+result <- run(model)
 result
 
 res <- tools::assertError(trajectory(result, I ~ S, as.is = TRUE))
@@ -63,7 +66,9 @@ p <- prevalence(result, I~S+I, type = "wnp", as.is = TRUE)
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
-    result <- run(model, threads = 2)
+    set_num_threads(2)
+    result <- run(model)
+    set_num_threads(1)
     result
 
     stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
@@ -102,7 +107,7 @@ check_error(res, "Please run the model first, the trajectory is empty.")
 res <- tools::assertError(trajectory(model, compartments = "I", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-result <- run(model, threads = 1)
+result <- run(model)
 result
 
 stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
@@ -116,7 +121,9 @@ p <- prevalence(result, I~S+I, type = "wnp", as.is = TRUE)
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
-    result <- run(model, threads = 2)
+    set_num_threads(2)
+    result <- run(model)
+    set_num_threads(1)
     result
 
     stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
@@ -161,7 +168,7 @@ check_error(res, "Please run the model first, the trajectory is empty.")
 res <- tools::assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-result <- run(model, threads = 1)
+result <- run(model)
 result
 
 stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
@@ -175,7 +182,9 @@ p <- prevalence(result, I_1+I_2+I_3~., type = "wnp", as.is = TRUE)
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
-    result <- run(model, threads = 2)
+    set_num_threads(2)
+    result <- run(model)
+    set_num_threads(1)
     result
 
     stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
@@ -222,7 +231,7 @@ check_error(res, "Please run the model first, the trajectory is empty.")
 res <- tools::assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-result <- run(model, threads = 1)
+result <- run(model)
 result
 
 stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
@@ -236,7 +245,9 @@ p <- prevalence(result, I_1+I_2+I_3~., type = "wnp", as.is = TRUE)
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
-    result <- run(model, threads = 2)
+    set_num_threads(2)
+    result <- run(model)
+    set_num_threads(1)
     result
 
     stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))

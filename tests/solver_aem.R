@@ -19,6 +19,9 @@
 library("SimInf")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -58,7 +61,7 @@ model <- SISe(u0      = u0,
               epsilon = 0.000011)
 
 set.seed(22)
-result <- run(model, threads = 1, solver = "aem")
+result <- run(model, solver = "aem")
 
 S_expected <- structure(c(9L, 9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L,
                           9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L, 8L, 10L, 9L, 9L,
@@ -118,7 +121,7 @@ model <- SISe(u0  = u0,
               epsilon = 0.000011)
 
 set.seed(123)
-result <- run(model, threads = 1, solver = "aem")
+result <- run(model, solver = "aem")
 
 S_expected <- structure(c(10L, 8L, 8L, 9L, 7L, 10L, 6L, 10L, 6L, 10L, 8L, 6L,
                           7L, 7L, 7L, 7L, 7L, 7L, 7L, 9L),
@@ -137,7 +140,9 @@ stopifnot(identical(I_observed, I_expected))
 ## run with AEM using multiple threads
 if (SimInf:::have_openmp()) {
     set.seed(123)
-    result <- run(model, threads = 123L, solver = "aem")
+    set_num_threads(2)
+    result <- run(model, solver = "aem")
+    set_num_threads(1)
     result
 
     stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 20L))
@@ -152,7 +157,7 @@ if (SimInf:::have_openmp()) {
 }
 
 ## Check solver argument
-tools::assertError(run(model, threads = 1, solver = 1))
-tools::assertError(run(model, threads = 1, solver = c("ssa", "aem")))
-tools::assertError(run(model, threads = 1, solver = NA_character_))
-tools::assertError(run(model, threads = 1, solver = "non-existing-solver"))
+tools::assertError(run(model, solver = 1))
+tools::assertError(run(model, solver = c("ssa", "aem")))
+tools::assertError(run(model, solver = NA_character_))
+tools::assertError(run(model, solver = "non-existing-solver"))

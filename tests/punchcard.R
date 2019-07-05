@@ -19,6 +19,9 @@ library("SimInf")
 library("Matrix")
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
 ## For debugging
 sessionInfo()
 
@@ -56,7 +59,7 @@ punchcard(model) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
                               row.names = c(NA, -6L),
                               class = "data.frame")
 set.seed(123)
-U_obs <- trajectory(run(model, threads = 1), as.is = TRUE)
+U_obs <- trajectory(run(model), as.is = TRUE)
 stopifnot(identical(U_obs, U_exp))
 
 if (SimInf:::have_openmp()) {
@@ -68,7 +71,9 @@ if (SimInf:::have_openmp()) {
                            3, 94, 7, 8, 101, 5, 5),
                      factors = list())
     set.seed(123)
-    U_obs_omp <- trajectory(run(model, threads = 2), as.is = TRUE)
+    set_num_threads(2)
+    U_obs_omp <- trajectory(run(model), as.is = TRUE)
+    set_num_threads(1)
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
 
@@ -86,7 +91,7 @@ model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
              tspan = 1:10,
              beta = 0.16,
              gamma = 0.077)
-result <- run(model, threads = 1)
+result <- run(model)
 punchcard(result) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
                                     time = c(5L, 6L, 7L, 8L, 9L, 10L),
                                     S = rep(TRUE, 6),
@@ -95,11 +100,11 @@ punchcard(result) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
                                .Names = c("node", "time", "S", "I", "R"),
                                row.names = c(NA, -6L),
                                class = "data.frame")
-result <- run(result, threads = 1)
+result <- run(result)
 stopifnot(identical(dim(result@U), c(0L, 0L)))
 stopifnot(identical(dim(result@U_sparse), c(18L, 10L)))
 punchcard(result) <- NULL
-result <- run(result, threads = 1)
+result <- run(result)
 stopifnot(identical(dim(result@U), c(18L, 10L)))
 stopifnot(identical(dim(result@U_sparse), c(0L, 0L)))
 
@@ -127,13 +132,13 @@ model <- SISe(u0      = u0,
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-result <- run(model, threads = 1)
+result <- run(model)
 punchcard(result) <- data.frame(time = 4:9, node = 1:6, phi = TRUE)
-result <- run(result, threads = 1)
+result <- run(result)
 stopifnot(identical(dim(result@V), c(0L, 0L)))
 stopifnot(identical(dim(result@V_sparse), c(6L, 10L)))
 punchcard(result) <- NULL
-result <- run(result, threads = 1)
+result <- run(result)
 stopifnot(identical(dim(result@V), c(6L, 10L)))
 stopifnot(identical(dim(result@V_sparse), c(0L, 0L)))
 
@@ -153,7 +158,7 @@ punchcard(model) <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
                               row.names = c(NA, -8L),
                               class = "data.frame")
 set.seed(22)
-result <- run(model, threads = 1)
+result <- run(model)
 U_exp <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
                         time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
                         S = c(100L, NA, 100L, NA, 99L, NA, 102L, NA),
@@ -174,7 +179,7 @@ punchcard(model) <- structure(list(node = 1:6,
                               row.names = c(NA, -6L),
                               class = "data.frame")
 set.seed(22)
-result <- run(model, threads = 1)
+result <- run(model)
 U_exp <- structure(list(node = 1:6,
                         time = 5:10,
                         S = c(100L, 100L, 99L, 102L, 91L, 94L),
@@ -187,13 +192,13 @@ stopifnot(identical(trajectory(result), U_exp))
 
 ## Test to specify empty data.frame
 punchcard(model) <- data.frame()
-result <- run(model, threads = 1)
+result <- run(model)
 U_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(18, 10))
 U_exp <- as(U_exp, "dgCMatrix")
 stopifnot(identical(result@U_sparse, U_exp))
 
 punchcard(model) <- data.frame()
-result <- run(model, threads = 1)
+result <- run(model)
 V_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(0, 10))
 V_exp <- as(V_exp, "dgCMatrix")
 stopifnot(identical(result@V_sparse, V_exp))
@@ -201,7 +206,7 @@ stopifnot(identical(result@V_sparse, V_exp))
 ## Test that it also works to remove the sparse matrix output
 punchcard(model) <- NULL
 set.seed(22)
-result <- run(model, threads = 1)
+result <- run(model)
 U_exp <- structure(list(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
