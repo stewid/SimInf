@@ -1,9 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015 Pavol Bauer
- *  Copyright (C) 2017 - 2018 Robin Eriksson
- *  Copyright (C) 2015 - 2018 Stefan Engblom
- *  Copyright (C) 2015 - 2018 Stefan Widgren
+ *  Copyright (C) 2017 - 2019 Robin Eriksson
+ *  Copyright (C) 2015 - 2019 Stefan Engblom
+ *  Copyright (C) 2015 - 2019 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #endif
 
 #include "SimInf.h"
+#include "SimInf_openmp.h"
 #include "SimInf_solver_ssm.h"
 
 /**
@@ -43,7 +44,7 @@ static int SimInf_solver_ssm(
     int Nthread = model->Nthread;
     int k;
 
-    #pragma omp parallel
+    #pragma omp parallel num_threads(SimInf_num_threads())
     {
         int i;
 
@@ -88,7 +89,7 @@ static int SimInf_solver_ssm(
 
     /* Main loop. */
     for (;;) {
-        #pragma omp parallel
+        #pragma omp parallel num_threads(SimInf_num_threads())
         {
             int i;
 
