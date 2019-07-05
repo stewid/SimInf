@@ -1,9 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015 Pavol Bauer
- *  Copyright (C) 2017 - 2018 Robin Eriksson
- *  Copyright (C) 2015 - 2018 Stefan Engblom
- *  Copyright (C) 2015 - 2018 Stefan Widgren
+ *  Copyright (C) 2017 - 2019 Robin Eriksson
+ *  Copyright (C) 2015 - 2019 Stefan Engblom
+ *  Copyright (C) 2015 - 2019 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -81,44 +81,6 @@ int SimInf_arg_check_model(SEXP arg)
         return -1;
 
     return 0;
-}
-
-/**
- * Get number of threads
- *
- * @param out Number of threads
- * @param threads Number of threads from R
- * @return 0 if Ok, else error code.
- */
-int SimInf_get_threads(int *out, SEXP threads)
-{
-    int error = 0;
-
-    if (Rf_isNull(threads)) {
-        *out = 0;
-    } else if (Rf_isInteger(threads)) {
-        if (LENGTH(threads) != 1)
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else if (INTEGER(threads)[0] == NA_INTEGER)
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else if (INTEGER(threads)[0] < 0)
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else
-            *out = INTEGER(threads)[0];
-    } else if (Rf_isReal(threads)) {
-        if (LENGTH(threads) != 1)
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else if (!R_finite(REAL(threads)[0]))
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else if ((int)(REAL(threads)[0] < 0))
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else
-            *out = (int)(REAL(threads)[0]);
-    } else {
-        error = SIMINF_INVALID_THREADS_VALUE;
-    }
-
-    return error;
 }
 
 /**
