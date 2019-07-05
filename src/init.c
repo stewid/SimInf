@@ -1,9 +1,9 @@
 /*
  *  SimInf, a framework for stochastic disease spread simulations
  *  Copyright (C) 2015 Pavol Bauer
- *  Copyright (C) 2017 - 2018 Robin Eriksson
- *  Copyright (C) 2015 - 2018 Stefan Engblom
- *  Copyright (C) 2015 - 2018 Stefan Widgren
+ *  Copyright (C) 2017 - 2019 Robin Eriksson
+ *  Copyright (C) 2015 - 2019 Stefan Engblom
+ *  Copyright (C) 2015 - 2019 Stefan Widgren
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,21 +31,10 @@ SEXP SISe_run(SEXP, SEXP, SEXP);
 SEXP SISe3_run(SEXP, SEXP, SEXP);
 SEXP SISe3_sp_run(SEXP, SEXP, SEXP);
 SEXP SISe_sp_run(SEXP, SEXP, SEXP);
+SEXP SimInf_have_openmp();
+SEXP SimInf_init_threads(SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
-
-/**
- * Is OpenMP available
- */
-SEXP SimInf_have_openmp()
-{
-    return Rf_ScalarLogical(
-#ifdef _OPENMP
-        1
-#else
-        0
-#endif
-        );
-}
+SEXP SimInf_trajectory(SEXP, SEXP);
 
 #define CALLDEF(name, n) {#name, (DL_FUNC) &name, n}
 
@@ -59,6 +48,8 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SISe_sp_run, 3),
     CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(SimInf_ldata_sp, 3),
+    CALLDEF(SimInf_trajectory, 2),
+    CALLDEF(SimInf_init_threads, 1),
     {NULL, NULL, 0}
 };
 
@@ -74,4 +65,5 @@ R_init_SimInf(DllInfo *info)
     R_useDynamicSymbols(info, FALSE);
     R_forceSymbols(info, FALSE);
     R_RegisterCCallable("SimInf", "SimInf_run", (DL_FUNC) &SimInf_run);
+    SimInf_init_threads(R_NilValue);
 }

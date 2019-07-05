@@ -21,11 +21,8 @@
 
 #include <Rdefines.h>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "SimInf_arg.h"
+#include "SimInf_openmp.h"
 #include "solvers/SimInf_solver.h"
 #include "solvers/ssm/SimInf_solver_ssm.h"
 #include "solvers/aem/SimInf_solver_aem.h"
@@ -79,11 +76,6 @@ SEXP SimInf_run(
             goto cleanup;
         }
     }
-
-    /* number of threads */
-    error = SimInf_get_threads(&(args.Nthread), threads);
-    if (error)
-        goto cleanup;
 
     /* seed */
     GetRNGstate();
@@ -189,17 +181,7 @@ SEXP SimInf_run(
 
     /* Specify the number of threads to use. Make sure to not use more
      * threads than the number of nodes in the model. */
-#ifdef _OPENMP
-    if (args.Nthread < 1)
-        args.Nthread = omp_get_num_procs();
-#else
-    args.Nthread = 1;
-#endif
-    if (args.Nn < args.Nthread)
-        args.Nthread = args.Nn;
-#ifdef _OPENMP
-    omp_set_num_threads(args.Nthread);
-#endif
+    args.Nthread = SimInf_set_num_threads(args.Nn);
 
     /* Run the simulation solver. */
     if (Rf_isNull(solver) || (strcmp(CHAR(STRING_ELT(solver, 0)), "ssm") == 0))
