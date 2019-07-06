@@ -51,6 +51,7 @@ int SimInf_set_num_threads(int threads)
 
 /* Compare and return the minimum value of x, y and the integer value
  * of the environmental variable named 'name' (if it exists). */
+#ifdef _OPENMP
 static int SimInf_min_env(int x, int y, const char *name)
 {
     int z;
@@ -62,6 +63,7 @@ static int SimInf_min_env(int x, int y, const char *name)
         x = y;
     return x;
 }
+#endif
 
 /* Initialise the maximum number of threads to use in a parallel
  * regions. This function is called from 'R_init_SimInf' but can also
