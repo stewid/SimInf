@@ -7,6 +7,7 @@ OBJECTS.misc = misc/SimInf_arg.o \
                misc/SimInf_ldata.o \
                misc/SimInf_local_spread.o \
                misc/SimInf_openmp.o \
+               misc/SimInf_trajectory.o \
                misc/binheap.o
 
 OBJECTS.solvers = solvers/SimInf_solver.o \
