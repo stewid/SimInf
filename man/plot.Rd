@@ -47,7 +47,6 @@ Plot either the median and the quantile range of the counts in all
 nodes, or plot the counts in specified nodes.
 }
 \examples{
-\dontrun{
 ## Create an 'SIR' model with 100 nodes and initialise
 ## it with 990 susceptible individuals and 10 infected
 ## individuals in each node. Run the model over 100 days.
@@ -80,5 +79,4 @@ plot(result, node = 1:3, range = FALSE)
 
 ## Plot the number of infected individuals in the first node.
 plot(result, compartments = "I", node = 1, range = FALSE)
-}
 }

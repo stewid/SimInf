@@ -126,7 +126,6 @@ setMethod("pairs",
 ##' @importFrom grDevices adjustcolor
 ##' @importFrom grDevices rainbow
 ##' @examples
-##' \dontrun{
 ##' ## Create an 'SIR' model with 100 nodes and initialise
 ##' ## it with 990 susceptible individuals and 10 infected
 ##' ## individuals in each node. Run the model over 100 days.
@@ -159,7 +158,6 @@ setMethod("pairs",
 ##'
 ##' ## Plot the number of infected individuals in the first node.
 ##' plot(result, compartments = "I", node = 1, range = FALSE)
-##' }
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,

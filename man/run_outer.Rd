@@ -34,15 +34,14 @@ Array with dimension \code{c(dim(x), dim(y))}.
 Run \code{SimInf_model} on scaled parameters
 }
 \examples{
-\dontrun{
-## Create an SIR-model with 500 nodes of 99 susceptible individuals
+## Create an SIR-model with 100 nodes of 99 susceptible individuals
 ## and one infected individuals.
-u0 <- data.frame(S = rep(99, 500), I = rep(1, 500), R = rep(0, 500))
+u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
 model <- SIR(u0, 1:75, beta = 0.16, gamma = 0.077)
 
 ## Define scaling parameters
-x <- seq(from = 0.2, to = 1.8, by = 0.05)
-y <- seq(from = 0.2, to = 1.1, by = 0.05)
+x <- seq(from = 0.2, to = 1.8, by = 0.1)
+y <- seq(from = 0.2, to = 1.1, by = 0.1)
 
 ## Utility function to run the model and estimate the population
 ## prevalence on day 75.
@@ -79,5 +78,4 @@ nop <- run_outer(x, y, model, gamma ~ beta, node_prev)
 ## Plot result
 contour(x * model@gdata["beta"], y * model@gdata["gamma"],
         nop, method = "edge", bty = "l")
-}
 }
