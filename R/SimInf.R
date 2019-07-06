@@ -70,16 +70,6 @@ NULL
     library.dynam.unload("SimInf", libpath)
 }
 
-##' Is OpenMP available
-##'
-##' @return TRUE if SimInf was built with support for OpenMP, else
-##'     FALSE.
-##' @noRd
-have_openmp <- function()
-{
-    .Call(SimInf_have_openmp)
-}
-
 ##' Example data with spatial distribution of nodes
 ##'
 ##' Example data to initialize a population of 1600 nodes and
