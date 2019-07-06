@@ -71,9 +71,9 @@ SEXP SimInf_trajectory(SEXP model, SEXP compartments)
 {
     int nprotect = 0, col = 0, *p_int_vec;
     double *p_real_vec;
-    R_xlen_t ncol, Nc, Nn, tlen;
+    R_xlen_t ncol, Nc, Nd, Nn, tlen;
     SEXP result;
-    SEXP colnames, S, tspan, vec, U, elmt;
+    SEXP colnames, S, tspan, vec, U, V, u0, v0, elmt;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -84,9 +84,16 @@ SEXP SimInf_trajectory(SEXP model, SEXP compartments)
     nprotect++;
     PROTECT(U = GET_SLOT(model, Rf_install("U")));
     nprotect++;
+    PROTECT(V = GET_SLOT(model, Rf_install("V")));
+    nprotect++;
+    PROTECT(u0 = GET_SLOT(model, Rf_install("u0")));
+    nprotect++;
+    PROTECT(v0 = GET_SLOT(model, Rf_install("v0")));
+    nprotect++;
 
     Nc = INTEGER(GET_SLOT(S, Rf_install("Dim")))[0];
-    Nn = INTEGER(GET_SLOT(GET_SLOT(model, Rf_install("u0")), R_DimSymbol))[1];
+    Nn = INTEGER(GET_SLOT(u0, R_DimSymbol))[1];
+    Nd = INTEGER(GET_SLOT(v0, R_DimSymbol))[0];
     tlen = XLENGTH(tspan);
 
     /* Create a list for the 'data.frame'. */
@@ -135,35 +142,73 @@ SEXP SimInf_trajectory(SEXP model, SEXP compartments)
             p_int_vec[i*Nn+j] = p_real_vec[i];
 
     elmt = SimInf_get_list_element(compartments, "U");
-    for (R_xlen_t i = 0; i < XLENGTH(elmt); i++) {
-        R_xlen_t j;
-        int *p_U;
+    if (!Rf_isNull(elmt)) {
         SEXP rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
 
-        /* Match compartment in model. */
-        for (j = 0; j < Nc; j++) {
-            if (strcmp(CHAR(STRING_ELT(elmt, i)),
-                       CHAR(STRING_ELT(rownames, j))) == 0) {
-                break;
+        for (R_xlen_t i = 0; i < XLENGTH(elmt); i++) {
+            R_xlen_t j;
+            int *p_U;
+
+            /* Match compartment in model. */
+            for (j = 0; j < Nc; j++) {
+                if (strcmp(CHAR(STRING_ELT(elmt, i)),
+                           CHAR(STRING_ELT(rownames, j))) == 0) {
+                    break;
+                }
             }
-        }
 
-        if (j >= XLENGTH(rownames)) {
-            Rf_error("Non-existing compartment in model: '%s'.",
-                     CHAR(STRING_ELT(elmt, i)));
-        }
+            if (j >= Nc) {
+                Rf_error("Non-existing compartment in model: '%s'.",
+                         CHAR(STRING_ELT(elmt, i)));
+            }
 
-        /* Add matched compartment column to the 'data.frame'. */
-        SET_STRING_ELT(colnames, col, STRING_ELT(elmt, i));
-        PROTECT(vec = Rf_allocVector(INTSXP, tlen * Nn));
-        nprotect++;
-        SET_VECTOR_ELT(result, col++, vec);
-        p_int_vec = INTEGER(vec);
-        p_U = INTEGER(U) + j;
-        #pragma omp parallel for num_threads(SimInf_num_threads())
-        for (R_xlen_t k = 0; k < tlen; k++)
-            for (R_xlen_t l = 0; l < Nn; l++)
-                p_int_vec[k * Nn + l] = p_U[(k * Nn + l) * Nc];
+            /* Add matched compartment column to the 'data.frame'. */
+            SET_STRING_ELT(colnames, col, STRING_ELT(elmt, i));
+            PROTECT(vec = Rf_allocVector(INTSXP, tlen * Nn));
+            nprotect++;
+            SET_VECTOR_ELT(result, col++, vec);
+            p_int_vec = INTEGER(vec);
+            p_U = INTEGER(U) + j;
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t k = 0; k < tlen; k++)
+                for (R_xlen_t l = 0; l < Nn; l++)
+                    p_int_vec[k * Nn + l] = p_U[(k * Nn + l) * Nc];
+        }
+    }
+
+    elmt = SimInf_get_list_element(compartments, "V");
+    if (!Rf_isNull(elmt)) {
+        SEXP rownames = VECTOR_ELT(Rf_getAttrib(v0, R_DimNamesSymbol), 0);
+
+        for (R_xlen_t i = 0; i < XLENGTH(elmt); i++) {
+            R_xlen_t j;
+            double *p_V;
+
+            /* Match compartment in model. */
+            for (j = 0; j < Nd; j++) {
+                if (strcmp(CHAR(STRING_ELT(elmt, i)),
+                           CHAR(STRING_ELT(rownames, j))) == 0) {
+                    break;
+                }
+            }
+
+            if (j >= Nd) {
+                Rf_error("Non-existing compartment in model: '%s'.",
+                         CHAR(STRING_ELT(elmt, i)));
+            }
+
+            /* Add matched compartment column to the 'data.frame'. */
+            SET_STRING_ELT(colnames, col, STRING_ELT(elmt, i));
+            PROTECT(vec = Rf_allocVector(REALSXP, tlen * Nn));
+            nprotect++;
+            SET_VECTOR_ELT(result, col++, vec);
+            p_real_vec = REAL(vec);
+            p_V = REAL(V) + j;
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t k = 0; k < tlen; k++)
+                for (R_xlen_t l = 0; l < Nn; l++)
+                    p_real_vec[k * Nn + l] = p_V[(k * Nn + l) * Nd];
+        }
     }
 
     if (nprotect)
