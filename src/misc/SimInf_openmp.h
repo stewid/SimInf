@@ -19,6 +19,10 @@
 #ifndef INCLUDE_SIMINF_OPENMP_H
 #define INCLUDE_SIMINF_OPENMP_H
 
+#ifdef _OPENMP
+#  include <omp.h>
+#endif
+
 int SimInf_num_threads();
 int SimInf_set_num_threads(int threads);
 
