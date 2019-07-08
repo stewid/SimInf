@@ -321,8 +321,11 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     if (is.null(node) &&
         !isTRUE(as.is) &&
         !is_trajectory_sparse(model@U_sparse) &&
-        !is_trajectory_sparse(model@V_sparse)) {
-        return(.Call("SimInf_trajectory", model, compartments, PACKAGE = "SimInf"))
+        !is_trajectory_sparse(model@V_sparse))
+    {
+        ui <- match(compartments$U, rownames(model@S))
+        vi <- match(compartments$V, rownames(model@v0))
+        return(.Call(SimInf_trajectory, model, ui, vi))
     }
 
     ## Check the 'node' argument

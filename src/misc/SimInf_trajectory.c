@@ -22,58 +22,23 @@
 #include "SimInf_openmp.h"
 
 /**
- * Get the list element named str, or return NULL.
- */
-static SEXP SimInf_get_list_element(SEXP list, const char *str)
-{
-    R_xlen_t i;
-    SEXP elmt = R_NilValue, names = Rf_getAttrib(list, R_NamesSymbol);
-
-    for (i = 0; i < Rf_xlength(list); i++) {
-        if(strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
-            elmt = VECTOR_ELT(list, i);
-            break;
-        }
-    }
-
-    return elmt;
-}
-
-/**
- *  Number of data.frame columns that is required for the trajectory.
- */
-static R_xlen_t SimInf_trajectory_ncol(SEXP compartments)
-{
-    R_xlen_t ncol = 2; /* Identifier and time columns. */
-    SEXP elmt;
-
-    elmt = SimInf_get_list_element(compartments, "U");
-    if (!Rf_isNull(elmt))
-        ncol += XLENGTH(elmt);
-
-    elmt = SimInf_get_list_element(compartments, "V");
-    if (!Rf_isNull(elmt))
-        ncol += XLENGTH(elmt);
-
-    return ncol;
-}
-
-/**
  * Extract data from a simulated trajectory as a data.frame.
  *
  * @param model the SimInf_model with data to transform to a
  *        data.frame.
- * @param compartments a list of character vectors with the
- *        compartments to include in the data.frame.
+ * @param ui index (1-based) to compartments in 'U' to include
+ *        in the data.frame.
+ * @param vi index (1-based) to compartments in 'V' to include
+ *        in the data.frame.
  * @return A data.frame.
  */
-SEXP SimInf_trajectory(SEXP model, SEXP compartments)
+SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
 {
     int col = 0, *p_int_vec;
     double *p_real_vec;
     R_xlen_t ncol, Nc, Nd, Nn, tlen;
     SEXP result;
-    SEXP colnames, S, tspan, vec, U, V, u0, v0, elmt;
+    SEXP colnames, S, tspan, vec, U, V, u0, v0;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -91,7 +56,7 @@ SEXP SimInf_trajectory(SEXP model, SEXP compartments)
     tlen = XLENGTH(tspan);
 
     /* Create a list for the 'data.frame'. */
-    ncol = SimInf_trajectory_ncol(compartments);
+    ncol = 2 + XLENGTH(ui) + XLENGTH(vi);
     PROTECT(result = Rf_allocVector(VECSXP, ncol));
 
     /* Create a vector for the column names. */
@@ -133,29 +98,15 @@ SEXP SimInf_trajectory(SEXP model, SEXP compartments)
     SET_VECTOR_ELT(result, col++, vec);
     UNPROTECT(1);
 
-    elmt = SimInf_get_list_element(compartments, "U");
-    if (!Rf_isNull(elmt)) {
+    if (XLENGTH(ui) > 0) {
         SEXP rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
 
-        for (R_xlen_t i = 0; i < XLENGTH(elmt); i++) {
-            R_xlen_t j;
+        for (R_xlen_t i = 0; i < XLENGTH(ui); i++) {
+            R_xlen_t j = INTEGER(ui)[i] - 1;
             int *p_U;
 
-            /* Match compartment in model. */
-            for (j = 0; j < Nc; j++) {
-                if (strcmp(CHAR(STRING_ELT(elmt, i)),
-                           CHAR(STRING_ELT(rownames, j))) == 0) {
-                    break;
-                }
-            }
-
-            if (j >= Nc) {
-                Rf_error("Non-existing compartment in model: '%s'.",
-                         CHAR(STRING_ELT(elmt, i)));
-            }
-
-            /* Add matched compartment column to the 'data.frame'. */
-            SET_STRING_ELT(colnames, col, STRING_ELT(elmt, i));
+            /* Add data for the column to the 'data.frame'. */
+            SET_STRING_ELT(colnames, col, STRING_ELT(rownames, j));
             PROTECT(vec = Rf_allocVector(INTSXP, tlen * Nn));
             p_int_vec = INTEGER(vec);
             p_U = INTEGER(U) + j;
@@ -168,29 +119,15 @@ SEXP SimInf_trajectory(SEXP model, SEXP compartments)
         }
     }
 
-    elmt = SimInf_get_list_element(compartments, "V");
-    if (!Rf_isNull(elmt)) {
+    if (XLENGTH(vi) > 0) {
         SEXP rownames = VECTOR_ELT(Rf_getAttrib(v0, R_DimNamesSymbol), 0);
 
-        for (R_xlen_t i = 0; i < XLENGTH(elmt); i++) {
-            R_xlen_t j;
+        for (R_xlen_t i = 0; i < XLENGTH(vi); i++) {
+            R_xlen_t j = INTEGER(vi)[i] - 1;
             double *p_V;
 
-            /* Match compartment in model. */
-            for (j = 0; j < Nd; j++) {
-                if (strcmp(CHAR(STRING_ELT(elmt, i)),
-                           CHAR(STRING_ELT(rownames, j))) == 0) {
-                    break;
-                }
-            }
-
-            if (j >= Nd) {
-                Rf_error("Non-existing compartment in model: '%s'.",
-                         CHAR(STRING_ELT(elmt, i)));
-            }
-
-            /* Add matched compartment column to the 'data.frame'. */
-            SET_STRING_ELT(colnames, col, STRING_ELT(elmt, i));
+            /* Add data for the column to the 'data.frame'. */
+            SET_STRING_ELT(colnames, col, STRING_ELT(rownames, j));
             PROTECT(vec = Rf_allocVector(REALSXP, tlen * Nn));
             p_real_vec = REAL(vec);
             p_V = REAL(V) + j;
