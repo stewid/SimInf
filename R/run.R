@@ -100,6 +100,15 @@ setMethod("run",
           {
               solver <- match.arg(solver)
 
+              ## FIXME: The 'threads' argument can be dropped with the
+              ##  new function 'set_num_threads' added. That also
+              ##  means that 'threads' should be removed from the
+              ##  expression to parse (below). However, since it is a
+              ##  breaking change to remove the 'threads' argument in
+              ##  '.Call', just use 'set_num_threads' for now.
+              if (!is.null(threads))
+                  set_num_threads(threads)
+
               ## Check that SimInf_model contains all data structures
               ## required by the siminf solver and that they make sense
               validObject(model);
