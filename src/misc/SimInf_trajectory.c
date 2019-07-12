@@ -36,7 +36,7 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
 {
     int col = 0, *p_int_vec;
     double *p_real_vec;
-    R_xlen_t ncol, Nc, Nd, Nn, tlen;
+    R_xlen_t ncol, nrow, Nc, Nd, Nn, tlen;
     SEXP result;
     SEXP colnames, S, tspan, vec, U, V, u0, v0;
 
@@ -55,8 +55,11 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
     Nd = INTEGER(GET_SLOT(v0, R_DimSymbol))[0];
     tlen = XLENGTH(tspan);
 
-    /* Create a list for the 'data.frame'. */
+    /* Determine the dimensions to hold the trajectory data. */
+    nrow = tlen * Nn;
     ncol = 2 + XLENGTH(ui) + XLENGTH(vi);
+
+    /* Create a list for the 'data.frame'. */
     PROTECT(result = Rf_allocVector(VECSXP, ncol));
 
     /* Create a vector for the column names. */
@@ -66,35 +69,37 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
     /* Add the 'data.frame' class attribute to the list. */
     Rf_setAttrib(result, R_ClassSymbol, Rf_mkString("data.frame"));
 
-    /* Add row names to the 'data.frame'. */
-    PROTECT(vec = Rf_allocVector(INTSXP, tlen * Nn));
+    /* Add row names to the 'data.frame'. Note that the row names are
+     * one-based. */
+    PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_int_vec = INTEGER(vec);
     #pragma omp parallel for num_threads(SimInf_num_threads())
-    for (R_xlen_t i = 0; i < tlen * Nn; i++)
+    for (R_xlen_t i = 0; i < nrow; i++)
         p_int_vec[i] = i + 1;
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
     UNPROTECT(1);
 
-    /* Add a 'node' identifier column to the 'data.frame'. */
+    /* Add a 'node' identifier column to the 'data.frame'. Note that
+     * the node identifiers are one-based. */
     SET_STRING_ELT(colnames, col, Rf_mkChar("node"));
-    PROTECT(vec = Rf_allocVector(INTSXP, tlen * Nn));
+    PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_int_vec = INTEGER(vec);
     #pragma omp parallel for num_threads(SimInf_num_threads())
-    for (R_xlen_t i = 0; i < tlen; i++)
-        for (R_xlen_t j = 0; j < Nn; j++)
-            p_int_vec[i * Nn + j] = j + 1;
+    for (R_xlen_t t = 0; t < tlen; t++)
+        for (R_xlen_t n = 0; n < Nn; n++)
+            p_int_vec[t * Nn + n] = n + 1;
     SET_VECTOR_ELT(result, col++, vec);
     UNPROTECT(1);
 
     /* Add a 'time' column to the 'data.frame'. */
     SET_STRING_ELT(colnames, col, Rf_mkChar("time"));
-    PROTECT(vec = Rf_allocVector(INTSXP, tlen * Nn));
+    PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_int_vec = INTEGER(vec);
     p_real_vec = REAL(tspan);
     #pragma omp parallel for num_threads(SimInf_num_threads())
-    for (R_xlen_t i = 0; i < tlen; i++)
-        for (R_xlen_t j = 0; j < Nn; j++)
-            p_int_vec[i*Nn+j] = p_real_vec[i];
+    for (R_xlen_t t = 0; t < tlen; t++)
+        for (R_xlen_t n = 0; n < Nn; n++)
+            p_int_vec[t * Nn + n] = p_real_vec[t];
     SET_VECTOR_ELT(result, col++, vec);
     UNPROTECT(1);
 
@@ -107,13 +112,13 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
 
             /* Add data for the column to the 'data.frame'. */
             SET_STRING_ELT(colnames, col, STRING_ELT(rownames, j));
-            PROTECT(vec = Rf_allocVector(INTSXP, tlen * Nn));
+            PROTECT(vec = Rf_allocVector(INTSXP, nrow));
             p_int_vec = INTEGER(vec);
             p_U = INTEGER(U) + j;
             #pragma omp parallel for num_threads(SimInf_num_threads())
-            for (R_xlen_t k = 0; k < tlen; k++)
-                for (R_xlen_t l = 0; l < Nn; l++)
-                    p_int_vec[k * Nn + l] = p_U[(k * Nn + l) * Nc];
+            for (R_xlen_t t = 0; t < tlen; t++)
+                for (R_xlen_t n = 0; n < Nn; n++)
+                    p_int_vec[t * Nn + n] = p_U[(t * Nn + n) * Nc];
             SET_VECTOR_ELT(result, col++, vec);
             UNPROTECT(1);
         }
@@ -128,13 +133,13 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
 
             /* Add data for the column to the 'data.frame'. */
             SET_STRING_ELT(colnames, col, STRING_ELT(rownames, j));
-            PROTECT(vec = Rf_allocVector(REALSXP, tlen * Nn));
+            PROTECT(vec = Rf_allocVector(REALSXP, nrow));
             p_real_vec = REAL(vec);
             p_V = REAL(V) + j;
             #pragma omp parallel for num_threads(SimInf_num_threads())
-            for (R_xlen_t k = 0; k < tlen; k++)
-                for (R_xlen_t l = 0; l < Nn; l++)
-                    p_real_vec[k * Nn + l] = p_V[(k * Nn + l) * Nd];
+            for (R_xlen_t t = 0; t < tlen; t++)
+                for (R_xlen_t n = 0; n < Nn; n++)
+                    p_real_vec[t * Nn + n] = p_V[(t * Nn + n) * Nd];
             SET_VECTOR_ELT(result, col++, vec);
             UNPROTECT(1);
         }
