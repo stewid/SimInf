@@ -227,11 +227,11 @@ G_rownames <- function(transitions)
 
 parse_compartments <- function(x, compartments)
 {
-    ## Remove spaces and the empty set
-    x <- gsub(" ", "", gsub("@", "", x))
-
     ## Split into 'compartment1 + compartment2 + ..'
     x <- unlist(strsplit(x, "+", fixed = TRUE))
+
+    ## Remove spaces.
+    x <- gsub(" ", "", x)
 
     ## Replace 'n*compartment' with n replicates of 'compartment'
     x <- unlist(sapply(x, function(xx) {
@@ -246,6 +246,11 @@ parse_compartments <- function(x, compartments)
 
         rep(xx, n)
     }))
+
+    ## Check for valid usage of the empty set.
+    if (any(x == "@") && length(x) > 1)
+        stop("Invalid usage of the empty set '@'.")
+    x <- x[x != "@"]
 
     ## Assign each compartment into its number according to the
     ## ordering in compartments

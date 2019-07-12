@@ -568,3 +568,31 @@ U_exp <- structure(list(
     row.names = c(NA, -60L),
     class = "data.frame")
 stopifnot(identical(trajectory(result), U_exp))
+
+## Check that mparse fails with invalid usage of the empty set '@'.
+res <- tools::assertError(
+                  mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
+                                         "I -> gamma*I -> @+R"),
+                         compartments = c("S", "I", "R"),
+                         gdata = c(beta = 0.16, gamma = 0.077),
+                         u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
+                         tspan = 1:10))
+check_error(res, "Invalid usage of the empty set '@'.")
+
+res <- tools::assertError(
+                  mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
+                                         "I -> gamma*I -> @+@"),
+                         compartments = c("S", "I", "R"),
+                         gdata = c(beta = 0.16, gamma = 0.077),
+                         u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
+                         tspan = 1:10))
+check_error(res, "Invalid usage of the empty set '@'.")
+
+res <- tools::assertError(
+                  mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
+                                         "I -> gamma*I -> 2*@"),
+                         compartments = c("S", "I", "R"),
+                         gdata = c(beta = 0.16, gamma = 0.077),
+                         u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
+                         tspan = 1:10))
+check_error(res, "Invalid usage of the empty set '@'.")
