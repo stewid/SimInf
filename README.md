@@ -169,6 +169,20 @@ head(prevalence(result, I ~ S + I + R), 10)
 #> 10   10 0.09321154
 ```
 
+## Learn more
+
+See the
+[vignette](https://CRAN.R-project.org/package=SimInf/vignettes/SimInf.pdf)
+to learn more about special features that the SimInf R package
+provides, for example, how to:
+
+- use continuous state variables
+
+- use the SimInf framework from another R package
+
+- incorporate available data such as births, deaths and movements as
+  scheduled events at predefined time-points.
+
 ## Installation
 
 You can install the released version of `SimInf` from
@@ -192,7 +206,7 @@ We refer to section 3.1 in the
 [vignette](https://CRAN.R-project.org/package=SimInf/vignettes/SimInf.pdf)
 for detailed installation instructions.
 
-# Authors
+## Authors
 
 In alphabetical order: Pavol Bauer [![ORCID
 iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0003-4328-7171),
@@ -207,7 +221,7 @@ iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid
 Any suggestions, bug reports, forks and pull requests are
 appreciated. Get in touch.
 
-# Acknowledgments
+## Acknowledgments
 
 This work was financially supported by the Swedish Research Council
 within the UPMARC Linnaeus centre of Excellence (Pavol Bauer, Robin
@@ -216,7 +230,7 @@ Eriksson and Stefan Engblom), the Swedish Research Council Formas
 (Stefan Widgren), and by the Swedish strategic research program
 eSSENCE (Stefan Widgren).
 
-# License
+## License
 
 The `SimInf` package is licensed under the
 [GPLv3](https://github.com/stewid/SimInf/blob/master/LICENSE).
