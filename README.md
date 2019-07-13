@@ -35,14 +35,14 @@ vector of transitions in the form of `X -> propensity -> Y` and
 automatically generates the C and R code for the model. The left hand
 side of the first arrow (`->`) is the initial state, the right hand
 side of the last arrow (`->`) is the final state, and the propensity
-is written between the two arrows. The flexibility of the
-\code{mparse} approach allows for quick prototyping of new models or
-features. To illustrate the `mparse` functionality, let us consider an
-SIR model in a closed population i.e., no births or deaths. Let `beta`
-denote the transmission rate of spread between a susceptible
-individual and an infectious individual and `gamma` the recovery rate
-from infection (`gamma` = 1 / average duration of infection). The
-model can be described as:
+is written between the two arrows. The flexibility of the `mparse`
+approach allows for quick prototyping of new models or features. To
+illustrate the `mparse` functionality, let us consider an SIR model in
+a closed population i.e., no births or deaths. Let `beta` denote the
+transmission rate of spread between a susceptible individual and an
+infectious individual and `gamma` the recovery rate from infection
+(`gamma` = 1 / average duration of infection). The model can be
+described as:
 
 
 ```r
