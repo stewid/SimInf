@@ -30,7 +30,7 @@
  *        in the data.frame.
  * @param vi index (1-based) to compartments in 'V' to include
  *        in the data.frame.
- * @param nodes NULL or integer vector with (1-based) node
+ * @param nodes NULL or an integer vector with (1-based) node
  *        indices of the nodes to include in the data.frame.
  * @return A data.frame.
  */
@@ -38,25 +38,21 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
 {
     int col = 0, *p_int_vec, *p_nodes = NULL;
     double *p_real_vec;
-    R_xlen_t ncol, nrow, Nc, Nd, Nn, Nnodes, tlen;
+    R_xlen_t ncol, nrow, Nn, Nnodes, tlen;
     SEXP result;
-    SEXP colnames, S, tspan, vec, U, V, u0, v0;
+    SEXP colnames, tspan, vec, u0;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
 
-    PROTECT(S = GET_SLOT(model, Rf_install("S")));
     PROTECT(tspan = GET_SLOT(model, Rf_install("tspan")));
-    PROTECT(U = GET_SLOT(model, Rf_install("U")));
-    PROTECT(V = GET_SLOT(model, Rf_install("V")));
-    PROTECT(u0 = GET_SLOT(model, Rf_install("u0")));
-    PROTECT(v0 = GET_SLOT(model, Rf_install("v0")));
-
-    Nc = INTEGER(GET_SLOT(S, Rf_install("Dim")))[0];
-    Nn = INTEGER(GET_SLOT(u0, R_DimSymbol))[1];
-    Nd = INTEGER(GET_SLOT(v0, R_DimSymbol))[0];
     tlen = XLENGTH(tspan);
 
+    /* Determine the number of nodes to extract data from (Nnodes) and
+     * the number of nodes in the model (Nn). */
+    PROTECT(u0 = GET_SLOT(model, Rf_install("u0")));
+    Nn = INTEGER(GET_SLOT(u0, R_DimSymbol))[1];
+    UNPROTECT(1);
     if (Rf_isNull(nodes)) {
         Nnodes = Nn;
     } else {
@@ -118,7 +114,14 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
     UNPROTECT(1);
 
     if (XLENGTH(ui) > 0) {
-        SEXP rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
+        R_xlen_t Nc;
+        SEXP rownames, S, U;
+
+        PROTECT(S = GET_SLOT(model, Rf_install("S")));
+        Nc = INTEGER(GET_SLOT(S, Rf_install("Dim")))[0];
+
+        PROTECT(U = GET_SLOT(model, Rf_install("U")));
+        rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
 
         for (R_xlen_t i = 0; i < XLENGTH(ui); i++) {
             R_xlen_t j = INTEGER(ui)[i] - 1;
@@ -151,10 +154,18 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
             SET_VECTOR_ELT(result, col++, vec);
             UNPROTECT(1);
         }
+
+        UNPROTECT(2);
     }
 
     if (XLENGTH(vi) > 0) {
-        SEXP rownames = VECTOR_ELT(Rf_getAttrib(v0, R_DimNamesSymbol), 0);
+        R_xlen_t Nd;
+        SEXP rownames, V, v0;
+
+        PROTECT(V = GET_SLOT(model, Rf_install("V")));
+        PROTECT(v0 = GET_SLOT(model, Rf_install("v0")));
+        Nd = INTEGER(GET_SLOT(v0, R_DimSymbol))[0];
+        rownames = VECTOR_ELT(Rf_getAttrib(v0, R_DimNamesSymbol), 0);
 
         for (R_xlen_t i = 0; i < XLENGTH(vi); i++) {
             R_xlen_t j = INTEGER(vi)[i] - 1;
@@ -187,9 +198,11 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
             SET_VECTOR_ELT(result, col++, vec);
             UNPROTECT(1);
         }
+
+        UNPROTECT(2);
     }
 
-    UNPROTECT(8);
+    UNPROTECT(3);
 
     return result;
 }
