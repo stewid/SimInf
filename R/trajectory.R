@@ -268,7 +268,6 @@ trajectory_as_is <- function(m, ac, sc, i)
 ##' @include prevalence.R
 ##' @export
 ##' @importFrom methods is
-##' @importFrom stats terms
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize
 ##' ## it to run over 10 days.
