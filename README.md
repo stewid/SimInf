@@ -126,7 +126,7 @@ simulated data.
 
 
 ```r
-head(trajectory(result), 10)
+trajectory(result)
 ```
 
 ```
@@ -141,6 +141,7 @@ head(trajectory(result), 10)
 #> 8     8    1 99 5 0
 #> 9     9    1 97 7 0
 #> 10   10    1 97 6 1
+...
 ```
 
 Finally, let us use the `prevalence` method to explore the proportion
@@ -152,7 +153,7 @@ compartments at risk. Below is the first 10 lines of the `data.frame`.
 
 
 ```r
-head(prevalence(result, I ~ S + I + R), 10)
+prevalence(result, I ~ S + I + R)
 ```
 
 ```
@@ -167,6 +168,7 @@ head(prevalence(result, I ~ S + I + R), 10)
 #> 8     8 0.08311538
 #> 9     9 0.08794231
 #> 10   10 0.09321154
+...
 ```
 
 ## Learn more
@@ -220,6 +222,21 @@ iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid
 
 Any suggestions, bug reports, forks and pull requests are
 appreciated. Get in touch.
+
+## Citation
+
+SimInf is research software. To cite SimInf in publications, please
+use:
+
+- Widgren S, Bauer P, Eriksson R, Engblom S (2018) SimInf: An R
+  Package for Data-Driven Stochastic Disease Spread Simulations. arXiv
+  preprint arXiv:1605.01421 [q-bio.PE].
+  [(url)](https://arxiv.org/abs/1605.01421)
+
+- Bauer p, Engblom S, Widgren S (2016) Fast event-based
+  epidemiological simulations on national scales. International
+  Journal of High Performance Computing Applications 30(4),
+  438--453. [(doi)](https://doi.org/10.1177/1094342016635723)
 
 ## Acknowledgments
 
