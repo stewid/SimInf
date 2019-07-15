@@ -30,13 +30,15 @@
  *        in the data.frame.
  * @param vi index (1-based) to compartments in 'V' to include
  *        in the data.frame.
+ * @param nodes NULL or integer vector with (1-based) node
+ *        indices of the nodes to include in the data.frame.
  * @return A data.frame.
  */
-SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
+SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
 {
-    int col = 0, *p_int_vec;
+    int col = 0, *p_int_vec, *p_nodes = NULL;
     double *p_real_vec;
-    R_xlen_t ncol, nrow, Nc, Nd, Nn, tlen;
+    R_xlen_t ncol, nrow, Nc, Nd, Nn, Nnodes, tlen;
     SEXP result;
     SEXP colnames, S, tspan, vec, U, V, u0, v0;
 
@@ -55,8 +57,15 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
     Nd = INTEGER(GET_SLOT(v0, R_DimSymbol))[0];
     tlen = XLENGTH(tspan);
 
+    if (Rf_isNull(nodes)) {
+        Nnodes = Nn;
+    } else {
+        Nnodes = XLENGTH(nodes);
+        p_nodes = INTEGER(nodes);
+    }
+
     /* Determine the dimensions to hold the trajectory data. */
-    nrow = tlen * Nn;
+    nrow = tlen * Nnodes;
     ncol = 2 + XLENGTH(ui) + XLENGTH(vi);
 
     /* Create a list for the 'data.frame'. */
@@ -79,15 +88,20 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
     UNPROTECT(1);
 
-    /* Add a 'node' identifier column to the 'data.frame'. Note that
-     * the node identifiers are one-based. */
+    /* Add a 'node' identifier column to the 'data.frame'. */
     SET_STRING_ELT(colnames, col, Rf_mkChar("node"));
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_int_vec = INTEGER(vec);
-    #pragma omp parallel for num_threads(SimInf_num_threads())
-    for (R_xlen_t t = 0; t < tlen; t++)
-        for (R_xlen_t node = 0; node < Nn; node++)
-            p_int_vec[t * Nn + node] = node + 1;
+    if (p_nodes != NULL) {
+        #pragma omp parallel for num_threads(SimInf_num_threads())
+        for (R_xlen_t t = 0; t < tlen; t++)
+            memcpy(&p_int_vec[t * Nnodes], p_nodes, Nnodes * sizeof(int));
+    } else {
+        #pragma omp parallel for num_threads(SimInf_num_threads())
+        for (R_xlen_t t = 0; t < tlen; t++)
+            for (R_xlen_t node = 0; node < Nnodes; node++)
+                p_int_vec[t * Nnodes + node] = node + 1;
+    }
     SET_VECTOR_ELT(result, col++, vec);
     UNPROTECT(1);
 
@@ -98,8 +112,8 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
     p_real_vec = REAL(tspan);
     #pragma omp parallel for num_threads(SimInf_num_threads())
     for (R_xlen_t t = 0; t < tlen; t++)
-        for (R_xlen_t node = 0; node < Nn; node++)
-            p_int_vec[t * Nn + node] = p_real_vec[t];
+        for (R_xlen_t node = 0; node < Nnodes; node++)
+            p_int_vec[t * Nnodes + node] = p_real_vec[t];
     SET_VECTOR_ELT(result, col++, vec);
     UNPROTECT(1);
 
@@ -110,14 +124,30 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
             R_xlen_t j = INTEGER(ui)[i] - 1;
             int *p_U = INTEGER(U) + j;
 
-            /* Add data for the column to the 'data.frame'. */
+            /* Add data for the compartment to the 'data.frame'. */
             SET_STRING_ELT(colnames, col, STRING_ELT(rownames, j));
             PROTECT(vec = Rf_allocVector(INTSXP, nrow));
             p_int_vec = INTEGER(vec);
-            #pragma omp parallel for num_threads(SimInf_num_threads())
-            for (R_xlen_t t = 0; t < tlen; t++)
-                for (R_xlen_t node = 0; node < Nn; node++)
-                    p_int_vec[t * Nn + node] = p_U[(t * Nn + node) * Nc];
+
+            if (p_nodes != NULL) {
+                /* Note that the node identifiers are one-based. */
+                #pragma omp parallel for num_threads(SimInf_num_threads())
+                for (R_xlen_t t = 0; t < tlen; t++) {
+                    for (R_xlen_t node = 0; node < Nnodes; node++) {
+                        p_int_vec[t * Nnodes + node] =
+                            p_U[(t * Nn + p_nodes[node] - 1) * Nc];
+                    }
+                }
+            } else {
+                #pragma omp parallel for num_threads(SimInf_num_threads())
+                for (R_xlen_t t = 0; t < tlen; t++) {
+                    for (R_xlen_t node = 0; node < Nnodes; node++) {
+                        p_int_vec[t * Nnodes + node] =
+                            p_U[(t * Nn + node) * Nc];
+                    }
+                }
+            }
+
             SET_VECTOR_ELT(result, col++, vec);
             UNPROTECT(1);
         }
@@ -130,14 +160,30 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi)
             R_xlen_t j = INTEGER(vi)[i] - 1;
             double *p_V = REAL(V) + j;
 
-            /* Add data for the column to the 'data.frame'. */
+            /* Add data for the compartment to the 'data.frame'. */
             SET_STRING_ELT(colnames, col, STRING_ELT(rownames, j));
             PROTECT(vec = Rf_allocVector(REALSXP, nrow));
             p_real_vec = REAL(vec);
-            #pragma omp parallel for num_threads(SimInf_num_threads())
-            for (R_xlen_t t = 0; t < tlen; t++)
-                for (R_xlen_t node = 0; node < Nn; node++)
-                    p_real_vec[t * Nn + node] = p_V[(t * Nn + node) * Nd];
+
+            if (p_nodes != NULL) {
+                /* Note that the node identifiers are one-based. */
+                #pragma omp parallel for num_threads(SimInf_num_threads())
+                for (R_xlen_t t = 0; t < tlen; t++) {
+                    for (R_xlen_t node = 0; node < Nnodes; node++) {
+                        p_real_vec[t * Nnodes + node] =
+                            p_V[(t * Nn + p_nodes[node] - 1) * Nd];
+                    }
+                }
+            } else {
+                #pragma omp parallel for num_threads(SimInf_num_threads())
+                for (R_xlen_t t = 0; t < tlen; t++) {
+                    for (R_xlen_t node = 0; node < Nnodes; node++) {
+                        p_real_vec[t * Nnodes + node] =
+                            p_V[(t * Nn + node) * Nd];
+                    }
+                }
+            }
+
             SET_VECTOR_ELT(result, col++, vec);
             UNPROTECT(1);
         }

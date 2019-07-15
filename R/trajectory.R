@@ -318,18 +318,17 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
 
     compartments <- match_compartments(model, compartments, as.is)
 
-    if (is.null(node) &&
-        !isTRUE(as.is) &&
+    ## Check the 'node' argument
+    node <- check_node_argument(model, node)
+
+    if (!isTRUE(as.is) &&
         !is_trajectory_sparse(model@U_sparse) &&
         !is_trajectory_sparse(model@V_sparse))
     {
         ui <- match(compartments$U, rownames(model@S))
         vi <- match(compartments$V, rownames(model@v0))
-        return(.Call(SimInf_trajectory, model, ui, vi))
+        return(.Call(SimInf_trajectory, model, ui, vi, node))
     }
-
-    ## Check the 'node' argument
-    node <- check_node_argument(model, node)
 
     ## Check to extract data in internal matrix format
     if (isTRUE(as.is)) {
