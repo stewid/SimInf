@@ -79,8 +79,9 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_int_vec = INTEGER(vec);
     #pragma omp parallel for num_threads(SimInf_num_threads())
-    for (R_xlen_t i = 0; i < nrow; i++)
+    for (R_xlen_t i = 0; i < nrow; i++) {
         p_int_vec[i] = i + 1;
+    }
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
     UNPROTECT(1);
 
@@ -90,13 +91,16 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
     p_int_vec = INTEGER(vec);
     if (p_nodes != NULL) {
         #pragma omp parallel for num_threads(SimInf_num_threads())
-        for (R_xlen_t t = 0; t < tlen; t++)
+        for (R_xlen_t t = 0; t < tlen; t++) {
             memcpy(&p_int_vec[t * Nnodes], p_nodes, Nnodes * sizeof(int));
+        }
     } else {
         #pragma omp parallel for num_threads(SimInf_num_threads())
-        for (R_xlen_t t = 0; t < tlen; t++)
-            for (R_xlen_t node = 0; node < Nnodes; node++)
+        for (R_xlen_t t = 0; t < tlen; t++) {
+            for (R_xlen_t node = 0; node < Nnodes; node++) {
                 p_int_vec[t * Nnodes + node] = node + 1;
+            }
+        }
     }
     SET_VECTOR_ELT(result, col++, vec);
     UNPROTECT(1);
@@ -107,9 +111,11 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
     p_int_vec = INTEGER(vec);
     p_real_vec = REAL(tspan);
     #pragma omp parallel for num_threads(SimInf_num_threads())
-    for (R_xlen_t t = 0; t < tlen; t++)
-        for (R_xlen_t node = 0; node < Nnodes; node++)
+    for (R_xlen_t t = 0; t < tlen; t++) {
+        for (R_xlen_t node = 0; node < Nnodes; node++) {
             p_int_vec[t * Nnodes + node] = p_real_vec[t];
+        }
+    }
     SET_VECTOR_ELT(result, col++, vec);
     UNPROTECT(1);
 
