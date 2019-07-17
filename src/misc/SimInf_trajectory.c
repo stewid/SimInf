@@ -54,17 +54,17 @@ SEXP SimInf_trajectory(
 {
     int *p_int_vec;
     double *p_real_vec;
-    R_xlen_t nrow;
     SEXP colnames, result, vec;
     int *p_nodes = Rf_isNull(nodes) ? NULL : INTEGER(nodes);
     R_xlen_t dm_len = XLENGTH(dm_i);
     R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
     R_xlen_t cm_len = XLENGTH(cm_i);
     R_xlen_t cm_stride = Rf_isNull(cm_lbl) ? 0 : XLENGTH(cm_lbl);
-    R_xlen_t ncol = 2 + dm_len + cm_len; /* The '2' is for the 'node' and 'time' columns. */
     R_xlen_t tlen = XLENGTH(tspan);
     R_xlen_t c_Nn = Rf_asInteger(Nn);
-    R_xlen_t Nnodes = Rf_isNull(nodes) ? Rf_asInteger(Nn) : XLENGTH(nodes);
+    R_xlen_t Nnodes = Rf_isNull(nodes) ? c_Nn : XLENGTH(nodes);
+    R_xlen_t nrow = tlen * Nnodes;
+    R_xlen_t ncol = 2 + dm_len + cm_len; /* The '2' is for the 'node' and 'time' columns. */
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -82,14 +82,10 @@ SEXP SimInf_trajectory(
         SET_STRING_ELT(colnames, 2 + dm_len + i, STRING_ELT(cm_lbl, j));
     }
 
-    /* Determine the number of rows to hold the trajectory data. */
-    nrow = tlen * Nnodes;
-
-    /* Create a list for the 'data.frame'. */
+    /* Create a list for the 'data.frame' and add colnames and a
+     * 'data.frame' class attribute. */
     PROTECT(result = Rf_allocVector(VECSXP, ncol));
     Rf_setAttrib(result, R_NamesSymbol, colnames);
-
-    /* Add the 'data.frame' class attribute to the list. */
     Rf_setAttrib(result, R_ClassSymbol, Rf_mkString("data.frame"));
 
     /* Add row names to the 'data.frame'. Note that the row names are
