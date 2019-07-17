@@ -324,9 +324,16 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
         !is_trajectory_sparse(model@U_sparse) &&
         !is_trajectory_sparse(model@V_sparse))
     {
-        ui <- match(compartments$U, rownames(model@S))
-        vi <- match(compartments$V, rownames(model@v0))
-        return(.Call(SimInf_trajectory, model, ui, vi, node))
+        dm <- model@U
+        dm_i <- match(compartments$U, rownames(model@S))
+        dm_lbl <- rownames(model@S)
+        cm <- model@V
+        cm_i <- match(compartments$V, rownames(model@v0))
+        cm_lbl <- rownames(model@v0)
+        return(.Call(SimInf_trajectory,
+                     dm, dm_i, dm_lbl,
+                     cm, cm_i, cm_lbl,
+                     model@tspan, Nn(model), node))
     }
 
     ## Check to extract data in internal matrix format

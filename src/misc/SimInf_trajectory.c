@@ -24,51 +24,69 @@
 /**
  * Extract data from a simulated trajectory as a data.frame.
  *
- * @param model the SimInf_model with data to transform to a
- *        data.frame.
- * @param ui index (1-based) to compartments in 'U' to include
+ * @param dm data for the discrete state matrix to transform
+ *        to a data.frame.
+ * @param dm_i index (1-based) to compartments in 'dm' to include
  *        in the data.frame.
- * @param vi index (1-based) to compartments in 'V' to include
+ * @param dm_lbl state names of the data in 'dm'.
+ * @param cm data for the continuous state matrix to transform
+ *        to a data.frame.
+ * @param cm_i index (1-based) to compartments in 'cm' to include
  *        in the data.frame.
+ * @param cm_lbl state names of the data in 'cm'.
+ * @param tspan a vector of increasing time points for the time
+ *        in each column in 'dm' and 'cm'.
+ * @param Nn number of nodes in the SimInf_model.
  * @param nodes NULL or an integer vector with (1-based) node
  *        indices of the nodes to include in the data.frame.
  * @return A data.frame.
  */
-SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
+SEXP SimInf_trajectory(
+    SEXP dm,
+    SEXP dm_i,
+    SEXP dm_lbl,
+    SEXP cm,
+    SEXP cm_i,
+    SEXP cm_lbl,
+    SEXP tspan,
+    SEXP Nn,
+    SEXP nodes)
 {
-    int col = 0, *p_int_vec, *p_nodes = NULL;
+    int *p_int_vec;
     double *p_real_vec;
-    R_xlen_t ncol, nrow, Nn, Nnodes, tlen;
-    SEXP result;
-    SEXP colnames, tspan, vec, u0;
+    R_xlen_t nrow;
+    SEXP colnames, result, vec;
+    int *p_nodes = Rf_isNull(nodes) ? NULL : INTEGER(nodes);
+    R_xlen_t dm_len = XLENGTH(dm_i);
+    R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
+    R_xlen_t cm_len = XLENGTH(cm_i);
+    R_xlen_t cm_stride = Rf_isNull(cm_lbl) ? 0 : XLENGTH(cm_lbl);
+    R_xlen_t ncol = 2 + dm_len + cm_len; /* The '2' is for the 'node' and 'time' columns. */
+    R_xlen_t tlen = XLENGTH(tspan);
+    R_xlen_t c_Nn = Rf_asInteger(Nn);
+    R_xlen_t Nnodes = Rf_isNull(nodes) ? Rf_asInteger(Nn) : XLENGTH(nodes);
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
 
-    PROTECT(tspan = GET_SLOT(model, Rf_install("tspan")));
-    tlen = XLENGTH(tspan);
-
-    /* Determine the number of nodes to extract data from (Nnodes) and
-     * the number of nodes in the model (Nn). */
-    PROTECT(u0 = GET_SLOT(model, Rf_install("u0")));
-    Nn = INTEGER(GET_SLOT(u0, R_DimSymbol))[1];
-    UNPROTECT(1);
-    if (Rf_isNull(nodes)) {
-        Nnodes = Nn;
-    } else {
-        Nnodes = XLENGTH(nodes);
-        p_nodes = INTEGER(nodes);
+    /* Create a vector for the column names. */
+    PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
+    SET_STRING_ELT(colnames, 0, Rf_mkChar("node"));
+    SET_STRING_ELT(colnames, 1, Rf_mkChar("time"));
+    for (R_xlen_t i = 0; i < dm_len; i++) {
+        R_xlen_t j = INTEGER(dm_i)[i] - 1;
+        SET_STRING_ELT(colnames, 2 + i, STRING_ELT(dm_lbl, j));
+    }
+    for (R_xlen_t i = 0; i < cm_len; i++) {
+        R_xlen_t j = INTEGER(cm_i)[i] - 1;
+        SET_STRING_ELT(colnames, 2 + dm_len + i, STRING_ELT(cm_lbl, j));
     }
 
-    /* Determine the dimensions to hold the trajectory data. */
+    /* Determine the number of rows to hold the trajectory data. */
     nrow = tlen * Nnodes;
-    ncol = 2 + XLENGTH(ui) + XLENGTH(vi);
 
     /* Create a list for the 'data.frame'. */
     PROTECT(result = Rf_allocVector(VECSXP, ncol));
-
-    /* Create a vector for the column names. */
-    PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
     Rf_setAttrib(result, R_NamesSymbol, colnames);
 
     /* Add the 'data.frame' class attribute to the list. */
@@ -86,7 +104,6 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
     UNPROTECT(1);
 
     /* Add a 'node' identifier column to the 'data.frame'. */
-    SET_STRING_ELT(colnames, col, Rf_mkChar("node"));
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_int_vec = INTEGER(vec);
     if (p_nodes != NULL) {
@@ -102,11 +119,10 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
             }
         }
     }
-    SET_VECTOR_ELT(result, col++, vec);
+    SET_VECTOR_ELT(result, 0, vec);
     UNPROTECT(1);
 
     /* Add a 'time' column to the 'data.frame'. */
-    SET_STRING_ELT(colnames, col, Rf_mkChar("time"));
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_int_vec = INTEGER(vec);
     p_real_vec = REAL(tspan);
@@ -116,99 +132,72 @@ SEXP SimInf_trajectory(SEXP model, SEXP ui, SEXP vi, SEXP nodes)
             p_int_vec[t * Nnodes + node] = p_real_vec[t];
         }
     }
-    SET_VECTOR_ELT(result, col++, vec);
+    SET_VECTOR_ELT(result, 1, vec);
     UNPROTECT(1);
 
-    if (XLENGTH(ui) > 0) {
-        R_xlen_t Nc;
-        SEXP rownames, S, U;
+    /* Copy data from the discrete state matrix. */
+    for (R_xlen_t i = 0; i < dm_len; i++) {
+        int *p_dm = INTEGER(dm) + INTEGER(dm_i)[i] - 1;
 
-        PROTECT(S = GET_SLOT(model, Rf_install("S")));
-        Nc = INTEGER(GET_SLOT(S, Rf_install("Dim")))[0];
+        /* Add data for the compartment to the 'data.frame'. */
+        PROTECT(vec = Rf_allocVector(INTSXP, nrow));
+        p_int_vec = INTEGER(vec);
 
-        PROTECT(U = GET_SLOT(model, Rf_install("U")));
-        rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
-
-        for (R_xlen_t i = 0; i < XLENGTH(ui); i++) {
-            R_xlen_t j = INTEGER(ui)[i] - 1;
-            int *p_U = INTEGER(U) + j;
-
-            /* Add data for the compartment to the 'data.frame'. */
-            SET_STRING_ELT(colnames, col, STRING_ELT(rownames, j));
-            PROTECT(vec = Rf_allocVector(INTSXP, nrow));
-            p_int_vec = INTEGER(vec);
-
-            if (p_nodes != NULL) {
-                /* Note that the node identifiers are one-based. */
-                #pragma omp parallel for num_threads(SimInf_num_threads())
-                for (R_xlen_t t = 0; t < tlen; t++) {
-                    for (R_xlen_t node = 0; node < Nnodes; node++) {
-                        p_int_vec[t * Nnodes + node] =
-                            p_U[(t * Nn + p_nodes[node] - 1) * Nc];
-                    }
-                }
-            } else {
-                #pragma omp parallel for num_threads(SimInf_num_threads())
-                for (R_xlen_t t = 0; t < tlen; t++) {
-                    for (R_xlen_t node = 0; node < Nnodes; node++) {
-                        p_int_vec[t * Nnodes + node] =
-                            p_U[(t * Nn + node) * Nc];
-                    }
+        if (p_nodes != NULL) {
+            /* Note that the node identifiers are one-based. */
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                    p_int_vec[t * Nnodes + node] =
+                        p_dm[(t * c_Nn + p_nodes[node] - 1) * dm_stride];
                 }
             }
-
-            SET_VECTOR_ELT(result, col++, vec);
-            UNPROTECT(1);
-        }
-
-        UNPROTECT(2);
-    }
-
-    if (XLENGTH(vi) > 0) {
-        R_xlen_t Nd;
-        SEXP rownames, V, v0;
-
-        PROTECT(V = GET_SLOT(model, Rf_install("V")));
-        PROTECT(v0 = GET_SLOT(model, Rf_install("v0")));
-        Nd = INTEGER(GET_SLOT(v0, R_DimSymbol))[0];
-        rownames = VECTOR_ELT(Rf_getAttrib(v0, R_DimNamesSymbol), 0);
-
-        for (R_xlen_t i = 0; i < XLENGTH(vi); i++) {
-            R_xlen_t j = INTEGER(vi)[i] - 1;
-            double *p_V = REAL(V) + j;
-
-            /* Add data for the compartment to the 'data.frame'. */
-            SET_STRING_ELT(colnames, col, STRING_ELT(rownames, j));
-            PROTECT(vec = Rf_allocVector(REALSXP, nrow));
-            p_real_vec = REAL(vec);
-
-            if (p_nodes != NULL) {
-                /* Note that the node identifiers are one-based. */
-                #pragma omp parallel for num_threads(SimInf_num_threads())
-                for (R_xlen_t t = 0; t < tlen; t++) {
-                    for (R_xlen_t node = 0; node < Nnodes; node++) {
-                        p_real_vec[t * Nnodes + node] =
-                            p_V[(t * Nn + p_nodes[node] - 1) * Nd];
-                    }
-                }
-            } else {
-                #pragma omp parallel for num_threads(SimInf_num_threads())
-                for (R_xlen_t t = 0; t < tlen; t++) {
-                    for (R_xlen_t node = 0; node < Nnodes; node++) {
-                        p_real_vec[t * Nnodes + node] =
-                            p_V[(t * Nn + node) * Nd];
-                    }
+        } else {
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                    p_int_vec[t * Nnodes + node] =
+                        p_dm[(t * c_Nn + node) * dm_stride];
                 }
             }
-
-            SET_VECTOR_ELT(result, col++, vec);
-            UNPROTECT(1);
         }
 
-        UNPROTECT(2);
+        SET_VECTOR_ELT(result, 2 + i, vec);
+        UNPROTECT(1);
     }
 
-    UNPROTECT(3);
+    /* Copy data from the continuous state matrix. */
+    for (R_xlen_t i = 0; i < cm_len; i++) {
+        double *p_cm = REAL(cm) + INTEGER(cm_i)[i] - 1;
+
+        /* Add data for the compartment to the 'data.frame'. */
+        PROTECT(vec = Rf_allocVector(REALSXP, nrow));
+        p_real_vec = REAL(vec);
+
+        if (p_nodes != NULL) {
+            /* Note that the node identifiers are one-based. */
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                    p_real_vec[t * Nnodes + node] =
+                        p_cm[(t * c_Nn + p_nodes[node] - 1) * cm_stride];
+                }
+            }
+        } else {
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                    p_real_vec[t * Nnodes + node] =
+                        p_cm[(t * c_Nn + node) * cm_stride];
+                }
+            }
+        }
+
+        SET_VECTOR_ELT(result, 2 + dm_len + i, vec);
+        UNPROTECT(1);
+    }
+
+    UNPROTECT(2);
 
     return result;
 }
