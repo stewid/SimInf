@@ -25,7 +25,7 @@ static void SimInf_dense2df_int(
     SEXP dst,
     int *m,
     int * m_i,
-    R_xlen_t m_len,
+    R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
     R_xlen_t tlen,
@@ -34,7 +34,7 @@ static void SimInf_dense2df_int(
     R_xlen_t col,
     int *p_nodes)
 {
-    for (R_xlen_t i = 0; i < m_len; i++) {
+    for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
         int *p_m = m + m_i[i] - 1;
@@ -67,7 +67,7 @@ static void SimInf_dense2df_real(
     SEXP dst,
     double *m,
     int * m_i,
-    R_xlen_t m_len,
+    R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
     R_xlen_t tlen,
@@ -76,7 +76,7 @@ static void SimInf_dense2df_real(
     R_xlen_t col,
     int *p_nodes)
 {
-    for (R_xlen_t i = 0; i < m_len; i++) {
+    for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
         double *p_m = m + m_i[i] - 1;
@@ -140,15 +140,15 @@ SEXP SimInf_trajectory(
     int *p_vec;
     double *p_tspan = REAL(tspan);
     int *p_nodes = Rf_isNull(nodes) ? NULL : INTEGER(nodes);
-    R_xlen_t dm_len = XLENGTH(dm_i);
+    R_xlen_t dm_i_len = XLENGTH(dm_i);
     R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
-    R_xlen_t cm_len = XLENGTH(cm_i);
+    R_xlen_t cm_i_len = XLENGTH(cm_i);
     R_xlen_t cm_stride = Rf_isNull(cm_lbl) ? 0 : XLENGTH(cm_lbl);
     R_xlen_t tlen = XLENGTH(tspan);
     R_xlen_t c_Nn = Rf_asInteger(Nn);
     R_xlen_t Nnodes = Rf_isNull(nodes) ? c_Nn : XLENGTH(nodes);
     R_xlen_t nrow = tlen * Nnodes;
-    R_xlen_t ncol = 2 + dm_len + cm_len; /* The '2' is for the 'node' and 'time' columns. */
+    R_xlen_t ncol = 2 + dm_i_len + cm_i_len; /* The '2' is for the 'node' and 'time' columns. */
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -157,13 +157,13 @@ SEXP SimInf_trajectory(
     PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
     SET_STRING_ELT(colnames, 0, Rf_mkChar("node"));
     SET_STRING_ELT(colnames, 1, Rf_mkChar("time"));
-    for (R_xlen_t i = 0; i < dm_len; i++) {
+    for (R_xlen_t i = 0; i < dm_i_len; i++) {
         R_xlen_t j = INTEGER(dm_i)[i] - 1;
         SET_STRING_ELT(colnames, 2 + i, STRING_ELT(dm_lbl, j));
     }
-    for (R_xlen_t i = 0; i < cm_len; i++) {
+    for (R_xlen_t i = 0; i < cm_i_len; i++) {
         R_xlen_t j = INTEGER(cm_i)[i] - 1;
-        SET_STRING_ELT(colnames, 2 + dm_len + i, STRING_ELT(cm_lbl, j));
+        SET_STRING_ELT(colnames, 2 + dm_i_len + i, STRING_ELT(cm_lbl, j));
     }
 
     /* Create a list for the 'data.frame' and add colnames and a
@@ -215,12 +215,12 @@ SEXP SimInf_trajectory(
     UNPROTECT(1);
 
     /* Copy data from the discrete state matrix. */
-    SimInf_dense2df_int(result, INTEGER(dm), INTEGER(dm_i), dm_len, dm_stride,
+    SimInf_dense2df_int(result, INTEGER(dm), INTEGER(dm_i), dm_i_len, dm_stride,
                         nrow, tlen, Nnodes, c_Nn, 2, p_nodes);
 
     /* Copy data from the continuous state matrix. */
-    SimInf_dense2df_real(result, REAL(cm), INTEGER(cm_i), cm_len, cm_stride,
-                         nrow, tlen, Nnodes, c_Nn, 2 + dm_len, p_nodes);
+    SimInf_dense2df_real(result, REAL(cm), INTEGER(cm_i), cm_i_len, cm_stride,
+                         nrow, tlen, Nnodes, c_Nn, 2 + dm_i_len, p_nodes);
 
     UNPROTECT(2);
 
