@@ -29,14 +29,12 @@ sessionInfo()
 res <- tools::assertError(SISe3(u0 = "u0"))
 check_error(res, "Missing columns in u0.")
 
-u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
-                     I_1 = c(0, 0, 0, 0, 0, 0),
-                     S_2 = c(0, 1, 2, 3, 4, 5),
-                     I_2 = c(0, 0, 0, 0, 0, 0),
-                     S_3 = c(0, 1, 2, 3, 4, 5),
-                     I_3 = c(0, 0, 0, 0, 0, 0)),
-                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                row.names = c(NA, -6L), class = "data.frame")
+u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5),
+                 I_1 = c(0, 0, 0, 0, 0, 0),
+                 S_2 = c(0, 1, 2, 3, 4, 5),
+                 I_2 = c(0, 0, 0, 0, 0, 0),
+                 S_3 = c(0, 1, 2, 3, 4, 5),
+                 I_3 = c(0, 0, 0, 0, 0, 0))
 
 ## Check missing columns in u0
 res <- tools::assertError(

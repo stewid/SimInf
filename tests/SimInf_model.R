@@ -393,14 +393,12 @@ res <- tools::assertError(new("SimInf_model",
 check_error(res, "The number of nodes in 'u0' and 'ldata' must match.", FALSE)
 
 ## Check initial state
-u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
-                     I_1 = c(0, 0, 0, 0, 0, 0),
-                     S_2 = c(0, 1, 2, 3, 4, 5),
-                     I_2 = c(0, 0, 0, 0, 0, 0),
-                     S_3 = c(0, 1, 2, 3, 4, 5),
-                     I_3 = c(0, 0, 0, 0, 0, 0)),
-                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                row.names = c(NA, -6L), class = "data.frame")
+u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5),
+                 I_1 = c(0, 0, 0, 0, 0, 0),
+                 S_2 = c(0, 1, 2, 3, 4, 5),
+                 I_2 = c(0, 0, 0, 0, 0, 0),
+                 S_3 = c(0, 1, 2, 3, 4, 5),
+                 I_3 = c(0, 0, 0, 0, 0, 0))
 
 ## 'u0' is NULL
 res <- tools::assertError(SimInf_model())
@@ -439,17 +437,14 @@ stopifnot(identical(show_observed[1:5], show_expected))
 summary(run(model))
 
 ## Check first lines of show method with events
-u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
-                     I_1 = c(0, 0, 0, 0, 0, 0),
-                     S_2 = c(0, 1, 2, 3, 4, 5),
-                     I_2 = c(0, 0, 0, 0, 0, 0),
-                     S_3 = c(0, 1, 2, 3, 4, 5),
-                     I_3 = c(0, 0, 0, 0, 0, 0)),
-                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                row.names = c(NA, -6L),
-                class = "data.frame")
+u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5),
+                 I_1 = c(0, 0, 0, 0, 0, 0),
+                 S_2 = c(0, 1, 2, 3, 4, 5),
+                 I_2 = c(0, 0, 0, 0, 0, 0),
+                 S_3 = c(0, 1, 2, 3, 4, 5),
+                 I_3 = c(0, 0, 0, 0, 0, 0))
 
-events <- structure(list(
+events <- data.frame(
     event      = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time       = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node       = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -457,10 +452,7 @@ events <- structure(list(
     n          = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select     = c(4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6),
-    shift      = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)),
-                    .Names = c("event", "time", "node", "dest",
-                        "n", "proportion", "select", "shift"),
-                    row.names = c(NA, -15L), class = "data.frame")
+    shift      = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
 model <- SISe3(u0        = u0,
                tspan     = 0:10,
@@ -640,15 +632,12 @@ check_error(res, "Please run the model first, the 'U' matrix is empty.")
 
 ## Check that the SimInf_model initialisation fails if the events
 ## argument is not either NULL or a data.frame
-u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5),
-                     I_1 = c(0, 0, 0, 0, 0, 0),
-                     S_2 = c(0, 1, 2, 3, 4, 5),
-                     I_2 = c(0, 0, 0, 0, 0, 0),
-                     S_3 = c(0, 1, 2, 3, 4, 5),
-                     I_3 = c(0, 0, 0, 0, 0, 0)),
-                .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                row.names = c(NA, -6L),
-                class = "data.frame")
+u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5),
+                 I_1 = c(0, 0, 0, 0, 0, 0),
+                 S_2 = c(0, 1, 2, 3, 4, 5),
+                 I_2 = c(0, 0, 0, 0, 0, 0),
+                 S_3 = c(0, 1, 2, 3, 4, 5),
+                 I_3 = c(0, 0, 0, 0, 0, 0))
 
 res <- tools::assertError(model <- SISe3(u0        = u0,
                                          tspan     = 0:10,

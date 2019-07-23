@@ -29,10 +29,8 @@ sessionInfo()
 res <- tools::assertError(SISe(u0 = "u0"))
 check_error(res, "Missing columns in u0.")
 
-u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
-                     I  = c(0, 0, 0, 0, 0, 0)),
-                .Names = c("S", "I"),
-                row.names = c(NA, -6L), class = "data.frame")
+u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
+                 I  = c(0, 0, 0, 0, 0, 0))
 
 ## Check missing columns in u0
 res <- tools::assertError(SISe(u0 = u0[, "I", drop = FALSE]))
@@ -941,36 +939,27 @@ check_error(res, "Select either continuous or discrete compartments.")
 stopifnot(identical(class(trajectory(result, c("S", "phi"))$phi), "numeric"))
 stopifnot(identical(class(trajectory(result, c("phi"))$phi), "numeric"))
 
-traj_expected <- structure(list(
+traj_expected <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
     time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
-    S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L)),
-    .Names = c("node", "time", "S"),
-    row.names = c(NA, -12L),
-    class = "data.frame")
+    S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L))
 stopifnot(identical(trajectory(result, c("S", "S")), traj_expected))
 
-traj_expected <- structure(list(
+traj_expected <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
     time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
     S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-    phi = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0, 0.1, 0.2, 0.3, 0.4, 0.5)),
-    .Names = c("node", "time", "S", "phi"),
-    row.names = c(NA, -12L),
-    class = "data.frame")
+    phi = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0, 0.1, 0.2, 0.3, 0.4, 0.5))
 stopifnot(identical(trajectory(result, c("S", "S", "phi", "phi"))[, -4], traj_expected[, -4]))
 stopifnot(identical(trajectory(result, c("phi", "phi", "S", "S"))[, -4], traj_expected[, -4]))
 stopifnot(all(abs(trajectory(result, c("phi", "phi", "S", "S"))[, 4] - traj_expected$phi) < 1e-8))
 
 ## Check extracting a subset of nodes
-traj_expected <- structure(list(
+traj_expected <- data.frame(
     node = c(2L, 5L, 2L, 5L),
     time = c(1L, 1L, 2L, 2L),
     S = c(1L, 4L, 1L, 4L),
-    phi = c(0.1, 0.4, 0.1, 0.4)),
-    .Names = c("node", "time", "S", "phi"),
-    row.names = c(NA, -4L),
-    class = "data.frame")
+    phi = c(0.1, 0.4, 0.1, 0.4))
 stopifnot(identical(trajectory(result, c("S", "S", "phi", "phi"), node = c(5, 2))[, -4], traj_expected[, -4]))
 stopifnot(identical(trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, -4], traj_expected[, -4]))
 stopifnot(all(abs(trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, 4] - traj_expected$phi) < 1e-8))

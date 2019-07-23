@@ -28,14 +28,12 @@ sessionInfo()
 res <- tools::assertError(SISe3_sp(u0 = "u0"))
 check_error(res, "Missing columns in u0.")
 
-u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                       I_1 = c(0, 0, 0, 0, 0, 0, 0, 0, 0),
-                       S_2 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                       I_2 = c(0, 0, 0, 0, 0, 0, 0, 0, 0),
-                       S_3 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                       I_3 = c(0, 0, 0, 0, 0, 0, 0, 0, 0)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -9L), class = "data.frame")
+u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                 I_1 = c(0, 0, 0, 0, 0, 0, 0, 0, 0),
+                 S_2 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                 I_2 = c(0, 0, 0, 0, 0, 0, 0, 0, 0),
+                 S_3 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                 I_3 = c(0, 0, 0, 0, 0, 0, 0, 0, 0))
 
 ## Place nodes in a grid
 distance <- expand.grid(x = seq_len(3),
@@ -1557,14 +1555,12 @@ res <- tools::assertError(run(model))
 check_error(res, "The continuous state 'v' is not finite.")
 
 ## Check negative v
-u0 <- structure(list(S_1 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                       I_10 = c(10, 10, 10, 10, 10, 10, 10, 10, 10),
-                       S_2 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                       I_2 = c(10, 10, 10, 10, 10, 10, 10, 10, 10),
-                       S_3 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                       I_3 = c(10, 10, 10, 10, 10, 10, 10, 10, 10)),
-                  .Names = c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
-                  row.names = c(NA, -9L), class = "data.frame")
+u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                 I_1 = c(10, 10, 10, 10, 10, 10, 10, 10, 10),
+                 S_2 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                 I_2 = c(10, 10, 10, 10, 10, 10, 10, 10, 10),
+                 S_3 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                 I_3 = c(10, 10, 10, 10, 10, 10, 10, 10, 10))
 model <- SISe3_sp(u0        = u0,
                   tspan     = seq_len(10) - 1,
                   events    = NULL,
