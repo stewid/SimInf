@@ -29,10 +29,8 @@ sessionInfo()
 res <- tools::assertError(SISe(u0 = "u0"))
 check_error(res, "Missing columns in u0.")
 
-u0 <- structure(list(S  = c(9, 9, 9, 9, 9, 10),
-                     I  = c(1, 1, 1, 1, 1, 0)),
-                .Names = c("S", "I"),
-                row.names = c(NA, -6L), class = "data.frame")
+u0 <- data.frame(S  = c(9, 9, 9, 9, 9, 10),
+                 I  = c(1, 1, 1, 1, 1, 0))
 
 ## Check missing columns in u0
 res <- tools::assertError(SISe(u0 = u0[, "I", drop = FALSE]))
@@ -84,24 +82,17 @@ I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 ## test with events.
-u0 <- structure(list(S = c(10, 9),
-                     I = c(0, 1)),
-                .Names = c("S", "I"),
-                row.names = c(NA, -2L),
-                class = "data.frame")
+u0 <- data.frame(S = c(10, 9),
+                 I = c(0, 1))
 
-events <- structure(list(
-    event      = c(3, 3),
-    time       = c(1, 5),
-    node       = c(1, 2),
-    dest       = c(2, 1),
-    n          = c(2, 2),
-    proportion = c(0, 0),
-    select     = c(2, 2),
-    shift      = c(0, 0)),
-    .Names = c("event", "time", "node", "dest",
-               "n", "proportion", "select", "shift"),
-    row.names = c(NA, -2L), class = "data.frame")
+events <- data.frame(event      = c(3, 3),
+                     time       = c(1, 5),
+                     node       = c(1, 2),
+                     dest       = c(2, 1),
+                     n          = c(2, 2),
+                     proportion = c(0, 0),
+                     select     = c(2, 2),
+                     shift      = c(0, 0))
 
 model <- SISe(u0  = u0,
               tspan   = seq_len(10) - 1,

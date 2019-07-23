@@ -27,11 +27,9 @@ sessionInfo()
 res <- tools::assertError(SIR(u0 = "u0"))
 check_error(res, "Missing columns in u0.")
 
-u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
-                     I  = c(0, 0, 0, 0, 0, 0),
-                     R  = c(0, 0, 0, 0, 0, 0)),
-                .Names = c("S", "I", "R"),
-                row.names = c(NA, -6L), class = "data.frame")
+u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
+                 I  = c(0, 0, 0, 0, 0, 0),
+                 R  = c(0, 0, 0, 0, 0, 0))
 
 ## Check missing columns in u0
 res <- tools::assertError(SIR(u0 = u0[, c("I", "R"), drop = FALSE]))

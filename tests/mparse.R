@@ -539,7 +539,7 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
 set.seed(22)
 result <- run_model(model)
 
-U_exp <- structure(list(
+U_exp <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
              3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
@@ -563,10 +563,8 @@ U_exp <- structure(list(
           1L, 0L, 1L, 0L, 1L, 1L, 4L, 1L, 1L, 0L, 1L, 2L, 4L, 1L, 1L, 0L,
           1L, 2L, 4L, 1L, 1L, 0L, 1L, 3L, 4L, 1L, 1L, 1L, 1L, 3L, 5L, 1L,
           2L, 1L, 2L, 3L, 5L, 1L, 2L, 2L, 2L, 5L, 6L, 1L, 2L, 3L, 2L, 5L,
-          6L, 1L, 2L, 3L, 3L, 8L, 7L)),
-    .Names = c("node", "time", "S", "I", "R"),
-    row.names = c(NA, -60L),
-    class = "data.frame")
+          6L, 1L, 2L, 3L, 3L, 8L, 7L))
+
 stopifnot(identical(trajectory(result), U_exp))
 
 ## Check that mparse fails with invalid usage of the empty set '@'.

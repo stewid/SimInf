@@ -24,10 +24,8 @@ set_num_threads(1)
 ## For debugging
 sessionInfo()
 
-u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                     I  = c(0, 0, 0, 0, 0, 0, 0, 0, 0)),
-                .Names = c("S", "I"),
-                row.names = c(NA, -9L), class = "data.frame")
+u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                 I  = c(0, 0, 0, 0, 0, 0, 0, 0, 0))
 
 ## Place nodes in a grid
 distance <- expand.grid(x = seq_len(3),
@@ -1070,10 +1068,8 @@ res <- tools::assertError(run(model))
 check_error(res, "The continuous state 'v' is not finite.")
 
 ## Check negative v
-u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
-                     I  = c(10, 10, 10, 10, 10, 10, 10, 10, 10)),
-                .Names = c("S", "I"),
-                row.names = c(NA, -9L), class = "data.frame")
+u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
+                 I  = c(10, 10, 10, 10, 10, 10, 10, 10, 10))
 model <- SISe_sp(u0       = u0,
                  tspan    = seq_len(10) - 1,
                  events   = NULL,
