@@ -50,14 +50,11 @@ U_exp <- new("dgCMatrix",
                    94, 10, 5, 98, 8, 5),
              factors = list())
 
-punchcard(model) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
-                                   time = c(5L, 6L, 7L, 8L, 9L, 10L),
-                                   S = rep(TRUE, 6),
-                                   I = rep(TRUE, 6),
-                                   R = rep(TRUE, 6)),
-                              .Names = c("node", "time", "S", "I", "R"),
-                              row.names = c(NA, -6L),
-                              class = "data.frame")
+punchcard(model) <- data.frame(node = c(1L, 2L, 3L, 4L, 5L, 6L),
+                               time = c(5L, 6L, 7L, 8L, 9L, 10L),
+                               S = rep(TRUE, 6),
+                               I = rep(TRUE, 6),
+                               R = rep(TRUE, 6))
 set.seed(123)
 U_obs <- trajectory(run(model), as.is = TRUE)
 stopifnot(identical(U_obs, U_exp))
@@ -92,14 +89,11 @@ model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
              beta = 0.16,
              gamma = 0.077)
 result <- run(model)
-punchcard(result) <- structure(list(node = c(1L, 2L, 3L, 4L, 5L, 6L),
-                                    time = c(5L, 6L, 7L, 8L, 9L, 10L),
-                                    S = rep(TRUE, 6),
-                                    I = rep(TRUE, 6),
-                                    R = rep(TRUE, 6)),
-                               .Names = c("node", "time", "S", "I", "R"),
-                               row.names = c(NA, -6L),
-                               class = "data.frame")
+punchcard(result) <- data.frame(node = c(1L, 2L, 3L, 4L, 5L, 6L),
+                                time = c(5L, 6L, 7L, 8L, 9L, 10L),
+                                S = rep(TRUE, 6),
+                                I = rep(TRUE, 6),
+                                R = rep(TRUE, 6))
 result <- run(result)
 stopifnot(identical(dim(result@U), c(0L, 0L)))
 stopifnot(identical(dim(result@U_sparse), c(18L, 10L)))
@@ -112,10 +106,8 @@ stopifnot(identical(dim(result@U_sparse), c(0L, 0L)))
 ## matrix, then run that model and check that the dense V result
 ## matrix is cleared. Then run the model again and check that the
 ## sparse result matrix is cleared.
-u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
-                     I  = c(0, 0, 0, 0, 0, 0)),
-                .Names = c("S", "I"),
-                row.names = c(NA, -6L), class = "data.frame")
+u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
+                 I  = c(0, 0, 0, 0, 0, 0))
 model <- SISe(u0      = u0,
               tspan   = seq_len(10) - 1,
               events  = NULL,
@@ -149,45 +141,33 @@ stopifnot(identical(dim(result@V_sparse), c(0L, 0L)))
 ## sparse matrix as a template for U where to write data.
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-punchcard(model) <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
-                                   time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
-                                   S = c(TRUE, NA, TRUE, NA, TRUE, NA, TRUE, NA),
-                                   I = c(TRUE, NA, NA, TRUE, TRUE, NA, NA, TRUE),
-                                   R = c(NA, TRUE, NA, TRUE, NA, TRUE, NA, TRUE)),
-                              .Names = c("node", "time", "S", "I", "R"),
-                              row.names = c(NA, -8L),
-                              class = "data.frame")
+punchcard(model) <- data.frame(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
+                               time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
+                               S = c(TRUE, NA, TRUE, NA, TRUE, NA, TRUE, NA),
+                               I = c(TRUE, NA, NA, TRUE, TRUE, NA, NA, TRUE),
+                               R = c(NA, TRUE, NA, TRUE, NA, TRUE, NA, TRUE))
 set.seed(22)
 result <- run(model)
-U_exp <- structure(list(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
-                        time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
-                        S = c(100L, NA, 100L, NA, 99L, NA, 102L, NA),
-                        I = c(0L, NA, NA, 1L, 4L, NA, NA, 2L),
-                        R = c(NA, 1L, NA, 2L, NA, 3L, NA, 3L)),
-                   .Names = c("node", "time", "S", "I", "R"),
-                   row.names = c(NA, -8L),
-                   class = "data.frame")
+U_exp <- data.frame(node = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L),
+                    time = c(5L, 6L, 6L, 7L, 8L, 9L, 9L, 10L),
+                    S = c(100L, NA, 100L, NA, 99L, NA, 102L, NA),
+                    I = c(0L, NA, NA, 1L, 4L, NA, NA, 2L),
+                    R = c(NA, 1L, NA, 2L, NA, 3L, NA, 3L))
 stopifnot(identical(trajectory(result), U_exp))
 
 ## Similar test case, but without NA-values
-punchcard(model) <- structure(list(node = 1:6,
-                                   time = 5:10,
-                                   S = rep(TRUE, 6),
-                                   I = rep(TRUE, 6),
-                                   R = rep(TRUE, 6)),
-                              .Names = c("node", "time", "S", "I", "R"),
-                              row.names = c(NA, -6L),
-                              class = "data.frame")
+punchcard(model) <- data.frame(node = 1:6,
+                               time = 5:10,
+                               S = rep(TRUE, 6),
+                               I = rep(TRUE, 6),
+                               R = rep(TRUE, 6))
 set.seed(22)
 result <- run(model)
-U_exp <- structure(list(node = 1:6,
-                        time = 5:10,
-                        S = c(100L, 100L, 99L, 102L, 91L, 94L),
-                        I = c(0L, 2L, 5L, 3L, 13L, 10L),
-                        R = c(1L, 1L, 1L, 2L, 5L, 7L)),
-                   .Names = c("node", "time", "S", "I", "R"),
-                   row.names = c(NA, -6L),
-                   class = "data.frame")
+U_exp <- data.frame(node = 1:6,
+                    time = 5:10,
+                    S = c(100L, 100L, 99L, 102L, 91L, 94L),
+                    I = c(0L, 2L, 5L, 3L, 13L, 10L),
+                    R = c(1L, 1L, 1L, 2L, 5L, 7L))
 stopifnot(identical(trajectory(result), U_exp))
 
 ## Test to specify empty data.frame
@@ -207,7 +187,7 @@ stopifnot(identical(result@V_sparse, V_exp))
 punchcard(model) <- NULL
 set.seed(22)
 result <- run(model)
-U_exp <- structure(list(
+U_exp <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
              3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
@@ -231,10 +211,7 @@ U_exp <- structure(list(
           1L, 0L, 1L, 0L, 1L, 1L, 4L, 1L, 1L, 0L, 1L, 2L, 4L, 1L, 1L, 0L,
           1L, 2L, 4L, 1L, 1L, 0L, 1L, 3L, 4L, 1L, 1L, 1L, 1L, 3L, 5L, 1L,
           2L, 1L, 2L, 3L, 5L, 1L, 2L, 2L, 2L, 5L, 6L, 1L, 2L, 3L, 2L, 5L,
-          6L, 1L, 2L, 3L, 3L, 8L, 7L)),
-    .Names = c("node", "time", "S", "I", "R"),
-    row.names = c(NA, -60L),
-    class = "data.frame")
+          6L, 1L, 2L, 3L, 3L, 8L, 7L))
 stopifnot(identical(trajectory(result), U_exp))
 
 ## Check that it fails with mis-specified columns.
@@ -257,12 +234,12 @@ punchcard(model) <- data.frame(node = c(1, 1),
 stopifnot(SimInf:::is_trajectory_empty(model))
 
 stopifnot(identical(trajectory(run(model)),
-                    structure(list(node = c(1L, 1L),
-                                   time = c("2016-01-01", "2016-01-02"),
-                                   S = c(100L, 100L),
-                                   I = c(NA_integer_, NA_integer_),
-                                   R = c(NA_integer_, NA_integer_)),
-                              class = "data.frame", row.names = c(NA, -2L))))
+                    data.frame(node = c(1L, 1L),
+                               time = c("2016-01-01", "2016-01-02"),
+                               S = c(100L, 100L),
+                               I = c(NA_integer_, NA_integer_),
+                               R = c(NA_integer_, NA_integer_),
+                               stringsAsFactors = FALSE)))
 
 punchcard(model) <- data.frame(node = c(1, 1),
                                time = as.Date(c("2016-01-01", "2016-01-02")),
@@ -271,22 +248,22 @@ punchcard(model) <- data.frame(node = c(1, 1),
                                R = c(FALSE, FALSE))
 
 stopifnot(identical(trajectory(run(model)),
-                    structure(list(node = c(1L, 1L),
-                                   time = c("2016-01-01", "2016-01-02"),
-                                   S = c(100L, 100L),
-                                   I = c(NA_integer_, NA_integer_),
-                                   R = c(NA_integer_, NA_integer_)),
-                              class = "data.frame", row.names = c(NA, -2L))))
+                    data.frame(node = c(1L, 1L),
+                               time = c("2016-01-01", "2016-01-02"),
+                               S = c(100L, 100L),
+                               I = c(NA_integer_, NA_integer_),
+                               R = c(NA_integer_, NA_integer_),
+                               stringsAsFactors = FALSE)))
 
 punchcard(model) <- data.frame(node = c(1, 1),
                                time = as.Date(c("2016-01-01", "2016-01-02")))
 stopifnot(identical(trajectory(run(model)),
-                    structure(list(node = c(1L, 1L),
-                                   time = c("2016-01-01", "2016-01-02"),
-                                   S = c(100L, 100L),
-                                   I = c(0L, 0L),
-                                   R = c(0L, 0L)),
-                              class = "data.frame", row.names = c(NA, -2L))))
+                    data.frame(node = c(1L, 1L),
+                               time = c("2016-01-01", "2016-01-02"),
+                               S = c(100L, 100L),
+                               I = c(0L, 0L),
+                               R = c(0L, 0L),
+                               stringsAsFactors = FALSE)))
 
 ## Check to extract trajectory with sparse U and V.
 model <- SISe(u0 = data.frame(S = c(100, 100), I = c(0, 0)),
@@ -296,13 +273,11 @@ model <- SISe(u0 = data.frame(S = c(100, 100), I = c(0, 0)),
               end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 punchcard(model) <- data.frame(node = c(1, 1), time = c(4, 6))
 stopifnot(identical(trajectory(run(model), ~.),
-                    structure(list(node = c(1L, 1L),
-                                   time = c(4L, 6L),
-                                   S = c(100L, 100L),
-                                   I = c(0L, 0L),
-                                   phi = c(1, 1)),
-                              row.names = c(NA, -2L),
-                              class = "data.frame")))
+                    data.frame(node = c(1L, 1L),
+                               time = c(4L, 6L),
+                               S = c(100L, 100L),
+                               I = c(0L, 0L),
+                               phi = c(1, 1))))
 
 punchcard(model) <- data.frame(node = c(1, 1, 2, 2),
                                time = c(2, 4, 6, 8),
@@ -310,10 +285,8 @@ punchcard(model) <- data.frame(node = c(1, 1, 2, 2),
                                I = c(TRUE, TRUE, FALSE, FALSE),
                                phi = c(FALSE, FALSE, TRUE, TRUE))
 stopifnot(identical(trajectory(run(model), ~.),
-                    structure(list(node = c(1L, 1L, 2L, 2L),
-                                   time = c(2L, 4L, 6L, 8L),
-                                   S = c(100L, 100L, NA, NA),
-                                   I = c(0L, 0L, NA, NA),
-                                   phi = c(NA, NA, 2, 2)),
-                              row.names = c(NA, -4L),
-                              class = "data.frame")))
+                    data.frame(node = c(1L, 1L, 2L, 2L),
+                               time = c(2L, 4L, 6L, 8L),
+                               S = c(100L, 100L, NA, NA),
+                               I = c(0L, 0L, NA, NA),
+                               phi = c(NA, NA, 2, 2))))

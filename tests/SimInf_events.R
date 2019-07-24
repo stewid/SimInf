@@ -146,7 +146,7 @@ check_error(res, "Columns in events must be numeric.")
 ## Check missing columns in events
 ## Iterate over each column and rename it
 lapply(seq_len(8), function(i) {
-    events <- structure(list(
+    events <- data.frame(
         event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
         time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
         node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -154,10 +154,7 @@ lapply(seq_len(8), function(i) {
         n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
         select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-        shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-        .Names = c("event", "time", "node", "dest", "n",
-                   "proportion", "select", "shift"),
-        row.names = c(NA, -15L), class = "data.frame")
+        shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 
     colnames(events)[i] <- "test"
     res <- tools::assertError(SimInf_events(E      = E,
@@ -167,7 +164,7 @@ lapply(seq_len(8), function(i) {
 })
 
 ## Check events$event not equal to whole number
-events <- structure(list(
+events <- data.frame(
     event = c(3.1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -175,10 +172,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -186,7 +180,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "Columns in events must be integer.")
 
 ## Check events$time not equal to whole number
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -194,10 +188,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -205,7 +196,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "Columns in events must be integer.")
 
 ## Check missing t0 when events$time is a Date vector
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = structure(c(17168, 17169, 17170, 17171, 17172,
                        17173, 17174, 17175, 17176, 17177,
@@ -216,17 +207,14 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 res <- tools::assertError(SimInf_events(E = E,
                                         N = N,
                                         events = events))
 check_error(res, "Missing 't0'.")
 
 ## Check invalid t0 (length != 1) when events$time is a Date vector
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = structure(c(17168, 17169, 17170, 17171, 17172,
                        17173, 17174, 17175, 17176, 17177,
@@ -237,10 +225,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events,
@@ -248,7 +233,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "Invalid 't0'.")
 
 ## Check invalid t0 (!numeric) when events$time is a Date vector
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = structure(c(17168, 17169, 17170, 17171, 17172,
                        17173, 17174, 17175, 17176, 17177,
@@ -259,10 +244,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events,
@@ -270,7 +252,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "Invalid 't0'.")
 
 ## Check invalid t0 (!NULL) when events$time is not a Date vector
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -278,10 +260,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events,
@@ -289,7 +268,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "Invalid 't0'.")
 
 ## Check events$time equal to a Date vector
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = structure(c(17168, 17169, 17170, 17171, 17172,
                        17173, 17174, 17175, 17176, 17177,
@@ -300,15 +279,12 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 res <- SimInf_events(E = E, N = N, events = events, t0 = 17166)
 stopifnot(identical(res@time, 2:16))
 
 ## Check events$time equal to an integer vector
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(17168, 17169, 17170, 17171, 17172,
              17173, 17174, 17175, 17176, 17177,
@@ -318,15 +294,12 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 res <- SimInf_events(E = E, N = N, events = events)
 stopifnot(identical(is.null(names(res@time)), TRUE))
 
 ## Check events$select not equal to whole number
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -334,10 +307,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0.1, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -345,7 +315,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "Columns in events must be integer.")
 
 ## Check events$node not equal to whole number
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(2.2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -353,10 +323,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -364,7 +331,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "Columns in events must be integer.")
 
 ## Check events$node less than one
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -372,10 +339,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -383,7 +347,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "'node' must be greater or equal to 1", FALSE)
 
 ## Check events$dest not equal to whole number
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -391,10 +355,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -402,7 +363,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "Columns in events must be integer.")
 
 ## Check events$dest less than 1
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -410,10 +371,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -421,7 +379,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "'dest' must be greater or equal to 1", FALSE)
 
 ## Check events$n not equal to whole number
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -429,10 +387,7 @@ events <- structure(list(
     n = c(1.1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -440,7 +395,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "Columns in events must be integer.")
 
 ## Check events$event equal to character
-events <- structure(list(
+events <- data.frame(
     event = c("3", "3", "3", "3", "3", "3", "3", "3", "3",
               "3", "3", "3", "3", "3", "3"),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -449,10 +404,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -460,7 +412,7 @@ res <- tools::assertError(SimInf_events(E      = E,
 check_error(res, "'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'.")
 
 ## Check events$shift not equal to whole number
-events <- structure(list(
+events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
@@ -468,10 +420,7 @@ events <- structure(list(
     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
-    shift = c(1.1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+    shift = c(1.1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
@@ -535,7 +484,7 @@ stopifnot(identical(summary_observed, summary_expected))
 
 ## Check if converting the events to a data.frame results in the same
 ## as the events data submitted to the SimInf_events function.
-events <- structure(list(
+events <- data.frame(
     event = c(3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
               3L, 3L, 3L, 3L, 3L, 3L),
     time = c(17168L, 17169L, 17170L, 17171L, 17172L,
@@ -552,10 +501,7 @@ events <- structure(list(
     select = c(1L, 1L, 2L, 1L, 1L, 2L, 1L, 1L,
                2L, 1L, 1L, 2L, 1L, 1L, 2L),
     shift = c(1L, 2L, 0L, 1L, 2L, 0L, 1L, 2L, 0L,
-              1L, 2L, 0L, 1L, 2L, 0L)),
-    .Names = c("event", "time", "node", "dest", "n",
-               "proportion", "select", "shift"),
-    row.names = c(NA, -15L), class = "data.frame")
+              1L, 2L, 0L, 1L, 2L, 0L))
 res <- SimInf_events(E = E, N = N, events = events)
 stopifnot(identical(as(res, "data.frame"), events))
 

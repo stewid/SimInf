@@ -27,12 +27,10 @@ sessionInfo()
 res <- tools::assertError(SEIR(u0 = "u0"))
 check_error(res, "Missing columns in u0.")
 
-u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
-                     E  = c(0, 0, 0, 0, 0, 0),
-                     I  = c(0, 0, 0, 0, 0, 0),
-                     R  = c(0, 0, 0, 0, 0, 0)),
-                .Names = c("S", "E", "I", "R"),
-                row.names = c(NA, -6L), class = "data.frame")
+u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
+                 E  = c(0, 0, 0, 0, 0, 0),
+                 I  = c(0, 0, 0, 0, 0, 0),
+                 R  = c(0, 0, 0, 0, 0, 0))
 
 ## Check missing columns in u0
 res <- tools::assertError(SEIR(u0 = u0[, c("E", "I", "R"), drop = FALSE]))
@@ -166,7 +164,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
 R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
-R_expected <- structure(list(
+R_expected <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
              3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
@@ -180,21 +178,16 @@ R_expected <- structure(list(
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
-          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
-    .Names = c("node",  "time", "R"),
-    class = "data.frame", row.names = c(NA, -60L))
+          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
 R_observed <- trajectory(result, compartments = "R")
 stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first node after
 ## each time step in the simulation
-R_expected <- structure(list(
+R_expected <- data.frame(
     node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
     time = 0:9L,
-    R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
-    .Names = c("node", "time", "R"),
-    row.names = c(NA, -10L),
-    class = "data.frame")
+    R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
 R_observed <- trajectory(result, compartments = "R", node = 1)
 stopifnot(identical(R_observed, R_expected))
 
@@ -205,16 +198,13 @@ stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first and third
 ## node after each time step in the simulation
-R_expected <- structure(list(
+R_expected <- data.frame(
     node = c(1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L,
              1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L),
     time = c(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L,
              5L, 5L, 6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L),
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
-          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
-    .Names = c("node", "time", "R"),
-    row.names = c(NA, -20L),
-    class = "data.frame")
+          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
 R_observed <- trajectory(result, compartments = "R", node = c(1, 3))
 stopifnot(identical(R_observed, R_expected))
 
@@ -252,7 +242,7 @@ check_error(res, "'S' and 'E' must have rownames matching the compartments.", FA
 rownames(model@events@E) <- c("S", "E", "I", "R")
 result <- run(model)
 
-U_expected <- structure(list(
+U_expected <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
              3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
@@ -288,25 +278,20 @@ U_expected <- structure(list(
           644L, 145L, 245L, 345L, 445L, 545L, 645L, 146L, 246L, 346L,
           446L, 546L, 646L, 147L, 247L, 347L, 447L, 547L, 647L, 148L,
           248L, 348L, 448L, 548L, 648L, 149L, 249L, 349L, 449L, 549L,
-          649L)),
-    .Names = c("node", "time", "S", "E", "I", "R"),
-    row.names = c(NA, -60L),
-    class = "data.frame")
+          649L))
 
 U_observed <- trajectory(result)
 stopifnot(identical(U_observed, U_expected))
 U_observed <- trajectory(result, compartments = c("S", "E", "I", "R"), node = 1:6)
 stopifnot(identical(U_observed, U_expected))
 
-U_expected <- structure(list(
+U_expected <- data.frame(
     node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
-    time = 0:9, S = 110:119, I = 130:139),
-    .Names = c("node", "time", "S", "I"),
-    row.names = c(NA, -10L), class = "data.frame")
+    time = 0:9, S = 110:119, I = 130:139)
 U_observed <- trajectory(result, compartments = c("S", "I"), node = 1)
 stopifnot(identical(U_observed, U_expected))
 
-U_expected <-structure(list(
+U_expected <-data.frame(
     node = c(2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L,
              2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L),
     time = c(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L,
@@ -314,9 +299,7 @@ U_expected <-structure(list(
     E = c(220L, 420L, 221L, 421L, 222L, 422L, 223L, 423L, 224L, 424L,
           225L, 425L, 226L, 426L, 227L, 427L, 228L, 428L, 229L, 429L),
     R = c(240L, 440L, 241L, 441L, 242L, 442L, 243L, 443L, 244L, 444L,
-          245L, 445L, 246L, 446L, 247L, 447L, 248L, 448L, 249L, 449L)),
-    .Names = c("node", "time", "E", "R"), row.names = c(NA, -20L),
-    class = "data.frame")
+          245L, 445L, 246L, 446L, 247L, 447L, 248L, 448L, 249L, 449L))
 U_observed <- trajectory(result, compartments = c("E", "R"), node = c(2, 4))
 stopifnot(identical(U_observed, U_expected))
 
@@ -334,15 +317,12 @@ stopifnot(identical(U_observed, U_expected))
 ## Define a tolerance
 tol = 1e-8
 
-p_expected <- structure(list(
+p_expected <- data.frame(
     time = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
     prevalence = c(0.253333333333333, 0.253324468085106, 0.253315649867374,
                    0.253306878306878, 0.253298153034301, 0.253289473684211,
                    0.253280839895013, 0.253272251308901, 0.253263707571802,
-                   0.253255208333333)),
-    .Names = c("time", "prevalence"),
-    row.names = c(NA, -10L),
-    class = "data.frame")
+                   0.253255208333333))
 p_observed <- prevalence(result, I~S+E+I+R)
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
