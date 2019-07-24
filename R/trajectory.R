@@ -50,8 +50,11 @@ match_compartments <- function(model, compartments, as.is)
         }
     }
 
-    if (is.null(U) && is.null(V))
+    if (is.null(U) && is.null(V)) {
         U <- rownames(model@S)
+        if (!isTRUE(as.is) && length(rownames(model@v0)) > 0)
+            V <- rownames(model@v0)
+    }
 
     list(U = U, V = V)
 }
