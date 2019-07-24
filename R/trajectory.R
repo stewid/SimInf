@@ -67,108 +67,6 @@ parse_formula <- function(model, compartments)
         c(rownames(model@S), rownames(model@v0)))
 }
 
-##' Convert the trajectory from a matrix to a data.frame
-##'
-##' Utility function to coerce a sparse matrix (U_sparse or V_sparse)
-##' to a data.frame.
-##' @param m sparse matrix to coerce.
-##' @param tspan time points in trajectory.
-##' @param ac available compartments in the simulated data.
-##' @param value default value.
-##' @return a \code{data.frame}
-##' @noRd
-sparse2df <- function(m, tspan, ac, value)
-{
-    ## Determine nodes and time-points with output.
-    i <- as.integer(ceiling((m@i + 1) / length(ac)))
-    time <- names(tspan)
-    if (is.null(time))
-        time <- as.integer(tspan)
-    time <- cbind(time, diff(m@p))
-    time <- unlist(apply(time, 1, function(x) rep(x[1], x[2])))
-
-    ## Determine unique combinations of node and time
-    j <- !duplicated(cbind(i, time))
-    i <- i[j]
-    time <- time[j]
-
-    ## Use node and time to determine the required size
-    ## of a matrix to hold all output data and fill it
-    ## with NA values.
-    x <- matrix(value, nrow = sum(j), ncol = length(ac))
-    colnames(x) <- ac
-
-    ## And then update non-NA items with values from m.
-    j <- cumsum(j)
-    k <- m@i %% length(ac) + 1
-    if (is.integer(value)) {
-        x[matrix(c(j, k), ncol = 2)] <- as.integer(m@x)
-    } else {
-        x[matrix(c(j, k), ncol = 2)] <- m@x
-    }
-
-    cbind(node = i, time = time, as.data.frame(x), stringsAsFactors = FALSE)
-}
-
-##' Convert the trajectory from a matrix to a data.frame
-##'
-##' Utility function to coerce a dense matrix (U or V) to a
-##' data.frame.
-##' @param m simulated data to convert to a data.frame.
-##' @param tspan time points in the trajectory.
-##' @param ac available compartments in the simulated data.
-##' @param sc selected compartments to extract from the simulated data
-##'     and include in the data.frame.
-##' @param i subset of nodes to extract data from. If NULL, all
-##'     available nodes are included.
-##' @return a \code{data.frame}
-##' @noRd
-dense2df <- function(m, tspan, ac, sc, i)
-{
-    x <- NULL
-    if (is.null(i)) {
-        if (length(sc) == length(ac)) {
-            if (storage.mode(m) == "integer") {
-                x <- as.integer(m)
-            } else {
-                x <- as.numeric(m)
-            }
-            x <- matrix(x, ncol = length(ac), byrow = TRUE)
-            colnames(x) <- ac
-        }
-
-        i <- seq_len(nrow(m) %/% length(ac))
-    }
-
-    if (is.null(x)) {
-        ## Extract a subset of data.
-        sc <- sort(match(sc, ac))
-        j <- rep(sc, length(i))
-        j <- j + rep((i - 1) * length(ac), each = length(sc))
-        k <- (seq_len(length(tspan)) - 1) * nrow(m)
-        k <- rep(k, each = length(j))
-        j <- rep(j, length(tspan))
-        j <- j + k
-
-        if (storage.mode(m) == "integer") {
-            x <- as.integer(m[j])
-        } else {
-            x <- as.numeric(m[j])
-        }
-
-        x <- matrix(x, ncol = length(sc), byrow = TRUE)
-        colnames(x) <- ac[sc]
-    }
-
-    time <- names(tspan)
-    if (is.null(time))
-        time <- as.integer(tspan)
-    time <- rep(time, each = length(i))
-
-    cbind(data.frame(node = i, time = time, stringsAsFactors = FALSE),
-          as.data.frame(x))
-}
-
 ##' Determine if the trajectory is empty.
 ##' @noRd
 is_trajectory_empty <- function(model)
@@ -320,22 +218,6 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     ## Check the 'node' argument
     node <- check_node_argument(model, node)
 
-    if (!isTRUE(as.is) &&
-        !is_trajectory_sparse(model@U_sparse) &&
-        !is_trajectory_sparse(model@V_sparse))
-    {
-        dm <- model@U
-        dm_i <- match(compartments$U, rownames(model@S))
-        dm_lbl <- rownames(model@S)
-        cm <- model@V
-        cm_i <- match(compartments$V, rownames(model@v0))
-        cm_lbl <- rownames(model@v0)
-        return(.Call(SimInf_trajectory,
-                     dm, dm_i, dm_lbl,
-                     cm, cm_i, cm_lbl,
-                     model@tspan, Nn(model), node))
-    }
-
     ## Check to extract data in internal matrix format
     if (isTRUE(as.is)) {
         if (!is.null(compartments$V)) {
@@ -358,32 +240,24 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
     ## Coerce the dense/sparse 'U' and 'V' matrices to a data.frame
     ## with one row per node and time-point with data from the
     ## specified discrete and continuous states.
-
-    dfV <- NULL
-    if (!is.null(compartments$V)) {
-        if (is_trajectory_sparse(model@V_sparse)) {
-            dfV <- sparse2df(model@V_sparse, model@tspan,
-                             rownames(model@v0), NA_real_)
-        } else {
-            dfV <- dense2df(model@V, model@tspan, rownames(model@v0),
-                            compartments$V, node)
-        }
+    if (is_trajectory_sparse(model@U_sparse)) {
+        Um <- model@U_sparse
+    } else {
+        Um <- model@U
     }
+    Um_i <- match(compartments$U, rownames(model@S))
+    Um_lbl <- rownames(model@S)
 
-    dfU <- NULL
-    if (!is.null(compartments$U)) {
-        if (is_trajectory_sparse(model@U_sparse)) {
-            dfU <- sparse2df(model@U_sparse, model@tspan,
-                             rownames(model@S), NA_integer_)
-        } else {
-            dfU <- dense2df(model@U, model@tspan, rownames(model@S),
-                            compartments$U, node)
-        }
+    if (is_trajectory_sparse(model@V_sparse)) {
+        Vm <- model@V_sparse
+    } else {
+        Vm <- model@V
     }
+    Vm_i <- match(compartments$V, rownames(model@v0))
+    Vm_lbl <- rownames(model@v0)
 
-    if (is.null(dfV))
-        return(dfU)
-    if (is.null(dfU))
-        return(dfV)
-    merge(dfU, dfV, all = TRUE, sort = FALSE)
+    .Call(SimInf_trajectory,
+          Um, Um_i, Um_lbl,
+          Vm, Vm_i, Vm_lbl,
+          model@tspan, Nn(model), node)
 }
