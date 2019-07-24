@@ -119,6 +119,10 @@ check_pkg_skeleton:
 rhub: clean check
 	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', rhub::platforms()[['name']], show_status = FALSE)"
 
+# Build and use 'rchk' on package on R-hub
+rchk: clean check
+	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', 'ubuntu-rchk', show_status = FALSE)"
+
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)
 valgrind:
