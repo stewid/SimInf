@@ -180,16 +180,16 @@ setMethod("plot",
               if (is.null(node))
                   node <- seq_len(Nn(x))
 
-              savepar <- par(mar = c(2,4,1,1), oma = c(4,1,0,0), xpd = TRUE)
+              savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
               on.exit(par(savepar))
 
               ## Create a matrix with one row for each line in the
               ## plot.
               if (identical(range, FALSE)) {
                   ## Extract subset of data from U
-                  j <- rep(compartments, length(node))
-                  j <- j + rep((node - 1) * Nc(x), each = length(compartments))
-                  m <- x@U[j, , drop = FALSE]
+                  i <- rep(compartments, length(node))
+                  i <- i + rep((node - 1) * Nc(x), each = length(compartments))
+                  m <- x@U[i, , drop = FALSE]
               } else {
                   ## Check range argument
                   if (!is.numeric(range) || !identical(length(range), 1L) ||
@@ -207,15 +207,15 @@ setMethod("plot",
                   mu <- m
                   ml <- m
 
-                  for (j in seq_len(length(compartments))) {
-                      k <- seq(from = compartments[j], to = dim(x@U)[1],
+                  for (i in seq_len(length(compartments))) {
+                      k <- seq(from = compartments[i], to = dim(x@U)[1],
                                by = Nc(x))
                       u <- apply(x@U[k[node], , drop = FALSE], 2,
                                  quantile,
                                  probs = c(range, 0.5, 1 - range))
-                      ml[j, ] <- u[1, ]
-                      m[j, ] <- u[2, ]
-                      mu[j, ] <- u[3, ]
+                      ml[i, ] <- u[1, ]
+                      m[i, ] <- u[2, ]
+                      mu[i, ] <- u[3, ]
                   }
 
                   range <- TRUE
@@ -273,12 +273,12 @@ setMethod("plot",
               title(xlab = xlab, outer = TRUE, line = 0)
 
               ## Add the rest of the lines to the plot
-              for (j in seq_len(dim(m)[1])[-1]) {
-                  lines(x = xx, y = m[j, ], type = "l", lty = lty[j],
-                        col = col[j], lwd = lwd, ...)
+              for (i in seq_len(dim(m)[1])[-1]) {
+                  lines(x = xx, y = m[i, ], type = "l", lty = lty[i],
+                        col = col[i], lwd = lwd, ...)
                   if (isTRUE(range)) {
-                      polygon(x = c(xx, rev(xx)), y = c(mu[j, ], rev(ml[j, ])),
-                              col = adjustcolor(col[j], alpha.f = 0.1), border = NA)
+                      polygon(x = c(xx, rev(xx)), y = c(mu[i, ], rev(ml[i, ])),
+                              col = adjustcolor(col[i], alpha.f = 0.1), border = NA)
                   }
               }
 
