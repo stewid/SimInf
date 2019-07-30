@@ -144,7 +144,7 @@ stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
 ## Check valid_SimInf_model_object with invalid G.
 m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
          tspan = 1:10, beta = 0.1, gamma = 0.1)
-m@G <- m@G[1, , drop = FALSE]
+m@G <- m@G[1, 1:2, drop = FALSE]
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "Wrong size of dependency graph."))
 
@@ -307,7 +307,7 @@ check_error(res, "'S' matrix must be an integer matrix.", FALSE)
 ## Check G
 ## Error: Wrong size of dependency graph
 res <- tools::assertError(new("SimInf_model",
-                              G     = G[-1,],
+                              G     = G[-1, ],
                               S     = S,
                               U     = U,
                               ldata = matrix(rep(0, Nn), nrow = 1),

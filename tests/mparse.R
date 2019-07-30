@@ -26,28 +26,28 @@ sessionInfo()
 
 ## Check that invalid arguments to mparse raises error
 res <- tools::assertError(
-                  mparse(compartments = c("D","W"),
+                  mparse(compartments = c("D", "W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 check_error(res, "'transitions' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = 5,
-                         compartments = c("D","W"),
+                         compartments = c("D", "W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 check_error(res, "'transitions' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 check_error(res, "'compartments' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
                          compartments = 5,
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
@@ -55,15 +55,15 @@ check_error(res, "'compartments' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          gdata = letters,
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 check_error(res, "'gdata' must either be a 'data.frame' or a 'numeric' vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
                          compartments = c("D", "W", "D"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
@@ -71,40 +71,40 @@ check_error(res, "'compartments' must be specified in a character vector.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6, c1 = 2),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 check_error(res, "'gdata' must have non-duplicated parameter names.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W"),
+                         compartments = c("D", "W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 check_error(res, "Invalid transition: 'W->c4*W'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("A->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 check_error(res, "Unknown compartment: 'A'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->B"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->B"),
+                         compartments = c("D", "W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 check_error(res, "Unknown compartment: 'B'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = matrix(c(10, 10), nrow = 1, ncol = 2,
                                      dimnames = list(NULL, c("A", "W"))),
@@ -113,8 +113,8 @@ check_error(res, "Missing columns in u0.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          ldata = 1:5,
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
@@ -122,8 +122,8 @@ check_error(res, "'ldata' must either be a 'data.frame' or a 'matrix'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          ldata = matrix(rep(0, 10), nrow = 2, ncol = 5,
                                         dimnames = list(c("c1", "c1"))),
                          gdata = c(c2 = 1, c3 = 0.005, c4 = 0.6),
@@ -132,8 +132,8 @@ check_error(res, "'ldata' must have non-duplicated parameter names.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          v0 = 1:5,
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
@@ -141,8 +141,8 @@ check_error(res, "'v0' must either be a 'data.frame' or a 'matrix'.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          v0 = matrix(rep(0, 10), nrow = 2, ncol = 5,
                                      dimnames = list(c("c1", "c1"))),
                          gdata = c(c2 = 1, c3 = 0.005, c4 = 0.6),
@@ -151,17 +151,17 @@ check_error(res, "'v0' must have non-duplicated parameter names.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
-                         ldata = matrix(1:5,, nrow = 1, dimnames = list("c4", NULL)),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
+                         ldata = matrix(1:5, nrow = 1, dimnames = list("c4", NULL)),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
 check_error(res, "'u0', 'gdata', 'ldata' and 'v0' have names in common.")
 
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5,
                          pts_fun = 5))
@@ -169,8 +169,8 @@ check_error(res, "'pts_fun' must be a character vector.")
 
 ## Check mparse
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                            "D+W->c3*D*W->W+W","W->c4*W->@"),
-            compartments = c("D","W"),
+                            "D+W->c3*D*W->W+W", "W->c4*W->@"),
+            compartments = c("D", "W"),
             gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
             u0 = data.frame(D = 10, W = 10), tspan = 1:5)
 
@@ -264,8 +264,8 @@ stopifnot(identical(m@C_code, C_code(m)))
 
 ## Check mparse with both gdata and ldata
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                            "D+W->c3*D*W->W+W","W->c4*W->@"),
-            compartments = c("D","W"),
+                            "D+W->c3*D*W->W+W", "W->c4*W->@"),
+            compartments = c("D", "W"),
             ldata = matrix(rep(0.6, 5), nrow = 1, dimnames = list("c4", NULL)),
             gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005),
             u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5)
@@ -408,16 +408,16 @@ stopifnot(identical(model@u0, u0))
 
 ## Check mparse with ldata and gdata as data.frames
 m1 <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                             "D+W->c3*D*W->W+W","W->c4*W->@"),
-             compartments = c("D","W"),
+                             "D+W->c3*D*W->W+W", "W->c4*W->@"),
+             compartments = c("D", "W"),
              ldata = matrix(c(0.2, 0.3, 0.4, 0.5, 0.6), nrow = 1,
                             dimnames = list("c4", NULL)),
              gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005),
              u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5)
 
 m2 <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                             "D+W->c3*D*W->W+W","W->c4*W->@"),
-             compartments = c("D","W"),
+                             "D+W->c3*D*W->W+W", "W->c4*W->@"),
+             compartments = c("D", "W"),
              ldata = data.frame(c4 = c(0.2, 0.3, 0.4, 0.5, 0.6)),
              gdata = data.frame(c1 = 0.5, c2 = 1, c3 = 0.005),
              u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5)
@@ -427,8 +427,8 @@ stopifnot(identical(m1, m2))
 ## Check that mparse fails with gdata as a 2-row data.frame
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          ldata = matrix(rep(0.6, 5), nrow = 1, dimnames = list("c4", NULL)),
                          gdata = data.frame(c1 = rep(0.5, 2), c2 = 1, c3 = 0.005),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
@@ -438,8 +438,8 @@ check_error(res, "When 'gdata' is a data.frame, it must have one row.")
 ## nrow(u0)
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
-                                         "D+W->c3*D*W->W+W","W->c4*W->@"),
-                         compartments = c("D","W"),
+                                         "D+W->c3*D*W->W+W", "W->c4*W->@"),
+                         compartments = c("D", "W"),
                          ldata = data.frame(c4 = c(0.2, 0.3, 0.4, 0.5)),
                          gdata = data.frame(c1 = 0.5, c2 = 1, c3 = 0.005),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))

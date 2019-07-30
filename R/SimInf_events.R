@@ -129,7 +129,7 @@ valid_SimInf_events_object <- function(object)
                                    length(object@n),
                                    length(object@proportion),
                                    length(object@select),
-                                   length(object@shift)))) , 1L)) {
+                                   length(object@shift)))), 1L)) {
         return("All scheduled events must have equal length.")
     }
 
@@ -349,7 +349,7 @@ SimInf_events <- function(E      = NULL,
             stop("Columns in events must be integer.", call. = FALSE)
     }
 
-    events <- events[order(events$time, events$event, events$select),]
+    events <- events[order(events$time, events$event, events$select), ]
 
     new("SimInf_events",
         E          = E,

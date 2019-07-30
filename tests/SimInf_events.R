@@ -451,7 +451,7 @@ stopifnot(identical(SimInf_events(), events))
 ## Check the SimInf_events plot method. Reduce the run-time by only
 ## using one year of data
 data(events_SISe3)
-events_SISe3 <- events_SISe3[events_SISe3$time < 366,]
+events_SISe3 <- events_SISe3[events_SISe3$time < 366, ]
 events <- SimInf_events(E = E, N = N, events = events_SISe3)
 stopifnot(identical(events, show(events)))
 pdf_file <- tempfile(fileext = ".pdf")
@@ -538,7 +538,7 @@ model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
 select_matrix(model) <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 3)
 
 E_expected <- new("dgCMatrix", i = c(0L, 0L, 1L, 2L, 2L), p = c(0L, 1L, 4L, 5L),
-                  Dim = c(3L, 3L), Dimnames = list(c("S", "I", "R"), c("1", "2", "3")) ,
+                  Dim = c(3L, 3L), Dimnames = list(c("S", "I", "R"), c("1", "2", "3")),
                   x = c(1, 1, 1, 1, 1), factors = list())
 
 ## Extract the select matrix from the model

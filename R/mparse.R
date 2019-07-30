@@ -125,7 +125,7 @@ tokens <- function(propensity)
     ## propensity in smaller pieces.
     for (op in operators) {
         propensity <- lapply(seq_len(nrow(propensity)), function(i) {
-            x <- propensity[i, , drop = FALSE]
+            x <- propensity[i, seq_len(ncol(propensity)), drop = FALSE]
 
             ## Is it a non-operator token that we could split?
             if (nchar(x[1, 2]) == 0) {

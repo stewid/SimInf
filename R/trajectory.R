@@ -116,7 +116,7 @@ trajectory_as_is <- function(m, ac, sc, i)
     ## Extract subset of data.
     sc <- sort(match(sc, ac))
     i <- rep(sc, length(i)) + rep((i - 1) * length(ac), each = length(sc))
-    m[i, , drop = FALSE]
+    m[i, seq_len(ncol(m)), drop = FALSE]
 }
 
 ##' Extract data from a simulated trajectory

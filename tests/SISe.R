@@ -931,7 +931,7 @@ I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
 
 ## Check output from trajectory method
-model@tspan <- c(1,2)
+model@tspan <- c(1, 2)
 result <- run(model)
 res <- tools::assertError(trajectory(result, c("S", "phi"), as.is = TRUE))
 check_error(res, "Select either continuous or discrete compartments.")

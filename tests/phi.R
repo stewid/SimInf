@@ -81,7 +81,7 @@ sis_e <- SISe(u0      = data.frame(S = 100, I = 0),
               epsilon = 0.000011)
 
 sis_e <- run(sis_e)
-sis_e_phi_obs <- trajectory(sis_e, "phi", as.is = TRUE)[1,]
+sis_e_phi_obs <- trajectory(sis_e, "phi", as.is = TRUE)[1, ]
 stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
 sis_e_phi_obs <- trajectory(sis_e, "phi")$phi
 stopifnot(all(abs(sis_e_phi_obs - as.numeric(phi_exp)) < tol))
@@ -91,7 +91,7 @@ punchcard(sis_e) <- data.frame(time = seq(from = 1, to = 700, by = 7),
                                node = 1,
                                phi = TRUE)
 sis_e <- run(sis_e)
-sis_e_phi_obs <- trajectory(sis_e, "phi", as.is = TRUE)[1,]
+sis_e_phi_obs <- trajectory(sis_e, "phi", as.is = TRUE)[1, ]
 stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
 sis_e_phi_obs <- trajectory(sis_e, "phi")$phi
 stopifnot(all(abs(sis_e_phi_obs - as.numeric(phi_exp)) < tol))
@@ -100,7 +100,7 @@ if (SimInf:::have_openmp()) {
     set_num_threads(2)
     sis_e <- run(sis_e)
     set_num_threads(1)
-    sis_e_phi_obs <- trajectory(sis_e, "phi", as.is = TRUE)[1,]
+    sis_e_phi_obs <- trajectory(sis_e, "phi", as.is = TRUE)[1, ]
     stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
     sis_e_phi_obs <- trajectory(sis_e, "phi")$phi
     stopifnot(all(abs(sis_e_phi_obs - as.numeric(phi_exp)) < tol))
@@ -131,7 +131,7 @@ sis_e3 <- SISe3(u0      = data.frame(S_1 = 10, I_1 = 0,
                 epsilon   = 0.000011)
 
 sis_e3 <- run(sis_e3)
-sis_e3_phi_obs <- trajectory(sis_e3, "phi", as.is = TRUE)[1,]
+sis_e3_phi_obs <- trajectory(sis_e3, "phi", as.is = TRUE)[1, ]
 stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
 sis_e3_phi_obs <- trajectory(sis_e3, "phi")$phi
 stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))
@@ -141,7 +141,7 @@ punchcard(sis_e3) <- data.frame(time = seq(from = 1, to = 700, by = 7),
                                 node = 1,
                                 phi = TRUE)
 sis_e3 <- run(sis_e3)
-sis_e3_phi_obs <- trajectory(sis_e3, "phi", as.is = TRUE)[1,]
+sis_e3_phi_obs <- trajectory(sis_e3, "phi", as.is = TRUE)[1, ]
 stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
 sis_e3_phi_obs <- trajectory(sis_e3, "phi")$phi
 stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))
@@ -150,7 +150,7 @@ if (SimInf:::have_openmp()) {
     set_num_threads(2)
     sis_e3 <- run(sis_e3)
     set_num_threads(1)
-    sis_e3_phi_obs <- trajectory(sis_e3, "phi", as.is = TRUE)[1,]
+    sis_e3_phi_obs <- trajectory(sis_e3, "phi", as.is = TRUE)[1, ]
     stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
     sis_e3_phi_obs <- trajectory(sis_e3, "phi")$phi
     stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))

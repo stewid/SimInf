@@ -189,7 +189,7 @@ setMethod("plot",
                   ## Extract subset of data from U
                   i <- rep(compartments, length(node))
                   i <- i + rep((node - 1) * Nc(x), each = length(compartments))
-                  m <- x@U[i, , drop = FALSE]
+                  m <- x@U[i, seq_len(ncol(x@U)), drop = FALSE]
               } else {
                   ## Check range argument
                   if (!is.numeric(range) || !identical(length(range), 1L) ||
@@ -210,7 +210,8 @@ setMethod("plot",
                   for (i in seq_len(length(compartments))) {
                       k <- seq(from = compartments[i], to = dim(x@U)[1],
                                by = Nc(x))
-                      u <- apply(x@U[k[node], , drop = FALSE], 2,
+                      u <- apply(x@U[k[node], seq_len(ncol(x@U)), drop = FALSE],
+                                 2,
                                  quantile,
                                  probs = c(range, 0.5, 1 - range))
                       ml[i, ] <- u[1, ]
