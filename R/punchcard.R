@@ -103,35 +103,48 @@
 {
     check_model_argument(model)
 
-    dimU <- c(Nn(model) * Nc(model), length(model@tspan))
-    dimV <- c(Nn(model) * Nd(model), length(model@tspan))
-    iU <- numeric(0)
-    jU <- numeric(0)
-    iV <- numeric(0)
-    jV <- numeric(0)
-    x <- NA_integer_
+    template <- create_template(value, model@tspan, seq_len(Nn(model)),
+                                rownames(model@S), integer(0))
+    model@U <- template$dense
+    model@U_sparse <- template$sparse
 
+    template <- create_template(value, model@tspan, seq_len(Nn(model)),
+                                rownames(model@v0), numeric(0))
+    model@V <- template$dense
+    model@V_sparse <- template$sparse
+
+    validObject(model)
+    model
+}
+
+##' Create  template for where to record result during a simualtion
+##'
+##' @param value A \code{data.frame} that specify the nodes,
+##'     time-points and compartments to record the number of
+##'     individuals at \code{tspan}. Use \code{NULL} to reset the
+##'     model to record the number of inidividuals in each compartment
+##'     in every node at each time-point in tspan.
+##' @param tspan time points in trajectory.
+##' @param ac available compartments in the simulated data.
+##' @param data default data in dense matrix.
+##' @noRd
+create_template <- function(value, tspan, nodes, ac, data)
+{
     if (is.null(value)) {
-        ## Create sparse templates.
-        model@U_sparse <- sparseMatrix(i = iU, j = jU, x = x, dims = c(0, 0))
-        model@V_sparse <- sparseMatrix(i = iV, j = jV, x = x, dims = c(0, 0))
-        validObject(model)
-        return(model)
+        dense <- matrix(data = data, nrow = 0, ncol = 0)
+        sparse <- new("dgCMatrix")
+        return(list(dense = dense, sparse = sparse))
     }
 
     if (!is.data.frame(value))
         stop("'value' argument is not a 'data.frame'.", call. = FALSE)
 
-    ## Clear dense result matrices.
-    model@U <- matrix(data = integer(0), nrow = 0, ncol = 0)
-    model@V <- matrix(data = numeric(0), nrow = 0, ncol = 0)
-
     if (nrow(value) == 0) {
-        ## Create sparse templates.
-        model@U_sparse <- sparseMatrix(i = iU, j = jU, x = x, dims = dimU)
-        model@V_sparse <- sparseMatrix(i = iV, j = jV, x = x, dims = dimV)
-        validObject(model)
-        return(model)
+        dense <- matrix(data = data, nrow = 0, ncol = 0)
+        dims <- c(length(nodes) * length(ac), length(tspan))
+        sparse <- sparseMatrix(i = numeric(0), j = numeric(0),
+                               x = NA_real_, dims = dims)
+        return(list(dense = dense, sparse = sparse))
     }
 
     ## Check the content in 'value'
@@ -140,63 +153,57 @@
     if (!is.numeric(value$time))
         value$time <- as.character(value$time)
     if (is.character(value$time))
-        value$time <- model@tspan[match(value$time, names(model@tspan))]
+        value$time <- tspan[match(value$time, names(tspan))]
 
     ## Sort the data.frame by time and node.
     value <- value[order(value$time, value$node), ]
 
     ## Match the nodes and time-points with the model.
-    i <- match(value$node, seq_len(Nn(model)))
+    i <- match(value$node, nodes)
     if (any(is.na(i)))
         stop("Unable to match all nodes.", call. = FALSE)
-    j <- match(value$time, model@tspan)
+    j <- match(value$time, tspan)
     if (any(is.na(j)))
         stop("Unable to match all time-points to tspan.", call. = FALSE)
 
-    compartments <- setdiff(colnames(value), c("time", "node"))
-    if (length(compartments) == 0) {
-        ## Only node and time specified, add all compartments and mark
-        ## them as TRUE.
-        compartments <- c(rownames(model@S), rownames(model@v0))
-        value[, compartments] <- TRUE
+    sc <- setdiff(colnames(value), c("time", "node"))
+    if (length(sc) == 0) {
+        ## Only node and time specified, select all compartments and
+        ## mark them as TRUE.
+        sc <- ac
+        value[, sc] <- TRUE
     }
 
     ## Coerce the compartments part of the data.frame to a logical
-    ## vector that match the rows of compartments in the U matrix.
-    if (any(compartments %in% rownames(model@S))) {
-        valueU <- value[, c("time", "node", rownames(model@S))]
-        valueU <- as.logical(t(as.matrix(valueU[, -(1:2)])))
-        valueU[is.na(valueU)] <- FALSE
+    ## vector that match the rows of compartments in the matrix.
+    if (any(sc %in% ac)) {
+        value <- value[, c("time", "node", ac)]
+        value <- as.logical(t(as.matrix(value[, -(1:2)])))
+        value[is.na(value)] <- FALSE
 
-        ## Create an index to all of its compartments in the U
+        ## Create an index to all of its compartments in the
         ## matrix. Keep only compartments and time-points that are
         ## marked with TRUE.
-        iU <- rep((i - 1) * Nc(model), each = Nc(model)) + seq_len(Nc(model))
-        jU <- rep(j, each = Nc(model))
-        iU <- iU[valueU]
-        jU <- jU[valueU]
+        i <- rep((i - 1) * length(ac), each = length(ac)) + seq_len(length(ac))
+        i <- i[value]
+        j <- rep(j, each = length(ac))
+        j <- j[value]
+
+        dims <- c(length(nodes) * length(ac), length(tspan))
+        if (sum(value, na.rm = TRUE) == (dims[1] * dims[2])) {
+            dense <- matrix(data = data, nrow = 0, ncol = 0)
+            sparse <- new("dgCMatrix")
+        } else {
+            dense <- matrix(data = data, nrow = 0, ncol = 0)
+            sparse <- sparseMatrix(i = i, j = j, x = NA_real_, dims = dims)
+        }
+
+        return(list(dense = dense, sparse = sparse))
     }
 
-    ## Coerce the compartments part of the data.frame to a logical
-    ## vector that match the rows of continuous state compartments in
-    ## the V matrix.
-    if (any(compartments %in% rownames(model@v0))) {
-        valueV <- value[, c("time", "node", rownames(model@v0))]
-        valueV <- as.logical(t(as.matrix(valueV[, -(1:2)])))
-        valueV[is.na(valueV)] <- FALSE
-
-        ## Create an index to all of its compartments in the V
-        ## matrix. Keep only compartments and time-points that are
-        ## marked with TRUE.
-        iV <- rep((i - 1) * Nd(model), each = Nd(model)) + seq_len(Nd(model))
-        jV <- rep(j, each = Nd(model))
-        iV <- iV[valueV]
-        jV <- jV[valueV]
-    }
-
-    ## Create sparse templates.
-    model@U_sparse <- sparseMatrix(i = iU, j = jU, x = x, dims = dimU)
-    model@V_sparse <- sparseMatrix(i = iV, j = jV, x = x, dims = dimV)
-    validObject(model)
-    model
+    dense <- matrix(data = data, nrow = 0, ncol = 0)
+    dims <- c(length(nodes) * length(ac), length(tspan))
+    sparse <- sparseMatrix(i = numeric(0), j = numeric(0),
+                           x = NA_real_, dims = dims)
+    list(dense = dense, sparse = sparse)
 }
