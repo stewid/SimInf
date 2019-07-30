@@ -21,11 +21,11 @@ do_compile_model <- function(filename)
 {
     ## Include directive for "SimInf.h"
     include <- system.file("include", package = "SimInf")
-    Sys.setenv(PKG_CPPFLAGS=sprintf("-I%s", shQuote(include)))
+    Sys.setenv(PKG_CPPFLAGS = sprintf("-I%s", shQuote(include)))
 
     ## Compile the model C code using the running version of R.
     wd <- setwd(dirname(filename))
-    cmd <- paste(shQuote(file.path(R.home(component="bin"), "R")),
+    cmd <- paste(shQuote(file.path(R.home(component = "bin"), "R")),
                  "CMD SHLIB",
                  shQuote(paste0(basename(filename), ".c")))
     compiled <- system(cmd, intern = TRUE)

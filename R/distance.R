@@ -59,7 +59,7 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL)
         y1 <- y0[i]
 
         ## Calculate euclidian distance
-        d <- sqrt((x0 - x1)^2 + (y0 - y1)^2)
+        d <- sqrt(((x0 - x1) ^ 2) + ((y0 - y1) ^ 2))
 
         ## Determine which indices are closer than cutoff
         row_ind <- which(d < cutoff)

@@ -191,7 +191,7 @@ R_expected <- data.frame(
 R_observed <- trajectory(result, compartments = "R", node = 1)
 stopifnot(identical(R_observed, R_expected))
 
-R_expected <-structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                        .Dim = c(1L, 10L))
 R_observed <- trajectory(result, compartments = "R", node = 1, as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
@@ -291,7 +291,7 @@ U_expected <- data.frame(
 U_observed <- trajectory(result, compartments = c("S", "I"), node = 1)
 stopifnot(identical(U_observed, U_expected))
 
-U_expected <-data.frame(
+U_expected <- data.frame(
     node = c(2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L,
              2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L),
     time = c(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L,
@@ -323,7 +323,7 @@ p_expected <- data.frame(
                    0.253306878306878, 0.253298153034301, 0.253289473684211,
                    0.253280839895013, 0.253272251308901, 0.253263707571802,
                    0.253255208333333))
-p_observed <- prevalence(result, I~S+E+I+R)
+p_observed <- prevalence(result, I ~ S + E + I + R)
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 p_observed <- prevalence(result, I~.)
@@ -336,9 +336,9 @@ p_expected <- structure(
     .Names = c("time", "prevalence"),
     row.names = c(NA, -10L),
     class = "data.frame")
-p_observed <- prevalence(result, I~S+E+I+R, type = "nop")
+p_observed <- prevalence(result, I ~ S + E + I + R, type = "nop")
 stopifnot(identical(p_observed, p_expected))
-p_observed <- prevalence(result, I~., type = "nop")
+p_observed <- prevalence(result, I ~ ., type = "nop")
 stopifnot(identical(p_observed, p_expected))
 
 p_expected <- structure(
@@ -370,11 +370,11 @@ p_expected <- structure(
     .Names = c("node", "time", "prevalence"),
     row.names = c(NA, -60L),
     class = "data.frame")
-p_observed <- prevalence(result, I~., type = "wnp")
+p_observed <- prevalence(result, I ~ ., type = "wnp")
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I~S+E+I+R, type = "wnp")
+p_observed <- prevalence(result, I ~ S + E + I + R, type = "wnp")
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
@@ -397,7 +397,7 @@ p_observed <- prevalence(result, I~., type = "wnp", node = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I~S+E+I+R, type = "wnp", node = 2:3)
+p_observed <- prevalence(result, I ~ S + E + I + R, type = "wnp", node = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))

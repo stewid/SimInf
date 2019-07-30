@@ -26,7 +26,7 @@ tol <- 1e-8
 model <- SIR(u0 = data.frame(S = c(8, 5, 0), I = c(0, 1, 0), R = c(0, 0, 4)),
              tspan = 1:5, beta = 0.1, gamma = 0.1)
 
-res <- tools::assertError(prevalence(model, I~.|R == 0))
+res <- tools::assertError(prevalence(model, I ~ . | R == 0))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
@@ -55,23 +55,23 @@ check_error(res, "Invalid formula specification.")
 res <- tools::assertError(SimInf:::parse_formula_item("", "S"))
 check_error(res, "No compartments in formula specification.")
 
-p <- prevalence(model, I~.)$prevalence
-stopifnot(all(abs(p - c(1/18, 2/18, 3/18, 3/18, 3/18)) < tol))
+p <- prevalence(model, I ~ .)$prevalence
+stopifnot(all(abs(p - c(1 / 18, 2 / 18, 3 / 18, 3 / 18, 3 / 18)) < tol))
 
-p <- prevalence(model, I~.|R == 0)$prevalence
-stopifnot(all(abs(p - c(1/14, 2/14, 3/14, 0/8, 0/8)) < tol))
+p <- prevalence(model, I ~ . | R == 0)$prevalence
+stopifnot(all(abs(p - c(1 / 14, 2 / 14, 3 / 14, 0 / 8, 0 / 8)) < tol))
 
-p <- prevalence(model, I~.|R > 0)$prevalence
-stopifnot(all(abs(p - c(0/4, 0/4, 0/4, 3/10, 3/10)) < tol))
+p <- prevalence(model, I ~ . | R > 0)$prevalence
+stopifnot(all(abs(p - c(0 / 4, 0 / 4, 0 / 4, 3 / 10, 3 / 10)) < tol))
 
-stopifnot(all(is.nan(prevalence(model, I~.|R == 5)$prevalence)))
+stopifnot(all(is.nan(prevalence(model, I ~ . | R == 5)$prevalence)))
 
-res <- tools::assertError(prevalence(model, I~.|TRUE == 0))
+res <- tools::assertError(prevalence(model, I ~ . | TRUE == 0))
 check_error(res, "The condition must be either 'TRUE' or 'FALSE' for every node and time step.")
 
-p <- prevalence(model, I~.| S == 0 | R == 0)$prevalence
-stopifnot(all(abs(p - c(1/18, 2/18, 3/18, 0/12, 0/12)) < tol))
+p <- prevalence(model, I ~ . | S == 0 | R == 0)$prevalence
+stopifnot(all(abs(p - c(1 / 18, 2 / 18, 3 / 18, 0 / 12, 0 / 12)) < tol))
 
-p <- prevalence(model, I~.| S == 0 | R == 0, node = 2)$prevalence
-stopifnot(all(abs(p[1:3] - c(1/6, 2/6, 3/6)) < tol))
+p <- prevalence(model, I ~ . | S == 0 | R == 0, node = 2)$prevalence
+stopifnot(all(abs(p[1:3] - c(1 / 6, 2 / 6, 3 / 6)) < tol))
 stopifnot(all(is.nan(p[4:5])))

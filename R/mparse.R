@@ -183,22 +183,22 @@ rewrite_propensity <- function(propensity, compartments, ldata_names,
 
     ## Find compartments in propensity
     i <- match(propensity, compartments)
-    propensity <- ifelse(is.na(i), propensity, sprintf("u[%i]", i-1L))
+    propensity <- ifelse(is.na(i), propensity, sprintf("u[%i]", i - 1L))
     i <- i[!is.na(i)]
     if (length(i))
         depends[i] <- 1
 
     ## Find ldata parameters in the propensity
     i <- match(propensity, ldata_names)
-    propensity <- ifelse(is.na(i), propensity, sprintf("ldata[%i]", i-1L))
+    propensity <- ifelse(is.na(i), propensity, sprintf("ldata[%i]", i - 1L))
 
     ## Find gdata parameters in the propensity
     i <- match(propensity, gdata_names)
-    propensity <- ifelse(is.na(i), propensity, sprintf("gdata[%i]", i-1L))
+    propensity <- ifelse(is.na(i), propensity, sprintf("gdata[%i]", i - 1L))
 
     ## Find v0 parameters in the propensity
     i <- match(propensity, v0_names)
-    propensity <- ifelse(is.na(i), propensity, sprintf("v[%i]", i-1L))
+    propensity <- ifelse(is.na(i), propensity, sprintf("v[%i]", i - 1L))
 
     list(propensity = paste0(propensity, collapse = ""),
          depends    = depends,

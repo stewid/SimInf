@@ -64,4 +64,4 @@ res <- tools::assertError(package_skeleton(m, name = "SIR", path = path))
 check_error(res, "already exists.", FALSE)
 
 ## Cleanup
-unlink(path, recursive=TRUE)
+unlink(path, recursive = TRUE)

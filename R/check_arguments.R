@@ -197,7 +197,7 @@ check_model_argument <- function(model)
 ##' @param tol Tolerance of the check
 ##' @return logical vector
 ##' @noRd
-is_wholenumber <- function(x, tol = .Machine$double.eps^0.5)
+is_wholenumber <- function(x, tol = .Machine$double.eps ^ 0.5)
 {
     abs(x - round(x)) < tol
 }
