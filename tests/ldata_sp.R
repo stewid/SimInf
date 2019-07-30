@@ -22,7 +22,7 @@ source("util/check.R")
 sessionInfo()
 
 ## Define a tolerance
-tol = 1e-8
+tol <- 1e-8
 
 ## Local model parameters
 l <- matrix(c(rep(91, 10), rep(182, 10), rep(273, 10), rep(365, 10)),

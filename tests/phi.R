@@ -25,7 +25,7 @@ set_num_threads(1)
 sessionInfo()
 
 ## Define a tolerance
-tol = 1e-8
+tol <- 1e-8
 
 ## Expected phi
 phi_exp <- c(1, 0.228812574827662, 0.0523896281322291, 0.0120297167737883,

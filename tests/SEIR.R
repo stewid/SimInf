@@ -315,7 +315,7 @@ stopifnot(identical(U_observed, U_expected))
 ## Check prevalence
 
 ## Define a tolerance
-tol = 1e-8
+tol <- 1e-8
 
 p_expected <- data.frame(
     time = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),

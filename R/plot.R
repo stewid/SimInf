@@ -239,7 +239,7 @@ setMethod("plot",
                                    "#a65628", "#f781bf", "#999999"),
                                  length.out = length(compartments))
                   } else {
-                      col = "black"
+                      col <- "black"
                   }
               } else {
                   col <- rep(col, length.out = length(compartments))

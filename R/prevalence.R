@@ -230,7 +230,7 @@ prevalence <- function(model,
     }
 
     if (is.null(node))
-        node = seq_len(Nn(model))
+        node <- seq_len(Nn(model))
 
     data.frame(node = node,
                time = rep(time, each = length(node)),

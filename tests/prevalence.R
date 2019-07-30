@@ -21,7 +21,7 @@ source("util/check.R")
 sessionInfo()
 
 ## Define a tolerance
-tol = 1e-8
+tol <- 1e-8
 
 model <- SIR(u0 = data.frame(S = c(8, 5, 0), I = c(0, 1, 0), R = c(0, 0, 4)),
              tspan = 1:5, beta = 0.1, gamma = 0.1)

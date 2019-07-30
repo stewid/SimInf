@@ -22,9 +22,9 @@ source("util/check.R")
 sessionInfo()
 
 ## Define some variables
-tol = 1e-8
-x = seq(from = 0.95, to = 1.05, by = 0.01)
-y = seq(from = 0.95, to = 1.05, by = 0.01)
+tol <- 1e-8
+x <- seq(from = 0.95, to = 1.05, by = 0.01)
+y <- seq(from = 0.95, to = 1.05, by = 0.01)
 
 ## Check gdata names
 model <- SISe(u0      = data.frame(S = 99, I = 1),
@@ -166,8 +166,8 @@ z_exp <- structure(
       0.010276245, 0.01037799, 0.010479735, 0.01058148, 0.010683225
       ), .Dim = c(11L, 11L))
 
-x = seq(from = 0.95, to = 1.05, by = 0.01)
-y = seq(from = 0.95, to = 1.05, by = 0.01)
+x <- seq(from = 0.95, to = 1.05, by = 0.01)
+y <- seq(from = 0.95, to = 1.05, by = 0.01)
 run_f <- function(m, N) {
     m@gdata["upsilon"] * m@gdata["beta_t1"] * N
 }
