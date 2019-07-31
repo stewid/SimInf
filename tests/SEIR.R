@@ -211,7 +211,8 @@ stopifnot(identical(R_observed, R_expected))
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(2L, 10L))
-R_observed <- trajectory(result, compartments = "R", node = c(1, 3), as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", node = c(1, 3),
+                         as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
 ## A more complex test to extract data from U from a trajectory of 6
@@ -237,7 +238,10 @@ model@events@select <- rep(1:4, length.out = length(model@events@select))
 
 # Check that this fails because rownames (compartments) are missing
 res <- tools::assertError(run(model))
-check_error(res, "'S' and 'E' must have rownames matching the compartments.", FALSE)
+check_error(
+    res,
+    "'S' and 'E' must have rownames matching the compartments.",
+    FALSE)
 
 rownames(model@events@E) <- c("S", "E", "I", "R")
 result <- run(model)
@@ -282,7 +286,8 @@ U_expected <- data.frame(
 
 U_observed <- trajectory(result)
 stopifnot(identical(U_observed, U_expected))
-U_observed <- trajectory(result, compartments = c("S", "E", "I", "R"), node = 1:6)
+U_observed <- trajectory(result, compartments = c("S", "E", "I", "R"),
+                         node = 1:6)
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- data.frame(
@@ -309,7 +314,8 @@ U_expected <- structure(
       225L, 245L, 425L, 445L, 226L, 246L, 426L, 446L, 227L, 247L, 427L,
       447L, 228L, 248L, 428L, 448L, 229L, 249L, 429L, 449L),
     .Dim = c(4L, 10L))
-U_observed <- trajectory(result, compartments = c("E", "R"), node = c(2, 4), as.is = TRUE)
+U_observed <- trajectory(result, compartments = c("E", "R"),
+                         node = c(2, 4), as.is = TRUE)
 stopifnot(identical(U_observed, U_expected))
 
 ## Check prevalence
@@ -341,35 +347,34 @@ stopifnot(identical(p_observed, p_expected))
 p_observed <- prevalence(result, I ~ ., type = "nop")
 stopifnot(identical(p_observed, p_expected))
 
-p_expected <- structure(
-    list(node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
-                  5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
-                  3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
-                  1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
-                  5L, 6L),
-         time = c(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2,
-                  2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5,
-                  6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9,
-                  9, 9, 9),
-         prevalence = c(0.26, 0.255555555555556, 0.253846153846154,
-                        0.252941176470588, 0.252380952380952, 0.252, 0.259920634920635,
-                        0.255530973451327, 0.253834355828221, 0.252934272300469, 0.252376425855513,
-                        0.251996805111821, 0.259842519685039, 0.255506607929515, 0.253822629969419,
-                        0.252927400468384, 0.252371916508539, 0.251993620414673, 0.259765625,
-                        0.255482456140351, 0.253810975609756, 0.252920560747664, 0.252367424242424,
-                        0.251990445859873, 0.25968992248062, 0.255458515283843, 0.253799392097264,
-                        0.252913752913753, 0.252362948960302, 0.251987281399046, 0.259615384615385,
-                        0.255434782608696, 0.253787878787879, 0.252906976744186, 0.252358490566038,
-                        0.251984126984127, 0.259541984732824, 0.255411255411255, 0.253776435045317,
-                        0.252900232018561, 0.252354048964218, 0.251980982567353, 0.259469696969697,
-                        0.255387931034483, 0.253765060240964, 0.252893518518519, 0.25234962406015,
-                        0.251977848101266, 0.259398496240602, 0.255364806866953, 0.253753753753754,
-                        0.252886836027714, 0.25234521575985, 0.251974723538705, 0.259328358208955,
-                        0.25534188034188, 0.25374251497006, 0.252880184331797, 0.252340823970037,
-                        0.251971608832808)),
-    .Names = c("node", "time", "prevalence"),
-    row.names = c(NA, -60L),
-    class = "data.frame")
+p_expected <- data.frame(
+    node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+             5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
+             3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
+             1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
+    time = c(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3,
+             3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6,
+             7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9),
+    prevalence = c(0.26, 0.255555555555556, 0.253846153846154,
+                   0.252941176470588, 0.252380952380952, 0.252,
+                   0.259920634920635, 0.255530973451327, 0.253834355828221,
+                   0.252934272300469, 0.252376425855513, 0.251996805111821,
+                   0.259842519685039, 0.255506607929515, 0.253822629969419,
+                   0.252927400468384, 0.252371916508539, 0.251993620414673,
+                   0.259765625, 0.255482456140351, 0.253810975609756,
+                   0.252920560747664, 0.252367424242424, 0.251990445859873,
+                   0.25968992248062, 0.255458515283843, 0.253799392097264,
+                   0.252913752913753, 0.252362948960302, 0.251987281399046,
+                   0.259615384615385, 0.255434782608696, 0.253787878787879,
+                   0.252906976744186, 0.252358490566038, 0.251984126984127,
+                   0.259541984732824, 0.255411255411255, 0.253776435045317,
+                   0.252900232018561, 0.252354048964218, 0.251980982567353,
+                   0.259469696969697, 0.255387931034483, 0.253765060240964,
+                   0.252893518518519, 0.25234962406015, 0.251977848101266,
+                   0.259398496240602, 0.255364806866953, 0.253753753753754,
+                   0.252886836027714, 0.25234521575985, 0.251974723538705,
+                   0.259328358208955, 0.25534188034188, 0.25374251497006,
+                   0.252880184331797, 0.252340823970037, 0.251971608832808))
 p_observed <- prevalence(result, I ~ ., type = "wnp")
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
@@ -379,20 +384,17 @@ stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 
-p_expected <- structure(
-    list(node = c(2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L,
-                  2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L),
-         time = c(0, 0, 1, 1,
-                  2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9),
-         prevalence = c(0.255555555555556,
-                        0.253846153846154, 0.255530973451327, 0.253834355828221, 0.255506607929515,
-                        0.253822629969419, 0.255482456140351, 0.253810975609756, 0.255458515283843,
-                        0.253799392097264, 0.255434782608696, 0.253787878787879, 0.255411255411255,
-                        0.253776435045317, 0.255387931034483, 0.253765060240964, 0.255364806866953,
-                        0.253753753753754, 0.25534188034188, 0.25374251497006)),
-    .Names = c("node", "time", "prevalence"),
-    row.names = c(NA, -20L),
-    class = "data.frame")
+p_expected <- data.frame(
+    node = c(2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L,
+             2L, 3L, 2L, 3L),
+    time = c(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9),
+    prevalence = c(0.255555555555556, 0.253846153846154, 0.255530973451327,
+                   0.253834355828221, 0.255506607929515, 0.253822629969419,
+                   0.255482456140351, 0.253810975609756, 0.255458515283843,
+                   0.253799392097264, 0.255434782608696, 0.253787878787879,
+                   0.255411255411255, 0.253776435045317, 0.255387931034483,
+                   0.253765060240964, 0.255364806866953, 0.253753753753754,
+                   0.25534188034188, 0.25374251497006))
 p_observed <- prevalence(result, I~., type = "wnp", node = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
@@ -463,10 +465,10 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SEIR run function fails for a misspecified SEIR model
-res <- tools::assertError(.Call("SEIR_run", NULL, NULL, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SEIR_run, NULL, NULL, NULL))
 check_error(res, "Invalid model.")
 
-res <- tools::assertError(.Call("SEIR_run", "SEIR", NULL, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SEIR_run, "SEIR", NULL, NULL))
 check_error(res, "Invalid model.")
 
 ## Check that an invalid rate error is raised during the simulation.

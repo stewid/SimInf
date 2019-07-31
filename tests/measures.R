@@ -55,8 +55,12 @@ result
 res <- tools::assertError(trajectory(result, I ~ S, as.is = TRUE))
 check_error(res, "Invalid formula specification of 'compartments'.")
 
-stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
-stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 1001L))
+stopifnot(identical(
+    length(trajectory(result, compartments = "S", as.is = TRUE)),
+    1001L))
+stopifnot(identical(
+    length(trajectory(result, compartments = "I", as.is = TRUE)),
+    1001L))
 
 p <- prevalence(result, I ~ S + I, as.is = TRUE)
 stopifnot(identical(length(p), 1001L))
@@ -71,8 +75,12 @@ if (SimInf:::have_openmp()) {
     set_num_threads(1)
     result
 
-    stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 1001L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "S", as.is = TRUE)),
+        1001L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "I", as.is = TRUE)),
+        1001L))
 
     p <- prevalence(result, I ~ S + I, as.is = TRUE)
     stopifnot(identical(length(p), 1001L))
@@ -110,8 +118,12 @@ check_error(res, "Please run the model first, the trajectory is empty.")
 result <- run(model)
 result
 
-stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
-stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 1001L))
+stopifnot(identical(
+    length(trajectory(result, compartments = "S", as.is = TRUE)),
+    1001L))
+stopifnot(identical(
+    length(trajectory(result, compartments = "I", as.is = TRUE)),
+    1001L))
 
 p <- prevalence(result, I ~ S + I, as.is = TRUE)
 stopifnot(identical(length(p), 1001L))
@@ -126,8 +138,12 @@ if (SimInf:::have_openmp()) {
     set_num_threads(1)
     result
 
-    stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 1001L))
-    stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 1001L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "S", as.is = TRUE)),
+        1001L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "I", as.is = TRUE)),
+        1001L))
 
     p <- prevalence(result, I ~ S + I, as.is = TRUE)
     stopifnot(identical(length(p), 1001L))
@@ -171,8 +187,12 @@ check_error(res, "Please run the model first, the trajectory is empty.")
 result <- run(model)
 result
 
-stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
-stopifnot(identical(length(trajectory(result, compartments = "I_1", as.is = TRUE)), 10000L))
+stopifnot(identical(
+    length(trajectory(result, compartments = "S_1", as.is = TRUE)),
+    10000L))
+stopifnot(identical(
+    length(trajectory(result, compartments = "I_1", as.is = TRUE)),
+    10000L))
 
 p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
 stopifnot(identical(length(p), 1000L))
@@ -187,8 +207,12 @@ if (SimInf:::have_openmp()) {
     set_num_threads(1)
     result
 
-    stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(trajectory(result, compartments = "I_1", as.is = TRUE)), 10000L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "S_1", as.is = TRUE)),
+        10000L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "I_1", as.is = TRUE)),
+        10000L))
 
     p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
     stopifnot(identical(length(p), 1000L))
@@ -234,8 +258,12 @@ check_error(res, "Please run the model first, the trajectory is empty.")
 result <- run(model)
 result
 
-stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
-stopifnot(identical(length(trajectory(result, compartments = "I_1", as.is = TRUE)), 10000L))
+stopifnot(identical(
+    length(trajectory(result, compartments = "S_1", as.is = TRUE)),
+    10000L))
+stopifnot(identical(
+    length(trajectory(result, compartments = "I_1", as.is = TRUE)),
+    10000L))
 
 p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
 stopifnot(identical(length(p), 1000L))
@@ -250,8 +278,12 @@ if (SimInf:::have_openmp()) {
     set_num_threads(1)
     result
 
-    stopifnot(identical(length(trajectory(result, compartments = "S_1", as.is = TRUE)), 10000L))
-    stopifnot(identical(length(trajectory(result, compartments = "I_1", as.is = TRUE)), 10000L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "S_1", as.is = TRUE)),
+        10000L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "I_1", as.is = TRUE)),
+        10000L))
 
     p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
     stopifnot(identical(length(p), 1000L))
