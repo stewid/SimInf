@@ -288,12 +288,14 @@ result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 stopifnot(all(trajectory(result, as.is = TRUE)[1:6, ] == 0))
-stopifnot(all(apply(trajectory(result, as.is = TRUE)[seq(from = 8, to = 36, by = 2), ], 1, any)))
 stopifnot(identical(sum(trajectory(result, as.is = TRUE)[, 11]), 45L))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
+
+i <- seq(from = 8, to = 36, by = 2)
+stopifnot(all(apply(trajectory(result, as.is = TRUE)[i, ], 1, any)))
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
@@ -302,12 +304,12 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
     stopifnot(all(result_omp@U[1:6, ] == 0))
-    stopifnot(all(apply(result_omp@U[seq(from = 8, to = 36, by = 2), ], 1, any)))
     stopifnot(identical(sum(result_omp@U[, 11]), 45L))
     stopifnot(identical(model@ldata, result_omp@ldata))
     stopifnot(identical(model@tspan, result_omp@tspan))
     stopifnot(identical(model@u0, result_omp@u0))
     stopifnot(identical(model@events, result_omp@events))
+    stopifnot(all(apply(result_omp@U[i, ], 1, any)))
 }
 
 ## 6 Nodes

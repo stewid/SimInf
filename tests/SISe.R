@@ -74,7 +74,9 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "Invalid 'phi': must be numeric vector with non-negative values.")
+check_error(
+    res,
+    "Invalid 'phi': must be numeric vector with non-negative values.")
 
 res <- SISe(u0      = u0,
             tspan   = seq_len(10) - 1,
@@ -817,7 +819,9 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 173,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'.")
+check_error(
+    res,
+    "'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'.")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -889,7 +893,9 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = c(8:12, 16),
                                end_t4  = c(2, 11:15),
                                epsilon = 0.000011))
-check_error(res, "'end_t4' must be less than 'end_t1' or greater than 'end_t3'.")
+check_error(
+    res,
+    "'end_t4' must be less than 'end_t1' or greater than 'end_t3'.")
 
 ## Check extraction of data from 'suscpetible', and 'infected'
 ## compartments
@@ -950,9 +956,15 @@ traj_expected <- data.frame(
     time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
     S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
     phi = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0, 0.1, 0.2, 0.3, 0.4, 0.5))
-stopifnot(identical(trajectory(result, c("S", "S", "phi", "phi"))[, -4], traj_expected[, -4]))
-stopifnot(identical(trajectory(result, c("phi", "phi", "S", "S"))[, -4], traj_expected[, -4]))
-stopifnot(all(abs(trajectory(result, c("phi", "phi", "S", "S"))[, 4] - traj_expected$phi) < 1e-8))
+stopifnot(identical(
+    trajectory(result, c("S", "S", "phi", "phi"))[, -4],
+    traj_expected[, -4]))
+stopifnot(identical(
+    trajectory(result, c("phi", "phi", "S", "S"))[, -4],
+    traj_expected[, -4]))
+
+d <- trajectory(result, c("phi", "phi", "S", "S"))[, 4] - traj_expected$phi
+stopifnot(all(abs(d) < 1e-8))
 
 ## Check extracting a subset of nodes
 traj_expected <- data.frame(
@@ -960,10 +972,19 @@ traj_expected <- data.frame(
     time = c(1L, 1L, 2L, 2L),
     S = c(1L, 4L, 1L, 4L),
     phi = c(0.1, 0.4, 0.1, 0.4))
-stopifnot(identical(trajectory(result, c("S", "S", "phi", "phi"), node = c(5, 2))[, -4], traj_expected[, -4]))
-stopifnot(identical(trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, -4], traj_expected[, -4]))
-stopifnot(all(abs(trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, 4] - traj_expected$phi) < 1e-8))
-stopifnot(identical(trajectory(result, c("S", "phi"), node = c(5, 2)), traj_expected))
+stopifnot(identical(
+    trajectory(result, c("S", "S", "phi", "phi"), node = c(5, 2))[, -4],
+    traj_expected[, -4]))
+stopifnot(identical(
+    trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, -4],
+    traj_expected[, -4]))
+stopifnot(identical(
+    trajectory(result, c("S", "phi"), node = c(5, 2)),
+    traj_expected))
+
+d <- trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, 4] -
+    traj_expected$phi
+stopifnot(all(abs(d) < 1e-8))
 
 ## Check extracting all compartments in U
 stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
@@ -982,22 +1003,26 @@ traj_expected <- data.frame(node = c(2L, 5L, 2L, 5L),
                             time = c(1L, 1L, 2L, 2L),
                             S = c(1L, 4L, 1L, 4L),
                             I = c(0L, 0L, 0L, 0L))
-stopifnot(identical(trajectory(result, c("S", "I"), node = c(5, 2)), traj_expected))
+stopifnot(identical(
+    trajectory(result, c("S", "I"), node = c(5, 2)),
+    traj_expected))
 
 ## Check extracting all compartments in U as a data.frame
-traj_expected <- data.frame(node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
-                            time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
-                            S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-                            I = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
+traj_expected <- data.frame(
+    node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
+    time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
+    S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
+    I = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
 traj_observed <- trajectory(result, c("S", "I"))
 stopifnot(identical(traj_observed, traj_expected))
 
 ## Check extracting all compartments in U and V as a data.frame
-traj_expected <- data.frame(node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
-                            time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
-                            S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-                            I = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                            phi = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0, 0.1, 0.2, 0.3, 0.4, 0.5))
+traj_expected <- data.frame(
+    node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
+    time = c(1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L),
+    S = c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
+    I = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+    phi = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0, 0.1, 0.2, 0.3, 0.4, 0.5))
 traj_observed <- trajectory(result, c("S", "I", "phi"))
 stopifnot(identical(traj_observed[, -5], traj_expected[, -5]))
 stopifnot(all(abs(traj_observed[, 5] - traj_expected$phi) < 1e-8))
@@ -1020,10 +1045,10 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SISe run function fails for misspecified SISe model
-res <- tools::assertError(.Call("SISe_run", NULL, NULL, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SISe_run, NULL, NULL, NULL))
 check_error(res, "Invalid model.")
 
-res <- tools::assertError(.Call("SISe_run", "SISe", NULL, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SISe_run, "SISe", NULL, NULL))
 check_error(res, "Invalid model.")
 
 ## Check error non-finite v

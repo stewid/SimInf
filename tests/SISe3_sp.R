@@ -1338,7 +1338,9 @@ res <- tools::assertError(SISe3_sp(u0        = u0,
                                    end_t4    = 365,
                                    coupling  = 0.0005,
                                    distance  = distance))
-check_error(res, "'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'.")
+check_error(
+    res,
+    "'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'.")
 
 res <- tools::assertError(SISe3_sp(u0        = u0,
                                    tspan     = seq_len(10) - 1,
@@ -1430,7 +1432,9 @@ res <- tools::assertError(SISe3_sp(u0        = u0,
                                    end_t4    = c(2, 11:18),
                                    coupling  = 0.0005,
                                    distance  = distance))
-check_error(res, "'end_t4' must be less than 'end_t1' or greater than 'end_t3'.")
+check_error(
+    res,
+    "'end_t4' must be less than 'end_t1' or greater than 'end_t3'.")
 
 ## Check distance matrix
 res <- tools::assertError(SISe3_sp(u0        = u0,
@@ -1519,10 +1523,10 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SISe3_sp run function fails for misspecified SISe3_sp model
-res <- tools::assertError(.Call("SISe3_sp_run", NULL, NULL, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SISe3_sp_run, NULL, NULL, NULL))
 check_error(res, "Invalid model.")
 
-res <- tools::assertError(.Call("SISe3_sp_run", "SISe3_sp", NULL, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SISe3_sp_run, "SISe3_sp", NULL, NULL))
 check_error(res, "Invalid model.")
 
 ## Check error non-finite v

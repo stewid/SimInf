@@ -1235,7 +1235,9 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 173,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'.")
+check_error(
+    res,
+    "'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'.")
 
 res <- tools::assertError(SISe3(u0        = u0,
                                 tspan     = seq_len(10) - 1,
@@ -1323,7 +1325,9 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = c(8:12, 16),
                                 end_t4    = c(2, 11:15),
                                 epsilon   = 0.000011))
-check_error(res, "'end_t4' must be less than 'end_t1' or greater than 'end_t3'.")
+check_error(
+    res,
+    "'end_t4' must be less than 'end_t1' or greater than 'end_t3'.")
 
 ## Check extraction of data from 'suscpetible', and 'infected'
 ## compartments
@@ -1378,10 +1382,10 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SISe3 run function fails for misspecified SISe3 model
-res <- tools::assertError(.Call("SISe3_run", NULL, NULL, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SISe3_run, NULL, NULL, NULL))
 check_error(res, "Invalid model.")
 
-res <- tools::assertError(.Call("SISe3_run", "SISe3", NULL, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SISe3_run, "SISe3", NULL, NULL))
 check_error(res, "Invalid model.")
 
 ## Check error non-finite v

@@ -697,9 +697,9 @@ check_error(res, "'node' must be integer <= number of nodes.")
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              tspan = 1:5, beta = 2, gamma = 4)
 
-stopifnot(identical(gdata(model), structure(c(2, 4), .Names = c("beta", "gamma"))))
+stopifnot(identical(gdata(model), c(beta = 2, gamma = 4)))
 gdata(model, "beta") <- 6
-stopifnot(identical(gdata(model), structure(c(6, 4), .Names = c("beta", "gamma"))))
+stopifnot(identical(gdata(model), c(beta = 6, gamma = 4)))
 
 res <- tools::assertError(gdata(model) <- 6)
 check_error(res, "Missing 'parameter' argument.")
