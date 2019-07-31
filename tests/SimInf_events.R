@@ -56,8 +56,9 @@ rownames(events@E) <- tolower(rownames(events@E))
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
                     "'E' and 'N' must have identical compartments."))
 rownames(events@E) <- NULL
-stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
-                    "'E' and 'N' must have rownames matching the compartments."))
+stopifnot(identical(
+    SimInf:::valid_SimInf_events_object(events),
+    "'E' and 'N' must have rownames matching the compartments."))
 
 events <- SimInf_events(E = E, N = N)
 events@event <- 3L
@@ -409,7 +410,9 @@ str(events)
 res <- tools::assertError(SimInf_events(E      = E,
                                         N      = N,
                                         events = events))
-check_error(res, "'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'.")
+check_error(
+    res,
+    "'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'.")
 
 ## Check events$shift not equal to whole number
 events <- data.frame(
@@ -509,7 +512,8 @@ stopifnot(identical(as(res, "data.frame"), events))
 u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
 events <- data.frame(event = 3, time = 2, node = 1, dest = 3,
                      n = 1, proportion = 0, select = 2, shift = 0)
-model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16, gamma = 0.077)
+model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
+             gamma = 0.077)
 res <- tools::assertError(run(model))
 check_error(res, "'dest' is out of bounds.")
 
@@ -517,7 +521,8 @@ check_error(res, "'dest' is out of bounds.")
 u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
 events <- data.frame(event = 3, time = 2, node = 1, dest = 2,
                      n = 1, proportion = 0, select = 2, shift = 0)
-model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16, gamma = 0.077)
+model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
+             gamma = 0.077)
 model@events@node <- -1L
 res <- tools::assertError(.Call(SimInf:::SIR_run, model, NULL, NULL))
 check_error(res, "'node' is out of bounds.")
@@ -526,20 +531,26 @@ check_error(res, "'node' is out of bounds.")
 u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
 events <- data.frame(event = 0, time = 2, node = 1, dest = 0,
                      n = 1, proportion = 0, select = 2, shift = 0)
-model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16, gamma = 0.077)
+model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
+             gamma = 0.077)
 model@events@event <- 4L
 res <- tools::assertError(.Call(SimInf:::SIR_run, model, NULL, NULL))
 check_error(res, "Undefined event type.")
 
 ## Check get/set select_matrix
-model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
+model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1,
+             gamma = 1)
 
 ## Set the select matrix
 select_matrix(model) <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 3)
 
-E_expected <- new("dgCMatrix", i = c(0L, 0L, 1L, 2L, 2L), p = c(0L, 1L, 4L, 5L),
-                  Dim = c(3L, 3L), Dimnames = list(c("S", "I", "R"), c("1", "2", "3")),
-                  x = c(1, 1, 1, 1, 1), factors = list())
+E_expected <- new("dgCMatrix",
+                  i = c(0L, 0L, 1L, 2L, 2L),
+                  p = c(0L, 1L, 4L, 5L),
+                  Dim = c(3L, 3L),
+                  Dimnames = list(c("S", "I", "R"), c("1", "2", "3")),
+                  x = c(1, 1, 1, 1, 1),
+                  factors = list())
 
 ## Extract the select matrix from the model
 E_observed <- select_matrix(model)
