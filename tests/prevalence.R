@@ -40,7 +40,9 @@ model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
                     4L, 4L, 4L, 4L, 4L),
                   ncol = 5,
                   byrow = TRUE,
-                  dimnames = list(c("S", "I", "R", "S", "I", "R", "S", "I", "R"),
+                  dimnames = list(c("S", "I", "R",
+                                    "S", "I", "R",
+                                    "S", "I", "R"),
                                   c("1", "2", "3", "4", "5")))
 
 res <- tools::assertError(prevalence(model))
@@ -67,7 +69,10 @@ stopifnot(all(abs(p - c(0 / 4, 0 / 4, 0 / 4, 3 / 10, 3 / 10)) < tol))
 stopifnot(all(is.nan(prevalence(model, I ~ . | R == 5)$prevalence)))
 
 res <- tools::assertError(prevalence(model, I ~ . | TRUE == 0))
-check_error(res, "The condition must be either 'TRUE' or 'FALSE' for every node and time step.")
+check_error(
+    res,
+    paste("The condition must be either 'TRUE' or",
+          "'FALSE' for every node and time step."))
 
 p <- prevalence(model, I ~ . | S == 0 | R == 0)$prevalence
 stopifnot(all(abs(p - c(1 / 18, 2 / 18, 3 / 18, 0 / 12, 0 / 12)) < tol))

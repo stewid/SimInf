@@ -303,15 +303,16 @@ stopifnot(identical(dim(model@U_sparse), c(4L, 10L)))
 stopifnot(identical(dim(model@V_sparse), c(0L, 0L)))
 stopifnot(identical(
     trajectory(run(model)),
-    data.frame(node = c(1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L,
-                        1L, 2L, 1L, 2L, 1L, 2L),
-               time = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L, 5L, 5L, 6L, 6L, 7L, 7L,
-                        8L, 8L, 9L, 9L, 10L, 10L),
-               S = c(100L, NA, 100L, NA, 100L, NA, 100L, NA, 100L, NA, 100L, NA,
-                     100L, NA, 100L, NA, 100L, NA, 100L, NA),
-               I = c(NA, 0L, NA, 0L, NA, 0L, NA, 0L, NA, 0L, NA, 0L, NA, 0L, NA,
-                     0L, NA, 0L, NA, 0L),
-               phi = c(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2))))
+    data.frame(
+        node = c(1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L,
+                 2L, 1L, 2L, 1L, 2L),
+        time = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L, 5L, 5L, 6L, 6L, 7L, 7L, 8L,
+                 8L, 9L, 9L, 10L, 10L),
+        S = c(100L, NA, 100L, NA, 100L, NA, 100L, NA, 100L, NA, 100L, NA, 100L,
+              NA, 100L, NA, 100L, NA, 100L, NA),
+        I = c(NA, 0L, NA, 0L, NA, 0L, NA, 0L, NA, 0L, NA, 0L, NA, 0L, NA, 0L,
+              NA, 0L, NA, 0L),
+        phi = c(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2))))
 
 punchcard(model) <- data.frame(node = rep(c(1, 2), times = 10),
                                time = rep(1:10, each = 2),
@@ -324,13 +325,14 @@ stopifnot(identical(dim(model@U_sparse), c(0L, 0L)))
 stopifnot(identical(dim(model@V_sparse), c(2L, 10L)))
 stopifnot(identical(
     trajectory(run(model)),
-    data.frame(node = c(1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L,
-                        1L, 2L, 1L, 2L, 1L, 2L),
-               time = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L, 5L, 5L, 6L, 6L, 7L, 7L,
-                        8L, 8L, 9L, 9L, 10L, 10L),
-               S = c(100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L,
-                     100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L),
-               I = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
-                     0L, 0L, 0L, 0L, 0L),
-               phi = c(1, NA, NA, 2, 1, NA, NA, 2, 1, NA, NA, 2, 1, NA, NA, 2, 1,
-                       NA, NA, 2))))
+    data.frame(
+        node = c(1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L,
+                 2L, 1L, 2L, 1L, 2L),
+        time = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L, 5L, 5L, 6L, 6L, 7L, 7L, 8L,
+                 8L, 9L, 9L, 10L, 10L),
+        S = c(100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L,
+              100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L, 100L),
+        I = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+              0L, 0L, 0L, 0L),
+        phi = c(1, NA, NA, 2, 1, NA, NA, 2, 1, NA, NA, 2, 1, NA, NA, 2, 1, NA,
+                NA, 2))))
