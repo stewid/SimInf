@@ -73,7 +73,8 @@ res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                                          "D+W->c3*D*W->W+W", "W->c4*W->@"),
                          compartments = c("D", "W"),
-                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6, c1 = 2),
+                         gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6,
+                                   c1 = 2),
                          u0 = data.frame(D = 10, W = 10), tspan = 1:5))
 check_error(res, "'gdata' must have non-duplicated parameter names.")
 
@@ -153,7 +154,8 @@ res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                                          "D+W->c3*D*W->W+W", "W->c4*W->@"),
                          compartments = c("D", "W"),
-                         ldata = matrix(1:5, nrow = 1, dimnames = list("c4", NULL)),
+                         ldata = matrix(1:5, nrow = 1,
+                                        dimnames = list("c4", NULL)),
                          gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
 check_error(res, "'u0', 'gdata', 'ldata' and 'v0' have names in common.")
@@ -399,7 +401,9 @@ C_code <- c(
     "    return SimInf_run(model, threads, solver, tr_fun, &ptsFun);",
     "}",
     "")
-stopifnot(identical(model@C_code[-1], C_code)) ## Skip first line that contains time
+
+## Skip first line that contains time
+stopifnot(identical(model@C_code[-1], C_code))
 
 u0 <- structure(c(100L, 1L, 0L),
                 .Dim = c(3L, 1L),
@@ -429,8 +433,10 @@ res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                                          "D+W->c3*D*W->W+W", "W->c4*W->@"),
                          compartments = c("D", "W"),
-                         ldata = matrix(rep(0.6, 5), nrow = 1, dimnames = list("c4", NULL)),
-                         gdata = data.frame(c1 = rep(0.5, 2), c2 = 1, c3 = 0.005),
+                         ldata = matrix(rep(0.6, 5), nrow = 1,
+                                        dimnames = list("c4", NULL)),
+                         gdata = data.frame(c1 = rep(0.5, 2), c2 = 1,
+                                            c3 = 0.005),
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
 check_error(res, "When 'gdata' is a data.frame, it must have one row.")
 

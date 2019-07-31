@@ -212,11 +212,11 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 1 with proportion = 10
 model@events@proportion <- 10
 
-res <- tools::assertError(.Call("SISe3_run", model, 1L, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SISe3_run, model, 1L, NULL))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(.Call("SISe3_run", model, 2L, NULL, PACKAGE = "SimInf"))
+    res <- tools::assertError(.Call(SimInf:::SISe3_run, model, 2L, NULL))
     check_error(res, "Unable to sample individuals for event.")
 }
 
@@ -295,11 +295,11 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 0 with proportion = -1
 model@events@proportion <- -1
 
-res <- tools::assertError(.Call("SISe3_run", model, 1L, NULL, PACKAGE = "SimInf"))
+res <- tools::assertError(.Call(SimInf:::SISe3_run, model, 1L, NULL))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(.Call("SISe3_run", model, 2L, NULL, PACKAGE = "SimInf"))
+    res <- tools::assertError(.Call(SimInf:::SISe3_run, model, 2L, NULL))
     check_error(res, "Unable to sample individuals for event.")
 }
 
@@ -715,13 +715,15 @@ model@events@E[5, 1] <- 1
 S_expected <- c(0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
 
 res <- run(model)
-S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"), node = 1, as.is = TRUE))
+S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"),
+                                 node = 1, as.is = TRUE))
 stopifnot(identical(S_observed, S_expected))
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
     res <- run(model)
     set_num_threads(1)
-    S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"), node = 1, as.is = TRUE))
+    S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"),
+                                     node = 1, as.is = TRUE))
     stopifnot(identical(S_observed, S_expected))
 }
