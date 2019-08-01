@@ -1,14 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2019  Stefan Engblom
-## Copyright (C) 2015 - 2019  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
