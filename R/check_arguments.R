@@ -31,28 +31,28 @@ check_infectious_pressure_arg <- function(len, ...) {
     for (i in seq_len(length(arg))) {
         if (!is.numeric(arg[[i]])) {
             stop(paste0("Invalid '",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "': must be numeric vector."),
                  call. = FALSE)
         }
 
         if (!is.null(dim(arg[[i]]))) {
             stop(paste0("Invalid '",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "': must be numeric vector."),
                  call. = FALSE)
         }
 
         if (!identical(length(arg[[i]]), len)) {
             stop(paste0("Invalid '",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "': must be numeric vector with length 'nrow(u0)'."),
                  call. = FALSE)
         }
 
         if (any(arg[[i]] < 0)) {
             stop(paste0("Invalid '",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "': must be numeric vector with non-negative values."),
                  call. = FALSE)
         }
@@ -72,21 +72,21 @@ check_integer_arg <- function(...) {
     for (i in seq_len(length(arg))) {
         if (is.null(arg[[i]])) {
             stop(paste0("'",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "' is missing."),
                  call. = FALSE)
         }
 
         if (!is.numeric(arg[[i]])) {
             stop(paste0("'",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "' must be integer."),
                  call. = FALSE)
         }
 
         if (!all(is_wholenumber(arg[[i]]))) {
             stop(paste0("'",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "' must be integer."),
                  call. = FALSE)
         }
@@ -106,21 +106,21 @@ check_gdata_arg <- function(...) {
     for (i in seq_len(length(arg))) {
         if (is.null(arg[[i]])) {
             stop(paste0("'",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "' is missing."),
                  call. = FALSE)
         }
 
         if (!is.numeric(arg[[i]])) {
             stop(paste0("'",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "' must be numeric."),
                  call. = FALSE)
         }
 
         if (!identical(length(arg[[i]]), 1L)) {
             stop(paste0("'",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "' must be of length 1."),
                  call. = FALSE)
         }
@@ -139,12 +139,12 @@ check_gdata_arg <- function(...) {
 ##' @noRd
 check_end_t_arg <- function(len, ...) {
     arg <- list(...)
-    names(arg) <- match.call(expand.dots = FALSE)$'...'
+    names(arg) <- match.call(expand.dots = FALSE)$"..."
 
     for (i in seq_len(length(arg))) {
         if (!identical(length(arg[[i]]), len)) {
             stop(paste0("'",
-                        match.call(expand.dots = FALSE)$'...'[i],
+                        match.call(expand.dots = FALSE)$"..."[i],
                         "' must be of length 1 or 'nrow(u0)'."),
                  call. = FALSE)
         }
