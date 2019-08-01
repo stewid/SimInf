@@ -44,8 +44,7 @@
 ##'
 ##' ## View the first 10 rows and columns in the distance matrix
 ##' d[1:10, 1:10]
-distance_matrix <- function(x, y, cutoff, min_dist = NULL)
-{
+distance_matrix <- function(x, y, cutoff, min_dist = NULL) {
     if (!is.null(min_dist)) {
         if (any(!is.numeric(min_dist),
                 !identical(length(min_dist), 1L),

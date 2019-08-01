@@ -26,8 +26,7 @@
 ##' @param ... The arguments to check
 ##' @return invisible(NULL)
 ##' @noRd
-check_infectious_pressure_arg <- function(len, ...)
-{
+check_infectious_pressure_arg <- function(len, ...) {
     arg <- list(...)
     for (i in seq_len(length(arg))) {
         if (!is.numeric(arg[[i]])) {
@@ -68,8 +67,7 @@ check_infectious_pressure_arg <- function(len, ...)
 ##' @param ... The arguments to check
 ##' @return invisible(NULL)
 ##' @noRd
-check_integer_arg <- function(...)
-{
+check_integer_arg <- function(...) {
     arg <- list(...)
     for (i in seq_len(length(arg))) {
         if (is.null(arg[[i]])) {
@@ -103,8 +101,7 @@ check_integer_arg <- function(...)
 ##' @param ... The arguments to check
 ##' @return invisible(NULL)
 ##' @noRd
-check_gdata_arg <- function(...)
-{
+check_gdata_arg <- function(...) {
     arg <- list(...)
     for (i in seq_len(length(arg))) {
         if (is.null(arg[[i]])) {
@@ -140,8 +137,7 @@ check_gdata_arg <- function(...)
 ##' @param ... The arguments to check
 ##' @return invisible(NULL)
 ##' @noRd
-check_end_t_arg <- function(len, ...)
-{
+check_end_t_arg <- function(len, ...) {
     arg <- list(...)
     names(arg) <- match.call(expand.dots = FALSE)$'...'
 
@@ -183,8 +179,7 @@ check_end_t_arg <- function(len, ...)
 ##' @param model the model to check.
 ##' @return invisible(NULL)
 ##' @noRd
-check_model_argument <- function(model)
-{
+check_model_argument <- function(model) {
     if (missing(model))
         stop("Missing 'model' argument.", call. = FALSE)
     if (!is(model, "SimInf_model"))
@@ -200,8 +195,7 @@ check_model_argument <- function(model)
 ##' @param tol Tolerance of the check
 ##' @return logical vector
 ##' @noRd
-is_wholenumber <- function(x, tol = .Machine$double.eps ^ 0.5)
-{
+is_wholenumber <- function(x, tol = .Machine$double.eps ^ 0.5) {
     abs(x - round(x)) < tol
 }
 
@@ -212,8 +206,7 @@ is_wholenumber <- function(x, tol = .Machine$double.eps ^ 0.5)
 ##' @param node the node vector to check
 ##' @return the node vector with unique nodes sorted in order.
 ##' @noRd
-check_node_argument <- function(model, node)
-{
+check_node_argument <- function(model, node) {
     if (is.null(node))
         return(NULL)
 
@@ -236,8 +229,7 @@ check_node_argument <- function(model, node)
 ##' @param N the shift matrix to check
 ##' @return the shift matrix.
 ##' @noRd
-check_N <- function(N)
-{
+check_N <- function(N) {
     if (is.null(N))
         return(matrix(integer(0), nrow = 0, ncol = 0))
 
@@ -261,8 +253,7 @@ check_N <- function(N)
 ##' @param compartments the compartments in u0.
 ##' @return u0 with columns ordered by the compartments.
 ##' @noRd
-check_u0 <- function(u0, compartments)
-{
+check_u0 <- function(u0, compartments) {
     ## Check compartments
     if (!is.atomic(compartments) || !is.character(compartments) ||
         !identical(compartments, make.names(compartments, unique = TRUE)))
@@ -286,8 +277,7 @@ check_u0 <- function(u0, compartments)
 ##' @param distance The distance matrix between neighboring nodes
 ##' @return invisible(NULL)
 ##' @noRd
-check_distance_matrix <- function(distance)
-{
+check_distance_matrix <- function(distance) {
     if (is.null(distance))
         stop("'distance' is missing.", call. = FALSE)
     if (!is(distance, "dgCMatrix")) {

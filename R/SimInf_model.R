@@ -123,8 +123,7 @@ setClass("SimInf_model",
                    C_code   = "character"))
 
 ## Check if the SimInf_model object is valid.
-valid_SimInf_model_object <- function(object)
-{
+valid_SimInf_model_object <- function(object) {
     ## Check events
     validObject(object@events)
 
@@ -286,8 +285,7 @@ SimInf_model <- function(G,
                          V      = NULL,
                          E      = NULL,
                          N      = NULL,
-                         C_code = NULL)
-{
+                         C_code = NULL) {
     ## Check u0
     if (is.null(u0))
         stop("'u0' is NULL.", call. = FALSE)
@@ -432,29 +430,25 @@ SimInf_model <- function(G,
 ##'
 ##' ## Display the number of nodes in the model.
 ##' Nn(model)
-Nn <- function(model)
-{
+Nn <- function(model) {
     check_model_argument(model)
     dim(model@u0)[2]
 }
 
 ## Number of compartments
-Nc <- function(model)
-{
+Nc <- function(model) {
     check_model_argument(model)
     dim(model@S)[1]
 }
 
 ## Number of transitions
-Nt <- function(model)
-{
+Nt <- function(model) {
     check_model_argument(model)
     dim(model@G)[1]
 }
 
 ## Number of continuous state variables
-Nd <- function(model)
-{
+Nd <- function(model) {
     check_model_argument(model)
     dim(model@v0)[1]
 }
@@ -477,8 +471,7 @@ Nd <- function(model)
 ##'
 ##' ## Extract the global data vector that is common to all nodes
 ##' gdata(model)
-gdata <- function(model)
-{
+gdata <- function(model) {
     check_model_argument(model)
     model@gdata
 }
@@ -503,8 +496,7 @@ gdata <- function(model)
 ##'
 ##' ## Extract the global data vector that is common to all nodes
 ##' gdata(model)
-"gdata<-" <- function(model, parameter, value)
-{
+"gdata<-" <- function(model, parameter, value) {
     check_model_argument(model)
 
     ## Check paramter argument
@@ -544,8 +536,7 @@ gdata <- function(model)
 ##' ## Display local data from the first two nodes.
 ##' ldata(model, node = 1)
 ##' ldata(model, node = 2)
-ldata <- function(model, node)
-{
+ldata <- function(model, node) {
     check_model_argument(model)
 
     ## Check node argument

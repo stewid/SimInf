@@ -84,8 +84,7 @@
 ##' ## Plot result
 ##' contour(x * model@gdata["beta"], y * model@gdata["gamma"],
 ##'         nop, method = "edge", bty = "l")
-run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...)
-{
+run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...) {
     ## Check 'x'
     if (missing(x))
         stop("Missing 'x' argument.", call. = FALSE)

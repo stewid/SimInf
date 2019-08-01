@@ -102,8 +102,7 @@
 ##' punchcard(model) <- NULL
 ##' result <- run(model)
 ##' trajectory(result)
-"punchcard<-" <- function(model, value)
-{
+"punchcard<-" <- function(model, value) {
     check_model_argument(model)
 
     template <- create_template(value, model@tspan, seq_len(Nn(model)),
@@ -131,8 +130,7 @@
 ##' @param ac available compartments in the simulated data.
 ##' @param data default data in dense matrix.
 ##' @noRd
-create_template <- function(value, tspan, nodes, ac, data)
-{
+create_template <- function(value, tspan, nodes, ac, data) {
     if (is.null(value)) {
         dense <- matrix(data = data, nrow = 0, ncol = 0)
         sparse <- new("dgCMatrix")

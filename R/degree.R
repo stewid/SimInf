@@ -36,8 +36,7 @@
 ##'
 ##' ## Display indegree for each node in the model.
 ##' plot(indegree(model))
-indegree <- function(model)
-{
+indegree <- function(model) {
     check_model_argument(model)
 
     ## Default indegree is 0
@@ -71,8 +70,7 @@ indegree <- function(model)
 ##'
 ##' ## Display outdegree for each node in the model.
 ##' plot(outdegree(model))
-outdegree <- function(model)
-{
+outdegree <- function(model) {
     check_model_argument(model)
 
     ## Default outdegree is 0

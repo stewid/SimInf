@@ -22,8 +22,7 @@
 ## Determine the compartments in the formula item and split
 ## 'compartment1 + compartment2 + ...'. Moreover, trim whitespace and
 ## replace '.' with all compartments in the model.
-parse_formula_item <- function(x, compartments)
-{
+parse_formula_item <- function(x, compartments) {
     x <- unlist(strsplit(x, "+", fixed = TRUE))
     x <- sub("^\\s", "", sub("\\s$", "", x))
     x <- unlist(sapply(x, function(y) {
@@ -45,8 +44,7 @@ parse_formula_item <- function(x, compartments)
 
 ## Sum all individuals in compartments in a matrix with one row per
 ## node X length(tspan)
-sum_individuals <- function(model, compartments, node)
-{
+sum_individuals <- function(model, compartments, node) {
     m <- NULL
     for (compartment in compartments) {
         if (is.null(m)) {
@@ -61,8 +59,7 @@ sum_individuals <- function(model, compartments, node)
     m
 }
 
-evaluate_condition <- function(condition, model, node)
-{
+evaluate_condition <- function(condition, model, node) {
     ## Create an environment to hold the trajectory data with one
     ## column for each compartment.
     e <- new.env(parent = baseenv())
@@ -166,8 +163,7 @@ prevalence <- function(model,
                        formula,
                        type = c("pop", "nop", "wnp"),
                        node = NULL,
-                       as.is = FALSE)
-{
+                       as.is = FALSE) {
     check_model_argument(model)
 
     ## Check 'formula' argument

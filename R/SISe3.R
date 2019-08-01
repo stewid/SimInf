@@ -85,8 +85,7 @@ SISe3 <- function(u0,
                   end_t2    = NULL,
                   end_t3    = NULL,
                   end_t4    = NULL,
-                  epsilon   = NULL)
-{
+                  epsilon   = NULL) {
     compartments <- c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
 
     ## Check arguments.

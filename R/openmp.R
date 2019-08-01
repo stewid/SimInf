@@ -24,8 +24,7 @@
 ##' @return TRUE if SimInf was built with support for OpenMP, else
 ##'     FALSE.
 ##' @noRd
-have_openmp <- function()
-{
+have_openmp <- function() {
     .Call(SimInf_have_openmp)
 }
 
@@ -45,8 +44,7 @@ have_openmp <- function()
 ##' @return Integer with the maximum number of threads that will be
 ##'     used.
 ##' @export
-set_num_threads <- function(threads = NULL)
-{
+set_num_threads <- function(threads = NULL) {
     if (!is.null(threads)) {
         if (!is.numeric(threads) ||
             length(threads) != 1 ||

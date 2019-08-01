@@ -87,8 +87,7 @@ SISe3_sp <- function(u0,
                      end_t3    = NULL,
                      end_t4    = NULL,
                      distance  = NULL,
-                     coupling  = NULL)
-{
+                     coupling  = NULL) {
     compartments <- c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
 
     ## Check arguments.

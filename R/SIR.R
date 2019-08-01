@@ -89,8 +89,7 @@ SIR <- function(u0,
                 tspan,
                 events = NULL,
                 beta   = NULL,
-                gamma  = NULL)
-{
+                gamma  = NULL) {
     compartments <- c("S", "I", "R")
 
     ## Check arguments.
@@ -172,8 +171,7 @@ SIR <- function(u0,
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
 ##' summary(result)
-events_SIR <- function()
-{
+events_SIR <- function() {
     data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 4
     events_SISe3$select[events_SISe3$event == "enter"] <- 1
@@ -213,8 +211,7 @@ events_SIR <- function()
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
-u0_SIR <- function()
-{
+u0_SIR <- function() {
     data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
     u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3

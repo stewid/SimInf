@@ -21,8 +21,7 @@
 
 ## Split the 'compartments' argument to match the compartments in U
 ## and V.
-match_compartments <- function(model, compartments, as.is)
-{
+match_compartments <- function(model, compartments, as.is) {
     U <- NULL
     V <- NULL
 
@@ -62,8 +61,7 @@ match_compartments <- function(model, compartments, as.is)
     list(U = U, V = V)
 }
 
-parse_formula <- function(model, compartments)
-{
+parse_formula <- function(model, compartments) {
     compartments <- as.character(compartments)
     if (!identical(length(compartments), 2L))
         stop("Invalid formula specification of 'compartments'.", call. = FALSE)
@@ -75,8 +73,7 @@ parse_formula <- function(model, compartments)
 
 ##' Determine if the trajectory is empty.
 ##' @noRd
-is_trajectory_empty <- function(model)
-{
+is_trajectory_empty <- function(model) {
     if (all(identical(dim(model@U), c(0L, 0L)),
             identical(dim(model@U_sparse), c(0L, 0L)),
             identical(dim(model@V), c(0L, 0L)),
@@ -92,8 +89,7 @@ is_trajectory_empty <- function(model)
 
 ##' Determine if the trajectory is sparse.
 ##' @noRd
-is_trajectory_sparse <- function(x)
-{
+is_trajectory_sparse <- function(x) {
     if (identical(dim(x), c(0L, 0L)))
         return(FALSE)
     TRUE
@@ -108,8 +104,7 @@ is_trajectory_sparse <- function(x)
 ##' @param i subset of nodes to extract data from. If NULL, all
 ##'     available nodes are included.
 ##' @noRd
-trajectory_as_is <- function(m, ac, sc, i)
-{
+trajectory_as_is <- function(m, ac, sc, i) {
     if (is.null(i)) {
         if (length(sc) == length(ac))
             return(m)
@@ -207,8 +202,7 @@ trajectory_as_is <- function(m, ac, sc, i)
 ##' ## Extract the continuous state variable 'phi' which represents
 ##' ## the environmental infectious pressure.
 ##' trajectory(result, "phi")
-trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE)
-{
+trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE) {
     check_model_argument(model)
 
     if (is_trajectory_empty(model)) {

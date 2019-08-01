@@ -23,8 +23,7 @@
 ##' @importFrom utils packageVersion
 ##' @noRd
 create_DESCRIPTION_file <- function(path, name, author, maintainer,
-                                    email, license)
-{
+                                    email, license) {
     lines <- c(paste0("Package: ", name),
                "Type: Package",
                paste0("Title: Model ('", name, "') Interface to the 'SimInf' Package"),
@@ -48,8 +47,7 @@ create_DESCRIPTION_file <- function(path, name, author, maintainer,
 
 ##' Create a NAMESPACE file for the package skeleton
 ##' @noRd
-create_NAMESPACE_file <- function(path, name)
-{
+create_NAMESPACE_file <- function(path, name) {
     lines <- c(paste0("export(", name, ")"),
                paste0("exportClasses(", name, ")"),
                "exportMethods(run)",
@@ -62,14 +60,12 @@ create_NAMESPACE_file <- function(path, name)
     invisible(NULL)
 }
 
-create_model_C_file <- function(path, model, name)
-{
+create_model_C_file <- function(path, model, name) {
     writeLines(C_code(model, name), con = file.path(path, "src", "model.c"))
     invisible(NULL)
 }
 
-create_model_R_class <- function(name)
-{
+create_model_R_class <- function(name) {
     c(paste0("##' Class \\code{", name, "}"),
       "##'",
       paste0("##' Class to handle the \\code{", name, "} \\code{SimInf_model}."),
@@ -78,8 +74,7 @@ create_model_R_class <- function(name)
       "")
 }
 
-create_model_R_object_roxygen <- function(model)
-{
+create_model_R_object_roxygen <- function(model) {
     lines <- c("##' Create a model for the SimInf framework",
                "##'",
                "##' Create a model to be used by the SimInf framework.")
@@ -125,8 +120,7 @@ create_model_R_object_roxygen <- function(model)
     lines
 }
 
-create_model_R_object_function <- function(model, name)
-{
+create_model_R_object_function <- function(model, name) {
     fn <- paste0(name, " <- function(")
     if (length(rownames(model@ldata)) > 0)
         fn <- paste0(fn, "ldata = NULL, ")
@@ -138,8 +132,7 @@ create_model_R_object_function <- function(model, name)
     fn <- paste0(fn, "tspan = NULL, events = NULL)")
 }
 
-create_model_R_object_u0 <- function(model)
-{
+create_model_R_object_u0 <- function(model) {
     compartments <- paste0(rownames(model@S), collapse = "\", \"")
     compartments <- paste0("    compartments <- c(\"", compartments, "\")")
 
@@ -155,8 +148,7 @@ create_model_R_object_u0 <- function(model)
       "")
 }
 
-create_model_R_object_ldata <- function(model)
-{
+create_model_R_object_ldata <- function(model) {
     if (length(rownames(model@ldata)) < 1)
         return(NULL)
 
@@ -179,8 +171,7 @@ create_model_R_object_ldata <- function(model)
       "")
 }
 
-create_model_R_object_gdata <- function(model)
-{
+create_model_R_object_gdata <- function(model) {
     if (length(names(model@gdata)) < 1)
         return(NULL)
 
@@ -203,8 +194,7 @@ create_model_R_object_gdata <- function(model)
       "")
 }
 
-create_model_R_object_v0 <- function(model)
-{
+create_model_R_object_v0 <- function(model) {
     if (length(rownames(model@v0)) < 1)
         return(NULL)
 
@@ -228,39 +218,34 @@ create_model_R_object_v0 <- function(model)
 }
 
 ## Dependency graph
-create_model_R_object_G <- function(model)
-{
+create_model_R_object_G <- function(model) {
     G <- capture.output(dput(as.matrix(model@G)))
     G <- c(paste0("G <- ", G[1]), G[-1])
     c(paste0("    ", G), "")
 }
 
 ## State change matrix
-create_model_R_object_S <- function(model)
-{
+create_model_R_object_S <- function(model) {
     S <- capture.output(dput(as.matrix(model@S)))
     S <- c(paste0("S <- ", S[1]), S[-1])
     c(paste0("    ", S), "")
 }
 
 ## Select matrix
-create_model_R_object_E <- function(model)
-{
+create_model_R_object_E <- function(model) {
     E <- capture.output(dput(as.matrix(model@events@E)))
     E <- c(paste0("E <- ", E[1]), E[-1])
     c(paste0("    ", E), "")
 }
 
 ## Shift matrix
-create_model_R_object_N <- function(model)
-{
+create_model_R_object_N <- function(model) {
     N <- capture.output(dput(as.matrix(model@events@N)))
     N <- c(paste0("N <- ", N[1]), N[-1])
     c(paste0("    ", N), "")
 }
 
-create_model_R_object_SimInf_model <- function(model, name)
-{
+create_model_R_object_SimInf_model <- function(model, name) {
     lines <- "    model <- SimInf_model("
     if (length(rownames(model@ldata)) > 0)
         lines <- paste0(lines, "ldata = ldata, ")
@@ -278,8 +263,7 @@ create_model_R_object_SimInf_model <- function(model, name)
 
 ##' @importFrom utils capture.output
 ##' @noRd
-create_model_R_object <- function(model, name)
-{
+create_model_R_object <- function(model, name) {
     c(create_model_R_object_roxygen(model),
       create_model_R_object_function(model, name),
       "{",
@@ -296,8 +280,7 @@ create_model_R_object <- function(model, name)
       "")
 }
 
-create_model_run_fn <- function(name)
-{
+create_model_run_fn <- function(name) {
     c("##' Run the model",
       "##'",
       "##' @rdname run-methods",
@@ -319,8 +302,7 @@ create_model_run_fn <- function(name)
       "    })")
 }
 
-create_model_R_SimInf_timestamp <- function()
-{
+create_model_R_SimInf_timestamp <- function() {
     c(sprintf("## Generated by SimInf (v%s) %s",
             packageVersion("SimInf"),
             format(Sys.time(), "%Y-%m-%d %H:%M")),
@@ -329,8 +311,7 @@ create_model_R_SimInf_timestamp <- function()
 
 ##' @importFrom utils packageVersion
 ##' @noRd
-create_model_R_file <- function(path, model, name)
-{
+create_model_R_file <- function(path, model, name) {
     lines <- c(create_model_R_SimInf_timestamp(),
                create_model_R_class(name),
                create_model_R_object(model, name),
@@ -341,8 +322,7 @@ create_model_R_file <- function(path, model, name)
     invisible(NULL)
 }
 
-create_model_class_man_file <- function(path, name)
-{
+create_model_class_man_file <- function(path, name) {
     lines <- c("\\docType{class}",
                paste0("\\name{", name, "-class}"),
                paste0("\\alias{", name, "-class}"),
@@ -356,8 +336,7 @@ create_model_class_man_file <- function(path, name)
     invisible(NULL)
 }
 
-create_model_man_file <- function(path, model, name)
-{
+create_model_man_file <- function(path, model, name) {
     lines <- c(paste0("\\name{", name, "}"),
                paste0("\\alias{", name, "}"),
                "\\title{Create a model for the SimInf framework}",
@@ -423,8 +402,7 @@ create_model_man_file <- function(path, model, name)
     invisible(NULL)
 }
 
-create_model_run_man_file <- function(path, name)
-{
+create_model_run_man_file <- function(path, name) {
     lines <- c("\\docType{methods}",
                paste0("\\name{run,", name, "-method}"),
                paste0("\\alias{run,", name, "-method}"),
@@ -478,8 +456,7 @@ create_model_run_man_file <- function(path, name)
 ##' \code{\link{INSTALL}} and \code{\link{install.packages}}.
 package_skeleton <- function(model, name = NULL, path = ".",
                              author = NULL, email = NULL,
-                             maintainer = NULL, license = "GPL-3")
-{
+                             maintainer = NULL, license = "GPL-3") {
     check_model_argument(model)
 
     stopifnot(!is.null(name), is.character(name), length(name) == 1,

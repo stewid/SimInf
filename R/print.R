@@ -21,8 +21,7 @@
 
 ##' @importFrom stats quantile
 ##' @noRd
-summary_U <- function(object)
-{
+summary_U <- function(object) {
     cat("Compartments\n")
     cat("------------\n")
 
@@ -44,8 +43,7 @@ summary_U <- function(object)
 
 ##' @importFrom stats quantile
 ##' @noRd
-summary_V <- function(object)
-{
+summary_V <- function(object) {
     cat("Continuous state variables\n")
     cat("--------------------------\n")
 
@@ -71,8 +69,7 @@ summary_V <- function(object)
 
 ##' @importFrom stats quantile
 ##' @noRd
-summary_ldata <- function(object)
-{
+summary_ldata <- function(object) {
     ## Local model parameters
     cat("Local data\n")
     cat("----------\n")
@@ -92,8 +89,7 @@ summary_ldata <- function(object)
 }
 
 ##' @noRd
-summary_gdata <- function(object)
-{
+summary_gdata <- function(object) {
     ## Global model parameters
     cat("Global data\n")
     cat("-----------\n")
@@ -108,8 +104,7 @@ summary_gdata <- function(object)
 
 ##' @importFrom stats quantile
 ##' @noRd
-summary_events <- function(object)
-{
+summary_events <- function(object) {
     cat("Scheduled events\n")
     cat("----------------\n")
 
@@ -152,8 +147,7 @@ summary_events <- function(object)
 }
 
 ##' @noRd
-summary_transitions <- function(object)
-{
+summary_transitions <- function(object) {
     cat("Transitions\n")
     cat("-----------\n")
 

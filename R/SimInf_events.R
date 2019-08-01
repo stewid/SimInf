@@ -115,8 +115,7 @@ setClass("SimInf_events",
                    shift      = "integer"))
 
 ## Check if the SimInf_events object is valid.
-valid_SimInf_events_object <- function(object)
-{
+valid_SimInf_events_object <- function(object) {
     ## Check that E and N have identical compartments
     if ((dim(object@E)[1] > 0) && (dim(object@N)[1] > 0)) {
         if (any(is.null(rownames(object@E)), is.null(rownames(object@N))))
@@ -262,8 +261,7 @@ setValidity("SimInf_events", valid_SimInf_events_object)
 SimInf_events <- function(E      = NULL,
                           N      = NULL,
                           events = NULL,
-                          t0     = NULL)
-{
+                          t0     = NULL) {
     ## Check E
     if (is.null(E)) {
         if (!is.null(events))
@@ -394,14 +392,13 @@ setAs(from = "SimInf_events",
 ##' @importFrom graphics mtext
 ##' @noRd
 plot_SimInf_events <- function(x,
-                                  y,
-                                  events = c("Exit",
-                                             "Enter",
-                                             "Internal transfer",
-                                             "External transfer"),
-                                  frame.plot,
-                                  ...)
-{
+                               y,
+                               events = c("Exit",
+                                          "Enter",
+                                          "Internal transfer",
+                                          "External transfer"),
+                               frame.plot,
+                               ...) {
     events <- match.arg(events)
     i <- switch(events,
                 "Exit" = "0",
@@ -561,8 +558,7 @@ setMethod("summary",
 ##'
 ##' ## Extract the scheduled events from the model and plot them
 ##' plot(events(model))
-events <- function(model)
-{
+events <- function(model) {
     check_model_argument(model)
     model@events
 }
@@ -583,8 +579,7 @@ events <- function(model)
 ##'
 ##' ## Extract the shift matrix from the model
 ##' shift_matrix(model)
-shift_matrix <- function(model)
-{
+shift_matrix <- function(model) {
     check_model_argument(model)
     model@events@N
 }
@@ -609,8 +604,7 @@ shift_matrix <- function(model)
 ##'
 ##' ## Extract the shift matrix from the model
 ##' shift_matrix(model)
-"shift_matrix<-" <- function(model, value)
-{
+"shift_matrix<-" <- function(model, value) {
     check_model_argument(model)
 
     model@events@N <- check_N(value)
@@ -640,8 +634,7 @@ shift_matrix <- function(model)
 ##'
 ##' ## Extract the select matrix from the model
 ##' select_matrix(model)
-select_matrix <- function(model)
-{
+select_matrix <- function(model) {
     check_model_argument(model)
     model@events@E
 }
@@ -665,8 +658,7 @@ select_matrix <- function(model)
 ##'
 ##' ## Extract the select matrix from the model
 ##' select_matrix(model)
-"select_matrix<-" <- function(model, value)
-{
+"select_matrix<-" <- function(model, value) {
     check_model_argument(model)
 
     if (!is(value, "dgCMatrix"))

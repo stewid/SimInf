@@ -20,8 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ## Use 'R CMD SHLIB' to compile the C code for the model.
-do_compile_model <- function(filename)
-{
+do_compile_model <- function(filename) {
     ## Include directive for "SimInf.h"
     include <- system.file("include", package = "SimInf")
     Sys.setenv(PKG_CPPFLAGS = sprintf("-I%s", shQuote(include)))
@@ -42,8 +41,7 @@ do_compile_model <- function(filename)
 }
 
 ## Check if model contains C code
-contains_C_code <- function(model)
-{
+contains_C_code <- function(model) {
     if (nchar(paste0(model@C_code, collapse = "\n")))
         return(TRUE)
     FALSE
