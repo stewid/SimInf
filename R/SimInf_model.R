@@ -170,7 +170,7 @@ valid_SimInf_model_object <- function(object) {
 
     ## Check that S and events@E have identical compartments
     if ((dim(object@S)[1] > 0) && (dim(object@events@E)[1] > 0)) {
-        if (any(is.null(rownames(object@S)), is.null(rownames(object@events@E))))
+        if (is.null(rownames(object@S)) || is.null(rownames(object@events@E)))
             return("'S' and 'E' must have rownames matching the compartments.")
         if (!identical(rownames(object@S), rownames(object@events@E)))
             return("'S' and 'E' must have identical compartments.")
@@ -185,7 +185,8 @@ valid_SimInf_model_object <- function(object) {
     transitions <- rownames(object@G)
     if (is.null(transitions))
         return("'G' must have rownames that specify transitions.")
-    transitions <- sub("^[[:space:]]*", "", sub("[[:space:]]*$", "", transitions))
+    transitions <- sub("[[:space:]]*$", "", transitions)
+    transitions <- sub("^[[:space:]]*", "", transitions)
     if (!all(nchar(transitions) > 0))
         return("'G' must have rownames that specify transitions.")
 
@@ -202,7 +203,8 @@ valid_SimInf_model_object <- function(object) {
         c(x[1], x[length(x)])
     }))
     transitions <- unlist(strsplit(transitions, split = "+", fixed = TRUE))
-    transitions <- sub("^[[:space:]]*", "", sub("[[:space:]]*$", "", transitions))
+    transitions <- sub("[[:space:]]*$", "", transitions)
+    transitions <- sub("^[[:space:]]*", "", transitions)
     transitions <- unique(transitions)
     transitions <- transitions[transitions != "@"]
     transitions <- sub("^[[:digit:]]+[*]", "", transitions)

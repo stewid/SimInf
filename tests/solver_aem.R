@@ -64,12 +64,13 @@ model <- SISe(u0      = u0,
 set.seed(22)
 result <- run(model, solver = "aem")
 
-S_expected <- structure(c(9L, 9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L,
-                          9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L, 8L, 10L, 9L, 9L,
-                          10L, 9L, 8L, 10L, 9L, 8L, 10L, 9L, 8L, 10L, 9L, 8L, 10L,
-                          10L, 8L, 10L, 9L, 8L, 10L, 10L, 7L, 10L, 10L, 7L, 10L,
-                          10L, 7L, 10L, 10L, 7L, 10L, 10L, 7L, 10L),
-                        .Dim = c(6L, 10L))
+S_expected <- structure(c(
+    9L, 9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L,
+    9L, 10L, 9L, 9L, 10L, 9L, 9L, 10L, 9L, 8L, 10L, 9L, 9L,
+    10L, 9L, 8L, 10L, 9L, 8L, 10L, 9L, 8L, 10L, 9L, 8L, 10L,
+    10L, 8L, 10L, 9L, 8L, 10L, 10L, 7L, 10L, 10L, 7L, 10L,
+    10L, 7L, 10L, 10L, 7L, 10L, 10L, 7L, 10L),
+    .Dim = c(6L, 10L))
 
 S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
@@ -139,8 +140,12 @@ if (SimInf:::have_openmp()) {
     set_num_threads(1)
     result
 
-    stopifnot(identical(length(trajectory(result, compartments = "S", as.is = TRUE)), 20L))
-    stopifnot(identical(length(trajectory(result, compartments = "I", as.is = TRUE)), 20L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "S", as.is = TRUE)),
+        20L))
+    stopifnot(identical(
+        length(trajectory(result, compartments = "I", as.is = TRUE)),
+        20L))
 
     p <- prevalence(result, I ~ S + I, as.is = TRUE)
     stopifnot(identical(length(p), 10L))

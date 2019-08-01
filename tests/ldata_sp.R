@@ -204,7 +204,8 @@ d_exp <- new("dgCMatrix",
              x = c(12.7279220613579, 2, 12.7279220613579,
                    12.7279220613579, 2, 12.7279220613579),
          factors = list())
-d_obs <- distance_matrix(x = c(1, 10, 1), y = c(1, 10, 1), cutoff = 20, min_dist = 2)
+d_obs <- distance_matrix(x = c(1, 10, 1), y = c(1, 10, 1),
+                         cutoff = 20, min_dist = 2)
 stopifnot(is(d_obs, "dgCMatrix"))
 stopifnot(identical(d_obs@i, d_exp@i))
 stopifnot(identical(d_obs@p, d_exp@p))

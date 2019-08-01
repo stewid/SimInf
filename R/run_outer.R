@@ -110,16 +110,22 @@ run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...) {
     ## Determine indices to the 'gdata' parameters to scale by 'x'
     xx <- attr(terms(formula, allowDotAsName = TRUE), "term.labels")
     xx <- xx[attr(terms(formula, allowDotAsName = TRUE), "order") == 1]
-    if (length(xx) < 1)
-        stop("Invalid parameters on the right side of the formula.", call. = FALSE)
+    if (length(xx) < 1) {
+        stop("Invalid parameters on the right side of the formula.",
+             call. = FALSE)
+    }
     x_i <- match(xx, names(model@gdata))
-    if (any(is.na(x_i)))
-        stop("Unmatched parameters on the right side of the formula.", call. = FALSE)
+    if (any(is.na(x_i))) {
+        stop("Unmatched parameters on the right side of the formula.",
+             call. = FALSE)
+    }
 
     ## Determine indices to the 'gdata' parameters to scale by 'y'
     yy <- attr(terms(formula, allowDotAsName = TRUE), "response")
-    if (yy < 1)
-        stop("Invalid parameters on the left side of the formula.", call. = FALSE)
+    if (yy < 1) {
+        stop("Invalid parameters on the left side of the formula.",
+             call. = FALSE)
+    }
     vars <- attr(terms(formula, allowDotAsName = TRUE), "variables")[-1]
     yy <- as.character(vars[yy])
     yy <- unlist(strsplit(yy, "+", fixed = TRUE))

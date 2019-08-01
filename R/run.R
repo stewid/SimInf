@@ -134,7 +134,7 @@ setMethod("run",
                   run_fn <- paste0(name, "_run")
 
                   ## Create expression to parse
-                  expr <- ".Call(run_fn, model, threads, solver, PACKAGE = 'SimInf')"
+                  expr <- ".Call(run_fn, model, threads, solver)"
               }
 
               ## Run the model. Re-throw any error without the call
