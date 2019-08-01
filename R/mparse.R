@@ -495,7 +495,7 @@ C_code <- function(model, pkg = NULL) {
     lines <- c(
         lines[1:2],
         "#include <R_ext/Visibility.h>",
-        lines[-(1:2)],
+        lines[c(-1, -2)],
         "static const R_CallMethodDef callMethods[] =",
         "{",
         "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",

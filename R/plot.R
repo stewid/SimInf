@@ -49,7 +49,7 @@ setMethod("boxplot",
           signature(x = "SimInf_model"),
           function(x, ...) {
               ## Remove the first two columns node and time
-              boxplot(trajectory(x)[-(1:2)], ...)
+              boxplot(trajectory(x)[c(-1, -2)], ...)
           }
 )
 
@@ -83,7 +83,7 @@ setMethod("pairs",
           signature(x = "SimInf_model"),
           function(x, ...) {
               ## Remove the first two columns node and time
-              pairs(trajectory(x)[-(1:2)], ...)
+              pairs(trajectory(x)[c(-1, -2)], ...)
           }
 )
 

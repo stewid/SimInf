@@ -179,7 +179,7 @@ create_template <- function(value, tspan, nodes, ac, data) {
     ## vector that match the rows of compartments in the matrix.
     if (any(sc %in% ac)) {
         value <- value[, c("time", "node", ac)]
-        value <- as.logical(t(as.matrix(value[, -(1:2)])))
+        value <- as.logical(t(as.matrix(value[, c(-1, -2)])))
         value[is.na(value)] <- FALSE
 
         ## Create an index to all of its compartments in the
