@@ -46,7 +46,9 @@ indegree <- function(model) {
     i <- which(model@events@event == 3L)
     if (length(i) > 0) {
         idd <- tapply(model@events@node[i], model@events@dest[i],
-                      function(x) {length(unique(x))})
+                      function(x) {
+                          length(unique(x))
+                      })
         id[as.integer(dimnames(idd)[[1]])] <- idd
     }
 
@@ -80,7 +82,9 @@ outdegree <- function(model) {
     i <- which(model@events@event == 3L)
     if (length(i) > 0) {
         odd <- tapply(model@events@dest[i], model@events@node[i],
-                      function(x) {length(unique(x))})
+                      function(x) {
+                          length(unique(x))
+                      })
         od[as.integer(dimnames(odd)[[1]])] <- odd
     }
 

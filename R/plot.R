@@ -47,8 +47,7 @@
 ##' boxplot(result)
 setMethod("boxplot",
           signature(x = "SimInf_model"),
-          function(x, ...)
-          {
+          function(x, ...) {
               ## Remove the first two columns node and time
               boxplot(trajectory(x)[-(1:2)], ...)
           }
@@ -82,8 +81,7 @@ setMethod("boxplot",
 ##' pairs(result)
 setMethod("pairs",
           signature(x = "SimInf_model"),
-          function(x, ...)
-          {
+          function(x, ...) {
               ## Remove the first two columns node and time
               pairs(trajectory(x)[-(1:2)], ...)
           }
@@ -164,8 +162,7 @@ setMethod("pairs",
 setMethod("plot",
           signature(x = "SimInf_model"),
           function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
-                   compartments = NULL, node = NULL, range = 0.5, ...)
-          {
+                   compartments = NULL, node = NULL, range = 0.5, ...) {
               if (identical(dim(x@U), c(0L, 0L))) {
                   stop("Please run the model first, the 'U' matrix is empty.",
                        call. = FALSE)
@@ -195,9 +192,9 @@ setMethod("plot",
                   m <- x@U[i, seq_len(ncol(x@U)), drop = FALSE]
               } else {
                   ## Check range argument
-                  if (!is.numeric(range) || !identical(length(range), 1L) ||
-                      range < 0 || range > 1)
-                  {
+                  if (!is.numeric(range) ||
+                      !identical(length(range), 1L) ||
+                      range < 0 || range > 1) {
                       stop("'range' must be FALSE or a value between 0 and 1.",
                            call. = FALSE)
                   }

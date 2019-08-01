@@ -50,8 +50,7 @@ set_num_threads <- function(threads = NULL) {
             length(threads) != 1 ||
             any(is.na(threads)) ||
             !all(is_wholenumber(threads)) ||
-            any(threads < 1))
-        {
+            any(threads < 1)) {
             stop("'threads' must be an integer >= 1.", call. = FALSE)
         }
 

@@ -367,8 +367,7 @@ SimInf_events <- function(E      = NULL,
 
 setAs(from = "SimInf_events",
       to = "data.frame",
-      def = function(from)
-      {
+      def = function(from) {
           data.frame(event = from@event,
                      time = from@time,
                      node = from@node,
@@ -438,8 +437,7 @@ plot_SimInf_events <- function(x,
 ##' @importFrom stats xtabs
 setMethod("plot",
           signature(x = "SimInf_events"),
-          function(x, frame.plot = FALSE, ...)
-          {
+          function(x, frame.plot = FALSE, ...) {
               savepar <- par(mfrow = c(2, 2),
                              oma = c(1, 1, 2, 0),
                              mar = c(4, 3, 1, 1))
@@ -466,8 +464,7 @@ setMethod("plot",
 ##' @importFrom methods show
 setMethod("show",
           signature(object = "SimInf_events"),
-          function (object)
-          {
+          function (object) {
               cat(sprintf("Number of scheduled events: %i\n",
                           length(object@event)))
               invisible(object)
@@ -484,8 +481,7 @@ setMethod("show",
 ##' @export
 setMethod("summary",
           signature(object = "SimInf_events"),
-          function(object, ...)
-          {
+          function(object, ...) {
               n <- length(object@event)
               cat(sprintf("Number of scheduled events: %i\n", n))
 

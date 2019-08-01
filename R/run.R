@@ -97,8 +97,7 @@ setGeneric("run",
 ##' @importFrom methods validObject
 setMethod("run",
           signature(model = "SimInf_model"),
-          function(model, threads, solver)
-          {
+          function(model, threads, solver) {
               solver <- match.arg(solver)
 
               ## FIXME: The 'threads' argument can be dropped with the

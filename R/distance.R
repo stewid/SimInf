@@ -48,8 +48,7 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL) {
     if (!is.null(min_dist)) {
         if (any(!is.numeric(min_dist),
                 !identical(length(min_dist), 1L),
-                min_dist[1] <= 0))
-        {
+                min_dist[1] <= 0)) {
             stop("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.",
                  call. = FALSE)
         }
@@ -90,7 +89,9 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL) {
     ## Create vectors for all distances, row indices and column indices.
     d <- as.numeric(unlist(lapply(m, "[[", "d")))
     row_ind <- as.integer(unlist(lapply(m, "[[", "row_ind")))
-    col_ind <- c(0L, cumsum(vapply(m, function(x) {length(x$row_ind)}, integer(1))))
+    col_ind <- c(0L, cumsum(vapply(m, function(x) {
+        length(x$row_ind)
+    }, integer(1))))
 
     ## Create a new sparse matrix
     new("dgCMatrix", x = d, i = row_ind, p = col_ind, Dim = rep(length(x), 2))

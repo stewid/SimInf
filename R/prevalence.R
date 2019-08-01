@@ -77,8 +77,7 @@ evaluate_condition <- function(condition, model, node) {
     e$condition <- condition
     k <- evalq(eval(parse(text = condition)), envir = e)
     if (!is.logical(k) ||
-        length(k) != (length(model@tspan) * ifelse(is.null(node), Nn(model), length(node))))
-    {
+        length(k) != (length(model@tspan) * ifelse(is.null(node), Nn(model), length(node)))) {
         stop("The condition must be either 'TRUE' or 'FALSE' for every node and time step.",
              call. = FALSE)
     }

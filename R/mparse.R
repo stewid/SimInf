@@ -417,8 +417,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     ## Check transitions
     if (!is.atomic(transitions) ||
         !is.character(transitions) ||
-        any(nchar(transitions) == 0))
-    {
+        any(nchar(transitions) == 0)) {
         stop("'transitions' must be specified in a character vector.",
              call. = FALSE)
     }

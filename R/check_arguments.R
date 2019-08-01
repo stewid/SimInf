@@ -256,8 +256,7 @@ check_N <- function(N) {
 check_u0 <- function(u0, compartments) {
     ## Check compartments
     if (!is.atomic(compartments) || !is.character(compartments) ||
-        !identical(compartments, make.names(compartments, unique = TRUE)))
-    {
+        !identical(compartments, make.names(compartments, unique = TRUE))) {
         stop("'compartments' must be specified in a character vector.",
              call. = FALSE)
     }
