@@ -182,7 +182,7 @@ summary_transitions <- function(object) {
 ##' result
 setMethod("show",
           signature(object = "SimInf_model"),
-          function (object) {
+          function(object) {
               ## The model name
               cat(sprintf("Model: %s\n", as.character(class(object))))
               cat(sprintf("Number of nodes: %i\n", Nn(object)))

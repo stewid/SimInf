@@ -157,9 +157,9 @@ if (SimInf:::have_openmp()) {
 }
 
 ## Check 'susceptible' and 'infected' methods for a SISe3 model
-u0 <- data.frame(S_1 = rep(10, 10), I_1 = rep( 0, 10),
-                 S_2 = rep(20, 10), I_2 = rep( 0, 10),
-                 S_3 = rep(70, 10), I_3 = rep( 0, 10))
+u0 <- data.frame(S_1 = rep(10, 10), I_1 = rep(0, 10),
+                 S_2 = rep(20, 10), I_2 = rep(0, 10),
+                 S_3 = rep(70, 10), I_3 = rep(0, 10))
 model <- SISe3(u0        = u0,
                tspan     = seq_len(1000) - 1,
                events    = NULL,
@@ -226,9 +226,9 @@ if (SimInf:::have_openmp()) {
 }
 
 ## Check measures with a SISe3_sp model
-u0 <- data.frame(S_1 = rep(10, 10), I_1 = rep( 0, 10),
-                 S_2 = rep(20, 10), I_2 = rep( 0, 10),
-                 S_3 = rep(70, 10), I_3 = rep( 0, 10))
+u0 <- data.frame(S_1 = rep(10, 10), I_1 = rep(0, 10),
+                 S_2 = rep(20, 10), I_2 = rep(0, 10),
+                 S_3 = rep(70, 10), I_3 = rep(0, 10))
 
 model <- SISe3_sp(u0        = u0,
                   tspan     = seq_len(1000) - 1,

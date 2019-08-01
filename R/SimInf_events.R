@@ -464,7 +464,7 @@ setMethod("plot",
 ##' @importFrom methods show
 setMethod("show",
           signature(object = "SimInf_events"),
-          function (object) {
+          function(object) {
               cat(sprintf("Number of scheduled events: %i\n",
                           length(object@event)))
               invisible(object)
