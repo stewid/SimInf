@@ -309,7 +309,8 @@ variable_names <- function(x, is_vector_ok) {
         } else {
             stop(paste0("'",
                         as.character(substitute(x)),
-                        "' must either be a 'data.frame' or a 'numeric' vector."),
+                        "' must either be a 'data.frame' ",
+                        "or a 'numeric' vector."),
                  call. = FALSE)
         }
     } else if (is.matrix(x)) {

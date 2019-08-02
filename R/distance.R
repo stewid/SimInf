@@ -73,7 +73,8 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL) {
 
         if (any(d == 0)) {
             if (is.null(min_dist)) {
-                stop("Identical coordinates. Please provide a minimum distance.",
+                stop(paste0("Identical coordinates. ",
+                            "Please provide a minimum distance."),
                      call. = FALSE)
             }
             d <- pmax(d, min_dist)

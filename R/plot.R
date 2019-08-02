@@ -180,7 +180,8 @@ setMethod("plot",
               if (is.null(node))
                   node <- seq_len(Nn(x))
 
-              savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
+              savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0),
+                             xpd = TRUE)
               on.exit(par(savepar))
 
               ## Create a matrix with one row for each line in the
@@ -279,7 +280,8 @@ setMethod("plot",
                         col = col[i], lwd = lwd, ...)
                   if (isTRUE(range)) {
                       polygon(x = c(xx, rev(xx)), y = c(mu[i, ], rev(ml[i, ])),
-                              col = adjustcolor(col[i], alpha.f = 0.1), border = NA)
+                              col = adjustcolor(col[i], alpha.f = 0.1),
+                              border = NA)
                   }
               }
 
