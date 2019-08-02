@@ -19,7 +19,8 @@ matrix:
     - r: oldrel
     - r: release
       r_packages: covr
-      env: R_CODECOV=true
+      r_github_packages: jimhester/lintr
+      env: R_CODECOV=true R_LINTR=true
     - r: devel
     - os: osx
       brew_packages: gsl
@@ -30,6 +31,8 @@ after_failure:
 # Only report coverage for the release version on linux
 after_success:
   - test ${R_CODECOV} && Rscript -e "covr::coveralls()"
+  - test ${R_LINTR} && R CMD INSTALL $PKG_TARBALL
+  - test ${R_LINTR} && Rscript -e "lintr::lint_package(linters = lintr::with_defaults(object_name_linter = NULL, object_usage_linter = NULL))"
   - cat "${RCHECK_DIR}/00install.out"
 
 notifications:
