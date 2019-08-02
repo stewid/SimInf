@@ -22,6 +22,8 @@
 library("SimInf")
 source("util/check.R")
 
+## This is a test line > 80 characters to test if travis running lintr::lint_package works.
+
 ## Specify the number of threads to use.
 set_num_threads(1)
 
