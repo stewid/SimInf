@@ -191,8 +191,9 @@ valid_SimInf_model_object <- function(object) {
         return("'G' must have rownames that specify transitions.")
 
     ## Check that the format of transitions are valid:
-    ## "X1 + X2 + ... + Xn -> Y1 + Y2 + ... + Yn" or
-    ## "X1 + X2 + ... + Xn -> propensity -> Y1 + Y2 + ... + Yn"
+    ## For example: "X1 + X2 + ... + Xn -> Y1 + Y2 + ... + Yn"
+    ## or
+    ## For example: "X1 + X2 + ... + Xn -> propensity -> Y1 + Y2 + ... + Yn"
     ## is expected, where X2, ..., Xn and Y2, ..., Yn are optional.
     transitions <- strsplit(transitions, split = "->", fixed = TRUE)
     if (any(sapply(transitions, length) < 2))

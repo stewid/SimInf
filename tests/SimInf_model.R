@@ -715,7 +715,7 @@ check_error(res, "'value' argument must be a numeric.")
 res <- tools::assertError(gdata(model, 5) <- 6)
 check_error(res, "'parameter' argument must be a character.")
 
-res <- tools::assertError("gdata<-"(model, "beta"))
+res <- tools::assertError("gdata<-" (model, "beta"))
 check_error(res, "Missing 'value' argument.")
 
 ## Check 'ldata'

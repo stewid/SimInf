@@ -444,8 +444,7 @@ res <- tools::assertError(
                          u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5))
 check_error(res, "When 'gdata' is a data.frame, it must have one row.")
 
-## Check mparse fails with ldata as data.frames and nrow(ldata) !=
-## nrow(u0)
+## Check mparse fails with ldata as data.frames and nrow(ldata) != nrow(u0)
 res <- tools::assertError(
                   mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                                          "D+W->c3*D*W->W+W", "W->c4*W->@"),
