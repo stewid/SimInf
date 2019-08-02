@@ -295,8 +295,10 @@ SimInf_events <- function(E      = NULL,
 
     ## Do we have to recode the event type as a numerical value
     if (is.character(events$event) || is.factor(events$event)) {
-        if (!all(events$event %in% c("enter", "exit", "extTrans", "intTrans"))) {
-            stop("'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'.",
+        event_names <- c("enter", "exit", "extTrans", "intTrans")
+        if (!all(events$event %in% event_names)) {
+            stop(paste0("'event' type must be 'enter', 'exit', ",
+                        "'extTrans' or 'intTrans'."),
                  call. = FALSE)
         }
 

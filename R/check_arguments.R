@@ -156,7 +156,8 @@ check_end_t_arg <- function(len, ...) {
     if (!all(arg$end_t1 < arg$end_t2))
         stop("'end_t1' must be less than 'end_t2'.", call. = FALSE)
     if (!all((arg$end_t4 < arg$end_t1) | (arg$end_t2 < arg$end_t3))) {
-        stop("'end_t2' must be less than 'end_t3' or 'end_t3' less than 'end_t1'.",
+        stop(paste0("'end_t2' must be less than 'end_t3' or ",
+                    "'end_t3' less than 'end_t1'."),
              call. = FALSE)
     }
     if (!all(arg$end_t3 < 364))

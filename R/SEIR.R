@@ -37,7 +37,8 @@ setClass("SEIR", contains = c("SimInf_model"))
 ##' and number of recovered (R).  Moreover, it has three state
 ##' transitions,
 ##'
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{S -- beta S I / N --> E}
+##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{
+##'   S -- beta S I / N --> E}
 ##' \deqn{E \stackrel{\epsilon E}{\longrightarrow} I}{E -- epsilon E --> I}
 ##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 ##'

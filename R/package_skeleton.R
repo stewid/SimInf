@@ -196,7 +196,8 @@ create_model_R_object_gdata <- function(model) {
       "            stop(\"Missing parameter(s) in 'gdata'\")",
       "        gdata <- gdata[gdata_names]",
       "    } else {",
-      "        stop(\"'gdata' must either be a 'data.frame' or a 'numeric' vector.\")",
+      paste0("        stop(\"'gdata' must either be a 'data.frame' or ",
+             "a 'numeric' vector.\")"),
       "    }",
       "")
 }
@@ -305,8 +306,8 @@ create_model_run_fn <- function(name) {
       "    function(model, threads = NULL, solver = NULL)",
       "    {",
       "        methods::validObject(model)",
-      paste0("       .Call(SimInf_model_run, model, threads, solver, PACKAGE = \"",
-             name, "\")"),
+      paste0("       .Call(SimInf_model_run, model, threads, solver, ",
+             "PACKAGE = \"", name, "\")"),
       "    })")
 }
 
