@@ -29,21 +29,8 @@
 check_infectious_pressure_arg <- function(len, ...) {
     arg <- list(...)
     for (i in seq_len(length(arg))) {
-        if (!is.numeric(arg[[i]])) {
-            stop(paste0("Invalid '",
-                        match.call(expand.dots = FALSE)$"..."[i],
-                        "': must be numeric vector."),
-                 call. = FALSE)
-        }
-
-        if (!is.null(dim(arg[[i]]))) {
-            stop(paste0("Invalid '",
-                        match.call(expand.dots = FALSE)$"..."[i],
-                        "': must be numeric vector."),
-                 call. = FALSE)
-        }
-
-        if (!identical(length(arg[[i]]), len)) {
+        if (!is.numeric(arg[[i]]) || !is.null(dim(arg[[i]])) ||
+            !identical(length(arg[[i]]), len)) {
             stop(paste0("Invalid '",
                         match.call(expand.dots = FALSE)$"..."[i],
                         "': must be numeric vector with length 'nrow(u0)'."),
@@ -77,14 +64,7 @@ check_integer_arg <- function(...) {
                  call. = FALSE)
         }
 
-        if (!is.numeric(arg[[i]])) {
-            stop(paste0("'",
-                        match.call(expand.dots = FALSE)$"..."[i],
-                        "' must be integer."),
-                 call. = FALSE)
-        }
-
-        if (!all(is_wholenumber(arg[[i]]))) {
+        if (!is.numeric(arg[[i]]) || !all(is_wholenumber(arg[[i]]))) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],
                         "' must be integer."),
@@ -111,17 +91,10 @@ check_gdata_arg <- function(...) {
                  call. = FALSE)
         }
 
-        if (!is.numeric(arg[[i]])) {
+        if (!is.numeric(arg[[i]]) || !identical(length(arg[[i]]), 1L)) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],
-                        "' must be numeric."),
-                 call. = FALSE)
-        }
-
-        if (!identical(length(arg[[i]]), 1L)) {
-            stop(paste0("'",
-                        match.call(expand.dots = FALSE)$"..."[i],
-                        "' must be of length 1."),
+                        "' must be numeric of length 1."),
                  call. = FALSE)
         }
     }
@@ -211,9 +184,7 @@ check_node_argument <- function(model, node) {
     if (is.null(node))
         return(NULL)
 
-    if (!is.numeric(node))
-        stop("'node' must be integer.", call. = FALSE)
-    if (!all(is_wholenumber(node)))
+    if (!is.numeric(node) || !all(is_wholenumber(node)))
         stop("'node' must be integer.", call. = FALSE)
     if (min(node) < 1)
         stop("'node' must be integer > 0.", call. = FALSE)
