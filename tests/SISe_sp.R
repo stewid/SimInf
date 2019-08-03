@@ -350,7 +350,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'upsilon' must be numeric.")
+check_error(res, "'upsilon' must be numeric of length 1.")
 
 ## Check non-numeric gamma
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -370,7 +370,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'gamma' must be numeric.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check non-numeric alpha
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -390,7 +390,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'alpha' must be numeric.")
+check_error(res, "'alpha' must be numeric of length 1.")
 
 ## Check non-numeric beta_t1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -410,7 +410,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t1' must be numeric.")
+check_error(res, "'beta_t1' must be numeric of length 1.")
 
 ## Check non-numeric beta_t2
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -430,7 +430,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t2' must be numeric.")
+check_error(res, "'beta_t2' must be numeric of length 1.")
 
 ## Check non-numeric beta_t3
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -450,7 +450,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t3' must be numeric.")
+check_error(res, "'beta_t3' must be numeric of length 1.")
 
 ## Check non-numeric beta_t4
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -470,7 +470,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t4' must be numeric.")
+check_error(res, "'beta_t4' must be numeric of length 1.")
 
 ## Check non-integer end_t1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -646,7 +646,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = "0.0005",
                                   distance = distance))
-check_error(res, "'coupling' must be numeric.")
+check_error(res, "'coupling' must be numeric of length 1.")
 
 ## Check that length of upsilon equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -666,7 +666,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'upsilon' must be of length 1.")
+check_error(res, "'upsilon' must be numeric of length 1.")
 
 ## Check that length of gamma equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -686,7 +686,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'gamma' must be of length 1.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check that length of alpha equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -706,7 +706,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'alpha' must be of length 1.")
+check_error(res, "'alpha' must be numeric of length 1.")
 
 ## Check that length of beta_t1 equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -726,7 +726,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t1' must be of length 1.")
+check_error(res, "'beta_t1' must be numeric of length 1.")
 
 ## Check that length of beta_t2 equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -746,7 +746,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t2' must be of length 1.")
+check_error(res, "'beta_t2' must be numeric of length 1.")
 
 ## Check that length of beta_t3 equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -766,7 +766,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t3' must be of length 1.")
+check_error(res, "'beta_t3' must be numeric of length 1.")
 
 ## Check that length of beta_t4 equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -786,7 +786,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t4' must be of length 1.")
+check_error(res, "'beta_t4' must be numeric of length 1.")
 
 ## Check that length of coupling equals 1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -806,7 +806,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = c(0.0005, 0.0005),
                                   distance = distance))
-check_error(res, "'coupling' must be of length 1.")
+check_error(res, "'coupling' must be numeric of length 1.")
 
 ## Check interval endpoints
 res <- tools::assertError(SISe_sp(u0       = u0,

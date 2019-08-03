@@ -81,7 +81,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = "0.5",
                                epsilon = 0.3,
                                gamma   = 0.1))
-check_error(res, "'beta' must be numeric.")
+check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check non-numeric epsilon
 res <- tools::assertError(SEIR(u0      = u0,
@@ -90,7 +90,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = "0.3",
                                gamma   = 0.1))
-check_error(res, "'epsilon' must be numeric.")
+check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check non-numeric gamma
 res <- tools::assertError(SEIR(u0      = u0,
@@ -99,7 +99,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = 0.3,
                                gamma   = "0.1"))
-check_error(res, "'gamma' must be numeric.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check that length of beta equals 1
 res <- tools::assertError(SEIR(u0      = u0,
@@ -108,7 +108,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = c(0.5, 0.5),
                                epsilon = 0.3,
                                gamma   = 0.1))
-check_error(res, "'beta' must be of length 1.")
+check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check that length of epsilon equals 1
 res <- tools::assertError(SEIR(u0      = u0,
@@ -117,7 +117,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = c(0.3, 0.3),
                                gamma   = 0.1))
-check_error(res, "'epsilon' must be of length 1.")
+check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check that length of gamma equals 1
 res <- tools::assertError(SEIR(u0      = u0,
@@ -126,7 +126,7 @@ res <- tools::assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = 0.3,
                                gamma   = c(0.1, 0.1)))
-check_error(res, "'gamma' must be of length 1.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check extraction of data from 'suscpetible', 'infected' and
 ## 'recovered' compartments

@@ -66,7 +66,7 @@ res <- tools::assertError(SIR(u0      = u0,
                               events  = NULL,
                               beta    = "0.5",
                               gamma   = 0.1))
-check_error(res, "'beta' must be numeric.")
+check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check non-numeric gamma
 res <- tools::assertError(SIR(u0      = u0,
@@ -74,7 +74,7 @@ res <- tools::assertError(SIR(u0      = u0,
                               events  = NULL,
                               beta    = 0.5,
                               gamma   = "0.1"))
-check_error(res, "'gamma' must be numeric.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check that length of beta equals 1
 res <- tools::assertError(SIR(u0      = u0,
@@ -82,7 +82,7 @@ res <- tools::assertError(SIR(u0      = u0,
                               events  = NULL,
                               beta    = c(0.5, 0.5),
                               gamma   = 0.1))
-check_error(res, "'beta' must be of length 1.")
+check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check that length of gamma equals 1
 res <- tools::assertError(SIR(u0      = u0,
@@ -90,7 +90,7 @@ res <- tools::assertError(SIR(u0      = u0,
                               events  = NULL,
                               beta    = 0.5,
                               gamma   = c(0.1, 0.1)))
-check_error(res, "'gamma' must be of length 1.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Extract data from the 'suscpetible', 'infected' and 'recovered'
 ## compartments

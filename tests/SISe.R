@@ -59,7 +59,21 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "Invalid 'phi': must be numeric vector.")
+check_error(
+    res,
+    "Invalid 'phi': must be numeric vector with length 'nrow(u0)'.")
+
+phi <- matrix(1)
+res <- tools::assertError(SimInf:::check_infectious_pressure_arg(1, phi))
+check_error(
+    res,
+    "Invalid 'phi': must be numeric vector with length 'nrow(u0)'.")
+
+phi <- c(2, 2)
+res <- tools::assertError(SimInf:::check_infectious_pressure_arg(1, phi))
+check_error(
+    res,
+    "Invalid 'phi': must be numeric vector with length 'nrow(u0)'.")
 
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
@@ -96,10 +110,10 @@ res <- SISe(u0      = u0,
             end_t3  = 273,
             end_t4  = 365,
             epsilon = 0.000011)
-stopifnot(identical(res@v0,
-                    structure(c(0, 0, 0, 0, 0, 0),
-                              .Dim = c(1L, 6L),
-                              .Dimnames = list("phi", NULL))))
+
+stopifnot(identical(
+    res@v0,
+    matrix(0, nrow = 1, ncol = 6, dimnames = list("phi", NULL))))
 
 ## Check missing upsilon
 res <- tools::assertError(SISe(u0      = u0,
@@ -334,7 +348,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'upsilon' must be numeric.")
+check_error(res, "'upsilon' must be numeric of length 1.")
 
 ## Check non-numeric gamma
 res <- tools::assertError(SISe(u0      = u0,
@@ -353,7 +367,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'gamma' must be numeric.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check non-numeric alpha
 res <- tools::assertError(SISe(u0      = u0,
@@ -372,7 +386,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'alpha' must be numeric.")
+check_error(res, "'alpha' must be numeric of length 1.")
 
 ## Check non-numeric beta_t1
 res <- tools::assertError(SISe(u0      = u0,
@@ -391,7 +405,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'beta_t1' must be numeric.")
+check_error(res, "'beta_t1' must be numeric of length 1.")
 
 ## Check non-numeric beta_t2
 res <- tools::assertError(SISe(u0      = u0,
@@ -410,7 +424,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'beta_t2' must be numeric.")
+check_error(res, "'beta_t2' must be numeric of length 1.")
 
 ## Check non-numeric beta_t3
 res <- tools::assertError(SISe(u0      = u0,
@@ -429,7 +443,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'beta_t3' must be numeric.")
+check_error(res, "'beta_t3' must be numeric of length 1.")
 
 ## Check non-numeric beta_t4
 res <- tools::assertError(SISe(u0      = u0,
@@ -448,7 +462,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'beta_t4' must be numeric.")
+check_error(res, "'beta_t4' must be numeric of length 1.")
 
 ## Check non-integer end_t1
 res <- tools::assertError(SISe(u0      = u0,
@@ -615,7 +629,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = "0.000011"))
-check_error(res, "'epsilon' must be numeric.")
+check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check that length of upsilon equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -634,7 +648,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'upsilon' must be of length 1.")
+check_error(res, "'upsilon' must be numeric of length 1.")
 
 ## Check that length of gamma equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -653,7 +667,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'gamma' must be of length 1.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check that length of alpha equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -672,7 +686,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'alpha' must be of length 1.")
+check_error(res, "'alpha' must be numeric of length 1.")
 
 ## Check that length of beta_t1 equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -691,7 +705,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'beta_t1' must be of length 1.")
+check_error(res, "'beta_t1' must be numeric of length 1.")
 
 ## Check that length of beta_t2 equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -710,7 +724,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'beta_t2' must be of length 1.")
+check_error(res, "'beta_t2' must be numeric of length 1.")
 
 ## Check that length of beta_t3 equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -729,7 +743,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'beta_t3' must be of length 1.")
+check_error(res, "'beta_t3' must be numeric of length 1.")
 
 ## Check that length of beta_t4 equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -748,7 +762,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = 0.000011))
-check_error(res, "'beta_t4' must be of length 1.")
+check_error(res, "'beta_t4' must be numeric of length 1.")
 
 ## Check that length of epsilon equals 1
 res <- tools::assertError(SISe(u0      = u0,
@@ -767,7 +781,7 @@ res <- tools::assertError(SISe(u0      = u0,
                                end_t3  = 273,
                                end_t4  = 365,
                                epsilon = c(0.000011, 0.000011)))
-check_error(res, "'epsilon' must be of length 1.")
+check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check interval endpoints
 res <- tools::assertError(SISe(u0      = u0,
