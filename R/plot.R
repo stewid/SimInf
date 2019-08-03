@@ -180,10 +180,6 @@ setMethod("plot",
               if (is.null(node))
                   node <- seq_len(Nn(x))
 
-              savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0),
-                             xpd = TRUE)
-              on.exit(par(savepar))
-
               ## Create a matrix with one row for each line in the
               ## plot.
               if (identical(range, FALSE)) {
@@ -264,6 +260,10 @@ setMethod("plot",
                   xx <- as.Date(names(x@tspan))
                   xlab <- "Date"
               }
+
+              savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0),
+                             xpd = TRUE)
+              on.exit(par(savepar))
 
               ## Plot first line to get a new plot window
               plot(x = xx, y = m[1, ], type = "l", ylab = ylab, ylim = ylim,

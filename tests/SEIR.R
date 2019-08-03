@@ -417,10 +417,26 @@ check_error(res, "Non-existing compartment(s) in model: 'phi'.")
 stopifnot(identical(nrow(events_SEIR()), 466692L))
 stopifnot(identical(nrow(u0_SEIR()), 1600L))
 
+## Try to plot non-extisting compartment.
+res <- tools::assertError(plot(result, compartments = "X"))
+check_error(res, "'compartments' must exist in the model.")
+
+## Try to plot with invalid range argument.
+res <- tools::assertError(plot(result, range = 1.2))
+check_error(res, "'range' must be FALSE or a value between 0 and 1.")
+
 ## Check SEIR plot method
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
 plot(result)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
+## Check SEIR plot method with range = FALSE
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+plot(result, range = FALSE)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)

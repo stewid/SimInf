@@ -784,6 +784,10 @@ res <- tools::assertError(SISe(u0      = u0,
 check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check interval endpoints
+end_t1 <- 1:3
+res <- tools::assertError(SimInf:::check_end_t_arg(2, end_t1))
+check_error(res, "'end_t1' must be of length 1 or 'nrow(u0)'.")
+
 res <- tools::assertError(SISe(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
