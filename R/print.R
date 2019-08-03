@@ -19,17 +19,14 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Summarise trajectory.
 ##' @importFrom stats quantile
 ##' @noRd
-summary_U <- function(object) {
-    cat("\n")
-    cat("Compartments\n")
-    cat("------------\n")
-
+summary_trajectory <- function(object, compartments) {
     if (is_trajectory_empty(object)) {
         cat(" - Empty, please run the model first\n")
     } else {
-        qq <- lapply(rownames(object@S), function(compartment) {
+        qq <- lapply(compartments, function(compartment) {
             x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
             qq <- quantile(x)
             qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
@@ -37,33 +34,24 @@ summary_U <- function(object) {
         qq <- do.call("rbind", qq)
         colnames(qq) <- c("Min.", "1st Qu.", "Median",
                           "Mean", "3rd Qu.", "Max.")
-        rownames(qq) <- paste0(" ", rownames(object@S))
+        rownames(qq) <- paste0(" ", compartments)
         print.table(qq, digits = 3)
     }
 }
 
-##' @importFrom stats quantile
-##' @noRd
+summary_U <- function(object) {
+    cat("\n")
+    cat("Compartments\n")
+    cat("------------\n")
+    summary_trajectory(object, rownames(object@S))
+}
+
 summary_V <- function(object) {
     if (Nd(object) > 0) {
         cat("\n")
         cat("Continuous state variables\n")
         cat("--------------------------\n")
-
-        if (is_trajectory_empty(object)) {
-            cat(" - Empty, please run the model first\n")
-        } else {
-            qq <- lapply(rownames(object@v0), function(compartment) {
-                x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
-                qq <- quantile(x)
-                qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
-            })
-            qq <- do.call("rbind", qq)
-            colnames(qq) <- c("Min.", "1st Qu.", "Median",
-                              "Mean", "3rd Qu.", "Max.")
-            rownames(qq) <- rownames(object@v0)
-            print.table(qq, digits = 3)
-        }
+        summary_trajectory(object, rownames(object@v0))
     }
 }
 
