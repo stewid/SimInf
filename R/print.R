@@ -22,6 +22,7 @@
 ##' @importFrom stats quantile
 ##' @noRd
 summary_U <- function(object) {
+    cat("\n")
     cat("Compartments\n")
     cat("------------\n")
 
@@ -44,10 +45,11 @@ summary_U <- function(object) {
 ##' @importFrom stats quantile
 ##' @noRd
 summary_V <- function(object) {
-    cat("Continuous state variables\n")
-    cat("--------------------------\n")
-
     if (Nd(object) > 0) {
+        cat("\n")
+        cat("Continuous state variables\n")
+        cat("--------------------------\n")
+
         if (is_trajectory_empty(object)) {
             cat(" - Empty, please run the model first\n")
         } else {
@@ -62,19 +64,18 @@ summary_V <- function(object) {
             rownames(qq) <- rownames(object@v0)
             print.table(qq, digits = 3)
         }
-    } else {
-        cat(" - None\n")
     }
 }
 
+##' Summarise local model parameters
 ##' @importFrom stats quantile
 ##' @noRd
 summary_ldata <- function(object) {
-    ## Local model parameters
-    cat("Local data\n")
-    cat("----------\n")
+    if (!is.null(rownames(object@ldata))) {
+        cat("\n")
+        cat("Local data\n")
+        cat("----------\n")
 
-    if (dim(object@ldata)[1] > 0) {
         qq <- t(apply(object@ldata, 1, function(x) {
             qq <- quantile(x)
             c(qq[1L:3L], mean(x), qq[4L:5L])
@@ -83,14 +84,13 @@ summary_ldata <- function(object) {
                           "Mean", "3rd Qu.", "Max.")
         rownames(qq) <- paste0(" ", rownames(object@ldata))
         print.table(qq, digits = 3)
-    } else {
-        cat(" - None\n")
     }
 }
 
+##' Summarise global model parameters
 ##' @noRd
 summary_gdata <- function(object) {
-    ## Global model parameters
+    cat("\n")
     cat("Global data\n")
     cat("-----------\n")
 
@@ -105,6 +105,7 @@ summary_gdata <- function(object) {
 ##' @importFrom stats quantile
 ##' @noRd
 summary_events <- function(object) {
+    cat("\n")
     cat("Scheduled events\n")
     cat("----------------\n")
 
@@ -189,20 +190,9 @@ setMethod("show",
               cat(sprintf("Number of transitions: %i\n", Nt(object)))
               show(object@events)
 
-              cat("\n")
               summary_gdata(object)
-
-              if (!is.null(rownames(object@ldata))) {
-                  cat("\n")
-                  summary_ldata(object)
-              }
-
-              if (Nd(object) > 0) {
-                  cat("\n")
-                  summary_V(object)
-              }
-
-              cat("\n")
+              summary_ldata(object)
+              summary_V(object)
               summary_U(object)
 
               invisible(object)
@@ -226,24 +216,12 @@ setMethod("summary",
               cat(sprintf("Number of nodes: %i\n\n", Nn(object)))
 
               summary_transitions(object)
-
-              cat("\n")
               summary_gdata(object)
-
-              if (!is.null(rownames(object@ldata))) {
-                  cat("\n")
-                  summary_ldata(object)
-              }
-
-              cat("\n")
+              summary_ldata(object)
               summary_events(object)
-
-              if (Nd(object) > 0) {
-                  cat("\n")
-                  summary_V(object)
-              }
-
-              cat("\n")
+              summary_V(object)
               summary_U(object)
+
+              invisible(NULL)
           }
 )
