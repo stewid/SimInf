@@ -82,7 +82,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'upsilon' is missing.")
+check_error(res, "'upsilon' must be numeric of length 1.")
 
 ## Check missing gamma
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -101,7 +101,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'gamma' is missing.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check missing alpha
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -120,7 +120,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'alpha' is missing.")
+check_error(res, "'alpha' must be numeric of length 1.")
 
 ## Check missing beta_t1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -139,7 +139,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t1' is missing.")
+check_error(res, "'beta_t1' must be numeric of length 1.")
 
 ## Check missing beta_t2
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -158,7 +158,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t2' is missing.")
+check_error(res, "'beta_t2' must be numeric of length 1.")
 
 ## Check missing beta_t3
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -177,7 +177,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t3' is missing.")
+check_error(res, "'beta_t3' must be numeric of length 1.")
 
 ## Check missing beta_t4
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -196,7 +196,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t4   = 365,
                                   coupling = 0.0005,
                                   distance = distance))
-check_error(res, "'beta_t4' is missing.")
+check_error(res, "'beta_t4' must be numeric of length 1.")
 
 ## Check missing end_t1
 res <- tools::assertError(SISe_sp(u0       = u0,
@@ -291,7 +291,7 @@ res <- tools::assertError(SISe_sp(u0       = u0,
                                   end_t3   = 273,
                                   end_t4   = 365,
                                   distance = distance))
-check_error(res, "'coupling' is missing.")
+check_error(res, "'coupling' must be numeric of length 1.")
 
 ## Check missing distance
 res <- tools::assertError(SISe_sp(u0       = u0,

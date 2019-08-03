@@ -109,7 +109,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'upsilon_1' is missing.")
+check_error(res, "'upsilon_1' must be numeric of length 1.")
 
 ## Check missing upsilon_2
 res <- tools::assertError(SISe3(u0        = u0,
@@ -131,7 +131,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'upsilon_2' is missing.")
+check_error(res, "'upsilon_2' must be numeric of length 1.")
 
 ## Check missing upsilon_3
 res <- tools::assertError(SISe3(u0        = u0,
@@ -153,7 +153,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'upsilon_3' is missing.")
+check_error(res, "'upsilon_3' must be numeric of length 1.")
 
 ## Check missing gamma_1
 res <- tools::assertError(SISe3(u0        = u0,
@@ -175,7 +175,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'gamma_1' is missing.")
+check_error(res, "'gamma_1' must be numeric of length 1.")
 
 ## Check missing gamma_2
 res <- tools::assertError(SISe3(u0        = u0,
@@ -197,7 +197,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'gamma_2' is missing.")
+check_error(res, "'gamma_2' must be numeric of length 1.")
 
 ## Check missing gamma_3
 res <- tools::assertError(SISe3(u0        = u0,
@@ -219,7 +219,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'gamma_3' is missing.")
+check_error(res, "'gamma_3' must be numeric of length 1.")
 
 ## Check missing alpha
 res <- tools::assertError(SISe3(u0        = u0,
@@ -241,7 +241,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'alpha' is missing.")
+check_error(res, "'alpha' must be numeric of length 1.")
 
 ## Check missing beta_t1
 res <- tools::assertError(SISe3(u0        = u0,
@@ -263,7 +263,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'beta_t1' is missing.")
+check_error(res, "'beta_t1' must be numeric of length 1.")
 
 ## Check missing beta_t2
 res <- tools::assertError(SISe3(u0        = u0,
@@ -285,7 +285,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'beta_t2' is missing.")
+check_error(res, "'beta_t2' must be numeric of length 1.")
 
 ## Check missing beta_t3
 res <- tools::assertError(SISe3(u0        = u0,
@@ -307,7 +307,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'beta_t3' is missing.")
+check_error(res, "'beta_t3' must be numeric of length 1.")
 
 ## Check missing beta_t4
 res <- tools::assertError(SISe3(u0        = u0,
@@ -329,7 +329,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t3    = 273,
                                 end_t4    = 365,
                                 epsilon   = 0.000011))
-check_error(res, "'beta_t4' is missing.")
+check_error(res, "'beta_t4' must be numeric of length 1.")
 
 ## Check missing end_t1
 res <- tools::assertError(SISe3(u0        = u0,
@@ -439,7 +439,7 @@ res <- tools::assertError(SISe3(u0        = u0,
                                 end_t2    = 182,
                                 end_t3    = 273,
                                 end_t4    = 365))
-check_error(res, "'epsilon' is missing.")
+check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check non-numeric upsilon_1
 res <- tools::assertError(SISe3(u0        = u0,

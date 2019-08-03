@@ -84,13 +84,6 @@ check_integer_arg <- function(...) {
 check_gdata_arg <- function(...) {
     arg <- list(...)
     for (i in seq_len(length(arg))) {
-        if (is.null(arg[[i]])) {
-            stop(paste0("'",
-                        match.call(expand.dots = FALSE)$"..."[i],
-                        "' is missing."),
-                 call. = FALSE)
-        }
-
         if (!is.numeric(arg[[i]]) || !identical(length(arg[[i]]), 1L)) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],

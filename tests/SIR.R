@@ -51,14 +51,14 @@ res <- tools::assertError(SIR(u0     = u0,
                               tspan  = seq_len(10) - 1,
                               events = NULL,
                               gamma  = 0.5))
-check_error(res, "'beta' is missing.")
+check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check missing gamma
 res <- tools::assertError(SIR(u0     = u0,
                               tspan  = seq_len(10) - 1,
                               events = NULL,
                               beta   = 0.5))
-check_error(res, "'gamma' is missing.")
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check non-numeric beta
 res <- tools::assertError(SIR(u0      = u0,
