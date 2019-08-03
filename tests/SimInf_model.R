@@ -479,15 +479,25 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 1)
 
-show_expected <- c("Model: SISe3",
-                   "Number of nodes: 6",
-                   "Number of transitions: 6",
-                   "Number of scheduled events: 15",
-                   "")
-
 show_observed <- capture.output(show(model))
 
-stopifnot(identical(show_observed[1:5], show_expected))
+stopifnot(identical(
+    show_observed[1:5],
+    c("Model: SISe3",
+      "Number of nodes: 6",
+      "Number of transitions: 6",
+      "Number of scheduled events: 15",
+      "")))
+
+stopifnot(identical(
+    show_observed[22:28],
+    c("Local data",
+      "----------",
+      "        Min. 1st Qu. Median Mean 3rd Qu. Max.",
+      " end_t1   91      91     91   91      91   91",
+      " end_t2  182     182    182  182     182  182",
+      " end_t3  273     273    273  273     273  273",
+      " end_t4  365     365    365  365     365  365")))
 
 ## Check summary method with events
 summary(run(model))

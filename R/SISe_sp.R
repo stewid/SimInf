@@ -117,8 +117,9 @@ SISe_sp <- function(u0,
                  dimnames = list("phi"))
 
     ldata <- matrix(as.numeric(c(end_t1, end_t2, end_t3, end_t4)),
-                    nrow = 4, byrow = TRUE)
-    ldata <- .Call("SimInf_ldata_sp", ldata, distance, 1L, PACKAGE = "SimInf")
+                    nrow = 4, byrow = TRUE,
+                    dimnames = list(c("end_t1", "end_t2", "end_t3", "end_t4")))
+    ldata <- .Call(SimInf_ldata_sp, ldata, distance, 1L)
 
     gdata <- as.numeric(c(upsilon, gamma, alpha, beta_t1, beta_t2,
                           beta_t3, beta_t4, coupling))
