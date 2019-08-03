@@ -19,7 +19,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-library("SimInf")
+library(SimInf)
 
 ## Specify the number of threads to use.
 set_num_threads(1)
