@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
@@ -75,12 +76,12 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-res <- tools::assertError(run(model))
+res <- assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
-    res <- tools::assertError(run(model))
+    res <- assertError(run(model))
     set_num_threads(1)
     check_error(res, "Unable to sample individuals for event.")
 }
@@ -130,12 +131,12 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0)
 
-res <- tools::assertError(run(model))
+res <- assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
-    res <- tools::assertError(run(model))
+    res <- assertError(run(model))
     set_num_threads(1)
     check_error(res, "Unable to sample individuals for event.")
 }
@@ -166,26 +167,26 @@ events <- data.frame(event      = 3,
                      shift      = 0)
 
 ## We should not be able to create model with prop = 10
-res <- tools::assertError(SISe3(u0        = u0,
-                                tspan     = 0:10,
-                                events    = events,
-                                phi       = rep(0, 2),
-                                upsilon_1 = 0,
-                                upsilon_2 = 0,
-                                upsilon_3 = 0,
-                                gamma_1   = 1,
-                                gamma_2   = 1,
-                                gamma_3   = 1,
-                                alpha     = 0,
-                                beta_t1   = 1,
-                                beta_t2   = 1,
-                                beta_t3   = 1,
-                                beta_t4   = 1,
-                                end_t1    = 91,
-                                end_t2    = 182,
-                                end_t3    = 273,
-                                end_t4    = 365,
-                                epsilon   = 0))
+res <- assertError(SISe3(u0        = u0,
+                         tspan     = 0:10,
+                         events    = events,
+                         phi       = rep(0, 2),
+                         upsilon_1 = 0,
+                         upsilon_2 = 0,
+                         upsilon_3 = 0,
+                         gamma_1   = 1,
+                         gamma_2   = 1,
+                         gamma_3   = 1,
+                         alpha     = 0,
+                         beta_t1   = 1,
+                         beta_t2   = 1,
+                         beta_t3   = 1,
+                         beta_t4   = 1,
+                         end_t1    = 91,
+                         end_t2    = 182,
+                         end_t3    = 273,
+                         end_t4    = 365,
+                         epsilon   = 0))
 check_error(res, "prop must be in the range 0 <= prop <= 1", FALSE)
 
 ## Replace proportion = 10 to proportion = 1
@@ -215,11 +216,11 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 1 with proportion = 10
 model@events@proportion <- 10
 
-res <- tools::assertError(.Call(SimInf:::SISe3_run, model, 1L, NULL))
+res <- assertError(.Call(SimInf:::SISe3_run, model, 1L, NULL))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(.Call(SimInf:::SISe3_run, model, 2L, NULL))
+    res <- assertError(.Call(SimInf:::SISe3_run, model, 2L, NULL))
     check_error(res, "Unable to sample individuals for event.")
 }
 
@@ -249,26 +250,26 @@ events <- data.frame(event      = 3,
                      shift      = 0)
 
 ## We should not be able to create model with proportion = -1
-res <- tools::assertError(SISe3(u0        = u0,
-                                tspan     = 0:10,
-                                events    = events,
-                                phi       = rep(0, 2),
-                                upsilon_1 = 0,
-                                upsilon_2 = 0,
-                                upsilon_3 = 0,
-                                gamma_1   = 1,
-                                gamma_2   = 1,
-                                gamma_3   = 1,
-                                alpha     = 0,
-                                beta_t1   = 1,
-                                beta_t2   = 1,
-                                beta_t3   = 1,
-                                beta_t4   = 1,
-                                end_t1    = 91,
-                                end_t2    = 182,
-                                end_t3    = 273,
-                                end_t4    = 365,
-                                epsilon   = 0))
+res <- assertError(SISe3(u0        = u0,
+                         tspan     = 0:10,
+                         events    = events,
+                         phi       = rep(0, 2),
+                         upsilon_1 = 0,
+                         upsilon_2 = 0,
+                         upsilon_3 = 0,
+                         gamma_1   = 1,
+                         gamma_2   = 1,
+                         gamma_3   = 1,
+                         alpha     = 0,
+                         beta_t1   = 1,
+                         beta_t2   = 1,
+                         beta_t3   = 1,
+                         beta_t4   = 1,
+                         end_t1    = 91,
+                         end_t2    = 182,
+                         end_t3    = 273,
+                         end_t4    = 365,
+                         epsilon   = 0))
 check_error(res, "prop must be in the range 0 <= prop <= 1", FALSE)
 
 ## Replace proportion = -1 with proportion = 0
@@ -298,11 +299,11 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 0 with proportion = -1
 model@events@proportion <- -1
 
-res <- tools::assertError(.Call(SimInf:::SISe3_run, model, 1L, NULL))
+res <- assertError(.Call(SimInf:::SISe3_run, model, 1L, NULL))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
-    res <- tools::assertError(.Call(SimInf:::SISe3_run, model, 2L, NULL))
+    res <- assertError(.Call(SimInf:::SISe3_run, model, 2L, NULL))
     check_error(res, "Unable to sample individuals for event.")
 }
 

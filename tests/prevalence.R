@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
 source("util/check.R")
 
 ## For debugging
@@ -31,7 +32,7 @@ tol <- 1e-8
 model <- SIR(u0 = data.frame(S = c(8, 5, 0), I = c(0, 1, 0), R = c(0, 0, 4)),
              tspan = 1:5, beta = 0.1, gamma = 0.1)
 
-res <- tools::assertError(prevalence(model, I ~ . | R == 0))
+res <- assertError(prevalence(model, I ~ . | R == 0))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
@@ -50,16 +51,16 @@ model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
                                     "S", "I", "R"),
                                   c("1", "2", "3", "4", "5")))
 
-res <- tools::assertError(prevalence(model))
+res <- assertError(prevalence(model))
 check_error(res, "Missing 'formula' argument.")
 
-res <- tools::assertError(prevalence(model, "I~."))
+res <- assertError(prevalence(model, "I~."))
 check_error(res, "'formula' argument is not a 'formula'.")
 
-res <- tools::assertError(prevalence(model, ~I))
+res <- assertError(prevalence(model, ~I))
 check_error(res, "Invalid formula specification.")
 
-res <- tools::assertError(SimInf:::parse_formula_item("", "S"))
+res <- assertError(SimInf:::parse_formula_item("", "S"))
 check_error(res, "No compartments in formula specification.")
 
 p <- prevalence(model, I ~ .)$prevalence
@@ -73,7 +74,7 @@ stopifnot(all(abs(p - c(0 / 4, 0 / 4, 0 / 4, 3 / 10, 3 / 10)) < tol))
 
 stopifnot(all(is.nan(prevalence(model, I ~ . | R == 5)$prevalence)))
 
-res <- tools::assertError(prevalence(model, I ~ . | TRUE == 0))
+res <- assertError(prevalence(model, I ~ . | TRUE == 0))
 check_error(
     res,
     paste("The condition must be either 'TRUE' or",

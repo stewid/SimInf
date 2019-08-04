@@ -21,6 +21,7 @@
 
 library(SimInf)
 library(Matrix)
+library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
@@ -36,13 +37,13 @@ model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
              gamma = 0.077)
 
 ## Check invalid value
-res <- tools::assertError(punchcard(model) <- 5)
+res <- assertError(punchcard(model) <- 5)
 check_error(res, "'value' argument is not a 'data.frame'.")
 
-res <- tools::assertError(punchcard(model) <- data.frame(node = 10, time = 3))
+res <- assertError(punchcard(model) <- data.frame(node = 10, time = 3))
 check_error(res, "Unable to match all nodes.")
 
-res <- tools::assertError(punchcard(model) <- data.frame(node = 3, time = 11))
+res <- assertError(punchcard(model) <- data.frame(node = 3, time = 11))
 check_error(res, "Unable to match all time-points to tspan.")
 
 ## Check sparse U
@@ -221,7 +222,7 @@ stopifnot(identical(trajectory(result), U_exp))
 ## Check that it fails with mis-specified columns.
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              tspan = 1:10, beta = 0.16, gamma = 0.077)
-res <- tools::assertError(punchcard(model) <- data.frame(a = 3, b = 11))
+res <- assertError(punchcard(model) <- data.frame(a = 3, b = 11))
 check_error(res, "'value' must have the columns 'time' and 'node'.")
 
 ## Check that it works to specify the time-points as dates

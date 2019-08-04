@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
@@ -825,23 +826,23 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
 .Call(SimInf:::SISe_run, model, 1L, NULL)
 .Call(SimInf:::SISe_run, model, 1, NULL)
 
-res <- tools::assertError(set_num_threads(-1L))
+res <- assertError(set_num_threads(-1L))
 check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(set_num_threads(-1))
+res <- assertError(set_num_threads(-1))
 check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(set_num_threads("1"))
+res <- assertError(set_num_threads("1"))
 check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(set_num_threads(c(1L, 1L)))
+res <- assertError(set_num_threads(c(1L, 1L)))
 check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(set_num_threads(c(1, 1)))
+res <- assertError(set_num_threads(c(1, 1)))
 check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(set_num_threads(NA_integer_))
+res <- assertError(set_num_threads(NA_integer_))
 check_error(res, "'threads' must be an integer >= 1.")
 
-res <- tools::assertError(set_num_threads(NA_real_))
+res <- assertError(set_num_threads(NA_real_))
 check_error(res, "'threads' must be an integer >= 1.")

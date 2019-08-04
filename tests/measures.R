@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
@@ -46,16 +47,16 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0)
 
-res <- tools::assertError(trajectory(model, compartments = "S", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "S", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-res <- tools::assertError(trajectory(model, compartments = "I", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "I", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 result <- run(model)
 result
 
-res <- tools::assertError(trajectory(result, I ~ S, as.is = TRUE))
+res <- assertError(trajectory(result, I ~ S, as.is = TRUE))
 check_error(res, "Invalid formula specification of 'compartments'.")
 
 stopifnot(identical(
@@ -112,10 +113,10 @@ model <- SISe_sp(u0       = data.frame(S = 99, I = 1),
                  coupling = 0,
                  distance = distance_matrix(1, 1, 1))
 
-res <- tools::assertError(trajectory(model, compartments = "S", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "S", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-res <- tools::assertError(trajectory(model, compartments = "I", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "I", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 result <- run(model)
@@ -181,10 +182,10 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0.000011)
 
-res <- tools::assertError(trajectory(model, compartments = "S_1", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "S_1", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-res <- tools::assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 result <- run(model)
@@ -252,10 +253,10 @@ model <- SISe3_sp(u0        = u0,
                   coupling = 0,
                   distance = distance_matrix(1:10, 1:10, 1))
 
-res <- tools::assertError(trajectory(model, compartments = "S_1", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "S_1", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-res <- tools::assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 result <- run(model)

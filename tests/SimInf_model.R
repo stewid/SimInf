@@ -21,6 +21,7 @@
 
 library(SimInf)
 library(Matrix)
+library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
@@ -195,13 +196,13 @@ stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "'gdata' must be a double vector."))
 
 ## Check v0
-res <- tools::assertError(SimInf_model(G     = G,
-                                       S     = S,
-                                       U     = U,
-                                       ldata = matrix(rep(0, Nn), nrow = 1),
-                                       tspan = c(1, 2),
-                                       u0    = u0,
-                                       v0    = 1))
+res <- assertError(SimInf_model(G     = G,
+                                S     = S,
+                                U     = U,
+                                ldata = matrix(rep(0, Nn), nrow = 1),
+                                tspan = c(1, 2),
+                                u0    = u0,
+                                v0    = 1))
 check_error(res, "v0 must be a numeric matrix.")
 res <- SimInf_model(G     = G,
                     S     = S,
@@ -213,31 +214,31 @@ res <- SimInf_model(G     = G,
                                    dimnames = list("phi")))
 
 ## Check tspan
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(1),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(1),
+                       u0    = u0))
 check_error(res, "Input time-span must be an increasing vector.", FALSE)
 
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(c(3, 2, 1)),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(c(3, 2, 1)),
+                       u0    = u0))
 check_error(res, "Input time-span must be an increasing vector.", FALSE)
 
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = c(1, NA, 3),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = c(1, NA, 3),
+                       u0    = u0))
 check_error(res, "Input time-span must be an increasing vector.", FALSE)
 
 ## Check that tspan can be a Date vector
@@ -256,13 +257,13 @@ stopifnot(identical(res@tspan,
                                          "2017-01-03"))))
 
 ## Check u0
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(1:10),
-                              u0    = u0 * -1L))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(1:10),
+                       u0    = u0 * -1L))
 check_error(res, "Initial state 'u0' has negative elements.", FALSE)
 
 ## Change storage mode of u0 to double.
@@ -281,105 +282,105 @@ SimInf_model(G     = G,
 u0_double <- u0
 storage.mode(u0_double) <- "double"
 u0_double <- 1.2 * u0_double
-res <- tools::assertError(SimInf_model(G     = G,
-                                       S     = S,
-                                       U     = U,
-                                       ldata = matrix(rep(0, Nn), nrow = 1),
-                                       tspan = as.numeric(1:10),
-                                       u0    = u0_double))
+res <- assertError(SimInf_model(G     = G,
+                                S     = S,
+                                U     = U,
+                                ldata = matrix(rep(0, Nn), nrow = 1),
+                                tspan = as.numeric(1:10),
+                                u0    = u0_double))
 check_error(res, "u0 must be an integer matrix.")
 
 ## Change u0 to vector. Should raise an error.
-res <- tools::assertError(SimInf_model(G     = G,
-                                       S     = S,
-                                       U     = U,
-                                       ldata = matrix(rep(0, Nn), nrow = 1),
-                                       tspan = as.numeric(1:10),
-                                       u0    = as.numeric(u0)))
+res <- assertError(SimInf_model(G     = G,
+                                S     = S,
+                                U     = U,
+                                ldata = matrix(rep(0, Nn), nrow = 1),
+                                tspan = as.numeric(1:10),
+                                u0    = as.numeric(u0)))
 check_error(res, "u0 must be an integer matrix.")
 
 ## Check S
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S * 1.1,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(1:10),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S * 1.1,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(1:10),
+                       u0    = u0))
 check_error(res, "'S' matrix must be an integer matrix.", FALSE)
 
 ## Check G
 ## Error: Wrong size of dependency graph
-res <- tools::assertError(new("SimInf_model",
-                              G     = G[-1, ],
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(1:10),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G[-1, ],
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(1:10),
+                       u0    = u0))
 check_error(res, "Wrong size of dependency graph.", FALSE)
 
 ## Check specication of transition
 rownames(G) <- NULL
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(1:10),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(1:10),
+                       u0    = u0))
 check_error(res, "'G' must have rownames that specify transitions.", FALSE)
 
 rownames(G) <- c("", "  ", "E -> F")
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(1:10),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(1:10),
+                       u0    = u0))
 check_error(res, "'G' must have rownames that specify transitions.", FALSE)
 
 rownames(G) <- c("A -> B", "C -> D", "E ->")
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(1:10),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(1:10),
+                       u0    = u0))
 check_error(res, "'G' rownames have invalid transitions.", FALSE)
 
 rownames(G) <- c("A -> B", "C -> D", "E ->")
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(1:10),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(1:10),
+                       u0    = u0))
 check_error(res, "'G' rownames have invalid transitions.", FALSE)
 
 rownames(G) <- c("A -> B", "C -> D", "E -> G")
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              tspan = as.numeric(1:10),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       tspan = as.numeric(1:10),
+                       u0    = u0))
 check_error(res, "'G' and 'S' must have identical compartments", FALSE)
 rownames(G) <- c("A -> B", "C -> D", "E -> F")
 
 ## Check gdata
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = matrix(rep(0, Nn), nrow = 1),
-                              gdata = 1L,
-                              tspan = as.numeric(1:10),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = matrix(rep(0, Nn), nrow = 1),
+                       gdata = 1L,
+                       tspan = as.numeric(1:10),
+                       u0    = u0))
 check_error(res, "'gdata' must be a double vector.", FALSE)
 
 ## Check ldata
@@ -387,13 +388,13 @@ ldata <- matrix(rep(0, Nn), nrow = 1)
 ldata <- ldata[, 1:3, drop = FALSE]
 
 ## Wrong size of ldata matrix
-res <- tools::assertError(new("SimInf_model",
-                              G     = G,
-                              S     = S,
-                              U     = U,
-                              ldata = ldata,
-                              tspan = as.numeric(1:10),
-                              u0    = u0))
+res <- assertError(new("SimInf_model",
+                       G     = G,
+                       S     = S,
+                       U     = U,
+                       ldata = ldata,
+                       tspan = as.numeric(1:10),
+                       u0    = u0))
 check_error(res, "The number of nodes in 'u0' and 'ldata' must match.", FALSE)
 
 ## Check initial state
@@ -405,7 +406,7 @@ u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5),
                  I_3 = c(0, 0, 0, 0, 0, 0))
 
 ## 'u0' is NULL
-res <- tools::assertError(SimInf_model())
+res <- assertError(SimInf_model())
 check_error(res, "'u0' is NULL.")
 
 ## Check first lines of show method without events
@@ -548,12 +549,12 @@ U_double <- U
 storage.mode(U_double) <- "double"
 U_double <- U_double * 1.2
 
-res <- tools::assertError(SimInf_model(G     = G,
-                                       S     = S,
-                                       U     = U_double,
-                                       ldata = matrix(rep(0, Nn), nrow = 1),
-                                       tspan = as.numeric(1:10),
-                                       u0    = u0))
+res <- assertError(SimInf_model(G     = G,
+                                S     = S,
+                                U     = U_double,
+                                ldata = matrix(rep(0, Nn), nrow = 1),
+                                tspan = as.numeric(1:10),
+                                u0    = u0))
 check_error(res, "U must be an integer.")
 
 ## Check U. Should not raise an error if U is an integer vector of length 0
@@ -565,12 +566,12 @@ SimInf_model(G     = G,
              u0    = u0)
 
 ## Check U. Should raise error if U is an integer vector of length > 0
-res <- tools::assertError(SimInf_model(G     = G,
-                                       S     = S,
-                                       U     = c(1L),
-                                       ldata = matrix(rep(0, Nn), nrow = 1),
-                                       tspan = as.numeric(1:10),
-                                       u0    = u0))
+res <- assertError(SimInf_model(G     = G,
+                                S     = S,
+                                U     = c(1L),
+                                ldata = matrix(rep(0, Nn), nrow = 1),
+                                tspan = as.numeric(1:10),
+                                u0    = u0))
 check_error(res, "U must be equal to 0 x 0 matrix.")
 
 ## Check V. Change storage mode of V to double.
@@ -597,23 +598,23 @@ SimInf_model(G     = G,
 V_character <- V
 storage.mode(V_character) <- "character"
 
-res <- tools::assertError(SimInf_model(G     = G,
-                                       S     = S,
-                                       U     = U,
-                                       V     = V_character,
-                                       ldata = matrix(rep(0, Nn), nrow = 1),
-                                       tspan = as.numeric(1:10),
-                                       u0    = u0))
+res <- assertError(SimInf_model(G     = G,
+                                S     = S,
+                                U     = U,
+                                V     = V_character,
+                                ldata = matrix(rep(0, Nn), nrow = 1),
+                                tspan = as.numeric(1:10),
+                                u0    = u0))
 check_error(res, "V must be numeric.")
 
 ## Check V. Should raise error if V is a vector of length > 0
-res <- tools::assertError(SimInf_model(G     = G,
-                                       S     = S,
-                                       U     = U,
-                                       V     = 1,
-                                       ldata = matrix(rep(0, Nn), nrow = 1),
-                                       tspan = as.numeric(1:10),
-                                       u0    = u0))
+res <- assertError(SimInf_model(G     = G,
+                                S     = S,
+                                U     = U,
+                                V     = 1,
+                                ldata = matrix(rep(0, Nn), nrow = 1),
+                                tspan = as.numeric(1:10),
+                                u0    = u0))
 check_error(res, "V must be equal to 0 x 0 matrix.")
 
 ## Check V. Should not raise an error if V is an integer vector of length 0
@@ -642,7 +643,7 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-res <- tools::assertError(plot(model))
+res <- assertError(plot(model))
 check_error(res, "Please run the model first, the 'U' matrix is empty.")
 
 ## Check that the SimInf_model initialisation fails if the events
@@ -654,58 +655,58 @@ u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5),
                  S_3 = c(0, 1, 2, 3, 4, 5),
                  I_3 = c(0, 0, 0, 0, 0, 0))
 
-res <- tools::assertError(model <- SISe3(u0        = u0,
-                                         tspan     = 0:10,
-                                         events    = "events",
-                                         phi       = rep(1, 6),
-                                         upsilon_1 = 1,
-                                         upsilon_2 = 1,
-                                         upsilon_3 = 1,
-                                         gamma_1   = 1,
-                                         gamma_2   = 1,
-                                         gamma_3   = 1,
-                                         alpha     = 1,
-                                         beta_t1   = 1,
-                                         beta_t2   = 1,
-                                         beta_t3   = 1,
-                                         beta_t4   = 1,
-                                         end_t1    = 91,
-                                         end_t2    = 182,
-                                         end_t3    = 273,
-                                         end_t4    = 365,
-                                         epsilon   = 1))
+res <- assertError(model <- SISe3(u0        = u0,
+                                  tspan     = 0:10,
+                                  events    = "events",
+                                  phi       = rep(1, 6),
+                                  upsilon_1 = 1,
+                                  upsilon_2 = 1,
+                                  upsilon_3 = 1,
+                                  gamma_1   = 1,
+                                  gamma_2   = 1,
+                                  gamma_3   = 1,
+                                  alpha     = 1,
+                                  beta_t1   = 1,
+                                  beta_t2   = 1,
+                                  beta_t3   = 1,
+                                  beta_t4   = 1,
+                                  end_t1    = 91,
+                                  end_t2    = 182,
+                                  end_t3    = 273,
+                                  end_t4    = 365,
+                                  epsilon   = 1))
 check_error(res, "'events' must be NULL or a data.frame.")
 
 ## Check arguments to 'U' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 result <- run(model)
-res <- tools::assertError(trajectory(result, compartments = c("A", "S")))
+res <- assertError(trajectory(result, compartments = c("A", "S")))
 check_error(res, "Non-existing compartment(s) in model: 'A'.")
-res <- tools::assertError(trajectory(result, node = c("A", "S")))
+res <- assertError(trajectory(result, node = c("A", "S")))
 check_error(res, "'node' must be integer.")
-res <- tools::assertError(trajectory(result, node = 3.4))
+res <- assertError(trajectory(result, node = 3.4))
 check_error(res, "'node' must be integer.")
-res <- tools::assertError(trajectory(result, node = 0))
+res <- assertError(trajectory(result, node = 0))
 check_error(res, "'node' must be integer > 0.")
-res <- tools::assertError(trajectory(result, node = 10))
+res <- assertError(trajectory(result, node = 10))
 check_error(res, "'node' must be integer <= number of nodes.")
 
 ## Check arguments to 'prevalence' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 result <- run(model)
-res <- tools::assertError(prevalence(result, A + S ~ S))
+res <- assertError(prevalence(result, A + S ~ S))
 check_error(res, "Non-existing compartment(s) in model: 'A'.")
-res <- tools::assertError(prevalence(result, S ~ A + S))
+res <- assertError(prevalence(result, S ~ A + S))
 check_error(res, "Non-existing compartment(s) in model: 'A'.")
-res <- tools::assertError(prevalence(result, I ~ S + I + R, node = c("A", "S")))
+res <- assertError(prevalence(result, I ~ S + I + R, node = c("A", "S")))
 check_error(res, "'node' must be integer.")
-res <- tools::assertError(prevalence(result, I ~ S + I + R, node = 3.4))
+res <- assertError(prevalence(result, I ~ S + I + R, node = 3.4))
 check_error(res, "'node' must be integer.")
-res <- tools::assertError(prevalence(result, I ~ S + I + R, node = 0))
+res <- assertError(prevalence(result, I ~ S + I + R, node = 0))
 check_error(res, "'node' must be integer > 0.")
-res <- tools::assertError(prevalence(result, I ~ S + I + R, node = 10))
+res <- assertError(prevalence(result, I ~ S + I + R, node = 10))
 check_error(res, "'node' must be integer <= number of nodes.")
 
 ## Check 'gdata'
@@ -716,33 +717,33 @@ stopifnot(identical(gdata(model), c(beta = 2, gamma = 4)))
 gdata(model, "beta") <- 6
 stopifnot(identical(gdata(model), c(beta = 6, gamma = 4)))
 
-res <- tools::assertError(gdata(model) <- 6)
+res <- assertError(gdata(model) <- 6)
 check_error(res, "Missing 'parameter' argument.")
 
-res <- tools::assertError(gdata(model, "beta") <- "6")
+res <- assertError(gdata(model, "beta") <- "6")
 check_error(res, "'value' argument must be a numeric.")
 
-res <- tools::assertError(gdata(model, 5) <- 6)
+res <- assertError(gdata(model, 5) <- 6)
 check_error(res, "'parameter' argument must be a character.")
 
-res <- tools::assertError("gdata<-" (model, "beta"))
+res <- assertError("gdata<-" (model, "beta"))
 check_error(res, "Missing 'value' argument.")
 
 ## Check 'ldata'
 model@ldata <- matrix(1, dimnames = list("test", NULL))
-res <- tools::assertError(ldata(5))
+res <- assertError(ldata(5))
 check_error(res, "'model' argument is not a 'SimInf_model'.")
 
-res <- tools::assertError(ldata(model))
+res <- assertError(ldata(model))
 check_error(res, "Missing 'node' argument.")
 
-res <- tools::assertError(ldata(model, "0"))
+res <- assertError(ldata(model, "0"))
 check_error(res, "Invalid 'node' argument.")
 
-res <- tools::assertError(ldata(model, 0))
+res <- assertError(ldata(model, 0))
 check_error(res, "Invalid 'node' argument.")
 
-res <- tools::assertError(ldata(model, c(0, 0)))
+res <- assertError(ldata(model, c(0, 0)))
 check_error(res, "Invalid 'node' argument.")
 
 ldata(model, 1)

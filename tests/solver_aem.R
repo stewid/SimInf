@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
@@ -29,17 +30,17 @@ set_num_threads(1)
 sessionInfo()
 
 ## Check invalid u0
-res <- tools::assertError(SISe(u0 = "u0"))
+res <- assertError(SISe(u0 = "u0"))
 check_error(res, "Missing columns in u0.")
 
 u0 <- data.frame(S  = c(9, 9, 9, 9, 9, 10),
                  I  = c(1, 1, 1, 1, 1, 0))
 
 ## Check missing columns in u0
-res <- tools::assertError(SISe(u0 = u0[, "I", drop = FALSE]))
+res <- assertError(SISe(u0 = u0[, "I", drop = FALSE]))
 check_error(res, "Missing columns in u0.")
 
-res <- tools::assertError(SISe(u0 = u0[, "S", drop = FALSE]))
+res <- assertError(SISe(u0 = u0[, "S", drop = FALSE]))
 check_error(res, "Missing columns in u0.")
 
 ## Check 'susceptible' and 'infected' compartments
@@ -156,7 +157,7 @@ if (SimInf:::have_openmp()) {
 }
 
 ## Check solver argument
-tools::assertError(run(model, solver = 1))
-tools::assertError(run(model, solver = c("ssa", "aem")))
-tools::assertError(run(model, solver = NA_character_))
-tools::assertError(run(model, solver = "non-existing-solver"))
+assertError(run(model, solver = 1))
+assertError(run(model, solver = c("ssa", "aem")))
+assertError(run(model, solver = NA_character_))
+assertError(run(model, solver = "non-existing-solver"))

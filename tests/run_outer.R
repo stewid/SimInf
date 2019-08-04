@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
 source("util/check.R")
 
 ## For debugging
@@ -48,7 +49,7 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0.000011)
 names(model@gdata) <- NULL
-res <- tools::assertError(
+res <- assertError(
     run_outer(x, y, model, alpha ~ upsilon, function(m) 1))
 check_error(res, "'names(model@gdata)' is NULL.")
 
@@ -69,7 +70,7 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-res <- tools::assertError(run_outer(x, y, model, NULL, function(m) 1))
+res <- assertError(run_outer(x, y, model, NULL, function(m) 1))
 check_error(res, "'formula' argument is NULL.")
 
 ## Check FUN argument
@@ -89,7 +90,7 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-res <- tools::assertError(run_outer(x, y, model, a ~ b, NULL))
+res <- assertError(run_outer(x, y, model, a ~ b, NULL))
 check_error(res, "'FUN' argument is NULL.")
 
 ## Check lhs
@@ -109,11 +110,11 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-res <- tools::assertError(
+res <- assertError(
     run_outer(x, y, model,  ~ upsilon, function(m) 1))
 check_error(res, "Invalid parameters on the left side of the formula.")
 
-res <- tools::assertError(
+res <- assertError(
     run_outer(x, y, model, dummy ~ upsilon, function(m) 1))
 check_error(res, "Unmatched parameters on the left hand side of the formula.")
 
@@ -134,12 +135,11 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-res <- tools::assertError(
-                  run_outer(x, y, model, alpha ~ upsilon:alpha, function(m) 1))
+res <- assertError(
+    run_outer(x, y, model, alpha ~ upsilon:alpha, function(m) 1))
 check_error(res, "Invalid parameters on the right side of the formula.")
 
-res <- tools::assertError(
-                  run_outer(x, y, model, alpha ~ dummy, function(m) 1))
+res <- assertError(run_outer(x, y, model, alpha ~ dummy, function(m) 1))
 check_error(res, "Unmatched parameters on the right side of the formula.")
 
 ## Check run_outer
@@ -196,43 +196,43 @@ z_obs <- run_outer(x, y, model, upsilon ~ beta_t1, run_f, N = 3)
 stopifnot(all(abs(z_obs - z_exp) < tol))
 
 ## Check missing 'x'
-res <- tools::assertError(
-                  run_outer(y = y, model = model,
-                            formula = alpha ~ upsilon,
-                            FUN = run_f, N = 3))
+res <- assertError(
+    run_outer(y = y, model = model,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
 check_error(res, "Missing 'x' argument.")
 
 ## Check non-numeric 'x'
-res <- tools::assertError(
-                  run_outer(x = "x", y = y, model = model,
-                            formula = alpha ~ upsilon,
-                            FUN = run_f, N = 3))
+res <- assertError(
+    run_outer(x = "x", y = y, model = model,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
 check_error(res, "'x' argument is not numeric.")
 
 ## Check missing 'y'
-res <- tools::assertError(
-                  run_outer(x = x, model = model,
-                            formula = alpha ~ upsilon,
-                            FUN = run_f, N = 3))
+res <- assertError(
+    run_outer(x = x, model = model,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
 check_error(res, "Missing 'y' argument.")
 
 ## Check non-numeric 'y'
-res <- tools::assertError(
-                  run_outer(x = x, y = "y", model = model,
-                            formula = alpha ~ upsilon,
-                            FUN = run_f, N = 3))
+res <- assertError(
+    run_outer(x = x, y = "y", model = model,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
 check_error(res, "'y' argument is not numeric.")
 
 ## Check missing 'model'
-res <- tools::assertError(
-                  run_outer(x = x, y = y,
-                            formula = alpha ~ upsilon,
-                            FUN = run_f, N = 3))
+res <- assertError(
+    run_outer(x = x, y = y,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
 check_error(res, "Missing 'model' argument.")
 
 ## Check non-SimInf_model 'model'
-res <- tools::assertError(
-                  run_outer(x = x, y = y, model = "model",
-                            formula = alpha ~ upsilon,
-                            FUN = run_f, N = 3))
+res <- assertError(
+    run_outer(x = x, y = y, model = "model",
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
 check_error(res, "'model' argument is not a 'SimInf_model'.")

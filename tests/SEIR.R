@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
@@ -29,7 +30,7 @@ set_num_threads(1)
 sessionInfo()
 
 ## Check invalid u0
-res <- tools::assertError(SEIR(u0 = "u0"))
+res <- assertError(SEIR(u0 = "u0"))
 check_error(res, "Missing columns in u0.")
 
 u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
@@ -38,20 +39,20 @@ u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
                  R  = c(0, 0, 0, 0, 0, 0))
 
 ## Check missing columns in u0
-res <- tools::assertError(SEIR(u0 = u0[, c("E", "I", "R"), drop = FALSE]))
+res <- assertError(SEIR(u0 = u0[, c("E", "I", "R"), drop = FALSE]))
 check_error(res, "Missing columns in u0.")
 
-res <- tools::assertError(SEIR(u0 = u0[, c("S", "I", "R"), drop = FALSE]))
+res <- assertError(SEIR(u0 = u0[, c("S", "I", "R"), drop = FALSE]))
 check_error(res, "Missing columns in u0.")
 
-res <- tools::assertError(SEIR(u0 = u0[, c("S", "E", "R"), drop = FALSE]))
+res <- assertError(SEIR(u0 = u0[, c("S", "E", "R"), drop = FALSE]))
 check_error(res, "Missing columns in u0.")
 
-res <- tools::assertError(SEIR(u0 = u0[, c("S", "E", "I"), drop = FALSE]))
+res <- assertError(SEIR(u0 = u0[, c("S", "E", "I"), drop = FALSE]))
 check_error(res, "Missing columns in u0.")
 
 ## Check missing beta
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                epsilon = 0.5,
@@ -59,7 +60,7 @@ res <- tools::assertError(SEIR(u0      = u0,
 check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check missing epsilon
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
@@ -67,7 +68,7 @@ res <- tools::assertError(SEIR(u0      = u0,
 check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check missing gamma
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
@@ -75,7 +76,7 @@ res <- tools::assertError(SEIR(u0      = u0,
 check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check non-numeric beta
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = "0.5",
@@ -84,7 +85,7 @@ res <- tools::assertError(SEIR(u0      = u0,
 check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check non-numeric epsilon
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
@@ -93,7 +94,7 @@ res <- tools::assertError(SEIR(u0      = u0,
 check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check non-numeric gamma
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
@@ -102,7 +103,7 @@ res <- tools::assertError(SEIR(u0      = u0,
 check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check that length of beta equals 1
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = c(0.5, 0.5),
@@ -111,7 +112,7 @@ res <- tools::assertError(SEIR(u0      = u0,
 check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check that length of epsilon equals 1
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
@@ -120,7 +121,7 @@ res <- tools::assertError(SEIR(u0      = u0,
 check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check that length of gamma equals 1
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
@@ -242,7 +243,7 @@ model@events@E <- as(diag(4), "dgCMatrix")
 model@events@select <- rep(1:4, length.out = length(model@events@select))
 
 # Check that this fails because rownames (compartments) are missing
-res <- tools::assertError(run(model))
+res <- assertError(run(model))
 check_error(
     res,
     "'S' and 'E' must have rownames matching the compartments.",
@@ -410,7 +411,7 @@ stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 
 ## Check 'V'
-res <- tools::assertError(trajectory(result, "phi"))
+res <- assertError(trajectory(result, "phi"))
 check_error(res, "Non-existing compartment(s) in model: 'phi'.")
 
 ## Check data
@@ -418,11 +419,11 @@ stopifnot(identical(nrow(events_SEIR()), 466692L))
 stopifnot(identical(nrow(u0_SEIR()), 1600L))
 
 ## Try to plot non-extisting compartment.
-res <- tools::assertError(plot(result, compartments = "X"))
+res <- assertError(plot(result, compartments = "X"))
 check_error(res, "'compartments' must exist in the model.")
 
 ## Try to plot with invalid range argument.
-res <- tools::assertError(plot(result, range = 1.2))
+res <- assertError(plot(result, range = 1.2))
 check_error(res, "'range' must be FALSE or a value between 0 and 1.")
 
 ## Check SEIR plot method
@@ -486,10 +487,10 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SEIR run function fails for a misspecified SEIR model
-res <- tools::assertError(.Call(SimInf:::SEIR_run, NULL, NULL, NULL))
+res <- assertError(.Call(SimInf:::SEIR_run, NULL, NULL, NULL))
 check_error(res, "Invalid model.")
 
-res <- tools::assertError(.Call(SimInf:::SEIR_run, "SEIR", NULL, NULL))
+res <- assertError(.Call(SimInf:::SEIR_run, "SEIR", NULL, NULL))
 check_error(res, "Invalid model.")
 
 ## Check that an invalid rate error is raised during the simulation.
@@ -499,7 +500,7 @@ model <- SEIR(u0 = data.frame(S = rep(100, 2), E = 0, I = 10, R = 0),
               epsilon = -0.3,
               gamma = 0.077)
 set.seed(1)
-res <- tools::assertError(run(model, solver = "ssm"))
+res <- assertError(run(model, solver = "ssm"))
 check_error(res, "Invalid rate detected (non-finite or < 0.0).")
-res <- tools::assertError(run(model, solver = "aem"))
+res <- assertError(run(model, solver = "aem"))
 check_error(res, "Invalid rate detected (non-finite or < 0.0).")

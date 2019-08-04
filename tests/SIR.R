@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
@@ -29,7 +30,7 @@ set_num_threads(1)
 sessionInfo()
 
 ## Check invalid u0
-res <- tools::assertError(SIR(u0 = "u0"))
+res <- assertError(SIR(u0 = "u0"))
 check_error(res, "Missing columns in u0.")
 
 u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
@@ -37,59 +38,59 @@ u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
                  R  = c(0, 0, 0, 0, 0, 0))
 
 ## Check missing columns in u0
-res <- tools::assertError(SIR(u0 = u0[, c("I", "R"), drop = FALSE]))
+res <- assertError(SIR(u0 = u0[, c("I", "R"), drop = FALSE]))
 check_error(res, "Missing columns in u0.")
 
-res <- tools::assertError(SIR(u0 = u0[, c("S", "R"), drop = FALSE]))
+res <- assertError(SIR(u0 = u0[, c("S", "R"), drop = FALSE]))
 check_error(res, "Missing columns in u0.")
 
-res <- tools::assertError(SIR(u0 = u0[, c("S", "I"), drop = FALSE]))
+res <- assertError(SIR(u0 = u0[, c("S", "I"), drop = FALSE]))
 check_error(res, "Missing columns in u0.")
 
 ## Check missing beta
-res <- tools::assertError(SIR(u0     = u0,
-                              tspan  = seq_len(10) - 1,
-                              events = NULL,
-                              gamma  = 0.5))
+res <- assertError(SIR(u0     = u0,
+                       tspan  = seq_len(10) - 1,
+                       events = NULL,
+                       gamma  = 0.5))
 check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check missing gamma
-res <- tools::assertError(SIR(u0     = u0,
-                              tspan  = seq_len(10) - 1,
-                              events = NULL,
-                              beta   = 0.5))
+res <- assertError(SIR(u0     = u0,
+                       tspan  = seq_len(10) - 1,
+                       events = NULL,
+                       beta   = 0.5))
 check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check non-numeric beta
-res <- tools::assertError(SIR(u0      = u0,
-                              tspan   = seq_len(10) - 1,
-                              events  = NULL,
-                              beta    = "0.5",
-                              gamma   = 0.1))
+res <- assertError(SIR(u0      = u0,
+                       tspan   = seq_len(10) - 1,
+                       events  = NULL,
+                       beta    = "0.5",
+                       gamma   = 0.1))
 check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check non-numeric gamma
-res <- tools::assertError(SIR(u0      = u0,
-                              tspan   = seq_len(10) - 1,
-                              events  = NULL,
-                              beta    = 0.5,
-                              gamma   = "0.1"))
+res <- assertError(SIR(u0      = u0,
+                       tspan   = seq_len(10) - 1,
+                       events  = NULL,
+                       beta    = 0.5,
+                       gamma   = "0.1"))
 check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check that length of beta equals 1
-res <- tools::assertError(SIR(u0      = u0,
-                              tspan   = seq_len(10) - 1,
-                              events  = NULL,
-                              beta    = c(0.5, 0.5),
-                              gamma   = 0.1))
+res <- assertError(SIR(u0      = u0,
+                       tspan   = seq_len(10) - 1,
+                       events  = NULL,
+                       beta    = c(0.5, 0.5),
+                       gamma   = 0.1))
 check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check that length of gamma equals 1
-res <- tools::assertError(SIR(u0      = u0,
-                              tspan   = seq_len(10) - 1,
-                              events  = NULL,
-                              beta    = 0.5,
-                              gamma   = c(0.1, 0.1)))
+res <- assertError(SIR(u0      = u0,
+                       tspan   = seq_len(10) - 1,
+                       events  = NULL,
+                       beta    = 0.5,
+                       gamma   = c(0.1, 0.1)))
 check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Extract data from the 'suscpetible', 'infected' and 'recovered'
@@ -185,17 +186,17 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SIR run function fails for misspecified SIR model
-res <- tools::assertError(.Call(SimInf:::SIR_run, NULL, NULL, NULL))
+res <- assertError(.Call(SimInf:::SIR_run, NULL, NULL, NULL))
 check_error(res, "Invalid model.")
 
-res <- tools::assertError(.Call(SimInf:::SIR_run, "SIR", NULL, NULL))
+res <- assertError(.Call(SimInf:::SIR_run, "SIR", NULL, NULL))
 check_error(res, "Invalid model.")
 
 ## Check events method
-res <- tools::assertError(events())
+res <- assertError(events())
 check_error(res, "Missing 'model' argument.")
 
-res <- tools::assertError(events(5))
+res <- assertError(events(5))
 check_error(res, "'model' argument is not a 'SimInf_model'.")
 
 model <- SIR(u0     = u0_SIR(),
@@ -211,8 +212,8 @@ model <- SIR(u0 = data.frame(S = rep(99, 2), I = 1, R = 0),
              beta = 0.16,
              gamma = -0.077)
 
-res <- tools::assertError(run(model, solver = "ssm"))
+res <- assertError(run(model, solver = "ssm"))
 check_error(res, "Invalid rate detected (non-finite or < 0.0).")
 
-res <- tools::assertError(run(model, solver = "aem"))
+res <- assertError(run(model, solver = "aem"))
 check_error(res, "Invalid rate detected (non-finite or < 0.0).")

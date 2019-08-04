@@ -20,6 +20,8 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(Matrix)
+library(tools)
 source("util/check.R")
 
 ## For debugging
@@ -63,50 +65,50 @@ stopifnot(identical(d_obs@i, d@i))
 stopifnot(identical(d_obs@p, d@p))
 stopifnot(all(abs(d_obs@x - d@x) < tol))
 
-res <- tools::assertError(distance_matrix(1:10, 1:10, 3, "min_dist"))
+res <- assertError(distance_matrix(1:10, 1:10, 3, "min_dist"))
 check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
-res <- tools::assertError(distance_matrix(1:10, 1:10, 3, c(1, 2)))
+res <- assertError(distance_matrix(1:10, 1:10, 3, c(1, 2)))
 check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
-res <- tools::assertError(distance_matrix(1:10, 1:10, 3, -1))
+res <- assertError(distance_matrix(1:10, 1:10, 3, -1))
 check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
 ## Check 'data' argument to C function 'SimInf_ldata_sp'
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, NULL, d, 0L))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, NULL, d, 0L))
 check_error(res, "Invalid 'data' argument.")
 
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, d, d, 0L))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, d, d, 0L))
 check_error(res, "Invalid 'data' argument.")
 
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, 1:10, d, 0L))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, 1:10, d, 0L))
 check_error(res, "Invalid 'data' argument.")
 
 ## Check 'distance' argument to C function 'SimInf_ldata_sp'
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, l, NULL, 0L))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, l, NULL, 0L))
 check_error(res, "Invalid 'distance' argument.")
 
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, l, l, 0L))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, l, l, 0L))
 check_error(res, "Invalid 'distance' argument.")
 
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, l, Matrix::Diagonal(10), 0L))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, l, Diagonal(10), 0L))
 check_error(res, "Invalid 'distance' argument.")
 
 ## Check 'metric' argument to C function 'SimInf_ldata_sp'
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, l, d, NA_integer_))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, l, d, NA_integer_))
 check_error(res, "Invalid 'metric' argument.")
 
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, l, d, NULL))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, l, d, NULL))
 check_error(res, "Invalid 'metric' argument.")
 
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, l, d, 0.0))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, l, d, 0.0))
 check_error(res, "Invalid 'metric' argument.")
 
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, l, d, c(0L, 0L)))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, l, d, c(0L, 0L)))
 check_error(res, "Invalid 'metric' argument.")
 
 ## Check non-equal number of nodes in 'distance' and 'data'
-res <- tools::assertError(.Call(SimInf:::SimInf_ldata_sp, l[, -1], d, 0L))
+res <- assertError(.Call(SimInf:::SimInf_ldata_sp, l[, -1], d, 0L))
 check_error(res, "The number of nodes in 'data' and 'distance' are not equal.")
 
 ## Check 'ldata' with metric equal to degree
@@ -181,7 +183,7 @@ ldata_obs <- .Call(SimInf:::SimInf_ldata_sp, l, d, 2L)
 stopifnot(all(abs(ldata_obs - ldata_exp) < tol))
 
 ## Check identical coordinates
-res <- tools::assertError(
+res <- assertError(
     distance_matrix(x = c(1, 10, 1), y = c(1, 10, 1), cutoff = 20))
 check_error(res, "Identical coordinates. Please provide a minimum distance.")
 

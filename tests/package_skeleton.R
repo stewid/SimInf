@@ -20,16 +20,17 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
 source("util/check.R")
 
 ## For debugging
 sessionInfo()
 
 ## Check missing and invalid model argument
-res <- tools::assertError(package_skeleton())
+res <- assertError(package_skeleton())
 check_error(res, "Missing 'model' argument.")
 
-res <- tools::assertError(package_skeleton(5))
+res <- assertError(package_skeleton(5))
 check_error(res, "'model' argument is not a 'SimInf_model'.")
 
 ## Check missing 'ldata', 'gdata' and 'v0' parameters
@@ -64,7 +65,7 @@ stopifnot(file.exists(file.path(path, "SIR", "R", "model.R")))
 stopifnot(file.exists(file.path(path, "SIR", "src", "model.c")))
 
 ## Check that it fails if path exists
-res <- tools::assertError(package_skeleton(m, name = "SIR", path = path))
+res <- assertError(package_skeleton(m, name = "SIR", path = path))
 check_error(res, "already exists.", FALSE)
 
 ## Cleanup
