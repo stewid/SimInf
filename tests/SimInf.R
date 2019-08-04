@@ -821,9 +821,9 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0.000011)
 
-.Call("SISe_run", model, NULL, NULL, PACKAGE = "SimInf")
-.Call("SISe_run", model, 1L, NULL, PACKAGE = "SimInf")
-.Call("SISe_run", model, 1, NULL, PACKAGE = "SimInf")
+.Call(SimInf:::SISe_run, model, NULL, NULL)
+.Call(SimInf:::SISe_run, model, 1L, NULL)
+.Call(SimInf:::SISe_run, model, 1, NULL)
 
 res <- tools::assertError(set_num_threads(-1L))
 check_error(res, "'threads' must be an integer >= 1.")
