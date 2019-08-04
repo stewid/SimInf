@@ -92,14 +92,6 @@ setMethod("pairs",
 ##' Plot either the median and the quantile range of the counts in all
 ##' nodes, or plot the counts in specified nodes.
 ##' @param x The \code{model} to plot
-##' @param legend The character vector to appear in the
-##'     legend. Default is to use the names of the compartments.
-##' @param col The plotting color for each compartment. Default is
-##'     black.
-##' @param lty The line type for each compartment. Default is the
-##'     sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
-##'     6=twodash.
-##' @param lwd The line width for each compartment. Default is 2.
 ##' @param compartments Character vector with the compartments in the
 ##'     model to include in the plot. Default is \code{NULL}
 ##'     i.e. include all compartments in the model.
@@ -161,12 +153,13 @@ setMethod("pairs",
 ##' plot(result, compartments = "I", node = 1, range = FALSE)
 setMethod("plot",
           signature(x = "SimInf_model"),
-          function(x, legend = NULL, col = NULL, lty = NULL, lwd = 2,
-                   compartments = NULL, node = NULL, range = 0.5, ...) {
+          function(x, compartments = NULL, node = NULL, range = 0.5, ...) {
               if (identical(dim(x@U), c(0L, 0L))) {
                   stop("Please run the model first, the 'U' matrix is empty.",
                        call. = FALSE)
               }
+
+              argv <- list(...)
 
               ## Determine the compartments to include in the plot
               if (is.null(compartments))
@@ -220,15 +213,15 @@ setMethod("plot",
               }
 
               ## Settings for line type
-              if (is.null(lty)) {
+              if (is.null(argv$lty)) {
                   lty <- seq_len(length(compartments))
               } else {
-                  lty <- rep(lty, length.out = length(compartments))
+                  lty <- rep(argv$lty, length.out = length(compartments))
               }
               lty <- rep(lty, length.out = dim(m)[1])
 
               ## Settings for color
-              if (is.null(col)) {
+              if (is.null(argv$col)) {
                   if (length(compartments) > 9) {
                       col <- rainbow(length(compartments))
                   } else if (length(compartments) > 1) {
@@ -240,44 +233,58 @@ setMethod("plot",
                       col <- "black"
                   }
               } else {
-                  col <- rep(col, length.out = length(compartments))
+                  col <- rep(argv$col, length.out = length(compartments))
               }
               col <- rep(col, length.out = dim(m)[1])
 
               ## Settings for the y-axis.
-              ylab <- "N"
+              argv$ylab <- "N"
               if (isTRUE(range)) {
-                  ylim <- c(0, max(mu))
+                  argv$ylim <- c(0, max(mu))
               } else {
-                  ylim <- c(0, max(m))
+                  argv$ylim <- c(0, max(m))
               }
 
               ## Settings for the x-axis
               if (is.null(names(x@tspan))) {
                   xx <- x@tspan
-                  xlab <- "Time"
+                  argv$xlab <- "Time"
               } else {
                   xx <- as.Date(names(x@tspan))
-                  xlab <- "Date"
+                  argv$xlab <- "Date"
               }
+
+              ## Type of plot
+              if (is.null(argv$type))
+                  argv$type <- "l"
+
+              ## The line width for each compartment
+              if (is.null(argv$lwd))
+                  argv$lwd <- 2
 
               savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0),
                              xpd = TRUE)
               on.exit(par(savepar))
 
               ## Plot first line to get a new plot window
-              plot(x = xx, y = m[1, ], type = "l", ylab = ylab, ylim = ylim,
-                   col = col[1], lty = lty[1], lwd = lwd, ...)
+              argv$x <- xx
+              argv$y <- m[1, ]
+              argv$col <- col[1]
+              argv$lty <- lty[1]
+              do.call(plot, argv)
               if (isTRUE(range)) {
                   polygon(x = c(xx, rev(xx)), y = c(mu[1, ], rev(ml[1, ])),
                           col = adjustcolor(col[1], alpha.f = 0.1), border = NA)
               }
-              title(xlab = xlab, outer = TRUE, line = 0)
+              title(xlab = argv$xlab, outer = TRUE, line = 0)
 
               ## Add the rest of the lines to the plot
               for (i in seq_len(dim(m)[1])[-1]) {
-                  lines(x = xx, y = m[i, ], type = "l", lty = lty[i],
-                        col = col[i], lwd = lwd, ...)
+                  argv$x <- xx
+                  argv$y <- m[i, ]
+                  argv$col <- col[i]
+                  argv$lty <- lty[i]
+                  do.call(lines, argv)
                   if (isTRUE(range)) {
                       polygon(x = c(xx, rev(xx)), y = c(mu[i, ], rev(ml[i, ])),
                               col = adjustcolor(col[i], alpha.f = 0.1),
@@ -287,14 +294,15 @@ setMethod("plot",
 
               ## Add the legend below plot. The default legend is the
               ## names of the compartments.
-              if (is.null(legend))
-                  legend <- rownames(x@S)[compartments]
+              if (is.null(argv$legend))
+                  argv$legend <- rownames(x@S)[compartments]
               par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
                   mar = c(0, 0, 0, 0), new = TRUE)
               plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
               legend("bottom", inset = c(0, 0),
                      lty = lty[seq_len(length(compartments))],
                      col = col[seq_len(length(compartments))],
-                     bty = "n", horiz = TRUE, legend = legend, lwd = lwd)
+                     bty = "n", horiz = TRUE, legend = argv$legend,
+                     lwd = argv$lwd)
           }
 )

@@ -5,24 +5,11 @@
 \alias{plot,SimInf_model-method}
 \title{Display the outcome from a simulated trajectory}
 \usage{
-\S4method{plot}{SimInf_model}(x, legend = NULL, col = NULL,
-  lty = NULL, lwd = 2, compartments = NULL, node = NULL,
+\S4method{plot}{SimInf_model}(x, compartments = NULL, node = NULL,
   range = 0.5, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot}
-
-\item{legend}{The character vector to appear in the
-legend. Default is to use the names of the compartments.}
-
-\item{col}{The plotting color for each compartment. Default is
-black.}
-
-\item{lty}{The line type for each compartment. Default is the
-sequence: 1=solid, 2=dashed, 3=dotted, 4=dotdash, 5=longdash,
-6=twodash.}
-
-\item{lwd}{The line width for each compartment. Default is 2.}
 
 \item{compartments}{Character vector with the compartments in the
 model to include in the plot. Default is \code{NULL}
