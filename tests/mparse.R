@@ -418,7 +418,7 @@ stopifnot(identical(model@u0, u0))
 m1 <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                              "D+W->c3*D*W->W+W", "W->c4*W->@"),
              compartments = c("D", "W"),
-             ldata = matrix(c(0.2, 0.3, 0.4, 0.5, 0.6), nrow = 1,
+             ldata = matrix(c(2L, 3L, 4L, 5L, 6L), nrow = 1,
                             dimnames = list("c4", NULL)),
              gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005),
              u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5)
@@ -426,7 +426,7 @@ m1 <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
 m2 <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                              "D+W->c3*D*W->W+W", "W->c4*W->@"),
              compartments = c("D", "W"),
-             ldata = data.frame(c4 = c(0.2, 0.3, 0.4, 0.5, 0.6)),
+             ldata = data.frame(c4 = c(2L, 3L, 4L, 5L, 6L)),
              gdata = data.frame(c1 = 0.5, c2 = 1, c3 = 0.005),
              u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5)
 

@@ -132,7 +132,7 @@ result <- run(model)
 punchcard(result) <- data.frame(time = 4:9, node = 1:6, phi = TRUE)
 result <- run(result)
 stopifnot(identical(dim(result@V), c(0L, 0L)))
-stopifnot(identical(dim(result@V_sparse), c(6L, 10L)))
+stopifnot(identical(dim(trajectory(result, "phi", as.is = TRUE)), c(6L, 10L)))
 punchcard(result) <- NULL
 result <- run(result)
 stopifnot(identical(dim(result@V), c(6L, 10L)))

@@ -436,7 +436,7 @@ unlink(pdf_file)
 ## Check SEIR plot method with range = FALSE
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
-plot(result, range = FALSE)
+plot(result, compartments = "S", lty = 1, range = FALSE)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
