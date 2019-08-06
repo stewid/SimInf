@@ -1,11 +1,20 @@
 # SimInf (development version)
 
+## IMPROVEMENTS
+
+* The 'trajectory' function has been ported to C and parallelized to
+  efficiently transform simulated data from a model to a 'data.frame'.
+
+* Codebase is now tested with the `lintr` package to improve
+  readability.
+
 ## CHANGES
 
-* The name of the internal function that generated the error has been
-  removed from the error message (use `traceback` to print the call
-  stack of the last uncaught error). Additionally, all error messages
-  now ends with a `.` (full stop).
+* To avoid cluttering the error message, the name of the internal
+  function that generated the error has been removed from the error
+  message (use `traceback` to print the call stack of the last
+  uncaught error). Additionally, all error messages now ends with a
+  `.` (full stop).
 
 * Removed the row and column names from the internal matrices U and V
   because they were not used anywhere in the code.
