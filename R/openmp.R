@@ -28,14 +28,16 @@ have_openmp <- function() {
     .Call(SimInf_have_openmp)
 }
 
-##' Specify the number of threads to use
+
+##' Specify the number of threads that SimInf should use
 ##'
-##' If OpenMP is available for parallelization, SimInf uses the
-##' 'omp_get_num_procs()' function and the environmental variables
-##' 'OMP_THREAD_LIMIT', 'OMP_NUM_THREADS', and 'SIMINF_NUM_THREADS' to
-##' determine the maximum number of threads to use in functions that
-##' are parallelized. Additionally, the maximum number of threads can
-##' be controlled by the 'threads' argument.
+##' Set number of threads to be used in SimInf functions that are
+##' parallelized with OpenMP (if available). If OpenMP is available,
+##' SimInf uses the 'omp_get_num_procs()' function and the
+##' environmental variables 'OMP_THREAD_LIMIT', 'OMP_NUM_THREADS', and
+##' 'SIMINF_NUM_THREADS' to determine the maximum number of threads to
+##' use in functions that are parallelized. Additionally, the maximum
+##' number of threads can be controlled by the 'threads' argument.
 ##' @param threads integer with maximum number of threads to use in
 ##'     functions that are parallelized with OpenMP (if
 ##'     available). Default is NULL, i.e. to use all available

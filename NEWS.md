@@ -2,11 +2,14 @@
 
 ## IMPROVEMENTS
 
-* The 'trajectory' function has been ported to C and parallelized to
-  efficiently transform simulated data from a model to a 'data.frame'.
+* The `trajectory` function has been ported to C and parallelized to
+  efficiently transform simulated data from a model to a `data.frame`.
 
 * Codebase is now tested with the `lintr` package to improve
   readability.
+
+* It's now possible to specify what type of plot should be drawn from
+  the simulated data, see the documentation.
 
 ## CHANGES
 
@@ -18,6 +21,9 @@
 
 * Removed the row and column names from the internal matrices U and V
   because they were not used anywhere in the code.
+
+* Renamed the `NEWS` file to `NEWS.md` and changed to use markdown
+  format style.
 
 ## BUG FIXES
 

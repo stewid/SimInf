@@ -2,7 +2,7 @@
 % Please edit documentation in R/openmp.R
 \name{set_num_threads}
 \alias{set_num_threads}
-\title{Specify the number of threads to use}
+\title{Specify the number of threads that SimInf should use}
 \usage{
 set_num_threads(threads = NULL)
 }
@@ -18,10 +18,11 @@ Integer with the maximum number of threads that will be
     used.
 }
 \description{
-If OpenMP is available for parallelization, SimInf uses the
-'omp_get_num_procs()' function and the environmental variables
-'OMP_THREAD_LIMIT', 'OMP_NUM_THREADS', and 'SIMINF_NUM_THREADS' to
-determine the maximum number of threads to use in functions that
-are parallelized. Additionally, the maximum number of threads can
-be controlled by the 'threads' argument.
+Set number of threads to be used in SimInf functions that are
+parallelized with OpenMP (if available). If OpenMP is available,
+SimInf uses the 'omp_get_num_procs()' function and the
+environmental variables 'OMP_THREAD_LIMIT', 'OMP_NUM_THREADS', and
+'SIMINF_NUM_THREADS' to determine the maximum number of threads to
+use in functions that are parallelized. Additionally, the maximum
+number of threads can be controlled by the 'threads' argument.
 }

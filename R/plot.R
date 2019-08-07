@@ -91,15 +91,15 @@ setMethod("pairs",
 ##'
 ##' Plot either the median and the quantile range of the counts in all
 ##' nodes, or plot the counts in specified nodes.
-##' @param x The \code{model} to plot
+##' @param x The \code{model} to plot.
 ##' @param compartments Character vector with the compartments in the
 ##'     model to include in the plot. Default is \code{NULL}
 ##'     i.e. include all compartments in the model.
-##' @param node indices specifying the nodes to include when plotting
+##' @param node Indices specifying the nodes to include when plotting
 ##'     data. Plot one line for each node. Default (\code{node =
 ##'     NULL}) is to extract data from all nodes and plot the median
 ##'     count for the specified compartments.
-##' @param range show the quantile range of the count in each
+##' @param range Show the quantile range of the count in each
 ##'     compartment. Default is to show the interquartile range
 ##'     i.e. the middle 50\% of the count in transparent color. The
 ##'     median value is shown in the same color. Use \code{range =
@@ -148,6 +148,9 @@ setMethod("pairs",
 ##' ## and recovered individuals in the first
 ##' ## three nodes.
 ##' plot(result, node = 1:3, range = FALSE)
+##'
+##' ## Use a stair step plot type instead.
+##' plot(result, node = 1:3, range = FALSE, type = "s")
 ##'
 ##' ## Plot the number of infected individuals in the first node.
 ##' plot(result, compartments = "I", node = 1, range = FALSE)
