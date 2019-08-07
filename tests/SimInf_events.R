@@ -24,9 +24,6 @@ library(Matrix)
 library(tools)
 source("util/check.R")
 
-## Specify the number of threads to use.
-set_num_threads(2)
-
 ## For debugging
 sessionInfo()
 
