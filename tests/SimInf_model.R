@@ -73,10 +73,10 @@ stopifnot(isTRUE(SimInf:::valid_SimInf_model_object(m)))
 ## Check valid_SimInf_model_object with invalid tspan.
 m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
          tspan = 1:10, beta = 0.1, gamma = 0.1)
-m@tspan <- 1L
+m@tspan <- integer(0)
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "Input time-span must be a double vector."))
-m@tspan <- 1
+m@tspan <- numeric(0)
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "Input time-span must be an increasing vector."))
 
@@ -219,7 +219,7 @@ res <- assertError(new("SimInf_model",
                        S     = S,
                        U     = U,
                        ldata = matrix(rep(0, Nn), nrow = 1),
-                       tspan = as.numeric(1),
+                       tspan = numeric(0),
                        u0    = u0))
 check_error(res, "Input time-span must be an increasing vector.", FALSE)
 

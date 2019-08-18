@@ -130,7 +130,7 @@ valid_SimInf_model_object <- function(object) {
     ## Check tspan.
     if (!is.double(object@tspan)) {
         return("Input time-span must be a double vector.")
-    } else if (any(length(object@tspan) < 2,
+    } else if (any(length(object@tspan) < 1,
                    any(diff(object@tspan) <= 0),
                    any(is.na(object@tspan)))) {
         return("Input time-span must be an increasing vector.")
