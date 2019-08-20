@@ -94,6 +94,7 @@ setGeneric("run",
 ##' @rdname run
 ##' @include SimInf_model.R
 ##' @export
+##' @importFrom digest digest
 ##' @importFrom methods validObject
 setMethod("run",
           signature(model = "SimInf_model"),
@@ -114,15 +115,15 @@ setMethod("run",
               validObject(model);
 
               if (contains_C_code(model)) {
-                  ## Write the C code to a temporary file
-                  filename <- tempfile("SimInf-")
-                  on.exit(unlink(paste0(filename,
-                                        c(".c", ".o", .Platform$dynlib.ex))))
-                  writeLines(model@C_code, con = paste0(filename, ".c"))
-
-                  lib <- do_compile_model(filename)
-                  dll <- dyn.load(lib)
-                  on.exit(dyn.unload(lib), add = TRUE)
+                  name <- digest(model@C_code, serialize = FALSE)
+                  dll <- getLoadedDLLs()[[name]]
+                  if (is.null(dll)) {
+                      ## Write the C code to a temporary file
+                      filename <- file.path(tempdir(), paste0(name, ".c"))
+                      writeLines(model@C_code, filename)
+                      lib <- do_compile_model(file.path(tempdir(), name))
+                      dll <- dyn.load(lib)
+                  }
 
                   ## Create expression to parse
                   expr <- ".Call(dll$SimInf_model_run, model, threads, solver)"
