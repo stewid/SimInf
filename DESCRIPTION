@@ -43,6 +43,7 @@ SystemRequirements: GNU Scientific Library (GSL)
 Depends:
     R(>= 3.1)
 Imports:
+    digest,
     graphics,
     grDevices,
     methods,
