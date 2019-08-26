@@ -2,6 +2,9 @@
 
 ## IMPROVEMENTS
 
+* It's now possible to have a 'tspan' vector of length one to simulate
+  over one time-point only.
+
 * The `trajectory` function has been ported to C and parallelized to
   efficiently transform simulated data from a model to a `data.frame`.
 
