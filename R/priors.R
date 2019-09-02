@@ -16,6 +16,63 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+do_parse_prior <- function(prior) {
+    prior <- as.character(prior)
+    if (!identical(length(prior), 3L)) {
+        stop("Invalid formula specification for prior.",
+             call. = FALSE)
+    }
+
+    ## Determine the parameter to fit.
+    parameter <- prior[2]
+
+    ## Determine the distribution for the parameter.
+    pattern <- paste0("^([GNU])\\s*\\(\\s*",
+                      "([-+]?[0-9]*\\.?[0-9]+),\\s*",
+                      "([-+]?[0-9]*\\.?[0-9]+)\\)$")
+    d <- prior[3]
+    m <- regexec(pattern, d)
+    if (m[[1]][1] == -1) {
+        stop("Invalid formula specification for priors.",
+             call. = FALSE)
+    }
+    m <- regmatches(d, m)[[1]][-1]
+    distribution <- m[1]
+    hyperparameters <- as.numeric(m[-1])
+
+    ## Check hyperparameters.
+    if (distribution == "G" && !all(hyperparameters > 0)) {
+        stop("Invalid prior: gamma hyperparameters must be > 0.",
+             call. = FALSE)
+    }
+    if (distribution == "N" && hyperparameters[2] < 0) {
+        stop("Invalid prior: normal variance must be > 0.",
+             call. = FALSE)
+    }
+    if (distribution == "U" && hyperparameters[1] >= hyperparameters[2]) {
+        stop("Invalid prior: uniform bounds in wrong order.",
+             call. = FALSE)
+    }
+
+    ## Generate random numbers according to the distribution.
+    rfun <- switch(distribution, G = rgamma, N = rnorm, U = runif)
+    random <- function(n) {
+        rfun(n, hyperparameters[1], hyperparameters[2])
+    }
+
+    ## Gives the density for the distribution.
+    dfun <- switch(distribution, G = dgamma, N = dnorm, U = dunif)
+    density <- function(x, log = FALSE) {
+        dfun(x, hyperparameters[1], hyperparameters[2], log)
+    }
+
+    list(parameter       = parameter,
+         distribution    = distribution,
+         hyperparameters = hyperparameters,
+         random          = random,
+         density         = density)
+}
+
 ##' @noRd
 ##' @importFrom stats dgamma
 ##' @importFrom stats dnorm
@@ -37,66 +94,7 @@ parse_priors <- function(priors) {
     }
 
     ## Determine priors for parameters in the model
-    parameters <- lapply(priors, function(f) {
-        f <- as.character(f)
-        if (!identical(length(f), 3L)) {
-            stop("Invalid formula specification for prior.",
-                 call. = FALSE)
-        }
-
-        ## Determine the parameter to fit.
-        parameter <- f[2]
-
-        ## Determine the distribution for the parameter.
-        pattern <- paste0("^([GNU])\\s*\\(\\s*",
-                          "([-+]?[0-9]*\\.?[0-9]+),\\s*",
-                          "([-+]?[0-9]*\\.?[0-9]+)\\)$")
-        d <- f[3]
-        m <- regexec(pattern, d)
-        if (m[[1]][1] == -1)
-            stop("Invalid formula specification for priors.", call. = FALSE)
-        m <- regmatches(d, m)[[1]][-1]
-        distribution <- m[1]
-        hyperparameters <- as.numeric(m[-1])
-
-        ## Check hyperparameters.
-        if (distribution == "G") {
-            if (!all(hyperparameters > 0)) {
-                stop("Invalid prior: gamma hyperparameters must be > 0.",
-                     call. = FALSE)
-            }
-        } else if (distribution == "N") {
-            if (hyperparameters[2] < 0) {
-                stop("Invalid prior: normal variance must be > 0.",
-                     call. = FALSE)
-            }
-        } else if (distribution == "U") {
-            if (hyperparameters[1] >= hyperparameters[2]) {
-                stop("Invalid prior: uniform bounds in wrong order.",
-                     call. = FALSE)
-            }
-        } else {
-            stop("Invalid prior: unknown distribution.", call. = FALSE)
-        }
-
-        ## Generate random numbers according to the distribution.
-        rfun <- switch(distribution, G = rgamma, N = rnorm, U = runif)
-        random <- function(n) {
-            rfun(n, hyperparameters[1], hyperparameters[2])
-        }
-
-        ## Gives the density for the distribution.
-        dfun <- switch(distribution, G = dgamma, N = dnorm, U = dunif)
-        density <- function(x, log = FALSE) {
-            dfun(x, hyperparameters[1], hyperparameters[2], log)
-        }
-
-        list(parameter       = parameter,
-             distribution    = distribution,
-             hyperparameters = hyperparameters,
-             random          = random,
-             density         = density)
-    })
+    parameters <- lapply(priors, do_parse_prior)
 
     lbl <- vapply(parameters, function(x) x$parameter, character(1))
     if (is.null(lbl) || any(duplicated(lbl)) || any(nchar(lbl) == 0))
