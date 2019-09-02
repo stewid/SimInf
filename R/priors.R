@@ -17,6 +17,12 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ##' @noRd
+##' @importFrom stats dgamma
+##' @importFrom stats dnorm
+##' @importFrom stats dunif
+##' @importFrom stats rgamma
+##' @importFrom stats rnorm
+##' @importFrom stats runif
 parse_priors <- function(priors) {
     if (is.list(priors)) {
         if (!all(vapply(priors, is, logical(1), "formula"))) {

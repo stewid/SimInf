@@ -26,7 +26,7 @@ set_num_threads(1)
 ## For debugging
 sessionInfo()
 
-res <- assertError(SimInf:::parse_priors(c(beta + muI ~ U(0, 5), mu2 ~ U(0, 1), 4)))
+res <- assertError(SimInf:::parse_priors(c(a + b ~ U(0, 5), c ~ U(0, 1), 4)))
 check_error(res, "'priors' must be a formula or a list with formula items.")
 
 res <- assertError(SimInf:::parse_priors(4))
