@@ -69,6 +69,7 @@ Collate:
     'plot.R'
     'prevalence.R'
     'print.R'
+    'priors.R'
     'punchcard.R'
     'run.R'
     'run_outer.R'
