@@ -22,34 +22,31 @@
 ## Split the 'compartments' argument to match the compartments in U
 ## and V.
 match_compartments <- function(model, compartments, as.is) {
+    compartments <- unique(as.character(compartments))
+
+    ## Match compartments in U
     U <- NULL
+    i <- compartments %in% rownames(model@S)
+    if (any(i))
+        U <- compartments[i]
+
+    ## Match compartments in V
     V <- NULL
+    i <- compartments %in% rownames(model@v0)
+    if (any(i))
+        V <- compartments[i]
 
-    if (!is.null(compartments)) {
-        compartments <- unique(as.character(compartments))
+    compartments <- setdiff(compartments, c(U, V))
+    if (length(compartments) > 0) {
+        stop("Non-existing compartment(s) in model: ",
+             paste0("'", compartments, "'", collapse = ", "),
+             ".", call. = FALSE)
+    }
 
-        ## Match compartments in U
-        i <- compartments %in% rownames(model@S)
-        if (any(i))
-            U <- compartments[i]
-
-        ## Match compartments in V
-        i <- compartments %in% rownames(model@v0)
-        if (any(i))
-            V <- compartments[i]
-
-        compartments <- setdiff(compartments, c(U, V))
-        if (length(compartments) > 0) {
-            stop("Non-existing compartment(s) in model: ",
-                 paste0("'", compartments, "'", collapse = ", "),
-                 ".", call. = FALSE)
-        }
-
-        ## Cannot combine data from U and V when as.is = TRUE.
-        if (!is.null(U) && !is.null(V) && isTRUE(as.is)) {
-            stop("Select either continuous or discrete compartments.",
-                 call. = FALSE)
-        }
+    ## Cannot combine data from U and V when as.is = TRUE.
+    if (!is.null(U) && !is.null(V) && isTRUE(as.is)) {
+        stop("Select either continuous or discrete compartments.",
+             call. = FALSE)
     }
 
     if (is.null(U) && is.null(V)) {
