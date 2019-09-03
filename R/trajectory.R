@@ -44,14 +44,14 @@ match_compartments <- function(model, compartments, as.is) {
     }
 
     ## Cannot combine data from U and V when as.is = TRUE.
-    if (!is.null(U) && !is.null(V) && isTRUE(as.is)) {
+    if (all(!is.null(U), !is.null(V), isTRUE(as.is))) {
         stop("Select either continuous or discrete compartments.",
              call. = FALSE)
     }
 
-    if (is.null(U) && is.null(V)) {
+    if (all(is.null(U), is.null(V))) {
         U <- rownames(model@S)
-        if (!isTRUE(as.is) && length(rownames(model@v0)) > 0)
+        if (all(!isTRUE(as.is), length(rownames(model@v0))) > 0)
             V <- rownames(model@v0)
     }
 
