@@ -54,23 +54,9 @@ do_parse_prior <- function(prior) {
              call. = FALSE)
     }
 
-    ## Generate random numbers according to the distribution.
-    rfun <- switch(distribution, G = rgamma, N = rnorm, U = runif)
-    random <- function(n) {
-        rfun(n, hyperparameters[1], hyperparameters[2])
-    }
-
-    ## Gives the density for the distribution.
-    dfun <- switch(distribution, G = dgamma, N = dnorm, U = dunif)
-    density <- function(x, log = FALSE) {
-        dfun(x, hyperparameters[1], hyperparameters[2], log)
-    }
-
-    list(parameter       = parameter,
-         distribution    = distribution,
-         hyperparameters = hyperparameters,
-         random          = random,
-         density         = density)
+    data.frame(parameter = parameter, distribution = distribution,
+               p1 = hyperparameters[1], p2 = hyperparameters[2],
+               stringsAsFactors = FALSE)
 }
 
 ##' @noRd
@@ -94,11 +80,10 @@ parse_priors <- function(priors) {
     }
 
     ## Determine priors for parameters in the model
-    parameters <- lapply(priors, do_parse_prior)
+    priors <- do.call("rbind", lapply(priors, do_parse_prior))
 
-    lbl <- vapply(parameters, function(x) x$parameter, character(1))
-    if (is.null(lbl) || any(duplicated(lbl)) || any(nchar(lbl) == 0))
+    if (any(duplicated(priors$parameter)) || any(nchar(priors$parameter) == 0))
         stop("'priors' must have non-duplicated parameter names.")
-    names(parameters) <- lbl
-    parameters
+
+    priors
 }

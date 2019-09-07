@@ -59,5 +59,7 @@ check_error(res, "Invalid prior: gamma hyperparameters must be > 0.")
 res <- assertError(SimInf:::parse_priors(~ U(1, 5)))
 check_error(res, "Invalid formula specification for prior.")
 
-p <- SimInf:::parse_priors(beta ~ U(1, 5))
-stopifnot(all(p$beta$density(p$beta$random(10)) == 0.25))
+stopifnot(identical(
+    SimInf:::parse_priors(beta ~ U(1, 5)),
+    data.frame(parameter = "beta", distribution = "U",
+               p1 = 1, p2 = 5, stringsAsFactors = FALSE)))
