@@ -16,7 +16,8 @@ PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
 MODELS_SRC = $(wildcard models/*.c)
 MODELS_OBJ = $(MODELS_SRC:.c=.o)
 
-OBJECTS.misc = misc/SimInf_arg.o \
+OBJECTS.misc = misc/SimInf_abc_smc.o \
+               misc/SimInf_arg.o \
                misc/SimInf_forward_euler_linear_decay.o \
                misc/SimInf_ldata.o \
                misc/SimInf_local_spread.o \
