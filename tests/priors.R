@@ -39,7 +39,7 @@ res <- assertError(SimInf:::parse_priors(mu ~ U(0, 1) + N(0, 1)))
 check_error(res, "Invalid formula specification for priors.")
 
 res <- assertError(SimInf:::parse_priors(mu ~ Z(0, 1)))
-check_error(res, "Invalid formula specification for priors.")
+check_error(res, "'distribution' must be one of 'G', 'N' or 'U'.")
 
 res <- assertError(SimInf:::parse_priors(c(muR ~ U(0, 1), muR ~ U(0, 1))))
 check_error(res, "'priors' must have non-duplicated parameter names.")
