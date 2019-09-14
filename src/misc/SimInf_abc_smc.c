@@ -24,7 +24,6 @@
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
-#include "SimInf_openmp.h"
 
 /**
  * Utility function for implementing the Approximate Bayesian
@@ -62,7 +61,7 @@ SEXP SimInf_abc_smc_proposals(
 {
     int error = 0;
     const int k = Rf_length(parameter);
-    gsl_rng **rng = NULL;
+    gsl_rng *rng = NULL;
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
     int N = INTEGER(n)[0];
@@ -72,7 +71,6 @@ SEXP SimInf_abc_smc_proposals(
     SEXP result, particle, dimnames;
     double *ptr_result;
     int *ptr_particle;
-    int Nthread;
 
     /* Setup result matrix. */
     PROTECT(result = Rf_allocMatrix(REALSXP, k, N));
@@ -87,43 +85,33 @@ SEXP SimInf_abc_smc_proposals(
     Rf_setAttrib(result, Rf_install("particle"), particle);
     ptr_particle = INTEGER(particle);
 
-    /* Specify the number of threads to use. Make sure to not use more
-     * threads than the number of particles to sample. */
-    Nthread = SimInf_set_num_threads(N);
-
     /* Setup random number generator. */
     GetRNGstate();
-    rng = calloc(Nthread, sizeof(gsl_rng*));
-    for (int i = 0; i < Nthread; i++) {
-        rng[i] = gsl_rng_alloc(gsl_rng_mt19937);
-        if (!rng[i]) {
-            error = 1;
-            goto cleanup;
-        }
-        gsl_rng_set(rng[i], unif_rand() * UINT_MAX);
+    rng = gsl_rng_alloc(gsl_rng_mt19937);
+    if (!rng) {
+        error = 1;
+        goto cleanup;
     }
+    gsl_rng_set(rng, unif_rand() * UINT_MAX);
     PutRNGstate();
 
     if (Rf_isNull(x)) {
         /* First generation: sample from priors. */
-        #pragma omp parallel for num_threads(SimInf_num_threads())
         for (int i = 0; i < N; i++) {
-            int tr = omp_get_thread_num();
-
             ptr_particle[i] = NA_INTEGER;
             for (int d = 0; d < k; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'G':
                     ptr_result[i * k + d] =
-                        gsl_ran_gamma(rng[tr], ptr_p1[d], 1.0 / ptr_p2[d]);
+                        gsl_ran_gamma(rng, ptr_p1[d], 1.0 / ptr_p2[d]);
                     break;
                 case 'N':
                     ptr_result[i * k + d] =
-                        gsl_ran_gaussian(rng[tr], ptr_p2[d]) + ptr_p1[d];
+                        gsl_ran_gaussian(rng, ptr_p2[d]) + ptr_p1[d];
                     break;
                 case 'U':
                     ptr_result[i * k + d] =
-                        gsl_ran_flat(rng[tr], ptr_p1[d], ptr_p2[d]);
+                        gsl_ran_flat(rng, ptr_p1[d], ptr_p2[d]);
                     break;
                 default:
                     error = 2;
@@ -160,19 +148,17 @@ SEXP SimInf_abc_smc_proposals(
             cumsum_w[i] += cumsum_w[i-1];
     }
 
-    #pragma omp parallel for num_threads(SimInf_num_threads())
     for (int i = 0; i < N; i++) {
         int accept;
         gsl_vector_view X;
         gsl_vector_view proposal = gsl_vector_view_array(&ptr_result[i * k], k);
-        int tr = omp_get_thread_num();
 
         do {
             /* Sample a particle from previous generation. Use a
              * binary search to determine the sampled particle based
              * on its weight. */
             int j = 0, j_low = 0, j_high = len - 1;
-            double r = gsl_rng_uniform_pos(rng[tr]) * cumsum_w[j_high];
+            double r = gsl_rng_uniform_pos(rng) * cumsum_w[j_high];
             while (j_high >= j_low) {
                 j = (j_low + j_high) / 2;
                 if (cumsum_w[j] < r)
@@ -186,7 +172,7 @@ SEXP SimInf_abc_smc_proposals(
 
             /* Perturbate the particle. */
             X = gsl_vector_view_array(&ptr_x[j * k], k);
-            gsl_ran_multivariate_gaussian(rng[tr], &X.vector, SIGMA,
+            gsl_ran_multivariate_gaussian(rng, &X.vector, SIGMA,
                                           &proposal.vector);
 
             /* Check that the proposal is valid. */
@@ -223,9 +209,7 @@ SEXP SimInf_abc_smc_proposals(
 cleanup:
     free(cumsum_w);
     gsl_matrix_free(SIGMA);
-    for (int i = 0; i < Nthread; i++)
-        gsl_rng_free(rng[i]);
-    free(rng);
+    gsl_rng_free(rng);
 
     if (error) {
         switch (error) {
