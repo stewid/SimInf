@@ -232,3 +232,150 @@ cleanup:
 
     return result;
 }
+
+/**
+ * Utility function for implementing the Approximate Bayesian
+ * Computation Sequential Monte Carlo (ABC-SMC) algorithm of Toni et
+ * al. (2009). Calculate weights for current generation of particles.
+ *
+ * @param distribution character vector with the name of the
+ *        distribution for each prior. Each entry must contain one of
+ *        'G' (gamma), 'N' (normal) or 'U' (uniform).
+ * @param p1 numeric vector with the first hyperparameter for each
+ *        prior: G) shape, N) mean, and U) lower bound.
+ * @param p2 numeric vector with the second hyperparameter for each
+ *        prior: G) rate, N) standard deviation, and U) upper bound.
+ * @param x a numeric matrix (parameters x particles) with the
+ *        previous generation of particles or NULL.
+ * @param xx a numeric matrix (parameters x particles) with the
+ *        current generation of particles or NULL.
+ * @param w a numeric vector with weights for the previous generation
+ *        of particles.
+ * @param sigma variance-covariance matrix.
+ * @return a numeric vector with weights for the current generation of
+ *         particles.
+ */
+SEXP SimInf_abc_smc_weights(
+    SEXP distribution,
+    SEXP p1,
+    SEXP p2,
+    SEXP x,
+    SEXP xx,
+    SEXP w,
+    SEXP sigma)
+{
+    int error = 0;
+    int k, n = Rf_ncols(xx);
+    gsl_matrix_view v_sigma;
+    gsl_matrix *SIGMA = NULL;
+    gsl_vector *work = NULL;
+    SEXP ww;
+    double *ptr_p1, *ptr_p2, *ptr_x, *ptr_xx, *ptr_w, *ptr_ww;
+    double sum = 0.0, sum_w_K = 0.0, max_ww;
+
+    PROTECT(ww = Rf_allocVector(REALSXP, n));
+    ptr_ww = REAL(ww);
+    if (Rf_isNull(w)) {
+        for (int i = 0; i < n; ++i)
+            ptr_ww[i] = 1.0 / (double)n;
+        goto cleanup;
+    }
+
+    k = INTEGER(GET_SLOT(sigma, R_DimSymbol))[0];
+    ptr_p1 = REAL(p1);
+    ptr_p2 = REAL(p2);
+    ptr_x = REAL(x);
+    ptr_xx = REAL(xx);
+    ptr_w = REAL(w);
+    work = gsl_vector_alloc(k);
+
+    /* Setup variance-covariance matrix. */
+    v_sigma = gsl_matrix_view_array(REAL(sigma), k, k);
+    SIGMA = gsl_matrix_alloc(k, k);
+    if (!SIGMA) {
+        error = 1;
+        goto cleanup;
+    }
+    gsl_matrix_memcpy(SIGMA, &v_sigma.matrix);
+    gsl_linalg_cholesky_decomp1(SIGMA);
+
+    for (int i = 0; i < n; i++) {
+        gsl_vector_view v_x = gsl_vector_view_array(&ptr_x[i * k], k);
+        gsl_vector_view v_xx = gsl_vector_view_array(&ptr_xx[i * k], k);
+        double pdf;
+
+        ptr_ww[i] = 0.0;
+        for (int d = 0; d < k; d++) {
+            switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
+            case 'G':
+                ptr_ww[i] += log(gsl_ran_gamma_pdf(
+                    gsl_vector_get(&v_xx.vector, d),
+                    ptr_p1[d], 1.0 / ptr_p2[d]));
+                break;
+            case 'N':
+                ptr_ww[i] += log(gsl_ran_gaussian_pdf(
+                    gsl_vector_get(&v_xx.vector, d) -
+                    ptr_x[i * k + d], ptr_p2[d]));
+                break;
+            case 'U':
+                ptr_ww[i] += log(gsl_ran_flat_pdf(
+                    gsl_vector_get(&v_xx.vector, d),
+                    ptr_p1[d], ptr_p2[d]));
+                break;
+            default:
+                error = 2;
+                break;
+            }
+        }
+
+        gsl_ran_multivariate_gaussian_pdf(&v_xx.vector, &v_x.vector,
+                                          SIGMA, &pdf, work);
+        if (ptr_w[i] < 0) {
+            error = 3;
+            goto cleanup;
+        }
+        sum_w_K += ptr_w[i] * pdf;
+    }
+
+    sum_w_K = log(sum_w_K);
+    for (int i = 0; i < n; i++) {
+        ptr_ww[i] -= sum_w_K;
+        if (ptr_ww[i] > max_ww)
+            max_ww = ptr_ww[i];
+    }
+
+    for (int i = 0; i < n; i++) {
+        ptr_ww[i] -= max_ww;
+        ptr_ww[i] = exp(ptr_ww[i]);
+        sum += ptr_ww[i];
+    }
+
+    /* Normalize. */
+    for (int i = 0; i < n; i++)
+        ptr_ww[i] /= sum;
+
+cleanup:
+    gsl_matrix_free(SIGMA);
+    gsl_vector_free(work);
+
+    if (error) {
+        switch (error) {
+        case 1:
+            Rf_error("Unable to allocate memory buffer.");
+            break;
+        case 2:
+            Rf_error("Unknown distribution.");
+            break;
+        case 3:
+            Rf_error("Negative weight detected.");
+            break;
+        default:
+            Rf_error("Unknown error code: %i.", error);
+            break;
+        }
+    }
+
+    UNPROTECT(1);
+
+    return ww;
+}

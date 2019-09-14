@@ -34,6 +34,7 @@ SEXP SISe3_run(SEXP, SEXP, SEXP);
 SEXP SISe3_sp_run(SEXP, SEXP, SEXP);
 SEXP SISe_sp_run(SEXP, SEXP, SEXP);
 SEXP SimInf_abc_smc_proposals(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+SEXP SimInf_abc_smc_weights(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_have_openmp();
 SEXP SimInf_init_threads(SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
@@ -50,6 +51,7 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SISe3_sp_run, 3),
     CALLDEF(SISe_sp_run, 3),
     CALLDEF(SimInf_abc_smc_proposals, 8),
+    CALLDEF(SimInf_abc_smc_weights, 7),
     CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(SimInf_init_threads, 1),
     CALLDEF(SimInf_ldata_sp, 3),
