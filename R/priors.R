@@ -27,30 +27,40 @@ do_parse_prior <- function(prior) {
     ## Determine the distribution for the parameter.
     distribution <- substr(prior[3], 1, 1)
     prior[3] <- substr(prior[3], 2, nchar(prior[3]))
-    if (!(distribution %in% c("G", "N", "U")))
-        stop("'distribution' must be one of 'G', 'N' or 'U'.", call. = FALSE)
 
     ## Determine the hyperparameters for the distribution.
-    if (!startsWith(prior[3], "(") || !endsWith(prior[3], ")"))
+    if (any(substr(prior[3], 1, 1) != "(",
+            substr(prior[3], nchar(prior[3]), nchar(prior[3])) != ")")) {
         stop("Invalid formula specification for priors.", call. = FALSE)
+    }
     prior[3] <- substr(prior[3], 2, nchar(prior[3]) - 1)
-    hyperparameters <- suppressWarnings(as.numeric(unlist(strsplit(prior[3], ","))))
-    if (length(hyperparameters) != 2 || any(is.na(hyperparameters)))
+    hyperparameters <- unlist(strsplit(prior[3], ","))
+    hyperparameters <- suppressWarnings(as.numeric(hyperparameters))
+    if (any(length(hyperparameters) != 2, any(is.na(hyperparameters))))
             stop("Invalid formula specification for priors.", call. = FALSE)
 
-    ## Check hyperparameters.
-    if (distribution == "G" && !all(hyperparameters > 0)) {
-        stop("Invalid prior: gamma hyperparameters must be > 0.",
-             call. = FALSE)
-    }
-    if (distribution == "N" && hyperparameters[2] < 0) {
-        stop("Invalid prior: normal variance must be > 0.",
-             call. = FALSE)
-    }
-    if (distribution == "U" && hyperparameters[1] >= hyperparameters[2]) {
-        stop("Invalid prior: uniform bounds in wrong order.",
-             call. = FALSE)
-    }
+    ## Check distribution and hyperparameters.
+    switch(distribution,
+           G = {
+               if (!all(hyperparameters > 0)) {
+                   stop("Invalid prior: gamma hyperparameters must be > 0.",
+                        call. = FALSE)
+               }
+           },
+           N = {
+               if (hyperparameters[2] < 0) {
+                   stop("Invalid prior: normal variance must be > 0.",
+                        call. = FALSE)
+               }
+           },
+           U = {
+               if (hyperparameters[1] >= hyperparameters[2]) {
+                   stop("Invalid prior: uniform bounds in wrong order.",
+                        call. = FALSE)
+               }
+           },
+           stop("'distribution' must be one of 'G', 'N' or 'U'.", call. = FALSE)
+           )
 
     data.frame(parameter = parameter, distribution = distribution,
                p1 = hyperparameters[1], p2 = hyperparameters[2],
