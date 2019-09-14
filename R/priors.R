@@ -18,27 +18,25 @@
 
 do_parse_prior <- function(prior) {
     prior <- as.character(prior)
-    if (!identical(length(prior), 3L)) {
-        stop("Invalid formula specification for prior.",
-             call. = FALSE)
-    }
+    if (!identical(length(prior), 3L))
+        stop("Invalid formula specification for prior.", call. = FALSE)
 
     ## Determine the parameter to fit.
     parameter <- prior[2]
 
     ## Determine the distribution for the parameter.
-    pattern <- paste0("^([GNU])\\s*\\(\\s*",
-                      "([-+]?[0-9]*\\.?[0-9]+),\\s*",
-                      "([-+]?[0-9]*\\.?[0-9]+)\\)$")
-    d <- prior[3]
-    m <- regexec(pattern, d)
-    if (m[[1]][1] == -1) {
-        stop("Invalid formula specification for priors.",
-             call. = FALSE)
-    }
-    m <- regmatches(d, m)[[1]][-1]
-    distribution <- m[1]
-    hyperparameters <- as.numeric(m[-1])
+    distribution <- substr(prior[3], 1, 1)
+    prior[3] <- substr(prior[3], 2, nchar(prior[3]))
+    if (!(distribution %in% c("G", "N", "U")))
+        stop("'distribution' must be one of 'G', 'N' or 'U'.", call. = FALSE)
+
+    ## Determine the hyperparameters for the distribution.
+    if (!startsWith(prior[3], "(") || !endsWith(prior[3], ")"))
+        stop("Invalid formula specification for priors.", call. = FALSE)
+    prior[3] <- substr(prior[3], 2, nchar(prior[3]) - 1)
+    hyperparameters <- suppressWarnings(as.numeric(unlist(strsplit(prior[3], ","))))
+    if (length(hyperparameters) != 2 || any(is.na(hyperparameters)))
+            stop("Invalid formula specification for priors.", call. = FALSE)
 
     ## Check hyperparameters.
     if (distribution == "G" && !all(hyperparameters > 0)) {
