@@ -294,7 +294,7 @@ SimInf_events <- function(E      = NULL,
     }
 
     ## Do we have to recode the event type as a numerical value
-    if (is.character(events$event) || is.factor(events$event)) {
+    if (any(is.character(events$event), is.factor(events$event))) {
         event_names <- c("enter", "exit", "extTrans", "intTrans")
         if (!all(events$event %in% event_names)) {
             stop(paste0("'event' type must be 'enter', 'exit', ",
@@ -336,20 +336,15 @@ SimInf_events <- function(E      = NULL,
     }
 
     if (nrow(events)) {
-        if (!all(is_wholenumber(events$event)))
+        if (any(!all(is_wholenumber(events$event)),
+                !all(is_wholenumber(events$time)),
+                !all(is_wholenumber(events$node)),
+                !all(is_wholenumber(events$dest)),
+                !all(is_wholenumber(events$n)),
+                !all(is_wholenumber(events$select)),
+                !all(is_wholenumber(events$shift)))) {
             stop("Columns in events must be integer.", call. = FALSE)
-        if (!all(is_wholenumber(events$time)))
-            stop("Columns in events must be integer.", call. = FALSE)
-        if (!all(is_wholenumber(events$node)))
-            stop("Columns in events must be integer.", call. = FALSE)
-        if (!all(is_wholenumber(events$dest)))
-            stop("Columns in events must be integer.", call. = FALSE)
-        if (!all(is_wholenumber(events$n)))
-            stop("Columns in events must be integer.", call. = FALSE)
-        if (!all(is_wholenumber(events$select)))
-            stop("Columns in events must be integer.", call. = FALSE)
-        if (!all(is_wholenumber(events$shift)))
-            stop("Columns in events must be integer.", call. = FALSE)
+        }
     }
 
     events <- events[order(events$time, events$event, events$select), ]
