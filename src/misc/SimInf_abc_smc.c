@@ -271,7 +271,7 @@ SEXP SimInf_abc_smc_weights(
     gsl_vector *work = NULL;
     SEXP ww;
     double *ptr_p1, *ptr_p2, *ptr_x, *ptr_xx, *ptr_w, *ptr_ww;
-    double sum = 0.0, sum_w_K = 0.0, max_ww;
+    double sum = 0.0, sum_w_K = 0.0, max_ww = 0.0;
 
     PROTECT(ww = Rf_allocVector(REALSXP, n));
     ptr_ww = REAL(ww);
