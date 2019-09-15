@@ -122,12 +122,7 @@ setClass("SimInf_model",
                    events   = "SimInf_events",
                    C_code   = "character"))
 
-## Check if the SimInf_model object is valid.
-valid_SimInf_model_object <- function(object) {
-    ## Check events
-    validObject(object@events)
-
-    ## Check tspan.
+valid_tspan <- function(object) {
     if (!is.double(object@tspan)) {
         return("Input time-span must be a double vector.")
     } else if (any(length(object@tspan) < 1,
@@ -136,35 +131,49 @@ valid_SimInf_model_object <- function(object) {
         return("Input time-span must be an increasing vector.")
     }
 
-    ## Check u0.
+    character(0);
+}
+
+valid_u0 <- function(object) {
     if (!identical(storage.mode(object@u0), "integer"))
         return("Initial state 'u0' must be an integer matrix.")
     if (any(object@u0 < 0L))
         return("Initial state 'u0' has negative elements.")
-    Nn_u0 <- dim(object@u0)[2]
 
-    ## Check U.
+    character(0);
+}
+
+valid_U <- function(object) {
     if (!identical(storage.mode(object@U), "integer"))
         return("Output state 'U' must be an integer matrix.")
     if (any(object@U < 0L) || any(object@U_sparse < 0, na.rm = TRUE))
         return("Output state 'U' has negative elements.")
 
-    ## Check v0.
+    character(0);
+}
+
+valid_v0 <- function(object) {
     if (!identical(storage.mode(object@v0), "double"))
         return("Initial model state 'v0' must be a double matrix.")
     if ((dim(object@v0)[1] > 0)) {
         r <- rownames(object@v0)
         if (is.null(r) || any(nchar(r) == 0))
             return("'v0' must have rownames.")
-        if (!identical(dim(object@v0)[2], Nn_u0))
+        if (!identical(dim(object@v0)[2], dim(object@u0)[2]))
             return("The number of nodes in 'u0' and 'v0' must match.")
     }
 
-    ## Check V.
+    character(0);
+}
+
+valid_V <- function(object) {
     if (!identical(storage.mode(object@V), "double"))
         return("Output model state 'V' must be a double matrix.")
 
-    ## Check S.
+    character(0);
+}
+
+valid_S <- function(object) {
     if (!all(is_wholenumber(object@S@x)))
         return("'S' matrix must be an integer matrix.")
 
@@ -176,7 +185,10 @@ valid_SimInf_model_object <- function(object) {
             return("'S' and 'E' must have identical compartments.")
     }
 
-    ## Check G.
+    character(0);
+}
+
+valid_G <- function(object) {
     Nt <- dim(object@S)[2]
     if (!identical(dim(object@G), c(Nt, Nt)))
         return("Wrong size of dependency graph.")
@@ -212,17 +224,43 @@ valid_SimInf_model_object <- function(object) {
     if (!all(transitions %in% rownames(object@S)))
         return("'G' and 'S' must have identical compartments.")
 
-    ## Check ldata.
+    character(0)
+}
+
+valid_ldata <- function(object) {
     if (!is.double(object@ldata))
         return("'ldata' matrix must be a double matrix.")
     Nn_ldata <- dim(object@ldata)[2]
-    if (Nn_ldata > 0 && !identical(Nn_ldata, Nn_u0))
+    if (Nn_ldata > 0 && !identical(Nn_ldata, dim(object@u0)[2]))
         return("The number of nodes in 'u0' and 'ldata' must match.")
 
-    ## Check gdata.
+    character(0)
+}
+
+valid_gdata <- function(object) {
     if (!is.double(object@gdata))
         return("'gdata' must be a double vector.")
 
+    character(0)
+}
+
+## Check if the SimInf_model object is valid.
+valid_SimInf_model_object <- function(object) {
+    ## Check events
+    validObject(object@events)
+
+    errors <- c(valid_tspan(object),
+                valid_u0(object),
+                valid_U(object),
+                valid_v0(object),
+                valid_V(object),
+                valid_S(object),
+                valid_G(object),
+                valid_ldata(object),
+                valid_gdata(object))
+
+    if (length(errors))
+        return(errors)
     TRUE
 }
 
