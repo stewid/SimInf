@@ -114,6 +114,31 @@ setClass("SimInf_events",
                    select     = "integer",
                    shift      = "integer"))
 
+valid_events <- function(object) {
+    if (!all(object@time > 0))
+        return("time must be greater than 0.")
+
+    if (any(object@event < 0, object@event > 3))
+        return("event must be in the range 0 <= event <= 3.")
+
+    if (any(object@node < 1))
+        return("'node' must be greater or equal to 1.")
+
+    if (any(object@dest[object@event == 3] < 1))
+        return("'dest' must be greater or equal to 1.")
+
+    if (any(object@proportion < 0, object@proportion > 1))
+        return("prop must be in the range 0 <= prop <= 1.")
+
+    if (any(object@select < 1, object@select > dim(object@E)[2]))
+        return("select must be in the range 1 <= select <= Nselect.")
+
+    if (any(object@shift[object@event == 2] < 1))
+        return("'shift' must be greater or equal to 1.")
+
+    character(0)
+}
+
 ## Check if the SimInf_events object is valid.
 valid_SimInf_events_object <- function(object) {
     ## Check that E and N have identical compartments
@@ -135,26 +160,9 @@ valid_SimInf_events_object <- function(object) {
         return("All scheduled events must have equal length.")
     }
 
-    if (!all(object@time > 0))
-        return("time must be greater than 0.")
-
-    if (any(object@event < 0, object@event > 3))
-        return("event must be in the range 0 <= event <= 3.")
-
-    if (any(object@node < 1))
-        return("'node' must be greater or equal to 1.")
-
-    if (any(object@dest[object@event == 3] < 1))
-        return("'dest' must be greater or equal to 1.")
-
-    if (any(object@proportion < 0, object@proportion > 1))
-        return("prop must be in the range 0 <= prop <= 1.")
-
-    if (any(object@select < 1, object@select > dim(object@E)[2]))
-        return("select must be in the range 1 <= select <= Nselect.")
-
-    if (any(object@shift[object@event == 2] < 1))
-        return("'shift' must be greater or equal to 1.")
+    errors <- valid_events(object)
+    if (length(errors))
+        return(errors)
 
     TRUE
 }
