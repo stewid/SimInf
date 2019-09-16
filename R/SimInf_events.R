@@ -162,6 +162,75 @@ valid_SimInf_events_object <- function(object) {
 ## Assign the function as the validity method for the class.
 setValidity("SimInf_events", valid_SimInf_events_object)
 
+init_E <- function(E, events) {
+    if (is.null(E)) {
+        if (!is.null(events))
+            stop("events is not NULL when E is NULL.", call. = FALSE)
+        E <- new("dgCMatrix")
+    } else if (!is(E, "dgCMatrix")) {
+        E <- as(E, "dgCMatrix")
+    }
+
+    E
+}
+
+init_events <- function(events, t0) {
+    if (is.null(events)) {
+        events <- data.frame(event      = as.integer(),
+                             time       = as.integer(),
+                             node       = as.integer(),
+                             dest       = as.integer(),
+                             n          = as.integer(),
+                             proportion = as.numeric(),
+                             select     = as.integer(),
+                             shift      = as.integer())
+    }
+    if (!is.data.frame(events))
+        stop("events must be a data.frame.", call. = FALSE)
+    if (!all(c("event", "time", "node", "dest",
+               "n", "proportion", "select",
+               "shift") %in% names(events))) {
+        stop("Missing columns in events.", call. = FALSE)
+    }
+
+    ## Do we have to recode the event type as a numerical value
+    if (any(is.character(events$event), is.factor(events$event))) {
+        event_names <- c("enter", "exit", "extTrans", "intTrans")
+        if (!all(events$event %in% event_names)) {
+            stop(paste0("'event' type must be 'enter', 'exit', ",
+                        "'extTrans' or 'intTrans'."),
+                 call. = FALSE)
+        }
+
+        ## Find indices to 'enter', 'internal transfer' and 'external
+        ## transfer' events.
+        i_enter <- which(events$event == "enter")
+        i_intTrans <- which(events$event == "intTrans")
+        i_extTrans <- which(events$event == "extTrans")
+
+        ## Replace the character event type with a numerical value.
+        events$event <- rep(0L, nrow(events))
+        events$event[i_enter] <- 1L
+        events$event[i_intTrans] <- 2L
+        events$event[i_extTrans] <- 3L
+    }
+
+    ## Check time
+    if (nrow(events)) {
+        if (is(events$time, "Date")) {
+            if (is.null(t0))
+                stop("Missing 't0'.", call. = FALSE)
+            if (!all(identical(length(t0), 1L), is.numeric(t0)))
+                stop("Invalid 't0'.", call. = FALSE)
+            events$time <- as.numeric(events$time) - t0
+        } else if (!is.null(t0)) {
+            stop("Invalid 't0'.", call. = FALSE)
+        }
+    }
+
+    events
+}
+
 ##' Create a \code{\linkS4class{SimInf_events}} object
 ##'
 ##' The argument events must be a \code{data.frame} with the following
@@ -262,71 +331,9 @@ SimInf_events <- function(E      = NULL,
                           N      = NULL,
                           events = NULL,
                           t0     = NULL) {
-    ## Check E
-    if (is.null(E)) {
-        if (!is.null(events))
-            stop("events is not NULL when E is NULL.", call. = FALSE)
-        E <- new("dgCMatrix")
-    } else if (!is(E, "dgCMatrix")) {
-        E <- as(E, "dgCMatrix")
-    }
-
-    ## Check N
+    E <- init_E(E, events)
     N <- check_N(N)
-
-    ## Check events
-    if (is.null(events)) {
-        events <- data.frame(event      = as.integer(),
-                             time       = as.integer(),
-                             node       = as.integer(),
-                             dest       = as.integer(),
-                             n          = as.integer(),
-                             proportion = as.numeric(),
-                             select     = as.integer(),
-                             shift      = as.integer())
-    }
-    if (!is.data.frame(events))
-        stop("events must be a data.frame.", call. = FALSE)
-    if (!all(c("event", "time", "node", "dest",
-               "n", "proportion", "select",
-               "shift") %in% names(events))) {
-        stop("Missing columns in events.", call. = FALSE)
-    }
-
-    ## Do we have to recode the event type as a numerical value
-    if (any(is.character(events$event), is.factor(events$event))) {
-        event_names <- c("enter", "exit", "extTrans", "intTrans")
-        if (!all(events$event %in% event_names)) {
-            stop(paste0("'event' type must be 'enter', 'exit', ",
-                        "'extTrans' or 'intTrans'."),
-                 call. = FALSE)
-        }
-
-        ## Find indices to 'enter', 'internal transfer' and 'external
-        ## transfer' events.
-        i_enter <- which(events$event == "enter")
-        i_intTrans <- which(events$event == "intTrans")
-        i_extTrans <- which(events$event == "extTrans")
-
-        ## Replace the character event type with a numerical value.
-        events$event <- rep(0L, nrow(events))
-        events$event[i_enter] <- 1L
-        events$event[i_intTrans] <- 2L
-        events$event[i_extTrans] <- 3L
-    }
-
-    ## Check time
-    if (nrow(events)) {
-        if (is(events$time, "Date")) {
-            if (is.null(t0))
-                stop("Missing 't0'.", call. = FALSE)
-            if (!all(identical(length(t0), 1L), is.numeric(t0)))
-                stop("Invalid 't0'.", call. = FALSE)
-            events$time <- as.numeric(events$time) - t0
-        } else if (!is.null(t0)) {
-            stop("Invalid 't0'.", call. = FALSE)
-        }
-    }
+    events <- init_events(events, t0)
 
     if (!all(is.numeric(events$event), is.numeric(events$time),
              is.numeric(events$node), is.numeric(events$dest),
