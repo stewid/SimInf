@@ -87,6 +87,61 @@ setMethod("pairs",
           }
 )
 
+init_plot_compartments <- function(x, compartments) {
+    ## Determine the compartments to include in the plot
+    if (is.null(compartments))
+        compartments <- rownames(x@S)
+    if (!(all(compartments %in% rownames(x@S))))
+        stop("'compartments' must exist in the model.", call. = FALSE)
+    match(compartments, rownames(x@S))
+}
+
+init_plot_node <- function(x, node) {
+    node <- check_node_argument(x, node)
+    if (is.null(node))
+        node <- seq_len(Nn(x))
+    node
+}
+
+init_plot_line_type <- function(lty, compartments, m) {
+    if (is.null(lty)) {
+        lty <- seq_len(length(compartments))
+    } else {
+        lty <- rep(lty, length.out = length(compartments))
+    }
+    rep(lty, length.out = dim(m)[1])
+}
+
+init_plot_color <- function(col, compartments, m) {
+    if (is.null(col)) {
+        if (length(compartments) > 9) {
+            col <- rainbow(length(compartments))
+        } else if (length(compartments) > 1) {
+            col <- rep(c("#e41a1c", "#377eb8", "#4daf4a",
+                         "#984ea3", "#ff7f00", "#ffff33",
+                         "#a65628", "#f781bf", "#999999"),
+                       length.out = length(compartments))
+        } else {
+            col <- "black"
+        }
+    } else {
+        col <- rep(col, length.out = length(compartments))
+    }
+    rep(col, length.out = dim(m)[1])
+}
+
+init_plot_type <- function(type) {
+    if (is.null(type))
+        type <- "l"
+    type
+}
+
+init_plot_line_width <- function(lwd) {
+    if (is.null(lwd))
+        lwd <- 2
+    lwd
+}
+
 ##' Display the outcome from a simulated trajectory
 ##'
 ##' Plot either the median and the quantile range of the counts in all
@@ -164,17 +219,8 @@ setMethod("plot",
 
               argv <- list(...)
 
-              ## Determine the compartments to include in the plot
-              if (is.null(compartments))
-                  compartments <- rownames(x@S)
-              if (!(all(compartments %in% rownames(x@S))))
-                  stop("'compartments' must exist in the model.", call. = FALSE)
-              compartments <- match(compartments, rownames(x@S))
-
-              ## Check the 'node' argument
-              node <- check_node_argument(x, node)
-              if (is.null(node))
-                  node <- seq_len(Nn(x))
+              compartments <- init_plot_compartments(x, compartments)
+              node <- init_plot_node(x, node)
 
               ## Create a matrix with one row for each line in the
               ## plot.
@@ -185,9 +231,8 @@ setMethod("plot",
                   m <- x@U[i, seq_len(ncol(x@U)), drop = FALSE]
               } else {
                   ## Check range argument
-                  if (!is.numeric(range) ||
-                      !identical(length(range), 1L) ||
-                      range < 0 || range > 1) {
+                  if (any(!is.numeric(range), !identical(length(range), 1L),
+                          range < 0, range > 1)) {
                       stop("'range' must be FALSE or a value between 0 and 1.",
                            call. = FALSE)
                   }
@@ -215,30 +260,10 @@ setMethod("plot",
                   range <- TRUE
               }
 
-              ## Settings for line type
-              if (is.null(argv$lty)) {
-                  lty <- seq_len(length(compartments))
-              } else {
-                  lty <- rep(argv$lty, length.out = length(compartments))
-              }
-              lty <- rep(lty, length.out = dim(m)[1])
-
-              ## Settings for color
-              if (is.null(argv$col)) {
-                  if (length(compartments) > 9) {
-                      col <- rainbow(length(compartments))
-                  } else if (length(compartments) > 1) {
-                      col <- rep(c("#e41a1c", "#377eb8", "#4daf4a",
-                                   "#984ea3", "#ff7f00", "#ffff33",
-                                   "#a65628", "#f781bf", "#999999"),
-                                 length.out = length(compartments))
-                  } else {
-                      col <- "black"
-                  }
-              } else {
-                  col <- rep(argv$col, length.out = length(compartments))
-              }
-              col <- rep(col, length.out = dim(m)[1])
+              lty <- init_plot_line_type(argv$lty, compartments, m)
+              col <- init_plot_color(argv$col, compartments, m)
+              argv$type <- init_plot_type(argv$type)
+              argv$lwd <- init_plot_line_width(argv$lwd)
 
               ## Settings for the y-axis.
               argv$ylab <- "N"
@@ -257,37 +282,22 @@ setMethod("plot",
                   argv$xlab <- "Date"
               }
 
-              ## Type of plot
-              if (is.null(argv$type))
-                  argv$type <- "l"
-
-              ## The line width for each compartment
-              if (is.null(argv$lwd))
-                  argv$lwd <- 2
-
               savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0),
                              xpd = TRUE)
               on.exit(par(savepar))
 
-              ## Plot first line to get a new plot window
-              argv$x <- xx
-              argv$y <- m[1, ]
-              argv$col <- col[1]
-              argv$lty <- lty[1]
-              do.call(plot, argv)
-              if (isTRUE(range)) {
-                  polygon(x = c(xx, rev(xx)), y = c(mu[1, ], rev(ml[1, ])),
-                          col = adjustcolor(col[1], alpha.f = 0.1), border = NA)
-              }
-              title(xlab = argv$xlab, outer = TRUE, line = 0)
-
-              ## Add the rest of the lines to the plot
-              for (i in seq_len(dim(m)[1])[-1]) {
+              ## Plot lines
+              for (i in seq_len(dim(m)[1])) {
                   argv$x <- xx
                   argv$y <- m[i, ]
                   argv$col <- col[i]
                   argv$lty <- lty[i]
-                  do.call(lines, argv)
+                  if (i == 1) {
+                      do.call(plot, argv)
+                      title(xlab = argv$xlab, outer = TRUE, line = 0)
+                  } else {
+                      do.call(lines, argv)
+                  }
                   if (isTRUE(range)) {
                       polygon(x = c(xx, rev(xx)), y = c(mu[i, ], rev(ml[i, ])),
                               col = adjustcolor(col[i], alpha.f = 0.1),
