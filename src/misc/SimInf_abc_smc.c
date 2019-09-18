@@ -181,21 +181,20 @@ SEXP SimInf_abc_smc_proposals(
             for (int d = 0; d < k; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'G':
-                    if (gsl_ran_gamma_pdf(gsl_vector_get(&proposal.vector, d),
-                                          ptr_p1[d], 1.0 / ptr_p2[d]) == 0) {
+                    if (dgamma(ptr_result[i * k + d], ptr_p1[d],
+                               1.0 / ptr_p2[d], 0) == 0) {
                         accept = 0;
                     }
                     break;
                 case 'N':
-                    if (gsl_ran_gaussian_pdf(
-                            gsl_vector_get(&proposal.vector, d) -
-                            ptr_x[j * k + d], ptr_p2[d]) == 0) {
+                    if (dnorm(ptr_result[i * k + d], ptr_x[j * k + d],
+                              ptr_p2[d], 0) == 0) {
                         accept = 0;
                     }
                     break;
                 case 'U':
-                    if (gsl_ran_flat_pdf(gsl_vector_get(&proposal.vector, d),
-                                         ptr_p1[d], ptr_p2[d]) == 0) {
+                    if (dunif(ptr_result[i * k + d], ptr_p1[d],
+                              ptr_p2[d], 0) == 0) {
                         accept = 0;
                     }
                     break;
