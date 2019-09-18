@@ -94,7 +94,6 @@ SEXP SimInf_abc_smc_proposals(
         goto cleanup;
     }
     gsl_rng_set(rng, unif_rand() * UINT_MAX);
-    PutRNGstate();
 
     if (Rf_isNull(x)) {
         /* First generation: sample from priors. */
@@ -103,16 +102,13 @@ SEXP SimInf_abc_smc_proposals(
             for (int d = 0; d < k; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'G':
-                    ptr_result[i * k + d] =
-                        gsl_ran_gamma(rng, ptr_p1[d], 1.0 / ptr_p2[d]);
+                    ptr_result[i * k + d] = rgamma(ptr_p1[d], 1.0 / ptr_p2[d]);
                     break;
                 case 'N':
-                    ptr_result[i * k + d] =
-                        gsl_ran_gaussian(rng, ptr_p2[d]) + ptr_p1[d];
+                    ptr_result[i * k + d] = rnorm(ptr_p1[d], ptr_p2[d]);
                     break;
                 case 'U':
-                    ptr_result[i * k + d] =
-                        gsl_ran_flat(rng, ptr_p1[d], ptr_p2[d]);
+                    ptr_result[i * k + d] = runif(ptr_p1[d], ptr_p2[d]);
                     break;
                 default:
                     error = 2;
@@ -210,6 +206,7 @@ cleanup:
     free(cumsum_w);
     gsl_matrix_free(SIGMA);
     gsl_rng_free(rng);
+    PutRNGstate();
 
     if (error) {
         switch (error) {
