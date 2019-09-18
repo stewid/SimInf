@@ -20,6 +20,7 @@
 
 #include <R.h>
 #include <Rdefines.h>
+#include <Rmath.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_randist.h>
@@ -308,19 +309,16 @@ SEXP SimInf_abc_smc_weights(
         for (int d = 0; d < k; d++) {
             switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
             case 'G':
-                ptr_ww[i] += log(gsl_ran_gamma_pdf(
-                    gsl_vector_get(&v_xx.vector, d),
-                    ptr_p1[d], 1.0 / ptr_p2[d]));
+                ptr_ww[i] +=
+                    dgamma(ptr_xx[i * k + d], ptr_p1[d], 1.0 / ptr_p2[d], 1);
                 break;
             case 'N':
-                ptr_ww[i] += log(gsl_ran_gaussian_pdf(
-                    gsl_vector_get(&v_xx.vector, d) -
-                    ptr_x[i * k + d], ptr_p2[d]));
+                ptr_ww[i] +=
+                    dnorm(ptr_xx[i * k + d], ptr_x[i * k + d], ptr_p2[d], 1);
                 break;
             case 'U':
-                ptr_ww[i] += log(gsl_ran_flat_pdf(
-                    gsl_vector_get(&v_xx.vector, d),
-                    ptr_p1[d], ptr_p2[d]));
+                ptr_ww[i] +=
+                    dunif(ptr_xx[i * k + d], ptr_p1[d], ptr_p2[d], 1);
                 break;
             default:
                 error = 2;
