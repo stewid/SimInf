@@ -93,7 +93,7 @@ SEXP SimInf_abc_smc_proposals(
         error = 1;
         goto cleanup;
     }
-    gsl_rng_set(rng, unif_rand() * UINT_MAX);
+    gsl_rng_set(rng, runif(0.0, 1.0) * UINT_MAX);
 
     if (Rf_isNull(x)) {
         /* First generation: sample from priors. */
@@ -155,7 +155,7 @@ SEXP SimInf_abc_smc_proposals(
              * binary search to determine the sampled particle based
              * on its weight. */
             int j = 0, j_low = 0, j_high = len - 1;
-            double r = gsl_rng_uniform_pos(rng) * cumsum_w[j_high];
+            double r = runif(0.0, 1.0) * cumsum_w[j_high];
             while (j_high >= j_low) {
                 j = (j_low + j_high) / 2;
                 if (cumsum_w[j] < r)
