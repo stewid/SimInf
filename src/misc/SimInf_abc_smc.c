@@ -41,14 +41,14 @@
  * @param p2 numeric vector with the second hyperparameter for each
  *        prior: G) rate, N) standard deviation, and U) upper bound.
  * @param n number of proposals to generate.
- * @param x a numeric matrix with a previous generation of particles
- *        or NULL.
+ * @param x a numeric matrix (parameters x particles) with a previous
+ *        generation of particles or NULL.
  * @param w a numeric vector with weigths for the previous generation
  *        of particles or NULL.
  * @param sigma variance-covariance matrix.
- * @return a numeric matrix with proposals. The matrix also has an
- * attribute 'particle' with an index that indicates which particle it
- * was sampled from.
+ * @return a numeric matrix (parameters x particles) with
+ *         proposals. The matrix also has an attribute 'particle' with
+ *         an index that indicates which particle it was sampled from.
  */
 SEXP SimInf_abc_smc_proposals(
     SEXP parameter,
@@ -69,21 +69,21 @@ SEXP SimInf_abc_smc_proposals(
     double *ptr_x = NULL, *ptr_w = NULL, *cumsum_w = NULL;
     double *ptr_p1 = REAL(p1), *ptr_p2 = REAL(p2);
     int len;
-    SEXP result, particle, dimnames;
-    double *ptr_result;
+    SEXP xx, particle, dimnames;
+    double *ptr_xx;
     int *ptr_particle;
 
     /* Setup result matrix. */
-    PROTECT(result = Rf_allocMatrix(REALSXP, k, N));
+    PROTECT(xx = Rf_allocMatrix(REALSXP, k, N));
     PROTECT(dimnames = Rf_allocVector(VECSXP, 2));
-    Rf_setAttrib(result, R_DimNamesSymbol, dimnames);
+    Rf_setAttrib(xx, R_DimNamesSymbol, dimnames);
     SET_VECTOR_ELT(dimnames, 0, parameter);
-    ptr_result = REAL(result);
+    ptr_xx = REAL(xx);
 
     /* Setup vector to record which particle the proposal was sampled
      * from. */
     PROTECT(particle = Rf_allocVector(INTSXP, N));
-    Rf_setAttrib(result, Rf_install("particle"), particle);
+    Rf_setAttrib(xx, Rf_install("particle"), particle);
     ptr_particle = INTEGER(particle);
 
     /* Setup random number generator. */
@@ -102,13 +102,13 @@ SEXP SimInf_abc_smc_proposals(
             for (int d = 0; d < k; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'G':
-                    ptr_result[i * k + d] = rgamma(ptr_p1[d], 1.0 / ptr_p2[d]);
+                    ptr_xx[i * k + d] = rgamma(ptr_p1[d], 1.0 / ptr_p2[d]);
                     break;
                 case 'N':
-                    ptr_result[i * k + d] = rnorm(ptr_p1[d], ptr_p2[d]);
+                    ptr_xx[i * k + d] = rnorm(ptr_p1[d], ptr_p2[d]);
                     break;
                 case 'U':
-                    ptr_result[i * k + d] = runif(ptr_p1[d], ptr_p2[d]);
+                    ptr_xx[i * k + d] = runif(ptr_p1[d], ptr_p2[d]);
                     break;
                 default:
                     error = 2;
@@ -148,7 +148,7 @@ SEXP SimInf_abc_smc_proposals(
     for (int i = 0; i < N; i++) {
         int accept;
         gsl_vector_view X;
-        gsl_vector_view proposal = gsl_vector_view_array(&ptr_result[i * k], k);
+        gsl_vector_view proposal = gsl_vector_view_array(&ptr_xx[i * k], k);
 
         do {
             /* Sample a particle from previous generation. Use a
@@ -177,19 +177,19 @@ SEXP SimInf_abc_smc_proposals(
             for (int d = 0; d < k; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'G':
-                    if (dgamma(ptr_result[i * k + d], ptr_p1[d],
+                    if (dgamma(ptr_xx[i * k + d], ptr_p1[d],
                                1.0 / ptr_p2[d], 0) == 0) {
                         accept = 0;
                     }
                     break;
                 case 'N':
-                    if (dnorm(ptr_result[i * k + d], ptr_x[j * k + d],
+                    if (dnorm(ptr_xx[i * k + d], ptr_x[j * k + d],
                               ptr_p2[d], 0) == 0) {
                         accept = 0;
                     }
                     break;
                 case 'U':
-                    if (dunif(ptr_result[i * k + d], ptr_p1[d],
+                    if (dunif(ptr_xx[i * k + d], ptr_p1[d],
                               ptr_p2[d], 0) == 0) {
                         accept = 0;
                     }
@@ -227,7 +227,7 @@ cleanup:
 
     UNPROTECT(3);
 
-    return result;
+    return xx;
 }
 
 /**
