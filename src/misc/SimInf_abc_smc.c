@@ -66,7 +66,7 @@ SEXP SimInf_abc_smc_proposals(
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
     int N = INTEGER(n)[0];
-    double *ptr_x = NULL, *ptr_w = NULL, *cumsum_w = NULL;
+    double *ptr_x = NULL, *ptr_w = NULL, *cdf = NULL;
     double *ptr_p1 = REAL(p1), *ptr_p2 = REAL(p2);
     int len;
     SEXP xx, particle, dimnames;
@@ -134,15 +134,15 @@ SEXP SimInf_abc_smc_proposals(
     ptr_x = REAL(x);
     ptr_w = REAL(w);
     len = Rf_length(w);
-    cumsum_w = malloc(len * sizeof(double));
+    cdf = malloc(len * sizeof(double));
     for (int i = 0; i < len; i++) {
         if (ptr_w[i] < 0) {
             error = 3;
             goto cleanup;
         }
-        cumsum_w[i] = ptr_w[i];
+        cdf[i] = ptr_w[i];
         if (i > 0)
-            cumsum_w[i] += cumsum_w[i-1];
+            cdf[i] += cdf[i-1];
     }
 
     for (int i = 0; i < N; i++) {
@@ -155,12 +155,12 @@ SEXP SimInf_abc_smc_proposals(
              * binary search to determine the sampled particle based
              * on its weight. */
             int j = 0, j_low = 0, j_high = len - 1;
-            double r = runif(0.0, 1.0) * cumsum_w[j_high];
+            double r = runif(0.0, 1.0) * cdf[j_high];
             while (j_high >= j_low) {
                 j = (j_low + j_high) / 2;
-                if (cumsum_w[j] < r)
+                if (cdf[j] < r)
                     j_low = j + 1;
-                else if (cumsum_w[j] - ptr_w[j] > r)
+                else if (cdf[j] - ptr_w[j] > r)
                     j_high = j - 1;
                 else
                     break;
@@ -203,7 +203,7 @@ SEXP SimInf_abc_smc_proposals(
     }
 
 cleanup:
-    free(cumsum_w);
+    free(cdf);
     gsl_matrix_free(SIGMA);
     gsl_rng_free(rng);
     PutRNGstate();
