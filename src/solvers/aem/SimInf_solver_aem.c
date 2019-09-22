@@ -115,7 +115,7 @@ static int SimInf_solver_aem(
                                                         sa.tt);
                     sa.t_rate[node * sa.Nt + j] = rate;
 
-                    if (!isfinite(rate) || rate < 0.0) {
+                    if (!R_FINITE(rate) || rate < 0.0) {
                         SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                             sa.Ni + node, sa.tt, rate, j);
                         sa.error = SIMINF_ERR_INVALID_RATE;
@@ -201,7 +201,7 @@ static int SimInf_solver_aem(
 
                                 sa.t_rate[node * sa.Nt + j] = rate;
 
-                                if (!isfinite(rate) || rate < 0.0) {
+                                if (!R_FINITE(rate) || rate < 0.0) {
                                     SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                         sa.Ni + node, sa.t_time[node],
                                                         rate, j);
@@ -228,7 +228,7 @@ static int SimInf_solver_aem(
                                                sa.t_time[node]);
                         sa.t_rate[node * sa.Nt + j] = rate;
 
-                        if (!isfinite(rate) || rate < 0.0) {
+                        if (!R_FINITE(rate) || rate < 0.0) {
                             SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                 sa.Ni + node, sa.t_time[node],
                                                 rate, j);
@@ -295,7 +295,7 @@ static int SimInf_solver_aem(
 
                             sa.t_rate[node * sa.Nt + j] = rate;
 
-                            if (!isfinite(rate) || rate < 0.0) {
+                            if (!R_FINITE(rate) || rate < 0.0) {
                                 SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                     sa.Ni + node, sa.tt, rate, j);
                                 sa.error = SIMINF_ERR_INVALID_RATE;
