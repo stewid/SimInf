@@ -136,7 +136,7 @@ SEXP SimInf_abc_smc_proposals(
     len = Rf_length(w);
     cdf = malloc(len * sizeof(double));
     for (int i = 0; i < len; i++) {
-        if (ptr_w[i] < 0) {
+        if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
             error = 3;
             goto cleanup;
         }
@@ -217,7 +217,7 @@ cleanup:
             Rf_error("Unknown distribution.");
             break;
         case 3:
-            Rf_error("Negative weight detected.");
+            Rf_error("Invalid weight detected (non-finite or < 0.0).");
             break;
         default:
             Rf_error("Unknown error code: %i.", error);
@@ -324,7 +324,7 @@ SEXP SimInf_abc_smc_weights(
 
         gsl_ran_multivariate_gaussian_pdf(&v_xx.vector, &v_x.vector,
                                           SIGMA, &pdf, work);
-        if (ptr_w[i] < 0) {
+        if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
             error = 3;
             goto cleanup;
         }
@@ -361,7 +361,7 @@ cleanup:
             Rf_error("Unknown distribution.");
             break;
         case 3:
-            Rf_error("Negative weight detected.");
+            Rf_error("Invalid weight detected (non-finite or < 0.0).");
             break;
         default:
             Rf_error("Unknown error code: %i.", error);
