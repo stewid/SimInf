@@ -153,17 +153,15 @@ SEXP SimInf_abc_smc_proposals(
         do {
             /* Sample a particle from previous generation. Use a
              * binary search to determine the sampled particle based
-             * on its weight. */
+             * on its weight: [0, cdf_0), [cdf_0, cdf_1), ... */
             int j = 0, j_low = 0, j_high = len - 1;
-            double r = runif(0.0, 1.0) * cdf[j_high];
-            while (j_high >= j_low) {
+            double r = unif_rand() * cdf[j_high]; /* r ~ U[0, cdf[j_high]) */
+            while (j_low < j_high) {
                 j = (j_low + j_high) / 2;
-                if (cdf[j] < r)
+                if (cdf[j] <= r)
                     j_low = j + 1;
-                else if (cdf[j] - ptr_w[j] > r)
-                    j_high = j - 1;
                 else
-                    break;
+                    j_high = j - 1;
             }
             ptr_particle[i] = j + 1; /* R is one-based. */
 
