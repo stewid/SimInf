@@ -215,7 +215,7 @@ int SISe3_sp_post_time_step(
                                 N_i, phi, Nc, gdata[COUPLING]);
     }
 
-    if (!isfinite(v_new[PHI]))
+    if (!R_FINITE(v_new[PHI]))
         return SIMINF_ERR_V_IS_NOT_FINITE;
     if (v_new[PHI] < 0.0)
         return SIMINF_ERR_V_IS_NEGATIVE;
