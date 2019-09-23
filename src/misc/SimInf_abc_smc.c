@@ -266,7 +266,7 @@ SEXP SimInf_abc_smc_weights(
     gsl_vector *work = NULL;
     SEXP ww;
     double *ptr_p1, *ptr_p2, *ptr_x, *ptr_xx, *ptr_w, *ptr_ww;
-    double sum = 0.0, sum_w_K = 0.0, max_ww = 0.0;
+    double sum = 0.0, max_ww = 0.0;
 
     PROTECT(ww = Rf_allocVector(REALSXP, n));
     ptr_ww = REAL(ww);
@@ -326,16 +326,17 @@ SEXP SimInf_abc_smc_weights(
             error = 3;
             goto cleanup;
         }
-        sum_w_K += ptr_w[i] * pdf;
+        sum += ptr_w[i] * pdf;
     }
 
-    sum_w_K = log(sum_w_K);
+    sum = log(sum);
     for (int i = 0; i < n; i++) {
-        ptr_ww[i] -= sum_w_K;
+        ptr_ww[i] -= sum;
         if (ptr_ww[i] > max_ww)
             max_ww = ptr_ww[i];
     }
 
+    sum = 0.0;
     for (int i = 0; i < n; i++) {
         ptr_ww[i] -= max_ww;
         ptr_ww[i] = exp(ptr_ww[i]);
