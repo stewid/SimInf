@@ -25,6 +25,7 @@
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include "SimInf_arg.h"
 
 /**
  * Utility function for implementing the Approximate Bayesian
@@ -49,7 +50,7 @@
  *        of particles or NULL.
  * @param sigma variance-covariance matrix.
  * @return a numeric matrix (parameters x particles) with
- *         proposals. The matrix also has an attribute 'particle' with
+ *         proposals. The matrix also has an attribute 'ancestor' with
  *         an index that indicates which particle it was sampled from.
  */
 SEXP SimInf_abc_smc_proposals(
@@ -68,9 +69,9 @@ SEXP SimInf_abc_smc_proposals(
     gsl_matrix *SIGMA = NULL;
     double *ptr_x = NULL, *ptr_w = NULL, *cdf = NULL;
     double *ptr_p1 = REAL(p1), *ptr_p2 = REAL(p2);
-    SEXP xx, particle, dimnames;
+    SEXP xx, ancestor, dimnames;
     double *ptr_xx;
-    int *ptr_particle;
+    int *ptr_ancestor;
 
     /* Check input arguments. */
     if (SimInf_arg_check_integer_gt_zero(n))
@@ -87,11 +88,11 @@ SEXP SimInf_abc_smc_proposals(
     SET_VECTOR_ELT(dimnames, 0, parameter);
     ptr_xx = REAL(xx);
 
-    /* Setup vector to record which particle the proposal was sampled
-     * from. */
-    PROTECT(particle = Rf_allocVector(INTSXP, N));
-    Rf_setAttrib(xx, Rf_install("particle"), particle);
-    ptr_particle = INTEGER(particle);
+    /* Setup vector to record 'ancestor' i.e. which particle the
+     * proposal was sampled from. */
+    PROTECT(ancestor = Rf_allocVector(INTSXP, N));
+    Rf_setAttrib(xx, Rf_install("ancestor"), ancestor);
+    ptr_ancestor = INTEGER(ancestor);
 
     /* Setup random number generator. */
     GetRNGstate();
@@ -105,7 +106,7 @@ SEXP SimInf_abc_smc_proposals(
     if (Rf_isNull(x)) {
         /* First generation: sample from priors. */
         for (int i = 0; i < N; i++) {
-            ptr_particle[i] = NA_INTEGER;
+            ptr_ancestor[i] = NA_INTEGER;
             for (int d = 0; d < k; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'G':
@@ -170,7 +171,7 @@ SEXP SimInf_abc_smc_proposals(
                 else
                     j_high = j - 1;
             }
-            ptr_particle[i] = j + 1; /* R is one-based. */
+            ptr_ancestor[i] = j + 1; /* R is one-based. */
 
             /* Perturbate the particle. */
             X = gsl_vector_view_array(&ptr_x[j * k], k);
