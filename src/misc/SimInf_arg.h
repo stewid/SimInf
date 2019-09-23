@@ -28,6 +28,7 @@
 
 int SimInf_arg_check_dgCMatrix(SEXP arg);
 int SimInf_arg_check_integer(SEXP arg);
+int SimInf_arg_check_integer_gt_zero(SEXP arg);
 int SimInf_arg_check_matrix(SEXP arg);
 int SimInf_arg_check_model(SEXP arg);
 int SimInf_get_solver(int *out, SEXP solver);

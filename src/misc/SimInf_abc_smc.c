@@ -33,6 +33,8 @@
  * for the first generation, and then from a previous generation of
  * particles.
  *
+ * @param parameter character vector with the name of the parameter
+ *        for each prior.
  * @param distribution character vector with the name of the
  *        distribution for each prior. Each entry must contain one of
  *        'G' (gamma), 'N' (normal) or 'U' (uniform).
@@ -60,18 +62,23 @@ SEXP SimInf_abc_smc_proposals(
     SEXP w,
     SEXP sigma)
 {
-    int error = 0;
-    const int k = Rf_length(parameter);
+    int error = 0, k, len, N;
     gsl_rng *rng = NULL;
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
-    int N = INTEGER(n)[0];
     double *ptr_x = NULL, *ptr_w = NULL, *cdf = NULL;
     double *ptr_p1 = REAL(p1), *ptr_p2 = REAL(p2);
-    int len;
     SEXP xx, particle, dimnames;
     double *ptr_xx;
     int *ptr_particle;
+
+    /* Check input arguments. */
+    if (SimInf_arg_check_integer_gt_zero(n))
+        Rf_error("'n' must be an integer > 0.");
+    N = INTEGER(n)[0];
+    if (!Rf_isString(parameter))
+        Rf_error("'parameter' must be a character vector.");
+    k = Rf_length(parameter);
 
     /* Setup result matrix. */
     PROTECT(xx = Rf_allocMatrix(REALSXP, k, N));
