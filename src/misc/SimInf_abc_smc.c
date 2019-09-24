@@ -63,7 +63,7 @@ SEXP SimInf_abc_smc_proposals(
     SEXP w,
     SEXP sigma)
 {
-    int error = 0, k, len, N;
+    int error = 0, k, len = 0, N;
     gsl_rng *rng = NULL;
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
@@ -80,6 +80,11 @@ SEXP SimInf_abc_smc_proposals(
     if (!Rf_isString(parameter))
         Rf_error("'parameter' must be a character vector.");
     k = Rf_length(parameter);
+    if (!Rf_isNull(x)) {
+        len = Rf_length(w);
+        if (len < 1)
+            Rf_error("'w' must have length >= 1 when 'x' is non-null.");
+    }
 
     /* Setup result matrix. */
     PROTECT(xx = Rf_allocMatrix(REALSXP, k, N));
@@ -141,7 +146,6 @@ SEXP SimInf_abc_smc_proposals(
     /* Setup weights */
     ptr_x = REAL(x);
     ptr_w = REAL(w);
-    len = Rf_length(w);
     cdf = malloc(len * sizeof(double));
     for (int i = 0; i < len; i++) {
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
