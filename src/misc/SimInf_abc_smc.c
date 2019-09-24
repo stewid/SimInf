@@ -106,7 +106,7 @@ SEXP SimInf_abc_smc_proposals(
         error = 1;
         goto cleanup;
     }
-    gsl_rng_set(rng, runif(1, UINT_MAX);
+    gsl_rng_set(rng, runif(1, UINT_MAX));
 
     if (Rf_isNull(x)) {
         /* First generation: sample from priors. */
