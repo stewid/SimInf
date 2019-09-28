@@ -35,22 +35,19 @@ check_model_for_abc_smc <- function(model) {
 
 ##' Generate replicates of first node in model.
 ##'
+##' Replicate the node specific matrices 'u0', 'v0' and 'ldata' in the
+##' first node.
 ##' @param model the model to replicate.
 ##' @param n the number of replicates.
 ##' @return A modified model object
 ##' @noRd
 replicate_first_node <- function(model, n) {
-    ## Replicate 'u0', 'v0' and 'ldata' matrices in the first
-    ## node. Use '1' if the node contains rows in each matrix, else 0.
-    j <- rep(min(1, nrow(model@u0)), n)
-    model@u0 <- model@u0[, j, drop = FALSE]
-
-    j <- rep(min(1, nrow(model@v0)), n)
-    model@v0 <- model@v0[, j, drop = FALSE]
-
-    j <- rep(min(1, nrow(model@ldata)), n)
-    model@ldata <- model@ldata[, j, drop = FALSE]
-
+    if (dim(model@u0)[1] > 0)
+        model@u0 <- model@u0[, rep(1, n), drop = FALSE]
+    if (dim(model@v0)[1] > 0)
+        model@v0 <- model@v0[, rep(1, n), drop = FALSE]
+    if (dim(model@ldata)[1] > 0)
+        model@ldata <- model@ldata[, rep(1, n), drop = FALSE]
     model
 }
 
