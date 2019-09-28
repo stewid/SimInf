@@ -201,7 +201,10 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
             result <- fn(run(model), generation, ...)
             stopifnot(is.logical(result), length(result) == n)
 
-            j <- which((cumsum(result) + ifelse(is.null(xx), 0, ncol(xx))) == npart)
+            ## Collect accepted particles making sure not to collect
+            ## more than 'npart'.
+            j <- cumsum(result) + ifelse(is.null(xx), 0, ncol(xx))
+            j <- which(j == npart)
             result <- which(result)
             if (length(j)) {
                 j <- min(j)
