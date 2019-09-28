@@ -33,6 +33,27 @@ check_model_for_abc_smc <- function(model) {
     invisible(NULL)
 }
 
+##' Generate replicates of first node in model.
+##'
+##' @param model the model to replicate.
+##' @param n the number of replicates.
+##' @return A modified model object
+##' @noRd
+replicate_first_node <- function(model, n) {
+    ## Replicate 'u0', 'v0' and 'ldata' matrices in the first
+    ## node. Use '1' if the node contains rows in each matrix, else 0.
+    j <- rep(min(1, nrow(model@u0)), n)
+    model@u0 <- model@u0[, j, drop = FALSE]
+
+    j <- rep(min(1, nrow(model@v0)), n)
+    model@v0 <- model@v0[, j, drop = FALSE]
+
+    j <- rep(min(1, nrow(model@ldata)), n)
+    model@ldata <- model@ldata[, j, drop = FALSE]
+
+    model
+}
+
 ##' Run ABC SMC
 ##'
 ##' @param model The model to generate data from.
@@ -141,12 +162,11 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
              call. = FALSE)
     }
 
-    ## Replicate 'u0' and 'ldata' to run many particles simultanously.
-    ## Start with 100 x 'npart' and increase the number adaptively
-    ## based on the acceptance rate.
+    ## Each node represents one particle. Replicate the first node to
+    ## run many particles simultanously. Start with 100 x 'npart' and
+    ## increase the number adaptively based on the acceptance rate.
     n <- as.integer(10 * npart)
-    model@u0 <- model@u0[, rep(1, n), drop = FALSE]
-    model@ldata <- model@ldata[, rep(1, n), drop = FALSE]
+    model <- replicate_first_node(model, n)
 
     ## Setup a population of particles (x), weights (w),
     ## variance-covariance matrix (sigma) and a list to hold the
@@ -171,8 +191,7 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
                 ## Increase the number of particles that is simulated
                 ## in each simulation.
                 n <- n * 2L
-                model@u0 <- model@u0[, rep(1, n), drop = FALSE]
-                model@ldata <- model@ldata[, rep(1, n), drop = FALSE]
+                model <- replicate_first_node(model, n)
             }
 
             proposals <- .Call(SimInf_abc_smc_proposals,
