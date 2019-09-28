@@ -242,7 +242,7 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
         if (isTRUE(verbose)) {
             t1 <- proc.time()
             cat(sprintf(" accrate = %.2e, ESS = %.2e time = %.2f secs\n",
-                        npart / tot_proposals, 1/sum(w^2), (t1 - t0)[3]))
+                        npart / tot_proposals, 1 / sum(w^2), (t1 - t0)[3]))
         }
     }
 
