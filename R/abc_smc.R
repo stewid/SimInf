@@ -184,10 +184,10 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
         tot_proposals <- 0
 
         repeat {
-            if (tot_proposals > 2 * n) {
+            if (all(n < 1e6, tot_proposals > 2 * n)) {
                 ## Increase the number of particles that is simulated
-                ## in each simulation.
-                n <- n * 2L
+                ## in each trajectory.
+                n <- min(1e6L, n * 2L)
                 model <- replicate_first_node(model, n)
             }
 
