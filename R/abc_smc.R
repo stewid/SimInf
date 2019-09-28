@@ -16,6 +16,23 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Check model before running ABC-SMC
+##'
+##' Raise an error if the model argument is not ok.
+##' @param model the model to check.
+##' @return invisible(NULL)
+##' @noRd
+check_model_for_abc_smc <- function(model) {
+    check_model_argument(model)
+
+    if (!identical(Nn(model), 1L))
+        stop("The 'model' must contain one node.", call. = FALSE)
+    if (length(model@events@event) > 0)
+        stop("The 'model' cannot contain any events.", call. = FALSE)
+
+    invisible(NULL)
+}
+
 ##' Run ABC SMC
 ##'
 ##' @param model The model to generate data from.
@@ -114,12 +131,7 @@
 ##'           rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
 ##'       })
 abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
-    check_model_argument(model)
-
-    if (!identical(Nn(model), 1L))
-        stop("The 'model' must contain one node.", call. = FALSE)
-    if (length(model@events@event) > 0)
-        stop("The 'model' cannot contain any events.", call. = FALSE)
+    check_model_for_abc_smc(model)
 
     ## Match the 'priors' to parameters in 'ldata'.
     priors <- parse_priors(priors)
