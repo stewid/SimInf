@@ -435,6 +435,10 @@ m2 <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
              gdata = data.frame(c1 = 0.5, c2 = 1, c3 = 0.005),
              u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5)
 
+## Skip first line that contains time
+m1@C_code <- m1@C_code[-1]
+m2@C_code <- m2@C_code[-1]
+
 stopifnot(identical(m1, m2))
 
 ## Check that mparse fails with gdata as a 2-row data.frame
