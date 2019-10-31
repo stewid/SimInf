@@ -8,6 +8,7 @@ warnings_are_errors: true
 addons:
   apt:
     packages:
+      - devscripts
       - libgsl0-dev
 
 matrix:
