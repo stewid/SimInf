@@ -265,12 +265,12 @@ vertex).  Moreover, each movement forms an edge (also called a link)
 between two nodes and following all edges through time, an infection
 may ``flow'' in the network and spread from node to node. Let
 $\Nnodes$ denote the number of nodes in a population, and let $i, j, k
-\in \{1, ..., \Nnodes\}$ denote three distinct nodes.  As illustrated
-in Figure~\ref{fig:temporal-network}, just because there exists an
-edge from $i$ to $j$ does not mean that there exists an edge from $j$
-to $i$.  Moreover, the existence of an edge from $i$ to $j$ and one
-from $j$ to $k$ does not imply there exists a path from $i$ to $k$.
-Furthermore, note that the order of the edges matter, consider
+\in \{1, \ldots, \Nnodes\}$ denote three distinct nodes.  As
+illustrated in Figure~\ref{fig:temporal-network}, just because there
+exists an edge from $i$ to $j$ does not mean that there exists an edge
+from $j$ to $i$.  Moreover, the existence of an edge from $i$ to $j$
+and one from $j$ to $k$ does not imply there exists a path from $i$ to
+$k$.  Furthermore, note that the order of the edges matter, consider
 swapping the first and second time step in
 Figure~\ref{fig:temporal-network}, then another path for spread is
 possible, namely from node $3$ to node $4$ and then to node $2$.
@@ -404,7 +404,7 @@ $\Nnodes$ nodes we first define the overall state matrices $\X \in
   \label{eq:local2}
   \frac{d\Y^{(i)}(t)}{dt} &= f(\X^{(i)},\Y^{(i)}),
 \end{align}
-where $i \in \{1,...,\Nnodes\}$ is the node index.
+where $i \in \{1, \ldots,\Nnodes\}$ is the node index.
 
 We then consider the $\Nnodes$ nodes being the vertices of an
 undirected graph $\mathcal{G}$ with interactions defined in terms of
@@ -498,7 +498,7 @@ t_{n+1}-t_{n}$ for the concentration variable $\Y$.
     \includegraphics{img/overview.pdf}
   \end{center}
   \caption{Schematic overview of the functionality in
-    \pkg{SimInf}. The central object is the S4 class
+    \pkg{SimInf}. The central object is the \proglang{S}4 class
     \code{Simlnf\_model} which contains the specification and data for
     a model.  A new model object is created using \code{mparse} or a
     predefined template, for example, \code{SIR} or \code{SEIR}.  A
@@ -518,7 +518,7 @@ t_{n+1}-t_{n}$ for the concentration variable $\Y$.
 The overall design of \pkg{SimInf} was inspired and partly adapted
 from the Unstructured Mesh Reaction-Diffusion Master Equation (URDME)
 framework \citep{Engblom2009, Drawert2012}.  \pkg{SimInf} uses object
-oriented programming and the \code{S4} class \citep{Chambers2008}
+oriented programming and the \proglang{S}4 class \citep{Chambers2008}
 \code{SimInf\_model} is central and provides the basis for the
 framework.  A \code{SimInf\_model} object supplies the state-change
 matrix, the dependency graph, the scheduled events, and the initial
@@ -664,8 +664,8 @@ The results reported here are based on \pkg{SimInf} version 6.1.0.
     transition rate functions and the post time step function.\\
 
     \code{events} & Scheduled events to modify the discrete state of
-    individuals in a node at a pre-defined time $t$.  \code{S4} class
-    \code{SimInf\_events}, see \S\ref{sec:events} and
+    individuals in a node at a pre-defined time $t$.  \proglang{S}4
+    class \code{SimInf\_events}, see \S\ref{sec:events} and
     Table~\ref{table:scheduled:events}.\\
 
     \code{C\_code} & Character vector with optional model \proglang{C}
@@ -677,7 +677,7 @@ The results reported here are based on \pkg{SimInf} version 6.1.0.
 
     \bottomrule
   \end{tabularx}
-  \caption{Description of the slots in the S4 class
+  \caption{Description of the slots in the \proglang{S}4 class
     \code{SimInf\_model} that defines the epidemiological model.
     $\Ntransitions$ is the number of state transitions in the model.
     $\Ncompartments$ is the number of compartments in the model.
@@ -693,7 +693,7 @@ The results reported here are based on \pkg{SimInf} version 6.1.0.
 The within-node disease spread model in \pkg{SimInf} is specified as a
 compartment model with the individuals divided into compartments
 defined by discrete disease statuses.  The model is defined by the
-slots in the \code{S4} class \code{SimInf\_model}
+slots in the \proglang{S}4 class \code{SimInf\_model}
 (Table~\ref{table:SimInf:model}).  The compartments contains the
 number of individuals in each of the $\Ncompartments$ disease states
 in every $\Nnodes$ nodes.
@@ -792,7 +792,7 @@ concentration variable $\Y$.
 
     \bottomrule
   \end{tabularx}
-  \caption{Description of the slots in the S4 class
+  \caption{Description of the slots in the \proglang{S}4 class
     \code{SimInf\_events} that holds data to process scheduled events
     to modify the discrete state of individuals in a node at a
     pre-defined time $t$.  Each index, \code{i}, of the vectors
@@ -887,22 +887,23 @@ when simulation time reaches the time for any of the events.  Events
 that are scheduled at the same time are processed in the following
 order: exit, enter, internal transfer and external transfer.
 
-The S4 class \code{SimInf\_events} contains slots with data structures
-to process events (Table~\ref{table:scheduled:events}).  The slots
-\code{event}, \code{time}, \code{node}, \code{dest}, \code{n},
-\code{proportion}, \code{select} and \code{shift}, are vectors of
-equal length.  These vectors hold data to process one event: \code{e},
-where $1 <$ \code{e} $\leq$ \code{length(event)}.  The event type and
-the time of the event are determined by \code{event[e]} and
-\code{time[e]}, respectively.  The compartments that \code{event[e]}
-operates on, are specified by \code{select[e]} together with the slot
-\code{E}.  Each row $\{1, 2, ..., \Ncompartments\}$ in the sparse
-matrix \code{E}, represents one compartment in the model.  Let \code{s
-  <- select[e]}, then each non-zero entry in the column \code{E[, s]}
-includes that compartment in the \code{event[e]} operation.  The
-definitions of all of these operations are a bit involved and to
-quickly get an overview, schematic diagrams illustrating all of them
-have been prepared, we refer to
+The \proglang{S}4 class \code{SimInf\_events} contains slots with data
+structures to process events (Table~\ref{table:scheduled:events}).
+The slots \code{event}, \code{time}, \code{node}, \code{dest},
+\code{n}, \code{proportion}, \code{select} and \code{shift}, are
+vectors of equal length.  These vectors hold data to process one
+event: \code{e}, where $1 <$ \code{e} $\leq$ \code{length(event)}.
+The event type and the time of the event are determined by
+\code{event[e]} and \code{time[e]}, respectively.  The compartments
+that \code{event[e]} operates on, are specified by \code{select[e]}
+together with the slot \code{E}.  Each row $\{1, 2, \ldots,
+\Ncompartments\}$ in the sparse matrix \code{E}, represents one
+compartment in the model.  Let \code{s <- select[e]}, then each
+non-zero entry in the column \code{E[, s]} includes that compartment
+in the \code{event[e]} operation.  The definitions of all of these
+operations are a bit involved and to quickly get an overview,
+schematic diagrams illustrating all of them have been prepared, we
+refer to
 Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\ref{fig:external:shift}
 in Appendix~\ref{sec:illustration-scheduled-events}.
 
@@ -930,7 +931,7 @@ compartments represented by the non-zero entries in column
 and removed from the compartments specified by \code{E[, s]}.  The
 next step is to move the sampled individuals to their new compartment
 using the matrix \code{N} and \code{shift[e]}, where \code{shift[e]}
-specifies which column in \code{N} to use.  Each row $\{1, 2, ...,
+specifies which column in \code{N} to use.  Each row $\{1, 2, \ldots,
 \Ncompartments\}$ in \code{N}, represents one compartment in the model
 and the values determine how to move sampled individuals before adding
 them to \code{node[e]} again.  Let \code{q <- shift[e]}, then each
@@ -1980,7 +1981,7 @@ the new package. Note that a temporary directory is used here for
 illustration of the functionality.  We refer to the \pkg{SimInf}
 documentation for other arguments that can be supplied to the
 \code{package_skeleton} method.  The created \proglang{R} file
-(\texttt{'R/models.R'}) defines the \code{S4} class
+(\texttt{'R/models.R'}) defines the \proglang{S}4 class
 \code{PredatorPrey} that contains the \code{SimInf\_model} and a
 generating function to create a new object of the \code{PredatorPrey}
 model.  The generating function is a template that might need to be
