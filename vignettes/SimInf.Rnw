@@ -310,18 +310,22 @@ state prior to any transition at time $t$, that is, $X(t-)$.
 
 The local dynamics can then compactly be described by a pure jump
 stochastic differential equation (SDE),
+%
 \begin{align}
   \label{eq:vectorJSDE}
   dX(t) &= \Stoich\fatmu(dt),
 \end{align}
+%
 where $\fatmu(dt)$ is a vector measure built up from the scalar
 counting measures $\fatmu(dt) = [\mu_{1}(dt),\ldots,$
   $\mu_{\Ntransitions}(dt)]^\top$. If at time $t$, transition $k$
 occurs, then the state vector is updated according to
+%
 \begin{align}
   \label{eq:eventupdate}
    X(t)=X(t-)+\Stoich_k,
 \end{align}
+%
 with $\Stoich_k$ the $k$th column of $\Stoich$.  In
 \eqref{eq:vectorJSDE} the $\Ntransitions$ different epidemiological
 state transitions are competing in the sense of independent Poisson
@@ -333,6 +337,7 @@ remembered via the state variable $X$ only.
 To make this abstract notation a bit more concrete we consider a
 traditional example as follows.  In an SIS-model the transitions
 between a susceptible and an infected compartment can be written as
+%
 \begin{align}
 \label{eq:sirtrans}
   &\left. \begin{array}{rl}
@@ -350,13 +355,16 @@ between a susceptible and an infected compartment can be written as
       \end{array} \right], \\
     R(x) &= [\beta x_{1}x_{2},\gamma x_{2}]^\top.
 \end{align}
+%
 To connect this with traditional ODE-based models, note that,
 replacing the random measure in \eqref{eq:vectorJSDE} with its mean
 drift, we arrive at
+%
 \begin{align}
   \label{eq:ODE}
   \frac{dx(t)}{dt} &= \Stoich R(x),
 \end{align}
+%
 where now the state variable $x \in \Realdom^{\Ncompartments}$.  The
 differences between \eqref{eq:vectorJSDE} and \eqref{eq:ODE} are that
 the randomness and discreteness of the state variable are not present
@@ -375,6 +383,7 @@ individual counting would clearly not be feasible.
 Assuming an additional concentration state vector $Y \in
 \Realdom^{\Nconcentrations}$ a general model which augments
 \eqref{eq:vectorJSDE} is
+%
 \begin{align}
   \label{eq:JSDE_ODE}
   \left. \begin{array}{rcl}
@@ -382,11 +391,14 @@ Assuming an additional concentration state vector $Y \in
     Y'(t) &=& f(X(t),Y(t)) \\
   \end{array} \right\},
 \end{align}
+%
 where now the random measure depends also on the concentration
 variable,
+%
 \begin{align}
   \fatmu(dt) = \fatmu(R(X(t-),Y(t)),dt).
 \end{align}
+%
 The overall combined state vector is then $[X; \; Y] \in
 [\Intdom^{\Ncompartments}; \; \Realdom^{\Nconcentrations}]$.
 
@@ -398,12 +410,14 @@ $\Nnodes$ nodes we first define the overall state matrices $\X \in
 \Intdom_{+}^{\Ncompartments \times \Nnodes}$ and $\Y \in
 \Realdom^{\Nconcentrations \times \Nnodes}$ and then extend
 \eqref{eq:JSDE_ODE} to
+%
 \begin{align}
   \label{eq:local1}
   d\X^{(i)}(t) &= \Stoich\fatmu^{(i)}(dt), \\
   \label{eq:local2}
   \frac{d\Y^{(i)}(t)}{dt} &= f(\X^{(i)},\Y^{(i)}),
 \end{align}
+%
 where $i \in \{1, \ldots,\Nnodes\}$ is the node index.
 
 We then consider the $\Nnodes$ nodes being the vertices of an
@@ -421,6 +435,7 @@ graph $\mathcal{G}$ as the matrix $\Connect \in
 % as the time dependent evolution of $C_t$ as $\Connect = [C_{t_0},C_{t_1}, \dots, C_{t_{max}}]$.
 
 The network dynamics is then written as
+%
 \begin{align}
   \label{eq:global1}
   d\X^{(i)}_{t} &= -\sum_{j \in C(i)} \Connect\fatnu^{(i,j)}(dt)+
@@ -429,7 +444,7 @@ The network dynamics is then written as
   \frac{d\Y^{(i)}(t)}{dt} &= -\sum_{j \in C(i)} g(\X^{(i)},\Y^{(i)})+
   \sum_{j; \, i \in C(j)} g(\X^{(j)},\Y^{(j)}).
 \end{align}
-
+%
 In \eqref{eq:global2}, $g$ is similarly the ``flow'' of the
 concentration variable $\Y$ between the nodes in the network.  For
 example, this could be the natural modeling target for concentration
@@ -437,6 +452,7 @@ variables $\Y$ which are transported via surface water or air.
 
 Combining this with \eqref{eq:local1}--\eqref{eq:local2} we obtain the
 overall dynamics
+%
 \begin{align}
   \label{eq:master1}
   d\X^{(i)}(t) &= \Stoich\fatmu^{(i)}(dt)-
@@ -447,7 +463,7 @@ overall dynamics
   \sum_{j \in C(i)} g(\X^{(i)},\Y^{(i)})+
   \sum_{j; \, i \in C(j)} g(\X^{(j)},\Y^{(j)}).
 \end{align}
-
+%
 Note that $\fatnu^{(i,j)}$ and $\fatnu^{(j,i)}$ may be equivalently
 employed for externally scheduled events given by data using an
 equivalent construction in terms of Dirac measures.  This is the case,
@@ -464,6 +480,7 @@ We discretize time as $0 = t_{0} < t_{1} < t_2 < \cdots$, which is
 partially required as external data has to be incorporated at some
 finitely resolved time stamps.  The numerical method of \pkg{SimInf}
 can then be written per node $i$ as
+%
 \begin{align}
   \label{eq:numstep1}
   \tilde{\X}_{n+1}^{(i)} &= \X_{n}^{(i)} + \int^{t_{n+1}}_{t_n}
@@ -480,7 +497,7 @@ can then be written per node $i$ as
   -\sum_{j \in C(i)} g(\tilde{\X}_{n+1}^{(i)},\Y_{n}^{(i)})\Delta t_{n}+
   \sum_{j; \, i \in C(j)} g(\tilde{\X}_{n+1}^{(j)},\Y_{n}^{(j)})\Delta t_{n}.
 \end{align}
-
+%
 In this scheme, \eqref{eq:numstep1} forms the local stochastic step,
 that is in practice simulated by the Gillespie method
 \citep{Gillespie1977}.  Equation~\eqref{eq:numstep2} is the data step,
@@ -1095,6 +1112,7 @@ This section illustrates the specification of the predefined
 transmission route of infection to susceptible individuals is through
 direct contact between susceptible and infected individuals.  The
 \code{SIR} model has two state transitions in each node $i$,
+%
 \begin{align}
 \label{eq:SIR}
 \begin{array}{rcl}
@@ -1102,6 +1120,7 @@ direct contact between susceptible and infected individuals.  The
   I_i &\xrightarrow{\gamma I_i} & R_i,
   \end{array}
 \end{align}
+%
 where $\beta$ is the transmission rate and $\gamma$ is the recovery
 rate.  To create an \code{SIR} model object, we need to define
 \code{u0}, a \code{data.frame} with the initial number of individuals
@@ -1413,6 +1432,7 @@ to the environment.  Moreover, it also includes a spatial coupling of
 the environmental contamination among proximal nodes to capture
 between-node spread unrelated to moving infected individuals.
 Consequently, the model has two state transitions,
+%
 \begin{align}
 \label{eq:vtectrans}
 \begin{array}{rcl}
@@ -1420,18 +1440,21 @@ Consequently, the model has two state transitions,
   I_i & \xrightarrow{\gamma} & S_i,
   \end{array}
 \end{align}
+%
 where the transition rate per unit of time from susceptible to
 infected is proportional to the concentration of the environmental
 contamination $\varphi_i(t)$ in node $i$.  Moreover, the transition
 rate from infected to susceptible is the recovery rate $\gamma$,
 measured per individual and per unit of time.  Finally, the
 environmental infectious pressure is evolved by
+%
 \begin{equation}
   \label{eq:envInfPressure-local-spread}
   \frac{d \varphi_i(t)}{dt}= \frac{\alpha I_i(t)}{N_i(t)} +
   \sum_k{\frac{\varphi_k(t) N_k(t) - \varphi_i(t) N_i(t)}{N_i(t)}
     \cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t),
 \end{equation}
+%
 where $\alpha$ is the average shedding rate of the pathogen to the
 environment per infected individual and $N_i = S_i + I_i$ the size of
 node $i$.  Next comes the spatial coupling among proximal nodes, where
@@ -1925,7 +1948,7 @@ model consists of five transitions
 (Equation~\eqref{eq:predator-prey}): i) prey birth, ii) prey death due
 to non-predatory events, iii) prey death due to predation, iv)
 predator birth, and v) predator death
-
+%
 \begin{align}
   \label{eq:predator-prey}
   \left.
@@ -1938,7 +1961,7 @@ predator birth, and v) predator death
     \end{array}
      \right\},
 \end{align}
-
+%
 where $b_R$, $d_R$, $b_F$, and $d_F$ are the per capita birth and
 death rate of the prey and predator, respectively.  Moreover, $K$ is
 the carrying capacity of the prey, $\alpha$ is the predation
