@@ -248,8 +248,8 @@ outbreak \citep{King2015}, seasonality of influenza epidemics
     individuals from a source node to a destination node and labels
     denote the size of the shipment.  Here, infection may spread from
     node $1$ to node $3$ at $t=2$ and then from node $3$ to node $2$
-    at $t=3$.
-    \label{fig:temporal-network}}
+    at $t=3$.}
+  \label{fig:temporal-network}
 \end{figure}
 
 In order to model disease spread on a larger scale, the infection
@@ -526,7 +526,8 @@ t_{n+1}-t_{n}$ for the concentration variable $\Y$.
     simulated data, for example, \code{trajectory}, \code{prevalence}
     and \code{plot}.  \pkg{SimInf} supports usage of the numerical
     solvers from other \proglang{R} packages via the \code{LinkingTo}
-    feature in \proglang{R}. \label{fig:overview}}
+    feature in \proglang{R}.}
+  \label{fig:overview}
 \end{figure}
 
 \section{Technical description of the simulation framework}
@@ -1213,7 +1214,8 @@ dev.off()
     There are no between-node interactions.  Left: The default plot
     shows the median and inter-quartile range of the count in each
     compartment through time across all nodes.  Right: Realizations
-    from a subset of 10 nodes.  \label{fig:SIR-model}}
+    from a subset of 10 nodes.}
+  \label{fig:SIR-model}
 \end{figure}
 
 Most modeling and simulation studies require custom data analysis once
@@ -1661,7 +1663,8 @@ plot(result)
   \caption{Showing the median and inter-quartile range from 1000
     realizations of an \code{mparse} \code{SIR} model ($\beta = 0.16$,
     $\gamma = 0.077$), starting with 99 susceptible, 5 infected, and 0
-    recovered individuals. \label{fig:SIR-mparse-proportion}}
+    recovered individuals.}
+  \label{fig:SIR-mparse-proportion}
   \end{center}
 \end{figure}
 
@@ -1744,7 +1747,8 @@ lines(avg_cases, col = "blue", lwd = 2, lty = 2)
     0.16, \gamma = 0.077$), starting with 99 susceptible, 1 infected
     and 0 recovered individuals.  (blue dashed line) Average number of
     incident cases per day from 1000 realizations of the
-    model.  \label{fig:SIR-mparse-incidence}}
+    model.}
+  \label{fig:SIR-mparse-incidence}
 \end{figure}
 
 \subsubsection[Incorporate scheduled events in an mparse model]{%
@@ -1919,7 +1923,8 @@ legend("topright", c("No vaccination", "Vaccination"),
     outbreak in an unvaccinated population of cattle herds (black
     solid line) and after vaccination of animals (blue dashed line).
     The vertical line (dotted) indicates when vaccination was
-    initiated.  \label{fig:mparse-epicurve}}
+    initiated.}
+  \label{fig:mparse-epicurve}
 \end{figure}
 
 %**************************************************************************
@@ -2047,7 +2052,8 @@ install.packages(pkg, repos = NULL, type = "source")
     the Rosenzweig-MacArthur predator-prey model. Right: One
     realization of the Rosenzweig-MacArthur predator-prey model, where
     the predators go extinct and then the prey population fluctuates
-    around a plateu of 1000 individuals.  \label{fig:predator-prey}}
+    around a plateu of 1000 individuals.}
+  \label{fig:predator-prey}
 \end{figure}
 
 Here we let \code{repos = NULL} to install from local files and use
@@ -2349,7 +2355,8 @@ executed (Figures~\ref{fig:exit}, \ref{fig:enter}, \ref{fig:external},
     node 14 after subtracting the sampled individual in step iii from
     node 14.  $^\dag$\code{dest} and $^\S$\code{shift} are not used in
     a scheduled exit event.  $^\ddag$\code{proportion} is not used
-    when $n > 0$.  \label{fig:exit}}
+    when $n > 0$.}
+  \label{fig:exit}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -2367,7 +2374,8 @@ executed (Figures~\ref{fig:exit}, \ref{fig:enter}, \ref{fig:external},
     state of node 14 after adding the individuals in step iii).
     $^\dag$\code{dest}, $^\ddag$\code{proportion} and
     $^\S$\code{shift} are not used in a scheduled enter
-    event.  \label{fig:enter}}
+    event.}
+  \label{fig:enter}
 
   \vspace*{\floatsep}
 
@@ -2391,7 +2399,8 @@ executed (Figures~\ref{fig:exit}, \ref{fig:enter}, \ref{fig:external},
     $^\dag$\code{shift} can be used in a scheduled external transfer
     event, see
     Figure~\ref{fig:external:shift}. $^\ddag$\code{proportion} is not
-    used when $n > 0$.  \label{fig:external}}
+    used when $n > 0$.}
+  \label{fig:external}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -2414,7 +2423,8 @@ executed (Figures~\ref{fig:exit}, \ref{fig:enter}, \ref{fig:external},
     individuals in step iii) and adding the individuals after the
     shift operation in step iv).  $^\dag$\code{dest} is not used in
     internal transfers.  $^\ddag$\code{proportion} is not used when $n
-    > 0$.  \label{fig:internal}}
+    > 0$.}
+  \label{fig:internal}
 
   \vspace*{\floatsep}
 
@@ -2438,7 +2448,8 @@ executed (Figures~\ref{fig:exit}, \ref{fig:enter}, \ref{fig:external},
     node 23 after subtracting the sampled individuals in step iii)
     from node 14 and adding them to the destination node 23 after the
     shift operation in step iv).  $^\ddag$\code{proportion} is not
-    used when $n > 0$.  \label{fig:external:shift}}
+    used when $n > 0$.}
+  \label{fig:external:shift}
 \end{figure}
 
 \clearpage
