@@ -202,12 +202,13 @@ includes a framework for modeling spread of diseases on networks.  In
 individuals is modelled through a contact network in discrete time.
 
 The remainder of this paper is organized as follows.  In
-\S\ref{sec:modeling} we summarize the mathematical foundation for our
-framework. Section \S\ref{sec:framework} gives a technical description
-of the simulation framework.  In \S\ref{sec:examples} we illustrate
-the use of the package by some worked examples.  In \S\ref{sec:extend}
-we demonstrate how to extend \pkg{SimInf} with user-defined models.
-Finally, in \S\ref{sec:benchmark} we provide a small benchmark between
+Section~\ref{sec:modeling} we summarize the mathematical foundation
+for our framework.  Section~\ref{sec:framework} gives a technical
+description of the simulation framework.  In
+Section~\ref{sec:examples} we illustrate the use of the package by
+some worked examples.  In Section~\ref{sec:extend} we demonstrate how
+to extend \pkg{SimInf} with user-defined models.  Finally, in
+Section~\ref{sec:benchmark} we provide a small benchmark between
 various \proglang{R} packages of the run-time to simulate SSA
 trajectories.
 
@@ -275,22 +276,22 @@ swapping the first and second time step in
 Figure~\ref{fig:temporal-network}, then another path for spread is
 possible, namely from node $3$ to node $4$ and then to node $2$.
 
-In \S\ref{subsec:local}--\ref{subsec:numerics}, we provide an overview
-of the epidemiological modeling framework employed in \pkg{SimInf}.
-The overall approach consists of CTMCs as a general model of the
-dynamics of the epidemiological state. Importantly, we also allow for
-variables obeying ordinary differential equations (ODEs). For example,
-this readily supports modeling infections that have an indirect
-transmission route, e.g., via shedding of a pathogen to the
-environment \citep{Ayscue2009, Breban2009}.  Additionally, the
+In Sections~\ref{subsec:local}--\ref{subsec:numerics}, we provide an
+overview of the epidemiological modeling framework employed in
+\pkg{SimInf}.  The overall approach consists of CTMCs as a general
+model of the dynamics of the epidemiological state.  Importantly, we
+also allow for variables obeying ordinary differential equations
+(ODEs). For example, this readily supports modeling infections that
+have an indirect transmission route, e.g., via shedding of a pathogen
+to the environment \citep{Ayscue2009, Breban2009}.  Additionally, the
 framework handles externally defined demographic and movement events.
-In \S\ref{subsec:local}--\ref{subsec:global} below we distinguish
-between the \emph{local} dynamics that describes the evolution of the
-epidemiological state at a single node, and the \emph{global}
-dynamics, which describes the system at the network level. The overall
-numerical approach underlying \pkg{SimInf} is described in
-\S\ref{subsec:numerics}. We draw much of the material here from
-\citep{Bauer2016, siminf_Ch}.
+In Sections~\ref{subsec:local}--\ref{subsec:global} below we
+distinguish between the \emph{local} dynamics that describes the
+evolution of the epidemiological state at a single node, and the
+\emph{global} dynamics, which describes the system at the network
+level.  The overall numerical approach underlying \pkg{SimInf} is
+described in Section~\ref{subsec:numerics}.  We draw much of the
+material here from \citep{Bauer2016, siminf_Ch}.
 
 \subsection{Local dynamics}
 \label{subsec:local}
@@ -531,15 +532,15 @@ functions for the disease transitions in the system.  All predefined
 models in \pkg{SimInf} have a generating function
 \citep{Chambers2008}, with the same name as the model, to initialize
 the data structures for that specific model, see the examples in
-\S\ref{sec:examples}.  A model can also be created from a model
+Section~\ref{sec:examples}.  A model can also be created from a model
 specification using the \code{mparse} method, further described in
-\S\ref{sec:extend}.  After a model is created, a simulation is started
-with a call to the \code{run} method and if execution is successful,
-it returns a modified \code{SimInf\_model} object with a single
-stochastic solution trajectory attached to it.  \pkg{SimInf} provides
-several utility functions to inspect simulated data, for example,
-\code{show}, \code{summary} and \code{plot}.  To facilitate custom
-analysis, \pkg{SimInf} provides the \code{trajectory} and
+Section~\ref{sec:extend}.  After a model is created, a simulation is
+started with a call to the \code{run} method and if execution is
+successful, it returns a modified \code{SimInf\_model} object with a
+single stochastic solution trajectory attached to it.  \pkg{SimInf}
+provides several utility functions to inspect simulated data, for
+example, \code{show}, \code{summary} and \code{plot}.  To facilitate
+custom analysis, \pkg{SimInf} provides the \code{trajectory} and
 \code{prevalence} methods that both return a \code{data.frame} with
 simulated data.  Figure~\ref{fig:overview} shows a schematic overview
 of the functionality in \pkg{SimInf}.  The overall modular design
@@ -665,15 +666,15 @@ The results reported here are based on \pkg{SimInf} version 6.1.0.
 
     \code{events} & Scheduled events to modify the discrete state of
     individuals in a node at a pre-defined time $t$.  \proglang{S}4
-    class \code{SimInf\_events}, see \S\ref{sec:events} and
+    class \code{SimInf\_events}, see Section~\ref{sec:events} and
     Table~\ref{table:scheduled:events}.\\
 
     \code{C\_code} & Character vector with optional model \proglang{C}
-    code, see \S\ref{sec:extend}.  If non-empty, the \proglang{C} code
-    is written to a temporary file when the \code{run} method is
-    called.  The temporary file is compiled and the resulting DLL is
-    dynamically loaded.  The DLL is unloaded and the temporary files
-    are removed after running the model.\\
+    code, see Section~\ref{sec:extend}.  If non-empty, the
+    \proglang{C} code is written to a temporary file when the
+    \code{run} method is called.  The temporary file is compiled and
+    the resulting DLL is dynamically loaded.  The DLL is unloaded and
+    the temporary files are removed after running the model.\\
 
     \bottomrule
   \end{tabularx}
@@ -809,7 +810,8 @@ and the post time-step function are stored in the two slots
 shared between nodes, is stored in the \code{gdata} vector.
 
 The \code{events} slot in the \code{SimInf\_model} holds data to
-process the scheduled events, further described in \S\ref{sec:events}.
+process the scheduled events, further described in
+Section~\ref{sec:events}.
 
 During simulation of one trajectory, the state of the system is
 written to the two matrices \code{U} and \code{V}.  This happens at
@@ -872,20 +874,21 @@ and exit.  The enter event adds individuals to a node, for example,
 due to births.  The internal transfer event moves individuals between
 compartments within one node.  For example, to simulate vaccination
 and move individuals to a vaccinated compartment (see example in
-\S\ref{sec:mparse-scheduled-events}).  Or ageing according to birth
-records in an age-structured model \citep{Widgren2016}.  The external
-transfer event moves individuals from compartments in one node to
-compartments in a destination node. Finally, the exit event removes
-individuals from a node, for example, due to death. The event types
-are classified into those that operate on the compartments of a single
-node $E_1 = \{\text{enter, internal transfer, exit}\}$ and those that
-operate on the compartments of two nodes $E_2 = \{\text{external
-  transfer}\}$.  The parallel algorithm processes these two classes of
-events differently, see Appendix~\ref{sec:pseudo-code} for pseudo-code
-of the core simulation solver.  The scheduled events are processed
-when simulation time reaches the time for any of the events.  Events
-that are scheduled at the same time are processed in the following
-order: exit, enter, internal transfer and external transfer.
+Section~\ref{sec:mparse-scheduled-events}).  Or ageing according to
+birth records in an age-structured model \citep{Widgren2016}.  The
+external transfer event moves individuals from compartments in one
+node to compartments in a destination node. Finally, the exit event
+removes individuals from a node, for example, due to death. The event
+types are classified into those that operate on the compartments of a
+single node $E_1 = \{\text{enter, internal transfer, exit}\}$ and
+those that operate on the compartments of two nodes $E_2 =
+\{\text{external transfer}\}$.  The parallel algorithm processes these
+two classes of events differently, see Appendix~\ref{sec:pseudo-code}
+for pseudo-code of the core simulation solver.  The scheduled events
+are processed when simulation time reaches the time for any of the
+events.  Events that are scheduled at the same time are processed in
+the following order: exit, enter, internal transfer and external
+transfer.
 
 The \proglang{S}4 class \code{SimInf\_events} contains slots with data
 structures to process events (Table~\ref{table:scheduled:events}).
@@ -1051,7 +1054,7 @@ a temporary file when the \code{run} method is called.  The temporary
 file is compiled using \code{'R CMD SHLIB'} and the resulting DLL is
 dynamically loaded.  The DLL is unloaded and the temporary files are
 removed after running the model.  This is further described in
-\S\ref{sec:extend}.
+Section~\ref{sec:extend}.
 
 The solver simulates the trajectory in parallel if \proglang{OpenMP}
 is available.  The default is to use all available threads.  However,
@@ -1064,16 +1067,16 @@ processed in the main thread.
 The solver runs the continuous-time Markov chain for each node $i$.
 For every time step $\tau_i$, the count in the compartments at node
 $i$ is updated according to the state transition that occurred
-(\S\ref{sec:model}).  The time to the next event is computed, after
-recalculating affected transition rate functions (\S\ref{sec:model}).
-When simulated time reaches the next day in node $i$ the $E_1$ events
-are processed for that node (\S\ref{sec:events}).  The $E_2$ events
-are processed when all nodes reaches the next day
-(\S\ref{sec:events}).  Thereafter, the post time step function is
-called to allow the model to incorporate model specific actions.  When
-simulated time passes the next time in \code{tspan}, the count of the
-compartments and the continuous state variables are written to
-\code{U} and \code{V}.
+(Section~\ref{sec:model}).  The time to the next event is computed,
+after recalculating affected transition rate functions
+(Section~\ref{sec:model}).  When simulated time reaches the next day
+in node $i$ the $E_1$ events are processed for that node
+(Section~\ref{sec:events}).  The $E_2$ events are processed when all
+nodes reaches the next day (Section~\ref{sec:events}).  Thereafter,
+the post time step function is called to allow the model to
+incorporate model specific actions.  When simulated time passes the
+next time in \code{tspan}, the count of the compartments and the
+continuous state variables are written to \code{U} and \code{V}.
 
 %**************************************************************************
 
