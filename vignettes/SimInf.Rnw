@@ -565,7 +565,8 @@ makes extensions easy to handle.
 \subsection{Installation}
 \label{sec:installation}
 
-The most recent stable version of \pkg{SimInf} is distributed via CRAN
+The most recent stable version of \pkg{SimInf} is available from the
+Comprehensive \proglang{R} Archive Network (CRAN) at
 (\url{https://CRAN.R-project.org/package=SimInf}) and may, depending
 on your platform, be available in source form or compiled binary form.
 The development version is available on GitHub
