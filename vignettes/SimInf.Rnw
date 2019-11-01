@@ -2305,7 +2305,7 @@ executed (Figures~\ref{fig:exit}, \ref{fig:enter}, \ref{fig:external},
 
 \begin{table}[!ht]
   \small
-  \begin{tabular}{l c c c c c c c c}
+  \begin{tabular}{l @{$\quad$}r @{ }r @{ }r @{ }r @{ }r @{ }r @{ }r @{ }r}
     \toprule
     Action & \code{event} & \code{time} & \code{node} & \code{dest} &
     \code{n} & \code{proportion} & \code{select} & \code{shift} \\
