@@ -906,9 +906,9 @@ non-zero entry in the column \code{E[, s]} includes that compartment
 in the \code{event[e]} operation.  The definitions of all of these
 operations are a bit involved and to quickly get an overview,
 schematic diagrams illustrating all of them have been prepared, we
-refer to
-Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\ref{fig:external:shift}
-in Appendix~\ref{sec:illustration-scheduled-events}.
+refer to Figures~\ref{fig:exit}, \ref{fig:enter}, \ref{fig:external},
+\ref{fig:internal}, \ref{fig:external:shift} in
+Appendix~\ref{sec:illustration-scheduled-events}.
 
 \subsubsection{Processing of an enter event}
 
@@ -958,7 +958,7 @@ The sampled individuals are added to the same compartments in
 \code{dest[e]} as in \code{node[e]}, unless \code{shift[e]} $> 0$.  In
 that case, the sampled individuals change compartments according to
 \code{N} as described in processing an internal transfer event before
-adding them to \code{dest[e]}.  See Figures \ref{fig:external} and
+adding them to \code{dest[e]}.  See Figures~\ref{fig:external} and
 \ref{fig:external:shift} in
 Appendix~\ref{sec:illustration-scheduled-events} for illustrations of
 scheduled external transfer events.
@@ -1998,18 +1998,18 @@ the declarations for these functions and must be included.  The
 \code{SimInf_model_run} function is the interface from \proglang{R} to
 the core solver in \proglang{C} and list all function pointers to the
 transition rate functions in a vector in the order the state
-transitions appear in the dependency graph \code{G}, see Listings
-\ref{lst:SIRrun} and \ref{lst:trSIR} in Appendix~\ref{sec:C-code-SIR}
-for an example from the predefined \code{SIR} model in \pkg{SimInf}
-and the use of the address of operator \code{'\&'} to obtain the
-address of a function.  The \code{SimInf_model_run} function must
-return the result from the call to the core solver with
-\code{SimInf_run}.  The arguments to \code{SimInf_run} are the
-arguments passed to the \code{SimInf_model_run} function plus the
-vector of function pointers to the transition rate functions and the
-function pointer to the post time step function. The add-on
-\pkg{PredatorPrey} source package can now be built and installed with
-the following commands.
+transitions appear in the dependency graph \code{G}, see
+Listings~\ref{lst:SIRrun} and~\ref{lst:trSIR} in
+Appendix~\ref{sec:C-code-SIR} for an example from the predefined
+\code{SIR} model in \pkg{SimInf} and the use of the address of
+operator \code{'\&'} to obtain the address of a function.  The
+\code{SimInf_model_run} function must return the result from the call
+to the core solver with \code{SimInf_run}.  The arguments to
+\code{SimInf_run} are the arguments passed to the
+\code{SimInf_model_run} function plus the vector of function pointers
+to the transition rate functions and the function pointer to the post
+time step function. The add-on \pkg{PredatorPrey} source package can
+now be built and installed with the following commands.
 
 <<install-package-skeleton, eval=FALSE>>=
 pkg <- file.path(path, "PredatorPrey")
@@ -2278,8 +2278,8 @@ quality of both the software package and this manuscript.
 This section illustrates how the scheduled events for the
 \code{SISe3\_sp} model are specified
 (Table~\ref{table:SISe3_sp:events}) and how each event type is
-executed
-(Figures~\ref{fig:exit},\ref{fig:enter},\ref{fig:external},\ref{fig:internal},\ref{fig:external:shift})
+executed (Figures~\ref{fig:exit}, \ref{fig:enter}, \ref{fig:external},
+\ref{fig:internal}, \ref{fig:external:shift})
 
 \begin{table}[!ht]
   \small
