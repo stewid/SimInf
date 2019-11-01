@@ -173,22 +173,21 @@ code from a model specification.
 Various packages available at the Comprehensive \proglang{R} Archive
 Network (CRAN) implement SSA to simulate a continuous-time stochastic
 process.  The \pkg{GillespieSSA} package \citep{Pineda-Krch2008}, on
-CRAN since 2007, but apparently not actively maintained after 2012,
-implements both the direct method and three approximate methods.  The
-\pkg{hybridModels} package \citep{hybridModels} uses
-\pkg{GillespieSSA} internally to simulate infections using a
-metapopulation model coupled with spread among subpopulations. Since
-each outcome of a stochastic process is different, it is (generally)
-necessary to study many realisations of the process to see the
-distribution of outcomes consistent with the model structure and
-parameterization.  Therefore, performance of the simulator becomes
-critical when using these methods in an applied context.  Because the
-algorithms in \pkg{GillespieSSA} are implemented in \proglang{R}, the
-computational efficiency is limited in comparison with implementations
-in a compiled language, for example, \proglang{C} or
-\proglang{C++}. The \pkg{adaptivetau} package \citep{adaptivetau} uses
-a hybrid \proglang{R}/\proglang{C++} strategy to implement the direct
-method and adaptive tau leaping \citep{Cao2007}.
+CRAN since 2007, implements both the direct method and three
+approximate methods.  The \pkg{hybridModels} package
+\citep{hybridModels} uses \pkg{GillespieSSA} internally to simulate
+infections using a metapopulation model coupled with spread among
+subpopulations. Since each outcome of a stochastic process is
+different, it is (generally) necessary to study many realisations of
+the process to see the distribution of outcomes consistent with the
+model structure and parameterization.  Therefore, performance of the
+simulator becomes critical when using these methods in an applied
+context.  Because the algorithms in \pkg{GillespieSSA} are implemented
+in \proglang{R}, the computational efficiency is limited in comparison
+with implementations in a compiled language, for example, \proglang{C}
+or \proglang{C++}. The \pkg{adaptivetau} package \citep{adaptivetau}
+uses a hybrid \proglang{R}/\proglang{C++} strategy to implement the
+direct method and adaptive tau leaping \citep{Cao2007}.
 
 There exists several related \proglang{R} packages for epidemiological
 analysis on CRAN.  For example, the package \pkg{amei} \citep{amei},
