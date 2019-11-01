@@ -223,10 +223,10 @@ assumptions about the transition rates for individuals to move from
 one compartment to another \citep{Kermack1927, Andersson1991,
   Keeling2007}. In order to capture spatial characteristics of a
 disease process, a compartment model can be further partioned into
-metapopulations (cities, households, farms), i.e., subpopulations with
+metapopulations (cities, households, farms), i.e.,~subpopulations with
 its own infection dynamics \citep{Grenfell1997}.  Since the population
 size of each subpopulation is small, it is often necessary to use
-stochastic models, e.g., to account for the random event that an
+stochastic models, e.g.,~to account for the random event that an
 infection will become extinct \citep{Bartlett1957}.  A stochastic
 compartment model is naturally formulated as a CTMC using SSA to
 simulate the number of individuals within each compartment through
@@ -281,7 +281,7 @@ overview of the epidemiological modeling framework employed in
 model of the dynamics of the epidemiological state.  Importantly, we
 also allow for variables obeying ordinary differential equations
 (ODEs). For example, this readily supports modeling infections that
-have an indirect transmission route, e.g., via shedding of a pathogen
+have an indirect transmission route, e.g.,~via shedding of a pathogen
 to the environment \citep{Ayscue2009, Breban2009}.  Additionally, the
 framework handles externally defined demographic and movement events.
 In Sections~\ref{subsec:local}--\ref{subsec:global} below we
@@ -340,9 +340,9 @@ between a susceptible and an infected compartment can be written as
     I &\xrightarrow{\gamma} S \\
   \end{array} \right\}.
   \intertext{With a state vector consisting of two compartments $X =
-    [S,I]$, i.e., the number of susceptible and infected
-    individuals, respectively, we can then write the transition matrix
-    and intensity vector as}
+    [S,I]$, i.e.,~the number of susceptible and infected individuals,
+    respectively, we can then write the transition matrix and
+    intensity vector as}
   \label{eq:SIRstoich}
     \Stoich &= \left[ \begin{array}{rr}
         -1 & 1 \\
@@ -752,7 +752,7 @@ concentration variable $\Y$.
     transfer; \code{3} or \code{'extTrans'}.  Internally in
     \pkg{SimInf}, the event type is coded as a numerical value.\\
 
-    \code{time} & Time of when the event occurs i.e., the event is
+    \code{time} & Time of when the event occurs i.e.,~the event is
     processed when time is reached in the simulation.  \code{time} is
     an integer vector.\\
 
@@ -761,7 +761,7 @@ concentration variable $\Y$.
     integer vector, where $1 \le$ \code{node[i]} $\le \Nnodes$.\\
 
     \code{dest} & The destination node for an external transfer event
-    i.e., individuals are moved from \code{node} to \code{dest}, where
+    i.e.,~individuals are moved from \code{node} to \code{dest}, where
     $1 \le$ \code{dest[i]} $\le \Nnodes$.  Set \code{event = 0} for
     the other event types.  \code{dest} is an integer vector.\\
 
@@ -786,7 +786,7 @@ concentration variable $\Y$.
     \code{shift} & Determines how individuals in internal transfer and
     external transfer events are shifted to enter another compartment.
     The sampled individuals are shifted according to column
-    \code{shift[i]} in matrix \code{N} i.e., \code{N[, shift[i]]},
+    \code{shift[i]} in matrix \code{N} i.e.,~\code{N[, shift[i]]},
     where \code{shift} is an integer vector.  See above for a
     description of \code{N}.\\
 
@@ -853,7 +853,7 @@ initial continuous state in node $i$.
     \code{ldata} & The local data vector for the node.\\
     \code{gdata} & The global data vector that is common to all nodes.\\
     \code{node} & The node index.  Note the node index is zero-based,
-    i.e., the first node is $0$.\\
+    i.e.,~the first node is $0$.\\
     \code{t} & Current time in the simulation.\\
     \bottomrule
   \end{tabularx}
@@ -938,7 +938,7 @@ specifies which column in \code{N} to use.  Each row $\{1, 2, \ldots,
 and the values determine how to move sampled individuals before adding
 them to \code{node[e]} again.  Let \code{q <- shift[e]}, then each
 non-zero entry in \code{N[, q]} defines the number of rows to move
-sampled individuals from that compartment i.e., sampled individuals
+sampled individuals from that compartment i.e.,~sampled individuals
 from compartment \code{p} are moved to compartment \code{N[p, q] + p},
 where $1 \leq$ \code{N[p, q] + p} $\le \Ncompartments$.  The value of
 \code{dest[e]}, described below, is not used when processing an
@@ -1503,7 +1503,7 @@ model <- SISe_sp(u0 = u0, tspan = 1:1460, events = events, phi = 0,
 Let us use the \code{prevalence()} method to explore the proportion of
 infected nodes through time.  It takes a model object and a formula
 specification, where the left hand side of the formula specifies the
-compartments representing cases i.e., have an attribute or a disease.
+compartments representing cases i.e.,~have an attribute or a disease.
 The right hand side of the formula specifies the compartments at risk.
 Here, we are interested in the proportion of nodes with at least one
 infected individual, therefore, we let \code{formula = I ~ S + I} and
@@ -1591,7 +1591,7 @@ includes all compartments and arrows for all state transitions.
 \label{sec:mparse-introductory-examples}
 
 In a first example we will consider the SIR model in a closed
-population i.e., no births or deaths.  If we let \code{b} denote the
+population i.e.,~no births or deaths.  If we let \code{b} denote the
 transmission rate and \code{g} the recovery rate, the model can be
 described as,
 
@@ -1756,7 +1756,7 @@ u0$V <- 0
 events <- events_SIR()
 @
 
-Now generate vaccination events i.e., internal transfer events.  Use
+Now generate vaccination events i.e.,~internal transfer events.  Use
 \code{select = 3} and \code{shift = 1} to move animals from the
 susceptible, infectious and recovered compartments to the vaccinated
 compartment, see the definitions of $E$ and $N$ below.  Let us start
