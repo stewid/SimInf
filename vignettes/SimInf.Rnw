@@ -121,8 +121,8 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 
 \section{Introduction}
 
-Cattle can act as a reservoir for \textit{Salmonella} and
-verotoxin-producing \textit{Escherichia coli} (VTEC), two important
+Cattle can act as a reservoir for \emph{Salmonella} and
+verotoxin-producing \emph{Escherichia coli} (VTEC), two important
 examples of zoonotic food-borne pathogens.  In order to develop
 effective control strategies, it is necessary to understand the spread
 of zoonotic diseases in the cattle population \citep{Newell2010}.
@@ -2219,10 +2219,10 @@ quality of both the software package and this manuscript.
     using direct SSA \\
     \midrule
 
-    \texttt{1:} & \textit{Run trajectory:} Dispatch to model specific
+    \texttt{1:} & \emph{Run trajectory:} Dispatch to model specific
     \code{run} method. \\
 
-    \texttt{2:} & \textit{\proglang{C} interface:} Initialize model
+    \texttt{2:} & \emph{\proglang{C} interface:} Initialize model
     transition rate functions and post time step function. \\
 
     \texttt{3:} & \textbf{for all} nodes $i=1$ \textbf{to} $\Nnodes$
