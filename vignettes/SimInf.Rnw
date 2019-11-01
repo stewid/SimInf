@@ -590,7 +590,7 @@ installation of \pkg{SimInf}.  Furthermore, when you install
 \pkg{SimInf} from source, depending on features of the compiler, the
 package is compiled with support for \proglang{OpenMP}.  To find out
 more about installing \proglang{R} add-on packages in general, the
-\texttt{'R Installation and Administration'}
+\emph{R Installation and Administration}
 (\url{https://cran.r-project.org/manuals.html}) manual describes the
 process in detail.  After installing the package
 
@@ -1035,7 +1035,7 @@ update continuous state variables in each node.
 
 The transition rate function is defined by the data type \code{TRFun}
 and the post time step function by the data type \code{PTSFun}.  These
-data types are defined in the header file \texttt{'src/SimInf.h'} and
+data types are defined in the header file \emph{src/SimInf.h} and
 shown below.  The arguments \code{v\_new}, \code{u}, \code{v},
 \code{ldata}, \code{gdata}, \code{node}, and \code{t} of the functions
 are described in Table~\ref{table:arguments}.
@@ -1057,19 +1057,19 @@ are described in Table~\ref{table:arguments}.
 
 Here follows an overview of the steps a solver performs to run a
 trajectory, see Appendix~\ref{sec:pseudo-code} for pseudo-code for the
-\code{'ssm'} solver and \texttt{'src/solvers/ssm/SimInf\_solver.c'}
-for the source code.  The simulation starts with a call to the
-\code{run} method with the model as the first argument and optionally
-the number of threads to use.  This method will first call the
-validity method on the model to perform error-checking and then call a
-model specific \proglang{C} function to initialize the function
-pointers to the transition rate functions and the post time step
-function of the model.  Subsequently, the simulation solver is called
-to run one trajectory using the model specific data, the transition
-rate functions, and the post time step function.  If the
-\code{C\_code} slot is non-empty, the \proglang{C} code is written to
-a temporary file when the \code{run} method is called.  The temporary
-file is compiled using \code{'R CMD SHLIB'} and the resulting DLL is
+\code{'ssm'} solver and \emph{src/solvers/ssm/SimInf\_solver.c} for
+the source code.  The simulation starts with a call to the \code{run}
+method with the model as the first argument and optionally the number
+of threads to use.  This method will first call the validity method on
+the model to perform error-checking and then call a model specific
+\proglang{C} function to initialize the function pointers to the
+transition rate functions and the post time step function of the
+model.  Subsequently, the simulation solver is called to run one
+trajectory using the model specific data, the transition rate
+functions, and the post time step function.  If the \code{C\_code}
+slot is non-empty, the \proglang{C} code is written to a temporary
+file when the \code{run} method is called.  The temporary file is
+compiled using \code{'R CMD SHLIB'} and the resulting DLL is
 dynamically loaded.  The DLL is unloaded and the temporary files are
 removed after running the model.  This is further described in
 Section~\ref{sec:extend}.
@@ -1407,7 +1407,7 @@ mean(replicate(n = 1000, {
   \proglang{C} code for the \code{SIR} model}
 
 The \proglang{C} code for the \code{SIR} model is defined in the
-source file \texttt{'src/models/SIR.c'}.  This file contains the
+source file \emph{src/models/SIR.c}.  This file contains the
 \code{SIR_run} function to initialize the core solver
 (Listing~\ref{lst:SIRrun} in Appendix~\ref{sec:C-code-SIR}), the
 transition rate functions (Listing~\ref{lst:trSIR} in
@@ -1591,11 +1591,10 @@ models, and this section describes the relevant steps to implement a
 new model.  Since extending \pkg{SimInf} requires that \proglang{C}
 code can be compiled, you will first need to install a compiler.  To
 read more about interfacing compiled code from \proglang{R} and
-creating \proglang{R} add-on packages, the \texttt{'Writing R
-  extensions'}
+creating \proglang{R} add-on packages, the \emph{Writing R extensions}
 (\url{https://cran.r-project.org/doc/manuals/r-release/R-exts.html})
 manual is the official guide and describes the process in detail.
-Another useful resource is the \texttt{'R packages'} book by
+Another useful resource is the \emph{R packages} book by
 \cite{Hadley2015} (\url{http://r-pkgs.had.co.nz/}).
 
 \subsection{Using the model parser to define a new model}
@@ -2012,14 +2011,14 @@ the new package. Note that a temporary directory is used here for
 illustration of the functionality.  We refer to the \pkg{SimInf}
 documentation for other arguments that can be supplied to the
 \code{package_skeleton} method.  The created \proglang{R} file
-(\texttt{'R/models.R'}) defines the \proglang{S}4 class
+(\emph{R/models.R}) defines the \proglang{S}4 class
 \code{PredatorPrey} that contains the \code{SimInf\_model} and a
 generating function to create a new object of the \code{PredatorPrey}
 model.  The generating function is a template that might need to be
 extended to meet the specific requirements for the model.
 
-The \proglang{C} file (\texttt{'src/models.c'}) defines one function
-for each state transition, the post time step function and the model
+The \proglang{C} file (\emph{src/models.c}) defines one function for
+each state transition, the post time step function and the model
 specific run function. The file is automatically compiled when
 installing the package.  The header file \code{"SimInf.h"} contains
 the declarations for these functions and must be included.  The
