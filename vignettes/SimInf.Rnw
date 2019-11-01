@@ -516,7 +516,7 @@ t_{n+1}-t_{n}$ for the concentration variable $\Y$.
   \end{center}
   \caption{Schematic overview of the functionality in
     \pkg{SimInf}. The central object is the \proglang{S}4 class
-    \code{Simlnf\_model} which contains the specification and data for
+    \code{SimInf\_model} which contains the specification and data for
     a model.  A new model object is created using \code{mparse} or a
     predefined template, for example, \code{SIR} or \code{SEIR}.  A
     stochastic trajectory is simulated from a model using \code{run}.
