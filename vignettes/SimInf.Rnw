@@ -2133,21 +2133,23 @@ numerical solvers from other \proglang{R} packages via the
 A comprehensive analysis of the performance of the numerical solver in
 \pkg{SimInf} is presented by \citet{Bauer2016}.  Here, we provide a
 small benchmark of the run-time of an SIR model using three
-\proglang{R} packages on CRAN.  The measurements were obtained on a
-ThinkPad T460p, Intel core i7-6700HQ quad-core at 2.6GHz , 8GB 2133MHz
-RAM, running Fedora 27 and using \proglang{R} version 3.4.3.  Ten
-replicates were performed and average run-time was estimated to
-generate 1,000 realizations of an SIR model with parameters $\beta =
-0.16$ and $\gamma = 0.077$ and initial conditions $S = 1000$, $I = 10$
-and $R = 0$.  As shown in Table~\ref{table:benchmark}, the
-implementation in \pkg{SimInf} appears to run over ten times faster
-than \pkg{adaptivtau}.  This difference probably depends on
-\pkg{adaptivetau} using a hybrid \proglang{R}/\proglang{C++}
-implementation with \proglang{R} code for the transition rate
-functions while \pkg{SimInf} uses \proglang{C} code.  To reduce
-run-time further, \pkg{SimInf} has built-in support to perform
-computations in parallel.  As expected, \pkg{GillespieSSA} has the
-longest run-time since it has an implementation in pure \proglang{R}.
+\proglang{R} packages on CRAN: \pkg{SimInf} version 6.1.0,
+\pkg{adaptivetau} version 2.2-3 and \pkg{GillespieSSA} version 0.6.1.
+The measurements were obtained on a ThinkPad T460p, Intel core
+i7-6700HQ quad-core at 2.6GHz , 32GB 2133MHz RAM, running Fedora 30
+and using \proglang{R} version 3.6.1.  Ten replicates were performed
+and average run-time was estimated to generate 1,000 realizations of
+an SIR model with parameters $\beta = 0.16$ and $\gamma = 0.077$ and
+initial conditions $S = 1000$, $I = 10$ and $R = 0$.  As shown in
+Table~\ref{table:benchmark}, the implementation in \pkg{SimInf}
+appears to run faster than \pkg{adaptivtau}.  This difference probably
+depends on \pkg{adaptivetau} using a hybrid
+\proglang{R}/\proglang{C++} implementation with \proglang{R} code for
+the transition rate functions while \pkg{SimInf} uses \proglang{C}
+code.  To reduce run-time further, \pkg{SimInf} has built-in support
+to perform computations in parallel.  As expected, \pkg{GillespieSSA}
+has the longest run-time since it has an implementation in pure
+\proglang{R}.
 
 \begin{table*}[!ht]
   \small
@@ -2155,13 +2157,13 @@ longest run-time since it has an implementation in pure \proglang{R}.
   \begin{tabular}{l l c r}
     \toprule \proglang{R} package & Method & Threads & Time [ms]\\
     \midrule
-    \pkg{SimInf} & Direct SSA & 4 &  57 \\
-    \pkg{SimInf} & Direct SSA & 2 & 106 \\
-    \pkg{SimInf} & Direct SSA & 1 & 198 \\
-    \pkg{adaptivetau} & Tau-leaping & 1 & 2840 \\
-    \pkg{adaptivetau} & Direct SSA & 1 & 9032 \\
-    \pkg{GillespieSSA} & Tau-leaping & 1 & 30681 \\
-    \pkg{GillespieSSA} & Direct SSA & 1 & 106091 \\
+    \pkg{SimInf} & Direct SSA & 4 &  38 \\
+    \pkg{SimInf} & Direct SSA & 2 &  69 \\
+    \pkg{SimInf} & Direct SSA & 1 & 126 \\
+    \pkg{adaptivetau} & Tau-leaping & 1 & 2730 \\
+    \pkg{adaptivetau} & Direct SSA  & 1 & 8894 \\
+    \pkg{GillespieSSA} & Tau-leaping & 1 & 18465 \\
+    \pkg{GillespieSSA} & Direct SSA  & 1 & 53009 \\
     \bottomrule
   \end{tabular}
   \caption{Comparison of the average run-time for generating 1000
