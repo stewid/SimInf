@@ -603,7 +603,7 @@ it is loaded in \proglang{R} with the following command
 library("SimInf")
 @
 
-The results reported here are based on \pkg{SimInf} version 6.1.0.
+The results reported here are based on \pkg{SimInf} version 6.3.0.
 
 \begin{table}
   \small
