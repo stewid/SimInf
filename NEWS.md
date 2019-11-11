@@ -2,8 +2,15 @@
 
 ## CHANGES
 
+* Updated the vignette, the CITATION file and added the DOI for the
+  JSS publication to DESCRIPTION/Description.
+
 * Renamed the `NEWS` file to `NEWS.md` and changed to use markdown
   format style.
+
+## BUG FIX
+
+* Removed a timestamp from a test to avoid a possible test failure.
 
 # SimInf 6.3.0
 
