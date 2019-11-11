@@ -1,4 +1,4 @@
-# SimInf (development version)
+# SimInf 6.3.0
 
 ## CHANGES
 
