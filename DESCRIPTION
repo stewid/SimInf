@@ -25,7 +25,9 @@ Description: Provides an efficient and very flexible framework to
     extendable and enable usage of the numerical solvers from other R
     extension packages in order to facilitate complex epidemiological
     research. The package contains template models and can be extended
-    with user-defined models.
+    with user-defined models. For more details see the paper by
+    Widgren, Bauer, Eriksson and Engblom (2019)
+    <doi:10.18637/jss.v091.i12>.
 Acknowledgements: This work was financially supported by the Swedish
     Research Council within the UPMARC Linnaeus center of Excellence
     (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the Swedish
