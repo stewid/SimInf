@@ -2216,7 +2216,7 @@ quality of both the software package and this manuscript.
   \small
   \begin{tabular}{r l}
     \toprule
-    & \textbf{Algorithm} Pseudo-code for the default simulation solver
+    & \emph{Algorithm} Pseudo-code for the default simulation solver
     using direct SSA \\
     \midrule
 
@@ -2226,20 +2226,20 @@ quality of both the software package and this manuscript.
     \texttt{2:} & \emph{\proglang{C} interface:} Initialize model
     transition rate functions and post time step function. \\
 
-    \texttt{3:} & \textbf{for all} nodes $i=1$ \textbf{to} $\Nnodes$
-    \textbf{do in parallel} \\
+    \texttt{3:} & \emph{for all} nodes $i=1$ \emph{to} $\Nnodes$
+    \emph{do in parallel} \\
 
     \texttt{4:} & \quad Compute transition rates for all transitions
     $\omega_{i,j}$, $j=1, \ldots ,\Ntransitions$. \\
 
-    \texttt{5:} & \textbf{end for} \\
+    \texttt{5:} & \emph{end for} \\
 
-    \texttt{6:} & \textbf{while} $t < T_{\text{End}}$ \textbf{do} \\
+    \texttt{6:} & \emph{while} $t < T_{\text{End}}$ \emph{do} \\
 
-    \texttt{7:} & \quad \textbf{for all} nodes $i=1$ \textbf{to}
-    $\Nnodes$ \textbf{do in parallel} \\
+    \texttt{7:} & \quad \emph{for all} nodes $i=1$ \emph{to} $\Nnodes$
+    \emph{do in parallel} \\
 
-    \texttt{8:} & \quad \quad \textbf{loop} \\
+    \texttt{8:} & \quad \quad \emph{loop} \\
 
     \texttt{9:} & \quad \quad \quad Compute sum of transition rates
     $\lambda_i = \sum_{j=1}^{\Ntransitions}\omega_{i,j}$ \\
@@ -2249,15 +2249,15 @@ quality of both the software package and this manuscript.
     \quad \quad is a uniformly distributed random number in the range
     (0, 1) \\
 
-    \texttt{11:} & \quad \quad \quad \textbf{if} $\tau_i + t_i >=
-    T_{\text{Next day}}$ \textbf{then} \\
+    \texttt{11:} & \quad \quad \quad \emph{if} $\tau_i + t_i >=
+    T_{\text{Next day}}$ \emph{then} \\
 
     \texttt{12:} & \quad \quad \quad \quad Move simulated time forward
     $t_i = T_{\text{Next day}}$ \\
 
     \texttt{13:} & \quad \quad \quad \quad go to \texttt{20} \\ % E1
 
-    \texttt{14:} & \quad \quad \quad \textbf{end if} \\
+    \texttt{14:} & \quad \quad \quad \emph{end if} \\
 
     \texttt{15:} & \quad \quad \quad Move simulated time forward $t_i
     = t_i + \tau_i$ \\
@@ -2275,26 +2275,26 @@ quality of both the software package and this manuscript.
     \code{G[, n]} to recalculate affected transition rates
     $\omega_{i,j}$ \\
 
-    \texttt{19:} & \quad \quad \textbf{end loop} \\
+    \texttt{19:} & \quad \quad \emph{end loop} \\
 
     \texttt{20:} & \quad \quad Process $E_1$ events \\
 
-    \texttt{21:} & \quad \textbf{end for} \\
+    \texttt{21:} & \quad \emph{end for} \\
 
     \texttt{22:} & \quad Process $E_2$ events \\
 
-    \texttt{23:} & \quad \textbf{for all} nodes $i=1$ \textbf{to}
-    $\Nnodes$ \textbf{do in parallel} \\
+    \texttt{23:} & \quad \emph{for all} nodes $i=1$ \emph{to}
+    $\Nnodes$ \emph{do in parallel} \\
 
     \texttt{24:} & \quad \quad Call post time step function and update
     the continuous state variable \code{v[ ,i]}. \\
 
-    \texttt{25:} & \quad \textbf{end for} \\
+    \texttt{25:} & \quad \emph{end for} \\
 
     \texttt{26:} & \quad $T_{\text{Next day}} = T_{\text{Next day}} +
     1$ \\
 
-    \texttt{27:} & \textbf{end while} \\
+    \texttt{27:} & \emph{end while} \\
 
     \bottomrule
   \end{tabular}
