@@ -33,14 +33,25 @@
 * Removed the row and column names from the internal matrices U and V
   because they were not used anywhere in the code.
 
-* Renamed the `NEWS` file to `NEWS.md` and changed to use markdown
-  format style.
-
 ## BUG FIXES
 
 * Fix storing solution of the state vectors of the first time point
   until after simulated time has passed the the first time point in
   tspan.
+
+# SimInf 6.4.0
+
+## CHANGES
+
+* Updated the vignette, the CITATION file and added the DOI for the
+  JSS publication to DESCRIPTION/Description.
+
+* Renamed the NEWS file to NEWS.md and changed to use markdown
+  format style.
+
+## BUG FIX
+
+* Removed a timestamp from a test to avoid a possible test failure.
 
 # SimInf 6.3.0
 
