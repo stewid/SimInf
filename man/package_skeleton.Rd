@@ -4,8 +4,15 @@
 \alias{package_skeleton}
 \title{Create a package skeleton from a \code{SimInf_model}}
 \usage{
-package_skeleton(model, name = NULL, path = ".", author = NULL,
-  email = NULL, maintainer = NULL, license = "GPL-3")
+package_skeleton(
+  model,
+  name = NULL,
+  path = ".",
+  author = NULL,
+  email = NULL,
+  maintainer = NULL,
+  license = "GPL-3"
+)
 }
 \arguments{
 \item{model}{The \code{model} \code{\linkS4class{SimInf_model}}
