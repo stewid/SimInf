@@ -49,7 +49,7 @@ result <- run(model)
 ## of susceptible, infected and recovered individuals.
 plot(result)
 
-## Plot the median and the middle 95\\\% quantile range of the
+## Plot the median and the middle 95\\% quantile range of the
 ## number of susceptible, infected and recovered individuals.
 plot(result, range = 0.95)
 
