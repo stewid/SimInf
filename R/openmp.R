@@ -62,5 +62,5 @@ set_num_threads <- function(threads = NULL) {
         threads <- as.integer(threads)
     }
 
-    .Call(SimInf_init_threads, threads)
+    invisible(.Call(SimInf_init_threads, threads))
 }
