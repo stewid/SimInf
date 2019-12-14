@@ -119,7 +119,7 @@ SEXP SimInf_init_threads(SEXP threads)
 
     /* No need to return the number of threads if this function is
      * called from 'R_init_SimInf' during initialisation. */
-    return old_value < 1 ? R_NilValue : Rf_ScalarInteger(SimInf_max_threads);
+    return old_value < 1 ? R_NilValue : Rf_ScalarInteger(old_value);
 }
 
 /**
