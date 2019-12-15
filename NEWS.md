@@ -8,7 +8,8 @@
 * The `trajectory` function has been ported to C and parallelized to
   efficiently transform simulated data from a model to a `data.frame`.
 
-* Codebase is now tested with the `lintr` package to improve
+* Static code analysis of the codebase has been performed using the
+  `lintr` package in order to improve code style, consistency and
   readability.
 
 * It's now possible to specify what type of plot should be drawn from
