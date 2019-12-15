@@ -217,7 +217,7 @@ use:
   Journal of Statistical Software, 91(12), 1--42. doi:
   [10.18637/jss.v091.i12](https://doi.org/10.18637/jss.v091.i12)
 
-- Bauer p, Engblom S, Widgren S (2016) Fast event-based
+- Bauer P, Engblom S, Widgren S (2016) Fast event-based
   epidemiological simulations on national scales. International
   Journal of High Performance Computing Applications, 30(4),
   438--453. doi:
