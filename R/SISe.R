@@ -228,8 +228,6 @@ events_SISe <- function() {
 ##' ## individual.
 ##' plot(prevalence(result, I~S+I, "nop"), type = "l")
 u0_SISe <- function() {
-    data("u0_SISe3", package = "SimInf", envir = environment())
-    u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
-    u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
-    u0_SISe3[, c("S", "I")]
+    u0 <- u0_SIR()
+    u0[, c("S", "I")]
 }
