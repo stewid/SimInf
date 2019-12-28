@@ -119,6 +119,14 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 
 %**************************************************************************
 
+\section*{Note}
+
+This vignette is based on the paper by \cite{Widgren2019} but has been
+updated in some places to describe functionality in \pkg{SimInf} that
+has been developed since the paper was published.  The results
+reported here are based on \pkg{SimInf} version
+\Sexpr{packageVersion("SimInf")} unless otherwise stated.
+
 \section{Introduction}
 
 Cattle can act as a reservoir for \emph{Salmonella} and
@@ -602,8 +610,6 @@ it is loaded in \proglang{R} with the following command
 <<load-SimInf>>=
 library("SimInf")
 @
-
-The results reported here are based on \pkg{SimInf} version 6.3.0.
 
 \begin{table}
   \small
