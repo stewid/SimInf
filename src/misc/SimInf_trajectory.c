@@ -84,8 +84,9 @@ static void SimInf_sparse2df_int(
     int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
     int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
     double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
+    R_xlen_t i;
 
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    for (i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
 
@@ -132,8 +133,9 @@ static void SimInf_sparse2df_int(
             #pragma omp parallel for num_threads(SimInf_num_threads())
             for (R_xlen_t t = 0; t < tlen; t++) {
                 R_xlen_t id = 0;
+                R_xlen_t j;
 
-                for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                for (j = m_jc[t]; j < m_jc[t + 1]; j++) {
                     if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
@@ -172,8 +174,9 @@ static void SimInf_sparse2df_real(
     int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
     int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
     double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
+    R_xlen_t i;
 
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    for (i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
 
@@ -220,8 +223,9 @@ static void SimInf_sparse2df_real(
             #pragma omp parallel for num_threads(SimInf_num_threads())
             for (R_xlen_t t = 0; t < tlen; t++) {
                 R_xlen_t id = 0;
+                R_xlen_t j;
 
-                for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                for (j = m_jc[t]; j < m_jc[t + 1]; j++) {
                     if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
@@ -258,7 +262,9 @@ static void SimInf_dense2df_int(
     R_xlen_t col,
     int *p_nodes)
 {
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    R_xlen_t i;
+
+    for (i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
         int *p_m = m + m_i[i] - 1;
@@ -267,7 +273,8 @@ static void SimInf_dense2df_int(
             /* Note that the node identifiers are one-based. */
             #pragma omp parallel for num_threads(SimInf_num_threads())
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                R_xlen_t node;
+                for (node = 0; node < Nnodes; node++) {
                     p_vec[t * Nnodes + node] =
                         p_m[(t * Nn + p_nodes[node] - 1) * m_stride];
                 }
@@ -275,7 +282,8 @@ static void SimInf_dense2df_int(
         } else {
             #pragma omp parallel for num_threads(SimInf_num_threads())
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                R_xlen_t node;
+                for (node = 0; node < Nnodes; node++) {
                     p_vec[t * Nnodes + node] =
                         p_m[(t * Nn + node) * m_stride];
                 }
@@ -300,7 +308,9 @@ static void SimInf_dense2df_real(
     R_xlen_t col,
     int *p_nodes)
 {
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    R_xlen_t i;
+
+    for (i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
         double *p_m = m + m_i[i] - 1;
@@ -309,7 +319,8 @@ static void SimInf_dense2df_real(
             /* Note that the node identifiers are one-based. */
             #pragma omp parallel for num_threads(SimInf_num_threads())
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                R_xlen_t node;
+                for (node = 0; node < Nnodes; node++) {
                     p_vec[t * Nnodes + node] =
                         p_m[(t * Nn + p_nodes[node] - 1) * m_stride];
                 }
@@ -317,7 +328,8 @@ static void SimInf_dense2df_real(
         } else {
             #pragma omp parallel for num_threads(SimInf_num_threads())
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                R_xlen_t node;
+                for (node = 0; node < Nnodes; node++) {
                     p_vec[t * Nnodes + node] =
                         p_m[(t * Nn + node) * m_stride];
                 }
