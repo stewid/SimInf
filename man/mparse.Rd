@@ -4,9 +4,19 @@
 \alias{mparse}
 \title{Model parser to define new models to run in \code{SimInf}}
 \usage{
-mparse(transitions = NULL, compartments = NULL, ldata = NULL,
-  gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
-  events = NULL, E = NULL, N = NULL, pts_fun = NULL)
+mparse(
+  transitions = NULL,
+  compartments = NULL,
+  ldata = NULL,
+  gdata = NULL,
+  u0 = NULL,
+  v0 = NULL,
+  tspan = NULL,
+  events = NULL,
+  E = NULL,
+  N = NULL,
+  pts_fun = NULL
+)
 }
 \arguments{
 \item{transitions}{character vector containing transitions on the

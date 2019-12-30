@@ -4,8 +4,13 @@
 \alias{prevalence}
 \title{Calculate prevalence from a model object with trajectory data}
 \usage{
-prevalence(model, formula, type = c("pop", "nop", "wnp"), node = NULL,
-  as.is = FALSE)
+prevalence(
+  model,
+  formula,
+  type = c("pop", "nop", "wnp"),
+  node = NULL,
+  as.is = FALSE
+)
 }
 \arguments{
 \item{model}{The \code{model} with trajectory data to calculate
