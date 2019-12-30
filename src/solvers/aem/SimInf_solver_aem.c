@@ -386,9 +386,10 @@ static void SimInf_aem_arguments_free(
 
             if (m) {
                 /* AEM variables */
-                if(m->rng_vec){
-                    for(int i = 0; i < mod->Nn * mod->Nt; i++)
-                        gsl_rng_free(m->rng_vec[i]);
+                if (m->rng_vec) {
+                    int j;
+                    for (j = 0; j < mod->Nn * mod->Nt; j++)
+                        gsl_rng_free(m->rng_vec[j]);
                 }
                 m->rng_vec = NULL;
                 free(m->reactHeap);
