@@ -57,9 +57,11 @@ static void SimInf_insert_node_time(
 {
     int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
     int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+    R_xlen_t t;
 
-    for (R_xlen_t t = 0; t < tlen; t++) {
-        for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+    for (t = 0; t < tlen; t++) {
+        R_xlen_t j;
+        for (j = m_jc[t]; j < m_jc[t + 1]; j++) {
             rowinfo_t r = {m_ir[j] / m_stride, t};
             if (!kb_get(rowinfo, ri, r))
                 kb_put(rowinfo, ri, r);
