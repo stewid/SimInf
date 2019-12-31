@@ -490,15 +490,26 @@ SEXP SimInf_trajectory(
             p_vec[i++] = p->id + 1;
         }
     } else if (p_nodes != NULL) {
-        #pragma omp parallel for num_threads(SimInf_num_threads())
-        for (R_xlen_t t = 0; t < tlen; t++) {
-            memcpy(&p_vec[t * Nnodes], p_nodes, Nnodes * sizeof(int));
+        #pragma omp parallel num_threads(SimInf_num_threads())
+        {
+            R_xlen_t t;
+
+            #pragma omp for
+            for (t = 0; t < tlen; t++) {
+                memcpy(&p_vec[t * Nnodes], p_nodes, Nnodes * sizeof(int));
+            }
         }
     } else {
-        #pragma omp parallel for num_threads(SimInf_num_threads())
-        for (R_xlen_t t = 0; t < tlen; t++) {
-            for (R_xlen_t node = 0; node < Nnodes; node++) {
-                p_vec[t * Nnodes + node] = node + 1;
+        #pragma omp parallel num_threads(SimInf_num_threads())
+        {
+            R_xlen_t t;
+
+            #pragma omp for
+            for (t = 0; t < tlen; t++) {
+                R_xlen_t node;
+                for (node = 0; node < Nnodes; node++) {
+                    p_vec[t * Nnodes + node] = node + 1;
+                }
             }
         }
     }
@@ -521,10 +532,16 @@ SEXP SimInf_trajectory(
                 p_vec[i++] = p_tspan[p->time];
             }
         } else {
-            #pragma omp parallel for num_threads(SimInf_num_threads())
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
-                    p_vec[t * Nnodes + node] = p_tspan[t];
+            #pragma omp parallel num_threads(SimInf_num_threads())
+            {
+                R_xlen_t t;
+
+                #pragma omp for
+                for (t = 0; t < tlen; t++) {
+                    R_xlen_t node;
+                    for (node = 0; node < Nnodes; node++) {
+                        p_vec[t * Nnodes + node] = p_tspan[t];
+                    }
                 }
             }
         }
