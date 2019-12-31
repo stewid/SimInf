@@ -466,9 +466,14 @@ SEXP SimInf_trajectory(
      * one-based. */
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_vec = INTEGER(vec);
-    #pragma omp parallel for num_threads(SimInf_num_threads())
-    for (R_xlen_t i = 0; i < nrow; i++) {
-        p_vec[i] = i + 1;
+    #pragma omp parallel num_threads(SimInf_num_threads())
+    {
+        R_xlen_t ii;
+
+        #pragma omp for
+        for (ii = 0; ii < nrow; ii++) {
+            p_vec[ii] = ii + 1;
+        }
     }
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
     UNPROTECT(1);
@@ -562,8 +567,10 @@ SEXP SimInf_trajectory(
                 SET_STRING_ELT(vec, i++, STRING_ELT(lbl_tspan, p->time));
             }
         } else {
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
+            R_xlen_t t;
+            for (t = 0; t < tlen; t++) {
+                R_xlen_t node;
+                for (node = 0; node < Nnodes; node++) {
                     SET_STRING_ELT(vec, t * Nnodes + node, STRING_ELT(lbl_tspan, t));
                 }
             }
