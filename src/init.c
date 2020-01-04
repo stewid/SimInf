@@ -36,6 +36,7 @@ SEXP SISe_sp_run(SEXP, SEXP, SEXP);
 SEXP SimInf_have_openmp();
 SEXP SimInf_init_threads(SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
+SEXP SimInf_systematic_resampling(SEXP);
 SEXP SimInf_trajectory(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 #define CALLDEF(name, n) {#name, (DL_FUNC) &name, n}
@@ -51,6 +52,7 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(SimInf_init_threads, 1),
     CALLDEF(SimInf_ldata_sp, 3),
+    CALLDEF(SimInf_systematic_resampling, 1),
     CALLDEF(SimInf_trajectory, 9),
     {NULL, NULL, 0}
 };
