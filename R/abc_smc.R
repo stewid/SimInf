@@ -183,7 +183,7 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
         ancestor <- NULL
         tot_proposals <- 0
 
-        repeat {
+        while (ifelse(is.null(xx), 0, ncol(xx)) < npart) {
             if (all(n < 1e6, tot_proposals > 2 * n)) {
                 ## Increase the number of particles that is simulated
                 ## in each trajectory.
@@ -219,9 +219,6 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
                     ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
                 }
             }
-
-            if (ifelse(is.null(xx), 0, ncol(xx)) >= npart)
-                break
         }
 
         ## Calculate weights.
