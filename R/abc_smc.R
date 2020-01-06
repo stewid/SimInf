@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
     }
 
     ## Each node represents one particle. Replicate the first node to
-    ## run many particles simultanously. Start with 100 x 'npart' and
+    ## run many particles simultanously. Start with 10 x 'npart' and
     ## increase the number adaptively based on the acceptance rate.
     n <- as.integer(10 * npart)
     model <- replicate_first_node(model, n)
@@ -243,6 +243,13 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
             t1 <- proc.time()
             cat(sprintf(" accrate = %.2e, ESS = %.2e time = %.2f secs\n",
                         npart / tot_proposals, 1 / sum(w^2), (t1 - t0)[3]))
+        }
+
+        ## Adaptively decrease the number of particles that are
+        ## simulated in each trajectory.
+        if (n > 1.2 * tot_proposals) {
+            n <- min(1e6L, as.integer(1.2 * tot_proposals))
+            model <- replicate_first_node(model, n)
         }
     }
 
