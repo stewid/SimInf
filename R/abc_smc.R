@@ -73,7 +73,8 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
     model <- replicate_first_node(model, n)
 
     if (isTRUE(verbose)) {
-        cat("Generation", generation, "...")
+        cat("\nGeneration", generation, "...\n")
+        pb <- txtProgressBar(min = 0, max = npart, style = 3)
         t0 <- proc.time()
     }
 
@@ -118,6 +119,11 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
                 ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
             }
         }
+
+        ## Report progress.
+        if (isTRUE(verbose)) {
+            setTxtProgressBar(pb, n_particles(xx))
+        }
     }
 
     ## Calculate weights.
@@ -127,8 +133,17 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
     ## Report progress.
     if (isTRUE(verbose)) {
         t1 <- proc.time()
-        cat(sprintf(" accrate = %.2e, ESS = %.2e time = %.2f secs\n",
+        cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
                     npart / tot_proposals, 1 / sum(ww^2), (t1 - t0)[3]))
+
+        qq <- t(apply(xx, 1, function(x) {
+            qq <- quantile(x)
+            c(qq[1L:3L], mean(x), qq[4L:5L])
+        }))
+        colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                          "Mean", "3rd Qu.", "Max.")
+        rownames(qq) <- paste0("  ", rownames(xx))
+        print.table(qq, digits = 3)
     }
 
     list(x = xx, w = ww)
