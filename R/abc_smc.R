@@ -51,6 +51,89 @@ replicate_first_node <- function(model, n) {
     model
 }
 
+proposal_covariance <- function(x) {
+    if (is.null(x))
+        return(NULL)
+    cov(t(x)) * 2
+}
+
+n_particles <- function(x) {
+    if (is.null(x))
+        return(0)
+    ncol(x)
+}
+
+abc_smc_ldata <- function(model, i, priors, npart, fn,
+                          generation, x, w, verbose, ...) {
+    ## Let each node represents one particle. Replicate the first node
+    ## to run many particles simultanously. Start with 10 x 'npart'
+    ## and then increase the number adaptively based on the acceptance
+    ## rate.
+    n <- as.integer(10 * npart)
+    model <- replicate_first_node(model, n)
+
+    if (isTRUE(verbose)) {
+        cat("Generation", generation, "...")
+        t0 <- proc.time()
+    }
+
+    xx <- NULL
+    ancestor <- NULL
+    tot_proposals <- 0
+    sigma <- proposal_covariance(x)
+
+    while (n_particles(xx) < npart) {
+        if (all(n < 1e5, tot_proposals > 2 * n)) {
+            ## Increase the number of particles that is simulated in
+            ## each trajectory.
+            n <- min(1e5L, n * 2L)
+            model <- replicate_first_node(model, n)
+        }
+
+        proposals <- .Call(SimInf_abc_smc_proposals,
+                           priors$parameter, priors$distribution,
+                           priors$p1, priors$p2, n, x, w, sigma)
+        for (j in seq_len(nrow(proposals))) {
+            model@ldata[i[j], ] <- proposals[j, ]
+        }
+
+        result <- fn(run(model), generation, ...)
+        stopifnot(is.logical(result), length(result) == n)
+
+        ## Collect accepted particles making sure not to collect more
+        ## than 'npart'.
+        j <- cumsum(result) + n_particles(xx)
+        j <- which(j == npart)
+        result <- which(result)
+        if (length(j)) {
+            j <- min(j)
+            result <- result[result <= j]
+            tot_proposals <- tot_proposals + j
+            xx <- cbind(xx, model@ldata[i, result, drop = FALSE])
+            ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
+        } else {
+            tot_proposals <- tot_proposals + n
+            if (length(result)) {
+                xx <- cbind(xx, model@ldata[i, result, drop = FALSE])
+                ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
+            }
+        }
+    }
+
+    ## Calculate weights.
+    ww <- .Call(SimInf_abc_smc_weights, priors$distribution,
+                priors$p1, priors$p2, x[, ancestor], xx, w, sigma)
+
+    ## Report progress.
+    if (isTRUE(verbose)) {
+        t1 <- proc.time()
+        cat(sprintf(" accrate = %.2e, ESS = %.2e time = %.2f secs\n",
+                    npart / tot_proposals, 1 / sum(ww^2), (t1 - t0)[3]))
+    }
+
+    list(x = xx, w = ww)
+}
+
 ##' Run ABC SMC
 ##'
 ##' @param model The model to generate data from.
@@ -159,96 +242,21 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
              call. = FALSE)
     }
 
-    ## Each node represents one particle. Replicate the first node to
-    ## run many particles simultanously. Start with 10 x 'npart' and
-    ## increase the number adaptively based on the acceptance rate.
-    n <- as.integer(10 * npart)
-    model <- replicate_first_node(model, n)
-
-    ## Setup a population of particles (x), weights (w),
-    ## variance-covariance matrix (sigma) and a list to hold the
-    ## results (out).
+    ## Setup a population of particles (x), weights (w) and a list to
+    ## hold the results (out).
     x <- NULL
     w <- NULL
-    sigma <- NULL
     out <- list()
 
     for (generation in seq_len(ngen)) {
-        if (isTRUE(verbose)) {
-            cat("Generation", generation, "...")
-            t0 <- proc.time()
-        }
+        out[[length(out) + 1]] <- abc_smc_ldata(model, i_ldata, priors,
+                                                npart, fn, generation,
+                                                x, w, verbose, ...)
 
-        xx <- NULL
-        ancestor <- NULL
-        tot_proposals <- 0
-
-        while (ifelse(is.null(xx), 0, ncol(xx)) < npart) {
-            if (all(n < 1e6, tot_proposals > 2 * n)) {
-                ## Increase the number of particles that is simulated
-                ## in each trajectory.
-                n <- min(1e6L, n * 2L)
-                model <- replicate_first_node(model, n)
-            }
-
-            proposals <- .Call(SimInf_abc_smc_proposals,
-                               priors$parameter, priors$distribution,
-                               priors$p1, priors$p2, n, x, w, sigma)
-            for (j in seq_len(nrow(proposals))) {
-                model@ldata[i_ldata[j], ] <- proposals[j, ]
-            }
-
-            result <- fn(run(model), generation, ...)
-            stopifnot(is.logical(result), length(result) == n)
-
-            ## Collect accepted particles making sure not to collect
-            ## more than 'npart'.
-            j <- cumsum(result) + ifelse(is.null(xx), 0, ncol(xx))
-            j <- which(j == npart)
-            result <- which(result)
-            if (length(j)) {
-                j <- min(j)
-                result <- result[result <= j]
-                tot_proposals <- tot_proposals + j
-                xx <- cbind(xx, model@ldata[i_ldata, result, drop = FALSE])
-                ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
-            } else {
-                tot_proposals <- tot_proposals + n
-                if (length(result)) {
-                    xx <- cbind(xx, model@ldata[i_ldata, result, drop = FALSE])
-                    ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
-                }
-            }
-        }
-
-        ## Calculate weights.
-        w <- .Call(SimInf_abc_smc_weights,
-                   priors$distribution, priors$p1, priors$p2,
-                   x[, ancestor], xx, w, sigma)
-
-        out[[length(out) + 1]] <- cbind(generation = generation,
-                                        weight = w,
-                                        as.data.frame(t(xx)))
-
-        ## Move the population of particles to the next generation and
-        ## update the variance-covariance matrix.
-        x <- xx
-        sigma <- cov(t(x)) * 2
-
-        ## Report progress.
-        if (isTRUE(verbose)) {
-            t1 <- proc.time()
-            cat(sprintf(" accrate = %.2e, ESS = %.2e time = %.2f secs\n",
-                        npart / tot_proposals, 1 / sum(w^2), (t1 - t0)[3]))
-        }
-
-        ## Adaptively decrease the number of particles that are
-        ## simulated in each trajectory.
-        if (n > 1.2 * tot_proposals) {
-            n <- min(1e6L, as.integer(1.2 * tot_proposals))
-            model <- replicate_first_node(model, n)
-        }
+        ## Move the population of particles to the next generation.
+        x <- out[[length(out)]]$x
+        w <- out[[length(out)]]$w
     }
 
-    do.call("rbind", out)
+    lapply(out, "[[", "x")
 }
