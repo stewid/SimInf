@@ -65,7 +65,7 @@ setMethod("plot",
                         breaks <- h$breaks
                         nB <- length(breaks)
                         y <- h$counts
-                        y <- y/max(y)
+                        y <- y / max(y)
                         rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
                     })
           }
