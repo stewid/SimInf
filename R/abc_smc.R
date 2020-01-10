@@ -16,6 +16,61 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Class \code{"SimInf_abc_smc"}
+##'
+##' @section Slots:
+##' \describe{
+##'   \item{model}{
+##'     FIXME.
+##'   }
+##'   \item{priors}{
+##'     FIXME.
+##'   }
+##'   \item{fn}{
+##'     FIXME.
+##'   }
+##'   \item{x}{
+##'     FIXME.
+##'   }
+##'   \item{w}{
+##'     FIXME.
+##'   }
+##' }
+##' @export
+setClass("SimInf_abc_smc",
+         slots = c(model = "SimInf_model",
+                   priors = "data.frame",
+                   fn = "function",
+                   x = "list",
+                   w = "list"))
+
+##' Display the ABC posterior distribution
+##'
+##' @param x The \code{SimInf_abc_smc} object to plot.
+##' @param y not used.
+##' @param ... Additional arguments affecting the plot. Not used.
+##' @aliases plot,SimInf_abc_smc-method
+##' @importFrom graphics hist
+##' @importFrom graphics rect
+##' @export
+setMethod("plot",
+          signature(x = "SimInf_abc_smc"),
+          function(x, ...) {
+              pairs(t(x@x[[length(x@x)]]),
+                    diag.panel = function(x, ...) {
+                        usr <- par("usr")
+                        on.exit(par(usr))
+                        par(usr = c(usr[1:2], 0, 1.5))
+                        h <- hist(x, plot = FALSE)
+                        breaks <- h$breaks
+                        nB <- length(breaks)
+                        y <- h$counts
+                        y <- y/max(y)
+                        rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
+                    })
+          }
+)
+
 ##' Check model before running ABC-SMC
 ##'
 ##' Raise an error if the model argument is not ok.
@@ -63,6 +118,9 @@ n_particles <- function(x) {
     ncol(x)
 }
 
+##' @importFrom utils setTxtProgressBar
+##' @importFrom utils txtProgressBar
+##' @noRd
 abc_smc_ldata <- function(model, i, priors, npart, fn,
                           generation, x, w, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
@@ -233,19 +291,7 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 ##'                tol = 100000,
 ##'                ptol = 0.5)
 ##'
-##' pairs(~ beta + gamma1 + gamma2, data = fit,
-##'       subset = generation == max(generation),
-##'       diag.panel = function(x, ...) {
-##'           usr <- par("usr")
-##'           on.exit(par(usr))
-##'           par(usr = c(usr[1:2], 0, 1.5))
-##'           h <- hist(x, plot = FALSE)
-##'           breaks <- h$breaks
-##'           nB <- length(breaks)
-##'           y <- h$counts
-##'           y <- y/max(y)
-##'           rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
-##'       })
+##' plot(fit)
 abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
     check_model_for_abc_smc(model)
 
@@ -273,5 +319,10 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
         w <- out[[length(out)]]$w
     }
 
-    lapply(out, "[[", "x")
+    new("SimInf_abc_smc",
+        model = model,
+        priors = priors,
+        fn = fn,
+        x = lapply(out, "[[", "x"),
+        w = lapply(out, "[[", "w"))
 }
