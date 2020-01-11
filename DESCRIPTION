@@ -46,6 +46,7 @@ Imports:
     digest,
     graphics,
     grDevices,
+    MASS,
     methods,
     stats,
     utils,

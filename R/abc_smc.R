@@ -47,27 +47,35 @@ setClass("SimInf_abc_smc",
 ##' Display the ABC posterior distribution
 ##'
 ##' @param x The \code{SimInf_abc_smc} object to plot.
-##' @param y not used.
-##' @param ... Additional arguments affecting the plot. Not used.
+##' @param y The generation to plot. The default is to display the
+##'     last generation.
+##' @param ... Additional arguments affecting the plot.
 ##' @aliases plot,SimInf_abc_smc-method
-##' @importFrom graphics hist
-##' @importFrom graphics rect
+##' @importFrom graphics contour
+##' @importFrom graphics lines
+##' @importFrom MASS bandwidth.nrd
+##' @importFrom MASS kde2d
+##' @importFrom stats density
 ##' @export
 setMethod("plot",
           signature(x = "SimInf_abc_smc"),
-          function(x, ...) {
-              pairs(t(x@x[[length(x@x)]]),
+          function(x, y, ...) {
+              if (missing(y))
+                  y <- length(x@x)
+              pairs(t(x@x[[y]]),
                     diag.panel = function(x, ...) {
                         usr <- par("usr")
                         on.exit(par(usr))
                         par(usr = c(usr[1:2], 0, 1.5))
-                        h <- hist(x, plot = FALSE)
-                        breaks <- h$breaks
-                        nB <- length(breaks)
-                        y <- h$counts
-                        y <- y / max(y)
-                        rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
-                    })
+                        d <- density(x, bw = "SJ-ste")
+                        d$y <- d$y / max(d$y)
+                        lines(d, ...)
+                    },
+                    lower.panel = function(x, y, ...) {
+                        h <- c(bandwidth.nrd(x), bandwidth.nrd(y))
+                        d <- kde2d(x, y, h = h, n = 100)
+                        contour(d, add = TRUE, drawlabels = FALSE, ...)
+                    }, ...)
           }
 )
 

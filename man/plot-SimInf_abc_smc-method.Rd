@@ -9,9 +9,10 @@
 \arguments{
 \item{x}{The \code{SimInf_abc_smc} object to plot.}
 
-\item{y}{not used.}
+\item{y}{The generation to plot. The default is to display the
+last generation.}
 
-\item{...}{Additional arguments affecting the plot. Not used.}
+\item{...}{Additional arguments affecting the plot.}
 }
 \description{
 Display the ABC posterior distribution
