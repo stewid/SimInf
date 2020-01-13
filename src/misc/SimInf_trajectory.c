@@ -416,6 +416,7 @@ SEXP SimInf_trajectory(
     R_xlen_t Nnodes = Rf_isNull(nodes) ? c_Nn : XLENGTH(nodes);
     R_xlen_t nrow = tlen * Nnodes;
     R_xlen_t ncol = 2 + dm_i_len + cm_i_len; /* The '2' is for the 'node' and 'time' columns. */
+    R_xlen_t i;
     kbtree_t(rowinfo) *ri = NULL;
 
     /* Use all available threads in parallel regions. */
@@ -425,11 +426,11 @@ SEXP SimInf_trajectory(
     PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
     SET_STRING_ELT(colnames, 0, Rf_mkChar("node"));
     SET_STRING_ELT(colnames, 1, Rf_mkChar("time"));
-    for (R_xlen_t i = 0; i < dm_i_len; i++) {
+    for (i = 0; i < dm_i_len; i++) {
         R_xlen_t j = INTEGER(dm_i)[i] - 1;
         SET_STRING_ELT(colnames, 2 + i, STRING_ELT(dm_lbl, j));
     }
-    for (R_xlen_t i = 0; i < cm_i_len; i++) {
+    for (i = 0; i < cm_i_len; i++) {
         R_xlen_t j = INTEGER(cm_i)[i] - 1;
         SET_STRING_ELT(colnames, 2 + dm_i_len + i, STRING_ELT(cm_lbl, j));
     }
@@ -490,7 +491,7 @@ SEXP SimInf_trajectory(
         SIMINF_UNUSED(&kb_itr_get_rowinfo);
 
         kb_itr_first(rowinfo, ri, &itr);
-        for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
+        for (i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
             rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
             p_vec[i++] = p->id + 1;
         }
@@ -532,7 +533,7 @@ SEXP SimInf_trajectory(
             kbitr_t itr;
 
             kb_itr_first(rowinfo, ri, &itr);
-            for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
+            for (i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
                 rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
                 p_vec[i++] = p_tspan[p->time];
             }
@@ -562,7 +563,7 @@ SEXP SimInf_trajectory(
             kbitr_t itr;
 
             kb_itr_first(rowinfo, ri, &itr);
-            for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
+            for (i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
                 rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
                 SET_STRING_ELT(vec, i++, STRING_ELT(lbl_tspan, p->time));
             }
