@@ -201,15 +201,7 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
         t1 <- proc.time()
         cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
                     npart / tot_proposals, 1 / sum(ww^2), (t1 - t0)[3]))
-
-        qq <- t(apply(xx, 1, function(x) {
-            qq <- quantile(x)
-            c(qq[1L:3L], mean(x), qq[4L:5L])
-        }))
-        colnames(qq) <- c("Min.", "1st Qu.", "Median",
-                          "Mean", "3rd Qu.", "Max.")
-        rownames(qq) <- paste0("  ", rownames(xx))
-        print.table(qq, digits = 3)
+        summary_matrix(xx)
     }
 
     list(x = xx, w = ww)
