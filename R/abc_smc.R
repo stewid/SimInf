@@ -26,6 +26,9 @@
 ##'   \item{priors}{
 ##'     FIXME.
 ##'   }
+##'   \item{i}{
+##'     FIXME.
+##'   }
 ##'   \item{fn}{
 ##'     FIXME.
 ##'   }
@@ -40,6 +43,7 @@
 setClass("SimInf_abc_smc",
          slots = c(model = "SimInf_model",
                    priors = "data.frame",
+                   i = "integer",
                    fn = "function",
                    x = "list",
                    w = "list"))
@@ -292,6 +296,10 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 ##'                ptol = 0.5)
 ##'
 ##' plot(fit)
+##'
+##' fit <- continue(fit, ngen = 3, tol = 100000, ptol = 0.5)
+##'
+##' plot(fit)
 abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
     check_model_for_abc_smc(model)
 
@@ -322,7 +330,25 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
     new("SimInf_abc_smc",
         model = model,
         priors = priors,
+        i = i_ldata,
         fn = fn,
         x = lapply(out, "[[", "x"),
         w = lapply(out, "[[", "w"))
+}
+
+##' @export
+continue <- function(object, ngen, ..., verbose = TRUE) {
+    for (generation in seq(length(object@x) + 1, length(object@x) + ngen)) {
+        x <- tail(object@x, 1)[[1]]
+        w <- tail(object@w, 1)[[1]]
+
+        tmp <- abc_smc_ldata(object@model, object@i, object@priors, length(w),
+                             object@fn, generation, x, w, verbose, ...)
+
+        ## Move the population of particles to the next generation.
+        object@x[[length(object@x) + 1]] <- tmp$x
+        object@w[[length(object@w) + 1]] <- tmp$w
+    }
+
+    object
 }

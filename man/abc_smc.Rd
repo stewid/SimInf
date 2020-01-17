@@ -100,4 +100,8 @@ fit <- abc_smc(model = model,
                ptol = 0.5)
 
 plot(fit)
+
+fit <- continue(fit, ngen = 3, tol = 100000, ptol = 0.5)
+
+plot(fit)
 }
