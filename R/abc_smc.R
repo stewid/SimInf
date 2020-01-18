@@ -133,6 +133,60 @@ n_particles <- function(x) {
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
+abc_smc_gdata <- function(model, i, priors, npart, fn,
+                          generation, x, w, verbose, ...) {
+    if (isTRUE(verbose)) {
+        cat("\nGeneration", generation, "...\n")
+        pb <- txtProgressBar(min = 0, max = npart, style = 3)
+        t0 <- proc.time()
+    }
+
+    xx <- NULL
+    ancestor <- NULL
+    tot_proposals <- 0
+    sigma <- proposal_covariance(x)
+
+    while (n_particles(xx) < npart) {
+        proposals <- .Call(SimInf_abc_smc_proposals,
+                           priors$parameter, priors$distribution,
+                           priors$p1, priors$p2, 1L, x, w, sigma)
+        for (j in seq_len(nrow(proposals))) {
+            model@gdata[i[j]] <- proposals[j, 1]
+        }
+
+        result <- fn(run(model), generation, ...)
+        stopifnot(is.logical(result), length(result) == 1L)
+        tot_proposals <- tot_proposals + 1L
+        if (isTRUE(result)) {
+            ## Collect accepted particle
+            xx <- cbind(xx, as.matrix(model@gdata)[i, 1, drop = FALSE])
+            ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
+        }
+
+        ## Report progress.
+        if (isTRUE(verbose)) {
+            setTxtProgressBar(pb, n_particles(xx))
+        }
+    }
+
+    ## Calculate weights.
+    ww <- .Call(SimInf_abc_smc_weights, priors$distribution,
+                priors$p1, priors$p2, x[, ancestor], xx, w, sigma)
+
+    ## Report progress.
+    if (isTRUE(verbose)) {
+        t1 <- proc.time()
+        cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
+                    npart / tot_proposals, 1 / sum(ww^2), (t1 - t0)[3]))
+        summary_matrix(xx)
+    }
+
+    list(x = xx, w = ww)
+}
+
+##' @importFrom utils setTxtProgressBar
+##' @importFrom utils txtProgressBar
+##' @noRd
 abc_smc_ldata <- function(model, i, priors, npart, fn,
                           generation, x, w, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
@@ -305,10 +359,16 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
 
     ## Match the 'priors' to parameters in 'ldata'.
     priors <- parse_priors(priors)
-    i_ldata <- match(priors$parameter, rownames(model@ldata))
-    if (any(is.na(i_ldata))) {
-        stop("All parameters in 'priors' must exist in 'ldata'",
-             call. = FALSE)
+    i_pars <- match(priors$parameter, rownames(model@ldata))
+    if (any(is.na(i_pars))) {
+        i_pars <- match(priors$parameter, names(model@gdata))
+        if (any(is.na(i_pars))) {
+            stop("All parameters in 'priors' must be either ",
+                 "in 'gdata' or 'ldata'", call. = FALSE)
+        }
+        abc_smc_fn <- abc_smc_gdata
+    } else {
+        abc_smc_fn <- abc_smc_ldata
     }
 
     ## Setup a population of particles (x), weights (w) and a list to
@@ -318,9 +378,9 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
     out <- list()
 
     for (generation in seq_len(ngen)) {
-        out[[length(out) + 1]] <- abc_smc_ldata(model, i_ldata, priors,
-                                                npart, fn, generation,
-                                                x, w, verbose, ...)
+        out[[length(out) + 1]] <- abc_smc_fn(model, i_pars, priors,
+                                             npart, fn, generation,
+                                             x, w, verbose, ...)
 
         ## Move the population of particles to the next generation.
         x <- out[[length(out)]]$x
@@ -330,12 +390,13 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
     new("SimInf_abc_smc",
         model = model,
         priors = priors,
-        i = i_ldata,
+        i = i_pars,
         fn = fn,
         x = lapply(out, "[[", "x"),
         w = lapply(out, "[[", "w"))
 }
 
+##' @importFrom utils tail
 ##' @export
 continue <- function(object, ngen = 1, ..., verbose = TRUE) {
     stopifnot(inherits(object, "SimInf_abc_smc"))
