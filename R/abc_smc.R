@@ -91,6 +91,58 @@ setMethod("plot",
           }
 )
 
+summary_particles <- function(x, i) {
+    str <- sprintf("Particles in generation %i:", i)
+    cat(sprintf("\n%s\n", str))
+    cat(sprintf("%s\n", paste0(rep("-", nchar(str)), collapse = "")))
+    summary_matrix(x[[i]])
+}
+
+##' Print summary of a \code{SimInf_abc_smc} object
+##'
+##' @param object The \code{SimInf_abc_smc} object.
+##' @return \code{invisible(object)}.
+##' @export
+##' @importFrom methods show
+setMethod("show",
+          signature(object = "SimInf_abc_smc"),
+          function(object) {
+              cat(sprintf("Number of particles per generation: %i\n",
+                          object@npart))
+              cat(sprintf("Number of generations: %i\n",
+                          length(object@x)))
+
+              if (length(object@x)) {
+                  summary_particles(object@x, length(object@x))
+              }
+
+              invisible(object)
+          }
+)
+
+##' Detailed summary of a \code{SimInf_abc_smc} object
+##'
+##' @param object The \code{SimInf_abc_smc} object
+##' @param ... Additional arguments affecting the summary produced.
+##' @return None (invisible 'NULL').
+##' @include SimInf_model.R
+##' @export
+setMethod("summary",
+          signature(object = "SimInf_abc_smc"),
+          function(object, ...) {
+              cat(sprintf("Number of particles per generation: %i\n",
+                          object@npart))
+              cat(sprintf("Number of generations: %i\n",
+                          length(object@x)))
+
+              for (i in seq_len(length(object@x))) {
+                  summary_particles(object@x, i)
+              }
+
+              invisible(NULL)
+          }
+)
+
 ##' Check model before running ABC-SMC
 ##'
 ##' Raise an error if the model argument is not ok.
