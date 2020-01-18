@@ -35,8 +35,7 @@ one value for each node in the simulated model.}
 \item{verbose}{= TRUE}
 }
 \value{
-A data.frame with columns: generation, weight and
-    parameters.
+A \code{SimInf_abc_smc} object.
 }
 \description{
 Run ABC SMC

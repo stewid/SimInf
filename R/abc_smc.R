@@ -287,8 +287,7 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 ##'     one value for each node in the simulated model.
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @param verbose = TRUE
-##' @return A data.frame with columns: generation, weight and
-##'     parameters.
+##' @return A \code{SimInf_abc_smc} object.
 ##' @export
 ##' @importFrom stats cov
 ##' @examples
@@ -396,6 +395,14 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
         w = lapply(out, "[[", "w"))
 }
 
+##' Run more generations of ABC SMC
+##'
+##' @param object The \code{SimInf_abc_smc} to continue from.
+##' @param ngen The number of generations of ABC-SMC to run.
+##' @param ... Further arguments to be passed to
+##'     \code{SimInf_abc_smc@@fn}.
+##' @param verbose = TRUE
+##' @return A \code{SimInf_abc_smc} object.
 ##' @importFrom utils tail
 ##' @export
 continue <- function(object, ngen = 1, ..., verbose = TRUE) {
