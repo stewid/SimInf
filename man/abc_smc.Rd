@@ -93,7 +93,7 @@ model <- mparse(transitions = transitions,
 ## and upper bound = 5.
 fit <- abc_smc(model = model,
                priors = c(beta~U(0, 5), gamma1~U(0, 5), gamma2~U(0, 5)),
-               ngen = 3,
+               ngen = 2,
                npart = 50,
                fn = acceptFun,
                tol = 100000,
@@ -101,7 +101,7 @@ fit <- abc_smc(model = model,
 
 plot(fit)
 
-fit <- continue(fit, ngen = 3, tol = 100000, ptol = 0.5)
+fit <- continue(fit, tol = 100000, ptol = 0.5)
 
 plot(fit)
 }

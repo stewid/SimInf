@@ -16,6 +16,9 @@ Class \code{"SimInf_abc_smc"}
   \item{priors}{
     FIXME.
   }
+  \item{i}{
+    FIXME.
+  }
   \item{fn}{
     FIXME.
   }

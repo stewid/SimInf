@@ -289,7 +289,7 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 ##' ## and upper bound = 5.
 ##' fit <- abc_smc(model = model,
 ##'                priors = c(beta~U(0, 5), gamma1~U(0, 5), gamma2~U(0, 5)),
-##'                ngen = 3,
+##'                ngen = 2,
 ##'                npart = 50,
 ##'                fn = acceptFun,
 ##'                tol = 100000,
@@ -297,7 +297,7 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 ##'
 ##' plot(fit)
 ##'
-##' fit <- continue(fit, ngen = 3, tol = 100000, ptol = 0.5)
+##' fit <- continue(fit, tol = 100000, ptol = 0.5)
 ##'
 ##' plot(fit)
 abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
@@ -337,7 +337,8 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
 }
 
 ##' @export
-continue <- function(object, ngen, ..., verbose = TRUE) {
+continue <- function(object, ngen = 1, ..., verbose = TRUE) {
+    stopifnot(inherits(object, "SimInf_abc_smc"))
     for (generation in seq(length(object@x) + 1, length(object@x) + ngen)) {
         x <- tail(object@x, 1)[[1]]
         w <- tail(object@w, 1)[[1]]
