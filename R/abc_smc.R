@@ -26,7 +26,13 @@
 ##'   \item{priors}{
 ##'     FIXME.
 ##'   }
+##'   \item{target}{
+##'     FIXME.
+##'   }
 ##'   \item{i}{
+##'     FIXME.
+##'   }
+##'   \item{npart}{
 ##'     FIXME.
 ##'   }
 ##'   \item{fn}{
@@ -41,12 +47,14 @@
 ##' }
 ##' @export
 setClass("SimInf_abc_smc",
-         slots = c(model = "SimInf_model",
+         slots = c(model  = "SimInf_model",
                    priors = "data.frame",
-                   i = "integer",
-                   fn = "function",
-                   x = "list",
-                   w = "list"))
+                   target = "character",
+                   i      = "integer",
+                   npart  = "integer",
+                   fn     = "function",
+                   x      = "list",
+                   w      = "list"))
 
 ##' Display the ABC posterior distribution
 ##'
@@ -355,44 +363,30 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 ##' plot(fit)
 abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
     check_model_for_abc_smc(model)
+    check_integer_arg(ngen, npart)
+    ngen <- as.integer(ngen)
+    npart <- as.integer(npart)
 
-    ## Match the 'priors' to parameters in 'ldata'.
+    ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
     priors <- parse_priors(priors)
-    i_pars <- match(priors$parameter, rownames(model@ldata))
-    if (any(is.na(i_pars))) {
-        i_pars <- match(priors$parameter, names(model@gdata))
-        if (any(is.na(i_pars))) {
+    i <- match(priors$parameter, rownames(model@ldata))
+    if (any(is.na(i))) {
+        i <- match(priors$parameter, names(model@gdata))
+        if (any(is.na(i))) {
             stop("All parameters in 'priors' must be either ",
                  "in 'gdata' or 'ldata'", call. = FALSE)
         }
-        abc_smc_fn <- abc_smc_gdata
+        target <- "gdata"
     } else {
-        abc_smc_fn <- abc_smc_ldata
+        target <- "ldata"
     }
 
-    ## Setup a population of particles (x), weights (w) and a list to
-    ## hold the results (out).
-    x <- NULL
-    w <- NULL
-    out <- list()
+    object <- new("SimInf_abc_smc", model = model,
+                  priors = priors, target = target,
+                  i = i, npart = npart, fn = fn,
+                  x = list(), w = list())
 
-    for (generation in seq_len(ngen)) {
-        out[[length(out) + 1]] <- abc_smc_fn(model, i_pars, priors,
-                                             npart, fn, generation,
-                                             x, w, verbose, ...)
-
-        ## Move the population of particles to the next generation.
-        x <- out[[length(out)]]$x
-        w <- out[[length(out)]]$w
-    }
-
-    new("SimInf_abc_smc",
-        model = model,
-        priors = priors,
-        i = i_pars,
-        fn = fn,
-        x = lapply(out, "[[", "x"),
-        w = lapply(out, "[[", "w"))
+    continue(object, ngen = ngen, verbose = verbose, ...)
 }
 
 ##' Run more generations of ABC SMC
@@ -403,20 +397,34 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
 ##'     \code{SimInf_abc_smc@@fn}.
 ##' @param verbose = TRUE
 ##' @return A \code{SimInf_abc_smc} object.
-##' @importFrom utils tail
 ##' @export
 continue <- function(object, ngen = 1, ..., verbose = TRUE) {
     stopifnot(inherits(object, "SimInf_abc_smc"))
-    for (generation in seq(length(object@x) + 1, length(object@x) + ngen)) {
-        x <- tail(object@x, 1)[[1]]
-        w <- tail(object@w, 1)[[1]]
+    check_integer_arg(ngen)
 
-        tmp <- abc_smc_ldata(object@model, object@i, object@priors, length(w),
-                             object@fn, generation, x, w, verbose, ...)
+    abc_smc_fn <- switch(object@target,
+                         "gdata" = abc_smc_gdata,
+                         "ldata" = abc_smc_ldata,
+                         stop("Unknown target: ", object@target,
+                              call. = FALSE))
+
+    ## Setup a population of particles (x) and weights (w)
+    x <- NULL
+    if (length(object@x))
+        x <- object@x[[length(object@x)]]
+    w <- NULL
+    if (length(object@w))
+        w <- object@w[[length(object@w)]]
+
+    for (generation in seq(length(object@x) + 1, length(object@x) + ngen)) {
+        tmp <- abc_smc_fn(object@model, object@i, object@priors, object@npart,
+                          object@fn, generation, x, w, verbose, ...)
 
         ## Move the population of particles to the next generation.
-        object@x[[length(object@x) + 1]] <- tmp$x
-        object@w[[length(object@w) + 1]] <- tmp$w
+        x <- tmp$x
+        w <- tmp$w
+        object@x[[length(object@x) + 1]] <- x
+        object@w[[length(object@w) + 1]] <- w
     }
 
     object

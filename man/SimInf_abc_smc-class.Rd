@@ -16,7 +16,13 @@ Class \code{"SimInf_abc_smc"}
   \item{priors}{
     FIXME.
   }
+  \item{target}{
+    FIXME.
+  }
   \item{i}{
+    FIXME.
+  }
+  \item{npart}{
     FIXME.
   }
   \item{fn}{
