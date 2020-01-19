@@ -143,23 +143,6 @@ setMethod("summary",
           }
 )
 
-##' Check model before running ABC-SMC
-##'
-##' Raise an error if the model argument is not ok.
-##' @param model the model to check.
-##' @return invisible(NULL)
-##' @noRd
-check_model_for_abc_smc <- function(model) {
-    check_model_argument(model)
-
-    if (!identical(Nn(model), 1L))
-        stop("The 'model' must contain one node.", call. = FALSE)
-    if (length(model@events@event) > 0)
-        stop("The 'model' cannot contain any events.", call. = FALSE)
-
-    invisible(NULL)
-}
-
 ##' Generate replicates of first node in model.
 ##'
 ##' Replicate the node specific matrices 'u0', 'v0' and 'ldata' in the
@@ -414,7 +397,7 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 ##'
 ##' plot(fit)
 abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
-    check_model_for_abc_smc(model)
+    check_model_argument(model)
     check_integer_arg(ngen, npart)
     ngen <- as.integer(ngen)
     npart <- as.integer(npart)
@@ -430,6 +413,10 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
         }
         target <- "gdata"
     } else {
+        if (!identical(Nn(model), 1L))
+            stop("The 'model' must contain one node.", call. = FALSE)
+        if (length(model@events@event) > 0)
+            stop("The 'model' cannot contain any events.", call. = FALSE)
         target <- "ldata"
     }
 
