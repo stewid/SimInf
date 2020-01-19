@@ -2,7 +2,7 @@
  * This file is part of SimInf, a framework for stochastic
  * disease spread simulations.
  *
- * Copyright (C) 2015 -- 2019 Stefan Widgren
+ * Copyright (C) 2015 -- 2020 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,7 +278,7 @@ SEXP SimInf_abc_smc_weights(
     gsl_vector *work = NULL;
     SEXP ww;
     double *ptr_p1, *ptr_p2, *ptr_x, *ptr_xx, *ptr_w, *ptr_ww;
-    double sum = 0.0, max_ww = 0.0;
+    double sum, max_ww = 0.0;
 
     PROTECT(ww = Rf_allocVector(REALSXP, n));
     ptr_ww = REAL(ww);
@@ -307,9 +307,7 @@ SEXP SimInf_abc_smc_weights(
     gsl_linalg_cholesky_decomp1(SIGMA);
 
     for (int i = 0; i < n; i++) {
-        gsl_vector_view v_x = gsl_vector_view_array(&ptr_x[i * k], k);
         gsl_vector_view v_xx = gsl_vector_view_array(&ptr_xx[i * k], k);
-        double pdf;
 
         ptr_ww[i] = 0.0;
         for (int d = 0; d < k; d++) {
@@ -332,17 +330,23 @@ SEXP SimInf_abc_smc_weights(
             }
         }
 
-        gsl_ran_multivariate_gaussian_pdf(&v_xx.vector, &v_x.vector,
-                                          SIGMA, &pdf, work);
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
             error = 3;
             goto cleanup;
         }
-        sum += ptr_w[i] * pdf;
-    }
 
-    sum = log(sum);
-    for (int i = 0; i < n; i++) {
+        sum = 0.0;
+        for (int j = 0; j < n; j++) {
+            double pdf;
+            gsl_vector_view v_x = gsl_vector_view_array(&ptr_x[j * k], k);
+
+            gsl_ran_multivariate_gaussian_pdf(&v_xx.vector, &v_x.vector,
+                                              SIGMA, &pdf, work);
+
+            sum += ptr_w[j] * pdf;
+        }
+
+        sum = log(sum);
         ptr_ww[i] -= sum;
         if (ptr_ww[i] > max_ww)
             max_ww = ptr_ww[i];
