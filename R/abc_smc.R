@@ -329,7 +329,7 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 ##'     particles. The function should return a logical vector with
 ##'     one value for each node in the simulated model.
 ##' @param ... Further arguments to be passed to \code{fn}.
-##' @param verbose = TRUE
+##' @template verbose-param
 ##' @return A \code{SimInf_abc_smc} object.
 ##' @export
 ##' @importFrom stats cov
@@ -396,7 +396,8 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 ##' fit <- continue(fit, tol = 100000, ptol = 0.5)
 ##'
 ##' plot(fit)
-abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
+abc_smc <- function(model, priors, ngen, npart, fn, ...,
+                    verbose = getOption("verbose", FALSE)) {
     check_model_argument(model)
     check_integer_arg(ngen, npart)
     ngen <- as.integer(ngen)
@@ -434,10 +435,11 @@ abc_smc <- function(model, priors, ngen, npart, fn, ..., verbose = TRUE) {
 ##' @param ngen The number of generations of ABC-SMC to run.
 ##' @param ... Further arguments to be passed to
 ##'     \code{SimInf_abc_smc@@fn}.
-##' @param verbose = TRUE
+##' @template verbose-param
 ##' @return A \code{SimInf_abc_smc} object.
 ##' @export
-continue <- function(object, ngen = 1, ..., verbose = TRUE) {
+continue <- function(object, ngen = 1, ...,
+                     verbose = getOption("verbose", FALSE)) {
     stopifnot(inherits(object, "SimInf_abc_smc"))
     check_integer_arg(ngen)
 

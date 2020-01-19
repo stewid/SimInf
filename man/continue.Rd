@@ -4,7 +4,7 @@
 \alias{continue}
 \title{Run more generations of ABC SMC}
 \usage{
-continue(object, ngen = 1, ..., verbose = TRUE)
+continue(object, ngen = 1, ..., verbose = getOption("verbose", FALSE))
 }
 \arguments{
 \item{object}{The \code{SimInf_abc_smc} to continue from.}
@@ -14,7 +14,9 @@ continue(object, ngen = 1, ..., verbose = TRUE)
 \item{...}{Further arguments to be passed to
 \code{SimInf_abc_smc@fn}.}
 
-\item{verbose}{= TRUE}
+\item{verbose}{prints diagnostic messages when \code{TRUE}. The
+default is to retrieve the global option \code{verbose} and
+use \code{FALSE} if it is not set.}
 }
 \value{
 A \code{SimInf_abc_smc} object.

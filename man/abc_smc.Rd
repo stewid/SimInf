@@ -4,7 +4,15 @@
 \alias{abc_smc}
 \title{Run ABC SMC}
 \usage{
-abc_smc(model, priors, ngen, npart, fn, ..., verbose = TRUE)
+abc_smc(
+  model,
+  priors,
+  ngen,
+  npart,
+  fn,
+  ...,
+  verbose = getOption("verbose", FALSE)
+)
 }
 \arguments{
 \item{model}{The model to generate data from.}
@@ -32,7 +40,9 @@ one value for each node in the simulated model.}
 
 \item{...}{Further arguments to be passed to \code{fn}.}
 
-\item{verbose}{= TRUE}
+\item{verbose}{prints diagnostic messages when \code{TRUE}. The
+default is to retrieve the global option \code{verbose} and
+use \code{FALSE} if it is not set.}
 }
 \value{
 A \code{SimInf_abc_smc} object.
