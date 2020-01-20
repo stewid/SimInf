@@ -53,9 +53,9 @@
 ##'   \item{ess}{
 ##'     A numeric vector with the effective sample size (ESS) in each
 ##'     generation. Effective sample size is computed as
-##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1/(sum(w_ig^2)),}
-##'     where \eqn{w_{g}^{(i)}}{w_ig} is the normalized weight of
-##'     particle \eqn{i} in generation \eqn{g}.
+##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
+##'     (sum(w_ig^2)),} where \eqn{w_{g}^{(i)}}{w_ig} is the
+##'     normalized weight of particle \eqn{i} in generation \eqn{g}.
 ##'   }
 ##' }
 ##' @export

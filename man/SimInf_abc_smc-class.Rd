@@ -19,11 +19,9 @@ Class \code{"SimInf_abc_smc"}
   \item{target}{
     FIXME.
   }
-
   \item{i}{
     index to the parameters in \code{target}.
   }
-
   \item{npart}{
     The number of particles in each generation.
   }
@@ -45,9 +43,9 @@ Class \code{"SimInf_abc_smc"}
   \item{ess}{
     A numeric vector with the effective sample size (ESS) in each
     generation. Effective sample size is computed as
-    \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1/(sum(w_ig^2)),}
-    where \eqn{w_{g}^{(i)}}{w_ig} is the normalized weight of
-    particle \eqn{i} in generation \eqn{g}.
+    \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
+    (sum(w_ig^2)),} where \eqn{w_{g}^{(i)}}{w_ig} is the
+    normalized weight of particle \eqn{i} in generation \eqn{g}.
   }
 }
 }
