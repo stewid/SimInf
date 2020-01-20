@@ -30,19 +30,32 @@
 ##'     FIXME.
 ##'   }
 ##'   \item{i}{
-##'     FIXME.
+##'     index to the parameters in \code{target}.
 ##'   }
 ##'   \item{npart}{
-##'     FIXME.
+##'     The number of particles in each generation.
+##'   }
+##'   \item{nprop}{
+##'     An integer vector with the number of simulated proposals in
+##'     each generation.
 ##'   }
 ##'   \item{fn}{
 ##'     FIXME.
 ##'   }
 ##'   \item{x}{
-##'     FIXME.
+##'     A list where each item is a \code{matrix} with the accepted
+##'     particles in each generation. Each column is one particle.
 ##'   }
 ##'   \item{w}{
-##'     FIXME.
+##'     A list where each item is a vector with the weights for the
+##'     particles \code{x} in the corresponding generation.
+##'   }
+##'   \item{ess}{
+##'     A numeric vector with the effective sample size (ESS) in each
+##'     generation. Effective sample size is computed as
+##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1/(sum(w_ig^2)),}
+##'     where \eqn{w_{g}^{(i)}}{w_ig} is the normalized weight of
+##'     particle \eqn{i} in generation \eqn{g}.
 ##'   }
 ##' }
 ##' @export
@@ -52,9 +65,11 @@ setClass("SimInf_abc_smc",
                    target = "character",
                    i      = "integer",
                    npart  = "integer",
+                   nprop  = "integer",
                    fn     = "function",
                    x      = "list",
-                   w      = "list"))
+                   w      = "list",
+                   ess    = "numeric"))
 
 ##' Display the ABC posterior distribution
 ##'
@@ -173,6 +188,13 @@ n_particles <- function(x) {
     ncol(x)
 }
 
+abc_smc_progress <- function(t0, t1, x, w, npart, nprop) {
+    t1 <- proc.time()
+    cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
+                npart / nprop, 1 / sum(w^2), (t1 - t0)[3]))
+    summary_matrix(x)
+}
+
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
@@ -186,7 +208,7 @@ abc_smc_gdata <- function(model, i, priors, npart, fn,
 
     xx <- NULL
     ancestor <- NULL
-    tot_proposals <- 0
+    nprop <- 0L
     sigma <- proposal_covariance(x)
 
     while (n_particles(xx) < npart) {
@@ -199,7 +221,7 @@ abc_smc_gdata <- function(model, i, priors, npart, fn,
 
         result <- fn(run(model), generation, ...)
         stopifnot(is.logical(result), length(result) == 1L)
-        tot_proposals <- tot_proposals + 1L
+        nprop <- nprop + 1L
         if (isTRUE(result)) {
             ## Collect accepted particle
             xx <- cbind(xx, as.matrix(model@gdata)[i, 1, drop = FALSE])
@@ -218,13 +240,10 @@ abc_smc_gdata <- function(model, i, priors, npart, fn,
 
     ## Report progress.
     if (isTRUE(verbose)) {
-        t1 <- proc.time()
-        cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
-                    npart / tot_proposals, 1 / sum(ww^2), (t1 - t0)[3]))
-        summary_matrix(xx)
+        abc_smc_progress(t0, proc.time(), xx, ww, npart, nprop)
     }
 
-    list(x = xx, w = ww)
+    list(x = xx, w = ww, nprop = nprop)
 }
 
 ##' @importFrom utils setTxtProgressBar
@@ -247,11 +266,11 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 
     xx <- NULL
     ancestor <- NULL
-    tot_proposals <- 0
+    nprop <- 0L
     sigma <- proposal_covariance(x)
 
     while (n_particles(xx) < npart) {
-        if (all(n < 1e5, tot_proposals > 2 * n)) {
+        if (all(n < 1e5, nprop > 2 * n)) {
             ## Increase the number of particles that is simulated in
             ## each trajectory.
             n <- min(1e5L, n * 2L)
@@ -276,11 +295,11 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
         if (length(j)) {
             j <- min(j)
             result <- result[result <= j]
-            tot_proposals <- tot_proposals + j
+            nprop <- nprop + j
             xx <- cbind(xx, model@ldata[i, result, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
         } else {
-            tot_proposals <- tot_proposals + n
+            nprop <- nprop + n
             if (length(result)) {
                 xx <- cbind(xx, model@ldata[i, result, drop = FALSE])
                 ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
@@ -299,13 +318,10 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
 
     ## Report progress.
     if (isTRUE(verbose)) {
-        t1 <- proc.time()
-        cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
-                    npart / tot_proposals, 1 / sum(ww^2), (t1 - t0)[3]))
-        summary_matrix(xx)
+        abc_smc_progress(t0, proc.time(), xx, ww, npart, nprop)
     }
 
-    list(x = xx, w = ww)
+    list(x = xx, w = ww, nprop = nprop)
 }
 
 ##' Run ABC SMC
@@ -423,8 +439,9 @@ abc_smc <- function(model, priors, ngen, npart, fn, ...,
 
     object <- new("SimInf_abc_smc", model = model,
                   priors = priors, target = target,
-                  i = i, npart = npart, fn = fn,
-                  x = list(), w = list())
+                  i = i, npart = npart, nprop = integer(),
+                  fn = fn, x = list(), w = list(),
+                  ess = numeric())
 
     continue(object, ngen = ngen, verbose = verbose, ...)
 }
@@ -466,6 +483,8 @@ continue <- function(object, ngen = 1, ...,
         w <- tmp$w
         object@x[[length(object@x) + 1]] <- x
         object@w[[length(object@w) + 1]] <- w
+        object@ess <- c(object@ess, 1 / sum(w^2))
+        object@nprop <- c(object@nprop, tmp$nprop)
     }
 
     object

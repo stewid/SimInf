@@ -19,20 +19,35 @@ Class \code{"SimInf_abc_smc"}
   \item{target}{
     FIXME.
   }
+
   \item{i}{
-    FIXME.
+    index to the parameters in \code{target}.
   }
+
   \item{npart}{
-    FIXME.
+    The number of particles in each generation.
+  }
+  \item{nprop}{
+    An integer vector with the number of simulated proposals in
+    each generation.
   }
   \item{fn}{
     FIXME.
   }
   \item{x}{
-    FIXME.
+    A list where each item is a \code{matrix} with the accepted
+    particles in each generation. Each column is one particle.
   }
   \item{w}{
-    FIXME.
+    A list where each item is a vector with the weights for the
+    particles \code{x} in the corresponding generation.
+  }
+  \item{ess}{
+    A numeric vector with the effective sample size (ESS) in each
+    generation. Effective sample size is computed as
+    \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1/(sum(w_ig^2)),}
+    where \eqn{w_{g}^{(i)}}{w_ig} is the normalized weight of
+    particle \eqn{i} in generation \eqn{g}.
   }
 }
 }
