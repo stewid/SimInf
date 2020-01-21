@@ -71,6 +71,27 @@ setClass("SimInf_abc_smc",
                    w      = "list",
                    ess    = "numeric"))
 
+setAs(from = "SimInf_abc_smc",
+      to = "data.frame",
+      def = function(from) {
+          do.call("rbind", lapply(seq_len(length(from@x)), function(i) {
+              cbind(generation = i,
+                    weight = from@w[[i]],
+                    as.data.frame(t(from@x[[i]])))
+          }))
+      }
+)
+
+##' Coerce to data frame
+##'
+##' @method as.data.frame SimInf_abc_smc
+##'
+##' @inheritParams base::as.data.frame
+##' @export
+as.data.frame.SimInf_abc_smc <- function(x, ...) {
+    as(x,"data.frame")
+}
+
 ##' Display the ABC posterior distribution
 ##'
 ##' @param x The \code{SimInf_abc_smc} object to plot.
