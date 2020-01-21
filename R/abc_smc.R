@@ -29,8 +29,8 @@
 ##'   \item{target}{
 ##'     FIXME.
 ##'   }
-##'   \item{i}{
-##'     index to the parameters in \code{target}.
+##'   \item{pars}{
+##'     Index to the parameters in \code{target}.
 ##'   }
 ##'   \item{npart}{
 ##'     The number of particles in each generation.
@@ -63,7 +63,7 @@ setClass("SimInf_abc_smc",
          slots = c(model  = "SimInf_model",
                    priors = "data.frame",
                    target = "character",
-                   i      = "integer",
+                   pars   = "integer",
                    npart  = "integer",
                    nprop  = "integer",
                    fn     = "function",
@@ -198,7 +198,7 @@ abc_smc_progress <- function(t0, t1, x, w, npart, nprop) {
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
-abc_smc_gdata <- function(model, i, priors, npart, fn,
+abc_smc_gdata <- function(model, pars, priors, npart, fn,
                           generation, x, w, verbose, ...) {
     if (isTRUE(verbose)) {
         cat("\nGeneration", generation, "...\n")
@@ -216,7 +216,7 @@ abc_smc_gdata <- function(model, i, priors, npart, fn,
                            priors$parameter, priors$distribution,
                            priors$p1, priors$p2, 1L, x, w, sigma)
         for (j in seq_len(nrow(proposals))) {
-            model@gdata[i[j]] <- proposals[j, 1]
+            model@gdata[pars[j]] <- proposals[j, 1]
         }
 
         result <- fn(run(model), generation, ...)
@@ -224,7 +224,7 @@ abc_smc_gdata <- function(model, i, priors, npart, fn,
         nprop <- nprop + 1L
         if (isTRUE(result)) {
             ## Collect accepted particle
-            xx <- cbind(xx, as.matrix(model@gdata)[i, 1, drop = FALSE])
+            xx <- cbind(xx, as.matrix(model@gdata)[pars, 1, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
         }
 
@@ -249,7 +249,7 @@ abc_smc_gdata <- function(model, i, priors, npart, fn,
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
-abc_smc_ldata <- function(model, i, priors, npart, fn,
+abc_smc_ldata <- function(model, pars, priors, npart, fn,
                           generation, x, w, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
     ## to run many particles simultanously. Start with 10 x 'npart'
@@ -281,7 +281,7 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
                            priors$parameter, priors$distribution,
                            priors$p1, priors$p2, n, x, w, sigma)
         for (j in seq_len(nrow(proposals))) {
-            model@ldata[i[j], ] <- proposals[j, ]
+            model@ldata[pars[j], ] <- proposals[j, ]
         }
 
         result <- fn(run(model), generation, ...)
@@ -296,12 +296,12 @@ abc_smc_ldata <- function(model, i, priors, npart, fn,
             j <- min(j)
             result <- result[result <= j]
             nprop <- nprop + j
-            xx <- cbind(xx, model@ldata[i, result, drop = FALSE])
+            xx <- cbind(xx, model@ldata[pars, result, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
         } else {
             nprop <- nprop + n
             if (length(result)) {
-                xx <- cbind(xx, model@ldata[i, result, drop = FALSE])
+                xx <- cbind(xx, model@ldata[pars, result, drop = FALSE])
                 ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
             }
         }
@@ -421,10 +421,10 @@ abc_smc <- function(model, priors, ngen, npart, fn, ...,
 
     ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
     priors <- parse_priors(priors)
-    i <- match(priors$parameter, rownames(model@ldata))
-    if (any(is.na(i))) {
-        i <- match(priors$parameter, names(model@gdata))
-        if (any(is.na(i))) {
+    pars <- match(priors$parameter, rownames(model@ldata))
+    if (any(is.na(pars))) {
+        pars <- match(priors$parameter, names(model@gdata))
+        if (any(is.na(pars))) {
             stop("All parameters in 'priors' must be either ",
                  "in 'gdata' or 'ldata'", call. = FALSE)
         }
@@ -439,8 +439,9 @@ abc_smc <- function(model, priors, ngen, npart, fn, ...,
 
     object <- new("SimInf_abc_smc", model = model,
                   priors = priors, target = target,
-                  i = i, npart = npart, nprop = integer(),
-                  fn = fn, x = list(), w = list(),
+                  pars = pars, npart = npart,
+                  nprop = integer(), fn = fn,
+                  x = list(), w = list(),
                   ess = numeric())
 
     continue(object, ngen = ngen, verbose = verbose, ...)
@@ -475,8 +476,9 @@ continue <- function(object, ngen = 1, ...,
         w <- object@w[[length(object@w)]]
 
     for (generation in seq(length(object@x) + 1, length(object@x) + ngen)) {
-        tmp <- abc_smc_fn(object@model, object@i, object@priors, object@npart,
-                          object@fn, generation, x, w, verbose, ...)
+        tmp <- abc_smc_fn(object@model, object@pars, object@priors,
+                          object@npart, object@fn, generation, x,
+                          w, verbose, ...)
 
         ## Move the population of particles to the next generation.
         x <- tmp$x

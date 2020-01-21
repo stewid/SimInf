@@ -19,8 +19,8 @@ Class \code{"SimInf_abc_smc"}
   \item{target}{
     FIXME.
   }
-  \item{i}{
-    index to the parameters in \code{target}.
+  \item{pars}{
+    Index to the parameters in \code{target}.
   }
   \item{npart}{
     The number of particles in each generation.
