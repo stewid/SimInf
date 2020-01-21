@@ -215,8 +215,8 @@ abc_smc_gdata <- function(model, pars, priors, npart, fn,
         proposals <- .Call(SimInf_abc_smc_proposals,
                            priors$parameter, priors$distribution,
                            priors$p1, priors$p2, 1L, x, w, sigma)
-        for (j in seq_len(nrow(proposals))) {
-            model@gdata[pars[j]] <- proposals[j, 1]
+        for (i in seq_len(nrow(proposals))) {
+            model@gdata[pars[i]] <- proposals[i, 1]
         }
 
         result <- fn(run(model), generation, ...)
@@ -270,7 +270,7 @@ abc_smc_ldata <- function(model, pars, priors, npart, fn,
     sigma <- proposal_covariance(x)
 
     while (n_particles(xx) < npart) {
-        if (all(n < 1e5, nprop > 2 * n)) {
+        if (all(n < 1e5L, nprop > 2L * n)) {
             ## Increase the number of particles that is simulated in
             ## each trajectory.
             n <- min(1e5L, n * 2L)
@@ -280,8 +280,8 @@ abc_smc_ldata <- function(model, pars, priors, npart, fn,
         proposals <- .Call(SimInf_abc_smc_proposals,
                            priors$parameter, priors$distribution,
                            priors$p1, priors$p2, n, x, w, sigma)
-        for (j in seq_len(nrow(proposals))) {
-            model@ldata[pars[j], ] <- proposals[j, ]
+        for (i in seq_len(nrow(proposals))) {
+            model@ldata[pars[i], ] <- proposals[i, ]
         }
 
         result <- fn(run(model), generation, ...)
@@ -289,13 +289,13 @@ abc_smc_ldata <- function(model, pars, priors, npart, fn,
 
         ## Collect accepted particles making sure not to collect more
         ## than 'npart'.
-        j <- cumsum(result) + n_particles(xx)
-        j <- which(j == npart)
+        i <- cumsum(result) + n_particles(xx)
+        i <- which(i == npart)
         result <- which(result)
-        if (length(j)) {
-            j <- min(j)
-            result <- result[result <= j]
-            nprop <- nprop + j
+        if (length(i)) {
+            i <- min(i)
+            result <- result[result <= i]
+            nprop <- nprop + i
             xx <- cbind(xx, model@ldata[pars, result, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
         } else {
