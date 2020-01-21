@@ -127,11 +127,13 @@ setMethod("plot",
           }
 )
 
-summary_particles <- function(x, i) {
-    str <- sprintf("Particles in generation %i:", i)
+summary_particles <- function(object, i) {
+    str <- sprintf("Generation %i:", i)
     cat(sprintf("\n%s\n", str))
     cat(sprintf("%s\n", paste0(rep("-", nchar(str)), collapse = "")))
-    summary_matrix(x[[i]])
+    cat(sprintf(" Accrate: %.2e\n", object@npart / object@nprop[i]))
+    cat(sprintf(" ESS: %.2e\n\n", 1 / sum(object@w[[1]]^2)))
+    summary_matrix(object@x[[i]])
 }
 
 ##' Print summary of a \code{SimInf_abc_smc} object
@@ -149,7 +151,7 @@ setMethod("show",
                           length(object@x)))
 
               if (length(object@x)) {
-                  summary_particles(object@x, length(object@x))
+                  summary_particles(object, length(object@x))
               }
 
               invisible(object)
@@ -172,7 +174,7 @@ setMethod("summary",
                           length(object@x)))
 
               for (i in seq_len(length(object@x))) {
-                  summary_particles(object@x, i)
+                  summary_particles(object, i)
               }
 
               invisible(NULL)
