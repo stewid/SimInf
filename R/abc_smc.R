@@ -89,7 +89,7 @@ setAs(from = "SimInf_abc_smc",
 ##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_abc_smc <- function(x, ...) {
-    as(x,"data.frame")
+    as(x, "data.frame")
 }
 
 ##' Display the ABC posterior distribution
