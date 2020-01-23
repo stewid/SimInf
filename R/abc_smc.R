@@ -132,7 +132,7 @@ summary_particles <- function(object, i) {
     cat(sprintf("\n%s\n", str))
     cat(sprintf("%s\n", paste0(rep("-", nchar(str)), collapse = "")))
     cat(sprintf(" Accrate: %.2e\n", object@npart / object@nprop[i]))
-    cat(sprintf(" ESS: %.2e\n\n", 1 / sum(object@w[[1]]^2)))
+    cat(sprintf(" ESS: %.2e\n\n", object@ess[i]))
     summary_matrix(object@x[[i]])
 }
 
