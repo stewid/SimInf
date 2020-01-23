@@ -187,15 +187,34 @@ setMethod("summary",
 ##' first node.
 ##' @param model the model to replicate.
 ##' @param n the number of replicates.
+##' @param n_events the number of of events for the first node in the
+##'     model.
 ##' @return A modified model object
 ##' @noRd
-replicate_first_node <- function(model, n) {
+replicate_first_node <- function(model, n, n_events) {
     if (dim(model@u0)[1] > 0)
         model@u0 <- model@u0[, rep(1, n), drop = FALSE]
     if (dim(model@v0)[1] > 0)
         model@v0 <- model@v0[, rep(1, n), drop = FALSE]
     if (dim(model@ldata)[1] > 0)
         model@ldata <- model@ldata[, rep(1, n), drop = FALSE]
+
+    if (n_events > 0) {
+        ## Replicate the events in the first node and add an offset to
+        ## the node vector. The offset is not added to 'dest' since
+        ## there are no external transfer events.
+        i <- seq_len(n_events)
+        offset <- rep(seq_len(n) - 1L, each = n_events)
+        model@events@event <- rep(model@events@event[i], n)
+        model@events@time <- rep(model@events@time[i], n)
+        model@events@node <- rep(model@events@node[i], n) + offset
+        model@events@dest <- rep(model@events@dest[i], n)
+        model@events@n <- rep(model@events@n[i], n)
+        model@events@proportion <- rep(model@events@proportion[i], n)
+        model@events@select <- rep(model@events@select[i], n)
+        model@events@shift <- rep(model@events@shift[i], n)
+    }
+
     model
 }
 
@@ -279,7 +298,8 @@ abc_smc_ldata <- function(model, pars, priors, npart, fn,
     ## and then increase the number adaptively based on the acceptance
     ## rate.
     n <- as.integer(10 * npart)
-    model <- replicate_first_node(model, n)
+    n_events <- length(model@events@event)
+    model <- replicate_first_node(model, n, n_events)
 
     if (isTRUE(verbose)) {
         cat("\nGeneration", generation, "...\n")
@@ -297,7 +317,7 @@ abc_smc_ldata <- function(model, pars, priors, npart, fn,
             ## Increase the number of particles that is simulated in
             ## each trajectory.
             n <- min(1e5L, n * 2L)
-            model <- replicate_first_node(model, n)
+            model <- replicate_first_node(model, n, n_events)
         }
 
         proposals <- .Call(SimInf_abc_smc_proposals,
@@ -455,8 +475,6 @@ abc_smc <- function(model, priors, ngen, npart, fn, ...,
     } else {
         if (!identical(Nn(model), 1L))
             stop("The 'model' must contain one node.", call. = FALSE)
-        if (length(model@events@event) > 0)
-            stop("The 'model' cannot contain any events.", call. = FALSE)
         target <- "ldata"
     }
 
