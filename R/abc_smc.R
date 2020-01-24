@@ -458,9 +458,10 @@ abc_smc_ldata <- function(model, pars, priors, npart, fn,
 abc_smc <- function(model, priors, ngen, npart, fn, ...,
                     verbose = getOption("verbose", FALSE)) {
     check_model_argument(model)
-    check_integer_arg(ngen, npart)
-    ngen <- as.integer(ngen)
+    check_integer_arg(npart)
     npart <- as.integer(npart)
+    if (length(npart) != 1L || npart <= 1L)
+        stop("'npart' must be an integer > 1.", call. = FALSE)
 
     ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
     priors <- parse_priors(priors)
@@ -469,7 +470,7 @@ abc_smc <- function(model, priors, ngen, npart, fn, ...,
         pars <- match(priors$parameter, names(model@gdata))
         if (any(is.na(pars))) {
             stop("All parameters in 'priors' must be either ",
-                 "in 'gdata' or 'ldata'", call. = FALSE)
+                 "in 'gdata' or 'ldata'.", call. = FALSE)
         }
         target <- "gdata"
     } else {
@@ -501,6 +502,9 @@ continue <- function(object, ngen = 1, ...,
                      verbose = getOption("verbose", FALSE)) {
     stopifnot(inherits(object, "SimInf_abc_smc"))
     check_integer_arg(ngen)
+    ngen <- as.integer(ngen)
+    if (length(ngen) != 1L || ngen < 1L)
+        stop("'ngen' must be an integer >= 1.", call. = FALSE)
 
     abc_smc_fn <- switch(object@target,
                          "gdata" = abc_smc_gdata,
