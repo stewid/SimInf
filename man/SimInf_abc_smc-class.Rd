@@ -17,7 +17,9 @@ Class \code{"SimInf_abc_smc"}
     FIXME.
   }
   \item{target}{
-    FIXME.
+    Character vector ("\sQuote{gdata}" or "\sQuote{ldata}") that
+    determines if the ABC-SMC method estimates parameters in
+    \code{model@gdata} or in \code{model@ldata}.
   }
   \item{pars}{
     Index to the parameters in \code{target}.
