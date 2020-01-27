@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2019 Stefan Widgren
+ * Copyright (C) 2015 -- 2020 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -640,7 +640,7 @@ void SimInf_store_solution_sparse(SimInf_compartment_model *model)
         /* Copy continuous state to V_sparse */
         for (j = model[0].jcV[model[0].V_it];
              j < model[0].jcV[model[0].V_it + 1]; j++)
-            model[0].prV[j] = model[0].v[model[0].irV[j]];
+            model[0].prV[j] = model[0].v_new[model[0].irV[j]];
         model[0].V_it++;
     }
 }
