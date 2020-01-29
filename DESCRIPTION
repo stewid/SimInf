@@ -62,7 +62,7 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
-    'abc_smc.R'
+    'abc.R'
     'degree.R'
     'distance.R'
     'mparse.R'
