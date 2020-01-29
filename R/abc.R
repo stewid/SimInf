@@ -211,7 +211,7 @@ n_particles <- function(x) {
     ncol(x)
 }
 
-abc_smc_progress <- function(t0, t1, x, w, npart, nprop) {
+abc_progress <- function(t0, t1, x, w, npart, nprop) {
     t1 <- proc.time()
     cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
                 npart / nprop, 1 / sum(w^2), (t1 - t0)[3]))
@@ -221,8 +221,8 @@ abc_smc_progress <- function(t0, t1, x, w, npart, nprop) {
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
-abc_smc_gdata <- function(model, pars, priors, npart, fn,
-                          generation, x, w, verbose, ...) {
+abc_gdata <- function(model, pars, priors, npart, fn,
+                      generation, x, w, verbose, ...) {
     if (isTRUE(verbose)) {
         cat("\nGeneration", generation, "...\n")
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
@@ -263,7 +263,7 @@ abc_smc_gdata <- function(model, pars, priors, npart, fn,
 
     ## Report progress.
     if (isTRUE(verbose)) {
-        abc_smc_progress(t0, proc.time(), xx, ww, npart, nprop)
+        abc_progress(t0, proc.time(), xx, ww, npart, nprop)
     }
 
     list(x = xx, w = ww, nprop = nprop)
@@ -272,8 +272,8 @@ abc_smc_gdata <- function(model, pars, priors, npart, fn,
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
-abc_smc_ldata <- function(model, pars, priors, npart, fn,
-                          generation, x, w, verbose, ...) {
+abc_ldata <- function(model, pars, priors, npart, fn,
+                      generation, x, w, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
     ## to run many particles simultanously. Start with 10 x 'npart'
     ## and then increase the number adaptively based on the acceptance
@@ -342,7 +342,7 @@ abc_smc_ldata <- function(model, pars, priors, npart, fn,
 
     ## Report progress.
     if (isTRUE(verbose)) {
-        abc_smc_progress(t0, proc.time(), xx, ww, npart, nprop)
+        abc_progress(t0, proc.time(), xx, ww, npart, nprop)
     }
 
     list(x = xx, w = ww, nprop = nprop)
@@ -423,21 +423,21 @@ abc_smc_ldata <- function(model, pars, priors, npart, fn,
 ##' ## are specified in the second argument using a formula notation. Here
 ##' ## we use a uniform distribtion for each parameter with lower bound = 0
 ##' ## and upper bound = 5.
-##' fit <- abc_smc(model = model,
-##'                priors = c(beta~U(0, 5), gamma1~U(0, 5), gamma2~U(0, 5)),
-##'                ngen = 2,
-##'                npart = 50,
-##'                fn = acceptFun,
-##'                tol = 100000,
-##'                ptol = 0.5)
+##' fit <- abc(model = model,
+##'            priors = c(beta~U(0, 5), gamma1~U(0, 5), gamma2~U(0, 5)),
+##'            ngen = 2,
+##'            npart = 50,
+##'            fn = acceptFun,
+##'            tol = 100000,
+##'            ptol = 0.5)
 ##'
 ##' plot(fit)
 ##'
 ##' fit <- continue(fit, tol = 100000, ptol = 0.5)
 ##'
 ##' plot(fit)
-abc_smc <- function(model, priors, ngen, npart, fn, ...,
-                    verbose = getOption("verbose", FALSE)) {
+abc <- function(model, priors, ngen, npart, fn, ...,
+                verbose = getOption("verbose", FALSE)) {
     check_model_argument(model)
     check_integer_arg(npart)
     npart <- as.integer(npart)
@@ -487,11 +487,11 @@ continue <- function(object, ngen = 1, ...,
     if (length(ngen) != 1L || ngen < 1L)
         stop("'ngen' must be an integer >= 1.", call. = FALSE)
 
-    abc_smc_fn <- switch(object@target,
-                         "gdata" = abc_smc_gdata,
-                         "ldata" = abc_smc_ldata,
-                         stop("Unknown target: ", object@target,
-                              call. = FALSE))
+    abc_fn <- switch(object@target,
+                     "gdata" = abc_gdata,
+                     "ldata" = abc_ldata,
+                     stop("Unknown target: ", object@target,
+                          call. = FALSE))
 
     ## Setup a population of particles (x) and weights (w)
     x <- NULL
@@ -502,9 +502,9 @@ continue <- function(object, ngen = 1, ...,
         w <- object@w[[length(object@w)]]
 
     for (generation in seq(length(object@x) + 1, length(object@x) + ngen)) {
-        tmp <- abc_smc_fn(object@model, object@pars, object@priors,
-                          object@npart, object@fn, generation, x,
-                          w, verbose, ...)
+        tmp <- abc_fn(object@model, object@pars, object@priors,
+                      object@npart, object@fn, generation, x,
+                      w, verbose, ...)
 
         ## Move the population of particles to the next generation.
         x <- tmp$x
