@@ -45,7 +45,7 @@ default is to retrieve the global option \code{verbose} and
 use \code{FALSE} if it is not set.}
 }
 \value{
-A \code{SimInf_abc_smc} object.
+A \code{SimInf_abc} object.
 }
 \description{
 Run ABC SMC

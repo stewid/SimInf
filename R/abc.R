@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_abc_smc"}
+##' Class \code{"SimInf_abc"}
 ##'
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
@@ -40,7 +40,7 @@
 ##'     (sum(w_ig^2)),} where \eqn{w_{g}^{(i)}}{w_ig} is the
 ##'     normalized weight of particle \eqn{i} in generation \eqn{g}.
 ##' @export
-setClass("SimInf_abc_smc",
+setClass("SimInf_abc",
          slots = c(model  = "SimInf_model",
                    priors = "data.frame",
                    target = "character",
@@ -52,7 +52,7 @@ setClass("SimInf_abc_smc",
                    w      = "list",
                    ess    = "numeric"))
 
-setAs(from = "SimInf_abc_smc",
+setAs(from = "SimInf_abc",
       to = "data.frame",
       def = function(from) {
           do.call("rbind", lapply(seq_len(length(from@x)), function(i) {
@@ -65,21 +65,21 @@ setAs(from = "SimInf_abc_smc",
 
 ##' Coerce to data frame
 ##'
-##' @method as.data.frame SimInf_abc_smc
+##' @method as.data.frame SimInf_abc
 ##'
 ##' @inheritParams base::as.data.frame
 ##' @export
-as.data.frame.SimInf_abc_smc <- function(x, ...) {
+as.data.frame.SimInf_abc <- function(x, ...) {
     as(x, "data.frame")
 }
 
 ##' Display the ABC posterior distribution
 ##'
-##' @param x The \code{SimInf_abc_smc} object to plot.
+##' @param x The \code{SimInf_abc} object to plot.
 ##' @param y The generation to plot. The default is to display the
 ##'     last generation.
 ##' @param ... Additional arguments affecting the plot.
-##' @aliases plot,SimInf_abc_smc-method
+##' @aliases plot,SimInf_abc-method
 ##' @importFrom graphics contour
 ##' @importFrom graphics lines
 ##' @importFrom MASS bandwidth.nrd
@@ -87,7 +87,7 @@ as.data.frame.SimInf_abc_smc <- function(x, ...) {
 ##' @importFrom stats density
 ##' @export
 setMethod("plot",
-          signature(x = "SimInf_abc_smc"),
+          signature(x = "SimInf_abc"),
           function(x, y, ...) {
               if (missing(y))
                   y <- length(x@x)
@@ -117,14 +117,14 @@ summary_particles <- function(object, i) {
     summary_matrix(object@x[[i]])
 }
 
-##' Print summary of a \code{SimInf_abc_smc} object
+##' Print summary of a \code{SimInf_abc} object
 ##'
-##' @param object The \code{SimInf_abc_smc} object.
+##' @param object The \code{SimInf_abc} object.
 ##' @return \code{invisible(object)}.
 ##' @export
 ##' @importFrom methods show
 setMethod("show",
-          signature(object = "SimInf_abc_smc"),
+          signature(object = "SimInf_abc"),
           function(object) {
               cat(sprintf("Number of particles per generation: %i\n",
                           object@npart))
@@ -139,15 +139,15 @@ setMethod("show",
           }
 )
 
-##' Detailed summary of a \code{SimInf_abc_smc} object
+##' Detailed summary of a \code{SimInf_abc} object
 ##'
-##' @param object The \code{SimInf_abc_smc} object
+##' @param object The \code{SimInf_abc} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
 ##' @include SimInf_model.R
 ##' @export
 setMethod("summary",
-          signature(object = "SimInf_abc_smc"),
+          signature(object = "SimInf_abc"),
           function(object, ...) {
               cat(sprintf("Number of particles per generation: %i\n",
                           object@npart))
@@ -370,7 +370,7 @@ abc_smc_ldata <- function(model, pars, priors, npart, fn,
 ##'     one value for each node in the simulated model.
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
-##' @return A \code{SimInf_abc_smc} object.
+##' @return A \code{SimInf_abc} object.
 ##' @export
 ##' @importFrom stats cov
 ##' @examples
@@ -460,7 +460,7 @@ abc_smc <- function(model, priors, ngen, npart, fn, ...,
         target <- "ldata"
     }
 
-    object <- new("SimInf_abc_smc", model = model,
+    object <- new("SimInf_abc", model = model,
                   priors = priors, target = target,
                   pars = pars, npart = npart,
                   nprop = integer(), fn = fn,
@@ -472,16 +472,16 @@ abc_smc <- function(model, priors, ngen, npart, fn, ...,
 
 ##' Run more generations of ABC SMC
 ##'
-##' @param object The \code{SimInf_abc_smc} to continue from.
+##' @param object The \code{SimInf_abc} to continue from.
 ##' @param ngen The number of generations of ABC-SMC to run.
 ##' @param ... Further arguments to be passed to
-##'     \code{SimInf_abc_smc@@fn}.
+##'     \code{SimInf_abc@@fn}.
 ##' @template verbose-param
-##' @return A \code{SimInf_abc_smc} object.
+##' @return A \code{SimInf_abc} object.
 ##' @export
 continue <- function(object, ngen = 1, ...,
                      verbose = getOption("verbose", FALSE)) {
-    stopifnot(inherits(object, "SimInf_abc_smc"))
+    stopifnot(inherits(object, "SimInf_abc"))
     check_integer_arg(ngen)
     ngen <- as.integer(ngen)
     if (length(ngen) != 1L || ngen < 1L)

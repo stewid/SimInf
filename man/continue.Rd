@@ -7,19 +7,19 @@
 continue(object, ngen = 1, ..., verbose = getOption("verbose", FALSE))
 }
 \arguments{
-\item{object}{The \code{SimInf_abc_smc} to continue from.}
+\item{object}{The \code{SimInf_abc} to continue from.}
 
 \item{ngen}{The number of generations of ABC-SMC to run.}
 
 \item{...}{Further arguments to be passed to
-\code{SimInf_abc_smc@fn}.}
+\code{SimInf_abc@fn}.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
 use \code{FALSE} if it is not set.}
 }
 \value{
-A \code{SimInf_abc_smc} object.
+A \code{SimInf_abc} object.
 }
 \description{
 Run more generations of ABC SMC
