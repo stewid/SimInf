@@ -511,8 +511,8 @@ continue <- function(object, ngen = 1, ...,
         w <- tmp$w
         object@x[[length(object@x) + 1]] <- x
         object@w[[length(object@w) + 1]] <- w
-        object@ess <- c(object@ess, 1 / sum(w^2))
-        object@nprop <- c(object@nprop, tmp$nprop)
+        object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
+        object@nprop[length(object@nprop) + 1] <- tmp$nprop
     }
 
     object
