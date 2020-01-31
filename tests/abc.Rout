@@ -59,7 +59,7 @@ Type 'q()' to quit R.
 > 
 > accept_fn_ldata <- function(result, generation, tol, ptol, ...) {
 +     ## Determine the tolerance for this generation.
-+     tol <- tol * (ptol)^(generation - 1)
++     tol <- tol * ptol ^ (generation - 1)
 + 
 +     ## Extract the time-series for R1 for each node as a
 +     ## data.frame.
@@ -197,7 +197,7 @@ null device
 > 
 > accept_fn_gdata <- function(result, generation, tol, ptol, ...) {
 +     ## Determine the tolerance for this generation.
-+     tol <- tol * (ptol)^(generation - 1)
++     tol <- tol * ptol ^ (generation - 1)
 + 
 +     p <- c(2e-04, 0.00015, 5e-05, 5e-05, 2e-04, 0.00025, 0.00025,
 +            0.00025, 0.00025, 0.00015, 0.00035, 6e-04, 0.001, 0.0022,
@@ -259,4 +259,4 @@ Generation 2:
 > 
 > proc.time()
    user  system elapsed 
-  1.799   0.126   1.908 
+  1.686   0.136   1.804 

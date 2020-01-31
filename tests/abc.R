@@ -41,7 +41,7 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I + Icum",
 
 accept_fn_ldata <- function(result, generation, tol, ptol, ...) {
     ## Determine the tolerance for this generation.
-    tol <- tol * (ptol)^(generation - 1)
+    tol <- tol * ptol ^ (generation - 1)
 
     ## Extract the time-series for R1 for each node as a
     ## data.frame.
@@ -146,7 +146,7 @@ model <- SIR(u0 = data.frame(S = rep(9999, 2), I = 1, R = 0),
 
 accept_fn_gdata <- function(result, generation, tol, ptol, ...) {
     ## Determine the tolerance for this generation.
-    tol <- tol * (ptol)^(generation - 1)
+    tol <- tol * ptol ^ (generation - 1)
 
     p <- c(2e-04, 0.00015, 5e-05, 5e-05, 2e-04, 0.00025, 0.00025,
            0.00025, 0.00025, 0.00015, 0.00035, 6e-04, 0.001, 0.0022,
