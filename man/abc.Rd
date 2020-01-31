@@ -2,7 +2,7 @@
 % Please edit documentation in R/abc.R
 \name{abc}
 \alias{abc}
-\title{Run ABC SMC}
+\title{Approximate Bayesian computation}
 \usage{
 abc(model, priors, ngen, npart, fn, ..., verbose = getOption("verbose", FALSE))
 }
@@ -22,13 +22,13 @@ are supported.}
 \item{npart}{An integer specifying the number of particles.}
 
 \item{fn}{A function for calculating the summary statistics for
-the simulated trajectory and determine for each node
-(particle) if it should be accepted (\code{TRUE}) or rejected
-(\code{FALSE}). The first argument in \code{fn} is the
-simulated model containing one trajectory. The second argument
-to \code{fn} is an integer with the \code{generation}
-particles. The function should return a logical vector with
-one value for each node in the simulated model.}
+the simulated trajectory and determine for each particle if it
+should be accepted (\code{TRUE}) or rejected (\code{FALSE}).
+The first argument in \code{fn} is the simulated model
+containing one trajectory.  The second argument to \code{fn}
+is an integer with the \code{generation} of the particles.
+The function should return a logical vector with one value for
+each particle in the simulated model.}
 
 \item{...}{Further arguments to be passed to \code{fn}.}
 
@@ -40,7 +40,7 @@ use \code{FALSE} if it is not set.}
 A \code{SimInf_abc} object.
 }
 \description{
-Run ABC SMC
+Approximate Bayesian computation
 }
 \examples{
 ## Fit a model to data from an influenza in a boarding school in

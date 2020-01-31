@@ -28,7 +28,14 @@
 ##' @slot npart The number of particles in each generation.
 ##' @slot nprop An integer vector with the number of simulated
 ##'     proposals in each generation.
-##' @slot fn FIXME.
+##' @slot fn A function for calculating the summary statistics for the
+##'     simulated trajectory and determine for each particle if it
+##'     should be accepted (\code{TRUE}) or rejected (\code{FALSE}).
+##'     The first argument in \code{fn} is the simulated model
+##'     containing one trajectory.  The second argument to \code{fn}
+##'     is an integer with the \code{generation} of the particles.
+##'     The function should return a logical vector with one value for
+##'     each particle in the simulated model.
 ##' @slot x A list where each item is a \code{matrix} with the
 ##'     accepted particles in each generation. Each column is one
 ##'     particle.
@@ -348,7 +355,7 @@ abc_ldata <- function(model, pars, priors, npart, fn,
     list(x = xx, w = ww, nprop = nprop)
 }
 
-##' Run ABC SMC
+##' Approximate Bayesian computation
 ##'
 ##' @param model The model to generate data from.
 ##' @param priors The priors for the parameters to fit. Each prior is
@@ -361,13 +368,13 @@ abc_ldata <- function(model, pars, priors, npart, fn,
 ##' @param ngen The number of generations of ABC-SMC to run.
 ##' @param npart An integer specifying the number of particles.
 ##' @param fn A function for calculating the summary statistics for
-##'     the simulated trajectory and determine for each node
-##'     (particle) if it should be accepted (\code{TRUE}) or rejected
-##'     (\code{FALSE}). The first argument in \code{fn} is the
-##'     simulated model containing one trajectory. The second argument
-##'     to \code{fn} is an integer with the \code{generation}
-##'     particles. The function should return a logical vector with
-##'     one value for each node in the simulated model.
+##'     the simulated trajectory and determine for each particle if it
+##'     should be accepted (\code{TRUE}) or rejected (\code{FALSE}).
+##'     The first argument in \code{fn} is the simulated model
+##'     containing one trajectory.  The second argument to \code{fn}
+##'     is an integer with the \code{generation} of the particles.
+##'     The function should return a logical vector with one value for
+##'     each particle in the simulated model.
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
 ##' @return A \code{SimInf_abc} object.
