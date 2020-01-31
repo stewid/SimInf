@@ -2,7 +2,7 @@ PKG_CPPFLAGS = @PKG_CPPFLAGS@
 PKG_CFLAGS = @PKG_CFLAGS@
 PKG_LIBS = @PKG_LIBS@
 
-OBJECTS.misc = misc/SimInf_abc_smc.o \
+OBJECTS.misc = misc/SimInf_abc.o \
                misc/SimInf_arg.o \
                misc/SimInf_forward_euler_linear_decay.o \
                misc/SimInf_ldata.o \
