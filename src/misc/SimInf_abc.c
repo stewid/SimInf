@@ -53,7 +53,7 @@
  *         proposals. The matrix also has an attribute 'ancestor' with
  *         an index that indicates which particle it was sampled from.
  */
-SEXP SimInf_abc_smc_proposals(
+SEXP SimInf_abc_proposals(
     SEXP parameter,
     SEXP distribution,
     SEXP p1,
@@ -262,7 +262,7 @@ cleanup:
  * @return a numeric vector with weights for the current generation of
  *         particles.
  */
-SEXP SimInf_abc_smc_weights(
+SEXP SimInf_abc_weights(
     SEXP distribution,
     SEXP p1,
     SEXP p2,

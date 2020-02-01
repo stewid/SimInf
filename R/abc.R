@@ -242,9 +242,9 @@ abc_gdata <- function(model, pars, priors, npart, fn,
     sigma <- proposal_covariance(x)
 
     while (n_particles(xx) < npart) {
-        proposals <- .Call(SimInf_abc_smc_proposals,
-                           priors$parameter, priors$distribution,
-                           priors$p1, priors$p2, 1L, x, w, sigma)
+        proposals <- .Call(SimInf_abc_proposals, priors$parameter,
+                           priors$distribution, priors$p1, priors$p2,
+                           1L, x, w, sigma)
         for (i in seq_len(nrow(proposals))) {
             model@gdata[pars[i]] <- proposals[i, 1]
         }
@@ -265,8 +265,8 @@ abc_gdata <- function(model, pars, priors, npart, fn,
     }
 
     ## Calculate weights.
-    ww <- .Call(SimInf_abc_smc_weights, priors$distribution,
-                priors$p1, priors$p2, x[, ancestor], xx, w, sigma)
+    ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
+                priors$p2, x[, ancestor], xx, w, sigma)
 
     ## Report progress.
     if (isTRUE(verbose)) {
@@ -308,9 +308,9 @@ abc_ldata <- function(model, pars, priors, npart, fn,
             model <- replicate_first_node(model, n, n_events)
         }
 
-        proposals <- .Call(SimInf_abc_smc_proposals,
-                           priors$parameter, priors$distribution,
-                           priors$p1, priors$p2, n, x, w, sigma)
+        proposals <- .Call(SimInf_abc_proposals, priors$parameter,
+                           priors$distribution, priors$p1, priors$p2,
+                           n, x, w, sigma)
         for (i in seq_len(nrow(proposals))) {
             model@ldata[pars[i], ] <- proposals[i, ]
         }
@@ -344,8 +344,8 @@ abc_ldata <- function(model, pars, priors, npart, fn,
     }
 
     ## Calculate weights.
-    ww <- .Call(SimInf_abc_smc_weights, priors$distribution,
-                priors$p1, priors$p2, x[, ancestor], xx, w, sigma)
+    ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
+                priors$p2, x[, ancestor], xx, w, sigma)
 
     ## Report progress.
     if (isTRUE(verbose)) {
