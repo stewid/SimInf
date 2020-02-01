@@ -20,7 +20,17 @@
 ##'
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
-##' @slot priors FIXME.
+##' @slot priors A \code{data.frame} containing the four columns
+##'     \code{parameter}, \code{distribution}, \code{p1} and
+##'     \code{p2}. The column \code{parameter} gives the name of the
+##'     parameter referred to in the model. The column
+##'     \code{distribution} contains a letter indicating the prior
+##'     distribution. Valid letters are 'G' (gamma), 'N' (normal) or
+##'     'U' (uniform). The column \code{p1} is a numeric vector with
+##'     the first hyperparameter for each prior: 'G') shape, 'N')
+##'     mean, and 'U') lower bound. The column \code{p2} is a numeric
+##'     vector with the second hyperparameter for each prior: 'G')
+##'     rate, 'N') standard deviation, and 'U') upper bound.
 ##' @slot target Character vector (\code{gdata} or \code{ldata}) that
 ##'     determines if the ABC-SMC method estimates parameters in
 ##'     \code{model@@gdata} or in \code{model@@ldata}.
@@ -46,6 +56,7 @@
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
 ##'     (sum(w_ig^2)),} where \eqn{w_{g}^{(i)}}{w_ig} is the
 ##'     normalized weight of particle \eqn{i} in generation \eqn{g}.
+##' @seealso \code{\link{abc}} and \code{\link{continue}}.
 ##' @export
 setClass("SimInf_abc",
          slots = c(model  = "SimInf_model",
