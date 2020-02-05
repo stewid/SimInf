@@ -369,6 +369,16 @@ setAs(from = "SimInf_events",
       }
 )
 
+##' Coerce to data frame
+##'
+##' @method as.data.frame SimInf_events
+##'
+##' @inheritParams base::as.data.frame
+##' @export
+as.data.frame.SimInf_events <- function(x, ...) {
+    as(x, "data.frame")
+}
+
 ##' Plot scheduled events
 ##'
 ##' @param x the time points of the events.
