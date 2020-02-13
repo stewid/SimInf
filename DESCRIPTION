@@ -46,11 +46,12 @@ Imports:
     digest,
     graphics,
     grDevices,
-    MASS,
     methods,
     stats,
     utils,
     Matrix
+Suggests:
+    MASS
 Collate:
     'check_arguments.R'
     'SimInf_events.R'

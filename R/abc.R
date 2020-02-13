@@ -100,29 +100,45 @@ as.data.frame.SimInf_abc <- function(x, ...) {
 ##' @aliases plot,SimInf_abc-method
 ##' @importFrom graphics contour
 ##' @importFrom graphics lines
-##' @importFrom MASS bandwidth.nrd
-##' @importFrom MASS kde2d
 ##' @importFrom stats density
 ##' @export
 setMethod("plot",
           signature(x = "SimInf_abc"),
           function(x, y, ...) {
+              if (!requireNamespace("MASS", quietly = TRUE)) {
+                  stop("Package \"MASS\" needed for this ",
+                       "function to work. Please install it.",
+                       call. = FALSE)
+              }
+
               if (missing(y))
                   y <- length(x@x)
-              pairs(t(x@x[[y]]),
-                    diag.panel = function(x, ...) {
-                        usr <- par("usr")
-                        on.exit(par(usr))
-                        par(usr = c(usr[1:2], 0, 1.5))
-                        d <- density(x, bw = "SJ-ste")
-                        d$y <- d$y / max(d$y)
-                        lines(d, ...)
-                    },
-                    lower.panel = function(x, y, ...) {
-                        h <- c(bandwidth.nrd(x), bandwidth.nrd(y))
-                        d <- kde2d(x, y, h = h, n = 100)
-                        contour(d, add = TRUE, drawlabels = FALSE, ...)
-                    }, ...)
+              y <- as.integer(y)
+              if (length(y) != 1) {
+                  stop("Can only select one generation to plot.",
+                       call. = FALSE)
+              }
+
+              if (length(x@pars) > 1) {
+                  pairs(t(x@x[[y]]),
+                        diag.panel = function(x, ...) {
+                            usr <- par("usr")
+                            on.exit(par(usr))
+                            par(usr = c(usr[1:2], 0, 1.5))
+                            d <- density(x, bw = "SJ-ste")
+                            d$y <- d$y / max(d$y)
+                            lines(d, ...)
+                        },
+                        lower.panel = function(x, y, ...) {
+                            h <- c(MASS::bandwidth.nrd(x),
+                                   MASS::bandwidth.nrd(y))
+                            d <- MASS::kde2d(x, y, h = h, n = 100)
+                            contour(d, add = TRUE, drawlabels = FALSE, ...)
+                        }, ...)
+              } else {
+                  plot(density(x@x[[y]], bw = "SJ-ste"),
+                       main = "", xlab = rownames(x@x[[y]]))
+              }
           }
 )
 
