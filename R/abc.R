@@ -165,9 +165,8 @@ setMethod("show",
               cat(sprintf("Number of generations: %i\n",
                           length(object@x)))
 
-              if (length(object@x)) {
+              if (length(object@x))
                   summary_particles(object, length(object@x))
-              }
 
               invisible(object)
           }
@@ -286,9 +285,8 @@ abc_gdata <- function(model, pars, priors, npart, fn,
         }
 
         ## Report progress.
-        if (isTRUE(verbose)) {
+        if (isTRUE(verbose))
             setTxtProgressBar(pb, n_particles(xx))
-        }
     }
 
     ## Calculate weights.
@@ -296,9 +294,8 @@ abc_gdata <- function(model, pars, priors, npart, fn,
                 priors$p2, x[, ancestor], xx, w, sigma)
 
     ## Report progress.
-    if (isTRUE(verbose)) {
+    if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
-    }
 
     list(x = xx, w = ww, nprop = nprop)
 }
@@ -365,9 +362,8 @@ abc_ldata <- function(model, pars, priors, npart, fn,
         }
 
         ## Report progress.
-        if (isTRUE(verbose)) {
+        if (isTRUE(verbose))
             setTxtProgressBar(pb, n_particles(xx))
-        }
     }
 
     ## Calculate weights.
@@ -375,9 +371,8 @@ abc_ldata <- function(model, pars, priors, npart, fn,
                 priors$p2, x[, ancestor], xx, w, sigma)
 
     ## Report progress.
-    if (isTRUE(verbose)) {
+    if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
-    }
 
     list(x = xx, w = ww, nprop = nprop)
 }
@@ -473,7 +468,9 @@ continue <- function(object, ngen = 1, ...,
     if (length(object@w))
         w <- object@w[[length(object@w)]]
 
-    for (generation in seq(length(object@x) + 1, length(object@x) + ngen)) {
+    ## Append new generations to object
+    generations <- seq(length(object@x) + 1, length(object@x) + ngen)
+    for (generation in generations) {
         tmp <- abc_fn(object@model, object@pars, object@priors,
                       object@npart, object@fn, generation, x,
                       w, verbose, ...)
