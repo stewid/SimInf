@@ -136,8 +136,8 @@ setMethod("plot",
                             contour(d, add = TRUE, drawlabels = FALSE, ...)
                         }, ...)
               } else {
-                  plot(density(x@x[[y]], bw = "SJ-ste"),
-                       main = "", xlab = rownames(x@x[[y]]))
+                  plot(density(x@x[[y]], bw = "SJ-ste"), main = "",
+                       xlab = rownames(x@x[[y]]), ...)
               }
           }
 )
