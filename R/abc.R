@@ -256,6 +256,23 @@ abc_progress <- function(t0, t1, x, w, npart, nprop) {
     summary_matrix(x)
 }
 
+##' Check that the returned result from the abc distance function is
+##' valid.
+##' @noRd
+check_abc_accept <- function(result, n) {
+    if (!is.logical(result)) {
+        stop("The accepted/rejected vector must be of type 'logical'.",
+             call. = FALSE)
+    }
+
+    if (!identical(length(result), n)) {
+        stop("Invalid length of the  accepted/rejected vector.",
+             call. = FALSE)
+    }
+
+    NULL
+}
+
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
@@ -281,7 +298,7 @@ abc_gdata <- function(model, pars, priors, npart, fn,
         }
 
         result <- fn(run(model), generation, ...)
-        stopifnot(is.logical(result), length(result) == 1L)
+        check_abc_accept(result, 1L)
         nprop <- nprop + 1L
         if (isTRUE(result)) {
             ## Collect accepted particle
@@ -345,7 +362,7 @@ abc_ldata <- function(model, pars, priors, npart, fn,
         }
 
         result <- fn(run(model), generation, ...)
-        stopifnot(is.logical(result), length(result) == n)
+        check_abc_accept(result, n)
 
         ## Collect accepted particles making sure not to collect more
         ## than 'npart'.
