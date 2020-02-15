@@ -25,7 +25,7 @@ acceptFun <- function(result, generation, tol, ptol, ...) {
 
     ## Return TRUE or FALSE for each node depending on if the
     ## distance is less than the tolerance.
-    dist < tol
+    abc_accept(dist < tol, tol)
 }
 
 ## Transitions

@@ -200,10 +200,10 @@ setMethod("summary",
           }
 )
 
-##' Generate replicates of first node in model.
+##' Generate replicates of the first node in the model.
 ##'
 ##' Replicate the node specific matrices 'u0', 'v0' and 'ldata' in the
-##' first node.
+##' first node. Additionally, replicate any events.
 ##' @param model the model to replicate.
 ##' @param n the number of replicates.
 ##' @param n_events the number of of events for the first node in the
@@ -260,12 +260,17 @@ abc_progress <- function(t0, t1, x, w, npart, nprop) {
 ##' valid.
 ##' @noRd
 check_abc_accept <- function(result, n) {
-    if (!is.logical(result)) {
+    if (!is.list(result)) {
+        stop("The result from the ABC distance function must be a 'list'.",
+             call. = FALSE)
+    }
+
+    if (!is.logical(result$accept)) {
         stop("The accepted/rejected vector must be of type 'logical'.",
              call. = FALSE)
     }
 
-    if (!identical(length(result), n)) {
+    if (!identical(length(result$accept), n)) {
         stop("Invalid length of the  accepted/rejected vector.",
              call. = FALSE)
     }
@@ -312,7 +317,7 @@ abc_gdata <- function(model, pars, priors, npart, fn,
         result <- fn(run(model), generation, ...)
         check_abc_accept(result, 1L)
         nprop <- nprop + 1L
-        if (isTRUE(result)) {
+        if (isTRUE(result$accept)) {
             ## Collect accepted particle
             xx <- cbind(xx, as.matrix(model@gdata)[pars, 1, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
@@ -375,6 +380,7 @@ abc_ldata <- function(model, pars, priors, npart, fn,
 
         result <- fn(run(model), generation, ...)
         check_abc_accept(result, n)
+        result <- result$accept
 
         ## Collect accepted particles making sure not to collect more
         ## than 'npart'.

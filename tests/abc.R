@@ -66,7 +66,7 @@ accept_fn_ldata <- function(result, generation, tol, ptol, ...) {
 
     ## Return TRUE or FALSE for each node depending on if the
     ## distance is less than the tolerance.
-    dist < tol
+    abc_accept(dist < tol, tol)
 }
 
 ## Check invalid npart
@@ -161,7 +161,7 @@ accept_fn_gdata <- function(result, generation, tol, ptol, ...) {
 
     ## Return TRUE or FALSE depending on if the distance is less than
     ## or equal to the tolerance.
-    dist <= tol
+    abc_accept(dist < tol, tol)
 }
 
 set.seed(123)
