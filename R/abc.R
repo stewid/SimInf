@@ -46,6 +46,10 @@
 ##'     is an integer with the \code{generation} of the particles.
 ##'     The function should return a logical vector with one value for
 ##'     each particle in the simulated model.
+##' @slot epsilon A numeric matrix (number of summary statistics X
+##'     number of generations) where each column contains the
+##'     tolerances for a generation and each row contains a sequence
+##'     of gradually decreasing tolerances.
 ##' @slot x A list where each item is a \code{matrix} with the
 ##'     accepted particles in each generation. Each column is one
 ##'     particle.
@@ -59,16 +63,17 @@
 ##' @seealso \code{\link{abc}} and \code{\link{continue}}.
 ##' @export
 setClass("SimInf_abc",
-         slots = c(model  = "SimInf_model",
-                   priors = "data.frame",
-                   target = "character",
-                   pars   = "integer",
-                   npart  = "integer",
-                   nprop  = "integer",
-                   fn     = "function",
-                   x      = "list",
-                   w      = "list",
-                   ess    = "numeric"))
+         slots = c(model   = "SimInf_model",
+                   priors  = "data.frame",
+                   target  = "character",
+                   pars    = "integer",
+                   npart   = "integer",
+                   nprop   = "integer",
+                   fn      = "function",
+                   epsilon = "matrix",
+                   x       = "list",
+                   w       = "list",
+                   ess     = "numeric"))
 
 setAs(from = "SimInf_abc",
       to = "data.frame",
@@ -427,12 +432,11 @@ abc <- function(model, priors, ngen, npart, fn, ...,
         target <- "ldata"
     }
 
-    object <- new("SimInf_abc", model = model,
-                  priors = priors, target = target,
-                  pars = pars, npart = npart,
-                  nprop = integer(), fn = fn,
-                  x = list(), w = list(),
-                  ess = numeric())
+    object <- new("SimInf_abc", model = model, priors = priors,
+                  target = target, pars = pars, npart = npart,
+                  nprop = integer(), fn = fn, x = list(),
+                  epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
+                  w = list(), ess = numeric())
 
     continue(object, ngen = ngen, verbose = verbose, ...)
 }
