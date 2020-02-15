@@ -259,7 +259,7 @@ abc_progress <- function(t0, t1, x, w, npart, nprop) {
 ##' Check that the returned result from the abc distance function is
 ##' valid.
 ##' @noRd
-check_abc_accept <- function(result, n) {
+check_abc_accept <- function(result, n, old_epsilon, epsilon) {
     if (!is.list(result)) {
         stop("The result from the ABC distance function must be a 'list'.",
              call. = FALSE)
@@ -275,7 +275,30 @@ check_abc_accept <- function(result, n) {
              call. = FALSE)
     }
 
-    NULL
+    if (!all(is.vector(result$epsilon, "numeric"),
+             length(result$epsilon) > 0,
+             all(result$epsilon >= 0))) {
+        stop("'epsilon' must be a numeric vector with non-negative values.",
+             call. = FALSE)
+    }
+
+    if (is.null(epsilon)) {
+        if (!is.null(old_epsilon)) {
+            if (!all(result$epsilon < old_epsilon)) {
+                stop("'epsilon' must decrease in each generation.",
+                     call. = FALSE)
+            }
+        }
+
+        return(TRUE)
+    }
+
+    if (!identical(epsilon, result$epsilon)) {
+        stop("'epsilon' must be fixed within each generation.",
+             call. = FALSE)
+    }
+
+    FALSE
 }
 
 ##' Return result for ABC whether the particles match the data
@@ -293,8 +316,8 @@ abc_accept <- function(accept, epsilon) {
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
-abc_gdata <- function(model, pars, priors, npart, fn,
-                      generation, x, w, verbose, ...) {
+abc_gdata <- function(model, pars, priors, npart, fn, generation,
+                      old_epsilon, x, w, verbose, ...) {
     if (isTRUE(verbose)) {
         cat("\nGeneration", generation, "...\n")
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
@@ -303,6 +326,7 @@ abc_gdata <- function(model, pars, priors, npart, fn,
 
     xx <- NULL
     ancestor <- NULL
+    epsilon <- NULL
     nprop <- 0L
     sigma <- proposal_covariance(x)
 
@@ -315,7 +339,8 @@ abc_gdata <- function(model, pars, priors, npart, fn,
         }
 
         result <- fn(run(model), generation, ...)
-        check_abc_accept(result, 1L)
+        if (check_abc_accept(result, 1L, old_epsilon, epsilon))
+            epsilon <- result$epsilon
         nprop <- nprop + 1L
         if (isTRUE(result$accept)) {
             ## Collect accepted particle
@@ -336,14 +361,14 @@ abc_gdata <- function(model, pars, priors, npart, fn,
     if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
 
-    list(x = xx, w = ww, nprop = nprop)
+    list(x = xx, w = ww, nprop = nprop, epsilon = epsilon)
 }
 
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
-abc_ldata <- function(model, pars, priors, npart, fn,
-                      generation, x, w, verbose, ...) {
+abc_ldata <- function(model, pars, priors, npart, fn, generation,
+                      old_epsilon, x, w, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
     ## to run many particles simultanously. Start with 10 x 'npart'
     ## and then increase the number adaptively based on the acceptance
@@ -360,6 +385,7 @@ abc_ldata <- function(model, pars, priors, npart, fn,
 
     xx <- NULL
     ancestor <- NULL
+    epsilon <- NULL
     nprop <- 0L
     sigma <- proposal_covariance(x)
 
@@ -379,7 +405,8 @@ abc_ldata <- function(model, pars, priors, npart, fn,
         }
 
         result <- fn(run(model), generation, ...)
-        check_abc_accept(result, n)
+        if (check_abc_accept(result, n, old_epsilon, epsilon))
+            epsilon <- result$epsilon
         result <- result$accept
 
         ## Collect accepted particles making sure not to collect more
@@ -414,7 +441,7 @@ abc_ldata <- function(model, pars, priors, npart, fn,
     if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
 
-    list(x = xx, w = ww, nprop = nprop)
+    list(x = xx, w = ww, nprop = nprop, epsilon = epsilon)
 }
 
 ##' Approximate Bayesian computation
@@ -499,26 +526,33 @@ continue <- function(object, ngen = 1, ...,
                      stop("Unknown target: ", object@target,
                           call. = FALSE))
 
-    ## Setup a population of particles (x) and weights (w)
+    ## Setup a population of particles (x), weights (w) and epsilon.
     x <- NULL
     if (length(object@x))
         x <- object@x[[length(object@x)]]
     w <- NULL
     if (length(object@w))
         w <- object@w[[length(object@w)]]
+    epsilon <- NULL
+    if (ncol(object@epsilon))
+        epsilon <- object@epsilon[, ncol(object@epsilon)]
 
     ## Append new generations to object
     generations <- seq(length(object@x) + 1, length(object@x) + ngen)
     for (generation in generations) {
         tmp <- abc_fn(object@model, object@pars, object@priors,
-                      object@npart, object@fn, generation, x,
-                      w, verbose, ...)
+                      object@npart, object@fn, generation,
+                      epsilon, x, w, verbose, ...)
 
         ## Move the population of particles to the next generation.
         x <- tmp$x
-        w <- tmp$w
         object@x[[length(object@x) + 1]] <- x
+        w <- tmp$w
         object@w[[length(object@w) + 1]] <- w
+        epsilon <- tmp$epsilon
+        if (ncol(object@epsilon) == 0)
+            dim(object@epsilon) <- c(length(tmp$epsilon), 0)
+        object@epsilon <- cbind(object@epsilon, epsilon)
         object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
         object@nprop[length(object@nprop) + 1] <- tmp$nprop
     }
