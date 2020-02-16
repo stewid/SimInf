@@ -123,13 +123,15 @@ run_abc <- function(model) {
         npart = 10,
         fn = accept_fn_ldata,
         tol = 250000,
-        ptol = 0.9)
+        ptol = 0.9,
+        verbose = TRUE)
 }
 
 set.seed(123)
 fit <- run_abc(model)
 fit
 summary(fit)
+as.data.frame(fit)
 
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
