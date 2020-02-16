@@ -407,24 +407,23 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
         result <- fn(run(model), generation, ...)
         if (check_abc_accept(result, n, old_epsilon, epsilon))
             epsilon <- result$epsilon
-        result <- result$accept
 
         ## Collect accepted particles making sure not to collect more
         ## than 'npart'.
-        i <- cumsum(result) + n_particles(xx)
+        i <- cumsum(result$accept) + n_particles(xx)
         i <- which(i == npart)
-        result <- which(result)
+        j <- which(result$accept)
         if (length(i)) {
             i <- min(i)
-            result <- result[result <= i]
+            j <- j[j <= i]
             nprop <- nprop + i
-            xx <- cbind(xx, model@ldata[pars, result, drop = FALSE])
-            ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
+            xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
+            ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
         } else {
             nprop <- nprop + n
-            if (length(result)) {
-                xx <- cbind(xx, model@ldata[pars, result, drop = FALSE])
-                ancestor <- c(ancestor, attr(proposals, "ancestor")[result])
+            if (length(j)) {
+                xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
+                ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
             }
         }
 
