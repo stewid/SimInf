@@ -3,7 +3,7 @@
 ## IMPROVEMENTS
 
 * It's now possible to have a 'tspan' vector of length one to simulate
-  over one time-point only.
+  over one time-unit only i.e. [t, t+1).
 
 * The `trajectory` function has been ported to C and parallelized to
   efficiently transform simulated data from a model to a `data.frame`.
@@ -17,13 +17,13 @@
 
 ## CHANGES
 
-* The way to specify the number of threads for SimInf to use in
-  parallelized functions has been changed. The reason for this change
-  was to fix that specifying the number of threads should only affect
-  SimInf and not other packages using OpenMP. Use `set_num_threads` to
-  specify the number of threads, see documentation. It still works to
-  pass the number of threads to the `run()` function, however, the
-  `threads` argument will be removed from `run()` in the future.
+* The way to specify the number of threads to use in parallelized
+  functions has been changed to fix that specifying the number of
+  threads should only affect SimInf and not other packages using
+  OpenMP. Use `set_num_threads` to specify the number of threads, see
+  documentation. It still works to pass the number of threads to the
+  `run()` function, however, the `threads` argument will be removed
+  from `run()` in a future release.
 
 * To avoid cluttering the error message, the name of the internal
   function that generated the error has been removed from the error
