@@ -28,11 +28,11 @@ setClass("SISe", contains = c("SimInf_model"))
 
 ##' Create a SISe model
 ##'
-##' Create an \acronym{SISe} model to be used by the simulation
+##' Create an \sQuote{SISe} model to be used by the simulation
 ##' framework.
 ##'
-##' The \acronym{SIS}\eqn{_e} model contains two compartments; number
-##' of susceptible (S) and number of infectious (I). Additionally, it
+##' The \sQuote{SISe} model contains two compartments; number of
+##' susceptible (S) and number of infectious (I). Additionally, it
 ##' contains an environmental compartment to model shedding of a
 ##' pathogen to the environment. Consequently, the model has two state
 ##' transitions,
@@ -40,8 +40,8 @@ setClass("SISe", contains = c("SimInf_model"))
 ##' \deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{
 ##' S -- upsilon phi S --> I}
 ##'
-##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I -->
-##' R}
+##' \deqn{I \stackrel{\gamma I}{\longrightarrow} S}{
+##' I -- gamma I --> S}
 ##'
 ##' where the transition rate per unit of time from susceptible to
 ##' infected is proportional to the concentration of the environmental
