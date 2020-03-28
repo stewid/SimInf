@@ -148,8 +148,8 @@ I_{i,2}(t) + I_{i,3}(t)\right)}{N_i(t)} +
 \sum_k{\frac{\varphi_k(t) N_k(t) - \varphi_i(t) N_i(t)}{N_i(t)}
 \cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t)}{
 dphi(t)/dt=
-alpha (I_1(t)+I_2(t)+I_3(t))/N(t) +
-D sum_k}
+alpha (I_1+I_2+I_3)/N+
+D*sum_k(phi_k*N_k-phi_i*N_i)/(d_ik*N_i)-beta*phi_i}
 
 where \eqn{\alpha} is the average shedding rate of the pathogen to
 the environment per infected individual and \eqn{N = S_1 + S_2 +
