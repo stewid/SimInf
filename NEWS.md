@@ -28,6 +28,8 @@
   `run()` function, however, the `threads` argument will be removed
   from `run()` in a future release.
 
+* Updated the vignette to use the 'set_num_threads' function.
+
 * To avoid cluttering the error message, the name of the internal
   function that generated the error has been removed from the error
   message (use `traceback` to print the call stack of the last
