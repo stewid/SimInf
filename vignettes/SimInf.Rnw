@@ -1064,28 +1064,27 @@ Here follows an overview of the steps a solver performs to run a
 trajectory, see Appendix~\ref{sec:pseudo-code} for pseudo-code for the
 \code{ssm} solver and \emph{src/solvers/ssm/SimInf\_solver.c} for the
 source code.  The simulation starts with a call to the \code{run}
-method with the model as the first argument and optionally the number
-of threads to use.  This method will first call the validity method on
-the model to perform error-checking and then call a model specific
-\proglang{C} function to initialize the function pointers to the
-transition rate functions and the post time step function of the
-model.  Subsequently, the simulation solver is called to run one
-trajectory using the model specific data, the transition rate
-functions, and the post time step function.  If the \code{C\_code}
-slot is non-empty, the \proglang{C} code is written to a temporary
-file when the \code{run} method is called.  The temporary file is
-compiled using \code{'R CMD SHLIB'} and the resulting DLL is
+method with the model as the first argument.  This method will first
+call the validity method on the model to perform error-checking and
+then call a model specific \proglang{C} function to initialize the
+function pointers to the transition rate functions and the post time
+step function of the model.  Subsequently, the simulation solver is
+called to run one trajectory using the model specific data, the
+transition rate functions, and the post time step function.  If the
+\code{C\_code} slot is non-empty, the \proglang{C} code is written to
+a temporary file when the \code{run} method is called.  The temporary
+file is compiled using \code{'R CMD SHLIB'} and the resulting DLL is
 dynamically loaded.  The DLL is unloaded and the temporary files are
 removed after running the model.  This is further described in
 Section~\ref{sec:extend}.
 
 The solver simulates the trajectory in parallel if \proglang{OpenMP}
 is available.  The default is to use all available threads.  However,
-the user can specify the number of threads to use.  The solver divides
-data for the $\Nnodes$ nodes and the $E_1$ events over the number
-threads.  All $E_1$ events that affect node $i$ is processed in the
-same thread as node $i$ is simulated in.  The $E_2$ events are
-processed in the main thread.
+the user can specify the number of threads to use with
+\code{set_num_threads()}.  The solver divides data for the $\Nnodes$
+nodes and the $E_1$ events over the number threads.  All $E_1$ events
+that affect node $i$ is processed in the same thread as node $i$ is
+simulated in.  The $E_2$ events are processed in the main thread.
 
 The solver runs the continuous-time Markov chain for each node $i$.
 For every time step $\tau_i$, the count in the compartments at node
@@ -1161,12 +1160,13 @@ We are now ready to create an \code{SIR} model and then use the
 \code{run()} routine to simulate data from it.  For reproducibility,
 we first call the \code{set.seed()} function and also specify the
 number of threads to use for the simulation.  To use all available
-threads, you only have to remove the threads argument.
+threads, you only have to remove the \code{set\_num\_threads()} call.
 
 <<SIR-run>>=
 model <- SIR(u0 = u0, tspan = tspan, beta = 0.16, gamma = 0.077)
 set.seed(123)
-result <- run(model = model, threads = 1)
+set_num_threads(1)
+result <- run(model = model)
 @
 
 The return value from \code{run()} is a \code{SimInf_model} object
@@ -1353,7 +1353,8 @@ events = rbind(add, infect, move, remove)
 model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
   gamma = 0.077)
 set.seed(3)
-result <- run(model, threads = 1)
+set_num_threads(1)
+result <- run(model)
 plot(result, node = 1:5, range = FALSE)
 @
 
@@ -1362,7 +1363,8 @@ events = rbind(add, infect, move, remove)
 model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
 gamma = 0.077)
 set.seed(3)
-result <- run(model, threads = 1)
+set_num_threads(1)
+result <- run(model)
 pdf("SimInf-SIR-events-I.pdf", width = 10, height = 5)
 plot(result, node = 1:5, range = FALSE)
 dev.off()
@@ -1373,7 +1375,8 @@ model_no_infected <- SIR(u0 = u0, tspan = 1:180,
 events = rbind(add, move, remove), beta = 0.16,
 gamma = 0.077)
 set.seed(3)
-result_no_infected <- run(model_no_infected, threads = 1)
+set_num_threads(1)
+result_no_infected <- run(model_no_infected)
 pdf("SimInf-SIR-events-II.pdf", width = 10, height = 5)
 plot(result_no_infected, node = 1:5, range = FALSE)
 dev.off()
@@ -1402,8 +1405,9 @@ of each trajectory.  Here, we find that infection spread from the
 
 <<SIR-replicate>>=
 set.seed(123)
+set_num_threads(1)
 mean(replicate(n = 1000, {
-  nI <- trajectory(run(model = model, threads = 1), node = 1:4)$I
+  nI <- trajectory(run(model = model), node = 1:4)$I
   sum(nI) > 0
 }))
 @
@@ -1545,8 +1549,9 @@ specify \code{type = "nop"}.  Consult the help page for other
 plot(NULL, xlim = c(0, 1500), ylim = c(0, 0.18), ylab = "Prevalance",
   xlab = "Time")
 set.seed(123)
+set_num_threads(1)
 replicate(5, {
-  result <- run(model = model, threads = 1)
+  result <- run(model = model)
   p <- prevalence(model = result, formula = I ~ S + I, type = "nop")
   lines(p)
 })
@@ -1561,7 +1566,7 @@ trajectories.
 <<eval=FALSE>>=
 gdata(model, "coupling") <- 0.1
 replicate(5, {
-  result <- run(model = model, threads = 1)
+  result <- run(model = model)
   p <- prevalence(model = result, formula = I ~ S + I, type = "nop")
   lines(p, col = "blue", lty = 2)
 })
@@ -1653,7 +1658,8 @@ completes, the DLL is unloaded and the temporary files are removed.
 
 <<SIR-mparse-III, eval=FALSE>>=
 set.seed(123)
-result <- run(model = model, threads = 1)
+set_num_threads(1)
+result <- run(model = model)
 plot(result)
 @
 
@@ -1661,7 +1667,8 @@ plot(result)
   \begin{center}
 <<SIR-mparse-IV, echo=FALSE, fig=TRUE>>=
 set.seed(123)
-result <- run(model = model, threads = 1)
+set_num_threads(1)
+result <- run(model = model)
 plot(result)
 @
   \caption{Showing the median and inter-quartile range from 1000
@@ -1700,7 +1707,8 @@ u0 <- data.frame(S = rep(99, n), I = rep(1, n), Icum = rep(0, n),
 model <- mparse(transitions = transitions, compartments = compartments,
   gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:150)
 set.seed(123)
-result <- run(model = model, threads = 1)
+set_num_threads(1)
+result <- run(model = model)
 @
 
 Let us post-process the simulated trajectory to compare the incidence
@@ -1736,7 +1744,8 @@ R = rep(0, n))
 model <- mparse(transitions = transitions, compartments = compartments,
 gdata = c(b = 0.16, g = 0.077), u0 = u0, tspan = 1:150)
 set.seed(123)
-result <- run(model = model, threads = 1)
+set_num_threads(1)
+result <- run(model = model)
 traj <- trajectory(model = result, compartments = "Icum")
 cases <- stepfun(result@tspan[-1], diff(c(0, traj$Icum[traj$node == 1])))
 avg_cases <- c(0, diff(by(traj, traj$time, function(x) sum(x$Icum))) / n)
@@ -2074,7 +2083,8 @@ Now create a model and run it to generate data.
 <<create-predator-prey-model, eval=FALSE>>=
 model <- PredatorPrey(u0 = u0, tspan = 1:100, gdata = parameters)
 set.seed(123)
-result <- run(model, threads = 1)
+set_num_threads(1)
+result <- run(model)
 @
 
 Because a \code{PredatorPrey} object contains the \code{SimInf_model}
