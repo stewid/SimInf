@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -26,12 +26,12 @@
 ##' @export
 setClass("SISe3", contains = c("SimInf_model"))
 
-##' Create a \sQuote{SISe3} model
+##' Create a \code{SISe3} model
 ##'
-##' Create a \sQuote{SISe3} model to be used by the simulation
+##' Create a \code{SISe3} model to be used by the simulation
 ##' framework.
 ##'
-##' The \sQuote{SISe3} model contains two compartments in three age
+##' The \code{SISe3} model contains two compartments in three age
 ##' categories; number of susceptible (S_1, S_2, S_3) and number of
 ##' infectious (I_1, I_2, I_3). Additionally, it contains an
 ##' environmental compartment to model shedding of a pathogen to the

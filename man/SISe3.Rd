@@ -2,7 +2,7 @@
 % Please edit documentation in R/SISe3.R
 \name{SISe3}
 \alias{SISe3}
-\title{Create a \sQuote{SISe3} model}
+\title{Create a \code{SISe3} model}
 \usage{
 SISe3(
   u0,
@@ -101,11 +101,11 @@ of nrow(u0).}
 \code{SISe3}
 }
 \description{
-Create a \sQuote{SISe3} model to be used by the simulation
+Create a \code{SISe3} model to be used by the simulation
 framework.
 }
 \details{
-The \sQuote{SISe3} model contains two compartments in three age
+The \code{SISe3} model contains two compartments in three age
 categories; number of susceptible (S_1, S_2, S_3) and number of
 infectious (I_1, I_2, I_3). Additionally, it contains an
 environmental compartment to model shedding of a pathogen to the
