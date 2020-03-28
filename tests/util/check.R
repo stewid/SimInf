@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -22,13 +22,20 @@
 ## Raise an error if the error message doesn't match.
 check_error <- function(current, target, exact = TRUE) {
     if (isTRUE(exact)) {
-        stopifnot(identical(current[[1]]$message, target))
-    } else {
-        stopifnot(length(grep(target, current[[1]]$message)) > 0)
+        if (!identical(current[[1]]$message, target)) {
+            stop("message: ", current[[1]]$message,
+                 "\nexpected: ", target)
+        }
+    } else if (!length(grep(target, current[[1]]$message))) {
+        stop("message: ", current[[1]]$message,
+             "\nexpected: ", target)
     }
 
     ## Check that the error message ends with '.'
-    stopifnot(length(grep("[.]$", current[[1]]$message)) > 0)
+    if (!length(grep("[.]$", current[[1]]$message))) {
+        stop("message: ", current[[1]]$message,
+             "\nexpected: ", target)
+    }
 
     invisible(NULL)
 }
