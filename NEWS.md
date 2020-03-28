@@ -15,6 +15,9 @@
 * It's now possible to specify what type of plot should be drawn from
   the simulated data, see the documentation.
 
+* Better documentation of the SISe, SISe3, SISe_sp, and SISe3_sp
+  models.
+
 ## CHANGES
 
 * The way to specify the number of threads to use in parallelized
