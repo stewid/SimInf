@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,17 +31,17 @@ set_num_threads(1)
 sessionInfo()
 
 ## Initialize test data
-S <- Matrix(c(-1,  0,  0,
-               1,  0,  0,
-               0, -1,  0,
-               0,  1,  0,
-               0,  0, -1,
-               0,  0,  1),
-            nrow   = 6,
-            ncol   = 3,
-            byrow  = TRUE,
-            sparse = TRUE)
-rownames(S) <- LETTERS[1:6]
+S <- as(Matrix(c(-1,  0,  0,
+                  1,  0,  0,
+                  0, -1,  0,
+                  0,  1,  0,
+                  0,  0, -1,
+                  0,  0,  1),
+               nrow   = 6,
+               ncol   = 3,
+               byrow  = TRUE,
+               dimnames = list(LETTERS[1:6], NULL)),
+        "dgCMatrix")
 
 Nn <- 6L
 
@@ -51,9 +51,8 @@ G <- as(Matrix(c(1, 0, 0,
                nrow   = 3,
                ncol   = 3,
                byrow  = TRUE,
-               sparse = TRUE),
+               dimnames = list(c("A -> B", "C -> D", "E -> F"), NULL)),
         "dgCMatrix")
-rownames(G) <- c("A -> B", "C -> D", "E -> F")
 
 u0 <- structure(c(0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 2, 0, 2, 0, 2,
                   0, 3, 0, 3, 0, 3, 0, 4, 0, 4, 0, 4, 0, 5, 0, 5, 0, 5, 0),
