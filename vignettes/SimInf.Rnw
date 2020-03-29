@@ -123,9 +123,10 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 
 This vignette is based on the paper by \cite{Widgren2019} but has been
 updated in some places to describe functionality in \pkg{SimInf} that
-has been developed since the paper was published.  The results
-reported here are based on \pkg{SimInf} version
-\Sexpr{packageVersion("SimInf")} unless otherwise stated.
+has been developed since the paper was published.  See the package
+NEWS file for recent changes.  The results reported here are based on
+\pkg{SimInf} version \Sexpr{packageVersion("SimInf")} unless otherwise
+stated.
 
 \section{Introduction}
 
