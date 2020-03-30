@@ -128,6 +128,12 @@ test_objects = $(wildcard tests/*.R)
 valgrind:
 	$(foreach var,$(test_objects),R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < $(var);)
 
+# Run static code analysis on the C code.
+# https://github.com/danmar/cppcheck/
+.PHONY: cppcheck
+cppcheck:
+	cppcheck src
+
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
 	chmod +x ./configure
