@@ -57,11 +57,9 @@ static void SimInf_insert_node_time(
 {
     int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
     int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
-    R_xlen_t t;
 
-    for (t = 0; t < tlen; t++) {
-        R_xlen_t j;
-        for (j = m_jc[t]; j < m_jc[t + 1]; j++) {
+    for (R_xlen_t t = 0; t < tlen; t++) {
+        for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
             rowinfo_t r = {m_ir[j] / m_stride, t};
             if (!kb_get(rowinfo, ri, r))
                 kb_put(rowinfo, ri, r);
@@ -84,9 +82,8 @@ static void SimInf_sparse2df_int(
     int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
     int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
     double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
-    R_xlen_t i;
 
-    for (i = 0; i < m_i_len; i++) {
+    for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
 
@@ -137,9 +134,8 @@ static void SimInf_sparse2df_int(
                 #pragma omp for
                 for (t = 0; t < tlen; t++) {
                     R_xlen_t id = 0;
-                    R_xlen_t j;
 
-                    for (j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                    for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
                         if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
                             R_xlen_t m_id = m_ir[j] / m_stride;
 
@@ -179,9 +175,8 @@ static void SimInf_sparse2df_real(
     int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
     int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
     double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
-    R_xlen_t i;
 
-    for (i = 0; i < m_i_len; i++) {
+    for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
 
@@ -232,9 +227,8 @@ static void SimInf_sparse2df_real(
                 #pragma omp for
                 for (t = 0; t < tlen; t++) {
                     R_xlen_t id = 0;
-                    R_xlen_t j;
 
-                    for (j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                    for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
                         if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
                             R_xlen_t m_id = m_ir[j] / m_stride;
 
@@ -272,9 +266,7 @@ static void SimInf_dense2df_int(
     R_xlen_t col,
     int *p_nodes)
 {
-    R_xlen_t i;
-
-    for (i = 0; i < m_i_len; i++) {
+    for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
         int *p_m = m + m_i[i] - 1;
@@ -287,8 +279,7 @@ static void SimInf_dense2df_int(
 
                 #pragma omp for
                 for (t = 0; t < tlen; t++) {
-                    R_xlen_t node;
-                    for (node = 0; node < Nnodes; node++) {
+                    for (R_xlen_t node = 0; node < Nnodes; node++) {
                         p_vec[t * Nnodes + node] =
                             p_m[(t * Nn + p_nodes[node] - 1) * m_stride];
                     }
@@ -301,8 +292,7 @@ static void SimInf_dense2df_int(
 
                 #pragma omp for
                 for (t = 0; t < tlen; t++) {
-                    R_xlen_t node;
-                    for (node = 0; node < Nnodes; node++) {
+                    for (R_xlen_t node = 0; node < Nnodes; node++) {
                         p_vec[t * Nnodes + node] =
                             p_m[(t * Nn + node) * m_stride];
                     }
@@ -328,9 +318,7 @@ static void SimInf_dense2df_real(
     R_xlen_t col,
     int *p_nodes)
 {
-    R_xlen_t i;
-
-    for (i = 0; i < m_i_len; i++) {
+    for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec = PROTECT(Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
         double *p_m = m + m_i[i] - 1;
@@ -343,8 +331,7 @@ static void SimInf_dense2df_real(
 
                 #pragma omp for
                 for (t = 0; t < tlen; t++) {
-                    R_xlen_t node;
-                    for (node = 0; node < Nnodes; node++) {
+                    for (R_xlen_t node = 0; node < Nnodes; node++) {
                         p_vec[t * Nnodes + node] =
                             p_m[(t * Nn + p_nodes[node] - 1) * m_stride];
                     }
@@ -357,8 +344,7 @@ static void SimInf_dense2df_real(
 
                 #pragma omp for
                 for (t = 0; t < tlen; t++) {
-                    R_xlen_t node;
-                    for (node = 0; node < Nnodes; node++) {
+                    for (R_xlen_t node = 0; node < Nnodes; node++) {
                         p_vec[t * Nnodes + node] =
                             p_m[(t * Nn + node) * m_stride];
                     }
@@ -416,7 +402,6 @@ SEXP SimInf_trajectory(
     R_xlen_t Nnodes = Rf_isNull(nodes) ? c_Nn : XLENGTH(nodes);
     R_xlen_t nrow = tlen * Nnodes;
     R_xlen_t ncol = 2 + dm_i_len + cm_i_len; /* The '2' is for the 'node' and 'time' columns. */
-    R_xlen_t i;
     kbtree_t(rowinfo) *ri = NULL;
 
     /* Use all available threads in parallel regions. */
@@ -426,11 +411,11 @@ SEXP SimInf_trajectory(
     PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
     SET_STRING_ELT(colnames, 0, Rf_mkChar("node"));
     SET_STRING_ELT(colnames, 1, Rf_mkChar("time"));
-    for (i = 0; i < dm_i_len; i++) {
+    for (R_xlen_t i = 0; i < dm_i_len; i++) {
         R_xlen_t j = INTEGER(dm_i)[i] - 1;
         SET_STRING_ELT(colnames, 2 + i, STRING_ELT(dm_lbl, j));
     }
-    for (i = 0; i < cm_i_len; i++) {
+    for (R_xlen_t i = 0; i < cm_i_len; i++) {
         R_xlen_t j = INTEGER(cm_i)[i] - 1;
         SET_STRING_ELT(colnames, 2 + dm_i_len + i, STRING_ELT(cm_lbl, j));
     }
@@ -491,7 +476,7 @@ SEXP SimInf_trajectory(
         SIMINF_UNUSED(&kb_itr_get_rowinfo);
 
         kb_itr_first(rowinfo, ri, &itr);
-        for (i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
+        for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
             rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
             p_vec[i++] = p->id + 1;
         }
@@ -512,8 +497,7 @@ SEXP SimInf_trajectory(
 
             #pragma omp for
             for (t = 0; t < tlen; t++) {
-                R_xlen_t node;
-                for (node = 0; node < Nnodes; node++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
                     p_vec[t * Nnodes + node] = node + 1;
                 }
             }
@@ -533,7 +517,7 @@ SEXP SimInf_trajectory(
             kbitr_t itr;
 
             kb_itr_first(rowinfo, ri, &itr);
-            for (i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
+            for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
                 rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
                 p_vec[i++] = p_tspan[p->time];
             }
@@ -544,8 +528,7 @@ SEXP SimInf_trajectory(
 
                 #pragma omp for
                 for (t = 0; t < tlen; t++) {
-                    R_xlen_t node;
-                    for (node = 0; node < Nnodes; node++) {
+                    for (R_xlen_t node = 0; node < Nnodes; node++) {
                         p_vec[t * Nnodes + node] = p_tspan[t];
                     }
                 }
@@ -563,15 +546,13 @@ SEXP SimInf_trajectory(
             kbitr_t itr;
 
             kb_itr_first(rowinfo, ri, &itr);
-            for (i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
+            for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
                 rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
                 SET_STRING_ELT(vec, i++, STRING_ELT(lbl_tspan, p->time));
             }
         } else {
-            R_xlen_t t;
-            for (t = 0; t < tlen; t++) {
-                R_xlen_t node;
-                for (node = 0; node < Nnodes; node++) {
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
                     SET_STRING_ELT(vec, t * Nnodes + node, STRING_ELT(lbl_tspan, t));
                 }
             }
