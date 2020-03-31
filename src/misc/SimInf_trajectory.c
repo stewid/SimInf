@@ -27,8 +27,6 @@
 #include "SimInf_openmp.h"
 #include "kbtree.h"
 
-#define SIMINF_UNUSED(x) ((void)(x))
-
 typedef struct {
     R_xlen_t id;
     R_xlen_t time;
@@ -430,11 +428,6 @@ SEXP SimInf_trajectory(
     p_vec = INTEGER(vec);
     if (ri != NULL) {
         kbitr_t itr;
-
-        /* Silence compiler warning unused function. */
-        SIMINF_UNUSED(&kb_del_rowinfo);
-        SIMINF_UNUSED(&kb_interval_rowinfo);
-        SIMINF_UNUSED(&kb_itr_get_rowinfo);
 
         kb_itr_first(rowinfo, ri, &itr);
         for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
