@@ -417,8 +417,8 @@ SEXP SimInf_trajectory(
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_vec = INTEGER(vec);
     #pragma omp parallel for num_threads(SimInf_num_threads())
-    for (R_xlen_t ii = 0; ii < nrow; ii++) {
-        p_vec[ii] = ii + 1;
+    for (R_xlen_t i = 0; i < nrow; i++) {
+        p_vec[i] = i + 1;
     }
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
     UNPROTECT(1);
