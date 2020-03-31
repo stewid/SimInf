@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2019 Stefan Widgren
+ * Copyright (C) 2015 -- 2020 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,31 +127,24 @@ static void SimInf_sparse2df_int(
                 }
             }
         } else {
-            #pragma omp parallel num_threads(SimInf_num_threads())
-            {
-                R_xlen_t t;
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                R_xlen_t id = 0;
 
-                #pragma omp for
-                for (t = 0; t < tlen; t++) {
-                    R_xlen_t id = 0;
+                for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                    if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
+                        R_xlen_t m_id = m_ir[j] / m_stride;
 
-                    for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
-                        if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
-                            R_xlen_t m_id = m_ir[j] / m_stride;
+                        for (; id < m_id; id++)
+                            p_vec[t * n_id + id] = NA_INTEGER;
 
-                            for (; id < m_id; id++) {
-                                p_vec[t * n_id + id] = NA_INTEGER;
-                            }
-
-                            p_vec[t * n_id + id] = m_x[j];
-                            id++;
-                        }
-                    }
-
-                    for (; id < n_id; id++) {
-                        p_vec[t * n_id + id] = NA_INTEGER;
+                        p_vec[t * n_id + id] = m_x[j];
+                        id++;
                     }
                 }
+
+                for (; id < n_id; id++)
+                    p_vec[t * n_id + id] = NA_INTEGER;
             }
         }
 
@@ -220,31 +213,24 @@ static void SimInf_sparse2df_real(
                 }
             }
         } else {
-            #pragma omp parallel num_threads(SimInf_num_threads())
-            {
-                R_xlen_t t;
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                R_xlen_t id = 0;
 
-                #pragma omp for
-                for (t = 0; t < tlen; t++) {
-                    R_xlen_t id = 0;
+                for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                    if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
+                        R_xlen_t m_id = m_ir[j] / m_stride;
 
-                    for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
-                        if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
-                            R_xlen_t m_id = m_ir[j] / m_stride;
+                        for (; id < m_id; id++)
+                            p_vec[t * n_id + id] = NA_REAL;
 
-                            for (; id < m_id; id++) {
-                                p_vec[t * n_id + id] = NA_REAL;
-                            }
-
-                            p_vec[t * n_id + id] = m_x[j];
-                            id++;
-                        }
-                    }
-
-                    for (; id < n_id; id++) {
-                        p_vec[t * n_id + id] = NA_REAL;
+                        p_vec[t * n_id + id] = m_x[j];
+                        id++;
                     }
                 }
+
+                for (; id < n_id; id++)
+                    p_vec[t * n_id + id] = NA_REAL;
             }
         }
 
@@ -273,29 +259,19 @@ static void SimInf_dense2df_int(
 
         if (p_nodes != NULL) {
             /* Note that the node identifiers are one-based. */
-            #pragma omp parallel num_threads(SimInf_num_threads())
-            {
-                R_xlen_t t;
-
-                #pragma omp for
-                for (t = 0; t < tlen; t++) {
-                    for (R_xlen_t node = 0; node < Nnodes; node++) {
-                        p_vec[t * Nnodes + node] =
-                            p_m[(t * Nn + p_nodes[node] - 1) * m_stride];
-                    }
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                    p_vec[t * Nnodes + node] =
+                        p_m[(t * Nn + p_nodes[node] - 1) * m_stride];
                 }
             }
         } else {
-            #pragma omp parallel num_threads(SimInf_num_threads())
-            {
-                R_xlen_t t;
-
-                #pragma omp for
-                for (t = 0; t < tlen; t++) {
-                    for (R_xlen_t node = 0; node < Nnodes; node++) {
-                        p_vec[t * Nnodes + node] =
-                            p_m[(t * Nn + node) * m_stride];
-                    }
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                    p_vec[t * Nnodes + node] =
+                        p_m[(t * Nn + node) * m_stride];
                 }
             }
         }
@@ -325,29 +301,19 @@ static void SimInf_dense2df_real(
 
         if (p_nodes != NULL) {
             /* Note that the node identifiers are one-based. */
-            #pragma omp parallel num_threads(SimInf_num_threads())
-            {
-                R_xlen_t t;
-
-                #pragma omp for
-                for (t = 0; t < tlen; t++) {
-                    for (R_xlen_t node = 0; node < Nnodes; node++) {
-                        p_vec[t * Nnodes + node] =
-                            p_m[(t * Nn + p_nodes[node] - 1) * m_stride];
-                    }
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                    p_vec[t * Nnodes + node] =
+                        p_m[(t * Nn + p_nodes[node] - 1) * m_stride];
                 }
             }
         } else {
-            #pragma omp parallel num_threads(SimInf_num_threads())
-            {
-                R_xlen_t t;
-
-                #pragma omp for
-                for (t = 0; t < tlen; t++) {
-                    for (R_xlen_t node = 0; node < Nnodes; node++) {
-                        p_vec[t * Nnodes + node] =
-                            p_m[(t * Nn + node) * m_stride];
-                    }
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                    p_vec[t * Nnodes + node] =
+                        p_m[(t * Nn + node) * m_stride];
                 }
             }
         }
@@ -452,14 +418,9 @@ SEXP SimInf_trajectory(
      * one-based. */
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_vec = INTEGER(vec);
-    #pragma omp parallel num_threads(SimInf_num_threads())
-    {
-        R_xlen_t ii;
-
-        #pragma omp for
-        for (ii = 0; ii < nrow; ii++) {
-            p_vec[ii] = ii + 1;
-        }
+    #pragma omp parallel for num_threads(SimInf_num_threads())
+    for (R_xlen_t ii = 0; ii < nrow; ii++) {
+        p_vec[ii] = ii + 1;
     }
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
     UNPROTECT(1);
@@ -481,26 +442,15 @@ SEXP SimInf_trajectory(
             p_vec[i++] = p->id + 1;
         }
     } else if (p_nodes != NULL) {
-        #pragma omp parallel num_threads(SimInf_num_threads())
-        {
-            R_xlen_t t;
-
-            #pragma omp for
-            for (t = 0; t < tlen; t++) {
-                memcpy(&p_vec[t * Nnodes], p_nodes, Nnodes * sizeof(int));
-            }
+        #pragma omp parallel for num_threads(SimInf_num_threads())
+        for (R_xlen_t t = 0; t < tlen; t++) {
+            memcpy(&p_vec[t * Nnodes], p_nodes, Nnodes * sizeof(int));
         }
     } else {
-        #pragma omp parallel num_threads(SimInf_num_threads())
-        {
-            R_xlen_t t;
-
-            #pragma omp for
-            for (t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
-                    p_vec[t * Nnodes + node] = node + 1;
-                }
-            }
+        #pragma omp parallel for num_threads(SimInf_num_threads())
+        for (R_xlen_t t = 0; t < tlen; t++) {
+            for (R_xlen_t node = 0; node < Nnodes; node++)
+                p_vec[t * Nnodes + node] = node + 1;
         }
     }
     SET_VECTOR_ELT(result, 0, vec);
@@ -522,16 +472,10 @@ SEXP SimInf_trajectory(
                 p_vec[i++] = p_tspan[p->time];
             }
         } else {
-            #pragma omp parallel num_threads(SimInf_num_threads())
-            {
-                R_xlen_t t;
-
-                #pragma omp for
-                for (t = 0; t < tlen; t++) {
-                    for (R_xlen_t node = 0; node < Nnodes; node++) {
-                        p_vec[t * Nnodes + node] = p_tspan[t];
-                    }
-                }
+            #pragma omp parallel for num_threads(SimInf_num_threads())
+            for (R_xlen_t t = 0; t < tlen; t++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++)
+                    p_vec[t * Nnodes + node] = p_tspan[t];
             }
         }
 
