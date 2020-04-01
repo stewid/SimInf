@@ -25,32 +25,20 @@
 
 #include "SimInf.h"
 #include "SimInf_openmp.h"
-#include "kbtree.h"
+#include "kvec.h"
 
 typedef struct {
     R_xlen_t id;
     R_xlen_t time;
 } rowinfo_t;
 
-typedef struct {size_t n, m; rowinfo_t *a;} rowinfo_vec;
-
-static int rowinfo_cmp(rowinfo_t x, rowinfo_t y)
-{
-    if (x.time < y.time)
-        return -1;
-    if (x.time > y.time)
-        return 1;
-    if (x.id < y.id)
-        return -1;
-    if (x.id > y.id)
-        return 1;
-    return 0;
-}
-
-KBTREE_INIT(rowinfo, rowinfo_t, rowinfo_cmp)
+typedef struct {
+    size_t n, m;
+    rowinfo_t *a;
+} rowinfo_vec;
 
 static void SimInf_insert_node_time(
-    kbtree_t(rowinfo) *ri,
+    rowinfo_vec *ri,
     SEXP m,
     R_xlen_t m_stride,
     R_xlen_t tlen)
