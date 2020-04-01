@@ -203,7 +203,7 @@ static void SimInf_sparse2df_int(
 
 static void SimInf_sparse2df_real(
     SEXP dst,
-    kbtree_t(rowinfo) *ri,
+    rowinfo_vec *ri,
     SEXP m,
     int * m_i,
     R_xlen_t m_i_len,
@@ -409,7 +409,7 @@ SEXP SimInf_trajectory(
     R_xlen_t Nnodes = Rf_isNull(nodes) ? c_Nn : XLENGTH(nodes);
     R_xlen_t nrow = tlen * Nnodes;
     R_xlen_t ncol = 2 + dm_i_len + cm_i_len; /* The '2' is for the 'node' and 'time' columns. */
-    kbtree_t(rowinfo) *ri = NULL;
+    rowinfo_vec *ri = NULL;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -434,19 +434,18 @@ SEXP SimInf_trajectory(
      * information in the sparse matrices. */
     if (dm_i_len > 0 && cm_i_len > 0) {
         if (dm_sparse && cm_sparse) {
-            ri = kb_init(rowinfo, KB_DEFAULT_SIZE);
-            SimInf_insert_node_time(ri, dm, dm_stride, tlen);
-            SimInf_insert_node_time(ri, cm, cm_stride, tlen);
-            nrow = kb_size(ri);
+            ri = calloc(1, sizeof(rowinfo_vec));
+            SimInf_insert_node_time2(ri, dm, cm, dm_stride, cm_stride, tlen);
+            nrow = kv_size(*ri);
         }
     } else if (dm_i_len > 0 && dm_sparse) {
-        ri = kb_init(rowinfo, KB_DEFAULT_SIZE);
+        ri = calloc(1, sizeof(rowinfo_vec));
         SimInf_insert_node_time(ri, dm, dm_stride, tlen);
-        nrow = kb_size(ri);
+        nrow = kv_size(*ri);
     } else if (cm_i_len > 0 && cm_sparse) {
-        ri = kb_init(rowinfo, KB_DEFAULT_SIZE);
+        ri = calloc(1, sizeof(rowinfo_vec));
         SimInf_insert_node_time(ri, cm, cm_stride, tlen);
-        nrow = kb_size(ri);
+        nrow = kv_size(*ri);
     }
 
     /* Create a list for the 'data.frame' and add colnames and a
@@ -469,14 +468,9 @@ SEXP SimInf_trajectory(
     /* Add a 'node' identifier column to the 'data.frame'. */
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_vec = INTEGER(vec);
-    if (ri != NULL) {
-        kbitr_t itr;
-
-        kb_itr_first(rowinfo, ri, &itr);
-        for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
-            rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-            p_vec[i++] = p->id + 1;
-        }
+    if (ri) {
+        for (R_xlen_t i = 0; i < kv_size(*ri); i++)
+            p_vec[i] = kv_A(*ri, i).id + 1;
     } else if (p_nodes != NULL) {
         #pragma omp parallel for num_threads(SimInf_num_threads())
         for (R_xlen_t t = 0; t < tlen; t++) {
@@ -499,14 +493,9 @@ SEXP SimInf_trajectory(
         PROTECT(vec = Rf_allocVector(INTSXP, nrow));
         p_vec = INTEGER(vec);
 
-        if (ri != NULL) {
-            kbitr_t itr;
-
-            kb_itr_first(rowinfo, ri, &itr);
-            for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
-                rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-                p_vec[i++] = p_tspan[p->time];
-            }
+        if (ri) {
+            for (R_xlen_t i = 0; i < kv_size(*ri); i++)
+                p_vec[i] = p_tspan[kv_A(*ri, i).time];
         } else {
             #pragma omp parallel for num_threads(SimInf_num_threads())
             for (R_xlen_t t = 0; t < tlen; t++) {
@@ -522,19 +511,13 @@ SEXP SimInf_trajectory(
 
         PROTECT(vec = Rf_allocVector(STRSXP, nrow));
 
-        if (ri != NULL) {
-            kbitr_t itr;
-
-            kb_itr_first(rowinfo, ri, &itr);
-            for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
-                rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-                SET_STRING_ELT(vec, i++, STRING_ELT(lbl_tspan, p->time));
-            }
+        if (ri) {
+            for (R_xlen_t i = 0; i < kv_size(*ri); i++)
+                SET_STRING_ELT(vec, i, STRING_ELT(lbl_tspan, kv_A(*ri, i).time));
         } else {
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++)
                     SET_STRING_ELT(vec, t * Nnodes + node, STRING_ELT(lbl_tspan, t));
-                }
             }
         }
 
@@ -560,8 +543,10 @@ SEXP SimInf_trajectory(
                              nrow, tlen, Nnodes, c_Nn, 2 + dm_i_len, p_nodes);
     }
 
-    if (ri != NULL)
-        kb_destroy(rowinfo, ri);
+    if (ri) {
+        kv_destroy(*ri);
+        free(ri);
+    }
 
     UNPROTECT(2);
 
