@@ -32,6 +32,8 @@ typedef struct {
     R_xlen_t time;
 } rowinfo_t;
 
+typedef struct {size_t n, m; rowinfo_t *a;} rowinfo_vec;
+
 static int rowinfo_cmp(rowinfo_t x, rowinfo_t y)
 {
     if (x.time < y.time)
@@ -67,7 +69,7 @@ static void SimInf_insert_node_time(
 
 static void SimInf_sparse2df_int(
     SEXP dst,
-    kbtree_t(rowinfo) *ri,
+    rowinfo_vec *ri,
     SEXP m,
     int * m_i,
     R_xlen_t m_i_len,
@@ -85,43 +87,36 @@ static void SimInf_sparse2df_int(
         SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
 
-        if (ri != NULL) {
-            R_xlen_t p_vec_i = 0, j = 0;
-            kbitr_t itr;
+        if (ri) {
+            R_xlen_t p_vec_i = 0, j = 0, k = 0;
 
-            kb_itr_first(rowinfo, ri, &itr);
-            while (kb_itr_valid(&itr)) {
-                rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-                R_xlen_t p_time = p->time;
+            while (k < kv_size(*ri)) {
+                R_xlen_t p_time = kv_A(*ri, k).time;
 
                 while (m_jc[p_time] <= j && j < m_jc[p_time + 1]) {
                     /* Check if data for column. */
                     if (m_ir[j] % m_stride == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
-                        if (m_id < p->id) {
+                        if (m_id < kv_A(*ri, k).id) {
                             j++; /* Move on. */
                         } else {
-                            if (m_id == p->id)
+                            if (m_id == kv_A(*ri, k).id)
                                 p_vec[p_vec_i++] = m_x[j++];
                             else
                                 p_vec[p_vec_i++] = NA_INTEGER;
 
-                            kb_itr_next(rowinfo, ri, &itr);
-                            if (!kb_itr_valid(&itr))
+                            if (++k >= kv_size(*ri))
                                 break;
-                            p = &kb_itr_key(rowinfo_t, &itr);
                         }
                     } else {
                         j++; /* Move on. */
                     }
                 }
 
-                while (kb_itr_valid(&itr) && p->time <= p_time) {
+                while (k < kv_size(*ri) && kv_A(*ri, k).time <= p_time) {
                     p_vec[p_vec_i++] = NA_INTEGER;
-                    kb_itr_next(rowinfo, ri, &itr);
-                    if (kb_itr_valid(&itr))
-                        p = &kb_itr_key(rowinfo_t, &itr);
+                    k++;
                 }
             }
         } else {
