@@ -166,43 +166,36 @@ static void SimInf_sparse2df_real(
         SEXP vec = PROTECT(Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
 
-        if (ri != NULL) {
-            R_xlen_t p_vec_i = 0, j = 0;
-            kbitr_t itr;
+        if (ri) {
+            R_xlen_t p_vec_i = 0, j = 0, k = 0;
 
-            kb_itr_first(rowinfo, ri, &itr);
-            while (kb_itr_valid(&itr)) {
-                rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-                R_xlen_t p_time = p->time;
+            while (k < kv_size(*ri)) {
+                R_xlen_t p_time = kv_A(*ri, k).time;
 
                 while (m_jc[p_time] <= j && j < m_jc[p_time + 1]) {
                     /* Check if data for column. */
                     if (m_ir[j] % m_stride == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
-                        if (m_id < p->id) {
+                        if (m_id < kv_A(*ri, k).id) {
                             j++; /* Move on. */
                         } else {
-                            if (m_id == p->id)
+                            if (m_id == kv_A(*ri, k).id)
                                 p_vec[p_vec_i++] = m_x[j++];
                             else
                                 p_vec[p_vec_i++] = NA_REAL;
 
-                            kb_itr_next(rowinfo, ri, &itr);
-                            if (!kb_itr_valid(&itr))
+                            if (++k >= kv_size(*ri))
                                 break;
-                            p = &kb_itr_key(rowinfo_t, &itr);
                         }
                     } else {
                         j++; /* Move on. */
                     }
                 }
 
-                while (kb_itr_valid(&itr) && p->time <= p_time) {
+                while (k < kv_size(*ri) && kv_A(*ri, k).time <= p_time) {
                     p_vec[p_vec_i++] = NA_REAL;
-                    kb_itr_next(rowinfo, ri, &itr);
-                    if (kb_itr_valid(&itr))
-                        p = &kb_itr_key(rowinfo_t, &itr);
+                    k++;
                 }
             }
         } else {
