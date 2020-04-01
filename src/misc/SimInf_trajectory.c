@@ -59,10 +59,65 @@ static void SimInf_insert_node_time(
     int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
 
     for (R_xlen_t t = 0; t < tlen; t++) {
+        R_xlen_t id_last = -1;
+
         for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
-            rowinfo_t r = {m_ir[j] / m_stride, t};
-            if (!kb_get(rowinfo, ri, r))
-                kb_put(rowinfo, ri, r);
+            R_xlen_t id = m_ir[j] / m_stride;
+
+            if (id > id_last) {
+                rowinfo_t r = {id, t};
+                kv_push(rowinfo_t, *ri, r);
+                id_last = id;
+            }
+        }
+    }
+}
+
+static void SimInf_insert_node_time2(
+    rowinfo_vec *ri,
+    SEXP m1,
+    SEXP m2,
+    R_xlen_t m1_stride,
+    R_xlen_t m2_stride,
+    R_xlen_t tlen)
+{
+    int *m1_ir = INTEGER(GET_SLOT(m1, Rf_install("i")));
+    int *m2_ir = INTEGER(GET_SLOT(m2, Rf_install("i")));
+    int *m1_jc = INTEGER(GET_SLOT(m1, Rf_install("p")));
+    int *m2_jc = INTEGER(GET_SLOT(m2, Rf_install("p")));
+
+    for (R_xlen_t t = 0; t < tlen; t++) {
+        R_xlen_t id_last = -1;
+        R_xlen_t j1 = m1_jc[t];
+        R_xlen_t j2 = m2_jc[t];
+
+        while (j1 < m1_jc[t + 1] || j2 < m2_jc[t + 1]) {
+            R_xlen_t id;
+
+            if (j1 < m1_jc[t + 1]) {
+                if (j2 < m2_jc[t + 1]) {
+                    R_xlen_t id1 = m1_ir[j1] / m1_stride;
+                    R_xlen_t id2 = m2_ir[j2] / m2_stride;
+
+                    if (id1 < id2) {
+                        id = id1;
+                        j1++;
+                    } else {
+                        id = id2;
+                        j2++;
+                    }
+                } else {
+                    id = m1_ir[j1++] / m1_stride;
+                }
+            } else {
+                id = m2_ir[j2++] / m2_stride;
+            }
+
+            if (id > id_last) {
+                rowinfo_t r = {id, t};
+                kv_push(rowinfo_t, *ri, r);
+                id_last = id;
+            }
         }
     }
 }
