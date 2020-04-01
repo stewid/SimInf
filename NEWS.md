@@ -1,3 +1,5 @@
+# SimInf (development version)
+
 # SimInf 6.5.1 (2020-04-01)
 
 ## BUG FIXES
