@@ -26,8 +26,8 @@ steps:
   displayName: "Setting up R library"
 
 - bash: |
-    Rscript -e "R.version"
-  displayName: 'Confirm R version'
+    Rscript -e "sessionInfo()"
+  displayName: 'R session information'
 
 - bash: |
     sudo dnf -y install \
