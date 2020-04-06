@@ -37,7 +37,7 @@ steps:
 # and that is why we can use 's' and not the name of the package.
 - bash: |
     cd ..
-    R CMD build s
+    R CMD build --compact-vignettes=both s
   displayName: 'Build package'
 
 - bash: |
