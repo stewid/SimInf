@@ -14,12 +14,12 @@ container: fedora:latest
 steps:
 - bash: |
     sudo dnf -y install langpacks-en R
+    sudo localectl set-locale LANG=en_US.UTF-8
   displayName: "Install R"
 
 - bash: |
     cd ..
     echo 'options(repos = "$(CRAN)")' > .Rprofile
-    echo 'options(encoding = "utf-8")' > .Rprofile
     echo 'R_LIBS_SITE="$(R_LIBS_SITE)"' > .Renviron
     echo 'R_LIBS_USER="$(R_LIBS_USER)"' >> .Renviron
     mkdir -p $(R_LIBS_USER)
