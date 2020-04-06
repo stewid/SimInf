@@ -3,6 +3,7 @@
 ^\.travis\.yml$
 ^Makefile$
 ^appveyor.yml$
+azure-pipelines.yml
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^man-roxygen$
