@@ -1,0 +1,66 @@
+variables:
+  R_LIBS_SITE: '/usr/share/R/library'
+  R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
+  CRAN: 'https://cloud.r-project.org'
+
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-latest'
+
+container: fedora:latest
+
+steps:
+- bash: |
+    sudo dnf -y install langpacks-en R
+  displayName: "Install R"
+
+- bash: |
+    cd ..
+    echo 'options(repos = "$(CRAN)")' > .Rprofile
+    echo 'R_LIBS_SITE="$(R_LIBS_SITE)"' > .Renviron
+    echo 'R_LIBS_USER="$(R_LIBS_USER)"' >> .Renviron
+    mkdir -p $(R_LIBS_USER)
+  displayName: "Setting up R library"
+
+- bash: |
+    Rscript -e "R.version"
+  displayName: 'Confirm R version'
+
+- bash: |
+    sudo dnf -y install \
+      gsl-devel
+  displayName: 'Install package dependencies'
+
+# This builds the package. The package is checked out to the 's' folder,
+# and that is why we can use 's' and not the name of the package.
+- bash: |
+    cd ..
+    R CMD build s
+  displayName: 'Build package'
+
+- bash: |
+    cd ..
+    _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
+      --no-stop-on-test-error \
+      --as-cran \
+      *.tar.gz
+  displayName: 'Check package'
+
+- bash: |
+    cd ..
+    cat *.Rcheck/00check.log
+    cat *.Rcheck/00install.out
+  condition: always()
+  displayName: 'Output the package check log'
+
+# Run static code analysis
+- bash: |
+    sudo dnf -y install R-lintr
+    Rscript \
+      -e "library(lintr)" \
+      -e "l <- lint_package(linters = with_defaults(object_name_linter = NULL, object_usage_linter = NULL))" \
+      -e "print(l)" \
+      -e "quit(save = 'no', status = length(l) > 0)"
+  displayName: 'Static code analysis'
