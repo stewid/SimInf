@@ -22,8 +22,6 @@ matrix:
       r_github_packages: jimhester/lintr
       env: R_CODECOV=true R_LINTR=true
     - r: devel
-    - os: osx
-      brew_packages: gsl
 
 after_failure:
   - cat "${RCHECK_DIR}/00install.out"
