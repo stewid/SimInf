@@ -2,7 +2,6 @@
 ^LICENSE$
 ^\.travis\.yml$
 ^Makefile$
-^appveyor.yml$
 azure-pipelines\.yml
 azure-pipelines
 ^.*\.Rproj$
