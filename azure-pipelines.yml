@@ -14,3 +14,4 @@ jobs:
     displayName: 'Install package dependencies'
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
+  - template: azure-pipelines/static-code-analysis.yml
