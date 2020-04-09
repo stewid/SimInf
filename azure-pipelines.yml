@@ -8,10 +8,23 @@ jobs:
     vmImage: 'Ubuntu-latest'
   container: fedora:latest
   steps:
-  - template: azure-pipelines/dnf-install-R.yml
+  - template: azure-pipelines/dnf-install-R-release.yml
   - bash: |
       sudo dnf -y install gsl-devel
     displayName: 'Install package dependencies'
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
   - template: azure-pipelines/static-code-analysis.yml
+
+- job: fedora_R_devel_gcc
+  displayName: "Fedora, R-devel, GCC"
+  pool:
+    vmImage: 'Ubuntu-latest'
+  container: fedora:latest
+  steps:
+  - template: azure-pipelines/dnf-install-R-devel.yml
+  - bash: |
+      sudo dnf -y install gsl-devel
+    displayName: 'Install package dependencies'
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml

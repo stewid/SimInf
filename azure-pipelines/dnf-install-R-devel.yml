@@ -1,0 +1,35 @@
+steps:
+- bash: |
+    sudo dnf -y install \
+      langpacks-en \
+      libcurl-devel \
+      libX11-devel \
+      libXt-devel \
+      R \
+      readline-devel
+    curl https://stat.ethz.ch/R/daily/R-devel.tar.gz -o R-devel.tar.gz
+    tar xf R-devel.tar.gz
+    cd R-devel
+    ./configure
+    make
+    sudo make install
+  displayName: "Install R-devel"
+
+- bash: |
+    cd
+    echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+    echo 'Sys.setlocale("LC_CTYPE", "en_US.UTF-8")' >> .Rprofile
+    echo 'Sys.setlocale("LC_TIME", "en_US.UTF-8")' >> .Rprofile
+    echo 'Sys.setlocale("LC_COLLATE", "en_US.UTF-8")' >> .Rprofile
+    echo 'Sys.setlocale("LC_MONETARY", "en_US.UTF-8")' >> .Rprofile
+    echo 'Sys.setlocale("LC_MESSAGES", "en_US.UTF-8")' >> .Rprofile
+    echo 'Sys.setlocale("LC_PAPER", "en_US.UTF-8")' >> .Rprofile
+    echo 'Sys.setlocale("LC_MEASUREMENT", "en_US.UTF-8")' >> .Rprofile
+    echo 'R_LIBS_SITE="/usr/share/R/library"' > .Renviron
+    echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' >> .Renviron
+    mkdir -p $(Agent.BuildDirectory)/R/library
+  displayName: "Customize R startup"
+
+- bash: |
+    Rscript -e "sessionInfo()"
+  displayName: 'R session information'
