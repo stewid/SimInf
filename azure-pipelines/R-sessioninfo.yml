@@ -1,0 +1,4 @@
+steps:
+- bash: |
+    Rscript -e "sessionInfo()"
+  displayName: 'R session information'
