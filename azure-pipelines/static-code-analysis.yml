@@ -1,0 +1,10 @@
+# Run static code analysis
+steps:
+- bash: |
+    sudo dnf -y install R-lintr
+    Rscript \
+      -e "library(lintr)" \
+      -e "l <- lint_package(linters = with_defaults(object_name_linter = NULL, object_usage_linter = NULL))" \
+      -e "print(l)" \
+      -e "quit(save = 'no', status = length(l) > 0)"
+  displayName: 'Static code analysis'
