@@ -1,7 +1,7 @@
 # Run static code analysis
 steps:
 - bash: |
-    sudo dnf -y install R-lintr
+    sudo dnf -y -q install R-lintr
     Rscript \
       -e "library(lintr)" \
       -e "l <- lint_package(linters = with_defaults(object_name_linter = NULL, object_usage_linter = NULL))" \
@@ -10,6 +10,6 @@ steps:
   displayName: 'Static analysis of R code'
 
 - bash: |
-    sudo dnf -y install cppcheck
+    sudo dnf -y -q install cppcheck
     cppcheck src
   displayName: 'Static analysis of C/C++ code'
