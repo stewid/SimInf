@@ -32,3 +32,23 @@ jobs:
     displayName: 'Install package dependencies'
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
+
+- job: macosx_R_release
+  displayName: "Mac OS X, R-release"
+  pool:
+    vmImage: 'macOS-10.15'
+  steps:
+  - template: azure-pipelines/macos-install-R-release.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'Sys.setenv(PATH = paste0("/usr/texbin:/Library/TeX/texbin:", Sys.getenv("PATH")))' >> .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      brew install gsl
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml

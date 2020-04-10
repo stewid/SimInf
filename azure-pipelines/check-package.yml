@@ -1,6 +1,5 @@
 steps:
 - bash: |
-    sudo dnf -y -q install devscripts-checkbashisms
     cd ..
     _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
       --no-stop-on-test-error \

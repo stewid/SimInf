@@ -2,6 +2,7 @@ steps:
 - bash: |
     cd
     sudo dnf -y install \
+      devscripts-checkbashisms \
       langpacks-en \
       libcurl-devel \
       libX11-devel \
