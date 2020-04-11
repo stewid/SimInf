@@ -12,7 +12,6 @@ addons:
 
 matrix:
   include:
-    - r: 3.4
     - r: oldrel
     - r: release
       r_packages: covr

@@ -59,6 +59,25 @@ jobs:
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
 
+- job: ubuntu_R_3_4
+  displayName: "Linux, R-3.4"
+  pool:
+    vmImage: "Ubuntu-16.04"
+  steps:
+  - template: azure-pipelines/ubuntu-install-R-3_4.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      sudo apt-get -y install libgsl0-dev
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+
 - job: fedora_R_release
   displayName: "Linux, R-release"
   pool:
