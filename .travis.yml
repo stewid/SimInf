@@ -21,7 +21,6 @@ matrix:
       r_packages: covr
       r_github_packages: jimhester/lintr
       env: R_CODECOV=true R_LINTR=true
-    - r: devel
 
 after_failure:
   - cat "${RCHECK_DIR}/00install.out"

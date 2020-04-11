@@ -3,7 +3,7 @@ trigger:
 
 jobs:
 - job: fedora_R_release_gcc
-  displayName: "Fedora, R-release, GCC"
+  displayName: "Linux, R-release, GCC"
   pool:
     vmImage: 'Ubuntu-latest'
   container: fedora:latest
@@ -19,7 +19,7 @@ jobs:
   - template: azure-pipelines/static-code-analysis.yml
 
 - job: fedora_R_devel_gcc
-  displayName: "Fedora, R-devel, GCC"
+  displayName: "Linux, R-devel, GCC"
   pool:
     vmImage: 'Ubuntu-latest'
   container: fedora:latest
