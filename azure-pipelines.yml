@@ -36,7 +36,7 @@ jobs:
 - job: macosx_R_release
   displayName: "Mac OS X, R-release"
   pool:
-    vmImage: 'macOS-10.15'
+    vmImage: 'macOS-latest'
   steps:
   - template: azure-pipelines/macos-install-R-release.yml
   - bash: |
