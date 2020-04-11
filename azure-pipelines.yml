@@ -2,10 +2,29 @@ trigger:
 - master
 
 jobs:
+- job: ubuntu_R_3_1_gcc
+  displayName: "Linux, R-3.1, GCC"
+  pool:
+    vmImage: "Ubuntu-16.04"
+  steps:
+  - template: azure-pipelines/ubuntu-install-R-3_1.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      sudo apt-get -y install libgsl0-dev
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+
 - job: fedora_R_release_gcc
   displayName: "Linux, R-release, GCC"
   pool:
-    vmImage: 'Ubuntu-latest'
+    vmImage: "Ubuntu-latest"
   container: fedora:latest
   steps:
   - template: azure-pipelines/dnf-install-R-release.yml
@@ -13,7 +32,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo dnf -y install gsl-devel
-    displayName: 'Install package dependencies'
+    displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
   - template: azure-pipelines/static-code-analysis.yml
@@ -21,7 +40,7 @@ jobs:
 - job: fedora_R_devel_gcc
   displayName: "Linux, R-devel, GCC"
   pool:
-    vmImage: 'Ubuntu-latest'
+    vmImage: "Ubuntu-latest"
   container: fedora:latest
   steps:
   - template: azure-pipelines/dnf-install-R-devel.yml
@@ -29,14 +48,14 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo dnf -y install gsl-devel
-    displayName: 'Install package dependencies'
+    displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
 
 - job: macosx_R_release
   displayName: "Mac OS X, R-release"
   pool:
-    vmImage: 'macOS-latest'
+    vmImage: "macOS-latest"
   steps:
   - template: azure-pipelines/macos-install-R-release.yml
   - bash: |
