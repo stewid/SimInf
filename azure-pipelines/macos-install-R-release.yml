@@ -6,8 +6,7 @@ steps:
     curl -fLo /tmp/BasicTeX.pkg https://ctan.org/tex-archive/systems/mac/mactex/BasicTeX.pkg
     sudo installer -pkg "/tmp/BasicTeX.pkg" -target /
     rm /tmp/BasicTeX.pkg
-    echo "##vso[task.prependpath]/usr/texbin"
-    echo "##vso[task.prependpath]/Library/TeX/texbin"
+    export PATH=/usr/texbin:/Library/TeX/texbin:$PATH
     sudo tlmgr update --self
     sudo tlmgr install inconsolata courier courier-scaled helvetic
     brew install ghostscript
