@@ -9,5 +9,5 @@ steps:
     export PATH=/usr/texbin:/Library/TeX/texbin:$PATH
     sudo tlmgr update --self
     sudo tlmgr install inconsolata courier courier-scaled helvetic
-    brew install ghostscript
+    brew install ghostscript checkbashisms
   displayName: "Install R"
