@@ -1,6 +1,5 @@
 ^README\.Rmd$
 ^LICENSE$
-^\.travis\.yml$
 ^Makefile$
 azure-pipelines\.yml
 azure-pipelines
