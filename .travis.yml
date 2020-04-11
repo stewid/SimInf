@@ -12,7 +12,6 @@ addons:
 
 matrix:
   include:
-    - r: oldrel
     - r: release
       r_packages: covr
       r_github_packages: jimhester/lintr
