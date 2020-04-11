@@ -3,6 +3,7 @@ steps:
     sudo apt-get update
     sudo DEBIAN_FRONTEND=noninteractive apt-get install \
       gdebi-core \
+      qpdf \
       texinfo \
       texlive-extra-utils \
       texlive-fonts-recommended \
