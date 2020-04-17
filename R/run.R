@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -115,7 +115,8 @@ setMethod("run",
               validObject(model);
 
               if (contains_C_code(model)) {
-                  name <- digest(model@C_code, serialize = FALSE)
+                  name <- paste0("SimInf_",
+                                 digest(model@C_code, serialize = FALSE))
                   dll <- getLoadedDLLs()[[name]]
                   if (is.null(dll)) {
                       ## Write the C code to a temporary file
