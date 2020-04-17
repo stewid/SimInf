@@ -17,6 +17,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo apt-get -y install libgsl0-dev
+      Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -36,6 +37,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo apt-get -y install libgsl0-dev
+      Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -55,6 +57,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo apt-get -y install libgsl0-dev
+      Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -74,6 +77,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo apt-get -y install libgsl0-dev
+      Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -93,6 +97,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo apt-get -y install libgsl0-dev
+      Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -107,7 +112,7 @@ jobs:
   - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
-      sudo dnf -y install gsl-devel
+      sudo dnf -y install gsl-devel R-digest
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -123,7 +128,7 @@ jobs:
   - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
-      sudo dnf -y install gsl-devel
+      sudo dnf -y install gsl-devel R-digest
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -144,6 +149,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       brew install gsl
+      Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -164,6 +170,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       brew install gsl
+      Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
