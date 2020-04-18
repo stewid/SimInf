@@ -148,7 +148,7 @@ tokens <- function(propensity) {
 
                     ## Remove leading and trailing whitespace and drop
                     ## empty strings
-                    xx <- gsub("(^\\s+)|(\\s+$)", "", xx)
+                    xx <- trimws(xx)
                     xx <- xx[nchar(xx) > 0]
 
                     ## Create a 2-column matrix from all sub-strings

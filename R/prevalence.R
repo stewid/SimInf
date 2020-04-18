@@ -24,7 +24,7 @@
 ## replace '.' with all compartments in the model.
 parse_formula_item <- function(x, compartments) {
     x <- unlist(strsplit(x, "+", fixed = TRUE))
-    x <- sub("^\\s", "", sub("\\s$", "", x))
+    x <- trimws(x)
     x <- unlist(sapply(x, function(y) {
         if (identical(y, "."))
             y <- compartments

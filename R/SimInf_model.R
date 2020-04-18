@@ -169,8 +169,7 @@ valid_G <- function(object) {
     transitions <- rownames(object@G)
     if (is.null(transitions))
         return("'G' must have rownames that specify transitions.")
-    transitions <- sub("[[:space:]]*$", "", transitions)
-    transitions <- sub("^[[:space:]]*", "", transitions)
+    transitions <- trimws(transitions)
     if (!all(nchar(transitions) > 0))
         return("'G' must have rownames that specify transitions.")
 
@@ -188,8 +187,7 @@ valid_G <- function(object) {
         c(x[1], x[length(x)])
     }))
     transitions <- unlist(strsplit(transitions, split = "+", fixed = TRUE))
-    transitions <- sub("[[:space:]]*$", "", transitions)
-    transitions <- sub("^[[:space:]]*", "", transitions)
+    transitions <- trimws(transitions)
     transitions <- unique(transitions)
     transitions <- transitions[transitions != "@"]
     transitions <- sub("^[[:digit:]]+[*]", "", transitions)

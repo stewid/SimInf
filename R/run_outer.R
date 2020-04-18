@@ -129,7 +129,7 @@ run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...) {
     vars <- attr(terms(formula, allowDotAsName = TRUE), "variables")[-1]
     yy <- as.character(vars[yy])
     yy <- unlist(strsplit(yy, "+", fixed = TRUE))
-    yy <- sub("^\\s", "", sub("\\s$", "", yy))
+    yy <- trimws(yy)
     y_i <- match(yy, names(model@gdata))
     if (any(is.na(y_i))) {
         stop("Unmatched parameters on the left hand side of the formula.",
