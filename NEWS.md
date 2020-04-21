@@ -1,5 +1,13 @@
 # SimInf (development version)
 
+## IMPROVEMENTS
+
+* In order to reduce the compilation-time when running multiple
+  simulations of a model that contains C code, the MD5 hash of the C
+  code is used to determine if a model has already been compiled and
+  the DLL loaded, and thus the compilation step can be skipped before
+  running a trajectory.
+
 # SimInf 6.5.1 (2020-04-01)
 
 ## BUG FIXES
