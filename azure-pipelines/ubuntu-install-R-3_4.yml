@@ -9,7 +9,7 @@ steps:
       texlive-fonts-recommended \
       texlive-fonts-extra \
       texlive-latex-recommended
-    curl -fLo /tmp/R.deb https://cdn.rstudio.com/r/ubuntu-1604/pkgs/r-3.4.4_1_amd64.deb
+    curl -fLo /tmp/R.deb https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-3.4.4_1_amd64.deb
     sudo gdebi --non-interactive /tmp/R.deb
     rm /tmp/R.deb
     echo '##vso[task.prependpath]/opt/R/3.4.4/bin'
