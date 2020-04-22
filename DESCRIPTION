@@ -52,6 +52,8 @@ Imports:
     stats,
     utils,
     Matrix
+Suggests:
+    MASS
 Collate:
     'check_arguments.R'
     'SimInf_events.R'
@@ -63,6 +65,7 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
+    'abc.R'
     'degree.R'
     'distance.R'
     'mparse.R'
@@ -71,6 +74,7 @@ Collate:
     'plot.R'
     'prevalence.R'
     'print.R'
+    'priors.R'
     'punchcard.R'
     'run.R'
     'run_outer.R'
