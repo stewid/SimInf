@@ -4,10 +4,25 @@
 \alias{SISe_sp}
 \title{Create a \code{SISe_sp} model}
 \usage{
-SISe_sp(u0, tspan, events = NULL, phi = NULL, upsilon = NULL,
-  gamma = NULL, alpha = NULL, beta_t1 = NULL, beta_t2 = NULL,
-  beta_t3 = NULL, beta_t4 = NULL, end_t1 = NULL, end_t2 = NULL,
-  end_t3 = NULL, end_t4 = NULL, coupling = NULL, distance = NULL)
+SISe_sp(
+  u0,
+  tspan,
+  events = NULL,
+  phi = NULL,
+  upsilon = NULL,
+  gamma = NULL,
+  alpha = NULL,
+  beta_t1 = NULL,
+  beta_t2 = NULL,
+  beta_t3 = NULL,
+  beta_t4 = NULL,
+  end_t1 = NULL,
+  end_t2 = NULL,
+  end_t3 = NULL,
+  end_t4 = NULL,
+  coupling = NULL,
+  distance = NULL
+)
 }
 \arguments{
 \item{u0}{A \code{data.frame} with the initial state in each node
@@ -76,6 +91,46 @@ Create a \code{SISe_sp} model to be used by the simulation
 framework.
 }
 \details{
+The \code{SISe_sp} model contains two compartments; number of
+susceptible (S) and number of infectious (I). Additionally, it
+contains an environmental compartment to model shedding of a
+pathogen to the environment. Moreover, it also includes a spatial
+coupling of the environmental contamination among proximal nodes
+to capture between-node spread unrelated to moving infected
+individuals. Consequently, the model has two state transitions,
+
+\deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{
+S -- upsilon phi S --> I}
+
+\deqn{I \stackrel{\gamma I}{\longrightarrow} S}{
+I -- gamma I --> S}
+
+where the transition rate per unit of time from susceptible to
+infected is proportional to the concentration of the environmental
+contamination \eqn{\varphi}{phi} in each node. Moreover, the
+transition rate from infected to susceptible is the recovery rate
+\eqn{\gamma}, measured per individual and per unit of
+time. Finally, the environmental infectious pressure in each node
+is evolved by,
+
+\deqn{\frac{d \varphi_i(t)}{dt} = \frac{\alpha I_{i}(t)}{N_i(t)} +
+\sum_k{\frac{\varphi_k(t) N_k(t) - \varphi_i(t) N_i(t)}{N_i(t)}
+\cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t)}{
+dphi(t)/dt=
+alpha I / N +
+D*sum_k(phi_k*N_k-phi_i*N_i)/(d_ik*N_i)-beta*phi_i}
+
+where \eqn{\alpha} is the average shedding rate of the pathogen to
+the environment per infected individual and \eqn{N = S + I} the
+size of the node. Next comes the spatial coupling among proximal
+nodes, where \eqn{D} is the rate of the local spread and
+\eqn{d_{ik}} the distance between holdings \eqn{i} and
+\eqn{k}. The seasonal decay and removal of the pathogen is
+captured by \eqn{\beta(t)}. The environmental infectious pressure
+\eqn{\varphi(t)}{phi(t)} in each node is evolved each time unit by
+the Euler forward method. The value of \eqn{\varphi(t)}{phi(t)} is
+saved at the time-points specified in \code{tspan}.
+
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{

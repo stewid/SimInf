@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -55,6 +55,17 @@ summary_V <- function(object) {
     }
 }
 
+summary_matrix <- function(x) {
+    qq <- t(apply(x, 1, function(xx) {
+        qq <- quantile(xx)
+        c(qq[1L:3L], mean(xx), qq[4L:5L])
+    }))
+    colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                      "Mean", "3rd Qu.", "Max.")
+    rownames(qq) <- paste0(" ", rownames(x))
+    print.table(qq, digits = 3)
+}
+
 ##' Summarise local model parameters
 ##' @importFrom stats quantile
 ##' @noRd
@@ -63,15 +74,7 @@ summary_ldata <- function(object) {
         cat("\n")
         cat("Local data\n")
         cat("----------\n")
-
-        qq <- t(apply(object@ldata, 1, function(x) {
-            qq <- quantile(x)
-            c(qq[1L:3L], mean(x), qq[4L:5L])
-        }))
-        colnames(qq) <- c("Min.", "1st Qu.", "Median",
-                          "Mean", "3rd Qu.", "Max.")
-        rownames(qq) <- paste0(" ", rownames(object@ldata))
-        print.table(qq, digits = 3)
+        summary_matrix(object@ldata)
     }
 }
 

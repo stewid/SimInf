@@ -4,8 +4,7 @@
 \alias{SEIR}
 \title{Create an \acronym{SEIR} model}
 \usage{
-SEIR(u0, tspan, events = NULL, beta = NULL, epsilon = NULL,
-  gamma = NULL)
+SEIR(u0, tspan, events = NULL, beta = NULL, epsilon = NULL, gamma = NULL)
 }
 \arguments{
 \item{u0}{A \code{data.frame} with the initial state in each node

@@ -3,7 +3,6 @@
 \docType{package}
 \name{SimInf}
 \alias{SimInf}
-\alias{SimInf-package}
 \title{A Framework for Data-Driven Stochastic Disease Spread Simulations}
 \description{
 The SimInf package provides a flexible framework for data-driven

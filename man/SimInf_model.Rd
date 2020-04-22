@@ -4,9 +4,21 @@
 \alias{SimInf_model}
 \title{Create a \code{SimInf_model}}
 \usage{
-SimInf_model(G, S, tspan, events = NULL, ldata = NULL, gdata = NULL,
-  U = NULL, u0 = NULL, v0 = NULL, V = NULL, E = NULL, N = NULL,
-  C_code = NULL)
+SimInf_model(
+  G,
+  S,
+  tspan,
+  events = NULL,
+  ldata = NULL,
+  gdata = NULL,
+  U = NULL,
+  u0 = NULL,
+  v0 = NULL,
+  V = NULL,
+  E = NULL,
+  N = NULL,
+  C_code = NULL
+)
 }
 \arguments{
 \item{G}{Dependency graph that indicates the transition rates that

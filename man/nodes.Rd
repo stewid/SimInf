@@ -4,7 +4,9 @@
 \name{nodes}
 \alias{nodes}
 \title{Example data with spatial distribution of nodes}
-\format{A \code{data.frame}}
+\format{
+A \code{data.frame}
+}
 \usage{
 data(nodes)
 }
