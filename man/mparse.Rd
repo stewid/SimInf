@@ -4,9 +4,19 @@
 \alias{mparse}
 \title{Model parser to define new models to run in \code{SimInf}}
 \usage{
-mparse(transitions = NULL, compartments = NULL, ldata = NULL,
-  gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
-  events = NULL, E = NULL, N = NULL, pts_fun = NULL)
+mparse(
+  transitions = NULL,
+  compartments = NULL,
+  ldata = NULL,
+  gdata = NULL,
+  u0 = NULL,
+  v0 = NULL,
+  tspan = NULL,
+  events = NULL,
+  E = NULL,
+  N = NULL,
+  pts_fun = NULL
+)
 }
 \arguments{
 \item{transitions}{character vector containing transitions on the
@@ -90,18 +100,18 @@ definition that is ready to \code{\link{run}}.
 \examples{
 \dontrun{
 ## Use the model parser to create a 'SimInf_model' object that
-## expresses a SIR model, where 'b' is the transmission rate and
-## 'g' is the recovery rate.
-model  <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
-                                 "I -> g*I -> R"),
+## expresses an SIR model, where 'beta' is the transmission rate
+## and 'gamma' is the recovery rate.
+model  <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
+                                 "I -> gamma*I -> R"),
                  compartments = c("S", "I", "R"),
-                 gdata = c(b = 0.16, g = 0.077),
+                 gdata = c(beta = 0.16, gamma = 0.077),
                  u0 = data.frame(S = 100, I = 1, R = 0),
                  tspan = 1:100)
 
 ## Run and plot the result
 set.seed(22)
-result <- run(model, threads = 1)
+result <- run(model)
 plot(result)
 }
 }

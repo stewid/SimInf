@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2019 Stefan Widgren
+ * Copyright (C) 2015 -- 2020 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,7 +337,7 @@ static int SimInf_solver_aem(
                 /* Copy continuous state to V */
                 while (sa.V && sa.V_it < sa.tlen && sa.tt > sa.tspan[sa.V_it])
                     memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.V_it++) + sa.Ni)],
-                           sa.v, sa.Nn * sa.Nd * sizeof(double));
+                           sa.v_new, sa.Nn * sa.Nd * sizeof(double));
 
                 *&model[i] = sa;
                 *&method[i] = ma;
@@ -386,9 +386,10 @@ static void SimInf_aem_arguments_free(
 
             if (m) {
                 /* AEM variables */
-                if(m->rng_vec){
-                    for(int i = 0; i < mod->Nn * mod->Nt; i++)
-                        gsl_rng_free(m->rng_vec[i]);
+                if (m->rng_vec) {
+                    int j;
+                    for (j = 0; j < mod->Nn * mod->Nt; j++)
+                        gsl_rng_free(m->rng_vec[j]);
                 }
                 m->rng_vec = NULL;
                 free(m->reactHeap);

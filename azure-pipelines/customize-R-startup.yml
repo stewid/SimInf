@@ -1,0 +1,15 @@
+steps:
+- bash: |
+    cd
+    echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+    echo 'invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))' >> .Rprofile
+    echo 'invisible(Sys.setlocale("LC_TIME", "en_US.UTF-8"))' >> .Rprofile
+    echo 'invisible(Sys.setlocale("LC_COLLATE", "en_US.UTF-8"))' >> .Rprofile
+    echo 'invisible(Sys.setlocale("LC_MONETARY", "en_US.UTF-8"))' >> .Rprofile
+    echo 'invisible(Sys.setlocale("LC_MESSAGES", "en_US.UTF-8"))' >> .Rprofile
+    echo 'invisible(Sys.setlocale("LC_PAPER", "en_US.UTF-8"))' >> .Rprofile
+    echo 'invisible(Sys.setlocale("LC_MEASUREMENT", "en_US.UTF-8"))' >> .Rprofile
+    echo 'R_LIBS_SITE="/usr/share/R/library"' > .Renviron
+    echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' >> .Renviron
+    mkdir -p $(Agent.BuildDirectory)/R/library
+  displayName: "Customize R startup"

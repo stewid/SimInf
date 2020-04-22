@@ -2,24 +2,51 @@
 
 ## IMPROVEMENTS
 
+* In order to reduce the compilation-time when running multiple
+  simulations of a model that contains C code, the MD5 hash of the C
+  code is used to determine if a model has already been compiled and
+  the DLL loaded, and thus the compilation step can be skipped before
+  running a trajectory.
+
+# SimInf 6.5.1 (2020-04-01)
+
+## BUG FIXES
+
+* Fixed a memory access error in the internal C code that was
+  introduced in the recently released 6.5.0 version. Detected by the
+  CRAN gcc-UBSAN tests (Undefined Behavior Sanitizer).
+
+# SimInf 6.5.0 (2020-03-29)
+
+## IMPROVEMENTS
+
+* It's now possible to have a 'tspan' vector of length one to simulate
+  over one time-unit only i.e. [t, t+1).
+
 * The `trajectory` function has been ported to C and parallelized to
   efficiently transform simulated data from a model to a `data.frame`.
 
-* Codebase is now tested with the `lintr` package to improve
+* Static code analysis of the codebase has been performed using the
+  `lintr` package in order to improve code style, consistency and
   readability.
 
 * It's now possible to specify what type of plot should be drawn from
   the simulated data, see the documentation.
 
+* Better documentation of the SISe, SISe3, SISe_sp, and SISe3_sp
+  models.
+
 ## CHANGES
 
-* The way to specify the number of threads for SimInf to use in
-  parallelized functions has been changed. The reason for this change
-  was to fix that specifying the number of threads should only affect
-  SimInf and not other packages using OpenMP. Use `set_num_threads` to
-  specify the number of threads, see documentation. It still works to
-  pass the number of threads to the `run()` function, however, the
-  `threads` argument will be removed from `run()` in the future.
+* The way to specify the number of threads to use in parallelized
+  functions has been changed to fix that specifying the number of
+  threads should only affect SimInf and not other packages using
+  OpenMP. Use `set_num_threads` to specify the number of threads, see
+  documentation. It still works to pass the number of threads to the
+  `run()` function, however, the `threads` argument will be removed
+  from `run()` in a future release.
+
+* Updated the vignette to use the 'set_num_threads' function.
 
 * To avoid cluttering the error message, the name of the internal
   function that generated the error has been removed from the error
@@ -30,16 +57,27 @@
 * Removed the row and column names from the internal matrices U and V
   because they were not used anywhere in the code.
 
-* Renamed the `NEWS` file to `NEWS.md` and changed to use markdown
-  format style.
-
 ## BUG FIXES
 
 * Fix storing solution of the state vectors of the first time point
   until after simulated time has passed the the first time point in
   tspan.
 
-# SimInf 6.3.0
+# SimInf 6.4.0 (2019-11-12)
+
+## CHANGES
+
+* Updated the vignette, the CITATION file and added the DOI for the
+  JSS publication to DESCRIPTION/Description.
+
+* Renamed the NEWS file to NEWS.md and changed to use markdown
+  format style.
+
+## BUG FIX
+
+* Removed a timestamp from a test to avoid a possible test failure.
+
+# SimInf 6.3.0 (2019-05-26)
 
 ## IMPROVEMENTS
 
@@ -68,7 +106,7 @@
 * Fix a link-type optimization type mismatch in the internal C
   function `SimInf_ldata_sp` (detected by the CRAN checks).
 
-# SimInf 6.2.0
+# SimInf 6.2.0 (2018-11-20)
 
 ## IMPROVEMENTS
 
@@ -89,7 +127,7 @@
 * Better error message when an invalid rate or a negative state is
   detected during a simulation.
 
-# SimInf 6.1.0
+# SimInf 6.1.0 (2018-08-13)
 
 ## IMPROVEMENTS
 
@@ -104,7 +142,7 @@
 
 * Fixed broken mparse example.
 
-# SimInf 6.0.0
+# SimInf 6.0.0 (2018-04-21)
 
 ## IMPROVEMENTS
 
@@ -168,7 +206,7 @@
 * Removed the `seed` argument from the `run` method. Use `set.seed`
   instead.
 
-# SimInf 5.1.0
+# SimInf 5.1.0 (2017-10-18)
 
 ## BUG FIXES
 
@@ -183,7 +221,7 @@
 
 * Improvements in the vignette.
 
-# SimInf 5.0.0
+# SimInf 5.0.0 (2017-06-13)
 
 ## NEW FEATURES
 
@@ -220,7 +258,7 @@
 * Added missing call to `PROTECT` to protect newly created matrices (R
   objects) from the garbage collector.
 
-# SimInf 4.0.0
+# SimInf 4.0.0 (2017-03-21)
 
 ## NEW FEATURES
 
@@ -275,7 +313,7 @@
   respectively. Prior to this change, the state was copied after the
   first time step.
 
-# SimInf 3.0.0
+# SimInf 3.0.0 (2017-01-29)
 
 ## NEW FEATURES
 
@@ -294,7 +332,7 @@
 * Added a parameter with a pointer to a random number generator to the
   post time step function.
 
-# SimInf 2.0.0
+# SimInf 2.0.0 (2016-05-04)
 
 ## NEW FEATURES
 
@@ -335,6 +373,6 @@
   avoid 0 in the direct SSA. If zero was randomly selected and the
   first compartment empty, the simulator could enter a negative state.
 
-# SimInf 1.0.0
+# SimInf 1.0.0 (2016-01-08)
 
 * First release.

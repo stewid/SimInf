@@ -1,0 +1,158 @@
+trigger:
+- master
+
+jobs:
+- job: ubuntu_R_3_2
+  displayName: "Linux, R-3.2"
+  pool:
+    vmImage: "Ubuntu-16.04"
+  steps:
+  - template: azure-pipelines/ubuntu-install-R-3_2.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      sudo apt-get -y install libgsl0-dev
+      Rscript -e "install.packages('digest')"
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+
+- job: ubuntu_R_3_3
+  displayName: "Linux, R-3.3"
+  pool:
+    vmImage: "Ubuntu-16.04"
+  steps:
+  - template: azure-pipelines/ubuntu-install-R-3_3.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      sudo apt-get -y install libgsl0-dev
+      Rscript -e "install.packages('digest')"
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+
+- job: ubuntu_R_3_4
+  displayName: "Linux, R-3.4"
+  pool:
+    vmImage: "Ubuntu-16.04"
+  steps:
+  - template: azure-pipelines/ubuntu-install-R-3_4.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      sudo apt-get -y install libgsl0-dev
+      Rscript -e "install.packages('digest')"
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+
+- job: ubuntu_R_3_5
+  displayName: "Linux, R-3.5"
+  pool:
+    vmImage: "Ubuntu-18.04"
+  steps:
+  - template: azure-pipelines/ubuntu-install-R-3_5.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      sudo apt-get -y install libgsl0-dev
+      Rscript -e "install.packages('digest')"
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+
+- job: fedora_R_release
+  displayName: "Linux, R-release"
+  pool:
+    vmImage: "Ubuntu-latest"
+  container: fedora:latest
+  steps:
+  - template: azure-pipelines/dnf-install-R-release.yml
+  - template: azure-pipelines/customize-R-startup.yml
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      sudo dnf -y install gsl-devel
+      Rscript -e "install.packages('digest')"
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+  - template: azure-pipelines/static-code-analysis.yml
+
+- job: fedora_R_devel_gcc
+  displayName: "Linux, R-devel, GCC"
+  pool:
+    vmImage: "Ubuntu-latest"
+  container: fedora:latest
+  steps:
+  - template: azure-pipelines/dnf-install-R-devel.yml
+  - template: azure-pipelines/customize-R-startup.yml
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      sudo dnf -y install gsl-devel
+      Rscript -e "install.packages('digest')"
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+
+- job: macosx_R_release
+  displayName: "Mac OS X, R-release"
+  pool:
+    vmImage: "macOS-latest"
+  steps:
+  - template: azure-pipelines/macos-install-R-release.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'Sys.setenv(PATH = paste0("/usr/texbin:/Library/TeX/texbin:", Sys.getenv("PATH")))' >> .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      brew install gsl
+      Rscript -e "install.packages('digest')"
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+
+- job: macosx_R_devel
+  displayName: "Mac OS X, R-devel"
+  pool:
+    vmImage: "macOS-latest"
+  steps:
+  - template: azure-pipelines/macos-install-R-devel.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'Sys.setenv(PATH = paste0("/usr/texbin:/Library/TeX/texbin:", Sys.getenv("PATH")))' >> .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - bash: |
+      brew install gsl
+      Rscript -e "install.packages('digest')"
+    displayName: "Install package dependencies"
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml

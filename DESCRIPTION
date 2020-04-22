@@ -1,6 +1,6 @@
 Package: SimInf
 Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
-Version: 6.3.0.9000
+Version: 6.5.1.9000
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     email = "stefan.widgren@gmail.com",
                     comment = c(ORCID = "0000-0001-5745-2284")),
@@ -11,7 +11,7 @@ Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
              person("Pavol", "Bauer", role = "aut",
                     comment = c(ORCID = "0000-0003-4328-7171")),
              person("Attractive Chaos", role = "cph",
-                    comment = "Author of 'kbtree.h' and 'kvec.h'."))
+                    comment = "Author of 'kvec.h'."))
 Description: Provides an efficient and very flexible framework to
     conduct data-driven epidemiological modeling in realistic large
     scale disease spread simulations. The framework integrates
@@ -25,7 +25,9 @@ Description: Provides an efficient and very flexible framework to
     extendable and enable usage of the numerical solvers from other R
     extension packages in order to facilitate complex epidemiological
     research. The package contains template models and can be extended
-    with user-defined models.
+    with user-defined models. For more details see the paper by
+    Widgren, Bauer, Eriksson and Engblom (2019)
+    <doi:10.18637/jss.v091.i12>.
 Acknowledgements: This work was financially supported by the Swedish
     Research Council within the UPMARC Linnaeus center of Excellence
     (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the Swedish
@@ -41,7 +43,7 @@ Biarch: true
 NeedsCompilation: yes
 SystemRequirements: GNU Scientific Library (GSL)
 Depends:
-    R(>= 3.1)
+    R(>= 3.2)
 Imports:
     digest,
     graphics,
@@ -74,4 +76,4 @@ Collate:
     'run_outer.R'
     'trajectory.R'
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

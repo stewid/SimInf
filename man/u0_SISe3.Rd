@@ -4,7 +4,9 @@
 \name{u0_SISe3}
 \alias{u0_SISe3}
 \title{Example data to initialize the \sQuote{SISe3} model}
-\format{A \code{data.frame}}
+\format{
+A \code{data.frame}
+}
 \usage{
 data(u0_SISe3)
 }

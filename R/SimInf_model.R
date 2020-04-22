@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -22,25 +22,18 @@
 ##' Class \code{"SimInf_model"}
 ##'
 ##' Class to handle the siminf data model
-##' @section Slots:
-##' \describe{
-##'   \item{G}{
-##'     Dependency graph that indicates the transition rates that need
-##'     to be updated after a given state transition has occured.
-##'     A non-zero entry in element \code{G[i, i]} indicates that transition
-##'     rate \code{i} needs to be recalculated if the state transition
-##'     \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt}) of object class
-##'     \code{\linkS4class{dgCMatrix}}.
-##'   }
-##'   \item{S}{
-##'     Each column corresponds to a state transition, and execution
-##'     of state transition \code{j} amounts to adding the \code{S[,
-##'     j]} column to the state vector \code{u[, i]} of node \emph{i}
-##'     where the transition occurred. Sparse matrix (\eqn{Nc \times
-##'     Nt}) of object class \code{\linkS4class{dgCMatrix}}.
-##'   }
-##'   \item{U}{
-##'     The result matrix with the number of individuals in each
+##' @slot G Dependency graph that indicates the transition rates that
+##'     need to be updated after a given state transition has occured.
+##'     A non-zero entry in element \code{G[i, i]} indicates that
+##'     transition rate \code{i} needs to be recalculated if the state
+##'     transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
+##'     of object class \code{\linkS4class{dgCMatrix}}.
+##' @slot S Each column corresponds to a state transition, and
+##'     execution of state transition \code{j} amounts to adding the
+##'     \code{S[, j]} column to the state vector \code{u[, i]} of node
+##'     \emph{i} where the transition occurred. Sparse matrix (\eqn{Nc
+##'     \times Nt}) of object class \code{\linkS4class{dgCMatrix}}.
+##' @slot U The result matrix with the number of individuals in each
 ##'     compartment in every node. \code{U[, j]} contains the number
 ##'     of individuals in each compartment at
 ##'     \code{tspan[j]}. \code{U[1:Nc, j]} contains the number of
@@ -48,61 +41,40 @@
 ##'     * Nc), j]} contains the number of individuals in node 2 at
 ##'     \code{tspan[j]} etc. Integer matrix (\eqn{N_n N_c \times}
 ##'     \code{length(tspan)}).
-##'   }
-##'   \item{U_sparse}{
-##'     If the model was configured to write the solution to a sparse
-##'     matrix (\code{dgCMatrix}) the \code{U_sparse} contains the data
-##'     and \code{U} is empty. The layout of the data in \code{U_sparse}
-##'     is identical to \code{U}. Please note that \code{U_sparse}
-##'     is numeric and \code{U} is integer.
-##'   }
-##'   \item{V}{
-##'     The result matrix for the real-valued continuous
+##' @slot U_sparse If the model was configured to write the solution
+##'     to a sparse matrix (\code{dgCMatrix}) the \code{U_sparse}
+##'     contains the data and \code{U} is empty. The layout of the
+##'     data in \code{U_sparse} is identical to \code{U}. Please note
+##'     that \code{U_sparse} is numeric and \code{U} is integer.
+##' @slot V The result matrix for the real-valued continuous
 ##'     state. \code{V[, j]} contains the real-valued state of the
 ##'     system at \code{tspan[j]}. Numeric matrix
 ##'     (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
 ##'     \code{length(tspan)}).
-##'   }
-##'   \item{V_sparse}{
-##'     If the model was configured to write the solution to a sparse
-##'     matrix (\code{dgCMatrix}) the \code{V_sparse} contains the data
-##'     and \code{V} is empty. The layout of the data in \code{V_sparse}
-##'     is identical to \code{V}.
-##'   }
-##'   \item{ldata}{
-##'     A matrix with local data for the nodes. The column \code{ldata[, j]}
-##'     contains the local data vector for the node \code{j}. The local
-##'     data vector is passed as an argument to the transition rate
-##'     functions and the post time step function.
-##'   }
-##'   \item{gdata}{
-##'     A numeric vector with global data that is common to all nodes.
-##'     The global data vector is passed as an argument to the
-##'     transition rate functions and the post time step function.
-##'   }
-##'   \item{tspan}{
-##'     A vector of increasing time points where the state of each node is
-##'     to be returned.
-##'   }
-##'   \item{u0}{
-##'     The initial state vector (\eqn{N_c \times N_n}) with
-##'     the number of individuals in each compartment in every node.
-##'   }
-##'   \item{v0}{
-##'      The initial value for the real-valued continuous state.
-##'      Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
-##'   }
-##'   \item{events}{
-##'     Scheduled events \code{\linkS4class{SimInf_events}}
-##'   }
-##'   \item{C_code}{
-##'     Character vector with optional model C code. If non-empty, the
-##'     C code is written to a temporary C-file when the \code{run}
-##'     method is called.  The temporary C-file is compiled and the
-##'     resulting DLL is dynamically loaded. The DLL is unloaded and
-##'     the temporary files are removed after running the model.
-##'   }
-##' }
+##' @slot V_sparse If the model was configured to write the solution
+##'     to a sparse matrix (\code{dgCMatrix}) the \code{V_sparse}
+##'     contains the data and \code{V} is empty. The layout of the
+##'     data in \code{V_sparse} is identical to \code{V}.
+##' @slot ldata A matrix with local data for the nodes. The column
+##'     \code{ldata[, j]} contains the local data vector for the node
+##'     \code{j}. The local data vector is passed as an argument to
+##'     the transition rate functions and the post time step function.
+##' @slot gdata A numeric vector with global data that is common to
+##'     all nodes.  The global data vector is passed as an argument to
+##'     the transition rate functions and the post time step function.
+##' @slot tspan A vector of increasing time points where the state of
+##'     each node is to be returned.
+##' @slot u0 The initial state vector (\eqn{N_c \times N_n}) with the
+##'     number of individuals in each compartment in every node.
+##' @slot v0 The initial value for the real-valued continuous state.
+##'     Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
+##' @slot events Scheduled events \code{\linkS4class{SimInf_events}}
+##' @slot C_code Character vector with optional model C code. If
+##'     non-empty, the C code is written to a temporary C-file when
+##'     the \code{run} method is called.  The temporary C-file is
+##'     compiled and the resulting DLL is dynamically loaded. The DLL
+##'     is unloaded and the temporary files are removed after running
+##'     the model.
 ##' @include SimInf_events.R
 ##' @export
 ##' @importFrom methods validObject
@@ -197,8 +169,7 @@ valid_G <- function(object) {
     transitions <- rownames(object@G)
     if (is.null(transitions))
         return("'G' must have rownames that specify transitions.")
-    transitions <- sub("[[:space:]]*$", "", transitions)
-    transitions <- sub("^[[:space:]]*", "", transitions)
+    transitions <- trimws(transitions)
     if (!all(nchar(transitions) > 0))
         return("'G' must have rownames that specify transitions.")
 
@@ -216,8 +187,7 @@ valid_G <- function(object) {
         c(x[1], x[length(x)])
     }))
     transitions <- unlist(strsplit(transitions, split = "+", fixed = TRUE))
-    transitions <- sub("[[:space:]]*$", "", transitions)
-    transitions <- sub("^[[:space:]]*", "", transitions)
+    transitions <- trimws(transitions)
     transitions <- unique(transitions)
     transitions <- transitions[transitions != "@"]
     transitions <- sub("^[[:digit:]]+[*]", "", transitions)

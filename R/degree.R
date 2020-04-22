@@ -19,6 +19,28 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' @importFrom methods slot
+##' @noRd
+degree <- function(model, a, b) {
+    check_model_argument(model)
+
+    ## Default degree is 0.
+    d <- integer(Nn(model))
+
+    ## Determine degree from data.
+    i <- which(model@events@event == 3L)
+    if (length(i) > 0) {
+        dd <- tapply(slot(model@events, a)[i],
+                     slot(model@events, b)[i],
+                     function(x) {
+                         length(unique(x))
+                     })
+        d[as.integer(dimnames(dd)[[1]])] <- dd
+    }
+
+    d
+}
+
 ##' Determine in-degree for each node in a model
 ##'
 ##' The number of nodes with inward \emph{external transfer} events to
@@ -37,22 +59,7 @@
 ##' ## Display indegree for each node in the model.
 ##' plot(indegree(model))
 indegree <- function(model) {
-    check_model_argument(model)
-
-    ## Default indegree is 0
-    id <- integer(Nn(model))
-
-    ## Determine indegree from data
-    i <- which(model@events@event == 3L)
-    if (length(i) > 0) {
-        idd <- tapply(model@events@node[i], model@events@dest[i],
-                      function(x) {
-                          length(unique(x))
-                      })
-        id[as.integer(dimnames(idd)[[1]])] <- idd
-    }
-
-    id
+    degree(model, "node", "dest")
 }
 
 ##' Determine out-degree for each node in a model
@@ -73,20 +80,5 @@ indegree <- function(model) {
 ##' ## Display outdegree for each node in the model.
 ##' plot(outdegree(model))
 outdegree <- function(model) {
-    check_model_argument(model)
-
-    ## Default outdegree is 0
-    od <- integer(Nn(model))
-
-    ## Determine oudegree from data
-    i <- which(model@events@event == 3L)
-    if (length(i) > 0) {
-        odd <- tapply(model@events@dest[i], model@events@node[i],
-                      function(x) {
-                          length(unique(x))
-                      })
-        od[as.integer(dimnames(odd)[[1]])] <- odd
-    }
-
-    od
+    degree(model, "dest", "node")
 }

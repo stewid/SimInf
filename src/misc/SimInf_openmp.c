@@ -78,12 +78,10 @@ static int SimInf_min_env(int x, int y, const char *name)
  * 'OMP_THREAD_LIMIT', 'OMP_NUM_THREADS', and 'SIMINF_NUM_THREADS' to
  * find the number of threads. Additionally, it can be controlled by
  * the 'threads' argument when called from 'R'. If called from R, it
- * returns the maximum number of threads that can be used. */
+ * returns the old value of the maximum number of threads used. */
 SEXP SimInf_init_threads(SEXP threads)
 {
-    /* No need to return the number of threads if this function is
-     * called from 'R_init_SimInf' during initialisation. */
-    int verbose = SimInf_max_threads < 1 ? 0 : 1;
+    int old_value = SimInf_max_threads;
 
 #ifdef _OPENMP
     SimInf_max_threads = omp_get_num_procs();
@@ -119,7 +117,9 @@ SEXP SimInf_init_threads(SEXP threads)
     SimInf_max_threads = 1;
 #endif
 
-    return verbose ? Rf_ScalarInteger(SimInf_max_threads) : R_NilValue;
+    /* No need to return the number of threads if this function is
+     * called from 'R_init_SimInf' during initialisation. */
+    return old_value < 1 ? R_NilValue : Rf_ScalarInteger(old_value);
 }
 
 /**

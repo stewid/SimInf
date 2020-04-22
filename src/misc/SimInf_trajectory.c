@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2019 Stefan Widgren
+ * Copyright (C) 2015 -- 2020 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,32 +25,20 @@
 
 #include "SimInf.h"
 #include "SimInf_openmp.h"
-#include "kbtree.h"
-
-#define SIMINF_UNUSED(x) ((void)(x))
+#include "kvec.h"
 
 typedef struct {
     R_xlen_t id;
     R_xlen_t time;
 } rowinfo_t;
 
-static int rowinfo_cmp(rowinfo_t x, rowinfo_t y)
-{
-    if (x.time < y.time)
-        return -1;
-    if (x.time > y.time)
-        return 1;
-    if (x.id < y.id)
-        return -1;
-    if (x.id > y.id)
-        return 1;
-    return 0;
-}
-
-KBTREE_INIT(rowinfo, rowinfo_t, rowinfo_cmp)
+typedef struct {
+    size_t n, m;
+    rowinfo_t *a;
+} rowinfo_vec;
 
 static void SimInf_insert_node_time(
-    kbtree_t(rowinfo) *ri,
+    rowinfo_vec *ri,
     SEXP m,
     R_xlen_t m_stride,
     R_xlen_t tlen)
@@ -59,17 +47,72 @@ static void SimInf_insert_node_time(
     int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
 
     for (R_xlen_t t = 0; t < tlen; t++) {
+        R_xlen_t id_last = -1;
+
         for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
-            rowinfo_t r = {m_ir[j] / m_stride, t};
-            if (!kb_get(rowinfo, ri, r))
-                kb_put(rowinfo, ri, r);
+            R_xlen_t id = m_ir[j] / m_stride;
+
+            if (id > id_last) {
+                rowinfo_t r = {id, t};
+                kv_push(rowinfo_t, *ri, r);
+                id_last = id;
+            }
+        }
+    }
+}
+
+static void SimInf_insert_node_time2(
+    rowinfo_vec *ri,
+    SEXP m1,
+    SEXP m2,
+    R_xlen_t m1_stride,
+    R_xlen_t m2_stride,
+    R_xlen_t tlen)
+{
+    int *m1_ir = INTEGER(GET_SLOT(m1, Rf_install("i")));
+    int *m2_ir = INTEGER(GET_SLOT(m2, Rf_install("i")));
+    int *m1_jc = INTEGER(GET_SLOT(m1, Rf_install("p")));
+    int *m2_jc = INTEGER(GET_SLOT(m2, Rf_install("p")));
+
+    for (R_xlen_t t = 0; t < tlen; t++) {
+        R_xlen_t id_last = -1;
+        R_xlen_t j1 = m1_jc[t];
+        R_xlen_t j2 = m2_jc[t];
+
+        while (j1 < m1_jc[t + 1] || j2 < m2_jc[t + 1]) {
+            R_xlen_t id;
+
+            if (j1 < m1_jc[t + 1]) {
+                if (j2 < m2_jc[t + 1]) {
+                    R_xlen_t id1 = m1_ir[j1] / m1_stride;
+                    R_xlen_t id2 = m2_ir[j2] / m2_stride;
+
+                    if (id1 < id2) {
+                        id = id1;
+                        j1++;
+                    } else {
+                        id = id2;
+                        j2++;
+                    }
+                } else {
+                    id = m1_ir[j1++] / m1_stride;
+                }
+            } else {
+                id = m2_ir[j2++] / m2_stride;
+            }
+
+            if (id > id_last) {
+                rowinfo_t r = {id, t};
+                kv_push(rowinfo_t, *ri, r);
+                id_last = id;
+            }
         }
     }
 }
 
 static void SimInf_sparse2df_int(
     SEXP dst,
-    kbtree_t(rowinfo) *ri,
+    rowinfo_vec *ri,
     SEXP m,
     int * m_i,
     R_xlen_t m_i_len,
@@ -87,43 +130,36 @@ static void SimInf_sparse2df_int(
         SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
 
-        if (ri != NULL) {
-            R_xlen_t p_vec_i = 0, j = 0;
-            kbitr_t itr;
+        if (ri) {
+            R_xlen_t p_vec_i = 0, j = 0, k = 0;
 
-            kb_itr_first(rowinfo, ri, &itr);
-            while (kb_itr_valid(&itr)) {
-                rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-                R_xlen_t p_time = p->time;
+            while (k < kv_size(*ri)) {
+                R_xlen_t p_time = kv_A(*ri, k).time;
 
                 while (m_jc[p_time] <= j && j < m_jc[p_time + 1]) {
                     /* Check if data for column. */
                     if (m_ir[j] % m_stride == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
-                        if (m_id < p->id) {
+                        if (m_id < kv_A(*ri, k).id) {
                             j++; /* Move on. */
                         } else {
-                            if (m_id == p->id)
+                            if (m_id == kv_A(*ri, k).id)
                                 p_vec[p_vec_i++] = m_x[j++];
                             else
                                 p_vec[p_vec_i++] = NA_INTEGER;
 
-                            kb_itr_next(rowinfo, ri, &itr);
-                            if (!kb_itr_valid(&itr))
+                            if (++k >= kv_size(*ri))
                                 break;
-                            p = &kb_itr_key(rowinfo_t, &itr);
                         }
                     } else {
                         j++; /* Move on. */
                     }
                 }
 
-                while (kb_itr_valid(&itr) && p->time <= p_time) {
+                while (k < kv_size(*ri) && kv_A(*ri, k).time <= p_time) {
                     p_vec[p_vec_i++] = NA_INTEGER;
-                    kb_itr_next(rowinfo, ri, &itr);
-                    if (kb_itr_valid(&itr))
-                        p = &kb_itr_key(rowinfo_t, &itr);
+                    k++;
                 }
             }
         } else {
@@ -135,18 +171,16 @@ static void SimInf_sparse2df_int(
                     if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
-                        for (; id < m_id; id++) {
+                        for (; id < m_id; id++)
                             p_vec[t * n_id + id] = NA_INTEGER;
-                        }
 
                         p_vec[t * n_id + id] = m_x[j];
                         id++;
                     }
                 }
 
-                for (; id < n_id; id++) {
+                for (; id < n_id; id++)
                     p_vec[t * n_id + id] = NA_INTEGER;
-                }
             }
         }
 
@@ -157,7 +191,7 @@ static void SimInf_sparse2df_int(
 
 static void SimInf_sparse2df_real(
     SEXP dst,
-    kbtree_t(rowinfo) *ri,
+    rowinfo_vec *ri,
     SEXP m,
     int * m_i,
     R_xlen_t m_i_len,
@@ -175,43 +209,36 @@ static void SimInf_sparse2df_real(
         SEXP vec = PROTECT(Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
 
-        if (ri != NULL) {
-            R_xlen_t p_vec_i = 0, j = 0;
-            kbitr_t itr;
+        if (ri) {
+            R_xlen_t p_vec_i = 0, j = 0, k = 0;
 
-            kb_itr_first(rowinfo, ri, &itr);
-            while (kb_itr_valid(&itr)) {
-                rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-                R_xlen_t p_time = p->time;
+            while (k < kv_size(*ri)) {
+                R_xlen_t p_time = kv_A(*ri, k).time;
 
                 while (m_jc[p_time] <= j && j < m_jc[p_time + 1]) {
                     /* Check if data for column. */
                     if (m_ir[j] % m_stride == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
-                        if (m_id < p->id) {
+                        if (m_id < kv_A(*ri, k).id) {
                             j++; /* Move on. */
                         } else {
-                            if (m_id == p->id)
+                            if (m_id == kv_A(*ri, k).id)
                                 p_vec[p_vec_i++] = m_x[j++];
                             else
                                 p_vec[p_vec_i++] = NA_REAL;
 
-                            kb_itr_next(rowinfo, ri, &itr);
-                            if (!kb_itr_valid(&itr))
+                            if (++k >= kv_size(*ri))
                                 break;
-                            p = &kb_itr_key(rowinfo_t, &itr);
                         }
                     } else {
                         j++; /* Move on. */
                     }
                 }
 
-                while (kb_itr_valid(&itr) && p->time <= p_time) {
+                while (k < kv_size(*ri) && kv_A(*ri, k).time <= p_time) {
                     p_vec[p_vec_i++] = NA_REAL;
-                    kb_itr_next(rowinfo, ri, &itr);
-                    if (kb_itr_valid(&itr))
-                        p = &kb_itr_key(rowinfo_t, &itr);
+                    k++;
                 }
             }
         } else {
@@ -223,18 +250,16 @@ static void SimInf_sparse2df_real(
                     if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
-                        for (; id < m_id; id++) {
+                        for (; id < m_id; id++)
                             p_vec[t * n_id + id] = NA_REAL;
-                        }
 
                         p_vec[t * n_id + id] = m_x[j];
                         id++;
                     }
                 }
 
-                for (; id < n_id; id++) {
+                for (; id < n_id; id++)
                     p_vec[t * n_id + id] = NA_REAL;
-                }
             }
         }
 
@@ -372,7 +397,7 @@ SEXP SimInf_trajectory(
     R_xlen_t Nnodes = Rf_isNull(nodes) ? c_Nn : XLENGTH(nodes);
     R_xlen_t nrow = tlen * Nnodes;
     R_xlen_t ncol = 2 + dm_i_len + cm_i_len; /* The '2' is for the 'node' and 'time' columns. */
-    kbtree_t(rowinfo) *ri = NULL;
+    rowinfo_vec *ri = NULL;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -397,19 +422,18 @@ SEXP SimInf_trajectory(
      * information in the sparse matrices. */
     if (dm_i_len > 0 && cm_i_len > 0) {
         if (dm_sparse && cm_sparse) {
-            ri = kb_init(rowinfo, KB_DEFAULT_SIZE);
-            SimInf_insert_node_time(ri, dm, dm_stride, tlen);
-            SimInf_insert_node_time(ri, cm, cm_stride, tlen);
-            nrow = kb_size(ri);
+            ri = calloc(1, sizeof(rowinfo_vec));
+            SimInf_insert_node_time2(ri, dm, cm, dm_stride, cm_stride, tlen);
+            nrow = kv_size(*ri);
         }
     } else if (dm_i_len > 0 && dm_sparse) {
-        ri = kb_init(rowinfo, KB_DEFAULT_SIZE);
+        ri = calloc(1, sizeof(rowinfo_vec));
         SimInf_insert_node_time(ri, dm, dm_stride, tlen);
-        nrow = kb_size(ri);
+        nrow = kv_size(*ri);
     } else if (cm_i_len > 0 && cm_sparse) {
-        ri = kb_init(rowinfo, KB_DEFAULT_SIZE);
+        ri = calloc(1, sizeof(rowinfo_vec));
         SimInf_insert_node_time(ri, cm, cm_stride, tlen);
-        nrow = kb_size(ri);
+        nrow = kv_size(*ri);
     }
 
     /* Create a list for the 'data.frame' and add colnames and a
@@ -432,19 +456,9 @@ SEXP SimInf_trajectory(
     /* Add a 'node' identifier column to the 'data.frame'. */
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_vec = INTEGER(vec);
-    if (ri != NULL) {
-        kbitr_t itr;
-
-        /* Silence compiler warning unused function. */
-        SIMINF_UNUSED(&kb_del_rowinfo);
-        SIMINF_UNUSED(&kb_interval_rowinfo);
-        SIMINF_UNUSED(&kb_itr_get_rowinfo);
-
-        kb_itr_first(rowinfo, ri, &itr);
-        for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
-            rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-            p_vec[i++] = p->id + 1;
-        }
+    if (ri) {
+        for (R_xlen_t i = 0; i < kv_size(*ri); i++)
+            p_vec[i] = kv_A(*ri, i).id + 1;
     } else if (p_nodes != NULL) {
         #pragma omp parallel for num_threads(SimInf_num_threads())
         for (R_xlen_t t = 0; t < tlen; t++) {
@@ -453,9 +467,8 @@ SEXP SimInf_trajectory(
     } else {
         #pragma omp parallel for num_threads(SimInf_num_threads())
         for (R_xlen_t t = 0; t < tlen; t++) {
-            for (R_xlen_t node = 0; node < Nnodes; node++) {
+            for (R_xlen_t node = 0; node < Nnodes; node++)
                 p_vec[t * Nnodes + node] = node + 1;
-            }
         }
     }
     SET_VECTOR_ELT(result, 0, vec);
@@ -468,20 +481,14 @@ SEXP SimInf_trajectory(
         PROTECT(vec = Rf_allocVector(INTSXP, nrow));
         p_vec = INTEGER(vec);
 
-        if (ri != NULL) {
-            kbitr_t itr;
-
-            kb_itr_first(rowinfo, ri, &itr);
-            for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
-                rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-                p_vec[i++] = p_tspan[p->time];
-            }
+        if (ri) {
+            for (R_xlen_t i = 0; i < kv_size(*ri); i++)
+                p_vec[i] = p_tspan[kv_A(*ri, i).time];
         } else {
             #pragma omp parallel for num_threads(SimInf_num_threads())
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++)
                     p_vec[t * Nnodes + node] = p_tspan[t];
-                }
             }
         }
 
@@ -492,19 +499,13 @@ SEXP SimInf_trajectory(
 
         PROTECT(vec = Rf_allocVector(STRSXP, nrow));
 
-        if (ri != NULL) {
-            kbitr_t itr;
-
-            kb_itr_first(rowinfo, ri, &itr);
-            for (R_xlen_t i = 0; kb_itr_valid(&itr); kb_itr_next(rowinfo, ri, &itr)) {
-                rowinfo_t *p = &kb_itr_key(rowinfo_t, &itr);
-                SET_STRING_ELT(vec, i++, STRING_ELT(lbl_tspan, p->time));
-            }
+        if (ri) {
+            for (R_xlen_t i = 0; i < kv_size(*ri); i++)
+                SET_STRING_ELT(vec, i, STRING_ELT(lbl_tspan, kv_A(*ri, i).time));
         } else {
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t node = 0; node < Nnodes; node++) {
+                for (R_xlen_t node = 0; node < Nnodes; node++)
                     SET_STRING_ELT(vec, t * Nnodes + node, STRING_ELT(lbl_tspan, t));
-                }
             }
         }
 
@@ -530,8 +531,10 @@ SEXP SimInf_trajectory(
                              nrow, tlen, Nnodes, c_Nn, 2 + dm_i_len, p_nodes);
     }
 
-    if (ri != NULL)
-        kb_destroy(rowinfo, ri);
+    if (ri) {
+        kv_destroy(*ri);
+        free(ri);
+    }
 
     UNPROTECT(2);
 

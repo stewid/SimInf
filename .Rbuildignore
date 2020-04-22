@@ -1,8 +1,8 @@
 ^README\.Rmd$
 ^LICENSE$
-^\.travis\.yml$
 ^Makefile$
-^appveyor.yml$
+azure-pipelines\.yml
+azure-pipelines
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^man-roxygen$
