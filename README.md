@@ -4,8 +4,7 @@
 
 > A flexible and efficient framework for data-driven stochastic disease spread simulations
 
-[![Build Status](https://travis-ci.org/stewid/SimInf.svg?branch=master)](https://travis-ci.org/stewid/SimInf)
-[![Build status](https://ci.appveyor.com/api/projects/status/pe68xiu1anxvet2n?svg=true)](https://ci.appveyor.com/project/stewid/SimInf)
+[![Build Status](https://dev.azure.com/stefanwidgren/SimInf/_apis/build/status/stewid.SimInf?branchName=master)](https://dev.azure.com/stefanwidgren/SimInf/_build/latest?definitionId=1&branchName=master)
 [![CRAN status](https://www.r-pkg.org/badges/version/SimInf)](https://CRAN.R-project.org/package=SimInf)
 [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/last-month/SimInf)](https://CRAN.R-project.org/package=SimInf)
 [![Coverage Status](https://coveralls.io/repos/stewid/SimInf/badge.svg?branch=master&service=github)](https://coveralls.io/github/stewid/SimInf?branch=master)
@@ -228,15 +227,16 @@ appreciated. Get in touch.
 SimInf is research software. To cite SimInf in publications, please
 use:
 
-- Widgren S, Bauer P, Eriksson R, Engblom S (2018) SimInf: An R
-  Package for Data-Driven Stochastic Disease Spread Simulations. arXiv
-  preprint arXiv:1605.01421 [q-bio.PE].
-  [(url)](https://arxiv.org/abs/1605.01421)
+- Widgren S, Bauer P, Eriksson R, Engblom S (2019) SimInf: An R
+  Package for Data-Driven Stochastic Disease Spread Simulations.
+  Journal of Statistical Software, 91(12), 1--42. doi:
+  [10.18637/jss.v091.i12](https://doi.org/10.18637/jss.v091.i12)
 
-- Bauer p, Engblom S, Widgren S (2016) Fast event-based
+- Bauer P, Engblom S, Widgren S (2016) Fast event-based
   epidemiological simulations on national scales. International
-  Journal of High Performance Computing Applications 30(4),
-  438--453. [(doi)](https://doi.org/10.1177/1094342016635723)
+  Journal of High Performance Computing Applications, 30(4),
+  438--453. doi:
+  [10.1177/1094342016635723](https://doi.org/10.1177/1094342016635723)
 
 ## Acknowledgments
 

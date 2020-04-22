@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -28,8 +28,43 @@ setClass("SISe", contains = c("SimInf_model"))
 
 ##' Create a SISe model
 ##'
-##' Create a SISe model to be used by the simulation framework.
+##' Create an \sQuote{SISe} model to be used by the simulation
+##' framework.
 ##'
+##' The \sQuote{SISe} model contains two compartments; number of
+##' susceptible (S) and number of infectious (I). Additionally, it
+##' contains an environmental compartment to model shedding of a
+##' pathogen to the environment. Consequently, the model has two state
+##' transitions,
+##'
+##' \deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{
+##' S -- upsilon phi S --> I}
+##'
+##' \deqn{I \stackrel{\gamma I}{\longrightarrow} S}{
+##' I -- gamma I --> S}
+##'
+##' where the transition rate per unit of time from susceptible to
+##' infected is proportional to the concentration of the environmental
+##' contamination \eqn{\varphi}{phi} in each node. Moreover, the
+##' transition rate from infected to susceptible is the recovery rate
+##' \eqn{\gamma}, measured per individual and per unit of
+##' time. Finally, the environmental infectious pressure in each node
+##' is evolved by,
+##'
+##' \deqn{\frac{d\varphi(t)}{dt} = \frac{\alpha I(t)}{N(t)} - \beta(t)
+##' \varphi(t) + \epsilon}{
+##' dphi(t) / dt = alpha I(t) / N(t) - beta(t) phi(t) + epsilon}
+##'
+##' where \eqn{\alpha} is the average shedding rate of the pathogen to
+##' the environment per infected individual and \eqn{N = S + I} the
+##' size of the node. The seasonal decay and removal of the pathogen
+##' is captured by \eqn{\beta(t)}. It is also possible to include a
+##' small background infectious pressure \eqn{\epsilon} to allow for
+##' other indirect sources of environmental contamination. The
+##' environmental infectious pressure \eqn{\varphi(t)}{phi(t)} in each
+##' node is evolved each time unit by the Euler forward method. The
+##' value of \eqn{\varphi(t)}{phi(t)} is saved at the time-points
+##' specified in \code{tspan}.
 ##'
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
@@ -228,8 +263,6 @@ events_SISe <- function() {
 ##' ## individual.
 ##' plot(prevalence(result, I~S+I, "nop"), type = "l")
 u0_SISe <- function() {
-    data("u0_SISe3", package = "SimInf", envir = environment())
-    u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
-    u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
-    u0_SISe3[, c("S", "I")]
+    u0 <- u0_SIR()
+    u0[, c("S", "I")]
 }

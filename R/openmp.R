@@ -31,20 +31,36 @@ have_openmp <- function() {
 
 ##' Specify the number of threads that SimInf should use
 ##'
-##' Set number of threads to be used in SimInf functions that are
-##' parallelized with OpenMP (if available). If OpenMP is available,
-##' SimInf uses the 'omp_get_num_procs()' function and the
-##' environmental variables 'OMP_THREAD_LIMIT', 'OMP_NUM_THREADS', and
-##' 'SIMINF_NUM_THREADS' to determine the maximum number of threads to
-##' use in functions that are parallelized. Additionally, the maximum
-##' number of threads can be controlled by the 'threads' argument.
+##' Set the number of threads to be used in SimInf code that is
+##' parallelized with OpenMP (if available). The number of threads is
+##' initialized when SimInf is first loaded in the R session using
+##' optional envioronment variables (see \sQuote{Details}). It is also
+##' possible to specify the number of threads by calling
+##' \code{set_num_threads}. If the environment variables that affect
+##' the number of threads change, then \code{set_num_threads} must be
+##' called again for it to take effect.
+##'
+##' The \code{omp_get_num_procs()} function is used to determine the
+##' number of processors that are available to the device at the time
+##' the routine is called. The number of threads is then limited by
+##' \code{omp_get_thread_limit()} and the current values of the
+##' environmental variables (if set)
+##'
+##' \itemize{
+##'   \item{\code{Sys.getenv("OMP_THREAD_LIMIT")}}
+##'   \item{\code{Sys.getenv("OMP_NUM_THREADS")}}
+##'   \item{\code{Sys.getenv("SIMINF_NUM_THREADS")}}
+##' }
+##'
+##' Additionally, the maximum number of threads can be controlled by
+##' the \code{threads} argument, given that its value is not above any
+##' of the limits described above.
 ##' @param threads integer with maximum number of threads to use in
 ##'     functions that are parallelized with OpenMP (if
 ##'     available). Default is NULL, i.e. to use all available
 ##'     processors and then check for limits in the environment
-##'     varibles.
-##' @return Integer with the maximum number of threads that will be
-##'     used.
+##'     varibles (see \sQuote{Details}).
+##' @return The previous value is returned (invisible).
 ##' @export
 set_num_threads <- function(threads = NULL) {
     if (!is.null(threads)) {
@@ -62,5 +78,5 @@ set_num_threads <- function(threads = NULL) {
         threads <- as.integer(threads)
     }
 
-    .Call(SimInf_init_threads, threads)
+    invisible(.Call(SimInf_init_threads, threads))
 }

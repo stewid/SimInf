@@ -74,7 +74,7 @@ p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
-    set_num_threads(2)
+    stopifnot(identical(set_num_threads(2), 1L))
     result <- run(model)
     set_num_threads(1)
     result

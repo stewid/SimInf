@@ -206,10 +206,7 @@ events_SEIR <- function() {
 ##' ## Summarize trajectory
 ##' summary(result)
 u0_SEIR <- function() {
-    data("u0_SISe3", package = "SimInf", envir = environment())
-    u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
-    u0_SISe3$E <- 0
-    u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
-    u0_SISe3$R <- 0
-    u0_SISe3[, c("S", "E", "I", "R")]
+    u0 <- u0_SIR()
+    u0$E <- 0
+    u0[, c("S", "E", "I", "R")]
 }

@@ -4,7 +4,9 @@
 \name{events_SISe3}
 \alias{events_SISe3}
 \title{Example data to initialize events for the \sQuote{SISe3} model}
-\format{A \code{data.frame}}
+\format{
+A \code{data.frame}
+}
 \usage{
 data(events_SISe3)
 }
