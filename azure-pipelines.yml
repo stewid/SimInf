@@ -5,7 +5,7 @@ jobs:
 - job: ubuntu_R_3_2
   displayName: "Linux, R-3.2"
   pool:
-    vmImage: "Ubuntu-16.04"
+    vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_2.yml
   - bash: |
@@ -25,7 +25,7 @@ jobs:
 - job: ubuntu_R_3_3
   displayName: "Linux, R-3.3"
   pool:
-    vmImage: "Ubuntu-16.04"
+    vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_3.yml
   - bash: |
@@ -45,7 +45,7 @@ jobs:
 - job: ubuntu_R_3_4
   displayName: "Linux, R-3.4"
   pool:
-    vmImage: "Ubuntu-16.04"
+    vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_4.yml
   - bash: |
