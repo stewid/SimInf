@@ -1,14 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2019  Stefan Engblom
-## Copyright (C) 2015 - 2019  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2020 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -20,10 +23,7 @@
 ##'
 ##' Class to hold data for scheduled events to modify the discrete
 ##' state of individuals in a node at a pre-defined time t.
-##' @section Slots:
-##' \describe{
-##'   \item{E}{
-##'     Each row corresponds to one compartment in the model. The
+##' @slot E Each row corresponds to one compartment in the model. The
 ##'     non-zero entries in a column indicates the compartments to
 ##'     include in an event.  For the \emph{exit}, \emph{internal
 ##'     transfer} and \emph{external transfer} events, a non-zero
@@ -31,73 +31,54 @@
 ##'     For the \emph{enter} event, all individuals enter first
 ##'     non-zero compartment. \code{E} is sparse matrix of class
 ##'     \code{\linkS4class{dgCMatrix}}.
-##'   }
-##'   \item{N}{
-##'      Determines how individuals in \emph{internal transfer} and
-##'      \emph{external transfer} events are shifted to enter another
-##'      compartment.  Each row corresponds to one compartment in the
-##'      model.  The values in a column are added to the current
-##'      compartment of sampled individuals to specify the destination
-##'      compartment, for example, a value of \code{1} in an entry
-##'      means that sampled individuals in this compartment are moved
-##'      to the next compartment.  Which column to use for each event
-##'      is specified by the \code{shift} vector (see below).
-##'      \code{N} is an integer matrix.
-##'   }
-##'   \item{event}{
-##'     Type of event: 0) \emph{exit}, 1) \emph{enter}, 2)
+##' @slot N Determines how individuals in \emph{internal transfer} and
+##'     \emph{external transfer} events are shifted to enter another
+##'     compartment.  Each row corresponds to one compartment in the
+##'     model.  The values in a column are added to the current
+##'     compartment of sampled individuals to specify the destination
+##'     compartment, for example, a value of \code{1} in an entry
+##'     means that sampled individuals in this compartment are moved
+##'     to the next compartment.  Which column to use for each event
+##'     is specified by the \code{shift} vector (see below).  \code{N}
+##'     is an integer matrix.
+##' @slot event Type of event: 0) \emph{exit}, 1) \emph{enter}, 2)
 ##'     \emph{internal transfer}, and 3) \emph{external transfer}.
 ##'     Other values are reserved for future event types and not
 ##'     supported by the current solvers. Integer vector.
-##'   }
-##'   \item{time}{
-##'     Time of when the event occurs i.e., the event is processed
-##'     when time is reached in the simulation.  \code{time} is an
-##'     integer vector.
-##'   }
-##'   \item{node}{
-##'     The node that the event operates on. Also the source node for
-##'     an \emph{external transfer} event.  Integer vector.
+##' @slot time Time of when the event occurs i.e., the event is
+##'     processed when time is reached in the simulation.  \code{time}
+##'     is an integer vector.
+##' @slot node The node that the event operates on. Also the source
+##'     node for an \emph{external transfer} event.  Integer vector.
 ##'     1 <= \code{node[i]} <= Number of nodes.
-##'   }
-##'   \item{dest}{
-##'     The destination node for an \emph{external transfer} event
-##'     i.e., individuals are moved from \code{node} to \code{dest},
-##'     where 1 <= \code{dest[i]} <= Number of nodes.  Set \code{event
-##'     = 0} for the other event types.  \code{dest} is an integer
-##'     vector.
-##'   }
-##'   \item{n}{
-##'     The number of individuals affected by the event. Integer vector.
-##'     n[i] >= 0.
-##'   }
-##'   \item{proportion}{
-##'     If \code{n[i]} equals zero, the number of individuals affected by
-##'     \code{event[i]} is calculated by summing the number of individuls
-##      in the compartments determined by \code{select[i]} and multiplying
-##'     with \code{proportion[i]}. Numeric vector.
-##'     0 <= proportion[i] <= 1.
-##'   }
-##'   \item{select}{
-##'     To process \code{event[i]}, the compartments affected by the
-##'     event are specified with \code{select[i]} together with the
-##'     matrix \code{E}, where \code{select[i]} determines which
+##' @slot dest The destination node for an \emph{external transfer}
+##'     event i.e., individuals are moved from \code{node} to
+##'     \code{dest}, where 1 <= \code{dest[i]} <= Number of nodes.
+##'     Set \code{event = 0} for the other event types.  \code{dest}
+##'     is an integer vector.
+##' @slot n The number of individuals affected by the event. Integer
+##'     vector.  n[i] >= 0.
+##' @slot proportion If \code{n[i]} equals zero, the number of
+##'     individuals affected by \code{event[i]} is calculated by
+##'     summing the number of individuls ## in the compartments
+##'     determined by \code{select[i]} and multiplying with
+##'     \code{proportion[i]}. Numeric vector.  0 <= proportion[i] <=
+##'     1.
+##' @slot select To process \code{event[i]}, the compartments affected
+##'     by the event are specified with \code{select[i]} together with
+##'     the matrix \code{E}, where \code{select[i]} determines which
 ##'     column in \code{E} to use.  The specific individuals affected
 ##'     by the event are proportionally sampled from the compartments
 ##'     corresponding to the non-zero entries in the specified column
 ##'     in \code{E[, select[i]]}, where \code{select} is an integer
 ##'     vector.
-##'   }
-##'   \item{shift}{
-##'     Determines how individuals in \emph{internal transfer} and
-##'     \emph{external transfer} events are shifted to enter another
-##'     compartment.  The sampled individuals are shifted according to
-##'     column \code{shift[i]} in matrix \code{N} i.e., \code{N[,
-##'     shift[i]]}, where \code{shift} is an integer vector.  See
-##'     above for a description of \code{N}. Unsued for the other
+##' @slot shift Determines how individuals in \emph{internal transfer}
+##'     and \emph{external transfer} events are shifted to enter
+##'     another compartment.  The sampled individuals are shifted
+##'     according to column \code{shift[i]} in matrix \code{N} i.e.,
+##'     \code{N[, shift[i]]}, where \code{shift} is an integer vector.
+##'     See above for a description of \code{N}. Unsued for the other
 ##'     event types.
-##'   }
-##' }
 ##' @export
 setClass("SimInf_events",
          slots = c(E          = "dgCMatrix",
@@ -111,9 +92,33 @@ setClass("SimInf_events",
                    select     = "integer",
                    shift      = "integer"))
 
+valid_events <- function(object) {
+    if (!all(object@time > 0))
+        return("time must be greater than 0.")
+
+    if (any(object@event < 0, object@event > 3))
+        return("event must be in the range 0 <= event <= 3.")
+
+    if (any(object@node < 1))
+        return("'node' must be greater or equal to 1.")
+
+    if (any(object@dest[object@event == 3] < 1))
+        return("'dest' must be greater or equal to 1.")
+
+    if (any(object@proportion < 0, object@proportion > 1))
+        return("prop must be in the range 0 <= prop <= 1.")
+
+    if (any(object@select < 1, object@select > dim(object@E)[2]))
+        return("select must be in the range 1 <= select <= Nselect.")
+
+    if (any(object@shift[object@event == 2] < 1))
+        return("'shift' must be greater or equal to 1.")
+
+    character(0)
+}
+
 ## Check if the SimInf_events object is valid.
-valid_SimInf_events_object <- function(object)
-{
+valid_SimInf_events_object <- function(object) {
     ## Check that E and N have identical compartments
     if ((dim(object@E)[1] > 0) && (dim(object@N)[1] > 0)) {
         if (any(is.null(rownames(object@E)), is.null(rownames(object@N))))
@@ -129,36 +134,88 @@ valid_SimInf_events_object <- function(object)
                                    length(object@n),
                                    length(object@proportion),
                                    length(object@select),
-                                   length(object@shift)))) , 1L)) {
+                                   length(object@shift)))), 1L)) {
         return("All scheduled events must have equal length.")
     }
 
-    if (!all(object@time > 0))
-        return("time must be greater than 0")
-
-    if (any(object@event < 0, object@event > 3))
-        return("event must be in the range 0 <= event <= 3")
-
-    if (any(object@node < 1))
-        return("'node' must be greater or equal to 1")
-
-    if (any(object@dest[object@event == 3] < 1))
-        return("'dest' must be greater or equal to 1")
-
-    if (any(object@proportion < 0, object@proportion > 1))
-        return("prop must be in the range 0 <= prop <= 1")
-
-    if (any(object@select < 1, object@select > dim(object@E)[2]))
-        return("select must be in the range 1 <= select <= Nselect")
-
-    if (any(object@shift[object@event == 2] < 1))
-        return("'shift' must be greater or equal to 1")
+    errors <- valid_events(object)
+    if (length(errors))
+        return(errors)
 
     TRUE
 }
 
 ## Assign the function as the validity method for the class.
 setValidity("SimInf_events", valid_SimInf_events_object)
+
+init_E <- function(E, events) {
+    if (is.null(E)) {
+        if (!is.null(events))
+            stop("events is not NULL when E is NULL.", call. = FALSE)
+        E <- new("dgCMatrix")
+    } else if (!is(E, "dgCMatrix")) {
+        E <- as(E, "dgCMatrix")
+    }
+
+    E
+}
+
+init_events <- function(events, t0) {
+    if (is.null(events)) {
+        events <- data.frame(event      = as.integer(),
+                             time       = as.integer(),
+                             node       = as.integer(),
+                             dest       = as.integer(),
+                             n          = as.integer(),
+                             proportion = as.numeric(),
+                             select     = as.integer(),
+                             shift      = as.integer())
+    }
+    if (!is.data.frame(events))
+        stop("events must be a data.frame.", call. = FALSE)
+    if (!all(c("event", "time", "node", "dest",
+               "n", "proportion", "select",
+               "shift") %in% names(events))) {
+        stop("Missing columns in events.", call. = FALSE)
+    }
+
+    ## Do we have to recode the event type as a numerical value
+    if (any(is.character(events$event), is.factor(events$event))) {
+        event_names <- c("enter", "exit", "extTrans", "intTrans")
+        if (!all(events$event %in% event_names)) {
+            stop(paste0("'event' type must be 'enter', 'exit', ",
+                        "'extTrans' or 'intTrans'."),
+                 call. = FALSE)
+        }
+
+        ## Find indices to 'enter', 'internal transfer' and 'external
+        ## transfer' events.
+        i_enter <- which(events$event == "enter")
+        i_intTrans <- which(events$event == "intTrans")
+        i_extTrans <- which(events$event == "extTrans")
+
+        ## Replace the character event type with a numerical value.
+        events$event <- rep(0L, nrow(events))
+        events$event[i_enter] <- 1L
+        events$event[i_intTrans] <- 2L
+        events$event[i_extTrans] <- 3L
+    }
+
+    ## Check time
+    if (nrow(events)) {
+        if (is(events$time, "Date")) {
+            if (is.null(t0))
+                stop("Missing 't0'.", call. = FALSE)
+            if (!all(identical(length(t0), 1L), is.numeric(t0)))
+                stop("Invalid 't0'.", call. = FALSE)
+            events$time <- as.numeric(events$time) - t0
+        } else if (!is.null(t0)) {
+            stop("Invalid 't0'.", call. = FALSE)
+        }
+    }
+
+    events
+}
 
 ##' Create a \code{\linkS4class{SimInf_events}} object
 ##'
@@ -259,95 +316,31 @@ setValidity("SimInf_events", valid_SimInf_events_object)
 SimInf_events <- function(E      = NULL,
                           N      = NULL,
                           events = NULL,
-                          t0     = NULL)
-{
-    ## Check E
-    if (is.null(E)) {
-        if (!is.null(events))
-            stop("events is not NULL when E is NULL")
-        E <- new("dgCMatrix")
-    } else if (!is(E, "dgCMatrix")) {
-        E <- as(E, "dgCMatrix")
-    }
-
-    ## Check N
+                          t0     = NULL) {
+    E <- init_E(E, events)
     N <- check_N(N)
-
-    ## Check events
-    if (is.null(events)) {
-        events <- data.frame(event      = as.integer(),
-                             time       = as.integer(),
-                             node       = as.integer(),
-                             dest       = as.integer(),
-                             n          = as.integer(),
-                             proportion = as.numeric(),
-                             select     = as.integer(),
-                             shift      = as.integer())
-    }
-    if (!is.data.frame(events))
-        stop("events must be a data.frame")
-    if (!all(c("event", "time", "node", "dest",
-               "n", "proportion", "select",
-               "shift") %in% names(events))) {
-        stop("Missing columns in events")
-    }
-
-    ## Do we have to recode the event type as a numerical value
-    if (is.character(events$event) || is.factor(events$event)) {
-        if (!all(events$event %in% c("enter", "exit", "extTrans", "intTrans")))
-            stop("'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'")
-
-        ## Find indices to 'enter', 'internal transfer' and 'external
-        ## transfer' events.
-        i_enter <- which(events$event == "enter")
-        i_intTrans <- which(events$event == "intTrans")
-        i_extTrans <- which(events$event == "extTrans")
-
-        ## Replace the character event type with a numerical value.
-        events$event <- rep(0L, nrow(events))
-        events$event[i_enter] <- 1L
-        events$event[i_intTrans] <- 2L
-        events$event[i_extTrans] <- 3L
-    }
-
-    ## Check time
-    if (nrow(events)) {
-        if (is(events$time, "Date")) {
-            if (is.null(t0))
-                stop("Missing 't0'")
-            if (!all(identical(length(t0), 1L), is.numeric(t0)))
-                stop("Invalid 't0'")
-            events$time <- as.numeric(events$time) - t0
-        } else if (!is.null(t0)) {
-            stop("Invalid 't0'")
-        }
-    }
+    events <- init_events(events, t0)
 
     if (!all(is.numeric(events$event), is.numeric(events$time),
              is.numeric(events$node), is.numeric(events$dest),
              is.numeric(events$n), is.numeric(events$proportion),
              is.numeric(events$select))) {
-        stop("Columns in events must be numeric")
+        stop("Columns in events must be numeric.", call. = FALSE)
     }
 
     if (nrow(events)) {
-        if (!all(is_wholenumber(events$event)))
-            stop("Columns in events must be integer")
-        if (!all(is_wholenumber(events$time)))
-            stop("Columns in events must be integer")
-        if (!all(is_wholenumber(events$node)))
-            stop("Columns in events must be integer")
-        if (!all(is_wholenumber(events$dest)))
-            stop("Columns in events must be integer")
-        if (!all(is_wholenumber(events$n)))
-            stop("Columns in events must be integer")
-        if (!all(is_wholenumber(events$select)))
-            stop("Columns in events must be integer")
-        if (!all(is_wholenumber(events$shift)))
-            stop("Columns in events must be integer")
+        if (any(!all(is_wholenumber(events$event)),
+                !all(is_wholenumber(events$time)),
+                !all(is_wholenumber(events$node)),
+                !all(is_wholenumber(events$dest)),
+                !all(is_wholenumber(events$n)),
+                !all(is_wholenumber(events$select)),
+                !all(is_wholenumber(events$shift)))) {
+            stop("Columns in events must be integer.", call. = FALSE)
+        }
     }
 
-    events <- events[order(events$time, events$event, events$select),]
+    events <- events[order(events$time, events$event, events$select), ]
 
     new("SimInf_events",
         E          = E,
@@ -364,8 +357,7 @@ SimInf_events <- function(E      = NULL,
 
 setAs(from = "SimInf_events",
       to = "data.frame",
-      def = function(from)
-      {
+      def = function(from) {
           data.frame(event = from@event,
                      time = from@time,
                      node = from@node,
@@ -376,6 +368,16 @@ setAs(from = "SimInf_events",
                      shift = from@shift)
       }
 )
+
+##' Coerce to data frame
+##'
+##' @method as.data.frame SimInf_events
+##'
+##' @inheritParams base::as.data.frame
+##' @export
+as.data.frame.SimInf_events <- function(x, ...) {
+    as(x, "data.frame")
+}
 
 ##' Plot scheduled events
 ##'
@@ -389,14 +391,13 @@ setAs(from = "SimInf_events",
 ##' @importFrom graphics mtext
 ##' @noRd
 plot_SimInf_events <- function(x,
-                                  y,
-                                  events = c("Exit",
-                                             "Enter",
-                                             "Internal transfer",
-                                             "External transfer"),
-                                  frame.plot,
-                                  ...)
-{
+                               y,
+                               events = c("Exit",
+                                          "Enter",
+                                          "Internal transfer",
+                                          "External transfer"),
+                               frame.plot,
+                               ...) {
     events <- match.arg(events)
     i <- switch(events,
                 "Exit" = "0",
@@ -436,8 +437,7 @@ plot_SimInf_events <- function(x,
 ##' @importFrom stats xtabs
 setMethod("plot",
           signature(x = "SimInf_events"),
-          function(x, frame.plot = FALSE, ...)
-          {
+          function(x, frame.plot = FALSE, ...) {
               savepar <- par(mfrow = c(2, 2),
                              oma = c(1, 1, 2, 0),
                              mar = c(4, 3, 1, 1))
@@ -464,8 +464,7 @@ setMethod("plot",
 ##' @importFrom methods show
 setMethod("show",
           signature(object = "SimInf_events"),
-          function (object)
-          {
+          function(object) {
               cat(sprintf("Number of scheduled events: %i\n",
                           length(object@event)))
               invisible(object)
@@ -482,57 +481,27 @@ setMethod("show",
 ##' @export
 setMethod("summary",
           signature(object = "SimInf_events"),
-          function(object, ...)
-          {
-              n <- length(object@event)
-              cat(sprintf("Number of scheduled events: %i\n", n))
+          function(object, ...) {
+              cat(sprintf("Number of scheduled events: %i\n",
+                          length(object@event)))
 
-              ## Summarise exit events
-              i <- which(object@event == 0L)
-              if (length(i) > 0) {
-                  cat(sprintf(" - Exit: %i (n: min = %i max = %i avg = %.1f)\n",
-                              length(i),
-                              min(object@n[i]),
-                              max(object@n[i]),
-                              mean(object@n[i])))
-              } else {
-                  cat(" - Exit: 0\n")
-              }
+              for (i in seq_len(4)) {
+                  switch(i,
+                         cat(" - Exit: "),
+                         cat(" - Enter: "),
+                         cat(" - Internal transfer: "),
+                         cat(" - External transfer: "))
 
-              ## Summarise enter events
-              i <- which(object@event == 1L)
-              if (length(i) > 0) {
-                  cat(sprintf(" - Enter: %i (n: min = %i max = %i avg = %.1f)\n",
-                              length(i),
-                              min(object@n[i]),
-                              max(object@n[i]),
-                              mean(object@n[i])))
-              } else {
-                  cat(" - Enter: 0\n")
-              }
-
-              ## Summarise internal transfer events
-              i <- which(object@event == 2L)
-              if (length(i) > 0) {
-                  cat(sprintf(" - Internal transfer: %i (n: min = %i max = %i avg = %.1f)\n",
-                              length(i),
-                              min(object@n[i]),
-                              max(object@n[i]),
-                              mean(object@n[i])))
-              } else {
-                  cat(" - Internal transfer: 0\n")
-              }
-
-              ## Summarise external transfer events
-              i <- which(object@event == 3L)
-              if (length(i) > 0) {
-                  cat(sprintf(" - External transfer: %i (n: min = %i max = %i avg = %.1f)\n",
-                              length(i),
-                              min(object@n[i]),
-                              max(object@n[i]),
-                              mean(object@n[i])))
-              } else {
-                  cat(" - External transfer: 0\n")
+                  j <- which(object@event == (i - 1))
+                  if (length(j) > 0) {
+                      cat(sprintf("%i (n: min = %i max = %i avg = %.1f)\n",
+                                  length(j),
+                                  min(object@n[j]),
+                                  max(object@n[j]),
+                                  mean(object@n[j])))
+                  } else {
+                      cat("0\n")
+                  }
               }
           }
 )
@@ -556,8 +525,7 @@ setMethod("summary",
 ##'
 ##' ## Extract the scheduled events from the model and plot them
 ##' plot(events(model))
-events <- function(model)
-{
+events <- function(model) {
     check_model_argument(model)
     model@events
 }
@@ -578,8 +546,7 @@ events <- function(model)
 ##'
 ##' ## Extract the shift matrix from the model
 ##' shift_matrix(model)
-shift_matrix <- function(model)
-{
+shift_matrix <- function(model) {
     check_model_argument(model)
     model@events@N
 }
@@ -604,8 +571,7 @@ shift_matrix <- function(model)
 ##'
 ##' ## Extract the shift matrix from the model
 ##' shift_matrix(model)
-"shift_matrix<-" <- function(model, value)
-{
+"shift_matrix<-" <- function(model, value) {
     check_model_argument(model)
 
     model@events@N <- check_N(value)
@@ -635,8 +601,7 @@ shift_matrix <- function(model)
 ##'
 ##' ## Extract the select matrix from the model
 ##' select_matrix(model)
-select_matrix <- function(model)
-{
+select_matrix <- function(model) {
     check_model_argument(model)
     model@events@E
 }
@@ -660,15 +625,16 @@ select_matrix <- function(model)
 ##'
 ##' ## Extract the select matrix from the model
 ##' select_matrix(model)
-"select_matrix<-" <- function(model, value)
-{
+"select_matrix<-" <- function(model, value) {
     check_model_argument(model)
 
     if (!is(value, "dgCMatrix"))
         value <- as(value, "dgCMatrix")
 
-    if (!identical(Nc(model), dim(value)[1]))
-        stop("'value' must have one row for each compartment in the model")
+    if (!identical(Nc(model), dim(value)[1])) {
+        stop("'value' must have one row for each compartment in the model.",
+             call. = FALSE)
+    }
 
     dimnames(value) <- list(rownames(model@events@E),
                             as.character(seq_len(dim(value)[2])))

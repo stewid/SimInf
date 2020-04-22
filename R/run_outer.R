@@ -1,13 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -36,15 +40,14 @@
 ##' @export
 ##' @importFrom stats terms
 ##' @examples
-##' \dontrun{
-##' ## Create an SIR-model with 500 nodes of 99 susceptible individuals
+##' ## Create an SIR-model with 100 nodes of 99 susceptible individuals
 ##' ## and one infected individuals.
-##' u0 <- data.frame(S = rep(99, 500), I = rep(1, 500), R = rep(0, 500))
+##' u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
 ##' model <- SIR(u0, 1:75, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Define scaling parameters
-##' x <- seq(from = 0.2, to = 1.8, by = 0.05)
-##' y <- seq(from = 0.2, to = 1.1, by = 0.05)
+##' x <- seq(from = 0.2, to = 1.8, by = 0.1)
+##' y <- seq(from = 0.2, to = 1.1, by = 0.1)
 ##'
 ##' ## Utility function to run the model and estimate the population
 ##' ## prevalence on day 75.
@@ -81,51 +84,57 @@
 ##' ## Plot result
 ##' contour(x * model@gdata["beta"], y * model@gdata["gamma"],
 ##'         nop, method = "edge", bty = "l")
-##' }
-run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...)
-{
+run_outer <- function(x, y, model, formula = NULL, FUN = NULL, ...) {
     ## Check 'x'
     if (missing(x))
-        stop("Missing 'x' argument")
+        stop("Missing 'x' argument.", call. = FALSE)
     if (!is.numeric(x))
-        stop("'x' argument is not numeric")
+        stop("'x' argument is not numeric.", call. = FALSE)
 
     ## Check 'y'
     if (missing(y))
-        stop("Missing 'y' argument")
+        stop("Missing 'y' argument.", call. = FALSE)
     if (!is.numeric(y))
-        stop("'y' argument is not numeric")
+        stop("'y' argument is not numeric.", call. = FALSE)
 
     check_model_argument(model)
 
     if (is.null(names(model@gdata)))
-        stop("'names(model@gdata)' is NULL")
+        stop("'names(model@gdata)' is NULL.", call. = FALSE)
     if (is.null(formula))
-        stop("'formula' argument is NULL")
+        stop("'formula' argument is NULL.", call. = FALSE)
     if (is.null(FUN))
-        stop("'FUN' argument is NULL")
+        stop("'FUN' argument is NULL.", call. = FALSE)
     FUN <- match.fun(FUN)
 
     ## Determine indices to the 'gdata' parameters to scale by 'x'
     xx <- attr(terms(formula, allowDotAsName = TRUE), "term.labels")
     xx <- xx[attr(terms(formula, allowDotAsName = TRUE), "order") == 1]
-    if (length(xx) < 1)
-        stop("Invalid parameters on the right side of the formula")
+    if (length(xx) < 1) {
+        stop("Invalid parameters on the right side of the formula.",
+             call. = FALSE)
+    }
     x_i <- match(xx, names(model@gdata))
-    if (any(is.na(x_i)))
-        stop("Unmatched parameters on the right side of the formula")
+    if (any(is.na(x_i))) {
+        stop("Unmatched parameters on the right side of the formula.",
+             call. = FALSE)
+    }
 
     ## Determine indices to the 'gdata' parameters to scale by 'y'
     yy <- attr(terms(formula, allowDotAsName = TRUE), "response")
-    if (yy < 1)
-        stop("Invalid parameters on the left side of the formula")
+    if (yy < 1) {
+        stop("Invalid parameters on the left side of the formula.",
+             call. = FALSE)
+    }
     vars <- attr(terms(formula, allowDotAsName = TRUE), "variables")[-1]
     yy <- as.character(vars[yy])
     yy <- unlist(strsplit(yy, "+", fixed = TRUE))
-    yy <- sub("^\\s", "", sub("\\s$", "", yy))
+    yy <- trimws(yy)
     y_i <- match(yy, names(model@gdata))
-    if (any(is.na(y_i)))
-        stop("Unmatched parameters on the left hand side of the formula")
+    if (any(is.na(y_i))) {
+        stop("Unmatched parameters on the left hand side of the formula.",
+             call. = FALSE)
+    }
 
     outer(x, y, function(x, y, ...) {
         run_internal <- function(x, y, x_i, y_i, model, ...) {

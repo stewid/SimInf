@@ -1,22 +1,24 @@
 /*
- *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015 Pavol Bauer
- *  Copyright (C) 2017 - 2018 Robin Eriksson
- *  Copyright (C) 2015 - 2018 Stefan Engblom
- *  Copyright (C) 2015 - 2018 Stefan Widgren
+ * This file is part of SimInf, a framework for stochastic
+ * disease spread simulations.
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (C) 2015 Pavol Bauer
+ * Copyright (C) 2017 -- 2019 Robin Eriksson
+ * Copyright (C) 2015 -- 2019 Stefan Engblom
+ * Copyright (C) 2015 -- 2020 Stefan Widgren
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * SimInf is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * SimInf is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <float.h>
@@ -25,11 +27,8 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "SimInf.h"
+#include "SimInf_openmp.h"
 #include "SimInf_solver_aem.h"
 #include "binheap.h"
 
@@ -92,7 +91,7 @@ static int SimInf_solver_aem(
 {
     int k;
 
-    #pragma omp parallel
+    #pragma omp parallel num_threads(SimInf_num_threads())
     {
         int i;
 
@@ -116,7 +115,7 @@ static int SimInf_solver_aem(
                                                         sa.tt);
                     sa.t_rate[node * sa.Nt + j] = rate;
 
-                    if (!isfinite(rate) || rate < 0.0) {
+                    if (!R_FINITE(rate) || rate < 0.0) {
                         SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                             sa.Ni + node, sa.tt, rate, j);
                         sa.error = SIMINF_ERR_INVALID_RATE;
@@ -202,7 +201,7 @@ static int SimInf_solver_aem(
 
                                 sa.t_rate[node * sa.Nt + j] = rate;
 
-                                if (!isfinite(rate) || rate < 0.0) {
+                                if (!R_FINITE(rate) || rate < 0.0) {
                                     SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                         sa.Ni + node, sa.t_time[node],
                                                         rate, j);
@@ -229,7 +228,7 @@ static int SimInf_solver_aem(
                                                sa.t_time[node]);
                         sa.t_rate[node * sa.Nt + j] = rate;
 
-                        if (!isfinite(rate) || rate < 0.0) {
+                        if (!R_FINITE(rate) || rate < 0.0) {
                             SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                 sa.Ni + node, sa.t_time[node],
                                                 rate, j);
@@ -296,7 +295,7 @@ static int SimInf_solver_aem(
 
                             sa.t_rate[node * sa.Nt + j] = rate;
 
-                            if (!isfinite(rate) || rate < 0.0) {
+                            if (!R_FINITE(rate) || rate < 0.0) {
                                 SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                     sa.Ni + node, sa.tt, rate, j);
                                 sa.error = SIMINF_ERR_INVALID_RATE;
@@ -338,7 +337,7 @@ static int SimInf_solver_aem(
                 /* Copy continuous state to V */
                 while (sa.V && sa.V_it < sa.tlen && sa.tt > sa.tspan[sa.V_it])
                     memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.V_it++) + sa.Ni)],
-                           sa.v, sa.Nn * sa.Nd * sizeof(double));
+                           sa.v_new, sa.Nn * sa.Nd * sizeof(double));
 
                 *&model[i] = sa;
                 *&method[i] = ma;
@@ -387,9 +386,10 @@ static void SimInf_aem_arguments_free(
 
             if (m) {
                 /* AEM variables */
-                if(m->rng_vec){
-                    for(int i = 0; i < mod->Nn * mod->Nt; i++)
-                        gsl_rng_free(m->rng_vec[i]);
+                if (m->rng_vec) {
+                    int j;
+                    for (j = 0; j < mod->Nn * mod->Nt; j++)
+                        gsl_rng_free(m->rng_vec[j]);
                 }
                 m->rng_vec = NULL;
                 free(m->reactHeap);

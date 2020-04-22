@@ -1,13 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2018  Stefan Engblom
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -15,18 +19,19 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-library("SimInf")
+library(SimInf)
+library(tools)
+source("util/check.R")
 
 ## For debugging
 sessionInfo()
 
 ## Check missing and invalid model argument
-res <- tools::assertError(package_skeleton())
-stopifnot(length(grep("Missing 'model' argument",
-                      res[[1]]$message)) > 0)
-res <- tools::assertError(package_skeleton(5))
-stopifnot(length(grep("'model' argument is not a 'SimInf_model'",
-                      res[[1]]$message)) > 0)
+res <- assertError(package_skeleton())
+check_error(res, "Missing 'model' argument.")
+
+res <- assertError(package_skeleton(5))
+check_error(res, "'model' argument is not a 'SimInf_model'.")
 
 ## Check missing 'ldata', 'gdata' and 'v0' parameters
 m <- mparse(transitions = "@ -> 1 -> S",
@@ -60,9 +65,8 @@ stopifnot(file.exists(file.path(path, "SIR", "R", "model.R")))
 stopifnot(file.exists(file.path(path, "SIR", "src", "model.c")))
 
 ## Check that it fails if path exists
-res <- tools::assertError(package_skeleton(m, name = "SIR", path = path))
-stopifnot(length(grep("already exists",
-                      res[[1]]$message)) > 0)
+res <- assertError(package_skeleton(m, name = "SIR", path = path))
+check_error(res, "already exists.", FALSE)
 
 ## Cleanup
-unlink(path, recursive=TRUE)
+unlink(path, recursive = TRUE)

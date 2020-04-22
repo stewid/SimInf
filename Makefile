@@ -38,14 +38,14 @@ build: clean
 
 # Check package
 check: build
-	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
+	cd .. && OMP_THREAD_LIMIT=2 _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
         --no-stop-on-test-error --as-cran --run-dontrun $(PKG_TAR)
 
 # Check package (without manual and vignettes)
 check_quick: clean
 	cd .. && R CMD build --no-build-vignettes --no-manual $(PKG_NAME)
-	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-stop-on-test-error \
-        --no-vignettes --no-manual --as-cran $(PKG_TAR)
+	cd .. && OMP_THREAD_LIMIT=2 _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
+        --no-stop-on-test-error --no-vignettes --no-manual --as-cran $(PKG_TAR)
 
 # Build and check package with gctorture
 check_gctorture:
@@ -115,10 +115,24 @@ check_pkg_skeleton:
             -e "stopifnot(identical(result_gdata, result_v0))"
 	R CMD REMOVE pkggdata pkgldata pkgv0
 
+# Build and check package on R-hub
+rhub: clean check
+	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', rhub::platforms()[['name']], show_status = FALSE)"
+
+# Build and use 'rchk' on package on R-hub
+rchk: clean check
+	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', 'ubuntu-rchk', show_status = FALSE)"
+
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)
 valgrind:
 	$(foreach var,$(test_objects),R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < $(var);)
+
+# Run static code analysis on the C code.
+# https://github.com/danmar/cppcheck/
+.PHONY: cppcheck
+cppcheck:
+	cppcheck src
 
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
@@ -127,4 +141,4 @@ configure: configure.ac
 clean:
 	./cleanup
 
-.PHONY: install roxygen pdf build check check_quick check_gctorture check_valgrind check_pkg_skeleton clean vignette
+.PHONY: install roxygen pdf build check check_quick check_gctorture check_valgrind check_pkg_skeleton rhub clean vignette

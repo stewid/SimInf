@@ -1,14 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2019  Stefan Engblom
-## Copyright (C) 2015 - 2019  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2020 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -16,17 +19,14 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Summarise trajectory.
 ##' @importFrom stats quantile
 ##' @noRd
-summary_U <- function(object)
-{
-    cat("Compartments\n")
-    cat("------------\n")
-
+summary_trajectory <- function(object, compartments) {
     if (is_trajectory_empty(object)) {
         cat(" - Empty, please run the model first\n")
     } else {
-        qq <- lapply(rownames(object@S), function(compartment) {
+        qq <- lapply(compartments, function(compartment) {
             x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
             qq <- quantile(x)
             qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
@@ -34,64 +34,54 @@ summary_U <- function(object)
         qq <- do.call("rbind", qq)
         colnames(qq) <- c("Min.", "1st Qu.", "Median",
                           "Mean", "3rd Qu.", "Max.")
-        rownames(qq) <- paste0(" ", rownames(object@S))
+        rownames(qq) <- paste0(" ", compartments)
         print.table(qq, digits = 3)
     }
 }
 
-##' @importFrom stats quantile
-##' @noRd
-summary_V <- function(object)
-{
-    cat("Continuous state variables\n")
-    cat("--------------------------\n")
+summary_U <- function(object) {
+    cat("\n")
+    cat("Compartments\n")
+    cat("------------\n")
+    summary_trajectory(object, rownames(object@S))
+}
 
+summary_V <- function(object) {
     if (Nd(object) > 0) {
-        if (is_trajectory_empty(object)) {
-            cat(" - Empty, please run the model first\n")
-        } else {
-            qq <- lapply(rownames(object@v0), function(compartment) {
-                x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
-                qq <- quantile(x)
-                qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
-            })
-            qq <- do.call("rbind", qq)
-            colnames(qq) <- c("Min.", "1st Qu.", "Median",
-                              "Mean", "3rd Qu.", "Max.")
-            rownames(qq) <- rownames(object@v0)
-            print.table(qq, digits = 3)
-        }
-    } else {
-        cat(" - None\n")
+        cat("\n")
+        cat("Continuous state variables\n")
+        cat("--------------------------\n")
+        summary_trajectory(object, rownames(object@v0))
     }
 }
 
+summary_matrix <- function(x) {
+    qq <- t(apply(x, 1, function(xx) {
+        qq <- quantile(xx)
+        c(qq[1L:3L], mean(xx), qq[4L:5L])
+    }))
+    colnames(qq) <- c("Min.", "1st Qu.", "Median",
+                      "Mean", "3rd Qu.", "Max.")
+    rownames(qq) <- paste0(" ", rownames(x))
+    print.table(qq, digits = 3)
+}
+
+##' Summarise local model parameters
 ##' @importFrom stats quantile
 ##' @noRd
-summary_ldata <- function(object)
-{
-    ## Local model parameters
-    cat("Local data\n")
-    cat("----------\n")
-
-    if (dim(object@ldata)[1] > 0) {
-        qq <- t(apply(object@ldata, 1, function(x) {
-            qq <- quantile(x)
-            c(qq[1L:3L], mean(x), qq[4L:5L])
-        }))
-        colnames(qq) <- c("Min.", "1st Qu.", "Median",
-                          "Mean", "3rd Qu.", "Max.")
-        rownames(qq) <- paste0(" ", rownames(object@ldata))
-        print.table(qq, digits = 3)
-    } else {
-        cat(" - None\n")
+summary_ldata <- function(object) {
+    if (!is.null(rownames(object@ldata))) {
+        cat("\n")
+        cat("Local data\n")
+        cat("----------\n")
+        summary_matrix(object@ldata)
     }
 }
 
+##' Summarise global model parameters
 ##' @noRd
-summary_gdata <- function(object)
-{
-    ## Global model parameters
+summary_gdata <- function(object) {
+    cat("\n")
     cat("Global data\n")
     cat("-----------\n")
 
@@ -105,8 +95,8 @@ summary_gdata <- function(object)
 
 ##' @importFrom stats quantile
 ##' @noRd
-summary_events <- function(object)
-{
+summary_events <- function(object) {
+    cat("\n")
     cat("Scheduled events\n")
     cat("----------------\n")
 
@@ -149,8 +139,7 @@ summary_events <- function(object)
 }
 
 ##' @noRd
-summary_transitions <- function(object)
-{
+summary_transitions <- function(object) {
     cat("Transitions\n")
     cat("-----------\n")
 
@@ -178,35 +167,23 @@ summary_transitions <- function(object)
 ##' model
 ##'
 ##' ## Run the model and save the result
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Brief summary of the result. Note that 'U' and 'V' are
 ##' ## non-empty after running the model.
 ##' result
 setMethod("show",
           signature(object = "SimInf_model"),
-          function (object)
-          {
+          function(object) {
               ## The model name
               cat(sprintf("Model: %s\n", as.character(class(object))))
               cat(sprintf("Number of nodes: %i\n", Nn(object)))
               cat(sprintf("Number of transitions: %i\n", Nt(object)))
               show(object@events)
 
-              cat("\n")
               summary_gdata(object)
-
-              if (!is.null(rownames(object@ldata))) {
-                  cat("\n")
-                  summary_ldata(object)
-              }
-
-              if (Nd(object) > 0) {
-                  cat("\n")
-                  summary_V(object)
-              }
-
-              cat("\n")
+              summary_ldata(object)
+              summary_V(object)
               summary_U(object)
 
               invisible(object)
@@ -222,8 +199,7 @@ setMethod("show",
 ##' @export
 setMethod("summary",
           signature(object = "SimInf_model"),
-          function(object, ...)
-          {
+          function(object, ...) {
               ## The model name
               cat(sprintf("Model: %s\n", as.character(class(object))))
 
@@ -231,24 +207,12 @@ setMethod("summary",
               cat(sprintf("Number of nodes: %i\n\n", Nn(object)))
 
               summary_transitions(object)
-
-              cat("\n")
               summary_gdata(object)
-
-              if (!is.null(rownames(object@ldata))) {
-                  cat("\n")
-                  summary_ldata(object)
-              }
-
-              cat("\n")
+              summary_ldata(object)
               summary_events(object)
-
-              if (Nd(object) > 0) {
-                  cat("\n")
-                  summary_V(object)
-              }
-
-              cat("\n")
+              summary_V(object)
               summary_U(object)
+
+              invisible(NULL)
           }
 )

@@ -10,7 +10,7 @@ SIR(u0, tspan, events = NULL, beta = NULL, gamma = NULL)
 \item{u0}{A \code{data.frame} with the initial state in each node
 (see \sQuote{Details}).}
 
-\item{tspan}{A vector (length >= 2) of increasing time points
+\item{tspan}{A vector (length >= 1) of increasing time points
 where the state of each node is to be returned. Can be either
 an \code{integer} or a \code{Date} vector. A \code{Date}
 vector is coerced to a numeric vector as days, where
@@ -36,7 +36,8 @@ framework.
 The \acronym{SIR} model contains three compartments; number of
 susceptible (S), number of infectious (I), and number of
 recovered (R).  Moreover, it has two state transitions,
-\deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{S -- beta S I / N --> I}
+\deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
+  S -- beta S I / N --> I}
 \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
 recovery rate, and \eqn{N=S+I+R}.

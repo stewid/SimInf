@@ -4,9 +4,21 @@
 \alias{SimInf_model}
 \title{Create a \code{SimInf_model}}
 \usage{
-SimInf_model(G, S, tspan, events = NULL, ldata = NULL, gdata = NULL,
-  U = NULL, u0 = NULL, v0 = NULL, V = NULL, E = NULL, N = NULL,
-  C_code = NULL)
+SimInf_model(
+  G,
+  S,
+  tspan,
+  events = NULL,
+  ldata = NULL,
+  gdata = NULL,
+  U = NULL,
+  u0 = NULL,
+  v0 = NULL,
+  V = NULL,
+  E = NULL,
+  N = NULL,
+  C_code = NULL
+)
 }
 \arguments{
 \item{G}{Dependency graph that indicates the transition rates that
@@ -22,7 +34,7 @@ to the state vector of the node where the state transition
 occurred.  Sparse matrix (\eqn{Nc \times Nt}) of object class
 \code{\linkS4class{dgCMatrix}}.}
 
-\item{tspan}{A vector (length >= 2) of increasing time points
+\item{tspan}{A vector (length >= 1) of increasing time points
 where the state of each node is to be returned. Can be either
 an \code{integer} or a \code{Date} vector. A \code{Date}
 vector is coerced to a numeric vector as days, where
@@ -32,10 +44,12 @@ vector.}
 
 \item{events}{A \code{data.frame} with the scheduled events.}
 
-\item{ldata}{A matrix with local data for the nodes. The column
-\code{ldata[, j]} contains the local data vector for the node
-\code{j}. The local data vector is passed as an argument to
-the transition rate functions and the post time step function.}
+\item{ldata}{local data for the nodes. Can either be specified as
+a \code{data.frame} with one row per node. Or as a matrix
+where each column \code{ldata[, j]} contains the local data
+vector for the node \code{j}. The local data vector is passed
+as an argument to the transition rate functions and the post
+time step function.}
 
 \item{gdata}{A numeric vector with global data that is common to
 all nodes. The global data vector is passed as an argument to

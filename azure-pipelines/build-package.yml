@@ -1,0 +1,7 @@
+# This builds the package. The package is checked out to the 's' folder,
+# and that is why we can use 's' and not the name of the package.
+steps:
+- bash: |
+    cd ..
+    R CMD build --compact-vignettes=both s
+  displayName: 'Build package'

@@ -1,22 +1,24 @@
 /*
- *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015 Pavol Bauer
- *  Copyright (C) 2017 - 2018 Robin Eriksson
- *  Copyright (C) 2015 - 2018 Stefan Engblom
- *  Copyright (C) 2015 - 2018 Stefan Widgren
+ * This file is part of SimInf, a framework for stochastic
+ * disease spread simulations.
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (C) 2015 Pavol Bauer
+ * Copyright (C) 2017 -- 2019 Robin Eriksson
+ * Copyright (C) 2015 -- 2019 Stefan Engblom
+ * Copyright (C) 2015 -- 2020 Stefan Widgren
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * SimInf is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * SimInf is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <string.h>
@@ -24,11 +26,8 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "SimInf.h"
+#include "SimInf_openmp.h"
 #include "SimInf_solver_ssm.h"
 
 /**
@@ -43,7 +42,7 @@ static int SimInf_solver_ssm(
     int Nthread = model->Nthread;
     int k;
 
-    #pragma omp parallel
+    #pragma omp parallel num_threads(SimInf_num_threads())
     {
         int i;
 
@@ -67,7 +66,7 @@ static int SimInf_solver_ssm(
 
                     m.t_rate[node * m.Nt + j] = rate;
                     m.sum_t_rate[node] += rate;
-                    if (!isfinite(rate) || rate < 0.0) {
+                    if (!R_FINITE(rate) || rate < 0.0) {
                         SimInf_print_status(m.Nc, &m.u[node * m.Nc],
                                             m.Ni + node, m.tt, rate, j);
                         m.error = SIMINF_ERR_INVALID_RATE;
@@ -88,7 +87,7 @@ static int SimInf_solver_ssm(
 
     /* Main loop. */
     for (;;) {
-        #pragma omp parallel
+        #pragma omp parallel num_threads(SimInf_num_threads())
         {
             int i;
 
@@ -167,7 +166,7 @@ static int SimInf_solver_ssm(
 
                             m.t_rate[node * m.Nt + m.irG[j]] = rate;
                             delta += rate - old;
-                            if (!isfinite(rate) || rate < 0.0) {
+                            if (!R_FINITE(rate) || rate < 0.0) {
                                 SimInf_print_status(m.Nc, &m.u[node * m.Nc],
                                                     m.Ni + node, m.t_time[node],
                                                     rate, m.irG[j]);
@@ -226,7 +225,7 @@ static int SimInf_solver_ssm(
 
                             m.t_rate[node * m.Nt + j] = rate;
                             delta += rate - old;
-                            if (!isfinite(rate) || rate < 0.0) {
+                            if (!R_FINITE(rate) || rate < 0.0) {
                                 SimInf_print_status(m.Nc, &m.u[node * m.Nc],
                                                     m.Ni + node, m.tt, rate, j);
                                 m.error = SIMINF_ERR_INVALID_RATE;
@@ -258,7 +257,7 @@ static int SimInf_solver_ssm(
                 /* Copy continuous state to V */
                 while (m.V && m.V_it < m.tlen && m.tt > m.tspan[m.V_it])
                     memcpy(&m.V[m.Nd * ((m.Ntot * m.V_it++) + m.Ni)],
-                           m.v, m.Nn * m.Nd * sizeof(double));
+                           m.v_new, m.Nn * m.Nd * sizeof(double));
 
                 *&model[i] = m;
             }

@@ -1,13 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -40,14 +44,13 @@
 ##'
 ##' ## View the first 10 rows and columns in the distance matrix
 ##' d[1:10, 1:10]
-distance_matrix <- function(x, y, cutoff, min_dist = NULL)
-{
+distance_matrix <- function(x, y, cutoff, min_dist = NULL) {
     if (!is.null(min_dist)) {
         if (any(!is.numeric(min_dist),
                 !identical(length(min_dist), 1L),
-                min_dist[1] <= 0))
-        {
-            stop("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
+                min_dist[1] <= 0)) {
+            stop("Invalid 'min_dist' argument. Please provide 'min_dist' > 0.",
+                 call. = FALSE)
         }
     }
 
@@ -58,7 +61,7 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL)
         y1 <- y0[i]
 
         ## Calculate euclidian distance
-        d <- sqrt((x0 - x1)^2 + (y0 - y1)^2)
+        d <- sqrt(((x0 - x1) ^ 2) + ((y0 - y1) ^ 2))
 
         ## Determine which indices are closer than cutoff
         row_ind <- which(d < cutoff)
@@ -69,8 +72,11 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL)
         d <- d[row_ind]
 
         if (any(d == 0)) {
-            if (is.null(min_dist))
-                stop("Identical coordinates. Please provide a minimum distance.")
+            if (is.null(min_dist)) {
+                stop(paste0("Identical coordinates. ",
+                            "Please provide a minimum distance."),
+                     call. = FALSE)
+            }
             d <- pmax(d, min_dist)
         }
 
@@ -84,7 +90,9 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL)
     ## Create vectors for all distances, row indices and column indices.
     d <- as.numeric(unlist(lapply(m, "[[", "d")))
     row_ind <- as.integer(unlist(lapply(m, "[[", "row_ind")))
-    col_ind <- c(0L, cumsum(vapply(m, function(x) {length(x$row_ind)}, integer(1))))
+    col_ind <- c(0L, cumsum(vapply(m, function(x) {
+        length(x$row_ind)
+    }, integer(1))))
 
     ## Create a new sparse matrix
     new("dgCMatrix", x = d, i = row_ind, p = col_ind, Dim = rep(length(x), 2))

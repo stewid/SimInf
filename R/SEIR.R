@@ -1,12 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -32,7 +37,8 @@ setClass("SEIR", contains = c("SimInf_model"))
 ##' and number of recovered (R).  Moreover, it has three state
 ##' transitions,
 ##'
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{S -- beta S I / N --> E}
+##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{
+##'   S -- beta S I / N --> E}
 ##' \deqn{E \stackrel{\epsilon E}{\longrightarrow} I}{E -- epsilon E --> I}
 ##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 ##'
@@ -75,8 +81,7 @@ SEIR <- function(u0,
                  events  = NULL,
                  beta    = NULL,
                  epsilon = NULL,
-                 gamma   = NULL)
-{
+                 gamma   = NULL) {
     compartments <- c("S", "E", "I", "R")
 
     ## Check arguments.
@@ -153,14 +158,13 @@ SEIR <- function(u0,
 ##' plot(events(model))
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' plot(result)
 ##'
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
 ##' summary(result)
-events_SEIR <- function()
-{
+events_SEIR <- function() {
     data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 2
     events_SISe3$select[events_SISe3$event == "enter"] <- 1
@@ -196,17 +200,13 @@ events_SEIR <- function()
 ##'               gamma   = 0.01)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' plot(result)
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
-u0_SEIR <- function()
-{
-    data("u0_SISe3", package = "SimInf", envir = environment())
-    u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
-    u0_SISe3$E <- 0
-    u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
-    u0_SISe3$R <- 0
-    u0_SISe3[, c("S", "E", "I", "R")]
+u0_SEIR <- function() {
+    u0 <- u0_SIR()
+    u0$E <- 0
+    u0[, c("S", "E", "I", "R")]
 }

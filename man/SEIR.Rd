@@ -4,14 +4,13 @@
 \alias{SEIR}
 \title{Create an \acronym{SEIR} model}
 \usage{
-SEIR(u0, tspan, events = NULL, beta = NULL, epsilon = NULL,
-  gamma = NULL)
+SEIR(u0, tspan, events = NULL, beta = NULL, epsilon = NULL, gamma = NULL)
 }
 \arguments{
 \item{u0}{A \code{data.frame} with the initial state in each node
 (see \sQuote{Details}).}
 
-\item{tspan}{A vector (length >= 2) of increasing time points
+\item{tspan}{A vector (length >= 1) of increasing time points
 where the state of each node is to be returned. Can be either
 an \code{integer} or a \code{Date} vector. A \code{Date}
 vector is coerced to a numeric vector as days, where
@@ -42,7 +41,8 @@ infected but are not yet infectious), number of infectious (I),
 and number of recovered (R).  Moreover, it has three state
 transitions,
 
-\deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{S -- beta S I / N --> E}
+\deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{
+  S -- beta S I / N --> E}
 \deqn{E \stackrel{\epsilon E}{\longrightarrow} I}{E -- epsilon E --> I}
 \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 

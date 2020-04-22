@@ -11,7 +11,8 @@ Class to handle the \acronym{SIR} \code{\link{SimInf_model}}.
 The \acronym{SIR} model contains three compartments; number of
 susceptible (S), number of infectious (I), and number of
 recovered (R).  Moreover, it has two state transitions,
-\deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{S -- beta S I / N --> I}
+\deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
+  S -- beta S I / N --> I}
 \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
 recovery rate, and \eqn{N=S+I}.

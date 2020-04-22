@@ -1,12 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2018  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -14,123 +19,115 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-library("SimInf")
+library(SimInf)
+library(tools)
+source("util/check.R")
+
+## Specify the number of threads to use.
+set_num_threads(1)
 
 ## For debugging
 sessionInfo()
 
 ## Check invalid u0
-res <- tools::assertError(SEIR(u0 = "u0"))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+res <- assertError(SEIR(u0 = "u0"))
+check_error(res, "Missing columns in u0.")
 
-u0 <- structure(list(S  = c(0, 1, 2, 3, 4, 5),
-                     E  = c(0, 0, 0, 0, 0, 0),
-                     I  = c(0, 0, 0, 0, 0, 0),
-                     R  = c(0, 0, 0, 0, 0, 0)),
-                .Names = c("S", "E", "I", "R"),
-                row.names = c(NA, -6L), class = "data.frame")
+u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
+                 E  = c(0, 0, 0, 0, 0, 0),
+                 I  = c(0, 0, 0, 0, 0, 0),
+                 R  = c(0, 0, 0, 0, 0, 0))
 
 ## Check missing columns in u0
-res <- tools::assertError(SEIR(u0 = u0[, c("E", "I", "R"), drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
-res <- tools::assertError(SEIR(u0 = u0[, c("S", "I", "R"), drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
-res <- tools::assertError(SEIR(u0 = u0[, c("S", "E", "R"), drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
-res <- tools::assertError(SEIR(u0 = u0[, c("S", "E", "I"), drop = FALSE]))
-stopifnot(length(grep("Missing columns in u0",
-                      res[[1]]$message)) > 0)
+res <- assertError(SEIR(u0 = u0[, c("E", "I", "R"), drop = FALSE]))
+check_error(res, "Missing columns in u0.")
+
+res <- assertError(SEIR(u0 = u0[, c("S", "I", "R"), drop = FALSE]))
+check_error(res, "Missing columns in u0.")
+
+res <- assertError(SEIR(u0 = u0[, c("S", "E", "R"), drop = FALSE]))
+check_error(res, "Missing columns in u0.")
+
+res <- assertError(SEIR(u0 = u0[, c("S", "E", "I"), drop = FALSE]))
+check_error(res, "Missing columns in u0.")
 
 ## Check missing beta
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                epsilon = 0.5,
                                gamma   = 0.5))
-stopifnot(length(grep("'beta' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check missing epsilon
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
                                gamma   = 0.5))
-stopifnot(length(grep("'epsilon' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check missing gamma
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
                                epsilon = 0.5))
-stopifnot(length(grep("'gamma' is missing",
-                      res[[1]]$message)) > 0)
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check non-numeric beta
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = "0.5",
                                epsilon = 0.3,
                                gamma   = 0.1))
-stopifnot(length(grep("'beta' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check non-numeric epsilon
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
                                epsilon = "0.3",
                                gamma   = 0.1))
-stopifnot(length(grep("'epsilon' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check non-numeric gamma
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
                                epsilon = 0.3,
                                gamma   = "0.1"))
-stopifnot(length(grep("'gamma' must be numeric",
-                      res[[1]]$message)) > 0)
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check that length of beta equals 1
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = c(0.5, 0.5),
                                epsilon = 0.3,
                                gamma   = 0.1))
-stopifnot(length(grep("'beta' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'beta' must be numeric of length 1.")
 
 ## Check that length of epsilon equals 1
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
                                epsilon = c(0.3, 0.3),
                                gamma   = 0.1))
-stopifnot(length(grep("'epsilon' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'epsilon' must be numeric of length 1.")
 
 ## Check that length of gamma equals 1
-res <- tools::assertError(SEIR(u0      = u0,
+res <- assertError(SEIR(u0      = u0,
                                tspan   = seq_len(10) - 1,
                                events  = NULL,
                                beta    = 0.5,
                                epsilon = 0.3,
                                gamma   = c(0.1, 0.1)))
-stopifnot(length(grep("'gamma' must be of length 1",
-                      res[[1]]$message)) > 0)
+check_error(res, "'gamma' must be numeric of length 1.")
 
 ## Check extraction of data from 'suscpetible', 'infected' and
 ## 'recovered' compartments
@@ -141,17 +138,14 @@ model <- SEIR(u0      = u0,
               epsilon = 0,
               gamma   = 0)
 
-result <- run(model, threads = 1)
+result <- run(model)
 
 S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L,
                           2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L,
                           3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-                        .Dim = c(6L, 10L),
-                        .Dimnames = list(c("S", "S", "S", "S", "S", "S"),
-                                         c("0", "1", "2", "3", "4", "5",
-                                           "6", "7", "8", "9")))
+                        .Dim = c(6L, 10L))
 
 S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
 stopifnot(identical(S_observed, S_expected))
@@ -161,10 +155,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L),
-                        .Dimnames = list(c("I", "I", "I", "I", "I", "I"),
-                                         c("0", "1", "2", "3", "4", "5",
-                                           "6", "7", "8", "9")))
+                        .Dim = c(6L, 10L))
 
 I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
 stopifnot(identical(I_observed, I_expected))
@@ -174,15 +165,12 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L),
-                        .Dimnames = list(c("R", "R", "R", "R", "R", "R"),
-                                         c("0", "1", "2", "3", "4", "5",
-                                           "6", "7", "8", "9")))
+                        .Dim = c(6L, 10L))
 
 R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
-R_expected <- structure(list(
+R_expected <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
              3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
@@ -196,54 +184,41 @@ R_expected <- structure(list(
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
-          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
-    .Names = c("node",  "time", "R"),
-    class = "data.frame", row.names = c(NA, -60L))
+          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
 R_observed <- trajectory(result, compartments = "R")
 stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first node after
 ## each time step in the simulation
-R_expected <- structure(list(
+R_expected <- data.frame(
     node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
     time = 0:9L,
-    R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
-    .Names = c("node", "time", "R"),
-    row.names = c(NA, -10L),
-    class = "data.frame")
+    R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
 R_observed <- trajectory(result, compartments = "R", node = 1)
 stopifnot(identical(R_observed, R_expected))
 
-R_expected <-structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                       .Dim = c(1L, 10L),
-                       .Dimnames = list(c("R"),
-                                        c("0", "1", "2", "3", "4", "5",
-                                          "6", "7", "8", "9")))
+R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+                       .Dim = c(1L, 10L))
 R_observed <- trajectory(result, compartments = "R", node = 1, as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first and third
 ## node after each time step in the simulation
-R_expected <- structure(list(
+R_expected <- data.frame(
     node = c(1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L,
              1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L),
     time = c(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L,
              5L, 5L, 6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L),
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
-          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)),
-    .Names = c("node", "time", "R"),
-    row.names = c(NA, -20L),
-    class = "data.frame")
+          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
 R_observed <- trajectory(result, compartments = "R", node = c(1, 3))
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(2L, 10L),
-                        .Dimnames = list(c("R", "R"),
-                                         c("0", "1", "2", "3", "4", "5",
-                                           "6", "7", "8", "9")))
-R_observed <- trajectory(result, compartments = "R", node = c(1, 3), as.is = TRUE)
+                        .Dim = c(2L, 10L))
+R_observed <- trajectory(result, compartments = "R", node = c(1, 3),
+                         as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
 ## A more complex test to extract data from U from a trajectory of 6
@@ -268,14 +243,16 @@ model@events@E <- as(diag(4), "dgCMatrix")
 model@events@select <- rep(1:4, length.out = length(model@events@select))
 
 # Check that this fails because rownames (compartments) are missing
-res <- tools::assertError(run(model, threads = 1))
-stopifnot(length(grep("'S' and 'E' must have rownames matching the compartments.",
-                      res[[1]]$message)) > 0)
+res <- assertError(run(model))
+check_error(
+    res,
+    "'S' and 'E' must have rownames matching the compartments.",
+    FALSE)
 
 rownames(model@events@E) <- c("S", "E", "I", "R")
-result <- run(model, threads = 1)
+result <- run(model)
 
-U_expected <- structure(list(
+U_expected <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
              5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
              3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
@@ -311,25 +288,21 @@ U_expected <- structure(list(
           644L, 145L, 245L, 345L, 445L, 545L, 645L, 146L, 246L, 346L,
           446L, 546L, 646L, 147L, 247L, 347L, 447L, 547L, 647L, 148L,
           248L, 348L, 448L, 548L, 648L, 149L, 249L, 349L, 449L, 549L,
-          649L)),
-    .Names = c("node", "time", "S", "E", "I", "R"),
-    row.names = c(NA, -60L),
-    class = "data.frame")
+          649L))
 
 U_observed <- trajectory(result)
 stopifnot(identical(U_observed, U_expected))
-U_observed <- trajectory(result, compartments = c("S", "E", "I", "R"), node = 1:6)
+U_observed <- trajectory(result, compartments = c("S", "E", "I", "R"),
+                         node = 1:6)
 stopifnot(identical(U_observed, U_expected))
 
-U_expected <- structure(list(
+U_expected <- data.frame(
     node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
-    time = 0:9, S = 110:119, I = 130:139),
-    .Names = c("node", "time", "S", "I"),
-    row.names = c(NA, -10L), class = "data.frame")
+    time = 0:9, S = 110:119, I = 130:139)
 U_observed <- trajectory(result, compartments = c("S", "I"), node = 1)
 stopifnot(identical(U_observed, U_expected))
 
-U_expected <-structure(list(
+U_expected <- data.frame(
     node = c(2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L,
              2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L),
     time = c(0L, 0L, 1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L,
@@ -337,9 +310,7 @@ U_expected <-structure(list(
     E = c(220L, 420L, 221L, 421L, 222L, 422L, 223L, 423L, 224L, 424L,
           225L, 425L, 226L, 426L, 227L, 427L, 228L, 428L, 229L, 429L),
     R = c(240L, 440L, 241L, 441L, 242L, 442L, 243L, 443L, 244L, 444L,
-          245L, 445L, 246L, 446L, 247L, 447L, 248L, 448L, 249L, 449L)),
-    .Names = c("node", "time", "E", "R"), row.names = c(NA, -20L),
-    class = "data.frame")
+          245L, 445L, 246L, 446L, 247L, 447L, 248L, 448L, 249L, 449L))
 U_observed <- trajectory(result, compartments = c("E", "R"), node = c(2, 4))
 stopifnot(identical(U_observed, U_expected))
 
@@ -348,27 +319,23 @@ U_expected <- structure(
       242L, 422L, 442L, 223L, 243L, 423L, 443L, 224L, 244L, 424L, 444L,
       225L, 245L, 425L, 445L, 226L, 246L, 426L, 446L, 227L, 247L, 427L,
       447L, 228L, 248L, 428L, 448L, 229L, 249L, 429L, 449L),
-    .Dim = c(4L, 10L),
-    .Dimnames = list(c("E", "R", "E", "R"),
-                     c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")))
-U_observed <- trajectory(result, compartments = c("E", "R"), node = c(2, 4), as.is = TRUE)
+    .Dim = c(4L, 10L))
+U_observed <- trajectory(result, compartments = c("E", "R"),
+                         node = c(2, 4), as.is = TRUE)
 stopifnot(identical(U_observed, U_expected))
 
 ## Check prevalence
 
 ## Define a tolerance
-tol = 1e-8
+tol <- 1e-8
 
-p_expected <- structure(list(
+p_expected <- data.frame(
     time = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
     prevalence = c(0.253333333333333, 0.253324468085106, 0.253315649867374,
                    0.253306878306878, 0.253298153034301, 0.253289473684211,
                    0.253280839895013, 0.253272251308901, 0.253263707571802,
-                   0.253255208333333)),
-    .Names = c("time", "prevalence"),
-    row.names = c(NA, -10L),
-    class = "data.frame")
-p_observed <- prevalence(result, I~S+E+I+R)
+                   0.253255208333333))
+p_observed <- prevalence(result, I ~ S + E + I + R)
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 p_observed <- prevalence(result, I~.)
@@ -381,85 +348,96 @@ p_expected <- structure(
     .Names = c("time", "prevalence"),
     row.names = c(NA, -10L),
     class = "data.frame")
-p_observed <- prevalence(result, I~S+E+I+R, type = "nop")
+p_observed <- prevalence(result, I ~ S + E + I + R, type = "nop")
 stopifnot(identical(p_observed, p_expected))
-p_observed <- prevalence(result, I~., type = "nop")
+p_observed <- prevalence(result, I ~ ., type = "nop")
 stopifnot(identical(p_observed, p_expected))
 
-p_expected <- structure(
-    list(node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
-                  5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
-                  3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
-                  1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
-                  5L, 6L),
-         time = c(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2,
-                  2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5,
-                  6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9,
-                  9, 9, 9),
-         prevalence = c(0.26, 0.255555555555556, 0.253846153846154,
-                        0.252941176470588, 0.252380952380952, 0.252, 0.259920634920635,
-                        0.255530973451327, 0.253834355828221, 0.252934272300469, 0.252376425855513,
-                        0.251996805111821, 0.259842519685039, 0.255506607929515, 0.253822629969419,
-                        0.252927400468384, 0.252371916508539, 0.251993620414673, 0.259765625,
-                        0.255482456140351, 0.253810975609756, 0.252920560747664, 0.252367424242424,
-                        0.251990445859873, 0.25968992248062, 0.255458515283843, 0.253799392097264,
-                        0.252913752913753, 0.252362948960302, 0.251987281399046, 0.259615384615385,
-                        0.255434782608696, 0.253787878787879, 0.252906976744186, 0.252358490566038,
-                        0.251984126984127, 0.259541984732824, 0.255411255411255, 0.253776435045317,
-                        0.252900232018561, 0.252354048964218, 0.251980982567353, 0.259469696969697,
-                        0.255387931034483, 0.253765060240964, 0.252893518518519, 0.25234962406015,
-                        0.251977848101266, 0.259398496240602, 0.255364806866953, 0.253753753753754,
-                        0.252886836027714, 0.25234521575985, 0.251974723538705, 0.259328358208955,
-                        0.25534188034188, 0.25374251497006, 0.252880184331797, 0.252340823970037,
-                        0.251971608832808)),
-    .Names = c("node", "time", "prevalence"),
-    row.names = c(NA, -60L),
-    class = "data.frame")
-p_observed <- prevalence(result, I~., type = "wnp")
+p_expected <- data.frame(
+    node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
+             5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L,
+             3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L,
+             1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L),
+    time = c(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3,
+             3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6,
+             7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9),
+    prevalence = c(0.26, 0.255555555555556, 0.253846153846154,
+                   0.252941176470588, 0.252380952380952, 0.252,
+                   0.259920634920635, 0.255530973451327, 0.253834355828221,
+                   0.252934272300469, 0.252376425855513, 0.251996805111821,
+                   0.259842519685039, 0.255506607929515, 0.253822629969419,
+                   0.252927400468384, 0.252371916508539, 0.251993620414673,
+                   0.259765625, 0.255482456140351, 0.253810975609756,
+                   0.252920560747664, 0.252367424242424, 0.251990445859873,
+                   0.25968992248062, 0.255458515283843, 0.253799392097264,
+                   0.252913752913753, 0.252362948960302, 0.251987281399046,
+                   0.259615384615385, 0.255434782608696, 0.253787878787879,
+                   0.252906976744186, 0.252358490566038, 0.251984126984127,
+                   0.259541984732824, 0.255411255411255, 0.253776435045317,
+                   0.252900232018561, 0.252354048964218, 0.251980982567353,
+                   0.259469696969697, 0.255387931034483, 0.253765060240964,
+                   0.252893518518519, 0.25234962406015, 0.251977848101266,
+                   0.259398496240602, 0.255364806866953, 0.253753753753754,
+                   0.252886836027714, 0.25234521575985, 0.251974723538705,
+                   0.259328358208955, 0.25534188034188, 0.25374251497006,
+                   0.252880184331797, 0.252340823970037, 0.251971608832808))
+p_observed <- prevalence(result, I ~ ., type = "wnp")
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I~S+E+I+R, type = "wnp")
+p_observed <- prevalence(result, I ~ S + E + I + R, type = "wnp")
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 
-p_expected <- structure(
-    list(node = c(2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L,
-                  2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L),
-         time = c(0, 0, 1, 1,
-                  2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9),
-         prevalence = c(0.255555555555556,
-                        0.253846153846154, 0.255530973451327, 0.253834355828221, 0.255506607929515,
-                        0.253822629969419, 0.255482456140351, 0.253810975609756, 0.255458515283843,
-                        0.253799392097264, 0.255434782608696, 0.253787878787879, 0.255411255411255,
-                        0.253776435045317, 0.255387931034483, 0.253765060240964, 0.255364806866953,
-                        0.253753753753754, 0.25534188034188, 0.25374251497006)),
-    .Names = c("node", "time", "prevalence"),
-    row.names = c(NA, -20L),
-    class = "data.frame")
+p_expected <- data.frame(
+    node = c(2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L, 2L, 3L,
+             2L, 3L, 2L, 3L),
+    time = c(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9),
+    prevalence = c(0.255555555555556, 0.253846153846154, 0.255530973451327,
+                   0.253834355828221, 0.255506607929515, 0.253822629969419,
+                   0.255482456140351, 0.253810975609756, 0.255458515283843,
+                   0.253799392097264, 0.255434782608696, 0.253787878787879,
+                   0.255411255411255, 0.253776435045317, 0.255387931034483,
+                   0.253765060240964, 0.255364806866953, 0.253753753753754,
+                   0.25534188034188, 0.25374251497006))
 p_observed <- prevalence(result, I~., type = "wnp", node = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I~S+E+I+R, type = "wnp", node = 2:3)
+p_observed <- prevalence(result, I ~ S + E + I + R, type = "wnp", node = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 
 ## Check 'V'
-res <- tools::assertError(trajectory(result, "phi"))
-stopifnot(length(grep("Non-existing compartment[(]s[)] in model: 'phi'",
-                      res[[1]]$message)) > 0)
+res <- assertError(trajectory(result, "phi"))
+check_error(res, "Non-existing compartment(s) in model: 'phi'.")
 
 ## Check data
 stopifnot(identical(nrow(events_SEIR()), 466692L))
 stopifnot(identical(nrow(u0_SEIR()), 1600L))
 
+## Try to plot non-extisting compartment.
+res <- assertError(plot(result, compartments = "X"))
+check_error(res, "'compartments' must exist in the model.")
+
+## Try to plot with invalid range argument.
+res <- assertError(plot(result, range = 1.2))
+check_error(res, "'range' must be FALSE or a value between 0 and 1.")
+
 ## Check SEIR plot method
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
 plot(result)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
+## Check SEIR plot method with range = FALSE
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+plot(result, compartments = "S", lty = 1, range = FALSE)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
@@ -509,13 +487,11 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SEIR run function fails for a misspecified SEIR model
-res <- tools::assertError(.Call("SEIR_run", NULL, NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid model.",
-                      res[[1]]$message)) > 0)
+res <- assertError(.Call(SimInf:::SEIR_run, NULL, NULL, NULL))
+check_error(res, "Invalid model.")
 
-res <- tools::assertError(.Call("SEIR_run", "SEIR", NULL, NULL, PACKAGE = "SimInf"))
-stopifnot(length(grep("Invalid model.",
-                      res[[1]]$message)) > 0)
+res <- assertError(.Call(SimInf:::SEIR_run, "SEIR", NULL, NULL))
+check_error(res, "Invalid model.")
 
 ## Check that an invalid rate error is raised during the simulation.
 model <- SEIR(u0 = data.frame(S = rep(100, 2), E = 0, I = 10, R = 0),
@@ -524,9 +500,7 @@ model <- SEIR(u0 = data.frame(S = rep(100, 2), E = 0, I = 10, R = 0),
               epsilon = -0.3,
               gamma = 0.077)
 set.seed(1)
-res <- tools::assertError(run(model, solver = "ssm"))
-stopifnot(identical("Invalid rate detected (non-finite or < 0.0)",
-                    res[[1]]$message))
-res <- tools::assertError(run(model, solver = "aem"))
-stopifnot(identical("Invalid rate detected (non-finite or < 0.0)",
-                    res[[1]]$message))
+res <- assertError(run(model, solver = "ssm"))
+check_error(res, "Invalid rate detected (non-finite or < 0.0).")
+res <- assertError(run(model, solver = "aem"))
+check_error(res, "Invalid rate detected (non-finite or < 0.0).")

@@ -1,22 +1,24 @@
 /*
- *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015 Pavol Bauer
- *  Copyright (C) 2017 - 2018 Robin Eriksson
- *  Copyright (C) 2015 - 2018 Stefan Engblom
- *  Copyright (C) 2015 - 2018 Stefan Widgren
+ * This file is part of SimInf, a framework for stochastic
+ * disease spread simulations.
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (C) 2015 Pavol Bauer
+ * Copyright (C) 2017 -- 2019 Robin Eriksson
+ * Copyright (C) 2015 -- 2019 Stefan Engblom
+ * Copyright (C) 2015 -- 2020 Stefan Widgren
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * SimInf is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * SimInf is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <string.h>
@@ -638,7 +640,7 @@ void SimInf_store_solution_sparse(SimInf_compartment_model *model)
         /* Copy continuous state to V_sparse */
         for (j = model[0].jcV[model[0].V_it];
              j < model[0].jcV[model[0].V_it + 1]; j++)
-            model[0].prV[j] = model[0].v[model[0].irV[j]];
+            model[0].prV[j] = model[0].v_new[model[0].irV[j]];
         model[0].V_it++;
     }
 }
@@ -754,8 +756,8 @@ int SimInf_compartment_model_create(
         model[i].next_unit_of_time = floor(model[i].tt) + 1.0;
         model[i].tspan = args->tspan;
         model[i].tlen = args->tlen;
-        model[i].U_it = 1;
-        model[i].V_it = 1;
+        model[i].U_it = 0;
+        model[i].V_it = 0;
 
         /* Data vectors */
         if (args->U) {

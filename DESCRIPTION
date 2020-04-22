@@ -1,6 +1,6 @@
 Package: SimInf
 Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
-Version: 6.4.0
+Version: 6.5.1.9000
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     email = "stefan.widgren@gmail.com",
                     comment = c(ORCID = "0000-0001-5745-2284")),
@@ -11,7 +11,7 @@ Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
              person("Pavol", "Bauer", role = "aut",
                     comment = c(ORCID = "0000-0003-4328-7171")),
              person("Attractive Chaos", role = "cph",
-                    comment = "Author of 'kvec.h', a generic dynamic array"))
+                    comment = "Author of 'kvec.h'."))
 Description: Provides an efficient and very flexible framework to
     conduct data-driven epidemiological modeling in realistic large
     scale disease spread simulations. The framework integrates
@@ -43,14 +43,17 @@ Biarch: true
 NeedsCompilation: yes
 SystemRequirements: GNU Scientific Library (GSL)
 Depends:
-    R(>= 3.1)
+    R(>= 3.2)
 Imports:
+    digest,
     graphics,
     grDevices,
     methods,
     stats,
     utils,
     Matrix
+Suggests:
+    MASS
 Collate:
     'check_arguments.R'
     'SimInf_events.R'
@@ -62,16 +65,19 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
+    'abc.R'
     'degree.R'
     'distance.R'
     'mparse.R'
+    'openmp.R'
     'package_skeleton.R'
     'plot.R'
     'prevalence.R'
     'print.R'
+    'priors.R'
     'punchcard.R'
     'run.R'
     'run_outer.R'
     'trajectory.R'
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

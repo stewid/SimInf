@@ -1,22 +1,24 @@
 /*
- *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2015 Pavol Bauer
- *  Copyright (C) 2017 - 2018 Robin Eriksson
- *  Copyright (C) 2015 - 2018 Stefan Engblom
- *  Copyright (C) 2015 - 2018 Stefan Widgren
+ * This file is part of SimInf, a framework for stochastic
+ * disease spread simulations.
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (C) 2015 Pavol Bauer
+ * Copyright (C) 2017 -- 2019 Robin Eriksson
+ * Copyright (C) 2015 -- 2019 Stefan Engblom
+ * Copyright (C) 2015 -- 2019 Stefan Widgren
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * SimInf is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * SimInf is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <Rdefines.h>
@@ -55,6 +57,21 @@ int SimInf_arg_check_integer(SEXP arg)
 }
 
 /**
+ * Check that integer argument is greater than zero.
+ *
+ * @param arg The arg to check
+ * @return 0 if OK, else -1
+ */
+int SimInf_arg_check_integer_gt_zero(SEXP arg)
+{
+    if (SimInf_arg_check_integer(arg))
+        return -1;
+    if (INTEGER(arg)[0] < 1)
+        return -1;
+    return 0;
+}
+
+/**
  * Check matrix argument
  *
  * @param arg The arg to check
@@ -84,39 +101,17 @@ int SimInf_arg_check_model(SEXP arg)
 }
 
 /**
- * Get number of threads
+ * Check if the trajectory data is stored in a sparse matrix.
  *
- * @param out Number of threads
- * @param threads Number of threads from R
- * @return 0 if Ok, else error code.
+ * @param m sparse matrix
+ * @param i number of rows in the matrix if data is stored
+ *        in a sparse matrix.
+ * @param j number of columsn in the matrix if data is stored
+ *        in a sparse matrix.
+ * @return 1 if data is stored in the sparse matrix, else 0.
  */
-int SimInf_get_threads(int *out, SEXP threads)
+int SimInf_sparse(SEXP m, R_xlen_t i, R_xlen_t j)
 {
-    int error = 0;
-
-    if (Rf_isNull(threads)) {
-        *out = 0;
-    } else if (Rf_isInteger(threads)) {
-        if (LENGTH(threads) != 1)
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else if (INTEGER(threads)[0] == NA_INTEGER)
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else if (INTEGER(threads)[0] < 0)
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else
-            *out = INTEGER(threads)[0];
-    } else if (Rf_isReal(threads)) {
-        if (LENGTH(threads) != 1)
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else if (!R_finite(REAL(threads)[0]))
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else if ((int)(REAL(threads)[0] < 0))
-            error = SIMINF_INVALID_THREADS_VALUE;
-        else
-            *out = (int)(REAL(threads)[0]);
-    } else {
-        error = SIMINF_INVALID_THREADS_VALUE;
-    }
-
-    return error;
+    int *d = INTEGER(GET_SLOT(m, Rf_install("Dim")));
+    return d[0] == i && d[1] == j;
 }

@@ -1,13 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -15,15 +19,17 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-library("SimInf")
+library(SimInf)
+library(tools)
+source("util/check.R")
 
 ## For debugging
 sessionInfo()
 
 ## Define some variables
-tol = 1e-8
-x = seq(from = 0.95, to = 1.05, by = 0.01)
-y = seq(from = 0.95, to = 1.05, by = 0.01)
+tol <- 1e-8
+x <- seq(from = 0.95, to = 1.05, by = 0.01)
+y <- seq(from = 0.95, to = 1.05, by = 0.01)
 
 ## Check gdata names
 model <- SISe(u0      = data.frame(S = 99, I = 1),
@@ -43,10 +49,9 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0.000011)
 names(model@gdata) <- NULL
-res <- tools::assertError(
+res <- assertError(
     run_outer(x, y, model, alpha ~ upsilon, function(m) 1))
-stopifnot(length(grep("'names[(]model@gdata[)]' is NULL",
-                      res[[1]]$message)) > 0)
+check_error(res, "'names(model@gdata)' is NULL.")
 
 ## Check formula argument
 model <- SISe(u0      = data.frame(S = 99, I = 1),
@@ -65,9 +70,8 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-res <- tools::assertError(run_outer(x, y, model, NULL, function(m) 1))
-stopifnot(length(grep("'formula' argument is NULL",
-                      res[[1]]$message)) > 0)
+res <- assertError(run_outer(x, y, model, NULL, function(m) 1))
+check_error(res, "'formula' argument is NULL.")
 
 ## Check FUN argument
 model <- SISe(u0      = data.frame(S = 99, I = 1),
@@ -86,9 +90,8 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-res <- tools::assertError(run_outer(x, y, model, a ~ b, NULL))
-stopifnot(length(grep("'FUN' argument is NULL",
-                      res[[1]]$message)) > 0)
+res <- assertError(run_outer(x, y, model, a ~ b, NULL))
+check_error(res, "'FUN' argument is NULL.")
 
 ## Check lhs
 model <- SISe(u0      = data.frame(S = 99, I = 1),
@@ -107,15 +110,13 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-res <- tools::assertError(
+res <- assertError(
     run_outer(x, y, model,  ~ upsilon, function(m) 1))
-stopifnot(length(grep("Invalid parameters on the left side of the formula",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid parameters on the left side of the formula.")
 
-res <- tools::assertError(
+res <- assertError(
     run_outer(x, y, model, dummy ~ upsilon, function(m) 1))
-stopifnot(length(grep("Unmatched parameters on the left hand side of the formula",
-                      res[[1]]$message)) > 0)
+check_error(res, "Unmatched parameters on the left hand side of the formula.")
 
 ## Check rhs
 model <- SISe(u0      = data.frame(S = 99, I = 1),
@@ -134,15 +135,12 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t3  = 273,
               end_t4  = 365,
               epsilon = 0.000011)
-res <- tools::assertError(
+res <- assertError(
     run_outer(x, y, model, alpha ~ upsilon:alpha, function(m) 1))
-stopifnot(length(grep("Invalid parameters on the right side of the formula",
-                      res[[1]]$message)) > 0)
+check_error(res, "Invalid parameters on the right side of the formula.")
 
-res <- tools::assertError(
-    run_outer(x, y, model, alpha ~ dummy, function(m) 1))
-stopifnot(length(grep("Unmatched parameters on the right side of the formula",
-                      res[[1]]$message)) > 0)
+res <- assertError(run_outer(x, y, model, alpha ~ dummy, function(m) 1))
+check_error(res, "Unmatched parameters on the right side of the formula.")
 
 ## Check run_outer
 z_exp <- structure(
@@ -172,8 +170,8 @@ z_exp <- structure(
       0.010276245, 0.01037799, 0.010479735, 0.01058148, 0.010683225
       ), .Dim = c(11L, 11L))
 
-x = seq(from = 0.95, to = 1.05, by = 0.01)
-y = seq(from = 0.95, to = 1.05, by = 0.01)
+x <- seq(from = 0.95, to = 1.05, by = 0.01)
+y <- seq(from = 0.95, to = 1.05, by = 0.01)
 run_f <- function(m, N) {
     m@gdata["upsilon"] * m@gdata["beta_t1"] * N
 }
@@ -198,37 +196,43 @@ z_obs <- run_outer(x, y, model, upsilon ~ beta_t1, run_f, N = 3)
 stopifnot(all(abs(z_obs - z_exp) < tol))
 
 ## Check missing 'x'
-res <- tools::assertError(
-    run_outer(y = y, model = model, formula = alpha ~ upsilon, FUN = run_f, N = 3))
-stopifnot(length(grep("Missing 'x' argument",
-                      res[[1]]$message)) > 0)
+res <- assertError(
+    run_outer(y = y, model = model,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
+check_error(res, "Missing 'x' argument.")
 
 ## Check non-numeric 'x'
-res <- tools::assertError(
-    run_outer(x = "x", y = y, model = model, formula = alpha ~ upsilon, FUN = run_f, N = 3))
-stopifnot(length(grep("'x' argument is not numeric",
-                      res[[1]]$message)) > 0)
+res <- assertError(
+    run_outer(x = "x", y = y, model = model,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
+check_error(res, "'x' argument is not numeric.")
 
 ## Check missing 'y'
-res <- tools::assertError(
-    run_outer(x = x, model = model, formula = alpha ~ upsilon, FUN = run_f, N = 3))
-stopifnot(length(grep("Missing 'y' argument",
-                      res[[1]]$message)) > 0)
+res <- assertError(
+    run_outer(x = x, model = model,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
+check_error(res, "Missing 'y' argument.")
 
 ## Check non-numeric 'y'
-res <- tools::assertError(
-    run_outer(x = x, y = "y", model = model, formula = alpha ~ upsilon, FUN = run_f, N = 3))
-stopifnot(length(grep("'y' argument is not numeric",
-                      res[[1]]$message)) > 0)
+res <- assertError(
+    run_outer(x = x, y = "y", model = model,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
+check_error(res, "'y' argument is not numeric.")
 
 ## Check missing 'model'
-res <- tools::assertError(
-    run_outer(x = x, y = y, formula = alpha ~ upsilon, FUN = run_f, N = 3))
-stopifnot(length(grep("Missing 'model' argument",
-                      res[[1]]$message)) > 0)
+res <- assertError(
+    run_outer(x = x, y = y,
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
+check_error(res, "Missing 'model' argument.")
 
 ## Check non-SimInf_model 'model'
-res <- tools::assertError(
-    run_outer(x = x, y = y, model = "model", formula = alpha ~ upsilon, FUN = run_f, N = 3))
-stopifnot(length(grep("'model' argument is not a 'SimInf_model'",
-                      res[[1]]$message)) > 0)
+res <- assertError(
+    run_outer(x = x, y = y, model = "model",
+              formula = alpha ~ upsilon,
+              FUN = run_f, N = 3))
+check_error(res, "'model' argument is not a 'SimInf_model'.")

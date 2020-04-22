@@ -4,7 +4,9 @@
 \name{nodes}
 \alias{nodes}
 \title{Example data with spatial distribution of nodes}
-\format{A \code{data.frame}}
+\format{
+A \code{data.frame}
+}
 \usage{
 data(nodes)
 }
@@ -26,7 +28,7 @@ model <- SIR(u0     = u0,
              gamma  = 0.077)
 
 ## Run the model to generate a single stochastic trajectory.
-result <- run(model, threads = 1)
+result <- run(model)
 
 ## Determine nodes with one or more infected individuals in the
 ## trajectory. Extract the 'I' compartment and check for any

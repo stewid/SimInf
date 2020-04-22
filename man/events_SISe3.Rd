@@ -4,7 +4,9 @@
 \name{events_SISe3}
 \alias{events_SISe3}
 \title{Example data to initialize events for the \sQuote{SISe3} model}
-\format{A \code{data.frame}}
+\format{
+A \code{data.frame}
+}
 \usage{
 data(events_SISe3)
 }
@@ -47,7 +49,7 @@ model <- SISe3(u0 = u0_SISe3, tspan = tspan, events = events_SISe3,
 plot(events(model))
 
 ## Run the model to generate a single stochastic trajectory.
-result <- run(model, threads = 1)
+result <- run(model)
 
 ## Summarize the trajectory. The summary includes the number of
 ## events by event type.

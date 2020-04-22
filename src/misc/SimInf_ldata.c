@@ -1,21 +1,24 @@
 /*
- *  SimInf, a framework for stochastic disease spread simulations
- *  Copyright (C) 2017 - 2018 Robin Eriksson
- *  Copyright (C) 2015 - 2018 Stefan Engblom
- *  Copyright (C) 2015 - 2018 Stefan Widgren
+ * This file is part of SimInf, a framework for stochastic
+ * disease spread simulations.
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (C) 2015 Pavol Bauer
+ * Copyright (C) 2017 -- 2019 Robin Eriksson
+ * Copyright (C) 2015 -- 2019 Stefan Engblom
+ * Copyright (C) 2015 -- 2019 Stefan Widgren
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * SimInf is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * SimInf is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "SimInf.h"
@@ -50,11 +53,11 @@ SEXP SimInf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
 
     /* Check arguments */
     if (SimInf_arg_check_matrix(data))
-        Rf_error("Invalid 'data' argument");
+        Rf_error("Invalid 'data' argument.");
     if (SimInf_arg_check_dgCMatrix(distance))
-        Rf_error("Invalid 'distance' argument");
+        Rf_error("Invalid 'distance' argument.");
     if (SimInf_arg_check_integer(metric))
-        Rf_error("Invalid 'metric' argument");
+        Rf_error("Invalid 'metric' argument.");
 
     /* Extract data from 'data' */
     Nn = INTEGER(GET_SLOT(data, R_DimSymbol))[1];
@@ -71,7 +74,7 @@ SEXP SimInf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
     /* Check that the number of nodes are equal in data and
      * distance */
     if (Nn != (LENGTH(GET_SLOT(distance, Rf_install("p"))) - 1))
-        Rf_error("The number of nodes in 'data' and 'distance' are not equal");
+        Rf_error("The number of nodes in 'data' and 'distance' are not equal.");
 
     /* Calculate length of 'Nld' in 'ldata' for each node in the
      * following three steps: 1), 2), and 3).

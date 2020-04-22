@@ -1,12 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -21,7 +26,8 @@
 ##' The \acronym{SIR} model contains three compartments; number of
 ##' susceptible (S), number of infectious (I), and number of
 ##' recovered (R).  Moreover, it has two state transitions,
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{S -- beta S I / N --> I}
+##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
+##'   S -- beta S I / N --> I}
 ##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 ##' where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
 ##' recovery rate, and \eqn{N=S+I}.
@@ -48,7 +54,8 @@ setClass("SIR", contains = c("SimInf_model"))
 ##' The \acronym{SIR} model contains three compartments; number of
 ##' susceptible (S), number of infectious (I), and number of
 ##' recovered (R).  Moreover, it has two state transitions,
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{S -- beta S I / N --> I}
+##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
+##'   S -- beta S I / N --> I}
 ##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 ##' where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
 ##' recovery rate, and \eqn{N=S+I+R}.
@@ -84,8 +91,7 @@ SIR <- function(u0,
                 tspan,
                 events = NULL,
                 beta   = NULL,
-                gamma  = NULL)
-{
+                gamma  = NULL) {
     compartments <- c("S", "I", "R")
 
     ## Check arguments.
@@ -161,14 +167,13 @@ SIR <- function(u0,
 ##' plot(events(model))
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' plot(result)
 ##'
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
 ##' summary(result)
-events_SIR <- function()
-{
+events_SIR <- function() {
     data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 4
     events_SISe3$select[events_SISe3$event == "enter"] <- 1
@@ -203,13 +208,12 @@ events_SIR <- function()
 ##'              gamma  = 0.01)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##' plot(result)
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
-u0_SIR <- function()
-{
+u0_SIR <- function() {
     data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
     u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3

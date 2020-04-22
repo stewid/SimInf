@@ -1,14 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2019  Stefan Engblom
-## Copyright (C) 2015 - 2019  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2020 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -25,8 +28,43 @@ setClass("SISe", contains = c("SimInf_model"))
 
 ##' Create a SISe model
 ##'
-##' Create a SISe model to be used by the simulation framework.
+##' Create an \sQuote{SISe} model to be used by the simulation
+##' framework.
 ##'
+##' The \sQuote{SISe} model contains two compartments; number of
+##' susceptible (S) and number of infectious (I). Additionally, it
+##' contains an environmental compartment to model shedding of a
+##' pathogen to the environment. Consequently, the model has two state
+##' transitions,
+##'
+##' \deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{
+##' S -- upsilon phi S --> I}
+##'
+##' \deqn{I \stackrel{\gamma I}{\longrightarrow} S}{
+##' I -- gamma I --> S}
+##'
+##' where the transition rate per unit of time from susceptible to
+##' infected is proportional to the concentration of the environmental
+##' contamination \eqn{\varphi}{phi} in each node. Moreover, the
+##' transition rate from infected to susceptible is the recovery rate
+##' \eqn{\gamma}, measured per individual and per unit of
+##' time. Finally, the environmental infectious pressure in each node
+##' is evolved by,
+##'
+##' \deqn{\frac{d\varphi(t)}{dt} = \frac{\alpha I(t)}{N(t)} - \beta(t)
+##' \varphi(t) + \epsilon}{
+##' dphi(t) / dt = alpha I(t) / N(t) - beta(t) phi(t) + epsilon}
+##'
+##' where \eqn{\alpha} is the average shedding rate of the pathogen to
+##' the environment per infected individual and \eqn{N = S + I} the
+##' size of the node. The seasonal decay and removal of the pathogen
+##' is captured by \eqn{\beta(t)}. It is also possible to include a
+##' small background infectious pressure \eqn{\epsilon} to allow for
+##' other indirect sources of environmental contamination. The
+##' environmental infectious pressure \eqn{\varphi(t)}{phi(t)} in each
+##' node is evolved each time unit by the Euler forward method. The
+##' value of \eqn{\varphi(t)}{phi(t)} is saved at the time-points
+##' specified in \code{tspan}.
 ##'
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
@@ -65,8 +103,7 @@ SISe <- function(u0,
                  end_t2  = NULL,
                  end_t3  = NULL,
                  end_t4  = NULL,
-                 epsilon = NULL)
-{
+                 epsilon = NULL) {
     compartments <- c("S", "I")
 
     ## Check arguments.
@@ -109,7 +146,8 @@ SISe <- function(u0,
                  dimnames = list("phi"))
 
     ldata <- matrix(as.numeric(c(end_t1, end_t2, end_t3, end_t4)),
-                    nrow  = 4, byrow = TRUE)
+                    nrow  = 4, byrow = TRUE,
+                    dimnames = list(c("end_t1", "end_t2", "end_t3", "end_t4")))
 
     gdata <- as.numeric(c(upsilon, gamma, alpha, beta_t1, beta_t2,
                           beta_t3, beta_t4, epsilon))
@@ -166,13 +204,12 @@ SISe <- function(u0,
 ##' plot(events(model))
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
 ##' summary(result)
-events_SISe <- function()
-{
+events_SISe <- function() {
     data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 2
     events_SISe3$select[events_SISe3$event == "enter"] <- 1
@@ -217,7 +254,7 @@ events_SISe <- function()
 ##'               end_t3 = 273, end_t4 = 365, epsilon = 0)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
@@ -225,10 +262,7 @@ events_SISe <- function()
 ##' ## Plot the proportion of nodes with at least one infected
 ##' ## individual.
 ##' plot(prevalence(result, I~S+I, "nop"), type = "l")
-u0_SISe <- function()
-{
-    data("u0_SISe3", package = "SimInf", envir = environment())
-    u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
-    u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
-    u0_SISe3[, c("S", "I")]
+u0_SISe <- function() {
+    u0 <- u0_SIR()
+    u0[, c("S", "I")]
 }

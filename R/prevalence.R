@@ -1,14 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2019  Stefan Engblom
-## Copyright (C) 2015 - 2019  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -19,10 +22,9 @@
 ## Determine the compartments in the formula item and split
 ## 'compartment1 + compartment2 + ...'. Moreover, trim whitespace and
 ## replace '.' with all compartments in the model.
-parse_formula_item <- function(x, compartments)
-{
+parse_formula_item <- function(x, compartments) {
     x <- unlist(strsplit(x, "+", fixed = TRUE))
-    x <- sub("^\\s", "", sub("\\s$", "", x))
+    x <- trimws(x)
     x <- unlist(sapply(x, function(y) {
         if (identical(y, "."))
             y <- compartments
@@ -30,19 +32,19 @@ parse_formula_item <- function(x, compartments)
     }))
     x <- unique(as.character(x))
     if (!length(x))
-        stop("No compartments in formula specification.")
+        stop("No compartments in formula specification.", call. = FALSE)
     i <- !(x %in% compartments)
     if (any(i)) {
         stop("Non-existing compartment(s) in model: ",
-             paste0("'", x[i], "'", collapse = ", "))
+             paste0("'", x[i], "'", collapse = ", "),
+             ".", call. = FALSE)
     }
     x
 }
 
 ## Sum all individuals in compartments in a matrix with one row per
 ## node X length(tspan)
-sum_individuals <- function(model, compartments, node)
-{
+sum_individuals <- function(model, compartments, node) {
     m <- NULL
     for (compartment in compartments) {
         if (is.null(m)) {
@@ -57,8 +59,7 @@ sum_individuals <- function(model, compartments, node)
     m
 }
 
-evaluate_condition <- function(condition, model, node)
-{
+evaluate_condition <- function(condition, model, node) {
     ## Create an environment to hold the trajectory data with one
     ## column for each compartment.
     e <- new.env(parent = baseenv())
@@ -75,9 +76,11 @@ evaluate_condition <- function(condition, model, node)
     ## Then evaluate the condition using the data in the environment.
     e$condition <- condition
     k <- evalq(eval(parse(text = condition)), envir = e)
-    if (!is.logical(k) ||
-        length(k) != (length(model@tspan) * ifelse(is.null(node), Nn(model), length(node)))) {
-        stop("The condition must be either 'TRUE' or 'FALSE' for every node and time step.")
+    l <- length(model@tspan) * ifelse(is.null(node), Nn(model), length(node))
+    if (!is.logical(k) || length(k) != l) {
+        stop(paste0("The condition must be either 'TRUE' ",
+                    "or 'FALSE' for every node and time step."),
+             call. = FALSE)
     }
 
     matrix(k, ncol = length(model@tspan))
@@ -128,7 +131,6 @@ evaluate_condition <- function(condition, model, node)
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
 ##' @export
-##' @importFrom stats terms
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize
 ##' ## it to run over 10 days.
@@ -136,7 +138,7 @@ evaluate_condition <- function(condition, model, node)
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Determine the proportion of infected individuals (cases)
 ##' ## in the population at the time-points in 'tspan'.
@@ -161,18 +163,17 @@ prevalence <- function(model,
                        formula,
                        type = c("pop", "nop", "wnp"),
                        node = NULL,
-                       as.is = FALSE)
-{
+                       as.is = FALSE) {
     check_model_argument(model)
 
     ## Check 'formula' argument
     if (missing(formula))
-        stop("Missing 'formula' argument")
+        stop("Missing 'formula' argument.", call. = FALSE)
     if (!is(formula, "formula"))
-        stop("'formula' argument is not a 'formula'")
+        stop("'formula' argument is not a 'formula'.", call. = FALSE)
     formula <- as.character(formula)
     if (!identical(length(formula), 3L))
-        stop("Invalid formula specification.")
+        stop("Invalid formula specification.", call. = FALSE)
 
     ## Check 'type' argument
     type <- match.arg(type)
@@ -228,7 +229,7 @@ prevalence <- function(model,
     }
 
     if (is.null(node))
-        node = seq_len(Nn(model))
+        node <- seq_len(Nn(model))
 
     data.frame(node = node,
                time = rep(time, each = length(node)),

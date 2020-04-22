@@ -1,14 +1,17 @@
-## SimInf, a framework for stochastic disease spread simulations
-## Copyright (C) 2015  Pavol Bauer
-## Copyright (C) 2015 - 2017  Stefan Engblom
-## Copyright (C) 2015 - 2017  Stefan Widgren
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
 ##
-## This program is free software: you can redistribute it and/or modify
+## Copyright (C) 2015 Pavol Bauer
+## Copyright (C) 2017 -- 2019 Robin Eriksson
+## Copyright (C) 2015 -- 2019 Stefan Engblom
+## Copyright (C) 2015 -- 2019 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
 ##
-## This program is distributed in the hope that it will be useful,
+## SimInf is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
@@ -65,19 +68,8 @@ NULL
 ##' @param libpath A character string giving the complete path to the
 ##' package.
 ##' @noRd
-.onUnload <- function (libpath)
-{
+.onUnload <- function(libpath) {
     library.dynam.unload("SimInf", libpath)
-}
-
-##' Is OpenMP available
-##'
-##' @return TRUE if SimInf was built with support for OpenMP, else
-##'     FALSE.
-##' @noRd
-have_openmp <- function()
-{
-    .Call(SimInf_have_openmp)
 }
 
 ##' Example data with spatial distribution of nodes
@@ -103,7 +95,7 @@ have_openmp <- function()
 ##'              gamma  = 0.077)
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model, threads = 1)
+##' result <- run(model)
 ##'
 ##' ## Determine nodes with one or more infected individuals in the
 ##' ## trajectory. Extract the 'I' compartment and check for any
