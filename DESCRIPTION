@@ -52,6 +52,8 @@ Imports:
     stats,
     utils,
     Matrix
+Suggests:
+    MASS
 Collate:
     'check_arguments.R'
     'SimInf_events.R'
