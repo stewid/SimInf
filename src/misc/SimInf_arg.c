@@ -57,6 +57,21 @@ int SimInf_arg_check_integer(SEXP arg)
 }
 
 /**
+ * Check that integer argument is greater than zero.
+ *
+ * @param arg The arg to check
+ * @return 0 if OK, else -1
+ */
+int SimInf_arg_check_integer_gt_zero(SEXP arg)
+{
+    if (SimInf_arg_check_integer(arg))
+        return -1;
+    if (INTEGER(arg)[0] < 1)
+        return -1;
+    return 0;
+}
+
+/**
  * Check matrix argument
  *
  * @param arg The arg to check
