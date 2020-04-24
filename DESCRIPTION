@@ -55,6 +55,7 @@ Imports:
 Suggests:
     MASS
 Collate:
+    'C-generator.R'
     'check_arguments.R'
     'SimInf_events.R'
     'SimInf_model.R'
