@@ -96,57 +96,6 @@ as.data.frame.SimInf_abc <- function(x, ...) {
     as(x, "data.frame")
 }
 
-##' Display the ABC posterior distribution
-##'
-##' @param x The \code{SimInf_abc} object to plot.
-##' @param y The generation to plot. The default is to display the
-##'     last generation.
-##' @param ... Additional arguments affecting the plot.
-##' @aliases plot,SimInf_abc-method
-##' @importFrom graphics contour
-##' @importFrom graphics lines
-##' @importFrom stats density
-##' @export
-setMethod("plot",
-          signature(x = "SimInf_abc"),
-          function(x, y, ...) {
-              if (!requireNamespace("MASS", quietly = TRUE)) {
-                  stop("Package \"MASS\" needed for this ",
-                       "function to work. Please install it.",
-                       call. = FALSE)
-              }
-
-              if (missing(y))
-                  y <- length(x@x)
-              y <- as.integer(y)
-              if (length(y) != 1) {
-                  stop("Can only select one generation to plot.",
-                       call. = FALSE)
-              }
-
-              if (length(x@pars) > 1) {
-                  pairs(t(x@x[[y]]),
-                        diag.panel = function(x, ...) {
-                            usr <- par("usr")
-                            on.exit(par(usr))
-                            par(usr = c(usr[1:2], 0, 1.5))
-                            d <- density(x, bw = "SJ-ste")
-                            d$y <- d$y / max(d$y)
-                            lines(d, ...)
-                        },
-                        lower.panel = function(x, y, ...) {
-                            h <- c(MASS::bandwidth.nrd(x),
-                                   MASS::bandwidth.nrd(y))
-                            d <- MASS::kde2d(x, y, h = h, n = 100)
-                            contour(d, add = TRUE, drawlabels = FALSE, ...)
-                        }, ...)
-              } else {
-                  plot(density(x@x[[y]], bw = "SJ-ste"), main = "",
-                       xlab = rownames(x@x[[y]]), ...)
-              }
-          }
-)
-
 summary_particles <- function(object, i) {
     str <- sprintf("Generation %i:", i)
     cat(sprintf("\n%s\n", str))
