@@ -329,18 +329,14 @@ setMethod("plot",
 ##' @aliases plot,SimInf_abc-method
 ##' @importFrom graphics contour
 ##' @importFrom graphics lines
+##' @importFrom MASS bandwidth.nrd
+##' @importFrom MASS kde2d
 ##' @importFrom stats density
 ##' @export
 ##' @include abc.R
 setMethod("plot",
           signature(x = "SimInf_abc"),
           function(x, y, ...) {
-              if (!requireNamespace("MASS", quietly = TRUE)) {
-                  stop("Package \"MASS\" needed for this ",
-                       "function to work. Please install it.",
-                       call. = FALSE)
-              }
-
               if (missing(y))
                   y <- length(x@x)
               y <- as.integer(y)
@@ -360,9 +356,8 @@ setMethod("plot",
                             lines(d, ...)
                         },
                         lower.panel = function(x, y, ...) {
-                            h <- c(MASS::bandwidth.nrd(x),
-                                   MASS::bandwidth.nrd(y))
-                            d <- MASS::kde2d(x, y, h = h, n = 100)
+                            h <- c(bandwidth.nrd(x), bandwidth.nrd(y))
+                            d <- kde2d(x, y, h = h, n = 100)
                             contour(d, add = TRUE, drawlabels = FALSE, ...)
                         }, ...)
               } else {

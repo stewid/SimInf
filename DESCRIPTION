@@ -48,12 +48,11 @@ Imports:
     digest,
     graphics,
     grDevices,
+    MASS,
     methods,
     stats,
     utils,
     Matrix
-Suggests:
-    MASS
 Collate:
     'C-generator.R'
     'check_arguments.R'
