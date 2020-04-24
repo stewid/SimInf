@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -317,5 +317,52 @@ setMethod("plot",
                      col = col[seq_len(length(compartments))],
                      bty = "n", horiz = TRUE, legend = argv$legend,
                      lwd = argv$lwd)
+          }
+)
+
+##' Display the ABC posterior distribution
+##'
+##' @param x The \code{SimInf_abc} object to plot.
+##' @param y The generation to plot. The default is to display the
+##'     last generation.
+##' @param ... Additional arguments affecting the plot.
+##' @aliases plot,SimInf_abc-method
+##' @importFrom graphics contour
+##' @importFrom graphics lines
+##' @importFrom MASS bandwidth.nrd
+##' @importFrom MASS kde2d
+##' @importFrom stats density
+##' @export
+##' @include abc.R
+setMethod("plot",
+          signature(x = "SimInf_abc"),
+          function(x, y, ...) {
+              if (missing(y))
+                  y <- length(x@x)
+              y <- as.integer(y)
+              if (length(y) != 1) {
+                  stop("Can only select one generation to plot.",
+                       call. = FALSE)
+              }
+
+              if (length(x@pars) > 1) {
+                  pairs(t(x@x[[y]]),
+                        diag.panel = function(x, ...) {
+                            usr <- par("usr")
+                            on.exit(par(usr))
+                            par(usr = c(usr[1:2], 0, 1.5))
+                            d <- density(x, bw = "SJ-ste")
+                            d$y <- d$y / max(d$y)
+                            lines(d, ...)
+                        },
+                        lower.panel = function(x, y, ...) {
+                            h <- c(bandwidth.nrd(x), bandwidth.nrd(y))
+                            d <- kde2d(x, y, h = h, n = 100)
+                            contour(d, add = TRUE, drawlabels = FALSE, ...)
+                        }, ...)
+              } else {
+                  plot(density(x@x[[y]], bw = "SJ-ste"), main = "",
+                       xlab = rownames(x@x[[y]]), ...)
+              }
           }
 )
