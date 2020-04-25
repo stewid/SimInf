@@ -199,7 +199,6 @@ n_particles <- function(x) {
 }
 
 abc_progress <- function(t0, t1, x, w, npart, nprop) {
-    t1 <- proc.time()
     cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
                 npart / nprop, 1 / sum(w^2), (t1 - t0)[3]))
     summary_matrix(x)
