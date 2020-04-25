@@ -27,6 +27,24 @@
 #include <gsl/gsl_rng.h>
 #include "SimInf_arg.h"
 
+static void SimInf_abc_error(int error)
+{
+    switch (error) {
+    case 1:
+        Rf_error("Unable to allocate memory buffer.");
+        break;
+    case 2:
+        Rf_error("Unknown distribution.");
+        break;
+    case 3:
+        Rf_error("Invalid weight detected (non-finite or < 0.0).");
+        break;
+    default:
+        Rf_error("Unknown error code: %i.", error);
+        break;
+    }
+}
+
 /**
  * Utility function for implementing the Approximate Bayesian
  * Computation Sequential Monte Carlo (ABC-SMC) algorithm of Toni et
@@ -218,22 +236,8 @@ cleanup:
     gsl_rng_free(rng);
     PutRNGstate();
 
-    if (error) {
-        switch (error) {
-        case 1:
-            Rf_error("Unable to allocate memory buffer.");
-            break;
-        case 2:
-            Rf_error("Unknown distribution.");
-            break;
-        case 3:
-            Rf_error("Invalid weight detected (non-finite or < 0.0).");
-            break;
-        default:
-            Rf_error("Unknown error code: %i.", error);
-            break;
-        }
-    }
+    if (error)
+        SimInf_abc_error(error);
 
     UNPROTECT(3);
 
@@ -367,22 +371,8 @@ cleanup:
     gsl_matrix_free(SIGMA);
     gsl_vector_free(work);
 
-    if (error) {
-        switch (error) {
-        case 1:
-            Rf_error("Unable to allocate memory buffer.");
-            break;
-        case 2:
-            Rf_error("Unknown distribution.");
-            break;
-        case 3:
-            Rf_error("Invalid weight detected (non-finite or < 0.0).");
-            break;
-        default:
-            Rf_error("Unknown error code: %i.", error);
-            break;
-        }
-    }
+    if (error)
+        SimInf_abc_error(error);
 
     UNPROTECT(1);
 
