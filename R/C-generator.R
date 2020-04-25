@@ -44,15 +44,17 @@ C_include <- function() {
 ##' @return character vector with C code.
 ##' @noRd
 C_trFun <- function(transitions) {
+    parameters <- c("    const int *u,",
+                    "    const double *v,",
+                    "    const double *ldata,",
+                    "    const double *gdata,",
+                    "    double t)")
+
     lines <- character(0)
     for (i in seq_len(length(transitions))) {
         lines <- c(lines,
                    sprintf("double trFun%i(", i),
-                   "    const int *u,",
-                   "    const double *v,",
-                   "    const double *ldata,",
-                   "    const double *gdata,",
-                   "    double t)",
+                   parameters,
                    "{",
                    sprintf("    return %s;", transitions[[i]]$propensity),
                    "}",
