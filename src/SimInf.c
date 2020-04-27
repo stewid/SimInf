@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2019 Stefan Widgren
+ * Copyright (C) 2015 -- 2020 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,60 @@
 #include "solvers/SimInf_solver.h"
 #include "solvers/ssm/SimInf_solver_ssm.h"
 #include "solvers/aem/SimInf_solver_aem.h"
+
+static void SimInf_raise_error(int error)
+{
+    switch (error) {
+    case SIMINF_ERR_NEGATIVE_STATE:
+        Rf_error("Negative state detected.");
+        break;
+    case SIMINF_ERR_ALLOC_MEMORY_BUFFER:
+        Rf_error("Unable to allocate memory buffer.");
+        break;
+    case SIMINF_UNDEFINED_EVENT:
+        Rf_error("Undefined event type.");
+        break;
+    case SIMINF_INVALID_THREADS_VALUE:
+        Rf_error("Invalid 'threads' value.");
+        break;
+    case SIMINF_ERR_V_IS_NOT_FINITE:
+        Rf_error("The continuous state 'v' is not finite.");
+        break;
+    case SIMINF_ERR_SAMPLE_SELECT:
+        Rf_error("Unable to sample individuals for event.");
+        break;
+    case SIMINF_ERR_INVALID_MODEL:
+        Rf_error("Invalid model.");
+        break;
+    case SIMINF_ERR_V_IS_NEGATIVE:
+        Rf_error("The continuous state 'v' is negative.");
+        break;
+    case SIMINF_ERR_INVALID_RATE:
+        Rf_error("Invalid rate detected (non-finite or < 0.0).");
+        break;
+    case SIMINF_ERR_UNKNOWN_SOLVER:
+        Rf_error("Invalid 'solver' value.");
+        break;
+    case SIMINF_ERR_DEST_OUT_OF_BOUNDS:
+        Rf_error("'dest' is out of bounds.");
+        break;
+    case SIMINF_ERR_NODE_OUT_OF_BOUNDS:
+        Rf_error("'node' is out of bounds.");
+        break;
+    case SIMINF_ERR_EVENTS_N:
+        Rf_error("'N' is invalid.");
+        break;
+    case SIMINF_ERR_EVENT_SHIFT:
+        Rf_error("'shift' is invalid.");
+        break;
+    case SIMINF_ERR_SHIFT_OUT_OF_BOUNDS:
+        Rf_error("'shift' is out of bounds.");
+        break;
+    default:
+        Rf_error("Unknown error code: %i.", error);
+        break;
+    }
+}
 
 /**
  * Initiate and run the simulation
@@ -194,58 +248,8 @@ SEXP SimInf_run(
         error = SIMINF_ERR_UNKNOWN_SOLVER;
 
 cleanup:
-    if (error) {
-        switch (error) {
-        case SIMINF_ERR_NEGATIVE_STATE:
-            Rf_error("Negative state detected.");
-            break;
-        case SIMINF_ERR_ALLOC_MEMORY_BUFFER:
-            Rf_error("Unable to allocate memory buffer.");
-            break;
-        case SIMINF_UNDEFINED_EVENT:
-            Rf_error("Undefined event type.");
-            break;
-        case SIMINF_INVALID_THREADS_VALUE:
-            Rf_error("Invalid 'threads' value.");
-            break;
-        case SIMINF_ERR_V_IS_NOT_FINITE:
-            Rf_error("The continuous state 'v' is not finite.");
-            break;
-        case SIMINF_ERR_SAMPLE_SELECT:
-            Rf_error("Unable to sample individuals for event.");
-            break;
-        case SIMINF_ERR_INVALID_MODEL:
-            Rf_error("Invalid model.");
-            break;
-        case SIMINF_ERR_V_IS_NEGATIVE:
-            Rf_error("The continuous state 'v' is negative.");
-            break;
-        case SIMINF_ERR_INVALID_RATE:
-            Rf_error("Invalid rate detected (non-finite or < 0.0).");
-            break;
-        case SIMINF_ERR_UNKNOWN_SOLVER:
-            Rf_error("Invalid 'solver' value.");
-            break;
-        case SIMINF_ERR_DEST_OUT_OF_BOUNDS:
-            Rf_error("'dest' is out of bounds.");
-            break;
-        case SIMINF_ERR_NODE_OUT_OF_BOUNDS:
-            Rf_error("'node' is out of bounds.");
-            break;
-        case SIMINF_ERR_EVENTS_N:
-            Rf_error("'N' is invalid.");
-            break;
-        case SIMINF_ERR_EVENT_SHIFT:
-            Rf_error("'shift' is invalid.");
-            break;
-        case SIMINF_ERR_SHIFT_OUT_OF_BOUNDS:
-            Rf_error("'shift' is out of bounds.");
-            break;
-        default:
-            Rf_error("Unknown error code: %i.", error);
-            break;
-        }
-    }
+    if (error)
+        SimInf_raise_error(error);
 
     if (nprotect)
         UNPROTECT(nprotect);
