@@ -12,7 +12,7 @@ OBJECTS.misc = misc/SimInf_abc.o \
                misc/binheap.o
 
 OBJECTS.solvers = solvers/SimInf_solver.o \
-                  solvers/ssm/SimInf_solver_ssm.o \
-                  solvers/aem/SimInf_solver_aem.o
+                  solvers/aem/SimInf_solver_aem.o \
+                  solvers/ssm/SimInf_solver_ssm.o
 
 OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) @MODELS_OBJ@
