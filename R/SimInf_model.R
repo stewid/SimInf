@@ -237,140 +237,6 @@ valid_SimInf_model_object <- function(object) {
 ## Assign the function as the validity method for the class.
 setValidity("SimInf_model", valid_SimInf_model_object)
 
-## Utility function to coerce the data.frame to a transposed matrix.
-as_t_matrix <- function(x) {
-    n_col <- ncol(x)
-    n_row <- nrow(x)
-    lbl <- colnames(x)
-    x <- t(data.matrix(x))
-    attributes(x) <- NULL
-    dim(x) <- c(n_col, n_row)
-    rownames(x) <- lbl
-    x
-}
-
-init_u0 <- function(u0) {
-    if (is.null(u0))
-        stop("'u0' is NULL.", call. = FALSE)
-    if (is.data.frame(u0))
-        u0 <- as_t_matrix(u0)
-    if (!all(is.matrix(u0), is.numeric(u0)))
-        stop("u0 must be an integer matrix.", call. = FALSE)
-    if (!is.integer(u0)) {
-        if (!all(is_wholenumber(u0)))
-            stop("u0 must be an integer matrix.", call. = FALSE)
-        storage.mode(u0) <- "integer"
-    }
-
-    u0
-}
-
-init_G <- function(G) {
-    if (!is.null(G)) {
-        if (!is(G, "dgCMatrix"))
-            G <- as(G, "dgCMatrix")
-    }
-
-    G
-}
-
-init_S <- function(S) {
-    if (!is.null(S)) {
-        if (!is(S, "dgCMatrix"))
-            S <- as(S, "dgCMatrix")
-    }
-
-    S
-}
-
-init_ldata <- function(ldata) {
-    if (is.null(ldata))
-        ldata <- matrix(numeric(0), nrow = 0, ncol = 0)
-    if (is.data.frame(ldata))
-        ldata <- as_t_matrix(ldata)
-    if (is.integer(ldata))
-        storage.mode(ldata) <- "double"
-
-    ldata
-}
-
-init_gdata <- function(gdata) {
-    if (is.null(gdata))
-        gdata <- numeric(0)
-    if (is.data.frame(gdata)) {
-        if (!identical(nrow(gdata), 1L)) {
-            stop("When 'gdata' is a data.frame, it must have one row.",
-                 call. = FALSE)
-        }
-        gdata <- unlist(gdata)
-    }
-
-    gdata
-}
-
-init_U <- function(U) {
-    if (is.null(U)) {
-        U <- matrix(integer(0), nrow = 0, ncol = 0)
-    } else {
-        if (!is.integer(U)) {
-            if (!all(is_wholenumber(U)))
-                stop("U must be an integer.", call. = FALSE)
-            storage.mode(U) <- "integer"
-        }
-
-        if (!is.matrix(U)) {
-            if (!identical(length(U), 0L))
-                stop("U must be equal to 0 x 0 matrix.", call. = FALSE)
-            dim(U) <- c(0, 0)
-        }
-    }
-
-    U
-}
-
-init_v0 <- function(v0) {
-    if (is.null(v0)) {
-        v0 <- matrix(numeric(0), nrow = 0, ncol = 0)
-    } else {
-        if (is.data.frame(v0))
-            v0 <- as_t_matrix(v0)
-        if (!all(is.matrix(v0), is.numeric(v0)))
-            stop("v0 must be a numeric matrix.", call. = FALSE)
-
-        if (!identical(storage.mode(v0), "double"))
-            storage.mode(v0) <- "double"
-    }
-
-    v0
-}
-
-init_V <- function(V) {
-    if (is.null(V)) {
-        V <- matrix(numeric(0), nrow = 0, ncol = 0)
-    } else {
-        if (!is.numeric(V))
-            stop("V must be numeric.")
-
-        if (!identical(storage.mode(V), "double"))
-            storage.mode(V) <- "double"
-
-        if (!is.matrix(V)) {
-            if (!identical(length(V), 0L))
-                stop("V must be equal to 0 x 0 matrix.", call. = FALSE)
-            dim(V) <- c(0, 0)
-        }
-    }
-
-    V
-}
-
-init_C_code <- function(C_code) {
-    if (is.null(C_code))
-        C_code <- character(0)
-
-    C_code
-}
-
 ##' Create a \code{SimInf_model}
 ##'
 ##' @template G-param
@@ -402,6 +268,7 @@ init_C_code <- function(C_code) {
 ##'     is unloaded and the temporary files are removed after running
 ##'     the model.
 ##' @return \linkS4class{SimInf_model}
+##' @include init.R
 ##' @export
 ##' @importFrom methods as
 ##' @importFrom methods is
@@ -428,26 +295,12 @@ SimInf_model <- function(G,
     v0 <- init_v0(v0)
     V <- init_V(V)
     C_code <- init_C_code(C_code)
-
-    ## Check tspan
-    if (is(tspan, "Date")) {
-        ## Coerce the date vector to a numeric vector as days, where
-        ## tspan[1] becomes the day of the year of the first year of
-        ## the tspan date vector. The dates are added as names to the
-        ## numeric vector.
-        t0 <- as.numeric(as.Date(format(tspan[1], "%Y-01-01"))) - 1
-        tspan_lbl <- format(tspan, "%Y-%m-%d")
-        tspan <- as.numeric(tspan) - t0
-        names(tspan) <- tspan_lbl
-    } else {
-        t0 <- NULL
-    }
-    storage.mode(tspan) <- "double"
+    tspan <- init_tspan(tspan)
 
     ## Check events
     if (!any(is.null(events), is.data.frame(events)))
         stop("'events' must be NULL or a data.frame.", call. = FALSE)
-    events <- SimInf_events(E = E, N = N, events = events, t0 = t0)
+    events <- SimInf_events(E = E, N = N, events = events, t0 = tspan$t0)
 
     new("SimInf_model",
         G      = G,
@@ -455,7 +308,7 @@ SimInf_model <- function(G,
         U      = U,
         ldata  = ldata,
         gdata  = gdata,
-        tspan  = tspan,
+        tspan  = tspan$tspan,
         u0     = u0,
         v0     = v0,
         V      = V,
