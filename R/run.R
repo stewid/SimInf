@@ -50,8 +50,7 @@ contains_C_code <- function(model) {
 ##' Run the SimInf stochastic simulation algorithm
 ##'
 ##' @param model The siminf model to run.
-##' @param threads Number of threads. Default is NULL, i.e. to use all
-##'     available processors.
+##' @param ... Additional arguments.
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @return \code{\link{SimInf_model}} object with result from simulation.
 ##' @references \itemize{
@@ -86,29 +85,19 @@ contains_C_code <- function(model) {
 ##' plot(result)
 setGeneric("run",
            signature = "model",
-           function(model,
-                    threads = NULL,
-                    solver  = c("ssm", "aem"))
+           function(model, ...)
                standardGeneric("run"))
 
 ##' @rdname run
+##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @include SimInf_model.R
 ##' @export
 ##' @importFrom digest digest
 ##' @importFrom methods validObject
 setMethod("run",
           signature(model = "SimInf_model"),
-          function(model, threads, solver) {
+          function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
-
-              ## FIXME: The 'threads' argument can be dropped with the
-              ##  new function 'set_num_threads' added. That also
-              ##  means that 'threads' should be removed from the
-              ##  expression to parse (below). However, since it is a
-              ##  breaking change to remove the 'threads' argument in
-              ##  '.Call', just use 'set_num_threads' for now.
-              if (!is.null(threads))
-                  set_num_threads(threads)
 
               ## Check that SimInf_model contains all data structures
               ## required by the siminf solver and that they make sense
@@ -127,7 +116,7 @@ setMethod("run",
                   }
 
                   ## Create expression to parse
-                  expr <- ".Call(dll$SimInf_model_run, model, threads, solver)"
+                  expr <- ".Call(dll$SimInf_model_run, model, NULL, solver)"
               } else {
                   ## The model name
                   name <- as.character(class(model))
@@ -136,7 +125,7 @@ setMethod("run",
                   run_fn <- paste0(name, "_run")
 
                   ## Create expression to parse
-                  expr <- ".Call(run_fn, model, threads, solver)"
+                  expr <- ".Call(run_fn, model, NULL, solver)"
               }
 
               ## Run the model. Re-throw any error without the call

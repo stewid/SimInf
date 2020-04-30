@@ -5,15 +5,14 @@
 \alias{run,SimInf_model-method}
 \title{Run the SimInf stochastic simulation algorithm}
 \usage{
-run(model, threads = NULL, solver = c("ssm", "aem"))
+run(model, ...)
 
-\S4method{run}{SimInf_model}(model, threads = NULL, solver = c("ssm", "aem"))
+\S4method{run}{SimInf_model}(model, solver = c("ssm", "aem"), ...)
 }
 \arguments{
 \item{model}{The siminf model to run.}
 
-\item{threads}{Number of threads. Default is NULL, i.e. to use all
-available processors.}
+\item{...}{Additional arguments.}
 
 \item{solver}{Which numerical solver to utilize. Default is 'ssm'.}
 }
