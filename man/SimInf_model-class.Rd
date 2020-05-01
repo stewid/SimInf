@@ -5,7 +5,7 @@
 \alias{SimInf_model-class}
 \title{Class \code{"SimInf_model"}}
 \description{
-Class to handle the siminf data model
+Class to handle data for the \code{SimInf_model}.
 }
 \section{Slots}{
 

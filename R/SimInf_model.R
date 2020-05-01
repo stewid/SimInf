@@ -21,31 +21,11 @@
 
 ##' Class \code{"SimInf_model"}
 ##'
-##' Class to handle the siminf data model
-##' @slot G Dependency graph that indicates the transition rates that
-##'     need to be updated after a given state transition has occured.
-##'     A non-zero entry in element \code{G[i, i]} indicates that
-##'     transition rate \code{i} needs to be recalculated if the state
-##'     transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
-##'     of object class \code{\linkS4class{dgCMatrix}}.
-##' @slot S Each column corresponds to a state transition, and
-##'     execution of state transition \code{j} amounts to adding the
-##'     \code{S[, j]} column to the state vector \code{u[, i]} of node
-##'     \emph{i} where the transition occurred. Sparse matrix (\eqn{Nc
-##'     \times Nt}) of object class \code{\linkS4class{dgCMatrix}}.
-##' @slot U The result matrix with the number of individuals in each
-##'     compartment in every node. \code{U[, j]} contains the number
-##'     of individuals in each compartment at
-##'     \code{tspan[j]}. \code{U[1:Nc, j]} contains the number of
-##'     individuals in node 1 at \code{tspan[j]}. \code{U[(Nc + 1):(2
-##'     * Nc), j]} contains the number of individuals in node 2 at
-##'     \code{tspan[j]} etc. Integer matrix (\eqn{N_n N_c \times}
-##'     \code{length(tspan)}).
-##' @slot U_sparse If the model was configured to write the solution
-##'     to a sparse matrix (\code{dgCMatrix}) the \code{U_sparse}
-##'     contains the data and \code{U} is empty. The layout of the
-##'     data in \code{U_sparse} is identical to \code{U}. Please note
-##'     that \code{U_sparse} is numeric and \code{U} is integer.
+##' Class to handle data for the \code{SimInf_model}.
+##' @template G-slot
+##' @template S-slot
+##' @template U-slot
+##' @template U_sparse-slot
 ##' @slot V The result matrix for the real-valued continuous
 ##'     state. \code{V[, j]} contains the real-valued state of the
 ##'     system at \code{tspan[j]}. Numeric matrix
@@ -55,26 +35,14 @@
 ##'     to a sparse matrix (\code{dgCMatrix}) the \code{V_sparse}
 ##'     contains the data and \code{V} is empty. The layout of the
 ##'     data in \code{V_sparse} is identical to \code{V}.
-##' @slot ldata A matrix with local data for the nodes. The column
-##'     \code{ldata[, j]} contains the local data vector for the node
-##'     \code{j}. The local data vector is passed as an argument to
-##'     the transition rate functions and the post time step function.
-##' @slot gdata A numeric vector with global data that is common to
-##'     all nodes.  The global data vector is passed as an argument to
-##'     the transition rate functions and the post time step function.
-##' @slot tspan A vector of increasing time points where the state of
-##'     each node is to be returned.
-##' @slot u0 The initial state vector (\eqn{N_c \times N_n}) with the
-##'     number of individuals in each compartment in every node.
+##' @template ldata-slot
+##' @template gdata-slot
+##' @template tspan-slot
+##' @template u0-slot
 ##' @slot v0 The initial value for the real-valued continuous state.
 ##'     Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
 ##' @slot events Scheduled events \code{\linkS4class{SimInf_events}}
-##' @slot C_code Character vector with optional model C code. If
-##'     non-empty, the C code is written to a temporary C-file when
-##'     the \code{run} method is called.  The temporary C-file is
-##'     compiled and the resulting DLL is dynamically loaded. The DLL
-##'     is unloaded and the temporary files are removed after running
-##'     the model.
+##' @template C_code-slot
 ##' @include SimInf_events.R
 ##' @export
 ##' @importFrom methods validObject
