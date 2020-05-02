@@ -53,7 +53,7 @@ C_trFun <- function(transitions) {
     lines <- character(0)
     for (i in seq_len(length(transitions))) {
         lines <- c(lines,
-                   sprintf("double trFun%i(", i),
+                   sprintf("static double trFun%i(", i),
                    parameters,
                    "{",
                    sprintf("    return %s;", transitions[[i]]$propensity),
@@ -82,7 +82,7 @@ C_ptsFun <- function(pts_fun) {
     lines <- readLines(f)
     close(f)
 
-    c("int ptsFun(",
+    c("static int ptsFun(",
       "    double *v_new,",
       "    const int *u,",
       "    const double *v,",
