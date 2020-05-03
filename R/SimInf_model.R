@@ -21,31 +21,11 @@
 
 ##' Class \code{"SimInf_model"}
 ##'
-##' Class to handle the siminf data model
-##' @slot G Dependency graph that indicates the transition rates that
-##'     need to be updated after a given state transition has occured.
-##'     A non-zero entry in element \code{G[i, i]} indicates that
-##'     transition rate \code{i} needs to be recalculated if the state
-##'     transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
-##'     of object class \code{\linkS4class{dgCMatrix}}.
-##' @slot S Each column corresponds to a state transition, and
-##'     execution of state transition \code{j} amounts to adding the
-##'     \code{S[, j]} column to the state vector \code{u[, i]} of node
-##'     \emph{i} where the transition occurred. Sparse matrix (\eqn{Nc
-##'     \times Nt}) of object class \code{\linkS4class{dgCMatrix}}.
-##' @slot U The result matrix with the number of individuals in each
-##'     compartment in every node. \code{U[, j]} contains the number
-##'     of individuals in each compartment at
-##'     \code{tspan[j]}. \code{U[1:Nc, j]} contains the number of
-##'     individuals in node 1 at \code{tspan[j]}. \code{U[(Nc + 1):(2
-##'     * Nc), j]} contains the number of individuals in node 2 at
-##'     \code{tspan[j]} etc. Integer matrix (\eqn{N_n N_c \times}
-##'     \code{length(tspan)}).
-##' @slot U_sparse If the model was configured to write the solution
-##'     to a sparse matrix (\code{dgCMatrix}) the \code{U_sparse}
-##'     contains the data and \code{U} is empty. The layout of the
-##'     data in \code{U_sparse} is identical to \code{U}. Please note
-##'     that \code{U_sparse} is numeric and \code{U} is integer.
+##' Class to handle data for the \code{SimInf_model}.
+##' @template G-slot
+##' @template S-slot
+##' @template U-slot
+##' @template U_sparse-slot
 ##' @slot V The result matrix for the real-valued continuous
 ##'     state. \code{V[, j]} contains the real-valued state of the
 ##'     system at \code{tspan[j]}. Numeric matrix
@@ -55,26 +35,14 @@
 ##'     to a sparse matrix (\code{dgCMatrix}) the \code{V_sparse}
 ##'     contains the data and \code{V} is empty. The layout of the
 ##'     data in \code{V_sparse} is identical to \code{V}.
-##' @slot ldata A matrix with local data for the nodes. The column
-##'     \code{ldata[, j]} contains the local data vector for the node
-##'     \code{j}. The local data vector is passed as an argument to
-##'     the transition rate functions and the post time step function.
-##' @slot gdata A numeric vector with global data that is common to
-##'     all nodes.  The global data vector is passed as an argument to
-##'     the transition rate functions and the post time step function.
-##' @slot tspan A vector of increasing time points where the state of
-##'     each node is to be returned.
-##' @slot u0 The initial state vector (\eqn{N_c \times N_n}) with the
-##'     number of individuals in each compartment in every node.
+##' @template ldata-slot
+##' @template gdata-slot
+##' @template tspan-slot
+##' @template u0-slot
 ##' @slot v0 The initial value for the real-valued continuous state.
 ##'     Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
 ##' @slot events Scheduled events \code{\linkS4class{SimInf_events}}
-##' @slot C_code Character vector with optional model C code. If
-##'     non-empty, the C code is written to a temporary C-file when
-##'     the \code{run} method is called.  The temporary C-file is
-##'     compiled and the resulting DLL is dynamically loaded. The DLL
-##'     is unloaded and the temporary files are removed after running
-##'     the model.
+##' @template C_code-slot
 ##' @include SimInf_events.R
 ##' @export
 ##' @importFrom methods validObject
@@ -94,127 +62,11 @@ setClass("SimInf_model",
                    events   = "SimInf_events",
                    C_code   = "character"))
 
-valid_tspan <- function(object) {
-    if (!is.double(object@tspan)) {
-        return("Input time-span must be a double vector.")
-    } else if (any(length(object@tspan) < 1,
-                   any(diff(object@tspan) <= 0),
-                   any(is.na(object@tspan)))) {
-        return("Input time-span must be an increasing vector.")
-    }
-
-    character(0);
-}
-
-valid_u0 <- function(object) {
-    if (!identical(storage.mode(object@u0), "integer"))
-        return("Initial state 'u0' must be an integer matrix.")
-    if (any(object@u0 < 0L))
-        return("Initial state 'u0' has negative elements.")
-
-    character(0);
-}
-
-valid_U <- function(object) {
-    if (!identical(storage.mode(object@U), "integer"))
-        return("Output state 'U' must be an integer matrix.")
-    if (any(object@U < 0L) || any(object@U_sparse < 0, na.rm = TRUE))
-        return("Output state 'U' has negative elements.")
-
-    character(0);
-}
-
-valid_v0 <- function(object) {
-    if (!identical(storage.mode(object@v0), "double"))
-        return("Initial model state 'v0' must be a double matrix.")
-    if ((dim(object@v0)[1] > 0)) {
-        r <- rownames(object@v0)
-        if (is.null(r) || any(nchar(r) == 0))
-            return("'v0' must have rownames.")
-        if (!identical(dim(object@v0)[2], dim(object@u0)[2]))
-            return("The number of nodes in 'u0' and 'v0' must match.")
-    }
-
-    character(0);
-}
-
-valid_V <- function(object) {
-    if (!identical(storage.mode(object@V), "double"))
-        return("Output model state 'V' must be a double matrix.")
-
-    character(0);
-}
-
-valid_S <- function(object) {
-    if (!all(is_wholenumber(object@S@x)))
-        return("'S' matrix must be an integer matrix.")
-
-    ## Check that S and events@E have identical compartments
-    if ((dim(object@S)[1] > 0) && (dim(object@events@E)[1] > 0)) {
-        if (is.null(rownames(object@S)) || is.null(rownames(object@events@E)))
-            return("'S' and 'E' must have rownames matching the compartments.")
-        if (!identical(rownames(object@S), rownames(object@events@E)))
-            return("'S' and 'E' must have identical compartments.")
-    }
-
-    character(0);
-}
-
-valid_G <- function(object) {
-    Nt <- dim(object@S)[2]
-    if (!identical(dim(object@G), c(Nt, Nt)))
-        return("Wrong size of dependency graph.")
-
-    ## Check that transitions exist in G.
-    transitions <- rownames(object@G)
-    if (is.null(transitions))
-        return("'G' must have rownames that specify transitions.")
-    transitions <- trimws(transitions)
-    if (!all(nchar(transitions) > 0))
-        return("'G' must have rownames that specify transitions.")
-
-    ## Check that the format of transitions are valid:
-    ## For example: "X1 + X2 + ... + Xn -> Y1 + Y2 + ... + Yn"
-    ## or
-    ## For example: "X1 + X2 + ... + Xn -> propensity -> Y1 + Y2 + ... + Yn"
-    ## is expected, where X2, ..., Xn and Y2, ..., Yn are optional.
-    transitions <- strsplit(transitions, split = "->", fixed = TRUE)
-    if (any(sapply(transitions, length) < 2))
-        return("'G' rownames have invalid transitions.")
-
-    ## Check that transitions and S have identical compartments.
-    transitions <- unlist(lapply(transitions, function(x) {
-        c(x[1], x[length(x)])
-    }))
-    transitions <- unlist(strsplit(transitions, split = "+", fixed = TRUE))
-    transitions <- trimws(transitions)
-    transitions <- unique(transitions)
-    transitions <- transitions[transitions != "@"]
-    transitions <- sub("^[[:digit:]]+[*]", "", transitions)
-    if (!all(transitions %in% rownames(object@S)))
-        return("'G' and 'S' must have identical compartments.")
-
-    character(0)
-}
-
-valid_ldata <- function(object) {
-    if (!is.double(object@ldata))
-        return("'ldata' matrix must be a double matrix.")
-    Nn_ldata <- dim(object@ldata)[2]
-    if (Nn_ldata > 0 && !identical(Nn_ldata, dim(object@u0)[2]))
-        return("The number of nodes in 'u0' and 'ldata' must match.")
-
-    character(0)
-}
-
-valid_gdata <- function(object) {
-    if (!is.double(object@gdata))
-        return("'gdata' must be a double vector.")
-
-    character(0)
-}
-
-## Check if the SimInf_model object is valid.
+##' Check if a SimInf_model object is valid
+##'
+##' @param object The SimInf_model_object to check.
+##' @include valid.R
+##' @noRd
 valid_SimInf_model_object <- function(object) {
     ## Check events
     validObject(object@events)
@@ -236,140 +88,6 @@ valid_SimInf_model_object <- function(object) {
 
 ## Assign the function as the validity method for the class.
 setValidity("SimInf_model", valid_SimInf_model_object)
-
-## Utility function to coerce the data.frame to a transposed matrix.
-as_t_matrix <- function(x) {
-    n_col <- ncol(x)
-    n_row <- nrow(x)
-    lbl <- colnames(x)
-    x <- t(data.matrix(x))
-    attributes(x) <- NULL
-    dim(x) <- c(n_col, n_row)
-    rownames(x) <- lbl
-    x
-}
-
-init_u0 <- function(u0) {
-    if (is.null(u0))
-        stop("'u0' is NULL.", call. = FALSE)
-    if (is.data.frame(u0))
-        u0 <- as_t_matrix(u0)
-    if (!all(is.matrix(u0), is.numeric(u0)))
-        stop("u0 must be an integer matrix.", call. = FALSE)
-    if (!is.integer(u0)) {
-        if (!all(is_wholenumber(u0)))
-            stop("u0 must be an integer matrix.", call. = FALSE)
-        storage.mode(u0) <- "integer"
-    }
-
-    u0
-}
-
-init_G <- function(G) {
-    if (!is.null(G)) {
-        if (!is(G, "dgCMatrix"))
-            G <- as(G, "dgCMatrix")
-    }
-
-    G
-}
-
-init_S <- function(S) {
-    if (!is.null(S)) {
-        if (!is(S, "dgCMatrix"))
-            S <- as(S, "dgCMatrix")
-    }
-
-    S
-}
-
-init_ldata <- function(ldata) {
-    if (is.null(ldata))
-        ldata <- matrix(numeric(0), nrow = 0, ncol = 0)
-    if (is.data.frame(ldata))
-        ldata <- as_t_matrix(ldata)
-    if (is.integer(ldata))
-        storage.mode(ldata) <- "double"
-
-    ldata
-}
-
-init_gdata <- function(gdata) {
-    if (is.null(gdata))
-        gdata <- numeric(0)
-    if (is.data.frame(gdata)) {
-        if (!identical(nrow(gdata), 1L)) {
-            stop("When 'gdata' is a data.frame, it must have one row.",
-                 call. = FALSE)
-        }
-        gdata <- unlist(gdata)
-    }
-
-    gdata
-}
-
-init_U <- function(U) {
-    if (is.null(U)) {
-        U <- matrix(integer(0), nrow = 0, ncol = 0)
-    } else {
-        if (!is.integer(U)) {
-            if (!all(is_wholenumber(U)))
-                stop("U must be an integer.", call. = FALSE)
-            storage.mode(U) <- "integer"
-        }
-
-        if (!is.matrix(U)) {
-            if (!identical(length(U), 0L))
-                stop("U must be equal to 0 x 0 matrix.", call. = FALSE)
-            dim(U) <- c(0, 0)
-        }
-    }
-
-    U
-}
-
-init_v0 <- function(v0) {
-    if (is.null(v0)) {
-        v0 <- matrix(numeric(0), nrow = 0, ncol = 0)
-    } else {
-        if (is.data.frame(v0))
-            v0 <- as_t_matrix(v0)
-        if (!all(is.matrix(v0), is.numeric(v0)))
-            stop("v0 must be a numeric matrix.", call. = FALSE)
-
-        if (!identical(storage.mode(v0), "double"))
-            storage.mode(v0) <- "double"
-    }
-
-    v0
-}
-
-init_V <- function(V) {
-    if (is.null(V)) {
-        V <- matrix(numeric(0), nrow = 0, ncol = 0)
-    } else {
-        if (!is.numeric(V))
-            stop("V must be numeric.")
-
-        if (!identical(storage.mode(V), "double"))
-            storage.mode(V) <- "double"
-
-        if (!is.matrix(V)) {
-            if (!identical(length(V), 0L))
-                stop("V must be equal to 0 x 0 matrix.", call. = FALSE)
-            dim(V) <- c(0, 0)
-        }
-    }
-
-    V
-}
-
-init_C_code <- function(C_code) {
-    if (is.null(C_code))
-        C_code <- character(0)
-
-    C_code
-}
 
 ##' Create a \code{SimInf_model}
 ##'
@@ -402,6 +120,7 @@ init_C_code <- function(C_code) {
 ##'     is unloaded and the temporary files are removed after running
 ##'     the model.
 ##' @return \linkS4class{SimInf_model}
+##' @include init.R
 ##' @export
 ##' @importFrom methods as
 ##' @importFrom methods is
@@ -428,26 +147,12 @@ SimInf_model <- function(G,
     v0 <- init_v0(v0)
     V <- init_V(V)
     C_code <- init_C_code(C_code)
-
-    ## Check tspan
-    if (is(tspan, "Date")) {
-        ## Coerce the date vector to a numeric vector as days, where
-        ## tspan[1] becomes the day of the year of the first year of
-        ## the tspan date vector. The dates are added as names to the
-        ## numeric vector.
-        t0 <- as.numeric(as.Date(format(tspan[1], "%Y-01-01"))) - 1
-        tspan_lbl <- format(tspan, "%Y-%m-%d")
-        tspan <- as.numeric(tspan) - t0
-        names(tspan) <- tspan_lbl
-    } else {
-        t0 <- NULL
-    }
-    storage.mode(tspan) <- "double"
+    tspan <- init_tspan(tspan)
 
     ## Check events
     if (!any(is.null(events), is.data.frame(events)))
         stop("'events' must be NULL or a data.frame.", call. = FALSE)
-    events <- SimInf_events(E = E, N = N, events = events, t0 = t0)
+    events <- SimInf_events(E = E, N = N, events = events, t0 = tspan$t0)
 
     new("SimInf_model",
         G      = G,
@@ -455,7 +160,7 @@ SimInf_model <- function(G,
         U      = U,
         ldata  = ldata,
         gdata  = gdata,
-        tspan  = tspan,
+        tspan  = tspan$tspan,
         u0     = u0,
         v0     = v0,
         V      = V,

@@ -19,21 +19,59 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-## Use 'R CMD SHLIB' to compile the C code for the model.
-do_compile_model <- function(filename) {
+##' Compile the model C code
+##'
+##' Use 'R CMD SHLIB' to compile the C code for the model and the
+##' on-the-fly generated C code to register the native routines for
+##' the model.
+##' @param model The SimInf model with C code to compile.
+##' @param name Character vector with the name of the dll.
+##' @return Character vector with the path to the built dll.
+##' @noRd
+do_compile_model <- function(model, name) {
+    lines <- c(
+        "#include <Rdefines.h>",
+        "#include <R_ext/Rdynload.h>",
+        "#include <R_ext/Visibility.h>",
+        "",
+        "SEXP SimInf_model_run(SEXP, SEXP, SEXP);",
+        "",
+        "static const R_CallMethodDef callMethods[] =",
+        "{",
+        "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",
+        "    {NULL, NULL, 0}",
+        "};",
+        "",
+        paste0("void attribute_visible R_init_", name, "(DllInfo *info)"),
+        "{",
+        "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
+        "    R_useDynamicSymbols(info, FALSE);",
+        "    R_forceSymbols(info, TRUE);",
+        "}",
+        "")
+
+    ## Write the model C code to a temporary file.
+    filename <- file.path(tempdir(), paste0(name, ".c"))
+    writeLines(model@C_code, filename)
+
+    ## Write the model init C code to a temporary file.
+    filename_init <- file.path(tempdir(), paste0(name, "_init.c"))
+    writeLines(lines, filename_init)
+
     ## Include directive for "SimInf.h"
     include <- system.file("include", package = "SimInf")
     Sys.setenv(PKG_CPPFLAGS = sprintf("-I%s", shQuote(include)))
 
     ## Compile the model C code using the running version of R.
-    wd <- setwd(dirname(filename))
+    wd <- setwd(tempdir())
     cmd <- paste(shQuote(file.path(R.home(component = "bin"), "R")),
                  "CMD SHLIB",
-                 shQuote(paste0(basename(filename), ".c")))
+                 shQuote(basename(filename)),
+                 shQuote(basename(filename_init)))
     compiled <- system(cmd, intern = TRUE)
     setwd(wd)
 
-    lib <- paste0(filename, .Platform$dynlib.ext)
+    lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
     if (!file.exists(lib))
         stop(compiled, call. = FALSE)
 
@@ -49,9 +87,8 @@ contains_C_code <- function(model) {
 
 ##' Run the SimInf stochastic simulation algorithm
 ##'
-##' @param model The siminf model to run.
-##' @param threads Number of threads. Default is NULL, i.e. to use all
-##'     available processors.
+##' @param model The SimInf model to run.
+##' @param ... Additional arguments.
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @return \code{\link{SimInf_model}} object with result from simulation.
 ##' @references \itemize{
@@ -86,29 +123,19 @@ contains_C_code <- function(model) {
 ##' plot(result)
 setGeneric("run",
            signature = "model",
-           function(model,
-                    threads = NULL,
-                    solver  = c("ssm", "aem"))
+           function(model, ...)
                standardGeneric("run"))
 
 ##' @rdname run
+##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @include SimInf_model.R
 ##' @export
 ##' @importFrom digest digest
 ##' @importFrom methods validObject
 setMethod("run",
           signature(model = "SimInf_model"),
-          function(model, threads, solver) {
+          function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
-
-              ## FIXME: The 'threads' argument can be dropped with the
-              ##  new function 'set_num_threads' added. That also
-              ##  means that 'threads' should be removed from the
-              ##  expression to parse (below). However, since it is a
-              ##  breaking change to remove the 'threads' argument in
-              ##  '.Call', just use 'set_num_threads' for now.
-              if (!is.null(threads))
-                  set_num_threads(threads)
 
               ## Check that SimInf_model contains all data structures
               ## required by the siminf solver and that they make sense
@@ -119,30 +146,21 @@ setMethod("run",
                                  digest(model@C_code, serialize = FALSE))
                   dll <- getLoadedDLLs()[[name]]
                   if (is.null(dll)) {
-                      ## Write the C code to a temporary file
-                      filename <- file.path(tempdir(), paste0(name, ".c"))
-                      writeLines(model@C_code, filename)
-                      lib <- do_compile_model(file.path(tempdir(), name))
+                      lib <- do_compile_model(model, name)
                       dll <- dyn.load(lib)
                   }
 
-                  ## Create expression to parse
-                  expr <- ".Call(dll$SimInf_model_run, model, threads, solver)"
-              } else {
-                  ## The model name
-                  name <- as.character(class(model))
-
-                  ## The model C run function
-                  run_fn <- paste0(name, "_run")
-
-                  ## Create expression to parse
-                  expr <- ".Call(run_fn, model, threads, solver)"
+                  ## Run the model
+                  return(.Call(dll$SimInf_model_run, model, NULL, solver))
               }
 
-              ## Run the model. Re-throw any error without the call
-              ## included in the error message to make it cleaner.
-              tryCatch(eval(parse(text = expr)), error = function(e) {
-                  stop(e$message, call. = FALSE)
-              })
+              ## The model name
+              name <- as.character(class(model))
+
+              ## The model C run function
+              run_fn <- paste0(name, "_run")
+
+              ## Run the model
+              eval(parse(text = ".Call(run_fn, model, NULL, solver)"))
           }
 )

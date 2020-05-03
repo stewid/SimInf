@@ -39,7 +39,7 @@ enum {BETA, GAMMA};
  * @param t Current time.
  * @return propensity.
  */
-double SIR_S_to_I(
+static double SIR_S_to_I(
     const int *u,
     const double *v,
     const double *ldata,
@@ -65,7 +65,7 @@ double SIR_S_to_I(
  * @param t Current time.
  * @return propensity.
  */
-double SIR_I_to_R(
+static double SIR_I_to_R(
     const int *u,
     const double *v,
     const double *ldata,
@@ -90,7 +90,7 @@ double SIR_I_to_R(
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-int SIR_post_time_step(
+static int SIR_post_time_step(
     double *v_new,
     const int *u,
     const double *v,
