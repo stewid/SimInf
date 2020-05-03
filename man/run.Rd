@@ -10,7 +10,7 @@ run(model, ...)
 \S4method{run}{SimInf_model}(model, solver = c("ssm", "aem"), ...)
 }
 \arguments{
-\item{model}{The siminf model to run.}
+\item{model}{The SimInf model to run.}
 
 \item{...}{Additional arguments.}
 

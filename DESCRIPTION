@@ -57,6 +57,7 @@ Collate:
     'C-generator.R'
     'check_arguments.R'
     'init.R'
+    'valid.R'
     'SimInf_events.R'
     'SimInf_model.R'
     'SEIR.R'
