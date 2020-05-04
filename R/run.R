@@ -45,8 +45,8 @@ do_compile_model <- function(model, name) {
         paste0("void attribute_visible R_init_", name, "(DllInfo *info)"),
         "{",
         "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
-        "    R_useDynamicSymbols(info, FALSE);",
-        "    R_forceSymbols(info, TRUE);",
+        "    R_useDynamicSymbols(info, TRUE);",
+        "    R_forceSymbols(info, FALSE);",
         "}",
         "")
 
@@ -64,12 +64,12 @@ do_compile_model <- function(model, name) {
 
     ## Compile the model C code using the running version of R.
     wd <- setwd(tempdir())
+    on.exit(setwd(wd), add = TRUE)
     cmd <- paste(shQuote(file.path(R.home(component = "bin"), "R")),
                  "CMD SHLIB",
                  shQuote(basename(filename)),
                  shQuote(basename(filename_init)))
     compiled <- system(cmd, intern = TRUE)
-    setwd(wd)
 
     lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
     if (!file.exists(lib))
@@ -144,14 +144,14 @@ setMethod("run",
               if (contains_C_code(model)) {
                   name <- paste0("SimInf_",
                                  digest(model@C_code, serialize = FALSE))
-                  dll <- getLoadedDLLs()[[name]]
-                  if (is.null(dll)) {
+                  if (!is.loaded("SimInf_model_run", name, "Call")) {
                       lib <- do_compile_model(model, name)
-                      dll <- dyn.load(lib)
+                      dyn.load(lib)
                   }
 
                   ## Run the model
-                  return(.Call(dll$SimInf_model_run, model, NULL, solver))
+                  return(.Call("SimInf_model_run", model, NULL,
+                               solver, PACKAGE = name))
               }
 
               ## The model name

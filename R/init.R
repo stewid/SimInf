@@ -31,83 +31,97 @@ as_t_matrix <- function(x) {
     x
 }
 
-init_u0 <- function(u0) {
-    if (is.null(u0))
-        stop("'u0' is NULL.", call. = FALSE)
-    if (is.data.frame(u0))
-        u0 <- as_t_matrix(u0)
-    if (!all(is.matrix(u0), is.numeric(u0)))
-        stop("u0 must be an integer matrix.", call. = FALSE)
-    if (!is.integer(u0)) {
-        if (!all(is_wholenumber(u0)))
-            stop("u0 must be an integer matrix.", call. = FALSE)
-        storage.mode(u0) <- "integer"
+init_u0 <- function(x) {
+    if (is.null(x)) {
+        stop(paste0("'",
+                    match.call()$x,
+                    "' must be an integer matrix."),
+             call. = FALSE)
     }
 
-    u0
-}
+    if (is.data.frame(x))
+        x <- as_t_matrix(x)
 
-init_G <- function(G) {
-    if (!is.null(G)) {
-        if (!is(G, "dgCMatrix"))
-            G <- as(G, "dgCMatrix")
+    if (!all(is.matrix(x), is.numeric(x))) {
+        stop(paste0("'",
+                    match.call()$x,
+                    "' must be an integer matrix."),
+             call. = FALSE)
     }
 
-    G
-}
-
-init_S <- function(S) {
-    if (!is.null(S)) {
-        if (!is(S, "dgCMatrix"))
-            S <- as(S, "dgCMatrix")
-    }
-
-    S
-}
-
-init_ldata <- function(ldata) {
-    if (is.null(ldata))
-        ldata <- matrix(numeric(0), nrow = 0, ncol = 0)
-    if (is.data.frame(ldata))
-        ldata <- as_t_matrix(ldata)
-    if (is.integer(ldata))
-        storage.mode(ldata) <- "double"
-
-    ldata
-}
-
-init_gdata <- function(gdata) {
-    if (is.null(gdata))
-        gdata <- numeric(0)
-    if (is.data.frame(gdata)) {
-        if (!identical(nrow(gdata), 1L)) {
-            stop("When 'gdata' is a data.frame, it must have one row.",
+    if (!is.integer(x)) {
+        if (!all(is_wholenumber(x))) {
+            stop(paste0("'",
+                        match.call()$x,
+                        "' must be an integer matrix."),
                  call. = FALSE)
         }
-        gdata <- unlist(gdata)
+        storage.mode(x) <- "integer"
     }
 
-    gdata
+    x
 }
 
-init_U <- function(U) {
-    if (is.null(U)) {
-        U <- matrix(integer(0), nrow = 0, ncol = 0)
+init_sparse_matrix <- function(x) {
+    if (!is.null(x) && !is(x, "dgCMatrix"))
+        x <- as(x, "dgCMatrix")
+
+    x
+}
+
+init_data_matrix <- function(x) {
+    if (is.null(x))
+        x <- matrix(numeric(0), nrow = 0, ncol = 0)
+    if (is.data.frame(x))
+        x <- as_t_matrix(x)
+    if (is.integer(x))
+        storage.mode(x) <- "double"
+
+    x
+}
+
+init_data_vector <- function(x) {
+    if (is.null(x))
+        x <- numeric(0)
+    if (is.data.frame(x)) {
+        if (!identical(nrow(x), 1L)) {
+            stop(paste0("When '",
+                        match.call()$x,
+                        "' is a data.frame, it must have one row."),
+                 call. = FALSE)
+        }
+        x <- unlist(x)
+    }
+
+    x
+}
+
+init_U <- function(x) {
+    if (is.null(x)) {
+        x <- matrix(integer(0), nrow = 0, ncol = 0)
     } else {
-        if (!is.integer(U)) {
-            if (!all(is_wholenumber(U)))
-                stop("U must be an integer.", call. = FALSE)
-            storage.mode(U) <- "integer"
+        if (!is.integer(x)) {
+            if (!all(is_wholenumber(x))) {
+                stop(paste0("'",
+                            match.call()$x,
+                            "' must be an integer matrix."),
+                     call. = FALSE)
+            }
+            storage.mode(x) <- "integer"
         }
 
-        if (!is.matrix(U)) {
-            if (!identical(length(U), 0L))
-                stop("U must be equal to 0 x 0 matrix.", call. = FALSE)
-            dim(U) <- c(0, 0)
+        if (!is.matrix(x)) {
+            if (!identical(length(x), 0L)) {
+                stop(paste0("'",
+                            match.call()$x,
+                            "' must be equal to a 0 x 0 matrix."),
+                     call. = FALSE)
+            }
+            dim(x) <- c(0, 0)
         }
     }
 
-    U
+    x
 }
 
 init_v0 <- function(v0) {
@@ -117,7 +131,7 @@ init_v0 <- function(v0) {
         if (is.data.frame(v0))
             v0 <- as_t_matrix(v0)
         if (!all(is.matrix(v0), is.numeric(v0)))
-            stop("v0 must be a numeric matrix.", call. = FALSE)
+            stop("'v0' must be a numeric matrix.", call. = FALSE)
 
         if (!identical(storage.mode(v0), "double"))
             storage.mode(v0) <- "double"
@@ -131,14 +145,14 @@ init_V <- function(V) {
         V <- matrix(numeric(0), nrow = 0, ncol = 0)
     } else {
         if (!is.numeric(V))
-            stop("V must be numeric.")
+            stop("'V' must be a numeric matrix.")
 
         if (!identical(storage.mode(V), "double"))
             storage.mode(V) <- "double"
 
         if (!is.matrix(V)) {
             if (!identical(length(V), 0L))
-                stop("V must be equal to 0 x 0 matrix.", call. = FALSE)
+                stop("'V' must be equal to 0 x 0 matrix.", call. = FALSE)
             dim(V) <- c(0, 0)
         }
     }
