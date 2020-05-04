@@ -64,12 +64,12 @@ do_compile_model <- function(model, name) {
 
     ## Compile the model C code using the running version of R.
     wd <- setwd(tempdir())
+    on.exit(setwd(wd), add = TRUE)
     cmd <- paste(shQuote(file.path(R.home(component = "bin"), "R")),
                  "CMD SHLIB",
                  shQuote(basename(filename)),
                  shQuote(basename(filename_init)))
     compiled <- system(cmd, intern = TRUE)
-    setwd(wd)
 
     lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
     if (!file.exists(lib))
