@@ -138,7 +138,7 @@ SimInf_model <- function(G,
                          E      = NULL,
                          N      = NULL,
                          C_code = NULL) {
-    u0 <- init_u0(u0, "u0")
+    u0 <- init_u0(u0)
     G <- init_G(G)
     S <- init_S(S)
     ldata <- init_ldata(ldata)
