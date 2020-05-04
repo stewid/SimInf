@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -56,16 +56,6 @@ match_compartments <- function(model, compartments, as.is) {
     }
 
     list(U = U, V = V)
-}
-
-parse_formula <- function(model, compartments) {
-    compartments <- as.character(compartments)
-    if (!identical(length(compartments), 2L))
-        stop("Invalid formula specification of 'compartments'.", call. = FALSE)
-
-    parse_formula_item(
-        compartments[2],
-        c(rownames(model@S), rownames(model@v0)))
 }
 
 ##' Determine if the trajectory is empty.
@@ -161,6 +151,7 @@ trajectory_as_is <- function(m, ac, sc, i) {
 ##'     matrix.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
+##' @include formula.R
 ##' @include prevalence.R
 ##' @export
 ##' @importFrom methods is
@@ -207,9 +198,10 @@ trajectory <- function(model, compartments = NULL, node = NULL, as.is = FALSE) {
              call. = FALSE)
     }
 
-    if (is(compartments, "formula"))
-        compartments <- parse_formula(model, compartments)
-
+    if (is(compartments, "formula")) {
+        compartments <- parse_formula(
+            compartments, c(rownames(model@S), rownames(model@v0)))
+    }
     compartments <- match_compartments(model, compartments, as.is)
 
     ## Check the 'node' argument

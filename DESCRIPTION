@@ -70,6 +70,7 @@ Collate:
     'abc.R'
     'degree.R'
     'distance.R'
+    'formula.R'
     'mparse.R'
     'openmp.R'
     'package_skeleton.R'
