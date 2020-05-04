@@ -31,16 +31,18 @@ as_t_matrix <- function(x) {
     x
 }
 
-init_u0 <- function(u0) {
+init_u0 <- function(u0, label) {
+    err_msg <- sprintf("'%s' must be an integer matrix.", label)
+
     if (is.null(u0))
-        stop("'u0' is NULL.", call. = FALSE)
+        stop(err_msg, call. = FALSE)
     if (is.data.frame(u0))
         u0 <- as_t_matrix(u0)
     if (!all(is.matrix(u0), is.numeric(u0)))
-        stop("u0 must be an integer matrix.", call. = FALSE)
+        stop(err_msg, call. = FALSE)
     if (!is.integer(u0)) {
         if (!all(is_wholenumber(u0)))
-            stop("u0 must be an integer matrix.", call. = FALSE)
+            stop(err_msg, call. = FALSE)
         storage.mode(u0) <- "integer"
     }
 

@@ -287,7 +287,7 @@ res <- assertError(SimInf_model(G     = G,
                                 ldata = matrix(rep(0, Nn), nrow = 1),
                                 tspan = as.numeric(1:10),
                                 u0    = u0_double))
-check_error(res, "u0 must be an integer matrix.")
+check_error(res, "'u0' must be an integer matrix.")
 
 ## Change u0 to vector. Should raise an error.
 res <- assertError(SimInf_model(G     = G,
@@ -296,7 +296,7 @@ res <- assertError(SimInf_model(G     = G,
                                 ldata = matrix(rep(0, Nn), nrow = 1),
                                 tspan = as.numeric(1:10),
                                 u0    = as.numeric(u0)))
-check_error(res, "u0 must be an integer matrix.")
+check_error(res, "'u0' must be an integer matrix.")
 
 ## Check S
 res <- assertError(new("SimInf_model",
@@ -406,7 +406,7 @@ u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5),
 
 ## 'u0' is NULL
 res <- assertError(SimInf_model())
-check_error(res, "'u0' is NULL.")
+check_error(res, "'u0' must be an integer matrix.")
 
 ## Check first lines of show method without events
 model <- SISe(u0      = data.frame(S = 99, I = 1),
