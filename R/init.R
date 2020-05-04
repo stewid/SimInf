@@ -62,47 +62,38 @@ init_u0 <- function(x) {
     x
 }
 
-init_G <- function(G) {
-    if (!is.null(G)) {
-        if (!is(G, "dgCMatrix"))
-            G <- as(G, "dgCMatrix")
-    }
+init_sparse_matrix <- function(x) {
+    if (!is.null(x) && !is(x, "dgCMatrix"))
+        x <- as(x, "dgCMatrix")
 
-    G
+    x
 }
 
-init_S <- function(S) {
-    if (!is.null(S)) {
-        if (!is(S, "dgCMatrix"))
-            S <- as(S, "dgCMatrix")
-    }
+init_data_matrix <- function(x) {
+    if (is.null(x))
+        x <- matrix(numeric(0), nrow = 0, ncol = 0)
+    if (is.data.frame(x))
+        x <- as_t_matrix(x)
+    if (is.integer(x))
+        storage.mode(x) <- "double"
 
-    S
+    x
 }
 
-init_ldata <- function(ldata) {
-    if (is.null(ldata))
-        ldata <- matrix(numeric(0), nrow = 0, ncol = 0)
-    if (is.data.frame(ldata))
-        ldata <- as_t_matrix(ldata)
-    if (is.integer(ldata))
-        storage.mode(ldata) <- "double"
-
-    ldata
-}
-
-init_gdata <- function(gdata) {
-    if (is.null(gdata))
-        gdata <- numeric(0)
-    if (is.data.frame(gdata)) {
-        if (!identical(nrow(gdata), 1L)) {
-            stop("When 'gdata' is a data.frame, it must have one row.",
+init_data_vector <- function(x) {
+    if (is.null(x))
+        x <- numeric(0)
+    if (is.data.frame(x)) {
+        if (!identical(nrow(x), 1L)) {
+            stop(paste0("When '",
+                        match.call()$x,
+                        "' is a data.frame, it must have one row."),
                  call. = FALSE)
         }
-        gdata <- unlist(gdata)
+        x <- unlist(x)
     }
 
-    gdata
+    x
 }
 
 init_U <- function(x) {
@@ -140,7 +131,7 @@ init_v0 <- function(v0) {
         if (is.data.frame(v0))
             v0 <- as_t_matrix(v0)
         if (!all(is.matrix(v0), is.numeric(v0)))
-            stop("v0 must be a numeric matrix.", call. = FALSE)
+            stop("'v0' must be a numeric matrix.", call. = FALSE)
 
         if (!identical(storage.mode(v0), "double"))
             storage.mode(v0) <- "double"
@@ -154,14 +145,14 @@ init_V <- function(V) {
         V <- matrix(numeric(0), nrow = 0, ncol = 0)
     } else {
         if (!is.numeric(V))
-            stop("V must be numeric.")
+            stop("'V' must be a numeric matrix.")
 
         if (!identical(storage.mode(V), "double"))
             storage.mode(V) <- "double"
 
         if (!is.matrix(V)) {
             if (!identical(length(V), 0L))
-                stop("V must be equal to 0 x 0 matrix.", call. = FALSE)
+                stop("'V' must be equal to 0 x 0 matrix.", call. = FALSE)
             dim(V) <- c(0, 0)
         }
     }

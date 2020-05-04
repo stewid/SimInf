@@ -139,10 +139,10 @@ SimInf_model <- function(G,
                          N      = NULL,
                          C_code = NULL) {
     u0 <- init_u0(u0)
-    G <- init_G(G)
-    S <- init_S(S)
-    ldata <- init_ldata(ldata)
-    gdata <- init_gdata(gdata)
+    G <- init_sparse_matrix(G)
+    S <- init_sparse_matrix(S)
+    ldata <- init_data_matrix(ldata)
+    gdata <- init_data_vector(gdata)
     U <- init_U(U)
     v0 <- init_v0(v0)
     V <- init_V(V)

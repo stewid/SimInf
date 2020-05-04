@@ -202,7 +202,7 @@ res <- assertError(SimInf_model(G     = G,
                                 tspan = c(1, 2),
                                 u0    = u0,
                                 v0    = 1))
-check_error(res, "v0 must be a numeric matrix.")
+check_error(res, "'v0' must be a numeric matrix.")
 res <- SimInf_model(G     = G,
                     S     = S,
                     U     = U,
@@ -604,7 +604,7 @@ res <- assertError(SimInf_model(G     = G,
                                 ldata = matrix(rep(0, Nn), nrow = 1),
                                 tspan = as.numeric(1:10),
                                 u0    = u0))
-check_error(res, "V must be numeric.")
+check_error(res, "'V' must be a numeric matrix.")
 
 ## Check V. Should raise error if V is a vector of length > 0
 res <- assertError(SimInf_model(G     = G,
@@ -614,7 +614,7 @@ res <- assertError(SimInf_model(G     = G,
                                 ldata = matrix(rep(0, Nn), nrow = 1),
                                 tspan = as.numeric(1:10),
                                 u0    = u0))
-check_error(res, "V must be equal to 0 x 0 matrix.")
+check_error(res, "'V' must be equal to 0 x 0 matrix.")
 
 ## Check V. Should not raise an error if V is an integer vector of length 0
 SimInf_model(G     = G,
