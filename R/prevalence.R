@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -18,29 +18,6 @@
 ##
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-## Determine the compartments in the formula item and split
-## 'compartment1 + compartment2 + ...'. Moreover, trim whitespace and
-## replace '.' with all compartments in the model.
-parse_formula_item <- function(x, compartments) {
-    x <- unlist(strsplit(x, "+", fixed = TRUE))
-    x <- trimws(x)
-    x <- unlist(sapply(x, function(y) {
-        if (identical(y, "."))
-            y <- compartments
-        y
-    }))
-    x <- unique(as.character(x))
-    if (!length(x))
-        stop("No compartments in formula specification.", call. = FALSE)
-    i <- !(x %in% compartments)
-    if (any(i)) {
-        stop("Non-existing compartment(s) in model: ",
-             paste0("'", x[i], "'", collapse = ", "),
-             ".", call. = FALSE)
-    }
-    x
-}
 
 ## Sum all individuals in compartments in a matrix with one row per
 ## node X length(tspan)
@@ -130,6 +107,7 @@ evaluate_condition <- function(condition, model, node) {
 ##'     matrix.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
+##' @include formula.R
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize
