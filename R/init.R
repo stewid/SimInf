@@ -96,29 +96,37 @@ init_data_vector <- function(x) {
     x
 }
 
-init_U <- function(x) {
-    if (is.null(x)) {
-        x <- matrix(integer(0), nrow = 0, ncol = 0)
-    } else {
-        if (!is.integer(x)) {
-            if (!all(is_wholenumber(x))) {
-                stop(paste0("'",
-                            match.call()$x,
-                            "' must be an integer matrix."),
-                     call. = FALSE)
-            }
-            storage.mode(x) <- "integer"
-        }
+init_output_matrix <- function(x, storage_mode = c("integer", "double")) {
+    storage_mode <- match.arg(storage_mode)
+    article <- ifelse(storage_mode == "integer", "an", "a")
 
-        if (!is.matrix(x)) {
-            if (!identical(length(x), 0L)) {
-                stop(paste0("'",
-                            match.call()$x,
-                            "' must be equal to a 0 x 0 matrix."),
-                     call. = FALSE)
-            }
-            dim(x) <- c(0, 0)
+    if (is.null(x))
+        x <- matrix(numeric(0), nrow = 0, ncol = 0)
+
+    if (!is.numeric(x)) {
+            stop(paste0("'", match.call()$x, "' must be ", article,
+                        " ", storage_mode, " matrix."),
+                 call. = FALSE)
+    }
+
+    if (storage_mode == "integer" && !is.integer(x)) {
+        if (!all(is_wholenumber(x))) {
+            stop(paste0("'", match.call()$x, "' must be ", article,
+                        " ", storage_mode, " matrix."),
+                 call. = FALSE)
         }
+    }
+
+    if (!identical(storage.mode(x), storage_mode))
+        storage.mode(x) <- storage_mode
+
+    if (!is.matrix(x)) {
+        if (!identical(length(x), 0L)) {
+            stop(paste0("'", match.call()$x,
+                        "' must be equal to a 0 x 0 matrix."),
+                 call. = FALSE)
+        }
+        dim(x) <- c(0, 0)
     }
 
     x
@@ -138,26 +146,6 @@ init_v0 <- function(v0) {
     }
 
     v0
-}
-
-init_V <- function(V) {
-    if (is.null(V)) {
-        V <- matrix(numeric(0), nrow = 0, ncol = 0)
-    } else {
-        if (!is.numeric(V))
-            stop("'V' must be a numeric matrix.")
-
-        if (!identical(storage.mode(V), "double"))
-            storage.mode(V) <- "double"
-
-        if (!is.matrix(V)) {
-            if (!identical(length(V), 0L))
-                stop("'V' must be equal to 0 x 0 matrix.", call. = FALSE)
-            dim(V) <- c(0, 0)
-        }
-    }
-
-    V
 }
 
 init_C_code <- function(C_code) {
