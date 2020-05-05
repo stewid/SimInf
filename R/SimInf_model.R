@@ -138,13 +138,13 @@ SimInf_model <- function(G,
                          E      = NULL,
                          N      = NULL,
                          C_code = NULL) {
-    u0 <- init_u0(u0)
+    u0 <- init_x0(u0)
     G <- init_sparse_matrix(G)
     S <- init_sparse_matrix(S)
     ldata <- init_data_matrix(ldata)
     gdata <- init_data_vector(gdata)
     U <- init_output_matrix(U)
-    v0 <- init_v0(v0)
+    v0 <- init_x0(v0, "double", TRUE)
     V <- init_output_matrix(V, "double")
     C_code <- init_C_code(C_code)
     tspan <- init_tspan(tspan)

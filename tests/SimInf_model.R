@@ -202,7 +202,7 @@ res <- assertError(SimInf_model(G     = G,
                                 tspan = c(1, 2),
                                 u0    = u0,
                                 v0    = 1))
-check_error(res, "'v0' must be a numeric matrix.")
+check_error(res, "'v0' must be a double matrix.")
 res <- SimInf_model(G     = G,
                     S     = S,
                     U     = U,
