@@ -21,6 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <R_ext/Visibility.h>
 #include <string.h>
 #include <math.h>
 #include <gsl/gsl_rng.h>
@@ -291,7 +292,7 @@ static int SimInf_solver_ssm(
  * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-int SimInf_run_solver_ssm(SimInf_solver_args *args)
+int attribute_hidden SimInf_run_solver_ssm(SimInf_solver_args *args)
 {
     int error = 0;
     gsl_rng *rng = NULL;

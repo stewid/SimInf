@@ -21,6 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <R_ext/Visibility.h>
 #include <float.h>
 #include <string.h>
 #include <math.h>
@@ -57,8 +58,9 @@ typedef struct SimInf_aem_arguments
  * @param new_rate, rate after event.
  * @param rng, current value of rng in heap.
  */
-void calcTimes(double* time, double* infTime, double tt, double old_rate,
-	       double new_rate, gsl_rng* rng)
+void static
+calcTimes(double* time, double* infTime, double tt, double old_rate,
+          double new_rate, gsl_rng* rng)
 {
     double oldtime = time[0];
 
@@ -485,7 +487,7 @@ on_error:
  * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-int SimInf_run_solver_aem(SimInf_solver_args *args)
+int attribute_hidden SimInf_run_solver_aem(SimInf_solver_args *args)
 {
     int error = 0;
     gsl_rng *rng = NULL;

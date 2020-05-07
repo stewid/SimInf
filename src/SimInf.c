@@ -22,7 +22,7 @@
  */
 
 #include <Rdefines.h>
-
+#include <R_ext/Visibility.h>
 #include "SimInf_arg.h"
 #include "SimInf_openmp.h"
 #include "solvers/SimInf_solver.h"
@@ -93,7 +93,7 @@ static void SimInf_raise_error(int error)
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  */
-SEXP SimInf_run(
+SEXP attribute_hidden SimInf_run(
     SEXP model,
     SEXP threads,
     SEXP solver,

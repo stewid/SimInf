@@ -21,6 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <R_ext/Visibility.h>
 #include "SimInf.h"
 
 /* Offset in integer compartment state vector */
@@ -130,7 +131,7 @@ static int SEIR_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-SEXP SEIR_run(SEXP model, SEXP threads, SEXP solver)
+SEXP attribute_hidden SEIR_run(SEXP model, SEXP threads, SEXP solver)
 {
     TRFun tr_fun[] = {&SEIR_S_to_E, &SEIR_E_to_I, &SEIR_I_to_R};
 

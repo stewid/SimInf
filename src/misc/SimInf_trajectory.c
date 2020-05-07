@@ -22,7 +22,7 @@
  */
 
 #include <Rdefines.h>
-
+#include <R_ext/Visibility.h>
 #include "SimInf.h"
 #include "SimInf_openmp.h"
 #include "kvec.h"
@@ -372,7 +372,7 @@ static void SimInf_dense2df_real(
  *        indices of the nodes to include in the data.frame.
  * @return A data.frame.
  */
-SEXP SimInf_trajectory(
+SEXP attribute_hidden SimInf_trajectory(
     SEXP dm,
     SEXP dm_i,
     SEXP dm_lbl,
