@@ -21,6 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <R_ext/Visibility.h>
 #include <string.h>
 #include <math.h>
 #include <gsl/gsl_rng.h>
@@ -197,7 +198,7 @@ static void SimInf_split_events(
  * @param rng random number generator
  * @return 0 or an error code
  */
-int SimInf_scheduled_events_create(
+int attribute_hidden SimInf_scheduled_events_create(
     SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng)
 {
     int error = SIMINF_ERR_ALLOC_MEMORY_BUFFER, i;
@@ -250,7 +251,7 @@ on_error:
  * @param events SimInf_scheduled_events to free
  * @param Nthread number of threads that was used during simulation.
  */
-void SimInf_scheduled_events_free(
+void attribute_hidden SimInf_scheduled_events_free(
     SimInf_scheduled_events *events)
 {
     if (events) {
@@ -394,7 +395,7 @@ static void SimInf_print_event(
  * process both E1 and E2 events.
  * @return 0 if Ok, else error code.
  */
-void SimInf_process_events(
+void attribute_hidden SimInf_process_events(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events,
     int process_E2)
@@ -620,7 +621,8 @@ done:
  *
  * @param SimInf_compartment_model *model data to store.
  */
-void SimInf_store_solution_sparse(SimInf_compartment_model *model)
+void attribute_hidden
+SimInf_store_solution_sparse(SimInf_compartment_model *model)
 {
     while (!model[0].U && model[0].U_it < model[0].tlen &&
            model[0].tt > model[0].tspan[model[0].U_it]) {
@@ -652,7 +654,8 @@ void SimInf_store_solution_sparse(SimInf_compartment_model *model)
  * @param model the data structure to free.
  * @param Nthread number of threads that was used during simulation.
  */
-void SimInf_compartment_model_free(SimInf_compartment_model *model)
+void attribute_hidden
+SimInf_compartment_model_free(SimInf_compartment_model *model)
 {
     if (model) {
         int i;
@@ -690,7 +693,7 @@ void SimInf_compartment_model_free(SimInf_compartment_model *model)
  * @param args structure with data for the solver.
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-int SimInf_compartment_model_create(
+int attribute_hidden SimInf_compartment_model_create(
     SimInf_compartment_model **out, SimInf_solver_args *args)
 {
     int i;
@@ -821,7 +824,7 @@ on_error:
  *        than zero.
  * @param transition Zero-based index with the state transition.
  */
-void SimInf_print_status(
+void attribute_hidden SimInf_print_status(
     const int Nc,
     const int *u,
     const int node,

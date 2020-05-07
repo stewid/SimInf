@@ -21,6 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <R_ext/Visibility.h>
 #include "SimInf.h"
 #include "SimInf_forward_euler_linear_decay.h"
 #include "SimInf_local_spread.h"
@@ -229,7 +230,7 @@ static int SISe3_sp_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-SEXP SISe3_sp_run(SEXP model, SEXP threads, SEXP solver)
+SEXP attribute_hidden SISe3_sp_run(SEXP model, SEXP threads, SEXP solver)
 {
     TRFun tr_fun[] = {&SISe3_sp_S_1_to_I_1, &SISe3_sp_I_1_to_S_1,
                       &SISe3_sp_S_2_to_I_2, &SISe3_sp_I_2_to_S_2,
