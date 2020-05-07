@@ -29,34 +29,13 @@
 ##' @return Character vector with the path to the built dll.
 ##' @noRd
 do_compile_model <- function(model, name) {
-    lines <- c(
-        "#include <Rdefines.h>",
-        "#include <R_ext/Rdynload.h>",
-        "#include <R_ext/Visibility.h>",
-        "",
-        "SEXP SimInf_model_run(SEXP, SEXP, SEXP);",
-        "",
-        "static const R_CallMethodDef callMethods[] =",
-        "{",
-        "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",
-        "    {NULL, NULL, 0}",
-        "};",
-        "",
-        paste0("void attribute_visible R_init_", name, "(DllInfo *info)"),
-        "{",
-        "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
-        "    R_useDynamicSymbols(info, TRUE);",
-        "    R_forceSymbols(info, FALSE);",
-        "}",
-        "")
-
     ## Write the model C code to a temporary file.
     filename <- file.path(tempdir(), paste0(name, ".c"))
     writeLines(model@C_code, filename)
 
     ## Write the model init C code to a temporary file.
     filename_init <- file.path(tempdir(), paste0(name, "_init.c"))
-    writeLines(lines, filename_init)
+    writeLines(C_init(name), filename_init)
 
     ## Include directive for "SimInf.h"
     include <- system.file("include", package = "SimInf")

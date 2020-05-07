@@ -185,3 +185,29 @@ C_code <- function(model, pkg = NULL) {
 
     lines
 }
+
+##' Generate C code for registering native routines
+##'
+##' @return character vector with C code.
+##' @noRd
+C_init <- function(name) {
+    c("#include <Rdefines.h>",
+      "#include <R_ext/Rdynload.h>",
+      "#include <R_ext/Visibility.h>",
+      "",
+      "SEXP SimInf_model_run(SEXP, SEXP, SEXP);",
+      "",
+      "static const R_CallMethodDef callMethods[] =",
+      "{",
+      "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",
+      "    {NULL, NULL, 0}",
+      "};",
+      "",
+      paste0("void attribute_visible R_init_", name, "(DllInfo *info)"),
+      "{",
+      "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
+      "    R_useDynamicSymbols(info, TRUE);",
+      "    R_forceSymbols(info, FALSE);",
+      "}",
+      "")
+}

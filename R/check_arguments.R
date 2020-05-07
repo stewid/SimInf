@@ -264,12 +264,12 @@ check_distance_matrix <- function(distance) {
 ##' @return invisible(NULL)
 ##' @noRd
 check_package_name <- function(name) {
-    if (is.null(name) ||
-        !is.character(name) ||
-        length(name) != 1 ||
-        nchar(name) == 0 ||
-        !grepl(paste0("^", .standard_regexps()$valid_package_name, "$"), name))
+    pattern <- paste0("^", .standard_regexps()$valid_package_name, "$")
+
+    if (any(is.null(name), !is.character(name), length(name) != 1,
+            nchar(name) == 0, !grepl(pattern, name))) {
         stop("Malformed package name.", call. = FALSE)
+    }
 
     invisible(NULL)
 }
