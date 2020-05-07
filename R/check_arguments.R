@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -250,6 +250,26 @@ check_distance_matrix <- function(distance) {
     }
     if (any(distance < 0))
         stop("All values in the 'distance' matrix must be >= 0.", call. = FALSE)
+
+    invisible(NULL)
+}
+
+##' Check a package name
+##'
+##' From the "Writing R Extensions" manual: The mandatory ‘Package’
+##' field gives the name of the package. This should contain only
+##' (ASCII) letters, numbers and dot, have at least two characters and
+##' start with a letter and not end in a dot.
+##' @param name Character string with the package name.
+##' @return invisible(NULL)
+##' @noRd
+check_package_name <- function(name) {
+    if (is.null(name) ||
+        !is.character(name) ||
+        length(name) != 1 ||
+        nchar(name) == 0 ||
+        !grepl(paste0("^", .standard_regexps()$valid_package_name, "$"), name))
+        stop("Malformed package name.", call. = FALSE)
 
     invisible(NULL)
 }

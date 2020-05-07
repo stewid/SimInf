@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -455,8 +455,11 @@ create_model_run_man_file <- function(path, name) {
 ##' definition that can be installed as an add-on R package.
 ##' @param model The \code{model} \code{\linkS4class{SimInf_model}}
 ##'     object with your model to create the package skeleton from.
-##' @param name Character string: the package name and directory name
-##'     for your package.
+##' @param name Character string with the package name. It should
+##'     contain only (ASCII) letters, numbers and dot, have at least
+##'     two characters and start with a letter and not end in a dot.
+##'     The package name is also used for the class name of the model
+##'     and the directory name of the package.
 ##' @param path Path to put the package directory in. Default is '.'
 ##'     i.e. the current directory.
 ##' @param author Author of the package.
@@ -475,9 +478,8 @@ package_skeleton <- function(model, name = NULL, path = ".",
                              author = NULL, email = NULL,
                              maintainer = NULL, license = "GPL-3") {
     check_model_argument(model)
+    check_package_name(name)
 
-    stopifnot(!is.null(name), is.character(name), length(name) == 1,
-              nchar(name) > 0)
     stopifnot(!is.null(path), is.character(path), length(path) == 1,
               nchar(path) > 0)
     path <- file.path(path, name)
