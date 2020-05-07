@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -53,9 +53,13 @@ m <- mparse(transitions = c("@ -> a -> S",
             v0 = data.frame(g = 0.077),
             tspan = 1:10)
 
+## Check that a malformed package name is detected
 path <- tempdir()
-package_skeleton(m, name = "SIR", path = path)
+res <- assertError(package_skeleton(m, name = "S_I_R", path = path))
+check_error(res, "Malformed package name.")
 
+## Create a package
+package_skeleton(m, name = "SIR", path = path)
 stopifnot(file.exists(file.path(path, "SIR", "DESCRIPTION")))
 stopifnot(file.exists(file.path(path, "SIR", "NAMESPACE")))
 stopifnot(file.exists(file.path(path, "SIR", "man", "SIR-class.Rd")))

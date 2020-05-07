@@ -18,8 +18,11 @@ package_skeleton(
 \item{model}{The \code{model} \code{\linkS4class{SimInf_model}}
 object with your model to create the package skeleton from.}
 
-\item{name}{Character string: the package name and directory name
-for your package.}
+\item{name}{Character string with the package name. It should
+contain only (ASCII) letters, numbers and dot, have at least
+two characters and start with a letter and not end in a dot.
+The package name is also used for the class name of the model
+and the directory name of the package.}
 
 \item{path}{Path to put the package directory in. Default is '.'
 i.e. the current directory.}
