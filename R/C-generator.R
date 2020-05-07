@@ -34,6 +34,7 @@ C_heading <- function() {
 ##' @noRd
 C_include <- function() {
     c("#include <R_ext/Rdynload.h>",
+      "#include <R_ext/Visibility.h>",
       "#include \"SimInf.h\"",
       "")
 }
@@ -102,7 +103,7 @@ C_ptsFun <- function(pts_fun) {
 ##' @return character vector with C code.
 ##' @noRd
 C_run <- function(transitions) {
-    c("SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    c("SEXP attribute_hidden SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
       "{",
       sprintf("    TRFun tr_fun[] = {%s};",
               paste0("&trFun", seq_len(length(transitions)), collapse = ", ")),
@@ -166,9 +167,7 @@ C_code <- function(model, pkg = NULL) {
     lines <- model@C_code
 
     lines <- c(
-        lines[1:2],
-        "#include <R_ext/Visibility.h>",
-        lines[c(-1, -2)],
+        lines,
         "static const R_CallMethodDef callMethods[] =",
         "{",
         "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",

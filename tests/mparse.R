@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -206,6 +206,7 @@ stopifnot(identical(m@S, S))
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",
+    "#include <R_ext/Visibility.h>",
     "#include \"SimInf.h\"",
     "",
     "static double trFun1(",
@@ -260,7 +261,7 @@ C_code <- c(
     "    return 0;",
     "}",
     "",
-    "SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    "SEXP attribute_hidden SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
     "{",
     "    TRFun tr_fun[] = {&trFun1, &trFun2, &trFun3, &trFun4};",
     "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
@@ -281,6 +282,7 @@ m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",
+    "#include <R_ext/Visibility.h>",
     "#include \"SimInf.h\"",
     "",
     "static double trFun1(",
@@ -335,7 +337,7 @@ C_code <- c(
     "    return 0;",
     "}",
     "",
-    "SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    "SEXP attribute_hidden SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
     "{",
     "    TRFun tr_fun[] = {&trFun1, &trFun2, &trFun3, &trFun4};",
     "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
@@ -366,6 +368,7 @@ model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",
+    "#include <R_ext/Visibility.h>",
     "#include \"SimInf.h\"",
     "",
     "static double trFun1(",
@@ -400,7 +403,7 @@ C_code <- c(
     "    return 0;",
     "}",
     "",
-    "SEXP SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    "SEXP attribute_hidden SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
     "{",
     "    TRFun tr_fun[] = {&trFun1, &trFun2};",
     "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
@@ -523,7 +526,7 @@ m  <- mparse(transitions = ".S.S -> 1.2*.S.S -> @",
              compartments = c(".S.S"),
              u0 = data.frame(.S.S = 100),
              tspan = 1:100)
-stopifnot(identical(m@C_code[13], "    return 1.2*u[0];"))
+stopifnot(identical(m@C_code[14], "    return 1.2*u[0];"))
 
 ## Check mparse with a propensity that contains '->' to handle a case
 ## where a pointer is used in the propensity.
@@ -531,7 +534,7 @@ m  <- mparse(transitions = "S -> a->data[2]*1.2*S -> @",
              compartments = c("S"),
              u0 = data.frame(S = 100),
              tspan = 1:100)
-stopifnot(identical(m@C_code[13], "    return a->data[2]*1.2*u[0];"))
+stopifnot(identical(m@C_code[14], "    return a->data[2]*1.2*u[0];"))
 
 run_model <- function(model) {
     ## The environmental variable "R_TEST" must be unset inside "R CMD
