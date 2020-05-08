@@ -175,7 +175,7 @@ C_init <- function(name) {
       paste0("void attribute_visible R_init_", name, "(DllInfo *info)"),
       "{",
       "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
-      "    R_useDynamicSymbols(info, TRUE);",
+      "    R_useDynamicSymbols(info, FALSE);",
       "    R_forceSymbols(info, FALSE);",
       "}",
       "")
