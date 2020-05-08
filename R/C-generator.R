@@ -103,7 +103,8 @@ C_ptsFun <- function(pts_fun) {
 ##' @return character vector with C code.
 ##' @noRd
 C_run <- function(transitions) {
-    c("SEXP attribute_hidden SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    c("SEXP attribute_hidden",
+      "SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
       "{",
       sprintf("    TRFun tr_fun[] = {%s};",
               paste0("&trFun", seq_len(length(transitions)), collapse = ", ")),
