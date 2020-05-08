@@ -54,6 +54,14 @@ C_trFun <- function(transitions) {
     lines <- character(0)
     for (i in seq_len(length(transitions))) {
         lines <- c(lines,
+                   "/**",
+                   " * @param u The compartment state vector in the node.",
+                   " * @param v The continuous state vector in the node.",
+                   " * @param ldata The local data vector in the node.",
+                   " * @param gdata The global data vector.",
+                   " * @param t Current time.",
+                   " * @return propensity.",
+                   " */",
                    sprintf("static double trFun%i(", i),
                    parameters,
                    "{",
