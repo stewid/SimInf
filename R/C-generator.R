@@ -135,10 +135,6 @@ C_code_mparse <- function(transitions, pts_fun) {
 ##'
 ##' @param model The \code{SimInf_model} object to extract the C code
 ##'     from.
-##' @param pkg Character vector. If the C could should be used in a
-##'     package named \code{pkg}, the function modifies the C code to
-##'     facilitate adding the code to the package. Default is to not
-##'     use this argument and return the C code unmodified.
 ##' @return Character vector with C code for the model.
 ##' @export
 ##' @examples
@@ -153,41 +149,14 @@ C_code_mparse <- function(transitions, pts_fun) {
 ##'
 ##' ## View the C code.
 ##' C_code(model)
-##'
-##' ## Modify the C code for a package named "XYZ"
-##' C_code(model, "XYZ")
-C_code <- function(model, pkg = NULL) {
+C_code <- function(model) {
     check_model_argument(model)
-
-    if (is.null(pkg))
-        return(model@C_code)
-
-    pkg <- as.character(pkg)
-    stopifnot(identical(length(pkg), 1L), nchar(pkg[1]) > 0)
-
-    lines <- model@C_code
-
-    lines <- c(
-        lines,
-        "static const R_CallMethodDef callMethods[] =",
-        "{",
-        "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",
-        "    {NULL, NULL, 0}",
-        "};",
-        "",
-        paste0("void attribute_visible R_init_", pkg, "(DllInfo *info)"),
-        "{",
-        "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
-        "    R_useDynamicSymbols(info, FALSE);",
-        "    R_forceSymbols(info, TRUE);",
-        "}",
-        "")
-
-    lines
+    model@C_code
 }
 
 ##' Generate C code for registering native routines
 ##'
+##' @param name FIXME
 ##' @return character vector with C code.
 ##' @noRd
 C_init <- function(name) {
