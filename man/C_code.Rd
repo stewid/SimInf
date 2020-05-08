@@ -4,16 +4,11 @@
 \alias{C_code}
 \title{Extract the C code from a \code{SimInf_model} object}
 \usage{
-C_code(model, pkg = NULL)
+C_code(model)
 }
 \arguments{
 \item{model}{The \code{SimInf_model} object to extract the C code
 from.}
-
-\item{pkg}{Character vector. If the C could should be used in a
-package named \code{pkg}, the function modifies the C code to
-facilitate adding the code to the package. Default is to not
-use this argument and return the C code unmodified.}
 }
 \value{
 Character vector with C code for the model.
@@ -33,7 +28,4 @@ model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I", "I -> g*I -> R"),
 
 ## View the C code.
 C_code(model)
-
-## Modify the C code for a package named "XYZ"
-C_code(model, "XYZ")
 }

@@ -62,7 +62,14 @@ create_NAMESPACE_file <- function(path, name) {
 }
 
 create_model_C_file <- function(path, model, name) {
-    writeLines(C_code(model, name), con = file.path(path, "src", "model.c"))
+    ## Write the model C code to a file.
+    filename <- file.path(path, "src", "model.c")
+    writeLines(model@C_code, filename)
+
+    ## Write the model init C code to a file.
+    filename <- file.path(path, "src", "init.c")
+    writeLines(C_init(name), filename)
+
     invisible(NULL)
 }
 
@@ -294,8 +301,6 @@ create_model_run_fn <- function(name) {
       "##'",
       "##' @rdname run-methods",
       "##' @param model The model to run.",
-      "##' @param threads Number of threads. Default is NULL, i.e. to use all",
-      "##'     available processors.",
       "##' @param solver Which numerical solver to utilize. Default is NULL,",
       "##'     i.e., use the default numerical solver in SimInf.",
       "##' @return SimInf_model with result from simulation.",
@@ -303,10 +308,10 @@ create_model_run_fn <- function(name) {
       paste0("##' @useDynLib ", name, ", .registration=TRUE"),
       "setMethod(\"run\",",
       paste0("    signature(model = \"", name, "\"),"),
-      "    function(model, threads = NULL, solver = NULL)",
+      "    function(model, solver = NULL)",
       "    {",
       "        methods::validObject(model)",
-      paste0("       .Call(SimInf_model_run, model, threads, solver, ",
+      paste0("       .Call(SimInf_model_run, model, NULL, solver, ",
              "PACKAGE = \"", name, "\")"),
       "    })")
 }
@@ -424,13 +429,10 @@ create_model_run_man_file <- function(path, name) {
         "\\title{Run the model}",
         "\\usage{",
         paste0("\\S4method{run}{", name,
-               "}(model, threads = NULL, solver = NULL)"),
+               "}(model, solver = NULL)"),
         "}",
         "\\arguments{",
         "\\item{model}{The model to run.}",
-        "",
-        paste0("\\item{threads}{Number of threads. Default is NULL, ",
-               "i.e. to use all available processors.}"),
         "",
         paste0("\\item{solver}{Which numerical solver to utilize. ",
                "Default is NULL, i.e. use the default numerical ",

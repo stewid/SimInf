@@ -1,6 +1,6 @@
 steps:
 - script: |
-    curl -fLo /tmp/R.pkg "https://cloud.r-project.org/bin/macosx/R-3.6.3.pkg"
+    curl -fLo /tmp/R.pkg "https://cloud.r-project.org/bin/macosx/R-4.0.0.pkg"
     sudo installer -pkg "/tmp/R.pkg" -target /
     rm /tmp/R.pkg
     curl -fLo /tmp/BasicTeX.pkg https://ctan.org/tex-archive/systems/mac/mactex/BasicTeX.pkg
