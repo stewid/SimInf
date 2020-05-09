@@ -100,7 +100,9 @@ SIR <- function(u0,
     u0 <- check_u0(u0, compartments)
 
     ## Check for non-numeric parameters
-    check_gdata_arg(beta, gamma)
+    check_ldata_arg(nrow(u0), beta, gamma)
+    beta <- rep(beta, length.out = nrow(u0))
+    gamma <- rep(gamma, length.out = nrow(u0))
 
     ## Arguments seem ok...go on
 
@@ -116,15 +118,16 @@ SIR <- function(u0,
     S <- matrix(c(-1, 1, 0, 0, -1, 1), nrow = 3, ncol = 2,
                 dimnames = list(compartments, c("1", "2")))
 
-    gdata <- as.numeric(c(beta, gamma))
-    names(gdata) <- c("beta", "gamma")
+    ldata <- matrix(as.numeric(c(beta, gamma)),
+                    nrow  = 2, byrow = TRUE,
+                    dimnames = list(c("beta", "gamma")))
 
     model <- SimInf_model(G      = G,
                           S      = S,
                           E      = E,
                           tspan  = tspan,
                           events = events,
-                          gdata  = gdata,
+                          ldata  = ldata,
                           u0     = u0)
 
     as(model, "SIR")

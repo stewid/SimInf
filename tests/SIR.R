@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -52,14 +52,14 @@ res <- assertError(SIR(u0     = u0,
                        tspan  = seq_len(10) - 1,
                        events = NULL,
                        gamma  = 0.5))
-check_error(res, "'beta' must be numeric of length 1.")
+check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check missing gamma
 res <- assertError(SIR(u0     = u0,
                        tspan  = seq_len(10) - 1,
                        events = NULL,
                        beta   = 0.5))
-check_error(res, "'gamma' must be numeric of length 1.")
+check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric beta
 res <- assertError(SIR(u0      = u0,
@@ -67,7 +67,7 @@ res <- assertError(SIR(u0      = u0,
                        events  = NULL,
                        beta    = "0.5",
                        gamma   = 0.1))
-check_error(res, "'beta' must be numeric of length 1.")
+check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric gamma
 res <- assertError(SIR(u0      = u0,
@@ -75,23 +75,23 @@ res <- assertError(SIR(u0      = u0,
                        events  = NULL,
                        beta    = 0.5,
                        gamma   = "0.1"))
-check_error(res, "'gamma' must be numeric of length 1.")
+check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
-## Check that length of beta equals 1
+## Check that length of beta equals 1 or nrow(u0)
 res <- assertError(SIR(u0      = u0,
                        tspan   = seq_len(10) - 1,
                        events  = NULL,
                        beta    = c(0.5, 0.5),
                        gamma   = 0.1))
-check_error(res, "'beta' must be numeric of length 1.")
+check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
-## Check that length of gamma equals 1
+## Check that length of gamma equals 1 or nrow(u0)
 res <- assertError(SIR(u0      = u0,
                        tspan   = seq_len(10) - 1,
                        events  = NULL,
                        beta    = 0.5,
                        gamma   = c(0.1, 0.1)))
-check_error(res, "'gamma' must be numeric of length 1.")
+check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Extract data from the 'suscpetible', 'infected' and 'recovered'
 ## compartments
