@@ -1,6 +1,7 @@
 # Run code coverage
 steps:
 - bash: |
-    sudo dnf -y -q install R-covr
-    Rscript -e "covr::azure()"
+    Rscript \
+      -e "install.packages('covr')" \
+      -e "covr::azure()"
   displayName: 'Code coverage'
