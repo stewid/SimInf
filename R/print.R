@@ -66,6 +66,15 @@ summary_matrix <- function(x) {
     print.table(qq, digits = 3)
 }
 
+summary_vector <- function(x) {
+    xx <- data.frame(Parameter = names(x), Value = x)
+    if (nrow(xx) > 0) {
+        print.data.frame(xx, right = FALSE, row.names = FALSE)
+    } else {
+        cat(" - None\n")
+    }
+}
+
 ##' Summarise local model parameters
 ##' @importFrom stats quantile
 ##' @noRd
@@ -74,7 +83,15 @@ summary_ldata <- function(object) {
         cat("\n")
         cat("Local data\n")
         cat("----------\n")
-        summary_matrix(object@ldata)
+
+        ## If there is only one node, or if all columns are identical,
+        ## then print ldata in a 'Parameter Value' format.
+        d <- sum(duplicated(object@ldata, MARGIN = 2)) + 1
+        if (ncol(object@ldata) == d) {
+            summary_vector(object@ldata[, 1, drop = TRUE])
+        } else {
+            summary_matrix(object@ldata)
+        }
     }
 }
 
@@ -84,13 +101,7 @@ summary_gdata <- function(object) {
     cat("\n")
     cat("Global data\n")
     cat("-----------\n")
-
-    gdata <- data.frame(Parameter = names(object@gdata), Value = object@gdata)
-    if (nrow(gdata) > 0) {
-        print.data.frame(gdata, right = FALSE, row.names = FALSE)
-    } else {
-        cat(" - None\n")
-    }
+    summary_vector(object@gdata)
 }
 
 ##' @importFrom stats quantile
@@ -181,8 +192,10 @@ setMethod("show",
               cat(sprintf("Number of transitions: %i\n", Nt(object)))
               show(object@events)
 
-              summary_gdata(object)
-              summary_ldata(object)
+              if (length(object@gdata))
+                  summary_gdata(object)
+              if (ncol(object@ldata))
+                  summary_ldata(object)
               summary_V(object)
               summary_U(object)
 

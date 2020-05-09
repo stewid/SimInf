@@ -493,11 +493,11 @@ stopifnot(identical(
     show_observed[22:28],
     c("Local data",
       "----------",
-      "        Min. 1st Qu. Median Mean 3rd Qu. Max.",
-      " end_t1   91      91     91   91      91   91",
-      " end_t2  182     182    182  182     182  182",
-      " end_t3  273     273    273  273     273  273",
-      " end_t4  365     365    365  365     365  365")))
+      " Parameter Value",
+      " end_t1     91  ",
+      " end_t2    182  ",
+      " end_t3    273  ",
+      " end_t4    365  ")))
 
 ## Check summary method with events
 summary(run(model))
