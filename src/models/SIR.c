@@ -52,7 +52,7 @@ static double SIR_S_to_I(
     const double n = S_n + I_n + u[R];
 
     if (n > 0.0)
-        return (gdata[BETA] * S_n * I_n) / n;
+        return (ldata[BETA] * S_n * I_n) / n;
     return 0.0;
 }
 
@@ -73,7 +73,7 @@ static double SIR_I_to_R(
     const double *gdata,
     double t)
 {
-    return gdata[GAMMA] * u[I];
+    return ldata[GAMMA] * u[I];
 }
 
 /**

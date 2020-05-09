@@ -1,0 +1,7 @@
+# Run code coverage
+steps:
+- bash: |
+    Rscript \
+      -e "install.packages('covr')" \
+      -e "covr::azure()"
+  displayName: 'Code coverage'

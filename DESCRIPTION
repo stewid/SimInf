@@ -80,7 +80,6 @@ Collate:
     'priors.R'
     'punchcard.R'
     'run.R'
-    'run_outer.R'
     'trajectory.R'
 Encoding: UTF-8
 RoxygenNote: 7.1.0
