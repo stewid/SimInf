@@ -95,6 +95,30 @@ check_gdata_arg <- function(...) {
     invisible(NULL)
 }
 
+##' Check arguments for 'ldata'
+##'
+##' Raise an error if any of the arguments are not ok.
+##' @param len Exprected length of each data vector in '...'.
+##' @param ... The arguments to check
+##' @return invisible(NULL)
+##' @noRd
+check_ldata_arg <- function(len, ...) {
+    arg <- list(...)
+    for (i in seq_len(length(arg))) {
+        if (!is.numeric(arg[[i]]) ||
+            !is.atomic(arg[[i]]) ||
+            (!identical(length(arg[[i]]), 1L) &&
+             !identical(length(arg[[i]]), len))) {
+            stop(paste0("'",
+                        match.call(expand.dots = FALSE)$"..."[i],
+                        "' must be numeric of length 1 or 'nrow(u0)'."),
+                 call. = FALSE)
+        }
+    }
+
+    invisible(NULL)
+}
+
 ##' Check arguments for interval endpoints
 ##'
 ##' Raise an error if any of the arguments are not ok.
