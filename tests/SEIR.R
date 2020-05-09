@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ res <- assertError(SEIR(u0      = u0,
                                events  = NULL,
                                epsilon = 0.5,
                                gamma   = 0.5))
-check_error(res, "'beta' must be numeric of length 1.")
+check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check missing epsilon
 res <- assertError(SEIR(u0      = u0,
@@ -65,7 +65,7 @@ res <- assertError(SEIR(u0      = u0,
                                events  = NULL,
                                beta    = 0.5,
                                gamma   = 0.5))
-check_error(res, "'epsilon' must be numeric of length 1.")
+check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check missing gamma
 res <- assertError(SEIR(u0      = u0,
@@ -73,7 +73,7 @@ res <- assertError(SEIR(u0      = u0,
                                events  = NULL,
                                beta    = 0.5,
                                epsilon = 0.5))
-check_error(res, "'gamma' must be numeric of length 1.")
+check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric beta
 res <- assertError(SEIR(u0      = u0,
@@ -82,7 +82,7 @@ res <- assertError(SEIR(u0      = u0,
                                beta    = "0.5",
                                epsilon = 0.3,
                                gamma   = 0.1))
-check_error(res, "'beta' must be numeric of length 1.")
+check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric epsilon
 res <- assertError(SEIR(u0      = u0,
@@ -91,7 +91,7 @@ res <- assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = "0.3",
                                gamma   = 0.1))
-check_error(res, "'epsilon' must be numeric of length 1.")
+check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric gamma
 res <- assertError(SEIR(u0      = u0,
@@ -100,7 +100,7 @@ res <- assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = 0.3,
                                gamma   = "0.1"))
-check_error(res, "'gamma' must be numeric of length 1.")
+check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of beta equals 1
 res <- assertError(SEIR(u0      = u0,
@@ -109,7 +109,7 @@ res <- assertError(SEIR(u0      = u0,
                                beta    = c(0.5, 0.5),
                                epsilon = 0.3,
                                gamma   = 0.1))
-check_error(res, "'beta' must be numeric of length 1.")
+check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of epsilon equals 1
 res <- assertError(SEIR(u0      = u0,
@@ -118,7 +118,7 @@ res <- assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = c(0.3, 0.3),
                                gamma   = 0.1))
-check_error(res, "'epsilon' must be numeric of length 1.")
+check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of gamma equals 1
 res <- assertError(SEIR(u0      = u0,
@@ -127,7 +127,7 @@ res <- assertError(SEIR(u0      = u0,
                                beta    = 0.5,
                                epsilon = 0.3,
                                gamma   = c(0.1, 0.1)))
-check_error(res, "'gamma' must be numeric of length 1.")
+check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check extraction of data from 'suscpetible', 'infected' and
 ## 'recovered' compartments

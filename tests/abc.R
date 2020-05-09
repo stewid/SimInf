@@ -169,14 +169,3 @@ accept_fn_gdata <- function(result, generation, tol, ptol, ...) {
     ## or equal to the tolerance.
     abc_accept(dist < tol, tol)
 }
-
-## set.seed(123)
-## fit <- abc(model = model,
-##            priors = c(beta~U(0.5, 1.5), gamma~U(0.3, 0.7)),
-##            ngen = 2,
-##            npart = 10,
-##            fn = accept_fn_gdata,
-##            tol = 0.1,
-##            ptol = 0.5)
-## fit
-## summary(fit)
