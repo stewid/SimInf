@@ -143,8 +143,12 @@ unlink(pdf_file)
 ##
 ## Create a model with parameters in gdata
 ##
-model <- SIR(u0 = data.frame(S = rep(9999, 2), I = 1, R = 0),
-             tspan = 1:50, beta = 1, gamma = 0.5)
+model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
+                                "I -> gamma*I -> R"),
+                compartments = c("S", "I", "R"),
+                gdata = c(beta = 1, gamma = 0.5),
+                u0 = data.frame(S = rep(9999, 2), I = 1, R = 0),
+                tspan = 1:50)
 
 accept_fn_gdata <- function(result, generation, tol, ptol, ...) {
     ## Determine the tolerance for this generation.
@@ -166,13 +170,13 @@ accept_fn_gdata <- function(result, generation, tol, ptol, ...) {
     abc_accept(dist < tol, tol)
 }
 
-set.seed(123)
-fit <- abc(model = model,
-           priors = c(beta~U(0.5, 1.5), gamma~U(0.3, 0.7)),
-           ngen = 2,
-           npart = 10,
-           fn = accept_fn_gdata,
-           tol = 0.1,
-           ptol = 0.5)
-fit
-summary(fit)
+## set.seed(123)
+## fit <- abc(model = model,
+##            priors = c(beta~U(0.5, 1.5), gamma~U(0.3, 0.7)),
+##            ngen = 2,
+##            npart = 10,
+##            fn = accept_fn_gdata,
+##            tol = 0.1,
+##            ptol = 0.5)
+## fit
+## summary(fit)

@@ -187,10 +187,13 @@ stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "The number of nodes in 'u0' and 'ldata' must match."))
 
 ## Check valid_SimInf_model_object with invalid gdata.
-m <- SIR(u0 = data.frame(S = 10, I = 0, R = 0),
-         tspan = 1:10, beta = 0.1, gamma = 0.1)
+m <- SISe(u0 = data.frame(S = 10, I = 0), tspan = 1:10, phi = 0,
+          upsilon = 0.1, gamma = 0.1, alpha = 1.0, beta_t1 = 0.1,
+          beta_t2 = 0.1, beta_t3 = 0.1, beta_t4 = 0.1, end_t1  = 91,
+          end_t2  = 182, end_t3  = 273, end_t4  = 365, epsilon = 0.1)
 m@gdata <- as.integer(m@gdata)
-names(m@gdata) <- c("beta", "gamma")
+names(m@gdata) <- c("upsilon", "gamma", "alpha", "beta_t1",
+                    "beta_t2", "beta_t3", "beta_t4", "epsilon")
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "'gdata' must be a double vector."))
 
@@ -709,23 +712,31 @@ res <- assertError(prevalence(result, I ~ S + I + R, node = 10))
 check_error(res, "'node' must be integer <= number of nodes.")
 
 ## Check 'gdata'
-model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-             tspan = 1:5, beta = 2, gamma = 4)
+model <- SISe(u0 = data.frame(S = 10, I = 0), tspan = 1:10, phi = 0,
+              upsilon = 1, gamma = 2, alpha = 3, beta_t1 = 4,
+              beta_t2 = 5, beta_t3 = 6, beta_t4 = 7, end_t1  = 91,
+              end_t2  = 182, end_t3  = 273, end_t4  = 365, epsilon = 8)
 
-stopifnot(identical(gdata(model), c(beta = 2, gamma = 4)))
-gdata(model, "beta") <- 6
-stopifnot(identical(gdata(model), c(beta = 6, gamma = 4)))
+stopifnot(identical(gdata(model),
+                    c(upsilon = 1, gamma = 2, alpha = 3, beta_t1 = 4,
+                      beta_t2 = 5, beta_t3 = 6, beta_t4 = 7, epsilon = 8)))
+
+gdata(model, "epsilon") <- 9
+
+stopifnot(identical(gdata(model),
+                    c(upsilon = 1, gamma = 2, alpha = 3, beta_t1 = 4,
+                      beta_t2 = 5, beta_t3 = 6, beta_t4 = 7, epsilon = 9)))
 
 res <- assertError(gdata(model) <- 6)
 check_error(res, "Missing 'parameter' argument.")
 
-res <- assertError(gdata(model, "beta") <- "6")
+res <- assertError(gdata(model, "epsilon") <- "6")
 check_error(res, "'value' argument must be a numeric.")
 
 res <- assertError(gdata(model, 5) <- 6)
 check_error(res, "'parameter' argument must be a character.")
 
-res <- assertError("gdata<-" (model, "beta"))
+res <- assertError("gdata<-" (model, "epsilon"))
 check_error(res, "Missing 'value' argument.")
 
 ## Check 'ldata'
