@@ -3,11 +3,29 @@
 \name{run}
 \alias{run}
 \alias{run,SimInf_model-method}
+\alias{run,SEIR-method}
+\alias{run,SIR-method}
+\alias{run,SISe-method}
+\alias{run,SISe3-method}
+\alias{run,SISe3_sp-method}
+\alias{run,SISe_sp-method}
 \title{Run the SimInf stochastic simulation algorithm}
 \usage{
 run(model, ...)
 
 \S4method{run}{SimInf_model}(model, solver = c("ssm", "aem"), ...)
+
+\S4method{run}{SEIR}(model, solver = c("ssm", "aem"), ...)
+
+\S4method{run}{SIR}(model, solver = c("ssm", "aem"), ...)
+
+\S4method{run}{SISe}(model, solver = c("ssm", "aem"), ...)
+
+\S4method{run}{SISe3}(model, solver = c("ssm", "aem"), ...)
+
+\S4method{run}{SISe3_sp}(model, solver = c("ssm", "aem"), ...)
+
+\S4method{run}{SISe_sp}(model, solver = c("ssm", "aem"), ...)
 }
 \arguments{
 \item{model}{The SimInf model to run.}

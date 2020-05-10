@@ -115,31 +115,81 @@ setMethod("run",
           signature(model = "SimInf_model"),
           function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
-
-              ## Check that SimInf_model contains all data structures
-              ## required by the siminf solver and that they make sense
               validObject(model);
 
-              if (contains_C_code(model)) {
-                  name <- paste0("SimInf_",
-                                 digest(model@C_code, serialize = FALSE))
-                  if (!is.loaded("SimInf_model_run", name, "Call")) {
-                      lib <- do_compile_model(model, name)
-                      dyn.load(lib)
-                  }
-
-                  ## Run the model
-                  return(.Call("SimInf_model_run", model, NULL,
-                               solver, PACKAGE = name))
+              name <- paste0("SimInf_",
+                             digest(model@C_code, serialize = FALSE))
+              if (!is.loaded("SimInf_model_run", name, "Call")) {
+                  lib <- do_compile_model(model, name)
+                  dyn.load(lib)
               }
 
-              ## The model name
-              name <- as.character(class(model))
+              .Call("SimInf_model_run", model, NULL, solver, PACKAGE = name)
+          }
+)
 
-              ## The model C run function
-              run_fn <- paste0(name, "_run")
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SEIR"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SEIR_run, model, NULL, solver)
+          }
+)
 
-              ## Run the model
-              eval(parse(text = ".Call(run_fn, model, NULL, solver)"))
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SIR"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SIR_run, model, NULL, solver)
+          }
+)
+
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SISe"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SISe_run, model, NULL, solver)
+          }
+)
+
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SISe3"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SISe3_run, model, NULL, solver)
+          }
+)
+
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SISe3_sp"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SISe3_sp_run, model, NULL, solver)
+          }
+)
+
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SISe_sp"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SISe_sp_run, model, NULL, solver)
           }
 )
