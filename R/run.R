@@ -35,7 +35,7 @@ do_compile_model <- function(model, name) {
 
     ## Write the model init C code to a temporary file.
     filename_init <- file.path(tempdir(), paste0(name, "_init.c"))
-    writeLines(C_init(name), filename_init)
+    writeLines(C_init(name, FALSE), filename_init)
 
     ## Include directive for "SimInf.h"
     include <- system.file("include", package = "SimInf")

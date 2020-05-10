@@ -181,27 +181,39 @@ C_code <- function(model) {
 
 ##' Generate C code for registering native routines
 ##'
-##' @param name FIXME
+##' @param name the name of the shared object.
+##' @param force_symbols If TRUE, then use 'R_forceSymbols(info,
+##'     TRUE)', else use 'R_forceSymbols(info, FALSE)'
 ##' @return character vector with C code.
 ##' @noRd
-C_init <- function(name) {
-    c("#include <Rdefines.h>",
-      "#include <R_ext/Rdynload.h>",
-      "#include <R_ext/Visibility.h>",
-      "",
-      "SEXP SimInf_model_run(SEXP, SEXP, SEXP);",
-      "",
-      "static const R_CallMethodDef callMethods[] =",
-      "{",
-      "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",
-      "    {NULL, NULL, 0}",
-      "};",
-      "",
-      paste0("void attribute_visible R_init_", name, "(DllInfo *info)"),
-      "{",
-      "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
-      "    R_useDynamicSymbols(info, FALSE);",
-      "    R_forceSymbols(info, FALSE);",
+C_init <- function(name, force_symbols) {
+    lines <- c(
+        "#include <Rdefines.h>",
+        "#include <R_ext/Rdynload.h>",
+        "#include <R_ext/Visibility.h>",
+        "",
+        "SEXP SimInf_model_run(SEXP, SEXP, SEXP);",
+        "",
+        "static const R_CallMethodDef callMethods[] =",
+        "{",
+        "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",
+        "    {NULL, NULL, 0}",
+        "};",
+        "",
+        paste0("void attribute_visible R_init_", name, "(DllInfo *info)"),
+        "{",
+        "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
+        "    R_useDynamicSymbols(info, FALSE);")
+
+    if (isTRUE(force_symbols)) {
+        lines <- c(lines,
+                   "    R_forceSymbols(info, TRUE);")
+    } else {
+        lines <- c(lines,
+                   "    R_forceSymbols(info, FALSE);")
+    }
+
+    c(lines,
       "}",
       "")
 }

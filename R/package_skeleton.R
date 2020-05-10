@@ -68,7 +68,7 @@ create_model_C_file <- function(path, model, name) {
 
     ## Write the model init C code to a file.
     filename <- file.path(path, "src", "init.c")
-    writeLines(C_init(name), filename)
+    writeLines(C_init(name, TRUE), filename)
 
     invisible(NULL)
 }
@@ -122,7 +122,7 @@ create_model_R_object_roxygen <- function(model) {
 
     lines <- c(
         lines,
-        "##' @param tspan A vector (length >= 2) of increasing time points",
+        "##' @param tspan A vector of increasing time points",
         "##'     where the state of each node is to be returned.",
         "##' @param events A data.frame with scheduled events.",
         "##' @import SimInf",
@@ -301,18 +301,20 @@ create_model_run_fn <- function(name) {
       "##'",
       "##' @rdname run-methods",
       "##' @param model The model to run.",
-      "##' @param solver Which numerical solver to utilize. Default is NULL,",
-      "##'     i.e., use the default numerical solver in SimInf.",
-      "##' @return SimInf_model with result from simulation.",
+      "##' @param solver Which numerical solver to utilize. Default is 'ssm'.",
+      "##' @param ... Additional arguments.",
+      paste0("##' @return A model with a single stochastic ",
+             "solution trajectory attached to it."),
       "##' @export",
+      "##' @import methods",
       paste0("##' @useDynLib ", name, ", .registration=TRUE"),
       "setMethod(\"run\",",
       paste0("    signature(model = \"", name, "\"),"),
-      "    function(model, solver = NULL)",
+      "    function(model, solver = c(\"ssm\", \"aem\"), ...)",
       "    {",
-      "        methods::validObject(model)",
-      paste0("       .Call(SimInf_model_run, model, NULL, solver, ",
-             "PACKAGE = \"", name, "\")"),
+      "        solver <- match.arg(solver)",
+      "        validObject(model)",
+      "       .Call(SimInf_model_run, model, NULL, solver)",
       "    })")
 }
 
@@ -340,9 +342,10 @@ create_model_class_man_file <- function(path, name) {
     lines <- c("\\docType{class}",
                paste0("\\name{", name, "-class}"),
                paste0("\\alias{", name, "-class}"),
-               paste0("\\title{Class \\code{\"", name, "\"}}"),
+               paste0("\\title{Class \\code{", name, "}}"),
                "\\description{",
-               paste0("Class to handle the ", name, " \\code{SimInf_model}."),
+               paste0("Class to handle the \\code{",
+                      name, "} \\code{SimInf_model}."),
                "}")
 
     writeLines(lines, con = file.path(path, "man", paste0(name, "-class.Rd")))
@@ -405,7 +408,7 @@ create_model_man_file <- function(path, model, name) {
 
     lines <- c(
         lines,
-        "\\item{tspan}{A vector (length >= 2) of increasing time points",
+        "\\item{tspan}{A vector of increasing time points",
         "where the state of each node is to be returned.}",
         "\\item{events}{A data.frame with scheduled events.}",
         "}",
@@ -429,17 +432,18 @@ create_model_run_man_file <- function(path, name) {
         "\\title{Run the model}",
         "\\usage{",
         paste0("\\S4method{run}{", name,
-               "}(model, solver = NULL)"),
+               "}(model, solver = c(\"ssm\", \"aem\"), ...)"),
         "}",
         "\\arguments{",
         "\\item{model}{The model to run.}",
         "",
         paste0("\\item{solver}{Which numerical solver to utilize. ",
-               "Default is NULL, i.e. use the default numerical ",
-               "solver in SimInf.}"),
+               "Default is 'ssm'.}"),
+        "",
+        "\\item{...}{Additional arguments.}",
         "}",
         "\\value{",
-        "SimInf_model with result from simulation.",
+        "A model with a single stochastic solution trajectory attached to it.",
         "}",
         "\\description{",
         "Run the model",
