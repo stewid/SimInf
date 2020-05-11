@@ -738,19 +738,6 @@ m  <- mparse(transitions = "S -> a->data[2]*1.2*S -> @",
              tspan = 1:100)
 stopifnot(identical(m@C_code[33], "    return a->data[2]*1.2*u[0];"))
 
-run_model <- function(model) {
-    ## The environmental variable "R_TEST" must be unset inside "R CMD
-    ## check" in order to successfully change the working directory to
-    ## a tempdir and then run "R CMD SHLIB".
-    R_TESTS <- Sys.getenv("R_TESTS", unset = NA)
-    if (!is.na(R_TESTS)) {
-        Sys.unsetenv("R_TESTS")
-        on.exit(Sys.setenv(R_TESTS = R_TESTS), add = TRUE)
-    }
-
-    run(model)
-}
-
 model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
                                 "I -> gamma*I -> R"),
                 compartments = c("S", "I", "R"),
@@ -759,7 +746,7 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
                 tspan = 1:10)
 
 set.seed(22)
-result <- run_model(model)
+result <- run(model)
 
 U_exp <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
