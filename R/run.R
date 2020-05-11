@@ -19,6 +19,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Keep track of compiled model DLLs.
+##' @noRd
+.dll <- new.env(parent=emptyenv())
+
 ##' Compile the model C code
 ##'
 ##' Use 'R CMD SHLIB' to compile the C code for the model and the
@@ -121,15 +125,17 @@ setMethod("run",
               solver <- match.arg(solver)
               validObject(model);
 
-              name <- paste0("SimInf_",
-                             digest(model@C_code, serialize = FALSE))
-              run_fn <- "SimInf_model_run"
-              if (!is.loaded(run_fn, name, "Call")) {
-                  lib <- do_compile_model(model, name, "SimInf_model_run")
+              key <- digest(model@C_code, serialize = FALSE)
+              if (is.null(.dll[[key]])) {
+                  name <- basename(tempfile("SimInf_"))
+                  run_fn <- sub("^SimInf_", "run_", name)
+                  lib <- do_compile_model(model, name, run_fn)
                   dyn.load(lib)
+                  .dll[[key]] <- list(run_fn = run_fn, name = name, lib = lib)
               }
 
-              .Call(run_fn, model, NULL, solver, PACKAGE = name)
+              .Call(.dll[[key]]$run_fn, model, NULL, solver,
+                    PACKAGE = .dll[[key]]$name)
           }
 )
 
