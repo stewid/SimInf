@@ -206,8 +206,19 @@ stopifnot(identical(m@S, S))
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",
-    "#include <R_ext/Visibility.h>",
     "#include \"SimInf.h\"",
+    "",
+    "#if !defined(SIMINF_MODEL_RUN)",
+    "#  error Definition for 'SIMINF_MODEL_RUN' is missing.",
+    "#endif",
+    "#if !defined(SIMINF_R_INIT)",
+    "#  error Definition for 'SIMINF_R_INIT' is missing.",
+    "#endif",
+    "#if !defined(SIMINF_FORCE_SYMBOLS)",
+    "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
+    "#endif",
+    "#define SIMINF_STR(name) #name",
+    "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
     "",
     "/**",
     " * @param u The compartment state vector in the node.",
@@ -310,14 +321,26 @@ C_code <- c(
     "    return 0;",
     "}",
     "",
-    "SEXP attribute_hidden",
-    "SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP threads, SEXP solver)",
     "{",
     "    TRFun tr_fun[] = {&trFun1, &trFun2, &trFun3, &trFun4};",
     "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
     "    return SimInf_run(model, threads, solver, tr_fun, &ptsFun);",
     "}",
-    "")
+    "",
+    "static const R_CallMethodDef callMethods[] =",
+    "{",
+    "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 3),",
+    "    {NULL, NULL, 0}",
+    "};",
+    "",
+    "void SIMINF_R_INIT(DllInfo *info)",
+    "{",
+    "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
+    "    R_useDynamicSymbols(info, FALSE);",
+    "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
+    "}")
+
 stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
 stopifnot(identical(m@C_code, C_code(m)))
 
@@ -332,8 +355,19 @@ m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",
-    "#include <R_ext/Visibility.h>",
     "#include \"SimInf.h\"",
+    "",
+    "#if !defined(SIMINF_MODEL_RUN)",
+    "#  error Definition for 'SIMINF_MODEL_RUN' is missing.",
+    "#endif",
+    "#if !defined(SIMINF_R_INIT)",
+    "#  error Definition for 'SIMINF_R_INIT' is missing.",
+    "#endif",
+    "#if !defined(SIMINF_FORCE_SYMBOLS)",
+    "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
+    "#endif",
+    "#define SIMINF_STR(name) #name",
+    "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
     "",
     "/**",
     " * @param u The compartment state vector in the node.",
@@ -436,14 +470,26 @@ C_code <- c(
     "    return 0;",
     "}",
     "",
-    "SEXP attribute_hidden",
-    "SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP threads, SEXP solver)",
     "{",
     "    TRFun tr_fun[] = {&trFun1, &trFun2, &trFun3, &trFun4};",
     "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
     "    return SimInf_run(model, threads, solver, tr_fun, &ptsFun);",
     "}",
-    "")
+    "",
+    "static const R_CallMethodDef callMethods[] =",
+    "{",
+    "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 3),",
+    "    {NULL, NULL, 0}",
+    "};",
+    "",
+    "void SIMINF_R_INIT(DllInfo *info)",
+    "{",
+    "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
+    "    R_useDynamicSymbols(info, FALSE);",
+    "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
+    "}")
+
 stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
 
 stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
@@ -468,8 +514,19 @@ model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",
-    "#include <R_ext/Visibility.h>",
     "#include \"SimInf.h\"",
+    "",
+    "#if !defined(SIMINF_MODEL_RUN)",
+    "#  error Definition for 'SIMINF_MODEL_RUN' is missing.",
+    "#endif",
+    "#if !defined(SIMINF_R_INIT)",
+    "#  error Definition for 'SIMINF_R_INIT' is missing.",
+    "#endif",
+    "#if !defined(SIMINF_FORCE_SYMBOLS)",
+    "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
+    "#endif",
+    "#define SIMINF_STR(name) #name",
+    "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
     "",
     "/**",
     " * @param u The compartment state vector in the node.",
@@ -536,14 +593,25 @@ C_code <- c(
     "    return 0;",
     "}",
     "",
-    "SEXP attribute_hidden",
-    "SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP threads, SEXP solver)",
     "{",
     "    TRFun tr_fun[] = {&trFun1, &trFun2};",
     "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
     "    return SimInf_run(model, threads, solver, tr_fun, &ptsFun);",
     "}",
-    "")
+    "",
+    "static const R_CallMethodDef callMethods[] =",
+    "{",
+    "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 3),",
+    "    {NULL, NULL, 0}",
+    "};",
+    "",
+    "void SIMINF_R_INIT(DllInfo *info)",
+    "{",
+    "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
+    "    R_useDynamicSymbols(info, FALSE);",
+    "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
+    "}")
 
 ## Skip first line that contains time
 stopifnot(identical(model@C_code[-1], C_code))
@@ -660,7 +728,7 @@ m  <- mparse(transitions = ".S.S -> 1.2*.S.S -> @",
              compartments = c(".S.S"),
              u0 = data.frame(.S.S = 100),
              tspan = 1:100)
-stopifnot(identical(m@C_code[22], "    return 1.2*u[0];"))
+stopifnot(identical(m@C_code[33], "    return 1.2*u[0];"))
 
 ## Check mparse with a propensity that contains '->' to handle a case
 ## where a pointer is used in the propensity.
@@ -668,7 +736,7 @@ m  <- mparse(transitions = "S -> a->data[2]*1.2*S -> @",
              compartments = c("S"),
              u0 = data.frame(S = 100),
              tspan = 1:100)
-stopifnot(identical(m@C_code[22], "    return a->data[2]*1.2*u[0];"))
+stopifnot(identical(m@C_code[33], "    return a->data[2]*1.2*u[0];"))
 
 run_model <- function(model) {
     ## The environmental variable "R_TEST" must be unset inside "R CMD
