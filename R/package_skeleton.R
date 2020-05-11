@@ -66,9 +66,17 @@ create_model_C_file <- function(path, model, name) {
     filename <- file.path(path, "src", "model.c")
     writeLines(model@C_code, filename)
 
-    ## Write the model init C code to a file.
-    filename <- file.path(path, "src", "init.c")
-    writeLines(C_init(name, TRUE), filename)
+    invisible(NULL)
+}
+
+create_Makevars_files <- function(path, name) {
+    lines <- paste0("PKG_CPPFLAGS =",
+                    " -DSIMINF_MODEL_RUN=", name, "_run",
+                    " -DSIMINF_R_INIT=R_init_", name,
+                    " -DSIMINF_FORCE_SYMBOLS=TRUE")
+
+    writeLines(lines, file.path(path, "src", "Makevars"))
+    writeLines(lines, file.path(path, "src", "Makevars.win"))
 
     invisible(NULL)
 }
@@ -314,7 +322,7 @@ create_model_run_fn <- function(name) {
       "    {",
       "        solver <- match.arg(solver)",
       "        validObject(model)",
-      "       .Call(SimInf_model_run, model, NULL, solver)",
+      paste0("       .Call(", name, "_run, model, NULL, solver)"),
       "    })")
 }
 
@@ -521,6 +529,7 @@ package_skeleton <- function(model, name = NULL, path = ".",
     create_NAMESPACE_file(path, name)
     message("Creating C file ...", domain = NA)
     create_model_C_file(path, model, name)
+    create_Makevars_files(path, name)
     message("Creating R file ...", domain = NA)
     create_model_R_file(path, model, name)
     message("Creating help files ...", domain = NA)
