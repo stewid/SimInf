@@ -21,7 +21,7 @@
 
 ##' Keep track of compiled model DLLs.
 ##' @noRd
-.dll <- new.env(parent=emptyenv())
+.dll <- new.env(parent = emptyenv())
 
 ##' Compile the model C code
 ##'
@@ -42,22 +42,21 @@ do_compile_model <- function(model, name, run_fn) {
     ## Include directive for "SimInf.h"
     include <- system.file("include", package = "SimInf")
 
-    ## PKG_CPPFLAGS
-    pkg_cppflags <- paste0("PKG_CPPFLAGS=-I", shQuote(include),
-                           paste0("\\ -DSIMINF_MODEL_RUN=", run_fn),
-                           paste0("\\ -DSIMINF_R_INIT=R_init_", name),
-                           "\\ -DSIMINF_FORCE_SYMBOLS=FALSE")
-
     ## The output from compiling the model C code.
     lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
 
     ## Compile the model C code using the running version of R.
-    cmd <- paste(pkg_cppflags,
-                 shQuote(file.path(R.home(component = "bin"), "R")),
-                 "CMD SHLIB",
-                 paste0("--output=", shQuote(lib)),
-                 shQuote(filename))
-    compiled <- system(cmd, intern = TRUE)
+    compiled <- system2(command = file.path(R.home(component = "bin"), "R"),
+                        args = c("CMD",
+                                 "SHLIB",
+                                 paste0("--output=", shQuote(lib)),
+                                 shQuote(filename)),
+                        stdout = TRUE,
+                        stderr = TRUE,
+                        env = paste0("PKG_CPPFLAGS=\"-I", shQuote(include),
+                                     " -DSIMINF_MODEL_RUN=", run_fn,
+                                     " -DSIMINF_R_INIT=R_init_", name,
+                                     " -DSIMINF_FORCE_SYMBOLS=FALSE\""))
 
     if (!file.exists(lib))
         stop(compiled, call. = FALSE)
