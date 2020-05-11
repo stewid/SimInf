@@ -26,28 +26,31 @@
 ##' the model.
 ##' @param model The SimInf model with C code to compile.
 ##' @param name Character vector with the name of the dll.
+##' @param run_fn Name of the function that will be called from
+##'     '.Call()'.
 ##' @return Character vector with the path to the built dll.
 ##' @noRd
-do_compile_model <- function(model, name) {
+do_compile_model <- function(model, name, run_fn) {
     ## Write the model C code to a temporary file.
     filename <- file.path(tempdir(), paste0(name, ".c"))
     writeLines(model@C_code, filename)
 
-    ## Write the model init C code to a temporary file.
-    filename_init <- file.path(tempdir(), paste0(name, "_init.c"))
-    writeLines(C_init(name, FALSE), filename_init)
-
     ## Include directive for "SimInf.h"
     include <- system.file("include", package = "SimInf")
-    Sys.setenv(PKG_CPPFLAGS = sprintf("-I%s", shQuote(include)))
+
+    ## PKG_CPPFLAGS
+    pkg_cppflags <- paste0("PKG_CPPFLAGS=-I", shQuote(include),
+                           paste0("\\ -DSIMINF_MODEL_RUN=", run_fn),
+                           paste0("\\ -DSIMINF_R_INIT=R_init_", name),
+                           "\\ -DSIMINF_FORCE_SYMBOLS=FALSE")
 
     ## Compile the model C code using the running version of R.
     wd <- setwd(tempdir())
     on.exit(setwd(wd), add = TRUE)
-    cmd <- paste(shQuote(file.path(R.home(component = "bin"), "R")),
+    cmd <- paste(pkg_cppflags,
+                 shQuote(file.path(R.home(component = "bin"), "R")),
                  "CMD SHLIB",
-                 shQuote(basename(filename)),
-                 shQuote(basename(filename_init)))
+                 shQuote(basename(filename)))
     compiled <- system(cmd, intern = TRUE)
 
     lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
@@ -119,12 +122,13 @@ setMethod("run",
 
               name <- paste0("SimInf_",
                              digest(model@C_code, serialize = FALSE))
-              if (!is.loaded("SimInf_model_run", name, "Call")) {
-                  lib <- do_compile_model(model, name)
+              run_fn <- "SimInf_model_run"
+              if (!is.loaded(run_fn, name, "Call")) {
+                  lib <- do_compile_model(model, name, "SimInf_model_run")
                   dyn.load(lib)
               }
 
-              .Call("SimInf_model_run", model, NULL, solver, PACKAGE = name)
+              .Call(run_fn, model, NULL, solver, PACKAGE = name)
           }
 )
 
