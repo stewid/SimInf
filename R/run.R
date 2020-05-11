@@ -44,16 +44,17 @@ do_compile_model <- function(model, name, run_fn) {
                            paste0("\\ -DSIMINF_R_INIT=R_init_", name),
                            "\\ -DSIMINF_FORCE_SYMBOLS=FALSE")
 
+    ## The output from compiling the model C code.
+    lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
+
     ## Compile the model C code using the running version of R.
-    wd <- setwd(tempdir())
-    on.exit(setwd(wd), add = TRUE)
     cmd <- paste(pkg_cppflags,
                  shQuote(file.path(R.home(component = "bin"), "R")),
                  "CMD SHLIB",
-                 shQuote(basename(filename)))
+                 paste0("--output=", shQuote(lib)),
+                 shQuote(filename))
     compiled <- system(cmd, intern = TRUE)
 
-    lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
     if (!file.exists(lib))
         stop(compiled, call. = FALSE)
 
