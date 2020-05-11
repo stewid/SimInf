@@ -45,18 +45,18 @@ do_compile_model <- function(model, name, run_fn) {
     ## The output from compiling the model C code.
     lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
 
-    ## Compile the model C code using the running version of R.
-    compiled <- system2(command = file.path(R.home(component = "bin"), "R"),
-                        args = c("CMD",
-                                 "SHLIB",
-                                 paste0("--output=", shQuote(lib)),
-                                 shQuote(filename)),
-                        stdout = TRUE,
-                        stderr = TRUE,
-                        env = paste0("PKG_CPPFLAGS=\"-I", shQuote(include),
+    ## PKG_CPPFLAGS
+    Sys.setenv(PKG_CPPFLAGS = paste0("-I", shQuote(include),
                                      " -DSIMINF_MODEL_RUN=", run_fn,
                                      " -DSIMINF_R_INIT=R_init_", name,
-                                     " -DSIMINF_FORCE_SYMBOLS=FALSE\""))
+                                     " -DSIMINF_FORCE_SYMBOLS=FALSE"))
+
+    ## Compile the model C code using the running version of R.
+    cmd <- paste0(shQuote(file.path(R.home(component = "bin"), "R")),
+                  " CMD SHLIB",
+                  " --output=", shQuote(lib),
+                  " ", shQuote(filename))
+    compiled <- system(cmd, intern = TRUE)
 
     if (!file.exists(lib))
         stop(compiled, call. = FALSE)
