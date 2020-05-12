@@ -48,7 +48,8 @@ do_compile_model <- function(model, name, run_fn) {
     lib <- normalizePath(paste0(tempdir(), "/", name, .Platform$dynlib.ext),
                          winslash = "/", mustWork = FALSE)
 
-    ## PKG_CPPFLAGS
+    ## Set PKG_CPPFLAGS
+    pkg_cppflags <- Sys.getenv("PKG_CPPFLAGS", unset = NA)
     Sys.setenv(PKG_CPPFLAGS = paste0("-I", shQuote(include),
                                      " -DSIMINF_MODEL_RUN=", run_fn,
                                      " -DSIMINF_R_INIT=R_init_", name,
@@ -61,6 +62,13 @@ do_compile_model <- function(model, name, run_fn) {
                   " --output=", shQuote(lib),
                   " ", shQuote(filename))
     compiled <- system(cmd, intern = TRUE)
+
+    ## Restore PKG_CPPFLAGS
+    if (is.na(pkg_cppflags)) {
+        Sys.unsetenv("PKG_CPPFLAGS")
+    } else {
+        Sys.setenv(PKG_CPPFLAGS = pkg_cppflags)
+    }
 
     if (!file.exists(lib))
         stop(compiled, call. = FALSE)

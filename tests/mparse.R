@@ -745,8 +745,15 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
                 u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
                 tspan = 1:10)
 
+## Test that the environmental variable PKG_CPPFLAGS is restored after
+## compiling C code for a model. First set it to a known value.
+Sys.setenv(PKG_CPPFLAGS = "test")
+
 set.seed(22)
 result <- run(model)
+
+## Then test that PKG_CPPFLAGS is restored.
+stopifnot(identical(Sys.getenv("PKG_CPPFLAGS"), "test"))
 
 U_exp <- data.frame(
     node = c(1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L, 5L, 6L, 1L, 2L, 3L, 4L,
