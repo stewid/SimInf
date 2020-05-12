@@ -138,11 +138,13 @@ setMethod("run",
 
               key <- digest(model@C_code, serialize = FALSE)
               if (is.null(.dll[[key]])) {
+                  if (!contains_C_code(model))
+                      stop("The model must contain C code.")
                   name <- basename(tempfile("SimInf_"))
                   run_fn <- sub("^SimInf_", "run_", name)
                   lib <- do_compile_model(model, name, run_fn)
                   dyn.load(lib)
-                  .dll[[key]] <- list(run_fn = run_fn, name = name, lib = lib)
+                  .dll[[key]] <- list(run_fn = run_fn, name = name)
               }
 
               .Call(.dll[[key]]$run_fn, model, NULL, solver,

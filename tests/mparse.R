@@ -783,6 +783,12 @@ U_exp <- data.frame(
 
 stopifnot(identical(trajectory(result), U_exp))
 
+## Remove the C code and check that an error is raised when calling
+## 'run'.
+model@C_code <- character(0)
+res <- assertError(run(model))
+check_error(res, "The model must contain C code.")
+
 ## Check that mparse fails with invalid usage of the empty set '@'.
 res <- assertError(
     mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
