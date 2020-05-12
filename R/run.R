@@ -36,14 +36,17 @@
 ##' @noRd
 do_compile_model <- function(model, name, run_fn) {
     ## Write the model C code to a temporary file.
-    filename <- file.path(tempdir(), paste0(name, ".c"))
+    filename <- normalizePath(paste0(tempdir(), "/", name, ".c"),
+                              winslash = "/")
     writeLines(model@C_code, filename)
 
     ## Include directive for "SimInf.h"
-    include <- system.file("include", package = "SimInf")
+    include <- normalizePath(system.file("include", package = "SimInf"),
+                             winslash = "/")
 
     ## The output from compiling the model C code.
-    lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
+    lib <- normalizePath(paste0(tempdir(), "/", name, .Platform$dynlib.ext),
+                         winslash = "/")
 
     ## PKG_CPPFLAGS
     Sys.setenv(PKG_CPPFLAGS = paste0("-I", shQuote(include),
@@ -52,7 +55,9 @@ do_compile_model <- function(model, name, run_fn) {
                                      " -DSIMINF_FORCE_SYMBOLS=FALSE"))
 
     ## Compile the model C code using the running version of R.
-    cmd <- paste0(shQuote(file.path(R.home(component = "bin"), "R")),
+    RBIN <- normalizePath(paste0(R.home(component = "bin"), "/R"),
+                          winslash = "/")
+    cmd <- paste0(shQuote(RBIN),
                   " CMD SHLIB",
                   " --output=", shQuote(lib),
                   " ", shQuote(filename))
