@@ -52,7 +52,7 @@ static double SEIR_S_to_E(
     const double n = S_n + u[E] + I_n + u[R];
 
     if (n > 0.0)
-        return gdata[BETA] * S_n * I_n / n;
+        return ldata[BETA] * S_n * I_n / n;
     return 0.0;
 }
 
@@ -73,7 +73,7 @@ static double SEIR_E_to_I(
     const double *gdata,
     double t)
 {
-    return gdata[EPSILON] * u[E];
+    return ldata[EPSILON] * u[E];
 }
 
 /**
@@ -93,7 +93,7 @@ static double SEIR_I_to_R(
     const double *gdata,
     double t)
 {
-    return gdata[GAMMA] * u[I];
+    return ldata[GAMMA] * u[I];
 }
 
 /**

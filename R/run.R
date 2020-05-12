@@ -19,6 +19,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Keep track of compiled model DLLs.
+##' @noRd
+.dll <- new.env(parent = emptyenv())
+
 ##' Compile the model C code
 ##'
 ##' Use 'R CMD SHLIB' to compile the C code for the model and the
@@ -26,31 +30,46 @@
 ##' the model.
 ##' @param model The SimInf model with C code to compile.
 ##' @param name Character vector with the name of the dll.
+##' @param run_fn Name of the function that will be called from
+##'     '.Call()'.
 ##' @return Character vector with the path to the built dll.
 ##' @noRd
-do_compile_model <- function(model, name) {
+do_compile_model <- function(model, name, run_fn) {
     ## Write the model C code to a temporary file.
-    filename <- file.path(tempdir(), paste0(name, ".c"))
+    filename <- normalizePath(paste0(tempdir(), "/", name, ".c"),
+                              winslash = "/", mustWork = FALSE)
     writeLines(model@C_code, filename)
 
-    ## Write the model init C code to a temporary file.
-    filename_init <- file.path(tempdir(), paste0(name, "_init.c"))
-    writeLines(C_init(name), filename_init)
-
     ## Include directive for "SimInf.h"
-    include <- system.file("include", package = "SimInf")
-    Sys.setenv(PKG_CPPFLAGS = sprintf("-I%s", shQuote(include)))
+    include <- normalizePath(system.file("include", package = "SimInf"),
+                             winslash = "/", mustWork = TRUE)
+
+    ## The output from compiling the model C code.
+    lib <- normalizePath(paste0(tempdir(), "/", name, .Platform$dynlib.ext),
+                         winslash = "/", mustWork = FALSE)
+
+    ## Set PKG_CPPFLAGS
+    pkg_cppflags <- Sys.getenv("PKG_CPPFLAGS", unset = NA)
+    Sys.setenv(PKG_CPPFLAGS = paste0("-I", shQuote(include),
+                                     " -DSIMINF_MODEL_RUN=", run_fn,
+                                     " -DSIMINF_R_INIT=R_init_", name,
+                                     " -DSIMINF_FORCE_SYMBOLS=FALSE"))
 
     ## Compile the model C code using the running version of R.
-    wd <- setwd(tempdir())
-    on.exit(setwd(wd), add = TRUE)
-    cmd <- paste(shQuote(file.path(R.home(component = "bin"), "R")),
-                 "CMD SHLIB",
-                 shQuote(basename(filename)),
-                 shQuote(basename(filename_init)))
+    RBIN <- file.path(R.home(component = "bin"), "R")
+    cmd <- paste0(shQuote(RBIN),
+                  " CMD SHLIB",
+                  " --output=", shQuote(lib),
+                  " ", shQuote(filename))
     compiled <- system(cmd, intern = TRUE)
 
-    lib <- file.path(tempdir(), paste0(name, .Platform$dynlib.ext))
+    ## Restore PKG_CPPFLAGS
+    if (is.na(pkg_cppflags)) {
+        Sys.unsetenv("PKG_CPPFLAGS")
+    } else {
+        Sys.setenv(PKG_CPPFLAGS = pkg_cppflags)
+    }
+
     if (!file.exists(lib))
         stop(compiled, call. = FALSE)
 
@@ -115,31 +134,86 @@ setMethod("run",
           signature(model = "SimInf_model"),
           function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
-
-              ## Check that SimInf_model contains all data structures
-              ## required by the siminf solver and that they make sense
               validObject(model);
 
-              if (contains_C_code(model)) {
-                  name <- paste0("SimInf_",
-                                 digest(model@C_code, serialize = FALSE))
-                  if (!is.loaded("SimInf_model_run", name, "Call")) {
-                      lib <- do_compile_model(model, name)
-                      dyn.load(lib)
-                  }
-
-                  ## Run the model
-                  return(.Call("SimInf_model_run", model, NULL,
-                               solver, PACKAGE = name))
+              key <- digest(model@C_code, serialize = FALSE)
+              if (is.null(.dll[[key]])) {
+                  if (!contains_C_code(model))
+                      stop("The model must contain C code.")
+                  name <- basename(tempfile("SimInf_"))
+                  run_fn <- sub("^SimInf_", "run_", name)
+                  lib <- do_compile_model(model, name, run_fn)
+                  dyn.load(lib)
+                  .dll[[key]] <- list(run_fn = run_fn, name = name)
               }
 
-              ## The model name
-              name <- as.character(class(model))
+              .Call(.dll[[key]]$run_fn, model, NULL, solver,
+                    PACKAGE = .dll[[key]]$name)
+          }
+)
 
-              ## The model C run function
-              run_fn <- paste0(name, "_run")
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SEIR"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SEIR_run, model, NULL, solver)
+          }
+)
 
-              ## Run the model
-              eval(parse(text = ".Call(run_fn, model, NULL, solver)"))
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SIR"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SIR_run, model, NULL, solver)
+          }
+)
+
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SISe"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SISe_run, model, NULL, solver)
+          }
+)
+
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SISe3"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SISe3_run, model, NULL, solver)
+          }
+)
+
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SISe3_sp"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SISe3_sp_run, model, NULL, solver)
+          }
+)
+
+##' @rdname run
+##' @export
+setMethod("run",
+          signature(model = "SISe_sp"),
+          function(model, solver = c("ssm", "aem"), ...) {
+              solver <- match.arg(solver)
+              validObject(model);
+              .Call(SISe_sp_run, model, NULL, solver)
           }
 )

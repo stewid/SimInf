@@ -71,7 +71,7 @@ R_init_SimInf(DllInfo *info)
 {
     R_registerRoutines(info, NULL, callMethods, NULL, NULL);
     R_useDynamicSymbols(info, FALSE);
-    R_forceSymbols(info, FALSE);
+    R_forceSymbols(info, TRUE);
     R_RegisterCCallable("SimInf", "SimInf_run", (DL_FUNC) &SimInf_run);
     SimInf_init_threads(R_NilValue);
 }

@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -90,7 +90,10 @@ SEIR <- function(u0,
     u0 <- check_u0(u0, compartments)
 
     ## Check for non-numeric parameters
-    check_gdata_arg(beta, epsilon, gamma)
+    check_ldata_arg(nrow(u0), beta, epsilon, gamma)
+    beta <- rep(beta, length.out = nrow(u0))
+    epsilon <- rep(epsilon, length.out = nrow(u0))
+    gamma <- rep(gamma, length.out = nrow(u0))
 
     ## Arguments seem ok...go on
 
@@ -106,15 +109,16 @@ SEIR <- function(u0,
     S <- matrix(c(-1, 1, 0, 0, 0, -1, 1, 0, 0, 0, -1, 1), nrow = 4, ncol = 3,
                 dimnames = list(compartments, c("1", "2", "3")))
 
-    gdata <- as.numeric(c(beta, epsilon, gamma))
-    names(gdata) <- c("beta", "epsilon", "gamma")
+    ldata <- matrix(as.numeric(c(beta, epsilon, gamma)),
+                    nrow  = 3, byrow = TRUE,
+                    dimnames = list(c("beta", "epsilon", "gamma")))
 
     model <- SimInf_model(G      = G,
                           S      = S,
                           E      = E,
                           tspan  = tspan,
                           events = events,
-                          gdata  = gdata,
+                          ldata  = ldata,
                           u0     = u0)
 
     as(model, "SEIR")

@@ -34,8 +34,25 @@ C_heading <- function() {
 ##' @noRd
 C_include <- function() {
     c("#include <R_ext/Rdynload.h>",
-      "#include <R_ext/Visibility.h>",
       "#include \"SimInf.h\"",
+      "")
+}
+
+##' Generate C code for definitions in the heading
+##' @return character vector with C code.
+##' @noRd
+C_define <- function() {
+    c("#if !defined(SIMINF_MODEL_RUN)",
+      "#  error Definition for 'SIMINF_MODEL_RUN' is missing.",
+      "#endif",
+      "#if !defined(SIMINF_R_INIT)",
+      "#  error Definition for 'SIMINF_R_INIT' is missing.",
+      "#endif",
+      "#if !defined(SIMINF_FORCE_SYMBOLS)",
+      "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
+      "#endif",
+      "#define SIMINF_STR(name) #name",
+      "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
       "")
 }
 
@@ -128,8 +145,7 @@ C_ptsFun <- function(pts_fun) {
 ##' @return character vector with C code.
 ##' @noRd
 C_run <- function(transitions) {
-    c("SEXP attribute_hidden",
-      "SimInf_model_run(SEXP model, SEXP threads, SEXP solver)",
+    c("static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP threads, SEXP solver)",
       "{",
       sprintf("    TRFun tr_fun[] = {%s};",
               paste0("&trFun", seq_len(length(transitions)), collapse = ", ")),
@@ -137,6 +153,32 @@ C_run <- function(transitions) {
       "    return SimInf_run(model, threads, solver, tr_fun, &ptsFun);",
       "}",
       "")
+}
+
+##' Generate C code for the calldef for registering native routines
+##' @return character vector with C code.
+##' @noRd
+C_calldef <- function() {
+    c("static const R_CallMethodDef callMethods[] =",
+      "{",
+      "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 3),",
+      "    {NULL, NULL, 0}",
+      "};",
+      "")
+}
+
+##' Generate C code for the R init function for registering native
+##' routines
+##'
+##' @return character vector with C code.
+##' @noRd
+C_R_init <- function() {
+    c("void SIMINF_R_INIT(DllInfo *info)",
+      "{",
+      "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
+      "    R_useDynamicSymbols(info, FALSE);",
+      "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
+      "}")
 }
 
 ##' Generate C code for mparse
@@ -151,9 +193,12 @@ C_run <- function(transitions) {
 C_code_mparse <- function(transitions, pts_fun) {
     c(C_heading(),
       C_include(),
+      C_define(),
       C_trFun(transitions),
       C_ptsFun(pts_fun),
-      C_run(transitions))
+      C_run(transitions),
+      C_calldef(),
+      C_R_init())
 }
 
 ##' Extract the C code from a \code{SimInf_model} object
@@ -177,31 +222,4 @@ C_code_mparse <- function(transitions, pts_fun) {
 C_code <- function(model) {
     check_model_argument(model)
     model@C_code
-}
-
-##' Generate C code for registering native routines
-##'
-##' @param name FIXME
-##' @return character vector with C code.
-##' @noRd
-C_init <- function(name) {
-    c("#include <Rdefines.h>",
-      "#include <R_ext/Rdynload.h>",
-      "#include <R_ext/Visibility.h>",
-      "",
-      "SEXP SimInf_model_run(SEXP, SEXP, SEXP);",
-      "",
-      "static const R_CallMethodDef callMethods[] =",
-      "{",
-      "    {\"SimInf_model_run\", (DL_FUNC)&SimInf_model_run, 3},",
-      "    {NULL, NULL, 0}",
-      "};",
-      "",
-      paste0("void attribute_visible R_init_", name, "(DllInfo *info)"),
-      "{",
-      "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
-      "    R_useDynamicSymbols(info, FALSE);",
-      "    R_forceSymbols(info, FALSE);",
-      "}",
-      "")
 }
