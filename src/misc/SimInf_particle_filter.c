@@ -21,6 +21,7 @@
 #include <R.h>
 #include <Rdefines.h>
 #include <Rmath.h>
+#include <R_ext/Visibility.h>
 
 /**
  * Systematic resampling of particles.
@@ -28,7 +29,7 @@
  * @param w a numeric vector with weights for the particles.
  * @return an integer vector with indices.
  */
-SEXP SimInf_systematic_resampling(SEXP w)
+SEXP attribute_hidden SimInf_systematic_resampling(SEXP w)
 {
     double cumsum_w, *ptr_w = REAL(w);
     int i, j, n = Rf_length(w);
