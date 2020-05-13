@@ -31,6 +31,7 @@
 ##' @param model The SimInf model with C code to compile.
 ##' @param key The digest of the C code to compile.
 ##' @return Invisible NULL.
+##' @importFrom tools Rcmd
 ##' @noRd
 compile_model <- function(model, key) {
     ## Check that the model contains C code.
@@ -62,12 +63,11 @@ compile_model <- function(model, key) {
                                      " -DSIMINF_FORCE_SYMBOLS=FALSE"))
 
     ## Compile the model C code using the running version of R.
-    RBIN <- file.path(R.home(component = "bin"), "R")
-    cmd <- paste0(shQuote(RBIN),
-                  " CMD SHLIB",
-                  " --output=", shQuote(lib),
-                  " ", shQuote(filename))
-    compiled <- system(cmd, intern = TRUE)
+    compiled <- Rcmd(c("SHLIB",
+                       paste0("--output=", shQuote(lib)),
+                       shQuote(filename)),
+                     stdout = TRUE,
+                     stderr = TRUE)
 
     ## Restore PKG_CPPFLAGS
     if (is.na(pkg_cppflags)) {
