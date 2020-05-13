@@ -29,12 +29,18 @@
 ##' on-the-fly generated C code to register the native routines for
 ##' the model.
 ##' @param model The SimInf model with C code to compile.
-##' @param name Character vector with the name of the dll.
-##' @param run_fn Name of the function that will be called from
-##'     '.Call()'.
-##' @return Character vector with the path to the built dll.
+##' @param key The digest of the C code to compile.
+##' @return Invisible NULL.
 ##' @noRd
-do_compile_model <- function(model, name, run_fn) {
+compile_model <- function(model, key) {
+    ## Check that the model contains C code.
+    if (nchar(paste0(model@C_code, collapse = "\n")) == 0)
+        stop("The model must contain C code.")
+
+    ## Determine the name and run_fun to call from R.
+    name <- basename(tempfile("SimInf_"))
+    run_fn <- sub("^SimInf_", "run_", name)
+
     ## Write the model C code to a temporary file.
     filename <- normalizePath(paste0(tempdir(), "/", name, ".c"),
                               winslash = "/", mustWork = FALSE)
@@ -73,14 +79,10 @@ do_compile_model <- function(model, name, run_fn) {
     if (!file.exists(lib))
         stop(compiled, call. = FALSE)
 
-    lib
-}
+    dyn.load(lib)
+    .dll[[key]] <- list(run_fn = run_fn, name = name)
 
-## Check if model contains C code
-contains_C_code <- function(model) {
-    if (nchar(paste0(model@C_code, collapse = "\n")))
-        return(TRUE)
-    FALSE
+    invisible(NULL)
 }
 
 ##' Run the SimInf stochastic simulation algorithm
@@ -137,15 +139,8 @@ setMethod("run",
               validObject(model);
 
               key <- digest(model@C_code, serialize = FALSE)
-              if (is.null(.dll[[key]])) {
-                  if (!contains_C_code(model))
-                      stop("The model must contain C code.")
-                  name <- basename(tempfile("SimInf_"))
-                  run_fn <- sub("^SimInf_", "run_", name)
-                  lib <- do_compile_model(model, name, run_fn)
-                  dyn.load(lib)
-                  .dll[[key]] <- list(run_fn = run_fn, name = name)
-              }
+              if (is.null(.dll[[key]]))
+                  compile_model(model, key)
 
               .Call(.dll[[key]]$run_fn, model, NULL, solver,
                     PACKAGE = .dll[[key]]$name)
