@@ -23,8 +23,6 @@
 
 #include <R_ext/Visibility.h>
 #include "SimInf.h"
-#include "SimInf_forward_euler_linear_decay.h"
-#include "SimInf_local_spread.h"
 
 /* Offset in integer compartment state vector */
 enum {S_1, I_1, S_2, I_2, S_3, I_3};
