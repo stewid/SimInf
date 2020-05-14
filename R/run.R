@@ -23,6 +23,10 @@
 ##' @noRd
 .dll <- new.env(parent = emptyenv())
 
+## Expression to be evaluated to run a compiled model.
+.SimInf_model_run <- paste0(".Call(.dll[[key]]$run_fn, model, NULL,",
+                            " solver, PACKAGE = .dll[[key]]$name)")
+
 ##' Compile the model C code
 ##'
 ##' Use 'R CMD SHLIB' to compile the C code for the model and the
@@ -142,8 +146,7 @@ setMethod("run",
               if (is.null(.dll[[key]]))
                   compile_model(model, key)
 
-              .Call(.dll[[key]]$run_fn, model, NULL, solver,
-                    PACKAGE = .dll[[key]]$name)
+              eval(parse(text = .SimInf_model_run))
           }
 )
 
