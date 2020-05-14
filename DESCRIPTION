@@ -43,7 +43,7 @@ Biarch: true
 NeedsCompilation: yes
 SystemRequirements: GNU Scientific Library (GSL)
 Depends:
-    R(>= 3.2)
+    R(>= 3.3)
 Imports:
     digest,
     graphics,
