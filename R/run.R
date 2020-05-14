@@ -23,6 +23,10 @@
 ##' @noRd
 .dll <- new.env(parent = emptyenv())
 
+## Expression to be evaluated to run a compiled model.
+.SimInf_model_run <- paste0(".Call(.dll[[key]]$run_fn, model, NULL,",
+                            " solver, PACKAGE = .dll[[key]]$name)")
+
 ##' Compile the model C code
 ##'
 ##' Use 'R CMD SHLIB' to compile the C code for the model and the
@@ -31,6 +35,7 @@
 ##' @param model The SimInf model with C code to compile.
 ##' @param key The digest of the C code to compile.
 ##' @return Invisible NULL.
+##' @importFrom tools Rcmd
 ##' @noRd
 compile_model <- function(model, key) {
     ## Check that the model contains C code.
@@ -62,12 +67,11 @@ compile_model <- function(model, key) {
                                      " -DSIMINF_FORCE_SYMBOLS=FALSE"))
 
     ## Compile the model C code using the running version of R.
-    RBIN <- file.path(R.home(component = "bin"), "R")
-    cmd <- paste0(shQuote(RBIN),
-                  " CMD SHLIB",
-                  " --output=", shQuote(lib),
-                  " ", shQuote(filename))
-    compiled <- system(cmd, intern = TRUE)
+    compiled <- Rcmd(c("SHLIB",
+                       paste0("--output=", shQuote(lib)),
+                       shQuote(filename)),
+                     stdout = TRUE,
+                     stderr = TRUE)
 
     ## Restore PKG_CPPFLAGS
     if (is.na(pkg_cppflags)) {
@@ -142,8 +146,7 @@ setMethod("run",
               if (is.null(.dll[[key]]))
                   compile_model(model, key)
 
-              .Call(.dll[[key]]$run_fn, model, NULL, solver,
-                    PACKAGE = .dll[[key]]$name)
+              eval(parse(text = .SimInf_model_run))
           }
 )
 

@@ -123,6 +123,13 @@ rhub: clean check
 rchk: clean check
 	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', 'ubuntu-rchk', show_status = FALSE)"
 
+# Build and check package on https://win-builder.r-project.org/
+.PHONY: winbuilder
+winbuilder: clean check
+	cd .. && curl -T $(PKG_TAR) ftp://win-builder.r-project.org/R-oldrelease/
+	cd .. && curl -T $(PKG_TAR) ftp://win-builder.r-project.org/R-release/
+	cd .. && curl -T $(PKG_TAR) ftp://win-builder.r-project.org/R-devel/
+
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)
 valgrind:

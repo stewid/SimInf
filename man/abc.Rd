@@ -43,12 +43,21 @@ A \code{SimInf_abc} object.
 Approximate Bayesian computation
 }
 \examples{
-## Fit a model to data from an influenza in a boarding school in
-## England (Anonymous. 1978. Influenza in a boarding school.
-## British Medical Journal 1:578.)
-obs <- data.frame(time = 1:15,
-                  R1 = c(0, 1, 6, 26, 73, 222, 293, 258,
-                         236, 191, 124, 69, 26, 11, 4))
+## Let us consider an SIR model in a closed population with N = 100
+## individuals of whom one is initially infectious and the rest are
+## susceptible. First, generate one realisation (with a specified
+## seed) from the model with known parameters \code{beta = 0.16} and
+## \code{gamma = 0.077}. Then, use \code{abc} to infer the (known)
+## parameters from the simulated data.
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = 0.077)
+
+## Run the SIR model and plot the number of infectious.
+set.seed(22)
+infectious <- trajectory(run(model), "I")$I
+plot(infectious, type = "s")
 
 ## The distance function to accept or reject a proposal. Each node
 ## in the simulated trajectory (contained in the 'result' object)
@@ -58,51 +67,39 @@ acceptFun <- function(result, generation, tol, ptol, ...) {
     ## Determine the tolerance for this generation.
     tol <- tol * (ptol)^(generation - 1)
 
-    ## Extract the time-series for R1 for each node as a
+    ## Extract the time-series of infectious in each node as a
     ## data.frame.
-    sim <- trajectory(result, "R1")
+    sim <- trajectory(result, "I")
 
-    ## Split the 'sim' data.frame by node and calculate the sum
-    ## of the squared distance at each time-point for each node.
-    dist <- tapply(sim$R1, sim$node, function(sim_R1) {
-        sum((obs$R1 - sim_R1)^2)
+    ## Split the 'sim' data.frame by node and calculate the sum of the
+    ## squared distance at each time-point for each node.
+    dist <- tapply(sim$I, sim$node, function(sim_infectious) {
+        sum((infectious - sim_infectious)^2)
     })
 
-    ## Return TRUE or FALSE for each node depending on if the
-    ## distance is less than the tolerance.
+    ## Return TRUE or FALSE for each node depending on if the distance
+    ## is less than the tolerance.
     abc_accept(dist < tol, tol)
 }
 
-## Transitions
-transitions <- c("S -> beta*S*I/(S+I+R1+R2) -> I",
-                 "I -> gamma1*I -> R1",
-                 "R1 -> gamma2*R1 -> R2")
-
-## Specify the compartments.
-compartments <- c("S", "I", "R1", "R2")
-
-## Create the model.
-model <- mparse(transitions = transitions,
-                compartments = compartments,
-                ldata = data.frame(beta = 0.1, gamma1 = 0.1, gamma2 = 0.1),
-                u0 = data.frame(S = 762, I = 1, R1 = 0, R2 = 0),
-                tspan = 1:15)
-
-## Fit the model parameters using ABC-SMC. The priors for the paramters
-## are specified in the second argument using a formula notation. Here
-## we use a uniform distribtion for each parameter with lower bound = 0
-## and upper bound = 5.
+## Fit the model parameters using ABC-SMC. The priors for the
+## paramters are specified in the second argument using a formula
+## notation. Here we use a uniform distribtion for each parameter with
+## lower bound = 0 and upper bound = 1. Note that we use a low number
+## particles here to keep the run-time of the example short.  In
+## practice you would want to use many more to ensure better
+## approximations.
 fit <- abc(model = model,
-           priors = c(beta~U(0, 5), gamma1~U(0, 5), gamma2~U(0, 5)),
-           ngen = 2,
-           npart = 50,
+           priors = c(beta~U(0, 1), gamma~U(0, 1)),
+           ngen = 4,
+           npart = 100,
            fn = acceptFun,
-           tol = 100000,
-           ptol = 0.5)
+           tol = 5000,
+           ptol = 0.9)
 
 plot(fit)
 
-fit <- continue(fit, tol = 100000, ptol = 0.5)
+fit <- continue(fit, tol = 5000, ptol = 0.9)
 
 plot(fit)
 }
