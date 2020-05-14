@@ -1,10 +1,7 @@
 #!/bin/sh
 
-# Don't use setInternet2() if R version > 3.2.1
-R_SCRIPT="${R_HOME}/bin${R_ARCH_BIN}/Rscript"
-SET_INTERNET2=`"${R_SCRIPT}" -e "cat(ifelse(compareVersion(sprintf('%s.%s', R.version['major'], R.version['minor']), '3.2.2') > 0, '', 'setInternet2();'))"`
-
 # Use libcurl if available
+R_SCRIPT="${R_HOME}/bin${R_ARCH_BIN}/Rscript"
 USE_LIBCURL=`"${R_SCRIPT}" -e "cat(ifelse(capabilities('libcurl'), 'method=\'libcurl\',', ''))"`
 
 # Check for gsl headers and library
@@ -17,7 +14,7 @@ if [ ! -e "${local}/include/gsl/gsl_rng.h" ]; then
         if [ ! -e gsl.zip ]; then
             echo "  cannot find gsl files"
             echo "  attempting to download them"
-            "${R_SCRIPT}" -e "${SET_INTERNET2} download.file('${GSL_URL}', 'gsl.zip', ${USE_LIBCURL} quiet = TRUE)"
+            "${R_SCRIPT}" -e "download.file('${GSL_URL}', 'gsl.zip', ${USE_LIBCURL} quiet = TRUE)"
         fi
         if [ ! -e gsl.zip ]; then
 	    have_gsl=no
