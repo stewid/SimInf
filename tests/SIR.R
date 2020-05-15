@@ -186,10 +186,10 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SIR run function fails for misspecified SIR model
-res <- assertError(.Call(SimInf:::SIR_run, NULL, NULL, NULL))
+res <- assertError(.Call(SimInf:::SIR_run, NULL, NULL))
 check_error(res, "Invalid model.")
 
-res <- assertError(.Call(SimInf:::SIR_run, "SIR", NULL, NULL))
+res <- assertError(.Call(SimInf:::SIR_run, "SIR", NULL))
 check_error(res, "Invalid model.")
 
 ## Check events method

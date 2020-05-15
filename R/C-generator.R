@@ -149,16 +149,15 @@ C_run <- function(transitions) {
       " * Run a trajectory of the model.",
       " *",
       " * @param model The model.",
-      " * @param threads Number of threads.",
       " * @param solver The name of the numerical solver.",
       " * @return A model with a trajectory attached to it.",
       " */",
-      "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP threads, SEXP solver)",
+      "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)",
       "{",
       sprintf("    TRFun tr_fun[] = {%s};",
               paste0("&trFun", seq_len(length(transitions)), collapse = ", ")),
       "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
-      "    return SimInf_run(model, threads, solver, tr_fun, &ptsFun);",
+      "    return SimInf_run(model, solver, tr_fun, &ptsFun);",
       "}",
       "")
 }
@@ -174,7 +173,7 @@ C_calldef <- function() {
       " */",
       "static const R_CallMethodDef callMethods[] =",
       "{",
-      "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 3),",
+      "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 2),",
       "    {NULL, NULL, 0}",
       "};",
       "")

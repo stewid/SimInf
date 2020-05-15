@@ -224,15 +224,14 @@ static int SISe3_sp_post_time_step(
  * Run simulation with the SISe3_sp model
  *
  * @param model The SISe3_sp model.
- * @param threads Number of threads.
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-SEXP attribute_hidden SISe3_sp_run(SEXP model, SEXP threads, SEXP solver)
+SEXP attribute_hidden SISe3_sp_run(SEXP model, SEXP solver)
 {
     TRFun tr_fun[] = {&SISe3_sp_S_1_to_I_1, &SISe3_sp_I_1_to_S_1,
                       &SISe3_sp_S_2_to_I_2, &SISe3_sp_I_2_to_S_2,
                       &SISe3_sp_S_3_to_I_3, &SISe3_sp_I_3_to_S_3};
 
-    return SimInf_run(model, threads, solver, tr_fun, &SISe3_sp_post_time_step);
+    return SimInf_run(model, solver, tr_fun, &SISe3_sp_post_time_step);
 }

@@ -487,10 +487,10 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SEIR run function fails for a misspecified SEIR model
-res <- assertError(.Call(SimInf:::SEIR_run, NULL, NULL, NULL))
+res <- assertError(.Call(SimInf:::SEIR_run, NULL, NULL))
 check_error(res, "Invalid model.")
 
-res <- assertError(.Call(SimInf:::SEIR_run, "SEIR", NULL, NULL))
+res <- assertError(.Call(SimInf:::SEIR_run, "SEIR", NULL))
 check_error(res, "Invalid model.")
 
 ## Check that an invalid rate error is raised during the simulation.

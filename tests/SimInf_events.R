@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -495,7 +495,7 @@ events <- data.frame(event = 3, time = 2, node = 1, dest = 2,
 model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
              gamma = 0.077)
 model@events@node <- -1L
-res <- assertError(.Call(SimInf:::SIR_run, model, NULL, NULL))
+res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
 check_error(res, "'node' is out of bounds.")
 
 ## Check that it fails for an invalid event type.
@@ -505,7 +505,7 @@ events <- data.frame(event = 0, time = 2, node = 1, dest = 0,
 model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
              gamma = 0.077)
 model@events@event <- 4L
-res <- assertError(.Call(SimInf:::SIR_run, model, NULL, NULL))
+res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
 check_error(res, "Undefined event type.")
 
 ## Check get/set select_matrix

@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -822,9 +822,7 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0.000011)
 
-.Call(SimInf:::SISe_run, model, NULL, NULL)
-.Call(SimInf:::SISe_run, model, 1L, NULL)
-.Call(SimInf:::SISe_run, model, 1, NULL)
+.Call(SimInf:::SISe_run, model, NULL)
 
 res <- assertError(set_num_threads(-1L))
 check_error(res, "'threads' must be an integer >= 1.")
