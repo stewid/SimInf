@@ -322,7 +322,7 @@ create_model_run_fn <- function(name) {
       "    {",
       "        solver <- match.arg(solver)",
       "        validObject(model)",
-      paste0("       .Call(", name, "_run, model, NULL, solver)"),
+      paste0("       .Call(", name, "_run, model, solver)"),
       "    })")
 }
 
