@@ -145,7 +145,15 @@ C_ptsFun <- function(pts_fun) {
 ##' @return character vector with C code.
 ##' @noRd
 C_run <- function(transitions) {
-    c("static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP threads, SEXP solver)",
+    c("/**",
+      " * Run a trajectory of the model.",
+      " *",
+      " * @param model The model.",
+      " * @param threads Number of threads.",
+      " * @param solver The name of the numerical solver.",
+      " * @return A model with a trajectory attached to it.",
+      " */",
+      "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP threads, SEXP solver)",
       "{",
       sprintf("    TRFun tr_fun[] = {%s};",
               paste0("&trFun", seq_len(length(transitions)), collapse = ", ")),
@@ -159,7 +167,12 @@ C_run <- function(transitions) {
 ##' @return character vector with C code.
 ##' @noRd
 C_calldef <- function() {
-    c("static const R_CallMethodDef callMethods[] =",
+    c("/**",
+      " * A NULL-terminated array of routines to register for the .Call",
+      " * interface, see section '5.4 Registering native routines' in",
+      " * the 'Writing R Extensions' manual.",
+      " */",
+      "static const R_CallMethodDef callMethods[] =",
       "{",
       "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 3),",
       "    {NULL, NULL, 0}",
@@ -173,7 +186,12 @@ C_calldef <- function() {
 ##' @return character vector with C code.
 ##' @noRd
 C_R_init <- function() {
-    c("void SIMINF_R_INIT(DllInfo *info)",
+    c("/**",
+      " * This routine will be invoked when R loads the shared object/DLL,",
+      " * see section '5.4 Registering native routines' in the",
+      " * 'Writing R Extensions' manual.",
+      " */",
+      "void SIMINF_R_INIT(DllInfo *info)",
       "{",
       "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);",
       "    R_useDynamicSymbols(info, FALSE);",
