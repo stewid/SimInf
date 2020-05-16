@@ -1,12 +1,24 @@
 # SimInf (development version)
 
-## IMPROVEMENTS
+## CHANGES OR IMPROVEMENTS
+
+* The beta and gamma parameters in the built-in SIR model have been
+  moved internally from 'gdata' to 'ldata' to allow node specific
+  parameter values.
+
+* The beta, gamma and epsilon parameters in the built-in SEIR model
+  have been moved internally from 'gdata' to 'ldata' to allow node
+  specific parameter values.
 
 * In order to reduce the compilation-time when running multiple
   simulations of a model that contains C code, the MD5 hash of the C
   code is used to determine if a model has already been compiled and
   the DLL loaded, and thus the compilation step can be skipped before
   running a trajectory.
+
+## BREAKING CHANGES
+
+* Removed the 'run_outer' function.
 
 # SimInf 6.5.1 (2020-04-01)
 
