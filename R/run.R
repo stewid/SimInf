@@ -24,8 +24,8 @@
 .dll <- new.env(parent = emptyenv())
 
 ## Expression to be evaluated to run a compiled model.
-.SimInf_model_run <- paste0(".Call(.dll[[key]]$run_fn, model, NULL,",
-                            " solver, PACKAGE = .dll[[key]]$name)")
+.SimInf_model_run <- paste0(".Call(.dll[[key]]$run_fn, model, solver,",
+                            " PACKAGE = .dll[[key]]$name)")
 
 ##' Compile the model C code
 ##'
@@ -157,7 +157,7 @@ setMethod("run",
           function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
               validObject(model);
-              .Call(SEIR_run, model, NULL, solver)
+              .Call(SEIR_run, model, solver)
           }
 )
 
@@ -168,7 +168,7 @@ setMethod("run",
           function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
               validObject(model);
-              .Call(SIR_run, model, NULL, solver)
+              .Call(SIR_run, model, solver)
           }
 )
 
@@ -179,7 +179,7 @@ setMethod("run",
           function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
               validObject(model);
-              .Call(SISe_run, model, NULL, solver)
+              .Call(SISe_run, model, solver)
           }
 )
 
@@ -190,7 +190,7 @@ setMethod("run",
           function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
               validObject(model);
-              .Call(SISe3_run, model, NULL, solver)
+              .Call(SISe3_run, model, solver)
           }
 )
 
@@ -201,7 +201,7 @@ setMethod("run",
           function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
               validObject(model);
-              .Call(SISe3_sp_run, model, NULL, solver)
+              .Call(SISe3_sp_run, model, solver)
           }
 )
 
@@ -212,6 +212,6 @@ setMethod("run",
           function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
               validObject(model);
-              .Call(SISe_sp_run, model, NULL, solver)
+              .Call(SISe_sp_run, model, solver)
           }
 )

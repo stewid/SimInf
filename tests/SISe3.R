@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -1386,10 +1386,10 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that C SISe3 run function fails for misspecified SISe3 model
-res <- assertError(.Call(SimInf:::SISe3_run, NULL, NULL, NULL))
+res <- assertError(.Call(SimInf:::SISe3_run, NULL, NULL))
 check_error(res, "Invalid model.")
 
-res <- assertError(.Call(SimInf:::SISe3_run, "SISe3", NULL, NULL))
+res <- assertError(.Call(SimInf:::SISe3_run, "SISe3", NULL))
 check_error(res, "Invalid model.")
 
 ## Check error non-finite v

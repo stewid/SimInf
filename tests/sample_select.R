@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -216,11 +216,13 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 1 with proportion = 10
 model@events@proportion <- 10
 
-res <- assertError(.Call(SimInf:::SISe3_run, model, 1L, NULL))
+res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
-    res <- assertError(.Call(SimInf:::SISe3_run, model, 2L, NULL))
+    set_num_threads(2)
+    res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
+    set_num_threads(1)
     check_error(res, "Unable to sample individuals for event.")
 }
 
@@ -299,11 +301,13 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 0 with proportion = -1
 model@events@proportion <- -1
 
-res <- assertError(.Call(SimInf:::SISe3_run, model, 1L, NULL))
+res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
 check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
-    res <- assertError(.Call(SimInf:::SISe3_run, model, 2L, NULL))
+    set_num_threads(2)
+    res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
+    set_num_threads(1)
     check_error(res, "Unable to sample individuals for event.")
 }
 
