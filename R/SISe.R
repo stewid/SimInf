@@ -82,7 +82,7 @@ setClass("SISe", contains = c("SimInf_model"))
 ##'     infectious pressure
 ##' @param gamma The recovery rate from infected to susceptible
 ##' @param alpha Shed rate from infected individuals
-##' @template beta-param
+##' @template beta-end-param
 ##' @param epsilon The background environmental infectious pressure
 ##' @return \code{SISe}
 ##' @include check_arguments.R

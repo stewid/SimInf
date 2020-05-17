@@ -115,7 +115,7 @@ setClass("SISe3_sp", contains = c("SimInf_model"))
 ##' @param gamma_3 The recovery rate from infected to susceptible for
 ##' age category 3
 ##' @param alpha Shed rate from infected individuals
-##' @template beta-param
+##' @template beta-end-param
 ##' @param coupling The coupling between neighboring nodes
 ##' @param distance The distance matrix between neighboring nodes
 ##' @return \code{SISe3_sp}
