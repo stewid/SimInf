@@ -20,6 +20,14 @@
 
 * Removed the 'run_outer' function.
 
+* Removed the unused 'threads' argument from the 'SimInf_run' function
+  (use 'set_num_threads' to specify the number of threads). The
+  'SimInf_run' function is the C function that a model calls to
+  simulate a trajectory. Because of this change, model packages
+  created with a previous version of SimInf must be modified/recreated
+  to work with this version of SimInf. This backwards incompatible
+  change is the reason for incrementing the major version of SimInf.
+
 # SimInf 6.5.1 (2020-04-01)
 
 ## BUG FIXES
