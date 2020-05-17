@@ -98,9 +98,10 @@ SEXP attribute_hidden SimInf_run(
     TRFun *tr_fun,
     PTSFun pts_fun)
 {
-    int error = 0, nprotect = 0;
+    int prE_len, error = 0, nprotect = 0;
+    double *prE_ptr;
     SEXP result = R_NilValue;
-    SEXP ext_events, E, G, N, S, prS;
+    SEXP ext_events, E, prE, G, N, S, prS;
     SEXP tspan;
     SEXP U, V, U_sparse, V_sparse;
     SimInf_solver_args args = {NULL};
@@ -172,10 +173,26 @@ SEXP attribute_hidden SimInf_run(
     args.proportion = REAL(GET_SLOT(ext_events, Rf_install("proportion")));
     args.select = INTEGER(GET_SLOT(ext_events, Rf_install("select")));
     args.shift = INTEGER(GET_SLOT(ext_events, Rf_install("shift")));
+
+    /* Select matrix. */
     PROTECT(E = GET_SLOT(ext_events, Rf_install("E")));
     nprotect++;
     args.irE = INTEGER(GET_SLOT(E, Rf_install("i")));
     args.jcE = INTEGER(GET_SLOT(E, Rf_install("p")));
+
+    /* Determine if all weights are identical in E and the individuals
+     * can be sampled from a hypergeometric distribution or if they
+     * need to be sampled from a biased urn. */
+    PROTECT(prE = GET_SLOT(E, Rf_install("x")));
+    nprotect++;
+    prE_ptr = REAL(prE);
+    prE_len = LENGTH(prE);
+    for (int i = 1; i < prE_len && !args.prE; i++) {
+        if (prE_ptr[i] != prE_ptr[i - 1])
+            args.prE = prE_ptr;
+    }
+
+    /* Shift matrix. */
     PROTECT(N = GET_SLOT(ext_events, Rf_install("N")));
     nprotect++;
     args.N = INTEGER(N);
