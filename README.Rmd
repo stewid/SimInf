@@ -230,6 +230,10 @@ Eriksson and Stefan Engblom), the Swedish Research Council Formas
 (Stefan Widgren), and by the Swedish strategic research program
 eSSENCE (Stefan Widgren).
 
+## Versioning
+
+The `SimInf` package uses [semantic versioning](https://semver.org/).
+
 ## License
 
 The `SimInf` package is licensed under the
