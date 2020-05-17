@@ -21,14 +21,27 @@ vector.}
 \item{events}{a \code{data.frame} with the scheduled events, see
 \code{\link{SimInf_model}}.}
 
-\item{beta}{The transmission rate from susceptible to exposed.}
+\item{beta}{A numeric vector with the transmission rate from
+susceptible to infected where each node can have a different
+beta value. The vector must have length 1 or \code{nrow(u0)}.
+If the vector has length 1, but the model contains more nodes,
+the beta value is repeated in all nodes.}
 
-\item{epsilon}{The incubation rate from exposed to infected.}
+\item{epsilon}{A numeric vector with the incubation rate from
+exposed to infected where each node can have a different
+epsilon value. The vector must have length 1 or
+\code{nrow(u0)}.  If the vector has length 1, but the model
+contains more nodes, the epsilon value is repeated in all
+nodes.}
 
-\item{gamma}{The recovery rate from infected to recovered.}
+\item{gamma}{A numeric vector with the recovery rate from infected
+to recovered where each node can have a different gamma
+value. The vector must have length 1 or \code{nrow(u0)}. If
+the vector has length 1, but the model contains more nodes,
+the beta value is repeated in all nodes.}
 }
 \value{
-\code{SEIR}
+A \code{\link{SimInf_model}} of class \code{SEIR}
 }
 \description{
 Create an \acronym{SEIR} model to be used by the simulation
