@@ -42,6 +42,7 @@
  * @param irE Select matrix for events. irE[k] is the row of E[k].
  * @param jcE Select matrix for events. Index to data of first
  *        non-zero element in row k.
+ * @param prE Select matrix for events. Value of item E[i, j].
  * @param Nc Number of compartments in each node.
  * @param u The state vector with number of individuals in each
  *        compartment at each node. The current state in each node is
@@ -116,29 +117,36 @@ static int SimInf_sample_select(
         return 0;
     }
 
-    if (!prE) {
-        /* All weights are equal. Sample from the hypergeometric
-         * distribution. For a multivariate hypergeometric
-         * distribution, use the algortihm described by James
-         * E. Gentle (2003, page 206) in 'Random Number Generation and
-         * Monte Carlo Methods'.*/
-        for (i = jcE[select]; i < jcE[select + 1] - 1; i++) {
-            if (n == 0)
-                break;
-
-            individuals[irE[i]] = gsl_ran_hypergeometric(
-                rng, u[node * Nc + irE[i]],
-                Nindividuals - u[node * Nc + irE[i]], n);
-
-            Nindividuals -= u[node * Nc + irE[i]];
-            n -= individuals[irE[i]];
-        }
-
-        individuals[irE[i]] = n;
-
-        return 0;
+    /* Determine if all weights are identical in the column in E and
+     * the individuals can be sampled from a hypergeometric
+     * distribution or if they need to be sampled from a biased
+     * urn. */
+    for (i = jcE[select] + 1; i < jcE[select + 1] - 1; i++) {
+        if (prE[i] != prE[i - 1])
+            goto sample_biased_urn;
     }
 
+    /* All weights are equal. Sample from the hypergeometric
+     * distribution. For a multivariate hypergeometric distribution,
+     * use the algortihm described by James E. Gentle (2003, page 206)
+     * in 'Random Number Generation and Monte Carlo Methods'.*/
+    for (i = jcE[select]; i < jcE[select + 1] - 1; i++) {
+        if (n == 0)
+            break;
+
+        individuals[irE[i]] = gsl_ran_hypergeometric(
+            rng, u[node * Nc + irE[i]],
+            Nindividuals - u[node * Nc + irE[i]], n);
+
+        Nindividuals -= u[node * Nc + irE[i]];
+        n -= individuals[irE[i]];
+    }
+
+    individuals[irE[i]] = n;
+
+    return 0;
+
+sample_biased_urn:
     /* Non-equal weights. Perform sampling from Wallenius' noncentral
      * hypergeometric distribution by simulating an urn experiment
      * with bias and without replacement. The probability of taking an
@@ -151,7 +159,7 @@ static int SimInf_sample_select(
      * Distributions'. Communications In statictics, Simulation and
      * Computation, 2008, vol. 37, no. 2, pp. 241-257. */
 
-    /* Repeat the sampling until all n individuals have taken. */
+    /* Repeat the sampling until all n individuals have been taken. */
     while (n > 0) {
         double rand, cum = 0;
 
