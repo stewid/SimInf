@@ -127,6 +127,9 @@ valid_SimInf_events_object <- function(object) {
             return("'E' and 'N' must have identical compartments.")
     }
 
+    if (any(object@E < 0))
+        return("Select matrix 'E' has negative elements.")
+
     if (!identical(length(unique(c(length(object@event),
                                    length(object@time),
                                    length(object@node),

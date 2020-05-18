@@ -42,6 +42,7 @@
  * @param irE Select matrix for events. irE[k] is the row of E[k].
  * @param jcE Select matrix for events. Index to data of first
  *        non-zero element in row k.
+ * @param prE Select matrix for events. Value of item E[i, j].
  * @param Nc Number of compartments in each node.
  * @param u The state vector with number of individuals in each
  *        compartment at each node. The current state in each node is
@@ -60,9 +61,9 @@
  * @return 0 if Ok, else error code.
  */
 static int SimInf_sample_select(
-    const int *irE, const int *jcE, int Nc, const int *u,
-    int node, int select, int n, double proportion,
-    int *individuals, gsl_rng *rng)
+    const int *irE, const int *jcE, const double *prE,
+    int Nc, const int *u, int node, int select, int n,
+    double proportion, int *individuals, gsl_rng *rng)
 {
     int i, Nstates, Nindividuals = 0, Nkinds = 0;
 
@@ -116,10 +117,19 @@ static int SimInf_sample_select(
         return 0;
     }
 
-    /* Sample from the hypergeometric distribution. For a multivariate
-     * hypergeometric distribution, use the algortihm described by
-     * James E. Gentle (2003, page 206) in 'Random Number Generation
-     * and Monte Carlo Methods'.*/
+    /* Determine if all weights are identical in the column in E and
+     * the individuals can be sampled from a hypergeometric
+     * distribution or if they need to be sampled from a biased
+     * urn. */
+    for (i = jcE[select] + 1; i < jcE[select + 1] - 1; i++) {
+        if (prE[i] != prE[i - 1])
+            goto sample_biased_urn;
+    }
+
+    /* All weights are equal. Sample from the hypergeometric
+     * distribution. For a multivariate hypergeometric distribution,
+     * use the algortihm described by James E. Gentle (2003, page 206)
+     * in 'Random Number Generation and Monte Carlo Methods'.*/
     for (i = jcE[select]; i < jcE[select + 1] - 1; i++) {
         if (n == 0)
             break;
@@ -133,6 +143,57 @@ static int SimInf_sample_select(
     }
 
     individuals[irE[i]] = n;
+
+    return 0;
+
+sample_biased_urn:
+    /* Non-equal weights. Perform sampling from Wallenius' noncentral
+     * hypergeometric distribution by simulating an urn experiment
+     * with bias and without replacement. The probability of taking an
+     * individual from a compartment at a particular draw is equal to
+     * this compartment’s fraction of the total weight of all
+     * individuals that lie in the urn at this moment. The
+     * implementation below is based on 'Simulating the urn
+     * Experiment' in Fog (2008) 'Sampling Methods for Wallenius' and
+     * Fisher's Noncentral Hypergeometric
+     * Distributions'. Communications In statictics, Simulation and
+     * Computation, 2008, vol. 37, no. 2, pp. 241-257. */
+
+    /* Repeat the sampling until all n individuals have been taken. */
+    while (n > 0) {
+        double rand, cum = 0;
+
+        /* Determine the total weight. */
+        for (i = jcE[select]; i < jcE[select + 1]; i++)
+            cum += prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]]);
+
+        /* Use inversion to determine the compartment that was
+         * sampled. */
+        rand = gsl_rng_uniform_pos(rng) * cum;
+        for (i = jcE[select], cum = prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]]);
+             i < jcE[select + 1] && rand > cum;
+             i++, cum += prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]]));
+
+        /* Elaborate floating point fix: */
+        if (i >= jcE[select + 1])
+            i = jcE[select + 1] - 1;
+        if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0) {
+            /* Go backwards and try to find the first nonzero
+             * compartment */
+            for (;
+                 i > jcE[select] && (prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0;
+                 i--);
+
+            if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0) {
+                /* No nonzero compartment found. */
+                return SIMINF_ERR_SAMPLE_SELECT;
+            }
+        }
+
+        /* Add the sampled individual. */
+        individuals[irE[i]] += 1;
+        n--;
+    }
 
     return 0;
 }
@@ -215,6 +276,7 @@ int attribute_hidden SimInf_scheduled_events_create(
         /* Matrices to process events */
         events[i].irE = args->irE;
         events[i].jcE = args->jcE;
+        events[i].prE = args->prE;
         events[i].N = args->N;
 
         /* Scheduled events */
@@ -420,7 +482,7 @@ void attribute_hidden SimInf_process_events(
         switch (ee.event) {
         case EXIT_EVENT:
             m.error = SimInf_sample_select(
-                e.irE, e.jcE, m.Nc, m.u, ee.node - m.Ni, ee.select,
+                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node - m.Ni, ee.select,
                 ee.n, ee.proportion, e.individuals, e.rng);
 
             if (m.error) {
@@ -474,7 +536,7 @@ void attribute_hidden SimInf_process_events(
             }
 
             m.error = SimInf_sample_select(
-                e.irE, e.jcE, m.Nc, m.u, ee.node - m.Ni, ee.select,
+                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node - m.Ni, ee.select,
                 ee.n, ee.proportion, e.individuals, e.rng);
 
             if (m.error) {
@@ -530,7 +592,7 @@ void attribute_hidden SimInf_process_events(
             }
 
             m.error = SimInf_sample_select(
-                e.irE, e.jcE, m.Nc, m.u, ee.node, ee.select, ee.n,
+                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node, ee.select, ee.n,
                 ee.proportion, e.individuals, e.rng);
 
             if (m.error) {

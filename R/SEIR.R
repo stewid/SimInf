@@ -58,10 +58,10 @@ setClass("SEIR", contains = c("SimInf_model"))
 ##' @template u0-param
 ##' @template tspan-param
 ##' @template events-param
-##' @param beta The transmission rate from susceptible to exposed.
-##' @param epsilon The incubation rate from exposed to infected.
-##' @param gamma The recovery rate from infected to recovered.
-##' @return \code{SEIR}
+##' @template beta-param
+##' @template epsilon-param
+##' @template gamma-param
+##' @return A \code{\link{SimInf_model}} of class \code{SEIR}
 ##' @include check_arguments.R
 ##' @export
 ##' @examples

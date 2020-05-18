@@ -100,7 +100,7 @@ SEXP attribute_hidden SimInf_run(
 {
     int error = 0, nprotect = 0;
     SEXP result = R_NilValue;
-    SEXP ext_events, E, G, N, S, prS;
+    SEXP ext_events, E, prE, G, N, S, prS;
     SEXP tspan;
     SEXP U, V, U_sparse, V_sparse;
     SimInf_solver_args args = {NULL};
@@ -172,10 +172,15 @@ SEXP attribute_hidden SimInf_run(
     args.proportion = REAL(GET_SLOT(ext_events, Rf_install("proportion")));
     args.select = INTEGER(GET_SLOT(ext_events, Rf_install("select")));
     args.shift = INTEGER(GET_SLOT(ext_events, Rf_install("shift")));
+
+    /* Select matrix. */
     PROTECT(E = GET_SLOT(ext_events, Rf_install("E")));
     nprotect++;
     args.irE = INTEGER(GET_SLOT(E, Rf_install("i")));
     args.jcE = INTEGER(GET_SLOT(E, Rf_install("p")));
+    args.prE = REAL(GET_SLOT(E, Rf_install("x")));
+
+    /* Shift matrix. */
     PROTECT(N = GET_SLOT(ext_events, Rf_install("N")));
     nprotect++;
     args.N = INTEGER(N);

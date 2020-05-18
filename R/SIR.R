@@ -71,8 +71,8 @@ setClass("SIR", contains = c("SimInf_model"))
 ##' @template u0-param
 ##' @template tspan-param
 ##' @template events-param
-##' @param beta The transmission rate from susceptible to infected.
-##' @param gamma The recovery rate from infected to recovered.
+##' @template beta-param
+##' @template gamma-param
 ##' @return A \code{\link{SimInf_model}} of class \code{SIR}
 ##' @include check_arguments.R
 ##' @export
