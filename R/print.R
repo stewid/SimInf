@@ -19,6 +19,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+print_title <- function(title) {
+    cat("\n")
+    cat(paste0(title, "\n"))
+    cat(gsub(" ", "-", sprintf("%*s\n", nchar(title), "")))
+}
+
 ##' Summarise trajectory.
 ##' @importFrom stats quantile
 ##' @noRd
@@ -39,19 +45,10 @@ summary_trajectory <- function(object, compartments) {
     }
 }
 
-summary_U <- function(object) {
-    cat("\n")
-    cat("Compartments\n")
-    cat("------------\n")
-    summary_trajectory(object, rownames(object@S))
-}
-
-summary_V <- function(object) {
-    if (Nd(object) > 0) {
-        cat("\n")
-        cat("Continuous state variables\n")
-        cat("--------------------------\n")
-        summary_trajectory(object, rownames(object@v0))
+summary_output_matrix <- function(object, title, names) {
+    if (length(names) > 0) {
+        print_title(title)
+        summary_trajectory(object, names)
     }
 }
 
@@ -75,22 +72,21 @@ summary_vector <- function(x) {
     }
 }
 
-##' Summarise local model parameters
+##' Summarise model parameters
+##'
 ##' @importFrom stats quantile
 ##' @noRd
-summary_ldata <- function(object) {
-    if (!is.null(rownames(object@ldata))) {
-        cat("\n")
-        cat("Local data\n")
-        cat("----------\n")
+summary_data_matrix <- function(x, title) {
+    if (!is.null(rownames(x))) {
+        print_title(title)
 
-        ## If there is only one node, or if all columns are identical,
-        ## then print ldata in a 'Parameter Value' format.
-        d <- sum(duplicated(object@ldata, MARGIN = 2)) + 1
-        if (ncol(object@ldata) == d) {
-            summary_vector(object@ldata[, 1, drop = TRUE])
+        ## If all columns are identical, then print the data in a
+        ## 'Parameter Value' format.
+        d <- sum(duplicated(x, MARGIN = 2)) + 1
+        if (ncol(x) == d) {
+            summary_vector(x[, 1, drop = TRUE])
         } else {
-            summary_matrix(object@ldata)
+            summary_matrix(x)
         }
     }
 }
@@ -98,18 +94,14 @@ summary_ldata <- function(object) {
 ##' Summarise global model parameters
 ##' @noRd
 summary_gdata <- function(object) {
-    cat("\n")
-    cat("Global data\n")
-    cat("-----------\n")
+    print_title("Global data")
     summary_vector(object@gdata)
 }
 
 ##' @importFrom stats quantile
 ##' @noRd
 summary_events <- function(object) {
-    cat("\n")
-    cat("Scheduled events\n")
-    cat("----------------\n")
+    print_title("Scheduled events")
 
     if (length(object@events@event) > 0) {
         ## Summarise exit events
@@ -151,9 +143,7 @@ summary_events <- function(object) {
 
 ##' @noRd
 summary_transitions <- function(object) {
-    cat("Transitions\n")
-    cat("-----------\n")
-
+    print_title("Transitions")
     cat(paste0(" ", rownames(object@G), collapse = "\n"), sep = "\n")
 }
 
@@ -195,9 +185,11 @@ setMethod("show",
               if (length(object@gdata))
                   summary_gdata(object)
               if (ncol(object@ldata))
-                  summary_ldata(object)
-              summary_V(object)
-              summary_U(object)
+                  summary_data_matrix(object@ldata, "Local data")
+              summary_output_matrix(object, "Continuous state variables",
+                                    rownames(object@v0))
+              summary_output_matrix(object, "Compartments",
+                                    rownames(object@S))
 
               invisible(object)
           }
@@ -217,14 +209,16 @@ setMethod("summary",
               cat(sprintf("Model: %s\n", as.character(class(object))))
 
               ## Nodes
-              cat(sprintf("Number of nodes: %i\n\n", Nn(object)))
+              cat(sprintf("Number of nodes: %i\n", Nn(object)))
 
               summary_transitions(object)
               summary_gdata(object)
-              summary_ldata(object)
+              summary_data_matrix(object@ldata, "Local data")
               summary_events(object)
-              summary_V(object)
-              summary_U(object)
+              summary_output_matrix(object, "Continuous state variables",
+                                    rownames(object@v0))
+              summary_output_matrix(object, "Compartments",
+                                    rownames(object@S))
 
               invisible(NULL)
           }
