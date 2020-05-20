@@ -83,9 +83,12 @@ static int SimInf_sample_select(
     Nstates = jcE[select + 1] - jcE[select];
 
     /* If n == 0, use the proportion of Nindividuals, else use n as */
-    /* the number of individuals to sample                          */
-    if (n == 0)
+    /* the number of individuals to sample.                         */
+    if (n == 0) {
+        if (proportion < 0 || proportion > 1)
+            return SIMINF_ERR_INVALID_PROPORTION;
         n = gsl_ran_binomial(rng, proportion, Nindividuals);
+    }
 
     /* Error checking. */
     if (Nstates <= 0 ||     /* No states to sample from, we shouldn't be here. */
