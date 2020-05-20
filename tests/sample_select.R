@@ -216,15 +216,14 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 1 with proportion = 10
 model@events@proportion <- 10
 
-## Check that an animal is moved in this case
-res <- .Call(SimInf:::SISe3_run, model, NULL)@U[1, 2]
-stopifnot(identical(res, 1L))
+res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
+check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
-    res <- .Call(SimInf:::SISe3_run, model, NULL)@U[1, 2]
+    res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
     set_num_threads(1)
-    stopifnot(identical(res, 1L))
+    check_error(res, "Unable to sample individuals for event.")
 }
 
 ## 2 Nodes
@@ -302,15 +301,14 @@ model <- SISe3(u0        = u0,
 ## Replace proportion = 0 with proportion = -1
 model@events@proportion <- -1
 
-res <- .Call(SimInf:::SISe3_run, model, NULL)@U[1, 2]
-## Check that no animal was moved to node one on day 1
-stopifnot(identical(res, 0L))
+res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
+check_error(res, "Unable to sample individuals for event.")
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
-    res <- .Call(SimInf:::SISe3_run, model, NULL)@U[1, 2]
+    res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
     set_num_threads(1)
-    stopifnot(identical(res, 0L))
+    check_error(res, "Unable to sample individuals for event.")
 }
 
 ## 2 Nodes
