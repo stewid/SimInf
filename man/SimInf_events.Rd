@@ -77,9 +77,11 @@ columns:
     The number of individuals affected by the event. n[i] >= 0.
   }
   \item{proportion}{
-    If \code{n[i]} equals zero, the number of individuals affected by
-    \code{event[i]} is calculated by summing the number of individuls
-    with \code{proportion[i]}. 0 <= proportion[i] <= 1.
+    If \code{n[i]} equals zero, the number of individuals affected
+    by \code{event[i]} is calculated by sampling the number of
+    individuals from a binomial distribution using the
+    \code{proportion[i]} and the number of individuals in the
+    compartments. Numeric vector.  0 <= proportion[i] <= 1.
   }
   \item{select}{
     To process \code{event[i]}, the compartments affected by the
