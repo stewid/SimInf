@@ -735,3 +735,91 @@ if (SimInf:::have_openmp()) {
                                      node = 1, as.is = TRUE))
     stopifnot(identical(S_observed, S_expected))
 }
+
+## 2 Nodes
+## 3 Age categories
+## 2 Disease-states: Susceptible & Infected
+##
+## 10 individuals start in susceptible state in node = 2, with a zero
+## probability of becoming infected.
+##
+## At t = 1, a proportion of 0.5 individuals are moved to node = 1.
+u0 <- data.frame(S_1 = c(0, 10),
+                 I_1 = c(0, 0),
+                 S_2 = c(0, 0),
+                 I_2 = c(0, 0),
+                 S_3 = c(0, 0),
+                 I_3 = c(0, 0))
+
+events <- data.frame(event      = 3,
+                     time       = 1,
+                     node       = 2,
+                     dest       = 1,
+                     n          = 0,
+                     proportion = 0.5,
+                     select     = 4,
+                     shift      = 0)
+
+model <- SISe3(u0        = u0,
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_t1   = 1,
+               beta_t2   = 1,
+               beta_t3   = 1,
+               beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
+               epsilon   = 0)
+
+## In this example, a proportion of 0.5 of 10 animals are scheduled to
+## move and this results in 6 being moved because the number of
+## animals moved is now sampled from a binomial distribution:
+set.seed(42)
+res <- .Call(SimInf:::SISe3_run, model, NULL)
+stopifnot(identical(res@U[1, 2], 6L))
+
+if (SimInf:::have_openmp()) {
+    set_num_threads(2)
+    set.seed(42)
+    res <- .Call(SimInf:::SISe3_run, model, NULL)
+    stopifnot(identical(res@U[1, 2], 6L))
+    set_num_threads(1)
+}
+
+## With a very small proportion, most often, 0 animals are moved:
+model@events@proportion <- 0.01
+set.seed(42)
+res <- .Call(SimInf:::SISe3_run, model, NULL)
+stopifnot(identical(res@U[1, 2], 0L))
+
+if (SimInf:::have_openmp()) {
+    set_num_threads(2)
+    set.seed(42)
+    res <- .Call(SimInf:::SISe3_run, model, NULL)
+    stopifnot(identical(res@U[1, 2], 0L))
+    set_num_threads(1)
+}
+
+## In some cases >0 are moved when 0.01 of 10 animals are scheduled to
+## move:
+set.seed(17)
+res <- .Call(SimInf:::SISe3_run, model, NULL)
+stopifnot(identical(res@U[1, 2], 1L))
+
+if (SimInf:::have_openmp()) {
+    set_num_threads(2)
+    set.seed(17)
+    res <- .Call(SimInf:::SISe3_run, model, NULL)
+    stopifnot(identical(res@U[1, 2], 1L))
+    set_num_threads(1)
+}
