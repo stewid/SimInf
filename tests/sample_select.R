@@ -217,13 +217,13 @@ model <- SISe3(u0        = u0,
 model@events@proportion <- 10
 
 res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
-check_error(res, "Unable to sample individuals for event.")
+check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
     res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
     set_num_threads(1)
-    check_error(res, "Unable to sample individuals for event.")
+    check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 }
 
 ## 2 Nodes
@@ -302,13 +302,13 @@ model <- SISe3(u0        = u0,
 model@events@proportion <- -1
 
 res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
-check_error(res, "Unable to sample individuals for event.")
+check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
     res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
     set_num_threads(1)
-    check_error(res, "Unable to sample individuals for event.")
+    check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 }
 
 ## 2 Nodes
