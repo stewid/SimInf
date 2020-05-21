@@ -27,6 +27,8 @@
 #include <R.h>
 #include <Rinternals.h>
 
+#define SIMINF_UNUSED(x) ((void)(x))
+
 /* Error constants */
 typedef enum {
     SIMINF_ERR_NEGATIVE_STATE       = -1,
