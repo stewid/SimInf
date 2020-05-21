@@ -103,7 +103,7 @@ SEXP attribute_hidden SimInf_run(
 {
     int error = 0, nprotect = 0;
     SEXP result = R_NilValue;
-    SEXP ext_events, E, prE, G, N, S, prS;
+    SEXP ext_events, E, G, N, S, prS;
     SEXP tspan;
     SEXP U, V, U_sparse, V_sparse;
     SimInf_solver_args args = {NULL};
