@@ -121,7 +121,7 @@ static int SimInf_sample_select(
      * the individuals can be sampled from a hypergeometric
      * distribution or if they need to be sampled from a biased
      * urn. */
-    for (i = jcE[select] + 1; i < jcE[select + 1] - 1; i++) {
+    for (i = jcE[select] + 1; i < jcE[select + 1]; i++) {
         if (prE[i] != prE[i - 1])
             goto sample_biased_urn;
     }

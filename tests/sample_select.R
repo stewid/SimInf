@@ -735,3 +735,33 @@ if (SimInf:::have_openmp()) {
                                      node = 1, as.is = TRUE))
     stopifnot(identical(S_observed, S_expected))
 }
+
+## 1 Node in a SIR model
+##
+## One individual starts in S, one in I and one in R with a zero
+## probability of becoming infected or recover.
+##
+## At t = 1, one individual exit, with a higher weight for being
+## sampled from the R compartment.
+model <- SIR(u0 = data.frame(S = 1, I = 1, R = 1),
+             tspan = 1,
+             events = data.frame(event      = 0,
+                                 time       = 1,
+                                 node       = 1,
+                                 dest       = 0,
+                                 n          = 1,
+                                 proportion = 0,
+                                 select     = 4,
+                                 shift      = 0),
+             beta = 0,
+             gamma = 0)
+
+## With equal weight the individual is sampled from the S compartment.
+set.seed(2)
+stopifnot(identical(run(model)@U, structure(c(0L, 1L, 1L), .Dim = c(3L, 1L))))
+
+## With non-equal weight the individual is sampled from the R
+## compartment (using the same seed).
+model@events@E[3, 4] <- 1000
+set.seed(2)
+stopifnot(identical(run(model)@U, structure(c(1L, 1L, 0L), .Dim = c(3L, 1L))))
