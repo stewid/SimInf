@@ -58,7 +58,7 @@ typedef struct SimInf_aem_arguments
  * @param new_rate, rate after event.
  * @param rng, current value of rng in heap.
  */
-void static
+static void
 calcTimes(double* time, double* infTime, double tt, double old_rate,
           double new_rate, gsl_rng* rng)
 {
