@@ -60,10 +60,10 @@
 ##'     vector.  n[i] >= 0.
 ##' @slot proportion If \code{n[i]} equals zero, the number of
 ##'     individuals affected by \code{event[i]} is calculated by
-##'     summing the number of individuls ## in the compartments
-##'     determined by \code{select[i]} and multiplying with
-##'     \code{proportion[i]}. Numeric vector.  0 <= proportion[i] <=
-##'     1.
+##'     sampling the number of individuals from a binomial
+##'     distribution using the \code{proportion[i]} and the number of
+##'     individuals in the compartments. Numeric vector.  0 <=
+##'     proportion[i] <= 1.
 ##' @slot select To process \code{event[i]}, the compartments affected
 ##'     by the event are specified with \code{select[i]} together with
 ##'     the matrix \code{E}, where \code{select[i]} determines which
@@ -260,10 +260,11 @@ init_events <- function(events, t0) {
 ##'     The number of individuals affected by the event. n[i] >= 0.
 ##'   }
 ##'   \item{proportion}{
-##'     If \code{n[i]} equals zero, the number of individuals affected by
-##'     \code{event[i]} is calculated by summing the number of individuls
-##      in the compartments determined by \code{select[i]} and multiplying
-##'     with \code{proportion[i]}. 0 <= proportion[i] <= 1.
+##'     If \code{n[i]} equals zero, the number of individuals affected
+##'     by \code{event[i]} is calculated by sampling the number of
+##'     individuals from a binomial distribution using the
+##'     \code{proportion[i]} and the number of individuals in the
+##'     compartments. Numeric vector.  0 <= proportion[i] <= 1.
 ##'   }
 ##'   \item{select}{
 ##'     To process \code{event[i]}, the compartments affected by the

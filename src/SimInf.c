@@ -77,6 +77,9 @@ static void SimInf_raise_error(int error)
     case SIMINF_ERR_SHIFT_OUT_OF_BOUNDS:
         Rf_error("'shift' is out of bounds.");
         break;
+    case SIMINF_ERR_INVALID_PROPORTION:
+        Rf_error("Invalid proportion detected (< 0.0 or > 1.0).");
+        break;
     default:
         Rf_error("Unknown error code: %i.", error);
         break;

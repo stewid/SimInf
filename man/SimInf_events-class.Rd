@@ -55,10 +55,10 @@ vector.  n[i] >= 0.}
 
 \item{\code{proportion}}{If \code{n[i]} equals zero, the number of
 individuals affected by \code{event[i]} is calculated by
-summing the number of individuls ## in the compartments
-determined by \code{select[i]} and multiplying with
-\code{proportion[i]}. Numeric vector.  0 <= proportion[i] <=
-1.}
+sampling the number of individuals from a binomial
+distribution using the \code{proportion[i]} and the number of
+individuals in the compartments. Numeric vector.  0 <=
+proportion[i] <= 1.}
 
 \item{\code{select}}{To process \code{event[i]}, the compartments affected
 by the event are specified with \code{select[i]} together with

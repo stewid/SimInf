@@ -83,9 +83,12 @@ static int SimInf_sample_select(
     Nstates = jcE[select + 1] - jcE[select];
 
     /* If n == 0, use the proportion of Nindividuals, else use n as */
-    /* the number of individuals to sample                          */
-    if (n == 0)
-        n = round(proportion * Nindividuals);
+    /* the number of individuals to sample.                         */
+    if (n == 0) {
+        if (proportion < 0 || proportion > 1)
+            return SIMINF_ERR_INVALID_PROPORTION;
+        n = gsl_ran_binomial(rng, proportion, Nindividuals);
+    }
 
     /* Error checking. */
     if (Nstates <= 0 ||     /* No states to sample from, we shouldn't be here. */
@@ -371,11 +374,6 @@ static void SimInf_print_event(
             /* Number of states */
             if ((jcE[e->select + 1] - jcE[e->select]) <= 0)
                 Rprintf("No states to sample from.\n");
-
-            /* If n == 0, use the proportion of Nindividuals, else use
-             * n as the number of individuals to sample */
-            if (n == 0)
-                n = round(e->proportion * Nindividuals);
 
             if (n > Nindividuals)
                 REprintf("Cannot sample %i for event from %i individuals.\n",
