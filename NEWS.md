@@ -16,6 +16,10 @@
   the DLL loaded, and thus the compilation step can be skipped before
   running a trajectory.
 
+* The C functions 'SimInf_forward_euler_linear_decay' and
+  'SimInf_local_spread' are now available to be called by C code in
+  another package.
+
 ## BREAKING CHANGES
 
 Backwards incompatible changes that are the reason why the meajor
