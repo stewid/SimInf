@@ -465,7 +465,6 @@ void attribute_hidden SimInf_process_events(
 
     /* Process events */
     while (e.events_index < kv_size(e.events) && !m.error) {
-        int i;
         const SimInf_scheduled_event ee = kv_A(e.events, e.events_index);
 
         if (ee.time > m.tt)
@@ -489,7 +488,7 @@ void attribute_hidden SimInf_process_events(
                 goto done;
             }
 
-            for (i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+            for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
                 const int jj = e.irE[i];
                 const int kn = (ee.node - m.Ni) * m.Nc + jj;
 
@@ -543,7 +542,7 @@ void attribute_hidden SimInf_process_events(
                 goto done;
             }
 
-            for (i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+            for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
                 const int jj = e.irE[i];
                 const int kn = (ee.node - m.Ni) * m.Nc + jj;
                 const int ll = e.N[ee.shift * m.Nc + jj];
@@ -599,7 +598,7 @@ void attribute_hidden SimInf_process_events(
                 goto done;
             }
 
-            for (i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+            for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
                 const int jj = e.irE[i];
                 const int kd = ee.dest * m.Nc + jj;
                 const int kn = ee.node * m.Nc + jj;
