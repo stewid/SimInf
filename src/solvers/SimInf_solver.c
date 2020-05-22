@@ -504,16 +504,22 @@ void attribute_hidden SimInf_process_events(
             break;
 
         case ENTER_EVENT:
+            if ((e.jcE[ee.select + 1] - e.jcE[ee.select]) <= 0) {
+                /* No compartments to enter. */
+                SimInf_print_event(&ee, NULL, NULL, m.Nc,
+                                   m.u, ee.node - m.Ni, -1);
+                m.error = SIMINF_ERR_SAMPLE_SELECT;
+                goto done;
+            }
+
             /* All individuals enter first non-zero compartment,
              * i.e. a non-zero entry in element in the select
              * column. */
-            if (e.jcE[ee.select] < e.jcE[ee.select + 1]) {
-                m.u[(ee.node - m.Ni) * m.Nc + e.irE[e.jcE[ee.select]]] += ee.n;
-                if (m.u[(ee.node - m.Ni) * m.Nc + e.irE[e.jcE[ee.select]]] < 0) {
-                    SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                       m.u, ee.node - m.Ni, -1);
-                    m.error = SIMINF_ERR_NEGATIVE_STATE;
-                }
+            m.u[(ee.node - m.Ni) * m.Nc + e.irE[e.jcE[ee.select]]] += ee.n;
+            if (m.u[(ee.node - m.Ni) * m.Nc + e.irE[e.jcE[ee.select]]] < 0) {
+                SimInf_print_event(&ee, NULL, NULL, m.Nc,
+                                   m.u, ee.node - m.Ni, -1);
+                m.error = SIMINF_ERR_NEGATIVE_STATE;
             }
             break;
 

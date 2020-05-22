@@ -853,3 +853,32 @@ stopifnot(identical(run(model)@U, structure(c(0L, 1L, 1L), .Dim = c(3L, 1L))))
 model@events@E[3, 4] <- 1000
 set.seed(2)
 stopifnot(identical(run(model)@U, structure(c(1L, 1L, 0L), .Dim = c(3L, 1L))))
+
+## Check that an error is raised if there are no non-zero elements in
+## the selected column in E.
+model <- SIR(u0 = data.frame(S = 1, I = 1, R = 1),
+             tspan = 1,
+             events = data.frame(event      = 0,
+                                 time       = 1,
+                                 node       = 1,
+                                 dest       = 0,
+                                 n          = 1,
+                                 proportion = 0,
+                                 select     = 4,
+                                 shift      = 0),
+             beta = 0,
+             gamma = 0)
+
+model@events@E <- as(matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),
+                            nrow = 3, ncol = 4,
+                            dimnames = list(c("S", "I", "R"),
+                                            c("1", "2", "3", "4"))),
+                     "dgCMatrix")
+
+res <- assertError(run(model))
+check_error(res, "Unable to sample individuals for event.")
+
+## Change to an enter event
+model@events@event <- 1L
+res <- assertError(run(model))
+check_error(res, "Unable to sample individuals for event.")
