@@ -887,3 +887,58 @@ check_error(res, "Unable to sample individuals for event.")
 model@events@n <- -1L
 res <- assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
+
+## Change to enter event and proportion = -1
+model@events@E <- as(matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1),
+                            nrow = 3, ncol = 4,
+                            dimnames = list(c("S", "I", "R"),
+                                            c("1", "2", "3", "4"))),
+                     "dgCMatrix")
+model@events@n <- 0L
+model@events@proportion <- -1
+res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
+check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
+
+## Change to enter event and proportion = 1.1
+model@events@n <- 0L
+model@events@proportion <- 1.1
+res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
+check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
+
+## Check that proportion works for an enter event.
+model@events@n <- 0L
+model@events@proportion <- 0.1
+model@events@select <- 1L
+set.seed(3)
+stopifnot(identical(run(model)@U, structure(c(2L, 1L, 1L), .Dim = c(3L, 1L))))
+
+## Check that an enter event fails with shift without N.
+model@events@n <- 1L
+model@events@shift <- 1L
+model@events@proportion <- 0
+res <- assertError(run(model))
+check_error(res, "'shift' is out of bounds.")
+
+## Check that shift fails for an enter event when the shift is out of
+## bounds.
+model@events@N <- matrix(c(3L, 0L, 0L),
+                         nrow = 3, ncol = 4,
+                         dimnames = list(c("S", "I", "R"),
+                                            c("1", "2", "3", "4")))
+res <- assertError(run(model))
+check_error(res, "'shift' is out of bounds.")
+
+model@events@N <- matrix(c(-1L, 0L, 0L),
+                         nrow = 3, ncol = 4,
+                         dimnames = list(c("S", "I", "R"),
+                                            c("1", "2", "3", "4")))
+res <- assertError(run(model))
+check_error(res, "'shift' is out of bounds.")
+
+
+## Check that shift works for an enter event.
+model@events@N <- matrix(c(1L, 0L, 0L),
+                         nrow = 3, ncol = 4,
+                         dimnames = list(c("S", "I", "R"),
+                                            c("1", "2", "3", "4")))
+stopifnot(identical(run(model)@U, structure(c(1L, 2L, 1L), .Dim = c(3L, 1L))))

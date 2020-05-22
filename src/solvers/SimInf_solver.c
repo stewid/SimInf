@@ -203,6 +203,108 @@ sample_biased_urn:
 }
 
 /**
+ * Sample individuals to enter a node
+ *
+ * Individuals are sampled from the states determined by select.
+ *
+ * @param irE Select matrix for events. irE[k] is the row of E[k].
+ * @param jcE Select matrix for events. Index to data of first
+ *        non-zero element in row k.
+ * @param prE Select matrix for events. Value of item E[i, j].
+ * @param Nc Number of compartments in each node.
+ * @param u The state vector with number of individuals in each
+ *        compartment at each node. The current state in each node is
+ *        offset by node * Nc.
+ * @param node The node to sample.
+ * @param select Column j in the select matrix that determines the
+ *        states to enter individuals in.
+ * @param n The number of individuals to enter. n >= 0.
+ * @param proportion If n equals zero, then the number of individuals
+ *        to enter is calculated by summing the number of individuals
+ *        in the states determined by select and sampling the from a
+ *        binomial distribution using the proportion and the number
+ *        of individuals in the compartments. 0 <= proportion <= 1.
+ * @param individuals The result of the sampling is stored in the
+ *        individuals vector.
+ * @param rng Random number generator.
+ * @return 0 if Ok, else error code.
+ */
+static int SimInf_sample_select_enter(
+    const int *irE, const int *jcE, const double *prE,
+    int Nc, const int *u, int node, int select, int n,
+    double proportion, int *individuals, gsl_rng *rng)
+{
+    int i, Nstates = jcE[select + 1] - jcE[select];
+    double w_cum = 0;
+
+    /* Clear vector with number of individuals to enter */
+    memset(individuals, 0, Nc * sizeof(int));
+
+    /* If n == 0, use the proportion of individuals in the seleceted
+     * compartments, else use n as the number of individuals to
+     * enter. */
+    if (n == 0) {
+        if (proportion < 0 || proportion > 1)
+            return SIMINF_ERR_INVALID_PROPORTION;
+
+        /* Count the total number of individuals in the selected
+         * compartments. */
+        for (i = jcE[select]; i < jcE[select + 1]; i++)
+            n += u[node * Nc + irE[i]];
+        n = gsl_ran_binomial(rng, proportion, n);
+    }
+
+    /* Error checking. */
+    if (Nstates <= 0 || /* No compartments to enter individuals in. */
+        n < 0)          /* No individuals to enter.                 */
+        return SIMINF_ERR_SAMPLE_SELECT;
+
+    /* Handle cases that require no random sampling */
+    if (n == 0) {
+        /* We are done */
+        return 0;
+    } else if (Nstates == 1) {
+        /* All individuals enter one state. */
+        individuals[irE[jcE[select]]] = n;
+        return 0;
+    }
+
+    /* Determine the total weight. */
+    for (i = jcE[select]; i < jcE[select + 1]; i++)
+        w_cum += prE[i];
+
+    /* Repeat the sampling until all n individuals have been entered. */
+    while (n > 0) {
+        double cum, rand = gsl_rng_uniform_pos(rng) * w_cum;
+
+        /* Use inversion to determine the compartment that was
+         * sampled. */
+        for (i = jcE[select], cum = prE[i];
+             i < jcE[select + 1] && rand > cum;
+             i++, cum += prE[i]);
+
+        /* Elaborate floating point fix: */
+        if (i >= jcE[select + 1])
+            i = jcE[select + 1] - 1;
+        if (prE[i] == 0.0) {
+            /* Go backwards and try to find the first nonzero
+             * weight. */
+            for (; i > jcE[select] && prE[i] == 0.0; i--);
+
+            /* Check if a nonzero weight was found. */
+            if (prE[i] == 0.0)
+                return SIMINF_ERR_SAMPLE_SELECT;
+        }
+
+        /* Add the sampled individual. */
+        individuals[irE[i]] += 1;
+        n--;
+    }
+
+    return 0;
+}
+
+/**
  * Split scheduled events to E1 and E2 events by number of threads
  * used during simulation
  *
@@ -505,30 +607,57 @@ void attribute_hidden SimInf_process_events(
             break;
 
         case ENTER_EVENT:
-            if ((e.jcE[ee.select + 1] - e.jcE[ee.select]) <= 0) {
-                /* No compartments to enter. */
-                SimInf_print_event(&ee, NULL, NULL, m.Nc,
+            m.error = SimInf_sample_select_enter(
+                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node - m.Ni, ee.select,
+                ee.n, ee.proportion, e.individuals, e.rng);
+
+            if (m.error) {
+                SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
                                    m.u, ee.node - m.Ni, -1);
-                m.error = SIMINF_ERR_SAMPLE_SELECT;
                 goto done;
             }
 
-            if (ee.n < 0) {
-                /* Cannot enter negative number of individuals. */
-                SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                   m.u, ee.node - m.Ni, -1);
-                m.error = SIMINF_ERR_SAMPLE_SELECT;
-                goto done;
-            }
+            for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+                const int jj = e.irE[i];
+                const int kn = (ee.node - m.Ni) * m.Nc + jj;
 
-            /* All individuals enter first non-zero compartment,
-             * i.e. a non-zero entry in element in the select
-             * column. */
-            m.u[(ee.node - m.Ni) * m.Nc + e.irE[e.jcE[ee.select]]] += ee.n;
-            if (m.u[(ee.node - m.Ni) * m.Nc + e.irE[e.jcE[ee.select]]] < 0) {
-                SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                   m.u, ee.node - m.Ni, -1);
-                m.error = SIMINF_ERR_NEGATIVE_STATE;
+                if (ee.shift < 0) {
+                    /* Add individuals to node without shifting
+                     * compartments. */
+                    m.u[kn] += e.individuals[jj];
+                    if (m.u[kn] < 0) {
+                        SimInf_print_event(&ee, NULL, NULL, m.Nc,
+                                           m.u, ee.node - m.Ni, -1);
+                        m.error = SIMINF_ERR_NEGATIVE_STATE;
+                        goto done;
+                    }
+                } else if (!e.N) {
+                    /* Not possible to shift when N is not defined. */
+                    SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
+                    m.error = SIMINF_ERR_EVENTS_N;
+                    goto done;
+                } else {
+                    /* Process an enter event that also involves a
+                     * shift between compartments. */
+                    const int ll = e.N[ee.shift * m.Nc + jj];
+
+                    /* Check that the index to the new compartment is
+                     * not out of bounds. */
+                    if (jj + ll < 0 || jj + ll >= m.Nc) {
+                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
+                        m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
+                        goto done;
+                    }
+
+                    /* Add individuals to node. */
+                    m.u[kn + ll] += e.individuals[jj];
+                    if (m.u[kn + ll] < 0) {
+                        SimInf_print_event(&ee, NULL, NULL, m.Nc,
+                                           m.u, ee.node, -1);
+                        m.error = SIMINF_ERR_NEGATIVE_STATE;
+                        goto done;
+                    }
+                }
             }
             break;
 
