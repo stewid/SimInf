@@ -53,8 +53,9 @@
  * @param n The number of individuals to sample. n >= 0.
  * @param proportion If n equals zero, then the number of individuals
  *        to sample is calculated by summing the number of individuals
- *        in the states determined by select and multiplying with the
- *        proportion. 0 <= proportion <= 1.
+ *        in the states determined by select and sampling the from a
+ *        binomial distribution using the proportion and the number
+ *        of individuals in the compartments. 0 <= proportion <= 1.
  * @param individuals The result of the sampling is stored in the
  *        individuals vector.
  * @param rng Random number generator.
