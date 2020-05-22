@@ -882,3 +882,8 @@ check_error(res, "Unable to sample individuals for event.")
 model@events@event <- 1L
 res <- assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
+
+## Change to enter event and n = -1
+model@events@n <- -1L
+res <- assertError(run(model))
+check_error(res, "Unable to sample individuals for event.")

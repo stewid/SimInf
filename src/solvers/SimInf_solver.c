@@ -512,6 +512,14 @@ void attribute_hidden SimInf_process_events(
                 goto done;
             }
 
+            if (ee.n < 0) {
+                /* Cannot enter negative number of individuals. */
+                SimInf_print_event(&ee, NULL, NULL, m.Nc,
+                                   m.u, ee.node - m.Ni, -1);
+                m.error = SIMINF_ERR_SAMPLE_SELECT;
+                goto done;
+            }
+
             /* All individuals enter first non-zero compartment,
              * i.e. a non-zero entry in element in the select
              * column. */
