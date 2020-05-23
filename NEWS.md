@@ -20,9 +20,27 @@
   'SimInf_local_spread' are now available to be called by C code in
   another package.
 
+* The values in the 'E' matrix are now used as weights when sampling
+  individuals for the exit, internal transfer and external transfer
+  events. The individuals are sampled, one by one, without replacement
+  from the compartments specified by 'E[, select]' in such a way that
+  the probability that a particular individual is sampled at a given
+  draw is proportional to the weight in 'E[, select]'.
+
+* The values in the 'E' matrix are now used as weights for enter
+  events. If the column 'E[, select]' contains several non-zero
+  entries, the compartment to add an individual to is sampled in such
+  a way that the probability is proportional to the weight in 'E[,
+  select]'.
+
+* The scheduled enter events can now use 'proportion' when 'n = 0',
+  see description of breaking changes below. Additionally, the 'shift'
+  feature can also be used to further control in which compartments
+  individuals are added.
+
 ## BREAKING CHANGES
 
-Backwards incompatible changes that are the reason why the meajor
+Backwards incompatible changes that are the reason why the major
 version has been incremented.
 
 * Removed the 'run_outer' function.
