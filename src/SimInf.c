@@ -186,7 +186,8 @@ SEXP attribute_hidden SimInf_run(
     /* Shift matrix. */
     PROTECT(N = GET_SLOT(ext_events, Rf_install("N")));
     nprotect++;
-    args.N = INTEGER(N);
+    if (Rf_nrows(N) == INTEGER(GET_SLOT(E, Rf_install("Dim")))[0])
+        args.N = INTEGER(N);
 
     /* Constants */
     args.Nn = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
