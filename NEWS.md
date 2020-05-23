@@ -1,3 +1,5 @@
+# SimInf (development version)
+
 # SimInf 7.0.0 (2020-05-23)
 
 ## CHANGES OR IMPROVEMENTS
