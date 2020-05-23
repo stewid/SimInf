@@ -917,28 +917,24 @@ model@events@n <- 1L
 model@events@shift <- 1L
 model@events@proportion <- 0
 res <- assertError(run(model))
-check_error(res, "'shift' is out of bounds.")
+check_error(res, "'N' is invalid.")
 
 ## Check that shift fails for an enter event when the shift is out of
 ## bounds.
 model@events@N <- matrix(c(3L, 0L, 0L),
-                         nrow = 3, ncol = 4,
-                         dimnames = list(c("S", "I", "R"),
-                                            c("1", "2", "3", "4")))
+                         nrow = 3, ncol = 1,
+                         dimnames = list(c("S", "I", "R"), "1"))
 res <- assertError(run(model))
 check_error(res, "'shift' is out of bounds.")
 
 model@events@N <- matrix(c(-1L, 0L, 0L),
-                         nrow = 3, ncol = 4,
-                         dimnames = list(c("S", "I", "R"),
-                                            c("1", "2", "3", "4")))
+                         nrow = 3, ncol = 1,
+                         dimnames = list(c("S", "I", "R"), "1"))
 res <- assertError(run(model))
 check_error(res, "'shift' is out of bounds.")
 
-
 ## Check that shift works for an enter event.
 model@events@N <- matrix(c(1L, 0L, 0L),
-                         nrow = 3, ncol = 4,
-                         dimnames = list(c("S", "I", "R"),
-                                            c("1", "2", "3", "4")))
+                         nrow = 3, ncol = 1,
+                         dimnames = list(c("S", "I", "R"), "1"))
 stopifnot(identical(run(model)@U, structure(c(1L, 2L, 1L), .Dim = c(3L, 1L))))
