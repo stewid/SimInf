@@ -82,7 +82,7 @@ jobs:
   - task: DotNetCoreInstaller@0
     inputs:
       packageType: sdk
-      version: 2.x
+      version: 2.2.207
       installationPath: $(Agent.ToolsDirectory)/dotnet
     displayName: "Install dotnet core"
   - task: PublishCodeCoverageResults@1
