@@ -1,12 +1,70 @@
 # SimInf (development version)
 
-## IMPROVEMENTS
+# SimInf 7.0.0 (2020-05-23)
+
+## CHANGES OR IMPROVEMENTS
+
+* The beta and gamma parameters in the built-in SIR model have been
+  moved internally from 'gdata' to 'ldata' to allow node specific
+  parameter values.
+
+* The beta, gamma and epsilon parameters in the built-in SEIR model
+  have been moved internally from 'gdata' to 'ldata' to allow node
+  specific parameter values.
 
 * In order to reduce the compilation-time when running multiple
   simulations of a model that contains C code, the MD5 hash of the C
   code is used to determine if a model has already been compiled and
   the DLL loaded, and thus the compilation step can be skipped before
   running a trajectory.
+
+* The C functions 'SimInf_forward_euler_linear_decay' and
+  'SimInf_local_spread' are now available to be called by C code in
+  another package.
+
+* The values in the 'E' matrix are now used as weights when sampling
+  individuals for the exit, internal transfer and external transfer
+  events. The individuals are sampled, one by one, without replacement
+  from the compartments specified by 'E[, select]' in such a way that
+  the probability that a particular individual is sampled at a given
+  draw is proportional to the weight in 'E[, select]'.
+
+* The values in the 'E' matrix are now used as weights for enter
+  events. If the column 'E[, select]' contains several non-zero
+  entries, the compartment to add an individual to is sampled in such
+  a way that the probability is proportional to the weight in 'E[,
+  select]'.
+
+* The scheduled enter events can now use 'proportion' when 'n = 0',
+  see description of breaking changes below. Additionally, the 'shift'
+  feature can also be used to further control in which compartments
+  individuals are added.
+
+## BREAKING CHANGES
+
+Backwards incompatible changes that are the reason why the major
+version has been incremented.
+
+* Removed the 'run_outer' function.
+
+* Removed the unused 'threads' argument from the 'SimInf_run' function
+  (use 'set_num_threads' to specify the number of threads). The
+  'SimInf_run' function is the C function that a model calls to
+  simulate a trajectory. Because of this change, model packages
+  created with a previous version of SimInf must be modified/recreated
+  to work with this version of SimInf.
+
+* Events with n = 0 utilize the proportion instead to calculate the
+  number of individuals affected by the event. The number was
+  previously calculated by multiplying the number of individuals in a
+  node by the proportion in the event. This made it tricky to use
+  proportion for a scheduled event when the proportion was very small
+  or very large and the number of individuals in a node was small,
+  since the result was that it always rounded to 0 individuals with a
+  small proportion and all individuals with a large proportion. This
+  has been replaced with a sampling from a binomial distribution to
+  determine the number of individuals affected by the event. Thanks to
+  Thomas Rosendal in PR #28.
 
 # SimInf 6.5.1 (2020-04-01)
 

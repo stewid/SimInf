@@ -51,6 +51,10 @@ static double SIR_S_to_I(
     const double I_n = u[I];
     const double n = S_n + I_n + u[R];
 
+    SIMINF_UNUSED(v);
+    SIMINF_UNUSED(gdata);
+    SIMINF_UNUSED(t);
+
     if (n > 0.0)
         return (ldata[BETA] * S_n * I_n) / n;
     return 0.0;
@@ -73,6 +77,10 @@ static double SIR_I_to_R(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(v);
+    SIMINF_UNUSED(gdata);
+    SIMINF_UNUSED(t);
+
     return ldata[GAMMA] * u[I];
 }
 
@@ -100,6 +108,14 @@ static int SIR_post_time_step(
     int node,
     double t)
 {
+    SIMINF_UNUSED(v_new);
+    SIMINF_UNUSED(u);
+    SIMINF_UNUSED(v);
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(gdata);
+    SIMINF_UNUSED(node);
+    SIMINF_UNUSED(t);
+
     return 0;
 }
 

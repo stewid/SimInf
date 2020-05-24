@@ -53,6 +53,9 @@ static double SISe_sp_S_to_I(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[UPSILON] * v[PHI] * u[S];
 }
 
@@ -73,6 +76,10 @@ static double SISe_sp_I_to_S(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(v);
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[GAMMA] * u[I];
 }
 

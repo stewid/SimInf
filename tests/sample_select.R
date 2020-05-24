@@ -217,13 +217,13 @@ model <- SISe3(u0        = u0,
 model@events@proportion <- 10
 
 res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
-check_error(res, "Unable to sample individuals for event.")
+check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
     res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
     set_num_threads(1)
-    check_error(res, "Unable to sample individuals for event.")
+    check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 }
 
 ## 2 Nodes
@@ -302,13 +302,13 @@ model <- SISe3(u0        = u0,
 model@events@proportion <- -1
 
 res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
-check_error(res, "Unable to sample individuals for event.")
+check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 
 if (SimInf:::have_openmp()) {
     set_num_threads(2)
     res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
     set_num_threads(1)
-    check_error(res, "Unable to sample individuals for event.")
+    check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 }
 
 ## 2 Nodes
@@ -735,3 +735,206 @@ if (SimInf:::have_openmp()) {
                                      node = 1, as.is = TRUE))
     stopifnot(identical(S_observed, S_expected))
 }
+
+## 2 Nodes
+## 3 Age categories
+## 2 Disease-states: Susceptible & Infected
+##
+## 10 individuals start in susceptible state in node = 2, with a zero
+## probability of becoming infected.
+##
+## At t = 1, a proportion of 0.5 individuals are moved to node = 1.
+u0 <- data.frame(S_1 = c(0, 10),
+                 I_1 = c(0, 0),
+                 S_2 = c(0, 0),
+                 I_2 = c(0, 0),
+                 S_3 = c(0, 0),
+                 I_3 = c(0, 0))
+
+events <- data.frame(event      = 3,
+                     time       = 1,
+                     node       = 2,
+                     dest       = 1,
+                     n          = 0,
+                     proportion = 0.5,
+                     select     = 4,
+                     shift      = 0)
+
+model <- SISe3(u0        = u0,
+               tspan     = 0:10,
+               events    = events,
+               phi       = rep(0, 2),
+               upsilon_1 = 0,
+               upsilon_2 = 0,
+               upsilon_3 = 0,
+               gamma_1   = 1,
+               gamma_2   = 1,
+               gamma_3   = 1,
+               alpha     = 0,
+               beta_t1   = 1,
+               beta_t2   = 1,
+               beta_t3   = 1,
+               beta_t4   = 1,
+               end_t1    = 91,
+               end_t2    = 182,
+               end_t3    = 273,
+               end_t4    = 365,
+               epsilon   = 0)
+
+## In this example, a proportion of 0.5 of 10 animals are scheduled to
+## move and this results in 6 being moved because the number of
+## animals moved is now sampled from a binomial distribution:
+set.seed(42)
+res <- .Call(SimInf:::SISe3_run, model, NULL)
+stopifnot(identical(res@U[1, 2], 6L))
+
+if (SimInf:::have_openmp()) {
+    set_num_threads(2)
+    set.seed(42)
+    res <- .Call(SimInf:::SISe3_run, model, NULL)
+    stopifnot(identical(res@U[1, 2], 6L))
+    set_num_threads(1)
+}
+
+## With a very small proportion, most often, 0 animals are moved:
+model@events@proportion <- 0.01
+set.seed(42)
+res <- .Call(SimInf:::SISe3_run, model, NULL)
+stopifnot(identical(res@U[1, 2], 0L))
+
+if (SimInf:::have_openmp()) {
+    set_num_threads(2)
+    set.seed(42)
+    res <- .Call(SimInf:::SISe3_run, model, NULL)
+    stopifnot(identical(res@U[1, 2], 0L))
+    set_num_threads(1)
+}
+
+## In some cases >0 are moved when 0.01 of 10 animals are scheduled to
+## move:
+set.seed(17)
+res <- .Call(SimInf:::SISe3_run, model, NULL)
+stopifnot(identical(res@U[1, 2], 1L))
+
+if (SimInf:::have_openmp()) {
+    set_num_threads(2)
+    set.seed(17)
+    res <- .Call(SimInf:::SISe3_run, model, NULL)
+    stopifnot(identical(res@U[1, 2], 1L))
+    set_num_threads(1)
+}
+
+## 1 Node in a SIR model
+##
+## One individual starts in S, one in I and one in R with a zero
+## probability of becoming infected or recover.
+##
+## At t = 1, one individual exit, with a higher weight for being
+## sampled from the R compartment.
+model <- SIR(u0 = data.frame(S = 1, I = 1, R = 1),
+             tspan = 1,
+             events = data.frame(event      = 0,
+                                 time       = 1,
+                                 node       = 1,
+                                 dest       = 0,
+                                 n          = 1,
+                                 proportion = 0,
+                                 select     = 4,
+                                 shift      = 0),
+             beta = 0,
+             gamma = 0)
+
+## With equal weight the individual is sampled from the S compartment.
+set.seed(2)
+stopifnot(identical(run(model)@U, structure(c(0L, 1L, 1L), .Dim = c(3L, 1L))))
+
+## With non-equal weight the individual is sampled from the R
+## compartment (using the same seed).
+model@events@E[3, 4] <- 1000
+set.seed(2)
+stopifnot(identical(run(model)@U, structure(c(1L, 1L, 0L), .Dim = c(3L, 1L))))
+
+## Check that an error is raised if there are no non-zero elements in
+## the selected column in E.
+model <- SIR(u0 = data.frame(S = 1, I = 1, R = 1),
+             tspan = 1,
+             events = data.frame(event      = 0,
+                                 time       = 1,
+                                 node       = 1,
+                                 dest       = 0,
+                                 n          = 1,
+                                 proportion = 0,
+                                 select     = 4,
+                                 shift      = 0),
+             beta = 0,
+             gamma = 0)
+
+model@events@E <- as(matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),
+                            nrow = 3, ncol = 4,
+                            dimnames = list(c("S", "I", "R"),
+                                            c("1", "2", "3", "4"))),
+                     "dgCMatrix")
+
+res <- assertError(run(model))
+check_error(res, "Unable to sample individuals for event.")
+
+## Change to an enter event
+model@events@event <- 1L
+res <- assertError(run(model))
+check_error(res, "Unable to sample individuals for event.")
+
+## Change to enter event and n = -1
+model@events@n <- -1L
+res <- assertError(run(model))
+check_error(res, "Unable to sample individuals for event.")
+
+## Change to enter event and proportion = -1
+model@events@E <- as(matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1),
+                            nrow = 3, ncol = 4,
+                            dimnames = list(c("S", "I", "R"),
+                                            c("1", "2", "3", "4"))),
+                     "dgCMatrix")
+model@events@n <- 0L
+model@events@proportion <- -1
+res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
+check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
+
+## Change to enter event and proportion = 1.1
+model@events@n <- 0L
+model@events@proportion <- 1.1
+res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
+check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
+
+## Check that proportion works for an enter event.
+model@events@n <- 0L
+model@events@proportion <- 0.1
+model@events@select <- 1L
+set.seed(3)
+stopifnot(identical(run(model)@U, structure(c(2L, 1L, 1L), .Dim = c(3L, 1L))))
+
+## Check that an enter event fails with shift without N.
+model@events@n <- 1L
+model@events@shift <- 1L
+model@events@proportion <- 0
+res <- assertError(run(model))
+check_error(res, "'N' is invalid.")
+
+## Check that shift fails for an enter event when the shift is out of
+## bounds.
+model@events@N <- matrix(c(3L, 0L, 0L),
+                         nrow = 3, ncol = 1,
+                         dimnames = list(c("S", "I", "R"), "1"))
+res <- assertError(run(model))
+check_error(res, "'shift' is out of bounds.")
+
+model@events@N <- matrix(c(-1L, 0L, 0L),
+                         nrow = 3, ncol = 1,
+                         dimnames = list(c("S", "I", "R"), "1"))
+res <- assertError(run(model))
+check_error(res, "'shift' is out of bounds.")
+
+## Check that shift works for an enter event.
+model@events@N <- matrix(c(1L, 0L, 0L),
+                         nrow = 3, ncol = 1,
+                         dimnames = list(c("S", "I", "R"), "1"))
+stopifnot(identical(run(model)@U, structure(c(1L, 2L, 1L), .Dim = c(3L, 1L))))

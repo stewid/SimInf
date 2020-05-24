@@ -130,6 +130,12 @@ winbuilder: clean check
 	cd .. && curl -T $(PKG_TAR) ftp://win-builder.r-project.org/R-release/
 	cd .. && curl -T $(PKG_TAR) ftp://win-builder.r-project.org/R-devel/
 
+# Run covr
+.PHONY: covr
+covr:
+	Rscript -e "covr::report(file = 'covr.html')"
+	xdg-open covr.html
+
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)
 valgrind:

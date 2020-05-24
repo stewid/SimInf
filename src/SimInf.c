@@ -77,6 +77,9 @@ static void SimInf_raise_error(int error)
     case SIMINF_ERR_SHIFT_OUT_OF_BOUNDS:
         Rf_error("'shift' is out of bounds.");
         break;
+    case SIMINF_ERR_INVALID_PROPORTION:
+        Rf_error("Invalid proportion detected (< 0.0 or > 1.0).");
+        break;
     default:
         Rf_error("Unknown error code: %i.", error);
         break;
@@ -172,13 +175,19 @@ SEXP attribute_hidden SimInf_run(
     args.proportion = REAL(GET_SLOT(ext_events, Rf_install("proportion")));
     args.select = INTEGER(GET_SLOT(ext_events, Rf_install("select")));
     args.shift = INTEGER(GET_SLOT(ext_events, Rf_install("shift")));
+
+    /* Select matrix. */
     PROTECT(E = GET_SLOT(ext_events, Rf_install("E")));
     nprotect++;
     args.irE = INTEGER(GET_SLOT(E, Rf_install("i")));
     args.jcE = INTEGER(GET_SLOT(E, Rf_install("p")));
+    args.prE = REAL(GET_SLOT(E, Rf_install("x")));
+
+    /* Shift matrix. */
     PROTECT(N = GET_SLOT(ext_events, Rf_install("N")));
     nprotect++;
-    args.N = INTEGER(N);
+    if (Rf_nrows(N) == INTEGER(GET_SLOT(E, Rf_install("Dim")))[0])
+        args.N = INTEGER(N);
 
     /* Constants */
     args.Nn = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];

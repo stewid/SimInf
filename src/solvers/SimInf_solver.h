@@ -167,6 +167,9 @@ typedef struct SimInf_solver_args
      * element in row k. */
     const int *jcE;
 
+    /* Select matrix for events. Value of item (i, j) in E. */
+    double *prE;
+
     /* Shift matrix for internal and external transfer events. */
     const int *N;
 
@@ -255,12 +258,14 @@ typedef struct SimInf_scheduled_events
                            *   row of E[k]. */
     const int *jcE;       /**< Select matrix for events. Index to data
                            *   of first non-zero element in row k. */
+    const double *prE;    /**< Select matrix for events. Value of item
+                           *   (i, j) in E. */
     const int *N;         /**< Shift matrix for internal and external
                            *   transfer events. */
 
     /*** Scheduled events ***/
     SimInf_events_t events; /**< Events to process. */
-    int events_index;       /**< Index to the next event to
+    size_t events_index;    /**< Index to the next event to
                              *   process. */
 
     /*** Vectors for sampling individuals ***/
