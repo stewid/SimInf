@@ -42,7 +42,7 @@ static void percolate_down(int n1,double *data,int *INDEX,int *INDEX2,int N)
   INDEX2[j]=node;
 }
 /*----------------------------------------------------------------------*/
-static void percolate_up(int node,double *data,int *INDEX,int *INDEX2,int N)
+static void percolate_up(int node,double *data,int *INDEX,int *INDEX2)
 /*** ? ***/
 {
   int parent;
@@ -84,7 +84,7 @@ void attribute_hidden update(int node,double *data,int *INDEX,int *INDEX2,int N)
   int parent=(node-1)>>1;
 
   if(node>0 && data[node]<data[parent])
-    percolate_up(node,data,INDEX,INDEX2,N);
+    percolate_up(node,data,INDEX,INDEX2);
   else
     percolate_down(node,data,INDEX,INDEX2,N);
 }

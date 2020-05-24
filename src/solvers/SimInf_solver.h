@@ -265,7 +265,7 @@ typedef struct SimInf_scheduled_events
 
     /*** Scheduled events ***/
     SimInf_events_t events; /**< Events to process. */
-    int events_index;       /**< Index to the next event to
+    size_t events_index;    /**< Index to the next event to
                              *   process. */
 
     /*** Vectors for sampling individuals ***/

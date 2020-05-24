@@ -54,6 +54,9 @@ static double SISe3_S_1_to_I_1(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[UPSILON_1] * v[PHI] * u[S_1];
 }
 
@@ -74,6 +77,9 @@ static double SISe3_S_2_to_I_2(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[UPSILON_2] * v[PHI] * u[S_2];
 }
 
@@ -94,6 +100,9 @@ static double SISe3_S_3_to_I_3(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[UPSILON_3] * v[PHI] * u[S_3];
 }
 
@@ -114,6 +123,10 @@ static double SISe3_I_1_to_S_1(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(v);
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[GAMMA_1] * u[I_1];
 }
 
@@ -134,6 +147,10 @@ static double SISe3_I_2_to_S_2(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(v);
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[GAMMA_2] * u[I_2];
 }
 
@@ -154,6 +171,10 @@ static double SISe3_I_3_to_S_3(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(v);
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[GAMMA_3] * u[I_3];
 }
 
@@ -185,6 +206,8 @@ static int SISe3_post_time_step(
     const double I_n = u[I_1] + u[I_2] + u[I_3];
     const double n = I_n + u[S_1] + u[S_2] + u[S_3];
     const double phi = v[PHI];
+
+    SIMINF_UNUSED(node);
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */

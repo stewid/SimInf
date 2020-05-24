@@ -1,6 +1,6 @@
 Package: SimInf
 Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
-Version: 6.5.1.9000
+Version: 7.0.0.9000
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     email = "stefan.widgren@gmail.com",
                     comment = c(ORCID = "0000-0001-5745-2284")),
@@ -10,6 +10,8 @@ Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0002-3614-1732")),
              person("Pavol", "Bauer", role = "aut",
                     comment = c(ORCID = "0000-0003-4328-7171")),
+             person("Thomas", "Rosendal", role = "ctb",
+                    comment = c(ORCID = "0000-0002-6576-9668")),
              person("Attractive Chaos", role = "cph",
                     comment = "Author of 'kvec.h'."))
 Description: Provides an efficient and very flexible framework to

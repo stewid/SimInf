@@ -53,6 +53,9 @@ static double SISe_S_to_I(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[UPSILON] * v[PHI] * u[S];
 }
 
@@ -73,6 +76,10 @@ static double SISe_I_to_S(
     const double *gdata,
     double t)
 {
+    SIMINF_UNUSED(v);
+    SIMINF_UNUSED(ldata);
+    SIMINF_UNUSED(t);
+
     return gdata[GAMMA] * u[I];
 }
 
@@ -104,6 +111,8 @@ static int SISe_post_time_step(
     const double I_n = u[I];
     const double n = u[S] + I_n;
     const double phi = v[PHI];
+
+    SIMINF_UNUSED(node);
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */

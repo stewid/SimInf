@@ -795,24 +795,24 @@ concentration variable $\Y$.
     \code{proportion} & If \code{n[i]} equals zero, the number of
     individuals affected by \code{event[i]} is calculated by summing
     the number of individuals in the compartments determined by
-    \code{select[i]} and multiplying with \code{proportion[i]}.
-    \code{proportion} is a numeric vector, where $0 \le$
-    \code{proportion[i]} $\le 1$.\\
+    \code{select[i]} and sampling from a binomial distribution with
+    \code{proportion[i]}.  \code{proportion} is a numeric vector,
+    where $0 \le$ \code{proportion[i]} $\le 1$.\\
 
     \code{select} & To process an \code{event[i]}, the compartments
     affected by the event are specified with \code{select[i]} together
     with the matrix \code{E}, where \code{select[i]} determines which
     column in \code{E} to use.  The specific individuals affected by
-    the event are proportionally sampled from the compartments
-    corresponding to the non-zero entries in the specified column in
-    \code{E[, select[i]]}, where \code{select} is an integer vector.\\
+    the event are sampled from the compartments corresponding to the
+    non-zero entries in the specified column in \code{E[, select[i]]},
+    where \code{select} is an integer vector.\\
 
-    \code{shift} & Determines how individuals in internal transfer and
-    external transfer events are shifted to enter another compartment.
-    The sampled individuals are shifted according to column
-    \code{shift[i]} in matrix \code{N} i.e.,~\code{N[, shift[i]]},
-    where \code{shift} is an integer vector.  See above for a
-    description of \code{N}.\\
+    \code{shift} & Determines how individuals in enter, internal
+    transfer and external transfer events are shifted to enter another
+    compartment.  The sampled individuals are shifted according to
+    column \code{shift[i]} in matrix \code{N} i.e.,~\code{N[,
+        shift[i]]}, where \code{shift} is an integer vector.  See
+    above for a description of \code{N}.\\
 
     \bottomrule
   \end{tabularx}
@@ -935,14 +935,21 @@ Appendix~\ref{sec:illustration-scheduled-events}.
 
 \subsubsection{Processing of an enter event}
 
-The enter event adds \code{n[e]} individuals to one compartment at
-\code{node[e]}, where the compartment is specified by a non-zero entry
-in the row for the compartment in column \code{E[, s]}.  Please note
-that, if the column \code{E[, s]} contains several non-zero entries,
-the individuals are added to the compartment represented by the first
-non-zero row in column \code{E[, s]}.  The values of \code{dest[e]},
-\code{proportion[e]} and \code{shift[e]}, described below, are not
-used when processing an enter event.  See Figure~\ref{fig:enter} in
+The enter event adds \code{n[e]} individuals to one or more
+compartments in \code{node[e]}, where the possible compartments are
+specified by a non-zero entry in the row for a compartment in column
+\code{E[, s]}.  If \code{n[e]} equals zero, the number of individuals
+to add is calculated by sampling from a binomial distribution with
+\code{proportion[e]} and the total number of individuals in the
+compartments represented by the non-zero entries in column
+\mbox{\code{E[, s]}}.  If the column \code{E[, s]} contains several
+non-zero entries, the compartment to add an individual is sampled in
+such a way that the probability is proportional to the weight in
+\code{E[, s]}.  Before the individuals are added to the compartments,
+it is possible to use the \code{shift[e]} feature (described below) to
+further control in which compartments they are added.  The value of
+\code{dest[e]}, described below, is not used when processing an enter
+event.  See Figure~\ref{fig:enter} in
 Appendix~\ref{sec:illustration-scheduled-events} for an illustration
 of a scheduled enter event.
 
@@ -950,23 +957,29 @@ of a scheduled enter event.
 
 The internal transfer event moves \code{n[e]} individuals into new
 compartments within \code{node[e]}.  However, if \code{n[e]} equals
-zero, the number of individuals to move is calculated by multiplying
-the \code{proportion[e]} with the total number of individuals in the
-compartments represented by the non-zero entries in column
-\mbox{\code{E[, s]}}.  The individuals are then proportionally sampled
-and removed from the compartments specified by \code{E[, s]}.  The
-next step is to move the sampled individuals to their new compartment
-using the matrix \code{N} and \code{shift[e]}, where \code{shift[e]}
-specifies which column in \code{N} to use.  Each row $\{1, 2, \ldots,
-\Ncompartments\}$ in \code{N}, represents one compartment in the model
-and the values determine how to move sampled individuals before adding
-them to \code{node[e]} again.  Let \code{q <- shift[e]}, then each
-non-zero entry in \code{N[, q]} defines the number of rows to move
-sampled individuals from that compartment i.e.,~sampled individuals
-from compartment \code{p} are moved to compartment \code{N[p, q] + p},
-where $1 \leq$ \code{N[p, q] + p} $\le \Ncompartments$.  The value of
-\code{dest[e]}, described below, is not used when processing an
-internal transfer event.  See Figure~\ref{fig:internal} in
+zero, the number of individuals to move is calculated by sampling from
+a binomial distribution with \code{proportion[e]} and the total number
+of individuals in the compartments represented by the non-zero entries
+in column \mbox{\code{E[, s]}}.  The individuals are then sampled, one
+by one, without replacement from the compartments specified by
+\code{E[, s]} in such a way that the probability that a particular
+individual is sampled at a given draw is proportional to the weight in
+\code{E[, s]}.  This sampling follows an hypergeometric distribution
+when all compartments have the same weight, and a Wallenius'
+noncentral hypergeometric distribution when the weights are different.
+\citep{Fog2008}.  The next step is to move the sampled individuals to
+their new compartment using the matrix \code{N} and \code{shift[e]},
+where \code{shift[e]} specifies which column in \code{N} to use.  Each
+row $\{1, 2, \ldots, \Ncompartments\}$ in \code{N}, represents one
+compartment in the model and the values determine how to move sampled
+individuals before adding them to \code{node[e]} again.  Let \code{q
+  <- shift[e]}, then each non-zero entry in \code{N[, q]} defines the
+number of rows to move sampled individuals from that compartment
+i.e.,~sampled individuals from compartment \code{p} are moved to
+compartment \code{N[p, q] + p}, where $1 \leq$ \code{N[p, q] + p} $\le
+\Ncompartments$.  The value of \code{dest[e]}, described below, is not
+used when processing an internal transfer event.  See
+Figure~\ref{fig:internal} in
 Appendix~\ref{sec:illustration-scheduled-events} for an illustration
 of a scheduled internal transfer event.
 
@@ -1934,7 +1947,7 @@ legend("topright", c("No vaccination", "Vaccination"),
   \begin{center}
     \includegraphics{img/mparse-epicurve.pdf}
   \end{center}
-  \caption{Comparison beween the number of cases per day of an
+  \caption{Comparison between the number of cases per day of an
     outbreak in an unvaccinated population of cattle herds (black
     solid line) and after vaccination of animals (blue dashed line).
     The vertical line (dotted) indicates when vaccination was
@@ -2390,9 +2403,10 @@ executed (Figures~\ref{fig:exit}, \ref{fig:enter}, \ref{fig:external},
     in the select matrix that determines which compartments (age
     categories) the new individuals are added.  iv) The resultant
     state of node 14 after adding the individuals in step iii).
-    $^\dag$\code{dest}, $^\ddag$\code{proportion} and
-    $^\S$\code{shift} are not used in a scheduled enter
-    event.}
+    $^\S$\code{shift} can be used in a scheduled enter event, see
+    Figure~\ref{fig:internal} for an illustration of that
+    functionality.  $^\ddag$\code{proportion} is not used when $n >
+    0$.  $^\dag$\code{dest} is not used in a scheduled enter event.}
   \label{fig:enter}
 
   \vspace*{\floatsep}

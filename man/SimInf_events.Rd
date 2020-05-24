@@ -77,19 +77,20 @@ columns:
     The number of individuals affected by the event. n[i] >= 0.
   }
   \item{proportion}{
-    If \code{n[i]} equals zero, the number of individuals affected by
-    \code{event[i]} is calculated by summing the number of individuls
-    with \code{proportion[i]}. 0 <= proportion[i] <= 1.
+    If \code{n[i]} equals zero, the number of individuals affected
+    by \code{event[i]} is calculated by sampling the number of
+    individuals from a binomial distribution using the
+    \code{proportion[i]} and the number of individuals in the
+    compartments. Numeric vector.  0 <= proportion[i] <= 1.
   }
   \item{select}{
-    To process \code{event[i]}, the compartments affected by the
-    event are specified with \code{select[i]} together with the
-    matrix \code{E}, where \code{select[i]} determines which
+    To process an \code{event[i]}, the compartments affected by
+    the event are specified with \code{select[i]} together with
+    the matrix \code{E}, where \code{select[i]} determines which
     column in \code{E} to use.  The specific individuals affected
-    by the event are proportionally sampled from the compartments
-    corresponding to the non-zero entries in the specified column
-    in \code{E[, select[i]]}, where \code{select} is an integer
-    vector.
+    by the event are sampled from the compartments corresponding
+    to the non-zero entries in the specified column in \code{E[,
+    select[i]]}, where \code{select} is an integer vector.
   }
   \item{shift}{
     Determines how individuals in \emph{internal transfer} and
@@ -101,4 +102,51 @@ columns:
     event types.
   }
 }
+}
+\examples{
+## Let us illustrate how movement events can be used to transfer
+## individuals from one node to another.  Use the built-in SIR
+## model and start with 2 nodes where all individuals are in the
+## first node (100 per compartment).
+u0 <- data.frame(S = c(100, 0), I = c(100, 0), R = c(100, 0))
+
+## Then create 300 movement events to transfer all individuals,
+## one per day, from the first node to the second node. Use the
+## fourth column in the select matrix where all compartments
+## can be sampled with equal weight.
+events <- data.frame(event      = rep("extTrans", 300),
+                     time       = 1:300,
+                     node       = 1,
+                     dest       = 2,
+                     n          = 1,
+                     proportion = 0,
+                     select     = 4,
+                     shift      = 0)
+
+## Create an SIR model without disease transmission to
+## demonstrate the events.
+model <- SIR(u0      = u0,
+             tspan  = 1:300,
+             events = events,
+             beta   = 0,
+             gamma  = 0)
+
+## Run the model and plot the number of individuals in
+## the second node.  As can be seen in the figure, all
+## indivuduals have been moved to the second node when
+## t = 300.
+plot(run(model), node = 1:2, range = FALSE)
+
+## Let us now double the weight to sample from the 'I'
+## compartment and rerun the model.
+model@events@E[2, 4] <- 2
+plot(run(model), node = 1:2, range = FALSE)
+
+## And much larger weight to sample from the I compartment.
+model@events@E[2, 4] <- 10
+plot(run(model), node = 1:2, range = FALSE)
+
+## Increase the weight for the R compartment.
+model@events@E[3, 4] <- 4
+plot(run(model), node = 1:2, range = FALSE)
 }
