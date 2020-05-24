@@ -79,6 +79,12 @@ jobs:
   - template: azure-pipelines/check-package.yml
   - template: azure-pipelines/static-code-analysis.yml
   - template: azure-pipelines/code-coverage.yml
+  - task: DotNetCoreInstaller@0
+    inputs:
+      packageType: sdk
+      version: 2.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+    displayName: "Install dotnet core"
   - task: PublishCodeCoverageResults@1
     inputs:
       codeCoverageTool: 'Cobertura'
