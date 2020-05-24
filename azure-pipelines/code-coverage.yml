@@ -5,7 +5,3 @@ steps:
       -e "install.packages('covr')" \
       -e "covr::azure()"
   displayName: 'Code coverage'
-- task: PublishCodeCoverageResults@1
-    inputs:
-      codeCoverageTool: 'Cobertura'
-      summaryFileLocation: 'coverage.xml'

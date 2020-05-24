@@ -79,6 +79,10 @@ jobs:
   - template: azure-pipelines/check-package.yml
   - template: azure-pipelines/static-code-analysis.yml
   - template: azure-pipelines/code-coverage.yml
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: 'Cobertura'
+      summaryFileLocation: 'coverage.xml'
 
 - job: fedora_R_devel_gcc
   displayName: "Linux, R-devel, GCC"
