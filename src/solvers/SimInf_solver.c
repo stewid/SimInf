@@ -1056,7 +1056,7 @@ void attribute_hidden SimInf_print_status(
 
             REprintf("Transition: %i\n", transition + 1); /* One based in R */
 
-            if (!isfinite(rate) || rate < 0.0)
+            if (!R_FINITE(rate) || rate < 0.0)
                 REprintf("Rate: %g\n", rate);
 
             REprintf("\n");

@@ -65,6 +65,12 @@ stopifnot(identical(
     "'E' and 'N' must have rownames matching the compartments."))
 
 events <- SimInf_events(E = E, N = N)
+events@E[1, 1] <- -1
+stopifnot(identical(
+    SimInf:::valid_SimInf_events_object(events),
+    "Select matrix 'E' has negative elements."))
+
+events <- SimInf_events(E = E, N = N)
 events@event <- 3L
 stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
                     "All scheduled events must have equal length."))
