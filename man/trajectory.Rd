@@ -2,12 +2,17 @@
 % Please edit documentation in R/trajectory.R
 \name{trajectory}
 \alias{trajectory}
+\alias{trajectory,SimInf_model-method}
 \title{Extract data from a simulated trajectory}
 \usage{
-trajectory(model, compartments = NULL, node = NULL, as.is = FALSE)
+trajectory(model, ...)
+
+\S4method{trajectory}{SimInf_model}(model, compartments = NULL, node = NULL, as.is = FALSE, ...)
 }
 \arguments{
 \item{model}{the \code{model} to extract the result from.}
+
+\item{...}{Additional arguments. Not used.}
 
 \item{compartments}{specify the names of the compartments to
 extract data from. The compartments can be specified as a
