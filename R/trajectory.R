@@ -19,69 +19,84 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-## Split the 'compartments' argument to match the compartments in U
-## and V.
-match_compartments <- function(model, compartments, as.is) {
-    compartments <- unique(as.character(compartments))
-
-    ## Match compartments in U
-    U <- NULL
-    i <- compartments %in% rownames(model@S)
-    if (any(i))
-        U <- compartments[i]
-
-    ## Match compartments in V
-    V <- NULL
-    i <- compartments %in% rownames(model@v0)
-    if (any(i))
-        V <- compartments[i]
-
-    compartments <- setdiff(compartments, c(U, V))
-    if (length(compartments) > 0) {
-        stop("Non-existing compartment(s) in model: ",
-             paste0("'", compartments, "'", collapse = ", "),
-             ".", call. = FALSE)
-    }
-
-    ## Cannot combine data from U and V when as.is = TRUE.
-    if (all(!is.null(U), !is.null(V), isTRUE(as.is))) {
-        stop("Select either continuous or discrete compartments.",
-             call. = FALSE)
-    }
-
-    if (all(is.null(U), is.null(V))) {
-        U <- rownames(model@S)
-        if (all(!isTRUE(as.is), length(rownames(model@v0))) > 0)
-            V <- rownames(model@v0)
-    }
-
-    list(U = U, V = V)
-}
-
-##' Determine if the trajectory is empty.
+##' Split the 'compartments' argument to match the compartments in the
+##' model.
 ##' @noRd
-setGeneric("is_trajectory_empty",
-           signature = "model",
-           function(model)
-               standardGeneric("is_trajectory_empty"))
+setGeneric(
+    "match_compartments",
+    signature = "model",
+    function(model, compartments, as.is)
+        standardGeneric("match_compartments"))
 
 ##' @include SimInf_model.R
 ##' @noRd
-setMethod("is_trajectory_empty",
-          signature(model = "SimInf_model"),
-          function(model) {
-              if (all(identical(dim(model@U), c(0L, 0L)),
-                      identical(dim(model@U_sparse), c(0L, 0L)),
-                      identical(dim(model@V), c(0L, 0L)),
-                      identical(dim(model@V_sparse), c(0L, 0L)))) {
-                  return(TRUE)
-              }
+setMethod(
+    "match_compartments",
+    signature(model = "SimInf_model"),
+    function(model, compartments, as.is) {
+        compartments <- unique(as.character(compartments))
 
-              if (any(is.na(model@U_sparse@x)) || any(is.na(model@V_sparse@x)))
-                  return(TRUE)
+        ## Match compartments in U
+        U <- NULL
+        i <- compartments %in% rownames(model@S)
+        if (any(i))
+            U <- compartments[i]
 
-              FALSE
-          }
+        ## Match compartments in V
+        V <- NULL
+        i <- compartments %in% rownames(model@v0)
+        if (any(i))
+            V <- compartments[i]
+
+        compartments <- setdiff(compartments, c(U, V))
+        if (length(compartments) > 0) {
+            stop("Non-existing compartment(s) in model: ",
+                 paste0("'", compartments, "'", collapse = ", "),
+                 ".", call. = FALSE)
+        }
+
+        ## Cannot combine data from U and V when as.is = TRUE.
+        if (all(!is.null(U), !is.null(V), isTRUE(as.is))) {
+            stop("Select either continuous or discrete compartments.",
+                 call. = FALSE)
+        }
+
+        if (all(is.null(U), is.null(V))) {
+            U <- rownames(model@S)
+            if (all(!isTRUE(as.is), length(rownames(model@v0))) > 0)
+                V <- rownames(model@v0)
+        }
+
+        list(U = U, V = V)
+    }
+)
+
+##' Determine if the trajectory is empty.
+##' @noRd
+setGeneric(
+    "is_trajectory_empty",
+    signature = "model",
+    function(model)
+        standardGeneric("is_trajectory_empty"))
+
+##' @include SimInf_model.R
+##' @noRd
+setMethod(
+    "is_trajectory_empty",
+    signature(model = "SimInf_model"),
+    function(model) {
+        if (all(identical(dim(model@U), c(0L, 0L)),
+                identical(dim(model@U_sparse), c(0L, 0L)),
+                identical(dim(model@V), c(0L, 0L)),
+                identical(dim(model@V_sparse), c(0L, 0L)))) {
+            return(TRUE)
+        }
+
+        if (any(is.na(model@U_sparse@x)) || any(is.na(model@V_sparse@x)))
+            return(TRUE)
+
+        FALSE
+    }
 )
 
 ##' Determine if the trajectory is sparse.
