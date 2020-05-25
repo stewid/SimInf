@@ -60,19 +60,29 @@ match_compartments <- function(model, compartments, as.is) {
 
 ##' Determine if the trajectory is empty.
 ##' @noRd
-is_trajectory_empty <- function(model) {
-    if (all(identical(dim(model@U), c(0L, 0L)),
-            identical(dim(model@U_sparse), c(0L, 0L)),
-            identical(dim(model@V), c(0L, 0L)),
-            identical(dim(model@V_sparse), c(0L, 0L)))) {
-        return(TRUE)
-    }
+setGeneric("is_trajectory_empty",
+           signature = "model",
+           function(model)
+               standardGeneric("is_trajectory_empty"))
 
-    if (any(is.na(model@U_sparse@x)) || any(is.na(model@V_sparse@x)))
-        return(TRUE)
+##' @include SimInf_model.R
+##' @noRd
+setMethod("is_trajectory_empty",
+          signature(model = "SimInf_model"),
+          function(model) {
+              if (all(identical(dim(model@U), c(0L, 0L)),
+                      identical(dim(model@U_sparse), c(0L, 0L)),
+                      identical(dim(model@V), c(0L, 0L)),
+                      identical(dim(model@V_sparse), c(0L, 0L)))) {
+                  return(TRUE)
+              }
 
-    FALSE
-}
+              if (any(is.na(model@U_sparse@x)) || any(is.na(model@V_sparse@x)))
+                  return(TRUE)
+
+              FALSE
+          }
+)
 
 ##' Determine if the trajectory is sparse.
 ##' @noRd
