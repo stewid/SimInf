@@ -373,7 +373,8 @@ C_code <- c(
     "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
     "}")
 
-stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
+## Skip first line that contains version
+stopifnot(identical(m@C_code[-1], C_code))
 stopifnot(identical(m@C_code, C_code(m)))
 
 ## Check mparse with both gdata and ldata
@@ -554,7 +555,8 @@ C_code <- c(
     "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
     "}")
 
-stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
+## Skip first line that contains version
+stopifnot(identical(m@C_code[-1], C_code))
 
 stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
                     c("beta", "*", "S", "*", "I", "/", "(", "S", "+",
@@ -709,7 +711,7 @@ C_code <- c(
     "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
     "}")
 
-## Skip first line that contains time
+## Skip first line that contains version
 stopifnot(identical(model@C_code[-1], C_code))
 
 u0 <- structure(c(100L, 1L, 0L),
@@ -733,7 +735,7 @@ m2 <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
              gdata = data.frame(c1 = 0.5, c2 = 1, c3 = 0.005),
              u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5)
 
-## Skip first line that contains time
+## Skip first line that contains version
 m1@C_code <- m1@C_code[-1]
 m2@C_code <- m2@C_code[-1]
 
