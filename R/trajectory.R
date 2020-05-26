@@ -21,55 +21,34 @@
 
 ##' Split the 'compartments' argument to match the compartments in the
 ##' model.
+##' @return a list with indices to the compartments in the available
+##'     data-structures in the model.
 ##' @noRd
-setGeneric(
-    "match_compartments",
-    signature = "model",
-    function(model, compartments, as.is)
-        standardGeneric("match_compartments"))
+match_compartments <- function(compartments = NULL, as.is = NULL, ...) {
+    args <- list(...)
+    compartments <- unique(as.character(compartments))
 
-##' @include SimInf_model.R
-##' @noRd
-setMethod(
-    "match_compartments",
-    signature(model = "SimInf_model"),
-    function(model, compartments, as.is) {
-        compartments <- unique(as.character(compartments))
+    result <- lapply(args, function(x) {
+        compartments[compartments %in% x]
+    })
 
-        ## Match compartments in U
-        U <- NULL
-        i <- compartments %in% rownames(model@S)
-        if (any(i))
-            U <- compartments[i]
-
-        ## Match compartments in V
-        V <- NULL
-        i <- compartments %in% rownames(model@v0)
-        if (any(i))
-            V <- compartments[i]
-
-        compartments <- setdiff(compartments, c(U, V))
-        if (length(compartments) > 0) {
-            stop("Non-existing compartment(s) in model: ",
-                 paste0("'", compartments, "'", collapse = ", "),
-                 ".", call. = FALSE)
-        }
-
-        ## Cannot combine data from U and V when as.is = TRUE.
-        if (all(!is.null(U), !is.null(V), isTRUE(as.is))) {
-            stop("Select either continuous or discrete compartments.",
-                 call. = FALSE)
-        }
-
-        if (all(is.null(U), is.null(V))) {
-            U <- rownames(model@S)
-            if (all(!isTRUE(as.is), length(rownames(model@v0))) > 0)
-                V <- rownames(model@v0)
-        }
-
-        list(U = U, V = V)
+    compartments <- setdiff(compartments, unlist(result))
+    if (length(compartments) > 0) {
+        stop("Non-existing compartment(s) in model: ",
+             paste0("'", compartments, "'", collapse = ", "),
+             ".", call. = FALSE)
     }
-)
+
+    if (isTRUE(as.is) && all(sapply(result, length))) {
+        stop("Cannot combine data from different slots when 'as.is = TRUE'.",
+             call. = FALSE)
+    }
+
+    if (all(sapply(result, length) == 0))
+        result <- args
+
+    mapply(match, result, args, SIMPLIFY = FALSE)
+}
 
 ##' Determine if the trajectory is empty.
 ##' @noRd
@@ -110,23 +89,35 @@ is_trajectory_sparse <- function(x) {
 ##' Extract data in the internal matrix format
 ##'
 ##' @param m simulated data to extract.
-##' @param ac available compartments in the simulated data.
-##' @param sc selected compartments to extract from the simulated data
-##'     and include in the matrix.
+##' @param n number of available compartments in the simulated data.
+##' @param sc indices to selected compartments to extract from the
+##'     simulated data and include in the matrix.
 ##' @param i subset of nodes to extract data from. If NULL, all
 ##'     available nodes are included.
 ##' @noRd
-trajectory_as_is <- function(m, ac, sc, i) {
+trajectory_as_is <- function(m, n, sc, i) {
     if (is.null(i)) {
-        if (length(sc) == length(ac))
+        if (length(sc) == n)
             return(m)
-        i <- seq_len(nrow(m) %/% length(ac))
+        i <- seq_len(nrow(m) %/% n)
     }
 
     ## Extract subset of data.
-    sc <- sort(match(sc, ac))
-    i <- rep(sc, length(i)) + rep((i - 1) * length(ac), each = length(sc))
+    sc <- sort(sc)
+    i <- rep(sc, length(i)) + rep((i - 1) * n, each = length(sc))
     m[i, seq_len(ncol(m)), drop = FALSE]
+}
+
+U <- function(model) {
+    if (is_trajectory_sparse(model@U_sparse))
+        return(model@U_sparse)
+    model@U
+}
+
+V <- function(model) {
+    if (is_trajectory_sparse(model@V_sparse))
+        return(model@V_sparse)
+    model@V
 }
 
 ##' Extract data from a simulated trajectory
@@ -235,60 +226,31 @@ setMethod(
             compartments <- parse_formula(
                 compartments, c(rownames(model@S), rownames(model@v0)))
         }
-        compartments <- match_compartments(model, compartments, as.is)
 
-        ## Check the 'node' argument.
+        compartments <- match_compartments(compartments = compartments,
+                                           as.is = as.is,
+                                           U = rownames(model@S),
+                                           V = rownames(model@v0))
+
         node <- check_node_argument(model, node)
 
-        ## Check to extract data in internal matrix format.
         if (isTRUE(as.is)) {
-            if (!is.null(compartments$V)) {
-                if (is_trajectory_sparse(model@V_sparse))
-                    return(trajectory_as_is(model@V_sparse,
-                                            rownames(model@v0),
-                                            compartments$V,
-                                            node))
-
-                return(trajectory_as_is(model@V,
-                                        rownames(model@v0),
-                                        compartments$V,
-                                        node))
+            ## Extract data in the internal matrix format.
+            if (length(compartments$U)) {
+                return(trajectory_as_is(U(model), Nc(model),
+                                        compartments$U, node))
             }
 
-            if (is_trajectory_sparse(model@U_sparse))
-                return(trajectory_as_is(model@U_sparse,
-                                        rownames(model@S),
-                                        compartments$U,
-                                        node))
-
-            return(trajectory_as_is(model@U,
-                                    rownames(model@S),
-                                    compartments$U,
-                                    node))
+            return(trajectory_as_is(V(model), Nd(model),
+                                    compartments$V, node))
         }
 
         ## Coerce the dense/sparse 'U' and 'V' matrices to a
         ## data.frame with one row per node and time-point with data
         ## from the specified discrete and continuous states.
-        if (is_trajectory_sparse(model@U_sparse)) {
-            Um <- model@U_sparse
-        } else {
-            Um <- model@U
-        }
-        Um_i <- match(compartments$U, rownames(model@S))
-        Um_lbl <- rownames(model@S)
-
-        if (is_trajectory_sparse(model@V_sparse)) {
-            Vm <- model@V_sparse
-        } else {
-            Vm <- model@V
-        }
-        Vm_i <- match(compartments$V, rownames(model@v0))
-        Vm_lbl <- rownames(model@v0)
-
         .Call(SimInf_trajectory,
-              Um, Um_i, Um_lbl,
-              Vm, Vm_i, Vm_lbl,
+              U(model), compartments$U, rownames(model@S),
+              V(model), compartments$V, rownames(model@v0),
               model@tspan, Nn(model), node)
     }
 )
