@@ -47,7 +47,7 @@ match_compartments <- function(compartments = NULL, as.is = NULL, ...) {
     if (all(sapply(result, length) == 0))
         result <- args
 
-    mapply(match, result, args)
+    mapply(match, result, args, SIMPLIFY = FALSE)
 }
 
 ##' Determine if the trajectory is empty.
