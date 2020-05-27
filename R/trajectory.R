@@ -78,14 +78,6 @@ setMethod(
     }
 )
 
-##' Determine if the trajectory is sparse.
-##' @noRd
-is_trajectory_sparse <- function(x) {
-    if (identical(dim(x), c(0L, 0L)))
-        return(FALSE)
-    TRUE
-}
-
 ##' Extract data in the internal matrix format
 ##'
 ##' @param m simulated data to extract.
@@ -108,16 +100,11 @@ trajectory_as_is <- function(m, n, sc, i) {
     m[i, seq_len(ncol(m)), drop = FALSE]
 }
 
-U <- function(model) {
-    if (is_trajectory_sparse(model@U_sparse))
-        return(model@U_sparse)
-    model@U
-}
-
-V <- function(model) {
-    if (is_trajectory_sparse(model@V_sparse))
-        return(model@V_sparse)
-    model@V
+trajectory_data <- function(model, name) {
+    x <- slot(model, paste0(name, "_sparse"))
+    if (!identical(dim(x), c(0L, 0L)))
+        return(x)
+    slot(model, name)
 }
 
 ##' Extract data from a simulated trajectory
@@ -237,20 +224,20 @@ setMethod(
         if (isTRUE(as.is)) {
             ## Extract data in the internal matrix format.
             if (length(compartments$U)) {
-                return(trajectory_as_is(U(model), Nc(model),
-                                        compartments$U, node))
+                return(trajectory_as_is(trajectory_data(model, "U"),
+                                        Nc(model), compartments$U, node))
             }
 
-            return(trajectory_as_is(V(model), Nd(model),
-                                    compartments$V, node))
+            return(trajectory_as_is(trajectory_data(model, "V"),
+                                    Nd(model), compartments$V, node))
         }
 
         ## Coerce the dense/sparse 'U' and 'V' matrices to a
         ## data.frame with one row per node and time-point with data
         ## from the specified discrete and continuous states.
         .Call(SimInf_trajectory,
-              U(model), compartments$U, rownames(model@S),
-              V(model), compartments$V, rownames(model@v0),
+              trajectory_data(model, "U"), compartments$U, rownames(model@S),
+              trajectory_data(model, "V"), compartments$V, rownames(model@v0),
               model@tspan, Nn(model), node)
     }
 )
