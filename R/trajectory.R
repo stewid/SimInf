@@ -52,6 +52,26 @@ match_compartments <- function(compartments = NULL, as.is = NULL, ...) {
 
 ##' Determine if the trajectory is empty.
 ##' @noRd
+do_is_trajectory_empty <- function(model, slots) {
+    ## First, check the dimensions of each slot to determine if the
+    ## trajectory is empty.
+    empty <- all(vapply(slots, function(name) {
+        all(identical(dim(slot(model, name)), c(0L, 0L)),
+            identical(dim(slot(model, paste0(name, "_sparse"))), c(0L, 0L)))
+    }, logical(1)))
+
+    if (!isTRUE(empty)) {
+        ## Need to also check the sparse slot.
+        empty <- any(vapply(slots, function(name) {
+            any(is.na(slot(model, paste0(name, "_sparse"))))
+        }, logical(1)))
+    }
+
+    empty
+}
+
+##' Determine if the trajectory is empty.
+##' @noRd
 setGeneric(
     "is_trajectory_empty",
     signature = "model",
@@ -64,17 +84,7 @@ setMethod(
     "is_trajectory_empty",
     signature(model = "SimInf_model"),
     function(model) {
-        if (all(identical(dim(model@U), c(0L, 0L)),
-                identical(dim(model@U_sparse), c(0L, 0L)),
-                identical(dim(model@V), c(0L, 0L)),
-                identical(dim(model@V_sparse), c(0L, 0L)))) {
-            return(TRUE)
-        }
-
-        if (any(is.na(model@U_sparse@x)) || any(is.na(model@V_sparse@x)))
-            return(TRUE)
-
-        FALSE
+        do_is_trajectory_empty(model, c("U", "V"))
     }
 )
 
