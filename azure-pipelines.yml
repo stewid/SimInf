@@ -79,7 +79,8 @@ jobs:
   - template: azure-pipelines/check-package.yml
   - template: azure-pipelines/static-code-analysis.yml
   - bash: |
-      nm -g $(Agent.BuildDirectory)/R/library/SimInf/libs/SimInf.so | \
+      cd ..
+      nm -g SimInf.Rcheck/SimInf/libs/SimInf.so | \
         grep -c " T " | grep 1 && exit 0 || exit 1
     displayName: "Check visibility of C entry points"
   - template: azure-pipelines/code-coverage.yml
