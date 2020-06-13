@@ -4,7 +4,7 @@
 
 > A flexible and efficient framework for data-driven stochastic disease spread simulations
 
-[![Build Status](https://dev.azure.com/stefanwidgren/SimInf/_build)](https://dev.azure.com/stefanwidgren/SimInf/_build)
+[![Build Status](https://dev.azure.com/stefanwidgren/SimInf/_apis/build/status/stewid.SimInf?branchName=master)](https://dev.azure.com/stefanwidgren/SimInf/_build)
 [![CRAN status](https://www.r-pkg.org/badges/version/SimInf)](https://CRAN.R-project.org/package=SimInf)
 [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/last-month/SimInf)](https://CRAN.R-project.org/package=SimInf)
 [![Code coverage](https://img.shields.io/azure-devops/coverage/stefanwidgren/SimInf/1)](https://dev.azure.com/stefanwidgren/SimInf/_build/latest?definitionId=1&branchName=master)
