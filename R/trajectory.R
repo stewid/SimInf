@@ -248,6 +248,6 @@ setMethod(
         .Call(SimInf_trajectory,
               trajectory_data(model, "U"), compartments$U, rownames(model@S),
               trajectory_data(model, "V"), compartments$V, rownames(model@v0),
-              model@tspan, Nn(model), node)
+              model@tspan, Nn(model), node, "node")
     }
 )

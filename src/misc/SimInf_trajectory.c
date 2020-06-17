@@ -378,6 +378,8 @@ SimInf_dense2df_real(
  * @param id_n number of identifiers in the model.
  * @param id NULL or an integer vector with (1-based) indices of the
  *        identifiers to include in the data.frame.
+ * @param id_lbl character vector of length one with the name of the
+ *        identifier column.
  * @return A data.frame.
  */
 SEXP attribute_hidden
@@ -390,7 +392,8 @@ SimInf_trajectory(
     SEXP cm_lbl,
     SEXP tspan,
     SEXP id_n,
-    SEXP id)
+    SEXP id,
+    SEXP id_lbl)
 {
     SEXP colnames, result, vec;
     int *p_vec;
@@ -415,7 +418,7 @@ SimInf_trajectory(
 
     /* Create a vector for the column names. */
     PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
-    SET_STRING_ELT(colnames, 0, Rf_mkChar("node"));
+    SET_STRING_ELT(colnames, 0, STRING_ELT(id_lbl, 0));
     SET_STRING_ELT(colnames, 1, Rf_mkChar("time"));
     for (R_xlen_t i = 0; i < dm_i_len; i++) {
         R_xlen_t j = INTEGER(dm_i)[i] - 1;
