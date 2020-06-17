@@ -37,7 +37,8 @@ typedef struct {
     rowinfo_t *a;
 } rowinfo_vec;
 
-static void SimInf_insert_node_time(
+static void
+SimInf_insert_node_time(
     rowinfo_vec *ri,
     SEXP m,
     R_xlen_t m_stride,
@@ -61,7 +62,8 @@ static void SimInf_insert_node_time(
     }
 }
 
-static void SimInf_insert_node_time2(
+static void
+SimInf_insert_node_time2(
     rowinfo_vec *ri,
     SEXP m1,
     SEXP m2,
@@ -110,7 +112,8 @@ static void SimInf_insert_node_time2(
     }
 }
 
-static void SimInf_sparse2df_int(
+static void
+SimInf_sparse2df_int(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
@@ -190,7 +193,8 @@ static void SimInf_sparse2df_int(
     }
 }
 
-static void SimInf_sparse2df_real(
+static void
+SimInf_sparse2df_real(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
@@ -270,7 +274,8 @@ static void SimInf_sparse2df_real(
     }
 }
 
-static void SimInf_dense2df_int(
+static void
+SimInf_dense2df_int(
     SEXP dst,
     int *m,
     int * m_i,
@@ -312,7 +317,8 @@ static void SimInf_dense2df_int(
     }
 }
 
-static void SimInf_dense2df_real(
+static void
+SimInf_dense2df_real(
     SEXP dst,
     double *m,
     int * m_i,
@@ -374,7 +380,8 @@ static void SimInf_dense2df_real(
  *        indices of the nodes to include in the data.frame.
  * @return A data.frame.
  */
-SEXP attribute_hidden SimInf_trajectory(
+SEXP attribute_hidden
+SimInf_trajectory(
     SEXP dm,
     SEXP dm_i,
     SEXP dm_lbl,
