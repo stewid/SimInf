@@ -142,7 +142,7 @@ setMethod("run",
               solver <- match.arg(solver)
               validObject(model);
 
-              key <- digest(model@C_code, serialize = FALSE)
+              key <- digest(model@C_code)
               if (is.null(.dll[[key]]))
                   compile_model(model, key)
 
