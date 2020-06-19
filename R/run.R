@@ -89,6 +89,15 @@ compile_model <- function(model, key) {
     invisible(NULL)
 }
 
+##' Determine the key to the compiled model DLL.
+##' @noRd
+model_dll_key <- function(model) {
+    key <- digest(model@C_code)
+    if (is.null(.dll[[key]]))
+        compile_model(model, key)
+    key
+}
+
 ##' Run the SimInf stochastic simulation algorithm
 ##'
 ##' @param model The SimInf model to run.
@@ -141,11 +150,7 @@ setMethod("run",
           function(model, solver = c("ssm", "aem"), ...) {
               solver <- match.arg(solver)
               validObject(model);
-
-              key <- digest(model@C_code)
-              if (is.null(.dll[[key]]))
-                  compile_model(model, key)
-
+              key <- model_dll_key(model)
               eval(parse(text = .SimInf_model_run))
           }
 )
