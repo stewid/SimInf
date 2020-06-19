@@ -92,21 +92,22 @@ setMethod(
 ##'
 ##' @param m simulated data to extract.
 ##' @param n number of available compartments in the simulated data.
-##' @param sc indices to selected compartments to extract from the
-##'     simulated data and include in the matrix.
+##' @param selected_compartments indices to selected compartments to
+##'     extract from the simulated data and include in the matrix.
 ##' @param i subset of nodes to extract data from. If NULL, all
 ##'     available nodes are included.
 ##' @noRd
-trajectory_as_is <- function(m, n, sc, i) {
+trajectory_as_is <- function(m, n, selected_compartments, i) {
     if (is.null(i)) {
-        if (length(sc) == n)
+        if (length(selected_compartments) == n)
             return(m)
         i <- seq_len(nrow(m) %/% n)
     }
 
     ## Extract subset of data.
-    sc <- sort(sc)
-    i <- rep(sc, length(i)) + rep((i - 1) * n, each = length(sc))
+    selected_compartments <- sort(selected_compartments)
+    i <- rep(selected_compartments, length(i)) +
+        rep((i - 1) * n, each = length(selected_compartments))
     m[i, seq_len(ncol(m)), drop = FALSE]
 }
 
