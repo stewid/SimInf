@@ -90,6 +90,7 @@ compile_model <- function(model, key) {
 }
 
 ##' Determine the key to the compiled model DLL.
+##' @importFrom digest digest
 ##' @noRd
 model_dll_key <- function(model) {
     key <- digest(model@C_code)
@@ -146,7 +147,6 @@ setGeneric(
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @include SimInf_model.R
 ##' @export
-##' @importFrom digest digest
 ##' @importFrom methods validObject
 setMethod(
     "run",
