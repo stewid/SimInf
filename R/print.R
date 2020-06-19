@@ -173,26 +173,27 @@ summary_transitions <- function(object) {
 ##' ## Brief summary of the result. Note that 'U' and 'V' are
 ##' ## non-empty after running the model.
 ##' result
-setMethod("show",
-          signature(object = "SimInf_model"),
-          function(object) {
-              ## The model name
-              cat(sprintf("Model: %s\n", as.character(class(object))))
-              cat(sprintf("Number of nodes: %i\n", Nn(object)))
-              cat(sprintf("Number of transitions: %i\n", Nt(object)))
-              show(object@events)
+setMethod(
+    "show",
+    signature(object = "SimInf_model"),
+    function(object) {
+        ## The model name
+        cat(sprintf("Model: %s\n", as.character(class(object))))
+        cat(sprintf("Number of nodes: %i\n", Nn(object)))
+        cat(sprintf("Number of transitions: %i\n", Nt(object)))
+        show(object@events)
 
-              if (length(object@gdata))
-                  summary_gdata(object)
-              if (ncol(object@ldata))
-                  summary_data_matrix(object@ldata, "Local data")
-              summary_output_matrix(object, "Continuous state variables",
-                                    rownames(object@v0))
-              summary_output_matrix(object, "Compartments",
-                                    rownames(object@S))
+        if (length(object@gdata))
+            summary_gdata(object)
+        if (ncol(object@ldata))
+            summary_data_matrix(object@ldata, "Local data")
+        summary_output_matrix(object, "Continuous state variables",
+                              rownames(object@v0))
+        summary_output_matrix(object, "Compartments",
+                              rownames(object@S))
 
-              invisible(object)
-          }
+        invisible(object)
+    }
 )
 
 ##' Detailed summary of a \code{SimInf_model} object
@@ -202,24 +203,25 @@ setMethod("show",
 ##' @return None (invisible 'NULL').
 ##' @include SimInf_model.R
 ##' @export
-setMethod("summary",
-          signature(object = "SimInf_model"),
-          function(object, ...) {
-              ## The model name
-              cat(sprintf("Model: %s\n", as.character(class(object))))
+setMethod(
+    "summary",
+    signature(object = "SimInf_model"),
+    function(object, ...) {
+        ## The model name
+        cat(sprintf("Model: %s\n", as.character(class(object))))
 
-              ## Nodes
-              cat(sprintf("Number of nodes: %i\n", Nn(object)))
+        ## Nodes
+        cat(sprintf("Number of nodes: %i\n", Nn(object)))
 
-              summary_transitions(object)
-              summary_gdata(object)
-              summary_data_matrix(object@ldata, "Local data")
-              summary_events(object)
-              summary_output_matrix(object, "Continuous state variables",
-                                    rownames(object@v0))
-              summary_output_matrix(object, "Compartments",
-                                    rownames(object@S))
+        summary_transitions(object)
+        summary_gdata(object)
+        summary_data_matrix(object@ldata, "Local data")
+        summary_events(object)
+        summary_output_matrix(object, "Continuous state variables",
+                              rownames(object@v0))
+        summary_output_matrix(object, "Compartments",
+                              rownames(object@S))
 
-              invisible(NULL)
-          }
+        invisible(NULL)
+    }
 )
