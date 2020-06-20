@@ -963,7 +963,7 @@ model@tspan <- c(1, 2)
 result <- run(model)
 res <- assertError(trajectory(result, c("S", "phi"), as.is = TRUE))
 check_error(res,
-            "Cannot combine data from different slots when 'as.is = TRUE'.")
+            "Cannot combine data from different slots.")
 
 stopifnot(identical(class(trajectory(result, c("S", "phi"))$phi), "numeric"))
 stopifnot(identical(class(trajectory(result, c("phi"))$phi), "numeric"))

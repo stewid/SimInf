@@ -19,13 +19,27 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Split the 'compartments' argument to match the compartments in the
-##' model.
+##' Match the 'compartments' argument in a function with the available
+##' compartments in a model.
+##'
+##' @param compartments the names of the compartments to extract data
+##'     from. The compartments can be specified as a formula or as a
+##'     character vector.
+##' @param ok_combine logical to indicate whether data from differnt
+##'     slots can be combined.
+##' @param ... character vectors with available compartment names in
+##'     the model.
 ##' @return a list with indices to the compartments in the available
 ##'     data-structures in the model.
 ##' @noRd
-match_compartments <- function(compartments = NULL, as.is = NULL, ...) {
+match_compartments <- function(compartments, ok_combine, ...) {
     args <- list(...)
+
+    if (is(compartments, "formula")) {
+        compartments <- parse_formula(
+            compartments, unlist(args, use.names = FALSE))
+    }
+
     compartments <- unique(as.character(compartments))
 
     result <- lapply(args, function(x) {
@@ -39,8 +53,8 @@ match_compartments <- function(compartments = NULL, as.is = NULL, ...) {
              ".", call. = FALSE)
     }
 
-    if (isTRUE(as.is) && all(sapply(result, length))) {
-        stop("Cannot combine data from different slots when 'as.is = TRUE'.",
+    if (!isTRUE(ok_combine) && all(sapply(result, length))) {
+        stop("Cannot combine data from different slots.",
              call. = FALSE)
     }
 
@@ -220,13 +234,8 @@ setMethod(
                  call. = FALSE)
         }
 
-        if (is(compartments, "formula")) {
-            compartments <- parse_formula(
-                compartments, c(rownames(model@S), rownames(model@v0)))
-        }
-
         compartments <- match_compartments(compartments = compartments,
-                                           as.is = as.is,
+                                           ok_combine = !isTRUE(as.is),
                                            U = rownames(model@S),
                                            V = rownames(model@v0))
 
