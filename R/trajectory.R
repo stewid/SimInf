@@ -53,24 +53,15 @@ match_compartments <- function(compartments, ok_combine, ...) {
              ".", call. = FALSE)
     }
 
-    if (all(!isTRUE(ok_combine),
-            all(sapply(result, length)),
-            length(args) > 1)) {
-        stop("Cannot combine data from different slots.", call. = FALSE)
+    if (!isTRUE(ok_combine) && all(sapply(result, length))) {
+        stop("Cannot combine data from different slots.",
+             call. = FALSE)
     }
 
     if (all(sapply(result, length) == 0))
         result <- args
 
-    mapply(function(a, b) {
-        ## Convert the compartment names to a named vector of
-        ## indices. Also store all available compartments as an
-        ## attribute.
-        x <- match(a, b)
-        names(x) <- b[x]
-        attr(x, "available_compartments") <- b
-        x
-    }, result, args, SIMPLIFY = FALSE)
+    mapply(match, result, args, SIMPLIFY = FALSE)
 }
 
 ##' Determine if the trajectory is empty.
@@ -265,10 +256,8 @@ setMethod(
         ## data.frame with one row per node and time-point with data
         ## from the specified discrete and continuous states.
         .Call(SimInf_trajectory,
-              trajectory_data(model, "U"), compartments$rhs$U,
-              attr(compartments$rhs$U, "available_compartments"),
-              trajectory_data(model, "V"), compartments$rhs$V,
-              attr(compartments$rhs$V, "available_compartments"),
+              trajectory_data(model, "U"), compartments$U, rownames(model@S),
+              trajectory_data(model, "V"), compartments$V, rownames(model@v0),
               model@tspan, Nn(model), node, "node")
     }
 )
