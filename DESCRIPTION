@@ -73,6 +73,7 @@ Collate:
     'degree.R'
     'distance.R'
     'formula.R'
+    'match_compartments.R'
     'mparse.R'
     'openmp.R'
     'package_skeleton.R'

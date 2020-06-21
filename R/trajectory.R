@@ -19,51 +19,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Match the 'compartments' argument in a function with the available
-##' compartments in a model.
-##'
-##' @param compartments the names of the compartments to extract data
-##'     from. The compartments can be specified as a formula or as a
-##'     character vector.
-##' @param ok_combine logical to indicate whether data from differnt
-##'     slots can be combined.
-##' @param ... character vectors with available compartment names in
-##'     the model.
-##' @return a list with indices to the compartments in the available
-##'     data-structures in the model.
-##' @noRd
-match_compartments <- function(compartments, ok_combine, ...) {
-    args <- list(...)
-
-    if (is(compartments, "formula")) {
-        compartments <- parse_formula(
-            compartments, unlist(args, use.names = FALSE))
-    }
-
-    compartments <- unique(as.character(compartments))
-
-    result <- lapply(args, function(x) {
-        compartments[compartments %in% x]
-    })
-
-    compartments <- setdiff(compartments, unlist(result))
-    if (length(compartments) > 0) {
-        stop("Non-existing compartment(s) in model: ",
-             paste0("'", compartments, "'", collapse = ", "),
-             ".", call. = FALSE)
-    }
-
-    if (!isTRUE(ok_combine) && all(sapply(result, length))) {
-        stop("Cannot combine data from different slots.",
-             call. = FALSE)
-    }
-
-    if (all(sapply(result, length) == 0))
-        result <- args
-
-    mapply(match, result, args, SIMPLIFY = FALSE)
-}
-
 ##' Determine if the trajectory is empty.
 ##' @noRd
 do_is_trajectory_empty <- function(model, slots) {
@@ -187,6 +142,7 @@ setGeneric(
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
 ##' @include formula.R
+##' @include match_compartments.R
 ##' @include prevalence.R
 ##' @export
 ##' @importFrom methods is
