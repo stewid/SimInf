@@ -72,7 +72,6 @@ Collate:
     'abc.R'
     'degree.R'
     'distance.R'
-    'formula.R'
     'match_compartments.R'
     'mparse.R'
     'openmp.R'

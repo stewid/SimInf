@@ -19,6 +19,38 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Determine the compartments in the formula item and split
+##' 'compartment1 + compartment2 + ...'. Moreover, trim whitespace and
+##' replace '.' with all compartments in the model.
+##' @noRd
+parse_formula_item <- function(x, compartments) {
+    x <- unlist(strsplit(x, "+", fixed = TRUE))
+    x <- trimws(x)
+    x <- unlist(sapply(x, function(y) {
+        if (identical(y, "."))
+            y <- compartments
+        y
+    }))
+    x <- unique(as.character(x))
+    if (!length(x))
+        stop("No compartments in formula specification.", call. = FALSE)
+    i <- !(x %in% compartments)
+    if (any(i)) {
+        stop("Non-existing compartment(s) in model: ",
+             paste0("'", x[i], "'", collapse = ", "),
+             ".", call. = FALSE)
+    }
+    x
+}
+
+parse_formula <- function(x, compartments) {
+    x <- as.character(x)
+    if (!identical(length(x), 2L))
+        stop("Invalid formula specification of 'compartments'.", call. = FALSE)
+
+    parse_formula_item(x[2], compartments)
+}
+
 ##' Match the 'compartments' argument in a function with the available
 ##' compartments in a model.
 ##'

@@ -107,7 +107,7 @@ evaluate_condition <- function(condition, model, node) {
 ##'     matrix.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
-##' @include formula.R
+##' @include match_compartments.R
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize

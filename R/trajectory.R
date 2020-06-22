@@ -141,7 +141,6 @@ setGeneric(
 ##'     matrix.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
-##' @include formula.R
 ##' @include match_compartments.R
 ##' @include prevalence.R
 ##' @export
