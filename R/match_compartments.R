@@ -44,54 +44,108 @@ parse_formula_item <- function(x, compartments) {
 }
 
 parse_formula <- function(x, compartments) {
-    x <- as.character(x)
-    if (!identical(length(x), 2L))
-        stop("Invalid formula specification of 'compartments'.", call. = FALSE)
+    lhs <- NULL
+    rhs <- NULL
+    condition <- NULL
 
-    parse_formula_item(x[2], compartments)
+    x <- as.character(x)
+    if (identical(length(x), 2L)) {
+        rhs <- parse_formula_item(x[2], compartments)
+    } else if (identical(length(x), 3L)) {
+        lhs <- parse_formula_item(x[2], compartments)
+        rhs <- parse_formula_item(x[3], compartments)
+    } else {
+        stop("Invalid formula specification of 'compartments'.", call. = FALSE)
+    }
+
+    list(lhs = lhs, rhs = rhs, condition = condition)
 }
 
-##' Match the 'compartments' argument in a function with the available
-##' compartments in a model.
+select_compartments <- function(x, from) {
+    if (is.null(x))
+        return(NULL)
+
+    lapply(from, function(y) {
+        x[x %in% y]
+    })
+}
+
+##' Convert the compartment names to a named vector of indices.
+##' Additionally, store all available compartments as an attribute.
+##' @noRd
+transform_compartments <- function(compartments, args) {
+    if (is.null(compartments))
+        return(NULL)
+
+    mapply(function(a, b) {
+        x <- match(a, b)
+        names(x) <- b[x]
+        attr(x, "available_compartments") <- b
+        x
+    }, compartments, args, SIMPLIFY = FALSE)
+}
+
+check_matched_data <- function(ok_combine, ok_lhs, lhs, rhs) {
+    if (!isTRUE(ok_lhs) && !is.null(lhs))
+        stop("Invalid formula specification of 'compartments'.", call. = FALSE)
+
+    if (isTRUE(ok_combine))
+        return(invisible(NULL))
+
+    if (!is.null(lhs) && all(sapply(lhs, length)))
+        stop("Cannot combine data from different slots.", call. = FALSE)
+    if (!is.null(rhs) && all(sapply(rhs, length)))
+        stop("Cannot combine data from different slots.", call. = FALSE)
+
+    invisible(NULL)
+}
+
+##' Match the selected 'compartments' argument in a function with the
+##' available compartments in a model.
 ##'
 ##' @param compartments the names of the compartments to extract data
 ##'     from. The compartments can be specified as a formula or as a
 ##'     character vector.
 ##' @param ok_combine logical to indicate whether data from differnt
 ##'     slots can be combined.
+##' @param ok_lhs logical to indicate whether a left-hand-side of a
+##'     formula is allowed.
 ##' @param ... character vectors with available compartment names in
-##'     the model.
+##'
+##' the model.
 ##' @return a list with indices to the compartments in the available
 ##'     data-structures in the model.
 ##' @noRd
-match_compartments <- function(compartments, ok_combine, ...) {
+match_compartments <- function(compartments, ok_combine, ok_lhs, ...) {
     args <- list(...)
 
     if (is(compartments, "formula")) {
         compartments <- parse_formula(
             compartments, unlist(args, use.names = FALSE))
+    } else {
+        compartments <- list(lhs = NULL,
+                             rhs = unique(as.character(compartments)),
+                             condition = NULL)
     }
 
-    compartments <- unique(as.character(compartments))
+    lhs <- select_compartments(compartments$lhs, args)
+    rhs <- select_compartments(compartments$rhs, args)
+    condition <- compartments$condition
 
-    result <- lapply(args, function(x) {
-        compartments[compartments %in% x]
-    })
-
-    compartments <- setdiff(compartments, unlist(result))
+    compartments <- setdiff(unlist(compartments), unlist(c(lhs, rhs)))
     if (length(compartments) > 0) {
         stop("Non-existing compartment(s) in model: ",
              paste0("'", compartments, "'", collapse = ", "),
              ".", call. = FALSE)
     }
 
-    if (!isTRUE(ok_combine) && all(sapply(result, length))) {
-        stop("Cannot combine data from different slots.",
-             call. = FALSE)
-    }
+    check_matched_data(ok_combine, ok_lhs, lhs, rhs)
 
-    if (all(sapply(result, length) == 0))
-        result <- args
+    if (all(sapply(lhs, length) == 0, sapply(rhs, length) == 0))
+        rhs <- args
 
-    mapply(match, result, args, SIMPLIFY = FALSE)
+    lhs <- transform_compartments(lhs, args)
+    rhs <- transform_compartments(rhs, args)
+
+    list(lhs = lhs, rhs = rhs, condition = condition)
 }
