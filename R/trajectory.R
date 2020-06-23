@@ -191,6 +191,7 @@ setMethod(
 
         compartments <- match_compartments(compartments = compartments,
                                            ok_combine = !isTRUE(as.is),
+                                           ok_lhs = FALSE,
                                            U = rownames(model@S),
                                            V = rownames(model@v0))
 
@@ -198,21 +199,23 @@ setMethod(
 
         if (isTRUE(as.is)) {
             ## Extract data in the internal matrix format.
-            if (length(compartments$U)) {
-                return(trajectory_as_is(trajectory_data(model, "U"),
-                                        Nc(model), compartments$U, node))
+            if (length(compartments$rhs$U)) {
+                return(trajectory_as_is(trajectory_data(model, "U"), Nc(model),
+                                        compartments$rhs$U, node))
             }
 
-            return(trajectory_as_is(trajectory_data(model, "V"),
-                                    Nd(model), compartments$V, node))
+            return(trajectory_as_is(trajectory_data(model, "V"), Nd(model),
+                                    compartments$rhs$V, node))
         }
 
         ## Coerce the dense/sparse 'U' and 'V' matrices to a
         ## data.frame with one row per node and time-point with data
         ## from the specified discrete and continuous states.
         .Call(SimInf_trajectory,
-              trajectory_data(model, "U"), compartments$U, rownames(model@S),
-              trajectory_data(model, "V"), compartments$V, rownames(model@v0),
+              trajectory_data(model, "U"), compartments$rhs$U,
+              attr(compartments$rhs$U, "available_compartments"),
+              trajectory_data(model, "V"), compartments$rhs$V,
+              attr(compartments$rhs$V, "available_compartments"),
               model@tspan, Nn(model), node, "node")
     }
 )
