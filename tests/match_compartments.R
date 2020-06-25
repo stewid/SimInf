@@ -115,5 +115,8 @@ stopifnot(identical(
                  1:2,
                  .Names = c("S", "I"),
                  available_compartments = c("S", "I", "R")),
-             V = structure(integer(0), .Names = character(0), available_compartments = "phi")),
+             V = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = "phi")),
          condition = "R == 0")))
