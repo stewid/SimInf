@@ -85,7 +85,15 @@ transform_compartments <- function(compartments, args) {
     }, compartments, args, SIMPLIFY = FALSE)
 }
 
-check_matched_data <- function(ok_combine, ok_lhs, lhs, rhs) {
+check_matched_data <- function(ok_combine, ok_lhs, lhs, rhs, compartments) {
+    compartments <- setdiff(unlist(c(compartments$lhs, compartments$rhs)),
+                            unlist(c(lhs, rhs)))
+    if (length(compartments) > 0) {
+        stop("Non-existing compartment(s) in model: ",
+             paste0("'", compartments, "'", collapse = ", "),
+             ".", call. = FALSE)
+    }
+
     if (!isTRUE(ok_lhs) && !is.null(lhs))
         stop("Invalid formula specification of 'compartments'.", call. = FALSE)
 
@@ -132,15 +140,10 @@ match_compartments <- function(compartments, ok_combine, ok_lhs, ...) {
     rhs <- select_compartments(compartments$rhs, args)
     condition <- compartments$condition
 
-    compartments <- setdiff(unlist(compartments), unlist(c(lhs, rhs)))
-    if (length(compartments) > 0) {
-        stop("Non-existing compartment(s) in model: ",
-             paste0("'", compartments, "'", collapse = ", "),
-             ".", call. = FALSE)
-    }
+    check_matched_data(ok_combine, ok_lhs, lhs, rhs, compartments)
 
-    check_matched_data(ok_combine, ok_lhs, lhs, rhs)
-
+    ## If no compartments were selected, default to set 'rhs' to all
+    ## available compartments.
     if (all(sapply(lhs, length) == 0, sapply(rhs, length) == 0))
         rhs <- args
 
