@@ -97,7 +97,7 @@ stopifnot(identical(
          condition = NULL)))
 
 stopifnot(identical(
-    SimInf:::match_compartments(compartments = I~S+I|R == 0,
+    SimInf:::match_compartments(compartments = I ~ S + I | R == 0,
                                 ok_combine = FALSE,
                                 ok_lhs = TRUE,
                                 U = c("S", "I", "R"),
