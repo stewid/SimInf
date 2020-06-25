@@ -34,12 +34,6 @@ parse_formula_item <- function(x, compartments) {
     x <- unique(as.character(x))
     if (!length(x))
         stop("No compartments in formula specification.", call. = FALSE)
-    i <- !(x %in% compartments)
-    if (any(i)) {
-        stop("Non-existing compartment(s) in model: ",
-             paste0("'", x[i], "'", collapse = ", "),
-             ".", call. = FALSE)
-    }
     x
 }
 
@@ -54,6 +48,19 @@ parse_formula <- function(x, compartments) {
     } else if (identical(length(x), 3L)) {
         lhs <- parse_formula_item(x[2], compartments)
         rhs <- parse_formula_item(x[3], compartments)
+
+        ## Check if the rhs of the formula contains a condition.
+        if (any(regexpr("|", rhs, fixed = TRUE) > 1)) {
+            condition <- sub("(^[^|]+)([|]?)(.*)$", "\\3", rhs)
+            condition <- trimws(condition[nchar(condition) > 0])
+            if (length(condition) != 1) {
+                stop("Invalid formula specification of 'condition'.",
+                     call. = FALSE)
+            }
+
+            rhs <- sub("(^[^|]+)([|]?)(.*)$", "\\1", rhs)
+            rhs <- parse_formula_item(rhs, compartments)
+        }
     } else {
         stop("Invalid formula specification of 'compartments'.", call. = FALSE)
     }

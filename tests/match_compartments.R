@@ -70,3 +70,50 @@ res <- assertError(
                                 U = c("S", "I", "R"),
                                 V = "phi"))
 check_error(res, "Non-existing compartment(s) in model: 'test'.")
+
+stopifnot(identical(
+    SimInf:::match_compartments(compartments = I ~ S + I + R,
+                                ok_combine = FALSE,
+                                ok_lhs = TRUE,
+                                U = c("S", "I", "R"),
+                                V = "phi"),
+    list(lhs = list(
+             U = structure(
+                 c(I = 2L),
+                 available_compartments = c("S", "I", "R")),
+             V = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = "phi")),
+         rhs = list(
+             U = structure(
+                 1:3,
+                 .Names = c("S", "I", "R"),
+                 available_compartments = c("S", "I", "R")),
+             V = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = "phi")),
+         condition = NULL)))
+
+stopifnot(identical(
+    SimInf:::match_compartments(compartments = I~S+I|R == 0,
+                                ok_combine = FALSE,
+                                ok_lhs = TRUE,
+                                U = c("S", "I", "R"),
+                                V = "phi"),
+    list(lhs = list(
+             U = structure(
+                 c(I = 2L),
+                 available_compartments = c("S", "I", "R")),
+             V = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = "phi")),
+         rhs = list(
+             U = structure(
+                 1:2,
+                 .Names = c("S", "I"),
+                 available_compartments = c("S", "I", "R")),
+             V = structure(integer(0), .Names = character(0), available_compartments = "phi")),
+         condition = "R == 0")))
