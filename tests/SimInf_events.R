@@ -484,6 +484,7 @@ events <- data.frame(
               1L, 2L, 0L, 1L, 2L, 0L))
 res <- SimInf_events(E = E, N = N, events = events)
 stopifnot(identical(as(res, "data.frame"), events))
+stopifnot(identical(as.data.frame(res), events))
 
 ## Check that it fails when dest is out of bounds.
 u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
