@@ -131,6 +131,10 @@ jobs:
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
+  - bash: |
+      cd ..
+      cat *.Rcheck/00install.out
+    displayName: "Output the installation log"
 
 - job: macosx_R_devel
   displayName: "Mac OS X, R-devel"
@@ -152,3 +156,7 @@ jobs:
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
+  - bash: |
+      cd ..
+      cat *.Rcheck/00install.out
+    displayName: "Output the installation log"
