@@ -23,7 +23,7 @@
 ## node X length(tspan)
 sum_individuals <- function(model, compartments, node) {
     m <- NULL
-    for (compartment in compartments) {
+    for (compartment in names(compartments)) {
         if (is.null(m)) {
             m <- trajectory(model, compartments = compartment,
                             node = node, as.is = TRUE)
@@ -138,20 +138,21 @@ evaluate_condition <- function(condition, model, node) {
 ##' ## zero.
 ##' prevalence(result, I~S+I+R|R==0, type = "wnp")
 prevalence <- function(model,
-                       formula,
+                       formula = NULL,
                        type = c("pop", "nop", "wnp"),
                        node = NULL,
                        as.is = FALSE) {
     check_model_argument(model)
 
     ## Check 'formula' argument
-    if (missing(formula))
-        stop("Missing 'formula' argument.", call. = FALSE)
-    if (!is(formula, "formula"))
-        stop("'formula' argument is not a 'formula'.", call. = FALSE)
-    formula <- as.character(formula)
-    if (!identical(length(formula), 3L))
-        stop("Invalid formula specification.", call. = FALSE)
+    if (is.null(formula) || !is(formula, "formula"))
+        stop("Invalid 'formula' specification.", call. = FALSE)
+    compartments <- match_compartments(compartments = formula,
+                                       ok_combine = FALSE,
+                                       ok_lhs = TRUE,
+                                       U = rownames(model@S))
+    if (is.null(compartments$lhs))
+        stop("Invalid 'formula' specification.", call. = FALSE)
 
     ## Check 'type' argument
     type <- match.arg(type)
@@ -159,26 +160,14 @@ prevalence <- function(model,
     ## Check the 'node' argument
     node <- check_node_argument(model, node)
 
-    ## Determine the compartments for the cases and the
-    ## population. Check if the formula contains a condition.
-    cases <- parse_formula_item(formula[2], rownames(model@S))
-    if (regexpr("|", formula[3], fixed = TRUE) > 1) {
-        condition <- sub("(^[^|]+)([|]?)(.*)$", "\\3", formula[3])
-        condition <- evaluate_condition(condition, model, node)
-        population <- sub("(^[^|]+)([|]?)(.*)$", "\\1", formula[3])
-        population <- parse_formula_item(population, rownames(model@S))
-    } else {
-        condition <- NULL
-        population <- parse_formula_item(formula[3], rownames(model@S))
-    }
-
     ## Sum all individuals in the 'cases' and 'population'
     ## compartments in a matrix with one row per node X length(tspan)
-    cases <- sum_individuals(model, cases, node)
-    population <- sum_individuals(model, population, node)
+    cases <- sum_individuals(model, compartments$lhs$U, node)
+    population <- sum_individuals(model, compartments$rhs$U, node)
 
     ## Apply condition
-    if (!is.null(condition)) {
+    if (!is.null(compartments$condition)) {
+        condition <- evaluate_condition(compartments$condition, model, node)
         cases <- cases * condition
         population <- population * condition
     }

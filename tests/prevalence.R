@@ -52,13 +52,13 @@ model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
                                   c("1", "2", "3", "4", "5")))
 
 res <- assertError(prevalence(model))
-check_error(res, "Missing 'formula' argument.")
+check_error(res, "Invalid 'formula' specification.")
 
 res <- assertError(prevalence(model, "I~."))
-check_error(res, "'formula' argument is not a 'formula'.")
+check_error(res, "Invalid 'formula' specification.")
 
 res <- assertError(prevalence(model, ~I))
-check_error(res, "Invalid formula specification.")
+check_error(res, "Invalid 'formula' specification.")
 
 res <- assertError(SimInf:::parse_formula_item("", "S"))
 check_error(res, "No compartments in formula specification.")

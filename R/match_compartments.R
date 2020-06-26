@@ -107,9 +107,9 @@ check_matched_data <- function(ok_combine, ok_lhs, lhs, rhs, compartments) {
     if (isTRUE(ok_combine))
         return(invisible(NULL))
 
-    if (!is.null(lhs) && all(sapply(lhs, length)))
+    if (!is.null(lhs) && length(lhs) > 1 && all(sapply(lhs, length)))
         stop("Cannot combine data from different slots.", call. = FALSE)
-    if (!is.null(rhs) && all(sapply(rhs, length)))
+    if (!is.null(rhs) && length(rhs) > 1 && all(sapply(rhs, length)))
         stop("Cannot combine data from different slots.", call. = FALSE)
 
     invisible(NULL)
