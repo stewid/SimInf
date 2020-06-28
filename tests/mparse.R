@@ -836,6 +836,18 @@ m  <- mparse(transitions = "S -> a->data[2]*1.2*S -> @",
              tspan = 1:100)
 stopifnot(identical(m@C_code[48], "    return a->data[2]*1.2*u[0];"))
 
+## Check that an error is raised if the compilation fails. Define a
+## model with undeclared identifiers 'betaSI' and 'gammaI'.
+model <- mparse(transitions = c("S -> betaSI -> I",
+                                "I -> gammaI -> R"),
+                compartments = c("S", "I", "R"),
+                gdata = c(beta = 0.16, gamma = 0.077),
+                u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
+                tspan = 1:10)
+assertError(run(model))
+
+## Test that the environmental variable PKG_CPPFLAGS is restored after
+## compiling C code for a model. First set it to a known value.
 model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
                                 "I -> gamma*I -> R"),
                 compartments = c("S", "I", "R"),
@@ -843,8 +855,6 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
                 u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
                 tspan = 1:10)
 
-## Test that the environmental variable PKG_CPPFLAGS is restored after
-## compiling C code for a model. First set it to a known value.
 Sys.setenv(PKG_CPPFLAGS = "test")
 
 set.seed(22)
