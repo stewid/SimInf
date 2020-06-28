@@ -135,6 +135,10 @@ jobs:
       cd ..
       cat *.Rcheck/00install.out
     displayName: "Output the installation log"
+  - bash: |
+      cd ..
+      cat SimInf.Rcheck/00_pkg_src/SimInf/config.log
+    displayName: "Output the configuration log"
 
 - job: macosx_R_devel
   displayName: "Mac OS X, R-devel"
@@ -160,3 +164,7 @@ jobs:
       cd ..
       cat *.Rcheck/00install.out
     displayName: "Output the installation log"
+  - bash: |
+      cd ..
+      cat SimInf.Rcheck/00_pkg_src/SimInf/config.log
+    displayName: "Output the configuration log"
