@@ -5,6 +5,6 @@ steps:
     echo 'Sys.setenv(PATH = paste0("/usr/texbin:/Library/TeX/texbin:", Sys.getenv("PATH")))' >> .Rprofile
     echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
     mkdir .R
-    echo 'CC=/usr/local/opt/llvm/bin/clang' > Makevars
+    echo 'CC=/usr/local/opt/llvm/bin/clang' > .R/Makevars
     mkdir -p $(Agent.BuildDirectory)/R/library
   displayName: "Customize R startup"
