@@ -126,6 +126,8 @@ jobs:
     displayName: "Customize R startup"
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
+      brew update
+      brew reinstall llvm
       brew install gsl
       Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
@@ -155,6 +157,8 @@ jobs:
     displayName: "Customize R startup"
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
+      brew update
+      brew reinstall llvm
       brew install gsl
       Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
