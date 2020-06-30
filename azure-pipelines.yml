@@ -122,14 +122,7 @@ jobs:
   - template: azure-pipelines/macos-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
-  - bash: |
-      cd ..
-      cat *.Rcheck/00install.out
-    displayName: "Output the installation log"
-  - bash: |
-      cd ..
-      cat SimInf.Rcheck/00_pkg_src/SimInf/config.log
-    displayName: "Output the configuration log"
+  - template: azure-pipelines/output-log.yml
 
 - job: macosx_R_devel
   displayName: "Mac OS X, R-devel"
@@ -142,11 +135,4 @@ jobs:
   - template: azure-pipelines/macos-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
-  - bash: |
-      cd ..
-      cat *.Rcheck/00install.out
-    displayName: "Output the installation log"
-  - bash: |
-      cd ..
-      cat SimInf.Rcheck/00_pkg_src/SimInf/config.log
-    displayName: "Output the configuration log"
+  - template: azure-pipelines/output-log.yml
