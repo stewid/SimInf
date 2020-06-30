@@ -2660,13 +2660,15 @@ RBIN_CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
 CPPFLAGS="${CPPFLAGS} ${RBIN_CPPFLAGS}"
 LIBS="${LIBS}"
 
-# since some systems have broken OMP libraries
-# we also check that the actual package will work
 ac_pkg_openmp=no
-if test -n "${OPENMP_CFLAGS}"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether OpenMP will work in a package" >&5
+
+if test -z "${OPENMP_CFLAGS}"; then
+            OPENMP_CFLAGS="-fopenmp"
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether OpenMP will work in a package" >&5
 $as_echo_n "checking whether OpenMP will work in a package... " >&6; }
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <omp.h>
 int
@@ -2677,13 +2679,12 @@ main ()
   return 0;
 }
 _ACEOF
-    PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c \
-    1>&5 2>&5 && \
-    "$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
-    1>&5 2>&5 && ac_pkg_openmp=yes
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${ac_pkg_openmp}" >&5
+PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c \
+1>&5 2>&5 && \
+"$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
+1>&5 2>&5 && ac_pkg_openmp=yes
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${ac_pkg_openmp}" >&5
 $as_echo "${ac_pkg_openmp}" >&6; }
-fi
 
 if test "x${ac_pkg_openmp}" = xno; then
     OPENMP_CFLAGS=''
