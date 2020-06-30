@@ -122,6 +122,7 @@ jobs:
   - bash: |
       brew update
       brew reinstall llvm
+      echo '##vso[task.prependpath]$(HOME)/usr/local/opt/llvm/bin'
       brew install gsl
       Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
@@ -147,6 +148,7 @@ jobs:
   - bash: |
       brew update
       brew reinstall llvm
+      echo '##vso[task.prependpath]$(HOME)/usr/local/opt/llvm/bin'
       brew install gsl
       Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
