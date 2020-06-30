@@ -119,13 +119,7 @@ jobs:
   - template: azure-pipelines/macos-install-R-release.yml
   - template: azure-pipelines/macos-customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
-  - bash: |
-      brew update
-      brew reinstall llvm
-      echo '##vso[task.prependpath]/usr/local/opt/llvm/bin'
-      brew install gsl
-      Rscript -e "install.packages('digest')"
-    displayName: "Install package dependencies"
+  - template: azure-pipelines/macos-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
   - bash: |
@@ -145,13 +139,7 @@ jobs:
   - template: azure-pipelines/macos-install-R-devel.yml
   - template: azure-pipelines/macos-customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
-  - bash: |
-      brew update
-      brew reinstall llvm
-      echo '##vso[task.prependpath]/usr/local/opt/llvm/bin'
-      brew install gsl
-      Rscript -e "install.packages('digest')"
-    displayName: "Install package dependencies"
+  - template: azure-pipelines/macos-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
   - bash: |
