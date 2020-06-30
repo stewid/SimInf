@@ -45,19 +45,24 @@ RBIN_CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
 CPPFLAGS="${CPPFLAGS} ${RBIN_CPPFLAGS}"
 LIBS="${LIBS}"
 
-# since some systems have broken OMP libraries
-# we also check that the actual package will work
+dnl Since some systems have broken OMP libraries we also check that
+dnl the actual package will work.
 ac_pkg_openmp=no
-if test -n "${OPENMP_CFLAGS}"; then
-    AC_MSG_CHECKING([whether OpenMP will work in a package])
-    AC_LANG_CONFTEST(
-    [AC_LANG_PROGRAM([[#include <omp.h>]], [[ return omp_get_num_threads (); ]])])
-    PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c \
-    1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && \
-    "$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
-    1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && ac_pkg_openmp=yes
-    AC_MSG_RESULT([${ac_pkg_openmp}])
+
+if test -z "${OPENMP_CFLAGS}"; then
+    dnl OpenMP was not detected by AC_OPENMP, try forcing -fopenmp
+    dnl instead.
+    OPENMP_CFLAGS="-fopenmp"
 fi
+
+AC_MSG_CHECKING([whether OpenMP will work in a package])
+AC_LANG_CONFTEST(
+[AC_LANG_PROGRAM([[#include <omp.h>]], [[ return omp_get_num_threads (); ]])])
+PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c \
+1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && \
+"$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
+1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && ac_pkg_openmp=yes
+AC_MSG_RESULT([${ac_pkg_openmp}])
 
 if test "x${ac_pkg_openmp}" = xno; then
     OPENMP_CFLAGS=''
