@@ -71,6 +71,13 @@ evaluate_condition <- function(condition, model, node) {
 ##' node.
 ##' @param model The \code{model} with trajectory data to calculate
 ##'     the prevalence from.
+setGeneric(
+    "prevalence",
+    signature = "model",
+    function(model, ...)
+        standardGeneric("prevalence"))
+
+##' @rdname prevalence
 ##' @param formula A formula that specifies the compartments that
 ##'     define the cases with a disease or that have a specific
 ##'     characteristic (numerator), and the compartments that define
@@ -103,10 +110,10 @@ evaluate_condition <- function(condition, model, node) {
 ##'     \code{data.frame} with one row per time-step with the
 ##'     prevalence. Using \code{as.is = TRUE} returns the result as a
 ##'     matrix, which is the internal format.
+##' @param ... Additional arguments. Not used.
 ##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
 ##'     matrix.
 ##' @include SimInf_model.R
-##' @include check_arguments.R
 ##' @include match_compartments.R
 ##' @export
 ##' @examples
@@ -137,69 +144,73 @@ evaluate_condition <- function(condition, model, node) {
 ##' ## at the time-points in 'tspan' when the number of recovered is
 ##' ## zero.
 ##' prevalence(result, I~S+I+R|R==0, type = "wnp")
-prevalence <- function(model,
-                       formula = NULL,
-                       type = c("pop", "nop", "wnp"),
-                       node = NULL,
-                       as.is = FALSE) {
-    check_model_argument(model)
+setMethod(
+    "prevalence",
+    signature(model = "SimInf_model"),
+    function(model,
+             formula = NULL,
+             type = c("pop", "nop", "wnp"),
+             node = NULL,
+             as.is = FALSE,
+             ...) {
+        ## Check 'formula' argument
+        if (is.null(formula) || !is(formula, "formula"))
+            stop("Invalid 'formula' specification.", call. = FALSE)
+        compartments <- match_compartments(compartments = formula,
+                                           ok_combine = FALSE,
+                                           ok_lhs = TRUE,
+                                           U = rownames(model@S))
+        if (is.null(compartments$lhs))
+            stop("Invalid 'formula' specification.", call. = FALSE)
 
-    ## Check 'formula' argument
-    if (is.null(formula) || !is(formula, "formula"))
-        stop("Invalid 'formula' specification.", call. = FALSE)
-    compartments <- match_compartments(compartments = formula,
-                                       ok_combine = FALSE,
-                                       ok_lhs = TRUE,
-                                       U = rownames(model@S))
-    if (is.null(compartments$lhs))
-        stop("Invalid 'formula' specification.", call. = FALSE)
+        ## Check 'type' argument
+        type <- match.arg(type)
 
-    ## Check 'type' argument
-    type <- match.arg(type)
+        ## Check the 'node' argument
+        node <- check_node_argument(model, node)
 
-    ## Check the 'node' argument
-    node <- check_node_argument(model, node)
+        ## Sum all individuals in the 'cases' and 'population'
+        ## compartments in a matrix with one row per node X
+        ## length(tspan)
+        cases <- sum_individuals(model, compartments$lhs$U, node)
+        population <- sum_individuals(model, compartments$rhs$U, node)
 
-    ## Sum all individuals in the 'cases' and 'population'
-    ## compartments in a matrix with one row per node X length(tspan)
-    cases <- sum_individuals(model, compartments$lhs$U, node)
-    population <- sum_individuals(model, compartments$rhs$U, node)
+        ## Apply condition
+        if (!is.null(compartments$condition)) {
+            condition <- evaluate_condition(compartments$condition, model, node)
+            cases <- cases * condition
+            population <- population * condition
+        }
 
-    ## Apply condition
-    if (!is.null(compartments$condition)) {
-        condition <- evaluate_condition(compartments$condition, model, node)
-        cases <- cases * condition
-        population <- population * condition
+        if (identical(type, "pop")) {
+            cases <- colSums(cases)
+            population <- colSums(population)
+        } else if (identical(type, "nop")) {
+            cases <- colSums(cases > 0)
+            ## Only include nodes with individuals
+            population <- colSums(population > 0)
+        }
+
+        prevalence <- cases / population
+
+        if (isTRUE(as.is))
+            return(prevalence)
+
+        time <- names(model@tspan)
+        if (is.null(time))
+            time <- model@tspan
+        if (type %in% c("pop", "nop")) {
+            return(data.frame(time = time,
+                              prevalence = prevalence,
+                              stringsAsFactors = FALSE))
+        }
+
+        if (is.null(node))
+            node <- seq_len(Nn(model))
+
+        data.frame(node = node,
+                   time = rep(time, each = length(node)),
+                   prevalence = as.numeric(prevalence),
+                   stringsAsFactors = FALSE)
     }
-
-    if (identical(type, "pop")) {
-        cases <- colSums(cases)
-        population <- colSums(population)
-    } else if (identical(type, "nop")) {
-        cases <- colSums(cases > 0)
-        ## Only include nodes with individuals
-        population <- colSums(population > 0)
-    }
-
-    prevalence <- cases / population
-
-    if (isTRUE(as.is))
-        return(prevalence)
-
-    time <- names(model@tspan)
-    if (is.null(time))
-        time <- model@tspan
-    if (type %in% c("pop", "nop")) {
-        return(data.frame(time = time,
-                          prevalence = prevalence,
-                          stringsAsFactors = FALSE))
-    }
-
-    if (is.null(node))
-        node <- seq_len(Nn(model))
-
-    data.frame(node = node,
-               time = rep(time, each = length(node)),
-               prevalence = as.numeric(prevalence),
-               stringsAsFactors = FALSE)
-}
+)

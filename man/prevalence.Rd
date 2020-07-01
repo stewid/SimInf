@@ -2,19 +2,25 @@
 % Please edit documentation in R/prevalence.R
 \name{prevalence}
 \alias{prevalence}
+\alias{prevalence,SimInf_model-method}
 \title{Calculate prevalence from a model object with trajectory data}
 \usage{
-prevalence(
+prevalence(model, ...)
+
+\S4method{prevalence}{SimInf_model}(
   model,
-  formula,
+  formula = NULL,
   type = c("pop", "nop", "wnp"),
   node = NULL,
-  as.is = FALSE
+  as.is = FALSE,
+  ...
 )
 }
 \arguments{
 \item{model}{The \code{model} with trajectory data to calculate
 the prevalence from.}
+
+\item{...}{Additional arguments. Not used.}
 
 \item{formula}{A formula that specifies the compartments that
 define the cases with a disease or that have a specific
