@@ -170,8 +170,7 @@ setMethod(
         node <- check_node_argument(model, node)
 
         ## Sum all individuals in the 'cases' and 'population'
-        ## compartments in a matrix with one row per node X
-        ## length(tspan)
+        ## compartments in a matrix with one row per node X length(tspan)
         cases <- sum_individuals(model, compartments$lhs$U, node)
         population <- sum_individuals(model, compartments$rhs$U, node)
 
