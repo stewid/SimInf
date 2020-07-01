@@ -30,9 +30,6 @@ AC_CONFIG_SRCDIR([src/SimInf.c])
 # Checks for programs.
 AC_PROG_CC
 
-# Check for OpenMP
-AC_OPENMP
-
 # Find the compiler and compiler flags to use
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
@@ -45,32 +42,40 @@ RBIN_CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
 CPPFLAGS="${CPPFLAGS} ${RBIN_CPPFLAGS}"
 LIBS="${LIBS}"
 
-dnl Since some systems have broken OMP libraries we also check that
-dnl the actual package will work.
+# Check for OpenMP
+AC_OPENMP
 ac_pkg_openmp=no
+if test "x$enable_openmp" != "xno"; then
+    # Since some systems have broken OpenMP libraries we also check
+    # that the actual package will work.
 
-if test -z "${OPENMP_CFLAGS}"; then
-    dnl OpenMP was not detected by AC_OPENMP, try forcing -fopenmp
-    dnl instead.
-    OPENMP_CFLAGS="-fopenmp"
-fi
+    if test -z "${OPENMP_CFLAGS}"; then
+        # OpenMP was not detected by the macro AC_OPENMP, try forcing
+        # -fopenmp instead.
+        OPENMP_CFLAGS="-fopenmp"
+    fi
 
-AC_MSG_CHECKING([whether OpenMP will work in a package])
-AC_LANG_CONFTEST(
-[AC_LANG_PROGRAM([[#include <omp.h>]], [[ return omp_get_num_threads (); ]])])
-PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c \
-1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && \
-"$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
-1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && ac_pkg_openmp=yes
-AC_MSG_RESULT([${ac_pkg_openmp}])
+    AC_MSG_CHECKING([whether OpenMP will work in a package])
+    AC_LANG_CONFTEST(
+    [AC_LANG_PROGRAM([[#include <omp.h>]], [[ return omp_get_num_threads (); ]])])
+    PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" \
+    "$RBIN" CMD SHLIB conftest.c \
+    1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && \
+    "$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
+    1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && ac_pkg_openmp=yes
+    AC_MSG_RESULT([${ac_pkg_openmp}])
 
-if test "x${ac_pkg_openmp}" = xno; then
-    OPENMP_CFLAGS=''
-    AC_MSG_WARN([
+    if test "x${ac_pkg_openmp}" = xno; then
+        OPENMP_CFLAGS=''
+        AC_MSG_WARN([
   -----------------------------------------------
    Unable to find OpenMP on this system.
    Building a version without support for OpenMP.
   -----------------------------------------------])
+    fi
+else
+    AC_MSG_CHECKING([whether to use OpenMP])
+    AC_MSG_RESULT([no])
 fi
 
 # Check for gsl
@@ -83,7 +88,7 @@ if test "x${GSL_CONFIG}" != x; then
     have_gsl=yes
 else
     # Check for gsl using autoconf macros
-    # https://www.gnu.org/software/gsl/manual/html_node/Autoconf-Macros.html
+    # https://www.gnu.org/software/gsl/doc/html/autoconf.html
     AC_CHECK_LIB([m],[cos])
     AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [have_gsl=no])
     AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [have_gsl=no])

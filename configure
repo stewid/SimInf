@@ -2579,6 +2579,18 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+# Find the compiler and compiler flags to use
+: ${R_HOME=`R RHOME`}
+if test -z "${R_HOME}"; then
+    echo "could not determine R_HOME"
+    exit 1
+fi
+RBIN="${R_HOME}/bin/R"
+RSCRIPT="${R_HOME}/bin/Rscript"
+RBIN_CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
+CPPFLAGS="${CPPFLAGS} ${RBIN_CPPFLAGS}"
+LIBS="${LIBS}"
+
 # Check for OpenMP
 
 
@@ -2647,28 +2659,20 @@ $as_echo "$ac_cv_prog_c_openmp" >&6; }
   fi
 
 
-
-# Find the compiler and compiler flags to use
-: ${R_HOME=`R RHOME`}
-if test -z "${R_HOME}"; then
-    echo "could not determine R_HOME"
-    exit 1
-fi
-RBIN="${R_HOME}/bin/R"
-RSCRIPT="${R_HOME}/bin/Rscript"
-RBIN_CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
-CPPFLAGS="${CPPFLAGS} ${RBIN_CPPFLAGS}"
-LIBS="${LIBS}"
-
 ac_pkg_openmp=no
+if test "x$enable_openmp" != "xno"; then
+    # Since some systems have broken OpenMP libraries we also check
+    # that the actual package will work.
 
-if test -z "${OPENMP_CFLAGS}"; then
-            OPENMP_CFLAGS="-fopenmp"
-fi
+    if test -z "${OPENMP_CFLAGS}"; then
+        # OpenMP was not detected by the macro AC_OPENMP, try forcing
+        # -fopenmp instead.
+        OPENMP_CFLAGS="-fopenmp"
+    fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether OpenMP will work in a package" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether OpenMP will work in a package" >&5
 $as_echo_n "checking whether OpenMP will work in a package... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <omp.h>
 int
@@ -2679,16 +2683,17 @@ main ()
   return 0;
 }
 _ACEOF
-PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" "$RBIN" CMD SHLIB conftest.c \
-1>&5 2>&5 && \
-"$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
-1>&5 2>&5 && ac_pkg_openmp=yes
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${ac_pkg_openmp}" >&5
+    PKG_CFLAGS="${OPENMP_CFLAGS}" PKG_LIBS="${OPENMP_CFLAGS}" \
+    "$RBIN" CMD SHLIB conftest.c \
+    1>&5 2>&5 && \
+    "$RBIN" --vanilla -q -e "dyn.load(paste('conftest',.Platform\$dynlib.ext,sep=''))" \
+    1>&5 2>&5 && ac_pkg_openmp=yes
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${ac_pkg_openmp}" >&5
 $as_echo "${ac_pkg_openmp}" >&6; }
 
-if test "x${ac_pkg_openmp}" = xno; then
-    OPENMP_CFLAGS=''
-    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
+    if test "x${ac_pkg_openmp}" = xno; then
+        OPENMP_CFLAGS=''
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
   -----------------------------------------------
    Unable to find OpenMP on this system.
    Building a version without support for OpenMP.
@@ -2698,6 +2703,12 @@ $as_echo "$as_me: WARNING:
    Unable to find OpenMP on this system.
    Building a version without support for OpenMP.
   -----------------------------------------------" >&2;}
+    fi
+else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use OpenMP" >&5
+$as_echo_n "checking whether to use OpenMP... " >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 # Check for gsl
@@ -2749,7 +2760,7 @@ if test "x${GSL_CONFIG}" != x; then
     have_gsl=yes
 else
     # Check for gsl using autoconf macros
-    # https://www.gnu.org/software/gsl/manual/html_node/Autoconf-Macros.html
+    # https://www.gnu.org/software/gsl/doc/html/autoconf.html
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for cos in -lm" >&5
 $as_echo_n "checking for cos in -lm... " >&6; }
 if ${ac_cv_lib_m_cos+:} false; then :
