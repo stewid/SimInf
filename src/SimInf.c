@@ -106,7 +106,7 @@ SEXP attribute_hidden SimInf_run(
     SEXP ext_events, E, G, N, S, prS;
     SEXP tspan;
     SEXP U, V, U_sparse, V_sparse;
-    SimInf_solver_args args = {NULL};
+    SimInf_solver_args args = {0};
 
     /* If the model ldata is a 0x0 matrix, i.e. Nld == 0, then use
      * ldata_tmp in the transition rate functions. This is to make
