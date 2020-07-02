@@ -167,7 +167,9 @@ SimInf_sparse2df_int(
                 }
             }
         } else {
-            #pragma omp parallel for num_threads(SimInf_num_threads())
+            #ifdef _OPENMP
+            #  pragma omp parallel for num_threads(SimInf_num_threads())
+            #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
                 R_xlen_t id = 0;
 
@@ -248,7 +250,9 @@ SimInf_sparse2df_real(
                 }
             }
         } else {
-            #pragma omp parallel for num_threads(SimInf_num_threads())
+            #ifdef _OPENMP
+            #  pragma omp parallel for num_threads(SimInf_num_threads())
+            #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
                 R_xlen_t id = 0;
 
@@ -295,7 +299,9 @@ SimInf_dense2df_int(
 
         if (p_id != NULL) {
             /* Note that the identifiers are one-based. */
-            #pragma omp parallel for num_threads(SimInf_num_threads())
+            #ifdef _OPENMP
+            #  pragma omp parallel for num_threads(SimInf_num_threads())
+            #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
                 for (R_xlen_t i = 0; i < id_len; i++) {
                     p_vec[t * id_len + i] =
@@ -303,7 +309,9 @@ SimInf_dense2df_int(
                 }
             }
         } else {
-            #pragma omp parallel for num_threads(SimInf_num_threads())
+            #ifdef _OPENMP
+            #  pragma omp parallel for num_threads(SimInf_num_threads())
+            #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
                 for (R_xlen_t i = 0; i < id_len; i++) {
                     p_vec[t * id_len + i] =
@@ -338,7 +346,9 @@ SimInf_dense2df_real(
 
         if (p_id != NULL) {
             /* Note that the node identifiers are one-based. */
-            #pragma omp parallel for num_threads(SimInf_num_threads())
+            #ifdef _OPENMP
+            #  pragma omp parallel for num_threads(SimInf_num_threads())
+            #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
                 for (R_xlen_t i = 0; i < id_len; i++) {
                     p_vec[t * id_len + i] =
@@ -346,7 +356,9 @@ SimInf_dense2df_real(
                 }
             }
         } else {
-            #pragma omp parallel for num_threads(SimInf_num_threads())
+            #ifdef _OPENMP
+            #  pragma omp parallel for num_threads(SimInf_num_threads())
+            #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
                 for (R_xlen_t i = 0; i < id_len; i++) {
                     p_vec[t * id_len + i] =
@@ -460,7 +472,9 @@ SimInf_trajectory(
      * one-based. */
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
     p_vec = INTEGER(vec);
-    #pragma omp parallel for num_threads(SimInf_num_threads())
+    #ifdef _OPENMP
+    #  pragma omp parallel for num_threads(SimInf_num_threads())
+    #endif
     for (R_xlen_t i = 0; i < nrow; i++) {
         p_vec[i] = i + 1;
     }
@@ -474,12 +488,16 @@ SimInf_trajectory(
         for (size_t i = 0; i < kv_size(*ri); i++)
             p_vec[i] = kv_A(*ri, i).id + 1;
     } else if (p_id != NULL) {
-        #pragma omp parallel for num_threads(SimInf_num_threads())
+        #ifdef _OPENMP
+        #  pragma omp parallel for num_threads(SimInf_num_threads())
+        #endif
         for (R_xlen_t t = 0; t < tlen; t++) {
             memcpy(&p_vec[t * id_len], p_id, id_len * sizeof(int));
         }
     } else {
-        #pragma omp parallel for num_threads(SimInf_num_threads())
+        #ifdef _OPENMP
+        #  pragma omp parallel for num_threads(SimInf_num_threads())
+        #endif
         for (R_xlen_t t = 0; t < tlen; t++) {
             for (R_xlen_t i = 0; i < id_len; i++)
                 p_vec[t * id_len + i] = i + 1;
@@ -499,7 +517,9 @@ SimInf_trajectory(
             for (size_t i = 0; i < kv_size(*ri); i++)
                 p_vec[i] = p_tspan[kv_A(*ri, i).time];
         } else {
-            #pragma omp parallel for num_threads(SimInf_num_threads())
+            #ifdef _OPENMP
+            #  pragma omp parallel for num_threads(SimInf_num_threads())
+            #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
                 for (R_xlen_t i = 0; i < id_len; i++)
                     p_vec[t * id_len + i] = p_tspan[t];
