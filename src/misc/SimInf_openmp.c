@@ -29,6 +29,8 @@
 #include <omp.h>
 #endif
 
+#include "SimInf.h"
+
 /* This is the maximum number of threads that SimInf will use for
  * OpenMP parallel regions. It is initialised (>= 1) by
  * SimInf_init_threads. */
@@ -115,6 +117,7 @@ SEXP attribute_hidden SimInf_init_threads(SEXP threads)
     if (SimInf_max_threads < 1)
         SimInf_max_threads = 1;
 #else
+    SIMINF_UNUSED(threads);
     SimInf_max_threads = 1;
 #endif
 
