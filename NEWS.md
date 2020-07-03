@@ -1,5 +1,14 @@
 # SimInf (development version)
 
+## CHANGES OR IMPROVEMENTS
+
+* Changed the 'prevalence' function to an S4 method.
+
+* Changed the 'trajectory' function to an S4 method.
+
+* The build configuration script has been improved to identify if
+  OpenMP can be used.
+
 # SimInf 7.0.1 (2020-06-18)
 
 ## CHANGES
