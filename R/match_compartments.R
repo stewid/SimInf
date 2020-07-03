@@ -38,31 +38,30 @@ parse_formula_item <- function(x, compartments) {
 }
 
 parse_formula <- function(x, compartments) {
-    lhs <- NULL
-    rhs <- NULL
-    condition <- NULL
-
     x <- as.character(x)
     if (identical(length(x), 2L)) {
+        lhs <- NULL
         rhs <- parse_formula_item(x[2], compartments)
     } else if (identical(length(x), 3L)) {
         lhs <- parse_formula_item(x[2], compartments)
         rhs <- parse_formula_item(x[3], compartments)
 
-        ## Check if the rhs of the formula contains a condition.
-        if (any(regexpr("|", rhs, fixed = TRUE) > 1)) {
-            condition <- sub("(^[^|]+)([|]?)(.*)$", "\\3", rhs)
-            condition <- trimws(condition[nchar(condition) > 0])
-            if (length(condition) != 1) {
-                stop("Invalid formula specification of 'condition'.",
-                     call. = FALSE)
-            }
-
-            rhs <- sub("(^[^|]+)([|]?)(.*)$", "\\1", rhs)
-            rhs <- parse_formula_item(rhs, compartments)
-        }
     } else {
         stop("Invalid formula specification of 'compartments'.", call. = FALSE)
+    }
+
+    ## Check if the rhs of the formula contains a condition.
+    condition <- NULL
+    if (any(regexpr("|", rhs, fixed = TRUE) > 1)) {
+        condition <- sub("(^[^|]+)([|]?)(.*)$", "\\3", rhs)
+        condition <- trimws(condition[nchar(condition) > 0])
+        if (length(condition) != 1) {
+            stop("Invalid formula specification of 'condition'.",
+                 call. = FALSE)
+        }
+
+        rhs <- sub("(^[^|]+)([|]?)(.*)$", "\\1", rhs)
+        rhs <- parse_formula_item(rhs, compartments)
     }
 
     list(lhs = lhs, rhs = rhs, condition = condition)
