@@ -154,7 +154,7 @@ setMethod(
              as.is = FALSE,
              ...) {
         ## Check 'formula' argument
-        if (is.null(formula) || !is(formula, "formula"))
+        if (!is(formula, "formula"))
             stop("Invalid 'formula' specification.", call. = FALSE)
         compartments <- match_compartments(compartments = formula,
                                            ok_combine = FALSE,
