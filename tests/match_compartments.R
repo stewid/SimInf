@@ -149,3 +149,18 @@ stopifnot(identical(
                  available_compartments = c("S", "E", "I", "R")),
              V = integer(0)),
          condition = NULL)))
+
+stopifnot(identical(
+    SimInf:::match_compartments(compartments = c(" S ", " E", "I ", "R"),
+                                ok_combine = FALSE,
+                                ok_lhs = FALSE,
+                                U = c("S", "E", "I", "R"),
+                                V = NULL),
+    list(lhs = NULL,
+         rhs = list(
+             U = structure(
+                 1:4,
+                 .Names = c("S", "E", "I", "R"),
+                 available_compartments = c("S", "E", "I", "R")),
+             V = integer(0)),
+         condition = NULL)))

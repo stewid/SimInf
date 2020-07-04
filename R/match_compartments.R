@@ -138,7 +138,7 @@ match_compartments <- function(compartments, ok_combine, ok_lhs, ...) {
             compartments, unlist(args, use.names = FALSE))
     } else {
         compartments <- list(lhs = NULL,
-                             rhs = unique(as.character(compartments)),
+                             rhs = unique(trimws(as.character(compartments))),
                              condition = NULL)
     }
 
