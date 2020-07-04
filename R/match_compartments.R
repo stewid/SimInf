@@ -29,23 +29,42 @@ parse_formula_item <- function(x) {
     x
 }
 
+define_dot <- function(a, b, args, ok_combine) {
+    dot <- NULL
+
+    if (!is.null(b)) {
+        dot <- unlist(lapply(args, function(x) {
+            if(any(b %in% x))
+                return(x)
+            NULL
+        }), use.names = FALSE)
+    }
+
+    if (is.null(dot)) {
+        if (isTRUE(ok_combine)) {
+            dot <- unlist(args, use.names = FALSE)
+        } else {
+            dot <- args[[1]]
+        }
+    }
+
+    dot
+}
+
 ##' Replace '.' with compartments in the model.
 ##' @noRd
-replace_dot <- function(x, args, ok_combine) {
-    if (is.null(x))
+replace_dot <- function(a, b, args, ok_combine) {
+    if (is.null(a))
         return(NULL)
 
-    x <- unlist(sapply(x, function(y) {
-        if (identical(y, "."))
-            if (isTRUE(ok_combine)) {
-                y <- unlist(args, use.names = FALSE)
-            } else {
-                y <- args[[1]]
-            }
-        y
+    dot <- define_dot(a, b, args, ok_combine)
+    a <- unlist(sapply(a, function(x) {
+        if (identical(x, "."))
+            x <- dot
+        x
     }))
 
-    unique(x)
+    unique(a)
 }
 
 parse_formula <- function(compartments, args, ok_combine) {
@@ -56,7 +75,6 @@ parse_formula <- function(compartments, args, ok_combine) {
     } else if (identical(length(compartments), 3L)) {
         lhs <- parse_formula_item(compartments[2])
         rhs <- parse_formula_item(compartments[3])
-
     } else {
         stop("Invalid formula specification of 'compartments'.", call. = FALSE)
     }
@@ -75,8 +93,8 @@ parse_formula <- function(compartments, args, ok_combine) {
         rhs <- parse_formula_item(rhs)
     }
 
-    lhs <- replace_dot(lhs, args, ok_combine)
-    rhs <- replace_dot(rhs, args, ok_combine)
+    lhs <- replace_dot(lhs, rhs, args, ok_combine)
+    rhs <- replace_dot(rhs, lhs, args, ok_combine)
 
     list(lhs = lhs, rhs = rhs, condition = condition)
 }

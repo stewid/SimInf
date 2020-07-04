@@ -202,3 +202,79 @@ stopifnot(identical(
 
 res <- assertError(SimInf:::parse_formula_item(""))
 check_error(res, "No compartments in formula specification.")
+
+stopifnot(identical(
+    SimInf:::match_compartments(compartments = D ~ .,
+                                ok_combine = FALSE,
+                                ok_lhs = TRUE,
+                                U = c("A", "B", "C"),
+                                V = c("D", "E", "F")),
+    list(lhs = list(
+             U = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = c("A", "B", "C")),
+             V = structure(
+                 c(D = 1L),
+                 available_compartments = c("D", "E", "F"))),
+         rhs = list(
+             U = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = c("A", "B", "C")),
+             V = structure(
+                 1:3,
+                 .Names = c("D", "E", "F"),
+                 available_compartments = c("D", "E", "F"))),
+         condition = NULL)))
+
+stopifnot(identical(
+    SimInf:::match_compartments(compartments = . ~ D,
+                                ok_combine = FALSE,
+                                ok_lhs = TRUE,
+                                U = c("A", "B", "C"),
+                                V = c("D", "E", "F")),
+    list(lhs = list(
+             U = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = c("A", "B", "C")),
+             V = structure(
+                 1:3,
+                 .Names = c("D", "E", "F"),
+                 available_compartments = c("D", "E", "F"))),
+         rhs = list(
+             U = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = c("A", "B", "C")),
+             V = structure(
+                 c(D = 1L),
+                 available_compartments = c("D", "E", "F"))),
+         condition = NULL)))
+
+stopifnot(identical(
+    SimInf:::match_compartments(compartments = . ~ .,
+                                ok_combine = FALSE,
+                                ok_lhs = TRUE,
+                                U = c("A", "B", "C"),
+                                V = c("D", "E", "F")),
+    list(lhs = list(
+             U = structure(
+                 1:3,
+                 .Names = c("A", "B", "C"),
+                 available_compartments = c("A", "B", "C")),
+             V = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = c("D", "E", "F"))),
+         rhs = list(
+             U = structure(
+                 1:3,
+                 .Names = c("A", "B", "C"),
+                 available_compartments = c("A", "B", "C")),
+             V = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = c("D", "E", "F"))),
+         condition = NULL)))
