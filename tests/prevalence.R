@@ -60,9 +60,6 @@ check_error(res, "Invalid 'formula' specification.")
 res <- assertError(prevalence(model, ~I))
 check_error(res, "Invalid 'formula' specification.")
 
-res <- assertError(SimInf:::parse_formula_item("", "S"))
-check_error(res, "No compartments in formula specification.")
-
 p <- prevalence(model, I ~ .)$prevalence
 stopifnot(all(abs(p - c(1 / 18, 2 / 18, 3 / 18, 3 / 18, 3 / 18)) < tol))
 

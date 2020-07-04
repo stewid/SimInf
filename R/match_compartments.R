@@ -20,31 +20,42 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ##' Determine the compartments in the formula item and split
-##' 'compartment1 + compartment2 + ...'. Moreover, trim whitespace and
-##' replace '.' with all compartments in the model.
+##' 'compartment1 + compartment2 + ...'. Moreover, trim whitespace.
 ##' @noRd
-parse_formula_item <- function(x, compartments) {
-    x <- unlist(strsplit(x, "+", fixed = TRUE))
-    x <- trimws(x)
-    x <- unlist(sapply(x, function(y) {
-        if (identical(y, "."))
-            y <- compartments
-        y
-    }))
-    x <- unique(as.character(x))
+parse_formula_item <- function(x) {
+    x <- unique(trimws(unlist(strsplit(x, "+", fixed = TRUE))))
     if (!length(x))
         stop("No compartments in formula specification.", call. = FALSE)
     x
 }
 
-parse_formula <- function(x, compartments) {
-    x <- as.character(x)
-    if (identical(length(x), 2L)) {
+##' Replace '.' with compartments in the model.
+##' @noRd
+replace_dot <- function(x, args, ok_combine) {
+    if (is.null(x))
+        return(NULL)
+
+    x <- unlist(sapply(x, function(y) {
+        if (identical(y, "."))
+            if (isTRUE(ok_combine)) {
+                y <- unlist(args, use.names = FALSE)
+            } else {
+                y <- args[[1]]
+            }
+        y
+    }))
+
+    unique(x)
+}
+
+parse_formula <- function(compartments, args, ok_combine) {
+    compartments <- as.character(compartments)
+    if (identical(length(compartments), 2L)) {
         lhs <- NULL
-        rhs <- parse_formula_item(x[2], compartments)
-    } else if (identical(length(x), 3L)) {
-        lhs <- parse_formula_item(x[2], compartments)
-        rhs <- parse_formula_item(x[3], compartments)
+        rhs <- parse_formula_item(compartments[2])
+    } else if (identical(length(compartments), 3L)) {
+        lhs <- parse_formula_item(compartments[2])
+        rhs <- parse_formula_item(compartments[3])
 
     } else {
         stop("Invalid formula specification of 'compartments'.", call. = FALSE)
@@ -61,8 +72,11 @@ parse_formula <- function(x, compartments) {
         }
 
         rhs <- sub("(^[^|]+)([|]?)(.*)$", "\\1", rhs)
-        rhs <- parse_formula_item(rhs, compartments)
+        rhs <- parse_formula_item(rhs)
     }
+
+    lhs <- replace_dot(lhs, args, ok_combine)
+    rhs <- replace_dot(rhs, args, ok_combine)
 
     list(lhs = lhs, rhs = rhs, condition = condition)
 }
@@ -134,8 +148,7 @@ match_compartments <- function(compartments, ok_combine, ok_lhs, ...) {
     args <- list(...)
 
     if (is(compartments, "formula")) {
-        compartments <- parse_formula(
-            compartments, unlist(args, use.names = FALSE))
+        compartments <- parse_formula(compartments, args, ok_combine)
     } else {
         compartments <- list(lhs = NULL,
                              rhs = unique(trimws(as.character(compartments))),

@@ -164,3 +164,41 @@ stopifnot(identical(
                  available_compartments = c("S", "E", "I", "R")),
              V = integer(0)),
          condition = NULL)))
+
+stopifnot(identical(
+    SimInf:::match_compartments(compartments = ~ .,
+                                ok_combine = FALSE,
+                                ok_lhs = FALSE,
+                                U = c("S", "I", "R"),
+                                V = "phi"),
+    list(lhs = NULL,
+         rhs = list(
+             U = structure(
+                 1:3,
+                 .Names = c("S", "I", "R"),
+                 available_compartments = c("S", "I", "R")),
+             V = structure(
+                 integer(0),
+                 .Names = character(0),
+                 available_compartments = "phi")),
+         condition = NULL)))
+
+stopifnot(identical(
+    SimInf:::match_compartments(compartments = ~ .,
+                                ok_combine = TRUE,
+                                ok_lhs = FALSE,
+                                U = c("S", "I", "R"),
+                                V = "phi"),
+    list(lhs = NULL,
+         rhs = list(
+             U = structure(
+                 1:3,
+                 .Names = c("S", "I", "R"),
+                 available_compartments = c("S", "I", "R")),
+             V = structure(
+                 c(phi = 1L),
+                 available_compartments = "phi")),
+         condition = NULL)))
+
+res <- assertError(SimInf:::parse_formula_item(""))
+check_error(res, "No compartments in formula specification.")
