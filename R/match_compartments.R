@@ -34,7 +34,7 @@ define_dot <- function(a, b, args, ok_combine) {
 
     if (!is.null(b)) {
         dot <- unlist(lapply(args, function(x) {
-            if(any(b %in% x))
+            if (any(b %in% x))
                 return(x)
             NULL
         }), use.names = FALSE)
