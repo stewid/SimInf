@@ -5,9 +5,11 @@ azure-pipelines\.yml
 azure-pipelines
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^covr\.html$
 ^man-roxygen$
 ^gsl\.zip$
 src/gsl
+^lib$
 ^logo$
 ^vignettes/SimInf\.aux$
 ^vignettes/SimInf\.bbl$
