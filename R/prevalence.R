@@ -21,18 +21,19 @@
 
 ## Sum all individuals in compartments in a matrix with one row per
 ## node X length(tspan)
-sum_individuals <- function(model, compartments, node) {
+sum_compartments <- function(model, compartments, ...) {
     m <- NULL
-    for (compartment in names(compartments)) {
-        if (is.null(m)) {
-            m <- trajectory(model, compartments = compartment,
-                            node = node, as.is = TRUE)
-        } else {
-            m <- m + trajectory(model, compartments = compartment,
-                                node = node, as.is = TRUE)
+
+    for (i in seq_len(length(compartments))) {
+        for (compartment in names(compartments[[i]])) {
+            if (is.null(m)) {
+                m <- trajectory(model, compartment, as.is = TRUE, ...)
+            } else {
+                m <- m + trajectory(model, compartment, as.is = TRUE, ...)
+            }
         }
     }
-    dimnames(m) <- NULL
+
     m
 }
 
@@ -171,8 +172,8 @@ setMethod(
 
         ## Sum all individuals in the 'cases' and 'population'
         ## compartments in a matrix with one row per node X length(tspan)
-        cases <- sum_individuals(model, compartments$lhs$U, node)
-        population <- sum_individuals(model, compartments$rhs$U, node)
+        cases <- sum_compartments(model, compartments$lhs, node = node)
+        population <- sum_compartments(model, compartments$rhs, node = node)
 
         ## Apply condition
         if (!is.null(compartments$condition)) {
