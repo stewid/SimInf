@@ -205,7 +205,7 @@ check_node_argument <- function(model, node) {
         stop("'node' must be integer.", call. = FALSE)
     if (min(node) < 1)
         stop("'node' must be integer > 0.", call. = FALSE)
-    if (max(node) > Nn(model))
+    if (max(node) > n_nodes(model))
         stop("'node' must be integer <= number of nodes.", call. = FALSE)
 
     as.integer(sort(unique(node)))

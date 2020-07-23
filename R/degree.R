@@ -25,7 +25,7 @@ degree <- function(model, a, b) {
     check_model_argument(model)
 
     ## Default degree is 0.
-    d <- integer(Nn(model))
+    d <- integer(n_nodes(model))
 
     ## Determine degree from data.
     i <- which(model@events@event == 3L)

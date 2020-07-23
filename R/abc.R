@@ -436,7 +436,7 @@ abc <- function(model, priors, ngen, npart, fn, ...,
         }
         target <- "gdata"
     } else {
-        if (!identical(Nn(model), 1L))
+        if (!identical(n_nodes(model), 1L))
             stop("The 'model' must contain one node.", call. = FALSE)
         target <- "ldata"
     }

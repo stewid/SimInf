@@ -179,7 +179,7 @@ setMethod(
     function(object) {
         ## The model name
         cat(sprintf("Model: %s\n", as.character(class(object))))
-        cat(sprintf("Number of nodes: %i\n", Nn(object)))
+        cat(sprintf("Number of nodes: %i\n", n_nodes(object)))
         cat(sprintf("Number of transitions: %i\n", Nt(object)))
         show(object@events)
 
@@ -211,7 +211,7 @@ setMethod(
         cat(sprintf("Model: %s\n", as.character(class(object))))
 
         ## Nodes
-        cat(sprintf("Number of nodes: %i\n", Nn(object)))
+        cat(sprintf("Number of nodes: %i\n", n_nodes(object)))
 
         summary_transitions(object)
         summary_gdata(object)
