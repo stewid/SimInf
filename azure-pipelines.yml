@@ -124,15 +124,15 @@ jobs:
   - template: azure-pipelines/check-package.yml
   - template: azure-pipelines/output-log.yml
 
-- job: macosx_R_devel
-  displayName: "Mac OS X, R-devel"
-  pool:
-    vmImage: "macOS-latest"
-  steps:
-  - template: azure-pipelines/macos-install-R-devel.yml
-  - template: azure-pipelines/macos-customize-R-startup.yml
-  - template: azure-pipelines/R-sessioninfo.yml
-  - template: azure-pipelines/macos-install-dependencies.yml
-  - template: azure-pipelines/build-package.yml
-  - template: azure-pipelines/check-package.yml
-  - template: azure-pipelines/output-log.yml
+# - job: macosx_R_devel
+#   displayName: "Mac OS X, R-devel"
+#   pool:
+#     vmImage: "macOS-latest"
+#   steps:
+#   - template: azure-pipelines/macos-install-R-devel.yml
+#   - template: azure-pipelines/macos-customize-R-startup.yml
+#   - template: azure-pipelines/R-sessioninfo.yml
+#   - template: azure-pipelines/macos-install-dependencies.yml
+#   - template: azure-pipelines/build-package.yml
+#   - template: azure-pipelines/check-package.yml
+#   - template: azure-pipelines/output-log.yml
