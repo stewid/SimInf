@@ -74,6 +74,7 @@ Collate:
     'distance.R'
     'match_compartments.R'
     'mparse.R'
+    'n.R'
     'openmp.R'
     'package_skeleton.R'
     'plot.R'
