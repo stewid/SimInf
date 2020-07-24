@@ -50,7 +50,7 @@ setMethod(
     }
 )
 
-##' Extract number of nodes in a model
+##' Determine the number of nodes in a model
 ##'
 ##' Extract number of nodes in a model.
 ##' @param model the \code{model} object to extract the number of
@@ -67,7 +67,8 @@ setMethod(
 ##' Nn(model)
 Nn <- function(model) {
     .Deprecated(new = "Use 'n_nodes' instead.",
-                msg = "'Nn' will be removed in a future version.")
+                msg = paste("'Nn' will be removed in a future version,",
+                            "use 'n_nodes' instead."))
     n_nodes(model)
 }
 
