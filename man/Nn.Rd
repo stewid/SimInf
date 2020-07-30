@@ -2,7 +2,7 @@
 % Please edit documentation in R/n.R
 \name{Nn}
 \alias{Nn}
-\title{Extract number of nodes in a model}
+\title{Determine the number of nodes in a model}
 \usage{
 Nn(model)
 }

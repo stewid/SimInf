@@ -2,14 +2,14 @@
 % Please edit documentation in R/prevalence.R
 \name{prevalence}
 \alias{prevalence}
-\alias{prevalence,SimInf_model-method}
+\alias{prevalence,SimInf_model,formula-method}
 \title{Calculate prevalence from a model object with trajectory data}
 \usage{
-prevalence(model, ...)
+prevalence(model, formula, ...)
 
-\S4method{prevalence}{SimInf_model}(
+\S4method{prevalence}{SimInf_model,formula}(
   model,
-  formula = NULL,
+  formula,
   type = c("pop", "nop", "wnp"),
   node = NULL,
   as.is = FALSE,
@@ -19,8 +19,6 @@ prevalence(model, ...)
 \arguments{
 \item{model}{The \code{model} with trajectory data to calculate
 the prevalence from.}
-
-\item{...}{Additional arguments. Not used.}
 
 \item{formula}{A formula that specifies the compartments that
 define the cases with a disease or that have a specific
@@ -40,6 +38,8 @@ when the recovered is zero in a \sQuote{SIR} model. The
 condition must evaluate to \code{TRUE} or \code{FALSE} in each
 node and time step. Note that if the denominator is zero, the
 prevalence is \code{NaN}.}
+
+\item{...}{Additional arguments. Not used.}
 
 \item{type}{The type of prevalence measure to calculate at each
 time point in \code{tspan}: \code{pop} (population prevalence)
