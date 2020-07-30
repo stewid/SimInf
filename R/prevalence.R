@@ -76,8 +76,8 @@ evaluate_condition <- function(condition, model, node) {
 ##'     the prevalence from.
 setGeneric(
     "prevalence",
-    signature = "model",
-    function(model, ...)
+    signature = c("model", "formula"),
+    function(model, formula, ...)
         standardGeneric("prevalence"))
 
 ##' @rdname prevalence
@@ -149,16 +149,13 @@ setGeneric(
 ##' prevalence(result, I~S+I+R|R==0, type = "wnp")
 setMethod(
     "prevalence",
-    signature(model = "SimInf_model"),
+    signature(model = "SimInf_model", formula = "formula"),
     function(model,
-             formula = NULL,
+             formula,
              type = c("pop", "nop", "wnp"),
              node = NULL,
              as.is = FALSE,
              ...) {
-        ## Check 'formula' argument
-        if (!is(formula, "formula"))
-            stop("Invalid 'formula' specification.", call. = FALSE)
         compartments <- match_compartments(compartments = formula,
                                            ok_combine = FALSE,
                                            ok_lhs = TRUE,
