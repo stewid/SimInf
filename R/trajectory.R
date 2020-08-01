@@ -95,7 +95,7 @@ trajectory_data <- function(model, name) {
 setGeneric(
     "trajectory",
     signature = "model",
-    function(model, ...)
+    function(model, compartments = NULL, node = NULL, as.is = FALSE)
         standardGeneric("trajectory"))
 
 ##' @rdname trajectory
@@ -136,7 +136,6 @@ setGeneric(
 ##'     number of individuals in each compartment. Using \code{as.is =
 ##'     TRUE} returns the result as a matrix, which is the internal
 ##'     format (see \sQuote{Details}).
-##' @param ... Additional arguments. Not used.
 ##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
 ##'     matrix.
 ##' @include SimInf_model.R
@@ -183,7 +182,7 @@ setGeneric(
 setMethod(
     "trajectory",
     signature(model = "SimInf_model"),
-    function(model, compartments = NULL, node = NULL, as.is = FALSE, ...) {
+    function(model, compartments, node, as.is) {
         if (is_trajectory_empty(model)) {
             stop("Please run the model first, the trajectory is empty.",
                  call. = FALSE)

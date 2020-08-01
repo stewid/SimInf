@@ -5,14 +5,12 @@
 \alias{trajectory,SimInf_model-method}
 \title{Extract data from a simulated trajectory}
 \usage{
-trajectory(model, ...)
+trajectory(model, compartments = NULL, node = NULL, as.is = FALSE)
 
-\S4method{trajectory}{SimInf_model}(model, compartments = NULL, node = NULL, as.is = FALSE, ...)
+\S4method{trajectory}{SimInf_model}(model, compartments = NULL, node = NULL, as.is = FALSE)
 }
 \arguments{
 \item{model}{the \code{model} to extract the result from.}
-
-\item{...}{Additional arguments. Not used.}
 
 \item{compartments}{specify the names of the compartments to
 extract data from. The compartments can be specified as a
