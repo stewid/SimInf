@@ -38,7 +38,7 @@ typedef struct {
 } rowinfo_vec;
 
 static void
-SimInf_insert_node_time(
+SimInf_insert_id_time(
     rowinfo_vec *ri,
     SEXP m,
     R_xlen_t m_stride,
@@ -63,7 +63,7 @@ SimInf_insert_node_time(
 }
 
 static void
-SimInf_insert_node_time2(
+SimInf_insert_id_time2(
     rowinfo_vec *ri,
     SEXP m1,
     SEXP m2,
@@ -449,16 +449,16 @@ SimInf_trajectory(
     if (dm_i_len > 0 && cm_i_len > 0) {
         if (dm_sparse && cm_sparse) {
             ri = calloc(1, sizeof(rowinfo_vec));
-            SimInf_insert_node_time2(ri, dm, cm, dm_stride, cm_stride, tlen);
+            SimInf_insert_id_time2(ri, dm, cm, dm_stride, cm_stride, tlen);
             nrow = kv_size(*ri);
         }
     } else if (dm_i_len > 0 && dm_sparse) {
         ri = calloc(1, sizeof(rowinfo_vec));
-        SimInf_insert_node_time(ri, dm, dm_stride, tlen);
+        SimInf_insert_id_time(ri, dm, dm_stride, tlen);
         nrow = kv_size(*ri);
     } else if (cm_i_len > 0 && cm_sparse) {
         ri = calloc(1, sizeof(rowinfo_vec));
-        SimInf_insert_node_time(ri, cm, cm_stride, tlen);
+        SimInf_insert_id_time(ri, cm, cm_stride, tlen);
         nrow = kv_size(*ri);
     }
 
