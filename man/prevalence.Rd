@@ -5,15 +5,20 @@
 \alias{prevalence,SimInf_model,formula-method}
 \title{Calculate prevalence from a model object with trajectory data}
 \usage{
-prevalence(model, formula, ...)
+prevalence(
+  model,
+  formula,
+  type = c("pop", "nop", "wnp"),
+  node = NULL,
+  as.is = FALSE
+)
 
 \S4method{prevalence}{SimInf_model,formula}(
   model,
   formula,
   type = c("pop", "nop", "wnp"),
   node = NULL,
-  as.is = FALSE,
-  ...
+  as.is = FALSE
 )
 }
 \arguments{
@@ -38,8 +43,6 @@ when the recovered is zero in a \sQuote{SIR} model. The
 condition must evaluate to \code{TRUE} or \code{FALSE} in each
 node and time step. Note that if the denominator is zero, the
 prevalence is \code{NaN}.}
-
-\item{...}{Additional arguments. Not used.}
 
 \item{type}{The type of prevalence measure to calculate at each
 time point in \code{tspan}: \code{pop} (population prevalence)

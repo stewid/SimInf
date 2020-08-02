@@ -77,8 +77,14 @@ evaluate_condition <- function(condition, model, node) {
 setGeneric(
     "prevalence",
     signature = c("model", "formula"),
-    function(model, formula, ...)
-        standardGeneric("prevalence"))
+    function(model,
+             formula,
+             type = c("pop", "nop", "wnp"),
+             node = NULL,
+             as.is = FALSE) {
+        standardGeneric("prevalence")
+    }
+)
 
 ##' @rdname prevalence
 ##' @param formula A formula that specifies the compartments that
@@ -113,7 +119,6 @@ setGeneric(
 ##'     \code{data.frame} with one row per time-step with the
 ##'     prevalence. Using \code{as.is = TRUE} returns the result as a
 ##'     matrix, which is the internal format.
-##' @param ... Additional arguments. Not used.
 ##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
 ##'     matrix.
 ##' @include SimInf_model.R
@@ -150,12 +155,7 @@ setGeneric(
 setMethod(
     "prevalence",
     signature(model = "SimInf_model", formula = "formula"),
-    function(model,
-             formula,
-             type = c("pop", "nop", "wnp"),
-             node = NULL,
-             as.is = FALSE,
-             ...) {
+    function(model, formula, type, node, as.is) {
         compartments <- match_compartments(compartments = formula,
                                            ok_combine = FALSE,
                                            ok_lhs = TRUE,
