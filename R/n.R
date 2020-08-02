@@ -36,8 +36,10 @@
 setGeneric(
     "n_nodes",
     signature = "model",
-    function(model)
-        standardGeneric("n_nodes"))
+    function(model) {
+        standardGeneric("n_nodes")
+    }
+)
 
 ##' @rdname n_nodes
 ##' @include SimInf_model.R

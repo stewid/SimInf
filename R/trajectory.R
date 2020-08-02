@@ -44,8 +44,10 @@ do_is_trajectory_empty <- function(model, slots) {
 setGeneric(
     "is_trajectory_empty",
     signature = "model",
-    function(model)
-        standardGeneric("is_trajectory_empty"))
+    function(model) {
+        standardGeneric("is_trajectory_empty")
+    }
+)
 
 ##' @include SimInf_model.R
 ##' @noRd
@@ -95,8 +97,10 @@ trajectory_data <- function(model, name) {
 setGeneric(
     "trajectory",
     signature = "model",
-    function(model, compartments = NULL, node = NULL, as.is = FALSE)
-        standardGeneric("trajectory"))
+    function(model, compartments = NULL, node = NULL, as.is = FALSE) {
+        standardGeneric("trajectory")
+    }
+)
 
 ##' @rdname trajectory
 ##' @section Internal format of the discrete state variables:
