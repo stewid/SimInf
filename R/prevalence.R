@@ -37,26 +37,27 @@ sum_compartments <- function(model, compartments, i) {
     m
 }
 
-evaluate_condition <- function(condition, model, node) {
+evaluate_condition <- function(model, compartments, i) {
     ## Create an environment to hold the trajectory data with one
     ## column for each compartment.
     e <- new.env(parent = baseenv())
-    for (compartment in rownames(model@S)) {
-        assign(x = compartment,
-               value = as.integer(trajectory(
-                   model,
-                   compartments = compartment,
-                   node = node,
-                   as.is = TRUE)),
-               pos = e)
+    for (j in seq_len(length(compartments$rhs))) {
+        if (length(compartments$rhs[[j]]) > 0) {
+            ac <- attr(compartments$rhs[[j]], "available_compartments")
+            for (compartment in ac) {
+                assign(x = compartment,
+                       value = as.integer(
+                           trajectory(model, compartment, i, as.is = TRUE)),
+                       pos = e)
+            }
+        }
     }
 
     ## Then evaluate the condition using the data in the environment.
+    condition <- compartments$condition
     e$condition <- condition
     k <- evalq(eval(parse(text = condition)), envir = e)
-    l <- length(model@tspan) * ifelse(is.null(node),
-                                      n_nodes(model),
-                                      length(node))
+    l <- length(model@tspan) * ifelse(is.null(i), n_nodes(model), length(i))
     if (!is.logical(k) || length(k) != l) {
         stop(paste0("The condition must be either 'TRUE' ",
                     "or 'FALSE' for every node and time step."),
@@ -176,7 +177,7 @@ setMethod(
 
         ## Apply condition
         if (!is.null(compartments$condition)) {
-            condition <- evaluate_condition(compartments$condition, model, node)
+            condition <- evaluate_condition(model, compartments, node)
             cases <- cases * condition
             population <- population * condition
         }
