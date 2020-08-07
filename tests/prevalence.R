@@ -74,6 +74,6 @@ check_error(
 p <- prevalence(model, I ~ . | S == 0 | R == 0)$prevalence
 stopifnot(all(abs(p - c(1 / 18, 2 / 18, 3 / 18, 0 / 12, 0 / 12)) < tol))
 
-p <- prevalence(model, I ~ . | S == 0 | R == 0, node = 2)$prevalence
+p <- prevalence(model, I ~ . | S == 0 | R == 0, i = 2)$prevalence
 stopifnot(all(abs(p[1:3] - c(1 / 6, 2 / 6, 3 / 6)) < tol))
 stopifnot(all(is.nan(p[4:5])))

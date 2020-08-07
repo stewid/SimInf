@@ -686,13 +686,21 @@ result <- run(model)
 res <- assertError(trajectory(result, compartments = c("A", "S")))
 check_error(res, "Non-existing compartment(s) in model: 'A'.")
 res <- assertError(trajectory(result, node = c("A", "S")))
-check_error(res, "'node' must be integer.")
+check_error(
+    res,
+    "The node index must be an integer > 0 and <= number of nodes.")
 res <- assertError(trajectory(result, node = 3.4))
-check_error(res, "'node' must be integer.")
+check_error(
+    res,
+    "The node index must be an integer > 0 and <= number of nodes.")
 res <- assertError(trajectory(result, node = 0))
-check_error(res, "'node' must be integer > 0.")
+check_error(
+    res,
+    "The node index must be an integer > 0 and <= number of nodes.")
 res <- assertError(trajectory(result, node = 10))
-check_error(res, "'node' must be integer <= number of nodes.")
+check_error(
+    res,
+    "The node index must be an integer > 0 and <= number of nodes.")
 
 ## Check arguments to 'prevalence' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
@@ -702,14 +710,22 @@ res <- assertError(prevalence(result, A + S ~ S))
 check_error(res, "Non-existing compartment(s) in model: 'A'.")
 res <- assertError(prevalence(result, S ~ A + S))
 check_error(res, "Non-existing compartment(s) in model: 'A'.")
-res <- assertError(prevalence(result, I ~ S + I + R, node = c("A", "S")))
-check_error(res, "'node' must be integer.")
-res <- assertError(prevalence(result, I ~ S + I + R, node = 3.4))
-check_error(res, "'node' must be integer.")
-res <- assertError(prevalence(result, I ~ S + I + R, node = 0))
-check_error(res, "'node' must be integer > 0.")
-res <- assertError(prevalence(result, I ~ S + I + R, node = 10))
-check_error(res, "'node' must be integer <= number of nodes.")
+res <- assertError(prevalence(result, I ~ S + I + R, i = c("A", "S")))
+check_error(
+    res,
+    "The node index must be an integer > 0 and <= number of nodes.")
+res <- assertError(prevalence(result, I ~ S + I + R, i = 3.4))
+check_error(
+    res,
+    "The node index must be an integer > 0 and <= number of nodes.")
+res <- assertError(prevalence(result, I ~ S + I + R, i = 0))
+check_error(
+    res,
+    "The node index must be an integer > 0 and <= number of nodes.")
+res <- assertError(prevalence(result, I ~ S + I + R, i = 10))
+check_error(
+    res,
+    "The node index must be an integer > 0 and <= number of nodes.")
 
 ## Check 'gdata'
 model <- SISe(u0 = data.frame(S = 10, I = 0), tspan = 1:10, phi = 0,
