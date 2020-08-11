@@ -21,15 +21,15 @@
 
 ## Sum all individuals in compartments in a matrix with one row per
 ## node X length(tspan)
-sum_compartments <- function(model, compartments, i) {
+sum_compartments <- function(model, compartments, index) {
     m <- NULL
 
     for (j in seq_len(length(compartments))) {
         for (compartment in names(compartments[[j]])) {
             if (is.null(m)) {
-                m <- trajectory(model, compartment, i, as.is = TRUE)
+                m <- trajectory(model, compartment, index, as.is = TRUE)
             } else {
-                m <- m + trajectory(model, compartment, i, as.is = TRUE)
+                m <- m + trajectory(model, compartment, index, as.is = TRUE)
             }
         }
     }
