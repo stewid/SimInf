@@ -99,7 +99,7 @@ init_plot_compartments <- function(x, compartments) {
 }
 
 init_plot_node <- function(x, node) {
-    node <- check_node_argument(x, node)
+    node <- check_node_index_argument(x, node)
     if (is.null(node))
         node <- seq_len(n_nodes(x))
     node

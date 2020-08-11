@@ -198,7 +198,7 @@ setMethod(
                                            U = rownames(model@S),
                                            V = rownames(model@v0))
 
-        node <- check_node_argument(model, node)
+        node <- check_node_index_argument(model, node)
 
         if (isTRUE(as.is)) {
             ## Extract data in the internal matrix format.

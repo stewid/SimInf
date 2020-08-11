@@ -168,7 +168,7 @@ setMethod(
         type <- match.arg(type)
 
         ## Check the node index argument 'i'.
-        i <- check_node_argument(model, i)
+        i <- check_node_index_argument(model, i)
 
         ## Sum all individuals in the 'cases' and 'population'
         ## compartments in a matrix with one row per node X
