@@ -83,7 +83,7 @@ setGeneric(
     function(model,
              formula,
              type = c("pop", "nop", "wnp"),
-             i = NULL,
+             index = NULL,
              as.is = FALSE) {
         standardGeneric("prevalence")
     }
@@ -115,9 +115,9 @@ setGeneric(
 ##'     proportion of nodes with at least one case, and \code{wnp}
 ##'     (within-node prevalence) calculates the proportion of cases
 ##'     within each node. Default is \code{pop}.
-##' @param i Indices specifying the subset of nodes to include in the
-##'     calculation of the prevalence. Default is \code{i = NULL},
-##'     which includes all nodes.
+##' @param index Indices specifying the subset of nodes to include in
+##'     the calculation of the prevalence. Default is \code{index =
+##'     NULL}, which includes all nodes.
 ##' @param as.is The default (\code{as.is = FALSE}) is to generate a
 ##'     \code{data.frame} with one row per time-step with the
 ##'     prevalence. Using \code{as.is = TRUE} returns the result as a
@@ -158,7 +158,7 @@ setGeneric(
 setMethod(
     "prevalence",
     signature(model = "SimInf_model", formula = "formula"),
-    function(model, formula, type, i, as.is) {
+    function(model, formula, type, index, as.is) {
         compartments <- match_compartments(compartments = formula,
                                            ok_combine = FALSE,
                                            ok_lhs = TRUE,
@@ -169,18 +169,18 @@ setMethod(
         ## Check 'type' argument
         type <- match.arg(type)
 
-        ## Check the node index argument 'i'.
-        i <- check_node_index_argument(model, i)
+        ## Check the node index argument.
+        index <- check_node_index_argument(model, index)
 
         ## Sum all individuals in the 'cases' and 'population'
         ## compartments in a matrix with one row per node X
         ## length(tspan)
-        cases <- sum_compartments(model, compartments$lhs, i)
-        population <- sum_compartments(model, compartments$rhs, i)
+        cases <- sum_compartments(model, compartments$lhs, index)
+        population <- sum_compartments(model, compartments$rhs, index)
 
         ## Apply condition
         if (!is.null(compartments$condition)) {
-            condition <- evaluate_condition(model, compartments, i)
+            condition <- evaluate_condition(model, compartments, index)
             cases <- cases * condition
             population <- population * condition
         }
@@ -208,11 +208,11 @@ setMethod(
                               stringsAsFactors = FALSE))
         }
 
-        if (is.null(i))
-            i <- seq_len(n_nodes(model))
+        if (is.null(index))
+            index <- seq_len(n_nodes(model))
 
-        data.frame(node = i,
-                   time = rep(time, each = length(i)),
+        data.frame(node = index,
+                   time = rep(time, each = length(index)),
                    prevalence = as.numeric(prevalence),
                    stringsAsFactors = FALSE)
     }

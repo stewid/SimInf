@@ -9,7 +9,7 @@ prevalence(
   model,
   formula,
   type = c("pop", "nop", "wnp"),
-  i = NULL,
+  index = NULL,
   as.is = FALSE
 )
 
@@ -17,7 +17,7 @@ prevalence(
   model,
   formula,
   type = c("pop", "nop", "wnp"),
-  i = NULL,
+  index = NULL,
   as.is = FALSE
 )
 }
@@ -52,9 +52,9 @@ proportion of nodes with at least one case, and \code{wnp}
 (within-node prevalence) calculates the proportion of cases
 within each node. Default is \code{pop}.}
 
-\item{i}{Indices specifying the subset of nodes to include in the
-calculation of the prevalence. Default is \code{i = NULL},
-which includes all nodes.}
+\item{index}{Indices specifying the subset of nodes to include in
+the calculation of the prevalence. Default is \code{index =
+NULL}, which includes all nodes.}
 
 \item{as.is}{The default (\code{as.is = FALSE}) is to generate a
 \code{data.frame} with one row per time-step with the
