@@ -37,7 +37,7 @@ sum_compartments <- function(model, compartments, index) {
     m
 }
 
-evaluate_condition <- function(model, compartments, i) {
+evaluate_condition <- function(model, compartments, index) {
     ## Create an environment to hold the trajectory data with one
     ## column for each compartment.
     e <- new.env(parent = baseenv())
@@ -47,7 +47,7 @@ evaluate_condition <- function(model, compartments, i) {
             for (compartment in ac) {
                 assign(x = compartment,
                        value = as.integer(
-                           trajectory(model, compartment, i, as.is = TRUE)),
+                           trajectory(model, compartment, index, TRUE)),
                        pos = e)
             }
         }
@@ -57,7 +57,9 @@ evaluate_condition <- function(model, compartments, i) {
     condition <- compartments$condition
     e$condition <- condition
     k <- evalq(eval(parse(text = condition)), envir = e)
-    l <- length(model@tspan) * ifelse(is.null(i), n_nodes(model), length(i))
+    l <- length(model@tspan) * ifelse(is.null(index),
+                                      n_nodes(model),
+                                      length(index))
     if (!is.logical(k) || length(k) != l) {
         stop(paste0("The condition must be either 'TRUE' ",
                     "or 'FALSE' for every node and time step."),
