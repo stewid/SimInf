@@ -92,7 +92,8 @@ jobs:
   - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
-      sudo dnf -y install gsl-devel R-digest
+      sudo dnf -y install gsl-devel
+      Rscript -e "install.packages('digest')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
