@@ -724,7 +724,7 @@ S_expected <- c(0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
 
 res <- run(model)
 S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"),
-                                 node = 1, as.is = TRUE))
+                                 index = 1, as.is = TRUE))
 stopifnot(identical(S_observed, S_expected))
 
 if (SimInf:::have_openmp()) {
@@ -732,7 +732,7 @@ if (SimInf:::have_openmp()) {
     res <- run(model)
     set_num_threads(1)
     S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"),
-                                     node = 1, as.is = TRUE))
+                                     index = 1, as.is = TRUE))
     stopifnot(identical(S_observed, S_expected))
 }
 

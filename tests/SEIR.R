@@ -194,12 +194,12 @@ R_expected <- data.frame(
     node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
     time = 0:9L,
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
-R_observed <- trajectory(result, compartments = "R", node = 1)
+R_observed <- trajectory(result, compartments = "R", index = 1)
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                        .Dim = c(1L, 10L))
-R_observed <- trajectory(result, compartments = "R", node = 1, as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", index = 1, as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first and third
@@ -211,13 +211,13 @@ R_expected <- data.frame(
              5L, 5L, 6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L),
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
-R_observed <- trajectory(result, compartments = "R", node = c(1, 3))
+R_observed <- trajectory(result, compartments = "R", index = c(1, 3))
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(2L, 10L))
-R_observed <- trajectory(result, compartments = "R", node = c(1, 3),
+R_observed <- trajectory(result, compartments = "R", index = c(1, 3),
                          as.is = TRUE)
 stopifnot(identical(R_observed, R_expected))
 
@@ -293,13 +293,13 @@ U_expected <- data.frame(
 U_observed <- trajectory(result)
 stopifnot(identical(U_observed, U_expected))
 U_observed <- trajectory(result, compartments = c("S", "E", "I", "R"),
-                         node = 1:6)
+                         index = 1:6)
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- data.frame(
     node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
     time = 0:9, S = 110:119, I = 130:139)
-U_observed <- trajectory(result, compartments = c("S", "I"), node = 1)
+U_observed <- trajectory(result, compartments = c("S", "I"), index = 1)
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- data.frame(
@@ -311,7 +311,7 @@ U_expected <- data.frame(
           225L, 425L, 226L, 426L, 227L, 427L, 228L, 428L, 229L, 429L),
     R = c(240L, 440L, 241L, 441L, 242L, 442L, 243L, 443L, 244L, 444L,
           245L, 445L, 246L, 446L, 247L, 447L, 248L, 448L, 249L, 449L))
-U_observed <- trajectory(result, compartments = c("E", "R"), node = c(2, 4))
+U_observed <- trajectory(result, compartments = c("E", "R"), index = c(2, 4))
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- structure(
@@ -321,7 +321,7 @@ U_expected <- structure(
       447L, 228L, 248L, 428L, 448L, 229L, 249L, 429L, 449L),
     .Dim = c(4L, 10L))
 U_observed <- trajectory(result, compartments = c("E", "R"),
-                         node = c(2, 4), as.is = TRUE)
+                         index = c(2, 4), as.is = TRUE)
 stopifnot(identical(U_observed, U_expected))
 
 ## Check prevalence

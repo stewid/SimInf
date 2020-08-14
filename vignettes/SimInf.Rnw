@@ -1241,12 +1241,12 @@ provides the \code{trajectory()} method to obtain a \code{data.frame}
 with the number of individuals in each compartment at the time points
 specified in \code{tspan}.  Below is an excerpt of the simulated data
 from the first node that clearly shows there was an outbreak there.
-To extract all data from every node, you only have to remove the node
+To extract all data from every node, you only have to remove the index
 argument.  Consult the help page for other \code{trajectory()}
 parameter options.
 
 <<SIR-head-trajectory>>=
-head(trajectory(model = result, node = 1))
+head(trajectory(model = result, index = 1))
 @
 
 \subsubsection[Specification of scheduled events in the SIR model]{%
@@ -1419,7 +1419,7 @@ of each trajectory.  Here, we find that infection spread from the
 set.seed(123)
 set_num_threads(1)
 mean(replicate(n = 1000, {
-  nI <- trajectory(run(model = model), node = 1:4)$I
+  nI <- trajectory(run(model = model), index = 1:4)$I
   sum(nI) > 0
 }))
 @
@@ -2144,9 +2144,9 @@ opar <- par(mfrow = c(1, 2))
 plot(R ~ F, trajectory(model = result), cex = 0.3, pch = 20,
   xlab = "Number of predators", ylab = "Number of prey",
   col = rgb(0, 0, 0, alpha = 0.1))
-plot(R ~ time, trajectory(model = result, node = 4), type = "l",
+plot(R ~ time, trajectory(model = result, index = 4), type = "l",
   xlab = "Time", ylab = "N")
-lines(F ~ time, trajectory(model = result, node = 4), type = "l", lty = 2)
+lines(F ~ time, trajectory(model = result, index = 4), type = "l", lty = 2)
 legend("right", c("Prey", "Predator"), lty = 1:2)
 par(opar)
 @

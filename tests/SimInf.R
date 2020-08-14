@@ -205,15 +205,15 @@ result <- run(model)
 stopifnot(identical(model@G, result@G))
 stopifnot(identical(model@S, result@S))
 
-m <- trajectory(result, compartments = "S_2", node = 1, as.is = TRUE) +
-    trajectory(result, compartments = "I_2", node = 1, as.is = TRUE)
+m <- trajectory(result, compartments = "S_2", index = 1, as.is = TRUE) +
+    trajectory(result, compartments = "I_2", index = 1, as.is = TRUE)
 dimnames(m) <- NULL
 stopifnot(identical(m,
                     structure(c(0L, 15L, 15L, 15L, 15L,
                                 15L, 15L, 15L, 15L, 15L, 15L),
                               .Dim = c(1L, 11L))))
-m <- trajectory(result, compartments = "S_3", node = 1, as.is = TRUE) +
-    trajectory(result, compartments = "I_3", node = 1, as.is = TRUE)
+m <- trajectory(result, compartments = "S_3", index = 1, as.is = TRUE) +
+    trajectory(result, compartments = "I_3", index = 1, as.is = TRUE)
 dimnames(m) <- NULL
 stopifnot(identical(m,
                     structure(c(0L, 15L, 15L, 15L, 15L,
@@ -231,15 +231,15 @@ if (SimInf:::have_openmp()) {
     set_num_threads(1)
     stopifnot(identical(model@G, result_omp@G))
     stopifnot(identical(model@S, result_omp@S))
-    m <- trajectory(result, compartments = "S_2", node = 1, as.is = TRUE) +
-        trajectory(result, compartments = "I_2", node = 1, as.is = TRUE)
+    m <- trajectory(result, compartments = "S_2", index = 1, as.is = TRUE) +
+        trajectory(result, compartments = "I_2", index = 1, as.is = TRUE)
     dimnames(m) <- NULL
     stopifnot(identical(m,
                         structure(c(0L, 15L, 15L, 15L, 15L,
                                     15L, 15L, 15L, 15L, 15L, 15L),
                                   .Dim = c(1L, 11L))))
-    m <- trajectory(result, compartments = "S_3", node = 1, as.is = TRUE) +
-        trajectory(result, compartments = "I_3", node = 1, as.is = TRUE)
+    m <- trajectory(result, compartments = "S_3", index = 1, as.is = TRUE) +
+        trajectory(result, compartments = "I_3", index = 1, as.is = TRUE)
     dimnames(m) <- NULL
     stopifnot(identical(m,
                         structure(c(0L, 15L, 15L, 15L, 15L,

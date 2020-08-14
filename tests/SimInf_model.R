@@ -679,25 +679,25 @@ res <- assertError(model <- SISe3(u0        = u0,
                                   epsilon   = 1))
 check_error(res, "'events' must be NULL or a data.frame.")
 
-## Check arguments to 'U' method
+## Check arguments to 'trajectory' method
 u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
 model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 result <- run(model)
 res <- assertError(trajectory(result, compartments = c("A", "S")))
 check_error(res, "Non-existing compartment(s) in model: 'A'.")
-res <- assertError(trajectory(result, node = c("A", "S")))
+res <- assertError(trajectory(result, index = c("A", "S")))
 check_error(
     res,
     "The node index must be an integer > 0 and <= number of nodes.")
-res <- assertError(trajectory(result, node = 3.4))
+res <- assertError(trajectory(result, index = 3.4))
 check_error(
     res,
     "The node index must be an integer > 0 and <= number of nodes.")
-res <- assertError(trajectory(result, node = 0))
+res <- assertError(trajectory(result, index = 0))
 check_error(
     res,
     "The node index must be an integer > 0 and <= number of nodes.")
-res <- assertError(trajectory(result, node = 10))
+res <- assertError(trajectory(result, index = 10))
 check_error(
     res,
     "The node index must be an integer > 0 and <= number of nodes.")

@@ -97,7 +97,7 @@ trajectory_data <- function(model, name) {
 setGeneric(
     "trajectory",
     signature = "model",
-    function(model, compartments = NULL, node = NULL, as.is = FALSE) {
+    function(model, compartments = NULL, index = NULL, as.is = FALSE) {
         standardGeneric("trajectory")
     }
 )
@@ -132,9 +132,9 @@ setGeneric(
 ##'     models that also have continuous state variables e.g. the
 ##'     \code{SISe} model, use \code{~.} instead of \code{NULL} to
 ##'     also include these.
-##' @param node indices specifying the subset of nodes to include when
-##'     extracting data. Default (\code{node = NULL}) is to extract data
-##'     from all nodes.
+##' @param index indices specifying the subset of nodes to include
+##'     when extracting data. Default (\code{index = NULL}) is to
+##'     extract data from all nodes.
 ##' @param as.is the default (\code{as.is = FALSE}) is to generate a
 ##'     \code{data.frame} with one row per node and time-step with the
 ##'     number of individuals in each compartment. Using \code{as.is =
@@ -163,11 +163,11 @@ setGeneric(
 ##'
 ##' ## Extract the number of recovered individuals in the first node
 ##' ## at the time-points in 'tspan'.
-##' trajectory(result, compartments = "R", node = 1)
+##' trajectory(result, compartments = "R", index = 1)
 ##'
 ##' ## Extract the number of recovered individuals in the first and
 ##' ## third node at the time-points in 'tspan'.
-##' trajectory(result, compartments = "R", node = c(1, 3))
+##' trajectory(result, compartments = "R", index = c(1, 3))
 ##'
 ##' ## Create an 'SISe' model with 6 nodes and initialize
 ##' ## it to run over 10 days.
@@ -186,7 +186,7 @@ setGeneric(
 setMethod(
     "trajectory",
     signature(model = "SimInf_model"),
-    function(model, compartments, node, as.is) {
+    function(model, compartments, index, as.is) {
         if (is_trajectory_empty(model)) {
             stop("Please run the model first, the trajectory is empty.",
                  call. = FALSE)
@@ -198,17 +198,17 @@ setMethod(
                                            U = rownames(model@S),
                                            V = rownames(model@v0))
 
-        node <- check_node_index_argument(model, node)
+        index <- check_node_index_argument(model, index)
 
         if (isTRUE(as.is)) {
             ## Extract data in the internal matrix format.
             if (length(compartments$rhs$U)) {
                 return(trajectory_as_is(trajectory_data(model, "U"), Nc(model),
-                                        compartments$rhs$U, node))
+                                        compartments$rhs$U, index))
             }
 
             return(trajectory_as_is(trajectory_data(model, "V"), Nd(model),
-                                    compartments$rhs$V, node))
+                                    compartments$rhs$V, index))
         }
 
         ## Coerce the dense/sparse 'U' and 'V' matrices to a
@@ -219,6 +219,6 @@ setMethod(
               attr(compartments$rhs$U, "available_compartments"),
               trajectory_data(model, "V"), compartments$rhs$V,
               attr(compartments$rhs$V, "available_compartments"),
-              model@tspan, n_nodes(model), node, "node")
+              model@tspan, n_nodes(model), index, "node")
     }
 )

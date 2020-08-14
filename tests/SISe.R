@@ -996,16 +996,16 @@ traj_expected <- data.frame(
     S = c(1L, 4L, 1L, 4L),
     phi = c(0.1, 0.4, 0.1, 0.4))
 stopifnot(identical(
-    trajectory(result, c("S", "S", "phi", "phi"), node = c(5, 2))[, -4],
+    trajectory(result, c("S", "S", "phi", "phi"), index = c(5, 2))[, -4],
     traj_expected[, -4]))
 stopifnot(identical(
-    trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, -4],
+    trajectory(result, c("phi", "phi", "S", "S"), index = c(5, 2))[, -4],
     traj_expected[, -4]))
 stopifnot(identical(
-    trajectory(result, c("S", "phi"), node = c(5, 2)),
+    trajectory(result, c("S", "phi"), index = c(5, 2)),
     traj_expected))
 
-d <- trajectory(result, c("phi", "phi", "S", "S"), node = c(5, 2))[, 4] -
+d <- trajectory(result, c("phi", "phi", "S", "S"), index = c(5, 2))[, 4] -
     traj_expected$phi
 stopifnot(all(abs(d) < 1e-8))
 
@@ -1016,7 +1016,7 @@ stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
 stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
 
 ## Check extracting a subset compartments of V in internal format
-traj_observed <- trajectory(result, "phi", node = c(5, 2), as.is = TRUE)
+traj_observed <- trajectory(result, "phi", index = c(5, 2), as.is = TRUE)
 stopifnot(identical(dim(traj_observed), c(2L, 2L)))
 stopifnot(all(abs(traj_observed[1, ] - 0.1) < 1e-8))
 stopifnot(all(abs(traj_observed[2, ] - 0.4) < 1e-8))
@@ -1027,7 +1027,7 @@ traj_expected <- data.frame(node = c(2L, 5L, 2L, 5L),
                             S = c(1L, 4L, 1L, 4L),
                             I = c(0L, 0L, 0L, 0L))
 stopifnot(identical(
-    trajectory(result, c("S", "I"), node = c(5, 2)),
+    trajectory(result, c("S", "I"), index = c(5, 2)),
     traj_expected))
 
 ## Check extracting all compartments in U as a data.frame
