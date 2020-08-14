@@ -50,7 +50,6 @@ Imports:
     digest,
     graphics,
     grDevices,
-    MASS,
     methods,
     stats,
     utils,
@@ -69,7 +68,6 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
-    'abc.R'
     'degree.R'
     'distance.R'
     'match_compartments.R'
