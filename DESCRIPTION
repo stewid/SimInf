@@ -54,6 +54,8 @@ Imports:
     stats,
     utils,
     Matrix
+Suggests:
+    knitr
 Collate:
     'C-generator.R'
     'check_arguments.R'
