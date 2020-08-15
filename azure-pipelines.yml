@@ -17,7 +17,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo apt-get -y install libgsl0-dev
-      Rscript -e "install.packages('digest')"
+      Rscript -e "install.packages('digest', 'knitr')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -37,7 +37,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo apt-get -y install libgsl0-dev
-      Rscript -e "install.packages('digest')"
+      Rscript -e "install.packages('digest', 'knitr')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -57,7 +57,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo apt-get -y install libgsl0-dev
-      Rscript -e "install.packages('digest')"
+      Rscript -e "install.packages('digest', 'knitr')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -77,7 +77,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo apt-get -y install libgsl0-dev
-      Rscript -e "install.packages('digest')"
+      Rscript -e "install.packages('digest', 'knitr')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
@@ -126,7 +126,7 @@ jobs:
   - template: azure-pipelines/R-sessioninfo.yml
   - bash: |
       sudo dnf -y install gsl-devel
-      Rscript -e "install.packages('digest')"
+      Rscript -e "install.packages('digest', 'knitr')"
     displayName: "Install package dependencies"
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml

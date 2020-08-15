@@ -3,5 +3,5 @@ steps:
     brew update
     brew reinstall llvm
     brew install gsl
-    Rscript -e "install.packages('digest')"
+    Rscript -e "install.packages('digest', 'knitr')"
   displayName: "Install dependencies"
