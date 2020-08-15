@@ -24,6 +24,15 @@
 ##' Produce box-and-whisker plot(s) of the number of individuals in
 ##' each model compartment.
 ##' @param x The \code{model} to plot
+##' @param compartments specify the names of the compartments to
+##'     extract data from. The compartments can be specified as a
+##'     character vector e.g. \code{compartments = c('S', 'I', 'R')},
+##'     or as a formula e.g. \code{compartments = ~S+I+R} (see
+##'     \sQuote{Examples}). Default (\code{compartments=NULL})
+##'     includes all compartments.
+##' @param index indices specifying the nodes to include when plotting
+##'     data. Default \code{index = NULL} include all nodes in the
+##'     model.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @aliases boxplot,SimInf_model-method
 ##' @export
@@ -43,14 +52,18 @@
 ##' ## Run the model and save the result.
 ##' result <- run(model)
 ##'
-##' ## Create a boxplot
+##' ## Create a boxplot that includes all compartments in all nodes.
 ##' boxplot(result)
+##'
+##' ## Create a boxplot that includes the S and I compartments in
+##' ## nodes 1 and 2.
+##' boxplot(result, ~S+I, 1:2)
 setMethod(
     "boxplot",
     signature(x = "SimInf_model"),
-    function(x, ...) {
+    function(x, compartments = NULL, index = NULL, ...) {
         ## Remove the first two columns node and time
-        boxplot(trajectory(x)[c(-1, -2)], ...)
+        boxplot(trajectory(x, compartments, index)[c(-1, -2)], ...)
     }
 )
 
