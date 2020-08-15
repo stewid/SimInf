@@ -73,6 +73,15 @@ setMethod(
 ##' compartment is produced. The \code{ij}th scatterplot contains
 ##' \code{x[,i]} plotted against \code{x[,j]}.
 ##' @param x The \code{model} to plot
+##' @param compartments specify the names of the compartments to
+##'     extract data from. The compartments can be specified as a
+##'     character vector e.g. \code{compartments = c('S', 'I', 'R')},
+##'     or as a formula e.g. \code{compartments = ~S+I+R} (see
+##'     \sQuote{Examples}). Default (\code{compartments=NULL})
+##'     includes all compartments.
+##' @param index indices specifying the nodes to include when plotting
+##'     data. Default \code{index = NULL} include all nodes in the
+##'     model.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @export
 ##' @include SimInf_model.R
@@ -91,14 +100,19 @@ setMethod(
 ##' ## Run the model and save the result.
 ##' result <- run(model)
 ##'
-##' ## Create a scatter plot
+##' ## Create a scatter plot that includes all compartments in all
+##' ## nodes.
 ##' pairs(result)
+##'
+##' ## Create a scatter plot that includes the S and I compartments in
+##' ## nodes 1 and 2.
+##' pairs(result, ~S+I, 1:2)
 setMethod(
     "pairs",
     signature(x = "SimInf_model"),
-    function(x, ...) {
+    function(x, compartments = NULL, index = NULL, ...) {
         ## Remove the first two columns node and time
-        pairs(trajectory(x)[c(-1, -2)], ...)
+        pairs(trajectory(x, compartments, index)[c(-1, -2)], ...)
     }
 )
 
