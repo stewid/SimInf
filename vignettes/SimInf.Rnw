@@ -112,7 +112,7 @@ options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 \begin{document}
 
 \SweaveOpts{engine=R,eps=FALSE,height=5,width=10}
-%\VignetteIndexEntry{1. SimInf: An R Package for Data-Driven Stochastic Disease Spread Simulations}
+%\VignetteIndexEntry{SimInf: An R Package for Data-Driven Stochastic Disease Spread Simulations}
 %\VignetteDepends{SimInf}
 %\VignetteKeywords{computational epidemiology, discrete-event simulation, multicore implementation, stochastic modeling}
 %\VignettePackage{SimInf}
