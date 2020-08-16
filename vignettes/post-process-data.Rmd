@@ -1,0 +1,27 @@
+---
+title: "Post-process data in a trajectory"
+author: "Stefan Widgren"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Post-process data in a trajectory}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+## Overview
+
+## `trajectory()`: Extract data from a simulated trajectory
+
+## `prevalence()`: Calculate prevalence from trajectory data
+
+## `plot()`: Display the outcome from a simulated trajectory
