@@ -1,5 +1,5 @@
 steps:
 - bash: |
-    sudo dnf -y install gsl-devel
+    sudo dnf -y install gsl-devel pandoc pandoc-citeproc
     Rscript -e "install.packages(c('digest', 'knitr', 'rmarkdown'))"
   displayName: "Install package dependencies"
