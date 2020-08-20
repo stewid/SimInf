@@ -1,5 +1,4 @@
 steps:
 - bash: |
-    sudo dnf -y install gsl-devel
-    Rscript -e "install.packages(c('digest', 'knitr'))"
+    sudo dnf -y install gsl-devel R-digest R-knitr
   displayName: "Install package dependencies"
