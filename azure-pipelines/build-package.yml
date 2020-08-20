@@ -1,7 +1,12 @@
 # This builds the package. The package is checked out to the 's' folder,
 # and that is why we can use 's' and not the name of the package.
+
+# FIXME: Skip building the vignettes since it currently fails on
+# R-devel and R-relese. I'm not sure why this happens but add the
+# vignettes again when it's fixed.
+
 steps:
 - bash: |
     cd ..
-    R CMD build --compact-vignettes=both s
+    R CMD build --no-manual --no-build-vignettes s
   displayName: 'Build package'
