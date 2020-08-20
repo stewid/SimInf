@@ -112,6 +112,14 @@ jobs:
   - template: azure-pipelines/dnf-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
+  - bash: |
+      cat /__w/1/SimInf.Rcheck/00install.out
+    condition: always()
+    displayName: "Output the installation log"
+  - bash: |
+      cat /__w/1/SimInf.Rcheck/00check.log
+    condition: always()
+    displayName: "Output the check log"
 
 - job: macosx_R_release
   displayName: "Mac OS X, R-release"
