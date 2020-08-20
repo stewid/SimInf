@@ -117,8 +117,8 @@ fi
 # List all model files to compile
 MODELS_OBJ=`"${RSCRIPT}" --slave --vanilla -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
-AC_SUBST([PKG_CPPFLAGS], ["-I. -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS}"])
-AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"])
+AC_SUBST([PKG_CPPFLAGS], ["-I. -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"])
+AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"])
 AC_SUBST(MODELS_OBJ)
 
@@ -127,9 +127,9 @@ AC_CONFIG_FILES([src/Makevars])
 echo "
   ---- Results for the SimInf package configure ----
 
-    PKG_CPPFLAGS..............: -I. -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS}
-    PKG_LIBS..................: ${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}
-    PKG_CFLAGS................: ${OPENMP_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS
+    PKG_CPPFLAGS..............: ${PKG_CPPFLAGS}
+    PKG_CFLAGS................: ${PKG_CFLAGS}
+    PKG_LIBS..................: ${PKG_LIBS}
     Have support for OpenMP...: ${ac_pkg_openmp}
 
   --------------------------------------------------
