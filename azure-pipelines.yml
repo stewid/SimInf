@@ -71,7 +71,7 @@ jobs:
   - template: azure-pipelines/check-package.yml
 
 - job: ubuntu_R_4_0
-  displayName: "Linux, R-4.0"
+  displayName: "Linux, R-release"
   pool:
     vmImage: "Ubuntu-18.04"
   steps:
@@ -86,25 +86,6 @@ jobs:
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
-
-- job: fedora_R_release
-  displayName: "Linux, R-release"
-  pool:
-    vmImage: "Ubuntu-latest"
-  container: fedora:latest
-  steps:
-  - template: azure-pipelines/dnf-install-R-release.yml
-  - template: azure-pipelines/customize-R-startup.yml
-  - template: azure-pipelines/R-sessioninfo.yml
-  - template: azure-pipelines/dnf-install-dependencies.yml
-  - template: azure-pipelines/build-package.yml
-  - template: azure-pipelines/check-package.yml
-  - template: azure-pipelines/static-code-analysis.yml
-  - bash: |
-      cd ..
-      nm -g SimInf.Rcheck/SimInf/libs/SimInf.so | \
-        grep -c " T " | grep 1 && exit 0 || exit 1
-    displayName: "Check visibility of C entry points"
   - template: azure-pipelines/code-coverage.yml
   - task: DotNetCoreInstaller@0
     inputs:
@@ -116,27 +97,6 @@ jobs:
     inputs:
       codeCoverageTool: 'Cobertura'
       summaryFileLocation: 'coverage.xml'
-
-- job: fedora_R_devel_gcc
-  displayName: "Linux, R-devel, GCC"
-  pool:
-    vmImage: "Ubuntu-latest"
-  container: fedora:latest
-  steps:
-  - template: azure-pipelines/dnf-install-R-devel.yml
-  - template: azure-pipelines/customize-R-startup.yml
-  - template: azure-pipelines/R-sessioninfo.yml
-  - template: azure-pipelines/dnf-install-dependencies.yml
-  - template: azure-pipelines/build-package.yml
-  - template: azure-pipelines/check-package.yml
-  - bash: |
-      cat /__w/1/SimInf.Rcheck/00install.out
-    condition: always()
-    displayName: "Output the installation log"
-  - bash: |
-      cat /__w/1/SimInf.Rcheck/00check.log
-    condition: always()
-    displayName: "Output the check log"
 
 - job: macosx_R_release
   displayName: "Mac OS X, R-release"
