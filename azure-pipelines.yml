@@ -70,6 +70,23 @@ jobs:
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
 
+- job: ubuntu_R_4_0
+  displayName: "Linux, R-4.0"
+  pool:
+    vmImage: "Ubuntu-18.04"
+  steps:
+  - template: azure-pipelines/ubuntu-install-R-4_0.yml
+  - bash: |
+      cd
+      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
+      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
+      mkdir -p $(Agent.BuildDirectory)/R/library
+    displayName: "Customize R startup"
+  - template: azure-pipelines/R-sessioninfo.yml
+  - template: azure-pipelines/ubuntu-install-dependencies.yml
+  - template: azure-pipelines/build-package.yml
+  - template: azure-pipelines/check-package.yml
+
 - job: fedora_R_release
   displayName: "Linux, R-release"
   pool:
