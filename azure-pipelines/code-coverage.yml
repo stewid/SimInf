@@ -1,6 +1,7 @@
 # Run code coverage
 steps:
 - bash: |
+    sudo apt-get -y install libcurl4-openssl-dev
     Rscript \
       -e "install.packages('covr')" \
       -e "covr::azure()"
