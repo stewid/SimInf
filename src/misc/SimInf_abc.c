@@ -18,15 +18,75 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <R.h>
-#include <Rdefines.h>
-#include <Rmath.h>
-#include <R_ext/Visibility.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_randist.h>
-#include <gsl/gsl_rng.h>
-#include "SimInf_arg.h"
+#if defined SIMINF_NO_ABC
+
+# include <Rdefines.h>
+# include <R_ext/Visibility.h>
+# include "SimInf.h"
+
+SEXP attribute_hidden SimInf_abc_proposals(
+    SEXP parameter,
+    SEXP distribution,
+    SEXP p1,
+    SEXP p2,
+    SEXP n,
+    SEXP x,
+    SEXP w,
+    SEXP sigma)
+{
+    SIMINF_UNUSED(parameter);
+    SIMINF_UNUSED(distribution);
+    SIMINF_UNUSED(p1);
+    SIMINF_UNUSED(p2);
+    SIMINF_UNUSED(n);
+    SIMINF_UNUSED(x);
+    SIMINF_UNUSED(w);
+    SIMINF_UNUSED(sigma);
+
+    Rf_error("The installed version of the GNU Scientific Library (GSL) that "
+             "is required to build SimInf with support for ABC is to old. "
+             "Please install GSL version >= 2.2 and reinstall SimInf if you "
+             "need that functionality.");
+
+    return R_NilValue;
+}
+
+SEXP attribute_hidden SimInf_abc_weights(
+    SEXP distribution,
+    SEXP p1,
+    SEXP p2,
+    SEXP x,
+    SEXP xx,
+    SEXP w,
+    SEXP sigma)
+{
+    SIMINF_UNUSED(distribution);
+    SIMINF_UNUSED(p1);
+    SIMINF_UNUSED(p2);
+    SIMINF_UNUSED(x);
+    SIMINF_UNUSED(xx);
+    SIMINF_UNUSED(w);
+    SIMINF_UNUSED(sigma);
+
+    Rf_error("The installed version of the GNU Scientific Library (GSL) that "
+             "is required to build SimInf with support for ABC is to old. "
+             "Please install GSL version >= 2.2 and reinstall SimInf if you "
+             "need that functionality.");
+
+    return R_NilValue;
+}
+
+#else
+
+# include <R.h>
+# include <Rdefines.h>
+# include <Rmath.h>
+# include <R_ext/Visibility.h>
+# include <gsl/gsl_matrix.h>
+# include <gsl/gsl_linalg.h>
+# include <gsl/gsl_randist.h>
+# include <gsl/gsl_rng.h>
+# include "SimInf_arg.h"
 
 static void SimInf_abc_error(int error)
 {
@@ -379,3 +439,5 @@ cleanup:
 
     return ww;
 }
+
+#endif
