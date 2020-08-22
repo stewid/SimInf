@@ -1,0 +1,47 @@
+---
+title: Scheduled events
+author: Stefan Widgren [![ORCID iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0001-5745-2284)
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Scheduled events}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+## Overview
+
+Incorporate births, deaths and movements as scheduled events at
+predefined time-points.
+
+## A first example
+
+Now we'll define **4** events to include in the simulation. Below is a
+`data.frame`, that contains the movements. Interpret it as follows:
+
+1. In time step **3** we move **1** animal from herd **1** to herd **2**
+2. In time step **4** we move **1** animal from herd **1** to herd **3**
+3. In time step **4** we move **1** animal from herd **1** to herd **4**
+2. In time step **5** we move **2** animals from herd **1** to herd
+   **5**
+
+```{r, eval = TRUE, echo = TRUE, message = FALSE}
+events <- data.frame(
+    event      = c(3, 3, 3, 3),  ## Event type 3 is a movement between herds
+    time       = c(3, 4, 4, 5),  ## The time that the event happens
+    node       = c(1, 1, 1, 1),  ## Which herd does the event occur
+    dest       = c(2, 3, 4, 5),  ## Which is the destination herd
+    n          = c(1, 1, 1, 2),  ## how many animals are moved
+    proportion = c(0, 0, 0, 0),  ## This is not used when n > 0
+    select     = c(2, 2, 2, 2),  ## 2nd column in select matrix
+    shift      = c(0, 0, 0, 0))  ## Not used in this example
+```
