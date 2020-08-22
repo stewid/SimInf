@@ -62,6 +62,7 @@ jobs:
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
   - template: azure-pipelines/code-coverage.yml
+  - template: azure-pipelines/static-code-analysis.yml
   - task: DotNetCoreInstaller@0
     inputs:
       packageType: sdk
