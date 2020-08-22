@@ -1,8 +1,8 @@
 # Run code coverage
 steps:
 - bash: |
-    sudo apt-get -y install libcurl4-openssl-dev
+    sudo apt-get -y install libcurl4-openssl-dev libxml2-dev
     Rscript \
-      -e "install.packages('covr')" \
+      -e "install.packages(c('covr', 'xml2'))" \
       -e "covr::azure()"
   displayName: 'Code coverage'
