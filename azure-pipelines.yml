@@ -62,11 +62,6 @@ jobs:
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
   - template: azure-pipelines/code-coverage.yml
-  - bash: |
-      cd ..
-      nm -g SimInf.Rcheck/SimInf/libs/SimInf.so | \
-        grep -c " T " | grep 1 && exit 0 || exit 1
-    displayName: "Check visibility of C entry points"
   - task: DotNetCoreInstaller@0
     inputs:
       packageType: sdk
