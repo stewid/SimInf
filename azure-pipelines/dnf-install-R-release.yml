@@ -1,7 +1,0 @@
-steps:
-- bash: |
-    sudo dnf -y install \
-      devscripts-checkbashisms \
-      langpacks-en \
-      R
-  displayName: "Install R"
