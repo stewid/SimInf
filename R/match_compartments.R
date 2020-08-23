@@ -127,14 +127,18 @@ stop_if_combined_data <- function(lhs, rhs) {
     msg <- "Cannot combine data from different slots."
 
     if (!is.null(lhs)) {
-        i <- vapply(lhs, function(x) {length(x) > 0}, logical(1))
+        i <- vapply(lhs, function(x) {
+            length(x) > 0
+        }, logical(1))
         lhs <- names(lhs)[i]
         if (length(lhs) > 1)
             stop(msg, call. = FALSE)
     }
 
     if (!is.null(rhs)) {
-        i <- vapply(rhs, function(x) {length(x) > 0}, logical(1))
+        i <- vapply(rhs, function(x) {
+            length(x) > 0
+        }, logical(1))
         rhs <- names(rhs)[i]
         if (length(rhs) > 1)
             stop(msg, call. = FALSE)
