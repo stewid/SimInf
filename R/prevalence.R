@@ -69,6 +69,31 @@ evaluate_condition <- function(model, compartments, index) {
     matrix(k, ncol = length(model@tspan))
 }
 
+calculate_prevalence <- function(model, compartments, type, index) {
+    ## Sum all individuals in the 'cases' and 'population'
+    ## compartments in a matrix with one row per node X length(tspan)
+    cases <- sum_compartments(model, compartments$lhs, index)
+    population <- sum_compartments(model, compartments$rhs, index)
+
+    ## Apply condition
+    if (!is.null(compartments$condition)) {
+        condition <- evaluate_condition(model, compartments, index)
+        cases <- cases * condition
+        population <- population * condition
+    }
+
+    if (identical(type, "pop")) {
+        cases <- colSums(cases)
+        population <- colSums(population)
+    } else if (identical(type, "nop")) {
+        cases <- colSums(cases > 0)
+        ## Only include nodes with individuals
+        population <- colSums(population > 0)
+    }
+
+    cases / population
+}
+
 ##' Calculate prevalence from a model object with trajectory data
 ##'
 ##' Calculate the proportion of individuals with disease in the
@@ -172,28 +197,7 @@ setMethod(
         ## Check the node index argument.
         index <- check_node_index_argument(model, index)
 
-        ## Sum all individuals in the 'cases' and 'population'
-        ## compartments in a matrix with one row per node X length(tspan)
-        cases <- sum_compartments(model, compartments$lhs, index)
-        population <- sum_compartments(model, compartments$rhs, index)
-
-        ## Apply condition
-        if (!is.null(compartments$condition)) {
-            condition <- evaluate_condition(model, compartments, index)
-            cases <- cases * condition
-            population <- population * condition
-        }
-
-        if (identical(type, "pop")) {
-            cases <- colSums(cases)
-            population <- colSums(population)
-        } else if (identical(type, "nop")) {
-            cases <- colSums(cases > 0)
-            ## Only include nodes with individuals
-            population <- colSums(population > 0)
-        }
-
-        prevalence <- cases / population
+        prevalence <- calculate_prevalence(model, compartments, type, index)
 
         if (isTRUE(as.is))
             return(prevalence)
