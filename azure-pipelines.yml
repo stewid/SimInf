@@ -8,12 +8,7 @@ jobs:
     vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_3.yml
-  - bash: |
-      cd
-      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-      mkdir -p $(Agent.BuildDirectory)/R/library
-    displayName: "Customize R startup"
+  - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
@@ -25,12 +20,7 @@ jobs:
     vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_4.yml
-  - bash: |
-      cd
-      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-      mkdir -p $(Agent.BuildDirectory)/R/library
-    displayName: "Customize R startup"
+  - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
@@ -42,12 +32,7 @@ jobs:
     vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_5.yml
-  - bash: |
-      cd
-      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-      mkdir -p $(Agent.BuildDirectory)/R/library
-    displayName: "Customize R startup"
+  - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
@@ -59,12 +44,7 @@ jobs:
     vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_6.yml
-  - bash: |
-      cd
-      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-      mkdir -p $(Agent.BuildDirectory)/R/library
-    displayName: "Customize R startup"
+  - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
@@ -76,17 +56,13 @@ jobs:
     vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-4_0.yml
-  - bash: |
-      cd
-      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-      mkdir -p $(Agent.BuildDirectory)/R/library
-    displayName: "Customize R startup"
+  - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
   - template: azure-pipelines/code-coverage.yml
+  - template: azure-pipelines/static-code-analysis.yml
   - task: DotNetCoreInstaller@0
     inputs:
       packageType: sdk

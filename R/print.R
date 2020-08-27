@@ -180,7 +180,7 @@ setMethod(
         ## The model name
         cat(sprintf("Model: %s\n", as.character(class(object))))
         cat(sprintf("Number of nodes: %i\n", n_nodes(object)))
-        cat(sprintf("Number of transitions: %i\n", Nt(object)))
+        cat(sprintf("Number of transitions: %i\n", n_transitions(object)))
         show(object@events)
 
         if (length(object@gdata))
