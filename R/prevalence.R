@@ -212,13 +212,11 @@ setMethod(
         if (is.null(compartments$lhs))
             stop("Invalid 'formula' specification.", call. = FALSE)
 
-        ## Check 'type' argument
         type <- match.arg(type)
-
-        ## Check the node index argument.
         index <- check_node_index_argument(model, index)
-
         n <- n_nodes(model)
-        calculate_prevalence(model, compartments, type, index, n, as.is, "node")
+        id <- "node"
+
+        calculate_prevalence(model, compartments, type, index, n, as.is, id)
     }
 )
