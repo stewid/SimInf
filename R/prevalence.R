@@ -37,7 +37,7 @@ sum_compartments <- function(model, compartments, index) {
     m
 }
 
-evaluate_condition <- function(model, compartments, index) {
+evaluate_condition <- function(model, compartments, index, n) {
     ## Create an environment to hold the trajectory data with one
     ## column for each compartment.
     e <- new.env(parent = baseenv())
@@ -57,9 +57,7 @@ evaluate_condition <- function(model, compartments, index) {
     condition <- compartments$condition
     e$condition <- condition
     k <- evalq(eval(parse(text = condition)), envir = e)
-    l <- length(model@tspan) * ifelse(is.null(index),
-                                      n_nodes(model),
-                                      length(index))
+    l <- length(model@tspan) * ifelse(is.null(index), n, length(index))
     if (!is.logical(k) || length(k) != l) {
         stop(paste0("The condition must be either 'TRUE' ",
                     "or 'FALSE' for every node and time step."),
@@ -69,7 +67,7 @@ evaluate_condition <- function(model, compartments, index) {
     matrix(k, ncol = length(model@tspan))
 }
 
-calculate_prevalence <- function(model, compartments, type, index) {
+calculate_prevalence <- function(model, compartments, type, index, n) {
     ## Sum all individuals in the 'cases' and 'population'
     ## compartments in a matrix with one row per node X length(tspan)
     cases <- sum_compartments(model, compartments$lhs, index)
@@ -77,7 +75,7 @@ calculate_prevalence <- function(model, compartments, type, index) {
 
     ## Apply condition
     if (!is.null(compartments$condition)) {
-        condition <- evaluate_condition(model, compartments, index)
+        condition <- evaluate_condition(model, compartments, index, n)
         cases <- cases * condition
         population <- population * condition
     }
@@ -197,7 +195,8 @@ setMethod(
         ## Check the node index argument.
         index <- check_node_index_argument(model, index)
 
-        prevalence <- calculate_prevalence(model, compartments, type, index)
+        n <- n_nodes(model)
+        prevalence <- calculate_prevalence(model, compartments, type, index, n)
 
         if (isTRUE(as.is))
             return(prevalence)
