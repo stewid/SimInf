@@ -46,6 +46,14 @@ res <- assertError(
                                 V = "phi"))
 check_error(res, "Cannot combine data from different slots.")
 
+res <- assertError(
+    SimInf:::match_compartments(compartments = phi ~ S + I,
+                                ok_combine = FALSE,
+                                ok_lhs = TRUE,
+                                U = c("S", "I", "R"),
+                                V = "phi"))
+check_error(res, "Cannot combine data from different slots.")
+
 stopifnot(identical(
     SimInf:::match_compartments(compartments = ~S + I + phi,
                                 ok_combine = TRUE,

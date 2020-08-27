@@ -80,11 +80,38 @@ Nc <- function(model) {
     dim(model@S)[1]
 }
 
-## Number of transitions
-Nt <- function(model) {
-    check_model_argument(model)
-    dim(model@G)[1]
-}
+##' Determine the number of transitions in a model
+##'
+##' @param model the \code{model} object to extract the number of
+##'     transitions from.
+##' @return the number of transitions in the model.
+##' @noRd
+##' @examples
+##' ## Create an 'SIR' model with 100 nodes, with 99 susceptible,
+##' ## 1 infected and 0 recovered in each node.
+##' u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
+##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##'
+##' ## Display the number of transitions in the model.
+##' n_transitions(model)
+setGeneric(
+    "n_transitions",
+    signature = "model",
+    function(model) {
+        standardGeneric("n_transitions")
+    }
+)
+
+##' @rdname n_transitions
+##' @include SimInf_model.R
+##' @noRd
+setMethod(
+    "n_transitions",
+    signature(model = "SimInf_model"),
+    function(model) {
+        dim(model@G)[1]
+    }
+)
 
 ## Number of continuous state variables
 Nd <- function(model) {

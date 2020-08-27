@@ -8,12 +8,7 @@ jobs:
     vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_3.yml
-  - bash: |
-      cd
-      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-      mkdir -p $(Agent.BuildDirectory)/R/library
-    displayName: "Customize R startup"
+  - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
@@ -25,12 +20,7 @@ jobs:
     vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_4.yml
-  - bash: |
-      cd
-      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-      mkdir -p $(Agent.BuildDirectory)/R/library
-    displayName: "Customize R startup"
+  - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
@@ -42,12 +32,7 @@ jobs:
     vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_5.yml
-  - bash: |
-      cd
-      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-      mkdir -p $(Agent.BuildDirectory)/R/library
-    displayName: "Customize R startup"
+  - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
@@ -59,59 +44,35 @@ jobs:
     vmImage: "Ubuntu-18.04"
   steps:
   - template: azure-pipelines/ubuntu-install-R-3_6.yml
-  - bash: |
-      cd
-      echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-      echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-      mkdir -p $(Agent.BuildDirectory)/R/library
-    displayName: "Customize R startup"
+  - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
 
-# - job: fedora_R_release
-#   displayName: "Linux, R-release"
-#   pool:
-#     vmImage: "Ubuntu-latest"
-#   container: fedora:latest
-#   steps:
-#   - template: azure-pipelines/dnf-install-R-release.yml
-#   - template: azure-pipelines/customize-R-startup.yml
-#   - template: azure-pipelines/R-sessioninfo.yml
-#   - template: azure-pipelines/dnf-install-dependencies.yml
-#   - template: azure-pipelines/build-package.yml
-#   - template: azure-pipelines/check-package.yml
-#   - template: azure-pipelines/static-code-analysis.yml
-#   - bash: |
-#       cd ..
-#       nm -g SimInf.Rcheck/SimInf/libs/SimInf.so | \
-#         grep -c " T " | grep 1 && exit 0 || exit 1
-#     displayName: "Check visibility of C entry points"
-#   - template: azure-pipelines/code-coverage.yml
-#   - task: DotNetCoreInstaller@0
-#     inputs:
-#       packageType: sdk
-#       version: 2.2.207
-#       installationPath: $(Agent.ToolsDirectory)/dotnet
-#     displayName: "Install dotnet core"
-#   - task: PublishCodeCoverageResults@1
-#     inputs:
-#       codeCoverageTool: 'Cobertura'
-#       summaryFileLocation: 'coverage.xml'
-
-- job: fedora_R_devel_gcc
-  displayName: "Linux, R-devel, GCC"
+- job: ubuntu_R_4_0
+  displayName: "Linux, R-release"
   pool:
-    vmImage: "Ubuntu-latest"
-  container: fedora:latest
+    vmImage: "Ubuntu-18.04"
   steps:
-  - template: azure-pipelines/dnf-install-R-devel.yml
+  - template: azure-pipelines/ubuntu-install-R-4_0.yml
   - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
-  - template: azure-pipelines/dnf-install-dependencies.yml
+  - template: azure-pipelines/ubuntu-install-dependencies.yml
   - template: azure-pipelines/build-package.yml
   - template: azure-pipelines/check-package.yml
+  - template: azure-pipelines/code-coverage.yml
+  - template: azure-pipelines/static-code-analysis.yml
+  - task: DotNetCoreInstaller@0
+    inputs:
+      packageType: sdk
+      version: 2.2.207
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+    displayName: "Install dotnet core"
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: 'Cobertura'
+      summaryFileLocation: 'coverage.xml'
 
 - job: macosx_R_release
   displayName: "Mac OS X, R-release"
