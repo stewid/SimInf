@@ -123,6 +123,33 @@ transform_compartments <- function(compartments, args) {
     }, compartments, args, SIMPLIFY = FALSE)
 }
 
+stop_if_combined_data <- function(lhs, rhs) {
+    msg <- "Cannot combine data from different slots."
+
+    if (!is.null(lhs)) {
+        i <- vapply(lhs, function(x) {
+            length(x) > 0
+        }, logical(1))
+        lhs <- names(lhs)[i]
+        if (length(lhs) > 1)
+            stop(msg, call. = FALSE)
+    }
+
+    if (!is.null(rhs)) {
+        i <- vapply(rhs, function(x) {
+            length(x) > 0
+        }, logical(1))
+        rhs <- names(rhs)[i]
+        if (length(rhs) > 1)
+            stop(msg, call. = FALSE)
+    }
+
+    if (!is.null(lhs) && !is.null(rhs) && lhs != rhs)
+        stop(msg, call. = FALSE)
+
+    invisible(NULL)
+}
+
 check_matched_data <- function(ok_combine, ok_lhs, lhs, rhs, compartments) {
     compartments <- setdiff(unlist(c(compartments$lhs, compartments$rhs)),
                             unlist(c(lhs, rhs)))
@@ -135,13 +162,8 @@ check_matched_data <- function(ok_combine, ok_lhs, lhs, rhs, compartments) {
     if (!isTRUE(ok_lhs) && !is.null(lhs))
         stop("Invalid formula specification of 'compartments'.", call. = FALSE)
 
-    if (isTRUE(ok_combine))
-        return(invisible(NULL))
-
-    if (all(!is.null(lhs), (length(lhs) > 1), all(sapply(lhs, length))))
-        stop("Cannot combine data from different slots.", call. = FALSE)
-    if (all(!is.null(rhs), (length(rhs) > 1), all(sapply(rhs, length))))
-        stop("Cannot combine data from different slots.", call. = FALSE)
+    if (!isTRUE(ok_combine))
+        stop_if_combined_data(lhs, rhs)
 
     invisible(NULL)
 }

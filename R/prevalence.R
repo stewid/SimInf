@@ -37,7 +37,7 @@ sum_compartments <- function(model, compartments, index) {
     m
 }
 
-evaluate_condition <- function(model, compartments, index) {
+evaluate_condition <- function(model, compartments, index, n) {
     ## Create an environment to hold the trajectory data with one
     ## column for each compartment.
     e <- new.env(parent = baseenv())
@@ -57,9 +57,7 @@ evaluate_condition <- function(model, compartments, index) {
     condition <- compartments$condition
     e$condition <- condition
     k <- evalq(eval(parse(text = condition)), envir = e)
-    l <- length(model@tspan) * ifelse(is.null(index),
-                                      n_nodes(model),
-                                      length(index))
+    l <- length(model@tspan) * ifelse(is.null(index), n, length(index))
     if (!is.logical(k) || length(k) != l) {
         stop(paste0("The condition must be either 'TRUE' ",
                     "or 'FALSE' for every node and time step."),
@@ -67,6 +65,54 @@ evaluate_condition <- function(model, compartments, index) {
     }
 
     matrix(k, ncol = length(model@tspan))
+}
+
+calculate_prevalence <- function(model, compartments, type,
+                                 index, n, as.is, id) {
+    ## Sum all individuals in the 'cases' and 'population'
+    ## compartments in a matrix with one row per node X length(tspan)
+    cases <- sum_compartments(model, compartments$lhs, index)
+    population <- sum_compartments(model, compartments$rhs, index)
+
+    ## Apply condition
+    if (!is.null(compartments$condition)) {
+        condition <- evaluate_condition(model, compartments, index, n)
+        cases <- cases * condition
+        population <- population * condition
+    }
+
+    if (identical(type, "pop")) {
+        cases <- colSums(cases)
+        population <- colSums(population)
+    } else if (identical(type, "nop")) {
+        cases <- colSums(cases > 0)
+        ## Only include nodes with individuals
+        population <- colSums(population > 0)
+    }
+
+    prevalence <- cases / population
+
+    if (isTRUE(as.is))
+        return(prevalence)
+
+    time <- names(model@tspan)
+    if (is.null(time))
+        time <- model@tspan
+    if (type %in% c("pop", "nop")) {
+        return(data.frame(time = time,
+                          prevalence = prevalence,
+                          stringsAsFactors = FALSE))
+    }
+
+    if (is.null(index))
+        index <- seq_len(n)
+
+    prevalence <- data.frame(id = index,
+                             time = rep(time, each = length(index)),
+                             prevalence = as.numeric(prevalence),
+                             stringsAsFactors = FALSE)
+    colnames(prevalence)[1] <- id
+    prevalence
 }
 
 ##' Calculate prevalence from a model object with trajectory data
@@ -166,54 +212,11 @@ setMethod(
         if (is.null(compartments$lhs))
             stop("Invalid 'formula' specification.", call. = FALSE)
 
-        ## Check 'type' argument
         type <- match.arg(type)
-
-        ## Check the node index argument.
         index <- check_node_index_argument(model, index)
+        n <- n_nodes(model)
+        id <- "node"
 
-        ## Sum all individuals in the 'cases' and 'population'
-        ## compartments in a matrix with one row per node X
-        ## length(tspan)
-        cases <- sum_compartments(model, compartments$lhs, index)
-        population <- sum_compartments(model, compartments$rhs, index)
-
-        ## Apply condition
-        if (!is.null(compartments$condition)) {
-            condition <- evaluate_condition(model, compartments, index)
-            cases <- cases * condition
-            population <- population * condition
-        }
-
-        if (identical(type, "pop")) {
-            cases <- colSums(cases)
-            population <- colSums(population)
-        } else if (identical(type, "nop")) {
-            cases <- colSums(cases > 0)
-            ## Only include nodes with individuals
-            population <- colSums(population > 0)
-        }
-
-        prevalence <- cases / population
-
-        if (isTRUE(as.is))
-            return(prevalence)
-
-        time <- names(model@tspan)
-        if (is.null(time))
-            time <- model@tspan
-        if (type %in% c("pop", "nop")) {
-            return(data.frame(time = time,
-                              prevalence = prevalence,
-                              stringsAsFactors = FALSE))
-        }
-
-        if (is.null(index))
-            index <- seq_len(n_nodes(model))
-
-        data.frame(node = index,
-                   time = rep(time, each = length(index)),
-                   prevalence = as.numeric(prevalence),
-                   stringsAsFactors = FALSE)
+        calculate_prevalence(model, compartments, type, index, n, as.is, id)
     }
 )
