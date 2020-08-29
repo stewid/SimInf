@@ -14,10 +14,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo = FALSE, message = FALSE}
-knitr::opts_chunk$set(collapse = TRUE)
-```
-
 ## Overview
 
 Incorporate births, deaths and movements as scheduled events at
