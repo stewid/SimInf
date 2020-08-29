@@ -2,6 +2,10 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* Added the 'compartments' and 'index' arguments to the 'boxplot' and
+  'pairs' plotting methods to facilitate analysis of a simulated
+  trajectory, see the documentation.
+
 * Changed the 'prevalence' function to an S4 method.
 
 * Changed the 'trajectory' function to an S4 method.
