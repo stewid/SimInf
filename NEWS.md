@@ -10,8 +10,25 @@
 
 * Changed the 'trajectory' function to an S4 method.
 
+* Removed the unused '...' argument from the prevalence and trajectory
+  functions.
+
 * The build configuration script has been improved to identify if
-  OpenMP can be used.
+  OpenMP can be used. It is also possible to skip the check for OpenMP
+  if --disable-openmp is specified.
+
+* Added the S4 method 'n_nodes' to replace 'Nn' function.
+
+## BREAKING CHANGES
+
+Backwards incompatible changes that are the reason why the major
+version has been incremented.
+
+* Renamed the node index argument in the prevalence function was
+  renamed from 'node' to 'index'.
+
+* Renamed the node index argument in the trajectory function was
+  renamed from 'node' to 'index'.
 
 # SimInf 7.0.1 (2020-06-18)
 
