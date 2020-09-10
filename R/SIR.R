@@ -178,10 +178,10 @@ SIR <- function(u0,
 ##' summary(result)
 events_SIR <- function() {
     data("events_SISe3", package = "SimInf", envir = environment())
-    events_SISe3$select[events_SISe3$event == "exit"] <- 4
-    events_SISe3$select[events_SISe3$event == "enter"] <- 1
+    events_SISe3$select[events_SISe3$event == "exit"] <- 4L
+    events_SISe3$select[events_SISe3$event == "enter"] <- 1L
     events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
-    events_SISe3$select[events_SISe3$event == "extTrans"] <- 4
+    events_SISe3$select[events_SISe3$event == "extTrans"] <- 4L
     events_SISe3
 }
 
