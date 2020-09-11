@@ -10,7 +10,7 @@ prevalence(
   formula,
   type = c("pop", "nop", "wnp"),
   index = NULL,
-  as.is = FALSE
+  format = c("data.frame", "matrix")
 )
 
 \S4method{prevalence}{SimInf_model,formula}(
@@ -18,7 +18,7 @@ prevalence(
   formula,
   type = c("pop", "nop", "wnp"),
   index = NULL,
-  as.is = FALSE
+  format = c("data.frame", "matrix")
 )
 }
 \arguments{
@@ -56,14 +56,14 @@ within each node. Default is \code{pop}.}
 the calculation of the prevalence. Default is \code{index =
 NULL}, which includes all nodes.}
 
-\item{as.is}{The default (\code{as.is = FALSE}) is to generate a
-\code{data.frame} with one row per time-step with the
-prevalence. Using \code{as.is = TRUE} returns the result as a
-matrix, which is the internal format.}
+\item{format}{The default (\code{format = "data.frame"}) is to
+generate a \code{data.frame} with one row per time-step with
+the prevalence. Using \code{format = "matrix"} returns the
+result as a matrix.}
 }
 \value{
-A \code{data.frame} if \code{as.is = FALSE}, else a
-    matrix.
+A \code{data.frame} if \code{format = "data.frame"}, else
+    a matrix.
 }
 \description{
 Calculate the proportion of individuals with disease in the

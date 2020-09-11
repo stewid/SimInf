@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -148,11 +148,11 @@ if (SimInf:::have_openmp()) {
         length(trajectory(result, compartments = "I", as.is = TRUE)),
         20L))
 
-    p <- prevalence(result, I ~ S + I, as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, format = "matrix")
     stopifnot(identical(length(p), 10L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
     stopifnot(identical(dim(p), c(2L, 10L)))
 }
 

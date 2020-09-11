@@ -68,7 +68,7 @@ evaluate_condition <- function(model, compartments, index, n) {
 }
 
 calculate_prevalence <- function(model, compartments, type,
-                                 index, n, as.is, id) {
+                                 index, n, format, id) {
     ## Sum all individuals in the 'cases' and 'population'
     ## compartments in a matrix with one row per node X length(tspan)
     cases <- sum_compartments(model, compartments$lhs, index)
@@ -92,7 +92,7 @@ calculate_prevalence <- function(model, compartments, type,
 
     prevalence <- cases / population
 
-    if (isTRUE(as.is))
+    if (identical(format, "matrix"))
         return(prevalence)
 
     time <- names(model@tspan)
@@ -130,7 +130,7 @@ setGeneric(
              formula,
              type = c("pop", "nop", "wnp"),
              index = NULL,
-             as.is = FALSE) {
+             format = c("data.frame", "matrix")) {
         standardGeneric("prevalence")
     }
 )
@@ -164,12 +164,12 @@ setGeneric(
 ##' @param index Indices specifying the subset of nodes to include in
 ##'     the calculation of the prevalence. Default is \code{index =
 ##'     NULL}, which includes all nodes.
-##' @param as.is The default (\code{as.is = FALSE}) is to generate a
-##'     \code{data.frame} with one row per time-step with the
-##'     prevalence. Using \code{as.is = TRUE} returns the result as a
-##'     matrix, which is the internal format.
-##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
-##'     matrix.
+##' @param format The default (\code{format = "data.frame"}) is to
+##'     generate a \code{data.frame} with one row per time-step with
+##'     the prevalence. Using \code{format = "matrix"} returns the
+##'     result as a matrix.
+##' @return A \code{data.frame} if \code{format = "data.frame"}, else
+##'     a matrix.
 ##' @include SimInf_model.R
 ##' @include match_compartments.R
 ##' @export
@@ -204,7 +204,7 @@ setGeneric(
 setMethod(
     "prevalence",
     signature(model = "SimInf_model", formula = "formula"),
-    function(model, formula, type, index, as.is) {
+    function(model, formula, type, index, format) {
         compartments <- match_compartments(compartments = formula,
                                            ok_combine = FALSE,
                                            ok_lhs = TRUE,
@@ -214,9 +214,10 @@ setMethod(
 
         type <- match.arg(type)
         index <- check_node_index_argument(model, index)
+        format <- match.arg(format)
         n <- n_nodes(model)
         id <- "node"
 
-        calculate_prevalence(model, compartments, type, index, n, as.is, id)
+        calculate_prevalence(model, compartments, type, index, n, format, id)
     }
 )

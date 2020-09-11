@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -66,11 +66,11 @@ stopifnot(identical(
     length(trajectory(result, compartments = "I", as.is = TRUE)),
     1001L))
 
-p <- prevalence(result, I ~ S + I, as.is = TRUE)
+p <- prevalence(result, I ~ S + I, format = "matrix")
 stopifnot(identical(length(p), 1001L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
@@ -86,11 +86,11 @@ if (SimInf:::have_openmp()) {
         length(trajectory(result, compartments = "I", as.is = TRUE)),
         1001L))
 
-    p <- prevalence(result, I ~ S + I, as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, format = "matrix")
     stopifnot(identical(length(p), 1001L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
     stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
@@ -129,11 +129,11 @@ stopifnot(identical(
     length(trajectory(result, compartments = "I", as.is = TRUE)),
     1001L))
 
-p <- prevalence(result, I ~ S + I, as.is = TRUE)
+p <- prevalence(result, I ~ S + I, format = "matrix")
 stopifnot(identical(length(p), 1001L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
@@ -149,11 +149,11 @@ if (SimInf:::have_openmp()) {
         length(trajectory(result, compartments = "I", as.is = TRUE)),
         1001L))
 
-    p <- prevalence(result, I ~ S + I, as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, format = "matrix")
     stopifnot(identical(length(p), 1001L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
     stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
@@ -198,11 +198,11 @@ stopifnot(identical(
     length(trajectory(result, compartments = "I_1", as.is = TRUE)),
     10000L))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
 stopifnot(identical(length(p), 1000L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", as.is = TRUE)
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", format = "matrix")
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
@@ -218,11 +218,11 @@ if (SimInf:::have_openmp()) {
         length(trajectory(result, compartments = "I_1", as.is = TRUE)),
         10000L))
 
-    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
+    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
     stopifnot(identical(length(p), 1000L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", format = "matrix")
     stopifnot(identical(dim(p), c(10L, 1000L)))
 }
 
@@ -269,11 +269,11 @@ stopifnot(identical(
     length(trajectory(result, compartments = "I_1", as.is = TRUE)),
     10000L))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
 stopifnot(identical(length(p), 1000L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", as.is = TRUE)
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", format = "matrix")
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
@@ -289,10 +289,10 @@ if (SimInf:::have_openmp()) {
         length(trajectory(result, compartments = "I_1", as.is = TRUE)),
         10000L))
 
-    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
+    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
     stopifnot(identical(length(p), 1000L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", format = "matrix")
     stopifnot(identical(dim(p), c(10L, 1000L)))
 }
