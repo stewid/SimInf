@@ -32,6 +32,8 @@ version has been incremented.
 * Renamed the node index argument in the trajectory function from
   'node' to 'index'.
 
+* Renamed the 'as.is' argument in the trajectory function to 'format'.
+
 # SimInf 7.0.1 (2020-06-18)
 
 ## CHANGES

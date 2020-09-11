@@ -1887,9 +1887,9 @@ first moved to the susceptible compartment.  Then, one infected
 individual is introduced into a randomly sampled node from the
 population.  Note that we use the 'L' suffix to create an integer
 value rather than a numeric value.  Run the model and accumulate
-\code{Icum}.  For efficiency, use \code{as.is = TRUE}, the internal
-matrix format, to extract \code{Icum} in every node at each time-point
-in \code{tspan}.
+\code{Icum}.  For efficiency, use \code{format = "matrix"}, the
+internal matrix format, to extract \code{Icum} in every node at each
+time-point in \code{tspan}.
 
 <<mparse-scheduled-events-epicurve>>=
 epicurve <- function(model, n = 1000) {
@@ -1902,7 +1902,7 @@ epicurve <- function(model, n = 1000) {
     model@u0["S", j] <- model@u0["S", j] - 1L
     result <- run(model = model)
     traj <- trajectory(model = result, compartments = "Icum",
-      as.is = TRUE)
+      format = "matrix")
     Icum <- Icum + colSums(traj)
   }
   stepfun(model@tspan[-1], diff(c(0, Icum / n)))

@@ -147,7 +147,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
                         .Dim = c(6L, 10L))
 
-S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -157,7 +157,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
 
-I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -167,7 +167,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
 
-R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", format = "matrix")
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- data.frame(
@@ -199,7 +199,8 @@ stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                        .Dim = c(1L, 10L))
-R_observed <- trajectory(result, compartments = "R", index = 1, as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R",
+                         index = 1, format = "matrix")
 stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first and third
@@ -218,7 +219,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(2L, 10L))
 R_observed <- trajectory(result, compartments = "R", index = c(1, 3),
-                         as.is = TRUE)
+                         format = "matrix")
 stopifnot(identical(R_observed, R_expected))
 
 ## A more complex test to extract data from U from a trajectory of 6
@@ -321,7 +322,7 @@ U_expected <- structure(
       447L, 228L, 248L, 428L, 448L, 229L, 249L, 429L, 449L),
     .Dim = c(4L, 10L))
 U_observed <- trajectory(result, compartments = c("E", "R"),
-                         index = c(2, 4), as.is = TRUE)
+                         index = c(2, 4), format = "matrix")
 stopifnot(identical(U_observed, U_expected))
 
 ## Check prevalence

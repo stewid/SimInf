@@ -27,9 +27,9 @@ sum_compartments <- function(model, compartments, index) {
     for (j in seq_len(length(compartments))) {
         for (compartment in names(compartments[[j]])) {
             if (is.null(m)) {
-                m <- trajectory(model, compartment, index, as.is = TRUE)
+                m <- trajectory(model, compartment, index, "matrix")
             } else {
-                m <- m + trajectory(model, compartment, index, as.is = TRUE)
+                m <- m + trajectory(model, compartment, index, "matrix")
             }
         }
     }
@@ -47,7 +47,7 @@ evaluate_condition <- function(model, compartments, index, n) {
             for (compartment in ac) {
                 assign(x = compartment,
                        value = as.integer(
-                           trajectory(model, compartment, index, TRUE)),
+                           trajectory(model, compartment, index, "matrix")),
                        pos = e)
             }
         }
