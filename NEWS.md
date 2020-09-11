@@ -24,11 +24,13 @@
 Backwards incompatible changes that are the reason why the major
 version has been incremented.
 
-* Renamed the node index argument in the prevalence function was
-  renamed from 'node' to 'index'.
+* Renamed the node index argument in the prevalence function from
+  'node' to 'index'.
 
-* Renamed the node index argument in the trajectory function was
-  renamed from 'node' to 'index'.
+* Renamed the 'as.is' argument in the prevalence function to 'format'.
+
+* Renamed the node index argument in the trajectory function from
+  'node' to 'index'.
 
 # SimInf 7.0.1 (2020-06-18)
 
