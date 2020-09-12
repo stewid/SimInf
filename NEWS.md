@@ -1,10 +1,23 @@
 # SimInf (development version)
 
-## CHANGES OR IMPROVEMENTS
+This release of SimInf includes improvements and changes to facilitate
+post-processing of trajectory data and future development of the
+package.
+
+## IMPROVEMENTS
 
 * Added the 'compartments' and 'index' arguments to the 'boxplot' and
   'pairs' plotting methods to facilitate analysis of a simulated
   trajectory, see the documentation.
+
+* The build configuration script has been improved to identify if
+  OpenMP can be used. It is also possible to skip the check for OpenMP
+  if --disable-openmp is specified.
+
+## BREAKING CHANGES
+
+Backwards incompatible changes that are the reason why the major
+version has been incremented.
 
 * Changed the 'prevalence' function to an S4 method.
 
@@ -12,17 +25,6 @@
 
 * Removed the unused '...' argument from the prevalence and trajectory
   functions.
-
-* The build configuration script has been improved to identify if
-  OpenMP can be used. It is also possible to skip the check for OpenMP
-  if --disable-openmp is specified.
-
-* Added the S4 method 'n_nodes' to replace 'Nn' function.
-
-## BREAKING CHANGES
-
-Backwards incompatible changes that are the reason why the major
-version has been incremented.
 
 * Renamed the node index argument in the prevalence function from
   'node' to 'index'.
@@ -36,6 +38,9 @@ version has been incremented.
   'node' to 'index'.
 
 * Renamed the 'as.is' argument in the trajectory function to 'format'.
+
+* The 'Nn' function to determine the number of nodes in a model has
+  been replaced with the S4 method 'n_nodes'.
 
 # SimInf 7.0.1 (2020-06-18)
 
