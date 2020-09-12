@@ -34,6 +34,9 @@ version has been incremented.
 
 * Renamed the 'as.is' argument in the trajectory function to 'format'.
 
+* Renamed the 'type' character argument in the trajectory function to
+  an integer 'level' argument.
+
 # SimInf 7.0.1 (2020-06-18)
 
 ## CHANGES

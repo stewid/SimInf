@@ -261,7 +261,7 @@ events_SISe <- function() {
 ##'
 ##' ## Plot the proportion of nodes with at least one infected
 ##' ## individual.
-##' plot(prevalence(result, I~S+I, "nop"), type = "l")
+##' plot(prevalence(result, I~S+I, level = 2), type = "l")
 u0_SISe <- function() {
     u0 <- u0_SIR()
     u0[, c("S", "I")]

@@ -50,5 +50,5 @@ summary(result)
 
 ## Plot the proportion of nodes with at least one infected
 ## individual.
-plot(prevalence(result, I~S+I, "nop"), type = "l")
+plot(prevalence(result, I~S+I, level = 2), type = "l")
 }

@@ -70,7 +70,7 @@ p <- prevalence(result, I ~ S + I, format = "matrix")
 stopifnot(identical(length(p), 1001L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
+p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
@@ -90,7 +90,7 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(p), 1001L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
+    p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
@@ -133,7 +133,7 @@ p <- prevalence(result, I ~ S + I, format = "matrix")
 stopifnot(identical(length(p), 1001L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
+p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
@@ -153,7 +153,7 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(p), 1001L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
+    p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
@@ -202,7 +202,7 @@ p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
 stopifnot(identical(length(p), 1000L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", format = "matrix")
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
@@ -223,7 +223,7 @@ if (SimInf:::have_openmp()) {
     stopifnot(is.null(dim(p)))
 
     p <- prevalence(result, I_1 + I_2 + I_3 ~ .,
-                    type = "wnp", format = "matrix")
+                    level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(10L, 1000L)))
 }
 
@@ -274,7 +274,7 @@ p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
 stopifnot(identical(length(p), 1000L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", format = "matrix")
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
@@ -295,6 +295,6 @@ if (SimInf:::have_openmp()) {
     stopifnot(is.null(dim(p)))
 
     p <- prevalence(result, I_1 + I_2 + I_3 ~ .,
-                    type = "wnp", format = "matrix")
+                    level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(10L, 1000L)))
 }

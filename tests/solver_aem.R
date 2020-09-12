@@ -152,7 +152,7 @@ if (SimInf:::have_openmp()) {
     stopifnot(identical(length(p), 10L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I ~ S + I, type = "wnp", format = "matrix")
+    p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(2L, 10L)))
 }
 
