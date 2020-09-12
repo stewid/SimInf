@@ -33,7 +33,7 @@ summary_trajectory <- function(object, compartments) {
         cat(" - Empty, please run the model first\n")
     } else {
         qq <- lapply(compartments, function(compartment) {
-            x <- as.numeric(trajectory(object, compartment, as.is = TRUE))
+            x <- as.numeric(trajectory(object, compartment, format = "matrix"))
             qq <- quantile(x)
             qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
         })

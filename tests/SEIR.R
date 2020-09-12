@@ -147,7 +147,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
                         .Dim = c(6L, 10L))
 
-S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -157,7 +157,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
 
-I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -167,7 +167,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
 
-R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", format = "matrix")
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- data.frame(
@@ -199,7 +199,8 @@ stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                        .Dim = c(1L, 10L))
-R_observed <- trajectory(result, compartments = "R", index = 1, as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R",
+                         index = 1, format = "matrix")
 stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first and third
@@ -218,7 +219,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(2L, 10L))
 R_observed <- trajectory(result, compartments = "R", index = c(1, 3),
-                         as.is = TRUE)
+                         format = "matrix")
 stopifnot(identical(R_observed, R_expected))
 
 ## A more complex test to extract data from U from a trajectory of 6
@@ -321,7 +322,7 @@ U_expected <- structure(
       447L, 228L, 248L, 428L, 448L, 229L, 249L, 429L, 449L),
     .Dim = c(4L, 10L))
 U_observed <- trajectory(result, compartments = c("E", "R"),
-                         index = c(2, 4), as.is = TRUE)
+                         index = c(2, 4), format = "matrix")
 stopifnot(identical(U_observed, U_expected))
 
 ## Check prevalence
@@ -348,9 +349,9 @@ p_expected <- structure(
     .Names = c("time", "prevalence"),
     row.names = c(NA, -10L),
     class = "data.frame")
-p_observed <- prevalence(result, I ~ S + E + I + R, type = "nop")
+p_observed <- prevalence(result, I ~ S + E + I + R, level = 2)
 stopifnot(identical(p_observed, p_expected))
-p_observed <- prevalence(result, I ~ ., type = "nop")
+p_observed <- prevalence(result, I ~ ., level = 2)
 stopifnot(identical(p_observed, p_expected))
 
 p_expected <- data.frame(
@@ -381,11 +382,11 @@ p_expected <- data.frame(
                    0.252886836027714, 0.25234521575985, 0.251974723538705,
                    0.259328358208955, 0.25534188034188, 0.25374251497006,
                    0.252880184331797, 0.252340823970037, 0.251971608832808))
-p_observed <- prevalence(result, I ~ ., type = "wnp")
+p_observed <- prevalence(result, I ~ ., level = 3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I ~ S + E + I + R, type = "wnp")
+p_observed <- prevalence(result, I ~ S + E + I + R, level = 3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
@@ -401,11 +402,11 @@ p_expected <- data.frame(
                    0.255411255411255, 0.253776435045317, 0.255387931034483,
                    0.253765060240964, 0.255364806866953, 0.253753753753754,
                    0.25534188034188, 0.25374251497006))
-p_observed <- prevalence(result, I~., type = "wnp", i = 2:3)
+p_observed <- prevalence(result, I~., level = 3, i = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I ~ S + E + I + R, type = "wnp", i = 2:3)
+p_observed <- prevalence(result, I ~ S + E + I + R, level = 3, i = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))

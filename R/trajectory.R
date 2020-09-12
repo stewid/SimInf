@@ -98,7 +98,8 @@ trajectory_data <- function(model, name) {
 setGeneric(
     "trajectory",
     signature = "model",
-    function(model, compartments = NULL, index = NULL, as.is = FALSE) {
+    function(model, compartments = NULL, index = NULL,
+             format = c("data.frame", "matrix")) {
         standardGeneric("trajectory")
     }
 )
@@ -106,7 +107,7 @@ setGeneric(
 ##' @rdname trajectory
 ##' @section Internal format of the discrete state variables:
 ##'     Description of the layout of the internal matrix (\code{U})
-##'     that is returned if \code{as.is = TRUE}. \code{U[, j]}
+##'     that is returned if \code{format = "matrix"}. \code{U[, j]}
 ##'     contains the number of individuals in each compartment at
 ##'     \code{tspan[j]}. \code{U[1:Nc, j]} contains the number of
 ##'     individuals in node 1 at \code{tspan[j]}. \code{U[(Nc + 1):(2
@@ -117,11 +118,11 @@ setGeneric(
 ##'     the number of nodes.
 ##' @section Internal format of the continuous state variables:
 ##'     Description of the layout of the matrix that is returned if
-##'     \code{as.is = TRUE}. The result matrix for the real-valued
-##'     continuous state. \code{V[, j]} contains the real-valued state
-##'     of the system at \code{tspan[j]}. The dimension of the matrix
-##'     is \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
-##'     \code{length(tspan)}.
+##'     \code{format = "matrix"}. The result matrix for the
+##'     real-valued continuous state. \code{V[, j]} contains the
+##'     real-valued state of the system at \code{tspan[j]}. The
+##'     dimension of the matrix is \eqn{N_n}\code{dim(ldata)[1]}
+##'     \eqn{\times} \code{length(tspan)}.
 ##' @param model the \code{model} to extract the result from.
 ##' @param compartments specify the names of the compartments to
 ##'     extract data from. The compartments can be specified as a
@@ -136,13 +137,14 @@ setGeneric(
 ##' @param index indices specifying the subset of nodes to include
 ##'     when extracting data. Default (\code{index = NULL}) is to
 ##'     extract data from all nodes.
-##' @param as.is the default (\code{as.is = FALSE}) is to generate a
-##'     \code{data.frame} with one row per node and time-step with the
-##'     number of individuals in each compartment. Using \code{as.is =
-##'     TRUE} returns the result as a matrix, which is the internal
-##'     format (see \sQuote{Details}).
-##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
-##'     matrix.
+##' @param format the default (\code{format = "data.frame"}) is to
+##'     generate a \code{data.frame} with one row per node and
+##'     time-step with the number of individuals in each
+##'     compartment. Using \code{format = "matrix"} returns the result
+##'     as a matrix, which is the internal format (see
+##'     \sQuote{Details}).
+##' @return A \code{data.frame} if \code{format = "data.frame"}, else
+##'     a matrix.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
 ##' @include match_compartments.R
@@ -187,21 +189,23 @@ setGeneric(
 setMethod(
     "trajectory",
     signature(model = "SimInf_model"),
-    function(model, compartments, index, as.is) {
+    function(model, compartments, index, format) {
         if (is_trajectory_empty(model)) {
             stop("Please run the model first, the trajectory is empty.",
                  call. = FALSE)
         }
 
+        format <- match.arg(format)
         compartments <- match_compartments(compartments = compartments,
-                                           ok_combine = !isTRUE(as.is),
+                                           ok_combine =
+                                               identical(format, "data.frame"),
                                            ok_lhs = FALSE,
                                            U = rownames(model@S),
                                            V = rownames(model@v0))
 
         index <- check_node_index_argument(model, index)
 
-        if (isTRUE(as.is)) {
+        if (identical(format, "matrix")) {
             ## Extract data in the internal matrix format.
             if (length(compartments$rhs$U)) {
                 return(trajectory_as_is(trajectory_data(model, "U"), Nc(model),

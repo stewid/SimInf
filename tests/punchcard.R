@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ punchcard(model) <- data.frame(node = c(1L, 2L, 3L, 4L, 5L, 6L),
                                I = rep(TRUE, 6),
                                R = rep(TRUE, 6))
 set.seed(123)
-U_obs <- trajectory(run(model), as.is = TRUE)
+U_obs <- trajectory(run(model), format = "matrix")
 stopifnot(identical(U_obs, U_exp))
 
 if (SimInf:::have_openmp()) {
@@ -74,7 +74,7 @@ if (SimInf:::have_openmp()) {
                      factors = list())
     set.seed(123)
     set_num_threads(2)
-    U_obs_omp <- trajectory(run(model), as.is = TRUE)
+    U_obs_omp <- trajectory(run(model), format = "matrix")
     set_num_threads(1)
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
@@ -133,7 +133,8 @@ result <- run(model)
 punchcard(result) <- data.frame(time = 4:9, node = 1:6, phi = TRUE)
 result <- run(result)
 stopifnot(identical(dim(result@V), c(0L, 0L)))
-stopifnot(identical(dim(trajectory(result, "phi", as.is = TRUE)), c(6L, 10L)))
+stopifnot(identical(dim(trajectory(result, "phi", format = "matrix")),
+                    c(6L, 10L)))
 punchcard(result) <- NULL
 result <- run(result)
 stopifnot(identical(dim(result@V), c(6L, 10L)))
