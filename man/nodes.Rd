@@ -33,7 +33,7 @@ result <- run(model)
 ## Determine nodes with one or more infected individuals in the
 ## trajectory. Extract the 'I' compartment and check for any
 ## infected individuals in each node.
-infected <- colSums(trajectory(result, ~ I, as.is = TRUE)) > 0
+infected <- colSums(trajectory(result, ~ I, format = "matrix")) > 0
 
 ## Display infected nodes in 'blue' and non-infected nodes in 'yellow'.
 data("nodes", package = "SimInf")

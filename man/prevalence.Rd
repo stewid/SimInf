@@ -8,17 +8,17 @@
 prevalence(
   model,
   formula,
-  type = c("pop", "nop", "wnp"),
+  level = 1,
   index = NULL,
-  as.is = FALSE
+  format = c("data.frame", "matrix")
 )
 
 \S4method{prevalence}{SimInf_model,formula}(
   model,
   formula,
-  type = c("pop", "nop", "wnp"),
+  level = 1,
   index = NULL,
-  as.is = FALSE
+  format = c("data.frame", "matrix")
 )
 }
 \arguments{
@@ -44,26 +44,26 @@ condition must evaluate to \code{TRUE} or \code{FALSE} in each
 node and time step. Note that if the denominator is zero, the
 prevalence is \code{NaN}.}
 
-\item{type}{The type of prevalence measure to calculate at each
-time point in \code{tspan}: \code{pop} (population prevalence)
+\item{level}{The level at which the prevalence is calculated at
+each time point in \code{tspan}. 1 (population prevalence):
 calculates the proportion of the individuals (cases) in the
-population, \code{nop} (node prevalence) calculates the
-proportion of nodes with at least one case, and \code{wnp}
-(within-node prevalence) calculates the proportion of cases
-within each node. Default is \code{pop}.}
+population. 2 (node prevalence): calculates the proportion of
+nodes with at least one case. 3 (within-node prevalence):
+calculates the proportion of cases within each node. Default
+is \code{1}.}
 
 \item{index}{Indices specifying the subset of nodes to include in
 the calculation of the prevalence. Default is \code{index =
 NULL}, which includes all nodes.}
 
-\item{as.is}{The default (\code{as.is = FALSE}) is to generate a
-\code{data.frame} with one row per time-step with the
-prevalence. Using \code{as.is = TRUE} returns the result as a
-matrix, which is the internal format.}
+\item{format}{The default (\code{format = "data.frame"}) is to
+generate a \code{data.frame} with one row per time-step with
+the prevalence. Using \code{format = "matrix"} returns the
+result as a matrix.}
 }
 \value{
-A \code{data.frame} if \code{as.is = FALSE}, else a
-    matrix.
+A \code{data.frame} if \code{format = "data.frame"}, else
+    a matrix.
 }
 \description{
 Calculate the proportion of individuals with disease in the
@@ -89,14 +89,14 @@ prevalence(result, I~.)
 
 ## Determine the proportion of nodes with infected individuals at
 ## the time-points in 'tspan'.
-prevalence(result, I~S+I+R, type = "nop")
+prevalence(result, I~S+I+R, level = 2)
 
 ## Determine the proportion of infected individuals in each node
 ## at the time-points in 'tspan'.
-prevalence(result, I~S+I+R, type = "wnp")
+prevalence(result, I~S+I+R, level = 3)
 
 ## Determine the proportion of infected individuals in each node
 ## at the time-points in 'tspan' when the number of recovered is
 ## zero.
-prevalence(result, I~S+I+R|R==0, type = "wnp")
+prevalence(result, I~S+I+R|R==0, level = 3)
 }

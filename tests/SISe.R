@@ -946,7 +946,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
                         .Dim = c(6L, 10L))
-S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -955,13 +955,13 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
-I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
 
 ## Check output from trajectory method
 model@tspan <- c(1, 2)
 result <- run(model)
-res <- assertError(trajectory(result, c("S", "phi"), as.is = TRUE))
+res <- assertError(trajectory(result, c("S", "phi"), format = "matrix"))
 check_error(res,
             "Cannot combine data from different slots.")
 
@@ -1010,13 +1010,15 @@ d <- trajectory(result, c("phi", "phi", "S", "S"), index = c(5, 2))[, 4] -
 stopifnot(all(abs(d) < 1e-8))
 
 ## Check extracting all compartments in U
-stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
+stopifnot(identical(trajectory(result, c("S", "I"), format = "matrix"),
+                    result@U))
 
 ## Check extracting all compartments of U in internal format
-stopifnot(identical(trajectory(result, c("S", "I"), as.is = TRUE), result@U))
+stopifnot(identical(trajectory(result, c("S", "I"), format = "matrix"),
+                    result@U))
 
 ## Check extracting a subset compartments of V in internal format
-traj_observed <- trajectory(result, "phi", index = c(5, 2), as.is = TRUE)
+traj_observed <- trajectory(result, "phi", index = c(5, 2), format = "matrix")
 stopifnot(identical(dim(traj_observed), c(2L, 2L)))
 stopifnot(all(abs(traj_observed[1, ] - 0.1) < 1e-8))
 stopifnot(all(abs(traj_observed[2, ] - 0.4) < 1e-8))
