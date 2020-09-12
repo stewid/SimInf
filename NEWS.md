@@ -29,13 +29,13 @@ version has been incremented.
 
 * Renamed the 'as.is' argument in the prevalence function to 'format'.
 
+* Renamed the 'type' character argument in the prevalence function to
+  an integer 'level' argument.
+
 * Renamed the node index argument in the trajectory function from
   'node' to 'index'.
 
 * Renamed the 'as.is' argument in the trajectory function to 'format'.
-
-* Renamed the 'type' character argument in the trajectory function to
-  an integer 'level' argument.
 
 # SimInf 7.0.1 (2020-06-18)
 
