@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -47,30 +47,30 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0)
 
-res <- assertError(trajectory(model, compartments = "S", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "S", format = "matrix"))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-res <- assertError(trajectory(model, compartments = "I", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "I", format = "matrix"))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 result <- run(model)
 result
 
-res <- assertError(trajectory(result, I ~ S, as.is = TRUE))
+res <- assertError(trajectory(result, I ~ S, format = "matrix"))
 check_error(res, "Invalid formula specification of 'compartments'.")
 
 stopifnot(identical(
-    length(trajectory(result, compartments = "S", as.is = TRUE)),
+    length(trajectory(result, compartments = "S", format = "matrix")),
     1001L))
 stopifnot(identical(
-    length(trajectory(result, compartments = "I", as.is = TRUE)),
+    length(trajectory(result, compartments = "I", format = "matrix")),
     1001L))
 
-p <- prevalence(result, I ~ S + I, as.is = TRUE)
+p <- prevalence(result, I ~ S + I, format = "matrix")
 stopifnot(identical(length(p), 1001L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
@@ -80,17 +80,17 @@ if (SimInf:::have_openmp()) {
     result
 
     stopifnot(identical(
-        length(trajectory(result, compartments = "S", as.is = TRUE)),
+        length(trajectory(result, compartments = "S", format = "matrix")),
         1001L))
     stopifnot(identical(
-        length(trajectory(result, compartments = "I", as.is = TRUE)),
+        length(trajectory(result, compartments = "I", format = "matrix")),
         1001L))
 
-    p <- prevalence(result, I ~ S + I, as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, format = "matrix")
     stopifnot(identical(length(p), 1001L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
@@ -113,27 +113,27 @@ model <- SISe_sp(u0       = data.frame(S = 99, I = 1),
                  coupling = 0,
                  distance = distance_matrix(1, 1, 1))
 
-res <- assertError(trajectory(model, compartments = "S", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "S", format = "matrix"))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-res <- assertError(trajectory(model, compartments = "I", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "I", format = "matrix"))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 result <- run(model)
 result
 
 stopifnot(identical(
-    length(trajectory(result, compartments = "S", as.is = TRUE)),
+    length(trajectory(result, compartments = "S", format = "matrix")),
     1001L))
 stopifnot(identical(
-    length(trajectory(result, compartments = "I", as.is = TRUE)),
+    length(trajectory(result, compartments = "I", format = "matrix")),
     1001L))
 
-p <- prevalence(result, I ~ S + I, as.is = TRUE)
+p <- prevalence(result, I ~ S + I, format = "matrix")
 stopifnot(identical(length(p), 1001L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(1L, 1001L)))
 
 if (SimInf:::have_openmp()) {
@@ -143,17 +143,17 @@ if (SimInf:::have_openmp()) {
     result
 
     stopifnot(identical(
-        length(trajectory(result, compartments = "S", as.is = TRUE)),
+        length(trajectory(result, compartments = "S", format = "matrix")),
         1001L))
     stopifnot(identical(
-        length(trajectory(result, compartments = "I", as.is = TRUE)),
+        length(trajectory(result, compartments = "I", format = "matrix")),
         1001L))
 
-    p <- prevalence(result, I ~ S + I, as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, format = "matrix")
     stopifnot(identical(length(p), 1001L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(1L, 1001L)))
 }
 
@@ -182,27 +182,27 @@ model <- SISe3(u0        = u0,
                end_t4    = 365,
                epsilon   = 0.000011)
 
-res <- assertError(trajectory(model, compartments = "S_1", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "S_1", format = "matrix"))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-res <- assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "I_1", format = "matrix"))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 result <- run(model)
 result
 
 stopifnot(identical(
-    length(trajectory(result, compartments = "S_1", as.is = TRUE)),
+    length(trajectory(result, compartments = "S_1", format = "matrix")),
     10000L))
 stopifnot(identical(
-    length(trajectory(result, compartments = "I_1", as.is = TRUE)),
+    length(trajectory(result, compartments = "I_1", format = "matrix")),
     10000L))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
 stopifnot(identical(length(p), 1000L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", as.is = TRUE)
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
@@ -212,17 +212,18 @@ if (SimInf:::have_openmp()) {
     result
 
     stopifnot(identical(
-        length(trajectory(result, compartments = "S_1", as.is = TRUE)),
+        length(trajectory(result, compartments = "S_1", format = "matrix")),
         10000L))
     stopifnot(identical(
-        length(trajectory(result, compartments = "I_1", as.is = TRUE)),
+        length(trajectory(result, compartments = "I_1", format = "matrix")),
         10000L))
 
-    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
+    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
     stopifnot(identical(length(p), 1000L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I_1 + I_2 + I_3 ~ .,
+                    level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(10L, 1000L)))
 }
 
@@ -253,27 +254,27 @@ model <- SISe3_sp(u0        = u0,
                   coupling = 0,
                   distance = distance_matrix(1:10, 1:10, 1))
 
-res <- assertError(trajectory(model, compartments = "S_1", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "S_1", format = "matrix"))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
-res <- assertError(trajectory(model, compartments = "I_1", as.is = TRUE))
+res <- assertError(trajectory(model, compartments = "I_1", format = "matrix"))
 check_error(res, "Please run the model first, the trajectory is empty.")
 
 result <- run(model)
 result
 
 stopifnot(identical(
-    length(trajectory(result, compartments = "S_1", as.is = TRUE)),
+    length(trajectory(result, compartments = "S_1", format = "matrix")),
     10000L))
 stopifnot(identical(
-    length(trajectory(result, compartments = "I_1", as.is = TRUE)),
+    length(trajectory(result, compartments = "I_1", format = "matrix")),
     10000L))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
 stopifnot(identical(length(p), 1000L))
 stopifnot(is.null(dim(p)))
 
-p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", as.is = TRUE)
+p <- prevalence(result, I_1 + I_2 + I_3 ~ ., level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(10L, 1000L)))
 
 if (SimInf:::have_openmp()) {
@@ -283,16 +284,17 @@ if (SimInf:::have_openmp()) {
     result
 
     stopifnot(identical(
-        length(trajectory(result, compartments = "S_1", as.is = TRUE)),
+        length(trajectory(result, compartments = "S_1", format = "matrix")),
         10000L))
     stopifnot(identical(
-        length(trajectory(result, compartments = "I_1", as.is = TRUE)),
+        length(trajectory(result, compartments = "I_1", format = "matrix")),
         10000L))
 
-    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., as.is = TRUE)
+    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
     stopifnot(identical(length(p), 1000L))
     stopifnot(is.null(dim(p)))
 
-    p <- prevalence(result, I_1 + I_2 + I_3 ~ ., type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I_1 + I_2 + I_3 ~ .,
+                    level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(10L, 1000L)))
 }
