@@ -50,13 +50,10 @@ Imports:
     digest,
     graphics,
     grDevices,
-    MASS,
     methods,
     stats,
     utils,
     Matrix
-Suggests:
-    knitr
 Collate:
     'C-generator.R'
     'check_arguments.R'
@@ -71,7 +68,6 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
-    'abc.R'
     'degree.R'
     'distance.R'
     'match_compartments.R'
@@ -88,6 +84,3 @@ Collate:
     'trajectory.R'
 Encoding: UTF-8
 RoxygenNote: 7.1.1
-VignetteBuilder:
-    utils,
-    knitr
