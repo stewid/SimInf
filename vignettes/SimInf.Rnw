@@ -81,14 +81,12 @@
   Department of Information Technology\\
   Uppsala University\\
   SE-751 05 Uppsala, Sweden\\
-  E-mail: \email{stefan.widgren@it.uu.se}\\
   \\
   Pavol Bauer\\
   Division of Scientific Computing\\
   Department of Information Technology\\
   Uppsala University\\
   SE-751 05 Uppsala, Sweden\\
-  E-mail: \email{pavol.bauer@it.uu.se}\\
   \\
   Robin Eriksson\\
   Division of Scientific Computing\\
