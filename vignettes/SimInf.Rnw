@@ -1554,7 +1554,7 @@ compartments representing cases i.e.,~have an attribute or a disease.
 The right hand side of the formula specifies the compartments at risk.
 Here, we are interested in the proportion of nodes with at least one
 infected individual, therefore, we let \code{formula = I ~ S + I} and
-specify \code{type = "nop"}.  Consult the help page for other
+specify \code{level = 2}.  Consult the help page for other
 \code{prevalence()} parameter options.
 
 <<eval=FALSE>>=
@@ -1564,7 +1564,7 @@ set.seed(123)
 set_num_threads(1)
 replicate(5, {
   result <- run(model = model)
-  p <- prevalence(model = result, formula = I ~ S + I, type = "nop")
+  p <- prevalence(model = result, formula = I ~ S + I, level = 2)
   lines(p)
 })
 @
@@ -1579,7 +1579,7 @@ trajectories.
 gdata(model, "coupling") <- 0.1
 replicate(5, {
   result <- run(model = model)
-  p <- prevalence(model = result, formula = I ~ S + I, type = "nop")
+  p <- prevalence(model = result, formula = I ~ S + I, level = 2)
   lines(p, col = "blue", lty = 2)
 })
 @
