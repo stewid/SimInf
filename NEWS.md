@@ -1,4 +1,4 @@
-# SimInf (development version)
+# SimInf 8.0.0 (2020-09-13)
 
 This release of SimInf includes improvements and changes to facilitate
 post-processing of trajectory data and future development of the
