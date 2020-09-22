@@ -249,15 +249,12 @@ setMethod(
 
         argv <- list(...)
 
-        compartments <- init_plot_compartments(x, compartments)
         node <- init_plot_node(x, node)
 
         ## Create a matrix with one row for each line in the plot.
         if (identical(range, FALSE)) {
-            ## Extract subset of data from U
-            i <- rep(compartments, length(node))
-            i <- i + rep((node - 1) * Nc(x), each = length(compartments))
-            m <- x@U[i, seq_len(ncol(x@U)), drop = FALSE]
+            m <- trajectory(x, compartments, node, "matrix")
+            compartments <- init_plot_compartments(x, compartments)
         } else {
             ## Check range argument
             if (any(!is.numeric(range), !identical(length(range), 1L),
@@ -267,6 +264,7 @@ setMethod(
             }
             range <- (1 - range) / 2
 
+            compartments <- init_plot_compartments(x, compartments)
             m <- matrix(0, nrow = length(compartments),
                         ncol = length(x@tspan))
 
