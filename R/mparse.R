@@ -329,7 +329,6 @@ dependency_graph <- function(transitions, S) {
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
 ##' @importFrom methods as
-##' @importFrom utils packageVersion
 ##' @template mparse-example
 mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                    gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
