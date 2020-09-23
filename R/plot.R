@@ -257,7 +257,7 @@ setMethod(
     signature(x = "SimInf_model"),
     function(x, compartments = NULL, node = NULL, range = 0.5, ...) {
         if (identical(dim(x@U), c(0L, 0L))) {
-            stop("Please run the model first, the 'U' matrix is empty.",
+            stop("Please run the model first, the trajectory is empty.",
                  call. = FALSE)
         }
 

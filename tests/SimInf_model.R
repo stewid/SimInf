@@ -646,7 +646,7 @@ model <- SISe(u0      = data.frame(S = 99, I = 1),
               end_t4  = 365,
               epsilon = 0.000011)
 res <- assertError(plot(model))
-check_error(res, "Please run the model first, the 'U' matrix is empty.")
+check_error(res, "Please run the model first, the trajectory is empty.")
 
 ## Check that the SimInf_model initialisation fails if the events
 ## argument is not either NULL or a data.frame
