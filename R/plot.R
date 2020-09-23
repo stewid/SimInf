@@ -171,6 +171,20 @@ init_plot_line_width <- function(lwd) {
     lwd
 }
 
+init_plot_range <- function(range) {
+    if (identical(range, FALSE))
+        return(range)
+
+    if (any(!is.numeric(range),
+            !identical(length(range), 1L),
+            range < 0, range > 1)) {
+        stop("'range' must be FALSE or a value between 0 and 1.",
+             call. = FALSE)
+    }
+
+    (1 - range) / 2
+}
+
 ##' Display the outcome from a simulated trajectory
 ##'
 ##' Plot either the median and the quantile range of the counts in all
@@ -250,20 +264,13 @@ setMethod(
         argv <- list(...)
 
         node <- init_plot_node(x, node)
+        range <- init_plot_range(range)
 
         ## Create a matrix with one row for each line in the plot.
         if (identical(range, FALSE)) {
             m <- trajectory(x, compartments, node, "matrix")
             compartments <- init_plot_compartments(x, compartments)
         } else {
-            ## Check range argument
-            if (any(!is.numeric(range), !identical(length(range), 1L),
-                    range < 0, range > 1)) {
-                stop("'range' must be FALSE or a value between 0 and 1.",
-                     call. = FALSE)
-            }
-            range <- (1 - range) / 2
-
             compartments <- init_plot_compartments(x, compartments)
             m <- matrix(0, nrow = length(compartments),
                         ncol = length(x@tspan))
@@ -309,8 +316,7 @@ setMethod(
             argv$xlab <- "Date"
         }
 
-        savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0),
-                       xpd = TRUE)
+        savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
         on.exit(par(savepar))
 
         ## Plot lines
