@@ -421,7 +421,7 @@ stopifnot(identical(nrow(u0_SEIR()), 1600L))
 
 ## Try to plot non-extisting compartment.
 res <- assertError(plot(result, compartments = "X"))
-check_error(res, "'compartments' must exist in the model.")
+check_error(res, "Non-existing compartment(s) in model: 'X'.")
 
 ## Try to plot with invalid range argument.
 res <- assertError(plot(result, range = 1.2))

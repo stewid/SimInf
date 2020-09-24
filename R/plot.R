@@ -256,11 +256,6 @@ setMethod(
     "plot",
     signature(x = "SimInf_model"),
     function(x, compartments = NULL, node = NULL, range = 0.5, ...) {
-        if (identical(dim(x@U), c(0L, 0L))) {
-            stop("Please run the model first, the trajectory is empty.",
-                 call. = FALSE)
-        }
-
         argv <- list(...)
 
         node <- init_plot_node(x, node)
@@ -271,26 +266,31 @@ setMethod(
             m <- trajectory(x, compartments, node, "matrix")
             compartments <- init_plot_compartments(x, compartments)
         } else {
-            compartments <- init_plot_compartments(x, compartments)
-            m <- matrix(0, nrow = length(compartments),
-                        ncol = length(x@tspan))
+            compartments <- match_compartments(compartments = compartments,
+                                               ok_combine = TRUE,
+                                               ok_lhs = FALSE,
+                                               U = rownames(x@S),
+                                               V = rownames(x@v0))
 
-            ## Matrices for quantile range
-            mu <- m
-            ml <- m
-
-            for (i in seq_len(length(compartments))) {
-                k <- seq(from = compartments[i], to = dim(x@U)[1],
-                         by = Nc(x))
-                u <- apply(x@U[k[node], seq_len(ncol(x@U)), drop = FALSE],
-                           2,
-                           quantile,
-                           probs = c(range, 0.5, 1 - range))
-                ml[i, ] <- u[1, ]
-                m[i, ] <- u[2, ]
-                mu[i, ] <- u[3, ]
+            m <- list()
+            for (j in seq_len(length(compartments$rhs))) {
+                for (compartment in names(compartments$rhs[[j]])) {
+                    m[[length(m) + 1]] <- apply(
+                        trajectory(x, compartment, node, "matrix"),
+                        2, quantile, probs = c(range, 0.5, 1 - range))
+                    names(u)[length(u)] <- compartment
+                }
             }
 
+            compartments <- names(m)
+
+            ## Matrices for quantile ranges and median.
+            ml <- do.call("rbind", lapply(m, function(mm) mm[1, ]))
+            mu <- do.call("rbind", lapply(m, function(mm) mm[3, ]))
+            m <- do.call("rbind", lapply(m, function(mm) mm[2, ]))
+
+            ## Change to TRUE to indicate that the range should be
+            ## displayed.
             range <- TRUE
         }
 
@@ -341,7 +341,7 @@ setMethod(
         ## Add the legend below plot. The default legend is the names
         ## of the compartments.
         if (is.null(argv$legend))
-            argv$legend <- rownames(x@S)[compartments]
+            argv$legend <- compartments
         par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
             mar = c(0, 0, 0, 0), new = TRUE)
         plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
