@@ -122,7 +122,7 @@ init_plot_compartments <- function(x, compartments) {
         compartments <- rownames(x@S)
     if (!(all(compartments %in% rownames(x@S))))
         stop("'compartments' must exist in the model.", call. = FALSE)
-    match(compartments, rownames(x@S))
+    rownames(x@S)[match(compartments, rownames(x@S))]
 }
 
 init_plot_node <- function(x, node) {
