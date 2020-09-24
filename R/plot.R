@@ -278,7 +278,7 @@ setMethod(
                     m[[length(m) + 1]] <- apply(
                         trajectory(x, compartment, node, "matrix"),
                         2, quantile, probs = c(range, 0.5, 1 - range))
-                    names(u)[length(u)] <- compartment
+                    names(m)[length(m)] <- compartment
                 }
             }
 
