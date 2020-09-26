@@ -206,17 +206,17 @@ init_plot_data <- function(model, compartments, index, range) {
     compartments <- names(y)
 
     if (identical(range, FALSE)) {
-        lower = NULL
-        upper = NULL
+        lower <- NULL
+        upper <- NULL
         ## Combine matrices for each comparment.
         y <- do.call("rbind", y)
-        each = length(index)
+        each <- length(index)
     } else {
         ## Matrices for quantile ranges and median.
         lower <- do.call("rbind", lapply(y, function(x) x[1, ]))
         upper <- do.call("rbind", lapply(y, function(x) x[3, ]))
         y <- do.call("rbind", lapply(y, function(x) x[2, ]))
-        each = 1
+        each <- 1
     }
 
     list(lower        = lower,
