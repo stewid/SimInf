@@ -80,17 +80,19 @@
 ##'     See above for a description of \code{N}. Unsued for the other
 ##'     event types.
 ##' @export
-setClass("SimInf_events",
-         slots = c(E          = "dgCMatrix",
-                   N          = "matrix",
-                   event      = "integer",
-                   time       = "integer",
-                   node       = "integer",
-                   dest       = "integer",
-                   n          = "integer",
-                   proportion = "numeric",
-                   select     = "integer",
-                   shift      = "integer"))
+setClass(
+    "SimInf_events",
+    slots = c(E          = "dgCMatrix",
+              N          = "matrix",
+              event      = "integer",
+              time       = "integer",
+              node       = "integer",
+              dest       = "integer",
+              n          = "integer",
+              proportion = "numeric",
+              select     = "integer",
+              shift      = "integer")
+)
 
 valid_events <- function(object) {
     if (!all(object@time > 0))
@@ -404,18 +406,19 @@ SimInf_events <- function(E      = NULL,
         shift      = as.integer(events$shift))
 }
 
-setAs(from = "SimInf_events",
-      to = "data.frame",
-      def = function(from) {
-          data.frame(event = from@event,
-                     time = from@time,
-                     node = from@node,
-                     dest = from@dest,
-                     n = from@n,
-                     proportion = from@proportion,
-                     select = from@select,
-                     shift = from@shift)
-      }
+setAs(
+    from = "SimInf_events",
+    to = "data.frame",
+    def = function(from) {
+        data.frame(event = from@event,
+                   time = from@time,
+                   node = from@node,
+                   dest = from@dest,
+                   n = from@n,
+                   proportion = from@proportion,
+                   select = from@select,
+                   shift = from@shift)
+    }
 )
 
 ##' Coerce to data frame
@@ -484,24 +487,25 @@ plot_SimInf_events <- function(x,
 ##' @export
 ##' @importFrom graphics par
 ##' @importFrom stats xtabs
-setMethod("plot",
-          signature(x = "SimInf_events"),
-          function(x, frame.plot = FALSE, ...) {
-              savepar <- par(mfrow = c(2, 2),
-                             oma = c(1, 1, 2, 0),
-                             mar = c(4, 3, 1, 1))
-              on.exit(par(savepar))
+setMethod(
+    "plot",
+    signature(x = "SimInf_events"),
+    function(x, frame.plot = FALSE, ...) {
+        savepar <- par(mfrow = c(2, 2),
+                       oma = c(1, 1, 2, 0),
+                       mar = c(4, 3, 1, 1))
+        on.exit(par(savepar))
 
-              yy <- xtabs(n ~ event + time,
-                          cbind(event = x@event, time = x@time, n = x@n))
-              xx <- as.integer(colnames(yy))
+        yy <- xtabs(n ~ event + time,
+                    cbind(event = x@event, time = x@time, n = x@n))
+        xx <- as.integer(colnames(yy))
 
-              ## Plot events
-              plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)
-              plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
-              plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
-              plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
-          }
+        ## Plot events
+        plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
+    }
 )
 
 ##' Brief summary of \code{SimInf_events}
@@ -511,13 +515,14 @@ setMethod("plot",
 ##' @return None (invisible 'NULL').
 ##' @export
 ##' @importFrom methods show
-setMethod("show",
-          signature(object = "SimInf_events"),
-          function(object) {
-              cat(sprintf("Number of scheduled events: %i\n",
-                          length(object@event)))
-              invisible(object)
-          }
+setMethod(
+    "show",
+    signature(object = "SimInf_events"),
+    function(object) {
+        cat(sprintf("Number of scheduled events: %i\n",
+                    length(object@event)))
+        invisible(object)
+    }
 )
 
 ##' Detailed summary of a \code{SimInf_events} object
@@ -528,31 +533,32 @@ setMethod("show",
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
 ##' @export
-setMethod("summary",
-          signature(object = "SimInf_events"),
-          function(object, ...) {
-              cat(sprintf("Number of scheduled events: %i\n",
-                          length(object@event)))
+setMethod(
+    "summary",
+    signature(object = "SimInf_events"),
+    function(object, ...) {
+        cat(sprintf("Number of scheduled events: %i\n",
+                    length(object@event)))
 
-              for (i in seq_len(4)) {
-                  switch(i,
-                         cat(" - Exit: "),
-                         cat(" - Enter: "),
-                         cat(" - Internal transfer: "),
-                         cat(" - External transfer: "))
+        for (i in seq_len(4)) {
+            switch(i,
+                   cat(" - Exit: "),
+                   cat(" - Enter: "),
+                   cat(" - Internal transfer: "),
+                   cat(" - External transfer: "))
 
-                  j <- which(object@event == (i - 1))
-                  if (length(j) > 0) {
-                      cat(sprintf("%i (n: min = %i max = %i avg = %.1f)\n",
-                                  length(j),
-                                  min(object@n[j]),
-                                  max(object@n[j]),
-                                  mean(object@n[j])))
-                  } else {
-                      cat("0\n")
-                  }
-              }
-          }
+            j <- which(object@event == (i - 1))
+            if (length(j) > 0) {
+                cat(sprintf("%i (n: min = %i max = %i avg = %.1f)\n",
+                            length(j),
+                            min(object@n[j]),
+                            max(object@n[j]),
+                            mean(object@n[j])))
+            } else {
+                cat("0\n")
+            }
+        }
+    }
 )
 
 ##' Extract the events from a \code{SimInf_model} object
