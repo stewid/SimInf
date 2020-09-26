@@ -116,15 +116,6 @@ setMethod(
     }
 )
 
-init_plot_compartments <- function(x, compartments) {
-    ## Determine the compartments to include in the plot
-    if (is.null(compartments))
-        compartments <- rownames(x@S)
-    if (!(all(compartments %in% rownames(x@S))))
-        stop("'compartments' must exist in the model.", call. = FALSE)
-    rownames(x@S)[match(compartments, rownames(x@S))]
-}
-
 init_plot_node <- function(x, node) {
     node <- check_node_index_argument(x, node)
     if (is.null(node))
@@ -132,16 +123,16 @@ init_plot_node <- function(x, node) {
     node
 }
 
-init_plot_line_type <- function(lty, compartments, m) {
+init_plot_line_type <- function(lty, compartments, each) {
     if (is.null(lty)) {
         lty <- seq_len(length(compartments))
     } else {
         lty <- rep(lty, length.out = length(compartments))
     }
-    rep(lty, length.out = dim(m)[1])
+    rep(lty, each = each)
 }
 
-init_plot_color <- function(col, compartments, m) {
+init_plot_color <- function(col, compartments, each) {
     if (is.null(col)) {
         if (length(compartments) > 9) {
             col <- rainbow(length(compartments))
@@ -156,7 +147,7 @@ init_plot_color <- function(col, compartments, m) {
     } else {
         col <- rep(col, length.out = length(compartments))
     }
-    rep(col, length.out = dim(m)[1])
+    rep(col, each = each)
 }
 
 init_plot_type <- function(type) {
@@ -183,6 +174,56 @@ init_plot_range <- function(range) {
     }
 
     (1 - range) / 2
+}
+
+init_plot_data <- function(model, compartments, index, range) {
+    index <- init_plot_node(model, index)
+    range <- init_plot_range(range)
+
+    compartments <- match_compartments(compartments = compartments,
+                                       ok_combine = TRUE,
+                                       ok_lhs = FALSE,
+                                       U = rownames(model@S),
+                                       V = rownames(model@v0))
+
+    ## Create a matrix with one row for each line in the plot.
+    y <- list()
+    for (j in seq_len(length(compartments$rhs))) {
+        for (compartment in names(compartments$rhs[[j]])) {
+            if (identical(range, FALSE)) {
+                y[[length(y) + 1]] <-
+                    trajectory(model, compartment, index, "matrix")
+            } else {
+                y[[length(y) + 1]] <- apply(
+                    trajectory(model, compartment, index, "matrix"),
+                    2, quantile, probs = c(range, 0.5, 1 - range))
+            }
+
+            names(y)[length(y)] <- compartment
+        }
+    }
+
+    compartments <- names(y)
+
+    if (identical(range, FALSE)) {
+        lower = NULL
+        upper = NULL
+        ## Combine matrices for each comparment.
+        y <- do.call("rbind", y)
+        each = length(index)
+    } else {
+        ## Matrices for quantile ranges and median.
+        lower <- do.call("rbind", lapply(y, function(x) x[1, ]))
+        upper <- do.call("rbind", lapply(y, function(x) x[3, ]))
+        y <- do.call("rbind", lapply(y, function(x) x[2, ]))
+        each = 1
+    }
+
+    list(lower        = lower,
+         y            = y,
+         upper        = upper,
+         each         = each,
+         compartments = compartments)
 }
 
 ##' Display the outcome from a simulated trajectory
@@ -257,54 +298,18 @@ setMethod(
     signature(x = "SimInf_model"),
     function(x, compartments = NULL, node = NULL, range = 0.5, ...) {
         argv <- list(...)
-
-        node <- init_plot_node(x, node)
-        range <- init_plot_range(range)
-
-        ## Create a matrix with one row for each line in the plot.
-        if (identical(range, FALSE)) {
-            m <- trajectory(x, compartments, node, "matrix")
-            compartments <- init_plot_compartments(x, compartments)
-        } else {
-            compartments <- match_compartments(compartments = compartments,
-                                               ok_combine = TRUE,
-                                               ok_lhs = FALSE,
-                                               U = rownames(x@S),
-                                               V = rownames(x@v0))
-
-            m <- list()
-            for (j in seq_len(length(compartments$rhs))) {
-                for (compartment in names(compartments$rhs[[j]])) {
-                    m[[length(m) + 1]] <- apply(
-                        trajectory(x, compartment, node, "matrix"),
-                        2, quantile, probs = c(range, 0.5, 1 - range))
-                    names(m)[length(m)] <- compartment
-                }
-            }
-
-            compartments <- names(m)
-
-            ## Matrices for quantile ranges and median.
-            ml <- do.call("rbind", lapply(m, function(mm) mm[1, ]))
-            mu <- do.call("rbind", lapply(m, function(mm) mm[3, ]))
-            m <- do.call("rbind", lapply(m, function(mm) mm[2, ]))
-
-            ## Change to TRUE to indicate that the range should be
-            ## displayed.
-            range <- TRUE
-        }
-
-        lty <- init_plot_line_type(argv$lty, compartments, m)
-        col <- init_plot_color(argv$col, compartments, m)
+        pd <- init_plot_data(x, compartments, node, range)
+        lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
+        col <- init_plot_color(argv$col, pd$compartments, pd$each)
         argv$type <- init_plot_type(argv$type)
         argv$lwd <- init_plot_line_width(argv$lwd)
 
         ## Settings for the y-axis.
         argv$ylab <- "N"
-        if (isTRUE(range)) {
-            argv$ylim <- c(0, max(mu))
+        if (is.null(pd$upper)) {
+            argv$ylim <- c(0, max(pd$y))
         } else {
-            argv$ylim <- c(0, max(m))
+            argv$ylim <- c(0, max(pd$upper))
         }
 
         ## Settings for the x-axis
@@ -320,19 +325,22 @@ setMethod(
         on.exit(par(savepar))
 
         ## Plot lines
-        for (i in seq_len(dim(m)[1])) {
+        for (i in seq_len(dim(pd$y)[1])) {
             argv$x <- xx
-            argv$y <- m[i, ]
+            argv$y <- pd$y[i, ]
             argv$col <- col[i]
             argv$lty <- lty[i]
+
             if (i == 1) {
                 do.call(plot, argv)
                 title(xlab = argv$xlab, outer = TRUE, line = 0)
             } else {
                 do.call(lines, argv)
             }
-            if (isTRUE(range)) {
-                polygon(x = c(xx, rev(xx)), y = c(mu[i, ], rev(ml[i, ])),
+
+            if (!is.null(pd$lower) && !is.null(pd$upper)) {
+                polygon(x = c(xx, rev(xx)),
+                        y = c(pd$upper[i, ], rev(pd$lower[i, ])),
                         col = adjustcolor(col[i], alpha.f = 0.1),
                         border = NA)
             }
@@ -341,13 +349,13 @@ setMethod(
         ## Add the legend below plot. The default legend is the names
         ## of the compartments.
         if (is.null(argv$legend))
-            argv$legend <- compartments
+            argv$legend <- pd$compartments
         par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
             mar = c(0, 0, 0, 0), new = TRUE)
         plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
         legend("bottom", inset = c(0, 0),
-               lty = lty[seq_len(length(compartments))],
-               col = col[seq_len(length(compartments))],
+               lty = lty[seq_len(length(pd$compartments))],
+               col = col[seq_len(length(pd$compartments))],
                bty = "n", horiz = TRUE, legend = argv$legend,
                lwd = argv$lwd)
     }
