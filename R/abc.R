@@ -62,28 +62,31 @@
 ##'     normalized weight of particle \eqn{i} in generation \eqn{g}.
 ##' @seealso \code{\link{abc}} and \code{\link{continue}}.
 ##' @export
-setClass("SimInf_abc",
-         slots = c(model   = "SimInf_model",
-                   priors  = "data.frame",
-                   target  = "character",
-                   pars    = "integer",
-                   npart   = "integer",
-                   nprop   = "integer",
-                   fn      = "function",
-                   epsilon = "matrix",
-                   x       = "list",
-                   w       = "list",
-                   ess     = "numeric"))
+setClass(
+    "SimInf_abc",
+    slots = c(model   = "SimInf_model",
+              priors  = "data.frame",
+              target  = "character",
+              pars    = "integer",
+              npart   = "integer",
+              nprop   = "integer",
+              fn      = "function",
+              epsilon = "matrix",
+              x       = "list",
+              w       = "list",
+              ess     = "numeric")
+)
 
-setAs(from = "SimInf_abc",
-      to = "data.frame",
-      def = function(from) {
-          do.call("rbind", lapply(seq_len(length(from@x)), function(i) {
-              cbind(generation = i,
-                    weight = from@w[[i]],
-                    as.data.frame(t(from@x[[i]])))
-          }))
-      }
+setAs(
+    from = "SimInf_abc",
+    to = "data.frame",
+    def = function(from) {
+        do.call("rbind", lapply(seq_len(length(from@x)), function(i) {
+            cbind(generation = i,
+                  weight = from@w[[i]],
+                  as.data.frame(t(from@x[[i]])))
+        }))
+    }
 )
 
 ##' Coerce to data frame
@@ -111,19 +114,20 @@ summary_particles <- function(object, i) {
 ##' @return \code{invisible(object)}.
 ##' @export
 ##' @importFrom methods show
-setMethod("show",
-          signature(object = "SimInf_abc"),
-          function(object) {
-              cat(sprintf("Number of particles per generation: %i\n",
-                          object@npart))
-              cat(sprintf("Number of generations: %i\n",
-                          length(object@x)))
+setMethod(
+    "show",
+    signature(object = "SimInf_abc"),
+    function(object) {
+        cat(sprintf("Number of particles per generation: %i\n",
+                    object@npart))
+        cat(sprintf("Number of generations: %i\n",
+                    length(object@x)))
 
-              if (length(object@x))
-                  summary_particles(object, length(object@x))
+        if (length(object@x))
+            summary_particles(object, length(object@x))
 
-              invisible(object)
-          }
+        invisible(object)
+    }
 )
 
 ##' Detailed summary of a \code{SimInf_abc} object
@@ -133,20 +137,21 @@ setMethod("show",
 ##' @return None (invisible 'NULL').
 ##' @include SimInf_model.R
 ##' @export
-setMethod("summary",
-          signature(object = "SimInf_abc"),
-          function(object, ...) {
-              cat(sprintf("Number of particles per generation: %i\n",
-                          object@npart))
-              cat(sprintf("Number of generations: %i\n",
-                          length(object@x)))
+setMethod(
+    "summary",
+    signature(object = "SimInf_abc"),
+    function(object, ...) {
+        cat(sprintf("Number of particles per generation: %i\n",
+                    object@npart))
+        cat(sprintf("Number of generations: %i\n",
+                    length(object@x)))
 
-              for (i in seq_len(length(object@x))) {
-                  summary_particles(object, i)
-              }
+        for (i in seq_len(length(object@x))) {
+            summary_particles(object, i)
+        }
 
-              invisible(NULL)
-          }
+        invisible(NULL)
+    }
 )
 
 ##' Generate replicates of the first node in the model.
