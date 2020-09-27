@@ -116,10 +116,10 @@ setMethod(
     }
 )
 
-init_plot_node <- function(x, node) {
-    node <- check_node_index_argument(x, node)
+init_plot_node_index <- function(model, node) {
+    node <- check_node_index_argument(model, node)
     if (is.null(node))
-        node <- seq_len(n_nodes(x))
+        node <- seq_len(n_nodes(model))
     node
 }
 
@@ -177,7 +177,7 @@ init_plot_range <- function(range) {
 }
 
 init_plot_data <- function(model, compartments, index, range) {
-    index <- init_plot_node(model, index)
+    index <- init_plot_node_index(model, index)
     range <- init_plot_range(range)
 
     compartments <- match_compartments(compartments = compartments,
