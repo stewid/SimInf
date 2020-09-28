@@ -226,6 +226,18 @@ init_plot_data <- function(model, compartments, index, range) {
          compartments = compartments)
 }
 
+##' Determine if the 'compartments' expression contains a lhs.
+##' @noRd
+compartments_has_lhs <- function(compartments) {
+    if (is(compartments, "formula")) {
+        compartments <- as.character(compartments)
+        if (identical(length(compartments), 3L))
+            return(TRUE)
+    }
+
+    FALSE
+}
+
 ##' Display the outcome from a simulated trajectory
 ##'
 ##' Plot either the median and the quantile range of the counts in all
