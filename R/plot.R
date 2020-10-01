@@ -176,7 +176,8 @@ init_plot_range <- function(range) {
     (1 - range) / 2
 }
 
-init_plot_prevalence_data <- function(model, compartments, level, index, range) {
+init_plot_prevalence_data <- function(model, compartments,
+                                      level, index, range) {
     index <- init_plot_node_index(model, index)
     range <- init_plot_range(range)
 
