@@ -4,14 +4,39 @@
 \alias{plot,SimInf_model-method}
 \title{Display the outcome from a simulated trajectory}
 \usage{
-\S4method{plot}{SimInf_model}(x, compartments = NULL, node = NULL, range = 0.5, ...)
+\S4method{plot}{SimInf_model}(x, compartments = NULL, level = 1, node = NULL, range = 0.5, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot.}
 
 \item{compartments}{Character vector with the compartments in the
 model to include in the plot. Default is \code{NULL}
-i.e. include all compartments in the model.}
+i.e. include all compartments in the model, Can also be a
+formula that specifies the compartments that define the cases
+with a disease or that have a specific characteristic
+(numerator), and the compartments that define the entire
+population of interest (denominator). The left-hand-side of
+the formula defines the cases, and the right-hand-side defines
+the population, for example, \code{I~S+I+R} in a \sQuote{SIR}
+model (see \sQuote{Examples}). The \code{.}  (dot) is expanded
+to all compartments, for example, \code{I~.}  is expanded to
+\code{I~S+I+R} in a \sQuote{SIR} model (see
+\sQuote{Examples}). The formula can also contain a condition
+(indicated by \code{|}) for each node and time step to further
+control the population to include in the calculation, for
+example, \code{I ~ . | R == 0} to calculate the prevalence
+when the recovered is zero in a \sQuote{SIR} model. The
+condition must evaluate to \code{TRUE} or \code{FALSE} in each
+node and time step. Note that if the denominator is zero, the
+prevalence is \code{NaN}.}
+
+\item{level}{The level at which the prevalence is calculated at
+each time point in \code{tspan}. 1 (population prevalence):
+calculates the proportion of the individuals (cases) in the
+population. 2 (node prevalence): calculates the proportion of
+nodes with at least one case. 3 (within-node prevalence):
+calculates the proportion of cases within each node. Default
+is \code{1}.}
 
 \item{node}{Indices specifying the nodes to include when plotting
 data. Plot one line for each node. Default (\code{node =
@@ -67,4 +92,15 @@ plot(result, node = 1:3, range = FALSE, type = "s")
 
 ## Plot the number of infected individuals in the first node.
 plot(result, compartments = "I", node = 1, range = FALSE)
+
+## Plot the proportion of infected individuals (cases)
+## in the population.
+plot(result, compartments = I~S+I+R)
+
+## Plot the proportion of nodes with infected individuals.
+plot(result, compartments = I~S+I+R, level = 2)
+
+## Plot the median and interquartile range of the proportion
+## of infected individuals in each node
+plot(result, compartments = I~S+I+R, level = 3)
 }
