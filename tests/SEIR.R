@@ -420,7 +420,7 @@ stopifnot(identical(nrow(events_SEIR()), 466692L))
 stopifnot(identical(nrow(u0_SEIR()), 1600L))
 
 ## Try to plot non-extisting compartment.
-res <- assertError(plot(result, compartments = "X"))
+res <- assertError(plot(result, "X"))
 check_error(res, "Non-existing compartment(s) in model: 'X'.")
 
 ## Try to plot with invalid range argument.
@@ -438,7 +438,7 @@ unlink(pdf_file)
 ## Check SEIR plot method with range = FALSE
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
-plot(result, compartments = "S", lty = 1, range = FALSE)
+plot(result, "S", lty = 1, range = FALSE)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)

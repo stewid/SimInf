@@ -273,26 +273,19 @@ compartments_has_lhs <- function(compartments) {
 ##' Plot either the median and the quantile range of the counts in all
 ##' nodes, or plot the counts in specified nodes.
 ##' @param x The \code{model} to plot.
-##' @param compartments Character vector with the compartments in the
-##'     model to include in the plot. Default is \code{NULL}
-##'     i.e. include all compartments in the model, Can also be a
-##'     formula that specifies the compartments that define the cases
-##'     with a disease or that have a specific characteristic
-##'     (numerator), and the compartments that define the entire
-##'     population of interest (denominator). The left-hand-side of
-##'     the formula defines the cases, and the right-hand-side defines
-##'     the population, for example, \code{I~S+I+R} in a \sQuote{SIR}
+##' @param y Character vector or formula with the compartments in the
+##'     model to include in the plot. Default includes all
+##'     compartments in the model. Can also be a formula that
+##'     specifies the compartments that define the cases with a
+##'     disease or that have a specific characteristic (numerator),
+##'     and the compartments that define the entire population of
+##'     interest (denominator). The left-hand-side of the formula
+##'     defines the cases, and the right-hand-side defines the
+##'     population, for example, \code{I~S+I+R} in a \sQuote{SIR}
 ##'     model (see \sQuote{Examples}). The \code{.}  (dot) is expanded
 ##'     to all compartments, for example, \code{I~.}  is expanded to
 ##'     \code{I~S+I+R} in a \sQuote{SIR} model (see
-##'     \sQuote{Examples}). The formula can also contain a condition
-##'     (indicated by \code{|}) for each node and time step to further
-##'     control the population to include in the calculation, for
-##'     example, \code{I ~ . | R == 0} to calculate the prevalence
-##'     when the recovered is zero in a \sQuote{SIR} model. The
-##'     condition must evaluate to \code{TRUE} or \code{FALSE} in each
-##'     node and time step. Note that if the denominator is zero, the
-##'     prevalence is \code{NaN}.
+##'     \sQuote{Examples}).
 ##' @param level The level at which the prevalence is calculated at
 ##'     each time point in \code{tspan}. 1 (population prevalence):
 ##'     calculates the proportion of the individuals (cases) in the
@@ -347,7 +340,11 @@ compartments_has_lhs <- function(compartments) {
 ##'
 ##' ## Plot the median and interquartile range of the  number
 ##' ## of infected individuals.
-##' plot(result, compartments = "I")
+##' plot(result, "I")
+##'
+##' ## Use the formula notation instead to plot the median and
+##' ## interquartile range of the number of infected individuals.
+##' plot(result, ~I)
 ##'
 ##' ## Plot the number of susceptible, infected
 ##' ## and recovered individuals in the first
@@ -358,29 +355,32 @@ compartments_has_lhs <- function(compartments) {
 ##' plot(result, node = 1:3, range = FALSE, type = "s")
 ##'
 ##' ## Plot the number of infected individuals in the first node.
-##' plot(result, compartments = "I", node = 1, range = FALSE)
+##' plot(result, "I", node = 1, range = FALSE)
 ##'
 ##' ## Plot the proportion of infected individuals (cases)
 ##' ## in the population.
-##' plot(result, compartments = I~S+I+R)
+##' plot(result, I~S+I+R)
 ##'
 ##' ## Plot the proportion of nodes with infected individuals.
-##' plot(result, compartments = I~S+I+R, level = 2)
+##' plot(result, I~S+I+R, level = 2)
 ##'
 ##' ## Plot the median and interquartile range of the proportion
 ##' ## of infected individuals in each node
-##' plot(result, compartments = I~S+I+R, level = 3)
+##' plot(result, I~S+I+R, level = 3)
 setMethod(
     "plot",
-    signature(x = "SimInf_model"),
-    function(x, compartments = NULL, level = 1, node = NULL, range = 0.5, ...) {
+    signature(x = "SimInf_model", y = "ANY"),
+    function(x, y, level = 1, node = NULL, range = 0.5, ...) {
+        if (missing(y))
+            y <- NULL
+
         argv <- list(...)
 
-        if (isTRUE(compartments_has_lhs(compartments))) {
-            pd <- init_plot_prevalence_data(x, compartments, level, node, range)
+        if (isTRUE(compartments_has_lhs(y))) {
+            pd <- init_plot_prevalence_data(x, y, level, node, range)
             argv$ylab <- "Prevalence"
         } else {
-            pd <- init_plot_trajectory_data(x, compartments, node, range)
+            pd <- init_plot_trajectory_data(x, y, node, range)
             argv$ylab <- "N"
         }
 
