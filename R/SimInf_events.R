@@ -350,20 +350,20 @@ init_events <- function(events, t0) {
 ##' ## the second node.  As can be seen in the figure, all
 ##' ## indivuduals have been moved to the second node when
 ##' ## t = 300.
-##' plot(run(model), node = 1:2, range = FALSE)
+##' plot(run(model), index = 1:2, range = FALSE)
 ##'
 ##' ## Let us now double the weight to sample from the 'I'
 ##' ## compartment and rerun the model.
 ##' model@events@E[2, 4] <- 2
-##' plot(run(model), node = 1:2, range = FALSE)
+##' plot(run(model), index = 1:2, range = FALSE)
 ##'
 ##' ## And much larger weight to sample from the I compartment.
 ##' model@events@E[2, 4] <- 10
-##' plot(run(model), node = 1:2, range = FALSE)
+##' plot(run(model), index = 1:2, range = FALSE)
 ##'
 ##' ## Increase the weight for the R compartment.
 ##' model@events@E[3, 4] <- 4
-##' plot(run(model), node = 1:2, range = FALSE)
+##' plot(run(model), index = 1:2, range = FALSE)
 SimInf_events <- function(E      = NULL,
                           N      = NULL,
                           events = NULL,

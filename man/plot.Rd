@@ -4,7 +4,7 @@
 \alias{plot,SimInf_model-method}
 \title{Display the outcome from a simulated trajectory}
 \usage{
-\S4method{plot}{SimInf_model}(x, y, level = 1, node = NULL, range = 0.5, ...)
+\S4method{plot}{SimInf_model}(x, y, level = 1, index = NULL, range = 0.5, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot.}
@@ -31,8 +31,8 @@ nodes with at least one case. 3 (within-node prevalence):
 calculates the proportion of cases within each node. Default
 is \code{1}.}
 
-\item{node}{Indices specifying the nodes to include when plotting
-data. Plot one line for each node. Default (\code{node =
+\item{index}{Indices specifying the nodes to include when plotting
+data. Plot one line for each node. Default (\code{index =
 NULL}) is to extract data from all nodes and plot the median
 count for the specified compartments.}
 
@@ -82,13 +82,13 @@ plot(result, ~I)
 ## Plot the number of susceptible, infected
 ## and recovered individuals in the first
 ## three nodes.
-plot(result, node = 1:3, range = FALSE)
+plot(result, index = 1:3, range = FALSE)
 
 ## Use a stair step plot type instead.
-plot(result, node = 1:3, range = FALSE, type = "s")
+plot(result, index = 1:3, range = FALSE, type = "s")
 
 ## Plot the number of infected individuals in the first node.
-plot(result, "I", node = 1, range = FALSE)
+plot(result, "I", index = 1, range = FALSE)
 
 ## Plot the proportion of infected individuals (cases)
 ## in the population.

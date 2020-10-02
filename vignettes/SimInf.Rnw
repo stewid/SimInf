@@ -1195,7 +1195,7 @@ to visualize the simulated trajectory.  The default plot will display
 the median count in each compartment across nodes as a colored line
 together with the inter-quartile range using the same color, but with
 transparency.  To display the outcome for individual nodes, specify
-the subset of nodes to plot using the \code{node} parameter and set
+the subset of nodes to plot using the \code{index} parameter and set
 \code{range = FALSE}.  In this example, an outbreak is likely to occur
 in an infected node, but sometimes the infectious disease will become
 extinct before it causes an epidemic, as shown in
@@ -1203,7 +1203,7 @@ Figure~\ref{fig:SIR-model}.
 
 <<SIR-plot, eval=FALSE>>=
 plot(result)
-plot(result, node = 1:10, range = FALSE)
+plot(result, index = 1:10, range = FALSE)
 @
 
 <<SIR-I, echo=FALSE, results=hide>>=
@@ -1214,7 +1214,7 @@ dev.off()
 
 <<SIR-II, echo=FALSE, results=hide>>=
 pdf("SimInf-SIR-II.pdf", width = 10, height = 5)
-plot(result, node = 1:10, range = FALSE)
+plot(result, index = 1:10, range = FALSE)
 dev.off()
 @
 
@@ -1365,7 +1365,7 @@ model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
 set.seed(3)
 set_num_threads(1)
 result <- run(model)
-plot(result, node = 1:5, range = FALSE)
+plot(result, index = 1:5, range = FALSE)
 @
 
 <<SIR-events-I, echo=FALSE, results=hide>>=
@@ -1376,7 +1376,7 @@ set.seed(3)
 set_num_threads(1)
 result <- run(model)
 pdf("SimInf-SIR-events-I.pdf", width = 10, height = 5)
-plot(result, node = 1:5, range = FALSE)
+plot(result, index = 1:5, range = FALSE)
 dev.off()
 @
 
@@ -1388,7 +1388,7 @@ set.seed(3)
 set_num_threads(1)
 result_no_infected <- run(model_no_infected)
 pdf("SimInf-SIR-events-II.pdf", width = 10, height = 5)
-plot(result_no_infected, node = 1:5, range = FALSE)
+plot(result_no_infected, index = 1:5, range = FALSE)
 dev.off()
 @
 

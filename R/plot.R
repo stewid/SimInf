@@ -116,11 +116,11 @@ setMethod(
     }
 )
 
-init_plot_node_index <- function(model, node) {
-    node <- check_node_index_argument(model, node)
-    if (is.null(node))
-        node <- seq_len(n_nodes(model))
-    node
+init_plot_node_index <- function(model, index) {
+    index <- check_node_index_argument(model, index)
+    if (is.null(index))
+        index <- seq_len(n_nodes(model))
+    index
 }
 
 init_plot_line_type <- function(lty, compartments, each) {
@@ -293,8 +293,8 @@ compartments_has_lhs <- function(compartments) {
 ##'     nodes with at least one case. 3 (within-node prevalence):
 ##'     calculates the proportion of cases within each node. Default
 ##'     is \code{1}.
-##' @param node Indices specifying the nodes to include when plotting
-##'     data. Plot one line for each node. Default (\code{node =
+##' @param index Indices specifying the nodes to include when plotting
+##'     data. Plot one line for each node. Default (\code{index =
 ##'     NULL}) is to extract data from all nodes and plot the median
 ##'     count for the specified compartments.
 ##' @param range Show the quantile range of the count in each
@@ -349,13 +349,13 @@ compartments_has_lhs <- function(compartments) {
 ##' ## Plot the number of susceptible, infected
 ##' ## and recovered individuals in the first
 ##' ## three nodes.
-##' plot(result, node = 1:3, range = FALSE)
+##' plot(result, index = 1:3, range = FALSE)
 ##'
 ##' ## Use a stair step plot type instead.
-##' plot(result, node = 1:3, range = FALSE, type = "s")
+##' plot(result, index = 1:3, range = FALSE, type = "s")
 ##'
 ##' ## Plot the number of infected individuals in the first node.
-##' plot(result, "I", node = 1, range = FALSE)
+##' plot(result, "I", index = 1, range = FALSE)
 ##'
 ##' ## Plot the proportion of infected individuals (cases)
 ##' ## in the population.
@@ -370,17 +370,17 @@ compartments_has_lhs <- function(compartments) {
 setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
-    function(x, y, level = 1, node = NULL, range = 0.5, ...) {
+    function(x, y, level = 1, index = NULL, range = 0.5, ...) {
         if (missing(y))
             y <- NULL
 
         argv <- list(...)
 
         if (isTRUE(compartments_has_lhs(y))) {
-            pd <- init_plot_prevalence_data(x, y, level, node, range)
+            pd <- init_plot_prevalence_data(x, y, level, index, range)
             argv$ylab <- "Prevalence"
         } else {
-            pd <- init_plot_trajectory_data(x, y, node, range)
+            pd <- init_plot_trajectory_data(x, y, index, range)
             argv$ylab <- "N"
         }
 
