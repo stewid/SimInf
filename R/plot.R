@@ -305,6 +305,45 @@ init_plot_argv <- function(model, compartments, pd, ...) {
     argv
 }
 
+plot_data <- function(pd, argv, lty, col) {
+    savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
+    on.exit(par(savepar))
+
+    ## Plot lines
+    for (i in seq_len(dim(pd$y)[1])) {
+        argv$y <- pd$y[i, ]
+        argv$col <- col[i]
+        argv$lty <- lty[i]
+
+        if (i == 1) {
+            do.call(plot, argv)
+            title(xlab = argv$xlab, outer = TRUE, line = 0)
+        } else {
+            do.call(lines, argv)
+        }
+
+        if (!is.null(pd$lower) && !is.null(pd$upper)) {
+            polygon(x = c(argv$x, rev(argv$x)),
+                    y = c(pd$upper[i, ], rev(pd$lower[i, ])),
+                    col = adjustcolor(col[i], alpha.f = 0.1),
+                    border = NA)
+        }
+    }
+
+    ## Add the legend below plot. The default legend is the names
+    ## of the compartments.
+    if (is.null(argv$legend))
+        argv$legend <- pd$compartments
+    par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
+        mar = c(0, 0, 0, 0), new = TRUE)
+    plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+    legend("bottom", inset = c(0, 0),
+           lty = lty[seq_len(length(pd$compartments))],
+           col = col[seq_len(length(pd$compartments))],
+           bty = "n", horiz = TRUE, legend = argv$legend,
+           lwd = argv$lwd)
+}
+
 ##' Display the outcome from a simulated trajectory
 ##'
 ##' Plot either the median and the quantile range of the counts in all
@@ -421,41 +460,6 @@ setMethod(
         lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
         col <- init_plot_color(argv$col, pd$compartments, pd$each)
 
-        savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
-        on.exit(par(savepar))
-
-        ## Plot lines
-        for (i in seq_len(dim(pd$y)[1])) {
-            argv$y <- pd$y[i, ]
-            argv$col <- col[i]
-            argv$lty <- lty[i]
-
-            if (i == 1) {
-                do.call(plot, argv)
-                title(xlab = argv$xlab, outer = TRUE, line = 0)
-            } else {
-                do.call(lines, argv)
-            }
-
-            if (!is.null(pd$lower) && !is.null(pd$upper)) {
-                polygon(x = c(argv$x, rev(argv$x)),
-                        y = c(pd$upper[i, ], rev(pd$lower[i, ])),
-                        col = adjustcolor(col[i], alpha.f = 0.1),
-                        border = NA)
-            }
-        }
-
-        ## Add the legend below plot. The default legend is the names
-        ## of the compartments.
-        if (is.null(argv$legend))
-            argv$legend <- pd$compartments
-        par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
-            mar = c(0, 0, 0, 0), new = TRUE)
-        plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-        legend("bottom", inset = c(0, 0),
-               lty = lty[seq_len(length(pd$compartments))],
-               col = col[seq_len(length(pd$compartments))],
-               bty = "n", horiz = TRUE, legend = argv$legend,
-               lwd = argv$lwd)
+        plot_data(pd, argv, lty, col)
     }
 )
