@@ -268,6 +268,43 @@ compartments_has_lhs <- function(compartments) {
     FALSE
 }
 
+init_plot_argv <- function(model, compartments, pd, ...) {
+    argv <- list(...)
+
+    if (is.null(argv$ylab)) {
+        if (isTRUE(compartments_has_lhs(compartments))) {
+            argv$ylab <- "Prevalence"
+        } else {
+            argv$ylab <- "N"
+        }
+    }
+
+    argv$type <- init_plot_type(argv$type)
+    argv$lwd <- init_plot_line_width(argv$lwd)
+
+    ## Settings for the y-axis.
+    if (is.null(argv$ylim)) {
+        if (is.null(pd$upper)) {
+            argv$ylim <- c(0, max(pd$y))
+        } else {
+            argv$ylim <- c(0, max(pd$upper))
+        }
+    }
+
+    ## Settings for the x-axis
+    if (is.null(names(model@tspan))) {
+        argv$x <- model@tspan
+        if (is.null(argv$xlab))
+            argv$xlab <- "Time"
+    } else {
+        argv$x <- as.Date(names(model@tspan))
+        if (is.null(argv$xlab))
+            argv$xlab <- "Date"
+    }
+
+    argv
+}
+
 ##' Display the outcome from a simulated trajectory
 ##'
 ##' Plot either the median and the quantile range of the counts in all
@@ -374,43 +411,21 @@ setMethod(
         if (missing(y))
             y <- NULL
 
-        argv <- list(...)
-
         if (isTRUE(compartments_has_lhs(y))) {
             pd <- init_plot_prevalence_data(x, y, level, index, range)
-            argv$ylab <- "Prevalence"
         } else {
             pd <- init_plot_trajectory_data(x, y, index, range)
-            argv$ylab <- "N"
         }
 
+        argv <- init_plot_argv(x, y, pd, ...)
         lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
         col <- init_plot_color(argv$col, pd$compartments, pd$each)
-        argv$type <- init_plot_type(argv$type)
-        argv$lwd <- init_plot_line_width(argv$lwd)
-
-        ## Settings for the y-axis.
-        if (is.null(pd$upper)) {
-            argv$ylim <- c(0, max(pd$y))
-        } else {
-            argv$ylim <- c(0, max(pd$upper))
-        }
-
-        ## Settings for the x-axis
-        if (is.null(names(x@tspan))) {
-            xx <- x@tspan
-            argv$xlab <- "Time"
-        } else {
-            xx <- as.Date(names(x@tspan))
-            argv$xlab <- "Date"
-        }
 
         savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
         on.exit(par(savepar))
 
         ## Plot lines
         for (i in seq_len(dim(pd$y)[1])) {
-            argv$x <- xx
             argv$y <- pd$y[i, ]
             argv$col <- col[i]
             argv$lty <- lty[i]
@@ -423,7 +438,7 @@ setMethod(
             }
 
             if (!is.null(pd$lower) && !is.null(pd$upper)) {
-                polygon(x = c(xx, rev(xx)),
+                polygon(x = c(argv$x, rev(argv$x)),
                         y = c(pd$upper[i, ], rev(pd$lower[i, ])),
                         col = adjustcolor(col[i], alpha.f = 0.1),
                         border = NA)
