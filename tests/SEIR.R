@@ -53,80 +53,80 @@ check_error(res, "Missing columns in u0.")
 
 ## Check missing beta
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               epsilon = 0.5,
-                               gamma   = 0.5))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        epsilon = 0.5,
+                        gamma   = 0.5))
 check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check missing epsilon
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               gamma   = 0.5))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        gamma   = 0.5))
 check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check missing gamma
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = 0.5))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = 0.5))
 check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric beta
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = "0.5",
-                               epsilon = 0.3,
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = "0.5",
+                        epsilon = 0.3,
+                        gamma   = 0.1))
 check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric epsilon
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = "0.3",
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = "0.3",
+                        gamma   = 0.1))
 check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric gamma
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = 0.3,
-                               gamma   = "0.1"))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = 0.3,
+                        gamma   = "0.1"))
 check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of beta equals 1
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = c(0.5, 0.5),
-                               epsilon = 0.3,
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = c(0.5, 0.5),
+                        epsilon = 0.3,
+                        gamma   = 0.1))
 check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of epsilon equals 1
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = c(0.3, 0.3),
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = c(0.3, 0.3),
+                        gamma   = 0.1))
 check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of gamma equals 1
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = 0.3,
-                               gamma   = c(0.1, 0.1)))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = 0.3,
+                        gamma   = c(0.1, 0.1)))
 check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check extraction of data from 'suscpetible', 'infected' and
