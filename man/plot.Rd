@@ -100,4 +100,8 @@ plot(result, I~S+I+R, level = 2)
 ## Plot the median and interquartile range of the proportion
 ## of infected individuals in each node
 plot(result, I~S+I+R, level = 3)
+
+## Plot the proportion of infected individuals in the first
+## three nodes.
+plot(result, I~S+I+R, level = 3, index = 1:3, range = FALSE)
 }

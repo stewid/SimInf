@@ -187,6 +187,12 @@ init_plot_prevalence_data <- function(model, compartments,
                     nrow = 1)
         lower <- NULL
         upper <- NULL
+        each <- 1
+    } else if (identical(range, FALSE)) {
+        y <- prevalence(model, compartments, level, index, "matrix")
+        lower <- NULL
+        upper <- NULL
+        each <- length(index)
     } else {
         y <- apply(
             prevalence(model, compartments, level, index, "matrix"),
@@ -197,12 +203,13 @@ init_plot_prevalence_data <- function(model, compartments,
         lower <- y[1, j, drop = FALSE]
         upper <- y[3, j, drop = FALSE]
         y <- y[2, j, drop = FALSE]
+        each <- 1
     }
 
     list(lower        = lower,
          y            = y,
          upper        = upper,
-         each         = 1,
+         each         = each,
          compartments = deparse(compartments))
 }
 
@@ -443,6 +450,10 @@ plot_data <- function(pd, argv, lty, col) {
 ##' ## Plot the median and interquartile range of the proportion
 ##' ## of infected individuals in each node
 ##' plot(result, I~S+I+R, level = 3)
+##'
+##' ## Plot the proportion of infected individuals in the first
+##' ## three nodes.
+##' plot(result, I~S+I+R, level = 3, index = 1:3, range = FALSE)
 setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
