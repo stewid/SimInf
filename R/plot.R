@@ -124,28 +124,40 @@ init_plot_node_index <- function(model, index) {
 }
 
 init_plot_line_type <- function(lty, compartments, each) {
-    if (is.null(lty)) {
-        lty <- seq_len(length(compartments))
+    if (is.null(compartments)) {
+        n <- 1
     } else {
-        lty <- rep(lty, length.out = length(compartments))
+        n <- length(compartments)
+    }
+
+    if (is.null(lty)) {
+        lty <- seq_len(n)
+    } else {
+        lty <- rep(lty, length.out = n)
     }
     rep(lty, each = each)
 }
 
 init_plot_color <- function(col, compartments, each) {
+    if (is.null(compartments)) {
+        n <- 1
+    } else {
+        n <- length(compartments)
+    }
+
     if (is.null(col)) {
-        if (length(compartments) > 9) {
-            col <- rainbow(length(compartments))
-        } else if (length(compartments) > 1) {
+        if (n > 9) {
+            col <- rainbow(n)
+        } else if (n > 1) {
             col <- rep(c("#e41a1c", "#377eb8", "#4daf4a",
                          "#984ea3", "#ff7f00", "#ffff33",
                          "#a65628", "#f781bf", "#999999"),
-                       length.out = length(compartments))
+                       length.out = n)
         } else {
             col <- "black"
         }
     } else {
-        col <- rep(col, length.out = length(compartments))
+        col <- rep(col, length.out = n)
     }
     rep(col, each = each)
 }
