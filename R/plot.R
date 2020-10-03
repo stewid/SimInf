@@ -229,12 +229,6 @@ init_plot_trajectory_data <- function(model, compartments, index, range) {
     index <- init_plot_node_index(model, index)
     range <- init_plot_range(range)
 
-    compartments <- match_compartments(compartments = compartments,
-                                       ok_combine = TRUE,
-                                       ok_lhs = FALSE,
-                                       U = rownames(model@S),
-                                       V = rownames(model@v0))
-
     ## Create a matrix with one row for each line in the plot.
     y <- list()
     for (j in seq_len(length(compartments$rhs))) {
@@ -480,7 +474,13 @@ setMethod(
         if (isTRUE(compartments_has_lhs(y))) {
             pd <- init_plot_prevalence_data(x, y, level, index, range)
         } else {
-            pd <- init_plot_trajectory_data(x, y, index, range)
+            compartments <- match_compartments(compartments = y,
+                                               ok_combine = TRUE,
+                                               ok_lhs = FALSE,
+                                               U = rownames(x@S),
+                                               V = rownames(x@v0))
+
+            pd <- init_plot_trajectory_data(x, compartments, index, range)
         }
 
         argv <- init_plot_argv(x, y, pd, ...)
