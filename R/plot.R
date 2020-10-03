@@ -280,7 +280,7 @@ init_plot_argv <- function(model, compartments, pd, ...) {
 
     if (is.null(argv$ylab)) {
         if (isTRUE(compartments_has_lhs(compartments))) {
-            argv$ylab <- "Prevalence"
+            argv$ylab <- deparse(compartments)
         } else {
             argv$ylab <- "N"
         }
