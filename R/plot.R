@@ -472,5 +472,7 @@ setMethod(
         col <- init_plot_color(argv$col, pd$compartments, pd$each)
 
         plot_data(pd, argv, lty, col)
+
+        invisible(NULL)
     }
 )
