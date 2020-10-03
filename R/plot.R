@@ -210,7 +210,7 @@ init_plot_prevalence_data <- function(model, compartments,
          y            = y,
          upper        = upper,
          each         = each,
-         compartments = deparse(compartments))
+         compartments = NULL)
 }
 
 init_plot_trajectory_data <- function(model, compartments, index, range) {
@@ -313,7 +313,11 @@ init_plot_argv <- function(model, compartments, pd, ...) {
 }
 
 plot_data <- function(pd, argv, lty, col) {
-    savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
+    if (is.null(pd$compartments)) {
+        savepar <- par(mar = c(2, 4, 1, 1), oma = c(2, 1, 0, 0), xpd = TRUE)
+    } else {
+        savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
+    }
     on.exit(par(savepar))
 
     ## Plot lines
@@ -339,16 +343,16 @@ plot_data <- function(pd, argv, lty, col) {
 
     ## Add the legend below plot. The default legend is the names
     ## of the compartments.
-    if (is.null(argv$legend))
-        argv$legend <- pd$compartments
-    par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
-        mar = c(0, 0, 0, 0), new = TRUE)
-    plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-    legend("bottom", inset = c(0, 0),
-           lty = lty[seq_len(length(pd$compartments))],
-           col = col[seq_len(length(pd$compartments))],
-           bty = "n", horiz = TRUE, legend = argv$legend,
-           lwd = argv$lwd)
+    if (!is.null(pd$compartments)) {
+        par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
+            mar = c(0, 0, 0, 0), new = TRUE)
+        plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+        legend("bottom", inset = c(0, 0),
+               lty = lty[seq_len(length(pd$compartments))],
+               col = col[seq_len(length(pd$compartments))],
+               bty = "n", horiz = TRUE, legend = pd$compartments,
+               lwd = argv$lwd)
+    }
 }
 
 ##' Display the outcome from a simulated trajectory
