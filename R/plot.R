@@ -287,7 +287,7 @@ init_plot_argv <- function(model, compartments, pd, ...) {
         if (isTRUE(compartments_has_lhs(compartments))) {
             argv$ylab <- deparse(compartments)
         } else {
-            argv$ylab <- "N"
+            argv$ylab <- "Value"
         }
     }
 
