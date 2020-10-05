@@ -195,8 +195,7 @@ init_plot_prevalence_data <- function(model, compartments,
 
     ## Create a matrix with one row for each line in the plot.
     if (level < 3) {
-        y <- matrix(prevalence(model, compartments, level, index, "matrix"),
-                    nrow = 1)
+        y <- prevalence(model, compartments, level, index, "matrix")
         lower <- NULL
         upper <- NULL
         each <- 1
