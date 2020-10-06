@@ -4,7 +4,7 @@
 \alias{plot,SimInf_model-method}
 \title{Display the outcome from a simulated trajectory}
 \usage{
-\S4method{plot}{SimInf_model}(x, y, level = 1, index = NULL, range = 0.5, ...)
+\S4method{plot}{SimInf_model}(x, y, level = 1, index = NULL, range = 0.5, type = "s", lwd = 2, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot.}
@@ -43,7 +43,13 @@ median value is shown in the same color. Use \code{range =
 0.95} to show the middle 95\% of the count. To display
 individual lines for each node, specify \code{range = FALSE}.}
 
-\item{...}{Additional arguments affecting the plot produced.}
+\item{type}{The type of plot to draw. The default \code{type =
+"s"} draws stair steps. See base plot for other values.}
+
+\item{lwd}{The line width. Default is \code{2}.}
+
+\item{...}{Other graphical parameters that are passed on to the
+plot function.}
 }
 \description{
 Plot either the median and the quantile range of the counts in all
@@ -84,8 +90,8 @@ plot(result, ~I)
 ## three nodes.
 plot(result, index = 1:3, range = FALSE)
 
-## Use a stair step plot type instead.
-plot(result, index = 1:3, range = FALSE, type = "s")
+## Use plot type line instead.
+plot(result, index = 1:3, range = FALSE, type = "l")
 
 ## Plot the number of infected individuals in the first node.
 plot(result, "I", index = 1, range = FALSE)

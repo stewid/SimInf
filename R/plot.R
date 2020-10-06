@@ -390,7 +390,11 @@ plot_data <- function(pd, argv, lty, col) {
 ##'     median value is shown in the same color. Use \code{range =
 ##'     0.95} to show the middle 95\% of the count. To display
 ##'     individual lines for each node, specify \code{range = FALSE}.
-##' @param ... Additional arguments affecting the plot produced.
+##' @param type The type of plot to draw. The default \code{type =
+##'     "s"} draws stair steps. See base plot for other values.
+##' @param lwd The line width. Default is \code{2}.
+##' @param ... Other graphical parameters that are passed on to the
+##'     plot function.
 ##' @rdname plot
 ##' @aliases plot,SimInf_model-method
 ##' @export
