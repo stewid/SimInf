@@ -438,8 +438,8 @@ plot_data <- function(pd, argv, lty, col) {
 ##' ## three nodes.
 ##' plot(result, index = 1:3, range = FALSE)
 ##'
-##' ## Use a stair step plot type instead.
-##' plot(result, index = 1:3, range = FALSE, type = "s")
+##' ## Use plot type line instead.
+##' plot(result, index = 1:3, range = FALSE, type = "l")
 ##'
 ##' ## Plot the number of infected individuals in the first node.
 ##' plot(result, "I", index = 1, range = FALSE)
@@ -462,7 +462,7 @@ setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
     function(x, y, level = 1, index = NULL, range = 0.5,
-             type = "l", lwd = 2, ...) {
+             type = "s", lwd = 2, ...) {
         if (missing(y))
             y <- NULL
 
