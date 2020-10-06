@@ -53,80 +53,80 @@ check_error(res, "Missing columns in u0.")
 
 ## Check missing beta
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               epsilon = 0.5,
-                               gamma   = 0.5))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        epsilon = 0.5,
+                        gamma   = 0.5))
 check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check missing epsilon
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               gamma   = 0.5))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        gamma   = 0.5))
 check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check missing gamma
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = 0.5))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = 0.5))
 check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric beta
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = "0.5",
-                               epsilon = 0.3,
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = "0.5",
+                        epsilon = 0.3,
+                        gamma   = 0.1))
 check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric epsilon
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = "0.3",
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = "0.3",
+                        gamma   = 0.1))
 check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric gamma
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = 0.3,
-                               gamma   = "0.1"))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = 0.3,
+                        gamma   = "0.1"))
 check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of beta equals 1
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = c(0.5, 0.5),
-                               epsilon = 0.3,
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = c(0.5, 0.5),
+                        epsilon = 0.3,
+                        gamma   = 0.1))
 check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of epsilon equals 1
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = c(0.3, 0.3),
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = c(0.3, 0.3),
+                        gamma   = 0.1))
 check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of gamma equals 1
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = 0.3,
-                               gamma   = c(0.1, 0.1)))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = 0.3,
+                        gamma   = c(0.1, 0.1)))
 check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check extraction of data from 'suscpetible', 'infected' and
@@ -420,8 +420,8 @@ stopifnot(identical(nrow(events_SEIR()), 466692L))
 stopifnot(identical(nrow(u0_SEIR()), 1600L))
 
 ## Try to plot non-extisting compartment.
-res <- assertError(plot(result, compartments = "X"))
-check_error(res, "'compartments' must exist in the model.")
+res <- assertError(plot(result, "X"))
+check_error(res, "Non-existing compartment(s) in model: 'X'.")
 
 ## Try to plot with invalid range argument.
 res <- assertError(plot(result, range = 1.2))
@@ -438,7 +438,7 @@ unlink(pdf_file)
 ## Check SEIR plot method with range = FALSE
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
-plot(result, compartments = "S", lty = 1, range = FALSE)
+plot(result, "S", lty = 1, range = FALSE)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
