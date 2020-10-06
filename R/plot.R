@@ -339,10 +339,18 @@ plot_data <- function(pd, argv, lty, col) {
         }
 
         if (!is.null(pd$lower) && !is.null(pd$upper)) {
-            polygon(x = c(argv$x, rev(argv$x)),
-                    y = c(pd$upper[i, ], rev(pd$lower[i, ])),
-                    col = adjustcolor(col[i], alpha.f = 0.1),
-                    border = NA)
+            if (argv$type == "s") {
+                x <- c(rep(argv$x, each = 2)[-1],
+                       rep(rev(argv$x), each = 2)[-1])
+                y <- c(rep(pd$upper[i, ], each = 2)[-2 * ncol(pd$upper)],
+                       rep(rev(pd$lower[i, ]), each = 2)[-2 * ncol(pd$upper)])
+            } else {
+                x <- c(argv$x, rev(argv$x))
+                y <- c(pd$upper[i, ], rev(pd$lower[i, ]))
+            }
+
+            polygon(x = x, y = y, border = NA,
+                    col = adjustcolor(col[i], alpha.f = 0.1))
         }
     }
 
