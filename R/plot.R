@@ -162,18 +162,6 @@ init_plot_color <- function(col, compartments, each) {
     rep(col, each = each)
 }
 
-init_plot_type <- function(type) {
-    if (is.null(type))
-        type <- "l"
-    type
-}
-
-init_plot_line_width <- function(lwd) {
-    if (is.null(lwd))
-        lwd <- 2
-    lwd
-}
-
 init_plot_range <- function(range) {
     if (identical(range, FALSE))
         return(range)
@@ -280,8 +268,10 @@ compartments_has_lhs <- function(compartments) {
     FALSE
 }
 
-init_plot_argv <- function(model, compartments, pd, ...) {
+init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
     argv <- list(...)
+    argv$type <- type
+    argv$lwd <- lwd
 
     if (is.null(argv$ylab)) {
         if (isTRUE(compartments_has_lhs(compartments))) {
@@ -290,9 +280,6 @@ init_plot_argv <- function(model, compartments, pd, ...) {
             argv$ylab <- "Value"
         }
     }
-
-    argv$type <- init_plot_type(argv$type)
-    argv$lwd <- init_plot_line_width(argv$lwd)
 
     ## Settings for the y-axis.
     if (is.null(argv$ylim)) {
@@ -474,7 +461,8 @@ plot_data <- function(pd, argv, lty, col) {
 setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
-    function(x, y, level = 1, index = NULL, range = 0.5, ...) {
+    function(x, y, level = 1, index = NULL, range = 0.5,
+             type = "l", lwd = 2, ...) {
         if (missing(y))
             y <- NULL
 
@@ -490,7 +478,7 @@ setMethod(
             pd <- init_plot_trajectory_data(x, compartments, index, range)
         }
 
-        argv <- init_plot_argv(x, y, pd, ...)
+        argv <- init_plot_argv(x, y, pd, type, lwd, ...)
         lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
         col <- init_plot_color(argv$col, pd$compartments, pd$each)
 
