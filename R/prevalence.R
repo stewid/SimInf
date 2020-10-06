@@ -92,8 +92,11 @@ calculate_prevalence <- function(model, compartments, level,
 
     prevalence <- cases / population
 
-    if (identical(format, "matrix"))
+    if (identical(format, "matrix")) {
+        if (is.null(dim(prevalence)))
+            dim(prevalence) <- c(1L, length(prevalence))
         return(prevalence)
+    }
 
     time <- names(model@tspan)
     if (is.null(time))
