@@ -71,6 +71,7 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
+    'run.R'
     'abc.R'
     'degree.R'
     'distance.R'
@@ -84,7 +85,6 @@ Collate:
     'print.R'
     'priors.R'
     'punchcard.R'
-    'run.R'
     'trajectory.R'
 Encoding: UTF-8
 RoxygenNote: 7.1.1

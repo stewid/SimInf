@@ -511,3 +511,31 @@ continue <- function(object, ngen = 1, ...,
 
     object
 }
+
+##' @rdname run
+##' @include run.R
+##' @export
+setMethod(
+    "run",
+    signature(model = "SimInf_abc"),
+    function(model, ...) {
+        ## Sample a particle to use for the parameters from the last
+        ## generation.
+        generation <- length(model@x)
+        particle <- sample.int(ncol(model@x[[generation]]), 1)
+
+        ## Apply the particle to the model.
+        for (i in seq_len(nrow(model@x[[generation]]))) {
+            parameter <- model@pars[i]
+            value <- model@x[[generation]][i, particle]
+            if (identical(model@target, "gdata")) {
+                model@model@gdata[parameter] <- value
+            } else {
+                model@model@ldata[parameter, 1] <- value
+            }
+        }
+
+        ## Run the model using the particle.
+        run(model@model, ...)
+    }
+)
