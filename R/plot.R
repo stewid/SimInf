@@ -187,7 +187,7 @@ init_plot_prevalence_data <- function(model, compartments,
         lower <- NULL
         upper <- NULL
         each <- 1
-    } else if (identical(range, FALSE) || n_nodes(model) == 1) {
+    } else if (identical(range, FALSE) || identical(length(index), 1L)) {
         y <- prevalence(model, compartments, level, index, "matrix")
         lower <- NULL
         upper <- NULL
@@ -220,7 +220,7 @@ init_plot_trajectory_data <- function(model, compartments, index, range) {
     y <- list()
     for (j in seq_len(length(compartments$rhs))) {
         for (compartment in names(compartments$rhs[[j]])) {
-            if (identical(range, FALSE) || n_nodes(model) == 1) {
+            if (identical(range, FALSE) || identical(length(index), 1L)) {
                 y[[length(y) + 1]] <-
                     trajectory(model, compartment, index, "matrix")
             } else {
@@ -235,7 +235,7 @@ init_plot_trajectory_data <- function(model, compartments, index, range) {
 
     compartments <- names(y)
 
-    if (identical(range, FALSE) || n_nodes(model) == 1) {
+    if (identical(range, FALSE) || identical(length(index), 1L)) {
         lower <- NULL
         upper <- NULL
         ## Combine matrices for each comparment.
