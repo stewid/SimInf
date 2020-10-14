@@ -436,8 +436,7 @@ as.data.frame.SimInf_events <- function(x, ...) {
 ##' @param x the time points of the events.
 ##' @param y the number of events over time.
 ##' @param events the event type to plot.
-##' @param frame.plot a logical indicating whether a box should be
-##'     drawn around the plot.
+##' @template plot-frame-param
 ##' @param ... additional arguments affecting the plot.
 ##' @importFrom graphics plot
 ##' @importFrom graphics mtext

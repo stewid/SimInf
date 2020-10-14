@@ -304,7 +304,7 @@ init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
     argv
 }
 
-plot_data <- function(pd, argv, lty, col) {
+plot_data <- function(pd, argv, lty, col, frame.plot) {
     if (is.null(pd$compartments)) {
         savepar <- par(mar = c(2, 4, 1, 1), oma = c(2, 1, 0, 0), xpd = TRUE)
     } else {
@@ -313,7 +313,7 @@ plot_data <- function(pd, argv, lty, col) {
     on.exit(par(savepar))
     ## Setup plot-region
     plot(NULL, type = "n", xlim = range(argv$x), ylim = argv$ylim,
-         xlab = argv$xlab, ylab = argv$ylab)
+         xlab = argv$xlab, ylab = argv$ylab, frame.plot = frame.plot)
 
     ## Plot lines
     for (i in seq_len(dim(pd$y)[1])) {
@@ -364,6 +364,7 @@ plot_data <- function(pd, argv, lty, col) {
 ##' @template plot-range-param
 ##' @template plot-type-param
 ##' @template plot-lwd-param
+##' @template plot-frame-param
 ##' @param ... Other graphical parameters that are passed on to the
 ##'     plot function.
 ##' @rdname plot
@@ -437,7 +438,7 @@ setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
     function(x, y, level = 1, index = NULL, range = 0.5,
-             type = "s", lwd = 2, ...) {
+             type = "s", lwd = 2, frame.plot = FALSE, ...) {
         if (missing(y))
             y <- NULL
 
@@ -457,7 +458,7 @@ setMethod(
         lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
         col <- init_plot_color(argv$col, pd$compartments, pd$each)
 
-        plot_data(pd, argv, lty, col)
+        plot_data(pd, argv, lty, col, frame.plot)
 
         invisible(NULL)
     }
