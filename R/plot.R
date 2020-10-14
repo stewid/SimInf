@@ -311,6 +311,7 @@ plot_data <- function(pd, argv, lty, col, frame.plot) {
         savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
     }
     on.exit(par(savepar))
+
     ## Setup plot-region
     plot(NULL, type = "n", xlim = range(argv$x), ylim = argv$ylim,
          xlab = argv$xlab, ylab = argv$ylab, frame.plot = frame.plot)
@@ -345,11 +346,9 @@ plot_data <- function(pd, argv, lty, col, frame.plot) {
         par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
             mar = c(0, 0, 0, 0), new = TRUE)
         plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-        legend("bottom", inset = c(0, 0),
-               lty = lty[seq_len(length(pd$compartments))],
-               col = col[seq_len(length(pd$compartments))],
-               bty = "n", horiz = TRUE, legend = pd$compartments,
-               lwd = argv$lwd)
+        legend("bottom", inset = c(0, 0), lty = unique(lty),
+               col = unique(col), bty = "n", horiz = TRUE,
+               legend = pd$compartments, lwd = argv$lwd)
     }
 }
 
