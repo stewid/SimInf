@@ -358,39 +358,12 @@ plot_data <- function(pd, argv, lty, col) {
 ##' Plot either the median and the quantile range of the counts in all
 ##' nodes, or plot the counts in specified nodes.
 ##' @param x The \code{model} to plot.
-##' @param y Character vector or formula with the compartments in the
-##'     model to include in the plot. Default includes all
-##'     compartments in the model. Can also be a formula that
-##'     specifies the compartments that define the cases with a
-##'     disease or that have a specific characteristic (numerator),
-##'     and the compartments that define the entire population of
-##'     interest (denominator). The left-hand-side of the formula
-##'     defines the cases, and the right-hand-side defines the
-##'     population, for example, \code{I~S+I+R} in a \sQuote{SIR}
-##'     model (see \sQuote{Examples}). The \code{.}  (dot) is expanded
-##'     to all compartments, for example, \code{I~.}  is expanded to
-##'     \code{I~S+I+R} in a \sQuote{SIR} model (see
-##'     \sQuote{Examples}).
-##' @param level The level at which the prevalence is calculated at
-##'     each time point in \code{tspan}. 1 (population prevalence):
-##'     calculates the proportion of the individuals (cases) in the
-##'     population. 2 (node prevalence): calculates the proportion of
-##'     nodes with at least one case. 3 (within-node prevalence):
-##'     calculates the proportion of cases within each node. Default
-##'     is \code{1}.
-##' @param index Indices specifying the nodes to include when plotting
-##'     data. Plot one line for each node. Default (\code{index =
-##'     NULL}) is to extract data from all nodes and plot the median
-##'     count for the specified compartments.
-##' @param range Show the quantile range of the count in each
-##'     compartment. Default is to show the interquartile range
-##'     i.e. the middle 50\% of the count in transparent color. The
-##'     median value is shown in the same color. Use \code{range =
-##'     0.95} to show the middle 95\% of the count. To display
-##'     individual lines for each node, specify \code{range = FALSE}.
-##' @param type The type of plot to draw. The default \code{type =
-##'     "s"} draws stair steps. See base plot for other values.
-##' @param lwd The line width. Default is \code{2}.
+##' @template plot-y-param
+##' @template plot-level-param
+##' @template plot-index-param
+##' @template plot-range-param
+##' @template plot-type-param
+##' @template plot-lwd-param
 ##' @param ... Other graphical parameters that are passed on to the
 ##'     plot function.
 ##' @rdname plot
