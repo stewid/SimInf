@@ -4,7 +4,17 @@
 \alias{plot,SimInf_model-method}
 \title{Display the outcome from a simulated trajectory}
 \usage{
-\S4method{plot}{SimInf_model}(x, y, level = 1, index = NULL, range = 0.5, type = "s", lwd = 2, ...)
+\S4method{plot}{SimInf_model}(
+  x,
+  y,
+  level = 1,
+  index = NULL,
+  range = 0.5,
+  type = "s",
+  lwd = 2,
+  frame.plot = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{The \code{model} to plot.}
@@ -47,6 +57,9 @@ individual lines for each node, specify \code{range = FALSE}.}
 "s"} draws stair steps. See base plot for other values.}
 
 \item{lwd}{The line width. Default is \code{2}.}
+
+\item{frame.plot}{a logical indicating whether a box should be
+drawn around the plot.}
 
 \item{...}{Other graphical parameters that are passed on to the
 plot function.}
