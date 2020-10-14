@@ -330,7 +330,7 @@ plot_data <- function(pd, argv, lty, col) {
                 x <- c(rep(argv$x, each = 2)[-1],
                        rep(rev(argv$x), each = 2)[-1])
                 y <- c(rep(pd$upper[i, ], each = 2)[-2 * ncol(pd$upper)],
-                       rep(rev(pd$lower[i, ]), each = 2)[-2 * ncol(pd$upper)])
+                       rep(rev(pd$lower[i, ]), each = 2)[-2 * ncol(pd$lower)])
             } else {
                 x <- c(argv$x, rev(argv$x))
                 y <- c(pd$upper[i, ], rev(pd$lower[i, ]))
