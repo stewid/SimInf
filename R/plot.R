@@ -311,6 +311,9 @@ plot_data <- function(pd, argv, lty, col) {
         savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
     }
     on.exit(par(savepar))
+    ## Setup plot-region
+    plot(NULL, type = "n", xlim = range(argv$x), ylim = argv$ylim,
+         xlab = argv$xlab, ylab = argv$ylab)
 
     ## Plot lines
     for (i in seq_len(dim(pd$y)[1])) {
@@ -318,12 +321,7 @@ plot_data <- function(pd, argv, lty, col) {
         argv$col <- col[i]
         argv$lty <- lty[i]
 
-        if (i == 1) {
-            do.call(plot, argv)
-            title(xlab = argv$xlab, outer = TRUE, line = 0)
-        } else {
-            do.call(lines, argv)
-        }
+        do.call(lines, argv)
 
         if (!is.null(pd$lower) && !is.null(pd$upper)) {
             if (argv$type == "s") {
