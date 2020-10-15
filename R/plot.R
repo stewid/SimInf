@@ -375,7 +375,6 @@ plot_data <- function(pd, argv, lty, col, frame.plot) {
 ##' @importFrom graphics par
 ##' @importFrom graphics plot
 ##' @importFrom graphics polygon
-##' @importFrom graphics title
 ##' @importFrom grDevices adjustcolor
 ##' @importFrom grDevices rainbow
 ##' @examples
