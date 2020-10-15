@@ -305,13 +305,6 @@ init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
 }
 
 plot_data <- function(pd, argv, lty, col, frame.plot) {
-    if (is.null(pd$compartments)) {
-        savepar <- par(mar = c(2, 4, 1, 1), oma = c(2, 1, 0, 0), xpd = TRUE)
-    } else {
-        savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0), xpd = TRUE)
-    }
-    on.exit(par(savepar))
-
     ## Setup plot-region
     plot(NULL, type = "n", xlim = range(argv$x), ylim = argv$ylim,
          xlab = argv$xlab, ylab = argv$ylab, frame.plot = frame.plot)
@@ -343,12 +336,21 @@ plot_data <- function(pd, argv, lty, col, frame.plot) {
     ## Add the legend below plot. The default legend is the names
     ## of the compartments.
     if (!is.null(pd$compartments)) {
-        par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
-            mar = c(0, 0, 0, 0), new = TRUE)
-        plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-        legend("bottom", inset = c(0, 0), lty = unique(lty),
-               col = unique(col), bty = "n", horiz = TRUE,
-               legend = pd$compartments, lwd = argv$lwd)
+        ## Determine the size of the legend.
+        lgd <- legend("top", lty = unique(lty), col = unique(col),
+                      bty = "n", horiz = TRUE, legend = pd$compartments,
+                      lwd = argv$lwd, xpd = TRUE, plot = FALSE)
+
+        ## Determine the y-position to place the legend one line
+        ## above the plot.
+        y <- par("cin")[2] * par("cex") * par("lheight")
+        y <- diff(grconvertY(c(0, y), "inches", "npc"))
+        y <- grconvertY(1 + y, "npc", "user")
+
+        ## Add the legend to the plot.
+        legend(lgd$rect$left, y, lty = unique(lty), col = unique(col),
+               bty = "n", horiz = TRUE, legend = pd$compartments,
+               lwd = argv$lwd, xpd = TRUE)
     }
 }
 
