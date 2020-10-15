@@ -13,6 +13,7 @@
   type = "s",
   lwd = 2,
   frame.plot = FALSE,
+  legend = TRUE,
   ...
 )
 }
@@ -60,6 +61,10 @@ individual lines for each node, specify \code{range = FALSE}.}
 
 \item{frame.plot}{a logical indicating whether a box should be
 drawn around the plot.}
+
+\item{legend}{a logical indicating whether a legend for the
+compartments should be added to the plot. A legend is not
+drawn for a prevalence plot.}
 
 \item{...}{Other graphical parameters that are passed on to the
 plot function.}

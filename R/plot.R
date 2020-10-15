@@ -304,7 +304,7 @@ init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
     argv
 }
 
-plot_data <- function(pd, argv, lty, col, frame.plot) {
+plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
     ## Setup plot-region
     plot(NULL, type = "n", xlim = range(argv$x), ylim = argv$ylim,
          xlab = argv$xlab, ylab = argv$ylab, frame.plot = frame.plot)
@@ -333,16 +333,16 @@ plot_data <- function(pd, argv, lty, col, frame.plot) {
         }
     }
 
-    ## Add the legend below plot. The default legend is the names
-    ## of the compartments.
-    if (!is.null(pd$compartments)) {
+    ## Add the legend below plot. The default legend is the names of
+    ## the compartments.
+    if (isTRUE(legend) && !is.null(pd$compartments)) {
         ## Determine the size of the legend.
         lgd <- legend("top", lty = unique(lty), col = unique(col),
                       bty = "n", horiz = TRUE, legend = pd$compartments,
                       lwd = argv$lwd, xpd = TRUE, plot = FALSE)
 
-        ## Determine the y-position to place the legend one line
-        ## above the plot.
+        ## Determine the y-position to place the legend one line above
+        ## the plot.
         y <- par("cin")[2] * par("cex") * par("lheight")
         y <- diff(grconvertY(c(0, y), "inches", "npc"))
         y <- grconvertY(1 + y, "npc", "user")
@@ -366,6 +366,7 @@ plot_data <- function(pd, argv, lty, col, frame.plot) {
 ##' @template plot-type-param
 ##' @template plot-lwd-param
 ##' @template plot-frame-param
+##' @template plot-legend-param
 ##' @param ... Other graphical parameters that are passed on to the
 ##'     plot function.
 ##' @rdname plot
@@ -438,8 +439,8 @@ plot_data <- function(pd, argv, lty, col, frame.plot) {
 setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
-    function(x, y, level = 1, index = NULL, range = 0.5,
-             type = "s", lwd = 2, frame.plot = FALSE, ...) {
+    function(x, y, level = 1, index = NULL, range = 0.5, type = "s",
+             lwd = 2, frame.plot = FALSE, legend = TRUE, ...) {
         if (missing(y))
             y <- NULL
 
@@ -459,7 +460,7 @@ setMethod(
         lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
         col <- init_plot_color(argv$col, pd$compartments, pd$each)
 
-        plot_data(pd, argv, lty, col, frame.plot)
+        plot_data(pd, argv, lty, col, frame.plot, legend)
 
         invisible(NULL)
     }
