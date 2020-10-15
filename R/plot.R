@@ -372,6 +372,7 @@ plot_data <- function(pd, argv, lty, col, frame.plot) {
 ##' @aliases plot,SimInf_model-method
 ##' @export
 ##' @include SimInf_model.R
+##' @importFrom graphics grconvertY
 ##' @importFrom graphics legend
 ##' @importFrom graphics lines
 ##' @importFrom graphics par
