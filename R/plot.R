@@ -124,11 +124,7 @@ init_plot_node_index <- function(model, index) {
 }
 
 init_plot_line_type <- function(lty, compartments, each) {
-    if (is.null(compartments)) {
-        n <- 1
-    } else {
-        n <- length(compartments)
-    }
+    n <- length(compartments)
 
     if (is.null(lty)) {
         lty <- seq_len(n)
@@ -139,11 +135,7 @@ init_plot_line_type <- function(lty, compartments, each) {
 }
 
 init_plot_color <- function(col, compartments, each) {
-    if (is.null(compartments)) {
-        n <- 1
-    } else {
-        n <- length(compartments)
-    }
+    n <- length(compartments)
 
     if (is.null(col)) {
         if (n > 9) {
