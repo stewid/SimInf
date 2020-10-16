@@ -305,17 +305,19 @@ init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
 }
 
 plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
-    ## Setup plot-region
-    plot(NULL, type = "n", xlim = range(argv$x), ylim = argv$ylim,
-         xlab = argv$xlab, ylab = argv$ylab, frame.plot = frame.plot)
-
     ## Plot lines
     for (i in seq_len(dim(pd$y)[1])) {
         argv$y <- pd$y[i, ]
         argv$col <- col[i]
         argv$lty <- lty[i]
 
-        do.call(lines, argv)
+        if (i == 1) {
+            argv$frame.plot <- frame.plot
+            do.call(plot, argv)
+            argv$frame.plot <- NULL
+        } else {
+            do.call(lines, argv)
+        }
 
         if (!is.null(pd$lower) && !is.null(pd$upper)) {
             if (argv$type == "s") {
