@@ -124,7 +124,11 @@ init_plot_node_index <- function(model, index) {
 }
 
 init_plot_line_type <- function(lty, compartments, each) {
-    n <- length(compartments)
+    if (is.null(compartments)) {
+        n <- 1
+    } else {
+        n <- length(compartments)
+    }
 
     if (is.null(lty)) {
         lty <- seq_len(n)
@@ -135,7 +139,11 @@ init_plot_line_type <- function(lty, compartments, each) {
 }
 
 init_plot_color <- function(col, compartments, each) {
-    n <- length(compartments)
+    if (is.null(compartments)) {
+        n <- 1
+    } else {
+        n <- length(compartments)
+    }
 
     if (is.null(col)) {
         if (n > 9) {
@@ -297,17 +305,19 @@ init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
 }
 
 plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
-    ## Setup plot-region
-    plot(argv$x, type = "n", ylim = argv$ylim, xlab = argv$xlab,
-         ylab = argv$ylab, frame.plot = frame.plot)
-
     ## Plot lines
     for (i in seq_len(dim(pd$y)[1])) {
         argv$y <- pd$y[i, ]
         argv$col <- col[i]
         argv$lty <- lty[i]
 
-        do.call(lines, argv)
+        if (i == 1) {
+            argv$frame.plot <- frame.plot
+            do.call(plot, argv)
+            argv$frame.plot <- NULL
+        } else {
+            do.call(lines, argv)
+        }
 
         if (!is.null(pd$lower) && !is.null(pd$upper)) {
             if (argv$type == "s") {
