@@ -149,7 +149,7 @@ unlink(pdf_file)
 ## Check SIR prevalence plot method
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
-plot(result, I~S+I+R)
+plot(result, I ~ S + I + R)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
