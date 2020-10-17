@@ -146,6 +146,14 @@ dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
+## Check SIR prevalence plot method
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+plot(result, I~S+I+R)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
 ## Check SIR events plot with no events
 model <- SIR(u0     = u0,
              tspan  = seq_len(10) - 1,

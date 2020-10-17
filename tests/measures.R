@@ -67,8 +67,7 @@ stopifnot(identical(
     1001L))
 
 p <- prevalence(result, I ~ S + I, format = "matrix")
-stopifnot(identical(length(p), 1001L))
-stopifnot(is.null(dim(p)))
+stopifnot(identical(dim(p), c(1L, 1001L)))
 
 p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(1L, 1001L)))
@@ -87,8 +86,7 @@ if (SimInf:::have_openmp()) {
         1001L))
 
     p <- prevalence(result, I ~ S + I, format = "matrix")
-    stopifnot(identical(length(p), 1001L))
-    stopifnot(is.null(dim(p)))
+    stopifnot(identical(dim(p), c(1L, 1001L)))
 
     p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(1L, 1001L)))
@@ -130,8 +128,7 @@ stopifnot(identical(
     1001L))
 
 p <- prevalence(result, I ~ S + I, format = "matrix")
-stopifnot(identical(length(p), 1001L))
-stopifnot(is.null(dim(p)))
+stopifnot(identical(dim(p), c(1L, 1001L)))
 
 p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(1L, 1001L)))
@@ -150,8 +147,7 @@ if (SimInf:::have_openmp()) {
         1001L))
 
     p <- prevalence(result, I ~ S + I, format = "matrix")
-    stopifnot(identical(length(p), 1001L))
-    stopifnot(is.null(dim(p)))
+    stopifnot(identical(dim(p), c(1L, 1001L)))
 
     p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(1L, 1001L)))
@@ -199,8 +195,7 @@ stopifnot(identical(
     10000L))
 
 p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
-stopifnot(identical(length(p), 1000L))
-stopifnot(is.null(dim(p)))
+stopifnot(identical(dim(p), c(1L, 1000L)))
 
 p <- prevalence(result, I_1 + I_2 + I_3 ~ ., level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(10L, 1000L)))
@@ -219,8 +214,7 @@ if (SimInf:::have_openmp()) {
         10000L))
 
     p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
-    stopifnot(identical(length(p), 1000L))
-    stopifnot(is.null(dim(p)))
+    stopifnot(identical(dim(p), c(1L, 1000L)))
 
     p <- prevalence(result, I_1 + I_2 + I_3 ~ .,
                     level = 3, format = "matrix")
@@ -271,8 +265,7 @@ stopifnot(identical(
     10000L))
 
 p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
-stopifnot(identical(length(p), 1000L))
-stopifnot(is.null(dim(p)))
+stopifnot(identical(dim(p), c(1L, 1000L)))
 
 p <- prevalence(result, I_1 + I_2 + I_3 ~ ., level = 3, format = "matrix")
 stopifnot(identical(dim(p), c(10L, 1000L)))
@@ -291,8 +284,7 @@ if (SimInf:::have_openmp()) {
         10000L))
 
     p <- prevalence(result, I_1 + I_2 + I_3 ~ ., format = "matrix")
-    stopifnot(identical(length(p), 1000L))
-    stopifnot(is.null(dim(p)))
+    stopifnot(identical(dim(p), c(1L, 1000L)))
 
     p <- prevalence(result, I_1 + I_2 + I_3 ~ .,
                     level = 3, format = "matrix")
