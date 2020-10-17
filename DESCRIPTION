@@ -1,6 +1,6 @@
 Package: SimInf
 Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
-Version: 7.0.1.9000
+Version: 8.0.0.9000
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     email = "stefan.widgren@gmail.com",
                     comment = c(ORCID = "0000-0001-5745-2284")),
@@ -50,13 +50,10 @@ Imports:
     digest,
     graphics,
     grDevices,
-    MASS,
     methods,
     stats,
     utils,
     Matrix
-Suggests:
-    knitr
 Collate:
     'C-generator.R'
     'check_arguments.R'
@@ -71,7 +68,6 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
-    'abc.R'
     'degree.R'
     'distance.R'
     'match_compartments.R'
@@ -88,6 +84,3 @@ Collate:
     'trajectory.R'
 Encoding: UTF-8
 RoxygenNote: 7.1.1
-VignetteBuilder:
-    utils,
-    knitr

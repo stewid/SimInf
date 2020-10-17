@@ -47,20 +47,22 @@
 ##' @export
 ##' @importFrom methods validObject
 ##' @importClassesFrom Matrix dgCMatrix
-setClass("SimInf_model",
-         slots = c(G        = "dgCMatrix",
-                   S        = "dgCMatrix",
-                   U        = "matrix",
-                   U_sparse = "dgCMatrix",
-                   ldata    = "matrix",
-                   gdata    = "numeric",
-                   tspan    = "numeric",
-                   u0       = "matrix",
-                   V        = "matrix",
-                   V_sparse = "dgCMatrix",
-                   v0       = "matrix",
-                   events   = "SimInf_events",
-                   C_code   = "character"))
+setClass(
+    "SimInf_model",
+    slots = c(G        = "dgCMatrix",
+              S        = "dgCMatrix",
+              U        = "matrix",
+              U_sparse = "dgCMatrix",
+              ldata    = "matrix",
+              gdata    = "numeric",
+              tspan    = "numeric",
+              u0       = "matrix",
+              V        = "matrix",
+              V_sparse = "dgCMatrix",
+              v0       = "matrix",
+              events   = "SimInf_events",
+              C_code   = "character")
+)
 
 ##' Check if a SimInf_model object is valid
 ##'

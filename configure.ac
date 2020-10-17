@@ -114,28 +114,6 @@ if test "x${have_gsl}" = xno; then AC_MSG_FAILURE([
   ---------------------------------------------])
 fi
 
-# We need GSL version >= 2.2 to build SimInf with support for ABC.
-AC_MSG_CHECKING([whether gsl_ran_multivariate_gaussian is available])
-have_gsl_ran_multivariate_gaussian=no
-AC_LANG_CONFTEST(
-[AC_LANG_PROGRAM(
-[[#include <gsl/gsl_randist.h>]],
-[[gsl_ran_multivariate_gaussian(NULL, NULL, NULL, NULL);]])])
-PKG_CFLAGS="${PKG_CFLAGS} ${GSL_CFLAGS} -Werror" "$RBIN" CMD SHLIB conftest.c \
-1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && have_gsl_ran_multivariate_gaussian=yes
-AC_MSG_RESULT([${have_gsl_ran_multivariate_gaussian}])
-if test "x${have_gsl_ran_multivariate_gaussian}" = xno; then AC_MSG_WARN([
-  ---------------------------------------------
-   The installed version of the GNU Scientific
-   Library (GSL) that is required to build
-   SimInf with support for ABC is to old.
-   Please install GSL version >= 2.2 and
-   try again if you need that functionality.
-  ---------------------------------------------])
-
-  CPPFLAGS="${CPPFLAGS} -DSIMINF_NO_ABC"
-fi
-
 # List all model files to compile
 MODELS_OBJ=`"${RSCRIPT}" --slave --vanilla -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
