@@ -1,3 +1,5 @@
+# SimInf (development version)
+
 # SimInf 8.1.0 (2020-10-18)
 
 This release of SimInf focuses primarily on improving the plotting of
