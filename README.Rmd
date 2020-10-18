@@ -74,7 +74,7 @@ model <- mparse(transitions = transitions,
                 compartments = compartments,
                 gdata = c(beta = 0.16, gamma = 0.077),
                 u0 = u0,
-                tspan = 1:180)
+                tspan = 1:150)
 ```
 
 To generate data from the model and then print some basic information
@@ -98,7 +98,7 @@ post-processing of simulated data, for example, `trajectory`,
 count in each compartment across nodes as a colored line together with
 the inter-quartile range using the same color, but with transparency.
 
-```{r, eval=FALSE}
+```{r mparse-SIR, fig.width = 10, fig.height = 5, eval = FALSE}
 plot(result)
 ```
 
