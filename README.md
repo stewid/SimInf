@@ -69,7 +69,7 @@ model <- mparse(transitions = transitions,
                 compartments = compartments,
                 gdata = c(beta = 0.16, gamma = 0.077),
                 u0 = u0,
-                tspan = 1:180)
+                tspan = 1:150)
 ```
 
 To generate data from the model and then print some basic information
@@ -98,9 +98,9 @@ result
 #> Compartments
 #> ------------
 #>      Min. 1st Qu. Median   Mean 3rd Qu.   Max.
-#>  S   1.00   17.00  27.00  37.91   53.00  99.00
-#>  I   0.00    0.00   2.00   5.74    9.00  47.00
-#>  R   0.00   36.00  73.00  60.34   85.00 103.00
+#>  S   1.00   19.00  30.00  40.74   60.00  99.00
+#>  I   0.00    0.00   4.00   6.87   11.00  47.00
+#>  R   0.00   28.00  67.00  56.39   83.00 103.00
 ```
 
 There are several functions in SimInf to facilitate analysis and
