@@ -116,16 +116,16 @@ plot(result, "I", index = 1, range = FALSE)
 
 ## Plot the proportion of infected individuals (cases)
 ## in the population.
-plot(result, I~S+I+R)
+plot(result, I ~ S + I + R)
 
 ## Plot the proportion of nodes with infected individuals.
-plot(result, I~S+I+R, level = 2)
+plot(result, I ~ S + I + R, level = 2)
 
 ## Plot the median and interquartile range of the proportion
 ## of infected individuals in each node
-plot(result, I~S+I+R, level = 3)
+plot(result, I ~ S + I + R, level = 3)
 
 ## Plot the proportion of infected individuals in the first
 ## three nodes.
-plot(result, I~S+I+R, level = 3, index = 1:3, range = FALSE)
+plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
 }
