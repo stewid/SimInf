@@ -7,7 +7,9 @@ trajectory data.
 
 * The plotting functionality has been improved to allow visualisation
   of the prevalence using the same formula notation as the
-  'prevalence' function, see the documentation.
+  'prevalence' function, see the documentation. In addition, the box
+  around the plot has been removed and the legend has been moved to
+  the top.
 
 * The prevalence function has been updated to always return a matrix
   when format='matrix'. Before it returned a vector instead of a
