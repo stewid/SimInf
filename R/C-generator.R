@@ -65,8 +65,6 @@ C_define <- function() {
       "#if !defined(SIMINF_FORCE_SYMBOLS)",
       "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
       "#endif",
-      "#define SIMINF_STR(name) #name",
-      "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
       "")
 }
 
