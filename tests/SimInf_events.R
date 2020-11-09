@@ -275,7 +275,8 @@ events <- data.frame(
     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
 res <- SimInf_events(E = E, N = N, events = events, t0 = 17166)
-stopifnot(identical(res@time, 2:16))
+stopifnot(identical(res@time, structure(2:16, origin = "2016-12-31")))
+stopifnot(all(as.data.frame(res)$time == events$time))
 
 ## Check events$time equal to an integer vector
 events <- data.frame(

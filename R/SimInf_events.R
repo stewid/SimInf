@@ -213,7 +213,10 @@ init_events <- function(events, t0) {
                 stop("Missing 't0'.", call. = FALSE)
             if (!all(identical(length(t0), 1L), is.numeric(t0)))
                 stop("Invalid 't0'.", call. = FALSE)
+            t1 <- min(events$time)
+            origin <- as.character(t1 - (as.numeric(t1) - t0))
             events$time <- as.numeric(events$time) - t0
+            attr(events$time, "origin") <- origin
         } else if (!is.null(t0)) {
             stop("Invalid 't0'.", call. = FALSE)
         }
@@ -391,13 +394,16 @@ SimInf_events <- function(E      = NULL,
         }
     }
 
+    origin <- attr(events$time, "origin")
+    events$time <- as.integer(events$time)
     events <- events[order(events$time, events$event, events$select), ]
+    attr(events$time, "origin") <- origin
 
     new("SimInf_events",
         E          = E,
         N          = N,
         event      = as.integer(events$event),
-        time       = as.integer(events$time),
+        time       = events$time,
         node       = as.integer(events$node),
         dest       = as.integer(events$dest),
         n          = as.integer(events$n),
@@ -410,14 +416,21 @@ setAs(
     from = "SimInf_events",
     to = "data.frame",
     def = function(from) {
-        data.frame(event = from@event,
-                   time = from@time,
-                   node = from@node,
-                   dest = from@dest,
-                   n = from@n,
-                   proportion = from@proportion,
-                   select = from@select,
-                   shift = from@shift)
+        events <- data.frame(event = from@event,
+                             time = from@time,
+                             node = from@node,
+                             dest = from@dest,
+                             n = from@n,
+                             proportion = from@proportion,
+                             select = from@select,
+                             shift = from@shift)
+
+        if (!is.null(attr(from@time, "origin"))) {
+            events$time <- as.Date(events$time,
+                                   origin = attr(from@time, "origin"))
+        }
+
+        events
     }
 )
 
