@@ -434,10 +434,9 @@ setAs(
     }
 )
 
-##' Coerce to data frame
+##' Coerce events to a data frame
 ##'
 ##' @method as.data.frame SimInf_events
-##'
 ##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_events <- function(x, ...) {
