@@ -510,6 +510,8 @@ setMethod(
         yy <- xtabs(n ~ event + time,
                     cbind(event = x@event, time = x@time, n = x@n))
         xx <- as.integer(colnames(yy))
+        if (!is.null(attr(x@time, "origin")))
+            xx <- as.Date(xx, origin = attr(x@time, "origin"))
 
         ## Plot events
         plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)

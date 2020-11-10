@@ -278,6 +278,13 @@ res <- SimInf_events(E = E, N = N, events = events, t0 = 17166)
 stopifnot(identical(res@time, structure(2:16, origin = "2016-12-31")))
 stopifnot(all(as.data.frame(res)$time == events$time))
 
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+plot(res)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
 ## Check events$time equal to an integer vector
 events <- data.frame(
     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
