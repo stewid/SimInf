@@ -477,6 +477,7 @@ setMethod(
 ##' @aliases plot,SimInf_abc-method
 ##' @importFrom graphics contour
 ##' @importFrom graphics lines
+##' @importFrom graphics rug
 ##' @importFrom MASS bandwidth.nrd
 ##' @importFrom MASS kde2d
 ##' @importFrom stats density
@@ -512,6 +513,7 @@ setMethod(
         } else {
             plot(density(x@x[[y]], bw = "SJ-ste"), main = "",
                  xlab = rownames(x@x[[y]]), ...)
+            rug(x@x[[y]])
         }
     }
 )
