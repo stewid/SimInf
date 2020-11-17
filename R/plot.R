@@ -504,6 +504,7 @@ setMethod(
                       d <- density(x, bw = "SJ-ste")
                       d$y <- d$y / max(d$y)
                       lines(d, ...)
+                      rug(x)
                   },
                   lower.panel = function(x, y, ...) {
                       h <- c(bandwidth.nrd(x), bandwidth.nrd(y))
