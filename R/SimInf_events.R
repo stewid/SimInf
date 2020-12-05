@@ -204,6 +204,7 @@ init_events <- function(events, t0) {
         events$event[i_enter] <- 1L
         events$event[i_intTrans] <- 2L
         events$event[i_extTrans] <- 3L
+        attr(events$event, "origin") <- "character"
     }
 
     ## Check time
@@ -394,15 +395,18 @@ SimInf_events <- function(E      = NULL,
         }
     }
 
-    origin <- attr(events$time, "origin")
+    event_origin <- attr(events$event, "origin")
+    events$event <- as.integer(events$event)
+    time_origin <- attr(events$time, "origin")
     events$time <- as.integer(events$time)
     events <- events[order(events$time, events$event, events$select), ]
-    attr(events$time, "origin") <- origin
+    attr(events$event, "origin") <- event_origin
+    attr(events$time, "origin") <- time_origin
 
     new("SimInf_events",
         E          = E,
         N          = N,
-        event      = as.integer(events$event),
+        event      = events$event,
         time       = events$time,
         node       = as.integer(events$node),
         dest       = as.integer(events$dest),
@@ -424,6 +428,11 @@ setAs(
                              proportion = from@proportion,
                              select = from@select,
                              shift = from@shift)
+
+        if (!is.null(attr(from@event, "origin"))) {
+            event_names <- c("exit", "enter", "intTrans", "extTrans")
+            events$event <- event_names[events$event + 1]
+        }
 
         if (!is.null(attr(from@time, "origin"))) {
             events$time <- as.Date(events$time,

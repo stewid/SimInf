@@ -576,3 +576,33 @@ check_error(res, "'N' must be an integer matrix.")
 m <- matrix(c(1.3, 0, 0), nrow = 3)
 res <- assertError(shift_matrix(model) <- m)
 check_error(res, "'N' must be an integer matrix.")
+
+## Check origin = character of event type
+events <- data.frame(
+    event = c("exit", "exit", "enter", "enter", "intTrans",
+              "intTrans", "extTrans", "extTrans"),
+    time = structure(c(14369, 13278, 13610, 13408, 13687,
+                       13407, 13087, 13590), class = "Date"),
+    node = c(163L, 1087L, 1402L, 372L, 869L, 926L, 376L, 729L),
+    dest = c(0L, 0L, 0L, 0L, 0L, 0L, 139L, 479L),
+    n = c(1L, 1L, 1L, 1L, 3L, 1L, 1L, 1L),
+    proportion = c(0, 0, 0, 0, 0, 0, 0, 0),
+    select = c(5L, 6L, 1L, 1L, 5L, 5L, 4L, 4L),
+    shift = c(0L, 0L, 0L, 0L, 2L, 2L, 0L, 0L))
+res <- SimInf_events(E = E, N = N, events = events, t0 = 12965)
+
+stopifnot(
+    identical(
+        as.data.frame(res),
+        data.frame(
+            event = c("extTrans", "exit", "intTrans", "enter",
+                      "extTrans", "enter", "intTrans", "exit"),
+            time = structure(c(13087, 13278, 13407, 13408, 13590,
+                               13610, 13687, 14369),
+                             origin = "2005-07-01", class = "Date"),
+            node = c(376L, 1087L, 926L, 372L, 729L, 1402L, 869L, 163L),
+            dest = c(139L, 0L, 0L, 0L, 479L, 0L, 0L, 0L),
+            n = c(1L, 1L, 1L, 1L, 1L, 1L, 3L, 1L),
+            proportion = c(0, 0, 0, 0, 0, 0, 0, 0),
+            select = c(4L, 6L, 5L, 1L, 4L, 1L, 5L, 5L),
+            shift = c(0L, 0L, 2L, 0L, 0L, 0L, 2L, 0L))))
