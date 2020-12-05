@@ -605,4 +605,5 @@ stopifnot(
             n = c(1L, 1L, 1L, 1L, 1L, 1L, 3L, 1L),
             proportion = c(0, 0, 0, 0, 0, 0, 0, 0),
             select = c(4L, 6L, 5L, 1L, 4L, 1L, 5L, 5L),
-            shift = c(0L, 0L, 2L, 0L, 0L, 0L, 2L, 0L))))
+            shift = c(0L, 0L, 2L, 0L, 0L, 0L, 2L, 0L),
+            stringsAsFactors = FALSE)))
