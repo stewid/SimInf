@@ -522,3 +522,5 @@ model@S@x[1] <- -1000
 set.seed(123)
 res <- assertError(.Call(SimInf:::SIR_run, model, "ssm"))
 check_error(res, "Negative state detected.")
+res <- assertError(.Call(SimInf:::SIR_run, model, "aem"))
+check_error(res, "Negative state detected.")
