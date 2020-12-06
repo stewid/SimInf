@@ -512,3 +512,13 @@ res <- assertError(.Call(SimInf:::SIR_run, model, NA_character_))
 check_error(res, "Invalid 'solver' value.")
 res <- assertError(.Call(SimInf:::SIR_run, model, 5))
 check_error(res, "Invalid 'solver' value.")
+
+## Trigger a negative state error
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = 0)
+model@S@x[1] <- -1000
+set.seed(123)
+res <- assertError(.Call(SimInf:::SIR_run, model, "ssm"))
+check_error(res, "Negative state detected.")
