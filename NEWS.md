@@ -1,4 +1,4 @@
-# SimInf (development version)
+# SimInf 8.2.0 (2020-12-06)
 
 ## IMPROVEMENTS
 
