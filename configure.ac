@@ -4,7 +4,7 @@
 # Copyright (C) 2015 Pavol Bauer
 # Copyright (C) 2017 -- 2019 Robin Eriksson
 # Copyright (C) 2015 -- 2019 Stefan Engblom
-# Copyright (C) 2015 -- 2020 Stefan Widgren
+# Copyright (C) 2015 -- 2021 Stefan Widgren
 #
 # SimInf is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ fi
 # List all model files to compile
 MODELS_OBJ=`"${RSCRIPT}" --slave --vanilla -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
 
-AC_SUBST([PKG_CPPFLAGS], ["-I. -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"])
+AC_SUBST([PKG_CPPFLAGS], ["-I. -I../inst/include ${CPPFLAGS} ${GSL_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"])
 AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"])
 AC_SUBST(MODELS_OBJ)
