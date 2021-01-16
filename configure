@@ -2928,7 +2928,7 @@ fi
 # List all model files to compile
 MODELS_OBJ=`"${RSCRIPT}" --slave --vanilla -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '.c$')), collapse=' '))"`
 
-PKG_CPPFLAGS="-I. -Imisc -Imodels ${CPPFLAGS} ${GSL_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"
+PKG_CPPFLAGS="-I. -I../inst/include ${CPPFLAGS} ${GSL_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"
 
 PKG_CFLAGS="${OPENMP_CFLAGS}"
 
