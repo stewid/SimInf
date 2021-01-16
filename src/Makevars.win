@@ -1,16 +1,14 @@
-# Use gsl headers and libraries in LOCAL_SOFT or from downloaded gsl
-SIMINF_LOCAL_SOFT=$(shell "${R_HOME}/bin/R" CMD config LOCAL_SOFT)
-ifeq ($(wildcard "${SIMINF_LOCAL_SOFT}/include/gsl/gsl_rng.h"),)
-ifneq ($(wildcard gsl/include/gsl/gsl_rng.h),)
-SIMINF_GSL_LIB = -L"gsl/lib$(R_ARCH)"
-SIMINF_GSL_INCLUDE = -Igsl/include
-endif
-endif
+VERSION = 2.4
+RWINLIB = ../windows/gsl-${VERSION}
 
-PKG_CFLAGS = -I. -I../inst/include $(SIMINF_GSL_INCLUDE) \
-             $(SHLIB_OPENMP_CFLAGS) -DR_NO_REMAP -DSTRICT_R_HEADERS
+PKG_CFLAGS = -I$(RWINLIB)/include \
+             -I. -I../inst/include \
+             $(SHLIB_OPENMP_CFLAGS) \
+             -DR_NO_REMAP -DSTRICT_R_HEADERS
 
-PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
+PKG_LIBS = -L$(RWINLIB)/lib$(R_ARCH) \
+           -lm -lgsl -lgslcblas \
+           $(SHLIB_OPENMP_CFLAGS)
 
 # List all model files to compile
 MODELS_SRC = $(wildcard models/*.c)
@@ -29,3 +27,13 @@ OBJECTS.solvers = solvers/SimInf_solver.o \
                   solvers/ssm/SimInf_solver_ssm.o
 
 OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)
+
+all: clean winlibs
+
+winlibs:
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" $(VERSION)
+
+clean:
+	rm -f $(SHLIB) $(OBJECTS)
+
+.PHONY: all winlibs clean
