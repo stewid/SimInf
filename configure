@@ -2925,6 +2925,45 @@ as_fn_error $? "
 See \`config.log' for more details" "$LINENO" 5; }
 fi
 
+# We need GSL version >= 2.2 to build SimInf with support for ABC.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether gsl_ran_multivariate_gaussian is available" >&5
+$as_echo_n "checking whether gsl_ran_multivariate_gaussian is available... " >&6; }
+have_gsl_ran_multivariate_gaussian=no
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <gsl/gsl_randist.h>
+int
+main ()
+{
+gsl_ran_multivariate_gaussian(NULL, NULL, NULL, NULL);
+  ;
+  return 0;
+}
+_ACEOF
+PKG_CFLAGS="${PKG_CFLAGS} ${GSL_CFLAGS} -Werror" "$RBIN" CMD SHLIB conftest.c \
+1>&5 2>&5 && have_gsl_ran_multivariate_gaussian=yes
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${have_gsl_ran_multivariate_gaussian}" >&5
+$as_echo "${have_gsl_ran_multivariate_gaussian}" >&6; }
+if test "x${have_gsl_ran_multivariate_gaussian}" = xno; then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
+  ---------------------------------------------
+   The installed version of the GNU Scientific
+   Library (GSL) that is required to build
+   SimInf with support for ABC is to old.
+   Please install GSL version >= 2.2 and
+   try again if you need that functionality.
+  ---------------------------------------------" >&5
+$as_echo "$as_me: WARNING:
+  ---------------------------------------------
+   The installed version of the GNU Scientific
+   Library (GSL) that is required to build
+   SimInf with support for ABC is to old.
+   Please install GSL version >= 2.2 and
+   try again if you need that functionality.
+  ---------------------------------------------" >&2;}
+
+  CPPFLAGS="${CPPFLAGS} -DSIMINF_NO_ABC"
+fi
+
 # List all model files to compile
 MODELS_OBJ=`"${RSCRIPT}" --slave --vanilla -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '.c$')), collapse=' '))"`
 
