@@ -28,7 +28,7 @@ valid_tspan <- function(object) {
         return("Input time-span must be an increasing vector.")
     }
 
-    character(0);
+    character(0)
 }
 
 valid_u0 <- function(object) {
@@ -37,7 +37,7 @@ valid_u0 <- function(object) {
     if (any(object@u0 < 0L))
         return("Initial state 'u0' has negative elements.")
 
-    character(0);
+    character(0)
 }
 
 valid_U <- function(object) {
@@ -46,7 +46,7 @@ valid_U <- function(object) {
     if (any(object@U < 0L) || any(object@U_sparse < 0, na.rm = TRUE))
         return("Output state 'U' has negative elements.")
 
-    character(0);
+    character(0)
 }
 
 valid_v0 <- function(object) {
@@ -60,14 +60,14 @@ valid_v0 <- function(object) {
             return("The number of nodes in 'u0' and 'v0' must match.")
     }
 
-    character(0);
+    character(0)
 }
 
 valid_V <- function(object) {
     if (!identical(storage.mode(object@V), "double"))
         return("Output model state 'V' must be a double matrix.")
 
-    character(0);
+    character(0)
 }
 
 valid_S <- function(object) {
@@ -82,7 +82,7 @@ valid_S <- function(object) {
             return("'S' and 'E' must have identical compartments.")
     }
 
-    character(0);
+    character(0)
 }
 
 valid_G <- function(object) {
