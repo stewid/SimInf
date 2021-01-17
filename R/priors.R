@@ -90,8 +90,11 @@ parse_priors <- function(priors) {
     ## Determine priors for parameters in the model
     priors <- do.call("rbind", lapply(priors, do_parse_prior))
 
-    if (any(duplicated(priors$parameter)) || any(nchar(priors$parameter) == 0))
-        stop("'priors' must have non-duplicated parameter names.")
+    if (any(duplicated(priors$parameter)) ||
+        any(nchar(priors$parameter) == 0)) {
+        stop("'priors' must have non-duplicated parameter names.",
+             call. = FALSE)
+    }
 
     priors
 }
