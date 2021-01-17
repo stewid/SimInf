@@ -217,8 +217,10 @@ setMethod(
 
         check_integer_arg(level)
         level <- as.integer(level)
-        if (length(level) != 1 || any(level < 1) || any(level > 3))
-            stop("'level' must be an integer with a value 1, 2 or 3.")
+        if (length(level) != 1 || any(level < 1) || any(level > 3)) {
+            stop("'level' must be an integer with a value 1, 2 or 3.",
+                 call. = FALSE)
+        }
         index <- check_node_index_argument(model, index)
         format <- match.arg(format)
         n <- n_nodes(model)

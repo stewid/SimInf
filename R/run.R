@@ -40,7 +40,7 @@
 compile_model <- function(model, key) {
     ## Check that the model contains C code.
     if (nchar(paste0(model@C_code, collapse = "\n")) == 0)
-        stop("The model must contain C code.")
+        stop("The model must contain C code.", call. = FALSE)
 
     ## Determine the name and run_fun to call from R.
     name <- basename(tempfile("SimInf_"))
@@ -153,7 +153,7 @@ setMethod(
     signature(model = "SimInf_model"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model);
+        validObject(model)
         key <- model_dll_key(model)
         eval(parse(text = .SimInf_model_run))
     }
@@ -166,7 +166,7 @@ setMethod(
     signature(model = "SEIR"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model);
+        validObject(model)
         .Call(SEIR_run, model, solver)
     }
 )
@@ -178,7 +178,7 @@ setMethod(
     signature(model = "SIR"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model);
+        validObject(model)
         .Call(SIR_run, model, solver)
     }
 )
@@ -190,7 +190,7 @@ setMethod(
     signature(model = "SISe"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model);
+        validObject(model)
         .Call(SISe_run, model, solver)
     }
 )
@@ -202,7 +202,7 @@ setMethod(
     signature(model = "SISe3"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model);
+        validObject(model)
         .Call(SISe3_run, model, solver)
     }
 )
@@ -214,7 +214,7 @@ setMethod(
     signature(model = "SISe3_sp"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model);
+        validObject(model)
         .Call(SISe3_sp_run, model, solver)
     }
 )
@@ -226,7 +226,7 @@ setMethod(
     signature(model = "SISe_sp"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model);
+        validObject(model)
         .Call(SISe_sp_run, model, solver)
     }
 )

@@ -71,10 +71,10 @@ parse_formula <- function(compartments, args, ok_combine) {
     compartments <- as.character(compartments)
     if (identical(length(compartments), 2L)) {
         lhs <- NULL
-        rhs <- parse_formula_item(compartments[2])
+        rhs <- compartments[2]
     } else if (identical(length(compartments), 3L)) {
         lhs <- parse_formula_item(compartments[2])
-        rhs <- parse_formula_item(compartments[3])
+        rhs <- compartments[3]
     } else {
         stop("Invalid formula specification of 'compartments'.", call. = FALSE)
     }
@@ -90,9 +90,9 @@ parse_formula <- function(compartments, args, ok_combine) {
         }
 
         rhs <- sub("(^[^|]+)([|]?)(.*)$", "\\1", rhs)
-        rhs <- parse_formula_item(rhs)
     }
 
+    rhs <- parse_formula_item(rhs)
     lhs <- replace_dot(lhs, rhs, args, ok_combine)
     rhs <- replace_dot(rhs, lhs, args, ok_combine)
 
