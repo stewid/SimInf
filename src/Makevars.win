@@ -1,12 +1,9 @@
-VERSION = 2.4
-RWINLIB = ../windows/gsl-${VERSION}
-
-PKG_CFLAGS = -I$(RWINLIB)/include \
+PKG_CFLAGS = -I$(LIB_GSL)/include \
              -I. -I../inst/include \
              $(SHLIB_OPENMP_CFLAGS) \
              -DR_NO_REMAP -DSTRICT_R_HEADERS
 
-PKG_LIBS = -L$(RWINLIB)/lib$(R_ARCH) \
+PKG_LIBS = -L$(LIB_GSL)/lib \
            -lm -lgsl -lgslcblas \
            $(SHLIB_OPENMP_CFLAGS)
 
@@ -27,13 +24,3 @@ OBJECTS.solvers = solvers/SimInf_solver.o \
                   solvers/ssm/SimInf_solver_ssm.o
 
 OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)
-
-all: clean winlibs
-
-winlibs:
-	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" $(VERSION)
-
-clean:
-	rm -f $(SHLIB) $(OBJECTS)
-
-.PHONY: all winlibs clean
