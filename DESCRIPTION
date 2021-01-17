@@ -54,6 +54,8 @@ Imports:
     stats,
     utils,
     Matrix
+Suggests:
+    knitr
 Collate:
     'C-generator.R'
     'check_arguments.R'
@@ -84,3 +86,6 @@ Collate:
     'trajectory.R'
 Encoding: UTF-8
 RoxygenNote: 7.1.1
+VignetteBuilder:
+    utils,
+    knitr
