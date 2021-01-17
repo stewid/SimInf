@@ -232,8 +232,6 @@ C_code <- c(
     "#if !defined(SIMINF_FORCE_SYMBOLS)",
     "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
     "#endif",
-    "#define SIMINF_STR(name) #name",
-    "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
     "",
     "/**",
     " * @param u The compartment state vector in the node.",
@@ -414,8 +412,6 @@ C_code <- c(
     "#if !defined(SIMINF_FORCE_SYMBOLS)",
     "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
     "#endif",
-    "#define SIMINF_STR(name) #name",
-    "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
     "",
     "/**",
     " * @param u The compartment state vector in the node.",
@@ -606,8 +602,6 @@ C_code <- c(
     "#if !defined(SIMINF_FORCE_SYMBOLS)",
     "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
     "#endif",
-    "#define SIMINF_STR(name) #name",
-    "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
     "",
     "/**",
     " * @param u The compartment state vector in the node.",
@@ -826,7 +820,7 @@ m  <- mparse(transitions = ".S.S -> 1.2*.S.S -> @",
              compartments = c(".S.S"),
              u0 = data.frame(.S.S = 100),
              tspan = 1:100)
-stopifnot(identical(m@C_code[48], "    return 1.2*u[0];"))
+stopifnot(identical(m@C_code[46], "    return 1.2*u[0];"))
 
 ## Check mparse with a propensity that contains '->' to handle a case
 ## where a pointer is used in the propensity.
@@ -834,7 +828,7 @@ m  <- mparse(transitions = "S -> a->data[2]*1.2*S -> @",
              compartments = c("S"),
              u0 = data.frame(S = 100),
              tspan = 1:100)
-stopifnot(identical(m@C_code[48], "    return a->data[2]*1.2*u[0];"))
+stopifnot(identical(m@C_code[46], "    return a->data[2]*1.2*u[0];"))
 
 ## Check that an error is raised if the compilation fails. Define a
 ## model with undeclared identifiers 'betaSI' and 'gammaI'.

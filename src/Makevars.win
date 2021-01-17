@@ -1,16 +1,11 @@
-# Use gsl headers and libraries in LOCAL_SOFT or from downloaded gsl
-SIMINF_LOCAL_SOFT=$(shell "${R_HOME}/bin/R" CMD config LOCAL_SOFT)
-ifeq ($(wildcard "${SIMINF_LOCAL_SOFT}/include/gsl/gsl_rng.h"),)
-ifneq ($(wildcard gsl/include/gsl/gsl_rng.h),)
-SIMINF_GSL_LIB = -L"gsl/lib$(R_ARCH)"
-SIMINF_GSL_INCLUDE = -Igsl/include
-endif
-endif
+PKG_CFLAGS = -I$(LIB_GSL)/include \
+             -I. -I../inst/include \
+             $(SHLIB_OPENMP_CFLAGS) \
+             -DR_NO_REMAP -DSTRICT_R_HEADERS
 
-PKG_CFLAGS = -I. -Imisc -Imodels $(SIMINF_GSL_INCLUDE) \
-             $(SHLIB_OPENMP_CFLAGS) -DR_NO_REMAP -DSTRICT_R_HEADERS
-
-PKG_LIBS = $(SIMINF_GSL_LIB) $(SHLIB_OPENMP_CFLAGS) -lm -lgsl -lgslcblas
+PKG_LIBS = -L$(LIB_GSL)/lib \
+           -lm -lgsl -lgslcblas \
+           $(SHLIB_OPENMP_CFLAGS)
 
 # List all model files to compile
 MODELS_SRC = $(wildcard models/*.c)

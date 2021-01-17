@@ -2,7 +2,7 @@
 % Please edit documentation in R/SimInf_events.R
 \name{as.data.frame.SimInf_events}
 \alias{as.data.frame.SimInf_events}
-\title{Coerce to data frame}
+\title{Coerce events to a data frame}
 \usage{
 \method{as.data.frame}{SimInf_events}(x, ...)
 }
@@ -12,5 +12,5 @@
 \item{...}{additional arguments to be passed to or from methods.}
 }
 \description{
-Coerce to data frame
+Coerce events to a data frame
 }

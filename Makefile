@@ -6,12 +6,14 @@ PKG_NAME=$(shell grep -i ^package DESCRIPTION | cut -d : -d \  -f 2)
 PKG_TAR=$(PKG_NAME)_$(PKG_VERSION).tar.gz
 
 # Install package
+.PHONY: install
 install:
 	cd .. && R CMD INSTALL $(PKG_NAME)
 
 # Build documentation with roxygen
 # 1) Remove old doc
 # 2) Generate documentation
+.PHONY: roxygen
 roxygen:
 	rm -f man/*.Rd
 	cd .. && Rscript -e "roxygen2::roxygenize('$(PKG_NAME)')"
@@ -19,6 +21,7 @@ roxygen:
 # Generate PDF output from the Rd sources
 # 1) Rebuild documentation with roxygen
 # 2) Generate pdf, overwrites output file if it exists
+.PHONY: pdf
 pdf: roxygen
 	cd .. && R CMD Rd2pdf --force $(PKG_NAME)
 
@@ -27,32 +30,42 @@ README.md: README.Rmd
 	Rscript -e "library(knitr); knit('README.Rmd')"
 
 # Generate vignette
+.PHONY: vignette
 vignette:
 	cd vignettes && Rscript -e "library('methods')" \
                                 -e "Sweave('SimInf')" \
                                 -e "tools::texi2pdf('SimInf.tex')"
 
 # Build package
+.PHONY: build
 build: clean
 	cd .. && R CMD build --compact-vignettes=both $(PKG_NAME)
 
 # Check package
+.PHONY: check
 check: build
 	cd .. && OMP_THREAD_LIMIT=2 _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
         --no-stop-on-test-error --as-cran --run-dontrun $(PKG_TAR)
 
 # Check package (without manual and vignettes)
+.PHONY: check_quick
 check_quick: clean
 	cd .. && R CMD build --no-build-vignettes --no-manual $(PKG_NAME)
-	cd .. && OMP_THREAD_LIMIT=2 _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
+	cd .. && \
+        OMP_THREAD_LIMIT=2 \
+        _R_CHECK_CRAN_INCOMING_=FALSE \
+        _R_CHECK_SYSTEM_CLOCK_=0 \
+        R CMD check \
         --no-stop-on-test-error --no-vignettes --no-manual --as-cran $(PKG_TAR)
 
 # Build and check package with gctorture
+.PHONY: check_gctorture
 check_gctorture:
 	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
 	cd .. && R CMD check --no-manual --no-vignettes --no-build-vignettes --use-gct $(PKG_TAR)
 
 # Build and check package with valgrind
+.PHONY: check_valgrind
 check_valgrind:
 	cd .. && R CMD build --no-build-vignettes $(PKG_NAME)
 	cd .. && _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran \
@@ -60,6 +73,7 @@ check_valgrind:
 
 # Check to create a package with 'package_skeleton' and then run 'R
 # CMD check' on that package.
+.PHONY: check_pkg_skeleton
 check_pkg_skeleton:
 	cd .. && rm -rf pkggdata
 	cd .. && Rscript \
@@ -115,11 +129,70 @@ check_pkg_skeleton:
             -e "stopifnot(identical(result_gdata, result_v0))"
 	R CMD REMOVE pkggdata pkgldata pkgv0
 
+# Check reverse dependencies
+#
+# 1) Install packages (in ../revdep/lib) to check the reverse dependencies.
+# 2) Check the reverse dependencies using 'R CMD check'.
+# 3) Collect results from the '00check.log' files.
+.PHONY: revdep
+revdep: revdep_install revdep_check revdep_results
+
+# Install packages to check reverse dependencies
+.PHONY: revdep_install
+revdep_install: clean
+	mkdir -p ../revdep/lib
+	cd .. && R CMD INSTALL --library=revdep/lib $(PKG_NAME)
+	R_LIBS_USER=../revdep/lib Rscript --vanilla \
+          -e "options(repos = c(CRAN='https://cran.r-project.org'))" \
+          -e "pkg <- tools::package_dependencies('$(PKG_NAME)', which = 'all', reverse = TRUE)" \
+          -e "pkg <- as.character(unlist(pkg))" \
+          -e "dep <- sapply(pkg, tools::package_dependencies, which = 'all')" \
+          -e "dep <- as.character(unlist(dep))" \
+          -e "if ('BiocInstaller' %in% dep) {" \
+          -e "    source('https://bioconductor.org/biocLite.R')" \
+          -e "    biocLite('BiocInstaller')" \
+          -e "}" \
+          -e "install.packages(pkg, dependencies = TRUE)" \
+          -e "download.packages(pkg, destdir = '../revdep')"
+
+# Check reverse dependencies with 'R CMD check'
+.PHONY: revdep_check
+revdep_check:
+	$(foreach var,$(wildcard ../revdep/*.tar.gz),R_LIBS_USER=../revdep/lib \
+          _R_CHECK_CRAN_INCOMING_=FALSE R --vanilla CMD check --as-cran \
+          --no-stop-on-test-error --output=../revdep $(var) \
+          | tee --append ../revdep/00revdep.log;)
+
+# Collect results from checking reverse dependencies
+.PHONY: revdep_results
+revdep_results:
+	Rscript --vanilla \
+          -e "options(repos = c(CRAN='https://cran.r-project.org'))" \
+          -e "pkg <- tools::package_dependencies('$(PKG_NAME)', which = 'all', reverse = TRUE)" \
+          -e "pkg <- as.character(unlist(pkg))" \
+          -e "results <- do.call('rbind', lapply(pkg, function(x) {" \
+          -e "    filename <- paste0('../revdep/', x, '.Rcheck/00check.log')" \
+          -e "    if (file.exists(filename)) {" \
+          -e "        lines <- readLines(filename)" \
+          -e "        status <- sub('^Status: ', '', lines[grep('^Status: ', lines)])" \
+          -e "    } else {" \
+          -e "        status <- 'missing'" \
+          -e "    }" \
+          -e "    data.frame(Package = x, Status = status)" \
+          -e "}))" \
+          -e "results <- results[order(results[, 'Status']), ]" \
+          -e "rownames(results) <- NULL" \
+          -e "cat('\n\n*** Results ***\n\n')" \
+          -e "results" \
+          -e "cat('\n\n')"
+
 # Build and check package on R-hub
+.PHONY: rhub
 rhub: clean check
 	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', rhub::platforms()[['name']], show_status = FALSE)"
 
 # Build and use 'rchk' on package on R-hub
+.PHONY: rchk
 rchk: clean check
 	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', 'ubuntu-rchk', show_status = FALSE)"
 
@@ -138,6 +211,7 @@ covr:
 
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)
+.PHONY: valgrind
 valgrind:
 	$(foreach var,$(test_objects),R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < $(var);)
 
@@ -151,7 +225,7 @@ configure: configure.ac
 	autoconf ./configure.ac > ./configure
 	chmod +x ./configure
 
+.PHONY: clean
 clean:
 	./cleanup
-
-.PHONY: install roxygen pdf build check check_quick check_gctorture check_valgrind check_pkg_skeleton rhub clean vignette
+	-rm -rf ../revdep
