@@ -28,6 +28,8 @@
 #include <Rinternals.h>
 
 #define SIMINF_UNUSED(x) ((void)(x))
+#define SIMINF_STR(name) #name
+#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}
 
 /* Error constants */
 typedef enum {

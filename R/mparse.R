@@ -161,7 +161,7 @@ parse_compartments <- function(x, compartments) {
 
     ## Check for valid usage of the empty set.
     if (any(x == "@") && length(x) > 1)
-        stop("Invalid usage of the empty set '@'.")
+        stop("Invalid usage of the empty set '@'.", call. = FALSE)
     x <- x[x != "@"]
 
     ## Assign each compartment into its number according to the
