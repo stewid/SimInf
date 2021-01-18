@@ -63,6 +63,9 @@ stopifnot(all(abs(p - c(1 / 14, 2 / 14, 3 / 14, 0 / 8, 0 / 8)) < tol))
 p <- prevalence(model, I ~ . | R > 0)$prevalence
 stopifnot(all(abs(p - c(0 / 4, 0 / 4, 0 / 4, 3 / 10, 3 / 10)) < tol))
 
+p <- prevalence(model, I ~ . | (I + R) < 4)$prevalence
+stopifnot(all(abs(p - c(1 / 14, 2 / 14, 3 / 14, 0 / 8, 0 / 8)) < tol))
+
 stopifnot(all(is.nan(prevalence(model, I ~ . | R == 5)$prevalence)))
 
 res <- assertError(prevalence(model, I ~ . | TRUE == 0))

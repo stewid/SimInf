@@ -497,3 +497,30 @@ check_error(res, "Invalid rate detected (non-finite or < 0.0).")
 
 res <- assertError(run(model, solver = "aem"))
 check_error(res, "Invalid rate detected (non-finite or < 0.0).")
+
+## Check that an invalid solver argument raises an error.
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = 0.077)
+
+res <- assertError(.Call(SimInf:::SIR_run, model, c("ssm", "ssm")))
+check_error(res, "Invalid 'solver' value.")
+res <- assertError(.Call(SimInf:::SIR_run, model, "non-existing-solver"))
+check_error(res, "Invalid 'solver' value.")
+res <- assertError(.Call(SimInf:::SIR_run, model, NA_character_))
+check_error(res, "Invalid 'solver' value.")
+res <- assertError(.Call(SimInf:::SIR_run, model, 5))
+check_error(res, "Invalid 'solver' value.")
+
+## Trigger a negative state error
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = 0)
+model@S@x[1] <- -1000
+set.seed(123)
+res <- assertError(.Call(SimInf:::SIR_run, model, "ssm"))
+check_error(res, "Negative state detected.")
+res <- assertError(.Call(SimInf:::SIR_run, model, "aem"))
+check_error(res, "Negative state detected.")

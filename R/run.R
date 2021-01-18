@@ -40,7 +40,7 @@
 compile_model <- function(model, key) {
     ## Check that the model contains C code.
     if (nchar(paste0(model@C_code, collapse = "\n")) == 0)
-        stop("The model must contain C code.")
+        stop("The model must contain C code.", call. = FALSE)
 
     ## Determine the name and run_fun to call from R.
     name <- basename(tempfile("SimInf_"))
