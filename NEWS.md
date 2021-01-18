@@ -1,5 +1,21 @@
 # SimInf (development version)
 
+# SimInf 8.2.0 (2020-12-06)
+
+## IMPROVEMENTS
+
+* Prevalence function: better handling of condition in prevalence
+  formula.
+
+* Use 'Date' on the x-axis when plotting events if time was specified
+  in a Date format.
+
+* Return event 'time' as Date and 'event' type as character when
+  coercing events to a 'data.frame' if they were specified as Date and
+  character.
+
+# SimInf 8.1.0 (2020-10-18)
+
 This release of SimInf focuses primarily on improving the plotting of
 trajectory data.
 
