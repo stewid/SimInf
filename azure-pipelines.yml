@@ -1,5 +1,5 @@
 trigger:
-- master
+- main
 
 jobs:
 - job: ubuntu_R_3_3
