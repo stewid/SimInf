@@ -478,7 +478,6 @@ setMethod(
 ##' @importFrom graphics contour
 ##' @importFrom graphics lines
 ##' @importFrom graphics rug
-##' @importFrom MASS bandwidth.nrd
 ##' @importFrom MASS kde2d
 ##' @importFrom stats density
 ##' @export
@@ -507,8 +506,7 @@ setMethod(
                       rug(x)
                   },
                   lower.panel = function(x, y, ...) {
-                      h <- c(bandwidth.nrd(x), bandwidth.nrd(y))
-                      d <- kde2d(x, y, h = h, n = 100)
+                      d <- kde2d(x, y)
                       contour(d, add = TRUE, drawlabels = FALSE, ...)
                   }, ...)
         } else {
