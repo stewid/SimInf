@@ -1,6 +1,14 @@
 ---
 title: Post-process data in a trajectory
-author: Stefan Widgren [![ORCID iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-5745-2284)
+author:
+  Stefan Widgren
+  <a href="https://orcid.org/0000-0001-5745-2284">
+    <img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"
+         alt="ORCID logo"
+         width="16"
+         height="16"
+         style="border-style:none;" />
+  </a>
 output:
   html_vignette:
     toc: true
@@ -10,17 +18,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
-```{css, echo = FALSE}
-img {
-  background-color: #FFFFFF;
-  padding: 2px;
-  border: 1px solid #FFFFFF;
-  border-radius: 3px;
-  border: 1px solid #FFFFFF;
-  margin: 0 5px;
-}
-```
 
 After a model is created, a simulation is started with a call to the
 `run()` function with the model as the first argument. The function
