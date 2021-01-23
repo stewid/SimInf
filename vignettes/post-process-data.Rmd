@@ -11,6 +11,17 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{css, echo = FALSE}
+img {
+  background-color: #FFFFFF;
+  padding: 2px;
+  border: 1px solid #FFFFFF;
+  border-radius: 3px;
+  border: 1px solid #FFFFFF;
+  margin: 0 5px;
+}
+```
+
 After a model is created, a simulation is started with a call to the
 `run()` function with the model as the first argument. The function
 returns a modified model object with a single stochastic solution

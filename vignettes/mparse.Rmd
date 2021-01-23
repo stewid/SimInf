@@ -11,4 +11,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{css, echo = FALSE}
+img {
+  background-color: #FFFFFF;
+  padding: 2px;
+  border: 1px solid #FFFFFF;
+  border-radius: 3px;
+  border: 1px solid #FFFFFF;
+  margin: 0 5px;
+}
+```
+
 ## Overview
