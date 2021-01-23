@@ -9,10 +9,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## Overview
+After a model is created, a simulation is started with a call to the
+`run()` function with the model as the first argument. The function
+returns a modified model object with a single stochastic solution
+trajectory attached to it. Trajectory data contains the state of each
+compartment, recorded at every time-point in `tspan`. This document
+introduces you to functionality in `SimInf` to post-process and
+explore that trajectory data.
 
-## `trajectory()`: Extract data from a simulated trajectory
+## Extract trajectory data with `trajectory()`
 
-## `prevalence()`: Calculate prevalence from trajectory data
+## Calculate prevalence from trajectory with `prevalence()`
 
-## `plot()`: Display the outcome from a simulated trajectory
+## Visualize trajectory with `plot()`
