@@ -3,6 +3,8 @@ title: Post-process data in a trajectory
 author: Stefan Widgren [![ORCID iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-5745-2284)
 output:
   html_vignette:
+    toc: true
+    toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{Post-process data in a trajectory}
   %\VignetteEngine{knitr::rmarkdown}
