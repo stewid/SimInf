@@ -1895,7 +1895,7 @@ epicurve <- function(model, n = 1000) {
   for (i in seq_len(n)) {
     model@u0["S", ] <- model@u0["S", ] + model@u0["I", ]
     model@u0["I", ] <- 0L
-    j <- sample(seq_len(Nn(model)), 1)
+    j <- sample(seq_len(n_nodes(model)), 1)
     model@u0["I", j] <- 1L
     model@u0["S", j] <- model@u0["S", j] - 1L
     result <- run(model = model)
