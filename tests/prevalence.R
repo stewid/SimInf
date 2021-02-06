@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -51,17 +51,8 @@ model@U <- matrix(c(8L, 8L, 8L, 8L, 8L,
                                     "S", "I", "R"),
                                   c("1", "2", "3", "4", "5")))
 
-res <- assertError(prevalence(model))
-check_error(res, "Missing 'formula' argument.")
-
-res <- assertError(prevalence(model, "I~."))
-check_error(res, "'formula' argument is not a 'formula'.")
-
 res <- assertError(prevalence(model, ~I))
-check_error(res, "Invalid formula specification.")
-
-res <- assertError(SimInf:::parse_formula_item("", "S"))
-check_error(res, "No compartments in formula specification.")
+check_error(res, "Invalid 'formula' specification.")
 
 p <- prevalence(model, I ~ .)$prevalence
 stopifnot(all(abs(p - c(1 / 18, 2 / 18, 3 / 18, 3 / 18, 3 / 18)) < tol))
@@ -71,6 +62,9 @@ stopifnot(all(abs(p - c(1 / 14, 2 / 14, 3 / 14, 0 / 8, 0 / 8)) < tol))
 
 p <- prevalence(model, I ~ . | R > 0)$prevalence
 stopifnot(all(abs(p - c(0 / 4, 0 / 4, 0 / 4, 3 / 10, 3 / 10)) < tol))
+
+p <- prevalence(model, I ~ . | (I + R) < 4)$prevalence
+stopifnot(all(abs(p - c(1 / 14, 2 / 14, 3 / 14, 0 / 8, 0 / 8)) < tol))
 
 stopifnot(all(is.nan(prevalence(model, I ~ . | R == 5)$prevalence)))
 
@@ -83,6 +77,6 @@ check_error(
 p <- prevalence(model, I ~ . | S == 0 | R == 0)$prevalence
 stopifnot(all(abs(p - c(1 / 18, 2 / 18, 3 / 18, 0 / 12, 0 / 12)) < tol))
 
-p <- prevalence(model, I ~ . | S == 0 | R == 0, node = 2)$prevalence
+p <- prevalence(model, I ~ . | S == 0 | R == 0, i = 2)$prevalence
 stopifnot(all(abs(p[1:3] - c(1 / 6, 2 / 6, 3 / 6)) < tol))
 stopifnot(all(is.nan(p[4:5])))

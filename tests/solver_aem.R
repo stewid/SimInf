@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2020 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ S_expected <- structure(c(
     10L, 7L, 10L, 10L, 7L, 10L, 10L, 7L, 10L),
     .Dim = c(6L, 10L))
 
-S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(1L, 1L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 1L,
@@ -83,7 +83,7 @@ I_expected <- structure(c(1L, 1L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 1L,
                           3L, 0L, 0L, 3L, 0L, 0L, 3L, 0L),
                         .Dim = c(6L, 10L))
 
-I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
 
 ## test with events.
@@ -123,14 +123,14 @@ S_expected <- structure(c(10L, 8L, 8L, 9L, 7L, 10L, 6L, 10L, 6L, 10L, 8L, 6L,
                           7L, 7L, 7L, 7L, 7L, 7L, 7L, 9L),
                         .Dim = c(2L, 10L))
 
-S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 2L, 0L, 3L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 4L, 3L,
                           3L, 3L, 3L, 3L, 3L, 3L, 1L),
                         .Dim = c(2L, 10L))
 
-I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
 
 ## run with AEM using multiple threads
@@ -142,17 +142,16 @@ if (SimInf:::have_openmp()) {
     result
 
     stopifnot(identical(
-        length(trajectory(result, compartments = "S", as.is = TRUE)),
+        length(trajectory(result, compartments = "S", format = "matrix")),
         20L))
     stopifnot(identical(
-        length(trajectory(result, compartments = "I", as.is = TRUE)),
+        length(trajectory(result, compartments = "I", format = "matrix")),
         20L))
 
-    p <- prevalence(result, I ~ S + I, as.is = TRUE)
-    stopifnot(identical(length(p), 10L))
-    stopifnot(is.null(dim(p)))
+    p <- prevalence(result, I ~ S + I, format = "matrix")
+    stopifnot(identical(dim(p), c(1L, 10L)))
 
-    p <- prevalence(result, I ~ S + I, type = "wnp", as.is = TRUE)
+    p <- prevalence(result, I ~ S + I, level = 3, format = "matrix")
     stopifnot(identical(dim(p), c(2L, 10L)))
 }
 

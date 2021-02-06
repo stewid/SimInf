@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2021 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 
 #include <Rdefines.h>
 #include <R_ext/Visibility.h>
-#include "SimInf_arg.h"
-#include "SimInf_openmp.h"
+#include "misc/SimInf_arg.h"
+#include "misc/SimInf_openmp.h"
 #include "solvers/SimInf_solver.h"
 #include "solvers/ssm/SimInf_solver_ssm.h"
 #include "solvers/aem/SimInf_solver_aem.h"
@@ -106,7 +106,7 @@ SEXP attribute_hidden SimInf_run(
     SEXP ext_events, E, G, N, S, prS;
     SEXP tspan;
     SEXP U, V, U_sparse, V_sparse;
-    SimInf_solver_args args = {NULL};
+    SimInf_solver_args args = {0};
 
     /* If the model ldata is a 0x0 matrix, i.e. Nld == 0, then use
      * ldata_tmp in the transition rate functions. This is to make

@@ -2,9 +2,22 @@
 % Please edit documentation in R/trajectory.R
 \name{trajectory}
 \alias{trajectory}
+\alias{trajectory,SimInf_model-method}
 \title{Extract data from a simulated trajectory}
 \usage{
-trajectory(model, compartments = NULL, node = NULL, as.is = FALSE)
+trajectory(
+  model,
+  compartments = NULL,
+  index = NULL,
+  format = c("data.frame", "matrix")
+)
+
+\S4method{trajectory}{SimInf_model}(
+  model,
+  compartments = NULL,
+  index = NULL,
+  format = c("data.frame", "matrix")
+)
 }
 \arguments{
 \item{model}{the \code{model} to extract the result from.}
@@ -20,19 +33,20 @@ models that also have continuous state variables e.g. the
 \code{SISe} model, use \code{~.} instead of \code{NULL} to
 also include these.}
 
-\item{node}{indices specifying the subset of nodes to include when
-extracting data. Default (\code{node = NULL}) is to extract data
-from all nodes.}
+\item{index}{indices specifying the subset of nodes to include
+when extracting data. Default (\code{index = NULL}) is to
+extract data from all nodes.}
 
-\item{as.is}{the default (\code{as.is = FALSE}) is to generate a
-\code{data.frame} with one row per node and time-step with the
-number of individuals in each compartment. Using \code{as.is =
-TRUE} returns the result as a matrix, which is the internal
-format (see \sQuote{Details}).}
+\item{format}{the default (\code{format = "data.frame"}) is to
+generate a \code{data.frame} with one row per node and
+time-step with the number of individuals in each
+compartment. Using \code{format = "matrix"} returns the result
+as a matrix, which is the internal format (see
+\sQuote{Details}).}
 }
 \value{
-A \code{data.frame} if \code{as.is = FALSE}, else a
-    matrix.
+A \code{data.frame} if \code{format = "data.frame"}, else
+    a matrix.
 }
 \description{
 Extract the number of individuals in each compartment in every
@@ -42,7 +56,7 @@ node after generating a single stochastic trajectory with
 \section{Internal format of the discrete state variables}{
 
     Description of the layout of the internal matrix (\code{U})
-    that is returned if \code{as.is = TRUE}. \code{U[, j]}
+    that is returned if \code{format = "matrix"}. \code{U[, j]}
     contains the number of individuals in each compartment at
     \code{tspan[j]}. \code{U[1:Nc, j]} contains the number of
     individuals in node 1 at \code{tspan[j]}. \code{U[(Nc + 1):(2
@@ -56,11 +70,11 @@ node after generating a single stochastic trajectory with
 \section{Internal format of the continuous state variables}{
 
     Description of the layout of the matrix that is returned if
-    \code{as.is = TRUE}. The result matrix for the real-valued
-    continuous state. \code{V[, j]} contains the real-valued state
-    of the system at \code{tspan[j]}. The dimension of the matrix
-    is \eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
-    \code{length(tspan)}.
+    \code{format = "matrix"}. The result matrix for the
+    real-valued continuous state. \code{V[, j]} contains the
+    real-valued state of the system at \code{tspan[j]}. The
+    dimension of the matrix is \eqn{N_n}\code{dim(ldata)[1]}
+    \eqn{\times} \code{length(tspan)}.
 }
 
 \examples{
@@ -78,11 +92,11 @@ trajectory(result)
 
 ## Extract the number of recovered individuals in the first node
 ## at the time-points in 'tspan'.
-trajectory(result, compartments = "R", node = 1)
+trajectory(result, compartments = "R", index = 1)
 
 ## Extract the number of recovered individuals in the first and
 ## third node at the time-points in 'tspan'.
-trajectory(result, compartments = "R", node = c(1, 3))
+trajectory(result, compartments = "R", index = c(1, 3))
 
 ## Create an 'SISe' model with 6 nodes and initialize
 ## it to run over 10 days.

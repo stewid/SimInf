@@ -190,25 +190,25 @@ is_wholenumber <- function(x, tol = .Machine$double.eps ^ 0.5) {
     abs(x - round(x)) < tol
 }
 
-##' Check the 'node' argument
+##' Check the node index argument
 ##'
 ##' Raise an error if the node argument is not ok.
 ##' @param model the model with nodes.
-##' @param node the node vector to check
+##' @param index the node index vector to check.
 ##' @return the node vector with unique nodes sorted in order.
 ##' @noRd
-check_node_argument <- function(model, node) {
-    if (is.null(node))
+check_node_index_argument <- function(model, index) {
+    if (is.null(index))
         return(NULL)
 
-    if (!is.numeric(node) || !all(is_wholenumber(node)))
-        stop("'node' must be integer.", call. = FALSE)
-    if (min(node) < 1)
-        stop("'node' must be integer > 0.", call. = FALSE)
-    if (max(node) > Nn(model))
-        stop("'node' must be integer <= number of nodes.", call. = FALSE)
+    if (!is.numeric(index) ||
+        !all(is_wholenumber(index)) ||
+        min(index) < 1 ||
+        max(index) > n_nodes(model))
+        stop("The node index must be an integer > 0 and <= number of nodes.",
+             call. = FALSE)
 
-    as.integer(sort(unique(node)))
+    as.integer(sort(unique(index)))
 }
 
 ##' Check the shift matrix 'N'

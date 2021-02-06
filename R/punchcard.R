@@ -105,12 +105,12 @@
 "punchcard<-" <- function(model, value) {
     check_model_argument(model)
 
-    template <- create_template(value, model@tspan, seq_len(Nn(model)),
+    template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
                                 rownames(model@S), integer(0))
     model@U <- template$dense
     model@U_sparse <- template$sparse
 
-    template <- create_template(value, model@tspan, seq_len(Nn(model)),
+    template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
                                 rownames(model@v0), numeric(0))
     model@V <- template$dense
     model@V_sparse <- template$sparse

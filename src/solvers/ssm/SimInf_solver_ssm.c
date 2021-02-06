@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2021 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include <gsl/gsl_randist.h>
 
 #include "SimInf.h"
-#include "SimInf_openmp.h"
+#include "misc/SimInf_openmp.h"
 #include "SimInf_solver_ssm.h"
 
 /**
@@ -43,11 +43,15 @@ static int SimInf_solver_ssm(
     int Nthread = model->Nthread;
     int k;
 
-    #pragma omp parallel num_threads(SimInf_num_threads())
+    #ifdef _OPENMP
+    #  pragma omp parallel num_threads(SimInf_num_threads())
+    #endif
     {
         int i;
 
-        #pragma omp for
+        #ifdef _OPENMP
+        #  pragma omp for
+        #endif
         for (i = 0; i < Nthread; i++) {
             int node;
             SimInf_compartment_model m = *&model[i];
@@ -88,11 +92,15 @@ static int SimInf_solver_ssm(
 
     /* Main loop. */
     for (;;) {
-        #pragma omp parallel num_threads(SimInf_num_threads())
+        #ifdef _OPENMP
+        #  pragma omp parallel num_threads(SimInf_num_threads())
+        #endif
         {
             int i;
 
-            #pragma omp for
+            #ifdef _OPENMP
+            #  pragma omp for
+            #endif
             for (i = 0; i < Nthread; i++) {
                 int node;
                 SimInf_scheduled_events e = *&events[i];
@@ -185,17 +193,25 @@ static int SimInf_solver_ssm(
                 SimInf_process_events(&model[i], &events[i], 0);
             }
 
-            #pragma omp barrier
+            #ifdef _OPENMP
+            #  pragma omp barrier
+            #endif
 
-            #pragma omp master
+            #ifdef _OPENMP
+            #  pragma omp master
+            #endif
             {
                 /* (3) Incorporate all scheduled E2 events */
                 SimInf_process_events(model, events, 1);
             }
 
-            #pragma omp barrier
+            #ifdef _OPENMP
+            #  pragma omp barrier
+            #endif
 
-            #pragma omp for
+            #ifdef _OPENMP
+            #  pragma omp for
+            #endif
             for (i = 0; i < Nthread; i++) {
                 int node;
                 SimInf_compartment_model m = *&model[i];

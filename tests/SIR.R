@@ -110,7 +110,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
                         .Dim = c(6L, 10L))
 
-S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -120,7 +120,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
 
-I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -130,7 +130,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
 
-R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", format = "matrix")
 
 stopifnot(identical(R_observed, R_expected))
 
@@ -142,6 +142,14 @@ stopifnot(identical(nrow(u0_SIR()), 1600L))
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
 plot(result)
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
+## Check SIR prevalence plot method
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+plot(result, I ~ S + I + R)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
@@ -489,3 +497,30 @@ check_error(res, "Invalid rate detected (non-finite or < 0.0).")
 
 res <- assertError(run(model, solver = "aem"))
 check_error(res, "Invalid rate detected (non-finite or < 0.0).")
+
+## Check that an invalid solver argument raises an error.
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = 0.077)
+
+res <- assertError(.Call(SimInf:::SIR_run, model, c("ssm", "ssm")))
+check_error(res, "Invalid 'solver' value.")
+res <- assertError(.Call(SimInf:::SIR_run, model, "non-existing-solver"))
+check_error(res, "Invalid 'solver' value.")
+res <- assertError(.Call(SimInf:::SIR_run, model, NA_character_))
+check_error(res, "Invalid 'solver' value.")
+res <- assertError(.Call(SimInf:::SIR_run, model, 5))
+check_error(res, "Invalid 'solver' value.")
+
+## Trigger a negative state error
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = 0)
+model@S@x[1] <- -1000
+set.seed(123)
+res <- assertError(.Call(SimInf:::SIR_run, model, "ssm"))
+check_error(res, "Negative state detected.")
+res <- assertError(.Call(SimInf:::SIR_run, model, "aem"))
+check_error(res, "Negative state detected.")

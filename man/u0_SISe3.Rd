@@ -55,6 +55,6 @@ summary(result)
 
 ## Plot the proportion of nodes with at least one infected
 ## individual.
-plot(prevalence(result, I_1 + I_2 + I_3 ~ ., "nop"), type = "l")
+plot(result, I_1 + I_2 + I_3 ~ ., level = 2, type = "l")
 }
 \keyword{dataset}

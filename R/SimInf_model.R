@@ -47,20 +47,22 @@
 ##' @export
 ##' @importFrom methods validObject
 ##' @importClassesFrom Matrix dgCMatrix
-setClass("SimInf_model",
-         slots = c(G        = "dgCMatrix",
-                   S        = "dgCMatrix",
-                   U        = "matrix",
-                   U_sparse = "dgCMatrix",
-                   ldata    = "matrix",
-                   gdata    = "numeric",
-                   tspan    = "numeric",
-                   u0       = "matrix",
-                   V        = "matrix",
-                   V_sparse = "dgCMatrix",
-                   v0       = "matrix",
-                   events   = "SimInf_events",
-                   C_code   = "character"))
+setClass(
+    "SimInf_model",
+    slots = c(G        = "dgCMatrix",
+              S        = "dgCMatrix",
+              U        = "matrix",
+              U_sparse = "dgCMatrix",
+              ldata    = "matrix",
+              gdata    = "numeric",
+              tspan    = "numeric",
+              u0       = "matrix",
+              V        = "matrix",
+              V_sparse = "dgCMatrix",
+              v0       = "matrix",
+              events   = "SimInf_events",
+              C_code   = "character")
+)
 
 ##' Check if a SimInf_model object is valid
 ##'
@@ -166,44 +168,6 @@ SimInf_model <- function(G,
         V      = V,
         events = events,
         C_code = C_code)
-}
-
-##' Extract number of nodes in a model
-##'
-##' Extract number of nodes in a model.
-##' @param model the \code{model} object to extract the number of
-##'     nodes from.
-##' @return the number of nodes in the model.
-##' @export
-##' @examples
-##' ## Create an 'SIR' model with 100 nodes, with 99 susceptible,
-##' ## 1 infected and 0 recovered in each node.
-##' u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
-##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-##'
-##' ## Display the number of nodes in the model.
-##' Nn(model)
-Nn <- function(model) {
-    check_model_argument(model)
-    dim(model@u0)[2]
-}
-
-## Number of compartments
-Nc <- function(model) {
-    check_model_argument(model)
-    dim(model@S)[1]
-}
-
-## Number of transitions
-Nt <- function(model) {
-    check_model_argument(model)
-    dim(model@G)[1]
-}
-
-## Number of continuous state variables
-Nd <- function(model) {
-    check_model_argument(model)
-    dim(model@v0)[1]
 }
 
 ##' Extract global data from a \code{SimInf_model} object

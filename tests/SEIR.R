@@ -53,80 +53,80 @@ check_error(res, "Missing columns in u0.")
 
 ## Check missing beta
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               epsilon = 0.5,
-                               gamma   = 0.5))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        epsilon = 0.5,
+                        gamma   = 0.5))
 check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check missing epsilon
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               gamma   = 0.5))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        gamma   = 0.5))
 check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check missing gamma
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = 0.5))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = 0.5))
 check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric beta
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = "0.5",
-                               epsilon = 0.3,
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = "0.5",
+                        epsilon = 0.3,
+                        gamma   = 0.1))
 check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric epsilon
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = "0.3",
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = "0.3",
+                        gamma   = 0.1))
 check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check non-numeric gamma
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = 0.3,
-                               gamma   = "0.1"))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = 0.3,
+                        gamma   = "0.1"))
 check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of beta equals 1
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = c(0.5, 0.5),
-                               epsilon = 0.3,
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = c(0.5, 0.5),
+                        epsilon = 0.3,
+                        gamma   = 0.1))
 check_error(res, "'beta' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of epsilon equals 1
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = c(0.3, 0.3),
-                               gamma   = 0.1))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = c(0.3, 0.3),
+                        gamma   = 0.1))
 check_error(res, "'epsilon' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check that length of gamma equals 1
 res <- assertError(SEIR(u0      = u0,
-                               tspan   = seq_len(10) - 1,
-                               events  = NULL,
-                               beta    = 0.5,
-                               epsilon = 0.3,
-                               gamma   = c(0.1, 0.1)))
+                        tspan   = seq_len(10) - 1,
+                        events  = NULL,
+                        beta    = 0.5,
+                        epsilon = 0.3,
+                        gamma   = c(0.1, 0.1)))
 check_error(res, "'gamma' must be numeric of length 1 or 'nrow(u0)'.")
 
 ## Check extraction of data from 'suscpetible', 'infected' and
@@ -147,7 +147,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
                         .Dim = c(6L, 10L))
 
-S_observed <- trajectory(result, compartments = "S", as.is = TRUE)
+S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -157,7 +157,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
 
-I_observed <- trajectory(result, compartments = "I", as.is = TRUE)
+I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
@@ -167,7 +167,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(6L, 10L))
 
-R_observed <- trajectory(result, compartments = "R", as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", format = "matrix")
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- data.frame(
@@ -194,12 +194,13 @@ R_expected <- data.frame(
     node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
     time = 0:9L,
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
-R_observed <- trajectory(result, compartments = "R", node = 1)
+R_observed <- trajectory(result, compartments = "R", index = 1)
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                        .Dim = c(1L, 10L))
-R_observed <- trajectory(result, compartments = "R", node = 1, as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R",
+                         index = 1, format = "matrix")
 stopifnot(identical(R_observed, R_expected))
 
 ## Extract the number of recovered individuals in the first and third
@@ -211,14 +212,14 @@ R_expected <- data.frame(
              5L, 5L, 6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L),
     R = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
-R_observed <- trajectory(result, compartments = "R", node = c(1, 3))
+R_observed <- trajectory(result, compartments = "R", index = c(1, 3))
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
                         .Dim = c(2L, 10L))
-R_observed <- trajectory(result, compartments = "R", node = c(1, 3),
-                         as.is = TRUE)
+R_observed <- trajectory(result, compartments = "R", index = c(1, 3),
+                         format = "matrix")
 stopifnot(identical(R_observed, R_expected))
 
 ## A more complex test to extract data from U from a trajectory of 6
@@ -293,13 +294,13 @@ U_expected <- data.frame(
 U_observed <- trajectory(result)
 stopifnot(identical(U_observed, U_expected))
 U_observed <- trajectory(result, compartments = c("S", "E", "I", "R"),
-                         node = 1:6)
+                         index = 1:6)
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- data.frame(
     node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
     time = 0:9, S = 110:119, I = 130:139)
-U_observed <- trajectory(result, compartments = c("S", "I"), node = 1)
+U_observed <- trajectory(result, compartments = c("S", "I"), index = 1)
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- data.frame(
@@ -311,7 +312,7 @@ U_expected <- data.frame(
           225L, 425L, 226L, 426L, 227L, 427L, 228L, 428L, 229L, 429L),
     R = c(240L, 440L, 241L, 441L, 242L, 442L, 243L, 443L, 244L, 444L,
           245L, 445L, 246L, 446L, 247L, 447L, 248L, 448L, 249L, 449L))
-U_observed <- trajectory(result, compartments = c("E", "R"), node = c(2, 4))
+U_observed <- trajectory(result, compartments = c("E", "R"), index = c(2, 4))
 stopifnot(identical(U_observed, U_expected))
 
 U_expected <- structure(
@@ -321,7 +322,7 @@ U_expected <- structure(
       447L, 228L, 248L, 428L, 448L, 229L, 249L, 429L, 449L),
     .Dim = c(4L, 10L))
 U_observed <- trajectory(result, compartments = c("E", "R"),
-                         node = c(2, 4), as.is = TRUE)
+                         index = c(2, 4), format = "matrix")
 stopifnot(identical(U_observed, U_expected))
 
 ## Check prevalence
@@ -348,9 +349,9 @@ p_expected <- structure(
     .Names = c("time", "prevalence"),
     row.names = c(NA, -10L),
     class = "data.frame")
-p_observed <- prevalence(result, I ~ S + E + I + R, type = "nop")
+p_observed <- prevalence(result, I ~ S + E + I + R, level = 2)
 stopifnot(identical(p_observed, p_expected))
-p_observed <- prevalence(result, I ~ ., type = "nop")
+p_observed <- prevalence(result, I ~ ., level = 2)
 stopifnot(identical(p_observed, p_expected))
 
 p_expected <- data.frame(
@@ -381,11 +382,11 @@ p_expected <- data.frame(
                    0.252886836027714, 0.25234521575985, 0.251974723538705,
                    0.259328358208955, 0.25534188034188, 0.25374251497006,
                    0.252880184331797, 0.252340823970037, 0.251971608832808))
-p_observed <- prevalence(result, I ~ ., type = "wnp")
+p_observed <- prevalence(result, I ~ ., level = 3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I ~ S + E + I + R, type = "wnp")
+p_observed <- prevalence(result, I ~ S + E + I + R, level = 3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
@@ -401,11 +402,11 @@ p_expected <- data.frame(
                    0.255411255411255, 0.253776435045317, 0.255387931034483,
                    0.253765060240964, 0.255364806866953, 0.253753753753754,
                    0.25534188034188, 0.25374251497006))
-p_observed <- prevalence(result, I~., type = "wnp", node = 2:3)
+p_observed <- prevalence(result, I~., level = 3, i = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I ~ S + E + I + R, type = "wnp", node = 2:3)
+p_observed <- prevalence(result, I ~ S + E + I + R, level = 3, i = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
@@ -419,8 +420,8 @@ stopifnot(identical(nrow(events_SEIR()), 466692L))
 stopifnot(identical(nrow(u0_SEIR()), 1600L))
 
 ## Try to plot non-extisting compartment.
-res <- assertError(plot(result, compartments = "X"))
-check_error(res, "'compartments' must exist in the model.")
+res <- assertError(plot(result, "X"))
+check_error(res, "Non-existing compartment(s) in model: 'X'.")
 
 ## Try to plot with invalid range argument.
 res <- assertError(plot(result, range = 1.2))
@@ -437,7 +438,7 @@ unlink(pdf_file)
 ## Check SEIR plot method with range = FALSE
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
-plot(result, compartments = "S", lty = 1, range = FALSE)
+plot(result, "S", lty = 1, range = FALSE)
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)

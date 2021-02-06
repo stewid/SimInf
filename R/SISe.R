@@ -211,10 +211,10 @@ SISe <- function(u0,
 ##' summary(result)
 events_SISe <- function() {
     data("events_SISe3", package = "SimInf", envir = environment())
-    events_SISe3$select[events_SISe3$event == "exit"] <- 2
-    events_SISe3$select[events_SISe3$event == "enter"] <- 1
+    events_SISe3$select[events_SISe3$event == "exit"] <- 2L
+    events_SISe3$select[events_SISe3$event == "enter"] <- 1L
     events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
-    events_SISe3$select[events_SISe3$event == "extTrans"] <- 2
+    events_SISe3$select[events_SISe3$event == "extTrans"] <- 2L
     events_SISe3
 }
 
@@ -261,7 +261,7 @@ events_SISe <- function() {
 ##'
 ##' ## Plot the proportion of nodes with at least one infected
 ##' ## individual.
-##' plot(prevalence(result, I~S+I, "nop"), type = "l")
+##' plot(result, I~S+I, level = 2, type = "l")
 u0_SISe <- function() {
     u0 <- u0_SIR()
     u0[, c("S", "I")]

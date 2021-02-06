@@ -80,17 +80,19 @@
 ##'     See above for a description of \code{N}. Unsued for the other
 ##'     event types.
 ##' @export
-setClass("SimInf_events",
-         slots = c(E          = "dgCMatrix",
-                   N          = "matrix",
-                   event      = "integer",
-                   time       = "integer",
-                   node       = "integer",
-                   dest       = "integer",
-                   n          = "integer",
-                   proportion = "numeric",
-                   select     = "integer",
-                   shift      = "integer"))
+setClass(
+    "SimInf_events",
+    slots = c(E          = "dgCMatrix",
+              N          = "matrix",
+              event      = "integer",
+              time       = "integer",
+              node       = "integer",
+              dest       = "integer",
+              n          = "integer",
+              proportion = "numeric",
+              select     = "integer",
+              shift      = "integer")
+)
 
 valid_events <- function(object) {
     if (!all(object@time > 0))
@@ -202,6 +204,7 @@ init_events <- function(events, t0) {
         events$event[i_enter] <- 1L
         events$event[i_intTrans] <- 2L
         events$event[i_extTrans] <- 3L
+        attr(events$event, "origin") <- "character"
     }
 
     ## Check time
@@ -211,7 +214,10 @@ init_events <- function(events, t0) {
                 stop("Missing 't0'.", call. = FALSE)
             if (!all(identical(length(t0), 1L), is.numeric(t0)))
                 stop("Invalid 't0'.", call. = FALSE)
+            t1 <- min(events$time)
+            origin <- as.character(t1 - (as.numeric(t1) - t0))
             events$time <- as.numeric(events$time) - t0
+            attr(events$time, "origin") <- origin
         } else if (!is.null(t0)) {
             stop("Invalid 't0'.", call. = FALSE)
         }
@@ -348,20 +354,20 @@ init_events <- function(events, t0) {
 ##' ## the second node.  As can be seen in the figure, all
 ##' ## indivuduals have been moved to the second node when
 ##' ## t = 300.
-##' plot(run(model), node = 1:2, range = FALSE)
+##' plot(run(model), index = 1:2, range = FALSE)
 ##'
 ##' ## Let us now double the weight to sample from the 'I'
 ##' ## compartment and rerun the model.
 ##' model@events@E[2, 4] <- 2
-##' plot(run(model), node = 1:2, range = FALSE)
+##' plot(run(model), index = 1:2, range = FALSE)
 ##'
 ##' ## And much larger weight to sample from the I compartment.
 ##' model@events@E[2, 4] <- 10
-##' plot(run(model), node = 1:2, range = FALSE)
+##' plot(run(model), index = 1:2, range = FALSE)
 ##'
 ##' ## Increase the weight for the R compartment.
 ##' model@events@E[3, 4] <- 4
-##' plot(run(model), node = 1:2, range = FALSE)
+##' plot(run(model), index = 1:2, range = FALSE)
 SimInf_events <- function(E      = NULL,
                           N      = NULL,
                           events = NULL,
@@ -389,13 +395,19 @@ SimInf_events <- function(E      = NULL,
         }
     }
 
+    event_origin <- attr(events$event, "origin")
+    events$event <- as.integer(events$event)
+    time_origin <- attr(events$time, "origin")
+    events$time <- as.integer(events$time)
     events <- events[order(events$time, events$event, events$select), ]
+    attr(events$event, "origin") <- event_origin
+    attr(events$time, "origin") <- time_origin
 
     new("SimInf_events",
         E          = E,
         N          = N,
-        event      = as.integer(events$event),
-        time       = as.integer(events$time),
+        event      = events$event,
+        time       = events$time,
         node       = as.integer(events$node),
         dest       = as.integer(events$dest),
         n          = as.integer(events$n),
@@ -404,24 +416,36 @@ SimInf_events <- function(E      = NULL,
         shift      = as.integer(events$shift))
 }
 
-setAs(from = "SimInf_events",
-      to = "data.frame",
-      def = function(from) {
-          data.frame(event = from@event,
-                     time = from@time,
-                     node = from@node,
-                     dest = from@dest,
-                     n = from@n,
-                     proportion = from@proportion,
-                     select = from@select,
-                     shift = from@shift)
-      }
+setAs(
+    from = "SimInf_events",
+    to = "data.frame",
+    def = function(from) {
+        events <- data.frame(event = from@event,
+                             time = from@time,
+                             node = from@node,
+                             dest = from@dest,
+                             n = from@n,
+                             proportion = from@proportion,
+                             select = from@select,
+                             shift = from@shift)
+
+        if (!is.null(attr(from@event, "origin"))) {
+            event_names <- c("exit", "enter", "intTrans", "extTrans")
+            events$event <- event_names[events$event + 1]
+        }
+
+        if (!is.null(attr(from@time, "origin"))) {
+            events$time <- as.Date(events$time,
+                                   origin = attr(from@time, "origin"))
+        }
+
+        events
+    }
 )
 
-##' Coerce to data frame
+##' Coerce events to a data frame
 ##'
 ##' @method as.data.frame SimInf_events
-##'
 ##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_events <- function(x, ...) {
@@ -433,8 +457,7 @@ as.data.frame.SimInf_events <- function(x, ...) {
 ##' @param x the time points of the events.
 ##' @param y the number of events over time.
 ##' @param events the event type to plot.
-##' @param frame.plot a logical indicating whether a box should be
-##'     drawn around the plot.
+##' @template plot-frame-param
 ##' @param ... additional arguments affecting the plot.
 ##' @importFrom graphics plot
 ##' @importFrom graphics mtext
@@ -484,24 +507,27 @@ plot_SimInf_events <- function(x,
 ##' @export
 ##' @importFrom graphics par
 ##' @importFrom stats xtabs
-setMethod("plot",
-          signature(x = "SimInf_events"),
-          function(x, frame.plot = FALSE, ...) {
-              savepar <- par(mfrow = c(2, 2),
-                             oma = c(1, 1, 2, 0),
-                             mar = c(4, 3, 1, 1))
-              on.exit(par(savepar))
+setMethod(
+    "plot",
+    signature(x = "SimInf_events"),
+    function(x, frame.plot = FALSE, ...) {
+        savepar <- par(mfrow = c(2, 2),
+                       oma = c(1, 1, 2, 0),
+                       mar = c(4, 3, 1, 1))
+        on.exit(par(savepar))
 
-              yy <- xtabs(n ~ event + time,
-                          cbind(event = x@event, time = x@time, n = x@n))
-              xx <- as.integer(colnames(yy))
+        yy <- xtabs(n ~ event + time,
+                    cbind(event = x@event, time = x@time, n = x@n))
+        xx <- as.integer(colnames(yy))
+        if (!is.null(attr(x@time, "origin")))
+            xx <- as.Date(xx, origin = attr(x@time, "origin"))
 
-              ## Plot events
-              plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)
-              plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
-              plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
-              plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
-          }
+        ## Plot events
+        plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
+    }
 )
 
 ##' Brief summary of \code{SimInf_events}
@@ -511,13 +537,14 @@ setMethod("plot",
 ##' @return None (invisible 'NULL').
 ##' @export
 ##' @importFrom methods show
-setMethod("show",
-          signature(object = "SimInf_events"),
-          function(object) {
-              cat(sprintf("Number of scheduled events: %i\n",
-                          length(object@event)))
-              invisible(object)
-          }
+setMethod(
+    "show",
+    signature(object = "SimInf_events"),
+    function(object) {
+        cat(sprintf("Number of scheduled events: %i\n",
+                    length(object@event)))
+        invisible(object)
+    }
 )
 
 ##' Detailed summary of a \code{SimInf_events} object
@@ -528,31 +555,32 @@ setMethod("show",
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
 ##' @export
-setMethod("summary",
-          signature(object = "SimInf_events"),
-          function(object, ...) {
-              cat(sprintf("Number of scheduled events: %i\n",
-                          length(object@event)))
+setMethod(
+    "summary",
+    signature(object = "SimInf_events"),
+    function(object, ...) {
+        cat(sprintf("Number of scheduled events: %i\n",
+                    length(object@event)))
 
-              for (i in seq_len(4)) {
-                  switch(i,
-                         cat(" - Exit: "),
-                         cat(" - Enter: "),
-                         cat(" - Internal transfer: "),
-                         cat(" - External transfer: "))
+        for (i in seq_len(4)) {
+            switch(i,
+                   cat(" - Exit: "),
+                   cat(" - Enter: "),
+                   cat(" - Internal transfer: "),
+                   cat(" - External transfer: "))
 
-                  j <- which(object@event == (i - 1))
-                  if (length(j) > 0) {
-                      cat(sprintf("%i (n: min = %i max = %i avg = %.1f)\n",
-                                  length(j),
-                                  min(object@n[j]),
-                                  max(object@n[j]),
-                                  mean(object@n[j])))
-                  } else {
-                      cat("0\n")
-                  }
-              }
-          }
+            j <- which(object@event == (i - 1))
+            if (length(j) > 0) {
+                cat(sprintf("%i (n: min = %i max = %i avg = %.1f)\n",
+                            length(j),
+                            min(object@n[j]),
+                            max(object@n[j]),
+                            mean(object@n[j])))
+            } else {
+                cat("0\n")
+            }
+        }
+    }
 )
 
 ##' Extract the events from a \code{SimInf_model} object

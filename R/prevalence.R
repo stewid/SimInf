@@ -21,39 +21,43 @@
 
 ## Sum all individuals in compartments in a matrix with one row per
 ## node X length(tspan)
-sum_individuals <- function(model, compartments, node) {
+sum_compartments <- function(model, compartments, index) {
     m <- NULL
-    for (compartment in compartments) {
-        if (is.null(m)) {
-            m <- trajectory(model, compartments = compartment,
-                            node = node, as.is = TRUE)
-        } else {
-            m <- m + trajectory(model, compartments = compartment,
-                                node = node, as.is = TRUE)
+
+    for (j in seq_len(length(compartments))) {
+        for (compartment in names(compartments[[j]])) {
+            if (is.null(m)) {
+                m <- trajectory(model, compartment, index, "matrix")
+            } else {
+                m <- m + trajectory(model, compartment, index, "matrix")
+            }
         }
     }
-    dimnames(m) <- NULL
+
     m
 }
 
-evaluate_condition <- function(condition, model, node) {
+evaluate_condition <- function(model, compartments, index, n) {
     ## Create an environment to hold the trajectory data with one
     ## column for each compartment.
     e <- new.env(parent = baseenv())
-    for (compartment in rownames(model@S)) {
-        assign(x = compartment,
-               value = as.integer(trajectory(
-                   model,
-                   compartments = compartment,
-                   node = node,
-                   as.is = TRUE)),
-               pos = e)
+    for (j in seq_len(length(compartments$rhs))) {
+        if (length(compartments$rhs[[j]]) > 0) {
+            ac <- attr(compartments$rhs[[j]], "available_compartments")
+            for (compartment in ac) {
+                assign(x = compartment,
+                       value = as.integer(
+                           trajectory(model, compartment, index, "matrix")),
+                       pos = e)
+            }
+        }
     }
 
     ## Then evaluate the condition using the data in the environment.
+    condition <- compartments$condition
     e$condition <- condition
     k <- evalq(eval(parse(text = condition)), envir = e)
-    l <- length(model@tspan) * ifelse(is.null(node), Nn(model), length(node))
+    l <- length(model@tspan) * ifelse(is.null(index), n, length(index))
     if (!is.logical(k) || length(k) != l) {
         stop(paste0("The condition must be either 'TRUE' ",
                     "or 'FALSE' for every node and time step."),
@@ -61,6 +65,57 @@ evaluate_condition <- function(condition, model, node) {
     }
 
     matrix(k, ncol = length(model@tspan))
+}
+
+calculate_prevalence <- function(model, compartments, level,
+                                 index, n, format, id) {
+    ## Sum all individuals in the 'cases' and 'population'
+    ## compartments in a matrix with one row per node X length(tspan)
+    cases <- sum_compartments(model, compartments$lhs, index)
+    population <- sum_compartments(model, compartments$rhs, index)
+
+    ## Apply condition
+    if (!is.null(compartments$condition)) {
+        condition <- evaluate_condition(model, compartments, index, n)
+        cases <- cases * condition
+        population <- population * condition
+    }
+
+    if (identical(level, 1L)) {
+        cases <- colSums(cases)
+        population <- colSums(population)
+    } else if (identical(level, 2L)) {
+        cases <- colSums(cases > 0)
+        ## Only include nodes with individuals
+        population <- colSums(population > 0)
+    }
+
+    prevalence <- cases / population
+
+    if (identical(format, "matrix")) {
+        if (is.null(dim(prevalence)))
+            dim(prevalence) <- c(1L, length(prevalence))
+        return(prevalence)
+    }
+
+    time <- names(model@tspan)
+    if (is.null(time))
+        time <- model@tspan
+    if (level %in% c(1L, 2L)) {
+        return(data.frame(time = time,
+                          prevalence = prevalence,
+                          stringsAsFactors = FALSE))
+    }
+
+    if (is.null(index))
+        index <- seq_len(n)
+
+    prevalence <- data.frame(id = index,
+                             time = rep(time, each = length(index)),
+                             prevalence = as.numeric(prevalence),
+                             stringsAsFactors = FALSE)
+    colnames(prevalence)[1] <- id
+    prevalence
 }
 
 ##' Calculate prevalence from a model object with trajectory data
@@ -71,6 +126,19 @@ evaluate_condition <- function(condition, model, node) {
 ##' node.
 ##' @param model The \code{model} with trajectory data to calculate
 ##'     the prevalence from.
+setGeneric(
+    "prevalence",
+    signature = c("model", "formula"),
+    function(model,
+             formula,
+             level = 1,
+             index = NULL,
+             format = c("data.frame", "matrix")) {
+        standardGeneric("prevalence")
+    }
+)
+
+##' @rdname prevalence
 ##' @param formula A formula that specifies the compartments that
 ##'     define the cases with a disease or that have a specific
 ##'     characteristic (numerator), and the compartments that define
@@ -89,25 +157,24 @@ evaluate_condition <- function(condition, model, node) {
 ##'     condition must evaluate to \code{TRUE} or \code{FALSE} in each
 ##'     node and time step. Note that if the denominator is zero, the
 ##'     prevalence is \code{NaN}.
-##' @param type The type of prevalence measure to calculate at each
-##'     time point in \code{tspan}: \code{pop} (population prevalence)
+##' @param level The level at which the prevalence is calculated at
+##'     each time point in \code{tspan}. 1 (population prevalence):
 ##'     calculates the proportion of the individuals (cases) in the
-##'     population, \code{nop} (node prevalence) calculates the
-##'     proportion of nodes with at least one case, and \code{wnp}
-##'     (within-node prevalence) calculates the proportion of cases
-##'     within each node. Default is \code{pop}.
-##' @param node Indices specifying the subset nodes to include in the
-##'     calculation of the prevalence. Default is \code{NULL}, which
-##'     includes all nodes.
-##' @param as.is The default (\code{as.is = FALSE}) is to generate a
-##'     \code{data.frame} with one row per time-step with the
-##'     prevalence. Using \code{as.is = TRUE} returns the result as a
-##'     matrix, which is the internal format.
-##' @return A \code{data.frame} if \code{as.is = FALSE}, else a
-##'     matrix.
+##'     population. 2 (node prevalence): calculates the proportion of
+##'     nodes with at least one case. 3 (within-node prevalence):
+##'     calculates the proportion of cases within each node. Default
+##'     is \code{1}.
+##' @param index Indices specifying the subset of nodes to include in
+##'     the calculation of the prevalence. Default is \code{index =
+##'     NULL}, which includes all nodes.
+##' @param format The default (\code{format = "data.frame"}) is to
+##'     generate a \code{data.frame} with one row per time-step with
+##'     the prevalence. Using \code{format = "matrix"} returns the
+##'     result as a matrix.
+##' @return A \code{data.frame} if \code{format = "data.frame"}, else
+##'     a matrix.
 ##' @include SimInf_model.R
-##' @include check_arguments.R
-##' @include formula.R
+##' @include match_compartments.R
 ##' @export
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize
@@ -120,97 +187,45 @@ evaluate_condition <- function(condition, model, node) {
 ##'
 ##' ## Determine the proportion of infected individuals (cases)
 ##' ## in the population at the time-points in 'tspan'.
-##' prevalence(result, I~S+I+R)
+##' prevalence(result, I ~ S + I + R)
 ##'
 ##' ## Identical result is obtained with the shorthand 'I~.'
-##' prevalence(result, I~.)
+##' prevalence(result, I ~ .)
 ##'
 ##' ## Determine the proportion of nodes with infected individuals at
 ##' ## the time-points in 'tspan'.
-##' prevalence(result, I~S+I+R, type = "nop")
+##' prevalence(result, I ~ S + I + R, level = 2)
 ##'
 ##' ## Determine the proportion of infected individuals in each node
 ##' ## at the time-points in 'tspan'.
-##' prevalence(result, I~S+I+R, type = "wnp")
+##' prevalence(result, I ~ S + I + R, level = 3)
 ##'
 ##' ## Determine the proportion of infected individuals in each node
 ##' ## at the time-points in 'tspan' when the number of recovered is
 ##' ## zero.
-##' prevalence(result, I~S+I+R|R==0, type = "wnp")
-prevalence <- function(model,
-                       formula,
-                       type = c("pop", "nop", "wnp"),
-                       node = NULL,
-                       as.is = FALSE) {
-    check_model_argument(model)
+##' prevalence(result, I ~ S + I + R | R == 0, level = 3)
+setMethod(
+    "prevalence",
+    signature(model = "SimInf_model", formula = "formula"),
+    function(model, formula, level, index, format) {
+        compartments <- match_compartments(compartments = formula,
+                                           ok_combine = FALSE,
+                                           ok_lhs = TRUE,
+                                           U = rownames(model@S))
+        if (is.null(compartments$lhs))
+            stop("Invalid 'formula' specification.", call. = FALSE)
 
-    ## Check 'formula' argument
-    if (missing(formula))
-        stop("Missing 'formula' argument.", call. = FALSE)
-    if (!is(formula, "formula"))
-        stop("'formula' argument is not a 'formula'.", call. = FALSE)
-    formula <- as.character(formula)
-    if (!identical(length(formula), 3L))
-        stop("Invalid formula specification.", call. = FALSE)
+        check_integer_arg(level)
+        level <- as.integer(level)
+        if (length(level) != 1 || any(level < 1) || any(level > 3)) {
+            stop("'level' must be an integer with a value 1, 2 or 3.",
+                 call. = FALSE)
+        }
+        index <- check_node_index_argument(model, index)
+        format <- match.arg(format)
+        n <- n_nodes(model)
+        id <- "node"
 
-    ## Check 'type' argument
-    type <- match.arg(type)
-
-    ## Check the 'node' argument
-    node <- check_node_argument(model, node)
-
-    ## Determine the compartments for the cases and the
-    ## population. Check if the formula contains a condition.
-    cases <- parse_formula_item(formula[2], rownames(model@S))
-    if (regexpr("|", formula[3], fixed = TRUE) > 1) {
-        condition <- sub("(^[^|]+)([|]?)(.*)$", "\\3", formula[3])
-        condition <- evaluate_condition(condition, model, node)
-        population <- sub("(^[^|]+)([|]?)(.*)$", "\\1", formula[3])
-        population <- parse_formula_item(population, rownames(model@S))
-    } else {
-        condition <- NULL
-        population <- parse_formula_item(formula[3], rownames(model@S))
+        calculate_prevalence(model, compartments, level, index, n, format, id)
     }
-
-    ## Sum all individuals in the 'cases' and 'population'
-    ## compartments in a matrix with one row per node X length(tspan)
-    cases <- sum_individuals(model, cases, node)
-    population <- sum_individuals(model, population, node)
-
-    ## Apply condition
-    if (!is.null(condition)) {
-        cases <- cases * condition
-        population <- population * condition
-    }
-
-    if (identical(type, "pop")) {
-        cases <- colSums(cases)
-        population <- colSums(population)
-    } else if (identical(type, "nop")) {
-        cases <- colSums(cases > 0)
-        ## Only include nodes with individuals
-        population <- colSums(population > 0)
-    }
-
-    prevalence <- cases / population
-
-    if (isTRUE(as.is))
-        return(prevalence)
-
-    time <- names(model@tspan)
-    if (is.null(time))
-        time <- model@tspan
-    if (type %in% c("pop", "nop")) {
-        return(data.frame(time = time,
-                          prevalence = prevalence,
-                          stringsAsFactors = FALSE))
-    }
-
-    if (is.null(node))
-        node <- seq_len(Nn(model))
-
-    data.frame(node = node,
-               time = rep(time, each = length(node)),
-               prevalence = as.numeric(prevalence),
-               stringsAsFactors = FALSE)
-}
+)

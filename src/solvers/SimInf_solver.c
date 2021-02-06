@@ -458,7 +458,9 @@ static void SimInf_print_event(
     const SimInf_scheduled_event *e, const int *irE, const int *jcE,
     const int Nc, const int *u, const int node, const int dest)
 {
-    #pragma omp critical
+    #ifdef _OPENMP
+    #  pragma omp critical
+    #endif
     {
         int i;
 
@@ -1035,7 +1037,9 @@ void attribute_hidden SimInf_print_status(
     const double rate,
     const int transition)
 {
-    #pragma omp critical
+    #ifdef _OPENMP
+    #  pragma omp critical
+    #endif
     {
         if (u && (node >= 0)) {
             int i;

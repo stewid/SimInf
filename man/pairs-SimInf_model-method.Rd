@@ -4,10 +4,21 @@
 \alias{pairs,SimInf_model-method}
 \title{Scatterplot of number of individuals in each compartment}
 \usage{
-\S4method{pairs}{SimInf_model}(x, ...)
+\S4method{pairs}{SimInf_model}(x, compartments = NULL, index = NULL, ...)
 }
 \arguments{
 \item{x}{The \code{model} to plot}
+
+\item{compartments}{specify the names of the compartments to
+extract data from. The compartments can be specified as a
+character vector e.g. \code{compartments = c('S', 'I', 'R')},
+or as a formula e.g. \code{compartments = ~S+I+R} (see
+\sQuote{Examples}). Default (\code{compartments=NULL})
+includes all compartments.}
+
+\item{index}{indices specifying the nodes to include when plotting
+data. Default \code{index = NULL} include all nodes in the
+model.}
 
 \item{...}{Additional arguments affecting the plot produced.}
 }
@@ -30,6 +41,11 @@ model <- SIR(u0 = data.frame(S = rep(99, 10),
 ## Run the model and save the result.
 result <- run(model)
 
-## Create a scatter plot
+## Create a scatter plot that includes all compartments in all
+## nodes.
 pairs(result)
+
+## Create a scatter plot that includes the S and I compartments in
+## nodes 1 and 2.
+pairs(result, ~S+I, 1:2)
 }

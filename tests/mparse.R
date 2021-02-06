@@ -232,8 +232,6 @@ C_code <- c(
     "#if !defined(SIMINF_FORCE_SYMBOLS)",
     "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
     "#endif",
-    "#define SIMINF_STR(name) #name",
-    "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
     "",
     "/**",
     " * @param u The compartment state vector in the node.",
@@ -373,7 +371,8 @@ C_code <- c(
     "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
     "}")
 
-stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
+## Skip first line that contains version
+stopifnot(identical(m@C_code[-1], C_code))
 stopifnot(identical(m@C_code, C_code(m)))
 
 ## Check mparse with both gdata and ldata
@@ -413,8 +412,6 @@ C_code <- c(
     "#if !defined(SIMINF_FORCE_SYMBOLS)",
     "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
     "#endif",
-    "#define SIMINF_STR(name) #name",
-    "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
     "",
     "/**",
     " * @param u The compartment state vector in the node.",
@@ -554,7 +551,8 @@ C_code <- c(
     "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
     "}")
 
-stopifnot(identical(m@C_code[-1], C_code)) ## Skip first line that contains time
+## Skip first line that contains version
+stopifnot(identical(m@C_code[-1], C_code))
 
 stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
                     c("beta", "*", "S", "*", "I", "/", "(", "S", "+",
@@ -604,8 +602,6 @@ C_code <- c(
     "#if !defined(SIMINF_FORCE_SYMBOLS)",
     "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
     "#endif",
-    "#define SIMINF_STR(name) #name",
-    "#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}",
     "",
     "/**",
     " * @param u The compartment state vector in the node.",
@@ -709,7 +705,7 @@ C_code <- c(
     "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);",
     "}")
 
-## Skip first line that contains time
+## Skip first line that contains version
 stopifnot(identical(model@C_code[-1], C_code))
 
 u0 <- structure(c(100L, 1L, 0L),
@@ -733,7 +729,7 @@ m2 <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
              gdata = data.frame(c1 = 0.5, c2 = 1, c3 = 0.005),
              u0 = data.frame(D = rep(10, 5), W = 10), tspan = 1:5)
 
-## Skip first line that contains time
+## Skip first line that contains version
 m1@C_code <- m1@C_code[-1]
 m2@C_code <- m2@C_code[-1]
 
@@ -824,7 +820,7 @@ m  <- mparse(transitions = ".S.S -> 1.2*.S.S -> @",
              compartments = c(".S.S"),
              u0 = data.frame(.S.S = 100),
              tspan = 1:100)
-stopifnot(identical(m@C_code[48], "    return 1.2*u[0];"))
+stopifnot(identical(m@C_code[46], "    return 1.2*u[0];"))
 
 ## Check mparse with a propensity that contains '->' to handle a case
 ## where a pointer is used in the propensity.
@@ -832,8 +828,20 @@ m  <- mparse(transitions = "S -> a->data[2]*1.2*S -> @",
              compartments = c("S"),
              u0 = data.frame(S = 100),
              tspan = 1:100)
-stopifnot(identical(m@C_code[48], "    return a->data[2]*1.2*u[0];"))
+stopifnot(identical(m@C_code[46], "    return a->data[2]*1.2*u[0];"))
 
+## Check that an error is raised if the compilation fails. Define a
+## model with undeclared identifiers 'betaSI' and 'gammaI'.
+model <- mparse(transitions = c("S -> betaSI -> I",
+                                "I -> gammaI -> R"),
+                compartments = c("S", "I", "R"),
+                gdata = c(beta = 0.16, gamma = 0.077),
+                u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
+                tspan = 1:10)
+assertError(run(model))
+
+## Test that the environmental variable PKG_CPPFLAGS is restored after
+## compiling C code for a model. First set it to a known value.
 model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
                                 "I -> gamma*I -> R"),
                 compartments = c("S", "I", "R"),
@@ -841,8 +849,6 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
                 u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
                 tspan = 1:10)
 
-## Test that the environmental variable PKG_CPPFLAGS is restored after
-## compiling C code for a model. First set it to a known value.
 Sys.setenv(PKG_CPPFLAGS = "test")
 
 set.seed(22)

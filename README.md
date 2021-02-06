@@ -1,12 +1,13 @@
 
 
-![](https://raw.githubusercontent.com/stewid/SimInf/master/logo/logo.png)
+![](https://raw.githubusercontent.com/stewid/SimInf/main/logo/logo.png)
 
 > A flexible and efficient framework for data-driven stochastic disease spread simulations
 
-[![Build Status](https://dev.azure.com/stefanwidgren/SimInf/_apis/build/status/stewid.SimInf?branchName=master)](https://dev.azure.com/stefanwidgren/SimInf/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://dev.azure.com/stefanwidgren/SimInf/_apis/build/status/stewid.SimInf?branchName=main)](https://dev.azure.com/stefanwidgren/SimInf/_build)
 [![CRAN status](https://www.r-pkg.org/badges/version/SimInf)](https://CRAN.R-project.org/package=SimInf)
 [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/last-month/SimInf)](https://CRAN.R-project.org/package=SimInf)
+[![Code coverage](https://img.shields.io/azure-devops/coverage/stefanwidgren/SimInf/1)](https://dev.azure.com/stefanwidgren/SimInf/_build/latest?definitionId=1&branchName=main)
 
 # SimInf
 
@@ -68,7 +69,7 @@ model <- mparse(transitions = transitions,
                 compartments = compartments,
                 gdata = c(beta = 0.16, gamma = 0.077),
                 u0 = u0,
-                tspan = 1:180)
+                tspan = 1:150)
 ```
 
 To generate data from the model and then print some basic information
@@ -97,9 +98,9 @@ result
 #> Compartments
 #> ------------
 #>      Min. 1st Qu. Median   Mean 3rd Qu.   Max.
-#>  S   1.00   17.00  27.00  37.91   53.00  99.00
-#>  I   0.00    0.00   2.00   5.74    9.00  47.00
-#>  R   0.00   36.00  73.00  60.34   85.00 103.00
+#>  S   1.00   19.00  30.00  40.74   60.00  99.00
+#>  I   0.00    0.00   4.00   6.87   11.00  47.00
+#>  R   0.00   28.00  67.00  56.39   83.00 103.00
 ```
 
 There are several functions in SimInf to facilitate analysis and
@@ -209,13 +210,13 @@ for detailed installation instructions.
 ## Authors
 
 In alphabetical order: Pavol Bauer [![ORCID
-iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0003-4328-7171),
+iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-4328-7171),
 Robin Eriksson [![ORCID
-iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0002-4291-712X),
+iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-4291-712X),
 Stefan Engblom [![ORCID
-iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0002-3614-1732),
+iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-3614-1732),
 and Stefan Widgren [![ORCID
-iD](https://orcid.org/sites/default/files/images/orcid_16x16.gif)](https://orcid.org/0000-0001-5745-2284)
+iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-5745-2284)
 **(Maintainer)**
 
 Any suggestions, bug reports, forks and pull requests are
@@ -253,4 +254,4 @@ The `SimInf` package uses [semantic versioning](https://semver.org/).
 ## License
 
 The `SimInf` package is licensed under the
-[GPLv3](https://github.com/stewid/SimInf/blob/master/LICENSE).
+[GPLv3](https://github.com/stewid/SimInf/blob/main/LICENSE).

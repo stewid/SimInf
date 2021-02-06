@@ -1,0 +1,22 @@
+---
+title: Getting started with `mparse`
+author:
+  Stefan Widgren
+  <a href="https://orcid.org/0000-0001-5745-2284">
+    <img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"
+         alt="ORCID logo"
+         width="16"
+         height="16"
+         style="border-style:none;" />
+  </a>
+output:
+  html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Getting started with mparse}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Overview

@@ -81,14 +81,12 @@
   Department of Information Technology\\
   Uppsala University\\
   SE-751 05 Uppsala, Sweden\\
-  E-mail: \email{stefan.widgren@it.uu.se}\\
   \\
   Pavol Bauer\\
   Division of Scientific Computing\\
   Department of Information Technology\\
   Uppsala University\\
   SE-751 05 Uppsala, Sweden\\
-  E-mail: \email{pavol.bauer@it.uu.se}\\
   \\
   Robin Eriksson\\
   Division of Scientific Computing\\
@@ -1197,7 +1195,7 @@ to visualize the simulated trajectory.  The default plot will display
 the median count in each compartment across nodes as a colored line
 together with the inter-quartile range using the same color, but with
 transparency.  To display the outcome for individual nodes, specify
-the subset of nodes to plot using the \code{node} parameter and set
+the subset of nodes to plot using the \code{index} parameter and set
 \code{range = FALSE}.  In this example, an outbreak is likely to occur
 in an infected node, but sometimes the infectious disease will become
 extinct before it causes an epidemic, as shown in
@@ -1205,7 +1203,7 @@ Figure~\ref{fig:SIR-model}.
 
 <<SIR-plot, eval=FALSE>>=
 plot(result)
-plot(result, node = 1:10, range = FALSE)
+plot(result, index = 1:10, range = FALSE)
 @
 
 <<SIR-I, echo=FALSE, results=hide>>=
@@ -1216,7 +1214,7 @@ dev.off()
 
 <<SIR-II, echo=FALSE, results=hide>>=
 pdf("SimInf-SIR-II.pdf", width = 10, height = 5)
-plot(result, node = 1:10, range = FALSE)
+plot(result, index = 1:10, range = FALSE)
 dev.off()
 @
 
@@ -1241,12 +1239,12 @@ provides the \code{trajectory()} method to obtain a \code{data.frame}
 with the number of individuals in each compartment at the time points
 specified in \code{tspan}.  Below is an excerpt of the simulated data
 from the first node that clearly shows there was an outbreak there.
-To extract all data from every node, you only have to remove the node
+To extract all data from every node, you only have to remove the index
 argument.  Consult the help page for other \code{trajectory()}
 parameter options.
 
 <<SIR-head-trajectory>>=
-head(trajectory(model = result, node = 1))
+head(trajectory(model = result, index = 1))
 @
 
 \subsubsection[Specification of scheduled events in the SIR model]{%
@@ -1367,7 +1365,7 @@ model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
 set.seed(3)
 set_num_threads(1)
 result <- run(model)
-plot(result, node = 1:5, range = FALSE)
+plot(result, index = 1:5, range = FALSE)
 @
 
 <<SIR-events-I, echo=FALSE, results=hide>>=
@@ -1378,7 +1376,7 @@ set.seed(3)
 set_num_threads(1)
 result <- run(model)
 pdf("SimInf-SIR-events-I.pdf", width = 10, height = 5)
-plot(result, node = 1:5, range = FALSE)
+plot(result, index = 1:5, range = FALSE)
 dev.off()
 @
 
@@ -1390,7 +1388,7 @@ set.seed(3)
 set_num_threads(1)
 result_no_infected <- run(model_no_infected)
 pdf("SimInf-SIR-events-II.pdf", width = 10, height = 5)
-plot(result_no_infected, node = 1:5, range = FALSE)
+plot(result_no_infected, index = 1:5, range = FALSE)
 dev.off()
 @
 
@@ -1419,7 +1417,7 @@ of each trajectory.  Here, we find that infection spread from the
 set.seed(123)
 set_num_threads(1)
 mean(replicate(n = 1000, {
-  nI <- trajectory(run(model = model), node = 1:4)$I
+  nI <- trajectory(run(model = model), index = 1:4)$I
   sum(nI) > 0
 }))
 @
@@ -1554,7 +1552,7 @@ compartments representing cases i.e.,~have an attribute or a disease.
 The right hand side of the formula specifies the compartments at risk.
 Here, we are interested in the proportion of nodes with at least one
 infected individual, therefore, we let \code{formula = I ~ S + I} and
-specify \code{type = "nop"}.  Consult the help page for other
+specify \code{level = 2}.  Consult the help page for other
 \code{prevalence()} parameter options.
 
 <<eval=FALSE>>=
@@ -1564,7 +1562,7 @@ set.seed(123)
 set_num_threads(1)
 replicate(5, {
   result <- run(model = model)
-  p <- prevalence(model = result, formula = I ~ S + I, type = "nop")
+  p <- prevalence(model = result, formula = I ~ S + I, level = 2)
   lines(p)
 })
 @
@@ -1579,7 +1577,7 @@ trajectories.
 gdata(model, "coupling") <- 0.1
 replicate(5, {
   result <- run(model = model)
-  p <- prevalence(model = result, formula = I ~ S + I, type = "nop")
+  p <- prevalence(model = result, formula = I ~ S + I, level = 2)
   lines(p, col = "blue", lty = 2)
 })
 @
@@ -1887,9 +1885,9 @@ first moved to the susceptible compartment.  Then, one infected
 individual is introduced into a randomly sampled node from the
 population.  Note that we use the 'L' suffix to create an integer
 value rather than a numeric value.  Run the model and accumulate
-\code{Icum}.  For efficiency, use \code{as.is = TRUE}, the internal
-matrix format, to extract \code{Icum} in every node at each time-point
-in \code{tspan}.
+\code{Icum}.  For efficiency, use \code{format = "matrix"}, the
+internal matrix format, to extract \code{Icum} in every node at each
+time-point in \code{tspan}.
 
 <<mparse-scheduled-events-epicurve>>=
 epicurve <- function(model, n = 1000) {
@@ -1897,12 +1895,12 @@ epicurve <- function(model, n = 1000) {
   for (i in seq_len(n)) {
     model@u0["S", ] <- model@u0["S", ] + model@u0["I", ]
     model@u0["I", ] <- 0L
-    j <- sample(seq_len(Nn(model)), 1)
+    j <- sample(seq_len(n_nodes(model)), 1)
     model@u0["I", j] <- 1L
     model@u0["S", j] <- model@u0["S", j] - 1L
     result <- run(model = model)
     traj <- trajectory(model = result, compartments = "Icum",
-      as.is = TRUE)
+      format = "matrix")
     Icum <- Icum + colSums(traj)
   }
   stepfun(model@tspan[-1], diff(c(0, Icum / n)))
@@ -2144,9 +2142,9 @@ opar <- par(mfrow = c(1, 2))
 plot(R ~ F, trajectory(model = result), cex = 0.3, pch = 20,
   xlab = "Number of predators", ylab = "Number of prey",
   col = rgb(0, 0, 0, alpha = 0.1))
-plot(R ~ time, trajectory(model = result, node = 4), type = "l",
+plot(R ~ time, trajectory(model = result, index = 4), type = "l",
   xlab = "Time", ylab = "N")
-lines(F ~ time, trajectory(model = result, node = 4), type = "l", lty = 2)
+lines(F ~ time, trajectory(model = result, index = 4), type = "l", lty = 2)
 legend("right", c("Prey", "Predator"), lty = 1:2)
 par(opar)
 @

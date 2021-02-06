@@ -24,6 +24,15 @@
 ##' Produce box-and-whisker plot(s) of the number of individuals in
 ##' each model compartment.
 ##' @param x The \code{model} to plot
+##' @param compartments specify the names of the compartments to
+##'     extract data from. The compartments can be specified as a
+##'     character vector e.g. \code{compartments = c('S', 'I', 'R')},
+##'     or as a formula e.g. \code{compartments = ~S+I+R} (see
+##'     \sQuote{Examples}). Default (\code{compartments=NULL})
+##'     includes all compartments.
+##' @param index indices specifying the nodes to include when plotting
+##'     data. Default \code{index = NULL} include all nodes in the
+##'     model.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @aliases boxplot,SimInf_model-method
 ##' @export
@@ -43,14 +52,19 @@
 ##' ## Run the model and save the result.
 ##' result <- run(model)
 ##'
-##' ## Create a boxplot
+##' ## Create a boxplot that includes all compartments in all nodes.
 ##' boxplot(result)
-setMethod("boxplot",
-          signature(x = "SimInf_model"),
-          function(x, ...) {
-              ## Remove the first two columns node and time
-              boxplot(trajectory(x)[c(-1, -2)], ...)
-          }
+##'
+##' ## Create a boxplot that includes the S and I compartments in
+##' ## nodes 1 and 2.
+##' boxplot(result, ~S+I, 1:2)
+setMethod(
+    "boxplot",
+    signature(x = "SimInf_model"),
+    function(x, compartments = NULL, index = NULL, ...) {
+        ## Remove the first two columns node and time
+        boxplot(trajectory(x, compartments, index)[c(-1, -2)], ...)
+    }
 )
 
 ##' Scatterplot of number of individuals in each compartment
@@ -59,6 +73,15 @@ setMethod("boxplot",
 ##' compartment is produced. The \code{ij}th scatterplot contains
 ##' \code{x[,i]} plotted against \code{x[,j]}.
 ##' @param x The \code{model} to plot
+##' @param compartments specify the names of the compartments to
+##'     extract data from. The compartments can be specified as a
+##'     character vector e.g. \code{compartments = c('S', 'I', 'R')},
+##'     or as a formula e.g. \code{compartments = ~S+I+R} (see
+##'     \sQuote{Examples}). Default (\code{compartments=NULL})
+##'     includes all compartments.
+##' @param index indices specifying the nodes to include when plotting
+##'     data. Default \code{index = NULL} include all nodes in the
+##'     model.
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @export
 ##' @include SimInf_model.R
@@ -77,69 +100,260 @@ setMethod("boxplot",
 ##' ## Run the model and save the result.
 ##' result <- run(model)
 ##'
-##' ## Create a scatter plot
+##' ## Create a scatter plot that includes all compartments in all
+##' ## nodes.
 ##' pairs(result)
-setMethod("pairs",
-          signature(x = "SimInf_model"),
-          function(x, ...) {
-              ## Remove the first two columns node and time
-              pairs(trajectory(x)[c(-1, -2)], ...)
-          }
+##'
+##' ## Create a scatter plot that includes the S and I compartments in
+##' ## nodes 1 and 2.
+##' pairs(result, ~S+I, 1:2)
+setMethod(
+    "pairs",
+    signature(x = "SimInf_model"),
+    function(x, compartments = NULL, index = NULL, ...) {
+        ## Remove the first two columns node and time
+        pairs(trajectory(x, compartments, index)[c(-1, -2)], ...)
+    }
 )
 
-init_plot_compartments <- function(x, compartments) {
-    ## Determine the compartments to include in the plot
-    if (is.null(compartments))
-        compartments <- rownames(x@S)
-    if (!(all(compartments %in% rownames(x@S))))
-        stop("'compartments' must exist in the model.", call. = FALSE)
-    match(compartments, rownames(x@S))
+init_plot_node_index <- function(model, index) {
+    index <- check_node_index_argument(model, index)
+    if (is.null(index))
+        index <- seq_len(n_nodes(model))
+    index
 }
 
-init_plot_node <- function(x, node) {
-    node <- check_node_argument(x, node)
-    if (is.null(node))
-        node <- seq_len(Nn(x))
-    node
-}
-
-init_plot_line_type <- function(lty, compartments, m) {
-    if (is.null(lty)) {
-        lty <- seq_len(length(compartments))
+init_plot_line_type <- function(lty, compartments, each) {
+    if (is.null(compartments)) {
+        n <- 1
     } else {
-        lty <- rep(lty, length.out = length(compartments))
+        n <- length(compartments)
     }
-    rep(lty, length.out = dim(m)[1])
+
+    if (is.null(lty)) {
+        lty <- seq_len(n)
+    } else {
+        lty <- rep(lty, length.out = n)
+    }
+    rep(lty, each = each)
 }
 
-init_plot_color <- function(col, compartments, m) {
+init_plot_color <- function(col, compartments, each) {
+    if (is.null(compartments)) {
+        n <- 1
+    } else {
+        n <- length(compartments)
+    }
+
     if (is.null(col)) {
-        if (length(compartments) > 9) {
-            col <- rainbow(length(compartments))
-        } else if (length(compartments) > 1) {
+        if (n > 9) {
+            col <- rainbow(n)
+        } else if (n > 1) {
             col <- rep(c("#e41a1c", "#377eb8", "#4daf4a",
                          "#984ea3", "#ff7f00", "#ffff33",
                          "#a65628", "#f781bf", "#999999"),
-                       length.out = length(compartments))
+                       length.out = n)
         } else {
             col <- "black"
         }
     } else {
-        col <- rep(col, length.out = length(compartments))
+        col <- rep(col, length.out = n)
     }
-    rep(col, length.out = dim(m)[1])
+    rep(col, each = each)
 }
 
-init_plot_type <- function(type) {
-    if (is.null(type))
-        type <- "l"
-    type
+init_plot_range <- function(range) {
+    if (identical(range, FALSE))
+        return(range)
+
+    if (any(!is.numeric(range),
+            !identical(length(range), 1L),
+            range < 0, range > 1)) {
+        stop("'range' must be FALSE or a value between 0 and 1.",
+             call. = FALSE)
+    }
+
+    (1 - range) / 2
 }
 
-init_plot_line_width <- function(lwd) {
-    if (is.null(lwd))
-        lwd <- 2
-    lwd
+init_plot_prevalence_data <- function(model, compartments,
+                                      level, index, range) {
+    index <- init_plot_node_index(model, index)
+    range <- init_plot_range(range)
+
+    ## Create a matrix with one row for each line in the plot.
+    if (level < 3) {
+        y <- prevalence(model, compartments, level, index, "matrix")
+        lower <- NULL
+        upper <- NULL
+        each <- 1
+    } else if (identical(range, FALSE) || identical(length(index), 1L)) {
+        y <- prevalence(model, compartments, level, index, "matrix")
+        lower <- NULL
+        upper <- NULL
+        each <- length(index)
+    } else {
+        y <- apply(
+            prevalence(model, compartments, level, index, "matrix"),
+            2, quantile, probs = c(range, 0.5, 1 - range))
+
+        ## Matrices for quantile ranges and median.
+        j <- seq_len(ncol(y))
+        lower <- y[1, j, drop = FALSE]
+        upper <- y[3, j, drop = FALSE]
+        y <- y[2, j, drop = FALSE]
+        each <- 1
+    }
+
+    list(lower        = lower,
+         y            = y,
+         upper        = upper,
+         each         = each,
+         compartments = NULL)
+}
+
+init_plot_trajectory_data <- function(model, compartments, index, range) {
+    index <- init_plot_node_index(model, index)
+    range <- init_plot_range(range)
+
+    ## Create a matrix with one row for each line in the plot.
+    y <- list()
+    for (j in seq_len(length(compartments$rhs))) {
+        for (compartment in names(compartments$rhs[[j]])) {
+            if (identical(range, FALSE) || identical(length(index), 1L)) {
+                y[[length(y) + 1]] <-
+                    trajectory(model, compartment, index, "matrix")
+            } else {
+                y[[length(y) + 1]] <- apply(
+                    trajectory(model, compartment, index, "matrix"),
+                    2, quantile, probs = c(range, 0.5, 1 - range))
+            }
+
+            names(y)[length(y)] <- compartment
+        }
+    }
+
+    compartments <- names(y)
+
+    if (identical(range, FALSE) || identical(length(index), 1L)) {
+        lower <- NULL
+        upper <- NULL
+        ## Combine matrices for each comparment.
+        y <- do.call("rbind", y)
+        each <- length(index)
+    } else {
+        ## Matrices for quantile ranges and median.
+        lower <- do.call("rbind", lapply(y, function(x) x[1, ]))
+        upper <- do.call("rbind", lapply(y, function(x) x[3, ]))
+        y <- do.call("rbind", lapply(y, function(x) x[2, ]))
+        each <- 1
+    }
+
+    list(lower        = lower,
+         y            = y,
+         upper        = upper,
+         each         = each,
+         compartments = compartments)
+}
+
+##' Determine if the 'compartments' expression contains a lhs.
+##' @noRd
+compartments_has_lhs <- function(compartments) {
+    if (is(compartments, "formula")) {
+        compartments <- as.character(compartments)
+        if (identical(length(compartments), 3L))
+            return(TRUE)
+    }
+
+    FALSE
+}
+
+init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
+    argv <- list(...)
+    argv$type <- type
+    argv$lwd <- lwd
+
+    if (is.null(argv$ylab)) {
+        if (isTRUE(compartments_has_lhs(compartments))) {
+            argv$ylab <- deparse(compartments)
+        } else {
+            argv$ylab <- "Value"
+        }
+    }
+
+    ## Settings for the y-axis.
+    if (is.null(argv$ylim)) {
+        if (is.null(pd$upper)) {
+            argv$ylim <- c(0, max(pd$y))
+        } else {
+            argv$ylim <- c(0, max(pd$upper))
+        }
+    }
+
+    ## Settings for the x-axis
+    if (is.null(names(model@tspan))) {
+        argv$x <- model@tspan
+        if (is.null(argv$xlab))
+            argv$xlab <- "Time"
+    } else {
+        argv$x <- as.Date(names(model@tspan))
+        if (is.null(argv$xlab))
+            argv$xlab <- "Date"
+    }
+
+    argv
+}
+
+plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
+    ## Plot lines
+    for (i in seq_len(dim(pd$y)[1])) {
+        argv$y <- pd$y[i, ]
+        argv$col <- col[i]
+        argv$lty <- lty[i]
+
+        if (i == 1) {
+            argv$frame.plot <- frame.plot
+            do.call(plot, argv)
+            argv$frame.plot <- NULL
+        } else {
+            do.call(lines, argv)
+        }
+
+        if (!is.null(pd$lower) && !is.null(pd$upper)) {
+            if (argv$type == "s") {
+                x <- c(rep(argv$x, each = 2)[-1],
+                       rep(rev(argv$x), each = 2)[-1])
+                y <- c(rep(pd$upper[i, ], each = 2)[-2 * ncol(pd$upper)],
+                       rep(rev(pd$lower[i, ]), each = 2)[-2 * ncol(pd$lower)])
+            } else {
+                x <- c(argv$x, rev(argv$x))
+                y <- c(pd$upper[i, ], rev(pd$lower[i, ]))
+            }
+
+            polygon(x = x, y = y, border = NA,
+                    col = adjustcolor(col[i], alpha.f = 0.1))
+        }
+    }
+
+    ## Add the legend below plot. The default legend is the names of
+    ## the compartments.
+    if (isTRUE(legend) && !is.null(pd$compartments)) {
+        ## Determine the size of the legend.
+        lgd <- legend("top", lty = unique(lty), col = unique(col),
+                      bty = "n", horiz = TRUE, legend = pd$compartments,
+                      lwd = argv$lwd, xpd = TRUE, plot = FALSE)
+
+        ## Determine the y-position to place the legend one line above
+        ## the plot.
+        y <- par("cin")[2] * par("cex") * par("lheight")
+        y <- diff(grconvertY(c(0, y), "inches", "npc"))
+        y <- grconvertY(1 + y, "npc", "user")
+
+        ## Add the legend to the plot.
+        legend(lgd$rect$left, y, lty = unique(lty), col = unique(col),
+               bty = "n", horiz = TRUE, legend = pd$compartments,
+               lwd = argv$lwd, xpd = TRUE)
+    }
 }
 
 ##' Display the outcome from a simulated trajectory
@@ -147,30 +361,26 @@ init_plot_line_width <- function(lwd) {
 ##' Plot either the median and the quantile range of the counts in all
 ##' nodes, or plot the counts in specified nodes.
 ##' @param x The \code{model} to plot.
-##' @param compartments Character vector with the compartments in the
-##'     model to include in the plot. Default is \code{NULL}
-##'     i.e. include all compartments in the model.
-##' @param node Indices specifying the nodes to include when plotting
-##'     data. Plot one line for each node. Default (\code{node =
-##'     NULL}) is to extract data from all nodes and plot the median
-##'     count for the specified compartments.
-##' @param range Show the quantile range of the count in each
-##'     compartment. Default is to show the interquartile range
-##'     i.e. the middle 50\% of the count in transparent color. The
-##'     median value is shown in the same color. Use \code{range =
-##'     0.95} to show the middle 95\% of the count. To display
-##'     individual lines for each node, specify \code{range = FALSE}.
-##' @param ... Additional arguments affecting the plot produced.
+##' @template plot-y-param
+##' @template plot-level-param
+##' @template plot-index-param
+##' @template plot-range-param
+##' @template plot-type-param
+##' @template plot-lwd-param
+##' @template plot-frame-param
+##' @template plot-legend-param
+##' @param ... Other graphical parameters that are passed on to the
+##'     plot function.
 ##' @rdname plot
 ##' @aliases plot,SimInf_model-method
 ##' @export
 ##' @include SimInf_model.R
+##' @importFrom graphics grconvertY
 ##' @importFrom graphics legend
 ##' @importFrom graphics lines
 ##' @importFrom graphics par
 ##' @importFrom graphics plot
 ##' @importFrom graphics polygon
-##' @importFrom graphics title
 ##' @importFrom grDevices adjustcolor
 ##' @importFrom grDevices rainbow
 ##' @examples
@@ -197,127 +407,65 @@ init_plot_line_width <- function(lwd) {
 ##'
 ##' ## Plot the median and interquartile range of the  number
 ##' ## of infected individuals.
-##' plot(result, compartments = "I")
+##' plot(result, "I")
+##'
+##' ## Use the formula notation instead to plot the median and
+##' ## interquartile range of the number of infected individuals.
+##' plot(result, ~I)
 ##'
 ##' ## Plot the number of susceptible, infected
 ##' ## and recovered individuals in the first
 ##' ## three nodes.
-##' plot(result, node = 1:3, range = FALSE)
+##' plot(result, index = 1:3, range = FALSE)
 ##'
-##' ## Use a stair step plot type instead.
-##' plot(result, node = 1:3, range = FALSE, type = "s")
+##' ## Use plot type line instead.
+##' plot(result, index = 1:3, range = FALSE, type = "l")
 ##'
 ##' ## Plot the number of infected individuals in the first node.
-##' plot(result, compartments = "I", node = 1, range = FALSE)
-setMethod("plot",
-          signature(x = "SimInf_model"),
-          function(x, compartments = NULL, node = NULL, range = 0.5, ...) {
-              if (identical(dim(x@U), c(0L, 0L))) {
-                  stop("Please run the model first, the 'U' matrix is empty.",
-                       call. = FALSE)
-              }
+##' plot(result, "I", index = 1, range = FALSE)
+##'
+##' ## Plot the proportion of infected individuals (cases)
+##' ## in the population.
+##' plot(result, I ~ S + I + R)
+##'
+##' ## Plot the proportion of nodes with infected individuals.
+##' plot(result, I ~ S + I + R, level = 2)
+##'
+##' ## Plot the median and interquartile range of the proportion
+##' ## of infected individuals in each node
+##' plot(result, I ~ S + I + R, level = 3)
+##'
+##' ## Plot the proportion of infected individuals in the first
+##' ## three nodes.
+##' plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
+setMethod(
+    "plot",
+    signature(x = "SimInf_model", y = "ANY"),
+    function(x, y, level = 1, index = NULL, range = 0.5, type = "s",
+             lwd = 2, frame.plot = FALSE, legend = TRUE, ...) {
+        if (missing(y))
+            y <- NULL
 
-              argv <- list(...)
+        if (isTRUE(compartments_has_lhs(y))) {
+            pd <- init_plot_prevalence_data(x, y, level, index, range)
+        } else {
+            compartments <- match_compartments(compartments = y,
+                                               ok_combine = TRUE,
+                                               ok_lhs = FALSE,
+                                               U = rownames(x@S),
+                                               V = rownames(x@v0))
 
-              compartments <- init_plot_compartments(x, compartments)
-              node <- init_plot_node(x, node)
+            pd <- init_plot_trajectory_data(x, compartments, index, range)
+        }
 
-              ## Create a matrix with one row for each line in the
-              ## plot.
-              if (identical(range, FALSE)) {
-                  ## Extract subset of data from U
-                  i <- rep(compartments, length(node))
-                  i <- i + rep((node - 1) * Nc(x), each = length(compartments))
-                  m <- x@U[i, seq_len(ncol(x@U)), drop = FALSE]
-              } else {
-                  ## Check range argument
-                  if (any(!is.numeric(range), !identical(length(range), 1L),
-                          range < 0, range > 1)) {
-                      stop("'range' must be FALSE or a value between 0 and 1.",
-                           call. = FALSE)
-                  }
-                  range <- (1 - range) / 2
+        argv <- init_plot_argv(x, y, pd, type, lwd, ...)
+        lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
+        col <- init_plot_color(argv$col, pd$compartments, pd$each)
 
-                  m <- matrix(0, nrow = length(compartments),
-                              ncol = length(x@tspan))
+        plot_data(pd, argv, lty, col, frame.plot, legend)
 
-                  ## Matrices for quantile range
-                  mu <- m
-                  ml <- m
-
-                  for (i in seq_len(length(compartments))) {
-                      k <- seq(from = compartments[i], to = dim(x@U)[1],
-                               by = Nc(x))
-                      u <- apply(x@U[k[node], seq_len(ncol(x@U)), drop = FALSE],
-                                 2,
-                                 quantile,
-                                 probs = c(range, 0.5, 1 - range))
-                      ml[i, ] <- u[1, ]
-                      m[i, ] <- u[2, ]
-                      mu[i, ] <- u[3, ]
-                  }
-
-                  range <- TRUE
-              }
-
-              lty <- init_plot_line_type(argv$lty, compartments, m)
-              col <- init_plot_color(argv$col, compartments, m)
-              argv$type <- init_plot_type(argv$type)
-              argv$lwd <- init_plot_line_width(argv$lwd)
-
-              ## Settings for the y-axis.
-              argv$ylab <- "N"
-              if (isTRUE(range)) {
-                  argv$ylim <- c(0, max(mu))
-              } else {
-                  argv$ylim <- c(0, max(m))
-              }
-
-              ## Settings for the x-axis
-              if (is.null(names(x@tspan))) {
-                  xx <- x@tspan
-                  argv$xlab <- "Time"
-              } else {
-                  xx <- as.Date(names(x@tspan))
-                  argv$xlab <- "Date"
-              }
-
-              savepar <- par(mar = c(2, 4, 1, 1), oma = c(4, 1, 0, 0),
-                             xpd = TRUE)
-              on.exit(par(savepar))
-
-              ## Plot lines
-              for (i in seq_len(dim(m)[1])) {
-                  argv$x <- xx
-                  argv$y <- m[i, ]
-                  argv$col <- col[i]
-                  argv$lty <- lty[i]
-                  if (i == 1) {
-                      do.call(plot, argv)
-                      title(xlab = argv$xlab, outer = TRUE, line = 0)
-                  } else {
-                      do.call(lines, argv)
-                  }
-                  if (isTRUE(range)) {
-                      polygon(x = c(xx, rev(xx)), y = c(mu[i, ], rev(ml[i, ])),
-                              col = adjustcolor(col[i], alpha.f = 0.1),
-                              border = NA)
-                  }
-              }
-
-              ## Add the legend below plot. The default legend is the
-              ## names of the compartments.
-              if (is.null(argv$legend))
-                  argv$legend <- rownames(x@S)[compartments]
-              par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0),
-                  mar = c(0, 0, 0, 0), new = TRUE)
-              plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-              legend("bottom", inset = c(0, 0),
-                     lty = lty[seq_len(length(compartments))],
-                     col = col[seq_len(length(compartments))],
-                     bty = "n", horiz = TRUE, legend = argv$legend,
-                     lwd = argv$lwd)
-          }
+        invisible(NULL)
+    }
 )
 
 ##' Display the ABC posterior distribution
@@ -329,40 +477,42 @@ setMethod("plot",
 ##' @aliases plot,SimInf_abc-method
 ##' @importFrom graphics contour
 ##' @importFrom graphics lines
-##' @importFrom MASS bandwidth.nrd
+##' @importFrom graphics rug
 ##' @importFrom MASS kde2d
 ##' @importFrom stats density
 ##' @export
 ##' @include abc.R
-setMethod("plot",
-          signature(x = "SimInf_abc"),
-          function(x, y, ...) {
-              if (missing(y))
-                  y <- length(x@x)
-              y <- as.integer(y)
-              if (length(y) != 1) {
-                  stop("Can only select one generation to plot.",
-                       call. = FALSE)
-              }
+setMethod(
+    "plot",
+    signature(x = "SimInf_abc"),
+    function(x, y, ...) {
+        if (missing(y))
+            y <- length(x@x)
+        y <- as.integer(y)
+        if (length(y) != 1) {
+            stop("Can only select one generation to plot.",
+                 call. = FALSE)
+        }
 
-              if (length(x@pars) > 1) {
-                  pairs(t(x@x[[y]]),
-                        diag.panel = function(x, ...) {
-                            usr <- par("usr")
-                            on.exit(par(usr))
-                            par(usr = c(usr[1:2], 0, 1.5))
-                            d <- density(x, bw = "SJ-ste")
-                            d$y <- d$y / max(d$y)
-                            lines(d, ...)
-                        },
-                        lower.panel = function(x, y, ...) {
-                            h <- c(bandwidth.nrd(x), bandwidth.nrd(y))
-                            d <- kde2d(x, y, h = h, n = 100)
-                            contour(d, add = TRUE, drawlabels = FALSE, ...)
-                        }, ...)
-              } else {
-                  plot(density(x@x[[y]], bw = "SJ-ste"), main = "",
-                       xlab = rownames(x@x[[y]]), ...)
-              }
-          }
+        if (length(x@pars) > 1) {
+            pairs(t(x@x[[y]]),
+                  diag.panel = function(x, ...) {
+                      usr <- par("usr")
+                      on.exit(par(usr))
+                      par(usr = c(usr[1:2], 0, 1.5))
+                      d <- density(x, bw = "SJ-ste")
+                      d$y <- d$y / max(d$y)
+                      lines(d, ...)
+                      rug(x)
+                  },
+                  lower.panel = function(x, y, ...) {
+                      d <- kde2d(x, y)
+                      contour(d, add = TRUE, drawlabels = FALSE, ...)
+                  }, ...)
+        } else {
+            plot(density(x@x[[y]], bw = "SJ-ste"), main = "",
+                 xlab = rownames(x@x[[y]]), ...)
+            rug(x@x[[y]])
+        }
+    }
 )
