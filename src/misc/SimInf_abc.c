@@ -264,29 +264,25 @@ SEXP attribute_hidden SimInf_abc_proposals(
             /* Check that the proposal is valid. */
             accept = 1;
             for (int d = 0; d < k; d++) {
+                double density;
+
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'G':
-                    if (dgamma(ptr_xx[i * k + d], ptr_p1[d],
-                               1.0 / ptr_p2[d], 0) == 0) {
-                        accept = 0;
-                    }
+                    density = dgamma(ptr_xx[i * k + d], ptr_p1[d], 1.0 / ptr_p2[d], 0);
                     break;
                 case 'N':
-                    if (dnorm(ptr_xx[i * k + d], ptr_x[j * k + d],
-                              ptr_p2[d], 0) == 0) {
-                        accept = 0;
-                    }
+                    density = dnorm(ptr_xx[i * k + d], ptr_x[j * k + d], ptr_p2[d], 0);
                     break;
                 case 'U':
-                    if (dunif(ptr_xx[i * k + d], ptr_p1[d],
-                              ptr_p2[d], 0) == 0) {
-                        accept = 0;
-                    }
+                    density = dunif(ptr_xx[i * k + d], ptr_p1[d], ptr_p2[d], 0);
                     break;
                 default:
                     error = 2;
                     break;
                 }
+
+                if (!R_FINITE(density) || density <= 0.0)
+                    accept = 0;
             }
         } while(!accept);
     }
