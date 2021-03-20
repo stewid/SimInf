@@ -81,6 +81,7 @@ Collate:
     'openmp.R'
     'package_skeleton.R'
     'plot.R'
+    'pmcmc.R'
     'prevalence.R'
     'print.R'
     'priors.R'
