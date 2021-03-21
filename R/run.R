@@ -108,6 +108,8 @@ model_dll_key <- function(model) {
 ##'     simulation.
 ##' @references
 ##'
+##' \Widgren2019
+##'
 ##' \Bauer2016
 ##'
 ##' \Bauer2015
