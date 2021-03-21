@@ -98,3 +98,23 @@ parse_priors <- function(priors) {
 
     priors
 }
+
+##' Match the 'priors' to parameters in 'ldata' or 'gdata'.
+##' @noRd
+match_priors <- function(model, priors) {
+    pars <- match(priors$parameter, rownames(model@ldata))
+    if (any(is.na(pars))) {
+        pars <- match(priors$parameter, names(model@gdata))
+        if (any(is.na(pars))) {
+            stop("All parameters in 'priors' must be either ",
+                 "in 'gdata' or 'ldata'.", call. = FALSE)
+        }
+        target <- "gdata"
+    } else {
+        if (!identical(n_nodes(model), 1L))
+            stop("The 'model' must contain one node.", call. = FALSE)
+        target <- "ldata"
+    }
+
+    list(pars = pars, target = target)
+}
