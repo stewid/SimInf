@@ -30,5 +30,6 @@ setClass(
     "SimInf_pmcmc",
     slots = c(model   = "SimInf_model",
               priors  = "data.frame",
-              target  = "character")
+              target  = "character",
+              pars    = "integer")
 )
