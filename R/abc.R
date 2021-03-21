@@ -403,6 +403,9 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
 ##' @return A \code{SimInf_abc} object.
+##' @references
+##'
+##' \Toni2009
 ##' @export
 ##' @importFrom stats cov
 ##' @example man/examples/abc.R
