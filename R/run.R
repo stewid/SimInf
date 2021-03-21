@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -104,21 +104,13 @@ model_dll_key <- function(model) {
 ##' @param model The SimInf model to run.
 ##' @param ... Additional arguments.
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.
-##' @return \code{\link{SimInf_model}} object with result from simulation.
-##' @references \itemize{
-##'   \item Bauer P, Engblom S, Widgren S
-##'   (2016) "Fast Event-Based Epidemiological Simulations on National Scales"
-##'   International Journal of High Performance Computing
-##'   Applications, 30(4), 438-453. doi:10.1177/1094342016635723
+##' @return \code{\link{SimInf_model}} object with result from
+##'     simulation.
+##' @references
 ##'
-##'   \item Bauer P., Engblom S. (2015) Sensitivity Estimation and
-##'   Inverse Problems in Spatial Stochastic Models of Chemical
-##'   Kinetics. In: Abdulle A., Deparis S., Kressner D., Nobile F.,
-##'   Picasso M. (eds) Numerical Mathematics and Advanced Applications
-##'   - ENUMATH 2013. Lecture Notes in Computational Science and
-##'   Engineering, vol 103. Springer, Cham. Doi:
-##'   10.1007/978-3-319-10705-9_51
-##' }
+##' \Bauer2016
+##'
+##' \Bauer2015
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it to run over 100 days.

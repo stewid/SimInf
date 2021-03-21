@@ -1,0 +1,3 @@
+\newcommand{\Bauer2015}{P. Bauer and S. Engblom. Sensitivity Estimation and Inverse Problems in Spatial Stochastic Models of Chemical Kinetics. In: A. Abdulle, S. Deparis, D. Kressner, F. Nobile and M. Picasso (eds.), \emph{Numerical Mathematics and Advanced Applications - ENUMATH 2013}, pp. 519--527, Lecture Notes in Computational Science and Engineering, vol 103. Springer, Cham, 2015. \doi{10.1007/978-3-319-10705-9_51}}
+
+\newcommand{\Bauer2016}{P. Bauer, S. Engblom and S. Widgren. Fast Event-Based Epidemiological Simulations on National Scales. \emph{International Journal of High Performance Computing Applications}, \bold{30}(4), 438--453, 2016. \doi{10.1177/1094342016635723}}
