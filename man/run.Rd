@@ -38,7 +38,8 @@ run(model, ...)
 \item{solver}{Which numerical solver to utilize. Default is 'ssm'.}
 }
 \value{
-\code{\link{SimInf_model}} object with result from simulation.
+\code{\link{SimInf_model}} object with result from
+    simulation.
 }
 \description{
 Run the SimInf stochastic simulation algorithm
@@ -61,18 +62,7 @@ result <- run(model)
 plot(result)
 }
 \references{
-\itemize{
-  \item Bauer P, Engblom S, Widgren S
-  (2016) "Fast Event-Based Epidemiological Simulations on National Scales"
-  International Journal of High Performance Computing
-  Applications, 30(4), 438-453. doi:10.1177/1094342016635723
+\Bauer2016
 
-  \item Bauer P., Engblom S. (2015) Sensitivity Estimation and
-  Inverse Problems in Spatial Stochastic Models of Chemical
-  Kinetics. In: Abdulle A., Deparis S., Kressner D., Nobile F.,
-  Picasso M. (eds) Numerical Mathematics and Advanced Applications
-  - ENUMATH 2013. Lecture Notes in Computational Science and
-  Engineering, vol 103. Springer, Cham. Doi:
-  10.1007/978-3-319-10705-9_51
-}
+\Bauer2015
 }
