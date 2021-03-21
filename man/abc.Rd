@@ -103,3 +103,6 @@ fit <- continue(fit, tol = 5000, ptol = 0.9)
 
 plot(fit)
 }
+\references{
+\Toni2009
+}
