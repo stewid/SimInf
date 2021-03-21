@@ -416,22 +416,10 @@ abc <- function(model, priors, ngen, npart, fn, ...,
 
     ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
     priors <- parse_priors(priors)
-    pars <- match(priors$parameter, rownames(model@ldata))
-    if (any(is.na(pars))) {
-        pars <- match(priors$parameter, names(model@gdata))
-        if (any(is.na(pars))) {
-            stop("All parameters in 'priors' must be either ",
-                 "in 'gdata' or 'ldata'.", call. = FALSE)
-        }
-        target <- "gdata"
-    } else {
-        if (!identical(n_nodes(model), 1L))
-            stop("The 'model' must contain one node.", call. = FALSE)
-        target <- "ldata"
-    }
+    pars <- match_priors(model, priors)
 
     object <- new("SimInf_abc", model = model, priors = priors,
-                  target = target, pars = pars, npart = npart,
+                  target = pars$target, pars = pars$pars, npart = npart,
                   nprop = integer(), fn = fn, x = list(),
                   epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
                   w = list(), ess = numeric())
