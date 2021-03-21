@@ -33,3 +33,43 @@ setClass(
               target  = "character",
               pars    = "integer")
 )
+
+##' Particle Markov chain Monte Carlo (PMCMC) algorithm
+##'
+##' @param model The model to simulate data from.
+##' @param data A data frame holding the time series data.
+##' @template priors-param
+##' @param npart An integer specifying the number of particles for the
+##'     bootstrap particle filter.
+##' @param niter An integer specifying the number of iterations to run
+##'     the PMCMC.
+##' @param fn FIXME.
+##' @param ... Further arguments to be passed to \code{fn}.
+##' @template verbose-param
+##' @references
+##'
+##' \Andrieu2010
+##' @export
+pmcmc <- function(model, data, priors, npart, niter, fn, ...,
+                  verbose = getOption("verbose", FALSE)) {
+    check_model_argument(model)
+
+    check_integer_arg(npart)
+    npart <- as.integer(npart)
+    if (length(npart) != 1L || npart <= 1L)
+        stop("'npart' must be an integer > 1.", call. = FALSE)
+
+    check_integer_arg(niter)
+    niter <- as.integer(niter)
+    if (length(niter) != 1L || niter <= 0L)
+        stop("'niter' must be an integer > 0.", call. = FALSE)
+
+    ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
+    priors <- parse_priors(priors)
+    pars <- match_priors(model, priors)
+
+    object <- new("SimInf_pmcmc", model = model, priors = priors,
+                  target = pars$target, pars = pars$pars)
+
+    continue(object, niter = niter, verbose = verbose, ...)
+}
