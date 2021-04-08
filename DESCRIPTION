@@ -82,6 +82,7 @@ Collate:
     'package_skeleton.R'
     'pfilter.R'
     'plot.R'
+    'pmcmc.R'
     'prevalence.R'
     'print.R'
     'priors.R'
