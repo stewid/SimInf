@@ -56,3 +56,25 @@ stopifnot(identical(
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data.frame(time = 2:3)),
     structure(c(1, NA, 2, 3), .Dim = c(2L, 2L))))
+
+## Create an SIR model object where tspan is specified as Dates.
+model <- SIR(
+    u0 = data.frame(S = 99, I = 1, R = 0),
+    tspan = seq(as.Date("2021-01-05"), as.Date("2021-01-09"), by = 1),
+    beta = 0.16,
+    gamma = 0.077)
+
+## Check that data$time[1] < model@tspan[1] raises an error.
+df <- data.frame(time = c("2021-01-04", "2021-01-05"))
+res <- assertError(SimInf:::pfilter_tspan(model, df))
+check_error(res, "data$time[1] must be >= tspan[1].")
+
+df <- data.frame(time = c("2021-01-05", "2021-01-06", "2021-01-07"))
+stopifnot(identical(
+    SimInf:::pfilter_tspan(model, df),
+    structure(c(NA, NA, NA, 5, 6, 7), .Dim = 3:2)))
+
+df <- data.frame(time = c("2021-01-06", "2021-01-07"))
+stopifnot(identical(
+    SimInf:::pfilter_tspan(model, df),
+    structure(c(5, NA, 6, 7), .Dim = c(2L, 2L))))

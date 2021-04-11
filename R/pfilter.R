@@ -24,6 +24,13 @@ pfilter_tspan <- function(model, data) {
 
     if (!("time" %in% names(data)))
         stop("Missing 'time' column in data.", call. = FALSE)
+
+    if (!is.null(names(model@tspan))) {
+        data$time <- julian(x = as.Date(data$time),
+                            origin = as.Date(names(model@tspan)[1]))
+        data$time <- as.numeric(data$time + model@tspan[1])
+    }
+
     check_integer_arg(data$time)
 
     if (any(length(data$time) < 1,
@@ -39,7 +46,7 @@ pfilter_tspan <- function(model, data) {
     do.call("rbind", lapply(seq_len(length(data$time)), function(i) {
         if (i == 1) {
             if (model@tspan[1] < data$time[1])
-                return(c(model@tspan[1], data$time[1]))
+                return(as.numeric(c(model@tspan[1], data$time[1])))
             return(c(NA_real_, data$time[i]))
         }
 
