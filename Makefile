@@ -209,6 +209,13 @@ covr:
 	Rscript -e "covr::report(file = 'covr.html')"
 	xdg-open covr.html
 
+# Run static code analysis
+.PHONY: lintr
+lintr:
+	Rscript \
+          -e "library(lintr)" \
+          -e "lint_package(linters = with_defaults(object_name_linter = NULL, object_usage_linter = NULL))"
+
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)
 .PHONY: valgrind
