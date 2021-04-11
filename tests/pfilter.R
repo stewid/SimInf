@@ -51,8 +51,8 @@ check_error(res, "data$time[1] must be >= tspan[1].")
 
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data.frame(time = 1:3)),
-    list(1L, 1:2, 2:3)))
+    structure(c(NA, NA, NA, 1, 2, 3), .Dim = 3:2)))
 
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data.frame(time = 2:3)),
-    list(c(1, 2), 2:3)))
+    structure(c(1, NA, 2, 3), .Dim = c(2L, 2L))))
