@@ -36,12 +36,15 @@ pfilter_tspan <- function(model, data) {
     if (data$time[1] < model@tspan[1])
         stop("data$time[1] must be >= tspan[1].", call. = TRUE)
 
-    lapply(seq_len(length(data$time)), function(i) {
+    do.call("rbind", lapply(seq_len(length(data$time)), function(i) {
         if (i == 1) {
             if (model@tspan[1] < data$time[1])
                 return(c(model@tspan[1], data$time[1]))
-            return(data$time[i])
+            return(c(NA_real_, data$time[i]))
         }
-        data$time[c(i - 1L, i)]
-    })
+
+        if (diff(as.integer(data$time[c(i - 1L, i)])) > 1)
+            return(as.numeric(data$time[c(i - 1L, i)]))
+        c(NA_real_, data$time[i])
+    }))
 }

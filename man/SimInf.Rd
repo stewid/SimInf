@@ -44,3 +44,6 @@ this, SimInf has functionality to generate the required C and R
 code from a model specification, see
 \code{\link{package_skeleton}}
 }
+\references{
+\Widgren2019
+}

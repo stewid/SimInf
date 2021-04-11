@@ -62,6 +62,8 @@ result <- run(model)
 plot(result)
 }
 \references{
+\Widgren2019
+
 \Bauer2016
 
 \Bauer2015
