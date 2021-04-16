@@ -45,7 +45,7 @@ acceptFun <- function(result, generation, tol, ptol, ...) {
 ## practice you would want to use many more to ensure better
 ## approximations.
 fit <- abc(model = model,
-           priors = c(beta~U(0, 1), gamma~U(0, 1)),
+           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
            ngen = 4,
            npart = 100,
            fn = acceptFun,
