@@ -52,25 +52,26 @@ do_parse_prior <- function(prior) {
 
     ## Check distribution and hyperparameters.
     switch(distribution,
-           G = {
+           gamma = {
                if (!all(hyperparameters > 0)) {
                    stop("Invalid prior: gamma hyperparameters must be > 0.",
                         call. = FALSE)
                }
            },
-           N = {
+           normal = {
                if (hyperparameters[2] < 0) {
                    stop("Invalid prior: normal variance must be > 0.",
                         call. = FALSE)
                }
            },
-           U = {
+           uniform = {
                if (hyperparameters[1] >= hyperparameters[2]) {
                    stop("Invalid prior: uniform bounds in wrong order.",
                         call. = FALSE)
                }
            },
-           stop("'distribution' must be one of 'G', 'N' or 'U'.", call. = FALSE)
+           stop("'distribution' must be one of 'gamma', 'normal' or 'uniform'.",
+                call. = FALSE)
            )
 
     data.frame(parameter = parameter, distribution = distribution,

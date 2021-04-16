@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -71,7 +71,8 @@ accept_fn_ldata <- function(result, generation, tol, ptol, ...) {
 
 ## Check invalid npart
 res <- assertError(abc(model = model,
-                       priors = c(beta~U(0.5, 1.5), gamma~U(0.3, 0.7)),
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 1,
                        fn = accept_fn_ldata,
@@ -80,7 +81,8 @@ res <- assertError(abc(model = model,
 check_error(res, "'npart' must be an integer > 1.")
 
 res <- assertError(abc(model = model,
-                       priors = c(beta~U(0.5, 1.5), gamma~U(0.3, 0.7)),
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = c(10, 10),
                        fn = accept_fn_ldata,
@@ -90,7 +92,8 @@ check_error(res, "'npart' must be an integer > 1.")
 
 ## Check invalid ngen
 res <- assertError(abc(model = model,
-                       priors = c(beta~U(0.5, 1.5), gamma~U(0.3, 0.7)),
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
                        ngen = 0,
                        npart = 10,
                        fn = accept_fn_ldata,
@@ -99,7 +102,8 @@ res <- assertError(abc(model = model,
 check_error(res, "'ngen' must be an integer >= 1.")
 
 res <- assertError(abc(model = model,
-                       priors = c(beta~U(0.5, 1.5), gamma~U(0.3, 0.7)),
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
                        ngen = c(2, 2),
                        npart = 10,
                        fn = accept_fn_ldata,
@@ -109,7 +113,8 @@ check_error(res, "'ngen' must be an integer >= 1.")
 
 set.seed(123)
 fit <- abc(model = model,
-           priors = c(beta~U(0.5, 1.5), gamma~U(0.3, 0.7)),
+           priors = c(beta ~ uniform(0.5, 1.5),
+                      gamma ~ uniform(0.3, 0.7)),
            ngen = 2,
            npart = 10,
            fn = accept_fn_ldata,

@@ -26,7 +26,8 @@ set_num_threads(1)
 ## For debugging
 sessionInfo()
 
-res <- assertError(SimInf:::parse_priors(c(a + b ~ U(0, 5), c ~ U(0, 1), 4)))
+res <- assertError(SimInf:::parse_priors(c(a + b ~ uniform(0, 5),
+                                           c ~ uniform(0, 1), 4)))
 check_error(res, "'priors' must be a formula or a list with formula items.")
 
 res <- assertError(SimInf:::parse_priors(4))
@@ -35,34 +36,36 @@ check_error(res, "'priors' must be a formula or a list with formula items.")
 res <- assertError(SimInf:::parse_priors(NULL))
 check_error(res, "'priors' must be a formula or a list with formula items.")
 
-res <- assertError(SimInf:::parse_priors(mu ~ U(0, 1) + N(0, 1)))
+res <- assertError(SimInf:::parse_priors(mu ~ uniform(0, 1) + normal(0, 1)))
 check_error(res, "Invalid formula specification for prior.")
 
-res <- assertError(SimInf:::parse_priors(mu ~ U[0, 1]))
+res <- assertError(SimInf:::parse_priors(mu ~ uniform[0, 1]))
 check_error(res, "Invalid formula specification for prior.")
 
-res <- assertError(SimInf:::parse_priors(mu ~ Z(0, 1)))
-check_error(res, "'distribution' must be one of 'G', 'N' or 'U'.")
+res <- assertError(SimInf:::parse_priors(mu ~ unknown(0, 1)))
+check_error(
+    res, "'distribution' must be one of 'gamma', 'normal' or 'uniform'.")
 
-res <- assertError(SimInf:::parse_priors(c(muR ~ U(0, 1), muR ~ U(0, 1))))
+res <- assertError(SimInf:::parse_priors(c(muR ~ uniform(0, 1),
+                                           muR ~ uniform(0, 1))))
 check_error(res, "'priors' must have non-duplicated parameter names.")
 
-res <- assertError(SimInf:::parse_priors(beta ~ U(1, 0)))
+res <- assertError(SimInf:::parse_priors(beta ~ uniform(1, 0)))
 check_error(res, "Invalid prior: uniform bounds in wrong order.")
 
-res <- assertError(SimInf:::parse_priors(beta ~ N(0, -1)))
+res <- assertError(SimInf:::parse_priors(beta ~ normal(0, -1)))
 check_error(res, "Invalid prior: normal variance must be > 0.")
 
-res <- assertError(SimInf:::parse_priors(beta ~ G(-1, 1)))
+res <- assertError(SimInf:::parse_priors(beta ~ gamma(-1, 1)))
 check_error(res, "Invalid prior: gamma hyperparameters must be > 0.")
 
-res <- assertError(SimInf:::parse_priors(beta ~ G(1, -1)))
+res <- assertError(SimInf:::parse_priors(beta ~ gamma(1, -1)))
 check_error(res, "Invalid prior: gamma hyperparameters must be > 0.")
 
-res <- assertError(SimInf:::parse_priors(~ U(1, 5)))
+res <- assertError(SimInf:::parse_priors(~ uniform(1, 5)))
 check_error(res, "Invalid formula specification for prior.")
 
 stopifnot(identical(
-    SimInf:::parse_priors(beta ~ U(1, 5)),
-    data.frame(parameter = "beta", distribution = "U",
+    SimInf:::parse_priors(beta ~ uniform(1, 5)),
+    data.frame(parameter = "beta", distribution = "uniform",
                p1 = 1, p2 = 5, stringsAsFactors = FALSE)))
