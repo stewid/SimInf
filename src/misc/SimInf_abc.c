@@ -117,11 +117,11 @@ static void SimInf_abc_error(int error)
  *        for each prior.
  * @param distribution character vector with the name of the
  *        distribution for each prior. Each entry must contain one of
- *        'G' (gamma), 'N' (normal) or 'U' (uniform).
+ *        'g' (gamma), 'n' (normal) or 'u' (uniform).
  * @param p1 numeric vector with the first hyperparameter for each
- *        prior: G) shape, N) mean, and U) lower bound.
+ *        prior: g) shape, n) mean, and u) lower bound.
  * @param p2 numeric vector with the second hyperparameter for each
- *        prior: G) rate, N) standard deviation, and U) upper bound.
+ *        prior: g) rate, n) standard deviation, and u) upper bound.
  * @param n number of proposals to generate.
  * @param x a numeric matrix (parameters x particles) with a previous
  *        generation of particles or NULL.
@@ -193,13 +193,13 @@ SEXP attribute_hidden SimInf_abc_proposals(
             ptr_ancestor[i] = NA_INTEGER;
             for (int d = 0; d < k; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
-                case 'G':
+                case 'g':
                     ptr_xx[i * k + d] = rgamma(ptr_p1[d], 1.0 / ptr_p2[d]);
                     break;
-                case 'N':
+                case 'n':
                     ptr_xx[i * k + d] = rnorm(ptr_p1[d], ptr_p2[d]);
                     break;
-                case 'U':
+                case 'u':
                     ptr_xx[i * k + d] = runif(ptr_p1[d], ptr_p2[d]);
                     break;
                 default:
@@ -267,13 +267,13 @@ SEXP attribute_hidden SimInf_abc_proposals(
                 double density;
 
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
-                case 'G':
+                case 'g':
                     density = dgamma(ptr_xx[i * k + d], ptr_p1[d], 1.0 / ptr_p2[d], 0);
                     break;
-                case 'N':
+                case 'n':
                     density = dnorm(ptr_xx[i * k + d], ptr_x[j * k + d], ptr_p2[d], 0);
                     break;
-                case 'U':
+                case 'u':
                     density = dunif(ptr_xx[i * k + d], ptr_p1[d], ptr_p2[d], 0);
                     break;
                 default:
@@ -308,11 +308,11 @@ cleanup:
  *
  * @param distribution character vector with the name of the
  *        distribution for each prior. Each entry must contain one of
- *        'G' (gamma), 'N' (normal) or 'U' (uniform).
+ *        'g' (gamma), 'n' (normal) or 'u' (uniform).
  * @param p1 numeric vector with the first hyperparameter for each
- *        prior: G) shape, N) mean, and U) lower bound.
+ *        prior: g) shape, n) mean, and u) lower bound.
  * @param p2 numeric vector with the second hyperparameter for each
- *        prior: G) rate, N) standard deviation, and U) upper bound.
+ *        prior: g) rate, n) standard deviation, and u) upper bound.
  * @param x a numeric matrix (parameters x particles) with the
  *        previous generation of particles or NULL.
  * @param xx a numeric matrix (parameters x particles) with the
@@ -373,15 +373,15 @@ SEXP attribute_hidden SimInf_abc_weights(
         ptr_ww[i] = 0.0;
         for (int d = 0; d < k; d++) {
             switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
-            case 'G':
+            case 'g':
                 ptr_ww[i] +=
                     dgamma(ptr_xx[i * k + d], ptr_p1[d], 1.0 / ptr_p2[d], 1);
                 break;
-            case 'N':
+            case 'n':
                 ptr_ww[i] +=
                     dnorm(ptr_xx[i * k + d], ptr_x[i * k + d], ptr_p2[d], 1);
                 break;
-            case 'U':
+            case 'u':
                 ptr_ww[i] +=
                     dunif(ptr_xx[i * k + d], ptr_p1[d], ptr_p2[d], 1);
                 break;

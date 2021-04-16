@@ -16,50 +16,62 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' @importFrom utils getParseData
+##' @noRd
 do_parse_prior <- function(prior) {
+    err_str <- "Invalid formula specification for prior."
     prior <- as.character(prior)
     if (!identical(length(prior), 3L))
-        stop("Invalid formula specification for prior.", call. = FALSE)
+        stop(err_str, call. = FALSE)
 
-    ## Determine the parameter to fit.
+    ## Determine the parameter to fit from the lhs.
     parameter <- prior[2]
 
+    ## Parse the rhs of the formula.
+    tokens <- getParseData(parse(text = prior[3], keep.source = TRUE))
+    tokens <- tokens[tokens$terminal, c("token", "text")]
+    if (!all(tokens$token[1] == "SYMBOL_FUNCTION_CALL",
+             tokens$token[2] == "'('",
+             tokens$token[nrow(tokens)] == "')'")) {
+        stop(err_str, call. = FALSE)
+    }
+
     ## Determine the distribution for the parameter.
-    distribution <- substr(prior[3], 1, 1)
-    prior[3] <- substr(prior[3], 2, nchar(prior[3]))
+    distribution <- tokens$text[1]
+    tokens <- tokens[c(-1, -2, -nrow(tokens)), 1:2]
 
     ## Determine the hyperparameters for the distribution.
-    if (any(substr(prior[3], 1, 1) != "(",
-            substr(prior[3], nchar(prior[3]), nchar(prior[3])) != ")")) {
-        stop("Invalid formula specification for priors.", call. = FALSE)
-    }
-    prior[3] <- substr(prior[3], 2, nchar(prior[3]) - 1)
-    hyperparameters <- unlist(strsplit(prior[3], ","))
+    comma <- which(tokens$token == "','")
+    if (length(comma) != 1)
+        stop(err_str, call. = FALSE)
+    hyperparameters <- c(paste0(tokens$text[seq_len(comma - 1)], collapse = ""),
+                         paste0(tokens$text[-seq_len(comma)], collapse = ""))
     hyperparameters <- suppressWarnings(as.numeric(hyperparameters))
     if (any(length(hyperparameters) != 2, any(is.na(hyperparameters))))
-            stop("Invalid formula specification for priors.", call. = FALSE)
+        stop(err_str, call. = FALSE)
 
     ## Check distribution and hyperparameters.
     switch(distribution,
-           G = {
+           gamma = {
                if (!all(hyperparameters > 0)) {
                    stop("Invalid prior: gamma hyperparameters must be > 0.",
                         call. = FALSE)
                }
            },
-           N = {
+           normal = {
                if (hyperparameters[2] < 0) {
                    stop("Invalid prior: normal variance must be > 0.",
                         call. = FALSE)
                }
            },
-           U = {
+           uniform = {
                if (hyperparameters[1] >= hyperparameters[2]) {
                    stop("Invalid prior: uniform bounds in wrong order.",
                         call. = FALSE)
                }
            },
-           stop("'distribution' must be one of 'G', 'N' or 'U'.", call. = FALSE)
+           stop("'distribution' must be one of 'gamma', 'normal' or 'uniform'.",
+                call. = FALSE)
            )
 
     data.frame(parameter = parameter, distribution = distribution,
