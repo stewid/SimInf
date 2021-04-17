@@ -29,13 +29,17 @@ Description: Provides an efficient and very flexible framework to
     research. The package contains template models and can be extended
     with user-defined models. For more details see the paper by
     Widgren, Bauer, Eriksson and Engblom (2019)
-    <doi:10.18637/jss.v091.i12>.
-Acknowledgements: This work was financially supported by the Swedish
-    Research Council within the UPMARC Linnaeus center of Excellence
-    (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the Swedish
-    Research Council Formas (Stefan Engblom and Stefan Widgren), the
-    Swedish Board of Agriculture (Stefan Widgren), and by the Swedish
-    strategic research program eSSENCE (Stefan Widgren).
+    <doi:10.18637/jss.v091.i12>. The package also provides
+    functionality to fit models to time series data using the
+    Approximate Bayesian Computation Sequential Monte Carlo (ABC-SMC)
+    algorithm of Toni et al. (2009) <doi:10.1098/rsif.2008.0172>.
+Acknowledgements: This software has been made possible by support from
+    the Swedish Research Council within the UPMARC Linnaeus center of
+    Excellence (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the
+    Swedish Research Council Formas (Stefan Engblom and Stefan
+    Widgren), the Swedish Board of Agriculture (Stefan Widgren), and
+    by the Swedish strategic research program eSSENCE (Stefan
+    Widgren).
 License: GPL-3
 URL: https://github.com/stewid/SimInf
 BugReports: https://github.com/stewid/SimInf/issues
