@@ -127,10 +127,10 @@
 ##'     model to record the number of inidividuals in each compartment
 ##'     in every node at each time-point in tspan.
 ##' @param tspan time points in trajectory.
-##' @param ac available compartments in the simulated data.
+##' @param compartments available compartments in the simulated data.
 ##' @param data default data in dense matrix.
 ##' @noRd
-create_template <- function(value, tspan, nodes, ac, data) {
+create_template <- function(value, tspan, nodes, compartments, data) {
     if (is.null(value)) {
         dense <- matrix(data = data, nrow = 0, ncol = 0)
         sparse <- new("dgCMatrix")
@@ -142,7 +142,7 @@ create_template <- function(value, tspan, nodes, ac, data) {
 
     if (nrow(value) == 0) {
         dense <- matrix(data = data, nrow = 0, ncol = 0)
-        dims <- c(length(nodes) * length(ac), length(tspan))
+        dims <- c(length(nodes) * length(compartments), length(tspan))
         sparse <- sparseMatrix(i = numeric(0), j = numeric(0),
                                x = NA_real_, dims = dims)
         return(list(dense = dense, sparse = sparse))
@@ -167,30 +167,31 @@ create_template <- function(value, tspan, nodes, ac, data) {
     if (any(is.na(j)))
         stop("Unable to match all time-points to tspan.", call. = FALSE)
 
-    sc <- setdiff(colnames(value), c("time", "node"))
-    if (length(sc) == 0) {
+    selected_compartments <- setdiff(colnames(value), c("time", "node"))
+    if (length(selected_compartments) == 0) {
         ## Only node and time specified, select all compartments and
         ## mark them as TRUE.
-        sc <- ac
-        value[, sc] <- TRUE
+        selected_compartments <- compartments
+        value[, selected_compartments] <- TRUE
     }
 
     ## Coerce the compartments part of the data.frame to a logical
     ## vector that match the rows of compartments in the matrix.
-    if (any(sc %in% ac)) {
-        value <- value[, c("time", "node", ac)]
+    if (any(selected_compartments %in% compartments)) {
+        value <- value[, c("time", "node", compartments)]
         value <- as.logical(t(as.matrix(value[, c(-1, -2)])))
         value[is.na(value)] <- FALSE
 
         ## Create an index to all of its compartments in the
         ## matrix. Keep only compartments and time-points that are
         ## marked with TRUE.
-        i <- rep((i - 1) * length(ac), each = length(ac)) + seq_len(length(ac))
+        i <- rep((i - 1) * length(compartments),
+                 each = length(compartments)) + seq_len(length(compartments))
         i <- i[value]
-        j <- rep(j, each = length(ac))
+        j <- rep(j, each = length(compartments))
         j <- j[value]
 
-        dims <- c(length(nodes) * length(ac), length(tspan))
+        dims <- c(length(nodes) * length(compartments), length(tspan))
         if (sum(value, na.rm = TRUE) == (dims[1] * dims[2])) {
             dense <- matrix(data = data, nrow = 0, ncol = 0)
             sparse <- new("dgCMatrix")
@@ -203,7 +204,7 @@ create_template <- function(value, tspan, nodes, ac, data) {
     }
 
     dense <- matrix(data = data, nrow = 0, ncol = 0)
-    dims <- c(length(nodes) * length(ac), length(tspan))
+    dims <- c(length(nodes) * length(compartments), length(tspan))
     sparse <- sparseMatrix(i = numeric(0), j = numeric(0),
                            x = NA_real_, dims = dims)
     list(dense = dense, sparse = sparse)
