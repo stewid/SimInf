@@ -16,6 +16,41 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Class \code{"SimInf_pfilter"}
+##'
+##' @slot model The \code{SimInf_model} object to simulate data from.
+##' @slot npart An integer with the number of particles that was used
+##'     at each timestep.
+##' @slot tspan A two-column matrix where each row specifies the tspan
+##'     to use when running the model from time[i] to time[i+1]. The
+##'     first column is \code{NA} if the interval is one time-unit.
+##' @slot loglik The estimated log likelihood.
+##' @export
+setClass(
+    "SimInf_pfilter",
+    slots = c(model  = "SimInf_model",
+              npart  = "integer",
+              tspan  = "matrix",
+              loglik = "numeric")
+)
+
+##' Print summary of a \code{SimInf_pfilter} object
+##'
+##' @param object The \code{SimInf_pfilter} object.
+##' @return \code{invisible(object)}.
+##' @export
+##' @importFrom methods show
+setMethod(
+    "show",
+    signature(object = "SimInf_pfilter"),
+    function(object) {
+        cat(sprintf("Number of particles: %i\n", object@npart))
+        cat(sprintf("Log-likelihood: %f\n", object@loglik))
+
+        invisible(object)
+    }
+)
+
 ##' Split tspan into intervals.
 ##' @noRd
 pfilter_tspan <- function(model, data) {
