@@ -25,13 +25,19 @@
 ##'     to use when running the model from time[i] to time[i+1]. The
 ##'     first column is \code{NA} if the interval is one time-unit.
 ##' @slot loglik The estimated log likelihood.
+##' @slot ess A numeric vector with the effective sample size (ESS).
+##'     The effective sample size is computed as
+##'     \deqn{\left(\sum_{i=1}^N\!(w_{t}^{(i)})^2\right)^{-1},}{1 /
+##'     (sum(w_it^2)),} where \eqn{w_{t}^{(i)}}{w_it} is the
+##'     normalized weight of particle \eqn{i} at time \eqn{t}.
 ##' @export
 setClass(
     "SimInf_pfilter",
     slots = c(model  = "SimInf_model",
               npart  = "integer",
               tspan  = "matrix",
-              loglik = "numeric")
+              loglik = "numeric",
+              ess    = "numeric")
 )
 
 ##' Print summary of a \code{SimInf_pfilter} object
