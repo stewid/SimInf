@@ -57,6 +57,23 @@ setMethod(
     }
 )
 
+##' Print summary of a \code{SimInf_pfilter} object
+##'
+##' @param object The \code{SimInf_pfilter} object.
+##' @param ... Unused additional arguments.
+##' @return \code{invisible(NULL)}.
+##' @export
+setMethod(
+    "summary",
+    signature(object = "SimInf_pfilter"),
+    function(object, ...) {
+        cat(sprintf("Number of particles: %i\n", object@npart))
+        cat(sprintf("Log-likelihood: %f\n", object@loglik))
+
+        invisible(NULL)
+    }
+)
+
 ##' Split tspan into intervals.
 ##' @noRd
 pfilter_tspan <- function(model, data) {

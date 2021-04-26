@@ -22,7 +22,7 @@ first column is \code{NA} if the interval is one time-unit.}
 \item{\code{loglik}}{The estimated log likelihood.}
 
 \item{\code{ess}}{A numeric vector with the effective sample size (ESS).
-Effective sample size is computed as
+The effective sample size is computed as
 \deqn{\left(\sum_{i=1}^N\!(w_{t}^{(i)})^2\right)^{-1},}{1 /
 (sum(w_it^2)),} where \eqn{w_{t}^{(i)}}{w_it} is the
 normalized weight of particle \eqn{i} at time \eqn{t}.}
