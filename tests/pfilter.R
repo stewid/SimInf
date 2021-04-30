@@ -78,3 +78,18 @@ df <- data.frame(time = c("2021-01-06", "2021-01-07"))
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, df),
     structure(c(5, NA, 6, 7), .Dim = c(2L, 2L))))
+
+## Check invalid npart
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:5,
+             beta = 0.16,
+             gamma = 0.077)
+res <- assertError(pfilter(model = model,
+                           npart = 1,
+                           data = data.frame(time = 1:3)))
+check_error(res, "'npart' must be an integer > 1.")
+
+res <- assertError(pfilter(model = model,
+                           npart = c(10, 10),
+                           data = data.frame(time = 1:3)))
+check_error(res, "'npart' must be an integer > 1.")
