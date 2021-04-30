@@ -113,3 +113,51 @@ pfilter_tspan <- function(model, data) {
         c(NA_real_, data$time[i])
     }))
 }
+
+##' Bootstrap particle filter
+##'
+##' Systematic resampling is performed at each observation.
+##'
+##' @param model The \code{SimInf_model} object to simulate data from.
+##' @param obs_process A \code{formula} or \code{function} determining
+##'     the observation process.
+##' @param data A \code{data.frame} holding the time series data.
+##' @param npart An integer with the number of particles (> 1) to use
+##'     at each timestep.
+##' @return A \code{SimInf_pfilter} object.
+##' @references
+##'
+##' \Gordon1993
+##' @export
+setGeneric(
+    "pfilter",
+    signature = "model",
+    function(model, obs_process, data, npart) {
+        standardGeneric("pfilter")
+    }
+)
+
+##' @rdname pfilter
+##' @export
+setMethod(
+    "pfilter",
+    signature(model = "SimInf_model"),
+    function(model, obs_process, data, npart) {
+        check_integer_arg(npart)
+        npart <- as.integer(npart)
+        if (length(npart) != 1L || npart <= 1L)
+            stop("'npart' must be an integer > 1.", call. = FALSE)
+
+        if (length(model@events@event) > 0) {
+            stop("Particle filtering is not implemented ",
+                 "for a model with scheduled events.",
+                 call. = FALSE)
+        }
+
+        tspan <- pfilter_tspan(model, data)
+
+        if (n_nodes(model) == 1)
+            return(pfilter_single_node(model, obs_process, data, npart, tspan))
+        pfilter_multiple_nodes(model, obs_process, data, npart, tspan)
+    }
+)
