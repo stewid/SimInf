@@ -79,6 +79,7 @@ Collate:
     'abc.R'
     'degree.R'
     'distance.R'
+    'distributions.R'
     'match_compartments.R'
     'mparse.R'
     'n.R'
@@ -88,7 +89,6 @@ Collate:
     'plot.R'
     'prevalence.R'
     'print.R'
-    'priors.R'
     'punchcard.R'
     'trajectory.R'
 Encoding: UTF-8
