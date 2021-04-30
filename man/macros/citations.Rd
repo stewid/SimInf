@@ -4,6 +4,8 @@
 
 \newcommand{\Bauer2016}{P. Bauer, S. Engblom and S. Widgren. Fast Event-Based Epidemiological Simulations on National Scales. \emph{International Journal of High Performance Computing Applications}, \strong{30}(4), 438--453, 2016. \doi{10.1177/1094342016635723}}
 
+\newcommand{\Gordon1993}{N. J. Gordon, D. J. Salmond, and A. F. M. Smith. Novel Approach to Nonlinear/Non-Gaussian Bayesian State Estimation. \emph{Radar and Signal Processing, IEE Proceedings F}, \strong{140}(2) 107--113, 1993. \doi{10.1049/ip-f-2.1993.0015}}
+
 \newcommand{\Toni2009}{T. Toni, D. Welch, N. Strelkowa, A. Ipsen, and M. P. H. Stumpf. Approximate Bayesian computation scheme for parameter inference and model selection in dynamical systems. \emph{Journal of the Royal Society Interface} \strong{6}, 187--202, 2009. \doi{10.1098/rsif.2008.0172}}
 
 \newcommand{\Widgren2019}{S. Widgren, P. Bauer, R. Eriksson and S. Engblom. \pkg{SimInf}: An \proglang{R} Package for Data-Driven Stochastic Disease Spread Simulations. \emph{Journal of Statistical Software}, \strong{91}(12), 1--42. \doi{10.18637/jss.v091.i12}. An updated version of this paper is available as a vignette in the package.}
