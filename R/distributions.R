@@ -18,7 +18,7 @@
 
 ##' @importFrom utils getParseData
 ##' @noRd
-do_parse_prior <- function(prior) {
+parse_distribution <- function(prior) {
     err_str <- "Invalid formula specification for distribution."
     prior <- as.character(prior)
     if (!identical(length(prior), 3L))
@@ -97,7 +97,7 @@ parse_priors <- function(priors) {
     }
 
     ## Determine priors for parameters in the model
-    priors <- do.call("rbind", lapply(priors, do_parse_prior))
+    priors <- do.call("rbind", lapply(priors, parse_distribution))
 
     if (any(duplicated(priors$parameter)) ||
         any(nchar(priors$parameter) == 0)) {
