@@ -74,6 +74,16 @@ setMethod(
     }
 )
 
+##' Validate the number of particles.
+##' @noRd
+pfilter_npart <- function(npart) {
+    check_integer_arg(npart)
+    npart <- as.integer(npart)
+    if (length(npart) != 1L || npart <= 1L)
+        stop("'npart' must be an integer > 1.", call. = FALSE)
+    npart
+}
+
 ##' Split tspan into intervals.
 ##' @noRd
 pfilter_tspan <- function(model, data) {
@@ -114,6 +124,24 @@ pfilter_tspan <- function(model, data) {
     }))
 }
 
+pfilter_obs_process <- function(model, obs_process) {
+    if (is.function(obs_process))
+        return(match.fun(obs_process))
+
+    if (n_nodes(model) > 1) {
+        stop("The observation process must be a function ",
+             "for a model with multiple nodes.",
+             call. = FALSE)
+    }
+
+    if (!is(obs_process, "formula")) {
+        stop("'obs_process' must be either a formula or a function.",
+             call. = FALSE)
+    }
+
+    stop("Not implemented", call. = FALSE)
+}
+
 ##' Bootstrap particle filter
 ##'
 ##' Systematic resampling is performed at each observation.
@@ -143,18 +171,9 @@ setMethod(
     "pfilter",
     signature(model = "SimInf_model"),
     function(model, obs_process, data, npart) {
-        check_integer_arg(npart)
-        npart <- as.integer(npart)
-        if (length(npart) != 1L || npart <= 1L)
-            stop("'npart' must be an integer > 1.", call. = FALSE)
-
-        if (length(model@events@event) > 0) {
-            stop("Particle filtering is not implemented ",
-                 "for a model with scheduled events.",
-                 call. = FALSE)
-        }
-
+        npart <- pfilter_npart(npart)
         tspan <- pfilter_tspan(model, data)
+        obs_process <- pfilter_obs_process(model, obs_process)
 
         if (n_nodes(model) == 1)
             return(pfilter_single_node(model, obs_process, data, npart, tspan))
