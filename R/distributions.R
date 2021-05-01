@@ -18,17 +18,17 @@
 
 ##' @importFrom utils getParseData
 ##' @noRd
-parse_distribution <- function(prior) {
+parse_distribution <- function(dist) {
     err_str <- "Invalid formula specification for distribution."
-    prior <- as.character(prior)
-    if (!identical(length(prior), 3L))
+    dist <- as.character(dist)
+    if (!identical(length(dist), 3L))
         stop(err_str, call. = FALSE)
 
-    ## Determine the parameter to fit from the lhs.
-    parameter <- prior[2]
+    ## Determine the parameter from the lhs.
+    parameter <- dist[2]
 
     ## Parse the rhs of the formula.
-    tokens <- getParseData(parse(text = prior[3], keep.source = TRUE))
+    tokens <- getParseData(parse(text = dist[3], keep.source = TRUE))
     tokens <- tokens[tokens$terminal, c("token", "text")]
     if (!all(tokens$token[1] == "SYMBOL_FUNCTION_CALL",
              tokens$token[2] == "'('",
@@ -40,7 +40,7 @@ parse_distribution <- function(prior) {
     distribution <- tokens$text[1]
     tokens <- tokens[c(-1, -2, -nrow(tokens)), 1:2]
 
-    ## Determine the hyperparameters for the distribution.
+    ## Determine the hyperparameter(s) for the distribution.
     comma <- which(tokens$token == "','")
     if (length(comma) != 1)
         stop(err_str, call. = FALSE)
