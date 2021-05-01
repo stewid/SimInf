@@ -26,3 +26,6 @@ A \code{SimInf_pfilter} object.
 \description{
 Systematic resampling is performed at each observation.
 }
+\references{
+\Gordon1993
+}
