@@ -37,10 +37,10 @@ res <- assertError(SimInf:::parse_priors(NULL))
 check_error(res, "'priors' must be a formula or a list with formula items.")
 
 res <- assertError(SimInf:::parse_priors(mu ~ uniform(0, 1) + normal(0, 1)))
-check_error(res, "Invalid formula specification for prior.")
+check_error(res, "Invalid formula specification for distribution.")
 
 res <- assertError(SimInf:::parse_priors(mu ~ uniform[0, 1]))
-check_error(res, "Invalid formula specification for prior.")
+check_error(res, "Invalid formula specification for distribution.")
 
 res <- assertError(SimInf:::parse_priors(mu ~ unknown(0, 1)))
 check_error(
@@ -51,19 +51,19 @@ res <- assertError(SimInf:::parse_priors(c(muR ~ uniform(0, 1),
 check_error(res, "'priors' must have non-duplicated parameter names.")
 
 res <- assertError(SimInf:::parse_priors(beta ~ uniform(1, 0)))
-check_error(res, "Invalid prior: uniform bounds in wrong order.")
+check_error(res, "Invalid distribution: uniform bounds in wrong order.")
 
 res <- assertError(SimInf:::parse_priors(beta ~ normal(0, -1)))
-check_error(res, "Invalid prior: normal variance must be > 0.")
+check_error(res, "Invalid distribution: normal variance must be > 0.")
 
 res <- assertError(SimInf:::parse_priors(beta ~ gamma(-1, 1)))
-check_error(res, "Invalid prior: gamma hyperparameters must be > 0.")
+check_error(res, "Invalid distribution: gamma hyperparameters must be > 0.")
 
 res <- assertError(SimInf:::parse_priors(beta ~ gamma(1, -1)))
-check_error(res, "Invalid prior: gamma hyperparameters must be > 0.")
+check_error(res, "Invalid distribution: gamma hyperparameters must be > 0.")
 
 res <- assertError(SimInf:::parse_priors(~ uniform(1, 5)))
-check_error(res, "Invalid formula specification for prior.")
+check_error(res, "Invalid formula specification for distribution.")
 
 stopifnot(identical(
     SimInf:::parse_priors(beta ~ uniform(1, 5)),

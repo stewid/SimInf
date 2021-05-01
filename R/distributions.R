@@ -19,7 +19,7 @@
 ##' @importFrom utils getParseData
 ##' @noRd
 do_parse_prior <- function(prior) {
-    err_str <- "Invalid formula specification for prior."
+    err_str <- "Invalid formula specification for distribution."
     prior <- as.character(prior)
     if (!identical(length(prior), 3L))
         stop(err_str, call. = FALSE)
@@ -54,19 +54,22 @@ do_parse_prior <- function(prior) {
     switch(distribution,
            gamma = {
                if (!all(hyperparameters > 0)) {
-                   stop("Invalid prior: gamma hyperparameters must be > 0.",
+                   stop("Invalid distribution: ",
+                        "gamma hyperparameters must be > 0.",
                         call. = FALSE)
                }
            },
            normal = {
                if (hyperparameters[2] < 0) {
-                   stop("Invalid prior: normal variance must be > 0.",
+                   stop("Invalid distribution: ",
+                        "normal variance must be > 0.",
                         call. = FALSE)
                }
            },
            uniform = {
                if (hyperparameters[1] >= hyperparameters[2]) {
-                   stop("Invalid prior: uniform bounds in wrong order.",
+                   stop("Invalid distribution: ",
+                        "uniform bounds in wrong order.",
                         call. = FALSE)
                }
            },
