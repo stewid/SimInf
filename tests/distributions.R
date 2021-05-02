@@ -50,11 +50,23 @@ res <- assertError(SimInf:::parse_priors(c(muR ~ uniform(0, 1),
                                            muR ~ uniform(0, 1))))
 check_error(res, "'priors' must have non-duplicated parameter names.")
 
+res <- assertError(SimInf:::parse_priors(beta ~ uniform(1)))
+check_error(res, "Invalid formula specification for uniform distribution.")
+
 res <- assertError(SimInf:::parse_priors(beta ~ uniform(1, 0)))
 check_error(res, "Invalid distribution: uniform bounds in wrong order.")
 
+res <- assertError(SimInf:::parse_priors(beta ~ normal(1)))
+check_error(res, "Invalid formula specification for normal distribution.")
+
 res <- assertError(SimInf:::parse_priors(beta ~ normal(0, -1)))
 check_error(res, "Invalid distribution: normal variance must be > 0.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ normal(0, gamma)))
+check_error(res, "Invalid formula specification for 'priors'.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ gamma(1)))
+check_error(res, "Invalid formula specification for gamma distribution.")
 
 res <- assertError(SimInf:::parse_priors(beta ~ gamma(-1, 1)))
 check_error(res, "Invalid distribution: gamma hyperparameters must be > 0.")
