@@ -37,7 +37,22 @@ check_normal_distribution <- function(hyperparameters, symbols) {
 
     if (is.null(symbols) && hyperparameters[2] < 0) {
         stop("Invalid distribution: ",
-             "normal variance must be > 0.",
+             "normal variance must be >= 0.",
+             call. = FALSE)
+    }
+}
+
+check_poisson_distribution <- function(hyperparameters, symbols) {
+    if (length(hyperparameters) != 2 ||
+        is.na(hyperparameters[1]) ||
+        !is.na(hyperparameters[2])) {
+            stop("Invalid formula specification for poisson distribution.",
+             call. = FALSE)
+    }
+
+    if (is.null(symbols) && hyperparameters[1] < 0) {
+        stop("Invalid distribution: ",
+             "lambda must be >= 0.",
              call. = FALSE)
     }
 }
@@ -63,11 +78,13 @@ check_hyperparameters <- function(distribution, hyperparameters, symbols) {
            normal = {
                check_normal_distribution(hyperparameters, symbols)
            },
+           poisson = {
+               check_poisson_distribution(hyperparameters, symbols)
+           },
            uniform = {
                check_uniform_distribution(hyperparameters, symbols)
            },
-           stop("'distribution' must be one of 'gamma', 'normal' or 'uniform'.",
-                call. = FALSE)
+           stop("Unknown distribution.", call. = FALSE)
            )
 }
 
