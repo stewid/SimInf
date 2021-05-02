@@ -101,7 +101,9 @@ res <- assertError(
                             distribution = "uniform",
                             p1 = 1,
                             p2 = 5)))
-check_error(res, "All parameters in 'priors' must be either in 'gdata' or 'ldata'.")
+check_error(
+    res,
+    "All parameters in 'priors' must be either in 'gdata' or 'ldata'.")
 
 res <- assertError(
     SimInf:::match_priors(
