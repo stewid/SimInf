@@ -43,8 +43,7 @@ res <- assertError(SimInf:::parse_priors(mu ~ uniform[0, 1]))
 check_error(res, "Invalid formula specification for distribution.")
 
 res <- assertError(SimInf:::parse_priors(mu ~ unknown(0, 1)))
-check_error(
-    res, "'distribution' must be one of 'gamma', 'normal' or 'uniform'.")
+check_error(res, "Unknown distribution.")
 
 res <- assertError(SimInf:::parse_priors(c(muR ~ uniform(0, 1),
                                            muR ~ uniform(0, 1))))
@@ -60,7 +59,13 @@ res <- assertError(SimInf:::parse_priors(beta ~ normal(1)))
 check_error(res, "Invalid formula specification for normal distribution.")
 
 res <- assertError(SimInf:::parse_priors(beta ~ normal(0, -1)))
-check_error(res, "Invalid distribution: normal variance must be > 0.")
+check_error(res, "Invalid distribution: normal variance must be >= 0.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ poisson(1, 2)))
+check_error(res, "Invalid formula specification for poisson distribution.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ poisson(-1)))
+check_error(res, "Invalid distribution: lambda must be >= 0.")
 
 res <- assertError(SimInf:::parse_priors(beta ~ normal(0, gamma)))
 check_error(res, "Invalid formula specification for 'priors'.")
