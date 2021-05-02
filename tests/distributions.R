@@ -81,3 +81,36 @@ stopifnot(identical(
     SimInf:::parse_priors(beta ~ uniform(1, 5)),
     data.frame(parameter = "beta", distribution = "uniform",
                p1 = 1, p2 = 5, stringsAsFactors = FALSE)))
+
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = 0.077)
+data.frame(parameter = "delta",
+           distribution = "uniform",
+           p1 = 1,
+           p2 = 5)
+
+res <- assertError(
+    SimInf:::match_priors(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = 1:100,
+                     beta = 0.16,
+                     gamma = 0.077),
+                 data.frame(parameter = "delta",
+                            distribution = "uniform",
+                            p1 = 1,
+                            p2 = 5)))
+check_error(res, "All parameters in 'priors' must be either in 'gdata' or 'ldata'.")
+
+res <- assertError(
+    SimInf:::match_priors(
+                 SIR(u0 = data.frame(S = c(99, 99), I = c(1, 1), R = c(0, 0)),
+                     tspan = 1:100,
+                     beta = 0.16,
+                     gamma = 0.077),
+                 data.frame(parameter = "beta",
+                            distribution = "uniform",
+                            p1 = 1,
+                            p2 = 5)))
+check_error(res, "The 'model' must contain one node.")
