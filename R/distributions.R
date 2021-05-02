@@ -16,6 +16,95 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+check_gamma_distribution <- function(hyperparameters, symbols) {
+    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+        stop("Invalid formula specification for gamma distribution.",
+             call. = FALSE)
+    }
+
+    if (is.null(symbols) && !all(hyperparameters > 0)) {
+        stop("Invalid distribution: ",
+             "gamma hyperparameters must be > 0.",
+             call. = FALSE)
+    }
+}
+
+check_normal_distribution <- function(hyperparameters, symbols) {
+    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+        stop("Invalid formula specification for normal distribution.",
+             call. = FALSE)
+    }
+
+    if (is.null(symbols) && hyperparameters[2] < 0) {
+        stop("Invalid distribution: ",
+             "normal variance must be > 0.",
+             call. = FALSE)
+    }
+}
+
+check_uniform_distribution <- function(hyperparameters, symbols) {
+    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+        stop("Invalid formula specification for uniform distribution.",
+             call. = FALSE)
+    }
+
+    if (is.null(symbols) && hyperparameters[1] >= hyperparameters[2]) {
+        stop("Invalid distribution: ",
+             "uniform bounds in wrong order.",
+             call. = FALSE)
+    }
+}
+
+check_hyperparameters <- function(distribution, hyperparameters, symbols) {
+    switch(distribution,
+           gamma = {
+               check_gamma_distribution(hyperparameters, symbols)
+           },
+           normal = {
+               check_normal_distribution(hyperparameters, symbols)
+           },
+           uniform = {
+               check_uniform_distribution(hyperparameters, symbols)
+           },
+           stop("'distribution' must be one of 'gamma', 'normal' or 'uniform'.",
+                call. = FALSE)
+           )
+}
+
+##' Determine if there are any symbols in the hyperparameter(s).
+##' @noRd
+parse_hyperparameter_symbols <- function(tokens) {
+    unlist(lapply(seq_len(nrow(tokens)), function(i) {
+        if (tokens$token[i] == "SYMBOL")
+            return(tokens$text[i])
+        NULL
+    }))
+}
+
+##' Determine the hyperparameter(s) for the distribution.
+##' @noRd
+parse_hyperparameters <- function(distribution, tokens, symbols) {
+    comma <- which(tokens$token == "','")
+    if (length(comma) == 0) {
+        hyperparameters <- c(paste0(tokens$text, collapse = ""), NA)
+    } else if (length(comma) == 1) {
+        hyperparameters <- c(paste0(tokens$text[seq_len(comma - 1)],
+                                    collapse = ""),
+                             paste0(tokens$text[-seq_len(comma)],
+                                    collapse = ""))
+    } else {
+        stop("Invalid formula specification for distribution.",
+             call. = FALSE)
+    }
+
+    if (is.null(symbols))
+        hyperparameters <- suppressWarnings(as.numeric(hyperparameters))
+
+    check_hyperparameters(distribution, hyperparameters, symbols)
+
+    hyperparameters
+}
+
 ##' @importFrom utils getParseData
 ##' @noRd
 parse_distribution <- function(dist) {
@@ -41,45 +130,12 @@ parse_distribution <- function(dist) {
     tokens <- tokens[c(-1, -2, -nrow(tokens)), 1:2]
 
     ## Determine the hyperparameter(s) for the distribution.
-    comma <- which(tokens$token == "','")
-    if (length(comma) != 1)
-        stop(err_str, call. = FALSE)
-    hyperparameters <- c(paste0(tokens$text[seq_len(comma - 1)], collapse = ""),
-                         paste0(tokens$text[-seq_len(comma)], collapse = ""))
-    hyperparameters <- suppressWarnings(as.numeric(hyperparameters))
-    if (any(length(hyperparameters) != 2, any(is.na(hyperparameters))))
-        stop(err_str, call. = FALSE)
-
-    ## Check distribution and hyperparameters.
-    switch(distribution,
-           gamma = {
-               if (!all(hyperparameters > 0)) {
-                   stop("Invalid distribution: ",
-                        "gamma hyperparameters must be > 0.",
-                        call. = FALSE)
-               }
-           },
-           normal = {
-               if (hyperparameters[2] < 0) {
-                   stop("Invalid distribution: ",
-                        "normal variance must be > 0.",
-                        call. = FALSE)
-               }
-           },
-           uniform = {
-               if (hyperparameters[1] >= hyperparameters[2]) {
-                   stop("Invalid distribution: ",
-                        "uniform bounds in wrong order.",
-                        call. = FALSE)
-               }
-           },
-           stop("'distribution' must be one of 'gamma', 'normal' or 'uniform'.",
-                call. = FALSE)
-           )
+    symbols <- parse_hyperparameter_symbols(tokens)
+    hyperparameters <- parse_hyperparameters(distribution, tokens, symbols)
 
     data.frame(parameter = parameter, distribution = distribution,
                p1 = hyperparameters[1], p2 = hyperparameters[2],
-               stringsAsFactors = FALSE)
+               symbols = I(list(symbols)), stringsAsFactors = FALSE)
 }
 
 ##' @noRd
@@ -97,7 +153,14 @@ parse_priors <- function(priors) {
     }
 
     ## Determine priors for parameters in the model
-    priors <- do.call("rbind", lapply(priors, parse_distribution))
+    priors <- do.call("rbind", lapply(priors, function(prior) {
+        prior <- parse_distribution(prior)
+        if (!is.null(unlist(prior$symbols))) {
+            stop("Invalid formula specification for 'priors'.",
+                 call. = FALSE)
+        }
+        prior[, c("parameter", "distribution", "p1", "p2")]
+    }))
 
     if (any(duplicated(priors$parameter)) ||
         any(nchar(priors$parameter) == 0)) {
