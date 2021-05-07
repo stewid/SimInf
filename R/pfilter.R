@@ -21,21 +21,17 @@
 ##' @slot model The \code{SimInf_model} object to simulate data from.
 ##' @slot npart An integer with the number of particles that was used
 ##'     at each timestep.
-##' @slot tspan A two-column matrix where each row specifies the tspan
-##'     to use when running the model from time[i] to time[i+1]. The
-##'     first column is \code{NA} if the interval is one time-unit.
 ##' @slot loglik The estimated log likelihood.
 ##' @slot ess A numeric vector with the effective sample size (ESS).
 ##'     The effective sample size is computed as
-##'     \deqn{\left(\sum_{i=1}^N\!(w_{t}^{(i)})^2\right)^{-1},}{1 /
-##'     (sum(w_it^2)),} where \eqn{w_{t}^{(i)}}{w_it} is the
-##'     normalized weight of particle \eqn{i} at time \eqn{t}.
+##'     \deqn{\left(\sum_{i=1}^N\!(w_{t}^{i})^2\right)^{-1},}{1 /
+##'     (sum(w_it^2)),} where \eqn{w_{t}^{i}}{w_it} is the normalized
+##'     weight of particle \eqn{i} at time \eqn{t}.
 ##' @export
 setClass(
     "SimInf_pfilter",
     slots = c(model  = "SimInf_model",
               npart  = "integer",
-              tspan  = "matrix",
               loglik = "numeric",
               ess    = "numeric")
 )
@@ -85,6 +81,10 @@ pfilter_npart <- function(npart) {
 }
 
 ##' Split tspan into intervals.
+##'
+##' @return A two-column matrix where each row specifies the tspan to
+##'     use when running the model from time[i] to time[i+1]. The
+##'     first column is \code{NA} if the interval is one time-unit.
 ##' @noRd
 pfilter_tspan <- function(model, data) {
     if (!is.data.frame(data))
