@@ -286,3 +286,31 @@ setMethod(
         pfilter_multiple_nodes(model, obs_process, data, npart, tspan)
     }
 )
+
+##' Display the sampled trajectory from a particle filter object
+##'
+##' @param x The \code{SimInf_pfilter} object to plot.
+##' @template plot-y-param
+##' @template plot-level-param
+##' @template plot-index-param
+##' @template plot-range-param
+##' @template plot-type-param
+##' @template plot-lwd-param
+##' @template plot-frame-param
+##' @template plot-legend-param
+##' @param ... Other graphical parameters that are passed on to the
+##'     plot function.
+##' @aliases plot,SimInf_pfilter-method
+##' @export
+setMethod(
+    "plot",
+    signature(x = "SimInf_pfilter", y = "ANY"),
+    function(x, y, level = 1, index = NULL, range = 0.5, type = "s",
+             lwd = 2, frame.plot = FALSE, legend = TRUE, ...) {
+        if (missing(y))
+            y <- NULL
+        plot(x = x@model, y = y, level = level, index = index,
+             range = range, type = type, lwd = lwd,
+             frame.plot = frame.plot, legend = legend, ...)
+    }
+)
