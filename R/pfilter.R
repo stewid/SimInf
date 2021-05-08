@@ -191,9 +191,6 @@ pfilter_single_node <- function(model, obs_process, data, npart, tspan) {
             x@V <- x@V[, 2, drop = FALSE]
         }
 
-        U[, i] <- x@U
-        V[, i] <- x@V
-
         ## Weighting
         if (is.function(obs_process)) {
             w <- obs_process(x, data[i, , drop = FALSE])
@@ -213,7 +210,6 @@ pfilter_single_node <- function(model, obs_process, data, npart, tspan) {
 
         ## Resampling
         j <- .Call(SimInf_systematic_resampling, w)
-        a[, i + 1] <- j
 
         ## Initialise the model for the next propagation.
         k <- Nc_i + rep((j - 1L) * Nc, each = Nc)
@@ -223,12 +219,16 @@ pfilter_single_node <- function(model, obs_process, data, npart, tspan) {
                        dimnames = dimnames(x@u0))
         if (Nd > 0)
             stop("Not implemented.")
+
+        ## Save states
+        U[, i] <- x@U
+        V[, i] <- x@V
+        a[, i + 1] <- j
     }
 
+    ## Sample a trajectory.
     model@U <- matrix(data = NA_integer_, nrow = Nc, ncol = Ntspan)
     model@V <- matrix(data = NA_real_, nrow = Nd, ncol = Ntspan)
-
-    ## Sample a trajectory.
     i <- sample.int(npart, 1)
     for (j in rev(seq_len(Ntspan))) {
         model@U[Nc_i, j] <- U[(i - 1) * Nc + Nc_i, j, drop = FALSE]
