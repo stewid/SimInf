@@ -36,7 +36,7 @@ setClass(
               ess    = "numeric")
 )
 
-##' Print summary of a \code{SimInf_pfilter} object
+##' Brief summary of a \code{SimInf_pfilter} object
 ##'
 ##' @param object The \code{SimInf_pfilter} object.
 ##' @return \code{invisible(object)}.
@@ -53,7 +53,7 @@ setMethod(
     }
 )
 
-##' Print summary of a \code{SimInf_pfilter} object
+##' Detailed summary of a \code{SimInf_pfilter} object
 ##'
 ##' @param object The \code{SimInf_pfilter} object.
 ##' @param ... Unused additional arguments.
@@ -65,6 +65,17 @@ setMethod(
     function(object, ...) {
         cat(sprintf("Number of particles: %i\n", object@npart))
         cat(sprintf("Log-likelihood: %f\n", object@loglik))
+        cat(sprintf("Number of nodes: %i\n", n_nodes(object@model)))
+        cat(sprintf("Number of transitions: %i\n", n_transitions(object@model)))
+
+        if (length(object@model@gdata))
+            summary_gdata(object@model)
+        if (ncol(object@model@ldata))
+            summary_data_matrix(object@model@ldata, "Local data")
+        summary_output_matrix(object@model, "Continuous state variables",
+                              rownames(object@model@v0))
+        summary_output_matrix(object@model, "Compartments",
+                              rownames(object@model@S))
 
         invisible(NULL)
     }
