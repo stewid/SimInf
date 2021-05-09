@@ -170,6 +170,7 @@ pfilter_single_node <- function(model, obs_process, data, npart, tspan) {
     Nc <- Nc(m)
     Nc_i <- seq_len(Nc)
     Nd <- nrow(m@v0)
+    Nd_i <- seq_len(Nd)
     Ntspan <- nrow(tspan)
     ess <- numeric(Ntspan)
     loglik <- 0
@@ -212,13 +213,15 @@ pfilter_single_node <- function(model, obs_process, data, npart, tspan) {
         j <- .Call(SimInf_systematic_resampling, w)
 
         ## Initialise the model for the next propagation.
-        k <- Nc_i + rep((j - 1L) * Nc, each = Nc)
-        m@u0 <- matrix(data = x@U[k, 1],
+        m@u0 <- matrix(data = x@U[Nc_i + rep((j - 1L) * Nc, each = Nc), 1],
                        nrow = nrow(x@u0),
                        ncol = ncol(x@u0),
                        dimnames = dimnames(x@u0))
-        if (Nd > 0)
-            stop("Not implemented.")
+
+        m@v0 <- matrix(data = x@V[Nd_i + rep((j - 1L) * Nd, each = Nd), 1],
+                       nrow = nrow(x@v0),
+                       ncol = ncol(x@v0),
+                       dimnames = dimnames(x@v0))
 
         ## Save states
         U[, i] <- x@U
@@ -232,6 +235,7 @@ pfilter_single_node <- function(model, obs_process, data, npart, tspan) {
     i <- sample.int(npart, 1)
     for (j in rev(seq_len(Ntspan))) {
         model@U[Nc_i, j] <- U[(i - 1) * Nc + Nc_i, j, drop = FALSE]
+        model@V[Nd_i, j] <- V[(i - 1) * Nd + Nd_i, j, drop = FALSE]
         i <- a[i, j]
     }
 
