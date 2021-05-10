@@ -135,7 +135,7 @@ pfilter_tspan <- function(model, data) {
     }))
 }
 
-pfilter_obs_process <- function(model, obs_process) {
+pfilter_obs_process <- function(model, obs_process, data, npart) {
     if (is.function(obs_process))
         return(match.fun(obs_process))
 
@@ -150,12 +150,57 @@ pfilter_obs_process <- function(model, obs_process) {
              call. = FALSE)
     }
 
-    stop("Not implemented", call. = FALSE)
+    obs_process <- parse_distribution(obs_process)
+
+    ## Match the parameter on the lhs of the observation process to a
+    ## column in the data data.frame.
+    par_i <- match(obs_process$parameter, colnames(data))
+    par <- colnames(data)[par_i]
+    if (!isTRUE(par %in% colnames(data))) {
+        stop("Unable to match the parameter on the lhs to a column in 'data'.",
+             call. = FALSE)
+    }
+
+    ## Match the symbols on the rhs of the observation process to
+    ## compartments in U or V.
+    symbols <- unlist(obs_process$symbols)
+    u <- lapply(match(symbols, rownames(model@S)), function(i) {
+        list(slot = "U",
+             name = rownames(model@S)[i],
+             i = seq(from = i, to = Nc(model) * npart, by = Nc(model)))
+    })
+
+    symbols <- setdiff(symbols, sapply(u, function(x) x$name))
+    v <- lapply(match(symbols, rownames(model@v0)), function(i) {
+        list(slot = "V",
+             name = rownames(model@v0)[i],
+             i = seq(from = i, to = Nd(model) * npart, by = Nd(model)))
+    })
+
+    symbols <- setdiff(symbols, sapply(v, function(x) x$name))
+    if (length(symbols) > 0) {
+        stop("Non-existing compartment(s) in model: ",
+             paste0("'", symbols, "'", collapse = ", "),
+             ".", call. = FALSE)
+    }
+
+    expr <- switch(obs_process$distribution,
+                   poisson = {
+                       paste0("stats::dpois(x = ",
+                              obs_process$parameter,
+                              ", lambda = ",
+                              obs_process$p1,
+                              ", log = TRUE)")
+                   },
+                   stop("Unknown distribution.", call. = FALSE)
+                   )
+
+    list(slots = c(u, v), expr = expr, par = par, par_i = par_i)
 }
 
 ##' Run a particle filter on a model that contains one node
 ##' @noRd
-pfilter_single_node <- function(model, obs_process, data, npart, tspan) {
+pfilter_single_node <- function(model, obs, data, npart, tspan) {
     ## Replicate the single node 'npart' times such that each node
     ## represents one particle and then run all particles
     ## simultanously.
@@ -193,10 +238,23 @@ pfilter_single_node <- function(model, obs_process, data, npart, tspan) {
         }
 
         ## Weighting
-        if (is.function(obs_process)) {
-            w <- obs_process(x, data[i, , drop = FALSE])
+        if (is.function(obs)) {
+            w <- obs(x, data[i, , drop = FALSE])
         } else {
-            stop("Not implemented", call. = FALSE)
+            e <- new.env(parent = baseenv())
+
+            assign(x = obs$par, value = data[i, obs$par_i], pos = e)
+
+            for (j in seq_len(length(obs$slots))) {
+                assign(
+                    x = obs$slots[[j]]$name,
+                    value = slot(x, obs$slots[[j]]$slot)[obs$slots[[j]]$i, 1],
+                    pos = e)
+            }
+
+            expr <- obs$expr
+            e$expr <- expr
+            w <- evalq(eval(parse(text = expr)), envir = e)
         }
 
         if (!all(identical(length(w), npart), is.vector(w, "numeric")))
@@ -283,7 +341,7 @@ setMethod(
         npart <- pfilter_npart(npart)
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]
-        obs_process <- pfilter_obs_process(model, obs_process)
+        obs_process <- pfilter_obs_process(model, obs_process, data, npart)
 
         if (n_nodes(model) == 1)
             return(pfilter_single_node(model, obs_process, data, npart, tspan))
