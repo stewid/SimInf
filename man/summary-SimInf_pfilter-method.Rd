@@ -2,7 +2,7 @@
 % Please edit documentation in R/pfilter.R
 \name{summary,SimInf_pfilter-method}
 \alias{summary,SimInf_pfilter-method}
-\title{Print summary of a \code{SimInf_pfilter} object}
+\title{Detailed summary of a \code{SimInf_pfilter} object}
 \usage{
 \S4method{summary}{SimInf_pfilter}(object, ...)
 }
@@ -15,5 +15,5 @@
 \code{invisible(NULL)}.
 }
 \description{
-Print summary of a \code{SimInf_pfilter} object
+Detailed summary of a \code{SimInf_pfilter} object
 }
