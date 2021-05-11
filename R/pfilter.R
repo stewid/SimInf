@@ -18,7 +18,8 @@
 
 ##' Class \code{"SimInf_pfilter"}
 ##'
-##' @slot model The \code{SimInf_model} object to simulate data from.
+##' @slot model A \code{SimInf_model} object with one filtered
+##'     trajectory attached.
 ##' @slot npart An integer with the number of particles that was used
 ##'     at each timestep.
 ##' @slot loglik The estimated log likelihood.
