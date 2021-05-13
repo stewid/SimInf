@@ -21,28 +21,46 @@ vignette: >
 
 ## Overview
 
-Incorporate births, deaths and movements as scheduled events at
-predefined time-points.
+This vignette describes how births, deaths and movements can be
+incorporated into a model as scheduled events at predefined
+time-points.  Events can, for example, be used to simulate disese
+spread among multiple subpopulations (e.g., farms) when individuals
+can move between the subpopulations and thus transfer infection, see
+Figure 1.  In SimInf, we use `node` to denote a subpopulation.
+
+$~$
+
+```{r pressure, echo=FALSE, fig.align="left", fig.cap="**Figure 1.** Illustration of movements between nodes. Each time step depicts movements during one time unit, for example, a day. The network has *N=4* nodes where node *1* is infected and nodes *2*--*4* are non-infected. Arrows indicate movements of individuals from a source node to a destination node and labels denote the size of the shipment. Here, infection may spread from node *1* to node *3* at *t=2* and then from node *3* to node *2* at *t=3*.", out.width = '100%'}
+knitr::include_graphics("img/temporal-network.svg")
+```
 
 ## A first example
 
-Now we'll define **4** events to include in the simulation. Below is a
-`data.frame`, that contains the movements. Interpret it as follows:
+Now we'll define the **6** movement events in Figure 1 to include in a
+simulation. Below is a `data.frame`, that contains the
+movements. Interpret it as follows:
 
-1. In time step **3** we move **1** animal from herd **1** to herd **2**
-2. In time step **4** we move **1** animal from herd **1** to herd **3**
-3. In time step **4** we move **1** animal from herd **1** to herd **4**
-2. In time step **5** we move **2** animals from herd **1** to herd
-   **5**
+1. In time step **1** we move **2** individuals from node **3** to node **4**
+2. In time step **1** we move **9** individuals from node **3** to node **2**
+3. In time step **2** we move **3** individuals from node **4** to node **3**
+4. In time step **2** we move **8** individuals from node **1** to node **3**
+5. In time step **3** we move **4** individuals from node **4** to node **2**
+6. In time step **3** we move **5** individuals from node **3** to node **2**
 
 ```{r, eval = TRUE, echo = TRUE, message = FALSE}
 events <- data.frame(
-    event      = c(3, 3, 3, 3),  ## Event type 3 is a movement between herds
-    time       = c(3, 4, 4, 5),  ## The time that the event happens
-    node       = c(1, 1, 1, 1),  ## Which herd does the event occur
-    dest       = c(2, 3, 4, 5),  ## Which is the destination herd
-    n          = c(1, 1, 1, 2),  ## how many animals are moved
-    proportion = c(0, 0, 0, 0),  ## This is not used when n > 0
-    select     = c(2, 2, 2, 2),  ## 2nd column in select matrix
-    shift      = c(0, 0, 0, 0))  ## Not used in this example
+    event      = rep("extTrans", 6),  ## Event "extTrans" is a movement between nodes
+    time       = c(1, 1, 2, 2, 3, 3), ## The time that the event happens
+    node       = c(3, 3, 4, 1, 4, 3), ## In which node does the event occur
+    dest       = c(4, 2, 3, 3, 2, 2), ## Which node is the destination node
+    n          = c(2, 9, 3, 8, 4, 5), ## How many individuals are moved
+    proportion = c(0, 0, 0, 0, 0, 0), ## This is not used when n > 0
+    select     = c(4, 4, 4, 4, 4, 4), ## Use 4th column in the model select matrix
+    shift      = c(0, 0, 0, 0, 0, 0)) ## Not used in this example
+```
+
+and have a look at the `data.frame`
+
+```{r}
+events
 ```
