@@ -31,8 +31,9 @@ Description: Provides an efficient and very flexible framework to
     Widgren, Bauer, Eriksson and Engblom (2019)
     <doi:10.18637/jss.v091.i12>. The package also provides
     functionality to fit models to time series data using the
-    Approximate Bayesian Computation Sequential Monte Carlo (ABC-SMC)
-    algorithm of Toni et al. (2009) <doi:10.1098/rsif.2008.0172>.
+    Approximate Bayesian Computation Sequential Monte Carlo
+    ('ABC-SMC') algorithm of Toni and others (2009)
+    <doi:10.1098/rsif.2008.0172>.
 Acknowledgements: This software has been made possible by support from
     the Swedish Research Council within the UPMARC Linnaeus center of
     Excellence (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the
