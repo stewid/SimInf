@@ -60,7 +60,8 @@ Imports:
     utils,
     Matrix
 Suggests:
-    knitr
+    knitr,
+    rmarkdown
 Collate:
     'C-generator.R'
     'check_arguments.R'
