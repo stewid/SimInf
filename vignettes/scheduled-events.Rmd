@@ -70,6 +70,8 @@ Now, create an SIR model where we turn off the disease dynamics
 different number of individuals in each node.
 
 ```{r}
+library(SimInf)
+
 model <- SIR(u0 = data.frame(S = c(10, 15, 20, 25),
                              I = c( 5,  0,  0,  0),
                              R = c( 0,  0,  0,  0)),
