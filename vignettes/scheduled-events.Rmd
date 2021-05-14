@@ -93,13 +93,20 @@ in each movement event (see below).
 ```{r}
 model@events@E
 ```
+
 In another case you might be interested in only targeting the
-susceptibles, using the first column.
+susceptibles, which means for this model that we select the first
+column. Now, let us run the model and generate data from it. For
+reproducibility, we first call the `set.seed()` function since there
+is random sampling involved when picking inviduals from the
+compartments.
 
 ```{r}
 set.seed(1)
 result <- run(model)
 ```
+
+And plot the number of individuals in each node.
 
 ```{r, fig.width=7, fig.height=4}
 plot(result, range = FALSE)
