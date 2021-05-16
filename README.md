@@ -240,12 +240,14 @@ use:
 
 ## Acknowledgments
 
-This work was financially supported by the Swedish Research Council
-within the UPMARC Linnaeus centre of Excellence (Pavol Bauer, Robin
-Eriksson and Stefan Engblom), the Swedish Research Council Formas
-(Stefan Engblom and Stefan Widgren), the Swedish Board of Agriculture
-(Stefan Widgren), and by the Swedish strategic research program
-eSSENCE (Stefan Widgren).
+This software has been made possible by support from the Swedish
+Research Council within the UPMARC Linnaeus center of Excellence
+(Pavol Bauer, Robin Eriksson, and Stefan Engblom), the Swedish
+Research Council Formas (Stefan Engblom and Stefan Widgren), the
+Swedish Board of Agriculture (Stefan Widgren), the Swedish strategic
+research program eSSENCE (Stefan Widgren), and by the Full-Force
+research project within the One Health European Joint Programme
+(Stefan Widgren).
 
 ## Versioning
 

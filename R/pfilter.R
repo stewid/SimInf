@@ -136,6 +136,41 @@ pfilter_tspan <- function(model, data) {
     }))
 }
 
+##' Split scheduled events into the intervals in tspan.
+##'
+##' @param events The scheduled events to split.
+##' @param time_end Endpoint time in each tpsan interval.
+##' @return A list with the scheduled events to use in each interval.
+##' @noRd
+pfilter_events <- function(events, time_end) {
+    lapply(time_end, function(t_end) {
+        e <- events
+        i <- seq_len(max(which(e@time <= t_end)))
+
+        ## Extract the events.
+        e@event <- e@event[i]
+        e@time <- e@time[i]
+        e@node <- e@node[i]
+        e@dest <- e@dest[i]
+        e@n <- e@n[i]
+        e@proportion <- e@proportion[i]
+        e@select <- e@select[i]
+        e@shift <- e@shift[i]
+
+        ## Drop the extracted events.
+        events@event <<- events@event[-i]
+        events@time <<- events@time[-i]
+        events@node <<- events@node[-i]
+        events@dest <<- events@dest[-i]
+        events@n <<- events@n[-i]
+        events@proportion <<- events@proportion[-i]
+        events@select <<- events@select[-i]
+        events@shift <<- events@shift[-i]
+
+        e
+    })
+}
+
 pfilter_obs_process <- function(model, obs_process, data, npart) {
     if (is.function(obs_process))
         return(match.fun(obs_process))
@@ -222,20 +257,20 @@ pfilter_single_node <- function(model, obs, data, npart, tspan) {
     loglik <- 0
     U <- matrix(data = NA_integer_, nrow = npart * Nc, ncol = Ntspan)
     V <- matrix(data = NA_real_, nrow = npart * Nd, ncol = Ntspan)
-    a <- matrix(data = NA_integer_, nrow = npart, ncol = Ntspan + 1)
-    a[, 1] <- seq_len(npart)
+    a <- matrix(data = NA_integer_, nrow = npart, ncol = Ntspan + 1L)
+    a[, 1L] <- seq_len(npart)
 
     for (i in seq_len(Ntspan)) {
         ## Propagation.
-        if (is.na(tspan[i, 1])) {
-            m@tspan <- tspan[i, 2]
+        if (is.na(tspan[i, 1L])) {
+            m@tspan <- tspan[i, 2L]
             x <- run(m)
         } else {
             m@tspan <- tspan[i, 1:2]
             x <- run(m)
-            x@tspan <- x@tspan[2]
-            x@U <- x@U[, 2, drop = FALSE]
-            x@V <- x@V[, 2, drop = FALSE]
+            x@tspan <- x@tspan[2L]
+            x@U <- x@U[, 2L, drop = FALSE]
+            x@V <- x@V[, 2L, drop = FALSE]
         }
 
         ## Weighting
@@ -249,7 +284,7 @@ pfilter_single_node <- function(model, obs, data, npart, tspan) {
             for (j in seq_len(length(obs$slots))) {
                 assign(
                     x = obs$slots[[j]]$name,
-                    value = slot(x, obs$slots[[j]]$slot)[obs$slots[[j]]$i, 1],
+                    value = slot(x, obs$slots[[j]]$slot)[obs$slots[[j]]$i, 1L],
                     pos = e)
             }
 
@@ -272,12 +307,12 @@ pfilter_single_node <- function(model, obs, data, npart, tspan) {
         j <- .Call(SimInf_systematic_resampling, w)
 
         ## Initialise the model for the next propagation.
-        m@u0 <- matrix(data = x@U[Nc_i + rep((j - 1L) * Nc, each = Nc), 1],
+        m@u0 <- matrix(data = x@U[Nc_i + rep((j - 1L) * Nc, each = Nc), 1L],
                        nrow = nrow(x@u0),
                        ncol = ncol(x@u0),
                        dimnames = dimnames(x@u0))
 
-        m@v0 <- matrix(data = x@V[Nd_i + rep((j - 1L) * Nd, each = Nd), 1],
+        m@v0 <- matrix(data = x@V[Nd_i + rep((j - 1L) * Nd, each = Nd), 1L],
                        nrow = nrow(x@v0),
                        ncol = ncol(x@v0),
                        dimnames = dimnames(x@v0))
@@ -285,16 +320,16 @@ pfilter_single_node <- function(model, obs, data, npart, tspan) {
         ## Save states
         U[, i] <- x@U
         V[, i] <- x@V
-        a[, i + 1] <- j
+        a[, i + 1L] <- j
     }
 
     ## Sample a trajectory.
     model@U <- matrix(data = NA_integer_, nrow = Nc, ncol = Ntspan)
     model@V <- matrix(data = NA_real_, nrow = Nd, ncol = Ntspan)
-    i <- sample.int(npart, 1)
+    i <- sample.int(npart, 1L)
     for (j in rev(seq_len(Ntspan))) {
-        model@U[Nc_i, j] <- U[(i - 1) * Nc + Nc_i, j, drop = FALSE]
-        model@V[Nd_i, j] <- V[(i - 1) * Nd + Nd_i, j, drop = FALSE]
+        model@U[Nc_i, j] <- U[(i - 1L) * Nc + Nc_i, j, drop = FALSE]
+        model@V[Nd_i, j] <- V[(i - 1L) * Nd + Nd_i, j, drop = FALSE]
         i <- a[i, j]
     }
 
