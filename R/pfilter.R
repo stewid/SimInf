@@ -136,6 +136,41 @@ pfilter_tspan <- function(model, data) {
     }))
 }
 
+##' Split scheduled events into the intervals in tspan.
+##'
+##' @param events The scheduled events to split.
+##' @param time_end Endpoint time in each tpsan interval.
+##' @return A list with the scheduled events to use in each interval.
+##' @noRd
+pfilter_events <- function(events, time_end) {
+    lapply(time_end, function(t_end) {
+        e <- events
+        i <- seq_len(max(which(e@time <= t_end)))
+
+        ## Extract the events.
+        e@event <- e@event[i]
+        e@time <- e@time[i]
+        e@node <- e@node[i]
+        e@dest <- e@dest[i]
+        e@n <- e@n[i]
+        e@proportion <- e@proportion[i]
+        e@select <- e@select[i]
+        e@shift <- e@shift[i]
+
+        ## Drop the extracted events.
+        events@event <<- events@event[-i]
+        events@time <<- events@time[-i]
+        events@node <<- events@node[-i]
+        events@dest <<- events@dest[-i]
+        events@n <<- events@n[-i]
+        events@proportion <<- events@proportion[-i]
+        events@select <<- events@select[-i]
+        events@shift <<- events@shift[-i]
+
+        e
+    })
+}
+
 pfilter_obs_process <- function(model, obs_process, data, npart) {
     if (is.function(obs_process))
         return(match.fun(obs_process))
