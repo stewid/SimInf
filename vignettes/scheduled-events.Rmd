@@ -86,9 +86,9 @@ select value specified for each event together with the model select
 matrix (E). Each row in E corresponds to one compartment in the model,
 and the non-zero entries in a column indicate which compartments to
 sample individuals from when processing an event. Which column to use
-for an event is determined by the event select value. In this example,
-we use the 4th column which means that all compartments can be sampled
-in each movement event (see below).
+in E for an event is determined by the event select value. In this
+example, we use the 4<sup>th</sup> column which means that all
+compartments can be sampled in each movement event (see below).
 
 ```{r}
 model@events@E
@@ -106,11 +106,16 @@ set.seed(1)
 result <- run(model)
 ```
 
-And plot the number of individuals in each node.
+And plot (Figure 2) the number of individuals in each node.
 
-```{r, fig.width=7, fig.height=4}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 2.** Number of susceptible, infected and recovered individuals in each node."}
 plot(result, range = FALSE)
 ```
+
+$~$
+
+Or use the `trajectory()` function to more easily inspect the outcome
+in each node in detail.
 
 ```{r}
 trajectory(result)
