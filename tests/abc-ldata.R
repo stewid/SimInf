@@ -131,3 +131,82 @@ plot(fit, xlim = c(0.3, 1.5), ylim = c(0.3, 1.5))
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
+
+## Check that an invalid 'n' is detected.
+sigma <- SimInf:::proposal_covariance(fit@x[[2]])
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_proposals,
+          fit@priors$parameter,
+          fit@priors$distribution,
+          fit@priors$p1,
+          fit@priors$p2,
+          0L,
+          fit@x[[2]],
+          fit@w[[2]],
+          sigma))
+check_error(res, "'n' must be an integer > 0.")
+
+## Check that an invalid 'parameter' is detected.
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_proposals,
+          3L,
+          fit@priors$distribution,
+          fit@priors$p1,
+          fit@priors$p2,
+          1L,
+          fit@x[[2]],
+          fit@w[[2]],
+          sigma))
+check_error(res, "'parameter' must be a character vector.")
+
+## Check that an invalid weight is detected.
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_proposals,
+          fit@priors$parameter,
+          fit@priors$distribution,
+          fit@priors$p1,
+          fit@priors$p2,
+          1L,
+          fit@x[[2]],
+          numeric(0),
+          sigma))
+check_error(res, "'w' must have length >= 1 when 'x' is non-null.")
+
+fit@w[[2]][2] <- -1
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_proposals,
+          fit@priors$parameter,
+          fit@priors$distribution,
+          fit@priors$p1,
+          fit@priors$p2,
+          1L,
+          fit@x[[2]],
+          fit@w[[2]],
+          sigma))
+check_error(res, "Invalid weight detected (non-finite or < 0.0).")
+
+fit@w[[2]][2] <- NaN
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_proposals,
+          fit@priors$parameter,
+          fit@priors$distribution,
+          fit@priors$p1,
+          fit@priors$p2,
+          1L,
+          fit@x[[2]],
+          fit@w[[2]],
+          sigma))
+check_error(res, "Invalid weight detected (non-finite or < 0.0).")
+
+fit@w[[2]][2] <- NA_real_
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_proposals,
+          fit@priors$parameter,
+          fit@priors$distribution,
+          fit@priors$p1,
+          fit@priors$p2,
+          1L,
+          fit@x[[2]],
+          fit@w[[2]],
+          sigma))
+check_error(res, "Invalid weight detected (non-finite or < 0.0).")
