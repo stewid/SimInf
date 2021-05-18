@@ -159,6 +159,19 @@ res <- assertError(
           sigma))
 check_error(res, "'parameter' must be a character vector.")
 
+## Check that an invalid 'distribution' is detected.
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_proposals,
+          fit@priors$parameter,
+          "a",
+          fit@priors$p1,
+          fit@priors$p2,
+          1L,
+          fit@x[[2]],
+          fit@w[[2]],
+          sigma))
+check_error(res, "Unknown distribution.")
+
 ## Check that an invalid weight is detected.
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
