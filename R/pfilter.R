@@ -196,6 +196,12 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
              call. = FALSE)
     }
 
+    if (any(as.integer(sapply(data, nrow)) > 1L)) {
+        stop("The observation process must be a function ",
+             "when data contains multiple rows for a ",
+             "time-point.", call. = FALSE)
+    }
+
     if (!is(obs_process, "formula")) {
         stop("'obs_process' must be either a formula or a function.",
              call. = FALSE)
