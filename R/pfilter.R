@@ -129,15 +129,25 @@ pfilter_data <- function(model, data) {
     })
 }
 
+##' Split tspan into intervals.
+##'
+##' @return A two-column matrix where each row specifies the tspan to
+##'     use when running the model from time[i] to time[i+1]. The
+##'     first column is \code{NA} if the interval is one time-unit.
+##' @noRd
+pfilter_tspan <- function(model, data) {
+    time <- sapply(data, function(x) {x$time[1]})
+
+    do.call("rbind", lapply(seq_len(length(time)), function(i) {
         if (i == 1) {
-            if (model@tspan[1] < data$time[1])
-                return(as.numeric(c(model@tspan[1], data$time[1])))
-            return(c(NA_real_, data$time[i]))
+            if (model@tspan[1] < time[1])
+                return(as.numeric(c(model@tspan[1], time[1])))
+            return(as.numeric(c(NA_real_, time[i])))
         }
 
-        if (diff(as.integer(data$time[c(i - 1L, i)])) > 1)
-            return(as.numeric(data$time[c(i - 1L, i)]))
-        c(NA_real_, data$time[i])
+        if (diff(as.integer(time[c(i - 1L, i)])) > 1)
+            return(as.numeric(time[c(i - 1L, i)]))
+        as.numeric(c(NA_real_, time[i]))
     }))
 }
 
