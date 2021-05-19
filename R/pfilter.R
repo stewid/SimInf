@@ -92,13 +92,12 @@ pfilter_npart <- function(npart) {
     npart
 }
 
-##' Split tspan into intervals.
+##' Split data into intervals.
 ##'
-##' @return A two-column matrix where each row specifies the tspan to
-##'     use when running the model from time[i] to time[i+1]. The
-##'     first column is \code{NA} if the interval is one time-unit.
+##' @return A list of data.frames where each list item is the data for
+##'     one interval in tspan.
 ##' @noRd
-pfilter_tspan <- function(model, data) {
+pfilter_data <- function(model, data) {
     if (!is.data.frame(data))
         data <- as.data.frame(data)
 
@@ -112,9 +111,10 @@ pfilter_tspan <- function(model, data) {
     }
 
     check_integer_arg(data$time)
+    data <- data[order(data$time), seq_len(ncol(data)), drop = FALSE]
 
     if (any(length(data$time) < 1,
-            any(diff(data$time) <= 0),
+            any(diff(unique(data$time)) <= 0),
             any(is.na(data$time)))) {
         stop("'time' column in data must be an increasing vector.",
              call. = FALSE)
@@ -123,16 +123,31 @@ pfilter_tspan <- function(model, data) {
     if (data$time[1] < model@tspan[1])
         stop("data$time[1] must be >= tspan[1].", call. = TRUE)
 
-    do.call("rbind", lapply(seq_len(length(data$time)), function(i) {
+    lapply(split(data, data$time), function(x) {
+        rownames(x) <- NULL
+        x
+    })
+}
+
+##' Split tspan into intervals.
+##'
+##' @return A two-column matrix where each row specifies the tspan to
+##'     use when running the model from time[i] to time[i+1]. The
+##'     first column is \code{NA} if the interval is one time-unit.
+##' @noRd
+pfilter_tspan <- function(model, data) {
+    time <- sapply(data, function(x) {x$time[1]})
+
+    do.call("rbind", lapply(seq_len(length(time)), function(i) {
         if (i == 1) {
-            if (model@tspan[1] < data$time[1])
-                return(as.numeric(c(model@tspan[1], data$time[1])))
-            return(c(NA_real_, data$time[i]))
+            if (model@tspan[1] < time[1])
+                return(as.numeric(c(model@tspan[1], time[1])))
+            return(as.numeric(c(NA_real_, time[i])))
         }
 
-        if (diff(as.integer(data$time[c(i - 1L, i)])) > 1)
-            return(as.numeric(data$time[c(i - 1L, i)]))
-        c(NA_real_, data$time[i])
+        if (diff(as.integer(time[c(i - 1L, i)])) > 1)
+            return(as.numeric(time[c(i - 1L, i)]))
+        as.numeric(c(NA_real_, time[i]))
     }))
 }
 
@@ -375,6 +390,7 @@ setMethod(
     signature(model = "SimInf_model"),
     function(model, obs_process, data, npart) {
         npart <- pfilter_npart(npart)
+        data <- pfilter_data(model, data)
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]
         obs_process <- pfilter_obs_process(model, obs_process, data, npart)
