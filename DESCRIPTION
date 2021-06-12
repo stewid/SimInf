@@ -80,6 +80,7 @@ Collate:
     'SimInf.R'
     'run.R'
     'abc.R'
+    'abc_support.R'
     'degree.R'
     'distance.R'
     'distributions.R'
