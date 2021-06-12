@@ -30,6 +30,7 @@ SIMINF_ABC=`"${R_SCRIPT}" tools/gsl_ran_multivariate_gaussian.R`
 echo "$SIMINF_ABC"
 if [ "x${SIMINF_ABC}" = "xyes" ]; then
     PKG_CPPFLAGS=""
+    ABC_SUPPORT="TRUE"
 else
     echo ""
     echo "  ---------------------------------------------"
@@ -52,9 +53,13 @@ else
     echo ""
 
     PKG_CPPFLAGS="-DSIMINF_NO_ABC"
+    ABC_SUPPORT="FALSE"
 fi
 
-# Generate Makevars.win from Makevars.win.in
+# Generate src/Makevars.win from src/Makevars.win.in
 sed -e "s/@PKG_CPPFLAGS@/$PKG_CPPFLAGS/" < src/Makevars.win.in > src/Makevars.win
+
+# Generate R/abc_support.R from R/abc_support.R.in
+sed -e "s/@ABC_SUPPORT@/$ABC_SUPPORT/" < R/abc_support.R.in > R/abc_support.R
 
 exit 0

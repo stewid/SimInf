@@ -134,6 +134,9 @@ if test "x${have_gsl_ran_multivariate_gaussian}" = xno; then AC_MSG_WARN([
   ---------------------------------------------])
 
   CPPFLAGS="${CPPFLAGS} -DSIMINF_NO_ABC"
+  ABC_SUPPORT="FALSE"
+else
+  ABC_SUPPORT="TRUE"
 fi
 
 # List all model files to compile
@@ -143,8 +146,9 @@ AC_SUBST([PKG_CPPFLAGS], ["-I. -I../inst/include ${CPPFLAGS} ${GSL_CFLAGS} -DR_N
 AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"])
 AC_SUBST(MODELS_OBJ)
+AC_SUBST(ABC_SUPPORT)
 
-AC_CONFIG_FILES([src/Makevars])
+AC_CONFIG_FILES([R/abc_support.R src/Makevars])
 
 echo "
   ---- Results for the SimInf package configure ----

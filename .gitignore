@@ -3,6 +3,7 @@
 *.dll
 *.Rproj
 /src/Makevars
+/src/Makevars.win
 /config.log
 /config.status
 autom4te.cache*
