@@ -196,6 +196,12 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
              call. = FALSE)
     }
 
+    if (any(as.integer(sapply(data, nrow)) > 1L)) {
+        stop("The observation process must be a function ",
+             "when data contains multiple rows for a ",
+             "time-point.", call. = FALSE)
+    }
+
     if (!is(obs_process, "formula")) {
         stop("'obs_process' must be either a formula or a function.",
              call. = FALSE)
@@ -205,9 +211,10 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
 
     ## Match the parameter on the lhs of the observation process to a
     ## column in the data data.frame.
-    par_i <- match(obs_process$parameter, colnames(data))
-    par <- colnames(data)[par_i]
-    if (!isTRUE(par %in% colnames(data))) {
+    data_columns <- colnames(data[[1]])
+    par_i <- match(obs_process$parameter, data_columns)
+    par <- data_columns[par_i]
+    if (!isTRUE(par %in% data_columns)) {
         stop("Unable to match the parameter on the lhs to a column in 'data'.",
              call. = FALSE)
     }
@@ -290,11 +297,11 @@ pfilter_single_node <- function(model, obs, data, npart, tspan) {
 
         ## Weighting
         if (is.function(obs)) {
-            w <- obs(x, data[i, , drop = FALSE])
+            w <- obs(x, data[[i]])
         } else {
             e <- new.env(parent = baseenv())
 
-            assign(x = obs$par, value = data[i, obs$par_i], pos = e)
+            assign(x = obs$par, value = data[[i]][, obs$par_i], pos = e)
 
             for (j in seq_len(length(obs$slots))) {
                 assign(
