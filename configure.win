@@ -1,0 +1,60 @@
+#!/bin/sh
+
+R_SCRIPT="${R_HOME}/bin${R_ARCH_BIN}/Rscript"
+
+# Check for the GSL library
+printf "checking whether the gsl library is available... "
+SIMINF_GSL=`"${R_SCRIPT}" tools/gsl.R`
+printf "%s\n" "$SIMINF_GSL"
+if [ "x${SIMINF_GSL}" != "xyes" ]; then
+    printf "\n"
+    printf "  ---------------------------------------------\n"
+    printf "   The GNU Scientific Library (GSL) that is\n"
+    printf "   required to build SimInf was not found.\n"
+    printf "   GSL is an external system library that can\n"
+    printf "   be installed using the package manager\n"
+    printf "   pacman included in Rtools40, see\n"
+    printf "   https://github.com/r-windows/docs/blob/master/rtools40.md#readme\n"
+    printf "\n"
+    printf "   Open the Rtools bash shell and run the\n"
+    printf "   following pacman command to install gsl:\n"
+    printf "     pacman -S mingw-w64-{i686,x86_64}-gsl\n"
+    printf "   and try again.\n"
+    printf "  ---------------------------------------------\n"
+    exit 1
+fi
+
+# We need GSL version >= 2.2 to build SimInf with support for ABC.
+printf "checking whether gsl_ran_multivariate_gaussian is available... "
+SIMINF_ABC=`"${R_SCRIPT}" tools/gsl_ran_multivariate_gaussian.R`
+printf "%s\n" "$SIMINF_ABC"
+if [ "x${SIMINF_ABC}" = "xyes" ]; then
+    PKG_CPPFLAGS=""
+else
+    printf "\n"
+    printf "  ---------------------------------------------\n"
+    printf "   The installed version of the GNU Scientific\n"
+    printf "   Library (GSL) that is required to build\n"
+    printf "   SimInf with support for ABC is to old.\n"
+    printf "\n"
+    printf "   GSL is an external system library that can\n"
+    printf "   be installed using the package manager\n"
+    printf "   pacman included in Rtools40, see\n"
+    printf "   https://github.com/r-windows/docs/blob/master/rtools40.md#readme\n"
+    printf "\n"
+    printf "   To install GSL version >= 2.2, open the\n"
+    printf "   Rtools bash shell and run the following\n"
+    printf "   pacman command to install gsl:\n"
+    printf "     pacman -S mingw-w64-{i686,x86_64}-gsl\n"
+    printf "   and try again if you need to build SimInf\n"
+    printf "   with support for ABC.\n"
+    printf "  ---------------------------------------------\n"
+    printf "\n"
+
+    PKG_CPPFLAGS="-DSIMINF_NO_ABC"
+fi
+
+# Generate Makevars.win from Makevars.win.in
+sed -e "s/@PKG_CPPFLAGS@/$PKG_CPPFLAGS/" < src/Makevars.win.in > src/Makevars.win
+
+exit 0
