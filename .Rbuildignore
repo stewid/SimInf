@@ -27,3 +27,5 @@ src/gsl
 ^vignettes/img/[^.]+\.tex$
 ^vignettes/img/SIR.pdf$
 ^vignettes/img/SISe3_sp.pdf$
+^vignettes/mparse.Rmd$
+^vignettes/post-process-data.Rmd$
