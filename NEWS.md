@@ -1,5 +1,13 @@
 # SimInf (development version)
 
+## CHANGES OR IMPROVEMENTS
+
+* Changed the R dependency to R(>= 4.0).
+
+* Refactoring of the build configuration script on Windows to work
+  with the new rtools40 toolchain that is used with R 4.0.0 (released
+  April 2020).
+
 # SimInf 8.2.0 (2020-12-06)
 
 ## IMPROVEMENTS
