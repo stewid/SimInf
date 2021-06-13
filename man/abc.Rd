@@ -2,9 +2,12 @@
 % Please edit documentation in R/abc.R
 \name{abc}
 \alias{abc}
+\alias{abc,SimInf_model-method}
 \title{Approximate Bayesian computation}
 \usage{
 abc(model, priors, ngen, npart, fn, ..., verbose = getOption("verbose", FALSE))
+
+\S4method{abc}{SimInf_model}(model, priors, ngen, npart, fn, ..., verbose = getOption("verbose", FALSE))
 }
 \arguments{
 \item{model}{The model to generate data from.}

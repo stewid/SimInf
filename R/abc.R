@@ -418,26 +418,39 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##' @export
 ##' @importFrom stats cov
 ##' @example man/examples/abc.R
-abc <- function(model, priors, ngen, npart, fn, ...,
-                verbose = getOption("verbose", FALSE)) {
-    check_model_argument(model)
-    check_integer_arg(npart)
-    npart <- as.integer(npart)
-    if (length(npart) != 1L || npart <= 1L)
-        stop("'npart' must be an integer > 1.", call. = FALSE)
+setGeneric(
+    "abc",
+    signature = "model",
+    function(model, priors, ngen, npart, fn, ...,
+             verbose = getOption("verbose", FALSE)) {
+        standardGeneric("abc")
+    }
+)
 
-    ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
-    priors <- parse_priors(priors)
-    pars <- match_priors(model, priors)
+##' @rdname abc
+##' @export
+setMethod(
+    "abc",
+    signature(model = "SimInf_model"),
+    function(model, priors, ngen, npart, fn, ..., verbose) {
+        check_integer_arg(npart)
+        npart <- as.integer(npart)
+        if (length(npart) != 1L || npart <= 1L)
+            stop("'npart' must be an integer > 1.", call. = FALSE)
 
-    object <- new("SimInf_abc", model = model, priors = priors,
-                  target = pars$target, pars = pars$pars, npart = npart,
-                  nprop = integer(), fn = fn, x = list(),
-                  epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
-                  w = list(), ess = numeric())
+        ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
+        priors <- parse_priors(priors)
+        pars <- match_priors(model, priors)
 
-    continue(object, ngen = ngen, verbose = verbose, ...)
-}
+        object <- new("SimInf_abc", model = model, priors = priors,
+                      target = pars$target, pars = pars$pars, npart = npart,
+                      nprop = integer(), fn = fn, x = list(),
+                      epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
+                      w = list(), ess = numeric())
+
+        continue(object, ngen = ngen, verbose = verbose, ...)
+    }
+)
 
 ##' Run more generations of ABC SMC
 ##'
