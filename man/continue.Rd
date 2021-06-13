@@ -2,9 +2,12 @@
 % Please edit documentation in R/abc.R
 \name{continue}
 \alias{continue}
+\alias{continue,SimInf_abc-method}
 \title{Run more generations of ABC SMC}
 \usage{
 continue(object, ngen = 1, ..., verbose = getOption("verbose", FALSE))
+
+\S4method{continue}{SimInf_abc}(object, ngen = 1, ..., verbose = getOption("verbose", FALSE))
 }
 \arguments{
 \item{object}{The \code{SimInf_abc} to continue from.}

@@ -448,7 +448,7 @@ setMethod(
                       epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
                       w = list(), ess = numeric())
 
-        continue(object, ngen = ngen, verbose = verbose, ...)
+        continue(object, ngen = ngen, ..., verbose = verbose)
     }
 )
 
@@ -461,53 +461,69 @@ setMethod(
 ##' @template verbose-param
 ##' @return A \code{SimInf_abc} object.
 ##' @export
-continue <- function(object, ngen = 1, ...,
-                     verbose = getOption("verbose", FALSE)) {
-    stopifnot(inherits(object, "SimInf_abc"))
-    check_integer_arg(ngen)
-    ngen <- as.integer(ngen)
-    if (length(ngen) != 1L || ngen < 1L)
-        stop("'ngen' must be an integer >= 1.", call. = FALSE)
-
-    abc_fn <- switch(object@target,
-                     "gdata" = abc_gdata,
-                     "ldata" = abc_ldata,
-                     stop("Unknown target: ", object@target,
-                          call. = FALSE))
-
-    ## Setup a population of particles (x), weights (w) and epsilon.
-    x <- NULL
-    if (length(object@x))
-        x <- object@x[[length(object@x)]]
-    w <- NULL
-    if (length(object@w))
-        w <- object@w[[length(object@w)]]
-    epsilon <- NULL
-    if (ncol(object@epsilon))
-        epsilon <- object@epsilon[, ncol(object@epsilon)]
-
-    ## Append new generations to object
-    generations <- seq(length(object@x) + 1, length(object@x) + ngen)
-    for (generation in generations) {
-        tmp <- abc_fn(object@model, object@pars, object@priors,
-                      object@npart, object@fn, generation,
-                      epsilon, x, w, verbose, ...)
-
-        ## Move the population of particles to the next generation.
-        x <- tmp$x
-        object@x[[length(object@x) + 1]] <- x
-        w <- tmp$w
-        object@w[[length(object@w) + 1]] <- w
-        epsilon <- tmp$epsilon
-        if (ncol(object@epsilon) == 0)
-            dim(object@epsilon) <- c(length(tmp$epsilon), 0)
-        object@epsilon <- cbind(object@epsilon, epsilon)
-        object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
-        object@nprop[length(object@nprop) + 1] <- tmp$nprop
+setGeneric(
+    "continue",
+    signature = "object",
+    function(object, ngen = 1, ...,
+             verbose = getOption("verbose", FALSE)) {
+        standardGeneric("continue")
     }
+)
 
-    object
-}
+##' @rdname continue
+##' @export
+setMethod(
+    "continue",
+    signature(object = "SimInf_abc"),
+    function(object, ngen = 1, ...,
+             verbose = getOption("verbose", FALSE)) {
+        check_integer_arg(ngen)
+        ngen <- as.integer(ngen)
+        if (length(ngen) != 1L || ngen < 1L)
+            stop("'ngen' must be an integer >= 1.", call. = FALSE)
+
+        abc_fn <- switch(object@target,
+                         "gdata" = abc_gdata,
+                         "ldata" = abc_ldata,
+                         stop("Unknown target: ", object@target,
+                              call. = FALSE))
+
+        ## Setup a population of particles (x), weights (w) and
+        ## epsilon.
+        x <- NULL
+        if (length(object@x))
+            x <- object@x[[length(object@x)]]
+        w <- NULL
+        if (length(object@w))
+            w <- object@w[[length(object@w)]]
+        epsilon <- NULL
+        if (ncol(object@epsilon))
+            epsilon <- object@epsilon[, ncol(object@epsilon)]
+
+        ## Append new generations to object
+        generations <- seq(length(object@x) + 1, length(object@x) + ngen)
+        for (generation in generations) {
+            tmp <- abc_fn(object@model, object@pars, object@priors,
+                          object@npart, object@fn, generation,
+                          epsilon, x, w, verbose, ...)
+
+            ## Move the population of particles to the next
+            ## generation.
+            x <- tmp$x
+            object@x[[length(object@x) + 1]] <- x
+            w <- tmp$w
+            object@w[[length(object@w) + 1]] <- w
+            epsilon <- tmp$epsilon
+            if (ncol(object@epsilon) == 0)
+                dim(object@epsilon) <- c(length(tmp$epsilon), 0)
+            object@epsilon <- cbind(object@epsilon, epsilon)
+            object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
+            object@nprop[length(object@nprop) + 1] <- tmp$nprop
+        }
+
+        object
+    }
+)
 
 ##' @rdname run
 ##' @include run.R
