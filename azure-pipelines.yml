@@ -2,54 +2,6 @@ trigger:
 - main
 
 jobs:
-- job: ubuntu_R_3_3
-  displayName: "Linux, R-3.3"
-  pool:
-    vmImage: "Ubuntu-18.04"
-  steps:
-  - template: azure-pipelines/ubuntu-install-R-3_3.yml
-  - template: azure-pipelines/customize-R-startup.yml
-  - template: azure-pipelines/R-sessioninfo.yml
-  - template: azure-pipelines/ubuntu-install-dependencies.yml
-  - template: azure-pipelines/build-package.yml
-  - template: azure-pipelines/check-package.yml
-
-- job: ubuntu_R_3_4
-  displayName: "Linux, R-3.4"
-  pool:
-    vmImage: "Ubuntu-18.04"
-  steps:
-  - template: azure-pipelines/ubuntu-install-R-3_4.yml
-  - template: azure-pipelines/customize-R-startup.yml
-  - template: azure-pipelines/R-sessioninfo.yml
-  - template: azure-pipelines/ubuntu-install-dependencies.yml
-  - template: azure-pipelines/build-package.yml
-  - template: azure-pipelines/check-package.yml
-
-- job: ubuntu_R_3_5
-  displayName: "Linux, R-3.5"
-  pool:
-    vmImage: "Ubuntu-18.04"
-  steps:
-  - template: azure-pipelines/ubuntu-install-R-3_5.yml
-  - template: azure-pipelines/customize-R-startup.yml
-  - template: azure-pipelines/R-sessioninfo.yml
-  - template: azure-pipelines/ubuntu-install-dependencies.yml
-  - template: azure-pipelines/build-package.yml
-  - template: azure-pipelines/check-package.yml
-
-- job: ubuntu_R_3_6
-  displayName: "Linux, R-3.6"
-  pool:
-    vmImage: "Ubuntu-18.04"
-  steps:
-  - template: azure-pipelines/ubuntu-install-R-3_6.yml
-  - template: azure-pipelines/customize-R-startup.yml
-  - template: azure-pipelines/R-sessioninfo.yml
-  - template: azure-pipelines/ubuntu-install-dependencies.yml
-  - template: azure-pipelines/build-package.yml
-  - template: azure-pipelines/check-package.yml
-
 - job: ubuntu_R_4_0
   displayName: "Linux, R-release"
   pool:
@@ -73,29 +25,3 @@ jobs:
     inputs:
       codeCoverageTool: 'Cobertura'
       summaryFileLocation: 'coverage.xml'
-
-# - job: macosx_R_release
-#   displayName: "Mac OS X, R-release"
-#   pool:
-#     vmImage: "macOS-latest"
-#   steps:
-#   - template: azure-pipelines/macos-install-R-release.yml
-#   - template: azure-pipelines/macos-customize-R-startup.yml
-#   - template: azure-pipelines/R-sessioninfo.yml
-#   - template: azure-pipelines/macos-install-dependencies.yml
-#   - template: azure-pipelines/build-package.yml
-#   - template: azure-pipelines/check-package.yml
-#   - template: azure-pipelines/output-log.yml
-
-# - job: macosx_R_devel
-#   displayName: "Mac OS X, R-devel"
-#   pool:
-#     vmImage: "macOS-latest"
-#   steps:
-#   - template: azure-pipelines/macos-install-R-devel.yml
-#   - template: azure-pipelines/macos-customize-R-startup.yml
-#   - template: azure-pipelines/R-sessioninfo.yml
-#   - template: azure-pipelines/macos-install-dependencies.yml
-#   - template: azure-pipelines/build-package.yml
-#   - template: azure-pipelines/check-package.yml
-#   - template: azure-pipelines/output-log.yml
