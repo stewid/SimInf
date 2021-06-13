@@ -8,6 +8,13 @@
   with the new rtools40 toolchain that is used with R 4.0.0 (released
   April 2020).
 
+* Added functionality to fit models to time series data using the
+  Approximate Bayesian Computation Sequential Monte Carlo ('ABC-SMC')
+  algorithm of Toni and others (2009) <doi:10.1098/rsif.2008.0172>.
+
+* Added a vignette about scheduled events. This vignette is
+  work-in-progress and not yet complete.
+
 # SimInf 8.2.0 (2020-12-06)
 
 ## IMPROVEMENTS
