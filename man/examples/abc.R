@@ -53,8 +53,13 @@ fit <- abc(model = model,
            tol = 5000,
            ptol = 0.9)
 
+## Print a brief summary.
+fit
+
+## Display the ABC posterior distribution.
 plot(fit)
 
+## Run one more generation.
 fit <- continue(fit, tol = 5000, ptol = 0.9)
 
 plot(fit)

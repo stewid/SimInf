@@ -392,14 +392,23 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##' @template priors-param
 ##' @param ngen The number of generations of ABC-SMC to run.
 ##' @param npart An integer specifying the number of particles.
-##' @param fn A function for calculating the summary statistics for
-##'     the simulated trajectory and determine for each particle if it
-##'     should be accepted (\code{TRUE}) or rejected (\code{FALSE}).
-##'     The first argument in \code{fn} is the simulated model
-##'     containing one trajectory.  The second argument to \code{fn}
-##'     is an integer with the \code{generation} of the particles.
-##'     The function should return a logical vector with one value for
-##'     each particle in the simulated model.
+##' @param fn A function for calculating the summary statistics for a
+##'     simulated trajectory and determine for each particle if it
+##'     should be accepted (\code{TRUE}) or rejected (\code{FALSE})
+##'     using the \code{\link{abc_accept}} function.  The first
+##'     argument passed to the \code{fn} function is the result from a
+##'     \code{run} of the model and it contains one trajectory.  The
+##'     second argument to \code{fn} is an integer with the
+##'     \code{generation} of the particle(s). Depending on the
+##'     underlying model structure, data for one or more particles
+##'     have been generated in each call to \code{fn}. If the
+##'     \code{model} only contains one node and all parameters to fit
+##'     are in \code{ldata}, then that node will be replicated and
+##'     each of the replicated nodes represent one particle in the
+##'     trajectory (see \sQuote{Examples}). On the other hand if the
+##'     model contains multiple nodes or any of the parameters to fit
+##'     are contained in \code{gdata}, then the trajectory in the
+##'     \code{result} argument represents one particle.
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
 ##' @return A \code{SimInf_abc} object.
