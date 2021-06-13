@@ -2,33 +2,48 @@
 % Please edit documentation in R/abc.R
 \name{abc}
 \alias{abc}
+\alias{abc,SimInf_model-method}
 \title{Approximate Bayesian computation}
 \usage{
 abc(model, priors, ngen, npart, fn, ..., verbose = getOption("verbose", FALSE))
+
+\S4method{abc}{SimInf_model}(model, priors, ngen, npart, fn, ..., verbose = getOption("verbose", FALSE))
 }
 \arguments{
 \item{model}{The model to generate data from.}
 
 \item{priors}{The priors for the parameters to fit. Each prior is
 specified with a formula notation, for example, \code{beta ~
-uniform(0, 1)} to specify that beta is uniformly distributed
+uniform(0, 1)} specifies that beta is uniformly distributed
 between 0 and 1. Use \code{c()} to provide more than one
 prior, for example, \code{c(beta ~ uniform(0, 1), gamma ~
 normal(10, 1)}. The following distributions are supported:
-\code{gamma}, \code{normal} and \code{uniform}.}
+\code{gamma}, \code{normal} and \code{uniform}. All parameters
+in \code{priors} must be either in \code{gdata} or
+\code{ldata}.}
 
 \item{ngen}{The number of generations of ABC-SMC to run.}
 
 \item{npart}{An integer specifying the number of particles.}
 
-\item{fn}{A function for calculating the summary statistics for
-the simulated trajectory and determine for each particle if it
-should be accepted (\code{TRUE}) or rejected (\code{FALSE}).
-The first argument in \code{fn} is the simulated model
-containing one trajectory.  The second argument to \code{fn}
-is an integer with the \code{generation} of the particles.
-The function should return a logical vector with one value for
-each particle in the simulated model.}
+\item{fn}{A function for calculating the summary statistics for a
+simulated trajectory. For each particle, the function must
+determine if the particle should be accepted (\code{TRUE}) or
+rejected (\code{FALSE}) and return that information using the
+\code{\link{abc_accept}} function. The first argument passed
+to the \code{fn} function is the result from a \code{run} of
+the model and it contains one trajectory. The second argument
+to \code{fn} is an integer with the \code{generation} of the
+particle(s). Depending on the underlying model structure, data
+for one or more particles have been generated in each call to
+\code{fn}. If the \code{model} only contains one node and all
+parameters to fit are in \code{ldata}, then that node will be
+replicated and each of the replicated nodes represent one
+particle in the trajectory (see \sQuote{Examples}). On the
+other hand if the model contains multiple nodes or the
+parameters to fit are contained in \code{gdata}, then the
+trajectory in the \code{result} argument represents one
+particle.}
 
 \item{...}{Further arguments to be passed to \code{fn}.}
 
@@ -98,8 +113,13 @@ fit <- abc(model = model,
            tol = 5000,
            ptol = 0.9)
 
+## Print a brief summary.
+fit
+
+## Display the ABC posterior distribution.
 plot(fit)
 
+## Run one more generation.
 fit <- continue(fit, tol = 5000, ptol = 0.9)
 
 plot(fit)

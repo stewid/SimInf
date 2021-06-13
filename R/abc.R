@@ -392,14 +392,24 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##' @template priors-param
 ##' @param ngen The number of generations of ABC-SMC to run.
 ##' @param npart An integer specifying the number of particles.
-##' @param fn A function for calculating the summary statistics for
-##'     the simulated trajectory and determine for each particle if it
-##'     should be accepted (\code{TRUE}) or rejected (\code{FALSE}).
-##'     The first argument in \code{fn} is the simulated model
-##'     containing one trajectory.  The second argument to \code{fn}
-##'     is an integer with the \code{generation} of the particles.
-##'     The function should return a logical vector with one value for
-##'     each particle in the simulated model.
+##' @param fn A function for calculating the summary statistics for a
+##'     simulated trajectory. For each particle, the function must
+##'     determine if the particle should be accepted (\code{TRUE}) or
+##'     rejected (\code{FALSE}) and return that information using the
+##'     \code{\link{abc_accept}} function. The first argument passed
+##'     to the \code{fn} function is the result from a \code{run} of
+##'     the model and it contains one trajectory. The second argument
+##'     to \code{fn} is an integer with the \code{generation} of the
+##'     particle(s). Depending on the underlying model structure, data
+##'     for one or more particles have been generated in each call to
+##'     \code{fn}. If the \code{model} only contains one node and all
+##'     parameters to fit are in \code{ldata}, then that node will be
+##'     replicated and each of the replicated nodes represent one
+##'     particle in the trajectory (see \sQuote{Examples}). On the
+##'     other hand if the model contains multiple nodes or the
+##'     parameters to fit are contained in \code{gdata}, then the
+##'     trajectory in the \code{result} argument represents one
+##'     particle.
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
 ##' @return A \code{SimInf_abc} object.
@@ -409,26 +419,39 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##' @export
 ##' @importFrom stats cov
 ##' @example man/examples/abc.R
-abc <- function(model, priors, ngen, npart, fn, ...,
-                verbose = getOption("verbose", FALSE)) {
-    check_model_argument(model)
-    check_integer_arg(npart)
-    npart <- as.integer(npart)
-    if (length(npart) != 1L || npart <= 1L)
-        stop("'npart' must be an integer > 1.", call. = FALSE)
+setGeneric(
+    "abc",
+    signature = "model",
+    function(model, priors, ngen, npart, fn, ...,
+             verbose = getOption("verbose", FALSE)) {
+        standardGeneric("abc")
+    }
+)
 
-    ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
-    priors <- parse_priors(priors)
-    pars <- match_priors(model, priors)
+##' @rdname abc
+##' @export
+setMethod(
+    "abc",
+    signature(model = "SimInf_model"),
+    function(model, priors, ngen, npart, fn, ..., verbose) {
+        check_integer_arg(npart)
+        npart <- as.integer(npart)
+        if (length(npart) != 1L || npart <= 1L)
+            stop("'npart' must be an integer > 1.", call. = FALSE)
 
-    object <- new("SimInf_abc", model = model, priors = priors,
-                  target = pars$target, pars = pars$pars, npart = npart,
-                  nprop = integer(), fn = fn, x = list(),
-                  epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
-                  w = list(), ess = numeric())
+        ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
+        priors <- parse_priors(priors)
+        pars <- match_priors(model, priors)
 
-    continue(object, ngen = ngen, verbose = verbose, ...)
-}
+        object <- new("SimInf_abc", model = model, priors = priors,
+                      target = pars$target, pars = pars$pars, npart = npart,
+                      nprop = integer(), fn = fn, x = list(),
+                      epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
+                      w = list(), ess = numeric())
+
+        continue(object, ngen = ngen, ..., verbose = verbose)
+    }
+)
 
 ##' Run more generations of ABC SMC
 ##'
@@ -439,53 +462,69 @@ abc <- function(model, priors, ngen, npart, fn, ...,
 ##' @template verbose-param
 ##' @return A \code{SimInf_abc} object.
 ##' @export
-continue <- function(object, ngen = 1, ...,
-                     verbose = getOption("verbose", FALSE)) {
-    stopifnot(inherits(object, "SimInf_abc"))
-    check_integer_arg(ngen)
-    ngen <- as.integer(ngen)
-    if (length(ngen) != 1L || ngen < 1L)
-        stop("'ngen' must be an integer >= 1.", call. = FALSE)
-
-    abc_fn <- switch(object@target,
-                     "gdata" = abc_gdata,
-                     "ldata" = abc_ldata,
-                     stop("Unknown target: ", object@target,
-                          call. = FALSE))
-
-    ## Setup a population of particles (x), weights (w) and epsilon.
-    x <- NULL
-    if (length(object@x))
-        x <- object@x[[length(object@x)]]
-    w <- NULL
-    if (length(object@w))
-        w <- object@w[[length(object@w)]]
-    epsilon <- NULL
-    if (ncol(object@epsilon))
-        epsilon <- object@epsilon[, ncol(object@epsilon)]
-
-    ## Append new generations to object
-    generations <- seq(length(object@x) + 1, length(object@x) + ngen)
-    for (generation in generations) {
-        tmp <- abc_fn(object@model, object@pars, object@priors,
-                      object@npart, object@fn, generation,
-                      epsilon, x, w, verbose, ...)
-
-        ## Move the population of particles to the next generation.
-        x <- tmp$x
-        object@x[[length(object@x) + 1]] <- x
-        w <- tmp$w
-        object@w[[length(object@w) + 1]] <- w
-        epsilon <- tmp$epsilon
-        if (ncol(object@epsilon) == 0)
-            dim(object@epsilon) <- c(length(tmp$epsilon), 0)
-        object@epsilon <- cbind(object@epsilon, epsilon)
-        object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
-        object@nprop[length(object@nprop) + 1] <- tmp$nprop
+setGeneric(
+    "continue",
+    signature = "object",
+    function(object, ngen = 1, ...,
+             verbose = getOption("verbose", FALSE)) {
+        standardGeneric("continue")
     }
+)
 
-    object
-}
+##' @rdname continue
+##' @export
+setMethod(
+    "continue",
+    signature(object = "SimInf_abc"),
+    function(object, ngen = 1, ...,
+             verbose = getOption("verbose", FALSE)) {
+        check_integer_arg(ngen)
+        ngen <- as.integer(ngen)
+        if (length(ngen) != 1L || ngen < 1L)
+            stop("'ngen' must be an integer >= 1.", call. = FALSE)
+
+        abc_fn <- switch(object@target,
+                         "gdata" = abc_gdata,
+                         "ldata" = abc_ldata,
+                         stop("Unknown target: ", object@target,
+                              call. = FALSE))
+
+        ## Setup a population of particles (x), weights (w) and
+        ## epsilon.
+        x <- NULL
+        if (length(object@x))
+            x <- object@x[[length(object@x)]]
+        w <- NULL
+        if (length(object@w))
+            w <- object@w[[length(object@w)]]
+        epsilon <- NULL
+        if (ncol(object@epsilon))
+            epsilon <- object@epsilon[, ncol(object@epsilon)]
+
+        ## Append new generations to object
+        generations <- seq(length(object@x) + 1, length(object@x) + ngen)
+        for (generation in generations) {
+            tmp <- abc_fn(object@model, object@pars, object@priors,
+                          object@npart, object@fn, generation,
+                          epsilon, x, w, verbose, ...)
+
+            ## Move the population of particles to the next
+            ## generation.
+            x <- tmp$x
+            object@x[[length(object@x) + 1]] <- x
+            w <- tmp$w
+            object@w[[length(object@w) + 1]] <- w
+            epsilon <- tmp$epsilon
+            if (ncol(object@epsilon) == 0)
+                dim(object@epsilon) <- c(length(tmp$epsilon), 0)
+            object@epsilon <- cbind(object@epsilon, epsilon)
+            object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
+            object@nprop[length(object@nprop) + 1] <- tmp$nprop
+        }
+
+        object
+    }
+)
 
 ##' @rdname run
 ##' @include run.R

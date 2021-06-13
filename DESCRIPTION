@@ -50,8 +50,7 @@ LazyData: true
 Biarch: true
 NeedsCompilation: yes
 SystemRequirements: GNU Scientific Library (GSL)
-Depends:
-    R(>= 3.3)
+Depends: R(>= 4.0)
 Imports:
     digest,
     graphics,
