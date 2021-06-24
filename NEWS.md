@@ -4,9 +4,7 @@
 
 * Changed the R dependency to R(>= 4.0).
 
-* Refactoring of the build configuration script on Windows to work
-  with the new rtools40 toolchain that is used with R 4.0.0 (released
-  April 2020).
+* Refactoring of the build configuration script on Windows.
 
 * Added functionality to fit models to time series data using the
   Approximate Bayesian Computation Sequential Monte Carlo ('ABC-SMC')
