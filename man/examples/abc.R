@@ -1,4 +1,3 @@
-\dontrun{
 ## Let us consider an SIR model in a closed population with N = 100
 ## individuals of whom one is initially infectious and the rest are
 ## susceptible. First, generate one realisation (with a specified
@@ -63,4 +62,3 @@ plot(fit)
 fit <- continue(fit, tol = 5000, ptol = 0.9)
 
 plot(fit)
-}
