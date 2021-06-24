@@ -587,6 +587,7 @@ PACKAGE_URL=''
 ac_unique_file="src/SimInf.c"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+ABC_SUPPORT
 MODELS_OBJ
 PKG_LIBS
 PKG_CFLAGS
@@ -2974,6 +2975,9 @@ $as_echo "$as_me: WARNING:
   ---------------------------------------------" >&2;}
 
   CPPFLAGS="${CPPFLAGS} -DSIMINF_NO_ABC"
+  ABC_SUPPORT="FALSE"
+else
+  ABC_SUPPORT="TRUE"
 fi
 
 # List all model files to compile
@@ -2987,7 +2991,8 @@ PKG_LIBS="${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"
 
 
 
-ac_config_files="$ac_config_files src/Makevars"
+
+ac_config_files="$ac_config_files R/abc_support.R src/Makevars"
 
 
 echo "
@@ -3706,6 +3711,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
+    "R/abc_support.R") CONFIG_FILES="$CONFIG_FILES R/abc_support.R" ;;
     "src/Makevars") CONFIG_FILES="$CONFIG_FILES src/Makevars" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
