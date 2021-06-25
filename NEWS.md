@@ -1,16 +1,15 @@
-# SimInf (development version)
+# SimInf 8.3.0 (2021-06-24)
 
 ## CHANGES OR IMPROVEMENTS
 
 * Changed the R dependency to R(>= 4.0).
 
-* Refactoring of the build configuration script on Windows to work
-  with the new rtools40 toolchain that is used with R 4.0.0 (released
-  April 2020).
+* Refactoring of the build configuration script on Windows.
 
 * Added functionality to fit models to time series data using the
   Approximate Bayesian Computation Sequential Monte Carlo ('ABC-SMC')
-  algorithm of Toni and others (2009) <doi:10.1098/rsif.2008.0172>.
+  algorithm of Toni and others (2009) [doi:
+  10.1098/rsif.2008.0172](https://doi.org/10.1098/rsif.2008.0172).
 
 * Added a vignette about scheduled events. This vignette is
   work-in-progress and not yet complete.
