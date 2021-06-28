@@ -1,6 +1,10 @@
 # SimInf (development version)
 
-## CHANGES OR IMPROVEMENTS
+## CHANGES
+
+* Updated the build configuration script ('src/Makevars.ucrt') for
+  Windows UCRT to fix the installation failure on CRAN introduced in
+  version 8.3.0.
 
 # SimInf 8.3.0 (2021-06-24)
 
