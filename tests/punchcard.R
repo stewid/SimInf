@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
-set_num_threads(1)
+max_threads <- set_num_threads(1)
 
 ## For debugging
 sessionInfo()
@@ -64,7 +64,7 @@ set.seed(123)
 U_obs <- trajectory(run(model), format = "matrix")
 stopifnot(identical(U_obs, U_exp))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     U_exp_omp <- new("dgCMatrix",
                      i = 0:17,
                      p = c(0L, 0L, 0L, 0L, 0L, 3L, 6L, 9L, 12L, 15L, 18L),
