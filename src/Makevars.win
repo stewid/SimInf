@@ -1,6 +1,6 @@
-PKG_CPPFLAGS = -I. -I../inst/include -DR_NO_REMAP -DSTRICT_R_HEADERS
+PKG_CPPFLAGS = -I../windows/gsl-2.7/include -I. -I../inst/include -DR_NO_REMAP -DSTRICT_R_HEADERS
 PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS)
-PKG_LIBS = -lm -lgsl -lgslcblas $(SHLIB_OPENMP_CFLAGS)
+PKG_LIBS = -I../windows/gsl-2.7/include -lm -lgsl -lgslcblas $(SHLIB_OPENMP_CFLAGS)
 
 # List all model files to compile
 MODELS_SRC = $(wildcard models/*.c)
@@ -21,9 +21,12 @@ OBJECTS.solvers = solvers/SimInf_solver.o \
 
 OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)
 
-all: clean
+all: clean winlibs
+
+winlibs:
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R"
 
 clean:
 	rm -f $(SHLIB) $(OBJECTS)
 
-.PHONY: all clean
+.PHONY: all winlibs clean
