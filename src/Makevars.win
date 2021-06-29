@@ -21,7 +21,7 @@ OBJECTS.solvers = solvers/SimInf_solver.o \
 
 OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)
 
-all: clean winlibs
+all: clean
 
 clean:
 	rm -f $(SHLIB) $(OBJECTS)
