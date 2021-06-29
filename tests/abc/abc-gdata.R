@@ -64,6 +64,3 @@ fit <- abc(model = model,
            ptol = 0.5)
 fit
 summary(fit)
-
-## Test that PKG_CPPFLAGS is unset.
-stopifnot(isTRUE(is.na(Sys.getenv("PKG_CPPFLAGS", unset = NA))))
