@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
-set_num_threads(1)
+max_threads <- set_num_threads(1)
 
 ## For debugging
 sessionInfo()
@@ -79,7 +79,7 @@ model <- SISe3(u0        = u0,
 res <- assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     res <- assertError(run(model))
     set_num_threads(1)
@@ -134,7 +134,7 @@ model <- SISe3(u0        = u0,
 res <- assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     res <- assertError(run(model))
     set_num_threads(1)
@@ -219,7 +219,7 @@ model@events@proportion <- 10
 res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
 check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
     set_num_threads(1)
@@ -304,7 +304,7 @@ model@events@proportion <- -1
 res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
 check_error(res, "Invalid proportion detected (< 0.0 or > 1.0).")
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     res <- assertError(.Call(SimInf:::SISe3_run, model, NULL))
     set_num_threads(1)
@@ -370,7 +370,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -442,7 +442,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -514,7 +514,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -588,7 +588,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set.seed(1)
     set_num_threads(2)
     result_omp <- run(model)
@@ -663,7 +663,7 @@ U <- structure(
 res <- run(model)
 stopifnot(identical(res@U, U))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     res <- run(model)
     set_num_threads(1)
@@ -727,7 +727,7 @@ S_observed <- colSums(trajectory(res, compartments = c("S_1", "S_2", "S_3"),
                                  index = 1, format = "matrix"))
 stopifnot(identical(S_observed, S_expected))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     res <- run(model)
     set_num_threads(1)
@@ -788,7 +788,7 @@ set.seed(42)
 res <- .Call(SimInf:::SISe3_run, model, NULL)
 stopifnot(identical(res@U[1, 2], 6L))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     set.seed(42)
     res <- .Call(SimInf:::SISe3_run, model, NULL)
@@ -802,7 +802,7 @@ set.seed(42)
 res <- .Call(SimInf:::SISe3_run, model, NULL)
 stopifnot(identical(res@U[1, 2], 0L))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     set.seed(42)
     res <- .Call(SimInf:::SISe3_run, model, NULL)
@@ -816,7 +816,7 @@ set.seed(17)
 res <- .Call(SimInf:::SISe3_run, model, NULL)
 stopifnot(identical(res@U[1, 2], 1L))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     set.seed(17)
     res <- .Call(SimInf:::SISe3_run, model, NULL)

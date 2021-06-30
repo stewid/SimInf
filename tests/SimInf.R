@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ library(tools)
 source("util/check.R")
 
 ## Specify the number of threads to use.
-set_num_threads(1)
+max_threads <- set_num_threads(1)
 
 ## For debugging
 sessionInfo()
@@ -65,7 +65,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -138,7 +138,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set.seed(123)
     set_num_threads(2)
     result_omp <- run(model)
@@ -225,7 +225,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -313,7 +313,7 @@ stopifnot(identical(model@events, result@events))
 i <- seq(from = 8, to = 36, by = 2)
 stopifnot(all(apply(trajectory(result, format = "matrix")[i, ], 1, any)))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -422,7 +422,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -528,7 +528,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -634,7 +634,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -741,7 +741,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     result_omp <- run(model)
     set_num_threads(1)
@@ -801,7 +801,7 @@ stopifnot(identical(model@tspan, result@tspan))
 stopifnot(identical(model@u0, result@u0))
 stopifnot(identical(model@events, result@events))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set.seed(123)
     set_num_threads(2)
     result_omp <- run(model)

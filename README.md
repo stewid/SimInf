@@ -245,9 +245,10 @@ Research Council within the UPMARC Linnaeus center of Excellence
 (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the Swedish
 Research Council Formas (Stefan Engblom and Stefan Widgren), the
 Swedish Board of Agriculture (Stefan Widgren), the Swedish strategic
-research program eSSENCE (Stefan Widgren), and by the Full-Force
-research project within the One Health European Joint Programme
-(Stefan Widgren).
+research program eSSENCE (Stefan Widgren), and in the framework of the
+Full Force project, supported by funding from the European Union’s
+Horizon 2020 Research and Innovation programme under grant agreement
+No 773830: One Health European Joint Programme (Stefan Widgren).
 
 ## Versioning
 

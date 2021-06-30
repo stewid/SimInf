@@ -2,6 +2,20 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+# SimInf 8.3.2 (2021-06-29)
+
+## BUG FIXES
+
+* Updated the build configuration script ('src/Makevars.ucrt') for
+  Windows UCRT to fix the installation failure on CRAN introduced in
+  version 8.3.0. Thanks to Tomas Kalibera for providing the patch.
+
+* Improved the test logic for checks using multiple threads to also
+  check that the number of available threads is greater than one
+  before running a test using two threads. Thanks to Tomas Kalibera
+  for reporting a test failure on CRAN
+  r-devel-windows-x86_64-gcc10-UCRT on a machine using one thread.
+
 # SimInf 8.3.0 (2021-06-24)
 
 ## CHANGES OR IMPROVEMENTS

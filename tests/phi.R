@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 library(SimInf)
 
 ## Specify the number of threads to use.
-set_num_threads(1)
+max_threads <- set_num_threads(1)
 
 ## For debugging
 sessionInfo()
@@ -116,7 +116,7 @@ stopifnot(all(abs(sis_e_phi_obs - phi_exp) < tol))
 sis_e_phi_obs <- trajectory(sis_e, "phi")$phi
 stopifnot(all(abs(sis_e_phi_obs - as.numeric(phi_exp)) < tol))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     sis_e <- run(sis_e)
     set_num_threads(1)
@@ -166,7 +166,7 @@ stopifnot(all(abs(sis_e3_phi_obs - phi_exp) < tol))
 sis_e3_phi_obs <- trajectory(sis_e3, "phi")$phi
 stopifnot(all(abs(sis_e3_phi_obs - as.numeric(phi_exp)) < tol))
 
-if (SimInf:::have_openmp()) {
+if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(2)
     sis_e3 <- run(sis_e3)
     set_num_threads(1)
