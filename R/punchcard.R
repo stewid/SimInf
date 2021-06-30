@@ -192,7 +192,8 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         j <- j[value]
 
         dims <- c(length(nodes) * length(compartments), length(tspan))
-        if (sum(value, na.rm = TRUE) == (dims[1] * dims[2])) {
+        d1_times_d2 <- as.numeric(dims[1]) * as.numeric(dims[2])
+        if (sum(value, na.rm = TRUE) == d1_times_d2) {
             dense <- matrix(data = data, nrow = 0, ncol = 0)
             sparse <- new("dgCMatrix")
         } else {
