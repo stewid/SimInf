@@ -1,6 +1,6 @@
 PKG_CPPFLAGS = -I../windows/gsl-2.7/include -I. -I../inst/include -DR_NO_REMAP -DSTRICT_R_HEADERS
 PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS)
-PKG_LIBS = -L../windows/gsl-2.7/lib${R_ARCH}${CRT} -lm -lgsl -lgslcblas $(SHLIB_OPENMP_CFLAGS)
+PKG_LIBS = -L../windows/gsl-2.7/lib${R_ARCH} -lm -lgsl -lgslcblas $(SHLIB_OPENMP_CFLAGS)
 
 # List all model files to compile
 MODELS_SRC = $(wildcard models/*.c)

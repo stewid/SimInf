@@ -1,2 +1,29 @@
-CRT=-ucrt
-include Makevars.win
+PKG_CPPFLAGS = -I. -I../inst/include -DR_NO_REMAP -DSTRICT_R_HEADERS
+PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS)
+PKG_LIBS = -lm -lgsl -lgslcblas $(SHLIB_OPENMP_CFLAGS)
+
+# List all model files to compile
+MODELS_SRC = $(wildcard models/*.c)
+MODELS_OBJ = $(MODELS_SRC:.c=.o)
+
+OBJECTS.misc = misc/SimInf_abc.o \
+               misc/SimInf_arg.o \
+               misc/SimInf_forward_euler_linear_decay.o \
+               misc/SimInf_ldata.o \
+               misc/SimInf_local_spread.o \
+               misc/SimInf_openmp.o \
+               misc/SimInf_trajectory.o \
+               misc/binheap.o
+
+OBJECTS.solvers = solvers/SimInf_solver.o \
+                  solvers/aem/SimInf_solver_aem.o \
+                  solvers/ssm/SimInf_solver_ssm.o
+
+OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)
+
+all: clean
+
+clean:
+	rm -f $(SHLIB) $(OBJECTS)
+
+.PHONY: all clean
