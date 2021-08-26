@@ -150,7 +150,7 @@ setMethod(
 ##' first node. Additionally, replicate any events.
 ##' @param model the model to replicate.
 ##' @param n the number of replicates.
-##' @param n_events the number of of events for the first node in the
+##' @param n_events the number of events for the first node in the
 ##'     model.
 ##' @return A modified model object
 ##' @noRd
@@ -199,7 +199,7 @@ abc_progress <- function(t0, t1, x, w, npart, nprop) {
     summary_matrix(x)
 }
 
-##' Check that the returned result from the abc distance function is
+##' Check that the returned result from the ABC distance function is
 ##' valid.
 ##' @noRd
 check_abc_accept <- function(result, n, old_epsilon, epsilon) {
@@ -313,7 +313,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
 abc_ldata <- function(model, pars, priors, npart, fn, generation,
                       old_epsilon, x, w, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
-    ## to run many particles simultanously. Start with 10 x 'npart'
+    ## to run many particles simultaneously. Start with 10 x 'npart'
     ## and then increase the number adaptively based on the acceptance
     ## rate.
     n <- as.integer(10 * npart)
@@ -334,7 +334,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 
     while (n_particles(xx) < npart) {
         if (all(n < 1e5L, nprop > 2L * n)) {
-            ## Increase the number of particles that is simulated in
+            ## Increase the number of particles that are simulated in
             ## each trajectory.
             n <- min(1e5L, n * 2L)
             model <- replicate_first_node(model, n, n_events)
