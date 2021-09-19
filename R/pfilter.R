@@ -258,7 +258,8 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
 
 ##' Run a particle filter on a model that contains one node
 ##' @noRd
-pfilter_single_node <- function(model, obs, data, npart, tspan) {
+pfilter_single_node <- function(model, events, obs, data, npart,
+                                tspan) {
     ## Replicate the single node 'npart' times such that each node
     ## represents one particle and then run all particles
     ## simultanously.
@@ -361,10 +362,112 @@ pfilter_single_node <- function(model, obs, data, npart, tspan) {
 
 ##' Run a particle filter on a model that contains multiple nodes
 ##' @noRd
-pfilter_multiple_nodes <- function(model, obs_process, data, npart, tspan) {
-    stop("Particle filtering is not implemented ",
-         "for a model with multiple nodes.",
-         call. = FALSE)
+pfilter_multiple_nodes <- function(model, events, obs_process, data,
+                                   npart, tspan) {
+    m <- model
+    Nc <- Nc(m)
+    Nd <- nrow(m@v0)
+    Ntspan <- nrow(tspan)
+    n_nodes <- n_nodes(m)
+    ess <- numeric(Ntspan)
+    loglik <- 0
+    w <- numeric(npart)
+
+    ## Create a matrix to keep track of the states in the compartments
+    ## (including the initial state) in every particle.
+    U <- matrix(data = NA_integer_,
+                nrow = npart * Nc * n_nodes,
+                ncol = Ntspan + 1L)
+    U[, 1L] <- rep(as.integer(m@u0), npart)
+
+    ## Create a matrix to keep track of the continuous states
+    ## (including the initial state) in every particle.
+    V <- matrix(data = NA_real_,
+                nrow = npart * Nd * n_nodes,
+                ncol = Ntspan + 1L)
+    V[, 1L] <- rep(as.numeric(m@v0), npart)
+
+    a <- matrix(data = NA_integer_,
+                nrow = npart,
+                ncol = Ntspan + 1L)
+    a[, 1L] <- seq_len(npart)
+
+    ## Loop over time series.
+    for (i in seq_len(Ntspan)) {
+        if (is.na(tspan[i, 1L])) {
+            m@tspan <- tspan[i, 2L]
+        } else {
+            m@tspan <- tspan[i, 1:2]
+        }
+
+        ## Initialise events for the interval.
+        m@events <- events[[i]]
+
+        ## Loop over particles.
+        for (p in seq_len(npart)) {
+            ## Initialise the model.
+            u_i <- seq.int(from = (p - 1L) * Nc * n_nodes + 1L,
+                           length.out = Nc * n_nodes)
+            m@u0 <- matrix(data = U[u_i, i],
+                           nrow = nrow(m@u0),
+                           ncol = ncol(m@u0),
+                           dimnames = dimnames(m@u0))
+
+            v_i <- seq.int(from = (p - 1L) * Nd * n_nodes + 1L,
+                           length.out = Nd * n_nodes)
+            m@v0 <- matrix(data = V[v_i, i],
+                           nrow = nrow(m@v0),
+                           ncol = ncol(m@v0),
+                           dimnames = dimnames(m@v0))
+
+            ## Propagate the model.
+            x <- run(m)
+            if (length(x@tspan) > 1L) {
+                x@tspan <- x@tspan[2L]
+                x@U <- x@U[, 2L, drop = FALSE]
+                x@V <- x@V[, 2L, drop = FALSE]
+            }
+
+            ## Save states.
+            U[u_i, i + 1L] <- x@U
+            V[v_i, i + 1L] <- x@V
+
+            ## Set the weight for the particle.
+            w_particle <- obs_process(x, data[[i]])
+            if (!isTRUE(is.finite(w_particle)))
+                stop("Invalid observation process.", call. = FALSE)
+            w[p] <- w_particle
+        }
+
+        max_w <- max(w)
+        w <- exp(w - max_w)
+        sum_w <- sum(w)
+        loglik <- loglik + max_w + log(sum_w) - log(npart)
+        w <- w / sum_w
+        ess[i] <- 1 / sum(w^2)
+
+        ## Resampling
+        a[, i + 1L] <- .Call(SimInf_systematic_resampling, w)
+    }
+
+    ## Sample a trajectory.
+    model@U <- matrix(data = NA_integer_, nrow = Nc * n_nodes, ncol = Ntspan)
+    model@V <- matrix(data = NA_real_, nrow = Nd * n_nodes, ncol = Ntspan)
+    i <- sample.int(npart, 1)
+    for (j in rev(seq_len(Ntspan))) {
+        u_i <- seq.int(from = (i - 1L) * Nc * n_nodes + 1L,
+                       length.out = Nc * n_nodes)
+        model@U[, j] <- U[u_i, j + 1L, drop = FALSE]
+
+        v_i <- seq.int(from = (i - 1L) * Nd * n_nodes + 1L,
+                       length.out = Nd * n_nodes)
+        model@V[, j] <- V[v_i, j + 1L, drop = FALSE]
+
+        i <- a[i, j]
+    }
+
+    new("SimInf_pfilter", model = model, npart = npart,
+        loglik = loglik, ess = ess)
 }
 
 ##' Bootstrap particle filter
@@ -400,12 +503,17 @@ setMethod(
         data <- pfilter_data(model, data)
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]
+        events <- pfilter_events(model@events, tspan[, 2])
         obs_process <- pfilter_obs_process(model, obs_process, data, npart)
 
-        if (n_nodes(model) == 1)
-            return(pfilter_single_node(model, obs_process, data, npart, tspan))
-        pfilter_multiple_nodes(model, obs_process, data, npart, tspan)
-    }
+        if (n_nodes(model) == 1) {
+            pfilter_fn <- pfilter_single_node
+        } else {
+            pfilter_fn <- pfilter_multiple_nodes
+        }
+
+        pfilter_fn(model, events, obs_process, data, npart, tspan)
+   }
 )
 
 ##' Diagnostic plot of a particle filter object
