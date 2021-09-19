@@ -617,9 +617,10 @@ setMethod(
 
         if (nrow(model@events@N) > 0 && is.null(rownames(model@events@N)))
             rownames(model@events@N) <- rownames(model@events@E)
-        if (ncol(model@events@N))
-            colnames(model@events@N) <- as.character(seq_len(ncol(model@events@N)))
-
+        if (ncol(model@events@N)) {
+            colnames(model@events@N) <-
+                as.character(seq_len(ncol(model@events@N)))
+        }
         validObject(model)
 
         model
