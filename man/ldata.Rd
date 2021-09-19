@@ -2,9 +2,12 @@
 % Please edit documentation in R/SimInf_model.R
 \name{ldata}
 \alias{ldata}
+\alias{ldata,SimInf_model-method}
 \title{Extract local data from a node}
 \usage{
 ldata(model, node)
+
+\S4method{ldata}{SimInf_model}(model, node)
 }
 \arguments{
 \item{model}{The \code{model} to get local data from.}

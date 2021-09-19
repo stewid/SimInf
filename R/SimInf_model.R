@@ -234,14 +234,26 @@ setMethod(
 ##' ## Display local data from the first two nodes.
 ##' ldata(model, node = 1)
 ##' ldata(model, node = 2)
-ldata <- function(model, node) {
-    check_model_argument(model)
+setGeneric(
+    "ldata",
+    signature = "model",
+    function(model, node) {
+        standardGeneric("ldata")
+    }
+)
 
-    ## Check node argument
-    if (missing(node))
-        stop("Missing 'node' argument.", call. = FALSE)
-    if (!is.numeric(node) || !identical(length(node), 1L) || node < 1)
-        stop("Invalid 'node' argument.", call. = FALSE)
+##' @rdname ldata
+##' @export
+setMethod(
+    "ldata",
+    signature(model = "SimInf_model"),
+    function(model, node) {
+        ## Check node argument
+        if (missing(node))
+            stop("Missing 'node' argument.", call. = FALSE)
+        if (!is.numeric(node) || !identical(length(node), 1L) || node < 1)
+            stop("Invalid 'node' argument.", call. = FALSE)
 
-    model@ldata[, node]
-}
+        model@ldata[, node]
+    }
+)
