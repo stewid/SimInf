@@ -2,9 +2,12 @@
 % Please edit documentation in R/SimInf_events.R
 \name{shift_matrix}
 \alias{shift_matrix}
+\alias{shift_matrix,SimInf_model-method}
 \title{Extract the shift matrix from a \code{SimInf_model} object}
 \usage{
 shift_matrix(model)
+
+\S4method{shift_matrix}{SimInf_model}(model)
 }
 \arguments{
 \item{model}{The \code{model} to extract the shift matrix

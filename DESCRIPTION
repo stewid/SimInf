@@ -1,6 +1,6 @@
 Package: SimInf
 Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
-Version: 8.3.2.9000
+Version: 8.4.0.9000
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     email = "stefan.widgren@gmail.com",
                     comment = c(ORCID = "0000-0001-5745-2284")),
@@ -70,7 +70,7 @@ Collate:
     'check_arguments.R'
     'init.R'
     'valid.R'
-    'SimInf_events.R'
+    'classes.R'
     'SimInf_model.R'
     'SEIR.R'
     'SIR.R'
@@ -79,6 +79,7 @@ Collate:
     'SISe3_sp.R'
     'SISe_sp.R'
     'SimInf.R'
+    'SimInf_events.R'
     'run.R'
     'abc.R'
     'abc_support.R'

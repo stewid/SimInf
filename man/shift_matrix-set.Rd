@@ -2,9 +2,12 @@
 % Please edit documentation in R/SimInf_events.R
 \name{shift_matrix<-}
 \alias{shift_matrix<-}
+\alias{shift_matrix<-,SimInf_model-method}
 \title{Set the shift matrix for a \code{SimInf_model} object}
 \usage{
 shift_matrix(model) <- value
+
+\S4method{shift_matrix}{SimInf_model}(model) <- value
 }
 \arguments{
 \item{model}{The \code{model} to set the shift matrix

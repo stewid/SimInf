@@ -2,9 +2,12 @@
 % Please edit documentation in R/SimInf_model.R
 \name{gdata<-}
 \alias{gdata<-}
+\alias{gdata<-,SimInf_model-method}
 \title{Set a global data parameter for a \code{SimInf_model} object}
 \usage{
 gdata(model, parameter) <- value
+
+\S4method{gdata}{SimInf_model}(model, parameter) <- value
 }
 \arguments{
 \item{model}{The \code{model} to set a global model parameter for.}
