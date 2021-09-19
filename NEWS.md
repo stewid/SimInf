@@ -2,9 +2,13 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* The 'events' function was changed to an S4 method.
+
 ## BUG FIXES
 
-* Protect against integer overflow in 'punchcard' method.
+* Protect against an integer overflow that could occur in the
+  'punchcard' method for a model with many nodes, compartments and
+  time-points.
 
 # SimInf 8.3.2 (2021-06-29)
 
