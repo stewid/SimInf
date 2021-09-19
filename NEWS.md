@@ -1,10 +1,14 @@
+# SimInf (development version)
+
+## CHANGES OR IMPROVEMENTS
+
 # SimInf 8.4.0 (2021-09-19)
 
 ## CHANGES OR IMPROVEMENTS
 
 * The 'events', 'gdata', 'gdata<-', 'ldata', 'punchcard<-',
-  'select_matrix', 'select_matrix<-' 'shift_matrix', 'shift_matrix<-'
-  functions were changed to S4 methods.
+  'select_matrix', 'select_matrix<-' 'shift_matrix', and
+  'shift_matrix<-' functions were changed to S4 methods.
 
 ## BUG FIXES
 
