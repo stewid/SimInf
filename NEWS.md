@@ -2,9 +2,9 @@
 
 ## CHANGES OR IMPROVEMENTS
 
-* The 'events', 'gdata', 'gdata<-', 'select_matrix', 'select_matrix<-'
-  'shift_matrix', 'shift_matrix<-' functions were changed to S4
-  methods.
+* The 'events', 'gdata', 'gdata<-', 'ldata', 'punchcard<-',
+  'select_matrix', 'select_matrix<-' 'shift_matrix', 'shift_matrix<-'
+  functions were changed to S4 methods.
 
 ## BUG FIXES
 

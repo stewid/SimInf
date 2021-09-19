@@ -2,9 +2,12 @@
 % Please edit documentation in R/punchcard.R
 \name{punchcard<-}
 \alias{punchcard<-}
+\alias{punchcard<-,SimInf_model-method}
 \title{Set a template for where to record result during a simulation}
 \usage{
 punchcard(model) <- value
+
+\S4method{punchcard}{SimInf_model}(model) <- value
 }
 \arguments{
 \item{model}{The \code{model} to set a template for where to
