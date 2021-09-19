@@ -561,10 +561,23 @@ setMethod(
 ##'
 ##' ## Extract the shift matrix from the model
 ##' shift_matrix(model)
-shift_matrix <- function(model) {
-    check_model_argument(model)
-    model@events@N
-}
+setGeneric(
+    "shift_matrix",
+    signature = "model",
+    function(model) {
+        standardGeneric("shift_matrix")
+    }
+)
+
+##' @rdname shift_matrix
+##' @export
+setMethod(
+    "shift_matrix",
+    signature(model = "SimInf_model"),
+    function(model) {
+        model@events@N
+    }
+)
 
 ##' Set the shift matrix for a \code{SimInf_model} object
 ##'
@@ -586,20 +599,32 @@ shift_matrix <- function(model) {
 ##'
 ##' ## Extract the shift matrix from the model
 ##' shift_matrix(model)
-"shift_matrix<-" <- function(model, value) {
-    check_model_argument(model)
+setGeneric(
+    "shift_matrix<-",
+    signature = "model",
+    function(model, value) {
+        standardGeneric("shift_matrix<-")
+    }
+)
 
-    model@events@N <- check_N(value)
+##' @rdname shift_matrix-set
+##' @export
+setMethod(
+    "shift_matrix<-",
+    signature(model = "SimInf_model"),
+    function(model, value) {
+        model@events@N <- check_N(value)
 
-    if (nrow(model@events@N) > 0 && is.null(rownames(model@events@N)))
-        rownames(model@events@N) <- rownames(model@events@E)
-    if (ncol(model@events@N))
-        colnames(model@events@N) <- as.character(seq_len(ncol(model@events@N)))
+        if (nrow(model@events@N) > 0 && is.null(rownames(model@events@N)))
+            rownames(model@events@N) <- rownames(model@events@E)
+        if (ncol(model@events@N))
+            colnames(model@events@N) <- as.character(seq_len(ncol(model@events@N)))
 
-    validObject(model)
+        validObject(model)
 
-    model
-}
+        model
+    }
+)
 
 ##' Extract the select matrix from a \code{SimInf_model} object
 ##'
