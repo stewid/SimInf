@@ -2,7 +2,9 @@
 
 ## CHANGES OR IMPROVEMENTS
 
-* The 'events' function was changed to an S4 method.
+* The 'events', 'gdata', 'gdata<-', 'select_matrix', 'select_matrix<-'
+  'shift_matrix', 'shift_matrix<-' functions were changed to S4
+  methods.
 
 ## BUG FIXES
 

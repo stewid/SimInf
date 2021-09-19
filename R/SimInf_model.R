@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -144,10 +144,23 @@ SimInf_model <- function(G,
 ##'
 ##' ## Extract the global data vector that is common to all nodes
 ##' gdata(model)
-gdata <- function(model) {
-    check_model_argument(model)
-    model@gdata
-}
+setGeneric(
+    "gdata",
+    signature = "model",
+    function(model) {
+        standardGeneric("gdata")
+    }
+)
+
+##' @rdname gdata
+##' @export
+setMethod(
+    "gdata",
+    signature(model = "SimInf_model"),
+    function(model) {
+        model@gdata
+    }
+)
 
 ##' Set a global data parameter for a \code{SimInf_model} object
 ##'
@@ -169,25 +182,37 @@ gdata <- function(model) {
 ##'
 ##' ## Extract the global data vector that is common to all nodes
 ##' gdata(model)
-"gdata<-" <- function(model, parameter, value) {
-    check_model_argument(model)
+setGeneric(
+    "gdata<-",
+    signature = "model",
+    function(model, parameter, value) {
+        standardGeneric("gdata<-")
+    }
+)
 
-    ## Check paramter argument
-    if (missing(parameter))
-        stop("Missing 'parameter' argument.", call. = FALSE)
-    if (!is.character(parameter))
-        stop("'parameter' argument must be a character.", call. = FALSE)
+##' @rdname gdata-set
+##' @export
+setMethod(
+    "gdata<-",
+    signature(model = "SimInf_model"),
+    function(model, parameter, value) {
+        ## Check parameter argument
+        if (missing(parameter))
+            stop("Missing 'parameter' argument.", call. = FALSE)
+        if (!is.character(parameter))
+            stop("'parameter' argument must be a character.", call. = FALSE)
 
-    ## Check value argument
-    if (missing(value))
-        stop("Missing 'value' argument.", call. = FALSE)
-    if (!is.numeric(value))
-        stop("'value' argument must be a numeric.", call. = FALSE)
+        ## Check value argument
+        if (missing(value))
+            stop("Missing 'value' argument.", call. = FALSE)
+        if (!is.numeric(value))
+            stop("'value' argument must be a numeric.", call. = FALSE)
 
-    model@gdata[parameter] <- value
+        model@gdata[parameter] <- value
 
-    model
-}
+        model
+    }
+)
 
 ##' Extract local data from a node
 ##'
