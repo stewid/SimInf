@@ -2,6 +2,10 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+## BUG FIXES
+
+* Protect against integer overflow in 'punchcard' method.
+
 # SimInf 8.3.2 (2021-06-29)
 
 ## BUG FIXES
