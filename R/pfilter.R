@@ -158,6 +158,9 @@ pfilter_tspan <- function(model, data) {
 ##' @return A list with the scheduled events to use in each interval.
 ##' @noRd
 pfilter_events <- function(events, time_end) {
+    if (length(model@events@event) == 0)
+        return(NULL)
+
     lapply(time_end, function(t_end) {
         e <- events
         i <- seq_len(max(which(e@time <= t_end)))
