@@ -19,54 +19,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_model"}
-##'
-##' Class to handle data for the \code{SimInf_model}.
-##' @template G-slot
-##' @template S-slot
-##' @template U-slot
-##' @template U_sparse-slot
-##' @slot V The result matrix for the real-valued continuous
-##'     state. \code{V[, j]} contains the real-valued state of the
-##'     system at \code{tspan[j]}. Numeric matrix
-##'     (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
-##'     \code{length(tspan)}).
-##' @slot V_sparse If the model was configured to write the solution
-##'     to a sparse matrix (\code{dgCMatrix}) the \code{V_sparse}
-##'     contains the data and \code{V} is empty. The layout of the
-##'     data in \code{V_sparse} is identical to \code{V}.
-##' @template ldata-slot
-##' @template gdata-slot
-##' @template tspan-slot
-##' @template u0-slot
-##' @slot v0 The initial value for the real-valued continuous state.
-##'     Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
-##' @slot events Scheduled events \code{\linkS4class{SimInf_events}}
-##' @template C_code-slot
-##' @include SimInf_events.R
-##' @export
-##' @importFrom methods validObject
-##' @importClassesFrom Matrix dgCMatrix
-setClass(
-    "SimInf_model",
-    slots = c(G        = "dgCMatrix",
-              S        = "dgCMatrix",
-              U        = "matrix",
-              U_sparse = "dgCMatrix",
-              ldata    = "matrix",
-              gdata    = "numeric",
-              tspan    = "numeric",
-              u0       = "matrix",
-              V        = "matrix",
-              V_sparse = "dgCMatrix",
-              v0       = "matrix",
-              events   = "SimInf_events",
-              C_code   = "character")
-)
-
 ##' Check if a SimInf_model object is valid
 ##'
 ##' @param object The SimInf_model_object to check.
+##' @include classes.R
 ##' @include valid.R
 ##' @noRd
 valid_SimInf_model_object <- function(object) {
