@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -18,81 +18,6 @@
 ##
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-##' Class \code{"SimInf_events"}
-##'
-##' Class to hold data for scheduled events to modify the discrete
-##' state of individuals in a node at a pre-defined time t.
-##' @slot E Each row corresponds to one compartment in the model. The
-##'     non-zero entries in a column indicates the compartments to
-##'     include in an event.  For the \emph{exit}, \emph{internal
-##'     transfer} and \emph{external transfer} events, a non-zero
-##'     entry indicate the compartments to sample individuals from.
-##'     For the \emph{enter} event, all individuals enter first
-##'     non-zero compartment. \code{E} is sparse matrix of class
-##'     \code{\linkS4class{dgCMatrix}}.
-##' @slot N Determines how individuals in \emph{internal transfer} and
-##'     \emph{external transfer} events are shifted to enter another
-##'     compartment.  Each row corresponds to one compartment in the
-##'     model.  The values in a column are added to the current
-##'     compartment of sampled individuals to specify the destination
-##'     compartment, for example, a value of \code{1} in an entry
-##'     means that sampled individuals in this compartment are moved
-##'     to the next compartment.  Which column to use for each event
-##'     is specified by the \code{shift} vector (see below).  \code{N}
-##'     is an integer matrix.
-##' @slot event Type of event: 0) \emph{exit}, 1) \emph{enter}, 2)
-##'     \emph{internal transfer}, and 3) \emph{external transfer}.
-##'     Other values are reserved for future event types and not
-##'     supported by the current solvers. Integer vector.
-##' @slot time Time of when the event occurs i.e., the event is
-##'     processed when time is reached in the simulation.  \code{time}
-##'     is an integer vector.
-##' @slot node The node that the event operates on. Also the source
-##'     node for an \emph{external transfer} event.  Integer vector.
-##'     1 <= \code{node[i]} <= Number of nodes.
-##' @slot dest The destination node for an \emph{external transfer}
-##'     event i.e., individuals are moved from \code{node} to
-##'     \code{dest}, where 1 <= \code{dest[i]} <= Number of nodes.
-##'     Set \code{event = 0} for the other event types.  \code{dest}
-##'     is an integer vector.
-##' @slot n The number of individuals affected by the event. Integer
-##'     vector.  n[i] >= 0.
-##' @slot proportion If \code{n[i]} equals zero, the number of
-##'     individuals affected by \code{event[i]} is calculated by
-##'     sampling the number of individuals from a binomial
-##'     distribution using the \code{proportion[i]} and the number of
-##'     individuals in the compartments. Numeric vector.  0 <=
-##'     proportion[i] <= 1.
-##' @slot select To process \code{event[i]}, the compartments affected
-##'     by the event are specified with \code{select[i]} together with
-##'     the matrix \code{E}, where \code{select[i]} determines which
-##'     column in \code{E} to use.  The specific individuals affected
-##'     by the event are proportionally sampled from the compartments
-##'     corresponding to the non-zero entries in the specified column
-##'     in \code{E[, select[i]]}, where \code{select} is an integer
-##'     vector.
-##' @slot shift Determines how individuals in \emph{internal transfer}
-##'     and \emph{external transfer} events are shifted to enter
-##'     another compartment.  The sampled individuals are shifted
-##'     according to column \code{shift[i]} in matrix \code{N} i.e.,
-##'     \code{N[, shift[i]]}, where \code{shift} is an integer vector.
-##'     See above for a description of \code{N}. Unsued for the other
-##'     event types.
-##' @export
-setClass(
-    "SimInf_events",
-    slots = c(E          = "dgCMatrix",
-              N          = "matrix",
-              event      = "integer",
-              time       = "integer",
-              node       = "integer",
-              dest       = "integer",
-              n          = "integer",
-              proportion = "numeric",
-              select     = "integer",
-              shift      = "integer")
-)
 
 valid_events <- function(object) {
     if (!all(object@time > 0))
@@ -602,10 +527,23 @@ setMethod(
 ##'
 ##' ## Extract the scheduled events from the model and plot them
 ##' plot(events(model))
-events <- function(model) {
-    check_model_argument(model)
-    model@events
-}
+setGeneric(
+    "events",
+    signature = "model",
+    function(model) {
+        standardGeneric("events")
+    }
+)
+
+##' @rdname events
+##' @export
+setMethod(
+    "events",
+    signature(model = "SimInf_model"),
+    function(model) {
+        model@events
+    }
+)
 
 ##' Extract the shift matrix from a \code{SimInf_model} object
 ##'
@@ -623,10 +561,23 @@ events <- function(model) {
 ##'
 ##' ## Extract the shift matrix from the model
 ##' shift_matrix(model)
-shift_matrix <- function(model) {
-    check_model_argument(model)
-    model@events@N
-}
+setGeneric(
+    "shift_matrix",
+    signature = "model",
+    function(model) {
+        standardGeneric("shift_matrix")
+    }
+)
+
+##' @rdname shift_matrix
+##' @export
+setMethod(
+    "shift_matrix",
+    signature(model = "SimInf_model"),
+    function(model) {
+        model@events@N
+    }
+)
 
 ##' Set the shift matrix for a \code{SimInf_model} object
 ##'
@@ -648,20 +599,33 @@ shift_matrix <- function(model) {
 ##'
 ##' ## Extract the shift matrix from the model
 ##' shift_matrix(model)
-"shift_matrix<-" <- function(model, value) {
-    check_model_argument(model)
+setGeneric(
+    "shift_matrix<-",
+    signature = "model",
+    function(model, value) {
+        standardGeneric("shift_matrix<-")
+    }
+)
 
-    model@events@N <- check_N(value)
+##' @rdname shift_matrix-set
+##' @export
+setMethod(
+    "shift_matrix<-",
+    signature(model = "SimInf_model"),
+    function(model, value) {
+        model@events@N <- check_N(value)
 
-    if (nrow(model@events@N) > 0 && is.null(rownames(model@events@N)))
-        rownames(model@events@N) <- rownames(model@events@E)
-    if (ncol(model@events@N))
-        colnames(model@events@N) <- as.character(seq_len(ncol(model@events@N)))
+        if (nrow(model@events@N) > 0 && is.null(rownames(model@events@N)))
+            rownames(model@events@N) <- rownames(model@events@E)
+        if (ncol(model@events@N)) {
+            colnames(model@events@N) <-
+                as.character(seq_len(ncol(model@events@N)))
+        }
+        validObject(model)
 
-    validObject(model)
-
-    model
-}
+        model
+    }
+)
 
 ##' Extract the select matrix from a \code{SimInf_model} object
 ##'
@@ -678,10 +642,23 @@ shift_matrix <- function(model) {
 ##'
 ##' ## Extract the select matrix from the model
 ##' select_matrix(model)
-select_matrix <- function(model) {
-    check_model_argument(model)
-    model@events@E
-}
+setGeneric(
+    "select_matrix",
+    signature = "model",
+    function(model) {
+        standardGeneric("select_matrix")
+    }
+)
+
+##' @rdname select_matrix
+##' @export
+setMethod(
+    "select_matrix",
+    signature(model = "SimInf_model"),
+    function(model) {
+        model@events@E
+    }
+)
 
 ##' Set the select matrix for a \code{SimInf_model} object
 ##'
@@ -702,22 +679,34 @@ select_matrix <- function(model) {
 ##'
 ##' ## Extract the select matrix from the model
 ##' select_matrix(model)
-"select_matrix<-" <- function(model, value) {
-    check_model_argument(model)
-
-    if (!is(value, "dgCMatrix"))
-        value <- as(value, "dgCMatrix")
-
-    if (!identical(Nc(model), dim(value)[1])) {
-        stop("'value' must have one row for each compartment in the model.",
-             call. = FALSE)
+setGeneric(
+    "select_matrix<-",
+    signature = "model",
+    function(model, value) {
+        standardGeneric("select_matrix<-")
     }
+)
 
-    dimnames(value) <- list(rownames(model@events@E),
-                            as.character(seq_len(dim(value)[2])))
-    model@events@E <- value
+##' @rdname select_matrix-set
+##' @export
+setMethod(
+    "select_matrix<-",
+    signature(model = "SimInf_model"),
+    function(model, value) {
+        if (!is(value, "dgCMatrix"))
+            value <- as(value, "dgCMatrix")
 
-    validObject(model)
+        if (!identical(Nc(model), dim(value)[1])) {
+            stop("'value' must have one row for each compartment in the model.",
+                 call. = FALSE)
+        }
 
-    model
-}
+        dimnames(value) <- list(rownames(model@events@E),
+                                as.character(seq_len(dim(value)[2])))
+        model@events@E <- value
+
+        validObject(model)
+
+        model
+    }
+)

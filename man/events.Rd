@@ -2,9 +2,12 @@
 % Please edit documentation in R/SimInf_events.R
 \name{events}
 \alias{events}
+\alias{events,SimInf_model-method}
 \title{Extract the events from a \code{SimInf_model} object}
 \usage{
 events(model)
+
+\S4method{events}{SimInf_model}(model)
 }
 \arguments{
 \item{model}{The \code{model} to extract the events from.}

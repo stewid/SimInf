@@ -2,9 +2,12 @@
 % Please edit documentation in R/SimInf_events.R
 \name{select_matrix}
 \alias{select_matrix}
+\alias{select_matrix,SimInf_model-method}
 \title{Extract the select matrix from a \code{SimInf_model} object}
 \usage{
 select_matrix(model)
+
+\S4method{select_matrix}{SimInf_model}(model)
 }
 \arguments{
 \item{model}{The \code{model} to extract the select matrix

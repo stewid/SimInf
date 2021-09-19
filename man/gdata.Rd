@@ -2,9 +2,12 @@
 % Please edit documentation in R/SimInf_model.R
 \name{gdata}
 \alias{gdata}
+\alias{gdata,SimInf_model-method}
 \title{Extract global data from a \code{SimInf_model} object}
 \usage{
 gdata(model)
+
+\S4method{gdata}{SimInf_model}(model)
 }
 \arguments{
 \item{model}{The \code{model} to get global data from.}

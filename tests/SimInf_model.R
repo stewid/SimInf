@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -757,9 +757,6 @@ check_error(res, "Missing 'value' argument.")
 
 ## Check 'ldata'
 model@ldata <- matrix(1, dimnames = list("test", NULL))
-res <- assertError(ldata(5))
-check_error(res, "'model' argument is not a 'SimInf_model'.")
-
 res <- assertError(ldata(model))
 check_error(res, "Missing 'node' argument.")
 

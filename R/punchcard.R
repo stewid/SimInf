@@ -102,22 +102,34 @@
 ##' punchcard(model) <- NULL
 ##' result <- run(model)
 ##' trajectory(result)
-"punchcard<-" <- function(model, value) {
-    check_model_argument(model)
+setGeneric(
+    "punchcard<-",
+    signature = "model",
+    function(model, value) {
+        standardGeneric("punchcard<-")
+    }
+)
 
-    template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
-                                rownames(model@S), integer(0))
-    model@U <- template$dense
-    model@U_sparse <- template$sparse
+##' @rdname punchcard-set
+##' @export
+setMethod(
+    "punchcard<-",
+    signature(model = "SimInf_model"),
+    function(model, value) {
+        template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
+                                    rownames(model@S), integer(0))
+        model@U <- template$dense
+        model@U_sparse <- template$sparse
 
-    template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
-                                rownames(model@v0), numeric(0))
-    model@V <- template$dense
-    model@V_sparse <- template$sparse
+        template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
+                                    rownames(model@v0), numeric(0))
+        model@V <- template$dense
+        model@V_sparse <- template$sparse
 
-    validObject(model)
-    model
-}
+        validObject(model)
+        model
+    }
+)
 
 ##' Create  template for where to record result during a simualtion
 ##'
