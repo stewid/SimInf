@@ -641,10 +641,23 @@ setMethod(
 ##'
 ##' ## Extract the select matrix from the model
 ##' select_matrix(model)
-select_matrix <- function(model) {
-    check_model_argument(model)
-    model@events@E
-}
+setGeneric(
+    "select_matrix",
+    signature = "model",
+    function(model) {
+        standardGeneric("select_matrix")
+    }
+)
+
+##' @rdname select_matrix
+##' @export
+setMethod(
+    "select_matrix",
+    signature(model = "SimInf_model"),
+    function(model) {
+        model@events@E
+    }
+)
 
 ##' Set the select matrix for a \code{SimInf_model} object
 ##'
@@ -665,22 +678,34 @@ select_matrix <- function(model) {
 ##'
 ##' ## Extract the select matrix from the model
 ##' select_matrix(model)
-"select_matrix<-" <- function(model, value) {
-    check_model_argument(model)
-
-    if (!is(value, "dgCMatrix"))
-        value <- as(value, "dgCMatrix")
-
-    if (!identical(Nc(model), dim(value)[1])) {
-        stop("'value' must have one row for each compartment in the model.",
-             call. = FALSE)
+setGeneric(
+    "select_matrix<-",
+    signature = "model",
+    function(model, value) {
+        standardGeneric("select_matrix<-")
     }
+)
 
-    dimnames(value) <- list(rownames(model@events@E),
-                            as.character(seq_len(dim(value)[2])))
-    model@events@E <- value
+##' @rdname select_matrix-set
+##' @export
+setMethod(
+    "select_matrix<-",
+    signature(model = "SimInf_model"),
+    function(model, value) {
+        if (!is(value, "dgCMatrix"))
+            value <- as(value, "dgCMatrix")
 
-    validObject(model)
+        if (!identical(Nc(model), dim(value)[1])) {
+            stop("'value' must have one row for each compartment in the model.",
+                 call. = FALSE)
+        }
 
-    model
-}
+        dimnames(value) <- list(rownames(model@events@E),
+                                as.character(seq_len(dim(value)[2])))
+        model@events@E <- value
+
+        validObject(model)
+
+        model
+    }
+)

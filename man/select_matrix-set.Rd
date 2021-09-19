@@ -2,9 +2,12 @@
 % Please edit documentation in R/SimInf_events.R
 \name{select_matrix<-}
 \alias{select_matrix<-}
+\alias{select_matrix<-,SimInf_model-method}
 \title{Set the select matrix for a \code{SimInf_model} object}
 \usage{
 select_matrix(model) <- value
+
+\S4method{select_matrix}{SimInf_model}(model) <- value
 }
 \arguments{
 \item{model}{The \code{model} to set the select matrix for.}
