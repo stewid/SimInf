@@ -158,7 +158,7 @@ pfilter_tspan <- function(model, data) {
 ##' @return A list with the scheduled events to use in each interval.
 ##' @noRd
 pfilter_events <- function(events, time_end) {
-    if (length(model@events@event) == 0)
+    if (length(events@event) == 0)
         return(NULL)
 
     lapply(time_end, function(t_end) {
@@ -404,7 +404,8 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
         }
 
         ## Initialise events for the interval.
-        m@events <- events[[i]]
+        if (!is.null(events))
+            m@events <- events[[i]]
 
         ## Loop over particles.
         for (p in seq_len(npart)) {

@@ -98,6 +98,28 @@ res <- assertError(pfilter(model = model,
                            data = data.frame(time = 1:3)))
 check_error(res, "'npart' must be an integer > 1.")
 
+## Check the C utility function to split events.
+res <- assertError(.Call(SimInf:::SimInf_split_events, 1, 1L))
+check_error(res, "'t' must be an integer vector with length >= 1.")
+
+res <- assertError(.Call(SimInf:::SimInf_split_events, 1L, 1))
+check_error(res, "'t_end' must be an integer vector with length >= 1.")
+
+stopifnot(identical(.Call(SimInf:::SimInf_split_events, 1L, 1L),
+                    structure(c(1L, 1L), .Dim = 1:2)))
+
+stopifnot(identical(.Call(SimInf:::SimInf_split_events, 1L, 1:3),
+                    structure(c(1L, 0L, 0L, 1L, 0L, 0L), .Dim = 3:2)))
+
+stopifnot(identical(.Call(SimInf:::SimInf_split_events, 2L, 1:3),
+                    structure(c(0L, 1L, 0L, 0L, 1L, 0L), .Dim = 3:2)))
+
+stopifnot(identical(.Call(SimInf:::SimInf_split_events, 3L, 1:3),
+                    structure(c(0L, 0L, 1L, 0L, 0L, 1L), .Dim = 3:2)))
+
+stopifnot(identical(.Call(SimInf:::SimInf_split_events, 4L, 1:3),
+                    structure(c(0L, 0L, 0L, 0L, 0L, 0L), .Dim = 3:2)))
+
 ## Split events
 events <- data.frame(
     event      = rep("extTrans", 6),

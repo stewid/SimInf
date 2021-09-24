@@ -2,7 +2,7 @@
  * This file is part of SimInf, a framework for stochastic
  * disease spread simulations.
  *
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2021 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,4 +63,59 @@ SEXP attribute_hidden SimInf_systematic_resampling(SEXP w)
     UNPROTECT(1);
 
     return idx;
+}
+
+/**
+ * Split scheduled events into the intervals in tspan.
+ *
+ * @param t an integer vector with the time-points for the events.
+ * @param t_end an integer vector with the time end-point in each
+ *        interval.
+ * @return a len(t_end) x 2 integer matrix where the first column
+ *         contains the one-based index to the first event in the
+ *         interval, and the second column the number of events in the
+ *         interval.
+ */
+SEXP attribute_hidden SimInf_split_events(SEXP t, SEXP t_end)
+{
+    int t_i = 0;
+    int t_end_i = 0;
+    int t_len;
+    int t_end_len;
+    int *ptr_t;
+    int *ptr_t_end;
+    int *ptr_m;
+    SEXP m;
+
+    if (!Rf_isInteger(t) || !Rf_length(t))
+        Rf_error("'t' must be an integer vector with length >= 1.");
+    t_len = Rf_length(t);
+    ptr_t = INTEGER(t);
+
+    if (!Rf_isInteger(t_end) || !Rf_length(t_end))
+        Rf_error("'t_end' must be an integer vector with length >= 1.");
+    t_end_len = Rf_length(t_end);
+    ptr_t_end = INTEGER(t_end);
+
+    /* Create a matrix to hold the result. */
+    PROTECT(m = Rf_allocMatrix(INTSXP, t_end_len, 2));
+    ptr_m = INTEGER(m);
+    memset(ptr_m, 0, t_end_len * 2 * sizeof(int));
+
+    /* Interate over the event time-points and place each event in the
+     * corresponding interval. */
+    while (t_i < t_len && t_end_i < t_end_len) {
+        if (ptr_t[t_i] <= ptr_t_end[t_end_i]) {
+            if (!ptr_m[t_end_i])
+                ptr_m[t_end_i] = t_i + 1;
+            ptr_m[t_end_len + t_end_i]++;
+            t_i++;
+        } else {
+            t_end_i++;
+        }
+    }
+
+    UNPROTECT(1);
+
+    return m;
 }
