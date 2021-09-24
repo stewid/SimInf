@@ -136,7 +136,9 @@ pfilter_data <- function(model, data) {
 ##'     first column is \code{NA} if the interval is one time-unit.
 ##' @noRd
 pfilter_tspan <- function(model, data) {
-    time <- sapply(data, function(x) {x$time[1]})
+    time <- sapply(data, function(x) {
+        x$time[1]
+    })
 
     do.call("rbind", lapply(seq_len(length(time)), function(i) {
         if (i == 1) {

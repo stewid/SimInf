@@ -132,8 +132,8 @@ events <- data.frame(
     shift      = c(0, 0, 0, 0, 0, 0))
 
 model <- SIR(u0 = data.frame(S = c(10, 15, 20, 25),
-                             I = c( 0,  0,  0,  0),
-                             R = c( 0,  0,  0,  0)),
+                             I = c(0, 0, 0, 0),
+                             R = c(0, 0, 0, 0)),
              tspan = 0:3,
              beta = 0.16,
              gamma = 0.077,
