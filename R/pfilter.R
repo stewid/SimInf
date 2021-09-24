@@ -161,31 +161,21 @@ pfilter_events <- function(events, time_end) {
     if (length(events@event) == 0)
         return(NULL)
 
-    lapply(time_end, function(t_end) {
-        e <- events
-        i <- seq_len(max(which(e@time <= t_end)))
+    m <- .Call(SimInf_split_events, events@time, as.integer(time_end))
+    lapply(seq_len(nrow(m)), function(i) {
+        j <- seq(from = m[i, 1], by = 1, length.out = m[i, 2])
 
-        ## Extract the events.
-        e@event <- e@event[i]
-        e@time <- e@time[i]
-        e@node <- e@node[i]
-        e@dest <- e@dest[i]
-        e@n <- e@n[i]
-        e@proportion <- e@proportion[i]
-        e@select <- e@select[i]
-        e@shift <- e@shift[i]
-
-        ## Drop the extracted events.
-        events@event <<- events@event[-i]
-        events@time <<- events@time[-i]
-        events@node <<- events@node[-i]
-        events@dest <<- events@dest[-i]
-        events@n <<- events@n[-i]
-        events@proportion <<- events@proportion[-i]
-        events@select <<- events@select[-i]
-        events@shift <<- events@shift[-i]
-
-        e
+        new("SimInf_events",
+            E          = events@E,
+            N          = events@N,
+            event      = events@event[j],
+            time       = events@time[j],
+            node       = events@node[j],
+            dest       = events@dest[j],
+            n          = events@n[j],
+            proportion = events@proportion[j],
+            select     = events@select[j],
+            shift      = events@shift[j])
     })
 }
 
