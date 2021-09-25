@@ -136,7 +136,9 @@ pfilter_data <- function(model, data) {
 ##'     first column is \code{NA} if the interval is one time-unit.
 ##' @noRd
 pfilter_tspan <- function(model, data) {
-    time <- sapply(data, function(x) {x$time[1]})
+    time <- sapply(data, function(x) {
+        x$time[1]
+    })
 
     do.call("rbind", lapply(seq_len(length(time)), function(i) {
         if (i == 1) {
@@ -255,15 +257,9 @@ pfilter_single_node <- function(model, events, obs, data, npart,
                                 tspan) {
     ## Replicate the single node 'npart' times such that each node
     ## represents one particle and then run all particles
-    ## simultanously.
-    n_events <- length(model@events@event)
-    if (n_events > 0) {
-        stop("Particle filtering is not implemented ",
-             "for a model with scheduled events.",
-             call. = FALSE)
-    }
-
-    m <- replicate_first_node(model, npart, n_events)
+    ## simultanously. Note that the events are replicated below for
+    ## each interval.
+    m <- replicate_first_node(model, npart, 0L)
     Nc <- Nc(m)
     Nc_i <- seq_len(Nc)
     Nd <- nrow(m@v0)
@@ -277,6 +273,27 @@ pfilter_single_node <- function(model, events, obs, data, npart,
     a[, 1L] <- seq_len(npart)
 
     for (i in seq_len(Ntspan)) {
+        ## Initialise the events for the interval. Replicate the
+        ## events in the first node and add an offset to the node
+        ## vector. The offset is not added to 'dest' since there are
+        ## no external transfer events.
+        if (!is.null(events)) {
+            m@events <- events[[i]]
+            n_events <- length(m@events@event)
+            if (n_events > 0) {
+                j <- seq_len(n_events)
+                offset <- rep(seq_len(npart) - 1L, each = n_events)
+                m@events@event <- rep(m@events@event[j], npart)
+                m@events@time <- rep(m@events@time[j], npart)
+                m@events@node <- rep(m@events@node[j], npart) + offset
+                m@events@dest <- rep(m@events@dest[j], npart)
+                m@events@n <- rep(m@events@n[j], npart)
+                m@events@proportion <- rep(m@events@proportion[j], npart)
+                m@events@select <- rep(m@events@select[j], npart)
+                m@events@shift <- rep(m@events@shift[j], npart)
+            }
+        }
+
         ## Propagation.
         if (is.na(tspan[i, 1L])) {
             m@tspan <- tspan[i, 2L]

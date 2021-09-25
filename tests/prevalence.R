@@ -32,6 +32,9 @@ tol <- 1e-8
 model <- SIR(u0 = data.frame(S = c(8, 5, 0), I = c(0, 1, 0), R = c(0, 0, 4)),
              tspan = 1:5, beta = 0.1, gamma = 0.1)
 
+res <- assertError(prevalence(model, I ~ . | R == 0, level = 4))
+check_error(res, "'level' must be an integer with a value 1, 2 or 3.")
+
 res <- assertError(prevalence(model, I ~ . | R == 0))
 check_error(res, "Please run the model first, the trajectory is empty.")
 

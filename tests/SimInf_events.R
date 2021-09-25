@@ -607,3 +607,19 @@ stopifnot(
             select = c(4L, 6L, 5L, 1L, 4L, 1L, 5L, 5L),
             shift = c(0L, 0L, 2L, 0L, 0L, 0L, 2L, 0L),
             stringsAsFactors = FALSE)))
+
+## Check that an error is raised when shift is out of bounds.
+u0 <- data.frame(S = 10, I = 0, R = 0)
+events <- data.frame(event = 2, time = 2, node = 1, dest = 0,
+                     n = 1, proportion = 0, select = 1, shift = 1)
+model <- SIR(u0 = u0,
+             tspan = seq_len(3),
+             events = events,
+             beta = 0.16,
+             gamma = 0.077)
+model@events@N <- matrix(c(0L, 0L, 0L),
+                         nrow = 3,
+                         dimnames = list(c("S", "I", "R"), NULL))
+model@events@shift <- -1L
+res <- assertError(.Call(SimInf:::SIR_run, model, "ssm"))
+check_error(res, "'shift' is invalid.")
