@@ -41,9 +41,6 @@ static void SimInf_raise_error(int error)
     case SIMINF_UNDEFINED_EVENT:
         Rf_error("Undefined event type.");
         break;
-    case SIMINF_INVALID_THREADS_VALUE:
-        Rf_error("Invalid 'threads' value.");
-        break;
     case SIMINF_ERR_V_IS_NOT_FINITE:
         Rf_error("The continuous state 'v' is not finite.");
         break;

@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2021 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ typedef enum {
     SIMINF_ERR_ALLOC_MEMORY_BUFFER  = -2,
     SIMINF_UNDEFINED_EVENT          = -3,
     SIMINF_INVALID_EDGE_PROBABILITY = -4,
-    SIMINF_INVALID_THREADS_VALUE    = -6,
     SIMINF_ERR_V_IS_NOT_FINITE      = -7,
     SIMINF_ERR_SAMPLE_SELECT        = -8,
     SIMINF_ERR_INVALID_MODEL        = -9,
