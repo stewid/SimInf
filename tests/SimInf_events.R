@@ -611,13 +611,13 @@ stopifnot(
 ## Check that an error is raised when shift is out of bounds.
 u0 <- data.frame(S = 10, I = 0, R = 0)
 events <- data.frame(event = 2, time = 2, node = 1, dest = 0,
-                     n = 1, proportion = 0, select = 1, shift = 2)
+                     n = 1, proportion = 0, select = 1, shift = 1)
 model <- SIR(u0 = u0,
              tspan = seq_len(3),
              events = events,
              beta = 0.16,
              gamma = 0.077)
-model@events@N <- matrix(c(0L, 0L, 0L),
+model@events@N <- matrix(c(3L, 0L, 0L),
                          nrow = 3,
                          dimnames = list(c("S", "I", "R"), NULL))
 res <- assertError(run(model))
