@@ -35,8 +35,8 @@ static void SimInf_raise_error(int error)
     case SIMINF_ERR_NEGATIVE_STATE:
         Rf_error("Negative state detected.");
         break;
-    case SIMINF_ERR_ALLOC_MEMORY_BUFFER:
-        Rf_error("Unable to allocate memory buffer.");
+    case SIMINF_ERR_ALLOC_MEMORY_BUFFER:               /* #nocov */
+        Rf_error("Unable to allocate memory buffer."); /* #nocov */
         break;
     case SIMINF_UNDEFINED_EVENT:
         Rf_error("Undefined event type.");
@@ -77,8 +77,8 @@ static void SimInf_raise_error(int error)
     case SIMINF_ERR_INVALID_PROPORTION:
         Rf_error("Invalid proportion detected (< 0.0 or > 1.0).");
         break;
-    default:
-        Rf_error("Unknown error code: %i.", error);
+    default:                                        /* #nocov */
+        Rf_error("Unknown error code: %i.", error); /* #nocov */
         break;
     }
 }
