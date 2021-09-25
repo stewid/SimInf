@@ -617,8 +617,9 @@ model <- SIR(u0 = u0,
              events = events,
              beta = 0.16,
              gamma = 0.077)
-model@events@N <- matrix(c(3L, 0L, 0L),
+model@events@N <- matrix(c(0L, 0L, 0L),
                          nrow = 3,
                          dimnames = list(c("S", "I", "R"), NULL))
-res <- assertError(run(model))
-check_error(res, "'shift' is out of bounds.")
+model@events@shift <- -1L
+res <- assertError(.Call(SimInf:::SIR_run, model, "ssm"))
+check_error(res, "'shift' is invalid.")
