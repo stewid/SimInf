@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2021 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -368,12 +368,12 @@ static void SimInf_split_events(
 int attribute_hidden SimInf_scheduled_events_create(
     SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng)
 {
-    int error = SIMINF_ERR_ALLOC_MEMORY_BUFFER, i;
+    int i;
     SimInf_scheduled_events *events = NULL;
 
     events = calloc(args->Nthread, sizeof(SimInf_scheduled_events));
     if (!events)
-        goto on_error;
+        goto on_error; /* #nocov */
 
     for (i = 0; i < args->Nthread; i++) {
         /*** Constants ***/
@@ -390,12 +390,12 @@ int attribute_hidden SimInf_scheduled_events_create(
 
         events[i].individuals = calloc(args->Nc, sizeof(int));
         if (!events[i].individuals)
-            goto on_error;
+            goto on_error; /* #nocov */
 
         /* Random number generator */
         events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
         if (!events[i].rng)
-            goto on_error;
+            goto on_error; /* #nocov */
         gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
     }
 
@@ -408,9 +408,9 @@ int attribute_hidden SimInf_scheduled_events_create(
     *out = events;
     return 0;
 
-on_error:
-    SimInf_scheduled_events_free(events);
-    return error;
+on_error:                                  /* #nocov */
+    SimInf_scheduled_events_free(events);  /* #nocov */
+    return SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
 }
 
 /**
@@ -907,16 +907,16 @@ int attribute_hidden SimInf_compartment_model_create(
     /* Allocate memory for the compartment model. */
     model = calloc(args->Nthread, sizeof(SimInf_compartment_model));
     if (!model)
-        goto on_error;
+        goto on_error; /* #nocov */
 
     /* Allocate memory to keep track of the continuous state in each
      * node. */
     model[0].v = malloc(args->Nn * args->Nd * sizeof(double));
     if (!model[0].v)
-        goto on_error;
+        goto on_error; /* #nocov */
     model[0].v_new = malloc(args->Nn * args->Nd * sizeof(double));
     if (!model[0].v_new)
-        goto on_error;
+        goto on_error; /* #nocov */
 
     /* Set continuous state to the initial state in each node. */
     memcpy(model[0].v, args->v0, args->Nn * args->Nd * sizeof(double));
@@ -926,13 +926,13 @@ int attribute_hidden SimInf_compartment_model_create(
      * scheduled events */
     model[0].update_node = calloc(args->Nn, sizeof(int));
     if (!model[0].update_node)
-        goto on_error;
+        goto on_error; /* #nocov */
 
     /* Allocate memory for compartment state and set compartment state
      * to the initial state. */
     model[0].u = malloc(args->Nn * args->Nc * sizeof(int));
     if (!model[0].u)
-        goto on_error;
+        goto on_error; /* #nocov */
     memcpy(model[0].u, args->u0, args->Nn * args->Nc * sizeof(int));
 
     for (i = 0; i < args->Nthread; i++) {
@@ -1000,21 +1000,21 @@ int attribute_hidden SimInf_compartment_model_create(
          * every node. */
         model[i].t_rate = malloc(args->Nt * model[i].Nn * sizeof(double));
         if (!model[i].t_rate)
-            goto on_error;
+            goto on_error; /* #nocov */
         model[i].sum_t_rate = malloc(model[i].Nn * sizeof(double));
         if (!model[i].sum_t_rate)
-            goto on_error;
+            goto on_error; /* #nocov */
         model[i].t_time = malloc(model[i].Nn * sizeof(double));
         if (!model[i].t_time)
-            goto on_error;
+            goto on_error; /* #nocov */
     }
 
     *out = model;
     return 0;
 
-on_error:
-    SimInf_compartment_model_free(model);
-    return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+on_error:                                  /* #nocov */
+    SimInf_compartment_model_free(model);  /* #nocov */
+    return SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
 }
 
 /**

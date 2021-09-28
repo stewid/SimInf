@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2021 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,8 +130,11 @@ SimInf_sparse2df_int(
     double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
-        SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
-        int *p_vec = INTEGER(vec);
+        SEXP vec;
+        int *p_vec;
+
+        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
+        p_vec = INTEGER(vec);
 
         if (ri) {
             size_t k = 0;
@@ -189,9 +192,6 @@ SimInf_sparse2df_int(
                     p_vec[t * n_id + id] = NA_INTEGER;
             }
         }
-
-        SET_VECTOR_ELT(dst, col++, vec);
-        UNPROTECT(1);
     }
 }
 
@@ -213,8 +213,11 @@ SimInf_sparse2df_real(
     double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
-        SEXP vec = PROTECT(Rf_allocVector(REALSXP, nrow));
-        double *p_vec = REAL(vec);
+        SEXP vec;
+        double *p_vec;
+
+        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
+        p_vec = REAL(vec);
 
         if (ri) {
             size_t k = 0;
@@ -272,9 +275,6 @@ SimInf_sparse2df_real(
                     p_vec[t * n_id + id] = NA_REAL;
             }
         }
-
-        SET_VECTOR_ELT(dst, col++, vec);
-        UNPROTECT(1);
     }
 }
 
@@ -293,9 +293,12 @@ SimInf_dense2df_int(
     int *p_id)
 {
     for (R_xlen_t i = 0; i < m_i_len; i++) {
-        SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
-        int *p_vec = INTEGER(vec);
+        SEXP vec;
+        int *p_vec;
         int *p_m = m + m_i[i] - 1;
+
+        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
+        p_vec = INTEGER(vec);
 
         if (p_id != NULL) {
             /* Note that the identifiers are one-based. */
@@ -319,9 +322,6 @@ SimInf_dense2df_int(
                 }
             }
         }
-
-        SET_VECTOR_ELT(dst, col++, vec);
-        UNPROTECT(1);
     }
 }
 
@@ -340,9 +340,12 @@ SimInf_dense2df_real(
     int *p_id)
 {
     for (R_xlen_t i = 0; i < m_i_len; i++) {
-        SEXP vec = PROTECT(Rf_allocVector(REALSXP, nrow));
-        double *p_vec = REAL(vec);
+        SEXP vec;
+        double *p_vec;
         double *p_m = m + m_i[i] - 1;
+
+        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
+        p_vec = REAL(vec);
 
         if (p_id != NULL) {
             /* Note that the node identifiers are one-based. */
@@ -366,9 +369,6 @@ SimInf_dense2df_real(
                 }
             }
         }
-
-        SET_VECTOR_ELT(dst, col++, vec);
-        UNPROTECT(1);
     }
 }
 

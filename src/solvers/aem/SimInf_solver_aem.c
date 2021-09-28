@@ -452,24 +452,24 @@ static int SimInf_aem_arguments_create(
         method[i].reactHeapSize = m->Nt;
         method[i].reactNode = malloc(m->Nn * m->Nt * sizeof(int));
         if (!method[i].reactNode)
-            goto on_error;
+            goto on_error; /* #nocov */
 
         method[i].reactHeap = malloc(m->Nn * m->Nt * sizeof(int));
         if (!method[i].reactHeap)
-            goto on_error;
+            goto on_error; /* #nocov */
 
         method[i].reactTimes = malloc(m->Nn * m->Nt * sizeof(double));
         if (!method[i].reactTimes)
-            goto on_error;
+            goto on_error; /* #nocov */
 
         method[i].reactInf = calloc(m->Nn * m->Nt, sizeof(double));
         if (!method[i].reactInf)
-            goto on_error;
+            goto on_error; /* #nocov */
 
         /* random generator for sample select with 1 per transition in each node */
         method[i].rng_vec = malloc(m->Nn * m->Nt * sizeof(gsl_rng*));
         if (!method[i].rng_vec)
-            goto on_error;
+            goto on_error; /* #nocov */
 
         for (node = 0; node < m->Nn; node++) {
             int trans;
@@ -492,9 +492,9 @@ static int SimInf_aem_arguments_create(
 
     return 0;
 
-on_error:
-    SimInf_aem_arguments_free(method, model, Nthread);
-    return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+on_error:                                              /* #nocov */
+    SimInf_aem_arguments_free(method, model, Nthread); /* #nocov */
+    return SIMINF_ERR_ALLOC_MEMORY_BUFFER;             /* #nocov */
 }
 
 /**
