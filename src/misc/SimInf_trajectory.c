@@ -482,7 +482,7 @@ SimInf_trajectory(
     UNPROTECT(1);
 
     /* Add an identifier column to the 'data.frame'. */
-    PROTECT(vec = Rf_allocVector(INTSXP, nrow));
+    SET_VECTOR_ELT(result, 0, vec = Rf_allocVector(INTSXP, nrow));
     p_vec = INTEGER(vec);
     if (ri) {
         for (size_t i = 0; i < kv_size(*ri); i++)
@@ -503,16 +503,13 @@ SimInf_trajectory(
                 p_vec[t * id_len + i] = i + 1;
         }
     }
-    SET_VECTOR_ELT(result, 0, vec);
-    UNPROTECT(1);
 
     /* Add a 'time' column to the 'data.frame'. */
     if (Rf_isNull(Rf_getAttrib(tspan, R_NamesSymbol))) {
         double *p_tspan = REAL(tspan);
 
-        PROTECT(vec = Rf_allocVector(INTSXP, nrow));
+        SET_VECTOR_ELT(result, 1, vec = Rf_allocVector(INTSXP, nrow));
         p_vec = INTEGER(vec);
-
         if (ri) {
             for (size_t i = 0; i < kv_size(*ri); i++)
                 p_vec[i] = p_tspan[kv_A(*ri, i).time];
@@ -525,14 +522,10 @@ SimInf_trajectory(
                     p_vec[t * id_len + i] = p_tspan[t];
             }
         }
-
-        SET_VECTOR_ELT(result, 1, vec);
-        UNPROTECT(1);
     } else {
         SEXP lbl_tspan = PROTECT(Rf_getAttrib(tspan, R_NamesSymbol));
 
-        PROTECT(vec = Rf_allocVector(STRSXP, nrow));
-
+        SET_VECTOR_ELT(result, 1, vec = Rf_allocVector(STRSXP, nrow));
         if (ri) {
             for (size_t i = 0; i < kv_size(*ri); i++)
                 SET_STRING_ELT(vec, i, STRING_ELT(lbl_tspan, kv_A(*ri, i).time));
@@ -543,8 +536,7 @@ SimInf_trajectory(
             }
         }
 
-        SET_VECTOR_ELT(result, 1, vec);
-        UNPROTECT(2);
+        UNPROTECT(1);
     }
 
     /* Copy data from the discrete state matrix. */
