@@ -408,6 +408,8 @@ SimInf_trajectory(
     SEXP id_lbl)
 {
     SEXP colnames, result, vec;
+    int error = 0;
+    int nprotect = 0;
     int *p_vec;
     int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
     R_xlen_t dm_i_len = XLENGTH(dm_i);
@@ -430,6 +432,7 @@ SimInf_trajectory(
 
     /* Create a vector for the column names. */
     PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
+    nprotect++;
     SET_STRING_ELT(colnames, 0, STRING_ELT(id_lbl, 0));
     SET_STRING_ELT(colnames, 1, Rf_mkChar("time"));
     for (R_xlen_t i = 0; i < dm_i_len; i++) {
@@ -449,15 +452,27 @@ SimInf_trajectory(
     if (dm_i_len > 0 && cm_i_len > 0) {
         if (dm_sparse && cm_sparse) {
             ri = calloc(1, sizeof(rowinfo_vec));
+            if (!ri) {
+                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+                goto cleanup;                           /* #nocov */
+            }
             SimInf_insert_id_time2(ri, dm, cm, dm_stride, cm_stride, tlen);
             nrow = kv_size(*ri);
         }
     } else if (dm_i_len > 0 && dm_sparse) {
         ri = calloc(1, sizeof(rowinfo_vec));
+        if (!ri) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+            goto cleanup;                           /* #nocov */
+        }
         SimInf_insert_id_time(ri, dm, dm_stride, tlen);
         nrow = kv_size(*ri);
     } else if (cm_i_len > 0 && cm_sparse) {
         ri = calloc(1, sizeof(rowinfo_vec));
+        if (!ri) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+            goto cleanup;                           /* #nocov */
+        }
         SimInf_insert_id_time(ri, cm, cm_stride, tlen);
         nrow = kv_size(*ri);
     }
@@ -465,12 +480,14 @@ SimInf_trajectory(
     /* Create a list for the 'data.frame' and add colnames and a
      * 'data.frame' class attribute. */
     PROTECT(result = Rf_allocVector(VECSXP, ncol));
+    nprotect++;
     Rf_setAttrib(result, R_NamesSymbol, colnames);
     Rf_setAttrib(result, R_ClassSymbol, Rf_mkString("data.frame"));
 
     /* Add row names to the 'data.frame'. Note that the row names are
      * one-based. */
     PROTECT(vec = Rf_allocVector(INTSXP, nrow));
+    nprotect++;
     p_vec = INTEGER(vec);
     #ifdef _OPENMP
     #  pragma omp parallel for num_threads(SimInf_num_threads())
@@ -479,7 +496,6 @@ SimInf_trajectory(
         p_vec[i] = i + 1;
     }
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
-    UNPROTECT(1);
 
     /* Add an identifier column to the 'data.frame'. */
     SET_VECTOR_ELT(result, 0, vec = Rf_allocVector(INTSXP, nrow));
@@ -524,6 +540,7 @@ SimInf_trajectory(
         }
     } else {
         SEXP lbl_tspan = PROTECT(Rf_getAttrib(tspan, R_NamesSymbol));
+        nprotect++;
 
         SET_VECTOR_ELT(result, 1, vec = Rf_allocVector(STRSXP, nrow));
         if (ri) {
@@ -535,8 +552,6 @@ SimInf_trajectory(
                     SET_STRING_ELT(vec, t * id_len + i, STRING_ELT(lbl_tspan, t));
             }
         }
-
-        UNPROTECT(1);
     }
 
     /* Copy data from the discrete state matrix. */
@@ -557,12 +572,17 @@ SimInf_trajectory(
                              nrow, tlen, id_len, c_id_n, 2 + dm_i_len, p_id);
     }
 
+cleanup:
     if (ri) {
         kv_destroy(*ri);
         free(ri);
     }
 
-    UNPROTECT(2);
+    if (nprotect)
+        UNPROTECT(nprotect);
+
+    if (error)
+        Rf_error("Unable to allocate memory buffer."); /* #nocov */
 
     return result;
 }
