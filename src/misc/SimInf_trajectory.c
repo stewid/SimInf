@@ -408,6 +408,7 @@ SimInf_trajectory(
     SEXP id_lbl)
 {
     SEXP colnames, result, vec;
+    int error = 0;
     int nprotect = 0;
     int *p_vec;
     int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
@@ -451,15 +452,27 @@ SimInf_trajectory(
     if (dm_i_len > 0 && cm_i_len > 0) {
         if (dm_sparse && cm_sparse) {
             ri = calloc(1, sizeof(rowinfo_vec));
+            if (!ri) {
+                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+                goto cleanup;                           /* #nocov */
+            }
             SimInf_insert_id_time2(ri, dm, cm, dm_stride, cm_stride, tlen);
             nrow = kv_size(*ri);
         }
     } else if (dm_i_len > 0 && dm_sparse) {
         ri = calloc(1, sizeof(rowinfo_vec));
+        if (!ri) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+            goto cleanup;                           /* #nocov */
+        }
         SimInf_insert_id_time(ri, dm, dm_stride, tlen);
         nrow = kv_size(*ri);
     } else if (cm_i_len > 0 && cm_sparse) {
         ri = calloc(1, sizeof(rowinfo_vec));
+        if (!ri) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+            goto cleanup;                           /* #nocov */
+        }
         SimInf_insert_id_time(ri, cm, cm_stride, tlen);
         nrow = kv_size(*ri);
     }
@@ -559,6 +572,7 @@ SimInf_trajectory(
                              nrow, tlen, id_len, c_id_n, 2 + dm_i_len, p_id);
     }
 
+cleanup:
     if (ri) {
         kv_destroy(*ri);
         free(ri);
@@ -566,6 +580,9 @@ SimInf_trajectory(
 
     if (nprotect)
         UNPROTECT(nprotect);
+
+    if (error)
+        Rf_error("Unable to allocate memory buffer."); /* #nocov */
 
     return result;
 }
