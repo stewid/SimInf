@@ -91,8 +91,8 @@ SEXP attribute_hidden SimInf_abc_weights(
 static void SimInf_abc_error(int error)
 {
     switch (error) {
-    case 1:
-        Rf_error("Unable to allocate memory buffer.");
+    case 1:                                            /* #nocov */
+        Rf_error("Unable to allocate memory buffer."); /* #nocov */
         break;
     case 2:
         Rf_error("Unknown distribution.");
@@ -100,8 +100,8 @@ static void SimInf_abc_error(int error)
     case 3:
         Rf_error("Invalid weight detected (non-finite or < 0.0).");
         break;
-    default:
-        Rf_error("Unknown error code: %i.", error);
+    default:                                        /* #nocov */
+        Rf_error("Unknown error code: %i.", error); /* #nocov */
         break;
     }
 }
@@ -182,8 +182,8 @@ SEXP attribute_hidden SimInf_abc_proposals(
     GetRNGstate();
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
-        error = 1;
-        goto cleanup;
+        error = 1;    /* #nocov */
+        goto cleanup; /* #nocov */
     }
     gsl_rng_set(rng, runif(1, UINT_MAX));
 
@@ -216,8 +216,8 @@ SEXP attribute_hidden SimInf_abc_proposals(
     v_sigma = gsl_matrix_view_array(REAL(sigma), k, k);
     SIGMA = gsl_matrix_alloc(k, k);
     if (!SIGMA) {
-        error = 1;
-        goto cleanup;
+        error = 1;    /* #nocov */
+        goto cleanup; /* #nocov */
     }
     gsl_matrix_memcpy(SIGMA, &v_sigma.matrix);
     gsl_linalg_cholesky_decomp1(SIGMA);
@@ -226,6 +226,10 @@ SEXP attribute_hidden SimInf_abc_proposals(
     ptr_x = REAL(x);
     ptr_w = REAL(w);
     cdf = malloc(len * sizeof(double));
+    if (!cdf) {
+        error = 1;    /* #nocov */
+        goto cleanup; /* #nocov */
+    }
     for (int i = 0; i < len; i++) {
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
             error = 3;
@@ -361,8 +365,8 @@ SEXP attribute_hidden SimInf_abc_weights(
     v_sigma = gsl_matrix_view_array(REAL(sigma), k, k);
     SIGMA = gsl_matrix_alloc(k, k);
     if (!SIGMA) {
-        error = 1;
-        goto cleanup;
+        error = 1;    /* #nocov */
+        goto cleanup; /* #nocov */
     }
     gsl_matrix_memcpy(SIGMA, &v_sigma.matrix);
     gsl_linalg_cholesky_decomp1(SIGMA);
