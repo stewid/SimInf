@@ -2,45 +2,54 @@
 % Please edit documentation in R/pmcmc.R
 \name{pmcmc}
 \alias{pmcmc}
+\alias{pmcmc,SimInf_model-method}
 \title{Particle Markov chain Monte Carlo (PMCMC) algorithm}
 \usage{
 pmcmc(
   model,
+  obs_process,
   data,
-  priors,
   npart,
   niter,
-  fn,
-  ...,
+  verbose = getOption("verbose", FALSE)
+)
+
+\S4method{pmcmc}{SimInf_model}(
+  model,
+  obs_process,
+  data,
+  npart,
+  niter,
   verbose = getOption("verbose", FALSE)
 )
 }
 \arguments{
 \item{model}{The model to simulate data from.}
 
-\item{data}{A data frame holding the time series data.}
+\item{obs_process}{A \code{formula} or \code{function} determining
+the observation process.}
 
-\item{priors}{The priors for the parameters to fit. Each prior is
-specified with a formula notation, for example, \code{beta ~
-U(0, 1)} to specify that beta is uniformly distributed between
-0 and 1. Use \code{c()} to provide more than one prior, for
-example, \code{c(beta ~ U(0, 1), gamma ~ N(10, 1)}. Gamma
-\code{G}, normal \code{N} and uniform \code{U} distributions
-are supported.}
+\item{data}{A \code{data.frame} holding the time series data.}
 
-\item{npart}{An integer specifying the number of particles for the
-bootstrap particle filter.}
+\item{npart}{An integer with the number of particles (> 1) to use
+at each timestep.}
 
 \item{niter}{An integer specifying the number of iterations to run
 the PMCMC.}
 
-\item{fn}{FIXME.}
-
-\item{...}{Further arguments to be passed to \code{fn}.}
-
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
 use \code{FALSE} if it is not set.}
+
+\item{priors}{The priors for the parameters to fit. Each prior is
+specified with a formula notation, for example, \code{beta ~
+uniform(0, 1)} specifies that beta is uniformly distributed
+between 0 and 1. Use \code{c()} to provide more than one
+prior, for example, \code{c(beta ~ uniform(0, 1), gamma ~
+normal(10, 1)}. The following distributions are supported:
+\code{gamma}, \code{normal} and \code{uniform}. All parameters
+in \code{priors} must be either in \code{gdata} or
+\code{ldata}.}
 }
 \description{
 Particle Markov chain Monte Carlo (PMCMC) algorithm
