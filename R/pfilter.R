@@ -486,11 +486,9 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
 ##' Systematic resampling is performed at each observation.
 ##'
 ##' @param model The \code{SimInf_model} object to simulate data from.
-##' @param obs_process A \code{formula} or \code{function} determining
-##'     the observation process.
-##' @param data A \code{data.frame} holding the time series data.
-##' @param npart An integer with the number of particles (> 1) to use
-##'     at each timestep.
+##' @template obs_process-param
+##' @template data-param
+##' @template npart-param
 ##' @return A \code{SimInf_pfilter} object.
 ##' @references
 ##'

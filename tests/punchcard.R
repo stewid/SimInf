@@ -133,6 +133,7 @@ result <- run(model)
 punchcard(result) <- data.frame(time = 4:9, node = 1:6, phi = TRUE)
 result <- run(result)
 stopifnot(identical(dim(result@V), c(0L, 0L)))
+stopifnot(identical(dim(trajectory(result, "phi")), c(6L, 3L)))
 stopifnot(identical(dim(trajectory(result, "phi", format = "matrix")),
                     c(6L, 10L)))
 punchcard(result) <- NULL
