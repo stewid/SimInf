@@ -207,3 +207,19 @@ match_priors <- function(model, priors) {
 
     list(pars = pars, target = target)
 }
+
+##' Generate random deviates from priors.
+##' @noRd
+rpriors <- function(priors, n = 1) {
+    mapply(function(parameter, distribution, p1, p2) {
+        switch(distribution,
+               "gamma" = rgamma(n, p1, 1 / p2),
+               "normal" = rnorm(n, p1, p2),
+               "uniform" = runif(n, p1, p2),
+               stop("Unknown distribution.", call. = FALSE))
+    },
+    priors$parameter,
+    priors$distribution,
+    priors$p1,
+    priors$p2)
+}
