@@ -465,8 +465,7 @@ setMethod(
 setGeneric(
     "continue",
     signature = "object",
-    function(object, ngen = 1, ...,
-             verbose = getOption("verbose", FALSE)) {
+    function(object, ..., verbose = getOption("verbose", FALSE)) {
         standardGeneric("continue")
     }
 )
