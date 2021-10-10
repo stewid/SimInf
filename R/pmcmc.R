@@ -164,6 +164,29 @@ setMethod(
     }
 )
 
+is_empty_chain <- function(object) {
+    isTRUE(length(object) == 0L)
+}
+
+setup_accept <- function(object, niter) {
+    c(object@accept, logical(niter))
+}
+
+setup_chain <- function(object, niter) {
+    m <- matrix(NA_real_,
+                nrow = niter,
+                ncol = length(object@pars),
+                dimnames = list(NULL, object@priors$parameter))
+
+    if (is_empty_chain(object))
+        return(m)
+    rbind(object@chain, m)
+}
+
+setup_pf <- function(object, niter) {
+    c(object@pf, lapply(seq_len(niter), function(i) NULL))
+}
+
 ##' Length of the MCMC chain
 ##'
 ##' @param x The \code{SimInf_pmcmc} object determine the length of
