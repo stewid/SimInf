@@ -169,7 +169,105 @@ setMethod(
     }
 )
 
+##' @rdname continue
+##' @importFrom mvtnorm rmvnorm
+##' @export
+setMethod(
+    "continue",
+    signature(object = "SimInf_pmcmc"),
+    function(object, niter, ...,
+             verbose = getOption("verbose", FALSE)) {
+        check_integer_arg(niter)
+        niter <- as.integer(niter)
+        if (length(niter) != 1L || niter <= 0L)
+            stop("'niter' must be an integer > 0.", call. = FALSE)
 
-        continue(object, niter = niter, verbose = verbose, ...)
+        iterations <- length(object) + seq_len(niter)
+        npars <- length(object@pars)
+        object@accept <- setup_accept(object, niter)
+        object@chain <- setup_chain(object, niter)
+        object@pf <- setup_pf(object, niter)
+
+        if (iterations[1] == 1L) {
+            iterations <- iterations[-1]
+            theta <- rpriors(object@priors)
+            logprior <- dpriors(theta, object@priors)
+
+            if (object@target == "gdata") {
+                for (i in seq_len(npars)) {
+                    object@model@gdata[object@pars[i]] <- theta[i]
+                }
+            } else {
+                for (i in seq_len(npars)) {
+                    object@model@ldata[object@pars[i], ] <- theta[i]
+                }
+            }
+
+            object@pf[[1]] <- pfilter(object@ model,
+                                      obs_process = object@obs_process,
+                                      object@data,
+                                      npart = object@npart)
+
+            pf <- object@pf[[1]]
+            loglik <- pf@loglik
+            object@chain[1, ] <- theta
+        } else {
+            ## Continue from the last iteration in the chain.
+            pf <- object@pf[[iterations[1] - 1]]
+            loglik <- pf@loglik
+            theta <- object@chain[iterations[1] - 1, ]
+            logprior <- dpriors(theta, object@priors)
+        }
+
+        for (i in iterations) {
+            ## Proposal
+            if (runif(1) < object@adaptmix || i <= 2 * npars) {
+                sigma <- diag(0.1^2 / npars, npars)
+            } else if (npars == 1) {
+                sigma <- matrix(2.38^2 * var(object@chain[seq_len(i - 1), ]))
+            } else {
+                sigma <- 2.38^2 / npars * cov(object@chain[seq_len(i - 1), ])
+            }
+            theta_prop <- mvtnorm::rmvnorm(n = 1, mean = theta, sigma = sigma)
+            logprior_prop <- dpriors(theta_prop, object@priors)
+
+            if (is.finite(logprior_prop)) {
+                if (object@target == "gdata") {
+                    for (j in seq_len(npars)) {
+                        object@model@gdata[object@pars[j]] <- theta_prop[j]
+                    }
+                } else {
+                    for (j in seq_len(npars)) {
+                        object@model@ldata[object@pars[j], ] <- theta_prop[j]
+                    }
+                }
+
+                pf_prop <- pfilter(object@model,
+                                   obs_process = object@obs_process,
+                                   object@data,
+                                   npart = object@npart)
+                loglik_prop <- pf_prop@loglik
+
+                alpha <- exp(loglik_prop + logprior_prop - loglik - logprior)
+                if (is.finite(alpha) && runif(1) < alpha) {
+                    theta <- theta_prop
+                    loglik <- loglik_prop
+                    logprior <- logprior_prop
+                    pf <- pf_prop
+                    object@accept[i] <- TRUE
+                }
+            }
+
+            object@chain[i, ] <- theta
+            object@pf[[i]] <- pf
+
+            if (isTRUE(verbose) && isTRUE(i %% 100 == 0)) {
+                cat(sprintf(
+                    "PMCMC iteration: %i of %i. Acceptance ratio: %.3f\n",
+                    i, length(object), mean(object@accept[seq_len(i)])))
+            }
+        }
+
+        object
     }
 )
