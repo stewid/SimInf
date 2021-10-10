@@ -59,6 +59,7 @@ Imports:
     grDevices,
     MASS,
     methods,
+    mvtnorm,
     stats,
     utils,
     Matrix

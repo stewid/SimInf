@@ -9,8 +9,10 @@ pmcmc(
   model,
   obs_process,
   data,
+  priors,
   npart,
   niter,
+  adaptmix = 0.05,
   verbose = getOption("verbose", FALSE)
 )
 
@@ -18,8 +20,10 @@ pmcmc(
   model,
   obs_process,
   data,
+  priors,
   npart,
   niter,
+  adaptmix = 0.05,
   verbose = getOption("verbose", FALSE)
 )
 }
@@ -31,16 +35,6 @@ the observation process.}
 
 \item{data}{A \code{data.frame} holding the time series data.}
 
-\item{npart}{An integer with the number of particles (> 1) to use
-at each timestep.}
-
-\item{niter}{An integer specifying the number of iterations to run
-the PMCMC.}
-
-\item{verbose}{prints diagnostic messages when \code{TRUE}. The
-default is to retrieve the global option \code{verbose} and
-use \code{FALSE} if it is not set.}
-
 \item{priors}{The priors for the parameters to fit. Each prior is
 specified with a formula notation, for example, \code{beta ~
 uniform(0, 1)} specifies that beta is uniformly distributed
@@ -50,6 +44,18 @@ normal(10, 1)}. The following distributions are supported:
 \code{gamma}, \code{normal} and \code{uniform}. All parameters
 in \code{priors} must be either in \code{gdata} or
 \code{ldata}.}
+
+\item{npart}{An integer with the number of particles (> 1) to use
+at each timestep.}
+
+\item{niter}{An integer specifying the number of iterations to run
+the PMCMC.}
+
+\item{adaptmix}{Mixing proportion for adaptive proposal.}
+
+\item{verbose}{prints diagnostic messages when \code{TRUE}. The
+default is to retrieve the global option \code{verbose} and
+use \code{FALSE} if it is not set.}
 }
 \description{
 Particle Markov chain Monte Carlo (PMCMC) algorithm
