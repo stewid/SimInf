@@ -156,6 +156,19 @@ setMethod(
 
         object <- new("SimInf_pmcmc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars)
+##' Length of the MCMC chain
+##'
+##' @param x The \code{SimInf_pmcmc} object determine the length of
+##'     the MCMC chain for.
+##' @export
+setMethod(
+    "length",
+    signature(x = "SimInf_pmcmc"),
+    function(x) {
+        nrow(x@chain)
+    }
+)
+
 
         continue(object, niter = niter, verbose = verbose, ...)
     }
