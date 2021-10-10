@@ -76,6 +76,16 @@ valid_SimInf_pmcmc_object <- function(object) {
 ## Assign the validity method for the SimInf_pmcmc class.
 setValidity("SimInf_pmcmc", valid_SimInf_pmcmc_object)
 
+summary_chain <- function(chain) {
+    qq <- do.call("rbind", apply(chain, 2, function(x) {
+        cbind(t(quantile(x, c(0.025, 0.25, 0.5, 0.75, 0.975))),
+              Mean = mean(x),
+              SD = sqrt(var(x, na.rm = TRUE)))
+    }, simplify = FALSE))
+    rownames(qq) <- paste0(" ", colnames(chain))
+    print.table(qq, digits = 3)
+}
+
 ##' Brief summary of a \code{SimInf_pmcmc} object
 ##'
 ##' @param object The \code{SimInf_pmcmc} object.
@@ -98,13 +108,7 @@ setMethod(
         if (length(object) > 0) {
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
-            qq <- do.call("rbind", apply(object@chain, 2, function(x) {
-                cbind(t(quantile(x, c(0.025, 0.25, 0.5, 0.75, 0.975))),
-                      Mean = mean(x),
-                      SD = sqrt(var(x, na.rm = TRUE)))
-            }, simplify = FALSE))
-            rownames(qq) <- paste0(" ", colnames(object@chain))
-            print.table(qq, digits = 3)
+            summary_chain(object@chain)
         }
 
         invisible(object)
@@ -293,9 +297,10 @@ setMethod(
             object@pf[[i]] <- pf
 
             if (isTRUE(verbose) && isTRUE(i %% 100 == 0)) {
-                cat(sprintf(
-                    "PMCMC iteration: %i of %i. Acceptance ratio: %.3f\n",
+                print_title(sprintf(
+                    "PMCMC iteration: %i of %i. Acceptance ratio: %.3f",
                     i, length(object), mean(object@accept[seq_len(i)])))
+                summary_chain(object@chain[seq_len(i), ])
             }
         }
 
