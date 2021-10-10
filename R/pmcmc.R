@@ -120,6 +120,7 @@ setMethod(
 ##' @template npart-param
 ##' @param niter An integer specifying the number of iterations to run
 ##'     the PMCMC.
+##' @param adaptmix Mixing proportion for adaptive proposal.
 ##' @template verbose-param
 ##' @references
 ##'
@@ -128,8 +129,8 @@ setMethod(
 setGeneric(
     "pmcmc",
     signature = "model",
-    function(model, obs_process, data, npart, niter,
-             verbose = getOption("verbose", FALSE)) {
+    function(model, obs_process, data, priors, npart, niter,
+             adaptmix = 0.05, verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
 )
@@ -139,23 +140,30 @@ setGeneric(
 setMethod(
     "pmcmc",
     signature(model = "SimInf_model"),
-    function(model, obs_process, data, npart, niter, verbose) {
+    function(model, obs_process, data, priors, npart, niter, adaptmix,
+             verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (length(npart) != 1L || npart <= 1L)
             stop("'npart' must be an integer > 1.", call. = FALSE)
 
-        check_integer_arg(niter)
-        niter <- as.integer(niter)
-        if (length(niter) != 1L || niter <= 0L)
-            stop("'niter' must be an integer > 0.", call. = FALSE)
+        adaptmix <- as.numeric(adaptmix)
+        if (length(adaptmix) != 1L || adaptmix <= 0 || adaptmix >= 1)
+            stop("'adaptmix' must be a value > 0 and < 1", call. = FALSE)
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
         pars <- match_priors(model, priors)
 
         object <- new("SimInf_pmcmc", model = model, priors = priors,
-                      target = pars$target, pars = pars$pars)
+                      target = pars$target, pars = pars$pars,
+                      obs_process = obs_process, data = data,
+                      npart = npart, adaptmix = adaptmix)
+
+        continue(object, niter = niter, verbose = verbose)
+    }
+)
+
 ##' Length of the MCMC chain
 ##'
 ##' @param x The \code{SimInf_pmcmc} object determine the length of
