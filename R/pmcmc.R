@@ -25,13 +25,79 @@
 ##'     determines if the \code{pmcmc} method estimates parameters in
 ##'     \code{model@@gdata} or in \code{model@@ldata}.
 ##' @slot pars Index to the parameters in \code{target}.
+##' @slot npart n integer with the number of particles (> 1) to use in
+##'     the bootstrap particle filter.
+##' @slot obs_process A \code{formula} or \code{function} determining
+##'     the observation process.
+##' @slot data A \code{data.frame} holding the time series data for
+##'     the observation process.
+##' @slot chain FIXME
+##' @slot pf FIXME
+##' @slot accept FIXME
 ##' @export
 setClass(
     "SimInf_pmcmc",
-    slots = c(model   = "SimInf_model",
-              priors  = "data.frame",
-              target  = "character",
-              pars    = "integer")
+    slots = c(model       = "SimInf_model",
+              priors      = "data.frame",
+              target      = "character",
+              pars        = "integer",
+              npart       = "integer",
+              obs_process = "ANY",
+              data        = "data.frame",
+              chain       = "matrix",
+              pf          = "list",
+              accept      = "logical",
+              adaptmix    = "numeric")
+)
+
+##' Check if a SimInf_pmcmc object is valid
+##'
+##' @param object The SimInf_pmcmc object to check.
+##' @noRd
+valid_SimInf_pmcmc_object <- function(object) {
+    errors <- character(0)
+
+    if (length(errors))
+        return(errors)
+    TRUE
+}
+
+## Assign the validity method for the SimInf_pmcmc class.
+setValidity("SimInf_pmcmc", valid_SimInf_pmcmc_object)
+
+##' Brief summary of a \code{SimInf_pmcmc} object
+##'
+##' @param object The \code{SimInf_pmcmc} object.
+##' @return \code{invisible(object)}.
+##' @export
+##' @importFrom methods show
+setMethod(
+    "show",
+    signature(object = "SimInf_pmcmc"),
+    function(object) {
+        cat("Particle Markov chain Monte Carlo\n")
+        cat("---------------------------------\n")
+        cat(sprintf("Number of iterations: %i\n", length(object)))
+        cat(sprintf("Number of particles: %i\n", object@npart))
+        cat(sprintf("Mixing proportion for adaptive proposal: %.2f\n",
+                    object@adaptmix))
+        cat(sprintf("Acceptance ratio: %.3f\n",
+                    ifelse(length(object) > 0, mean(object@accept), 0)))
+
+        if (length(object) > 0) {
+            print_title(
+                "Quantiles, mean and standard deviation for each variable")
+            qq <- do.call("rbind", apply(object@chain, 2, function(x) {
+                cbind(t(quantile(x, c(0.025, 0.25, 0.5, 0.75, 0.975))),
+                      Mean = mean(x),
+                      SD = sqrt(var(x, na.rm = TRUE)))
+            }, simplify = FALSE))
+            rownames(qq) <- paste0(" ", colnames(object@chain))
+            print.table(qq, digits = 3)
+        }
+
+        invisible(object)
+    }
 )
 
 ##' Particle Markov chain Monte Carlo (PMCMC) algorithm
