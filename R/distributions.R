@@ -209,6 +209,9 @@ match_priors <- function(model, priors) {
 }
 
 ##' Generate random deviates from priors.
+##' @importFrom stats rgamma
+##' @importFrom stats rnorm
+##' @importFrom stats runif
 ##' @noRd
 rpriors <- function(priors, n = 1) {
     mapply(function(parameter, distribution, p1, p2) {
@@ -226,6 +229,9 @@ rpriors <- function(priors, n = 1) {
 }
 
 ##' Determine the sum of the log of the densities for the priors.
+##' @importFrom stats dgamma
+##' @importFrom stats dnorm
+##' @importFrom stats dunif
 ##' @noRd
 dpriors <- function(x, priors) {
     sum(mapply(function(x, distribution, p1, p2) {
