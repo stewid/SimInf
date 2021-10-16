@@ -201,7 +201,7 @@ setMethod(
             loglik <- object@pf[[1]]@loglik
             logprior <- dpriors(theta, object@priors)
             logpost <- loglik + logprior
-            accept <- FALSE
+            accept <- 0
             object@chain[1, ] <- c(logpost, loglik, logprior, accept, theta)
 
             niter <- niter - 1L
