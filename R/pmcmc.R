@@ -33,7 +33,6 @@
 ##'     the observation process.
 ##' @slot chain FIXME
 ##' @slot pf FIXME
-##' @slot accept FIXME
 ##' @export
 setClass(
     "SimInf_pmcmc",
@@ -46,7 +45,6 @@ setClass(
               data        = "data.frame",
               chain       = "matrix",
               pf          = "list",
-              accept      = "logical",
               adaptmix    = "numeric")
 )
 
@@ -82,7 +80,7 @@ summary_chain <- function(chain) {
               Mean = mean(x),
               SD = sqrt(var(x, na.rm = TRUE)))
     }, simplify = FALSE))
-    rownames(qq) <- paste0(" ", colnames(chain))
+    rownames(qq) <- colnames(chain)
     print.table(qq, digits = 3)
 }
 
@@ -102,13 +100,14 @@ setMethod(
         cat(sprintf("Number of particles: %i\n", object@npart))
         cat(sprintf("Mixing proportion for adaptive proposal: %.2f\n",
                     object@adaptmix))
-        cat(sprintf("Acceptance ratio: %.3f\n",
-                    ifelse(length(object) > 0, mean(object@accept), 0)))
 
         if (length(object) > 0) {
+            cat(sprintf("Acceptance ratio: %.3f\n",
+                        mean(object@chain[, "accept"])))
+
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
-            summary_chain(object@chain)
+            summary_chain(object@chain[, -(1:4)])
         }
 
         invisible(object)
@@ -134,7 +133,8 @@ setGeneric(
     "pmcmc",
     signature = "model",
     function(model, obs_process, data, priors, npart, niter,
-             adaptmix = 0.05, verbose = getOption("verbose", FALSE)) {
+             theta = NULL, adaptmix = 0.05,
+             verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
 )
@@ -144,8 +144,8 @@ setGeneric(
 setMethod(
     "pmcmc",
     signature(model = "SimInf_model"),
-    function(model, obs_process, data, priors, npart, niter, adaptmix,
-             verbose) {
+    function(model, obs_process, data, priors, npart, niter, theta,
+             adaptmix, verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (length(npart) != 1L || npart <= 1L)
@@ -164,6 +164,51 @@ setMethod(
                       obs_process = obs_process, data = data,
                       npart = npart, adaptmix = adaptmix)
 
+        if (!is.null(theta)) {
+            check_integer_arg(niter)
+            niter <- as.integer(niter)
+            if (length(niter) != 1L || niter <= 0L)
+                stop("'niter' must be an integer > 0.", call. = FALSE)
+
+            if (!all(is.atomic(theta),
+                     is.numeric(theta),
+                     all(priors$parameter %in% names(theta)))) {
+                stop("'theta' must be a vector with initial ",
+                     "values for the parameters.",
+                     call. = FALSE)
+            }
+            theta <- theta[priors$parameter]
+
+            npars <- length(object@pars)
+            object@chain <- setup_chain(object, 1L)
+            object@pf <- setup_pf(object, 1L)
+
+            if (object@target == "gdata") {
+                for (i in seq_len(npars)) {
+                    object@model@gdata[object@pars[i]] <- theta[i]
+                }
+            } else {
+                for (i in seq_len(npars)) {
+                    object@model@ldata[object@pars[i], ] <- theta[i]
+                }
+            }
+
+            object@pf[[1]] <- pfilter(object@ model,
+                                      obs_process = object@obs_process,
+                                      object@data,
+                                      npart = object@npart)
+
+            loglik <- object@pf[[1]]@loglik
+            logprior <- dpriors(theta, object@priors)
+            logpost <- loglik + logprior
+            accept <- FALSE
+            object@chain[1, ] <- c(logpost, loglik, logprior, accept, theta)
+
+            niter <- niter - 1L
+            if (niter == 0)
+                return(object)
+        }
+
         continue(object, niter = niter, verbose = verbose)
     }
 )
@@ -172,15 +217,13 @@ is_empty_chain <- function(object) {
     isTRUE(length(object) == 0L)
 }
 
-setup_accept <- function(object, niter) {
-    c(object@accept, logical(niter))
-}
-
 setup_chain <- function(object, niter) {
     m <- matrix(NA_real_,
                 nrow = niter,
-                ncol = length(object@pars),
-                dimnames = list(NULL, object@priors$parameter))
+                ncol = 4L + length(object@pars),
+                dimnames = list(NULL, c("logpost", "loglik",
+                                        "logprior", "accept",
+                                        object@priors$parameter)))
 
     if (is_empty_chain(object))
         return(m)
@@ -219,15 +262,13 @@ setMethod(
 
         iterations <- length(object) + seq_len(niter)
         npars <- length(object@pars)
-        object@accept <- setup_accept(object, niter)
         object@chain <- setup_chain(object, niter)
         object@pf <- setup_pf(object, niter)
 
         if (iterations[1] == 1L) {
             iterations <- iterations[-1]
-            theta <- rpriors(object@priors)
-            logprior <- dpriors(theta, object@priors)
 
+            theta <- rpriors(object@priors)
             if (object@target == "gdata") {
                 for (i in seq_len(npars)) {
                     object@model@gdata[object@pars[i]] <- theta[i]
@@ -245,13 +286,18 @@ setMethod(
 
             pf <- object@pf[[1]]
             loglik <- pf@loglik
-            object@chain[1, ] <- theta
+            logprior <- dpriors(theta, object@priors)
+            logpost <- loglik + logprior
+            accept <- 0
+            object@chain[1, ] <- c(logpost, loglik, logprior, accept, theta)
         } else {
             ## Continue from the last iteration in the chain.
-            pf <- object@pf[[iterations[1] - 1]]
-            loglik <- pf@loglik
-            theta <- object@chain[iterations[1] - 1, ]
-            logprior <- dpriors(theta, object@priors)
+            i <- iterations[1] - 1
+            pf <- object@pf[[i]]
+            logpost <- object@chain[i, "logpost"]
+            loglik <- object@chain[i, "loglik"]
+            logprior <- object@chain[i, "logprior"]
+            theta <- object@chain[i, -(1:4)]
         }
 
         for (i in iterations) {
@@ -259,9 +305,9 @@ setMethod(
             if (runif(1) < object@adaptmix || i <= 2 * npars) {
                 sigma <- diag(0.1^2 / npars, npars)
             } else if (npars == 1) {
-                sigma <- matrix(2.38^2 * var(object@chain[seq_len(i - 1), ]))
+                sigma <- matrix(2.38^2 * var(object@chain[seq_len(i - 1), -c(1:4)]))
             } else {
-                sigma <- 2.38^2 / npars * cov(object@chain[seq_len(i - 1), ])
+                sigma <- 2.38^2 / npars * cov(object@chain[seq_len(i - 1), -c(1:4)])
             }
             theta_prop <- mvtnorm::rmvnorm(n = 1, mean = theta, sigma = sigma)
             logprior_prop <- dpriors(theta_prop, object@priors)
@@ -283,24 +329,27 @@ setMethod(
                                    npart = object@npart)
                 loglik_prop <- pf_prop@loglik
 
+                accept <- 0
                 alpha <- exp(loglik_prop + logprior_prop - loglik - logprior)
                 if (is.finite(alpha) && runif(1) < alpha) {
-                    theta <- theta_prop
                     loglik <- loglik_prop
                     logprior <- logprior_prop
+                    logpost <- loglik + logprior
+                    theta <- theta_prop
                     pf <- pf_prop
-                    object@accept[i] <- TRUE
+                    accept <- 1
                 }
             }
 
-            object@chain[i, ] <- theta
+            object@chain[i, ] <- c(logpost, loglik, logprior, accept, theta)
             object@pf[[i]] <- pf
 
             if (isTRUE(verbose) && isTRUE(i %% 100 == 0)) {
                 print_title(sprintf(
                     "PMCMC iteration: %i of %i. Acceptance ratio: %.3f",
-                    i, length(object), mean(object@accept[seq_len(i)])))
-                summary_chain(object@chain[seq_len(i), ])
+                    i, length(object),
+                    mean(object@chain[seq_len(i), "accept"])))
+                summary_chain(object@chain[seq_len(i), -(1:4)])
             }
         }
 
