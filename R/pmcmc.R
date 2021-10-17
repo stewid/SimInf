@@ -203,7 +203,7 @@ setMethod(
                 }
             }
 
-            object@pf[[1]] <- pfilter(object@ model,
+            object@pf[[1]] <- pfilter(object@model,
                                       obs_process = object@obs_process,
                                       object@data,
                                       npart = object@npart)
@@ -321,7 +321,7 @@ setMethod(
                 }
             }
 
-            object@pf[[1]] <- pfilter(object@ model,
+            object@pf[[1]] <- pfilter(object@model,
                                       obs_process = object@obs_process,
                                       object@data,
                                       npart = object@npart)
