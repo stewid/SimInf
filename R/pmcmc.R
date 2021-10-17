@@ -148,12 +148,17 @@ setMethod(
              adaptmix, verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
-        if (length(npart) != 1L || npart <= 1L)
+        if (any(length(npart) != 1L,
+                any(npart <= 1L))) {
             stop("'npart' must be an integer > 1.", call. = FALSE)
+        }
 
         adaptmix <- as.numeric(adaptmix)
-        if (length(adaptmix) != 1L || adaptmix <= 0 || adaptmix >= 1)
+        if (any(length(adaptmix) != 1L,
+                any(adaptmix <= 0),
+                any(adaptmix >= 1))) {
             stop("'adaptmix' must be a value > 0 and < 1", call. = FALSE)
+        }
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
@@ -167,8 +172,10 @@ setMethod(
         if (!is.null(theta)) {
             check_integer_arg(niter)
             niter <- as.integer(niter)
-            if (length(niter) != 1L || niter <= 0L)
+            if (any(length(niter) != 1L,
+                    any(niter <= 0L))) {
                 stop("'niter' must be an integer > 0.", call. = FALSE)
+            }
 
             if (!all(is.atomic(theta),
                      is.numeric(theta),
