@@ -309,7 +309,7 @@ setMethod(
             } else {
                 sigma <- 2.38^2 / npars * cov(object@chain[seq_len(i - 1), -c(1:4)])
             }
-            theta_prop <- mvtnorm::rmvnorm(n = 1, mean = theta, sigma = sigma)
+            theta_prop <- rmvnorm(n = 1, mean = theta, sigma = sigma)[1, ]
             logprior_prop <- dpriors(theta_prop, object@priors)
 
             if (is.finite(logprior_prop)) {
