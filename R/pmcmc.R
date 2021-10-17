@@ -234,6 +234,18 @@ setup_pf <- function(object, niter) {
     c(object@pf, lapply(seq_len(niter), function(i) NULL))
 }
 
+pmcmc_progress <- function(object, i, verbose) {
+    if (isTRUE(verbose) && isTRUE(i %% 100 == 0)) {
+        print_title(sprintf(
+            "PMCMC iteration: %i of %i. Acceptance ratio: %.3f",
+            i, length(object),
+            mean(object@chain[seq_len(i), "accept"])))
+        summary_chain(object@chain[seq_len(i), vars_i])
+    }
+
+    invisible(NULL)
+}
+
 ##' Length of the MCMC chain
 ##'
 ##' @param x The \code{SimInf_pmcmc} object determine the length of
@@ -341,16 +353,12 @@ setMethod(
                 }
             }
 
+            ## Save current value of chain.
             object@chain[i, ] <- c(logpost, loglik, logprior, accept, theta)
             object@pf[[i]] <- pf
 
-            if (isTRUE(verbose) && isTRUE(i %% 100 == 0)) {
-                print_title(sprintf(
-                    "PMCMC iteration: %i of %i. Acceptance ratio: %.3f",
-                    i, length(object),
-                    mean(object@chain[seq_len(i), "accept"])))
-                summary_chain(object@chain[seq_len(i), -(1:4)])
-            }
+            ## Report progress.
+            pmcmc_progress(object, i, verbose)
         }
 
         object
