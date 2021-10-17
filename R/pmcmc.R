@@ -107,7 +107,10 @@ setMethod(
 
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
-            summary_chain(object@chain[, -(1:4)])
+
+            ## Skip first four columns in chain.
+            j <- seq(from = 5, by = 1, length.out = length(object@pars))
+            summary_chain(object@chain[, j])
         }
 
         invisible(object)
@@ -247,10 +250,30 @@ pmcmc_progress <- function(object, i, verbose) {
             "PMCMC iteration: %i of %i. Acceptance ratio: %.3f",
             i, length(object),
             mean(object@chain[seq_len(i), "accept"])))
-        summary_chain(object@chain[seq_len(i), vars_i])
+
+        ## Skip first four columns in chain.
+        j <- seq(from = 5, by = 1, length.out = length(object@pars))
+        summary_chain(object@chain[seq_len(i), j])
     }
 
     invisible(NULL)
+}
+
+##' @importFrom mvtnorm rmvnorm
+##' @noRd
+pmcmc_proposal <- function(object, i) {
+    npars <- length(object@pars)
+    j <- seq(from = 5, by = 1, length.out = npars)
+
+    if (runif(1) < object@adaptmix || i <= 2 * npars) {
+        sigma <- diag(0.1^2 / npars, npars)
+    } else if (npars == 1) {
+        sigma <- matrix(2.38^2 * var(object@chain[seq_len(i - 1), j]))
+    } else {
+        sigma <- 2.38^2 / npars * cov(object@chain[seq_len(i - 1), j])
+    }
+
+    rmvnorm(n = 1, mean = object@chain[i - 1, j], sigma = sigma)[1, ]
 }
 
 ##' Length of the MCMC chain
@@ -321,14 +344,7 @@ setMethod(
 
         for (i in iterations) {
             ## Proposal
-            if (runif(1) < object@adaptmix || i <= 2 * npars) {
-                sigma <- diag(0.1^2 / npars, npars)
-            } else if (npars == 1) {
-                sigma <- matrix(2.38^2 * var(object@chain[seq_len(i - 1), -c(1:4)]))
-            } else {
-                sigma <- 2.38^2 / npars * cov(object@chain[seq_len(i - 1), -c(1:4)])
-            }
-            theta_prop <- rmvnorm(n = 1, mean = theta, sigma = sigma)[1, ]
+            theta_prop <- pmcmc_proposal(object, i)
             logprior_prop <- dpriors(theta_prop, object@priors)
 
             if (is.finite(logprior_prop)) {
