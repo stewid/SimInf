@@ -295,7 +295,6 @@ setMethod(
 )
 
 ##' @rdname continue
-##' @importFrom mvtnorm rmvnorm
 ##' @export
 setMethod(
     "continue",
@@ -304,24 +303,21 @@ setMethod(
              verbose = getOption("verbose", FALSE)) {
         check_integer_arg(niter)
         niter <- as.integer(niter)
-        if (length(niter) != 1L || niter <= 0L)
+        if (any(length(niter) != 1L, any(niter <= 0L)))
             stop("'niter' must be an integer > 0.", call. = FALSE)
 
         iterations <- length(object) + seq_len(niter)
-        npars <- length(object@pars)
         object@chain <- setup_chain(object, niter)
         object@pf <- setup_pf(object, niter)
 
-        if (iterations[1] == 1L) {
+        if (iterations[1] == 1) {
             iterations <- iterations[-1]
 
             theta <- rpriors(object@priors)
             slot(object@model, object@target) <- set_proposal(object, theta)
 
-            object@pf[[1]] <- pfilter(object@model,
-                                      obs_process = object@obs_process,
-                                      object@data,
-                                      npart = object@npart)
+            object@pf[[1]] <- pfilter(object@model, object@obs_process,
+                                      object@data, object@npart)
 
             pf <- object@pf[[1]]
             loglik <- pf@loglik
@@ -329,18 +325,19 @@ setMethod(
             logpost <- loglik + logprior
             accept <- 0
             object@chain[1, ] <- c(logpost, loglik, logprior, accept, theta)
-        } else {
-            ## Continue from the last iteration in the chain.
-            i <- iterations[1] - 1
-            pf <- object@pf[[i]]
-            logpost <- object@chain[i, "logpost"]
-            loglik <- object@chain[i, "loglik"]
-            logprior <- object@chain[i, "logprior"]
-            theta <- object@chain[i, -(1:4)]
         }
+
+        ## Continue from the last iteration in the chain.
+        i <- iterations[1] - 1
+        pf <- object@pf[[i]]
+        logpost <- object@chain[i, "logpost"]
+        loglik <- object@chain[i, "loglik"]
+        logprior <- object@chain[i, "logprior"]
+        theta <- object@chain[i, seq(5, length.out = length(object@pars))]
 
         for (i in iterations) {
             ## Proposal
+            accept <- 0
             theta_prop <- pmcmc_proposal(object, i)
             logprior_prop <- dpriors(theta_prop, object@priors)
 
@@ -348,13 +345,10 @@ setMethod(
                 slot(object@model, object@target) <-
                     set_proposal(object, theta_prop)
 
-                pf_prop <- pfilter(object@model,
-                                   obs_process = object@obs_process,
-                                   object@data,
-                                   npart = object@npart)
+                pf_prop <- pfilter(object@model, object@obs_process,
+                                   object@data, object@npart)
                 loglik_prop <- pf_prop@loglik
 
-                accept <- 0
                 alpha <- exp(loglik_prop + logprior_prop - loglik - logprior)
                 if (is.finite(alpha) && runif(1) < alpha) {
                     loglik <- loglik_prop
