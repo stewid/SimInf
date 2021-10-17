@@ -193,16 +193,7 @@ setMethod(
             object@chain <- setup_chain(object, 1L)
             object@pf <- setup_pf(object, 1L)
 
-            if (object@target == "gdata") {
-                for (i in seq_len(npars)) {
-                    object@model@gdata[object@pars[i]] <- theta[i]
-                }
-            } else {
-                for (i in seq_len(npars)) {
-                    object@model@ldata[object@pars[i], ] <- theta[i]
-                }
-            }
-
+            slot(object@model, object@target) <- set_proposal(object, theta)
             object@pf[[1]] <- pfilter(object@model,
                                       obs_process = object@obs_process,
                                       object@data,
@@ -242,6 +233,20 @@ setup_chain <- function(object, niter) {
 
 setup_pf <- function(object, niter) {
     c(object@pf, lapply(seq_len(niter), function(i) NULL))
+}
+
+set_proposal <- function(object, theta) {
+    if (object@target == "gdata") {
+        for (i in seq_len(length(object@pars))) {
+            object@model@gdata[object@pars[i]] <- theta[i]
+        }
+    } else {
+        for (i in seq_len(length(object@pars))) {
+            object@model@ldata[object@pars[i], ] <- theta[i]
+        }
+    }
+
+    slot(object@model, object@target)
 }
 
 pmcmc_progress <- function(object, i, verbose) {
@@ -311,15 +316,7 @@ setMethod(
             iterations <- iterations[-1]
 
             theta <- rpriors(object@priors)
-            if (object@target == "gdata") {
-                for (i in seq_len(npars)) {
-                    object@model@gdata[object@pars[i]] <- theta[i]
-                }
-            } else {
-                for (i in seq_len(npars)) {
-                    object@model@ldata[object@pars[i], ] <- theta[i]
-                }
-            }
+            slot(object@model, object@target) <- set_proposal(object, theta)
 
             object@pf[[1]] <- pfilter(object@model,
                                       obs_process = object@obs_process,
@@ -348,15 +345,8 @@ setMethod(
             logprior_prop <- dpriors(theta_prop, object@priors)
 
             if (is.finite(logprior_prop)) {
-                if (object@target == "gdata") {
-                    for (j in seq_len(npars)) {
-                        object@model@gdata[object@pars[j]] <- theta_prop[j]
-                    }
-                } else {
-                    for (j in seq_len(npars)) {
-                        object@model@ldata[object@pars[j], ] <- theta_prop[j]
-                    }
-                }
+                slot(object@model, object@target) <-
+                    set_proposal(object, theta_prop)
 
                 pf_prop <- pfilter(object@model,
                                    obs_process = object@obs_process,
