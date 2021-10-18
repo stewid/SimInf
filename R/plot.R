@@ -522,3 +522,36 @@ setMethod(
         invisible(NULL)
     }
 )
+
+##' Display the PMCMC posterior distribution
+##'
+##' Display the (approximate) posterior distributions obtained from
+#'      fitting a particle Markov chain Monte Carlo algorithm.
+##' @param x The \code{SimInf_pmcmc} object to plot.
+##' @param start The start iteration to remove some burn-in
+##'     iterations. Default is \code{start = 1}.
+##' @param thin keep every \code{thin} iteration after the
+##'     \code{start} iteration. Default is \code{thin = 1}, i.e., keep
+##'     every iteration.
+##' @param ... Additional arguments affecting the plot.
+##' @aliases plot,SimInf_pmcmc-method
+##' @export
+##' @include pmcmc.R
+setMethod(
+    "plot",
+    signature(x = "SimInf_pmcmc"),
+    function(x, start = 1, thin = 1, ...) {
+        start <- as.integer(start)
+        if (any(length(start) != 1, any(start < 1)))
+            stop("'start' must be an integer >= 1.", call. = FALSE)
+
+        thin <- as.integer(thin)
+        if (any(length(thin) != 1, any(thin < 1)))
+            stop("'thin' must be an integer >= 1.", call. = FALSE)
+
+        i <- seq(from = start, to = length(x), by = thin)
+        j <- seq(from = 5, by = 1, length.out = length(x@pars))
+        plot_density(x@chain[i, j, drop = FALSE], ...)
+        invisible(NULL)
+    }
+)
