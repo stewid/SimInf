@@ -12,6 +12,7 @@ pmcmc(
   priors,
   npart,
   niter,
+  theta = NULL,
   adaptmix = 0.05,
   verbose = getOption("verbose", FALSE)
 )
@@ -23,6 +24,7 @@ pmcmc(
   priors,
   npart,
   niter,
+  theta = NULL,
   adaptmix = 0.05,
   verbose = getOption("verbose", FALSE)
 )
