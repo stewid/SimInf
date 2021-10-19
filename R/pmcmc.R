@@ -200,10 +200,10 @@ setMethod(
                                       npart = object@npart)
 
             logLik <- object@pf[[1]]@loglik
-            logprior <- dpriors(theta, object@priors)
-            logPost <- logLik + logprior
+            logPrior <- dpriors(theta, object@priors)
+            logPost <- logLik + logPrior
             accept <- 0
-            object@chain[1, ] <- c(logPost, logLik, logprior, accept, theta)
+            object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
 
             niter <- niter - 1L
             if (niter == 0)
@@ -223,7 +223,7 @@ setup_chain <- function(object, niter) {
                 nrow = niter,
                 ncol = 4L + length(object@pars),
                 dimnames = list(NULL, c("logPost", "logLik",
-                                        "logprior", "accept",
+                                        "logPrior", "accept",
                                         object@priors$parameter)))
 
     if (is_empty_chain(object))
@@ -321,10 +321,10 @@ setMethod(
 
             pf <- object@pf[[1]]
             logLik <- pf@loglik
-            logprior <- dpriors(theta, object@priors)
-            logPost <- logLik + logprior
+            logPrior <- dpriors(theta, object@priors)
+            logPost <- logLik + logPrior
             accept <- 0
-            object@chain[1, ] <- c(logPost, logLik, logprior, accept, theta)
+            object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
         }
 
         ## Continue from the last iteration in the chain.
@@ -332,16 +332,16 @@ setMethod(
         pf <- object@pf[[i]]
         logPost <- object@chain[i, "logPost"]
         logLik <- object@chain[i, "logLik"]
-        logprior <- object@chain[i, "logprior"]
+        logPrior <- object@chain[i, "logPrior"]
         theta <- object@chain[i, seq(5, length.out = length(object@pars))]
 
         for (i in iterations) {
             ## Proposal
             accept <- 0
             theta_prop <- pmcmc_proposal(object, i)
-            logprior_prop <- dpriors(theta_prop, object@priors)
+            logPrior_prop <- dpriors(theta_prop, object@priors)
 
-            if (is.finite(logprior_prop)) {
+            if (is.finite(logPrior_prop)) {
                 slot(object@model, object@target) <-
                     set_proposal(object, theta_prop)
 
@@ -349,11 +349,11 @@ setMethod(
                                    object@data, object@npart)
                 logLik_prop <- pf_prop@loglik
 
-                alpha <- exp(logLik_prop + logprior_prop - logLik - logprior)
+                alpha <- exp(logLik_prop + logPrior_prop - logLik - logPrior)
                 if (is.finite(alpha) && runif(1) < alpha) {
                     logLik <- logLik_prop
-                    logprior <- logprior_prop
-                    logPost <- logLik + logprior
+                    logPrior <- logPrior_prop
+                    logPost <- logLik + logPrior
                     theta <- theta_prop
                     pf <- pf_prop
                     accept <- 1
@@ -361,7 +361,7 @@ setMethod(
             }
 
             ## Save current value of chain.
-            object@chain[i, ] <- c(logPost, logLik, logprior, accept, theta)
+            object@chain[i, ] <- c(logPost, logLik, logPrior, accept, theta)
             object@pf[[i]] <- pf
 
             ## Report progress.
