@@ -256,8 +256,8 @@ pmcmc_progress <- function(object, i, verbose) {
             i, length(object),
             mean(object@chain[seq_len(i), "accept"])))
 
-        ## Skip first four columns in chain.
-        j <- seq(from = 5, by = 1, length.out = length(object@pars))
+        ## Skip columns logLik, logPrior and accept in the chain.
+        j <- c(1, seq(from = 5, by = 1, length.out = length(object@pars)))
         summary_chain(object@chain[seq_len(i), j])
     }
 
