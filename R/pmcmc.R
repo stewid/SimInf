@@ -201,9 +201,9 @@ setMethod(
 
             loglik <- object@pf[[1]]@loglik
             logprior <- dpriors(theta, object@priors)
-            logpost <- loglik + logprior
+            logPost <- loglik + logprior
             accept <- 0
-            object@chain[1, ] <- c(logpost, loglik, logprior, accept, theta)
+            object@chain[1, ] <- c(logPost, loglik, logprior, accept, theta)
 
             niter <- niter - 1L
             if (niter == 0)
@@ -222,7 +222,7 @@ setup_chain <- function(object, niter) {
     m <- matrix(NA_real_,
                 nrow = niter,
                 ncol = 4L + length(object@pars),
-                dimnames = list(NULL, c("logpost", "loglik",
+                dimnames = list(NULL, c("logPost", "loglik",
                                         "logprior", "accept",
                                         object@priors$parameter)))
 
@@ -322,15 +322,15 @@ setMethod(
             pf <- object@pf[[1]]
             loglik <- pf@loglik
             logprior <- dpriors(theta, object@priors)
-            logpost <- loglik + logprior
+            logPost <- loglik + logprior
             accept <- 0
-            object@chain[1, ] <- c(logpost, loglik, logprior, accept, theta)
+            object@chain[1, ] <- c(logPost, loglik, logprior, accept, theta)
         }
 
         ## Continue from the last iteration in the chain.
         i <- iterations[1] - 1
         pf <- object@pf[[i]]
-        logpost <- object@chain[i, "logpost"]
+        logPost <- object@chain[i, "logPost"]
         loglik <- object@chain[i, "loglik"]
         logprior <- object@chain[i, "logprior"]
         theta <- object@chain[i, seq(5, length.out = length(object@pars))]
@@ -353,7 +353,7 @@ setMethod(
                 if (is.finite(alpha) && runif(1) < alpha) {
                     loglik <- loglik_prop
                     logprior <- logprior_prop
-                    logpost <- loglik + logprior
+                    logPost <- loglik + logprior
                     theta <- theta_prop
                     pf <- pf_prop
                     accept <- 1
@@ -361,7 +361,7 @@ setMethod(
             }
 
             ## Save current value of chain.
-            object@chain[i, ] <- c(logpost, loglik, logprior, accept, theta)
+            object@chain[i, ] <- c(logPost, loglik, logprior, accept, theta)
             object@pf[[i]] <- pf
 
             ## Report progress.
