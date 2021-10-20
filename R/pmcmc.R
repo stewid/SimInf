@@ -143,6 +143,7 @@ setGeneric(
 )
 
 ##' @rdname pmcmc
+##' @importFrom methods slot<-
 ##' @export
 setMethod(
     "pmcmc",
@@ -265,6 +266,7 @@ pmcmc_progress <- function(object, i, verbose) {
 }
 
 ##' @importFrom mvtnorm rmvnorm
+##' @importFrom stats var
 ##' @noRd
 pmcmc_proposal <- function(object, i) {
     npars <- length(object@pars)
@@ -295,6 +297,7 @@ setMethod(
 )
 
 ##' @rdname continue
+##' @importFrom methods slot<-
 ##' @export
 setMethod(
     "continue",
