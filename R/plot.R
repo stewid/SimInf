@@ -560,6 +560,8 @@ setMethod(
 ##'     distributions.
 ##' @param start The start iteration to remove some burn-in
 ##'     iterations. Default is \code{start = 1}.
+##' @param end the last iteration to include. Default is
+##'     \code{end = length(x)}.
 ##' @param thin keep every \code{thin} iteration after the
 ##'     \code{start} iteration. Default is \code{thin = 1}, i.e., keep
 ##'     every iteration.
@@ -570,7 +572,7 @@ setMethod(
 setMethod(
     "plot",
     signature(x = "SimInf_pmcmc"),
-    function(x, y, start = 1, thin = 1, ...) {
+    function(x, y, start = 1, end = length(x), thin = 1, ...) {
         if (missing(y))
             y <- "density"
         if (is(y, "formula") && identical(as.character(y), c("~", "trace")))
@@ -581,11 +583,17 @@ setMethod(
         if (any(length(start) != 1, any(start < 1)))
             stop("'start' must be an integer >= 1.", call. = FALSE)
 
+        end <- as.integer(end)
+        if (any(length(end) != 1, any(end < start), any(end > length(x)))) {
+            stop("'end' must be an integer between start and length(x).",
+                 call. = FALSE)
+        }
+
         thin <- as.integer(thin)
         if (any(length(thin) != 1, any(thin < 1)))
             stop("'thin' must be an integer >= 1.", call. = FALSE)
 
-        i <- seq(from = start, to = length(x), by = thin)
+        i <- seq(from = start, to = end, by = thin)
         j <- seq(from = 5, by = 1, length.out = length(x@pars))
 
         if (identical(y, "trace")) {

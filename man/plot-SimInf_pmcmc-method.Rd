@@ -4,7 +4,7 @@
 \alias{plot,SimInf_pmcmc-method}
 \title{Display the PMCMC posterior distribution}
 \usage{
-\S4method{plot}{SimInf_pmcmc}(x, y, start = 1, thin = 1, ...)
+\S4method{plot}{SimInf_pmcmc}(x, y, start = 1, end = length(x), thin = 1, ...)
 }
 \arguments{
 \item{x}{The \code{SimInf_pmcmc} object to plot.}
@@ -16,6 +16,9 @@ distributions.}
 
 \item{start}{The start iteration to remove some burn-in
 iterations. Default is \code{start = 1}.}
+
+\item{end}{the last iteration to include. Default is
+\code{end = length(x)}.}
 
 \item{thin}{keep every \code{thin} iteration after the
 \code{start} iteration. Default is \code{thin = 1}, i.e., keep
