@@ -384,6 +384,31 @@ plot_density <- function(x, ...) {
     }
 }
 
+plot_trace <- function(x, i, j, ...) {
+    mfrow <- switch(min(length(j), 10),
+                    c(1, 1),
+                    c(1, 2),
+                    c(2, 2),
+                    c(2, 2),
+                    c(3, 2),
+                    c(3, 2),
+                    c(3, 3),
+                    c(3, 3),
+                    c(3, 3),
+                    stop("To many variables to plot."))
+    opar <- par(mfrow = mfrow)
+    on.exit(par(opar), add = TRUE)
+
+    for (k in j) {
+        plot(x[i, k] ~ i,
+             xlab = "Iterations",
+             ylab = colnames(x)[k],
+             type = "l",
+             main = sprintf("Trace of %s", colnames(x)[k]),
+             ...)
+    }
+}
+
 ##' Display the outcome from a simulated trajectory
 ##'
 ##' Plot either the median and the quantile range of the counts in all
@@ -517,7 +542,7 @@ setMethod(
                  call. = FALSE)
         }
 
-        plot_density(t(x@x[[y]]))
+        plot_density(t(x@x[[y]]), ...)
 
         invisible(NULL)
     }
@@ -526,8 +551,13 @@ setMethod(
 ##' Display the PMCMC posterior distribution
 ##'
 ##' Display the (approximate) posterior distributions obtained from
-#'      fitting a particle Markov chain Monte Carlo algorithm.
+#'      fitting a particle Markov chain Monte Carlo algorithm, or the
+#'      corresponding trace plots.
 ##' @param x The \code{SimInf_pmcmc} object to plot.
+##' @param y The trace of all variables and logPost are plotted when
+##'     \code{y = "trace"} or \code{y = ~trace}, else the posterior
+##'     distributions are plotted. Default is to plot the posterier
+##'     distributions.
 ##' @param start The start iteration to remove some burn-in
 ##'     iterations. Default is \code{start = 1}.
 ##' @param thin keep every \code{thin} iteration after the
@@ -540,7 +570,13 @@ setMethod(
 setMethod(
     "plot",
     signature(x = "SimInf_pmcmc"),
-    function(x, start = 1, thin = 1, ...) {
+    function(x, y, start = 1, thin = 1, ...) {
+        if (missing(y))
+            y <- "density"
+        if (is(y, "formula") && identical(as.character(y), c("~", "trace")))
+            y <- "trace"
+        y <- as.character(y)
+
         start <- as.integer(start)
         if (any(length(start) != 1, any(start < 1)))
             stop("'start' must be an integer >= 1.", call. = FALSE)
@@ -551,7 +587,14 @@ setMethod(
 
         i <- seq(from = start, to = length(x), by = thin)
         j <- seq(from = 5, by = 1, length.out = length(x@pars))
-        plot_density(x@chain[i, j, drop = FALSE], ...)
+
+        if (identical(y, "trace")) {
+            ## Include the logPost column.
+            plot_trace(x@chain, i, c(j, 1), ...)
+        } else {
+            plot_density(x@chain[i, j, drop = FALSE], ...)
+        }
+
         invisible(NULL)
     }
 )

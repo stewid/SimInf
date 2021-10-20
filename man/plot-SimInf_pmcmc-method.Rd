@@ -4,10 +4,15 @@
 \alias{plot,SimInf_pmcmc-method}
 \title{Display the PMCMC posterior distribution}
 \usage{
-\S4method{plot}{SimInf_pmcmc}(x, start = 1, thin = 1, ...)
+\S4method{plot}{SimInf_pmcmc}(x, y, start = 1, thin = 1, ...)
 }
 \arguments{
 \item{x}{The \code{SimInf_pmcmc} object to plot.}
+
+\item{y}{The trace of all variables and logPost are plotted when
+\code{y = "trace"} or \code{y = ~trace}, else the posterior
+distributions are plotted. Default is to plot the posterier
+distributions.}
 
 \item{start}{The start iteration to remove some burn-in
 iterations. Default is \code{start = 1}.}
@@ -20,5 +25,6 @@ every iteration.}
 }
 \description{
 Display the (approximate) posterior distributions obtained from
-     fitting a particle Markov chain Monte Carlo algorithm.
+     fitting a particle Markov chain Monte Carlo algorithm, or the
+     corresponding trace plots.
 }
