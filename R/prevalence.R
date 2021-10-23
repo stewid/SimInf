@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2021 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -118,6 +118,31 @@ calculate_prevalence <- function(model, compartments, level,
     prevalence
 }
 
+##' Generic function to calculate prevalence from trajectory data
+##'
+##' Calculate the proportion of individuals with disease in the
+##' population, or the proportion of nodes with at least one diseased
+##' individual, or the proportion of individuals with disease in each
+##' node.
+##' @param model The \code{model} with trajectory data to calculate
+##'     the prevalence from.
+##' @template prevalence-formula-param
+##' @template prevalence-level-param
+##' @template index-param
+##' @param ... Additional arguments, see
+##'     \code{\link{prevalence,SimInf_model-method}}
+setGeneric(
+    "prevalence",
+    signature = c("model"),
+    function(model,
+             formula,
+             level = 1,
+             index = NULL,
+             ...) {
+        standardGeneric("prevalence")
+    }
+)
+
 ##' Calculate prevalence from a model object with trajectory data
 ##'
 ##' Calculate the proportion of individuals with disease in the
@@ -126,47 +151,9 @@ calculate_prevalence <- function(model, compartments, level,
 ##' node.
 ##' @param model The \code{model} with trajectory data to calculate
 ##'     the prevalence from.
-setGeneric(
-    "prevalence",
-    signature = c("model", "formula"),
-    function(model,
-             formula,
-             level = 1,
-             index = NULL,
-             format = c("data.frame", "matrix")) {
-        standardGeneric("prevalence")
-    }
-)
-
-##' @rdname prevalence
-##' @param formula A formula that specifies the compartments that
-##'     define the cases with a disease or that have a specific
-##'     characteristic (numerator), and the compartments that define
-##'     the entire population of interest (denominator). The
-##'     left-hand-side of the formula defines the cases, and the
-##'     right-hand-side defines the population, for example,
-##'     \code{I~S+I+R} in a \sQuote{SIR} model (see
-##'     \sQuote{Examples}). The \code{.}  (dot) is expanded to all
-##'     compartments, for example, \code{I~.}  is expanded to
-##'     \code{I~S+I+R} in a \sQuote{SIR} model (see
-##'     \sQuote{Examples}). The formula can also contain a condition
-##'     (indicated by \code{|}) for each node and time step to further
-##'     control the population to include in the calculation, for
-##'     example, \code{I ~ . | R == 0} to calculate the prevalence
-##'     when the recovered is zero in a \sQuote{SIR} model. The
-##'     condition must evaluate to \code{TRUE} or \code{FALSE} in each
-##'     node and time step. Note that if the denominator is zero, the
-##'     prevalence is \code{NaN}.
-##' @param level The level at which the prevalence is calculated at
-##'     each time point in \code{tspan}. 1 (population prevalence):
-##'     calculates the proportion of the individuals (cases) in the
-##'     population. 2 (node prevalence): calculates the proportion of
-##'     nodes with at least one case. 3 (within-node prevalence):
-##'     calculates the proportion of cases within each node. Default
-##'     is \code{1}.
-##' @param index Indices specifying the subset of nodes to include in
-##'     the calculation of the prevalence. Default is \code{index =
-##'     NULL}, which includes all nodes.
+##' @template prevalence-formula-param
+##' @template prevalence-level-param
+##' @template index-param
 ##' @param format The default (\code{format = "data.frame"}) is to
 ##'     generate a \code{data.frame} with one row per time-step with
 ##'     the prevalence. Using \code{format = "matrix"} returns the
@@ -206,8 +193,9 @@ setGeneric(
 ##' prevalence(result, I ~ S + I + R | R == 0, level = 3)
 setMethod(
     "prevalence",
-    signature(model = "SimInf_model", formula = "formula"),
-    function(model, formula, level, index, format) {
+    signature(model = "SimInf_model"),
+    function(model, formula, level, index,
+             format = c("data.frame", "matrix")) {
         compartments <- match_compartments(compartments = formula,
                                            ok_combine = FALSE,
                                            ok_lhs = TRUE,
