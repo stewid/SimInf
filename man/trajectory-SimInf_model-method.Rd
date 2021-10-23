@@ -4,12 +4,7 @@
 \alias{trajectory,SimInf_model-method}
 \title{Extract data from a simulated trajectory}
 \usage{
-\S4method{trajectory}{SimInf_model}(
-  model,
-  compartments = NULL,
-  index = NULL,
-  format = c("data.frame", "matrix")
-)
+\S4method{trajectory}{SimInf_model}(model, compartments, index, format = c("data.frame", "matrix"))
 }
 \arguments{
 \item{model}{the \code{SimInf_model} object to extract the result

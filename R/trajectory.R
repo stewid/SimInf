@@ -90,11 +90,17 @@ trajectory_data <- function(model, name) {
     slot(model, name)
 }
 
+##' Generic function to extract data from a simulated trajectory
+##'
+##' @param model the object to extract the trajectory from.
+##' @template compartments-param
+##' @template index-param
+##' @param ... Additional arguments, see
+##'     \code{\link{trajectory,SimInf_model-method}}
 setGeneric(
     "trajectory",
     signature = "model",
-    function(model, compartments = NULL, index = NULL,
-             format = c("data.frame", "matrix")) {
+    function(model, compartments = NULL, index = NULL, ...) {
         standardGeneric("trajectory")
     }
 )
@@ -178,7 +184,8 @@ setGeneric(
 setMethod(
     "trajectory",
     signature(model = "SimInf_model"),
-    function(model, compartments, index, format) {
+    function(model, compartments, index,
+             format = c("data.frame", "matrix")) {
         if (is_trajectory_empty(model)) {
             stop("Please run the model first, the trajectory is empty.",
                  call. = FALSE)
