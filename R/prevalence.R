@@ -217,3 +217,33 @@ setMethod(
         calculate_prevalence(model, compartments, level, index, n, format, id)
     }
 )
+
+##' Extract prevalence from fitting a PMCMC algorithm
+##'
+##' Extract prevalence from the filtered trajectories from a particle
+##' Markov chain Monte Carlo algorithm.
+##' @param model the \code{SimInf_pmcmc} object to extract the
+##'     prevalence from.
+##' @template prevalence-formula-param
+##' @template prevalence-level-param
+##' @template index-param
+##' @template start-param
+##' @template end-param
+##' @template thin-param
+##' @return A \code{data.frame} where the first column is the
+##'     \code{iteration} and the remaining columns are the result from
+##'     calling \code{\link{prevalence,SimInf_model-method}} with the
+##'     arguments \code{formula}, \code{level} and \code{index} for
+##'     each iteration.
+##' @export
+setMethod(
+    "prevalence",
+    signature(model = "SimInf_pmcmc"),
+    function(model, formula, level, index, start = 1, end = NULL, thin = 1) {
+        iterations <- pmcmc_iterations(model, start, end, thin)
+        do.call("rbind", lapply(iterations, function(i) {
+            cbind(iteration = i,
+                  prevalence(model@pf[[i]]@model, formula, level, index))
+        }))
+    }
+)
