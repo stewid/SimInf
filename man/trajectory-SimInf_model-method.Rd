@@ -23,8 +23,7 @@ or as a formula e.g. \code{compartments = ~S+I+R} (see
 extract the number of individuals in each compartment i.e. the
 data from all discrete state compartments in the model. In
 models that also have continuous state variables e.g. the
-\code{SISe} model, use \code{~.} instead of \code{NULL} to
-also include these.}
+\code{SISe} model, they are also included.}
 
 \item{index}{indices specifying the subset of nodes to include
 when extracting data. Default (\code{index = NULL}) is to
