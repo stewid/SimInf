@@ -93,8 +93,7 @@ trajectory_data <- function(model, name) {
 setGeneric(
     "trajectory",
     signature = "model",
-    function(model, compartments = NULL, index = NULL,
-             format = c("data.frame", "matrix")) {
+    function(model, compartments = NULL, index = NULL, ...) {
         standardGeneric("trajectory")
     }
 )
@@ -178,7 +177,8 @@ setGeneric(
 setMethod(
     "trajectory",
     signature(model = "SimInf_model"),
-    function(model, compartments, index, format) {
+    function(model, compartments, index,
+             format = c("data.frame", "matrix")) {
         if (is_trajectory_empty(model)) {
             stop("Please run the model first, the trajectory is empty.",
                  call. = FALSE)
