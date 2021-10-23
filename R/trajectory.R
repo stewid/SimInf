@@ -223,3 +223,32 @@ setMethod(
               model@tspan, n_nodes(model), index, "node")
     }
 )
+
+##' Extract filtered trajectories from fitting a PMCMC algorithm
+##'
+##' Extract filtered trajectories from a particle Markov chain Monte
+##' Carlo algorithm.
+##' @param model the \code{SimInf_pmcmc} object to extract the
+##'     filtered trajectories from.
+##' @template compartments-param
+##' @template index-param
+##' @template start-param
+##' @template end-param
+##' @template thin-param
+##' @return A \code{data.frame} where the first column is the
+##'     \code{iteration} and the remaining columns are the result from
+##'     calling \code{\link{trajectory,SimInf_model-method}} with the
+##'     arguments \code{compartments} and \code{index} for each
+##'     iteration.
+##' @export
+setMethod(
+    "trajectory",
+    signature(model = "SimInf_pmcmc"),
+    function(model, compartments, index, start = 1, end = NULL, thin = 1) {
+        iterations <- pmcmc_iterations(model, start, end, thin)
+        do.call("rbind", lapply(iterations, function(i) {
+            cbind(iteration = i,
+                  trajectory(model@pf[[i]]@model, compartments, index))
+        }))
+    }
+)
