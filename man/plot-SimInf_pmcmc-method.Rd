@@ -4,7 +4,7 @@
 \alias{plot,SimInf_pmcmc-method}
 \title{Display the PMCMC posterior distribution}
 \usage{
-\S4method{plot}{SimInf_pmcmc}(x, y, start = 1, end = length(x), thin = 1, ...)
+\S4method{plot}{SimInf_pmcmc}(x, y, start = 1, end = NULL, thin = 1, ...)
 }
 \arguments{
 \item{x}{The \code{SimInf_pmcmc} object to plot.}
