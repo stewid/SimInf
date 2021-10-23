@@ -558,13 +558,9 @@ setMethod(
 ##'     \code{y = "trace"} or \code{y = ~trace}, else the posterior
 ##'     distributions are plotted. Default is to plot the posterier
 ##'     distributions.
-##' @param start The start iteration to remove some burn-in
-##'     iterations. Default is \code{start = 1}.
-##' @param end the last iteration to include. Default is
-##'     \code{end = length(x)}.
-##' @param thin keep every \code{thin} iteration after the
-##'     \code{start} iteration. Default is \code{thin = 1}, i.e., keep
-##'     every iteration.
+##' @template start-param
+##' @template end-param
+##' @template thin-param
 ##' @param ... Additional arguments affecting the plot.
 ##' @aliases plot,SimInf_pmcmc-method
 ##' @export
@@ -572,7 +568,7 @@ setMethod(
 setMethod(
     "plot",
     signature(x = "SimInf_pmcmc"),
-    function(x, y, start = 1, end = length(x), thin = 1, ...) {
+    function(x, y, start = 1, end = NULL, thin = 1, ...) {
         if (missing(y))
             y <- "density"
         if (is(y, "formula") && identical(as.character(y), c("~", "trace")))

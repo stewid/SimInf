@@ -17,8 +17,8 @@ distributions.}
 \item{start}{The start iteration to remove some burn-in
 iterations. Default is \code{start = 1}.}
 
-\item{end}{the last iteration to include. Default is
-\code{end = length(x)}.}
+\item{end}{the last iteration to include. Default is \code{NULL}
+which set \code{end} to the last iteration in the chain.}
 
 \item{thin}{keep every \code{thin} iteration after the
 \code{start} iteration. Default is \code{thin = 1}, i.e., keep
