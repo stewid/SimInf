@@ -90,6 +90,13 @@ trajectory_data <- function(model, name) {
     slot(model, name)
 }
 
+##' Generic function to extract data from a simulated trajectory
+##'
+##' @param model the object to extract the trajectory from.
+##' @template compartments-param
+##' @template index-param
+##' @param ... Additional arguments, see
+##'     \code{\link{trajectory,SimInf_model-method}}
 setGeneric(
     "trajectory",
     signature = "model",
