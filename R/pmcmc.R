@@ -374,3 +374,21 @@ setMethod(
         object
     }
 )
+
+pmcmc_iterations <- function(x, start, end, thin) {
+    start <- as.integer(start)
+    if (any(length(start) != 1, any(start < 1)))
+        stop("'start' must be an integer >= 1.", call. = FALSE)
+
+    end <- as.integer(end)
+    if (any(length(end) != 1, any(end < start), any(end > length(x)))) {
+        stop("'end' must be an integer between start and length(x).",
+             call. = FALSE)
+    }
+
+    thin <- as.integer(thin)
+    if (any(length(thin) != 1, any(thin < 1)))
+        stop("'thin' must be an integer >= 1.", call. = FALSE)
+
+    seq(from = start, to = end, by = thin)
+}

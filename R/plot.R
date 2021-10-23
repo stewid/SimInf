@@ -579,21 +579,7 @@ setMethod(
             y <- "trace"
         y <- as.character(y)
 
-        start <- as.integer(start)
-        if (any(length(start) != 1, any(start < 1)))
-            stop("'start' must be an integer >= 1.", call. = FALSE)
-
-        end <- as.integer(end)
-        if (any(length(end) != 1, any(end < start), any(end > length(x)))) {
-            stop("'end' must be an integer between start and length(x).",
-                 call. = FALSE)
-        }
-
-        thin <- as.integer(thin)
-        if (any(length(thin) != 1, any(thin < 1)))
-            stop("'thin' must be an integer >= 1.", call. = FALSE)
-
-        i <- seq(from = start, to = end, by = thin)
+        i <- pmcmc_iterations(x, start, end, thin)
         j <- seq(from = 5, by = 1, length.out = length(x@pars))
 
         if (identical(y, "trace")) {
