@@ -50,7 +50,8 @@
 ##' SimInf provides several utility functions to inspect simulated
 ##' data, for example, \code{show}, \code{summary} and \code{plot}.
 ##' To facilitate custom analysis, it provides the
-##' \code{\link{trajectory}} and \code{\link{prevalence}} methods.
+##' \code{\link{trajectory,SimInf_model-method}} and
+##' \code{\link{prevalence}} methods.
 ##'
 ##' One of our design goal was to make SimInf extendable and enable
 ##' usage of the numerical solvers from other R extension packages in
