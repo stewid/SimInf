@@ -117,6 +117,46 @@ setMethod(
     }
 )
 
+##' Detailed summary of a \code{SimInf_pmcmc} object
+##'
+##' @param object The \code{SimInf_pmcmc} object
+##' @param ... Not used.
+##' @return None (invisible 'NULL').
+##' @export
+setMethod(
+    "summary",
+    signature(object = "SimInf_pmcmc"),
+    function(object, ...) {
+        cat("Particle Markov chain Monte Carlo\n")
+        cat("---------------------------------\n")
+        cat(sprintf("Number of iterations: %i\n", length(object)))
+        cat(sprintf("Number of particles: %i\n", object@npart))
+        if (length(object) > 0) {
+            cat(sprintf("Acceptance ratio: %.3f\n",
+                        mean(object@chain[, "accept"])))
+        }
+
+        ## The model name
+        cat(sprintf("Model: %s\n", as.character(class(object@model))))
+
+        ## Nodes
+        cat(sprintf("Number of nodes: %i\n", n_nodes(object@model)))
+
+        summary_transitions(object@model)
+
+        if (length(object) > 0) {
+            print_title(
+                "Quantiles, mean and standard deviation for each variable")
+
+            ## Skip first four columns in chain.
+            j <- seq(from = 5, by = 1, length.out = length(object@pars))
+            summary_chain(object@chain[, j])
+        }
+
+        invisible(NULL)
+    }
+)
+
 ##' Particle Markov chain Monte Carlo (PMCMC) algorithm
 ##'
 ##' @param model The model to simulate data from.
