@@ -238,6 +238,15 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
     }
 
     expr <- switch(obs_process$distribution,
+                   binomial = {
+                       paste0("stats::dbinom(x = ",
+                              obs_process$parameter,
+                              ", size = ",
+                              obs_process$p1,
+                              ", prob = ",
+                              obs_process$p2,
+                              ", log = TRUE)")
+                   },
                    poisson = {
                        paste0("stats::dpois(x = ",
                               obs_process$parameter,
@@ -245,7 +254,9 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
                               obs_process$p1,
                               ", log = TRUE)")
                    },
-                   stop("Unknown distribution.", call. = FALSE)
+                   stop("Unknown distribution: '",
+                        obs_process$distribution, "'",
+                        call. = FALSE)
                    )
 
     list(slots = c(u, v), expr = expr, par = par, par_i = par_i)
