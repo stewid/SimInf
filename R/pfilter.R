@@ -538,32 +538,46 @@ setMethod(
 
 ##' Diagnostic plot of a particle filter object
 ##'
-##' Displays the randomly selected trajectory from the particle filter
-##' (top), and the effective sample size (bottom).
 ##' @param x The \code{SimInf_pfilter} object to plot.
+##' @param y If y is \code{NULL} or missing (default), the filtered
+##'     trajectory (top) and the effective sample size (bottom) are
+##'     displayed. If \code{y} is a character vector or a formula, the
+##'     plot function for a \code{SimInf_model} object is called with
+##'     the filtered trajectory, see
+##'     \code{\link{plot,SimInf_model-method}} for more details about
+##'     the specification a plot.
+##' @param ... Other graphical parameters that are passed on to the
+##'     plot function.
 ##' @aliases plot,SimInf_pfilter-method
 ##' @export
 setMethod(
     "plot",
     signature(x = "SimInf_pfilter"),
-    function(x) {
-        savepar <- par(mfrow = c(2, 1))
-        on.exit(par(savepar), add = TRUE)
+    function(x, y, ...) {
+        if (missing(y)) {
+            savepar <- par(mfrow = c(2, 1))
+            on.exit(par(savepar), add = TRUE)
 
-        ## Settings for the x-axis
-        if (is.null(names(x@model@tspan))) {
-            xx <- x@model@tspan
-            xlab <- "Time"
+            ## Settings for the x-axis
+            if (is.null(names(x@model@tspan))) {
+                xx <- x@model@tspan
+                xlab <- "Time"
+            } else {
+                xx <- as.Date(names(x@model@tspan))
+                xlab <- "Date"
+            }
+
+            ## Plot the sampled trajectory.
+            plot(x@model, ...)
+
+            ## Plot the effective sample size.
+            plot(xx, x@ess, xlab = xlab, ylab = "ESS",
+             ylim = c(0, x@npart), frame.plot = FALSE, type = "l")
         } else {
-            xx <- as.Date(names(x@model@tspan))
-            xlab <- "Date"
+            ## Plot the sampled trajectory.
+            plot(x@model, y, ...)
         }
 
-        ## Plot the sampled trajectory.
-        plot(x@model)
-
-        ## Plot the effective sample size.
-        plot(xx, x@ess, xlab = xlab, ylab = "ESS",
-             ylim = c(0, x@npart), frame.plot = FALSE, type = "l")
+        invisible(NULL)
     }
 )

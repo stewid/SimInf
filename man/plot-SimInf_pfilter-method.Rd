@@ -4,12 +4,22 @@
 \alias{plot,SimInf_pfilter-method}
 \title{Diagnostic plot of a particle filter object}
 \usage{
-\S4method{plot}{SimInf_pfilter}(x)
+\S4method{plot}{SimInf_pfilter}(x, y, ...)
 }
 \arguments{
 \item{x}{The \code{SimInf_pfilter} object to plot.}
+
+\item{y}{If y is \code{NULL} or missing (default), the filtered
+trajectory (top) and the effective sample size (bottom) are
+displayed. If \code{y} is a character vector or a formula, the
+plot function for a \code{SimInf_model} object is called with
+the filtered trajectory, see
+\code{\link{plot,SimInf_model-method}} for more details about
+the specification a plot.}
+
+\item{...}{Other graphical parameters that are passed on to the
+plot function.}
 }
 \description{
-Displays the randomly selected trajectory from the particle filter
-(top), and the effective sample size (bottom).
+Diagnostic plot of a particle filter object
 }
