@@ -224,6 +224,32 @@ setMethod(
     }
 )
 
+##' Extract filtered trajectory from running a particle filter
+##'
+##' @param model the \code{SimInf_pfilter} object to extract the
+##'     result from.
+##' @template compartments-param
+##' @template index-param
+##' @param format the default (\code{format = "data.frame"}) is to
+##'     generate a \code{data.frame} with one row per node and
+##'     time-step with the number of individuals in each
+##'     compartment. Using \code{format = "matrix"} returns the result
+##'     as a matrix, which is the internal format (see
+##'     \sQuote{Details} in
+##'     \code{\link{trajectory,SimInf_model-method}}).
+##' @return A \code{data.frame} if \code{format = "data.frame"}, else
+##'     a matrix.
+##' @include pfilter.R
+##' @export
+setMethod(
+    "trajectory",
+    signature(model = "SimInf_pfilter"),
+    function(model, compartments, index,
+             format = c("data.frame", "matrix")) {
+        trajectory(model@model, compartments, index, format)
+    }
+)
+
 ##' Extract filtered trajectories from fitting a PMCMC algorithm
 ##'
 ##' Extract filtered trajectories from a particle Markov chain Monte
@@ -248,7 +274,7 @@ setMethod(
         iterations <- pmcmc_iterations(model, start, end, thin)
         do.call("rbind", lapply(iterations, function(i) {
             cbind(iteration = i,
-                  trajectory(model@pf[[i]]@model, compartments, index))
+                  trajectory(model@pf[[i]], compartments, index))
         }))
     }
 )
