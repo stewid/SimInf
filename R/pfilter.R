@@ -64,10 +64,14 @@ setMethod(
     "summary",
     signature(object = "SimInf_pfilter"),
     function(object, ...) {
+        cat("Particle filter\n")
+        cat("---------------\n")
         cat(sprintf("Number of particles: %i\n", object@npart))
         cat(sprintf("Log-likelihood: %f\n", object@loglik))
+        cat(sprintf("Model: %s\n", as.character(class(object@model))))
         cat(sprintf("Number of nodes: %i\n", n_nodes(object@model)))
-        cat(sprintf("Number of transitions: %i\n", n_transitions(object@model)))
+
+        summary_transitions(object@model)
 
         if (length(object@model@gdata))
             summary_gdata(object@model)
