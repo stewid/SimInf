@@ -254,6 +254,15 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
                               obs_process$p1,
                               ", log = TRUE)")
                    },
+                   uniform = {
+                       paste0("stats::dunif(x = ",
+                              obs_process$parameter,
+                              ", min = ",
+                              obs_process$p1,
+                              ", max = ",
+                              obs_process$p2,
+                              ", log = TRUE)")
+                   },
                    stop("Unknown distribution: '",
                         obs_process$distribution, "'",
                         call. = FALSE)
