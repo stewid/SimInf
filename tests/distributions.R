@@ -43,7 +43,7 @@ res <- assertError(SimInf:::parse_priors(mu ~ uniform[0, 1]))
 check_error(res, "Invalid formula specification for distribution.")
 
 res <- assertError(SimInf:::parse_priors(mu ~ unknown(0, 1)))
-check_error(res, "Unknown distribution.")
+check_error(res, "Unknown distribution: 'unknown'.")
 
 res <- assertError(SimInf:::parse_priors(c(muR ~ uniform(0, 1),
                                            muR ~ uniform(0, 1))))
