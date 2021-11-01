@@ -268,7 +268,7 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
                               ", log = TRUE)")
                    },
                    stop("Unknown distribution: '",
-                        obs_process$distribution, "'",
+                        obs_process$distribution, "'.",
                         call. = FALSE)
                    )
 

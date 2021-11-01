@@ -113,7 +113,7 @@ check_hyperparameters <- function(distribution, hyperparameters, symbols) {
            uniform = {
                check_uniform_distribution(hyperparameters, symbols)
            },
-           stop("Unknown distribution: '", distribution, "'", call. = FALSE)
+           stop("Unknown distribution: '", distribution, "'.", call. = FALSE)
            )
 }
 
