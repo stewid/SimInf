@@ -177,3 +177,19 @@ stopifnot(identical(
              proportion = c(0, 0),
              select = c(4L, 4L),
              shift = c(0L, 0L)))))
+
+## Check that an error is raised if a weight is invalid.
+res <- assertError(.Call(SimInf:::SimInf_systematic_resampling, NaN))
+check_error(res, "Invalid weight detected (non-finite or < 0.0).")
+res <- assertError(.Call(SimInf:::SimInf_systematic_resampling, -0.1))
+check_error(res, "Invalid weight detected (non-finite or < 0.0).")
+
+## Check that sum of weights >= 0.
+res <- assertError(.Call(SimInf:::SimInf_systematic_resampling, 0))
+check_error(res, "Non-positive sum of weights detected.")
+
+## Expect all particles if the weights are equal.
+w <- rep(0.1, 10)
+stopifnot(identical(
+    seq_len(length(w)),
+    .Call(SimInf:::SimInf_systematic_resampling, w)))
