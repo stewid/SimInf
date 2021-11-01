@@ -856,3 +856,9 @@ check_error(res, "'threads' must be an integer >= 1.")
 
 res <- assertError(set_num_threads(NA_real_))
 check_error(res, "'threads' must be an integer >= 1.")
+
+## Check that we have at least one available thread.  First, try to
+## set the number of threads to 0 and then set the number of threads
+## to one to get the previous number of threads.
+.Call(SimInf:::SimInf_init_threads, 0L)
+stopifnot(identical(.Call(SimInf:::SimInf_init_threads, 1L), 1L))
