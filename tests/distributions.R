@@ -79,6 +79,21 @@ check_error(res, "Invalid distribution: gamma hyperparameters must be > 0.")
 res <- assertError(SimInf:::parse_priors(beta ~ gamma(1, -1)))
 check_error(res, "Invalid distribution: gamma hyperparameters must be > 0.")
 
+res <- assertError(SimInf:::parse_priors(beta ~ binomial(1)))
+check_error(res, "Invalid formula specification for binomial distribution.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ binomial(1, NA)))
+check_error(res, "Invalid formula specification for binomial distribution.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ binomial(1, -1)))
+check_error(res, "Invalid distribution: binomial hyperparameters must be >= 0.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ binomial(1.1, 0.1)))
+check_error(res, "Invalid distribution: binomial size must be an integer >= 0.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ binomial(1, 1.1)))
+check_error(res, "Invalid distribution: binomial probability must be <= 1.")
+
 res <- assertError(SimInf:::parse_priors(~ uniform(1, 5)))
 check_error(res, "Invalid formula specification for distribution.")
 
@@ -86,15 +101,6 @@ stopifnot(identical(
     SimInf:::parse_priors(beta ~ uniform(1, 5)),
     data.frame(parameter = "beta", distribution = "uniform",
                p1 = 1, p2 = 5, stringsAsFactors = FALSE)))
-
-model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
-data.frame(parameter = "delta",
-           distribution = "uniform",
-           p1 = 1,
-           p2 = 5)
 
 res <- assertError(
     SimInf:::match_priors(
@@ -121,3 +127,27 @@ res <- assertError(
                             p1 = 1,
                             p2 = 5)))
 check_error(res, "The 'model' must contain one node.")
+
+res <- SimInf:::match_priors(
+                    SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                        tspan = 1:100,
+                        beta = 0.16,
+                        gamma = 0.077),
+                    data.frame(parameter = "beta",
+                               distribution = "uniform",
+                               p1 = 1,
+                               p2 = 5))
+stopifnot(identical(res, list(pars = 1L, target = "ldata")))
+
+res <- SimInf:::match_priors(
+                    mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
+                                           "I -> gamma*I -> R"),
+                           compartments = c("S", "I", "R"),
+                           gdata = c(beta = 0.16, gamma = 0.077),
+                           u0 = data.frame(S = 99, I = 1, R = 0),
+                           tspan = 1:10),
+                    data.frame(parameter = "beta",
+                               distribution = "uniform",
+                               p1 = 1,
+                               p2 = 5))
+stopifnot(identical(res, list(pars = 1L, target = "gdata")))
