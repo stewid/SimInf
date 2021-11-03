@@ -193,3 +193,35 @@ w <- rep(0.1, 10)
 stopifnot(identical(
     seq_len(length(w)),
     .Call(SimInf:::SimInf_systematic_resampling, w)))
+
+## Expect function for the observation process
+obs_fn <- function(model, data) {0}
+
+stopifnot(identical(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 obs_fn,
+                 data.frame(time = c(1, 4, 7, 10, 13, 16, 19),
+                            Iobs = c(1, 2, 2, 3, 3, 3, 3)),
+                 5),
+    obs_fn))
+
+## Raise an error if the observation process is not a function when a
+## model contains multiple nodes.
+res <- assertError(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = c(99, 99), I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 Iobs ~ poisson(I + 1e-6),
+                 data.frame(time = c(1, 4, 7, 10, 13, 16, 19),
+                            Iobs = c(1, 2, 2, 3, 3, 3, 3)),
+                 5))
+
+check_error(res,
+            paste("The observation process must be a function",
+                  "for a model with multiple nodes."))
