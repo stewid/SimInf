@@ -204,8 +204,13 @@ stopifnot(identical(
                      beta = 0.16,
                      gamma = 0.077),
                  obs_fn,
-                 data.frame(time = c(1, 4, 7, 10, 13, 16, 19),
-                            Iobs = c(1, 2, 2, 3, 3, 3, 3)),
+                 list("1" = data.frame(time = 1, Iobs = 1),
+                      "4" = data.frame(time = 4, Iobs = 2),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
                  5),
     obs_fn))
 
@@ -218,10 +223,56 @@ res <- assertError(
                      beta = 0.16,
                      gamma = 0.077),
                  Iobs ~ poisson(I + 1e-6),
-                 data.frame(time = c(1, 4, 7, 10, 13, 16, 19),
-                            Iobs = c(1, 2, 2, 3, 3, 3, 3)),
+                 list("1" = data.frame(time = 1, Iobs = 1),
+                      "4" = data.frame(time = 4, Iobs = 2),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
                  5))
 
 check_error(res,
             paste("The observation process must be a function",
                   "for a model with multiple nodes."))
+
+## Raise an error if the observation process is not a function when
+## data contains multiple rows for a time-point.
+res <- assertError(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 Iobs ~ poisson(I + 1e-6),
+                 list("1" = data.frame(time = c(1, 1), Iobs = c(1, 2)),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
+                 5))
+
+check_error(res,
+            paste("The observation process must be a function",
+                  "when data contains multiple rows for a time-point."))
+
+## Raise an error if the observation process is not a function or a
+## formula.
+res <- assertError(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 "obs_process",
+                 list("1" = data.frame(time = 1, Iobs = 1),
+                      "4" = data.frame(time = 4, Iobs = 2),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
+                 5))
+
+check_error(res, "'obs_process' must be either a formula or a function.")
