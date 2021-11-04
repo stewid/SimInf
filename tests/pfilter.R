@@ -276,3 +276,22 @@ res <- assertError(
                  5))
 
 check_error(res, "'obs_process' must be either a formula or a function.")
+
+## Raise an error if the lhs does not match a column in data.
+res <- assertError(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 Robs ~ poisson(I + 1e-6),
+                 list("1" = data.frame(time = 1, Iobs = 1),
+                      "4" = data.frame(time = 4, Iobs = 2),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
+                 5))
+
+check_error(res, "Unable to match the parameter on the lhs to a column in 'data'.")
