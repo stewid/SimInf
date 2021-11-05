@@ -70,6 +70,7 @@ setMethod(
         cat(sprintf("Log-likelihood: %f\n", object@loglik))
         cat(sprintf("Model: %s\n", as.character(class(object@model))))
         cat(sprintf("Number of nodes: %i\n", n_nodes(object@model)))
+        show(object@model@events)
 
         summary_transitions(object@model)
 
