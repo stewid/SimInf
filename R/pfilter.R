@@ -70,6 +70,7 @@ setMethod(
         cat(sprintf("Log-likelihood: %f\n", object@loglik))
         cat(sprintf("Model: %s\n", as.character(class(object@model))))
         cat(sprintf("Number of nodes: %i\n", n_nodes(object@model)))
+        show(object@model@events)
 
         summary_transitions(object@model)
 
@@ -221,14 +222,14 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
     ## Match the symbols on the rhs of the observation process to
     ## compartments in U or V.
     symbols <- unlist(obs_process$symbols)
-    u <- lapply(match(symbols, rownames(model@S)), function(i) {
+    u <- lapply(match(symbols, rownames(model@S), nomatch = 0), function(i) {
         list(slot = "U",
              name = rownames(model@S)[i],
              i = seq(from = i, to = Nc(model) * npart, by = Nc(model)))
     })
 
     symbols <- setdiff(symbols, sapply(u, function(x) x$name))
-    v <- lapply(match(symbols, rownames(model@v0)), function(i) {
+    v <- lapply(match(symbols, rownames(model@v0), nomatch = 0), function(i) {
         list(slot = "V",
              name = rownames(model@v0)[i],
              i = seq(from = i, to = Nd(model) * npart, by = Nd(model)))

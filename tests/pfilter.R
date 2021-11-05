@@ -177,3 +177,274 @@ stopifnot(identical(
              proportion = c(0, 0),
              select = c(4L, 4L),
              shift = c(0L, 0L)))))
+
+## Check that an error is raised if a weight is invalid.
+res <- assertError(.Call(SimInf:::SimInf_systematic_resampling, NaN))
+check_error(res, "Invalid weight detected (non-finite or < 0.0).")
+res <- assertError(.Call(SimInf:::SimInf_systematic_resampling, -0.1))
+check_error(res, "Invalid weight detected (non-finite or < 0.0).")
+
+## Check that sum of weights >= 0.
+res <- assertError(.Call(SimInf:::SimInf_systematic_resampling, 0))
+check_error(res, "Non-positive sum of weights detected.")
+
+## Expect all particles if the weights are equal.
+w <- rep(0.1, 10)
+stopifnot(identical(
+    seq_len(length(w)),
+    .Call(SimInf:::SimInf_systematic_resampling, w)))
+
+## Expect function for the observation process
+obs_fn <- function(model, data) {0}
+
+stopifnot(identical(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 obs_fn,
+                 list("1" = data.frame(time = 1, Iobs = 1),
+                      "4" = data.frame(time = 4, Iobs = 2),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
+                 5),
+    obs_fn))
+
+## Raise an error if the observation process is not a function when a
+## model contains multiple nodes.
+res <- assertError(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = c(99, 99), I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 Iobs ~ poisson(I + 1e-6),
+                 list("1" = data.frame(time = 1, Iobs = 1),
+                      "4" = data.frame(time = 4, Iobs = 2),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
+                 5))
+
+check_error(res,
+            paste("The observation process must be a function",
+                  "for a model with multiple nodes."))
+
+## Raise an error if the observation process is not a function when
+## data contains multiple rows for a time-point.
+res <- assertError(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 Iobs ~ poisson(I + 1e-6),
+                 list("1" = data.frame(time = c(1, 1), Iobs = c(1, 2)),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
+                 5))
+
+check_error(res,
+            paste("The observation process must be a function",
+                  "when data contains multiple rows for a time-point."))
+
+## Raise an error if the observation process is not a function or a
+## formula.
+res <- assertError(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 "obs_process",
+                 list("1" = data.frame(time = 1, Iobs = 1),
+                      "4" = data.frame(time = 4, Iobs = 2),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
+                 5))
+
+check_error(res, "'obs_process' must be either a formula or a function.")
+
+## Raise an error if the lhs does not match a column in data.
+res <- assertError(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 Robs ~ poisson(I + 1e-6),
+                 list("1" = data.frame(time = 1, Iobs = 1),
+                      "4" = data.frame(time = 4, Iobs = 2),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
+                 5))
+
+check_error(res, "Unable to match the parameter on the lhs to a column in 'data'.")
+
+## Raise an error if the rhs does not match a compartment.
+res <- assertError(
+    SimInf:::pfilter_obs_process(
+                 SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                     tspan = seq(1, 21, by = 3),
+                     beta = 0.16,
+                     gamma = 0.077),
+                 Iobs ~ poisson(E + 1e-6),
+                 list("1" = data.frame(time = 1, Iobs = 1),
+                      "4" = data.frame(time = 4, Iobs = 2),
+                      "7" = data.frame(time = 7, Iobs = 2),
+                      "10" = data.frame(time = 10, Iobs = 3),
+                      "13" = data.frame(time = 13, Iobs = 3),
+                      "16" = data.frame(time = 16, Iobs = 3),
+                      "19" = data.frame(time = 19, Iobs = 3)),
+                 5))
+
+check_error(res, "Non-existing compartment(s) in model: 'E'.")
+
+## Check the return value.
+result <- SimInf:::pfilter_obs_process(
+                       SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                           tspan = seq(1, 21, by = 3),
+                           beta = 0.16,
+                           gamma = 0.077),
+                       Iobs ~ poisson(I + 1e-6),
+                       list("1" = data.frame(time = 1, Iobs = 1),
+                            "4" = data.frame(time = 4, Iobs = 2),
+                            "7" = data.frame(time = 7, Iobs = 2),
+                            "10" = data.frame(time = 10, Iobs = 3),
+                            "13" = data.frame(time = 13, Iobs = 3),
+                            "16" = data.frame(time = 16, Iobs = 3),
+                            "19" = data.frame(time = 19, Iobs = 3)),
+                       5)
+
+stopifnot(identical(
+    result,
+    list(slots = list(list(
+             slot = "U",
+             name = "I",
+             i = c(2, 5, 8, 11, 14))),
+         expr = "stats::dpois(x = Iobs, lambda = I+1e-06, log = TRUE)",
+         par = "Iobs",
+         par_i = 2L)))
+
+result <- SimInf:::pfilter_obs_process(
+                       SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                           tspan = seq(1, 21, by = 3),
+                           beta = 0.16,
+                           gamma = 0.077),
+                       Iobs ~ binomial(100, I / 100),
+                       list("1" = data.frame(time = 1, Iobs = 1),
+                            "4" = data.frame(time = 4, Iobs = 2),
+                            "7" = data.frame(time = 7, Iobs = 2),
+                            "10" = data.frame(time = 10, Iobs = 3),
+                            "13" = data.frame(time = 13, Iobs = 3),
+                            "16" = data.frame(time = 16, Iobs = 3),
+                            "19" = data.frame(time = 19, Iobs = 3)),
+                       5)
+
+stopifnot(identical(
+    result,
+    list(slots = list(list(
+             slot = "U",
+             name = "I",
+             i = c(2, 5, 8, 11, 14))),
+         expr = "stats::dbinom(x = Iobs, size = 100, prob = I/100, log = TRUE)",
+         par = "Iobs",
+         par_i = 2L)))
+
+result <- SimInf:::pfilter_obs_process(
+                       SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+                           tspan = seq(1, 21, by = 3),
+                           beta = 0.16,
+                           gamma = 0.077),
+                       Iobs ~ uniform(I - 3, I + 3),
+                       list("1" = data.frame(time = 1, Iobs = 1),
+                            "4" = data.frame(time = 4, Iobs = 2),
+                            "7" = data.frame(time = 7, Iobs = 2),
+                            "10" = data.frame(time = 10, Iobs = 3),
+                            "13" = data.frame(time = 13, Iobs = 3),
+                            "16" = data.frame(time = 16, Iobs = 3),
+                            "19" = data.frame(time = 19, Iobs = 3)),
+                       5)
+
+stopifnot(identical(
+    result,
+    list(slots = list(list(slot = "U", name = "I", i = c(2, 5, 8, 11, 14)),
+                      list(slot = "U", name = "I", i = c(2, 5, 8, 11, 14))),
+         expr = "stats::dunif(x = Iobs, min = I-3, max = I+3, log = TRUE)",
+         par = "Iobs",
+         par_i = 2L)))
+
+## Run a particle filter using a single node model with events.
+set.seed(22)
+pf <- pfilter(
+    model = SIR(u0 = data.frame(S = 90, I = 0, R = 0),
+                tspan = seq(1, 21, by = 3),
+                events = data.frame(
+                    event = 1,
+                    time = 2,
+                    node = 1,
+                    dest = 0,
+                    n = 10,
+                    proportion = 0,
+                    select = 2,
+                    shift = 0),
+                beta = 0.16,
+                gamma = 0.077),
+    obs_process = Iobs ~ poisson(I + 1e-6),
+    data = data.frame(
+        time = c(1, 4, 7, 10, 13, 16, 19),
+        Iobs = c(0, 16, 12, 11, 19, 19, 23)),
+    npart = 25)
+
+show_expected <- c("Number of particles: 25",
+                   "Log-likelihood: -17.915850")
+show_observed <- capture.output(show(pf))
+stopifnot(identical(show_observed, show_expected))
+
+summary_expected <- c(
+    "Particle filter",
+    "---------------",
+    "Number of particles: 25",
+    "Log-likelihood: -17.915850",
+    "Model: SIR",
+    "Number of nodes: 1",
+    "Number of scheduled events: 1",
+    "",
+    "Transitions",
+    "-----------",
+    " S -> beta*S*I/(S+I+R) -> I",
+    " I -> gamma*I -> R",
+    "",
+    "Local data",
+    "----------",
+    " Parameter Value",
+    " beta      0.160",
+    " gamma     0.077",
+    "",
+    "Compartments",
+    "------------",
+    "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
+    " S 58.0    67.5   74.0 74.9    83.5 90.0",
+    " I  0.0    12.5   16.0 13.3    17.0 18.0",
+    " R  0.0     4.0   10.0 10.4    15.5 24.0")
+
+summary_observed <- capture.output(summary(pf))
+stopifnot(identical(summary_observed, summary_expected))
+
+plot(pf)
+plot(pf, ~I)
