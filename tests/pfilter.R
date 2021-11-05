@@ -388,3 +388,63 @@ stopifnot(identical(
          expr = "stats::dunif(x = Iobs, min = I-3, max = I+3, log = TRUE)",
          par = "Iobs",
          par_i = 2L)))
+
+## Run a particle filter using a single node model with events.
+set.seed(22)
+pf <- pfilter(
+    model = SIR(u0 = data.frame(S = 90, I = 0, R = 0),
+                tspan = seq(1, 21, by = 3),
+                events = data.frame(
+                    event = 1,
+                    time = 2,
+                    node = 1,
+                    dest = 0,
+                    n = 10,
+                    proportion = 0,
+                    select = 2,
+                    shift = 0),
+                beta = 0.16,
+                gamma = 0.077),
+    obs_process = Iobs ~ poisson(I + 1e-6),
+    data = data.frame(
+        time = c(1, 4, 7, 10, 13, 16, 19),
+        Iobs = c(0, 16, 12, 11, 19, 19, 23)),
+    npart = 25)
+
+show_expected <- c("Number of particles: 25",
+                   "Log-likelihood: -17.915850")
+show_observed <- capture.output(show(pf))
+stopifnot(identical(show_observed, show_expected))
+
+summary_expected <- c(
+    "Particle filter",
+    "---------------",
+    "Number of particles: 25",
+    "Log-likelihood: -17.915850",
+    "Model: SIR",
+    "Number of nodes: 1",
+    "Number of scheduled events: 1",
+    "",
+    "Transitions",
+    "-----------",
+    " S -> beta*S*I/(S+I+R) -> I",
+    " I -> gamma*I -> R",
+    "",
+    "Local data",
+    "----------",
+    " Parameter Value",
+    " beta      0.160",
+    " gamma     0.077",
+    "",
+    "Compartments",
+    "------------",
+    "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
+    " S 58.0    67.5   74.0 74.9    83.5 90.0",
+    " I  0.0    12.5   16.0 13.3    17.0 18.0",
+    " R  0.0     4.0   10.0 10.4    15.5 24.0")
+
+summary_observed <- capture.output(summary(pf))
+stopifnot(identical(summary_observed, summary_expected))
+
+plot(pf)
+plot(pf, ~I)
