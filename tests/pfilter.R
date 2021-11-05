@@ -32,6 +32,10 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              beta = 0.16,
              gamma = 0.077)
 
+## Check that data is a data.frame.
+res <- assertError(SimInf:::pfilter_data(model, 5))
+check_error(res, "'data' must be a data.frame.")
+
 ## Check that a missing 'time' column in data raises an error.
 res <- assertError(SimInf:::pfilter_data(model, data.frame()))
 check_error(res, "Missing 'time' column in data.")
@@ -44,6 +48,10 @@ check_error(res, "'data$time' must be integer.")
 ## Check that a NA value in the 'data$time' column raises an error.
 res <- assertError(SimInf:::pfilter_data(model, data.frame(time = NA)))
 check_error(res, "'data$time' must be integer.")
+
+## Check that 'data$time' column is a non-empty vector.
+res <- assertError(SimInf:::pfilter_data(model, data.frame(time = numeric(0))))
+check_error(res, "'time' column in data must be an increasing vector.")
 
 ## Check that data$time[1] < model@tspan[1] raises an error.
 res <- assertError(SimInf:::pfilter_data(model, data.frame(time = 0)))

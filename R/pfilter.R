@@ -104,7 +104,7 @@ pfilter_npart <- function(npart) {
 ##' @noRd
 pfilter_data <- function(model, data) {
     if (!is.data.frame(data))
-        data <- as.data.frame(data)
+        stop("'data' must be a data.frame.", call. = FALSE)
 
     if (!("time" %in% names(data)))
         stop("Missing 'time' column in data.", call. = FALSE)
