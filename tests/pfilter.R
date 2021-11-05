@@ -186,6 +186,13 @@ stopifnot(identical(
              select = c(4L, 4L),
              shift = c(0L, 0L)))))
 
+## Check that the result is NULL for a model without events.
+stopifnot(is.null(
+    SimInf:::pfilter_events(
+                 SIR(u0 = data.frame(S = 100, I = 0, R = 0),
+                     tspan = 0:3, beta = 0.16, gamma = 0.077)@events,
+                 2:3)))
+
 ## Check that an error is raised if a weight is invalid.
 res <- assertError(.Call(SimInf:::SimInf_systematic_resampling, NaN))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")
