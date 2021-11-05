@@ -448,3 +448,42 @@ stopifnot(identical(summary_observed, summary_expected))
 
 plot(pf)
 plot(pf, ~I)
+
+## Modify the model object to check that 'gdata' is included in the
+## output.
+gdata(pf@model, "test") <- 1
+
+summary_expected <- c(
+    "Particle filter",
+    "---------------",
+    "Number of particles: 25",
+    "Log-likelihood: -17.915850",
+    "Model: SIR",
+    "Number of nodes: 1",
+    "Number of scheduled events: 1",
+    "",
+    "Transitions",
+    "-----------",
+    " S -> beta*S*I/(S+I+R) -> I",
+    " I -> gamma*I -> R",
+    "",
+    "Global data",
+    "-----------",
+    " Parameter Value",
+    " test      1    ",
+    "",
+    "Local data",
+    "----------",
+    " Parameter Value",
+    " beta      0.160",
+    " gamma     0.077",
+    "",
+    "Compartments",
+    "------------",
+    "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
+    " S 58.0    67.5   74.0 74.9    83.5 90.0",
+    " I  0.0    12.5   16.0 13.3    17.0 18.0",
+    " R  0.0     4.0   10.0 10.4    15.5 24.0")
+
+summary_observed <- capture.output(summary(pf))
+stopifnot(identical(summary_observed, summary_expected))
