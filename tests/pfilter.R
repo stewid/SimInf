@@ -32,6 +32,10 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              beta = 0.16,
              gamma = 0.077)
 
+## Check that data is a data.frame.
+res <- assertError(SimInf:::pfilter_data(model, 5))
+check_error(res, "'data' must be a data.frame.")
+
 ## Check that a missing 'time' column in data raises an error.
 res <- assertError(SimInf:::pfilter_data(model, data.frame()))
 check_error(res, "Missing 'time' column in data.")
@@ -44,6 +48,10 @@ check_error(res, "'data$time' must be integer.")
 ## Check that a NA value in the 'data$time' column raises an error.
 res <- assertError(SimInf:::pfilter_data(model, data.frame(time = NA)))
 check_error(res, "'data$time' must be integer.")
+
+## Check that 'data$time' column is a non-empty vector.
+res <- assertError(SimInf:::pfilter_data(model, data.frame(time = numeric(0))))
+check_error(res, "'time' column in data must be an increasing vector.")
 
 ## Check that data$time[1] < model@tspan[1] raises an error.
 res <- assertError(SimInf:::pfilter_data(model, data.frame(time = 0)))
@@ -177,6 +185,13 @@ stopifnot(identical(
              proportion = c(0, 0),
              select = c(4L, 4L),
              shift = c(0L, 0L)))))
+
+## Check that the result is NULL for a model without events.
+stopifnot(is.null(
+    SimInf:::pfilter_events(
+                 SIR(u0 = data.frame(S = 100, I = 0, R = 0),
+                     tspan = 0:3, beta = 0.16, gamma = 0.077)@events,
+                 2:3)))
 
 ## Check that an error is raised if a weight is invalid.
 res <- assertError(.Call(SimInf:::SimInf_systematic_resampling, NaN))
@@ -448,3 +463,42 @@ stopifnot(identical(summary_observed, summary_expected))
 
 plot(pf)
 plot(pf, ~I)
+
+## Modify the model object to check that 'gdata' is included in the
+## output.
+gdata(pf@model, "test") <- 1
+
+summary_expected <- c(
+    "Particle filter",
+    "---------------",
+    "Number of particles: 25",
+    "Log-likelihood: -17.915850",
+    "Model: SIR",
+    "Number of nodes: 1",
+    "Number of scheduled events: 1",
+    "",
+    "Transitions",
+    "-----------",
+    " S -> beta*S*I/(S+I+R) -> I",
+    " I -> gamma*I -> R",
+    "",
+    "Global data",
+    "-----------",
+    " Parameter Value",
+    " test      1    ",
+    "",
+    "Local data",
+    "----------",
+    " Parameter Value",
+    " beta      0.160",
+    " gamma     0.077",
+    "",
+    "Compartments",
+    "------------",
+    "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
+    " S 58.0    67.5   74.0 74.9    83.5 90.0",
+    " I  0.0    12.5   16.0 13.3    17.0 18.0",
+    " R  0.0     4.0   10.0 10.4    15.5 24.0")
+
+summary_observed <- capture.output(summary(pf))
+stopifnot(identical(summary_observed, summary_expected))
