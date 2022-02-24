@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -45,6 +45,9 @@
 ##'     particle.
 ##' @slot w A list where each item is a vector with the weights for
 ##'     the particles \code{x} in the corresponding generation.
+##' @slot distance A list where each item is a vector with the
+##'     distance for the particles \code{x} in the corresponding
+##'     generation.
 ##' @slot ess A numeric vector with the effective sample size (ESS) in
 ##'     each generation. Effective sample size is computed as
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
@@ -64,6 +67,7 @@ setClass(
               epsilon = "matrix",
               x       = "list",
               w       = "list",
+              distance = "list",
               ess     = "numeric")
 )
 
@@ -447,7 +451,7 @@ setMethod(
                       target = pars$target, pars = pars$pars, npart = npart,
                       nprop = integer(), fn = fn, x = list(),
                       epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
-                      w = list(), ess = numeric())
+                      w = list(), distance = list(), ess = numeric())
 
         continue(object, ngen = ngen, ..., verbose = verbose)
     }
