@@ -45,9 +45,11 @@
 ##'     particle.
 ##' @slot w A list where each item is a vector with the weights for
 ##'     the particles \code{x} in the corresponding generation.
-##' @slot distance A list where each item is a vector with the
-##'     distance for the particles \code{x} in the corresponding
-##'     generation.
+##' @slot distance A list where each item is a numeric matrix (number
+##'     of summary statistics X number of particles) with the distance
+##'     for the particles \code{x} in the corresponding generation.
+##'     Each column contains the distance for a particle and each row
+##'     contains the distance for a summary statistics.
 ##' @slot ess A numeric vector with the effective sample size (ESS) in
 ##'     each generation. Effective sample size is computed as
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
