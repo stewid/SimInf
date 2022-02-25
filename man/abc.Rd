@@ -77,9 +77,8 @@ plot(infectious, type = "s")
 
 ## The distance function to accept or reject a proposal. Each node
 ## in the simulated trajectory (contained in the 'result' object)
-## represents one proposal. The 'generation' argument is the current
-## generation of proposals.
-acceptFun <- function(result, generation, ...) {
+## represents one proposal.
+acceptFun <- function(result, ...) {
     ## Extract the time-series of infectious in each node as a
     ## data.frame.
     sim <- trajectory(result, "I")
