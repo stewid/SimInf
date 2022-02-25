@@ -205,51 +205,6 @@ abc_progress <- function(t0, t1, x, w, npart, nprop) {
     summary_matrix(x)
 }
 
-##' Check that the returned result from the ABC distance function is
-##' valid.
-##' @noRd
-check_abc_accept <- function(result, n, old_epsilon, epsilon) {
-    if (!is.list(result)) {
-        stop("The result from the ABC distance function must be a 'list'.",
-             call. = FALSE)
-    }
-
-    if (!is.logical(result$accept)) {
-        stop("The accepted/rejected vector must be of type 'logical'.",
-             call. = FALSE)
-    }
-
-    if (!identical(length(result$accept), n)) {
-        stop("Invalid length of the  accepted/rejected vector.",
-             call. = FALSE)
-    }
-
-    if (!all(is.vector(result$epsilon, "numeric"),
-             length(result$epsilon) > 0,
-             all(result$epsilon >= 0))) {
-        stop("'epsilon' must be a numeric vector with non-negative values.",
-             call. = FALSE)
-    }
-
-    if (is.null(epsilon)) {
-        if (!is.null(old_epsilon)) {
-            if (!all(result$epsilon < old_epsilon)) {
-                stop("'epsilon' must decrease in each generation.",
-                     call. = FALSE)
-            }
-        }
-
-        return(TRUE)
-    }
-
-    if (!identical(epsilon, result$epsilon)) {
-        stop("'epsilon' must be fixed within each generation.",
-             call. = FALSE)
-    }
-
-    FALSE
-}
-
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
