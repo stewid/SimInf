@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -39,17 +39,14 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I + Icum",
                                            c("1"))),
                 tspan = 2:75)
 
-accept_fn_ldata <- function(result, generation, tol, ptol, ...) {
-    ## Determine the tolerance for this generation.
-    tol <- tol * ptol ^ (generation - 1)
-
+accept_fn_ldata <- function(result, ...) {
     ## Extract the time-series for R1 for each node as a
     ## data.frame.
     sim <- trajectory(result, "Icum")
 
     ## Split the 'sim' data.frame by node and calculate the sum of the
     ## squared distance at each time-point for every node.
-    dist <- tapply(sim$Icum, sim$node, function(Icum) {
+    tapply(sim$Icum, sim$node, function(Icum) {
         ## Observed cases
         cases <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 6, 6, 25, 42, 56,
@@ -63,10 +60,6 @@ accept_fn_ldata <- function(result, generation, tol, ptol, ...) {
 
         sum((sim_cases - cases)^2)
     })
-
-    ## Return TRUE or FALSE for each node depending on if the
-    ## distance is less than the tolerance.
-    abc_accept(dist < tol, tol)
 }
 
 ## Check invalid npart
@@ -76,8 +69,7 @@ res <- assertError(abc(model = model,
                        ngen = 2,
                        npart = 1,
                        fn = accept_fn_ldata,
-                       tol = 250000,
-                       ptol = 0.9))
+                       tolerance = c(250000, 225000))
 check_error(res, "'npart' must be an integer > 1.")
 
 res <- assertError(abc(model = model,
@@ -86,8 +78,7 @@ res <- assertError(abc(model = model,
                        ngen = 2,
                        npart = c(10, 10),
                        fn = accept_fn_ldata,
-                       tol = 250000,
-                       ptol = 0.9))
+                       tolerance = c(250000, 225000))
 check_error(res, "'npart' must be an integer > 1.")
 
 ## Check invalid ngen
@@ -97,8 +88,7 @@ res <- assertError(abc(model = model,
                        ngen = 0,
                        npart = 10,
                        fn = accept_fn_ldata,
-                       tol = 250000,
-                       ptol = 0.9))
+                       tolerance = c(250000, 225000))
 check_error(res, "'ngen' must be an integer >= 1.")
 
 res <- assertError(abc(model = model,
@@ -107,8 +97,7 @@ res <- assertError(abc(model = model,
                        ngen = c(2, 2),
                        npart = 10,
                        fn = accept_fn_ldata,
-                       tol = 250000,
-                       ptol = 0.9))
+                       tolerance = c(250000, 225000))
 check_error(res, "'ngen' must be an integer >= 1.")
 
 set.seed(123)
@@ -118,8 +107,7 @@ fit <- abc(model = model,
            ngen = 2,
            npart = 10,
            fn = accept_fn_ldata,
-           tol = 250000,
-           ptol = 0.9,
+           tolerance = c(250000, 225000),
            verbose = TRUE)
 fit
 summary(fit)
