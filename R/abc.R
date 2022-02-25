@@ -250,18 +250,6 @@ check_abc_accept <- function(result, n, old_epsilon, epsilon) {
     FALSE
 }
 
-##' Return result for ABC whether the particles match the data
-##'
-##' @param accept A logical vector with one value for each particle in
-##'     the simulated model.
-##' @param epsilon A numeric vector with the tolerance for the
-##'     generation.
-##' @return \code{list(accept = accept, epsilon = epsilon)}
-##' @export
-abc_accept <- function(accept, epsilon) {
-    list(accept = accept, epsilon = epsilon)
-}
-
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
