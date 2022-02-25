@@ -69,7 +69,7 @@ res <- assertError(abc(model = model,
                        ngen = 2,
                        npart = 1,
                        fn = accept_fn_ldata,
-                       tolerance = c(250000, 225000))
+                       tolerance = c(250000, 225000)))
 check_error(res, "'npart' must be an integer > 1.")
 
 res <- assertError(abc(model = model,
@@ -78,7 +78,7 @@ res <- assertError(abc(model = model,
                        ngen = 2,
                        npart = c(10, 10),
                        fn = accept_fn_ldata,
-                       tolerance = c(250000, 225000))
+                       tolerance = c(250000, 225000)))
 check_error(res, "'npart' must be an integer > 1.")
 
 ## Check invalid ngen
@@ -88,7 +88,7 @@ res <- assertError(abc(model = model,
                        ngen = 0,
                        npart = 10,
                        fn = accept_fn_ldata,
-                       tolerance = c(250000, 225000))
+                       tolerance = c(250000, 225000)))
 check_error(res, "'ngen' must be an integer >= 1.")
 
 res <- assertError(abc(model = model,
@@ -97,7 +97,7 @@ res <- assertError(abc(model = model,
                        ngen = c(2, 2),
                        npart = 10,
                        fn = accept_fn_ldata,
-                       tolerance = c(250000, 225000))
+                       tolerance = c(250000, 225000)))
 check_error(res, "'ngen' must be an integer >= 1.")
 
 set.seed(123)
