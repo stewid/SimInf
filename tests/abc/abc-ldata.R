@@ -39,6 +39,53 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I + Icum",
                                            c("1"))),
                 tspan = 2:75)
 
+## Check that a non-numeric distance vector raises an error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = 2,
+                       npart = 2,
+                       fn = function(result, ...) {c("1", "2")},
+                       tolerance = c(5, 4)))
+check_error(res, "The result from the ABC distance function must be numeric.")
+
+## Check that a distance vector with the wrong dimension raises an
+## error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = 2,
+                       npart = 2,
+                       fn = function(result, ...) {1:3},
+                       tolerance = c(5, 4)))
+check_error(
+    res,
+    "Invalid dimension of the result from the ABC distance function.")
+
+## Check that a distance vector with NA raises an error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = 2,
+                       npart = 2,
+                       fn = function(result, ...) {c(NA, 2:20)},
+                       tolerance = c(5, 4)))
+check_error(
+    res,
+    "The result from the ABC distance function must be non-negative.")
+
+## Check that a distance vector with a negative value raises an error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = 2,
+                       npart = 2,
+                       fn = function(result, ...) {c(-1L, 2:20)},
+                       tolerance = c(5, 4)))
+check_error(
+    res,
+    "The result from the ABC distance function must be non-negative.")
+
 accept_fn_ldata <- function(result, ...) {
     ## Extract the time-series for R1 for each node as a
     ## data.frame.
