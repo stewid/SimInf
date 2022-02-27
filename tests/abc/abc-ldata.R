@@ -23,9 +23,7 @@ source("util/check.R")
 ## Specify the number of threads to use.
 set_num_threads(1)
 
-##
 ## Create a model with parameters in ldata
-##
 model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I + Icum",
                                 "I -> gamma*I -> R"),
                 compartments = c("S", "I", "Icum", "R"),
@@ -38,6 +36,16 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I + Icum",
                            dimnames = list(c("S", "I", "Icum", "R"),
                                            c("1"))),
                 tspan = 2:75)
+
+## Check that ngen=NA raises an error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = NA,
+                       npart = 2,
+                       fn = function(result, ...) {1:2},
+                       tolerance = c(5, 4)))
+check_error(res, "'ngen' must be integer.")
 
 ## Check that a non-numeric distance vector raises an error.
 res <- assertError(abc(model = model,
