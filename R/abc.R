@@ -249,7 +249,7 @@ abc_accept <- function(distance, tolerance) {
              call. = FALSE)
     }
 
-    colSums(distance < tolerance) == length(tolerance))
+    colSums(distance < tolerance) == length(tolerance)
 }
 
 ##' @importFrom utils setTxtProgressBar
