@@ -256,7 +256,7 @@ abc_accept <- function(distance, tolerance) {
 ##' @importFrom utils txtProgressBar
 ##' @noRd
 abc_gdata <- function(model, pars, priors, npart, fn, generation,
-                      old_epsilon, x, w, verbose, ...) {
+                      tolerance, x, w, verbose, ...) {
     if (isTRUE(verbose)) {
         cat("\nGeneration", generation, "...\n")
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
@@ -265,7 +265,6 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
 
     xx <- NULL
     ancestor <- NULL
-    epsilon <- NULL
     nprop <- 0L
     sigma <- proposal_covariance(x)
 
@@ -278,7 +277,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
         }
 
         d <- abc_distance(fn(run(model), generation = generation, ...), 1L)
-        accept <- abc_accept(d, epsilon)
+        accept <- abc_accept(d, tolerance)
         nprop <- nprop + 1L
         if (isTRUE(accept)) {
             ## Collect accepted particle
@@ -299,18 +298,18 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
 
-    list(x = xx, w = ww, nprop = nprop, epsilon = epsilon)
+    list(x = xx, w = ww, nprop = nprop)
 }
 
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
 abc_ldata <- function(model, pars, priors, npart, fn, generation,
-                      old_epsilon, x, w, verbose, ...) {
+                      tolerance, x, w, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
-    ## to run many particles simultaneously. Start with 10 x 'npart'
-    ## and then increase the number adaptively based on the acceptance
-    ## rate.
+    ## to run multiple particles simultaneously. Start with 10 x
+    ## 'npart' and then increase the number adaptively based on the
+    ## acceptance rate.
     n <- as.integer(10 * npart)
     n_events <- length(model@events@event)
     model <- replicate_first_node(model, n, n_events)
@@ -323,7 +322,6 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 
     xx <- NULL
     ancestor <- NULL
-    epsilon <- NULL
     nprop <- 0L
     sigma <- proposal_covariance(x)
 
@@ -343,7 +341,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
         }
 
         d <- abc_distance(fn(run(model), generation = generation, ...), n)
-        accept <- abc_accept(d, epsilon)
+        accept <- abc_accept(d, tolerance)
 
         ## Collect accepted particles making sure not to collect more
         ## than 'npart'.
@@ -377,7 +375,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
 
-    list(x = xx, w = ww, nprop = nprop, epsilon = epsilon)
+    list(x = xx, w = ww, nprop = nprop)
 }
 
 ##' Approximate Bayesian computation
