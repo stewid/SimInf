@@ -207,29 +207,29 @@ abc_progress <- function(t0, t1, x, w, npart, nprop) {
 
 ##' Check the result from the ABC distance function.
 ##' @noRd
-abc_distance <- function(d, n) {
-    if (!is.numeric(d)) {
+abc_distance <- function(distance, n) {
+    if (!is.numeric(distance)) {
         stop("The result from the ABC distance function must be numeric.",
              call. = FALSE)
     }
 
-    if (!is.matrix(d))
-        dim(d) <- c(1L, length(d))
+    if (!is.matrix(distance))
+        dim(distance) <- c(1L, length(distance))
 
-    if (is.integer(d))
-        storage.mode(d) <- "double"
+    if (is.integer(distance))
+        storage.mode(distance) <- "double"
 
-    if (!identical(ncol(d), n)) {
+    if (!identical(ncol(distance), n)) {
         stop("Invalid dimension of the result from the ABC distance function.",
              call. = FALSE)
     }
 
-    if (any(is.na(d)) || any(d < 0)) {
+    if (any(is.na(distance)) || any(distance < 0)) {
         stop("The result from the ABC distance function must be non-negative.",
              call. = FALSE)
     }
 
-    d
+    distance
 }
 
 ##' Check which particles to accept
