@@ -232,7 +232,7 @@ abc_distance <- function(distance, n) {
     distance
 }
 
-##' Check which particles to accept
+##' Determine which particles to accept
 ##'
 ##' @param distance a numeric matrix (number of summary statistics X
 ##'     number of particles) with the distance for the particles. Each
@@ -249,7 +249,7 @@ abc_accept <- function(distance, tolerance) {
              call. = FALSE)
     }
 
-    colSums(distance < tolerance) == length(tolerance)
+    colSums(distance <= tolerance) == length(tolerance)
 }
 
 ##' @importFrom utils setTxtProgressBar
