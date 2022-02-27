@@ -277,11 +277,10 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             model@gdata[pars[i]] <- proposals[i, 1]
         }
 
-        result <- fn(run(model), generation, ...)
-        if (check_abc_accept(result, 1L, old_epsilon, epsilon))
-            epsilon <- result$epsilon
+        d <- abc_distance(fn(run(model), generation = generation, ...), 1L)
+        accept <- abc_accept(d, epsilon)
         nprop <- nprop + 1L
-        if (isTRUE(result$accept)) {
+        if (isTRUE(accept)) {
             ## Collect accepted particle
             xx <- cbind(xx, as.matrix(model@gdata)[pars, 1, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
@@ -343,15 +342,14 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             model@ldata[pars[i], ] <- proposals[i, ]
         }
 
-        result <- fn(run(model), generation, ...)
-        if (check_abc_accept(result, n, old_epsilon, epsilon))
-            epsilon <- result$epsilon
+        d <- abc_distance(fn(run(model), generation = generation, ...), n)
+        accept <- abc_accept(d, epsilon)
 
         ## Collect accepted particles making sure not to collect more
         ## than 'npart'.
-        i <- cumsum(result$accept) + n_particles(xx)
+        i <- cumsum(accept) + n_particles(xx)
         i <- which(i == npart)
-        j <- which(result$accept)
+        j <- which(accept)
         if (length(i)) {
             i <- min(i)
             j <- j[j <= i]
