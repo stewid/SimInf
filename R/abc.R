@@ -232,6 +232,26 @@ abc_distance <- function(d, n) {
     d
 }
 
+##' Check which particles to accept
+##'
+##' @param distance a numeric matrix (number of summary statistics X
+##'     number of particles) with the distance for the particles. Each
+##'     column contains the distance for a particle and each row
+##'     contains the distance for a summary statistics.
+##' @param tolerance a numeric vector with the tolerance for each
+##'     summary statistics.
+##' @return a logical vector of length ncol(distance) with TRUE for
+##'     the particles to accept, else FALSE.
+##' @noRd
+abc_accept <- function(distance, tolerance) {
+    if (!identical(nrow(distance), length(tolerance))) {
+        stop("Mismatch between the number of summary statistics and tolerance.",
+             call. = FALSE)
+    }
+
+    colSums(distance < tolerance) == length(tolerance))
+}
+
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
