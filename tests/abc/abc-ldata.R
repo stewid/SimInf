@@ -134,6 +134,16 @@ res <- assertError(abc(model = model,
                        tolerance = c(1, 2, 3)))
 check_error(res, "'tolerance' must have 'ngen' columns.")
 
+## Check that a non-decreasing tolerance raises an error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = 2,
+                       npart = 2,
+                       fn = function(result, ...) {1:20},
+                       tolerance = c(4, 5)))
+check_error(res, "'tolerance' must be a decreasing vector.")
+
 accept_fn_ldata <- function(result, ...) {
     ## Extract the time-series for R1 for each node as a
     ## data.frame.
