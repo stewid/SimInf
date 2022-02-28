@@ -64,7 +64,9 @@ check_integer_arg <- function(...) {
                  call. = FALSE)
         }
 
-        if (!is.numeric(arg[[i]]) || !all(is_wholenumber(arg[[i]]))) {
+        if (!is.numeric(arg[[i]]) ||
+            any(is.na(arg[[i]])) ||
+            !all(is_wholenumber(arg[[i]]))) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],
                         "' must be integer."),
