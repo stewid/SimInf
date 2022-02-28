@@ -199,6 +199,25 @@ n_particles <- function(x) {
     ncol(x)
 }
 
+abc_tolerance <- function(tolerance, epsilon, ngen) {
+    if (!is.numeric(tolerance))
+        stop("'tolerance' must have non-negative values.", call. = FALSE)
+
+    if (!is.matrix(tolerance))
+        dim(tolerance) <- c(1L, length(tolerance))
+
+    if (is.integer(tolerance))
+        storage.mode(tolerance) <- "double"
+
+    if (!identical(ncol(tolerance), ngen))
+        stop("'tolerance' must have 'ngen' columns.", call. = FALSE)
+
+    if (any(is.na(tolerance)) || any(tolerance < 0))
+        stop("'tolerance' must have non-negative values.", call. = FALSE)
+
+    tolerance
+}
+
 abc_progress <- function(t0, t1, x, w, npart, nprop) {
     cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
                 npart / nprop, 1 / sum(w^2), (t1 - t0)[3]))
@@ -414,7 +433,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 setGeneric(
     "abc",
     signature = "model",
-    function(model, priors, ngen, npart, fn, ...,
+    function(model, priors, ngen, npart, fn, tolerance, ...,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("abc")
     }
@@ -425,7 +444,7 @@ setGeneric(
 setMethod(
     "abc",
     signature(model = "SimInf_model"),
-    function(model, priors, ngen, npart, fn, ..., verbose) {
+    function(model, priors, ngen, npart, fn, tolerance, ..., verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (length(npart) != 1L || npart <= 1L)
@@ -441,7 +460,8 @@ setMethod(
                       epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
                       w = list(), distance = list(), ess = numeric())
 
-        continue(object, ngen = ngen, ..., verbose = verbose)
+        continue(object, ngen = ngen, tolerance = tolerance, ...,
+                 verbose = verbose)
     }
 )
 
@@ -457,7 +477,7 @@ setMethod(
 setGeneric(
     "continue",
     signature = "object",
-    function(object, ngen = 1, ...,
+    function(object, ngen = 1, tolerance, ...,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("continue")
     }
@@ -468,12 +488,14 @@ setGeneric(
 setMethod(
     "continue",
     signature(object = "SimInf_abc"),
-    function(object, ngen = 1, ...,
+    function(object, ngen = 1, tolerance, ...,
              verbose = getOption("verbose", FALSE)) {
         check_integer_arg(ngen)
         ngen <- as.integer(ngen)
         if (length(ngen) != 1L || ngen < 1L)
             stop("'ngen' must be an integer >= 1.", call. = FALSE)
+
+        tolerance <- abc_tolerance(tolerance, object$epsilon, ngen)
 
         abc_fn <- switch(object@target,
                          "gdata" = abc_gdata,

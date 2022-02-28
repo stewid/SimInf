@@ -94,6 +94,46 @@ check_error(
     res,
     "The result from the ABC distance function must be non-negative.")
 
+## Check that a non-numeric tolerance raises an error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = 2,
+                       npart = 2,
+                       fn = function(result, ...) {1:20},
+                       tolerance = c("1", "2")))
+check_error(res, "'tolerance' must have non-negative values.")
+
+## Check that a tolerance with NA raises an error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = 2,
+                       npart = 2,
+                       fn = function(result, ...) {1:20},
+                       tolerance = c(NA_real_, 2)))
+check_error(res, "'tolerance' must have non-negative values.")
+
+## Check that a 'tolerance' with a negative value raises an error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = 2,
+                       npart = 2,
+                       fn = function(result, ...) {1:20},
+                       tolerance = c(1, -2)))
+check_error(res, "'tolerance' must have non-negative values.")
+
+## Check that a tolerance with wrong dimension raises an error.
+res <- assertError(abc(model = model,
+                       priors = c(beta ~ uniform(0.5, 1.5),
+                                  gamma ~ uniform(0.3, 0.7)),
+                       ngen = 2,
+                       npart = 2,
+                       fn = function(result, ...) {1:20},
+                       tolerance = c(1, 2, 3)))
+check_error(res, "'tolerance' must have 'ngen' columns.")
+
 accept_fn_ldata <- function(result, ...) {
     ## Extract the time-series for R1 for each node as a
     ## data.frame.
