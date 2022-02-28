@@ -215,6 +215,20 @@ abc_tolerance <- function(tolerance, epsilon, ngen) {
     if (any(is.na(tolerance)) || any(tolerance < 0))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
 
+    tol <- NULL
+    if (nrow(epsilon) > 0) {
+        ## Check that the number of summary statistics is the same as
+        ## in previous generations.
+        if (nrow(tolerance) != nrow(epsilon))
+            stop("Invalid dimension of 'tolerance'.", call. = FALSE)
+        tol <- epsilon
+    }
+
+    ## Check that tolerance is a decreasing vector for each summary
+    ## statistics.
+    if (any(apply(cbind(tol, tolerance), 1, diff) >= 0))
+        stop("'tolerance' must be a decreasing vector.", call. = FALSE)
+
     tolerance
 }
 
