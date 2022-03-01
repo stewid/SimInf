@@ -5,9 +5,27 @@
 \alias{abc,SimInf_model-method}
 \title{Approximate Bayesian computation}
 \usage{
-abc(model, priors, ngen, npart, fn, ..., verbose = getOption("verbose", FALSE))
+abc(
+  model,
+  priors,
+  ngen,
+  npart,
+  fn,
+  tolerance,
+  ...,
+  verbose = getOption("verbose", FALSE)
+)
 
-\S4method{abc}{SimInf_model}(model, priors, ngen, npart, fn, ..., verbose = getOption("verbose", FALSE))
+\S4method{abc}{SimInf_model}(
+  model,
+  priors,
+  ngen,
+  npart,
+  fn,
+  tolerance,
+  ...,
+  verbose = getOption("verbose", FALSE)
+)
 }
 \arguments{
 \item{model}{The model to generate data from.}
@@ -28,22 +46,26 @@ in \code{priors} must be either in \code{gdata} or
 
 \item{fn}{A function for calculating the summary statistics for a
 simulated trajectory. For each particle, the function must
-determine if the particle should be accepted (\code{TRUE}) or
-rejected (\code{FALSE}) and return that information using the
-\code{\link{abc_accept}} function. The first argument passed
-to the \code{fn} function is the result from a \code{run} of
-the model and it contains one trajectory. The second argument
-to \code{fn} is an integer with the \code{generation} of the
-particle(s). Depending on the underlying model structure, data
-for one or more particles have been generated in each call to
-\code{fn}. If the \code{model} only contains one node and all
-parameters to fit are in \code{ldata}, then that node will be
-replicated and each of the replicated nodes represent one
-particle in the trajectory (see \sQuote{Examples}). On the
-other hand if the model contains multiple nodes or the
-parameters to fit are contained in \code{gdata}, then the
-trajectory in the \code{result} argument represents one
-particle.}
+determine the distance and return that information. The first
+argument passed to the \code{fn} function is the result from a
+\code{run} of the model and it contains one trajectory. The
+second argument to \code{fn} is an integer with the
+\code{generation} of the particle(s). Depending on the
+underlying model structure, data for one or more particles
+have been generated in each call to \code{fn}. If the
+\code{model} only contains one node and all parameters to fit
+are in \code{ldata}, then that node will be replicated and
+each of the replicated nodes represent one particle in the
+trajectory (see \sQuote{Examples}). On the other hand if the
+model contains multiple nodes or the parameters to fit are
+contained in \code{gdata}, then the trajectory in the
+\code{result} argument represents one particle.}
+
+\item{tolerance}{A numeric matrix (number of summary statistics X
+number of generations) where each column contains the
+tolerances for a generation and each row contains a sequence
+of gradually decreasing tolerances. Can also be a numeric
+vector if there is only one summary statistics.}
 
 \item{...}{Further arguments to be passed to \code{fn}.}
 

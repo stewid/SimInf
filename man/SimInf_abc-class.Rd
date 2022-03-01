@@ -46,7 +46,7 @@ is an integer with the \code{generation} of the particles.
 The function should return a logical vector with one value for
 each particle in the simulated model.}
 
-\item{\code{epsilon}}{A numeric matrix (number of summary statistics X
+\item{\code{tolerance}}{A numeric matrix (number of summary statistics X
 number of generations) where each column contains the
 tolerances for a generation and each row contains a sequence
 of gradually decreasing tolerances.}
