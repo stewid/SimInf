@@ -419,22 +419,21 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##' @param npart An integer specifying the number of particles.
 ##' @param fn A function for calculating the summary statistics for a
 ##'     simulated trajectory. For each particle, the function must
-##'     determine if the particle should be accepted (\code{TRUE}) or
-##'     rejected (\code{FALSE}) and return that information using the
-##'     \code{\link{abc_accept}} function. The first argument passed
-##'     to the \code{fn} function is the result from a \code{run} of
-##'     the model and it contains one trajectory. The second argument
-##'     to \code{fn} is an integer with the \code{generation} of the
-##'     particle(s). Depending on the underlying model structure, data
-##'     for one or more particles have been generated in each call to
-##'     \code{fn}. If the \code{model} only contains one node and all
-##'     parameters to fit are in \code{ldata}, then that node will be
-##'     replicated and each of the replicated nodes represent one
-##'     particle in the trajectory (see \sQuote{Examples}). On the
-##'     other hand if the model contains multiple nodes or the
-##'     parameters to fit are contained in \code{gdata}, then the
-##'     trajectory in the \code{result} argument represents one
-##'     particle.
+##'     determine the distance and return that information. The first
+##'     argument passed to the \code{fn} function is the result from a
+##'     \code{run} of the model and it contains one trajectory. The
+##'     second argument to \code{fn} is an integer with the
+##'     \code{generation} of the particle(s). Depending on the
+##'     underlying model structure, data for one or more particles
+##'     have been generated in each call to \code{fn}. If the
+##'     \code{model} only contains one node and all parameters to fit
+##'     are in \code{ldata}, then that node will be replicated and
+##'     each of the replicated nodes represent one particle in the
+##'     trajectory (see \sQuote{Examples}). On the other hand if the
+##'     model contains multiple nodes or the parameters to fit are
+##'     contained in \code{gdata}, then the trajectory in the
+##'     \code{result} argument represents one particle.
+##' @template tolerance-param
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
 ##' @return A \code{SimInf_abc} object.
@@ -483,6 +482,7 @@ setMethod(
 ##'
 ##' @param object The \code{SimInf_abc} to continue from.
 ##' @param ngen The number of generations of ABC-SMC to run.
+##' @template tolerance-param
 ##' @param ... Further arguments to be passed to
 ##'     \code{SimInf_abc@@fn}.
 ##' @template verbose-param
@@ -519,8 +519,7 @@ setMethod(
                          stop("Unknown target: ", object@target,
                               call. = FALSE))
 
-        ## Setup a population of particles (x), weights (w) and
-        ## epsilon.
+        ## Setup a population of particles (x) and weights (w).
         x <- NULL
         if (length(object@x))
             x <- object@x[[length(object@x)]]
