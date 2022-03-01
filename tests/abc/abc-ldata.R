@@ -43,7 +43,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = NA,
                        npart = 2,
-                       fn = function(result, ...) {1:2},
+                       fn = function(result, ...) {
+                           1:2
+                       },
                        tolerance = c(5, 4)))
 check_error(res, "'ngen' must be integer.")
 
@@ -53,7 +55,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 2,
-                       fn = function(result, ...) {c("1", "2")},
+                       fn = function(result, ...) {
+                           c("1", "2")
+                       },
                        tolerance = c(5, 4)))
 check_error(res, "The result from the ABC distance function must be numeric.")
 
@@ -64,7 +68,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 2,
-                       fn = function(result, ...) {1:3},
+                       fn = function(result, ...) {
+                           1:3
+                       },
                        tolerance = c(5, 4)))
 check_error(
     res,
@@ -76,7 +82,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 2,
-                       fn = function(result, ...) {c(NA, 2:20)},
+                       fn = function(result, ...) {
+                           c(NA, 2:20)
+                       },
                        tolerance = c(5, 4)))
 check_error(
     res,
@@ -88,7 +96,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 2,
-                       fn = function(result, ...) {c(-1L, 2:20)},
+                       fn = function(result, ...) {
+                           c(-1L, 2:20)
+                       },
                        tolerance = c(5, 4)))
 check_error(
     res,
@@ -100,7 +110,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 2,
-                       fn = function(result, ...) {1:20},
+                       fn = function(result, ...) {
+                           1:20
+                       },
                        tolerance = c("1", "2")))
 check_error(res, "'tolerance' must have non-negative values.")
 
@@ -110,7 +122,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 2,
-                       fn = function(result, ...) {1:20},
+                       fn = function(result, ...) {
+                           1:20
+                       },
                        tolerance = c(NA_real_, 2)))
 check_error(res, "'tolerance' must have non-negative values.")
 
@@ -120,7 +134,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 2,
-                       fn = function(result, ...) {1:20},
+                       fn = function(result, ...) {
+                           1:20
+                       },
                        tolerance = c(1, -2)))
 check_error(res, "'tolerance' must have non-negative values.")
 
@@ -130,7 +146,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 2,
-                       fn = function(result, ...) {1:20},
+                       fn = function(result, ...) {
+                           1:20
+                       },
                        tolerance = c(1, 2, 3)))
 check_error(res, "'tolerance' must have 'ngen' columns.")
 
@@ -140,7 +158,9 @@ res <- assertError(abc(model = model,
                                   gamma ~ uniform(0.3, 0.7)),
                        ngen = 2,
                        npart = 2,
-                       fn = function(result, ...) {1:20},
+                       fn = function(result, ...) {
+                           1:20
+                       },
                        tolerance = c(4, 5)))
 check_error(res, "'tolerance' must be a decreasing vector.")
 
