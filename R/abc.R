@@ -199,7 +199,7 @@ n_particles <- function(x) {
     ncol(x)
 }
 
-abc_tolerance <- function(tolerance, epsilon, ngen) {
+abc_tolerance <- function(tolerance, tolerance_prev, ngen) {
     if (!is.numeric(tolerance))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
 
@@ -215,18 +215,17 @@ abc_tolerance <- function(tolerance, epsilon, ngen) {
     if (any(is.na(tolerance)) || any(tolerance < 0))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
 
-    tol <- NULL
-    if (nrow(epsilon) > 0) {
+    if (nrow(tolerance_prev) > 0) {
         ## Check that the number of summary statistics is the same as
         ## in previous generations.
-        if (nrow(tolerance) != nrow(epsilon))
+        if (nrow(tolerance) != nrow(tolerance_prev))
             stop("Invalid dimension of 'tolerance'.", call. = FALSE)
-        tol <- epsilon
+        tolerance <- cbind(tolerance_prev, tolerance)
     }
 
     ## Check that tolerance is a decreasing vector for each summary
     ## statistics.
-    if (any(apply(cbind(tol, tolerance), 1, diff) >= 0))
+    if (any(apply(tolerance, 1, diff) >= 0))
         stop("'tolerance' must be a decreasing vector.", call. = FALSE)
 
     tolerance
@@ -296,6 +295,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
         t0 <- proc.time()
     }
 
+    distance <- NULL
     xx <- NULL
     ancestor <- NULL
     nprop <- 0L
@@ -314,6 +314,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
         nprop <- nprop + 1L
         if (isTRUE(accept)) {
             ## Collect accepted particle
+            distance <- cbind(distance, d)
             xx <- cbind(xx, as.matrix(model@gdata)[pars, 1, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
         }
@@ -331,7 +332,8 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
 
-    list(x = xx, w = ww, nprop = nprop)
+    list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
+         distance = distance)
 }
 
 ##' @importFrom utils setTxtProgressBar
@@ -353,6 +355,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
         t0 <- proc.time()
     }
 
+    distance <- NULL
     xx <- NULL
     ancestor <- NULL
     nprop <- 0L
@@ -385,11 +388,13 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             i <- min(i)
             j <- j[j <= i]
             nprop <- nprop + i
+            distance <- cbind(distance, d[, j, drop = FALSE])
             xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
         } else {
             nprop <- nprop + n
             if (length(j)) {
+                distance <- cbind(distance, d[, j, drop = FALSE])
                 xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
                 ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
             }
@@ -408,7 +413,8 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
 
-    list(x = xx, w = ww, nprop = nprop)
+    list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
+         distance = distance)
 }
 
 ##' Approximate Bayesian computation
@@ -470,7 +476,7 @@ setMethod(
         object <- new("SimInf_abc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars, npart = npart,
                       nprop = integer(), fn = fn, x = list(),
-                      epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
+                      tolerance = matrix(numeric(0), ncol = 0, nrow = 0),
                       w = list(), distance = list(), ess = numeric())
 
         continue(object, ngen = ngen, tolerance = tolerance, ...,
@@ -532,10 +538,11 @@ setMethod(
         for (generation in generations) {
             tmp <- abc_fn(object@model, object@pars, object@priors,
                           object@npart, object@fn, generation,
-                          epsilon, x, w, verbose, ...)
+                          tolerance[, generation], x, w, verbose, ...)
 
             ## Move the population of particles to the next
             ## generation.
+            object@distance[[length(object@distance) + 1]] <- tmp$distance
             x <- tmp$x
             object@x[[length(object@x) + 1]] <- x
             w <- tmp$w
