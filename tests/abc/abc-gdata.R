@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -33,10 +33,7 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
                 u0 = data.frame(S = rep(9999, 2), I = 1, R = 0),
                 tspan = 1:50)
 
-accept_fn_gdata <- function(result, generation, tol, ptol, ...) {
-    ## Determine the tolerance for this generation.
-    tol <- tol * ptol ^ (generation - 1)
-
+accept_fn_gdata <- function(result, ...) {
     p <- c(2e-04, 0.00015, 5e-05, 5e-05, 2e-04, 0.00025, 0.00025,
            0.00025, 0.00025, 0.00015, 0.00035, 6e-04, 0.001, 0.0022,
            0.00395, 0.00655, 0.0102, 0.01755, 0.02795, 0.04235,
@@ -46,11 +43,7 @@ accept_fn_gdata <- function(result, generation, tol, ptol, ...) {
            0.00145, 0.0012, 8e-04, 7e-04, 3e-04, 2e-04, 0.00015,
            5e-05, 0, 0, 0)
 
-    dist <- sum((prevalence(result, I~.)$prevalence - p)^2)
-
-    ## Return TRUE or FALSE depending on if the distance is less than
-    ## or equal to the tolerance.
-    abc_accept(dist < tol, tol)
+    sum((prevalence(result, I~.)$prevalence - p)^2)
 }
 
 set.seed(123)
@@ -60,7 +53,6 @@ fit <- abc(model = model,
            ngen = 2,
            npart = 10,
            fn = accept_fn_gdata,
-           tol = 0.1,
-           ptol = 0.5)
+           tolerance = c(0.1, 0.05))
 fit
 summary(fit)
