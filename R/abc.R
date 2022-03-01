@@ -29,13 +29,12 @@
 ##' @slot nprop An integer vector with the number of simulated
 ##'     proposals in each generation.
 ##' @slot fn A function for calculating the summary statistics for the
-##'     simulated trajectory and determine for each particle if it
-##'     should be accepted (\code{TRUE}) or rejected (\code{FALSE}).
-##'     The first argument in \code{fn} is the simulated model
-##'     containing one trajectory.  The second argument to \code{fn}
-##'     is an integer with the \code{generation} of the particles.
-##'     The function should return a logical vector with one value for
-##'     each particle in the simulated model.
+##'     simulated trajectory and determine the distance for each
+##'     particle. The first argument in \code{fn} is the simulated
+##'     model containing one trajectory. The second argument to
+##'     \code{fn} is an integer with the \code{generation} of the
+##'     particles. The function should return a logical vector with
+##'     one value for each particle in the simulated model.
 ##' @slot tolerance A numeric matrix (number of summary statistics X
 ##'     number of generations) where each column contains the
 ##'     tolerances for a generation and each row contains a sequence
