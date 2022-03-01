@@ -5,9 +5,27 @@
 \alias{abc,SimInf_model-method}
 \title{Approximate Bayesian computation}
 \usage{
-abc(model, priors, ngen, npart, fn, ..., verbose = getOption("verbose", FALSE))
+abc(
+  model,
+  priors,
+  ngen,
+  npart,
+  fn,
+  tolerance,
+  ...,
+  verbose = getOption("verbose", FALSE)
+)
 
-\S4method{abc}{SimInf_model}(model, priors, ngen, npart, fn, ..., verbose = getOption("verbose", FALSE))
+\S4method{abc}{SimInf_model}(
+  model,
+  priors,
+  ngen,
+  npart,
+  fn,
+  tolerance,
+  ...,
+  verbose = getOption("verbose", FALSE)
+)
 }
 \arguments{
 \item{model}{The model to generate data from.}
@@ -28,22 +46,26 @@ in \code{priors} must be either in \code{gdata} or
 
 \item{fn}{A function for calculating the summary statistics for a
 simulated trajectory. For each particle, the function must
-determine if the particle should be accepted (\code{TRUE}) or
-rejected (\code{FALSE}) and return that information using the
-\code{\link{abc_accept}} function. The first argument passed
-to the \code{fn} function is the result from a \code{run} of
-the model and it contains one trajectory. The second argument
-to \code{fn} is an integer with the \code{generation} of the
-particle(s). Depending on the underlying model structure, data
-for one or more particles have been generated in each call to
-\code{fn}. If the \code{model} only contains one node and all
-parameters to fit are in \code{ldata}, then that node will be
-replicated and each of the replicated nodes represent one
-particle in the trajectory (see \sQuote{Examples}). On the
-other hand if the model contains multiple nodes or the
-parameters to fit are contained in \code{gdata}, then the
-trajectory in the \code{result} argument represents one
-particle.}
+determine the distance and return that information. The first
+argument passed to the \code{fn} function is the result from a
+\code{run} of the model and it contains one trajectory. The
+second argument to \code{fn} is an integer with the
+\code{generation} of the particle(s). Depending on the
+underlying model structure, data for one or more particles
+have been generated in each call to \code{fn}. If the
+\code{model} only contains one node and all parameters to fit
+are in \code{ldata}, then that node will be replicated and
+each of the replicated nodes represent one particle in the
+trajectory (see \sQuote{Examples}). On the other hand if the
+model contains multiple nodes or the parameters to fit are
+contained in \code{gdata}, then the trajectory in the
+\code{result} argument represents one particle.}
+
+\item{tolerance}{A numeric matrix (number of summary statistics X
+number of generations) where each column contains the
+tolerances for a generation and each row contains a sequence
+of gradually decreasing tolerances. Can also be a numeric
+vector if there is only one summary statistics.}
 
 \item{...}{Further arguments to be passed to \code{fn}.}
 
@@ -77,12 +99,8 @@ plot(infectious, type = "s")
 
 ## The distance function to accept or reject a proposal. Each node
 ## in the simulated trajectory (contained in the 'result' object)
-## represents one proposal. The 'generation' argument is the current
-## generation of proposals.
-acceptFun <- function(result, generation, tol, ptol, ...) {
-    ## Determine the tolerance for this generation.
-    tol <- tol * (ptol)^(generation - 1)
-
+## represents one proposal.
+acceptFun <- function(result, ...) {
     ## Extract the time-series of infectious in each node as a
     ## data.frame.
     sim <- trajectory(result, "I")
@@ -93,16 +111,17 @@ acceptFun <- function(result, generation, tol, ptol, ...) {
         sum((infectious - sim_infectious)^2)
     })
 
-    ## Return TRUE or FALSE for each node depending on if the distance
-    ## is less than the tolerance.
-    abc_accept(dist < tol, tol)
+    ## Return the distance for each node. Each proposal will be
+    ## accepted or rejected depending on if the distance is less than
+    ## the tolerance for the current generation.
+    dist
 }
 
 ## Fit the model parameters using ABC-SMC. The priors for the
-## paramters are specified in the second argument using a formula
+## parameters are specified in the second argument using a formula
 ## notation. Here we use a uniform distribtion for each parameter with
 ## lower bound = 0 and upper bound = 1. Note that we use a low number
-## particles here to keep the run-time of the example short.  In
+## particles here to keep the run-time of the example short. In
 ## practice you would want to use many more to ensure better
 ## approximations.
 fit <- abc(model = model,
@@ -110,8 +129,7 @@ fit <- abc(model = model,
            ngen = 4,
            npart = 100,
            fn = acceptFun,
-           tol = 5000,
-           ptol = 0.9)
+           tolerance = c(5000, 4500, 4050, 3645))
 
 ## Print a brief summary.
 fit
@@ -120,7 +138,7 @@ fit
 plot(fit)
 
 ## Run one more generation.
-fit <- continue(fit, tol = 5000, ptol = 0.9)
+fit <- continue(fit, tolerance = 3280)
 
 plot(fit)
 }

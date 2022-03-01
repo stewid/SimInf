@@ -6,14 +6,34 @@
 \alias{continue,SimInf_pmcmc-method}
 \title{Run more generations of ABC SMC}
 \usage{
-continue(object, ..., verbose = getOption("verbose", FALSE))
+continue(
+  object,
+  ngen = 1,
+  tolerance,
+  ...,
+  verbose = getOption("verbose", FALSE)
+)
 
-\S4method{continue}{SimInf_abc}(object, ngen = 1, ..., verbose = getOption("verbose", FALSE))
+\S4method{continue}{SimInf_abc}(
+  object,
+  ngen = 1,
+  tolerance,
+  ...,
+  verbose = getOption("verbose", FALSE)
+)
 
 \S4method{continue}{SimInf_pmcmc}(object, niter, ..., verbose = getOption("verbose", FALSE))
 }
 \arguments{
 \item{object}{The \code{SimInf_abc} to continue from.}
+
+\item{ngen}{The number of generations of ABC-SMC to run.}
+
+\item{tolerance}{A numeric matrix (number of summary statistics X
+number of generations) where each column contains the
+tolerances for a generation and each row contains a sequence
+of gradually decreasing tolerances. Can also be a numeric
+vector if there is only one summary statistics.}
 
 \item{...}{Further arguments to be passed to
 \code{SimInf_abc@fn}.}
@@ -21,8 +41,6 @@ continue(object, ..., verbose = getOption("verbose", FALSE))
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
 use \code{FALSE} if it is not set.}
-
-\item{ngen}{The number of generations of ABC-SMC to run.}
 }
 \value{
 A \code{SimInf_abc} object.

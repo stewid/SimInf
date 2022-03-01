@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -29,14 +29,13 @@
 ##' @slot nprop An integer vector with the number of simulated
 ##'     proposals in each generation.
 ##' @slot fn A function for calculating the summary statistics for the
-##'     simulated trajectory and determine for each particle if it
-##'     should be accepted (\code{TRUE}) or rejected (\code{FALSE}).
-##'     The first argument in \code{fn} is the simulated model
-##'     containing one trajectory.  The second argument to \code{fn}
-##'     is an integer with the \code{generation} of the particles.
-##'     The function should return a logical vector with one value for
-##'     each particle in the simulated model.
-##' @slot epsilon A numeric matrix (number of summary statistics X
+##'     simulated trajectory and determine the distance for each
+##'     particle. The first argument in \code{fn} is the simulated
+##'     model containing one trajectory. The second argument to
+##'     \code{fn} is an integer with the \code{generation} of the
+##'     particles. The function should return a logical vector with
+##'     one value for each particle in the simulated model.
+##' @slot tolerance A numeric matrix (number of summary statistics X
 ##'     number of generations) where each column contains the
 ##'     tolerances for a generation and each row contains a sequence
 ##'     of gradually decreasing tolerances.
@@ -45,6 +44,11 @@
 ##'     particle.
 ##' @slot w A list where each item is a vector with the weights for
 ##'     the particles \code{x} in the corresponding generation.
+##' @slot distance A list where each item is a numeric matrix (number
+##'     of summary statistics X number of particles) with the distance
+##'     for the particles \code{x} in the corresponding generation.
+##'     Each column contains the distance for a particle and each row
+##'     contains the distance for a summary statistics.
 ##' @slot ess A numeric vector with the effective sample size (ESS) in
 ##'     each generation. Effective sample size is computed as
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
@@ -54,17 +58,18 @@
 ##' @export
 setClass(
     "SimInf_abc",
-    slots = c(model   = "SimInf_model",
-              priors  = "data.frame",
-              target  = "character",
-              pars    = "integer",
-              npart   = "integer",
-              nprop   = "integer",
-              fn      = "function",
-              epsilon = "matrix",
-              x       = "list",
-              w       = "list",
-              ess     = "numeric")
+    slots = c(model     = "SimInf_model",
+              priors    = "data.frame",
+              target    = "character",
+              pars      = "integer",
+              npart     = "integer",
+              nprop     = "integer",
+              fn        = "function",
+              tolerance = "matrix",
+              x         = "list",
+              w         = "list",
+              distance  = "list",
+              ess       = "numeric")
 )
 
 setAs(
@@ -193,83 +198,105 @@ n_particles <- function(x) {
     ncol(x)
 }
 
+abc_tolerance <- function(tolerance, tolerance_prev, ngen) {
+    if (!is.numeric(tolerance))
+        stop("'tolerance' must have non-negative values.", call. = FALSE)
+
+    if (!is.matrix(tolerance))
+        dim(tolerance) <- c(1L, length(tolerance))
+
+    if (is.integer(tolerance))
+        storage.mode(tolerance) <- "double"
+
+    if (!identical(ncol(tolerance), ngen))
+        stop("'tolerance' must have 'ngen' columns.", call. = FALSE)
+
+    if (any(is.na(tolerance)) || any(tolerance < 0))
+        stop("'tolerance' must have non-negative values.", call. = FALSE)
+
+    if (nrow(tolerance_prev) > 0) {
+        ## Check that the number of summary statistics is the same as
+        ## in previous generations.
+        if (nrow(tolerance) != nrow(tolerance_prev))
+            stop("Invalid dimension of 'tolerance'.", call. = FALSE)
+        tolerance <- cbind(tolerance_prev, tolerance)
+    }
+
+    ## Check that tolerance is a decreasing vector for each summary
+    ## statistics.
+    if (any(apply(tolerance, 1, diff) >= 0))
+        stop("'tolerance' must be a decreasing vector.", call. = FALSE)
+
+    tolerance
+}
+
 abc_progress <- function(t0, t1, x, w, npart, nprop) {
     cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
                 npart / nprop, 1 / sum(w^2), (t1 - t0)[3]))
     summary_matrix(x)
 }
 
-##' Check that the returned result from the ABC distance function is
-##' valid.
+##' Check the result from the ABC distance function.
 ##' @noRd
-check_abc_accept <- function(result, n, old_epsilon, epsilon) {
-    if (!is.list(result)) {
-        stop("The result from the ABC distance function must be a 'list'.",
+abc_distance <- function(distance, n) {
+    if (!is.numeric(distance)) {
+        stop("The result from the ABC distance function must be numeric.",
              call. = FALSE)
     }
 
-    if (!is.logical(result$accept)) {
-        stop("The accepted/rejected vector must be of type 'logical'.",
+    if (!is.matrix(distance))
+        dim(distance) <- c(1L, length(distance))
+
+    if (is.integer(distance))
+        storage.mode(distance) <- "double"
+
+    if (!identical(ncol(distance), n)) {
+        stop("Invalid dimension of the result from the ABC distance function.",
              call. = FALSE)
     }
 
-    if (!identical(length(result$accept), n)) {
-        stop("Invalid length of the  accepted/rejected vector.",
+    if (any(is.na(distance)) || any(distance < 0)) {
+        stop("The result from the ABC distance function must be non-negative.",
              call. = FALSE)
     }
 
-    if (!all(is.vector(result$epsilon, "numeric"),
-             length(result$epsilon) > 0,
-             all(result$epsilon >= 0))) {
-        stop("'epsilon' must be a numeric vector with non-negative values.",
-             call. = FALSE)
-    }
-
-    if (is.null(epsilon)) {
-        if (!is.null(old_epsilon)) {
-            if (!all(result$epsilon < old_epsilon)) {
-                stop("'epsilon' must decrease in each generation.",
-                     call. = FALSE)
-            }
-        }
-
-        return(TRUE)
-    }
-
-    if (!identical(epsilon, result$epsilon)) {
-        stop("'epsilon' must be fixed within each generation.",
-             call. = FALSE)
-    }
-
-    FALSE
+    distance
 }
 
-##' Return result for ABC whether the particles match the data
+##' Determine which particles to accept
 ##'
-##' @param accept A logical vector with one value for each particle in
-##'     the simulated model.
-##' @param epsilon A numeric vector with the tolerance for the
-##'     generation.
-##' @return \code{list(accept = accept, epsilon = epsilon)}
-##' @export
-abc_accept <- function(accept, epsilon) {
-    list(accept = accept, epsilon = epsilon)
+##' @param distance a numeric matrix (number of summary statistics X
+##'     number of particles) with the distance for the particles. Each
+##'     column contains the distance for a particle and each row
+##'     contains the distance for a summary statistics.
+##' @param tolerance a numeric vector with the tolerance for each
+##'     summary statistics.
+##' @return a logical vector of length ncol(distance) with TRUE for
+##'     the particles to accept, else FALSE.
+##' @noRd
+abc_accept <- function(distance, tolerance) {
+    if (!identical(nrow(distance), length(tolerance))) {
+        stop("Mismatch between the number of summary statistics and tolerance.",
+             call. = FALSE)
+    }
+
+    colSums(distance <= tolerance) == length(tolerance)
 }
 
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
 abc_gdata <- function(model, pars, priors, npart, fn, generation,
-                      old_epsilon, x, w, verbose, ...) {
+                      tolerance, x, w, verbose, ...) {
     if (isTRUE(verbose)) {
         cat("\nGeneration", generation, "...\n")
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
         t0 <- proc.time()
     }
 
+    distance <- NULL
     xx <- NULL
     ancestor <- NULL
-    epsilon <- NULL
     nprop <- 0L
     sigma <- proposal_covariance(x)
 
@@ -281,12 +308,12 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             model@gdata[pars[i]] <- proposals[i, 1]
         }
 
-        result <- fn(run(model), generation, ...)
-        if (check_abc_accept(result, 1L, old_epsilon, epsilon))
-            epsilon <- result$epsilon
+        d <- abc_distance(fn(run(model), generation = generation, ...), 1L)
+        accept <- abc_accept(d, tolerance)
         nprop <- nprop + 1L
-        if (isTRUE(result$accept)) {
+        if (isTRUE(accept)) {
             ## Collect accepted particle
+            distance <- cbind(distance, d)
             xx <- cbind(xx, as.matrix(model@gdata)[pars, 1, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
         }
@@ -304,18 +331,19 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
 
-    list(x = xx, w = ww, nprop = nprop, epsilon = epsilon)
+    list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
+         distance = distance)
 }
 
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
 abc_ldata <- function(model, pars, priors, npart, fn, generation,
-                      old_epsilon, x, w, verbose, ...) {
+                      tolerance, x, w, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
-    ## to run many particles simultaneously. Start with 10 x 'npart'
-    ## and then increase the number adaptively based on the acceptance
-    ## rate.
+    ## to run multiple particles simultaneously. Start with 10 x
+    ## 'npart' and then increase the number adaptively based on the
+    ## acceptance rate.
     n <- as.integer(10 * npart)
     n_events <- length(model@events@event)
     model <- replicate_first_node(model, n, n_events)
@@ -326,9 +354,9 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
         t0 <- proc.time()
     }
 
+    distance <- NULL
     xx <- NULL
     ancestor <- NULL
-    epsilon <- NULL
     nprop <- 0L
     sigma <- proposal_covariance(x)
 
@@ -347,24 +375,25 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             model@ldata[pars[i], ] <- proposals[i, ]
         }
 
-        result <- fn(run(model), generation, ...)
-        if (check_abc_accept(result, n, old_epsilon, epsilon))
-            epsilon <- result$epsilon
+        d <- abc_distance(fn(run(model), generation = generation, ...), n)
+        accept <- abc_accept(d, tolerance)
 
         ## Collect accepted particles making sure not to collect more
         ## than 'npart'.
-        i <- cumsum(result$accept) + n_particles(xx)
+        i <- cumsum(accept) + n_particles(xx)
         i <- which(i == npart)
-        j <- which(result$accept)
+        j <- which(accept)
         if (length(i)) {
             i <- min(i)
             j <- j[j <= i]
             nprop <- nprop + i
+            distance <- cbind(distance, d[, j, drop = FALSE])
             xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
         } else {
             nprop <- nprop + n
             if (length(j)) {
+                distance <- cbind(distance, d[, j, drop = FALSE])
                 xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
                 ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
             }
@@ -383,7 +412,8 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     if (isTRUE(verbose))
         abc_progress(t0, proc.time(), xx, ww, npart, nprop)
 
-    list(x = xx, w = ww, nprop = nprop, epsilon = epsilon)
+    list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
+         distance = distance)
 }
 
 ##' Approximate Bayesian computation
@@ -394,22 +424,21 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##' @param npart An integer specifying the number of particles.
 ##' @param fn A function for calculating the summary statistics for a
 ##'     simulated trajectory. For each particle, the function must
-##'     determine if the particle should be accepted (\code{TRUE}) or
-##'     rejected (\code{FALSE}) and return that information using the
-##'     \code{\link{abc_accept}} function. The first argument passed
-##'     to the \code{fn} function is the result from a \code{run} of
-##'     the model and it contains one trajectory. The second argument
-##'     to \code{fn} is an integer with the \code{generation} of the
-##'     particle(s). Depending on the underlying model structure, data
-##'     for one or more particles have been generated in each call to
-##'     \code{fn}. If the \code{model} only contains one node and all
-##'     parameters to fit are in \code{ldata}, then that node will be
-##'     replicated and each of the replicated nodes represent one
-##'     particle in the trajectory (see \sQuote{Examples}). On the
-##'     other hand if the model contains multiple nodes or the
-##'     parameters to fit are contained in \code{gdata}, then the
-##'     trajectory in the \code{result} argument represents one
-##'     particle.
+##'     determine the distance and return that information. The first
+##'     argument passed to the \code{fn} function is the result from a
+##'     \code{run} of the model and it contains one trajectory. The
+##'     second argument to \code{fn} is an integer with the
+##'     \code{generation} of the particle(s). Depending on the
+##'     underlying model structure, data for one or more particles
+##'     have been generated in each call to \code{fn}. If the
+##'     \code{model} only contains one node and all parameters to fit
+##'     are in \code{ldata}, then that node will be replicated and
+##'     each of the replicated nodes represent one particle in the
+##'     trajectory (see \sQuote{Examples}). On the other hand if the
+##'     model contains multiple nodes or the parameters to fit are
+##'     contained in \code{gdata}, then the trajectory in the
+##'     \code{result} argument represents one particle.
+##' @template tolerance-param
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
 ##' @return A \code{SimInf_abc} object.
@@ -422,7 +451,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 setGeneric(
     "abc",
     signature = "model",
-    function(model, priors, ngen, npart, fn, ...,
+    function(model, priors, ngen, npart, fn, tolerance, ...,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("abc")
     }
@@ -433,7 +462,7 @@ setGeneric(
 setMethod(
     "abc",
     signature(model = "SimInf_model"),
-    function(model, priors, ngen, npart, fn, ..., verbose) {
+    function(model, priors, ngen, npart, fn, tolerance, ..., verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (length(npart) != 1L || npart <= 1L)
@@ -446,10 +475,11 @@ setMethod(
         object <- new("SimInf_abc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars, npart = npart,
                       nprop = integer(), fn = fn, x = list(),
-                      epsilon = matrix(numeric(0), ncol = 0, nrow = 0),
-                      w = list(), ess = numeric())
+                      tolerance = matrix(numeric(0), ncol = 0, nrow = 0),
+                      w = list(), distance = list(), ess = numeric())
 
-        continue(object, ngen = ngen, ..., verbose = verbose)
+        continue(object, ngen = ngen, tolerance = tolerance, ...,
+                 verbose = verbose)
     }
 )
 
@@ -457,6 +487,7 @@ setMethod(
 ##'
 ##' @param object The \code{SimInf_abc} to continue from.
 ##' @param ngen The number of generations of ABC-SMC to run.
+##' @template tolerance-param
 ##' @param ... Further arguments to be passed to
 ##'     \code{SimInf_abc@@fn}.
 ##' @template verbose-param
@@ -465,7 +496,8 @@ setMethod(
 setGeneric(
     "continue",
     signature = "object",
-    function(object, ..., verbose = getOption("verbose", FALSE)) {
+    function(object, ngen = 1, tolerance, ...,
+             verbose = getOption("verbose", FALSE)) {
         standardGeneric("continue")
     }
 )
@@ -475,12 +507,16 @@ setGeneric(
 setMethod(
     "continue",
     signature(object = "SimInf_abc"),
-    function(object, ngen = 1, ...,
+    function(object, ngen = 1, tolerance, ...,
              verbose = getOption("verbose", FALSE)) {
         check_integer_arg(ngen)
         ngen <- as.integer(ngen)
         if (length(ngen) != 1L || ngen < 1L)
             stop("'ngen' must be an integer >= 1.", call. = FALSE)
+
+        tolerance <- abc_tolerance(tolerance, object@tolerance, ngen)
+        if (ncol(object@tolerance) == 0)
+            dim(object@tolerance) <- c(nrow(tolerance), 0)
 
         abc_fn <- switch(object@target,
                          "gdata" = abc_gdata,
@@ -488,35 +524,29 @@ setMethod(
                          stop("Unknown target: ", object@target,
                               call. = FALSE))
 
-        ## Setup a population of particles (x), weights (w) and
-        ## epsilon.
+        ## Setup a population of particles (x) and weights (w).
         x <- NULL
         if (length(object@x))
             x <- object@x[[length(object@x)]]
         w <- NULL
         if (length(object@w))
             w <- object@w[[length(object@w)]]
-        epsilon <- NULL
-        if (ncol(object@epsilon))
-            epsilon <- object@epsilon[, ncol(object@epsilon)]
 
         ## Append new generations to object
         generations <- seq(length(object@x) + 1, length(object@x) + ngen)
         for (generation in generations) {
             tmp <- abc_fn(object@model, object@pars, object@priors,
                           object@npart, object@fn, generation,
-                          epsilon, x, w, verbose, ...)
+                          tolerance[, generation], x, w, verbose, ...)
 
             ## Move the population of particles to the next
             ## generation.
+            object@distance[[length(object@distance) + 1]] <- tmp$distance
             x <- tmp$x
             object@x[[length(object@x) + 1]] <- x
             w <- tmp$w
             object@w[[length(object@w) + 1]] <- w
-            epsilon <- tmp$epsilon
-            if (ncol(object@epsilon) == 0)
-                dim(object@epsilon) <- c(length(tmp$epsilon), 0)
-            object@epsilon <- cbind(object@epsilon, epsilon)
+            object@tolerance <- cbind(object@tolerance, tmp$tolerance)
             object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
             object@nprop[length(object@nprop) + 1] <- tmp$nprop
         }

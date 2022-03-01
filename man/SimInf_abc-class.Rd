@@ -38,15 +38,14 @@ determines if the ABC-SMC method estimates parameters in
 proposals in each generation.}
 
 \item{\code{fn}}{A function for calculating the summary statistics for the
-simulated trajectory and determine for each particle if it
-should be accepted (\code{TRUE}) or rejected (\code{FALSE}).
-The first argument in \code{fn} is the simulated model
-containing one trajectory.  The second argument to \code{fn}
-is an integer with the \code{generation} of the particles.
-The function should return a logical vector with one value for
-each particle in the simulated model.}
+simulated trajectory and determine the distance for each
+particle. The first argument in \code{fn} is the simulated
+model containing one trajectory. The second argument to
+\code{fn} is an integer with the \code{generation} of the
+particles. The function should return a logical vector with
+one value for each particle in the simulated model.}
 
-\item{\code{epsilon}}{A numeric matrix (number of summary statistics X
+\item{\code{tolerance}}{A numeric matrix (number of summary statistics X
 number of generations) where each column contains the
 tolerances for a generation and each row contains a sequence
 of gradually decreasing tolerances.}
@@ -57,6 +56,12 @@ particle.}
 
 \item{\code{w}}{A list where each item is a vector with the weights for
 the particles \code{x} in the corresponding generation.}
+
+\item{\code{distance}}{A list where each item is a numeric matrix (number
+of summary statistics X number of particles) with the distance
+for the particles \code{x} in the corresponding generation.
+Each column contains the distance for a particle and each row
+contains the distance for a summary statistics.}
 
 \item{\code{ess}}{A numeric vector with the effective sample size (ESS) in
 each generation. Effective sample size is computed as
