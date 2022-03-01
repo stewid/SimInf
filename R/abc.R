@@ -36,7 +36,7 @@
 ##'     is an integer with the \code{generation} of the particles.
 ##'     The function should return a logical vector with one value for
 ##'     each particle in the simulated model.
-##' @slot epsilon A numeric matrix (number of summary statistics X
+##' @slot tolerance A numeric matrix (number of summary statistics X
 ##'     number of generations) where each column contains the
 ##'     tolerances for a generation and each row contains a sequence
 ##'     of gradually decreasing tolerances.
@@ -59,18 +59,18 @@
 ##' @export
 setClass(
     "SimInf_abc",
-    slots = c(model   = "SimInf_model",
-              priors  = "data.frame",
-              target  = "character",
-              pars    = "integer",
-              npart   = "integer",
-              nprop   = "integer",
-              fn      = "function",
-              epsilon = "matrix",
-              x       = "list",
-              w       = "list",
-              distance = "list",
-              ess     = "numeric")
+    slots = c(model     = "SimInf_model",
+              priors    = "data.frame",
+              target    = "character",
+              pars      = "integer",
+              npart     = "integer",
+              nprop     = "integer",
+              fn        = "function",
+              tolerance = "matrix",
+              x         = "list",
+              w         = "list",
+              distance  = "list",
+              ess       = "numeric")
 )
 
 setAs(
@@ -509,7 +509,9 @@ setMethod(
         if (length(ngen) != 1L || ngen < 1L)
             stop("'ngen' must be an integer >= 1.", call. = FALSE)
 
-        tolerance <- abc_tolerance(tolerance, object$epsilon, ngen)
+        tolerance <- abc_tolerance(tolerance, object@tolerance, ngen)
+        if (ncol(object@tolerance) == 0)
+            dim(object@tolerance) <- c(nrow(tolerance), 0)
 
         abc_fn <- switch(object@target,
                          "gdata" = abc_gdata,
@@ -525,9 +527,6 @@ setMethod(
         w <- NULL
         if (length(object@w))
             w <- object@w[[length(object@w)]]
-        epsilon <- NULL
-        if (ncol(object@epsilon))
-            epsilon <- object@epsilon[, ncol(object@epsilon)]
 
         ## Append new generations to object
         generations <- seq(length(object@x) + 1, length(object@x) + ngen)
@@ -542,10 +541,7 @@ setMethod(
             object@x[[length(object@x) + 1]] <- x
             w <- tmp$w
             object@w[[length(object@w) + 1]] <- w
-            epsilon <- tmp$epsilon
-            if (ncol(object@epsilon) == 0)
-                dim(object@epsilon) <- c(length(tmp$epsilon), 0)
-            object@epsilon <- cbind(object@epsilon, epsilon)
+            object@tolerance <- cbind(object@tolerance, tmp$tolerance)
             object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
             object@nprop[length(object@nprop) + 1] <- tmp$nprop
         }
