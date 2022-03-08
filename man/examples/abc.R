@@ -18,7 +18,7 @@ plot(infectious, type = "s")
 ## The distance function to accept or reject a proposal. Each node
 ## in the simulated trajectory (contained in the 'result' object)
 ## represents one proposal.
-acceptFun <- function(result, ...) {
+distance <- function(result, ...) {
     ## Extract the time-series of infectious in each node as a
     ## data.frame.
     sim <- trajectory(result, "I")
@@ -44,9 +44,8 @@ acceptFun <- function(result, ...) {
 ## approximations.
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-           ngen = 4,
            npart = 100,
-           fn = acceptFun,
+           fn = distance,
            tolerance = c(5000, 4500, 4050, 3645))
 
 ## Print a brief summary.

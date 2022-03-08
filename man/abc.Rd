@@ -8,7 +8,6 @@
 abc(
   model,
   priors,
-  ngen,
   npart,
   fn,
   tolerance,
@@ -19,7 +18,6 @@ abc(
 \S4method{abc}{SimInf_model}(
   model,
   priors,
-  ngen,
   npart,
   fn,
   tolerance,
@@ -39,8 +37,6 @@ normal(10, 1)}. The following distributions are supported:
 \code{gamma}, \code{normal} and \code{uniform}. All parameters
 in \code{priors} must be either in \code{gdata} or
 \code{ldata}.}
-
-\item{ngen}{The number of generations of ABC-SMC to run.}
 
 \item{npart}{An integer specifying the number of particles.}
 
@@ -65,7 +61,8 @@ contained in \code{gdata}, then the trajectory in the
 number of generations) where each column contains the
 tolerances for a generation and each row contains a sequence
 of gradually decreasing tolerances. Can also be a numeric
-vector if there is only one summary statistics.}
+vector if there is only one summary statistics. The tolerance
+determines the number of generations of ABC-SMC to run.}
 
 \item{...}{Further arguments to be passed to \code{fn}.}
 
@@ -100,7 +97,7 @@ plot(infectious, type = "s")
 ## The distance function to accept or reject a proposal. Each node
 ## in the simulated trajectory (contained in the 'result' object)
 ## represents one proposal.
-acceptFun <- function(result, ...) {
+distance <- function(result, ...) {
     ## Extract the time-series of infectious in each node as a
     ## data.frame.
     sim <- trajectory(result, "I")
@@ -126,9 +123,8 @@ acceptFun <- function(result, ...) {
 ## approximations.
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-           ngen = 4,
            npart = 100,
-           fn = acceptFun,
+           fn = distance,
            tolerance = c(5000, 4500, 4050, 3645))
 
 ## Print a brief summary.
