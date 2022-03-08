@@ -33,7 +33,7 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I",
                 u0 = data.frame(S = rep(9999, 2), I = 1, R = 0),
                 tspan = 1:50)
 
-accept_fn_gdata <- function(result, ...) {
+distance_fn_gdata <- function(result, ...) {
     p <- c(2e-04, 0.00015, 5e-05, 5e-05, 2e-04, 0.00025, 0.00025,
            0.00025, 0.00025, 0.00015, 0.00035, 6e-04, 0.001, 0.0022,
            0.00395, 0.00655, 0.0102, 0.01755, 0.02795, 0.04235,
@@ -50,9 +50,8 @@ set.seed(123)
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0.5, 1.5),
                       gamma ~ uniform(0.3, 0.7)),
-           ngen = 2,
            npart = 10,
-           fn = accept_fn_gdata,
+           fn = distance_fn_gdata,
            tolerance = c(0.1, 0.05))
 fit
 summary(fit)

@@ -37,23 +37,10 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I + Icum",
                                            c("1"))),
                 tspan = 2:75)
 
-## Check that ngen=NA raises an error.
-res <- assertError(abc(model = model,
-                       priors = c(beta ~ uniform(0.5, 1.5),
-                                  gamma ~ uniform(0.3, 0.7)),
-                       ngen = NA,
-                       npart = 2,
-                       fn = function(result, ...) {
-                           1:2
-                       },
-                       tolerance = c(5, 4)))
-check_error(res, "'ngen' must be integer.")
-
 ## Check that a non-numeric distance vector raises an error.
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 2,
                        fn = function(result, ...) {
                            c("1", "2")
@@ -66,7 +53,6 @@ check_error(res, "The result from the ABC distance function must be numeric.")
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 2,
                        fn = function(result, ...) {
                            1:3
@@ -80,7 +66,6 @@ check_error(
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 2,
                        fn = function(result, ...) {
                            c(NA, 2:20)
@@ -94,7 +79,6 @@ check_error(
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 2,
                        fn = function(result, ...) {
                            c(-1L, 2:20)
@@ -108,7 +92,6 @@ check_error(
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 2,
                        fn = function(result, ...) {
                            1:20
@@ -120,7 +103,6 @@ check_error(res, "'tolerance' must have non-negative values.")
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 2,
                        fn = function(result, ...) {
                            1:20
@@ -132,7 +114,6 @@ check_error(res, "'tolerance' must have non-negative values.")
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 2,
                        fn = function(result, ...) {
                            1:20
@@ -144,19 +125,17 @@ check_error(res, "'tolerance' must have non-negative values.")
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 2,
                        fn = function(result, ...) {
                            1:20
                        },
-                       tolerance = c(1, 2, 3)))
-check_error(res, "'tolerance' must have 'ngen' columns.")
+                       tolerance = numeric(0)))
+check_error(res, "'tolerance' must have columns.")
 
 ## Check that a non-decreasing tolerance raises an error.
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 2,
                        fn = function(result, ...) {
                            1:20
@@ -164,9 +143,8 @@ res <- assertError(abc(model = model,
                        tolerance = c(4, 5)))
 check_error(res, "'tolerance' must be a decreasing vector.")
 
-accept_fn_ldata <- function(result, ...) {
-    ## Extract the time-series for R1 for each node as a
-    ## data.frame.
+distance_fn_ldata <- function(result, ...) {
+    ## Extract the time-series for R1 for each node as a data.frame.
     sim <- trajectory(result, "Icum")
 
     ## Split the 'sim' data.frame by node and calculate the sum of the
@@ -191,39 +169,18 @@ accept_fn_ldata <- function(result, ...) {
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = 1,
-                       fn = accept_fn_ldata,
+                       fn = distance_fn_ldata,
                        tolerance = c(250000, 225000)))
 check_error(res, "'npart' must be an integer > 1.")
 
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       ngen = 2,
                        npart = c(10, 10),
-                       fn = accept_fn_ldata,
+                       fn = distance_fn_ldata,
                        tolerance = c(250000, 225000)))
 check_error(res, "'npart' must be an integer > 1.")
-
-## Check invalid ngen
-res <- assertError(abc(model = model,
-                       priors = c(beta ~ uniform(0.5, 1.5),
-                                  gamma ~ uniform(0.3, 0.7)),
-                       ngen = 0,
-                       npart = 10,
-                       fn = accept_fn_ldata,
-                       tolerance = c(250000, 225000)))
-check_error(res, "'ngen' must be an integer >= 1.")
-
-res <- assertError(abc(model = model,
-                       priors = c(beta ~ uniform(0.5, 1.5),
-                                  gamma ~ uniform(0.3, 0.7)),
-                       ngen = c(2, 2),
-                       npart = 10,
-                       fn = accept_fn_ldata,
-                       tolerance = c(250000, 225000)))
-check_error(res, "'ngen' must be an integer >= 1.")
 
 set.seed(123)
 fit <- abc(model = model,
@@ -231,7 +188,7 @@ fit <- abc(model = model,
                       gamma ~ uniform(0.3, 0.7)),
            ngen = 2,
            npart = 10,
-           fn = accept_fn_ldata,
+           fn = distance_fn_ldata,
            tolerance = c(250000, 225000),
            verbose = TRUE)
 fit

@@ -198,7 +198,7 @@ n_particles <- function(x) {
     ncol(x)
 }
 
-abc_tolerance <- function(tolerance, tolerance_prev, ngen) {
+abc_tolerance <- function(tolerance, tolerance_prev) {
     if (!is.numeric(tolerance))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
 
@@ -208,8 +208,8 @@ abc_tolerance <- function(tolerance, tolerance_prev, ngen) {
     if (is.integer(tolerance))
         storage.mode(tolerance) <- "double"
 
-    if (!identical(ncol(tolerance), ngen))
-        stop("'tolerance' must have 'ngen' columns.", call. = FALSE)
+    if (ncol(tolerance) == 0)
+        stop("'tolerance' must have columns.", call. = FALSE)
 
     if (any(is.na(tolerance)) || any(tolerance < 0))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
@@ -420,7 +420,6 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##'
 ##' @param model The model to generate data from.
 ##' @template priors-param
-##' @param ngen The number of generations of ABC-SMC to run.
 ##' @param npart An integer specifying the number of particles.
 ##' @param fn A function for calculating the summary statistics for a
 ##'     simulated trajectory. For each particle, the function must
@@ -451,7 +450,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 setGeneric(
     "abc",
     signature = "model",
-    function(model, priors, ngen, npart, fn, tolerance, ...,
+    function(model, priors, npart, fn, tolerance, ...,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("abc")
     }
@@ -462,7 +461,7 @@ setGeneric(
 setMethod(
     "abc",
     signature(model = "SimInf_model"),
-    function(model, priors, ngen, npart, fn, tolerance, ..., verbose) {
+    function(model, priors, npart, fn, tolerance, ..., verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (length(npart) != 1L || npart <= 1L)
@@ -478,15 +477,13 @@ setMethod(
                       tolerance = matrix(numeric(0), ncol = 0, nrow = 0),
                       w = list(), distance = list(), ess = numeric())
 
-        continue(object, ngen = ngen, tolerance = tolerance, ...,
-                 verbose = verbose)
+        continue(object, tolerance = tolerance, ..., verbose = verbose)
     }
 )
 
 ##' Run more generations of ABC SMC
 ##'
 ##' @param object The \code{SimInf_abc} to continue from.
-##' @param ngen The number of generations of ABC-SMC to run.
 ##' @template tolerance-param
 ##' @param ... Further arguments to be passed to
 ##'     \code{SimInf_abc@@fn}.
@@ -496,7 +493,7 @@ setMethod(
 setGeneric(
     "continue",
     signature = "object",
-    function(object, ngen = 1, tolerance, ...,
+    function(object, tolerance, ...,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("continue")
     }
@@ -507,14 +504,9 @@ setGeneric(
 setMethod(
     "continue",
     signature(object = "SimInf_abc"),
-    function(object, ngen = 1, tolerance, ...,
+    function(object, tolerance, ...,
              verbose = getOption("verbose", FALSE)) {
-        check_integer_arg(ngen)
-        ngen <- as.integer(ngen)
-        if (length(ngen) != 1L || ngen < 1L)
-            stop("'ngen' must be an integer >= 1.", call. = FALSE)
-
-        tolerance <- abc_tolerance(tolerance, object@tolerance, ngen)
+        tolerance <- abc_tolerance(tolerance, object@tolerance)
         if (ncol(object@tolerance) == 0)
             dim(object@tolerance) <- c(nrow(tolerance), 0)
 
@@ -533,7 +525,7 @@ setMethod(
             w <- object@w[[length(object@w)]]
 
         ## Append new generations to object
-        generations <- seq(length(object@x) + 1, length(object@x) + ngen)
+        generations <- seq(length(object@x) + 1, ncol(tolerance))
         for (generation in generations) {
             tmp <- abc_fn(object@model, object@pars, object@priors,
                           object@npart, object@fn, generation,
