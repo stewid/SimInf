@@ -323,8 +323,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
                 priors$p2, x[, ancestor], xx, w, sigma)
 
-    list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
-         distance = distance)
+    list(x = xx, w = ww, nprop = nprop, distance = distance)
 }
 
 ##' @importFrom utils setTxtProgressBar
@@ -396,8 +395,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
                 priors$p2, x[, ancestor], xx, w, sigma)
 
-    list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
-         distance = distance)
+    list(x = xx, w = ww, nprop = nprop, distance = distance)
 }
 
 ##' Approximate Bayesian computation
@@ -531,7 +529,7 @@ setMethod(
             object@x[[length(object@x) + 1]] <- x
             w <- result$w
             object@w[[length(object@w) + 1]] <- w
-            object@tolerance <- cbind(object@tolerance, result$tolerance)
+            object@tolerance <- cbind(object@tolerance, tolerance[, generation])
             object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
             object@nprop[length(object@nprop) + 1] <- result$nprop
 
