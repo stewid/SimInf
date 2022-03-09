@@ -319,11 +319,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             setTxtProgressBar(pb, n_particles(xx))
     }
 
-    ## Calculate weights.
-    ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
-                priors$p2, x[, ancestor], xx, w, sigma)
-
-    list(x = xx, w = ww, nprop = nprop, distance = distance)
+    list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
 ##' @importFrom utils setTxtProgressBar
@@ -391,11 +387,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             setTxtProgressBar(pb, n_particles(xx))
     }
 
-    ## Calculate weights.
-    ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
-                priors$p2, x[, ancestor], xx, w, sigma)
-
-    list(x = xx, w = ww, nprop = nprop, distance = distance)
+    list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
 ##' Approximate Bayesian computation
@@ -522,12 +514,16 @@ setMethod(
                              tolerance = tolerance[, generation], x = x,
                              w = w, sigma = sigma, verbose = verbose, ...)
 
+            ## Calculate weights.
+            w <- .Call(SimInf_abc_weights, object@priors$distribution,
+                       object@priors$p1, object@priors$p2, x[, result$ancestor],
+                       result$x, w, sigma)
+
             ## Move the population of particles to the next
             ## generation.
             object@distance[[length(object@distance) + 1]] <- result$distance
             x <- result$x
             object@x[[length(object@x) + 1]] <- x
-            w <- result$w
             object@w[[length(object@w) + 1]] <- w
             object@tolerance <- cbind(object@tolerance, tolerance[, generation])
             object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
