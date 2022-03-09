@@ -288,11 +288,8 @@ abc_accept <- function(distance, tolerance) {
 ##' @noRd
 abc_gdata <- function(model, pars, priors, npart, fn, generation,
                       tolerance, x, w, verbose, ...) {
-    if (isTRUE(verbose)) {
-        cat("\nGeneration", generation, "...\n")
+    if (isTRUE(verbose))
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
-        t0 <- proc.time()
-    }
 
     distance <- NULL
     xx <- NULL
@@ -327,10 +324,6 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
                 priors$p2, x[, ancestor], xx, w, sigma)
 
-    ## Report progress.
-    if (isTRUE(verbose))
-        abc_progress(t0, proc.time(), xx, ww, npart, nprop)
-
     list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
          distance = distance)
 }
@@ -348,11 +341,8 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     n_events <- length(model@events@event)
     model <- replicate_first_node(model, n, n_events)
 
-    if (isTRUE(verbose)) {
-        cat("\nGeneration", generation, "...\n")
+    if (isTRUE(verbose))
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
-        t0 <- proc.time()
-    }
 
     distance <- NULL
     xx <- NULL
@@ -407,10 +397,6 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     ## Calculate weights.
     ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
                 priors$p2, x[, ancestor], xx, w, sigma)
-
-    ## Report progress.
-    if (isTRUE(verbose))
-        abc_progress(t0, proc.time(), xx, ww, npart, nprop)
 
     list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
          distance = distance)
@@ -527,6 +513,12 @@ setMethod(
         ## Append new generations to object
         generations <- seq(length(object@x) + 1, ncol(tolerance))
         for (generation in generations) {
+            ## Report progress.
+            if (isTRUE(verbose)) {
+                cat("\nGeneration", generation, "...\n")
+                t0 <- proc.time()
+            }
+
             tmp <- abc_fn(object@model, object@pars, object@priors,
                           object@npart, object@fn, generation,
                           tolerance[, generation], x, w, verbose, ...)
@@ -541,6 +533,10 @@ setMethod(
             object@tolerance <- cbind(object@tolerance, tmp$tolerance)
             object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
             object@nprop[length(object@nprop) + 1] <- tmp$nprop
+
+            ## Report progress.
+            if (isTRUE(verbose))
+                abc_progress(t0, proc.time(), x, w, object@npart, tmp$nprop)
         }
 
         object
