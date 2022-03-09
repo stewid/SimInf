@@ -518,26 +518,26 @@ setMethod(
             }
 
             sigma <- proposal_covariance(x)
-            tmp <- abc_fn(model = object@model, pars = object@pars,
-                          priors = object@priors, npart = object@npart,
-                          fn = object@fn, generation = generation,
-                          tolerance = tolerance[, generation], x = x,
-                          w = w, sigma = sigma, verbose = verbose, ...)
+            result <- abc_fn(model = object@model, pars = object@pars,
+                             priors = object@priors, npart = object@npart,
+                             fn = object@fn, generation = generation,
+                             tolerance = tolerance[, generation], x = x,
+                             w = w, sigma = sigma, verbose = verbose, ...)
 
             ## Move the population of particles to the next
             ## generation.
-            object@distance[[length(object@distance) + 1]] <- tmp$distance
-            x <- tmp$x
+            object@distance[[length(object@distance) + 1]] <- result$distance
+            x <- result$x
             object@x[[length(object@x) + 1]] <- x
-            w <- tmp$w
+            w <- result$w
             object@w[[length(object@w) + 1]] <- w
-            object@tolerance <- cbind(object@tolerance, tmp$tolerance)
+            object@tolerance <- cbind(object@tolerance, result$tolerance)
             object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
-            object@nprop[length(object@nprop) + 1] <- tmp$nprop
+            object@nprop[length(object@nprop) + 1] <- result$nprop
 
             ## Report progress.
             if (isTRUE(verbose))
-                abc_progress(t0, proc.time(), x, w, object@npart, tmp$nprop)
+                abc_progress(t0, proc.time(), x, w, object@npart, result$nprop)
         }
 
         object
