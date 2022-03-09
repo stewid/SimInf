@@ -519,9 +519,11 @@ setMethod(
                 t0 <- proc.time()
             }
 
-            tmp <- abc_fn(object@model, object@pars, object@priors,
-                          object@npart, object@fn, generation,
-                          tolerance[, generation], x, w, verbose, ...)
+            tmp <- abc_fn(model = object@model, pars = object@pars,
+                          priors = object@priors, npart = object@npart,
+                          fn = object@fn, generation = generation,
+                          tolerance = tolerance[, generation], x = x,
+                          w = w, verbose = verbose, ...)
 
             ## Move the population of particles to the next
             ## generation.
