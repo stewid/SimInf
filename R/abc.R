@@ -287,7 +287,7 @@ abc_accept <- function(distance, tolerance) {
 ##' @importFrom utils txtProgressBar
 ##' @noRd
 abc_gdata <- function(model, pars, priors, npart, fn, generation,
-                      tolerance, x, w, verbose, ...) {
+                      tolerance, x, w, sigma, verbose, ...) {
     if (isTRUE(verbose))
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
 
@@ -295,7 +295,6 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     xx <- NULL
     ancestor <- NULL
     nprop <- 0L
-    sigma <- proposal_covariance(x)
 
     while (n_particles(xx) < npart) {
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
@@ -332,7 +331,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
 ##' @importFrom utils txtProgressBar
 ##' @noRd
 abc_ldata <- function(model, pars, priors, npart, fn, generation,
-                      tolerance, x, w, verbose, ...) {
+                      tolerance, x, w, sigma, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
     ## to run multiple particles simultaneously. Start with 10 x
     ## 'npart' and then increase the number adaptively based on the
@@ -348,7 +347,6 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     xx <- NULL
     ancestor <- NULL
     nprop <- 0L
-    sigma <- proposal_covariance(x)
 
     while (n_particles(xx) < npart) {
         if (all(n < 1e5L, nprop > 2L * n)) {
@@ -519,11 +517,12 @@ setMethod(
                 t0 <- proc.time()
             }
 
+            sigma <- proposal_covariance(x)
             tmp <- abc_fn(model = object@model, pars = object@pars,
                           priors = object@priors, npart = object@npart,
                           fn = object@fn, generation = generation,
                           tolerance = tolerance[, generation], x = x,
-                          w = w, verbose = verbose, ...)
+                          w = w, sigma = sigma, verbose = verbose, ...)
 
             ## Move the population of particles to the next
             ## generation.
