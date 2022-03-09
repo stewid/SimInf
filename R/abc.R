@@ -199,6 +199,9 @@ n_particles <- function(x) {
 }
 
 abc_tolerance <- function(tolerance, tolerance_prev) {
+    if (is.null(tolerance))
+        return(tolerance)
+
     if (!is.numeric(tolerance))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
 
@@ -305,6 +308,12 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
         }
 
         d <- abc_distance(fn(run(model), generation = generation, ...), 1L)
+        if (is.null(tolerance)) {
+            ## Accept all particles if the tolerance is NULL, but make
+            ## sure the dimension of tolerance and distance matches in
+            ## subsequent calls to 'abc_accept'.
+            tolerance <- rep(Inf, nrow(d))
+        }
         accept <- abc_accept(d, tolerance)
         nprop <- nprop + 1L
         if (isTRUE(accept)) {
@@ -359,6 +368,12 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
         }
 
         d <- abc_distance(fn(run(model), generation = generation, ...), n)
+        if (is.null(tolerance)) {
+            ## Accept all particles if the tolerance is NULL, but make
+            ## sure the dimension of tolerance and distance matches in
+            ## subsequent calls to 'abc_accept'.
+            tolerance <- rep(Inf, nrow(d))
+        }
         accept <- abc_accept(d, tolerance)
 
         ## Collect accepted particles making sure not to collect more
