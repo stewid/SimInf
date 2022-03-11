@@ -198,6 +198,18 @@ n_particles <- function(x) {
     ncol(x)
 }
 
+abc_init_x <- function(object) {
+    if (length(object@x))
+        return(object@x[[length(object@x)]])
+    NULL
+}
+
+abc_init_weight <- function(object) {
+    if (length(object@w))
+        return(object@w[[length(object@w)]])
+    NULL
+}
+
 abc_tolerance <- function(tolerance, tolerance_prev) {
     if (!is.numeric(tolerance))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
@@ -491,12 +503,8 @@ setMethod(
                               call. = FALSE))
 
         ## Setup a population of particles (x) and weights (w).
-        x <- NULL
-        if (length(object@x))
-            x <- object@x[[length(object@x)]]
-        w <- NULL
-        if (length(object@w))
-            w <- object@w[[length(object@w)]]
+        x <- abc_init_x(object)
+        w <- abc_init_weight(object)
 
         ## Append new generations to object
         generations <- seq(length(object@x) + 1, ncol(tolerance))
