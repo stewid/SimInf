@@ -198,6 +198,18 @@ n_particles <- function(x) {
     ncol(x)
 }
 
+abc_init_x <- function(object) {
+    if (length(object@x))
+        return(object@x[[length(object@x)]])
+    NULL
+}
+
+abc_init_weight <- function(object) {
+    if (length(object@w))
+        return(object@w[[length(object@w)]])
+    NULL
+}
+
 abc_tolerance <- function(tolerance, tolerance_prev) {
     if (!is.numeric(tolerance))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
@@ -287,7 +299,7 @@ abc_accept <- function(distance, tolerance) {
 ##' @importFrom utils txtProgressBar
 ##' @noRd
 abc_gdata <- function(model, pars, priors, npart, fn, generation,
-                      tolerance, x, w, verbose, ...) {
+                      tolerance, x, w, sigma, verbose, ...) {
     if (isTRUE(verbose))
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
 
@@ -295,7 +307,6 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     xx <- NULL
     ancestor <- NULL
     nprop <- 0L
-    sigma <- proposal_covariance(x)
 
     while (n_particles(xx) < npart) {
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
@@ -320,19 +331,14 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             setTxtProgressBar(pb, n_particles(xx))
     }
 
-    ## Calculate weights.
-    ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
-                priors$p2, x[, ancestor], xx, w, sigma)
-
-    list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
-         distance = distance)
+    list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
 ##' @noRd
 abc_ldata <- function(model, pars, priors, npart, fn, generation,
-                      tolerance, x, w, verbose, ...) {
+                      tolerance, x, w, sigma, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
     ## to run multiple particles simultaneously. Start with 10 x
     ## 'npart' and then increase the number adaptively based on the
@@ -348,7 +354,6 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     xx <- NULL
     ancestor <- NULL
     nprop <- 0L
-    sigma <- proposal_covariance(x)
 
     while (n_particles(xx) < npart) {
         if (all(n < 1e5L, nprop > 2L * n)) {
@@ -394,12 +399,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             setTxtProgressBar(pb, n_particles(xx))
     }
 
-    ## Calculate weights.
-    ww <- .Call(SimInf_abc_weights, priors$distribution, priors$p1,
-                priors$p2, x[, ancestor], xx, w, sigma)
-
-    list(x = xx, w = ww, nprop = nprop, tolerance = tolerance,
-         distance = distance)
+    list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
 ##' Approximate Bayesian computation
@@ -503,12 +503,8 @@ setMethod(
                               call. = FALSE))
 
         ## Setup a population of particles (x) and weights (w).
-        x <- NULL
-        if (length(object@x))
-            x <- object@x[[length(object@x)]]
-        w <- NULL
-        if (length(object@w))
-            w <- object@w[[length(object@w)]]
+        x <- abc_init_x(object)
+        w <- abc_init_weight(object)
 
         ## Append new generations to object
         generations <- seq(length(object@x) + 1, ncol(tolerance))
@@ -519,24 +515,31 @@ setMethod(
                 t0 <- proc.time()
             }
 
-            tmp <- abc_fn(object@model, object@pars, object@priors,
-                          object@npart, object@fn, generation,
-                          tolerance[, generation], x, w, verbose, ...)
+            sigma <- proposal_covariance(x)
+            result <- abc_fn(model = object@model, pars = object@pars,
+                             priors = object@priors, npart = object@npart,
+                             fn = object@fn, generation = generation,
+                             tolerance = tolerance[, generation], x = x,
+                             w = w, sigma = sigma, verbose = verbose, ...)
+
+            ## Calculate weights.
+            w <- .Call(SimInf_abc_weights, object@priors$distribution,
+                       object@priors$p1, object@priors$p2, x[, result$ancestor],
+                       result$x, w, sigma)
 
             ## Move the population of particles to the next
             ## generation.
-            object@distance[[length(object@distance) + 1]] <- tmp$distance
-            x <- tmp$x
+            object@distance[[length(object@distance) + 1]] <- result$distance
+            x <- result$x
             object@x[[length(object@x) + 1]] <- x
-            w <- tmp$w
             object@w[[length(object@w) + 1]] <- w
-            object@tolerance <- cbind(object@tolerance, tmp$tolerance)
+            object@tolerance <- cbind(object@tolerance, tolerance[, generation])
             object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
-            object@nprop[length(object@nprop) + 1] <- tmp$nprop
+            object@nprop[length(object@nprop) + 1] <- result$nprop
 
             ## Report progress.
             if (isTRUE(verbose))
-                abc_progress(t0, proc.time(), x, w, object@npart, tmp$nprop)
+                abc_progress(t0, proc.time(), x, w, object@npart, result$nprop)
         }
 
         object
