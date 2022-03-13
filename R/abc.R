@@ -198,13 +198,13 @@ n_particles <- function(x) {
     ncol(x)
 }
 
-abc_init_x <- function(object) {
+abc_init_particles <- function(object) {
     if (length(object@x))
         return(object@x[[length(object@x)]])
     NULL
 }
 
-abc_init_weight <- function(object) {
+abc_init_weights <- function(object) {
     if (length(object@w))
         return(object@w[[length(object@w)]])
     NULL
@@ -517,9 +517,8 @@ setMethod(
                          stop("Unknown target: ", object@target,
                               call. = FALSE))
 
-        ## Setup a population of particles (x) and weights (w).
-        x <- abc_init_x(object)
-        w <- abc_init_weight(object)
+        x <- abc_init_particles(object)
+        w <- abc_init_weights(object)
 
         ## Append new generations to object
         generations <- seq(length(object@x) + 1, ncol(tolerance))
