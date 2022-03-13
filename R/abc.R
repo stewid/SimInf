@@ -198,6 +198,10 @@ n_particles <- function(x) {
     ncol(x)
 }
 
+abc_init_generation <- function(object) {
+    length(object@x) + 1L
+}
+
 abc_init_npart <- function(object, ninit, tolerance) {
     if (length(object@x) > 0 || is.null(ninit))
         return(object@npart)
@@ -536,10 +540,9 @@ setMethod(
 
         x <- abc_init_particles(object)
         w <- abc_init_weights(object)
+        generation <- abc_init_generation(object)
 
-        ## Append new generations to object
-        generations <- seq(length(object@x) + 1, ncol(tolerance))
-        for (generation in generations) {
+        repeat {
             ## Report progress.
             if (isTRUE(verbose)) {
                 cat("\nGeneration", generation, "...\n")
