@@ -198,6 +198,23 @@ n_particles <- function(x) {
     ncol(x)
 }
 
+abc_init_npart <- function(object, ninit, tolerance) {
+    if (length(object@x) > 0 || is.null(ninit))
+        return(object@npart)
+
+    check_integer_arg(ninit)
+    ninit <- as.integer(ninit)
+    if (length(ninit) != 1L || ninit <= 1L)
+        stop("'ninit' must be an integer > 1.", call. = FALSE)
+    if (ninit <= object@npart)
+        stop("'ninit' must be an integer > 'npart'.", call. = FALSE)
+
+    if (!is.null(tolerance))
+        stop("'tolerance' must be NULL for adaptive distance.", call. = FALSE)
+
+    ninit
+}
+
 abc_init_particles <- function(object) {
     if (length(object@x))
         return(object@x[[length(object@x)]])
