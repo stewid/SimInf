@@ -4,6 +4,8 @@
 
 \newcommand{\Sugiyama2008}{M. Sugiyama, T. Suzuki, S. Nakajima, H. Kashima, P. von Bunau, and M. Kawanabe. Direct importance estimation for covariate shift adaptation. \emph{Annals of the Institute of Statistical Mathematics}, \strong{60}(4), 699--746, 2008. \doi{10.1007/s10463-008-0197-x}}
 
+\newcommand{\Simola2021}{U. Simola, J. Cisewski-Kehe, M. U. Gutmann, J. Corander. Adaptive Approximate Bayesian Computation Tolerance Selection. \emph{Bayesian Analysis}, \strong{16}(2), 397--423, 2021. \doi{10.1214/20-BA1211}}
+
 \newcommand{\Toni2009}{T. Toni, D. Welch, N. Strelkowa, A. Ipsen, and M. P. H. Stumpf. Approximate Bayesian computation scheme for parameter inference and model selection in dynamical systems. \emph{Journal of the Royal Society Interface} \strong{6}, 187--202, 2009. \doi{10.1098/rsif.2008.0172}}
 
 \newcommand{\Widgren2019}{S. Widgren, P. Bauer, R. Eriksson and S. Engblom. \pkg{SimInf}: An \proglang{R} Package for Data-Driven Stochastic Disease Spread Simulations. \emph{Journal of Statistical Software}, \strong{91}(12), 1--42. \doi{10.18637/jss.v091.i12}. An updated version of this paper is available as a vignette in the package.}
