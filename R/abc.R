@@ -231,7 +231,7 @@ abc_init_weights <- function(object) {
     NULL
 }
 
-abc_tolerance <- function(tolerance, tolerance_prev) {
+abc_init_tolerance <- function(tolerance, tolerance_prev) {
     if (is.null(tolerance))
         return(tolerance)
 
@@ -535,7 +535,7 @@ setMethod(
         if (all(is.null(ninit), is.null(tolerance)))
             stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
 
-        tolerance <- abc_tolerance(tolerance, object@tolerance)
+        tolerance <- abc_init_tolerance(tolerance, object@tolerance)
         if (ncol(object@tolerance) == 0)
             dim(object@tolerance) <- c(nrow(tolerance), 0)
 
