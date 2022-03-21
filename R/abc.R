@@ -443,6 +443,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##' @param model The model to generate data from.
 ##' @template priors-param
 ##' @param npart An integer specifying the number of particles.
+##' @template ninit-param
 ##' @param fn A function for calculating the summary statistics for a
 ##'     simulated trajectory. For each particle, the function must
 ##'     determine the distance and return that information. The first
@@ -473,7 +474,8 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 setGeneric(
     "abc",
     signature = "model",
-    function(model, priors, npart, fn, tolerance, ...,
+    function(model, priors = NULL, npart = NULL, ninit = NULL,
+             fn = NULL, tolerance = NULL, ...,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("abc")
     }
@@ -484,7 +486,7 @@ setGeneric(
 setMethod(
     "abc",
     signature(model = "SimInf_model"),
-    function(model, priors, npart, fn, tolerance, ..., verbose) {
+    function(model, priors, npart, ninit, fn, tolerance, ..., verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (length(npart) != 1L || npart <= 1L)
@@ -500,13 +502,15 @@ setMethod(
                       tolerance = matrix(numeric(0), ncol = 0, nrow = 0),
                       w = list(), distance = list(), ess = numeric())
 
-        continue(object, tolerance = tolerance, ..., verbose = verbose)
+        continue(object, ninit = ninit, tolerance = tolerance, ...,
+                 verbose = verbose)
     }
 )
 
 ##' Run more generations of ABC SMC
 ##'
 ##' @param object The \code{SimInf_abc} to continue from.
+##' @template ninit-param
 ##' @template tolerance-param
 ##' @param ... Further arguments to be passed to
 ##'     \code{SimInf_abc@@fn}.
@@ -516,8 +520,7 @@ setMethod(
 setGeneric(
     "continue",
     signature = "object",
-    function(object, tolerance, ...,
-             verbose = getOption("verbose", FALSE)) {
+    function(object, ...) {
         standardGeneric("continue")
     }
 )
@@ -527,8 +530,11 @@ setGeneric(
 setMethod(
     "continue",
     signature(object = "SimInf_abc"),
-    function(object, tolerance, ...,
+    function(object, ninit = NULL, tolerance = NULL, ...,
              verbose = getOption("verbose", FALSE)) {
+        if (all(is.null(ninit), is.null(tolerance)))
+            stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
+
         tolerance <- abc_tolerance(tolerance, object@tolerance)
         if (ncol(object@tolerance) == 0)
             dim(object@tolerance) <- c(nrow(tolerance), 0)
