@@ -545,6 +545,7 @@ setMethod(
                          stop("Unknown target: ", object@target,
                               call. = FALSE))
 
+        npart <- abc_init_npart(object, ninit, tolerance)
         x <- abc_init_particles(object)
         w <- abc_init_weights(object)
         generation <- abc_init_generation(object)
@@ -558,7 +559,7 @@ setMethod(
 
             sigma <- proposal_covariance(x)
             result <- abc_fn(model = object@model, pars = object@pars,
-                             priors = object@priors, npart = object@npart,
+                             priors = object@priors, npart = npart,
                              fn = object@fn, generation = generation,
                              tolerance = tolerance[, generation], x = x,
                              w = w, sigma = sigma, verbose = verbose, ...)
@@ -577,6 +578,7 @@ setMethod(
             object@tolerance <- cbind(object@tolerance, tolerance[, generation])
             object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
             object@nprop[length(object@nprop) + 1] <- result$nprop
+            npart <- object@npart
 
             ## Report progress.
             if (isTRUE(verbose))
