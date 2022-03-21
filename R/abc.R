@@ -467,6 +467,8 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 ##' @references
 ##'
 ##' \Toni2009
+##'
+##' \Simola2021
 ##' @include density_ratio.R
 ##' @export
 ##' @importFrom stats cov
