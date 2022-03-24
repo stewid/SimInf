@@ -266,6 +266,53 @@ abc_init_tolerance <- function(tolerance, tolerance_prev) {
     tolerance
 }
 
+##' Adaptive Approximate Baeysian Computation Tolerance Selection
+##' using the algorithm of Simola and others (2021).
+##' @references
+##'
+##' \Simola2021
+##' @noRd
+abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
+    ## Determine the density ratio by using the Kullback-Leibler
+    ## importance estimation procedure.
+    k <- KLIEP(t(xnu), t(xde))
+
+    ## Determine the supremum by using an optimizer. For
+    ## one-dimensional problems, use "Brent"m else "Nelder-Mead".
+    if (nrow(result$x) > 1) {
+        method <- "Nelder-Mead"
+        lower <- -Inf
+        upper <- Inf
+    } else {
+        method <- "Brent"
+        lower <- min(result$x)
+        upper <- max(result$x)
+    }
+
+    c_t <- optim(par = result$x[, 1],
+                 fn = function(x, centers, sigma, weights) {
+                     KLIEP_density_ratio(matrix(x, nrow = 1),
+                                         centers = centers,
+                                         sigma = sigma,
+                                         weights = weights)
+                 },
+                 centers = k$centers,
+                 sigma = k$sigma,
+                 weights = k$weights,
+                 lower = lower,
+                 upper = upper,
+                 method = method,
+                 control = list(fnscale = -1))
+
+    q_t <- 1 / c_t$value
+
+    ## Check if stopping rule applies.
+    if (q_t > 0.99 && generation >= 3L)
+        return(NULL)
+
+    distance[, ceiling(q_t * nrow(xnu))]
+}
+
 abc_progress <- function(t0, t1, x, w, npart, nprop) {
     cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
                 npart / nprop, 1 / sum(w^2), (t1 - t0)[3]))
