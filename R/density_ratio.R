@@ -20,7 +20,7 @@ KLIEP_kernel <- function(x, y, sigma) {
     i <- rep(seq_len(nrow(x)), nrow(y))
     j <- rep(seq_len(nrow(y)), each = nrow(x))
     matrix(exp(-rowSums((x[i, , drop = FALSE] - y[j, , drop = FALSE])^2) /
-               (2*sigma^2)), nrow = nrow(x), ncol = nrow(y))
+               (2 * sigma^2)), nrow = nrow(x), ncol = nrow(y))
 }
 
 ##' @importFrom MASS ginv
@@ -45,7 +45,7 @@ KLIEP_learning <- function(mean_xde, xnu) {
             xnu_alpha_new <- xnu %*% alpha_new
             score_new <- mean(log(xnu_alpha_new))
 
-            if(score_new <= score)
+            if (score_new <= score)
                 break
 
             alpha <- alpha_new
@@ -80,9 +80,9 @@ KLIEP_learning <- function(mean_xde, xnu) {
 ##' \Sugiyama2008
 ##' @noRd
 KLIEP <- function(xnu, xde, fold = 5L, kernels = 100L) {
-    if (!is.matrix(xnu) || !is.numeric(xnu))
+    if (any(!is.matrix(xnu), !is.numeric(xnu)))
         stop("'xnu' must be a numeric matrix.", call. = FALSE)
-    if (!is.matrix(xde) || !is.numeric(xde))
+    if (any(!is.matrix(xde), !is.numeric(xde)))
         stop("'xde' must be a numeric matrix.", call. = FALSE)
     if (ncol(xnu) != ncol(xde))
         stop("'xnu' and 'xde' must have the same dimension.", call. = FALSE)
@@ -109,7 +109,7 @@ KLIEP <- function(xnu, xde, fold = 5L, kernels = 100L) {
                 score_new <- score_new + mean(log(wh_cv)) / fold
             }
 
-            if(score_new <= score)
+            if (score_new <= score)
                 break
 
             sigma <- sigma_new
