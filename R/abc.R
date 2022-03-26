@@ -233,7 +233,7 @@ abc_init_weights <- function(object) {
 
 abc_init_tolerance <- function(tolerance, tolerance_prev) {
     if (is.null(tolerance))
-        return(tolerance)
+        return(NULL)
 
     if (!is.numeric(tolerance))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
@@ -264,6 +264,12 @@ abc_init_tolerance <- function(tolerance, tolerance_prev) {
         stop("'tolerance' must be a decreasing vector.", call. = FALSE)
 
     tolerance
+}
+
+abc_init_epsilon <- function(tolerance, generation) {
+    if (is.null(tolerance))
+        return(NULL)
+    tolerance[, generation]
 }
 
 ##' Adaptive Tolerance Selection
@@ -595,20 +601,18 @@ setMethod(
         if (all(is.null(ninit), is.null(tolerance)))
             stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
 
-        tolerance <- abc_init_tolerance(tolerance, object@tolerance)
-        if (ncol(object@tolerance) == 0)
-            dim(object@tolerance) <- c(nrow(tolerance), 0)
-
         abc_fn <- switch(object@target,
                          "gdata" = abc_gdata,
                          "ldata" = abc_ldata,
                          stop("Unknown target: ", object@target,
                               call. = FALSE))
 
+        generation <- abc_init_generation(object)
+        tolerance <- abc_init_tolerance(tolerance, object@tolerance)
+        epsilon <- abc_init_epsilon(tolerance, generation)
         npart <- abc_init_npart(object, ninit, tolerance)
         x <- abc_init_particles(object)
         w <- abc_init_weights(object)
-        generation <- abc_init_generation(object)
 
         repeat {
             ## Report progress.
