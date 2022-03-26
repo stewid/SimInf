@@ -266,8 +266,19 @@ abc_init_tolerance <- function(tolerance, tolerance_prev) {
     tolerance
 }
 
+##' Adaptive Tolerance Selection
+##'
 ##' Adaptive Approximate Baeysian Computation Tolerance Selection
 ##' using the algorithm of Simola and others (2021).
+##'
+##' @param xnu a \code{matrix} with the particles in the current
+##'     generation.
+##' @param xde a \code{matrix} with the particles in the previous
+##'     generation.
+##' @param distance the distance for the particles in xnu.
+##' @param generation a positive integer with the current generation.
+##' @return NULL if the stopping rule applies, else a numeric vector
+##'     with the tolerance for the next generation.
 ##' @references
 ##'
 ##' \Simola2021
@@ -279,17 +290,17 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
 
     ## Determine the supremum by using an optimizer. For
     ## one-dimensional problems, use "Brent"m else "Nelder-Mead".
-    if (nrow(result$x) > 1) {
+    if (ncol(xnu) > 1) {
         method <- "Nelder-Mead"
         lower <- -Inf
         upper <- Inf
     } else {
         method <- "Brent"
-        lower <- min(result$x)
-        upper <- max(result$x)
+        lower <- min(xnu)
+        upper <- max(xnu)
     }
 
-    c_t <- optim(par = result$x[, 1],
+    c_t <- optim(par = xnu[, 1],
                  fn = function(x, centers, sigma, weights) {
                      KLIEP_density_ratio(matrix(x, nrow = 1),
                                          centers = centers,
@@ -310,7 +321,7 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
     if (q_t > 0.99 && generation >= 3L)
         return(NULL)
 
-    distance[, ceiling(q_t * nrow(xnu))]
+    distance[, ceiling(q_t * length(distance))]
 }
 
 abc_progress <- function(t0, t1, x, w, npart, nprop) {
