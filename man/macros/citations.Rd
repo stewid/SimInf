@@ -2,6 +2,8 @@
 
 \newcommand{\Bauer2016}{P. Bauer, S. Engblom and S. Widgren. Fast Event-Based Epidemiological Simulations on National Scales. \emph{International Journal of High Performance Computing Applications}, \strong{30}(4), 438--453, 2016. \doi{10.1177/1094342016635723}}
 
+\newcommand{\CisewskiKehe2019}{J. Cisewski-Kehe, G. Weller and C. Schafer. A preferential attachment model for the stellar initial mass function. \emph{Electronic Journal of Statistics}, \strong{13}(1), 1580--1607, 2019. \doi{10.1214/19-EJS1556}}
+
 \newcommand{\Sugiyama2008}{M. Sugiyama, T. Suzuki, S. Nakajima, H. Kashima, P. von Bunau, and M. Kawanabe. Direct importance estimation for covariate shift adaptation. \emph{Annals of the Institute of Statistical Mathematics}, \strong{60}(4), 699--746, 2008. \doi{10.1007/s10463-008-0197-x}}
 
 \newcommand{\Simola2021}{U. Simola, J. Cisewski-Kehe, M. U. Gutmann, J. Corander. Adaptive Approximate Bayesian Computation Tolerance Selection. \emph{Bayesian Analysis}, \strong{16}(2), 397--423, 2021. \doi{10.1214/20-BA1211}}
