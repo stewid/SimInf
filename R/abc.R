@@ -272,6 +272,26 @@ abc_init_epsilon <- function(tolerance, generation) {
     tolerance[, generation]
 }
 
+##' Adaptive selection of the first tolerance
+##'
+##' The first tolerance is adaptively selected by sorting the 'ninit'
+##' distances and select the 'npart' distance. The first 'npart'
+##' particles are retained.
+##' @param distance a numeric matrix (number of summary statistics X
+##'     number of particles) with the distance for the particles. Each
+##'     column contains the distance for a particle and each row
+##'     contains the distance for a summary statistic.
+##' @param npart An integer specifying the number of particles.
+##' @return a numeric vector.
+##' @references
+##'
+##' \CisewskiKehe2019
+##' @noRd
+abc_adaptive_epsilon <- function(distance, npart) {
+    i <- order(colSums(distance))
+    distance[, i[npart]]
+}
+
 ##' Adaptive Tolerance Selection
 ##'
 ##' Adaptive Approximate Baeysian Computation Tolerance Selection
@@ -625,8 +645,15 @@ setMethod(
             result <- abc_fn(model = object@model, pars = object@pars,
                              priors = object@priors, npart = npart,
                              fn = object@fn, generation = generation,
-                             tolerance = tolerance[, generation], x = x,
-                             w = w, sigma = sigma, verbose = verbose, ...)
+                             tolerance = epsilon, x = x, w = w,
+                             sigma = sigma, verbose = verbose, ...)
+
+            if (is.null(epsilon))
+                epsilon <- abc_adaptive_epsilon(result$distance, object@npart)
+            if (ncol(object@tolerance) == 0L)
+                dim(object@tolerance) <- c(length(epsilon), 0L)
+            object@tolerance <- cbind(object@tolerance, epsilon,
+                                      deparse.level = 0)
 
             ## Calculate weights.
             w <- .Call(SimInf_abc_weights, object@priors$distribution,
