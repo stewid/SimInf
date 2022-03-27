@@ -315,7 +315,7 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
     k <- KLIEP(t(xnu), t(xde))
 
     ## Determine the supremum by using an optimizer. For
-    ## one-dimensional problems, use "Brent"m else "Nelder-Mead".
+    ## one-dimensional problems, use "Brent" else "Nelder-Mead".
     if (ncol(xnu) > 1) {
         method <- "Nelder-Mead"
         lower <- -Inf
