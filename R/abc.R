@@ -292,6 +292,15 @@ abc_first_epsilon <- function(distance, npart) {
     distance[, i[npart]]
 }
 
+abc_next_epsilon <- function(x_old, x, distance, tolerance,
+                             generation) {
+    if (is.null(tolerance))
+        return(abc_adaptive_tolerance(x, x_old, distance, generation))
+    if (generation <= ncol(tolerance))
+        return(tolerance[, generation])
+    NULL
+}
+
 ##' Adaptive Tolerance Selection
 ##'
 ##' Adaptive Approximate Baeysian Computation Tolerance Selection
