@@ -287,7 +287,7 @@ abc_init_epsilon <- function(tolerance, generation) {
 ##'
 ##' \CisewskiKehe2019
 ##' @noRd
-abc_adaptive_epsilon <- function(distance, npart) {
+abc_first_epsilon <- function(distance, npart) {
     i <- order(colSums(distance))
     distance[, i[npart]]
 }
@@ -649,7 +649,7 @@ setMethod(
                              sigma = sigma, verbose = verbose, ...)
 
             if (is.null(epsilon))
-                epsilon <- abc_adaptive_epsilon(result$distance, object@npart)
+                epsilon <- abc_first_epsilon(result$distance, object@npart)
             if (ncol(object@tolerance) == 0L)
                 dim(object@tolerance) <- c(length(epsilon), 0L)
             object@tolerance <- cbind(object@tolerance, epsilon,
