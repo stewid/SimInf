@@ -657,8 +657,10 @@ setMethod(
                              tolerance = epsilon, x = x, w = w,
                              sigma = sigma, verbose = verbose, ...)
 
+            ## Append the tolerance for the generation.
+            npart <- object@npart
             if (is.null(epsilon))
-                epsilon <- abc_first_epsilon(result$distance, object@npart)
+                epsilon <- abc_first_epsilon(result$distance, npart)
             if (ncol(object@tolerance) == 0L)
                 dim(object@tolerance) <- c(length(epsilon), 0L)
             object@tolerance <- cbind(object@tolerance, epsilon,
@@ -671,18 +673,22 @@ setMethod(
 
             ## Move the population of particles to the next
             ## generation.
-            object@distance[[length(object@distance) + 1]] <- result$distance
+            object@distance[[length(object@distance) + 1L]] <- result$distance
+            x_old <- x
             x <- result$x
-            object@x[[length(object@x) + 1]] <- x
-            object@w[[length(object@w) + 1]] <- w
-            object@tolerance <- cbind(object@tolerance, tolerance[, generation])
-            object@ess[length(object@ess) + 1] <- 1 / sum(w^2)
-            object@nprop[length(object@nprop) + 1] <- result$nprop
-            npart <- object@npart
+            object@x[[length(object@x) + 1L]] <- x
+            object@w[[length(object@w) + 1L]] <- w
+            object@ess[length(object@ess) + 1L] <- 1 / sum(w^2)
+            object@nprop[length(object@nprop) + 1L] <- result$nprop
 
             ## Report progress.
             if (isTRUE(verbose))
-                abc_progress(t0, proc.time(), x, w, object@npart, result$nprop)
+                abc_progress(t0, proc.time(), x, w, npart, result$nprop)
+
+            generation <- generation + 1L
+            epsilon <- abc_next_epsilon(x_old, x, d, tolerance, generation)
+            if (is.null(epsilon))
+                break
         }
 
         object
