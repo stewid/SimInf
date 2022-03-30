@@ -7,20 +7,22 @@
 \usage{
 abc(
   model,
-  priors,
-  npart,
-  fn,
-  tolerance,
+  priors = NULL,
+  npart = NULL,
+  ninit = NULL,
+  fn = NULL,
+  tolerance = NULL,
   ...,
   verbose = getOption("verbose", FALSE)
 )
 
 \S4method{abc}{SimInf_model}(
   model,
-  priors,
-  npart,
-  fn,
-  tolerance,
+  priors = NULL,
+  npart = NULL,
+  ninit = NULL,
+  fn = NULL,
+  tolerance = NULL,
   ...,
   verbose = getOption("verbose", FALSE)
 )
@@ -39,6 +41,8 @@ in \code{priors} must be either in \code{gdata} or
 \code{ldata}.}
 
 \item{npart}{An integer specifying the number of particles.}
+
+\item{ninit}{FIXME.}
 
 \item{fn}{A function for calculating the summary statistics for a
 simulated trajectory. For each particle, the function must
@@ -124,21 +128,18 @@ distance <- function(result, ...) {
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
            npart = 100,
-           fn = distance,
-           tolerance = c(5000, 4500, 4050, 3645))
+           ninit = 1000,
+           fn = distance)
 
 ## Print a brief summary.
 fit
 
 ## Display the ABC posterior distribution.
 plot(fit)
-
-## Run one more generation.
-fit <- continue(fit, tolerance = 3280)
-
-plot(fit)
 }
 }
 \references{
 \Toni2009
+
+\Simola2021
 }
