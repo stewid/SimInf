@@ -532,12 +532,91 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
+abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
+                         verbose = getOption("verbose", FALSE)) {
+    if (all(is.null(ninit), is.null(tolerance)))
+        stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
+
+    abc_fn <- switch(object@target,
+                     "gdata" = abc_gdata,
+                     "ldata" = abc_ldata,
+                     stop("Unknown target: ", object@target,
+                          call. = FALSE))
+
+    generation <- abc_init_generation(object)
+    tolerance <- abc_init_tolerance(tolerance, object@tolerance)
+    epsilon <- abc_init_epsilon(tolerance, generation)
+    npart <- abc_init_npart(object, ninit, tolerance)
+    x <- abc_init_particles(object)
+    w <- abc_init_weights(object)
+
+    repeat {
+        ## Report progress.
+        if (isTRUE(verbose)) {
+            cat("\nGeneration", generation, "...\n")
+            t0 <- proc.time()
+        }
+
+        sigma <- proposal_covariance(x)
+        result <- abc_fn(model = object@model, pars = object@pars,
+                         priors = object@priors, npart = npart,
+                         fn = object@fn, generation = generation,
+                         tolerance = epsilon, x = x, w = w,
+                         sigma = sigma, verbose = verbose, ...)
+
+        ## Append the tolerance for the generation.
+        npart <- object@npart
+        if (is.null(epsilon))
+            epsilon <- abc_first_epsilon(result$distance, npart)
+        if (ncol(object@tolerance) == 0L)
+            dim(object@tolerance) <- c(length(epsilon), 0L)
+        object@tolerance <- cbind(object@tolerance, epsilon,
+                                  deparse.level = 0)
+
+        if (is.null(tolerance) && generation == 1L) {
+            i <- order(colSums(result$distance))[seq_len(npart)]
+            result$ancestor <- result$ancestor[i]
+            object@x[[length(object@x) + 1L]] <- result$x[, i, drop = FALSE]
+            object@distance[[length(object@distance) + 1L]] <-
+                result$distance[, i, drop = FALSE]
+            x_old <- result$x
+        } else {
+            object@x[[length(object@x) + 1L]] <- result$x
+            object@distance[[length(object@distance) + 1L]] <-
+                result$distance
+            x_old <- x
+        }
+
+        ## Calculate weights.
+        w <- .Call(SimInf_abc_weights, object@priors$distribution,
+                   object@priors$p1, object@priors$p2, x[, result$ancestor],
+                   object@x[[length(object@x)]], w, sigma)
+
+        object@w[[length(object@w) + 1L]] <- w
+        object@ess[length(object@ess) + 1L] <- 1 / sum(w^2)
+        object@nprop[length(object@nprop) + 1L] <- result$nprop
+        x <- object@x[[length(object@x)]]
+        d <- object@distance[[length(object@distance)]]
+
+        ## Report progress.
+        if (isTRUE(verbose))
+            abc_progress(t0, proc.time(), x, w, npart, result$nprop)
+
+        generation <- generation + 1L
+        epsilon <- abc_next_epsilon(x_old, x, d, tolerance, generation)
+        if (is.null(epsilon))
+            break
+    }
+
+    object
+}
+
 ##' Approximate Bayesian computation
 ##'
 ##' @param model The model to generate data from.
 ##' @template priors-param
 ##' @param npart An integer specifying the number of particles.
-##' @template ninit-param
+##' @param ninit FIXME.
 ##' @param fn A function for calculating the summary statistics for a
 ##'     simulated trajectory. For each particle, the function must
 ##'     determine the distance and return that information. The first
@@ -598,15 +677,14 @@ setMethod(
                       tolerance = matrix(numeric(0), ncol = 0, nrow = 0),
                       w = list(), distance = list(), ess = numeric())
 
-        continue(object, ninit = ninit, tolerance = tolerance, ...,
-                 verbose = verbose)
+        abc_internal(object, ninit = ninit, tolerance = tolerance,
+                     ..., verbose = verbose)
     }
 )
 
 ##' Run more generations of ABC SMC
 ##'
 ##' @param object The \code{SimInf_abc} to continue from.
-##' @template ninit-param
 ##' @template tolerance-param
 ##' @param ... Further arguments to be passed to
 ##'     \code{SimInf_abc@@fn}.
@@ -626,83 +704,10 @@ setGeneric(
 setMethod(
     "continue",
     signature(object = "SimInf_abc"),
-    function(object, ninit = NULL, tolerance = NULL, ...,
+    function(object, tolerance = NULL, ...,
              verbose = getOption("verbose", FALSE)) {
-        if (all(is.null(ninit), is.null(tolerance)))
-            stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
-
-        abc_fn <- switch(object@target,
-                         "gdata" = abc_gdata,
-                         "ldata" = abc_ldata,
-                         stop("Unknown target: ", object@target,
-                              call. = FALSE))
-
-        generation <- abc_init_generation(object)
-        tolerance <- abc_init_tolerance(tolerance, object@tolerance)
-        epsilon <- abc_init_epsilon(tolerance, generation)
-        npart <- abc_init_npart(object, ninit, tolerance)
-        x <- abc_init_particles(object)
-        w <- abc_init_weights(object)
-
-        repeat {
-            ## Report progress.
-            if (isTRUE(verbose)) {
-                cat("\nGeneration", generation, "...\n")
-                t0 <- proc.time()
-            }
-
-            sigma <- proposal_covariance(x)
-            result <- abc_fn(model = object@model, pars = object@pars,
-                             priors = object@priors, npart = npart,
-                             fn = object@fn, generation = generation,
-                             tolerance = epsilon, x = x, w = w,
-                             sigma = sigma, verbose = verbose, ...)
-
-            ## Append the tolerance for the generation.
-            npart <- object@npart
-            if (is.null(epsilon))
-                epsilon <- abc_first_epsilon(result$distance, npart)
-            if (ncol(object@tolerance) == 0L)
-                dim(object@tolerance) <- c(length(epsilon), 0L)
-            object@tolerance <- cbind(object@tolerance, epsilon,
-                                      deparse.level = 0)
-
-            if (is.null(tolerance) && generation == 1L) {
-                i <- order(colSums(result$distance))[seq_len(npart)]
-                result$ancestor <- result$ancestor[i]
-                object@x[[length(object@x) + 1L]] <- result$x[, i, drop = FALSE]
-                object@distance[[length(object@distance) + 1L]] <-
-                    result$distance[, i, drop = FALSE]
-                x_old <- result$x
-            } else {
-                object@x[[length(object@x) + 1L]] <- result$x
-                object@distance[[length(object@distance) + 1L]] <-
-                    result$distance
-                x_old <- x
-            }
-
-            ## Calculate weights.
-            w <- .Call(SimInf_abc_weights, object@priors$distribution,
-                       object@priors$p1, object@priors$p2, x[, result$ancestor],
-                       object@x[[length(object@x)]], w, sigma)
-
-            object@w[[length(object@w) + 1L]] <- w
-            object@ess[length(object@ess) + 1L] <- 1 / sum(w^2)
-            object@nprop[length(object@nprop) + 1L] <- result$nprop
-            x <- object@x[[length(object@x)]]
-            d <- object@distance[[length(object@distance)]]
-
-            ## Report progress.
-            if (isTRUE(verbose))
-                abc_progress(t0, proc.time(), x, w, npart, result$nprop)
-
-            generation <- generation + 1L
-            epsilon <- abc_next_epsilon(x_old, x, d, tolerance, generation)
-            if (is.null(epsilon))
-                break
-        }
-
-        object
+        abc_internal(object, ninit = NULL, tolerance = tolerance,
+                     ..., verbose = verbose)
     }
 )
 
