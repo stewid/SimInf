@@ -325,7 +325,7 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
 
     ## Determine the supremum by using an optimizer. For
     ## one-dimensional problems, use "Brent" else "Nelder-Mead".
-    if (ncol(xnu) > 1) {
+    if (nrow(xnu) > 1) {
         method <- "Nelder-Mead"
         lower <- -Inf
         upper <- Inf
