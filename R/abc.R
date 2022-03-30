@@ -356,6 +356,7 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
     if (q_t > 0.99 && generation >= 3L)
         return(NULL)
 
+    distance <- distance[, order(colSums(distance)), drop = FALSE]
     distance[, ceiling(q_t * length(distance))]
 }
 
@@ -666,20 +667,30 @@ setMethod(
             object@tolerance <- cbind(object@tolerance, epsilon,
                                       deparse.level = 0)
 
+            if (is.null(tolerance) && generation == 1L) {
+                i <- order(colSums(result$distance))[seq_len(npart)]
+                result$ancestor <- result$ancestor[i]
+                object@x[[length(object@x) + 1L]] <- result$x[, i, drop = FALSE]
+                object@distance[[length(object@distance) + 1L]] <-
+                    result$distance[, i, drop = FALSE]
+                x_old <- result$x
+            } else {
+                object@x[[length(object@x) + 1L]] <- result$x
+                object@distance[[length(object@distance) + 1L]] <-
+                    result$distance
+                x_old <- x
+            }
+
             ## Calculate weights.
             w <- .Call(SimInf_abc_weights, object@priors$distribution,
                        object@priors$p1, object@priors$p2, x[, result$ancestor],
-                       result$x, w, sigma)
+                       object@x[[length(object@x)]], w, sigma)
 
-            ## Move the population of particles to the next
-            ## generation.
-            object@distance[[length(object@distance) + 1L]] <- result$distance
-            x_old <- x
-            x <- result$x
-            object@x[[length(object@x) + 1L]] <- x
             object@w[[length(object@w) + 1L]] <- w
             object@ess[length(object@ess) + 1L] <- 1 / sum(w^2)
             object@nprop[length(object@nprop) + 1L] <- result$nprop
+            x <- object@x[[length(object@x)]]
+            d <- object@distance[[length(object@distance)]]
 
             ## Report progress.
             if (isTRUE(verbose))
