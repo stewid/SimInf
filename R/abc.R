@@ -422,17 +422,19 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     if (isTRUE(verbose))
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
 
-    distance <- NULL
+    if (!is.null(tolerance))
+        distance <- matrix(NA_real_, nrow = npart, ncol = length(tolerance))
     xx <- NULL
     ancestor <- NULL
     nprop <- 0L
+    particle_i <- 1L
 
     while (n_particles(xx) < npart) {
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
                            priors$distribution, priors$p1, priors$p2,
                            1L, x, w, sigma)
         for (i in seq_len(nrow(proposals))) {
-            model@gdata[pars[i]] <- proposals[i, 1]
+            model@gdata[pars[i]] <- proposals[i, 1L]
         }
 
         d <- abc_distance(fn(run(model), generation = generation, ...), 1L)
@@ -441,14 +443,17 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             ## sure the dimension of tolerance and distance matches in
             ## subsequent calls to 'abc_accept'.
             tolerance <- rep(Inf, ncol(d))
+            distance <- matrix(NA_real_, nrow = npart, ncol = ncol(d))
         }
+
         accept <- abc_accept(d, tolerance)
         nprop <- nprop + 1L
         if (isTRUE(accept)) {
             ## Collect accepted particle
-            distance <- rbind(distance, d)
+            distance[particle_i, ] <- d
             xx <- cbind(xx, as.matrix(model@gdata)[pars, 1, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
+            particle_i <- particle_i + 1L
         }
 
         ## Report progress.
@@ -475,10 +480,12 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     if (isTRUE(verbose))
         pb <- txtProgressBar(min = 0, max = npart, style = 3)
 
-    distance <- NULL
+    if (!is.null(tolerance))
+        distance <- matrix(NA_real_, nrow = npart, ncol = length(tolerance))
     xx <- NULL
     ancestor <- NULL
     nprop <- 0L
+    particle_i <- 1L
 
     while (n_particles(xx) < npart) {
         if (all(n < 1e5L, nprop > 2L * n)) {
@@ -501,11 +508,12 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             ## sure the dimension of tolerance and distance matches in
             ## subsequent calls to 'abc_accept'.
             tolerance <- rep(Inf, ncol(d))
+            distance <- matrix(NA_real_, nrow = npart, ncol = ncol(d))
         }
-        accept <- abc_accept(d, tolerance)
 
         ## Collect accepted particles making sure not to collect more
         ## than 'npart'.
+        accept <- abc_accept(d, tolerance)
         i <- cumsum(accept) + n_particles(xx)
         i <- which(i == npart)
         j <- which(accept)
@@ -513,16 +521,16 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             i <- min(i)
             j <- j[j <= i]
             nprop <- nprop + i
-            distance <- rbind(distance, d[j, , drop = FALSE])
-            xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
-            ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
         } else {
             nprop <- nprop + n
-            if (length(j)) {
-                distance <- rbind(distance, d[j, , drop = FALSE])
-                xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
-                ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
-            }
+        }
+
+        if (length(j)) {
+            k <- seq(from = particle_i, length.out = length(j))
+            distance[k, ] <- d[j, , drop = FALSE]
+            xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
+            ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
+            particle_i <- particle_i + length(j)
         }
 
         ## Report progress.
