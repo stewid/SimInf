@@ -314,6 +314,7 @@ abc_next_epsilon <- function(x_old, x, distance, tolerance,
 ##' @param generation a positive integer with the current generation.
 ##' @return NULL if the stopping rule applies, else a numeric vector
 ##'     with the tolerance for the next generation.
+##' @importFrom stats optim
 ##' @references
 ##'
 ##' \Simola2021
