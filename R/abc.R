@@ -420,7 +420,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
         distance <- matrix(NA_real_, nrow = npart, ncol = length(tolerance))
     xx <- matrix(NA_real_, nrow = npart, ncol = length(pars),
                  dimnames = list(NULL, names(model@gdata)[pars]))
-    ancestor <- NULL
+    ancestor <- rep(NA_real_, npart)
     nprop <- 0L
     particle_i <- 0L
 
@@ -448,7 +448,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             particle_i <- particle_i + 1L
             distance[particle_i, ] <- d
             xx[particle_i, ] <- model@gdata[pars]
-            ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
+            ancestor[particle_i] <- attr(proposals, "ancestor")[1L]
         }
 
         ## Report progress.
@@ -479,7 +479,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
         distance <- matrix(NA_real_, nrow = npart, ncol = length(tolerance))
     xx <- matrix(NA_real_, nrow = npart, ncol = length(pars),
                  dimnames = list(NULL, rownames(model@ldata)[pars]))
-    ancestor <- NULL
+    ancestor <- rep(NA_real_, npart)
     nprop <- 0L
     particle_i <- 0L
 
@@ -525,7 +525,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             k <- seq(from = particle_i + 1L, length.out = length(j))
             distance[k, ] <- d[j, , drop = FALSE]
             xx[k, ] <- t(model@ldata[pars, j, drop = FALSE])
-            ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
+            ancestor[k] <- attr(proposals, "ancestor")[j]
             particle_i <- particle_i + length(j)
         }
 
