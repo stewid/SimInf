@@ -186,7 +186,6 @@ set.seed(123)
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0.5, 1.5),
                       gamma ~ uniform(0.3, 0.7)),
-           ngen = 2,
            npart = 10,
            fn = distance_fn_ldata,
            tolerance = c(250000, 225000),
@@ -194,6 +193,8 @@ fit <- abc(model = model,
 fit
 summary(fit)
 as.data.frame(fit)
+
+fit <- continue(fit, tolerance = 200000, verbose = TRUE)
 
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
