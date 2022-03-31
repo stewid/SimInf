@@ -45,10 +45,10 @@
 ##' @slot w A list where each item is a vector with the weights for
 ##'     the particles \code{x} in the corresponding generation.
 ##' @slot distance A list where each item is a numeric matrix (number
-##'     of summary statistics X number of particles) with the distance
-##'     for the particles \code{x} in the corresponding generation.
-##'     Each column contains the distance for a particle and each row
-##'     contains the distance for a summary statistics.
+##'     of particles \eqn{\times} number of summary statistics) with
+##'     the distance for the particles \code{x} in the corresponding
+##'     generation.  Each row contains the distance for a particle and
+##'     each column contains the distance for a summary statistics.
 ##' @slot ess A numeric vector with the effective sample size (ESS) in
 ##'     each generation. Effective sample size is computed as
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
@@ -277,10 +277,10 @@ abc_init_epsilon <- function(tolerance, generation) {
 ##' The first tolerance is adaptively selected by sorting the 'ninit'
 ##' distances and select the 'npart' distance. The first 'npart'
 ##' particles are retained.
-##' @param distance a numeric matrix (number of summary statistics X
-##'     number of particles) with the distance for the particles. Each
-##'     column contains the distance for a particle and each row
-##'     contains the distance for a summary statistic.
+##' @param distance a numeric matrix (number of particles \eqn{\times}
+##'     number of summary statistics) with the distance for the
+##'     particles. Each row contains the distance for a particle and
+##'     each column contains the distance for a summary statistic.
 ##' @param npart An integer specifying the number of particles.
 ##' @return a numeric vector.
 ##' @references
@@ -288,8 +288,8 @@ abc_init_epsilon <- function(tolerance, generation) {
 ##' \CisewskiKehe2019
 ##' @noRd
 abc_first_epsilon <- function(distance, npart) {
-    i <- order(colSums(distance))
-    distance[, i[npart]]
+    i <- order(rowSums(distance))
+    distance[i[npart], ]
 }
 
 abc_next_epsilon <- function(x_old, x, distance, tolerance,
@@ -325,7 +325,7 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
 
     ## Determine the supremum by using an optimizer. For
     ## one-dimensional problems, use "Brent" else "Nelder-Mead".
-    if (nrow(xnu) > 1) {
+    if (ncol(xnu) > 1) {
         method <- "Nelder-Mead"
         lower <- -Inf
         upper <- Inf
@@ -356,8 +356,8 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
     if (q_t > 0.99 && generation >= 3L)
         return(NULL)
 
-    distance <- distance[, order(colSums(distance)), drop = FALSE]
-    distance[, ceiling(q_t * length(distance))]
+    distance <- distance[order(rowSums(distance)), , drop = FALSE]
+    distance[ceiling(q_t * nrow(distance)), ]
 }
 
 abc_progress <- function(t0, t1, x, w, npart, nprop) {
@@ -375,12 +375,12 @@ abc_distance <- function(distance, n) {
     }
 
     if (!is.matrix(distance))
-        dim(distance) <- c(1L, length(distance))
+        dim(distance) <- c(length(distance), 1L)
 
     if (is.integer(distance))
         storage.mode(distance) <- "double"
 
-    if (!identical(ncol(distance), n)) {
+    if (!identical(nrow(distance), n)) {
         stop("Invalid dimension of the result from the ABC distance function.",
              call. = FALSE)
     }
@@ -395,22 +395,22 @@ abc_distance <- function(distance, n) {
 
 ##' Determine which particles to accept
 ##'
-##' @param distance a numeric matrix (number of summary statistics X
-##'     number of particles) with the distance for the particles. Each
-##'     column contains the distance for a particle and each row
-##'     contains the distance for a summary statistics.
+##' @param distance a numeric matrix (number of particles \eqn{\times}
+##'     number of summary statistics) with the distance for the
+##'     particles. Each row contains the distance for a particle and
+##'     each column contains the distance for a summary statistic.
 ##' @param tolerance a numeric vector with the tolerance for each
 ##'     summary statistics.
-##' @return a logical vector of length ncol(distance) with TRUE for
+##' @return a logical vector of length nrow(distance) with TRUE for
 ##'     the particles to accept, else FALSE.
 ##' @noRd
 abc_accept <- function(distance, tolerance) {
-    if (!identical(nrow(distance), length(tolerance))) {
+    if (!identical(ncol(distance), length(tolerance))) {
         stop("Mismatch between the number of summary statistics and tolerance.",
              call. = FALSE)
     }
 
-    colSums(distance <= tolerance) == length(tolerance)
+    rowSums(distance <= tolerance) == length(tolerance)
 }
 
 ##' @importFrom utils setTxtProgressBar
@@ -439,13 +439,13 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             ## Accept all particles if the tolerance is NULL, but make
             ## sure the dimension of tolerance and distance matches in
             ## subsequent calls to 'abc_accept'.
-            tolerance <- rep(Inf, nrow(d))
+            tolerance <- rep(Inf, ncol(d))
         }
         accept <- abc_accept(d, tolerance)
         nprop <- nprop + 1L
         if (isTRUE(accept)) {
             ## Collect accepted particle
-            distance <- cbind(distance, d)
+            distance <- rbind(distance, d)
             xx <- cbind(xx, as.matrix(model@gdata)[pars, 1, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
         }
@@ -499,7 +499,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             ## Accept all particles if the tolerance is NULL, but make
             ## sure the dimension of tolerance and distance matches in
             ## subsequent calls to 'abc_accept'.
-            tolerance <- rep(Inf, nrow(d))
+            tolerance <- rep(Inf, ncol(d))
         }
         accept <- abc_accept(d, tolerance)
 
@@ -512,13 +512,13 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             i <- min(i)
             j <- j[j <= i]
             nprop <- nprop + i
-            distance <- cbind(distance, d[, j, drop = FALSE])
+            distance <- rbind(distance, d[j, , drop = FALSE])
             xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
         } else {
             nprop <- nprop + n
             if (length(j)) {
-                distance <- cbind(distance, d[, j, drop = FALSE])
+                distance <- rbind(distance, d[j, , drop = FALSE])
                 xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
                 ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
             }
@@ -574,11 +574,11 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
                                   deparse.level = 0)
 
         if (is.null(tolerance) && generation == 1L) {
-            i <- order(colSums(result$distance))[seq_len(npart)]
+            i <- order(rowSums(result$distance))[seq_len(npart)]
             result$ancestor <- result$ancestor[i]
             object@x[[length(object@x) + 1L]] <- result$x[, i, drop = FALSE]
             object@distance[[length(object@distance) + 1L]] <-
-                result$distance[, i, drop = FALSE]
+                result$distance[i, , drop = FALSE]
             x_old <- result$x
         } else {
             object@x[[length(object@x) + 1L]] <- result$x
