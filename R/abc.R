@@ -192,12 +192,6 @@ proposal_covariance <- function(x) {
     cov(t(x)) * 2
 }
 
-n_particles <- function(x) {
-    if (is.null(x))
-        return(0)
-    ncol(x)
-}
-
 abc_init_generation <- function(object) {
     length(object@x) + 1L
 }
@@ -424,12 +418,13 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
 
     if (!is.null(tolerance))
         distance <- matrix(NA_real_, nrow = npart, ncol = length(tolerance))
-    xx <- NULL
+    xx <- matrix(NA_real_, nrow = npart, ncol = length(pars),
+                 dimnames = list(NULL, names(model@gdata)[pars]))
     ancestor <- NULL
     nprop <- 0L
-    particle_i <- 1L
+    particle_i <- 0L
 
-    while (n_particles(xx) < npart) {
+    while (particle_i < npart) {
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
                            priors$distribution, priors$p1, priors$p2,
                            1L, x, w, sigma)
@@ -450,18 +445,18 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
         nprop <- nprop + 1L
         if (isTRUE(accept)) {
             ## Collect accepted particle
-            distance[particle_i, ] <- d
-            xx <- cbind(xx, as.matrix(model@gdata)[pars, 1, drop = FALSE])
-            ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
             particle_i <- particle_i + 1L
+            distance[particle_i, ] <- d
+            xx[particle_i, ] <- model@gdata[pars]
+            ancestor <- c(ancestor, attr(proposals, "ancestor")[1])
         }
 
         ## Report progress.
         if (isTRUE(verbose))
-            setTxtProgressBar(pb, n_particles(xx))
+            setTxtProgressBar(pb, particle_i)
     }
 
-    list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
+    list(x = t(xx), ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
 ##' @importFrom utils setTxtProgressBar
@@ -482,12 +477,13 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 
     if (!is.null(tolerance))
         distance <- matrix(NA_real_, nrow = npart, ncol = length(tolerance))
-    xx <- NULL
+    xx <- matrix(NA_real_, nrow = npart, ncol = length(pars),
+                 dimnames = list(NULL, rownames(model@ldata)[pars]))
     ancestor <- NULL
     nprop <- 0L
-    particle_i <- 1L
+    particle_i <- 0L
 
-    while (n_particles(xx) < npart) {
+    while (particle_i < npart) {
         if (all(n < 1e5L, nprop > 2L * n)) {
             ## Increase the number of particles that are simulated in
             ## each trajectory.
@@ -514,7 +510,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
         ## Collect accepted particles making sure not to collect more
         ## than 'npart'.
         accept <- abc_accept(d, tolerance)
-        i <- cumsum(accept) + n_particles(xx)
+        i <- cumsum(accept) + particle_i
         i <- which(i == npart)
         j <- which(accept)
         if (length(i)) {
@@ -526,19 +522,19 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
         }
 
         if (length(j)) {
-            k <- seq(from = particle_i, length.out = length(j))
+            k <- seq(from = particle_i + 1L, length.out = length(j))
             distance[k, ] <- d[j, , drop = FALSE]
-            xx <- cbind(xx, model@ldata[pars, j, drop = FALSE])
+            xx[k, ] <- t(model@ldata[pars, j, drop = FALSE])
             ancestor <- c(ancestor, attr(proposals, "ancestor")[j])
             particle_i <- particle_i + length(j)
         }
 
         ## Report progress.
         if (isTRUE(verbose))
-            setTxtProgressBar(pb, n_particles(xx))
+            setTxtProgressBar(pb, particle_i)
     }
 
-    list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
+    list(x = t(xx), ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
 abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
