@@ -42,8 +42,9 @@
 ##' @slot x A list where each item is a \code{matrix} with the
 ##'     accepted particles in each generation. Each column is one
 ##'     particle.
-##' @slot w A list where each item is a vector with the weights for
-##'     the particles \code{x} in the corresponding generation.
+##' @slot weight A numeric matrix (number of particles \eqn{\times}
+##'     number of generations) with the weights for the particles
+##'     \code{x} in the corresponding generation.
 ##' @slot distance A numeric array (number of particles \eqn{\times}
 ##'     number of summary statistics \eqn{\times} number of
 ##'     generations) with the distance for the particles \code{x} in
@@ -67,7 +68,7 @@ setClass(
               fn        = "function",
               tolerance = "matrix",
               x         = "list",
-              w         = "list",
+              weight    = "matrix",
               distance  = "array",
               ess       = "numeric")
 )
@@ -78,7 +79,7 @@ setAs(
     def = function(from) {
         do.call("rbind", lapply(seq_len(length(from@x)), function(i) {
             cbind(generation = i,
-                  weight = from@w[[i]],
+                  weight = from@weight[, i],
                   as.data.frame(t(from@x[[i]])))
         }))
     }
@@ -220,8 +221,8 @@ abc_init_particles <- function(object) {
 }
 
 abc_init_weights <- function(object) {
-    if (length(object@w))
-        return(object@w[[length(object@w)]])
+    if (ncol(object@weight) > 0L)
+        return(object@weight[, ncol(object@weight)])
     NULL
 }
 
@@ -600,7 +601,7 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
                    object@priors$p1, object@priors$p2, x[, result$ancestor],
                    object@x[[length(object@x)]], w, sigma)
 
-        object@w[[length(object@w) + 1L]] <- w
+        object@weight <- cbind(object@weight, w, deparse.level = 0)
         object@ess[length(object@ess) + 1L] <- 1 / sum(w^2)
         object@nprop[length(object@nprop) + 1L] <- result$nprop
         x <- object@x[[length(object@x)]]
@@ -682,8 +683,8 @@ setMethod(
         object <- new("SimInf_abc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars, npart = npart,
                       nprop = integer(), fn = fn, x = list(),
-                      tolerance = matrix(numeric(0), ncol = 0, nrow = 0),
-                      w = list(),
+                      tolerance = matrix(numeric(0), nrow = 0, ncol = 0),
+                      weight = matrix(numeric(0), nrow = npart, ncol = 0),
                       distance = array(numeric(0), dim = c(0, 0, 0)),
                       ess = numeric())
 

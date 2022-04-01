@@ -54,8 +54,9 @@ of gradually decreasing tolerances.}
 accepted particles in each generation. Each column is one
 particle.}
 
-\item{\code{w}}{A list where each item is a vector with the weights for
-the particles \code{x} in the corresponding generation.}
+\item{\code{weight}}{A numeric matrix (number of particles \eqn{\times}
+number of generations) with the weights for the particles
+\code{x} in the corresponding generation.}
 
 \item{\code{distance}}{A numeric array (number of particles \eqn{\times}
 number of summary statistics \eqn{\times} number of

@@ -213,7 +213,7 @@ res <- assertError(
           fit@priors$p2,
           0L,
           fit@x[[2]],
-          fit@w[[2]],
+          fit@weight[, 2],
           sigma))
 check_error(res, "'n' must be an integer > 0.")
 
@@ -226,7 +226,7 @@ res <- assertError(
           fit@priors$p2,
           1L,
           fit@x[[2]],
-          fit@w[[2]],
+          fit@weight[, 2],
           sigma))
 check_error(res, "'parameter' must be a character vector.")
 
@@ -239,7 +239,7 @@ res <- assertError(
           fit@priors$p2,
           1L,
           fit@x[[2]],
-          fit@w[[2]],
+          fit@weight[, 2],
           sigma))
 check_error(res, "Unknown distribution.")
 
@@ -256,7 +256,7 @@ res <- assertError(
           sigma))
 check_error(res, "'w' must have length >= 1 when 'x' is non-null.")
 
-fit@w[[2]][2] <- -1
+fit@weight[2, 2] <- -1
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
           fit@priors$parameter,
@@ -265,11 +265,11 @@ res <- assertError(
           fit@priors$p2,
           1L,
           fit@x[[2]],
-          fit@w[[2]],
+          fit@weight[, 2],
           sigma))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")
 
-fit@w[[2]][2] <- NaN
+fit@weight[2, 2] <- NaN
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
           fit@priors$parameter,
@@ -278,11 +278,11 @@ res <- assertError(
           fit@priors$p2,
           1L,
           fit@x[[2]],
-          fit@w[[2]],
+          fit@weight[, 2],
           sigma))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")
 
-fit@w[[2]][2] <- NA_real_
+fit@weight[2, 2] <- NA_real_
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
           fit@priors$parameter,
@@ -291,6 +291,6 @@ res <- assertError(
           fit@priors$p2,
           1L,
           fit@x[[2]],
-          fit@w[[2]],
+          fit@weight[, 2],
           sigma))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")
