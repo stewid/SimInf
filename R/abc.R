@@ -44,11 +44,11 @@
 ##'     particle.
 ##' @slot w A list where each item is a vector with the weights for
 ##'     the particles \code{x} in the corresponding generation.
-##' @slot distance A list where each item is a numeric matrix (number
-##'     of particles \eqn{\times} number of summary statistics) with
-##'     the distance for the particles \code{x} in the corresponding
-##'     generation.  Each row contains the distance for a particle and
-##'     each column contains the distance for a summary statistics.
+##' @slot distance A numeric array (number of particles \eqn{\times}
+##'     number of summary statistics \eqn{\times} number of
+##'     generations) with the distance for the particles \code{x} in
+##'     each generation. Each row contains the distance for a particle
+##'     and each column contains the distance for a summary statistic.
 ##' @slot ess A numeric vector with the effective sample size (ESS) in
 ##'     each generation. Effective sample size is computed as
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
@@ -68,7 +68,7 @@ setClass(
               tolerance = "matrix",
               x         = "list",
               w         = "list",
-              distance  = "list",
+              distance  = "array",
               ess       = "numeric")
 )
 
@@ -351,8 +351,9 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
     if (q_t > 0.99 && generation >= 3L)
         return(NULL)
 
-    distance <- distance[order(rowSums(distance)), , drop = FALSE]
-    distance[ceiling(q_t * nrow(distance)), ]
+    i <- order(rowSums(distance))
+    distance[, , 1] <- distance[i, , 1]
+    distance[ceiling(q_t * nrow(distance)), , 1]
 }
 
 abc_progress <- function(t0, t1, x, w, npart, nprop) {
@@ -582,17 +583,19 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
             i <- order(rowSums(result$distance))[seq_len(npart)]
             result$ancestor <- result$ancestor[i]
             object@x[[length(object@x) + 1L]] <- result$x[, i, drop = FALSE]
-            object@distance[[length(object@distance) + 1L]] <-
-                result$distance[i, , drop = FALSE]
+            object@distance <-
+                array(result$distance[i, , drop = FALSE],
+                      dim = c(npart, ncol(result$distance), generation))
             x_old <- result$x
         } else {
             object@x[[length(object@x) + 1L]] <- result$x
-            object@distance[[length(object@distance) + 1L]] <-
-                result$distance
+            object@distance <-
+                array(c(object@distance, result$distance),
+                      dim = c(npart, ncol(result$distance), generation))
             x_old <- x
         }
 
-        ## Calculate weights.
+        ## Calculate weights
         w <- .Call(SimInf_abc_weights, object@priors$distribution,
                    object@priors$p1, object@priors$p2, x[, result$ancestor],
                    object@x[[length(object@x)]], w, sigma)
@@ -601,7 +604,7 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
         object@ess[length(object@ess) + 1L] <- 1 / sum(w^2)
         object@nprop[length(object@nprop) + 1L] <- result$nprop
         x <- object@x[[length(object@x)]]
-        d <- object@distance[[length(object@distance)]]
+        d <- object@distance[, , generation, drop = FALSE]
 
         ## Report progress.
         if (isTRUE(verbose))
@@ -680,7 +683,9 @@ setMethod(
                       target = pars$target, pars = pars$pars, npart = npart,
                       nprop = integer(), fn = fn, x = list(),
                       tolerance = matrix(numeric(0), ncol = 0, nrow = 0),
-                      w = list(), distance = list(), ess = numeric())
+                      w = list(),
+                      distance = array(numeric(0), dim = c(0, 0, 0)),
+                      ess = numeric())
 
         abc_internal(object, ninit = ninit, tolerance = tolerance,
                      ..., verbose = verbose)

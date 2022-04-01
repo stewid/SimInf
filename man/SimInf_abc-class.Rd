@@ -57,11 +57,11 @@ particle.}
 \item{\code{w}}{A list where each item is a vector with the weights for
 the particles \code{x} in the corresponding generation.}
 
-\item{\code{distance}}{A list where each item is a numeric matrix (number
-of particles \eqn{\times} number of summary statistics) with
-the distance for the particles \code{x} in the corresponding
-generation.  Each row contains the distance for a particle and
-each column contains the distance for a summary statistics.}
+\item{\code{distance}}{A numeric array (number of particles \eqn{\times}
+number of summary statistics \eqn{\times} number of
+generations) with the distance for the particles \code{x} in
+each generation. Each row contains the distance for a particle
+and each column contains the distance for a summary statistic.}
 
 \item{\code{ess}}{A numeric vector with the effective sample size (ESS) in
 each generation. Effective sample size is computed as
