@@ -78,7 +78,7 @@ setAs(
         do.call("rbind", lapply(seq_len(abc_n_generations(from)), function(i) {
             cbind(generation = i,
                   weight = from@weight[, i],
-                  as.data.frame(t(from@x[[i]])))
+                  as.data.frame(t(abc_particles(from, i))))
         }))
     }
 )
@@ -99,7 +99,7 @@ summary_particles <- function(object, i) {
     cat(sprintf("%s\n", paste0(rep("-", nchar(str)), collapse = "")))
     cat(sprintf(" Accrate: %.2e\n", abc_n_particles(object) / object@nprop[i]))
     cat(sprintf(" ESS: %.2e\n\n", object@ess[i]))
-    summary_matrix(object@x[[i]])
+    summary_matrix(abc_particles(object, i))
 }
 
 ##' Print summary of a \code{SimInf_abc} object
@@ -158,6 +158,16 @@ abc_n_generations <- function(object) {
 ##' @noRd
 abc_n_particles <- function(object) {
     nrow(object@weight)
+}
+
+##' Get the particles for a specific generation
+##' @noRd
+abc_particles <- function(object, generation) {
+    stopifnot(is.integer(generation),
+              length(generation) ==  1,
+              generation[1] >= 1,
+              generation[1] <= abc_n_generations(object))
+    object@x[[generation]]
 }
 
 ##' Generate replicates of the first node in the model.
@@ -226,7 +236,7 @@ abc_init_npart <- function(object, ninit, tolerance) {
 
 abc_init_particles <- function(object) {
     if (abc_n_generations(object) > 0)
-        return(object@x[[abc_n_generations(object)]])
+        return(abc_particles(object, abc_n_generations(object)))
     NULL
 }
 
