@@ -32,8 +32,6 @@ determines if the ABC-SMC method estimates parameters in
 
 \item{\code{pars}}{Index to the parameters in \code{target}.}
 
-\item{\code{npart}}{The number of particles in each generation.}
-
 \item{\code{nprop}}{An integer vector with the number of simulated
 proposals in each generation.}
 

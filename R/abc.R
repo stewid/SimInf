@@ -25,7 +25,6 @@
 ##'     determines if the ABC-SMC method estimates parameters in
 ##'     \code{model@@gdata} or in \code{model@@ldata}.
 ##' @slot pars Index to the parameters in \code{target}.
-##' @slot npart The number of particles in each generation.
 ##' @slot nprop An integer vector with the number of simulated
 ##'     proposals in each generation.
 ##' @slot fn A function for calculating the summary statistics for the
@@ -63,7 +62,6 @@ setClass(
               priors    = "data.frame",
               target    = "character",
               pars      = "integer",
-              npart     = "integer",
               nprop     = "integer",
               fn        = "function",
               tolerance = "matrix",
@@ -99,7 +97,7 @@ summary_particles <- function(object, i) {
     str <- sprintf("Generation %i:", i)
     cat(sprintf("\n%s\n", str))
     cat(sprintf("%s\n", paste0(rep("-", nchar(str)), collapse = "")))
-    cat(sprintf(" Accrate: %.2e\n", object@npart / object@nprop[i]))
+    cat(sprintf(" Accrate: %.2e\n", abc_n_particles(object) / object@nprop[i]))
     cat(sprintf(" ESS: %.2e\n\n", object@ess[i]))
     summary_matrix(object@x[[i]])
 }
@@ -114,8 +112,10 @@ setMethod(
     "show",
     signature(object = "SimInf_abc"),
     function(object) {
-        cat(sprintf("Number of particles per generation: %i\n", object@npart))
-        cat(sprintf("Number of generations: %i\n", abc_n_generations(object)))
+        cat(sprintf("Number of particles per generation: %i\n",
+                    abc_n_particles(object)))
+        cat(sprintf("Number of generations: %i\n",
+                    abc_n_generations(object)))
 
         if (abc_n_generations(object))
             summary_particles(object, abc_n_generations(object))
@@ -135,8 +135,10 @@ setMethod(
     "summary",
     signature(object = "SimInf_abc"),
     function(object, ...) {
-        cat(sprintf("Number of particles per generation: %i\n", object@npart))
-        cat(sprintf("Number of generations: %i\n", abc_n_generations(object)))
+        cat(sprintf("Number of particles per generation: %i\n",
+                    abc_n_particles(object)))
+        cat(sprintf("Number of generations: %i\n",
+                    abc_n_generations(object)))
 
         for (i in seq_len(abc_n_generations(object))) {
             summary_particles(object, i)
@@ -150,6 +152,12 @@ setMethod(
 ##' @noRd
 abc_n_generations <- function(object) {
     length(object@x)
+}
+
+##' Determine the number of particles.
+##' @noRd
+abc_n_particles <- function(object) {
+    nrow(object@weight)
 }
 
 ##' Generate replicates of the first node in the model.
@@ -201,13 +209,13 @@ abc_init_generation <- function(object) {
 
 abc_init_npart <- function(object, ninit, tolerance) {
     if (abc_n_generations(object) > 0 || is.null(ninit))
-        return(object@npart)
+        return(abc_n_particles(object))
 
     check_integer_arg(ninit)
     ninit <- as.integer(ninit)
     if (length(ninit) != 1L || ninit <= 1L)
         stop("'ninit' must be an integer > 1.", call. = FALSE)
-    if (ninit <= object@npart)
+    if (ninit <= abc_n_particles(object))
         stop("'ninit' must be an integer > 'npart'.", call. = FALSE)
 
     if (!is.null(tolerance))
@@ -574,7 +582,7 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
                          sigma = sigma, verbose = verbose, ...)
 
         ## Append the tolerance for the generation.
-        npart <- object@npart
+        npart <- abc_n_particles(object)
         if (is.null(epsilon))
             epsilon <- abc_first_epsilon(result$distance, npart)
         if (ncol(object@tolerance) == 0L)
@@ -684,7 +692,7 @@ setMethod(
         pars <- match_priors(model, priors)
 
         object <- new("SimInf_abc", model = model, priors = priors,
-                      target = pars$target, pars = pars$pars, npart = npart,
+                      target = pars$target, pars = pars$pars,
                       nprop = integer(), fn = fn, x = list(),
                       tolerance = matrix(numeric(0), nrow = 0, ncol = 0),
                       weight = matrix(numeric(0), nrow = npart, ncol = 0),
