@@ -77,7 +77,7 @@ setAs(
     from = "SimInf_abc",
     to = "data.frame",
     def = function(from) {
-        do.call("rbind", lapply(seq_len(length(from@x)), function(i) {
+        do.call("rbind", lapply(seq_len(abc_n_generations(from)), function(i) {
             cbind(generation = i,
                   weight = from@weight[, i],
                   as.data.frame(t(from@x[[i]])))
@@ -115,10 +115,10 @@ setMethod(
     signature(object = "SimInf_abc"),
     function(object) {
         cat(sprintf("Number of particles per generation: %i\n", object@npart))
-        cat(sprintf("Number of generations: %i\n", n_generations(object)))
+        cat(sprintf("Number of generations: %i\n", abc_n_generations(object)))
 
-        if (n_generations(object))
-            summary_particles(object, n_generations(object))
+        if (abc_n_generations(object))
+            summary_particles(object, abc_n_generations(object))
 
         invisible(object)
     }
@@ -136,9 +136,9 @@ setMethod(
     signature(object = "SimInf_abc"),
     function(object, ...) {
         cat(sprintf("Number of particles per generation: %i\n", object@npart))
-        cat(sprintf("Number of generations: %i\n", n_generations(object)))
+        cat(sprintf("Number of generations: %i\n", abc_n_generations(object)))
 
-        for (i in seq_len(n_generations(object))) {
+        for (i in seq_len(abc_n_generations(object))) {
             summary_particles(object, i)
         }
 
@@ -148,7 +148,7 @@ setMethod(
 
 ##' Determine the number of generations.
 ##' @noRd
-n_generations <- function(object) {
+abc_n_generations <- function(object) {
     length(object@x)
 }
 
@@ -196,11 +196,11 @@ proposal_covariance <- function(x) {
 }
 
 abc_init_generation <- function(object) {
-    n_generations(object) + 1L
+    abc_n_generations(object) + 1L
 }
 
 abc_init_npart <- function(object, ninit, tolerance) {
-    if (n_generations(object) > 0 || is.null(ninit))
+    if (abc_n_generations(object) > 0 || is.null(ninit))
         return(object@npart)
 
     check_integer_arg(ninit)
@@ -217,8 +217,8 @@ abc_init_npart <- function(object, ninit, tolerance) {
 }
 
 abc_init_particles <- function(object) {
-    if (n_generations(object) > 0)
-        return(object@x[[n_generations(object)]])
+    if (abc_n_generations(object) > 0)
+        return(object@x[[abc_n_generations(object)]])
     NULL
 }
 
@@ -585,14 +585,14 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
         if (is.null(tolerance) && generation == 1L) {
             i <- order(rowSums(result$distance))[seq_len(npart)]
             result$ancestor <- result$ancestor[i]
-            object@x[[n_generations(object) + 1L]] <-
+            object@x[[abc_n_generations(object) + 1L]] <-
                 result$x[, i, drop = FALSE]
             object@distance <-
                 array(result$distance[i, , drop = FALSE],
                       dim = c(npart, ncol(result$distance), generation))
             x_old <- result$x
         } else {
-            object@x[[n_generations(object) + 1L]] <- result$x
+            object@x[[abc_n_generations(object) + 1L]] <- result$x
             object@distance <-
                 array(c(object@distance, result$distance),
                       dim = c(npart, ncol(result$distance), generation))
@@ -602,12 +602,12 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
         ## Calculate weights
         w <- .Call(SimInf_abc_weights, object@priors$distribution,
                    object@priors$p1, object@priors$p2, x[, result$ancestor],
-                   object@x[[n_generations(object)]], w, sigma)
+                   object@x[[abc_n_generations(object)]], w, sigma)
 
         object@weight <- cbind(object@weight, w, deparse.level = 0)
         object@ess[length(object@ess) + 1L] <- 1 / sum(w^2)
         object@nprop[length(object@nprop) + 1L] <- result$nprop
-        x <- object@x[[n_generations(object)]]
+        x <- object@x[[abc_n_generations(object)]]
         d <- object@distance[, , generation, drop = FALSE]
 
         ## Report progress.
