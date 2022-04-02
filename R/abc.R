@@ -631,8 +631,8 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
                    abc_particles(object, generation), w, sigma)
 
         object@weight <- cbind(object@weight, w, deparse.level = 0)
-        object@ess[length(object@ess) + 1L] <- 1 / sum(w^2)
-        object@nprop[length(object@nprop) + 1L] <- result$nprop
+        object@ess <- c(object@ess, 1 / sum(w^2))
+        object@nprop <- c(object@nprop, result$nprop)
         x <- abc_particles(object, generation)
         d <- object@distance[, , generation, drop = FALSE]
 
