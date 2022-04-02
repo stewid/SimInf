@@ -65,7 +65,7 @@ setClass(
               nprop     = "integer",
               fn        = "function",
               tolerance = "matrix",
-              x         = "list",
+              x         = "array",
               weight    = "matrix",
               distance  = "array",
               ess       = "numeric")
@@ -151,7 +151,7 @@ setMethod(
 ##' Determine the number of generations.
 ##' @noRd
 abc_n_generations <- function(object) {
-    length(object@x)
+    dim(object@x)[3]
 }
 
 ##' Determine the number of particles.
@@ -167,7 +167,10 @@ abc_particles <- function(object, generation) {
               length(generation) ==  1,
               generation[1] >= 1,
               generation[1] <= abc_n_generations(object))
-    object@x[[generation]]
+
+    matrix(as.vector(object@x[, , generation]),
+           ncol = abc_n_particles(object),
+           dimnames = list(rownames(object@x), NULL))
 }
 
 ##' Generate replicates of the first node in the model.
@@ -603,14 +606,19 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
         if (is.null(tolerance) && generation == 1L) {
             i <- order(rowSums(result$distance))[seq_len(npart)]
             result$ancestor <- result$ancestor[i]
-            object@x[[abc_n_generations(object) + 1L]] <-
-                result$x[, i, drop = FALSE]
+            object@x <-
+                array(result$x[, i],
+                      dim = c(nrow(result$x), npart, generation),
+                      dimnames = list(rownames(result$x), NULL, NULL))
             object@distance <-
                 array(result$distance[i, , drop = FALSE],
                       dim = c(npart, ncol(result$distance), generation))
             x_old <- result$x
         } else {
-            object@x[[abc_n_generations(object) + 1L]] <- result$x
+            object@x <-
+                array(c(object@x, result$x),
+                      dim = c(nrow(result$x), npart, generation),
+                      dimnames = list(rownames(result$x), NULL, NULL))
             object@distance <-
                 array(c(object@distance, result$distance),
                       dim = c(npart, ncol(result$distance), generation))
@@ -620,12 +628,12 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
         ## Calculate weights
         w <- .Call(SimInf_abc_weights, object@priors$distribution,
                    object@priors$p1, object@priors$p2, x[, result$ancestor],
-                   object@x[[abc_n_generations(object)]], w, sigma)
+                   abc_particles(object, generation), w, sigma)
 
         object@weight <- cbind(object@weight, w, deparse.level = 0)
         object@ess[length(object@ess) + 1L] <- 1 / sum(w^2)
         object@nprop[length(object@nprop) + 1L] <- result$nprop
-        x <- object@x[[abc_n_generations(object)]]
+        x <- abc_particles(object, generation)
         d <- object@distance[, , generation, drop = FALSE]
 
         ## Report progress.
@@ -703,7 +711,8 @@ setMethod(
 
         object <- new("SimInf_abc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars,
-                      nprop = integer(), fn = fn, x = list(),
+                      nprop = integer(), fn = fn,
+                      x = array(numeric(0), c(0, 0, 0)),
                       tolerance = matrix(numeric(0), nrow = 0, ncol = 0),
                       weight = matrix(numeric(0), nrow = npart, ncol = 0),
                       distance = array(numeric(0), dim = c(0, 0, 0)),
