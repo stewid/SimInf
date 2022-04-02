@@ -204,7 +204,7 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that an invalid 'n' is detected.
-sigma <- SimInf:::proposal_covariance(fit@x[[2]])
+sigma <- SimInf:::abc_proposal_covariance(SimInf:::abc_particles(fit, 2L))
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
           fit@priors$parameter,
@@ -212,7 +212,7 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           0L,
-          fit@x[[2]],
+          SimInf:::abc_particles(fit, 2L),
           fit@weight[, 2],
           sigma))
 check_error(res, "'n' must be an integer > 0.")
@@ -225,7 +225,7 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
+          SimInf:::abc_particles(fit, 2L),
           fit@weight[, 2],
           sigma))
 check_error(res, "'parameter' must be a character vector.")
@@ -238,7 +238,7 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
+          SimInf:::abc_particles(fit, 2L),
           fit@weight[, 2],
           sigma))
 check_error(res, "Unknown distribution.")
@@ -251,7 +251,7 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
+          SimInf:::abc_particles(fit, 2L),
           numeric(0),
           sigma))
 check_error(res, "'w' must have length >= 1 when 'x' is non-null.")
@@ -264,7 +264,7 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
+          SimInf:::abc_particles(fit, 2L),
           fit@weight[, 2],
           sigma))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")
@@ -277,7 +277,7 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
+          SimInf:::abc_particles(fit, 2L),
           fit@weight[, 2],
           sigma))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")
@@ -290,7 +290,7 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
+          SimInf:::abc_particles(fit, 2L),
           fit@weight[, 2],
           sigma))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")
