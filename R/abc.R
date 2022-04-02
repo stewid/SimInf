@@ -197,7 +197,7 @@ replicate_first_node <- function(model, n, n_events) {
     model
 }
 
-proposal_covariance <- function(x) {
+abc_proposal_covariance <- function(x) {
     if (is.null(x))
         return(NULL)
     cov(t(x)) * 2
@@ -574,7 +574,7 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
             t0 <- proc.time()
         }
 
-        sigma <- proposal_covariance(x)
+        sigma <- abc_proposal_covariance(x)
         result <- abc_fn(model = object@model, pars = object@pars,
                          priors = object@priors, npart = npart,
                          fn = object@fn, generation = generation,
