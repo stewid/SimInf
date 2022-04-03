@@ -377,13 +377,19 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
         return(NULL)
 
     i <- order(rowSums(distance))
-    distance[, , 1] <- distance[i, , 1]
-    distance[ceiling(q_t * nrow(distance)), , 1]
+    distance <- distance[i, , drop = FALSE]
+    distance[ceiling(q_t * nrow(distance)), ]
 }
 
-abc_progress <- function(t0, t1, x, w, npart, nprop) {
-    cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
+abc_progress <- function(t0, t1, x, w, d, npart, nprop) {
+    cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n",
                 npart / nprop, 1 / sum(w^2), (t1 - t0)[3]))
+
+    print_title(ifelse(ncol(d) > 1, "Distances", "Distance"))
+    colnames(d) <- paste0(seq_len(ncol(d)), ":")
+    summary_matrix(t(d))
+
+    print_title(ifelse(ncol(x) > 1, "Parameters", "Parameter"))
     summary_matrix(t(x))
 }
 
@@ -640,11 +646,12 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
         object@ess <- c(object@ess, 1 / sum(w^2))
         object@nprop <- c(object@nprop, result$nprop)
         x <- abc_particles(object, generation)
-        d <- object@distance[, , generation, drop = FALSE]
+        d <- matrix(as.vector(object@distance[, , generation]),
+                    nrow = abc_n_particles(object))
 
         ## Report progress.
         if (isTRUE(verbose))
-            abc_progress(t0, proc.time(), x, w, npart, result$nprop)
+            abc_progress(t0, proc.time(), x, w, d, npart, result$nprop)
 
         generation <- generation + 1L
         epsilon <- abc_next_epsilon(x_old, x, d, tolerance, generation)
