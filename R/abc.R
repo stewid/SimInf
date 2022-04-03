@@ -78,7 +78,7 @@ setAs(
         do.call("rbind", lapply(seq_len(abc_n_generations(from)), function(i) {
             cbind(generation = i,
                   weight = from@weight[, i],
-                  as.data.frame(t(abc_particles(from, i))))
+                  as.data.frame(abc_particles(from, i)))
         }))
     }
 )
@@ -99,7 +99,7 @@ summary_particles <- function(object, i) {
     cat(sprintf("%s\n", paste0(rep("-", nchar(str)), collapse = "")))
     cat(sprintf(" Accrate: %.2e\n", abc_n_particles(object) / object@nprop[i]))
     cat(sprintf(" ESS: %.2e\n\n", object@ess[i]))
-    summary_matrix(abc_particles(object, i))
+    summary_matrix(t(abc_particles(object, i)))
 }
 
 ##' Print summary of a \code{SimInf_abc} object
@@ -169,8 +169,8 @@ abc_particles <- function(object, generation) {
               generation[1] <= abc_n_generations(object))
 
     matrix(as.vector(object@x[, , generation]),
-           ncol = abc_n_particles(object),
-           dimnames = list(rownames(object@x), NULL))
+           nrow = abc_n_particles(object),
+           dimnames = list(NULL, colnames(object@x)))
 }
 
 ##' Generate replicates of the first node in the model.
@@ -213,7 +213,7 @@ replicate_first_node <- function(model, n, n_events) {
 abc_proposal_covariance <- function(x) {
     if (is.null(x))
         return(NULL)
-    cov(t(x)) * 2
+    2 * cov(x)
 }
 
 abc_init_generation <- function(object) {
@@ -340,7 +340,7 @@ abc_next_epsilon <- function(x_old, x, distance, tolerance,
 abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
     ## Determine the density ratio by using the Kullback-Leibler
     ## importance estimation procedure.
-    k <- KLIEP(t(xnu), t(xde))
+    k <- KLIEP(xnu, xde)
 
     ## Determine the supremum by using an optimizer. For
     ## one-dimensional problems, use "Brent" else "Nelder-Mead".
@@ -354,7 +354,7 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
         upper <- max(xnu)
     }
 
-    c_t <- optim(par = xnu[, 1],
+    c_t <- optim(par = xnu[1, ],
                  fn = function(x, centers, sigma, weights) {
                      KLIEP_density_ratio(matrix(x, nrow = 1),
                                          centers = centers,
@@ -383,7 +383,7 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
 abc_progress <- function(t0, t1, x, w, npart, nprop) {
     cat(sprintf("\n\n  accrate = %.2e, ESS = %.2e time = %.2f secs\n\n",
                 npart / nprop, 1 / sum(w^2), (t1 - t0)[3]))
-    summary_matrix(x)
+    summary_matrix(t(x))
 }
 
 ##' Check the result from the ABC distance function.
@@ -481,7 +481,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             setTxtProgressBar(pb, particle_i)
     }
 
-    list(x = t(xx), ancestor = ancestor, distance = distance, nprop = nprop)
+    list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
 ##' @importFrom utils setTxtProgressBar
@@ -559,7 +559,16 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             setTxtProgressBar(pb, particle_i)
     }
 
-    list(x = t(xx), ancestor = ancestor, distance = distance, nprop = nprop)
+    list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
+}
+
+abc_weights <- function(object, generation, x, ancestor, w, sigma) {
+    if (!is.null(x))
+        x <- t(x[ancestor, , drop = FALSE])
+
+    .Call(SimInf_abc_weights, object@priors$distribution,
+          object@priors$p1, object@priors$p2, x,
+          t(abc_particles(object, generation)), w, sigma)
 }
 
 abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
@@ -607,9 +616,9 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
             i <- order(rowSums(result$distance))[seq_len(npart)]
             result$ancestor <- result$ancestor[i]
             object@x <-
-                array(result$x[, i],
-                      dim = c(nrow(result$x), npart, generation),
-                      dimnames = list(rownames(result$x), NULL, NULL))
+                array(result$x[i, ],
+                      dim = c(npart, ncol(result$x), generation),
+                      dimnames = list(NULL, colnames(result$x), NULL))
             object@distance <-
                 array(result$distance[i, , drop = FALSE],
                       dim = c(npart, ncol(result$distance), generation))
@@ -617,19 +626,15 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
         } else {
             object@x <-
                 array(c(object@x, result$x),
-                      dim = c(nrow(result$x), npart, generation),
-                      dimnames = list(rownames(result$x), NULL, NULL))
+                      dim = c(npart, ncol(result$x), generation),
+                      dimnames = list(NULL, colnames(result$x), NULL))
             object@distance <-
                 array(c(object@distance, result$distance),
                       dim = c(npart, ncol(result$distance), generation))
             x_old <- x
         }
 
-        ## Calculate weights
-        w <- .Call(SimInf_abc_weights, object@priors$distribution,
-                   object@priors$p1, object@priors$p2, x[, result$ancestor],
-                   abc_particles(object, generation), w, sigma)
-
+        w <- abc_weights(object, generation, x, result$ancestor, w, sigma)
         object@weight <- cbind(object@weight, w, deparse.level = 0)
         object@ess <- c(object@ess, 1 / sum(w^2))
         object@nprop <- c(object@nprop, result$nprop)

@@ -517,7 +517,7 @@ setMethod(
                  call. = FALSE)
         }
 
-        plot_density(t(abc_particles(x, y)))
+        plot_density(abc_particles(x, y))
 
         invisible(NULL)
     }
