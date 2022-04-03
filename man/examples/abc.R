@@ -46,7 +46,8 @@ fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
            npart = 100,
            ninit = 1000,
-           fn = distance)
+           fn = distance,
+           verbose = TRUE)
 
 ## Print a brief summary.
 fit
