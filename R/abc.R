@@ -38,9 +38,10 @@
 ##'     number of generations) where each column contains the
 ##'     tolerances for a generation and each row contains a sequence
 ##'     of gradually decreasing tolerances.
-##' @slot x A list where each item is a \code{matrix} with the
-##'     accepted particles in each generation. Each column is one
-##'     particle.
+##' @slot x A numeric array (number of particles \eqn{\times} number
+##'     of parameters \eqn{\times} number of generations) with the
+##'     parameter values for the accepted particles in each
+##'     generation. Each row is one particle.
 ##' @slot weight A numeric matrix (number of particles \eqn{\times}
 ##'     number of generations) with the weights for the particles
 ##'     \code{x} in the corresponding generation.
