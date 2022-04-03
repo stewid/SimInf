@@ -766,13 +766,13 @@ setMethod(
     function(model, ...) {
         ## Sample a particle to use for the parameters from the last
         ## generation.
-        generation <- length(model@x)
-        particle <- sample.int(ncol(model@x[[generation]]), 1)
+        generation <- abc_n_generations(model)
+        particle <- sample.int(abc_n_particles(model), 1)
 
         ## Apply the particle to the model.
-        for (i in seq_len(nrow(model@x[[generation]]))) {
+        for (i in seq_len(dim(model@x)[2])) {
             parameter <- model@pars[i]
-            value <- model@x[[generation]][i, particle]
+            value <- model@x[particle, i, generation]
             if (identical(model@target, "gdata")) {
                 model@model@gdata[parameter] <- value
             } else {
