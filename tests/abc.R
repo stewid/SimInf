@@ -141,6 +141,24 @@ stopifnot(identical(attr(proposals_obs, "ancestor"),
                     attr(proposals_exp, "ancestor")))
 
 ##
+## Determine weights for the proposals
+##
+
+w_exp <- rep(0.01, 100)
+
+w_obs <- .Call(SimInf:::SimInf_abc_weights, ## function
+               c("uniform", "uniform"),     ## distribution
+               c(0, 0),                     ## p1
+               c(1, 1),                     ## p2
+               NULL,                        ## x
+               proposals_obs,               ## xx
+               NULL,                        ## w
+               NULL)                        ## sigma
+
+stopifnot(identical(length(w_obs), length(w_exp)))
+stopifnot(all(abs(w_obs - w_exp) < tol))
+
+##
 ## Generate proposals with particles from a previous generation.
 ##
 
