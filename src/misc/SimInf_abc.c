@@ -142,7 +142,7 @@ SEXP attribute_hidden SimInf_abc_proposals(
     SEXP w,
     SEXP sigma)
 {
-    int error = 0, k, len = 0, N;
+    int error = 0, n_parameters, len = 0, n_proposals;
     gsl_rng *rng = NULL;
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
@@ -155,10 +155,10 @@ SEXP attribute_hidden SimInf_abc_proposals(
     /* Check input arguments. */
     if (SimInf_arg_check_integer_gt_zero(n))
         Rf_error("'n' must be an integer > 0.");
-    N = INTEGER(n)[0];
+    n_proposals = INTEGER(n)[0];
     if (!Rf_isString(parameter))
         Rf_error("'parameter' must be a character vector.");
-    k = Rf_length(parameter);
+    n_parameters = Rf_length(parameter);
     if (!Rf_isNull(x)) {
         len = Rf_length(w);
         if (len < 1)
@@ -166,7 +166,7 @@ SEXP attribute_hidden SimInf_abc_proposals(
     }
 
     /* Setup result matrix. */
-    PROTECT(xx = Rf_allocMatrix(REALSXP, k, N));
+    PROTECT(xx = Rf_allocMatrix(REALSXP, n_parameters, n_proposals));
     PROTECT(dimnames = Rf_allocVector(VECSXP, 2));
     Rf_setAttrib(xx, R_DimNamesSymbol, dimnames);
     SET_VECTOR_ELT(dimnames, 0, parameter);
@@ -174,7 +174,7 @@ SEXP attribute_hidden SimInf_abc_proposals(
 
     /* Setup vector to record 'ancestor' i.e. which particle the
      * proposal was sampled from. */
-    PROTECT(ancestor = Rf_allocVector(INTSXP, N));
+    PROTECT(ancestor = Rf_allocVector(INTSXP, n_proposals));
     Rf_setAttrib(xx, Rf_install("ancestor"), ancestor);
     ptr_ancestor = INTEGER(ancestor);
 
@@ -189,18 +189,19 @@ SEXP attribute_hidden SimInf_abc_proposals(
 
     if (Rf_isNull(x)) {
         /* First generation: sample from priors. */
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < n_proposals; i++) {
             ptr_ancestor[i] = NA_INTEGER;
-            for (int d = 0; d < k; d++) {
+            for (int d = 0; d < n_parameters; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'g':
-                    ptr_xx[i * k + d] = rgamma(ptr_p1[d], 1.0 / ptr_p2[d]);
+                    ptr_xx[i * n_parameters + d] =
+                        rgamma(ptr_p1[d], 1.0 / ptr_p2[d]);
                     break;
                 case 'n':
-                    ptr_xx[i * k + d] = rnorm(ptr_p1[d], ptr_p2[d]);
+                    ptr_xx[i * n_parameters + d] = rnorm(ptr_p1[d], ptr_p2[d]);
                     break;
                 case 'u':
-                    ptr_xx[i * k + d] = runif(ptr_p1[d], ptr_p2[d]);
+                    ptr_xx[i * n_parameters + d] = runif(ptr_p1[d], ptr_p2[d]);
                     break;
                 default:
                     error = 2;
@@ -213,8 +214,8 @@ SEXP attribute_hidden SimInf_abc_proposals(
     }
 
     /* Setup variance-covariance matrix. */
-    v_sigma = gsl_matrix_view_array(REAL(sigma), k, k);
-    SIGMA = gsl_matrix_alloc(k, k);
+    v_sigma = gsl_matrix_view_array(REAL(sigma), n_parameters, n_parameters);
+    SIGMA = gsl_matrix_alloc(n_parameters, n_parameters);
     if (!SIGMA) {
         error = 1;    /* #nocov */
         goto cleanup; /* #nocov */
@@ -240,10 +241,11 @@ SEXP attribute_hidden SimInf_abc_proposals(
             cdf[i] += cdf[i-1];
     }
 
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n_proposals; i++) {
         int accept;
         gsl_vector_view X;
-        gsl_vector_view proposal = gsl_vector_view_array(&ptr_xx[i * k], k);
+        gsl_vector_view proposal =
+            gsl_vector_view_array(&ptr_xx[i * n_parameters], n_parameters);
 
         do {
             /* Sample a particle from previous generation. Use a
@@ -261,24 +263,33 @@ SEXP attribute_hidden SimInf_abc_proposals(
             ptr_ancestor[i] = j + 1; /* R is one-based. */
 
             /* Perturbate the particle. */
-            X = gsl_vector_view_array(&ptr_x[j * k], k);
+            X = gsl_vector_view_array(&ptr_x[j * n_parameters], n_parameters);
             gsl_ran_multivariate_gaussian(rng, &X.vector, SIGMA,
                                           &proposal.vector);
 
             /* Check that the proposal is valid. */
             accept = 1;
-            for (int d = 0; d < k; d++) {
+            for (int d = 0; d < n_parameters; d++) {
                 double density;
 
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'g':
-                    density = dgamma(ptr_xx[i * k + d], ptr_p1[d], 1.0 / ptr_p2[d], 0);
+                    density = dgamma(ptr_xx[i * n_parameters + d],
+                                     ptr_p1[d],
+                                     1.0 / ptr_p2[d],
+                                     0);
                     break;
                 case 'n':
-                    density = dnorm(ptr_xx[i * k + d], ptr_x[j * k + d], ptr_p2[d], 0);
+                    density = dnorm(ptr_xx[i * n_parameters + d],
+                                    ptr_x[j * n_parameters + d],
+                                    ptr_p2[d],
+                                    0);
                     break;
                 case 'u':
-                    density = dunif(ptr_xx[i * k + d], ptr_p1[d], ptr_p2[d], 0);
+                    density = dunif(ptr_xx[i * n_parameters + d],
+                                    ptr_p1[d],
+                                    ptr_p2[d],
+                                    0);
                     break;
                 default:
                     error = 2;
