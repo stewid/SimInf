@@ -328,12 +328,12 @@ cleanup:
  *        prior: g) shape, n) mean, and u) lower bound.
  * @param p2 numeric vector with the second hyperparameter for each
  *        prior: g) rate, n) standard deviation, and u) upper bound.
- * @param x a numeric matrix (parameters x particles) with the
+ * @param x a numeric matrix (particles x parameters) with the
  *        previous generation of particles or NULL.
- * @param xx a numeric matrix (parameters x particles) with the
+ * @param xx a numeric matrix (particles x parameters) with the
  *        current generation of particles or NULL.
  * @param w a numeric vector with weights for the previous generation
- *        of particles.
+ *        of particles or NULL.
  * @param sigma variance-covariance matrix.
  * @return a numeric vector with weights for the current generation of
  *         particles.
