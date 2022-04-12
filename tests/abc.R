@@ -151,7 +151,7 @@ w_obs <- .Call(SimInf:::SimInf_abc_weights, ## function
                c(0, 0),                     ## p1
                c(1, 1),                     ## p2
                NULL,                        ## x
-               proposals_obs,               ## xx
+               t(proposals_obs),            ## xx
                NULL,                        ## w
                NULL)                        ## sigma
 
@@ -325,8 +325,8 @@ w_obs <- .Call(SimInf:::SimInf_abc_weights, ## function
                c("uniform", "uniform"),     ## distribution
                c(0, 0),                     ## p1
                c(1, 1),                     ## p2
-               x,                           ## x
-               xx,                          ## xx
+               t(x),                        ## x
+               t(xx),                       ## xx
                w,                           ## w
                sigma)                       ## sigma
 

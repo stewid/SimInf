@@ -457,9 +457,12 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     particle_i <- 0L
 
     while (particle_i < npart) {
+        x_prop <- x
+        if (!is.null(x_prop))
+            x_prop <- t(x_prop)
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
                            priors$distribution, priors$p1, priors$p2,
-                           1L, x, w, sigma)
+                           1L, x_prop, w, sigma)
         for (i in seq_len(nrow(proposals))) {
             model@gdata[pars[i]] <- proposals[i, 1L]
         }
@@ -523,9 +526,12 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             model <- replicate_first_node(model, n, n_events)
         }
 
+        x_prop <- x
+        if (!is.null(x_prop))
+            x_prop <- t(x_prop)
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
                            priors$distribution, priors$p1, priors$p2,
-                           n, x, w, sigma)
+                           n, x_prop, w, sigma)
         for (i in seq_len(nrow(proposals))) {
             model@ldata[pars[i], ] <- proposals[i, ]
         }
@@ -571,11 +577,11 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 
 abc_weights <- function(object, generation, x, ancestor, w, sigma) {
     if (!is.null(x))
-        x <- t(x[ancestor, , drop = FALSE])
+        x <- x[ancestor, , drop = FALSE]
 
     .Call(SimInf_abc_weights, object@priors$distribution,
           object@priors$p1, object@priors$p2, x,
-          t(abc_particles(object, generation)), w, sigma)
+          abc_particles(object, generation), w, sigma)
 }
 
 abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,

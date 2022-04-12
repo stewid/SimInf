@@ -348,7 +348,7 @@ SEXP attribute_hidden SimInf_abc_weights(
     SEXP sigma)
 {
     int error = 0;
-    int n_parameters, n_particles = Rf_ncols(xx);
+    int n_parameters, n_particles = Rf_nrows(xx);
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
     gsl_vector *work = NULL;
@@ -383,26 +383,31 @@ SEXP attribute_hidden SimInf_abc_weights(
     gsl_linalg_cholesky_decomp1(SIGMA);
 
     for (int i = 0; i < n_particles; i++) {
-        gsl_vector_view v_xx = gsl_vector_view_array(&ptr_xx[i * n_parameters],
-                                                     n_parameters);
+        gsl_vector_view v_xx = gsl_vector_view_array_with_stride(
+            &ptr_xx[i],    /* double *base */
+            n_particles,   /* size_t stride */
+            n_parameters); /* size_t n */
 
         ptr_ww[i] = 0.0;
         for (int d = 0; d < n_parameters; d++) {
             switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
             case 'g':
-                ptr_ww[i] +=
-                    dgamma(ptr_xx[i * n_parameters + d],
-                           ptr_p1[d], 1.0 / ptr_p2[d], 1);
+                ptr_ww[i] += dgamma(ptr_xx[d * n_particles + i],
+                                    ptr_p1[d],
+                                    1.0 / ptr_p2[d],
+                                    1);
                 break;
             case 'n':
-                ptr_ww[i] +=
-                    dnorm(ptr_xx[i * n_parameters + d],
-                          ptr_x[i * n_parameters + d], ptr_p2[d], 1);
+                ptr_ww[i] += dnorm(ptr_xx[d * n_particles + i],
+                                   ptr_x[d * n_particles + i],
+                                   ptr_p2[d],
+                                   1);
                 break;
             case 'u':
-                ptr_ww[i] +=
-                    dunif(ptr_xx[i * n_parameters + d],
-                          ptr_p1[d], ptr_p2[d], 1);
+                ptr_ww[i] += dunif(ptr_xx[d * n_particles + i],
+                                   ptr_p1[d],
+                                   ptr_p2[d],
+                                   1);
                 break;
             default:
                 error = 2;
@@ -418,8 +423,10 @@ SEXP attribute_hidden SimInf_abc_weights(
         sum = 0.0;
         for (int j = 0; j < n_particles; j++) {
             double pdf;
-            gsl_vector_view v_x = gsl_vector_view_array(
-                &ptr_x[j * n_parameters], n_parameters);
+            gsl_vector_view v_x = gsl_vector_view_array_with_stride(
+                &ptr_x[j],     /* double *base */
+                n_particles,   /* size_t stride */
+                n_parameters); /* size_t n */
 
             gsl_ran_multivariate_gaussian_pdf(&v_xx.vector, &v_x.vector,
                                               SIGMA, &pdf, work);
