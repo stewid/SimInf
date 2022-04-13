@@ -123,12 +123,12 @@ static void SimInf_abc_error(int error)
  * @param p2 numeric vector with the second hyperparameter for each
  *        prior: g) rate, n) standard deviation, and u) upper bound.
  * @param n number of proposals to generate.
- * @param x a numeric matrix (parameters x particles) with a previous
+ * @param x a numeric matrix (particles x parameters) with a previous
  *        generation of particles or NULL.
  * @param w a numeric vector with weigths for the previous generation
  *        of particles or NULL.
  * @param sigma variance-covariance matrix.
- * @return a numeric matrix (parameters x particles) with
+ * @return a numeric matrix (particles x parameters) with
  *         proposals. The matrix also has an attribute 'ancestor' with
  *         an index that indicates which particle it was sampled from.
  */
@@ -166,10 +166,10 @@ SEXP attribute_hidden SimInf_abc_proposals(
     }
 
     /* Setup result matrix. */
-    PROTECT(xx = Rf_allocMatrix(REALSXP, n_parameters, n_proposals));
+    PROTECT(xx = Rf_allocMatrix(REALSXP, n_proposals, n_parameters));
     PROTECT(dimnames = Rf_allocVector(VECSXP, 2));
     Rf_setAttrib(xx, R_DimNamesSymbol, dimnames);
-    SET_VECTOR_ELT(dimnames, 0, parameter);
+    SET_VECTOR_ELT(dimnames, 1, parameter);
     ptr_xx = REAL(xx);
 
     /* Setup vector to record 'ancestor' i.e. which particle the
@@ -194,14 +194,14 @@ SEXP attribute_hidden SimInf_abc_proposals(
             for (int d = 0; d < n_parameters; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'g':
-                    ptr_xx[i * n_parameters + d] =
+                    ptr_xx[d * n_proposals + i] =
                         rgamma(ptr_p1[d], 1.0 / ptr_p2[d]);
                     break;
                 case 'n':
-                    ptr_xx[i * n_parameters + d] = rnorm(ptr_p1[d], ptr_p2[d]);
+                    ptr_xx[d * n_proposals + i] = rnorm(ptr_p1[d], ptr_p2[d]);
                     break;
                 case 'u':
-                    ptr_xx[i * n_parameters + d] = runif(ptr_p1[d], ptr_p2[d]);
+                    ptr_xx[d * n_proposals + i] = runif(ptr_p1[d], ptr_p2[d]);
                     break;
                 default:
                     error = 2;
@@ -244,8 +244,10 @@ SEXP attribute_hidden SimInf_abc_proposals(
     for (int i = 0; i < n_proposals; i++) {
         int accept;
         gsl_vector_view X;
-        gsl_vector_view proposal =
-            gsl_vector_view_array(&ptr_xx[i * n_parameters], n_parameters);
+        gsl_vector_view proposal = gsl_vector_view_array_with_stride(
+            &ptr_xx[i],    /* double *base */
+            n_proposals,   /* size_t stride */
+            n_parameters); /* size_t n */
 
         do {
             /* Sample a particle from previous generation. Use a
@@ -263,7 +265,10 @@ SEXP attribute_hidden SimInf_abc_proposals(
             ptr_ancestor[i] = j + 1; /* R is one-based. */
 
             /* Perturbate the particle. */
-            X = gsl_vector_view_array(&ptr_x[j * n_parameters], n_parameters);
+            X = gsl_vector_view_array_with_stride(
+                &ptr_x[j],     /* double *base */
+                len,           /* size_t stride */
+                n_parameters); /* size_t n */
             gsl_ran_multivariate_gaussian(rng, &X.vector, SIGMA,
                                           &proposal.vector);
 
@@ -274,19 +279,19 @@ SEXP attribute_hidden SimInf_abc_proposals(
 
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'g':
-                    density = dgamma(ptr_xx[i * n_parameters + d],
+                    density = dgamma(ptr_xx[d * n_proposals + i],
                                      ptr_p1[d],
                                      1.0 / ptr_p2[d],
                                      0);
                     break;
                 case 'n':
-                    density = dnorm(ptr_xx[i * n_parameters + d],
-                                    ptr_x[j * n_parameters + d],
+                    density = dnorm(ptr_xx[d * n_proposals + i],
+                                    ptr_x[d * len + j],
                                     ptr_p2[d],
                                     0);
                     break;
                 case 'u':
-                    density = dunif(ptr_xx[i * n_parameters + d],
+                    density = dunif(ptr_xx[d * n_proposals + i],
                                     ptr_p1[d],
                                     ptr_p2[d],
                                     0);

@@ -134,9 +134,9 @@ proposals_obs <-
           NULL,                          ## w
           NULL)                          ## sigma
 
-stopifnot(identical(dim(proposals_obs), dim(proposals_exp)))
-stopifnot(identical(dimnames(proposals_obs), dimnames(proposals_exp)))
-stopifnot(all(abs(proposals_obs - proposals_exp) < tol))
+stopifnot(identical(dim(proposals_obs), dim(t(proposals_exp))))
+stopifnot(identical(dimnames(proposals_obs), dimnames(t(proposals_exp))))
+stopifnot(all(abs(proposals_obs - t(proposals_exp)) < tol))
 stopifnot(identical(attr(proposals_obs, "ancestor"),
                     attr(proposals_exp, "ancestor")))
 
@@ -151,7 +151,7 @@ w_obs <- .Call(SimInf:::SimInf_abc_weights, ## function
                c(0, 0),                     ## p1
                c(1, 1),                     ## p2
                NULL,                        ## x
-               t(proposals_obs),            ## xx
+               proposals_obs,               ## xx
                NULL,                        ## w
                NULL)                        ## sigma
 
@@ -268,13 +268,13 @@ proposals_obs <-
           c(0, 0),                       ## p1
           c(1, 1),                       ## p2
           100L,                          ## n
-          x,                             ## x
+          t(x),                          ## x
           w,                             ## w
           sigma)                         ## sigma
 
-stopifnot(identical(dim(proposals_obs), dim(proposals_exp)))
-stopifnot(identical(dimnames(proposals_obs), dimnames(proposals_exp)))
-stopifnot(all(abs(proposals_obs - proposals_exp) < tol))
+stopifnot(identical(dim(proposals_obs), dim(t(proposals_exp))))
+stopifnot(identical(dimnames(proposals_obs), dimnames(t(proposals_exp))))
+stopifnot(all(abs(proposals_obs - t(proposals_exp)) < tol))
 stopifnot(identical(attr(proposals_obs, "ancestor"),
                     attr(proposals_exp, "ancestor")))
 

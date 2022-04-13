@@ -457,14 +457,11 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     particle_i <- 0L
 
     while (particle_i < npart) {
-        x_prop <- x
-        if (!is.null(x_prop))
-            x_prop <- t(x_prop)
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
                            priors$distribution, priors$p1, priors$p2,
-                           1L, x_prop, w, sigma)
-        for (i in seq_len(nrow(proposals))) {
-            model@gdata[pars[i]] <- proposals[i, 1L]
+                           1L, x, w, sigma)
+        for (i in seq_len(ncol(proposals))) {
+            model@gdata[pars[i]] <- proposals[1L, i]
         }
 
         d <- abc_distance(fn(run(model), generation = generation, ...), 1L)
@@ -526,14 +523,11 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             model <- replicate_first_node(model, n, n_events)
         }
 
-        x_prop <- x
-        if (!is.null(x_prop))
-            x_prop <- t(x_prop)
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
                            priors$distribution, priors$p1, priors$p2,
-                           n, x_prop, w, sigma)
-        for (i in seq_len(nrow(proposals))) {
-            model@ldata[pars[i], ] <- proposals[i, ]
+                           n, x, w, sigma)
+        for (i in seq_len(ncol(proposals))) {
+            model@ldata[pars[i], ] <- proposals[, i]
         }
 
         d <- abc_distance(fn(run(model), generation = generation, ...), n)
