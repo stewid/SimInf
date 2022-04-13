@@ -40,9 +40,18 @@ normal(10, 1)}. The following distributions are supported:
 in \code{priors} must be either in \code{gdata} or
 \code{ldata}.}
 
-\item{npart}{An integer specifying the number of particles.}
+\item{npart}{An integer specifying the number of particles to
+approximate the posterior.}
 
-\item{ninit}{FIXME.}
+\item{ninit}{Specify a positive integer (>\code{npart}) to
+adaptively select a sequence of tolerances using the algorithm
+of Simola and others (2021). The initial tolerance is
+adaptively selected by sampling \code{ninit} draws from the
+prior and then retain the \code{npart} particles with the
+smallest distances. Note there must be enough initial
+particles to satisfactorily explore the parameter space, see
+Simola and others (2021). If the \code{tolerance} parameter is
+specified, then \code{ninit} must be \code{NULL}.}
 
 \item{fn}{A function for calculating the summary statistics for a
 simulated trajectory. For each particle, the function must
@@ -65,7 +74,7 @@ contained in \code{gdata}, then the trajectory in the
 number of generations) where each column contains the
 tolerances for a generation and each row contains a sequence
 of gradually decreasing tolerances. Can also be a numeric
-vector if there is only one summary statistics. The tolerance
+vector if there is only one summary statistic. The tolerance
 determines the number of generations of ABC-SMC to run.}
 
 \item{...}{Further arguments to be passed to \code{fn}.}

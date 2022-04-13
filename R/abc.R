@@ -666,8 +666,17 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
 ##'
 ##' @param model The model to generate data from.
 ##' @template priors-param
-##' @param npart An integer specifying the number of particles.
-##' @param ninit FIXME.
+##' @param npart An integer specifying the number of particles to
+##'     approximate the posterior.
+##' @param ninit Specify a positive integer (>\code{npart}) to
+##'     adaptively select a sequence of tolerances using the algorithm
+##'     of Simola and others (2021). The initial tolerance is
+##'     adaptively selected by sampling \code{ninit} draws from the
+##'     prior and then retain the \code{npart} particles with the
+##'     smallest distances. Note there must be enough initial
+##'     particles to satisfactorily explore the parameter space, see
+##'     Simola and others (2021). If the \code{tolerance} parameter is
+##'     specified, then \code{ninit} must be \code{NULL}.
 ##' @param fn A function for calculating the summary statistics for a
 ##'     simulated trajectory. For each particle, the function must
 ##'     determine the distance and return that information. The first
