@@ -72,6 +72,32 @@ setClass(
               ess       = "numeric")
 )
 
+##' Check if a SimInf_abc object is valid
+##'
+##' @param object The SimInf_abc object to check.
+##' @noRd
+valid_SimInf_abc_object <- function(object) {
+    ## Check model
+    validObject(object@model)
+
+    if (!identical(storage.mode(object@x), "double"))
+        return("The storage mode of 'x' must be double.")
+
+    if (!identical(storage.mode(object@distance), "double"))
+        return("The storage mode of 'distance' must be double.")
+
+    if (!identical(storage.mode(object@tolerance), "double"))
+        return("The storage mode of 'tolerance' must be double.")
+
+    if (!identical(storage.mode(object@weight), "double"))
+        return("The storage mode of 'weight' must be double.")
+
+    TRUE
+}
+
+## Assign the function as the validity method for the class.
+setValidity("SimInf_abc", valid_SimInf_abc_object)
+
 setAs(
     from = "SimInf_abc",
     to = "data.frame",
