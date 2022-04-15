@@ -37,16 +37,12 @@ proposals in each generation.}
 
 \item{\code{fn}}{A function for calculating the summary statistics for the
 simulated trajectory and determine the distance for each
-particle. The first argument in \code{fn} is the simulated
-model containing one trajectory. The second argument to
-\code{fn} is an integer with the \code{generation} of the
-particles. The function should return a logical vector with
-one value for each particle in the simulated model.}
+particle, see \code{\link{abc}} for more details.}
 
-\item{\code{tolerance}}{A numeric matrix (number of summary statistics X
-number of generations) where each column contains the
-tolerances for a generation and each row contains a sequence
-of gradually decreasing tolerances.}
+\item{\code{tolerance}}{A numeric matrix (number of summary statistics
+\eqn{\times} number of generations) where each column contains
+the tolerances for a generation and each row contains a
+sequence of gradually decreasing tolerances.}
 
 \item{\code{x}}{A numeric array (number of particles \eqn{\times} number
 of parameters \eqn{\times} number of generations) with the
@@ -64,7 +60,7 @@ each generation. Each row contains the distance for a particle
 and each column contains the distance for a summary statistic.}
 
 \item{\code{ess}}{A numeric vector with the effective sample size (ESS) in
-each generation. Effective sample size is computed as
+each generation. The effective sample size is computed as
 \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
 (sum(w_ig^2)),} where \eqn{w_{g}^{(i)}}{w_ig} is the
 normalized weight of particle \eqn{i} in generation \eqn{g}.}

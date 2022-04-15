@@ -35,7 +35,7 @@ specified with a formula notation, for example, \code{beta ~
 uniform(0, 1)} specifies that beta is uniformly distributed
 between 0 and 1. Use \code{c()} to provide more than one
 prior, for example, \code{c(beta ~ uniform(0, 1), gamma ~
-normal(10, 1)}. The following distributions are supported:
+normal(10, 1))}. The following distributions are supported:
 \code{gamma}, \code{normal} and \code{uniform}. All parameters
 in \code{priors} must be only in either \code{gdata} or
 \code{ldata}.}
@@ -73,12 +73,13 @@ parameters to fit are contained in \code{gdata}, then the
 trajectory in the \code{result} argument represents one
 particle.}
 
-\item{tolerance}{A numeric matrix (number of summary statistics X
-number of generations) where each column contains the
-tolerances for a generation and each row contains a sequence
-of gradually decreasing tolerances. Can also be a numeric
-vector if there is only one summary statistic. The tolerance
-determines the number of generations of ABC-SMC to run.}
+\item{tolerance}{A numeric matrix (number of summary statistics
+\eqn{\times} number of generations) where each column contains
+the tolerances for a generation and each row contains a
+sequence of gradually decreasing tolerances. Can also be a
+numeric vector if there is only one summary statistic. The
+tolerance determines the number of generations of ABC-SMC to
+run.}
 
 \item{...}{Further arguments to be passed to \code{fn}.}
 
