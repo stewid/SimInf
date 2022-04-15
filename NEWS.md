@@ -2,6 +2,11 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+## BUG FIXES
+
+*  The `plot` function for the SimInf_abc class now passes the
+   additional arguments in '...' to the underlying plot functions.
+
 # SimInf 8.4.0 (2021-09-19)
 
 ## CHANGES OR IMPROVEMENTS
