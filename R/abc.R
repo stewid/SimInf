@@ -690,10 +690,10 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
 
 ##' Approximate Bayesian computation
 ##'
-##' @param model The model to generate data from.
+##' @param model The \code{SimInf_model} object to generate data from.
 ##' @template priors-param
-##' @param npart An integer specifying the number of particles to
-##'     approximate the posterior.
+##' @param npart An integer \code{(>1)} specifying the number of
+##'     particles to approximate the posterior with.
 ##' @param ninit Specify a positive integer (>\code{npart}) to
 ##'     adaptively select a sequence of tolerances using the algorithm
 ##'     of Simola and others (2021). The initial tolerance is
@@ -706,19 +706,22 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
 ##' @param fn A function for calculating the summary statistics for a
 ##'     simulated trajectory. For each particle, the function must
 ##'     determine the distance and return that information. The first
-##'     argument passed to the \code{fn} function is the result from a
-##'     \code{run} of the model and it contains one trajectory. The
-##'     second argument to \code{fn} is an integer with the
-##'     \code{generation} of the particle(s). Depending on the
-##'     underlying model structure, data for one or more particles
-##'     have been generated in each call to \code{fn}. If the
-##'     \code{model} only contains one node and all parameters to fit
-##'     are in \code{ldata}, then that node will be replicated and
-##'     each of the replicated nodes represent one particle in the
-##'     trajectory (see \sQuote{Examples}). On the other hand if the
-##'     model contains multiple nodes or the parameters to fit are
-##'     contained in \code{gdata}, then the trajectory in the
-##'     \code{result} argument represents one particle.
+##'     argument, \code{result}, passed to the \code{fn} function is
+##'     the result from a \code{run} of the model with one trajectory
+##'     attached to it. The second argument, \code{generation}, to
+##'     \code{fn} is an integer with the generation of the
+##'     particle(s). Further arguments that can passed to the
+##'     \code{fn} comes from \code{...} in the \code{abc}
+##'     function. Depending on the underlying model structure, data
+##'     for one or more particles have been generated in each call to
+##'     \code{fn}. If the \code{model} only contains one node and all
+##'     the parameters to fit are in \code{ldata}, then that node will
+##'     be replicated and each of the replicated nodes represent one
+##'     particle in the trajectory (see \sQuote{Examples}). On the
+##'     other hand if the model contains multiple nodes or the
+##'     parameters to fit are contained in \code{gdata}, then the
+##'     trajectory in the \code{result} argument represents one
+##'     particle.
 ##' @template tolerance-param
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param

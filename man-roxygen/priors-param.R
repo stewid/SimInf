@@ -5,5 +5,5 @@
 ##'     prior, for example, \code{c(beta ~ uniform(0, 1), gamma ~
 ##'     normal(10, 1)}. The following distributions are supported:
 ##'     \code{gamma}, \code{normal} and \code{uniform}. All parameters
-##'     in \code{priors} must be either in \code{gdata} or
+##'     in \code{priors} must be only in either \code{gdata} or
 ##'     \code{ldata}.

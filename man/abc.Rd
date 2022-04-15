@@ -28,7 +28,7 @@ abc(
 )
 }
 \arguments{
-\item{model}{The model to generate data from.}
+\item{model}{The \code{SimInf_model} object to generate data from.}
 
 \item{priors}{The priors for the parameters to fit. Each prior is
 specified with a formula notation, for example, \code{beta ~
@@ -37,11 +37,11 @@ between 0 and 1. Use \code{c()} to provide more than one
 prior, for example, \code{c(beta ~ uniform(0, 1), gamma ~
 normal(10, 1)}. The following distributions are supported:
 \code{gamma}, \code{normal} and \code{uniform}. All parameters
-in \code{priors} must be either in \code{gdata} or
+in \code{priors} must be only in either \code{gdata} or
 \code{ldata}.}
 
-\item{npart}{An integer specifying the number of particles to
-approximate the posterior.}
+\item{npart}{An integer \code{(>1)} specifying the number of
+particles to approximate the posterior with.}
 
 \item{ninit}{Specify a positive integer (>\code{npart}) to
 adaptively select a sequence of tolerances using the algorithm
@@ -56,19 +56,22 @@ specified, then \code{ninit} must be \code{NULL}.}
 \item{fn}{A function for calculating the summary statistics for a
 simulated trajectory. For each particle, the function must
 determine the distance and return that information. The first
-argument passed to the \code{fn} function is the result from a
-\code{run} of the model and it contains one trajectory. The
-second argument to \code{fn} is an integer with the
-\code{generation} of the particle(s). Depending on the
-underlying model structure, data for one or more particles
-have been generated in each call to \code{fn}. If the
-\code{model} only contains one node and all parameters to fit
-are in \code{ldata}, then that node will be replicated and
-each of the replicated nodes represent one particle in the
-trajectory (see \sQuote{Examples}). On the other hand if the
-model contains multiple nodes or the parameters to fit are
-contained in \code{gdata}, then the trajectory in the
-\code{result} argument represents one particle.}
+argument, \code{result}, passed to the \code{fn} function is
+the result from a \code{run} of the model with one trajectory
+attached to it. The second argument, \code{generation}, to
+\code{fn} is an integer with the generation of the
+particle(s). Further arguments that can passed to the
+\code{fn} comes from \code{...} in the \code{abc}
+function. Depending on the underlying model structure, data
+for one or more particles have been generated in each call to
+\code{fn}. If the \code{model} only contains one node and all
+the parameters to fit are in \code{ldata}, then that node will
+be replicated and each of the replicated nodes represent one
+particle in the trajectory (see \sQuote{Examples}). On the
+other hand if the model contains multiple nodes or the
+parameters to fit are contained in \code{gdata}, then the
+trajectory in the \code{result} argument represents one
+particle.}
 
 \item{tolerance}{A numeric matrix (number of summary statistics X
 number of generations) where each column contains the
@@ -128,12 +131,11 @@ distance <- function(result, ...) {
 }
 
 ## Fit the model parameters using ABC-SMC. The priors for the
-## parameters are specified in the second argument using a formula
-## notation. Here we use a uniform distribtion for each parameter with
-## lower bound = 0 and upper bound = 1. Note that we use a low number
-## particles here to keep the run-time of the example short. In
-## practice you would want to use many more to ensure better
-## approximations.
+## parameters are specified using a formula notation. Here we use a
+## uniform distribtion for each parameter with lower bound = 0 and
+## upper bound = 1. Note that we use a low number particles here to
+## keep the run-time of the example short. In practice you would want
+## to use many more to ensure better approximations.
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
            npart = 100,
