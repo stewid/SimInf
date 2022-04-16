@@ -725,8 +725,21 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
 ##'     other hand if the model contains multiple nodes or the
 ##'     parameters to fit are contained in \code{gdata}, then the
 ##'     trajectory in the \code{result} argument represents one
-##'     particle.
-##' @template tolerance-param
+##'     particle. The function can return a numeric matrix (number of
+##'     particles \eqn{\times} number of summary statistics). Or, if
+##'     the distance contains one summary statistic, a numeric vector
+##'     with the length equal to the number of particles. Note that
+##'     when using adaptive tolerance selection, only one summary
+##'     statistic can be used, i.e., the function must return a matrix
+##'     (number of particles \eqn{\times} 1) or a numeric vector.
+##' @param tolerance A numeric matrix (number of summary statistics
+##'     \eqn{\times} number of generations) where each column contains
+##'     the tolerances for a generation and each row contains a
+##'     sequence of gradually decreasing tolerances. Can also be a
+##'     numeric vector if there is only one summary statistic. The
+##'     tolerance determines the number of generations of ABC-SMC to
+##'     run. If the \code{ninit} parameter is specified, then
+##'     \code{tolerance} must be \code{NULL}.
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
 ##' @return A \code{SimInf_abc} object.
@@ -781,7 +794,13 @@ setMethod(
 ##' Run more generations of ABC SMC
 ##'
 ##' @param object The \code{SimInf_abc} to continue from.
-##' @template tolerance-param
+##' @param tolerance A numeric matrix (number of summary statistics
+##'     \eqn{\times} number of generations) where each column contains
+##'     the tolerances for a generation and each row contains a
+##'     sequence of gradually decreasing tolerances. Can also be a
+##'     numeric vector if there is only one summary statistic. The
+##'     tolerance determines the number of generations of ABC-SMC to
+##'     run.
 ##' @param ... Further arguments to be passed to the
 ##'     \code{SimInf_abc@@fn}.
 ##' @template verbose-param
