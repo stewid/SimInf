@@ -12,8 +12,8 @@ version has been incremented.
   Approximate Bayesian Computation Sequential Monte Carlo ('ABC-SMC')
   algorithm, see the documentation for the 'abc' function. Moreover,
   added functionality to adaptively select a sequence of tolerances
-  using the algorithm of Simola and others (2021) [doi:
-  10.1214/20-BA1211](https://doi.org/10.1214/20-BA1211).
+  using the algorithm 'Adaptive Approximate Bayesian Computation
+  Tolerance Selection' of Simola and others (2021), Bayesian Analysis.
 
 ## BUG FIXES
 
