@@ -493,6 +493,10 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             ## subsequent calls to 'abc_accept'.
             tolerance <- rep(Inf, ncol(d))
             distance <- matrix(NA_real_, nrow = npart, ncol = ncol(d))
+            if (!identical(ncol(d), 1L)) {
+                stop("Adaptive tolerance must have one summary statistic.",
+                     call. = FALSE)
+            }
         }
 
         accept <- abc_accept(d, tolerance)
@@ -559,6 +563,10 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
             ## subsequent calls to 'abc_accept'.
             tolerance <- rep(Inf, ncol(d))
             distance <- matrix(NA_real_, nrow = npart, ncol = ncol(d))
+            if (!identical(ncol(d), 1L)) {
+                stop("Adaptive tolerance must have one summary statistic.",
+                     call. = FALSE)
+            }
         }
 
         ## Collect accepted particles making sure not to collect more
