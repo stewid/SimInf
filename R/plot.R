@@ -510,7 +510,7 @@ setMethod(
     signature(x = "SimInf_abc"),
     function(x, y, ...) {
         if (missing(y))
-            y <- abc_n_generations(x)
+            y <- n_generations(x)
         y <- as.integer(y)
         if (length(y) != 1) {
             stop("Can only select one generation to plot.",

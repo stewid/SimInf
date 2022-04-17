@@ -98,7 +98,7 @@ setAs(
     from = "SimInf_abc",
     to = "data.frame",
     def = function(from) {
-        do.call("rbind", lapply(seq_len(abc_n_generations(from)), function(i) {
+        do.call("rbind", lapply(seq_len(n_generations(from)), function(i) {
             cbind(generation = i,
                   weight = from@weight[, i],
                   as.data.frame(abc_particles(from, i)))
@@ -115,6 +115,30 @@ setAs(
 as.data.frame.SimInf_abc <- function(x, ...) {
     as(x, "data.frame")
 }
+
+##' Determine the number of generations
+##'
+##' @param object the \code{SimInf_abc} object to determine the number
+##'     of generations for.
+##' @return an integer with the number of generations.
+##' @export
+setGeneric(
+    "n_generations",
+    signature = "object",
+    function(object) {
+        standardGeneric("n_generations")
+    }
+)
+
+##' @rdname n_generations
+##' @export
+setMethod(
+    "n_generations",
+    signature(object = "SimInf_abc"),
+    function(object) {
+        dim(object@x)[3]
+    }
+)
 
 summary_particles <- function(object, i) {
     str <- sprintf("Generation %i:", i)
@@ -138,10 +162,10 @@ setMethod(
         cat(sprintf("Number of particles per generation: %i\n",
                     abc_n_particles(object)))
         cat(sprintf("Number of generations: %i\n",
-                    abc_n_generations(object)))
+                    n_generations(object)))
 
-        if (abc_n_generations(object))
-            summary_particles(object, abc_n_generations(object))
+        if (n_generations(object))
+            summary_particles(object, n_generations(object))
 
         invisible(object)
     }
@@ -161,21 +185,15 @@ setMethod(
         cat(sprintf("Number of particles per generation: %i\n",
                     abc_n_particles(object)))
         cat(sprintf("Number of generations: %i\n",
-                    abc_n_generations(object)))
+                    n_generations(object)))
 
-        for (i in seq_len(abc_n_generations(object))) {
+        for (i in seq_len(n_generations(object))) {
             summary_particles(object, i)
         }
 
         invisible(NULL)
     }
 )
-
-##' Determine the number of generations.
-##' @noRd
-abc_n_generations <- function(object) {
-    dim(object@x)[3]
-}
 
 ##' Determine the number of particles.
 ##' @noRd
@@ -189,7 +207,7 @@ abc_particles <- function(object, generation) {
     stopifnot(is.integer(generation),
               length(generation) ==  1,
               generation[1] >= 1,
-              generation[1] <= abc_n_generations(object))
+              generation[1] <= n_generations(object))
 
     matrix(as.vector(object@x[, , generation]),
            nrow = abc_n_particles(object),
@@ -240,11 +258,11 @@ abc_proposal_covariance <- function(x) {
 }
 
 abc_init_generation <- function(object) {
-    abc_n_generations(object) + 1L
+    n_generations(object) + 1L
 }
 
 abc_init_npart <- function(object, ninit, tolerance) {
-    if (abc_n_generations(object) > 0 || is.null(ninit))
+    if (n_generations(object) > 0 || is.null(ninit))
         return(abc_n_particles(object))
 
     check_integer_arg(ninit)
@@ -261,8 +279,8 @@ abc_init_npart <- function(object, ninit, tolerance) {
 }
 
 abc_init_particles <- function(object) {
-    if (abc_n_generations(object) > 0)
-        return(abc_particles(object, abc_n_generations(object)))
+    if (n_generations(object) > 0)
+        return(abc_particles(object, n_generations(object)))
     NULL
 }
 
@@ -701,6 +719,7 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
 
 ##' Approximate Bayesian computation
 ##'
+##'
 ##' @param model The \code{SimInf_model} object to generate data from.
 ##' @template priors-param
 ##' @param npart An integer \code{(>1)} specifying the number of
@@ -848,7 +867,7 @@ setMethod(
     function(model, ...) {
         ## Sample a particle to use for the parameters from the last
         ## generation.
-        generation <- abc_n_generations(model)
+        generation <- n_generations(model)
         particle <- sample.int(abc_n_particles(model), 1)
 
         ## Apply the particle to the model.
