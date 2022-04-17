@@ -13,7 +13,8 @@ abc(
   fn = NULL,
   tolerance = NULL,
   ...,
-  verbose = getOption("verbose", FALSE)
+  verbose = getOption("verbose", FALSE),
+  post_gen_fun = NULL
 )
 
 \S4method{abc}{SimInf_model}(
@@ -24,7 +25,8 @@ abc(
   fn = NULL,
   tolerance = NULL,
   ...,
-  verbose = getOption("verbose", FALSE)
+  verbose = getOption("verbose", FALSE),
+  post_gen_fun = NULL
 )
 }
 \arguments{
@@ -93,6 +95,12 @@ run. If the \code{ninit} parameter is specified, then
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
 use \code{FALSE} if it is not set.}
+
+\item{post_gen_fun}{An optional function that, if non-NULL, is
+applied after each completed generation. The function must
+accept one argument of type code{SimInf_abc} with the current
+state of the fitting process. This function can be useful to,
+for example, save and inspect intermediate results.}
 }
 \value{
 A \code{SimInf_abc} object.

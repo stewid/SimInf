@@ -608,8 +608,11 @@ abc_weights <- function(object, generation, x, ancestor, w, sigma) {
           abc_particles(object, generation), w, sigma)
 }
 
-abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
-                         verbose = getOption("verbose", FALSE)) {
+abc_internal <- function(object, ninit, tolerance, ..., verbose,
+                         post_gen_fun) {
+    if (!is.null(post_gen_fun))
+        post_gen_fun <- match.fun(post_gen_fun)
+
     if (all(is.null(ninit), is.null(tolerance)))
         stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
 
@@ -683,6 +686,10 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
         if (isTRUE(verbose))
             abc_progress(t0, proc.time(), x, w, d, npart, result$nprop)
 
+        ## Handle the post-generation callback.
+        if (!is.null(post_gen_fun))
+            post_gen_fun(object)
+
         generation <- generation + 1L
         epsilon <- abc_next_epsilon(x_old, x, d, tolerance, generation)
         if (is.null(epsilon))
@@ -742,6 +749,7 @@ abc_internal <- function(object, ninit = NULL, tolerance = NULL, ...,
 ##'     \code{tolerance} must be \code{NULL}.
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
+##' @template post_gen_fun-param
 ##' @return A \code{SimInf_abc} object.
 ##' @references
 ##'
@@ -757,7 +765,8 @@ setGeneric(
     signature = "model",
     function(model, priors = NULL, npart = NULL, ninit = NULL,
              fn = NULL, tolerance = NULL, ...,
-             verbose = getOption("verbose", FALSE)) {
+             verbose = getOption("verbose", FALSE),
+             post_gen_fun = NULL) {
         standardGeneric("abc")
     }
 )
@@ -767,7 +776,8 @@ setGeneric(
 setMethod(
     "abc",
     signature(model = "SimInf_model"),
-    function(model, priors, npart, ninit, fn, tolerance, ..., verbose) {
+    function(model, priors, npart, ninit, fn, tolerance, ..., verbose,
+             post_gen_fun) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (length(npart) != 1L || npart <= 1L)
@@ -779,15 +789,16 @@ setMethod(
 
         object <- new("SimInf_abc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars,
-                      nprop = integer(), fn = fn,
+                      nprop = integer(), fn = match.fun(fn),
                       x = array(numeric(0), c(0, 0, 0)),
                       tolerance = matrix(numeric(0), nrow = 0, ncol = 0),
                       weight = matrix(numeric(0), nrow = npart, ncol = 0),
                       distance = array(numeric(0), dim = c(0, 0, 0)),
                       ess = numeric())
 
-        abc_internal(object, ninit = ninit, tolerance = tolerance,
-                     ..., verbose = verbose)
+        abc_internal(object = object, ninit = ninit, tolerance = tolerance,
+                     ..., verbose = verbose,
+                     post_gen_fun = post_gen_fun)
     }
 )
 
@@ -804,6 +815,7 @@ setMethod(
 ##' @param ... Further arguments to be passed to the
 ##'     \code{SimInf_abc@@fn}.
 ##' @template verbose-param
+##' @template post_gen_fun-param
 ##' @return A \code{SimInf_abc} object.
 ##' @export
 setGeneric(
@@ -820,9 +832,10 @@ setMethod(
     "continue",
     signature(object = "SimInf_abc"),
     function(object, tolerance = NULL, ...,
-             verbose = getOption("verbose", FALSE)) {
-        abc_internal(object, ninit = NULL, tolerance = tolerance,
-                     ..., verbose = verbose)
+             verbose = getOption("verbose", FALSE),
+             post_gen_fun = NULL) {
+        abc_internal(object = object, ninit = NULL, tolerance = tolerance,
+                     ..., verbose = verbose, post_gen_fun = post_gen_fun)
     }
 )
 
