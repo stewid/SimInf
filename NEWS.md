@@ -15,6 +15,11 @@ version has been incremented.
   using the algorithm 'Adaptive Approximate Bayesian Computation
   Tolerance Selection' of Simola and others (2021), Bayesian Analysis.
 
+## CHANGES OR IMPROVEMENTS
+
+* Added the function 'n_generations' to determine the number of
+  generations in a 'SimInf_abc' object.
+
 ## BUG FIXES
 
 *  The `plot` function for the SimInf_abc class now passes the
