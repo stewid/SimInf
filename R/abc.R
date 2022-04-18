@@ -733,31 +733,32 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
 ##'     particles to satisfactorily explore the parameter space, see
 ##'     Simola and others (2021). If the \code{tolerance} parameter is
 ##'     specified, then \code{ninit} must be \code{NULL}.
-##' @param fn A function for calculating the summary statistics for a
-##'     simulated trajectory. For each particle, the function must
-##'     determine the distance and return that information. The first
-##'     argument, \code{result}, passed to the \code{fn} function is
-##'     the result from a \code{run} of the model with one trajectory
-##'     attached to it. The second argument, \code{generation}, to
-##'     \code{fn} is an integer with the generation of the
-##'     particle(s). Further arguments that can passed to the
-##'     \code{fn} comes from \code{...} in the \code{abc}
-##'     function. Depending on the underlying model structure, data
-##'     for one or more particles have been generated in each call to
-##'     \code{fn}. If the \code{model} only contains one node and all
-##'     the parameters to fit are in \code{ldata}, then that node will
-##'     be replicated and each of the replicated nodes represent one
-##'     particle in the trajectory (see \sQuote{Examples}). On the
-##'     other hand if the model contains multiple nodes or the
-##'     parameters to fit are contained in \code{gdata}, then the
-##'     trajectory in the \code{result} argument represents one
-##'     particle. The function can return a numeric matrix (number of
-##'     particles \eqn{\times} number of summary statistics). Or, if
-##'     the distance contains one summary statistic, a numeric vector
-##'     with the length equal to the number of particles. Note that
-##'     when using adaptive tolerance selection, only one summary
-##'     statistic can be used, i.e., the function must return a matrix
-##'     (number of particles \eqn{\times} 1) or a numeric vector.
+##' @param distance A function for calculating the summary statistics
+##'     for a simulated trajectory. For each particle, the function
+##'     must determine the distance and return that information. The
+##'     first argument, \code{result}, passed to the \code{distance}
+##'     function is the result from a \code{run} of the model with one
+##'     trajectory attached to it. The second argument,
+##'     \code{generation}, to \code{distance} is an integer with the
+##'     generation of the particle(s). Further arguments that can
+##'     passed to the \code{distance} function comes from \code{...}
+##'     in the \code{abc} function. Depending on the underlying model
+##'     structure, data for one or more particles have been generated
+##'     in each call to \code{distance}. If the \code{model} only
+##'     contains one node and all the parameters to fit are in
+##'     \code{ldata}, then that node will be replicated and each of
+##'     the replicated nodes represent one particle in the trajectory
+##'     (see \sQuote{Examples}). On the other hand if the model
+##'     contains multiple nodes or the parameters to fit are contained
+##'     in \code{gdata}, then the trajectory in the \code{result}
+##'     argument represents one particle. The function can return a
+##'     numeric matrix (number of particles \eqn{\times} number of
+##'     summary statistics). Or, if the distance contains one summary
+##'     statistic, a numeric vector with the length equal to the
+##'     number of particles. Note that when using adaptive tolerance
+##'     selection, only one summary statistic can be used, i.e., the
+##'     function must return a matrix (number of particles
+##'     \eqn{\times} 1) or a numeric vector.
 ##' @param tolerance A numeric matrix (number of summary statistics
 ##'     \eqn{\times} number of generations) where each column contains
 ##'     the tolerances for a generation and each row contains a
@@ -783,9 +784,8 @@ setGeneric(
     "abc",
     signature = "model",
     function(model, priors = NULL, npart = NULL, ninit = NULL,
-             fn = NULL, tolerance = NULL, ...,
-             verbose = getOption("verbose", FALSE),
-             post_gen = NULL) {
+             distance = NULL, tolerance = NULL, ...,
+             verbose = getOption("verbose", FALSE), post_gen = NULL) {
         standardGeneric("abc")
     }
 )
@@ -795,8 +795,8 @@ setGeneric(
 setMethod(
     "abc",
     signature(model = "SimInf_model"),
-    function(model, priors, npart, ninit, fn, tolerance, ..., verbose,
-             post_gen) {
+    function(model, priors, npart, ninit, distance, tolerance, ...,
+             verbose, post_gen) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (length(npart) != 1L || npart <= 1L)
@@ -808,7 +808,7 @@ setMethod(
 
         object <- new("SimInf_abc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars,
-                      nprop = integer(), fn = match.fun(fn),
+                      nprop = integer(), fn = match.fun(distance),
                       x = array(numeric(0), c(0, 0, 0)),
                       tolerance = matrix(numeric(0), nrow = 0, ncol = 0),
                       weight = matrix(numeric(0), nrow = npart, ncol = 0),

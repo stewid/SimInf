@@ -42,7 +42,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            c("1", "2")
                        },
                        tolerance = c(5, 4)))
@@ -54,7 +54,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:3
                        },
                        tolerance = c(5, 4)))
@@ -67,7 +67,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            c(NA, 2:20)
                        },
                        tolerance = c(5, 4)))
@@ -80,7 +80,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            c(-1L, 2:20)
                        },
                        tolerance = c(5, 4)))
@@ -93,7 +93,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = c("1", "2")))
@@ -104,7 +104,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = c(NA_real_, 2)))
@@ -115,7 +115,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = c(1, -2)))
@@ -126,7 +126,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = numeric(0)))
@@ -137,7 +137,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = c(4, 5)))
@@ -170,7 +170,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 1,
-                       fn = distance_fn_ldata,
+                       distance = distance_fn_ldata,
                        tolerance = c(250000, 225000)))
 check_error(res, "'npart' must be an integer > 1.")
 
@@ -178,7 +178,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = c(10, 10),
-                       fn = distance_fn_ldata,
+                       distance = distance_fn_ldata,
                        tolerance = c(250000, 225000)))
 check_error(res, "'npart' must be an integer > 1.")
 
@@ -187,7 +187,7 @@ fit <- abc(model = model,
            priors = c(beta ~ uniform(0.5, 1.5),
                       gamma ~ uniform(0.3, 0.7)),
            npart = 10,
-           fn = distance_fn_ldata,
+           distance = distance_fn_ldata,
            tolerance = c(250000, 225000),
            verbose = TRUE)
 fit

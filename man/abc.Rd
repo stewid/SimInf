@@ -10,7 +10,7 @@ abc(
   priors = NULL,
   npart = NULL,
   ninit = NULL,
-  fn = NULL,
+  distance = NULL,
   tolerance = NULL,
   ...,
   verbose = getOption("verbose", FALSE),
@@ -22,7 +22,7 @@ abc(
   priors = NULL,
   npart = NULL,
   ninit = NULL,
-  fn = NULL,
+  distance = NULL,
   tolerance = NULL,
   ...,
   verbose = getOption("verbose", FALSE),
@@ -55,31 +55,32 @@ particles to satisfactorily explore the parameter space, see
 Simola and others (2021). If the \code{tolerance} parameter is
 specified, then \code{ninit} must be \code{NULL}.}
 
-\item{fn}{A function for calculating the summary statistics for a
-simulated trajectory. For each particle, the function must
-determine the distance and return that information. The first
-argument, \code{result}, passed to the \code{fn} function is
-the result from a \code{run} of the model with one trajectory
-attached to it. The second argument, \code{generation}, to
-\code{fn} is an integer with the generation of the
-particle(s). Further arguments that can passed to the
-\code{fn} comes from \code{...} in the \code{abc}
-function. Depending on the underlying model structure, data
-for one or more particles have been generated in each call to
-\code{fn}. If the \code{model} only contains one node and all
-the parameters to fit are in \code{ldata}, then that node will
-be replicated and each of the replicated nodes represent one
-particle in the trajectory (see \sQuote{Examples}). On the
-other hand if the model contains multiple nodes or the
-parameters to fit are contained in \code{gdata}, then the
-trajectory in the \code{result} argument represents one
-particle. The function can return a numeric matrix (number of
-particles \eqn{\times} number of summary statistics). Or, if
-the distance contains one summary statistic, a numeric vector
-with the length equal to the number of particles. Note that
-when using adaptive tolerance selection, only one summary
-statistic can be used, i.e., the function must return a matrix
-(number of particles \eqn{\times} 1) or a numeric vector.}
+\item{distance}{A function for calculating the summary statistics
+for a simulated trajectory. For each particle, the function
+must determine the distance and return that information. The
+first argument, \code{result}, passed to the \code{distance}
+function is the result from a \code{run} of the model with one
+trajectory attached to it. The second argument,
+\code{generation}, to \code{distance} is an integer with the
+generation of the particle(s). Further arguments that can
+passed to the \code{distance} function comes from \code{...}
+in the \code{abc} function. Depending on the underlying model
+structure, data for one or more particles have been generated
+in each call to \code{distance}. If the \code{model} only
+contains one node and all the parameters to fit are in
+\code{ldata}, then that node will be replicated and each of
+the replicated nodes represent one particle in the trajectory
+(see \sQuote{Examples}). On the other hand if the model
+contains multiple nodes or the parameters to fit are contained
+in \code{gdata}, then the trajectory in the \code{result}
+argument represents one particle. The function can return a
+numeric matrix (number of particles \eqn{\times} number of
+summary statistics). Or, if the distance contains one summary
+statistic, a numeric vector with the length equal to the
+number of particles. Note that when using adaptive tolerance
+selection, only one summary statistic can be used, i.e., the
+function must return a matrix (number of particles
+\eqn{\times} 1) or a numeric vector.}
 
 \item{tolerance}{A numeric matrix (number of summary statistics
 \eqn{\times} number of generations) where each column contains
@@ -156,7 +157,7 @@ fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
            npart = 100,
            ninit = 1000,
-           fn = distance,
+           distance = distance,
            verbose = TRUE)
 
 ## Print a brief summary.
