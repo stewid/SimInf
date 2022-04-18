@@ -36,26 +36,21 @@ distance <- function(result, ...) {
 }
 
 ## Fit the model parameters using ABC-SMC. The priors for the
-## parameters are specified in the second argument using a formula
-## notation. Here we use a uniform distribtion for each parameter with
-## lower bound = 0 and upper bound = 1. Note that we use a low number
-## particles here to keep the run-time of the example short. In
-## practice you would want to use many more to ensure better
-## approximations.
+## parameters are specified using a formula notation. Here we use a
+## uniform distribtion for each parameter with lower bound = 0 and
+## upper bound = 1. Note that we use a low number particles here to
+## keep the run-time of the example short. In practice you would want
+## to use many more to ensure better approximations.
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
            npart = 100,
-           fn = distance,
-           tolerance = c(5000, 4500, 4050, 3645))
+           ninit = 1000,
+           distance = distance,
+           verbose = TRUE)
 
 ## Print a brief summary.
 fit
 
 ## Display the ABC posterior distribution.
-plot(fit)
-
-## Run one more generation.
-fit <- continue(fit, tolerance = 3280)
-
 plot(fit)
 }

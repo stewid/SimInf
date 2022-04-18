@@ -51,7 +51,7 @@ fit <- abc(model = model,
            priors = c(beta ~ uniform(0.5, 1.5),
                       gamma ~ uniform(0.3, 0.7)),
            npart = 10,
-           fn = distance_fn_gdata,
+           distance = distance_fn_gdata,
            tolerance = c(0.1, 0.05))
 fit
 summary(fit)
