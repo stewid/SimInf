@@ -1,4 +1,4 @@
-# SimInf (development version)
+# SimInf 9.0.0 (2022-04-20)
 
 This release of SimInf focuses primarily on improving the
 functionality for performing Approximate Bayesian computation.
