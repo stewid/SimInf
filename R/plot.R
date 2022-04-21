@@ -367,7 +367,7 @@ plot_density <- function(x, ...) {
         pairs(x,
               diag.panel = function(x, ...) {
                   usr <- par("usr")
-                  on.exit(par(usr))
+                  on.exit(par(usr = usr))
                   par(usr = c(usr[1:2], 0, 1.5))
                   d <- density(x, bw = "SJ-ste")
                   d$y <- d$y / max(d$y)

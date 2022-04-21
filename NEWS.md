@@ -2,6 +2,11 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+## BUG FIXES
+
+* Fixed the unnamed non-character argument 'usr' in par() when ploting
+  the density of the ABC posterior distribution.
+
 # SimInf 9.0.0 (2022-04-20)
 
 This release of SimInf focuses primarily on improving the
