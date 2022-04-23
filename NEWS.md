@@ -2,6 +2,38 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+## BUG FIXES
+
+* Fixed the unnamed non-character argument 'usr' in par() when ploting
+  the density of the ABC posterior distribution.
+
+# SimInf 9.0.0 (2022-04-20)
+
+This release of SimInf focuses primarily on improving the
+functionality for performing Approximate Bayesian computation.
+
+## BREAKING CHANGES
+
+Backwards incompatible changes that are the reason why the major
+version has been incremented.
+
+* Redesigned the S4 class SimInf_abc and the interface to using the
+  Approximate Bayesian Computation Sequential Monte Carlo ('ABC-SMC')
+  algorithm, see the documentation for the 'abc' function. Moreover,
+  added functionality to adaptively select a sequence of tolerances
+  using the algorithm 'Adaptive Approximate Bayesian Computation
+  Tolerance Selection' of Simola and others (2021), Bayesian Analysis.
+
+## CHANGES OR IMPROVEMENTS
+
+* Added the function 'n_generations' to determine the number of
+  generations in a 'SimInf_abc' object.
+
+## BUG FIXES
+
+*  The `plot` function for the SimInf_abc class now passes the
+   additional arguments in '...' to the underlying plot functions.
+
 # SimInf 8.4.0 (2021-09-19)
 
 ## CHANGES OR IMPROVEMENTS

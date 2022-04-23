@@ -5,26 +5,39 @@
 \alias{continue,SimInf_abc-method}
 \title{Run more generations of ABC SMC}
 \usage{
-continue(object, tolerance, ..., verbose = getOption("verbose", FALSE))
+continue(object, ...)
 
-\S4method{continue}{SimInf_abc}(object, tolerance, ..., verbose = getOption("verbose", FALSE))
+\S4method{continue}{SimInf_abc}(
+  object,
+  tolerance = NULL,
+  ...,
+  verbose = getOption("verbose", FALSE),
+  post_gen = NULL
+)
 }
 \arguments{
 \item{object}{The \code{SimInf_abc} to continue from.}
 
-\item{tolerance}{A numeric matrix (number of summary statistics X
-number of generations) where each column contains the
-tolerances for a generation and each row contains a sequence
-of gradually decreasing tolerances. Can also be a numeric
-vector if there is only one summary statistics. The tolerance
-determines the number of generations of ABC-SMC to run.}
-
-\item{...}{Further arguments to be passed to
+\item{...}{Further arguments to be passed to the
 \code{SimInf_abc@fn}.}
+
+\item{tolerance}{A numeric matrix (number of summary statistics
+\eqn{\times} number of generations) where each column contains
+the tolerances for a generation and each row contains a
+sequence of gradually decreasing tolerances. Can also be a
+numeric vector if there is only one summary statistic. The
+tolerance determines the number of generations of ABC-SMC to
+run.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
 use \code{FALSE} if it is not set.}
+
+\item{post_gen}{An optional function that, if non-NULL, is applied
+after each completed generation. The function must accept one
+argument of type code{SimInf_abc} with the current state of
+the fitting process. This function can be useful to, for
+example, save and inspect intermediate results.}
 }
 \value{
 A \code{SimInf_abc} object.

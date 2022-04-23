@@ -42,7 +42,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            c("1", "2")
                        },
                        tolerance = c(5, 4)))
@@ -54,7 +54,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:3
                        },
                        tolerance = c(5, 4)))
@@ -67,7 +67,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            c(NA, 2:20)
                        },
                        tolerance = c(5, 4)))
@@ -80,7 +80,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            c(-1L, 2:20)
                        },
                        tolerance = c(5, 4)))
@@ -93,7 +93,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = c("1", "2")))
@@ -104,7 +104,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = c(NA_real_, 2)))
@@ -115,7 +115,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = c(1, -2)))
@@ -126,7 +126,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = numeric(0)))
@@ -137,7 +137,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 2,
-                       fn = function(result, ...) {
+                       distance = function(result, ...) {
                            1:20
                        },
                        tolerance = c(4, 5)))
@@ -170,7 +170,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = 1,
-                       fn = distance_fn_ldata,
+                       distance = distance_fn_ldata,
                        tolerance = c(250000, 225000)))
 check_error(res, "'npart' must be an integer > 1.")
 
@@ -178,7 +178,7 @@ res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
                        npart = c(10, 10),
-                       fn = distance_fn_ldata,
+                       distance = distance_fn_ldata,
                        tolerance = c(250000, 225000)))
 check_error(res, "'npart' must be an integer > 1.")
 
@@ -186,14 +186,15 @@ set.seed(123)
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0.5, 1.5),
                       gamma ~ uniform(0.3, 0.7)),
-           ngen = 2,
            npart = 10,
-           fn = distance_fn_ldata,
+           distance = distance_fn_ldata,
            tolerance = c(250000, 225000),
            verbose = TRUE)
 fit
 summary(fit)
 as.data.frame(fit)
+
+fit <- continue(fit, tolerance = 200000, verbose = TRUE)
 
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
@@ -203,7 +204,7 @@ stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
 
 ## Check that an invalid 'n' is detected.
-sigma <- SimInf:::proposal_covariance(fit@x[[2]])
+sigma <- SimInf:::abc_proposal_covariance(SimInf:::abc_particles(fit, 2L))
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
           fit@priors$parameter,
@@ -211,8 +212,8 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           0L,
-          fit@x[[2]],
-          fit@w[[2]],
+          SimInf:::abc_particles(fit, 2L),
+          fit@weight[, 2],
           sigma))
 check_error(res, "'n' must be an integer > 0.")
 
@@ -224,8 +225,8 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
-          fit@w[[2]],
+          SimInf:::abc_particles(fit, 2L),
+          fit@weight[, 2],
           sigma))
 check_error(res, "'parameter' must be a character vector.")
 
@@ -237,8 +238,8 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
-          fit@w[[2]],
+          SimInf:::abc_particles(fit, 2L),
+          fit@weight[, 2],
           sigma))
 check_error(res, "Unknown distribution.")
 
@@ -250,12 +251,12 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
+          SimInf:::abc_particles(fit, 2L),
           numeric(0),
           sigma))
 check_error(res, "'w' must have length >= 1 when 'x' is non-null.")
 
-fit@w[[2]][2] <- -1
+fit@weight[2, 2] <- -1
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
           fit@priors$parameter,
@@ -263,12 +264,12 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
-          fit@w[[2]],
+          SimInf:::abc_particles(fit, 2L),
+          fit@weight[, 2],
           sigma))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")
 
-fit@w[[2]][2] <- NaN
+fit@weight[2, 2] <- NaN
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
           fit@priors$parameter,
@@ -276,12 +277,12 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
-          fit@w[[2]],
+          SimInf:::abc_particles(fit, 2L),
+          fit@weight[, 2],
           sigma))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")
 
-fit@w[[2]][2] <- NA_real_
+fit@weight[2, 2] <- NA_real_
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
           fit@priors$parameter,
@@ -289,7 +290,7 @@ res <- assertError(
           fit@priors$p1,
           fit@priors$p2,
           1L,
-          fit@x[[2]],
-          fit@w[[2]],
+          SimInf:::abc_particles(fit, 2L),
+          fit@weight[, 2],
           sigma))
 check_error(res, "Invalid weight detected (non-finite or < 0.0).")

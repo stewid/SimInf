@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -367,7 +367,7 @@ plot_density <- function(x, ...) {
         pairs(x,
               diag.panel = function(x, ...) {
                   usr <- par("usr")
-                  on.exit(par(usr))
+                  on.exit(par(usr = usr))
                   par(usr = c(usr[1:2], 0, 1.5))
                   d <- density(x, bw = "SJ-ste")
                   d$y <- d$y / max(d$y)
@@ -510,14 +510,14 @@ setMethod(
     signature(x = "SimInf_abc"),
     function(x, y, ...) {
         if (missing(y))
-            y <- length(x@x)
+            y <- n_generations(x)
         y <- as.integer(y)
         if (length(y) != 1) {
             stop("Can only select one generation to plot.",
                  call. = FALSE)
         }
 
-        plot_density(t(x@x[[y]]))
+        plot_density(abc_particles(x, y), ...)
 
         invisible(NULL)
     }
