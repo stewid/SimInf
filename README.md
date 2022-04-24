@@ -235,8 +235,7 @@ use:
 - Bauer P, Engblom S, Widgren S (2016) Fast event-based
   epidemiological simulations on national scales. International
   Journal of High Performance Computing Applications, 30(4),
-  438--453. doi:
-  [10.1177/1094342016635723](https://doi.org/10.1177/1094342016635723)
+  438--453. doi: 10.1177/1094342016635723
 
 ## Acknowledgments
 
