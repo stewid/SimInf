@@ -30,7 +30,7 @@
 ##'   S -- beta S I / N --> I}
 ##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 ##' where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-##' recovery rate, and \eqn{N=S+I}.
+##' recovery rate, and \eqn{N=S+I+R}.
 ##' @include SimInf_model.R
 ##' @export
 ##' @examples
