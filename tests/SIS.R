@@ -118,6 +118,22 @@ set.seed(22)
 trajectory_obs <- trajectory(run(model))
 stopifnot(identical(trajectory_obs, trajectory_exp))
 
+## Check running a trajectory with empty compartments
+trajectory_exp <- data.frame(
+    node = rep(1L, 100),
+    time = 1:100,
+    S = rep(0L, 100),
+    I = rep(0L, 100))
+
+model <- SIS(u0 = data.frame(S = 0, I = 0),
+             tspan = 1:100,
+             events = NULL,
+             beta = 0.16,
+             gamma = 0.077)
+
+trajectory_obs <- trajectory(run(model))
+stopifnot(identical(trajectory_obs, trajectory_exp))
+
 ## Check data
 stopifnot(identical(events_SIS(), events_SISe()))
 stopifnot(identical(u0_SIS(), u0_SISe()))
