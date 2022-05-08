@@ -74,6 +74,7 @@ Collate:
     'SimInf_model.R'
     'SEIR.R'
     'SIR.R'
+    'SIS.R'
     'SISe.R'
     'SISe3.R'
     'SISe3_sp.R'
