@@ -1,9 +1,6 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 Pavol Bauer
-## Copyright (C) 2017 -- 2019 Robin Eriksson
-## Copyright (C) 2015 -- 2019 Stefan Engblom
 ## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
@@ -19,53 +16,50 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SIR} model
+##' Definition of the \acronym{SIS} model
 ##'
-##' Class to handle the \acronym{SIR} \code{\link{SimInf_model}}.
+##' Class to handle the \acronym{SIS} \code{\link{SimInf_model}}.
 ##'
-##' The \acronym{SIR} model contains three compartments; number of
-##' susceptible (S), number of infectious (I), and number of
-##' recovered (R).  Moreover, it has two state transitions,
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
-##'   S -- beta S I / N --> I}
-##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
-##' where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-##' recovery rate, and \eqn{N=S+I+R}.
+##' The \acronym{SIS} model contains two compartments; number of
+##' susceptible (S), and number of infectious (I).  Moreover, it has
+##' two state transitions, \deqn{S \stackrel{\beta S I /
+##' N}{\longrightarrow} I}{ S -- beta S I / N --> I} \deqn{I
+##' \stackrel{\gamma I}{\longrightarrow} S}{I -- gamma I --> S} where
+##' \eqn{\beta} is the transmission rate, \eqn{\gamma} is the recovery
+##' rate, and \eqn{N=S+I}.
 ##' @include SimInf_model.R
 ##' @export
 ##' @examples
-##' ## Create an SIR model object.
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##' ## Create an SIS model object.
+##' model <- SIS(u0 = data.frame(S = 99, I = 1),
 ##'              tspan = 1:100,
 ##'              beta = 0.16,
 ##'              gamma = 0.077)
 ##'
-##' ## Run the SIR model and plot the result.
+##' ## Run the SIS model and plot the result.
 ##' set.seed(22)
 ##' result <- run(model)
 ##' plot(result)
-setClass("SIR", contains = c("SimInf_model"))
+setClass("SIS", contains = c("SimInf_model"))
 
-##' Create an \acronym{SIR} model
+##' Create an \acronym{SIS} model
 ##'
-##' Create an \acronym{SIR} model to be used by the simulation
+##' Create an \acronym{SIS} model to be used by the simulation
 ##' framework.
 ##'
-##' The \acronym{SIR} model contains three compartments; number of
-##' susceptible (S), number of infectious (I), and number of
-##' recovered (R).  Moreover, it has two state transitions,
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
-##'   S -- beta S I / N --> I}
-##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
-##' where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-##' recovery rate, and \eqn{N=S+I+R}.
+##' The \acronym{SIS} model contains two compartments; number of
+##' susceptible (S), and number of infectious (I).  Moreover, it has
+##' two state transitions, \deqn{S \stackrel{\beta S I /
+##' N}{\longrightarrow} I}{ S -- beta S I / N --> I} \deqn{I
+##' \stackrel{\gamma I}{\longrightarrow} S}{I -- gamma I --> S} where
+##' \eqn{\beta} is the transmission rate, \eqn{\gamma} is the recovery
+##' rate, and \eqn{N=S+I}.
 ##'
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
 ##' \item{S}{The number of sucsceptible in each node}
 ##' \item{I}{The number of infected in each node}
-##' \item{R}{The number of recovered in each node}
 ##' }
 ##'
 ##' @template u0-param
@@ -73,26 +67,26 @@ setClass("SIR", contains = c("SimInf_model"))
 ##' @template events-param
 ##' @template beta-param
 ##' @template gamma-param
-##' @return A \code{\link{SimInf_model}} of class \code{SIR}
+##' @return A \code{\link{SimInf_model}} of class \code{SIS}
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
-##' ## Create an SIR model object.
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##' ## Create an SIS model object.
+##' model <- SIS(u0 = data.frame(S = 99, I = 1),
 ##'              tspan = 1:100,
 ##'              beta = 0.16,
 ##'              gamma = 0.077)
 ##'
-##' ## Run the SIR model and plot the result.
+##' ## Run the SIS model and plot the result.
 ##' set.seed(22)
 ##' result <- run(model)
 ##' plot(result)
-SIR <- function(u0,
+SIS <- function(u0,
                 tspan,
                 events = NULL,
                 beta   = NULL,
                 gamma  = NULL) {
-    compartments <- c("S", "I", "R")
+    compartments <- c("S", "I")
 
     ## Check arguments.
 
@@ -106,16 +100,15 @@ SIR <- function(u0,
 
     ## Arguments seem ok...go on
 
-    E <- matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1),
-                nrow = 3, ncol = 4,
-                dimnames = list(compartments, c("1", "2", "3", "4")))
+    E <- matrix(c(1, 0, 1, 1), nrow = 2, ncol = 2,
+                dimnames = list(compartments, c("1", "2")))
 
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
-                dimnames = list(c("S -> beta*S*I/(S+I+R) -> I",
-                                  "I -> gamma*I -> R"),
+                dimnames = list(c("S -> upsilon*S*I -> I",
+                                  "I -> gamma*I -> S"),
                                 c("1", "2")))
 
-    S <- matrix(c(-1, 1, 0, 0, -1, 1), nrow = 3, ncol = 2,
+    S <- matrix(c(-1,  1, 1, -1), nrow = 2, ncol = 2,
                 dimnames = list(compartments, c("1", "2")))
 
     ldata <- matrix(as.numeric(c(beta, gamma)),
@@ -130,17 +123,17 @@ SIR <- function(u0,
                           ldata  = ldata,
                           u0     = u0)
 
-    as(model, "SIR")
+    as(model, "SIS")
 }
 
-##' Example data to initialize events for the \sQuote{SIR} model
+##' Example data to initialize events for the \sQuote{SIS} model
 ##'
 ##' Example data to initialize scheduled events for a population of
-##' 1600 nodes and demonstrate the \code{\linkS4class{SIR}} model.
+##' 1600 nodes and demonstrate the \code{\linkS4class{SIS}} model.
 ##'
 ##' Example data to initialize scheduled events (see
 ##' \code{\linkS4class{SimInf_events}}) for a population of 1600 nodes
-##' and demonstrate the \code{\linkS4class{SIR}} model. The dataset
+##' and demonstrate the \code{\linkS4class{SIS}} model. The dataset
 ##' contains 466692 events for 1600 nodes distributed over 4 * 365
 ##' days. The events are divided into three types: \sQuote{Exit}
 ##' events remove individuals from the population (n = 182535),
@@ -153,15 +146,15 @@ SIR <- function(u0,
 ##' @export
 ##' @importFrom utils data
 ##' @examples
-##' ## Create an 'SIR' model with 1600 nodes and initialize
+##' ## Create an 'SIS' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
-##' u0 <- u0_SIR()
+##' u0 <- u0_SIS()
 ##' u0$I[1] <- 1
 ##' tspan <- seq(from = 1, to = 4*365, by = 1)
-##' model <- SIR(u0     = u0,
+##' model <- SIS(u0     = u0,
 ##'              tspan  = tspan,
-##'              events = events_SIR(),
+##'              events = events_SIS(),
 ##'              beta   = 0.16,
 ##'              gamma  = 0.01)
 ##'
@@ -176,37 +169,31 @@ SIR <- function(u0,
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
 ##' summary(result)
-events_SIR <- function() {
-    data("events_SISe3", package = "SimInf", envir = environment())
-    events_SISe3$select[events_SISe3$event == "exit"] <- 4L
-    events_SISe3$select[events_SISe3$event == "enter"] <- 1L
-    events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
-    events_SISe3$select[events_SISe3$event == "extTrans"] <- 4L
-    events_SISe3
+events_SIS <- function() {
+    events_SISe()
 }
 
-##' Example data to initialize the \sQuote{SIR} model
+##' Example data to initialize the \sQuote{SIS} model
 ##'
 ##' Example data to initialize a population of 1600 nodes and
-##' demonstrate the \code{\linkS4class{SIR}} model.
+##' demonstrate the \code{\linkS4class{SIS}} model.
 ##'
 ##' A \code{data.frame} with the number of individuals in the
-##' \sQuote{S}, \sQuote{I} and \sQuote{R} compartments in 1600
-##' nodes. Note that the \sQuote{I} and \sQuote{R} compartments are
-##' zero.
+##' \sQuote{S}, and \sQuote{I} compartments in 1600 nodes. Note that
+##' the \sQuote{I} compartment is zero.
 ##' @return A \code{data.frame}
 ##' @export
 ##' @importFrom utils data
 ##' @examples
-##' ## Create an 'SIR' model with 1600 nodes and initialize
+##' ## Create an 'SIS' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
-##' u0 <- u0_SIR()
+##' u0 <- u0_SIS()
 ##' u0$I[1] <- 1
 ##' tspan <- seq(from = 1, to = 4*365, by = 1)
-##' model <- SIR(u0     = u0,
+##' model <- SIS(u0     = u0,
 ##'              tspan  = tspan,
-##'              events = events_SIR(),
+##'              events = events_SIS(),
 ##'              beta   = 0.16,
 ##'              gamma  = 0.01)
 ##'
@@ -216,10 +203,6 @@ events_SIR <- function() {
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
-u0_SIR <- function() {
-    data("u0_SISe3", package = "SimInf", envir = environment())
-    u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
-    u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
-    u0_SISe3$R <- 0L
-    u0_SISe3[, c("S", "I", "R")]
+u0_SIS <- function() {
+    u0_SISe()
 }

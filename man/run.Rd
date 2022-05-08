@@ -5,6 +5,7 @@
 \alias{run,SimInf_model-method}
 \alias{run,SEIR-method}
 \alias{run,SIR-method}
+\alias{run,SIS-method}
 \alias{run,SISe-method}
 \alias{run,SISe3-method}
 \alias{run,SISe3_sp-method}
@@ -19,6 +20,8 @@ run(model, ...)
 \S4method{run}{SEIR}(model, solver = c("ssm", "aem"), ...)
 
 \S4method{run}{SIR}(model, solver = c("ssm", "aem"), ...)
+
+\S4method{run}{SIS}(model, solver = c("ssm", "aem"), ...)
 
 \S4method{run}{SISe}(model, solver = c("ssm", "aem"), ...)
 

@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2021 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 /* Declare functions to register */
 SEXP SEIR_run(SEXP, SEXP);
 SEXP SIR_run(SEXP, SEXP);
+SEXP SIS_run(SEXP, SEXP);
 SEXP SISe_run(SEXP, SEXP);
 SEXP SISe3_run(SEXP, SEXP);
 SEXP SISe3_sp_run(SEXP, SEXP);
@@ -49,6 +50,7 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SEIR_run, 2),
     CALLDEF(SIR_run, 2),
     CALLDEF(SISe_run, 2),
+    CALLDEF(SIS_run, 2),
     CALLDEF(SISe3_run, 2),
     CALLDEF(SISe3_sp_run, 2),
     CALLDEF(SISe_sp_run, 2),

@@ -2,6 +2,8 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* Added a new built-in model: `SIS`.
+
 ## BUG FIXES
 
 * Fixed the unnamed non-character argument 'usr' in par() when ploting
