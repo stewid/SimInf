@@ -255,6 +255,18 @@ res <- assertError(
           sigma))
 check_error(res, "Unknown distribution.")
 
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_proposals,
+          fit@priors$parameter,
+          "a",
+          fit@priors$p1,
+          fit@priors$p2,
+          1L,
+          NULL,
+          NULL,
+          NULL))
+check_error(res, "Unknown distribution.")
+
 ## Check that an invalid weight is detected.
 res <- assertError(
     .Call(SimInf:::SimInf_abc_proposals,
