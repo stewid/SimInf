@@ -93,6 +93,7 @@ Collate:
     'n.R'
     'openmp.R'
     'package_skeleton.R'
+    'pfilter.R'
     'plot.R'
     'prevalence.R'
     'print.R'

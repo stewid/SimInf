@@ -16,6 +16,32 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+check_binomial_distribution <- function(hyperparameters, symbols) {
+    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+        stop("Invalid formula specification for binomial distribution.",
+             call. = FALSE)
+    }
+
+    if (is.null(symbols)) {
+        if (!all(is.numeric(hyperparameters), all(hyperparameters >= 0))) {
+            stop("Invalid distribution: binomial hyperparameters must be >= 0.",
+                 call. = FALSE)
+        }
+
+        if (!is_wholenumber(hyperparameters[1])) {
+            stop("Invalid distribution: ",
+                 "binomial size must be an integer >= 0.",
+                 call. = FALSE)
+        }
+
+        if (hyperparameters[2] > 1) {
+            stop("Invalid distribution: ",
+                 "binomial probability must be <= 1.",
+                 call. = FALSE)
+        }
+    }
+}
+
 check_gamma_distribution <- function(hyperparameters, symbols) {
     if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
         stop("Invalid formula specification for gamma distribution.",
@@ -72,6 +98,9 @@ check_uniform_distribution <- function(hyperparameters, symbols) {
 
 check_hyperparameters <- function(distribution, hyperparameters, symbols) {
     switch(distribution,
+           binomial = {
+               check_binomial_distribution(hyperparameters, symbols)
+           },
            gamma = {
                check_gamma_distribution(hyperparameters, symbols)
            },
@@ -84,7 +113,7 @@ check_hyperparameters <- function(distribution, hyperparameters, symbols) {
            uniform = {
                check_uniform_distribution(hyperparameters, symbols)
            },
-           stop("Unknown distribution.", call. = FALSE)
+           stop("Unknown distribution: '", distribution, "'.", call. = FALSE)
            )
 }
 
