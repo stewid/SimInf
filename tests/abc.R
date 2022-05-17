@@ -17,6 +17,8 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(tools)
+source("util/check.R")
 
 ## Define a tolerance
 tol <- 1e-8
@@ -377,3 +379,17 @@ w_obs <- .Call(SimInf:::SimInf_abc_weights, ## function
 
 stopifnot(identical(length(w_obs), length(w_exp)))
 stopifnot(all(abs(w_obs - w_exp) < tol))
+
+##
+## Check that an invalid 'distribution' is detected.
+##
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_weights, ## function
+          "a",                         ## distribution (invalid)
+          0,                           ## p1
+          0,                           ## p2
+          x,                           ## x
+          xx,                          ## xx
+          w,                           ## w
+          sigma))                      ## sigma
+check_error(res, "Unknown distribution.")
