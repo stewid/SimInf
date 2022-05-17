@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -210,7 +210,9 @@ stopifnot(identical(
     .Call(SimInf:::SimInf_systematic_resampling, w)))
 
 ## Expect function for the observation process
-obs_fn <- function(model, data) {0}
+obs_fn <- function(model, data) {
+    0
+}
 
 stopifnot(identical(
     SimInf:::pfilter_obs_process(
@@ -309,7 +311,8 @@ res <- assertError(
                       "19" = data.frame(time = 19, Iobs = 3)),
                  5))
 
-check_error(res, "Unable to match the parameter on the lhs to a column in 'data'.")
+check_error(res,
+            "Unable to match the parameter on the lhs to a column in 'data'.")
 
 ## Raise an error if the rhs does not match a compartment.
 res <- assertError(
