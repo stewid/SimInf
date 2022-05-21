@@ -725,3 +725,14 @@ w_obs <- .Call(SimInf:::SimInf_abc_weights, ## function
                sigma)                       ## sigma
 
 stopifnot(all(abs(w_obs - w_exp) < tol))
+
+res <- assertError(
+    .Call(SimInf:::SimInf_abc_weights, ## function
+          "normal",                    ## distribution
+          10,                          ## p1
+          -0.1,                        ## p2
+          x,                           ## x
+          xx,                          ## xx
+          rep(0.01, 100),              ## w
+          sigma))                      ## sigma
+check_error(res, "Invalid weight detected (non-finite or < 0.0).")
