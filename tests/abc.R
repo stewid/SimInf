@@ -506,7 +506,7 @@ proposals_obs <- .Call(SimInf:::SimInf_abc_proposals, ## function
                        0.1,                           ## p2
                        100L,                          ## n
                        x,                             ## x
-                       rep(1/100, 100),               ## w
+                       rep(0.01, 100),                ## w
                        sigma)                         ## sigma
 
 stopifnot(all(abs(proposals_obs - proposals_exp) < tol))
@@ -623,7 +623,7 @@ proposals_obs <- .Call(SimInf:::SimInf_abc_proposals, ## function
                        0.1,                           ## p2
                        100L,                          ## n
                        x,                             ## x
-                       rep(1/100, 100),               ## w
+                       rep(0.01, 100),                ## w
                        sigma)                         ## sigma
 
 stopifnot(all(abs(proposals_obs - proposals_exp) < tol))
