@@ -42,7 +42,8 @@ at each timestep.}
 A \code{SimInf_pfilter} object.
 }
 \description{
-Systematic resampling is performed at each observation.
+The bootstrap filtering algorithm. Systematic resampling is
+performed at each observation.
 }
 \references{
 \Gordon1993

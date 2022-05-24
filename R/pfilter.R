@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -508,7 +508,8 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
 
 ##' Bootstrap particle filter
 ##'
-##' Systematic resampling is performed at each observation.
+##' The bootstrap filtering algorithm. Systematic resampling is
+##' performed at each observation.
 ##'
 ##' @param model The \code{SimInf_model} object to simulate data from.
 ##' @template obs_process-param
@@ -586,7 +587,7 @@ setMethod(
 
             ## Plot the effective sample size.
             plot(xx, x@ess, xlab = xlab, ylab = "ESS",
-             ylim = c(0, x@npart), frame.plot = FALSE, type = "l")
+                 ylim = c(0, x@npart), frame.plot = FALSE, type = "l")
         } else {
             ## Plot the sampled trajectory.
             plot(x@model, y, ...)
