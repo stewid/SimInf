@@ -1059,7 +1059,7 @@ void attribute_hidden SimInf_print_status(
 
         REprintf("Current state in node:\n");
 
-        REprintf(" u = {");
+        REprintf(" u(length: %i) = {", Nc);
         for (i = 0; u && i < Nc; i++) {
             REprintf("%i", u[i]);
             if (i < (Nc - 1))
@@ -1067,7 +1067,7 @@ void attribute_hidden SimInf_print_status(
         }
         REprintf("}\n");
 
-        REprintf(" v = {");
+        REprintf(" v(length: %i) = {", Nd);
         for (i = 0; v && i < Nd; i++) {
             REprintf("%g", v[i]);
             if (i < (Nd - 1))
@@ -1075,7 +1075,7 @@ void attribute_hidden SimInf_print_status(
         }
         REprintf("}\n");
 
-        REprintf(" ldata = {");
+        REprintf(" ldata(length: %i) = {", Nld);
         for (i = 0; ldata && i < Nld; i++) {
             REprintf("%g", ldata[i]);
             if (i < (Nld - 1))
