@@ -123,6 +123,8 @@ static int SimInf_solver_aem(
 
                     if (!R_FINITE(rate) || rate < 0.0) {
                         SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                            sa.Nd, &sa.v[node * sa.Nd],
+                                            sa.Nld, &sa.ldata[node * sa.Nld],
                                             sa.Ni + node, sa.tt, rate, j);
                         sa.error = SIMINF_ERR_INVALID_RATE;
                     }
@@ -191,6 +193,8 @@ static int SimInf_solver_aem(
                             sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
                             if (sa.u[node * sa.Nc + sa.irS[j]] < 0) {
                                 SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                                    sa.Nd, &sa.v[node * sa.Nd],
+                                                    sa.Nld, &sa.ldata[node * sa.Nld],
                                                     sa.Ni + node, sa.t_time[node],
                                                     0, tr);
                                 sa.error = SIMINF_ERR_NEGATIVE_STATE;
@@ -213,6 +217,8 @@ static int SimInf_solver_aem(
 
                                 if (!R_FINITE(rate) || rate < 0.0) {
                                     SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                                        sa.Nd, &sa.v[node * sa.Nd],
+                                                        sa.Nld, &sa.ldata[node * sa.Nld],
                                                         sa.Ni + node, sa.t_time[node],
                                                         rate, j);
                                     sa.error = SIMINF_ERR_INVALID_RATE;
@@ -240,6 +246,8 @@ static int SimInf_solver_aem(
 
                         if (!R_FINITE(rate) || rate < 0.0) {
                             SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                                sa.Nd, &sa.v[node * sa.Nd],
+                                                sa.Nld, &sa.ldata[node * sa.Nld],
                                                 sa.Ni + node, sa.t_time[node],
                                                 rate, j);
                             sa.error = SIMINF_ERR_INVALID_RATE;
@@ -315,6 +323,8 @@ static int SimInf_solver_aem(
 
                             if (!R_FINITE(rate) || rate < 0.0) {
                                 SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
+                                                    sa.Nd, &sa.v[node * sa.Nd],
+                                                    sa.Nld, &sa.ldata[node * sa.Nld],
                                                     sa.Ni + node, sa.tt, rate, j);
                                 sa.error = SIMINF_ERR_INVALID_RATE;
                             }

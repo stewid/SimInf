@@ -1023,6 +1023,10 @@ on_error:                                  /* #nocov */
  * @param Nc Number of compartments in each node.
  * @param u The state vector with number of individuals in each
  *        compartment in the node.
+ * @param Nd Number of continuous state variables in the node.
+ * @param v The continuous state vector in the node.
+ * @param Nld Number of local data variables in the node.
+ * @param ldata The local data vector with variables in the node.
  * @param node Zero-based index to node.
  * @param tt The current time in node.
  * @param rate The propensity. Only reported if it's infinite or less
@@ -1032,6 +1036,10 @@ on_error:                                  /* #nocov */
 void attribute_hidden SimInf_print_status(
     const int Nc,
     const int *u,
+    const int Nd,
+    const double *v,
+    const int Nld,
+    const double *ldata,
     const int node,
     const double tt,
     const double rate,
@@ -1041,31 +1049,47 @@ void attribute_hidden SimInf_print_status(
     #  pragma omp critical
     #endif
     {
-        if (u && (node >= 0)) {
-            int i;
+        int i;
 
-            REprintf("Status:\n");
-            REprintf("-------\n");
+        REprintf("Status:\n");
+        REprintf("-------\n");
 
-            REprintf("Time: %g\n", tt);
-            REprintf("Node: %i\n", node + 1); /* One based in R */
+        REprintf("Time: %g\n", tt);
+        REprintf("Node: %i\n", node + 1); /* One based in R */
 
-            REprintf("Current state in node: {");
-            for (i = 0; i < Nc; i++) {
-                REprintf("%i", u[i]);
-                if (i < (Nc - 1))
-                    REprintf(", ");
-            }
-            REprintf("}\n");
+        REprintf("Current state in node:\n");
 
-            REprintf("Transition: %i\n", transition + 1); /* One based in R */
-
-            if (!R_FINITE(rate) || rate < 0.0)
-                REprintf("Rate: %g\n", rate);
-
-            REprintf("\n");
-
-            R_FlushConsole();
+        REprintf(" u = {");
+        for (i = 0; u && i < Nc; i++) {
+            REprintf("%i", u[i]);
+            if (i < (Nc - 1))
+                REprintf(", ");
         }
+        REprintf("}\n");
+
+        REprintf(" v = {");
+        for (i = 0; v && i < Nd; i++) {
+            REprintf("%g", v[i]);
+            if (i < (Nd - 1))
+                REprintf(", ");
+        }
+        REprintf("}\n");
+
+        REprintf(" ldata = {");
+        for (i = 0; ldata && i < Nld; i++) {
+            REprintf("%g", ldata[i]);
+            if (i < (Nld - 1))
+                REprintf(", ");
+        }
+        REprintf("}\n");
+
+        REprintf("Transition: %i\n", transition + 1); /* One based in R */
+
+        if (!R_FINITE(rate) || rate < 0.0)
+            REprintf("Rate: %g\n", rate);
+
+        REprintf("\n");
+
+        R_FlushConsole();
     }
 }

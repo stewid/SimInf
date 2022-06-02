@@ -393,6 +393,10 @@ void SimInf_store_solution_sparse(SimInf_compartment_model *model);
 void SimInf_print_status(
     const int Nc,
     const int *u,
+    const int Nd,
+    const double *v,
+    const int Nld,
+    const double *ldata,
     const int node,
     const double tt,
     const double rate,
