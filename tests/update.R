@@ -38,4 +38,4 @@ stopifnot(identical(model@u0,
 
 res <- assertError(
     update_u0(model, data.frame(S = 10:13, I = 14:17, R = 18:21)))
-check_error(res, "Number of rows in 'u0' must match nodes in 'model'.")
+check_error(res, "The number of rows in 'u0' must match nodes in 'model'.")
