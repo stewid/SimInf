@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -236,6 +236,23 @@ check_N <- function(N) {
     N
 }
 
+##' Check compartments
+##'
+##' Raise an error if the 'compartments' arguments is invalid.
+##' @param compartments a character vector with the compartment names
+##'     to check.
+##' @return invisible(NULL)
+##' @noRd
+check_compartments <- function(compartments) {
+    if (!is.atomic(compartments) || !is.character(compartments) ||
+        !identical(compartments, make.names(compartments, unique = TRUE))) {
+        stop("'compartments' must be specified in a character vector.",
+             call. = FALSE)
+    }
+
+    invisible(NULL)
+}
+
 ##' Check u0
 ##'
 ##' Raise an error if any of the 'u0' or 'compartments' arguments are
@@ -245,12 +262,7 @@ check_N <- function(N) {
 ##' @return u0 with columns ordered by the compartments.
 ##' @noRd
 check_u0 <- function(u0, compartments) {
-    ## Check compartments
-    if (!is.atomic(compartments) || !is.character(compartments) ||
-        !identical(compartments, make.names(compartments, unique = TRUE))) {
-        stop("'compartments' must be specified in a character vector.",
-             call. = FALSE)
-    }
+    check_compartments(compartments)
 
     ## Check u0
     if (!is.data.frame(u0))
