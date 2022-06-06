@@ -16,9 +16,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Update the initial compartment state in each node
+##' Update the initial compartment state u0 in each node
 ##'
-##' @param model The model to update the initial state \code{u0}.
+##' @param model The model to update the initial compartment state
+##'     \code{u0}.
 ##' @param u0 A \code{data.frame} with the initial state in each
 ##'     node. Each row is one node, and the number of rows in
 ##'     \code{u0} must match the number of nodes in \code{model}. Only
@@ -64,6 +65,68 @@ setMethod(
                  call. = FALSE)
         }
         model@u0 <- init_x0(u0)
+        model
+    }
+)
+
+##' Update the initial continuous state v0 in each node
+##'
+##' @param model The model to update the initial continuous state
+##'     \code{v0}.
+##' @param v0 A \code{data.frame} with the initial continuosu state in
+##'     each node. Each row is one node, and the number of rows in
+##'     \code{v0} must match the number of nodes in \code{model}. Only
+##'     the columns in \code{v0} with a name that matches a continuous
+##'     state in \code{v0} in the \code{model} will be used.
+##' @return a \code{SimInf_model} with the updated initial continuous
+##'     state \code{v0}.
+##' @export
+##' @examples
+##' ## Create an 'SISe' model with no infected individuals and no
+##' ## infectious pressure (phi = 0, epsilon = 0).
+##' model <- SISe(u0 = data.frame(S = 100, I = 0), tspan = 1:100,
+##'               phi = 0, upsilon = 0.02, gamma = 0.1, alpha = 1,
+##'               epsilon = 0, beta_t1 = 0.15, beta_t2 = 0.15,
+##'               beta_t3 = 0.15, beta_t4 = 0.15, end_t1 = 91,
+##'               end_t2 = 182, end_t3 = 273, end_t4 = 365)
+##'
+##' ## Run the 'SISe' model and plot the result.
+##' set.seed(22)
+##' result <- run(model)
+##' plot(result)
+##'
+##' ## Update the infectious pressure 'phi' in 'v0' and run
+##' ## the model again.
+##' model <- update_v0(model, data.frame(phi = 1))
+##' result <- run(model)
+##' plot(result)
+setGeneric(
+    "update_v0",
+    signature = "model",
+    function(model, v0) {
+        standardGeneric("update_v0")
+    }
+)
+
+##' @rdname update_v0
+##' @export
+setMethod(
+    "update_v0",
+    signature(model = "SimInf_model"),
+    function(model, v0) {
+        variables <- rownames(model@v0)
+        if (is.null(variables))
+            variables <- character(0)
+
+        v0 <- check_v0(v0, variables)
+        if (!identical(nrow(v0), n_nodes(model))) {
+            stop("The number of rows in 'v0' must match nodes in 'model'.",
+                 call. = FALSE)
+        }
+
+        if (!identical(dim(model@v0), c(0L, 0L)))
+            model@v0 <- init_x0(v0, "double")
+
         model
     }
 )

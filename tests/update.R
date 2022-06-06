@@ -39,3 +39,37 @@ stopifnot(identical(model@u0,
 res <- assertError(
     update_u0(model, data.frame(S = 10:13, I = 14:17, R = 18:21)))
 check_error(res, "The number of rows in 'u0' must match nodes in 'model'.")
+
+res <- assertError(
+    update_v0(model, data.frame(phi = 10:13)))
+check_error(res, "The number of rows in 'v0' must match nodes in 'model'.")
+
+model <- update_v0(model, data.frame(phi = 1:3))
+stopifnot(identical(model@v0, matrix(numeric(0), nrow = 0, ncol = 0)))
+
+## Check that a matrix is coerced to a data.frame.
+res <- SimInf:::check_v0(matrix(1:9,
+                                ncol = 3,
+                                dimnames = list(NULL, c("A", "B", "C"))),
+                         c("A", "B", "C"))
+stopifnot(identical(res,
+                    data.frame(A = 1:3,
+                               B = 4:6,
+                               C = 7:9)))
+
+## Create an 'SISe' model with 6 nodes.
+model <- SISe(u0 = data.frame(S = 100:105, I = 1:6), tspan = 1:10,
+              phi = rep(0, 6), upsilon = 0.02, gamma = 0.1, alpha = 1,
+              epsilon = 1.1e-5, beta_t1 = 0.15, beta_t2 = 0.15,
+              beta_t3 = 0.15, beta_t4 = 0.15, end_t1 = 91, end_t2 = 182,
+              end_t3 = 273, end_t4 = 365)
+
+res <- assertError(update_v0(model, data.frame(A = 1:6)))
+check_error(res, "Missing columns in 'v0'.")
+
+model <- update_v0(model, data.frame(phi = 1:6))
+stopifnot(identical(model@v0,
+                    matrix(c(1, 2, 3, 4, 5, 6),
+                           nrow = 1,
+                           ncol = 6,
+                           dimnames = list("phi", NULL))))

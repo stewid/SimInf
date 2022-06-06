@@ -273,6 +273,26 @@ check_u0 <- function(u0, compartments) {
     u0[, compartments, drop = FALSE]
 }
 
+##' Check v0
+##'
+##' Raise an error if any of the 'v0' or 'compartments' arguments are
+##' invalid.
+##' @param v0 the initial continuous state for the model.
+##' @param variables the variables in v0.
+##' @return v0 with columns ordered by the variables.
+##' @noRd
+check_v0 <- function(v0, variables) {
+    check_compartments(variables)
+
+    ## Check v0
+    if (!is.data.frame(v0))
+        v0 <- as.data.frame(v0)
+    if (!all(variables %in% names(v0)))
+        stop("Missing columns in 'v0'.", call. = FALSE)
+
+    v0[, variables, drop = FALSE]
+}
+
 ##' Check distance matrix
 ##'
 ##' Raise an error if the distance argument is not ok.

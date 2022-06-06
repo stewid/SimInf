@@ -3,14 +3,15 @@
 \name{update_u0}
 \alias{update_u0}
 \alias{update_u0,SimInf_model-method}
-\title{Update the initial compartment state in each node}
+\title{Update the initial compartment state u0 in each node}
 \usage{
 update_u0(model, u0)
 
 \S4method{update_u0}{SimInf_model}(model, u0)
 }
 \arguments{
-\item{model}{The model to update the initial state \code{u0}.}
+\item{model}{The model to update the initial compartment state
+\code{u0}.}
 
 \item{u0}{A \code{data.frame} with the initial state in each
 node. Each row is one node, and the number of rows in
@@ -23,7 +24,7 @@ a \code{SimInf_model} with the updated initial compartment
     state \code{u0}.
 }
 \description{
-Update the initial compartment state in each node
+Update the initial compartment state u0 in each node
 }
 \examples{
 ## Create an SIR model object.
