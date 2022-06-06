@@ -596,3 +596,20 @@ setMethod(
         invisible(NULL)
     }
 )
+
+##' Log likelihood
+##'
+##' Extract the estimated log likelihood from a \code{SimInf_pfilter}
+##' object.
+##'
+##' @param object The \code{SimInf_pfilter} object.
+##' @return the estimated log likelihood.
+##' @export
+##' @importFrom stats logLik
+setMethod(
+    "logLik",
+    signature(object = "SimInf_pfilter"),
+    function(object) {
+        object@loglik
+    }
+)
