@@ -520,6 +520,7 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
 ##'
 ##' \Gordon1993
 ##' @export
+##' @example man/examples/pfilter.R
 setGeneric(
     "pfilter",
     signature = "model",
