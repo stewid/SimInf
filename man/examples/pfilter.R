@@ -17,7 +17,7 @@ infected <- trajectory(run(model), "I")[, c("time", "I")]
 colnames(infected) <- c("time", "Iobs")
 
 ## Use a Poison observation process for the infected individuals, such
-## that 'Iobs ~ poison(I + 1e-6)'. A small constant '1e−6' is added to
+## that 'Iobs ~ poison(I + 1e-6)'. A small constant '1e-6' is added to
 ## prevent numerical errors, since the simulated counts 'I' could be
 ## zero, which would result in the Poisson rate parameter being zero,
 ## which violates the conditions of the Poisson distribution. Use 1000
