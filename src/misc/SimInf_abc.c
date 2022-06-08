@@ -420,7 +420,7 @@ SEXP attribute_hidden SimInf_abc_weights(
             }
         }
 
-        if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
+        if (!R_FINITE(ptr_ww[i])) {
             error = 3;
             goto cleanup;
         }

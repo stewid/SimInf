@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2021 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -393,6 +393,10 @@ void SimInf_store_solution_sparse(SimInf_compartment_model *model);
 void SimInf_print_status(
     const int Nc,
     const int *u,
+    const int Nd,
+    const double *v,
+    const int Nld,
+    const double *ldata,
     const int node,
     const double tt,
     const double rate,

@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2021 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1023,6 +1023,10 @@ on_error:                                  /* #nocov */
  * @param Nc Number of compartments in each node.
  * @param u The state vector with number of individuals in each
  *        compartment in the node.
+ * @param Nd Number of continuous state variables in the node.
+ * @param v The continuous state vector in the node.
+ * @param Nld Number of local data variables in the node.
+ * @param ldata The local data vector with variables in the node.
  * @param node Zero-based index to node.
  * @param tt The current time in node.
  * @param rate The propensity. Only reported if it's infinite or less
@@ -1032,6 +1036,10 @@ on_error:                                  /* #nocov */
 void attribute_hidden SimInf_print_status(
     const int Nc,
     const int *u,
+    const int Nd,
+    const double *v,
+    const int Nld,
+    const double *ldata,
     const int node,
     const double tt,
     const double rate,
@@ -1041,31 +1049,47 @@ void attribute_hidden SimInf_print_status(
     #  pragma omp critical
     #endif
     {
-        if (u && (node >= 0)) {
-            int i;
+        int i;
 
-            REprintf("Status:\n");
-            REprintf("-------\n");
+        REprintf("Status:\n");
+        REprintf("-------\n");
 
-            REprintf("Time: %g\n", tt);
-            REprintf("Node: %i\n", node + 1); /* One based in R */
+        REprintf("Time: %g\n", tt);
+        REprintf("Node: %i\n", node + 1); /* One based in R */
 
-            REprintf("Current state in node: {");
-            for (i = 0; i < Nc; i++) {
-                REprintf("%i", u[i]);
-                if (i < (Nc - 1))
-                    REprintf(", ");
-            }
-            REprintf("}\n");
+        REprintf("Current state in node:\n");
 
-            REprintf("Transition: %i\n", transition + 1); /* One based in R */
-
-            if (!R_FINITE(rate) || rate < 0.0)
-                REprintf("Rate: %g\n", rate);
-
-            REprintf("\n");
-
-            R_FlushConsole();
+        REprintf(" u(length: %i) = {", Nc);
+        for (i = 0; u && i < Nc; i++) {
+            REprintf("%i", u[i]);
+            if (i < (Nc - 1))
+                REprintf(", ");
         }
+        REprintf("}\n");
+
+        REprintf(" v(length: %i) = {", Nd);
+        for (i = 0; v && i < Nd; i++) {
+            REprintf("%g", v[i]);
+            if (i < (Nd - 1))
+                REprintf(", ");
+        }
+        REprintf("}\n");
+
+        REprintf(" ldata(length: %i) = {", Nld);
+        for (i = 0; ldata && i < Nld; i++) {
+            REprintf("%g", ldata[i]);
+            if (i < (Nld - 1))
+                REprintf(", ");
+        }
+        REprintf("}\n");
+
+        REprintf("Transition: %i\n", transition + 1); /* One based in R */
+
+        if (!R_FINITE(rate) || rate < 0.0)
+            REprintf("Rate: %g\n", rate);
+
+        REprintf("\n");
+
+        R_FlushConsole();
     }
 }
