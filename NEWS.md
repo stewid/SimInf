@@ -2,7 +2,13 @@
 
 ## CHANGES OR IMPROVEMENTS
 
-* Added a new built-in model: `SIS`.
+* Added a new built-in Susceptible-Infected-Susceptible model: `SIS`.
+
+* Added the functions `update_u0` and `update_v0` to update the
+  initial state in a model.
+
+* Added the `pfilter` function to run a bootstrap particle algorithm
+  on a model. See the documentation for an example.
 
 ## BUG FIXES
 
