@@ -43,7 +43,7 @@ distance_fn_gdata <- function(result, ...) {
            0.00145, 0.0012, 8e-04, 7e-04, 3e-04, 2e-04, 0.00015,
            5e-05, 0, 0, 0)
 
-    sum((prevalence(result, I~.)$prevalence - p)^2)
+    sum((prevalence(result, I ~ .)$prevalence - p)^2)
 }
 
 set.seed(123)
