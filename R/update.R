@@ -20,13 +20,11 @@
 ##'
 ##' @param model The model to update the initial compartment state
 ##'     \code{u0}.
-##' @param u0 A \code{data.frame} with the initial state in each
+##' @param value A \code{data.frame} with the initial state in each
 ##'     node. Each row is one node, and the number of rows in
 ##'     \code{u0} must match the number of nodes in \code{model}. Only
 ##'     the columns in \code{u0} with a name that matches a
 ##'     compartment in the \code{model} will be used.
-##' @return a \code{SimInf_model} with the updated initial compartment
-##'     state \code{u0}.
 ##' @export
 ##' @examples
 ##' ## Create an SIR model object.
@@ -41,30 +39,30 @@
 ##' plot(result)
 ##'
 ##' ## Update u0 and run the model again
-##' model <- update_u0(model, data.frame(S = 990, I = 10, R = 0))
+##' update_u0(model) <- data.frame(S = 990, I = 10, R = 0)
 ##' result <- run(model)
 ##' plot(result)
 setGeneric(
-    "update_u0",
+    "update_u0<-",
     signature = "model",
-    function(model, u0) {
-        standardGeneric("update_u0")
+    function(model, value) {
+        standardGeneric("update_u0<-")
     }
 )
 
-##' @rdname update_u0
+##' @rdname update_u0-set
 ##' @export
 setMethod(
-    "update_u0",
+    "update_u0<-",
     signature(model = "SimInf_model"),
-    function(model, u0) {
+    function(model, value) {
         compartments <- rownames(model@S)
-        u0 <- check_u0(u0, compartments)
-        if (!identical(nrow(u0), n_nodes(model))) {
+        value <- check_u0(value, compartments)
+        if (!identical(nrow(value), n_nodes(model))) {
             stop("The number of rows in 'u0' must match nodes in 'model'.",
                  call. = FALSE)
         }
-        model@u0 <- init_x0(u0)
+        model@u0 <- init_x0(value)
         model
     }
 )
