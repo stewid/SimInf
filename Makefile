@@ -15,8 +15,7 @@ install:
 # 2) Generate documentation
 .PHONY: roxygen
 roxygen:
-	rm -f man/*.Rd
-	cd .. && Rscript -e "roxygen2::roxygenize('$(PKG_NAME)')"
+	Rscript -e "roxygen2::roxygenize(clean = TRUE)"
 
 # Generate PDF output from the Rd sources
 # 1) Rebuild documentation with roxygen
