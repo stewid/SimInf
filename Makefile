@@ -10,9 +10,7 @@ PKG_TAR=$(PKG_NAME)_$(PKG_VERSION).tar.gz
 install:
 	cd .. && R CMD INSTALL $(PKG_NAME)
 
-# Build documentation with roxygen
-# 1) Remove old doc
-# 2) Generate documentation
+# Build documentation with roxygen (first delete previous roxygen files)
 .PHONY: roxygen
 roxygen:
 	Rscript -e "roxygen2::roxygenize(clean = TRUE)"
