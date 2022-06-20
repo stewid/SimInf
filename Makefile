@@ -209,9 +209,7 @@ covr:
 # Run static code analysis
 .PHONY: lintr
 lintr:
-	Rscript \
-          -e "library(lintr)" \
-          -e "lint_package(linters = with_defaults(object_name_linter = NULL, object_usage_linter = NULL))"
+	Rscript -e "lintr::lint_package()"
 
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)
