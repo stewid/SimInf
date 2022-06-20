@@ -2137,7 +2137,7 @@ Or the \code{trajectory()} method, for example, to plot the phase
 plane from 1000 realizations or to illustrate stochastic extinction of
 the predators in the fourth node (Figure~\ref{fig:predator-prey}).
 
-# nolint start
+% # nolint start
 <<predator-prey-plot, eval=FALSE>>=
 opar <- par(mfrow = c(1, 2))
 plot(R ~ F, trajectory(model = result), cex = 0.3, pch = 20,
@@ -2149,7 +2149,7 @@ lines(F ~ time, trajectory(model = result, index = 4), type = "l", lty = 2)
 legend("right", c("Prey", "Predator"), lty = 1:2)
 par(opar)
 @
-# nolint end
+% # nolint end
 
 This example illustrated how \pkg{SimInf} supports usage of the
 numerical solvers from other \proglang{R} packages via the
