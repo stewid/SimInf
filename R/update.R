@@ -71,13 +71,11 @@ setMethod(
 ##'
 ##' @param model The model to update the initial continuous state
 ##'     \code{v0}.
-##' @param v0 A \code{data.frame} with the initial continuosu state in
+##' @param value A \code{data.frame} with the initial continuosu state in
 ##'     each node. Each row is one node, and the number of rows in
 ##'     \code{v0} must match the number of nodes in \code{model}. Only
 ##'     the columns in \code{v0} with a name that matches a continuous
 ##'     state in \code{v0} in the \code{model} will be used.
-##' @return a \code{SimInf_model} with the updated initial continuous
-##'     state \code{v0}.
 ##' @export
 ##' @examples
 ##' ## Create an 'SISe' model with no infected individuals and no
@@ -95,35 +93,35 @@ setMethod(
 ##'
 ##' ## Update the infectious pressure 'phi' in 'v0' and run
 ##' ## the model again.
-##' model <- update_v0(model, data.frame(phi = 1))
+##' v0(model) <- data.frame(phi = 1)
 ##' result <- run(model)
 ##' plot(result)
 setGeneric(
-    "update_v0",
+    "v0<-",
     signature = "model",
-    function(model, v0) {
-        standardGeneric("update_v0")
+    function(model, value) {
+        standardGeneric("v0<-")
     }
 )
 
-##' @rdname update_v0
+##' @rdname v0-set
 ##' @export
 setMethod(
-    "update_v0",
+    "v0<-",
     signature(model = "SimInf_model"),
-    function(model, v0) {
+    function(model, value) {
         variables <- rownames(model@v0)
         if (is.null(variables))
             variables <- character(0)
 
-        v0 <- check_v0(v0, variables)
-        if (!identical(nrow(v0), n_nodes(model))) {
+        value <- check_v0(value, variables)
+        if (!identical(nrow(value), n_nodes(model))) {
             stop("The number of rows in 'v0' must match nodes in 'model'.",
                  call. = FALSE)
         }
 
         if (!identical(dim(model@v0), c(0L, 0L)))
-            model@v0 <- init_x0(v0, "double")
+            model@v0 <- init_x0(value, "double")
 
         model
     }

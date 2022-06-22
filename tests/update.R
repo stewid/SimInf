@@ -41,10 +41,10 @@ res <- assertError(
 check_error(res, "The number of rows in 'u0' must match nodes in 'model'.")
 
 res <- assertError(
-    update_v0(model, data.frame(phi = 10:13)))
+    v0(model) <- data.frame(phi = 10:13))
 check_error(res, "The number of rows in 'v0' must match nodes in 'model'.")
 
-model <- update_v0(model, data.frame(phi = 1:3))
+v0(model) <- data.frame(phi = 1:3)
 stopifnot(identical(model@v0, matrix(numeric(0), nrow = 0, ncol = 0)))
 
 ## Check that a matrix is coerced to a data.frame.
@@ -64,10 +64,11 @@ model <- SISe(u0 = data.frame(S = 100:105, I = 1:6), tspan = 1:10,
               beta_t3 = 0.15, beta_t4 = 0.15, end_t1 = 91, end_t2 = 182,
               end_t3 = 273, end_t4 = 365)
 
-res <- assertError(update_v0(model, data.frame(A = 1:6)))
+res <- assertError(
+    v0(model) <- data.frame(A = 1:6))
 check_error(res, "Missing columns in 'v0'.")
 
-model <- update_v0(model, data.frame(phi = 1:6))
+v0(model) <- data.frame(phi = 1:6)
 stopifnot(identical(model@v0,
                     matrix(c(1, 2, 3, 4, 5, 6),
                            nrow = 1,
