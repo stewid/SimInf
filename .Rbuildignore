@@ -10,6 +10,7 @@ azure-pipelines
 ^gsl\.zip$
 src/gsl
 ^lib$
+^\.lintr$
 ^logo$
 ^vignettes/SimInf\.aux$
 ^vignettes/SimInf\.bbl$
