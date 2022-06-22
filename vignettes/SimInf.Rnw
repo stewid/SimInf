@@ -1359,7 +1359,7 @@ select susceptible, infected or recovered individuals to move between
 the nodes.
 
 <<eval=FALSE>>=
-events = rbind(add, infect, move, remove)
+events <- rbind(add, infect, move, remove)
 model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
   gamma = 0.077)
 set.seed(3)
@@ -1369,7 +1369,7 @@ plot(result, index = 1:5, range = FALSE)
 @
 
 <<SIR-events-I, echo=FALSE, results=hide>>=
-events = rbind(add, infect, move, remove)
+events <- rbind(add, infect, move, remove)
 model <- SIR(u0 = u0, tspan = 1:180, events = events, beta = 0.16,
 gamma = 0.077)
 set.seed(3)
@@ -2018,7 +2018,7 @@ $n$ identical nodes.
 
 <<mparse-predator-prey-II>>=
 n <- 1000
-u0 = data.frame(R = rep(1000, n), F = rep(100, n))
+u0 <- data.frame(R = rep(1000, n), F = rep(100, n))
 model <- mparse(transitions = transitions, compartments = compartments,
   gdata = parameters, u0 = u0, tspan = 1:100)
 @
@@ -2137,6 +2137,7 @@ Or the \code{trajectory()} method, for example, to plot the phase
 plane from 1000 realizations or to illustrate stochastic extinction of
 the predators in the fourth node (Figure~\ref{fig:predator-prey}).
 
+% # nolint start
 <<predator-prey-plot, eval=FALSE>>=
 opar <- par(mfrow = c(1, 2))
 plot(R ~ F, trajectory(model = result), cex = 0.3, pch = 20,
@@ -2148,6 +2149,7 @@ lines(F ~ time, trajectory(model = result, index = 4), type = "l", lty = 2)
 legend("right", c("Prey", "Predator"), lty = 1:2)
 par(opar)
 @
+% # nolint end
 
 This example illustrated how \pkg{SimInf} supports usage of the
 numerical solvers from other \proglang{R} packages via the

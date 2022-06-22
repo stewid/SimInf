@@ -10,13 +10,10 @@ PKG_TAR=$(PKG_NAME)_$(PKG_VERSION).tar.gz
 install:
 	cd .. && R CMD INSTALL $(PKG_NAME)
 
-# Build documentation with roxygen
-# 1) Remove old doc
-# 2) Generate documentation
+# Build documentation with roxygen (first delete previous roxygen files)
 .PHONY: roxygen
 roxygen:
-	rm -f man/*.Rd
-	cd .. && Rscript -e "roxygen2::roxygenize('$(PKG_NAME)')"
+	Rscript -e "roxygen2::roxygenize(clean = TRUE)"
 
 # Generate PDF output from the Rd sources
 # 1) Rebuild documentation with roxygen
@@ -212,9 +209,7 @@ covr:
 # Run static code analysis
 .PHONY: lintr
 lintr:
-	Rscript \
-          -e "library(lintr)" \
-          -e "lint_package(linters = with_defaults(object_name_linter = NULL, object_usage_linter = NULL))"
+	Rscript -e "lintr::lint_package()"
 
 # Run all tests with valgrind
 test_objects = $(wildcard tests/*.R)

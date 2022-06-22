@@ -339,7 +339,7 @@ p_expected <- data.frame(
 p_observed <- prevalence(result, I ~ S + E + I + R)
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
-p_observed <- prevalence(result, I~.)
+p_observed <- prevalence(result, I ~ .)
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 
@@ -402,7 +402,7 @@ p_expected <- data.frame(
                    0.255411255411255, 0.253776435045317, 0.255387931034483,
                    0.253765060240964, 0.255364806866953, 0.253753753753754,
                    0.25534188034188, 0.25374251497006))
-p_observed <- prevalence(result, I~., level = 3, i = 2:3)
+p_observed <- prevalence(result, I ~ ., level = 3, i = 2:3)
 stopifnot(identical(p_observed$node, p_expected$node))
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
