@@ -39,21 +39,21 @@
 ##' plot(result)
 ##'
 ##' ## Update u0 and run the model again
-##' update_u0(model) <- data.frame(S = 990, I = 10, R = 0)
+##' u0(model) <- data.frame(S = 990, I = 10, R = 0)
 ##' result <- run(model)
 ##' plot(result)
 setGeneric(
-    "update_u0<-",
+    "u0<-",
     signature = "model",
     function(model, value) {
-        standardGeneric("update_u0<-")
+        standardGeneric("u0<-")
     }
 )
 
-##' @rdname update_u0-set
+##' @rdname u0-set
 ##' @export
 setMethod(
-    "update_u0<-",
+    "u0<-",
     signature(model = "SimInf_model"),
     function(model, value) {
         compartments <- rownames(model@S)
