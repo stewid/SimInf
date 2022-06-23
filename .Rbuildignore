@@ -7,8 +7,6 @@ azure-pipelines
 ^\.Rproj\.user$
 ^covr\.html$
 ^man-roxygen$
-^gsl\.zip$
-src/gsl
 ^lib$
 ^\.lintr$
 ^logo$
@@ -30,3 +28,4 @@ src/gsl
 ^vignettes/img/SISe3_sp.pdf$
 ^vignettes/mparse.Rmd$
 ^vignettes/post-process-data.Rmd$
+windows
