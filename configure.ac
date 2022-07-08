@@ -25,7 +25,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT([SimInf], [see.DESCRIPTION.file], [https://github.com/stewid/SimInf/issues])
-AC_CONFIG_SRCDIR([src/SimInf.c])
+AC_CONFIG_SRCDIR([src])
 
 # Checks for programs.
 AC_PROG_CC
@@ -139,13 +139,13 @@ else
   ABC_SUPPORT="TRUE"
 fi
 
-# List all model files to compile
-MODELS_OBJ=`"${RSCRIPT}" --slave --vanilla -e "cat(paste0('models/', sub('c$', 'o', list.files('src/models', '[.]c$')), collapse=' '))"`
+# List all object files to compile
+OBJECTS=`find src -type f -name "*.c" | sed 's/src\///' | sed 's/\.c$/.o/' | tr '\n' ' '`
 
 AC_SUBST([PKG_CPPFLAGS], ["-I. -I../inst/include ${CPPFLAGS} ${GSL_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"])
 AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"])
-AC_SUBST(MODELS_OBJ)
+AC_SUBST(OBJECTS)
 AC_SUBST(ABC_SUPPORT)
 
 AC_CONFIG_FILES([R/abc_support.R src/Makevars])
