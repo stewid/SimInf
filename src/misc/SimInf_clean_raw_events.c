@@ -160,7 +160,7 @@ SimInf_clean_raw_events(
     /* Check that the input vectors have an identical length > 0. */
     if (len < 1)
         Rf_error("'id' must be an integer vector with length > 0.");
-    if (XLENGTH(time) != len)
+    if (XLENGTH(event) != len)
         Rf_error("'event' must be an integer vector with length %i.", len);
     if (XLENGTH(time) != len)
         Rf_error("'time' must be an integer vector with length %i.", len);
@@ -176,7 +176,7 @@ SimInf_clean_raw_events(
         case MOVEMENT_EVENT:
             break;
         default:
-            Rf_error("'event[%i]' is invalid.", i);
+            Rf_error("'event[%i]' is invalid.", i + 1);
         }
     }
 
