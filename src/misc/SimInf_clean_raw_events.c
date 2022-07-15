@@ -85,9 +85,9 @@ SimInf_find_longest_path(
                 /* Find an event that is consistent with 'from' in the
                  * previous event. */
                 for (int j = i + 1; j < n && path[depth] == 0; j++) {
-                    if (time[i] < time[j] &&
+                    if (time[j] > time[i] &&
                         from == node[j] &&
-                        node[j] != dest[j] &&
+                        from != dest[j] &&
                         (event[j] == EXIT_EVENT || event[j] == MOVEMENT_EVENT))
                     {
                         path[depth] = j + 1;
