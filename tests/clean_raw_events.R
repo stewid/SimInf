@@ -74,3 +74,21 @@ res <- assertError(.Call(
     c(1L, 1L),
     c(0L, 2L)))
 check_error(res, "'event[2]' is invalid.")
+
+## Check raw events.
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 3L, 3L, 0L),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 0L))
+
+keep <- .Call(
+    SimInf:::SimInf_clean_raw_events,
+    events$id,
+    events$event,
+    events$time,
+    events$node,
+    events$dest)
+
+stopifnot(identical(keep, c(TRUE, TRUE, FALSE, TRUE)))
