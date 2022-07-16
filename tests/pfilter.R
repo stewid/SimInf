@@ -467,6 +467,15 @@ stopifnot(identical(summary_observed, summary_expected))
 plot(pf)
 plot(pf, ~I)
 
+stopifnot(identical(
+    trajectory(pf),
+    data.frame(
+        node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L),
+        time = c(1L, 4L, 7L, 10L, 13L, 16L, 19L),
+        S = c(90L, 87L, 80L, 74L, 69L, 66L, 58L),
+        I = c(0L, 11L, 14L, 16L, 18L, 16L, 18L),
+        R = c(0L, 2L, 6L, 10L, 13L, 18L, 24L))))
+
 ## Modify the model object to check that 'gdata' is included in the
 ## output.
 gdata(pf@model, "test") <- 1
