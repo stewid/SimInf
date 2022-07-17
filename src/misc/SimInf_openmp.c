@@ -57,19 +57,20 @@ int attribute_hidden SimInf_set_num_threads(int threads)
     return SimInf_threads;
 }
 
-/* Compare and return the minimum value of x, y and the integer value
- * of the environmental variable named 'name' (if it exists). */
+/* Get the value of the environmental variable 'SIMINF_NUM_THREADS'
+ * (if it exists and is greater than 0). */
 #ifdef _OPENMP
-static int SimInf_min_env(int x, int y, const char *name)
+static int SimInf_get_max_threads()
 {
-    int z;
-    const char *p = getenv(name);
+    const char *p = getenv("SIMINF_NUM_THREADS");
 
-    if (p != NULL && ((z = atoi(p)) < y))
-        y = z;
-    if (y < x)
-        x = y;
-    return x;
+    if (p != NULL) {
+        int value = atoi(p);
+        if (value > 0)
+            return value;
+    }
+
+    return INT_MAX;
 }
 #endif
 
@@ -87,23 +88,24 @@ SEXP attribute_hidden SimInf_init_threads(SEXP threads)
     int old_value = SimInf_max_threads;
 
 #ifdef _OPENMP
+    int thread_limit;
     SimInf_max_threads = omp_get_num_procs();
 
     /* The thread limit can be set with the OMP_THREAD_LIMIT
      * environment variable, for example, CRAN uses
      * OMP_THREAD_LIMIT=2. */
-    SimInf_max_threads = SimInf_min_env(
-        SimInf_max_threads, omp_get_thread_limit(), "OMP_THREAD_LIMIT");
+    if ((thread_limit = omp_get_thread_limit()) < SimInf_max_threads)
+        SimInf_max_threads = thread_limit;
 
     /* The maximum number of threads can also be limited with the
      * OMP_NUM_THREADS environment variable. */
-    SimInf_max_threads = SimInf_min_env(
-        SimInf_max_threads, omp_get_max_threads(), "OMP_NUM_THREADS");
+    if ((thread_limit = omp_get_max_threads()) < SimInf_max_threads)
+        SimInf_max_threads = thread_limit;
 
     /* Additionally, the maximum number of threads can be limited with
      * the SIMINF_NUM_THREADS environment variable. */
-    SimInf_max_threads = SimInf_min_env(
-        SimInf_max_threads, SimInf_max_threads, "SIMINF_NUM_THREADS");
+    if ((thread_limit = SimInf_get_max_threads()) < SimInf_max_threads)
+        SimInf_max_threads = thread_limit;
 
     if (Rf_isInteger(threads) &&
         LENGTH(threads) == 1 &&
