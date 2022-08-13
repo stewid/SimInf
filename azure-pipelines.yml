@@ -2,12 +2,12 @@ trigger:
 - main
 
 jobs:
-- job: ubuntu_R_4_0
+- job: ubuntu_R_release
   displayName: "Linux, R-release"
   pool:
     vmImage: "Ubuntu-18.04"
   steps:
-  - template: azure-pipelines/ubuntu-install-R-4_0.yml
+  - template: azure-pipelines/ubuntu-install-R.yml
   - template: azure-pipelines/customize-R-startup.yml
   - template: azure-pipelines/R-sessioninfo.yml
   - template: azure-pipelines/ubuntu-install-dependencies.yml
