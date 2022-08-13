@@ -12,6 +12,8 @@ Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0003-4328-7171")),
              person("Thomas", "Rosendal", role = "ctb",
                     comment = c(ORCID = "0000-0002-6576-9668")),
+             person("Ivana", "Rodriguez Ewerlöf", role = "ctb",
+                    comment = c(ORCID = "0000-0002-9678-9813")),
              person("Attractive Chaos", role = "cph",
                     comment = "Author of 'kvec.h'."))
 Description: Provides an efficient and very flexible framework to
