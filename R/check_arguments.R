@@ -331,3 +331,39 @@ check_package_name <- function(name) {
 
     invisible(NULL)
 }
+
+##' Check raw events identifiers
+##'
+##' Check that the identifiers used for 'id', 'node', and 'dest' are
+##' valid, else raise an error.
+##' @param ... The arguments ('id', 'node', and 'dest') to check.
+##' @return invisible(NULL)
+##' @noRd
+check_raw_events_identifier <- function(...) {
+    arg <- list(...)
+    names(arg) <- match.call(expand.dots = FALSE)$"..."
+
+    for (i in seq_len(length(arg))) {
+        is_ok <- FALSE
+
+        if (is.numeric(arg[[i]])) {
+            is_ok <- all(is_wholenumber(arg[[i]]))
+        } else {
+            is_ok <- is.character(arg[[i]])
+        }
+
+        if (isTRUE(is_ok)) {
+            is_ok <- !any(is.na(arg[[i]]))
+        }
+
+        if (!isTRUE(is_ok)) {
+            stop(paste0("'",
+                        match.call(expand.dots = FALSE)$"..."[i],
+                        "' must be an integer or character vector ",
+                        "with non-NA values."),
+                 call. = FALSE)
+        }
+    }
+
+    invisible(NULL)
+}

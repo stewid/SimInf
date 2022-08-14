@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -65,9 +65,11 @@ init_x0 <- function(x, storage_mode = c("integer", "double"), null_ok = FALSE) {
     x
 }
 
+##' @importFrom Matrix Matrix
+##' @noRd
 init_sparse_matrix <- function(x) {
     if (!is.null(x) && !is(x, "dgCMatrix"))
-        x <- as(x, "dgCMatrix")
+        x <- as(as(as(Matrix(x), "dMatrix"), "generalMatrix"), "CsparseMatrix")
 
     x
 }

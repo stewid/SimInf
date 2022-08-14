@@ -51,14 +51,16 @@ movements. Interpret it as follows:
 
 ```{r, eval = TRUE, echo = TRUE, message = FALSE}
 events <- data.frame(
-    event      = rep("extTrans", 6),  ## Event "extTrans" is a movement between nodes
-    time       = c(1, 1, 2, 2, 3, 3), ## The time that the event happens
-    node       = c(3, 3, 1, 4, 3, 4), ## In which node does the event occur
-    dest       = c(4, 2, 3, 3, 2, 2), ## Which node is the destination node
-    n          = c(9, 2, 8, 3, 5, 4), ## How many individuals are moved
-    proportion = c(0, 0, 0, 0, 0, 0), ## This is not used when n > 0
-    select     = c(4, 4, 4, 4, 4, 4), ## Use the 4th column in the model select matrix
-    shift      = c(0, 0, 0, 0, 0, 0)) ## Not used in this example
+  event      = rep("extTrans", 6),  ## Event "extTrans" is
+                                    ##  a movement between nodes
+  time       = c(1, 1, 2, 2, 3, 3), ## The time that the event happens
+  node       = c(3, 3, 1, 4, 3, 4), ## In which node does the event occur
+  dest       = c(4, 2, 3, 3, 2, 2), ## Which node is the destination node
+  n          = c(9, 2, 8, 3, 5, 4), ## How many individuals are moved
+  proportion = c(0, 0, 0, 0, 0, 0), ## This is not used when n > 0
+  select     = c(4, 4, 4, 4, 4, 4), ## Use the 4th column in
+                                    ## the model select matrix
+  shift      = c(0, 0, 0, 0, 0, 0)) ## Not used in this example
 ```
 
 and have a look at the `data.frame`
@@ -75,8 +77,8 @@ different number of individuals in each node.
 library(SimInf)
 
 model <- SIR(u0 = data.frame(S = c(10, 15, 20, 25),
-                             I = c( 5,  0,  0,  0),
-                             R = c( 0,  0,  0,  0)),
+                             I = c(5,  0,  0,  0),
+                             R = c(0,  0,  0,  0)),
              tspan = 0:3,
              beta = 0,
              gamma = 0,

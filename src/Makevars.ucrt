@@ -3,24 +3,18 @@ PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS)
 PKG_LIBS = -lm -lgsl -lgslcblas $(SHLIB_OPENMP_CFLAGS)
 
 # List all model files to compile
-MODELS_SRC = $(wildcard models/*.c)
-MODELS_OBJ = $(MODELS_SRC:.c=.o)
+SOURCE.models = $(wildcard models/*.c)
+OBJECTS.models = $(SOURCE.models:.c=.o)
 
-OBJECTS.misc = misc/SimInf_abc.o \
-               misc/SimInf_arg.o \
-               misc/SimInf_forward_euler_linear_decay.o \
-               misc/SimInf_ldata.o \
-               misc/SimInf_local_spread.o \
-               misc/SimInf_openmp.o \
-               misc/SimInf_particle_filter.o \
-               misc/SimInf_trajectory.o \
-               misc/binheap.o
+# List all misc files to compile
+SOURCE.misc = $(wildcard misc/*.c)
+OBJECTS.misc = $(SOURCE.misc:.c=.o)
 
 OBJECTS.solvers = solvers/SimInf_solver.o \
                   solvers/aem/SimInf_solver_aem.o \
                   solvers/ssm/SimInf_solver_ssm.o
 
-OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(MODELS_OBJ)
+OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(OBJECTS.models)
 
 all: clean
 
