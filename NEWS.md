@@ -2,6 +2,15 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* Renamed the set/get funtions `update_u0` and `update_v0` to `u0`and
+  `v0`, respectively.
+
+* Some internal refactoring of the C code to set number of threads
+  when using OpenMP.
+
+* Changed to coerce to a sparse matrix via virtual classes in order to
+  work with the upcoming Matrix package update.
+
 # SimInf 9.1.0 (2022-06-08)
 
 ## CHANGES OR IMPROVEMENTS
