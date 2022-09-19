@@ -54,7 +54,7 @@ LazyData: true
 Biarch: true
 NeedsCompilation: yes
 SystemRequirements: GNU Scientific Library (GSL)
-Depends: R(>= 4.0)
+Depends: R (>= 4.0)
 Imports:
     digest,
     graphics,
@@ -63,7 +63,7 @@ Imports:
     methods,
     stats,
     utils,
-    Matrix
+    Matrix (>= 1.3-0)
 Suggests:
     knitr,
     rmarkdown
