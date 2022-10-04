@@ -527,15 +527,15 @@ int attribute_hidden SimInf_run_solver_aem(SimInf_solver_args *args)
 
     error = SimInf_compartment_model_create(&model, args);
     if (error)
-        goto cleanup;
+        goto cleanup; /* #nocov */
 
     error = SimInf_scheduled_events_create(&events, args, rng);
     if (error)
-        goto cleanup;
+        goto cleanup; /* #nocov */
 
     error = SimInf_aem_arguments_create(&method, model, args->Nthread, rng);
     if (error)
-        goto cleanup;
+        goto cleanup; /* #nocov */
 
     error = SimInf_solver_aem(model, method, events, args->Nthread);
 
