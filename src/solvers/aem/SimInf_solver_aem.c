@@ -489,9 +489,6 @@ static int SimInf_aem_arguments_create(
                 if (!method[i].rng_vec[m->Nt * node + trans])
                     goto on_error;
 
-                if (!method[i].rng_vec[m->Nt * node + trans])
-                    goto on_error;
-
                 gsl_rng_set(method[i].rng_vec[m->Nt * node + trans],
                             gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
             }
