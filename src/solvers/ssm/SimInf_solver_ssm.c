@@ -325,18 +325,18 @@ int attribute_hidden SimInf_run_solver_ssm(SimInf_solver_args *args)
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
+        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+        goto cleanup;                           /* #nocov */
     }
     gsl_rng_set(rng, args->seed);
 
     error = SimInf_compartment_model_create(&model, args);
     if (error)
-        goto cleanup;
+        goto cleanup; /* #nocov */
 
     error = SimInf_scheduled_events_create(&events, args, rng);
     if (error)
-        goto cleanup;
+        goto cleanup; /* #nocov */
 
     error = SimInf_solver_ssm(model, events);
 
