@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -166,9 +166,19 @@ C_run <- function(transitions) {
       " */",
       "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)",
       "{",
+      "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
       sprintf("    TRFun tr_fun[] = {%s};",
               paste0("&trFun", seq_len(length(transitions)), collapse = ", ")),
-      "    DL_FUNC SimInf_run = R_GetCCallable(\"SimInf\", \"SimInf_run\");",
+      "",
+      "    if (!SimInf_run) {",
+      "        SimInf_run = (SEXP(*)(SEXP, SEXP, TRFun*, PTSFun))",
+      "            R_GetCCallable(\"SimInf\", \"SimInf_run\");",
+      "",
+      "        if (!SimInf_run) {",
+      "            Rf_error(\"Cannot find function 'SimInf_run'.\");",
+      "        }",
+      "    }",
+      "",
       "    return SimInf_run(model, solver, tr_fun, &ptsFun);",
       "}",
       "")
