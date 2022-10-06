@@ -1,6 +1,9 @@
-# SimInf (development version)
+# SimInf 9.3.0 (2022-10-06)
 
 ## CHANGES OR IMPROVEMENTS
+
+* Cast the return value from R_GetCCallable("SimInf", "SimInf_run");
+  to the correct function pointer type.
 
 # SimInf 9.2.0 (2022-09-03)
 
