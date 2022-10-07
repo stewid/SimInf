@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ static int SimInf_max_threads = -1;
  * run. */
 static int SimInf_threads = -1;
 
-int attribute_hidden SimInf_num_threads()
+int attribute_hidden SimInf_num_threads(void)
 {
     return SimInf_threads;
 }
@@ -60,7 +60,7 @@ int attribute_hidden SimInf_set_num_threads(int threads)
 /* Get the value of the environmental variable 'SIMINF_NUM_THREADS'
  * (if it exists and is greater than 0). */
 #ifdef _OPENMP
-static int SimInf_get_max_threads()
+static int SimInf_get_max_threads(void)
 {
     const char *p = getenv("SIMINF_NUM_THREADS");
 
@@ -131,7 +131,7 @@ SEXP attribute_hidden SimInf_init_threads(SEXP threads)
 /**
  * Is OpenMP available
  */
-SEXP attribute_hidden SimInf_have_openmp()
+SEXP attribute_hidden SimInf_have_openmp(void)
 {
 #ifdef _OPENMP
     return Rf_ScalarLogical(1);

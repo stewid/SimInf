@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -69,7 +69,14 @@ create_model_C_file <- function(path, model, name) {
     invisible(NULL)
 }
 
+create_valid_C_entry_point <- function(name) {
+    ## A valid C entry point cannot contain '.'
+    gsub("[.]", "_", name)
+}
+
 create_Makevars_files <- function(path, name) {
+    name <- create_valid_C_entry_point(name)
+
     lines <- paste0("PKG_CPPFLAGS =",
                     " -DSIMINF_MODEL_RUN=", name, "_run",
                     " -DSIMINF_R_INIT=R_init_", name,
@@ -151,7 +158,7 @@ create_model_R_object_function <- function(model, name) {
     fn <- paste0(fn, "u0 = NULL, ")
     if (length(rownames(model@v0)) > 0)
         fn <- paste0(fn, "v0 = NULL, ")
-    fn <- paste0(fn, "tspan = NULL, events = NULL)")
+    paste0(fn, "tspan = NULL, events = NULL) {")
 }
 
 create_model_R_object_u0 <- function(model) {
@@ -290,7 +297,6 @@ create_model_R_object_model <- function(model, name) {
 create_model_R_object <- function(model, name) {
     c(create_model_R_object_roxygen(model),
       create_model_R_object_function(model, name),
-      "{",
       create_model_R_object_ldata(model),
       create_model_R_object_gdata(model),
       create_model_R_object_u0(model),
@@ -318,11 +324,12 @@ create_model_run_fn <- function(name) {
       paste0("##' @useDynLib ", name, ", .registration=TRUE"),
       "setMethod(\"run\",",
       paste0("    signature(model = \"", name, "\"),"),
-      "    function(model, solver = c(\"ssm\", \"aem\"), ...)",
-      "    {",
+      "    function(model, solver = c(\"ssm\", \"aem\"), ...) {",
       "        solver <- match.arg(solver)",
       "        validObject(model)",
-      paste0("       .Call(", name, "_run, model, solver)"),
+      paste0("       .Call(",
+             create_valid_C_entry_point(name),
+             "_run, model, solver)"),
       "    })")
 }
 

@@ -2,6 +2,28 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+# SimInf 9.3.1 (2022-10-07)
+
+## CHANGES OR IMPROVEMENTS
+
+* Cast the return value from R_GetCCallable("SimInf", "SimInf_run");
+  to the correct function pointer type.
+
+* Fix strict-prototype warnings.
+
+# SimInf 9.2.0 (2022-09-03)
+
+## CHANGES OR IMPROVEMENTS
+
+* Renamed the set/get funtions `update_u0` and `update_v0` to `u0`and
+  `v0`, respectively.
+
+* Some internal refactoring of the C code to set number of threads
+  when using OpenMP.
+
+* Changed to coerce to a sparse matrix via virtual classes in order to
+  work with the upcoming Matrix package update.
+
 # SimInf 9.1.0 (2022-06-08)
 
 ## CHANGES OR IMPROVEMENTS

@@ -37,7 +37,7 @@ SEXP SISe_sp_run(SEXP, SEXP);
 SEXP SimInf_abc_proposals(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_abc_weights(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_clean_raw_events(SEXP, SEXP, SEXP, SEXP, SEXP);
-SEXP SimInf_have_openmp();
+SEXP SimInf_have_openmp(void);
 SEXP SimInf_init_threads(SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
 SEXP SimInf_split_events(SEXP, SEXP);

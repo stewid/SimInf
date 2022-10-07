@@ -452,7 +452,7 @@ static int SimInf_aem_arguments_create(
 
     method = calloc(Nthread, sizeof(SimInf_aem_arguments));
     if(!method)
-        goto on_error;
+        goto on_error; /* #nocov */
 
     for (i = 0; i < Nthread; i++) {
         int node;
@@ -487,10 +487,7 @@ static int SimInf_aem_arguments_create(
                 /* Random number generator */
                 method[i].rng_vec[m->Nt * node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
                 if (!method[i].rng_vec[m->Nt * node + trans])
-                    goto on_error;
-
-                if (!method[i].rng_vec[m->Nt * node + trans])
-                    goto on_error;
+                    goto on_error; /* #nocov */
 
                 gsl_rng_set(method[i].rng_vec[m->Nt * node + trans],
                             gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
@@ -523,22 +520,22 @@ int attribute_hidden SimInf_run_solver_aem(SimInf_solver_args *args)
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
-        goto cleanup;
+        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+        goto cleanup;                           /* #nocov */
     }
     gsl_rng_set(rng, args->seed);
 
     error = SimInf_compartment_model_create(&model, args);
     if (error)
-        goto cleanup;
+        goto cleanup; /* #nocov */
 
     error = SimInf_scheduled_events_create(&events, args, rng);
     if (error)
-        goto cleanup;
+        goto cleanup; /* #nocov */
 
     error = SimInf_aem_arguments_create(&method, model, args->Nthread, rng);
     if (error)
-        goto cleanup;
+        goto cleanup; /* #nocov */
 
     error = SimInf_solver_aem(model, method, events, args->Nthread);
 

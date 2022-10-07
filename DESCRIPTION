@@ -1,6 +1,6 @@
 Package: SimInf
 Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
-Version: 9.1.0.9000
+Version: 9.3.1.9000
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     email = "stefan.widgren@gmail.com",
                     comment = c(ORCID = "0000-0001-5745-2284")),
@@ -54,7 +54,7 @@ LazyData: true
 Biarch: true
 NeedsCompilation: yes
 SystemRequirements: GNU Scientific Library (GSL)
-Depends: R(>= 4.0)
+Depends: R (>= 4.0)
 Imports:
     digest,
     graphics,
@@ -64,7 +64,7 @@ Imports:
     mvtnorm,
     stats,
     utils,
-    Matrix
+    Matrix (>= 1.3-0)
 Suggests:
     knitr,
     rmarkdown
@@ -105,7 +105,7 @@ Collate:
     'trajectory.R'
     'update.R'
 Encoding: UTF-8
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 VignetteBuilder:
     utils,
     knitr
