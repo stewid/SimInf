@@ -1,4 +1,4 @@
-# SimInf 9.3.0 (2022-10-06)
+# SimInf 9.3.1 (2022-10-07)
 
 ## CHANGES OR IMPROVEMENTS
 
