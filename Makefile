@@ -72,7 +72,7 @@ check_valgrind:
 # CMD check' on that package.
 .PHONY: check_pkg_skeleton
 check_pkg_skeleton:
-	cd .. && rm -rf pkggdata
+	cd .. && rm -rf pkg.gdata
 	cd .. && Rscript \
             -e "library('SimInf')" \
             -e "model <- mparse(transitions = c('S->b*S*I->I', 'I->g*I->R')," \
@@ -80,10 +80,10 @@ check_pkg_skeleton:
             -e "    gdata = c(b = 0.16, g = 0.077)," \
             -e "    u0 = data.frame(S = 100, I = 1, R = 0)," \
             -e "    tspan = 1:100)" \
-            -e "package_skeleton(model = model, name = 'pkggdata')" \
-        && R CMD build pkggdata \
-        && R CMD check pkggdata_1.0.tar.gz \
-        && R CMD INSTALL pkggdata_1.0.tar.gz
+            -e "package_skeleton(model = model, name = 'pkg.gdata')" \
+        && R CMD build pkg.gdata \
+        && R CMD check pkg.gdata_1.0.tar.gz \
+        && R CMD INSTALL pkg.gdata_1.0.tar.gz
 	cd .. && rm -rf pkgldata
 	cd .. && Rscript \
             -e "library('SimInf')" \
@@ -109,11 +109,11 @@ check_pkg_skeleton:
         && R CMD check pkgv0_1.0.tar.gz \
         && R CMD INSTALL pkgv0_1.0.tar.gz
 	cd .. && Rscript \
-            -e "library('pkggdata')" \
+            -e "library('pkg.gdata')" \
             -e "library('pkgldata')" \
             -e "library('pkgv0')" \
             -e "u0 <- data.frame(S = 100, I = 1, R = 0)" \
-            -e "model_gdata <- pkggdata(u0 = u0, gdata = c(b = 0.16, g = 0.077), tspan = 1:100)" \
+            -e "model_gdata <- pkg.gdata(u0 = u0, gdata = c(b = 0.16, g = 0.077), tspan = 1:100)" \
             -e "set.seed(22)" \
             -e "result_gdata <- prevalence(run(model_gdata), I ~ .)" \
             -e "model_ldata <- pkgldata(u0 = u0, ldata = data.frame(b = 0.16, g = 0.077), tspan = 1:100)" \
@@ -124,7 +124,7 @@ check_pkg_skeleton:
             -e "result_v0 <- prevalence(run(model_v0), I ~ .)" \
             -e "stopifnot(identical(result_gdata, result_ldata))" \
             -e "stopifnot(identical(result_gdata, result_v0))"
-	R CMD REMOVE pkggdata pkgldata pkgv0
+	R CMD REMOVE pkg.gdata pkgldata pkgv0
 
 # Check reverse dependencies
 #
