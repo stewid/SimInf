@@ -69,7 +69,14 @@ create_model_C_file <- function(path, model, name) {
     invisible(NULL)
 }
 
+create_valid_C_entry_point <- function(name) {
+    ## A valid C entry point cannot contain '.'
+    gsub("[.]", "_", name)
+}
+
 create_Makevars_files <- function(path, name) {
+    name <- create_valid_C_entry_point(name)
+
     lines <- paste0("PKG_CPPFLAGS =",
                     " -DSIMINF_MODEL_RUN=", name, "_run",
                     " -DSIMINF_R_INIT=R_init_", name,
@@ -320,7 +327,9 @@ create_model_run_fn <- function(name) {
       "    function(model, solver = c(\"ssm\", \"aem\"), ...) {",
       "        solver <- match.arg(solver)",
       "        validObject(model)",
-      paste0("       .Call(", name, "_run, model, solver)"),
+      paste0("       .Call(",
+             create_valid_C_entry_point(name),
+             "_run, model, solver)"),
       "    })")
 }
 
