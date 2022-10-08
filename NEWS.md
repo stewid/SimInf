@@ -2,6 +2,10 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* Fix the 'package_skeleton' function to generate internal C code with
+  valid C entry names if the package name contains '.', for example,
+  for a package named 'pkg.name'.
+
 # SimInf 9.3.1 (2022-10-07)
 
 ## CHANGES OR IMPROVEMENTS
