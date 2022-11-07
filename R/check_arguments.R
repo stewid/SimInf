@@ -367,3 +367,45 @@ check_raw_events_identifier <- function(...) {
 
     invisible(NULL)
 }
+
+##' Check raw events
+##'
+##' Raise an error if any of the columns in the events data.frame are
+##' invalid.
+##' @param events a data.frame with raw events.
+##' @return a raw events data.frame with the columns 'id', 'event',
+##'     'time', 'node', and 'dest'.
+##' @noRd
+check_raw_events <- function(events) {
+    columns <- c("id", "event", "time", "node", "dest")
+    if (!is.data.frame(events))
+        events <- as.data.frame(events)
+    if (!all(columns %in% names(events)))
+        stop("Missing columns in 'events'.", call. = FALSE)
+
+    check_raw_events_identifier(events$id, events$node, events$dest)
+
+    ## Do we have to recode the event type as a numerical value
+    if (any(is.character(events$event), is.factor(events$event))) {
+        event_names <- c("enter", "exit", "extTrans", "intTrans")
+        if (!all(events$event %in% event_names)) {
+            stop(paste0("'event' type must be 'enter', 'exit', ",
+                        "'extTrans' or 'intTrans'."),
+                 call. = FALSE)
+        }
+
+        ## Find indices to 'enter', 'internal transfer' and 'external
+        ## transfer' events.
+        i_enter <- which(events$event == "enter")
+        i_intTrans <- which(events$event == "intTrans")
+        i_extTrans <- which(events$event == "extTrans")
+
+        ## Replace the character event type with a numerical value.
+        events$.event <- rep(0L, nrow(events))
+        events$.event[i_enter] <- 1L
+        events$.event[i_intTrans] <- 2L
+        events$.event[i_extTrans] <- 3L
+    }
+
+    events[, columns, drop = FALSE]
+}
