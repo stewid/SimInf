@@ -101,7 +101,8 @@ Collate:
     'print.R'
     'punchcard.R'
     'trajectory.R'
-    'update.R'
+    'u0.R'
+    'v0.R'
 Encoding: UTF-8
 RoxygenNote: 7.2.1
 VignetteBuilder:
