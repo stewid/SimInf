@@ -63,6 +63,7 @@ setMethod(
                  call. = FALSE)
         }
         model@u0 <- init_x0(value)
+        validObject(model)
         model
     }
 )

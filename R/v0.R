@@ -72,6 +72,7 @@ setMethod(
         if (!identical(dim(model@v0), c(0L, 0L)))
             model@v0 <- init_x0(value, "double")
 
+        validObject(model)
         model
     }
 )

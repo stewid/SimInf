@@ -210,6 +210,7 @@ setMethod(
 
         model@gdata[parameter] <- value
 
+        validObject(model)
         model
     }
 )
