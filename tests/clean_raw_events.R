@@ -349,4 +349,4 @@ keep <- .Call(
     events$node,
     events$dest)
 
-stopifnot(identical(keep, c(FALSE, FALSE, FALSE, FALSE)))
+stopifnot(identical(keep, c(FALSE, FALSE, FALSE)))
