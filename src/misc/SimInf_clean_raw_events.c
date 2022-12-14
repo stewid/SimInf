@@ -24,6 +24,21 @@
 #include "SimInf.h"
 #include "SimInf_openmp.h"
 
+/**
+ * Find the longest path through the events.
+ *
+ * @param event integer vector with the event type. Each entry must
+ *        contain one of '0' (exit), '1' (enter) or '3' (external
+ *        transfer event, i.e., movement).
+ * @param time integer vector with the time for each event.
+ * @param node integer vector with the node that the event operates
+ *        on.
+ * @param dest integer vector with the destination node for an
+ *        external transfer event i.e.of proposals to generate Not
+ *        used for the other event types.
+ * @param keep integer vector for results with 1 for each event to
+ *        keep, else 0.
+ */
 static void
 SimInf_find_longest_path(
     int *event,
