@@ -183,7 +183,7 @@ SimInf_clean_raw_events(
     ptr_keep = LOGICAL(keep);
 
     /* The default is to drop all events. */
-    memset(keep, 0, len * sizeof(int));
+    memset(ptr_keep, 0, len * sizeof(int));
 
     #ifdef _OPENMP
     #  pragma omp parallel num_threads(SimInf_num_threads())
