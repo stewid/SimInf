@@ -36,6 +36,8 @@
  * @param dest integer vector with the destination node for an
  *        external transfer event i.e.of proposals to generate Not
  *        used for the other event types.
+ * @param path integer vector for temporary storage of one-based
+ *        indices to the events in the current search.
  * @param keep integer vector for results with 1 for each event to
  *        keep, else 0.
  */
@@ -45,11 +47,10 @@ SimInf_find_longest_path(
     int *time,
     int *node,
     int *dest,
+    int *path,
     int *keep,
     int n)
 {
-    int path[n]; /* One-based indices to the events in the current
-                  * search. */
     int longest_path = 0;
     int must_exit = 0;
 
@@ -167,6 +168,7 @@ SimInf_clean_raw_events(
     R_xlen_t len = XLENGTH(id);
     SEXP keep;
     int *ptr_keep;
+    int *ptr_path;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -194,6 +196,10 @@ SimInf_clean_raw_events(
         }
     }
 
+    ptr_path = malloc(len * sizeof(int));
+    if (!ptr_path)
+        Rf_error("Unable to allocate memory buffer."); /* #nocov */
+
     PROTECT(keep = Rf_allocVector(LGLSXP, len));
     ptr_keep = LOGICAL(keep);
 
@@ -215,6 +221,7 @@ SimInf_clean_raw_events(
                 &ptr_time[j],
                 &ptr_node[j],
                 &ptr_dest[j],
+                &ptr_path[j],
                 &ptr_keep[j],
                 i - j + 1);
 
@@ -222,6 +229,7 @@ SimInf_clean_raw_events(
         }
     }
 
+    free(ptr_path);
     UNPROTECT(1);
 
     return keep;
