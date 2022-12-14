@@ -38,9 +38,6 @@ SimInf_find_longest_path(
     int longest_path = 0;
     int must_exit = 0;
 
-    /* The default is to drop all events. */
-    memset(keep, 0, n * sizeof(int));
-
     /* If one of the events is an exit event, then the last event in
      * the path must be an exit event. */
     for (int i = 0; i < n && must_exit == 0; i++) {
@@ -177,6 +174,9 @@ SimInf_clean_raw_events(
 
     PROTECT(keep = Rf_allocVector(LGLSXP, len));
     ptr_keep = LOGICAL(keep);
+
+    /* The default is to drop all events. */
+    memset(keep, 0, len * sizeof(int));
 
     #ifdef _OPENMP
     #  pragma omp parallel num_threads(SimInf_num_threads())
