@@ -58,6 +58,13 @@ SimInf_find_longest_path(
              * an enter event. This is the root for the search. */
             path[depth - 1] = begin + 1;
 
+            /* Check if this enter event might be the longest path,
+             * for example, if there are no more events. */
+            if (must_exit == 0 && longest_path == 0) {
+                longest_path = 1;
+                keep[path[0] - 1] = 1;
+            }
+
             /* Perform a depth first search of the events to find the
              * longest path. */
             while (depth > 0 &&
