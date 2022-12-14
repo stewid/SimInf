@@ -21,13 +21,8 @@
 #include <R.h>
 #include <Rdefines.h>
 #include <R_ext/Visibility.h>
+#include "SimInf.h"
 #include "SimInf_openmp.h"
-
-enum {
-    EXIT_EVENT = 0,
-    ENTER_EVENT = 1,
-    MOVEMENT_EVENT = 3
-};
 
 static void
 SimInf_find_longest_path(
@@ -88,10 +83,10 @@ SimInf_find_longest_path(
                     if (time[j] > time[i] &&
                         from == node[j] &&
                         from != dest[j] &&
-                        (event[j] == EXIT_EVENT || event[j] == MOVEMENT_EVENT))
+                        (event[j] == EXIT_EVENT || event[j] == EXTERNAL_TRANSFER_EVENT))
                     {
                         path[depth] = j + 1;
-                        if (!(must_exit && event[j] == MOVEMENT_EVENT) &&
+                        if (!(must_exit && event[j] == EXTERNAL_TRANSFER_EVENT) &&
                             (depth + 1) > longest_path)
                         {
                             longest_path = depth + 1;
@@ -173,7 +168,7 @@ SimInf_clean_raw_events(
         switch (ptr_event[i]) {
         case EXIT_EVENT:
         case ENTER_EVENT:
-        case MOVEMENT_EVENT:
+        case EXTERNAL_TRANSFER_EVENT:
             break;
         default:
             Rf_error("'event[%i]' is invalid.", i + 1);
