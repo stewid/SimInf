@@ -52,39 +52,48 @@ SimInf_find_longest_path(
     int n)
 {
     int longest_path = 0;
+    int must_enter = 0;
     int must_exit = 0;
 
-    /* If one of the events is an exit event, then the last event in
-     * the path must be an exit event. */
-    for (int i = 0; i < n && must_exit == 0; i++) {
+    /* If one of the events is an enter event, then the first event in
+     * the path must be an enter event. If one of the events is an
+     * exit event, then the last event in the path must be an exit
+     * event. */
+    for (int i = 0; i < n; i++) {
+        if (event[i] == ENTER_EVENT)
+            must_enter = 1;
         if (event[i] == EXIT_EVENT)
             must_exit = 1;
     }
 
-    /* Iterate over all events to identify an enter event that begins
+    /* Iterate over all events to identify an event that should begin
      * each path. */
     for (int begin = 0; begin < n; begin++) {
         int depth = 1;
 
-        if (event[begin] != ENTER_EVENT)
+        if (must_enter && event[begin] != ENTER_EVENT)
             continue;
 
         /* Clear the path. */
         memset(&path[0], 0, n * sizeof(int));
 
-        /* Initialize the path with the first event that must be
-            * an enter event. This is the root for the search. */
+        /* Initialize the path with the first event. This is the root for the search. */
         path[depth - 1] = begin + 1;
 
-        /* Check if this enter event might be the longest path,
-            * for example, if there are no more events. */
-        if (must_exit == 0 && longest_path == 0) {
-            longest_path = 1;
-            keep[path[0] - 1] = 1;
+        /* Check if this event might be the longest path, for example,
+         * if there are no more events. */
+        if (longest_path == 0) {
+            if ((must_exit == 0 && event[begin] == ENTER_EVENT) ||
+                (must_exit == 0 && event[begin] == EXTERNAL_TRANSFER_EVENT) ||
+                (must_exit == 1 && event[begin] == EXIT_EVENT))
+            {
+                longest_path = 1;
+                keep[path[0] - 1] = 1;
+            }
         }
 
         /* Perform a depth first search of the events to find the
-            * longest path. */
+         * longest path. */
         while (depth > 0 &&
                 depth < (n - begin) &&
                 longest_path < (n - begin))
@@ -100,7 +109,7 @@ SimInf_find_longest_path(
             }
 
             /* Find an event that is consistent with 'from' in the
-                * previous event. */
+             * previous event. */
             for (int j = i + 1; j < n && path[depth] == 0; j++) {
                 if (time[j] > time[i] &&
                     from == node[j] &&
@@ -120,12 +129,12 @@ SimInf_find_longest_path(
             }
 
             if (path[depth] == 0) {
-                /* No new event found at this depth, move up in
-                    * the search tree. */
+                /* No new event found at this depth, move up in the
+                 * search tree. */
                 depth -= 1;
             } else if (event[path[depth] - 1] == EXIT_EVENT) {
                 /* The last event is an exit event, move up in the
-                    * search tree. */
+                 * search tree. */
                 path[depth] = 0;
                 depth -= 1;
             } else {
