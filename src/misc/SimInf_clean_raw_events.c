@@ -63,7 +63,7 @@ SimInf_find_longest_path(
     for (int i = 0; i < n; i++) {
         if (event[i] == ENTER_EVENT)
             must_enter = 1;
-        if (event[i] == EXIT_EVENT)
+        else if (event[i] == EXIT_EVENT)
             must_exit = 1;
     }
 
@@ -103,7 +103,7 @@ SimInf_find_longest_path(
             int from = event[i] == ENTER_EVENT ? node[i] : dest[i];
 
             /* Continue the search from a previous search at this
-                * depth? */
+             * depth? */
             if (path[depth] > 0) {
                 i = path[depth] - 1;
                 path[depth] = 0;
