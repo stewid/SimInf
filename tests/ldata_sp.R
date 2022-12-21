@@ -71,6 +71,21 @@ check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 res <- assertError(distance_matrix(rep(1, 10), rep(1, 10), 3, -1))
 check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
+res <- assertError(distance_matrix(x = numeric(0), y = 1, cutoff = 2))
+check_error(res, "'x' must be a numeric vector with length > 0.")
+
+res <- assertError(distance_matrix(x = 1:3, y = 1:2, cutoff = 2))
+check_error(res, "'y' must be a numeric vector with length 3.")
+
+res <- assertError(distance_matrix(x = 1:3, y = 1:3, cutoff = -2))
+check_error(res, "'cutoff' must be > 0.")
+
+res <- assertError(distance_matrix(x = 1:3, y = 1:3, cutoff = Inf))
+check_error(res, "'cutoff' must be > 0.")
+
+res <- assertError(distance_matrix(x = 1:3, y = c(4, NA, 6), cutoff = 1))
+check_error(res, "Invalid distance for i=0 and j=1.")
+
 ## Check 'data' argument to C function 'SimInf_ldata_sp'
 res <- assertError(.Call(SimInf:::SimInf_ldata_sp, NULL, d, 0L))
 check_error(res, "Invalid 'data' argument.")
