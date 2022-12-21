@@ -114,13 +114,13 @@ check_error(
     "'events$dest' must be an integer or character vector with non-NA values.")
 events$dest <- c(0L, 2L, 2L, 0L)
 
-## Testing animals with only one enter event
+## Testing animal with only one enter event, keep
 events <- data.frame(
-    id    = c(1L, 2L),
-    event = c(1L, 1L),
-    time  = c(1L, 1L),
-    node  = c(1L, 2L),
-    dest  = c(0L, 0L))
+    id    = c(1L),
+    event = c(1L),
+    time  = c(1L),
+    node  = c(1L),
+    dest  = c(0L))
 
 keep <- .Call(
     SimInf:::SimInf_clean_raw_events,
@@ -130,15 +130,15 @@ keep <- .Call(
     events$node,
     events$dest)
 
-stopifnot(identical(keep, c(TRUE, TRUE)))
+stopifnot(identical(keep, c(TRUE)))
 
-## Testing animals with only one exit event
+## Testing animal with only one exit event, keep
 events <- data.frame(
-    id    = c(1L, 2L),
-    event = c(0L, 0L),
-    time  = c(1L, 1L),
-    node  = c(1L, 2L),
-    dest  = c(0L, 0L))
+    id    = c(1L),
+    event = c(0L),
+    time  = c(1L),
+    node  = c(1L),
+    dest  = c(0L))
 
 keep <- .Call(
     SimInf:::SimInf_clean_raw_events,
@@ -148,12 +148,49 @@ keep <- .Call(
     events$node,
     events$dest)
 
-stopifnot(identical(keep, c(FALSE, FALSE)))
+stopifnot(identical(keep, c(TRUE)))
+
+## Testing animal with only one external transfer event, keep
+events <- data.frame(
+    id    = c(1L),
+    event = c(3L),
+    time  = c(1L),
+    node  = c(1L),
+    dest  = c(2L))
+
+keep <- .Call(
+    SimInf:::SimInf_clean_raw_events,
+    events$id,
+    events$event,
+    events$time,
+    events$node,
+    events$dest)
+
+stopifnot(identical(keep, c(TRUE)))
 
 ## Testing animal with two enter events, keep first
 events <- data.frame(
     id    = c(1L, 1L),
     event = c(1L, 1L),
+    time  = c(1L, 2L),
+    node  = c(1L, 1L),
+    dest  = c(0L, 0L))
+
+keep <- .Call(
+    SimInf:::SimInf_clean_raw_events,
+    events$id,
+    events$event,
+    events$time,
+    events$node,
+    events$dest)
+
+stopifnot(identical(keep, c(TRUE, FALSE)))
+
+
+## Testing animal with two exit events, keep first
+events <- data.frame(
+    id    = c(1L, 1L),
+    event = c(0L, 0L),
     time  = c(1L, 2L),
     node  = c(1L, 1L),
     dest  = c(0L, 0L))
@@ -333,7 +370,7 @@ keep <- .Call(
 
 stopifnot(identical(keep, c(FALSE, FALSE, FALSE, FALSE)))
 
-## Testing animal with no enter event, don't keep
+## Testing animal with no enter event, keep path
 events <- data.frame(
     id    = c(1L, 1L, 1L),
     event = c(3L, 3L, 0L),
@@ -349,4 +386,77 @@ keep <- .Call(
     events$node,
     events$dest)
 
-stopifnot(identical(keep, c(FALSE, FALSE, FALSE)))
+stopifnot(identical(keep, c(TRUE, TRUE, TRUE)))
+
+## Testing animal with no enter or exit event, keep path
+events <- data.frame(
+    id    = c(1L, 1L),
+    event = c(3L, 3L),
+    time  = c(1L, 2L),
+    node  = c(1L, 2L),
+    dest  = c(2L, 3L))
+
+keep <- .Call(
+    SimInf:::SimInf_clean_raw_events,
+    events$id,
+    events$event,
+    events$time,
+    events$node,
+    events$dest)
+
+stopifnot(identical(keep, c(TRUE, TRUE)))
+
+## Testing animal with no exit event, keep path
+events <- data.frame(
+    id    = c(1L, 1L),
+    event = c(1L, 3L),
+    time  = c(1L, 2L),
+    node  = c(1L, 1L),
+    dest  = c(0L, 2L))
+
+keep <- .Call(
+    SimInf:::SimInf_clean_raw_events,
+    events$id,
+    events$event,
+    events$time,
+    events$node,
+    events$dest)
+
+stopifnot(identical(keep, c(TRUE, TRUE)))
+
+
+## Testing animal with only enter and exit event, keep path
+events <- data.frame(
+    id    = c(1L, 1L),
+    event = c(1L, 0L),
+    time  = c(1L, 2L),
+    node  = c(1L, 1L),
+    dest  = c(0L, 0L))
+
+keep <- .Call(
+    SimInf:::SimInf_clean_raw_events,
+    events$id,
+    events$event,
+    events$time,
+    events$node,
+    events$dest)
+
+stopifnot(identical(keep, c(TRUE, TRUE)))
+
+## Testing animal with enter and exit event in wrong order, don't keep
+events <- data.frame(
+    id    = c(1L, 1L),
+    event = c(0L, 1L),
+    time  = c(1L, 2L),
+    node  = c(1L, 1L),
+    dest  = c(0L, 0L))
+
+keep <- .Call(
+    SimInf:::SimInf_clean_raw_events,
+    events$id,
+    events$event,
+    events$time,
+    events$node,
+    events$dest)
+
+stopifnot(identical(keep, c(FALSE, FALSE)))
