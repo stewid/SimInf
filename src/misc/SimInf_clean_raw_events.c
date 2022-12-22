@@ -207,9 +207,10 @@ SimInf_clean_raw_events(
         }
     }
 
-    ptr_path = malloc(len * sizeof(int));
-    if (!ptr_path)
-        Rf_error("Unable to allocate memory buffer."); /* #nocov */
+    /* Allocate transient storage of an integer vector for keeping
+     * track of the current path when searching for the longest
+     * path. R will reclaim the memory at the end of the call. */
+    ptr_path = (int*)R_alloc(len, sizeof(int));
 
     PROTECT(keep = Rf_allocVector(LGLSXP, len));
     ptr_keep = LOGICAL(keep);
@@ -240,7 +241,6 @@ SimInf_clean_raw_events(
         }
     }
 
-    free(ptr_path);
     UNPROTECT(1);
 
     return keep;
