@@ -11,3 +11,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install R
+        run: sudo dnf --assumeyes install langpacks-en R
