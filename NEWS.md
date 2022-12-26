@@ -6,6 +6,16 @@
   valid C entry names if the package name contains '.', for example,
   for a package named 'pkg.name'.
 
+* Changed the usage of 'any(is.na(x))' to 'anyNA(x)' in the R code.
+
+* Internal refactoring of the 'distance_matrix' function to reduce
+  memory usage.
+
+* Ensure to check for a valid model object after updating model data.
+
+* Moved the enumeration of event types to the header file
+  'inst/SimInf.h'
+
 # SimInf 9.3.1 (2022-10-07)
 
 ## CHANGES OR IMPROVEMENTS
