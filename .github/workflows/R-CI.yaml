@@ -13,13 +13,13 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install R
-        run: dnf --assumeyes install langpacks-en R
+        run: sudo dnf --assumeyes install langpacks-en R
 
-      - name: Setup to install binary packages
+      - name: Setup to install binary R packages
         run: |
-            dnf install "dnf-command(copr)"
-            dnf copr enable iucar/cran
-            dnf install R-CoprManager
+            sudo dnf --assumeyes install "dnf-command(copr)"
+            sudo dnf copr enable iucar/cran
+            sudo dnf --assumeyes install R-CoprManager
 
       - name: R session information
         run: Rscript -e "sessionInfo()"
