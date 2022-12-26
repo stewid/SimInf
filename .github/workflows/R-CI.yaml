@@ -19,12 +19,10 @@ jobs:
         run: |
             sudo dnf --assumeyes install "dnf-command(copr)"
             sudo dnf --assumeyes copr enable iucar/cran
-            sudo dnf --assumeyes install R-CoprManager
 
       - name: Install package dependencies
         run: |
-            sudo dnf --assumeyes install gsl-devel
-            Rscript -e "install.packages(c('digest', 'knitr', 'rmarkdown'), repos = 'https://cran.r-project.org')"
+            sudo dnf --assumeyes install gsl-devel R-CRAN-digest R-CRAN-knitr R-CRAN-rmarkdown
 
       - name: R session information
         run: Rscript -e "sessionInfo()"
