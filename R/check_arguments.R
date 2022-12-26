@@ -65,7 +65,7 @@ check_integer_arg <- function(...) {
         }
 
         if (!is.numeric(arg[[i]]) ||
-            any(is.na(arg[[i]])) ||
+            anyNA(arg[[i]]) ||
             !all(is_wholenumber(arg[[i]]))) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],
@@ -353,7 +353,7 @@ check_raw_events_identifier <- function(...) {
         }
 
         if (isTRUE(is_ok)) {
-            is_ok <- !any(is.na(arg[[i]]))
+            is_ok <- !anyNA(arg[[i]])
         }
 
         if (!isTRUE(is_ok)) {

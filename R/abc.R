@@ -306,7 +306,7 @@ abc_init_tolerance <- function(tolerance, tolerance_prev) {
     if (ncol(tolerance) == 0)
         stop("'tolerance' must have columns.", call. = FALSE)
 
-    if (any(is.na(tolerance)) || any(tolerance < 0))
+    if (anyNA(tolerance) || any(tolerance < 0))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
 
     if (nrow(tolerance_prev) > 0) {
@@ -452,7 +452,7 @@ abc_distance <- function(distance, n) {
              call. = FALSE)
     }
 
-    if (any(is.na(distance)) || any(distance < 0)) {
+    if (anyNA(distance) || any(distance < 0)) {
         stop("The result from the ABC distance function must be non-negative.",
              call. = FALSE)
     }

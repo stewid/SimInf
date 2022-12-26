@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -173,10 +173,10 @@ create_template <- function(value, tspan, nodes, compartments, data) {
 
     ## Match the nodes and time-points with the model.
     i <- match(value$node, nodes)
-    if (any(is.na(i)))
+    if (anyNA(i))
         stop("Unable to match all nodes.", call. = FALSE)
     j <- match(value$time, tspan)
-    if (any(is.na(j)))
+    if (anyNA(j))
         stop("Unable to match all time-points to tspan.", call. = FALSE)
 
     selected_compartments <- setdiff(colnames(value), c("time", "node"))

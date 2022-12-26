@@ -119,8 +119,8 @@ pfilter_data <- function(model, data) {
     data <- data[order(data$time), seq_len(ncol(data)), drop = FALSE]
 
     if (any(length(data$time) < 1,
-            any(diff(unique(data$time)) <= 0),
-            any(is.na(data$time)))) {
+            anyNA(data$time),
+            any(diff(unique(data$time)) <= 0))) {
         stop("'time' column in data must be an increasing vector.",
              call. = FALSE)
     }

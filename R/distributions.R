@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 check_binomial_distribution <- function(hyperparameters, symbols) {
-    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+    if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
         stop("Invalid formula specification for binomial distribution.",
              call. = FALSE)
     }
@@ -43,7 +43,7 @@ check_binomial_distribution <- function(hyperparameters, symbols) {
 }
 
 check_gamma_distribution <- function(hyperparameters, symbols) {
-    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+    if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
         stop("Invalid formula specification for gamma distribution.",
              call. = FALSE)
     }
@@ -56,7 +56,7 @@ check_gamma_distribution <- function(hyperparameters, symbols) {
 }
 
 check_normal_distribution <- function(hyperparameters, symbols) {
-    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+    if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
         stop("Invalid formula specification for normal distribution.",
              call. = FALSE)
     }
@@ -84,7 +84,7 @@ check_poisson_distribution <- function(hyperparameters, symbols) {
 }
 
 check_uniform_distribution <- function(hyperparameters, symbols) {
-    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+    if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
         stop("Invalid formula specification for uniform distribution.",
              call. = FALSE)
     }
@@ -221,9 +221,9 @@ parse_priors <- function(priors) {
 ##' @noRd
 match_priors <- function(model, priors) {
     pars <- match(priors$parameter, rownames(model@ldata))
-    if (any(is.na(pars))) {
+    if (anyNA(pars)) {
         pars <- match(priors$parameter, names(model@gdata))
-        if (any(is.na(pars))) {
+        if (anyNA(pars)) {
             stop("All parameters in 'priors' must be either ",
                  "in 'gdata' or 'ldata'.", call. = FALSE)
         }
