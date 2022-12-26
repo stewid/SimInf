@@ -18,7 +18,7 @@ jobs:
       - name: Setup to install binary R packages
         run: |
             sudo dnf --assumeyes install "dnf-command(copr)"
-            sudo dnf --assumeys copr enable iucar/cran
+            sudo dnf --assumeyes copr enable iucar/cran
             sudo dnf --assumeyes install R-CoprManager
 
       - name: R session information
