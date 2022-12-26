@@ -24,7 +24,7 @@ jobs:
       - name: Install package dependencies
         run: |
             sudo dnf --assumeyes install gsl-devel
-            Rscript -e "install.packages(c('digest', 'knitr', 'rmarkdown'))"
+            Rscript -e "install.packages(c('digest', 'knitr', 'rmarkdown'), repos = 'https://cran.r-project.org')"
 
       - name: R session information
         run: Rscript -e "sessionInfo()"
