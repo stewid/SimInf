@@ -17,3 +17,6 @@ jobs:
 
       - name: R session information
         run: Rscript -e "sessionInfo()"
+
+      - name: Build package
+        run: R CMD build --no-manual .
