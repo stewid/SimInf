@@ -27,6 +27,7 @@ jobs:
           gsl-devel
           R-CRAN-digest
           R-CRAN-knitr
+          R-CRAN-lintr
           R-CRAN-rmarkdown
 
       - name: R session information
@@ -39,3 +40,6 @@ jobs:
         run: |
           _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-stop-on-test-error --as-cran $(ls -1t *.tar.gz | head -n 1)
           if grep -q WARNING SimInf.Rcheck/00check.log; then exit 1; fi
+
+      - name: Static code analysis of R code
+        run: Rscript -e "library(lintr); l <- lint_package(); print(l); quit(save = 'no', status = length(l) > 0)"
