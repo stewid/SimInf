@@ -44,10 +44,10 @@
  */
 static void
 SimInf_find_longest_path(
-    int *event,
-    int *time,
-    int *node,
-    int *dest,
+    const int *event,
+    const int *time,
+    const int *node,
+    const int *dest,
     int *path,
     int *keep,
     int n)
