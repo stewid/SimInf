@@ -15,6 +15,12 @@ jobs:
       - name: Install R
         run: dnf --assumeyes install langpacks-en R
 
+      - name: Setup to install binary packages
+        run: |
+            dnf install "dnf-command(copr)"
+            dnf copr enable iucar/cran
+            dnf install R-CoprManager
+
       - name: R session information
         run: Rscript -e "sessionInfo()"
 
