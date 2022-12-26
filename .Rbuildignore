@@ -1,8 +1,7 @@
 ^README\.Rmd$
 ^LICENSE$
 ^Makefile$
-azure-pipelines\.yml
-azure-pipelines
+^\.github
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^covr\.html$
