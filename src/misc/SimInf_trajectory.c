@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2021 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ SimInf_sparse2df_int(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
-    int * m_i,
+    const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
@@ -125,9 +125,9 @@ SimInf_sparse2df_int(
     R_xlen_t n_id,
     R_xlen_t col)
 {
-    int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-    int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
-    double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
+    const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
+    const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+    const double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
@@ -200,7 +200,7 @@ SimInf_sparse2df_real(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
-    int * m_i,
+    const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
@@ -208,9 +208,9 @@ SimInf_sparse2df_real(
     R_xlen_t n_id,
     R_xlen_t col)
 {
-    int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-    int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
-    double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
+    const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
+    const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+    const double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
@@ -282,7 +282,7 @@ static void
 SimInf_dense2df_int(
     SEXP dst,
     int *m,
-    int * m_i,
+    const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
@@ -290,7 +290,7 @@ SimInf_dense2df_int(
     R_xlen_t id_len,
     R_xlen_t id_n,
     R_xlen_t col,
-    int *p_id)
+    const int *p_id)
 {
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
@@ -329,7 +329,7 @@ static void
 SimInf_dense2df_real(
     SEXP dst,
     double *m,
-    int * m_i,
+    const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
@@ -337,7 +337,7 @@ SimInf_dense2df_real(
     R_xlen_t id_len,
     R_xlen_t id_n,
     R_xlen_t col,
-    int *p_id)
+    const int *p_id)
 {
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
