@@ -281,7 +281,7 @@ SimInf_sparse2df_real(
 static void
 SimInf_dense2df_int(
     SEXP dst,
-    int *m,
+    const int *m,
     const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
@@ -295,7 +295,7 @@ SimInf_dense2df_int(
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
         int *p_vec;
-        int *p_m = m + m_i[i] - 1;
+        const int *p_m = m + m_i[i] - 1;
 
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
         p_vec = INTEGER(vec);
@@ -328,7 +328,7 @@ SimInf_dense2df_int(
 static void
 SimInf_dense2df_real(
     SEXP dst,
-    double *m,
+    const double *m,
     const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
@@ -342,7 +342,7 @@ SimInf_dense2df_real(
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
         double *p_vec;
-        double *p_m = m + m_i[i] - 1;
+        const double *p_m = m + m_i[i] - 1;
 
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
         p_vec = REAL(vec);
