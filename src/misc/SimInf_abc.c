@@ -226,11 +226,7 @@ SEXP attribute_hidden SimInf_abc_proposals(
     /* Setup weights */
     ptr_x = REAL(x);
     ptr_w = REAL(w);
-    cdf = malloc(len * sizeof(double));
-    if (!cdf) {
-        error = 1;    /* #nocov */
-        goto cleanup; /* #nocov */
-    }
+    cdf = (double *)R_alloc(len, sizeof(double));
     for (int i = 0; i < len; i++) {
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
             error = 3;
@@ -308,7 +304,6 @@ SEXP attribute_hidden SimInf_abc_proposals(
     }
 
 cleanup:
-    free(cdf);
     gsl_matrix_free(SIGMA);
     gsl_rng_free(rng);
     PutRNGstate();
