@@ -20,6 +20,7 @@ jobs:
           devscripts-checkbashisms
           langpacks-en
           R
+          R-CRAN-lintr
           tidy
 
       - name: Setup to install binary R packages
@@ -27,13 +28,20 @@ jobs:
           sudo dnf --assumeyes install "dnf-command(copr)"
           sudo dnf --assumeyes copr enable iucar/cran
 
+      - name:  Determine package name and version from DESCRIPTION file
+        run: |
+          echo "PKG_NAME=$(grep -i ^package DESCRIPTION | cut -d : -d ' ' -f 2 | tr -d '\r')" >> $GITHUB_ENV
+          echo "PKG_VERSION=$(grep -i ^version DESCRIPTION | cut -d : -d ' ' -f 2 | tr -d '\r')" >> $GITHUB_ENV
+
+      - name: Name of built package
+        run: echo "PKG_TAR=$(PKG_NAME)_$(PKG_VERSION).tar.gz" >> $GITHUB_ENV
+
       - name: Install package dependencies
         run: >
           sudo dnf --assumeyes install
           gsl-devel
           R-CRAN-digest
           R-CRAN-knitr
-          R-CRAN-lintr
           R-CRAN-rmarkdown
 
       - name: R session information
@@ -44,14 +52,14 @@ jobs:
 
       - name: Check package
         run: |
-          _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-stop-on-test-error --as-cran $(ls -1t *.tar.gz | head -n 1)
-          if grep -q WARNING SimInf.Rcheck/00check.log; then exit 1; fi
+          _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-stop-on-test-error --as-cran $(PKG_TAR)
+          if grep -q WARNING $(PKG_NAME).Rcheck/00check.log; then exit 1; fi
 
       - name: Static code analysis of R code
         run: Rscript -e "library(lintr); l <- lint_package(); print(l); quit(save = 'no', status = length(l) > 0)"
 
       - name: Static code analysis of C code
         run: |
-          cat <(cppcheck --enable=warning,style,performance,portability --quiet --verbose src 2>&1) > SimInf.Rcheck/00cppcheck.log
-          cat SimInf.Rcheck/00cppcheck.log
-          if [[ -s SimInf.Rcheck/00cppcheck.log ]]; then exit 1; fi
+          cat <(cppcheck --enable=warning,style,performance,portability --quiet --verbose src 2>&1) > $(PKG_NAME).Rcheck/00cppcheck.log
+          cat $(PKG_NAME).Rcheck/00cppcheck.log
+          if [[ -s $(PKG_NAME).Rcheck/00cppcheck.log ]]; then exit 1; fi
