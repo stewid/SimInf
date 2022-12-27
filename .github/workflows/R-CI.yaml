@@ -33,7 +33,7 @@ jobs:
           echo "PKG_VERSION=$(grep -i ^version DESCRIPTION | cut -d : -d ' ' -f 2 | tr -d '\r')" >> $GITHUB_ENV
 
       - name: Name of built package
-        run: echo "PKG_TAR=$(PKG_NAME)_$(PKG_VERSION).tar.gz" >> $GITHUB_ENV
+        run: echo "PKG_TAR=${{ env.PKG_NAME }}_${{ env.PKG_VERSION }}.tar.gz" >> $GITHUB_ENV
 
       - name: Install package dependencies
         run: >
@@ -52,14 +52,14 @@ jobs:
 
       - name: Check package
         run: |
-          _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-stop-on-test-error --as-cran $(PKG_TAR)
-          if grep -q WARNING $(PKG_NAME).Rcheck/00check.log; then exit 1; fi
+          _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-stop-on-test-error --as-cran ${{ env.PKG_TAR }}
+          if grep -q WARNING ${{ env.PKG_NAME }}.Rcheck/00check.log; then exit 1; fi
 
       - name: Static code analysis of R code
         run: Rscript -e "library(lintr); l <- lint_package(); print(l); quit(save = 'no', status = length(l) > 0)"
 
       - name: Static code analysis of C code
         run: |
-          cat <(cppcheck --enable=warning,style,performance,portability --quiet --verbose src 2>&1) > $(PKG_NAME).Rcheck/00cppcheck.log
-          cat $(PKG_NAME).Rcheck/00cppcheck.log
-          if [[ -s $(PKG_NAME).Rcheck/00cppcheck.log ]]; then exit 1; fi
+          cat <(cppcheck --enable=warning,style,performance,portability --quiet --verbose src 2>&1) > ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log
+          cat ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log
+          if [[ -s ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log ]]; then exit 1; fi
