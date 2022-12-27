@@ -50,7 +50,7 @@ SimInf_find_longest_path(
     const int *dest,
     int *path,
     int *keep,
-    int n)
+    const int n)
 {
     int longest_path = 0;
     int must_enter = 0;
@@ -171,11 +171,11 @@ SimInf_clean_raw_events(
     SEXP node,
     SEXP dest)
 {
-    int *ptr_id = INTEGER(id);
-    int *ptr_event = INTEGER(event);
-    int *ptr_time = INTEGER(time);
-    int *ptr_node = INTEGER(node);
-    int *ptr_dest = INTEGER(dest);
+    const int *ptr_id = INTEGER(id);
+    const int *ptr_event = INTEGER(event);
+    const int *ptr_time = INTEGER(time);
+    const int *ptr_node = INTEGER(node);
+    const int *ptr_dest = INTEGER(dest);
     R_xlen_t len = XLENGTH(id);
     SEXP keep;
     int *ptr_keep;
