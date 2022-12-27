@@ -20,7 +20,6 @@ jobs:
           devscripts-checkbashisms
           langpacks-en
           R
-          R-CRAN-lintr
           tidy
 
       - name: Setup to install binary R packages
@@ -42,6 +41,7 @@ jobs:
           gsl-devel
           R-CRAN-digest
           R-CRAN-knitr
+          R-CRAN-lintr
           R-CRAN-rmarkdown
 
       - name: R session information
