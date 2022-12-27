@@ -54,4 +54,4 @@ jobs:
         run: |
           cat <(cppcheck --enable=warning,style,performance,portability --quiet --verbose src 2>&1) > SimInf.Rcheck/00cppcheck.log
           cat SimInf.Rcheck/00cppcheck.log
-          if [[ -s SimInf.Rcheck/00check1.log ]]; then exit 1; fi
+          if [[ -s SimInf.Rcheck/00cppcheck.log ]]; then exit 1; fi
