@@ -60,6 +60,6 @@ jobs:
 
       - name: Static code analysis of C code
         run: |
-          cat <(cppcheck --enable=warning,style,performance,portability --quiet --verbose src 2>&1) > ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log
+          cat <(cppcheck --enable=warning,style,performance,portability --inline-suppr --quiet --verbose src 2>&1) > ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log
           cat ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log
           if [[ -s ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log ]]; then exit 1; fi

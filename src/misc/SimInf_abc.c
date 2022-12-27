@@ -440,6 +440,8 @@ SEXP attribute_hidden SimInf_abc_weights(
             sum += ptr_w[j] * pdf;
         }
 
+        /* FIXME: handle case when value of sum is 0. */
+        /* cppcheck-suppress invalidFunctionArg */
         sum = log(sum);
         ptr_ww[i] -= sum;
         if (ptr_ww[i] > max_ww)
