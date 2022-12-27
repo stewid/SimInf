@@ -306,9 +306,9 @@ SimInf_dense2df_int(
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++) {
-                    p_vec[t * id_len + i] =
-                        p_m[(t * id_n + p_id[i] - 1) * m_stride];
+                for (R_xlen_t j = 0; j < id_len; j++) {
+                    p_vec[t * id_len + j] =
+                        p_m[(t * id_n + p_id[j] - 1) * m_stride];
                 }
             }
         } else {
@@ -316,9 +316,9 @@ SimInf_dense2df_int(
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++) {
-                    p_vec[t * id_len + i] =
-                        p_m[(t * id_n + i) * m_stride];
+                for (R_xlen_t j = 0; j < id_len; j++) {
+                    p_vec[t * id_len + j] =
+                        p_m[(t * id_n + j) * m_stride];
                 }
             }
         }
@@ -353,9 +353,9 @@ SimInf_dense2df_real(
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++) {
-                    p_vec[t * id_len + i] =
-                        p_m[(t * id_n + p_id[i] - 1) * m_stride];
+                for (R_xlen_t j = 0; j < id_len; j++) {
+                    p_vec[t * id_len + j] =
+                        p_m[(t * id_n + p_id[j] - 1) * m_stride];
                 }
             }
         } else {
@@ -363,9 +363,9 @@ SimInf_dense2df_real(
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++) {
-                    p_vec[t * id_len + i] =
-                        p_m[(t * id_n + i) * m_stride];
+                for (R_xlen_t j = 0; j < id_len; j++) {
+                    p_vec[t * id_len + j] =
+                        p_m[(t * id_n + j) * m_stride];
                 }
             }
         }
