@@ -985,10 +985,10 @@ int attribute_hidden SimInf_compartment_model_create(
         }
 
         if (i > 0) {
-            model[i].u = &model[0].u[model[i].Ni * args->Nc];
-            model[i].v = &model[0].v[model[i].Ni * args->Nd];
-            model[i].v_new = &model[0].v_new[model[i].Ni * args->Nd];
-            model[i].update_node = &model[0].update_node[model[i].Ni];
+            model[i].u = &(model[0].u[model[i].Ni * args->Nc]);
+            model[i].v = &(model[0].v[model[i].Ni * args->Nd]);
+            model[i].v_new = &(model[0].v_new[model[i].Ni * args->Nd]);
+            model[i].update_node = &(model[0].update_node[model[i].Ni]);
         }
 
         model[i].ldata = &(args->ldata[model[i].Ni * model[i].Nld]);
