@@ -358,7 +358,8 @@ SEXP attribute_hidden SimInf_abc_weights(
     gsl_matrix *SIGMA = NULL;
     gsl_vector *work = NULL;
     SEXP ww;
-    double *ptr_p1, *ptr_p2, *ptr_x, *ptr_xx, *ptr_w, *ptr_ww;
+    const double *ptr_p1, *ptr_p2, *ptr_w;
+    double *ptr_x, *ptr_xx, *ptr_ww;
     double sum, max_ww = 0.0;
 
     PROTECT(ww = Rf_allocVector(REALSXP, n_particles));
