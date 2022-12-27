@@ -96,8 +96,8 @@ SimInf_find_longest_path(
         /* Perform a depth first search of the events to find the
          * longest path. */
         while (depth > 0 &&
-                depth < (n - begin) &&
-                longest_path < (n - begin))
+               depth < (n - begin) &&
+               longest_path < (n - begin))
         {
             int i = path[depth - 1] - 1;
             int from = event[i] == ENTER_EVENT ? node[i] : dest[i];
