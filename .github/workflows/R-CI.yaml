@@ -68,4 +68,4 @@ jobs:
         run: |
           scan-build make -f <(echo -e "install:\n\tR CMD INSTALL ${{ env.PKG_TAR }}") > ${{ env.PKG_NAME }}.Rcheck/00scan-build.log 2>&1
           cat ${{ env.PKG_NAME }}.Rcheck/00scan-build.log
-          if [[ $(sed -n -e 's/^scan-build:\s\+\([0-9]\+\)\s\+bugs\s\+found\./\1/p' ${{ env.PKG_NAME }}.Rcheck/00scan-build.log) != 0 ]]; then exit 1; fi
+          if [[ ! $(grep "scan-build: No bugs found." ${{ env.PKG_NAME }}.Rcheck/00scan-build.log) ]]; then exit 1; fi
