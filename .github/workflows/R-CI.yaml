@@ -39,6 +39,7 @@ jobs:
         run: >
           sudo dnf --assumeyes install
           gsl-devel
+          R-CRAN-covr
           R-CRAN-digest
           R-CRAN-knitr
           R-CRAN-lintr
