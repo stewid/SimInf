@@ -22,7 +22,7 @@ jobs:
           R
           tidy
 
-      - name: Setup to install binary R packages
+      - name: Setup Copr to install binary R packages
         run: |
           sudo dnf --assumeyes install "dnf-command(copr)"
           sudo dnf --assumeyes copr enable iucar/cran
@@ -60,11 +60,11 @@ jobs:
 
       - name: Static code analysis of C code using cppcheck
         run: |
-          cat <(cppcheck --enable=warning,style,performance,portability --inline-suppr --quiet --verbose src 2>&1) > ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log
+          cppcheck --enable=warning,style,performance,portability --inline-suppr --quiet --verbose src > ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log 2>&1
           cat ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log
           if [[ -s ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log ]]; then exit 1; fi
 
       - name: Static code analysis of C code using scan-build
         run: |
-          scan-build make -f <(echo -e "install:\n\tR CMD INSTALL ${{ env.PKG_TAR }} 2>&1") > ${{ env.PKG_NAME }}.Rcheck/00scan-build.log
+          scan-build make -f <(echo -e "install:\n\tR CMD INSTALL ${{ env.PKG_TAR }}") > ${{ env.PKG_NAME }}.Rcheck/00scan-build.log 2>&1
           cat ${{ env.PKG_NAME }}.Rcheck/00scan-build.log
