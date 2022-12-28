@@ -477,7 +477,7 @@ static int SimInf_aem_arguments_create(
             goto on_error; /* #nocov */
 
         /* random generator for sample select with 1 per transition in each node */
-        method[i].rng_vec = malloc(m->Nn * m->Nt * sizeof(gsl_rng*));
+        method[i].rng_vec = calloc(m->Nn * m->Nt, sizeof(gsl_rng*));
         if (!method[i].rng_vec)
             goto on_error; /* #nocov */
 
