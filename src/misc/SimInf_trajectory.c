@@ -37,7 +37,7 @@ typedef struct {
     rowinfo_t *a;
 } rowinfo_vec;
 
-static void
+static int
 SimInf_insert_id_time(
     rowinfo_vec *ri,
     SEXP m,
@@ -46,6 +46,9 @@ SimInf_insert_id_time(
 {
     const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
     const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+
+    if (m_stride < 1)
+        return -1;
 
     for (R_xlen_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
@@ -60,9 +63,11 @@ SimInf_insert_id_time(
             }
         }
     }
+
+    return 0;
 }
 
-static void
+static int
 SimInf_insert_id_time2(
     rowinfo_vec *ri,
     SEXP m1,
@@ -75,6 +80,9 @@ SimInf_insert_id_time2(
     const int *m2_ir = INTEGER(GET_SLOT(m2, Rf_install("i")));
     const int *m1_jc = INTEGER(GET_SLOT(m1, Rf_install("p")));
     const int *m2_jc = INTEGER(GET_SLOT(m2, Rf_install("p")));
+
+    if (m1_stride < 1 || m2_stride < 1)
+        return -1;
 
     for (R_xlen_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
@@ -110,6 +118,8 @@ SimInf_insert_id_time2(
             }
         }
     }
+
+    return 0;
 }
 
 static void
@@ -456,7 +466,12 @@ SimInf_trajectory(
                 error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
                 goto cleanup;                           /* #nocov */
             }
-            SimInf_insert_id_time2(ri, dm, cm, dm_stride, cm_stride, tlen);
+
+            if (SimInf_insert_id_time2(ri, dm, cm, dm_stride, cm_stride, tlen)) {
+                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+                goto cleanup;                           /* #nocov */
+            }
+
             nrow = kv_size(*ri);
         }
     } else if (dm_i_len > 0 && dm_sparse) {
@@ -465,7 +480,12 @@ SimInf_trajectory(
             error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
             goto cleanup;                           /* #nocov */
         }
-        SimInf_insert_id_time(ri, dm, dm_stride, tlen);
+
+        if (SimInf_insert_id_time(ri, dm, dm_stride, tlen)) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+            goto cleanup;                           /* #nocov */
+        }
+
         nrow = kv_size(*ri);
     } else if (cm_i_len > 0 && cm_sparse) {
         ri = calloc(1, sizeof(rowinfo_vec));
@@ -473,7 +493,12 @@ SimInf_trajectory(
             error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
             goto cleanup;                           /* #nocov */
         }
-        SimInf_insert_id_time(ri, cm, cm_stride, tlen);
+
+        if (SimInf_insert_id_time(ri, cm, cm_stride, tlen)) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+            goto cleanup;                           /* #nocov */
+        }
+
         nrow = kv_size(*ri);
     }
 
