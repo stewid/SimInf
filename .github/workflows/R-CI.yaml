@@ -69,3 +69,6 @@ jobs:
           scan-build make -f <(echo -e "install:\n\tR CMD INSTALL ${{ env.PKG_TAR }}") > ${{ env.PKG_NAME }}.Rcheck/00scan-build.log 2>&1
           cat ${{ env.PKG_NAME }}.Rcheck/00scan-build.log
           if [[ ! $(grep "scan-build: No bugs found." ${{ env.PKG_NAME }}.Rcheck/00scan-build.log) ]]; then exit 1; fi
+
+      - name: Run code coverage
+        run: Rscript -e "covr::codecov()"
