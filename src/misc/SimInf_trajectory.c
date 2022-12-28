@@ -44,8 +44,8 @@ SimInf_insert_id_time(
     R_xlen_t m_stride,
     R_xlen_t tlen)
 {
-    int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-    int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+    const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
+    const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
 
     for (R_xlen_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
@@ -71,10 +71,10 @@ SimInf_insert_id_time2(
     R_xlen_t m2_stride,
     R_xlen_t tlen)
 {
-    int *m1_ir = INTEGER(GET_SLOT(m1, Rf_install("i")));
-    int *m2_ir = INTEGER(GET_SLOT(m2, Rf_install("i")));
-    int *m1_jc = INTEGER(GET_SLOT(m1, Rf_install("p")));
-    int *m2_jc = INTEGER(GET_SLOT(m2, Rf_install("p")));
+    const int *m1_ir = INTEGER(GET_SLOT(m1, Rf_install("i")));
+    const int *m2_ir = INTEGER(GET_SLOT(m2, Rf_install("i")));
+    const int *m1_jc = INTEGER(GET_SLOT(m1, Rf_install("p")));
+    const int *m2_jc = INTEGER(GET_SLOT(m2, Rf_install("p")));
 
     for (R_xlen_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
