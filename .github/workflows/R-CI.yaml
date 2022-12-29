@@ -58,7 +58,7 @@ jobs:
         run: cat ${{ env.PKG_NAME }}.Rcheck/00install.out
 
       - name: Package check result
-        run: if [[ grep WARNING ${{ env.PKG_NAME }}.Rcheck/00check.log ]]; then exit 1; fi
+        run: if [[ $(grep WARNING ${{ env.PKG_NAME }}.Rcheck/00check.log) ]]; then exit 1; fi
 
       - name: Static code analysis of R code using lintr
         run: Rscript -e "library(lintr); l <- lint_package(); print(l); quit(save = 'no', status = length(l) > 0)"
