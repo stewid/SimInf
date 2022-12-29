@@ -52,14 +52,10 @@ jobs:
         run: R CMD build --no-manual --compact-vignettes=both .
 
       - name: Check package
-        run: |
-          _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-stop-on-test-error --as-cran ${{ env.PKG_TAR }}
+        run: _R_CHECK_CRAN_INCOMING_=FALSE R CMD check --no-stop-on-test-error --as-cran ${{ env.PKG_TAR }}
 
       - name: Display check installation log
         run: cat ${{ env.PKG_NAME }}.Rcheck/00install.out
-
-      - name: Display check log
-        run: cat ${{ env.PKG_NAME }}.Rcheck/00check.out
 
       - name: Package check result
         run: if [[ grep WARNING ${{ env.PKG_NAME }}.Rcheck/00check.log ]]; then exit 1; fi
