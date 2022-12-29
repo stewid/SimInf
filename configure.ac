@@ -4,7 +4,7 @@
 # Copyright (C) 2015 Pavol Bauer
 # Copyright (C) 2017 -- 2019 Robin Eriksson
 # Copyright (C) 2015 -- 2019 Stefan Engblom
-# Copyright (C) 2015 -- 2021 Stefan Widgren
+# Copyright (C) 2015 -- 2022 Stefan Widgren
 #
 # SimInf is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -114,31 +114,6 @@ if test "x${have_gsl}" = xno; then AC_MSG_FAILURE([
   ---------------------------------------------])
 fi
 
-# We need GSL version >= 2.2 to build SimInf with support for ABC.
-AC_MSG_CHECKING([whether gsl_ran_multivariate_gaussian is available])
-have_gsl_ran_multivariate_gaussian=no
-AC_LANG_CONFTEST(
-[AC_LANG_PROGRAM(
-[[#include <gsl/gsl_randist.h>]],
-[[gsl_ran_multivariate_gaussian(NULL, NULL, NULL, NULL);]])])
-PKG_CFLAGS="${PKG_CFLAGS} ${GSL_CFLAGS} -Werror" "$RBIN" CMD SHLIB conftest.c \
-1>&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD && have_gsl_ran_multivariate_gaussian=yes
-AC_MSG_RESULT([${have_gsl_ran_multivariate_gaussian}])
-if test "x${have_gsl_ran_multivariate_gaussian}" = xno; then AC_MSG_WARN([
-  ---------------------------------------------
-   The installed version of the GNU Scientific
-   Library (GSL) that is required to build
-   SimInf with support for ABC is to old.
-   Please install GSL version >= 2.2 and
-   try again if you need that functionality.
-  ---------------------------------------------])
-
-  CPPFLAGS="${CPPFLAGS} -DSIMINF_NO_ABC"
-  ABC_SUPPORT="FALSE"
-else
-  ABC_SUPPORT="TRUE"
-fi
-
 # List all object files to compile
 OBJECTS=`find src -type f -name "*.c" | sed 's/src\///' | sed 's/\.c$/.o/' | tr '\n' ' '`
 
@@ -146,9 +121,8 @@ AC_SUBST([PKG_CPPFLAGS], ["-I. -I../inst/include ${CPPFLAGS} ${GSL_CFLAGS} -DR_N
 AC_SUBST([PKG_CFLAGS], ["${OPENMP_CFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"])
 AC_SUBST(OBJECTS)
-AC_SUBST(ABC_SUPPORT)
 
-AC_CONFIG_FILES([R/abc_support.R src/Makevars])
+AC_CONFIG_FILES([src/Makevars])
 
 echo "
   ---- Results for the SimInf package configure ----

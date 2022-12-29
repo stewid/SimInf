@@ -86,7 +86,6 @@ Collate:
     'run.R'
     'density_ratio.R'
     'abc.R'
-    'abc_support.R'
     'degree.R'
     'distance.R'
     'distributions.R'

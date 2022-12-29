@@ -618,7 +618,6 @@ PACKAGE_URL=''
 ac_unique_file="src"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-ABC_SUPPORT
 OBJECTS
 PKG_LIBS
 PKG_CFLAGS
@@ -3506,51 +3505,8 @@ as_fn_error $? "
 See \`config.log' for more details" "$LINENO" 5; }
 fi
 
-# We need GSL version >= 2.2 to build SimInf with support for ABC.
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether gsl_ran_multivariate_gaussian is available" >&5
-printf %s "checking whether gsl_ran_multivariate_gaussian is available... " >&6; }
-have_gsl_ran_multivariate_gaussian=no
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <gsl/gsl_randist.h>
-int
-main (void)
-{
-gsl_ran_multivariate_gaussian(NULL, NULL, NULL, NULL);
-  ;
-  return 0;
-}
-_ACEOF
-PKG_CFLAGS="${PKG_CFLAGS} ${GSL_CFLAGS} -Werror" "$RBIN" CMD SHLIB conftest.c \
-1>&5 2>&5 && have_gsl_ran_multivariate_gaussian=yes
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${have_gsl_ran_multivariate_gaussian}" >&5
-printf "%s\n" "${have_gsl_ran_multivariate_gaussian}" >&6; }
-if test "x${have_gsl_ran_multivariate_gaussian}" = xno; then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING:
-  ---------------------------------------------
-   The installed version of the GNU Scientific
-   Library (GSL) that is required to build
-   SimInf with support for ABC is to old.
-   Please install GSL version >= 2.2 and
-   try again if you need that functionality.
-  ---------------------------------------------" >&5
-printf "%s\n" "$as_me: WARNING:
-  ---------------------------------------------
-   The installed version of the GNU Scientific
-   Library (GSL) that is required to build
-   SimInf with support for ABC is to old.
-   Please install GSL version >= 2.2 and
-   try again if you need that functionality.
-  ---------------------------------------------" >&2;}
-
-  CPPFLAGS="${CPPFLAGS} -DSIMINF_NO_ABC"
-  ABC_SUPPORT="FALSE"
-else
-  ABC_SUPPORT="TRUE"
-fi
-
-# List all misc and model object files to compile
+# List all object files to compile
 OBJECTS=`find src -type f -name "*.c" | sed 's/src\///' | sed 's/\.c$/.o/' | tr '\n' ' '`
-SUBDIR_OBJ=`ls src/{misc,models}/*.c | sed 's/^src\///' | sed 's/\.c$/.o/' | tr '\n' ' '`
 
 PKG_CPPFLAGS="-I. -I../inst/include ${CPPFLAGS} ${GSL_CFLAGS} -DR_NO_REMAP -DSTRICT_R_HEADERS"
 
@@ -3560,8 +3516,7 @@ PKG_LIBS="${OPENMP_CFLAGS} ${GSL_LIBS} ${LIBS}"
 
 
 
-
-ac_config_files="$ac_config_files R/abc_support.R src/Makevars"
+ac_config_files="$ac_config_files src/Makevars"
 
 
 echo "
@@ -4275,7 +4230,6 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "R/abc_support.R") CONFIG_FILES="$CONFIG_FILES R/abc_support.R" ;;
     "src/Makevars") CONFIG_FILES="$CONFIG_FILES src/Makevars" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
