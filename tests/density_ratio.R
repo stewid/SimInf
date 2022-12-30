@@ -26,11 +26,14 @@ check_error(res, "'xnu' must be a numeric matrix.")
 res <- assertError(SimInf:::KLIEP(xnu = matrix(letters)))
 check_error(res, "'xnu' must be a numeric matrix.")
 
-res <- assertError(SimInf:::KLIEP(xnu = matrix(1:5), xde = 1:5))
+res <- assertError(SimInf:::KLIEP(xnu = matrix(1:5),
+                                  xde = 1:5))
 check_error(res, "'xde' must be a numeric matrix.")
 
-res <- assertError(SimInf:::KLIEP(xnu = matrix(1:5), xde = matrix(letters)))
+res <- assertError(SimInf:::KLIEP(xnu = matrix(1:5),
+                                  xde = matrix(letters)))
 check_error(res, "'xde' must be a numeric matrix.")
 
-res <- assertError(SimInf:::KLIEP(xnu = matrix(1:5), xde = matrix(1:10, ncol = 2)))
+res <- assertError(SimInf:::KLIEP(xnu = matrix(1:5),
+                                  xde = matrix(1:10, ncol = 2)))
 check_error(res, "'xnu' and 'xde' must have the same dimension.")
