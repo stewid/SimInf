@@ -15,8 +15,6 @@ jobs:
       - name: Install R and required software
         run: >
           sudo dnf --assumeyes install
-          clang-analyzer
-          cppcheck
           devscripts-checkbashisms
           langpacks-en
           R
@@ -27,7 +25,7 @@ jobs:
           sudo dnf --assumeyes install "dnf-command(copr)"
           sudo dnf --assumeyes copr enable iucar/cran
 
-      - name:  Determine package name and version from DESCRIPTION file
+      - name: Determine package name and version from DESCRIPTION file
         run: |
           echo "PKG_NAME=$(grep -i ^package DESCRIPTION | cut -d : -d ' ' -f 2 | tr -d '\r')" >> $GITHUB_ENV
           echo "PKG_VERSION=$(grep -i ^version DESCRIPTION | cut -d : -d ' ' -f 2 | tr -d '\r')" >> $GITHUB_ENV
@@ -39,10 +37,8 @@ jobs:
         run: >
           sudo dnf --assumeyes install
           gsl-devel
-          R-CRAN-covr
           R-CRAN-digest
           R-CRAN-knitr
-          R-CRAN-lintr
           R-CRAN-rmarkdown
 
       - name: R session information
@@ -61,19 +57,25 @@ jobs:
         run: if [[ $(grep WARNING ${{ env.PKG_NAME }}.Rcheck/00check.log) ]]; then exit 1; fi
 
       - name: Static code analysis of R code using lintr
-        run: Rscript -e "library(lintr); l <- lint_package(); print(l); quit(save = 'no', status = length(l) > 0)"
+        run: |
+          sudo dnf --assumeyes install R-CRAN-lintr
+          Rscript -e "library(lintr); l <- lint_package(); print(l); quit(save = 'no', status = length(l) > 0)"
 
       - name: Static code analysis of C code using cppcheck
         run: |
+          sudo dnf --assumeyes install cppcheck
           cppcheck --enable=warning,style,performance,portability --inline-suppr --quiet --verbose src > ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log 2>&1
           cat ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log
           if [[ -s ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log ]]; then exit 1; fi
 
       - name: Static code analysis of C code using scan-build
         run: |
+          sudo dnf --assumeyes install clang-analyzer
           scan-build make -f <(echo -e "install:\n\tR CMD INSTALL ${{ env.PKG_TAR }}") > ${{ env.PKG_NAME }}.Rcheck/00scan-build.log 2>&1
           cat ${{ env.PKG_NAME }}.Rcheck/00scan-build.log
           if [[ ! $(grep "scan-build: No bugs found." ${{ env.PKG_NAME }}.Rcheck/00scan-build.log) ]]; then exit 1; fi
 
       - name: Run code coverage
-        run: Rscript -e "covr::codecov()"
+        run: |
+          sudo dnf --assumeyes install R-CRAN-covr
+          Rscript -e "covr::codecov()"
