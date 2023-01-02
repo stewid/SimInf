@@ -16,6 +16,40 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Get the initial compartment state
+##'
+##' @param model The model to get the initial compartment state
+##'     \code{u0} from.
+##' @param ... Additional arguments. Currently not used.
+##' @return a \code{data.frame} with the initial compartment state.
+##' @export
+##' @examples
+##' ## Create an SIR model object.
+##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+##'              tspan = 1:100,
+##'              beta = 0.16,
+##'              gamma = 0.077)
+##'
+##' ## Get the initial compartment state.
+##' u0(model)
+setGeneric(
+    "u0",
+    signature = "model",
+    function(model, ...) {
+        standardGeneric("u0")
+    }
+)
+
+##' @rdname u0
+##' @export
+setMethod(
+    "u0",
+    signature(model = "SimInf_model"),
+    function(model, ...) {
+        as.data.frame(t(model@u0))
+    }
+)
+
 ##' Update the initial compartment state u0 in each node
 ##'
 ##' @param model The model to update the initial compartment state

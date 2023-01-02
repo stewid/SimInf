@@ -36,6 +36,8 @@ stopifnot(identical(model@u0,
                            byrow = TRUE,
                            dimnames = list(c("S", "I", "R"), NULL))))
 
+stopifnot(identical(u0(model), data.frame(S = 10:12, I = 13:15, R = 16:18)))
+
 res <- assertError(
     u0(model) <- data.frame(S = 10:13, I = 14:17, R = 18:21))
 check_error(res, "The number of rows in 'u0' must match nodes in 'model'.")
