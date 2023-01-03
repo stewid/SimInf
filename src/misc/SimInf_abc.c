@@ -379,8 +379,8 @@ SEXP attribute_hidden SimInf_abc_weights(
         }
 
         if (!R_FINITE(sum) || sum <= 0.0) {
-            error = 4;
-            goto cleanup;
+            error = 4;    /* #nocov */
+            goto cleanup; /* #nocov */
         }
 
         sum = log(sum);
