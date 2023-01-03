@@ -40,6 +40,9 @@ static void SimInf_abc_error(int error)
     case 3:
         Rf_error("Invalid weight detected (non-finite or < 0.0).");
         break;
+    case 4:                                       /* #nocov */
+        Rf_error("Unable to calculate weights."); /* #nocov */
+        break;
     default:                                        /* #nocov */
         Rf_error("Unknown error code: %i.", error); /* #nocov */
         break;
@@ -375,8 +378,11 @@ SEXP attribute_hidden SimInf_abc_weights(
             sum += ptr_w[j] * pdf;
         }
 
-        /* FIXME: handle case when value of sum is 0. */
-        /* cppcheck-suppress invalidFunctionArg */
+        if (!R_FINITE(sum) || sum <= 0.0) {
+            error = 4;
+            goto cleanup;
+        }
+
         sum = log(sum);
         ptr_ww[i] -= sum;
         if (ptr_ww[i] > max_ww)
