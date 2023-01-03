@@ -64,7 +64,7 @@ jobs:
       - name: Static code analysis of C code using cppcheck
         run: |
           sudo dnf --assumeyes install cppcheck
-          cppcheck --enable=warning,style,performance,portability --inline-suppr --quiet --verbose src > ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log 2>&1
+          cppcheck --enable=warning,style,performance,portability --quiet --verbose src > ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log 2>&1
           cat ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log
           if [[ -s ${{ env.PKG_NAME }}.Rcheck/00cppcheck.log ]]; then exit 1; fi
 
