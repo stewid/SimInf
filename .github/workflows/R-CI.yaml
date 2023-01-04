@@ -86,6 +86,9 @@ jobs:
           cat ${{ env.PKG_NAME }}.Rcheck/00scan-build.log
           if [[ ! $(grep "scan-build: No bugs found." ${{ env.PKG_NAME }}.Rcheck/00scan-build.log) ]]; then exit 1; fi
 
+      - name: Check visibility of C entry points
+        run: nm -g ${{ env.PKG_NAME }}.Rcheck/${{ env.PKG_NAME }}/libs/${{ env.PKG_NAME }}.so | grep -c " T " | grep 1 && exit 0 || exit 1
+
       - name: Run code coverage
         run: |
           sudo dnf --assumeyes install R-CRAN-covr
