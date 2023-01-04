@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 [![Build Status](https://github.com/stewid/SimInf/actions/workflows/R-CI.yaml/badge.svg)](https://github.com/stewid/SimInf/actions/workflows/R-CI.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/SimInf)](https://CRAN.R-project.org/package=SimInf)
 [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/last-month/SimInf)](https://CRAN.R-project.org/package=SimInf)
-[![Code coverage](https://codecov.io/gh/stewid/SimInf/branch/main/graph/badge.svg)](https://codecov.io/gh/stewid/SimInf)
+[![Code coverage](https://codecov.io/gh/stewid/SimInf/branch/main/graph/badge.svg)](https://app.codecov.io/gh/stewid/SimInf)
 
 # SimInf
 
