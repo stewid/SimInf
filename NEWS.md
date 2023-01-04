@@ -16,6 +16,12 @@
 * Moved the enumeration of event types to the header file
   'inst/SimInf.h'
 
+* Fixed problems identified with static analysis the of C code using
+  the cppcheck and scan-build tools.
+
+* Added the getter function 'u0' to get the initial compartment state
+  of a model.
+
 # SimInf 9.3.1 (2022-10-07)
 
 ## CHANGES OR IMPROVEMENTS
