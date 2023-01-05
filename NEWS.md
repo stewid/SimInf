@@ -16,7 +16,7 @@
 * Moved the enumeration of event types to the header file
   'inst/SimInf.h'
 
-* Fixed problems identified with static analysis the of C code using
+* Fixed problems identified with static analysis of the C code using
   the cppcheck and scan-build tools.
 
 * Added the getter function 'u0' to get the initial compartment state
