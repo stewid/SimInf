@@ -465,27 +465,22 @@ static void SimInf_print_event(
         int i;
 
         if (irE && jcE && u) {
-            int n = e->n, Nindividuals = 0, Nkinds = 0;
+            int Nindividuals = 0;
 
-            /* 1) Count number of states with individuals */
-            /* 2) Count total number of individuals       */
-            for (i = jcE[e->select]; i < jcE[e->select + 1]; i++) {
-                const int nk = u[node * Nc + irE[i]];
-                if (nk > 0)
-                    Nkinds++;
-                Nindividuals += nk;
-            }
+            /* Count total number of individuals */
+            for (i = jcE[e->select]; i < jcE[e->select + 1]; i++)
+                Nindividuals += u[node * Nc + irE[i]];
 
             /* Number of states */
             if ((jcE[e->select + 1] - jcE[e->select]) <= 0)
                 Rprintf("No states to sample from.\n");
 
-            if (n > Nindividuals)
+            if (e->n > Nindividuals)
                 REprintf("Cannot sample %i for event from %i individuals.\n",
-                        n, Nindividuals);
+                         e->n, Nindividuals);
 
-            if (n < 0)
-                REprintf("Cannot sample %i individuals for event.\n", n);
+            if (e->n < 0)
+                REprintf("Cannot sample %i individuals for event.\n", e->n);
 
             REprintf("\n");
         }
