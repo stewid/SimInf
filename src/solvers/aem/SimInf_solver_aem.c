@@ -59,8 +59,13 @@ typedef struct SimInf_aem_arguments
  * @param rng, current value of rng in heap.
  */
 static void
-calcTimes(double* time, double* infTime, double tt, double old_rate,
-          double new_rate, gsl_rng* rng)
+calcTimes(
+    double* time,
+    double* infTime,
+    double tt,
+    double old_rate,
+    double new_rate,
+    gsl_rng* rng)
 {
     double oldtime = time[0];
 
@@ -85,7 +90,8 @@ calcTimes(double* time, double* infTime, double tt, double old_rate,
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver_aem(
+static int
+SimInf_solver_aem(
     SimInf_compartment_model *model,
     SimInf_aem_arguments *method,
     SimInf_scheduled_events *events,
@@ -402,8 +408,11 @@ static int SimInf_solver_aem(
  * @param model structure with data about the model
  * @param Nthread number of threads that was used during simulation.
  */
-static void SimInf_aem_arguments_free(
-    SimInf_aem_arguments *method, SimInf_compartment_model *model ,int Nthread)
+static void
+SimInf_aem_arguments_free(
+    SimInf_aem_arguments *method,
+    SimInf_compartment_model *model,
+    int Nthread)
 {
     if (method) {
         int i;
@@ -444,8 +453,12 @@ static void SimInf_aem_arguments_free(
  * @param rng random number generator.
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-static int SimInf_aem_arguments_create(
-    SimInf_aem_arguments **out, SimInf_compartment_model *model, int Nthread, gsl_rng *rng)
+static int
+SimInf_aem_arguments_create(
+    SimInf_aem_arguments **out,
+    SimInf_compartment_model *model,
+    int Nthread,
+    gsl_rng *rng)
 {
     int i;
     SimInf_aem_arguments *method = NULL;
@@ -510,7 +523,9 @@ on_error:                                              /* #nocov */
  * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-int attribute_hidden SimInf_run_solver_aem(SimInf_solver_args *args)
+int attribute_hidden
+SimInf_run_solver_aem(
+    SimInf_solver_args *args)
 {
     int error = 0;
     gsl_rng *rng = NULL;

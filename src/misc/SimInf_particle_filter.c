@@ -2,7 +2,7 @@
  * This file is part of SimInf, a framework for stochastic
  * disease spread simulations.
  *
- * Copyright (C) 2015 -- 2021 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,9 @@
  * @param w a numeric vector with weights for the particles.
  * @return an integer vector with indices.
  */
-SEXP attribute_hidden SimInf_systematic_resampling(SEXP w)
+SEXP attribute_hidden
+SimInf_systematic_resampling(
+    SEXP w)
 {
     double cumsum_w, *ptr_w = REAL(w);
     int i, j, n = Rf_length(w);
@@ -76,7 +78,10 @@ SEXP attribute_hidden SimInf_systematic_resampling(SEXP w)
  *         interval, and the second column the number of events in the
  *         interval.
  */
-SEXP attribute_hidden SimInf_split_events(SEXP t, SEXP t_end)
+SEXP attribute_hidden
+SimInf_split_events(
+    SEXP t,
+    SEXP t_end)
 {
     int t_i = 0;
     int t_end_i = 0;
