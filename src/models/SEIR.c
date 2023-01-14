@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@ enum {BETA, EPSILON, GAMMA};
  * @param t Current time.
  * @return propensity.
  */
-static double SEIR_S_to_E(
+static double
+SEIR_S_to_E(
     const int *u,
     const double *v,
     const double *ldata,
@@ -70,7 +71,8 @@ static double SEIR_S_to_E(
  * @param t Current time.
  * @return propensity.
  */
-static double SEIR_E_to_I(
+static double
+SEIR_E_to_I(
     const int *u,
     const double *v,
     const double *ldata,
@@ -94,7 +96,8 @@ static double SEIR_E_to_I(
  * @param t Current time.
  * @return propensity.
  */
-static double SEIR_I_to_R(
+static double
+SEIR_I_to_R(
     const int *u,
     const double *v,
     const double *ldata,
@@ -123,7 +126,8 @@ static double SEIR_I_to_R(
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int SEIR_post_time_step(
+static int
+SEIR_post_time_step(
     double *v_new,
     const int *u,
     const double *v,
@@ -150,7 +154,10 @@ static int SEIR_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-SEXP attribute_hidden SEIR_run(SEXP model, SEXP solver)
+SEXP attribute_hidden
+SEIR_run(
+    SEXP model,
+    SEXP solver)
 {
     TRFun tr_fun[] = {&SEIR_S_to_E, &SEIR_E_to_I, &SEIR_I_to_R};
 
