@@ -27,9 +27,6 @@ AC_PREREQ([2.69])
 AC_INIT([SimInf], [see.DESCRIPTION.file], [https://github.com/stewid/SimInf/issues])
 AC_CONFIG_SRCDIR([src])
 
-# Checks for programs.
-AC_PROG_CC
-
 # Find the compiler and compiler flags to use
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
@@ -37,10 +34,8 @@ if test -z "${R_HOME}"; then
     exit 1
 fi
 RBIN="${R_HOME}/bin/R"
-RSCRIPT="${R_HOME}/bin/Rscript"
-RBIN_CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
-CPPFLAGS="${CPPFLAGS} ${RBIN_CPPFLAGS}"
-LIBS="${LIBS}"
+CC=`"${RBIN}" CMD config CC`
+CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
 
 # Check for OpenMP
 AC_OPENMP

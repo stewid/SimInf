@@ -2152,7 +2152,20 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-# Checks for programs.
+# Find the compiler and compiler flags to use
+: ${R_HOME=`R RHOME`}
+if test -z "${R_HOME}"; then
+    echo "could not determine R_HOME"
+    exit 1
+fi
+RBIN="${R_HOME}/bin/R"
+CC=`"${RBIN}" CMD config CC`
+CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
+
+# Check for OpenMP
+if test -e penmp || test -e mp; then
+  as_fn_error $? "AC_OPENMP clobbers files named 'mp' and 'penmp'. Aborting configure because one of these files already exists." "$LINENO" 5
+fi
 
 
 
@@ -3148,23 +3161,6 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-
-# Find the compiler and compiler flags to use
-: ${R_HOME=`R RHOME`}
-if test -z "${R_HOME}"; then
-    echo "could not determine R_HOME"
-    exit 1
-fi
-RBIN="${R_HOME}/bin/R"
-RSCRIPT="${R_HOME}/bin/Rscript"
-RBIN_CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
-CPPFLAGS="${CPPFLAGS} ${RBIN_CPPFLAGS}"
-LIBS="${LIBS}"
-
-# Check for OpenMP
-if test -e penmp || test -e mp; then
-  as_fn_error $? "AC_OPENMP clobbers files named 'mp' and 'penmp'. Aborting configure because one of these files already exists." "$LINENO" 5
-fi
 
 # Check whether --enable-openmp was given.
 if test ${enable_openmp+y}
