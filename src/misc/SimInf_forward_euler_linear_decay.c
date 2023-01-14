@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,10 +53,18 @@
  * @param beta_t4 The value for beta in interval 4.
  * @return phi * (1.0 - beta) (where beta is the value for the interval)
  */
-double attribute_hidden SimInf_forward_euler_linear_decay(
-    double phi, int day,
-    int end_t1, int end_t2, int end_t3, int end_t4,
-    double beta_t1, double beta_t2, double beta_t3, double beta_t4)
+double attribute_hidden
+SimInf_forward_euler_linear_decay(
+    double phi,
+    int day,
+    int end_t1,
+    int end_t2,
+    int end_t3,
+    int end_t4,
+    double beta_t1,
+    double beta_t2,
+    double beta_t3,
+    double beta_t4)
 {
     if (day < end_t2) {
         if (day < end_t1) {

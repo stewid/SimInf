@@ -74,7 +74,8 @@ SimInf_Euclidean_distance(
     return n;
 }
 
-SEXP attribute_hidden SimInf_distance_matrix(
+SEXP attribute_hidden
+SimInf_distance_matrix(
     SEXP x_,
     SEXP y_,
     SEXP cutoff_,

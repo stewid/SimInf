@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,9 @@
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden SimInf_arg_check_dgCMatrix(SEXP arg)
+int attribute_hidden
+SimInf_arg_check_dgCMatrix(
+    SEXP arg)
 {
     SEXP class_name;
 
@@ -49,7 +51,9 @@ int attribute_hidden SimInf_arg_check_dgCMatrix(SEXP arg)
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden SimInf_arg_check_integer(SEXP arg)
+int attribute_hidden
+SimInf_arg_check_integer(
+    SEXP arg)
 {
     if (!Rf_isInteger(arg) || Rf_length(arg) != 1 || NA_INTEGER == INTEGER(arg)[0])
         return -1;
@@ -62,7 +66,9 @@ int attribute_hidden SimInf_arg_check_integer(SEXP arg)
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden SimInf_arg_check_integer_gt_zero(SEXP arg)
+int attribute_hidden
+SimInf_arg_check_integer_gt_zero(
+    SEXP arg)
 {
     if (SimInf_arg_check_integer(arg))
         return -1;
@@ -77,7 +83,9 @@ int attribute_hidden SimInf_arg_check_integer_gt_zero(SEXP arg)
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden SimInf_arg_check_matrix(SEXP arg)
+int attribute_hidden
+SimInf_arg_check_matrix(
+    SEXP arg)
 {
     if (!Rf_isMatrix(arg))
         return -1;
@@ -90,7 +98,9 @@ int attribute_hidden SimInf_arg_check_matrix(SEXP arg)
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden SimInf_arg_check_model(SEXP arg)
+int attribute_hidden
+SimInf_arg_check_model(
+    SEXP arg)
 {
     static const char *valid[] = {"SimInf_model", ""};
 
@@ -110,7 +120,11 @@ int attribute_hidden SimInf_arg_check_model(SEXP arg)
  *        in a sparse matrix.
  * @return 1 if data is stored in the sparse matrix, else 0.
  */
-int attribute_hidden SimInf_sparse(SEXP m, R_xlen_t i, R_xlen_t j)
+int attribute_hidden
+SimInf_sparse(
+    SEXP m,
+    R_xlen_t i,
+    R_xlen_t j)
 {
     int *d = INTEGER(GET_SLOT(m, Rf_install("Dim")));
     return d[0] == i && d[1] == j;

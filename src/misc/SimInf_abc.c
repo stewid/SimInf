@@ -28,7 +28,9 @@
 #include <gsl/gsl_rng.h>
 #include "SimInf_arg.h"
 
-static void SimInf_abc_error(int error)
+static void
+SimInf_abc_error(
+    int error)
 {
     switch (error) {
     case 1:                                            /* #nocov */
@@ -75,7 +77,8 @@ static void SimInf_abc_error(int error)
  *         proposals. The matrix also has an attribute 'ancestor' with
  *         an index that indicates which particle it was sampled from.
  */
-SEXP attribute_hidden SimInf_abc_proposals(
+SEXP attribute_hidden
+SimInf_abc_proposals(
     SEXP parameter,
     SEXP distribution,
     SEXP p1,
@@ -281,7 +284,8 @@ cleanup:
  * @return a numeric vector with weights for the current generation of
  *         particles.
  */
-SEXP attribute_hidden SimInf_abc_weights(
+SEXP attribute_hidden
+SimInf_abc_weights(
     SEXP distribution,
     SEXP p1,
     SEXP p2,
