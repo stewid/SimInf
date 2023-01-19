@@ -19,4 +19,4 @@ jobs:
         run: curl -Ls https://stewid.github.io/ansible-r-ci/r-ci.yml -o ../r-ci.yml
 
       - name: Check package
-        run: ansible-playbook -i localhost, --extra-vars "sysreqs=gsl-devel" ../r-ci.yml
+        run: ansible-playbook -i localhost, --extra-vars "sysreqs=gsl-devel r_ci_covr=codecov" ../r-ci.yml
