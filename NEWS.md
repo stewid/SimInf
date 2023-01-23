@@ -2,6 +2,8 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* Fixed the configuration script to use R to find the compiler to use.
+
 # SimInf 9.4.0 (2023-01-06)
 
 ## CHANGES OR IMPROVEMENTS
