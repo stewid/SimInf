@@ -65,11 +65,13 @@ init_x0 <- function(x, storage_mode = c("integer", "double"), null_ok = FALSE) {
     x
 }
 
-##' @importFrom Matrix Matrix
-##' @noRd
 init_sparse_matrix <- function(x) {
-    if (!is.null(x) && !is(x, "dgCMatrix"))
-        x <- as(as(as(Matrix(x), "dMatrix"), "generalMatrix"), "CsparseMatrix")
+    if (!is.null(x) && !is(x, "dgCMatrix")) {
+        x <- Matrix::Matrix(x)
+        x <- methods::as(x, "dMatrix")
+        x <- methods::as(x, "generalMatrix")
+        x <- methods::as(x, "CsparseMatrix")
+    }
 
     x
 }

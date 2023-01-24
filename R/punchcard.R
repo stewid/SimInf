@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -47,8 +47,6 @@
 ##' @include check_arguments.R
 ##' @include SimInf_model.R
 ##' @export
-##' @importFrom methods as
-##' @importFrom Matrix sparseMatrix
 ##' @examples
 ##' ## Create an 'SIR' model with 6 nodes and initialize it to run over 10 days.
 ##' u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
@@ -126,7 +124,7 @@ setMethod(
         model@V <- template$dense
         model@V_sparse <- template$sparse
 
-        validObject(model)
+        methods::validObject(model)
         model
     }
 )
@@ -145,7 +143,7 @@ setMethod(
 create_template <- function(value, tspan, nodes, compartments, data) {
     if (is.null(value)) {
         dense <- matrix(data = data, nrow = 0, ncol = 0)
-        sparse <- new("dgCMatrix")
+        sparse <- methods::new("dgCMatrix")
         return(list(dense = dense, sparse = sparse))
     }
 
@@ -155,8 +153,8 @@ create_template <- function(value, tspan, nodes, compartments, data) {
     if (nrow(value) == 0) {
         dense <- matrix(data = data, nrow = 0, ncol = 0)
         dims <- c(length(nodes) * length(compartments), length(tspan))
-        sparse <- sparseMatrix(i = numeric(0), j = numeric(0),
-                               x = NA_real_, dims = dims)
+        sparse <- Matrix::sparseMatrix(i = numeric(0), j = numeric(0),
+                                       x = NA_real_, dims = dims)
         return(list(dense = dense, sparse = sparse))
     }
 
@@ -207,10 +205,11 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         d1_times_d2 <- as.numeric(dims[1]) * as.numeric(dims[2])
         if (sum(value, na.rm = TRUE) == d1_times_d2) {
             dense <- matrix(data = data, nrow = 0, ncol = 0)
-            sparse <- new("dgCMatrix")
+            sparse <- methods::new("dgCMatrix")
         } else {
             dense <- matrix(data = data, nrow = 0, ncol = 0)
-            sparse <- sparseMatrix(i = i, j = j, x = NA_real_, dims = dims)
+            sparse <- Matrix::sparseMatrix(i = i, j = j, x = NA_real_,
+                                           dims = dims)
         }
 
         return(list(dense = dense, sparse = sparse))
@@ -218,7 +217,7 @@ create_template <- function(value, tspan, nodes, compartments, data) {
 
     dense <- matrix(data = data, nrow = 0, ncol = 0)
     dims <- c(length(nodes) * length(compartments), length(tspan))
-    sparse <- sparseMatrix(i = numeric(0), j = numeric(0),
-                           x = NA_real_, dims = dims)
+    sparse <- Matrix::sparseMatrix(i = numeric(0), j = numeric(0),
+                                   x = NA_real_, dims = dims)
     list(dense = dense, sparse = sparse)
 }
