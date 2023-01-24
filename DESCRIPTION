@@ -81,6 +81,7 @@ Collate:
     'SISe3.R'
     'SISe3_sp.R'
     'SISe_sp.R'
+    'SimInf-package.R'
     'SimInf.R'
     'SimInf_events.R'
     'run.R'
