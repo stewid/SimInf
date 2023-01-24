@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -151,8 +151,6 @@ parse_hyperparameters <- function(distribution, tokens, symbols) {
     hyperparameters
 }
 
-##' @importFrom utils getParseData
-##' @noRd
 parse_distribution <- function(dist) {
     err_str <- "Invalid formula specification for distribution."
     dist <- as.character(dist)
@@ -163,7 +161,7 @@ parse_distribution <- function(dist) {
     parameter <- dist[2]
 
     ## Parse the rhs of the formula.
-    tokens <- getParseData(parse(text = dist[3], keep.source = TRUE))
+    tokens <- utils::getParseData(parse(text = dist[3], keep.source = TRUE))
     tokens <- tokens[tokens$terminal, c("token", "text")]
     if (!all(tokens$token[1] == "SYMBOL_FUNCTION_CALL",
              tokens$token[2] == "'('",

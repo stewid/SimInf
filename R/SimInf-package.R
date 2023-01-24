@@ -17,6 +17,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ##' @importClassesFrom Matrix dgCMatrix
+##' @importFrom digest digest
 ##' @importFrom graphics boxplot
 ##' @importFrom graphics contour
 ##' @importFrom graphics grconvertY
@@ -31,14 +32,19 @@
 ##' @importFrom grDevices rainbow
 ##' @importFrom MASS ginv
 ##' @importFrom MASS kde2d
+##' @importFrom methods new
 ##' @importFrom methods show
 ##' @importFrom methods slot
 ##' @importFrom methods validObject
 ##' @importFrom stats cov
 ##' @importFrom stats density
+##' @importFrom stats logLik
 ##' @importFrom stats optim
 ##' @importFrom stats quantile
+##' @importFrom tools Rcmd
+##' @importFrom utils capture.output
 ##' @importFrom utils data
+##' @importFrom utils getParseData
 ##' @importFrom utils packageVersion
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar

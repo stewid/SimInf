@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@
 ##' @param model The SimInf model with C code to compile.
 ##' @param key The digest of the C code to compile.
 ##' @return Invisible NULL.
-##' @importFrom tools Rcmd
 ##' @noRd
 compile_model <- function(model, key) {
     ## Check that the model contains C code.
@@ -67,11 +66,11 @@ compile_model <- function(model, key) {
                                      " -DSIMINF_FORCE_SYMBOLS=FALSE"))
 
     ## Compile the model C code using the running version of R.
-    compiled <- Rcmd(c("SHLIB",
-                       paste0("--output=", shQuote(lib)),
-                       shQuote(filename)),
-                     stdout = TRUE,
-                     stderr = TRUE)
+    compiled <- tools::Rcmd(c("SHLIB",
+                              paste0("--output=", shQuote(lib)),
+                              shQuote(filename)),
+                            stdout = TRUE,
+                            stderr = TRUE)
 
     ## Restore PKG_CPPFLAGS
     if (is.na(pkg_cppflags)) {
@@ -90,10 +89,9 @@ compile_model <- function(model, key) {
 }
 
 ##' Determine the key to the compiled model DLL.
-##' @importFrom digest digest
 ##' @noRd
 model_dll_key <- function(model) {
-    key <- digest(model@C_code)
+    key <- digest::digest(model@C_code)
     if (is.null(.dll[[key]]))
         compile_model(model, key)
     key
@@ -141,13 +139,12 @@ setGeneric(
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @include SimInf_model.R
 ##' @export
-##' @importFrom methods validObject
 setMethod(
     "run",
     signature(model = "SimInf_model"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model)
+        methods::validObject(model)
         key <- model_dll_key(model)
         eval(parse(text = .SimInf_model_run))
     }
@@ -160,7 +157,7 @@ setMethod(
     signature(model = "SEIR"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model)
+        methods::validObject(model)
         .Call(SEIR_run, model, solver)
     }
 )
@@ -172,7 +169,7 @@ setMethod(
     signature(model = "SIR"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model)
+        methods::validObject(model)
         .Call(SIR_run, model, solver)
     }
 )
@@ -184,7 +181,7 @@ setMethod(
     signature(model = "SIS"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model)
+        methods::validObject(model)
         .Call(SIS_run, model, solver)
     }
 )
@@ -196,7 +193,7 @@ setMethod(
     signature(model = "SISe"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model)
+        methods::validObject(model)
         .Call(SISe_run, model, solver)
     }
 )
@@ -208,7 +205,7 @@ setMethod(
     signature(model = "SISe3"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model)
+        methods::validObject(model)
         .Call(SISe3_run, model, solver)
     }
 )
@@ -220,7 +217,7 @@ setMethod(
     signature(model = "SISe3_sp"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model)
+        methods::validObject(model)
         .Call(SISe3_sp_run, model, solver)
     }
 )
@@ -232,7 +229,7 @@ setMethod(
     signature(model = "SISe_sp"),
     function(model, solver = c("ssm", "aem"), ...) {
         solver <- match.arg(solver)
-        validObject(model)
+        methods::validObject(model)
         .Call(SISe_sp_run, model, solver)
     }
 )
