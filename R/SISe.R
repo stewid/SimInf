@@ -87,7 +87,6 @@ setClass("SISe", contains = c("SimInf_model"))
 ##' @return \code{SISe}
 ##' @include check_arguments.R
 ##' @export
-##' @importFrom methods as
 SISe <- function(u0,
                  tspan,
                  events  = NULL,
@@ -164,7 +163,7 @@ SISe <- function(u0,
                           u0     = u0,
                           v0     = v0)
 
-    as(model, "SISe")
+    methods::as(model, "SISe")
 }
 
 ##' Example data to initialize events for the \sQuote{SISe} model
