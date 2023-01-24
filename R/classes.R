@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -119,8 +119,6 @@ setClass(
 ##' @slot events Scheduled events \code{\linkS4class{SimInf_events}}
 ##' @template C_code-slot
 ##' @export
-##' @importFrom methods validObject
-##' @importClassesFrom Matrix dgCMatrix
 setClass(
     "SimInf_model",
     slots = c(G        = "dgCMatrix",

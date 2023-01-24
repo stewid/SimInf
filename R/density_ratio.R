@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -23,11 +23,9 @@ KLIEP_kernel <- function(x, y, sigma) {
                (2 * sigma^2)), nrow = nrow(x), ncol = nrow(y))
 }
 
-##' @importFrom MASS ginv
-##' @noRd
 KLIEP_alpha <- function(alpha, mean_xde) {
     alpha <- alpha + mean_xde * (1 - (t(mean_xde) %*% alpha)[1, 1]) *
-        ginv(t(mean_xde) %*% mean_xde)[1, 1]
+        MASS::ginv(t(mean_xde) %*% mean_xde)[1, 1]
     alpha <- pmax(alpha, 0)
     alpha * ginv(t(mean_xde) %*% alpha)[1, 1]
 }

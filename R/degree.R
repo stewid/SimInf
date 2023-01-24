@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' @importFrom methods slot
-##' @noRd
 degree <- function(model, a, b) {
     check_model_argument(model)
 
@@ -30,8 +28,8 @@ degree <- function(model, a, b) {
     ## Determine degree from data.
     i <- which(model@events@event == 3L)
     if (length(i) > 0) {
-        dd <- tapply(slot(model@events, a)[i],
-                     slot(model@events, b)[i],
+        dd <- tapply(methods::slot(model@events, a)[i],
+                     methods::slot(model@events, b)[i],
                      function(x) {
                          length(unique(x))
                      })

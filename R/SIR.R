@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -151,7 +151,6 @@ SIR <- function(u0,
 ##' a model.
 ##' @return A \code{data.frame}
 ##' @export
-##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SIR' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
@@ -177,7 +176,7 @@ SIR <- function(u0,
 ##' ## events by event type.
 ##' summary(result)
 events_SIR <- function() {
-    data("events_SISe3", package = "SimInf", envir = environment())
+    utils::data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 4L
     events_SISe3$select[events_SISe3$event == "enter"] <- 1L
     events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
@@ -196,7 +195,6 @@ events_SIR <- function() {
 ##' zero.
 ##' @return A \code{data.frame}
 ##' @export
-##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SIR' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
@@ -217,7 +215,7 @@ events_SIR <- function() {
 ##' ## Summarize trajectory
 ##' summary(result)
 u0_SIR <- function() {
-    data("u0_SISe3", package = "SimInf", envir = environment())
+    utils::data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3
     u0_SISe3$I <- u0_SISe3$I_1 + u0_SISe3$I_2 + u0_SISe3$I_3
     u0_SISe3$R <- 0L

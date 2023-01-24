@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -144,7 +144,6 @@ SIS <- function(u0,
 ##' a model.
 ##' @return A \code{data.frame}
 ##' @export
-##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SIS' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
@@ -183,7 +182,6 @@ events_SIS <- function() {
 ##' the \sQuote{I} compartment is zero.
 ##' @return A \code{data.frame}
 ##' @export
-##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SIS' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual

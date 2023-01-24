@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -142,7 +142,6 @@ SEIR <- function(u0,
 ##' a model.
 ##' @return A \code{data.frame}
 ##' @export
-##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SEIR' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
@@ -169,7 +168,7 @@ SEIR <- function(u0,
 ##' ## events by event type.
 ##' summary(result)
 events_SEIR <- function() {
-    data("events_SISe3", package = "SimInf", envir = environment())
+    utils::data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 2L
     events_SISe3$select[events_SISe3$event == "enter"] <- 1L
     events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
@@ -188,7 +187,6 @@ events_SEIR <- function() {
 ##' compartments are zero.
 ##' @return A \code{data.frame}
 ##' @export
-##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SEIR' model with 1600 nodes and initialize it to
 ##' ## run over 4*365 days and record data at weekly time-points.

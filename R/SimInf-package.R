@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,9 +16,29 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' @importClassesFrom Matrix dgCMatrix
+##' @importFrom graphics boxplot
+##' @importFrom graphics contour
+##' @importFrom graphics grconvertY
+##' @importFrom graphics lines
+##' @importFrom graphics legend
+##' @importFrom graphics pairs
+##' @importFrom graphics par
+##' @importFrom graphics plot
+##' @importFrom graphics polygon
+##' @importFrom graphics rug
+##' @importFrom grDevices adjustcolor
+##' @importFrom grDevices rainbow
+##' @importFrom MASS ginv
+##' @importFrom MASS kde2d
 ##' @importFrom methods show
+##' @importFrom methods slot
+##' @importFrom methods validObject
 ##' @importFrom stats cov
+##' @importFrom stats density
 ##' @importFrom stats optim
+##' @importFrom stats quantile
+##' @importFrom utils data
 ##' @importFrom utils packageVersion
 ##' @importFrom utils setTxtProgressBar
 ##' @importFrom utils txtProgressBar
