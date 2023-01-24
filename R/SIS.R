@@ -123,7 +123,7 @@ SIS <- function(u0,
                           ldata  = ldata,
                           u0     = u0)
 
-    as(model, "SIS")
+    methods::as(model, "SIS")
 }
 
 ##' Example data to initialize events for the \sQuote{SIS} model

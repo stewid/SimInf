@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -175,7 +175,7 @@ check_end_t_arg <- function(len, ...) {
 check_model_argument <- function(model) {
     if (missing(model))
         stop("Missing 'model' argument.", call. = FALSE)
-    if (!is(model, "SimInf_model"))
+    if (!methods::is(model, "SimInf_model"))
         stop("'model' argument is not a 'SimInf_model'.", call. = FALSE)
 
     invisible(NULL)
@@ -302,7 +302,7 @@ check_v0 <- function(v0, variables) {
 check_distance_matrix <- function(distance) {
     if (is.null(distance))
         stop("'distance' is missing.", call. = FALSE)
-    if (!is(distance, "dgCMatrix")) {
+    if (!methods::is(distance, "dgCMatrix")) {
         stop("The 'distance' argument must be of type 'dgCMatrix'.",
              call. = FALSE)
     }

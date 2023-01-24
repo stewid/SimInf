@@ -189,7 +189,7 @@ parse_priors <- function(priors) {
             stop("'priors' must be a formula or a list with formula items.",
                  call. = FALSE)
         }
-    } else if (!is(priors, "formula")) {
+    } else if (!methods::is(priors, "formula")) {
         stop("'priors' must be a formula or a list with formula items.",
              call. = FALSE)
     } else {

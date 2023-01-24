@@ -257,7 +257,7 @@ init_plot_trajectory_data <- function(model, compartments, index, range) {
 ##' Determine if the 'compartments' expression contains a lhs.
 ##' @noRd
 compartments_has_lhs <- function(compartments) {
-    if (is(compartments, "formula")) {
+    if (methods::is(compartments, "formula")) {
         compartments <- as.character(compartments)
         if (identical(length(compartments), 3L))
             return(TRUE)

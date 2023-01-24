@@ -121,7 +121,7 @@ SEIR <- function(u0,
                           ldata  = ldata,
                           u0     = u0)
 
-    as(model, "SEIR")
+    methods::as(model, "SEIR")
 }
 
 ##' Example data to initialize events for the \sQuote{SEIR} model

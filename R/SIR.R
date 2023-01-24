@@ -130,7 +130,7 @@ SIR <- function(u0,
                           ldata  = ldata,
                           u0     = u0)
 
-    as(model, "SIR")
+    methods::as(model, "SIR")
 }
 
 ##' Example data to initialize events for the \sQuote{SIR} model

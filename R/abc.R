@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ setAs(
 ##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_abc <- function(x, ...) {
-    as(x, "data.frame")
+    methods::as(x, "data.frame")
 }
 
 ##' Determine the number of generations
@@ -797,14 +797,18 @@ setMethod(
         priors <- parse_priors(priors)
         pars <- match_priors(model, priors)
 
-        object <- new("SimInf_abc", model = model, priors = priors,
-                      target = pars$target, pars = pars$pars,
-                      nprop = integer(), fn = match.fun(distance),
-                      x = array(numeric(0), c(0, 0, 0)),
-                      tolerance = matrix(numeric(0), nrow = 0, ncol = 0),
-                      weight = matrix(numeric(0), nrow = npart, ncol = 0),
-                      distance = array(numeric(0), dim = c(0, 0, 0)),
-                      ess = numeric())
+        object <- methods::new("SimInf_abc",
+                               model = model,
+                               priors = priors,
+                               target = pars$target,
+                               pars = pars$pars,
+                               nprop = integer(),
+                               fn = match.fun(distance),
+                               x = array(numeric(0), c(0, 0, 0)),
+                               tolerance = matrix(numeric(0), nrow = 0, ncol = 0),
+                               weight = matrix(numeric(0), nrow = npart, ncol = 0),
+                               distance = array(numeric(0), dim = c(0, 0, 0)),
+                               ess = numeric())
 
         abc_internal(object = object, ninit = ninit, tolerance = tolerance,
                      ..., verbose = verbose, post_gen = post_gen)

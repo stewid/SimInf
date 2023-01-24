@@ -66,7 +66,7 @@ init_x0 <- function(x, storage_mode = c("integer", "double"), null_ok = FALSE) {
 }
 
 init_sparse_matrix <- function(x) {
-    if (!is.null(x) && !is(x, "dgCMatrix")) {
+    if (!is.null(x) && !methods::is(x, "dgCMatrix")) {
         x <- Matrix::Matrix(x)
         x <- methods::as(x, "dMatrix")
         x <- methods::as(x, "generalMatrix")
@@ -141,7 +141,7 @@ init_C_code <- function(C_code) {
 }
 
 init_tspan <- function(tspan) {
-    if (is(tspan, "Date")) {
+    if (methods::is(tspan, "Date")) {
         ## Coerce the date vector to a numeric vector as days, where
         ## tspan[1] becomes the day of the year of the first year of
         ## the tspan date vector. The dates are added as names to the
