@@ -802,13 +802,19 @@ setMethod(
                                priors = priors,
                                target = pars$target,
                                pars = pars$pars,
-                               nprop = integer(),
+                               nprop = integer(0),
                                fn = match.fun(distance),
-                               x = array(numeric(0), c(0, 0, 0)),
-                               tolerance = matrix(numeric(0), nrow = 0, ncol = 0),
-                               weight = matrix(numeric(0), nrow = npart, ncol = 0),
-                               distance = array(numeric(0), dim = c(0, 0, 0)),
-                               ess = numeric())
+                               x = array(numeric(0),
+                                         dim = c(0, 0, 0)),
+                               tolerance = matrix(numeric(0),
+                                                  nrow = 0,
+                                                  ncol = 0),
+                               weight = matrix(numeric(0),
+                                               nrow = npart,
+                                               ncol = 0),
+                               distance = array(numeric(0),
+                                                dim = c(0, 0, 0)),
+                               ess = numeric(0))
 
         abc_internal(object = object, ninit = ninit, tolerance = tolerance,
                      ..., verbose = verbose, post_gen = post_gen)
