@@ -193,7 +193,7 @@ init_plot_prevalence_data <- function(model, compartments,
     } else {
         y <- apply(
             prevalence(model, compartments, level, index, "matrix"),
-            2, quantile, probs = c(range, 0.5, 1 - range))
+            2, stats::quantile, probs = c(range, 0.5, 1 - range))
 
         ## Matrices for quantile ranges and median.
         j <- seq_len(ncol(y))
@@ -224,7 +224,7 @@ init_plot_trajectory_data <- function(model, compartments, index, range) {
             } else {
                 y[[length(y) + 1]] <- apply(
                     trajectory(model, compartment, index, "matrix"),
-                    2, quantile, probs = c(range, 0.5, 1 - range))
+                    2, stats::quantile, probs = c(range, 0.5, 1 - range))
             }
 
             names(y)[length(y)] <- compartment
