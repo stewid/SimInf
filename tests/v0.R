@@ -26,20 +26,6 @@ model <- SIR(u0     = data.frame(S = 1:3, I = 4:6, R = 7:9),
              beta   = 0,
              gamma  = 0)
 
-u0(model) <- data.frame(S = 10:12, I = 13:15, R = 16:18)
-stopifnot(identical(model@u0,
-                    matrix(c(10L, 11L, 12L,
-                             13L, 14L, 15L,
-                             16L, 17L, 18L),
-                           nrow = 3,
-                           ncol = 3,
-                           byrow = TRUE,
-                           dimnames = list(c("S", "I", "R"), NULL))))
-
-res <- assertError(
-    u0(model) <- data.frame(S = 10:13, I = 14:17, R = 18:21))
-check_error(res, "The number of rows in 'u0' must match nodes in 'model'.")
-
 res <- assertError(
     v0(model) <- data.frame(phi = 10:13))
 check_error(res, "The number of rows in 'v0' must match nodes in 'model'.")

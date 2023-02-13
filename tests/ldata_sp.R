@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2019 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -65,14 +65,26 @@ stopifnot(identical(d_obs@i, d@i))
 stopifnot(identical(d_obs@p, d@p))
 stopifnot(all(abs(d_obs@x - d@x) < tol))
 
-res <- assertError(distance_matrix(1:10, 1:10, 3, "min_dist"))
+res <- assertError(distance_matrix(rep(1, 10), rep(1, 10), 3, "min_dist"))
 check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
-res <- assertError(distance_matrix(1:10, 1:10, 3, c(1, 2)))
+res <- assertError(distance_matrix(rep(1, 10), rep(1, 10), 3, -1))
 check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
-res <- assertError(distance_matrix(1:10, 1:10, 3, -1))
-check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
+res <- assertError(distance_matrix(x = numeric(0), y = 1, cutoff = 2))
+check_error(res, "'x' must be a numeric vector with length > 0.")
+
+res <- assertError(distance_matrix(x = 1:3, y = 1:2, cutoff = 2))
+check_error(res, "'y' must be a numeric vector with length 3.")
+
+res <- assertError(distance_matrix(x = 1:3, y = 1:3, cutoff = -2))
+check_error(res, "'cutoff' must be > 0.")
+
+res <- assertError(distance_matrix(x = 1:3, y = 1:3, cutoff = Inf))
+check_error(res, "'cutoff' must be > 0.")
+
+res <- assertError(distance_matrix(x = 1:3, y = c(4, NA, 6), cutoff = 1))
+check_error(res, "Invalid distance for i=0 and j=1.")
 
 ## Check 'data' argument to C function 'SimInf_ldata_sp'
 res <- assertError(.Call(SimInf:::SimInf_ldata_sp, NULL, d, 0L))
@@ -185,7 +197,7 @@ stopifnot(all(abs(ldata_obs - ldata_exp) < tol))
 ## Check identical coordinates
 res <- assertError(
     distance_matrix(x = c(1, 10, 1), y = c(1, 10, 1), cutoff = 20))
-check_error(res, "Identical coordinates. Please provide a minimum distance.")
+check_error(res, "Invalid 'min_dist' argument. Please provide 'min_dist' > 0.")
 
 d_exp <- new("dgCMatrix",
              i = c(1L, 2L, 0L, 2L, 0L, 1L),

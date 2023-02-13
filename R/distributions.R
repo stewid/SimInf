@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 check_binomial_distribution <- function(hyperparameters, symbols) {
-    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+    if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
         stop("Invalid formula specification for binomial distribution.",
              call. = FALSE)
     }
@@ -43,7 +43,7 @@ check_binomial_distribution <- function(hyperparameters, symbols) {
 }
 
 check_gamma_distribution <- function(hyperparameters, symbols) {
-    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+    if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
         stop("Invalid formula specification for gamma distribution.",
              call. = FALSE)
     }
@@ -56,7 +56,7 @@ check_gamma_distribution <- function(hyperparameters, symbols) {
 }
 
 check_normal_distribution <- function(hyperparameters, symbols) {
-    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+    if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
         stop("Invalid formula specification for normal distribution.",
              call. = FALSE)
     }
@@ -84,7 +84,7 @@ check_poisson_distribution <- function(hyperparameters, symbols) {
 }
 
 check_uniform_distribution <- function(hyperparameters, symbols) {
-    if (length(hyperparameters) != 2 || any(is.na(hyperparameters))) {
+    if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
         stop("Invalid formula specification for uniform distribution.",
              call. = FALSE)
     }
@@ -151,8 +151,6 @@ parse_hyperparameters <- function(distribution, tokens, symbols) {
     hyperparameters
 }
 
-##' @importFrom utils getParseData
-##' @noRd
 parse_distribution <- function(dist) {
     err_str <- "Invalid formula specification for distribution."
     dist <- as.character(dist)
@@ -163,7 +161,7 @@ parse_distribution <- function(dist) {
     parameter <- dist[2]
 
     ## Parse the rhs of the formula.
-    tokens <- getParseData(parse(text = dist[3], keep.source = TRUE))
+    tokens <- utils::getParseData(parse(text = dist[3], keep.source = TRUE))
     tokens <- tokens[tokens$terminal, c("token", "text")]
     if (!all(tokens$token[1] == "SYMBOL_FUNCTION_CALL",
              tokens$token[2] == "'('",
@@ -191,7 +189,7 @@ parse_priors <- function(priors) {
             stop("'priors' must be a formula or a list with formula items.",
                  call. = FALSE)
         }
-    } else if (!is(priors, "formula")) {
+    } else if (!methods::is(priors, "formula")) {
         stop("'priors' must be a formula or a list with formula items.",
              call. = FALSE)
     } else {
@@ -221,9 +219,9 @@ parse_priors <- function(priors) {
 ##' @noRd
 match_priors <- function(model, priors) {
     pars <- match(priors$parameter, rownames(model@ldata))
-    if (any(is.na(pars))) {
+    if (anyNA(pars)) {
         pars <- match(priors$parameter, names(model@gdata))
-        if (any(is.na(pars))) {
+        if (anyNA(pars)) {
             stop("All parameters in 'priors' must be either ",
                  "in 'gdata' or 'ldata'.", call. = FALSE)
         }

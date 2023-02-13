@@ -61,10 +61,19 @@
  * @param rng Random number generator.
  * @return 0 if Ok, else error code.
  */
-static int SimInf_sample_select(
-    const int *irE, const int *jcE, const double *prE,
-    int Nc, const int *u, int node, int select, int n,
-    double proportion, int *individuals, gsl_rng *rng)
+static int
+SimInf_sample_select(
+    const int *irE,
+    const int *jcE,
+    const double *prE,
+    int Nc,
+    const int *u,
+    int node,
+    int select,
+    int n,
+    double proportion,
+    int *individuals,
+    gsl_rng *rng)
 {
     int i, Nstates, Nindividuals = 0, Nkinds = 0;
 
@@ -229,10 +238,19 @@ sample_biased_urn:
  * @param rng Random number generator.
  * @return 0 if Ok, else error code.
  */
-static int SimInf_sample_select_enter(
-    const int *irE, const int *jcE, const double *prE,
-    int Nc, const int *u, int node, int select, int n,
-    double proportion, int *individuals, gsl_rng *rng)
+static int
+SimInf_sample_select_enter(
+    const int *irE,
+    const int *jcE,
+    const double *prE,
+    int Nc,
+    const int *u,
+    int node,
+    int select,
+    int n,
+    double proportion,
+    int *individuals,
+    gsl_rng *rng)
 {
     int i, Nstates = jcE[select + 1] - jcE[select];
     double w_cum = 0;
@@ -331,11 +349,20 @@ static int SimInf_sample_select_enter(
  * @param Nn Total number of nodes.
  * @param Nthread Number of threads to use during simulation.
  */
-static void SimInf_split_events(
+static void
+SimInf_split_events(
     SimInf_scheduled_events *out,
-    int len, const int *event, const int *time, const int *node,
-    const int *dest, const int *n, const double *proportion,
-    const int *select, const int *shift, int Nn, int Nthread)
+    int len,
+    const int *event,
+    const int *time,
+    const int *node,
+    const int *dest,
+    const int *n,
+    const double *proportion,
+    const int *select,
+    const int *shift,
+    int Nn,
+    int Nthread)
 {
     int i;
     const int chunk_size = Nn / Nthread;
@@ -365,8 +392,11 @@ static void SimInf_split_events(
  * @param rng random number generator
  * @return 0 or an error code
  */
-int attribute_hidden SimInf_scheduled_events_create(
-    SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng)
+int attribute_hidden
+SimInf_scheduled_events_create(
+    SimInf_scheduled_events **out,
+    SimInf_solver_args *args,
+    gsl_rng *rng)
 {
     int i;
     SimInf_scheduled_events *events = NULL;
@@ -419,7 +449,8 @@ on_error:                                  /* #nocov */
  * @param events SimInf_scheduled_events to free
  * @param Nthread number of threads that was used during simulation.
  */
-void attribute_hidden SimInf_scheduled_events_free(
+void attribute_hidden
+SimInf_scheduled_events_free(
     SimInf_scheduled_events *events)
 {
     if (events) {
@@ -454,9 +485,15 @@ void attribute_hidden SimInf_scheduled_events_free(
  *        offset by node * Nc.
  * @param node The node in u.
  */
-static void SimInf_print_event(
-    const SimInf_scheduled_event *e, const int *irE, const int *jcE,
-    const int Nc, const int *u, const int node, const int dest)
+static void
+SimInf_print_event(
+    const SimInf_scheduled_event *e,
+    const int *irE,
+    const int *jcE,
+    const int Nc,
+    const int *u,
+    const int node,
+    const int dest)
 {
     #ifdef _OPENMP
     #  pragma omp critical
@@ -465,27 +502,22 @@ static void SimInf_print_event(
         int i;
 
         if (irE && jcE && u) {
-            int n = e->n, Nindividuals = 0, Nkinds = 0;
+            int Nindividuals = 0;
 
-            /* 1) Count number of states with individuals */
-            /* 2) Count total number of individuals       */
-            for (i = jcE[e->select]; i < jcE[e->select + 1]; i++) {
-                const int nk = u[node * Nc + irE[i]];
-                if (nk > 0)
-                    Nkinds++;
-                Nindividuals += nk;
-            }
+            /* Count total number of individuals */
+            for (i = jcE[e->select]; i < jcE[e->select + 1]; i++)
+                Nindividuals += u[node * Nc + irE[i]];
 
             /* Number of states */
             if ((jcE[e->select + 1] - jcE[e->select]) <= 0)
                 Rprintf("No states to sample from.\n");
 
-            if (n > Nindividuals)
+            if (e->n > Nindividuals)
                 REprintf("Cannot sample %i for event from %i individuals.\n",
-                        n, Nindividuals);
+                         e->n, Nindividuals);
 
-            if (n < 0)
-                REprintf("Cannot sample %i individuals for event.\n", n);
+            if (e->n < 0)
+                REprintf("Cannot sample %i individuals for event.\n", e->n);
 
             REprintf("\n");
         }
@@ -560,7 +592,8 @@ static void SimInf_print_event(
  * process both E1 and E2 events.
  * @return 0 if Ok, else error code.
  */
-void attribute_hidden SimInf_process_events(
+void attribute_hidden
+SimInf_process_events(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events,
     int process_E2)
@@ -827,7 +860,8 @@ done:
  * @param SimInf_compartment_model *model data to store.
  */
 void attribute_hidden
-SimInf_store_solution_sparse(SimInf_compartment_model *model)
+SimInf_store_solution_sparse(
+    SimInf_compartment_model *model)
 {
     while (!model[0].U && model[0].U_it < model[0].tlen &&
            model[0].tt > model[0].tspan[model[0].U_it]) {
@@ -860,7 +894,8 @@ SimInf_store_solution_sparse(SimInf_compartment_model *model)
  * @param Nthread number of threads that was used during simulation.
  */
 void attribute_hidden
-SimInf_compartment_model_free(SimInf_compartment_model *model)
+SimInf_compartment_model_free(
+    SimInf_compartment_model *model)
 {
     if (model) {
         int i;
@@ -898,8 +933,10 @@ SimInf_compartment_model_free(SimInf_compartment_model *model)
  * @param args structure with data for the solver.
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-int attribute_hidden SimInf_compartment_model_create(
-    SimInf_compartment_model **out, SimInf_solver_args *args)
+int attribute_hidden
+SimInf_compartment_model_create(
+    SimInf_compartment_model **out,
+    SimInf_solver_args *args)
 {
     int i;
     SimInf_compartment_model *model = NULL;
@@ -985,10 +1022,10 @@ int attribute_hidden SimInf_compartment_model_create(
         }
 
         if (i > 0) {
-            model[i].u = &model[0].u[model[i].Ni * args->Nc];
-            model[i].v = &model[0].v[model[i].Ni * args->Nd];
-            model[i].v_new = &model[0].v_new[model[i].Ni * args->Nd];
-            model[i].update_node = &model[0].update_node[model[i].Ni];
+            model[i].u = &(model[0].u[model[i].Ni * args->Nc]);
+            model[i].v = &(model[0].v[model[i].Ni * args->Nd]);
+            model[i].v_new = &(model[0].v_new[model[i].Ni * args->Nd]);
+            model[i].update_node = &(model[0].update_node[model[i].Ni]);
         }
 
         model[i].ldata = &(args->ldata[model[i].Ni * model[i].Nld]);
@@ -1033,7 +1070,8 @@ on_error:                                  /* #nocov */
  *        than zero.
  * @param transition Zero-based index with the state transition.
  */
-void attribute_hidden SimInf_print_status(
+void attribute_hidden
+SimInf_print_status(
     const int Nc,
     const int *u,
     const int Nd,

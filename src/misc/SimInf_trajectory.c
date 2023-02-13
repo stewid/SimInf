@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2021 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,15 +37,18 @@ typedef struct {
     rowinfo_t *a;
 } rowinfo_vec;
 
-static void
+static int
 SimInf_insert_id_time(
     rowinfo_vec *ri,
     SEXP m,
     R_xlen_t m_stride,
     R_xlen_t tlen)
 {
-    int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-    int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+    const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
+    const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+
+    if (m_stride < 1)
+        return -1;
 
     for (R_xlen_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
@@ -60,9 +63,11 @@ SimInf_insert_id_time(
             }
         }
     }
+
+    return 0;
 }
 
-static void
+static int
 SimInf_insert_id_time2(
     rowinfo_vec *ri,
     SEXP m1,
@@ -71,10 +76,13 @@ SimInf_insert_id_time2(
     R_xlen_t m2_stride,
     R_xlen_t tlen)
 {
-    int *m1_ir = INTEGER(GET_SLOT(m1, Rf_install("i")));
-    int *m2_ir = INTEGER(GET_SLOT(m2, Rf_install("i")));
-    int *m1_jc = INTEGER(GET_SLOT(m1, Rf_install("p")));
-    int *m2_jc = INTEGER(GET_SLOT(m2, Rf_install("p")));
+    const int *m1_ir = INTEGER(GET_SLOT(m1, Rf_install("i")));
+    const int *m2_ir = INTEGER(GET_SLOT(m2, Rf_install("i")));
+    const int *m1_jc = INTEGER(GET_SLOT(m1, Rf_install("p")));
+    const int *m2_jc = INTEGER(GET_SLOT(m2, Rf_install("p")));
+
+    if (m1_stride < 1 || m2_stride < 1)
+        return -1;
 
     for (R_xlen_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
@@ -110,6 +118,8 @@ SimInf_insert_id_time2(
             }
         }
     }
+
+    return 0;
 }
 
 static void
@@ -117,7 +127,7 @@ SimInf_sparse2df_int(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
-    int * m_i,
+    const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
@@ -125,9 +135,9 @@ SimInf_sparse2df_int(
     R_xlen_t n_id,
     R_xlen_t col)
 {
-    int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-    int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
-    double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
+    const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
+    const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+    const double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
@@ -200,7 +210,7 @@ SimInf_sparse2df_real(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
-    int * m_i,
+    const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
@@ -208,9 +218,9 @@ SimInf_sparse2df_real(
     R_xlen_t n_id,
     R_xlen_t col)
 {
-    int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-    int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
-    double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
+    const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
+    const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+    const double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
@@ -281,8 +291,8 @@ SimInf_sparse2df_real(
 static void
 SimInf_dense2df_int(
     SEXP dst,
-    int *m,
-    int * m_i,
+    const int *m,
+    const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
@@ -290,12 +300,12 @@ SimInf_dense2df_int(
     R_xlen_t id_len,
     R_xlen_t id_n,
     R_xlen_t col,
-    int *p_id)
+    const int *p_id)
 {
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
         int *p_vec;
-        int *p_m = m + m_i[i] - 1;
+        const int *p_m = m + m_i[i] - 1;
 
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
         p_vec = INTEGER(vec);
@@ -306,9 +316,9 @@ SimInf_dense2df_int(
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++) {
-                    p_vec[t * id_len + i] =
-                        p_m[(t * id_n + p_id[i] - 1) * m_stride];
+                for (R_xlen_t j = 0; j < id_len; j++) {
+                    p_vec[t * id_len + j] =
+                        p_m[(t * id_n + p_id[j] - 1) * m_stride];
                 }
             }
         } else {
@@ -316,9 +326,9 @@ SimInf_dense2df_int(
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++) {
-                    p_vec[t * id_len + i] =
-                        p_m[(t * id_n + i) * m_stride];
+                for (R_xlen_t j = 0; j < id_len; j++) {
+                    p_vec[t * id_len + j] =
+                        p_m[(t * id_n + j) * m_stride];
                 }
             }
         }
@@ -328,8 +338,8 @@ SimInf_dense2df_int(
 static void
 SimInf_dense2df_real(
     SEXP dst,
-    double *m,
-    int * m_i,
+    const double *m,
+    const int *m_i,
     R_xlen_t m_i_len,
     R_xlen_t m_stride,
     R_xlen_t nrow,
@@ -337,12 +347,12 @@ SimInf_dense2df_real(
     R_xlen_t id_len,
     R_xlen_t id_n,
     R_xlen_t col,
-    int *p_id)
+    const int *p_id)
 {
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
         double *p_vec;
-        double *p_m = m + m_i[i] - 1;
+        const double *p_m = m + m_i[i] - 1;
 
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
         p_vec = REAL(vec);
@@ -353,9 +363,9 @@ SimInf_dense2df_real(
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++) {
-                    p_vec[t * id_len + i] =
-                        p_m[(t * id_n + p_id[i] - 1) * m_stride];
+                for (R_xlen_t j = 0; j < id_len; j++) {
+                    p_vec[t * id_len + j] =
+                        p_m[(t * id_n + p_id[j] - 1) * m_stride];
                 }
             }
         } else {
@@ -363,9 +373,9 @@ SimInf_dense2df_real(
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++) {
-                    p_vec[t * id_len + i] =
-                        p_m[(t * id_n + i) * m_stride];
+                for (R_xlen_t j = 0; j < id_len; j++) {
+                    p_vec[t * id_len + j] =
+                        p_m[(t * id_n + j) * m_stride];
                 }
             }
         }
@@ -456,7 +466,12 @@ SimInf_trajectory(
                 error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
                 goto cleanup;                           /* #nocov */
             }
-            SimInf_insert_id_time2(ri, dm, cm, dm_stride, cm_stride, tlen);
+
+            if (SimInf_insert_id_time2(ri, dm, cm, dm_stride, cm_stride, tlen)) {
+                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+                goto cleanup;                           /* #nocov */
+            }
+
             nrow = kv_size(*ri);
         }
     } else if (dm_i_len > 0 && dm_sparse) {
@@ -465,7 +480,12 @@ SimInf_trajectory(
             error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
             goto cleanup;                           /* #nocov */
         }
-        SimInf_insert_id_time(ri, dm, dm_stride, tlen);
+
+        if (SimInf_insert_id_time(ri, dm, dm_stride, tlen)) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+            goto cleanup;                           /* #nocov */
+        }
+
         nrow = kv_size(*ri);
     } else if (cm_i_len > 0 && cm_sparse) {
         ri = calloc(1, sizeof(rowinfo_vec));
@@ -473,7 +493,12 @@ SimInf_trajectory(
             error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
             goto cleanup;                           /* #nocov */
         }
-        SimInf_insert_id_time(ri, cm, cm_stride, tlen);
+
+        if (SimInf_insert_id_time(ri, cm, cm_stride, tlen)) {
+            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+            goto cleanup;                           /* #nocov */
+        }
+
         nrow = kv_size(*ri);
     }
 

@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2022 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ valid_tspan <- function(object) {
         return("Input time-span must be a double vector.")
     } else if (any(length(object@tspan) < 1,
                    any(diff(object@tspan) <= 0),
-                   any(is.na(object@tspan)))) {
+                   anyNA(object@tspan))) {
         return("Input time-span must be an increasing vector.")
     }
 

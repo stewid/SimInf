@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ check_integer_arg <- function(...) {
         }
 
         if (!is.numeric(arg[[i]]) ||
-            any(is.na(arg[[i]])) ||
+            anyNA(arg[[i]]) ||
             !all(is_wholenumber(arg[[i]]))) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],
@@ -175,7 +175,7 @@ check_end_t_arg <- function(len, ...) {
 check_model_argument <- function(model) {
     if (missing(model))
         stop("Missing 'model' argument.", call. = FALSE)
-    if (!is(model, "SimInf_model"))
+    if (!methods::is(model, "SimInf_model"))
         stop("'model' argument is not a 'SimInf_model'.", call. = FALSE)
 
     invisible(NULL)
@@ -302,7 +302,7 @@ check_v0 <- function(v0, variables) {
 check_distance_matrix <- function(distance) {
     if (is.null(distance))
         stop("'distance' is missing.", call. = FALSE)
-    if (!is(distance, "dgCMatrix")) {
+    if (!methods::is(distance, "dgCMatrix")) {
         stop("The 'distance' argument must be of type 'dgCMatrix'.",
              call. = FALSE)
     }
@@ -353,7 +353,7 @@ check_raw_events_identifier <- function(...) {
         }
 
         if (isTRUE(is_ok)) {
-            is_ok <- !any(is.na(arg[[i]]))
+            is_ok <- !anyNA(arg[[i]])
         }
 
         if (!isTRUE(is_ok)) {
@@ -366,4 +366,46 @@ check_raw_events_identifier <- function(...) {
     }
 
     invisible(NULL)
+}
+
+##' Check raw events
+##'
+##' Raise an error if any of the columns in the events data.frame are
+##' invalid.
+##' @param events a data.frame with raw events.
+##' @return a raw events data.frame with the columns 'id', 'event',
+##'     'time', 'node', and 'dest'.
+##' @noRd
+check_raw_events <- function(events) {
+    columns <- c("id", "event", "time", "node", "dest")
+    if (!is.data.frame(events))
+        events <- as.data.frame(events)
+    if (!all(columns %in% names(events)))
+        stop("Missing columns in 'events'.", call. = FALSE)
+
+    check_raw_events_identifier(events$id, events$node, events$dest)
+
+    ## Do we have to recode the event type as a numerical value
+    if (any(is.character(events$event), is.factor(events$event))) {
+        event_names <- c("enter", "exit", "extTrans", "intTrans")
+        if (!all(events$event %in% event_names)) {
+            stop(paste0("'event' type must be 'enter', 'exit', ",
+                        "'extTrans' or 'intTrans'."),
+                 call. = FALSE)
+        }
+
+        ## Find indices to 'enter', 'internal transfer' and 'external
+        ## transfer' events.
+        i_enter <- which(events$event == "enter")
+        i_intTrans <- which(events$event == "intTrans")
+        i_extTrans <- which(events$event == "extTrans")
+
+        ## Replace the character event type with a numerical value.
+        events$.event <- rep(0L, nrow(events))
+        events$.event[i_enter] <- 1L
+        events$.event[i_intTrans] <- 2L
+        events$.event[i_extTrans] <- 3L
+    }
+
+    events[, columns, drop = FALSE]
 }

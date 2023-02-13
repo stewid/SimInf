@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -87,7 +87,6 @@ setClass("SISe", contains = c("SimInf_model"))
 ##' @return \code{SISe}
 ##' @include check_arguments.R
 ##' @export
-##' @importFrom methods as
 SISe <- function(u0,
                  tspan,
                  events  = NULL,
@@ -164,7 +163,7 @@ SISe <- function(u0,
                           u0     = u0,
                           v0     = v0)
 
-    as(model, "SISe")
+    methods::as(model, "SISe")
 }
 
 ##' Example data to initialize events for the \sQuote{SISe} model
@@ -185,7 +184,6 @@ SISe <- function(u0,
 ##' a model.
 ##' @return A \code{data.frame}
 ##' @export
-##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SISe' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
@@ -210,7 +208,7 @@ SISe <- function(u0,
 ##' ## events by event type.
 ##' summary(result)
 events_SISe <- function() {
-    data("events_SISe3", package = "SimInf", envir = environment())
+    utils::data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 2L
     events_SISe3$select[events_SISe3$event == "enter"] <- 1L
     events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
@@ -228,7 +226,6 @@ events_SISe <- function() {
 ##' the \sQuote{I} compartment is zero.
 ##' @return A \code{data.frame}
 ##' @export
-##' @importFrom utils data
 ##' @examples
 ##' ## Create an 'SISe' model with 1600 nodes and initialize it to
 ##' ## run over 4*365 days and record data at weekly time-points.

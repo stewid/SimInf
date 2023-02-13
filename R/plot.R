@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@
 ##' @aliases boxplot,SimInf_model-method
 ##' @export
 ##' @include SimInf_model.R
-##' @importFrom graphics boxplot
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it with 99 susceptible individuals and one infected
@@ -63,7 +62,7 @@ setMethod(
     signature(x = "SimInf_model"),
     function(x, compartments = NULL, index = NULL, ...) {
         ## Remove the first two columns node and time
-        boxplot(trajectory(x, compartments, index)[c(-1, -2)], ...)
+        graphics::boxplot(trajectory(x, compartments, index)[c(-1, -2)], ...)
     }
 )
 
@@ -85,7 +84,6 @@ setMethod(
 ##' @param ... Additional arguments affecting the plot produced.
 ##' @export
 ##' @include SimInf_model.R
-##' @importFrom graphics pairs
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it with 99 susceptible individuals and one infected
@@ -112,7 +110,7 @@ setMethod(
     signature(x = "SimInf_model"),
     function(x, compartments = NULL, index = NULL, ...) {
         ## Remove the first two columns node and time
-        pairs(trajectory(x, compartments, index)[c(-1, -2)], ...)
+        graphics::pairs(trajectory(x, compartments, index)[c(-1, -2)], ...)
     }
 )
 
@@ -195,7 +193,7 @@ init_plot_prevalence_data <- function(model, compartments,
     } else {
         y <- apply(
             prevalence(model, compartments, level, index, "matrix"),
-            2, quantile, probs = c(range, 0.5, 1 - range))
+            2, stats::quantile, probs = c(range, 0.5, 1 - range))
 
         ## Matrices for quantile ranges and median.
         j <- seq_len(ncol(y))
@@ -226,7 +224,7 @@ init_plot_trajectory_data <- function(model, compartments, index, range) {
             } else {
                 y[[length(y) + 1]] <- apply(
                     trajectory(model, compartment, index, "matrix"),
-                    2, quantile, probs = c(range, 0.5, 1 - range))
+                    2, stats::quantile, probs = c(range, 0.5, 1 - range))
             }
 
             names(y)[length(y)] <- compartment
@@ -259,7 +257,7 @@ init_plot_trajectory_data <- function(model, compartments, index, range) {
 ##' Determine if the 'compartments' expression contains a lhs.
 ##' @noRd
 compartments_has_lhs <- function(compartments) {
-    if (is(compartments, "formula")) {
+    if (methods::is(compartments, "formula")) {
         compartments <- as.character(compartments)
         if (identical(length(compartments), 3L))
             return(TRUE)
@@ -356,12 +354,6 @@ plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
     }
 }
 
-##' @importFrom graphics contour
-##' @importFrom graphics lines
-##' @importFrom graphics rug
-##' @importFrom MASS kde2d
-##' @importFrom stats density
-##' @noRd
 plot_density <- function(x, ...) {
     if (ncol(x) > 1) {
         pairs(x,
@@ -369,18 +361,19 @@ plot_density <- function(x, ...) {
                   usr <- par("usr")
                   on.exit(par(usr = usr))
                   par(usr = c(usr[1:2], 0, 1.5))
-                  d <- density(x, bw = "SJ-ste")
+                  d <- stats::density(x, bw = "SJ-ste")
                   d$y <- d$y / max(d$y)
-                  lines(d, ...)
-                  rug(x)
+                  graphics::lines(d, ...)
+                  graphics::rug(x)
               },
               lower.panel = function(x, y, ...) {
-                  d <- kde2d(x, y)
-                  contour(d, add = TRUE, drawlabels = FALSE, ...)
+                  d <- MASS::kde2d(x, y)
+                  graphics::contour(d, add = TRUE, drawlabels = FALSE, ...)
               }, ...)
     } else {
-        plot(density(x, bw = "SJ-ste"), main = "", xlab = colnames(x), ...)
-        rug(x)
+        plot(stats::density(x, bw = "SJ-ste"),
+             main = "", xlab = colnames(x), ...)
+        graphics::rug(x)
     }
 }
 
@@ -428,14 +421,6 @@ plot_trace <- function(x, i, j, ...) {
 ##' @aliases plot,SimInf_model-method
 ##' @export
 ##' @include SimInf_model.R
-##' @importFrom graphics grconvertY
-##' @importFrom graphics legend
-##' @importFrom graphics lines
-##' @importFrom graphics par
-##' @importFrom graphics plot
-##' @importFrom graphics polygon
-##' @importFrom grDevices adjustcolor
-##' @importFrom grDevices rainbow
 ##' @examples
 ##' ## Create an 'SIR' model with 100 nodes and initialise
 ##' ## it with 990 susceptible individuals and 10 infected

@@ -1,7 +1,0 @@
-steps:
-- bash: |
-    cd
-    echo 'options(repos = "https://cloud.r-project.org")' > .Rprofile
-    echo 'R_LIBS_USER="$(Agent.BuildDirectory)/R/library"' > .Renviron
-    mkdir -p $(Agent.BuildDirectory)/R/library
-  displayName: "Customize R startup"

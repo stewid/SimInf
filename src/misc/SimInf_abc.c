@@ -2,7 +2,7 @@
  * This file is part of SimInf, a framework for stochastic
  * disease spread simulations.
  *
- * Copyright (C) 2015 -- 2021 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,77 +18,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if defined SIMINF_NO_ABC
+#include <R.h>
+#include <Rdefines.h>
+#include <Rmath.h>
+#include <R_ext/Visibility.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_rng.h>
+#include "SimInf_arg.h"
 
-# include <Rdefines.h>
-# include <R_ext/Visibility.h>
-# include "SimInf.h"
-
-SEXP attribute_hidden SimInf_abc_proposals(
-    SEXP parameter,
-    SEXP distribution,
-    SEXP p1,
-    SEXP p2,
-    SEXP n,
-    SEXP x,
-    SEXP w,
-    SEXP sigma)
-{
-    SIMINF_UNUSED(parameter);
-    SIMINF_UNUSED(distribution);
-    SIMINF_UNUSED(p1);
-    SIMINF_UNUSED(p2);
-    SIMINF_UNUSED(n);
-    SIMINF_UNUSED(x);
-    SIMINF_UNUSED(w);
-    SIMINF_UNUSED(sigma);
-
-    Rf_error("The installed version of the GNU Scientific Library (GSL) that "
-             "is required to build SimInf with support for ABC is to old. "
-             "Please install GSL version >= 2.2 and reinstall SimInf if you "
-             "need that functionality.");
-
-    return R_NilValue;
-}
-
-SEXP attribute_hidden SimInf_abc_weights(
-    SEXP distribution,
-    SEXP p1,
-    SEXP p2,
-    SEXP x,
-    SEXP xx,
-    SEXP w,
-    SEXP sigma)
-{
-    SIMINF_UNUSED(distribution);
-    SIMINF_UNUSED(p1);
-    SIMINF_UNUSED(p2);
-    SIMINF_UNUSED(x);
-    SIMINF_UNUSED(xx);
-    SIMINF_UNUSED(w);
-    SIMINF_UNUSED(sigma);
-
-    Rf_error("The installed version of the GNU Scientific Library (GSL) that "
-             "is required to build SimInf with support for ABC is to old. "
-             "Please install GSL version >= 2.2 and reinstall SimInf if you "
-             "need that functionality.");
-
-    return R_NilValue;
-}
-
-#else
-
-# include <R.h>
-# include <Rdefines.h>
-# include <Rmath.h>
-# include <R_ext/Visibility.h>
-# include <gsl/gsl_matrix.h>
-# include <gsl/gsl_linalg.h>
-# include <gsl/gsl_randist.h>
-# include <gsl/gsl_rng.h>
-# include "SimInf_arg.h"
-
-static void SimInf_abc_error(int error)
+static void
+SimInf_abc_error(
+    int error)
 {
     switch (error) {
     case 1:                                            /* #nocov */
@@ -99,6 +41,9 @@ static void SimInf_abc_error(int error)
         break;
     case 3:
         Rf_error("Invalid weight detected (non-finite or < 0.0).");
+        break;
+    case 4:                                       /* #nocov */
+        Rf_error("Unable to calculate weights."); /* #nocov */
         break;
     default:                                        /* #nocov */
         Rf_error("Unknown error code: %i.", error); /* #nocov */
@@ -132,7 +77,8 @@ static void SimInf_abc_error(int error)
  *         proposals. The matrix also has an attribute 'ancestor' with
  *         an index that indicates which particle it was sampled from.
  */
-SEXP attribute_hidden SimInf_abc_proposals(
+SEXP attribute_hidden
+SimInf_abc_proposals(
     SEXP parameter,
     SEXP distribution,
     SEXP p1,
@@ -226,11 +172,7 @@ SEXP attribute_hidden SimInf_abc_proposals(
     /* Setup weights */
     ptr_x = REAL(x);
     ptr_w = REAL(w);
-    cdf = malloc(len * sizeof(double));
-    if (!cdf) {
-        error = 1;    /* #nocov */
-        goto cleanup; /* #nocov */
-    }
+    cdf = (double *)R_alloc(len, sizeof(double));
     for (int i = 0; i < len; i++) {
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
             error = 3;
@@ -308,7 +250,6 @@ SEXP attribute_hidden SimInf_abc_proposals(
     }
 
 cleanup:
-    free(cdf);
     gsl_matrix_free(SIGMA);
     gsl_rng_free(rng);
     PutRNGstate();
@@ -343,7 +284,8 @@ cleanup:
  * @return a numeric vector with weights for the current generation of
  *         particles.
  */
-SEXP attribute_hidden SimInf_abc_weights(
+SEXP attribute_hidden
+SimInf_abc_weights(
     SEXP distribution,
     SEXP p1,
     SEXP p2,
@@ -358,7 +300,8 @@ SEXP attribute_hidden SimInf_abc_weights(
     gsl_matrix *SIGMA = NULL;
     gsl_vector *work = NULL;
     SEXP ww;
-    double *ptr_p1, *ptr_p2, *ptr_x, *ptr_xx, *ptr_w, *ptr_ww;
+    const double *ptr_p1, *ptr_p2, *ptr_w;
+    double *ptr_x, *ptr_xx, *ptr_ww;
     double sum, max_ww = 0.0;
 
     PROTECT(ww = Rf_allocVector(REALSXP, n_particles));
@@ -439,6 +382,11 @@ SEXP attribute_hidden SimInf_abc_weights(
             sum += ptr_w[j] * pdf;
         }
 
+        if (!R_FINITE(sum) || sum <= 0.0) {
+            error = 4;    /* #nocov */
+            goto cleanup; /* #nocov */
+        }
+
         sum = log(sum);
         ptr_ww[i] -= sum;
         if (ptr_ww[i] > max_ww)
@@ -467,5 +415,3 @@ cleanup:
 
     return ww;
 }
-
-#endif

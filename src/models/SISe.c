@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2020 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,8 @@ enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON};
  * @param t Current time.
  * @return propensity.
  */
-static double SISe_S_to_I(
+static double
+SISe_S_to_I(
     const int *u,
     const double *v,
     const double *ldata,
@@ -69,7 +70,8 @@ static double SISe_S_to_I(
  * @param t Current time.
  * @return propensity.
  */
-static double SISe_I_to_S(
+static double
+SISe_I_to_S(
     const int *u,
     const double *v,
     const double *ldata,
@@ -98,7 +100,8 @@ static double SISe_I_to_S(
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int SISe_post_time_step(
+static int
+SISe_post_time_step(
     double *v_new,
     const int *u,
     const double *v,
@@ -140,7 +143,10 @@ static int SISe_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-SEXP attribute_hidden SISe_run(SEXP model, SEXP solver)
+SEXP attribute_hidden
+SISe_run(
+    SEXP model,
+    SEXP solver)
 {
     TRFun tr_fun[] = {&SISe_S_to_I, &SISe_I_to_S};
 

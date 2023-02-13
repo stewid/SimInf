@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -82,9 +82,9 @@ init_E <- function(E, events) {
     if (is.null(E)) {
         if (!is.null(events))
             stop("events is not NULL when E is NULL.", call. = FALSE)
-        E <- new("dgCMatrix")
-    } else if (!is(E, "dgCMatrix")) {
-        E <- as(E, "dgCMatrix")
+        E <- methods::new("dgCMatrix")
+    } else if (!methods::is(E, "dgCMatrix")) {
+        E <- methods::as(E, "dgCMatrix")
     }
 
     E
@@ -134,7 +134,7 @@ init_events <- function(events, t0) {
 
     ## Check time
     if (nrow(events)) {
-        if (is(events$time, "Date")) {
+        if (methods::is(events$time, "Date")) {
             if (is.null(t0))
                 stop("Missing 't0'.", call. = FALSE)
             if (!all(identical(length(t0), 1L), is.numeric(t0)))
@@ -244,9 +244,6 @@ init_events <- function(events, t0) {
 ##' @return S4 class \code{SimInf_events}
 ##' @include check_arguments.R
 ##' @export
-##' @importFrom methods as
-##' @importFrom methods is
-##' @importFrom methods new
 ##' @examples
 ##' ## Let us illustrate how movement events can be used to transfer
 ##' ## individuals from one node to another.  Use the built-in SIR
@@ -328,17 +325,17 @@ SimInf_events <- function(E      = NULL,
     attr(events$event, "origin") <- event_origin
     attr(events$time, "origin") <- time_origin
 
-    new("SimInf_events",
-        E          = E,
-        N          = N,
-        event      = events$event,
-        time       = events$time,
-        node       = as.integer(events$node),
-        dest       = as.integer(events$dest),
-        n          = as.integer(events$n),
-        proportion = as.numeric(events$proportion),
-        select     = as.integer(events$select),
-        shift      = as.integer(events$shift))
+    methods::new("SimInf_events",
+                 E          = E,
+                 N          = N,
+                 event      = events$event,
+                 time       = events$time,
+                 node       = as.integer(events$node),
+                 dest       = as.integer(events$dest),
+                 n          = as.integer(events$n),
+                 proportion = as.numeric(events$proportion),
+                 select     = as.integer(events$select),
+                 shift      = as.integer(events$shift))
 }
 
 setAs(
@@ -374,7 +371,7 @@ setAs(
 ##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_events <- function(x, ...) {
-    as(x, "data.frame")
+    methods::as(x, "data.frame")
 }
 
 ##' Plot scheduled events
@@ -384,8 +381,6 @@ as.data.frame.SimInf_events <- function(x, ...) {
 ##' @param events the event type to plot.
 ##' @template plot-frame-param
 ##' @param ... additional arguments affecting the plot.
-##' @importFrom graphics plot
-##' @importFrom graphics mtext
 ##' @noRd
 plot_SimInf_events <- function(x,
                                y,
@@ -411,16 +406,16 @@ plot_SimInf_events <- function(x,
             y <- rep(0, length(x))
         }
 
-        plot(x, y, type = "l", ylim = ylim, xlab = "",
-             ylab = "", frame.plot = frame.plot, ...)
+        graphics::plot(x, y, type = "l", ylim = ylim, xlab = "",
+                       ylab = "", frame.plot = frame.plot, ...)
     } else {
-        plot(0, 0, type = "n", xlab = "", ylab = "",
-             frame.plot = frame.plot, ...)
+        graphics::plot(0, 0, type = "n", xlab = "", ylab = "",
+                       frame.plot = frame.plot, ...)
     }
 
-    mtext(events, side = 3, line = 0)
-    mtext("Individuals", side = 2, line = 2)
-    mtext("Time", side = 1, line = 2)
+    graphics::mtext(events, side = 3, line = 0)
+    graphics::mtext("Individuals", side = 2, line = 2)
+    graphics::mtext("Time", side = 1, line = 2)
 }
 
 ##' Display the distribution of scheduled events over time
@@ -430,19 +425,17 @@ plot_SimInf_events <- function(x,
 ##' @param ... Additional arguments affecting the plot
 ##' @aliases plot,SimInf_events-method
 ##' @export
-##' @importFrom graphics par
-##' @importFrom stats xtabs
 setMethod(
     "plot",
     signature(x = "SimInf_events"),
     function(x, frame.plot = FALSE, ...) {
-        savepar <- par(mfrow = c(2, 2),
-                       oma = c(1, 1, 2, 0),
-                       mar = c(4, 3, 1, 1))
-        on.exit(par(savepar))
+        savepar <- graphics::par(mfrow = c(2, 2),
+                                 oma = c(1, 1, 2, 0),
+                                 mar = c(4, 3, 1, 1))
+        on.exit(graphics::par(savepar))
 
-        yy <- xtabs(n ~ event + time,
-                    cbind(event = x@event, time = x@time, n = x@n))
+        yy <- stats::xtabs(n ~ event + time,
+                           cbind(event = x@event, time = x@time, n = x@n))
         xx <- as.integer(colnames(yy))
         if (!is.null(attr(x@time, "origin")))
             xx <- as.Date(xx, origin = attr(x@time, "origin"))
@@ -461,7 +454,6 @@ setMethod(
 ##' @param object The SimInf_events \code{object}
 ##' @return None (invisible 'NULL').
 ##' @export
-##' @importFrom methods show
 setMethod(
     "show",
     signature(object = "SimInf_events"),
@@ -588,7 +580,6 @@ setMethod(
 ##' @param value A matrix.
 ##' @return \code{SimInf_model} object
 ##' @export
-##' @importFrom methods is
 ##' @examples
 ##' ## Create an SIR model
 ##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
@@ -621,7 +612,7 @@ setMethod(
             colnames(model@events@N) <-
                 as.character(seq_len(ncol(model@events@N)))
         }
-        validObject(model)
+        methods::validObject(model)
 
         model
     }
@@ -667,8 +658,6 @@ setMethod(
 ##' @param model The \code{model} to set the select matrix for.
 ##' @param value A matrix.
 ##' @export
-##' @importFrom methods as
-##' @importFrom methods is
 ##' @examples
 ##' ## Create an SIR model
 ##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
@@ -693,8 +682,8 @@ setMethod(
     "select_matrix<-",
     signature(model = "SimInf_model"),
     function(model, value) {
-        if (!is(value, "dgCMatrix"))
-            value <- as(value, "dgCMatrix")
+        if (!methods::is(value, "dgCMatrix"))
+            value <- methods::as(value, "dgCMatrix")
 
         if (!identical(Nc(model), dim(value)[1])) {
             stop("'value' must have one row for each compartment in the model.",
@@ -705,7 +694,7 @@ setMethod(
                                 as.character(seq_len(dim(value)[2])))
         model@events@E <- value
 
-        validObject(model)
+        methods::validObject(model)
 
         model
     }

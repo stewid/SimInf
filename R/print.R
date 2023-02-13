@@ -26,7 +26,6 @@ print_title <- function(title) {
 }
 
 ##' Summarise trajectory.
-##' @importFrom stats quantile
 ##' @noRd
 summary_trajectory <- function(object, compartments) {
     if (is_trajectory_empty(object)) {
@@ -34,7 +33,7 @@ summary_trajectory <- function(object, compartments) {
     } else {
         qq <- lapply(compartments, function(compartment) {
             x <- as.numeric(trajectory(object, compartment, format = "matrix"))
-            qq <- quantile(x)
+            qq <- stats::quantile(x)
             qq <- c(qq[1L:3L], mean(x), qq[4L:5L])
         })
         qq <- do.call("rbind", qq)
@@ -54,7 +53,7 @@ summary_output_matrix <- function(object, title, names) {
 
 summary_matrix <- function(x) {
     qq <- t(apply(x, 1, function(xx) {
-        qq <- quantile(xx)
+        qq <- stats::quantile(xx)
         c(qq[1L:3L], mean(xx), qq[4L:5L])
     }))
     colnames(qq) <- c("Min.", "1st Qu.", "Median",
@@ -73,8 +72,6 @@ summary_vector <- function(x) {
 }
 
 ##' Summarise model parameters
-##'
-##' @importFrom stats quantile
 ##' @noRd
 summary_data_matrix <- function(x, title) {
     if (!is.null(rownames(x))) {
@@ -98,8 +95,6 @@ summary_gdata <- function(object) {
     summary_vector(object@gdata)
 }
 
-##' @importFrom stats quantile
-##' @noRd
 summary_events <- function(object) {
     print_title("Scheduled events")
 
@@ -126,9 +121,9 @@ summary_events <- function(object) {
             cat("---------------\n")
             id <- indegree(object)
             od <- outdegree(object)
-            qq_id <- quantile(id)
+            qq_id <- stats::quantile(id)
             qq_id <- c(qq_id[1L:3L], mean(id), qq_id[4L:5L])
-            qq_od <- quantile(od)
+            qq_od <- stats::quantile(od)
             qq_od <- c(qq_od[1L:3L], mean(od), qq_od[4L:5L])
             qq <- rbind(qq_id, qq_od)
             colnames(qq) <- c("Min.", "1st Qu.", "Median",
@@ -153,7 +148,6 @@ summary_transitions <- function(object) {
 ##' @return None (invisible 'NULL').
 ##' @include SimInf_model.R
 ##' @export
-##' @importFrom methods show
 ##' @examples
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it to run over 100 days.

@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ setAs(
 ##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_abc <- function(x, ...) {
-    as(x, "data.frame")
+    methods::as(x, "data.frame")
 }
 
 ##' Determine the number of generations
@@ -154,7 +154,6 @@ summary_particles <- function(object, i) {
 ##' @param object The \code{SimInf_abc} object.
 ##' @return \code{invisible(object)}.
 ##' @export
-##' @importFrom methods show
 setMethod(
     "show",
     signature(object = "SimInf_abc"),
@@ -254,7 +253,7 @@ replicate_first_node <- function(model, n, n_events) {
 abc_proposal_covariance <- function(x) {
     if (is.null(x))
         return(NULL)
-    2 * cov(x)
+    2 * stats::cov(x)
 }
 
 abc_init_generation <- function(object) {
@@ -306,7 +305,7 @@ abc_init_tolerance <- function(tolerance, tolerance_prev) {
     if (ncol(tolerance) == 0)
         stop("'tolerance' must have columns.", call. = FALSE)
 
-    if (any(is.na(tolerance)) || any(tolerance < 0))
+    if (anyNA(tolerance) || any(tolerance < 0))
         stop("'tolerance' must have non-negative values.", call. = FALSE)
 
     if (nrow(tolerance_prev) > 0) {
@@ -373,7 +372,6 @@ abc_next_epsilon <- function(x_old, x, distance, tolerance,
 ##' @param generation a positive integer with the current generation.
 ##' @return NULL if the stopping rule applies, else a numeric vector
 ##'     with the tolerance for the next generation.
-##' @importFrom stats optim
 ##' @references
 ##'
 ##' \Simola2021
@@ -395,20 +393,20 @@ abc_adaptive_tolerance <- function(xnu, xde, distance, generation) {
         upper <- max(xnu)
     }
 
-    c_t <- optim(par = xnu[1, ],
-                 fn = function(x, centers, sigma, weights) {
-                     KLIEP_density_ratio(matrix(x, nrow = 1),
-                                         centers = centers,
-                                         sigma = sigma,
-                                         weights = weights)
-                 },
-                 centers = k$centers,
-                 sigma = k$sigma,
-                 weights = k$weights,
-                 lower = lower,
-                 upper = upper,
-                 method = method,
-                 control = list(fnscale = -1))
+    c_t <- stats::optim(par = xnu[1, ],
+                        fn = function(x, centers, sigma, weights) {
+                            KLIEP_density_ratio(matrix(x, nrow = 1),
+                                                centers = centers,
+                                                sigma = sigma,
+                                                weights = weights)
+                        },
+                        centers = k$centers,
+                        sigma = k$sigma,
+                        weights = k$weights,
+                        lower = lower,
+                        upper = upper,
+                        method = method,
+                        control = list(fnscale = -1))
 
     q_t <- 1 / c_t$value
 
@@ -452,7 +450,7 @@ abc_distance <- function(distance, n) {
              call. = FALSE)
     }
 
-    if (any(is.na(distance)) || any(distance < 0)) {
+    if (anyNA(distance) || any(distance < 0)) {
         stop("The result from the ABC distance function must be non-negative.",
              call. = FALSE)
     }
@@ -480,13 +478,10 @@ abc_accept <- function(distance, tolerance) {
     rowSums(distance <= tolerance) == length(tolerance)
 }
 
-##' @importFrom utils setTxtProgressBar
-##' @importFrom utils txtProgressBar
-##' @noRd
 abc_gdata <- function(model, pars, priors, npart, fn, generation,
                       tolerance, x, w, sigma, verbose, ...) {
     if (isTRUE(verbose))
-        pb <- txtProgressBar(min = 0, max = npart, style = 3)
+        pb <- utils::txtProgressBar(min = 0, max = npart, style = 3)
 
     if (!is.null(tolerance))
         distance <- matrix(NA_real_, nrow = npart, ncol = length(tolerance))
@@ -529,15 +524,12 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
 
         ## Report progress.
         if (isTRUE(verbose))
-            setTxtProgressBar(pb, particle_i)
+            utils::setTxtProgressBar(pb, particle_i)
     }
 
     list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
-##' @importFrom utils setTxtProgressBar
-##' @importFrom utils txtProgressBar
-##' @noRd
 abc_ldata <- function(model, pars, priors, npart, fn, generation,
                       tolerance, x, w, sigma, verbose, ...) {
     ## Let each node represents one particle. Replicate the first node
@@ -549,7 +541,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
     model <- replicate_first_node(model, n, n_events)
 
     if (isTRUE(verbose))
-        pb <- txtProgressBar(min = 0, max = npart, style = 3)
+        pb <- utils::txtProgressBar(min = 0, max = npart, style = 3)
 
     if (!is.null(tolerance))
         distance <- matrix(NA_real_, nrow = npart, ncol = length(tolerance))
@@ -611,7 +603,7 @@ abc_ldata <- function(model, pars, priors, npart, fn, generation,
 
         ## Report progress.
         if (isTRUE(verbose))
-            setTxtProgressBar(pb, particle_i)
+            utils::setTxtProgressBar(pb, particle_i)
     }
 
     list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
@@ -778,7 +770,6 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
 ##' \Simola2021
 ##' @include density_ratio.R
 ##' @export
-##' @importFrom stats cov
 ##' @example man/examples/abc.R
 setGeneric(
     "abc",
@@ -806,14 +797,24 @@ setMethod(
         priors <- parse_priors(priors)
         pars <- match_priors(model, priors)
 
-        object <- new("SimInf_abc", model = model, priors = priors,
-                      target = pars$target, pars = pars$pars,
-                      nprop = integer(), fn = match.fun(distance),
-                      x = array(numeric(0), c(0, 0, 0)),
-                      tolerance = matrix(numeric(0), nrow = 0, ncol = 0),
-                      weight = matrix(numeric(0), nrow = npart, ncol = 0),
-                      distance = array(numeric(0), dim = c(0, 0, 0)),
-                      ess = numeric())
+        object <- methods::new("SimInf_abc",
+                               model = model,
+                               priors = priors,
+                               target = pars$target,
+                               pars = pars$pars,
+                               nprop = integer(0),
+                               fn = match.fun(distance),
+                               x = array(numeric(0),
+                                         dim = c(0, 0, 0)),
+                               tolerance = matrix(numeric(0),
+                                                  nrow = 0,
+                                                  ncol = 0),
+                               weight = matrix(numeric(0),
+                                               nrow = npart,
+                                               ncol = 0),
+                               distance = array(numeric(0),
+                                                dim = c(0, 0, 0)),
+                               ess = numeric(0))
 
         abc_internal(object = object, ninit = ninit, tolerance = tolerance,
                      ..., verbose = verbose, post_gen = post_gen)

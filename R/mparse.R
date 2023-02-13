@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -167,7 +167,7 @@ parse_compartments <- function(x, compartments) {
     ## Assign each compartment into its number according to the
     ## ordering in compartments
     i <- match(x, compartments)
-    if (any(is.na(i)))
+    if (anyNA(i))
         stop(sprintf("Unknown compartment: '%s'.", x[is.na(i)]), call. = FALSE)
 
     tabulate(i, length(compartments))
@@ -328,7 +328,6 @@ dependency_graph <- function(transitions, S) {
 ##'     curly brackets.
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
-##' @importFrom methods as
 ##' @template mparse-example
 mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                    gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,

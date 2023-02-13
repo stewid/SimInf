@@ -2,6 +2,36 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+# SimInf 9.5.0 (2023-01-23)
+
+## CHANGES OR IMPROVEMENTS
+
+* Fixed the configuration script to use R to find the compiler to use.
+
+# SimInf 9.4.0 (2023-01-06)
+
+## CHANGES OR IMPROVEMENTS
+
+* Fix the 'package_skeleton' function to generate internal C code with
+  valid C entry names if the package name contains '.', for example,
+  for a package named 'pkg.name'.
+
+* Changed the usage of 'any(is.na(x))' to 'anyNA(x)' in the R code.
+
+* Internal refactoring of the 'distance_matrix' function to reduce
+  memory usage.
+
+* Ensure to check for a valid model object after updating model data.
+
+* Moved the enumeration of event types to the header file
+  'inst/SimInf.h'
+
+* Fixed problems identified with static analysis of the C code using
+  the cppcheck and scan-build tools.
+
+* Added the getter function 'u0' to get the initial compartment state
+  of a model.
+
 # SimInf 9.3.1 (2022-10-07)
 
 ## CHANGES OR IMPROVEMENTS

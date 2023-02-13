@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2021 Stefan Widgren
+ * Copyright (C) 2015 -- 2022 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,9 @@
 #include "solvers/ssm/SimInf_solver_ssm.h"
 #include "solvers/aem/SimInf_solver_aem.h"
 
-static void SimInf_raise_error(int error)
+static void
+SimInf_raise_error(
+    int error)
 {
     switch (error) {
     case SIMINF_ERR_NEGATIVE_STATE:
@@ -92,7 +94,8 @@ static void SimInf_raise_error(int error)
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  */
-SEXP attribute_hidden SimInf_run(
+SEXP attribute_hidden
+SimInf_run(
     SEXP model,
     SEXP solver,
     TRFun *tr_fun,

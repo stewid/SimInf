@@ -187,7 +187,7 @@ check_matched_data <- function(ok_combine, ok_lhs, lhs, rhs, compartments) {
 match_compartments <- function(compartments, ok_combine, ok_lhs, ...) {
     args <- list(...)
 
-    if (is(compartments, "formula")) {
+    if (methods::is(compartments, "formula")) {
         compartments <- parse_formula(compartments, args, ok_combine)
     } else {
         compartments <- list(lhs = NULL,

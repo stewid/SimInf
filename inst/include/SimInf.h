@@ -27,6 +27,30 @@
 #include <R.h>
 #include <Rinternals.h>
 
+/**
+ * Event types
+ *
+ * EXIT_EVENT (0): Exit events are events that remove individuals from
+ * a node.
+ *
+ * ENTER_EVENT (1): Enter events are events that introduce new
+ * individuals into a node. All individuals enter first non-zero
+ * compartment, i.e. a non-zero entry in element in the select column.
+ *
+ * INTERNAL_TRANSFER_EVENT (2): Internal transfer events are events
+ * that change the number of individuals in the compartments whithin
+ * one node e.g. aging of n individuals from age_1 to age_2 in a model
+ * with age categories.
+ *
+ * EXTERNAL_TRANSFER_EVENT (3): External transfer events are events
+ * that move individuals from compartments in one node to compartments
+ * in another node e.g. moving n individuals from node A to node B.
+ */
+enum {EXIT_EVENT,
+      ENTER_EVENT,
+      INTERNAL_TRANSFER_EVENT,
+      EXTERNAL_TRANSFER_EVENT};
+
 #define SIMINF_UNUSED(x) ((void)(x))
 #define SIMINF_STR(name) #name
 #define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}

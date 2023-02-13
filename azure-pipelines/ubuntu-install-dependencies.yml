@@ -1,5 +1,0 @@
-steps:
-- bash: |
-    sudo apt-get -y install libgsl0-dev
-    Rscript -e "install.packages(c('digest', 'knitr', 'rmarkdown'))"
-  displayName: "Install package dependencies"

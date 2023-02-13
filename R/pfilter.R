@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@ setClass(
 ##' @param object The \code{SimInf_pfilter} object.
 ##' @return \code{invisible(object)}.
 ##' @export
-##' @importFrom methods show
 setMethod(
     "show",
     signature(object = "SimInf_pfilter"),
@@ -119,8 +118,8 @@ pfilter_data <- function(model, data) {
     data <- data[order(data$time), seq_len(ncol(data)), drop = FALSE]
 
     if (any(length(data$time) < 1,
-            any(diff(unique(data$time)) <= 0),
-            any(is.na(data$time)))) {
+            anyNA(data$time),
+            any(diff(unique(data$time)) <= 0))) {
         stop("'time' column in data must be an increasing vector.",
              call. = FALSE)
     }
@@ -172,17 +171,17 @@ pfilter_events <- function(events, time_end) {
     lapply(seq_len(nrow(m)), function(i) {
         j <- seq(from = m[i, 1], by = 1, length.out = m[i, 2])
 
-        new("SimInf_events",
-            E          = events@E,
-            N          = events@N,
-            event      = events@event[j],
-            time       = events@time[j],
-            node       = events@node[j],
-            dest       = events@dest[j],
-            n          = events@n[j],
-            proportion = events@proportion[j],
-            select     = events@select[j],
-            shift      = events@shift[j])
+        methods::new("SimInf_events",
+                     E          = events@E,
+                     N          = events@N,
+                     event      = events@event[j],
+                     time       = events@time[j],
+                     node       = events@node[j],
+                     dest       = events@dest[j],
+                     n          = events@n[j],
+                     proportion = events@proportion[j],
+                     select     = events@select[j],
+                     shift      = events@shift[j])
     })
 }
 
@@ -202,7 +201,7 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
              "time-point.", call. = FALSE)
     }
 
-    if (!is(obs_process, "formula")) {
+    if (!methods::is(obs_process, "formula")) {
         stop("'obs_process' must be either a formula or a function.",
              call. = FALSE)
     }
@@ -391,8 +390,11 @@ pfilter_single_node <- function(model, events, obs, data, npart,
         i <- a[i, j]
     }
 
-    new("SimInf_pfilter", model = model, npart = npart,
-        loglik = loglik, ess = ess)
+    methods::new("SimInf_pfilter",
+                 model = model,
+                 npart = npart,
+                 loglik = loglik,
+                 ess = ess)
 }
 
 ##' Run a particle filter on a model that contains multiple nodes
@@ -502,8 +504,11 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
         i <- a[i, j]
     }
 
-    new("SimInf_pfilter", model = model, npart = npart,
-        loglik = loglik, ess = ess)
+    methods::new("SimInf_pfilter",
+                 model = model,
+                 npart = npart,
+                 loglik = loglik,
+                 ess = ess)
 }
 
 ##' Bootstrap particle filter
@@ -606,7 +611,6 @@ setMethod(
 ##' @param object The \code{SimInf_pfilter} object.
 ##' @return the estimated log likelihood.
 ##' @export
-##' @importFrom stats logLik
 setMethod(
     "logLik",
     signature(object = "SimInf_pfilter"),
