@@ -112,24 +112,21 @@ setMethod(
 ##' Raw events
 ##' @export
 raw_events <- function(events) {
-    if (!is.data.frame(events)) {
+    if (!is.data.frame(events))
         stop("'events' must be a data.frame object.", call. = FALSE)
-    }
 
     keep <- .Call(SimInf_clean_raw_events,
                   events$id,
                   events$event,
                   events$time,
                   events$node,
-                  events$dest
-    )
+                  events$dest)
 
     methods::new("SimInf_raw_events",
-                  id    = events$id,
-                  event = events$event,
-                  time  = events$time,
-                  node  = events$node,
-                  dest  = events$dest,
-                  keep  = keep
-    )
+                 id    = events$id,
+                 event = events$event,
+                 time  = events$time,
+                 node  = events$node,
+                 dest  = events$dest,
+                 keep  = keep)
 }
