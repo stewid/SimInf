@@ -150,7 +150,9 @@ setMethod(
         on.exit(graphics::par(savepar))
 
         yy <- stats::xtabs(n ~ event + time,
-                           cbind(event = x@event, time = x@time, n = 1))
+                           cbind(event = x@event[x@keep],
+                                 time = x@time[x@keep],
+                                 n = 1))
         xx <- as.integer(colnames(yy))
         if (!is.null(attr(x@time, "origin")))
             xx <- as.Date(xx, origin = attr(x@time, "origin"))
