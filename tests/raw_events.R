@@ -124,51 +124,27 @@ events <- data.frame(
     node  = 1L,
     dest  = 0L)
 
-keep <- .Call(
-    SimInf:::SimInf_clean_raw_events,
-    events$id,
-    events$event,
-    events$time,
-    events$node,
-    events$dest)
-
-stopifnot(identical(keep, c(TRUE)))
+stopifnot(identical(events, as.data.frame(raw_events(events))))
 
 ## Testing animal with only one exit event, keep
 events <- data.frame(
-    id    = c(1L),
-    event = c(0L),
-    time  = c(1L),
-    node  = c(1L),
-    dest  = c(0L))
+    id    = 1L,
+    event = 0L,
+    time  = 1L,
+    node  = 1L,
+    dest  = 0L)
 
-keep <- .Call(
-    SimInf:::SimInf_clean_raw_events,
-    events$id,
-    events$event,
-    events$time,
-    events$node,
-    events$dest)
-
-stopifnot(identical(keep, c(TRUE)))
+stopifnot(identical(events, as.data.frame(raw_events(events))))
 
 ## Testing animal with only one external transfer event, keep
 events <- data.frame(
-    id    = c(1L),
-    event = c(3L),
-    time  = c(1L),
-    node  = c(1L),
-    dest  = c(2L))
+    id    = 1L,
+    event = 3L,
+    time  = 1L,
+    node  = 1L,
+    dest  = 2L)
 
-keep <- .Call(
-    SimInf:::SimInf_clean_raw_events,
-    events$id,
-    events$event,
-    events$time,
-    events$node,
-    events$dest)
-
-stopifnot(identical(keep, c(TRUE)))
+stopifnot(identical(events, as.data.frame(raw_events(events))))
 
 ## Testing animal with two enter events, keep first
 events <- data.frame(
