@@ -6,6 +6,12 @@
 \usage{
 raw_events(events)
 }
+\arguments{
+\item{events}{FIXME}
+}
+\value{
+FIXME
+}
 \description{
 Raw events
 }

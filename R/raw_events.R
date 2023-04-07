@@ -111,12 +111,11 @@ setMethod(
 
 ##' Raw events
 ##'
-##' @param FIXME
+##' @param events FIXME
 ##' @return FIXME
 ##' @export
 raw_events <- function(events) {
-    if (!is.data.frame(events))
-        stop("'events' must be a data.frame object.", call. = FALSE)
+    events <- check_raw_events(events)
 
     keep <- .Call(SimInf_clean_raw_events,
                   events$id,
