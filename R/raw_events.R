@@ -132,3 +132,33 @@ raw_events <- function(events) {
                  dest  = events$dest,
                  keep  = keep)
 }
+
+##' Display the distribution of raw events over time
+##'
+##' @param x The raw events data to plot.
+##' @param frame.plot Draw a frame around each plot. Default is FALSE.
+##' @param ... Additional arguments affecting the plot
+##' @aliases plot,SimInf_raw_events-method
+##' @export
+setMethod(
+    "plot",
+    signature(x = "SimInf_raw_events"),
+    function(x, frame.plot = FALSE, ...) {
+        savepar <- graphics::par(mfrow = c(2, 2),
+                                 oma = c(1, 1, 2, 0),
+                                 mar = c(4, 3, 1, 1))
+        on.exit(graphics::par(savepar))
+
+        yy <- stats::xtabs(n ~ event + time,
+                           cbind(event = x@event, time = x@time, n = 1))
+        xx <- as.integer(colnames(yy))
+        if (!is.null(attr(x@time, "origin")))
+            xx <- as.Date(xx, origin = attr(x@time, "origin"))
+
+        ## Plot events
+        plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
+    }
+)
