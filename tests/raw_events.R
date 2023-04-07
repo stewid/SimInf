@@ -154,16 +154,16 @@ events <- data.frame(
     node  = c(1L, 1L),
     dest  = c(0L, 0L))
 
-keep <- .Call(
-    SimInf:::SimInf_clean_raw_events,
-    events$id,
-    events$event,
-    events$time,
-    events$node,
-    events$dest)
+events_obs <- as.data.frame(raw_events(events))
 
-stopifnot(identical(keep, c(TRUE, FALSE)))
+events_exp <- data.frame(
+    id    = 1L,
+    event = 1L,
+    time  = 1L,
+    node  = 1L,
+    dest  = 0L)
 
+stopifnot(identical(events_obs, events_exp))
 
 ## Testing animal with two exit events, keep first
 events <- data.frame(
@@ -173,15 +173,16 @@ events <- data.frame(
     node  = c(1L, 1L),
     dest  = c(0L, 0L))
 
-keep <- .Call(
-    SimInf:::SimInf_clean_raw_events,
-    events$id,
-    events$event,
-    events$time,
-    events$node,
-    events$dest)
+events_obs <- as.data.frame(raw_events(events))
 
-stopifnot(identical(keep, c(TRUE, FALSE)))
+events_exp <- data.frame(
+    id    = 1L,
+    event = 0L,
+    time  = 1L,
+    node  = 1L,
+    dest  = 0L)
+
+stopifnot(identical(events_obs, events_exp))
 
 ## Testing animal with two enter events and exit, keep path
 events <- data.frame(
@@ -191,15 +192,16 @@ events <- data.frame(
     node  = c(1L, 2L, 2L),
     dest  = c(0L, 0L, 0L))
 
-keep <- .Call(
-    SimInf:::SimInf_clean_raw_events,
-    events$id,
-    events$event,
-    events$time,
-    events$node,
-    events$dest)
+events_obs <- as.data.frame(raw_events(events))
 
-stopifnot(identical(keep, c(FALSE, TRUE, TRUE)))
+events_exp <- data.frame(
+    id    = c(1L, 1L),
+    event = c(1L, 0L),
+    time  = c(2L, 3L),
+    node  = c(2L, 2L),
+    dest  = c(0L, 0L))
+
+stopifnot(identical(events_obs, events_exp))
 
 ## Testing animal with two enter events, a movement and an exit, keep
 ## path
