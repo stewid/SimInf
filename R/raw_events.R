@@ -110,6 +110,9 @@ setMethod(
 )
 
 ##' Raw events
+##'
+##' @param FIXME
+##' @return FIXME
 ##' @export
 raw_events <- function(events) {
     if (!is.data.frame(events))
