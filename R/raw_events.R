@@ -149,18 +149,41 @@ setMethod(
                                  mar = c(4, 3, 1, 1))
         on.exit(graphics::par(savepar))
 
-        yy <- stats::xtabs(n ~ event + time,
+        all_y <- stats::xtabs(n ~ event + time,
+                           cbind(event = x@event,
+                                 time = x@time,
+                                 n = 1))
+        all_x <- as.integer(colnames(all_y))
+        if (!is.null(attr(x@time, "origin")))
+            all_x <- as.Date(all_x, origin = attr(x@time, "origin"))
+
+        keep_y <- stats::xtabs(n ~ event + time,
                            cbind(event = x@event[x@keep],
                                  time = x@time[x@keep],
                                  n = 1))
-        xx <- as.integer(colnames(yy))
+        keep_x <- as.integer(colnames(keep_y))
         if (!is.null(attr(x@time, "origin")))
-            xx <- as.Date(xx, origin = attr(x@time, "origin"))
+            keep_x <- as.Date(keep_x, origin = attr(x@time, "origin"))
 
         ## Plot events
-        plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)
-        plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
-        plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
-        plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
+        plot_SimInf_events(all_x, all_y, "Exit", frame.plot,
+                           col = "gray70", ...)
+        if (length(keep_x) && "0" %in% rownames(keep_y))
+            lines(keep_x, keep_y["0", ])
+
+        plot_SimInf_events(all_x, all_y, "Enter", frame.plot,
+                           col = "gray70", ...)
+        if (length(keep_x) && "1" %in% rownames(keep_y))
+            lines(keep_x, keep_y["1", ])
+
+        plot_SimInf_events(all_x, all_y, "Internal transfer",
+                           frame.plot, col = "gray70", ...)
+        if (length(keep_x) && "2" %in% rownames(keep_y))
+            lines(keep_x, keep_y["2", ])
+
+        plot_SimInf_events(all_x, all_y, "External transfer",
+                           frame.plot, col = "gray70", ...)
+        if (length(keep_x) && "3" %in% rownames(keep_y))
+            lines(keep_x, keep_y["3", ])
     }
 )
