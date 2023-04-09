@@ -149,10 +149,11 @@ setMethod(
                                  mar = c(4, 3, 1, 1))
         on.exit(graphics::par(savepar))
 
+        n <- rep(1L, length(x@keep))
         all_y <- stats::xtabs(n ~ event + time,
                            cbind(event = x@event,
                                  time = x@time,
-                                 n = 1))
+                                 n = n))
         all_x <- as.integer(colnames(all_y))
         if (!is.null(attr(x@time, "origin")))
             all_x <- as.Date(all_x, origin = attr(x@time, "origin"))
@@ -160,7 +161,7 @@ setMethod(
         keep_y <- stats::xtabs(n ~ event + time,
                            cbind(event = x@event[x@keep],
                                  time = x@time[x@keep],
-                                 n = 1))
+                                 n = n[x@keep]))
         keep_x <- as.integer(colnames(keep_y))
         if (!is.null(attr(x@time, "origin")))
             keep_x <- as.Date(keep_x, origin = attr(x@time, "origin"))
