@@ -117,12 +117,16 @@ setMethod(
 raw_events <- function(events) {
     events <- check_raw_events(events)
 
-    keep <- .Call(SimInf_clean_raw_events,
-                  events$id,
-                  events$event,
-                  events$time,
-                  events$node,
-                  events$dest)
+    if (nrow(events)) {
+        keep <- .Call(SimInf_clean_raw_events,
+                      events$id,
+                      events$event,
+                      events$time,
+                      events$node,
+                      events$dest)
+    } else {
+        keep <- logical(0)
+    }
 
     methods::new("SimInf_raw_events",
                  id    = events$id,
