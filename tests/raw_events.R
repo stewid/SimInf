@@ -321,6 +321,13 @@ events_exp <- data.frame(
 
 stopifnot(identical(events_obs, events_exp))
 
+pdf_file <- tempfile(fileext = ".pdf")
+pdf(pdf_file)
+plot(raw_events(events))
+dev.off()
+stopifnot(file.exists(pdf_file))
+unlink(pdf_file)
+
 ## Testing animal with another event before enter event, keep path if
 ## starting on enter event and ending with exit
 events <- data.frame(
