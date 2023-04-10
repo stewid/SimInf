@@ -29,7 +29,7 @@ res <- assertError(.Call(
     c(1L, 2L),
     c(1L, 1L),
     c(0L, 2L)))
-check_error(res, "'id' must be an integer vector with length > 0.")
+check_error(res, "'event' must be an integer vector with length 0.")
 
 res <- assertError(.Call(
     SimInf:::SimInf_clean_raw_events,
