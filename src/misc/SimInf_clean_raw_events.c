@@ -185,9 +185,9 @@ SimInf_clean_raw_events(
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
 
-    /* Check that the input vectors have an identical length > 0. */
-    if (len < 1)
-        Rf_error("'id' must be an integer vector with length > 0.");
+    /* Check that the input vectors have an identical length >= 0. */
+    if (len < 0)
+        Rf_error("'id' must be an integer vector with length >= 0.");
     if (XLENGTH(event) != len)
         Rf_error("'event' must be an integer vector with length %i.", len);
     if (XLENGTH(time) != len)
