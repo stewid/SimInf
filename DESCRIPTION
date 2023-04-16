@@ -91,6 +91,7 @@ Collate:
     'degree.R'
     'distance.R'
     'distributions.R'
+    'edge_properties.R'
     'match_compartments.R'
     'mparse.R'
     'n.R'
