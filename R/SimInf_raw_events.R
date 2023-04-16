@@ -19,20 +19,31 @@
 
 ##' Class \code{"SimInf_raw_events"}
 ##'
-##' @slot id FIXME
-##' @slot event FIXME
-##' @slot time FIXME
-##' @slot node FIXME
-##' @slot dest FIXME
-##' @slot keep FIXME
+##' @slot id an integer or character identifier of the source holding
+##' @slot event four event types are supported: \emph{exit},
+##'     \emph{enter}, \emph{internal transfer}, and \emph{external
+##'     transfer}.  When assigning the events, they can either be
+##'     coded as a numerical value or a character string: \emph{exit;}
+##'     \code{0} or \code{'exit'}, \emph{enter;} \code{1} or
+##'     \code{'enter'}, \emph{internal transfer;} \code{2} or
+##'     \code{'intTrans'}, and \emph{external transfer;} \code{3} or
+##'     \code{'extTrans'}.
+##' @slot time an integer, character, or date (of class \code{Date})
+##'     for when the event occured. If it's a character it must be
+##'     able to coerce to \code{Date}.
+##' @slot node an integer or character identifier of the source node.
+##' @slot dest an integer or character identifier of the destination
+##'     node.
+##' @slot keep logical vector with the events that are kept after the
+##'     cleaning.
 ##' @export
 setClass(
     "SimInf_raw_events",
-    slots = c(id    = "integer",
-              event = "integer",
-              time  = "integer",
-              node  = "integer",
-              dest  = "integer",
+    slots = c(id    = "ANY",
+              event = "ANY",
+              time  = "ANY",
+              node  = "ANY",
+              dest  = "ANY",
               keep  = "logical"
     )
 )

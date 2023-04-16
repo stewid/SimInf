@@ -10,16 +10,27 @@ Class \code{"SimInf_raw_events"}
 \section{Slots}{
 
 \describe{
-\item{\code{id}}{FIXME}
+\item{\code{id}}{an integer or character identifier of the source holding}
 
-\item{\code{event}}{FIXME}
+\item{\code{event}}{four event types are supported: \emph{exit},
+\emph{enter}, \emph{internal transfer}, and \emph{external
+transfer}.  When assigning the events, they can either be
+coded as a numerical value or a character string: \emph{exit;}
+\code{0} or \code{'exit'}, \emph{enter;} \code{1} or
+\code{'enter'}, \emph{internal transfer;} \code{2} or
+\code{'intTrans'}, and \emph{external transfer;} \code{3} or
+\code{'extTrans'}.}
 
-\item{\code{time}}{FIXME}
+\item{\code{time}}{an integer, character, or date (of class \code{Date})
+for when the event occured. If it's a character it must be
+able to coerce to \code{Date}.}
 
-\item{\code{node}}{FIXME}
+\item{\code{node}}{an integer or character identifier of the source node.}
 
-\item{\code{dest}}{FIXME}
+\item{\code{dest}}{an integer or character identifier of the destination
+node.}
 
-\item{\code{keep}}{FIXME}
+\item{\code{keep}}{logical vector with the events that are kept after the
+cleaning.}
 }}
 
