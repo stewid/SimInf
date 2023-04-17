@@ -10,7 +10,7 @@ Class \code{"SimInf_raw_events"}
 \section{Slots}{
 
 \describe{
-\item{\code{id}}{an integer or character identifier of the source holding}
+\item{\code{id}}{an integer or character identifier of the individual.}
 
 \item{\code{event}}{four event types are supported: \emph{exit},
 \emph{enter}, \emph{internal transfer}, and \emph{external

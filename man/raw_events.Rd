@@ -7,11 +7,39 @@
 raw_events(events)
 }
 \arguments{
-\item{events}{FIXME}
+\item{events}{a \code{data.frame} with the columns \code{id}, \code{event},
+\code{time}, \code{node}, and \code{dest} to define the events, see
+\code{details}.}
 }
 \value{
-FIXME
+\linkS4class{SimInf_raw_events}
 }
 \description{
-Raw events
+In many countries, livestock movement data are collected to enable
+contact tracing during disease outbreaks. However, the livestock
+movement databases are not always structured in such a way that
+relevant information for disease spread simulations is easily
+retrieved. The aim of this function is to facilitate cleaning
+livestock event data for usage in SimInf.
+}
+\details{
+The argument \code{events} in \code{raw_events} must be a
+\code{data.frame} with the following columns:
+\itemize{
+\item \strong{id:} an integer or character identifier of the individual.
+\item \strong{event:} four event types are supported: \emph{exit},
+\emph{enter}, \emph{internal transfer}, and \emph{external
+transfer}.  When assigning the events, they can either be
+coded as a numerical value or a character string: \emph{exit;}
+\code{0} or \code{'exit'}, \emph{enter;} \code{1} or
+\code{'enter'}, \emph{internal transfer;} \code{2} or
+\code{'intTrans'}, and \emph{external transfer;} \code{3} or
+\code{'extTrans'}.
+\item \strong{time:} an integer, character, or date (of class \code{Date})
+for when the event occured. If it's a character it must be
+able to coerce to \code{Date}.
+\item \strong{node:} an integer or character identifier of the source node.
+\item \strong{dest:} an integer or character identifier of the destination
+node.
+}
 }

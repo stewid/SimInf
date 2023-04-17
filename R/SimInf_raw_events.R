@@ -19,7 +19,7 @@
 
 ##' Class \code{"SimInf_raw_events"}
 ##'
-##' @slot id an integer or character identifier of the source holding
+##' @slot id an integer or character identifier of the individual.
 ##' @slot event four event types are supported: \emph{exit},
 ##'     \emph{enter}, \emph{internal transfer}, and \emph{external
 ##'     transfer}.  When assigning the events, they can either be
@@ -122,9 +122,36 @@ setMethod(
 
 ##' Raw events
 ##'
-##' @param events FIXME
-##' @return FIXME
+##' In many countries, livestock movement data are collected to enable
+##' contact tracing during disease outbreaks. However, the livestock
+##' movement databases are not always structured in such a way that
+##' relevant information for disease spread simulations is easily
+##' retrieved. The aim of this function is to facilitate cleaning
+##' livestock event data for usage in SimInf.
+##'
+##' The argument \code{events} in \code{raw_events} must be a
+##' \code{data.frame} with the following columns:
+##' * **id:** an integer or character identifier of the individual.
+##' * **event:** four event types are supported: \emph{exit},
+##'     \emph{enter}, \emph{internal transfer}, and \emph{external
+##'     transfer}.  When assigning the events, they can either be
+##'     coded as a numerical value or a character string: \emph{exit;}
+##'     \code{0} or \code{'exit'}, \emph{enter;} \code{1} or
+##'     \code{'enter'}, \emph{internal transfer;} \code{2} or
+##'     \code{'intTrans'}, and \emph{external transfer;} \code{3} or
+##'     \code{'extTrans'}.
+##' * **time:** an integer, character, or date (of class \code{Date})
+##'     for when the event occured. If it's a character it must be
+##'     able to coerce to \code{Date}.
+##' * **node:** an integer or character identifier of the source node.
+##' * **dest:** an integer or character identifier of the destination
+##'     node.
+##' @param events a \code{data.frame} with the columns `id`, `event`,
+##'     `time`, `node`, and `dest` to define the events, see
+##'     `details`.
+##' @return \linkS4class{SimInf_raw_events}
 ##' @export
+##' @md
 raw_events <- function(events) {
     events <- check_raw_events(events)
 
