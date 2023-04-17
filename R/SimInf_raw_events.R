@@ -120,6 +120,96 @@ setMethod(
     }
 )
 
+check_raw_events_id <- function(id) {
+    msg <- "'id' must be an integer or character vector with non-NA values."
+
+    if (anyNA(id))
+        stop(msg, call. = FALSE)
+
+    if (is.numeric(id)) {
+        if (!all(is_wholenumber(id)))
+            stop(msg, call. = FALSE)
+        return(as.integer(id))
+    }
+
+    if (is.character(id))
+        return(as.integer(as.factor(id)))
+
+    if (is.factor(id))
+        return(as.integer(id))
+
+    stop(msg, call. = FALSE)
+}
+
+check_raw_events_event <- function(event) {
+    msg <- "'event' must be an integer or character vector with non-NA values."
+
+    if (anyNA(event))
+        stop(msg, call. = FALSE)
+
+    if (is.numeric(event)) {
+        if (!all(is_wholenumber(event)))
+            stop(msg, call. = FALSE)
+        i <- as.integer(event)
+        if (!all(i %in% c(0L, 1L, 3L)))
+            stop(msg, call. = FALSE)
+        return(i)
+    }
+
+    if (is.character(event) || is.factor(event)) {
+        if (!all(event %in% c("enter", "exit", "extTrans"))) {
+            stop("'event' type must be 'enter', 'exit', or 'extTrans'.",
+                 call. = FALSE)
+        }
+
+        ## Find indices to 'enter', 'internal transfer' and 'external
+        ## transfer' events.
+        i <- rep(0L, length(event))
+        i[which(event == "enter")] <- 1L
+        i[which(event == "extTrans")] <- 3L
+        return(i)
+    }
+
+    stop(msg, call. = FALSE)
+}
+
+check_raw_events_time <- function(time) {
+    msg <- "'time' must be an integer or character vector with non-NA values."
+
+    if (anyNA(time))
+        stop(msg, call. = FALSE)
+
+    if (is.numeric(time)) {
+        if (!all(is_wholenumber(time)))
+            stop(msg, call. = FALSE)
+        return(as.integer(time))
+    }
+
+    if (is.character(time) || is.factor(time))
+        return(as.integer(julian(as.Date(time))))
+
+    stop(msg, call. = FALSE)
+}
+
+check_raw_events_nodes <- function(node, dest) {
+    if (any(anyNA(node), anyNA(dest))) {
+        stop("'node' or 'dest' contain NA values.",
+             call. = FALSE)
+    }
+
+    if (all(is.numeric(node), is.numeric(dest))) {
+        if (any(!all(is_wholenumber(node)), !all(is_wholenumber(dest)))) {
+            stop("'node' and 'dest' must both be integer or character.",
+                 call. = FALSE)
+        }
+
+        return(list(node = as.integer(node), dest = as.integer(dest)))
+    }
+
+    stop("'node' and 'dest' must both be integer or character.",
+         call. = FALSE)
+}
+
 ##' Raw events
 ##'
 ##' In many countries, livestock movement data are collected to enable
@@ -127,7 +217,7 @@ setMethod(
 ##' movement databases are not always structured in such a way that
 ##' relevant information for disease spread simulations is easily
 ##' retrieved. The aim of this function is to facilitate cleaning
-##' livestock event data for usage in SimInf.
+##' livestock event data and prepare it for usage in SimInf.
 ##'
 ##' The argument \code{events} in \code{raw_events} must be a
 ##' \code{data.frame} with the following columns:
@@ -153,14 +243,24 @@ setMethod(
 ##' @export
 ##' @md
 raw_events <- function(events) {
-    events <- check_raw_events(events)
+    columns <- c("id", "event", "time", "node", "dest")
+    if (!is.data.frame(events))
+        events <- as.data.frame(events)
+    if (!all(columns %in% names(events)))
+        stop("Missing columns in 'events'.", call. = FALSE)
+    events <- events[, columns, drop = FALSE]
+
+    id <- check_raw_events_id(events$id)
+    event <- check_raw_events_event(events$event)
+    time <- check_raw_events_time(events$time)
+    nodes <- check_raw_events_nodes(events$node, events$dest)
 
     keep <- .Call(SimInf_clean_raw_events,
-                  events$id,
-                  events$event,
-                  events$time,
-                  events$node,
-                  events$dest)
+                  id,
+                  event,
+                  time,
+                  nodes$node,
+                  nodes$dest)
 
     methods::new("SimInf_raw_events",
                  id    = events$id,

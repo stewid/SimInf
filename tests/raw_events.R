@@ -99,21 +99,21 @@ events$id[2] <- NA_integer_
 res <- assertError(raw_events(events))
 check_error(
     res,
-    "'events$id' must be an integer or character vector with non-NA values.")
+    "'id' must be an integer or character vector with non-NA values.")
 events$id[2] <- 1L
 
 events$node[2] <- 1.1
 res <- assertError(raw_events(events))
 check_error(
     res,
-    "'events$node' must be an integer or character vector with non-NA values.")
+    "'node' and 'dest' must both be integer or character.")
 events$node <- c(1L, 1L, 2L, 2L)
 
 events$dest <- as.Date(events$dest, origin = "1970-01-01")
 res <- assertError(raw_events(events))
 check_error(
     res,
-    "'events$dest' must be an integer or character vector with non-NA values.")
+    "'node' and 'dest' must both be integer or character.")
 events$dest <- c(0L, 2L, 2L, 0L)
 
 ## Testing animal with only one enter event, keep
