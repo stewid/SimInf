@@ -27,8 +27,8 @@
 ##' the \code{from} node. The reason for a zero-based index is to
 ##' facilitate it's usage in C code. The sequence will be added to the
 ##' 'to' column in the matrix. There will always be at least one stop
-##' sequence (-1, NA, NA, ..., NA) in each column. See
-##' \sQuote{Examples}.
+##' value=-1 in each column. All other values in the matrix will be
+##' set to \code{NaN}. See \sQuote{Examples}.
 ##' @param edges a \code{data.frame} with properties assigned for each
 ##'     edge 'from' --> 'to', for example, weight or count. The
 ##'     \code{data.frame} must contain the columns '\code{from}' and
@@ -38,7 +38,7 @@
 ##'     resulting matrix will have the number of columns equal to
 ##'     \code{n_nodes}.
 ##' @return a numeric matrix with the number of rows equal to
-##'     \code{(max(table(edges$to)) + 1) * (ncol(edges) - 1)} and the
+##'     \code{max(table(edges$to)) * (ncol(edges) - 1) + 1} and the
 ##'     number of columns equal to \code{n_nodes}.
 ##' @export
 ##' @examples
@@ -57,22 +57,20 @@
 ##' ## row is the zero-based index of from, i.e., 1. The second row
 ##' ## contains the rate=0.2 and the third row count=5. On the fourth
 ##' ## row starts the next sequence with the values in the second row
-##' ## in the edges data.frame. The stop sequence for the first column
-##' ## starts on row 10. As can be seen in column 6, there are no edge
+##' ## in the edges data.frame. The stop value in the first column is
+##' ## on row 10. As can be seen in column 6, there are no edge
 ##' ## properties for node=6.
 ##' ##        [,1] [,2]  [,3] [,4] [,5] [,6]
 ##' ##  [1,]  1.00    0  3.00  0.0  0.0   -1
-##' ##  [2,]  0.20    1  0.20  0.2  0.2   NA
-##' ##  [3,]  5.00   50 10.00  5.0  5.0   NA
-##' ##  [4,]  2.00   -1  4.00  2.0  2.0   -1
-##' ##  [5,]  0.01   NA  0.05  0.8  0.8   NA
-##' ##  [6,]  5.00   NA 10.00  5.0  5.0   NA
-##' ##  [7,]  3.00   -1 -1.00 -1.0 -1.0   -1
-##' ##  [8,]  0.79   NA    NA   NA   NA   NA
-##' ##  [9,]  5.00   NA    NA   NA   NA   NA
-##' ## [10,] -1.00   -1 -1.00 -1.0 -1.0   -1
-##' ## [11,]    NA   NA    NA   NA   NA   NA
-##' ## [12,]    NA   NA    NA   NA   NA   NA
+##' ##  [2,]  0.20    1  0.20  0.2  0.2  NaN
+##' ##  [3,]  5.00   50 10.00  5.0  5.0  NaN
+##' ##  [4,]  2.00   -1  4.00  2.0  2.0  NaN
+##' ##  [5,]  0.01  NaN  0.05  0.8  0.8  NaN
+##' ##  [6,]  5.00  NaN 10.00  5.0  5.0  NaN
+##' ##  [7,]  3.00  NaN -1.00 -1.0 -1.0  NaN
+##' ##  [8,]  0.79  NaN   NaN  NaN  NaN  NaN
+##' ##  [9,]  5.00  NaN   NaN  NaN  NaN  NaN
+##' ## [10,] -1.00  NaN   NaN  NaN  NaN  NaN
 edge_properties_to_matrix <- function(edges, n_nodes) {
     ## Check that all values are numeric and finite.
     if (!all(sapply(edges, is.numeric)) ||
@@ -109,21 +107,24 @@ edge_properties_to_matrix <- function(edges, n_nodes) {
 
     ## Create a matrix with sequences starting with -1, indicating the
     ## stop condition for each item. Set all other values to
-    ## 'NA'. Ensure that there is at least one sequence that starts
-    ## with '-1' in each column after the values have been added to
-    ## the matrix.
-    x <- c(-1, rep(NA_real_, ncol(edges) - 2L))
-    m <- matrix(x,
-                nrow = (max(table(edges$to)) + 1L) * length(x),
+    ## 'NA'. Ensure that there is at least one stop value '-1' in each
+    ## column after the values have been added to the matrix.
+    n_to <- table(edges$to)
+    m <- matrix(NaN,
+                nrow = max(n_to) * (ncol(edges) - 1L) + 1L,
                 ncol = n_nodes)
+
+    ## Set stop values.
+    m[1, ] <- -1
+    m[cbind(n_to * (ncol(edges) - 1L) + 1L, as.integer(names(n_to)))] <- -1
 
     ## Determine the row index in the matrix to the first item
     ## ('from') of each sequence.
     i <- stats::ave(rep(1L, nrow(edges)), edges$to, FUN = cumsum)
-    i <- (i - 1L) * length(x) + 1L
+    i <- (i - 1L) * (ncol(edges) - 1L) + 1L
 
     ## Set 'from', the first item in each sequence, to the zero-based
-    ## index to from, i.e., decrease from by 1.
+    ## index to 'from', i.e., decrease 'from' by 1.
     m[cbind(i, edges$to)] <- edges$from - 1
 
     ## Set all other values (except 'from' and 'to') in each sequence.

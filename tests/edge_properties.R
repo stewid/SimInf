@@ -29,19 +29,20 @@ edges <- data.frame(
     rate  = c(0.2, 0.01, 0.79, 1, 0.2, 0.05, 0.2, 0.8, 0.2, 0.8),
     count = c(5, 5, 5, 50, 10, 10, 5, 5, 5, 5))
 
-m_exp <- matrix(c(1, 0.2, 5, 2, 0.01, 5, 3, 0.79, 5, -1, NA, NA, 0, 1,
-                  50, -1, NA, NA, -1, NA, NA, -1, NA, NA, 3, 0.2, 10,
-                  4, 0.05, 10, -1, NA, NA, -1, NA, NA, 0, 0.2, 5, 2,
-                  0.8, 5, -1, NA, NA, -1, NA, NA, 0, 0.2, 5, 2, 0.8,
-                  5, -1, NA, NA, -1, NA, NA, -1, NA, NA, -1, NA, NA,
-                  -1, NA, NA, -1, NA, NA),
-                nrow = 12L,
+m_exp <- matrix(c(1, 0.2, 5, 2, 0.01, 5, 3, 0.79, 5, -1, 0, 1, 50, -1,
+                  NaN, NaN, NaN, NaN, NaN, NaN, 3, 0.2, 10, 4, 0.05,
+                  10, -1, NaN, NaN, NaN, 0, 0.2, 5, 2, 0.8, 5, -1,
+                  NaN, NaN, NaN, 0, 0.2, 5, 2, 0.8, 5, -1, NaN, NaN,
+                  NaN, -1, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN,
+                  NaN),
+                nrow = 10L,
                 ncol = 6L)
 
 m_obs <- edge_properties_to_matrix(edges, 6)
 
+
 stopifnot(identical(length(m_obs), length(m_exp)))
-stopifnot(all(abs(m_obs[!is.na(m_obs)] - m_exp[!is.na(m_exp)]) < tol))
+stopifnot(all(abs(m_obs[is.finite(m_obs)] - m_exp[is.finite(m_exp)]) < tol))
 
 edges$from[1] <- NaN
 res <- assertError(edge_properties_to_matrix(edges, 6))
