@@ -19,7 +19,7 @@ resulting matrix will have the number of columns equal to
 }
 \value{
 a numeric matrix with the number of rows equal to
-    \code{(max(table(edges$to)) + 1) * (ncol(edges) - 1)} and the
+    \code{max(table(edges$to)) * (ncol(edges) - 1) + 1} and the
     number of columns equal to \code{n_nodes}.
 }
 \description{
@@ -33,8 +33,8 @@ value_2, ..., value_n) where 'index' is the zero-based index of
 the \code{from} node. The reason for a zero-based index is to
 facilitate it's usage in C code. The sequence will be added to the
 'to' column in the matrix. There will always be at least one stop
-sequence (-1, NA, NA, ..., NA) in each column. See
-\sQuote{Examples}.
+value=-1 in each column. All other values in the matrix will be
+set to \code{NaN}. See \sQuote{Examples}.
 }
 \examples{
 ## Let us consider the following edge properties.
@@ -52,20 +52,18 @@ edge_properties_to_matrix(edges, 6)
 ## row is the zero-based index of from, i.e., 1. The second row
 ## contains the rate=0.2 and the third row count=5. On the fourth
 ## row starts the next sequence with the values in the second row
-## in the edges data.frame. The stop sequence for the first column
-## starts on row 10. As can be seen in column 6, there are no edge
+## in the edges data.frame. The stop value in the first column is
+## on row 10. As can be seen in column 6, there are no edge
 ## properties for node=6.
 ##        [,1] [,2]  [,3] [,4] [,5] [,6]
 ##  [1,]  1.00    0  3.00  0.0  0.0   -1
-##  [2,]  0.20    1  0.20  0.2  0.2   NA
-##  [3,]  5.00   50 10.00  5.0  5.0   NA
-##  [4,]  2.00   -1  4.00  2.0  2.0   -1
-##  [5,]  0.01   NA  0.05  0.8  0.8   NA
-##  [6,]  5.00   NA 10.00  5.0  5.0   NA
-##  [7,]  3.00   -1 -1.00 -1.0 -1.0   -1
-##  [8,]  0.79   NA    NA   NA   NA   NA
-##  [9,]  5.00   NA    NA   NA   NA   NA
-## [10,] -1.00   -1 -1.00 -1.0 -1.0   -1
-## [11,]    NA   NA    NA   NA   NA   NA
-## [12,]    NA   NA    NA   NA   NA   NA
+##  [2,]  0.20    1  0.20  0.2  0.2  NaN
+##  [3,]  5.00   50 10.00  5.0  5.0  NaN
+##  [4,]  2.00   -1  4.00  2.0  2.0  NaN
+##  [5,]  0.01  NaN  0.05  0.8  0.8  NaN
+##  [6,]  5.00  NaN 10.00  5.0  5.0  NaN
+##  [7,]  3.00  NaN -1.00 -1.0 -1.0  NaN
+##  [8,]  0.79  NaN   NaN  NaN  NaN  NaN
+##  [9,]  5.00  NaN   NaN  NaN  NaN  NaN
+## [10,] -1.00  NaN   NaN  NaN  NaN  NaN
 }

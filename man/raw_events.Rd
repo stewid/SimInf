@@ -20,7 +20,7 @@ contact tracing during disease outbreaks. However, the livestock
 movement databases are not always structured in such a way that
 relevant information for disease spread simulations is easily
 retrieved. The aim of this function is to facilitate cleaning
-livestock event data for usage in SimInf.
+livestock event data and prepare it for usage in SimInf.
 }
 \details{
 The argument \code{events} in \code{raw_events} must be a
