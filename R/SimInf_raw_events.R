@@ -40,7 +40,7 @@
 setClass(
     "SimInf_raw_events",
     slots = c(id    = "ANY",
-              event = "ANY",
+              event = "integer",
               time  = "ANY",
               node  = "ANY",
               dest  = "ANY",
@@ -63,12 +63,18 @@ setAs(
     from = "SimInf_raw_events",
     to = "data.frame",
     def = function(from) {
-        data.frame(id    = from@id[from@keep],
-                   event = from@event[from@keep],
-                   time  = from@time[from@keep],
-                   node  = from@node[from@keep],
-                   dest  = from@dest[from@keep]
-        )
+        events <- data.frame(id    = from@id[from@keep],
+                             event = from@event[from@keep],
+                             time  = from@time[from@keep],
+                             node  = from@node[from@keep],
+                             dest  = from@dest[from@keep])
+
+        if (!is.null(attr(from@event, "origin"))) {
+            event_names <- c("exit", "enter", "intTrans", "extTrans")
+            events$event <- event_names[events$event + 1]
+        }
+
+        events
     }
 )
 
@@ -167,6 +173,7 @@ check_raw_events_event <- function(event) {
         i <- rep(0L, length(event))
         i[which(event == "enter")] <- 1L
         i[which(event == "extTrans")] <- 3L
+        attr(i, "origin") <- "character"
         return(i)
     }
 
@@ -264,7 +271,7 @@ raw_events <- function(events) {
 
     methods::new("SimInf_raw_events",
                  id    = events$id,
-                 event = events$event,
+                 event = event,
                  time  = events$time,
                  node  = events$node,
                  dest  = events$dest,
