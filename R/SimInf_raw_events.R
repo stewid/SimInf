@@ -41,7 +41,7 @@ setClass(
     "SimInf_raw_events",
     slots = c(id    = "ANY",
               event = "integer",
-              time  = "ANY",
+              time  = "integer",
               node  = "ANY",
               dest  = "ANY",
               keep  = "logical"
@@ -72,6 +72,11 @@ setAs(
         if (!is.null(attr(from@event, "origin"))) {
             event_names <- c("exit", "enter", "intTrans", "extTrans")
             events$event <- event_names[events$event + 1]
+        }
+
+        if (!is.null(attr(from@time, "origin"))) {
+            events$time <- as.Date(events$time,
+                                   origin = attr(from@time, "origin"))
         }
 
         events
@@ -193,7 +198,13 @@ check_raw_events_time <- function(time) {
     }
 
     if (is.character(time) || is.factor(time))
-        return(as.integer(julian(as.Date(time))))
+        time <- as.Date(time)
+
+    if (methods::is(time, "Date")) {
+        time <- as.integer(julian(time, origin = as.Date("1970-01-01")))
+        attr(time, "origin") <- "1970-01-01"
+        return(time)
+    }
 
     stop(msg, call. = FALSE)
 }
@@ -272,7 +283,7 @@ raw_events <- function(events) {
     methods::new("SimInf_raw_events",
                  id    = events$id,
                  event = event,
-                 time  = events$time,
+                 time  = time,
                  node  = events$node,
                  dest  = events$dest,
                  keep  = keep)
