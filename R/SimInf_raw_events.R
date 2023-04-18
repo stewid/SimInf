@@ -232,6 +232,18 @@ check_raw_events_nodes <- function(event, node, dest) {
         return(list(node = node, dest = dest))
     }
 
+    if (all(is.character(node), is.character(dest))) {
+        if (any(dest[event != 3L] != 0L)) {
+            stop("'dest' must be '0' for non-movement events.",
+                 call. = FALSE)
+        }
+
+        nodes <- as.factor(unique(c(node, dest)))
+        node <- as.integer(factor(node, levels = levels(nodes)))
+        dest <- as.integer(factor(dest, levels = levels(nodes)))
+        return(list(node = node, dest = dest))
+    }
+
     stop("'node' and 'dest' must both be integer or character.",
          call. = FALSE)
 }
