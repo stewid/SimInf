@@ -50,6 +50,28 @@ setMethod(
     }
 )
 
+##' @rdname u0
+##' @param at the first date ('yyyy-mm-dd') in the events that will be
+##'     used to create u0. If left empty (the default), the earliest
+##'     time among the events will be used.
+##' @export
+setMethod(
+    "u0",
+    signature(model = "SimInf_raw_events"),
+    function(model, at = NULL) {
+        ## Check for a valid 'at' parameter
+        if (length(at) && nchar(trimws(at))) {
+            at <- as.integer(julian(as.Date(at)))
+            if (length(at) > 1)
+                stop("'at' must be one date.", call. = FALSE)
+        } else {
+            at <- integer(0)
+        }
+
+        stop("Not implemented")
+    }
+)
+
 ##' Update the initial compartment state u0 in each node
 ##'
 ##' @param model The model to update the initial compartment state
