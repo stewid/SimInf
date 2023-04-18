@@ -209,7 +209,7 @@ check_raw_events_time <- function(time) {
     stop(msg, call. = FALSE)
 }
 
-check_raw_events_nodes <- function(node, dest) {
+check_raw_events_nodes <- function(event, node, dest) {
     if (any(anyNA(node), anyNA(dest))) {
         stop("'node' or 'dest' contain NA values.",
              call. = FALSE)
@@ -221,7 +221,15 @@ check_raw_events_nodes <- function(node, dest) {
                  call. = FALSE)
         }
 
-        return(list(node = as.integer(node), dest = as.integer(dest)))
+        node <- as.integer(node)
+        dest <- as.integer(dest)
+
+        if (any(dest[event != 3L] != 0L)) {
+            stop("'dest' must be 0 for non-movement events.",
+                 call. = FALSE)
+        }
+
+        return(list(node = node, dest = dest))
     }
 
     stop("'node' and 'dest' must both be integer or character.",
@@ -271,7 +279,7 @@ raw_events <- function(events) {
     id <- check_raw_events_id(events$id)
     event <- check_raw_events_event(events$event)
     time <- check_raw_events_time(events$time)
-    nodes <- check_raw_events_nodes(events$node, events$dest)
+    nodes <- check_raw_events_nodes(event, events$node, events$dest)
 
     keep <- .Call(SimInf_clean_raw_events,
                   id,
