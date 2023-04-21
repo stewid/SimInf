@@ -95,6 +95,24 @@ events_exp <- data.frame(
 
 stopifnot(identical(events_obs, events_exp))
 
+events <- data.frame(
+    id    = c("A", "A", "A", "A"),
+    event = c("enter", "extTrans", "extTrans", "exit"),
+    time  = c("2019-02-02", "2020-03-07", "2021-04-14", "2022-05-11"),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 0L))
+
+events_obs <- as.data.frame(raw_events(events))
+
+events_exp <- data.frame(
+    id = c("A", "A", "A"),
+    event = c("enter", "extTrans", "exit"),
+    time  = as.Date(c("2019-02-02", "2020-03-07", "2022-05-11")),
+    node = c(1L, 1L, 2L),
+    dest = c(0L, 2L, 0L))
+
+stopifnot(identical(events_obs, events_exp))
+
 events$id[2] <- NA_integer_
 res <- assertError(raw_events(events))
 check_error(
