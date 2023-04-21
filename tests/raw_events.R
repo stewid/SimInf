@@ -76,6 +76,24 @@ res <- assertError(.Call(
     c(0L, 2L)))
 check_error(res, "'event[2]' is invalid.")
 
+res <- assertError(raw_events(
+    data.frame(
+        id    = c(1L, 1L, 1L, 1L),
+        event = c(1L, 3L, 3L, 0L),
+        time  = c(1L, 2L, 3L, 4L),
+        node  = c(1L, 1L, 2L, 2L),
+        dest  = c(0L, 2L, 2L, 1L))))
+check_error(res, "'dest' must be 0 for non-movement events.")
+
+res <- assertError(raw_events(
+    data.frame(
+        id    = c(1L, 1L, 1L, 1L),
+        event = c(1L, 3L, 3L, 0L),
+        time  = c(1L, 2L, 3L, 4L),
+        node  = c("1", "1", "2", "2"),
+        dest  = c("0", "2", "2", "1"))))
+check_error(res, "'dest' must be '0' for non-movement events.")
+
 ## Check raw events.
 events <- data.frame(
     id    = c(1L, 1L, 1L, 1L),
@@ -92,6 +110,24 @@ events_exp <- data.frame(
     time  = c(1L, 2L, 4L),
     node  = c(1L, 1L, 2L),
     dest  = c(0L, 2L, 0L))
+
+stopifnot(identical(events_obs, events_exp))
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 3L, 3L, 0L),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c("A", "A", "B", "B"),
+    dest  = c("0", "B", "B", "0"))
+
+events_obs <- as.data.frame(raw_events(events))
+
+events_exp <- data.frame(
+    id    = c(1L, 1L, 1L),
+    event = c(1L, 3L, 0L),
+    time  = c(1L, 2L, 4L),
+    node  = c("A", "A", "B"),
+    dest  = c("0", "B", "0"))
 
 stopifnot(identical(events_obs, events_exp))
 
