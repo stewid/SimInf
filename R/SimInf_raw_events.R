@@ -188,10 +188,9 @@ check_raw_events_event <- function(event) {
 check_raw_events_time <- function(time) {
     msg <- "'time' must be an integer or character vector with non-NA values."
 
-    if (anyNA(time))
-        stop(msg, call. = FALSE)
-
     if (is.numeric(time)) {
+        if (anyNA(time))
+            stop(msg, call. = FALSE)
         if (!all(is_wholenumber(time)))
             stop(msg, call. = FALSE)
         return(as.integer(time))
@@ -199,6 +198,9 @@ check_raw_events_time <- function(time) {
 
     if (is.character(time) || is.factor(time))
         time <- as.Date(time)
+
+    if (anyNA(time))
+        stop(msg, call. = FALSE)
 
     if (methods::is(time, "Date")) {
         time <- as.integer(julian(time, origin = as.Date("1970-01-01")))
