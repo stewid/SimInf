@@ -170,6 +170,17 @@ check_error(
     "'node' and 'dest' must both be integer or character.")
 events$dest <- c(0L, 2L, 2L, 0L)
 
+events <- data.frame(
+    id    = c("A", "A", "A", "A"),
+    event = c("enter", "extTrans", "extTrans", "exit"),
+    time  = c("2001-02-01", 2L, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 0L))
+res <- assertError(raw_events(events))
+check_error(
+    res,
+    "'time' must be an integer or character vector with non-NA values.")
+
 ## Testing animal with only one enter event, keep
 events <- data.frame(
     id    = 1L,
