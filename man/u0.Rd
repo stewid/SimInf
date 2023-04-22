@@ -3,17 +3,24 @@
 \name{u0}
 \alias{u0}
 \alias{u0,SimInf_model-method}
+\alias{u0,SimInf_raw_events-method}
 \title{Get the initial compartment state}
 \usage{
 u0(model, ...)
 
 \S4method{u0}{SimInf_model}(model, ...)
+
+\S4method{u0}{SimInf_raw_events}(model, at = NULL)
 }
 \arguments{
 \item{model}{The model to get the initial compartment state
 \code{u0} from.}
 
 \item{...}{Additional arguments. Currently not used.}
+
+\item{at}{the first date ('yyyy-mm-dd') in the events that will be
+used to create u0. If left empty (the default), the earliest
+time among the events will be used.}
 }
 \value{
 a \code{data.frame} with the initial compartment state.
