@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2023 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -89,7 +89,6 @@ summary_chain <- function(chain) {
 ##' @param object The \code{SimInf_pmcmc} object.
 ##' @return \code{invisible(object)}.
 ##' @export
-##' @importFrom methods show
 setMethod(
     "show",
     signature(object = "SimInf_pmcmc"),
@@ -183,7 +182,6 @@ setGeneric(
 )
 
 ##' @rdname pmcmc
-##' @importFrom methods slot<-
 ##' @export
 setMethod(
     "pmcmc",
@@ -234,7 +232,8 @@ setMethod(
             object@chain <- setup_chain(object, 1L)
             object@pf <- setup_pf(object, 1L)
 
-            slot(object@model, object@target) <- set_proposal(object, theta)
+            methods::slot(object@model, object@target) <-
+                set_proposal(object, theta)
             object@pf[[1]] <- pfilter(object@model,
                                       obs_process = object@obs_process,
                                       object@data,
@@ -287,7 +286,7 @@ set_proposal <- function(object, theta) {
         }
     }
 
-    slot(object@model, object@target)
+    methods::slot(object@model, object@target)
 }
 
 pmcmc_progress <- function(object, i, verbose) {
@@ -305,8 +304,6 @@ pmcmc_progress <- function(object, i, verbose) {
     invisible(NULL)
 }
 
-##' @importFrom mvtnorm rmvnorm
-##' @importFrom stats var
 ##' @noRd
 pmcmc_proposal <- function(object, i) {
     npars <- length(object@pars)
@@ -315,12 +312,12 @@ pmcmc_proposal <- function(object, i) {
     if (runif(1) < object@adaptmix || i <= 2 * npars) {
         sigma <- diag(0.1^2 / npars, npars)
     } else if (npars == 1) {
-        sigma <- matrix(2.38^2 * var(object@chain[seq_len(i - 1), j]))
+        sigma <- matrix(2.38^2 * stats::var(object@chain[seq_len(i - 1), j]))
     } else {
-        sigma <- 2.38^2 / npars * cov(object@chain[seq_len(i - 1), j])
+        sigma <- 2.38^2 / npars * stats::cov(object@chain[seq_len(i - 1), j])
     }
 
-    rmvnorm(n = 1, mean = object@chain[i - 1, j], sigma = sigma)[1, ]
+    mvtnorm::rmvnorm(n = 1, mean = object@chain[i - 1, j], sigma = sigma)[1, ]
 }
 
 ##' Length of the MCMC chain
@@ -337,7 +334,6 @@ setMethod(
 )
 
 ##' @rdname continue
-##' @importFrom methods slot<-
 ##' @export
 setMethod(
     "continue",
@@ -357,7 +353,8 @@ setMethod(
             iterations <- iterations[-1]
 
             theta <- rpriors(object@priors)
-            slot(object@model, object@target) <- set_proposal(object, theta)
+            methods::slot(object@model, object@target) <-
+                set_proposal(object, theta)
 
             object@pf[[1]] <- pfilter(object@model, object@obs_process,
                                       object@data, object@npart)
@@ -385,7 +382,7 @@ setMethod(
             logPrior_prop <- dpriors(theta_prop, object@priors)
 
             if (is.finite(logPrior_prop)) {
-                slot(object@model, object@target) <-
+                methods::slot(object@model, object@target) <-
                     set_proposal(object, theta_prop)
 
                 pf_prop <- pfilter(object@model, object@obs_process,
