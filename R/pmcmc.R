@@ -33,6 +33,7 @@
 ##'     the observation process.
 ##' @slot chain FIXME
 ##' @slot pf FIXME
+##' @slot adaptmix Mixing proportion for adaptive proposal.
 ##' @export
 setClass(
     "SimInf_pmcmc",
@@ -58,7 +59,7 @@ valid_SimInf_pmcmc_object <- function(object) {
     if (length(object@adaptmix) != 1L ||
         object@adaptmix <= 0 ||
         object@adaptmix >= 1) {
-        errors <- c(errors, "'adaptmix' must be a value > 0 and < 1")
+        errors <- c(errors, "'adaptmix' must be a value >= 0 and <= 1")
     }
 
     if (!identical(object@target, "gdata") &&
@@ -165,6 +166,7 @@ setMethod(
 ##' @template npart-param
 ##' @param niter An integer specifying the number of iterations to run
 ##'     the PMCMC.
+##' @param theta FIXME
 ##' @param adaptmix Mixing proportion for adaptive proposal.
 ##' @template verbose-param
 ##' @references
@@ -334,6 +336,7 @@ setMethod(
 )
 
 ##' @rdname continue
+##' @param niter FIXME
 ##' @export
 setMethod(
     "continue",

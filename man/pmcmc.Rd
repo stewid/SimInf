@@ -71,6 +71,8 @@ at each timestep.}
 \item{niter}{An integer specifying the number of iterations to run
 the PMCMC.}
 
+\item{theta}{FIXME}
+
 \item{adaptmix}{Mixing proportion for adaptive proposal.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The

@@ -44,5 +44,7 @@ the observation process.}
 \item{\code{chain}}{FIXME}
 
 \item{\code{pf}}{FIXME}
+
+\item{\code{adaptmix}}{Mixing proportion for adaptive proposal.}
 }}
 
