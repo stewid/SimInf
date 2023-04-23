@@ -40,6 +40,7 @@ for when the event occured. If it's a character it must be
 able to coerce to \code{Date}.
 \item \strong{node:} an integer or character identifier of the source node.
 \item \strong{dest:} an integer or character identifier of the destination
-node.
+node for movement events, and 'dest' will be replaced with
+\code{NA} for non-movement events.
 }
 }
