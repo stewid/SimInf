@@ -76,25 +76,43 @@ res <- assertError(.Call(
     c(0L, 2L)))
 check_error(res, "'event[2]' is invalid.")
 
-res <- assertError(raw_events(
-    data.frame(
-        id    = c(1L, 1L, 1L, 1L),
-        event = c(1L, 3L, 3L, 0L),
-        time  = c(1L, 2L, 3L, 4L),
-        node  = c(1L, 1L, 2L, 2L),
-        dest  = c(0L, 2L, 2L, 1L))))
-check_error(res, "'dest' must be 0 for non-movement events.")
-
-res <- assertError(raw_events(
-    data.frame(
-        id    = c(1L, 1L, 1L, 1L),
-        event = c(1L, 3L, 3L, 0L),
-        time  = c(1L, 2L, 3L, 4L),
-        node  = c("1", "1", "2", "2"),
-        dest  = c("0", "2", "2", "1"))))
-check_error(res, "'dest' must be '0' for non-movement events.")
-
 ## Check raw events.
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 3L, 3L, 0L),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+
+events_obs <- as.data.frame(raw_events(events))
+
+events_exp <- data.frame(
+    id    = c(1L, 1L, 1L),
+    event = c(1L, 3L, 0L),
+    time  = c(1L, 2L, 4L),
+    node  = c(1L, 1L, 2L),
+    dest  = c(NA_integer_, 2L, NA_integer_))
+
+stopifnot(identical(events_obs, events_exp))
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 3L, 3L, 0L),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c("1", "1", "2", "2"),
+    dest  = c("0", "2", "2", "1"))
+
+events_obs <- as.data.frame(raw_events(events))
+
+events_exp <- data.frame(
+    id    = c(1L, 1L, 1L),
+    event = c(1L, 3L, 0L),
+    time  = c(1L, 2L, 4L),
+    node  = c("1", "1", "2"),
+    dest  = c(NA_character_, "2", NA_character_))
+
+stopifnot(identical(events_obs, events_exp))
+
 events <- data.frame(
     id    = c(1L, 1L, 1L, 1L),
     event = c(1L, 3L, 3L, 0L),
@@ -109,7 +127,7 @@ events_exp <- data.frame(
     event = c(1L, 3L, 0L),
     time  = c(1L, 2L, 4L),
     node  = c(1L, 1L, 2L),
-    dest  = c(0L, 2L, 0L))
+    dest  = c(NA_integer_, 2L, NA_integer_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -127,7 +145,7 @@ events_exp <- data.frame(
     event = c(1L, 3L, 0L),
     time  = c(1L, 2L, 4L),
     node  = c("A", "A", "B"),
-    dest  = c("0", "B", "0"))
+    dest  = c(NA_character_, "B", NA_character_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -145,7 +163,7 @@ events_exp <- data.frame(
     event = c("enter", "extTrans", "exit"),
     time  = as.Date(c("2019-02-02", "2020-03-07", "2022-05-11")),
     node = c(1L, 1L, 2L),
-    dest = c(0L, 2L, 0L))
+    dest = c(NA_integer_, 2L, NA_integer_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -189,7 +207,16 @@ events <- data.frame(
     node  = 1L,
     dest  = 0L)
 
-stopifnot(identical(events, as.data.frame(raw_events(events))))
+events_obs <- as.data.frame(raw_events(events))
+
+events_exp <- data.frame(
+    id    = 1L,
+    event = 1L,
+    time  = 1L,
+    node  = 1L,
+    dest  = NA_integer_)
+
+stopifnot(identical(events_obs, events_exp))
 
 ## Testing animal with only one exit event, keep
 events <- data.frame(
@@ -199,7 +226,16 @@ events <- data.frame(
     node  = 1L,
     dest  = 0L)
 
-stopifnot(identical(events, as.data.frame(raw_events(events))))
+events_obs <- as.data.frame(raw_events(events))
+
+events_exp <- data.frame(
+    id    = 1L,
+    event = 0L,
+    time  = 1L,
+    node  = 1L,
+    dest  = NA_integer_)
+
+stopifnot(identical(events_obs, events_exp))
 
 ## Testing animal with only one external transfer event, keep
 events <- data.frame(
@@ -226,7 +262,7 @@ events_exp <- data.frame(
     event = 1L,
     time  = 1L,
     node  = 1L,
-    dest  = 0L)
+    dest  = NA_integer_)
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -245,7 +281,7 @@ events_exp <- data.frame(
     event = 0L,
     time  = 1L,
     node  = 1L,
-    dest  = 0L)
+    dest  = NA_integer_)
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -264,7 +300,7 @@ events_exp <- data.frame(
     event = c(1L, 0L),
     time  = c(2L, 3L),
     node  = c(2L, 2L),
-    dest  = c(0L, 0L))
+    dest  = c(NA_integer_, NA_integer_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -284,7 +320,7 @@ events_exp <- data.frame(
     event = c(1L, 3L, 0L),
     time  = c(1L, 3L, 4L),
     node  = c(1L, 1L, 3L),
-    dest  = c(0L, 3L, 0L))
+    dest  = c(NA_integer_, 3L, NA_integer_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -303,7 +339,7 @@ events_exp <- data.frame(
     event = c(1L, 0L),
     time  = c(1L, 3L),
     node  = c(1L, 1L),
-    dest  = c(0L, 0L))
+    dest  = c(NA_integer_, NA_integer_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -322,7 +358,7 @@ events_exp <- data.frame(
     event = c(1L, 0L),
     time  = c(1L, 2L),
     node  = c(1L, 1L),
-    dest  = c(0L, 0L))
+    dest  = c(NA_integer_, NA_integer_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -342,7 +378,7 @@ events_exp <- data.frame(
     event = c(1L, 3L, 0L),
     time  = c(1L, 2L, 3L),
     node  = c(1L, 1L, 2L),
-    dest  = c(0L, 2L, 0L))
+    dest  = c(NA_integer_, 2L, NA_integer_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -382,7 +418,7 @@ events_exp <- data.frame(
     event = c(1L, 3L, 0L),
     time  = c(2L, 3L, 4L),
     node  = c(1L, 1L, 2L),
-    dest  = c(0L, 2L, 0L))
+    dest  = c(NA_integer_, 2L, NA_integer_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -409,7 +445,7 @@ events_exp <- data.frame(
     event = c(1L, 0L),
     time  = c(2L, 4L),
     node  = c(2L, 2L),
-    dest  = c(0L, 0L))
+    dest  = c(NA_integer_, NA_integer_))
 
 stopifnot(identical(events_obs, events_exp))
 
@@ -442,7 +478,14 @@ events <- data.frame(
 
 events_obs <- as.data.frame(raw_events(events))
 
-stopifnot(identical(events_obs, events))
+events_exp <- data.frame(
+    id    = c(1L, 1L, 1L),
+    event = c(3L, 3L, 0L),
+    time  = c(1L, 2L, 3L),
+    node  = c(1L, 2L, 1L),
+    dest  = c(2L, 1L, NA_integer_))
+
+stopifnot(identical(events_obs, events_exp))
 
 ## Testing animal with no enter or exit event, keep path
 events <- data.frame(
@@ -466,7 +509,14 @@ events <- data.frame(
 
 events_obs <- as.data.frame(raw_events(events))
 
-stopifnot(identical(events_obs, events))
+events_exp <- data.frame(
+    id    = c(1L, 1L),
+    event = c(1L, 3L),
+    time  = c(1L, 2L),
+    node  = c(1L, 1L),
+    dest  = c(NA_integer_, 2L))
+
+stopifnot(identical(events_obs, events_exp))
 
 ## Testing animal with only enter and exit event, keep path
 events <- data.frame(
@@ -478,7 +528,14 @@ events <- data.frame(
 
 events_obs <- as.data.frame(raw_events(events))
 
-stopifnot(identical(events_obs, events))
+events_exp <- data.frame(
+    id    = c(1L, 1L),
+    event = c(1L, 0L),
+    time  = c(1L, 2L),
+    node  = c(1L, 1L),
+    dest  = c(NA_integer_, NA_integer_))
+
+stopifnot(identical(events_obs, events_obs))
 
 ## Testing animal with enter and exit event in wrong order, don't keep
 events <- data.frame(

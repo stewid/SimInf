@@ -212,13 +212,14 @@ check_raw_events_time <- function(time) {
 }
 
 check_raw_events_nodes <- function(event, node, dest) {
-    if (any(anyNA(node), anyNA(dest))) {
+    if (any(anyNA(node), anyNA(dest[event == 3L]))) {
         stop("'node' or 'dest' contain NA values.",
              call. = FALSE)
     }
 
     if (all(is.numeric(node), is.numeric(dest))) {
-        if (any(!all(is_wholenumber(node)), !all(is_wholenumber(dest)))) {
+        if (any(!all(is_wholenumber(node)),
+                !all(is_wholenumber(dest[event == 3L])))) {
             stop("'node' and 'dest' must both be integer or character.",
                  call. = FALSE)
         }
@@ -226,20 +227,10 @@ check_raw_events_nodes <- function(event, node, dest) {
         node <- as.integer(node)
         dest <- as.integer(dest)
 
-        if (any(dest[event != 3L] != 0L)) {
-            stop("'dest' must be 0 for non-movement events.",
-                 call. = FALSE)
-        }
-
         return(list(node = node, dest = dest))
     }
 
     if (all(is.character(node), is.character(dest))) {
-        if (any(dest[event != 3L] != 0L)) {
-            stop("'dest' must be '0' for non-movement events.",
-                 call. = FALSE)
-        }
-
         nodes <- as.factor(unique(c(node, dest)))
         node <- as.integer(factor(node, levels = levels(nodes)))
         dest <- as.integer(factor(dest, levels = levels(nodes)))
@@ -275,7 +266,8 @@ check_raw_events_nodes <- function(event, node, dest) {
 ##'     able to coerce to \code{Date}.
 ##' * **node:** an integer or character identifier of the source node.
 ##' * **dest:** an integer or character identifier of the destination
-##'     node.
+##'     node for movement events, and 'dest' will be replaced with
+##'     \code{NA} for non-movement events.
 ##' @param events a \code{data.frame} with the columns `id`, `event`,
 ##'     `time`, `node`, and `dest` to define the events, see
 ##'     `details`.
@@ -293,6 +285,7 @@ raw_events <- function(events) {
     id <- check_raw_events_id(events$id)
     event <- check_raw_events_event(events$event)
     time <- check_raw_events_time(events$time)
+    events$dest[event != 3L] <- NA
     nodes <- check_raw_events_nodes(event, events$node, events$dest)
 
     keep <- .Call(SimInf_clean_raw_events,
