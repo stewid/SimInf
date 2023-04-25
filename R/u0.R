@@ -54,21 +54,35 @@ setMethod(
 ##' @param at the first date ('yyyy-mm-dd') in the events that will be
 ##'     used to create u0. If left empty (the default), the earliest
 ##'     time among the events will be used.
+##' @param target the SimInf model ('SEIR', 'SIR', 'SIS', 'SISe3',
+##'     'SISe3_sp', 'SISe', or 'SISe_sp') to target the events and u0
+##'     for. The default, \code{NULL}, creates an \code{u0}, but where
+##'     the compartments might have to be renamed and post-processed
+##'     to fit the specific use case.
 ##' @export
 setMethod(
     "u0",
     signature(model = "SimInf_raw_events"),
-    function(model, at = NULL) {
+    function(model, at = NULL, target = NULL) {
         ## Check for a valid 'at' parameter
-        if (length(at) && nchar(trimws(at))) {
-            at <- as.integer(julian(as.Date(at)))
-            if (length(at) > 1)
-                stop("'at' must be one date.", call. = FALSE)
+        if (is.null(at)) {
+            at <- min(model@time[model@keep])
         } else {
-            at <- integer(0)
+            stop("Not implemented.")
         }
 
-        stop("Not implemented")
+        ## Check for valid model.
+        if (!is.null(target)) {
+            target <- match.arg(target, c("SEIR", "SIR", "SIS",
+                                          "SISe3", "SISe3_sp", "SISe",
+                                          "SISe_sp"))
+        }
+
+        ## Drop individuals that exit before 'at'.
+        drop <- model@id[model@keep == TRUE &
+                         model@event == 0L &
+                         model@time <= at]
+        model@keep[model@id %in% unique(drop)] <- FALSE
     }
 )
 
