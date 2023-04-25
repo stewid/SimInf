@@ -18,9 +18,9 @@
 
 ##' Get the initial compartment state
 ##'
-##' @param model The model to get the initial compartment state
+##' @param object The object to get the initial compartment state
 ##'     \code{u0} from.
-##' @param ... Additional arguments. Currently not used.
+##' @param ... Additional arguments.
 ##' @return a \code{data.frame} with the initial compartment state.
 ##' @export
 ##' @examples
@@ -34,8 +34,8 @@
 ##' u0(model)
 setGeneric(
     "u0",
-    signature = "model",
-    function(model, ...) {
+    signature = "object",
+    function(object, ...) {
         standardGeneric("u0")
     }
 )
@@ -44,9 +44,9 @@ setGeneric(
 ##' @export
 setMethod(
     "u0",
-    signature(model = "SimInf_model"),
-    function(model, ...) {
-        as.data.frame(t(model@u0))
+    signature(object = "SimInf_model"),
+    function(object, ...) {
+        as.data.frame(t(object@u0))
     }
 )
 
@@ -62,11 +62,11 @@ setMethod(
 ##' @export
 setMethod(
     "u0",
-    signature(model = "SimInf_raw_events"),
-    function(model, at = NULL, target = NULL) {
+    signature(object = "SimInf_raw_events"),
+    function(object, at = NULL, target = NULL) {
         ## Check for a valid 'at' parameter
         if (is.null(at)) {
-            at <- min(model@time[model@keep])
+            at <- min(object@time[object@keep])
         } else {
             stop("Not implemented.")
         }
@@ -79,10 +79,10 @@ setMethod(
         }
 
         ## Drop individuals that exit before 'at'.
-        drop <- model@id[model@keep == TRUE &
-                         model@event == 0L &
-                         model@time <= at]
-        model@keep[model@id %in% unique(drop)] <- FALSE
+        drop <- object@id[object@keep == TRUE &
+                          object@event == 0L &
+                          object@time <= at]
+        object@keep[object@id %in% unique(drop)] <- FALSE
     }
 )
 
