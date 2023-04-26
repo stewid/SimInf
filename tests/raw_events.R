@@ -555,3 +555,44 @@ events_exp <- data.frame(
     dest  = integer(0))
 
 stopifnot(identical(events_obs, events_exp))
+
+## Check converting raw events to u0
+events <- data.frame(
+    id    = c(1, 1, 1, 1,
+              2, 2, 2, 2),
+    event = c(1, 3, 3, 0,
+              1, 3, 3, 0),
+    time  = c(1, 2, 3, 4,
+              1, 2, 3, 4),
+    node  = c(1, 1, 2, 2,
+              1, 1, 2, 2),
+    dest  = c(NA, 2, 2, NA,
+              NA, 2, 2, NA))
+
+u0_obs <- u0(raw_events(events))
+
+u0_exp <- data.frame(
+    node = c(1, 2),
+    S_1 = c(2L, 0L))
+
+stopifnot(identical(u0_obs, u0_exp))
+
+events <- data.frame(
+    id    = c("individual-1", "individual-1", "individual-1", "individual-1",
+              "individual-2", "individual-2", "individual-2", "individual-2"),
+    event = c("enter", "extTrans", "extTrans", "exit",
+              "enter", "extTrans", "extTrans", "exit"),
+    time  = c("2019-02-02", "2020-03-07", "2021-04-14", "2022-05-11",
+              "2019-02-02", "2020-03-07", "2021-04-14", "2022-05-11"),
+    node  = c("node-1", "node-1", "node-2", "node-2",
+              "node-1", "node-1", "node-2", "node-2"),
+    dest  = c(NA, "node-2", "node-2", NA,
+              NA, "node-2", "node-2", NA))
+
+u0_obs <- u0(raw_events(events))
+
+u0_exp <- data.frame(
+    node = c("node-1", "node-2"),
+    S_1 = c(2L, 0L))
+
+stopifnot(identical(u0_obs, u0_exp))

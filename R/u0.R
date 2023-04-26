@@ -103,8 +103,17 @@ setMethod(
         days <- object@time[j] - object@time[k]
         age_category <- paste0("S_", findInterval(days, age))
 
+        ## Ensure all nodes are included in u0.
+        nodes <- setdiff(c(object@node, object@dest), node)
+        nodes <- nodes[!is.na(nodes)]
+        node <- c(node, nodes)
+        age_category <- c(age_category, rep(NA_character_, length(nodes)))
+
         ## Create u0
         u0 <- as.data.frame.matrix(table(node, age_category))
+        u0 <- cbind(node = rownames(u0), u0)
+        mode(u0$node) <- mode(node)
+        rownames(u0) <- NULL
 
         u0
     }
