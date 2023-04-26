@@ -96,15 +96,16 @@ setMethod(
         ## have the current location of the individual in node.
         i <- which(object@keep == TRUE & object@time <= at)
         j <- ave(i, object@id[i], FUN = max)
-        node = ifelse(object@event[j] == 3L, object@dest[j], object@node[j])
+        node <- ifelse(object@event[j] == 3L, object@dest[j], object@node[j])
 
         ## Determine the age categories.
         k <- ave(i, object@id[i], FUN = min)
-        days = object@time[j] - object@time[k]
+        days <- object@time[j] - object@time[k]
         age_category <- paste0("S_", findInterval(days, age))
 
         ## Create u0
         u0 <- as.data.frame.matrix(table(node, age_category))
+
         u0
     }
 )
