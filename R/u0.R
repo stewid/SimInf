@@ -59,11 +59,12 @@ setMethod(
 ##'     for. The default, \code{NULL}, creates an \code{u0}, but where
 ##'     the compartments might have to be renamed and post-processed
 ##'     to fit the specific use case.
+##' @param age FIXME.
 ##' @export
 setMethod(
     "u0",
     signature(object = "SimInf_raw_events"),
-    function(object, at = NULL, target = NULL) {
+    function(object, at = NULL, target = NULL, age = NULL) {
         ## Check for a valid 'at' parameter
         if (is.null(at)) {
             at <- min(object@time[object@keep])
@@ -78,11 +79,33 @@ setMethod(
                                           "SISe_sp"))
         }
 
+        if (is.null(age)) {
+            age <- c(0, Inf)
+        } else {
+            stop("Not implemented.")
+        }
+
         ## Drop individuals that exit before 'at'.
         drop <- object@id[object@keep == TRUE &
                           object@event == 0L &
                           object@time <= at]
         object@keep[object@id %in% unique(drop)] <- FALSE
+
+        ## Keep events for 'u0' that are <= 'at'. Keep last event for
+        ## each individual. If it's a movement, swap node and dest to
+        ## have the current location of the individual in node.
+        i <- which(object@keep == TRUE & object@time <= at)
+        j <- ave(i, object@id[i], FUN = max)
+        node = ifelse(object@event[j] == 3L, object@dest[j], object@node[j])
+
+        ## Determine the age categories.
+        k <- ave(i, object@id[i], FUN = min)
+        days = object@time[j] - object@time[k]
+        age_category <- paste0("S_", findInterval(days, age))
+
+        ## Create u0
+        u0 <- as.data.frame.matrix(table(node, age_category))
+        u0
     }
 )
 

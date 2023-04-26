@@ -10,7 +10,7 @@ u0(object, ...)
 
 \S4method{u0}{SimInf_model}(object, ...)
 
-\S4method{u0}{SimInf_raw_events}(object, at = NULL, target = NULL)
+\S4method{u0}{SimInf_raw_events}(object, at = NULL, target = NULL, age = NULL)
 }
 \arguments{
 \item{object}{The object to get the initial compartment state
@@ -27,6 +27,8 @@ time among the events will be used.}
 for. The default, \code{NULL}, creates an \code{u0}, but where
 the compartments might have to be renamed and post-processed
 to fit the specific use case.}
+
+\item{age}{FIXME.}
 }
 \value{
 a \code{data.frame} with the initial compartment state.
