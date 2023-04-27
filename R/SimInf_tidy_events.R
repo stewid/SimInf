@@ -52,12 +52,12 @@ setClass(
 ##'
 ##' @param object The SimInf_tidy_events object to check.
 ##' @noRd
-valid_SimInf_tidy_events_object <- function(object) {
+valid_SimInf_tidy_events <- function(object) {
     TRUE
 }
 
 ## Assign the function as the validity method for the class.
-setValidity("SimInf_tidy_events", valid_SimInf_tidy_events_object)
+setValidity("SimInf_tidy_events", valid_SimInf_tidy_events)
 
 setAs(
     from = "SimInf_tidy_events",
