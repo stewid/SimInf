@@ -80,8 +80,8 @@ setMethod(
         }
 
         ## Drop individuals that exit before 'at'.
-        at <- raw_events_at(object, at)
-        drop <- raw_events_drop_individuals_at(object, at)
+        at <- tidy_events_at(object, at)
+        drop <- tidy_events_drop_individuals_at(object, at)
         object@keep[object@id %in% drop] <- FALSE
 
         ## Keep events for 'u0' that are <= 'at'. Keep last event for

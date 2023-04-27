@@ -305,7 +305,7 @@ tidy_events <- function(events) {
 }
 
 ## Check for a valid 'at' parameter
-raw_events_at <- function(events, at) {
+tidy_events_at <- function(events, at) {
     if (is.null(at))
         return(min(events@time[events@keep]))
 
@@ -319,7 +319,7 @@ raw_events_at <- function(events, at) {
 }
 
 ## Drop individuals that exit before 'at'.
-raw_events_drop_individuals_at <- function(events, at) {
+tidy_events_drop_individuals_at <- function(events, at) {
     unique(events@id[events@keep == TRUE &
                      events@event == 0L &
                      events@time <= at])
