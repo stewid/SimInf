@@ -95,11 +95,11 @@ setMethod(
         ## each individual. If it's a movement, swap node and dest to
         ## have the current location of the individual in node.
         i <- which(object@keep == TRUE & object@time <= at)
-        j <- ave(i, object@id[i], FUN = max)
+        j <- as.integer(tapply(i, object@id[i], max))
         node <- ifelse(object@event[j] == 3L, object@dest[j], object@node[j])
 
         ## Determine the age categories.
-        k <- ave(i, object@id[i], FUN = min)
+        k <- as.integer(tapply(i, object@id[i], min))
         days <- object@time[j] - object@time[k]
         age_category <- paste0("S_", findInterval(days, age))
 

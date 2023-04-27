@@ -563,7 +563,7 @@ events <- data.frame(
     event = c(1, 3, 3, 0,
               1, 3, 3, 0),
     time  = c(1, 2, 3, 4,
-              1, 2, 3, 4),
+              2, 3, 4, 5),
     node  = c(1, 1, 2, 2,
               1, 1, 2, 2),
     dest  = c(NA, 2, 2, NA,
@@ -573,7 +573,7 @@ u0_obs <- u0(raw_events(events))
 
 u0_exp <- data.frame(
     node = c(1, 2),
-    S_1 = c(2L, 0L))
+    S_1 = c(1L, 0L))
 
 stopifnot(identical(u0_obs, u0_exp))
 
