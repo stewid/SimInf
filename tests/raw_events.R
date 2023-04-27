@@ -569,13 +569,29 @@ events <- data.frame(
     dest  = c(NA, 2, 2, NA,
               NA, 2, 2, NA))
 
-u0_obs <- u0(raw_events(events))
+stopifnot(identical(
+    u0(raw_events(events), at = 0),
+    data.frame(node = c(1, 2), S_1 = c(0L, 0L))))
 
-u0_exp <- data.frame(
-    node = c(1, 2),
-    S_1 = c(1L, 0L))
+stopifnot(identical(
+    u0(raw_events(events), at = 1),
+    data.frame(node = c(1, 2), S_1 = c(1L, 0L))))
 
-stopifnot(identical(u0_obs, u0_exp))
+stopifnot(identical(
+    u0(raw_events(events), at = 2),
+    data.frame(node = c(1, 2), S_1 = c(1L, 1L))))
+
+stopifnot(identical(
+    u0(raw_events(events), at = 3),
+    data.frame(node = c(1, 2), S_1 = c(0L, 2L))))
+
+stopifnot(identical(
+    u0(raw_events(events), at = 4),
+    data.frame(node = c(1, 2), S_1 = c(0L, 1L))))
+
+stopifnot(identical(
+    u0(raw_events(events), at = 5),
+    data.frame(node = c(1, 2), S_1 = c(0L, 0L))))
 
 events <- data.frame(
     id    = c("individual-1", "individual-1", "individual-1", "individual-1",

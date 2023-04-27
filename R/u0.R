@@ -66,13 +66,15 @@ setMethod(
     signature(object = "SimInf_raw_events"),
     function(object, at = NULL, target = NULL, age = NULL) {
         ## Check for a valid 'at' parameter
-        if (is.null(at)) {
+        if (is.null(at))
             at <- min(object@time[object@keep])
-        } else {
-            stop("Not implemented.")
+        if (is.numeric(at)) {
+            if (!all(is_wholenumber(at)))
+                stop("'at' must be an integer or date.", call. = FALSE)
+            at <- as.integer(at)
         }
 
-        ## Check for valid model.
+        ## Check for valid target model.
         if (!is.null(target)) {
             target <- match.arg(target, c("SEIR", "SIR", "SIS",
                                           "SISe3", "SISe3_sp", "SISe",
@@ -98,19 +100,31 @@ setMethod(
         j <- as.integer(tapply(i, object@id[i], max))
         node <- ifelse(object@event[j] == 3L, object@dest[j], object@node[j])
 
-        ## Determine the age categories.
-        k <- as.integer(tapply(i, object@id[i], min))
-        days <- object@time[j] - object@time[k]
-        age_category <- paste0("S_", findInterval(days, age))
-
         ## Ensure all nodes are included in u0.
         nodes <- setdiff(c(object@node, object@dest), node)
         nodes <- nodes[!is.na(nodes)]
         node <- c(node, nodes)
-        age_category <- c(age_category, rep(NA_character_, length(nodes)))
 
-        ## Create u0
-        u0 <- as.data.frame.matrix(table(node, age_category))
+        ## Determine the age categories.
+        k <- as.integer(tapply(i, object@id[i], min))
+        days <- object@time[j] - object@time[k]
+        if (length(days)) {
+            age_category <- paste0("S_", findInterval(days, age))
+            age_category <- c(age_category, rep(NA_character_, length(nodes)))
+
+            ## Create u0.
+            u0 <- as.data.frame.matrix(table(node, age_category))
+        } else {
+            ## Create an empty u0.
+            u0 <- as.data.frame.matrix(
+                matrix(data = 0L,
+                       nrow = length(nodes),
+                       ncol = length(age) - 1,
+                       dimnames = list(
+                           nodes,
+                           paste0("S_", seq_len(length(age) - 1)))))
+        }
+
         u0 <- cbind(node = rownames(u0), u0)
         mode(u0$node) <- mode(node)
         rownames(u0) <- NULL
