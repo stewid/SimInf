@@ -304,6 +304,26 @@ raw_events <- function(events) {
                  keep  = keep)
 }
 
+## Check for a valid 'at' parameter
+raw_events_at <- function(events, at) {
+    if (is.null(at))
+        return(min(events@time[events@keep]))
+
+    if (is.numeric(at)) {
+        if (!all(is_wholenumber(at)))
+            stop("'at' must be an integer or date.", call. = FALSE)
+        return(as.integer(at))
+    }
+
+    stop("Not implemented.")
+}
+
+## Drop individuals that exit before 'at'.
+raw_events_drop_individuals_at <- function(events, at) {
+    unique(events@id[events@keep == TRUE &
+                     events@event == 0L &
+                     events@time <= at])
+}
 ##' Display the distribution of raw events over time
 ##'
 ##' @param x The raw events data to plot.

@@ -65,14 +65,6 @@ setMethod(
     "u0",
     signature(object = "SimInf_raw_events"),
     function(object, at = NULL, target = NULL, age = NULL) {
-        ## Check for a valid 'at' parameter
-        if (is.null(at))
-            at <- min(object@time[object@keep])
-        if (is.numeric(at)) {
-            if (!all(is_wholenumber(at)))
-                stop("'at' must be an integer or date.", call. = FALSE)
-            at <- as.integer(at)
-        }
 
         ## Check for valid target model.
         if (!is.null(target)) {
@@ -88,10 +80,9 @@ setMethod(
         }
 
         ## Drop individuals that exit before 'at'.
-        drop <- object@id[object@keep == TRUE &
-                          object@event == 0L &
-                          object@time <= at]
-        object@keep[object@id %in% unique(drop)] <- FALSE
+        at <- raw_events_at(object, at)
+        drop <- raw_events_drop_individuals_at(object, at)
+        object@keep[object@id %in% drop] <- FALSE
 
         ## Keep events for 'u0' that are <= 'at'. Keep last event for
         ## each individual. If it's a movement, swap node and dest to
