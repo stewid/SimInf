@@ -17,7 +17,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_raw_events"}
+##' Class \code{"SimInf_tidy_events"}
 ##'
 ##' @slot id an integer or character identifier of the individual.
 ##' @slot event four event types are supported: \emph{exit},
@@ -38,7 +38,7 @@
 ##'     cleaning.
 ##' @export
 setClass(
-    "SimInf_raw_events",
+    "SimInf_tidy_events",
     slots = c(id    = "ANY",
               event = "integer",
               time  = "integer",
@@ -48,19 +48,19 @@ setClass(
     )
 )
 
-##' Check if a SimInf_raw_events object is valid
+##' Check if a SimInf_tidy_events object is valid
 ##'
-##' @param object The SimInf_raw_events object to check.
+##' @param object The SimInf_tidy_events object to check.
 ##' @noRd
-valid_SimInf_raw_events_object <- function(object) {
+valid_SimInf_tidy_events_object <- function(object) {
     TRUE
 }
 
 ## Assign the function as the validity method for the class.
-setValidity("SimInf_raw_events", valid_SimInf_raw_events_object)
+setValidity("SimInf_tidy_events", valid_SimInf_tidy_events_object)
 
 setAs(
-    from = "SimInf_raw_events",
+    from = "SimInf_tidy_events",
     to = "data.frame",
     def = function(from) {
         events <- data.frame(id    = from@id[from@keep],
@@ -85,22 +85,22 @@ setAs(
 
 ##' Coerce to data frame
 ##'
-##' @method as.data.frame SimInf_raw_events
+##' @method as.data.frame SimInf_tidy_events
 ##'
 ##' @inheritParams base::as.data.frame
 ##' @export
-as.data.frame.SimInf_raw_events <- function(x, ...) {
+as.data.frame.SimInf_tidy_events <- function(x, ...) {
     methods::as(x, "data.frame")
 }
 
-##' Print summary of a \code{SimInf_raw_events} object
+##' Print summary of a \code{SimInf_tidy_events} object
 ##'
-##' @param object The \code{SimInf_raw_events} object.
+##' @param object The \code{SimInf_tidy_events} object.
 ##' @return \code{invisible(object)}.
 ##' @export
 setMethod(
     "show",
-    signature(object = "SimInf_raw_events"),
+    signature(object = "SimInf_tidy_events"),
     function(object) {
         cat(sprintf(
             "Number of events: %i\n",
@@ -115,15 +115,15 @@ setMethod(
     }
 )
 
-##' Detailed summary of a \code{SimInf_raw_events} object
+##' Detailed summary of a \code{SimInf_tidy_events} object
 ##'
-##' @param object The \code{SimInf_raw_events} object
+##' @param object The \code{SimInf_tidy_events} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
 ##' @export
 setMethod(
     "summary",
-    signature(object = "SimInf_raw_events"),
+    signature(object = "SimInf_tidy_events"),
     function(object, ...) {
         show(object)
 
@@ -271,7 +271,7 @@ check_raw_events_nodes <- function(event, node, dest) {
 ##' @param events a \code{data.frame} with the columns `id`, `event`,
 ##'     `time`, `node`, and `dest` to define the events, see
 ##'     `details`.
-##' @return \linkS4class{SimInf_raw_events}
+##' @return \linkS4class{SimInf_tidy_events}
 ##' @export
 ##' @md
 tidy_events <- function(events) {
@@ -295,7 +295,7 @@ tidy_events <- function(events) {
                   nodes$node,
                   nodes$dest)
 
-    methods::new("SimInf_raw_events",
+    methods::new("SimInf_tidy_events",
                  id    = events$id,
                  event = event,
                  time  = time,
@@ -329,11 +329,11 @@ raw_events_drop_individuals_at <- function(events, at) {
 ##' @param x The raw events data to plot.
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
 ##' @param ... Additional arguments affecting the plot
-##' @aliases plot,SimInf_raw_events-method
+##' @aliases plot,SimInf_tidy_events-method
 ##' @export
 setMethod(
     "plot",
-    signature(x = "SimInf_raw_events"),
+    signature(x = "SimInf_tidy_events"),
     function(x, frame.plot = FALSE, ...) {
         savepar <- graphics::par(mfrow = c(2, 2),
                                  oma = c(1, 1, 2, 0),
