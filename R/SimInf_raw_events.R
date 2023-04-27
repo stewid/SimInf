@@ -241,16 +241,16 @@ check_raw_events_nodes <- function(event, node, dest) {
          call. = FALSE)
 }
 
-##' Raw events
+##' Tidy events
 ##'
-##' In many countries, livestock movement data are collected to enable
-##' contact tracing during disease outbreaks. However, the livestock
-##' movement databases are not always structured in such a way that
+##' In many countries, individual-based livestock data are collected
+##' to enable contact tracing during disease outbreaks. However, the
+##' livestock databases are not always structured in such a way that
 ##' relevant information for disease spread simulations is easily
 ##' retrieved. The aim of this function is to facilitate cleaning
 ##' livestock event data and prepare it for usage in SimInf.
 ##'
-##' The argument \code{events} in \code{raw_events} must be a
+##' The argument \code{events} in \code{tidy_events} must be a
 ##' \code{data.frame} with the following columns:
 ##' * **id:** an integer or character identifier of the individual.
 ##' * **event:** four event types are supported: \emph{exit},
@@ -274,7 +274,7 @@ check_raw_events_nodes <- function(event, node, dest) {
 ##' @return \linkS4class{SimInf_raw_events}
 ##' @export
 ##' @md
-raw_events <- function(events) {
+tidy_events <- function(events) {
     columns <- c("id", "event", "time", "node", "dest")
     if (!is.data.frame(events))
         events <- as.data.frame(events)

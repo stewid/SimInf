@@ -84,7 +84,7 @@ events <- data.frame(
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 2L, 1L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L, 1L),
@@ -102,7 +102,7 @@ events <- data.frame(
     node  = c("1", "1", "2", "2"),
     dest  = c("0", "2", "2", "1"))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L, 1L),
@@ -120,7 +120,7 @@ events <- data.frame(
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 2L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L, 1L),
@@ -138,7 +138,7 @@ events <- data.frame(
     node  = c("A", "A", "B", "B"),
     dest  = c("0", "B", "B", "0"))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L, 1L),
@@ -156,7 +156,7 @@ events <- data.frame(
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 2L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id = c("A", "A", "A"),
@@ -168,21 +168,21 @@ events_exp <- data.frame(
 stopifnot(identical(events_obs, events_exp))
 
 events$id[2] <- NA_integer_
-res <- assertError(raw_events(events))
+res <- assertError(tidy_events(events))
 check_error(
     res,
     "'id' must be an integer or character vector with non-NA values.")
 events$id[2] <- 1L
 
 events$node[2] <- 1.1
-res <- assertError(raw_events(events))
+res <- assertError(tidy_events(events))
 check_error(
     res,
     "'node' and 'dest' must both be integer or character.")
 events$node <- c(1L, 1L, 2L, 2L)
 
 events$dest <- as.Date(events$dest, origin = "1970-01-01")
-res <- assertError(raw_events(events))
+res <- assertError(tidy_events(events))
 check_error(
     res,
     "'node' and 'dest' must both be integer or character.")
@@ -194,7 +194,7 @@ events <- data.frame(
     time  = c("2001-02-01", 2L, 3L, 4L),
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 2L, 0L))
-res <- assertError(raw_events(events))
+res <- assertError(tidy_events(events))
 check_error(
     res,
     "'time' must be an integer or character vector with non-NA values.")
@@ -207,7 +207,7 @@ events <- data.frame(
     node  = 1L,
     dest  = 0L)
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = 1L,
@@ -226,7 +226,7 @@ events <- data.frame(
     node  = 1L,
     dest  = 0L)
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = 1L,
@@ -245,7 +245,7 @@ events <- data.frame(
     node  = 1L,
     dest  = 2L)
 
-stopifnot(identical(events, as.data.frame(raw_events(events))))
+stopifnot(identical(events, as.data.frame(tidy_events(events))))
 
 ## Testing animal with two enter events, keep first
 events <- data.frame(
@@ -255,7 +255,7 @@ events <- data.frame(
     node  = c(1L, 1L),
     dest  = c(0L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = 1L,
@@ -274,7 +274,7 @@ events <- data.frame(
     node  = c(1L, 1L),
     dest  = c(0L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = 1L,
@@ -293,7 +293,7 @@ events <- data.frame(
     node  = c(1L, 2L, 2L),
     dest  = c(0L, 0L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L),
@@ -313,7 +313,7 @@ events <- data.frame(
     node  = c(1L, 2L, 1L, 3L),
     dest  = c(0L, 0L, 3L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L, 1L),
@@ -332,7 +332,7 @@ events <- data.frame(
     node  = c(1L, 2L, 1L),
     dest  = c(0L, 0L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L),
@@ -351,7 +351,7 @@ events <- data.frame(
     node  = c(1L, 1L, 2L),
     dest  = c(0L, 0L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L),
@@ -371,7 +371,7 @@ events <- data.frame(
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 0L, 3L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L, 1L),
@@ -391,7 +391,7 @@ events <- data.frame(
     node  = c(1L, 1L, 3L, 2L),
     dest  = c(0L, 2L, 0L, 3L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = integer(0),
@@ -411,7 +411,7 @@ events <- data.frame(
     node  = c(1L, 1L, 1L, 2L),
     dest  = c(2L, 0L, 2L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L, 1L),
@@ -424,7 +424,7 @@ stopifnot(identical(events_obs, events_exp))
 
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)
-plot(raw_events(events))
+plot(tidy_events(events))
 dev.off()
 stopifnot(file.exists(pdf_file))
 unlink(pdf_file)
@@ -438,7 +438,7 @@ events <- data.frame(
     node  = c(1L, 2L, 1L, 2L),
     dest  = c(2L, 0L, 2L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L),
@@ -457,7 +457,7 @@ events <- data.frame(
     node  = c(1L, 2L, 2L, 3L),
     dest  = c(2L, 0L, 1L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = integer(0),
@@ -476,7 +476,7 @@ events <- data.frame(
     node  = c(1L, 2L, 1L),
     dest  = c(2L, 1L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L, 1L),
@@ -495,7 +495,7 @@ events <- data.frame(
     node  = c(1L, 2L),
     dest  = c(2L, 3L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 stopifnot(identical(events_obs, events))
 
@@ -507,7 +507,7 @@ events <- data.frame(
     node  = c(1L, 1L),
     dest  = c(0L, 2L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L),
@@ -526,7 +526,7 @@ events <- data.frame(
     node  = c(1L, 1L),
     dest  = c(0L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = c(1L, 1L),
@@ -545,7 +545,7 @@ events <- data.frame(
     node  = c(1L, 1L),
     dest  = c(0L, 0L))
 
-events_obs <- as.data.frame(raw_events(events))
+events_obs <- as.data.frame(tidy_events(events))
 
 events_exp <- data.frame(
     id    = integer(0),
@@ -570,27 +570,27 @@ events <- data.frame(
               NA, 2, 2, NA))
 
 stopifnot(identical(
-    u0(raw_events(events), at = 0),
+    u0(tidy_events(events), at = 0),
     data.frame(node = c(1, 2), S_1 = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(raw_events(events), at = 1),
+    u0(tidy_events(events), at = 1),
     data.frame(node = c(1, 2), S_1 = c(1L, 0L))))
 
 stopifnot(identical(
-    u0(raw_events(events), at = 2),
+    u0(tidy_events(events), at = 2),
     data.frame(node = c(1, 2), S_1 = c(1L, 1L))))
 
 stopifnot(identical(
-    u0(raw_events(events), at = 3),
+    u0(tidy_events(events), at = 3),
     data.frame(node = c(1, 2), S_1 = c(0L, 2L))))
 
 stopifnot(identical(
-    u0(raw_events(events), at = 4),
+    u0(tidy_events(events), at = 4),
     data.frame(node = c(1, 2), S_1 = c(0L, 1L))))
 
 stopifnot(identical(
-    u0(raw_events(events), at = 5),
+    u0(tidy_events(events), at = 5),
     data.frame(node = c(1, 2), S_1 = c(0L, 0L))))
 
 events <- data.frame(
@@ -605,7 +605,7 @@ events <- data.frame(
     dest  = c(NA, "node-2", "node-2", NA,
               NA, "node-2", "node-2", NA))
 
-u0_obs <- u0(raw_events(events))
+u0_obs <- u0(tidy_events(events))
 
 u0_exp <- data.frame(
     node = c("node-1", "node-2"),
