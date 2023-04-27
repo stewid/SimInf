@@ -63,20 +63,22 @@ setAs(
     from = "SimInf_tidy_events",
     to = "data.frame",
     def = function(from) {
-        events <- data.frame(id    = from@id[from@keep],
-                             event = from@event[from@keep],
-                             time  = from@time[from@keep],
-                             node  = from@node[from@keep],
-                             dest  = from@dest[from@keep])
+        events <- data.frame(id    = from@id,
+                             event = from@event,
+                             time  = from@time,
+                             node  = from@node,
+                             dest  = from@dest)
 
-        if (!is.null(attr(from@event, "origin"))) {
+        if (!is.null(attr(events$event, "origin"))) {
             event_names <- c("exit", "enter", "intTrans", "extTrans")
             events$event <- event_names[events$event + 1]
+            attr(events$event, "origin") <- NULL
         }
 
-        if (!is.null(attr(from@time, "origin"))) {
+        if (!is.null(attr(events$time, "origin"))) {
             events$time <- as.Date(events$time,
-                                   origin = attr(from@time, "origin"))
+                                   origin = attr(events$time, "origin"))
+            attr(events$time, "origin") <- NULL
         }
 
         events
@@ -295,13 +297,23 @@ tidy_events <- function(events) {
                   nodes$node,
                   nodes$dest)
 
+    origin <- attr(time, "origin")
+    time <- time[keep]
+    if (!is.null(origin))
+        attr(time, "origin") <- origin
+
+    origin <- attr(event, "origin")
+    event <- event[keep]
+    if (!is.null(origin))
+        attr(event, "origin") <- origin
+
     methods::new("SimInf_tidy_events",
-                 id    = events$id,
+                 id    = events$id[keep],
                  event = event,
                  time  = time,
-                 node  = events$node,
-                 dest  = events$dest,
-                 keep  = keep)
+                 node  = events$node[keep],
+                 dest  = events$dest[keep],
+                 keep  = keep[keep])
 }
 
 ## Check for a valid 'at' parameter
