@@ -319,7 +319,7 @@ tidy_events_at <- function(events, at) {
 }
 
 ## Drop individuals that exit before 'at'.
-tidy_events_drop_individuals_at <- function(events, at) {
+tidy_events_drop_at <- function(events, at) {
     unique(events@id[events@keep == TRUE &
                      events@event == 0L &
                      events@time <= at])
