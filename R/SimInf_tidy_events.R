@@ -340,8 +340,7 @@ tidy_events_drop_at <- function(events, at) {
 setMethod(
     "[",
     signature(x = "SimInf_tidy_events", i = "integer", j = "missing"),
-    function(x, i)
-    {
+    function(x, i) {
         ## Drop individuals that exit before 'at'.
         at <- tidy_events_at(x, i)
         drop <- tidy_events_drop_at(x, at)
@@ -366,8 +365,7 @@ setMethod(
 setMethod(
     "[",
     signature(x = "SimInf_tidy_events", i = "numeric", j = "missing"),
-    function(x, i)
-    {
+    function(x, i) {
         x[as.integer(i)]
     }
 )
