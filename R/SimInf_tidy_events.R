@@ -17,7 +17,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_raw_events"}
+##' Class \code{"SimInf_tidy_events"}
 ##'
 ##' @slot id an integer or character identifier of the individual.
 ##' @slot event four event types are supported: \emph{exit},
@@ -34,49 +34,48 @@
 ##' @slot node an integer or character identifier of the source node.
 ##' @slot dest an integer or character identifier of the destination
 ##'     node.
-##' @slot keep logical vector with the events that are kept after the
-##'     cleaning.
 ##' @export
 setClass(
-    "SimInf_raw_events",
+    "SimInf_tidy_events",
     slots = c(id    = "ANY",
               event = "integer",
               time  = "integer",
               node  = "ANY",
-              dest  = "ANY",
-              keep  = "logical"
+              dest  = "ANY"
     )
 )
 
-##' Check if a SimInf_raw_events object is valid
+##' Check if a SimInf_tidy_events object is valid
 ##'
-##' @param object The SimInf_raw_events object to check.
+##' @param object The SimInf_tidy_events object to check.
 ##' @noRd
-valid_SimInf_raw_events_object <- function(object) {
+valid_SimInf_tidy_events <- function(object) {
     TRUE
 }
 
 ## Assign the function as the validity method for the class.
-setValidity("SimInf_raw_events", valid_SimInf_raw_events_object)
+setValidity("SimInf_tidy_events", valid_SimInf_tidy_events)
 
 setAs(
-    from = "SimInf_raw_events",
+    from = "SimInf_tidy_events",
     to = "data.frame",
     def = function(from) {
-        events <- data.frame(id    = from@id[from@keep],
-                             event = from@event[from@keep],
-                             time  = from@time[from@keep],
-                             node  = from@node[from@keep],
-                             dest  = from@dest[from@keep])
+        events <- data.frame(id    = from@id,
+                             event = from@event,
+                             time  = from@time,
+                             node  = from@node,
+                             dest  = from@dest)
 
-        if (!is.null(attr(from@event, "origin"))) {
+        if (!is.null(attr(events$event, "origin"))) {
             event_names <- c("exit", "enter", "intTrans", "extTrans")
             events$event <- event_names[events$event + 1]
+            attr(events$event, "origin") <- NULL
         }
 
-        if (!is.null(attr(from@time, "origin"))) {
+        if (!is.null(attr(events$time, "origin"))) {
             events$time <- as.Date(events$time,
-                                   origin = attr(from@time, "origin"))
+                                   origin = attr(events$time, "origin"))
+            attr(events$time, "origin") <- NULL
         }
 
         events
@@ -85,45 +84,41 @@ setAs(
 
 ##' Coerce to data frame
 ##'
-##' @method as.data.frame SimInf_raw_events
+##' @method as.data.frame SimInf_tidy_events
 ##'
 ##' @inheritParams base::as.data.frame
 ##' @export
-as.data.frame.SimInf_raw_events <- function(x, ...) {
+as.data.frame.SimInf_tidy_events <- function(x, ...) {
     methods::as(x, "data.frame")
 }
 
-##' Print summary of a \code{SimInf_raw_events} object
+##' Print summary of a \code{SimInf_tidy_events} object
 ##'
-##' @param object The \code{SimInf_raw_events} object.
+##' @param object The \code{SimInf_tidy_events} object.
 ##' @return \code{invisible(object)}.
 ##' @export
 setMethod(
     "show",
-    signature(object = "SimInf_raw_events"),
+    signature(object = "SimInf_tidy_events"),
     function(object) {
         cat(sprintf(
             "Number of events: %i\n",
             length(object@id)
-        ))
-        cat(sprintf(
-            "Proportion of events to keep: %f\n",
-            mean(object@keep)
         ))
 
         invisible(object)
     }
 )
 
-##' Detailed summary of a \code{SimInf_raw_events} object
+##' Detailed summary of a \code{SimInf_tidy_events} object
 ##'
-##' @param object The \code{SimInf_raw_events} object
+##' @param object The \code{SimInf_tidy_events} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
 ##' @export
 setMethod(
     "summary",
-    signature(object = "SimInf_raw_events"),
+    signature(object = "SimInf_tidy_events"),
     function(object, ...) {
         show(object)
 
@@ -241,16 +236,16 @@ check_raw_events_nodes <- function(event, node, dest) {
          call. = FALSE)
 }
 
-##' Raw events
+##' Tidy events
 ##'
-##' In many countries, livestock movement data are collected to enable
-##' contact tracing during disease outbreaks. However, the livestock
-##' movement databases are not always structured in such a way that
+##' In many countries, individual-based livestock data are collected
+##' to enable contact tracing during disease outbreaks. However, the
+##' livestock databases are not always structured in such a way that
 ##' relevant information for disease spread simulations is easily
 ##' retrieved. The aim of this function is to facilitate cleaning
 ##' livestock event data and prepare it for usage in SimInf.
 ##'
-##' The argument \code{events} in \code{raw_events} must be a
+##' The argument \code{events} in \code{tidy_events} must be a
 ##' \code{data.frame} with the following columns:
 ##' * **id:** an integer or character identifier of the individual.
 ##' * **event:** four event types are supported: \emph{exit},
@@ -271,10 +266,10 @@ check_raw_events_nodes <- function(event, node, dest) {
 ##' @param events a \code{data.frame} with the columns `id`, `event`,
 ##'     `time`, `node`, and `dest` to define the events, see
 ##'     `details`.
-##' @return \linkS4class{SimInf_raw_events}
+##' @return \linkS4class{SimInf_tidy_events}
 ##' @export
 ##' @md
-raw_events <- function(events) {
+tidy_events <- function(events) {
     columns <- c("id", "event", "time", "node", "dest")
     if (!is.data.frame(events))
         events <- as.data.frame(events)
@@ -295,67 +290,118 @@ raw_events <- function(events) {
                   nodes$node,
                   nodes$dest)
 
-    methods::new("SimInf_raw_events",
-                 id    = events$id,
+    origin <- attr(time, "origin")
+    time <- time[keep]
+    if (!is.null(origin))
+        attr(time, "origin") <- origin
+
+    origin <- attr(event, "origin")
+    event <- event[keep]
+    if (!is.null(origin))
+        attr(event, "origin") <- origin
+
+    methods::new("SimInf_tidy_events",
+                 id    = events$id[keep],
                  event = event,
                  time  = time,
-                 node  = events$node,
-                 dest  = events$dest,
-                 keep  = keep)
+                 node  = events$node[keep],
+                 dest  = events$dest[keep])
 }
+
+## Check for a valid 'at' parameter
+tidy_events_at <- function(events, at) {
+    if (is.null(at))
+        return(min(events@time))
+
+    if (is.numeric(at)) {
+        if (!all(is_wholenumber(at)))
+            stop("'at' must be an integer or date.", call. = FALSE)
+        return(as.integer(at))
+    }
+
+    stop("Not implemented.")
+}
+
+## Drop individuals that exit before 'at'.
+tidy_events_drop_at <- function(events, at) {
+    unique(events@id[events@event == 0L & events@time <= at])
+}
+
+##' Extract individuals from tidy events
+##'
+##' Lookup individuals, in which node they are located and their age
+##' at a specified time-point \code{i}.
+##' @rdname SimInf_tidy_events-index-methods
+##' @param x a tidy events \code{object}.
+##' @param i FIXME.
+##' @return a \code{data.frame} with the columns \code{id},
+##'     \code{node}, and \code{age}.
+##' @export
+setMethod(
+    "[",
+    signature(x = "SimInf_tidy_events", i = "integer", j = "missing"),
+    function(x, i)
+    {
+        ## Drop individuals that exit before 'at'.
+        at <- tidy_events_at(x, i)
+        drop <- tidy_events_drop_at(x, at)
+
+        ## Keep events for 'u0' that are <= 'at'. Keep last event for
+        ## each individual. If it's a movement, swap node and dest to
+        ## have the current location of the individual in node.
+        j <- which(x@time <= at & !(x@id %in% drop))
+        k <- as.integer(tapply(j, x@id[j], max))
+        node <- ifelse(x@event[k] == 3L, x@dest[k], x@node[k])
+
+        ## Determine age.
+        l <- as.integer(tapply(j, x@id[j], min))
+        days <- x@time[k] - x@time[l]
+
+        data.frame(id = x@id[k], node = node, age = days)
+    }
+)
+
+##' @rdname SimInf_tidy_events-index-methods
+##' @export
+setMethod(
+    "[",
+    signature(x = "SimInf_tidy_events", i = "numeric", j = "missing"),
+    function(x, i)
+    {
+        x[as.integer(i)]
+    }
+)
 
 ##' Display the distribution of raw events over time
 ##'
 ##' @param x The raw events data to plot.
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
 ##' @param ... Additional arguments affecting the plot
-##' @aliases plot,SimInf_raw_events-method
+##' @aliases plot,SimInf_tidy_events-method
 ##' @export
 setMethod(
     "plot",
-    signature(x = "SimInf_raw_events"),
+    signature(x = "SimInf_tidy_events"),
     function(x, frame.plot = FALSE, ...) {
         savepar <- graphics::par(mfrow = c(2, 2),
                                  oma = c(1, 1, 2, 0),
                                  mar = c(4, 3, 1, 1))
         on.exit(graphics::par(savepar))
 
-        n <- rep(1L, length(x@keep))
-        all_y <- stats::xtabs(n ~ event + time,
+        n <- rep(1L, length(x@id))
+        yy <- stats::xtabs(n ~ event + time,
                            cbind(event = x@event,
                                  time = x@time,
                                  n = n))
-        all_x <- as.integer(colnames(all_y))
-        if (!is.null(attr(x@time, "origin")))
-            all_x <- as.Date(all_x, origin = attr(x@time, "origin"))
 
-        keep_y <- stats::xtabs(n ~ event + time,
-                           cbind(event = x@event[x@keep],
-                                 time = x@time[x@keep],
-                                 n = n[x@keep]))
-        keep_x <- as.integer(colnames(keep_y))
+        xx <- as.integer(colnames(yy))
         if (!is.null(attr(x@time, "origin")))
-            keep_x <- as.Date(keep_x, origin = attr(x@time, "origin"))
+            xx <- as.Date(xx, origin = attr(x@time, "origin"))
 
         ## Plot events
-        plot_SimInf_events(all_x, all_y, "Exit", frame.plot,
-                           col = "gray70", ...)
-        if (length(keep_x) && "0" %in% rownames(keep_y))
-            lines(keep_x, keep_y["0", ])
-
-        plot_SimInf_events(all_x, all_y, "Enter", frame.plot,
-                           col = "gray70", ...)
-        if (length(keep_x) && "1" %in% rownames(keep_y))
-            lines(keep_x, keep_y["1", ])
-
-        plot_SimInf_events(all_x, all_y, "Internal transfer",
-                           frame.plot, col = "gray70", ...)
-        if (length(keep_x) && "2" %in% rownames(keep_y))
-            lines(keep_x, keep_y["2", ])
-
-        plot_SimInf_events(all_x, all_y, "External transfer",
-                           frame.plot, col = "gray70", ...)
-        if (length(keep_x) && "3" %in% rownames(keep_y))
-            lines(keep_x, keep_y["3", ])
+        plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
     }
 )

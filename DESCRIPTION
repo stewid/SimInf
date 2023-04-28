@@ -84,7 +84,7 @@ Collate:
     'SimInf-package.R'
     'SimInf.R'
     'SimInf_events.R'
-    'SimInf_raw_events.R'
+    'SimInf_tidy_events.R'
     'run.R'
     'density_ratio.R'
     'abc.R'
