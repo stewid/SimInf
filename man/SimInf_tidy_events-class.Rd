@@ -29,8 +29,5 @@ able to coerce to \code{Date}.}
 
 \item{\code{dest}}{an integer or character identifier of the destination
 node.}
-
-\item{\code{keep}}{logical vector with the events that are kept after the
-cleaning.}
 }}
 

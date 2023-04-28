@@ -34,8 +34,6 @@
 ##' @slot node an integer or character identifier of the source node.
 ##' @slot dest an integer or character identifier of the destination
 ##'     node.
-##' @slot keep logical vector with the events that are kept after the
-##'     cleaning.
 ##' @export
 setClass(
     "SimInf_tidy_events",
@@ -43,8 +41,7 @@ setClass(
               event = "integer",
               time  = "integer",
               node  = "ANY",
-              dest  = "ANY",
-              keep  = "logical"
+              dest  = "ANY"
     )
 )
 
@@ -107,10 +104,6 @@ setMethod(
         cat(sprintf(
             "Number of events: %i\n",
             length(object@id)
-        ))
-        cat(sprintf(
-            "Proportion of events to keep: %f\n",
-            mean(object@keep)
         ))
 
         invisible(object)
@@ -312,14 +305,13 @@ tidy_events <- function(events) {
                  event = event,
                  time  = time,
                  node  = events$node[keep],
-                 dest  = events$dest[keep],
-                 keep  = keep[keep])
+                 dest  = events$dest[keep])
 }
 
 ## Check for a valid 'at' parameter
 tidy_events_at <- function(events, at) {
     if (is.null(at))
-        return(min(events@time[events@keep]))
+        return(min(events@time))
 
     if (is.numeric(at)) {
         if (!all(is_wholenumber(at)))
@@ -332,9 +324,7 @@ tidy_events_at <- function(events, at) {
 
 ## Drop individuals that exit before 'at'.
 tidy_events_drop_at <- function(events, at) {
-    unique(events@id[events@keep == TRUE &
-                     events@event == 0L &
-                     events@time <= at])
+    unique(events@id[events@event == 0L & events@time <= at])
 }
 ##' Display the distribution of raw events over time
 ##'
@@ -352,42 +342,20 @@ setMethod(
                                  mar = c(4, 3, 1, 1))
         on.exit(graphics::par(savepar))
 
-        n <- rep(1L, length(x@keep))
-        all_y <- stats::xtabs(n ~ event + time,
+        n <- rep(1L, length(x@id))
+        yy <- stats::xtabs(n ~ event + time,
                            cbind(event = x@event,
                                  time = x@time,
                                  n = n))
-        all_x <- as.integer(colnames(all_y))
-        if (!is.null(attr(x@time, "origin")))
-            all_x <- as.Date(all_x, origin = attr(x@time, "origin"))
 
-        keep_y <- stats::xtabs(n ~ event + time,
-                           cbind(event = x@event[x@keep],
-                                 time = x@time[x@keep],
-                                 n = n[x@keep]))
-        keep_x <- as.integer(colnames(keep_y))
+        xx <- as.integer(colnames(yy))
         if (!is.null(attr(x@time, "origin")))
-            keep_x <- as.Date(keep_x, origin = attr(x@time, "origin"))
+            xx <- as.Date(xx, origin = attr(x@time, "origin"))
 
         ## Plot events
-        plot_SimInf_events(all_x, all_y, "Exit", frame.plot,
-                           col = "gray70", ...)
-        if (length(keep_x) && "0" %in% rownames(keep_y))
-            lines(keep_x, keep_y["0", ])
-
-        plot_SimInf_events(all_x, all_y, "Enter", frame.plot,
-                           col = "gray70", ...)
-        if (length(keep_x) && "1" %in% rownames(keep_y))
-            lines(keep_x, keep_y["1", ])
-
-        plot_SimInf_events(all_x, all_y, "Internal transfer",
-                           frame.plot, col = "gray70", ...)
-        if (length(keep_x) && "2" %in% rownames(keep_y))
-            lines(keep_x, keep_y["2", ])
-
-        plot_SimInf_events(all_x, all_y, "External transfer",
-                           frame.plot, col = "gray70", ...)
-        if (length(keep_x) && "3" %in% rownames(keep_y))
-            lines(keep_x, keep_y["3", ])
+        plot_SimInf_events(xx, yy, "Exit", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
+        plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
     }
 )
