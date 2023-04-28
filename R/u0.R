@@ -79,27 +79,16 @@ setMethod(
             stop("Not implemented.")
         }
 
-        ## Drop individuals that exit before 'at'.
-        at <- tidy_events_at(object, at)
-        drop <- tidy_events_drop_at(object, at)
-
-        ## Keep events for 'u0' that are <= 'at'. Keep last event for
-        ## each individual. If it's a movement, swap node and dest to
-        ## have the current location of the individual in node.
-        i <- which(object@time <= at & !(object@id %in% drop))
-        j <- as.integer(tapply(i, object@id[i], max))
-        node <- ifelse(object@event[j] == 3L, object@dest[j], object@node[j])
+        individuals <- object[tidy_events_at(object, at)]
 
         ## Ensure all nodes are included in u0.
-        nodes <- setdiff(c(object@node, object@dest), node)
+        nodes <- setdiff(c(object@node, object@dest), individuals$node)
         nodes <- nodes[!is.na(nodes)]
-        node <- c(node, nodes)
+        node <- c(individuals$node, nodes)
 
-        ## Determine the age categories.
-        k <- as.integer(tapply(i, object@id[i], min))
-        days <- object@time[j] - object@time[k]
-        if (length(days)) {
-            age_category <- paste0("S_", findInterval(days, age))
+        if (nrow(individuals)) {
+            ## Determine the age categories.
+            age_category <- paste0("S_", findInterval(individuals$age, age))
             age_category <- c(age_category, rep(NA_character_, length(nodes)))
 
             ## Create u0.
