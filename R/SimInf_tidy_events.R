@@ -326,6 +326,52 @@ tidy_events_at <- function(events, at) {
 tidy_events_drop_at <- function(events, at) {
     unique(events@id[events@event == 0L & events@time <= at])
 }
+
+##' Extract individuals from tidy events
+##'
+##' Lookup individuals, in which node they are located and their age
+##' at a specified time-point \code{i}.
+##' @rdname SimInf_tidy_events-index-methods
+##' @param x a tidy events \code{object}.
+##' @param i FIXME.
+##' @return a \code{data.frame} with the columns \code{id},
+##'     \code{node}, and \code{age}.
+##' @export
+setMethod(
+    "[",
+    signature(x = "SimInf_tidy_events", i = "integer", j = "missing"),
+    function(x, i)
+    {
+        ## Drop individuals that exit before 'at'.
+        at <- tidy_events_at(x, i)
+        drop <- tidy_events_drop_at(x, at)
+
+        ## Keep events for 'u0' that are <= 'at'. Keep last event for
+        ## each individual. If it's a movement, swap node and dest to
+        ## have the current location of the individual in node.
+        j <- which(x@time <= at & !(x@id %in% drop))
+        k <- as.integer(tapply(j, x@id[j], max))
+        node <- ifelse(x@event[k] == 3L, x@dest[k], x@node[k])
+
+        ## Determine age.
+        l <- as.integer(tapply(j, x@id[j], min))
+        days <- x@time[k] - x@time[l]
+
+        data.frame(id = x@id[k], node = node, age = days)
+    }
+)
+
+##' @rdname SimInf_tidy_events-index-methods
+##' @export
+setMethod(
+    "[",
+    signature(x = "SimInf_tidy_events", i = "numeric", j = "missing"),
+    function(x, i)
+    {
+        x[as.integer(i)]
+    }
+)
+
 ##' Display the distribution of raw events over time
 ##'
 ##' @param x The raw events data to plot.
