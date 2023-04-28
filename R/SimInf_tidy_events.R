@@ -339,8 +339,11 @@ tidy_events_drop_at <- function(events, at) {
 ##' @export
 setMethod(
     "[",
-    signature(x = "SimInf_tidy_events", i = "integer", j = "missing"),
+    signature(x = "SimInf_tidy_events", i = "ANY", j = "ANY"),
     function(x, i) {
+        if (missing(i))
+            i <- NULL
+
         ## Drop individuals that exit before 'at'.
         at <- tidy_events_at(x, i)
         drop <- tidy_events_drop_at(x, at)
@@ -357,16 +360,6 @@ setMethod(
         days <- x@time[k] - x@time[l]
 
         data.frame(id = x@id[k], node = node, age = days)
-    }
-)
-
-##' @rdname SimInf_tidy_events-index-methods
-##' @export
-setMethod(
-    "[",
-    signature(x = "SimInf_tidy_events", i = "numeric", j = "missing"),
-    function(x, i) {
-        x[as.integer(i)]
     }
 )
 
