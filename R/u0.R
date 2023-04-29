@@ -65,7 +65,6 @@ setMethod(
     "u0",
     signature(object = "SimInf_tidy_events"),
     function(object, at = NULL, target = NULL, age = NULL) {
-
         ## Check for valid target model.
         if (!is.null(target)) {
             target <- match.arg(target, c("SEIR", "SIR", "SIS",
