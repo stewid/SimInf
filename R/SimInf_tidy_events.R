@@ -322,11 +322,6 @@ tidy_events_at <- function(events, at) {
     stop("Not implemented.")
 }
 
-## Drop individuals that exit before 'at'.
-tidy_events_drop_at <- function(events, at) {
-    unique(events@id[events@event == 0L & events@time <= at])
-}
-
 ##' Extract individuals from tidy events
 ##'
 ##' Lookup individuals, in which node they are located and their age
@@ -344,15 +339,21 @@ setMethod(
         if (missing(i))
             i <- NULL
 
-        ## Drop individuals that exit before 'at'.
-        at <- tidy_events_at(x, i)
-        drop <- tidy_events_drop_at(x, at)
+        ## Check that all individuals have an enter event.
+        if (length(setdiff(x@id, x@id[x@event == 1L])))
+            stop("All individuals must have an 'enter' event.", call. = FALSE)
 
-        ## Keep events for 'u0' that are <= 'at'. Keep last event for
-        ## each individual. If it's a movement, swap node and dest to
-        ## have the current location of the individual in node.
-        k <- which(x@time <= at & !(x@id %in% drop))
+        ## Keep events for 'u0' that are <= 'at'. Drop individuals
+        ## that exit before 'at'.
+        k <- which(x@time <= tidy_events_at(x, i))
+        drop <- unique(x@id[k[x@event[k] == 0L]])
+        k <- k[!(x@id[k] %in% drop)]
+
+        ## Keep last event for each individual.
         l <- as.integer(tapply(k, x@id[k], max))
+
+        ## If it's a movement, swap node and dest to have the current
+        ## node location of the individual.
         node <- ifelse(x@event[l] == 3L, x@dest[l], x@node[l])
 
         ## Determine age in days of each individual by subtracting the

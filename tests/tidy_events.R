@@ -612,3 +612,14 @@ u0_exp <- data.frame(
     S_1 = c(2L, 0L))
 
 stopifnot(identical(u0_obs, u0_exp))
+
+events <- data.frame(
+    id    = c(1, 1),
+    event = c("extTrans", "exit"),
+    time  = c(2, 3),
+    node  = c(1, 2),
+    dest  = c(2, 0))
+res <- assertError(tidy_events(events)[])
+check_error(
+    res,
+    "All individuals must have an 'enter' event.")
