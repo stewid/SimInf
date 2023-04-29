@@ -351,15 +351,15 @@ setMethod(
         ## Keep events for 'u0' that are <= 'at'. Keep last event for
         ## each individual. If it's a movement, swap node and dest to
         ## have the current location of the individual in node.
-        j <- which(x@time <= at & !(x@id %in% drop))
-        k <- as.integer(tapply(j, x@id[j], max))
-        node <- ifelse(x@event[k] == 3L, x@dest[k], x@node[k])
+        k <- which(x@time <= at & !(x@id %in% drop))
+        l <- as.integer(tapply(k, x@id[k], max))
+        node <- ifelse(x@event[l] == 3L, x@dest[l], x@node[l])
 
-        ## Determine age.
-        l <- as.integer(tapply(j, x@id[j], min))
-        days <- x@time[k] - x@time[l]
+        ## Determine age in days of each individual by subtracting the
+        ## current time with the first event for each individual.
+        age <- x@time[l] - x@time[as.integer(tapply(k, x@id[k], min))]
 
-        data.frame(id = x@id[k], node = node, age = days)
+        data.frame(id = x@id[l], node = node, age = age)
     }
 )
 
