@@ -79,7 +79,8 @@ setMethod(
             stop("Not implemented.")
         }
 
-        individuals <- object[tidy_events_at(object, at)]
+        ## Determine the location and age for all individuals.
+        individuals <- object[at]
 
         ## Ensure all nodes are included in u0.
         nodes <- setdiff(c(object@node, object@dest), individuals$node)
