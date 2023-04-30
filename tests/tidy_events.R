@@ -623,3 +623,13 @@ res <- assertError(tidy_events(events)[])
 check_error(
     res,
     "All individuals must have an 'enter' event.")
+
+res <- assertError(SimInf:::check_tidy_events_id(3.2))
+check_error(
+    res,
+    "'id' must be an integer or character vector with non-NA values.")
+
+res <- assertError(SimInf:::check_tidy_events_id(NULL))
+check_error(
+    res,
+    "'id' must be an integer or character vector with non-NA values.")

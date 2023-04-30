@@ -126,7 +126,7 @@ setMethod(
     }
 )
 
-check_raw_events_id <- function(id) {
+check_tidy_events_id <- function(id) {
     msg <- "'id' must be an integer or character vector with non-NA values."
 
     if (anyNA(id))
@@ -139,7 +139,7 @@ check_raw_events_id <- function(id) {
     }
 
     if (is.character(id))
-        return(as.integer(as.factor(id)))
+        id <- as.factor(id)
 
     if (is.factor(id))
         return(as.integer(id))
@@ -147,7 +147,7 @@ check_raw_events_id <- function(id) {
     stop(msg, call. = FALSE)
 }
 
-check_raw_events_event <- function(event) {
+check_tidy_events_event <- function(event) {
     msg <- "'event' must be an integer or character vector with non-NA values."
 
     if (anyNA(event))
@@ -180,7 +180,7 @@ check_raw_events_event <- function(event) {
     stop(msg, call. = FALSE)
 }
 
-check_raw_events_time <- function(time) {
+check_tidy_events_time <- function(time) {
     msg <- "'time' must be an integer or character vector with non-NA values."
 
     if (is.numeric(time)) {
@@ -206,7 +206,7 @@ check_raw_events_time <- function(time) {
     stop(msg, call. = FALSE)
 }
 
-check_raw_events_nodes <- function(event, node, dest) {
+check_tidy_events_nodes <- function(event, node, dest) {
     if (any(anyNA(node), anyNA(dest[event == 3L]))) {
         stop("'node' or 'dest' contain NA values.",
              call. = FALSE)
@@ -277,11 +277,11 @@ tidy_events <- function(events) {
         stop("Missing columns in 'events'.", call. = FALSE)
     events <- events[, columns, drop = FALSE]
 
-    id <- check_raw_events_id(events$id)
-    event <- check_raw_events_event(events$event)
-    time <- check_raw_events_time(events$time)
+    id <- check_tidy_events_id(events$id)
+    event <- check_tidy_events_event(events$event)
+    time <- check_tidy_events_time(events$time)
     events$dest[event != 3L] <- NA
-    nodes <- check_raw_events_nodes(event, events$node, events$dest)
+    nodes <- check_tidy_events_nodes(event, events$node, events$dest)
 
     keep <- .Call(SimInf_clean_raw_events,
                   id,
