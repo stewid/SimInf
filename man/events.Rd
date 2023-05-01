@@ -5,12 +5,12 @@
 \alias{events,SimInf_model-method}
 \title{Extract the events from a \code{SimInf_model} object}
 \usage{
-events(model)
+events(object)
 
-\S4method{events}{SimInf_model}(model)
+\S4method{events}{SimInf_model}(object)
 }
 \arguments{
-\item{model}{The \code{model} to extract the events from.}
+\item{object}{The \code{model} to extract the events from.}
 }
 \value{
 \code{\linkS4class{SimInf_events}} object.

@@ -503,7 +503,7 @@ setMethod(
 ##' Extract the events from a \code{SimInf_model} object
 ##'
 ##' Extract the scheduled events from a \code{SimInf_model} object.
-##' @param model The \code{model} to extract the events from.
+##' @param object The \code{model} to extract the events from.
 ##' @return \code{\linkS4class{SimInf_events}} object.
 ##' @export
 ##' @examples
@@ -521,8 +521,8 @@ setMethod(
 ##' plot(events(model))
 setGeneric(
     "events",
-    signature = "model",
-    function(model) {
+    signature = "object",
+    function(object) {
         standardGeneric("events")
     }
 )
@@ -531,9 +531,9 @@ setGeneric(
 ##' @export
 setMethod(
     "events",
-    signature(model = "SimInf_model"),
-    function(model) {
-        model@events
+    signature(object = "SimInf_model"),
+    function(object) {
+        object@events
     }
 )
 
