@@ -310,6 +310,8 @@ tidy_events <- function(events) {
 
 ## Check for a valid 'at' parameter
 tidy_events_at <- function(events, at) {
+    msg <- "'at' must be an integer or date."
+
     if (is.null(at))
         return(min(events@time))
 
@@ -319,7 +321,18 @@ tidy_events_at <- function(events, at) {
         return(as.integer(at))
     }
 
-    stop("Not implemented.")
+    if (is.character(at) || is.factor(at))
+        at <- as.Date(at)
+
+    if (anyNA(at))
+        stop(msg, call. = FALSE)
+
+    if (methods::is(at, "Date")) {
+        origin <- as.Date(attr(events@time, "origin"))
+        return(as.integer(julian(at, origin = origin)))
+    }
+
+    stop(msg, call. = FALSE)
 }
 
 ##' Extract individuals from tidy events
@@ -335,7 +348,10 @@ tidy_events_at <- function(events, at) {
 setMethod(
     "[",
     signature(x = "SimInf_tidy_events", i = "ANY", j = "ANY"),
-    function(x, i) {
+    function(x, i, j) {
+        if (!missing(j))
+            stop("Using 'j' is not implemented.", call. = FALSE)
+
         if (missing(i))
             i <- NULL
 
@@ -343,9 +359,10 @@ setMethod(
         if (length(setdiff(x@id, x@id[x@event == 1L])))
             stop("All individuals must have an 'enter' event.", call. = FALSE)
 
-        ## Keep events for 'u0' that are <= 'at'. Drop individuals
-        ## that exit before 'at'.
-        k <- which(x@time <= tidy_events_at(x, i))
+        ## Keep events that occur <= 'at'. Drop individuals that exit
+        ## before 'at'.
+        at <- tidy_events_at(x, i)
+        k <- which(x@time <= at)
         drop <- unique(x@id[k[x@event[k] == 0L]])
         k <- k[!(x@id[k] %in% drop)]
 
@@ -358,7 +375,7 @@ setMethod(
 
         ## Determine age in days of each individual by subtracting the
         ## current time with the first event for each individual.
-        age <- x@time[l] - x@time[as.integer(tapply(k, x@id[k], min))]
+        age <- at - x@time[as.integer(tapply(k, x@id[k], min))]
 
         data.frame(id = x@id[l], node = node, age = age)
     }
