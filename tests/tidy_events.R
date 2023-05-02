@@ -613,6 +613,28 @@ u0_exp <- data.frame(
 
 stopifnot(identical(u0_obs, u0_exp))
 
+stopifnot(identical(
+    tidy_events(events)["2019-02-02"],
+    data.frame(
+        id = c("individual-1", "individual-2"),
+        node = c("node-1", "node-1"),
+        age = c(0L, 0L))))
+
+stopifnot(identical(
+    tidy_events(events)["2019-02-04"],
+    data.frame(
+        id = c("individual-1", "individual-2"),
+        node = c("node-1", "node-1"),
+        age = c(2L, 2L))))
+
+show_expected <- c("Number of events: 6")
+show_observed <- capture.output(show(tidy_events(events)))
+stopifnot(identical(show_observed, show_expected))
+
+summary_expected <- c("Number of events: 6")
+summary_observed <- capture.output(summary(tidy_events(events)))
+stopifnot(identical(summary_observed, summary_expected))
+
 events <- data.frame(
     id    = c(1, 1),
     event = c("extTrans", "exit"),
