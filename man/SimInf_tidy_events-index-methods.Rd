@@ -4,12 +4,14 @@
 \alias{[,SimInf_tidy_events,ANY,ANY,ANY-method}
 \title{Extract individuals from tidy events}
 \usage{
-\S4method{[}{SimInf_tidy_events,ANY,ANY,ANY}(x, i)
+\S4method{[}{SimInf_tidy_events,ANY,ANY,ANY}(x, i, j)
 }
 \arguments{
 \item{x}{a tidy events \code{object}.}
 
 \item{i}{FIXME.}
+
+\item{j}{FIXME.}
 }
 \value{
 a \code{data.frame} with the columns \code{id},

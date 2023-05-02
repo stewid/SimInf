@@ -316,7 +316,7 @@ tidy_events_at <- function(events, at) {
         return(min(events@time))
 
     if (is.numeric(at)) {
-        if (!all(is_wholenumber(at)))
+        if (any(!all(is_wholenumber(at)), length(at) != 1L, anyNA(at)))
             stop("'at' must be an integer or date.", call. = FALSE)
         return(as.integer(at))
     }
@@ -324,7 +324,7 @@ tidy_events_at <- function(events, at) {
     if (is.character(at) || is.factor(at))
         at <- as.Date(at)
 
-    if (anyNA(at))
+    if (any(anyNA(at), length(at) != 1L))
         stop(msg, call. = FALSE)
 
     if (methods::is(at, "Date")) {
@@ -342,6 +342,7 @@ tidy_events_at <- function(events, at) {
 ##' @rdname SimInf_tidy_events-index-methods
 ##' @param x a tidy events \code{object}.
 ##' @param i FIXME.
+##' @param j FIXME.
 ##' @return a \code{data.frame} with the columns \code{id},
 ##'     \code{node}, and \code{age}.
 ##' @export

@@ -627,6 +627,13 @@ stopifnot(identical(
         node = c("node-1", "node-1"),
         age = c(2L, 2L))))
 
+stopifnot(identical(
+    tidy_events(events)["2019-02-01"],
+    data.frame(
+        id = character(0),
+        node = logical(0),
+        age = integer(0))))
+
 show_expected <- c("Number of events: 6")
 show_observed <- capture.output(show(tidy_events(events)))
 stopifnot(identical(show_observed, show_expected))
