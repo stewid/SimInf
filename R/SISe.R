@@ -28,7 +28,7 @@ setClass("SISe", contains = c("SimInf_model"))
 
 ##' The compartments in an SISe model
 ##' @noRd
-compartments_SISe <- function()
+compartments_SISe <- function() {
     compartments_SIS()
 }
 

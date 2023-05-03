@@ -44,7 +44,7 @@ setClass("SIS", contains = c("SimInf_model"))
 
 ##' The compartments in an SIS model
 ##' @noRd
-compartments_SIS <- function()
+compartments_SIS <- function() {
     c("S", "I")
 }
 
