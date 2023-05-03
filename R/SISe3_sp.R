@@ -26,6 +26,18 @@
 ##' @export
 setClass("SISe3_sp", contains = c("SimInf_model"))
 
+##' The compartments in an SISe3_sp model
+##' @noRd
+compartments_SISe3_sp <- function()
+    compartments_SISe3()
+}
+
+##' The select matrix 'E' for an SISe3_sp model
+##' @noRd
+select_matrix_SISe3_sp <- function() {
+    select_matrix_SISe3()
+}
+
 ##' Create an \code{SISe3_sp} model
 ##'
 ##' Create an \code{SISe3_sp} model to be used by the simulation
@@ -142,12 +154,10 @@ SISe3_sp <- function(u0,
                      end_t4    = NULL,
                      distance  = NULL,
                      coupling  = NULL) {
-    compartments <- c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
-
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_u0(u0, compartments_SISe3_sp())
 
     ## Check initial infectious pressure
     if (is.null(phi))
@@ -171,14 +181,10 @@ SISe3_sp <- function(u0,
 
     ## Arguments seem ok...go on
 
-    E <- matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-                  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),
-                nrow = 6, ncol = 6,
-                dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
-
     N <- matrix(c(2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, -1, 0, -1, 0, -1),
                 nrow = 6, ncol = 3,
-                dimnames = list(compartments, c("1", "2", "3")))
+                dimnames = list(compartments_SISe3_sp(),
+                                c("1", "2", "3")))
 
     G <- matrix(c(1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0,
                   0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1),
@@ -194,7 +200,8 @@ SISe3_sp <- function(u0,
     S <- matrix(c(-1, 1, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0,
                   0, 0, 1, -1, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 1, -1),
                 nrow = 6, ncol = 6,
-                dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
+                dimnames = list(compartments_SISe3_sp(),
+                                c("1", "2", "3", "4", "5", "6")))
 
     v0 <- matrix(as.numeric(phi), nrow  = 1, byrow = TRUE,
                  dimnames = list("phi"))
@@ -213,7 +220,7 @@ SISe3_sp <- function(u0,
 
     model <- SimInf_model(G      = G,
                           S      = S,
-                          E      = E,
+                          E      = select_matrix_SISe3_sp(),
                           N      = N,
                           tspan  = tspan,
                           events = events,

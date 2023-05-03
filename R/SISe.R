@@ -26,6 +26,18 @@
 ##' @export
 setClass("SISe", contains = c("SimInf_model"))
 
+##' The compartments in an SISe model
+##' @noRd
+compartments_SISe <- function()
+    compartments_SIS()
+}
+
+##' The select matrix 'E' for an SISe model
+##' @noRd
+select_matrix_SISe <- function() {
+    select_matrix_SIS()
+}
+
 ##' Create a SISe model
 ##'
 ##' Create an \sQuote{SISe} model to be used by the simulation
@@ -103,12 +115,10 @@ SISe <- function(u0,
                  end_t3  = NULL,
                  end_t4  = NULL,
                  epsilon = NULL) {
-    compartments <- c("S", "I")
-
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_u0(u0, compartments_SISe())
 
     ## Check initial infectious pressure
     if (is.null(phi))
@@ -130,16 +140,13 @@ SISe <- function(u0,
 
     ## Arguments seem ok...go on
 
-    E <- matrix(c(1, 0, 1, 1), nrow = 2, ncol = 2,
-                dimnames = list(compartments, c("1", "2")))
-
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
                 dimnames = list(c("S -> upsilon*phi*S -> I",
                                   "I -> gamma*I -> S"),
                                 c("1", "2")))
 
     S <- matrix(c(-1,  1, 1, -1), nrow = 2, ncol = 2,
-                dimnames = list(compartments, c("1", "2")))
+                dimnames = list(compartments_SISe(), c("1", "2")))
 
     v0 <- matrix(as.numeric(phi), nrow  = 1, byrow = TRUE,
                  dimnames = list("phi"))
@@ -155,7 +162,7 @@ SISe <- function(u0,
 
     model <- SimInf_model(G      = G,
                           S      = S,
-                          E      = E,
+                          E      = select_matrix_SISe(),
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,

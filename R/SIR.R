@@ -46,6 +46,21 @@
 ##' plot(result)
 setClass("SIR", contains = c("SimInf_model"))
 
+##' The compartments in an SIR model
+##' @noRd
+compartments_SIR <- function() {
+    c("S", "I", "R")
+}
+
+##' The select matrix 'E' for an SIR model
+##' @noRd
+select_matrix_SIR <- function() {
+    matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1),
+           nrow = 3,
+           ncol = 4,
+           dimnames = list(compartments_SIR(), seq_len(4)))
+}
+
 ##' Create an \acronym{SIR} model
 ##'
 ##' Create an \acronym{SIR} model to be used by the simulation
@@ -92,12 +107,10 @@ SIR <- function(u0,
                 events = NULL,
                 beta   = NULL,
                 gamma  = NULL) {
-    compartments <- c("S", "I", "R")
-
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_u0(u0, compartments_SIR())
 
     ## Check for non-numeric parameters
     check_ldata_arg(nrow(u0), beta, gamma)
@@ -106,17 +119,13 @@ SIR <- function(u0,
 
     ## Arguments seem ok...go on
 
-    E <- matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1),
-                nrow = 3, ncol = 4,
-                dimnames = list(compartments, c("1", "2", "3", "4")))
-
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
                 dimnames = list(c("S -> beta*S*I/(S+I+R) -> I",
                                   "I -> gamma*I -> R"),
                                 c("1", "2")))
 
     S <- matrix(c(-1, 1, 0, 0, -1, 1), nrow = 3, ncol = 2,
-                dimnames = list(compartments, c("1", "2")))
+                dimnames = list(compartments_SIR(), c("1", "2")))
 
     ldata <- matrix(as.numeric(c(beta, gamma)),
                     nrow  = 2, byrow = TRUE,
@@ -124,7 +133,7 @@ SIR <- function(u0,
 
     model <- SimInf_model(G      = G,
                           S      = S,
-                          E      = E,
+                          E      = select_matrix_SIR(),
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,

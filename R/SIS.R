@@ -42,6 +42,21 @@
 ##' plot(result)
 setClass("SIS", contains = c("SimInf_model"))
 
+##' The compartments in an SIS model
+##' @noRd
+compartments_SIS <- function()
+    c("S", "I")
+}
+
+##' The select matrix 'E' for an SIS model
+##' @noRd
+select_matrix_SIS <- function() {
+    matrix(c(1, 0, 1, 1),
+           nrow = 2,
+           ncol = 2,
+           dimnames = list(compartments_SIS(), seq_len(2)))
+}
+
 ##' Create an \acronym{SIS} model
 ##'
 ##' Create an \acronym{SIS} model to be used by the simulation
@@ -86,12 +101,10 @@ SIS <- function(u0,
                 events = NULL,
                 beta   = NULL,
                 gamma  = NULL) {
-    compartments <- c("S", "I")
-
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_u0(u0, compartments_SIS())
 
     ## Check for non-numeric parameters
     check_ldata_arg(nrow(u0), beta, gamma)
@@ -100,16 +113,13 @@ SIS <- function(u0,
 
     ## Arguments seem ok...go on
 
-    E <- matrix(c(1, 0, 1, 1), nrow = 2, ncol = 2,
-                dimnames = list(compartments, c("1", "2")))
-
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
                 dimnames = list(c("S -> upsilon*S*I -> I",
                                   "I -> gamma*I -> S"),
                                 c("1", "2")))
 
     S <- matrix(c(-1,  1, 1, -1), nrow = 2, ncol = 2,
-                dimnames = list(compartments, c("1", "2")))
+                dimnames = list(compartments_SIS(), c("1", "2")))
 
     ldata <- matrix(as.numeric(c(beta, gamma)),
                     nrow  = 2, byrow = TRUE,
@@ -117,7 +127,7 @@ SIS <- function(u0,
 
     model <- SimInf_model(G      = G,
                           S      = S,
-                          E      = E,
+                          E      = select_matrix_SIS(),
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,

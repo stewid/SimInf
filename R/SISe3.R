@@ -26,6 +26,22 @@
 ##' @export
 setClass("SISe3", contains = c("SimInf_model"))
 
+##' The compartments in an SISe3 model
+##' @noRd
+compartments_SISe3 <- function() {
+    c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
+}
+
+##' The select matrix 'E' for an SISe3 model
+##' @noRd
+select_matrix_SISe3 <- function() {
+    matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+             1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),
+           nrow = 6,
+           ncol = 6,
+           dimnames = list(compartments_SISe3(), seq_len(6)))
+}
+
 ##' Create a \code{SISe3} model
 ##'
 ##' Create a \code{SISe3} model to be used by the simulation
@@ -133,12 +149,11 @@ SISe3 <- function(u0,
                   end_t3    = NULL,
                   end_t4    = NULL,
                   epsilon   = NULL) {
-    compartments <- c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
 
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_u0(u0, compartments_SISe3())
 
     ## Check initial infectious pressure
     if (is.null(phi))
@@ -160,14 +175,9 @@ SISe3 <- function(u0,
 
     ## Arguments seem ok...go on
 
-    E <- matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-                  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),
-                nrow = 6, ncol = 6,
-                dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
-
     N <- matrix(c(2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, -1, 0, -1, 0, -1),
                 nrow = 6, ncol = 3,
-                dimnames = list(compartments, c("1", "2", "3")))
+                dimnames = list(compartments_SISe3(), c("1", "2", "3")))
 
     G <- matrix(c(1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0,
                   0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1),
@@ -183,7 +193,8 @@ SISe3 <- function(u0,
     S <- matrix(c(-1, 1, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0,
                   0, 0, 1, -1, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 1, -1),
                 nrow = 6, ncol = 6,
-                dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
+                dimnames = list(compartments_SISe3(),
+                                c("1", "2", "3", "4", "5", "6")))
 
     v0 <- matrix(as.numeric(phi), nrow  = 1, byrow = TRUE,
                  dimnames = list("phi"))
@@ -201,7 +212,7 @@ SISe3 <- function(u0,
 
     model <- SimInf_model(G      = G,
                           S      = S,
-                          E      = E,
+                          E      = select_matrix_SISe3(),
                           N      = N,
                           tspan  = tspan,
                           events = events,
