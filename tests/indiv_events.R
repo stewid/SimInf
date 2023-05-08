@@ -614,21 +614,21 @@ u0_exp <- data.frame(
 stopifnot(identical(u0_obs, u0_exp))
 
 stopifnot(identical(
-    individual_events(events)["2019-02-02"],
+    individuals(individual_events(events), "2019-02-02"),
     data.frame(
         id = c("individual-1", "individual-2"),
         node = c("node-1", "node-1"),
         age = c(0L, 0L))))
 
 stopifnot(identical(
-    individual_events(events)["2019-02-04"],
+    individuals(individual_events(events), "2019-02-04"),
     data.frame(
         id = c("individual-1", "individual-2"),
         node = c("node-1", "node-1"),
         age = c(2L, 2L))))
 
 stopifnot(identical(
-    individual_events(events)["2019-02-01"],
+    individuals(individual_events(events), "2019-02-01"),
     data.frame(
         id = character(0),
         node = logical(0),
@@ -648,7 +648,7 @@ events <- data.frame(
     time  = c(2, 3),
     node  = c(1, 2),
     dest  = c(2, 0))
-res <- assertError(individual_events(events)[])
+res <- assertError(individuals(individual_events(events)))
 check_error(
     res,
     "All individuals must have an 'enter' event.")

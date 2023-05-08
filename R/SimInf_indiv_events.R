@@ -335,34 +335,39 @@ indiv_events_at <- function(events, at) {
     stop(msg, call. = FALSE)
 }
 
-##' Extract individuals from indiv events
+##' Extract individuals from \code{SimInf_indiv_events}
 ##'
 ##' Lookup individuals, in which node they are located and their age
-##' at a specified time-point \code{i}.
-##' @rdname SimInf_indiv_events-index-methods
-##' @param x a indiv events \code{object}.
-##' @param i FIXME.
-##' @param j FIXME.
+##' at a specified time-point.
+##' @param x an individual events object of class
+##'     \code{SimInf_indiv_events}.
+##' @param at the time-point for the lookup of individuals. Default is
+##'     \code{NULL} which means to extract the individuals at the
+##'     minimum time-point in the events object \code{x}.
 ##' @return a \code{data.frame} with the columns \code{id},
 ##'     \code{node}, and \code{age}.
 ##' @export
+setGeneric(
+    "individuals",
+    signature = "x",
+    function(x, at = NULL) {
+        standardGeneric("individuals")
+    }
+)
+
+##' @rdname individuals
+##' @export
 setMethod(
-    "[",
-    signature(x = "SimInf_indiv_events", i = "ANY", j = "ANY"),
-    function(x, i, j) {
-        if (!missing(j))
-            stop("Using 'j' is not implemented.", call. = FALSE)
-
-        if (missing(i))
-            i <- NULL
-
+    "individuals",
+    signature(x = "SimInf_indiv_events"),
+    function(x, at = NULL) {
         ## Check that all individuals have an enter event.
         if (length(setdiff(x@id, x@id[x@event == 1L])))
             stop("All individuals must have an 'enter' event.", call. = FALSE)
 
         ## Keep events that occur <= 'at'. Drop individuals that exit
         ## before 'at'.
-        at <- indiv_events_at(x, i)
+        at <- indiv_events_at(x, at)
         k <- which(x@time <= at)
         drop <- unique(x@id[k[x@event[k] == 0L]])
         k <- k[!(x@id[k] %in% drop)]
