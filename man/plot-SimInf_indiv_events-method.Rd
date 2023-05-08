@@ -2,7 +2,7 @@
 % Please edit documentation in R/SimInf_indiv_events.R
 \name{plot,SimInf_indiv_events-method}
 \alias{plot,SimInf_indiv_events-method}
-\title{Display the distribution of raw events over time}
+\title{Display the distribution of individual events over time}
 \usage{
 \S4method{plot}{SimInf_indiv_events}(x, frame.plot = FALSE, ...)
 }
@@ -14,5 +14,5 @@
 \item{...}{Additional arguments affecting the plot}
 }
 \description{
-Display the distribution of raw events over time
+Display the distribution of individual events over time
 }

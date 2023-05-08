@@ -2,12 +2,12 @@
 % Please edit documentation in R/SimInf_indiv_events.R
 \name{[,SimInf_indiv_events,ANY,ANY,ANY-method}
 \alias{[,SimInf_indiv_events,ANY,ANY,ANY-method}
-\title{Extract individuals from tidy events}
+\title{Extract individuals from indiv events}
 \usage{
 \S4method{[}{SimInf_indiv_events,ANY,ANY,ANY}(x, i, j)
 }
 \arguments{
-\item{x}{a tidy events \code{object}.}
+\item{x}{a indiv events \code{object}.}
 
 \item{i}{FIXME.}
 
