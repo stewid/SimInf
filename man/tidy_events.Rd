@@ -12,7 +12,7 @@ tidy_events(events)
 \code{details}.}
 }
 \value{
-\linkS4class{SimInf_tidy_events}
+\linkS4class{SimInf_indiv_events}
 }
 \description{
 In many countries, individual-based livestock data are collected

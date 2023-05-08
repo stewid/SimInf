@@ -3,14 +3,14 @@
 \name{u0}
 \alias{u0}
 \alias{u0,SimInf_model-method}
-\alias{u0,SimInf_tidy_events-method}
+\alias{u0,SimInf_indiv_events-method}
 \title{Get the initial compartment state}
 \usage{
 u0(object, ...)
 
 \S4method{u0}{SimInf_model}(object, ...)
 
-\S4method{u0}{SimInf_tidy_events}(object, at = NULL, target = NULL, age = NULL)
+\S4method{u0}{SimInf_indiv_events}(object, at = NULL, target = NULL, age = NULL)
 }
 \arguments{
 \item{object}{The object to get the initial compartment state
