@@ -126,7 +126,7 @@ setMethod(
     }
 )
 
-check_tidy_events_id <- function(id) {
+check_indiv_events_id <- function(id) {
     msg <- "'id' must be an integer or character vector with non-NA values."
 
     if (anyNA(id))
@@ -147,7 +147,7 @@ check_tidy_events_id <- function(id) {
     stop(msg, call. = FALSE)
 }
 
-check_tidy_events_event <- function(event) {
+check_indiv_events_event <- function(event) {
     msg <- "'event' must be an integer or character vector with non-NA values."
 
     if (anyNA(event))
@@ -180,7 +180,7 @@ check_tidy_events_event <- function(event) {
     stop(msg, call. = FALSE)
 }
 
-check_tidy_events_time <- function(time) {
+check_indiv_events_time <- function(time) {
     msg <- "'time' must be an integer or character vector with non-NA values."
 
     if (is.numeric(time)) {
@@ -206,7 +206,7 @@ check_tidy_events_time <- function(time) {
     stop(msg, call. = FALSE)
 }
 
-check_tidy_events_nodes <- function(event, node, dest) {
+check_indiv_events_nodes <- function(event, node, dest) {
     if (any(anyNA(node), anyNA(dest[event == 3L]))) {
         stop("'node' or 'dest' contain NA values.",
              call. = FALSE)
@@ -236,7 +236,7 @@ check_tidy_events_nodes <- function(event, node, dest) {
          call. = FALSE)
 }
 
-##' Tidy events
+##' Individual events
 ##'
 ##' In many countries, individual-based livestock data are collected
 ##' to enable contact tracing during disease outbreaks. However, the
@@ -245,7 +245,7 @@ check_tidy_events_nodes <- function(event, node, dest) {
 ##' retrieved. The aim of this function is to facilitate cleaning
 ##' livestock event data and prepare it for usage in SimInf.
 ##'
-##' The argument \code{events} in \code{tidy_events} must be a
+##' The argument \code{events} in \code{individual_events} must be a
 ##' \code{data.frame} with the following columns:
 ##' * **id:** an integer or character identifier of the individual.
 ##' * **event:** four event types are supported: \emph{exit},
@@ -269,7 +269,7 @@ check_tidy_events_nodes <- function(event, node, dest) {
 ##' @return \linkS4class{SimInf_indiv_events}
 ##' @export
 ##' @md
-tidy_events <- function(events) {
+individual_events <- function(events) {
     columns <- c("id", "event", "time", "node", "dest")
     if (!is.data.frame(events))
         events <- as.data.frame(events)
@@ -277,11 +277,11 @@ tidy_events <- function(events) {
         stop("Missing columns in 'events'.", call. = FALSE)
     events <- events[, columns, drop = FALSE]
 
-    id <- check_tidy_events_id(events$id)
-    event <- check_tidy_events_event(events$event)
-    time <- check_tidy_events_time(events$time)
+    id <- check_indiv_events_id(events$id)
+    event <- check_indiv_events_event(events$event)
+    time <- check_indiv_events_time(events$time)
     events$dest[event != 3L] <- NA
-    nodes <- check_tidy_events_nodes(event, events$node, events$dest)
+    nodes <- check_indiv_events_nodes(event, events$node, events$dest)
 
     keep <- .Call(SimInf_clean_indiv_events,
                   id,
@@ -309,7 +309,7 @@ tidy_events <- function(events) {
 }
 
 ## Check for a valid 'at' parameter
-tidy_events_at <- function(events, at) {
+indiv_events_at <- function(events, at) {
     msg <- "'at' must be an integer or date."
 
     if (is.null(at))
@@ -335,12 +335,12 @@ tidy_events_at <- function(events, at) {
     stop(msg, call. = FALSE)
 }
 
-##' Extract individuals from tidy events
+##' Extract individuals from indiv events
 ##'
 ##' Lookup individuals, in which node they are located and their age
 ##' at a specified time-point \code{i}.
 ##' @rdname SimInf_indiv_events-index-methods
-##' @param x a tidy events \code{object}.
+##' @param x a indiv events \code{object}.
 ##' @param i FIXME.
 ##' @param j FIXME.
 ##' @return a \code{data.frame} with the columns \code{id},
@@ -362,7 +362,7 @@ setMethod(
 
         ## Keep events that occur <= 'at'. Drop individuals that exit
         ## before 'at'.
-        at <- tidy_events_at(x, i)
+        at <- indiv_events_at(x, i)
         k <- which(x@time <= at)
         drop <- unique(x@id[k[x@event[k] == 0L]])
         k <- k[!(x@id[k] %in% drop)]
@@ -382,7 +382,7 @@ setMethod(
     }
 )
 
-##' Display the distribution of raw events over time
+##' Display the distribution of individual events over time
 ##'
 ##' @param x The raw events data to plot.
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
