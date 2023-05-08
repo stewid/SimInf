@@ -17,7 +17,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_tidy_events"}
+##' Class \code{"SimInf_indiv_events"}
 ##'
 ##' @slot id an integer or character identifier of the individual.
 ##' @slot event four event types are supported: \emph{exit},
@@ -36,7 +36,7 @@
 ##'     node.
 ##' @export
 setClass(
-    "SimInf_tidy_events",
+    "SimInf_indiv_events",
     slots = c(id    = "ANY",
               event = "integer",
               time  = "integer",
@@ -45,19 +45,19 @@ setClass(
     )
 )
 
-##' Check if a SimInf_tidy_events object is valid
+##' Check if a SimInf_indiv_events object is valid
 ##'
-##' @param object The SimInf_tidy_events object to check.
+##' @param object The SimInf_indiv_events object to check.
 ##' @noRd
-valid_SimInf_tidy_events <- function(object) {
+valid_SimInf_indiv_events <- function(object) {
     TRUE
 }
 
 ## Assign the function as the validity method for the class.
-setValidity("SimInf_tidy_events", valid_SimInf_tidy_events)
+setValidity("SimInf_indiv_events", valid_SimInf_indiv_events)
 
 setAs(
-    from = "SimInf_tidy_events",
+    from = "SimInf_indiv_events",
     to = "data.frame",
     def = function(from) {
         events <- data.frame(id    = from@id,
@@ -84,22 +84,22 @@ setAs(
 
 ##' Coerce to data frame
 ##'
-##' @method as.data.frame SimInf_tidy_events
+##' @method as.data.frame SimInf_indiv_events
 ##'
 ##' @inheritParams base::as.data.frame
 ##' @export
-as.data.frame.SimInf_tidy_events <- function(x, ...) {
+as.data.frame.SimInf_indiv_events <- function(x, ...) {
     methods::as(x, "data.frame")
 }
 
-##' Print summary of a \code{SimInf_tidy_events} object
+##' Print summary of a \code{SimInf_indiv_events} object
 ##'
-##' @param object The \code{SimInf_tidy_events} object.
+##' @param object The \code{SimInf_indiv_events} object.
 ##' @return \code{invisible(object)}.
 ##' @export
 setMethod(
     "show",
-    signature(object = "SimInf_tidy_events"),
+    signature(object = "SimInf_indiv_events"),
     function(object) {
         cat(sprintf(
             "Number of events: %i\n",
@@ -110,15 +110,15 @@ setMethod(
     }
 )
 
-##' Detailed summary of a \code{SimInf_tidy_events} object
+##' Detailed summary of a \code{SimInf_indiv_events} object
 ##'
-##' @param object The \code{SimInf_tidy_events} object
+##' @param object The \code{SimInf_indiv_events} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
 ##' @export
 setMethod(
     "summary",
-    signature(object = "SimInf_tidy_events"),
+    signature(object = "SimInf_indiv_events"),
     function(object, ...) {
         show(object)
 
@@ -266,7 +266,7 @@ check_tidy_events_nodes <- function(event, node, dest) {
 ##' @param events a \code{data.frame} with the columns `id`, `event`,
 ##'     `time`, `node`, and `dest` to define the events, see
 ##'     `details`.
-##' @return \linkS4class{SimInf_tidy_events}
+##' @return \linkS4class{SimInf_indiv_events}
 ##' @export
 ##' @md
 tidy_events <- function(events) {
@@ -300,7 +300,7 @@ tidy_events <- function(events) {
     if (!is.null(origin))
         attr(event, "origin") <- origin
 
-    methods::new("SimInf_tidy_events",
+    methods::new("SimInf_indiv_events",
                  id    = events$id[keep],
                  event = event,
                  time  = time,
@@ -339,7 +339,7 @@ tidy_events_at <- function(events, at) {
 ##'
 ##' Lookup individuals, in which node they are located and their age
 ##' at a specified time-point \code{i}.
-##' @rdname SimInf_tidy_events-index-methods
+##' @rdname SimInf_indiv_events-index-methods
 ##' @param x a tidy events \code{object}.
 ##' @param i FIXME.
 ##' @param j FIXME.
@@ -348,7 +348,7 @@ tidy_events_at <- function(events, at) {
 ##' @export
 setMethod(
     "[",
-    signature(x = "SimInf_tidy_events", i = "ANY", j = "ANY"),
+    signature(x = "SimInf_indiv_events", i = "ANY", j = "ANY"),
     function(x, i, j) {
         if (!missing(j))
             stop("Using 'j' is not implemented.", call. = FALSE)
@@ -387,11 +387,11 @@ setMethod(
 ##' @param x The raw events data to plot.
 ##' @param frame.plot Draw a frame around each plot. Default is FALSE.
 ##' @param ... Additional arguments affecting the plot
-##' @aliases plot,SimInf_tidy_events-method
+##' @aliases plot,SimInf_indiv_events-method
 ##' @export
 setMethod(
     "plot",
-    signature(x = "SimInf_tidy_events"),
+    signature(x = "SimInf_indiv_events"),
     function(x, frame.plot = FALSE, ...) {
         savepar <- graphics::par(mfrow = c(2, 2),
                                  oma = c(1, 1, 2, 0),

@@ -63,7 +63,7 @@ setMethod(
 ##' @export
 setMethod(
     "u0",
-    signature(object = "SimInf_tidy_events"),
+    signature(object = "SimInf_indiv_events"),
     function(object, at = NULL, target = NULL, age = NULL) {
         ## Check for valid target model.
         if (!is.null(target)) {
