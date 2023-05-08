@@ -3,7 +3,7 @@
  * disease spread simulations.
  *
  * Copyright (C) 2022 Ivana Rodriguez Ewerlöf
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2023 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ SimInf_find_longest_path(
 }
 
 /**
- * Utility function to clean raw events.
+ * Utility function to clean individual events.
  *
  * @param id integer vector with an unique identifier for each
  *        individual.
@@ -165,7 +165,7 @@ SimInf_find_longest_path(
  *         FALSE.
  */
 SEXP attribute_hidden
-SimInf_clean_raw_events(
+SimInf_clean_indiv_events(
     SEXP id,
     SEXP event,
     SEXP time,

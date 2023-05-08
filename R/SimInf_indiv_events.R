@@ -283,7 +283,7 @@ tidy_events <- function(events) {
     events$dest[event != 3L] <- NA
     nodes <- check_tidy_events_nodes(event, events$node, events$dest)
 
-    keep <- .Call(SimInf_clean_raw_events,
+    keep <- .Call(SimInf_clean_indiv_events,
                   id,
                   event,
                   time,

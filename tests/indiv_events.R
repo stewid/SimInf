@@ -23,7 +23,7 @@ source("util/check.R")
 
 ## Check to pass vectors of different lengths.
 res <- assertError(.Call(
-    SimInf:::SimInf_clean_raw_events,
+    SimInf:::SimInf_clean_indiv_events,
     integer(0),
     c(0L, 3L),
     c(1L, 2L),
@@ -32,7 +32,7 @@ res <- assertError(.Call(
 check_error(res, "'event' must be an integer vector with length 0.")
 
 res <- assertError(.Call(
-    SimInf:::SimInf_clean_raw_events,
+    SimInf:::SimInf_clean_indiv_events,
     c(1L, 1L),
     c(0L),
     c(1L, 2L),
@@ -41,7 +41,7 @@ res <- assertError(.Call(
 check_error(res, "'event' must be an integer vector with length 2.")
 
 res <- assertError(.Call(
-    SimInf:::SimInf_clean_raw_events,
+    SimInf:::SimInf_clean_indiv_events,
     c(1L, 1L),
     c(0L, 3L),
     c(1L),
@@ -50,7 +50,7 @@ res <- assertError(.Call(
 check_error(res, "'time' must be an integer vector with length 2.")
 
 res <- assertError(.Call(
-    SimInf:::SimInf_clean_raw_events,
+    SimInf:::SimInf_clean_indiv_events,
     c(1L, 1L),
     c(0L, 3L),
     c(1L, 2L),
@@ -59,7 +59,7 @@ res <- assertError(.Call(
 check_error(res, "'node' must be an integer vector with length 2.")
 
 res <- assertError(.Call(
-    SimInf:::SimInf_clean_raw_events,
+    SimInf:::SimInf_clean_indiv_events,
     c(1L, 1L),
     c(0L, 3L),
     c(1L, 2L),
@@ -68,7 +68,7 @@ res <- assertError(.Call(
 check_error(res, "'dest' must be an integer vector with length 2.")
 
 res <- assertError(.Call(
-    SimInf:::SimInf_clean_raw_events,
+    SimInf:::SimInf_clean_indiv_events,
     c(1L, 1L),
     c(0L, 2L),
     c(1L, 2L),
@@ -76,7 +76,7 @@ res <- assertError(.Call(
     c(0L, 2L)))
 check_error(res, "'event[2]' is invalid.")
 
-## Check raw events.
+## Check individual events.
 events <- data.frame(
     id    = c(1L, 1L, 1L, 1L),
     event = c(1L, 3L, 3L, 0L),
@@ -556,7 +556,7 @@ events_exp <- data.frame(
 
 stopifnot(identical(events_obs, events_exp))
 
-## Check converting raw events to u0
+## Check converting individual events to u0
 events <- data.frame(
     id    = c(1, 1, 1, 1,
               2, 2, 2, 2),
