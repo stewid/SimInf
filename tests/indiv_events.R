@@ -634,11 +634,19 @@ stopifnot(identical(
         node = logical(0),
         age = integer(0))))
 
-show_expected <- c("Number of events: 6")
+show_expected <- c(
+    "Number of individuals: 2",
+    "Number of events: 6")
 show_observed <- capture.output(show(individual_events(events)))
 stopifnot(identical(show_observed, show_expected))
 
-summary_expected <- c("Number of events: 6")
+summary_expected <- c(
+    "Number of individuals: 2",
+    "Number of events: 6",
+    " - Exit: 2",
+    " - Enter: 2",
+    " - Internal transfer: 0",
+    " - External transfer: 2")
 summary_observed <- capture.output(summary(individual_events(events)))
 stopifnot(identical(summary_observed, summary_expected))
 

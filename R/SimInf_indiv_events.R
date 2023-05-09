@@ -102,7 +102,9 @@ setMethod(
     signature(object = "SimInf_indiv_events"),
     function(object) {
         cat(sprintf(
-            "Number of events: %i\n",
+            paste0("Number of individuals: %i\n",
+                   "Number of events: %i\n"),
+            length(unique(object@id)),
             length(object@id)
         ))
 
@@ -121,6 +123,17 @@ setMethod(
     signature(object = "SimInf_indiv_events"),
     function(object, ...) {
         show(object)
+
+        for (i in seq_len(4)) {
+            switch(i,
+                   cat(" - Exit: "),
+                   cat(" - Enter: "),
+                   cat(" - Internal transfer: "),
+                   cat(" - External transfer: "))
+
+            j <- which(object@event == (i - 1L))
+            cat(sprintf("%i\n", length(j)))
+        }
 
         invisible(NULL)
     }
