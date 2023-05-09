@@ -348,17 +348,17 @@ indiv_events_at <- function(events, at) {
 ##'     \code{node}, and \code{age}.
 ##' @export
 setGeneric(
-    "individuals",
+    "get_individuals",
     signature = "x",
     function(x, at = NULL) {
-        standardGeneric("individuals")
+        standardGeneric("get_individuals")
     }
 )
 
-##' @rdname individuals
+##' @rdname get_individuals
 ##' @export
 setMethod(
-    "individuals",
+    "get_individuals",
     signature(x = "SimInf_indiv_events"),
     function(x, at = NULL) {
         ## Check that all individuals have an enter event.

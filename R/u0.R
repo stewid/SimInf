@@ -79,7 +79,7 @@ setMethod(
         }
 
         ## Determine the location and age for all individuals.
-        individuals <- individuals(object, at)
+        individuals <- get_individuals(object, at)
 
         ## Ensure all nodes are included in u0.
         nodes <- setdiff(c(object@node, object@dest), individuals$node)
