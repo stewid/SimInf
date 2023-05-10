@@ -296,29 +296,32 @@ individual_events <- function(events) {
     events$dest[event != 3L] <- NA
     nodes <- check_indiv_events_nodes(event, events$node, events$dest)
 
+    ## Ensure the events are sorted.
+    i <- order(id, time, event)
+
     keep <- .Call(SimInf_clean_indiv_events,
-                  id,
-                  event,
-                  time,
-                  nodes$node,
-                  nodes$dest)
+                  id[i],
+                  event[i],
+                  time[i],
+                  nodes$node[i],
+                  nodes$dest[i])
 
     origin <- attr(time, "origin")
-    time <- time[keep]
+    time <- time[i][keep]
     if (!is.null(origin))
         attr(time, "origin") <- origin
 
     origin <- attr(event, "origin")
-    event <- event[keep]
+    event <- event[i][keep]
     if (!is.null(origin))
         attr(event, "origin") <- origin
 
     methods::new("SimInf_indiv_events",
-                 id    = events$id[keep],
+                 id    = events$id[i][keep],
                  event = event,
                  time  = time,
-                 node  = events$node[keep],
-                 dest  = events$dest[keep])
+                 node  = events$node[i][keep],
+                 dest  = events$dest[i][keep])
 }
 
 ## Check for a valid 'at' parameter

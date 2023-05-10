@@ -613,6 +613,10 @@ u0_exp <- data.frame(
 
 stopifnot(identical(u0_obs, u0_exp))
 
+u0_obs <- u0(individual_events(events[rev(seq_len(nrow(events))), ]))
+
+stopifnot(identical(u0_obs, u0_exp))
+
 stopifnot(identical(
     get_individuals(individual_events(events), "2019-02-02"),
     data.frame(
