@@ -76,7 +76,7 @@ SimInf_find_longest_path(
             continue;
 
         /* Clear the path. */
-        memset(&path[0], 0, n * sizeof(int));
+        memset(path, 0, n * sizeof(int));
 
         /* Initialize the path with the first event. This is the root
          * for the search. */
