@@ -598,7 +598,8 @@ check_error(
     res,
     "'at' must be an integer or date.")
 
-res <- assertError(u0(individual_events(events), at = c("2021-01-01", "2022-01-01")))
+res <- assertError(u0(individual_events(events),
+                      at = c("2021-01-01", "2022-01-01")))
 check_error(
     res,
     "'at' must be an integer or date.")
