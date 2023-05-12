@@ -51,9 +51,9 @@ setMethod(
 )
 
 ##' @rdname u0
-##' @param at the first date ('yyyy-mm-dd') in the events that will be
-##'     used to create u0. If left empty (the default), the earliest
-##'     time among the events will be used.
+##' @param time the time-point that will be used to create u0. If left
+##'     empty (the default), the earliest time among the events will
+##'     be used.
 ##' @param target the SimInf model ('SEIR', 'SIR', 'SIS', 'SISe3',
 ##'     'SISe3_sp', 'SISe', or 'SISe_sp') to target the events and u0
 ##'     for. The default, \code{NULL}, creates an \code{u0}, but where
@@ -64,7 +64,7 @@ setMethod(
 setMethod(
     "u0",
     signature(object = "SimInf_indiv_events"),
-    function(object, at = NULL, target = NULL, age = NULL) {
+    function(object, time = NULL, target = NULL, age = NULL) {
         ## Check for valid target model.
         if (!is.null(target)) {
             target <- match.arg(target, c("SEIR", "SIR", "SIS",
@@ -79,7 +79,7 @@ setMethod(
         }
 
         ## Determine the location and age for all individuals.
-        individuals <- get_individuals(object, at)
+        individuals <- get_individuals(object, time)
 
         ## Ensure all nodes are included in u0.
         nodes <- setdiff(c(object@node, object@dest), individuals$node)

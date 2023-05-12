@@ -324,31 +324,31 @@ individual_events <- function(events) {
                  dest  = events$dest[i][keep])
 }
 
-## Check for a valid 'at' parameter
-indiv_events_at <- function(events, at) {
-    msg <- "'at' must be an integer or date."
+## Check for a valid 'time' parameter
+indiv_events_time <- function(events, time) {
+    msg <- "'time' must be an integer or date."
 
-    if (is.null(at))
+    if (is.null(time))
         return(min(events@time))
 
-    if (is.numeric(at)) {
-        if (any(!all(is_wholenumber(at)), length(at) != 1L, anyNA(at)))
+    if (is.numeric(time)) {
+        if (any(!all(is_wholenumber(time)), length(time) != 1L, anyNA(time)))
             stop(msg, call. = FALSE)
-        return(as.integer(at))
+        return(as.integer(time))
     }
 
-    if (is.character(at) || is.factor(at))
-        at <- as.Date(at)
+    if (is.character(time) || is.factor(time))
+        time <- as.Date(time)
 
-    if (any(anyNA(at), length(at) != 1L))
+    if (any(anyNA(time), length(time) != 1L))
         stop(msg, call. = FALSE)
 
-    if (methods::is(at, "Date")) {
+    if (methods::is(time, "Date")) {
         origin <- attr(events@time, "origin")
         if (is.null(origin))
-            stop("'at' must be an integer.", call. = FALSE)
+            stop("'time' must be an integer.", call. = FALSE)
         origin <- as.Date(origin)
-        return(as.integer(julian(at, origin = origin)))
+        return(as.integer(julian(time, origin = origin)))
     }
 
     stop(msg, call. = FALSE)
@@ -360,8 +360,8 @@ indiv_events_at <- function(events, at) {
 ##' at a specified time-point.
 ##' @param x an individual events object of class
 ##'     \code{SimInf_indiv_events}.
-##' @param at the time-point for the lookup of individuals. Default is
-##'     \code{NULL} which means to extract the individuals at the
+##' @param time the time-point for the lookup of individuals. Default
+##'     is \code{NULL} which means to extract the individuals at the
 ##'     minimum time-point in the events object \code{x}.
 ##' @return a \code{data.frame} with the columns \code{id},
 ##'     \code{node}, and \code{age}.
@@ -369,7 +369,7 @@ indiv_events_at <- function(events, at) {
 setGeneric(
     "get_individuals",
     signature = "x",
-    function(x, at = NULL) {
+    function(x, time = NULL) {
         standardGeneric("get_individuals")
     }
 )
@@ -379,15 +379,15 @@ setGeneric(
 setMethod(
     "get_individuals",
     signature(x = "SimInf_indiv_events"),
-    function(x, at = NULL) {
+    function(x, time = NULL) {
         ## Check that all individuals have an enter event.
         if (length(setdiff(x@id, x@id[x@event == 1L])))
             stop("All individuals must have an 'enter' event.", call. = FALSE)
 
-        ## Keep events that occur <= 'at'. Drop individuals that exit
-        ## before 'at'.
-        at <- indiv_events_at(x, at)
-        k <- which(x@time <= at)
+        ## Keep events that occur <= 'time'. Drop individuals that
+        ## exit before 'time'.
+        time <- indiv_events_time(x, time)
+        k <- which(x@time <= time)
         drop <- unique(x@id[k[x@event[k] == 0L]])
         k <- k[!(x@id[k] %in% drop)]
 
@@ -400,7 +400,7 @@ setMethod(
 
         ## Determine age in days of each individual by subtracting the
         ## current time with the first event for each individual.
-        age <- at - x@time[as.integer(tapply(k, x@id[k], min))]
+        age <- time - x@time[as.integer(tapply(k, x@id[k], min))]
 
         data.frame(id = x@id[l], node = node, age = age)
     }

@@ -570,49 +570,49 @@ events <- data.frame(
               NA, 2, 2, NA))
 
 stopifnot(identical(
-    u0(individual_events(events), at = 0),
+    u0(individual_events(events), time = 0),
     data.frame(node = c(1, 2), S_1 = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), at = 1),
+    u0(individual_events(events), time = 1),
     data.frame(node = c(1, 2), S_1 = c(1L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), at = 2),
+    u0(individual_events(events), time = 2),
     data.frame(node = c(1, 2), S_1 = c(1L, 1L))))
 
 stopifnot(identical(
-    u0(individual_events(events), at = 3),
+    u0(individual_events(events), time = 3),
     data.frame(node = c(1, 2), S_1 = c(0L, 2L))))
 
 stopifnot(identical(
-    u0(individual_events(events), at = 4),
+    u0(individual_events(events), time = 4),
     data.frame(node = c(1, 2), S_1 = c(0L, 1L))))
 
 stopifnot(identical(
-    u0(individual_events(events), at = 5),
+    u0(individual_events(events), time = 5),
     data.frame(node = c(1, 2), S_1 = c(0L, 0L))))
 
-res <- assertError(u0(individual_events(events), at = 4.3))
+res <- assertError(u0(individual_events(events), time = 4.3))
 check_error(
     res,
-    "'at' must be an integer or date.")
+    "'time' must be an integer or date.")
 
 res <- assertError(u0(individual_events(events),
-                      at = c("2021-01-01", "2022-01-01")))
+                      time = c("2021-01-01", "2022-01-01")))
 check_error(
     res,
-    "'at' must be an integer or date.")
+    "'time' must be an integer or date.")
 
-res <- assertError(u0(individual_events(events), at = "2021-01-01"))
+res <- assertError(u0(individual_events(events), time = "2021-01-01"))
 check_error(
     res,
-    "'at' must be an integer.")
+    "'time' must be an integer.")
 
-res <- assertError(u0(individual_events(events), at = list()))
+res <- assertError(u0(individual_events(events), time = list()))
 check_error(
     res,
-    "'at' must be an integer or date.")
+    "'time' must be an integer or date.")
 
 events <- data.frame(
     id    = c("individual-1", "individual-1", "individual-1", "individual-1",

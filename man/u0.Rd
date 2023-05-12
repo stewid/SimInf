@@ -10,7 +10,7 @@ u0(object, ...)
 
 \S4method{u0}{SimInf_model}(object, ...)
 
-\S4method{u0}{SimInf_indiv_events}(object, at = NULL, target = NULL, age = NULL)
+\S4method{u0}{SimInf_indiv_events}(object, time = NULL, target = NULL, age = NULL)
 }
 \arguments{
 \item{object}{The object to get the initial compartment state
@@ -18,9 +18,9 @@ u0(object, ...)
 
 \item{...}{Additional arguments.}
 
-\item{at}{the first date ('yyyy-mm-dd') in the events that will be
-used to create u0. If left empty (the default), the earliest
-time among the events will be used.}
+\item{time}{the time-point that will be used to create u0. If left
+empty (the default), the earliest time among the events will
+be used.}
 
 \item{target}{the SimInf model ('SEIR', 'SIR', 'SIS', 'SISe3',
 'SISe3_sp', 'SISe', or 'SISe_sp') to target the events and u0
