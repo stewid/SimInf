@@ -593,6 +593,26 @@ stopifnot(identical(
     u0(individual_events(events), at = 5),
     data.frame(node = c(1, 2), S_1 = c(0L, 0L))))
 
+res <- assertError(u0(individual_events(events), at = 4.3))
+check_error(
+    res,
+    "'at' must be an integer or date.")
+
+res <- assertError(u0(individual_events(events), at = c("2021-01-01", "2022-01-01")))
+check_error(
+    res,
+    "'at' must be an integer or date.")
+
+res <- assertError(u0(individual_events(events), at = "2021-01-01"))
+check_error(
+    res,
+    "'at' must be an integer.")
+
+res <- assertError(u0(individual_events(events), at = list()))
+check_error(
+    res,
+    "'at' must be an integer or date.")
+
 events <- data.frame(
     id    = c("individual-1", "individual-1", "individual-1", "individual-1",
               "individual-2", "individual-2", "individual-2", "individual-2"),

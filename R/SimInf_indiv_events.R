@@ -333,7 +333,7 @@ indiv_events_at <- function(events, at) {
 
     if (is.numeric(at)) {
         if (any(!all(is_wholenumber(at)), length(at) != 1L, anyNA(at)))
-            stop("'at' must be an integer or date.", call. = FALSE)
+            stop(msg, call. = FALSE)
         return(as.integer(at))
     }
 
@@ -344,7 +344,10 @@ indiv_events_at <- function(events, at) {
         stop(msg, call. = FALSE)
 
     if (methods::is(at, "Date")) {
-        origin <- as.Date(attr(events@time, "origin"))
+        origin <- attr(events@time, "origin")
+        if (is.null(origin))
+            stop("'at' must be an integer.", call. = FALSE)
+        origin <- as.Date(origin)
         return(as.integer(julian(at, origin = origin)))
     }
 
