@@ -522,7 +522,7 @@ setMethod(
 setGeneric(
     "events",
     signature = "object",
-    function(object) {
+    function(object, ...) {
         standardGeneric("events")
     }
 )
@@ -532,7 +532,7 @@ setGeneric(
 setMethod(
     "events",
     signature(object = "SimInf_model"),
-    function(object) {
+    function(object, ...) {
         object@events
     }
 )

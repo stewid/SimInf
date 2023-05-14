@@ -7,9 +7,7 @@
 \S4method{plot}{SimInf_indiv_events}(x, frame.plot = FALSE, ...)
 }
 \arguments{
-\item{x}{The raw events data to plot.}
-
-\item{frame.plot}{Draw a frame around each plot. Default is FALSE.}
+\item{x}{The individual events data to plot.}
 
 \item{...}{Additional arguments affecting the plot}
 }

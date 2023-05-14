@@ -408,8 +408,7 @@ setMethod(
 
 ##' Display the distribution of individual events over time
 ##'
-##' @param x The raw events data to plot.
-##' @param frame.plot Draw a frame around each plot. Default is FALSE.
+##' @param x The individual events data to plot.
 ##' @param ... Additional arguments affecting the plot
 ##' @aliases plot,SimInf_indiv_events-method
 ##' @export
@@ -437,5 +436,38 @@ setMethod(
         plot_SimInf_events(xx, yy, "Enter", frame.plot, ...)
         plot_SimInf_events(xx, yy, "Internal transfer", frame.plot, ...)
         plot_SimInf_events(xx, yy, "External transfer", frame.plot, ...)
+    }
+)
+
+##' @rdname events
+##' @export
+setMethod(
+    "events",
+    signature(object = "SimInf_indiv_events"),
+    function(object, time = NULL, target = NULL, age = NULL) {
+        ## Check for valid target model.
+        if (!is.null(target)) {
+            target <- match.arg(target, c("SEIR", "SIR", "SIS",
+                                          "SISe3", "SISe3_sp", "SISe",
+                                          "SISe_sp"))
+        } else {
+            stop("Not implemented.", call. = FALSE)
+        }
+
+        ## Keep events that occur after 'time'.
+        i <- which(object@time > indiv_events_time(object, time))
+
+        node <- object@node[i]
+        dest <- object@dest[i]
+        dest[is.na(dest)] <- 0L
+
+        data.frame(event      = object@event[i],
+                   time       = object@time[i],
+                   node       = node,
+                   dest       = dest,
+                   n          = 1,
+                   proportion = 0,
+                   select     = 1,
+                   shift      = 0)
     }
 )
