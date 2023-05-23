@@ -2,7 +2,7 @@
  * This file is part of SimInf, a framework for stochastic
  * disease spread simulations.
  *
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2023 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  */
 
 #include <R.h>
-#include <Rdefines.h>
 #include <Rmath.h>
 #include <R_ext/Visibility.h>
 #include <gsl/gsl_matrix.h>
@@ -312,7 +311,7 @@ SimInf_abc_weights(
         goto cleanup;
     }
 
-    n_parameters = INTEGER(GET_SLOT(sigma, R_DimSymbol))[0];
+    n_parameters = INTEGER(R_do_slot(sigma, R_DimSymbol))[0];
     ptr_p1 = REAL(p1);
     ptr_p2 = REAL(p2);
     ptr_x = REAL(x);

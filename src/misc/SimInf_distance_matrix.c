@@ -2,7 +2,7 @@
  * This file is part of SimInf, a framework for stochastic
  * disease spread simulations.
  *
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2023 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,8 +136,8 @@ SimInf_distance_matrix(
     SET_SLOT(result, Rf_install("x"), distance);
     SET_SLOT(result, Rf_install("i"), row_indices);
     SET_SLOT(result, Rf_install("p"), col_indices);
-    INTEGER(GET_SLOT(result, Rf_install("Dim")))[0] = len;
-    INTEGER(GET_SLOT(result, Rf_install("Dim")))[1] = len;
+    INTEGER(R_do_slot(result, Rf_install("Dim")))[0] = len;
+    INTEGER(R_do_slot(result, Rf_install("Dim")))[1] = len;
 
     UNPROTECT(4);
 
