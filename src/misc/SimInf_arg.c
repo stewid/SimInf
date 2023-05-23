@@ -21,7 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rdefines.h>
+#include <Rinternals.h>
 #include <R_ext/Visibility.h>
 #include "SimInf.h"
 

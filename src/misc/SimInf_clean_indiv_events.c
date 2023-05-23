@@ -20,7 +20,7 @@
  */
 
 #include <R.h>
-#include <Rdefines.h>
+#include <Rinternals.h>
 #include <R_ext/Visibility.h>
 #include "SimInf.h"
 #include "SimInf_openmp.h"
