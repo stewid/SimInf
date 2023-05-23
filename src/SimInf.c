@@ -207,7 +207,7 @@ SimInf_run(
     } else {
         PROTECT(U = Rf_allocMatrix(INTSXP, args.Nn * args.Nc, args.tlen));
         nprotect++;
-        SET_SLOT(result, Rf_install("U"), U);
+        R_do_slot_assign(result, Rf_install("U"), U);
         args.U = INTEGER(R_do_slot(result, Rf_install("U")));
     }
 
@@ -221,7 +221,7 @@ SimInf_run(
     } else {
         PROTECT(V = Rf_allocMatrix(REALSXP, args.Nn * args.Nd, args.tlen));
         nprotect++;
-        SET_SLOT(result, Rf_install("V"), V);
+        R_do_slot_assign(result, Rf_install("V"), V);
         args.V = REAL(R_do_slot(result, Rf_install("V")));
     }
 
