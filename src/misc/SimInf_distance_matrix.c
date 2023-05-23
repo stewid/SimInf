@@ -132,7 +132,7 @@ SimInf_distance_matrix(
         INTEGER(col_indices));
 
     /* Create the sparse matrix. */
-    PROTECT(result = NEW_OBJECT(MAKE_CLASS("dgCMatrix")));
+    PROTECT(result = R_do_new_object(MAKE_CLASS("dgCMatrix")));
     R_do_slot_assign(result, Rf_install("x"), distance);
     R_do_slot_assign(result, Rf_install("i"), row_indices);
     R_do_slot_assign(result, Rf_install("p"), col_indices);
