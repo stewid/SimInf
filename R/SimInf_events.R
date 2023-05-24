@@ -504,6 +504,7 @@ setMethod(
 ##'
 ##' Extract the scheduled events from a \code{SimInf_model} object.
 ##' @param object The \code{model} to extract the events from.
+##' @param ... Additional arguments affecting the generated events.
 ##' @return \code{\linkS4class{SimInf_events}} object.
 ##' @export
 ##' @examples
