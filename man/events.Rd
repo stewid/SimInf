@@ -14,6 +14,21 @@ events(object, ...)
 }
 \arguments{
 \item{object}{The \code{model} to extract the events from.}
+
+\item{...}{Additional arguments affecting the generated events.}
+
+\item{time}{Only used when object is of class
+\code{SimInf_indiv_events} object. All events that occur after
+\sQuote{time} are included. Default is \code{NULL} which means
+to extract the events after the minimum time-point in the
+\code{SimInf_indiv_events} object.}
+
+\item{target}{the SimInf model ('SEIR', 'SIR', 'SIS', 'SISe3',
+'SISe3_sp', 'SISe', or 'SISe_sp') to target the events and u0
+for. The default, \code{NULL}, creates events but they might
+have to be post-processed to fit the specific use case.}
+
+\item{age}{FIXME.}
 }
 \value{
 \code{\linkS4class{SimInf_events}} object.

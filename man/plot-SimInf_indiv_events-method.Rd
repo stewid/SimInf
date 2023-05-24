@@ -9,7 +9,11 @@
 \arguments{
 \item{x}{The individual events data to plot.}
 
-\item{...}{Additional arguments affecting the plot}
+\item{frame.plot}{a logical indicating whether a box should be
+drawn around the plot.}
+
+\item{...}{Other graphical parameters that are passed on to the
+plot function.}
 }
 \description{
 Display the distribution of individual events over time
