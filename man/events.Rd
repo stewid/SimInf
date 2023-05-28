@@ -23,12 +23,16 @@ events(object, ...)
 to extract the events after the minimum time-point in the
 \code{SimInf_indiv_events} object.}
 
-\item{target}{the SimInf model ('SEIR', 'SIR', 'SIS', 'SISe3',
-'SISe3_sp', 'SISe', or 'SISe_sp') to target the events and u0
-for. The default, \code{NULL}, creates events but they might
-have to be post-processed to fit the specific use case.}
+\item{target}{Only used when object is of class
+\code{SimInf_indiv_events} object. The SimInf model ('SEIR',
+'SIR', 'SIS', 'SISe3', 'SISe3_sp', 'SISe', or 'SISe_sp') to
+target the events and u0 for. The default, \code{NULL},
+creates events but they might have to be post-processed to fit
+the specific use case.}
 
-\item{age}{FIXME.}
+\item{age}{Only used when object is of class
+\code{SimInf_indiv_events} object. Integer vector with break
+points in days for the ageing events.}
 }
 \value{
 \code{\linkS4class{SimInf_events}} object.
