@@ -63,6 +63,7 @@
 ##'
 ##' \Widgren2019
 ##' @docType package
+##' @aliases SimInf-package
 ##' @name SimInf
 ##' @useDynLib SimInf, .registration=TRUE
 NULL
