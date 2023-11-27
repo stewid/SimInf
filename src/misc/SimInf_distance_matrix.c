@@ -44,7 +44,7 @@ SimInf_Euclidean_distance(
                 double d = hypot(x[i] - x[j], y[i] - y[j]);
 
                 if (!R_FINITE(d))
-                    Rf_error("Invalid distance for i=%i and j=%i.", i, j);
+                    Rf_error("Invalid distance for i=%li and j=%li.", i, j);
 
                 if (d <= cutoff) {
                     if (d <= 0) {
@@ -96,7 +96,7 @@ SimInf_distance_matrix(
     if (len < 1)
         Rf_error("'x' must be a numeric vector with length > 0.");
     if (XLENGTH(y_) != len)
-        Rf_error("'y' must be a numeric vector with length %i.", len);
+        Rf_error("'y' must be a numeric vector with length %li.", len);
 
     /* Check for valid cutoff. */
     if (!R_FINITE(cutoff) || cutoff < 0)
