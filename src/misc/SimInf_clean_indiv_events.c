@@ -22,6 +22,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <R_ext/Visibility.h>
+#include <inttypes.h>
 #include "SimInf.h"
 #include "SimInf_openmp.h"
 
@@ -189,13 +190,13 @@ SimInf_clean_indiv_events(
     if (len < 0)
         Rf_error("'id' must be an integer vector with length >= 0.");
     if (XLENGTH(event) != len)
-        Rf_error("'event' must be an integer vector with length %li.", len);
+        Rf_error("'event' must be an integer vector with length %"PRIiMAX".", len);
     if (XLENGTH(time) != len)
-        Rf_error("'time' must be an integer vector with length %li.", len);
+        Rf_error("'time' must be an integer vector with length %"PRIiMAX".", len);
     if (XLENGTH(node) != len)
-        Rf_error("'node' must be an integer vector with length %li.", len);
+        Rf_error("'node' must be an integer vector with length %"PRIiMAX".", len);
     if (XLENGTH(dest) != len)
-        Rf_error("'dest' must be an integer vector with length %li.", len);
+        Rf_error("'dest' must be an integer vector with length %"PRIiMAX".", len);
 
     for (R_xlen_t i = 0; i < len; i++) {
         switch (ptr_event[i]) {
@@ -204,7 +205,7 @@ SimInf_clean_indiv_events(
         case EXTERNAL_TRANSFER_EVENT:
             break;
         default:
-            Rf_error("'event[%li]' is invalid.", i + 1);
+            Rf_error("'event[%"PRIiMAX"]' is invalid.", i + 1);
         }
     }
 
