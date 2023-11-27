@@ -236,8 +236,8 @@ SISe3 <- function(u0,
 ##' days. The events are divided into three types: \sQuote{Exit}
 ##' events remove individuals from the population (n = 182535),
 ##' \sQuote{Enter} events add individuals to the population (n =
-##' 182685), sQuote{Internal transfer} events move individuals between
-##' compartmens within one node e.g. ageing (n = 317081), and
+##' 182685), \sQuote{Internal transfer} events move individuals
+##' between compartmens within one node e.g. ageing (n = 317081), and
 ##' \sQuote{External transfer} events move individuals between nodes
 ##' in the population (n = 101472). The vignette contains a detailed
 ##' description of how scheduled events operate on a model.
