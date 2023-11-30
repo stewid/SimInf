@@ -20,6 +20,7 @@
 
 #include <Rinternals.h>
 #include <R_ext/Visibility.h>
+#include "SimInf.h"
 
 static R_xlen_t
 SimInf_Euclidean_distance(
@@ -44,7 +45,7 @@ SimInf_Euclidean_distance(
                 double d = hypot(x[i] - x[j], y[i] - y[j]);
 
                 if (!R_FINITE(d))
-                    Rf_error("Invalid distance for i=%i and j=%i.", i, j);
+                    Rf_error("Invalid distance for i=%" R_PRIdXLEN_T " and j=%" R_PRIdXLEN_T ".", i, j);
 
                 if (d <= cutoff) {
                     if (d <= 0) {

@@ -27,6 +27,14 @@
 #include <R.h>
 #include <Rinternals.h>
 
+#ifndef R_PRIdXLEN_T
+#  ifdef LONG_VECTOR_SUPPORT
+#    define R_PRIdXLEN_T "td"
+#  else
+#    define R_PRIdXLEN_T "d"
+#  endif
+#endif
+
 /**
  * Event types
  *

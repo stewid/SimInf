@@ -189,13 +189,13 @@ SimInf_clean_indiv_events(
     if (len < 0)
         Rf_error("'id' must be an integer vector with length >= 0.");
     if (XLENGTH(event) != len)
-        Rf_error("'event' must be an integer vector with length %i.", len);
+        Rf_error("'event' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
     if (XLENGTH(time) != len)
-        Rf_error("'time' must be an integer vector with length %i.", len);
+        Rf_error("'time' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
     if (XLENGTH(node) != len)
-        Rf_error("'node' must be an integer vector with length %i.", len);
+        Rf_error("'node' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
     if (XLENGTH(dest) != len)
-        Rf_error("'dest' must be an integer vector with length %i.", len);
+        Rf_error("'dest' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
 
     for (R_xlen_t i = 0; i < len; i++) {
         switch (ptr_event[i]) {
@@ -204,7 +204,7 @@ SimInf_clean_indiv_events(
         case EXTERNAL_TRANSFER_EVENT:
             break;
         default:
-            Rf_error("'event[%i]' is invalid.", i + 1);
+            Rf_error("'event[%" R_PRIdXLEN_T "]' is invalid.", i + 1);
         }
     }
 
