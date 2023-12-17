@@ -97,7 +97,7 @@ SimInf_distance_matrix(
     if (len < 1)
         Rf_error("'x' must be a numeric vector with length > 0.");
     if (XLENGTH(y_) != len)
-        Rf_error("'y' must be a numeric vector with length %i.", len);
+        Rf_error("'y' must be a numeric vector with length %" R_PRIdXLEN_T ".", len);
 
     /* Check for valid cutoff. */
     if (!R_FINITE(cutoff) || cutoff < 0)
