@@ -200,6 +200,7 @@ events_SEIR <- function() {
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
+##' \dontrun{
 ##' ## Create an 'SEIR' model with 1600 nodes and initialize it to
 ##' ## run over 4*365 days and record data at weekly time-points.
 ##' ## Add ten infected individuals to the first node.
@@ -219,6 +220,7 @@ events_SEIR <- function() {
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
+##' }
 u0_SEIR <- function() {
     u0 <- u0_SIR()
     u0$E <- 0L

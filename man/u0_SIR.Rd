@@ -20,6 +20,7 @@ nodes. Note that the \sQuote{I} and \sQuote{R} compartments are
 zero.
 }
 \examples{
+\dontrun{
 ## Create an 'SIR' model with 1600 nodes and initialize
 ## it to run over 4*365 days. Add one infected individual
 ## to the first node.
@@ -38,4 +39,5 @@ plot(result)
 
 ## Summarize trajectory
 summary(result)
+}
 }

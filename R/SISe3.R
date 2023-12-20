@@ -292,6 +292,7 @@ NULL
 ##' @format A \code{data.frame}
 ##' @keywords dataset
 ##' @examples
+##' \dontrun{
 ##' ## Create an 'SISe3' model with 1600 nodes and initialize it to
 ##' ## run over 4*365 days and record data at weekly time-points.
 ##'
@@ -326,4 +327,5 @@ NULL
 ##' ## Plot the proportion of nodes with at least one infected
 ##' ## individual.
 ##' plot(result, I_1 + I_2 + I_3 ~ ., level = 2, type = "l")
+##' }
 NULL
