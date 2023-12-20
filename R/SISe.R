@@ -192,6 +192,12 @@ SISe <- function(u0,
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
+##' ## For reproducibility, call the set.seed() function and specify
+##' ## the number of threads to use. To use all available threads,
+##' ## remove the set_num_threads() call.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SISe' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
@@ -234,6 +240,12 @@ events_SISe <- function() {
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
+##' ## For reproducibility, call the set.seed() function and specify
+##' ## the number of threads to use. To use all available threads,
+##' ## remove the set_num_threads() call.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SISe' model with 1600 nodes and initialize it to
 ##' ## run over 4*365 days and record data at weekly time-points.
 ##'

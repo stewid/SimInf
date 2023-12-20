@@ -29,6 +29,12 @@ in the population (n = 101472). The vignette contains a detailed
 description of how scheduled events operate on a model.
 }
 \examples{
+## For reproducibility, call the set.seed() function and specify
+## the number of threads to use. To use all available threads,
+## remove the set_num_threads() call.
+set.seed(123)
+set_num_threads(1)
+
 ## Create an 'SISe3' model with 1600 nodes and initialize
 ## it to run over 4*365 days. Add one infected individual
 ## to the first node.
