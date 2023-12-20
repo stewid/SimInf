@@ -29,7 +29,6 @@ in the population (n = 101472). The vignette contains a detailed
 description of how scheduled events operate on a model.
 }
 \examples{
-\dontrun{
 ## Create an 'SISe3' model with 1600 nodes and initialize
 ## it to run over 4*365 days. Add one infected individual
 ## to the first node.
@@ -55,6 +54,5 @@ result <- run(model)
 ## Summarize the trajectory. The summary includes the number of
 ## events by event type.
 summary(result)
-}
 }
 \keyword{dataset}

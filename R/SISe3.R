@@ -247,7 +247,6 @@ SISe3 <- function(u0,
 ##' @format A \code{data.frame}
 ##' @keywords dataset
 ##' @examples
-##' \dontrun{
 ##' ## Create an 'SISe3' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
@@ -273,7 +272,6 @@ SISe3 <- function(u0,
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
 ##' summary(result)
-##' }
 NULL
 
 ##' Example data to initialize the \sQuote{SISe3} model
