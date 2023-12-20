@@ -20,6 +20,7 @@ A \code{data.frame} with the number of individuals in the
 compartments are zero.
 }
 \examples{
+\dontrun{
 ## For reproducibility, call the set.seed() function and specify
 ## the number of threads to use. To use all available threads,
 ## remove the set_num_threads() call.
@@ -45,4 +46,5 @@ plot(result)
 
 ## Summarize trajectory
 summary(result)
+}
 }

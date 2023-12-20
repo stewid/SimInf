@@ -240,6 +240,7 @@ events_SISe <- function() {
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
+##' \dontrun{
 ##' ## For reproducibility, call the set.seed() function and specify
 ##' ## the number of threads to use. To use all available threads,
 ##' ## remove the set_num_threads() call.
@@ -278,6 +279,7 @@ events_SISe <- function() {
 ##' ## Plot the proportion of nodes with at least one infected
 ##' ## individual.
 ##' plot(result, I~S+I, level = 2, type = "l")
+##' }
 u0_SISe <- function() {
     u0 <- u0_SIR()
     u0[, c("S", "I")]

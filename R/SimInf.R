@@ -87,6 +87,7 @@ NULL
 ##' @format A \code{data.frame}
 ##' @keywords dataset
 ##' @examples
+##' \dontrun{
 ##' ## For reproducibility, call the set.seed() function and specify
 ##' ## the number of threads to use. To use all available threads,
 ##' ## remove the set_num_threads() call.
@@ -117,4 +118,5 @@ NULL
 ##' data("nodes", package = "SimInf")
 ##' col <- ifelse(infected, "blue", "yellow")
 ##' plot(y ~ x, nodes, col = col, pch = 20, cex = 2)
+##' }
 NULL

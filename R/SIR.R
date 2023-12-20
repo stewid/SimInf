@@ -211,6 +211,7 @@ events_SIR <- function() {
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
+##' \dontrun{
 ##' ## For reproducibility, call the set.seed() function and specify
 ##' ## the number of threads to use. To use all available threads,
 ##' ## remove the set_num_threads() call.
@@ -235,6 +236,7 @@ events_SIR <- function() {
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
+##' }
 u0_SIR <- function() {
     utils::data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3

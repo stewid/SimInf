@@ -296,6 +296,7 @@ NULL
 ##' @format A \code{data.frame}
 ##' @keywords dataset
 ##' @examples
+##' \dontrun{
 ##' ## For reproducibility, call the set.seed() function and specify
 ##' ## the number of threads to use. To use all available threads,
 ##' ## remove the set_num_threads() call.
@@ -336,4 +337,5 @@ NULL
 ##' ## Plot the proportion of nodes with at least one infected
 ##' ## individual.
 ##' plot(result, I_1 + I_2 + I_3 ~ ., level = 2, type = "l")
+##' }
 NULL

@@ -15,6 +15,7 @@ Example data to initialize a population of 1600 nodes and
 demonstrate various models.
 }
 \examples{
+\dontrun{
 ## For reproducibility, call the set.seed() function and specify
 ## the number of threads to use. To use all available threads,
 ## remove the set_num_threads() call.
@@ -45,5 +46,6 @@ infected <- colSums(trajectory(result, ~ I, format = "matrix")) > 0
 data("nodes", package = "SimInf")
 col <- ifelse(infected, "blue", "yellow")
 plot(y ~ x, nodes, col = col, pch = 20, cex = 2)
+}
 }
 \keyword{dataset}
