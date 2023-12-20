@@ -192,6 +192,7 @@ SISe <- function(u0,
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
+##' \dontrun{
 ##' ## Create an 'SISe' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
@@ -214,6 +215,7 @@ SISe <- function(u0,
 ##' ## Summarize the trajectory. The summary includes the number of
 ##' ## events by event type.
 ##' summary(result)
+##' }
 events_SISe <- function() {
     utils::data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 2L
