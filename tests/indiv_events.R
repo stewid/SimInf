@@ -21,6 +21,12 @@ library(SimInf)
 library(tools)
 source("util/check.R")
 
+## Specify the number of threads to use.
+set_num_threads(1)
+
+## For debugging
+sessionInfo()
+
 ## Check to pass vectors of different lengths.
 res <- assertError(.Call(
     SimInf:::SimInf_clean_indiv_events,
