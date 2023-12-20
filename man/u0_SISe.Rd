@@ -19,7 +19,6 @@ A \code{data.frame} with the number of individuals in the
 the \sQuote{I} compartment is zero.
 }
 \examples{
-\dontrun{
 ## Create an 'SISe' model with 1600 nodes and initialize it to
 ## run over 4*365 days and record data at weekly time-points.
 
@@ -52,5 +51,4 @@ summary(result)
 ## Plot the proportion of nodes with at least one infected
 ## individual.
 plot(result, I~S+I, level = 2, type = "l")
-}
 }

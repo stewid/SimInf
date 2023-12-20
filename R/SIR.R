@@ -207,7 +207,6 @@ events_SIR <- function() {
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
-##' \dontrun{
 ##' ## Create an 'SIR' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
@@ -226,7 +225,6 @@ events_SIR <- function() {
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
-##' }
 u0_SIR <- function() {
     utils::data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3

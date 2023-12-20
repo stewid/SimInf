@@ -22,7 +22,6 @@ that the \sQuote{I_1}, \sQuote{I_2} and \sQuote{I_3} compartments
 are zero.
 }
 \examples{
-\dontrun{
 ## Create an 'SISe3' model with 1600 nodes and initialize it to
 ## run over 4*365 days and record data at weekly time-points.
 
@@ -57,6 +56,5 @@ summary(result)
 ## Plot the proportion of nodes with at least one infected
 ## individual.
 plot(result, I_1 + I_2 + I_3 ~ ., level = 2, type = "l")
-}
 }
 \keyword{dataset}

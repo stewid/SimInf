@@ -19,7 +19,6 @@ A \code{data.frame} with the number of individuals in the
 the \sQuote{I} compartment is zero.
 }
 \examples{
-\dontrun{
 ## Create an 'SIS' model with 1600 nodes and initialize
 ## it to run over 4*365 days. Add one infected individual
 ## to the first node.
@@ -38,5 +37,4 @@ plot(result)
 
 ## Summarize trajectory
 summary(result)
-}
 }

@@ -195,7 +195,6 @@ events_SIS <- function() {
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
-##' \dontrun{
 ##' ## Create an 'SIS' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
@@ -214,7 +213,6 @@ events_SIS <- function() {
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
-##' }
 u0_SIS <- function() {
     u0_SISe()
 }
