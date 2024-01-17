@@ -49,3 +49,29 @@ code from a model specification, see
 \references{
 \Widgren2019
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/stewid/SimInf}
+  \item Report bugs at \url{https://github.com/stewid/SimInf/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Stefan Widgren \email{stefan.widgren@gmail.com} (\href{https://orcid.org/0000-0001-5745-2284}{ORCID})
+
+Authors:
+\itemize{
+  \item Robin Eriksson (\href{https://orcid.org/0000-0002-4291-712X}{ORCID})
+  \item Stefan Engblom (\href{https://orcid.org/0000-0002-3614-1732}{ORCID})
+  \item Pavol Bauer (\href{https://orcid.org/0000-0003-4328-7171}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item Thomas Rosendal (\href{https://orcid.org/0000-0002-6576-9668}{ORCID}) [contributor]
+  \item Ivana Rodriguez Ewerlöf (\href{https://orcid.org/0000-0002-9678-9813}{ORCID}) [contributor]
+  \item Attractive Chaos (Author of 'kvec.h'.) [copyright holder]
+}
+
+}

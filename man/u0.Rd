@@ -28,7 +28,9 @@ for. The default, \code{NULL}, creates an \code{u0}, but where
 the compartments might have to be renamed and post-processed
 to fit the specific use case.}
 
-\item{age}{FIXME.}
+\item{age}{an integer vector with break points in days for the
+ageing events. The default, \code{NULL}, creates an \code{u0}
+where all individuals belong to the same age category.}
 }
 \value{
 a \code{data.frame} with the initial compartment state.
