@@ -577,27 +577,51 @@ events <- data.frame(
 
 stopifnot(identical(
     u0(individual_events(events), time = 0),
-    data.frame(node = c(1, 2), S_1 = c(0L, 0L))))
+    data.frame(node = c(1, 2),
+               S_1 = c(0L, 0L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 1),
-    data.frame(node = c(1, 2), S_1 = c(1L, 0L))))
+    data.frame(node = c(1, 2),
+               S_1 = c(1L, 0L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 2),
-    data.frame(node = c(1, 2), S_1 = c(1L, 1L))))
+    data.frame(node = c(1, 2),
+               S_1 = c(1L, 1L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 3),
-    data.frame(node = c(1, 2), S_1 = c(0L, 2L))))
+    data.frame(node = c(1, 2),
+               S_1 = c(0L, 2L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 4),
-    data.frame(node = c(1, 2), S_1 = c(0L, 1L))))
+    data.frame(node = c(1, 2),
+               S_1 = c(0L, 1L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 5),
-    data.frame(node = c(1, 2), S_1 = c(0L, 0L))))
+    data.frame(node = c(1, 2),
+               S_1 = c(0L, 0L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 3, age = 2),
+    data.frame(node = c(1, 2),
+               S_1 = c(0L, 1L),
+               S_2 = c(0L, 1L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 3, age = 5),
+    data.frame(node = c(1, 2),
+               S_1 = c(0L, 2L),
+               S_2 = c(0L, 0L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 3, age = 1),
+    data.frame(node = c(1, 2),
+               S_1 = c(0L, 0L),
+               S_2 = c(0L, 2L))))
 
 res <- assertError(u0(individual_events(events), time = 4.3))
 check_error(
@@ -619,6 +643,11 @@ res <- assertError(u0(individual_events(events), time = list()))
 check_error(
     res,
     "'time' must be an integer or date.")
+
+res <- assertError(u0(individual_events(events), time = 3, age = -1))
+check_error(
+    res,
+    "'age' must be an integer vector with values > 0.")
 
 events <- data.frame(
     id    = c("individual-1", "individual-1", "individual-1", "individual-1",

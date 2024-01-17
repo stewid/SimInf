@@ -59,7 +59,9 @@ setMethod(
 ##'     for. The default, \code{NULL}, creates an \code{u0}, but where
 ##'     the compartments might have to be renamed and post-processed
 ##'     to fit the specific use case.
-##' @param age FIXME.
+##' @param age an integer vector with break points in days for the
+##'     ageing events. The default, \code{NULL}, creates an \code{u0}
+##'     where all individuals belong to the same age category.
 ##' @export
 setMethod(
     "u0",
@@ -73,9 +75,13 @@ setMethod(
         }
 
         if (is.null(age)) {
-            age <- c(0, Inf)
+            age <- 0
         } else {
-            stop("Not implemented.")
+            ## Check for valid age.
+            age <- sort(unique(as.integer(age)))
+            if (any(age <= 0))
+                stop("'age' must be an integer vector with values > 0.")
+            age <- c(0, age)
         }
 
         ## Determine the location and age for all individuals.
@@ -93,17 +99,31 @@ setMethod(
 
             ## Create u0.
             u0 <- as.data.frame.matrix(table(node, age_category))
+
+            ## Ensure all age categories exist in u0
+            age_category <- setdiff(paste0("S_", seq_len(length(age))),
+                                    colnames(u0))
+            if (length(age_category)) {
+                u0 <- cbind(u0,
+                            matrix(data = 0L,
+                                   nrow = length(nodes),
+                                   ncol = length(age_category),
+                                   dimnames = list(
+                                       NULL,
+                                       age_category)))
+            }
         } else {
             ## Create an empty u0.
             u0 <- as.data.frame.matrix(
                 matrix(data = 0L,
                        nrow = length(nodes),
-                       ncol = length(age) - 1,
+                       ncol = length(age),
                        dimnames = list(
                            nodes,
-                           paste0("S_", seq_len(length(age) - 1)))))
+                           paste0("S_", seq_len(length(age))))))
         }
 
+        u0 <- u0[, paste0("S_", seq_len(length(age))), drop = FALSE]
         u0 <- cbind(node = rownames(u0), u0)
         mode(u0$node) <- mode(node)
         rownames(u0) <- NULL
