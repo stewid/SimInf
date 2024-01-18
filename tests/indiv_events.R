@@ -632,6 +632,14 @@ stopifnot(identical(
                S_1 = c(0L, 0L),
                S_2 = c(0L, 2L))))
 
+res <- assertError(u0(individual_events(events),
+                      time = 3,
+                      age = 1,
+                      target = "SIR"))
+check_error(
+    res,
+    "Invalid 'age' for 'target' model.")
+
 res <- assertError(u0(individual_events(events), time = 4.3))
 check_error(
     res,
