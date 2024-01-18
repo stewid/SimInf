@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -67,17 +67,7 @@ setMethod(
     "u0",
     signature(object = "SimInf_indiv_events"),
     function(object, time = NULL, target = NULL, age = NULL) {
-        if (is.null(age)) {
-            age <- 0
-        } else {
-            ## Check for valid age.
-            age <- sort(unique(as.integer(age)))
-            if (any(age <= 0)) {
-                stop("'age' must be an integer vector with values > 0.",
-                     call. = FALSE)
-            }
-            age <- c(0, age)
-        }
+        age <- check_age(age)
 
         ## Check for valid target model.
         if (!is.null(target)) {
