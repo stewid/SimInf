@@ -570,56 +570,65 @@ events <- data.frame(
               1, 3, 3, 0),
     time  = c(1, 2, 3, 4,
               2, 3, 4, 5),
-    node  = c(1, 1, 2, 2,
-              1, 1, 2, 2),
-    dest  = c(NA, 2, 2, NA,
-              NA, 2, 2, NA))
+    node  = c(10, 10, 20, 20,
+              10, 10, 20, 20),
+    dest  = c(NA, 20, 20, NA,
+              NA, 20, 20, NA))
 
 stopifnot(identical(
     u0(individual_events(events), time = 0),
-    data.frame(node = c(1, 2),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
                S_1 = c(0L, 0L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 1),
-    data.frame(node = c(1, 2),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
                S_1 = c(1L, 0L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 2),
-    data.frame(node = c(1, 2),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
                S_1 = c(1L, 1L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 3),
-    data.frame(node = c(1, 2),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
                S_1 = c(0L, 2L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 4),
-    data.frame(node = c(1, 2),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
                S_1 = c(0L, 1L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 5),
-    data.frame(node = c(1, 2),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
                S_1 = c(0L, 0L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 3, age = 2),
-    data.frame(node = c(1, 2),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
                S_1 = c(0L, 1L),
                S_2 = c(0L, 1L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 3, age = 5),
-    data.frame(node = c(1, 2),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
                S_1 = c(0L, 2L),
                S_2 = c(0L, 0L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 3, age = 1),
-    data.frame(node = c(1, 2),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
                S_1 = c(0L, 0L),
                S_2 = c(0L, 2L))))
 
@@ -664,7 +673,8 @@ events <- data.frame(
 u0_obs <- u0(individual_events(events))
 
 u0_exp <- data.frame(
-    node = c("node-1", "node-2"),
+    key = c("node-1", "node-2"),
+    node = c(1L, 2L),
     S_1 = c(2L, 0L))
 
 stopifnot(identical(u0_obs, u0_exp))

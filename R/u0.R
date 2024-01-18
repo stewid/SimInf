@@ -127,8 +127,10 @@ setMethod(
         }
 
         u0 <- u0[, paste0("S_", seq_len(length(age))), drop = FALSE]
-        u0 <- cbind(node = rownames(u0), u0)
-        mode(u0$node) <- mode(all_nodes)
+        u0 <- cbind(key = rownames(u0),
+                    node = seq_len(nrow(u0)),
+                    u0)
+        mode(u0$key) <- mode(all_nodes)
         rownames(u0) <- NULL
 
         u0
