@@ -88,17 +88,20 @@ setMethod(
         individuals <- get_individuals(object, time)
 
         ## Ensure all nodes are included in u0.
-        nodes <- setdiff(c(object@node, object@dest), individuals$node)
-        nodes <- nodes[!is.na(nodes)]
-        node <- c(individuals$node, nodes)
+        all_nodes <- unique(c(object@node, object@dest))
+        all_nodes <- all_nodes[!is.na(all_nodes)]
+        all_nodes <- sort(all_nodes)
+        missing_nodes <- setdiff(all_nodes, individuals$node)
 
         if (nrow(individuals)) {
             ## Determine the age categories.
             age_category <- paste0("S_", findInterval(individuals$age, age))
-            age_category <- c(age_category, rep(NA_character_, length(nodes)))
+            age_category <- c(age_category,
+                              rep(NA_character_, length(missing_nodes)))
 
             ## Create u0.
-            u0 <- as.data.frame.matrix(table(node, age_category))
+            nodes <- c(individuals$node, missing_nodes)
+            u0 <- as.data.frame.matrix(table(nodes, age_category))
 
             ## Ensure all age categories exist in u0
             age_category <- setdiff(paste0("S_", seq_len(length(age))),
@@ -106,7 +109,7 @@ setMethod(
             if (length(age_category)) {
                 u0 <- cbind(u0,
                             matrix(data = 0L,
-                                   nrow = length(nodes),
+                                   nrow = length(all_nodes),
                                    ncol = length(age_category),
                                    dimnames = list(
                                        NULL,
@@ -116,16 +119,16 @@ setMethod(
             ## Create an empty u0.
             u0 <- as.data.frame.matrix(
                 matrix(data = 0L,
-                       nrow = length(nodes),
+                       nrow = length(all_nodes),
                        ncol = length(age),
                        dimnames = list(
-                           nodes,
+                           all_nodes,
                            paste0("S_", seq_len(length(age))))))
         }
 
         u0 <- u0[, paste0("S_", seq_len(length(age))), drop = FALSE]
         u0 <- cbind(node = rownames(u0), u0)
-        mode(u0$node) <- mode(node)
+        mode(u0$node) <- mode(all_nodes)
         rownames(u0) <- NULL
 
         u0
