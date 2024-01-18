@@ -461,14 +461,8 @@ setMethod(
     "events",
     signature(object = "SimInf_indiv_events"),
     function(object, time = NULL, target = NULL, age = NULL) {
-        ## Check for valid target model.
-        if (!is.null(target)) {
-            target <- match.arg(target, c("SEIR", "SIR", "SIS",
-                                          "SISe3", "SISe3_sp", "SISe",
-                                          "SISe_sp"))
-        } else {
-            stop("Not implemented.", call. = FALSE)
-        }
+        age <- check_age(age)
+        target <- check_target(target, age)
 
         ## Keep events that occur after 'time'.
         i <- which(object@time > indiv_events_time(object, time))
