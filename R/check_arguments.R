@@ -349,3 +349,26 @@ check_age <- function(age) {
 
     c(0, age)
 }
+
+##' Check for valid target model and raise an error if the target is
+##' not ok.
+##' @param target The SimInf model ('SEIR', 'SIR', 'SIS', 'SISe3',
+##'     'SISe3_sp', 'SISe', or 'SISe_sp') to target the events and u0
+##'     for.
+##' @param age an integer vector with break points in days for the
+##'     ageing events.
+##' @return valid target.
+##' @noRd
+check_target <- function(target, age) {
+    if (is.null(target))
+        return(NULL)
+
+    target <- match.arg(target, c("SEIR", "SIR", "SIS", "SISe3",
+                                  "SISe3_sp", "SISe", "SISe_sp"))
+    if ((target %in% c("SISe3", "SISe3_sp") && length(age) != 3) ||
+        length(age) != 1) {
+        stop("Invalid 'age' for 'target' model.", call. = FALSE)
+    }
+
+    target
+}

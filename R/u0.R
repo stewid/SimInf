@@ -72,19 +72,7 @@ setMethod(
     signature(object = "SimInf_indiv_events"),
     function(object, time = NULL, target = NULL, age = NULL) {
         age <- check_age(age)
-
-        ## Check for valid target model.
-        if (!is.null(target)) {
-            target <- match.arg(target, c("SEIR", "SIR", "SIS",
-                                          "SISe3", "SISe3_sp", "SISe",
-                                          "SISe_sp"))
-
-            if ((target %in% c("SISe3", "SISe3_sp") && length(age) != 3) ||
-                length(age) != 1) {
-                stop("Invalid 'age' for 'target' model.",
-                     call. = FALSE)
-            }
-        }
+        target <- check_target(target, age)
 
         ## Determine the location and age for all individuals.
         individuals <- get_individuals(object, time)
