@@ -50,6 +50,41 @@ setMethod(
     }
 )
 
+u0_target <- function(u0, target) {
+    if (is.null(target))
+        return(u0)
+
+    if (target %in% c("SISe3", "SISe3_sp")) {
+        u0$I_1 <- 0L
+        u0$I_2 <- 0L
+        u0$I_3 <- 0L
+        return(u0)
+    }
+
+    if (target %in% c("SIS", "SISe", "SISe_sp")) {
+        colnames(u0) <- c("key", "node", "S")
+        u0$I <- 0L
+        return(u0)
+    }
+
+    if (target %in% c("SIR")) {
+        colnames(u0) <- c("key", "node", "S")
+        u0$I <- 0L
+        u0$R <- 0L
+        return(u0)
+    }
+
+    if (target %in% c("SEIR")) {
+        colnames(u0) <- c("key", "node", "S")
+        u0$E <- 0L
+        u0$I <- 0L
+        u0$R <- 0L
+        return(u0)
+    }
+
+    stop("Invalid 'target' for 'u0'.", call. = FALSE)
+}
+
 ##' @rdname u0
 ##' @param time Only used when object is of class
 ##'     \code{SimInf_indiv_events} object. The time-point that will be
@@ -123,7 +158,7 @@ setMethod(
         mode(u0$key) <- mode(all_nodes)
         rownames(u0) <- NULL
 
-        u0
+        u0_target(u0, target)
     }
 )
 

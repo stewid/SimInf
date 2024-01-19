@@ -2,7 +2,7 @@
 ## disease spread simulations.
 ##
 ## Copyright (C) 2022 Ivana Rodriguez Ewerlöf
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -592,6 +592,66 @@ stopifnot(identical(
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(1L, 1L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 2, target = "SIS"),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
+               S = c(1L, 1L),
+               I = c(0L, 0L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 2, target = "SISe"),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
+               S = c(1L, 1L),
+               I = c(0L, 0L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 2, target = "SISe_sp"),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
+               S = c(1L, 1L),
+               I = c(0L, 0L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 2, target = "SIR"),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
+               S = c(1L, 1L),
+               I = c(0L, 0L),
+               R = c(0L, 0L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 2, target = "SEIR"),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
+               S = c(1L, 1L),
+               E = c(0L, 0L),
+               I = c(0L, 0L),
+               R = c(0L, 0L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 2, age = c(1, 2), target = "SISe3"),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
+               S_1 = c(1L, 0L),
+               S_2 = c(0L, 1L),
+               S_3 = c(0L, 0L),
+               I_1 = c(0L, 0L),
+               I_2 = c(0L, 0L),
+               I_3 = c(0L, 0L))))
+
+stopifnot(identical(
+    u0(individual_events(events), time = 2, age = c(1, 2), target = "SISe3_sp"),
+    data.frame(key = c(10, 20),
+               node = c(1L, 2L),
+               S_1 = c(1L, 0L),
+               S_2 = c(0L, 1L),
+               S_3 = c(0L, 0L),
+               I_1 = c(0L, 0L),
+               I_2 = c(0L, 0L),
+               I_3 = c(0L, 0L))))
 
 stopifnot(identical(
     u0(individual_events(events), time = 3),
