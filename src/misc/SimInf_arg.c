@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2023 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rdefines.h>
+#include <Rinternals.h>
 #include <R_ext/Visibility.h>
 #include "SimInf.h"
 
@@ -126,6 +126,6 @@ SimInf_sparse(
     R_xlen_t i,
     R_xlen_t j)
 {
-    int *d = INTEGER(GET_SLOT(m, Rf_install("Dim")));
+    int *d = INTEGER(R_do_slot(m, Rf_install("Dim")));
     return d[0] == i && d[1] == j;
 }

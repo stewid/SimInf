@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -330,4 +330,45 @@ check_package_name <- function(name) {
     }
 
     invisible(NULL)
+}
+
+##' Check the age argument and raise an error if the age argument is
+##' not ok.
+##' @param age an integer vector with break points in days for the
+##'     ageing events.
+##' @return an integer vector with the valid break points.
+##' @noRd
+check_age <- function(age) {
+    if (is.null(age))
+        return(0)
+
+    ## Check for valid age.
+    age <- sort(unique(as.integer(age)))
+    if (any(age <= 0))
+        stop("'age' must be an integer vector with values > 0.", call. = FALSE)
+
+    c(0, age)
+}
+
+##' Check for valid target model and raise an error if the target is
+##' not ok.
+##' @param target The SimInf model ('SEIR', 'SIR', 'SIS', 'SISe3',
+##'     'SISe3_sp', 'SISe', or 'SISe_sp') to target the events and u0
+##'     for.
+##' @param age an integer vector with break points in days for the
+##'     ageing events.
+##' @return valid target.
+##' @noRd
+check_target <- function(target, age) {
+    if (is.null(target))
+        return(NULL)
+
+    target <- match.arg(target, c("SEIR", "SIR", "SIS", "SISe3",
+                                  "SISe3_sp", "SISe", "SISe_sp"))
+    if ((target %in% c("SISe3", "SISe3_sp") && length(age) != 3) ||
+        length(age) != 1) {
+        stop("Invalid 'age' for 'target' model.", call. = FALSE)
+    }
+
+    target
 }

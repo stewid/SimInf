@@ -85,6 +85,12 @@ setMethod(
 ##' @export
 ##' @include SimInf_model.R
 ##' @examples
+##' ## For reproducibility, call the set.seed() function and specify
+##' ## the number of threads to use. To use all available threads,
+##' ## remove the set_num_threads() call.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it with 99 susceptible individuals and one infected
 ##' ## individual. Let the model run over 100 days.
@@ -422,6 +428,13 @@ plot_trace <- function(x, i, j, ...) {
 ##' @export
 ##' @include SimInf_model.R
 ##' @examples
+##' \dontrun{
+##' ## For reproducibility, call the set.seed() function and specify
+##' ## the number of threads to use. To use all available threads,
+##' ## remove the set_num_threads() call.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SIR' model with 100 nodes and initialise
 ##' ## it with 990 susceptible individuals and 10 infected
 ##' ## individuals in each node. Run the model over 100 days.
@@ -476,6 +489,7 @@ plot_trace <- function(x, i, j, ...) {
 ##' ## Plot the proportion of infected individuals in the first
 ##' ## three nodes.
 ##' plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
+##' }
 setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),

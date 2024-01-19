@@ -3,17 +3,38 @@
 \name{u0}
 \alias{u0}
 \alias{u0,SimInf_model-method}
+\alias{u0,SimInf_indiv_events-method}
 \title{Get the initial compartment state}
 \usage{
-u0(model, ...)
+u0(object, ...)
 
-\S4method{u0}{SimInf_model}(model, ...)
+\S4method{u0}{SimInf_model}(object, ...)
+
+\S4method{u0}{SimInf_indiv_events}(object, time = NULL, target = NULL, age = NULL)
 }
 \arguments{
-\item{model}{The model to get the initial compartment state
+\item{object}{The object to get the initial compartment state
 \code{u0} from.}
 
-\item{...}{Additional arguments. Currently not used.}
+\item{...}{Additional arguments.}
+
+\item{time}{Only used when object is of class
+\code{SimInf_indiv_events} object. The time-point that will be
+used to create u0. If left empty (the default), the earliest
+time among the events will be used.}
+
+\item{target}{Only used when object is of class
+\code{SimInf_indiv_events} object. The SimInf model ('SEIR',
+'SIR', 'SIS', 'SISe3', 'SISe3_sp', 'SISe', or 'SISe_sp') to
+target the events and u0 for. The default, \code{NULL},
+creates an \code{u0}, but where the compartments might have to
+be renamed and post-processed to fit the specific use case.}
+
+\item{age}{Only used when object is of class
+\code{SimInf_indiv_events} object. An integer vector with
+break points in days for the ageing events. The default,
+\code{NULL}, creates an \code{u0} where all individuals belong
+to the same age category.}
 }
 \value{
 a \code{data.frame} with the initial compartment state.

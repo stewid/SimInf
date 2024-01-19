@@ -26,6 +26,22 @@
 ##' @export
 setClass("SISe3", contains = c("SimInf_model"))
 
+##' The compartments in an SISe3 model
+##' @noRd
+compartments_SISe3 <- function() {
+    c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
+}
+
+##' The select matrix 'E' for an SISe3 model
+##' @noRd
+select_matrix_SISe3 <- function() {
+    matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+             1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),
+           nrow = 6,
+           ncol = 6,
+           dimnames = list(compartments_SISe3(), seq_len(6)))
+}
+
 ##' Create a \code{SISe3} model
 ##'
 ##' Create a \code{SISe3} model to be used by the simulation
@@ -133,12 +149,11 @@ SISe3 <- function(u0,
                   end_t3    = NULL,
                   end_t4    = NULL,
                   epsilon   = NULL) {
-    compartments <- c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
 
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_u0(u0, compartments_SISe3())
 
     ## Check initial infectious pressure
     if (is.null(phi))
@@ -160,14 +175,9 @@ SISe3 <- function(u0,
 
     ## Arguments seem ok...go on
 
-    E <- matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-                  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1),
-                nrow = 6, ncol = 6,
-                dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
-
     N <- matrix(c(2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, -1, 0, -1, 0, -1),
                 nrow = 6, ncol = 3,
-                dimnames = list(compartments, c("1", "2", "3")))
+                dimnames = list(compartments_SISe3(), c("1", "2", "3")))
 
     G <- matrix(c(1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0,
                   0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1),
@@ -183,7 +193,8 @@ SISe3 <- function(u0,
     S <- matrix(c(-1, 1, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0,
                   0, 0, 1, -1, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 1, -1),
                 nrow = 6, ncol = 6,
-                dimnames = list(compartments, c("1", "2", "3", "4", "5", "6")))
+                dimnames = list(compartments_SISe3(),
+                                c("1", "2", "3", "4", "5", "6")))
 
     v0 <- matrix(as.numeric(phi), nrow  = 1, byrow = TRUE,
                  dimnames = list("phi"))
@@ -201,7 +212,7 @@ SISe3 <- function(u0,
 
     model <- SimInf_model(G      = G,
                           S      = S,
-                          E      = E,
+                          E      = select_matrix_SISe3(),
                           N      = N,
                           tspan  = tspan,
                           events = events,
@@ -225,8 +236,8 @@ SISe3 <- function(u0,
 ##' days. The events are divided into three types: \sQuote{Exit}
 ##' events remove individuals from the population (n = 182535),
 ##' \sQuote{Enter} events add individuals to the population (n =
-##' 182685), sQuote{Internal transfer} events move individuals between
-##' compartmens within one node e.g. ageing (n = 317081), and
+##' 182685), \sQuote{Internal transfer} events move individuals
+##' between compartmens within one node e.g. ageing (n = 317081), and
 ##' \sQuote{External transfer} events move individuals between nodes
 ##' in the population (n = 101472). The vignette contains a detailed
 ##' description of how scheduled events operate on a model.
@@ -236,6 +247,12 @@ SISe3 <- function(u0,
 ##' @format A \code{data.frame}
 ##' @keywords dataset
 ##' @examples
+##' ## For reproducibility, call the set.seed() function and specify
+##' ## the number of threads to use. To use all available threads,
+##' ## remove the set_num_threads() call.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SISe3' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
@@ -279,6 +296,13 @@ NULL
 ##' @format A \code{data.frame}
 ##' @keywords dataset
 ##' @examples
+##' \dontrun{
+##' ## For reproducibility, call the set.seed() function and specify
+##' ## the number of threads to use. To use all available threads,
+##' ## remove the set_num_threads() call.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SISe3' model with 1600 nodes and initialize it to
 ##' ## run over 4*365 days and record data at weekly time-points.
 ##'
@@ -313,4 +337,5 @@ NULL
 ##' ## Plot the proportion of nodes with at least one infected
 ##' ## individual.
 ##' plot(result, I_1 + I_2 + I_3 ~ ., level = 2, type = "l")
+##' }
 NULL

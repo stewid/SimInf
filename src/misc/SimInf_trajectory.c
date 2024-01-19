@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2023 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ SimInf_insert_id_time(
     R_xlen_t m_stride,
     R_xlen_t tlen)
 {
-    const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-    const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
+    const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
+    const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
 
     if (m_stride < 1)
         return -1;
@@ -76,10 +76,10 @@ SimInf_insert_id_time2(
     R_xlen_t m2_stride,
     R_xlen_t tlen)
 {
-    const int *m1_ir = INTEGER(GET_SLOT(m1, Rf_install("i")));
-    const int *m2_ir = INTEGER(GET_SLOT(m2, Rf_install("i")));
-    const int *m1_jc = INTEGER(GET_SLOT(m1, Rf_install("p")));
-    const int *m2_jc = INTEGER(GET_SLOT(m2, Rf_install("p")));
+    const int *m1_ir = INTEGER(R_do_slot(m1, Rf_install("i")));
+    const int *m2_ir = INTEGER(R_do_slot(m2, Rf_install("i")));
+    const int *m1_jc = INTEGER(R_do_slot(m1, Rf_install("p")));
+    const int *m2_jc = INTEGER(R_do_slot(m2, Rf_install("p")));
 
     if (m1_stride < 1 || m2_stride < 1)
         return -1;
@@ -135,9 +135,9 @@ SimInf_sparse2df_int(
     R_xlen_t n_id,
     R_xlen_t col)
 {
-    const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-    const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
-    const double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
+    const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
+    const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
+    const double *m_x = REAL(R_do_slot(m, Rf_install("x")));
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
@@ -218,9 +218,9 @@ SimInf_sparse2df_real(
     R_xlen_t n_id,
     R_xlen_t col)
 {
-    const int *m_ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-    const int *m_jc = INTEGER(GET_SLOT(m, Rf_install("p")));
-    const double *m_x = REAL(GET_SLOT(m, Rf_install("x")));
+    const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
+    const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
+    const double *m_x = REAL(R_do_slot(m, Rf_install("x")));
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;

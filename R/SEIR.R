@@ -26,6 +26,21 @@
 ##' @export
 setClass("SEIR", contains = c("SimInf_model"))
 
+##' The compartments in an SEIR model
+##' @noRd
+compartments_SEIR <- function() {
+    c("S", "E", "I", "R")
+}
+
+##' The select matrix 'E' for an SEIR model
+##' @noRd
+select_matrix_SEIR <- function() {
+    matrix(c(1, 0, 0, 0, 1, 1, 1, 1),
+           nrow = 4,
+           ncol = 2,
+           dimnames = list(compartments_SEIR(), seq_len(2)))
+}
+
 ##' Create an \acronym{SEIR} model
 ##'
 ##' Create an \acronym{SEIR} model to be used by the simulation
@@ -82,12 +97,10 @@ SEIR <- function(u0,
                  beta    = NULL,
                  epsilon = NULL,
                  gamma   = NULL) {
-    compartments <- c("S", "E", "I", "R")
-
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_u0(u0, compartments_SEIR())
 
     ## Check for non-numeric parameters
     check_ldata_arg(nrow(u0), beta, epsilon, gamma)
@@ -97,9 +110,6 @@ SEIR <- function(u0,
 
     ## Arguments seem ok...go on
 
-    E <- matrix(c(1, 0, 0, 0, 1, 1, 1, 1), nrow = 4, ncol = 2,
-                dimnames = list(compartments, c("1", "2")))
-
     G <- matrix(c(1, 1, 1, 1, 1, 1, 1, 1, 1), nrow = 3, ncol = 3,
                 dimnames = list(c("S -> beta*S*I/(S+E+I+R) -> E",
                                   "E -> epsilon*E -> I",
@@ -107,7 +117,7 @@ SEIR <- function(u0,
                                 c("1", "2", "3")))
 
     S <- matrix(c(-1, 1, 0, 0, 0, -1, 1, 0, 0, 0, -1, 1), nrow = 4, ncol = 3,
-                dimnames = list(compartments, c("1", "2", "3")))
+                dimnames = list(compartments_SEIR(), c("1", "2", "3")))
 
     ldata <- matrix(as.numeric(c(beta, epsilon, gamma)),
                     nrow  = 3, byrow = TRUE,
@@ -115,7 +125,7 @@ SEIR <- function(u0,
 
     model <- SimInf_model(G      = G,
                           S      = S,
-                          E      = E,
+                          E      = select_matrix_SEIR(),
                           tspan  = tspan,
                           events = events,
                           ldata  = ldata,
@@ -143,6 +153,12 @@ SEIR <- function(u0,
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
+##' ## For reproducibility, call the set.seed() function and specify
+##' ## the number of threads to use. To use all available threads,
+##' ## remove the set_num_threads() call.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SEIR' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
@@ -188,6 +204,13 @@ events_SEIR <- function() {
 ##' @return A \code{data.frame}
 ##' @export
 ##' @examples
+##' \dontrun{
+##' ## For reproducibility, call the set.seed() function and specify
+##' ## the number of threads to use. To use all available threads,
+##' ## remove the set_num_threads() call.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SEIR' model with 1600 nodes and initialize it to
 ##' ## run over 4*365 days and record data at weekly time-points.
 ##' ## Add ten infected individuals to the first node.
@@ -207,6 +230,7 @@ events_SEIR <- function() {
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
+##' }
 u0_SEIR <- function() {
     u0 <- u0_SIR()
     u0$E <- 0L

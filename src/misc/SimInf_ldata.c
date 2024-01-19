@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2023 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,20 +65,20 @@ SimInf_ldata_sp(
         Rf_error("Invalid 'metric' argument.");
 
     /* Extract data from 'data' */
-    Nn = INTEGER(GET_SLOT(data, R_DimSymbol))[1];
+    Nn = INTEGER(R_do_slot(data, R_DimSymbol))[1];
     ld = REAL(data);
 
     /* Extract data from the distance matrix */
-    ir = INTEGER(GET_SLOT(distance, Rf_install("i")));
-    jc = INTEGER(GET_SLOT(distance, Rf_install("p")));
-    val = REAL(GET_SLOT(distance, Rf_install("x")));
+    ir = INTEGER(R_do_slot(distance, Rf_install("i")));
+    jc = INTEGER(R_do_slot(distance, Rf_install("p")));
+    val = REAL(R_do_slot(distance, Rf_install("x")));
 
     /* Extract data from 'metric' */
     m = INTEGER(metric)[0];
 
     /* Check that the number of nodes are equal in data and
      * distance */
-    if (Nn != (LENGTH(GET_SLOT(distance, Rf_install("p"))) - 1))
+    if (Nn != (LENGTH(R_do_slot(distance, Rf_install("p"))) - 1))
         Rf_error("The number of nodes in 'data' and 'distance' are not equal.");
 
     /* Calculate length of 'Nld' in 'ldata' for each node in the
@@ -103,7 +103,7 @@ SimInf_ldata_sp(
     Nld = (Nld + 1) * 2;
 
     /*  3) Add space for local model parameters in 'data' */
-    n_data = INTEGER(GET_SLOT(data, R_DimSymbol))[0];
+    n_data = INTEGER(R_do_slot(data, R_DimSymbol))[0];
     Nld += n_data;
 
     /* Allocate and initialize memory for ldata */

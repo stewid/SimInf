@@ -3,7 +3,7 @@
  * disease spread simulations.
  *
  * Copyright (C) 2022 Ivana Rodriguez Ewerlöf
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2023 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 #include <R.h>
-#include <Rdefines.h>
+#include <Rinternals.h>
 #include <R_ext/Visibility.h>
 #include "SimInf.h"
 #include "SimInf_openmp.h"
@@ -76,7 +76,7 @@ SimInf_find_longest_path(
             continue;
 
         /* Clear the path. */
-        memset(&path[0], 0, n * sizeof(int));
+        memset(path, 0, n * sizeof(int));
 
         /* Initialize the path with the first event. This is the root
          * for the search. */
@@ -148,7 +148,7 @@ SimInf_find_longest_path(
 }
 
 /**
- * Utility function to clean raw events.
+ * Utility function to clean individual events.
  *
  * @param id integer vector with an unique identifier for each
  *        individual.
@@ -165,7 +165,7 @@ SimInf_find_longest_path(
  *         FALSE.
  */
 SEXP attribute_hidden
-SimInf_clean_raw_events(
+SimInf_clean_indiv_events(
     SEXP id,
     SEXP event,
     SEXP time,
@@ -189,13 +189,13 @@ SimInf_clean_raw_events(
     if (len < 0)
         Rf_error("'id' must be an integer vector with length >= 0.");
     if (XLENGTH(event) != len)
-        Rf_error("'event' must be an integer vector with length %i.", len);
+        Rf_error("'event' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
     if (XLENGTH(time) != len)
-        Rf_error("'time' must be an integer vector with length %i.", len);
+        Rf_error("'time' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
     if (XLENGTH(node) != len)
-        Rf_error("'node' must be an integer vector with length %i.", len);
+        Rf_error("'node' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
     if (XLENGTH(dest) != len)
-        Rf_error("'dest' must be an integer vector with length %i.", len);
+        Rf_error("'dest' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
 
     for (R_xlen_t i = 0; i < len; i++) {
         switch (ptr_event[i]) {
@@ -204,7 +204,7 @@ SimInf_clean_raw_events(
         case EXTERNAL_TRANSFER_EVENT:
             break;
         default:
-            Rf_error("'event[%i]' is invalid.", i + 1);
+            Rf_error("'event[%" R_PRIdXLEN_T "]' is invalid.", i + 1);
         }
     }
 

@@ -1,6 +1,11 @@
-# SimInf (development version)
+# SimInf 9.6.0 (2023-12-20)
 
 ## CHANGES OR IMPROVEMENTS
+
+* Fixed CRAN check warnings for print format specifiers.
+
+* Added a utility function 'individual_events' to facilitate cleaning
+  raw individual event data and prepare it for usage in SimInf.
 
 # SimInf 9.5.0 (2023-01-23)
 

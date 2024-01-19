@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2023 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,99 +144,99 @@ SimInf_run(
     nprotect++;
 
     /* Dependency graph */
-    PROTECT(G = GET_SLOT(result, Rf_install("G")));
+    PROTECT(G = R_do_slot(result, Rf_install("G")));
     nprotect++;
-    args.irG = INTEGER(GET_SLOT(G, Rf_install("i")));
-    args.jcG = INTEGER(GET_SLOT(G, Rf_install("p")));
+    args.irG = INTEGER(R_do_slot(G, Rf_install("i")));
+    args.jcG = INTEGER(R_do_slot(G, Rf_install("p")));
 
     /* State change matrix */
-    PROTECT(S = GET_SLOT(result, Rf_install("S")));
+    PROTECT(S = R_do_slot(result, Rf_install("S")));
     nprotect++;
-    PROTECT(prS = Rf_coerceVector(GET_SLOT(S, Rf_install("x")), INTSXP));
+    PROTECT(prS = Rf_coerceVector(R_do_slot(S, Rf_install("x")), INTSXP));
     nprotect++;
-    args.irS = INTEGER(GET_SLOT(S, Rf_install("i")));
-    args.jcS = INTEGER(GET_SLOT(S, Rf_install("p")));
+    args.irS = INTEGER(R_do_slot(S, Rf_install("i")));
+    args.jcS = INTEGER(R_do_slot(S, Rf_install("p")));
     args.prS = INTEGER(prS);
 
     /* tspan */
-    PROTECT(tspan = GET_SLOT(result, Rf_install("tspan")));
+    PROTECT(tspan = R_do_slot(result, Rf_install("tspan")));
     nprotect++;
     args.tspan = REAL(tspan);
 
     /* Scheduled events */
-    PROTECT(ext_events = GET_SLOT(result, Rf_install("events")));
+    PROTECT(ext_events = R_do_slot(result, Rf_install("events")));
     nprotect++;
-    args.len = LENGTH(GET_SLOT(ext_events, Rf_install("event")));
-    args.event = INTEGER(GET_SLOT(ext_events, Rf_install("event")));
-    args.time = INTEGER(GET_SLOT(ext_events, Rf_install("time")));
-    args.node = INTEGER(GET_SLOT(ext_events, Rf_install("node")));
-    args.dest = INTEGER(GET_SLOT(ext_events, Rf_install("dest")));
-    args.n = INTEGER(GET_SLOT(ext_events, Rf_install("n")));
-    args.proportion = REAL(GET_SLOT(ext_events, Rf_install("proportion")));
-    args.select = INTEGER(GET_SLOT(ext_events, Rf_install("select")));
-    args.shift = INTEGER(GET_SLOT(ext_events, Rf_install("shift")));
+    args.len = LENGTH(R_do_slot(ext_events, Rf_install("event")));
+    args.event = INTEGER(R_do_slot(ext_events, Rf_install("event")));
+    args.time = INTEGER(R_do_slot(ext_events, Rf_install("time")));
+    args.node = INTEGER(R_do_slot(ext_events, Rf_install("node")));
+    args.dest = INTEGER(R_do_slot(ext_events, Rf_install("dest")));
+    args.n = INTEGER(R_do_slot(ext_events, Rf_install("n")));
+    args.proportion = REAL(R_do_slot(ext_events, Rf_install("proportion")));
+    args.select = INTEGER(R_do_slot(ext_events, Rf_install("select")));
+    args.shift = INTEGER(R_do_slot(ext_events, Rf_install("shift")));
 
     /* Select matrix. */
-    PROTECT(E = GET_SLOT(ext_events, Rf_install("E")));
+    PROTECT(E = R_do_slot(ext_events, Rf_install("E")));
     nprotect++;
-    args.irE = INTEGER(GET_SLOT(E, Rf_install("i")));
-    args.jcE = INTEGER(GET_SLOT(E, Rf_install("p")));
-    args.prE = REAL(GET_SLOT(E, Rf_install("x")));
+    args.irE = INTEGER(R_do_slot(E, Rf_install("i")));
+    args.jcE = INTEGER(R_do_slot(E, Rf_install("p")));
+    args.prE = REAL(R_do_slot(E, Rf_install("x")));
 
     /* Shift matrix. */
-    PROTECT(N = GET_SLOT(ext_events, Rf_install("N")));
+    PROTECT(N = R_do_slot(ext_events, Rf_install("N")));
     nprotect++;
-    if (Rf_nrows(N) == INTEGER(GET_SLOT(E, Rf_install("Dim")))[0])
+    if (Rf_nrows(N) == INTEGER(R_do_slot(E, Rf_install("Dim")))[0])
         args.N = INTEGER(N);
 
     /* Constants */
-    args.Nn = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("u0")), R_DimSymbol))[1];
-    args.Nc = INTEGER(GET_SLOT(S, Rf_install("Dim")))[0];
-    args.Nt = INTEGER(GET_SLOT(S, Rf_install("Dim")))[1];
-    args.Nd = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("v0")), R_DimSymbol))[0];
-    args.Nld = INTEGER(GET_SLOT(GET_SLOT(result, Rf_install("ldata")), R_DimSymbol))[0];
-    args.tlen = LENGTH(GET_SLOT(result, Rf_install("tspan")));
+    args.Nn = INTEGER(R_do_slot(R_do_slot(result, Rf_install("u0")), R_DimSymbol))[1];
+    args.Nc = INTEGER(R_do_slot(S, Rf_install("Dim")))[0];
+    args.Nt = INTEGER(R_do_slot(S, Rf_install("Dim")))[1];
+    args.Nd = INTEGER(R_do_slot(R_do_slot(result, Rf_install("v0")), R_DimSymbol))[0];
+    args.Nld = INTEGER(R_do_slot(R_do_slot(result, Rf_install("ldata")), R_DimSymbol))[0];
+    args.tlen = LENGTH(R_do_slot(result, Rf_install("tspan")));
 
     /* Output array (to hold a single trajectory) */
-    PROTECT(U_sparse = GET_SLOT(result, Rf_install("U_sparse")));
+    PROTECT(U_sparse = R_do_slot(result, Rf_install("U_sparse")));
     nprotect++;
     if (SimInf_sparse(U_sparse, args.Nn * args.Nc, args.tlen)) {
-        args.irU = INTEGER(GET_SLOT(U_sparse, Rf_install("i")));
-        args.jcU = INTEGER(GET_SLOT(U_sparse, Rf_install("p")));
-        args.prU = REAL(GET_SLOT(U_sparse, Rf_install("x")));
+        args.irU = INTEGER(R_do_slot(U_sparse, Rf_install("i")));
+        args.jcU = INTEGER(R_do_slot(U_sparse, Rf_install("p")));
+        args.prU = REAL(R_do_slot(U_sparse, Rf_install("x")));
     } else {
         PROTECT(U = Rf_allocMatrix(INTSXP, args.Nn * args.Nc, args.tlen));
         nprotect++;
-        SET_SLOT(result, Rf_install("U"), U);
-        args.U = INTEGER(GET_SLOT(result, Rf_install("U")));
+        R_do_slot_assign(result, Rf_install("U"), U);
+        args.U = INTEGER(R_do_slot(result, Rf_install("U")));
     }
 
     /* Output array (to hold a single trajectory) */
-    PROTECT(V_sparse = GET_SLOT(result, Rf_install("V_sparse")));
+    PROTECT(V_sparse = R_do_slot(result, Rf_install("V_sparse")));
     nprotect++;
     if (SimInf_sparse(V_sparse, args.Nn * args.Nd, args.tlen)) {
-        args.irV = INTEGER(GET_SLOT(V_sparse, Rf_install("i")));
-        args.jcV = INTEGER(GET_SLOT(V_sparse, Rf_install("p")));
-        args.prV = REAL(GET_SLOT(V_sparse, Rf_install("x")));
+        args.irV = INTEGER(R_do_slot(V_sparse, Rf_install("i")));
+        args.jcV = INTEGER(R_do_slot(V_sparse, Rf_install("p")));
+        args.prV = REAL(R_do_slot(V_sparse, Rf_install("x")));
     } else {
         PROTECT(V = Rf_allocMatrix(REALSXP, args.Nn * args.Nd, args.tlen));
         nprotect++;
-        SET_SLOT(result, Rf_install("V"), V);
-        args.V = REAL(GET_SLOT(result, Rf_install("V")));
+        R_do_slot_assign(result, Rf_install("V"), V);
+        args.V = REAL(R_do_slot(result, Rf_install("V")));
     }
 
     /* Initial state. */
-    args.u0 = INTEGER(GET_SLOT(result, Rf_install("u0")));
-    args.v0 = REAL(GET_SLOT(result, Rf_install("v0")));
+    args.u0 = INTEGER(R_do_slot(result, Rf_install("u0")));
+    args.v0 = REAL(R_do_slot(result, Rf_install("v0")));
 
     /* Local data */
     if (args.Nld > 0)
-        args.ldata = REAL(GET_SLOT(result, Rf_install("ldata")));
+        args.ldata = REAL(R_do_slot(result, Rf_install("ldata")));
     else
         args.ldata = ldata_tmp;
 
     /* Global data */
-    args.gdata = REAL(GET_SLOT(result, Rf_install("gdata")));
+    args.gdata = REAL(R_do_slot(result, Rf_install("gdata")));
 
     /* Function pointers */
     args.tr_fun = tr_fun;

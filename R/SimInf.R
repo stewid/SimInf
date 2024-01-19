@@ -63,6 +63,7 @@
 ##'
 ##' \Widgren2019
 ##' @docType package
+##' @aliases SimInf-package
 ##' @name SimInf
 ##' @useDynLib SimInf, .registration=TRUE
 NULL
@@ -86,6 +87,13 @@ NULL
 ##' @format A \code{data.frame}
 ##' @keywords dataset
 ##' @examples
+##' \dontrun{
+##' ## For reproducibility, call the set.seed() function and specify
+##' ## the number of threads to use. To use all available threads,
+##' ## remove the set_num_threads() call.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SIR' model with 1600 nodes and initialize
 ##' ## it to run over 4*365 days. Add one infected individual
 ##' ## to the first node.
@@ -110,4 +118,5 @@ NULL
 ##' data("nodes", package = "SimInf")
 ##' col <- ifelse(infected, "blue", "yellow")
 ##' plot(y ~ x, nodes, col = col, pch = 20, cex = 2)
+##' }
 NULL

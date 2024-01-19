@@ -2,7 +2,7 @@
  * This file is part of SimInf, a framework for stochastic
  * disease spread simulations.
  *
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2023 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rdefines.h>
+#include <Rinternals.h>
 #include <R_ext/Visibility.h>
+#include "SimInf.h"
 
 static R_xlen_t
 SimInf_Euclidean_distance(
@@ -44,7 +45,7 @@ SimInf_Euclidean_distance(
                 double d = hypot(x[i] - x[j], y[i] - y[j]);
 
                 if (!R_FINITE(d))
-                    Rf_error("Invalid distance for i=%i and j=%i.", i, j);
+                    Rf_error("Invalid distance for i=%" R_PRIdXLEN_T " and j=%" R_PRIdXLEN_T ".", i, j);
 
                 if (d <= cutoff) {
                     if (d <= 0) {
@@ -96,7 +97,7 @@ SimInf_distance_matrix(
     if (len < 1)
         Rf_error("'x' must be a numeric vector with length > 0.");
     if (XLENGTH(y_) != len)
-        Rf_error("'y' must be a numeric vector with length %i.", len);
+        Rf_error("'y' must be a numeric vector with length %" R_PRIdXLEN_T ".", len);
 
     /* Check for valid cutoff. */
     if (!R_FINITE(cutoff) || cutoff < 0)
@@ -132,12 +133,12 @@ SimInf_distance_matrix(
         INTEGER(col_indices));
 
     /* Create the sparse matrix. */
-    PROTECT(result = NEW_OBJECT(MAKE_CLASS("dgCMatrix")));
-    SET_SLOT(result, Rf_install("x"), distance);
-    SET_SLOT(result, Rf_install("i"), row_indices);
-    SET_SLOT(result, Rf_install("p"), col_indices);
-    INTEGER(GET_SLOT(result, Rf_install("Dim")))[0] = len;
-    INTEGER(GET_SLOT(result, Rf_install("Dim")))[1] = len;
+    PROTECT(result = R_do_new_object(R_do_MAKE_CLASS("dgCMatrix")));
+    R_do_slot_assign(result, Rf_install("x"), distance);
+    R_do_slot_assign(result, Rf_install("i"), row_indices);
+    R_do_slot_assign(result, Rf_install("p"), col_indices);
+    INTEGER(R_do_slot(result, Rf_install("Dim")))[0] = len;
+    INTEGER(R_do_slot(result, Rf_install("Dim")))[1] = len;
 
     UNPROTECT(4);
 

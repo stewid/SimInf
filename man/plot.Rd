@@ -74,6 +74,13 @@ Plot either the median and the quantile range of the counts in all
 nodes, or plot the counts in specified nodes.
 }
 \examples{
+\dontrun{
+## For reproducibility, call the set.seed() function and specify
+## the number of threads to use. To use all available threads,
+## remove the set_num_threads() call.
+set.seed(123)
+set_num_threads(1)
+
 ## Create an 'SIR' model with 100 nodes and initialise
 ## it with 990 susceptible individuals and 10 infected
 ## individuals in each node. Run the model over 100 days.
@@ -128,4 +135,5 @@ plot(result, I ~ S + I + R, level = 3)
 ## Plot the proportion of infected individuals in the first
 ## three nodes.
 plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
+}
 }
