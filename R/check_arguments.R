@@ -365,10 +365,16 @@ check_target <- function(target, age) {
 
     target <- match.arg(target, c("SEIR", "SIR", "SIS", "SISe3",
                                   "SISe3_sp", "SISe", "SISe_sp"))
-    if ((target %in% c("SISe3", "SISe3_sp") && length(age) != 3) ||
-        length(age) != 1) {
-        stop("Invalid 'age' for 'target' model.", call. = FALSE)
+
+    if (target %in% c("SISe3", "SISe3_sp") && length(age) == 3)
+        return(target)
+
+    if (target %in% c("SEIR", "SIR", "SIS", "SISe", "SISe_sp") &&
+        length(age) == 1) {
+        return(target)
     }
 
-    target
+        stop("Invalid 'age' for 'target' model.", call. = FALSE)
+
+    stop("Invalid 'age' for 'target' model.", call. = FALSE)
 }
