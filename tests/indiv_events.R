@@ -726,6 +726,13 @@ check_error(
     res,
     "'age' must be an integer vector with values > 0.")
 
+res <- assertError(SimInf:::u0_target(u0(individual_events(events),
+                                         time = 2),
+                                      target = "Unknown"))
+check_error(
+    res,
+    "Invalid 'target' for 'u0'.")
+
 events <- data.frame(
     id    = c("individual-1", "individual-1", "individual-1", "individual-1",
               "individual-2", "individual-2", "individual-2", "individual-2"),
