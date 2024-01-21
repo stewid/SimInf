@@ -467,17 +467,40 @@ setMethod(
         ## Keep events that occur after 'time'.
         i <- which(object@time > indiv_events_time(object, time))
 
-        node <- object@node[i]
-        dest <- object@dest[i]
-        dest[is.na(dest)] <- 0L
+        events <- data.frame(event      = object@event[i],
+                             time       = object@time[i],
+                             node       = object@node[i],
+                             dest       = object@dest[i],
+                             n          = 1L,
+                             select     = 1L,
+                             shift      = 0L)
 
-        data.frame(event      = object@event[i],
-                   time       = object@time[i],
-                   node       = node,
-                   dest       = dest,
-                   n          = 1,
-                   proportion = 0,
-                   select     = 1,
-                   shift      = 0)
+        ## Map nodes to the one-based index in SimInf.
+        all_nodes <- unique(c(object@node, object@dest))
+        all_nodes <- sort(all_nodes[!is.na(all_nodes)])
+        events$node <- match(events$node, all_nodes)
+        events$dest <- match(events$dest, all_nodes)
+        events$dest[is.na(events$dest)] <- 0L
+
+        events <- aggregate(n ~ event + time + node + dest + select + shift,
+                            events,
+                            length)
+        events <- events[order(events$time, events$event, events$select), ]
+        events$proportion <- 0
+        rownames(events) <- NULL
+
+        if (!is.null(attr(object@event, "origin"))) {
+            event_names <- c("exit", "enter", "intTrans", "extTrans")
+            events$event <- event_names[events$event + 1]
+        }
+
+        if (!is.null(attr(object@time, "origin"))) {
+            events$time <- as.Date(events$time,
+                                   origin = attr(object@time, "origin"))
+            events$time <- as.character(events$time)
+        }
+
+        events[, c("event", "time", "node", "dest", "n", "proportion",
+                   "select", "shift")]
     }
 )
