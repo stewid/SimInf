@@ -115,8 +115,8 @@ setMethod(
         ## Ensure all nodes are included in u0.
         all_nodes <- unique(c(object@node, object@dest))
         all_nodes <- all_nodes[!is.na(all_nodes)]
-        all_nodes <- sort(all_nodes)
         missing_nodes <- setdiff(all_nodes, individuals$node)
+        S_columns <- paste0("S_", seq_len(length(age)))
 
         if (nrow(individuals)) {
             ## Determine the age categories.
@@ -129,16 +129,13 @@ setMethod(
             u0 <- as.data.frame.matrix(table(nodes, age_category))
 
             ## Ensure all age categories exist in u0
-            age_category <- setdiff(paste0("S_", seq_len(length(age))),
-                                    colnames(u0))
+            age_category <- setdiff(S_columns, colnames(u0))
             if (length(age_category)) {
                 u0 <- cbind(u0,
                             matrix(data = 0L,
                                    nrow = length(all_nodes),
                                    ncol = length(age_category),
-                                   dimnames = list(
-                                       NULL,
-                                       age_category)))
+                                   dimnames = list(NULL, age_category)))
             }
         } else {
             ## Create an empty u0.
@@ -146,17 +143,15 @@ setMethod(
                 matrix(data = 0L,
                        nrow = length(all_nodes),
                        ncol = length(age),
-                       dimnames = list(
-                           all_nodes,
-                           paste0("S_", seq_len(length(age))))))
+                       dimnames = list(all_nodes, S_columns)))
         }
 
-        u0 <- u0[, paste0("S_", seq_len(length(age))), drop = FALSE]
-        u0 <- cbind(key = rownames(u0),
-                    node = seq_len(nrow(u0)),
-                    u0)
+        u0 <- cbind(key = rownames(u0), u0)
         mode(u0$key) <- mode(all_nodes)
         rownames(u0) <- NULL
+        u0 <- u0[order(u0$key), ]
+        u0$node <- seq_len(nrow(u0))
+        u0 <- u0[, c("key", "node", S_columns), drop = FALSE]
 
         u0_target(u0, target)
     }
