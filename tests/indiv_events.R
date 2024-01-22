@@ -806,6 +806,11 @@ check_error(
     res,
     "All individuals must have an 'enter' event.")
 
+res <- assertError(events(individual_events(events)))
+check_error(
+    res,
+    "All individuals must have an 'enter' event.")
+
 res <- assertError(SimInf:::check_indiv_events_id(3.2))
 check_error(
     res,
