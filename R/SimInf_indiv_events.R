@@ -464,6 +464,10 @@ setMethod(
         age <- check_age(age)
         target <- check_target(target, age)
 
+        ## Check that all individuals have an enter event.
+        if (length(setdiff(object@id, object@id[object@event == 1L])))
+            stop("All individuals must have an 'enter' event.", call. = FALSE)
+
         ## Keep events that occur after 'time'.
         i <- which(object@time > indiv_events_time(object, time))
 
