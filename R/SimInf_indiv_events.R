@@ -468,6 +468,25 @@ setMethod(
         if (length(setdiff(object@id, object@id[object@event == 1L])))
             stop("All individuals must have an 'enter' event.", call. = FALSE)
 
+        if (length(age) > 1) {
+            ## Create ageing events for individuals. First, determine
+            ## the time-points for the enter events.
+            i <- which(object@event == 1L)
+            ageing <- data.frame(id = object@id[i],
+                                 enter = object@time[i])
+
+            ## Then determine the time-points for the exit events.
+            i <- which(object@event == 0L)
+            ageing <- merge(ageing,
+                            data.frame(id = object@id[i],
+                                       exit = object@time[i]),
+                            all.x = TRUE)
+
+            ## Ensure all ageing events occur within the time-span of
+            ## all events.
+            ageing$exit[is.na(ageing$exit)] <- max(object@time) + 1L
+        }
+
         ## Keep events that occur after 'time'.
         i <- which(object@time > indiv_events_time(object, time))
 
