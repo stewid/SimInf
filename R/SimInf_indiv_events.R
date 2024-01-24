@@ -468,6 +468,15 @@ setMethod(
         if (length(setdiff(object@id, object@id[object@event == 1L])))
             stop("All individuals must have an 'enter' event.", call. = FALSE)
 
+        events <- data.frame(id = object@id,
+                             event = object@event,
+                             time = object@time,
+                             node = object@node,
+                             dest = object@dest,
+                             select = 1L,
+                             shift = 0L)
+        events$dest[is.na(events$dest)] <- 0L
+
         if (length(age) > 1) {
             ## Create ageing events for individuals. First, determine
             ## the time-points for the enter events.
@@ -485,18 +494,38 @@ setMethod(
             ## Ensure all ageing events occur within the time-span of
             ## all events.
             ageing$exit[is.na(ageing$exit)] <- max(object@time) + 1L
+
+            for (i in seq_len(length(age))[-1]) {
+                ageing <- ageing[(ageing$exit - ageing$enter) > age[i], ]
+                if (nrow(ageing) == 0)
+                    break
+
+                events <- rbind(events,
+                                data.frame(id = ageing$id,
+                                           event = 2L,
+                                           time = ageing$enter + age[i],
+                                           node = 0L,
+                                           dest = 0L,
+                                           select = 2L,
+                                           shift = 0L))
+
+                events <- events[order(events$id,
+                                       events$time,
+                                       events$event,
+                                       events$node,
+                                       events$dest), ]
+
+                ## Determine the node for the ageing event.
+                j <- which(events$event == 2L & events$node == 0L)
+                if (length(j)) {
+                    ## If the previous event is a movement, then the
+                    ## node is the destination of that movement.
+                    events$node[j] <- ifelse(events$dest[j - 1] > 0L,
+                                             events$dest[j - 1],
+                                             events$node[j - 1])
+                }
+            }
         }
-
-        ## Keep events that occur after 'time'.
-        i <- which(object@time > indiv_events_time(object, time))
-
-        events <- data.frame(event      = object@event[i],
-                             time       = object@time[i],
-                             node       = object@node[i],
-                             dest       = object@dest[i],
-                             n          = 1L,
-                             select     = 1L,
-                             shift      = 0L)
 
         ## Map nodes to the one-based index in SimInf.
         all_nodes <- unique(c(object@node, object@dest))
@@ -505,11 +534,15 @@ setMethod(
         events$dest <- match(events$dest, all_nodes)
         events$dest[is.na(events$dest)] <- 0L
 
+        events$n <- 1L
         events <- aggregate(n ~ event + time + node + dest + select + shift,
                             events,
                             length)
         events <- events[order(events$time, events$event, events$select), ]
         events$proportion <- 0
+
+        ## Keep events that occur after 'time'.
+        events <- events[events$time > indiv_events_time(object, time), ]
         rownames(events) <- NULL
 
         if (!is.null(attr(object@event, "origin"))) {
