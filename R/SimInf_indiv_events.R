@@ -456,6 +456,15 @@ setMethod(
 ##' @param age Only used when object is of class
 ##'     \code{SimInf_indiv_events} object. Integer vector with break
 ##'     points in days for the ageing events.
+##' @section Transform individual events:
+
+##'     In many countries, individual-based livestock data are
+##'     collected to enable contact tracing during disease
+##'     outbreaks. However, the livestock databases are not always
+##'     structured in such a way that relevant information for disease
+##'     spread simulations is easily retrieved. The aim of this
+##'     function is to facilitate cleaning livestock event data and
+##'     prepare it for usage in SimInf.
 ##' @export
 setMethod(
     "events",

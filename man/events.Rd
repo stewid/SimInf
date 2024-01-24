@@ -40,6 +40,17 @@ points in days for the ageing events.}
 \description{
 Extract the scheduled events from a \code{SimInf_model} object.
 }
+\section{Transform individual events}{
+
+    In many countries, individual-based livestock data are
+    collected to enable contact tracing during disease
+    outbreaks. However, the livestock databases are not always
+    structured in such a way that relevant information for disease
+    spread simulations is easily retrieved. The aim of this
+    function is to facilitate cleaning livestock event data and
+    prepare it for usage in SimInf.
+}
+
 \examples{
 ## Create an SIR model that includes scheduled events.
 model <- SIR(u0     = u0_SIR(),
