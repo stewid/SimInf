@@ -480,20 +480,20 @@ setMethod(
         if (length(age) > 1) {
             ## Create ageing events for individuals. First, determine
             ## the time-points for the enter events.
-            i <- which(object@event == 1L)
-            ageing <- data.frame(id = object@id[i],
-                                 enter = object@time[i])
+            i <- which(events@event == 1L)
+            ageing <- data.frame(id = events@id[i],
+                                 enter = events@time[i])
 
             ## Then determine the time-points for the exit events.
-            i <- which(object@event == 0L)
+            i <- which(events@event == 0L)
             ageing <- merge(ageing,
-                            data.frame(id = object@id[i],
-                                       exit = object@time[i]),
+                            data.frame(id = events@id[i],
+                                       exit = events@time[i]),
                             all.x = TRUE)
 
             ## Ensure all ageing events occur within the time-span of
             ## all events.
-            ageing$exit[is.na(ageing$exit)] <- max(object@time) + 1L
+            ageing$exit[is.na(ageing$exit)] <- max(events@time) + 1L
 
             for (i in seq_len(length(age))[-1]) {
                 ageing <- ageing[(ageing$exit - ageing$enter) > age[i], ]
