@@ -906,21 +906,21 @@ stopifnot(identical(events_observed, events_expected))
 
 ## Check that an intTrans event is added.
 events <- data.frame(
-    id    = c(1, 1, 1, 1),
-    event = c("enter", "extTrans", "extTrans", "exit"),
-    time  = c(1, 3, 5, 7),
-    node  = c(1, 1, 2, 3),
-    dest  = c(NA, 2, 3, NA))
+    id    = c(1, 1, 1, 1, 2, 2),
+    event = c("enter", "extTrans", "extTrans", "exit", "enter", "exit"),
+    time  = c(1, 3, 5, 7, 1, 3),
+    node  = c(1, 1, 2, 3, 1, 1),
+    dest  = c(NA, 2, 3, NA, NA, NA))
 
 events_expected <- data.frame(
-    event = c("enter", "extTrans", "extTrans", "intTrans", "exit"),
-    time = c(1, 3, 5, 6, 7),
-    node = c(1L, 1L, 2L, 3L, 3L),
-    dest = c(0L, 2L, 3L, 0L, 0L),
-    n = c(1L, 1L, 1L, 1L, 1L),
-    proportion = c(0, 0, 0, 0, 0),
-    select = c(1L, 3L, 3L, 3L, 4L),
-    shift = c(0L, 0L, 0L, 1L, 0L))
+    event = c("enter", "exit", "extTrans", "extTrans", "intTrans", "exit"),
+    time = c(1, 3, 3, 5, 6, 7),
+    node = c(1L, 1L, 1L, 2L, 3L, 3L),
+    dest = c(0L, 0L, 2L, 3L, 0L, 0L),
+    n = c(2L, 1L, 1L, 1L, 1L, 1L),
+    proportion = c(0, 0, 0, 0, 0, 0),
+    select = c(1L, 3L, 3L, 3L, 3L, 4L),
+    shift = c(0L, 0L, 0L, 0L, 1L, 0L))
 
 events_observed <- events(individual_events(events), time = 0, age = 5)
 
