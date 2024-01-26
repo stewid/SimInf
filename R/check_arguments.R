@@ -340,14 +340,14 @@ check_package_name <- function(name) {
 ##' @noRd
 check_age <- function(age) {
     if (is.null(age))
-        return(0)
+        return(0L)
 
     ## Check for valid age.
     age <- sort(unique(as.integer(age)))
-    if (any(age <= 0))
+    if (any(age <= 0L))
         stop("'age' must be an integer vector with values > 0.", call. = FALSE)
 
-    c(0, age)
+    c(0L, age)
 }
 
 ##' Check for valid target model and raise an error if the target is

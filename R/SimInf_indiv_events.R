@@ -441,6 +441,25 @@ setMethod(
     }
 )
 
+events_target <- function(events, target) {
+    if (is.null(target) || (target %in% c("SISe3", "SISe3_sp")))
+        return(events)
+
+    if (target %in% c("SIS", "SISe", "SISe_sp", "SEIR")) {
+        events$select[events$event == 0L] <- 2L
+        events$select[events$event == 3L] <- 2L
+        return(events)
+    }
+
+    if (target %in% c("SIR")) {
+        events$select[events$event == 0L] <- 4L
+        events$select[events$event == 3L] <- 4L
+        return(events)
+    }
+
+    stop("Invalid 'target' for 'events'.", call. = FALSE)
+}
+
 ##' @rdname events
 ##' @param time Only used when object is of class
 ##'     \code{SimInf_indiv_events} object. All events that occur after
@@ -478,8 +497,8 @@ setMethod(
             stop("All individuals must have an 'enter' event.", call. = FALSE)
 
         events <- data.frame(id = object@id,
-                             event = object@event,
-                             time = object@time,
+                             event = as.integer(object@event),
+                             time = as.integer(object@time),
                              node = object@node,
                              dest = object@dest,
                              select = 1L,
@@ -587,6 +606,10 @@ setMethod(
         events <- events[events$time > indiv_events_time(object, time), ]
         rownames(events) <- NULL
 
+        events <- events[, c("event", "time", "node", "dest", "n",
+                             "proportion", "select", "shift")]
+        events <- events_target(events, target)
+
         if (!is.null(attr(object@event, "origin"))) {
             event_names <- c("exit", "enter", "intTrans", "extTrans")
             events$event <- event_names[events$event + 1]
@@ -596,9 +619,10 @@ setMethod(
             events$time <- as.Date(events$time,
                                    origin = attr(object@time, "origin"))
             events$time <- as.character(events$time)
+        } else {
+            events$time <- as.numeric(events$time)
         }
 
-        events[, c("event", "time", "node", "dest", "n", "proportion",
-                   "select", "shift")]
+        events
     }
 )
