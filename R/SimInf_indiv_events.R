@@ -449,9 +449,8 @@ inject_ageing_events <- function(events, age) {
 
     ## Then determine the time-points for the exit events.
     i <- which(events$event == 0L)
-    ageing <- merge(ageing,
-                    data.frame(id = events$id[i], exit = events$time[i]),
-                    all.x = TRUE)
+    j <- match(ageing$id, events$id[i])
+    ageing$exit <- events$time[i][j]
 
     ## Ensure all ageing events occur within the time-span of all
     ## events.
