@@ -577,7 +577,7 @@ setMethod(
         if (length(setdiff(object@id, object@id[object@event == 1L])))
             stop("All individuals must have an 'enter' event.", call. = FALSE)
 
-        events <- data.frame(id = object@id,
+        events <- data.frame(id = as.integer(as.factor(object@id)),
                              event = as.integer(object@event),
                              time = as.integer(object@time),
                              node = object@node,
