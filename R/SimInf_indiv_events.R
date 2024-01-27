@@ -572,28 +572,25 @@ setMethod(
         age <- check_age(age)
         target <- check_target(target, age)
 
-        ## Check that all individuals have an enter event.
-        if (length(setdiff(object@id, object@id[object@event == 1L])))
-            stop("All individuals must have an 'enter' event.", call. = FALSE)
+        ## Map nodes to the one-based index in SimInf.
+        all_nodes <- unique(c(object@node, object@dest))
+        all_nodes <- sort(all_nodes[!is.na(all_nodes)])
 
         events <- data.frame(id = as.integer(as.factor(object@id)),
                              event = as.integer(object@event),
                              time = as.integer(object@time),
-                             node = object@node,
-                             dest = object@dest,
+                             node = match(object@node, all_nodes),
+                             dest = match(object@dest, all_nodes),
                              select = 1L,
                              shift = 0L)
         events$dest[is.na(events$dest)] <- 0L
 
+        ## Check that all individuals have an enter event.
+        if (length(setdiff(events$id, events$id[events$event == 1L])))
+            stop("All individuals must have an 'enter' event.", call. = FALSE)
+
         if (length(age) > 1)
             events <- inject_ageing_events(events, age)
-
-        ## Map nodes to the one-based index in SimInf.
-        all_nodes <- unique(c(object@node, object@dest))
-        all_nodes <- sort(all_nodes[!is.na(all_nodes)])
-        events$node <- match(events$node, all_nodes)
-        events$dest <- match(events$dest, all_nodes)
-        events$dest[is.na(events$dest)] <- 0L
 
         events$n <- 1L
         events <- aggregate(n ~ event + time + node + dest + select + shift,
