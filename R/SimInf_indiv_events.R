@@ -444,100 +444,102 @@ setMethod(
 inject_ageing_events <- function(events, age) {
     ## Create ageing events for individuals. First, determine the
     ## time-points for the enter events.
-    i <- which(events$event == 1L)
-    ageing <- data.frame(id = events$id[i], enter = events$time[i])
+    ageing <- events[events[, "event"] == 1L, c("id", "time"), drop = FALSE]
+    colnames(ageing) <- c("id", "enter")
 
     ## Then determine the time-points for the exit events.
-    i <- which(events$event == 0L)
-    j <- match(ageing$id, events$id[i])
-    ageing$exit <- events$time[i][j]
+    i <- which(events[, "event"] == 0L)
+    j <- match(ageing[, "id"], events[i, "id"])
+    ageing <- cbind(ageing, exit = events[i, "time"][j])
 
     ## Ensure all ageing events occur within the time-span of all
     ## events.
-    ageing$exit[is.na(ageing$exit)] <- max(events$time) + 1L
+    ageing[is.na(ageing[, "exit"]), "exit"] <- max(events[, "time"]) + 1L
 
     ## Add a column of the age in days of the individual at
     ## each event.
-    i <- match(events$id, ageing$id)
-    events$days <- events$time - ageing$enter[i]
+    i <- match(events[, "id"], ageing[, "id"])
+    events <- cbind(events, days = events[, "time"] - ageing[i, "enter"])
 
     ## Clear select for non-enter events.
-    events$select[events$event != 1L] <- NA_integer_
+    events[events[, "event"] != 1L, "select"] <- NA_integer_
 
     for (i in seq_len(length(age))[-1]) {
-        ageing <- ageing[(ageing$exit - ageing$enter) > age[i], ]
+        ## Determine which individuals are eligble for ageing.
+        j <- which(ageing[, "exit"] - ageing[, "enter"] > age[i])
+        ageing <- ageing[j, , drop = FALSE]
 
         if (nrow(ageing) > 0) {
-            events <- rbind(events,
-                            data.frame(id = ageing$id,
-                                       event = 2L,
-                                       time = ageing$enter + age[i],
-                                       node = 0L,
-                                       dest = 0L,
-                                       select = length(age) + i - 1L,
-                                       shift = i - 1L,
-                                       days = age[i]))
+            events <- rbind(
+                events,
+                matrix(c(ageing[, "id"],
+                         rep(2L, nrow(ageing)),
+                         ageing[, "enter"] + age[i],
+                         rep(0L, nrow(ageing)),
+                         rep(0L, nrow(ageing)),
+                         rep(length(age) + i - 1L, nrow(ageing)),
+                         rep(i - 1L, nrow(ageing)),
+                         rep(age[i], nrow(ageing))),
+                       nrow = nrow(ageing),
+                       ncol = 8L,
+                       dimnames = list(
+                           NULL,
+                           c("id", "event", "time", "node", "dest",
+                             "select", "shift", "days"))))
 
-            events <- events[order(events$id,
-                                   events$time,
-                                   events$event,
-                                   events$node,
-                                   events$dest), ]
+            events <- events[order(events[, "id"],
+                                   events[, "time"],
+                                   events[, "event"],
+                                   events[, "node"],
+                                   events[, "dest"]), ]
 
             ## Determine the node for the ageing event.
-            j <- which(events$event == 2L & events$node == 0L)
+            j <- which(events[, "event"] == 2L &
+                       events[, "node"] == 0L)
             if (length(j)) {
                 ## If the previous event is a movement, then the node
                 ## is the destination of that movement.
-                events$node[j] <- ifelse(events$dest[j - 1] > 0L,
-                                         events$dest[j - 1],
-                                         events$node[j - 1])
+                events[j, "node"] <- ifelse(events[j - 1, "dest"] > 0L,
+                                            events[j - 1, "dest"],
+                                            events[j - 1, "node"])
             }
         }
 
         ## Determine if there are any exit events for this age
         ## category.
-        j <- which(events$event == 0L &
-                   events$days <= age[i] &
-                   is.na(events$select))
-        if (length(j))
-            events$select[j] <- length(age) + i - 1L
+        j <- which(events[, "event"] == 0L &
+                   events[, "days"] <= age[i] &
+                   is.na(events[, "select"]))
+        events[j, "select"] <- length(age) + i - 1L
 
         ## Determine if there are any movement events for this age
         ## category.
-        j <- which(events$event == 3L &
-                   events$days < age[i] &
-                   is.na(events$select))
-        if (length(j))
-            events$select[j] <- length(age) + i - 1L
+        j <- which(events[, "event"] == 3L &
+                   events[, "days"] < age[i] &
+                   is.na(events[, "select"]))
+        events[j, "select"] <- length(age) + i - 1L
     }
 
     ## Determine if there are any events where select = NA because of
     ## individuals being older than the largest age break point.
-    j <- which(is.na(events$select))
-    if (length(j))
-        events$select[j] <- 2L * length(age)
+    j <- which(is.na(events[, "select"]))
+    events[j, "select"] <- 2L * length(age)
 
     events
 }
 
 events_target <- function(events, target) {
-    if (is.null(target) || (target %in% c("SISe3", "SISe3_sp")))
-        return(events)
-
-    if (target %in% c("SIS", "SISe", "SISe_sp", "SEIR")) {
-        events$select[events$event == 0L] <- 2L
-        events$select[events$event == 3L] <- 2L
-        return(events)
+    if (!is.null(target)) {
+        if (target %in% c("SIS", "SISe", "SISe_sp", "SEIR")) {
+            events[events[, "event"] == 0L, "select"] <- 2L
+            events[events[, "event"] == 3L, "select"] <- 2L
+        } else if (target %in% c("SIR")) {
+            events[events[, "event"] == 0L, "select"] <- 4L
+            events[events[, "event"] == 3L, "select"] <- 4L
+        }
     }
 
-    if (target %in% c("SIR")) {
-        events$select[events$event == 0L] <- 4L
-        events$select[events$event == 3L] <- 4L
-        return(events)
-    }
-
-    stop("Invalid 'target' for 'events'.", call. = FALSE)
+    as.data.frame(events)
 }
 
 ##' @rdname events
@@ -576,36 +578,51 @@ setMethod(
         all_nodes <- unique(c(object@node, object@dest))
         all_nodes <- sort(all_nodes[!is.na(all_nodes)])
 
-        events <- data.frame(id = as.integer(as.factor(object@id)),
-                             event = as.integer(object@event),
-                             time = as.integer(object@time),
-                             node = match(object@node, all_nodes),
-                             dest = match(object@dest, all_nodes),
-                             select = 1L,
-                             shift = 0L)
-        events$dest[is.na(events$dest)] <- 0L
+        events <- matrix(c(as.integer(as.factor(object@id)),
+                           as.integer(object@event),
+                           as.integer(object@time),
+                           match(object@node, all_nodes),
+                           match(object@dest, all_nodes),
+                           rep(1L, length(object@id)),
+                           rep(0L, length(object@id))),
+                         nrow = length(object@id),
+                         ncol = 7,
+                         dimnames = list(
+                             NULL,
+                             c("id", "event", "time", "node", "dest",
+                               "select", "shift")))
+
+        ## Ensure all 'dest' are non-NA.
+        events[is.na(events[, "dest"]), "dest"] <- 0L
 
         ## Check that all individuals have an enter event.
-        if (length(setdiff(events$id, events$id[events$event == 1L])))
+        if (length(setdiff(events[, "id"],
+                           events[events[, "event"] == 1L, "id"]))) {
             stop("All individuals must have an 'enter' event.", call. = FALSE)
+        }
 
         if (length(age) > 1)
             events <- inject_ageing_events(events, age)
 
-        events$n <- 1L
+        ## Keep events that occur after 'time'.
+        i <- which(events[, "time"] > indiv_events_time(object, time))
+        events <- cbind(events[i, c("event", "time", "node", "dest",
+                                    "select", "shift"), drop = FALSE],
+                        n = 1L)
+
         events <- aggregate(n ~ event + time + node + dest + select + shift,
                             events,
                             length)
-        events <- events[order(events$time, events$event, events$select), ]
-        events$proportion <- 0
 
-        ## Keep events that occur after 'time'.
-        events <- events[events$time > indiv_events_time(object, time), ]
+        i <- order(events[, "time"], events[, "event"], events[, "select"])
+        events <- cbind(events[i, , drop = FALSE], proportion = 0)
         rownames(events) <- NULL
 
-        events <- events[, c("event", "time", "node", "dest", "n",
-                             "proportion", "select", "shift")]
-        events <- events_target(events, target)
+        events <- events_target(events[, c("event", "time", "node",
+                                           "dest", "n", "proportion",
+                                           "select", "shift"),
+                                       drop = FALSE],
+                                target)
 
         if (!is.null(attr(object@event, "origin"))) {
             event_names <- c("exit", "enter", "intTrans", "extTrans")
