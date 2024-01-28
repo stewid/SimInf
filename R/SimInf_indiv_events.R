@@ -539,7 +539,9 @@ events_target <- function(events, target) {
         }
     }
 
-    as.data.frame(events)
+    events <- as.data.frame(events)
+    events$proportion <- as.numeric(events$proportion)
+    events
 }
 
 ##' @rdname events
@@ -606,16 +608,39 @@ setMethod(
 
         ## Keep events that occur after 'time'.
         i <- which(events[, "time"] > indiv_events_time(object, time))
-        events <- cbind(events[i, c("event", "time", "node", "dest",
-                                    "select", "shift"), drop = FALSE],
+        j <- order(events[i, "time"], events[i, "event"], events[i, "node"],
+                   events[i, "dest"], events[i, "select"], events[i, "shift"])
+        events <- cbind(events[i[j], c("event", "time", "node", "dest", "select",
+                                       "shift"), drop = FALSE],
                         n = 1L)
 
-        events <- aggregate(n ~ event + time + node + dest + select + shift,
-                            events,
-                            length)
+        if (nrow(events) > 1) {
+            ## Determine duplicated events.
+            i <- seq(from = 2L, to = nrow(events), by = 1L)
+            duplicated <- i[events[i, "time"] == events[i - 1, "time"] &
+                            events[i, "event"] == events[i - 1, "event"] &
+                            events[i, "node"] == events[i - 1, "node"] &
+                            events[i, "dest"] == events[i - 1, "dest"] &
+                            events[i, "select"] == events[i - 1, "select"] &
+                            events[i, "shift"] == events[i - 1, "shift"]]
 
-        i <- order(events[, "time"], events[, "event"], events[, "select"])
-        events <- cbind(events[i, , drop = FALSE], proportion = 0)
+            if (length(duplicated) > 0) {
+                ## Determine the index to the first non-duplicated row
+                ## before each sequence of duplicates.
+                d <- diff(duplicated)
+                i <- duplicated[c(0L, d) != 1L] - 1L
+
+                ## Count the number of duplicates in each sequence.
+                n <- cumsum(c(1L, d) > 1L)
+                n <- as.integer(tapply(n, n, length))
+
+                ## Update events and remove duplicates.
+                events[i, "n"] <- events[i, "n"] + n
+                events <- events[-duplicated, ]
+            }
+        }
+
+        events <- cbind(events, proportion = 0L)
         rownames(events) <- NULL
 
         events <- events_target(events[, c("event", "time", "node",
