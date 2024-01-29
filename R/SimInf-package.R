@@ -41,7 +41,6 @@
 ##' @importFrom methods show
 ##' @importFrom methods slot
 ##' @importFrom methods validObject
-##' @importFrom stats aggregate
 ##' @importFrom stats ave
 ##' @importFrom stats cov
 ##' @importFrom stats density
