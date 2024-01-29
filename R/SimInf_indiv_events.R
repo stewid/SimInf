@@ -610,8 +610,8 @@ setMethod(
         i <- which(events[, "time"] > indiv_events_time(object, time))
         j <- order(events[i, "time"], events[i, "event"], events[i, "node"],
                    events[i, "dest"], events[i, "select"], events[i, "shift"])
-        events <- cbind(events[i[j], c("event", "time", "node", "dest", "select",
-                                       "shift"), drop = FALSE],
+        events <- cbind(events[i[j], c("event", "time", "node", "dest",
+                                       "select", "shift"), drop = FALSE],
                         n = 1L)
 
         if (nrow(events) > 1) {
