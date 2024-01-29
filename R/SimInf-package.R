@@ -43,7 +43,6 @@
 ##' @importFrom methods slot<-
 ##' @importFrom methods validObject
 ##' @importFrom mvtnorm rmvnorm
-##' @importFrom stats aggregate
 ##' @importFrom stats ave
 ##' @importFrom stats cov
 ##' @importFrom stats density
