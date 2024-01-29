@@ -2,8 +2,8 @@
 % Please edit documentation in R/SimInf.R
 \docType{package}
 \name{SimInf}
-\alias{SimInf}
 \alias{SimInf-package}
+\alias{SimInf}
 \title{A Framework for Data-Driven Stochastic Disease Spread Simulations}
 \description{
 The SimInf package provides a flexible framework for data-driven

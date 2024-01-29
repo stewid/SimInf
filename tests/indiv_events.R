@@ -726,6 +726,13 @@ check_error(
     res,
     "'age' must be an integer vector with values > 0.")
 
+res <- assertError(SimInf:::u0_target(u0(individual_events(events),
+                                         time = 2),
+                                      target = "Unknown"))
+check_error(
+    res,
+    "Invalid 'target' for 'u0'.")
+
 events <- data.frame(
     id    = c("individual-1", "individual-1", "individual-1", "individual-1",
               "individual-2", "individual-2", "individual-2", "individual-2"),
@@ -799,6 +806,11 @@ check_error(
     res,
     "All individuals must have an 'enter' event.")
 
+res <- assertError(events(individual_events(events)))
+check_error(
+    res,
+    "All individuals must have an 'enter' event.")
+
 res <- assertError(SimInf:::check_indiv_events_id(3.2))
 check_error(
     res,
@@ -808,3 +820,197 @@ res <- assertError(SimInf:::check_indiv_events_id(NULL))
 check_error(
     res,
     "'id' must be an integer or character vector with non-NA values.")
+
+## Test to generate events and u0
+events <- data.frame(
+    id = c("animal-06", "animal-03", "animal-03", "animal-03",
+           "animal-08", "animal-03", "animal-03", "animal-06",
+           "animal-08", "animal-08", "animal-06", "animal-08",
+           "animal-08", "animal-06", "animal-06", "animal-05",
+           "animal-07", "animal-05", "animal-05", "animal-05",
+           "animal-05", "animal-10", "animal-01", "animal-04",
+           "animal-04", "animal-04", "animal-01", "animal-01",
+           "animal-05", "animal-05", "animal-08", "animal-08",
+           "animal-01", "animal-01", "animal-09", "animal-10",
+           "animal-09", "animal-09", "animal-02", "animal-11",
+           "animal-11", "animal-11", "animal-11", "animal-11",
+           "animal-11", "animal-11"),
+    event = c("enter", "enter", "extTrans", "extTrans", "enter",
+              "exit", "exit", "extTrans", "extTrans", "extTrans",
+              "extTrans", "extTrans", "extTrans", "exit", "exit",
+              "enter", "enter", "extTrans", "extTrans", "extTrans",
+              "extTrans", "enter", "enter", "enter", "exit", "exit",
+              "extTrans", "extTrans", "exit", "exit", "exit", "exit",
+              "exit", "exit", "enter", "exit", "extTrans", "extTrans",
+              "enter", "enter", "extTrans", "extTrans", "extTrans",
+              "extTrans", "exit", "exit"),
+    time = c("2015-01-31", "2015-04-01", "2015-05-27", "2015-05-27",
+             "2015-10-14", "2015-12-25", "2015-12-26", "2016-05-23",
+             "2016-06-01", "2016-10-12", "2016-10-28", "2017-03-01",
+             "2017-03-01", "2017-03-09", "2017-03-09", "2017-04-25",
+             "2017-08-30", "2017-12-21", "2017-12-21", "2017-12-22",
+             "2017-12-22", "2018-03-30", "2019-05-30", "2019-07-06",
+             "2019-07-16", "2019-07-17", "2019-08-14", "2019-08-14",
+             "2020-03-31", "2020-04-01", "2020-07-13", "2020-07-14",
+             "2021-02-09", "2021-02-09", "2022-02-01", "2022-04-10",
+             "2022-07-25", "2022-07-25", "2022-12-09", "2017-04-25",
+             "2017-12-21", "2017-12-21", "2017-12-22", "2017-12-22",
+             "2020-03-31", "2020-04-01"),
+    node = c("node-08", "node-03", "node-03", "node-03", "node-12",
+             "node-05", "node-05", "node-08", "node-12", "node-13",
+             "node-07", "node-12", "node-12", "node-08", "node-08",
+             "node-06", "node-11", "node-06", "node-06", "node-09",
+             "node-09", "node-17", "node-01", "node-04", "node-04",
+             "node-04", "node-01", "node-01", "node-16", "node-16",
+             "node-18", "node-18", "node-10", "node-10", "node-14",
+             "node-17", "node-14", "node-14", "node-02", "node-06",
+             "node-06", "node-06", "node-09", "node-09", "node-16",
+             "node-16"),
+    dest = c(NA, NA, "node-05", "node-05", NA, NA, NA, "node-07",
+             "node-13", "node-12", "node-08", "node-18", "node-18",
+             NA, NA, NA, NA, "node-09", "node-09", "node-16",
+             "node-16", NA, NA, NA, NA, NA, "node-10", "node-10", NA,
+             NA, NA, NA, NA, NA, NA, NA, "node-15", "node-15", NA,
+             NA, "node-09", "node-09", "node-16", "node-16", NA, NA))
+
+events_expected <- data.frame(
+    event = c("enter", "extTrans", "enter", "exit", "extTrans",
+              "extTrans", "extTrans", "extTrans", "extTrans", "exit",
+              "enter", "enter", "extTrans", "extTrans", "enter",
+              "enter", "enter", "exit", "extTrans", "exit", "exit",
+              "exit", "enter", "exit", "extTrans", "enter"),
+    time = c("2015-04-01", "2015-05-27", "2015-10-14", "2015-12-25",
+             "2016-05-23", "2016-06-01", "2016-10-12", "2016-10-28",
+             "2017-03-01", "2017-03-09", "2017-04-25", "2017-08-30",
+             "2017-12-21", "2017-12-22", "2018-03-30", "2019-05-30",
+             "2019-07-06", "2019-07-16", "2019-08-14", "2020-03-31",
+             "2020-07-13", "2021-02-09", "2022-02-01", "2022-04-10",
+             "2022-07-25", "2022-12-09"),
+    node = c(3L, 3L, 12L, 5L, 8L, 12L, 13L, 7L, 12L, 8L, 6L, 11L, 6L,
+             9L, 17L, 1L, 4L, 4L, 1L, 16L, 18L, 10L, 14L, 17L, 14L,
+             2L),
+    dest = c(0L, 5L, 0L, 0L, 7L, 13L, 12L, 8L, 18L, 0L, 0L, 0L, 9L,
+             16L, 0L, 0L, 0L, 0L, 10L, 0L, 0L, 0L, 0L, 0L, 15L, 0L),
+    n = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 2L, 2L, 1L,
+          1L, 1L, 1L, 1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L),
+    proportion = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                   0, 0, 0, 0, 0, 0, 0, 0, 0),
+    select = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L,
+               1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L),
+    shift = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
+              0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
+
+events_observed <- events(individual_events(events))
+
+stopifnot(identical(events_observed, events_expected))
+
+## Check that an intTrans event is added.
+events <- data.frame(
+    id    = c(1, 1, 1, 1, 2, 2),
+    event = c("enter", "extTrans", "extTrans", "exit", "enter", "exit"),
+    time  = c(1, 3, 5, 7, 1, 3),
+    node  = c(1, 1, 2, 3, 1, 1),
+    dest  = c(NA, 2, 3, NA, NA, NA))
+
+events_expected <- data.frame(
+    event = c("enter", "exit", "extTrans", "extTrans", "intTrans", "exit"),
+    time = c(1, 3, 3, 5, 6, 7),
+    node = c(1L, 1L, 1L, 2L, 3L, 3L),
+    dest = c(0L, 0L, 2L, 3L, 0L, 0L),
+    n = c(2L, 1L, 1L, 1L, 1L, 1L),
+    proportion = c(0, 0, 0, 0, 0, 0),
+    select = c(1L, 3L, 3L, 3L, 3L, 4L),
+    shift = c(0L, 0L, 0L, 0L, 1L, 0L))
+
+events_observed <- events(individual_events(events), time = 0, age = 5)
+
+stopifnot(identical(events_observed, events_expected))
+
+## Check that target works for 'SEIR', 'SIS', 'SISe', and
+## 'SISe_sp'.
+events <- data.frame(
+    id    = c(1, 1, 1, 1, 2, 2),
+    event = c("enter", "extTrans", "extTrans", "exit", "enter", "exit"),
+    time  = c(1, 3, 5, 7, 1, 3),
+    node  = c(1, 1, 2, 3, 1, 1),
+    dest  = c(NA, 2, 3, NA, NA, NA))
+
+events_expected <- data.frame(
+    event = c("enter", "exit", "extTrans", "extTrans", "exit"),
+    time = c(1, 3, 3, 5, 7),
+    node = c(1L, 1L, 1L, 2L, 3L),
+    dest = c(0L, 0L, 2L, 3L, 0L),
+    n = c(2L, 1L, 1L, 1L, 1L),
+    proportion = c(0, 0, 0, 0, 0),
+    select = c(1L, 2L, 2L, 2L, 2L),
+    shift = c(0L, 0L, 0L, 0L, 0L))
+
+events_observed <- events(individual_events(events),
+                          time = 0, target = "SEIR")
+stopifnot(identical(events_observed, events_expected))
+
+events_observed <- events(individual_events(events),
+                          time = 0, target = "SIS")
+stopifnot(identical(events_observed, events_expected))
+
+events_observed <- events(individual_events(events),
+                          time = 0, target = "SISe")
+stopifnot(identical(events_observed, events_expected))
+
+events_observed <- events(individual_events(events),
+                          time = 0, target = "SISe_sp")
+stopifnot(identical(events_observed, events_expected))
+
+## Check that target works for 'SIR'.
+events <- data.frame(
+    id    = c(1, 1, 1, 1, 2, 2),
+    event = c("enter", "extTrans", "extTrans", "exit", "enter", "exit"),
+    time  = c(1, 3, 5, 7, 1, 3),
+    node  = c(1, 1, 2, 3, 1, 1),
+    dest  = c(NA, 2, 3, NA, NA, NA))
+
+events_expected <- data.frame(
+    event = c("enter", "exit", "extTrans", "extTrans", "exit"),
+    time = c(1, 3, 3, 5, 7),
+    node = c(1L, 1L, 1L, 2L, 3L),
+    dest = c(0L, 0L, 2L, 3L, 0L),
+    n = c(2L, 1L, 1L, 1L, 1L),
+    proportion = c(0, 0, 0, 0, 0),
+    select = c(1L, 4L, 4L, 4L, 4L),
+    shift = c(0L, 0L, 0L, 0L, 0L))
+
+events_observed <- events(individual_events(events),
+                          time = 0, target = "SIR")
+stopifnot(identical(events_observed, events_expected))
+
+## Check that target works for 'NULL', 'SISe3', and 'SISe3_sp'.
+events <- data.frame(
+    id    = c(1, 1, 1, 1, 2, 2),
+    event = c("enter", "extTrans", "extTrans", "exit", "enter", "exit"),
+    time  = c(1, 3, 5, 7, 1, 3),
+    node  = c(1, 1, 2, 3, 1, 1),
+    dest  = c(NA, 2, 3, NA, NA, NA))
+
+events_expected <- data.frame(
+    event = c("enter", "exit", "extTrans", "intTrans", "extTrans",
+              "intTrans", "exit"),
+    time = c(1, 3, 3, 4, 5, 6, 7),
+    node = c(1L, 1L, 1L, 2L, 2L, 3L, 3L),
+    dest = c(0L, 0L, 2L, 0L, 3L, 0L, 0L),
+    n = c(2L, 1L, 1L, 1L, 1L, 1L, 1L),
+    proportion = c(0, 0, 0, 0, 0, 0, 0),
+    select = c(1L, 4L, 4L, 4L, 5L, 5L, 6L),
+    shift = c(0L, 0L, 0L, 1L, 0L, 2L, 0L))
+
+events_observed <- events(individual_events(events),
+                          time = 0, age = c(3, 5), target = NULL)
+
+stopifnot(identical(events_observed, events_expected))
+events_observed <- events(individual_events(events),
+                          time = 0, age = c(3L, 5L), target = "SISe3")
+
+stopifnot(identical(events_observed, events_expected))
+
+events_observed <- events(individual_events(events),
+                          time = 0, age = c(3, 5), target = "SISe3_sp")
+stopifnot(identical(events_observed, events_expected))
