@@ -10,7 +10,7 @@ jobs:
     container: fedora:latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install ansible
         run: sudo dnf --assumeyes install ansible
