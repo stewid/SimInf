@@ -93,7 +93,9 @@ events <- data.frame(
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 2L, 1L))
 res <- assertError(individual_events(events))
-check_error(res, "'event' must be an integer or character vector with non-NA values.")
+check_error(
+    res,
+    "'event' must be an integer or character vector with non-NA values.")
 
 events <- data.frame(
     id    = c(1L, 1L, 1L, 1L),
@@ -102,7 +104,9 @@ events <- data.frame(
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 2L, 1L))
 res <- assertError(individual_events(events))
-check_error(res, "'event' must be an integer or character vector with non-NA values.")
+check_error(
+    res,
+    "'event' must be an integer or character vector with non-NA values.")
 
 events <- data.frame(
     id    = c(1L, 1L, 1L, 1L),
@@ -111,7 +115,9 @@ events <- data.frame(
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 2L, 1L))
 res <- assertError(individual_events(events))
-check_error(res, "'event' must be an integer or character vector with non-NA values.")
+check_error(
+    res,
+    "'event' must be an integer or character vector with non-NA values.")
 
 events <- data.frame(
     id    = c(1L, 1L, 1L, 1L),
@@ -120,7 +126,9 @@ events <- data.frame(
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 2L, 1L))
 res <- assertError(individual_events(events))
-check_error(res, "'event' type must be 'enter', 'exit', or 'extTrans'.")
+check_error(
+    res,
+    "'event' type must be 'enter', 'exit', or 'extTrans'.")
 
 events <- data.frame(
     id    = c(1L, 1L, 1L, 1L),
@@ -129,7 +137,42 @@ events <- data.frame(
     node  = c(1L, 1L, 2L, 2L),
     dest  = c(0L, 2L, 2L, 1L))
 res <- assertError(individual_events(events))
-check_error(res, "'event' must be an integer or character vector with non-NA values.")
+check_error(
+    res,
+    "'event' must be an integer or character vector with non-NA values.")
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 3L, 3L, 0L),
+    time  = c(1L, NA_integer_, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(
+    res,
+    "'time' must be an integer or character vector with non-NA values.")
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 3L, 3L, 0L),
+    time  = c(1, 2.1, 3, 4),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(
+    res,
+    "'time' must be an integer or character vector with non-NA values.")
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 3L, 3L, 0L),
+    time  = c(TRUE, TRUE, TRUE, TRUE),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(
+    res,
+    "'time' must be an integer or character vector with non-NA values.")
 
 ## Check individual events.
 events <- data.frame(
