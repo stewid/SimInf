@@ -82,6 +82,55 @@ res <- assertError(.Call(
     c(0L, 2L)))
 check_error(res, "'event[2]' is invalid.")
 
+## Check various errors in event data.
+res <- assertError(individual_events(1L))
+check_error(res, "Missing columns in 'events'.")
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, NA_integer_, 3L, 0L),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(res, "'event' must be an integer or character vector with non-NA values.")
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1, 3.1, 3, 0),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(res, "'event' must be an integer or character vector with non-NA values.")
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 4L, 3L, 0L),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(res, "'event' must be an integer or character vector with non-NA values.")
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c("enter", "unknown", "extTrans", "exit"),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(res, "'event' type must be 'enter', 'exit', or 'extTrans'.")
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(TRUE, TRUE, TRUE, TRUE),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(res, "'event' must be an integer or character vector with non-NA values.")
+
 ## Check individual events.
 events <- data.frame(
     id    = c(1L, 1L, 1L, 1L),
