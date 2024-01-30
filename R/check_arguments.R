@@ -374,7 +374,5 @@ check_target <- function(target, age) {
         return(target)
     }
 
-        stop("Invalid 'age' for 'target' model.", call. = FALSE)
-
     stop("Invalid 'age' for 'target' model.", call. = FALSE)
 }
