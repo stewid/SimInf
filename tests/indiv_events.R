@@ -174,6 +174,28 @@ check_error(
     res,
     "'time' must be an integer or character vector with non-NA values.")
 
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 3L, 3L, 0L),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c(NA_integer_, 1L, 2L, 2L),
+    dest  = c(0L, 2L, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(
+    res,
+    "'node' or 'dest' contain NA values.")
+
+events <- data.frame(
+    id    = c(1L, 1L, 1L, 1L),
+    event = c(1L, 3L, 3L, 0L),
+    time  = c(1L, 2L, 3L, 4L),
+    node  = c(1L, 1L, 2L, 2L),
+    dest  = c(0L, NA_integer_, 2L, 1L))
+res <- assertError(individual_events(events))
+check_error(
+    res,
+    "'node' or 'dest' contain NA values.")
+
 ## Check individual events.
 events <- data.frame(
     id    = c(1L, 1L, 1L, 1L),
