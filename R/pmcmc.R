@@ -110,7 +110,7 @@ setMethod(
 
             ## Skip first four columns in chain.
             j <- seq(from = 5, by = 1, length.out = length(object@pars))
-            summary_chain(object@chain[, j])
+            summary_chain(object@chain[, j, drop = FALSE])
         }
 
         invisible(object)
@@ -150,7 +150,7 @@ setMethod(
 
             ## Skip first four columns in chain.
             j <- seq(from = 5, by = 1, length.out = length(object@pars))
-            summary_chain(object@chain[, j])
+            summary_chain(object@chain[, j, drop = FALSE])
         }
 
         invisible(NULL)
