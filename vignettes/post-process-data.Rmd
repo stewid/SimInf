@@ -46,8 +46,8 @@ set.seed(123)
 set_num_threads(1)
 
 u0 <- data.frame(S = c(100, 101, 102, 103, 104, 105),
-                 I = c(  1,   2,   3,   4,   5,   6),
-                 R = c(  0,   0,   0,   0,   0,   0))
+                 I = c(1, 2, 3, 4, 5, 6),
+                 R = c(0, 0, 0, 0, 0, 0))
 
 model  <- SIR(u0 = u0,
               tspan = 1:10,
@@ -93,10 +93,10 @@ of infected individuals in the population at the time-points in
 `tspan`.
 
 ```{r}
-prevalence(result, I~S+I+R)
+prevalence(result, I ~ S + I + R)
 ```
 
-Identical result is obtained with the shorthand 'I~.'
+Identical result is obtained with the shorthand 'I ~ .'
 
 ```{r}
 prevalence(result, I ~ .)
@@ -109,14 +109,14 @@ now, we can also ask for the proportion of nodes with infected
 individuals by specifying `level = 2`.
 
 ```{r}
-prevalence(result, I~S+I+R, level = 2)
+prevalence(result, I ~ S + I + R, level = 2)
 ```
 
 Finally, we may wish to know the proportion of infected individuals
 within each node with `level = 3`.
 
 ```{r}
-prevalence(result, I~S+I+R, level = 3)
+prevalence(result, I ~ S + I + R, level = 3)
 ```
 
 Consult the help page for other `prevalence()` parameter options.
