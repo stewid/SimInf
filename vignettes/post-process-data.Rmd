@@ -29,6 +29,182 @@ explore that trajectory data.
 
 ## Extract trajectory data with `trajectory()`
 
-## Calculate prevalence from trajectory with `prevalence()`
+Most modelling and simulation studies require custom data analysis
+once the simulation data has been generated.  To support this, SimInf
+provides the `trajectory()` method to obtain a `data.frame` with the
+number of individuals in each compartment at the time points specified
+in `tspan`.
 
-## Visualize trajectory with `plot()`
+Let's simulate 10 days of data from an SIR model with 6 nodes. For
+reproducibility, we first call the `set.seed()` function and specify
+the number of threads to use for the simulation.
+
+```{r}
+library(SimInf)
+
+set.seed(123)
+set_num_threads(1)
+
+u0 <- data.frame(S = c(100, 101, 102, 103, 104, 105),
+                 I = c(  1,   2,   3,   4,   5,   6),
+                 R = c(  0,   0,   0,   0,   0,   0))
+
+model  <- SIR(u0 = u0,
+              tspan = 1:10,
+              beta = 0.16,
+              gamma = 0.077)
+
+result <- run(model)
+```
+
+Extract the number of individuals in each compartment at the
+time-points in `tspan`.
+
+```{r}
+trajectory(result)
+```
+
+Extract the number of recovered individuals in the first node.
+
+```{r}
+trajectory(result, compartments = "R", index = 1)
+```
+
+Extract the number of recovered individuals in the first and third
+node.
+
+```{r}
+trajectory(result, compartments = "R", index = c(1, 3))
+```
+
+Consult the help page for other `trajectory()` parameter options.
+
+## Calculate prevalence from a trajectory using `prevalence()`
+
+Use the `prevalence` function to calculate the proportion of
+individuals with disease in the population.  The `prevalence()`
+function takes a model object and a formula specification, where the
+left-hand-side of the formula specifies the compartments representing
+cases i.e. have an attribute or a disease. The right-hand-side of the
+formula specifies the compartments at risk.
+
+Let's use the previously simulated data and determine the proportion
+of infected individuals in the population at the time-points in
+`tspan`.
+
+```{r}
+prevalence(result, I~S+I+R)
+```
+
+Identical result is obtained with the shorthand 'I~.'
+
+```{r}
+prevalence(result, I ~ .)
+```
+
+The prevalence function has an argument `level` which has a default
+`level = 1`. This returns the prevalence at the whole population
+level. Since we have several nodes (farms if you like) in the model
+now, we can also ask for the proportion of nodes with infected
+individuals by specifying `level = 2`.
+
+```{r}
+prevalence(result, I~S+I+R, level = 2)
+```
+
+Finally, we may wish to know the proportion of infected individuals
+within each node with `level = 3`.
+
+```{r}
+prevalence(result, I~S+I+R, level = 3)
+```
+
+Consult the help page for other `prevalence()` parameter options.
+
+## Visualize a trajectory with `plot()`
+
+The `plot()` function is another useful way of inspecting the outcome
+of a trajectory.  It can display either the median and the quantile
+range of the counts in all nodes, plot the counts in specified nodes,
+or the prevalence. Below are some examples of using the `plot()`
+function.
+
+Plot the median and interquartile range of the number of susceptible,
+infected and recovered individuals.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result)
+```
+
+Plot the median and the middle 95\% quantile range of the number of
+susceptible, infected and recovered individuals.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, range = 0.95)
+```
+
+Plot the median and interquartile range of the number of infected
+individuals.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, "I")
+```
+
+Use the formula notation instead to plot the median and interquartile
+range of the number of infected individuals.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, ~I)
+```
+
+Plot the number of susceptible, infected and recovered individuals in
+the first three nodes.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, index = 1:3, range = FALSE)
+```
+
+Use plot type line instead.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, index = 1:3, range = FALSE, type = "l")
+```
+
+Plot the number of infected individuals in the first node.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, "I", index = 1, range = FALSE)
+```
+
+Plot the proportion of infected individuals (cases) in the population.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, I ~ S + I + R)
+```
+
+Plot the proportion of nodes with infected individuals.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, I ~ S + I + R, level = 2)
+```
+
+Plot the median and interquartile range of the proportion of infected
+individuals in each node
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, I ~ S + I + R, level = 3)
+```
+
+Plot the proportion of infected individuals in the first three nodes.
+
+```{r, fig.width=7, fig.height=4, fig.align="left"}
+plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
+```
+
+Please run a couple of `plot(run(model))` to view the stochasticity
+between trajectories. To find help on the SimInf plot function for the
+model object run:
+
+```{r, eval=FALSE}
+help("plot,SimInf_model-method", package = "SimInf")
+```
