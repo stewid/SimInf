@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2023 Stefan Widgren
+ * Copyright (C) 2015 -- 2024 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ SEXP SISe_sp_run(SEXP, SEXP);
 SEXP SimInf_abc_proposals(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_abc_weights(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_clean_indiv_events(SEXP, SEXP, SEXP, SEXP, SEXP);
-SEXP SimInf_distance_matrix(SEXP, SEXP, SEXP, SEXP);
+SEXP SimInf_distance_matrix(SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_have_openmp(void);
 SEXP SimInf_init_threads(SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
@@ -59,7 +59,7 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SimInf_abc_proposals, 8),
     CALLDEF(SimInf_abc_weights, 7),
     CALLDEF(SimInf_clean_indiv_events, 5),
-    CALLDEF(SimInf_distance_matrix, 4),
+    CALLDEF(SimInf_distance_matrix, 5),
     CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(SimInf_init_threads, 1),
     CALLDEF(SimInf_ldata_sp, 3),

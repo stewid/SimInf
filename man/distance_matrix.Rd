@@ -4,7 +4,7 @@
 \alias{distance_matrix}
 \title{Create a distance matrix between nodes for spatial models}
 \usage{
-distance_matrix(x, y, cutoff, min_dist = NULL)
+distance_matrix(x, y, cutoff, min_dist = NULL, na_fail = TRUE)
 }
 \arguments{
 \item{x}{Projected x coordinate}
@@ -15,8 +15,13 @@ distance_matrix(x, y, cutoff, min_dist = NULL)
 
 \item{min_dist}{The minimum distance to separate two nodes.  If
 the coordinates for two nodes are identical, the min_dist must
-be assigned or an error is raised.  Default is NULL i.e. to
-raise an error.}
+be assigned or an error is raised.  Default is \code{NULL},
+i.e., to raise an error.}
+
+\item{na_fail}{A logical indicating whether missing values in
+\code{x} or \code{y} should raise an error or assign zero to
+all distances involving missing values.  Default is
+\code{TRUE}, i.e., to raise an error.}
 }
 \value{
 \code{dgCMatrix}
