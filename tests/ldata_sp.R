@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -85,6 +85,27 @@ check_error(res, "'cutoff' must be > 0.")
 
 res <- assertError(distance_matrix(x = 1:3, y = c(4, NA, 6), cutoff = 1))
 check_error(res, "Invalid distance for i=0 and j=1.")
+
+d_exp <- new("dgCMatrix",
+             i = c(2L, 0L),
+             p = c(0L, 1L, 1L, 2L),
+             Dim = c(3L, 3L),
+             Dimnames = list(NULL, NULL),
+             x = c(2.828427125, 2.828427125),
+             factors = list())
+d_obs <- distance_matrix(x = 1:3, y = c(4, NA, 6), cutoff = 3, na_fail = FALSE)
+stopifnot(is(d_obs, "dgCMatrix"))
+stopifnot(identical(d_obs@i, d_exp@i))
+stopifnot(identical(d_obs@p, d_exp@p))
+stopifnot(all(abs(d_obs@x - d_exp@x) < tol))
+
+res <- assertError(.Call(SimInf:::SimInf_distance_matrix,
+                         x = c(1, 2, 3),
+                         y = c(4, NA, 6),
+                         cutoff = 3,
+                         as.numeric(NULL),
+                         na_fail = 1))
+check_error(res, "'na_fail' must be TRUE or FALSE.")
 
 ## Check 'data' argument to C function 'SimInf_ldata_sp'
 res <- assertError(.Call(SimInf:::SimInf_ldata_sp, NULL, d, 0L))
