@@ -121,7 +121,7 @@ SimInf_distance_matrix(
     if (!Rf_isLogical(na_fail) ||
         Rf_length(na_fail) != 1 ||
         LOGICAL(na_fail)[0] == NA_LOGICAL) {
-        Rf_error("'na_fail' must be a non-NA logical value.");
+        Rf_error("'na_fail' must be TRUE or FALSE.");
     }
 
     /* First, iterate over all the elements to determine the required
