@@ -39,3 +39,13 @@ relevant information for disease spread simulations is easily
 retrieved. The aim of this function is to facilitate cleaning
 livestock event data and prepare it for usage in SimInf.
 }
+\details{
+The individual-based events will be aggregated on node-level.  The
+\code{select} value is determined by the event type and age
+category.  If there is only one age category, i.e.,
+\code{age=NULL}, then \code{select=1} for the birth events, and
+\code{select=2} for all other events.
+}
+\seealso{
+\code{\link{individual_events}}.
+}

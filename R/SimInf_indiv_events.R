@@ -281,6 +281,7 @@ check_indiv_events_nodes <- function(event, node, dest) {
 ##'     `details`.
 ##' @return \linkS4class{SimInf_indiv_events}
 ##' @export
+##' @seealso \code{\link{node_events}}.
 ##' @md
 individual_events <- function(events) {
     columns <- c("id", "event", "time", "node", "dest")
@@ -553,6 +554,12 @@ events_target <- function(events, target) {
 ##' retrieved. The aim of this function is to facilitate cleaning
 ##' livestock event data and prepare it for usage in SimInf.
 ##'
+##' The individual-based events will be aggregated on node-level.  The
+##' \code{select} value is determined by the event type and age
+##' category.  If there is only one age category, i.e.,
+##' \code{age=NULL}, then \code{select=1} for the birth events, and
+##' \code{select=2} for all other events.
+##'
 ##' @param x an individual events object of class
 ##'     \code{SimInf_indiv_events}.
 ##' @param time All events that occur after \sQuote{time} are
@@ -568,6 +575,7 @@ events_target <- function(events, target) {
 ##' @return a \code{data.frame} with the columns \code{event},
 ##'     \code{time}, \code{node}, \code{dest}, \code{n},
 ##'     \code{proportion}, \code{select}, and \code{shift}.
+##' @seealso \code{\link{individual_events}}.
 ##' @export
 setGeneric(
     "node_events",
