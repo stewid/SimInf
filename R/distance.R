@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -28,8 +28,12 @@
 ##' @param cutoff The distance cutoff
 ##' @param min_dist The minimum distance to separate two nodes.  If
 ##'     the coordinates for two nodes are identical, the min_dist must
-##'     be assigned or an error is raised.  Default is NULL i.e. to
-##'     raise an error.
+##'     be assigned or an error is raised.  Default is \code{NULL},
+##'     i.e., to raise an error.
+##' @param na_fail A logical indicating whether missing values in
+##'     \code{x} or \code{y} should raise an error or assign zero to
+##'     all distances involving missing values.  Default is
+##'     \code{TRUE}, i.e., to raise an error.
 ##' @return \code{dgCMatrix}
 ##' @export
 ##' @examples
@@ -43,10 +47,11 @@
 ##'
 ##' ## View the first 10 rows and columns in the distance matrix
 ##' d[1:10, 1:10]
-distance_matrix <- function(x, y, cutoff, min_dist = NULL) {
+distance_matrix <- function(x, y, cutoff, min_dist = NULL, na_fail = TRUE) {
     .Call(SimInf_distance_matrix,
           as.numeric(x),
           as.numeric(y),
           as.numeric(cutoff),
-          as.numeric(min_dist))
+          as.numeric(min_dist),
+          isTRUE(na_fail))
 }

@@ -920,7 +920,7 @@ check_error(
     res,
     "All individuals must have an 'enter' event.")
 
-res <- assertError(events(individual_events(events)))
+res <- assertError(node_events(individual_events(events)))
 check_error(
     res,
     "All individuals must have an 'enter' event.")
@@ -1014,7 +1014,7 @@ events_expected <- data.frame(
     shift = c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
               0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L))
 
-events_observed <- events(individual_events(events))
+events_observed <- node_events(individual_events(events))
 
 stopifnot(identical(events_observed, events_expected))
 
@@ -1036,7 +1036,7 @@ events_expected <- data.frame(
     select = c(1L, 3L, 3L, 3L, 3L, 4L),
     shift = c(0L, 0L, 0L, 0L, 1L, 0L))
 
-events_observed <- events(individual_events(events), time = 0, age = 5)
+events_observed <- node_events(individual_events(events), time = 0, age = 5)
 
 stopifnot(identical(events_observed, events_expected))
 
@@ -1059,20 +1059,20 @@ events_expected <- data.frame(
     select = c(1L, 2L, 2L, 2L, 2L),
     shift = c(0L, 0L, 0L, 0L, 0L))
 
-events_observed <- events(individual_events(events),
-                          time = 0, target = "SEIR")
+events_observed <- node_events(individual_events(events),
+                               time = 0, target = "SEIR")
 stopifnot(identical(events_observed, events_expected))
 
-events_observed <- events(individual_events(events),
-                          time = 0, target = "SIS")
+events_observed <- node_events(individual_events(events),
+                               time = 0, target = "SIS")
 stopifnot(identical(events_observed, events_expected))
 
-events_observed <- events(individual_events(events),
-                          time = 0, target = "SISe")
+events_observed <- node_events(individual_events(events),
+                               time = 0, target = "SISe")
 stopifnot(identical(events_observed, events_expected))
 
-events_observed <- events(individual_events(events),
-                          time = 0, target = "SISe_sp")
+events_observed <- node_events(individual_events(events),
+                               time = 0, target = "SISe_sp")
 stopifnot(identical(events_observed, events_expected))
 
 ## Check that target works for 'SIR'.
@@ -1093,8 +1093,8 @@ events_expected <- data.frame(
     select = c(1L, 4L, 4L, 4L, 4L),
     shift = c(0L, 0L, 0L, 0L, 0L))
 
-events_observed <- events(individual_events(events),
-                          time = 0, target = "SIR")
+events_observed <- node_events(individual_events(events),
+                               time = 0, target = "SIR")
 stopifnot(identical(events_observed, events_expected))
 
 ## Check that target works for 'NULL', 'SISe3', and 'SISe3_sp'.
@@ -1116,15 +1116,15 @@ events_expected <- data.frame(
     select = c(1L, 4L, 4L, 4L, 5L, 5L, 6L),
     shift = c(0L, 0L, 0L, 1L, 0L, 2L, 0L))
 
-events_observed <- events(individual_events(events),
-                          time = 0, age = c(3, 5), target = NULL)
+events_observed <- node_events(individual_events(events),
+                               time = 0, age = c(3, 5), target = NULL)
 
 stopifnot(identical(events_observed, events_expected))
-events_observed <- events(individual_events(events),
-                          time = 0, age = c(3L, 5L), target = "SISe3")
+events_observed <- node_events(individual_events(events),
+                               time = 0, age = c(3L, 5L), target = "SISe3")
 
 stopifnot(identical(events_observed, events_expected))
 
-events_observed <- events(individual_events(events),
-                          time = 0, age = c(3, 5), target = "SISe3_sp")
+events_observed <- node_events(individual_events(events),
+                               time = 0, age = c(3, 5), target = "SISe3_sp")
 stopifnot(identical(events_observed, events_expected))

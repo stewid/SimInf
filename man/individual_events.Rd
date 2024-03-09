@@ -44,3 +44,6 @@ node for movement events, and 'dest' will be replaced with
 \code{NA} for non-movement events.
 }
 }
+\seealso{
+\code{\link{node_events}}.
+}

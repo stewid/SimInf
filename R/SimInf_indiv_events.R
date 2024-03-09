@@ -281,6 +281,7 @@ check_indiv_events_nodes <- function(event, node, dest) {
 ##'     `details`.
 ##' @return \linkS4class{SimInf_indiv_events}
 ##' @export
+##' @seealso \code{\link{node_events}}.
 ##' @md
 individual_events <- function(events) {
     columns <- c("id", "event", "time", "node", "dest")
@@ -544,50 +545,67 @@ events_target <- function(events, target) {
     events
 }
 
-##' @rdname events
-##' @param time Only used when object is of class
-##'     \code{SimInf_indiv_events} object. All events that occur after
-##'     \sQuote{time} are included. Default is \code{NULL} which means
-##'     to extract the events after the minimum time-point in the
+##' Transform individual events to node events for a model
+##'
+##' In many countries, individual-based livestock data are collected
+##' to enable contact tracing during disease outbreaks. However, the
+##' livestock databases are not always structured in such a way that
+##' relevant information for disease spread simulations is easily
+##' retrieved. The aim of this function is to facilitate cleaning
+##' livestock event data and prepare it for usage in SimInf.
+##'
+##' The individual-based events will be aggregated on node-level.  The
+##' \code{select} value is determined by the event type and age
+##' category.  If there is only one age category, i.e.,
+##' \code{age=NULL}, then \code{select=1} for the birth events, and
+##' \code{select=2} for all other events.
+##'
+##' @param x an individual events object of class
+##'     \code{SimInf_indiv_events}.
+##' @param time All events that occur after \sQuote{time} are
+##'     included. Default is \code{NULL} which means to extract the
+##'     events after the minimum time-point in the
 ##'     \code{SimInf_indiv_events} object.
-##' @param target Only used when object is of class
-##'     \code{SimInf_indiv_events} object. The SimInf model ('SEIR',
-##'     'SIR', 'SIS', 'SISe3', 'SISe3_sp', 'SISe', or 'SISe_sp') to
-##'     target the events and u0 for. The default, \code{NULL},
-##'     creates events but they might have to be post-processed to fit
-##'     the specific use case.
-##' @param age Only used when object is of class
-##'     \code{SimInf_indiv_events} object. Integer vector with break
-##'     points in days for the ageing events.
-##' @section Transform individual events:
+##' @param target The SimInf model ('SEIR', 'SIR', 'SIS', 'SISe3',
+##'     'SISe3_sp', 'SISe', or 'SISe_sp') to target the events and u0
+##'     for. The default, \code{NULL}, creates events but they might
+##'     have to be post-processed to fit the specific use case.
+##' @param age Integer vector with break points in days for the ageing
+##'     events.
+##' @return a \code{data.frame} with the columns \code{event},
+##'     \code{time}, \code{node}, \code{dest}, \code{n},
+##'     \code{proportion}, \code{select}, and \code{shift}.
+##' @seealso \code{\link{individual_events}}.
+##' @export
+setGeneric(
+    "node_events",
+    signature = "x",
+    function(x, time = NULL, target = NULL, age = NULL) {
+        standardGeneric("node_events")
+    }
+)
 
-##'     In many countries, individual-based livestock data are
-##'     collected to enable contact tracing during disease
-##'     outbreaks. However, the livestock databases are not always
-##'     structured in such a way that relevant information for disease
-##'     spread simulations is easily retrieved. The aim of this
-##'     function is to facilitate cleaning livestock event data and
-##'     prepare it for usage in SimInf.
+##' @rdname node_events
 ##' @export
 setMethod(
-    "events",
-    signature(object = "SimInf_indiv_events"),
-    function(object, time = NULL, target = NULL, age = NULL) {
+    "node_events",
+    signature(x = "SimInf_indiv_events"),
+    function(x, time = NULL, target = NULL, age = NULL) {
         age <- check_age(age)
         target <- check_target(target, age)
 
         ## Map nodes to the one-based index in SimInf.
-        all_nodes <- unique(c(object@node, object@dest))
+        all_nodes <- unique(c(x@node, x@dest))
         all_nodes <- sort(all_nodes[!is.na(all_nodes)])
 
-        events <- matrix(c(as.integer(as.factor(object@id)),
-                           as.integer(object@event),
-                           as.integer(object@time),
-                           match(object@node, all_nodes),
-                           match(object@dest, all_nodes),
-                           rep(1L, length(object@id)),
-                           rep(0L, length(object@id))),
-                         nrow = length(object@id),
+        events <- matrix(c(as.integer(as.factor(x@id)),
+                           as.integer(x@event),
+                           as.integer(x@time),
+                           match(x@node, all_nodes),
+                           match(x@dest, all_nodes),
+                           rep(1L, length(x@id)),
+                           rep(0L, length(x@id))),
+                         nrow = length(x@id),
                          ncol = 7,
                          dimnames = list(
                              NULL,
@@ -607,7 +625,7 @@ setMethod(
             events <- inject_ageing_events(events, age)
 
         ## Keep events that occur after 'time'.
-        i <- which(events[, "time"] > indiv_events_time(object, time))
+        i <- which(events[, "time"] > indiv_events_time(x, time))
         j <- order(events[i, "time"], events[i, "event"], events[i, "node"],
                    events[i, "dest"], events[i, "select"], events[i, "shift"])
         events <- cbind(events[i[j], c("event", "time", "node", "dest",
@@ -649,14 +667,14 @@ setMethod(
                                        drop = FALSE],
                                 target)
 
-        if (!is.null(attr(object@event, "origin"))) {
+        if (!is.null(attr(x@event, "origin"))) {
             event_names <- c("exit", "enter", "intTrans", "extTrans")
             events$event <- event_names[events$event + 1]
         }
 
-        if (!is.null(attr(object@time, "origin"))) {
+        if (!is.null(attr(x@time, "origin"))) {
             events$time <- as.Date(events$time,
-                                   origin = attr(object@time, "origin"))
+                                   origin = attr(x@time, "origin"))
             events$time <- as.character(events$time)
         } else {
             events$time <- as.numeric(events$time)
