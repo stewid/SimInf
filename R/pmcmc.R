@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -312,7 +312,7 @@ pmcmc_proposal <- function(object, i) {
     j <- seq(from = 5, by = 1, length.out = npars)
 
     if (runif(1) < object@adaptmix || i <= 2 * npars) {
-        sigma <- diag(0.1^2 / npars, npars)
+        sigma <- diag((object@chain[1, j] / 10)^2 / npars, npars)
     } else if (npars == 1) {
         sigma <- matrix(2.38^2 * stats::var(object@chain[seq_len(i - 1), j]))
     } else {
