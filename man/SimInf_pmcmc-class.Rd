@@ -45,7 +45,7 @@ the observation process.}
 \code{logLik}, \code{logPrior}, \code{accept}, and the
 \code{parameters} for each iteration.}
 
-\item{\code{pf}}{FIXME}
+\item{\code{pf}}{List with the filtered trajectory from each iteration.}
 
 \item{\code{adaptmix}}{Mixing proportion for adaptive proposal.}
 }}

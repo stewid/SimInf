@@ -34,7 +34,7 @@
 ##' @slot chain A matrix where each row contains \code{logPost},
 ##'     \code{logLik}, \code{logPrior}, \code{accept}, and the
 ##'     \code{parameters} for each iteration.
-##' @slot pf FIXME
+##' @slot pf List with the filtered trajectory from each iteration.
 ##' @slot adaptmix Mixing proportion for adaptive proposal.
 ##' @export
 setClass(
