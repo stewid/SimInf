@@ -31,7 +31,9 @@
 ##'     the observation process.
 ##' @slot data A \code{data.frame} holding the time series data for
 ##'     the observation process.
-##' @slot chain FIXME
+##' @slot chain A matrix where each row contains \code{logPost},
+##'     \code{logLik}, \code{logPrior}, \code{accept}, and the
+##'     \code{parameters} for each iteration.
 ##' @slot pf FIXME
 ##' @slot adaptmix Mixing proportion for adaptive proposal.
 ##' @export
