@@ -166,8 +166,7 @@ setMethod(
 ##' @template data-param
 ##' @template priors-param
 ##' @template npart-param
-##' @param niter An integer specifying the number of iterations to run
-##'     the PMCMC.
+##' @template niter-param
 ##' @param theta FIXME
 ##' @param adaptmix Mixing proportion for adaptive proposal.
 ##' @template verbose-param
@@ -340,7 +339,7 @@ setMethod(
 )
 
 ##' @rdname continue
-##' @param niter FIXME
+##' @template niter-param
 ##' @export
 setMethod(
     "continue",

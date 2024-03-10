@@ -42,7 +42,8 @@ argument of type \code{SimInf_abc} with the current state of
 the fitting process. This function can be useful to, for
 example, save and inspect intermediate results.}
 
-\item{niter}{FIXME}
+\item{niter}{An integer specifying the number of iterations to run
+the PMCMC.}
 }
 \value{
 A \code{SimInf_abc} object.
