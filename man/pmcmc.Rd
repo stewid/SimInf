@@ -84,4 +84,6 @@ Particle Markov chain Monte Carlo (PMCMC) algorithm
 }
 \references{
 \Andrieu2010
+
+\Roberts2009
 }

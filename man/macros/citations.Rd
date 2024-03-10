@@ -6,11 +6,13 @@
 
 \newcommand{\CisewskiKehe2019}{J. Cisewski-Kehe, G. Weller and C. Schafer. A preferential attachment model for the stellar initial mass function. \emph{Electronic Journal of Statistics}, \strong{13}(1), 1580--1607, 2019. \doi{10.1214/19-EJS1556}}
 
+\newcommand{\Gordon1993}{N. J. Gordon, D. J. Salmond, and A. F. M. Smith. Novel Approach to Nonlinear/Non-Gaussian Bayesian State Estimation. \emph{Radar and Signal Processing, IEE Proceedings F}, \strong{140}(2) 107--113, 1993. \doi{10.1049/ip-f-2.1993.0015}}
+
+\newcommand{\Roberts2009}{G. O. Roberts and J. S. Rosenthal. Examples of adaptive MCMC. \emph{Journal of computational and graphical statistics}, \strong{18}(2), 349--367, 2009. \doi{10.1198/jcgs.2009.06134}}
+
 \newcommand{\Sugiyama2008}{M. Sugiyama, T. Suzuki, S. Nakajima, H. Kashima, P. von Bunau, and M. Kawanabe. Direct importance estimation for covariate shift adaptation. \emph{Annals of the Institute of Statistical Mathematics}, \strong{60}(4), 699--746, 2008. \doi{10.1007/s10463-008-0197-x}}
 
 \newcommand{\Simola2021}{U. Simola, J. Cisewski-Kehe, M. U. Gutmann, J. Corander. Adaptive Approximate Bayesian Computation Tolerance Selection. \emph{Bayesian Analysis}, \strong{16}(2), 397--423, 2021. doi: 10.1214/20-BA1211}
-
-\newcommand{\Gordon1993}{N. J. Gordon, D. J. Salmond, and A. F. M. Smith. Novel Approach to Nonlinear/Non-Gaussian Bayesian State Estimation. \emph{Radar and Signal Processing, IEE Proceedings F}, \strong{140}(2) 107--113, 1993. \doi{10.1049/ip-f-2.1993.0015}}
 
 \newcommand{\Toni2009}{T. Toni, D. Welch, N. Strelkowa, A. Ipsen, and M. P. H. Stumpf. Approximate Bayesian computation scheme for parameter inference and model selection in dynamical systems. \emph{Journal of the Royal Society Interface} \strong{6}, 187--202, 2009. \doi{10.1098/rsif.2008.0172}}
 

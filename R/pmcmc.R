@@ -174,6 +174,8 @@ setMethod(
 ##' @references
 ##'
 ##' \Andrieu2010
+##'
+##' \Roberts2009
 ##' @export
 setGeneric(
     "pmcmc",
