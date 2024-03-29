@@ -150,7 +150,8 @@ setMethod(
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
 
-            ## Skip first four columns in chain.
+            ## Skip the first four columns in chain: 'logPost',
+            ## 'logLik', 'logPrior', and 'accept'.
             j <- seq(from = 5, by = 1, length.out = length(object@pars))
             summary_chain(object@chain[, j, drop = FALSE])
         }
