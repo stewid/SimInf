@@ -105,6 +105,7 @@ SimInf_distance_matrix(
     SEXP distance;
     SEXP row_indices;
     SEXP col_indices;
+    SEXP class;
     SEXP result;
 
     /* Check that the input vectors have an identical length > 0. */
@@ -156,14 +157,15 @@ SimInf_distance_matrix(
         INTEGER(col_indices));
 
     /* Create the sparse matrix. */
-    PROTECT(result = R_do_new_object(R_do_MAKE_CLASS("dgCMatrix")));
+    PROTECT(class = R_do_MAKE_CLASS("dgCMatrix"));
+    PROTECT(result = R_do_new_object(class));
     R_do_slot_assign(result, Rf_install("x"), distance);
     R_do_slot_assign(result, Rf_install("i"), row_indices);
     R_do_slot_assign(result, Rf_install("p"), col_indices);
     INTEGER(R_do_slot(result, Rf_install("Dim")))[0] = len;
     INTEGER(R_do_slot(result, Rf_install("Dim")))[1] = len;
 
-    UNPROTECT(4);
+    UNPROTECT(5);
 
     return result;
 }
