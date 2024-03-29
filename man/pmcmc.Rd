@@ -71,9 +71,12 @@ at each timestep.}
 \item{niter}{An integer specifying the number of iterations to run
 the PMCMC.}
 
-\item{theta}{FIXME}
+\item{theta}{A named vector of initial values for the parameters
+of the model.  Default is \code{NULL}, and then these are
+sampled from the prior distribution(s).}
 
-\item{adaptmix}{Mixing proportion for adaptive proposal.}
+\item{adaptmix}{Mixing proportion for adaptive proposal.  Must be
+a value between zero and one.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and

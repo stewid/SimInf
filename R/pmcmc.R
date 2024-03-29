@@ -167,8 +167,11 @@ setMethod(
 ##' @template priors-param
 ##' @template npart-param
 ##' @template niter-param
-##' @param theta FIXME
-##' @param adaptmix Mixing proportion for adaptive proposal.
+##' @param theta A named vector of initial values for the parameters
+##'     of the model.  Default is \code{NULL}, and then these are
+##'     sampled from the prior distribution(s).
+##' @param adaptmix Mixing proportion for adaptive proposal.  Must be
+##'     a value between zero and one.
 ##' @template verbose-param
 ##' @references
 ##'
