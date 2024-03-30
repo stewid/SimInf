@@ -32,9 +32,6 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              gamma = 0.077)
 
 ## Observed data
-## set.seed(22)
-## infected <- trajectory(run(model), "I")[, c("time", "I")]
-## colnames(infected) <- c("time", "Iobs")
 infected <- data.frame(
     time = c(1L, 4L, 7L, 10L, 13L, 16L, 19L, 22L, 25L, 28L, 31L, 34L,
              37L, 40L, 43L, 46L, 49L, 52L, 55L, 58L, 61L, 64L, 67L,
