@@ -1,0 +1,85 @@
+## This file is part of SimInf, a framework for stochastic
+## disease spread simulations.
+##
+## Copyright (C) 2015 -- 2024 Stefan Widgren
+##
+## SimInf is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## SimInf is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+library(SimInf)
+library(tools)
+source("util/check.R")
+
+## Specify the number of threads to use.
+set_num_threads(1)
+
+## For debugging
+sessionInfo()
+
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = seq(1, 100, by = 3),
+             beta = 0.16,
+             gamma = 0.077)
+
+## Observed data
+## set.seed(22)
+## infected <- trajectory(run(model), "I")[, c("time", "I")]
+## colnames(infected) <- c("time", "Iobs")
+infected <- data.frame(
+    time = c(1L, 4L, 7L, 10L, 13L, 16L, 19L, 22L, 25L, 28L, 31L, 34L,
+             37L, 40L, 43L, 46L, 49L, 52L, 55L, 58L, 61L, 64L, 67L,
+             70L, 73L, 76L, 79L, 82L, 85L, 88L, 91L, 94L, 97L, 100L),
+    Iobs = c(1L, 2L, 2L, 3L, 3L, 3L, 3L, 2L, 3L, 3L, 6L, 10L, 9L, 16L,
+             17L, 15L, 15L, 13L, 18L, 18L, 16L, 13L, 12L, 12L, 11L,
+             10L, 9L, 10L, 7L, 7L, 6L, 3L, 3L, 2L))
+
+## Check that an invalid 'npart' raises an error.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = 200.1,
+          niter = 200,
+          verbose = TRUE))
+check_error(res, "'npart' must be integer.")
+
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = NA_integer_,
+          niter = 200,
+          verbose = TRUE))
+check_error(res, "'npart' must be integer.")
+
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = -200,
+          niter = 200,
+          verbose = TRUE))
+check_error(res, "'npart' must be an integer > 1.")
+
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = c(200, 200),
+          niter = 200,
+          verbose = TRUE))
+check_error(res, "'npart' must be an integer > 1.")
