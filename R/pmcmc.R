@@ -314,20 +314,18 @@ pmcmc_progress <- function(object, i, verbose) {
 }
 
 ##' @noRd
-pmcmc_proposal <- function(object, i) {
+pmcmc_proposal <- function(object, i, scale_start = 100L,
+                           shape_start = 200L, cooling = 0.999,
+                           max_scaling = 50) {
     n_accepted <- sum(object@chain[seq_len(i - 1), "accept"])
     n_pars <- length(object@pars)
-    scale_start <- 100L
-    shape_start <- 200L
     j <- seq(from = 5, by = 1, length.out = n_pars)
     theta <- object@chain[i - 1, j]
 
     if (runif(1) < object@adaptmix || i <= scale_start) {
         covmat <- diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
     } else if (n_accepted < shape_start) {
-        cooling <- 0.999
         scaling <- 1
-        max_scaling <- 50
         target <- ifelse(n_pars == 1L, 0.44, 0.234)
 
         for (k in seq(from = scale_start, to = i - 1L)) {
