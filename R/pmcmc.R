@@ -323,7 +323,7 @@ pmcmc_proposal <- function(object, i) {
     theta <- object@chain[i - 1, j]
 
     if (runif(1) < object@adaptmix || i <= scale_start) {
-        sigma <- diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
+        covmat <- diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
     } else if (n_accepted < shape_start) {
         cooling <- 0.999
         scaling <- 1
@@ -336,14 +336,18 @@ pmcmc_proposal <- function(object, i) {
             scaling <- min(scaling * exp(l * m), max_scaling)
         }
 
-        sigma <- scaling^2 * diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
+        covmat <- scaling^2 * diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
     } else if (n_pars == 1) {
-        sigma <- matrix(2.38^2 * stats::var(object@chain[seq_len(i - 1), j]))
+        covmat <- matrix(2.38^2 * stats::var(object@chain[seq_len(i - 1), j]))
     } else {
-        sigma <- 2.38^2 / n_pars * stats::cov(object@chain[seq_len(i - 1), j])
+        covmat <- 2.38^2 / n_pars * stats::cov(object@chain[seq_len(i - 1), j])
     }
 
-    mvtnorm::rmvnorm(n = 1, mean = theta, sigma = sigma)[1, ]
+    ch <- chol(covmat, pivot = TRUE)
+    Q <- ch[, order(attr(ch, "pivot"))]
+    proposal <- as.numeric(theta + rnorm(n = n_pars) %*% Q)
+    names(proposal) <- names(theta)
+    proposal
 }
 
 ##' Length of the MCMC chain
