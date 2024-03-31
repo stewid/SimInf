@@ -281,7 +281,7 @@ setup_chain <- function(object, niter) {
 }
 
 setup_pf <- function(object, niter) {
-    c(object@pf, lapply(seq_len(niter), function(i) NULL))
+    c(object@pf, vector("list", length = niter))
 }
 
 set_proposal <- function(object, theta) {
