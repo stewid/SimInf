@@ -315,18 +315,35 @@ pmcmc_progress <- function(object, i, verbose) {
 
 ##' @noRd
 pmcmc_proposal <- function(object, i) {
-    npars <- length(object@pars)
-    j <- seq(from = 5, by = 1, length.out = npars)
+    n_accepted <- sum(object@chain[seq_len(i - 1), "accept"])
+    n_pars <- length(object@pars)
+    scale_start <- 100L
+    shape_start <- 200L
+    j <- seq(from = 5, by = 1, length.out = n_pars)
+    theta <- object@chain[i - 1, j]
 
-    if (runif(1) < object@adaptmix || i <= 2 * npars) {
-        sigma <- diag((object@chain[1, j] / 10)^2 / npars, npars)
-    } else if (npars == 1) {
+    if (runif(1) < object@adaptmix || i <= scale_start) {
+        sigma <- diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
+    } else if (n_accepted < shape_start) {
+        cooling <- 0.999
+        scaling <- 1
+        max_scaling <- 50
+        target <- ifelse(n_pars == 1L, 0.44, 0.234)
+
+        for (k in seq(from = scale_start, to = i - 1L)) {
+            l <- cooling^(k - scale_start)
+            m <- mean(object@chain[seq_len(k), "accept"]) - target
+            scaling <- min(scaling * exp(l * m), max_scaling)
+        }
+
+        sigma <- scaling^2 * diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
+    } else if (n_pars == 1) {
         sigma <- matrix(2.38^2 * stats::var(object@chain[seq_len(i - 1), j]))
     } else {
-        sigma <- 2.38^2 / npars * stats::cov(object@chain[seq_len(i - 1), j])
+        sigma <- 2.38^2 / n_pars * stats::cov(object@chain[seq_len(i - 1), j])
     }
 
-    mvtnorm::rmvnorm(n = 1, mean = object@chain[i - 1, j], sigma = sigma)[1, ]
+    mvtnorm::rmvnorm(n = 1, mean = theta, sigma = sigma)[1, ]
 }
 
 ##' Length of the MCMC chain
