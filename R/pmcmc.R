@@ -314,9 +314,9 @@ pmcmc_progress <- function(object, i, verbose) {
 }
 
 ##' @noRd
-pmcmc_proposal <- function(object, i, scale_start = 100L,
-                           shape_start = 200L, cooling = 0.999,
-                           max_scaling = 50) {
+pmcmc_proposal <- function(object, i, theta_mean, covmat_emp,
+                           scale_start = 100L, shape_start = 200L,
+                           cooling = 0.999, max_scaling = 50) {
     n_accepted <- sum(object@chain[seq_len(i - 1), "accept"])
     n_pars <- length(object@pars)
     j <- seq(from = 5, by = 1, length.out = n_pars)
@@ -335,17 +335,30 @@ pmcmc_proposal <- function(object, i, scale_start = 100L,
         }
 
         covmat <- scaling^2 * diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
-    } else if (n_pars == 1) {
-        covmat <- matrix(2.38^2 * stats::var(object@chain[seq_len(i - 1), j]))
     } else {
-        covmat <- 2.38^2 / n_pars * stats::cov(object@chain[seq_len(i - 1), j])
+        covmat <- 2.38^2 / n_pars * covmat_emp
     }
+
+    theta_mean <- ((i - 1) * theta_mean + theta) / i
+    covmat_emp <- ((i - 1) * covmat_emp + tcrossprod(theta - theta_mean)) / i
 
     ch <- chol(covmat, pivot = TRUE)
     Q <- ch[, order(attr(ch, "pivot"))]
     proposal <- as.numeric(theta + rnorm(n = n_pars) %*% Q)
     names(proposal) <- names(theta)
-    proposal
+
+    list(theta = proposal,
+         theta_mean = theta_mean,
+         covmat_emp = covmat_emp)
+}
+
+covmat_empirical <- function(object, i) {
+    n_pars <- length(object@pars)
+    j <- seq(from = 5, by = 1, length.out = n_pars)
+    covmat <- stats::cov(object@chain[seq_len(i), j, drop = FALSE])
+    if (i == 1)
+        covmat[, ] <- 0
+    covmat
 }
 
 ##' Length of the MCMC chain
@@ -402,17 +415,22 @@ setMethod(
         logPost <- object@chain[i, "logPost"]
         logLik <- object@chain[i, "logLik"]
         logPrior <- object@chain[i, "logPrior"]
-        theta <- object@chain[i, seq(5, length.out = length(object@pars))]
+        j <- seq(from = 5, by = 1, length.out = length(object@pars))
+        theta <- object@chain[i, j]
+        theta_mean <- colMeans(object@chain[seq_len(i), j, drop = FALSE])
+        covmat_emp <- covmat_empirical(object, i)
 
         for (i in iterations) {
             ## Proposal
             accept <- 0
-            theta_prop <- pmcmc_proposal(object, i)
-            logPrior_prop <- dpriors(theta_prop, object@priors)
+            proposal <- pmcmc_proposal(object, i, theta_mean, covmat_emp)
+            theta_mean <- proposal$theta_mean
+            covmat_emp <- proposal$covmat_emp
+            logPrior_prop <- dpriors(proposal$theta, object@priors)
 
             if (is.finite(logPrior_prop)) {
                 methods::slot(object@model, object@target) <-
-                    set_proposal(object, theta_prop)
+                    set_proposal(object, proposal$theta)
 
                 pf_prop <- pfilter(object@model, object@obs_process,
                                    object@data, object@npart)
@@ -423,7 +441,7 @@ setMethod(
                     logLik <- logLik_prop
                     logPrior <- logPrior_prop
                     logPost <- logLik + logPrior
-                    theta <- theta_prop
+                    theta <- proposal$theta
                     pf <- pf_prop
                     accept <- 1
                 }
