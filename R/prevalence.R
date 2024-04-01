@@ -270,3 +270,5 @@ setMethod(
             cbind(iteration = i,
                   prevalence(model@pf[[i]], formula, level, index))
         }))
+    }
+)
