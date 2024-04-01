@@ -124,3 +124,54 @@ res <- assertError(
           niter = c(200, 200),
           theta = c(beta = 0.16, gamma = 0.077)))
 check_error(res, "'niter' must be an integer > 0.")
+
+## Check that an invalid 'theta' raises an error.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = 200,
+          niter = 200,
+          theta = c(beta = "A", gamma = 0.077)))
+check_error(
+    res,
+    "'theta' must be a vector with initial values for the parameters.")
+
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = 200,
+          niter = 200,
+          theta = c(gamma = 0.077)))
+check_error(
+    res,
+    "'theta' must be a vector with initial values for the parameters.")
+
+## Run pmcmc
+set.seed(123)
+fit <- pmcmc(model,
+             Iobs ~ poisson(I + 1e-6),
+             infected,
+             priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+             npart = 10,
+             niter = 1,
+             theta = c(beta = 0.16, gamma = 0.077))
+
+show_expected <- c(
+    "Particle Markov chain Monte Carlo",
+    "---------------------------------",
+    "Number of iterations: 1",
+    "Number of particles: 10",
+    "Mixing proportion for adaptive proposal: 0.05",
+    "Acceptance ratio: 0.000",
+    "",
+    "Quantiles, mean and standard deviation for each variable",
+    "--------------------------------------------------------",
+    "       2.5%   25%   50%   75% 97.5%  Mean SD",
+    "beta  0.160 0.160 0.160 0.160 0.160 0.160   ",
+    "gamma 0.077 0.077 0.077 0.077 0.077 0.077   ")
+show_observed <- capture.output(show(fit))
+stopifnot(identical(show_observed, show_expected))
