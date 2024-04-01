@@ -208,7 +208,7 @@ setMethod(
         if (any(length(adaptmix) != 1L,
                 any(adaptmix <= 0),
                 any(adaptmix >= 1))) {
-            stop("'adaptmix' must be a value > 0 and < 1", call. = FALSE)
+            stop("'adaptmix' must be a value > 0 and < 1.", call. = FALSE)
         }
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.

@@ -80,3 +80,47 @@ res <- assertError(
           niter = 200,
           verbose = TRUE))
 check_error(res, "'npart' must be an integer > 1.")
+
+## Check that an invalid 'adaptmix' raises an error.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = 200,
+          niter = 200,
+          adaptmix = -1,
+          verbose = TRUE))
+check_error(res, "'adaptmix' must be a value > 0 and < 1.")
+
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = 200,
+          niter = 200,
+          adaptmix = c(0.5, 0.5),
+          verbose = TRUE))
+check_error(res, "'adaptmix' must be a value > 0 and < 1.")
+
+## Check that an invalid 'niter' raises an error.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = 200,
+          niter = 0,
+          theta = c(beta = 0.16, gamma = 0.077)))
+check_error(res, "'niter' must be an integer > 0.")
+
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          npart = 200,
+          niter = c(200, 200),
+          theta = c(beta = 0.16, gamma = 0.077)))
+check_error(res, "'niter' must be an integer > 0.")
