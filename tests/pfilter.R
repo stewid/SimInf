@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,6 +25,9 @@ set_num_threads(1)
 
 ## For debugging
 sessionInfo()
+
+## Define a tolerance
+tol <- 1e-8
 
 ## Create an SIR model object.
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
@@ -475,6 +478,13 @@ stopifnot(identical(
         S = c(90L, 87L, 80L, 74L, 69L, 66L, 58L),
         I = c(0L, 11L, 14L, 16L, 18L, 16L, 18L),
         R = c(0L, 2L, 6L, 10L, 13L, 18L, 24L))))
+
+stopifnot(identical(
+    prevalence(pf, I ~ .)$time,
+    c(1, 4, 7, 10, 13, 16, 19)))
+
+stopifnot(all(abs(prevalence(pf, I ~ .)$prevalence
+                  - c(0, 0.11, 0.14, 0.16, 0.18, 0.16, 0.18)) < tol))
 
 ## Modify the model object to check that 'gdata' is included in the
 ## output.
