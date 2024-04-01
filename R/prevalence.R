@@ -218,6 +218,30 @@ setMethod(
     }
 )
 
+##' Extract prevalence from running a particle filter
+##'
+##' @param model the \code{SimInf_pfilter} object to extract the
+##'     prevalence from.
+##' @template prevalence-formula-param
+##' @template prevalence-level-param
+##' @template index-param
+##' @param format The default (\code{format = "data.frame"}) is to
+##'     generate a \code{data.frame} with one row per time-step with
+##'     the prevalence. Using \code{format = "matrix"} returns the
+##'     result as a matrix.
+##' @return A \code{data.frame} if \code{format = "data.frame"}, else
+##'     a matrix.
+##' @include pfilter.R
+##' @export
+setMethod(
+    "prevalence",
+    signature(model = "SimInf_pfilter"),
+    function(model, formula, level, index,
+             format = c("data.frame", "matrix")) {
+        prevalence(model@model, formula, level, index, format)
+    }
+)
+
 ##' Extract prevalence from fitting a PMCMC algorithm
 ##'
 ##' Extract prevalence from the filtered trajectories from a particle
@@ -235,6 +259,7 @@ setMethod(
 ##'     calling \code{\link{prevalence,SimInf_model-method}} with the
 ##'     arguments \code{formula}, \code{level} and \code{index} for
 ##'     each iteration.
+##' @include pmcmc.R
 ##' @export
 setMethod(
     "prevalence",
@@ -243,7 +268,5 @@ setMethod(
         iterations <- pmcmc_iterations(model, start, end, thin)
         do.call("rbind", lapply(iterations, function(i) {
             cbind(iteration = i,
-                  prevalence(model@pf[[i]]@model, formula, level, index))
+                  prevalence(model@pf[[i]], formula, level, index))
         }))
-    }
-)
