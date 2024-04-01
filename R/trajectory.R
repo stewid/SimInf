@@ -265,6 +265,7 @@ setMethod(
 ##'     calling \code{\link{trajectory,SimInf_model-method}} with the
 ##'     arguments \code{compartments} and \code{index} for each
 ##'     iteration.
+##' @include pmcmc.R
 ##' @export
 setMethod(
     "trajectory",
