@@ -175,3 +175,30 @@ show_expected <- c(
     "gamma 0.077 0.077 0.077 0.077 0.077 0.077   ")
 show_observed <- capture.output(show(fit))
 stopifnot(identical(show_observed, show_expected))
+
+fit <- pmcmc(model,
+             Iobs ~ poisson(I + 1e-6),
+             infected,
+             priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+             npart = 10,
+             niter = 5)
+summary_expected <- c(
+    "Particle Markov chain Monte Carlo",
+    "---------------------------------",
+    "Number of iterations: 5",
+    "Number of particles: 10",
+    "Acceptance ratio: 0.400",
+    "Model: SIR", "Number of nodes: 1",
+    "",
+    "Transitions",
+    "-----------",
+    " S -> beta*S*I/(S+I+R) -> I",
+    " I -> gamma*I -> R",
+    "",
+    "Quantiles, mean and standard deviation for each variable",
+    "--------------------------------------------------------",
+    "        2.5%    25%    50%    75%  97.5%   Mean     SD",
+    "beta  0.7545 0.7545 0.8035 0.8663 0.8663 0.8090 0.0560",
+    "gamma 0.6062 0.6292 0.6292 0.6438 0.6438 0.6299 0.0164")
+summary_observed <- capture.output(summary(fit))
+stopifnot(identical(summary_observed, summary_expected))
