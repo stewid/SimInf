@@ -314,10 +314,10 @@ pmcmc_progress <- function(object, i, verbose) {
 }
 
 ##' @noRd
-pmcmc_proposal <- function(object, i, theta_mean, covmat_emp,
-                           scale_start = 100L, shape_start = 200L,
-                           cooling = 0.999, max_scaling = 50) {
-    n_accepted <- sum(object@chain[seq_len(i - 1), "accept"])
+pmcmc_proposal <- function(object, i, n_accepted, theta_mean,
+                           covmat_emp, scale_start = 100L,
+                           shape_start = 200L, cooling = 0.999,
+                           max_scaling = 50) {
     n_pars <- length(object@pars)
     j <- seq(from = 5, by = 1, length.out = n_pars)
     theta <- object@chain[i - 1, j]
@@ -412,6 +412,7 @@ setMethod(
         ## Continue from the last iteration in the chain.
         i <- iterations[1] - 1
         pf <- object@pf[[i]]
+        n_accepted <- sum(object@chain[seq_len(i), "accept"])
         logPost <- object@chain[i, "logPost"]
         logLik <- object@chain[i, "logLik"]
         logPrior <- object@chain[i, "logPrior"]
@@ -423,7 +424,8 @@ setMethod(
         for (i in iterations) {
             ## Proposal
             accept <- 0
-            proposal <- pmcmc_proposal(object, i, theta_mean, covmat_emp)
+            proposal <- pmcmc_proposal(object, i, n_accepted,
+                                       theta_mean, covmat_emp)
             theta_mean <- proposal$theta_mean
             covmat_emp <- proposal$covmat_emp
             logPrior_prop <- dpriors(proposal$theta, object@priors)
@@ -444,6 +446,7 @@ setMethod(
                     theta <- proposal$theta
                     pf <- pf_prop
                     accept <- 1
+                    n_accepted <- n_accepted + 1
                 }
             }
 
