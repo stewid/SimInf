@@ -313,17 +313,20 @@ pmcmc_progress <- function(object, i, verbose) {
     invisible(NULL)
 }
 
+get_theta <- function(x, i) {
+    j <- seq(from = 5, by = 1, length.out = length(x@pars))
+    x@chain[i, j]
+}
+
 ##' @noRd
 pmcmc_proposal <- function(object, i, n_accepted, theta_mean,
                            covmat_emp, scale_start = 100L,
                            shape_start = 200L, cooling = 0.999,
                            max_scaling = 50) {
     n_pars <- length(object@pars)
-    j <- seq(from = 5, by = 1, length.out = n_pars)
-    theta <- object@chain[i - 1, j]
 
     if (runif(1) < object@adaptmix || i <= scale_start) {
-        covmat <- diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
+        covmat <- diag((get_theta(object, 1) / 10)^2 / n_pars)
     } else if (n_accepted < shape_start) {
         scaling <- 1
         target <- ifelse(n_pars == 1L, 0.44, 0.234)
@@ -334,11 +337,12 @@ pmcmc_proposal <- function(object, i, n_accepted, theta_mean,
             scaling <- min(scaling * exp(l * m), max_scaling)
         }
 
-        covmat <- scaling^2 * diag((object@chain[1, j] / 10)^2 / n_pars, n_pars)
+        covmat <- scaling^2 * diag((get_theta(object, 1) / 10)^2 / n_pars)
     } else {
         covmat <- 2.38^2 / n_pars * covmat_emp
     }
 
+    theta <- get_theta(object, i - 1)
     theta_mean <- ((i - 1) * theta_mean + theta) / i
     covmat_emp <- ((i - 1) * covmat_emp + tcrossprod(theta - theta_mean)) / i
 
