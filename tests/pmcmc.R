@@ -202,3 +202,49 @@ summary_expected <- c(
     "gamma 0.6062 0.6292 0.6292 0.6438 0.6438 0.6299 0.0164")
 summary_observed <- capture.output(summary(fit))
 stopifnot(identical(summary_observed, summary_expected))
+
+stopifnot(identical(
+    SimInf:::pmcmc_iterations(x = fit, start = 1, end = NULL, thin = 1),
+    1:5))
+
+res <- assertError(
+    SimInf:::pmcmc_iterations(x = fit, start = -1, end = NULL, thin = 1))
+check_error(
+    res,
+    "'start' must be an integer >= 1.")
+
+res <- assertError(
+    SimInf:::pmcmc_iterations(x = fit, start = 1:2, end = NULL, thin = 1))
+check_error(
+    res,
+    "'start' must be an integer >= 1.")
+
+res <- assertError(
+    SimInf:::pmcmc_iterations(x = fit, start = 1, end = 1:2, thin = 1))
+check_error(
+    res,
+    "'end' must be an integer between start and length(x).")
+
+res <- assertError(
+    SimInf:::pmcmc_iterations(x = fit, start = 2, end = 1, thin = 1))
+check_error(
+    res,
+    "'end' must be an integer between start and length(x).")
+
+res <- assertError(
+    SimInf:::pmcmc_iterations(x = fit, start = 1, end = 6, thin = 1))
+check_error(
+    res,
+    "'end' must be an integer between start and length(x).")
+
+res <- assertError(
+    SimInf:::pmcmc_iterations(x = fit, start = 1, end = NULL, thin = 1:2))
+check_error(
+    res,
+    "'thin' must be an integer >= 1.")
+
+res <- assertError(
+    SimInf:::pmcmc_iterations(x = fit, start = 1, end = NULL, thin = -1))
+check_error(
+    res,
+    "'thin' must be an integer >= 1.")
