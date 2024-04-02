@@ -237,7 +237,6 @@ setMethod(
             }
             theta <- theta[priors$parameter]
 
-            npars <- length(object@pars)
             object@chain <- setup_chain(object, 1L)
             object@pf <- setup_pf(object, 1L)
 
@@ -313,42 +312,43 @@ pmcmc_progress <- function(object, i, verbose) {
     invisible(NULL)
 }
 
+n_pars <- function(x) {
+    length(x@pars)
+}
+
 get_theta <- function(x, i) {
-    j <- seq(from = 5, by = 1, length.out = length(x@pars))
+    j <- seq(from = 5, by = 1, length.out = n_pars(x))
     x@chain[i, j]
 }
 
 ##' @noRd
-pmcmc_proposal <- function(object, i, n_accepted, theta_mean,
-                           covmat_emp, scale_start = 100L,
-                           shape_start = 200L, cooling = 0.999,
-                           max_scaling = 50) {
-    n_pars <- length(object@pars)
-
-    if (runif(1) < object@adaptmix || i <= scale_start) {
-        covmat <- diag((get_theta(object, 1) / 10)^2 / n_pars)
+pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
+                           scale_start = 100L, shape_start = 200L,
+                           cooling = 0.999, max_scaling = 50) {
+    if (runif(1) < x@adaptmix || i <= scale_start) {
+        covmat <- diag((get_theta(x, 1) / 10)^2 / n_pars(x))
     } else if (n_accepted < shape_start) {
         scaling <- 1
-        target <- ifelse(n_pars == 1L, 0.44, 0.234)
+        target <- ifelse(n_pars(x) == 1L, 0.44, 0.234)
 
         for (k in seq(from = scale_start, to = i - 1L)) {
             l <- cooling^(k - scale_start)
-            m <- mean(object@chain[seq_len(k), "accept"]) - target
+            m <- mean(x@chain[seq_len(k), "accept"]) - target
             scaling <- min(scaling * exp(l * m), max_scaling)
         }
 
-        covmat <- scaling^2 * diag((get_theta(object, 1) / 10)^2 / n_pars)
+        covmat <- scaling^2 * diag((get_theta(x, 1) / 10)^2 / n_pars(x))
     } else {
-        covmat <- 2.38^2 / n_pars * covmat_emp
+        covmat <- 2.38^2 / n_pars(x) * covmat_emp
     }
 
-    theta <- get_theta(object, i - 1)
+    theta <- get_theta(x, i - 1)
     theta_mean <- ((i - 1) * theta_mean + theta) / i
     covmat_emp <- ((i - 1) * covmat_emp + tcrossprod(theta - theta_mean)) / i
 
     ch <- chol(covmat, pivot = TRUE)
     Q <- ch[, order(attr(ch, "pivot"))]
-    proposal <- as.numeric(theta + rnorm(n = n_pars) %*% Q)
+    proposal <- as.numeric(theta + rnorm(n = n_pars(x)) %*% Q)
     names(proposal) <- names(theta)
 
     list(theta = proposal,
