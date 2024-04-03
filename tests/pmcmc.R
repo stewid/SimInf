@@ -222,6 +222,8 @@ summary_expected <- c(
 summary_observed <- capture.output(summary(fit))
 stopifnot(identical(summary_observed, summary_expected))
 
+stopifnot(all(is.na(SimInf:::setup_chain(fit, 5)[6:10, ])))
+
 res <- assertError(
     continue(fit, niter = 0))
 check_error(
@@ -279,3 +281,15 @@ res <- assertError(
 check_error(
     res,
     "'thin' must be an integer >= 1.")
+
+fit@chain <- fit@chain[sample(1:5, 100, replace = TRUE), ]
+progress_expected <- c(
+"",
+"PMCMC iteration: 100 of 100. Acceptance ratio: 0.470",
+"----------------------------------------------------",
+"             2.5%       25%       50%       75%     97.5%      Mean        SD",
+"logPost -3.94e+03 -3.94e+03 -3.68e+03 -3.20e+03 -3.20e+03 -3.59e+03  3.35e+02",
+"beta     7.54e-01  7.54e-01  8.04e-01  8.66e-01  8.66e-01  8.09e-01  4.97e-02",
+"gamma    6.04e-01  6.29e-01  6.29e-01  6.44e-01  6.44e-01  6.29e-01  1.51e-02")
+progress_observed <- capture.output(SimInf:::pmcmc_progress(fit, 100, TRUE))
+stopifnot(identical(progress_observed, progress_expected))
