@@ -61,12 +61,12 @@ valid_SimInf_pmcmc_object <- function(object) {
     if (length(object@adaptmix) != 1L ||
         object@adaptmix <= 0 ||
         object@adaptmix >= 1) {
-        errors <- c(errors, "'adaptmix' must be a value >= 0 and <= 1")
+        errors <- c(errors, "'adaptmix' must be a value >= 0 and <= 1.")
     }
 
     if (!identical(object@target, "gdata") &&
         !identical(object@target, "ldata")) {
-        errors <- c(errors, "'target' must be 'gdata' or 'ldata'")
+        errors <- c(errors, "'target' must be 'gdata' or 'ldata'.")
     }
 
     if (length(errors))

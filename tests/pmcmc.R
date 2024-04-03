@@ -176,6 +176,25 @@ show_expected <- c(
 show_observed <- capture.output(show(fit))
 stopifnot(identical(show_observed, show_expected))
 
+stopifnot(isTRUE(SimInf:::valid_SimInf_pmcmc_object(fit)))
+
+fit@adaptmix <- 1:2
+stopifnot(identical(SimInf:::valid_SimInf_pmcmc_object(fit),
+                    "'adaptmix' must be a value >= 0 and <= 1."))
+
+fit@adaptmix <- 0
+stopifnot(identical(SimInf:::valid_SimInf_pmcmc_object(fit),
+                    "'adaptmix' must be a value >= 0 and <= 1."))
+
+fit@adaptmix <- 1
+stopifnot(identical(SimInf:::valid_SimInf_pmcmc_object(fit),
+                    "'adaptmix' must be a value >= 0 and <= 1."))
+
+fit@adaptmix <- 0.05
+fit@target <- "test"
+stopifnot(identical(SimInf:::valid_SimInf_pmcmc_object(fit),
+                    "'target' must be 'gdata' or 'ldata'."))
+
 fit <- pmcmc(model,
              Iobs ~ poisson(I + 1e-6),
              infected,
