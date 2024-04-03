@@ -385,6 +385,7 @@ setMethod(
     signature(object = "SimInf_pmcmc"),
     function(object, niter, ...,
              verbose = getOption("verbose", FALSE)) {
+        methods::validObject(object)
         check_integer_arg(niter)
         niter <- as.integer(niter)
         if (any(length(niter) != 1L, any(niter <= 0L)))
