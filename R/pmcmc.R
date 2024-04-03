@@ -111,7 +111,7 @@ setMethod(
                 "Quantiles, mean and standard deviation for each variable")
 
             ## Skip first four columns in chain.
-            j <- seq(from = 5, by = 1, length.out = length(object@pars))
+            j <- seq(from = 5, by = 1, length.out = n_pars(object))
             summary_chain(object@chain[, j, drop = FALSE])
         }
 
@@ -152,7 +152,7 @@ setMethod(
 
             ## Skip the first four columns in chain: 'logPost',
             ## 'logLik', 'logPrior', and 'accept'.
-            j <- seq(from = 5, by = 1, length.out = length(object@pars))
+            j <- seq(from = 5, by = 1, length.out = n_pars(object))
             summary_chain(object@chain[, j, drop = FALSE])
         }
 
@@ -269,7 +269,7 @@ is_empty_chain <- function(object) {
 setup_chain <- function(object, niter) {
     m <- matrix(NA_real_,
                 nrow = niter,
-                ncol = 4L + length(object@pars),
+                ncol = 4L + n_pars(object),
                 dimnames = list(NULL, c("logPost", "logLik",
                                         "logPrior", "accept",
                                         object@priors$parameter)))
@@ -285,11 +285,11 @@ setup_pf <- function(object, niter) {
 
 set_proposal <- function(object, theta) {
     if (object@target == "gdata") {
-        for (i in seq_len(length(object@pars))) {
+        for (i in seq_len(n_pars(object))) {
             object@model@gdata[object@pars[i]] <- theta[i]
         }
     } else {
-        for (i in seq_len(length(object@pars))) {
+        for (i in seq_len(n_pars(object))) {
             object@model@ldata[object@pars[i], ] <- theta[i]
         }
     }
@@ -305,7 +305,7 @@ pmcmc_progress <- function(object, i, verbose) {
             mean(object@chain[seq_len(i), "accept"])))
 
         ## Skip columns logLik, logPrior and accept in the chain.
-        j <- c(1, seq(from = 5, by = 1, length.out = length(object@pars)))
+        j <- c(1, seq(from = 5, by = 1, length.out = n_pars(object)))
         summary_chain(object@chain[seq_len(i), j])
     }
 
@@ -357,8 +357,7 @@ pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
 }
 
 covmat_empirical <- function(object, i) {
-    n_pars <- length(object@pars)
-    j <- seq(from = 5, by = 1, length.out = n_pars)
+    j <- seq(from = 5, by = 1, length.out = n_pars(object))
     covmat <- stats::cov(object@chain[seq_len(i), j, drop = FALSE])
     if (i == 1)
         covmat[, ] <- 0
@@ -420,7 +419,7 @@ setMethod(
         logPost <- object@chain[i, "logPost"]
         logLik <- object@chain[i, "logLik"]
         logPrior <- object@chain[i, "logPrior"]
-        j <- seq(from = 5, by = 1, length.out = length(object@pars))
+        j <- seq(from = 5, by = 1, length.out = n_pars(object))
         theta <- object@chain[i, j]
         theta_mean <- colMeans(object@chain[seq_len(i), j, drop = FALSE])
         covmat_emp <- covmat_empirical(object, i)
