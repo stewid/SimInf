@@ -26,6 +26,9 @@ set_num_threads(1)
 ## For debugging
 sessionInfo()
 
+## Define a tolerance
+tol <- 1e-8
+
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              tspan = seq(1, 100, by = 3),
              beta = 0.16,
@@ -224,6 +227,45 @@ stopifnot(identical(summary_observed, summary_expected))
 
 stopifnot(all(is.na(SimInf:::setup_chain(fit, 5)[6:10, ])))
 
+proposal_exp <- list(
+    theta = c(beta = 0.805085162476816, gamma = 0.672626293669262),
+    theta_mean = c(beta = 0.818561741932892, gamma = 0.632232762500019),
+    covmat_emp = structure(c(0.00299324946584347, 0.000468732158843136,
+                             0.000468732158843136, 0.000246502076160179),
+                           dim = c(2L, 2L),
+                           dimnames = list(c("beta", "gamma"),
+                                           c("beta", "gamma"))))
+theta_mean <- colMeans(fit@chain[seq_len(5), 5:6, drop = FALSE])
+covmat_emp <- SimInf:::covmat_empirical(fit, 5)
+proposal_obs <- SimInf:::pmcmc_proposal(fit, i = 6, n_accepted = 2,
+                                        theta_mean = theta_mean,
+                                        covmat_emp = covmat_emp,
+                                        scale_start = 5)
+
+stopifnot(all(abs(proposal_exp$theta - proposal_obs$theta) < tol))
+stopifnot(all(abs(proposal_exp$theta_mean - proposal_obs$theta_mean) < tol))
+stopifnot(all(abs(proposal_exp$covmat_emp - proposal_obs$covmat_emp) < tol))
+
+proposal_exp <- list(
+    theta = c(beta = 0.832033430879964, gamma = 0.640270855570007),
+    theta_mean = c(beta = 0.818561741932892, gamma = 0.632232762500019),
+    covmat_emp = structure(c(0.00299324946584347, 0.000468732158843136,
+                             0.000468732158843136, 0.000246502076160179),
+                           dim = c(2L, 2L),
+                           dimnames = list(c("beta", "gamma"),
+                                           c("beta", "gamma"))))
+theta_mean <- colMeans(fit@chain[seq_len(5), 5:6, drop = FALSE])
+covmat_emp <- SimInf:::covmat_empirical(fit, 5)
+proposal_obs <- SimInf:::pmcmc_proposal(fit, i = 6, n_accepted = 2,
+                                        theta_mean = theta_mean,
+                                        covmat_emp = covmat_emp,
+                                        scale_start = 5,
+                                        shape_start = 2)
+
+stopifnot(all(abs(proposal_exp$theta - proposal_obs$theta) < tol))
+stopifnot(all(abs(proposal_exp$theta_mean - proposal_obs$theta_mean) < tol))
+stopifnot(all(abs(proposal_exp$covmat_emp - proposal_obs$covmat_emp) < tol))
+
 res <- assertError(
     continue(fit, niter = 0))
 check_error(
@@ -282,14 +324,24 @@ check_error(
     res,
     "'thin' must be an integer >= 1.")
 
+set.seed(22)
 fit@chain <- fit@chain[sample(1:5, 100, replace = TRUE), ]
 progress_expected <- c(
 "",
-"PMCMC iteration: 100 of 100. Acceptance ratio: 0.470",
+"PMCMC iteration: 100 of 100. Acceptance ratio: 0.360",
 "----------------------------------------------------",
 "             2.5%       25%       50%       75%     97.5%      Mean        SD",
-"logPost -3.94e+03 -3.94e+03 -3.68e+03 -3.20e+03 -3.20e+03 -3.59e+03  3.35e+02",
-"beta     7.54e-01  7.54e-01  8.04e-01  8.66e-01  8.66e-01  8.09e-01  4.97e-02",
-"gamma    6.04e-01  6.29e-01  6.29e-01  6.44e-01  6.44e-01  6.29e-01  1.51e-02")
+"logPost -3.94e+03 -3.94e+03 -3.68e+03 -3.20e+03 -3.20e+03 -3.60e+03  3.36e+02",
+"beta     7.54e-01  7.54e-01  8.04e-01  8.66e-01  8.66e-01  8.07e-01  5.00e-02",
+"gamma    6.04e-01  6.29e-01  6.29e-01  6.44e-01  6.44e-01  6.29e-01  1.48e-02")
 progress_observed <- capture.output(SimInf:::pmcmc_progress(fit, 100, TRUE))
 stopifnot(identical(progress_observed, progress_expected))
+
+plot(fit)
+plot(fit, ~trace)
+
+fit@model@gdata <- c(beta = 0, gamma = 0)
+fit@target <- "gdata"
+stopifnot(all(
+    abs(SimInf:::set_proposal(fit, c(beta = 0.5, gamma = 0.6)) -
+        c(beta = 0.5, gamma = 0.6)) < tol))
