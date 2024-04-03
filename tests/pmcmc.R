@@ -203,6 +203,18 @@ summary_expected <- c(
 summary_observed <- capture.output(summary(fit))
 stopifnot(identical(summary_observed, summary_expected))
 
+res <- assertError(
+    continue(fit, niter = 0))
+check_error(
+    res,
+    "'niter' must be an integer > 0.")
+
+res <- assertError(
+    continue(fit, niter = 1:2))
+check_error(
+    res,
+    "'niter' must be an integer > 0.")
+
 stopifnot(identical(
     SimInf:::pmcmc_iterations(x = fit, start = 1, end = NULL, thin = 1),
     1:5))
