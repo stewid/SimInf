@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -173,6 +173,35 @@ parse_compartments <- function(x, compartments) {
     tabulate(i, length(compartments))
 }
 
+parse_propensity <- function(x, compartments, ldata_names,
+                             gdata_names, v0_names) {
+    ## Remove spaces
+    propensity <- gsub(" ", "", x[c(-1, -length(x))])
+    propensity <- paste0(propensity, collapse = "->")
+
+    ## Determine the corresponding column in the state change vector
+    ## S.
+    from <- parse_compartments(x[1], compartments)
+    dest <- parse_compartments(x[length(x)], compartments)
+    S <- dest - from
+
+    propensity <- rewrite_propensity(propensity, compartments,
+                                     ldata_names, gdata_names,
+                                     v0_names)
+
+    ## Determine the G rowname
+    names(from) <- compartments
+    names(dest) <- compartments
+    from <- G_label(from[which(from > 0)])
+    dest <- G_label(dest[which(dest > 0)])
+    G_rowname <- paste(from, "->", propensity$G_rowname, "->", dest)
+
+    list(propensity = propensity$propensity,
+         depends    = propensity$depends,
+         S          = S,
+         G_rowname  = G_rowname)
+}
+
 parse_transitions <- function(transitions, compartments, ldata_names,
                               gdata_names, v0_names) {
     lapply(strsplit(transitions, "->", fixed = TRUE), function(x) {
@@ -183,31 +212,8 @@ parse_transitions <- function(transitions, compartments, ldata_names,
                  call. = FALSE)
         }
 
-        ## Remove spaces
-        propensity <- gsub(" ", "", x[c(-1, -length(x))])
-        propensity <- paste0(propensity, collapse = "->")
-
-        ## Determine the corresponding column in the state change
-        ## vector S.
-        from <- parse_compartments(x[1], compartments)
-        dest <- parse_compartments(x[length(x)], compartments)
-        S <- dest - from
-
-        propensity <- rewrite_propensity(propensity, compartments,
-                                         ldata_names, gdata_names,
-                                         v0_names)
-
-        ## Determine the G rowname
-        names(from) <- compartments
-        names(dest) <- compartments
-        from <- G_label(from[which(from > 0)])
-        dest <- G_label(dest[which(dest > 0)])
-        G_rowname <- paste(from, "->", propensity$G_rowname, "->", dest)
-
-        list(propensity = propensity$propensity,
-             depends    = propensity$depends,
-             S          = S,
-             G_rowname  = G_rowname)
+        parse_propensity(x, compartments, ldata_names, gdata_names,
+                         v0_names)
     })
 }
 
