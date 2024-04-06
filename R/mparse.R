@@ -202,9 +202,21 @@ parse_propensity <- function(x, compartments, ldata_names,
          G_rowname  = G_rowname)
 }
 
+##' Determine if a transition should be parsed as a variable
+##' @noRd
+is_variable <- function(transition) {
+    ## The variable name must be a valid name in C. Which means upper
+    ## and lower case letters, digits, and the underscore character
+    ## '_'.  Names must not begin with a digit.
+    grepl("^[[:space:]]*[a-zA-Z_][a-zA-Z_0-9]*[[:space:]]<-", transition)
+}
+
 parse_transitions <- function(transitions, compartments, ldata_names,
                               gdata_names, v0_names) {
-    lapply(strsplit(transitions, "->", fixed = TRUE), function(x) {
+    ## Determine for each transition whether it is a variable or not.
+    i <- vapply(transitions, is_variable, logical(1), USE.NAMES = FALSE)
+
+    lapply(strsplit(transitions[!i], "->", fixed = TRUE), function(x) {
         if (length(x) < 3) {
             stop("Invalid transition: '",
                  paste0(x, collapse = "->"),
