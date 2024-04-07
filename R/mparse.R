@@ -19,12 +19,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-## Split the propensity in order to separate preprocessor and
-## punctuator tokens from identifiers, for example:
+## Split the code in order to separate preprocessor and punctuator
+## tokens from identifiers, for example:
 ##
 ## > tokens(" bR * R ")
 ## [1] "bR" "*"  "R"
-tokens <- function(propensity) {
+tokens <- function(code) {
     ## List of valid preprocessor operator or punctuator tokens.
     operators <- c("<<=", ">>=", "!=", "%=", "##", "&&", "&=", "*=",
                    "++", "+=", "--", "-=", "->", "/=", "<<", "<=", "==",
@@ -32,16 +32,16 @@ tokens <- function(propensity) {
                    ")", "*", "+", ",", "-", "/", ":", ";", "<", "=",
                    ">", "?", "[", "]", "^", "{", "|", "}", "#")
 
-    ## Create a matrix (1 x 2) of the propensity, where the first
-    ## column is the token and the second column indicates if the
-    ## token is one of the operators (indicated with 'op').
-    propensity <- cbind(token = propensity, type = "")
+    ## Create a matrix (1 x 2) of the code, where the first column is
+    ## the token and the second column indicates if the token is one
+    ## of the operators (indicated with 'op').
+    code <- cbind(token = code, type = "")
 
     ## Iterate over each operator and try to split each row in the
-    ## propensity in smaller pieces.
+    ## code in smaller pieces.
     for (op in operators) {
-        propensity <- lapply(seq_len(nrow(propensity)), function(i) {
-            x <- propensity[i, seq_len(ncol(propensity)), drop = FALSE]
+        code <- lapply(seq_len(nrow(code)), function(i) {
+            x <- code[i, seq_len(ncol(code)), drop = FALSE]
 
             ## Is it a non-operator token that we could split?
             if (nchar(x[1, 2]) == 0) {
@@ -78,10 +78,10 @@ tokens <- function(propensity) {
             x
         })
 
-        propensity <- do.call("rbind", propensity)
+        code <- do.call("rbind", code)
     }
 
-    propensity[, 1]
+    code[, 1]
 }
 
 ## Rewrite propensity
