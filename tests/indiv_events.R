@@ -1128,3 +1128,56 @@ stopifnot(identical(events_observed, events_expected))
 events_observed <- node_events(individual_events(events),
                                time = 0, age = c(3, 5), target = "SISe3_sp")
 stopifnot(identical(events_observed, events_expected))
+
+## Check generating tex-code from events
+events <- data.frame(
+    id    = c(1, 1, 1, 1, 1, 1, 1, 1),
+    event = c(1, 1, 3, 3, 3, 0, 0, 3),
+    time  = c(1, 1, 2, 2, 3, 4, 4, 5),
+    node  = c(1, 2, 1, 1, 2, 2, 1, 3),
+    dest  = c(0, 0, 2, 3, 2, 0, 0, 2))
+
+tex_expected <- c(
+    "\\documentclass[tikz]{standalone}",
+    "\\usepackage{tikz}",
+    "\\begin{document}",
+    "\\begin{tikzpicture}",
+    "  \\sffamily",
+    "",
+    "  \\draw[>=stealth,->] (0,0.5) -- (6,0.5);",
+    "  \\node at (3,0) {\\tiny Time};",
+    "",
+    "  \\draw[>=stealth, gray!40] (0.5,1) -- (5.5,1);",
+    "  \\node at (0,1) {\\tiny Node 1};",
+    "",
+    "  \\draw[>=stealth, gray!40] (0.5,2) -- (5.5,2);",
+    "  \\node at (0,2) {\\tiny Node 2};",
+    "",
+    "  \\draw[>=stealth, gray!40] (0.5,3) -- (5.5,3);",
+    "  \\node at (0,3) {\\tiny Node 3};",
+    "",
+    "  \\node at (1,0.3) {\\tiny $t_1$};",
+    "  \\draw (1,0.55) -- (1,0.45);",
+    "  \\node at (2,0.3) {\\tiny $t_2$};",
+    "  \\draw (2,0.55) -- (2,0.45);",
+    "  \\node at (3,0.3) {\\tiny $t_3$};",
+    "  \\draw (3,0.55) -- (3,0.45);",
+    "  \\node at (4,0.3) {\\tiny $t_4$};",
+    "  \\draw (4,0.55) -- (4,0.45);",
+    "  \\node at (5,0.3) {\\tiny $t_5$};",
+    "  \\draw (5,0.55) -- (5,0.45);",
+    "",
+    "  \\node at (1,1.1) {\\textborn};",
+    "  \\node at (1,2.1) {\\textcolor{gray!60}\\textborn};",
+    "  \\path[>=stealth,->] (2,1) edge [out=135, in=225] (2,2);",
+    "  \\path[>=stealth,gray!60,->] (2,1) edge [out=135, in=225] (2,3);",
+    "  \\path[>=stealth,gray!60,->] (3,2) edge [out=135, in=45, loop] (3,2);",
+    "  \\node at (4,2.2) {\\textdagger};",
+    "  \\node at (4,1.2) {\\textcolor{gray!60}\\textdagger};",
+    "  \\path[>=stealth,gray!60,->] (5,3) edge [out=315, in=45] (5,2);",
+    "",
+    "\\end{tikzpicture}",
+    "\\end{document}")
+
+tex_observed <- SimInf:::events_to_tex(events)
+stopifnot(identical(tex_observed, tex_expected))

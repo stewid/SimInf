@@ -683,3 +683,116 @@ setMethod(
         events
     }
 )
+
+##' Non-exported utility function to display events for an individual
+##' @param events a \code{data.frame} with the columns `id`, `event`,
+##'     `time`, `node`, and `dest` to define the events, see
+##'     \code{\link{individual_events}} for details.
+##' @return a character vector with tex-code.
+##' @md
+##' @noRd
+events_to_tex <- function(events) {
+    columns <- c("id", "event", "time", "node", "dest")
+    if (!is.data.frame(events))
+        events <- as.data.frame(events)
+    if (!all(columns %in% names(events)))
+        stop("Missing columns in 'events'.", call. = FALSE)
+    events <- events[, columns, drop = FALSE]
+
+    id <- check_indiv_events_id(events$id)
+    stopifnot(length(unique(id)) == 1)
+    event <- check_indiv_events_event(events$event)
+    time <- check_indiv_events_time(events$time)
+    time <- as.integer(factor(time - min(time)))
+    events$dest[event != 3L] <- NA
+    nodes <- check_indiv_events_nodes(event, events$node, events$dest)
+
+    ## Ensure the events are sorted.
+    i <- order(id, time, event)
+
+    keep <- .Call(SimInf_clean_indiv_events,
+                  id[i],
+                  event[i],
+                  time[i],
+                  nodes$node[i],
+                  nodes$dest[i])
+
+    lines <- c(
+        "\\documentclass[tikz]{standalone}",
+        "\\usepackage{tikz}",
+        "\\begin{document}",
+        "\\begin{tikzpicture}",
+        "  \\sffamily",
+        "",
+        sprintf("  \\draw[>=stealth,->] (0,0.5) -- (%i,0.5);", max(time) + 1),
+        sprintf("  \\node at (%g,0) {\\tiny Time};", (max(time) + 1) / 2),
+        "")
+
+    ## Add all nodes.
+    for (j in sort(unique(c(nodes$node, nodes$dest[!is.na(nodes$dest)])))) {
+        lines <- c(
+            lines,
+            sprintf("  \\draw[>=stealth, gray!40] (0.5,%i) -- (%g,%i);",
+                    j, max(time) + 0.5, j),
+            sprintf("  \\node at (0,%i) {\\tiny Node %i};", j, j),
+            "")
+    }
+
+    ## Add all time markers.
+    for (j in sort(unique(time))) {
+        lines <- c(
+            lines,
+            sprintf("  \\node at (%i,0.3) {\\tiny $t_%i$};", j, j),
+            sprintf("  \\draw (%i,0.55) -- (%i,0.45);", j, j))
+    }
+
+    ## Add all events.
+    events <- data.frame(keep = keep,
+                         id = id[i],
+                         event = event[i],
+                         time = time[i],
+                         node = nodes$node[i],
+                         dest = nodes$dest[i])
+    lines <- c(lines, "")
+    for (i in seq_len(nrow(events))) {
+        if (events$event[i] == 0) {
+            l <- sprintf("  \\node at (%i,%g) {%s\\textdagger};",
+                         events$time[i], events$node[i] + 0.2,
+                         ifelse(isTRUE(events$keep[i]), "",
+                                "\\textcolor{gray!60}"))
+        } else if (events$event[i] == 1) {
+            l <- sprintf("  \\node at (%i,%g) {%s\\textborn};",
+                         events$time[i], events$node[i] + 0.1,
+                         ifelse(isTRUE(events$keep[i]), "",
+                                "\\textcolor{gray!60}"))
+        } else if (events$event[i]) {
+            l <- sprintf("  \\path[>=stealth%s,->]",
+                         ifelse(isTRUE(events$keep[i]), "", ",gray!60"))
+
+            ## From.
+            l <- sprintf("%s (%i,%i)", l, events$time[i], events$node[i])
+
+            ## Edge
+            if (isTRUE(events$node[i] < events$dest[i])) {
+                l <- sprintf("%s edge [out=135, in=225]", l)
+            } else if (isTRUE(events$node[i] == events$dest[i])) {
+                l <- sprintf("%s edge [out=135, in=45, loop]", l)
+            } else {
+                l <- sprintf("%s edge [out=315, in=45]", l)
+            }
+
+            ## To
+            l <- sprintf("%s (%i,%i);", l, events$time[i], events$dest[i])
+        }
+
+        lines <- c(lines, l)
+    }
+
+    lines <- c(
+        lines,
+        "",
+        "\\end{tikzpicture}",
+        "\\end{document}")
+
+    lines
+}
