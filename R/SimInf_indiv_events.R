@@ -706,6 +706,9 @@ events_to_tex <- function(events) {
     time <- as.integer(factor(time - min(time)))
     events$dest[event != 3L] <- NA
     nodes <- check_indiv_events_nodes(event, events$node, events$dest)
+    levels <- sort(unique(c(nodes$node, nodes$dest)))
+    nodes$node <- as.integer(factor(nodes$node, levels = levels))
+    nodes$dest <- as.integer(factor(nodes$dest, levels = levels))
 
     ## Ensure the events are sorted.
     i <- order(id, time, event)
@@ -742,7 +745,7 @@ events_to_tex <- function(events) {
     for (j in sort(unique(time))) {
         lines <- c(
             lines,
-            sprintf("  \\node at (%i,0.3) {\\tiny $t_%i$};", j, j),
+            sprintf("  \\node at (%i,0.3) {\\tiny $t_{%i}$};", j, j),
             sprintf("  \\draw (%i,0.55) -- (%i,0.45);", j, j))
     }
 
