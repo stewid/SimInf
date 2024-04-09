@@ -88,7 +88,7 @@ SimInf_find_longest_path(
         /* Perform a depth first search of the events to find the
          * longest path. Offset determines where to start searching
          * after the first event. */
-        for (int offset = 0; begin + offset < n; offset++) {
+        for (int offset = 0; (begin + offset + 1) < n; offset++) {
             int depth = 1;
 
             /* Initialize the path with the first event. This is the root
@@ -97,16 +97,11 @@ SimInf_find_longest_path(
             path[0] = begin + 1;
 
             while (depth > 0 &&
-                   depth < (n - begin - offset) &&
-                   longest_path < (n - begin - offset))
+                   depth < (n - begin) &&
+                   longest_path < (n - begin))
             {
                 int i = path[depth - 1] - 1;
                 int from = event[i] == ENTER_EVENT ? node[i] : dest[i];
-
-                /* Next event to search from. */
-                int j = i + 1;
-                if (depth == 1)
-                    j += offset;
 
                 /* Continue the search from a previous search at this
                  * depth? */
@@ -116,8 +111,12 @@ SimInf_find_longest_path(
                 }
 
                 /* Find an event that is consistent with 'from' in the
-                 * previous event. */
-                for (; j < n && path[depth] == 0; j++) {
+                 * previous event. 'j' is the next event to search
+                 * from. */
+                for (int j = i + 1 + (depth == 1 ? offset : 0);
+                     j < n && path[depth] == 0;
+                     j++)
+                {
                     if (time[j] > time[i] &&
                         from == node[j] &&
                         from != dest[j] &&
