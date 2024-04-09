@@ -70,8 +70,6 @@ SimInf_find_longest_path(
     /* Iterate over all events to identify an event that should begin
      * each path. */
     for (int begin = 0; begin < n; begin++) {
-        int depth = 1;
-
         if (must_enter && event[begin] != ENTER_EVENT)
             continue;
 
@@ -87,62 +85,69 @@ SimInf_find_longest_path(
             }
         }
 
-        /* Initialize the path with the first event. This is the root
-         * for the search. */
-        memset(path, 0, n * sizeof(int));
-        path[0] = begin + 1;
-
         /* Perform a depth first search of the events to find the
-         * longest path. */
-        while (depth > 0 &&
-               depth < (n - begin) &&
-               longest_path < (n - begin))
-        {
-            int i = path[depth - 1] - 1;
-            int from = event[i] == ENTER_EVENT ? node[i] : dest[i];
+         * longest path. Offset determines where to start searching
+         * after the first event. */
+        for (int offset = 0; begin + offset < n; offset++) {
+            int depth = 1;
 
-            /* Next event to search from. */
-            int j = i + 1;
+            /* Initialize the path with the first event. This is the root
+             * for the search. */
+            memset(path, 0, n * sizeof(int));
+            path[0] = begin + 1;
 
-            /* Continue the search from a previous search at this
-             * depth? */
-            if (path[depth] > 0) {
-                i = path[depth] - 1;
-                path[depth] = 0;
-            }
+            while (depth > 0 &&
+                   depth < (n - begin - offset) &&
+                   longest_path < (n - begin - offset))
+            {
+                int i = path[depth - 1] - 1;
+                int from = event[i] == ENTER_EVENT ? node[i] : dest[i];
 
-            /* Find an event that is consistent with 'from' in the
-             * previous event. */
-            for (; j < n && path[depth] == 0; j++) {
-                if (time[j] > time[i] &&
-                    from == node[j] &&
-                    from != dest[j] &&
-                    (event[j] == EXIT_EVENT || event[j] == EXTERNAL_TRANSFER_EVENT))
-                {
-                    path[depth] = j + 1;
-                    if (!(must_exit && event[j] == EXTERNAL_TRANSFER_EVENT) &&
-                        (depth + 1) > longest_path)
+                /* Next event to search from. */
+                int j = i + 1;
+                if (depth == 1)
+                    j += offset;
+
+                /* Continue the search from a previous search at this
+                 * depth? */
+                if (path[depth] > 0) {
+                    i = path[depth] - 1;
+                    path[depth] = 0;
+                }
+
+                /* Find an event that is consistent with 'from' in the
+                 * previous event. */
+                for (; j < n && path[depth] == 0; j++) {
+                    if (time[j] > time[i] &&
+                        from == node[j] &&
+                        from != dest[j] &&
+                        (event[j] == EXIT_EVENT || event[j] == EXTERNAL_TRANSFER_EVENT))
                     {
-                        longest_path = depth + 1;
-                        memset(keep, 0, n * sizeof(int));
-                        for (int k = 0; k < longest_path; k++)
-                            keep[path[k] - 1] = 1;
+                        path[depth] = j + 1;
+                        if (!(must_exit && event[j] == EXTERNAL_TRANSFER_EVENT) &&
+                            (depth + 1) > longest_path)
+                        {
+                            longest_path = depth + 1;
+                            memset(keep, 0, n * sizeof(int));
+                            for (int k = 0; k < longest_path; k++)
+                                keep[path[k] - 1] = 1;
+                        }
                     }
                 }
-            }
 
-            if (path[depth] == 0) {
-                /* No new event found at this depth, move up in the
-                 * search tree. */
-                depth -= 1;
-            } else if (event[path[depth] - 1] == EXIT_EVENT) {
-                /* The last event is an exit event, move up in the
-                 * search tree. */
-                path[depth] = 0;
-                depth -= 1;
-            } else {
-                /* Go down in the search tree. */
-                depth += 1;
+                if (path[depth] == 0) {
+                    /* No new event found at this depth, move up in
+                     * the search tree. */
+                    depth -= 1;
+                } else if (event[path[depth] - 1] == EXIT_EVENT) {
+                    /* The last event is an exit event, move up in the
+                     * search tree. */
+                    path[depth] = 0;
+                    depth -= 1;
+                } else {
+                    /* Go down in the search tree. */
+                    depth += 1;
+                }
             }
         }
     }

@@ -1181,3 +1181,21 @@ tex_expected <- c(
 
 tex_observed <- SimInf:::events_to_tex(events)
 stopifnot(identical(tex_observed, tex_expected))
+
+events <- data.frame(
+    id    = c(1, 1, 1, 1, 1, 1, 1, 1),
+    event = c(1, 1, 3, 3, 3, 0, 0, 3),
+    time  = c(1, 1, 2, 2, 3, 4, 4, 5),
+    node  = c(1, 2, 1, 1, 3, 2, 1, 2),
+    dest  = c(0, 0, 2, 3, 2, 0, 0, 2))
+
+events_expected <- data.frame(
+    id = c(1, 1, 1, 1),
+    event = c(1L, 3L, 3L, 0L),
+    time = c(1L, 2L, 3L, 4L),
+    node = c(1, 1, 3, 2),
+    dest = c(NA, 3, 2, NA))
+
+events_observed <- as.data.frame(individual_events(events))
+
+stopifnot(identical(events_observed, events_expected))
