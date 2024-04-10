@@ -91,8 +91,8 @@ SimInf_find_longest_path(
         for (int offset = 0; (begin + offset + 1) < n; offset++) {
             int depth = 1;
 
-            /* Initialize the path with the first event. This is the root
-             * for the search. */
+            /* Initialize the path with the first event. This is the
+             * root for the search. */
             memset(path, 0, n * sizeof(int));
             path[0] = begin + 1;
 
