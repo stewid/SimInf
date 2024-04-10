@@ -100,19 +100,20 @@ SimInf_find_longest_path(
                    depth < (n - begin) &&
                    longest_path < (n - begin))
             {
-                int i = path[depth - 1] - 1;
-                int from = event[i] == ENTER_EVENT ? node[i] : dest[i];
+                int i, from;
 
-                /* Continue the search from a previous search at this
-                 * depth? */
+                /* Determine where to continue the search. */
                 if (path[depth] > 0) {
                     i = path[depth] - 1;
                     path[depth] = 0;
+                } else {
+                    i = path[depth - 1] - 1;
                 }
 
                 /* Find an event that is consistent with 'from' in the
-                 * previous event. 'j' is the next event to search
-                 * from. */
+                 * previous event. 'j' is the index to the next event
+                 * to search from. */
+                from = event[i] == ENTER_EVENT ? node[i] : dest[i];
                 for (int j = i + 1 + (depth == 1 ? offset : 0);
                      j < n && path[depth] == 0;
                      j++)
