@@ -1199,3 +1199,21 @@ events_expected <- data.frame(
 events_observed <- as.data.frame(individual_events(events))
 
 stopifnot(identical(events_observed, events_expected))
+
+events <- data.frame(
+    id    = c(1, 1, 1, 1, 1, 1),
+    event = c(1, 3, 3, 3, 3, 0),
+    time  = c(1, 2, 2, 3, 3, 4),
+    node  = c(1, 1, 1, 3, 3, 2),
+    dest  = c(0, 2, 3, 1, 2, 0))
+
+events_expected <- data.frame(
+    id = c(1, 1, 1, 1),
+    event = c(1L, 3L, 3L, 0L),
+    time = c(1L, 2L, 3L, 4L),
+    node = c(1, 1, 3, 2),
+    dest = c(NA, 3, 2, NA))
+
+events_observed <- as.data.frame(individual_events(events))
+
+stopifnot(identical(events_observed, events_expected))
