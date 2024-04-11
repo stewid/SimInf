@@ -70,6 +70,8 @@ SimInf_find_longest_path(
     /* Iterate over all events to identify an event that should begin
      * each path. */
     for (int begin = 0; begin < n; begin++) {
+        int depth = 1;
+
         if (must_enter && event[begin] != ENTER_EVENT)
             continue;
 
@@ -85,68 +87,67 @@ SimInf_find_longest_path(
             }
         }
 
+        /* Initialize the path with the first event. This is the
+         * root for the search. */
+        memset(path, 0, n * sizeof(int));
+        path[0] = begin + 1;
+
         /* Perform a depth first search of the events to find the
-         * longest path. Offset determines where to start searching
-         * after the first event. */
-        for (int offset = 0; (begin + offset + 1) < n; offset++) {
-            int depth = 1;
+         * longest path. */
+        while (depth > 0 &&
+               depth < (n - begin) &&
+               longest_path < (n - begin))
+        {
+            int i, from;
+            int offset = 1;
 
-            /* Initialize the path with the first event. This is the root
-             * for the search. */
-            memset(path, 0, n * sizeof(int));
-            path[0] = begin + 1;
+            /* Determine where to continue the search. */
+            i = path[depth - 1] - 1;
+            if (path[depth] > 0) {
+                /* Since the search is moving up in the search tree,
+                 * ensure to continue searching from a non-visited
+                 * node (in this path), i.e., set offset to skip the
+                 * node at depth. */
+                offset = path[depth] - path[depth - 1] + 1;
+                path[depth] = 0;
+            }
 
-            while (depth > 0 &&
-                   depth < (n - begin) &&
-                   longest_path < (n - begin))
-            {
-                int i = path[depth - 1] - 1;
-                int from = event[i] == ENTER_EVENT ? node[i] : dest[i];
-
-                /* Continue the search from a previous search at this
-                 * depth? */
-                if (path[depth] > 0) {
-                    i = path[depth] - 1;
-                    path[depth] = 0;
-                }
-
-                /* Find an event that is consistent with 'from' in the
-                 * previous event. 'j' is the next event to search
-                 * from. */
-                for (int j = i + 1 + (depth == 1 ? offset : 0);
-                     j < n && path[depth] == 0;
-                     j++)
+            /* Find an event that is consistent with 'from' in the
+             * previous event. 'j' is the index to the next event to
+             * search from. */
+            from = event[i] == ENTER_EVENT ? node[i] : dest[i];
+            for (int j = i + offset; j < n && path[depth] == 0; j++) {
+                if (time[j] > time[i] &&
+                    from == node[j] &&
+                    from != dest[j] &&
+                    (event[j] == EXIT_EVENT || event[j] == EXTERNAL_TRANSFER_EVENT))
                 {
-                    if (time[j] > time[i] &&
-                        from == node[j] &&
-                        from != dest[j] &&
-                        (event[j] == EXIT_EVENT || event[j] == EXTERNAL_TRANSFER_EVENT))
+                    path[depth] = j + 1;
+                    if (!(must_exit && event[j] == EXTERNAL_TRANSFER_EVENT) &&
+                        (depth + 1) > longest_path)
                     {
-                        path[depth] = j + 1;
-                        if (!(must_exit && event[j] == EXTERNAL_TRANSFER_EVENT) &&
-                            (depth + 1) > longest_path)
-                        {
-                            longest_path = depth + 1;
-                            memset(keep, 0, n * sizeof(int));
-                            for (int k = 0; k < longest_path; k++)
-                                keep[path[k] - 1] = 1;
-                        }
+                        longest_path = depth + 1;
+                        memset(keep, 0, n * sizeof(int));
+                        for (int k = 0; k < longest_path; k++)
+                            keep[path[k] - 1] = 1;
                     }
                 }
+            }
 
-                if (path[depth] == 0) {
-                    /* No new event found at this depth, move up in
-                     * the search tree. */
-                    depth -= 1;
-                } else if (event[path[depth] - 1] == EXIT_EVENT) {
-                    /* The last event is an exit event, move up in the
-                     * search tree. */
-                    path[depth] = 0;
-                    depth -= 1;
-                } else {
-                    /* Go down in the search tree. */
-                    depth += 1;
-                }
+            if (path[depth] == 0) {
+                /* No new event found at this depth, move up in the
+                 * search tree. */
+                depth -= 1;
+            } else if (event[path[depth] - 1] == EXIT_EVENT) {
+                /* The last event is an exit event, move up in the
+                 * search tree. */
+                /* if (depth > 1) */
+                /*     offset += path[depth] - path[depth - 1]; */
+                path[depth] = 0;
+                depth -= 1;
+            } else {
+                /* Go down in the search tree. */
+                depth += 1;
             }
         }
     }
