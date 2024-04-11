@@ -104,6 +104,10 @@ SimInf_find_longest_path(
             /* Determine where to continue the search. */
             i = path[depth - 1] - 1;
             if (path[depth] > 0) {
+                /* Since the search is moving up in the search tree,
+                 * ensure to continue searching from a non-visited
+                 * node (in this path), i.e., set offset to skip the
+                 * node at depth. */
                 offset = path[depth] - path[depth - 1] + 1;
                 path[depth] = 0;
             }
