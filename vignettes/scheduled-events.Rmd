@@ -198,7 +198,8 @@ plot(run(model), index = 2)
 
 $~$
 
-And a much larger weight to sample from the $I$ compartment.
+And a much larger weight to sample individuals from the $I$
+compartment.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 5.** The individuals in the $I$ compartment are even more likely of being selected for a movement event compared to the previous example."}
 model@events@E[2, 4] <- 10
