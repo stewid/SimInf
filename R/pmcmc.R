@@ -79,8 +79,8 @@ setValidity("SimInf_pmcmc", valid_SimInf_pmcmc_object)
 
 summary_chain <- function(chain) {
     qq <- do.call("rbind", apply(chain, 2, function(x) {
-        cbind(t(quantile(x, c(0.025, 0.25, 0.5, 0.75, 0.975))),
-              Mean = mean(x),
+        cbind(t(quantile(x, c(0.025, 0.25, 0.5, 0.75, 0.975), na.rm = TRUE)),
+              Mean = mean(x, na.rm = TRUE),
               SD = sqrt(var(x, na.rm = TRUE)))
     }, simplify = FALSE))
     rownames(qq) <- colnames(chain)
@@ -105,7 +105,7 @@ setMethod(
 
         if (length(object) > 0) {
             cat(sprintf("Acceptance ratio: %.3f\n",
-                        mean(object@chain[, "accept"])))
+                        mean(object@chain[, "accept"], na.rm = TRUE)))
 
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
