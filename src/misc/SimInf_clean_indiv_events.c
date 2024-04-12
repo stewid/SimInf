@@ -141,8 +141,6 @@ SimInf_find_longest_path(
             } else if (event[path[depth] - 1] == EXIT_EVENT) {
                 /* The last event is an exit event, move up in the
                  * search tree. */
-                /* if (depth > 1) */
-                /*     offset += path[depth] - path[depth - 1]; */
                 path[depth] = 0;
                 depth -= 1;
             } else {
