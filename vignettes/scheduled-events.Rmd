@@ -101,12 +101,13 @@ model@events@E
 In another case you might be interested in only targeting the
 susceptibles, which means for this model that we select the first
 column. Now, let us run the model and generate data from it. For
-reproducibility, we first call the `set.seed()` function since there
-is random sampling involved when picking inviduals from the
-compartments.
+reproducibility, we first call the `set.seed()` function and specify
+the number of threads to use since there is random sampling involved
+when picking inviduals from the compartments.
 
 ```{r}
 set.seed(1)
+set_num_threads(1)
 result <- run(model)
 ```
 
@@ -123,4 +124,92 @@ in each node in detail.
 
 ```{r}
 trajectory(result)
+```
+
+## Varying probability of picking individuals
+
+It is possible to assign different probabillities for the compartments
+that an event sample individuals from.  If the weights in the select
+matrix $E$ are non-identical, individuals are sampled from a biased
+urn.  To illustrate this, let us create movement events between two
+nodes for the built-in SIR model, where we start with 300 individuals
+($S = 100$, $I = 100$, $R = 100$) in the first node and then move
+them, one by one, to the second node.
+
+```{r}
+u0 <- data.frame(S = c(100, 0),
+                 I = c(100, 0),
+                 R = c(100, 0))
+```
+
+```{r}
+events <- data.frame(
+  event = rep("extTrans", 300), ## Event "extTrans" is a movement between nodes
+  time = 1:300,                 ## The time that the event happens
+  node = 1,                     ## In which node does the event occur
+  dest = 2,                     ## Which node is the destination node
+  n = 1,                        ## How many individuals are moved
+  proportion = 0,               ## This is not used when n > 0
+  select = 4,                   ## Use the 4th column in the model select matrix
+  shift = 0)                    ## Not used in this example
+```
+
+Now, create the model. Then run it, and plot the number of individuals
+in the second node.
+
+```{r}
+model <- SIR(u0 = u0,
+             tspan = 1:300,
+             events = events,
+             beta = 0,
+             gamma = 0)
+```
+
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 3.** The individuals have an equal probability of being selected regardless of compartment."}
+plot(run(model), index = 2)
+```
+
+$~$
+
+The probability to sample an individual from each compartment is
+
+$$
+p_S = \frac{w_S * S}{w_S * S + w_I * I + w_R * R}
+$$
+
+$$
+p_I = \frac{w_I * I}{w_S * S + w_I * I + w_R * R}
+$$
+
+$$
+p_R = \frac{w_R * R}{w_S * S + w_I * I + w_R * R}
+$$
+
+Where $w_S$, $w_I$ and $w_R$ are the weights in E.  These
+probabilities are applied sequentially, that is the probability of
+choosing the next item is proportional to the weights amongst the
+remaining items.  Let us now double the weight to sample individuals
+from the $I$ compartment and then run the model again.
+
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 4.** The individuals in the $I$ compartment are more likely of being selected for a movement event."}
+model@events@E[2, 4] <- 2
+plot(run(model), index = 2)
+```
+
+$~$
+
+And a much larger weight to sample from the $I$ compartment.
+
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 5.** The individuals in the $I$ compartment are even more likely of being selected for a movement event compared to the previous example."}
+model@events@E[2, 4] <- 10
+plot(run(model), index = 2)
+```
+
+$~$
+
+Increase the weight for the $R$ compartment and run the model again.
+
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 6.** The individuals in the $I$ and $R$ compartments are more likely of being selected for a movement event compared to individuals in the $S$ compartment."}
+model@events@E[3, 4] <- 4
+plot(run(model), index = 2)
 ```
