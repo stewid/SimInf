@@ -220,10 +220,10 @@ parse_variable <- function(x, compartments, ldata_names, gdata_names,
              call. = FALSE)
     }
 
-    expr <- gsub(" ", "", substr(x, attr(m, "match.length") + 1, nchar(x)))
-    expr <- tokenize(expr)
+    x <- remove_spaces(substr(x, attr(m, "match.length") + 1, nchar(x)))
 
-    stop("Not implemented.", call. = FALSE)
+    list(variable = variable,
+         tokens = tokenize(x))
 }
 
 ##' Determine if a transition should be parsed as a variable
