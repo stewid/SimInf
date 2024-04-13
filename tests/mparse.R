@@ -574,7 +574,7 @@ C_code <- c(
 ## Skip first line that contains version
 stopifnot(identical(m@C_code[-1], C_code))
 
-stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
+stopifnot(identical(SimInf:::tokenize("beta*S*I/(S+I+R)"),
                     c("beta", "*", "S", "*", "I", "/", "(", "S", "+",
                       "I", "+", "R", ")")))
 

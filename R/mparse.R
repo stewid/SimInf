@@ -22,9 +22,9 @@
 ## Split the code in order to separate preprocessor and punctuator
 ## tokens from identifiers, for example:
 ##
-## > tokens(" bR * R ")
+## > tokenize(" bR * R ")
 ## [1] "bR" "*"  "R"
-tokens <- function(code) {
+tokenize <- function(code) {
     ## List of valid preprocessor operator or punctuator tokens.
     operators <- c("<<=", ">>=", "!=", "%=", "##", "&&", "&=", "*=",
                    "++", "+=", "--", "-=", "->", "/=", "<<", "<=", "==",
@@ -92,7 +92,7 @@ tokens <- function(code) {
 ## which the propensity depends.
 rewrite_propensity <- function(propensity, compartments, ldata_names,
                                gdata_names, v0_names) {
-    propensity <- tokens(propensity)
+    propensity <- tokenize(propensity)
     G_rowname <- paste0(propensity, collapse = "")
     depends <- integer(length(compartments))
 
@@ -221,7 +221,7 @@ parse_variable <- function(x, compartments, ldata_names, gdata_names,
     }
 
     expr <- gsub(" ", "", substr(x, attr(m, "match.length") + 1, nchar(x)))
-    expr <- tokens(expr)
+    expr <- tokenize(expr)
 
     stop("Not implemented.", call. = FALSE)
 }
