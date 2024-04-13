@@ -202,13 +202,37 @@ parse_propensity <- function(x, compartments, ldata_names,
          G_rowname  = G_rowname)
 }
 
+pattern_variable <- function() {
+    "^[[:space:]]*[a-zA-Z_][a-zA-Z_0-9]*[[:space:]]*<-"
+}
+
+parse_variable <- function(x, compartments, ldata_names, gdata_names,
+                           v0_names) {
+    m <- regexpr(pattern_variable(), x)
+    if (m != 1)
+        stop("Invalid variable: '", x, "'.", call. = FALSE)
+
+    variable <- regmatches(x, m)
+    variable <- trimws(substr(variable, 1, nchar(variable) - 2))
+    if (variable %in% c(compartments, gdata_names, ldata_names,
+                        v0_names)) {
+        stop("Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.",
+             call. = FALSE)
+    }
+
+    expr <- gsub(" ", "", substr(x, attr(m, "match.length") + 1, nchar(x)))
+    expr <- tokens(expr)
+
+    stop("Not implemented.", call. = FALSE)
+}
+
 ##' Determine if a transition should be parsed as a variable
 ##' @noRd
 is_variable <- function(transition) {
     ## The variable name must be a valid name in C. Which means upper
     ## and lower case letters, digits, and the underscore character
     ## '_'.  Names must not begin with a digit.
-    grepl("^[[:space:]]*[a-zA-Z_][a-zA-Z_0-9]*[[:space:]]*<-", transition)
+    grepl(pattern_variable(), transition)
 }
 
 parse_transitions <- function(transitions, compartments, ldata_names,
@@ -216,7 +240,16 @@ parse_transitions <- function(transitions, compartments, ldata_names,
     ## Determine for each transition whether it is a variable or not.
     i <- vapply(transitions, is_variable, logical(1), USE.NAMES = FALSE)
 
-    lapply(strsplit(transitions[!i], "->", fixed = TRUE), function(x) {
+    ## Split the transitions into propensities and variables.
+    propensities <- strsplit(transitions[!i], "->", fixed = TRUE)
+    variables <- transitions[i]
+
+    variables <- lapply(variables, function(x) {
+        parse_variable(x, compartments, ldata_names, gdata_names,
+                       v0_names)
+    })
+
+    propensities <- lapply(propensities, function(x) {
         if (length(x) < 3) {
             stop("Invalid transition: '",
                  paste0(x, collapse = "->"),
@@ -227,6 +260,8 @@ parse_transitions <- function(transitions, compartments, ldata_names,
         parse_propensity(x, compartments, ldata_names, gdata_names,
                          v0_names)
     })
+
+    propensities
 }
 
 ##' Extract variable names from data

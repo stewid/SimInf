@@ -948,3 +948,21 @@ res <- assertError(
            u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
            tspan = 1:10))
 check_error(res, "Invalid usage of the empty set '@'.")
+
+res <- assertError(
+    SimInf:::parse_variable(x = "3N <- S + I + R",
+                            compartments = c("S", "I", "R"),
+                            ldata_names = character(0),
+                            gdata_names = character(0),
+                            v0_names = character(0)))
+check_error(res, "Invalid variable: '3N <- S + I + R'.")
+
+res <- assertError(
+    SimInf:::parse_variable(x = "N <- S + I + R",
+                            compartments = c("S", "I", "R"),
+                            ldata_names = "N",
+                            gdata_names = character(0),
+                            v0_names = character(0)))
+check_error(
+    res,
+    "Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.")
