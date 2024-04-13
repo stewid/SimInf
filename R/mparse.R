@@ -84,6 +84,10 @@ tokenize <- function(code) {
     code[, 1]
 }
 
+remove_spaces <- function(x) {
+    gsub(" ", "", x)
+}
+
 ## Rewrite propensity
 ##
 ## Rewrite the propensity by replacing all compartments by
@@ -142,11 +146,8 @@ parse_compartments <- function(x, compartments) {
     ## Split into 'compartment1 + compartment2 + ..'
     x <- unlist(strsplit(x, "+", fixed = TRUE))
 
-    ## Remove spaces.
-    x <- gsub(" ", "", x)
-
     ## Replace 'n*compartment' with n replicates of 'compartment'
-    x <- unlist(sapply(x, function(xx) {
+    x <- unlist(sapply(remove_spaces(x), function(xx) {
         m <- regexpr("^[[:digit:]]+[*]", xx)
         if (m != 1)
             return(xx)
@@ -175,8 +176,7 @@ parse_compartments <- function(x, compartments) {
 
 parse_propensity <- function(x, compartments, ldata_names,
                              gdata_names, v0_names) {
-    ## Remove spaces
-    propensity <- gsub(" ", "", x[c(-1, -length(x))])
+    propensity <- remove_spaces(x[c(-1, -length(x))])
     propensity <- paste0(propensity, collapse = "->")
 
     ## Determine the corresponding column in the state change vector
