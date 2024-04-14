@@ -243,7 +243,7 @@ parse_variable <- function(x, compartments, ldata_names, gdata_names,
          tokens = tokenize(x))
 }
 
-parse_variables <- function(variables,compartments, ldata_names,
+parse_variables <- function(variables, compartments, ldata_names,
                             gdata_names, v0_names) {
     if (length(variables) == 0)
         return(list())
