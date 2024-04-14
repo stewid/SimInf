@@ -202,6 +202,23 @@ parse_propensity <- function(x, compartments, ldata_names,
          G_rowname  = G_rowname)
 }
 
+parse_propensities <- function(propensities, compartments,
+                               ldata_names, gdata_names, v0_names) {
+    propensities <- strsplit(propensities, "->", fixed = TRUE)
+
+    lapply(propensities, function(x) {
+        if (length(x) < 3) {
+            stop("Invalid transition: '",
+                 paste0(x, collapse = "->"),
+                 "'.",
+                 call. = FALSE)
+        }
+
+        parse_propensity(x, compartments, ldata_names, gdata_names,
+                         v0_names)
+    })
+}
+
 pattern_variable <- function() {
     "^[[:space:]]*[a-zA-Z_][a-zA-Z_0-9]*[[:space:]]*<-"
 }
@@ -224,6 +241,37 @@ parse_variable <- function(x, compartments, ldata_names, gdata_names,
 
     list(variable = variable,
          tokens = tokenize(x))
+}
+
+parse_variables <- function(variables,compartments, ldata_names,
+                            gdata_names, v0_names) {
+    if (length(variables) == 0)
+        return(list())
+
+    variables <- lapply(variables, function(x) {
+        parse_variable(x, compartments, ldata_names, gdata_names,
+                       v0_names)
+    })
+
+    ## Determine variable names.
+    names(variables) <- vapply(variables, "[[", character(1), "variable")
+    if (any(duplicated(names(variables))))
+        stop("Variables must have non-duplicated names.", call. = FALSE)
+
+    ## Determine dependencies between variables.
+    depends <- do.call("cbind", lapply(variables, function(x) {
+        i <- match(x$tokens, names(variables))
+        d <- integer(length(variables))
+        d[i] <- 1L
+        matrix(d, ncol = 1, dimnames = list(names(variables), x$variable))
+    }))
+    depends <- topological_sort(depends)
+
+    lapply(variables[colnames(depends)], function(x) {
+        i <- which(depends[, x$variable] > 0)
+        x$depends <- colnames(depends)[i]
+        x
+    })
 }
 
 ##' Determine if a transition should be parsed as a variable
@@ -275,28 +323,13 @@ parse_transitions <- function(transitions, compartments, ldata_names,
     ## Determine for each transition whether it is a variable or not.
     i <- vapply(transitions, is_variable, logical(1), USE.NAMES = FALSE)
 
-    ## Split the transitions into propensities and variables.
-    propensities <- strsplit(transitions[!i], "->", fixed = TRUE)
-    variables <- transitions[i]
+    ## Extract the variables from the transitions.
+    variables <- parse_variables(transitions[i], compartments,
+                                 ldata_names, gdata_names, v0_names)
 
-    variables <- lapply(variables, function(x) {
-        parse_variable(x, compartments, ldata_names, gdata_names,
-                       v0_names)
-    })
-
-    propensities <- lapply(propensities, function(x) {
-        if (length(x) < 3) {
-            stop("Invalid transition: '",
-                 paste0(x, collapse = "->"),
-                 "'.",
-                 call. = FALSE)
-        }
-
-        parse_propensity(x, compartments, ldata_names, gdata_names,
-                         v0_names)
-    })
-
-    propensities
+    ## Extract the propensites from the transitions.
+    parse_propensities(transitions[!i], compartments, ldata_names,
+                       gdata_names, v0_names)
 }
 
 ##' Extract variable names from data
