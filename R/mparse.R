@@ -255,7 +255,7 @@ topological_sort <- function(x) {
         stop("Invalid dependencies between variables.", call. = FALSE)
 
     m <- x
-    while(length(S)) {
+    while (length(S)) {
         var <- S[1]
         S <- S[-1]
         L <- c(L, var)
