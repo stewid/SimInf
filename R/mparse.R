@@ -235,6 +235,41 @@ is_variable <- function(transition) {
     grepl(pattern_variable(), transition)
 }
 
+##' Perform a topological search of the variables using Kahn's
+##' algorithm (Kahn, 1962). Kahn, A. B. (1962). Topological sorting of
+##' large networks. *Communications of the ACM*, 5(11),
+##' p. 558-562. \doi{10.1145/368996.369025}.
+##' @noRd
+topological_sort <- function(x) {
+    ## First, sort lexiographically to break potential ties and get a
+    ## consistent solution.
+    x <- x[sort(colnames(x)), sort(colnames(x)), drop = FALSE]
+
+    ## Find variables which have no dependencies.
+    S <- colnames(x)[which(colSums(x) == 0)]
+
+    ## Character vector that will contain the sorted variables.
+    L <- character(0)
+
+    if (length(S) == 0)
+        stop("Invalid dependencies between variables.", call. = FALSE)
+
+    m <- x
+    while(length(S)) {
+        var <- S[1]
+        S <- S[-1]
+        L <- c(L, var)
+        m <- m[, -which(colnames(m) == var), drop = FALSE]
+        m[var, ] <- 0L
+        S <- c(S, colnames(m)[which(colSums(m) == 0)])
+    }
+
+    if (ncol(m))
+        stop("Invalid dependencies between variables.", call. = FALSE)
+
+    x[L, L, drop = FALSE]
+}
+
 parse_transitions <- function(transitions, compartments, ldata_names,
                               gdata_names, v0_names) {
     ## Determine for each transition whether it is a variable or not.
