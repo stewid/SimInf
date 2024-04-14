@@ -975,3 +975,30 @@ stopifnot(identical(
                             v0_names = character(0)),
     list(variable = "N",
          tokens = c("S", "+", "I", "+", "R"))))
+
+res <- assertError(
+    SimInf:::topological_sort(
+                 matrix(c(1, 0, 0, 1, 0, 0, 0, 1, 0),
+                        nrow = 3, ncol = 3,
+                        dimnames = list(c("A", "B", "C"),
+                                        c("A", "B", "C")))))
+check_error(res, "Invalid dependencies between variables.")
+
+res <- assertError(
+    SimInf:::topological_sort(
+                 matrix(c(0, 0, 0, 1, 0, 0, 0, 1, 1),
+                        nrow = 3, ncol = 3,
+                        dimnames = list(c("A", "B", "C"),
+                                        c("A", "B", "C")))))
+check_error(res, "Invalid dependencies between variables.")
+
+stopifnot(identical(
+    SimInf:::topological_sort(
+                 matrix(c(0, 1, 0, 1, 0, 0, 0, 0, 0),
+                        nrow = 3, ncol = 3,
+                        dimnames = list(c("A", "B", "C"),
+                                        c("C", "B", "A")))),
+    matrix(c(0, 0, 0, 1, 0, 0, 0, 1, 0),
+           nrow = 3, ncol = 3,
+           dimnames = list(c("A", "B", "C"),
+                           c("A", "B", "C")))))
