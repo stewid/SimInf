@@ -88,6 +88,11 @@ remove_spaces <- function(x) {
     gsub(" ", "", x)
 }
 
+rewrite_tokens <- function(tokens, pattern, replacement) {
+    i <- match(tokens, pattern)
+    ifelse(is.na(i), tokens, sprintf("%s[%i]", replacement, i - 1L))
+}
+
 ## Rewrite propensity
 ##
 ## Rewrite the propensity by replacing all compartments by
@@ -102,22 +107,19 @@ rewrite_propensity <- function(propensity, compartments, ldata_names,
 
     ## Find compartments in propensity
     i <- match(propensity, compartments)
-    propensity <- ifelse(is.na(i), propensity, sprintf("u[%i]", i - 1L))
     i <- i[!is.na(i)]
     if (length(i))
         depends[i] <- 1
+    propensity <- rewrite_tokens(propensity, compartments, "u")
 
     ## Find ldata parameters in the propensity
-    i <- match(propensity, ldata_names)
-    propensity <- ifelse(is.na(i), propensity, sprintf("ldata[%i]", i - 1L))
+    propensity <- rewrite_tokens(propensity, ldata_names, "ldata")
 
     ## Find gdata parameters in the propensity
-    i <- match(propensity, gdata_names)
-    propensity <- ifelse(is.na(i), propensity, sprintf("gdata[%i]", i - 1L))
+    propensity <- rewrite_tokens(propensity, gdata_names, "gdata")
 
     ## Find v0 parameters in the propensity
-    i <- match(propensity, v0_names)
-    propensity <- ifelse(is.na(i), propensity, sprintf("v[%i]", i - 1L))
+    propensity <- rewrite_tokens(propensity, v0_names, "v")
 
     list(propensity = paste0(propensity, collapse = ""),
          depends    = depends,
