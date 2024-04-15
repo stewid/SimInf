@@ -88,9 +88,26 @@ remove_spaces <- function(x) {
     gsub(" ", "", x)
 }
 
-rewrite_tokens <- function(tokens, pattern, replacement) {
+substitute_tokens <- function(tokens, pattern, replacement) {
     i <- match(tokens, pattern)
     ifelse(is.na(i), tokens, sprintf("%s[%i]", replacement, i - 1L))
+}
+
+rewrite_tokens <- function(tokens, compartments, ldata_names,
+                           gdata_names, v0_names) {
+    ## Find compartments in tokens
+    tokens <- substitute_tokens(tokens, compartments, "u")
+
+    ## Find ldata parameters in tokens
+    tokens <- substitute_tokens(tokens, ldata_names, "ldata")
+
+    ## Find gdata parameters in tokens
+    tokens <- substitute_tokens(tokens, gdata_names, "gdata")
+
+    ## Find v0 parameters in tokens
+    tokens <- substitute_tokens(tokens, v0_names, "v")
+
+    tokens
 }
 
 ## Rewrite propensity
@@ -110,16 +127,9 @@ rewrite_propensity <- function(propensity, compartments, ldata_names,
     i <- i[!is.na(i)]
     if (length(i))
         depends[i] <- 1
-    propensity <- rewrite_tokens(propensity, compartments, "u")
 
-    ## Find ldata parameters in the propensity
-    propensity <- rewrite_tokens(propensity, ldata_names, "ldata")
-
-    ## Find gdata parameters in the propensity
-    propensity <- rewrite_tokens(propensity, gdata_names, "gdata")
-
-    ## Find v0 parameters in the propensity
-    propensity <- rewrite_tokens(propensity, v0_names, "v")
+    propensity <- rewrite_tokens(propensity, compartments,
+                                 ldata_names, gdata_names, v0_names)
 
     list(propensity = paste0(propensity, collapse = ""),
          depends    = depends,
@@ -242,10 +252,13 @@ parse_variable <- function(x, compartments, ldata_names, gdata_names,
              call. = FALSE)
     }
 
-    x <- remove_spaces(substr(x, attr(m, "match.length") + 1, nchar(x)))
+    tokens <- remove_spaces(substr(x, attr(m, "match.length") + 1, nchar(x)))
+    tokens <- tokenize(tokens)
+    tokens <- rewrite_tokens(tokens, compartments, ldata_names,
+                             gdata_names, v0_names)
 
     list(variable = variable,
-         tokens = tokenize(x))
+         tokens = tokens)
 }
 
 parse_variables <- function(variables, compartments, ldata_names,

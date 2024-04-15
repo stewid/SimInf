@@ -974,7 +974,7 @@ stopifnot(identical(
                             gdata_names = character(0),
                             v0_names = character(0)),
     list(variable = "N",
-         tokens = c("S", "+", "I", "+", "R"))))
+         tokens = c("u[0]", "+", "u[1]", "+", "u[2]"))))
 
 res <- assertError(
     SimInf:::topological_sort(
