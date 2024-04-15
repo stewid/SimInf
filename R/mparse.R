@@ -220,6 +220,9 @@ parse_propensities <- function(propensities, compartments,
 }
 
 pattern_variable <- function() {
+    ## The variable name must be a valid name in C. Which means upper
+    ## and lower case letters, digits, and the underscore character
+    ## '_'.  Names must not begin with a digit.
     "^[[:space:]]*[a-zA-Z_][a-zA-Z_0-9]*[[:space:]]*<-"
 }
 
