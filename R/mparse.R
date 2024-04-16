@@ -186,9 +186,9 @@ parse_compartments <- function(x, compartments) {
     tabulate(i, length(compartments))
 }
 
-parse_propensity <- function(propensity, compartments, ldata_names,
+parse_propensity <- function(x, compartments, ldata_names,
                              gdata_names, v0_names) {
-    propensity <- remove_spaces(propensity[c(-1, -length(propensity))])
+    propensity <- remove_spaces(x[c(-1, -length(x))])
     propensity <- paste0(propensity, collapse = "->")
 
     ## Determine the corresponding column in the state change vector
