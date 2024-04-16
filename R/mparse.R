@@ -116,8 +116,8 @@ rewrite_tokens <- function(tokens, compartments, ldata_names,
 ## \code{u[compartments[j]]} where \code{j} is the numbering in
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
-rewrite_propensity <- function(propensity, compartments, ldata_names,
-                               gdata_names, v0_names) {
+rewrite_propensity <- function(propensity, variables, compartments,
+                               ldata_names, gdata_names, v0_names) {
     propensity <- tokenize(propensity)
     G_rowname <- paste0(propensity, collapse = "")
     depends <- integer(length(compartments))
@@ -128,12 +128,20 @@ rewrite_propensity <- function(propensity, compartments, ldata_names,
     if (length(i))
         depends[i] <- 1
 
+    ## Find variables in propensity.
+    i <- match(propensity, names(variables))
+    i <- i[!is.na(i)]
+    variables <- names(variables)[i]
+    if (is.null(variables))
+        variables <- character(0)
+
     propensity <- rewrite_tokens(propensity, compartments,
                                  ldata_names, gdata_names, v0_names)
 
     list(propensity = paste0(propensity, collapse = ""),
          depends    = depends,
-         G_rowname  = G_rowname)
+         G_rowname  = G_rowname,
+         variables  = variables)
 }
 
 ## Generate the 'from' or 'dest' labels in the G rownames.
@@ -186,7 +194,7 @@ parse_compartments <- function(x, compartments) {
     tabulate(i, length(compartments))
 }
 
-parse_propensity <- function(x, compartments, ldata_names,
+parse_propensity <- function(x, variables, compartments, ldata_names,
                              gdata_names, v0_names) {
     propensity <- remove_spaces(x[c(-1, -length(x))])
     propensity <- paste0(propensity, collapse = "->")
@@ -197,9 +205,9 @@ parse_propensity <- function(x, compartments, ldata_names,
     dest <- parse_compartments(x[length(x)], compartments)
     S <- dest - from
 
-    propensity <- rewrite_propensity(propensity, compartments,
-                                     ldata_names, gdata_names,
-                                     v0_names)
+    propensity <- rewrite_propensity(propensity, variables,
+                                     compartments, ldata_names,
+                                     gdata_names, v0_names)
 
     ## Determine the G rowname
     names(from) <- compartments
@@ -211,10 +219,11 @@ parse_propensity <- function(x, compartments, ldata_names,
     list(propensity = propensity$propensity,
          depends    = propensity$depends,
          S          = S,
-         G_rowname  = G_rowname)
+         G_rowname  = G_rowname,
+         variables  = propensity$variables)
 }
 
-parse_propensities <- function(propensities, compartments,
+parse_propensities <- function(propensities, variables, compartments,
                                ldata_names, gdata_names, v0_names) {
     propensities <- strsplit(propensities, "->", fixed = TRUE)
 
@@ -226,8 +235,8 @@ parse_propensities <- function(propensities, compartments,
                  call. = FALSE)
         }
 
-        parse_propensity(x, compartments, ldata_names, gdata_names,
-                         v0_names)
+        parse_propensity(x, variables, compartments, ldata_names,
+                         gdata_names, v0_names)
     })
 }
 
@@ -346,8 +355,11 @@ parse_transitions <- function(transitions, compartments, ldata_names,
                                  ldata_names, gdata_names, v0_names)
 
     ## Extract the propensites from the transitions.
-    parse_propensities(transitions[!i], compartments, ldata_names,
-                       gdata_names, v0_names)
+    propensities <- parse_propensities(transitions[!i], variables,
+                                       compartments, ldata_names,
+                                       gdata_names, v0_names)
+
+    list(propensities = propensities, variables = variables)
 }
 
 ##' Extract variable names from data
@@ -497,8 +509,8 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                                      ldata_names, gdata_names,
                                      v0_names)
 
-    S <- state_change_matrix(transitions, compartments)
-    G <- dependency_graph(transitions, S)
+    S <- state_change_matrix(transitions$propensities, compartments)
+    G <- dependency_graph(transitions$propensities, S)
 
     SimInf_model(G      = G,
                  S      = S,
@@ -510,5 +522,5 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                  gdata  = gdata,
                  u0     = u0,
                  v0     = v0,
-                 C_code = C_code_mparse(transitions, pts_fun))
+                 C_code = C_code_mparse(transitions$propensities, pts_fun))
 }

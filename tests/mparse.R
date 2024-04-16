@@ -579,12 +579,13 @@ stopifnot(identical(SimInf:::tokenize("beta*S*I/(S+I+R)"),
                       "I", "+", "R", ")")))
 
 stopifnot(
-    identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", c("S", "I", "R"),
-                                          NULL, "beta", NULL),
-              structure(list(propensity = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
-                             depends = c(1, 1, 1),
-                             G_rowname = "beta*S*I/(S+I+R)"),
-                        .Names = c("propensity", "depends", "G_rowname"))))
+    identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", list(),
+                                          c("S", "I", "R"), NULL,
+                                          "beta", NULL),
+              list(propensity = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
+                   depends = c(1, 1, 1),
+                   G_rowname = "beta*S*I/(S+I+R)",
+                   variables = character(0))))
 
 ## Check init function
 model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
