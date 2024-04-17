@@ -297,6 +297,8 @@ parse_variables <- function(variables, compartments, ldata_names,
     lapply(variables[colnames(depends)], function(x) {
         i <- which(depends[, x$variable] > 0)
         x$depends <- colnames(depends)[i]
+        x$code <- paste0(x$tokens, collapse = "")
+        x$tokens <- NULL
         x
     })
 }
@@ -522,5 +524,5 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                  gdata  = gdata,
                  u0     = u0,
                  v0     = v0,
-                 C_code = C_code_mparse(transitions$propensities, pts_fun))
+                 C_code = C_code_mparse(transitions, pts_fun))
 }

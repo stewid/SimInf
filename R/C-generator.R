@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -68,36 +68,91 @@ C_define <- function() {
       "")
 }
 
+##' Generate C code for the variables
+##'
+##' Generate C code for the variables in the model transition rate
+##' functions.
+##'
+##' @param propensity data for the propensity.
+##' @param propensity data for the variables.
+##' @return character vector with C code.
+##' @noRd
+C_variables <- function(propensity, variables) {
+    ## Determine variables to include, both directly in the
+    ## propensity, and as a dependency between variables.
+    j <- match(propensity$variables, names(variables))
+    i <- integer(0)
+    while (length(j)) {
+        v <- j[1]
+        j <- j[-1]
+        if (!any(v == i)) {
+            j <- c(j, match(variables[[v]]$depends, names(variables)))
+            i <- sort(c(i, v))
+        }
+    }
+
+    lines <- character(0)
+    for (i in seq_len(length(i))) {
+        lines <- c(
+            lines,
+            sprintf("    const double %s = %s;",
+                    variables[[i]]$variable,
+                    variables[[i]]$code))
+    }
+
+    if (length(lines))
+        lines <- c(lines, "")
+
+    lines
+}
+
 ##' Generate C code for the model transition rate functions
 ##'
 ##' @param transitions data for the transitions.
 ##' @return character vector with C code.
 ##' @noRd
 C_trFun <- function(transitions) {
-    parameters <- c("    const int *u,",
-                    "    const double *v,",
-                    "    const double *ldata,",
-                    "    const double *gdata,",
-                    "    double t)")
+    propensities <- transitions$propensities
+    variables <- transitions$variables
+
+    parameters <- c(
+        "    const int *u,",
+        "    const double *v,",
+        "    const double *ldata,",
+        "    const double *gdata,",
+        "    double t)")
 
     lines <- character(0)
-    for (i in seq_len(length(transitions))) {
-        lines <- c(lines,
-                   "/**",
-                   " * @param u The compartment state vector in the node.",
-                   " * @param v The continuous state vector in the node.",
-                   " * @param ldata The local data vector in the node.",
-                   " * @param gdata The global data vector.",
-                   " * @param t Current time.",
-                   " * @return propensity.",
-                   " */",
-                   sprintf("static double trFun%i(", i),
-                   parameters,
-                   "{",
-                   sprintf("    return %s;", transitions[[i]]$propensity),
-                   "}",
-                   "")
+    for (i in seq_len(length(propensities))) {
+        propensity <- propensities[[i]]
+
+        lines <- c(
+            lines,
+            "/**",
+            " * @param u The compartment state vector in the node.",
+            " * @param v The continuous state vector in the node.",
+            " * @param ldata The local data vector in the node.",
+            " * @param gdata The global data vector.",
+            " * @param t Current time.",
+            " * @return propensity.",
+            " */",
+            sprintf("static double trFun%i(", i),
+            parameters,
+            "{")
+
+        ## Insert variables.
+        lines <- c(
+            lines,
+            C_variables(propensity, variables))
+
+        ## Insert propensity.
+        lines <- c(
+            lines,
+            sprintf("    return %s;", propensity$propensity),
+            "}",
+            "")
     }
+
     lines
 }
 
@@ -157,6 +212,8 @@ C_ptsFun <- function(pts_fun) {
 ##' @return character vector with C code.
 ##' @noRd
 C_run <- function(transitions) {
+    n_tr_fn <- length(transitions$propensities)
+
     c("/**",
       " * Run a trajectory of the model.",
       " *",
@@ -168,7 +225,7 @@ C_run <- function(transitions) {
       "{",
       "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
       sprintf("    TRFun tr_fun[] = {%s};",
-              paste0("&trFun", seq_len(length(transitions)), collapse = ", ")),
+              paste0("&trFun", seq_len(n_tr_fn), collapse = ", ")),
       "",
       "    if (!SimInf_run) {",
       "        SimInf_run = (SEXP(*)(SEXP, SEXP, TRFun*, PTSFun))",
