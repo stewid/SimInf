@@ -83,21 +83,20 @@ C_variables <- function(propensity, variables) {
     j <- match(propensity$variables, names(variables))
     i <- integer(0)
     while (length(j)) {
-        v <- j[1]
-        j <- j[-1]
-        if (!any(v == i)) {
-            j <- c(j, match(variables[[v]]$depends, names(variables)))
-            i <- sort(c(i, v))
+        if (!any(i == j[1])) {
+            i <- sort(c(i, j[1]))
+            j <- c(j, match(variables[[j[1]]]$depends, names(variables)))
         }
+        j <- j[-1]
     }
 
     lines <- character(0)
-    for (i in seq_len(length(i))) {
+    for (j in i) {
         lines <- c(
             lines,
             sprintf("    const double %s = %s;",
-                    variables[[i]]$variable,
-                    variables[[i]]$code))
+                    variables[[j]]$variable,
+                    variables[[j]]$code))
     }
 
     if (length(lines))
