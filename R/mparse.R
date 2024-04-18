@@ -129,7 +129,7 @@ rewrite_propensity <- function(propensity, variables, compartments,
         depends[i] <- 1
 
     ## Find variables in propensity.
-    i <- match(propensity, names(variables))
+    i <- unique(match(propensity, names(variables)))
     i <- i[!is.na(i)]
     variables <- names(variables)[i]
     if (is.null(variables))
