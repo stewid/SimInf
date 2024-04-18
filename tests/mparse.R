@@ -1003,3 +1003,26 @@ stopifnot(identical(
            nrow = 3, ncol = 3,
            dimnames = list(c("A", "B", "C"),
                            c("A", "B", "C")))))
+
+## Check to generate C code for variables.
+propensity <- list(propensity = "N>0?beta*u[0]*u[1]/N:0",
+                   depends = c(1, 1, 0), S = c(-1L, 1L, 0L),
+                   G_rowname = "S -> N>0?beta*S*I/N:0 -> I",
+                   variables = "N")
+
+variables <- list(N1 = list(variable = "N1",
+                            depends = character(0),
+                            code = "u[0]"),
+                  N2 = list(variable = "N2",
+                            depends = "N1",
+                            code = "N1+u[1]"),
+                  N = list(variable = "N",
+                           depends = "N2",
+                           code = "N2+u[2]"))
+
+stopifnot(identical(
+    SimInf:::C_variables(propensity, variables),
+    c("    const double N1 = u[0];",
+      "    const double N2 = N1+u[1];",
+      "    const double N = N2+u[2];",
+      "")))
