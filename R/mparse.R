@@ -118,27 +118,27 @@ rewrite_tokens <- function(tokens, compartments, ldata_names,
 ## which the propensity depends.
 rewrite_propensity <- function(propensity, variables, compartments,
                                ldata_names, gdata_names, v0_names) {
-    propensity <- tokenize(propensity)
-    G_rowname <- paste0(propensity, collapse = "")
+    tokens <- tokenize(propensity)
+    G_rowname <- paste0(tokens, collapse = "")
     depends <- integer(length(compartments))
 
     ## Find compartments in propensity
-    i <- match(propensity, compartments)
+    i <- match(tokens, compartments)
     i <- i[!is.na(i)]
     if (length(i))
         depends[i] <- 1
 
     ## Find variables in propensity.
-    i <- unique(match(propensity, names(variables)))
+    i <- unique(match(tokens, names(variables)))
     i <- i[!is.na(i)]
     variables <- names(variables)[i]
     if (is.null(variables))
         variables <- character(0)
 
-    propensity <- rewrite_tokens(propensity, compartments,
-                                 ldata_names, gdata_names, v0_names)
+    tokens <- rewrite_tokens(tokens, compartments, ldata_names,
+                             gdata_names, v0_names)
 
-    list(propensity = paste0(propensity, collapse = ""),
+    list(code       = paste0(tokens, collapse = ""),
          depends    = depends,
          G_rowname  = G_rowname,
          variables  = variables)
@@ -216,7 +216,7 @@ parse_propensity <- function(x, variables, compartments, ldata_names,
     dest <- G_label(dest[which(dest > 0)])
     G_rowname <- paste(from, "->", propensity$G_rowname, "->", dest)
 
-    list(propensity = propensity$propensity,
+    list(code       = propensity$code,
          depends    = propensity$depends,
          S          = S,
          G_rowname  = G_rowname,

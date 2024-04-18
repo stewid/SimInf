@@ -582,7 +582,7 @@ stopifnot(
     identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", list(),
                                           c("S", "I", "R"), NULL,
                                           "beta", NULL),
-              list(propensity = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
+              list(code = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
                    depends = c(1, 1, 1),
                    G_rowname = "beta*S*I/(S+I+R)",
                    variables = character(0))))
@@ -1005,7 +1005,7 @@ stopifnot(identical(
                            c("A", "B", "C")))))
 
 ## Check to generate C code for variables.
-propensity <- list(propensity = "N>0?beta*u[0]*u[1]/N:0",
+propensity <- list(code = "N>0?beta*u[0]*u[1]/N:0",
                    depends = c(1, 1, 0), S = c(-1L, 1L, 0L),
                    G_rowname = "S -> N>0?beta*S*I/N:0 -> I",
                    variables = "N")

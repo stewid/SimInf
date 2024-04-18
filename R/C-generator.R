@@ -147,7 +147,7 @@ C_trFun <- function(transitions) {
         ## Insert propensity.
         lines <- c(
             lines,
-            sprintf("    return %s;", propensity$propensity),
+            sprintf("    return %s;", propensity$code),
             "}",
             "")
     }
