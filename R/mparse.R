@@ -243,31 +243,46 @@ parse_propensities <- function(propensities, variables, compartments,
 pattern_variable <- function() {
     ## The variable name must be a valid name in C. Which means upper
     ## and lower case letters, digits, and the underscore character
-    ## '_'.  Names must not begin with a digit.
-    "^[[:space:]]*[a-zA-Z_][a-zA-Z_0-9]*[[:space:]]*<-"
+    ## '_'. Names must not begin with a digit.
+    paste0(c(
+        "^[[:space:]]*",
+        "([(]double[)]|[(]int[)])?",
+        "[[:space:]]*",
+        "([a-zA-Z_][a-zA-Z_0-9]*)",
+        "[[:space:]]*",
+        "<-"),
+        collapse = "")
 }
 
 parse_variable <- function(x, compartments, ldata_names, gdata_names,
                            v0_names) {
-    m <- regexpr(pattern_variable(), x)
-    if (m != 1)
+    m <- regexec(pattern_variable(), x)
+    v <- unlist(regmatches(x, m))
+    if (length(v) == 0L)
         stop("Invalid variable: '", x, "'.", call. = FALSE)
 
-    variable <- regmatches(x, m)
-    variable <- trimws(substr(variable, 1, nchar(variable) - 2))
+    if (startsWith(v[2], "(")) {
+        type <- substr(v[2], 2, nchar(v[2]) - 1)
+    } else {
+        type <- "double"
+    }
+
+    variable <- v[3]
     if (variable %in% c(compartments, gdata_names, ldata_names,
                         v0_names)) {
         stop("Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.",
              call. = FALSE)
     }
 
-    tokens <- remove_spaces(substr(x, attr(m, "match.length") + 1, nchar(x)))
+    tokens <- substr(x, attr(m[[1]], "match.length")[1] + 1, nchar(x))
+    tokens <- remove_spaces(tokens)
     tokens <- tokenize(tokens)
     tokens <- rewrite_tokens(tokens, compartments, ldata_names,
                              gdata_names, v0_names)
 
     list(variable = variable,
-         tokens = tokens)
+         tokens = tokens,
+         type = type)
 }
 
 parse_variables <- function(variables, compartments, ldata_names,

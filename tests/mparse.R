@@ -975,7 +975,8 @@ stopifnot(identical(
                             gdata_names = character(0),
                             v0_names = character(0)),
     list(variable = "N",
-         tokens = c("u[0]", "+", "u[1]", "+", "u[2]"))))
+         tokens = c("u[0]", "+", "u[1]", "+", "u[2]"),
+         type = "double")))
 
 res <- assertError(
     SimInf:::topological_sort(
@@ -1011,12 +1012,15 @@ propensity <- list(code = "N>0?beta*u[0]*u[1]/N:0",
                    variables = "N")
 
 variables <- list(N1 = list(variable = "N1",
+                            type = "double",
                             depends = character(0),
                             code = "u[0]"),
                   N2 = list(variable = "N2",
+                            type = "double",
                             depends = "N1",
                             code = "N1+u[1]"),
                   N = list(variable = "N",
+                            type = "double",
                            depends = "N2",
                            code = "N2+u[2]"))
 

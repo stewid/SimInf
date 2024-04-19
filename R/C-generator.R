@@ -94,7 +94,8 @@ C_variables <- function(propensity, variables) {
     for (j in i) {
         lines <- c(
             lines,
-            sprintf("    const double %s = %s;",
+            sprintf("    const %s %s = %s;",
+                    variables[[j]]$type,
                     variables[[j]]$variable,
                     variables[[j]]$code))
     }
