@@ -2,6 +2,15 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* Added a new vignette about how to post-process data from a simulated
+  trajectory.
+
+* Added a new section about varying probability of picking individuals
+  to the scheduled events vignette.
+
+* Added a missing PROTECT in the C function SimInf_distance_matrix.
+  This was uncovered by rchk on CRAN.
+
 # SimInf 9.6.0 (2023-12-20)
 
 ## CHANGES OR IMPROVEMENTS

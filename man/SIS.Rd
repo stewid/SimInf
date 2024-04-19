@@ -8,7 +8,10 @@ SIS(u0, tspan, events = NULL, beta = NULL, gamma = NULL)
 }
 \arguments{
 \item{u0}{A \code{data.frame} with the initial state in each node
-(see \sQuote{Details}).}
+(see \sQuote{Details}). The parameter \code{u0} can also be an
+object that can be coerced to a \code{data.frame}, for
+example, a named numeric vector will be coerced to a one row
+\code{data.frame}.}
 
 \item{tspan}{A vector (length >= 1) of increasing time points
 where the state of each node is to be returned. Can be either
