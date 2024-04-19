@@ -278,8 +278,21 @@ dependency_graph <- function(transitions, S) {
 ##'     initial (final) state and the propensity is written in between
 ##'     the \code{->}-signs. The special symbol \code{@} is reserved
 ##'     for the empty set. For example, \code{transitions =
-##'     c("S -> k1*S*I -> I", "I -> k2*I -> R")} expresses a SIR
-##'     model.
+##'     c("S -> beta*S*I/(S+I+R) -> I", "I -> gamma*I -> R")}
+##'     expresses the SIR model. It is also possible to define
+##'     variables which can then be used in calculations of
+##'     propensities or in calculations of other variables. A variable
+##'     is defined by the operator \code{<-}. Using a variable for the
+##'     size of the population, the SIR model can instead be written
+##'     \code{transitions = c("S -> beta*S*I/N -> I",
+##'     "I -> gamma*I -> R", "N <- S+I+R")}. By default, the type of a
+##'     variable is defined as a double, but it is possible to also
+##'     define it as an integer by writing \code{(int)} before the
+##'     variable name. For example, for the SIR model, the population
+##'     size can be defined as \code{"(int)N <- S+I+R"}. It is also
+##'     possible to explicitly use (double) in front of the variable
+##'     name, but it is not needed because it is the default. Note
+##'     that the order of propensities and variables does not matter.
 ##' @param compartments contains the names of the involved
 ##'     compartments, for example, \code{compartments = c("S", "I",
 ##'     "R")}.
