@@ -265,8 +265,11 @@ check_u0 <- function(u0, compartments) {
     check_compartments(compartments)
 
     ## Check u0
-    if (!is.data.frame(u0))
+    if (!is.data.frame(u0)) {
+        if (is.vector(x = u0, mode = "numeric"))
+            u0 <- t(u0)
         u0 <- as.data.frame(u0)
+    }
     if (!all(compartments %in% names(u0)))
         stop("Missing columns in u0.", call. = FALSE)
 
