@@ -68,6 +68,41 @@ C_define <- function() {
       "")
 }
 
+C_enumeration_constants <- function(target, labels) {
+    if (length(labels) == 0)
+        return(character(0))
+
+    lines <- c(
+        paste0("/* Enumeration constants for indicies in the '",
+               target, "' vector. */"),
+        "enum {")
+
+    for (i in seq_len(length(labels))) {
+        lbl <- toupper(labels[i])
+        if ((nchar(lines[length(lines)]) + nchar(lbl)) > 64)
+            lines <- c(lines, "      ")
+        if (i > 1)
+            lines[length(lines)] <- paste0(lines[length(lines)], " ")
+        lines[length(lines)] <- paste0(lines[length(lines)], lbl)
+        if (i < length(labels))
+            lines[length(lines)] <- paste0(lines[length(lines)], ",")
+    }
+
+    lines[length(lines)] <- paste0(lines[length(lines)], "};")
+    c(lines, "")
+}
+
+C_enum <- function(compartments, ldata_names, gdata_names, v0_names,
+                   use_enum) {
+    if (!isTRUE(use_enum))
+        return(character(0))
+
+   c(C_enumeration_constants("u", compartments),
+     C_enumeration_constants("v", v0_names),
+     C_enumeration_constants("ldata", ldata_names),
+     C_enumeration_constants("gdata", gdata_names))
+}
+
 ##' Generate C code for the variables
 ##'
 ##' Generate C code for the variables in the model transition rate
@@ -286,10 +321,14 @@ C_R_init <- function() {
 ##'     curly brackets.
 ##' @return character vector with C code.
 ##' @noRd
-C_code_mparse <- function(transitions, pts_fun) {
+C_code_mparse <- function(transitions, pts_fun, compartments,
+                          ldata_names, gdata_names, v0_names,
+                          use_enum) {
     c(C_heading(),
       C_include(),
       C_define(),
+      C_enum(compartments, ldata_names, gdata_names, v0_names,
+             use_enum),
       C_trFun(transitions),
       C_ptsFun(pts_fun),
       C_run(transitions),

@@ -15,7 +15,8 @@ mparse(
   events = NULL,
   E = NULL,
   N = NULL,
-  pts_fun = NULL
+  pts_fun = NULL,
+  use_enum = FALSE
 )
 }
 \arguments{
@@ -101,6 +102,16 @@ i.e. no scheduled events in the model.}
 time step function. The C code should contain only the body of
 the function i.e. the code between the opening and closing
 curly brackets.}
+
+\item{use_enum}{generate enumeration constants for the indices to
+each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
+in the C code. The name of each enumeration constant will be
+transformed to the upper-case name of the corresponding
+parameter, for example, a parameter 'beta' will become
+'BETA'. Using enumeration constants can make it easier to
+modify the C code manually afterwards. Default is
+\code{FALSE}, i.e., the parameters are specified by using
+integer indices for the parameters.}
 }
 \value{
 a \code{\linkS4class{SimInf_model}} object

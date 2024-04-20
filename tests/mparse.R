@@ -581,8 +581,17 @@ stopifnot(identical(SimInf:::tokenize("beta*S*I/(S+I+R)"),
 stopifnot(
     identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", list(),
                                           c("S", "I", "R"), NULL,
-                                          "beta", NULL),
+                                          "beta", NULL, FALSE),
               list(code = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
+                   depends = c(1, 1, 1),
+                   G_rowname = "beta*S*I/(S+I+R)",
+                   variables = character(0))))
+
+stopifnot(
+    identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", list(),
+                                          c("S", "I", "R"), NULL,
+                                          "beta", NULL, TRUE),
+              list(code = "gdata[BETA]*u[S]*u[I]/(u[S]+u[I]+u[R])",
                    depends = c(1, 1, 1),
                    G_rowname = "beta*S*I/(S+I+R)",
                    variables = character(0))))
@@ -955,7 +964,8 @@ res <- assertError(
                             compartments = c("S", "I", "R"),
                             ldata_names = character(0),
                             gdata_names = character(0),
-                            v0_names = character(0)))
+                            v0_names = character(0),
+                            use_enum = FALSE))
 check_error(res, "Invalid variable: '3N <- S + I + R'.")
 
 res <- assertError(
@@ -963,7 +973,8 @@ res <- assertError(
                             compartments = c("S", "I", "R"),
                             ldata_names = "N",
                             gdata_names = character(0),
-                            v0_names = character(0)))
+                            v0_names = character(0),
+                            use_enum = FALSE))
 check_error(
     res,
     "Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.")
@@ -973,9 +984,21 @@ stopifnot(identical(
                             compartments = c("S", "I", "R"),
                             ldata_names = character(0),
                             gdata_names = character(0),
-                            v0_names = character(0)),
+                            v0_names = character(0),
+                            use_enum = FALSE),
     list(variable = "N",
          tokens = c("u[0]", "+", "u[1]", "+", "u[2]"),
+         type = "double")))
+
+stopifnot(identical(
+    SimInf:::parse_variable(x = "N <- S + I + R",
+                            compartments = c("S", "I", "R"),
+                            ldata_names = character(0),
+                            gdata_names = character(0),
+                            v0_names = character(0),
+                            use_enum = TRUE),
+    list(variable = "N",
+         tokens = c("u[S]", "+", "u[I]", "+", "u[R]"),
          type = "double")))
 
 res <- assertError(
