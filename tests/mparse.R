@@ -1053,3 +1053,19 @@ stopifnot(identical(
       "    const double N2 = N1+u[1];",
       "    const double N = N2+u[2];",
       "")))
+
+stopifnot(identical(
+    SimInf:::C_enum(compartment = c("S", "I", "R"),
+                    ldata_names = c("beta", "gamma", "delta",
+                                    "epsilon", "zeta", "eta", "theta",
+                                    "iota", "kappa", "lambda"),
+                    gdata_names = character(0),
+                    v0_names = character(0),
+                    use_enum = TRUE),
+    c("/* Enumeration constants for indicies in the 'u' vector. */",
+      "enum {S, I, R};",
+      "",
+      "/* Enumeration constants for indicies in the 'ldata' vector. */",
+      "enum {BETA, GAMMA, DELTA, EPSILON, ZETA, ETA, THETA, IOTA, KAPPA,",
+      "      LAMBDA};",
+      "")))
