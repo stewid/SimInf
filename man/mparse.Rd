@@ -133,7 +133,7 @@ definition that is ready to \code{\link{run}}.
 ## and 'gamma' is the recovery rate.
 model  <- mparse(transitions = c("S -> beta*S*I/N -> I",
                                  "I -> gamma*I -> R",
-                                 "N <- S+I+E"),
+                                 "N <- S+I+R"),
                  compartments = c("S", "I", "R"),
                  gdata = c(beta = 0.16, gamma = 0.077),
                  u0 = data.frame(S = 100, I = 1, R = 0),
