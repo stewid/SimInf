@@ -288,8 +288,11 @@ check_v0 <- function(v0, variables) {
     check_compartments(variables)
 
     ## Check v0
-    if (!is.data.frame(v0))
+    if (!is.data.frame(v0)) {
+        if (is.vector(x = v0, mode = "numeric"))
+            v0 <- t(v0)
         v0 <- as.data.frame(v0)
+    }
     if (!all(variables %in% names(v0)))
         stop("Missing columns in 'v0'.", call. = FALSE)
 
