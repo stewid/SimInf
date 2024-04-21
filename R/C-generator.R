@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -68,36 +68,126 @@ C_define <- function() {
       "")
 }
 
+C_enumeration_constants <- function(target, labels) {
+    if (length(labels) == 0)
+        return(character(0))
+
+    lines <- c(
+        paste0("/* Enumeration constants for indicies in the '",
+               target, "' vector. */"),
+        "enum {")
+
+    for (i in seq_len(length(labels))) {
+        lbl <- labels[i]
+        if ((nchar(lines[length(lines)]) + nchar(lbl)) > 64)
+            lines <- c(lines, "     ")
+        if (i > 1)
+            lines[length(lines)] <- paste0(lines[length(lines)], " ")
+        lines[length(lines)] <- paste0(lines[length(lines)], lbl)
+        if (i < length(labels))
+            lines[length(lines)] <- paste0(lines[length(lines)], ",")
+    }
+
+    lines[length(lines)] <- paste0(lines[length(lines)], "};")
+    c(lines, "")
+}
+
+C_enum <- function(compartments, ldata_names, gdata_names, v0_names,
+                   use_enum) {
+    if (!isTRUE(use_enum))
+        return(character(0))
+
+   c(C_enumeration_constants("u", compartments),
+     C_enumeration_constants("v", v0_names),
+     C_enumeration_constants("ldata", ldata_names),
+     C_enumeration_constants("gdata", gdata_names))
+}
+
+##' Generate C code for the variables
+##'
+##' Generate C code for the variables in the model transition rate
+##' functions.
+##'
+##' @param propensity data for the propensity.
+##' @param propensity data for the variables.
+##' @return character vector with C code.
+##' @noRd
+C_variables <- function(propensity, variables) {
+    ## Determine variables to include, both directly in the
+    ## propensity, and as a dependency between variables.
+    j <- match(propensity$variables, names(variables))
+    i <- integer(0)
+    while (length(j)) {
+        if (!any(i == j[1])) {
+            i <- sort(c(i, j[1]))
+            j <- c(j, match(variables[[j[1]]]$depends, names(variables)))
+        }
+        j <- j[-1]
+    }
+
+    lines <- character(0)
+    for (j in i) {
+        lines <- c(
+            lines,
+            sprintf("    const %s %s = %s;",
+                    variables[[j]]$type,
+                    variables[[j]]$variable,
+                    variables[[j]]$code))
+    }
+
+    if (length(lines))
+        lines <- c(lines, "")
+
+    lines
+}
+
 ##' Generate C code for the model transition rate functions
 ##'
 ##' @param transitions data for the transitions.
 ##' @return character vector with C code.
 ##' @noRd
 C_trFun <- function(transitions) {
-    parameters <- c("    const int *u,",
-                    "    const double *v,",
-                    "    const double *ldata,",
-                    "    const double *gdata,",
-                    "    double t)")
+    propensities <- transitions$propensities
+    variables <- transitions$variables
+
+    parameters <- c(
+        "    const int *u,",
+        "    const double *v,",
+        "    const double *ldata,",
+        "    const double *gdata,",
+        "    double t)")
 
     lines <- character(0)
-    for (i in seq_len(length(transitions))) {
-        lines <- c(lines,
-                   "/**",
-                   " * @param u The compartment state vector in the node.",
-                   " * @param v The continuous state vector in the node.",
-                   " * @param ldata The local data vector in the node.",
-                   " * @param gdata The global data vector.",
-                   " * @param t Current time.",
-                   " * @return propensity.",
-                   " */",
-                   sprintf("static double trFun%i(", i),
-                   parameters,
-                   "{",
-                   sprintf("    return %s;", transitions[[i]]$propensity),
-                   "}",
-                   "")
+    for (i in seq_len(length(propensities))) {
+        propensity <- propensities[[i]]
+
+        lines <- c(
+            lines,
+            "/**",
+            " * @param u The compartment state vector in the node.",
+            " * @param v The continuous state vector in the node.",
+            " * @param ldata The local data vector in the node.",
+            " * @param gdata The global data vector.",
+            " * @param t Current time.",
+            " * @return propensity.",
+            " */",
+            sprintf("static double trFun%i(", i),
+            parameters,
+            "{")
+
+        ## Insert variables.
+        lines <- c(
+            lines,
+            C_variables(propensity, variables))
+
+        ## Insert propensity.
+        lines <- c(
+            lines,
+            sprintf("    return %s;", propensity$code),
+            "}",
+            "")
     }
+
     lines
 }
 
@@ -157,6 +247,8 @@ C_ptsFun <- function(pts_fun) {
 ##' @return character vector with C code.
 ##' @noRd
 C_run <- function(transitions) {
+    n_tr_fn <- length(transitions$propensities)
+
     c("/**",
       " * Run a trajectory of the model.",
       " *",
@@ -168,7 +260,7 @@ C_run <- function(transitions) {
       "{",
       "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
       sprintf("    TRFun tr_fun[] = {%s};",
-              paste0("&trFun", seq_len(length(transitions)), collapse = ", ")),
+              paste0("&trFun", seq_len(n_tr_fn), collapse = ", ")),
       "",
       "    if (!SimInf_run) {",
       "        SimInf_run = (SEXP(*)(SEXP, SEXP, TRFun*, PTSFun))",
@@ -229,10 +321,14 @@ C_R_init <- function() {
 ##'     curly brackets.
 ##' @return character vector with C code.
 ##' @noRd
-C_code_mparse <- function(transitions, pts_fun) {
+C_code_mparse <- function(transitions, pts_fun, compartments,
+                          ldata_names, gdata_names, v0_names,
+                          use_enum) {
     c(C_heading(),
       C_include(),
       C_define(),
+      C_enum(compartments, ldata_names, gdata_names, v0_names,
+             use_enum),
       C_trFun(transitions),
       C_ptsFun(pts_fun),
       C_run(transitions),

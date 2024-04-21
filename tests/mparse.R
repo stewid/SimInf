@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(Matrix)
 library(tools)
 source("util/check.R")
 
@@ -574,17 +575,27 @@ C_code <- c(
 ## Skip first line that contains version
 stopifnot(identical(m@C_code[-1], C_code))
 
-stopifnot(identical(SimInf:::tokens("beta*S*I/(S+I+R)"),
+stopifnot(identical(SimInf:::tokenize("beta*S*I/(S+I+R)"),
                     c("beta", "*", "S", "*", "I", "/", "(", "S", "+",
                       "I", "+", "R", ")")))
 
 stopifnot(
-    identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", c("S", "I", "R"),
-                                          NULL, "beta", NULL),
-              structure(list(propensity = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
-                             depends = c(1, 1, 1),
-                             G_rowname = "beta*S*I/(S+I+R)"),
-                        .Names = c("propensity", "depends", "G_rowname"))))
+    identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", list(),
+                                          c("S", "I", "R"), NULL,
+                                          "beta", NULL, FALSE),
+              list(code = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
+                   depends = c(1, 1, 1),
+                   G_rowname = "beta*S*I/(S+I+R)",
+                   variables = character(0))))
+
+stopifnot(
+    identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", list(),
+                                          c("S", "I", "R"), NULL,
+                                          "beta", NULL, TRUE),
+              list(code = "gdata[BETA]*u[S]*u[I]/(u[S]+u[I]+u[R])",
+                   depends = c(1, 1, 1),
+                   G_rowname = "beta*S*I/(S+I+R)",
+                   variables = character(0))))
 
 ## Check init function
 model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
@@ -948,3 +959,143 @@ res <- assertError(
            u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
            tspan = 1:10))
 check_error(res, "Invalid usage of the empty set '@'.")
+
+res <- assertError(
+    SimInf:::parse_variable(x = "3N <- S + I + R",
+                            compartments = c("S", "I", "R"),
+                            ldata_names = character(0),
+                            gdata_names = character(0),
+                            v0_names = character(0),
+                            use_enum = FALSE))
+check_error(res, "Invalid variable: '3N <- S + I + R'.")
+
+res <- assertError(
+    SimInf:::parse_variable(x = "N <- S + I + R",
+                            compartments = c("S", "I", "R"),
+                            ldata_names = "N",
+                            gdata_names = character(0),
+                            v0_names = character(0),
+                            use_enum = FALSE))
+check_error(
+    res,
+    "Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.")
+
+stopifnot(identical(
+    SimInf:::parse_variable(x = "N <- S + I + R",
+                            compartments = c("S", "I", "R"),
+                            ldata_names = character(0),
+                            gdata_names = character(0),
+                            v0_names = character(0),
+                            use_enum = FALSE),
+    list(variable = "N",
+         tokens = c("u[0]", "+", "u[1]", "+", "u[2]"),
+         type = "double",
+         compartments = c("S", "I", "R"))))
+
+stopifnot(identical(
+    SimInf:::parse_variable(x = "N <- S + I + R",
+                            compartments = c("S", "I", "R"),
+                            ldata_names = character(0),
+                            gdata_names = character(0),
+                            v0_names = character(0),
+                            use_enum = TRUE),
+    list(variable = "N",
+         tokens = c("u[S]", "+", "u[I]", "+", "u[R]"),
+         type = "double",
+         compartments = c("S", "I", "R"))))
+
+res <- assertError(
+    SimInf:::topological_sort(
+                 matrix(c(1, 0, 0, 1, 0, 0, 0, 1, 0),
+                        nrow = 3, ncol = 3,
+                        dimnames = list(c("A", "B", "C"),
+                                        c("A", "B", "C")))))
+check_error(res, "Invalid dependencies between variables.")
+
+res <- assertError(
+    SimInf:::topological_sort(
+                 matrix(c(0, 0, 0, 1, 0, 0, 0, 1, 1),
+                        nrow = 3, ncol = 3,
+                        dimnames = list(c("A", "B", "C"),
+                                        c("A", "B", "C")))))
+check_error(res, "Invalid dependencies between variables.")
+
+stopifnot(identical(
+    SimInf:::topological_sort(
+                 matrix(c(0, 1, 0, 1, 0, 0, 0, 0, 0),
+                        nrow = 3, ncol = 3,
+                        dimnames = list(c("A", "B", "C"),
+                                        c("C", "B", "A")))),
+    matrix(c(0, 0, 0, 1, 0, 0, 0, 1, 0),
+           nrow = 3, ncol = 3,
+           dimnames = list(c("A", "B", "C"),
+                           c("A", "B", "C")))))
+
+## Check to generate C code for variables.
+propensity <- list(code = "N>0?beta*u[0]*u[1]/N:0",
+                   depends = c(1, 1, 0), S = c(-1L, 1L, 0L),
+                   G_rowname = "S -> N>0?beta*S*I/N:0 -> I",
+                   variables = "N")
+
+variables <- list(N1 = list(variable = "N1",
+                            type = "double",
+                            depends = character(0),
+                            code = "u[0]"),
+                  N2 = list(variable = "N2",
+                            type = "double",
+                            depends = "N1",
+                            code = "N1+u[1]"),
+                  N = list(variable = "N",
+                            type = "double",
+                           depends = "N2",
+                           code = "N2+u[2]"))
+
+stopifnot(identical(
+    SimInf:::C_variables(propensity, variables),
+    c("    const double N1 = u[0];",
+      "    const double N2 = N1+u[1];",
+      "    const double N = N2+u[2];",
+      "")))
+
+stopifnot(identical(
+    SimInf:::C_enum(compartment = c("S", "I", "R"),
+                    ldata_names = c("beta", "gamma", "delta",
+                                    "epsilon", "zeta", "eta", "theta",
+                                    "iota", "kappa", "lambda"),
+                    gdata_names = character(0),
+                    v0_names = character(0),
+                    use_enum = TRUE),
+    c("/* Enumeration constants for indicies in the 'u' vector. */",
+      "enum {S, I, R};",
+      "",
+      "/* Enumeration constants for indicies in the 'ldata' vector. */",
+      "enum {beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa,",
+      "      lambda};",
+      "")))
+
+## Check dependecies to compartments via variables.
+model <- mparse(transitions = c("S -> beta*NS*NI/N -> E",
+                                "E -> gamma*NE -> I",
+                                "I -> delta*NI -> R",
+                                "NS <- S",
+                                "NE <- E",
+                                "NI <- I",
+                                "N <- NS+NE+NI+NR"),
+                compartments = c("S", "E", "I", "R"),
+                ldata = c(beta = 1, gamma = 2),
+                u0 = c(S = 100, E = 0, I = 10, R = 0),
+                v0 = c(delta = 3),
+                tspan = 1:100)
+
+G_expected <- new("dgCMatrix",
+                  i = c(0L, 1L, 0L, 1L, 2L, 0L, 2L),
+                  p = c(0L, 2L, 5L, 7L),
+                  Dim = c(3L, 3L),
+                  Dimnames = list(c("S -> beta*NS*NI/N -> E",
+                                    "E -> gamma*NE -> I",
+                                    "I -> delta*NI -> R"),
+                                  c("1", "2", "3")),
+                  x = c(1, 1, 1, 1, 1, 1, 1),
+                  factors = list())
+
+stopifnot(identical(model@G, G_expected))
