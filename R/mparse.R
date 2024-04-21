@@ -503,15 +503,17 @@ dependency_graph <- function(transitions, S) {
 ##' @param compartments contains the names of the involved
 ##'     compartments, for example, \code{compartments = c("S", "I",
 ##'     "R")}.
-##' @param ldata optional data for the nodes. Can be specified either
-##'     as a numeric matrix where column \code{ldata[, j]} contains
-##'     the local data vector for the node \code{j} or as a
-##'     \code{data.frame} with one row per node. If it's specified as
-##'     a matrix, it must have row names to identify the parameters in
-##'     the transitions. If it's specified as a data.frame, each
-##'     column is one parameter. The local data vector is passed as an
-##'     argument to the transition rate functions and the post time
-##'     step function.
+##' @param ldata optional data for the nodes. Can be specified as a
+##'     \code{data.frame} with one row per node, as a numeric matrix
+##'     where column \code{ldata[, j]} contains the local data vector
+##'     for the node \code{j}, or as a as a named vector when the
+##'     model only contains one node. If \code{ldata} is specified as
+##'     a \code{data.frame}, each column is one parameter. If
+##'     \code{v0} is specified as a matrix, it must have row names to
+##'     identify the parameters in the transitions. If \code{v0} is
+##'     specified as a named vector, the names identify the
+##'     parameters. The local data vector is passed as an argument to
+##'     the transition rate functions and the post time step function.
 ##' @param gdata optional data that are common to all nodes in the
 ##'     model. Can be specified either as a named numeric vector or as
 ##'     as a one-row data.frame. The names are used to identify the
@@ -520,15 +522,17 @@ dependency_graph <- function(transitions, S) {
 ##'     post time step function.
 ##' @template u0-param
 ##' @param v0 optional data with the initial continuous state in each
-##'     node. Can be specified either as a \code{data.frame} with one
-##'     row per node or as a numeric matrix where column \code{v0[,
-##'     j]} contains the initial state vector for the node
-##'     \code{j}. If \code{v0} is specified as a \code{data.frame},
-##'     each column is one parameter. If \code{v0} is specified as a
-##'     matrix, the row names identify the parameters. The 'v' vector
-##'     is passed as an argument to the transition rate functions and
-##'     the post time step function. The continuous state can be
-##'     updated in the post time step function.
+##'     node. \code{v0} can be specified as a \code{data.frame} with
+##'     one row per node, as a numeric matrix where column \code{v0[,
+##'     j]} contains the initial state vector for the node \code{j},
+##'     or as a named vector when the model only contains one node. If
+##'     \code{v0} is specified as a \code{data.frame}, each column is
+##'     one parameter. If \code{v0} is specified as a matrix, the row
+##'     names identify the parameters. If \code{v0} is specified as a
+##'     named vector, the names identify the parameters. The
+##'     \sQuote{v} vector is passed as an argument to the transition
+##'     rate functions and the post time step function. The continuous
+##'     state can be updated in the post time step function.
 ##' @template tspan-param
 ##' @param events A \code{data.frame} with the scheduled
 ##'     events. Default is \code{NULL} i.e. no scheduled events in the
@@ -570,8 +574,14 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     u0 <- check_u0(u0, compartments)
 
     ## Extract variable names from data.
+    if (is.vector(x = ldata, mode = "numeric") && nrow(u0) == 1)
+        ldata <- as.data.frame(t(ldata))
     ldata_names <- variable_names(ldata, FALSE)
+
     gdata_names <- variable_names(gdata, TRUE)
+
+    if (is.vector(x = v0, mode = "numeric") && nrow(u0) == 1)
+        v0 <- as.data.frame(t(v0))
     v0_names <- variable_names(v0, FALSE)
 
     if (any(duplicated(c(compartments, gdata_names, ldata_names, v0_names)))) {
