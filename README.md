@@ -118,7 +118,7 @@ the inter-quartile range using the same color, but with transparency.
 plot(result)
 ```
 
-![](https://siminf.org/img/mparse-SIR.png)
+![plot of chunk mparse-SIR](man/figures/README-mparse-SIR-1.png)
 
 Most modeling and simulation studies require custom data analysis once
 the simulation data has been generated.  To support this, SimInf
