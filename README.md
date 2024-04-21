@@ -36,19 +36,23 @@ side of the first arrow (`->`) is the initial state, the right hand
 side of the last arrow (`->`) is the final state, and the propensity
 is written between the two arrows. The flexibility of the `mparse`
 approach allows for quick prototyping of new models or features. To
-illustrate the `mparse` functionality, let us consider an SIR model in
-a closed population i.e., no births or deaths. Let `beta` denote the
-transmission rate of spread between a susceptible individual and an
-infectious individual and `gamma` the recovery rate from infection
-(`gamma` = 1 / average duration of infection). The model can be
-described as:
+illustrate the `mparse` functionality, let us consider the SIR model
+in a closed population i.e., no births or deaths. Let `beta` denote
+the transmission rate of spread between a susceptible individual and
+an infectious individual and `gamma` the recovery rate from infection
+(`gamma` = 1 / average duration of infection). It is also possible to
+define variables which can then be used in calculations of
+propensities or in calculations of other variables. A variable is
+defined by the operator `<-`. Using a variable for the size of the
+population, the SIR model can be described as:
 
 
 ```r
 library(SimInf)
 
-transitions <- c("S -> beta*S*I/(S+I+R) -> I",
-                 "I -> gamma*I -> R")
+transitions <- c("S -> beta*S*I/N -> I",
+                 "I -> gamma*I -> R",
+                 "N <- S+I+R")
 compartments <- c("S", "I", "R")
 ```
 
