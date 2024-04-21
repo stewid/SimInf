@@ -550,12 +550,11 @@ dependency_graph <- function(transitions, S) {
 ##' @param use_enum generate enumeration constants for the indices to
 ##'     each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
 ##'     in the C code. The name of each enumeration constant will be
-##'     transformed to the upper-case name of the corresponding
-##'     parameter, for example, a parameter 'beta' will become
-##'     'BETA'. Using enumeration constants can make it easier to
-##'     modify the C code manually afterwards. Default is
-##'     \code{FALSE}, i.e., the parameters are specified by using
-##'     integer indices for the parameters.
+##'     identical to the name of the corresponding parameter.  Using
+##'     enumeration constants can make it easier to modify the C code
+##'     afterwards, or when writing C code for the \code{pts_fun}
+##'     parameter. Default is \code{FALSE}, i.e., the parameters are
+##'     specified by using integer indices for the parameters.
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
 ##' @template mparse-example

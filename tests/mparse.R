@@ -1069,8 +1069,8 @@ stopifnot(identical(
       "enum {S, I, R};",
       "",
       "/* Enumeration constants for indicies in the 'ldata' vector. */",
-      "enum {BETA, GAMMA, DELTA, EPSILON, ZETA, ETA, THETA, IOTA, KAPPA,",
-      "      LAMBDA};",
+      "enum {beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa,",
+      "      lambda};",
       "")))
 
 ## Check dependecies to compartments via variables.
