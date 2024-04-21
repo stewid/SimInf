@@ -62,10 +62,12 @@ parameters in the transitions. The global data vector is
 passed as an argument to the transition rate functions and the
 post time step function.}
 
-\item{u0}{A \code{data.frame} (or an object that can be coerced to
-a \code{data.frame} with \code{as.data.frame}) with the
-initial state i.e. the number of individuals in each
-compartment in each node when the simulation starts..}
+\item{u0}{A \code{data.frame} with the initial state in each node,
+i.e., the number of individuals in each compartment in each
+node when the simulation starts (see \sQuote{Details}). The
+parameter \code{u0} can also be an object that can be coerced
+to a \code{data.frame}, e.g., a named numeric vector will be
+coerced to a one row \code{data.frame}.}
 
 \item{v0}{optional data with the initial continuous state in each
 node. Can be specified either as a \code{data.frame} with one

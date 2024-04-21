@@ -518,10 +518,7 @@ dependency_graph <- function(transitions, S) {
 ##'     parameters in the transitions. The global data vector is
 ##'     passed as an argument to the transition rate functions and the
 ##'     post time step function.
-##' @param u0 A \code{data.frame} (or an object that can be coerced to
-##'     a \code{data.frame} with \code{as.data.frame}) with the
-##'     initial state i.e. the number of individuals in each
-##'     compartment in each node when the simulation starts..
+##' @template u0-param
 ##' @param v0 optional data with the initial continuous state in each
 ##'     node. Can be specified either as a \code{data.frame} with one
 ##'     row per node or as a numeric matrix where column \code{v0[,
