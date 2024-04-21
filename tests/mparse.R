@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
+library(Matrix)
 library(tools)
 source("util/check.R")
 
@@ -988,7 +989,8 @@ stopifnot(identical(
                             use_enum = FALSE),
     list(variable = "N",
          tokens = c("u[0]", "+", "u[1]", "+", "u[2]"),
-         type = "double")))
+         type = "double",
+         compartments = c("S", "I", "R"))))
 
 stopifnot(identical(
     SimInf:::parse_variable(x = "N <- S + I + R",
@@ -999,7 +1001,8 @@ stopifnot(identical(
                             use_enum = TRUE),
     list(variable = "N",
          tokens = c("u[S]", "+", "u[I]", "+", "u[R]"),
-         type = "double")))
+         type = "double",
+         compartments = c("S", "I", "R"))))
 
 res <- assertError(
     SimInf:::topological_sort(
@@ -1069,3 +1072,29 @@ stopifnot(identical(
       "enum {BETA, GAMMA, DELTA, EPSILON, ZETA, ETA, THETA, IOTA, KAPPA,",
       "      LAMBDA};",
       "")))
+
+## Check dependecies to compartments via variables.
+model <- mparse(transitions = c("S -> beta*NS*NI/N -> E",
+                                "E -> gamma*NE -> I",
+                                "I -> delta*NI -> R",
+                                "NS <- S",
+                                "NE <- E",
+                                "NI <- I",
+                                "N <- NS+NE+NI+NR"),
+                compartments = c("S", "E", "I", "R"),
+                ldata = data.frame(beta = 1, gamma = 2, delta = 3),
+                u0 = c(S = 100, E = 0, I = 10, R = 0),
+                tspan = 1:100)
+
+G_expected <- new("dgCMatrix",
+                  i = c(0L, 1L, 0L, 1L, 2L, 0L, 2L),
+                  p = c(0L, 2L, 5L, 7L),
+                  Dim = c(3L, 3L),
+                  Dimnames = list(c("S -> beta*NS*NI/N -> E",
+                                    "E -> gamma*NE -> I",
+                                    "I -> delta*NI -> R"),
+                                  c("1", "2", "3")),
+                  x = c(1, 1, 1, 1, 1, 1, 1),
+                  factors = list())
+
+stopifnot(identical(model@G, G_expected))

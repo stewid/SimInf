@@ -121,6 +121,36 @@ rewrite_tokens <- function(tokens, compartments, ldata_names,
     tokens
 }
 
+propensity_dependencies <- function(tokens, vars, variables,
+                                    compartments) {
+    depends <- integer(length(compartments))
+
+    ## Find compartments in propensity
+    i <- unique(match(tokens, compartments))
+    depends[i[!is.na(i)]] <- 1
+
+    ## Determine dependencies to compartments via variables, both
+    ## direct and indirect dependencies through other variables.
+    i <- unique(match(vars, names(variables)))
+    while (length(i)) {
+        j <- unique(match(variables[[i[1]]]$compartments, compartments))
+        depends[j[!is.na(j)]] <- 1
+        i <- c(i, match(variables[[i[1]]]$depends, names(variables)))
+        i <- unique(i[-1])
+    }
+
+    depends
+}
+
+propensity_variables <- function(tokens, variables) {
+    ## Find variables in propensity.
+    i <- unique(match(tokens, names(variables)))
+    variables <- names(variables)[i[!is.na(i)]]
+    if (is.null(variables))
+        variables <- character(0)
+    variables
+}
+
 ## Rewrite propensity
 ##
 ## Rewrite the propensity by replacing all compartments by
@@ -132,28 +162,16 @@ rewrite_propensity <- function(propensity, variables, compartments,
                                use_enum) {
     tokens <- tokenize(propensity)
     G_rowname <- paste0(tokens, collapse = "")
-    depends <- integer(length(compartments))
-
-    ## Find compartments in propensity
-    i <- match(tokens, compartments)
-    i <- i[!is.na(i)]
-    if (length(i))
-        depends[i] <- 1
-
-    ## Find variables in propensity.
-    i <- unique(match(tokens, names(variables)))
-    i <- i[!is.na(i)]
-    variables <- names(variables)[i]
-    if (is.null(variables))
-        variables <- character(0)
-
+    vars <- propensity_variables(tokens, variables)
+    depends <- propensity_dependencies(tokens, vars, variables,
+                                       compartments)
     tokens <- rewrite_tokens(tokens, compartments, ldata_names,
                              gdata_names, v0_names, use_enum)
 
-    list(code       = paste0(tokens, collapse = ""),
-         depends    = depends,
-         G_rowname  = G_rowname,
-         variables  = variables)
+    list(code      = paste0(tokens, collapse = ""),
+         depends   = depends,
+         G_rowname = G_rowname,
+         variables = vars)
 }
 
 ## Generate the 'from' or 'dest' labels in the G rownames.
@@ -290,12 +308,18 @@ parse_variable <- function(x, compartments, ldata_names, gdata_names,
     tokens <- substr(x, attr(m[[1]], "match.length")[1] + 1, nchar(x))
     tokens <- remove_spaces(tokens)
     tokens <- tokenize(tokens)
+
+    ## Find compartments in variable.
+    i <- unique(match(tokens, compartments))
+    variable_compartments <- compartments[i[!is.na(i)]]
+
     tokens <- rewrite_tokens(tokens, compartments, ldata_names,
                              gdata_names, v0_names, use_enum)
 
     list(variable = variable,
          tokens = tokens,
-         type = type)
+         type = type,
+         compartments = variable_compartments)
 }
 
 parse_variables <- function(variables, compartments, ldata_names,
@@ -539,8 +563,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                    events = NULL, E = NULL, N = NULL, pts_fun = NULL,
                    use_enum = FALSE) {
     ## Check transitions
-    if (!is.atomic(transitions) ||
-        !is.character(transitions) ||
+    if (!is.vector(transitions, mode = "character") ||
         any(nchar(transitions) == 0)) {
         stop("'transitions' must be specified in a character vector.",
              call. = FALSE)
