@@ -44,15 +44,17 @@ that the order of propensities and variables does not matter.}
 compartments, for example, \code{compartments = c("S", "I",
 "R")}.}
 
-\item{ldata}{optional data for the nodes. Can be specified either
-as a numeric matrix where column \code{ldata[, j]} contains
-the local data vector for the node \code{j} or as a
-\code{data.frame} with one row per node. If it's specified as
-a matrix, it must have row names to identify the parameters in
-the transitions. If it's specified as a data.frame, each
-column is one parameter. The local data vector is passed as an
-argument to the transition rate functions and the post time
-step function.}
+\item{ldata}{optional data for the nodes. Can be specified as a
+\code{data.frame} with one row per node, as a numeric matrix
+where column \code{ldata[, j]} contains the local data vector
+for the node \code{j}, or as a as a named vector when the
+model only contains one node. If \code{ldata} is specified as
+a \code{data.frame}, each column is one parameter. If
+\code{v0} is specified as a matrix, it must have row names to
+identify the parameters in the transitions. If \code{v0} is
+specified as a named vector, the names identify the
+parameters. The local data vector is passed as an argument to
+the transition rate functions and the post time step function.}
 
 \item{gdata}{optional data that are common to all nodes in the
 model. Can be specified either as a named numeric vector or as
@@ -69,15 +71,17 @@ to a \code{data.frame}, e.g., a named numeric vector will be
 coerced to a one row \code{data.frame}.}
 
 \item{v0}{optional data with the initial continuous state in each
-node. Can be specified either as a \code{data.frame} with one
-row per node or as a numeric matrix where column \code{v0[,
-j]} contains the initial state vector for the node
-\code{j}. If \code{v0} is specified as a \code{data.frame},
-each column is one parameter. If \code{v0} is specified as a
-matrix, the row names identify the parameters. The 'v' vector
-is passed as an argument to the transition rate functions and
-the post time step function. The continuous state can be
-updated in the post time step function.}
+node. \code{v0} can be specified as a \code{data.frame} with
+one row per node, as a numeric matrix where column \code{v0[,
+j]} contains the initial state vector for the node \code{j},
+or as a named vector when the model only contains one node. If
+\code{v0} is specified as a \code{data.frame}, each column is
+one parameter. If \code{v0} is specified as a matrix, the row
+names identify the parameters. If \code{v0} is specified as a
+named vector, the names identify the parameters. The
+\sQuote{v} vector is passed as an argument to the transition
+rate functions and the post time step function. The continuous
+state can be updated in the post time step function.}
 
 \item{tspan}{A vector (length >= 1) of increasing time points
 where the state of each node is to be returned. Can be either
