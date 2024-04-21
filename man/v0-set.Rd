@@ -13,11 +13,14 @@ v0(model) <- value
 \item{model}{The model to update the initial continuous state
 \code{v0}.}
 
-\item{value}{A \code{data.frame} with the initial continuosu state in
-each node. Each row is one node, and the number of rows in
-\code{v0} must match the number of nodes in \code{model}. Only
-the columns in \code{v0} with a name that matches a continuous
-state in \code{v0} in the \code{model} will be used.}
+\item{value}{the initial continuous state in each node. Must be a
+\code{data.frame} or an object that can be coerced to a
+\code{data.frame}. A named numeric vector will be coerced to a
+one-row \code{data.frame}. Each row is one node, and the
+number of rows in \code{v0} must match the number of nodes in
+\code{model}. Only the columns in \code{v0} with a name that
+matches a continuous state in \code{v0} in the \code{model}
+will be used}
 }
 \description{
 Update the initial continuous state v0 in each node

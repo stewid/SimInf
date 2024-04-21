@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -42,6 +42,13 @@ stopifnot(identical(res,
                     data.frame(A = 1:3,
                                B = 4:6,
                                C = 7:9)))
+
+## Check that a named vector is coerced to a data.frame.
+res <- SimInf:::check_v0(c(A = 1, B = 4, C = 7), c("A", "B", "C"))
+stopifnot(identical(res,
+                    data.frame(A = 1,
+                               B = 4,
+                               C = 7)))
 
 ## Create an 'SISe' model with 6 nodes.
 model <- SISe(u0 = data.frame(S = 100:105, I = 1:6), tspan = 1:10,

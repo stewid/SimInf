@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,11 +20,14 @@
 ##'
 ##' @param model The model to update the initial continuous state
 ##'     \code{v0}.
-##' @param value A \code{data.frame} with the initial continuosu state in
-##'     each node. Each row is one node, and the number of rows in
-##'     \code{v0} must match the number of nodes in \code{model}. Only
-##'     the columns in \code{v0} with a name that matches a continuous
-##'     state in \code{v0} in the \code{model} will be used.
+##' @param value the initial continuous state in each node. Must be a
+##'     \code{data.frame} or an object that can be coerced to a
+##'     \code{data.frame}. A named numeric vector will be coerced to a
+##'     one-row \code{data.frame}. Each row is one node, and the
+##'     number of rows in \code{v0} must match the number of nodes in
+##'     \code{model}. Only the columns in \code{v0} with a name that
+##'     matches a continuous state in \code{v0} in the \code{model}
+##'     will be used
 ##' @export
 ##' @examples
 ##' ## Create an 'SISe' model with no infected individuals and no
