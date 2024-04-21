@@ -223,7 +223,7 @@ variable_names <- function(x, is_vector_ok) {
     if (is.data.frame(x)) {
         lbl <- colnames(x)
     } else if (isTRUE(is_vector_ok)) {
-        if (is.atomic(x) && is.numeric(x)) {
+        if (is.vector(x = x, mode = "numeric")) {
             lbl <- names(x)
         } else {
             stop(paste0("'",
