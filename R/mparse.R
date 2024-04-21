@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-## Split the propensity in order to separate preprocessor and
-## punctuator tokens from identifiers, for example:
+## Split the code in order to separate preprocessor and punctuator
+## tokens from identifiers, for example:
 ##
-## > tokens(" bR * R ")
+## > tokenize(" bR * R ")
 ## [1] "bR" "*"  "R"
-tokens <- function(propensity) {
+tokenize <- function(code) {
     ## List of valid preprocessor operator or punctuator tokens.
     operators <- c("<<=", ">>=", "!=", "%=", "##", "&&", "&=", "*=",
                    "++", "+=", "--", "-=", "->", "/=", "<<", "<=", "==",
@@ -32,16 +32,16 @@ tokens <- function(propensity) {
                    ")", "*", "+", ",", "-", "/", ":", ";", "<", "=",
                    ">", "?", "[", "]", "^", "{", "|", "}", "#")
 
-    ## Create a matrix (1 x 2) of the propensity, where the first
-    ## column is the token and the second column indicates if the
-    ## token is one of the operators (indicated with 'op').
-    propensity <- cbind(token = propensity, type = "")
+    ## Create a matrix (1 x 2) of the code, where the first column is
+    ## the token and the second column indicates if the token is one
+    ## of the operators (indicated with 'op').
+    code <- cbind(token = code, type = "")
 
     ## Iterate over each operator and try to split each row in the
-    ## propensity in smaller pieces.
+    ## code in smaller pieces.
     for (op in operators) {
-        propensity <- lapply(seq_len(nrow(propensity)), function(i) {
-            x <- propensity[i, seq_len(ncol(propensity)), drop = FALSE]
+        code <- lapply(seq_len(nrow(code)), function(i) {
+            x <- code[i, seq_len(ncol(code)), drop = FALSE]
 
             ## Is it a non-operator token that we could split?
             if (nchar(x[1, 2]) == 0) {
@@ -78,10 +78,77 @@ tokens <- function(propensity) {
             x
         })
 
-        propensity <- do.call("rbind", propensity)
+        code <- do.call("rbind", code)
     }
 
-    propensity[, 1]
+    code[, 1]
+}
+
+remove_spaces <- function(x) {
+    gsub(" ", "", x)
+}
+
+substitute_tokens <- function(tokens, pattern, replacement, use_enum) {
+    i <- match(tokens, pattern)
+    j <- which(!is.na(i))
+    if (length(j)) {
+        if (isTRUE(use_enum)) {
+            lbl <- toupper(pattern[i[j]])
+        } else {
+            lbl <- as.character(i[j] - 1L)
+        }
+
+        tokens[j] <- sprintf("%s[%s]", replacement, lbl)
+    }
+
+    tokens
+}
+
+rewrite_tokens <- function(tokens, compartments, ldata_names,
+                           gdata_names, v0_names, use_enum) {
+    ## Find compartments in tokens
+    tokens <- substitute_tokens(tokens, compartments, "u", use_enum)
+
+    ## Find ldata parameters in tokens
+    tokens <- substitute_tokens(tokens, ldata_names, "ldata", use_enum)
+
+    ## Find gdata parameters in tokens
+    tokens <- substitute_tokens(tokens, gdata_names, "gdata", use_enum)
+
+    ## Find v0 parameters in tokens
+    tokens <- substitute_tokens(tokens, v0_names, "v", use_enum)
+
+    tokens
+}
+
+propensity_dependencies <- function(tokens, vars, variables,
+                                    compartments) {
+    depends <- integer(length(compartments))
+
+    ## Find compartments in propensity
+    i <- unique(match(tokens, compartments))
+    depends[i[!is.na(i)]] <- 1
+
+    ## Determine dependencies to compartments via variables, both
+    ## direct and indirect dependencies through other variables.
+    i <- unique(match(vars, names(variables)))
+    while (length(i)) {
+        j <- unique(match(variables[[i[1]]]$compartments, compartments))
+        depends[j[!is.na(j)]] <- 1
+        i <- c(i, match(variables[[i[1]]]$depends, names(variables)))
+        i <- unique(i[-1])
+    }
+
+    depends
+}
+
+propensity_variables <- function(tokens, variables) {
+    ## Find variables in propensity.
+    i <- unique(match(tokens, names(variables)))
+    variables <- names(variables)[i[!is.na(i)]]
+    if (is.null(variables))
+        variables <- character(0)
+    variables
 }
 
 ## Rewrite propensity
@@ -90,34 +157,21 @@ tokens <- function(propensity) {
 ## \code{u[compartments[j]]} where \code{j} is the numbering in
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
-rewrite_propensity <- function(propensity, compartments, ldata_names,
-                               gdata_names, v0_names) {
-    propensity <- tokens(propensity)
-    G_rowname <- paste0(propensity, collapse = "")
-    depends <- integer(length(compartments))
+rewrite_propensity <- function(propensity, variables, compartments,
+                               ldata_names, gdata_names, v0_names,
+                               use_enum) {
+    tokens <- tokenize(propensity)
+    G_rowname <- paste0(tokens, collapse = "")
+    vars <- propensity_variables(tokens, variables)
+    depends <- propensity_dependencies(tokens, vars, variables,
+                                       compartments)
+    tokens <- rewrite_tokens(tokens, compartments, ldata_names,
+                             gdata_names, v0_names, use_enum)
 
-    ## Find compartments in propensity
-    i <- match(propensity, compartments)
-    propensity <- ifelse(is.na(i), propensity, sprintf("u[%i]", i - 1L))
-    i <- i[!is.na(i)]
-    if (length(i))
-        depends[i] <- 1
-
-    ## Find ldata parameters in the propensity
-    i <- match(propensity, ldata_names)
-    propensity <- ifelse(is.na(i), propensity, sprintf("ldata[%i]", i - 1L))
-
-    ## Find gdata parameters in the propensity
-    i <- match(propensity, gdata_names)
-    propensity <- ifelse(is.na(i), propensity, sprintf("gdata[%i]", i - 1L))
-
-    ## Find v0 parameters in the propensity
-    i <- match(propensity, v0_names)
-    propensity <- ifelse(is.na(i), propensity, sprintf("v[%i]", i - 1L))
-
-    list(propensity = paste0(propensity, collapse = ""),
-         depends    = depends,
-         G_rowname  = G_rowname)
+    list(code      = paste0(tokens, collapse = ""),
+         depends   = depends,
+         G_rowname = G_rowname,
+         variables = vars)
 }
 
 ## Generate the 'from' or 'dest' labels in the G rownames.
@@ -142,11 +196,8 @@ parse_compartments <- function(x, compartments) {
     ## Split into 'compartment1 + compartment2 + ..'
     x <- unlist(strsplit(x, "+", fixed = TRUE))
 
-    ## Remove spaces.
-    x <- gsub(" ", "", x)
-
     ## Replace 'n*compartment' with n replicates of 'compartment'
-    x <- unlist(sapply(x, function(xx) {
+    x <- unlist(sapply(remove_spaces(x), function(xx) {
         m <- regexpr("^[[:digit:]]+[*]", xx)
         if (m != 1)
             return(xx)
@@ -173,9 +224,41 @@ parse_compartments <- function(x, compartments) {
     tabulate(i, length(compartments))
 }
 
-parse_transitions <- function(transitions, compartments, ldata_names,
-                              gdata_names, v0_names) {
-    lapply(strsplit(transitions, "->", fixed = TRUE), function(x) {
+parse_propensity <- function(x, variables, compartments, ldata_names,
+                             gdata_names, v0_names, use_enum) {
+    propensity <- remove_spaces(x[c(-1, -length(x))])
+    propensity <- paste0(propensity, collapse = "->")
+
+    ## Determine the corresponding column in the state change vector
+    ## S.
+    from <- parse_compartments(x[1], compartments)
+    dest <- parse_compartments(x[length(x)], compartments)
+    S <- dest - from
+
+    propensity <- rewrite_propensity(propensity, variables,
+                                     compartments, ldata_names,
+                                     gdata_names, v0_names, use_enum)
+
+    ## Determine the G rowname
+    names(from) <- compartments
+    names(dest) <- compartments
+    from <- G_label(from[which(from > 0)])
+    dest <- G_label(dest[which(dest > 0)])
+    G_rowname <- paste(from, "->", propensity$G_rowname, "->", dest)
+
+    list(code       = propensity$code,
+         depends    = propensity$depends,
+         S          = S,
+         G_rowname  = G_rowname,
+         variables  = propensity$variables)
+}
+
+parse_propensities <- function(propensities, variables, compartments,
+                               ldata_names, gdata_names, v0_names,
+                               use_enum) {
+    propensities <- strsplit(propensities, "->", fixed = TRUE)
+
+    lapply(propensities, function(x) {
         if (length(x) < 3) {
             stop("Invalid transition: '",
                  paste0(x, collapse = "->"),
@@ -183,32 +266,156 @@ parse_transitions <- function(transitions, compartments, ldata_names,
                  call. = FALSE)
         }
 
-        ## Remove spaces
-        propensity <- gsub(" ", "", x[c(-1, -length(x))])
-        propensity <- paste0(propensity, collapse = "->")
-
-        ## Determine the corresponding column in the state change
-        ## vector S.
-        from <- parse_compartments(x[1], compartments)
-        dest <- parse_compartments(x[length(x)], compartments)
-        S <- dest - from
-
-        propensity <- rewrite_propensity(propensity, compartments,
-                                         ldata_names, gdata_names,
-                                         v0_names)
-
-        ## Determine the G rowname
-        names(from) <- compartments
-        names(dest) <- compartments
-        from <- G_label(from[which(from > 0)])
-        dest <- G_label(dest[which(dest > 0)])
-        G_rowname <- paste(from, "->", propensity$G_rowname, "->", dest)
-
-        list(propensity = propensity$propensity,
-             depends    = propensity$depends,
-             S          = S,
-             G_rowname  = G_rowname)
+        parse_propensity(x, variables, compartments, ldata_names,
+                         gdata_names, v0_names, use_enum)
     })
+}
+
+pattern_variable <- function() {
+    ## The variable name must be a valid name in C. Which means upper
+    ## and lower case letters, digits, and the underscore character
+    ## '_'. Names must not begin with a digit.
+    paste0(c(
+        "^[[:space:]]*",
+        "([(]double[)]|[(]int[)])?",
+        "[[:space:]]*",
+        "([a-zA-Z_][a-zA-Z_0-9]*)",
+        "[[:space:]]*",
+        "<-"),
+        collapse = "")
+}
+
+parse_variable <- function(x, compartments, ldata_names, gdata_names,
+                           v0_names, use_enum) {
+    m <- regexec(pattern_variable(), x)
+    v <- unlist(regmatches(x, m))
+    if (length(v) == 0L)
+        stop("Invalid variable: '", x, "'.", call. = FALSE)
+
+    if (startsWith(v[2], "(")) {
+        type <- substr(v[2], 2, nchar(v[2]) - 1)
+    } else {
+        type <- "double"
+    }
+
+    variable <- v[3]
+    if (variable %in% c(compartments, gdata_names, ldata_names,
+                        v0_names)) {
+        stop("Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.",
+             call. = FALSE)
+    }
+
+    tokens <- substr(x, attr(m[[1]], "match.length")[1] + 1, nchar(x))
+    tokens <- remove_spaces(tokens)
+    tokens <- tokenize(tokens)
+
+    ## Find compartments in variable.
+    i <- unique(match(tokens, compartments))
+    variable_compartments <- compartments[i[!is.na(i)]]
+
+    tokens <- rewrite_tokens(tokens, compartments, ldata_names,
+                             gdata_names, v0_names, use_enum)
+
+    list(variable = variable,
+         tokens = tokens,
+         type = type,
+         compartments = variable_compartments)
+}
+
+parse_variables <- function(variables, compartments, ldata_names,
+                            gdata_names, v0_names, use_enum) {
+    if (length(variables) == 0)
+        return(list())
+
+    variables <- lapply(variables, function(x) {
+        parse_variable(x, compartments, ldata_names, gdata_names,
+                       v0_names, use_enum)
+    })
+
+    ## Determine variable names.
+    names(variables) <- vapply(variables, "[[", character(1), "variable")
+    if (any(duplicated(names(variables))))
+        stop("Variables must have non-duplicated names.", call. = FALSE)
+
+    ## Determine dependencies between variables.
+    depends <- do.call("cbind", lapply(variables, function(x) {
+        i <- match(x$tokens, names(variables))
+        d <- integer(length(variables))
+        d[i] <- 1L
+        matrix(d, ncol = 1, dimnames = list(names(variables), x$variable))
+    }))
+    depends <- topological_sort(depends)
+
+    lapply(variables[colnames(depends)], function(x) {
+        i <- which(depends[, x$variable] > 0)
+        x$depends <- colnames(depends)[i]
+        x$code <- paste0(x$tokens, collapse = "")
+        x$tokens <- NULL
+        x
+    })
+}
+
+##' Determine if a transition should be parsed as a variable
+##' @noRd
+is_variable <- function(transition) {
+    ## The variable name must be a valid name in C. Which means upper
+    ## and lower case letters, digits, and the underscore character
+    ## '_'.  Names must not begin with a digit.
+    grepl(pattern_variable(), transition)
+}
+
+##' Perform a topological search of the variables using Kahn's
+##' algorithm (Kahn, 1962). Kahn, A. B. (1962). Topological sorting of
+##' large networks. *Communications of the ACM*, 5(11),
+##' p. 558-562. \doi{10.1145/368996.369025}.
+##' @noRd
+topological_sort <- function(x) {
+    ## First, sort lexiographically to break potential ties and get a
+    ## consistent solution.
+    x <- x[sort(colnames(x)), sort(colnames(x)), drop = FALSE]
+
+    ## Find variables which have no dependencies.
+    S <- colnames(x)[which(colSums(x) == 0)]
+
+    ## Character vector that will contain the sorted variables.
+    L <- character(0)
+
+    if (length(S) == 0)
+        stop("Invalid dependencies between variables.", call. = FALSE)
+
+    m <- x
+    while (length(S)) {
+        var <- S[1]
+        S <- S[-1]
+        L <- c(L, var)
+        m <- m[, -which(colnames(m) == var), drop = FALSE]
+        m[var, ] <- 0L
+        S <- c(S, colnames(m)[which(colSums(m) == 0)])
+    }
+
+    if (ncol(m))
+        stop("Invalid dependencies between variables.", call. = FALSE)
+
+    x[L, L, drop = FALSE]
+}
+
+parse_transitions <- function(transitions, compartments, ldata_names,
+                              gdata_names, v0_names, use_enum) {
+    ## Determine for each transition whether it is a variable or not.
+    i <- vapply(transitions, is_variable, logical(1), USE.NAMES = FALSE)
+
+    ## Extract the variables from the transitions.
+    variables <- parse_variables(transitions[i], compartments,
+                                 ldata_names, gdata_names, v0_names,
+                                 use_enum)
+
+    ## Extract the propensites from the transitions.
+    propensities <- parse_propensities(transitions[!i], variables,
+                                       compartments, ldata_names,
+                                       gdata_names, v0_names,
+                                       use_enum)
+
+    list(propensities = propensities, variables = variables)
 }
 
 ##' Extract variable names from data
@@ -340,15 +547,23 @@ dependency_graph <- function(transitions, S) {
 ##'     time step function. The C code should contain only the body of
 ##'     the function i.e. the code between the opening and closing
 ##'     curly brackets.
+##' @param use_enum generate enumeration constants for the indices to
+##'     each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
+##'     in the C code. The name of each enumeration constant will be
+##'     identical to the name of the corresponding parameter.  Using
+##'     enumeration constants can make it easier to modify the C code
+##'     afterwards, or when writing C code for the \code{pts_fun}
+##'     parameter. Default is \code{FALSE}, i.e., the parameters are
+##'     specified by using integer indices for the parameters.
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
 ##' @template mparse-example
 mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                    gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
-                   events = NULL, E = NULL, N = NULL, pts_fun = NULL) {
+                   events = NULL, E = NULL, N = NULL, pts_fun = NULL,
+                   use_enum = FALSE) {
     ## Check transitions
-    if (!is.atomic(transitions) ||
-        !is.character(transitions) ||
+    if (!is.vector(transitions, mode = "character") ||
         any(nchar(transitions) == 0)) {
         stop("'transitions' must be specified in a character vector.",
              call. = FALSE)
@@ -376,10 +591,15 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     ## Parse transitions
     transitions <- parse_transitions(transitions, compartments,
                                      ldata_names, gdata_names,
-                                     v0_names)
+                                     v0_names, use_enum)
 
-    S <- state_change_matrix(transitions, compartments)
-    G <- dependency_graph(transitions, S)
+    S <- state_change_matrix(transitions$propensities, compartments)
+    G <- dependency_graph(transitions$propensities, S)
+
+    ## Generate C code.
+    C_code <- C_code_mparse(transitions, pts_fun, compartments,
+                            ldata_names, gdata_names, v0_names,
+                            use_enum)
 
     SimInf_model(G      = G,
                  S      = S,
@@ -391,5 +611,5 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                  gdata  = gdata,
                  u0     = u0,
                  v0     = v0,
-                 C_code = C_code_mparse(transitions, pts_fun))
+                 C_code = C_code)
 }

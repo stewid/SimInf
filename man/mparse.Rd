@@ -15,7 +15,8 @@ mparse(
   events = NULL,
   E = NULL,
   N = NULL,
-  pts_fun = NULL
+  pts_fun = NULL,
+  use_enum = FALSE
 )
 }
 \arguments{
@@ -107,6 +108,15 @@ i.e. no scheduled events in the model.}
 time step function. The C code should contain only the body of
 the function i.e. the code between the opening and closing
 curly brackets.}
+
+\item{use_enum}{generate enumeration constants for the indices to
+each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
+in the C code. The name of each enumeration constant will be
+identical to the name of the corresponding parameter.  Using
+enumeration constants can make it easier to modify the C code
+afterwards, or when writing C code for the \code{pts_fun}
+parameter. Default is \code{FALSE}, i.e., the parameters are
+specified by using integer indices for the parameters.}
 }
 \value{
 a \code{\linkS4class{SimInf_model}} object
@@ -123,7 +133,7 @@ definition that is ready to \code{\link{run}}.
 ## and 'gamma' is the recovery rate.
 model  <- mparse(transitions = c("S -> beta*S*I/N -> I",
                                  "I -> gamma*I -> R",
-                                 "N <- S+I+E"),
+                                 "N <- S+I+R"),
                  compartments = c("S", "I", "R"),
                  gdata = c(beta = 0.16, gamma = 0.077),
                  u0 = data.frame(S = 100, I = 1, R = 0),
