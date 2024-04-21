@@ -1082,8 +1082,9 @@ model <- mparse(transitions = c("S -> beta*NS*NI/N -> E",
                                 "NI <- I",
                                 "N <- NS+NE+NI+NR"),
                 compartments = c("S", "E", "I", "R"),
-                ldata = data.frame(beta = 1, gamma = 2, delta = 3),
+                ldata = c(beta = 1, gamma = 2),
                 u0 = c(S = 100, E = 0, I = 10, R = 0),
+                v0 = c(delta = 3),
                 tspan = 1:100)
 
 G_expected <- new("dgCMatrix",
