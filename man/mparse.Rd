@@ -33,13 +33,14 @@ is defined by the operator \code{<-}. Using a variable for the
 size of the population, the SIR model can instead be written
 \code{transitions = c("S -> beta*S*I/N -> I",
 "I -> gamma*I -> R", "N <- S+I+R")}. By default, the type of a
-variable is defined as a double, but it is possible to also
-define it as an integer by writing \code{(int)} before the
-variable name. For example, for the SIR model, the population
-size can be defined as \code{"(int)N <- S+I+R"}. It is also
-possible to explicitly use (double) in front of the variable
-name, but it is not needed because it is the default. Note
-that the order of propensities and variables does not matter.}
+variable is defined as a double in the generated C code, but
+it is possible to also define it as an integer by writing
+\code{(int)} before the variable name. For example, for the
+SIR model, the population size can be defined as
+\code{"(int)N <- S+I+R"}. It is also possible to explicitly
+use (double) in front of the variable name, but it is not
+needed because it is the default. Note that the order of
+propensities and variables does not matter.}
 
 \item{compartments}{contains the names of the involved
 compartments, for example, \code{compartments = c("S", "I",
@@ -111,13 +112,13 @@ curly brackets.}
 
 \item{use_enum}{generate enumeration constants for the indices to
 each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
-in the C code. The name of each enumeration constant will be
-transformed to the upper-case name of the corresponding
-parameter, for example, a parameter 'beta' will become
-'BETA'. Using enumeration constants can make it easier to
-modify the C code afterwards, or when writing C code for the
-\code{pts_fun} parameter. Default is \code{FALSE}, i.e., the
-parameters are specified by using integer indices for the
+in the generated C code. The name of each enumeration constant
+will be transformed to the upper-case name of the
+corresponding parameter, for example, a parameter 'beta' will
+become 'BETA'. Using enumeration constants can make it easier
+to modify the C code afterwards, or when writing C code for
+the \code{pts_fun} parameter. Default is \code{FALSE}, i.e.,
+the parameters are specified by using integer indices for the
 parameters.}
 }
 \value{
