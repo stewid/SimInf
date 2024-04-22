@@ -385,12 +385,11 @@ topological_sort <- function(x) {
 
     m <- x
     while (length(S)) {
-        var <- S[1]
-        S <- S[-1]
-        L <- c(L, var)
-        m <- m[, -which(colnames(m) == var), drop = FALSE]
-        m[var, ] <- 0L
+        L <- c(L, S[1])
+        m <- m[, -which(colnames(m) == S[1]), drop = FALSE]
+        m[S[1], ] <- 0L
         S <- c(S, colnames(m)[which(colSums(m) == 0)])
+        S <- S[-1]
     }
 
     if (ncol(m))
