@@ -183,16 +183,6 @@ revdep_results:
           -e "results" \
           -e "cat('\n\n')"
 
-# Build and check package on R-hub
-.PHONY: rhub
-rhub: clean check
-	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', rhub::platforms()[['name']], show_status = FALSE)"
-
-# Build and use 'rchk' on package on R-hub
-.PHONY: rchk
-rchk: clean check
-	cd .. && Rscript -e "rhub::check(path='$(PKG_TAR)', 'ubuntu-rchk', show_status = FALSE)"
-
 # Build and check package on https://win-builder.r-project.org/
 .PHONY: winbuilder
 winbuilder: clean check
