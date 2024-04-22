@@ -592,7 +592,7 @@ stopifnot(
     identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", list(),
                                           c("S", "I", "R"), NULL,
                                           "beta", NULL, TRUE),
-              list(code = "gdata[beta]*u[S]*u[I]/(u[S]+u[I]+u[R])",
+              list(code = "gdata[BETA]*u[S]*u[I]/(u[S]+u[I]+u[R])",
                    depends = c(1, 1, 1),
                    G_rowname = "beta*S*I/(S+I+R)",
                    variables = character(0))))
@@ -1069,8 +1069,8 @@ stopifnot(identical(
       "enum {S, I, R};",
       "",
       "/* Enumeration constants for indicies in the 'ldata' vector. */",
-      "enum {beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa,",
-      "      lambda};",
+      "enum {BETA, GAMMA, DELTA, EPSILON, ZETA, ETA, THETA, IOTA, KAPPA,",
+      "      LAMBDA};",
       "")))
 
 ## Check dependecies to compartments via variables.
