@@ -374,12 +374,11 @@ topological_sort <- function(x) {
     ## consistent solution.
     x <- x[sort(colnames(x)), sort(colnames(x)), drop = FALSE]
 
-    ## Find variables which have no dependencies.
-    S <- colnames(x)[which(colSums(x) == 0)]
-
     ## Character vector that will contain the sorted variables.
     L <- character(0)
 
+    ## Find variables which have no dependencies.
+    S <- colnames(x)[which(colSums(x) == 0)]
     if (length(S) == 0)
         stop("Invalid dependencies between variables.", call. = FALSE)
 
