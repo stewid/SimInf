@@ -375,26 +375,26 @@ topological_sort <- function(x) {
     x <- x[sort(colnames(x)), sort(colnames(x)), drop = FALSE]
 
     ## Character vector that will contain the sorted variables.
-    L <- character(0)
+    i <- character(0)
 
     ## Find variables which have no dependencies.
-    S <- colnames(x)[which(colSums(x) == 0)]
-    if (length(S) == 0)
+    j <- colnames(x)[which(colSums(x) == 0)]
+    if (length(j) == 0)
         stop("Invalid dependencies between variables.", call. = FALSE)
 
     m <- x
-    while (length(S)) {
-        L <- c(L, S[1])
-        m <- m[, -which(colnames(m) == S[1]), drop = FALSE]
-        m[S[1], ] <- 0L
-        S <- c(S, colnames(m)[which(colSums(m) == 0)])
-        S <- S[-1]
+    while (length(j)) {
+        i <- c(i, j[1])
+        m <- m[, -which(colnames(m) == j[1]), drop = FALSE]
+        m[j[1], ] <- 0L
+        j <- c(j, colnames(m)[which(colSums(m) == 0)])
+        j <- j[-1]
     }
 
     if (ncol(m))
         stop("Invalid dependencies between variables.", call. = FALSE)
 
-    x[L, L, drop = FALSE]
+    x[i, i, drop = FALSE]
 }
 
 parse_transitions <- function(transitions, compartments, ldata_names,
