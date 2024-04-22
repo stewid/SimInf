@@ -93,7 +93,7 @@ substitute_tokens <- function(tokens, pattern, replacement, use_enum) {
     j <- which(!is.na(i))
     if (length(j)) {
         if (isTRUE(use_enum)) {
-            lbl <- toupper(pattern[i[j]])
+            lbl <- pattern[i[j]]
         } else {
             lbl <- as.character(i[j] - 1L)
         }
