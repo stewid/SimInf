@@ -78,7 +78,7 @@ C_enumeration_constants <- function(target, labels) {
         "enum {")
 
     for (i in seq_len(length(labels))) {
-        lbl <- labels[i]
+        lbl <- toupper(labels[i])
         if ((nchar(lines[length(lines)]) + nchar(lbl)) > 64)
             lines <- c(lines, "     ")
         if (i > 1)

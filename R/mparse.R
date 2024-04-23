@@ -374,29 +374,27 @@ topological_sort <- function(x) {
     ## consistent solution.
     x <- x[sort(colnames(x)), sort(colnames(x)), drop = FALSE]
 
-    ## Find variables which have no dependencies.
-    S <- colnames(x)[which(colSums(x) == 0)]
-
     ## Character vector that will contain the sorted variables.
-    L <- character(0)
+    i <- character(0)
 
-    if (length(S) == 0)
+    ## Find variables which have no dependencies.
+    j <- colnames(x)[which(colSums(x) == 0)]
+    if (length(j) == 0)
         stop("Invalid dependencies between variables.", call. = FALSE)
 
     m <- x
-    while (length(S)) {
-        var <- S[1]
-        S <- S[-1]
-        L <- c(L, var)
-        m <- m[, -which(colnames(m) == var), drop = FALSE]
-        m[var, ] <- 0L
-        S <- c(S, colnames(m)[which(colSums(m) == 0)])
+    while (length(j)) {
+        i <- c(i, j[1])
+        m <- m[, -which(colnames(m) == j[1]), drop = FALSE]
+        m[j[1], ] <- 0L
+        j <- c(j, colnames(m)[which(colSums(m) == 0)])
+        j <- j[-1]
     }
 
     if (ncol(m))
         stop("Invalid dependencies between variables.", call. = FALSE)
 
-    x[L, L, drop = FALSE]
+    x[i, i, drop = FALSE]
 }
 
 parse_transitions <- function(transitions, compartments, ldata_names,
@@ -493,13 +491,14 @@ dependency_graph <- function(transitions, S) {
 ##'     size of the population, the SIR model can instead be written
 ##'     \code{transitions = c("S -> beta*S*I/N -> I",
 ##'     "I -> gamma*I -> R", "N <- S+I+R")}. By default, the type of a
-##'     variable is defined as a double, but it is possible to also
-##'     define it as an integer by writing \code{(int)} before the
-##'     variable name. For example, for the SIR model, the population
-##'     size can be defined as \code{"(int)N <- S+I+R"}. It is also
-##'     possible to explicitly use (double) in front of the variable
-##'     name, but it is not needed because it is the default. Note
-##'     that the order of propensities and variables does not matter.
+##'     variable is defined as a double in the generated C code, but
+##'     it is possible to also define it as an integer by writing
+##'     \code{(int)} before the variable name. For example, for the
+##'     SIR model, the population size can be defined as
+##'     \code{"(int)N <- S+I+R"}. It is also possible to explicitly
+##'     use (double) in front of the variable name, but it is not
+##'     needed because it is the default. Note that the order of
+##'     propensities and variables does not matter.
 ##' @param compartments contains the names of the involved
 ##'     compartments, for example, \code{compartments = c("S", "I",
 ##'     "R")}.
@@ -549,12 +548,14 @@ dependency_graph <- function(transitions, S) {
 ##'     curly brackets.
 ##' @param use_enum generate enumeration constants for the indices to
 ##'     each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
-##'     in the C code. The name of each enumeration constant will be
-##'     identical to the name of the corresponding parameter.  Using
-##'     enumeration constants can make it easier to modify the C code
-##'     afterwards, or when writing C code for the \code{pts_fun}
-##'     parameter. Default is \code{FALSE}, i.e., the parameters are
-##'     specified by using integer indices for the parameters.
+##'     in the generated C code. The name of each enumeration constant
+##'     will be transformed to the upper-case name of the
+##'     corresponding parameter, for example, a parameter 'beta' will
+##'     become 'BETA'. Using enumeration constants can make it easier
+##'     to modify the C code afterwards, or when writing C code for
+##'     the \code{pts_fun} parameter. Default is \code{FALSE}, i.e.,
+##'     the parameters are specified by using integer indices for the
+##'     parameters.
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
 ##' @template mparse-example
