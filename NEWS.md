@@ -3,8 +3,8 @@
 ## CHANGES OR IMPROVEMENTS
 
 * Two new features have been added to the model parser. First, it is
-  now possible to define variables, which can then be used in
-  calculations of propensities or in calculations of other
+  now possible to define variables in the transitions, which can then
+  be used in calculations of propensities or in calculations of other
   variables. Secondly, enumeration constants can now be generated for
   the indices to each parameter in the `u`, `v`, `ldata`, and `gdata`
   vectors in the generated C code. See the `mparse()` documentation.
