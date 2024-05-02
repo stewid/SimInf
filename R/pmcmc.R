@@ -45,6 +45,7 @@ setClass(
               pars        = "integer",
               npart       = "integer",
               obs_process = "ANY",
+              init_fun    = "ANY",
               data        = "data.frame",
               chain       = "matrix",
               pf          = "list",
@@ -173,6 +174,7 @@ setMethod(
 ##'     sampled from the prior distribution(s).
 ##' @param adaptmix Mixing proportion for adaptive proposal.  Must be
 ##'     a value between zero and one.
+##' @param init_fun FIXME.
 ##' @template verbose-param
 ##' @references
 ##'
@@ -184,7 +186,7 @@ setGeneric(
     "pmcmc",
     signature = "model",
     function(model, obs_process, data, priors, npart, niter,
-             theta = NULL, adaptmix = 0.05,
+             theta = NULL, adaptmix = 0.05, init_fun = NULL,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
@@ -196,7 +198,7 @@ setMethod(
     "pmcmc",
     signature(model = "SimInf_model"),
     function(model, obs_process, data, priors, npart, niter, theta,
-             adaptmix, verbose) {
+             adaptmix, init_fun, verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (any(length(npart) != 1L,
@@ -211,14 +213,17 @@ setMethod(
             stop("'adaptmix' must be a value > 0 and < 1.", call. = FALSE)
         }
 
+        if (!is.null(init_fun))
+            init_fun <- match.fun(init_fun)
+
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
         pars <- match_priors(model, priors)
 
         object <- new("SimInf_pmcmc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars,
-                      obs_process = obs_process, data = data,
-                      npart = npart, adaptmix = adaptmix)
+                      obs_process = obs_process, init_fun = init_fun,
+                      data = data, npart = npart, adaptmix = adaptmix)
 
         if (!is.null(theta)) {
             check_integer_arg(niter)
@@ -242,6 +247,10 @@ setMethod(
 
             methods::slot(object@model, object@target) <-
                 set_proposal(object, theta)
+
+            if (is.function(object@init_fun))
+                object@model <- object@init_fun(object@model)
+
             object@pf[[1]] <- pfilter(object@model,
                                       obs_process = object@obs_process,
                                       object@data,
@@ -402,6 +411,9 @@ setMethod(
             methods::slot(object@model, object@target) <-
                 set_proposal(object, theta)
 
+            if (is.function(object@init_fun))
+                object@model <- object@init_fun(object@model)
+
             object@pf[[1]] <- pfilter(object@model, object@obs_process,
                                       object@data, object@npart)
 
@@ -437,6 +449,9 @@ setMethod(
             if (is.finite(logPrior_prop)) {
                 methods::slot(object@model, object@target) <-
                     set_proposal(object, proposal$theta)
+
+                if (is.function(object@init_fun))
+                    object@model <- object@init_fun(object@model)
 
                 pf_prop <- pfilter(object@model, object@obs_process,
                                    object@data, object@npart)
