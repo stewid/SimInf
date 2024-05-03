@@ -71,6 +71,11 @@ valid_SimInf_pmcmc_object <- function(object) {
         errors <- c(errors, "'target' must be 'gdata' or 'ldata'.")
     }
 
+    if (!is.null(object@init_model) &&
+        !is.function(object@init_model)) {
+        errors <- c(errors, "'init_model' must be 'NULL' or a 'function'.")
+    }
+
     if (length(errors))
         return(errors)
     TRUE
