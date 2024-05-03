@@ -38,6 +38,8 @@ the bootstrap particle filter.}
 \item{\code{obs_process}}{A \code{formula} or \code{function} determining
 the observation process.}
 
+\item{\code{init_model}}{FIXME.}
+
 \item{\code{data}}{A \code{data.frame} holding the time series data for
 the observation process.}
 

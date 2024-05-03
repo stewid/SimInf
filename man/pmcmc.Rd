@@ -14,6 +14,7 @@ pmcmc(
   niter,
   theta = NULL,
   adaptmix = 0.05,
+  init_model = NULL,
   verbose = getOption("verbose", FALSE)
 )
 
@@ -26,6 +27,7 @@ pmcmc(
   niter,
   theta = NULL,
   adaptmix = 0.05,
+  init_model = NULL,
   verbose = getOption("verbose", FALSE)
 )
 }
@@ -77,6 +79,8 @@ sampled from the prior distribution(s).}
 
 \item{adaptmix}{Mixing proportion for adaptive proposal.  Must be
 a value between zero and one.}
+
+\item{init_model}{FIXME.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
