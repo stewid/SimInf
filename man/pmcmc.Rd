@@ -15,6 +15,7 @@ pmcmc(
   theta = NULL,
   adaptmix = 0.05,
   init_model = NULL,
+  record = TRUE,
   verbose = getOption("verbose", FALSE)
 )
 
@@ -28,6 +29,7 @@ pmcmc(
   theta = NULL,
   adaptmix = 0.05,
   init_model = NULL,
+  record = TRUE,
   verbose = getOption("verbose", FALSE)
 )
 }
@@ -81,6 +83,8 @@ sampled from the prior distribution(s).}
 a value between zero and one.}
 
 \item{init_model}{FIXME.}
+
+\item{record}{FIXME}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and

@@ -49,7 +49,7 @@ setClass(
               init_model  = "ANY",
               data        = "data.frame",
               chain       = "matrix",
-              pf          = "list",
+              pf          = "ANY",
               adaptmix    = "numeric")
 )
 
@@ -181,6 +181,7 @@ setMethod(
 ##' @param adaptmix Mixing proportion for adaptive proposal.  Must be
 ##'     a value between zero and one.
 ##' @param init_model FIXME.
+##' @param record FIXME
 ##' @template verbose-param
 ##' @references
 ##'
@@ -193,7 +194,7 @@ setGeneric(
     signature = "model",
     function(model, obs_process, data, priors, npart, niter,
              theta = NULL, adaptmix = 0.05, init_model = NULL,
-             verbose = getOption("verbose", FALSE)) {
+             record = TRUE, verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
 )
@@ -204,7 +205,7 @@ setMethod(
     "pmcmc",
     signature(model = "SimInf_model"),
     function(model, obs_process, data, priors, npart, niter, theta,
-             adaptmix, init_model, verbose) {
+             adaptmix, init_model, record, verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (any(length(npart) != 1L,
@@ -222,14 +223,21 @@ setMethod(
         if (!is.null(init_model))
             init_model <- match.fun(init_model)
 
+        if (isTRUE(record)) {
+            pf <- list()
+        } else {
+            pf <- NULL
+        }
+
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
         pars <- match_priors(model, priors)
 
         object <- new("SimInf_pmcmc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars,
-                      obs_process = obs_process, init_model = init_model,
-                      data = data, npart = npart, adaptmix = adaptmix)
+                      obs_process = obs_process,
+                      init_model = init_model, pf = pf, data = data,
+                      npart = npart, adaptmix = adaptmix)
 
         if (!is.null(theta)) {
             check_integer_arg(niter)
@@ -269,7 +277,8 @@ setMethod(
 
             ## Save current value of chain.
             object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
-            object@pf[[1]] <- pf
+            if (!is.null(object@pf))
+                object@pf[[1]] <- pf
 
             niter <- niter - 1L
             if (niter == 0)
@@ -298,6 +307,8 @@ setup_chain <- function(object, niter) {
 }
 
 setup_pf <- function(object, niter) {
+    if (is.null(object@pf))
+        return(NULL)
     c(object@pf, vector("list", length = niter))
 }
 
@@ -433,12 +444,14 @@ setMethod(
 
             ## Save current value of chain.
             object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
-            object@pf[[1]] <- pf
+            if (!is.null(object@pf))
+                object@pf[[1]] <- pf
         }
 
         ## Continue from the last iteration in the chain.
         i <- iterations[1] - 1
-        pf <- object@pf[[i]]
+        if (!is.null(object@pf))
+            pf <- object@pf[[i]]
         n_accepted <- sum(object@chain[seq_len(i), "accept"])
         logPost <- object@chain[i, "logPost"]
         logLik <- object@chain[i, "logLik"]
@@ -482,7 +495,8 @@ setMethod(
 
             ## Save current value of chain.
             object@chain[i, ] <- c(logPost, logLik, logPrior, accept, theta)
-            object@pf[[i]] <- pf
+            if (!is.null(object@pf))
+                object@pf[[i]] <- pf
 
             ## Report progress.
             pmcmc_progress(object, i, verbose)
