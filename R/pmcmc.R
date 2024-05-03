@@ -257,16 +257,19 @@ setMethod(
             if (is.function(object@init_model))
                 object@model <- object@init_model(object@model)
 
-            object@pf[[1]] <- pfilter(object@model,
-                                      obs_process = object@obs_process,
-                                      object@data,
-                                      npart = object@npart)
+            pf <- pfilter(object@model,
+                          obs_process = object@obs_process,
+                          object@data,
+                          npart = object@npart)
 
-            logLik <- object@pf[[1]]@loglik
+            logLik <- pf@loglik
             logPrior <- dpriors(theta, object@priors)
             logPost <- logLik + logPrior
             accept <- 0
+
+            ## Save current value of chain.
             object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
+            object@pf[[1]] <- pf
 
             niter <- niter - 1L
             if (niter == 0)
@@ -420,15 +423,17 @@ setMethod(
             if (is.function(object@init_model))
                 object@model <- object@init_model(object@model)
 
-            object@pf[[1]] <- pfilter(object@model, object@obs_process,
-                                      object@data, object@npart)
+            pf <- pfilter(object@model, object@obs_process,
+                          object@data, object@npart)
 
-            pf <- object@pf[[1]]
             logLik <- pf@loglik
             logPrior <- dpriors(theta, object@priors)
             logPost <- logLik + logPrior
             accept <- 0
+
+            ## Save current value of chain.
             object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
+            object@pf[[1]] <- pf
         }
 
         ## Continue from the last iteration in the chain.
