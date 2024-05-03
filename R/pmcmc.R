@@ -29,6 +29,7 @@
 ##'     the bootstrap particle filter.
 ##' @slot obs_process A \code{formula} or \code{function} determining
 ##'     the observation process.
+##' @slot init_model FIXME.
 ##' @slot data A \code{data.frame} holding the time series data for
 ##'     the observation process.
 ##' @slot chain A matrix where each row contains \code{logPost},
@@ -45,7 +46,7 @@ setClass(
               pars        = "integer",
               npart       = "integer",
               obs_process = "ANY",
-              init_fun    = "ANY",
+              init_model  = "ANY",
               data        = "data.frame",
               chain       = "matrix",
               pf          = "list",
@@ -174,7 +175,7 @@ setMethod(
 ##'     sampled from the prior distribution(s).
 ##' @param adaptmix Mixing proportion for adaptive proposal.  Must be
 ##'     a value between zero and one.
-##' @param init_fun FIXME.
+##' @param init_model FIXME.
 ##' @template verbose-param
 ##' @references
 ##'
@@ -186,7 +187,7 @@ setGeneric(
     "pmcmc",
     signature = "model",
     function(model, obs_process, data, priors, npart, niter,
-             theta = NULL, adaptmix = 0.05, init_fun = NULL,
+             theta = NULL, adaptmix = 0.05, init_model = NULL,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
@@ -198,7 +199,7 @@ setMethod(
     "pmcmc",
     signature(model = "SimInf_model"),
     function(model, obs_process, data, priors, npart, niter, theta,
-             adaptmix, init_fun, verbose) {
+             adaptmix, init_model, verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (any(length(npart) != 1L,
@@ -213,8 +214,8 @@ setMethod(
             stop("'adaptmix' must be a value > 0 and < 1.", call. = FALSE)
         }
 
-        if (!is.null(init_fun))
-            init_fun <- match.fun(init_fun)
+        if (!is.null(init_model))
+            init_model <- match.fun(init_model)
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
@@ -222,7 +223,7 @@ setMethod(
 
         object <- new("SimInf_pmcmc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars,
-                      obs_process = obs_process, init_fun = init_fun,
+                      obs_process = obs_process, init_model = init_model,
                       data = data, npart = npart, adaptmix = adaptmix)
 
         if (!is.null(theta)) {
@@ -248,8 +249,8 @@ setMethod(
             methods::slot(object@model, object@target) <-
                 set_proposal(object, theta)
 
-            if (is.function(object@init_fun))
-                object@model <- object@init_fun(object@model)
+            if (is.function(object@init_model))
+                object@model <- object@init_model(object@model)
 
             object@pf[[1]] <- pfilter(object@model,
                                       obs_process = object@obs_process,
@@ -411,8 +412,8 @@ setMethod(
             methods::slot(object@model, object@target) <-
                 set_proposal(object, theta)
 
-            if (is.function(object@init_fun))
-                object@model <- object@init_fun(object@model)
+            if (is.function(object@init_model))
+                object@model <- object@init_model(object@model)
 
             object@pf[[1]] <- pfilter(object@model, object@obs_process,
                                       object@data, object@npart)
@@ -450,8 +451,8 @@ setMethod(
                 methods::slot(object@model, object@target) <-
                     set_proposal(object, proposal$theta)
 
-                if (is.function(object@init_fun))
-                    object@model <- object@init_fun(object@model)
+                if (is.function(object@init_model))
+                    object@model <- object@init_model(object@model)
 
                 pf_prop <- pfilter(object@model, object@obs_process,
                                    object@data, object@npart)
