@@ -94,6 +94,10 @@ summary_chain <- function(chain) {
     print.table(qq, digits = 3)
 }
 
+acceptance_ratio <- function(object) {
+    mean(object@chain[, "accept"], na.rm = TRUE)
+}
+
 ##' Brief summary of a \code{SimInf_pmcmc} object
 ##'
 ##' @param object The \code{SimInf_pmcmc} object.
@@ -111,8 +115,7 @@ setMethod(
                     object@adaptmix))
 
         if (length(object) > 0) {
-            cat(sprintf("Acceptance ratio: %.3f\n",
-                        mean(object@chain[, "accept"], na.rm = TRUE)))
+            cat(sprintf("Acceptance ratio: %.3f\n", acceptance_ratio(object)))
 
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
@@ -140,10 +143,8 @@ setMethod(
         cat("---------------------------------\n")
         cat(sprintf("Number of iterations: %i\n", length(object)))
         cat(sprintf("Number of particles: %i\n", object@npart))
-        if (length(object) > 0) {
-            cat(sprintf("Acceptance ratio: %.3f\n",
-                        mean(object@chain[, "accept"])))
-        }
+        if (length(object) > 0)
+            cat(sprintf("Acceptance ratio: %.3f\n", acceptance_ratio(object)))
 
         ## The model name
         cat(sprintf("Model: %s\n", as.character(class(object@model))))
@@ -330,8 +331,7 @@ pmcmc_progress <- function(object, i, verbose) {
     if (isTRUE(verbose) && isTRUE(i %% 100 == 0)) {
         print_title(sprintf(
             "PMCMC iteration: %i of %i. Acceptance ratio: %.3f",
-            i, length(object),
-            mean(object@chain[seq_len(i), "accept"])))
+            i, length(object), acceptance_ratio(object)))
 
         ## Skip columns logLik, logPrior and accept in the chain.
         j <- c(1, seq(from = 5, by = 1, length.out = n_pars(object)))
