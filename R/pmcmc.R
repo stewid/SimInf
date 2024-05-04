@@ -330,7 +330,7 @@ set_proposal <- function(object, theta) {
 pmcmc_progress <- function(object, i, verbose) {
     if (isTRUE(verbose) && isTRUE(i %% 100 == 0)) {
         print_title(sprintf(
-            "PMCMC iteration: %i of %i (%s). Acceptance ratio: %.3f",
+            "Iteration: %i of %i. Time: %s. Acceptance ratio: %.3f",
             i, length(object), format(Sys.time(), "%T"),
             acceptance_ratio(object)))
 
