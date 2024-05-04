@@ -191,7 +191,7 @@ SimInf_clean_indiv_events(
 
     /* Check that the input vectors have an identical length >= 0. */
     if (len < 0)
-        Rf_error("'id' must be an integer vector with length >= 0.");
+        Rf_error("'id' must be an integer vector with length >= 0."); /* #nocov */
     if (XLENGTH(event) != len)
         Rf_error("'event' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
     if (XLENGTH(time) != len)

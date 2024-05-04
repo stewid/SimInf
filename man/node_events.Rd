@@ -43,8 +43,16 @@ livestock event data and prepare it for usage in SimInf.
 The individual-based events will be aggregated on node-level.  The
 \code{select} value is determined by the event type and age
 category.  If there is only one age category, i.e.,
-\code{age=NULL}, then \code{select=1} for the birth events, and
-\code{select=2} for all other events.
+\code{age=NULL}, then \code{select=1} for the enter events, and
+\code{select=2} for all other events. If there are two age
+categories, then \code{select=1} for the enter events in the first
+age category, and \code{select=2} for the enter events in the
+second age category. Similarly, \code{select=3} for all other
+events in the first age category, and \code{select=4} for all
+other events in the first second category. With three age
+categories, it works similarly with \code{select=1,2,3} for the
+enter events in each age category, respectively. And
+\code{select=4,5,6} for all other events.
 }
 \seealso{
 \code{\link{individual_events}}.
