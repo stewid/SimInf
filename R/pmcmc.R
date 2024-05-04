@@ -330,8 +330,9 @@ set_proposal <- function(object, theta) {
 pmcmc_progress <- function(object, i, verbose) {
     if (isTRUE(verbose) && isTRUE(i %% 100 == 0)) {
         print_title(sprintf(
-            "PMCMC iteration: %i of %i. Acceptance ratio: %.3f",
-            i, length(object), acceptance_ratio(object)))
+            "PMCMC iteration: %i of %i (%s). Acceptance ratio: %.3f",
+            i, length(object), format(Sys.time(), "%T"),
+            acceptance_ratio(object)))
 
         ## Skip columns logLik, logPrior and accept in the chain.
         j <- c(1, seq(from = 5, by = 1, length.out = n_pars(object)))
