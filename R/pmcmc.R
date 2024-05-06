@@ -328,7 +328,7 @@ set_proposal <- function(object, theta) {
 }
 
 pmcmc_progress <- function(object, i, verbose) {
-    if (isTRUE(verbose) && isTRUE(i %% 100 == 0)) {
+    if (!is.null(verbose) && isTRUE(i %% verbose == 0)) {
         print_title(sprintf(
             "Iteration: %i of %i. Time: %s. Acceptance ratio: %.3f",
             i, length(object), format(Sys.time(), "%T"),
@@ -407,8 +407,25 @@ setMethod(
     }
 )
 
+get_verbose <- function(verbose) {
+    if (isTRUE(verbose))
+        return(100L)
+
+    if (is.numeric(verbose) &&
+        !anyNA(verbose) &&
+        all(is_wholenumber(verbose)) &&
+        all(verbose > 0) &&
+        length(verbose) == 1L) {
+        return(as.integer(verbose))
+    }
+
+    NULL
+}
+
 ##' @rdname continue
 ##' @template niter-param
+##' @param ... Unused additional arguments.
+##' @param verbose FIXME.
 ##' @export
 setMethod(
     "continue",
@@ -421,6 +438,7 @@ setMethod(
         if (any(length(niter) != 1L, any(niter <= 0L)))
             stop("'niter' must be an integer > 0.", call. = FALSE)
 
+        verbose <- get_verbose(verbose)
         iterations <- length(object) + seq_len(niter)
         object@chain <- setup_chain(object, niter)
         object@pf <- setup_pf(object, niter)
