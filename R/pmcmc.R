@@ -422,6 +422,30 @@ get_verbose <- function(verbose) {
     NULL
 }
 
+get_scale_start <- function(scale_start, object) {
+    if (is.null(scale_start))
+        scale_start <- 2 * n_pars(object)
+
+    check_integer_arg(scale_start)
+    scale_start <- as.integer(scale_start)
+    if (any(length(scale_start) != 1L, any(scale_start <= 0L)))
+        stop("'scale_start' must be an integer > 0.", call. = FALSE)
+
+    scale_start
+}
+
+get_shape_start <- function(shape_start) {
+    if (is.null(shape_start))
+        return(0L)
+
+    check_integer_arg(shape_start)
+    shape_start <- as.integer(shape_start)
+    if (any(length(shape_start) != 1L, any(shape_start < 0L)))
+        stop("'shape_start' must be an integer >= 0.", call. = FALSE)
+
+    shape_start
+}
+
 ##' @rdname continue
 ##' @template niter-param
 ##' @param ... Unused additional arguments.
@@ -433,6 +457,11 @@ setMethod(
     function(object, niter, ...,
              verbose = getOption("verbose", FALSE)) {
         methods::validObject(object)
+
+        argv <- list(...)
+        scale_start <- get_scale_start(argv$scale_start)
+        shape_start <- get_shape_start(argv$shape_start)
+
         check_integer_arg(niter)
         niter <- as.integer(niter)
         if (any(length(niter) != 1L, any(niter <= 0L)))
@@ -483,8 +512,13 @@ setMethod(
         for (i in iterations) {
             ## Proposal
             accept <- 0
-            proposal <- pmcmc_proposal(object, i, n_accepted,
-                                       theta_mean, covmat_emp)
+            proposal <- pmcmc_proposal(x = object,
+                                       i = i,
+                                       n_accepted = n_accepted,
+                                       theta_mean = theta_mean,
+                                       covmat_emp = covmat_emp,
+                                       scale_start = scale_start,
+                                       shape_start = shape_start)
             theta_mean <- proposal$theta_mean
             covmat_emp <- proposal$covmat_emp
             logPrior_prop <- dpriors(proposal$theta, object@priors)
