@@ -459,7 +459,7 @@ setMethod(
         methods::validObject(object)
 
         argv <- list(...)
-        scale_start <- get_scale_start(argv$scale_start)
+        scale_start <- get_scale_start(argv$scale_start, object)
         shape_start <- get_shape_start(argv$shape_start)
 
         check_integer_arg(niter)
