@@ -353,8 +353,8 @@ get_theta <- function(x, i) {
 
 ##' @noRd
 pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
-                           scale_start = 100L, shape_start = 200L,
-                           cooling = 0.999, max_scaling = 50) {
+                           scale_start, shape_start, cooling = 0.999,
+                           max_scaling = 50) {
     if (runif(1) < x@adaptmix || i <= scale_start || n_accepted == 0) {
         covmat <- diag((get_theta(x, 1) / 10)^2 / n_pars(x))
     } else if (n_accepted < shape_start) {
