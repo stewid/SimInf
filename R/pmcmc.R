@@ -351,12 +351,16 @@ get_theta <- function(x, i) {
     x@chain[i, j]
 }
 
+get_initial_covmat <- function(x) {
+    diag((get_theta(x, 1) / 10)^2 / n_pars(x), nrow = n_pars(x))
+}
+
 ##' @noRd
 pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
                            scale_start, shape_start, cooling = 0.999,
                            max_scaling = 50) {
     if (runif(1) < x@adaptmix || i <= scale_start || n_accepted == 0) {
-        covmat <- diag((get_theta(x, 1) / 10)^2 / n_pars(x))
+        covmat <- get_initial_covmat(x)
     } else if (n_accepted < shape_start) {
         scaling <- 1
         target <- ifelse(n_pars(x) == 1L, 0.44, 0.234)
@@ -367,7 +371,7 @@ pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
             scaling <- min(scaling * exp(l * m), max_scaling)
         }
 
-        covmat <- scaling^2 * diag((get_theta(x, 1) / 10)^2 / n_pars(x))
+        covmat <- scaling^2 * get_initial_covmat(x)
     } else {
         covmat <- 2.38^2 / n_pars(x) * covmat_emp
     }
@@ -436,7 +440,7 @@ get_scale_start <- function(scale_start, object) {
 
 get_shape_start <- function(shape_start) {
     if (is.null(shape_start))
-        return(0L)
+        shape_start <- 0L
 
     check_integer_arg(shape_start)
     shape_start <- as.integer(shape_start)
