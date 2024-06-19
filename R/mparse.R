@@ -387,7 +387,8 @@ topological_sort <- function(x) {
         i <- c(i, j[1])
         m <- m[, -which(colnames(m) == j[1]), drop = FALSE]
         m[j[1], ] <- 0L
-        j <- c(j, colnames(m)[which(colSums(m) == 0)])
+        k <- colnames(m)[which(colSums(m) == 0)]
+        j <- c(j, setdiff(k, j))
         j <- j[-1]
     }
 
