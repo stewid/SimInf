@@ -1,4 +1,4 @@
-# SimInf (development version)
+# SimInf 9.8.0 (2024-06-20)
 
 ## BUG FIXES
 
