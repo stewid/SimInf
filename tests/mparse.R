@@ -1031,6 +1031,17 @@ stopifnot(identical(
            dimnames = list(c("A", "B", "C"),
                            c("A", "B", "C")))))
 
+stopifnot(identical(
+    SimInf:::topological_sort(
+                 matrix(c(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                        nrow = 4, ncol = 4,
+                        dimnames = list(c("A", "B", "C", "D"),
+                                        c("C", "B", "A", "D")))),
+    matrix(c(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0),
+           nrow = 4, ncol = 4,
+           dimnames = list(c("A", "D", "B", "C"),
+                           c("A", "D", "B", "C")))))
+
 ## Check to generate C code for variables.
 propensity <- list(code = "N>0?beta*u[0]*u[1]/N:0",
                    depends = c(1, 1, 0), S = c(-1L, 1L, 0L),
