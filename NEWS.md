@@ -1,6 +1,9 @@
 # SimInf (development version)
 
-## CHANGES OR IMPROVEMENTS
+## BUG FIXES
+
+* Fix model parser (mparse) to resolve dependencies between variables
+  in the transitions when multiple variables have zero dependencies.
 
 # SimInf 9.7.0 (2024-04-23)
 
