@@ -24,7 +24,7 @@ all distances involving missing values.  Default is
 \code{TRUE}, i.e., to raise an error.}
 }
 \value{
-\code{dgCMatrix}
+\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}
 }
 \description{
 Calculate the euclidian distances beween coordinates for all

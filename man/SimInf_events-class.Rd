@@ -18,7 +18,7 @@ transfer} and \emph{external transfer} events, a non-zero
 entry indicate the compartments to sample individuals from.
 For the \emph{enter} event, all individuals enter first
 non-zero compartment. \code{E} is sparse matrix of class
-\code{\linkS4class{dgCMatrix}}.}
+\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
 
 \item{\code{N}}{Determines how individuals in \emph{internal transfer} and
 \emph{external transfer} events are shifted to enter another

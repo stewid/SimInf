@@ -14,7 +14,7 @@ select_matrix(model)
 \code{E} from.}
 }
 \value{
-\code{\linkS4class{dgCMatrix}} object.
+\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} object.
 }
 \description{
 Utility function to extract \code{events@E} from a
