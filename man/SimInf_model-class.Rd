@@ -15,13 +15,15 @@ need to be updated after a given state transition has occured.
 A non-zero entry in element \code{G[i, i]} indicates that
 transition rate \code{i} needs to be recalculated if the state
 transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
-of object class \code{\linkS4class{dgCMatrix}}.}
+of object class
+\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
 
 \item{\code{S}}{Each column corresponds to a state transition, and
 execution of state transition \code{j} amounts to adding the
 \code{S[, j]} column to the state vector \code{u[, i]} of node
 \emph{i} where the transition occurred. Sparse matrix (\eqn{Nc
-\times Nt}) of object class \code{\linkS4class{dgCMatrix}}.}
+\times Nt}) of object class
+\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
 
 \item{\code{U}}{The result matrix with the number of individuals in each
 compartment in every node. \code{U[, j]} contains the number
@@ -33,10 +35,12 @@ individuals in node 1 at \code{tspan[j]}. \code{U[(Nc + 1):(2
 \code{length(tspan)}).}
 
 \item{\code{U_sparse}}{If the model was configured to write the solution
-to a sparse matrix (\code{dgCMatrix}) the \code{U_sparse}
-contains the data and \code{U} is empty. The layout of the
-data in \code{U_sparse} is identical to \code{U}. Please note
-that \code{U_sparse} is numeric and \code{U} is integer.}
+to a sparse matrix
+(\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}) the
+\code{U_sparse} contains the data and \code{U} is empty. The
+layout of the data in \code{U_sparse} is identical to
+\code{U}. Please note that \code{U_sparse} is numeric and
+\code{U} is integer.}
 
 \item{\code{V}}{The result matrix for the real-valued continuous
 state. \code{V[, j]} contains the real-valued state of the
@@ -45,9 +49,11 @@ system at \code{tspan[j]}. Numeric matrix
 \code{length(tspan)}).}
 
 \item{\code{V_sparse}}{If the model was configured to write the solution
-to a sparse matrix (\code{dgCMatrix}) the \code{V_sparse}
-contains the data and \code{V} is empty. The layout of the
-data in \code{V_sparse} is identical to \code{V}.}
+to a sparse matrix
+(\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}) the
+\code{V_sparse} contains the data and \code{V} is empty. The
+layout of the data in \code{V_sparse} is identical to
+\code{V}.}
 
 \item{\code{ldata}}{A matrix with local data for the nodes. The column
 \code{ldata[, j]} contains the local data vector for the node

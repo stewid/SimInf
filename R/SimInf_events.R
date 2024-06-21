@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -224,7 +224,7 @@ init_events <- function(events, t0) {
 ##'     entry indicate the compartments to sample individuals from.
 ##'     For the \emph{enter} event, all individuals enter first
 ##'     non-zero compartment. \code{E} is sparse matrix of class
-##'     \code{\linkS4class{dgCMatrix}}.
+##'     \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
 ##' @param N Determines how individuals in \emph{internal transfer}
 ##'     and \emph{external transfer} events are shifted to enter
 ##'     another compartment.  Each row corresponds to one compartment
@@ -625,7 +625,7 @@ setMethod(
 ##' \code{SimInf_model} object, see \code{\linkS4class{SimInf_events}}
 ##' @param model The \code{model} to extract the select matrix
 ##'     \code{E} from.
-##' @return \code{\linkS4class{dgCMatrix}} object.
+##' @return \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} object.
 ##' @export
 ##' @examples
 ##' ## Create an SIR model

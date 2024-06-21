@@ -34,7 +34,7 @@
 ##'     \code{x} or \code{y} should raise an error or assign zero to
 ##'     all distances involving missing values.  Default is
 ##'     \code{TRUE}, i.e., to raise an error.
-##' @return \code{dgCMatrix}
+##' @return \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}
 ##' @export
 ##' @examples
 ##' ## Generate a grid 10 x 10 and place one node in each cell

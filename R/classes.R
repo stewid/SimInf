@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 ##'     entry indicate the compartments to sample individuals from.
 ##'     For the \emph{enter} event, all individuals enter first
 ##'     non-zero compartment. \code{E} is sparse matrix of class
-##'     \code{\linkS4class{dgCMatrix}}.
+##'     \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
 ##' @slot N Determines how individuals in \emph{internal transfer} and
 ##'     \emph{external transfer} events are shifted to enter another
 ##'     compartment.  Each row corresponds to one compartment in the
@@ -107,9 +107,11 @@ setClass(
 ##'     (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
 ##'     \code{length(tspan)}).
 ##' @slot V_sparse If the model was configured to write the solution
-##'     to a sparse matrix (\code{dgCMatrix}) the \code{V_sparse}
-##'     contains the data and \code{V} is empty. The layout of the
-##'     data in \code{V_sparse} is identical to \code{V}.
+##'     to a sparse matrix
+##'     (\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}) the
+##'     \code{V_sparse} contains the data and \code{V} is empty. The
+##'     layout of the data in \code{V_sparse} is identical to
+##'     \code{V}.
 ##' @template ldata-slot
 ##' @template gdata-slot
 ##' @template tspan-slot
