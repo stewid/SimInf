@@ -1,4 +1,4 @@
-# SimInf 9.8.0 (2024-06-20)
+# SimInf 9.8.1 (2024-06-21)
 
 ## CHANGES OR IMPROVEMENTS
 
