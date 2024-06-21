@@ -1,5 +1,10 @@
 # SimInf 9.8.0 (2024-06-20)
 
+## CHANGES OR IMPROVEMENTS
+
+* Added package anchors in the documentation for all Rd \link{}
+  targets not in the package itself and the base packages.
+
 ## BUG FIXES
 
 * Fix model parser (mparse) to resolve dependencies between variables
