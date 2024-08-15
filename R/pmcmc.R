@@ -450,6 +450,32 @@ get_shape_start <- function(shape_start) {
     shape_start
 }
 
+get_scale_cooling <- function(scale_cooling) {
+    if (is.null(scale_cooling))
+        scale_cooling <- 0.999
+
+    check_numeric_arg(scale_cooling)
+    scale_cooling <- as.numeric(scale_cooling)
+    if (any(length(scale_cooling) != 1L,
+            any(scale_cooling <= 0),
+            any(scale_cooling > 1))) {
+        stop("'scale_cooling' must be a numeric value in (0, 1].",
+             call. = FALSE)
+    }
+
+    scale_cooling
+}
+
+get_max_scaling <- function(max_scaling) {
+    if (is.null(max_scaling))
+        max_scaling <- 50
+
+    check_numeric_arg(max_scaling)
+    max_scaling <- as.numeric(max_scaling)
+
+    max_scaling
+}
+
 ##' @rdname continue
 ##' @template niter-param
 ##' @param ... Unused additional arguments.
