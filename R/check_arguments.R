@@ -77,6 +77,34 @@ check_integer_arg <- function(...) {
     invisible(NULL)
 }
 
+##' Check numeric arguments
+##'
+##' Raise an error if any of the arguments are non-numeric.
+##' @param ... The arguments to check
+##' @return invisible(NULL)
+##' @noRd
+check_numeric_arg <- function(...) {
+    arg <- list(...)
+    for (i in seq_len(length(arg))) {
+        if (is.null(arg[[i]])) {
+            stop(paste0("'",
+                        match.call(expand.dots = FALSE)$"..."[i],
+                        "' is missing."),
+                 call. = FALSE)
+        }
+
+        if (!is.numeric(arg[[i]]) ||
+            anyNA(arg[[i]])) {
+            stop(paste0("'",
+                        match.call(expand.dots = FALSE)$"..."[i],
+                        "' must be numeric."),
+                 call. = FALSE)
+        }
+    }
+
+    invisible(NULL)
+}
+
 ##' Check arguments for 'gdata'
 ##'
 ##' Raise an error if any of the arguments are not ok.
