@@ -240,7 +240,10 @@ covmat_emp <- SimInf:::covmat_empirical(fit, 5)
 proposal_obs <- SimInf:::pmcmc_proposal(fit, i = 6, n_accepted = 2,
                                         theta_mean = theta_mean,
                                         covmat_emp = covmat_emp,
-                                        scale_start = 5)
+                                        scale_start = 5,
+                                        shape_start = 200,
+                                        scale_cooling = 0.999,
+                                        max_scaling = 50)
 
 stopifnot(all(abs(proposal_exp$theta - proposal_obs$theta) < tol))
 stopifnot(all(abs(proposal_exp$theta_mean - proposal_obs$theta_mean) < tol))
@@ -260,7 +263,9 @@ proposal_obs <- SimInf:::pmcmc_proposal(fit, i = 6, n_accepted = 2,
                                         theta_mean = theta_mean,
                                         covmat_emp = covmat_emp,
                                         scale_start = 5,
-                                        shape_start = 2)
+                                        shape_start = 2,
+                                        scale_cooling = 0.999,
+                                        max_scaling = 50)
 
 stopifnot(all(abs(proposal_exp$theta - proposal_obs$theta) < tol))
 stopifnot(all(abs(proposal_exp$theta_mean - proposal_obs$theta_mean) < tol))
