@@ -357,8 +357,8 @@ get_initial_covmat <- function(x) {
 
 ##' @noRd
 pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
-                           scale_start, shape_start, cooling = 0.999,
-                           max_scaling = 50) {
+                           scale_start, shape_start, scale_cooling,
+                           max_scaling) {
     if (runif(1) < x@adaptmix || i <= scale_start || n_accepted == 0) {
         covmat <- get_initial_covmat(x)
     } else if (n_accepted < shape_start) {
@@ -366,7 +366,7 @@ pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
         target <- ifelse(n_pars(x) == 1L, 0.44, 0.234)
 
         for (k in seq(from = scale_start, to = i - 1L)) {
-            l <- cooling^(k - scale_start)
+            l <- scale_cooling^(k - scale_start)
             m <- mean(x@chain[seq_len(k), "accept"]) - target
             scaling <- min(scaling * exp(l * m), max_scaling)
         }
