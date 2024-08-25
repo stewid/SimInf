@@ -415,11 +415,11 @@ get_verbose <- function(verbose) {
     if (isTRUE(verbose))
         return(100L)
 
-    if (is.numeric(verbose) &&
-        !anyNA(verbose) &&
-        all(is_wholenumber(verbose)) &&
-        all(verbose > 0) &&
-        length(verbose) == 1L) {
+    if (all(is.numeric(verbose),
+            !anyNA(verbose),
+            all(is_wholenumber(verbose)),
+            all(verbose > 0),
+            length(verbose) == 1L)) {
         return(as.integer(verbose))
     }
 
