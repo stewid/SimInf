@@ -332,14 +332,13 @@ check_error(
 set.seed(22)
 fit@chain <- fit@chain[sample(1:5, 100, replace = TRUE), ]
 progress_expected <- c(
-"",
-"PMCMC iteration: 100 of 100. Acceptance ratio: 0.360",
-"----------------------------------------------------",
 "             2.5%       25%       50%       75%     97.5%      Mean        SD",
 "logPost -3.94e+03 -3.94e+03 -3.68e+03 -3.20e+03 -3.20e+03 -3.60e+03  3.36e+02",
 "beta     7.54e-01  7.54e-01  8.04e-01  8.66e-01  8.66e-01  8.07e-01  5.00e-02",
 "gamma    6.04e-01  6.29e-01  6.29e-01  6.44e-01  6.44e-01  6.29e-01  1.48e-02")
 progress_observed <- capture.output(SimInf:::pmcmc_progress(fit, 100, TRUE))
+## Skip first three lines since it contains a timestamp.
+progress_observed <- progress_observed[4:7]
 stopifnot(identical(progress_observed, progress_expected))
 
 plot(fit)
