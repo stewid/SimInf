@@ -26,8 +26,11 @@ control the population to include in the calculation, for
 example, \code{I ~ . | R == 0} to calculate the prevalence
 when the recovered is zero in a \sQuote{SIR} model. The
 condition must evaluate to \code{TRUE} or \code{FALSE} in each
-node and time step. Note that if the denominator is zero, the
-prevalence is \code{NaN}.}
+node and time step. Please note, if the denominator is zero,
+the prevalence is \code{NaN}. Additionally, when
+\code{level=3} (within-node prevalence) and the formula
+contains a condition that evaluates to \code{FALSE}, the
+prevalence is also \code{NaN}.}
 
 \item{level}{The level at which the prevalence is calculated at
 each time point in \code{tspan}. 1 (population prevalence):
