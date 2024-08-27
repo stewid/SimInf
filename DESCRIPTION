@@ -107,7 +107,7 @@ Collate:
     'u0.R'
     'v0.R'
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 VignetteBuilder:
     utils,
     knitr
