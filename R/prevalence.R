@@ -115,10 +115,6 @@ calculate_prevalence <- function(model, compartments, level,
                              prevalence = as.numeric(prevalence),
                              stringsAsFactors = FALSE)
     colnames(prevalence)[1] <- id
-
-    if (!is.null(compartments$condition))
-        prevalence <- prevalence[as.logical(condition), ]
-
     prevalence
 }
 
