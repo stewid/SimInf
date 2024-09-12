@@ -523,7 +523,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             ## Collect accepted particle
             particle_i <- particle_i + 1L
             distance[particle_i, ] <- d
-            xx[particle_i, ] <- model@gdata[pars]
+            xx[particle_i, ] <- tmp_model@gdata[pars]
             ancestor[particle_i] <- attr(proposals, "ancestor")[1L]
         }
 
