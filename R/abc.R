@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -479,7 +479,7 @@ abc_accept <- function(distance, tolerance) {
 }
 
 abc_gdata <- function(model, pars, priors, npart, fn, generation,
-                      tolerance, x, w, sigma, verbose, ...) {
+                      tolerance, x, w, sigma, verbose, model_init, ...) {
     if (isTRUE(verbose))
         pb <- utils::txtProgressBar(min = 0, max = npart, style = 3)
 
@@ -492,14 +492,19 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     particle_i <- 0L
 
     while (particle_i < npart) {
+        tmp_model <- model
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
                            priors$distribution, priors$p1, priors$p2,
                            1L, x, w, sigma)
         for (i in seq_len(ncol(proposals))) {
-            model@gdata[pars[i]] <- proposals[1L, i]
+            tmp_model@gdata[pars[i]] <- proposals[1L, i]
         }
 
-        d <- abc_distance(fn(run(model), generation = generation, ...), 1L)
+        ## Handle the model_init callback.
+        if (!is.null(model_init))
+            tmp_model <- model_init(tmp_model)
+
+        d <- abc_distance(fn(run(tmp_model), generation = generation, ...), 1L)
         if (is.null(tolerance)) {
             ## Accept all particles if the tolerance is NULL, but make
             ## sure the dimension of tolerance and distance matches in
@@ -531,7 +536,13 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
 }
 
 abc_ldata <- function(model, pars, priors, npart, fn, generation,
-                      tolerance, x, w, sigma, verbose, ...) {
+                      tolerance, x, w, sigma, verbose, model_init, ...) {
+    ## Handle the model_init callback.
+    if (!is.null(model_init)) {
+        stop("'model_init' callback is not implemented for 'ldata'.",
+             call. = FALSE)
+    }
+
     ## Let each node represents one particle. Replicate the first node
     ## to run multiple particles simultaneously. Start with 10 x
     ## 'npart' and then increase the number adaptively based on the
@@ -619,9 +630,12 @@ abc_weights <- function(object, generation, x, ancestor, w, sigma) {
 }
 
 abc_internal <- function(object, ninit, tolerance, ..., verbose,
-                         post_gen) {
+                         post_gen, model_init) {
     if (!is.null(post_gen))
         post_gen <- match.fun(post_gen)
+
+    if (!is.null(model_init))
+        model_init <- match.fun(model_init)
 
     if (all(is.null(ninit), is.null(tolerance)))
         stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
@@ -651,7 +665,8 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
                          priors = object@priors, npart = npart,
                          fn = object@fn, generation = generation,
                          tolerance = epsilon, x = x, w = w,
-                         sigma = sigma, verbose = verbose, ...)
+                         sigma = sigma, verbose = verbose,
+                         model_init = model_init, ...)
 
         ## Append the tolerance for the generation.
         npart <- abc_n_particles(object)
@@ -762,6 +777,7 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
 ##' @template post_gen-param
+##' @template model_init-param
 ##' @return A \code{SimInf_abc} object.
 ##' @references
 ##'
@@ -776,7 +792,8 @@ setGeneric(
     signature = "model",
     function(model, priors = NULL, npart = NULL, ninit = NULL,
              distance = NULL, tolerance = NULL, ...,
-             verbose = getOption("verbose", FALSE), post_gen = NULL) {
+             verbose = getOption("verbose", FALSE), post_gen = NULL,
+             model_init = NULL) {
         standardGeneric("abc")
     }
 )
@@ -817,7 +834,8 @@ setMethod(
                                ess = numeric(0))
 
         abc_internal(object = object, ninit = ninit, tolerance = tolerance,
-                     ..., verbose = verbose, post_gen = post_gen)
+                     ..., verbose = verbose, post_gen = post_gen,
+                     model_init = model_init)
     }
 )
 
@@ -835,6 +853,7 @@ setMethod(
 ##'     \code{SimInf_abc@@fn}.
 ##' @template verbose-param
 ##' @template post_gen-param
+##' @template model_init-param
 ##' @return A \code{SimInf_abc} object.
 ##' @export
 setGeneric(
@@ -851,9 +870,11 @@ setMethod(
     "continue",
     signature(object = "SimInf_abc"),
     function(object, tolerance = NULL, ...,
-             verbose = getOption("verbose", FALSE), post_gen = NULL) {
-        abc_internal(object = object, ninit = NULL, tolerance = tolerance,
-                     ..., verbose = verbose, post_gen = post_gen)
+             verbose = getOption("verbose", FALSE), post_gen = NULL,
+             model_init = NULL) {
+        abc_internal(object = object, ninit = NULL,
+                     tolerance = tolerance, ..., verbose = verbose,
+                     post_gen = post_gen, model_init = model_init)
     }
 )
 
