@@ -13,7 +13,7 @@ continue(object, ...)
   ...,
   verbose = getOption("verbose", FALSE),
   post_gen = NULL,
-  model_init = NULL
+  init_model = NULL
 )
 }
 \arguments{

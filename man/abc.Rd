@@ -15,7 +15,7 @@ abc(
   ...,
   verbose = getOption("verbose", FALSE),
   post_gen = NULL,
-  model_init = NULL
+  init_model = NULL
 )
 
 \S4method{abc}{SimInf_model}(
@@ -28,7 +28,7 @@ abc(
   ...,
   verbose = getOption("verbose", FALSE),
   post_gen = NULL,
-  model_init = NULL
+  init_model = NULL
 )
 }
 \arguments{

@@ -479,7 +479,7 @@ abc_accept <- function(distance, tolerance) {
 }
 
 abc_gdata <- function(model, pars, priors, npart, fn, generation,
-                      tolerance, x, w, sigma, verbose, model_init, ...) {
+                      tolerance, x, w, sigma, verbose, init_model, ...) {
     if (isTRUE(verbose))
         pb <- utils::txtProgressBar(min = 0, max = npart, style = 3)
 
@@ -500,9 +500,9 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             tmp_model@gdata[pars[i]] <- proposals[1L, i]
         }
 
-        ## Handle the model_init callback.
-        if (!is.null(model_init))
-            tmp_model <- model_init(tmp_model)
+        ## Handle the init_model callback.
+        if (!is.null(init_model))
+            tmp_model <- init_model(tmp_model)
 
         d <- abc_distance(fn(run(tmp_model), generation = generation, ...), 1L)
         if (is.null(tolerance)) {
@@ -536,10 +536,10 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
 }
 
 abc_ldata <- function(model, pars, priors, npart, fn, generation,
-                      tolerance, x, w, sigma, verbose, model_init, ...) {
-    ## Handle the model_init callback.
-    if (!is.null(model_init)) {
-        stop("'model_init' callback is not implemented for 'ldata'.",
+                      tolerance, x, w, sigma, verbose, init_model, ...) {
+    ## Handle the init_model callback.
+    if (!is.null(init_model)) {
+        stop("'init_model' callback is not implemented for 'ldata'.",
              call. = FALSE)
     }
 
@@ -630,12 +630,12 @@ abc_weights <- function(object, generation, x, ancestor, w, sigma) {
 }
 
 abc_internal <- function(object, ninit, tolerance, ..., verbose,
-                         post_gen, model_init) {
+                         post_gen, init_model) {
     if (!is.null(post_gen))
         post_gen <- match.fun(post_gen)
 
-    if (!is.null(model_init))
-        model_init <- match.fun(model_init)
+    if (!is.null(init_model))
+        init_model <- match.fun(init_model)
 
     if (all(is.null(ninit), is.null(tolerance)))
         stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
@@ -666,7 +666,7 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
                          fn = object@fn, generation = generation,
                          tolerance = epsilon, x = x, w = w,
                          sigma = sigma, verbose = verbose,
-                         model_init = model_init, ...)
+                         init_model = init_model, ...)
 
         ## Append the tolerance for the generation.
         npart <- abc_n_particles(object)
@@ -777,7 +777,7 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
 ##' @template post_gen-param
-##' @template model_init-param
+##' @template init_model-param
 ##' @return A \code{SimInf_abc} object.
 ##' @references
 ##'
@@ -793,7 +793,7 @@ setGeneric(
     function(model, priors = NULL, npart = NULL, ninit = NULL,
              distance = NULL, tolerance = NULL, ...,
              verbose = getOption("verbose", FALSE), post_gen = NULL,
-             model_init = NULL) {
+             init_model = NULL) {
         standardGeneric("abc")
     }
 )
@@ -835,7 +835,7 @@ setMethod(
 
         abc_internal(object = object, ninit = ninit, tolerance = tolerance,
                      ..., verbose = verbose, post_gen = post_gen,
-                     model_init = model_init)
+                     init_model = init_model)
     }
 )
 
@@ -853,7 +853,7 @@ setMethod(
 ##'     \code{SimInf_abc@@fn}.
 ##' @template verbose-param
 ##' @template post_gen-param
-##' @template model_init-param
+##' @template init_model-param
 ##' @return A \code{SimInf_abc} object.
 ##' @export
 setGeneric(
@@ -871,10 +871,10 @@ setMethod(
     signature(object = "SimInf_abc"),
     function(object, tolerance = NULL, ...,
              verbose = getOption("verbose", FALSE), post_gen = NULL,
-             model_init = NULL) {
+             init_model = NULL) {
         abc_internal(object = object, ninit = NULL,
                      tolerance = tolerance, ..., verbose = verbose,
-                     post_gen = post_gen, model_init = model_init)
+                     post_gen = post_gen, init_model = init_model)
     }
 )
 
