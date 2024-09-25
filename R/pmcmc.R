@@ -183,7 +183,7 @@ setMethod(
 ##'     a value between zero and one.
 ##' @param init_model FIXME.
 ##' @param record FIXME
-##' @template verbose-param
+##' @template verbose-param-pmcmc
 ##' @references
 ##'
 ##' \Andrieu2010
@@ -429,7 +429,7 @@ get_scale_start <- function(scale_start, object) {
 ##' @rdname continue
 ##' @template niter-param
 ##' @param ... Unused additional arguments.
-##' @param verbose FIXME.
+##' @template verbose-param-pmcmc
 ##' @export
 setMethod(
     "continue",

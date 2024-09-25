@@ -21,8 +21,7 @@ continue(object, ...)
 \arguments{
 \item{object}{The \code{SimInf_abc} to continue from.}
 
-\item{...}{Further arguments to be passed to the
-\code{SimInf_abc@fn}.}
+\item{...}{Unused additional arguments.}
 
 \item{tolerance}{A numeric matrix (number of summary statistics
 \eqn{\times} number of generations) where each column contains
@@ -34,7 +33,11 @@ run.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
-use \code{FALSE} if it is not set.}
+use \code{FALSE} if it is not set. When \code{verbose=TRUE},
+information is printed every 100 iterations. For pmcmc, it is
+possible to get information every nth information by
+specifying \code{verbose=n}, for example, \code{verbose=1} or
+\code{verbose=10}.}
 
 \item{post_gen}{An optional function that, if non-NULL, is applied
 after each completed generation. The function must accept one
