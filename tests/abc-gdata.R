@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -55,3 +55,25 @@ fit <- abc(model = model,
            tolerance = c(0.1, 0.05))
 fit
 summary(fit)
+
+storage.mode(fit@x) <- "character"
+stopifnot(identical(SimInf:::valid_SimInf_abc_object(fit),
+                    "The storage mode of 'x' must be double."))
+storage.mode(fit@x) <- "numeric"
+
+storage.mode(fit@distance) <- "character"
+stopifnot(identical(SimInf:::valid_SimInf_abc_object(fit),
+                    "The storage mode of 'distance' must be double."))
+storage.mode(fit@distance) <- "numeric"
+
+storage.mode(fit@tolerance) <- "character"
+stopifnot(identical(SimInf:::valid_SimInf_abc_object(fit),
+                    "The storage mode of 'tolerance' must be double."))
+storage.mode(fit@tolerance) <- "numeric"
+
+storage.mode(fit@weight) <- "character"
+stopifnot(identical(SimInf:::valid_SimInf_abc_object(fit),
+                    "The storage mode of 'weight' must be double."))
+storage.mode(fit@weight) <- "numeric"
+
+stopifnot(isTRUE(SimInf:::valid_SimInf_abc_object(fit)))
