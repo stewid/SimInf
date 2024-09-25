@@ -357,21 +357,9 @@ get_initial_covmat <- function(x) {
 
 ##' @noRd
 pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
-                           scale_start, shape_start, scale_cooling,
-                           max_scaling) {
+                           scale_start) {
     if (runif(1) < x@adaptmix || i <= scale_start || n_accepted == 0) {
         covmat <- get_initial_covmat(x)
-    } else if (n_accepted < shape_start) {
-        scaling <- 1
-        target <- ifelse(n_pars(x) == 1L, 0.44, 0.234)
-
-        for (k in seq(from = scale_start, to = i - 1L)) {
-            l <- scale_cooling^(k - scale_start)
-            m <- mean(x@chain[seq_len(k), "accept"]) - target
-            scaling <- min(scaling * exp(l * m), max_scaling)
-        }
-
-        covmat <- scaling^2 * get_initial_covmat(x)
     } else {
         covmat <- 2.38^2 / n_pars(x) * covmat_emp
     }
@@ -438,44 +426,6 @@ get_scale_start <- function(scale_start, object) {
     scale_start
 }
 
-get_shape_start <- function(shape_start) {
-    if (is.null(shape_start))
-        shape_start <- 0L
-
-    check_integer_arg(shape_start)
-    shape_start <- as.integer(shape_start)
-    if (any(length(shape_start) != 1L, any(shape_start < 0L)))
-        stop("'shape_start' must be an integer >= 0.", call. = FALSE)
-
-    shape_start
-}
-
-get_scale_cooling <- function(scale_cooling) {
-    if (is.null(scale_cooling))
-        scale_cooling <- 0.999
-
-    check_numeric_arg(scale_cooling)
-    scale_cooling <- as.numeric(scale_cooling)
-    if (any(length(scale_cooling) != 1L,
-            any(scale_cooling <= 0),
-            any(scale_cooling > 1))) {
-        stop("'scale_cooling' must be a numeric value in (0, 1].",
-             call. = FALSE)
-    }
-
-    scale_cooling
-}
-
-get_max_scaling <- function(max_scaling) {
-    if (is.null(max_scaling))
-        max_scaling <- 50
-
-    check_numeric_arg(max_scaling)
-    max_scaling <- as.numeric(max_scaling)
-
-    max_scaling
-}
-
 ##' @rdname continue
 ##' @template niter-param
 ##' @param ... Unused additional arguments.
@@ -490,7 +440,6 @@ setMethod(
 
         argv <- list(...)
         scale_start <- get_scale_start(argv$scale_start, object)
-        shape_start <- get_shape_start(argv$shape_start)
 
         check_integer_arg(niter)
         niter <- as.integer(niter)
@@ -547,8 +496,7 @@ setMethod(
                                        n_accepted = n_accepted,
                                        theta_mean = theta_mean,
                                        covmat_emp = covmat_emp,
-                                       scale_start = scale_start,
-                                       shape_start = shape_start)
+                                       scale_start = scale_start)
             theta_mean <- proposal$theta_mean
             covmat_emp <- proposal$covmat_emp
             logPrior_prop <- dpriors(proposal$theta, object@priors)

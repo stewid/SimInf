@@ -227,8 +227,9 @@ stopifnot(identical(summary_observed, summary_expected))
 
 stopifnot(all(is.na(SimInf:::setup_chain(fit, 5)[6:10, ])))
 
+set.seed(123)
 proposal_exp <- list(
-    theta = c(beta = 0.805085162476816, gamma = 0.672626293669262),
+    theta = c(beta = 0.941752495232583, gamma = 0.683261306583403),
     theta_mean = c(beta = 0.818561741932892, gamma = 0.632232762500019),
     covmat_emp = structure(c(0.00299324946584347, 0.000468732158843136,
                              0.000468732158843136, 0.000246502076160179),
@@ -240,32 +241,7 @@ covmat_emp <- SimInf:::covmat_empirical(fit, 5)
 proposal_obs <- SimInf:::pmcmc_proposal(fit, i = 6, n_accepted = 2,
                                         theta_mean = theta_mean,
                                         covmat_emp = covmat_emp,
-                                        scale_start = 5,
-                                        shape_start = 200,
-                                        scale_cooling = 0.999,
-                                        max_scaling = 50)
-
-stopifnot(all(abs(proposal_exp$theta - proposal_obs$theta) < tol))
-stopifnot(all(abs(proposal_exp$theta_mean - proposal_obs$theta_mean) < tol))
-stopifnot(all(abs(proposal_exp$covmat_emp - proposal_obs$covmat_emp) < tol))
-
-proposal_exp <- list(
-    theta = c(beta = 0.832033430879964, gamma = 0.640270855570007),
-    theta_mean = c(beta = 0.818561741932892, gamma = 0.632232762500019),
-    covmat_emp = structure(c(0.00299324946584347, 0.000468732158843136,
-                             0.000468732158843136, 0.000246502076160179),
-                           dim = c(2L, 2L),
-                           dimnames = list(c("beta", "gamma"),
-                                           c("beta", "gamma"))))
-theta_mean <- colMeans(fit@chain[seq_len(5), 5:6, drop = FALSE])
-covmat_emp <- SimInf:::covmat_empirical(fit, 5)
-proposal_obs <- SimInf:::pmcmc_proposal(fit, i = 6, n_accepted = 2,
-                                        theta_mean = theta_mean,
-                                        covmat_emp = covmat_emp,
-                                        scale_start = 5,
-                                        shape_start = 2,
-                                        scale_cooling = 0.999,
-                                        max_scaling = 50)
+                                        scale_start = 5)
 
 stopifnot(all(abs(proposal_exp$theta - proposal_obs$theta) < tol))
 stopifnot(all(abs(proposal_exp$theta_mean - proposal_obs$theta_mean) < tol))
