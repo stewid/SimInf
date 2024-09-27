@@ -356,9 +356,8 @@ get_theta <- function(x, i) {
 }
 
 ##' @noRd
-pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
-                           scale_start) {
-    if (runif(1) < x@adaptmix || i <= scale_start || n_accepted == 0) {
+pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp) {
+    if (runif(1) < x@adaptmix || i <= 100L || n_accepted == 0) {
         covmat <- x@covmat
     } else {
         covmat <- 2.38^2 / n_pars(x) * covmat_emp
@@ -414,18 +413,6 @@ get_verbose <- function(verbose) {
     NULL
 }
 
-get_scale_start <- function(scale_start, object) {
-    if (is.null(scale_start))
-        scale_start <- 2 * n_pars(object)
-
-    check_integer_arg(scale_start)
-    scale_start <- as.integer(scale_start)
-    if (any(length(scale_start) != 1L, any(scale_start <= 0L)))
-        stop("'scale_start' must be an integer > 0.", call. = FALSE)
-
-    scale_start
-}
-
 ##' @rdname continue
 ##' @template niter-param
 ##' @param ... Unused additional arguments.
@@ -437,9 +424,6 @@ setMethod(
     function(object, niter, ...,
              verbose = getOption("verbose", FALSE)) {
         methods::validObject(object)
-
-        argv <- list(...)
-        scale_start <- get_scale_start(argv$scale_start, object)
 
         check_integer_arg(niter)
         niter <- as.integer(niter)
@@ -471,8 +455,7 @@ setMethod(
                                        i = i,
                                        n_accepted = n_accepted,
                                        theta_mean = theta_mean,
-                                       covmat_emp = covmat_emp,
-                                       scale_start = scale_start)
+                                       covmat_emp = covmat_emp)
             theta_mean <- proposal$theta_mean
             covmat_emp <- proposal$covmat_emp
             logPrior_prop <- dpriors(proposal$theta, object@priors)
