@@ -36,6 +36,8 @@
 ##'     \code{logLik}, \code{logPrior}, \code{accept}, and the
 ##'     \code{parameters} for each iteration.
 ##' @slot pf List with the filtered trajectory from each iteration.
+##' @slot covmat A named numeric \code{(npars x npars)} matrix with
+##'     covariances to use as initial proposal matrix.
 ##' @slot adaptmix Mixing proportion for adaptive proposal.
 ##' @export
 setClass(
@@ -50,6 +52,7 @@ setClass(
               data        = "data.frame",
               chain       = "matrix",
               pf          = "ANY",
+              covmat      = "matrix",
               adaptmix    = "numeric")
 )
 
