@@ -209,10 +209,13 @@ setMethod(
              adaptmix, init_model, record, verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
-        if (any(length(npart) != 1L,
-                any(npart <= 1L))) {
+        if (any(length(npart) != 1L, any(npart <= 1L)))
             stop("'npart' must be an integer > 1.", call. = FALSE)
-        }
+
+        check_integer_arg(niter)
+        niter <- as.integer(niter)
+        if (any(length(niter) != 1L, any(niter <= 0L)))
+            stop("'niter' must be an integer > 0.", call. = FALSE)
 
         adaptmix <- as.numeric(adaptmix)
         if (any(length(adaptmix) != 1L,
@@ -240,51 +243,44 @@ setMethod(
                       init_model = init_model, pf = pf, data = data,
                       npart = npart, adaptmix = adaptmix)
 
-        if (!is.null(theta)) {
-            check_integer_arg(niter)
-            niter <- as.integer(niter)
-            if (any(length(niter) != 1L,
-                    any(niter <= 0L))) {
-                stop("'niter' must be an integer > 0.", call. = FALSE)
-            }
-
-            if (!all(is.atomic(theta),
-                     is.numeric(theta),
-                     all(priors$parameter %in% names(theta)))) {
-                stop("'theta' must be a vector with initial ",
-                     "values for the parameters.",
-                     call. = FALSE)
-            }
-            theta <- theta[priors$parameter]
-
-            object@chain <- setup_chain(object, 1L)
-            object@pf <- setup_pf(object, 1L)
-
-            methods::slot(object@model, object@target) <-
-                set_proposal(object, theta)
-
-            if (is.function(object@init_model))
-                object@model <- object@init_model(object@model)
-
-            pf <- pfilter(object@model,
-                          obs_process = object@obs_process,
-                          object@data,
-                          npart = object@npart)
-
-            logLik <- pf@loglik
-            logPrior <- dpriors(theta, object@priors)
-            logPost <- logLik + logPrior
-            accept <- 0
-
-            ## Save current value of chain.
-            object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
-            if (!is.null(object@pf))
-                object@pf[[1]] <- pf
-
-            niter <- niter - 1L
-            if (niter == 0)
-                return(object)
+        if (is.null(theta))
+            theta <- rpriors(object@priors)
+        if (!all(is.atomic(theta),
+                 is.numeric(theta),
+                 all(object@priors$parameter %in% names(theta)))) {
+            stop("'theta' must be a vector with initial ",
+                 "values for the parameters.",
+                 call. = FALSE)
         }
+        theta <- theta[object@priors$parameter]
+
+        object@chain <- setup_chain(object, 1L)
+        object@pf <- setup_pf(object, 1L)
+
+        methods::slot(object@model, object@target) <-
+            set_proposal(object, theta)
+
+        if (is.function(object@init_model))
+            object@model <- object@init_model(object@model)
+
+        pf <- pfilter(object@model,
+                      obs_process = object@obs_process,
+                      object@data,
+                      npart = object@npart)
+
+        logLik <- pf@loglik
+        logPrior <- dpriors(theta, object@priors)
+        logPost <- logLik + logPrior
+        accept <- 0
+
+        ## Save current value of chain.
+        object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
+        if (!is.null(object@pf))
+            object@pf[[1]] <- pf
+
+        niter <- niter - 1L
+        if (niter == 0)
+            return(object)
 
         continue(object, niter = niter, verbose = verbose)
     }
@@ -450,30 +446,6 @@ setMethod(
         iterations <- length(object) + seq_len(niter)
         object@chain <- setup_chain(object, niter)
         object@pf <- setup_pf(object, niter)
-
-        if (iterations[1] == 1) {
-            iterations <- iterations[-1]
-
-            theta <- rpriors(object@priors)
-            methods::slot(object@model, object@target) <-
-                set_proposal(object, theta)
-
-            if (is.function(object@init_model))
-                object@model <- object@init_model(object@model)
-
-            pf <- pfilter(object@model, object@obs_process,
-                          object@data, object@npart)
-
-            logLik <- pf@loglik
-            logPrior <- dpriors(theta, object@priors)
-            logPost <- logLik + logPrior
-            accept <- 0
-
-            ## Save current value of chain.
-            object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
-            if (!is.null(object@pf))
-                object@pf[[1]] <- pf
-        }
 
         ## Continue from the last iteration in the chain.
         i <- iterations[1] - 1
