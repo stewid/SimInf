@@ -240,22 +240,27 @@ setMethod(
         priors <- parse_priors(priors)
         pars <- match_priors(model, priors)
 
-        object <- new("SimInf_pmcmc", model = model, priors = priors,
-                      target = pars$target, pars = pars$pars,
-                      obs_process = obs_process,
-                      init_model = init_model, pf = pf, data = data,
-                      npart = npart, adaptmix = adaptmix)
-
         if (is.null(theta))
-            theta <- rpriors(object@priors)
+            theta <- rpriors(priors)
         if (!all(is.atomic(theta),
                  is.numeric(theta),
-                 all(object@priors$parameter %in% names(theta)))) {
+                 all(priors$parameter %in% names(theta)))) {
             stop("'theta' must be a vector with initial ",
                  "values for the parameters.",
                  call. = FALSE)
         }
-        theta <- theta[object@priors$parameter]
+        theta <- theta[priors$parameter]
+
+        covmat <- diag((theta / 10)^2 / length(theta), nrow = length(theta))
+        colnames(covmat) <- names(theta)
+        rownames(covmat) <- names(theta)
+
+        object <- new("SimInf_pmcmc", model = model, priors = priors,
+                      target = pars$target, pars = pars$pars,
+                      obs_process = obs_process,
+                      init_model = init_model, pf = pf, data = data,
+                      npart = npart, covmat = covmat,
+                      adaptmix = adaptmix)
 
         object@chain <- setup_chain(object, 1L)
         object@pf <- setup_pf(object, 1L)
@@ -350,15 +355,11 @@ get_theta <- function(x, i) {
     x@chain[i, j]
 }
 
-get_initial_covmat <- function(x) {
-    diag((get_theta(x, 1) / 10)^2 / n_pars(x), nrow = n_pars(x))
-}
-
 ##' @noRd
 pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp,
                            scale_start) {
     if (runif(1) < x@adaptmix || i <= scale_start || n_accepted == 0) {
-        covmat <- get_initial_covmat(x)
+        covmat <- x@covmat
     } else {
         covmat <- 2.38^2 / n_pars(x) * covmat_emp
     }
