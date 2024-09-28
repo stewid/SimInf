@@ -191,7 +191,8 @@ setMethod(
 ##'     a value between zero and one. Default is \code{adaptmix =
 ##'     0.05}.
 ##' @param adaptive Controls when to start adaptive update. Must be
-##'     greater or equal to zero. Default is \code{adaptive = 100}.
+##'     greater or equal to zero. If \code{adaptive=0}, then adaptive
+##'     update is not performed. Default is \code{adaptive = 100}.
 ##' @param init_model FIXME.
 ##' @param record FIXME
 ##' @template verbose-param-pmcmc

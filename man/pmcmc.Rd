@@ -13,7 +13,9 @@ pmcmc(
   npart,
   niter,
   theta = NULL,
+  covmat = NULL,
   adaptmix = 0.05,
+  adaptive = 100,
   init_model = NULL,
   record = TRUE,
   verbose = getOption("verbose", FALSE)
@@ -27,7 +29,9 @@ pmcmc(
   npart,
   niter,
   theta = NULL,
+  covmat = NULL,
   adaptmix = 0.05,
+  adaptive = 100,
   init_model = NULL,
   record = TRUE,
   verbose = getOption("verbose", FALSE)
@@ -79,8 +83,17 @@ the PMCMC.}
 of the model.  Default is \code{NULL}, and then these are
 sampled from the prior distribution(s).}
 
+\item{covmat}{A named numeric \code{(npars x npars)} matrix with
+covariances to use as initial proposal matrix. If left
+unspecified then defaults to \code{diag((theta/10)^2/npars)}.}
+
 \item{adaptmix}{Mixing proportion for adaptive proposal.  Must be
-a value between zero and one.}
+a value between zero and one. Default is \code{adaptmix =
+0.05}.}
+
+\item{adaptive}{Controls when to start adaptive update. Must be
+greater or equal to zero. If \code{adaptive=0}, then adaptive
+update is not performed. Default is \code{adaptive = 100}.}
 
 \item{init_model}{FIXME.}
 
