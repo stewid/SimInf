@@ -184,8 +184,14 @@ setMethod(
 ##' @param theta A named vector of initial values for the parameters
 ##'     of the model.  Default is \code{NULL}, and then these are
 ##'     sampled from the prior distribution(s).
+##' @param covmat A named numeric \code{(npars x npars)} matrix with
+##'     covariances to use as initial proposal matrix. If left
+##'     unspecified then defaults to \code{diag((theta/10)^2/npars)}.
 ##' @param adaptmix Mixing proportion for adaptive proposal.  Must be
-##'     a value between zero and one.
+##'     a value between zero and one. Default is \code{adaptmix =
+##'     0.05}.
+##' @param adaptive Controls when to start adaptive update. Must be
+##'     greater or equal to zero. Default is \code{adaptive = 100}.
 ##' @param init_model FIXME.
 ##' @param record FIXME
 ##' @template verbose-param-pmcmc
@@ -199,8 +205,9 @@ setGeneric(
     "pmcmc",
     signature = "model",
     function(model, obs_process, data, priors, npart, niter,
-             theta = NULL, adaptmix = 0.05, init_model = NULL,
-             record = TRUE, verbose = getOption("verbose", FALSE)) {
+             theta = NULL, covmat = NULL, adaptmix = 0.05,
+             adaptive = 100, init_model = NULL, record = TRUE,
+             verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
 )
@@ -211,7 +218,7 @@ setMethod(
     "pmcmc",
     signature(model = "SimInf_model"),
     function(model, obs_process, data, priors, npart, niter, theta,
-             adaptmix, init_model, record, verbose) {
+             covmat, adaptmix, adaptive, init_model, record, verbose) {
         check_integer_arg(npart)
         npart <- as.integer(npart)
         if (any(length(npart) != 1L, any(npart <= 1L)))
@@ -228,6 +235,11 @@ setMethod(
                 any(adaptmix >= 1))) {
             stop("'adaptmix' must be a value > 0 and < 1.", call. = FALSE)
         }
+
+        check_integer_arg(adaptive)
+        adaptive <- as.integer(adaptive)
+        if (any(length(adaptive) != 1L, any(adaptive < 0L)))
+            stop("'adaptive' must be an integer >= 0.", call. = FALSE)
 
         if (!is.null(init_model))
             init_model <- match.fun(init_model)
@@ -253,16 +265,19 @@ setMethod(
         }
         theta <- theta[priors$parameter]
 
-        covmat <- diag((theta / 10)^2 / length(theta), nrow = length(theta))
-        colnames(covmat) <- names(theta)
-        rownames(covmat) <- names(theta)
+        if (is.null(covmat)) {
+            covmat <- diag(((theta / 10)^2) / length(theta),
+                           nrow = length(theta))
+            colnames(covmat) <- names(theta)
+            rownames(covmat) <- names(theta)
+        }
 
         object <- new("SimInf_pmcmc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars,
                       obs_process = obs_process,
                       init_model = init_model, pf = pf, data = data,
                       npart = npart, covmat = covmat,
-                      adaptmix = adaptmix)
+                      adaptmix = adaptmix, adaptive = adaptive)
 
         object@chain <- setup_chain(object, 1L)
         object@pf <- setup_pf(object, 1L)
@@ -359,7 +374,10 @@ get_theta <- function(x, i) {
 
 ##' @noRd
 pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp) {
-    if (runif(1) < x@adaptmix || i <= 100L || n_accepted == 0) {
+    if (x@adaptive == 0L ||
+        i <= x@adaptive ||
+        n_accepted == 0 ||
+        runif(1) < x@adaptmix) {
         covmat <- x@covmat
     } else {
         covmat <- 2.38^2 / n_pars(x) * covmat_emp
