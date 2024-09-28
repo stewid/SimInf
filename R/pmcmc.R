@@ -39,6 +39,7 @@
 ##' @slot covmat A named numeric \code{(npars x npars)} matrix with
 ##'     covariances to use as initial proposal matrix.
 ##' @slot adaptmix Mixing proportion for adaptive proposal.
+##' @slot adaptive Controls when to start adaptive update.
 ##' @export
 setClass(
     "SimInf_pmcmc",
@@ -53,7 +54,8 @@ setClass(
               chain       = "matrix",
               pf          = "ANY",
               covmat      = "matrix",
-              adaptmix    = "numeric")
+              adaptmix    = "numeric",
+              adaptive    = "integer")
 )
 
 ##' Check if a SimInf_pmcmc object is valid
