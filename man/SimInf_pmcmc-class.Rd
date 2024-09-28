@@ -49,6 +49,11 @@ the observation process.}
 
 \item{\code{pf}}{List with the filtered trajectory from each iteration.}
 
+\item{\code{covmat}}{A named numeric \code{(npars x npars)} matrix with
+covariances to use as initial proposal matrix.}
+
 \item{\code{adaptmix}}{Mixing proportion for adaptive proposal.}
+
+\item{\code{adaptive}}{Controls when to start adaptive update.}
 }}
 
