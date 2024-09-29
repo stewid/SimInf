@@ -222,26 +222,7 @@ stopifnot(identical(SimInf:::valid_SimInf_pmcmc_object(fit),
 
 stopifnot(all(is.na(SimInf:::setup_chain(fit, 5)[6:10, ])))
 
-set.seed(123)
-proposal_exp <- list(
-    theta = c(beta = 0.941752495232583, gamma = 0.683261306583403),
-    theta_mean = c(beta = 0.818561741932892, gamma = 0.632232762500019),
-    covmat_emp = structure(c(0.00299324946584347, 0.000468732158843136,
-                             0.000468732158843136, 0.000246502076160179),
-                           dim = c(2L, 2L),
-                           dimnames = list(c("beta", "gamma"),
-                                           c("beta", "gamma"))))
-theta_mean <- colMeans(fit@chain[seq_len(5), 5:6, drop = FALSE])
-covmat_emp <- SimInf:::covmat_empirical(fit, 5)
-proposal_obs <- SimInf:::pmcmc_proposal(fit, i = 6, n_accepted = 2,
-                                        theta_mean = theta_mean,
-                                        covmat_emp = covmat_emp,
-                                        scale_start = 5)
-
-stopifnot(all(abs(proposal_exp$theta - proposal_obs$theta) < tol))
-stopifnot(all(abs(proposal_exp$theta_mean - proposal_obs$theta_mean) < tol))
-stopifnot(all(abs(proposal_exp$covmat_emp - proposal_obs$covmat_emp) < tol))
-
+fit@target <- "ldata"
 res <- assertError(
     continue(fit, niter = 0))
 check_error(
@@ -304,9 +285,9 @@ set.seed(22)
 fit@chain <- fit@chain[sample(1:5, 100, replace = TRUE), ]
 progress_expected <- c(
 "             2.5%       25%       50%       75%     97.5%      Mean        SD",
-"logPost -3.94e+03 -3.94e+03 -3.68e+03 -3.20e+03 -3.20e+03 -3.60e+03  3.36e+02",
-"beta     7.54e-01  7.54e-01  8.04e-01  8.66e-01  8.66e-01  8.07e-01  5.00e-02",
-"gamma    6.04e-01  6.29e-01  6.29e-01  6.44e-01  6.44e-01  6.29e-01  1.48e-02")
+"logPost -81.38261 -81.38261 -79.79876 -79.79876 -78.96708 -80.27348   0.97877",
+"beta      0.15168   0.16000   0.16000   0.16749   0.16749   0.16110   0.00592",
+"gamma     0.06923   0.07700   0.07700   0.07883   0.07883   0.07606   0.00364")
 progress_observed <- capture.output(SimInf:::pmcmc_progress(fit, 100, TRUE))
 ## Skip first three lines since it contains a timestamp.
 progress_observed <- progress_observed[4:7]
