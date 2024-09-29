@@ -160,24 +160,46 @@ fit <- pmcmc(model,
              infected,
              priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
              npart = 10,
-             niter = 1,
+             niter = 5,
              theta = c(beta = 0.16, gamma = 0.077))
 
 show_expected <- c(
     "Particle Markov chain Monte Carlo",
     "---------------------------------",
-    "Number of iterations: 1",
+    "Number of iterations: 5",
     "Number of particles: 10",
     "Mixing proportion for adaptive proposal: 0.05",
-    "Acceptance ratio: 0.000",
+    "Acceptance ratio: 0.400",
     "",
     "Quantiles, mean and standard deviation for each variable",
     "--------------------------------------------------------",
-    "       2.5%   25%   50%   75% 97.5%  Mean SD",
-    "beta  0.160 0.160 0.160 0.160 0.160 0.160   ",
-    "gamma 0.077 0.077 0.077 0.077 0.077 0.077   ")
+    "         2.5%     25%     50%     75%   97.5%    Mean      SD",
+    "beta  0.15252 0.16000 0.16000 0.16749 0.16749 0.16133 0.00657",
+    "gamma 0.07000 0.07700 0.07700 0.07883 0.07883 0.07618 0.00399")
 show_observed <- capture.output(show(fit))
 stopifnot(identical(show_observed, show_expected))
+
+summary_expected <- c(
+    "Particle Markov chain Monte Carlo",
+    "---------------------------------",
+    "Number of iterations: 5",
+    "Number of particles: 10",
+    "Acceptance ratio: 0.400",
+    "Model: SIR",
+    "Number of nodes: 1",
+    "",
+    "Transitions",
+    "-----------",
+    " S -> beta*S*I/(S+I+R) -> I",
+    " I -> gamma*I -> R",
+    "",
+    "Quantiles, mean and standard deviation for each variable",
+    "--------------------------------------------------------",
+    "         2.5%     25%     50%     75%   97.5%    Mean      SD",
+    "beta  0.15252 0.16000 0.16000 0.16749 0.16749 0.16133 0.00657",
+    "gamma 0.07000 0.07700 0.07700 0.07883 0.07883 0.07618 0.00399")
+summary_observed <- capture.output(summary(fit))
+stopifnot(identical(summary_observed, summary_expected))
 
 stopifnot(isTRUE(SimInf:::valid_SimInf_pmcmc_object(fit)))
 
@@ -197,33 +219,6 @@ fit@adaptmix <- 0.05
 fit@target <- "test"
 stopifnot(identical(SimInf:::valid_SimInf_pmcmc_object(fit),
                     "'target' must be 'gdata' or 'ldata'."))
-
-fit <- pmcmc(model,
-             Iobs ~ poisson(I + 1e-6),
-             infected,
-             priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-             npart = 10,
-             niter = 5)
-summary_expected <- c(
-    "Particle Markov chain Monte Carlo",
-    "---------------------------------",
-    "Number of iterations: 5",
-    "Number of particles: 10",
-    "Acceptance ratio: 0.400",
-    "Model: SIR", "Number of nodes: 1",
-    "",
-    "Transitions",
-    "-----------",
-    " S -> beta*S*I/(S+I+R) -> I",
-    " I -> gamma*I -> R",
-    "",
-    "Quantiles, mean and standard deviation for each variable",
-    "--------------------------------------------------------",
-    "        2.5%    25%    50%    75%  97.5%   Mean     SD",
-    "beta  0.7545 0.7545 0.8035 0.8663 0.8663 0.8090 0.0560",
-    "gamma 0.6062 0.6292 0.6292 0.6438 0.6438 0.6299 0.0164")
-summary_observed <- capture.output(summary(fit))
-stopifnot(identical(summary_observed, summary_expected))
 
 stopifnot(all(is.na(SimInf:::setup_chain(fit, 5)[6:10, ])))
 
