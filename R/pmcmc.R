@@ -220,10 +220,7 @@ setMethod(
     signature(model = "SimInf_model"),
     function(model, obs_process, data, priors, npart, niter, theta,
              covmat, adaptmix, adaptive, init_model, record, verbose) {
-        check_integer_arg(npart)
-        npart <- as.integer(npart)
-        if (any(length(npart) != 1L, any(npart <= 1L)))
-            stop("'npart' must be an integer > 1.", call. = FALSE)
+        npart <- check_npart(npart)
 
         check_integer_arg(niter)
         niter <- as.integer(niter)
