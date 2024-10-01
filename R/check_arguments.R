@@ -382,3 +382,13 @@ check_target <- function(target, age) {
 
     stop("Invalid 'age' for 'target' model.", call. = FALSE)
 }
+
+##' Validate the number of particles.
+##' @noRd
+check_npart <- function(npart) {
+    check_integer_arg(npart)
+    npart <- as.integer(npart)
+    if (length(npart) != 1L || npart <= 1L)
+        stop("'npart' must be an integer > 1.", call. = FALSE)
+    npart
+}
