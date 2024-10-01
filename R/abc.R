@@ -788,10 +788,7 @@ setMethod(
     signature(model = "SimInf_model"),
     function(model, priors, npart, ninit, distance, tolerance, ...,
              verbose, post_gen) {
-        check_integer_arg(npart)
-        npart <- as.integer(npart)
-        if (length(npart) != 1L || npart <= 1L)
-            stop("'npart' must be an integer > 1.", call. = FALSE)
+        npart <- check_npart(npart)
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
