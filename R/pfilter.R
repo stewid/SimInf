@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -85,16 +85,6 @@ setMethod(
         invisible(NULL)
     }
 )
-
-##' Validate the number of particles.
-##' @noRd
-pfilter_npart <- function(npart) {
-    check_integer_arg(npart)
-    npart <- as.integer(npart)
-    if (length(npart) != 1L || npart <= 1L)
-        stop("'npart' must be an integer > 1.", call. = FALSE)
-    npart
-}
 
 ##' Split data into intervals.
 ##'
@@ -540,7 +530,7 @@ setMethod(
     "pfilter",
     signature(model = "SimInf_model"),
     function(model, obs_process, data, npart) {
-        npart <- pfilter_npart(npart)
+        npart <- check_npart(npart)
         data <- pfilter_data(model, data)
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]
