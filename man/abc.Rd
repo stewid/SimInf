@@ -40,9 +40,9 @@ uniform(0, 1)} specifies that beta is uniformly distributed
 between 0 and 1. Use \code{c()} to provide more than one
 prior, for example, \code{c(beta ~ uniform(0, 1), gamma ~
 normal(10, 1))}. The following distributions are supported:
-\code{gamma}, \code{normal} and \code{uniform}. All parameters
-in \code{priors} must be only in either \code{gdata} or
-\code{ldata}.}
+\code{gamma}, \code{lognormal}, \code{normal} and
+\code{uniform}. All parameters in \code{priors} must be only
+in either \code{gdata} or \code{ldata}.}
 
 \item{npart}{An integer \code{(>1)} specifying the number of
 particles to approximate the posterior with.}
