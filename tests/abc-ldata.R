@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -194,7 +194,7 @@ fit
 summary(fit)
 as.data.frame(fit)
 
-fit <- continue(fit, tolerance = 200000, verbose = TRUE)
+fit <- continue_abc(fit, tolerance = 200000, verbose = TRUE)
 
 pdf_file <- tempfile(fileext = ".pdf")
 pdf(pdf_file)

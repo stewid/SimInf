@@ -40,6 +40,7 @@
 ##'     covariances to use as initial proposal matrix.
 ##' @slot adaptmix Mixing proportion for adaptive proposal.
 ##' @slot adaptive Controls when to start adaptive update.
+##' @seealso \code{\link{pmcmc}} and \code{\link{continue_pmcmc}}.
 ##' @export
 setClass(
     "SimInf_pmcmc",
@@ -202,6 +203,7 @@ setMethod(
 ##'
 ##' \Roberts2009
 ##' @export
+##' @seealso \code{\link{continue_pmcmc}}.
 setGeneric(
     "pmcmc",
     signature = "model",
@@ -431,13 +433,25 @@ get_verbose <- function(verbose) {
     NULL
 }
 
-##' @rdname continue
+##' Run more iterations of PMCMC
+##'
+##' @param object The \code{SimInf_pmcmc} object to continue from.
 ##' @template niter-param
 ##' @param ... Unused additional arguments.
 ##' @template verbose-param-pmcmc
 ##' @export
+setGeneric(
+    "continue_pmcmc",
+    signature = "object",
+    function(object, ...) {
+        standardGeneric("continue_pmcmc")
+    }
+)
+
+##' @rdname continue_pmcmc
+##' @export
 setMethod(
-    "continue",
+    "continue_pmcmc",
     signature(object = "SimInf_pmcmc"),
     function(object, niter, ...,
              verbose = getOption("verbose", FALSE)) {

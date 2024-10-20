@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -60,6 +60,17 @@ check_error(res, "Invalid formula specification for normal distribution.")
 
 res <- assertError(SimInf:::parse_priors(beta ~ normal(0, -1)))
 check_error(res, "Invalid distribution: normal variance must be >= 0.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ lognormal(1)))
+check_error(res, "Invalid formula specification for lognormal distribution.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ lognormal(NA, 1)))
+check_error(res, "Invalid formula specification for lognormal distribution.")
+
+res <- assertError(SimInf:::parse_priors(beta ~ lognormal(0, -1)))
+check_error(
+    res,
+    "Invalid distribution: lognormal standard deviation must be >= 0.")
 
 res <- assertError(SimInf:::parse_priors(beta ~ poisson(1, 2)))
 check_error(res, "Invalid formula specification for poisson distribution.")

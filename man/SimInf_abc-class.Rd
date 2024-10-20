@@ -20,11 +20,12 @@ parameter referred to in the model. The column
 \code{distribution} contains the name of the prior
 distribution. Valid distributions are 'gamma', 'normal' or
 'uniform'. The column \code{p1} is a numeric vector with the
-first hyperparameter for each prior: 'gamma') shape, 'normal')
-mean, and 'uniform') lower bound. The column \code{p2} is a
-numeric vector with the second hyperparameter for each prior:
-'gamma') rate, 'normal') standard deviation, and 'uniform')
-upper bound.}
+first hyperparameter for each prior: 'gamma') shape,
+'lognormal') logmean, 'normal') mean, and 'uniform') lower
+bound. The column \code{p2} is a numeric vector with the
+second hyperparameter for each prior: 'gamma') rate,
+'lognormal') standard deviation on the log scale, 'normal')
+standard deviation, and 'uniform') upper bound.}
 
 \item{\code{target}}{Character vector (\code{gdata} or \code{ldata}) that
 determines if the ABC-SMC method estimates parameters in
@@ -67,5 +68,5 @@ normalized weight of particle \eqn{i} in generation \eqn{g}.}
 }}
 
 \seealso{
-\code{\link{abc}} and \code{\link{continue}}.
+\code{\link{abc}} and \code{\link{continue_abc}}.
 }

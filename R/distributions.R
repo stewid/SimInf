@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -55,6 +55,19 @@ check_gamma_distribution <- function(hyperparameters, symbols) {
     }
 }
 
+check_lognormal_distribution <- function(hyperparameters, symbols) {
+    if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
+        stop("Invalid formula specification for lognormal distribution.",
+             call. = FALSE)
+    }
+
+    if (is.null(symbols) && hyperparameters[2] < 0) {
+        stop("Invalid distribution: ",
+             "lognormal standard deviation must be >= 0.",
+             call. = FALSE)
+    }
+}
+
 check_normal_distribution <- function(hyperparameters, symbols) {
     if (length(hyperparameters) != 2 || anyNA(hyperparameters)) {
         stop("Invalid formula specification for normal distribution.",
@@ -103,6 +116,9 @@ check_hyperparameters <- function(distribution, hyperparameters, symbols) {
            },
            gamma = {
                check_gamma_distribution(hyperparameters, symbols)
+           },
+           lognormal = {
+               check_lognormal_distribution(hyperparameters, symbols)
            },
            normal = {
                check_normal_distribution(hyperparameters, symbols)

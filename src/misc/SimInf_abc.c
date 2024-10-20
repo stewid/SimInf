@@ -2,7 +2,7 @@
  * This file is part of SimInf, a framework for stochastic
  * disease spread simulations.
  *
- * Copyright (C) 2015 -- 2023 Stefan Widgren
+ * Copyright (C) 2015 -- 2024 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,6 +142,9 @@ SimInf_abc_proposals(
                     ptr_xx[d * n_proposals + i] =
                         rgamma(ptr_p1[d], 1.0 / ptr_p2[d]);
                     break;
+                case 'l':
+                    ptr_xx[d * n_proposals + i] = rlnorm(ptr_p1[d], ptr_p2[d]);
+                    break;
                 case 'n':
                     ptr_xx[d * n_proposals + i] = rnorm(ptr_p1[d], ptr_p2[d]);
                     break;
@@ -223,6 +226,12 @@ SimInf_abc_proposals(
                     density = dgamma(ptr_xx[d * n_proposals + i],
                                      ptr_p1[d],
                                      1.0 / ptr_p2[d],
+                                     0);
+                    break;
+                case 'l':
+                    density = dlnorm(ptr_xx[d * n_proposals + i],
+                                     ptr_x[d * len + j],
+                                     ptr_p2[d],
                                      0);
                     break;
                 case 'n':
@@ -342,6 +351,12 @@ SimInf_abc_weights(
                 ptr_ww[i] += dgamma(ptr_xx[d * n_particles + i],
                                     ptr_p1[d],
                                     1.0 / ptr_p2[d],
+                                    1);
+                break;
+            case 'l':
+                ptr_ww[i] += dlnorm(ptr_xx[d * n_particles + i],
+                                    ptr_x[d * n_particles + i],
+                                    ptr_p2[d],
                                     1);
                 break;
             case 'n':

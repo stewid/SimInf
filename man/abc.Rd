@@ -14,7 +14,8 @@ abc(
   tolerance = NULL,
   ...,
   verbose = getOption("verbose", FALSE),
-  post_gen = NULL
+  post_gen = NULL,
+  init_model = NULL
 )
 
 \S4method{abc}{SimInf_model}(
@@ -26,7 +27,8 @@ abc(
   tolerance = NULL,
   ...,
   verbose = getOption("verbose", FALSE),
-  post_gen = NULL
+  post_gen = NULL,
+  init_model = NULL
 )
 }
 \arguments{
@@ -38,9 +40,9 @@ uniform(0, 1)} specifies that beta is uniformly distributed
 between 0 and 1. Use \code{c()} to provide more than one
 prior, for example, \code{c(beta ~ uniform(0, 1), gamma ~
 normal(10, 1))}. The following distributions are supported:
-\code{gamma}, \code{normal} and \code{uniform}. All parameters
-in \code{priors} must be only in either \code{gdata} or
-\code{ldata}.}
+\code{gamma}, \code{lognormal}, \code{normal} and
+\code{uniform}. All parameters in \code{priors} must be only
+in either \code{gdata} or \code{ldata}.}
 
 \item{npart}{An integer \code{(>1)} specifying the number of
 particles to approximate the posterior with.}
@@ -102,6 +104,13 @@ after each completed generation. The function must accept one
 argument of type \code{SimInf_abc} with the current state of
 the fitting process. This function can be useful to, for
 example, save and inspect intermediate results.}
+
+\item{init_model}{An optional function that, if non-NULL, is
+applied before running each proposal. The function must accept
+one argument of type \code{SimInf_model} with the current
+model of the fitting process. This function can be useful to
+specify the initial state of \code{u0} or \code{v0} of the
+model before running a trajectory with proposed parameters.}
 }
 \value{
 A \code{SimInf_abc} object.
