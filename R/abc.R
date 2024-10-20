@@ -492,19 +492,20 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
     particle_i <- 0L
 
     while (particle_i < npart) {
-        tmp_model <- model
+        model_proposals <- model
         proposals <- .Call(SimInf_abc_proposals, priors$parameter,
                            priors$distribution, priors$p1, priors$p2,
                            1L, x, w, sigma)
         for (i in seq_len(ncol(proposals))) {
-            tmp_model@gdata[pars[i]] <- proposals[1L, i]
+            model_proposals@gdata[pars[i]] <- proposals[1L, i]
         }
 
         ## Handle the init_model callback.
         if (!is.null(init_model))
-            tmp_model <- init_model(tmp_model)
+            model_proposals <- init_model(model_proposals)
 
-        d <- abc_distance(fn(run(tmp_model), generation = generation, ...), 1L)
+        d <- abc_distance(
+            fn(run(model_proposals), generation = generation, ...), 1L)
         if (is.null(tolerance)) {
             ## Accept all particles if the tolerance is NULL, but make
             ## sure the dimension of tolerance and distance matches in
@@ -523,7 +524,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
             ## Collect accepted particle
             particle_i <- particle_i + 1L
             distance[particle_i, ] <- d
-            xx[particle_i, ] <- tmp_model@gdata[pars]
+            xx[particle_i, ] <- model_proposals@gdata[pars]
             ancestor[particle_i] <- attr(proposals, "ancestor")[1L]
         }
 
