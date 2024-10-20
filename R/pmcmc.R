@@ -307,7 +307,7 @@ setMethod(
         if (niter == 0)
             return(object)
 
-        continue(object, niter = niter, verbose = verbose)
+        continue_pmcmc(object, niter = niter, verbose = verbose)
     }
 )
 

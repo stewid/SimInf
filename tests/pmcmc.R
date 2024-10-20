@@ -224,13 +224,13 @@ stopifnot(all(is.na(SimInf:::setup_chain(fit, 5)[6:10, ])))
 
 fit@target <- "ldata"
 res <- assertError(
-    continue(fit, niter = 0))
+    continue_pmcmc(fit, niter = 0))
 check_error(
     res,
     "'niter' must be an integer > 0.")
 
 res <- assertError(
-    continue(fit, niter = 1:2))
+    continue_pmcmc(fit, niter = 1:2))
 check_error(
     res,
     "'niter' must be an integer > 0.")
