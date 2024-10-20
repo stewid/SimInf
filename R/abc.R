@@ -787,6 +787,7 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
 ##' \Simola2021
 ##' @include density_ratio.R
 ##' @export
+##' @seealso \code{\link{continue_abc}}.
 ##' @example man/examples/abc.R
 setGeneric(
     "abc",
