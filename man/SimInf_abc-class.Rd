@@ -68,5 +68,5 @@ normalized weight of particle \eqn{i} in generation \eqn{g}.}
 }}
 
 \seealso{
-\code{\link{abc}} and \code{\link{continue}}.
+\code{\link{abc}} and \code{\link{continue_abc}}.
 }

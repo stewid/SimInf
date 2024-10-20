@@ -51,7 +51,7 @@
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
 ##'     (sum(w_ig^2)),} where \eqn{w_{g}^{(i)}}{w_ig} is the
 ##'     normalized weight of particle \eqn{i} in generation \eqn{g}.
-##' @seealso \code{\link{abc}} and \code{\link{continue}}.
+##' @seealso \code{\link{abc}} and \code{\link{continue_abc}}.
 ##' @export
 setClass(
     "SimInf_abc",
@@ -839,7 +839,7 @@ setMethod(
 
 ##' Run more generations of ABC SMC
 ##'
-##' @param object The \code{SimInf_abc} to continue from.
+##' @param object The \code{SimInf_abc} object to continue from.
 ##' @param tolerance A numeric matrix (number of summary statistics
 ##'     \eqn{\times} number of generations) where each column contains
 ##'     the tolerances for a generation and each row contains a
@@ -855,17 +855,17 @@ setMethod(
 ##' @return A \code{SimInf_abc} object.
 ##' @export
 setGeneric(
-    "continue",
+    "continue_abc",
     signature = "object",
     function(object, ...) {
-        standardGeneric("continue")
+        standardGeneric("continue_abc")
     }
 )
 
-##' @rdname continue
+##' @rdname continue_abc
 ##' @export
 setMethod(
-    "continue",
+    "continue_abc",
     signature(object = "SimInf_abc"),
     function(object, tolerance = NULL, ...,
              verbose = getOption("verbose", FALSE), post_gen = NULL,
