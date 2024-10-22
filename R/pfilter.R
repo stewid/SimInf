@@ -560,6 +560,12 @@ setMethod(
     "pfilter",
     signature(model = "SimInf_model"),
     function(model, obs_process, data, npart, init_model) {
+        if (isFALSE(identical(dim(model@U_sparse), c(0L, 0L))) ||
+            isFALSE(identical(dim(model@V_sparse), c(0L, 0L)))) {
+            stop("'pfilter' cannot run a model with a sparse result matrix.",
+                 call. = FALSE)
+        }
+
         npart <- check_npart(npart)
         data <- pfilter_data(model, data)
         tspan <- pfilter_tspan(model, data)
