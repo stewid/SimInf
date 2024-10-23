@@ -182,3 +182,6 @@ plot(fit)
 
 \Simola2021
 }
+\seealso{
+\code{\link{continue_abc}}.
+}

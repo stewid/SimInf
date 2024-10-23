@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -78,6 +78,20 @@ if (SimInf:::have_openmp() && max_threads > 1) {
     set_num_threads(1)
     stopifnot(identical(U_obs_omp, U_exp_omp))
 }
+
+## Check that an error is raised if both U and U_sparse have
+## rows and columns greater than zero.
+model@U <- matrix(data = 1L, nrow = 18, ncol = 10)
+stopifnot(identical(SimInf:::valid_SimInf_model_object(model),
+                    "Output state 'U' must be either dense or sparse."))
+model@U <- matrix(data = integer(0), nrow = 0, ncol = 0)
+
+## Check that an error is raised if both V and V_sparse have
+## rows and columns greater than zero.
+model@V <- matrix(data = numeric(0), nrow = 0, ncol = 10)
+stopifnot(identical(SimInf:::valid_SimInf_model_object(model),
+                    "Output model state 'V' must be either dense or sparse."))
+model@V <- matrix(data = numeric(0), nrow = 0, ncol = 0)
 
 ## Check that an error is raised if U_sparse contains a negative
 ## element.

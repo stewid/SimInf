@@ -268,7 +268,14 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
 ##' Run a particle filter on a model that contains one node
 ##' @noRd
 pfilter_single_node <- function(model, events, obs, data, npart,
-                                tspan) {
+                                tspan, init_model) {
+    ## Handle the init_model callback.
+    if (!is.null(init_model)) {
+        stop("'init_model' callback is not implemented ",
+             "for 'pfilter' of a single node.",
+             call. = FALSE)
+    }
+
     ## Replicate the single node 'npart' times such that each node
     ## represents one particle and then run all particles
     ## simultanously. Note that the events are replicated below for
@@ -390,12 +397,14 @@ pfilter_single_node <- function(model, events, obs, data, npart,
 ##' Run a particle filter on a model that contains multiple nodes
 ##' @noRd
 pfilter_multiple_nodes <- function(model, events, obs_process, data,
-                                   npart, tspan) {
-    m <- model
-    Nc <- Nc(m)
-    Nd <- nrow(m@v0)
+                                   npart, tspan, init_model) {
+    if (!is.null(init_model))
+        init_model <- match.fun(init_model)
+
+    Nc <- Nc(model)
+    Nd <- nrow(model@v0)
     Ntspan <- nrow(tspan)
-    n_nodes <- n_nodes(m)
+    n_nodes <- n_nodes(model)
     ess <- numeric(Ntspan)
     loglik <- 0
     w <- numeric(npart)
@@ -405,14 +414,33 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
     U <- matrix(data = NA_integer_,
                 nrow = npart * Nc * n_nodes,
                 ncol = Ntspan + 1L)
-    U[, 1L] <- rep(as.integer(m@u0), npart)
 
     ## Create a matrix to keep track of the continuous states
     ## (including the initial state) in every particle.
     V <- matrix(data = NA_real_,
                 nrow = npart * Nd * n_nodes,
                 ncol = Ntspan + 1L)
-    V[, 1L] <- rep(as.numeric(m@v0), npart)
+
+    if (is.null(init_model)) {
+        U[, 1L] <- rep(as.integer(model@u0), npart)
+        V[, 1L] <- rep(as.numeric(model@v0), npart)
+    } else {
+        ## Loop over the particles and initialise each model.
+        for (p in seq_len(npart)) {
+            ## Initialise the model.
+            m <- init_model(model)
+
+            ## Save the initial u0 state.
+            u_i <- seq.int(from = (p - 1L) * Nc * n_nodes + 1L,
+                           length.out = Nc * n_nodes)
+            U[u_i, 1L] <- as.integer(m@u0)
+
+            ## Save the initial v0 state.
+            v_i <- seq.int(from = (p - 1L) * Nd * n_nodes + 1L,
+                           length.out = Nd * n_nodes)
+            V[v_i, 1L] <- as.numeric(m@v0)
+        }
+    }
 
     a <- matrix(data = NA_integer_,
                 nrow = npart,
@@ -420,6 +448,7 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
     a[, 1L] <- seq_len(npart)
 
     ## Loop over time series.
+    m <- model
     for (i in seq_len(Ntspan)) {
         if (is.na(tspan[i, 1L])) {
             m@tspan <- tspan[i, 2L]
@@ -510,6 +539,7 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
 ##' @template obs_process-param
 ##' @template data-param
 ##' @template npart-param
+##' @template init_model-param
 ##' @return A \code{SimInf_pfilter} object.
 ##' @references
 ##'
@@ -519,7 +549,7 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
 setGeneric(
     "pfilter",
     signature = "model",
-    function(model, obs_process, data, npart) {
+    function(model, obs_process, data, npart, init_model = NULL) {
         standardGeneric("pfilter")
     }
 )
@@ -529,7 +559,13 @@ setGeneric(
 setMethod(
     "pfilter",
     signature(model = "SimInf_model"),
-    function(model, obs_process, data, npart) {
+    function(model, obs_process, data, npart, init_model) {
+        if (isFALSE(identical(dim(model@U_sparse), c(0L, 0L))) ||
+            isFALSE(identical(dim(model@V_sparse), c(0L, 0L)))) {
+            stop("'pfilter' cannot run a model with a sparse result matrix.",
+                 call. = FALSE)
+        }
+
         npart <- check_npart(npart)
         data <- pfilter_data(model, data)
         tspan <- pfilter_tspan(model, data)
@@ -543,7 +579,7 @@ setMethod(
             pfilter_fn <- pfilter_multiple_nodes
         }
 
-        pfilter_fn(model, events, obs_process, data, npart, tspan)
+        pfilter_fn(model, events, obs_process, data, npart, tspan, init_model)
    }
 )
 
