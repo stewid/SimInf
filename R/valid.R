@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -45,7 +45,10 @@ valid_U <- function(object) {
         return("Output state 'U' must be an integer matrix.")
     if (any(object@U < 0L) || any(object@U_sparse < 0, na.rm = TRUE))
         return("Output state 'U' has negative elements.")
-
+    if (all(isFALSE(identical(dim(object@U), c(0L, 0L))),
+            isFALSE(identical(dim(object@U_sparse), c(0L, 0L))))) {
+        return("Output state 'U' must be either dense or sparse.")
+    }
     character(0)
 }
 
@@ -66,6 +69,10 @@ valid_v0 <- function(object) {
 valid_V <- function(object) {
     if (!identical(storage.mode(object@V), "double"))
         return("Output model state 'V' must be a double matrix.")
+    if (all(isFALSE(identical(dim(object@V), c(0L, 0L))),
+            isFALSE(identical(dim(object@V_sparse), c(0L, 0L))))) {
+        return("Output model state 'V' must be either dense or sparse.")
+    }
 
     character(0)
 }
