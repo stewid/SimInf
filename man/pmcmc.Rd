@@ -18,6 +18,7 @@ pmcmc(
   adaptive = 100,
   init_model = NULL,
   record = TRUE,
+  output = NULL,
   verbose = getOption("verbose", FALSE)
 )
 
@@ -34,6 +35,7 @@ pmcmc(
   adaptive = 100,
   init_model = NULL,
   record = TRUE,
+  output = NULL,
   verbose = getOption("verbose", FALSE)
 )
 }
@@ -98,6 +100,13 @@ update is not performed. Default is \code{adaptive = 100}.}
 \item{init_model}{FIXME.}
 
 \item{record}{FIXME}
+
+\item{output}{Write result of the values in the chain to a csv
+file \code{output} while the chain is running. This can be
+useful for following long running jobs. Must be a character
+string with the filename to the output file. Each item in the
+chain is written to the file using \code{write.table}. Default
+\code{output=NULL} is to not write the chain to a file.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and

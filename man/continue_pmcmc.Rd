@@ -7,7 +7,13 @@
 \usage{
 continue_pmcmc(object, ...)
 
-\S4method{continue_pmcmc}{SimInf_pmcmc}(object, niter, ..., verbose = getOption("verbose", FALSE))
+\S4method{continue_pmcmc}{SimInf_pmcmc}(
+  object,
+  niter,
+  ...,
+  output = NULL,
+  verbose = getOption("verbose", FALSE)
+)
 }
 \arguments{
 \item{object}{The \code{SimInf_pmcmc} object to continue from.}
@@ -16,6 +22,14 @@ continue_pmcmc(object, ...)
 
 \item{niter}{An integer specifying the number of iterations to run
 the PMCMC.}
+
+\item{output}{Write result of the values in the chain to a csv
+file \code{output} while the chain is running. This can be
+useful for following long running jobs. Must be a character
+string with the filename to an existing output file. Each item
+in the chain is appende to the file using
+\code{write.table}. Default \code{output=NULL} is to not
+append the chain to a file.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and

@@ -196,6 +196,12 @@ setMethod(
 ##'     update is not performed. Default is \code{adaptive = 100}.
 ##' @param init_model FIXME.
 ##' @param record FIXME
+##' @param output Write result of the values in the chain to a csv
+##'     file \code{output} while the chain is running. This can be
+##'     useful for following long running jobs. Must be a character
+##'     string with the filename to the output file. Each item in the
+##'     chain is written to the file using \code{write.table}. Default
+##'     \code{output=NULL} is to not write the chain to a file.
 ##' @template verbose-param-pmcmc
 ##' @references
 ##'
@@ -210,7 +216,7 @@ setGeneric(
     function(model, obs_process, data, priors, npart, niter,
              theta = NULL, covmat = NULL, adaptmix = 0.05,
              adaptive = 100, init_model = NULL, record = TRUE,
-             verbose = getOption("verbose", FALSE)) {
+             output = NULL, verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
 )
@@ -221,7 +227,8 @@ setMethod(
     "pmcmc",
     signature(model = "SimInf_model"),
     function(model, obs_process, data, priors, npart, niter, theta,
-             covmat, adaptmix, adaptive, init_model, record, verbose) {
+             covmat, adaptmix, adaptive, init_model, record, output,
+             verbose) {
         npart <- check_npart(npart)
 
         check_integer_arg(niter)
@@ -249,6 +256,8 @@ setMethod(
         } else {
             pf <- NULL
         }
+
+        output <- check_output(output)
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
@@ -300,6 +309,11 @@ setMethod(
 
         ## Save current value of chain.
         object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
+        if (!is.null(output)) {
+            write.table(x = t(object@chain[1, ]), file = output,
+                        append = FALSE, sep = ",", col.names = TRUE,
+                        row.names = FALSE)
+        }
         if (!is.null(object@pf))
             object@pf[[1]] <- pf
 
@@ -307,9 +321,20 @@ setMethod(
         if (niter == 0)
             return(object)
 
-        continue_pmcmc(object, niter = niter, verbose = verbose)
+        continue_pmcmc(object, niter = niter, output = output,
+                       verbose = verbose)
     }
 )
+
+check_output <- function(output, append = FALSE) {
+    if (is.null(output))
+        return(NULL)
+
+    if (!is.character(output) || anyNA(output) || length(output) != 1L)
+        stop("'output' must be a character string.", call. = FALSE)
+
+    normalizePath(output, mustWork = isTRUE(append))
+}
 
 is_empty_chain <- function(object) {
     isTRUE(length(object) == 0L)
@@ -438,6 +463,13 @@ get_verbose <- function(verbose) {
 ##' @param object The \code{SimInf_pmcmc} object to continue from.
 ##' @template niter-param
 ##' @param ... Unused additional arguments.
+##' @param output Write result of the values in the chain to a csv
+##'     file \code{output} while the chain is running. This can be
+##'     useful for following long running jobs. Must be a character
+##'     string with the filename to an existing output file. Each item
+##'     in the chain is appende to the file using
+##'     \code{write.table}. Default \code{output=NULL} is to not
+##'     append the chain to a file.
 ##' @template verbose-param-pmcmc
 ##' @export
 setGeneric(
@@ -454,6 +486,7 @@ setMethod(
     "continue_pmcmc",
     signature(object = "SimInf_pmcmc"),
     function(object, niter, ...,
+             output = NULL,
              verbose = getOption("verbose", FALSE)) {
         methods::validObject(object)
 
@@ -462,6 +495,7 @@ setMethod(
         if (any(length(niter) != 1L, any(niter <= 0L)))
             stop("'niter' must be an integer > 0.", call. = FALSE)
 
+        output <- check_output(output, append = TRUE)
         verbose <- get_verbose(verbose)
         iterations <- length(object) + seq_len(niter)
         object@chain <- setup_chain(object, niter)
@@ -517,6 +551,11 @@ setMethod(
 
             ## Save current value of chain.
             object@chain[i, ] <- c(logPost, logLik, logPrior, accept, theta)
+            if (!is.null(output)) {
+                write.table(x = t(object@chain[i, ]), file = output,
+                            append = TRUE, sep = ",", col.names = FALSE,
+                            row.names = FALSE)
+            }
             if (!is.null(object@pf))
                 object@pf[[i]] <- pf
 
