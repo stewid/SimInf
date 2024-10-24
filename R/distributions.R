@@ -258,6 +258,7 @@ rpriors <- function(priors, n = 1) {
         switch(
             distribution,
             "gamma" = stats::rgamma(n = n, shape = p1, rate = 1 / p2),
+            "lognormal" = stats::rlnorm(n = n, meanlog = p1, sdlog = p2),
             "normal" = stats::rnorm(n = n, mean = p1, sd = p2),
             "uniform" = stats::runif(n = n, min = p1, max = p2),
             stop("Unknown distribution.", call. = FALSE))
@@ -278,6 +279,10 @@ dpriors <- function(x, priors) {
                                     shape = p1,
                                     rate = 1 / p2,
                                     log = TRUE),
+            "lognormal" = stats::dlnorm(x = x,
+                                        meanlog = p1,
+                                        sdlog = p2,
+                                        log = TRUE),
             "normal" = stats::dnorm(x = x,
                                     mean = p1,
                                     sd = p2,
