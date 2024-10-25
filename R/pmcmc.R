@@ -294,13 +294,11 @@ setMethod(
         methods::slot(object@model, object@target) <-
             set_proposal(object, theta)
 
-        if (is.function(object@init_model))
-            object@model <- object@init_model(object@model)
-
         pf <- pfilter(object@model,
                       obs_process = object@obs_process,
-                      object@data,
-                      npart = object@npart)
+                      data = object@data,
+                      npart = object@npart,
+                      init_model = object@init_model)
 
         logLik <- pf@loglik
         logPrior <- dpriors(theta, object@priors)
@@ -530,11 +528,11 @@ setMethod(
                 methods::slot(object@model, object@target) <-
                     set_proposal(object, proposal$theta)
 
-                if (is.function(object@init_model))
-                    object@model <- object@init_model(object@model)
-
-                pf_prop <- pfilter(object@model, object@obs_process,
-                                   object@data, object@npart)
+                pf_prop <- pfilter(model = object@model,
+                                   obs_process = object@obs_process,
+                                   data = object@data,
+                                   npart = object@npart,
+                                   init_model = object@init_model)
                 logLik_prop <- pf_prop@loglik
 
                 alpha <- exp(logLik_prop + logPrior_prop - logLik - logPrior)
