@@ -448,8 +448,8 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
     a[, 1L] <- seq_len(npart)
 
     ## Loop over time series.
-    m <- model
     for (i in seq_len(Ntspan)) {
+        m <- model
         if (is.na(tspan[i, 1L])) {
             m@tspan <- tspan[i, 2L]
         } else {
