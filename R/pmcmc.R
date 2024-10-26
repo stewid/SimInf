@@ -230,11 +230,7 @@ setMethod(
              covmat, adaptmix, adaptive, init_model, record, output,
              verbose) {
         npart <- check_npart(npart)
-
-        check_integer_arg(niter)
-        niter <- as.integer(niter)
-        if (any(length(niter) != 1L, any(niter <= 0L)))
-            stop("'niter' must be an integer > 0.", call. = FALSE)
+        niter <- check_niter(niter)
 
         adaptmix <- as.numeric(adaptmix)
         if (any(length(adaptmix) != 1L,
@@ -323,6 +319,14 @@ setMethod(
                        verbose = verbose)
     }
 )
+
+check_niter <- function(niter) {
+    check_integer_arg(niter)
+    niter <- as.integer(niter)
+    if (any(length(niter) != 1L, any(niter <= 0L)))
+        stop("'niter' must be an integer > 0.", call. = FALSE)
+    niter
+}
 
 check_output <- function(output, append = FALSE) {
     if (is.null(output))
