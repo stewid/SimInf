@@ -232,11 +232,7 @@ setMethod(
         npart <- check_npart(npart)
         niter <- check_niter(niter)
         adaptmix <- check_adaptmix(adaptmix)
-
-        check_integer_arg(adaptive)
-        adaptive <- as.integer(adaptive)
-        if (any(length(adaptive) != 1L, any(adaptive < 0L)))
-            stop("'adaptive' must be an integer >= 0.", call. = FALSE)
+        adaptive <- check_adaptive(adaptive)
 
         if (!is.null(init_model))
             init_model <- match.fun(init_model)
@@ -313,6 +309,14 @@ setMethod(
                        verbose = verbose)
     }
 )
+
+check_adaptive <- function(adaptive) {
+    check_integer_arg(adaptive)
+    adaptive <- as.integer(adaptive)
+    if (any(length(adaptive) != 1L, any(adaptive < 0L)))
+        stop("'adaptive' must be an integer >= 0.", call. = FALSE)
+    adaptive
+}
 
 check_adaptmix <- function(adaptmix) {
     adaptmix <- as.numeric(adaptmix)
