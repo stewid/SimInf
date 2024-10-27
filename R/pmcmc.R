@@ -500,11 +500,7 @@ setMethod(
              verbose = getOption("verbose", FALSE)) {
         methods::validObject(object)
 
-        check_integer_arg(niter)
-        niter <- as.integer(niter)
-        if (any(length(niter) != 1L, any(niter <= 0L)))
-            stop("'niter' must be an integer > 0.", call. = FALSE)
-
+        niter <- check_niter(niter)
         output <- check_output(output, append = TRUE)
         verbose <- get_verbose(verbose)
         iterations <- length(object) + seq_len(niter)
