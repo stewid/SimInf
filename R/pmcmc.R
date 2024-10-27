@@ -234,13 +234,7 @@ setMethod(
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)
         init_model <- check_init_model(init_model)
-
-        if (isTRUE(record)) {
-            pf <- list()
-        } else {
-            pf <- NULL
-        }
-
+        pf <- check_record_pf(record)
         output <- check_output(output)
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
@@ -348,6 +342,12 @@ check_output <- function(output, append = FALSE) {
         stop("'output' must be a character string.", call. = FALSE)
 
     normalizePath(output, mustWork = isTRUE(append))
+}
+
+check_record_pf <- function(record) {
+    if (isTRUE(record))
+        return(list())
+    NULL
 }
 
 is_empty_chain <- function(object) {
