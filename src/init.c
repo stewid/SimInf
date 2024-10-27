@@ -40,6 +40,7 @@ SEXP SimInf_clean_indiv_events(SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_distance_matrix(SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_have_openmp(void);
 SEXP SimInf_init_threads(SEXP);
+SEXP SimInf_lambertW0(SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
 SEXP SimInf_split_events(SEXP, SEXP);
 SEXP SimInf_systematic_resampling(SEXP);
@@ -62,6 +63,7 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SimInf_distance_matrix, 5),
     CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(SimInf_init_threads, 1),
+    CALLDEF(SimInf_lambertW0, 1),
     CALLDEF(SimInf_ldata_sp, 3),
     CALLDEF(SimInf_split_events, 2),
     CALLDEF(SimInf_systematic_resampling, 1),
