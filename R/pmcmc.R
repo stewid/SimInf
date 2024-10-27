@@ -213,10 +213,7 @@ setMethod(
 setGeneric(
     "pmcmc",
     signature = "model",
-    function(model, obs_process, data, priors, npart, niter,
-             theta = NULL, covmat = NULL, adaptmix = 0.05,
-             adaptive = 100, init_model = NULL, record = TRUE,
-             output = NULL, verbose = getOption("verbose", FALSE)) {
+    function(model, ...) {
         standardGeneric("pmcmc")
     }
 )
@@ -226,9 +223,10 @@ setGeneric(
 setMethod(
     "pmcmc",
     signature(model = "SimInf_model"),
-    function(model, obs_process, data, priors, npart, niter, theta,
-             covmat, adaptmix, adaptive, init_model, record, output,
-             verbose) {
+    function(model, obs_process, data, priors, npart, niter,
+             theta = NULL, covmat = NULL, adaptmix = 0.05,
+             adaptive = 100, init_model = NULL, record = TRUE,
+             output = NULL, verbose = getOption("verbose", FALSE)) {
         npart <- check_npart(npart)
         niter <- check_niter(niter)
         adaptmix <- check_adaptmix(adaptmix)
