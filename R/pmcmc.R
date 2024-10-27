@@ -233,9 +233,7 @@ setMethod(
         niter <- check_niter(niter)
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)
-
-        if (!is.null(init_model))
-            init_model <- match.fun(init_model)
+        init_model <- check_init_model(init_model)
 
         if (isTRUE(record)) {
             pf <- list()
@@ -326,6 +324,12 @@ check_adaptmix <- function(adaptmix) {
         stop("'adaptmix' must be a value > 0 and < 1.", call. = FALSE)
     }
     adaptmix
+}
+
+check_init_model <- function(init_model) {
+    if (!is.null(init_model))
+        init_model <- match.fun(init_model)
+    init_model
 }
 
 check_niter <- function(niter) {
