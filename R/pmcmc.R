@@ -203,6 +203,7 @@ setMethod(
 ##'     chain is written to the file using \code{write.table}. Default
 ##'     \code{output=NULL} is to not write the chain to a file.
 ##' @template verbose-param-pmcmc
+##' @param ... other arguments passed to specific methods.
 ##' @references
 ##'
 ##' \Andrieu2010

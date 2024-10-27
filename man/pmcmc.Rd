@@ -27,6 +27,8 @@ pmcmc(model, ...)
 \arguments{
 \item{model}{The model to simulate data from.}
 
+\item{...}{other arguments passed to specific methods.}
+
 \item{obs_process}{Specification of the stochastic observation
 process. The \code{obs_process} can be specified as a
 \code{formula} if the model contains only one node and there
