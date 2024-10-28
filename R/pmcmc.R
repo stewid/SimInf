@@ -310,8 +310,7 @@ setMethod(
         if (niter == 0)
             return(object)
 
-        continue_pmcmc(object, niter = niter, output = output,
-                       verbose = verbose)
+        continue_pmcmc(object, niter = niter, verbose = verbose)
     }
 )
 
@@ -485,20 +484,12 @@ get_verbose <- function(verbose) {
 ##'
 ##' @param object The \code{SimInf_pmcmc} object to continue from.
 ##' @template niter-param
-##' @param ... Unused additional arguments.
-##' @param output Write result of the values in the chain to a csv
-##'     file \code{output} while the chain is running. This can be
-##'     useful for following long running jobs. Must be a character
-##'     string with the filename to an existing output file. Each item
-##'     in the chain is appende to the file using
-##'     \code{write.table}. Default \code{output=NULL} is to not
-##'     append the chain to a file.
 ##' @template verbose-param-pmcmc
 ##' @export
 setGeneric(
     "continue_pmcmc",
     signature = "object",
-    function(object, ...) {
+    function(object, niter, verbose = getOption("verbose", FALSE)) {
         standardGeneric("continue_pmcmc")
     }
 )
@@ -508,13 +499,10 @@ setGeneric(
 setMethod(
     "continue_pmcmc",
     signature(object = "SimInf_pmcmc"),
-    function(object, niter, ...,
-             output = NULL,
-             verbose = getOption("verbose", FALSE)) {
+    function(object, niter, verbose) {
         methods::validObject(object)
 
         niter <- check_niter(niter)
-        output <- check_output(output, append = TRUE)
         verbose <- get_verbose(verbose)
         iterations <- length(object) + seq_len(niter)
         object@chain <- setup_chain(object, niter)
