@@ -30,6 +30,14 @@
 ##' @slot obs_process A \code{formula} or \code{function} determining
 ##'     the observation process.
 ##' @slot init_model FIXME.
+##' @slot post_particle An optional function that, if non-NULL, is
+##'     applied after each completed particle. The function must
+##'     accept three arguments: 1) an object of \code{SimInf_pmcmc}
+##'     with the current state of the fitting process, 2) an object
+##'     \code{SimInf_pfilter} with the last particle and one filtered
+##'     trajectory attached, and 3) an integer with the iteration in
+##'     the fitting process. This function can be useful to, for
+##'     example, monitor, save and inspect intermediate results.
 ##' @slot data A \code{data.frame} holding the time series data for
 ##'     the observation process.
 ##' @slot chain A matrix where each row contains \code{logPost},
@@ -44,19 +52,20 @@
 ##' @export
 setClass(
     "SimInf_pmcmc",
-    slots = c(model       = "SimInf_model",
-              priors      = "data.frame",
-              target      = "character",
-              pars        = "integer",
-              npart       = "integer",
-              obs_process = "ANY",
-              init_model  = "ANY",
-              data        = "data.frame",
-              chain       = "matrix",
-              pf          = "ANY",
-              covmat      = "matrix",
-              adaptmix    = "numeric",
-              adaptive    = "integer")
+    slots = c(model         = "SimInf_model",
+              priors        = "data.frame",
+              target        = "character",
+              pars          = "integer",
+              npart         = "integer",
+              obs_process   = "ANY",
+              init_model    = "ANY",
+              post_particle = "ANY",
+              data          = "data.frame",
+              chain         = "matrix",
+              pf            = "ANY",
+              covmat        = "matrix",
+              adaptmix      = "numeric",
+              adaptive      = "integer")
 )
 
 ##' Check if a SimInf_pmcmc object is valid
@@ -80,6 +89,11 @@ valid_SimInf_pmcmc_object <- function(object) {
     if (!is.null(object@init_model) &&
         !is.function(object@init_model)) {
         errors <- c(errors, "'init_model' must be 'NULL' or a 'function'.")
+    }
+
+    if (!is.null(object@post_particle) &&
+        !is.function(object@post_particle)) {
+        errors <- c(errors, "'post_particle' must be 'NULL' or a 'function'.")
     }
 
     if (length(errors))
@@ -195,13 +209,15 @@ setMethod(
 ##'     greater or equal to zero. If \code{adaptive=0}, then adaptive
 ##'     update is not performed. Default is \code{adaptive = 100}.
 ##' @param init_model FIXME.
+##' @param post_particle An optional function that, if non-NULL, is
+##'     applied after each completed particle. The function must
+##'     accept three arguments: 1) an object of \code{SimInf_pmcmc}
+##'     with the current state of the fitting process, 2) an object
+##'     \code{SimInf_pfilter} with the last particle and one filtered
+##'     trajectory attached, and 3) an integer with the iteration in
+##'     the fitting process. This function can be useful to, for
+##'     example, monitor, save and inspect intermediate results.
 ##' @param record FIXME
-##' @param output Write result of the values in the chain to a csv
-##'     file \code{output} while the chain is running. This can be
-##'     useful for following long running jobs. Must be a character
-##'     string with the filename to the output file. Each item in the
-##'     chain is written to the file using \code{write.table}. Default
-##'     \code{output=NULL} is to not write the chain to a file.
 ##' @template verbose-param-pmcmc
 ##' @param ... other arguments passed to specific methods.
 ##' @references
@@ -226,15 +242,15 @@ setMethod(
     signature(model = "SimInf_model"),
     function(model, obs_process, data, priors, npart, niter,
              theta = NULL, covmat = NULL, adaptmix = 0.05,
-             adaptive = 100, init_model = NULL, record = TRUE,
-             output = NULL, verbose = getOption("verbose", FALSE)) {
+             adaptive = 100, init_model = NULL, post_particle = NULL,
+             record = TRUE, verbose = getOption("verbose", FALSE)) {
         npart <- check_npart(npart)
         niter <- check_niter(niter)
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)
         init_model <- check_init_model(init_model)
+        post_particle <- check_post_particle(post_particle)
         pf <- check_record_pf(record)
-        output <- check_output(output)
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
@@ -261,8 +277,9 @@ setMethod(
         object <- new("SimInf_pmcmc", model = model, priors = priors,
                       target = pars$target, pars = pars$pars,
                       obs_process = obs_process,
-                      init_model = init_model, pf = pf, data = data,
-                      npart = npart, covmat = covmat,
+                      init_model = init_model,
+                      post_particle = post_particle, pf = pf,
+                      data = data, npart = npart, covmat = covmat,
                       adaptmix = adaptmix, adaptive = adaptive)
 
         object@chain <- setup_chain(object, 1L)
@@ -284,11 +301,8 @@ setMethod(
 
         ## Save current value of chain.
         object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
-        if (!is.null(output)) {
-            write.table(x = t(object@chain[1, ]), file = output,
-                        append = FALSE, sep = ",", col.names = TRUE,
-                        row.names = FALSE)
-        }
+        if (is.function(object@post_particle))
+            object@post_particle(object, pf, 1)
         if (!is.null(object@pf))
             object@pf[[1]] <- pf
 
@@ -333,14 +347,10 @@ check_niter <- function(niter) {
     niter
 }
 
-check_output <- function(output, append = FALSE) {
-    if (is.null(output))
-        return(NULL)
-
-    if (!is.character(output) || anyNA(output) || length(output) != 1L)
-        stop("'output' must be a character string.", call. = FALSE)
-
-    normalizePath(output, mustWork = isTRUE(append))
+check_post_particle <- function(post_particle) {
+    if (!is.null(post_particle))
+        post_particle <- match.fun(post_particle)
+    post_particle
 }
 
 check_record_pf <- function(record) {
@@ -560,11 +570,8 @@ setMethod(
 
             ## Save current value of chain.
             object@chain[i, ] <- c(logPost, logLik, logPrior, accept, theta)
-            if (!is.null(output)) {
-                write.table(x = t(object@chain[i, ]), file = output,
-                            append = TRUE, sep = ",", col.names = FALSE,
-                            row.names = FALSE)
-            }
+            if (is.function(object@post_particle))
+                object@post_particle(object, pf, i)
             if (!is.null(object@pf))
                 object@pf[[i]] <- pf
 

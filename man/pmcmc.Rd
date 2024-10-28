@@ -19,8 +19,8 @@ pmcmc(model, ...)
   adaptmix = 0.05,
   adaptive = 100,
   init_model = NULL,
+  post_particle = NULL,
   record = TRUE,
-  output = NULL,
   verbose = getOption("verbose", FALSE)
 )
 }
@@ -86,14 +86,16 @@ update is not performed. Default is \code{adaptive = 100}.}
 
 \item{init_model}{FIXME.}
 
-\item{record}{FIXME}
+\item{post_particle}{An optional function that, if non-NULL, is
+applied after each completed particle. The function must
+accept three arguments: 1) an object of \code{SimInf_pmcmc}
+with the current state of the fitting process, 2) an object
+\code{SimInf_pfilter} with the last particle and one filtered
+trajectory attached, and 3) an integer with the iteration in
+the fitting process. This function can be useful to, for
+example, monitor, save and inspect intermediate results.}
 
-\item{output}{Write result of the values in the chain to a csv
-file \code{output} while the chain is running. This can be
-useful for following long running jobs. Must be a character
-string with the filename to the output file. Each item in the
-chain is written to the file using \code{write.table}. Default
-\code{output=NULL} is to not write the chain to a file.}
+\item{record}{FIXME}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
