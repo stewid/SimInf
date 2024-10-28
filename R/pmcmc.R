@@ -81,18 +81,18 @@ valid_SimInf_pmcmc_object <- function(object) {
         errors <- c(errors, "'adaptmix' must be a value >= 0 and <= 1.")
     }
 
-    if (!identical(object@target, "gdata") &&
-        !identical(object@target, "ldata")) {
+    if (all(!identical(object@target, "gdata"),
+            !identical(object@target, "ldata"))) {
         errors <- c(errors, "'target' must be 'gdata' or 'ldata'.")
     }
 
-    if (!is.null(object@init_model) &&
-        !is.function(object@init_model)) {
+    if (all(!is.null(object@init_model),
+            !is.function(object@init_model))) {
         errors <- c(errors, "'init_model' must be 'NULL' or a 'function'.")
     }
 
-    if (!is.null(object@post_particle) &&
-        !is.function(object@post_particle)) {
+    if (all(!is.null(object@post_particle),
+            !is.function(object@post_particle))) {
         errors <- c(errors, "'post_particle' must be 'NULL' or a 'function'.")
     }
 
