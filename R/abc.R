@@ -51,21 +51,28 @@
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
 ##'     (sum(w_ig^2)),} where \eqn{w_{g}^{(i)}}{w_ig} is the
 ##'     normalized weight of particle \eqn{i} in generation \eqn{g}.
+##' @slot init_model An optional function that, if non-NULL, is
+##'     applied before running each proposal. The function must accept
+##'     one argument of type \code{SimInf_model} with the current
+##'     model of the fitting process. This function can be useful to
+##'     specify the initial state of \code{u0} or \code{v0} of the
+##'     model before running a trajectory with proposed parameters.
 ##' @seealso \code{\link{abc}} and \code{\link{continue_abc}}.
 ##' @export
 setClass(
     "SimInf_abc",
-    slots = c(model     = "SimInf_model",
-              priors    = "data.frame",
-              target    = "character",
-              pars      = "integer",
-              nprop     = "integer",
-              fn        = "function",
-              tolerance = "matrix",
-              x         = "array",
-              weight    = "matrix",
-              distance  = "array",
-              ess       = "numeric")
+    slots = c(model      = "SimInf_model",
+              priors     = "data.frame",
+              target     = "character",
+              pars       = "integer",
+              nprop      = "integer",
+              fn         = "function",
+              tolerance  = "matrix",
+              x          = "array",
+              weight     = "matrix",
+              distance   = "array",
+              ess        = "numeric",
+              init_model = "ANY")
 )
 
 ##' Check if a SimInf_abc object is valid
@@ -87,6 +94,11 @@ valid_SimInf_abc_object <- function(object) {
 
     if (!identical(storage.mode(object@weight), "double"))
         return("The storage mode of 'weight' must be double.")
+
+    if (all(!is.null(object@init_model),
+            !is.function(object@init_model))) {
+        return("'init_model' must be 'NULL' or a 'function'.")
+    }
 
     TRUE
 }
@@ -501,7 +513,7 @@ abc_gdata <- function(model, pars, priors, npart, fn, generation,
         }
 
         ## Handle the init_model callback.
-        if (!is.null(init_model))
+        if (is.function(init_model))
             model_proposals <- init_model(model_proposals)
 
         d <- abc_distance(
@@ -631,12 +643,9 @@ abc_weights <- function(object, generation, x, ancestor, w, sigma) {
 }
 
 abc_internal <- function(object, ninit, tolerance, ..., verbose,
-                         post_gen, init_model) {
+                         post_gen) {
     if (!is.null(post_gen))
         post_gen <- match.fun(post_gen)
-
-    if (!is.null(init_model))
-        init_model <- match.fun(init_model)
 
     if (all(is.null(ninit), is.null(tolerance)))
         stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
@@ -667,7 +676,7 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
                          fn = object@fn, generation = generation,
                          tolerance = epsilon, x = x, w = w,
                          sigma = sigma, verbose = verbose,
-                         init_model = init_model, ...)
+                         init_model = object@init_model, ...)
 
         ## Append the tolerance for the generation.
         npart <- abc_n_particles(object)
@@ -808,6 +817,7 @@ setMethod(
     function(model, priors, npart, ninit, distance, tolerance, ...,
              verbose, post_gen) {
         npart <- check_npart(npart)
+        init_model <- check_init_model(init_model)
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
@@ -830,11 +840,11 @@ setMethod(
                                                ncol = 0),
                                distance = array(numeric(0),
                                                 dim = c(0, 0, 0)),
-                               ess = numeric(0))
+                               ess = numeric(0),
+                               init_model = init_model)
 
         abc_internal(object = object, ninit = ninit, tolerance = tolerance,
-                     ..., verbose = verbose, post_gen = post_gen,
-                     init_model = init_model)
+                     ..., verbose = verbose, post_gen = post_gen)
     }
 )
 
@@ -852,7 +862,6 @@ setMethod(
 ##'     \code{SimInf_abc@@fn}.
 ##' @template verbose-param
 ##' @template post_gen-param
-##' @template init_model-param
 ##' @return A \code{SimInf_abc} object.
 ##' @export
 setGeneric(
@@ -869,11 +878,10 @@ setMethod(
     "continue_abc",
     signature(object = "SimInf_abc"),
     function(object, tolerance = NULL, ...,
-             verbose = getOption("verbose", FALSE), post_gen = NULL,
-             init_model = NULL) {
+             verbose = getOption("verbose", FALSE), post_gen = NULL) {
         abc_internal(object = object, ninit = NULL,
                      tolerance = tolerance, ..., verbose = verbose,
-                     post_gen = post_gen, init_model = init_model)
+                     post_gen = post_gen)
     }
 )
 

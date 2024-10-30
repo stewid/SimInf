@@ -65,6 +65,13 @@ each generation. The effective sample size is computed as
 \deqn{\left(\sum_{i=1}^N\!(w_{g}^{(i)})^2\right)^{-1},}{1 /
 (sum(w_ig^2)),} where \eqn{w_{g}^{(i)}}{w_ig} is the
 normalized weight of particle \eqn{i} in generation \eqn{g}.}
+
+\item{\code{init_model}}{An optional function that, if non-NULL, is
+applied before running each proposal. The function must accept
+one argument of type \code{SimInf_model} with the current
+model of the fitting process. This function can be useful to
+specify the initial state of \code{u0} or \code{v0} of the
+model before running a trajectory with proposed parameters.}
 }}
 
 \seealso{
