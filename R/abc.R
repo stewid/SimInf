@@ -909,6 +909,8 @@ setMethod(
         }
 
         ## Run the model using the particle.
+        if (is.function(model@init_model))
+            return(run(model@init_model(model@model), ...))
         run(model@model, ...)
     }
 )
