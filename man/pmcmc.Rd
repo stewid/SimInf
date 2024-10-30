@@ -3,6 +3,7 @@
 \name{pmcmc}
 \alias{pmcmc}
 \alias{pmcmc,SimInf_model-method}
+\alias{pmcmc,SimInf_abc-method}
 \title{Particle Markov chain Monte Carlo (PMCMC) algorithm}
 \usage{
 pmcmc(model, ...)
@@ -19,6 +20,19 @@ pmcmc(model, ...)
   adaptmix = 0.05,
   adaptive = 100,
   init_model = NULL,
+  post_particle = NULL,
+  record = TRUE,
+  verbose = getOption("verbose", FALSE)
+)
+
+\S4method{pmcmc}{SimInf_abc}(
+  model,
+  obs_process,
+  data,
+  npart,
+  niter,
+  adaptmix = 0.05,
+  adaptive = 100,
   post_particle = NULL,
   record = TRUE,
   verbose = getOption("verbose", FALSE)
