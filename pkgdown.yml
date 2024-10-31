@@ -1,0 +1,11 @@
+pandoc: 3.1.11
+pkgdown: 2.1.1
+pkgdown_sha: ~
+articles:
+  mparse: mparse.html
+  post-process-data: post-process-data.html
+  scheduled-events: scheduled-events.html
+last_built: 2024-10-31T06:33Z
+urls:
+  reference: http://stewid.github.io/SimInf/reference
+  article: http://stewid.github.io/SimInf/articles
