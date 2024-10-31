@@ -27,3 +27,7 @@
 ^vignettes/img/SISe3_sp.pdf$
 ^vignettes/mparse.Rmd$
 windows
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$

@@ -47,7 +47,7 @@ Acknowledgements: This software has been made possible by support from
     programme under grant agreement No 773830: One Health European
     Joint Programme (Stefan Widgren).
 License: GPL-3
-URL: https://github.com/stewid/SimInf
+URL: https://github.com/stewid/SimInf, http://stewid.github.io/SimInf/
 BugReports: https://github.com/stewid/SimInf/issues
 Type: Package
 LazyData: true
