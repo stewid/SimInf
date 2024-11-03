@@ -15,6 +15,11 @@ in.}
 
 \item{\code{multi_model}}{FIXME.}
 
+\item{\code{events}}{FIXME.}
+
+\item{\code{data}}{A \code{list} with \code{data.frame} items holding the
+time series data.}
+
 \item{\code{n_models}}{Integer with the number of models.}
 }}
 

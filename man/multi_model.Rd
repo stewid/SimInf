@@ -4,13 +4,15 @@
 \alias{multi_model}
 \title{Create a multi-model object}
 \usage{
-multi_model(model, multi_model)
+multi_model(model, multi_model, data)
 }
 \arguments{
 \item{model}{The \code{SimInf_model} object to estimate parameters
 in.}
 
 \item{multi_model}{FIXME.}
+
+\item{data}{A \code{data.frame} holding the time series data.}
 }
 \description{
 Create a multi-model object

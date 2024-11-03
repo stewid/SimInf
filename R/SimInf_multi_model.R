@@ -21,12 +21,17 @@
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
 ##' @slot multi_model FIXME.
+##' @slot events FIXME.
+##' @slot data A \code{list} with \code{data.frame} items holding the
+##'     time series data.
 ##' @slot n_models Integer with the number of models.
 ##' @export
 setClass(
     "SimInf_multi_model",
     slots = c(model       = "SimInf_model",
               multi_model = "SimInf_model",
+              events      = "list",
+              data        = "list",
               n_models    = "integer")
 )
 
@@ -35,9 +40,10 @@ setClass(
 ##' @param model The \code{SimInf_model} object to estimate parameters
 ##'     in.
 ##' @param multi_model FIXME.
+##' @param data A \code{data.frame} holding the time series data.
 ##' @value FIXME
 ##' @export
-multi_model <- function(model, multi_model) {
+multi_model <- function(model, multi_model, data) {
     if (any(isFALSE(identical(dim(model@U_sparse), c(0L, 0L))),
             isFALSE(identical(dim(model@V_sparse), c(0L, 0L))),
             isFALSE(identical(dim(multi_model@U_sparse), c(0L, 0L))),
@@ -52,10 +58,16 @@ multi_model <- function(model, multi_model) {
              call. = FALSE)
     }
 
+    data <- pfilter_data(multi_model, data)
+    tspan <- pfilter_tspan(model, data)
+    multi_model@tspan <- tspan[, 2]
+    events <- pfilter_events(multi_model@events, tspan[, 2])
     n_models <- as.integer(n_nodes(multi_model) / n_nodes(model))
 
     methods::new("SimInf_multi_model",
                  model = model,
                  multi_model = multi_model,
+                 events = events,
+                 data = data,
                  n_models = n_models)
 }
