@@ -29,3 +29,33 @@ setClass(
               multi_model = "SimInf_model",
               n_models    = "integer")
 )
+
+##' Create a multi-model object
+##'
+##' @param model The \code{SimInf_model} object to estimate parameters
+##'     in.
+##' @param multi_model FIXME.
+##' @value FIXME
+##' @export
+multi_model <- function(model, multi_model) {
+    if (any(isFALSE(identical(dim(model@U_sparse), c(0L, 0L))),
+            isFALSE(identical(dim(model@V_sparse), c(0L, 0L))),
+            isFALSE(identical(dim(multi_model@U_sparse), c(0L, 0L))),
+            isFALSE(identical(dim(multi_model@V_sparse), c(0L, 0L))))) {
+        stop("Cannot create a multi model object with a sparse result matrix.",
+             call. = FALSE)
+    }
+
+    if (any(n_nodes(multi_model) <= n_nodes(model),
+            n_nodes(multi_model) %% n_nodes(model))) {
+        stop("Invalid number of nodes in the multi_model object.",
+             call. = FALSE)
+    }
+
+    n_models <- as.integer(n_nodes(multi_model) / n_nodes(model))
+
+    methods::new("SimInf_multi_model",
+                 model = model,
+                 multi_model = multi_model,
+                 n_models = n_models)
+}

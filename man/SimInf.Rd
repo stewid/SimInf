@@ -53,6 +53,7 @@ code from a model specification, see
 Useful links:
 \itemize{
   \item \url{https://github.com/stewid/SimInf}
+  \item \url{http://stewid.github.io/SimInf/}
   \item Report bugs at \url{https://github.com/stewid/SimInf/issues}
 }
 
