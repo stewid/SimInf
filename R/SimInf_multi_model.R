@@ -30,6 +30,7 @@ setClass(
     "SimInf_multi_model",
     slots = c(model       = "SimInf_model",
               multi_model = "SimInf_model",
+              tspan       = "matrix",
               events      = "list",
               data        = "list",
               n_models    = "integer")
@@ -58,8 +59,14 @@ multi_model <- function(model, multi_model, data) {
              call. = FALSE)
     }
 
+    if (!identical(model@tspan, multi_model@tspan)) {
+        stop("Invalid 'tspan' in the multi_model object.",
+             call. = FALSE)
+    }
+
     data <- pfilter_data(multi_model, data)
     tspan <- pfilter_tspan(model, data)
+    model@tspan <- tspan[, 2]
     multi_model@tspan <- tspan[, 2]
     events <- pfilter_events(multi_model@events, tspan[, 2])
     n_models <- as.integer(n_nodes(multi_model) / n_nodes(model))
@@ -67,6 +74,7 @@ multi_model <- function(model, multi_model, data) {
     methods::new("SimInf_multi_model",
                  model = model,
                  multi_model = multi_model,
+                 tspan = tspan,
                  events = events,
                  data = data,
                  n_models = n_models)
