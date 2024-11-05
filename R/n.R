@@ -48,7 +48,7 @@ setMethod(
     "n_nodes",
     signature(model = "SimInf_model"),
     function(model) {
-        dim(model@u0)[2] / n_replicates(model)
+        as.integer(floor(dim(model@u0)[2] / n_replicates(model)))
     }
 )
 
