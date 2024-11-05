@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -48,7 +48,40 @@ setMethod(
     "n_nodes",
     signature(model = "SimInf_model"),
     function(model) {
-        dim(model@u0)[2]
+        dim(model@u0)[2] / n_replicates(model)
+    }
+)
+
+##' Determine the number of replicates in a model
+##'
+##' @param model the \code{model} object to extract the number of
+##'     replicates from.
+##' @return the number of replicates in the model.
+##' @export
+##' @examples
+##' ## Create an 'SIR' model with 100 nodes, with 99 susceptible,
+##' ## 1 infected and 0 recovered in each node.
+##' u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
+##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##'
+##' ## Display the number of replicates in the model.
+##' n_replicates(model)
+setGeneric(
+    "n_replicates",
+    signature = "model",
+    function(model) {
+        standardGeneric("n_replicates")
+    }
+)
+
+##' @rdname n_replicates
+##' @include SimInf_model.R
+##' @export
+setMethod(
+    "n_replicates",
+    signature(model = "SimInf_model"),
+    function(model) {
+        model@replicates
     }
 )
 
