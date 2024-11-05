@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2023 Stefan Widgren
+ * Copyright (C) 2015 -- 2024 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +190,8 @@ SimInf_run(
         args.N = INTEGER(N);
 
     /* Constants */
-    args.Nn = INTEGER(R_do_slot(R_do_slot(result, Rf_install("u0")), R_DimSymbol))[1];
+    args.Nrep = INTEGER(R_do_slot(result, Rf_install("replicates")))[0];
+    args.Nn = INTEGER(R_do_slot(R_do_slot(result, Rf_install("u0")), R_DimSymbol))[1] / args.Nrep;
     args.Nc = INTEGER(R_do_slot(S, Rf_install("Dim")))[0];
     args.Nt = INTEGER(R_do_slot(S, Rf_install("Dim")))[1];
     args.Nd = INTEGER(R_do_slot(R_do_slot(result, Rf_install("v0")), R_DimSymbol))[0];

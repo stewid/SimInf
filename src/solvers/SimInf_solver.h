@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2024 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,6 +135,9 @@ typedef struct SimInf_solver_args
      * 'ldata' vector is sent to propensities and the post time step
      * function. */
     int Nld;
+
+    /* Number of replicates of the model. */
+    int Nrep;
 
     /* Select matrix for events. irE[k] is the row of E[k]. */
     const int *irE;
