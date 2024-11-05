@@ -110,17 +110,18 @@ SimInf_model <- function(G,
     events <- SimInf_events(E = E, N = N, events = events, t0 = tspan$t0)
 
     methods::new("SimInf_model",
-                 G      = G,
-                 S      = S,
-                 U      = U,
-                 ldata  = ldata,
-                 gdata  = gdata,
-                 tspan  = tspan$tspan,
-                 u0     = u0,
-                 v0     = v0,
-                 V      = V,
-                 events = events,
-                 C_code = C_code)
+                 G          = G,
+                 S          = S,
+                 U          = U,
+                 ldata      = ldata,
+                 gdata      = gdata,
+                 tspan      = tspan$tspan,
+                 u0         = u0,
+                 v0         = v0,
+                 V          = V,
+                 events     = events,
+                 replicates = 1L,
+                 C_code     = C_code)
 }
 
 ##' Extract global data from a \code{SimInf_model} object
