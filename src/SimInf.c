@@ -206,7 +206,7 @@ SimInf_run(
         args.jcU = INTEGER(R_do_slot(U_sparse, Rf_install("p")));
         args.prU = REAL(R_do_slot(U_sparse, Rf_install("x")));
     } else {
-        PROTECT(U = Rf_allocMatrix(INTSXP, args.Nn * args.Nc, args.tlen));
+        PROTECT(U = Rf_allocMatrix(INTSXP, args.Nn * args.Nc, args.Nrep * args.tlen));
         nprotect++;
         R_do_slot_assign(result, Rf_install("U"), U);
         args.U = INTEGER(R_do_slot(result, Rf_install("U")));
@@ -220,7 +220,7 @@ SimInf_run(
         args.jcV = INTEGER(R_do_slot(V_sparse, Rf_install("p")));
         args.prV = REAL(R_do_slot(V_sparse, Rf_install("x")));
     } else {
-        PROTECT(V = Rf_allocMatrix(REALSXP, args.Nn * args.Nd, args.tlen));
+        PROTECT(V = Rf_allocMatrix(REALSXP, args.Nn * args.Nd, args.Nrep * args.tlen));
         nprotect++;
         R_do_slot_assign(result, Rf_install("V"), V);
         args.V = REAL(R_do_slot(result, Rf_install("V")));
