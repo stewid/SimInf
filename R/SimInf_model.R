@@ -30,6 +30,7 @@ valid_SimInf_model_object <- function(object) {
     methods::validObject(object@events)
 
     errors <- c(valid_tspan(object),
+                valid_replicates(object),
                 valid_u0(object),
                 valid_U(object),
                 valid_v0(object),
