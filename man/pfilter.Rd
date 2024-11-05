@@ -3,14 +3,19 @@
 \name{pfilter}
 \alias{pfilter}
 \alias{pfilter,SimInf_model-method}
+\alias{pfilter,SimInf_multi_model-method}
 \title{Bootstrap particle filter}
 \usage{
-pfilter(model, obs_process, data, npart, init_model = NULL)
+pfilter(model, ...)
 
 \S4method{pfilter}{SimInf_model}(model, obs_process, data, npart, init_model = NULL)
+
+\S4method{pfilter}{SimInf_multi_model}(model, obs_process, init_model = NULL)
 }
 \arguments{
 \item{model}{The \code{SimInf_model} object to simulate data from.}
+
+\item{...}{other arguments passed to specific methods.}
 
 \item{obs_process}{Specification of the stochastic observation
 process. The \code{obs_process} can be specified as a

@@ -42,7 +42,7 @@ setClass(
 ##'     in.
 ##' @param multi_model FIXME.
 ##' @param data A \code{data.frame} holding the time series data.
-##' @value FIXME
+##' @return FIXME
 ##' @export
 multi_model <- function(model, multi_model, data) {
     if (any(isFALSE(identical(dim(model@U_sparse), c(0L, 0L))),

@@ -14,6 +14,9 @@ in.}
 
 \item{data}{A \code{data.frame} holding the time series data.}
 }
+\value{
+FIXME
+}
 \description{
 Create a multi-model object
 }
