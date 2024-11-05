@@ -20,7 +20,7 @@
 ##'
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
-##' @slot multi_model FIXME.
+##' @slot tspan FIXME.
 ##' @slot events FIXME.
 ##' @slot data A \code{list} with \code{data.frame} items holding the
 ##'     time series data.
@@ -29,7 +29,6 @@
 setClass(
     "SimInf_multi_model",
     slots = c(model       = "SimInf_model",
-              multi_model = "SimInf_model",
               tspan       = "matrix",
               events      = "list",
               data        = "list",
@@ -40,40 +39,25 @@ setClass(
 ##'
 ##' @param model The \code{SimInf_model} object to estimate parameters
 ##'     in.
-##' @param multi_model FIXME.
+##' @param n_models FIXME.
 ##' @param data A \code{data.frame} holding the time series data.
 ##' @return FIXME
 ##' @export
-multi_model <- function(model, multi_model, data) {
+multi_model <- function(model, n_models, data) {
     if (any(isFALSE(identical(dim(model@U_sparse), c(0L, 0L))),
-            isFALSE(identical(dim(model@V_sparse), c(0L, 0L))),
-            isFALSE(identical(dim(multi_model@U_sparse), c(0L, 0L))),
-            isFALSE(identical(dim(multi_model@V_sparse), c(0L, 0L))))) {
+            isFALSE(identical(dim(model@V_sparse), c(0L, 0L))))) {
         stop("Cannot create a multi model object with a sparse result matrix.",
              call. = FALSE)
     }
 
-    if (any(n_nodes(multi_model) <= n_nodes(model),
-            n_nodes(multi_model) %% n_nodes(model))) {
-        stop("Invalid number of nodes in the multi_model object.",
-             call. = FALSE)
-    }
-
-    if (!identical(model@tspan, multi_model@tspan)) {
-        stop("Invalid 'tspan' in the multi_model object.",
-             call. = FALSE)
-    }
-
-    data <- pfilter_data(multi_model, data)
+    data <- pfilter_data(model, data)
     tspan <- pfilter_tspan(model, data)
     model@tspan <- tspan[, 2]
-    multi_model@tspan <- tspan[, 2]
-    events <- pfilter_events(multi_model@events, tspan[, 2])
-    n_models <- as.integer(n_nodes(multi_model) / n_nodes(model))
+    events <- pfilter_events(model@events, tspan[, 2])
+    n_models <- as.integer(n_models)
 
     methods::new("SimInf_multi_model",
                  model = model,
-                 multi_model = multi_model,
                  tspan = tspan,
                  events = events,
                  data = data,

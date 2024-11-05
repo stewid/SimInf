@@ -13,7 +13,7 @@ Class \code{"SimInf_multi_model"}
 \item{\code{model}}{The \code{SimInf_model} object to estimate parameters
 in.}
 
-\item{\code{multi_model}}{FIXME.}
+\item{\code{tspan}}{FIXME.}
 
 \item{\code{events}}{FIXME.}
 
