@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2024 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,34 +54,46 @@ SimInf_solver_ssm(
         #  pragma omp for
         #endif
         for (i = 0; i < Nthread; i++) {
-            int node;
+            int node, replicate;
             SimInf_compartment_model m = *&model[i];
 
             /* Initialize the transition rate for every transition and
              * every node. Store the sum of the transition rates in
              * each node in sum_t_rate. Moreover, initialize time in
              * each node. */
-            for (node = 0; node < m.Nn; node++) {
-                int j;
+            for (replicate = 0; replicate < m.Nrep; replicate++) {
+                for (node = 0; node < m.Nn; node++) {
+                    int j;
 
-                m.sum_t_rate[node] = 0.0;
-                for (j = 0; j < m.Nt; j++) {
-                    const double rate = (*m.tr_fun[j])(
-                            &m.u[node * m.Nc], &m.v[node * m.Nd],
-                            &m.ldata[node * m.Nld], m.gdata, m.tt);
+                    m.sum_t_rate[replicate * m.Nn + node] = 0.0;
+                    for (j = 0; j < m.Nt; j++) {
+                        const double rate = (*m.tr_fun[j])(
+                            &m.u[(replicate * m.Ntot + node) * m.Nc],
+                            &m.v[(replicate * m.Ntot + node) * m.Nd],
+                            &m.ldata[node * m.Nld],
+                            m.gdata,
+                            m.tt);
 
-                    m.t_rate[node * m.Nt + j] = rate;
-                    m.sum_t_rate[node] += rate;
-                    if (!R_FINITE(rate) || rate < 0.0) {
-                        SimInf_print_status(m.Nc, &m.u[node * m.Nc],
-                                            m.Nd, &m.v[node * m.Nd],
-                                            m.Nld, &m.ldata[node * m.Nld],
-                                            m.Ni + node, m.tt, rate, j);
-                        m.error = SIMINF_ERR_INVALID_RATE;
+                        m.t_rate[(replicate * m.Nn + node) * m.Nt + j] = rate;
+                        m.sum_t_rate[replicate * m.Nn + node] += rate;
+                        if (!R_FINITE(rate) || rate < 0.0) {
+                            SimInf_print_status(
+                                m.Nc,
+                                &m.u[(replicate * m.Ntot + node) * m.Nc],
+                                m.Nd,
+                                &m.v[(replicate * m.Ntot + node) * m.Nd],
+                                m.Nld,
+                                &m.ldata[node * m.Nld],
+                                m.Ni + node,
+                                m.tt,
+                                rate,
+                                j);
+                            m.error = SIMINF_ERR_INVALID_RATE;
+                        }
                     }
-                }
 
-                m.t_time[node] = m.tt;
+                    m.t_time[replicate * m.Nn + node] = m.tt;
+                }
             }
 
             *&model[i] = m;
