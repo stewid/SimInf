@@ -272,6 +272,7 @@ typedef struct SimInf_compartment_model
     int Nld;   /**< Length of the local data vector 'ldata' for each
                 *   node. The 'ldata' vector is sent to propensities
                 *   and the post time step function. */
+    int Nrep;  /**< Number of replicates of the model. */
 
     /*** Sparse matrices ***/
     const int *irG; /**< Dependency graph. irG[k] is the row of
