@@ -26,6 +26,14 @@ valid_replicates <- function(object) {
         return("'replicates' must be a positive integer.")
     }
 
+    if (object@replicates > 1L) {
+        if (any(isFALSE(identical(dim(object@U_sparse), c(0L, 0L))),
+                isFALSE(identical(dim(object@V_sparse), c(0L, 0L))))) {
+        stop("'replicates' must equal one when a sparse result matrix.",
+             call. = FALSE)
+        }
+    }
+
     character(0)
 }
 
