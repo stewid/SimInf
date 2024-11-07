@@ -616,83 +616,142 @@ SimInf_process_events(
 
         switch (ee.event) {
         case EXIT_EVENT:
-            m.error = SimInf_sample_select(
-                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node - m.Ni, ee.select,
-                ee.n, ee.proportion, e.individuals, e.rng);
+            for (int replicate = 0; replicate < m.Nrep; replicate++) {
+                m.error = SimInf_sample_select(
+                    e.irE,
+                    e.jcE,
+                    e.prE,
+                    m.Nc,
+                    &m.u[replicate * m.Ntot * m.Nc],
+                    ee.node - m.Ni,
+                    ee.select,
+                    ee.n,
+                    ee.proportion,
+                    e.individuals,
+                    e.rng);
 
-            if (m.error) {
-                SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
-                                   m.u, ee.node - m.Ni, -1);
-                goto done;
-            }
-
-            for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
-                const int jj = e.irE[i];
-                const int kn = (ee.node - m.Ni) * m.Nc + jj;
-
-                /* Remove individuals from node */
-                m.u[kn] -= e.individuals[jj];
-                if (m.u[kn] < 0) {
-                    SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                       m.u, ee.node - m.Ni, -1);
-                    m.error = SIMINF_ERR_NEGATIVE_STATE;
+                if (m.error) {
+                    SimInf_print_event(
+                        &ee,
+                        e.irE,
+                        e.jcE,
+                        m.Nc,
+                        &m.u[replicate * m.Ntot * m.Nc],
+                        ee.node - m.Ni,
+                        -1);
                     goto done;
                 }
+
+                for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+                    const int jj = e.irE[i];
+                    const int kn = (replicate * m.Ntot + ee.node - m.Ni) * m.Nc + jj;
+
+                    /* Remove individuals from node */
+                    m.u[kn] -= e.individuals[jj];
+                    if (m.u[kn] < 0) {
+                        SimInf_print_event(
+                            &ee,
+                            NULL,
+                            NULL,
+                            m.Nc,
+                            &m.u[replicate * m.Ntot * m.Nc],
+                            ee.node - m.Ni,
+                            -1);
+                        m.error = SIMINF_ERR_NEGATIVE_STATE;
+                        goto done;
+                    }
+                }
+
+                /* Indicate node for update */
+                m.update_node[replicate * m.Ntot + ee.node - m.Ni] = 1;
             }
             break;
 
         case ENTER_EVENT:
-            m.error = SimInf_sample_select_enter(
-                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node - m.Ni, ee.select,
-                ee.n, ee.proportion, e.individuals, e.rng);
+            for (int replicate = 0; replicate < m.Nrep; replicate++) {
+                m.error = SimInf_sample_select_enter(
+                    e.irE,
+                    e.jcE,
+                    e.prE,
+                    m.Nc,
+                    &m.u[replicate * m.Ntot * m.Nc],
+                    ee.node - m.Ni,
+                    ee.select,
+                    ee.n,
+                    ee.proportion,
+                    e.individuals,
+                    e.rng);
 
-            if (m.error) {
-                SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
-                                   m.u, ee.node - m.Ni, -1);
-                goto done;
-            }
-
-            for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
-                const int jj = e.irE[i];
-                const int kn = (ee.node - m.Ni) * m.Nc + jj;
-
-                if (ee.shift < 0) {
-                    /* Add individuals to node without shifting
-                     * compartments. */
-                    m.u[kn] += e.individuals[jj];
-                    if (m.u[kn] < 0) {
-                        SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                           m.u, ee.node - m.Ni, -1);
-                        m.error = SIMINF_ERR_NEGATIVE_STATE;
-                        goto done;
-                    }
-                } else if (!e.N) {
-                    /* Not possible to shift when N is not defined. */
-                    SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
-                    m.error = SIMINF_ERR_EVENTS_N;
+                if (m.error) {
+                    SimInf_print_event(
+                        &ee,
+                        e.irE,
+                        e.jcE,
+                        m.Nc,
+                        &m.u[replicate * m.Ntot * m.Nc],
+                        ee.node - m.Ni,
+                        -1);
                     goto done;
-                } else {
-                    /* Process an enter event that also involves a
-                     * shift between compartments. */
-                    const int ll = e.N[ee.shift * m.Nc + jj];
+                }
 
-                    /* Check that the index to the new compartment is
-                     * not out of bounds. */
-                    if (jj + ll < 0 || jj + ll >= m.Nc) {
+                for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+                    const int jj = e.irE[i];
+                    const int kn = (replicate * m.Ntot + ee.node - m.Ni) * m.Nc + jj;
+
+                    if (ee.shift < 0) {
+                        /* Add individuals to node without shifting
+                         * compartments. */
+                        m.u[kn] += e.individuals[jj];
+                        if (m.u[kn] < 0) {
+                            SimInf_print_event(
+                                &ee,
+                                NULL,
+                                NULL,
+                                m.Nc,
+                                &m.u[replicate * m.Ntot * m.Nc],
+                                ee.node - m.Ni,
+                                -1);
+                            m.error = SIMINF_ERR_NEGATIVE_STATE;
+                            goto done;
+                        }
+                    } else if (!e.N) {
+                        /* Not possible to shift when N is not
+                         * defined. */
                         SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
-                        m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
+                        m.error = SIMINF_ERR_EVENTS_N;
                         goto done;
-                    }
+                    } else {
+                        /* Process an enter event that also involves a
+                         * shift between compartments. */
+                        const int ll = e.N[ee.shift * m.Nc + jj];
 
-                    /* Add individuals to node. */
-                    m.u[kn + ll] += e.individuals[jj];
-                    if (m.u[kn + ll] < 0) {
-                        SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                           m.u, ee.node, -1);
-                        m.error = SIMINF_ERR_NEGATIVE_STATE;
-                        goto done;
+                        /* Check that the index to the new compartment
+                         * is not out of bounds. */
+                        if (jj + ll < 0 || jj + ll >= m.Nc) {
+                            SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
+                            m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
+                            goto done;
+                        }
+
+                        /* Add individuals to node. */
+                        m.u[kn + ll] += e.individuals[jj];
+                        if (m.u[kn + ll] < 0) {
+                            SimInf_print_event(
+                                &ee,
+                                NULL,
+                                NULL,
+                                m.Nc,
+                                &m.u[replicate * m.Ntot * m.Nc],
+                                ee.node,
+                                -1);
+                            m.error = SIMINF_ERR_NEGATIVE_STATE;
+                            goto done;
+                        }
                     }
                 }
+
+                /* Indicate node for update */
+                m.update_node[replicate * m.Ntot + ee.node - m.Ni] = 1;
             }
             break;
 
@@ -711,47 +770,79 @@ SimInf_process_events(
                 goto done;
             }
 
-            m.error = SimInf_sample_select(
-                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node - m.Ni, ee.select,
-                ee.n, ee.proportion, e.individuals, e.rng);
+            for (int replicate = 0; replicate < m.Nrep; replicate++) {
+                m.error = SimInf_sample_select(
+                    e.irE,
+                    e.jcE,
+                    e.prE,
+                    m.Nc,
+                    &m.u[replicate * m.Ntot * m.Nc],
+                    ee.node - m.Ni,
+                    ee.select,
+                    ee.n,
+                    ee.proportion,
+                    e.individuals,
+                    e.rng);
 
-            if (m.error) {
-                SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
-                                   m.u, ee.node - m.Ni, -1);
-                goto done;
-            }
-
-            for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
-                const int jj = e.irE[i];
-                const int kn = (ee.node - m.Ni) * m.Nc + jj;
-                const int ll = e.N[ee.shift * m.Nc + jj];
-
-                /* Check that the index to the new compartment is not
-                 * out of bounds. */
-                if (jj + ll < 0 || jj + ll >= m.Nc) {
-                    SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
-                    m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
+                if (m.error) {
+                    SimInf_print_event(
+                        &ee,
+                        e.irE,
+                        e.jcE,
+                        m.Nc,
+                        &m.u[replicate * m.Ntot * m.Nc],
+                        ee.node - m.Ni,
+                        -1);
                     goto done;
                 }
 
-                /* Add individuals to new compartments in node */
-                m.u[kn + ll] += e.individuals[jj];
-                if (m.u[kn + ll] < 0) {
-                    SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                       m.u, ee.node - m.Ni, -1);
-                    m.error = SIMINF_ERR_NEGATIVE_STATE;
-                    goto done;
+                for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+                    const int jj = e.irE[i];
+                    const int kn = (replicate * m.Ntot + ee.node - m.Ni) * m.Nc + jj;
+                    const int ll = e.N[ee.shift * m.Nc + jj];
+
+                    /* Check that the index to the new compartment is
+                     * not out of bounds. */
+                    if (jj + ll < 0 || jj + ll >= m.Nc) {
+                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
+                        m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
+                        goto done;
+                    }
+
+                    /* Add individuals to new compartments in node */
+                    m.u[kn + ll] += e.individuals[jj];
+                    if (m.u[kn + ll] < 0) {
+                        SimInf_print_event(
+                            &ee,
+                            NULL,
+                            NULL,
+                            m.Nc,
+                            &m.u[replicate * m.Ntot * m.Nc],
+                            ee.node - m.Ni,
+                            -1);
+                        m.error = SIMINF_ERR_NEGATIVE_STATE;
+                        goto done;
+                    }
+
+                    /* Remove individuals from previous compartments
+                     * in node */
+                    m.u[kn] -= e.individuals[jj];
+                    if (m.u[kn] < 0) {
+                        SimInf_print_event(
+                            &ee,
+                            NULL,
+                            NULL,
+                            m.Nc,
+                            &m.u[replicate * m.Ntot * m.Nc],
+                            ee.node - m.Ni,
+                            -1);
+                        m.error = SIMINF_ERR_NEGATIVE_STATE;
+                        goto done;
+                    }
                 }
 
-                /* Remove individuals from previous compartments in
-                 * node */
-                m.u[kn] -= e.individuals[jj];
-                if (m.u[kn] < 0) {
-                    SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                       m.u, ee.node - m.Ni, -1);
-                    m.error = SIMINF_ERR_NEGATIVE_STATE;
-                    goto done;
-                }
+                /* Indicate node for update */
+                m.update_node[replicate * m.Ntot + ee.node - m.Ni] = 1;
             }
             break;
 
@@ -767,71 +858,110 @@ SimInf_process_events(
                 goto done;
             }
 
-            m.error = SimInf_sample_select(
-                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node, ee.select, ee.n,
-                ee.proportion, e.individuals, e.rng);
+            for (int replicate = 0; replicate < m.Nrep; replicate++) {
+                m.error = SimInf_sample_select(
+                    e.irE,
+                    e.jcE,
+                    e.prE,
+                    m.Nc,
+                    &m.u[replicate * m.Ntot * m.Nc],
+                    ee.node,
+                    ee.select,
+                    ee.n,
+                    ee.proportion,
+                    e.individuals,
+                    e.rng);
 
-            if (m.error) {
-                SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
-                                   m.u, ee.node, ee.dest);
-                goto done;
-            }
-
-            for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
-                const int jj = e.irE[i];
-                const int kd = ee.dest * m.Nc + jj;
-                const int kn = ee.node * m.Nc + jj;
-
-                if (ee.shift < 0) {
-                    /* Add individuals to dest without shifting
-                     * compartments */
-                    m.u[kd] += e.individuals[jj];
-                    if (m.u[kd] < 0) {
-                        SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                           m.u, ee.node, ee.dest);
-                        m.error = SIMINF_ERR_NEGATIVE_STATE;
-                        goto done;
-                    }
-                } else if (!e.N) {
-                    /* Not possible to shift when N is not defined. */
-                    SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
-                    m.error = SIMINF_ERR_EVENTS_N;
+                if (m.error) {
+                    SimInf_print_event(
+                        &ee,
+                        e.irE,
+                        e.jcE,
+                        m.Nc,
+                        &m.u[replicate * m.Ntot * m.Nc],
+                        ee.node,
+                        ee.dest);
                     goto done;
-                } else {
-                    /* Process a movement event that also involves a
-                     * shift between compartments. */
-                    const int ll = e.N[ee.shift * m.Nc + jj];
+                }
 
-                    /* Check that the index to the new compartment is
-                     * not out of bounds. */
-                    if (jj + ll < 0 || jj + ll >= m.Nc) {
+                for (int i = e.jcE[ee.select]; i < e.jcE[ee.select + 1]; i++) {
+                    const int jj = e.irE[i];
+                    const int kd = (replicate * m.Ntot + ee.dest) * m.Nc + jj;
+                    const int kn = (replicate * m.Ntot + ee.node) * m.Nc + jj;
+
+                    if (ee.shift < 0) {
+                        /* Add individuals to dest without shifting
+                         * compartments */
+                        m.u[kd] += e.individuals[jj];
+                        if (m.u[kd] < 0) {
+                            SimInf_print_event(
+                                &ee,
+                                NULL,
+                                NULL,
+                                m.Nc,
+                                &m.u[replicate * m.Ntot * m.Nc],
+                                ee.node,
+                                ee.dest);
+                            m.error = SIMINF_ERR_NEGATIVE_STATE;
+                            goto done;
+                        }
+                    } else if (!e.N) {
+                        /* Not possible to shift when N is not
+                         * defined. */
                         SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
-                        m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
+                        m.error = SIMINF_ERR_EVENTS_N;
                         goto done;
+                    } else {
+                        /* Process a movement event that also involves
+                         * a shift between compartments. */
+                        const int ll = e.N[ee.shift * m.Nc + jj];
+
+                        /* Check that the index to the new compartment
+                         * is not out of bounds. */
+                        if (jj + ll < 0 || jj + ll >= m.Nc) {
+                            SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
+                            m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
+                            goto done;
+                        }
+
+                        /* Add individuals to dest */
+                        m.u[kd + ll] += e.individuals[jj];
+                        if (m.u[kd + ll] < 0) {
+                            SimInf_print_event(
+                                &ee,
+                                NULL,
+                                NULL,
+                                m.Nc,
+                                &m.u[replicate * m.Ntot * m.Nc],
+                                ee.node,
+                                ee.dest);
+                            m.error = SIMINF_ERR_NEGATIVE_STATE;
+                            goto done;
+                        }
                     }
 
-                    /* Add individuals to dest */
-                    m.u[kd + ll] += e.individuals[jj];
-                    if (m.u[kd + ll] < 0) {
-                        SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                           m.u, ee.node, ee.dest);
+                    /* Remove individuals from node */
+                    m.u[kn] -= e.individuals[jj];
+                    if (m.u[kn] < 0) {
+                        SimInf_print_event(
+                            &ee,
+                            NULL,
+                            NULL,
+                            m.Nc,
+                            &m.u[replicate * m.Ntot * m.Nc],
+                            ee.node,
+                            ee.dest);
                         m.error = SIMINF_ERR_NEGATIVE_STATE;
                         goto done;
                     }
                 }
 
-                /* Remove individuals from node */
-                m.u[kn] -= e.individuals[jj];
-                if (m.u[kn] < 0) {
-                    SimInf_print_event(&ee, NULL, NULL, m.Nc,
-                                       m.u, ee.node, ee.dest);
-                    m.error = SIMINF_ERR_NEGATIVE_STATE;
-                    goto done;
-                }
-            }
+                /* Indicate node for update */
+                m.update_node[replicate * m.Ntot + ee.node - m.Ni] = 1;
 
-            /* Indicate dest for update */
-            m.update_node[ee.dest] = 1;
+                /* Indicate dest for update */
+                m.update_node[replicate * m.Ntot + ee.dest] = 1;
+            }
             break;
 
         default:
@@ -839,9 +969,6 @@ SimInf_process_events(
             m.error = SIMINF_UNDEFINED_EVENT;
             break;
         }
-
-        /* Indicate node for update */
-        m.update_node[ee.node - m.Ni] = 1;
 
         e.events_index++;
     }
