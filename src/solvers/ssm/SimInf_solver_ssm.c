@@ -321,14 +321,26 @@ SimInf_solver_ssm(
                  * outside the 'pragma omp parallel' statement (6b). */
                 /* 6a) Handle the case where the solution is stored in
                  * a dense matrix */
+
                 /* Copy compartment state to U */
-                while (m.U && m.U_it < m.tlen && m.tt > m.tspan[m.U_it])
-                    memcpy(&m.U[m.Nc * ((m.Ntot * m.U_it++) + m.Ni)],
-                           m.u, m.Nn * m.Nc * sizeof(int));
+                while (m.U && m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
+                    for (replicate = 0; replicate < m.Nrep; replicate++) {
+                        memcpy(&m.U[((replicate * m.tlen + m.U_it) * m.Ntot + m.Ni) * m.Nc],
+                               &m.u[replicate * m.Ntot * m.Nc],
+                               m.Nn * m.Nc * sizeof(int));
+                    }
+                    m.U_it++;
+                }
+
                 /* Copy continuous state to V */
-                while (m.V && m.V_it < m.tlen && m.tt > m.tspan[m.V_it])
-                    memcpy(&m.V[m.Nd * ((m.Ntot * m.V_it++) + m.Ni)],
-                           m.v_new, m.Nn * m.Nd * sizeof(double));
+                while (m.V && m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
+                    for (replicate = 0; replicate < m.Nrep; replicate++) {
+                        memcpy(&m.V[((replicate * m.tlen + m.V_it) * m.Ntot + m.Ni) * m.Nd],
+                               &m.v_new[replicate * m.Ntot * m.Nd],
+                               m.Nn * m.Nd * sizeof(double));
+                    }
+                    m.V_it++;
+                }
 
                 *&model[i] = m;
             }
