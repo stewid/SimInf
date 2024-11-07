@@ -948,29 +948,29 @@ SimInf_compartment_model_create(
 
     /* Allocate memory to keep track of the continuous state in each
      * node. */
-    model[0].v = malloc(args->Nn * args->Nd * sizeof(double));
+    model[0].v = malloc(args->Nrep * args->Nn * args->Nd * sizeof(double));
     if (!model[0].v)
         goto on_error; /* #nocov */
-    model[0].v_new = malloc(args->Nn * args->Nd * sizeof(double));
+    model[0].v_new = malloc(args->Nrep * args->Nn * args->Nd * sizeof(double));
     if (!model[0].v_new)
         goto on_error; /* #nocov */
 
     /* Set continuous state to the initial state in each node. */
-    memcpy(model[0].v, args->v0, args->Nn * args->Nd * sizeof(double));
-    memcpy(model[0].v_new, args->v0, args->Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v, args->v0, args->Nrep * args->Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v_new, args->v0, args->Nrep * args->Nn * args->Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
-    model[0].update_node = calloc(args->Nn, sizeof(int));
+    model[0].update_node = calloc(args->Nrep * args->Nn, sizeof(int));
     if (!model[0].update_node)
         goto on_error; /* #nocov */
 
     /* Allocate memory for compartment state and set compartment state
      * to the initial state. */
-    model[0].u = malloc(args->Nn * args->Nc * sizeof(int));
+    model[0].u = malloc(args->Nrep * args->Nn * args->Nc * sizeof(int));
     if (!model[0].u)
         goto on_error; /* #nocov */
-    memcpy(model[0].u, args->u0, args->Nn * args->Nc * sizeof(int));
+    memcpy(model[0].u, args->u0, args->Nrep * args->Nn * args->Nc * sizeof(int));
 
     for (i = 0; i < args->Nthread; i++) {
         /* Constants */
@@ -1032,17 +1032,17 @@ SimInf_compartment_model_create(
         model[i].ldata = &(args->ldata[model[i].Ni * model[i].Nld]);
         model[i].gdata = args->gdata;
 
-        /* Create transition rate matrix (Nt X Nn) and total rate
+        /* Create transition rate matrix (Nrep x Nt X Nn) and total rate
          * vector. In t_rate we store all propensities for state
          * transitions, and in sum_t_rate the sum of propensities in
          * every node. */
-        model[i].t_rate = malloc(args->Nt * model[i].Nn * sizeof(double));
+        model[i].t_rate = malloc(model[i].Nrep * model[i].Nt * model[i].Nn * sizeof(double));
         if (!model[i].t_rate)
             goto on_error; /* #nocov */
-        model[i].sum_t_rate = malloc(model[i].Nn * sizeof(double));
+        model[i].sum_t_rate = malloc(model[i].Nrep * model[i].Nn * sizeof(double));
         if (!model[i].sum_t_rate)
             goto on_error; /* #nocov */
-        model[i].t_time = malloc(model[i].Nn * sizeof(double));
+        model[i].t_time = malloc(model[i].Nrep * model[i].Nn * sizeof(double));
         if (!model[i].t_time)
             goto on_error; /* #nocov */
     }
