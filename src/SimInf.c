@@ -79,6 +79,9 @@ SimInf_raise_error(
     case SIMINF_ERR_INVALID_PROPORTION:
         Rf_error("Invalid proportion detected (< 0.0 or > 1.0).");
         break;
+    case SIMINF_ERR_AEM_REPLICATED_MODEL:
+        Rf_error("Cannot run the 'aem' solver on a replicated model.");
+        break;
     default:                                        /* #nocov */
         Rf_error("Unknown error code: %i.", error); /* #nocov */
         break;
@@ -248,12 +251,16 @@ SimInf_run(
     args.Nthread = SimInf_set_num_threads(args.Nn);
 
     /* Run the simulation solver. */
-    if (Rf_isNull(solver) || (strcmp(CHAR(STRING_ELT(solver, 0)), "ssm") == 0))
+    if (Rf_isNull(solver) || (strcmp(CHAR(STRING_ELT(solver, 0)), "ssm") == 0)) {
         error = SimInf_run_solver_ssm(&args);
-    else if (strcmp(CHAR(STRING_ELT(solver, 0)), "aem") == 0)
-        error = SimInf_run_solver_aem(&args);
-    else
+    } else if (strcmp(CHAR(STRING_ELT(solver, 0)), "aem") == 0) {
+        if (args.Nrep > 1)
+            error = SIMINF_ERR_AEM_REPLICATED_MODEL;
+        else
+            error = SimInf_run_solver_aem(&args);
+    } else {
         error = SIMINF_ERR_UNKNOWN_SOLVER;
+    }
 
 cleanup:
     if (error)
