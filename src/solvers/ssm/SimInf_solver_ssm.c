@@ -117,108 +117,91 @@ SimInf_solver_ssm(
             #  pragma omp for
             #endif
             for (i = 0; i < Nthread; i++) {
-                int node, replicate;
+                int node;
                 SimInf_scheduled_events e = *&events[i];
                 SimInf_compartment_model m = *&model[i];
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
-                for (replicate = 0; replicate < m.Nrep && !m.error; replicate++) {
-                    for (node = 0; node < m.Nn && !m.error; node++) {
-                        for (;;) {
-                            double cum, rand, tau, delta = 0.0;
-                            int j, tr;
+                for (node = 0; node < m.Nn && !m.error; node++) {
+                    for (;;) {
+                        double cum, rand, tau, delta = 0.0;
+                        int j, tr;
 
-                            /* 1a) Compute time to next event for this
-                             * node. */
-                            if (m.sum_t_rate[replicate * m.Nn + node] <= 0.0) {
-                                m.t_time[replicate * m.Nn + node] = m.next_unit_of_time;
-                                break;
-                            }
-                            tau = -log(gsl_rng_uniform_pos(e.rng)) /
-                                m.sum_t_rate[replicate * m.Nn + node];
-                            if ((tau + m.t_time[replicate * m.Nn + node]) >= m.next_unit_of_time) {
-                                m.t_time[replicate * m.Nn + node] = m.next_unit_of_time;
-                                break;
-                            }
-                            m.t_time[replicate * m.Nn + node] += tau;
-
-                            /* 1b) Determine the transition that did
-                             * occur (direct SSA). */
-                            rand = gsl_rng_uniform_pos(e.rng) * m.sum_t_rate[replicate * m.Nn + node];
-                            for (tr = 0, cum = m.t_rate[(replicate * m.Nn + node) * m.Nt];
-                                 tr < m.Nt && rand > cum;
-                                 tr++, cum += m.t_rate[(replicate * m.Nn + node) * m.Nt + tr]);
-
-                            /* Elaborate floating point fix: */
-                            if (tr >= m.Nt)
-                                tr = m.Nt - 1;
-                            if (m.t_rate[(replicate * m.Nn + node) * m.Nt + tr] == 0.0) {
-                                /* Go backwards and try to find first
-                                 * nonzero transition rate */
-                                for ( ; tr > 0 && m.t_rate[(replicate * m.Nn + node) * m.Nt + tr] == 0.0; tr--);
-
-                                /* No nonzero rate found, but a
-                                   transition was sampled. This can
-                                   happen due to floating point errors
-                                   in the iterated recalculated
-                                   rates. */
-                                if (m.t_rate[(replicate * m.Nn + node) * m.Nt + tr] == 0.0) {
-                                    /* nil event: zero out and move on */
-                                    m.sum_t_rate[replicate * m.Nn + node] = 0.0;
-                                    break;
-                                }
-                            }
-
-                            /* 1c) Update the state of the node */
-                            for (j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
-                                m.u[(replicate * m.Ntot + node) * m.Nc + m.irS[j]] += m.prS[j];
-                                if (m.u[(replicate * m.Ntot + node) * m.Nc + m.irS[j]] < 0) {
-                                    SimInf_print_status(
-                                        m.Nc,
-                                        &m.u[(replicate * m.Ntot + node) * m.Nc],
-                                        m.Nd,
-                                        &m.v[(replicate * m.Ntot + node) * m.Nd],
-                                        m.Nld,
-                                        &m.ldata[node * m.Nld],
-                                        m.Ni + node,
-                                        m.t_time[replicate * m.Nn + node],
-                                        0,
-                                        tr);
-                                    m.error = SIMINF_ERR_NEGATIVE_STATE;
-                                }
-                            }
-
-                            /* 1d) Recalculate sum_t_rate[replicate *
-                             * m.Nn + node] using dependency graph. */
-                            for (j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
-                                const double old = m.t_rate[(replicate * m.Nn + node) * m.Nt + m.irG[j]];
-                                const double rate = (*m.tr_fun[m.irG[j]])(
-                                    &m.u[(replicate * m.Ntot + node) * m.Nc],
-                                    &m.v[(replicate * m.Ntot + node) * m.Nd],
-                                    &m.ldata[node * m.Nld],
-                                    m.gdata,
-                                    m.t_time[replicate * m.Nn + node]);
-
-                                m.t_rate[(replicate * m.Nn + node) * m.Nt + m.irG[j]] = rate;
-                                delta += rate - old;
-                                if (!R_FINITE(rate) || rate < 0.0) {
-                                    SimInf_print_status(
-                                        m.Nc,
-                                        &m.u[(replicate * m.Ntot + node) * m.Nc],
-                                        m.Nd,
-                                        &m.v[(replicate * m.Ntot + node) * m.Nd],
-                                        m.Nld,
-                                        &m.ldata[node * m.Nld],
-                                        m.Ni + node,
-                                        m.t_time[replicate * m.Nn + node],
-                                        rate,
-                                        m.irG[j]);
-                                    m.error = SIMINF_ERR_INVALID_RATE;
-                                }
-                            }
-                            m.sum_t_rate[replicate * m.Nn + node] += delta;
+                        /* 1a) Compute time to next event for this
+                         * node. */
+                        if (m.sum_t_rate[node] <= 0.0) {
+                            m.t_time[node] = m.next_unit_of_time;
+                            break;
                         }
+                        tau = -log(gsl_rng_uniform_pos(e.rng)) /
+                            m.sum_t_rate[node];
+                        if ((tau + m.t_time[node]) >= m.next_unit_of_time) {
+                            m.t_time[node] = m.next_unit_of_time;
+                            break;
+                        }
+                        m.t_time[node] += tau;
+
+                        /* 1b) Determine the transition that did occur
+                         * (direct SSA). */
+                        rand = gsl_rng_uniform_pos(e.rng) * m.sum_t_rate[node];
+                        for (tr = 0, cum = m.t_rate[node * m.Nt];
+                             tr < m.Nt && rand > cum;
+                             tr++, cum += m.t_rate[node * m.Nt + tr]);
+
+                        /* Elaborate floating point fix: */
+                        if (tr >= m.Nt)
+                            tr = m.Nt - 1;
+                        if (m.t_rate[node * m.Nt + tr] == 0.0) {
+                            /* Go backwards and try to find first
+                             * nonzero transition rate */
+                            for ( ; tr > 0 && m.t_rate[node * m.Nt + tr] == 0.0; tr--);
+
+                            /* No nonzero rate found, but a transition
+                               was sampled. This can happen due to
+                               floating point errors in the iterated
+                               recalculated rates. */
+                            if (m.t_rate[node * m.Nt + tr] == 0.0) {
+                                /* nil event: zero out and move on */
+                                m.sum_t_rate[node] = 0.0;
+                                break;
+                            }
+                        }
+
+                        /* 1c) Update the state of the node */
+                        for (j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
+                            m.u[node * m.Nc + m.irS[j]] += m.prS[j];
+                            if (m.u[node * m.Nc + m.irS[j]] < 0) {
+                                SimInf_print_status(m.Nc, &m.u[node * m.Nc],
+                                                    m.Nd, &m.v[node * m.Nd],
+                                                    m.Nld, &m.ldata[node * m.Nld],
+                                                    m.Ni + node, m.t_time[node],
+                                                    0, tr);
+                                m.error = SIMINF_ERR_NEGATIVE_STATE;
+                            }
+                        }
+
+                        /* 1d) Recalculate sum_t_rate[node] using
+                         * dependency graph. */
+                        for (j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
+                            const double old = m.t_rate[node * m.Nt + m.irG[j]];
+                            const double rate = (*m.tr_fun[m.irG[j]])(
+                                &m.u[node * m.Nc], &m.v[node * m.Nd],
+                                &m.ldata[node * m.Nld], m.gdata,
+                                m.t_time[node]);
+
+                            m.t_rate[node * m.Nt + m.irG[j]] = rate;
+                            delta += rate - old;
+                            if (!R_FINITE(rate) || rate < 0.0) {
+                                SimInf_print_status(m.Nc, &m.u[node * m.Nc],
+                                                    m.Nd, &m.v[node * m.Nd],
+                                                    m.Nld, &m.ldata[node * m.Nld],
+                                                    m.Ni + node, m.t_time[node],
+                                                    rate, m.irG[j]);
+                                m.error = SIMINF_ERR_INVALID_RATE;
+                            }
+                        }
+                        m.sum_t_rate[node] += delta;
                     }
                 }
 
@@ -249,62 +232,46 @@ SimInf_solver_ssm(
             #  pragma omp for
             #endif
             for (i = 0; i < Nthread; i++) {
-                int node, replicate;
+                int node;
                 SimInf_compartment_model m = *&model[i];
 
                 /* (4) Incorporate model specific actions after each
                  * timestep e.g. update the infectious pressure
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
-                for (replicate = 0; replicate < m.Nrep; replicate++) {
-                    for (node = 0; node < m.Nn; node++) {
-                        const int rc = m.pts_fun(
-                            &m.v_new[(replicate * m.Ntot + node) * m.Nd],
-                            &m.u[(replicate * m.Ntot + node) * m.Nc],
-                            &m.v[(replicate * m.Ntot + node) * m.Nd],
-                            &m.ldata[node * m.Nld],
-                            m.gdata,
-                            m.Ni + node,
-                            m.tt);
+                for (node = 0; node < m.Nn; node++) {
+                    const int rc = m.pts_fun(
+                        &m.v_new[node * m.Nd], &m.u[node * m.Nc],
+                        &m.v[node * m.Nd], &m.ldata[node * m.Nld],
+                        m.gdata, m.Ni + node, m.tt);
 
-                        if (rc < 0) {
-                            m.error = rc;
-                            break;
-                        } else if (rc > 0 || m.update_node[replicate * m.Ntot + node]) {
-                            /* Update transition rates */
-                            int j = 0;
-                            double delta = 0.0;
+                    if (rc < 0) {
+                        m.error = rc;
+                        break;
+                    } else if (rc > 0 || m.update_node[node]) {
+                        /* Update transition rates */
+                        int j = 0;
+                        double delta = 0.0;
 
-                            for (; j < m.Nt; j++) {
-                                const double old = m.t_rate[(replicate * m.Nn + node) * m.Nt + j];
-                                const double rate = (*m.tr_fun[j])(
-                                    &m.u[(replicate * m.Ntot + node) * m.Nc],
-                                    &m.v_new[(replicate * m.Ntot + node) * m.Nd],
-                                    &m.ldata[node * m.Nld],
-                                    m.gdata,
-                                    m.tt);
+                        for (; j < m.Nt; j++) {
+                            const double old = m.t_rate[node * m.Nt + j];
+                            const double rate = (*m.tr_fun[j])(
+                                &m.u[node * m.Nc], &m.v_new[node * m.Nd],
+                                &m.ldata[node * m.Nld], m.gdata, m.tt);
 
-                                m.t_rate[(replicate * m.Nn + node) * m.Nt + j] = rate;
-                                delta += rate - old;
-                                if (!R_FINITE(rate) || rate < 0.0) {
-                                    SimInf_print_status(
-                                        m.Nc,
-                                        &m.u[(replicate * m.Ntot + node) * m.Nc],
-                                        m.Nd,
-                                        &m.v[(replicate * m.Ntot + node) * m.Nd],
-                                        m.Nld,
-                                        &m.ldata[node * m.Nld],
-                                        m.Ni + node,
-                                        m.tt,
-                                        rate,
-                                        j);
-                                    m.error = SIMINF_ERR_INVALID_RATE;
-                                }
+                            m.t_rate[node * m.Nt + j] = rate;
+                            delta += rate - old;
+                            if (!R_FINITE(rate) || rate < 0.0) {
+                                SimInf_print_status(m.Nc, &m.u[node * m.Nc],
+                                                    m.Nd, &m.v[node * m.Nd],
+                                                    m.Nld, &m.ldata[node * m.Nld],
+                                                    m.Ni + node, m.tt, rate, j);
+                                m.error = SIMINF_ERR_INVALID_RATE;
                             }
-                            m.sum_t_rate[replicate * m.Nn + node] += delta;
-
-                            m.update_node[replicate * m.Ntot + node] = 0;
                         }
+                        m.sum_t_rate[node] += delta;
+
+                        m.update_node[node] = 0;
                     }
                 }
 
