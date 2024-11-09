@@ -27,6 +27,7 @@
 #include "misc/SimInf_openmp.h"
 #include "solvers/SimInf_solver.h"
 #include "solvers/ssm/SimInf_solver_ssm.h"
+#include "solvers/mssm/SimInf_solver_mssm.h"
 #include "solvers/aem/SimInf_solver_aem.h"
 
 static void
@@ -248,11 +249,17 @@ SimInf_run(
 
     /* Specify the number of threads to use. Make sure to not use more
      * threads than the number of nodes in the model. */
-    args.Nthread = SimInf_set_num_threads(args.Nn);
+    if (args.Nrep > 1)
+        args.Nthread = SimInf_set_num_threads(args.Nrep);
+    else
+        args.Nthread = SimInf_set_num_threads(args.Nn);
 
     /* Run the simulation solver. */
     if (Rf_isNull(solver) || (strcmp(CHAR(STRING_ELT(solver, 0)), "ssm") == 0)) {
-        error = SimInf_run_solver_ssm(&args);
+        if (args.Nrep > 1)
+            error = SimInf_run_solver_mssm(&args);
+        else
+            error = SimInf_run_solver_ssm(&args);
     } else if (strcmp(CHAR(STRING_ELT(solver, 0)), "aem") == 0) {
         if (args.Nrep > 1)
             error = SIMINF_ERR_AEM_REPLICATED_MODEL;
