@@ -6,9 +6,9 @@ rm -rf autom4te.cache
 rm -f src/Makevars
 rm -f src/*.o
 rm -f src/solvers/*.o
-rm -f src/solvers/ssm/*.o
 rm -f src/solvers/aem/*.o
-rm -f src/events/*.o
+rm -f src/solvers/mssm/*.o
+rm -f src/solvers/ssm/*.o
 rm -f src/misc/*.o
 rm -f src/models/*.o
 rm -f src/*.so
