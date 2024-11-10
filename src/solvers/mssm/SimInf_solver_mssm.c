@@ -42,10 +42,6 @@ SimInf_solver_mssm(
     SimInf_scheduled_events *events,
     int Nthread)
 {
-    int *u = model[0].u;
-    double *v = model[0].v;
-    double *v_new = model[0].v_new;
-
     #ifdef _OPENMP
     #  pragma omp parallel num_threads(SimInf_num_threads())
     #endif
@@ -59,23 +55,30 @@ SimInf_solver_mssm(
             SimInf_scheduled_events e = *&events[i];
             SimInf_compartment_model m = *&model[i];
 
+            /* Store original pointers to the model state. */
+            int *u = m.u;
+            int *U = m.U;
+            double *v = m.v;
+            double *v_new = m.v_new;
+            double *V = m.V;
+
             for (int replicate = 0; replicate < m.Nrep && !m.error; replicate++) {
-                if (replicate > 0) {
-                    /* Clear processed events. */
-                    e.events_index = 0;
+                /* Clear processed events. */
+                e.events_index = 0;
 
-                    /* Move to next replicate of the model. */
-                    m.u = &m.u[m.Nn * m.Nc];
-                    m.v = &m.v[m.Nn * m.Nd];
-                    m.v_new = &m.v_new[m.Nn * m.Nd];
-                    m.U = &m.U[m.tlen * m.Nn * m.Nc];
-                    m.V = &m.V[m.tlen * m.Nn * m.Nd];
+                /* Move to the initial state of the model
+                 * replicate. */
+                m.u = &u[replicate * m.Nn * m.Nc];
+                m.U = &U[replicate * m.tlen * m.Nn * m.Nc];
+                m.v = &v[replicate * m.Nn * m.Nd];
+                m.v_new = &v_new[replicate * m.Nn * m.Nd];
+                m.V = &V[replicate * m.tlen * m.Nn * m.Nd];
 
-                    m.tt = m.tspan[0];
-                    m.next_unit_of_time = floor(m.tt) + 1.0;
-                    m.U_it = 0;
-                    m.V_it = 0;
-                }
+                /* Initialize global time. */
+                m.tt = m.tspan[0];
+                m.next_unit_of_time = floor(m.tt) + 1.0;
+                m.U_it = 0;
+                m.V_it = 0;
 
                 /* Initialize the transition rate for every transition
                  * and every node. Store the sum of the transition
@@ -301,15 +304,17 @@ SimInf_solver_mssm(
                     if (m.U_it >= m.tlen)
                         break;
                 }
-
-                *&model[i] = m;
             }
+
+            /* Restore original pointers to the model state. */
+            m.u = u;
+            m.U = U;
+            m.v = v;
+            m.v_new = v_new;
+            m.V = V;
+            *&model[i] = m;
         }
     }
-
-    model[0].u = u;
-    model[0].v = v;
-    model[0].v_new = v_new;
 
     /* Check for error. */
     for (int j = 0; j < Nthread; j++)
