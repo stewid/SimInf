@@ -52,6 +52,17 @@ setMethod(
     }
 )
 
+##' @rdname n_nodes
+##' @include SimInf_multi_model.R
+##' @export
+setMethod(
+    "n_nodes",
+    signature(model = "SimInf_multi_model"),
+    function(model) {
+        n_nodes(model@model)
+    }
+)
+
 ##' Determine the number of replicates in a model
 ##'
 ##' @param model the \code{model} object to extract the number of
