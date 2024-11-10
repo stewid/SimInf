@@ -213,17 +213,9 @@ SimInf_solver_mssm(
                         }
                     }
 
-                    *&events[i] = e;
-                    *&model[i] = m;
-
-                    /* (2) Incorporate all scheduled E1 events */
-                    SimInf_process_events(&model[i], &events[i], 0);
-
-                    /* (3) Incorporate all scheduled E2 events */
-                    SimInf_process_events(&model[i], &events[i], 1);
-
-                    e = *&events[i];
-                    m = *&model[i];
+                    /* (2 & 3) Incorporate all scheduled E1 and E2
+                     * events */
+                    SimInf_process_events(&m, &e, 1);
 
                     /* (4) Incorporate model specific actions after
                      * each timestep e.g. update the infectious
