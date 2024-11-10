@@ -82,10 +82,8 @@ SimInf_solver_mssm(
                  * rates in each node in sum_t_rate. Moreover,
                  * initialize time in each node. */
                 for (int node = 0; node < m.Nn && !m.error; node++) {
-                    int j;
-
                     m.sum_t_rate[node] = 0.0;
-                    for (j = 0; j < m.Nt; j++) {
+                    for (int j = 0; j < m.Nt; j++) {
                         const double rate = (*m.tr_fun[j])(
                             &m.u[node * m.Nc],
                             &m.v[node * m.Nd],
@@ -121,7 +119,7 @@ SimInf_solver_mssm(
                     for (int node = 0; node < m.Nn && !m.error; node++) {
                         for (;;) {
                             double cum, rand, tau, delta = 0.0;
-                            int j, tr;
+                            int tr;
 
                             /* 1a) Compute time to next event for this
                              * node. */
@@ -165,7 +163,7 @@ SimInf_solver_mssm(
                             }
 
                             /* 1c) Update the state of the node */
-                            for (j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
+                            for (int j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
                                 m.u[node * m.Nc + m.irS[j]] += m.prS[j];
                                 if (m.u[node * m.Nc + m.irS[j]] < 0) {
                                     SimInf_print_status(
@@ -185,7 +183,7 @@ SimInf_solver_mssm(
 
                             /* 1d) Recalculate sum_t_rate[node] using
                              * dependency graph. */
-                            for (j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
+                            for (int j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
                                 const double old = m.t_rate[node * m.Nt + m.irG[j]];
                                 const double rate = (*m.tr_fun[m.irG[j]])(
                                     &m.u[node * m.Nc],
@@ -246,10 +244,9 @@ SimInf_solver_mssm(
                             break;
                         } else if (rc > 0 || m.update_node[node]) {
                             /* Update transition rates */
-                            int j = 0;
                             double delta = 0.0;
 
-                            for (; j < m.Nt; j++) {
+                            for (int j = 0; j < m.Nt; j++) {
                                 const double old = m.t_rate[node * m.Nt + j];
                                 const double rate = (*m.tr_fun[j])(
                                     &m.u[node * m.Nc],
