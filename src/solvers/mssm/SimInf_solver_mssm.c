@@ -293,8 +293,7 @@ SimInf_solver_mssm(
                                m.v_new, m.Nn * m.Nd * sizeof(double));
 
                     /* Swap the pointers to the continuous state
-                     * variable so that 'v' equals 'v_new'. Moreover,
-                     * check for error. */
+                     * variable so that 'v' equals 'v_new'. */
                     double *v_tmp = m.v;
                     m.v = m.v_new;
                     m.v_new = v_tmp;
