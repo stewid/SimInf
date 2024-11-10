@@ -115,7 +115,7 @@ SimInf_solver_mssm(
                 }
 
                 /* Main loop. */
-                for (;;) {
+                for (;!m.error;) {
                     /* (1) Handle internal epidemiological model,
                      * continuous-time Markov chain. */
                     for (int node = 0; node < m.Nn && !m.error; node++) {
@@ -231,7 +231,7 @@ SimInf_solver_mssm(
                      * each timestep e.g. update the infectious
                      * pressure variable. Moreover, update transition
                      * rates in nodes that are indicated for update */
-                    for (int node = 0; node < m.Nn; node++) {
+                    for (int node = 0; node < m.Nn && !m.error; node++) {
                         const int rc = m.pts_fun(
                             &m.v_new[node * m.Nd],
                             &m.u[node * m.Nc],
@@ -327,9 +327,9 @@ SimInf_solver_mssm(
     model[0].v_new = v_new;
 
     /* Check for error. */
-    for (int k = 0; k < Nthread; k++)
-        if (model[k].error)
-            return model[k].error;
+    for (int j = 0; j < Nthread; j++)
+        if (model[j].error)
+            return model[j].error;
 
     return 0;
 }
