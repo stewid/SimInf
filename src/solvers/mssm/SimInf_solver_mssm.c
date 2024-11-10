@@ -289,16 +289,12 @@ SimInf_solver_mssm(
                         memcpy(&m.V[m.Nd * m.Ntot * m.V_it++],
                                m.v_new, m.Nn * m.Nd * sizeof(double));
 
-                    /* *&model[i] = m; */
-
                     /* Swap the pointers to the continuous state
                      * variable so that 'v' equals 'v_new'. Moreover,
                      * check for error. */
                     double *v_tmp = m.v;
                     m.v = m.v_new;
                     m.v_new = v_tmp;
-                    /* if (model[k].error) */
-                    /*     return model[k].error; */
 
                     /* If the simulation has reached the final time,
                      * exit. */
