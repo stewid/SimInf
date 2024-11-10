@@ -85,10 +85,53 @@ setMethod(
     }
 )
 
+##' Determine the number of compartments in a model
+##'
+##' @param model the \code{model} object to extract the number of
+##'     compartments from.
+##' @return the number of compartments in the model.
+##' @export
+##' @examples
+##' ## Create an 'SIR' model with 100 nodes, with 99 susceptible,
+##' ## 1 infected and 0 recovered in each node.
+##' u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
+##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##'
+##' ## Display the number of compartments in the model.
+##' n_compartments(model)
+setGeneric(
+    "n_compartments",
+    signature = "model",
+    function(model) {
+        standardGeneric("n_compartments")
+    }
+)
+
+##' @rdname n_compartments
+##' @include SimInf_model.R
+##' @export
+setMethod(
+    "n_compartments",
+    signature(model = "SimInf_model"),
+    function(model) {
+        dim(model@S)[1]
+    }
+)
+
+##' @rdname n_compartments
+##' @include SimInf_multi_model.R
+##' @export
+setMethod(
+    "n_compartments",
+    signature(model = "SimInf_multi_model"),
+    function(model) {
+        n_compartments(model@model)
+    }
+)
+
 ## Number of compartments
 Nc <- function(model) {
-    check_model_argument(model)
-    dim(model@S)[1]
+    n_compartmens(model)
 }
 
 ##' Determine the number of transitions in a model
