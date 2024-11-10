@@ -506,19 +506,19 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
         for (p in seq_len(npart)) {
             ## Initialise the model.
             u_i <- seq.int(
-                from = (p - 1L) * n_nodes(model) * n_compartments(model) + 1L,
-                length.out = n_nodes(model) * n_compartments(model))
+                from = (p - 1L) * n_nodes(m) * n_compartments(m) + 1L,
+                length.out = n_nodes(m) * n_compartments(m))
             m@u0 <- matrix(data = U[u_i, i],
-                           nrow = nrow(m@u0),
-                           ncol = ncol(m@u0),
+                           nrow = n_compartments(m),
+                           ncol = n_replicates(m) * n_nodes(m),
                            dimnames = dimnames(m@u0))
 
             v_i <- seq.int(
-                from = (p - 1L) * n_nodes(model) * Nd + 1L,
-                length.out = n_nodes(model) * Nd)
+                from = (p - 1L) * n_nodes(m) * Nd + 1L,
+                length.out = n_nodes(m) * Nd)
             m@v0 <- matrix(data = V[v_i, i],
                            nrow = nrow(m@v0),
-                           ncol = ncol(m@v0),
+                           ncol = n_replicates(m) * n_nodes(m),
                            dimnames = dimnames(m@v0))
 
             ## Propagate the model.
