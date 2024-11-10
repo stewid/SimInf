@@ -131,7 +131,7 @@ setMethod(
 
 ## Number of compartments
 Nc <- function(model) {
-    n_compartmens(model)
+    n_compartments(model)
 }
 
 ##' Determine the number of transitions in a model
