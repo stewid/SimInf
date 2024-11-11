@@ -491,6 +491,7 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
 
     ## Loop over time series.
     m <- model
+    m@replicates <- npart
     for (i in seq_len(Ntspan)) {
         if (is.na(tspan[i, 1L])) {
             m@tspan <- tspan[i, 2L]
@@ -502,43 +503,36 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
         if (!is.null(events))
             m@events <- events[[i]]
 
-        ## Loop over particles.
-        for (p in seq_len(npart)) {
-            ## Initialise the model.
-            u_i <- seq.int(
-                from = (p - 1L) * n_nodes(m) * n_compartments(m) + 1L,
-                length.out = n_nodes(m) * n_compartments(m))
-            m@u0 <- matrix(data = U[u_i, i],
-                           nrow = n_compartments(m),
-                           ncol = n_replicates(m) * n_nodes(m),
-                           dimnames = dimnames(m@u0))
+        ## Initialise the model.
+        stop("Indexing of 'u0' not implemented.")
+        m@u0 <- matrix(
+            data = U[u_i, i],
+            nrow = n_compartments(m),
+            dimnames = dimnames(m@u0))
 
-            v_i <- seq.int(
-                from = (p - 1L) * n_nodes(m) * Nd + 1L,
-                length.out = n_nodes(m) * Nd)
-            m@v0 <- matrix(data = V[v_i, i],
-                           nrow = nrow(m@v0),
-                           ncol = n_replicates(m) * n_nodes(m),
-                           dimnames = dimnames(m@v0))
+        stop("Indexing of 'v0' not implemented.")
+        m@v0 <- matrix(
+            data = V[v_i, i],
+            nrow = nrow(m@v0),
+            dimnames = dimnames(m@v0))
 
-            ## Propagate the model.
-            x <- run(m)
-            if (length(x@tspan) > 1L) {
-                x@tspan <- x@tspan[2L]
-                x@U <- x@U[, 2L, drop = FALSE]
-                x@V <- x@V[, 2L, drop = FALSE]
-            }
-
-            ## Save states.
-            U[u_i, i + 1L] <- x@U
-            V[v_i, i + 1L] <- x@V
-
-            ## Set the weight for the particle.
-            w_particle <- obs_process(x, data[[i]])
-            if (!isTRUE(is.finite(w_particle)))
-                stop("Invalid observation process.", call. = FALSE)
-            w[p] <- w_particle
+        ## Propagate the model.
+        x <- run(m)
+        if (length(x@tspan) > 1L) {
+            x@tspan <- x@tspan[2L]
+            j <- seq(from = npart + 1, length.out = npart)
+            x@U <- x@U[, j, drop = FALSE]
+            x@V <- x@V[, j, drop = FALSE]
         }
+
+        ## Save states.
+        U[, i + 1L] <- x@U
+        V[, i + 1L] <- x@V
+
+        ## Set the weight for the particle.
+        w <- obs_process(x, data[[i]])
+        if (!all(is.finite(w)) || !identical(length(w), npart))
+            stop("Invalid observation process.", call. = FALSE)
 
         max_w <- max(w)
         w <- exp(w - max_w)
