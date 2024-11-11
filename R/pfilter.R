@@ -504,13 +504,17 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
             m@events <- events[[i]]
 
         ## Initialise the model.
-        stop("Indexing of 'u0' not implemented.")
+        u_i <- seq_len(n_nodes(model) * n_compartments(model)) +
+            rep((a[, i] - 1L) * n_nodes(model) * n_compartments(model),
+                each = n_nodes(model) * n_compartments(model))
         m@u0 <- matrix(
             data = U[u_i, i],
-            nrow = n_compartments(m),
+            nrow = n_compartments(model),
             dimnames = dimnames(m@u0))
 
-        stop("Indexing of 'v0' not implemented.")
+        v_i <- seq_len(n_nodes(model) * Nd) +
+            rep((a[, i] - 1L) * n_nodes(model) * Nd,
+                each = n_nodes(model) * Nd)
         m@v0 <- matrix(
             data = V[v_i, i],
             nrow = nrow(m@v0),
@@ -520,7 +524,7 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
         x <- run(m)
         if (length(x@tspan) > 1L) {
             x@tspan <- x@tspan[2L]
-            j <- seq(from = npart + 1, length.out = npart)
+            j <- seq.int(from = npart + 1L, length.out = npart)
             x@U <- x@U[, j, drop = FALSE]
             x@V <- x@V[, j, drop = FALSE]
         }
