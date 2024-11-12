@@ -3,14 +3,11 @@
 \name{n_compartments}
 \alias{n_compartments}
 \alias{n_compartments,SimInf_model-method}
-\alias{n_compartments,SimInf_multi_model-method}
 \title{Determine the number of compartments in a model}
 \usage{
 n_compartments(model)
 
 \S4method{n_compartments}{SimInf_model}(model)
-
-\S4method{n_compartments}{SimInf_multi_model}(model)
 }
 \arguments{
 \item{model}{the \code{model} object to extract the number of
