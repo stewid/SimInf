@@ -461,10 +461,7 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
                 nrow = npart * n_nodes(model) * Nd,
                 ncol = Ntspan + 1L)
 
-    if (is.null(init_model)) {
-        U[, 1L] <- rep(as.integer(model@u0), npart)
-        V[, 1L] <- rep(as.numeric(model@v0), npart)
-    } else {
+    if (is.function(init_model)) {
         ## Loop over the particles and initialise each model.
         for (p in seq_len(npart)) {
             ## Initialise the model.
@@ -482,6 +479,9 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
                 length.out = n_nodes(model) * Nd)
             V[v_i, 1L] <- as.numeric(m@v0)
         }
+    } else {
+        U[, 1L] <- rep(as.integer(model@u0), npart)
+        V[, 1L] <- rep(as.numeric(model@v0), npart)
     }
 
     a <- matrix(data = NA_integer_,
