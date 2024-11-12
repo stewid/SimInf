@@ -5,14 +5,12 @@
 \alias{pfilter,SimInf_model-method}
 \title{Bootstrap particle filter}
 \usage{
-pfilter(model, ...)
+pfilter(model, obs_process, data, npart, init_model = NULL)
 
 \S4method{pfilter}{SimInf_model}(model, obs_process, data, npart, init_model = NULL)
 }
 \arguments{
 \item{model}{The \code{SimInf_model} object to simulate data from.}
-
-\item{...}{other arguments passed to specific methods.}
 
 \item{obs_process}{Specification of the stochastic observation
 process. The \code{obs_process} can be specified as a
@@ -46,6 +44,8 @@ one argument of type \code{SimInf_model} with the current
 model of the fitting process. This function can be useful to
 specify the initial state of \code{u0} or \code{v0} of the
 model before running a trajectory with proposed parameters.}
+
+\item{...}{other arguments passed to specific methods.}
 }
 \value{
 A \code{SimInf_pfilter} object.
