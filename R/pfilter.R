@@ -524,7 +524,7 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
         x <- run(m)
         if (length(x@tspan) > 1L) {
             x@tspan <- x@tspan[2L]
-            j <- seq.int(from = npart + 1L, length.out = npart)
+            j <- seq.int(from = 2L, by = 2L, length.out = npart)
             x@U <- x@U[, j, drop = FALSE]
             x@V <- x@V[, j, drop = FALSE]
         }
@@ -619,7 +619,7 @@ setMethod(
         data <- pfilter_data(model, data)
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]
-        events <- pfilter_events(model@events, tspan[, 2])
+        events <- pfilter_events(model@events, tspan[, 2] - 1)
         obs_process <- pfilter_obs_process(model, obs_process, data, npart)
 
         if (n_nodes(model) == 1) {
