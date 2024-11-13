@@ -1062,8 +1062,6 @@ SimInf_compartment_model_create(
             model[i].Nn = args->Nn;
             model[i].Nrep = u - l;
 
-            /* Rprintf("Thread: %i [%i, %i); %i\n", i, l, u, u - l); */
-
             if (i > 0) {
                 model[i].u = &model[0].u[l * args->Nn * args->Nc];
                 model[i].v = &model[0].v[l * args->Nn * args->Nd];
