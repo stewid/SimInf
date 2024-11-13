@@ -588,7 +588,6 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
 ##' @template data-param
 ##' @template npart-param
 ##' @template init_model-param
-##' @param ... other arguments passed to specific methods.
 ##' @return A \code{SimInf_pfilter} object.
 ##' @references
 ##'
