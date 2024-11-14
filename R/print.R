@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2024 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -174,6 +174,8 @@ setMethod(
         ## The model name
         cat(sprintf("Model: %s\n", as.character(class(object))))
         cat(sprintf("Number of nodes: %i\n", n_nodes(object)))
+        if (n_replicates(object) > 1L)
+            cat(sprintf("Number of replicates: %i\n", n_replicates(object)))
         cat(sprintf("Number of transitions: %i\n", n_transitions(object)))
         show(object@events)
 
@@ -206,6 +208,10 @@ setMethod(
 
         ## Nodes
         cat(sprintf("Number of nodes: %i\n", n_nodes(object)))
+
+        ## Replicates
+        if (n_replicates(object) > 1L)
+            cat(sprintf("Number of replicates: %i\n", n_replicates(object)))
 
         summary_transitions(object)
         summary_gdata(object)

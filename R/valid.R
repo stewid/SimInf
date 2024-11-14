@@ -19,6 +19,24 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+valid_replicates <- function(object) {
+    if (any(length(object@replicates) != 1L,
+            anyNA(object@replicates),
+            any(object@replicates < 1L))) {
+        return("'replicates' must be a positive integer.")
+    }
+
+    if (object@replicates > 1L) {
+        if (any(isFALSE(identical(dim(object@U_sparse), c(0L, 0L))),
+                isFALSE(identical(dim(object@V_sparse), c(0L, 0L))))) {
+        stop("'replicates' must equal one when a sparse result matrix.",
+             call. = FALSE)
+        }
+    }
+
+    character(0)
+}
+
 valid_tspan <- function(object) {
     if (!is.double(object@tspan)) {
         return("Input time-span must be a double vector.")
@@ -133,8 +151,10 @@ valid_ldata <- function(object) {
     if (!is.double(object@ldata))
         return("'ldata' matrix must be a double matrix.")
     Nn_ldata <- dim(object@ldata)[2]
-    if (Nn_ldata > 0 && !identical(Nn_ldata, dim(object@u0)[2]))
+    if (Nn_ldata > 0 &&
+        !identical(object@replicates * Nn_ldata, dim(object@u0)[2])) {
         return("The number of nodes in 'u0' and 'ldata' must match.")
+    }
 
     character(0)
 }

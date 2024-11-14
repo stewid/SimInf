@@ -265,6 +265,48 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
     list(slots = c(u, v), expr = expr, par = par, par_i = par_i)
 }
 
+pfilter_sample_trajectory <- function(model, U, V, a, npart, loglik, ess) {
+    i <- sample.int(npart, 1)
+
+    u_i <- seq.int(from = (i - 1L) * prod(dim(model@u0)) + 1L,
+                   length.out = prod(dim(model@u0)))
+    model@u0 <- matrix(data = U[u_i, i],
+                       nrow = nrow(model@u0),
+                       ncol = ncol(model@u0),
+                       dimnames = dimnames(model@u0))
+
+    v_i <- seq.int(from = (i - 1L) * prod(dim(model@v0)) + 1L,
+                   length.out = prod(dim(model@v0)))
+    model@v0 <- matrix(data = V[v_i, i],
+                       nrow = nrow(model@v0),
+                       ncol = ncol(model@v0),
+                       dimnames = dimnames(model@v0))
+
+    model@U <- matrix(data = NA_integer_,
+                      nrow = prod(dim(model@u0)),
+                      ncol = length(model@tspan))
+
+    model@V <- matrix(data = NA_real_,
+                      nrow = prod(dim(model@v0)),
+                      ncol = length(model@tspan))
+
+    for (j in rev(seq_len(length(model@tspan)))) {
+        model@U[, j] <- U[u_i, j + 1L, drop = FALSE]
+        model@V[, j] <- V[v_i, j + 1L, drop = FALSE]
+        i <- a[i, j]
+        u_i <- seq.int(from = (i - 1L) * prod(dim(model@u0)) + 1L,
+                       length.out = prod(dim(model@u0)))
+        v_i <- seq.int(from = (i - 1L) * prod(dim(model@v0)) + 1L,
+                       length.out = prod(dim(model@v0)))
+    }
+
+    methods::new("SimInf_pfilter",
+                 model = model,
+                 npart = npart,
+                 loglik = loglik,
+                 ess = ess)
+}
+
 ##' Run a particle filter on a model that contains one node
 ##' @noRd
 pfilter_single_node <- function(model, events, obs, data, npart,
@@ -401,10 +443,8 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
     if (!is.null(init_model))
         init_model <- match.fun(init_model)
 
-    Nc <- Nc(model)
     Nd <- nrow(model@v0)
     Ntspan <- nrow(tspan)
-    n_nodes <- n_nodes(model)
     ess <- numeric(Ntspan)
     loglik <- 0
     w <- numeric(npart)
@@ -412,34 +452,36 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
     ## Create a matrix to keep track of the states in the compartments
     ## (including the initial state) in every particle.
     U <- matrix(data = NA_integer_,
-                nrow = npart * Nc * n_nodes,
+                nrow = npart * n_nodes(model) * n_compartments(model),
                 ncol = Ntspan + 1L)
 
     ## Create a matrix to keep track of the continuous states
     ## (including the initial state) in every particle.
     V <- matrix(data = NA_real_,
-                nrow = npart * Nd * n_nodes,
+                nrow = npart * n_nodes(model) * Nd,
                 ncol = Ntspan + 1L)
 
-    if (is.null(init_model)) {
-        U[, 1L] <- rep(as.integer(model@u0), npart)
-        V[, 1L] <- rep(as.numeric(model@v0), npart)
-    } else {
+    if (is.function(init_model)) {
         ## Loop over the particles and initialise each model.
         for (p in seq_len(npart)) {
             ## Initialise the model.
             m <- init_model(model)
 
             ## Save the initial u0 state.
-            u_i <- seq.int(from = (p - 1L) * Nc * n_nodes + 1L,
-                           length.out = Nc * n_nodes)
+            u_i <- seq.int(
+                from = (p - 1L) * n_nodes(model) * n_compartments(model) + 1L,
+                length.out = n_nodes(model) * n_compartments(model))
             U[u_i, 1L] <- as.integer(m@u0)
 
             ## Save the initial v0 state.
-            v_i <- seq.int(from = (p - 1L) * Nd * n_nodes + 1L,
-                           length.out = Nd * n_nodes)
+            v_i <- seq.int(
+                from = (p - 1L) * n_nodes(model) * Nd + 1L,
+                length.out = n_nodes(model) * Nd)
             V[v_i, 1L] <- as.numeric(m@v0)
         }
+    } else {
+        U[, 1L] <- rep(as.integer(model@u0), npart)
+        V[, 1L] <- rep(as.numeric(model@v0), npart)
     }
 
     a <- matrix(data = NA_integer_,
@@ -448,8 +490,9 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
     a[, 1L] <- seq_len(npart)
 
     ## Loop over time series.
+    m <- model
+    m@replicates <- npart
     for (i in seq_len(Ntspan)) {
-        m <- model
         if (is.na(tspan[i, 1L])) {
             m@tspan <- tspan[i, 2L]
         } else {
@@ -460,41 +503,40 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
         if (!is.null(events))
             m@events <- events[[i]]
 
-        ## Loop over particles.
-        for (p in seq_len(npart)) {
-            ## Initialise the model.
-            u_i <- seq.int(from = (p - 1L) * Nc * n_nodes + 1L,
-                           length.out = Nc * n_nodes)
-            m@u0 <- matrix(data = U[u_i, i],
-                           nrow = nrow(m@u0),
-                           ncol = ncol(m@u0),
-                           dimnames = dimnames(m@u0))
+        ## Initialise the model.
+        u_i <- seq_len(n_nodes(model) * n_compartments(model)) +
+            rep((a[, i] - 1L) * n_nodes(model) * n_compartments(model),
+                each = n_nodes(model) * n_compartments(model))
+        m@u0 <- matrix(
+            data = U[u_i, i],
+            nrow = n_compartments(model),
+            dimnames = dimnames(m@u0))
 
-            v_i <- seq.int(from = (p - 1L) * Nd * n_nodes + 1L,
-                           length.out = Nd * n_nodes)
-            m@v0 <- matrix(data = V[v_i, i],
-                           nrow = nrow(m@v0),
-                           ncol = ncol(m@v0),
-                           dimnames = dimnames(m@v0))
+        v_i <- seq_len(n_nodes(model) * Nd) +
+            rep((a[, i] - 1L) * n_nodes(model) * Nd,
+                each = n_nodes(model) * Nd)
+        m@v0 <- matrix(
+            data = V[v_i, i],
+            nrow = nrow(m@v0),
+            dimnames = dimnames(m@v0))
 
-            ## Propagate the model.
-            x <- run(m)
-            if (length(x@tspan) > 1L) {
-                x@tspan <- x@tspan[2L]
-                x@U <- x@U[, 2L, drop = FALSE]
-                x@V <- x@V[, 2L, drop = FALSE]
-            }
-
-            ## Save states.
-            U[u_i, i + 1L] <- x@U
-            V[v_i, i + 1L] <- x@V
-
-            ## Set the weight for the particle.
-            w_particle <- obs_process(x, data[[i]])
-            if (!isTRUE(is.finite(w_particle)))
-                stop("Invalid observation process.", call. = FALSE)
-            w[p] <- w_particle
+        ## Propagate the model.
+        x <- run(m)
+        if (length(x@tspan) > 1L) {
+            x@tspan <- x@tspan[2L]
+            j <- seq.int(from = 2L, by = 2L, length.out = npart)
+            x@U <- x@U[, j, drop = FALSE]
+            x@V <- x@V[, j, drop = FALSE]
         }
+
+        ## Save states.
+        U[, i + 1L] <- x@U
+        V[, i + 1L] <- x@V
+
+        ## Set the weight for the particle.
+        w <- obs_process(x, data[[i]])
+        if (!all(is.finite(w)) || !identical(length(w), npart))
+            stop("Invalid observation process.", call. = FALSE)
 
         max_w <- max(w)
         w <- exp(w - max_w)
@@ -508,16 +550,22 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
     }
 
     ## Sample a trajectory.
-    model@U <- matrix(data = NA_integer_, nrow = Nc * n_nodes, ncol = Ntspan)
-    model@V <- matrix(data = NA_real_, nrow = Nd * n_nodes, ncol = Ntspan)
+    model@U <- matrix(data = NA_integer_,
+                      nrow = n_nodes(model) * n_compartments(model),
+                      ncol = Ntspan)
+    model@V <- matrix(data = NA_real_,
+                      nrow = n_nodes(model) * Nd,
+                      ncol = Ntspan)
     i <- sample.int(npart, 1)
     for (j in rev(seq_len(Ntspan))) {
-        u_i <- seq.int(from = (i - 1L) * Nc * n_nodes + 1L,
-                       length.out = Nc * n_nodes)
+        u_i <- seq.int(
+            from = (i - 1L) * n_nodes(model) * n_compartments(model) + 1L,
+            length.out = n_nodes(model) * n_compartments(model))
         model@U[, j] <- U[u_i, j + 1L, drop = FALSE]
 
-        v_i <- seq.int(from = (i - 1L) * Nd * n_nodes + 1L,
-                       length.out = Nd * n_nodes)
+        v_i <- seq.int(
+            from = (i - 1L) * n_nodes(model) * Nd + 1L,
+            length.out = n_nodes(model) * Nd)
         model@V[, j] <- V[v_i, j + 1L, drop = FALSE]
 
         i <- a[i, j]
@@ -570,7 +618,7 @@ setMethod(
         data <- pfilter_data(model, data)
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]
-        events <- pfilter_events(model@events, tspan[, 2])
+        events <- pfilter_events(model@events, tspan[, 2] - 1)
         obs_process <- pfilter_obs_process(model, obs_process, data, npart)
 
         if (n_nodes(model) == 1) {

@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2021 Stefan Widgren
+ * Copyright (C) 2015 -- 2024 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,8 @@ typedef enum {
     SIMINF_ERR_EVENTS_N             = -15,
     SIMINF_ERR_EVENT_SHIFT          = -16,
     SIMINF_ERR_SHIFT_OUT_OF_BOUNDS  = -17,
-    SIMINF_ERR_INVALID_PROPORTION   = -18
+    SIMINF_ERR_INVALID_PROPORTION   = -18,
+    SIMINF_ERR_AEM_REPLICATED_MODEL = -19
 } SimInf_error_code;
 
 /* Forward declaration of the transition rate function. */

@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2024 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -384,6 +384,52 @@ SimInf_split_events(
 }
 
 /**
+ * Copy scheduled events to each thread used during simulation
+ *
+ * @param len Number of scheduled events.
+ * @param event The type of event i.
+ * @param time The time of event i.
+ * @param node The source node index (one based) of event i.
+ * @param dest The dest node index (one-based) of event i.
+ * @param n The number of individuals in event i. n[i] >= 0.
+ * @param proportion If n[i] equals zero, then the number of
+ *        individuals to sample is calculated by summing the number of
+ *        individuals in the states determined by select[i] and
+ *        multiplying with the proportion. 0 <= p[i] <= 1.
+ * @param select Column j (one-based) in the event matrix that
+ *        determines the states to sample from.
+ * @param shift Column j (one-based) in the shift matrix S that
+ *        determines the shift of the internal and external
+ *        transfer event.
+ * @param Nn Total number of nodes.
+ * @param Nthread Number of threads to use during simulation.
+ */
+static void
+SimInf_copy_events(
+    SimInf_scheduled_events *out,
+    int len,
+    const int *event,
+    const int *time,
+    const int *node,
+    const int *dest,
+    const int *n,
+    const double *proportion,
+    const int *select,
+    const int *shift,
+    int Nthread)
+{
+    for (int i = 0; i < len; i++) {
+        const SimInf_scheduled_event e = {event[i], time[i], node[i] - 1,
+                                          dest[i] - 1, n[i], proportion[i],
+                                          select[i] - 1, shift[i] - 1};
+
+        for (int j = 0; j < Nthread; j++) {
+            kv_push(SimInf_scheduled_event, out[j].events, e);
+        }
+    }
+}
+
+/**
  * Create and initialize data to process scheduled events. The
  * generated data structure must be freed by the user.
  *
@@ -429,11 +475,36 @@ SimInf_scheduled_events_create(
         gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
     }
 
-    /* Split scheduled events into E1 and E2 events. */
-    SimInf_split_events(
-        events, args->len, args->event, args->time, args->node,
-        args->dest, args->n, args->proportion, args->select,
-        args->shift, args->Nn, args->Nthread);
+    if (args->Nrep > 1) {
+        /* Copy scheduled events into each thread. */
+        SimInf_copy_events(
+            events,
+            args->len,
+            args->event,
+            args->time,
+            args->node,
+            args->dest,
+            args->n,
+            args->proportion,
+            args->select,
+            args->shift,
+            args->Nthread);
+    } else {
+        /* Split scheduled events into E1 and E2 events. */
+        SimInf_split_events(
+            events,
+            args->len,
+            args->event,
+            args->time,
+            args->node,
+            args->dest,
+            args->n,
+            args->proportion,
+            args->select,
+            args->shift,
+            args->Nn,
+            args->Nthread);
+    }
 
     *out = events;
     return 0;
@@ -898,9 +969,7 @@ SimInf_compartment_model_free(
     SimInf_compartment_model *model)
 {
     if (model) {
-        int i;
-
-        for (i = 0; i < model->Nthread; i++) {
+        for (int i = 0; i < model->Nthread; i++) {
             SimInf_compartment_model *m = &model[i];
 
             if (m) {
@@ -910,6 +979,11 @@ SimInf_compartment_model_free(
                 m->sum_t_rate = NULL;
                 free(m->t_time);
                 m->t_time = NULL;
+
+                if (m->Nrep > 0 || i == 0) {
+                    free(m->update_node);
+                    m->update_node = NULL;
+                }
             }
         }
 
@@ -919,8 +993,6 @@ SimInf_compartment_model_free(
         model[0].v = NULL;
         free(model[0].v_new);
         model[0].v_new = NULL;
-        free(model[0].update_node);
-        model[0].update_node = NULL;
         free(model);
     }
 }
@@ -938,7 +1010,6 @@ SimInf_compartment_model_create(
     SimInf_compartment_model **out,
     SimInf_solver_args *args)
 {
-    int i;
     SimInf_compartment_model *model = NULL;
 
     /* Allocate memory for the compartment model. */
@@ -948,16 +1019,16 @@ SimInf_compartment_model_create(
 
     /* Allocate memory to keep track of the continuous state in each
      * node. */
-    model[0].v = malloc(args->Nn * args->Nd * sizeof(double));
+    model[0].v = malloc(args->Nrep * args->Nn * args->Nd * sizeof(double));
     if (!model[0].v)
         goto on_error; /* #nocov */
-    model[0].v_new = malloc(args->Nn * args->Nd * sizeof(double));
+    model[0].v_new = malloc(args->Nrep * args->Nn * args->Nd * sizeof(double));
     if (!model[0].v_new)
         goto on_error; /* #nocov */
 
     /* Set continuous state to the initial state in each node. */
-    memcpy(model[0].v, args->v0, args->Nn * args->Nd * sizeof(double));
-    memcpy(model[0].v_new, args->v0, args->Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v, args->v0, args->Nrep * args->Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v_new, args->v0, args->Nrep * args->Nn * args->Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
@@ -967,23 +1038,81 @@ SimInf_compartment_model_create(
 
     /* Allocate memory for compartment state and set compartment state
      * to the initial state. */
-    model[0].u = malloc(args->Nn * args->Nc * sizeof(int));
+    model[0].u = malloc(args->Nrep * args->Nn * args->Nc * sizeof(int));
     if (!model[0].u)
         goto on_error; /* #nocov */
-    memcpy(model[0].u, args->u0, args->Nn * args->Nc * sizeof(int));
+    memcpy(model[0].u, args->u0, args->Nrep * args->Nn * args->Nc * sizeof(int));
 
-    for (i = 0; i < args->Nthread; i++) {
+    for (int i = 0; i < args->Nthread; i++) {
         /* Constants */
         model[i].Nthread = args->Nthread;
         model[i].Ntot = args->Nn;
-        model[i].Ni = i * (args->Nn / args->Nthread);
-        model[i].Nn = args->Nn / args->Nthread;
-        if (i == (args->Nthread - 1))
-            model[i].Nn += (args->Nn % args->Nthread);
         model[i].Nt = args->Nt;
         model[i].Nc = args->Nc;
         model[i].Nd = args->Nd;
         model[i].Nld = args->Nld;
+
+        if (args->Nrep > 1) {
+            /* All nodes belong to the same thread when running
+             * multiple replicates of a model. */
+            const int l = args->Nrep * i / args->Nthread;
+            const int u = args->Nrep * (i + 1) / args->Nthread;
+
+            model[i].Ni = 0;
+            model[i].Nn = args->Nn;
+            model[i].Nrep = u - l;
+
+            if (i > 0) {
+                model[i].u = &model[0].u[l * args->Nn * args->Nc];
+                model[i].v = &model[0].v[l * args->Nn * args->Nd];
+                model[i].v_new = &model[0].v_new[l * args->Nn * args->Nd];
+
+                /* Setup vector to keep track of nodes that must be
+                 * updated due to scheduled events */
+                model[i].update_node = calloc(args->Nn, sizeof(int));
+                if (!model[i].update_node)
+                    goto on_error; /* #nocov */
+            }
+
+            if (args->U)
+                model[i].U = &args->U[args->tlen * l * args->Nn * args->Nc];
+            if (args->V)
+                model[i].V = &args->V[args->tlen * l * args->Nn * args->Nd];
+        } else {
+            /* The nodes are split between the threads when running
+             * one replicate of a model. */
+            model[i].Ni = i * (args->Nn / args->Nthread);
+            model[i].Nn = args->Nn / args->Nthread;
+            if (i == (args->Nthread - 1))
+                model[i].Nn += (args->Nn % args->Nthread);
+
+            /* To ensure allocated memory in a multi-model can be
+             * identified and released. */
+            model[i].Nrep = 0;
+
+            if (i > 0) {
+                model[i].u = &(model[0].u[model[i].Ni * args->Nc]);
+                model[i].v = &(model[0].v[model[i].Ni * args->Nd]);
+                model[i].v_new = &(model[0].v_new[model[i].Ni * args->Nd]);
+                model[i].update_node = &(model[0].update_node[model[i].Ni]);
+            }
+
+            if (args->U) {
+                model[i].U = args->U;
+            } else {
+                model[i].irU = args->irU;
+                model[i].jcU = args->jcU;
+                model[i].prU = args->prU;
+            }
+
+            if (args->V) {
+                model[i].V = args->V;
+            } else {
+                model[i].irV = args->irV;
+                model[i].jcV = args->jcV;
+                model[i].prV = args->prV;
+            }
+        }
 
         /* Sparse matrices */
         model[i].irG = args->irG;
@@ -1005,29 +1134,6 @@ SimInf_compartment_model_create(
         model[i].V_it = 0;
 
         /* Data vectors */
-        if (args->U) {
-            model[i].U = args->U;
-        } else if (i == 0) {
-            model[i].irU = args->irU;
-            model[i].jcU = args->jcU;
-            model[i].prU = args->prU;
-        }
-
-        if (args->V) {
-            model[i].V = args->V;
-        } else if (i == 0) {
-            model[i].irV = args->irV;
-            model[i].jcV = args->jcV;
-            model[i].prV = args->prV;
-        }
-
-        if (i > 0) {
-            model[i].u = &(model[0].u[model[i].Ni * args->Nc]);
-            model[i].v = &(model[0].v[model[i].Ni * args->Nd]);
-            model[i].v_new = &(model[0].v_new[model[i].Ni * args->Nd]);
-            model[i].update_node = &(model[0].update_node[model[i].Ni]);
-        }
-
         model[i].ldata = &(args->ldata[model[i].Ni * model[i].Nld]);
         model[i].gdata = args->gdata;
 

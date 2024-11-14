@@ -119,21 +119,23 @@ setClass(
 ##' @slot v0 The initial value for the real-valued continuous state.
 ##'     Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).
 ##' @slot events Scheduled events \code{\linkS4class{SimInf_events}}
+##' @slot replicates Number of replicates of the model.
 ##' @template C_code-slot
 ##' @export
 setClass(
     "SimInf_model",
-    slots = c(G        = "dgCMatrix",
-              S        = "dgCMatrix",
-              U        = "matrix",
-              U_sparse = "dgCMatrix",
-              ldata    = "matrix",
-              gdata    = "numeric",
-              tspan    = "numeric",
-              u0       = "matrix",
-              V        = "matrix",
-              V_sparse = "dgCMatrix",
-              v0       = "matrix",
-              events   = "SimInf_events",
-              C_code   = "character")
+    slots = c(G          = "dgCMatrix",
+              S          = "dgCMatrix",
+              U          = "matrix",
+              U_sparse   = "dgCMatrix",
+              ldata      = "matrix",
+              gdata      = "numeric",
+              tspan      = "numeric",
+              u0         = "matrix",
+              V          = "matrix",
+              V_sparse   = "dgCMatrix",
+              v0         = "matrix",
+              events     = "SimInf_events",
+              replicates = "integer",
+              C_code     = "character")
 )

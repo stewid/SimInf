@@ -30,6 +30,7 @@ valid_SimInf_model_object <- function(object) {
     methods::validObject(object@events)
 
     errors <- c(valid_tspan(object),
+                valid_replicates(object),
                 valid_u0(object),
                 valid_U(object),
                 valid_v0(object),
@@ -110,17 +111,18 @@ SimInf_model <- function(G,
     events <- SimInf_events(E = E, N = N, events = events, t0 = tspan$t0)
 
     methods::new("SimInf_model",
-                 G      = G,
-                 S      = S,
-                 U      = U,
-                 ldata  = ldata,
-                 gdata  = gdata,
-                 tspan  = tspan$tspan,
-                 u0     = u0,
-                 v0     = v0,
-                 V      = V,
-                 events = events,
-                 C_code = C_code)
+                 G          = G,
+                 S          = S,
+                 U          = U,
+                 ldata      = ldata,
+                 gdata      = gdata,
+                 tspan      = tspan$tspan,
+                 u0         = u0,
+                 v0         = v0,
+                 V          = V,
+                 events     = events,
+                 replicates = 1L,
+                 C_code     = C_code)
 }
 
 ##' Extract global data from a \code{SimInf_model} object
