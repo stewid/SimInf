@@ -265,48 +265,6 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
     list(slots = c(u, v), expr = expr, par = par, par_i = par_i)
 }
 
-pfilter_sample_trajectory <- function(model, U, V, a, npart, loglik, ess) {
-    i <- sample.int(npart, 1)
-
-    u_i <- seq.int(from = (i - 1L) * prod(dim(model@u0)) + 1L,
-                   length.out = prod(dim(model@u0)))
-    model@u0 <- matrix(data = U[u_i, i],
-                       nrow = nrow(model@u0),
-                       ncol = ncol(model@u0),
-                       dimnames = dimnames(model@u0))
-
-    v_i <- seq.int(from = (i - 1L) * prod(dim(model@v0)) + 1L,
-                   length.out = prod(dim(model@v0)))
-    model@v0 <- matrix(data = V[v_i, i],
-                       nrow = nrow(model@v0),
-                       ncol = ncol(model@v0),
-                       dimnames = dimnames(model@v0))
-
-    model@U <- matrix(data = NA_integer_,
-                      nrow = prod(dim(model@u0)),
-                      ncol = length(model@tspan))
-
-    model@V <- matrix(data = NA_real_,
-                      nrow = prod(dim(model@v0)),
-                      ncol = length(model@tspan))
-
-    for (j in rev(seq_len(length(model@tspan)))) {
-        model@U[, j] <- U[u_i, j + 1L, drop = FALSE]
-        model@V[, j] <- V[v_i, j + 1L, drop = FALSE]
-        i <- a[i, j]
-        u_i <- seq.int(from = (i - 1L) * prod(dim(model@u0)) + 1L,
-                       length.out = prod(dim(model@u0)))
-        v_i <- seq.int(from = (i - 1L) * prod(dim(model@v0)) + 1L,
-                       length.out = prod(dim(model@v0)))
-    }
-
-    methods::new("SimInf_pfilter",
-                 model = model,
-                 npart = npart,
-                 loglik = loglik,
-                 ess = ess)
-}
-
 ##' Run a particle filter on a model that contains one node
 ##' @noRd
 pfilter_single_node <- function(model, events, obs, data, npart,
