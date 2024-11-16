@@ -801,9 +801,15 @@ abc_internal <- function(object, n_init, tolerance, ..., verbose,
 setGeneric(
     "abc",
     signature = "model",
-    function(model, priors = NULL, npart = NULL, n_init = NULL,
-             distance = NULL, tolerance = NULL, ...,
-             verbose = getOption("verbose", FALSE), post_gen = NULL,
+    function(model,
+             priors = NULL,
+             npart = NULL,
+             n_init = NULL,
+             distance = NULL,
+             tolerance = NULL,
+             ...,
+             verbose = getOption("verbose", FALSE),
+             post_gen = NULL,
              init_model = NULL) {
         standardGeneric("abc")
     }
@@ -814,8 +820,15 @@ setGeneric(
 setMethod(
     "abc",
     signature(model = "SimInf_model"),
-    function(model, priors, npart, n_init, distance, tolerance, ...,
-             verbose, post_gen) {
+    function(model,
+             priors,
+             npart,
+             n_init,
+             distance,
+             tolerance,
+             ...,
+             verbose,
+             post_gen) {
         npart <- check_npart(npart)
         init_model <- check_init_model(init_model)
 
@@ -877,8 +890,11 @@ setGeneric(
 setMethod(
     "continue_abc",
     signature(object = "SimInf_abc"),
-    function(object, tolerance = NULL, ...,
-             verbose = getOption("verbose", FALSE), post_gen = NULL) {
+    function(object,
+             tolerance = NULL,
+             ...,
+             verbose = getOption("verbose", FALSE),
+             post_gen = NULL) {
         abc_internal(object = object, n_init = NULL,
                      tolerance = tolerance, ..., verbose = verbose,
                      post_gen = post_gen)
