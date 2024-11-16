@@ -856,8 +856,12 @@ setMethod(
                                ess = numeric(0),
                                init_model = init_model)
 
-        abc_internal(object = object, n_init = n_init, tolerance = tolerance,
-                     ..., verbose = verbose, post_gen = post_gen)
+        abc_internal(object = object,
+                     n_init = n_init,
+                     tolerance = tolerance,
+                     ...,
+                     verbose = verbose,
+                     post_gen = post_gen)
     }
 )
 
@@ -895,8 +899,11 @@ setMethod(
              ...,
              verbose = getOption("verbose", FALSE),
              post_gen = NULL) {
-        abc_internal(object = object, n_init = NULL,
-                     tolerance = tolerance, ..., verbose = verbose,
+        abc_internal(object = object,
+                     n_init = NULL,
+                     tolerance = tolerance,
+                     ...,
+                     verbose = verbose,
                      post_gen = post_gen)
     }
 )
