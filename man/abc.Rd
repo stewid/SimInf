@@ -9,7 +9,7 @@ abc(
   model,
   priors = NULL,
   npart = NULL,
-  ninit = NULL,
+  n_init = NULL,
   distance = NULL,
   tolerance = NULL,
   ...,
@@ -22,7 +22,7 @@ abc(
   model,
   priors = NULL,
   npart = NULL,
-  ninit = NULL,
+  n_init = NULL,
   distance = NULL,
   tolerance = NULL,
   ...,
@@ -47,15 +47,15 @@ in either \code{gdata} or \code{ldata}.}
 \item{npart}{An integer \code{(>1)} specifying the number of
 particles to approximate the posterior with.}
 
-\item{ninit}{Specify a positive integer (>\code{npart}) to
+\item{n_init}{Specify a positive integer (>\code{npart}) to
 adaptively select a sequence of tolerances using the algorithm
 of Simola and others (2021). The initial tolerance is
-adaptively selected by sampling \code{ninit} draws from the
+adaptively selected by sampling \code{n_init} draws from the
 prior and then retain the \code{npart} particles with the
 smallest distances. Note there must be enough initial
 particles to satisfactorily explore the parameter space, see
 Simola and others (2021). If the \code{tolerance} parameter is
-specified, then \code{ninit} must be \code{NULL}.}
+specified, then \code{n_init} must be \code{NULL}.}
 
 \item{distance}{A function for calculating the summary statistics
 for a simulated trajectory. For each particle, the function
@@ -90,7 +90,7 @@ the tolerances for a generation and each row contains a
 sequence of gradually decreasing tolerances. Can also be a
 numeric vector if there is only one summary statistic. The
 tolerance determines the number of generations of ABC-SMC to
-run. If the \code{ninit} parameter is specified, then
+run. If the \code{n_init} parameter is specified, then
 \code{tolerance} must be \code{NULL}.}
 
 \item{...}{Further arguments to be passed to \code{fn}.}
@@ -166,7 +166,7 @@ distance <- function(result, ...) {
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
            npart = 100,
-           ninit = 1000,
+           n_init = 1000,
            distance = distance,
            verbose = TRUE)
 

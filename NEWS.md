@@ -2,6 +2,8 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+Renamed the `abc` function argument `ninit` to `n_init`.
+
 # SimInf 9.8.1 (2024-06-21)
 
 ## CHANGES OR IMPROVEMENTS

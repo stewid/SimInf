@@ -272,21 +272,21 @@ abc_init_generation <- function(object) {
     n_generations(object) + 1L
 }
 
-abc_init_npart <- function(object, ninit, tolerance) {
-    if (n_generations(object) > 0 || is.null(ninit))
+abc_init_npart <- function(object, n_init, tolerance) {
+    if (n_generations(object) > 0 || is.null(n_init))
         return(abc_n_particles(object))
 
-    check_integer_arg(ninit)
-    ninit <- as.integer(ninit)
-    if (length(ninit) != 1L || ninit <= 1L)
-        stop("'ninit' must be an integer > 1.", call. = FALSE)
-    if (ninit <= abc_n_particles(object))
-        stop("'ninit' must be an integer > 'npart'.", call. = FALSE)
+    check_integer_arg(n_init)
+    n_init <- as.integer(n_init)
+    if (length(n_init) != 1L || n_init <= 1L)
+        stop("'n_init' must be an integer > 1.", call. = FALSE)
+    if (n_init <= abc_n_particles(object))
+        stop("'n_init' must be an integer > 'npart'.", call. = FALSE)
 
     if (!is.null(tolerance))
         stop("'tolerance' must be NULL for adaptive distance.", call. = FALSE)
 
-    ninit
+    n_init
 }
 
 abc_init_particles <- function(object) {
@@ -344,7 +344,7 @@ abc_init_epsilon <- function(tolerance, generation) {
 
 ##' Adaptive selection of the first tolerance
 ##'
-##' The first tolerance is adaptively selected by sorting the 'ninit'
+##' The first tolerance is adaptively selected by sorting the 'n_init'
 ##' distances and select the 'npart' distance. The first 'npart'
 ##' particles are retained.
 ##' @param distance a numeric matrix (number of particles \eqn{\times}
@@ -642,13 +642,13 @@ abc_weights <- function(object, generation, x, ancestor, w, sigma) {
           abc_particles(object, generation), w, sigma)
 }
 
-abc_internal <- function(object, ninit, tolerance, ..., verbose,
+abc_internal <- function(object, n_init, tolerance, ..., verbose,
                          post_gen) {
     if (!is.null(post_gen))
         post_gen <- match.fun(post_gen)
 
-    if (all(is.null(ninit), is.null(tolerance)))
-        stop("Both 'ninit' and 'tolerance' can not be NULL.", call. = FALSE)
+    if (all(is.null(n_init), is.null(tolerance)))
+        stop("Both 'n_init' and 'tolerance' can not be NULL.", call. = FALSE)
 
     abc_fn <- switch(object@target,
                      "gdata" = abc_gdata,
@@ -659,7 +659,7 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
     generation <- abc_init_generation(object)
     tolerance <- abc_init_tolerance(tolerance, object@tolerance)
     epsilon <- abc_init_epsilon(tolerance, generation)
-    npart <- abc_init_npart(object, ninit, tolerance)
+    npart <- abc_init_npart(object, n_init, tolerance)
     x <- abc_init_particles(object)
     w <- abc_init_weights(object)
 
@@ -741,15 +741,15 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
 ##' @template priors-param
 ##' @param npart An integer \code{(>1)} specifying the number of
 ##'     particles to approximate the posterior with.
-##' @param ninit Specify a positive integer (>\code{npart}) to
+##' @param n_init Specify a positive integer (>\code{npart}) to
 ##'     adaptively select a sequence of tolerances using the algorithm
 ##'     of Simola and others (2021). The initial tolerance is
-##'     adaptively selected by sampling \code{ninit} draws from the
+##'     adaptively selected by sampling \code{n_init} draws from the
 ##'     prior and then retain the \code{npart} particles with the
 ##'     smallest distances. Note there must be enough initial
 ##'     particles to satisfactorily explore the parameter space, see
 ##'     Simola and others (2021). If the \code{tolerance} parameter is
-##'     specified, then \code{ninit} must be \code{NULL}.
+##'     specified, then \code{n_init} must be \code{NULL}.
 ##' @param distance A function for calculating the summary statistics
 ##'     for a simulated trajectory. For each particle, the function
 ##'     must determine the distance and return that information. The
@@ -782,7 +782,7 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
 ##'     sequence of gradually decreasing tolerances. Can also be a
 ##'     numeric vector if there is only one summary statistic. The
 ##'     tolerance determines the number of generations of ABC-SMC to
-##'     run. If the \code{ninit} parameter is specified, then
+##'     run. If the \code{n_init} parameter is specified, then
 ##'     \code{tolerance} must be \code{NULL}.
 ##' @param ... Further arguments to be passed to \code{fn}.
 ##' @template verbose-param
@@ -801,7 +801,7 @@ abc_internal <- function(object, ninit, tolerance, ..., verbose,
 setGeneric(
     "abc",
     signature = "model",
-    function(model, priors = NULL, npart = NULL, ninit = NULL,
+    function(model, priors = NULL, npart = NULL, n_init = NULL,
              distance = NULL, tolerance = NULL, ...,
              verbose = getOption("verbose", FALSE), post_gen = NULL,
              init_model = NULL) {
@@ -814,7 +814,7 @@ setGeneric(
 setMethod(
     "abc",
     signature(model = "SimInf_model"),
-    function(model, priors, npart, ninit, distance, tolerance, ...,
+    function(model, priors, npart, n_init, distance, tolerance, ...,
              verbose, post_gen) {
         npart <- check_npart(npart)
         init_model <- check_init_model(init_model)
@@ -843,7 +843,7 @@ setMethod(
                                ess = numeric(0),
                                init_model = init_model)
 
-        abc_internal(object = object, ninit = ninit, tolerance = tolerance,
+        abc_internal(object = object, n_init = n_init, tolerance = tolerance,
                      ..., verbose = verbose, post_gen = post_gen)
     }
 )
@@ -879,7 +879,7 @@ setMethod(
     signature(object = "SimInf_abc"),
     function(object, tolerance = NULL, ...,
              verbose = getOption("verbose", FALSE), post_gen = NULL) {
-        abc_internal(object = object, ninit = NULL,
+        abc_internal(object = object, n_init = NULL,
                      tolerance = tolerance, ..., verbose = verbose,
                      post_gen = post_gen)
     }
