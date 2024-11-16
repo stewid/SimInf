@@ -672,9 +672,9 @@ abc_weights <- function(object, generation, x, ancestor, w, sigma) {
 abc_internal <- function(object,
                          n_init,
                          tolerance,
-                         ...,
                          verbose,
-                         post_gen) {
+                         post_gen,
+                         ...) {
     if (!is.null(post_gen))
         post_gen <- match.fun(post_gen)
 
@@ -897,9 +897,9 @@ setMethod(
         abc_internal(object = object,
                      n_init = n_init,
                      tolerance = tolerance,
-                     ...,
                      verbose = verbose,
-                     post_gen = post_gen)
+                     post_gen = post_gen,
+                     ...)
     }
 )
 
@@ -940,9 +940,9 @@ setMethod(
         abc_internal(object = object,
                      n_init = NULL,
                      tolerance = tolerance,
-                     ...,
                      verbose = verbose,
-                     post_gen = post_gen)
+                     post_gen = post_gen,
+                     ...)
     }
 )
 
