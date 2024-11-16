@@ -495,8 +495,11 @@ abc_gdata <- function(model, pars, priors, n_particles, fn, generation,
     if (isTRUE(verbose))
         pb <- utils::txtProgressBar(min = 0, max = n_particles, style = 3)
 
-    if (!is.null(tolerance))
-        distance <- matrix(NA_real_, nrow = n_particles, ncol = length(tolerance))
+    if (!is.null(tolerance)) {
+        distance <- matrix(NA_real_,
+                           nrow = n_particles,
+                           ncol = length(tolerance))
+    }
     xx <- matrix(NA_real_, nrow = n_particles, ncol = length(pars),
                  dimnames = list(NULL, names(model@gdata)[pars]))
     ancestor <- rep(NA_real_, n_particles)
@@ -567,8 +570,11 @@ abc_ldata <- function(model, pars, priors, n_particles, fn, generation,
     if (isTRUE(verbose))
         pb <- utils::txtProgressBar(min = 0, max = n_particles, style = 3)
 
-    if (!is.null(tolerance))
-        distance <- matrix(NA_real_, nrow = n_particles, ncol = length(tolerance))
+    if (!is.null(tolerance)) {
+        distance <- matrix(NA_real_,
+                           nrow = n_particles,
+                           ncol = length(tolerance))
+    }
     xx <- matrix(NA_real_, nrow = n_particles, ncol = length(pars),
                  dimnames = list(NULL, rownames(model@ldata)[pars]))
     ancestor <- rep(NA_real_, n_particles)
