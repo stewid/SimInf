@@ -49,7 +49,7 @@
 <span>  <span class="va">model</span>,</span>
 <span>  priors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  npart <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ninit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n_init <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  distance <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tolerance <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
@@ -63,7 +63,7 @@
 <span>  <span class="va">model</span>,</span>
 <span>  priors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  npart <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ninit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n_init <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  distance <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tolerance <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
@@ -98,16 +98,16 @@ in either <code>gdata</code> or <code>ldata</code>.</p></dd>
 particles to approximate the posterior with.</p></dd>
 
 
-<dt id="arg-ninit">ninit<a class="anchor" aria-label="anchor" href="#arg-ninit"></a></dt>
+<dt id="arg-n-init">n_init<a class="anchor" aria-label="anchor" href="#arg-n-init"></a></dt>
 <dd><p>Specify a positive integer (&gt;<code>npart</code>) to
 adaptively select a sequence of tolerances using the algorithm
 of Simola and others (2021). The initial tolerance is
-adaptively selected by sampling <code>ninit</code> draws from the
+adaptively selected by sampling <code>n_init</code> draws from the
 prior and then retain the <code>npart</code> particles with the
 smallest distances. Note there must be enough initial
 particles to satisfactorily explore the parameter space, see
 Simola and others (2021). If the <code>tolerance</code> parameter is
-specified, then <code>ninit</code> must be <code>NULL</code>.</p></dd>
+specified, then <code>n_init</code> must be <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-distance">distance<a class="anchor" aria-label="anchor" href="#arg-distance"></a></dt>
@@ -146,7 +146,7 @@ the tolerances for a generation and each row contains a
 sequence of gradually decreasing tolerances. Can also be a
 numeric vector if there is only one summary statistic. The
 tolerance determines the number of generations of ABC-SMC to
-run. If the <code>ninit</code> parameter is specified, then
+run. If the <code>n_init</code> parameter is specified, then
 <code>tolerance</code> must be <code>NULL</code>.</p></dd>
 
 
@@ -240,7 +240,7 @@ model before running a trajectory with proposed parameters.</p></dd>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">abc</span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span></span>
 <span class="r-in"><span>           priors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">beta</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, <span class="va">gamma</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>           npart <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>           ninit <span class="op">=</span> <span class="fl">1000</span>,</span></span>
+<span class="r-in"><span>           n_init <span class="op">=</span> <span class="fl">1000</span>,</span></span>
 <span class="r-in"><span>           distance <span class="op">=</span> <span class="va">distance</span>,</span></span>
 <span class="r-in"><span>           verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
