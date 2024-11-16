@@ -572,7 +572,7 @@ setMethod(
                  call. = FALSE)
         }
 
-        npart <- check_npart(npart)
+        npart <- check_n_particles(npart)
         data <- pfilter_data(model, data)
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]

@@ -44,7 +44,7 @@ distance <- function(result, ...) {
 ## approximations.
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-           npart = 100,
+           n_particles = 100,
            n_init = 1000,
            distance = distance,
            verbose = TRUE)

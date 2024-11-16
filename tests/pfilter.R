@@ -102,12 +102,12 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
 res <- assertError(pfilter(model = model,
                            npart = 1,
                            data = data.frame(time = 1:3)))
-check_error(res, "'npart' must be an integer > 1.")
+check_error(res, "'n_particles' must be an integer > 1.")
 
 res <- assertError(pfilter(model = model,
                            npart = c(10, 10),
                            data = data.frame(time = 1:3)))
-check_error(res, "'npart' must be an integer > 1.")
+check_error(res, "'n_particles' must be an integer > 1.")
 
 ## Check the C utility function to split events.
 res <- assertError(.Call(SimInf:::SimInf_split_events, 1, 1L))

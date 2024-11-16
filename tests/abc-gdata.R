@@ -50,7 +50,7 @@ set.seed(123)
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0.5, 1.5),
                       gamma ~ uniform(0.3, 0.7)),
-           npart = 10,
+           n_particles = 10,
            distance = distance_fn_gdata,
            tolerance = c(0.1, 0.05))
 fit

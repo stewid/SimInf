@@ -244,7 +244,7 @@ setMethod(
              theta = NULL, covmat = NULL, adaptmix = 0.05,
              adaptive = 100, init_model = NULL, post_particle = NULL,
              record = TRUE, verbose = getOption("verbose", FALSE)) {
-        npart <- check_npart(npart)
+        npart <- check_n_particles(npart)
         niter <- check_niter(niter)
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)
@@ -322,7 +322,7 @@ setMethod(
     function(model, obs_process, data, npart, niter, adaptmix = 0.05,
              adaptive = 100, post_particle = NULL, record = TRUE,
              verbose = getOption("verbose", FALSE)) {
-        npart <- check_npart(npart)
+        npart <- check_n_particles(npart)
         niter <- check_niter(niter)
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)

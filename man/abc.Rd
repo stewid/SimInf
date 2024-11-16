@@ -8,7 +8,7 @@
 abc(
   model,
   priors = NULL,
-  npart = NULL,
+  n_particles = NULL,
   n_init = NULL,
   distance = NULL,
   tolerance = NULL,
@@ -21,7 +21,7 @@ abc(
 \S4method{abc}{SimInf_model}(
   model,
   priors = NULL,
-  npart = NULL,
+  n_particles = NULL,
   n_init = NULL,
   distance = NULL,
   tolerance = NULL,
@@ -44,15 +44,15 @@ normal(10, 1))}. The following distributions are supported:
 \code{uniform}. All parameters in \code{priors} must be only
 in either \code{gdata} or \code{ldata}.}
 
-\item{npart}{An integer \code{(>1)} specifying the number of
+\item{n_particles}{An integer \code{(>1)} specifying the number of
 particles to approximate the posterior with.}
 
-\item{n_init}{Specify a positive integer (>\code{npart}) to
+\item{n_init}{Specify a positive integer (>\code{n_particles}) to
 adaptively select a sequence of tolerances using the algorithm
 of Simola and others (2021). The initial tolerance is
 adaptively selected by sampling \code{n_init} draws from the
-prior and then retain the \code{npart} particles with the
-smallest distances. Note there must be enough initial
+prior and then retain the \code{n_particles} particles with
+the smallest distances. Note there must be enough initial
 particles to satisfactorily explore the parameter space, see
 Simola and others (2021). If the \code{tolerance} parameter is
 specified, then \code{n_init} must be \code{NULL}.}
@@ -165,7 +165,7 @@ distance <- function(result, ...) {
 ## approximations.
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-           npart = 100,
+           n_particles = 100,
            n_init = 1000,
            distance = distance,
            verbose = TRUE)

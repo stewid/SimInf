@@ -52,7 +52,7 @@ res <- assertError(
           npart = 200.1,
           niter = 200,
           verbose = TRUE))
-check_error(res, "'npart' must be integer.")
+check_error(res, "'n_particles' must be integer.")
 
 res <- assertError(
     pmcmc(model,
@@ -62,7 +62,7 @@ res <- assertError(
           npart = NA_integer_,
           niter = 200,
           verbose = TRUE))
-check_error(res, "'npart' must be integer.")
+check_error(res, "'n_particles' must be integer.")
 
 res <- assertError(
     pmcmc(model,
@@ -72,7 +72,7 @@ res <- assertError(
           npart = -200,
           niter = 200,
           verbose = TRUE))
-check_error(res, "'npart' must be an integer > 1.")
+check_error(res, "'n_particles' must be an integer > 1.")
 
 res <- assertError(
     pmcmc(model,
@@ -82,7 +82,7 @@ res <- assertError(
           npart = c(200, 200),
           niter = 200,
           verbose = TRUE))
-check_error(res, "'npart' must be an integer > 1.")
+check_error(res, "'n_particles' must be an integer > 1.")
 
 ## Check that an invalid 'adaptmix' raises an error.
 res <- assertError(

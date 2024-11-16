@@ -41,7 +41,7 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I + Icum",
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 2,
+                       n_particles = 2,
                        distance = function(result, ...) {
                            c("1", "2")
                        },
@@ -53,7 +53,7 @@ check_error(res, "The result from the ABC distance function must be numeric.")
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 2,
+                       n_particles = 2,
                        distance = function(result, ...) {
                            1:3
                        },
@@ -66,7 +66,7 @@ check_error(
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 2,
+                       n_particles = 2,
                        distance = function(result, ...) {
                            c(NA, 2:20)
                        },
@@ -79,7 +79,7 @@ check_error(
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 2,
+                       n_particles = 2,
                        distance = function(result, ...) {
                            c(-1L, 2:20)
                        },
@@ -92,7 +92,7 @@ check_error(
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 2,
+                       n_particles = 2,
                        distance = function(result, ...) {
                            1:20
                        },
@@ -103,7 +103,7 @@ check_error(res, "'tolerance' must have non-negative values.")
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 2,
+                       n_particles = 2,
                        distance = function(result, ...) {
                            1:20
                        },
@@ -114,7 +114,7 @@ check_error(res, "'tolerance' must have non-negative values.")
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 2,
+                       n_particles = 2,
                        distance = function(result, ...) {
                            1:20
                        },
@@ -125,7 +125,7 @@ check_error(res, "'tolerance' must have non-negative values.")
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 2,
+                       n_particles = 2,
                        distance = function(result, ...) {
                            1:20
                        },
@@ -136,7 +136,7 @@ check_error(res, "'tolerance' must have columns.")
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 2,
+                       n_particles = 2,
                        distance = function(result, ...) {
                            1:20
                        },
@@ -165,28 +165,28 @@ distance_fn_ldata <- function(result, ...) {
     })
 }
 
-## Check invalid npart
+## Check invalid n_particles
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = 1,
+                       n_particles = 1,
                        distance = distance_fn_ldata,
                        tolerance = c(250000, 225000)))
-check_error(res, "'npart' must be an integer > 1.")
+check_error(res, "'n_particles' must be an integer > 1.")
 
 res <- assertError(abc(model = model,
                        priors = c(beta ~ uniform(0.5, 1.5),
                                   gamma ~ uniform(0.3, 0.7)),
-                       npart = c(10, 10),
+                       n_particles = c(10, 10),
                        distance = distance_fn_ldata,
                        tolerance = c(250000, 225000)))
-check_error(res, "'npart' must be an integer > 1.")
+check_error(res, "'n_particles' must be an integer > 1.")
 
 set.seed(123)
 fit <- abc(model = model,
            priors = c(beta ~ uniform(0.5, 1.5),
                       gamma ~ uniform(0.3, 0.7)),
-           npart = 10,
+           n_particles = 10,
            distance = distance_fn_ldata,
            tolerance = c(250000, 225000),
            verbose = TRUE)
