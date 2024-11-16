@@ -490,8 +490,19 @@ abc_accept <- function(distance, tolerance) {
     rowSums(distance <= tolerance) == length(tolerance)
 }
 
-abc_gdata <- function(model, pars, priors, n_particles, fn, generation,
-                      tolerance, x, w, sigma, verbose, init_model, ...) {
+abc_gdata <- function(model,
+                      pars,
+                      priors,
+                      n_particles,
+                      fn,
+                      generation,
+                      tolerance,
+                      x,
+                      w,
+                      sigma,
+                      verbose,
+                      init_model,
+                      ...) {
     if (isTRUE(verbose))
         pb <- utils::txtProgressBar(min = 0, max = n_particles, style = 3)
 
@@ -551,8 +562,18 @@ abc_gdata <- function(model, pars, priors, n_particles, fn, generation,
     list(x = xx, ancestor = ancestor, distance = distance, nprop = nprop)
 }
 
-abc_ldata <- function(model, pars, priors, n_particles, fn, generation,
-                      tolerance, x, w, sigma, verbose, init_model, ...) {
+abc_ldata <- function(model,
+                      pars,
+                      priors,
+                      n_particles,
+                      fn, generation,
+                      tolerance,
+                      x,
+                      w,
+                      sigma,
+                      verbose,
+                      init_model,
+                      ...) {
     ## Handle the init_model callback.
     if (!is.null(init_model)) {
         stop("'init_model' callback is not implemented for 'ldata'.",
@@ -648,7 +669,11 @@ abc_weights <- function(object, generation, x, ancestor, w, sigma) {
           abc_particles(object, generation), w, sigma)
 }
 
-abc_internal <- function(object, n_init, tolerance, ..., verbose,
+abc_internal <- function(object,
+                         n_init,
+                         tolerance,
+                         ...,
+                         verbose,
                          post_gen) {
     if (!is.null(post_gen))
         post_gen <- match.fun(post_gen)
@@ -677,12 +702,19 @@ abc_internal <- function(object, n_init, tolerance, ..., verbose,
         }
 
         sigma <- abc_proposal_covariance(x)
-        result <- abc_fn(model = object@model, pars = object@pars,
-                         priors = object@priors, n_particles = n_particles,
-                         fn = object@fn, generation = generation,
-                         tolerance = epsilon, x = x, w = w,
-                         sigma = sigma, verbose = verbose,
-                         init_model = object@init_model, ...)
+        result <- abc_fn(model = object@model,
+                         pars = object@pars,
+                         priors = object@priors,
+                         n_particles = n_particles,
+                         fn = object@fn,
+                         generation = generation,
+                         tolerance = epsilon,
+                         x = x,
+                         w = w,
+                         sigma = sigma,
+                         verbose = verbose,
+                         init_model = object@init_model,
+                         ...)
 
         ## Append the tolerance for the generation.
         n_particles <- abc_n_particles(object)
