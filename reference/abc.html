@@ -48,7 +48,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">abc</span><span class="op">(</span></span>
 <span>  <span class="va">model</span>,</span>
 <span>  priors <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  npart <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n_particles <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_init <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  distance <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tolerance <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -62,7 +62,7 @@
 <span><span class="fu">abc</span><span class="op">(</span></span>
 <span>  <span class="va">model</span>,</span>
 <span>  priors <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  npart <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n_particles <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_init <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  distance <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tolerance <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -93,18 +93,18 @@ normal(10, 1))</code>. The following distributions are supported:
 in either <code>gdata</code> or <code>ldata</code>.</p></dd>
 
 
-<dt id="arg-npart">npart<a class="anchor" aria-label="anchor" href="#arg-npart"></a></dt>
+<dt id="arg-n-particles">n_particles<a class="anchor" aria-label="anchor" href="#arg-n-particles"></a></dt>
 <dd><p>An integer <code>(&gt;1)</code> specifying the number of
 particles to approximate the posterior with.</p></dd>
 
 
 <dt id="arg-n-init">n_init<a class="anchor" aria-label="anchor" href="#arg-n-init"></a></dt>
-<dd><p>Specify a positive integer (&gt;<code>npart</code>) to
+<dd><p>Specify a positive integer (&gt;<code>n_particles</code>) to
 adaptively select a sequence of tolerances using the algorithm
 of Simola and others (2021). The initial tolerance is
 adaptively selected by sampling <code>n_init</code> draws from the
-prior and then retain the <code>npart</code> particles with the
-smallest distances. Note there must be enough initial
+prior and then retain the <code>n_particles</code> particles with
+the smallest distances. Note there must be enough initial
 particles to satisfactorily explore the parameter space, see
 Simola and others (2021). If the <code>tolerance</code> parameter is
 specified, then <code>n_init</code> must be <code>NULL</code>.</p></dd>
@@ -239,7 +239,7 @@ model before running a trajectory with proposed parameters.</p></dd>
 <span class="r-in"><span><span class="co">## approximations.</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">abc</span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span></span>
 <span class="r-in"><span>           priors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">beta</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, <span class="va">gamma</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>           npart <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>           n_particles <span class="op">=</span> <span class="fl">100</span>,</span></span>
 <span class="r-in"><span>           n_init <span class="op">=</span> <span class="fl">1000</span>,</span></span>
 <span class="r-in"><span>           distance <span class="op">=</span> <span class="va">distance</span>,</span></span>
 <span class="r-in"><span>           verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
