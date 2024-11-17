@@ -406,8 +406,8 @@ pfilter_single_node <- function(model,
     model@V <- matrix(data = NA_real_, nrow = Nd, ncol = Ntspan)
     i <- sample.int(npart, 1L)
     for (j in rev(seq_len(Ntspan))) {
-        model@U[Nc_i, j] <- U[(i - 1L) * Nc + Nc_i, j, drop = FALSE]
-        model@V[Nd_i, j] <- V[(i - 1L) * Nd + Nd_i, j, drop = FALSE]
+        model@U[, j] <- U[(i - 1L) * Nc + Nc_i, j + 1L, drop = FALSE]
+        model@V[, j] <- V[(i - 1L) * Nd + Nd_i, j + 1L, drop = FALSE]
         i <- a[i, j]
     }
 
