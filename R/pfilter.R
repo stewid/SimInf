@@ -546,6 +546,7 @@ pfilter_multiple_nodes <- function(model,
     model@V <- matrix(data = NA_real_,
                       nrow = n_nodes(model) * Nd,
                       ncol = Ntspan)
+
     i <- sample.int(npart, 1)
     for (j in rev(seq_len(Ntspan))) {
         u_i <- seq.int(
@@ -560,6 +561,22 @@ pfilter_multiple_nodes <- function(model,
 
         i <- a[i, j]
     }
+
+    u_i <- seq.int(
+        from = (i - 1L) * n_nodes(model) * n_compartments(model) + 1L,
+        length.out = n_nodes(model) * n_compartments(model))
+    model@u0 <- matrix(
+        data = U[u_i, 1L],
+        nrow = n_compartments(model),
+        dimnames = dimnames(model@u0))
+
+    v_i <- seq.int(
+        from = (i - 1L) * n_nodes(model) * Nd + 1L,
+        length.out = n_nodes(model) * Nd)
+    m@v0 <- matrix(
+        data = V[v_i, 1L],
+        nrow = nrow(model@v0),
+        dimnames = dimnames(model@v0))
 
     methods::new("SimInf_pfilter",
                  model = model,
