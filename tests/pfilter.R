@@ -357,7 +357,7 @@ stopifnot(identical(
     list(slots = list(list(
              slot = "U",
              name = "I",
-             i = c(2, 5, 8, 11, 14))),
+             i = 2L)),
          expr = "stats::dpois(x = Iobs, lambda = I+1e-06, log = TRUE)",
          par = "Iobs",
          par_i = 2L)))
@@ -382,7 +382,7 @@ stopifnot(identical(
     list(slots = list(list(
              slot = "U",
              name = "I",
-             i = c(2, 5, 8, 11, 14))),
+             i = 2L)),
          expr = "stats::dbinom(x = Iobs, size = 100, prob = I/100, log = TRUE)",
          par = "Iobs",
          par_i = 2L)))
@@ -404,8 +404,8 @@ result <- SimInf:::pfilter_obs_process(
 
 stopifnot(identical(
     result,
-    list(slots = list(list(slot = "U", name = "I", i = c(2, 5, 8, 11, 14)),
-                      list(slot = "U", name = "I", i = c(2, 5, 8, 11, 14))),
+    list(slots = list(list(slot = "U", name = "I", i = 2L),
+                      list(slot = "U", name = "I", i = 2L)),
          expr = "stats::dunif(x = Iobs, min = I-3, max = I+3, log = TRUE)",
          par = "Iobs",
          par_i = 2L)))
@@ -433,7 +433,7 @@ pf <- pfilter(
     npart = 25)
 
 show_expected <- c("Number of particles: 25",
-                   "Log-likelihood: -17.915850")
+                   "Log-likelihood: -18.113888")
 show_observed <- capture.output(show(pf))
 stopifnot(identical(show_observed, show_expected))
 
@@ -441,7 +441,7 @@ summary_expected <- c(
     "Particle filter",
     "---------------",
     "Number of particles: 25",
-    "Log-likelihood: -17.915850",
+    "Log-likelihood: -18.113888",
     "Model: SIR",
     "Number of nodes: 1",
     "Number of scheduled events: 1",
@@ -460,9 +460,9 @@ summary_expected <- c(
     "Compartments",
     "------------",
     "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
-    " S 58.0    67.5   74.0 74.9    83.5 90.0",
-    " I  0.0    12.5   16.0 13.3    17.0 18.0",
-    " R  0.0     4.0   10.0 10.4    15.5 24.0")
+    " S 53.0    61.5   71.0 71.1    80.5 90.0",
+    " I  0.0    15.0   15.0 13.7    16.5 18.0",
+    " R  0.0     4.5   12.0 13.7    22.0 31.0")
 
 summary_observed <- capture.output(summary(pf))
 stopifnot(identical(summary_observed, summary_expected))
@@ -475,16 +475,16 @@ stopifnot(identical(
     data.frame(
         node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L),
         time = c(1L, 4L, 7L, 10L, 13L, 16L, 19L),
-        S = c(90L, 87L, 80L, 74L, 69L, 66L, 58L),
-        I = c(0L, 11L, 14L, 16L, 18L, 16L, 18L),
-        R = c(0L, 2L, 6L, 10L, 13L, 18L, 24L))))
+        S = c(90L, 83L, 78L, 71L, 65L, 58L, 53L),
+        I = c(0L, 15L, 15L, 17L, 15L, 18L, 16L),
+        R = c(0L, 2L, 7L, 12L, 20L, 24L, 31L))))
 
 stopifnot(identical(
     prevalence(pf, I ~ .)$time,
     c(1, 4, 7, 10, 13, 16, 19)))
 
 stopifnot(all(abs(prevalence(pf, I ~ .)$prevalence
-                  - c(0, 0.11, 0.14, 0.16, 0.18, 0.16, 0.18)) < tol))
+                  - c(0, 0.15, 0.15, 0.17, 0.15, 0.18, 0.16)) < tol))
 
 ## Modify the model object to check that 'gdata' is included in the
 ## output.
@@ -494,7 +494,7 @@ summary_expected <- c(
     "Particle filter",
     "---------------",
     "Number of particles: 25",
-    "Log-likelihood: -17.915850",
+    "Log-likelihood: -18.113888",
     "Model: SIR",
     "Number of nodes: 1",
     "Number of scheduled events: 1",
@@ -518,9 +518,9 @@ summary_expected <- c(
     "Compartments",
     "------------",
     "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
-    " S 58.0    67.5   74.0 74.9    83.5 90.0",
-    " I  0.0    12.5   16.0 13.3    17.0 18.0",
-    " R  0.0     4.0   10.0 10.4    15.5 24.0")
+    " S 53.0    61.5   71.0 71.1    80.5 90.0",
+    " I  0.0    15.0   15.0 13.7    16.5 18.0",
+    " R  0.0     4.5   12.0 13.7    22.0 31.0")
 
 summary_observed <- capture.output(summary(pf))
 stopifnot(identical(summary_observed, summary_expected))

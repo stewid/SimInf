@@ -285,7 +285,7 @@ set.seed(22)
 fit@chain <- fit@chain[sample(1:5, 100, replace = TRUE), ]
 progress_expected <- c(
 "             2.5%       25%       50%       75%     97.5%      Mean        SD",
-"logPost -81.38261 -81.38261 -79.79876 -79.79876 -78.96708 -80.27348   0.97877",
+"logPost -79.76966 -79.76966 -79.45949 -79.45949 -78.50691 -79.37731   0.47179",
 "beta      0.15168   0.16000   0.16000   0.16749   0.16749   0.16110   0.00592",
 "gamma     0.06923   0.07700   0.07700   0.07883   0.07883   0.07606   0.00364")
 progress_observed <- capture.output(SimInf:::pmcmc_progress(fit, 100, TRUE))
