@@ -481,6 +481,9 @@ pfilter_multiple_nodes <- function(model, events, obs_process, data,
         ## Propagate the model.
         x <- run(m)
         if (length(x@tspan) > 1L) {
+            ## Extract the final state in each replicate. The first
+            ## replicate is in column 1 and 2, the second replicate in
+            ## column 3 and 4, et cetera.
             x@tspan <- x@tspan[2L]
             j <- seq.int(from = 2L, by = 2L, length.out = npart)
             x@U <- x@U[, j, drop = FALSE]
