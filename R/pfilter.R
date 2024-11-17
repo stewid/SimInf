@@ -378,10 +378,10 @@ pfilter_internal <- function(model,
                    pos = e)
 
             for (j in seq_len(length(obs_process$slots))) {
-                assign(
-                    x = obs_process$slots[[j]]$name,
-                    value = slot(x, obs_process$slots[[j]]$slot)[obs_process$slots[[j]]$i, ],
-                    pos = e)
+                s <- obs_process$slots[[j]]$slot
+                v <- slot(x, s)[obs_process$slots[[j]]$i, ]
+                n <- obs_process$slots[[j]]$name
+                assign(x = n, value = v, pos = e)
             }
 
             expr <- obs_process$expr
