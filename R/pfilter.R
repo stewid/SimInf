@@ -293,9 +293,25 @@ pfilter_single_node <- function(model,
     Ntspan <- nrow(tspan)
     ess <- numeric(Ntspan)
     loglik <- 0
-    U <- matrix(data = NA_integer_, nrow = npart * Nc, ncol = Ntspan)
-    V <- matrix(data = NA_real_, nrow = npart * Nd, ncol = Ntspan)
-    a <- matrix(data = NA_integer_, nrow = npart, ncol = Ntspan + 1L)
+
+    ## Create a matrix to keep track of the states in the compartments
+    ## (including the initial state) in every particle.
+    U <- matrix(data = NA_integer_,
+                nrow = npart * Nc,
+                ncol = Ntspan + 1L)
+
+    ## Create a matrix to keep track of the continuous states
+    ## (including the initial state) in every particle.
+    V <- matrix(data = NA_real_,
+                nrow = npart * Nd,
+                ncol = Ntspan + 1L)
+
+    U[, 1L] <- rep(as.integer(model@u0), npart)
+    V[, 1L] <- rep(as.numeric(model@v0), npart)
+
+    a <- matrix(data = NA_integer_,
+                nrow = npart,
+                ncol = Ntspan + 1L)
     a[, 1L] <- seq_len(npart)
 
     for (i in seq_len(Ntspan)) {
@@ -326,6 +342,17 @@ pfilter_single_node <- function(model,
             }
         }
 
+        ## Initialise the model.
+        u_i <- Nc_i + rep((a[, i] - 1L) * Nc, each = Nc)
+        m@u0 <- matrix(data = U[u_i, i],
+                       nrow = Nc,
+                       dimnames = dimnames(m@u0))
+
+        v_i <- Nd_i + rep((a[, i] - 1L) * Nd, each = Nd)
+        m@v0 <- matrix(data = V[v_i, i],
+                       nrow = Nd,
+                       dimnames = dimnames(m@v0))
+
         ## Propagate the model.
         x <- run(m)
         if (length(x@tspan) > 1L) {
@@ -333,6 +360,10 @@ pfilter_single_node <- function(model,
             x@U <- x@U[, 2L, drop = FALSE]
             x@V <- x@V[, 2L, drop = FALSE]
         }
+
+        ## Save states.
+        U[, i + 1L] <- x@U
+        V[, i + 1L] <- x@V
 
         ## Weighting
         if (is.function(obs)) {
@@ -367,23 +398,7 @@ pfilter_single_node <- function(model,
         ess[i] <- 1 / sum(w^2)
 
         ## Resampling
-        j <- .Call(SimInf_systematic_resampling, w)
-
-        ## Initialise the model for the next propagation.
-        m@u0 <- matrix(data = x@U[Nc_i + rep((j - 1L) * Nc, each = Nc), 1L],
-                       nrow = nrow(x@u0),
-                       ncol = ncol(x@u0),
-                       dimnames = dimnames(x@u0))
-
-        m@v0 <- matrix(data = x@V[Nd_i + rep((j - 1L) * Nd, each = Nd), 1L],
-                       nrow = nrow(x@v0),
-                       ncol = ncol(x@v0),
-                       dimnames = dimnames(x@v0))
-
-        ## Save states
-        U[, i] <- x@U
-        V[, i] <- x@V
-        a[, i + 1L] <- j
+        a[, i + 1L] <- .Call(SimInf_systematic_resampling, w)
     }
 
     ## Sample a trajectory.
