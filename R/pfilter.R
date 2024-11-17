@@ -267,8 +267,13 @@ pfilter_obs_process <- function(model, obs_process, data, npart) {
 
 ##' Run a particle filter on a model that contains one node
 ##' @noRd
-pfilter_single_node <- function(model, events, obs, data, npart,
-                                tspan, init_model) {
+pfilter_single_node <- function(model,
+                                events,
+                                obs,
+                                data,
+                                npart,
+                                tspan,
+                                init_model) {
     ## Handle the init_model callback.
     if (!is.null(init_model)) {
         stop("'init_model' callback is not implemented ",
@@ -294,6 +299,12 @@ pfilter_single_node <- function(model, events, obs, data, npart,
     a[, 1L] <- seq_len(npart)
 
     for (i in seq_len(Ntspan)) {
+        if (is.na(tspan[i, 1L])) {
+            m@tspan <- tspan[i, 2L]
+        } else {
+            m@tspan <- tspan[i, 1:2]
+        }
+
         ## Initialise the events for the interval. Replicate the
         ## events in the first node and add an offset to the node
         ## vector. The offset is not added to 'dest' since there are
@@ -315,13 +326,9 @@ pfilter_single_node <- function(model, events, obs, data, npart,
             }
         }
 
-        ## Propagation.
-        if (is.na(tspan[i, 1L])) {
-            m@tspan <- tspan[i, 2L]
-            x <- run(m)
-        } else {
-            m@tspan <- tspan[i, 1:2]
-            x <- run(m)
+        ## Propagate the model.
+        x <- run(m)
+        if (length(x@tspan) > 1L) {
             x@tspan <- x@tspan[2L]
             x@U <- x@U[, 2L, drop = FALSE]
             x@V <- x@V[, 2L, drop = FALSE]
@@ -333,7 +340,9 @@ pfilter_single_node <- function(model, events, obs, data, npart,
         } else {
             e <- new.env(parent = baseenv())
 
-            assign(x = obs$par, value = data[[i]][, obs$par_i], pos = e)
+            assign(x = obs$par,
+                   value = data[[i]][, obs$par_i],
+                   pos = e)
 
             for (j in seq_len(length(obs$slots))) {
                 assign(
@@ -396,8 +405,13 @@ pfilter_single_node <- function(model, events, obs, data, npart,
 
 ##' Run a particle filter on a model that contains multiple nodes
 ##' @noRd
-pfilter_multiple_nodes <- function(model, events, obs_process, data,
-                                   npart, tspan, init_model) {
+pfilter_multiple_nodes <- function(model,
+                                   events,
+                                   obs_process,
+                                   data,
+                                   npart,
+                                   tspan,
+                                   init_model) {
     if (!is.null(init_model))
         init_model <- match.fun(init_model)
 
