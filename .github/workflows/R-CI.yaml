@@ -1,0 +1,22 @@
+name: R-CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  R-CI:
+    runs-on: ubuntu-latest
+    container: fedora:latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ansible
+        run: sudo dnf --assumeyes install ansible
+
+      - name: Get ansible playbook to check package
+        run: curl -Ls https://stewid.github.io/ansible-r-ci/r-ci.yml -o ../r-ci.yml
+
+      - name: Check package
+        run: ansible-playbook -i localhost, --extra-vars "sysreqs=gsl-devel r_ci_covr=codecov" ../r-ci.yml
