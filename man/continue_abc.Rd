@@ -8,7 +8,7 @@
 continue_abc(
   object,
   tolerance = NULL,
-  ...,
+  data = NULL,
   verbose = getOption("verbose", FALSE),
   post_gen = NULL
 )
@@ -16,7 +16,7 @@ continue_abc(
 \S4method{continue_abc}{SimInf_abc}(
   object,
   tolerance = NULL,
-  ...,
+  data = NULL,
   verbose = getOption("verbose", FALSE),
   post_gen = NULL
 )
@@ -32,8 +32,8 @@ numeric vector if there is only one summary statistic. The
 tolerance determines the number of generations of ABC-SMC to
 run.}
 
-\item{...}{Further arguments to be passed to the
-\code{SimInf_abc@fn}.}
+\item{data}{Optional data to be passed to the
+\code{SimInf_abc@fn} function. Default is \code{NULL}.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and

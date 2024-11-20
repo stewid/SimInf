@@ -916,8 +916,8 @@ setMethod(
 ##'     numeric vector if there is only one summary statistic. The
 ##'     tolerance determines the number of generations of ABC-SMC to
 ##'     run.
-##' @param ... Further arguments to be passed to the
-##'     \code{SimInf_abc@@fn}.
+##' @param data Optional data to be passed to the
+##'     \code{SimInf_abc@@fn} function. Default is \code{NULL}.
 ##' @template verbose-param
 ##' @template post_gen-param
 ##' @return A \code{SimInf_abc} object.
@@ -927,7 +927,7 @@ setGeneric(
     signature = "object",
     function(object,
              tolerance = NULL,
-             ...,
+             data = NULL,
              verbose = getOption("verbose", FALSE),
              post_gen = NULL) {
         standardGeneric("continue_abc")
@@ -941,7 +941,7 @@ setMethod(
     signature(object = "SimInf_abc"),
     function(object,
              tolerance,
-             ...,
+             data,
              verbose,
              post_gen) {
         abc_internal(object = object,
@@ -949,7 +949,7 @@ setMethod(
                      tolerance = tolerance,
                      verbose = verbose,
                      post_gen = post_gen,
-                     data = ...)
+                     data = data)
     }
 )
 
