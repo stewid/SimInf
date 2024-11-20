@@ -675,7 +675,7 @@ abc_internal <- function(object,
                          tolerance,
                          verbose,
                          post_gen,
-                         ...) {
+                         data) {
     if (!is.null(post_gen))
         post_gen <- match.fun(post_gen)
 
@@ -715,7 +715,7 @@ abc_internal <- function(object,
                          sigma = sigma,
                          verbose = verbose,
                          init_model = object@init_model,
-                         ...)
+                         data = data)
 
         ## Append the tolerance for the generation.
         n_particles <- abc_n_particles(object)
@@ -900,7 +900,7 @@ setMethod(
                      tolerance = tolerance,
                      verbose = verbose,
                      post_gen = post_gen,
-                     ...)
+                     data = ...)
     }
 )
 
@@ -943,7 +943,7 @@ setMethod(
                      tolerance = tolerance,
                      verbose = verbose,
                      post_gen = post_gen,
-                     ...)
+                     data = ...)
     }
 )
 
