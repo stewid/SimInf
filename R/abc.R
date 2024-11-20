@@ -502,7 +502,7 @@ abc_gdata <- function(model,
                       sigma,
                       verbose,
                       init_model,
-                      ...) {
+                      data) {
     if (isTRUE(verbose))
         pb <- utils::txtProgressBar(min = 0, max = n_particles, style = 3)
 
@@ -531,7 +531,7 @@ abc_gdata <- function(model,
             model_proposals <- init_model(model_proposals)
 
         d <- abc_distance(
-            fn(run(model_proposals), generation = generation, ...), 1L)
+            fn(run(model_proposals), generation, data), 1L)
         if (is.null(tolerance)) {
             ## Accept all particles if the tolerance is NULL, but make
             ## sure the dimension of tolerance and distance matches in
@@ -573,7 +573,7 @@ abc_ldata <- function(model,
                       sigma,
                       verbose,
                       init_model,
-                      ...) {
+                      data) {
     ## Handle the init_model callback.
     if (!is.null(init_model)) {
         stop("'init_model' callback is not implemented for 'ldata'.",
@@ -617,7 +617,7 @@ abc_ldata <- function(model,
             model@ldata[pars[i], ] <- proposals[, i]
         }
 
-        d <- abc_distance(fn(run(model), generation = generation, ...), n)
+        d <- abc_distance(fn(run(model), generation, data), n)
         if (is.null(tolerance)) {
             ## Accept all particles if the tolerance is NULL, but make
             ## sure the dimension of tolerance and distance matches in
