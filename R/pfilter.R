@@ -20,8 +20,8 @@
 ##'
 ##' @slot model A \code{SimInf_model} object with one filtered
 ##'     trajectory attached.
-##' @slot npart An integer with the number of particles that was used
-##'     at each timestep.
+##' @slot n_particles An integer with the number of particles that was
+##'     used at each timestep.
 ##' @slot loglik The estimated log likelihood.
 ##' @slot ess A numeric vector with the effective sample size (ESS).
 ##'     The effective sample size is computed as
@@ -31,10 +31,10 @@
 ##' @export
 setClass(
     "SimInf_pfilter",
-    slots = c(model  = "SimInf_model",
-              npart  = "integer",
+    slots = c(model = "SimInf_model",
+              n_particles = "integer",
               loglik = "numeric",
-              ess    = "numeric")
+              ess = "numeric")
 )
 
 ##' Brief summary of a \code{SimInf_pfilter} object
@@ -46,7 +46,7 @@ setMethod(
     "show",
     signature(object = "SimInf_pfilter"),
     function(object) {
-        cat(sprintf("Number of particles: %i\n", object@npart))
+        cat(sprintf("Number of particles: %i\n", object@n_particles))
         cat(sprintf("Log-likelihood: %f\n", logLik(object)))
 
         invisible(object)
@@ -65,7 +65,7 @@ setMethod(
     function(object, ...) {
         cat("Particle filter\n")
         cat("---------------\n")
-        cat(sprintf("Number of particles: %i\n", object@npart))
+        cat(sprintf("Number of particles: %i\n", object@n_particles))
         cat(sprintf("Log-likelihood: %f\n", logLik(object)))
         cat(sprintf("Model: %s\n", as.character(class(object@model))))
         cat(sprintf("Number of nodes: %i\n", n_nodes(object)))
@@ -430,7 +430,7 @@ pfilter_internal <- function(model,
 
     methods::new("SimInf_pfilter",
                  model = model,
-                 npart = npart,
+                 n_particles = npart,
                  loglik = loglik,
                  ess = ess)
 }
@@ -534,7 +534,7 @@ setMethod(
 
             ## Plot the effective sample size.
             plot(xx, x@ess, xlab = xlab, ylab = "ESS",
-                 ylim = c(0, x@npart), frame.plot = FALSE, type = "l")
+                 ylim = c(0, x@n_particles), frame.plot = FALSE, type = "l")
         } else {
             ## Plot the sampled trajectory.
             plot(x@model, y, ...)

@@ -13,8 +13,8 @@ Class \code{"SimInf_pfilter"}
 \item{\code{model}}{A \code{SimInf_model} object with one filtered
 trajectory attached.}
 
-\item{\code{npart}}{An integer with the number of particles that was used
-at each timestep.}
+\item{\code{n_particles}}{An integer with the number of particles that was
+used at each timestep.}
 
 \item{\code{loglik}}{The estimated log likelihood.}
 
