@@ -5,7 +5,13 @@
 \alias{continue_abc,SimInf_abc-method}
 \title{Run more generations of ABC SMC}
 \usage{
-continue_abc(object, ...)
+continue_abc(
+  object,
+  tolerance = NULL,
+  ...,
+  verbose = getOption("verbose", FALSE),
+  post_gen = NULL
+)
 
 \S4method{continue_abc}{SimInf_abc}(
   object,
@@ -18,9 +24,6 @@ continue_abc(object, ...)
 \arguments{
 \item{object}{The \code{SimInf_abc} object to continue from.}
 
-\item{...}{Further arguments to be passed to the
-\code{SimInf_abc@fn}.}
-
 \item{tolerance}{A numeric matrix (number of summary statistics
 \eqn{\times} number of generations) where each column contains
 the tolerances for a generation and each row contains a
@@ -28,6 +31,9 @@ sequence of gradually decreasing tolerances. Can also be a
 numeric vector if there is only one summary statistic. The
 tolerance determines the number of generations of ABC-SMC to
 run.}
+
+\item{...}{Further arguments to be passed to the
+\code{SimInf_abc@fn}.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and

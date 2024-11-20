@@ -925,7 +925,11 @@ setMethod(
 setGeneric(
     "continue_abc",
     signature = "object",
-    function(object, ...) {
+    function(object,
+             tolerance = NULL,
+             ...,
+             verbose = getOption("verbose", FALSE),
+             post_gen = NULL) {
         standardGeneric("continue_abc")
     }
 )
@@ -936,10 +940,10 @@ setMethod(
     "continue_abc",
     signature(object = "SimInf_abc"),
     function(object,
-             tolerance = NULL,
+             tolerance,
              ...,
-             verbose = getOption("verbose", FALSE),
-             post_gen = NULL) {
+             verbose,
+             post_gen) {
         abc_internal(object = object,
                      n_init = NULL,
                      tolerance = tolerance,
