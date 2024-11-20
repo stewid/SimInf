@@ -823,7 +823,8 @@ abc_internal <- function(object,
 ##'     tolerance determines the number of generations of ABC-SMC to
 ##'     run. If the \code{n_init} parameter is specified, then
 ##'     \code{tolerance} must be \code{NULL}.
-##' @param ... Further arguments to be passed to \code{fn}.
+##' @param data Optional data to be passed to the \code{distance}
+##'     function. Default is \code{NULL}.
 ##' @template verbose-param
 ##' @template post_gen-param
 ##' @template init_model-param
@@ -846,7 +847,7 @@ setGeneric(
              n_init = NULL,
              distance = NULL,
              tolerance = NULL,
-             ...,
+             data = NULL,
              verbose = getOption("verbose", FALSE),
              post_gen = NULL,
              init_model = NULL) {
@@ -865,9 +866,10 @@ setMethod(
              n_init,
              distance,
              tolerance,
-             ...,
+             data,
              verbose,
-             post_gen) {
+             post_gen,
+             init_model) {
         n_particles <- check_n_particles(n_particles)
         init_model <- check_init_model(init_model)
 
@@ -900,7 +902,7 @@ setMethod(
                      tolerance = tolerance,
                      verbose = verbose,
                      post_gen = post_gen,
-                     data = ...)
+                     data = data)
     }
 )
 

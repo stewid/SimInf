@@ -12,7 +12,7 @@ abc(
   n_init = NULL,
   distance = NULL,
   tolerance = NULL,
-  ...,
+  data = NULL,
   verbose = getOption("verbose", FALSE),
   post_gen = NULL,
   init_model = NULL
@@ -25,7 +25,7 @@ abc(
   n_init = NULL,
   distance = NULL,
   tolerance = NULL,
-  ...,
+  data = NULL,
   verbose = getOption("verbose", FALSE),
   post_gen = NULL,
   init_model = NULL
@@ -93,7 +93,8 @@ tolerance determines the number of generations of ABC-SMC to
 run. If the \code{n_init} parameter is specified, then
 \code{tolerance} must be \code{NULL}.}
 
-\item{...}{Further arguments to be passed to \code{fn}.}
+\item{data}{Optional data to be passed to the \code{distance}
+function. Default is \code{NULL}.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
