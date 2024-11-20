@@ -3,11 +3,14 @@
 \name{n_nodes}
 \alias{n_nodes}
 \alias{n_nodes,SimInf_model-method}
+\alias{n_nodes,SimInf_pfilter-method}
 \title{Determine the number of nodes in a model}
 \usage{
 n_nodes(model)
 
 \S4method{n_nodes}{SimInf_model}(model)
+
+\S4method{n_nodes}{SimInf_pfilter}(model)
 }
 \arguments{
 \item{model}{the \code{model} object to extract the number of

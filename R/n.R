@@ -52,6 +52,17 @@ setMethod(
     }
 )
 
+##' @rdname n_nodes
+##' @include pfilter.R
+##' @export
+setMethod(
+    "n_nodes",
+    signature(model = "SimInf_pfilter"),
+    function(model) {
+        n_nodes(model@model)
+    }
+)
+
 ##' Determine the number of replicates in a model
 ##'
 ##' @param model the \code{model} object to extract the number of
