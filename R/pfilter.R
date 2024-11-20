@@ -454,7 +454,11 @@ pfilter_internal <- function(model,
 setGeneric(
     "pfilter",
     signature = "model",
-    function(model, obs_process, data, npart, init_model = NULL) {
+    function(model,
+             obs_process,
+             data,
+             npart,
+             init_model = NULL) {
         standardGeneric("pfilter")
     }
 )
@@ -464,7 +468,11 @@ setGeneric(
 setMethod(
     "pfilter",
     signature(model = "SimInf_model"),
-    function(model, obs_process, data, npart, init_model) {
+    function(model,
+             obs_process,
+             data,
+             npart,
+             init_model) {
         if (isFALSE(identical(dim(model@U_sparse), c(0L, 0L))) ||
             isFALSE(identical(dim(model@V_sparse), c(0L, 0L)))) {
             stop("'pfilter' cannot run a model with a sparse result matrix.",
