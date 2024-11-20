@@ -47,7 +47,7 @@ setMethod(
     signature(object = "SimInf_pfilter"),
     function(object) {
         cat(sprintf("Number of particles: %i\n", object@npart))
-        cat(sprintf("Log-likelihood: %f\n", object@loglik))
+        cat(sprintf("Log-likelihood: %f\n", logLik(object)))
 
         invisible(object)
     }
@@ -66,7 +66,7 @@ setMethod(
         cat("Particle filter\n")
         cat("---------------\n")
         cat(sprintf("Number of particles: %i\n", object@npart))
-        cat(sprintf("Log-likelihood: %f\n", object@loglik))
+        cat(sprintf("Log-likelihood: %f\n", logLik(object)))
         cat(sprintf("Model: %s\n", as.character(class(object@model))))
         cat(sprintf("Number of nodes: %i\n", n_nodes(object)))
         show(object@model@events)
