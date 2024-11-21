@@ -94,18 +94,18 @@ stopifnot(identical(
     SimInf:::pfilter_tspan(model, data),
     structure(c(5, NA, 6, 7), .Dim = c(2L, 2L))))
 
-## Check invalid npart
+## Check invalid n_particles
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              tspan = 1:5,
              beta = 0.16,
              gamma = 0.077)
 res <- assertError(pfilter(model = model,
-                           npart = 1,
+                           n_particles = 1,
                            data = data.frame(time = 1:3)))
 check_error(res, "'n_particles' must be an integer > 1.")
 
 res <- assertError(pfilter(model = model,
-                           npart = c(10, 10),
+                           n_particles = c(10, 10),
                            data = data.frame(time = 1:3)))
 check_error(res, "'n_particles' must be an integer > 1.")
 
@@ -421,7 +421,7 @@ pf <- pfilter(
     data = data.frame(
         time = c(1, 4, 7, 10, 13, 16, 19),
         Iobs = c(0, 16, 12, 11, 19, 19, 23)),
-    npart = 25)
+    n_particles = 25)
 
 show_expected <- c("Number of particles: 25",
                    "Log-likelihood: -18.113888")

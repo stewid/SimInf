@@ -5,9 +5,9 @@
 \alias{pfilter,SimInf_model-method}
 \title{Bootstrap particle filter}
 \usage{
-pfilter(model, obs_process, data, npart, init_model = NULL)
+pfilter(model, obs_process, data, n_particles, init_model = NULL)
 
-\S4method{pfilter}{SimInf_model}(model, obs_process, data, npart, init_model = NULL)
+\S4method{pfilter}{SimInf_model}(model, obs_process, data, n_particles, init_model = NULL)
 }
 \arguments{
 \item{model}{The \code{SimInf_model} object to simulate data from.}
@@ -35,8 +35,8 @@ density.}
 
 \item{data}{A \code{data.frame} holding the time series data.}
 
-\item{npart}{An integer with the number of particles (> 1) to use
-at each timestep.}
+\item{n_particles}{An integer with the number of particles (> 1)
+to use at each timestep.}
 
 \item{init_model}{An optional function that, if non-NULL, is
 applied before running each proposal. The function must accept

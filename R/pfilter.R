@@ -443,7 +443,7 @@ pfilter_internal <- function(model,
 ##' @param model The \code{SimInf_model} object to simulate data from.
 ##' @template obs_process-param
 ##' @template data-param
-##' @template npart-param
+##' @template n_particles-param
 ##' @template init_model-param
 ##' @return A \code{SimInf_pfilter} object.
 ##' @references
@@ -457,7 +457,7 @@ setGeneric(
     function(model,
              obs_process,
              data,
-             npart,
+             n_particles,
              init_model = NULL) {
         standardGeneric("pfilter")
     }
@@ -471,7 +471,7 @@ setMethod(
     function(model,
              obs_process,
              data,
-             npart,
+             n_particles,
              init_model) {
         if (isFALSE(identical(dim(model@U_sparse), c(0L, 0L))) ||
             isFALSE(identical(dim(model@V_sparse), c(0L, 0L)))) {
@@ -479,7 +479,7 @@ setMethod(
                  call. = FALSE)
         }
 
-        npart <- check_n_particles(npart)
+        n_particles <- check_n_particles(n_particles)
         data <- pfilter_data(model, data)
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]
@@ -492,7 +492,7 @@ setMethod(
                          events = events,
                          obs_process = obs_process,
                          data = data,
-                         n_particles = npart,
+                         n_particles = n_particles,
                          tspan = tspan,
                          init_model = init_model)
    }
