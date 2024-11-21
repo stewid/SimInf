@@ -5,7 +5,22 @@
 \alias{pmcmc,SimInf_model-method}
 \title{Particle Markov chain Monte Carlo (PMCMC) algorithm}
 \usage{
-pmcmc(model, ...)
+pmcmc(
+  model,
+  obs_process,
+  data,
+  priors,
+  npart,
+  niter,
+  theta = NULL,
+  covmat = NULL,
+  adaptmix = 0.05,
+  adaptive = 100,
+  init_model = NULL,
+  post_particle = NULL,
+  record = TRUE,
+  verbose = getOption("verbose", FALSE)
+)
 
 \S4method{pmcmc}{SimInf_model}(
   model,
@@ -26,8 +41,6 @@ pmcmc(model, ...)
 }
 \arguments{
 \item{model}{The model to simulate data from.}
-
-\item{...}{other arguments passed to specific methods.}
 
 \item{obs_process}{Specification of the stochastic observation
 process. The \code{obs_process} can be specified as a

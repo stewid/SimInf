@@ -219,7 +219,6 @@ setMethod(
 ##'     example, monitor, save and inspect intermediate results.
 ##' @param record FIXME
 ##' @template verbose-param-pmcmc
-##' @param ... other arguments passed to specific methods.
 ##' @references
 ##'
 ##' \Andrieu2010
@@ -230,7 +229,20 @@ setMethod(
 setGeneric(
     "pmcmc",
     signature = "model",
-    function(model, ...) {
+    function(model,
+             obs_process,
+             data,
+             priors,
+             npart,
+             niter,
+             theta = NULL,
+             covmat = NULL,
+             adaptmix = 0.05,
+             adaptive = 100,
+             init_model = NULL,
+             post_particle = NULL,
+             record = TRUE,
+             verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
 )
@@ -240,10 +252,20 @@ setGeneric(
 setMethod(
     "pmcmc",
     signature(model = "SimInf_model"),
-    function(model, obs_process, data, priors, npart, niter,
-             theta = NULL, covmat = NULL, adaptmix = 0.05,
-             adaptive = 100, init_model = NULL, post_particle = NULL,
-             record = TRUE, verbose = getOption("verbose", FALSE)) {
+    function(model,
+             obs_process,
+             data,
+             priors,
+             npart,
+             niter,
+             theta,
+             covmat,
+             adaptmix,
+             adaptive,
+             init_model,
+             post_particle,
+             record,
+             verbose) {
         npart <- check_n_particles(npart)
         niter <- check_niter(niter)
         adaptmix <- check_adaptmix(adaptmix)
