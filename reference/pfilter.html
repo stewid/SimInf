@@ -48,10 +48,10 @@ performed at each observation.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pfilter</span><span class="op">(</span><span class="va">model</span>, <span class="va">obs_process</span>, <span class="va">data</span>, <span class="va">npart</span>, init_model <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pfilter</span><span class="op">(</span><span class="va">model</span>, <span class="va">obs_process</span>, <span class="va">data</span>, <span class="va">n_particles</span>, init_model <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SimInf_model'</span></span>
-<span><span class="fu">pfilter</span><span class="op">(</span><span class="va">model</span>, <span class="va">obs_process</span>, <span class="va">data</span>, <span class="va">npart</span>, init_model <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">pfilter</span><span class="op">(</span><span class="va">model</span>, <span class="va">obs_process</span>, <span class="va">data</span>, <span class="va">n_particles</span>, init_model <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -89,9 +89,9 @@ density.</p></dd>
 <dd><p>A <code>data.frame</code> holding the time series data.</p></dd>
 
 
-<dt id="arg-npart">npart<a class="anchor" aria-label="anchor" href="#arg-npart"></a></dt>
-<dd><p>An integer with the number of particles (&gt; 1) to use
-at each timestep.</p></dd>
+<dt id="arg-n-particles">n_particles<a class="anchor" aria-label="anchor" href="#arg-n-particles"></a></dt>
+<dd><p>An integer with the number of particles (&gt; 1)
+to use at each timestep.</p></dd>
 
 
 <dt id="arg-init-model">init_model<a class="anchor" aria-label="anchor" href="#arg-init-model"></a></dt>
