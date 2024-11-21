@@ -175,7 +175,7 @@ pfilter_events <- function(events, time_end) {
     })
 }
 
-pfilter_obs_process <- function(model, obs_process, data, npart) {
+pfilter_obs_process <- function(model, obs_process, data) {
     if (is.function(obs_process))
         return(match.fun(obs_process))
 
@@ -484,7 +484,7 @@ setMethod(
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]
         events <- pfilter_events(model@events, tspan[, 2] - 1)
-        obs_process <- pfilter_obs_process(model, obs_process, data, npart)
+        obs_process <- pfilter_obs_process(model, obs_process, data)
         if (!is.null(init_model))
             init_model <- match.fun(init_model)
 

@@ -230,8 +230,7 @@ stopifnot(identical(
                       "10" = data.frame(time = 10, Iobs = 3),
                       "13" = data.frame(time = 13, Iobs = 3),
                       "16" = data.frame(time = 16, Iobs = 3),
-                      "19" = data.frame(time = 19, Iobs = 3)),
-                 5),
+                      "19" = data.frame(time = 19, Iobs = 3))),
     obs_fn))
 
 ## Raise an error if the observation process is not a function when a
@@ -249,8 +248,7 @@ res <- assertError(
                       "10" = data.frame(time = 10, Iobs = 3),
                       "13" = data.frame(time = 13, Iobs = 3),
                       "16" = data.frame(time = 16, Iobs = 3),
-                      "19" = data.frame(time = 19, Iobs = 3)),
-                 5))
+                      "19" = data.frame(time = 19, Iobs = 3))))
 
 check_error(res,
             paste("The observation process must be a function",
@@ -270,8 +268,7 @@ res <- assertError(
                       "10" = data.frame(time = 10, Iobs = 3),
                       "13" = data.frame(time = 13, Iobs = 3),
                       "16" = data.frame(time = 16, Iobs = 3),
-                      "19" = data.frame(time = 19, Iobs = 3)),
-                 5))
+                      "19" = data.frame(time = 19, Iobs = 3))))
 
 check_error(res,
             paste("The observation process must be a function",
@@ -292,8 +289,7 @@ res <- assertError(
                       "10" = data.frame(time = 10, Iobs = 3),
                       "13" = data.frame(time = 13, Iobs = 3),
                       "16" = data.frame(time = 16, Iobs = 3),
-                      "19" = data.frame(time = 19, Iobs = 3)),
-                 5))
+                      "19" = data.frame(time = 19, Iobs = 3))))
 
 check_error(res, "'obs_process' must be either a formula or a function.")
 
@@ -311,8 +307,7 @@ res <- assertError(
                       "10" = data.frame(time = 10, Iobs = 3),
                       "13" = data.frame(time = 13, Iobs = 3),
                       "16" = data.frame(time = 16, Iobs = 3),
-                      "19" = data.frame(time = 19, Iobs = 3)),
-                 5))
+                      "19" = data.frame(time = 19, Iobs = 3))))
 
 check_error(res,
             "Unable to match the parameter on the lhs to a column in 'data'.")
@@ -331,8 +326,7 @@ res <- assertError(
                       "10" = data.frame(time = 10, Iobs = 3),
                       "13" = data.frame(time = 13, Iobs = 3),
                       "16" = data.frame(time = 16, Iobs = 3),
-                      "19" = data.frame(time = 19, Iobs = 3)),
-                 5))
+                      "19" = data.frame(time = 19, Iobs = 3))))
 
 check_error(res, "Non-existing compartment(s) in model: 'E'.")
 
@@ -349,8 +343,7 @@ result <- SimInf:::pfilter_obs_process(
                             "10" = data.frame(time = 10, Iobs = 3),
                             "13" = data.frame(time = 13, Iobs = 3),
                             "16" = data.frame(time = 16, Iobs = 3),
-                            "19" = data.frame(time = 19, Iobs = 3)),
-                       5)
+                            "19" = data.frame(time = 19, Iobs = 3)))
 
 stopifnot(identical(
     result,
@@ -374,8 +367,7 @@ result <- SimInf:::pfilter_obs_process(
                             "10" = data.frame(time = 10, Iobs = 3),
                             "13" = data.frame(time = 13, Iobs = 3),
                             "16" = data.frame(time = 16, Iobs = 3),
-                            "19" = data.frame(time = 19, Iobs = 3)),
-                       5)
+                            "19" = data.frame(time = 19, Iobs = 3)))
 
 stopifnot(identical(
     result,
@@ -399,8 +391,7 @@ result <- SimInf:::pfilter_obs_process(
                             "10" = data.frame(time = 10, Iobs = 3),
                             "13" = data.frame(time = 13, Iobs = 3),
                             "16" = data.frame(time = 16, Iobs = 3),
-                            "19" = data.frame(time = 19, Iobs = 3)),
-                       5)
+                            "19" = data.frame(time = 19, Iobs = 3)))
 
 stopifnot(identical(
     result,
