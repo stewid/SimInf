@@ -314,66 +314,6 @@ setMethod(
     }
 )
 
-##' @rdname pmcmc
-##' @export
-setMethod(
-    "pmcmc",
-    signature(model = "SimInf_abc"),
-    function(model, obs_process, data, npart, niter, adaptmix = 0.05,
-             adaptive = 100, post_particle = NULL, record = TRUE,
-             verbose = getOption("verbose", FALSE)) {
-        npart <- check_n_particles(npart)
-        niter <- check_niter(niter)
-        adaptmix <- check_adaptmix(adaptmix)
-        adaptive <- check_adaptive(adaptive)
-        init_model <- check_init_model(model@init_model)
-        post_particle <- check_post_particle(post_particle)
-        pf <- check_record_pf(record)
-
-        i <- sample.int(abc_n_particles(model), 1)
-        theta <- model@x[i, , n_generations(model)]
-        covmat <- cov(model@x[, , n_generations(model)])
-
-        object <- new("SimInf_pmcmc", model = model@model,
-                      priors = model@priors, target = model@target,
-                      pars = model@pars, obs_process = obs_process,
-                      init_model = init_model,
-                      post_particle = post_particle, pf = pf,
-                      data = data, npart = npart, covmat = covmat,
-                      adaptmix = adaptmix, adaptive = adaptive)
-
-        object@chain <- setup_chain(object, 1L)
-        object@pf <- setup_pf(object, 1L)
-
-        methods::slot(object@model, object@target) <-
-            set_proposal(object, theta)
-
-        pf <- pfilter(object@model,
-                      obs_process = object@obs_process,
-                      data = object@data,
-                      npart = object@npart,
-                      init_model = object@init_model)
-
-        logLik <- pf@loglik
-        logPrior <- dpriors(theta, object@priors)
-        logPost <- logLik + logPrior
-        accept <- 0
-
-        ## Save current value of chain.
-        object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
-        if (is.function(object@post_particle))
-            object@post_particle(object, pf, 1)
-        if (!is.null(object@pf))
-            object@pf[[1]] <- pf
-
-        niter <- niter - 1L
-        if (niter == 0)
-            return(object)
-
-        continue_pmcmc(object, niter = niter, verbose = verbose)
-    }
-)
-
 check_adaptive <- function(adaptive) {
     check_integer_arg(adaptive)
     adaptive <- as.integer(adaptive)
