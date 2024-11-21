@@ -10,7 +10,7 @@ pmcmc(
   obs_process,
   data,
   priors,
-  npart,
+  n_particles,
   niter,
   theta = NULL,
   covmat = NULL,
@@ -27,7 +27,7 @@ pmcmc(
   obs_process,
   data,
   priors,
-  npart,
+  n_particles,
   niter,
   theta = NULL,
   covmat = NULL,
@@ -75,8 +75,8 @@ normal(10, 1))}. The following distributions are supported:
 \code{uniform}. All parameters in \code{priors} must be only
 in either \code{gdata} or \code{ldata}.}
 
-\item{npart}{An integer with the number of particles (> 1) to use
-at each timestep.}
+\item{n_particles}{An integer with the number of particles (> 1)
+to use at each timestep.}
 
 \item{niter}{An integer specifying the number of iterations to run
 the PMCMC.}

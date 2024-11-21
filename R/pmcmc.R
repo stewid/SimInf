@@ -194,7 +194,7 @@ setMethod(
 ##' @template obs_process-param
 ##' @template data-param
 ##' @template priors-param
-##' @template npart-param
+##' @template n_particles-param
 ##' @template niter-param
 ##' @param theta A named vector of initial values for the parameters
 ##'     of the model.  Default is \code{NULL}, and then these are
@@ -233,7 +233,7 @@ setGeneric(
              obs_process,
              data,
              priors,
-             npart,
+             n_particles,
              niter,
              theta = NULL,
              covmat = NULL,
@@ -256,7 +256,7 @@ setMethod(
              obs_process,
              data,
              priors,
-             npart,
+             n_particles,
              niter,
              theta,
              covmat,
@@ -266,7 +266,7 @@ setMethod(
              post_particle,
              record,
              verbose) {
-        npart <- check_n_particles(npart)
+        n_particles <- check_n_particles(n_particles)
         niter <- check_niter(niter)
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)
@@ -301,7 +301,7 @@ setMethod(
                       obs_process = obs_process,
                       init_model = init_model,
                       post_particle = post_particle, pf = pf,
-                      data = data, npart = npart, covmat = covmat,
+                      data = data, npart = n_particles, covmat = covmat,
                       adaptmix = adaptmix, adaptive = adaptive)
 
         object@chain <- setup_chain(object, 1L)
@@ -313,7 +313,7 @@ setMethod(
         pf <- pfilter(object@model,
                       obs_process = object@obs_process,
                       data = object@data,
-                      npart = object@npart,
+                      n_particles = object@npart,
                       init_model = object@init_model)
 
         logLik <- pf@loglik
@@ -562,7 +562,7 @@ setMethod(
                 pf_prop <- pfilter(model = object@model,
                                    obs_process = object@obs_process,
                                    data = object@data,
-                                   npart = object@npart,
+                                   n_particles = object@npart,
                                    init_model = object@init_model)
                 logLik_prop <- pf_prop@loglik
 

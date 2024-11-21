@@ -43,13 +43,13 @@ infected <- data.frame(
              17L, 15L, 15L, 13L, 18L, 18L, 16L, 13L, 12L, 12L, 11L,
              10L, 9L, 10L, 7L, 7L, 6L, 3L, 3L, 2L))
 
-## Check that an invalid 'npart' raises an error.
+## Check that an invalid 'n_particles' raises an error.
 res <- assertError(
     pmcmc(model,
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = 200.1,
+          n_particles = 200.1,
           niter = 200,
           verbose = TRUE))
 check_error(res, "'n_particles' must be integer.")
@@ -59,7 +59,7 @@ res <- assertError(
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = NA_integer_,
+          n_particles = NA_integer_,
           niter = 200,
           verbose = TRUE))
 check_error(res, "'n_particles' must be integer.")
@@ -69,7 +69,7 @@ res <- assertError(
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = -200,
+          n_particles = -200,
           niter = 200,
           verbose = TRUE))
 check_error(res, "'n_particles' must be an integer > 1.")
@@ -79,7 +79,7 @@ res <- assertError(
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = c(200, 200),
+          n_particles = c(200, 200),
           niter = 200,
           verbose = TRUE))
 check_error(res, "'n_particles' must be an integer > 1.")
@@ -90,7 +90,7 @@ res <- assertError(
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = 200,
+          n_particles = 200,
           niter = 200,
           adaptmix = -1,
           verbose = TRUE))
@@ -101,7 +101,7 @@ res <- assertError(
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = 200,
+          n_particles = 200,
           niter = 200,
           adaptmix = c(0.5, 0.5),
           verbose = TRUE))
@@ -113,7 +113,7 @@ res <- assertError(
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = 200,
+          n_particles = 200,
           niter = 0,
           theta = c(beta = 0.16, gamma = 0.077)))
 check_error(res, "'niter' must be an integer > 0.")
@@ -123,7 +123,7 @@ res <- assertError(
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = 200,
+          n_particles = 200,
           niter = c(200, 200),
           theta = c(beta = 0.16, gamma = 0.077)))
 check_error(res, "'niter' must be an integer > 0.")
@@ -134,7 +134,7 @@ res <- assertError(
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = 200,
+          n_particles = 200,
           niter = 200,
           theta = c(beta = "A", gamma = 0.077)))
 check_error(
@@ -146,7 +146,7 @@ res <- assertError(
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-          npart = 200,
+          n_particles = 200,
           niter = 200,
           theta = c(gamma = 0.077)))
 check_error(
@@ -159,7 +159,7 @@ fit <- pmcmc(model,
              Iobs ~ poisson(I + 1e-6),
              infected,
              priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-             npart = 10,
+             n_particles = 10,
              niter = 5,
              theta = c(beta = 0.16, gamma = 0.077))
 
