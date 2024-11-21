@@ -271,41 +271,41 @@ pfilter_internal <- function(model,
                              events,
                              obs_process,
                              data,
-                             npart,
+                             n_particles,
                              tspan,
                              init_model) {
     Nd <- nrow(model@v0)
     Ntspan <- nrow(tspan)
     ess <- numeric(Ntspan)
     loglik <- 0
-    w <- numeric(npart)
+    w <- numeric(n_particles)
 
     ## Create a matrix to keep track of the states in the compartments
     ## (including the initial state) in every particle.
     U <- matrix(data = NA_integer_,
-                nrow = npart * n_nodes(model) * n_compartments(model),
+                nrow = n_particles * n_nodes(model) * n_compartments(model),
                 ncol = Ntspan + 1L)
 
     ## Create a matrix to keep track of the continuous states
     ## (including the initial state) in every particle.
     V <- matrix(data = NA_real_,
-                nrow = npart * n_nodes(model) * Nd,
+                nrow = n_particles * n_nodes(model) * Nd,
                 ncol = Ntspan + 1L)
 
     ## Initialise the model.
     if (is.function(init_model))
         model <- init_model(model)
-    U[, 1L] <- rep(as.integer(model@u0), npart)
-    V[, 1L] <- rep(as.numeric(model@v0), npart)
+    U[, 1L] <- rep(as.integer(model@u0), n_particles)
+    V[, 1L] <- rep(as.numeric(model@v0), n_particles)
 
     a <- matrix(data = NA_integer_,
-                nrow = npart,
+                nrow = n_particles,
                 ncol = Ntspan + 1L)
-    a[, 1L] <- seq_len(npart)
+    a[, 1L] <- seq_len(n_particles)
 
     ## Loop over time series.
     m <- model
-    m@replicates <- npart
+    m@replicates <- n_particles
     for (i in seq_len(Ntspan)) {
         if (is.na(tspan[i, 1L])) {
             m@tspan <- tspan[i, 2L]
@@ -341,7 +341,7 @@ pfilter_internal <- function(model,
             ## replicate is in column 1 and 2, the second replicate in
             ## column 3 and 4, et cetera.
             x@tspan <- x@tspan[2L]
-            j <- seq.int(from = 2L, by = 2L, length.out = npart)
+            j <- seq.int(from = 2L, by = 2L, length.out = n_particles)
             x@U <- x@U[, j, drop = FALSE]
             x@V <- x@V[, j, drop = FALSE]
         }
@@ -373,7 +373,7 @@ pfilter_internal <- function(model,
         }
 
         if (!all(all(is.finite(w)),
-                 identical(length(w), npart),
+                 identical(length(w), n_particles),
                  is.vector(w, "numeric"))) {
             stop("Invalid observation process.", call. = FALSE)
         }
@@ -381,7 +381,7 @@ pfilter_internal <- function(model,
         max_w <- max(w)
         w <- exp(w - max_w)
         sum_w <- sum(w)
-        loglik <- loglik + max_w + log(sum_w) - log(npart)
+        loglik <- loglik + max_w + log(sum_w) - log(n_particles)
         w <- w / sum_w
         ess[i] <- 1 / sum(w^2)
 
@@ -397,7 +397,7 @@ pfilter_internal <- function(model,
                       nrow = n_nodes(model) * Nd,
                       ncol = Ntspan)
 
-    i <- sample.int(npart, 1)
+    i <- sample.int(n_particles, 1)
     for (j in rev(seq_len(Ntspan))) {
         u_i <- seq.int(
             from = (i - 1L) * n_nodes(model) * n_compartments(model) + 1L,
@@ -430,7 +430,7 @@ pfilter_internal <- function(model,
 
     methods::new("SimInf_pfilter",
                  model = model,
-                 n_particles = npart,
+                 n_particles = n_particles,
                  loglik = loglik,
                  ess = ess)
 }
@@ -488,13 +488,13 @@ setMethod(
         if (!is.null(init_model))
             init_model <- match.fun(init_model)
 
-        pfilter_internal(model,
-                         events,
-                         obs_process,
-                         data,
-                         npart,
-                         tspan,
-                         init_model)
+        pfilter_internal(model = model,
+                         events = events,
+                         obs_process = obs_process,
+                         data = data,
+                         n_particles = npart,
+                         tspan = tspan,
+                         init_model = init_model)
    }
 )
 
