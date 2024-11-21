@@ -296,13 +296,20 @@ setMethod(
             rownames(covmat) <- names(theta)
         }
 
-        object <- new("SimInf_pmcmc", model = model, priors = priors,
-                      target = pars$target, pars = pars$pars,
+        object <- new("SimInf_pmcmc",
+                      model = model,
+                      priors = priors,
+                      target = pars$target,
+                      pars = pars$pars,
                       obs_process = obs_process,
                       init_model = init_model,
-                      post_particle = post_particle, pf = pf,
-                      data = data, npart = n_particles, covmat = covmat,
-                      adaptmix = adaptmix, adaptive = adaptive)
+                      post_particle = post_particle,
+                      pf = pf,
+                      data = data,
+                      npart = n_particles,
+                      covmat = covmat,
+                      adaptmix = adaptmix,
+                      adaptive = adaptive)
 
         object@chain <- setup_chain(object, 1L)
         object@pf <- setup_pf(object, 1L)
