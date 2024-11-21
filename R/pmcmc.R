@@ -170,7 +170,7 @@ setMethod(
         cat(sprintf("Model: %s\n", as.character(class(object@model))))
 
         ## Nodes
-        cat(sprintf("Number of nodes: %i\n", n_nodes(object@model)))
+        cat(sprintf("Number of nodes: %i\n", n_nodes(object)))
 
         summary_transitions(object@model)
 

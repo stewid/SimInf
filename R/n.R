@@ -63,6 +63,17 @@ setMethod(
     }
 )
 
+##' @rdname n_nodes
+##' @include pmcmc.R
+##' @export
+setMethod(
+    "n_nodes",
+    signature(model = "SimInf_pmcmc"),
+    function(model) {
+        n_nodes(model@model)
+    }
+)
+
 ##' Determine the number of replicates in a model
 ##'
 ##' @param model the \code{model} object to extract the number of
