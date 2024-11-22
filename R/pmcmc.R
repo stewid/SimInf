@@ -25,8 +25,8 @@
 ##'     determines if the \code{pmcmc} method estimates parameters in
 ##'     \code{model@@gdata} or in \code{model@@ldata}.
 ##' @slot pars Index to the parameters in \code{target}.
-##' @slot npart n integer with the number of particles (> 1) to use in
-##'     the bootstrap particle filter.
+##' @slot n_particles An integer with the number of particles (> 1) to
+##'     use in the bootstrap particle filter.
 ##' @slot obs_process A \code{formula} or \code{function} determining
 ##'     the observation process.
 ##' @slot init_model FIXME.
@@ -56,7 +56,7 @@ setClass(
               priors        = "data.frame",
               target        = "character",
               pars          = "integer",
-              npart         = "integer",
+              n_particles   = "integer",
               obs_process   = "ANY",
               init_model    = "ANY",
               post_particle = "ANY",
@@ -130,7 +130,7 @@ setMethod(
         cat("Particle Markov chain Monte Carlo\n")
         cat("---------------------------------\n")
         cat(sprintf("Number of iterations: %i\n", length(object)))
-        cat(sprintf("Number of particles: %i\n", object@npart))
+        cat(sprintf("Number of particles: %i\n", object@n_particles))
         cat(sprintf("Mixing proportion for adaptive proposal: %.2f\n",
                     object@adaptmix))
 
@@ -162,7 +162,7 @@ setMethod(
         cat("Particle Markov chain Monte Carlo\n")
         cat("---------------------------------\n")
         cat(sprintf("Number of iterations: %i\n", length(object)))
-        cat(sprintf("Number of particles: %i\n", object@npart))
+        cat(sprintf("Number of particles: %i\n", object@n_particles))
         if (length(object) > 0)
             cat(sprintf("Acceptance ratio: %.3f\n", acceptance_ratio(object)))
 
@@ -306,7 +306,7 @@ setMethod(
                       post_particle = post_particle,
                       pf = pf,
                       data = data,
-                      npart = n_particles,
+                      n_particles = n_particles,
                       covmat = covmat,
                       adaptmix = adaptmix,
                       adaptive = adaptive)
@@ -320,7 +320,7 @@ setMethod(
         pf <- pfilter(object@model,
                       obs_process = object@obs_process,
                       data = object@data,
-                      n_particles = object@npart,
+                      n_particles = object@n_particles,
                       init_model = object@init_model)
 
         logLik <- pf@loglik
@@ -569,7 +569,7 @@ setMethod(
                 pf_prop <- pfilter(model = object@model,
                                    obs_process = object@obs_process,
                                    data = object@data,
-                                   n_particles = object@npart,
+                                   n_particles = object@n_particles,
                                    init_model = object@init_model)
                 logLik_prop <- pf_prop@loglik
 
