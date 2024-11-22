@@ -229,7 +229,7 @@ setMethod(
 ##' @param adaptive Controls when to start adaptive update. Must be
 ##'     greater or equal to zero. If \code{adaptive=0}, then adaptive
 ##'     update is not performed. Default is \code{adaptive = 100}.
-##' @param init_model FIXME.
+##' @template init_model-param
 ##' @param post_particle An optional function that, if non-NULL, is
 ##'     applied after each completed particle. The function must
 ##'     accept three arguments: 1) an object of \code{SimInf_pmcmc}
