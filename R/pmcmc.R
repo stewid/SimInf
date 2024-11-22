@@ -267,7 +267,7 @@ setMethod(
              record,
              verbose) {
         n_particles <- check_n_particles(n_particles)
-        niter <- check_niter(niter)
+        niter <- check_n_iterations(niter)
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)
         init_model <- check_init_model(init_model)
@@ -367,12 +367,12 @@ check_init_model <- function(init_model) {
     init_model
 }
 
-check_niter <- function(niter) {
-    check_integer_arg(niter)
-    niter <- as.integer(niter)
-    if (any(length(niter) != 1L, any(niter <= 0L)))
-        stop("'niter' must be an integer > 0.", call. = FALSE)
-    niter
+check_n_iterations <- function(n_iterations) {
+    check_integer_arg(n_iterations)
+    n_iterations <- as.integer(n_iterations)
+    if (any(length(n_iterations) != 1L, any(n_iterations <= 0L)))
+        stop("'n_iterations' must be an integer > 0.", call. = FALSE)
+    n_iterations
 }
 
 check_post_particle <- function(post_particle) {
@@ -531,7 +531,7 @@ setMethod(
     function(object, niter, verbose) {
         methods::validObject(object)
 
-        niter <- check_niter(niter)
+        niter <- check_n_iterations(niter)
         verbose <- get_verbose(verbose)
         iterations <- length(object) + seq_len(niter)
         object@chain <- setup_chain(object, niter)

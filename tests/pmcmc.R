@@ -116,7 +116,7 @@ res <- assertError(
           n_particles = 200,
           niter = 0,
           theta = c(beta = 0.16, gamma = 0.077)))
-check_error(res, "'niter' must be an integer > 0.")
+check_error(res, "'n_iterations' must be an integer > 0.")
 
 res <- assertError(
     pmcmc(model,
@@ -126,7 +126,7 @@ res <- assertError(
           n_particles = 200,
           niter = c(200, 200),
           theta = c(beta = 0.16, gamma = 0.077)))
-check_error(res, "'niter' must be an integer > 0.")
+check_error(res, "'n_iterations' must be an integer > 0.")
 
 ## Check that an invalid 'theta' raises an error.
 res <- assertError(
@@ -227,13 +227,13 @@ res <- assertError(
     continue_pmcmc(fit, niter = 0))
 check_error(
     res,
-    "'niter' must be an integer > 0.")
+    "'n_iterations' must be an integer > 0.")
 
 res <- assertError(
     continue_pmcmc(fit, niter = 1:2))
 check_error(
     res,
-    "'niter' must be an integer > 0.")
+    "'n_iterations' must be an integer > 0.")
 
 stopifnot(identical(
     SimInf:::pmcmc_iterations(x = fit, start = 1, end = NULL, thin = 1),
