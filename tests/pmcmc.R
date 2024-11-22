@@ -50,7 +50,7 @@ res <- assertError(
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = 200.1,
-          niter = 200,
+          n_iterations = 200,
           verbose = TRUE))
 check_error(res, "'n_particles' must be integer.")
 
@@ -60,7 +60,7 @@ res <- assertError(
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = NA_integer_,
-          niter = 200,
+          n_iterations = 200,
           verbose = TRUE))
 check_error(res, "'n_particles' must be integer.")
 
@@ -70,7 +70,7 @@ res <- assertError(
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = -200,
-          niter = 200,
+          n_iterations = 200,
           verbose = TRUE))
 check_error(res, "'n_particles' must be an integer > 1.")
 
@@ -80,7 +80,7 @@ res <- assertError(
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = c(200, 200),
-          niter = 200,
+          n_iterations = 200,
           verbose = TRUE))
 check_error(res, "'n_particles' must be an integer > 1.")
 
@@ -91,7 +91,7 @@ res <- assertError(
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = 200,
-          niter = 200,
+          n_iterations = 200,
           adaptmix = -1,
           verbose = TRUE))
 check_error(res, "'adaptmix' must be a value > 0 and < 1.")
@@ -102,19 +102,19 @@ res <- assertError(
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = 200,
-          niter = 200,
+          n_iterations = 200,
           adaptmix = c(0.5, 0.5),
           verbose = TRUE))
 check_error(res, "'adaptmix' must be a value > 0 and < 1.")
 
-## Check that an invalid 'niter' raises an error.
+## Check that an invalid 'n_iterations' raises an error.
 res <- assertError(
     pmcmc(model,
           Iobs ~ poisson(I + 1e-6),
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = 200,
-          niter = 0,
+          n_iterations = 0,
           theta = c(beta = 0.16, gamma = 0.077)))
 check_error(res, "'n_iterations' must be an integer > 0.")
 
@@ -124,7 +124,7 @@ res <- assertError(
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = 200,
-          niter = c(200, 200),
+          n_iterations = c(200, 200),
           theta = c(beta = 0.16, gamma = 0.077)))
 check_error(res, "'n_iterations' must be an integer > 0.")
 
@@ -135,7 +135,7 @@ res <- assertError(
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = 200,
-          niter = 200,
+          n_iterations = 200,
           theta = c(beta = "A", gamma = 0.077)))
 check_error(
     res,
@@ -147,7 +147,7 @@ res <- assertError(
           infected,
           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
           n_particles = 200,
-          niter = 200,
+          n_iterations = 200,
           theta = c(gamma = 0.077)))
 check_error(
     res,
@@ -160,7 +160,7 @@ fit <- pmcmc(model,
              infected,
              priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
              n_particles = 10,
-             niter = 5,
+             n_iterations = 5,
              theta = c(beta = 0.16, gamma = 0.077))
 
 show_expected <- c(
@@ -224,13 +224,13 @@ stopifnot(all(is.na(SimInf:::setup_chain(fit, 5)[6:10, ])))
 
 fit@target <- "ldata"
 res <- assertError(
-    continue_pmcmc(fit, niter = 0))
+    continue_pmcmc(fit, n_iterations = 0))
 check_error(
     res,
     "'n_iterations' must be an integer > 0.")
 
 res <- assertError(
-    continue_pmcmc(fit, niter = 1:2))
+    continue_pmcmc(fit, n_iterations = 1:2))
 check_error(
     res,
     "'n_iterations' must be an integer > 0.")

@@ -195,7 +195,7 @@ setMethod(
 ##' @template data-param
 ##' @template priors-param
 ##' @template n_particles-param
-##' @template niter-param
+##' @template n_iterations-param
 ##' @param theta A named vector of initial values for the parameters
 ##'     of the model.  Default is \code{NULL}, and then these are
 ##'     sampled from the prior distribution(s).
@@ -234,7 +234,7 @@ setGeneric(
              data,
              priors,
              n_particles,
-             niter,
+             n_iterations,
              theta = NULL,
              covmat = NULL,
              adaptmix = 0.05,
@@ -257,7 +257,7 @@ setMethod(
              data,
              priors,
              n_particles,
-             niter,
+             n_iterations,
              theta,
              covmat,
              adaptmix,
@@ -267,7 +267,7 @@ setMethod(
              record,
              verbose) {
         n_particles <- check_n_particles(n_particles)
-        niter <- check_n_iterations(niter)
+        n_iterations <- check_n_iterations(n_iterations)
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)
         init_model <- check_init_model(init_model)
@@ -335,11 +335,13 @@ setMethod(
         if (!is.null(object@pf))
             object@pf[[1]] <- pf
 
-        niter <- niter - 1L
-        if (niter == 0)
+        n_iterations <- n_iterations - 1L
+        if (n_iterations == 0)
             return(object)
 
-        continue_pmcmc(object, niter = niter, verbose = verbose)
+        continue_pmcmc(object,
+                       n_iterations = n_iterations,
+                       verbose = verbose)
     }
 )
 
@@ -512,14 +514,14 @@ get_verbose <- function(verbose) {
 ##' Run more iterations of PMCMC
 ##'
 ##' @param object The \code{SimInf_pmcmc} object to continue from.
-##' @template niter-param
+##' @template n_iterations-param
 ##' @template verbose-param-pmcmc
 ##' @export
 setGeneric(
     "continue_pmcmc",
     signature = "object",
     function(object,
-             niter,
+             n_iterations,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("continue_pmcmc")
     }
@@ -531,15 +533,15 @@ setMethod(
     "continue_pmcmc",
     signature(object = "SimInf_pmcmc"),
     function(object,
-             niter,
+             n_iterations,
              verbose) {
         methods::validObject(object)
 
-        niter <- check_n_iterations(niter)
+        n_iterations <- check_n_iterations(n_iterations)
         verbose <- get_verbose(verbose)
-        iterations <- length(object) + seq_len(niter)
-        object@chain <- setup_chain(object, niter)
-        object@pf <- setup_pf(object, niter)
+        iterations <- length(object) + seq_len(n_iterations)
+        object@chain <- setup_chain(object, n_iterations)
+        object@pf <- setup_pf(object, n_iterations)
 
         ## Continue from the last iteration in the chain.
         i <- iterations[1] - 1

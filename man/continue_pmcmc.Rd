@@ -5,15 +5,15 @@
 \alias{continue_pmcmc,SimInf_pmcmc-method}
 \title{Run more iterations of PMCMC}
 \usage{
-continue_pmcmc(object, niter, verbose = getOption("verbose", FALSE))
+continue_pmcmc(object, n_iterations, verbose = getOption("verbose", FALSE))
 
-\S4method{continue_pmcmc}{SimInf_pmcmc}(object, niter, verbose = getOption("verbose", FALSE))
+\S4method{continue_pmcmc}{SimInf_pmcmc}(object, n_iterations, verbose = getOption("verbose", FALSE))
 }
 \arguments{
 \item{object}{The \code{SimInf_pmcmc} object to continue from.}
 
-\item{niter}{An integer specifying the number of iterations to run
-the PMCMC.}
+\item{n_iterations}{An integer specifying the number of iterations
+to run the PMCMC.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and

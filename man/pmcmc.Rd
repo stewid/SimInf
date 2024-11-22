@@ -11,7 +11,7 @@ pmcmc(
   data,
   priors,
   n_particles,
-  niter,
+  n_iterations,
   theta = NULL,
   covmat = NULL,
   adaptmix = 0.05,
@@ -28,7 +28,7 @@ pmcmc(
   data,
   priors,
   n_particles,
-  niter,
+  n_iterations,
   theta = NULL,
   covmat = NULL,
   adaptmix = 0.05,
@@ -78,8 +78,8 @@ in either \code{gdata} or \code{ldata}.}
 \item{n_particles}{An integer with the number of particles (> 1)
 to use at each timestep.}
 
-\item{niter}{An integer specifying the number of iterations to run
-the PMCMC.}
+\item{n_iterations}{An integer specifying the number of iterations
+to run the PMCMC.}
 
 \item{theta}{A named vector of initial values for the parameters
 of the model.  Default is \code{NULL}, and then these are
