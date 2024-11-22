@@ -108,7 +108,8 @@ trajectory attached, and 3) an integer with the iteration in
 the fitting process. This function can be useful to, for
 example, monitor, save and inspect intermediate results.}
 
-\item{record}{FIXME}
+\item{record}{Record a filtered trajectory from the particle
+filter in each iteration. Default is \code{FALSE}.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and

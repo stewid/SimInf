@@ -238,7 +238,8 @@ setMethod(
 ##'     trajectory attached, and 3) an integer with the iteration in
 ##'     the fitting process. This function can be useful to, for
 ##'     example, monitor, save and inspect intermediate results.
-##' @param record FIXME
+##' @param record Record a filtered trajectory from the particle
+##'     filter in each iteration. Default is \code{FALSE}.
 ##' @template verbose-param-pmcmc
 ##' @references
 ##'
