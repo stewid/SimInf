@@ -518,7 +518,9 @@ get_verbose <- function(verbose) {
 setGeneric(
     "continue_pmcmc",
     signature = "object",
-    function(object, niter, verbose = getOption("verbose", FALSE)) {
+    function(object,
+             niter,
+             verbose = getOption("verbose", FALSE)) {
         standardGeneric("continue_pmcmc")
     }
 )
@@ -528,7 +530,9 @@ setGeneric(
 setMethod(
     "continue_pmcmc",
     signature(object = "SimInf_pmcmc"),
-    function(object, niter, verbose) {
+    function(object,
+             niter,
+             verbose) {
         methods::validObject(object)
 
         niter <- check_n_iterations(niter)
