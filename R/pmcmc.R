@@ -104,6 +104,27 @@ valid_SimInf_pmcmc_object <- function(object) {
 ## Assign the validity method for the SimInf_pmcmc class.
 setValidity("SimInf_pmcmc", valid_SimInf_pmcmc_object)
 
+setAs(
+    from = "SimInf_pmcmc",
+    to = "data.frame",
+    def = function(from) {
+        ## Skip the first four columns in chain: 'logPost',
+        ## 'logLik', 'logPrior', and 'accept'.
+        j <- seq(from = 5, by = 1, length.out = n_pars(from))
+        as.data.frame(from@chain[, j, drop = FALSE])
+    }
+)
+
+##' Coerce to data frame
+##'
+##' @method as.data.frame SimInf_pmcmc
+##'
+##' @inheritParams base::as.data.frame
+##' @export
+as.data.frame.SimInf_pmcmc <- function(x, ...) {
+    methods::as(x, "data.frame")
+}
+
 summary_chain <- function(chain) {
     qq <- do.call("rbind", apply(chain, 2, function(x) {
         cbind(t(quantile(x, c(0.025, 0.25, 0.5, 0.75, 0.975), na.rm = TRUE)),

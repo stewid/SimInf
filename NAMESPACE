@@ -3,6 +3,7 @@
 S3method(as.data.frame,SimInf_abc)
 S3method(as.data.frame,SimInf_events)
 S3method(as.data.frame,SimInf_indiv_events)
+S3method(as.data.frame,SimInf_pmcmc)
 export("gdata<-")
 export("punchcard<-")
 export("select_matrix<-")
