@@ -262,7 +262,7 @@ setGeneric(
              adaptive = 100,
              init_model = NULL,
              post_particle = NULL,
-             record = TRUE,
+             record = FALSE,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
