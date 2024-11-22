@@ -39,7 +39,12 @@ use in the bootstrap particle filter.}
 \item{\code{obs_process}}{A \code{formula} or \code{function} determining
 the observation process.}
 
-\item{\code{init_model}}{FIXME.}
+\item{\code{init_model}}{An optional function that, if non-NULL, is
+applied before running each proposal. The function must accept
+one argument of type \code{SimInf_model} with the current
+model of the fitting process. This function can be useful to
+specify the initial state of \code{u0} or \code{v0} of the
+model before running a trajectory with proposed parameters.}
 
 \item{\code{post_particle}}{An optional function that, if non-NULL, is
 applied after each completed particle. The function must
