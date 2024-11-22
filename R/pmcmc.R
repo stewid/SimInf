@@ -391,9 +391,9 @@ is_empty_chain <- function(object) {
     isTRUE(length(object) == 0L)
 }
 
-setup_chain <- function(object, niter) {
+setup_chain <- function(object, n_iterations) {
     m <- matrix(NA_real_,
-                nrow = niter,
+                nrow = n_iterations,
                 ncol = 4L + n_pars(object),
                 dimnames = list(NULL, c("logPost", "logLik",
                                         "logPrior", "accept",
@@ -404,10 +404,10 @@ setup_chain <- function(object, niter) {
     rbind(object@chain, m)
 }
 
-setup_pf <- function(object, niter) {
+setup_pf <- function(object, n_iterations) {
     if (is.null(object@pf))
         return(NULL)
-    c(object@pf, vector("list", length = niter))
+    c(object@pf, vector("list", length = n_iterations))
 }
 
 set_proposal <- function(object, theta) {
