@@ -46,15 +46,6 @@ model of the fitting process. This function can be useful to
 specify the initial state of \code{u0} or \code{v0} of the
 model before running a trajectory with proposed parameters.}
 
-\item{\code{post_particle}}{An optional function that, if non-NULL, is
-applied after each completed particle. The function must
-accept three arguments: 1) an object of \code{SimInf_pmcmc}
-with the current state of the fitting process, 2) an object
-\code{SimInf_pfilter} with the last particle and one filtered
-trajectory attached, and 3) an integer with the iteration in
-the fitting process. This function can be useful to, for
-example, monitor, save and inspect intermediate results.}
-
 \item{\code{data}}{A \code{data.frame} holding the time series data for
 the observation process.}
 

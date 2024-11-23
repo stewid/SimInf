@@ -35,14 +35,6 @@
 ##'     model of the fitting process. This function can be useful to
 ##'     specify the initial state of \code{u0} or \code{v0} of the
 ##'     model before running a trajectory with proposed parameters.
-##' @slot post_particle An optional function that, if non-NULL, is
-##'     applied after each completed particle. The function must
-##'     accept three arguments: 1) an object of \code{SimInf_pmcmc}
-##'     with the current state of the fitting process, 2) an object
-##'     \code{SimInf_pfilter} with the last particle and one filtered
-##'     trajectory attached, and 3) an integer with the iteration in
-##'     the fitting process. This function can be useful to, for
-##'     example, monitor, save and inspect intermediate results.
 ##' @slot data A \code{data.frame} holding the time series data for
 ##'     the observation process.
 ##' @slot chain A matrix where each row contains \code{logPost},
@@ -64,7 +56,6 @@ setClass(
               n_particles   = "integer",
               obs_process   = "ANY",
               init_model    = "ANY",
-              post_particle = "ANY",
               data          = "data.frame",
               chain         = "matrix",
               pf            = "ANY",
@@ -94,11 +85,6 @@ valid_SimInf_pmcmc_object <- function(object) {
     if (all(!is.null(object@init_model),
             !is.function(object@init_model))) {
         errors <- c(errors, "'init_model' must be 'NULL' or a 'function'.")
-    }
-
-    if (all(!is.null(object@post_particle),
-            !is.function(object@post_particle))) {
-        errors <- c(errors, "'post_particle' must be 'NULL' or a 'function'.")
     }
 
     if (length(errors))
@@ -330,7 +316,6 @@ setMethod(
                       pars = pars$pars,
                       obs_process = obs_process,
                       init_model = init_model,
-                      post_particle = post_particle,
                       pf = pf,
                       data = data,
                       n_particles = n_particles,
@@ -357,8 +342,8 @@ setMethod(
 
         ## Save current value of chain.
         object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
-        if (is.function(object@post_particle))
-            object@post_particle(object, pf, 1)
+        if (is.function(post_particle))
+            post_particle(object, pf, 1)
         if (!is.null(object@pf))
             object@pf[[1]] <- pf
 
@@ -368,6 +353,7 @@ setMethod(
 
         continue_pmcmc(object,
                        n_iterations = n_iterations,
+                       post_particle = post_particle,
                        verbose = verbose)
     }
 )
@@ -542,6 +528,14 @@ get_verbose <- function(verbose) {
 ##'
 ##' @param object The \code{SimInf_pmcmc} object to continue from.
 ##' @template n_iterations-param
+##' @param post_particle An optional function that, if non-NULL, is
+##'     applied after each completed particle. The function must
+##'     accept three arguments: 1) an object of \code{SimInf_pmcmc}
+##'     with the current state of the fitting process, 2) an object
+##'     \code{SimInf_pfilter} with the last particle and one filtered
+##'     trajectory attached, and 3) an integer with the iteration in
+##'     the fitting process. This function can be useful to, for
+##'     example, monitor, save and inspect intermediate results.
 ##' @template verbose-param-pmcmc
 ##' @export
 setGeneric(
@@ -549,6 +543,7 @@ setGeneric(
     signature = "object",
     function(object,
              n_iterations,
+             post_particle = NULL,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("continue_pmcmc")
     }
@@ -561,10 +556,12 @@ setMethod(
     signature(object = "SimInf_pmcmc"),
     function(object,
              n_iterations,
+             post_particle,
              verbose) {
         methods::validObject(object)
 
         n_iterations <- check_n_iterations(n_iterations)
+        post_particle <- check_post_particle(post_particle)
         verbose <- get_verbose(verbose)
         iterations <- length(object) + seq_len(n_iterations)
         object@chain <- setup_chain(object, n_iterations)
@@ -620,8 +617,8 @@ setMethod(
 
             ## Save current value of chain.
             object@chain[i, ] <- c(logPost, logLik, logPrior, accept, theta)
-            if (is.function(object@post_particle))
-                object@post_particle(object, pf, i)
+            if (is.function(post_particle))
+                post_particle(object, pf, i)
             if (!is.null(object@pf))
                 object@pf[[i]] <- pf
 
