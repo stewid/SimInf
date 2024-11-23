@@ -89,15 +89,6 @@ use in the bootstrap particle filter.</p></dd>
 the observation process.</p></dd>
 
 
-<dt><code>init_model</code></dt>
-<dd><p>An optional function that, if non-NULL, is
-applied before running each proposal. The function must accept
-one argument of type <code>SimInf_model</code> with the current
-model of the fitting process. This function can be useful to
-specify the initial state of <code>u0</code> or <code>v0</code> of the
-model before running a trajectory with proposed parameters.</p></dd>
-
-
 <dt><code>data</code></dt>
 <dd><p>A <code>data.frame</code> holding the time series data for
 the observation process.</p></dd>

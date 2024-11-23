@@ -48,6 +48,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">continue_pmcmc</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
 <span>  <span class="va">n_iterations</span>,</span>
+<span>  init_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  post_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"verbose"</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -56,6 +57,7 @@
 <span><span class="fu">continue_pmcmc</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
 <span>  <span class="va">n_iterations</span>,</span>
+<span>  init_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  post_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"verbose"</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -72,6 +74,15 @@
 <dt id="arg-n-iterations">n_iterations<a class="anchor" aria-label="anchor" href="#arg-n-iterations"></a></dt>
 <dd><p>An integer specifying the number of iterations
 to run the PMCMC.</p></dd>
+
+
+<dt id="arg-init-model">init_model<a class="anchor" aria-label="anchor" href="#arg-init-model"></a></dt>
+<dd><p>An optional function that, if non-NULL, is
+applied before running each proposal. The function must accept
+one argument of type <code>SimInf_model</code> with the current
+model of the fitting process. This function can be useful to
+specify the initial state of <code>u0</code> or <code>v0</code> of the
+model before running a trajectory with proposed parameters.</p></dd>
 
 
 <dt id="arg-post-particle">post_particle<a class="anchor" aria-label="anchor" href="#arg-post-particle"></a></dt>
