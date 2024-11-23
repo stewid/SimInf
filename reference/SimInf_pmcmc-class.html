@@ -98,17 +98,6 @@ specify the initial state of <code>u0</code> or <code>v0</code> of the
 model before running a trajectory with proposed parameters.</p></dd>
 
 
-<dt><code>post_particle</code></dt>
-<dd><p>An optional function that, if non-NULL, is
-applied after each completed particle. The function must
-accept three arguments: 1) an object of <code>SimInf_pmcmc</code>
-with the current state of the fitting process, 2) an object
-<code>SimInf_pfilter</code> with the last particle and one filtered
-trajectory attached, and 3) an integer with the iteration in
-the fitting process. This function can be useful to, for
-example, monitor, save and inspect intermediate results.</p></dd>
-
-
 <dt><code>data</code></dt>
 <dd><p>A <code>data.frame</code> holding the time series data for
 the observation process.</p></dd>
