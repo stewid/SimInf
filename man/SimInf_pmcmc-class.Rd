@@ -36,9 +36,6 @@ determines if the \code{pmcmc} method estimates parameters in
 \item{\code{n_particles}}{An integer with the number of particles (> 1) to
 use in the bootstrap particle filter.}
 
-\item{\code{obs_process}}{A \code{formula} or \code{function} determining
-the observation process.}
-
 \item{\code{data}}{A \code{data.frame} holding the time series data for
 the observation process.}
 

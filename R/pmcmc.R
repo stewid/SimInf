@@ -27,8 +27,6 @@
 ##' @slot pars Index to the parameters in \code{target}.
 ##' @slot n_particles An integer with the number of particles (> 1) to
 ##'     use in the bootstrap particle filter.
-##' @slot obs_process A \code{formula} or \code{function} determining
-##'     the observation process.
 ##' @slot data A \code{data.frame} holding the time series data for
 ##'     the observation process.
 ##' @slot chain A matrix where each row contains \code{logPost},
@@ -47,7 +45,6 @@ setClass(
               target        = "character",
               pars          = "integer",
               n_particles   = "integer",
-              obs_process   = "ANY",
               data          = "data.frame",
               chain         = "matrix",
               covmat        = "matrix",
@@ -295,7 +292,6 @@ setMethod(
                       priors = priors,
                       target = pars$target,
                       pars = pars$pars,
-                      obs_process = obs_process,
                       data = data,
                       n_particles = n_particles,
                       covmat = covmat,
@@ -308,7 +304,7 @@ setMethod(
             set_proposal(object, theta)
 
         pf <- pfilter(object@model,
-                      obs_process = object@obs_process,
+                      obs_process = obs_process,
                       data = object@data,
                       n_particles = object@n_particles,
                       init_model = init_model)
@@ -327,7 +323,8 @@ setMethod(
         if (n_iterations == 0)
             return(object)
 
-        continue_pmcmc(object,
+        continue_pmcmc(object = object,
+                       obs_process = obs_process,
                        n_iterations = n_iterations,
                        init_model = init_model,
                        post_particle = post_particle,
@@ -492,6 +489,7 @@ get_verbose <- function(verbose) {
 ##' Run more iterations of PMCMC
 ##'
 ##' @param object The \code{SimInf_pmcmc} object to continue from.
+##' @template obs_process-param
 ##' @template n_iterations-param
 ##' @template init_model-param
 ##' @param post_particle An optional function that, if non-NULL, is
@@ -511,6 +509,7 @@ setGeneric(
     "continue_pmcmc",
     signature = "object",
     function(object,
+             obs_process,
              n_iterations,
              init_model = NULL,
              post_particle = NULL,
@@ -525,6 +524,7 @@ setMethod(
     "continue_pmcmc",
     signature(object = "SimInf_pmcmc"),
     function(object,
+             obs_process,
              n_iterations,
              init_model,
              post_particle,
@@ -567,7 +567,7 @@ setMethod(
                     set_proposal(object, proposal$theta)
 
                 pf_prop <- pfilter(model = object@model,
-                                   obs_process = object@obs_process,
+                                   obs_process = obs_process,
                                    data = object@data,
                                    n_particles = object@n_particles,
                                    init_model = init_model)
