@@ -46,8 +46,6 @@ the observation process.}
 \code{logLik}, \code{logPrior}, \code{accept}, and the
 \code{parameters} for each iteration.}
 
-\item{\code{pf}}{List with the filtered trajectory from each iteration.}
-
 \item{\code{covmat}}{A named numeric \code{(npars x npars)} matrix with
 covariances to use as initial proposal matrix.}
 

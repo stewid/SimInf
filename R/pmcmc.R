@@ -34,7 +34,6 @@
 ##' @slot chain A matrix where each row contains \code{logPost},
 ##'     \code{logLik}, \code{logPrior}, \code{accept}, and the
 ##'     \code{parameters} for each iteration.
-##' @slot pf List with the filtered trajectory from each iteration.
 ##' @slot covmat A named numeric \code{(npars x npars)} matrix with
 ##'     covariances to use as initial proposal matrix.
 ##' @slot adaptmix Mixing proportion for adaptive proposal.
@@ -51,7 +50,6 @@ setClass(
               obs_process   = "ANY",
               data          = "data.frame",
               chain         = "matrix",
-              pf            = "ANY",
               covmat        = "matrix",
               adaptmix      = "numeric",
               adaptive      = "integer")
@@ -217,8 +215,6 @@ setMethod(
 ##'     trajectory attached, and 3) an integer with the iteration in
 ##'     the fitting process. This function can be useful to, for
 ##'     example, monitor, save and inspect intermediate results.
-##' @param record Record a filtered trajectory from the particle
-##'     filter in each iteration. Default is \code{FALSE}.
 ##' @template verbose-param-pmcmc
 ##' @references
 ##'
@@ -242,7 +238,6 @@ setGeneric(
              adaptive = 100,
              init_model = NULL,
              post_particle = NULL,
-             record = FALSE,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
@@ -265,7 +260,6 @@ setMethod(
              adaptive,
              init_model,
              post_particle,
-             record,
              verbose) {
         n_particles <- check_n_particles(n_particles)
         n_iterations <- check_n_iterations(n_iterations)
@@ -273,7 +267,6 @@ setMethod(
         adaptive <- check_adaptive(adaptive)
         init_model <- check_init_model(init_model)
         post_particle <- check_post_particle(post_particle)
-        pf <- check_record_pf(record)
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
         priors <- parse_priors(priors)
@@ -303,7 +296,6 @@ setMethod(
                       target = pars$target,
                       pars = pars$pars,
                       obs_process = obs_process,
-                      pf = pf,
                       data = data,
                       n_particles = n_particles,
                       covmat = covmat,
@@ -311,7 +303,6 @@ setMethod(
                       adaptive = adaptive)
 
         object@chain <- setup_chain(object, 1L)
-        object@pf <- setup_pf(object, 1L)
 
         methods::slot(object@model, object@target) <-
             set_proposal(object, theta)
@@ -331,8 +322,6 @@ setMethod(
         object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
         if (is.function(post_particle))
             post_particle(object, pf, 1)
-        if (!is.null(object@pf))
-            object@pf[[1]] <- pf
 
         n_iterations <- n_iterations - 1L
         if (n_iterations == 0)
@@ -384,12 +373,6 @@ check_post_particle <- function(post_particle) {
     post_particle
 }
 
-check_record_pf <- function(record) {
-    if (isTRUE(record))
-        return(list())
-    NULL
-}
-
 is_empty_chain <- function(object) {
     isTRUE(length(object) == 0L)
 }
@@ -405,12 +388,6 @@ setup_chain <- function(object, n_iterations) {
     if (is_empty_chain(object))
         return(m)
     rbind(object@chain, m)
-}
-
-setup_pf <- function(object, n_iterations) {
-    if (is.null(object@pf))
-        return(NULL)
-    c(object@pf, vector("list", length = n_iterations))
 }
 
 set_proposal <- function(object, theta) {
@@ -524,7 +501,10 @@ get_verbose <- function(verbose) {
 ##'     \code{SimInf_pfilter} with the last particle and one filtered
 ##'     trajectory attached, and 3) an integer with the iteration in
 ##'     the fitting process. This function can be useful to, for
-##'     example, monitor, save and inspect intermediate results.
+##'     example, monitor, save and inspect intermediate results. Note
+##'     that the second \code{SimInf_pfilter} argument, is non-NULL
+##'     only for the first particle in the chain, and for accepted
+##'     particles.
 ##' @template verbose-param-pmcmc
 ##' @export
 setGeneric(
@@ -557,12 +537,9 @@ setMethod(
         verbose <- get_verbose(verbose)
         iterations <- length(object) + seq_len(n_iterations)
         object@chain <- setup_chain(object, n_iterations)
-        object@pf <- setup_pf(object, n_iterations)
 
         ## Continue from the last iteration in the chain.
         i <- iterations[1] - 1
-        if (!is.null(object@pf))
-            pf <- object@pf[[i]]
         n_accepted <- sum(object@chain[seq_len(i), "accept"])
         logPost <- object@chain[i, "logPost"]
         logLik <- object@chain[i, "logLik"]
@@ -575,6 +552,7 @@ setMethod(
         for (i in iterations) {
             ## Proposal
             accept <- 0
+            pf <- NULL
             proposal <- pmcmc_proposal(x = object,
                                        i = i,
                                        n_accepted = n_accepted,
@@ -611,8 +589,6 @@ setMethod(
             object@chain[i, ] <- c(logPost, logLik, logPrior, accept, theta)
             if (is.function(post_particle))
                 post_particle(object, pf, i)
-            if (!is.null(object@pf))
-                object@pf[[i]] <- pf
 
             ## Report progress.
             pmcmc_progress(object, i, verbose)
