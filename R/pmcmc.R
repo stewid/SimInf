@@ -212,6 +212,12 @@ setMethod(
 ##'     trajectory attached, and 3) an integer with the iteration in
 ##'     the fitting process. This function can be useful to, for
 ##'     example, monitor, save and inspect intermediate results.
+##' @param chain An optional chain to start from. Must be a
+##'     \code{data.frame} or an object that can be coerced to a
+##'     \code{data.frame}. Only the columns in \code{chain} with a
+##'     name that matches the names that will be used if this argument
+##'     is not provided will be used. When this argument is provided,
+##'     \code{n_iterations} can be 0.
 ##' @template verbose-param-pmcmc
 ##' @references
 ##'
@@ -235,6 +241,7 @@ setGeneric(
              adaptive = 100,
              init_model = NULL,
              post_particle = NULL,
+             chain = NULL,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("pmcmc")
     }
@@ -257,6 +264,7 @@ setMethod(
              adaptive,
              init_model,
              post_particle,
+             chain,
              verbose) {
         n_particles <- check_n_particles(n_particles)
         n_iterations <- check_n_iterations(n_iterations)
@@ -298,28 +306,33 @@ setMethod(
                       adaptmix = adaptmix,
                       adaptive = adaptive)
 
-        object@chain <- setup_chain(object, 1L)
+        if (!is.null(chain)) {
+            object@chain <- check_chain(object, chain)
+        } else {
+            object@chain <- setup_chain(object, 1L)
 
-        methods::slot(object@model, object@target) <-
-            set_proposal(object, theta)
+            methods::slot(object@model, object@target) <-
+                set_proposal(object, theta)
 
-        pf <- pfilter(object@model,
-                      obs_process = obs_process,
-                      data = object@data,
-                      n_particles = object@n_particles,
-                      init_model = init_model)
+            pf <- pfilter(object@model,
+                          obs_process = obs_process,
+                          data = object@data,
+                          n_particles = object@n_particles,
+                          init_model = init_model)
 
-        logLik <- pf@loglik
-        logPrior <- dpriors(theta, object@priors)
-        logPost <- logLik + logPrior
-        accept <- 0
+            logLik <- pf@loglik
+            logPrior <- dpriors(theta, object@priors)
+            logPost <- logLik + logPrior
+            accept <- 0
 
-        ## Save current value of chain.
-        object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
-        if (is.function(post_particle))
-            post_particle(object, pf, 1)
+            ## Save current value of chain.
+            object@chain[1, ] <- c(logPost, logLik, logPrior, accept, theta)
+            if (is.function(post_particle))
+                post_particle(object, pf, 1)
 
-        n_iterations <- n_iterations - 1L
+            n_iterations <- n_iterations - 1L
+        }
+
         if (n_iterations == 0)
             return(object)
 
@@ -372,6 +385,24 @@ check_post_particle <- function(post_particle) {
 
 is_empty_chain <- function(object) {
     isTRUE(length(object) == 0L)
+}
+
+check_chain <- function(object, chain) {
+    if (!is.data.frame(chain))
+        chain <- as.data.frame(chain)
+
+    ## Check variables in chain.
+    variables <- c("logPost",
+                   "logLik",
+                   "logPrior",
+                   "accept",
+                   object@priors$parameter)
+    if (!all(variables %in% colnames(chain)))
+        stop("Missing columns in 'chain'.", call. = FALSE)
+
+    chain <- chain[, variables, drop = FALSE]
+    storage.mode(chain) <- "double"
+    as.matrix(chain, dimnames = list(NULL, variables))
 }
 
 setup_chain <- function(object, n_iterations) {

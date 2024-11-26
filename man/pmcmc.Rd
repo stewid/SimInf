@@ -18,6 +18,7 @@ pmcmc(
   adaptive = 100,
   init_model = NULL,
   post_particle = NULL,
+  chain = NULL,
   verbose = getOption("verbose", FALSE)
 )
 
@@ -34,6 +35,7 @@ pmcmc(
   adaptive = 100,
   init_model = NULL,
   post_particle = NULL,
+  chain = NULL,
   verbose = getOption("verbose", FALSE)
 )
 }
@@ -110,6 +112,13 @@ with the current state of the fitting process, 2) an object
 trajectory attached, and 3) an integer with the iteration in
 the fitting process. This function can be useful to, for
 example, monitor, save and inspect intermediate results.}
+
+\item{chain}{An optional chain to start from. Must be a
+\code{data.frame} or an object that can be coerced to a
+\code{data.frame}. Only the columns in \code{chain} with a
+name that matches the names that will be used if this argument
+is not provided will be used. When this argument is provided,
+\code{n_iterations} can be 0.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
