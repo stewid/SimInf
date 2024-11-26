@@ -58,6 +58,7 @@
 <span>  adaptive <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  init_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  post_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  chain <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"verbose"</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -75,6 +76,7 @@
 <span>  adaptive <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  init_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  post_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  chain <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"verbose"</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -178,6 +180,15 @@ with the current state of the fitting process, 2) an object
 trajectory attached, and 3) an integer with the iteration in
 the fitting process. This function can be useful to, for
 example, monitor, save and inspect intermediate results.</p></dd>
+
+
+<dt id="arg-chain">chain<a class="anchor" aria-label="anchor" href="#arg-chain"></a></dt>
+<dd><p>An optional chain to start from. Must be a
+<code>data.frame</code> or an object that can be coerced to a
+<code>data.frame</code>. Only the columns in <code>chain</code> with a
+name that matches the names that will be used if this argument
+is not provided will be used. When this argument is provided,
+<code>n_iterations</code> can be 0.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
