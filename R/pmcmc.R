@@ -401,8 +401,9 @@ check_chain <- function(object, chain) {
         stop("Missing columns in 'chain'.", call. = FALSE)
 
     chain <- chain[, variables, drop = FALSE]
+    chain <- as.matrix(chain, dimnames = list(NULL, variables))
     storage.mode(chain) <- "double"
-    as.matrix(chain, dimnames = list(NULL, variables))
+    chain
 }
 
 setup_chain <- function(object, n_iterations) {
