@@ -267,7 +267,6 @@ setMethod(
              chain,
              verbose) {
         n_particles <- check_n_particles(n_particles)
-        n_iterations <- check_n_iterations(n_iterations)
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)
         init_model <- check_init_model(init_model)
@@ -307,8 +306,10 @@ setMethod(
                       adaptive = adaptive)
 
         if (!is.null(chain)) {
+            n_iterations <- check_n_iterations(n_iterations, TRUE)
             object@chain <- check_chain(object, chain)
         } else {
+            n_iterations <- check_n_iterations(n_iterations, FALSE)
             object@chain <- setup_chain(object, 1L)
 
             methods::slot(object@model, object@target) <-
@@ -369,11 +370,17 @@ check_init_model <- function(init_model) {
     init_model
 }
 
-check_n_iterations <- function(n_iterations) {
+check_n_iterations <- function(n_iterations, include_zero) {
     check_integer_arg(n_iterations)
     n_iterations <- as.integer(n_iterations)
-    if (any(length(n_iterations) != 1L, any(n_iterations <= 0L)))
-        stop("'n_iterations' must be an integer > 0.", call. = FALSE)
+    if (isTRUE(include_zero)) {
+        if (any(length(n_iterations) != 1L, any(n_iterations < 0L)))
+            stop("'n_iterations' must be an integer >= 0.", call. = FALSE)
+    } else {
+        if (any(length(n_iterations) != 1L, any(n_iterations <= 0L)))
+            stop("'n_iterations' must be an integer > 0.", call. = FALSE)
+    }
+
     n_iterations
 }
 
@@ -563,7 +570,7 @@ setMethod(
              verbose) {
         methods::validObject(object)
 
-        n_iterations <- check_n_iterations(n_iterations)
+        n_iterations <- check_n_iterations(n_iterations, FALSE)
         init_model <- check_init_model(init_model)
         post_particle <- check_post_particle(post_particle)
         verbose <- get_verbose(verbose)
