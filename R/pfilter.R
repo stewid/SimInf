@@ -293,10 +293,28 @@ pfilter_internal <- function(model,
                 ncol = Ntspan + 1L)
 
     ## Initialise the model.
-    if (is.function(init_model))
-        model <- init_model(model)
-    U[, 1L] <- rep(as.integer(model@u0), n_particles)
-    V[, 1L] <- rep(as.numeric(model@v0), n_particles)
+    if (is.function(init_model)) {
+        ## Loop over the particles and initialise each model.
+        for (p in seq_len(n_particles)) {
+            ## Initialise the model.
+            m <- init_model(model)
+
+            ## Save the initial u0 state.
+            u_i <- seq.int(
+                from = (p - 1L) * n_nodes(model) * n_compartments(model) + 1L,
+                length.out = n_nodes(model) * n_compartments(model))
+            U[u_i, 1L] <- as.integer(m@u0)
+
+            ## Save the initial v0 state.
+            v_i <- seq.int(
+                from = (p - 1L) * n_nodes(model) * Nd + 1L,
+                length.out = n_nodes(model) * Nd)
+            V[v_i, 1L] <- as.numeric(m@v0)
+        }
+    } else {
+        U[, 1L] <- rep(as.integer(model@u0), n_particles)
+        V[, 1L] <- rep(as.numeric(model@v0), n_particles)
+    }
 
     a <- matrix(data = NA_integer_,
                 nrow = n_particles,
