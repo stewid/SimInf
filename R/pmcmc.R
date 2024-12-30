@@ -465,28 +465,17 @@ get_theta <- function(x, i) {
 }
 
 ##' @noRd
-pmcmc_proposal <- function(x, i, n_accepted, theta_mean, covmat_emp) {
+pmcmc_proposal <- function(x, i, n_accepted) {
     if (x@adaptive == 0L ||
         i <= x@adaptive ||
         n_accepted == 0 ||
         runif(1) < x@adaptmix) {
         covmat <- x@covmat
     } else {
-        covmat <- 2.38^2 / n_pars(x) * covmat_emp
+        covmat <- 2.38^2 / n_pars(x) * covmat_empirical(x, i - 1)
     }
 
-    theta <- get_theta(x, i - 1)
-    theta_mean <- ((i - 1) * theta_mean + theta) / i
-    covmat_emp <- ((i - 1) * covmat_emp + tcrossprod(theta - theta_mean)) / i
-
-    ch <- chol(covmat, pivot = TRUE)
-    Q <- ch[, order(attr(ch, "pivot"))]
-    proposal <- as.numeric(theta + rnorm(n = n_pars(x)) %*% Q)
-    names(proposal) <- names(theta)
-
-    list(theta = proposal,
-         theta_mean = theta_mean,
-         covmat_emp = covmat_emp)
+    mvtnorm::rmvnorm(n = 1, mean = get_theta(x, i - 1), sigma = covmat)[1, ]
 }
 
 covmat_empirical <- function(object, i) {
@@ -585,8 +574,6 @@ setMethod(
         logPrior <- object@chain[i, "logPrior"]
         j <- seq(from = 5, by = 1, length.out = n_pars(object))
         theta <- object@chain[i, j]
-        theta_mean <- colMeans(object@chain[seq_len(i), j, drop = FALSE])
-        covmat_emp <- covmat_empirical(object, i)
 
         for (i in iterations) {
             ## Proposal
@@ -594,16 +581,12 @@ setMethod(
             pf <- NULL
             proposal <- pmcmc_proposal(x = object,
                                        i = i,
-                                       n_accepted = n_accepted,
-                                       theta_mean = theta_mean,
-                                       covmat_emp = covmat_emp)
-            theta_mean <- proposal$theta_mean
-            covmat_emp <- proposal$covmat_emp
-            logPrior_prop <- dpriors(proposal$theta, object@priors)
+                                       n_accepted = n_accepted)
+            logPrior_prop <- dpriors(proposal, object@priors)
 
             if (is.finite(logPrior_prop)) {
                 methods::slot(object@model, object@target) <-
-                    set_proposal(object, proposal$theta)
+                    set_proposal(object, proposal)
 
                 pf_prop <- pfilter(model = object@model,
                                    obs_process = obs_process,
@@ -617,7 +600,7 @@ setMethod(
                     logLik <- logLik_prop
                     logPrior <- logPrior_prop
                     logPost <- logLik + logPrior
-                    theta <- proposal$theta
+                    theta <- proposal
                     pf <- pf_prop
                     accept <- 1
                     n_accepted <- n_accepted + 1
