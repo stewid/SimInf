@@ -98,11 +98,12 @@ greater or equal to zero. If \code{adaptive=0}, then adaptive
 update is not performed. Default is \code{adaptive = 100}.}
 
 \item{init_model}{An optional function that, if non-NULL, is
-applied before running each proposal. The function must accept
-one argument of type \code{SimInf_model} with the current
-model of the fitting process. This function can be useful to
-specify the initial state of \code{u0} or \code{v0} of the
-model before running a trajectory with proposed parameters.}
+applied in the particle filter before running each
+proposal. The function must accept one argument of type
+\code{SimInf_model} with the current model of the fitting
+process. This function can be useful to specify the initial
+state of \code{u0} or \code{v0} of the model before running a
+trajectory with proposed parameters.}
 
 \item{post_particle}{An optional function that, if non-NULL, is
 applied after each completed particle. The function must
@@ -111,7 +112,10 @@ with the current state of the fitting process, 2) an object
 \code{SimInf_pfilter} with the last particle and one filtered
 trajectory attached, and 3) an integer with the iteration in
 the fitting process. This function can be useful to, for
-example, monitor, save and inspect intermediate results.}
+example, monitor, save and inspect intermediate results. Note
+that the second \code{SimInf_pfilter} argument, is non-NULL
+only for the first particle in the chain, and for accepted
+particles.}
 
 \item{chain}{An optional chain to start from. Must be a
 \code{data.frame} or an object that can be coerced to a
