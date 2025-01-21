@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -203,15 +203,14 @@ setMethod(
 ##' @param adaptive Controls when to start adaptive update. Must be
 ##'     greater or equal to zero. If \code{adaptive=0}, then adaptive
 ##'     update is not performed. Default is \code{adaptive = 100}.
-##' @template init_model-param
-##' @param post_particle An optional function that, if non-NULL, is
-##'     applied after each completed particle. The function must
-##'     accept three arguments: 1) an object of \code{SimInf_pmcmc}
-##'     with the current state of the fitting process, 2) an object
-##'     \code{SimInf_pfilter} with the last particle and one filtered
-##'     trajectory attached, and 3) an integer with the iteration in
-##'     the fitting process. This function can be useful to, for
-##'     example, monitor, save and inspect intermediate results.
+##' @param init_model An optional function that, if non-NULL, is
+##'     applied in the particle filter before running each
+##'     proposal. The function must accept one argument of type
+##'     \code{SimInf_model} with the current model of the fitting
+##'     process. This function can be useful to specify the initial
+##'     state of \code{u0} or \code{v0} of the model before running a
+##'     trajectory with proposed parameters.
+##' @template post-particle-param
 ##' @param chain An optional chain to start from. Must be a
 ##'     \code{data.frame} or an object that can be coerced to a
 ##'     \code{data.frame}. Only the columns in \code{chain} with a
@@ -519,18 +518,14 @@ get_verbose <- function(verbose) {
 ##' @param object The \code{SimInf_pmcmc} object to continue from.
 ##' @template obs_process-param
 ##' @template n_iterations-param
-##' @template init_model-param
-##' @param post_particle An optional function that, if non-NULL, is
-##'     applied after each completed particle. The function must
-##'     accept three arguments: 1) an object of \code{SimInf_pmcmc}
-##'     with the current state of the fitting process, 2) an object
-##'     \code{SimInf_pfilter} with the last particle and one filtered
-##'     trajectory attached, and 3) an integer with the iteration in
-##'     the fitting process. This function can be useful to, for
-##'     example, monitor, save and inspect intermediate results. Note
-##'     that the second \code{SimInf_pfilter} argument, is non-NULL
-##'     only for the first particle in the chain, and for accepted
-##'     particles.
+##' @param init_model An optional function that, if non-NULL, is
+##'     applied in the particle filter before running each
+##'     proposal. The function must accept one argument of type
+##'     \code{SimInf_model} with the current model of the fitting
+##'     process. This function can be useful to specify the initial
+##'     state of \code{u0} or \code{v0} of the model before running a
+##'     trajectory with proposed parameters.
+##' @template post-particle-param
 ##' @template verbose-param-pmcmc
 ##' @export
 setGeneric(
