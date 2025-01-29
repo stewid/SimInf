@@ -203,6 +203,7 @@ setMethod(
 ##' @param adaptive Controls when to start adaptive update. Must be
 ##'     greater or equal to zero. If \code{adaptive=0}, then adaptive
 ##'     update is not performed. Default is \code{adaptive = 100}.
+##' @template post_proposal-param
 ##' @param init_model An optional function that, if non-NULL, is
 ##'     applied in the particle filter before running each
 ##'     proposal. The function must accept one argument of type
@@ -210,7 +211,6 @@ setMethod(
 ##'     process. This function can be useful to specify the initial
 ##'     state of \code{u0} or \code{v0} of the model before running a
 ##'     trajectory with proposed parameters.
-##' @template pre_particle-param
 ##' @template post-particle-param
 ##' @param chain An optional chain to start from. Must be a
 ##'     \code{data.frame} or an object that can be coerced to a
@@ -239,8 +239,8 @@ setGeneric(
              covmat = NULL,
              adaptmix = 0.05,
              adaptive = 100,
+             post_proposal = NULL,
              init_model = NULL,
-             pre_particle = NULL,
              post_particle = NULL,
              chain = NULL,
              verbose = getOption("verbose", FALSE)) {
@@ -263,16 +263,16 @@ setMethod(
              covmat,
              adaptmix,
              adaptive,
+             post_proposal,
              init_model,
-             pre_particle,
              post_particle,
              chain,
              verbose) {
         n_particles <- check_n_particles(n_particles)
         adaptmix <- check_adaptmix(adaptmix)
         adaptive <- check_adaptive(adaptive)
+        post_proposal <- check_post_proposal(post_proposal)
         init_model <- check_init_model(init_model)
-        pre_particle <- check_pre_particle(pre_particle)
         post_particle <- check_post_particle(post_particle)
 
         ## Match the 'priors' to parameters in 'ldata' or 'gdata'.
@@ -319,8 +319,8 @@ setMethod(
                 set_proposal(object, theta)
 
             m <- object@model
-            if (is.function(pre_particle))
-                m <- pre_particle(m)
+            if (is.function(post_proposal))
+                m <- post_proposal(m)
 
             pf <- pfilter(model = m,
                           obs_process = obs_process,
@@ -347,6 +347,7 @@ setMethod(
         continue_pmcmc(object = object,
                        obs_process = obs_process,
                        n_iterations = n_iterations,
+                       post_proposal = post_proposal,
                        init_model = init_model,
                        post_particle = post_particle,
                        verbose = verbose)
@@ -391,10 +392,10 @@ check_n_iterations <- function(n_iterations, include_zero) {
     n_iterations
 }
 
-check_pre_particle <- function(pre_particle) {
-    if (!is.null(pre_particle))
-        pre_particle <- match.fun(pre_particle)
-    pre_particle
+check_post_proposal <- function(post_proposal) {
+    if (!is.null(post_proposal))
+        post_proposal <- match.fun(post_proposal)
+    post_proposal
 }
 
 check_post_particle <- function(post_particle) {
@@ -532,6 +533,7 @@ get_verbose <- function(verbose) {
 ##' @param object The \code{SimInf_pmcmc} object to continue from.
 ##' @template obs_process-param
 ##' @template n_iterations-param
+##' @template post_proposal-param
 ##' @param init_model An optional function that, if non-NULL, is
 ##'     applied in the particle filter before running each
 ##'     proposal. The function must accept one argument of type
@@ -539,7 +541,6 @@ get_verbose <- function(verbose) {
 ##'     process. This function can be useful to specify the initial
 ##'     state of \code{u0} or \code{v0} of the model before running a
 ##'     trajectory with proposed parameters.
-##' @template pre_particle-param
 ##' @template post-particle-param
 ##' @template verbose-param-pmcmc
 ##' @export
@@ -549,8 +550,8 @@ setGeneric(
     function(object,
              obs_process,
              n_iterations,
+             post_proposal = NULL,
              init_model = NULL,
-             pre_particle = NULL,
              post_particle = NULL,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("continue_pmcmc")
@@ -565,15 +566,15 @@ setMethod(
     function(object,
              obs_process,
              n_iterations,
+             post_proposal,
              init_model,
-             pre_particle,
              post_particle,
              verbose) {
         methods::validObject(object)
 
         n_iterations <- check_n_iterations(n_iterations, FALSE)
+        post_proposal <- check_post_proposal(post_proposal)
         init_model <- check_init_model(init_model)
-        pre_particle <- check_pre_particle(pre_particle)
         post_particle <- check_post_particle(post_particle)
         verbose <- get_verbose(verbose)
         iterations <- length(object) + seq_len(n_iterations)
@@ -602,8 +603,8 @@ setMethod(
                     set_proposal(object, proposal)
 
                 m <- object@model
-                if (is.function(pre_particle))
-                    m <- pre_particle(m)
+                if (is.function(post_proposal))
+                    m <- post_proposal(m)
 
                 pf_prop <- pfilter(model = m,
                                    obs_process = obs_process,
