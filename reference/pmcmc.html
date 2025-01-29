@@ -56,8 +56,8 @@
 <span>  covmat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  adaptmix <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  adaptive <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  post_proposal <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  init_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pre_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  post_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chain <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"verbose"</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -75,8 +75,8 @@
 <span>  covmat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  adaptmix <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  adaptive <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  post_proposal <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  init_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pre_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  post_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chain <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"verbose"</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -164,6 +164,18 @@ greater or equal to zero. If <code>adaptive=0</code>, then adaptive
 update is not performed. Default is <code>adaptive = 100</code>.</p></dd>
 
 
+<dt id="arg-post-proposal">post_proposal<a class="anchor" aria-label="anchor" href="#arg-post-proposal"></a></dt>
+<dd><p>An optional function that, if
+non-<code>NULL</code>, is applied on the model after the proposal
+has been set for the model, but before running the particle
+filter. The function must accept one argument of type
+<code>SimInf_model</code> with the current model of the fitting
+process. This function can be useful to update, for example,
+<code>ldata</code> of the model before running a trajectory with
+proposed parameters. The function must return the model object
+which is then used in the particle filter.</p></dd>
+
+
 <dt id="arg-init-model">init_model<a class="anchor" aria-label="anchor" href="#arg-init-model"></a></dt>
 <dd><p>An optional function that, if non-NULL, is
 applied in the particle filter before running each
@@ -172,16 +184,6 @@ proposal. The function must accept one argument of type
 process. This function can be useful to specify the initial
 state of <code>u0</code> or <code>v0</code> of the model before running a
 trajectory with proposed parameters.</p></dd>
-
-
-<dt id="arg-pre-particle">pre_particle<a class="anchor" aria-label="anchor" href="#arg-pre-particle"></a></dt>
-<dd><p>An optional function that, if non-NULL, is
-applied on the model after the proposal has been set for the
-model, but before running the particle filter. The function
-must accept one argument of type <code>SimInf_model</code> with the
-current model of the fitting process.  This function can be
-useful to update, for example, <code>ldata</code> of the model
-before running a trajectory with proposed parameters.</p></dd>
 
 
 <dt id="arg-post-particle">post_particle<a class="anchor" aria-label="anchor" href="#arg-post-particle"></a></dt>
