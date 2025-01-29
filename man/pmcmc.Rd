@@ -16,8 +16,8 @@ pmcmc(
   covmat = NULL,
   adaptmix = 0.05,
   adaptive = 100,
+  post_proposal = NULL,
   init_model = NULL,
-  pre_particle = NULL,
   post_particle = NULL,
   chain = NULL,
   verbose = getOption("verbose", FALSE)
@@ -34,8 +34,8 @@ pmcmc(
   covmat = NULL,
   adaptmix = 0.05,
   adaptive = 100,
+  post_proposal = NULL,
   init_model = NULL,
-  pre_particle = NULL,
   post_particle = NULL,
   chain = NULL,
   verbose = getOption("verbose", FALSE)
@@ -99,6 +99,16 @@ a value between zero and one. Default is \code{adaptmix =
 greater or equal to zero. If \code{adaptive=0}, then adaptive
 update is not performed. Default is \code{adaptive = 100}.}
 
+\item{post_proposal}{An optional function that, if
+non-\code{NULL}, is applied on the model after the proposal
+has been set for the model, but before running the particle
+filter. The function must accept one argument of type
+\code{SimInf_model} with the current model of the fitting
+process. This function can be useful to update, for example,
+\code{ldata} of the model before running a trajectory with
+proposed parameters. The function must return the model object
+which is then used in the particle filter.}
+
 \item{init_model}{An optional function that, if non-NULL, is
 applied in the particle filter before running each
 proposal. The function must accept one argument of type
@@ -106,14 +116,6 @@ proposal. The function must accept one argument of type
 process. This function can be useful to specify the initial
 state of \code{u0} or \code{v0} of the model before running a
 trajectory with proposed parameters.}
-
-\item{pre_particle}{An optional function that, if non-NULL, is
-applied on the model after the proposal has been set for the
-model, but before running the particle filter. The function
-must accept one argument of type \code{SimInf_model} with the
-current model of the fitting process.  This function can be
-useful to update, for example, \code{ldata} of the model
-before running a trajectory with proposed parameters.}
 
 \item{post_particle}{An optional function that, if non-NULL, is
 applied after each completed particle. The function must
