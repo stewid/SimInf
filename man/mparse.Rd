@@ -115,7 +115,11 @@ each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
 in the generated C code. The name of each enumeration constant
 will be transformed to the upper-case name of the
 corresponding parameter, for example, a parameter 'beta' will
-become 'BETA'. Using enumeration constants can make it easier
+become 'BETA'. The enumeration constants 'N_COMPARTMENTS_U'
+and 'N_COMPARTMENTS_V' will be automatically added to
+facilitate indexing 'u' and 'v' in the C code. These two
+enumeration constants cannot be used as a compartment or
+variable name. Using enumeration constants can make it easier
 to modify the C code afterwards, or when writing C code for
 the \code{pts_fun} parameter. Default is \code{FALSE}, i.e.,
 the parameters are specified by using integer indices for the

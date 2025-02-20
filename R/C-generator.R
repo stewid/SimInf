@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -96,6 +96,12 @@ C_enum <- function(compartments, ldata_names, gdata_names, v0_names,
                    use_enum) {
     if (!isTRUE(use_enum))
         return(character(0))
+
+    if (length(compartments) > 0)
+        compartments <- c(compartments, "N_COMPARTMENTS_U")
+
+    if (length(v0_names) > 0)
+        v0_names <- c(v0_names, "N_COMPARTMENTS_V")
 
    c(C_enumeration_constants("u", compartments),
      C_enumeration_constants("v", v0_names),

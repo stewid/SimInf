@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -552,7 +552,11 @@ dependency_graph <- function(transitions, S) {
 ##'     in the generated C code. The name of each enumeration constant
 ##'     will be transformed to the upper-case name of the
 ##'     corresponding parameter, for example, a parameter 'beta' will
-##'     become 'BETA'. Using enumeration constants can make it easier
+##'     become 'BETA'. The enumeration constants 'N_COMPARTMENTS_U'
+##'     and 'N_COMPARTMENTS_V' will be automatically added to
+##'     facilitate indexing 'u' and 'v' in the C code. These two
+##'     enumeration constants cannot be used as a compartment or
+##'     variable name. Using enumeration constants can make it easier
 ##'     to modify the C code afterwards, or when writing C code for
 ##'     the \code{pts_fun} parameter. Default is \code{FALSE}, i.e.,
 ##'     the parameters are specified by using integer indices for the
@@ -587,6 +591,12 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
 
     if (any(duplicated(c(compartments, gdata_names, ldata_names, v0_names)))) {
         stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
+             call. = FALSE)
+    }
+
+    if (any(c("N_COMPARTMENTS_U", "N_COMPARTMENTS_V") %in%
+            c(compartments, gdata_names, ldata_names, v0_names))) {
+        stop("Invalid compartment or variable name.",
              call. = FALSE)
     }
 

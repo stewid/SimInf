@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -175,6 +175,27 @@ res <- assertError(
            u0 = data.frame(D = 10, W = 10), tspan = 1:5,
            pts_fun = 5))
 check_error(res, "'pts_fun' must be a character vector.")
+
+res <- assertError(
+    mparse(transitions = c("S -> beta*S*I/N -> I",
+                           "I -> gamma*I -> R",
+                           "N <- S+I+R"),
+           compartments = c("S", "I", "R", "N_COMPARTMENTS_U"),
+           gdata = c(beta = 0.16, gamma = 0.077),
+           u0 = data.frame(S = 100, I = 1, R = 0,
+                           N_COMPARTMENTS_U = 3),
+           tspan = 1:100))
+check_error(res, "Invalid compartment or variable name.")
+
+res <- assertError(
+    mparse(transitions = c("S -> beta*S*I/N -> I",
+                           "I -> gamma*I -> R",
+                           "N <- S+I+R"),
+           compartments = c("S", "I", "R"),
+           gdata = c(beta = 0.16, gamma = 0.077, N_COMPARTMENTS_V = 2),
+           u0 = data.frame(S = 100, I = 1, R = 0),
+           tspan = 1:100))
+check_error(res, "Invalid compartment or variable name.")
 
 ## Check mparse
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -1077,7 +1098,7 @@ stopifnot(identical(
                     v0_names = character(0),
                     use_enum = TRUE),
     c("/* Enumeration constants for indicies in the 'u' vector. */",
-      "enum {S, I, R};",
+      "enum {S, I, R, N_COMPARTMENTS_U};",
       "",
       "/* Enumeration constants for indicies in the 'ldata' vector. */",
       "enum {BETA, GAMMA, DELTA, EPSILON, ZETA, ETA, THETA, IOTA, KAPPA,",
