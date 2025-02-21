@@ -12,7 +12,7 @@ OBJECTS.misc = $(SOURCE.misc:.c=.o)
 
 OBJECTS.solvers = solvers/SimInf_solver.o \
                   solvers/aem/SimInf_solver_aem.o \
-                  solvers/ssm/SimInf_solver_mssm.o \
+                  solvers/mssm/SimInf_solver_mssm.o \
                   solvers/ssm/SimInf_solver_ssm.o
 
 OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(OBJECTS.models)
