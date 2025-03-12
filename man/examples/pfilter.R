@@ -25,7 +25,7 @@ colnames(infected) <- c("time", "Iobs")
 pf <- pfilter(model,
               obs_process = Iobs ~ poisson(I + 1e-6),
               data = infected,
-              npart = 1000)
+              n_particles = 1000)
 
 ## Print a brief summary.
 pf
