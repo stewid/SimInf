@@ -41,7 +41,11 @@ build: clean
 # Check package
 .PHONY: check
 check: build
-	cd .. && OMP_THREAD_LIMIT=2 _R_CHECK_CRAN_INCOMING_=FALSE R CMD check \
+	cd .. && \
+        OMP_THREAD_LIMIT=2 \
+        _R_CHECK_CRAN_INCOMING_=FALSE \
+        _R_CHECK_SYSTEM_CLOCK_=0 \
+        R CMD check \
         --no-stop-on-test-error --as-cran --run-dontrun $(PKG_TAR)
 
 # Check package (without manual and vignettes)
