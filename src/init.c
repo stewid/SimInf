@@ -76,7 +76,8 @@ static const R_CallMethodDef callMethods[] =
  *
  * @param info Information about the DLL being loaded
  */
-void attribute_visible
+attribute_visible
+void
 R_init_SimInf(
     DllInfo *info)
 {

@@ -46,7 +46,8 @@
  * Example:
  * end_t1, end_t2, end_t3, end_t4, index, value, index, value, -1, 0.0
  */
-SEXP attribute_hidden
+attribute_hidden
+SEXP
 SimInf_ldata_sp(
     SEXP data,
     SEXP distance,

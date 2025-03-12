@@ -88,7 +88,8 @@ SimInf_Euclidean_distance(
     return n;
 }
 
-SEXP attribute_hidden
+attribute_hidden
+SEXP
 SimInf_distance_matrix(
     SEXP x_,
     SEXP y_,

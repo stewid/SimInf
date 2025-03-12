@@ -438,7 +438,8 @@ SimInf_copy_events(
  * @param rng random number generator
  * @return 0 or an error code
  */
-int attribute_hidden
+attribute_hidden
+int
 SimInf_scheduled_events_create(
     SimInf_scheduled_events **out,
     SimInf_solver_args *args,
@@ -520,7 +521,8 @@ on_error:                                  /* #nocov */
  * @param events SimInf_scheduled_events to free
  * @param Nthread number of threads that was used during simulation.
  */
-void attribute_hidden
+attribute_hidden
+void
 SimInf_scheduled_events_free(
     SimInf_scheduled_events *events)
 {
@@ -663,7 +665,8 @@ SimInf_print_event(
  * process both E1 and E2 events.
  * @return 0 if Ok, else error code.
  */
-void attribute_hidden
+attribute_hidden
+void
 SimInf_process_events(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events,
@@ -930,7 +933,8 @@ done:
  *
  * @param SimInf_compartment_model *model data to store.
  */
-void attribute_hidden
+attribute_hidden
+void
 SimInf_store_solution_sparse(
     SimInf_compartment_model *model)
 {
@@ -964,7 +968,8 @@ SimInf_store_solution_sparse(
  * @param model the data structure to free.
  * @param Nthread number of threads that was used during simulation.
  */
-void attribute_hidden
+attribute_hidden
+void
 SimInf_compartment_model_free(
     SimInf_compartment_model *model)
 {
@@ -1005,7 +1010,8 @@ SimInf_compartment_model_free(
  * @param args structure with data for the solver.
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-int attribute_hidden
+attribute_hidden
+int
 SimInf_compartment_model_create(
     SimInf_compartment_model **out,
     SimInf_solver_args *args)
@@ -1176,7 +1182,8 @@ on_error:                                  /* #nocov */
  *        than zero.
  * @param transition Zero-based index with the state transition.
  */
-void attribute_hidden
+attribute_hidden
+void
 SimInf_print_status(
     const int Nc,
     const int *u,

@@ -29,7 +29,8 @@
  * @param w a numeric vector with weights for the particles.
  * @return an integer vector with indices.
  */
-SEXP attribute_hidden
+attribute_hidden
+SEXP
 SimInf_systematic_resampling(
     SEXP w)
 {
@@ -78,7 +79,8 @@ SimInf_systematic_resampling(
  *         interval, and the second column the number of events in the
  *         interval.
  */
-SEXP attribute_hidden
+attribute_hidden
+SEXP
 SimInf_split_events(
     SEXP t,
     SEXP t_end)

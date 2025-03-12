@@ -70,7 +70,13 @@ static void percolate_up(int node,double *data,int *INDEX,int *INDEX2)
   INDEX2[j]=node;
 }
 /*----------------------------------------------------------------------*/
-void attribute_hidden initialize_heap(double *data,int *INDEX,int *INDEX2,int N)
+attribute_hidden
+void
+initialize_heap(
+    double *data,
+    int *INDEX,
+    int *INDEX2,
+    int N)
 /*** ? ***/
 {
   int i;
@@ -78,7 +84,14 @@ void attribute_hidden initialize_heap(double *data,int *INDEX,int *INDEX2,int N)
     percolate_down(i,data,INDEX,INDEX2,N);
 }
 /*----------------------------------------------------------------------*/
-void attribute_hidden update(int node,double *data,int *INDEX,int *INDEX2,int N)
+attribute_hidden
+void
+update(
+    int node,
+    double *data,
+    int *INDEX,
+    int *INDEX2,
+    int N)
 /*** ? ***/
 {
   int parent=(node-1)>>1;

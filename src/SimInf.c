@@ -98,7 +98,8 @@ SimInf_raise_error(
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  */
-SEXP attribute_hidden
+attribute_hidden
+SEXP
 SimInf_run(
     SEXP model,
     SEXP solver,

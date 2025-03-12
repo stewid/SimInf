@@ -31,7 +31,8 @@
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden
+attribute_hidden
+int
 SimInf_arg_check_dgCMatrix(
     SEXP arg)
 {
@@ -51,7 +52,8 @@ SimInf_arg_check_dgCMatrix(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden
+attribute_hidden
+int
 SimInf_arg_check_integer(
     SEXP arg)
 {
@@ -66,7 +68,8 @@ SimInf_arg_check_integer(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden
+attribute_hidden
+int
 SimInf_arg_check_integer_gt_zero(
     SEXP arg)
 {
@@ -83,7 +86,8 @@ SimInf_arg_check_integer_gt_zero(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden
+attribute_hidden
+int
 SimInf_arg_check_matrix(
     SEXP arg)
 {
@@ -98,7 +102,8 @@ SimInf_arg_check_matrix(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-int attribute_hidden
+attribute_hidden
+int
 SimInf_arg_check_model(
     SEXP arg)
 {
@@ -120,7 +125,8 @@ SimInf_arg_check_model(
  *        in a sparse matrix.
  * @return 1 if data is stored in the sparse matrix, else 0.
  */
-int attribute_hidden
+attribute_hidden
+int
 SimInf_sparse(
     SEXP m,
     R_xlen_t i,

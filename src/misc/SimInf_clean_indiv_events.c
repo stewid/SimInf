@@ -168,7 +168,8 @@ SimInf_find_longest_path(
  * @return a logical vector with TRUE for each event to keep, else
  *         FALSE.
  */
-SEXP attribute_hidden
+attribute_hidden
+SEXP
 SimInf_clean_indiv_events(
     SEXP id,
     SEXP event,

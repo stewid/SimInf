@@ -242,7 +242,8 @@ SISe3_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-SEXP attribute_hidden
+attribute_hidden
+SEXP
 SISe3_run(
     SEXP model,
     SEXP solver)

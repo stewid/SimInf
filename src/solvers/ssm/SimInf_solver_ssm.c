@@ -317,7 +317,8 @@ SimInf_solver_ssm(
  * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-int attribute_hidden
+attribute_hidden
+int
 SimInf_run_solver_ssm(
     SimInf_solver_args *args)
 {

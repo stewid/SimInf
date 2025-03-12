@@ -404,7 +404,8 @@ SimInf_dense2df_real(
  *        identifier column.
  * @return A data.frame.
  */
-SEXP attribute_hidden
+attribute_hidden
+SEXP
 SimInf_trajectory(
     SEXP dm,
     SEXP dm_i,
