@@ -3,7 +3,7 @@
  * disease spread simulations.
  *
  * Copyright (C) 2022 Ivana Rodriguez Ewerlöf
- * Copyright (C) 2015 -- 2024 Stefan Widgren
+ * Copyright (C) 2015 -- 2025 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
