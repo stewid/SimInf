@@ -1,6 +1,13 @@
+ifeq (,$(shell pkg-config --version 2>/dev/null))
+    PKG_LIBS = -lm -lgsl -lgslcblas
+else
+    PKG_CFLAGS = $(shell pkg-config --cflags gsl)
+    PKG_LIBS = $(shell pkg-config --libs gsl)
+endif
+
 PKG_CPPFLAGS = -I. -I../inst/include -DR_NO_REMAP -DSTRICT_R_HEADERS
-PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS)
-PKG_LIBS = -lm -lgsl -lgslcblas $(SHLIB_OPENMP_CFLAGS)
+PKG_CFLAGS += $(SHLIB_OPENMP_CFLAGS)
+PKG_LIBS += $(SHLIB_OPENMP_CFLAGS)
 
 # List all model files to compile
 SOURCE.models = $(wildcard models/*.c)

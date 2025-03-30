@@ -2,6 +2,8 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* On Windows, use gsl from the system, via pkg-config when available.
+
 * Renamed the `abc` function argument `ninit` to `n_init`.
 
 * Renamed the `abc` function argument `npart` to `n_particles`.
