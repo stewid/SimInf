@@ -1131,3 +1131,52 @@ G_expected <- new("dgCMatrix",
                   factors = list())
 
 stopifnot(identical(model@G, G_expected))
+
+## Check that mparse works with gdata-parameters without a name.
+model  <- mparse(transitions = "S -> beta * S -> I",
+                 compartments = c("S", "I"),
+                 gdata = c(beta = 1, 1:4),
+                 u0 = data.frame(S = 100, I = 100),
+                 tspan = 1:100)
+
+show_expected <- c(
+    "Model: SimInf_model",
+    "Number of nodes: 1",
+    "Number of transitions: 1",
+    "Number of scheduled events: 0",
+    "",
+    "Global data",
+    "-----------",
+    " Parameter Value",
+    " beta      1    ",
+    " Number of parameters without a name: 4",
+    "",
+    "Compartments",
+    "------------",
+    " - Empty, please run the model first")
+
+show_observed <- capture.output(show(model))
+stopifnot(identical(show_observed, show_expected))
+
+model  <- mparse(transitions = "S -> S -> I",
+                 compartments = c("S", "I"),
+                 gdata = c(1:4),
+                 u0 = data.frame(S = 100, I = 100),
+                 tspan = 1:100)
+
+show_expected <- c(
+    "Model: SimInf_model",
+    "Number of nodes: 1",
+    "Number of transitions: 1",
+    "Number of scheduled events: 0",
+    "",
+    "Global data",
+    "-----------",
+    " Number of parameters without a name: 4",
+    "",
+    "Compartments",
+    "------------",
+    " - Empty, please run the model first")
+
+show_observed <- capture.output(show(model))
+stopifnot(identical(show_observed, show_expected))

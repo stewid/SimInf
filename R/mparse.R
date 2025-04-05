@@ -431,6 +431,9 @@ variable_names <- function(x, is_vector_ok) {
     } else if (isTRUE(is_vector_ok)) {
         if (is.vector(x = x, mode = "numeric")) {
             lbl <- names(x)
+
+            ## Keep only non-empty variable names.
+            lbl <- lbl[nchar(lbl) > 0]
         } else {
             stop(paste0("'",
                         as.character(substitute(x)),
