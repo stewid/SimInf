@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -63,12 +63,24 @@ summary_matrix <- function(x) {
 }
 
 summary_vector <- function(x) {
-    xx <- data.frame(Parameter = names(x), Value = x)
-    if (nrow(xx) > 0) {
+    ## Summarise named parameters.
+    i <- which(nchar(names(x)) > 0)
+    if (length(i) > 0) {
+        xx <- data.frame(Parameter = names(x)[i], Value = x[i])
         print.data.frame(xx, right = FALSE, row.names = FALSE)
-    } else {
-        cat(" - None\n")
     }
+
+    ## Summarise parameters without a name.
+    fmt <- " Number of parameters without a name: %i\n"
+    i <- which(nchar(names(x)) == 0)
+    if (length(i) > 0)
+        cat(sprintf(fmt, length(i)))
+    if (is.null(names(x)))
+        cat(sprintf(fmt, length(x)))
+
+    ## No parameters in the vector.
+    if (!length(x))
+        cat(" - None\n")
 }
 
 ##' Summarise model parameters
