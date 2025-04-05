@@ -100,6 +100,9 @@ init_data_vector <- function(x) {
         x <- unlist(x)
     }
 
+    if (is.integer(x))
+        storage.mode(x) <- "double"
+
     x
 }
 
