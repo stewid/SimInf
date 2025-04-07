@@ -79,17 +79,12 @@ C_enumeration_constants <- function(target, labels) {
 
     for (i in seq_len(length(labels))) {
         lbl <- toupper(labels[i])
-        if ((nchar(lines[length(lines)]) + nchar(lbl)) > 64)
-            lines <- c(lines, "     ")
-        if (i > 1)
-            lines[length(lines)] <- paste0(lines[length(lines)], " ")
-        lines[length(lines)] <- paste0(lines[length(lines)], lbl)
         if (i < length(labels))
-            lines[length(lines)] <- paste0(lines[length(lines)], ",")
+            lbl <- paste0(lbl, ",")
+        lines <- c(lines, paste0("    ", lbl))
     }
 
-    lines[length(lines)] <- paste0(lines[length(lines)], "};")
-    c(lines, "")
+    c(lines, "};", "")
 }
 
 C_enum <- function(compartments, ldata_names, gdata_names, v0_names,
