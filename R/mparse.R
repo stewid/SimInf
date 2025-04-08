@@ -431,9 +431,6 @@ variable_names <- function(x, is_vector_ok) {
     } else if (isTRUE(is_vector_ok)) {
         if (is.vector(x = x, mode = "numeric")) {
             lbl <- names(x)
-
-            ## Keep only non-empty variable names.
-            lbl <- lbl[nchar(lbl) > 0]
         } else {
             stop(paste0("'",
                         as.character(substitute(x)),
@@ -448,6 +445,18 @@ variable_names <- function(x, is_vector_ok) {
                     as.character(substitute(x)),
                     "' must either be a 'data.frame' or a 'matrix'."),
              call. = FALSE)
+    }
+
+    ## Add enumeration value.
+    value <- seq_len(length(lbl)) - 1L
+    n_values <- length(value)
+
+    ## Keep only non-empty variable names.
+    i <- which(nchar(lbl) > 0)
+    lbl <- lbl[i]
+    if (length(i)) {
+        attr(lbl, "value") <- value[i]
+        attr(lbl, "n_values") <- n_values
     }
 
     if (any(duplicated(lbl)) || any(nchar(lbl) == 0)) {

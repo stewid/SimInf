@@ -79,8 +79,14 @@ C_enumeration_constants <- function(target, labels) {
 
     for (i in seq_len(length(labels))) {
         lbl <- toupper(labels[i])
+
+        ## Add enumeration value.
+        if (!is.null(attr(labels, "value")))
+            lbl <- sprintf("%s = %i", lbl, attr(labels, "value")[i])
+
         if (i < length(labels))
             lbl <- paste0(lbl, ",")
+
         lines <- c(lines, paste0("    ", lbl))
     }
 

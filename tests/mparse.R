@@ -1094,7 +1094,7 @@ stopifnot(identical(
                     ldata_names = c("beta", "gamma", "delta",
                                     "epsilon", "zeta", "eta", "theta",
                                     "iota", "kappa", "lambda"),
-                    gdata_names = character(0),
+                    gdata_names = structure("beta", value = 4L, n_values = 5L),
                     v0_names = character(0),
                     use_enum = TRUE),
     c("/* Enumeration constants for indicies in the 'u' vector. */",
@@ -1117,6 +1117,11 @@ stopifnot(identical(
       "    IOTA,",
       "    KAPPA,",
       "    LAMBDA",
+      "};",
+      "",
+      "/* Enumeration constants for indicies in the 'gdata' vector. */",
+      "enum {",
+      "    BETA = 4",
       "};",
       "")))
 
