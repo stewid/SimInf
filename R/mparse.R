@@ -473,7 +473,7 @@ variable_names <- function(x, is_vector_ok) {
 state_change_matrix <- function(transitions, compartments) {
     S <- do.call("cbind", lapply(transitions, "[[", "S"))
     colnames(S) <- as.character(seq_len(dim(S)[2]))
-    rownames(S) <- compartments
+    rownames(S) <- as.character(compartments)
     S
 }
 
@@ -589,6 +589,10 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
 
     ## Check u0 and compartments
     u0 <- check_u0(u0, compartments)
+
+    ## Add enumeration value to compartments.
+    attr(compartments, "value") <- seq_len(length(compartments)) - 1L
+    attr(compartments, "n_values") <- length(compartments)
 
     ## Extract variable names from data.
     if (is.vector(x = ldata, mode = "numeric") && nrow(u0) == 1)

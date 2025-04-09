@@ -1090,7 +1090,9 @@ stopifnot(identical(
       "")))
 
 stopifnot(identical(
-    SimInf:::C_enum(compartment = c("S", "I", "R"),
+    SimInf:::C_enum(compartment = structure(c("S", "I", "R"),
+                                            value = c(0L, 1L, 2L),
+                                            n_values = 3L),
                     ldata_names = c("beta", "gamma", "delta",
                                     "epsilon", "zeta", "eta", "theta",
                                     "iota", "kappa", "lambda"),
@@ -1099,10 +1101,10 @@ stopifnot(identical(
                     use_enum = TRUE),
     c("/* Enumeration constants for indicies in the 'u' vector. */",
       "enum {",
-      "    S,",
-      "    I,",
-      "    R,",
-      "    N_COMPARTMENTS_U",
+      "    S = 0,",
+      "    I = 1,",
+      "    R = 2,",
+      "    N_COMPARTMENTS_U = 3",
       "};",
       "",
       "/* Enumeration constants for indicies in the 'ldata' vector. */",
