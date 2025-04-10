@@ -79,6 +79,8 @@ init_sparse_matrix <- function(x) {
 init_data_matrix <- function(x) {
     if (is.null(x))
         x <- matrix(numeric(0), nrow = 0, ncol = 0)
+    if (is.vector(x, mode = "numeric"))
+        x <- as.matrix(x)
     if (is.data.frame(x))
         x <- as_t_matrix(x)
     if (is.integer(x))

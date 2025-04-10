@@ -595,10 +595,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     attr(compartments, "n_values") <- length(compartments)
 
     ## Extract variable names from data.
-    if (is.vector(x = ldata, mode = "numeric") && nrow(u0) == 1)
-        ldata <- as.data.frame(t(ldata))
-    ldata_names <- variable_names(ldata, FALSE)
-
+    ldata_names <- variable_names(ldata, nrow(u0) == 1L)
     gdata_names <- variable_names(gdata, TRUE)
 
     if (is.vector(x = v0, mode = "numeric") && nrow(u0) == 1)
