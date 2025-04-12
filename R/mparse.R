@@ -597,10 +597,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     ## Extract variable names from data.
     ldata_names <- variable_names(ldata, nrow(u0) == 1L)
     gdata_names <- variable_names(gdata, TRUE)
-
-    if (is.vector(x = v0, mode = "numeric") && nrow(u0) == 1)
-        v0 <- as.data.frame(t(v0))
-    v0_names <- variable_names(v0, FALSE)
+    v0_names <- variable_names(v0, nrow(u0) == 1L)
 
     if (any(duplicated(c(compartments, gdata_names, ldata_names, v0_names)))) {
         stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
