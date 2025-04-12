@@ -83,8 +83,8 @@ init_E <- function(E, events) {
         if (!is.null(events))
             stop("events is not NULL when E is NULL.", call. = FALSE)
         E <- methods::new("dgCMatrix")
-    } else if (!methods::is(E, "dgCMatrix")) {
-        E <- methods::as(E, "dgCMatrix")
+    } else {
+        E <- init_sparse_matrix(E)
     }
 
     E
@@ -683,8 +683,7 @@ setMethod(
     "select_matrix<-",
     signature(model = "SimInf_model"),
     function(model, value) {
-        if (!methods::is(value, "dgCMatrix"))
-            value <- methods::as(value, "dgCMatrix")
+        value <- init_sparse_matrix(value)
 
         if (!identical(Nc(model), dim(value)[1])) {
             stop("'value' must have one row for each compartment in the model.",

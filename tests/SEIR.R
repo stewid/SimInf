@@ -240,7 +240,7 @@ model <- SEIR(u0 = data.frame(S = c(110, 210, 310, 410, 510, 610),
                               R = c(140, 240, 340, 440, 540, 640)),
               tspan   = 0:9, events  = events, beta    = 0,
               epsilon = 0, gamma   = 0)
-model@events@E <- as(diag(4), "dgCMatrix")
+model@events@E <- SimInf:::init_sparse_matrix(diag(4))
 model@events@select <- rep(1:4, length.out = length(model@events@select))
 
 # Check that this fails because rownames (compartments) are missing

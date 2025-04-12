@@ -31,28 +31,28 @@ set_num_threads(1)
 sessionInfo()
 
 ## Initialize test data
-S <- as(Matrix(c(-1,  0,  0,
-                  1,  0,  0,
-                  0, -1,  0,
-                  0,  1,  0,
-                  0,  0, -1,
-                  0,  0,  1),
-               nrow   = 6,
-               ncol   = 3,
-               byrow  = TRUE,
-               dimnames = list(LETTERS[1:6], NULL)),
-        "dgCMatrix")
+S <- SimInf:::init_sparse_matrix(Matrix(c(-1,  0,  0,
+                                          1,  0,  0,
+                                          0, -1,  0,
+                                          0,  1,  0,
+                                          0,  0, -1,
+                                          0,  0,  1),
+                                        nrow   = 6,
+                                        ncol   = 3,
+                                        byrow  = TRUE,
+                                        dimnames = list(LETTERS[1:6], NULL)))
 
 Nn <- 6L
 
-G <- as(Matrix(c(1, 0, 0,
-                 0, 1, 0,
-                 0, 0, 1),
-               nrow   = 3,
-               ncol   = 3,
-               byrow  = TRUE,
-               dimnames = list(c("A -> B", "C -> D", "E -> F"), NULL)),
-        "dgCMatrix")
+G <- SimInf:::init_sparse_matrix(Matrix(c(1, 0, 0,
+                                          0, 1, 0,
+                                          0, 0, 1),
+                                        nrow   = 3,
+                                        ncol   = 3,
+                                        byrow  = TRUE,
+                                        dimnames = list(
+                                            c("A -> B", "C -> D", "E -> F"),
+                                            NULL)))
 
 u0 <- structure(c(0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 2, 0, 2, 0, 2,
                   0, 3, 0, 3, 0, 3, 0, 4, 0, 4, 0, 4, 0, 5, 0, 5, 0, 5, 0),

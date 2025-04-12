@@ -869,11 +869,11 @@ model <- SIR(u0 = data.frame(S = 1, I = 1, R = 1),
              beta = 0,
              gamma = 0)
 
-model@events@E <- as(matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),
-                            nrow = 3, ncol = 4,
-                            dimnames = list(c("S", "I", "R"),
-                                            c("1", "2", "3", "4"))),
-                     "dgCMatrix")
+model@events@E <- SimInf:::init_sparse_matrix(
+                               matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),
+                                      nrow = 3, ncol = 4,
+                                      dimnames = list(c("S", "I", "R"),
+                                                      c("1", "2", "3", "4"))))
 
 res <- assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
@@ -889,11 +889,12 @@ res <- assertError(run(model))
 check_error(res, "Unable to sample individuals for event.")
 
 ## Change to enter event and proportion = -1
-model@events@E <- as(matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1),
-                            nrow = 3, ncol = 4,
-                            dimnames = list(c("S", "I", "R"),
-                                            c("1", "2", "3", "4"))),
-                     "dgCMatrix")
+model@events@E <- SimInf:::init_sparse_matrix(
+                               matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1),
+                                      nrow = 3, ncol = 4,
+                                      dimnames = list(c("S", "I", "R"),
+                                                      c("1", "2", "3", "4"))))
+
 model@events@n <- 0L
 model@events@proportion <- -1
 res <- assertError(.Call(SimInf:::SIR_run, model, NULL))

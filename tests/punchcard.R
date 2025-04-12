@@ -195,13 +195,13 @@ stopifnot(identical(trajectory(result), U_exp))
 punchcard(model) <- data.frame()
 result <- run(model)
 U_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(18, 10))
-U_exp <- as(U_exp, "dgCMatrix")
+U_exp <- SimInf:::init_sparse_matrix(U_exp)
 stopifnot(identical(result@U_sparse, U_exp))
 
 punchcard(model) <- data.frame()
 result <- run(model)
 V_exp <- sparseMatrix(i = numeric(0), j = numeric(0), dims = c(0, 10))
-V_exp <- as(V_exp, "dgCMatrix")
+V_exp <- SimInf:::init_sparse_matrix(V_exp)
 stopifnot(identical(result@V_sparse, V_exp))
 
 ## Test that it also works to remove the sparse matrix output
