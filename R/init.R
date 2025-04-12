@@ -47,6 +47,8 @@ init_x0 <- function(x, storage_mode = c("integer", "double"), null_ok = FALSE) {
         x <- matrix(numeric(0), nrow = 0, ncol = 0)
     }
 
+    if (is.vector(x, mode = "numeric"))
+        x <- as.matrix(x)
     if (is.data.frame(x))
         x <- as_t_matrix(x)
 

@@ -54,6 +54,8 @@ valid_u0 <- function(object) {
         return("Initial state 'u0' must be an integer matrix.")
     if (any(object@u0 < 0L))
         return("Initial state 'u0' has negative elements.")
+    if (!identical(nrow(object@S), nrow(object@u0)))
+        return("The number of rows in 'u0' and 'S' must match.")
 
     character(0)
 }

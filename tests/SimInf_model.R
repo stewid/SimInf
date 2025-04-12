@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -191,21 +191,25 @@ m <- SISe(u0 = data.frame(S = 10, I = 0), tspan = 1:10, phi = 0,
           upsilon = 0.1, gamma = 0.1, alpha = 1.0, beta_t1 = 0.1,
           beta_t2 = 0.1, beta_t3 = 0.1, beta_t4 = 0.1, end_t1  = 91,
           end_t2  = 182, end_t3  = 273, end_t4  = 365, epsilon = 0.1)
-m@gdata <- as.integer(m@gdata)
-names(m@gdata) <- c("upsilon", "gamma", "alpha", "beta_t1",
-                    "beta_t2", "beta_t3", "beta_t4", "epsilon")
+storage.mode(m@gdata) <- "integer"
 stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
                     "'gdata' must be a double vector."))
 
 ## Check v0
-res <- assertError(SimInf_model(G     = G,
-                                S     = S,
-                                U     = U,
-                                ldata = matrix(rep(0, Nn), nrow = 1),
-                                tspan = c(1, 2),
-                                u0    = u0,
-                                v0    = 1))
-check_error(res, "'v0' must be a double matrix.")
+m <- SISe(u0 = data.frame(S = 10, I = 0), tspan = 1:10, phi = 0,
+          upsilon = 0.1, gamma = 0.1, alpha = 1.0, beta_t1 = 0.1,
+          beta_t2 = 0.1, beta_t3 = 0.1, beta_t4 = 0.1, end_t1  = 91,
+          end_t2  = 182, end_t3  = 273, end_t4  = 365, epsilon = 0.1)
+
+storage.mode(m@v0) <- "integer"
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "Initial model state 'v0' must be a double matrix."))
+
+storage.mode(m@v0) <- "double"
+rownames(m@v0) <- NULL
+stopifnot(identical(SimInf:::valid_SimInf_model_object(m),
+                    "'v0' must have rownames."))
+
 res <- SimInf_model(G     = G,
                     S     = S,
                     U     = U,
@@ -299,7 +303,8 @@ res <- assertError(SimInf_model(G     = G,
                                 ldata = matrix(rep(0, Nn), nrow = 1),
                                 tspan = as.numeric(1:10),
                                 u0    = as.numeric(u0)))
-check_error(res, "'u0' must be an integer matrix.")
+check_error(res, "The number of rows in 'u0' and 'S' must match.", FALSE)
+check_error(res, "The number of nodes in 'u0' and 'ldata' must match.", FALSE)
 
 ## Check S
 res <- assertError(new("SimInf_model",
