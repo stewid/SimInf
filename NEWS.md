@@ -10,7 +10,7 @@
 
 * When using `use_enum=TRUE` in `mparse`, the enumeration constants
   `N_COMPARTMENTS_U` and `N_COMPARTMENTS_V` will be automatically
-  added to facilitate indexing 'u' and 'v' in the C code.
+  added to facilitate indexing 'u' and 'v' in the C code. Additionally, enumeration value area added to all enumeration constants.
 
 # SimInf 9.8.1 (2024-06-21)
 
