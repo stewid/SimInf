@@ -419,8 +419,12 @@ parse_transitions <- function(transitions, compartments, ldata_names,
 
 ##' Extract variable names from data
 ##'
-##' @param x data to extract the variable names from.
+##' @param x data to extract the variable names from. Varible names
+##'     can be empty, i.e., "", however, the empty variable names will
+##'     be removed from the return value.
 ##' @param is_vector_ok TRUE if x can be a numeric vector, else FALSE.
+##' @return character vector containting the variables with name and
+##'     their enumeration value as attribute.
 ##' @noRd
 variable_names <- function(x, is_vector_ok) {
     if (is.null(x))
