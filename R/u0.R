@@ -116,7 +116,7 @@ setMethod(
         all_nodes <- unique(c(object@node, object@dest))
         all_nodes <- all_nodes[!is.na(all_nodes)]
         missing_nodes <- setdiff(all_nodes, individuals$node)
-        S_columns <- paste0("S_", seq_len(length(age)))
+        S_columns <- paste0("S_", seq_along(age))
 
         if (nrow(individuals)) {
             ## Determine the age categories.

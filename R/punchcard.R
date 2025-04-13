@@ -202,7 +202,7 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         ## matrix. Keep only compartments and time-points that are
         ## marked with TRUE.
         i <- rep((i - 1) * length(compartments),
-                 each = length(compartments)) + seq_len(length(compartments))
+                 each = length(compartments)) + seq_along(compartments)
         i <- i[value]
         j <- rep(j, each = length(compartments))
         j <- j[value]

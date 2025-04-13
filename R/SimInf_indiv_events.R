@@ -465,7 +465,7 @@ inject_ageing_events <- function(events, age) {
     ## Clear select for non-enter events.
     events[events[, "event"] != 1L, "select"] <- NA_integer_
 
-    for (i in seq_len(length(age))[-1]) {
+    for (i in seq_along(age)[-1]) {
         ## Determine which individuals are eligble for ageing.
         j <- which(ageing[, "exit"] - ageing[, "enter"] > age[i])
         ageing <- ageing[j, , drop = FALSE]

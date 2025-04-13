@@ -54,7 +54,7 @@ tokenize <- function(code) {
                     x <- as.character(x[1, 1])
                     j <- 1
                     xx <- NULL
-                    for (i in seq_len(length(m))) {
+                    for (i in seq_along(m)) {
                         if (m[i] > j)
                             xx <- c(xx, substr(x, j, m[i] - 1))
                         j <- m[i] + attr(m, "match.length")[i]
@@ -452,7 +452,7 @@ variable_names <- function(x, is_vector_ok) {
     }
 
     ## Add enumeration value.
-    value <- seq_len(length(lbl)) - 1L
+    value <- seq_along(lbl) - 1L
     n_values <- length(value)
 
     ## Keep only non-empty variable names.
@@ -599,7 +599,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     u0 <- check_u0(u0, compartments)
 
     ## Add enumeration value to compartments.
-    attr(compartments, "value") <- seq_len(length(compartments)) - 1L
+    attr(compartments, "value") <- seq_along(compartments) - 1L
     attr(compartments, "n_values") <- length(compartments)
 
     ## Extract variable names from data.

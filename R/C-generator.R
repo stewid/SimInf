@@ -77,7 +77,7 @@ C_enumeration_constants <- function(target, labels) {
                target, "' vector. */"),
         "enum {")
 
-    for (i in seq_len(length(labels))) {
+    for (i in seq_along(labels)) {
         lbl <- toupper(labels[i])
 
         ## Add enumeration value.
@@ -170,7 +170,7 @@ C_trFun <- function(transitions) {
         "    double t)")
 
     lines <- character(0)
-    for (i in seq_len(length(propensities))) {
+    for (i in seq_along(propensities)) {
         propensity <- propensities[[i]]
 
         lines <- c(

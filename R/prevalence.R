@@ -24,7 +24,7 @@
 sum_compartments <- function(model, compartments, index) {
     m <- NULL
 
-    for (j in seq_len(length(compartments))) {
+    for (j in seq_along(compartments)) {
         for (compartment in names(compartments[[j]])) {
             if (is.null(m)) {
                 m <- trajectory(model, compartment, index, "matrix")
@@ -41,7 +41,7 @@ evaluate_condition <- function(model, compartments, index, n) {
     ## Create an environment to hold the trajectory data with one
     ## column for each compartment.
     e <- new.env(parent = baseenv())
-    for (j in seq_len(length(compartments$rhs))) {
+    for (j in seq_along(compartments$rhs)) {
         if (length(compartments$rhs[[j]]) > 0) {
             ac <- attr(compartments$rhs[[j]], "available_compartments")
             for (compartment in ac) {

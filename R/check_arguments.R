@@ -28,7 +28,7 @@
 ##' @noRd
 check_infectious_pressure_arg <- function(len, ...) {
     arg <- list(...)
-    for (i in seq_len(length(arg))) {
+    for (i in seq_along(arg)) {
         if (!is.numeric(arg[[i]]) || !is.null(dim(arg[[i]])) ||
             !identical(length(arg[[i]]), len)) {
             stop(paste0("Invalid '",
@@ -56,7 +56,7 @@ check_infectious_pressure_arg <- function(len, ...) {
 ##' @noRd
 check_integer_arg <- function(...) {
     arg <- list(...)
-    for (i in seq_len(length(arg))) {
+    for (i in seq_along(arg)) {
         if (is.null(arg[[i]])) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],
@@ -85,7 +85,7 @@ check_integer_arg <- function(...) {
 ##' @noRd
 check_numeric_arg <- function(...) {
     arg <- list(...)
-    for (i in seq_len(length(arg))) {
+    for (i in seq_along(arg)) {
         if (is.null(arg[[i]])) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],
@@ -113,7 +113,7 @@ check_numeric_arg <- function(...) {
 ##' @noRd
 check_gdata_arg <- function(...) {
     arg <- list(...)
-    for (i in seq_len(length(arg))) {
+    for (i in seq_along(arg)) {
         if (!is.numeric(arg[[i]]) || !identical(length(arg[[i]]), 1L)) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],
@@ -134,7 +134,7 @@ check_gdata_arg <- function(...) {
 ##' @noRd
 check_ldata_arg <- function(len, ...) {
     arg <- list(...)
-    for (i in seq_len(length(arg))) {
+    for (i in seq_along(arg)) {
         if (!is.numeric(arg[[i]]) ||
             !is.atomic(arg[[i]]) ||
             (!identical(length(arg[[i]]), 1L) &&
@@ -161,7 +161,7 @@ check_end_t_arg <- function(len, ...) {
     arg <- list(...)
     names(arg) <- match.call(expand.dots = FALSE)$"..."
 
-    for (i in seq_len(length(arg))) {
+    for (i in seq_along(arg)) {
         if (!identical(length(arg[[i]]), len)) {
             stop(paste0("'",
                         match.call(expand.dots = FALSE)$"..."[i],

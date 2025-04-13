@@ -222,7 +222,7 @@ init_plot_trajectory_data <- function(model, compartments, index, range) {
 
     ## Create a matrix with one row for each line in the plot.
     y <- list()
-    for (j in seq_len(length(compartments$rhs))) {
+    for (j in seq_along(compartments$rhs)) {
         for (compartment in names(compartments$rhs[[j]])) {
             if (identical(range, FALSE) || identical(length(index), 1L)) {
                 y[[length(y) + 1]] <-
