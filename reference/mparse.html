@@ -117,11 +117,15 @@ the transition rate functions and the post time step function.</p></dd>
 
 <dt id="arg-gdata">gdata<a class="anchor" aria-label="anchor" href="#arg-gdata"></a></dt>
 <dd><p>optional data that are common to all nodes in the
-model. Can be specified either as a named numeric vector or as
-as a one-row data.frame. The names are used to identify the
-parameters in the transitions. The global data vector is
-passed as an argument to the transition rate functions and the
-post time step function.</p></dd>
+model. Can be specified either as a optionally named numeric
+vector or as as a one-row data.frame. The names are used to
+identify the parameters in the transitions. When <code>gdata</code>
+is specified as a vector, it is possible to have parameters
+without names, however, these parameters will not be
+automatically identified by mparse but need to be identified
+in the code by the user. The global data vector is passed as
+an argument to the transition rate functions and the post time
+step function.</p></dd>
 
 
 <dt id="arg-u-">u0<a class="anchor" aria-label="anchor" href="#arg-u-"></a></dt>
