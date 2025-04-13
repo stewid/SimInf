@@ -21,6 +21,7 @@
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
 ##' @template priors-slot
+##' @include SimInf_model.R
 ##' @export
 setClass(
     "SimInf_if2",

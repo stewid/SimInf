@@ -93,6 +93,7 @@ Collate:
     'distance.R'
     'distributions.R'
     'edge_properties.R'
+    'iterated-filtering.R'
     'match_compartments.R'
     'mparse.R'
     'pmcmc.R'
