@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 sum_compartments <- function(model, compartments, index) {
     m <- NULL
 
-    for (j in seq_len(length(compartments))) {
+    for (j in seq_along(compartments)) {
         for (compartment in names(compartments[[j]])) {
             if (is.null(m)) {
                 m <- trajectory(model, compartment, index, "matrix")
@@ -41,7 +41,7 @@ evaluate_condition <- function(model, compartments, index, n) {
     ## Create an environment to hold the trajectory data with one
     ## column for each compartment.
     e <- new.env(parent = baseenv())
-    for (j in seq_len(length(compartments$rhs))) {
+    for (j in seq_along(compartments$rhs)) {
         if (length(compartments$rhs[[j]]) > 0) {
             ac <- attr(compartments$rhs[[j]], "available_compartments")
             for (compartment in ac) {

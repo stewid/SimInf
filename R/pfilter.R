@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ pfilter_tspan <- function(model, data) {
         x$time[1]
     })
 
-    do.call("rbind", lapply(seq_len(length(time)), function(i) {
+    do.call("rbind", lapply(seq_along(time), function(i) {
         if (i == 1) {
             if (model@tspan[1] < time[1])
                 return(as.numeric(c(model@tspan[1], time[1])))
@@ -378,7 +378,7 @@ pfilter_internal <- function(model,
                    value = data[[i]][, obs_process$par_i],
                    pos = e)
 
-            for (j in seq_len(length(obs_process$slots))) {
+            for (j in seq_along(obs_process$slots)) {
                 s <- obs_process$slots[[j]]$slot
                 v <- slot(x, s)[obs_process$slots[[j]]$i, ]
                 n <- obs_process$slots[[j]]$name

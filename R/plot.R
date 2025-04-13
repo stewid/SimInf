@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -222,7 +222,7 @@ init_plot_trajectory_data <- function(model, compartments, index, range) {
 
     ## Create a matrix with one row for each line in the plot.
     y <- list()
-    for (j in seq_len(length(compartments$rhs))) {
+    for (j in seq_along(compartments$rhs)) {
         for (compartment in names(compartments$rhs[[j]])) {
             if (identical(range, FALSE) || identical(length(index), 1L)) {
                 y[[length(y) + 1]] <-

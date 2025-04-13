@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ setMethod(
         all_nodes <- unique(c(object@node, object@dest))
         all_nodes <- all_nodes[!is.na(all_nodes)]
         missing_nodes <- setdiff(all_nodes, individuals$node)
-        S_columns <- paste0("S_", seq_len(length(age)))
+        S_columns <- paste0("S_", seq_along(age))
 
         if (nrow(individuals)) {
             ## Determine the age categories.

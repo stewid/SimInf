@@ -54,7 +54,7 @@ tokenize <- function(code) {
                     x <- as.character(x[1, 1])
                     j <- 1
                     xx <- NULL
-                    for (i in seq_len(length(m))) {
+                    for (i in seq_along(m)) {
                         if (m[i] > j)
                             xx <- c(xx, substr(x, j, m[i] - 1))
                         j <- m[i] + attr(m, "match.length")[i]
@@ -419,8 +419,12 @@ parse_transitions <- function(transitions, compartments, ldata_names,
 
 ##' Extract variable names from data
 ##'
-##' @param x data to extract the variable names from.
+##' @param x data to extract the variable names from. Varible names
+##'     can be empty, i.e., "", however, the empty variable names will
+##'     be removed from the return value.
 ##' @param is_vector_ok TRUE if x can be a numeric vector, else FALSE.
+##' @return character vector containting the variables with name and
+##'     their enumeration value as attribute.
 ##' @noRd
 variable_names <- function(x, is_vector_ok) {
     if (is.null(x))
@@ -448,7 +452,7 @@ variable_names <- function(x, is_vector_ok) {
     }
 
     ## Add enumeration value.
-    value <- seq_len(length(lbl)) - 1L
+    value <- seq_along(lbl) - 1L
     n_values <- length(value)
 
     ## Keep only non-empty variable names.
@@ -527,11 +531,15 @@ dependency_graph <- function(transitions, S) {
 ##'     parameters. The local data vector is passed as an argument to
 ##'     the transition rate functions and the post time step function.
 ##' @param gdata optional data that are common to all nodes in the
-##'     model. Can be specified either as a named numeric vector or as
-##'     as a one-row data.frame. The names are used to identify the
-##'     parameters in the transitions. The global data vector is
-##'     passed as an argument to the transition rate functions and the
-##'     post time step function.
+##'     model. Can be specified either as a optionally named numeric
+##'     vector or as as a one-row data.frame. The names are used to
+##'     identify the parameters in the transitions. When \code{gdata}
+##'     is specified as a vector, it is possible to have parameters
+##'     without names, however, these parameters will not be
+##'     automatically identified by mparse but need to be identified
+##'     in the code by the user. The global data vector is passed as
+##'     an argument to the transition rate functions and the post time
+##'     step function.
 ##' @template u0-param
 ##' @param v0 optional data with the initial continuous state in each
 ##'     node. \code{v0} can be specified as a \code{data.frame} with
@@ -591,7 +599,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     u0 <- check_u0(u0, compartments)
 
     ## Add enumeration value to compartments.
-    attr(compartments, "value") <- seq_len(length(compartments)) - 1L
+    attr(compartments, "value") <- seq_along(compartments) - 1L
     attr(compartments, "n_values") <- length(compartments)
 
     ## Extract variable names from data.
