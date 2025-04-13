@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ check_error(res, "Non-positive sum of weights detected.")
 ## Expect all particles if the weights are equal.
 w <- rep(0.1, 10)
 stopifnot(identical(
-    seq_len(length(w)),
+    seq_along(w),
     .Call(SimInf:::SimInf_systematic_resampling, w)))
 
 ## Expect function for the observation process
