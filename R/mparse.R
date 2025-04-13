@@ -531,11 +531,15 @@ dependency_graph <- function(transitions, S) {
 ##'     parameters. The local data vector is passed as an argument to
 ##'     the transition rate functions and the post time step function.
 ##' @param gdata optional data that are common to all nodes in the
-##'     model. Can be specified either as a named numeric vector or as
-##'     as a one-row data.frame. The names are used to identify the
-##'     parameters in the transitions. The global data vector is
-##'     passed as an argument to the transition rate functions and the
-##'     post time step function.
+##'     model. Can be specified either as a optionally named numeric
+##'     vector or as as a one-row data.frame. The names are used to
+##'     identify the parameters in the transitions. When \code{gdata}
+##'     is specified as a vector, it is possible to have parameters
+##'     without names, however, these parameters will not be
+##'     automatically identified by mparse but need to be identified
+##'     in the code by the user. The global data vector is passed as
+##'     an argument to the transition rate functions and the post time
+##'     step function.
 ##' @template u0-param
 ##' @param v0 optional data with the initial continuous state in each
 ##'     node. \code{v0} can be specified as a \code{data.frame} with
