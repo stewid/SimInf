@@ -28,3 +28,36 @@ setClass(
     slots = c(model = "SimInf_model",
               priors = "data.frame")
 )
+
+##' Brief summary of a \code{SimInf_if2} object
+##'
+##' @param object The \code{SimInf_if2} object.
+##' @return \code{invisible(object)}.
+##' @export
+setMethod(
+    "show",
+    signature(object = "SimInf_if2"),
+    function(object) {
+        cat("Iterated filtering\n")
+        cat("------------------\n")
+
+        invisible(object)
+    }
+)
+
+##' Detailed summary of a \code{SimInf_if2} object
+##'
+##' @param object The \code{SimInf_if2} object
+##' @param ... Not used.
+##' @return None (invisible 'NULL').
+##' @export
+setMethod(
+    "summary",
+    signature(object = "SimInf_if2"),
+    function(object, ...) {
+        cat("Iterated filtering\n")
+        cat("------------------\n")
+
+        invisible(NULL)
+    }
+)
