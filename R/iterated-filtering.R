@@ -61,3 +61,30 @@ setMethod(
         invisible(NULL)
     }
 )
+
+##' Iterated filtering algorithm
+##'
+##' @param model The model to simulate data from.
+##' @references
+##'
+##' \Ionides2015
+##' @export
+setGeneric(
+    "if2",
+    signature = "model",
+    function(model,
+             verbose = getOption("verbose", FALSE)) {
+        standardGeneric("if2")
+    }
+)
+
+##' @rdname if2
+##' @export
+setMethod(
+    "if2",
+    signature(model = "SimInf_model"),
+    function(model,
+             verbose) {
+        stop("Not implemented.")
+    }
+)
