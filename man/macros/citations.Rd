@@ -8,7 +8,7 @@
 
 \newcommand{\Gordon1993}{N. J. Gordon, D. J. Salmond, and A. F. M. Smith. Novel Approach to Nonlinear/Non-Gaussian Bayesian State Estimation. \emph{Radar and Signal Processing, IEE Proceedings F}, \strong{140}(2) 107--113, 1993. \doi{10.1049/ip-f-2.1993.0015}}
 
-\newcommand{Ionides2015}{E. L. Ionides and D. Nguyen and Y. Atchadé and S. Stoev and A. A. King. Inference for Dynamic and Latent Variable Models via Iterated, Perturbed Bayes Maps. \emph{PNAS}, \strong{112}(3), 719–-724, 2015. \doi{10.1073/pnas.1410597112.}}
+\newcommand{\Ionides2015}{E. L. Ionides and D. Nguyen and Y. Atchadé and S. Stoev and A. A. King. Inference for Dynamic and Latent Variable Models via Iterated, Perturbed Bayes Maps. \emph{PNAS}, \strong{112}(3), 719–-724, 2015. \doi{10.1073/pnas.1410597112.}}
 
 \newcommand{\Roberts2009}{G. O. Roberts and J. S. Rosenthal. Examples of adaptive MCMC. \emph{Journal of computational and graphical statistics}, \strong{18}(2), 349--367, 2009. \doi{10.1198/jcgs.2009.06134}}
 
