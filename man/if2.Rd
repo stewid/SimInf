@@ -32,6 +32,10 @@ data for a time-point. The second argument to the
 the rows for the specific time-point that the function is
 called for. Note that the function must return the log of the
 density.}
+
+\item{verbose}{prints diagnostic messages when \code{TRUE}. The
+default is to retrieve the global option \code{verbose} and
+use \code{FALSE} if it is not set.}
 }
 \description{
 Iterated filtering algorithm

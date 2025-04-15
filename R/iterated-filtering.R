@@ -66,6 +66,9 @@ setMethod(
 ##'
 ##' @param model The model to simulate data from.
 ##' @template obs_process-param
+##' @param verbose prints diagnostic messages when \code{TRUE}. The
+##'     default is to retrieve the global option \code{verbose} and
+##'     use \code{FALSE} if it is not set.
 ##' @references
 ##'
 ##' \Ionides2015
