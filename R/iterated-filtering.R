@@ -65,6 +65,7 @@ setMethod(
 ##' Iterated filtering algorithm
 ##'
 ##' @param model The model to simulate data from.
+##' @template obs_process-param
 ##' @references
 ##'
 ##' \Ionides2015
@@ -73,6 +74,7 @@ setGeneric(
     "if2",
     signature = "model",
     function(model,
+             obs_process,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("if2")
     }
@@ -84,6 +86,7 @@ setMethod(
     "if2",
     signature(model = "SimInf_model"),
     function(model,
+             obs_process,
              verbose) {
         stop("Not implemented.")
     }
