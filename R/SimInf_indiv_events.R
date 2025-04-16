@@ -739,7 +739,19 @@ events_to_tex <- function(events) {
     nodes$dest <- as.integer(factor(nodes$dest, levels = levels))
 
     ## Ensure the events are sorted.
-    i <- order(id, time, event)
+    i <- order(id, time, event, nodes$node, nodes$dest)
+
+    ## Remove duplicated events.
+    if (length(i) > 1L) {
+        j <- i[-1L]
+        k <- i[-length(i)]
+        d <- compareNA(id[j], id[k]) &
+            compareNA(time[j], time[k]) &
+            compareNA(event[j], event[k]) &
+            compareNA(nodes$node[j], nodes$node[k]) &
+            compareNA(nodes$dest[j], nodes$dest[k])
+        i <- i[!d]
+    }
 
     keep <- .Call(SimInf_clean_indiv_events,
                   id[i],
