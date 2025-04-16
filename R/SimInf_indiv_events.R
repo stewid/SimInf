@@ -249,6 +249,14 @@ check_indiv_events_nodes <- function(event, node, dest) {
          call. = FALSE)
 }
 
+##' Compare two vectors and return TRUE wherever elements are the
+##' same, including NA's, and FALSE everywhere else.
+compareNA <- function(x, y) {
+    z <- (x == y) | (is.na(x) & is.na(y))
+    z[is.na(z)] <- FALSE
+    z
+}
+
 ##' Individual events
 ##'
 ##' In many countries, individual-based livestock data are collected
@@ -298,7 +306,19 @@ individual_events <- function(events) {
     nodes <- check_indiv_events_nodes(event, events$node, events$dest)
 
     ## Ensure the events are sorted.
-    i <- order(id, time, event)
+    i <- order(id, time, event, nodes$node, nodes$dest)
+
+    ## Remove duplicated events.
+    if (length(i) > 1L) {
+        j <- i[-1L]
+        k <- i[-length(i)]
+        d <- compareNA(id[j], id[k]) &
+            compareNA(time[j], time[k]) &
+            compareNA(event[j], event[k]) &
+            compareNA(nodes$node[j], nodes$node[k]) &
+            compareNA(nodes$dest[j], nodes$dest[k])
+        i <- i[!d]
+    }
 
     keep <- .Call(SimInf_clean_indiv_events,
                   id[i],
