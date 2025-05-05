@@ -66,6 +66,8 @@ setMethod(
 ##'
 ##' @param model The model to simulate data from.
 ##' @template obs_process-param
+##' @param n_iterations An integer specifying the number of filtering
+##'     iterations to perform.
 ##' @param verbose prints diagnostic messages when \code{TRUE}. The
 ##'     default is to retrieve the global option \code{verbose} and
 ##'     use \code{FALSE} if it is not set.
@@ -78,6 +80,7 @@ setGeneric(
     signature = "model",
     function(model,
              obs_process,
+             n_iterations,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("if2")
     }
@@ -90,6 +93,7 @@ setMethod(
     signature(model = "SimInf_model"),
     function(model,
              obs_process,
+             n_iterations,
              verbose) {
         stop("Not implemented.")
     }
