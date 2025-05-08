@@ -494,7 +494,7 @@ setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
     function(x, y, level = 1, index = NULL, range = 0.5, type = "s",
-             lwd = 2, frame.plot = FALSE, legend = TRUE, ...) {
+             lwd = 2, frame.plot = FALSE, legend = TRUE, log_transform = FALSE, ...) { #ajab
         if (missing(y))
             y <- NULL
 
@@ -509,6 +509,18 @@ setMethod(
 
             pd <- init_plot_trajectory_data(x, compartments, index, range)
         }
+
+    # Apply log transformation if required                              #ajab
+    if (log_transform) {                                                #ajab
+      pd$y[pd$y <= 0] <- NA  # Prevent log(0) or log(negative values)   #ajab
+      pd$y <- log(pd$y)                                                 #ajab
+      if (!is.null(pd$lower) && !is.null(pd$upper)) {                   #ajab
+        pd$lower[pd$lower <= 0] <- NA                                   #ajab
+        pd$upper[pd$upper <= 0] <- NA                                   #ajab 
+        pd$lower <- log(pd$lower)                                       #ajab    
+        pd$upper <- log(pd$upper)                                       #ajab     
+      }                                                                 #ajab    
+    }                                                                   #ajab    
 
         argv <- init_plot_argv(x, y, pd, type, lwd, ...)
         lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
