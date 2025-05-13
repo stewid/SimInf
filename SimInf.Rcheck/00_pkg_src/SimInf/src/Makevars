@@ -1,0 +1,4 @@
+PKG_CPPFLAGS = -I. -I../inst/include  -I/usr/include -DR_NO_REMAP -DSTRICT_R_HEADERS
+PKG_CFLAGS = -fopenmp
+PKG_LIBS = -fopenmp -L/usr/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm 
+OBJECTS = misc/binheap.o misc/SimInf_forward_euler_linear_decay.o misc/SimInf_LambertW.o misc/SimInf_openmp.o misc/SimInf_arg.o misc/SimInf_particle_filter.o misc/SimInf_trajectory.o misc/SimInf_local_spread.o misc/SimInf_ldata.o misc/SimInf_abc.o misc/SimInf_distance_matrix.o misc/SimInf_clean_indiv_events.o SimInf.o init.o models/SIS.o models/SISe.o models/SISe3.o models/SIR.o models/SISe3_sp.o models/SISe_sp.o models/SEIR.o solvers/aem/SimInf_solver_aem.o solvers/ssm/SimInf_solver_ssm.o solvers/mssm/SimInf_solver_mssm.o solvers/SimInf_solver.o 

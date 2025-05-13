@@ -1,0 +1,168 @@
+C_code                  Extract the C code from a 'SimInf_model' object
+SEIR                    Create an SEIR model
+SEIR-class              Definition of the 'SEIR' model
+SIR                     Create an SIR model
+SIR-class               Definition of the SIR model
+SIS                     Create an SIS model
+SIS-class               Definition of the SIS model
+SISe                    Create a SISe model
+SISe-class              Definition of the 'SISe' model
+SISe3                   Create a 'SISe3' model
+SISe3-class             Definition of the 'SISe3' model
+SISe3_sp                Create an 'SISe3_sp' model
+SISe3_sp-class          Definition of the 'SISe3_sp' model
+SISe_sp                 Create a 'SISe_sp' model
+SISe_sp-class           Definition of the 'SISe_sp' model
+SimInf                  A Framework for Data-Driven Stochastic Disease
+                        Spread Simulations
+SimInf_abc-class        Class '"SimInf_abc"'
+SimInf_events           Create a 'SimInf_events' object
+SimInf_events-class     Class '"SimInf_events"'
+SimInf_indiv_events-class
+                        Class '"SimInf_indiv_events"'
+SimInf_model            Create a 'SimInf_model'
+SimInf_model-class      Class '"SimInf_model"'
+SimInf_pfilter-class    Class '"SimInf_pfilter"'
+SimInf_pmcmc-class      Class '"SimInf_pmcmc"'
+abc                     Approximate Bayesian computation
+as.data.frame.SimInf_abc
+                        Coerce to data frame
+as.data.frame.SimInf_events
+                        Coerce events to a data frame
+as.data.frame.SimInf_indiv_events
+                        Coerce to data frame
+as.data.frame.SimInf_pmcmc
+                        Coerce to data frame
+boxplot,SimInf_model-method
+                        Box plot of number of individuals in each
+                        compartment
+continue_abc            Run more generations of ABC SMC
+continue_pmcmc          Run more iterations of PMCMC
+distance_matrix         Create a distance matrix between nodes for
+                        spatial models
+edge_properties_to_matrix
+                        Convert an edge list with properties to a
+                        matrix
+events                  Extract the events from a 'SimInf_model' object
+events_SEIR             Example data to initialize events for the
+                        'SEIR' model
+events_SIR              Example data to initialize events for the 'SIR'
+                        model
+events_SIS              Example data to initialize events for the 'SIS'
+                        model
+events_SISe             Example data to initialize events for the
+                        'SISe' model
+events_SISe3            Example data to initialize events for the
+                        'SISe3' model
+gdata                   Extract global data from a 'SimInf_model'
+                        object
+gdata<-                 Set a global data parameter for a
+                        'SimInf_model' object
+get_individuals         Extract individuals from 'SimInf_indiv_events'
+indegree                Determine in-degree for each node in a model
+individual_events       Individual events
+ldata                   Extract local data from a node
+length,SimInf_pmcmc-method
+                        Length of the MCMC chain
+logLik,SimInf_pfilter-method
+                        Log likelihood
+mparse                  Model parser to define new models to run in
+                        'SimInf'
+n_compartments          Determine the number of compartments in a model
+n_generations           Determine the number of generations
+n_nodes                 Determine the number of nodes in a model
+n_replicates            Determine the number of replicates in a model
+node_events             Transform individual events to node events for
+                        a model
+nodes                   Example data with spatial distribution of nodes
+outdegree               Determine out-degree for each node in a model
+package_skeleton        Create a package skeleton from a 'SimInf_model'
+pairs,SimInf_model-method
+                        Scatterplot of number of individuals in each
+                        compartment
+pfilter                 Bootstrap particle filter
+plot,SimInf_abc-method
+                        Display the ABC posterior distribution
+plot,SimInf_events-method
+                        Display the distribution of scheduled events
+                        over time
+plot,SimInf_indiv_events-method
+                        Display the distribution of individual events
+                        over time
+plot,SimInf_model-method
+                        Display the outcome from a simulated trajectory
+plot,SimInf_pfilter-method
+                        Diagnostic plot of a particle filter object
+plot,SimInf_pmcmc-method
+                        Display the PMCMC posterior distribution
+pmcmc                   Particle Markov chain Monte Carlo (PMCMC)
+                        algorithm
+prevalence              Generic function to calculate prevalence from
+                        trajectory data
+prevalence,SimInf_model-method
+                        Calculate prevalence from a model object with
+                        trajectory data
+prevalence,SimInf_pfilter-method
+                        Extract prevalence from running a particle
+                        filter
+prevalence,SimInf_pmcmc-method
+                        Extract prevalence from fitting a PMCMC
+                        algorithm
+punchcard<-             Set a template for where to record result
+                        during a simulation
+run                     Run the SimInf stochastic simulation algorithm
+select_matrix           Extract the select matrix from a 'SimInf_model'
+                        object
+select_matrix<-         Set the select matrix for a 'SimInf_model'
+                        object
+set_num_threads         Specify the number of threads that SimInf
+                        should use
+shift_matrix            Extract the shift matrix from a 'SimInf_model'
+                        object
+shift_matrix<-          Set the shift matrix for a 'SimInf_model'
+                        object
+show,SimInf_abc-method
+                        Print summary of a 'SimInf_abc' object
+show,SimInf_events-method
+                        Brief summary of 'SimInf_events'
+show,SimInf_indiv_events-method
+                        Print summary of a 'SimInf_indiv_events' object
+show,SimInf_model-method
+                        Brief summary of 'SimInf_model'
+show,SimInf_pfilter-method
+                        Brief summary of a 'SimInf_pfilter' object
+show,SimInf_pmcmc-method
+                        Brief summary of a 'SimInf_pmcmc' object
+summary,SimInf_abc-method
+                        Detailed summary of a 'SimInf_abc' object
+summary,SimInf_events-method
+                        Detailed summary of a 'SimInf_events' object
+summary,SimInf_indiv_events-method
+                        Detailed summary of a 'SimInf_indiv_events'
+                        object
+summary,SimInf_model-method
+                        Detailed summary of a 'SimInf_model' object
+summary,SimInf_pfilter-method
+                        Detailed summary of a 'SimInf_pfilter' object
+summary,SimInf_pmcmc-method
+                        Detailed summary of a 'SimInf_pmcmc' object
+trajectory              Generic function to extract data from a
+                        simulated trajectory
+trajectory,SimInf_model-method
+                        Extract data from a simulated trajectory
+trajectory,SimInf_pfilter-method
+                        Extract filtered trajectory from running a
+                        particle filter
+trajectory,SimInf_pmcmc-method
+                        Extract filtered trajectories from fitting a
+                        PMCMC algorithm
+u0                      Get the initial compartment state
+u0<-                    Update the initial compartment state u0 in each
+                        node
+u0_SEIR                 Example data to initialize the 'SEIR' model
+u0_SIR                  Example data to initialize the 'SIR' model
+u0_SIS                  Example data to initialize the 'SIS' model
+u0_SISe                 Example data to initialize the 'SISe' model
+u0_SISe3                Example data to initialize the 'SISe3' model
+v0<-                    Update the initial continuous state v0 in each
+                        node

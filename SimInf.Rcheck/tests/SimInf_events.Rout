@@ -1,0 +1,855 @@
+
+R version 4.3.3 (2024-02-29) -- "Angel Food Cake"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## This file is part of SimInf, a framework for stochastic
+> ## disease spread simulations.
+> ##
+> ## Copyright (C) 2015 Pavol Bauer
+> ## Copyright (C) 2017 -- 2019 Robin Eriksson
+> ## Copyright (C) 2015 -- 2019 Stefan Engblom
+> ## Copyright (C) 2015 -- 2020 Stefan Widgren
+> ##
+> ## SimInf is free software: you can redistribute it and/or modify
+> ## it under the terms of the GNU General Public License as published by
+> ## the Free Software Foundation, either version 3 of the License, or
+> ## (at your option) any later version.
+> ##
+> ## SimInf is distributed in the hope that it will be useful,
+> ## but WITHOUT ANY WARRANTY; without even the implied warranty of
+> ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> ## GNU General Public License for more details.
+> ##
+> ## You should have received a copy of the GNU General Public License
+> ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
+> 
+> library(SimInf)
+> library(Matrix)
+> library(tools)
+> source("util/check.R")
+> 
+> ## For debugging
+> sessionInfo()
+R version 4.3.3 (2024-02-29)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 24.04.1 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.0 
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0
+
+locale:
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+ [4] LC_COLLATE=C           LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+
+time zone: Europe/Berlin
+tzcode source: system (glibc)
+
+attached base packages:
+[1] tools     stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+[1] Matrix_1.6-5      SimInf_9.8.1.9001
+
+loaded via a namespace (and not attached):
+[1] MASS_7.3-60.0.1 compiler_4.3.3  mvtnorm_1.3-3   grid_4.3.3     
+[5] digest_0.6.37   lattice_0.22-5 
+> 
+> E <- Matrix(c(1, 0, 0, 1, 0, 0,
++               0, 0, 0, 1, 0, 0,
++               0, 1, 0, 0, 1, 0,
++               0, 0, 0, 0, 1, 0,
++               0, 0, 1, 0, 0, 1,
++               0, 0, 0, 0, 0, 1),
++             nrow   = 6,
++             ncol   = 6,
++             byrow  = TRUE,
++             sparse = TRUE,
++             dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
++                             c("1", "2", "3", "4", "5", "6")))
+> 
+> N <- matrix(c(2, 0,
++               2, 0,
++               0, 2,
++               0, 2,
++               0, 0,
++               0, 0),
++             nrow   = 6,
++             ncol   = 2,
++             byrow  = TRUE,
++             dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
++                             c("1", "2")))
+> 
+> ## Check valid_SimInf_events_object
+> events <- SimInf_events(E = E, N = N)
+> stopifnot(isTRUE(SimInf:::valid_SimInf_events_object(events)))
+> 
+> rownames(events@E) <- tolower(rownames(events@E))
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "'E' and 'N' must have identical compartments."))
+> rownames(events@E) <- NULL
+> stopifnot(identical(
++     SimInf:::valid_SimInf_events_object(events),
++     "'E' and 'N' must have rownames matching the compartments."))
+> 
+> events <- SimInf_events(E = E, N = N)
+> events@E[1, 1] <- -1
+> stopifnot(identical(
++     SimInf:::valid_SimInf_events_object(events),
++     "Select matrix 'E' has negative elements."))
+> 
+> events <- SimInf_events(E = E, N = N)
+> events@event <- 3L
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "All scheduled events must have equal length."))
+> 
+> events@event <- 3L
+> events@time <- 1L
+> events@node <- 2L
+> events@dest <- 1L
+> events@n <- 1L
+> events@proportion <- 0
+> events@select <- 1L
+> events@shift <- 1L
+> 
+> events@time <- 0L
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "time must be greater than 0."))
+> events@time <- 1L
+> 
+> events@event <- -1L
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "event must be in the range 0 <= event <= 3."))
+> events@event <- 4L
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "event must be in the range 0 <= event <= 3."))
+> events@event <- 3L
+> 
+> events@node <- 0L
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "'node' must be greater or equal to 1."))
+> events@node <- 2L
+> 
+> events@dest <- 0L
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "'dest' must be greater or equal to 1."))
+> events@dest <- 1L
+> 
+> events@proportion <- -1
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "prop must be in the range 0 <= prop <= 1."))
+> events@proportion <- 2
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "prop must be in the range 0 <= prop <= 1."))
+> events@proportion <- 0
+> 
+> events@select <- 0L
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "select must be in the range 1 <= select <= Nselect."))
+> events@select <- 7L
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "select must be in the range 1 <= select <= Nselect."))
+> events@select <- 1L
+> 
+> events@event <- 2L
+> events@shift <- 0L
+> stopifnot(identical(SimInf:::valid_SimInf_events_object(events),
++                     "'shift' must be greater or equal to 1."))
+> 
+> ## Check that an error is raised when E is NULL and events is
+> ## non-NULL.
+> events <- data.frame(event = 3, time = 1, node = 2, dest = 1, n = 1,
++                      proportion = 1, select = 0, shift = 1)
+> res <- assertError(SimInf_events(events = events))
+> check_error(res, "events is not NULL when E is NULL.")
+> 
+> ## Check that an error is raised when N is not an integer matrix.
+> res <- assertError(SimInf_events(N = c("a", "b")))
+> check_error(res, "'N' must be an integer matrix.")
+> 
+> ## Check that an error is raised when N is not an integer matrix.
+> res <- assertError(SimInf_events(N = matrix(c(1.5, 1.5), nrow = 2)))
+> check_error(res, "'N' must be an integer matrix.")
+> 
+> ## Check that an error is raised when events is not a data.frame.
+> res <- assertError(SimInf_events(E = E, events = c("a", "b")))
+> check_error(res, "events must be a data.frame.")
+> 
+> ## Check that an error is raised when events contains a non-numeric
+> ## value.
+> events <- data.frame(event = 3, time = 1, node = 2, dest = 1, n = 1,
++                      proportion = "1", select = 0, shift = 1)
+> res <- assertError(SimInf_events(E = E, events = events))
+> check_error(res, "Columns in events must be numeric.")
+> 
+> ## Check missing columns in events
+> ## Iterate over each column and rename it
+> lapply(seq_len(8), function(i) {
++     events <- data.frame(
++         event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++         time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++         node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++         dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++         n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++         proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++         select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++         shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
++ 
++     colnames(events)[i] <- "test"
++     res <- assertError(SimInf_events(E = E, N = N, events = events))
++     check_error(res, "Missing columns in events.")
++ })
+[[1]]
+NULL
+
+[[2]]
+NULL
+
+[[3]]
+NULL
+
+[[4]]
+NULL
+
+[[5]]
+NULL
+
+[[6]]
+NULL
+
+[[7]]
+NULL
+
+[[8]]
+NULL
+
+> 
+> ## Check events$event not equal to whole number
+> events <- data.frame(
++     event = c(3.1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : num  3.1 3 3 3 3 3 3 3 3 3 ...
+ $ time      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  2 2 2 3 3 3 4 4 4 5 ...
+ $ dest      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "Columns in events must be integer.")
+> 
+> ## Check events$time not equal to whole number
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : num  3 3 3 3 3 3 3 3 3 3 ...
+ $ time      : num  1.1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  2 2 2 3 3 3 4 4 4 5 ...
+ $ dest      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "Columns in events must be integer.")
+> 
+> ## Check missing t0 when events$time is a Date vector
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = structure(c(17168, 17169, 17170, 17171, 17172,
++                        17173, 17174, 17175, 17176, 17177,
++                        17178, 17179, 17180, 17181, 17182),
++                      class = "Date"),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "Missing 't0'.")
+> 
+> ## Check invalid t0 (length != 1) when events$time is a Date vector
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = structure(c(17168, 17169, 17170, 17171, 17172,
++                        17173, 17174, 17175, 17176, 17177,
++                        17178, 17179, 17180, 17181, 17182),
++                      class = "Date"),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> res <- assertError(SimInf_events(E = E, N = N, events = events, t0 = c(1, 1)))
+> check_error(res, "Invalid 't0'.")
+> 
+> ## Check invalid t0 (!numeric) when events$time is a Date vector
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = structure(c(17168, 17169, 17170, 17171, 17172,
++                        17173, 17174, 17175, 17176, 17177,
++                        17178, 17179, 17180, 17181, 17182),
++                      class = "Date"),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> res <- assertError(SimInf_events(E = E, N = N, events = events, t0 = "1"))
+> check_error(res, "Invalid 't0'.")
+> 
+> ## Check invalid t0 (!NULL) when events$time is not a Date vector
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> res <- assertError(SimInf_events(E = E, N = N, events = events, t0 = 0))
+> check_error(res, "Invalid 't0'.")
+> 
+> ## Check events$time equal to a Date vector
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = structure(c(17168, 17169, 17170, 17171, 17172,
++                        17173, 17174, 17175, 17176, 17177,
++                        17178, 17179, 17180, 17181, 17182),
++                      class = "Date"),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> res <- SimInf_events(E = E, N = N, events = events, t0 = 17166)
+> stopifnot(identical(res@time, structure(2:16, origin = "2016-12-31")))
+> stopifnot(all(as.data.frame(res)$time == events$time))
+> 
+> pdf_file <- tempfile(fileext = ".pdf")
+> pdf(pdf_file)
+> plot(res)
+> dev.off()
+null device 
+          1 
+> stopifnot(file.exists(pdf_file))
+> unlink(pdf_file)
+> 
+> ## Check events$time equal to an integer vector
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(17168, 17169, 17170, 17171, 17172,
++              17173, 17174, 17175, 17176, 17177,
++              17178, 17179, 17180, 17181, 17182),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> res <- SimInf_events(E = E, N = N, events = events)
+> stopifnot(identical(is.null(names(res@time)), TRUE))
+> 
+> ## Check events$select not equal to whole number
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0.1, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : num  3 3 3 3 3 3 3 3 3 3 ...
+ $ time      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  2 2 2 3 3 3 4 4 4 5 ...
+ $ dest      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0.1 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "Columns in events must be integer.")
+> 
+> ## Check events$node not equal to whole number
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2.2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : num  3 3 3 3 3 3 3 3 3 3 ...
+ $ time      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  2.2 2 2 3 3 3 4 4 4 5 ...
+ $ dest      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "Columns in events must be integer.")
+> 
+> ## Check events$node less than one
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : num  3 3 3 3 3 3 3 3 3 3 ...
+ $ time      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ dest      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "'node' must be greater or equal to 1", FALSE)
+> 
+> ## Check events$dest not equal to whole number
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1.1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : num  3 3 3 3 3 3 3 3 3 3 ...
+ $ time      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  2 2 2 3 3 3 4 4 4 5 ...
+ $ dest      : num  1.1 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "Columns in events must be integer.")
+> 
+> ## Check events$dest less than 1
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : num  3 3 3 3 3 3 3 3 3 3 ...
+ $ time      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  2 2 2 3 3 3 4 4 4 5 ...
+ $ dest      : num  0 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "'dest' must be greater or equal to 1", FALSE)
+> 
+> ## Check events$n not equal to whole number
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1.1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : num  3 3 3 3 3 3 3 3 3 3 ...
+ $ time      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  2 2 2 3 3 3 4 4 4 5 ...
+ $ dest      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1.1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "Columns in events must be integer.")
+> 
+> ## Check events$event equal to character
+> events <- data.frame(
++     event = c("3", "3", "3", "3", "3", "3", "3", "3", "3",
++               "3", "3", "3", "3", "3", "3"),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : chr  "3" "3" "3" "3" ...
+ $ time      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  2 2 2 3 3 3 4 4 4 5 ...
+ $ dest      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(
++     res,
++     "'event' type must be 'enter', 'exit', 'extTrans' or 'intTrans'.")
+> 
+> ## Check events$shift not equal to whole number
+> events <- data.frame(
++     event = c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
++     time = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     node = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6),
++     dest = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     n = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
++     select = c(0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2),
++     shift = c(1.1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0))
+> str(events)
+'data.frame':	15 obs. of  8 variables:
+ $ event     : num  3 3 3 3 3 3 3 3 3 3 ...
+ $ time      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ node      : num  2 2 2 3 3 3 4 4 4 5 ...
+ $ dest      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ n         : num  1 1 1 2 2 2 3 3 3 4 ...
+ $ proportion: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ select    : num  0 1 2 0 1 2 0 1 2 0 ...
+ $ shift     : num  1.1 2 0 1 2 0 1 2 0 1 ...
+> res <- assertError(SimInf_events(E = E, N = N, events = events))
+> check_error(res, "Columns in events must be integer.")
+> 
+> ## Check E and events equal to NULL (default).
+> events <- new("SimInf_events",
++               E = new("dgCMatrix",
++                       i = integer(0),
++                       p = 0L,
++                       Dim = c(0L, 0L),
++                       Dimnames = list(NULL, NULL),
++                       x = numeric(0),
++                       factors = list()),
++               N = matrix(integer(0), nrow = 0, ncol = 0),
++               event = integer(0),
++               time = integer(0),
++               node = integer(0),
++               dest = integer(0),
++               n = integer(0),
++               proportion = numeric(0),
++               select = integer(0),
++               shift = integer(0))
+> str(events)
+Formal class 'SimInf_events' [package "SimInf"] with 10 slots
+  ..@ E         :Formal class 'dgCMatrix' [package "Matrix"] with 6 slots
+  .. .. ..@ i       : int(0) 
+  .. .. ..@ p       : int 0
+  .. .. ..@ Dim     : int [1:2] 0 0
+  .. .. ..@ Dimnames:List of 2
+  .. .. .. ..$ : NULL
+  .. .. .. ..$ : NULL
+  .. .. ..@ x       : num(0) 
+  .. .. ..@ factors : list()
+  ..@ N         : int[0 , 0 ] 
+  ..@ event     : int(0) 
+  ..@ time      : int(0) 
+  ..@ node      : int(0) 
+  ..@ dest      : int(0) 
+  ..@ n         : int(0) 
+  ..@ proportion: num(0) 
+  ..@ select    : int(0) 
+  ..@ shift     : int(0) 
+> stopifnot(identical(SimInf_events(), events))
+> 
+> ## Check the SimInf_events plot method. Reduce the run-time by only
+> ## using one year of data
+> data(events_SISe3)
+> events_SISe3 <- events_SISe3[events_SISe3$time < 366, ]
+> events <- SimInf_events(E = E, N = N, events = events_SISe3)
+> stopifnot(identical(events, show(events)))
+Number of scheduled events: 195919
+> pdf_file <- tempfile(fileext = ".pdf")
+> pdf(pdf_file)
+> plot(events)
+> dev.off()
+null device 
+          1 
+> stopifnot(file.exists(pdf_file))
+> unlink(pdf_file)
+> 
+> ## Test summary method with scheduled events
+> summary_expected <-
++     c("Number of scheduled events: 195919",
++       " - Exit: 45562 (n: min = 1 max = 1 avg = 1.0)",
++       " - Enter: 45603 (n: min = 1 max = 1 avg = 1.0)",
++       " - Internal transfer: 79225 (n: min = 1 max = 4 avg = 1.1)",
++       " - External transfer: 25529 (n: min = 1 max = 1 avg = 1.0)")
+> summary_observed <- capture.output(summary(events))
+> stopifnot(identical(summary_observed, summary_expected))
+> 
+> ## Test summary method with no scheduled events
+> events <- SimInf_events(E = E, N = N)
+> summary_expected <-
++     c("Number of scheduled events: 0",
++       " - Exit: 0",
++       " - Enter: 0",
++       " - Internal transfer: 0",
++       " - External transfer: 0")
+> summary_observed <- capture.output(summary(events))
+> stopifnot(identical(summary_observed, summary_expected))
+> 
+> ## Check if converting the events to a data.frame results in the same
+> ## as the events data submitted to the SimInf_events function.
+> events <- data.frame(
++     event = c(3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L,
++               3L, 3L, 3L, 3L, 3L, 3L),
++     time = c(17168L, 17169L, 17170L, 17171L, 17172L,
++              17173L, 17174L, 17175L, 17176L, 17177L,
++              17178L, 17179L, 17180L, 17181L, 17182L),
++     node = c(2L, 2L, 2L, 3L, 3L, 3L, 4L, 4L, 4L,
++              5L, 5L, 5L, 6L, 6L, 6L),
++     dest = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L,
++              1L, 1L, 1L, 1L, 1L, 1L),
++     n = c(1L, 1L, 1L, 2L, 2L, 2L, 3L, 3L, 3L, 4L,
++           4L, 4L, 5L, 5L, 5L),
++     proportion = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
++                    1, 1, 1, 1, 1),
++     select = c(1L, 1L, 2L, 1L, 1L, 2L, 1L, 1L,
++                2L, 1L, 1L, 2L, 1L, 1L, 2L),
++     shift = c(1L, 2L, 0L, 1L, 2L, 0L, 1L, 2L, 0L,
++               1L, 2L, 0L, 1L, 2L, 0L))
+> res <- SimInf_events(E = E, N = N, events = events)
+> stopifnot(identical(as(res, "data.frame"), events))
+> stopifnot(identical(as.data.frame(res), events))
+> 
+> ## Check that it fails when dest is out of bounds.
+> u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
+> events <- data.frame(event = 3, time = 2, node = 1, dest = 3,
++                      n = 1, proportion = 0, select = 2, shift = 0)
+> model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
++              gamma = 0.077)
+> res <- assertError(run(model))
+Scheduled event
+---------------
+event: 3 (external transfer event)
+time: 2
+node: 1
+dest: 3
+n: 1
+proportion: 0
+select: 2
+shift: 0
+
+> check_error(res, "'dest' is out of bounds.")
+> 
+> ## Check that it fails when node is out of bounds.
+> u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
+> events <- data.frame(event = 3, time = 2, node = 1, dest = 2,
++                      n = 1, proportion = 0, select = 2, shift = 0)
+> model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
++              gamma = 0.077)
+> model@events@node <- -1L
+> res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
+Scheduled event
+---------------
+event: 3 (external transfer event)
+time: 2
+node: -1
+dest: 2
+n: 1
+proportion: 0
+select: 2
+shift: 0
+
+> check_error(res, "'node' is out of bounds.")
+> 
+> ## Check that it fails for an invalid event type.
+> u0 <- data.frame(S = c(10, 10), I = c(0, 0), R = c(0, 0))
+> events <- data.frame(event = 0, time = 2, node = 1, dest = 0,
++                      n = 1, proportion = 0, select = 2, shift = 0)
+> model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
++              gamma = 0.077)
+> model@events@event <- 4L
+> res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
+Scheduled event
+---------------
+event: 4 (undefined event)
+time: 2
+node: 1
+dest: 0
+n: 1
+proportion: 0
+select: 2
+shift: 0
+
+> check_error(res, "Undefined event type.")
+> 
+> ## Check get/set select_matrix
+> model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1,
++              gamma = 1)
+> 
+> ## Set the select matrix
+> select_matrix(model) <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 3)
+> 
+> E_expected <- new("dgCMatrix",
++                   i = c(0L, 0L, 1L, 2L, 2L),
++                   p = c(0L, 1L, 4L, 5L),
++                   Dim = c(3L, 3L),
++                   Dimnames = list(c("S", "I", "R"), c("1", "2", "3")),
++                   x = c(1, 1, 1, 1, 1),
++                   factors = list())
+> 
+> ## Extract the select matrix from the model
+> E_observed <- select_matrix(model)
+> 
+> stopifnot(identical(E_expected, E_observed))
+> 
+> m <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0), nrow = 2)
+> res <- assertError(select_matrix(model) <- m)
+> check_error(res, "'value' must have one row for each compartment in the model.")
+> 
+> ## Check get/set shift_matrix
+> model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
+> 
+> ## Set the shift matrix
+> shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
+> 
+> N_expected <- structure(c(2L, 1L, 0L), .Dim = c(3L, 1L),
++                         .Dimnames = list(c("S", "I", "R"), "1"))
+> 
+> ## Extract the shift matrix from the model
+> N_observed <- shift_matrix(model)
+> 
+> stopifnot(identical(N_expected, N_observed))
+> 
+> shift_matrix(model) <- NULL
+> stopifnot(identical(shift_matrix(model),
++                     matrix(integer(0), nrow = 0, ncol = 0)))
+> 
+> m <- matrix(c(1, 0), nrow = 2, dimnames = list(c("S", "I")))
+> res <- assertError(select_matrix(model) <- m)
+> check_error(res, "'value' must have one row for each compartment in the model.")
+> 
+> m <- matrix(c("1", "0", "0"), nrow = 3)
+> res <- assertError(shift_matrix(model) <- m)
+> check_error(res, "'N' must be an integer matrix.")
+> 
+> m <- matrix(c(1.3, 0, 0), nrow = 3)
+> res <- assertError(shift_matrix(model) <- m)
+> check_error(res, "'N' must be an integer matrix.")
+> 
+> ## Check origin = character of event type
+> events <- data.frame(
++     event = c("exit", "exit", "enter", "enter", "intTrans",
++               "intTrans", "extTrans", "extTrans"),
++     time = structure(c(14369, 13278, 13610, 13408, 13687,
++                        13407, 13087, 13590), class = "Date"),
++     node = c(163L, 1087L, 1402L, 372L, 869L, 926L, 376L, 729L),
++     dest = c(0L, 0L, 0L, 0L, 0L, 0L, 139L, 479L),
++     n = c(1L, 1L, 1L, 1L, 3L, 1L, 1L, 1L),
++     proportion = c(0, 0, 0, 0, 0, 0, 0, 0),
++     select = c(5L, 6L, 1L, 1L, 5L, 5L, 4L, 4L),
++     shift = c(0L, 0L, 0L, 0L, 2L, 2L, 0L, 0L))
+> res <- SimInf_events(E = E, N = N, events = events, t0 = 12965)
+> 
+> stopifnot(
++     identical(
++         as.data.frame(res),
++         data.frame(
++             event = c("extTrans", "exit", "intTrans", "enter",
++                       "extTrans", "enter", "intTrans", "exit"),
++             time = structure(c(13087, 13278, 13407, 13408, 13590,
++                                13610, 13687, 14369),
++                              origin = "2005-07-01", class = "Date"),
++             node = c(376L, 1087L, 926L, 372L, 729L, 1402L, 869L, 163L),
++             dest = c(139L, 0L, 0L, 0L, 479L, 0L, 0L, 0L),
++             n = c(1L, 1L, 1L, 1L, 1L, 1L, 3L, 1L),
++             proportion = c(0, 0, 0, 0, 0, 0, 0, 0),
++             select = c(4L, 6L, 5L, 1L, 4L, 1L, 5L, 5L),
++             shift = c(0L, 0L, 2L, 0L, 0L, 0L, 2L, 0L),
++             stringsAsFactors = FALSE)))
+> 
+> ## Check that an error is raised when shift is out of bounds.
+> u0 <- data.frame(S = 10, I = 0, R = 0)
+> events <- data.frame(event = 2, time = 2, node = 1, dest = 0,
++                      n = 1, proportion = 0, select = 1, shift = 1)
+> model <- SIR(u0 = u0,
++              tspan = seq_len(3),
++              events = events,
++              beta = 0.16,
++              gamma = 0.077)
+> model@events@N <- matrix(c(0L, 0L, 0L),
++                          nrow = 3,
++                          dimnames = list(c("S", "I", "R"), NULL))
+> model@events@shift <- -1L
+> res <- assertError(.Call(SimInf:::SIR_run, model, "ssm"))
+Scheduled event
+---------------
+event: 2 (internal transfer event)
+time: 2
+node: 1
+dest: 0
+n: 1
+proportion: 0
+select: 1
+shift: -1
+
+> check_error(res, "'shift' is invalid.")
+> 
+> proc.time()
+   user  system elapsed 
+  1.904   0.342   2.274 

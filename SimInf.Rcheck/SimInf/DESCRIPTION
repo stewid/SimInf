@@ -1,5 +1,6 @@
 Package: SimInf
-Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
+Title: A Framework for Data-Driven Stochastic Disease Spread
+        Simulations
 Version: 9.8.1.9001
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     email = "stefan.widgren@gmail.com",
@@ -37,15 +38,15 @@ Description: Provides an efficient and very flexible framework to
     ('ABC-SMC') algorithm of Toni and others (2009)
     <doi:10.1098/rsif.2008.0172>.
 Acknowledgements: This software has been made possible by support from
-    the Swedish Research Council within the UPMARC Linnaeus center of
-    Excellence (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the
-    Swedish Research Council Formas (Stefan Engblom and Stefan
-    Widgren), the Swedish Board of Agriculture (Stefan Widgren), the
-    Swedish strategic research program eSSENCE (Stefan Widgren), and
-    in the framework of the Full Force project, supported by funding
-    from the European Union’s Horizon 2020 Research and Innovation
-    programme under grant agreement No 773830: One Health European
-    Joint Programme (Stefan Widgren).
+        the Swedish Research Council within the UPMARC Linnaeus center
+        of Excellence (Pavol Bauer, Robin Eriksson, and Stefan
+        Engblom), the Swedish Research Council Formas (Stefan Engblom
+        and Stefan Widgren), the Swedish Board of Agriculture (Stefan
+        Widgren), the Swedish strategic research program eSSENCE
+        (Stefan Widgren), and in the framework of the Full Force
+        project, supported by funding from the European Union’s Horizon
+        2020 Research and Innovation programme under grant agreement No
+        773830: One Health European Joint Programme (Stefan Widgren).
 License: GPL-3
 URL: https://github.com/stewid/SimInf, http://stewid.github.io/SimInf/
 BugReports: https://github.com/stewid/SimInf/issues
@@ -55,60 +56,28 @@ Biarch: true
 NeedsCompilation: yes
 SystemRequirements: GNU Scientific Library (GSL)
 Depends: R (>= 4.0)
-Imports:
-    digest,
-    graphics,
-    grDevices,
-    MASS,
-    methods,
-    mvtnorm,
-    stats,
-    utils,
-    Matrix (>= 1.3-0)
-Suggests:
-    knitr,
-    rmarkdown
-Collate:
-    'C-generator.R'
-    'check_arguments.R'
-    'init.R'
-    'valid.R'
-    'classes.R'
-    'SimInf_model.R'
-    'SEIR.R'
-    'SIR.R'
-    'SIS.R'
-    'SISe.R'
-    'SISe3.R'
-    'SISe3_sp.R'
-    'SISe_sp.R'
-    'SimInf-package.R'
-    'SimInf.R'
-    'SimInf_events.R'
-    'SimInf_indiv_events.R'
-    'run.R'
-    'density_ratio.R'
-    'abc.R'
-    'degree.R'
-    'distance.R'
-    'distributions.R'
-    'edge_properties.R'
-    'match_compartments.R'
-    'mparse.R'
-    'pmcmc.R'
-    'pfilter.R'
-    'n.R'
-    'openmp.R'
-    'package_skeleton.R'
-    'plot.R'
-    'prevalence.R'
-    'print.R'
-    'punchcard.R'
-    'trajectory.R'
-    'u0.R'
-    'v0.R'
+Imports: digest, graphics, grDevices, MASS, methods, mvtnorm, stats,
+        utils, Matrix (>= 1.3-0)
+Suggests: knitr, rmarkdown
+Collate: 'C-generator.R' 'check_arguments.R' 'init.R' 'valid.R'
+        'classes.R' 'SimInf_model.R' 'SEIR.R' 'SIR.R' 'SIS.R' 'SISe.R'
+        'SISe3.R' 'SISe3_sp.R' 'SISe_sp.R' 'SimInf-package.R'
+        'SimInf.R' 'SimInf_events.R' 'SimInf_indiv_events.R' 'run.R'
+        'density_ratio.R' 'abc.R' 'degree.R' 'distance.R'
+        'distributions.R' 'edge_properties.R' 'match_compartments.R'
+        'mparse.R' 'pmcmc.R' 'pfilter.R' 'n.R' 'openmp.R'
+        'package_skeleton.R' 'plot.R' 'prevalence.R' 'print.R'
+        'punchcard.R' 'trajectory.R' 'u0.R' 'v0.R'
 Encoding: UTF-8
 RoxygenNote: 7.3.2
-VignetteBuilder:
-    utils,
-    knitr
+VignetteBuilder: utils, knitr
+Packaged: 2025-05-13 08:31:25 UTC; aa
+Author: Stefan Widgren [aut, cre] (<https://orcid.org/0000-0001-5745-2284>),
+  Robin Eriksson [aut] (<https://orcid.org/0000-0002-4291-712X>),
+  Stefan Engblom [aut] (<https://orcid.org/0000-0002-3614-1732>),
+  Pavol Bauer [aut] (<https://orcid.org/0000-0003-4328-7171>),
+  Thomas Rosendal [ctb] (<https://orcid.org/0000-0002-6576-9668>),
+  Ivana Rodriguez Ewerlöf [ctb] (<https://orcid.org/0000-0002-9678-9813>),
+  Attractive Chaos [cph] (Author of 'kvec.h'.)
+Maintainer: Stefan Widgren <stefan.widgren@gmail.com>
+Built: R 4.3.3; x86_64-pc-linux-gnu; 2025-05-13 08:36:14 UTC; unix
