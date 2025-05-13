@@ -309,9 +309,10 @@ init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
 }
 
 plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
-   # Extract the log argument and remove it from argv
+    # Extract the log argument and remove it from argv
     log_arg <- argv$log
-    argv$log <- NULL  # Remove log from argv to avoid passing it to lower-level functions
+    # Remove log from argv to avoid passing it to lower-level functions
+    argv$log <- NULL  
 
     ## Plot lines
     for (i in seq_len(dim(pd$y)[1])) {
