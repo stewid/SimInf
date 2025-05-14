@@ -1,3 +1,0 @@
-LIBRARY SimInf.dll
-EXPORTS
- R_init_SimInf
