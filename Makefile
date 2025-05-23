@@ -24,7 +24,7 @@ pdf: roxygen
 
 # Generate README
 README.md: README.Rmd
-	Rscript -e "library(knitr); knit('README.Rmd')"
+	Rscript -e "knitr::knit('README.Rmd')"
 
 # Generate vignette
 .PHONY: vignette

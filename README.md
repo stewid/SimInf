@@ -47,7 +47,7 @@ defined by the operator `<-`. Using a variable for the size of the
 population, the SIR model can be described as:
 
 
-```r
+``` r
 library(SimInf)
 
 transitions <- c("S -> beta*S*I/N -> I",
@@ -65,7 +65,7 @@ the system is to be returned. Let us create a model that consists of
 starts with 99 susceptibles, 5 infected and 0 recovered individuals.
 
 
-```r
+``` r
 n <- 1000
 u0 <- data.frame(S = rep(99, n), I = rep(5, n), R = rep(0, n))
 
@@ -82,7 +82,7 @@ about the outcome, run the following commands:
 
 
 
-```r
+``` r
 result <- run(model)
 result
 ```
@@ -114,7 +114,7 @@ count in each compartment across nodes as a colored line together with
 the inter-quartile range using the same color, but with transparency.
 
 
-```r
+``` r
 plot(result)
 ```
 
@@ -128,7 +128,7 @@ in `tspan`. Below is the first 10 lines of the `data.frame` with
 simulated data.
 
 
-```r
+``` r
 trajectory(result)
 ```
 
@@ -155,7 +155,7 @@ or a disease and the right hand side of the formula specifies the
 compartments at risk. Below is the first 10 lines of the `data.frame`.
 
 
-```r
+``` r
 prevalence(result, I ~ S + I + R)
 ```
 
@@ -194,7 +194,7 @@ You can install the released version of `SimInf` from
 [CRAN](https://CRAN.R-project.org/package=SimInf)
 
 
-```r
+``` r
 install.packages("SimInf")
 ```
 
@@ -202,7 +202,7 @@ or use the `remotes` package to install the development version from
 [GitHub](https://github.com/stewid/SimInf)
 
 
-```r
+``` r
 library(remotes)
 install_github("stewid/SimInf")
 ```
@@ -239,7 +239,7 @@ use:
 - Bauer P, Engblom S, Widgren S (2016) Fast event-based
   epidemiological simulations on national scales. International
   Journal of High Performance Computing Applications, 30(4),
-  438--453. doi: 10.1177/1094342016635723
+  438--453. doi: [10.1177/1094342016635723](https://doi.org/10.1177/1094342016635723)
 
 ## Acknowledgments
 
