@@ -308,12 +308,7 @@ init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
     argv
 }
 
-plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
-    # Extract the log argument and remove it from argv
-    log_arg <- argv$log
-    # Remove log from argv to avoid passing it to lower-level functions
-    argv$log <- NULL  
-
+plot_data <- function(pd, argv, lty, col, frame.plot, legend, log) {
     ## Plot lines
     for (i in seq_len(dim(pd$y)[1])) {
         argv$y <- pd$y[i, ]
@@ -322,7 +317,7 @@ plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
 
         if (i == 1) {
             argv$frame.plot <- frame.plot
-            do.call(plot, c(argv, list(log = log_arg)))
+            do.call(plot, c(argv, log = log))
             argv$frame.plot <- NULL
         } else {
             do.call(lines, argv)
@@ -515,11 +510,11 @@ setMethod(
             pd <- init_plot_trajectory_data(x, compartments, index, range)
         }
 
-        argv <- init_plot_argv(x, y, pd, type, lwd, log = log, ...)  
+        argv <- init_plot_argv(x, y, pd, type, lwd, ...)
         lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
         col <- init_plot_color(argv$col, pd$compartments, pd$each)
 
-        plot_data(pd, argv, lty, col, frame.plot, legend)
+        plot_data(pd, argv, lty, col, frame.plot, legend, log)
 
         invisible(NULL)
     }
