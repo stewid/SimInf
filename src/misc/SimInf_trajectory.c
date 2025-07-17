@@ -491,15 +491,16 @@ SimInf_trajectory(
     /* Create a vector for the column names. */
     PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
     nprotect++;
-    SET_STRING_ELT(colnames, 0, STRING_ELT(id_lbl, 0));
-    SET_STRING_ELT(colnames, 1, Rf_mkChar("time"));
+    R_xlen_t col = 0;
+    SET_STRING_ELT(colnames, col++, STRING_ELT(id_lbl, 0));
+    SET_STRING_ELT(colnames, col++, Rf_mkChar("time"));
     for (R_xlen_t i = 0; i < dm_i_len; i++) {
         const R_xlen_t j = INTEGER(dm_i)[i] - 1;
-        SET_STRING_ELT(colnames, 2 + i, STRING_ELT(dm_lbl, j));
+        SET_STRING_ELT(colnames, col++, STRING_ELT(dm_lbl, j));
     }
     for (R_xlen_t i = 0; i < cm_i_len; i++) {
         const R_xlen_t j = INTEGER(cm_i)[i] - 1;
-        SET_STRING_ELT(colnames, 2 + dm_i_len + i, STRING_ELT(cm_lbl, j));
+        SET_STRING_ELT(colnames, col++, STRING_ELT(cm_lbl, j));
     }
 
     /* Determine the number of rows that is required for the
@@ -536,7 +537,8 @@ SimInf_trajectory(
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
 
     /* Add an identifier column to the 'data.frame'. */
-    SET_VECTOR_ELT(result, 0, vec = Rf_allocVector(INTSXP, nrow));
+    col = 0;
+    SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(INTSXP, nrow));
     p_vec = INTEGER(vec);
     if (ri) {
         for (size_t i = 0; i < kv_size(*ri); i++)
@@ -562,7 +564,7 @@ SimInf_trajectory(
     if (Rf_isNull(Rf_getAttrib(tspan, R_NamesSymbol))) {
         double *p_tspan = REAL(tspan);
 
-        SET_VECTOR_ELT(result, 1, vec = Rf_allocVector(INTSXP, nrow));
+        SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(INTSXP, nrow));
         p_vec = INTEGER(vec);
         if (ri) {
             for (size_t i = 0; i < kv_size(*ri); i++)
@@ -580,7 +582,7 @@ SimInf_trajectory(
         SEXP lbl_tspan = PROTECT(Rf_getAttrib(tspan, R_NamesSymbol));
         nprotect++;
 
-        SET_VECTOR_ELT(result, 1, vec = Rf_allocVector(STRSXP, nrow));
+        SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(STRSXP, nrow));
         if (ri) {
             for (size_t i = 0; i < kv_size(*ri); i++)
                 SET_STRING_ELT(vec, i, STRING_ELT(lbl_tspan, kv_A(*ri, i).time));
