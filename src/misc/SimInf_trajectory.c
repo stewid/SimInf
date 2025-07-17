@@ -447,11 +447,11 @@ SimInf_trajectory(
     SET_STRING_ELT(colnames, 0, STRING_ELT(id_lbl, 0));
     SET_STRING_ELT(colnames, 1, Rf_mkChar("time"));
     for (R_xlen_t i = 0; i < dm_i_len; i++) {
-        R_xlen_t j = INTEGER(dm_i)[i] - 1;
+        const R_xlen_t j = INTEGER(dm_i)[i] - 1;
         SET_STRING_ELT(colnames, 2 + i, STRING_ELT(dm_lbl, j));
     }
     for (R_xlen_t i = 0; i < cm_i_len; i++) {
-        R_xlen_t j = INTEGER(cm_i)[i] - 1;
+        const R_xlen_t j = INTEGER(cm_i)[i] - 1;
         SET_STRING_ELT(colnames, 2 + dm_i_len + i, STRING_ELT(cm_lbl, j));
     }
 
