@@ -48,7 +48,7 @@ SimInf_insert_id_time(
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
 
     if (m_stride < 1)
-        return -1;
+        return -1; /* #nocov */
 
     for (R_xlen_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
@@ -120,6 +120,55 @@ SimInf_insert_id_time2(
     }
 
     return 0;
+}
+
+static int
+SimInf_create_rowinfo(
+    rowinfo_vec **out,
+    SEXP dm,
+    SEXP cm,
+    R_xlen_t dm_i_len,
+    R_xlen_t cm_i_len,
+    int dm_sparse,
+    int cm_sparse,
+    R_xlen_t dm_stride,
+    R_xlen_t cm_stride,
+    R_xlen_t tlen)
+{
+    if (dm_i_len > 0 && cm_i_len > 0) {
+        if (dm_sparse && cm_sparse) {
+            *out = calloc(1, sizeof(rowinfo_vec));
+            if (!*out)
+                return -1; /* #nocov */
+
+            return SimInf_insert_id_time2(*out, dm, cm, dm_stride, cm_stride, tlen);
+        }
+    } else if (dm_i_len > 0 && dm_sparse) {
+        *out = calloc(1, sizeof(rowinfo_vec));
+        if (!*out)
+            return -1; /* #nocov */
+
+        return SimInf_insert_id_time(*out, dm, dm_stride, tlen);
+    } else if (cm_i_len > 0 && cm_sparse) {
+        *out = calloc(1, sizeof(rowinfo_vec));
+        if (!*out)
+            return -1; /* #nocov */
+
+        return SimInf_insert_id_time(*out, cm, cm_stride, tlen);
+    }
+
+    return 0;
+}
+
+static R_xlen_t
+SimInf_number_of_rows(
+    const rowinfo_vec *ri,
+    const R_xlen_t tlen,
+    const R_xlen_t id_len)
+{
+    if (ri)
+        return kv_size(*ri);
+    return tlen * id_len;
 }
 
 static void
@@ -432,11 +481,9 @@ SimInf_trajectory(
     const R_xlen_t tlen = XLENGTH(tspan);
     const R_xlen_t c_id_n = Rf_asInteger(id_n);
     const R_xlen_t id_len = Rf_isNull(id) ? c_id_n : XLENGTH(id);
-    R_xlen_t nrow = tlen * id_len;
     const R_xlen_t ncol = 2 + dm_i_len + cm_i_len; /* The '2' is for the
                                                     * 'identifier' and
                                                     * 'time' columns. */
-    rowinfo_vec *ri = NULL;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -460,48 +507,13 @@ SimInf_trajectory(
      * full data.frame with one row per node and time point, else the
      * number of rows depends on unique combinations of identifier and
      * time information in the sparse matrices. */
-    if (dm_i_len > 0 && cm_i_len > 0) {
-        if (dm_sparse && cm_sparse) {
-            ri = calloc(1, sizeof(rowinfo_vec));
-            if (!ri) {
-                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-                goto cleanup;                           /* #nocov */
-            }
-
-            if (SimInf_insert_id_time2(ri, dm, cm, dm_stride, cm_stride, tlen)) {
-                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-                goto cleanup;                           /* #nocov */
-            }
-
-            nrow = kv_size(*ri);
-        }
-    } else if (dm_i_len > 0 && dm_sparse) {
-        ri = calloc(1, sizeof(rowinfo_vec));
-        if (!ri) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-            goto cleanup;                           /* #nocov */
-        }
-
-        if (SimInf_insert_id_time(ri, dm, dm_stride, tlen)) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-            goto cleanup;                           /* #nocov */
-        }
-
-        nrow = kv_size(*ri);
-    } else if (cm_i_len > 0 && cm_sparse) {
-        ri = calloc(1, sizeof(rowinfo_vec));
-        if (!ri) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-            goto cleanup;                           /* #nocov */
-        }
-
-        if (SimInf_insert_id_time(ri, cm, cm_stride, tlen)) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-            goto cleanup;                           /* #nocov */
-        }
-
-        nrow = kv_size(*ri);
+    rowinfo_vec *ri = NULL;
+    if (SimInf_create_rowinfo(&ri, dm, cm, dm_i_len, cm_i_len, dm_sparse,
+                              cm_sparse, dm_stride, cm_stride, tlen)) {
+        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+        goto cleanup;                           /* #nocov */
     }
+    const R_xlen_t nrow = SimInf_number_of_rows(ri, tlen, id_len);
 
     /* Create a list for the 'data.frame' and add colnames and a
      * 'data.frame' class attribute. */
