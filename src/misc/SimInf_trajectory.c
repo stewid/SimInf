@@ -423,19 +423,19 @@ SimInf_trajectory(
     int nprotect = 0;
     int *p_vec;
     int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
-    R_xlen_t dm_i_len = XLENGTH(dm_i);
-    R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
-    int dm_sparse = Rf_isS4(dm) && Rf_inherits(dm, "dgCMatrix") ? 1 : 0;
-    R_xlen_t cm_i_len = XLENGTH(cm_i);
-    R_xlen_t cm_stride = Rf_isNull(cm_lbl) ? 0 : XLENGTH(cm_lbl);
-    int cm_sparse = Rf_isS4(cm) && Rf_inherits(cm, "dgCMatrix") ? 1 : 0;
-    R_xlen_t tlen = XLENGTH(tspan);
-    R_xlen_t c_id_n = Rf_asInteger(id_n);
-    R_xlen_t id_len = Rf_isNull(id) ? c_id_n : XLENGTH(id);
+    const R_xlen_t dm_i_len = XLENGTH(dm_i);
+    const R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
+    const int dm_sparse = Rf_isS4(dm) && Rf_inherits(dm, "dgCMatrix") ? 1 : 0;
+    const R_xlen_t cm_i_len = XLENGTH(cm_i);
+    const R_xlen_t cm_stride = Rf_isNull(cm_lbl) ? 0 : XLENGTH(cm_lbl);
+    const int cm_sparse = Rf_isS4(cm) && Rf_inherits(cm, "dgCMatrix") ? 1 : 0;
+    const R_xlen_t tlen = XLENGTH(tspan);
+    const R_xlen_t c_id_n = Rf_asInteger(id_n);
+    const R_xlen_t id_len = Rf_isNull(id) ? c_id_n : XLENGTH(id);
     R_xlen_t nrow = tlen * id_len;
-    R_xlen_t ncol = 2 + dm_i_len + cm_i_len; /* The '2' is for the
-                                              * 'identifier' and
-                                              * 'time' columns. */
+    const R_xlen_t ncol = 2 + dm_i_len + cm_i_len; /* The '2' is for the
+                                                    * 'identifier' and
+                                                    * 'time' columns. */
     rowinfo_vec *ri = NULL;
 
     /* Use all available threads in parallel regions. */
