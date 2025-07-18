@@ -170,7 +170,7 @@ SimInf_find_longest_path(
  */
 attribute_hidden
 SEXP
-SimInf_clean_indiv_events(
+SimInf_individual_events(
     SEXP id,
     SEXP event,
     SEXP time,

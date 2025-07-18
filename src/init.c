@@ -36,9 +36,9 @@ SEXP SISe3_sp_run(SEXP, SEXP);
 SEXP SISe_sp_run(SEXP, SEXP);
 SEXP SimInf_abc_proposals(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_abc_weights(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-SEXP SimInf_clean_indiv_events(SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_distance_matrix(SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_have_openmp(void);
+SEXP SimInf_individual_events(SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP SimInf_init_threads(SEXP);
 SEXP SimInf_lambertW0(SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
@@ -59,7 +59,7 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SISe_sp_run, 2),
     CALLDEF(SimInf_abc_proposals, 8),
     CALLDEF(SimInf_abc_weights, 7),
-    CALLDEF(SimInf_clean_indiv_events, 5),
+    CALLDEF(SimInf_individual_events, 5),
     CALLDEF(SimInf_distance_matrix, 5),
     CALLDEF(SimInf_have_openmp, 0),
     CALLDEF(SimInf_init_threads, 1),

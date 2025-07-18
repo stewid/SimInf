@@ -321,7 +321,7 @@ individual_events <- function(events) {
         i <- i[!d]
     }
 
-    keep <- .Call(SimInf_clean_indiv_events,
+    keep <- .Call(SimInf_individual_events,
                   id[i],
                   event[i],
                   time[i],
@@ -754,7 +754,7 @@ events_to_tex <- function(events) {
         i <- i[!d]
     }
 
-    keep <- .Call(SimInf_clean_indiv_events,
+    keep <- .Call(SimInf_individual_events,
                   id[i],
                   event[i],
                   time[i],
