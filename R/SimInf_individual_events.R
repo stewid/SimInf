@@ -251,6 +251,7 @@ check_indiv_events_nodes <- function(event, node, dest) {
 
 ##' Compare two vectors and return TRUE wherever elements are the
 ##' same, including NA's, and FALSE everywhere else.
+##' @noRd
 compareNA <- function(x, y) {
     z <- (x == y) | (is.na(x) & is.na(y))
     z[is.na(z)] <- FALSE
