@@ -50,7 +50,7 @@
 <span><span class="co"># S4 method for class 'SimInf_model'</span></span>
 <span><span class="fu">u0</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for class 'SimInf_indiv_events'</span></span>
+<span><span class="co"># S4 method for class 'SimInf_individual_events'</span></span>
 <span><span class="fu">u0</span><span class="op">(</span><span class="va">object</span>, time <span class="op">=</span> <span class="cn">NULL</span>, target <span class="op">=</span> <span class="cn">NULL</span>, age <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -69,23 +69,24 @@
 
 <dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
 <dd><p>Only used when object is of class
-<code>SimInf_indiv_events</code> object. The time-point that will be
-used to create u0. If left empty (the default), the earliest
-time among the events will be used.</p></dd>
+<code>SimInf_individual_events</code> object. The time-point that
+will be used to create u0. If left empty (the default), the
+earliest time among the events will be used.</p></dd>
 
 
 <dt id="arg-target">target<a class="anchor" aria-label="anchor" href="#arg-target"></a></dt>
 <dd><p>Only used when object is of class
-<code>SimInf_indiv_events</code> object. The SimInf model ('SEIR',
-'SIR', 'SIS', 'SISe3', 'SISe3_sp', 'SISe', or 'SISe_sp') to
-target the events and u0 for. The default, <code>NULL</code>,
-creates an <code>u0</code>, but where the compartments might have to
-be renamed and post-processed to fit the specific use case.</p></dd>
+<code>SimInf_individual_events</code> object. The SimInf model
+('SEIR', 'SIR', 'SIS', 'SISe3', 'SISe3_sp', 'SISe', or
+'SISe_sp') to target the events and u0 for. The default,
+<code>NULL</code>, creates an <code>u0</code>, but where the compartments
+might have to be renamed and post-processed to fit the
+specific use case.</p></dd>
 
 
 <dt id="arg-age">age<a class="anchor" aria-label="anchor" href="#arg-age"></a></dt>
 <dd><p>Only used when object is of class
-<code>SimInf_indiv_events</code> object. An integer vector with
+<code>SimInf_individual_events</code> object. An integer vector with
 break points in days for the ageing events. The default,
 <code>NULL</code>, creates an <code>u0</code> where all individuals belong
 to the same age category.</p></dd>

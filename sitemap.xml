@@ -27,7 +27,7 @@
 <url><loc>http://stewid.github.io/SimInf/reference/SimInf_abc-class.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/SimInf_events-class.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/SimInf_events.html</loc></url>
-<url><loc>http://stewid.github.io/SimInf/reference/SimInf_indiv_events-class.html</loc></url>
+<url><loc>http://stewid.github.io/SimInf/reference/SimInf_individual_events-class.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/SimInf_model-class.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/SimInf_model.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/SimInf_pfilter-class.html</loc></url>
@@ -35,7 +35,7 @@
 <url><loc>http://stewid.github.io/SimInf/reference/abc.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_abc.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_events.html</loc></url>
-<url><loc>http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_indiv_events.html</loc></url>
+<url><loc>http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_individual_events.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_pmcmc.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/boxplot-SimInf_model-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/continue_abc.html</loc></url>
@@ -70,7 +70,7 @@
 <url><loc>http://stewid.github.io/SimInf/reference/pfilter.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/plot-SimInf_abc-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/plot-SimInf_events-method.html</loc></url>
-<url><loc>http://stewid.github.io/SimInf/reference/plot-SimInf_indiv_events-method.html</loc></url>
+<url><loc>http://stewid.github.io/SimInf/reference/plot-SimInf_individual_events-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/plot-SimInf_pfilter-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/plot-SimInf_pmcmc-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/plot.html</loc></url>
@@ -88,13 +88,13 @@
 <url><loc>http://stewid.github.io/SimInf/reference/shift_matrix.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/show-SimInf_abc-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/show-SimInf_events-method.html</loc></url>
-<url><loc>http://stewid.github.io/SimInf/reference/show-SimInf_indiv_events-method.html</loc></url>
+<url><loc>http://stewid.github.io/SimInf/reference/show-SimInf_individual_events-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/show-SimInf_model-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/show-SimInf_pfilter-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/show-SimInf_pmcmc-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/summary-SimInf_abc-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/summary-SimInf_events-method.html</loc></url>
-<url><loc>http://stewid.github.io/SimInf/reference/summary-SimInf_indiv_events-method.html</loc></url>
+<url><loc>http://stewid.github.io/SimInf/reference/summary-SimInf_individual_events-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/summary-SimInf_model-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/summary-SimInf_pfilter-method.html</loc></url>
 <url><loc>http://stewid.github.io/SimInf/reference/summary-SimInf_pmcmc-method.html</loc></url>
