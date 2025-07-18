@@ -12,7 +12,7 @@ individual_events(events)
 \code{details}.}
 }
 \value{
-\linkS4class{SimInf_indiv_events}
+\linkS4class{SimInf_individual_events}
 }
 \description{
 In many countries, individual-based livestock data are collected

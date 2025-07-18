@@ -2,16 +2,16 @@
 % Please edit documentation in R/SimInf_individual_events.R
 \name{get_individuals}
 \alias{get_individuals}
-\alias{get_individuals,SimInf_indiv_events-method}
-\title{Extract individuals from \code{SimInf_indiv_events}}
+\alias{get_individuals,SimInf_individual_events-method}
+\title{Extract individuals from \code{SimInf_individual_events}}
 \usage{
 get_individuals(x, time = NULL)
 
-\S4method{get_individuals}{SimInf_indiv_events}(x, time = NULL)
+\S4method{get_individuals}{SimInf_individual_events}(x, time = NULL)
 }
 \arguments{
 \item{x}{an individual events object of class
-\code{SimInf_indiv_events}.}
+\code{SimInf_individual_events}.}
 
 \item{time}{the time-point for the lookup of individuals. Default
 is \code{NULL} which means to extract the individuals at the
