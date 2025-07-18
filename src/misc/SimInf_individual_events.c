@@ -182,7 +182,7 @@ SimInf_clean_indiv_events(
     const int *ptr_time = INTEGER(time);
     const int *ptr_node = INTEGER(node);
     const int *ptr_dest = INTEGER(dest);
-    R_xlen_t len = XLENGTH(id);
+    const R_xlen_t len = XLENGTH(id);
     SEXP keep;
     int *ptr_keep;
     int *ptr_path;
