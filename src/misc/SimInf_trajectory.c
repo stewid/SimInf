@@ -82,7 +82,7 @@ SimInf_insert_id_time2(
     const int *m2_jc = INTEGER(R_do_slot(m2, Rf_install("p")));
 
     if (m1_stride < 1 || m2_stride < 1)
-        return -1;
+        return -1; /* #nocov */
 
     for (R_xlen_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
