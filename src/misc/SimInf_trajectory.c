@@ -597,19 +597,20 @@ SimInf_trajectory(
     /* Copy data from the discrete state matrix. */
     if (dm_sparse) {
         SimInf_sparse2df_int(result, ri, dm, INTEGER(dm_i), dm_i_len,
-                             dm_stride, nrow, tlen, id_len, 2);
+                             dm_stride, nrow, tlen, id_len, col);
     } else {
         SimInf_dense2df_int(result, INTEGER(dm), INTEGER(dm_i), dm_i_len,
-                            dm_stride, nrow, tlen, id_len, c_id_n, 2, p_id);
+                            dm_stride, nrow, tlen, id_len, c_id_n, col, p_id);
     }
 
     /* Copy data from the continuous state matrix. */
+    col += dm_i_len;
     if (cm_sparse) {
         SimInf_sparse2df_real(result, ri, cm, INTEGER(cm_i), cm_i_len,
-                              cm_stride, nrow, tlen, id_len, 2 + dm_i_len);
+                              cm_stride, nrow, tlen, id_len, col);
     } else {
         SimInf_dense2df_real(result, REAL(cm), INTEGER(cm_i), cm_i_len, cm_stride,
-                             nrow, tlen, id_len, c_id_n, 2 + dm_i_len, p_id);
+                             nrow, tlen, id_len, c_id_n, col, p_id);
     }
 
 cleanup:
