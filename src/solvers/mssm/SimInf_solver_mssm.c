@@ -29,7 +29,7 @@
 
 #include "SimInf.h"
 #include "misc/SimInf_openmp.h"
-#include "SimInf_solver_mssm.h"
+#include "solvers/SimInf_solver.h"
 
 /**
  * SimInf multi-model solver

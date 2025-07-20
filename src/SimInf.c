@@ -26,9 +26,6 @@
 #include "misc/SimInf_arg.h"
 #include "misc/SimInf_openmp.h"
 #include "solvers/SimInf_solver.h"
-#include "solvers/ssm/SimInf_solver_ssm.h"
-#include "solvers/mssm/SimInf_solver_mssm.h"
-#include "solvers/aem/SimInf_solver_aem.h"
 
 static void
 SimInf_raise_error(

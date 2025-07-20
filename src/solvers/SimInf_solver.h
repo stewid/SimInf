@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2024 Stefan Widgren
+ * Copyright (C) 2015 -- 2025 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -381,5 +381,17 @@ void SimInf_print_status(
     const double tt,
     const double rate,
     const int transition);
+
+/* Declaration of the function to initialize and run the SimInf aem
+ * solver */
+int SimInf_run_solver_aem(SimInf_solver_args *args);
+
+/* Declaration of the function to initialize and run the SimInf
+ * multi-model ssm solver */
+int SimInf_run_solver_mssm(SimInf_solver_args *args);
+
+/* Declaration of the function to initialize and run the SimInf ssm
+ * solver */
+int SimInf_run_solver_ssm(SimInf_solver_args *args);
 
 #endif
