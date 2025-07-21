@@ -22,8 +22,8 @@ percolate_down(
 {
     int child;
     int node=n1;
-    double key=data[node];
-    int j=INDEX[node];
+    const double key = data[node];
+    const int j = INDEX[node];
 
     while ((child = (node<<1)+1)<N) {
         if (child!=N-1 && data[child+1]<data[child])
@@ -41,9 +41,9 @@ percolate_down(
         node=child;
     }
 
-    data[node]=key;
-    INDEX[node]=j;
-    INDEX2[j]=node;
+    data[node] = key;
+    INDEX[node] = j;
+    INDEX2[j] = node;
 }
 
 static void
@@ -54,8 +54,8 @@ percolate_up(
     int *INDEX2)
 {
     int parent;
-    int j=INDEX[node];
-    double key=data[node];
+    const double key = data[node];
+    const int j = INDEX[node];
 
     do {
         parent=(node-1)>>1;
@@ -72,9 +72,9 @@ percolate_up(
         node=parent;
     } while (parent>0);
 
-    data[node]=key;
-    INDEX[node]=j;
-    INDEX2[j]=node;
+    data[node] = key;
+    INDEX[node] = j;
+    INDEX2[j] = node;
 }
 
 attribute_hidden
