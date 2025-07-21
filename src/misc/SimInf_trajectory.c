@@ -471,7 +471,7 @@ SimInf_trajectory(
     int error = 0;
     int nprotect = 0;
     int *p_vec;
-    int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
+    const int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
     const R_xlen_t dm_i_len = XLENGTH(dm_i);
     const R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
     const int dm_sparse = Rf_isS4(dm) && Rf_inherits(dm, "dgCMatrix") ? 1 : 0;
@@ -562,7 +562,7 @@ SimInf_trajectory(
 
     /* Add a 'time' column to the 'data.frame'. */
     if (Rf_isNull(Rf_getAttrib(tspan, R_NamesSymbol))) {
-        double *p_tspan = REAL(tspan);
+        const double *p_tspan = REAL(tspan);
 
         SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(INTSXP, nrow));
         p_vec = INTEGER(vec);
