@@ -940,10 +940,8 @@ SimInf_store_solution_sparse(
 {
     while (!model[0].U && model[0].U_it < model[0].tlen &&
            model[0].tt > model[0].tspan[model[0].U_it]) {
-        int j;
-
         /* Copy compartment state to U_sparse */
-        for (j = model[0].jcU[model[0].U_it];
+        for (int j = model[0].jcU[model[0].U_it];
              j < model[0].jcU[model[0].U_it + 1]; j++)
             model[0].prU[j] = model[0].u[model[0].irU[j]];
         model[0].U_it++;
@@ -951,10 +949,8 @@ SimInf_store_solution_sparse(
 
     while (!model[0].V && model[0].V_it < model[0].tlen &&
            model[0].tt > model[0].tspan[model[0].V_it]) {
-        int j;
-
         /* Copy continuous state to V_sparse */
-        for (j = model[0].jcV[model[0].V_it];
+        for (int j = model[0].jcV[model[0].V_it];
              j < model[0].jcV[model[0].V_it + 1]; j++)
             model[0].prV[j] = model[0].v_new[model[0].irV[j]];
         model[0].V_it++;
