@@ -97,8 +97,8 @@ SimInf_distance_matrix(
     SEXP min_dist_,
     SEXP na_fail)
 {
-    double *x = REAL(x_);
-    double *y = REAL(y_);
+    const double *x = REAL(x_);
+    const double *y = REAL(y_);
     double cutoff = Rf_asReal(cutoff_);
     double min_dist = Rf_asReal(min_dist_);
     R_xlen_t len = XLENGTH(x_);
