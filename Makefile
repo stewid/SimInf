@@ -158,7 +158,7 @@ valgrind:
 # https://github.com/danmar/cppcheck/
 .PHONY: cppcheck
 cppcheck:
-	cppcheck -I ./inst/include/ src
+	cppcheck -I ./inst/include/ --check-level=exhaustive --enable=style src
 
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
