@@ -971,18 +971,16 @@ SimInf_compartment_model_free(
         for (int i = 0; i < model->Nthread; i++) {
             SimInf_compartment_model *m = &model[i];
 
-            if (m) {
-                free(m->t_rate);
-                m->t_rate = NULL;
-                free(m->sum_t_rate);
-                m->sum_t_rate = NULL;
-                free(m->t_time);
-                m->t_time = NULL;
+            free(m->t_rate);
+            m->t_rate = NULL;
+            free(m->sum_t_rate);
+            m->sum_t_rate = NULL;
+            free(m->t_time);
+            m->t_time = NULL;
 
-                if (m->Nrep > 0 || i == 0) {
-                    free(m->update_node);
-                    m->update_node = NULL;
-                }
+            if (m->Nrep > 0 || i == 0) {
+                free(m->update_node);
+                m->update_node = NULL;
             }
         }
 
