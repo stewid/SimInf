@@ -99,10 +99,10 @@ update(
     int *INDEX2,
     int N)
 {
-    int parent=(node-1)>>1;
+    const int parent = (node - 1) >> 1;
 
-    if (node>0 && data[node]<data[parent])
-        percolate_up(node,data,INDEX,INDEX2);
+    if (node > 0 && data[node] < data[parent])
+        percolate_up(node, data, INDEX, INDEX2);
     else
-        percolate_down(node,data,INDEX,INDEX2,N);
+        percolate_down(node, data, INDEX, INDEX2, N);
 }
