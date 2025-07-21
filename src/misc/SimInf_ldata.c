@@ -54,8 +54,8 @@ SimInf_ldata_sp(
     SEXP metric)
 {
     SEXP result;
-    double *val, *ldata, *ld;
-    int *degree = NULL, i, *ir, *jc, Nld, Nn, node, n_data, m;
+    double *ldata;
+    int *degree = NULL, i, Nld, node, m;
 
     /* Check arguments */
     if (SimInf_arg_check_matrix(data))
@@ -66,13 +66,13 @@ SimInf_ldata_sp(
         Rf_error("Invalid 'metric' argument.");
 
     /* Extract data from 'data' */
-    Nn = INTEGER(R_do_slot(data, R_DimSymbol))[1];
-    ld = REAL(data);
+    const int Nn = INTEGER(R_do_slot(data, R_DimSymbol))[1];
+    const double *ld = REAL(data);
 
     /* Extract data from the distance matrix */
-    ir = INTEGER(R_do_slot(distance, Rf_install("i")));
-    jc = INTEGER(R_do_slot(distance, Rf_install("p")));
-    val = REAL(R_do_slot(distance, Rf_install("x")));
+    const int *ir = INTEGER(R_do_slot(distance, Rf_install("i")));
+    const int *jc = INTEGER(R_do_slot(distance, Rf_install("p")));
+    const double *val = REAL(R_do_slot(distance, Rf_install("x")));
 
     /* Extract data from 'metric' */
     m = INTEGER(metric)[0];
@@ -104,7 +104,7 @@ SimInf_ldata_sp(
     Nld = (Nld + 1) * 2;
 
     /*  3) Add space for local model parameters in 'data' */
-    n_data = INTEGER(R_do_slot(data, R_DimSymbol))[0];
+    const int n_data = INTEGER(R_do_slot(data, R_DimSymbol))[0];
     Nld += n_data;
 
     /* Allocate and initialize memory for ldata */
