@@ -21,8 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_SOLVER_H
-#define INCLUDE_SIMINF_SOLVER_H
+#pragma once
 
 #include <gsl/gsl_rng.h>
 
@@ -393,5 +392,3 @@ int SimInf_run_solver_mssm(SimInf_solver_args *args);
 /* Declaration of the function to initialize and run the SimInf ssm
  * solver */
 int SimInf_run_solver_ssm(SimInf_solver_args *args);
-
-#endif

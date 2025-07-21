@@ -45,8 +45,7 @@ int main() {
 
 */
 
-#ifndef AC_KVEC_H
-#define AC_KVEC_H
+#pragma once
 
 #include <stdlib.h>
 
@@ -86,5 +85,3 @@ int main() {
 						   (v).a = (type*)realloc((v).a, sizeof(type) * (v).m), 0) \
 						  : (v).n <= (size_t)(i)? (v).n = (i) + 1 \
 						  : 0), (v).a[(i)])
-
-#endif
