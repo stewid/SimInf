@@ -421,23 +421,21 @@ SimInf_aem_arguments_free(
             SimInf_aem_arguments *m = &method[i];
             const SimInf_compartment_model *mod = &model[i];
 
-            if (m) {
-                /* AEM variables */
-                if (m->rng_vec) {
-                    int j;
-                    for (j = 0; j < mod->Nn * mod->Nt; j++)
-                        gsl_rng_free(m->rng_vec[j]);
-                }
-                m->rng_vec = NULL;
-                free(m->reactHeap);
-                m->reactHeap = NULL;
-                free(m->reactInf);
-                m->reactInf = NULL;
-                free(m->reactNode);
-                m->reactNode = NULL;
-                free(m->reactTimes);
-                m->reactTimes = NULL;
+            /* AEM variables */
+            if (m->rng_vec) {
+                int j;
+                for (j = 0; j < mod->Nn * mod->Nt; j++)
+                    gsl_rng_free(m->rng_vec[j]);
             }
+            m->rng_vec = NULL;
+            free(m->reactHeap);
+            m->reactHeap = NULL;
+            free(m->reactInf);
+            m->reactInf = NULL;
+            free(m->reactNode);
+            m->reactNode = NULL;
+            free(m->reactTimes);
+            m->reactTimes = NULL;
         }
         free(method);
     }
