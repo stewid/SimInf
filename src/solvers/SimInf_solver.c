@@ -532,13 +532,11 @@ SimInf_scheduled_events_free(
         for (i = 0; i < events->Nthread; i++) {
             SimInf_scheduled_events *e = &events[i];
 
-            if (e) {
-                kv_destroy(e->events);
-                free(e->individuals);
-                e->individuals = NULL;
-                gsl_rng_free(e->rng);
-                e->rng = NULL;
-            }
+            kv_destroy(e->events);
+            free(e->individuals);
+            e->individuals = NULL;
+            gsl_rng_free(e->rng);
+            e->rng = NULL;
         }
 
         free(events);
