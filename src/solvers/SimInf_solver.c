@@ -442,7 +442,7 @@ attribute_hidden
 int
 SimInf_scheduled_events_create(
     SimInf_scheduled_events **out,
-    SimInf_solver_args *args,
+    const SimInf_solver_args *args,
     gsl_rng *rng)
 {
     int i;

@@ -419,7 +419,7 @@ SimInf_aem_arguments_free(
 
         for (i = 0; i < Nthread; i++) {
             SimInf_aem_arguments *m = &method[i];
-            SimInf_compartment_model *mod = &model[i];
+            const SimInf_compartment_model *mod = &model[i];
 
             if (m) {
                 /* AEM variables */
@@ -469,7 +469,7 @@ SimInf_aem_arguments_create(
 
     for (i = 0; i < Nthread; i++) {
         int node;
-        SimInf_compartment_model *m = &model[i];
+        const SimInf_compartment_model *m = &model[i];
         /* Binary heap storing all reaction events */
         /* we have one for each node. Heap is thus only the size of the # transitions */
         method[i].reactHeapSize = m->Nt;
