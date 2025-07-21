@@ -55,7 +55,7 @@ SimInf_ldata_sp(
 {
     SEXP result;
     double *ldata;
-    int *degree = NULL, i, Nld, node, m;
+    int *degree = NULL, Nld, m;
 
     /* Check arguments */
     if (SimInf_arg_check_matrix(data))
@@ -92,7 +92,7 @@ SimInf_ldata_sp(
     if (!degree)
         Rf_error("Unable to allocate memory buffer."); /* #nocov */
     Nld = 0;
-    for (i = 0; i < Nn; i++) {
+    for (int i = 0; i < Nn; i++) {
         const int k = jc[i + 1] - jc[i];
         if (k > Nld)
             Nld = k;
@@ -112,15 +112,15 @@ SimInf_ldata_sp(
     memset(REAL(result), 0, Nn * Nld * sizeof(double));
     ldata = REAL(result);
 
-    for (node = 0; node < Nn; node++) {
+    for (int node = 0; node < Nn; node++) {
         int k = 0;
 
         /* Copy local model parameters */
-        for (i = 0; i < n_data; i++, k++)
+        for (int i = 0; i < n_data; i++, k++)
             ldata[node * Nld + k] = ld[node * n_data + k];
 
         /* Copy neighbor data */
-        for (i = jc[node]; i < jc[node + 1]; i++) {
+        for (int i = jc[node]; i < jc[node + 1]; i++) {
             ldata[node * Nld + k++] = ir[i];
             switch (m) {
             case 1:
