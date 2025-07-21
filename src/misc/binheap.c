@@ -24,17 +24,16 @@ percolate_down(
     int node=n1;
     double key=data[node];
     int j=INDEX[node];
-    int rxn;
 
     while ((child = (node<<1)+1)<N) {
         if (child!=N-1 && data[child+1]<data[child])
             child++;
 
         if (data[child]<key) {
-            data[node]=data[child];
-            rxn=INDEX[child];
-            INDEX2[rxn]=node;
-            INDEX[node]=rxn;
+            data[node] = data[child];
+            const int rxn = INDEX[child];
+            INDEX2[rxn] = node;
+            INDEX[node] = rxn;
         } else {
             break;
         }
@@ -55,7 +54,6 @@ percolate_up(
     int *INDEX2)
 {
     int parent;
-    int rxn;
     int j=INDEX[node];
     double key=data[node];
 
@@ -63,10 +61,10 @@ percolate_up(
         parent=(node-1)>>1;
 
         if (key<data[parent]) {
-            rxn=INDEX[parent];
-            data[node]=data[parent];
-            INDEX2[rxn]=node;
-            INDEX[node]=rxn;
+            data[node] = data[parent];
+            const int rxn = INDEX[parent];
+            INDEX2[rxn] = node;
+            INDEX[node] = rxn;
         } else {
             break;
         }
