@@ -455,15 +455,13 @@ SimInf_aem_arguments_create(
     int Nthread,
     gsl_rng *rng)
 {
-    int i;
     SimInf_aem_arguments *method = NULL;
 
     method = calloc(Nthread, sizeof(SimInf_aem_arguments));
     if(!method)
         goto on_error; /* #nocov */
 
-    for (i = 0; i < Nthread; i++) {
-        int node;
+    for (int i = 0; i < Nthread; i++) {
         const SimInf_compartment_model *m = &model[i];
         /* Binary heap storing all reaction events */
         /* we have one for each node. Heap is thus only the size of the # transitions */
@@ -489,9 +487,8 @@ SimInf_aem_arguments_create(
         if (!method[i].rng_vec)
             goto on_error; /* #nocov */
 
-        for (node = 0; node < m->Nn; node++) {
-            int trans;
-            for (trans = 0; trans < m->Nt; trans++) {
+        for (int node = 0; node < m->Nn; node++) {
+            for (int trans = 0; trans < m->Nt; trans++) {
                 /* Random number generator */
                 method[i].rng_vec[m->Nt * node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
                 if (!method[i].rng_vec[m->Nt * node + trans])
