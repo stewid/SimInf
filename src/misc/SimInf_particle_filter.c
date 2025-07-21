@@ -89,20 +89,18 @@ SimInf_split_events(
     int t_end_i = 0;
     int t_len;
     int t_end_len;
-    int *ptr_t;
-    int *ptr_t_end;
     int *ptr_m;
     SEXP m;
 
     if (!Rf_isInteger(t) || !Rf_length(t))
         Rf_error("'t' must be an integer vector with length >= 1.");
     t_len = Rf_length(t);
-    ptr_t = INTEGER(t);
+    const int *ptr_t = INTEGER(t);
 
     if (!Rf_isInteger(t_end) || !Rf_length(t_end))
         Rf_error("'t_end' must be an integer vector with length >= 1.");
     t_end_len = Rf_length(t_end);
-    ptr_t_end = INTEGER(t_end);
+    const int *ptr_t_end = INTEGER(t_end);
 
     /* Create a matrix to hold the result. */
     PROTECT(m = Rf_allocMatrix(INTSXP, t_end_len, 2));
