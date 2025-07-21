@@ -527,9 +527,7 @@ SimInf_scheduled_events_free(
     SimInf_scheduled_events *events)
 {
     if (events) {
-        int i;
-
-        for (i = 0; i < events->Nthread; i++) {
+        for (int i = 0; i < events->Nthread; i++) {
             SimInf_scheduled_events *e = &events[i];
 
             kv_destroy(e->events);
