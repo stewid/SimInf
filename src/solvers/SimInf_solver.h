@@ -357,7 +357,7 @@ void SimInf_compartment_model_free(
     SimInf_compartment_model *model);
 
 int SimInf_scheduled_events_create(
-    SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng);
+    SimInf_scheduled_events **out, const SimInf_solver_args *args, gsl_rng *rng);
 
 void SimInf_scheduled_events_free(
     SimInf_scheduled_events *events);
