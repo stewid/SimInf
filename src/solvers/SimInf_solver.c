@@ -364,10 +364,9 @@ SimInf_split_events(
     int Nn,
     int Nthread)
 {
-    int i;
     const int chunk_size = Nn / Nthread;
 
-    for (i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
         const SimInf_scheduled_event e = {event[i], time[i], node[i] - 1,
                                           dest[i] - 1, n[i], proportion[i],
                                           select[i] - 1, shift[i] - 1};
