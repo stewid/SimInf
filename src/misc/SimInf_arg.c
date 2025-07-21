@@ -132,6 +132,6 @@ SimInf_sparse(
     R_xlen_t i,
     R_xlen_t j)
 {
-    int *d = INTEGER(R_do_slot(m, Rf_install("Dim")));
+    const int *d = INTEGER(R_do_slot(m, Rf_install("Dim")));
     return d[0] == i && d[1] == j;
 }
