@@ -110,7 +110,7 @@ SimInf_solver_ssm(
                 for (int node = 0; node < m.Nn && !m.error; node++) {
                     for (;;) {
                         double cum, rand, tau, delta = 0.0;
-                        int j, tr;
+                        int tr;
 
                         /* 1a) Compute time to next event for this
                          * node. */
@@ -153,7 +153,7 @@ SimInf_solver_ssm(
                         }
 
                         /* 1c) Update the state of the node */
-                        for (j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
+                        for (int j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
                             m.u[node * m.Nc + m.irS[j]] += m.prS[j];
                             if (m.u[node * m.Nc + m.irS[j]] < 0) {
                                 SimInf_print_status(m.Nc, &m.u[node * m.Nc],
@@ -167,7 +167,7 @@ SimInf_solver_ssm(
 
                         /* 1d) Recalculate sum_t_rate[node] using
                          * dependency graph. */
-                        for (j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
+                        for (int j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
                             const double old = m.t_rate[node * m.Nt + m.irG[j]];
                             const double rate = (*m.tr_fun[m.irG[j]])(
                                 &m.u[node * m.Nc], &m.v[node * m.Nd],
