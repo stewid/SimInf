@@ -284,12 +284,12 @@ SimInf_solver_ssm(
 
         /* Swap the pointers to the continuous state variable so that
          * 'v' equals 'v_new'. Moreover, check for error. */
-        for (int k = 0; k < Nthread; k++) {
-            double *v_tmp = model[k].v;
-            model[k].v = model[k].v_new;
-            model[k].v_new = v_tmp;
-            if (model[k].error)
-                return model[k].error;
+        for (int i = 0; i < Nthread; i++) {
+            double *v_tmp = model[i].v;
+            model[i].v = model[i].v_new;
+            model[i].v_new = v_tmp;
+            if (model[i].error)
+                return model[i].error;
         }
 
         /* If the simulation has reached the final time, exit. */
