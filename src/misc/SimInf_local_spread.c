@@ -50,14 +50,14 @@ SimInf_local_spread(
     const int Nc,
     const double D)
 {
-    int j, k;
-    double N_j, ls = 0.0;
+    double ls = 0.0;
     const double phi_i_N_i = phi_i * N_i;
 
-    j = (int)*neighbors++;
+    int j = (int)*neighbors++;
     while (j >= 0) {
         /* Count number of individuals in node j */
-        for (k = j * Nc, N_j = 0; k < (j + 1) * Nc; k++)
+        double N_j = 0;
+        for (int k = j * Nc; k < (j + 1) * Nc; k++)
             N_j += u[k];
 
         if (N_j > 0.0)
