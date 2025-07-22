@@ -1058,9 +1058,9 @@ SimInf_compartment_model_create(
             model[i].Nrep = u - l;
 
             if (i > 0) {
-                model[i].u = &model[0].u[l * args->Nn * args->Nc];
-                model[i].v = &model[0].v[l * args->Nn * args->Nd];
-                model[i].v_new = &model[0].v_new[l * args->Nn * args->Nd];
+                model[i].u = &(model[0].u[l * args->Nn * args->Nc]);
+                model[i].v = &(model[0].v[l * args->Nn * args->Nd]);
+                model[i].v_new = &(model[0].v_new[l * args->Nn * args->Nd]);
 
                 /* Setup vector to keep track of nodes that must be
                  * updated due to scheduled events */
