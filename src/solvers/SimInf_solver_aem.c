@@ -308,8 +308,7 @@ SimInf_solver_aem(
                         break;
                     } else if (rc > 0 || sa.update_node[node]) {
                         /* Update transition rates */
-                        int j = 0;
-                        for (; j < sa.Nt; j++) {
+                        for (int j = 0; j < sa.Nt; j++) {
                             const double old = sa.t_rate[node * sa.Nt + j];
                             const double rate = (*sa.tr_fun[j])(
                                 &sa.u[node * sa.Nc], &sa.v_new[node * sa.Nd],
