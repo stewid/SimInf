@@ -85,8 +85,7 @@ initialize_heap(
     int *INDEX2,
     int N)
 {
-    int i;
-    for (i=(N-1)>>1; i>=0; i--)
+    for (int i=(N-1)>>1; i>=0; i--)
         percolate_down(i,data,INDEX,INDEX2,N);
 }
 
