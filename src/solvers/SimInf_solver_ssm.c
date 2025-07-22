@@ -216,14 +216,13 @@ SimInf_solver_ssm(
             #  pragma omp for
             #endif
             for (i = 0; i < Nthread; i++) {
-                int node;
                 SimInf_compartment_model m = *&model[i];
 
                 /* (4) Incorporate model specific actions after each
                  * timestep e.g. update the infectious pressure
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
-                for (node = 0; node < m.Nn; node++) {
+                for (int node = 0; node < m.Nn; node++) {
                     const int rc = m.pts_fun(
                         &m.v_new[node * m.Nd], &m.u[node * m.Nc],
                         &m.v[node * m.Nd], &m.ldata[node * m.Nld],
