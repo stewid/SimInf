@@ -113,8 +113,7 @@ SimInf_solver_aem(
 
 	    /* Calculate the propensity for every reaction*/
 	    for (int node = 0; node < sa.Nn; node++) {
-                int j;
-                for (j = 0; j < sa.Nt; j++){
+                for (int j = 0; j < sa.Nt; j++){
                     const double rate = (*sa.tr_fun[j])(&sa.u[node * sa.Nc],
                                                         &sa.v[node * sa.Nd],
                                                         &sa.ldata[node * sa.Nld],
