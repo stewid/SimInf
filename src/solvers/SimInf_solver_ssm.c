@@ -233,10 +233,9 @@ SimInf_solver_ssm(
                         break;
                     } else if (rc > 0 || m.update_node[node]) {
                         /* Update transition rates */
-                        int j = 0;
                         double delta = 0.0;
 
-                        for (; j < m.Nt; j++) {
+                        for (int j = 0; j < m.Nt; j++) {
                             const double old = m.t_rate[node * m.Nt + j];
                             const double rate = (*m.tr_fun[j])(
                                 &m.u[node * m.Nc], &m.v_new[node * m.Nd],
