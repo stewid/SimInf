@@ -444,14 +444,13 @@ SimInf_scheduled_events_create(
     const SimInf_solver_args *args,
     gsl_rng *rng)
 {
-    int i;
     SimInf_scheduled_events *events = NULL;
 
     events = calloc(args->Nthread, sizeof(SimInf_scheduled_events));
     if (!events)
         goto on_error; /* #nocov */
 
-    for (i = 0; i < args->Nthread; i++) {
+    for (int i = 0; i < args->Nthread; i++) {
         /*** Constants ***/
         events[i].Nthread = args->Nthread;
 
