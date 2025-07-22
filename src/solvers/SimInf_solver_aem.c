@@ -296,7 +296,6 @@ SimInf_solver_aem(
             #  pragma omp for
             #endif
             for (i = 0; i < Nthread; i++) {
-                int node;
                 SimInf_compartment_model sa = *&model[i];
                 SimInf_aem_arguments ma = *&method[i];
 
@@ -304,7 +303,7 @@ SimInf_solver_aem(
                  * timestep e.g. update the infectious pressure
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
-                for (node = 0; node < sa.Nn; node++) {
+                for (int node = 0; node < sa.Nn; node++) {
                     const int rc = sa.pts_fun(
                         &sa.v_new[node * sa.Nd], &sa.u[node * sa.Nc],
                         &sa.v[node * sa.Nd], &sa.ldata[node * sa.Nld],
