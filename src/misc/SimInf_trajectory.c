@@ -568,14 +568,14 @@ SimInf_trajectory(
         p_vec = INTEGER(vec);
         if (ri) {
             for (size_t i = 0; i < kv_size(*ri); i++)
-                p_vec[i] = p_tspan[kv_A(*ri, i).time];
+                p_vec[i] = (int)p_tspan[kv_A(*ri, i).time];
         } else {
             #ifdef _OPENMP
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (R_xlen_t t = 0; t < tlen; t++) {
                 for (R_xlen_t i = 0; i < id_len; i++)
-                    p_vec[t * id_len + i] = p_tspan[t];
+                    p_vec[t * id_len + i] = (int)p_tspan[t];
             }
         }
     } else {
