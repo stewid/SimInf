@@ -101,12 +101,10 @@ SimInf_solver_aem(
     #  pragma omp parallel num_threads(SimInf_num_threads())
     #endif
     {
-        int i;
-
         #ifdef _OPENMP
         #  pragma omp for
         #endif
-        for (i = 0; i < Nthread; i++) {
+        for (int i = 0; i < Nthread; i++) {
             int node;
             SimInf_compartment_model sa = *&model[i];
             SimInf_aem_arguments ma = *&method[i];
