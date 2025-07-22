@@ -171,13 +171,12 @@ SimInf_solver_aem(
             #  pragma omp for
             #endif
             for (i = 0; i < Nthread; i++) {
-                int node;
                 SimInf_compartment_model sa = *&model[i];
                 SimInf_aem_arguments ma = *&method[i];
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
-                for (node = 0; node < sa.Nn && !sa.error; node++) {
+                for (int node = 0; node < sa.Nn && !sa.error; node++) {
                     for (;;) {
                         int ii,j,tr;
                         double old_t_rate,rate;
