@@ -567,13 +567,11 @@ SimInf_print_event(
     #  pragma omp critical
     #endif
     {
-        int i;
-
         if (irE && jcE && u) {
             int Nindividuals = 0;
 
             /* Count total number of individuals */
-            for (i = jcE[e->select]; i < jcE[e->select + 1]; i++)
+            for (int i = jcE[e->select]; i < jcE[e->select + 1]; i++)
                 Nindividuals += u[node * Nc + irE[i]];
 
             /* Number of states */
@@ -595,7 +593,7 @@ SimInf_print_event(
             REprintf("---------------------\n");
 
             REprintf("{");
-            for (i = 0; i < Nc; i++) {
+            for (int i = 0; i < Nc; i++) {
                 REprintf("%i", u[node * Nc + i]);
                 if (i < (Nc - 1))
                     REprintf(", ");
@@ -608,7 +606,7 @@ SimInf_print_event(
             REprintf("---------------------\n");
 
             REprintf("{");
-            for (i = 0; i < Nc; i++) {
+            for (int i = 0; i < Nc; i++) {
                 REprintf("%i", u[dest * Nc + i]);
                 if (i < (Nc - 1))
                     REprintf(", ");
