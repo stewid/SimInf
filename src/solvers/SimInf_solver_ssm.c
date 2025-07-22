@@ -42,7 +42,6 @@ SimInf_solver_ssm(
     SimInf_scheduled_events *events)
 {
     int Nthread = model->Nthread;
-    int k;
 
     #ifdef _OPENMP
     #  pragma omp parallel num_threads(SimInf_num_threads())
@@ -86,7 +85,7 @@ SimInf_solver_ssm(
     }
 
     /* Check for error during initialization. */
-    for (k = 0; k < Nthread; k++)
+    for (int k = 0; k < Nthread; k++)
         if (model[k].error)
             return model[k].error;
 
@@ -289,7 +288,7 @@ SimInf_solver_ssm(
 
         /* Swap the pointers to the continuous state variable so that
          * 'v' equals 'v_new'. Moreover, check for error. */
-        for (k = 0; k < Nthread; k++) {
+        for (int k = 0; k < Nthread; k++) {
             double *v_tmp = model[k].v;
             model[k].v = model[k].v_new;
             model[k].v_new = v_tmp;
