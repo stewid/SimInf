@@ -102,13 +102,12 @@ SimInf_solver_ssm(
             #  pragma omp for
             #endif
             for (i = 0; i < Nthread; i++) {
-                int node;
                 SimInf_scheduled_events e = *&events[i];
                 SimInf_compartment_model m = *&model[i];
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
-                for (node = 0; node < m.Nn && !m.error; node++) {
+                for (int node = 0; node < m.Nn && !m.error; node++) {
                     for (;;) {
                         double cum, rand, tau, delta = 0.0;
                         int j, tr;
