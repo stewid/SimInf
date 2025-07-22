@@ -54,14 +54,13 @@ SimInf_solver_ssm(
         #  pragma omp for
         #endif
         for (i = 0; i < Nthread; i++) {
-            int node;
             SimInf_compartment_model m = *&model[i];
 
             /* Initialize the transition rate for every transition and
              * every node. Store the sum of the transition rates in
              * each node in sum_t_rate. Moreover, initialize time in
              * each node. */
-            for (node = 0; node < m.Nn; node++) {
+            for (int node = 0; node < m.Nn; node++) {
                 int j;
 
                 m.sum_t_rate[node] = 0.0;
