@@ -149,9 +149,9 @@ SimInf_solver_aem(
     }
 
     /* Check for error during initialization. */
-    for (int k = 0; k < Nthread; k++)
-        if (model[k].error)
-            return model[k].error;
+    for (int i = 0; i < Nthread; i++)
+        if (model[i].error)
+            return model[i].error;
 
     /* Main loop. */
     for (;;) {
