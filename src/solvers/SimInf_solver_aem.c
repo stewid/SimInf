@@ -105,7 +105,6 @@ SimInf_solver_aem(
         #  pragma omp for
         #endif
         for (int i = 0; i < Nthread; i++) {
-            int node;
             SimInf_compartment_model sa = *&model[i];
             SimInf_aem_arguments ma = *&method[i];
 
@@ -113,7 +112,7 @@ SimInf_solver_aem(
              * every node. */
 
 	    /* Calculate the propensity for every reaction*/
-	    for (node = 0; node < sa.Nn; node++) {
+	    for (int node = 0; node < sa.Nn; node++) {
                 int j;
                 for (j = 0; j < sa.Nt; j++){
                     const double rate = (*sa.tr_fun[j])(&sa.u[node * sa.Nc],
