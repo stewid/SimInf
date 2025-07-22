@@ -314,9 +314,9 @@ SimInf_solver_mssm(
     }
 
     /* Check for error. */
-    for (int j = 0; j < Nthread; j++)
-        if (model[j].error)
-            return model[j].error;
+    for (int i = 0; i < Nthread; i++)
+        if (model[i].error)
+            return model[i].error;
 
     return 0;
 }
