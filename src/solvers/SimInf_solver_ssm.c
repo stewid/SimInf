@@ -47,12 +47,10 @@ SimInf_solver_ssm(
     #  pragma omp parallel num_threads(SimInf_num_threads())
     #endif
     {
-        int i;
-
         #ifdef _OPENMP
         #  pragma omp for
         #endif
-        for (i = 0; i < Nthread; i++) {
+        for (int i = 0; i < Nthread; i++) {
             SimInf_compartment_model m = *&model[i];
 
             /* Initialize the transition rate for every transition and
