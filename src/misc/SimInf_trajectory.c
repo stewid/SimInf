@@ -532,7 +532,7 @@ SimInf_trajectory(
     #  pragma omp parallel for num_threads(SimInf_num_threads())
     #endif
     for (R_xlen_t i = 0; i < nrow; i++) {
-        p_vec[i] = i + 1;
+        p_vec[i] = (int)(i + 1);
     }
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
 
@@ -556,7 +556,7 @@ SimInf_trajectory(
         #endif
         for (R_xlen_t t = 0; t < tlen; t++) {
             for (R_xlen_t i = 0; i < id_len; i++)
-                p_vec[t * id_len + i] = i + 1;
+                p_vec[t * id_len + i] = (int)(i + 1);
         }
     }
 
