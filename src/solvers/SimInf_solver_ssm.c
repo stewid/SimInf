@@ -61,10 +61,8 @@ SimInf_solver_ssm(
              * each node in sum_t_rate. Moreover, initialize time in
              * each node. */
             for (int node = 0; node < m.Nn; node++) {
-                int j;
-
                 m.sum_t_rate[node] = 0.0;
-                for (j = 0; j < m.Nt; j++) {
+                for (int j = 0; j < m.Nt; j++) {
                     const double rate = (*m.tr_fun[j])(
                             &m.u[node * m.Nc], &m.v[node * m.Nd],
                             &m.ldata[node * m.Nld], m.gdata, m.tt);
