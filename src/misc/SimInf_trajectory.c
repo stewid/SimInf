@@ -211,7 +211,7 @@ SimInf_sparse2df_int(
                             j++; /* Move on. */
                         } else {
                             if (m_id == kv_A(*ri, k).id)
-                                p_vec[p_vec_i++] = m_x[j++];
+                                p_vec[p_vec_i++] = (int)m_x[j++];
                             else
                                 p_vec[p_vec_i++] = NA_INTEGER;
 
@@ -242,7 +242,7 @@ SimInf_sparse2df_int(
                         for (; id < m_id; id++)
                             p_vec[t * n_id + id] = NA_INTEGER;
 
-                        p_vec[t * n_id + id] = m_x[j];
+                        p_vec[t * n_id + id] = (int)m_x[j];
                         id++;
                     }
                 }
