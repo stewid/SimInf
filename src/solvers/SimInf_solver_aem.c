@@ -176,8 +176,8 @@ SimInf_solver_aem(
                  * continuous-time Markov chain. */
                 for (int node = 0; node < sa.Nn && !sa.error; node++) {
                     for (;;) {
-                        int ii,j,tr;
-                        double old_t_rate,rate;
+                        int j, tr;
+                        double old_t_rate, rate;
 
                         /* 1a) Step time forward until next event */
                         sa.t_time[node] = ma.reactTimes[sa.Nt * node];
@@ -206,7 +206,7 @@ SimInf_solver_aem(
 
 
                         /* 1d) update dependent transitions events. */
-                        for (ii = sa.jcG[tr]; ii < sa.jcG[tr + 1]; ii++){
+                        for (int ii = sa.jcG[tr]; ii < sa.jcG[tr + 1]; ii++){
                             j = sa.irG[ii];
                             if (j != tr) { /*see code underneath */
                                 old_t_rate = sa.t_rate[node * sa.Nt + j];
