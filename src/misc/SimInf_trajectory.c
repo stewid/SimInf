@@ -348,12 +348,11 @@ SimInf_dense2df_int(
     const int *p_id)
 {
     for (R_xlen_t i = 0; i < m_i_len; i++) {
-        SEXP vec;
-        int *p_vec;
         const int *p_m = m + m_i[i] - 1;
 
+        SEXP vec;
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
-        p_vec = INTEGER(vec);
+        int *p_vec = INTEGER(vec);
 
         if (p_id != NULL) {
             /* Note that the identifiers are one-based. */
@@ -395,12 +394,11 @@ SimInf_dense2df_real(
     const int *p_id)
 {
     for (R_xlen_t i = 0; i < m_i_len; i++) {
-        SEXP vec;
-        double *p_vec;
         const double *p_m = m + m_i[i] - 1;
 
+        SEXP vec;
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
-        p_vec = REAL(vec);
+        double *p_vec = REAL(vec);
 
         if (p_id != NULL) {
             /* Note that the node identifiers are one-based. */
