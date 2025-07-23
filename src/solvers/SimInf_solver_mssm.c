@@ -60,7 +60,7 @@ SimInf_solver_mssm(
             double *v_new = m.v_new;
             double *V = m.V;
 
-            for (int replicate = 0; replicate < m.Nrep && !m.error; replicate++) {
+            for (ptrdiff_t replicate = 0; replicate < m.Nrep && !m.error; replicate++) {
                 /* Clear processed events. */
                 e.events_index = 0;
 
