@@ -97,7 +97,7 @@ SimInf_sample_select(
     if (n == 0) {
         if (proportion < 0 || proportion > 1)
             return SIMINF_ERR_INVALID_PROPORTION;
-        n = gsl_ran_binomial(rng, proportion, Nindividuals);
+        n = (int)gsl_ran_binomial(rng, proportion, Nindividuals);
     }
 
     /* Error checking. */
@@ -147,7 +147,7 @@ SimInf_sample_select(
         if (n == 0)
             break;
 
-        individuals[irE[i]] = gsl_ran_hypergeometric(
+        individuals[irE[i]] = (int)gsl_ran_hypergeometric(
             rng, u[node * Nc + irE[i]],
             Nindividuals - u[node * Nc + irE[i]], n);
 
@@ -269,7 +269,7 @@ SimInf_sample_select_enter(
          * compartments. */
         for (i = jcE[select]; i < jcE[select + 1]; i++)
             n += u[node * Nc + irE[i]];
-        n = gsl_ran_binomial(rng, proportion, n);
+        n = (int)gsl_ran_binomial(rng, proportion, n);
     }
 
     /* Error checking. */
