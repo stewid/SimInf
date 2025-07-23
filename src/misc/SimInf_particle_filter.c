@@ -36,8 +36,6 @@ SimInf_systematic_resampling(
 {
     double cumsum_w, *ptr_w = REAL(w);
     int i, j, n = Rf_length(w);
-    SEXP idx;
-    int *ptr_idx;
 
     for (i = 0, cumsum_w = 0; i < n; i++) {
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0)
@@ -53,8 +51,8 @@ SimInf_systematic_resampling(
     double u = du * unif_rand();
     PutRNGstate();
 
-    PROTECT(idx = Rf_allocVector(INTSXP, n));
-    ptr_idx = INTEGER(idx);
+    SEXP idx = PROTECT(Rf_allocVector(INTSXP, n));
+    int *ptr_idx = INTEGER(idx);
     for (i = 0, j = 0, cumsum_w = ptr_w[0]; i < n; i++) {
         while (u > cumsum_w)
             cumsum_w += ptr_w[++j];
