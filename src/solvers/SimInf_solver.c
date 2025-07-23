@@ -1005,16 +1005,16 @@ SimInf_compartment_model_create(
     SimInf_compartment_model *model = NULL;
 
     /* Allocate memory for the compartment model. */
-    const R_xlen_t Nthread = args->Nthread;
+    const ptrdiff_t Nthread = args->Nthread;
     model = calloc(Nthread, sizeof(SimInf_compartment_model));
     if (!model)
         goto on_error; /* #nocov */
 
     /* Allocate memory to keep track of the continuous state in each
      * node. */
-    const R_xlen_t Nrep = args->Nrep;
-    const R_xlen_t Nn = args->Nn;
-    const R_xlen_t Nd = args->Nd;
+    const ptrdiff_t Nrep = args->Nrep;
+    const ptrdiff_t Nn = args->Nn;
+    const ptrdiff_t Nd = args->Nd;
     model[0].v = malloc(Nrep * Nn * Nd * sizeof(double));
     if (!model[0].v)
         goto on_error; /* #nocov */
@@ -1034,16 +1034,16 @@ SimInf_compartment_model_create(
 
     /* Allocate memory for compartment state and set compartment state
      * to the initial state. */
-    const R_xlen_t Nc = args->Nc;
+    const ptrdiff_t Nc = args->Nc;
     model[0].u = malloc(Nrep * Nn * Nc * sizeof(int));
     if (!model[0].u)
         goto on_error; /* #nocov */
     memcpy(model[0].u, args->u0, Nrep * Nn * Nc * sizeof(int));
 
-    const R_xlen_t Nt = args->Nt;
-    const R_xlen_t Nld = args->Nld;
-    const R_xlen_t tlen = args->tlen;
-    for (R_xlen_t i = 0; i < Nthread; i++) {
+    const ptrdiff_t Nt = args->Nt;
+    const ptrdiff_t Nld = args->Nld;
+    const ptrdiff_t tlen = args->tlen;
+    for (ptrdiff_t i = 0; i < Nthread; i++) {
         /* Constants */
         model[i].Nthread = (int)Nthread;
         model[i].Ntot = (int)Nn;
@@ -1055,8 +1055,8 @@ SimInf_compartment_model_create(
         if (Nrep > 1) {
             /* All nodes belong to the same thread when running
              * multiple replicates of a model. */
-            const R_xlen_t l = Nrep * i / Nthread;
-            const R_xlen_t u = Nrep * (i + 1) / Nthread;
+            const ptrdiff_t l = Nrep * i / Nthread;
+            const ptrdiff_t u = Nrep * (i + 1) / Nthread;
 
             model[i].Ni = 0;
             model[i].Nn = (int)Nn;
