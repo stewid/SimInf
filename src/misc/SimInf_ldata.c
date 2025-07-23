@@ -62,7 +62,7 @@ SimInf_ldata_sp(
         Rf_error("Invalid 'metric' argument.");
 
     /* Extract data from 'data' */
-    const R_xlen_t Nn = INTEGER(R_do_slot(data, R_DimSymbol))[1];
+    const ptrdiff_t Nn = INTEGER(R_do_slot(data, R_DimSymbol))[1];
     const double *ld = REAL(data);
 
     /* Extract data from the distance matrix */
@@ -71,7 +71,7 @@ SimInf_ldata_sp(
     const double *val = REAL(R_do_slot(distance, Rf_install("x")));
 
     /* Extract data from 'metric' */
-    const R_xlen_t m = INTEGER(metric)[0];
+    const ptrdiff_t m = INTEGER(metric)[0];
 
     /* Check that the number of nodes are equal in data and
      * distance */
@@ -87,8 +87,8 @@ SimInf_ldata_sp(
     int *degree = malloc(Nn * sizeof(int));
     if (!degree)
         Rf_error("Unable to allocate memory buffer."); /* #nocov */
-    R_xlen_t Nld = 0;
-    for (R_xlen_t i = 0; i < Nn; i++) {
+    ptrdiff_t Nld = 0;
+    for (ptrdiff_t i = 0; i < Nn; i++) {
         const int k = jc[i + 1] - jc[i];
         if (k > Nld)
             Nld = k;
@@ -100,7 +100,7 @@ SimInf_ldata_sp(
     Nld = (Nld + 1) * 2;
 
     /*  3) Add space for local model parameters in 'data' */
-    const R_xlen_t n_data = INTEGER(R_do_slot(data, R_DimSymbol))[0];
+    const ptrdiff_t n_data = INTEGER(R_do_slot(data, R_DimSymbol))[0];
     Nld += n_data;
 
     /* Allocate and initialize memory for ldata */
@@ -108,15 +108,15 @@ SimInf_ldata_sp(
     double *ldata = REAL(result);
     memset(ldata, 0, Nn * Nld * sizeof(double));
 
-    for (R_xlen_t node = 0; node < Nn; node++) {
-        R_xlen_t k = 0;
+    for (ptrdiff_t node = 0; node < Nn; node++) {
+        ptrdiff_t k = 0;
 
         /* Copy local model parameters */
-        for (R_xlen_t i = 0; i < n_data; i++, k++)
+        for (ptrdiff_t i = 0; i < n_data; i++, k++)
             ldata[node * Nld + k] = ld[node * n_data + k];
 
         /* Copy neighbor data */
-        for (R_xlen_t i = jc[node]; i < jc[node + 1]; i++) {
+        for (ptrdiff_t i = jc[node]; i < jc[node + 1]; i++) {
             ldata[node * Nld + k++] = ir[i];
             switch (m) {
             case 1:
