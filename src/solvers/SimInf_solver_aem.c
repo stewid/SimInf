@@ -112,7 +112,7 @@ SimInf_solver_aem(
              * every node. */
 
 	    /* Calculate the propensity for every reaction*/
-	    for (int node = 0; node < sa.Nn; node++) {
+	    for (ptrdiff_t node = 0; node < sa.Nn; node++) {
                 for (int j = 0; j < sa.Nt; j++){
                     const double rate = (*sa.tr_fun[j])(&sa.u[node * sa.Nc],
                                                         &sa.v[node * sa.Nd],
@@ -168,7 +168,7 @@ SimInf_solver_aem(
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
-                for (int node = 0; node < sa.Nn && !sa.error; node++) {
+                for (ptrdiff_t node = 0; node < sa.Nn && !sa.error; node++) {
                     for (;;) {
                         int j, tr;
                         double old_t_rate, rate;
@@ -297,7 +297,7 @@ SimInf_solver_aem(
                  * timestep e.g. update the infectious pressure
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
-                for (int node = 0; node < sa.Nn; node++) {
+                for (ptrdiff_t node = 0; node < sa.Nn; node++) {
                     const int rc = sa.pts_fun(
                         &sa.v_new[node * sa.Nd], &sa.u[node * sa.Nc],
                         &sa.v[node * sa.Nd], &sa.ldata[node * sa.Nld],
