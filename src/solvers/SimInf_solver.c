@@ -1042,11 +1042,11 @@ SimInf_compartment_model_create(
 
     for (R_xlen_t i = 0; i < Nthread; i++) {
         /* Constants */
-        model[i].Nthread = Nthread;
-        model[i].Ntot = Nn;
+        model[i].Nthread = (int)Nthread;
+        model[i].Ntot = (int)Nn;
         model[i].Nt = args->Nt;
-        model[i].Nc = Nc;
-        model[i].Nd = Nd;
+        model[i].Nc = (int)Nc;
+        model[i].Nd = (int)Nd;
         model[i].Nld = args->Nld;
 
         if (Nrep > 1) {
@@ -1056,8 +1056,8 @@ SimInf_compartment_model_create(
             const R_xlen_t u = Nrep * (i + 1) / Nthread;
 
             model[i].Ni = 0;
-            model[i].Nn = Nn;
-            model[i].Nrep = u - l;
+            model[i].Nn = (int)Nn;
+            model[i].Nrep = (int)(u - l);
 
             if (i > 0) {
                 model[i].u = &(model[0].u[l * Nn * Nc]);
@@ -1078,10 +1078,10 @@ SimInf_compartment_model_create(
         } else {
             /* The nodes are split between the threads when running
              * one replicate of a model. */
-            model[i].Ni = i * (Nn / Nthread);
-            model[i].Nn = Nn / Nthread;
+            model[i].Ni = (int)(i * (Nn / Nthread));
+            model[i].Nn = (int)(Nn / Nthread);
             if (i == (Nthread - 1))
-                model[i].Nn += (Nn % Nthread);
+                model[i].Nn += (int)(Nn % Nthread);
 
             /* To ensure allocated memory in a multi-model can be
              * identified and released. */
