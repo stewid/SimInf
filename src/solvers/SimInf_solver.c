@@ -1013,34 +1013,35 @@ SimInf_compartment_model_create(
     /* Allocate memory to keep track of the continuous state in each
      * node. */
     const R_xlen_t Nrep = args->Nrep;
-    model[0].v = malloc(Nrep * args->Nn * args->Nd * sizeof(double));
+    const R_xlen_t Nn = args->Nn;
+    model[0].v = malloc(Nrep * Nn * args->Nd * sizeof(double));
     if (!model[0].v)
         goto on_error; /* #nocov */
-    model[0].v_new = malloc(Nrep * args->Nn * args->Nd * sizeof(double));
+    model[0].v_new = malloc(Nrep * Nn * args->Nd * sizeof(double));
     if (!model[0].v_new)
         goto on_error; /* #nocov */
 
     /* Set continuous state to the initial state in each node. */
-    memcpy(model[0].v, args->v0, Nrep * args->Nn * args->Nd * sizeof(double));
-    memcpy(model[0].v_new, args->v0, Nrep * args->Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v, args->v0, Nrep * Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v_new, args->v0, Nrep * Nn * args->Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
-    model[0].update_node = calloc(args->Nn, sizeof(int));
+    model[0].update_node = calloc(Nn, sizeof(int));
     if (!model[0].update_node)
         goto on_error; /* #nocov */
 
     /* Allocate memory for compartment state and set compartment state
      * to the initial state. */
-    model[0].u = malloc(Nrep * args->Nn * args->Nc * sizeof(int));
+    model[0].u = malloc(Nrep * Nn * args->Nc * sizeof(int));
     if (!model[0].u)
         goto on_error; /* #nocov */
-    memcpy(model[0].u, args->u0, Nrep * args->Nn * args->Nc * sizeof(int));
+    memcpy(model[0].u, args->u0, Nrep * Nn * args->Nc * sizeof(int));
 
     for (int i = 0; i < Nthread; i++) {
         /* Constants */
         model[i].Nthread = Nthread;
-        model[i].Ntot = args->Nn;
+        model[i].Ntot = Nn;
         model[i].Nt = args->Nt;
         model[i].Nc = args->Nc;
         model[i].Nd = args->Nd;
@@ -1053,32 +1054,32 @@ SimInf_compartment_model_create(
             const int u = Nrep * (i + 1) / Nthread;
 
             model[i].Ni = 0;
-            model[i].Nn = args->Nn;
+            model[i].Nn = Nn;
             model[i].Nrep = u - l;
 
             if (i > 0) {
-                model[i].u = &(model[0].u[l * args->Nn * args->Nc]);
-                model[i].v = &(model[0].v[l * args->Nn * args->Nd]);
-                model[i].v_new = &(model[0].v_new[l * args->Nn * args->Nd]);
+                model[i].u = &(model[0].u[l * Nn * args->Nc]);
+                model[i].v = &(model[0].v[l * Nn * args->Nd]);
+                model[i].v_new = &(model[0].v_new[l * Nn * args->Nd]);
 
                 /* Setup vector to keep track of nodes that must be
                  * updated due to scheduled events */
-                model[i].update_node = calloc(args->Nn, sizeof(int));
+                model[i].update_node = calloc(Nn, sizeof(int));
                 if (!model[i].update_node)
                     goto on_error; /* #nocov */
             }
 
             if (args->U)
-                model[i].U = &args->U[args->tlen * l * args->Nn * args->Nc];
+                model[i].U = &args->U[args->tlen * l * Nn * args->Nc];
             if (args->V)
-                model[i].V = &args->V[args->tlen * l * args->Nn * args->Nd];
+                model[i].V = &args->V[args->tlen * l * Nn * args->Nd];
         } else {
             /* The nodes are split between the threads when running
              * one replicate of a model. */
-            model[i].Ni = i * (args->Nn / Nthread);
-            model[i].Nn = args->Nn / Nthread;
+            model[i].Ni = i * (Nn / Nthread);
+            model[i].Nn = Nn / Nthread;
             if (i == (Nthread - 1))
-                model[i].Nn += (args->Nn % Nthread);
+                model[i].Nn += (Nn % Nthread);
 
             /* To ensure allocated memory in a multi-model can be
              * identified and released. */
