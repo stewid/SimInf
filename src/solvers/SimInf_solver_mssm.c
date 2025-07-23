@@ -102,7 +102,7 @@ SimInf_solver_mssm(
                                 &m.v[node * m.Nd],
                                 m.Nld,
                                 &m.ldata[node * m.Nld],
-                                node,
+                                (int)node,
                                 m.tt,
                                 rate,
                                 j);
@@ -174,7 +174,7 @@ SimInf_solver_mssm(
                                         &m.v[node * m.Nd],
                                         m.Nld,
                                         &m.ldata[node * m.Nld],
-                                        node,
+                                        (int)node,
                                         m.t_time[node],
                                         0,
                                         tr);
@@ -203,7 +203,7 @@ SimInf_solver_mssm(
                                         &m.v[node * m.Nd],
                                         m.Nld,
                                         &m.ldata[node * m.Nld],
-                                        node,
+                                        (int)node,
                                         m.t_time[node],
                                         rate,
                                         m.irG[j]);
@@ -229,7 +229,7 @@ SimInf_solver_mssm(
                             &m.v[node * m.Nd],
                             &m.ldata[node * m.Nld],
                             m.gdata,
-                            node,
+                            (int)node,
                             m.tt);
 
                         if (rc < 0) {
@@ -258,7 +258,7 @@ SimInf_solver_mssm(
                                         &m.v[node * m.Nd],
                                         m.Nld,
                                         &m.ldata[node * m.Nld],
-                                        node,
+                                        (int)node,
                                         m.tt,
                                         rate,
                                         j);
