@@ -190,10 +190,8 @@ SimInf_sparse2df_int(
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
-        int *p_vec;
-
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
-        p_vec = INTEGER(vec);
+        int *p_vec = INTEGER(vec);
 
         if (ri) {
             size_t k = 0;
@@ -273,10 +271,8 @@ SimInf_sparse2df_real(
 
     for (R_xlen_t i = 0; i < m_i_len; i++) {
         SEXP vec;
-        double *p_vec;
-
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
-        p_vec = REAL(vec);
+        double *p_vec = REAL(vec);
 
         if (ri) {
             size_t k = 0;
