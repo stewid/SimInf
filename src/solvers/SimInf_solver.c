@@ -1034,17 +1034,18 @@ SimInf_compartment_model_create(
 
     /* Allocate memory for compartment state and set compartment state
      * to the initial state. */
-    model[0].u = malloc(Nrep * Nn * args->Nc * sizeof(int));
+    const R_xlen_t Nc = args->Nc;
+    model[0].u = malloc(Nrep * Nn * Nc * sizeof(int));
     if (!model[0].u)
         goto on_error; /* #nocov */
-    memcpy(model[0].u, args->u0, Nrep * Nn * args->Nc * sizeof(int));
+    memcpy(model[0].u, args->u0, Nrep * Nn * Nc * sizeof(int));
 
     for (int i = 0; i < Nthread; i++) {
         /* Constants */
         model[i].Nthread = Nthread;
         model[i].Ntot = Nn;
         model[i].Nt = args->Nt;
-        model[i].Nc = args->Nc;
+        model[i].Nc = Nc;
         model[i].Nd = Nd;
         model[i].Nld = args->Nld;
 
@@ -1059,7 +1060,7 @@ SimInf_compartment_model_create(
             model[i].Nrep = u - l;
 
             if (i > 0) {
-                model[i].u = &(model[0].u[l * Nn * args->Nc]);
+                model[i].u = &(model[0].u[l * Nn * Nc]);
                 model[i].v = &(model[0].v[l * Nn * Nd]);
                 model[i].v_new = &(model[0].v_new[l * Nn * Nd]);
 
@@ -1071,7 +1072,7 @@ SimInf_compartment_model_create(
             }
 
             if (args->U)
-                model[i].U = &args->U[args->tlen * l * Nn * args->Nc];
+                model[i].U = &args->U[args->tlen * l * Nn * Nc];
             if (args->V)
                 model[i].V = &args->V[args->tlen * l * Nn * Nd];
         } else {
@@ -1087,7 +1088,7 @@ SimInf_compartment_model_create(
             model[i].Nrep = 0;
 
             if (i > 0) {
-                model[i].u = &(model[0].u[model[i].Ni * args->Nc]);
+                model[i].u = &(model[0].u[model[i].Ni * Nc]);
                 model[i].v = &(model[0].v[model[i].Ni * Nd]);
                 model[i].v_new = &(model[0].v_new[model[i].Ni * Nd]);
                 model[i].update_node = &(model[0].update_node[model[i].Ni]);
