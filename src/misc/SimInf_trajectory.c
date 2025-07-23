@@ -32,10 +32,7 @@ typedef struct {
     R_xlen_t time;
 } rowinfo_t;
 
-typedef struct {
-    size_t n, m;
-    rowinfo_t *a;
-} rowinfo_vec;
+typedef kvec_t(rowinfo_t) rowinfo_vec;
 
 static int
 SimInf_insert_id_time(
