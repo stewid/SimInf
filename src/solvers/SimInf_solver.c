@@ -1040,11 +1040,12 @@ SimInf_compartment_model_create(
         goto on_error; /* #nocov */
     memcpy(model[0].u, args->u0, Nrep * Nn * Nc * sizeof(int));
 
+    const R_xlen_t Nt = args->Nt;
     for (R_xlen_t i = 0; i < Nthread; i++) {
         /* Constants */
         model[i].Nthread = (int)Nthread;
         model[i].Ntot = (int)Nn;
-        model[i].Nt = args->Nt;
+        model[i].Nt = (int)Nt;
         model[i].Nc = (int)Nc;
         model[i].Nd = (int)Nd;
         model[i].Nld = args->Nld;
@@ -1138,7 +1139,7 @@ SimInf_compartment_model_create(
          * vector. In t_rate we store all propensities for state
          * transitions, and in sum_t_rate the sum of propensities in
          * every node. */
-        model[i].t_rate = malloc(args->Nt * model[i].Nn * sizeof(double));
+        model[i].t_rate = malloc(Nt * model[i].Nn * sizeof(double));
         if (!model[i].t_rate)
             goto on_error; /* #nocov */
         model[i].sum_t_rate = malloc(model[i].Nn * sizeof(double));
