@@ -1041,6 +1041,8 @@ SimInf_compartment_model_create(
     memcpy(model[0].u, args->u0, Nrep * Nn * Nc * sizeof(int));
 
     const R_xlen_t Nt = args->Nt;
+    const R_xlen_t Nld = args->Nld;
+    const R_xlen_t tlen = args->tlen;
     for (R_xlen_t i = 0; i < Nthread; i++) {
         /* Constants */
         model[i].Nthread = (int)Nthread;
@@ -1048,7 +1050,7 @@ SimInf_compartment_model_create(
         model[i].Nt = (int)Nt;
         model[i].Nc = (int)Nc;
         model[i].Nd = (int)Nd;
-        model[i].Nld = args->Nld;
+        model[i].Nld = (int)Nld;
 
         if (Nrep > 1) {
             /* All nodes belong to the same thread when running
@@ -1073,9 +1075,9 @@ SimInf_compartment_model_create(
             }
 
             if (args->U)
-                model[i].U = &args->U[args->tlen * l * Nn * Nc];
+                model[i].U = &args->U[tlen * l * Nn * Nc];
             if (args->V)
-                model[i].V = &args->V[args->tlen * l * Nn * Nd];
+                model[i].V = &args->V[tlen * l * Nn * Nd];
         } else {
             /* The nodes are split between the threads when running
              * one replicate of a model. */
@@ -1127,12 +1129,12 @@ SimInf_compartment_model_create(
         model[i].tt = args->tspan[0];
         model[i].next_unit_of_time = floor(model[i].tt) + 1.0;
         model[i].tspan = args->tspan;
-        model[i].tlen = args->tlen;
+        model[i].tlen = tlen;
         model[i].U_it = 0;
         model[i].V_it = 0;
 
         /* Data vectors */
-        model[i].ldata = &(args->ldata[model[i].Ni * model[i].Nld]);
+        model[i].ldata = &(args->ldata[model[i].Ni * Nld]);
         model[i].gdata = args->gdata;
 
         /* Create transition rate matrix (Nt X Nn) and total rate
