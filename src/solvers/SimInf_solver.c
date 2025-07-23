@@ -1186,8 +1186,6 @@ SimInf_print_status(
     #  pragma omp critical
     #endif
     {
-        int i;
-
         REprintf("Status:\n");
         REprintf("-------\n");
 
@@ -1197,7 +1195,7 @@ SimInf_print_status(
         REprintf("Current state in node:\n");
 
         REprintf(" u(length: %i) = {", Nc);
-        for (i = 0; u && i < Nc; i++) {
+        for (int i = 0; u && i < Nc; i++) {
             REprintf("%i", u[i]);
             if (i < (Nc - 1))
                 REprintf(", ");
@@ -1205,7 +1203,7 @@ SimInf_print_status(
         REprintf("}\n");
 
         REprintf(" v(length: %i) = {", Nd);
-        for (i = 0; v && i < Nd; i++) {
+        for (int i = 0; v && i < Nd; i++) {
             REprintf("%g", v[i]);
             if (i < (Nd - 1))
                 REprintf(", ");
@@ -1213,7 +1211,7 @@ SimInf_print_status(
         REprintf("}\n");
 
         REprintf(" ldata(length: %i) = {", Nld);
-        for (i = 0; ldata && i < Nld; i++) {
+        for (int i = 0; ldata && i < Nld; i++) {
             REprintf("%g", ldata[i]);
             if (i < (Nld - 1))
                 REprintf(", ");
