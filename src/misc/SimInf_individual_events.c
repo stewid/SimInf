@@ -50,9 +50,9 @@ SimInf_find_longest_path(
     const int *dest,
     int *path,
     int *keep,
-    const int n)
+    const R_xlen_t n)
 {
-    int longest_path = 0;
+    R_xlen_t longest_path = 0;
     int must_enter = 0;
     int must_exit = 0;
 
@@ -60,7 +60,7 @@ SimInf_find_longest_path(
      * the path must be an enter event. If one of the events is an
      * exit event, then the last event in the path must be an exit
      * event. */
-    for (int i = 0; i < n; i++) {
+    for (R_xlen_t i = 0; i < n; i++) {
         if (event[i] == ENTER_EVENT)
             must_enter = 1;
         else if (event[i] == EXIT_EVENT)
@@ -69,8 +69,8 @@ SimInf_find_longest_path(
 
     /* Iterate over all events to identify an event that should begin
      * each path. */
-    for (int begin = 0; begin < n; begin++) {
-        int depth = 1;
+    for (R_xlen_t begin = 0; begin < n; begin++) {
+        R_xlen_t depth = 1;
 
         if (must_enter && event[begin] != ENTER_EVENT)
             continue;
@@ -90,7 +90,7 @@ SimInf_find_longest_path(
         /* Initialize the path with the first event. This is the
          * root for the search. */
         memset(path, 0, n * sizeof(int));
-        path[0] = begin + 1;
+        path[0] = (int)(begin + 1);
 
         /* Perform a depth first search of the events to find the
          * longest path. */
@@ -98,11 +98,10 @@ SimInf_find_longest_path(
                depth < (n - begin) &&
                longest_path < (n - begin))
         {
-            int i, from;
-            int offset = 1;
+            R_xlen_t offset = 1;
 
             /* Determine where to continue the search. */
-            i = path[depth - 1] - 1;
+            R_xlen_t i = path[depth - 1] - 1;
             if (path[depth] > 0) {
                 /* Since the search is moving up in the search tree,
                  * ensure to continue searching from a non-visited
@@ -115,14 +114,14 @@ SimInf_find_longest_path(
             /* Find an event that is consistent with 'from' in the
              * previous event. 'j' is the index to the next event to
              * search from. */
-            from = event[i] == ENTER_EVENT ? node[i] : dest[i];
-            for (int j = i + offset; j < n && path[depth] == 0; j++) {
+            R_xlen_t from = event[i] == ENTER_EVENT ? node[i] : dest[i];
+            for (R_xlen_t j = i + offset; j < n && path[depth] == 0; j++) {
                 if (time[j] > time[i] &&
                     from == node[j] &&
                     from != dest[j] &&
                     (event[j] == EXIT_EVENT || event[j] == EXTERNAL_TRANSFER_EVENT))
                 {
-                    path[depth] = j + 1;
+                    path[depth] = (int)(j + 1);
                     if (!(must_exit && event[j] == EXTERNAL_TRANSFER_EVENT) &&
                         (depth + 1) > longest_path)
                     {
@@ -183,9 +182,6 @@ SimInf_individual_events(
     const int *ptr_node = INTEGER(node);
     const int *ptr_dest = INTEGER(dest);
     const R_xlen_t len = XLENGTH(id);
-    SEXP keep;
-    int *ptr_keep;
-    int *ptr_path;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -216,10 +212,10 @@ SimInf_individual_events(
     /* Allocate transient storage of an integer vector for keeping
      * track of the current path when searching for the longest
      * path. R will reclaim the memory at the end of the call. */
-    ptr_path = (int*)R_alloc(len, sizeof(int));
+    int *ptr_path = (int*)R_alloc(len, sizeof(int));
 
-    PROTECT(keep = Rf_allocVector(LGLSXP, len));
-    ptr_keep = LOGICAL(keep);
+    SEXP keep = PROTECT(Rf_allocVector(LGLSXP, len));
+    int *ptr_keep = LOGICAL(keep);
 
     /* The default is to drop all events. */
     memset(ptr_keep, 0, len * sizeof(int));
