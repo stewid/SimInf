@@ -17,8 +17,6 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 library(SimInf)
-library(tools)
-source("util/check.R")
 
 ## Specify the number of threads to use.
 set_num_threads(1)
@@ -28,13 +26,6 @@ sessionInfo()
 
 ## Define a tolerance
 tol <- 1e-8
-
-## Check that an error is raised for an invalid vector.
-res <- assertError(.Call(SimInf:::SimInf_lambertW0, "test"))
-check_error(res, "'x' must be a numeric vector.")
-
-res <- assertError(.Call(SimInf:::SimInf_lambertW0, 1L))
-check_error(res, "'x' must be a numeric vector.")
 
 stopifnot(identical(
     .Call(SimInf:::SimInf_lambertW0, c(NA_real_, Inf, -Inf, NaN)),

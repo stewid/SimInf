@@ -35,17 +35,13 @@ SEXP
 SimInf_lambertW0(
     SEXP x)
 {
-    SEXP W0;
-    R_xlen_t len;
+    const double *ptr_x = REAL(x);
+    R_xlen_t len = XLENGTH(x);
+    SEXP W0 = PROTECT(Rf_allocVector(REALSXP, len));
+    double *ptr_W0 = REAL(W0);
 
-    if (!Rf_isReal(x))
-        Rf_error("'x' must be a numeric vector.");
-
-    len = XLENGTH(x);
-    PROTECT(W0 = Rf_allocVector(REALSXP, len));
-
-    for (R_xlen_t i = 0; i < len; i++) {
-        double xx= REAL(x)[i];
+    for (ptrdiff_t i = 0; i < len; i++) {
+        const double xx = ptr_x[i];
         double val = R_NaN;
         gsl_sf_result result;
 
@@ -55,7 +51,7 @@ SimInf_lambertW0(
             val = R_PosInf;
         else if (R_FINITE(xx) && gsl_sf_lambert_W0_e(xx, &result) == GSL_SUCCESS)
             val = result.val;
-        REAL(W0)[i] = val;
+        ptr_W0[i] = val;
     }
 
     UNPROTECT(1);
