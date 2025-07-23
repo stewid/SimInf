@@ -36,7 +36,6 @@ SimInf_systematic_resampling(
 {
     double cumsum_w, *ptr_w = REAL(w);
     int i, j, n = Rf_length(w);
-    double du, u;
     SEXP idx;
     int *ptr_idx;
 
@@ -49,9 +48,9 @@ SimInf_systematic_resampling(
     if (cumsum_w <= 0.0)
         Rf_error("Non-positive sum of weights detected.");
 
-    du = cumsum_w / n;
+    const double du = cumsum_w / n;
     GetRNGstate();
-    u = du * unif_rand();
+    double u = du * unif_rand();
     PutRNGstate();
 
     PROTECT(idx = Rf_allocVector(INTSXP, n));
