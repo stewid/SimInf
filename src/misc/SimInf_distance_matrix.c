@@ -74,7 +74,7 @@ SimInf_Euclidean_distance(
                         distance[n] = d;
 
                     if (row_indices)
-                        row_indices[n] = j;
+                        row_indices[n] = (int)j;
 
                     n++;
                 }
@@ -82,7 +82,7 @@ SimInf_Euclidean_distance(
         }
 
         if (col_indices)
-            col_indices[i + 1] = n;
+            col_indices[i + 1] = (int)n;
     }
 
     return n;
@@ -163,8 +163,8 @@ SimInf_distance_matrix(
     R_do_slot_assign(result, Rf_install("x"), distance);
     R_do_slot_assign(result, Rf_install("i"), row_indices);
     R_do_slot_assign(result, Rf_install("p"), col_indices);
-    INTEGER(R_do_slot(result, Rf_install("Dim")))[0] = len;
-    INTEGER(R_do_slot(result, Rf_install("Dim")))[1] = len;
+    INTEGER(R_do_slot(result, Rf_install("Dim")))[0] = (int)len;
+    INTEGER(R_do_slot(result, Rf_install("Dim")))[1] = (int)len;
 
     UNPROTECT(5);
 
