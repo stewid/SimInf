@@ -1129,7 +1129,7 @@ SimInf_compartment_model_create(
         model[i].tt = args->tspan[0];
         model[i].next_unit_of_time = floor(model[i].tt) + 1.0;
         model[i].tspan = args->tspan;
-        model[i].tlen = tlen;
+        model[i].tlen = (int)tlen;
         model[i].U_it = 0;
         model[i].V_it = 0;
 
