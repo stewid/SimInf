@@ -125,7 +125,7 @@ SimInf_solver_aem(
                         SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                             sa.Nd, &sa.v[node * sa.Nd],
                                             sa.Nld, &sa.ldata[node * sa.Nld],
-                                            sa.Ni + node, sa.tt, rate, j);
+                                            (int)(sa.Ni + node), sa.tt, rate, j);
                         sa.error = SIMINF_ERR_INVALID_RATE;
                     }
 
@@ -192,7 +192,7 @@ SimInf_solver_aem(
                                 SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                     sa.Nd, &sa.v[node * sa.Nd],
                                                     sa.Nld, &sa.ldata[node * sa.Nld],
-                                                    sa.Ni + node, sa.t_time[node],
+                                                    (int)(sa.Ni + node), sa.t_time[node],
                                                     0, tr);
                                 sa.error = SIMINF_ERR_NEGATIVE_STATE;
                             }
@@ -216,7 +216,7 @@ SimInf_solver_aem(
                                     SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                         sa.Nd, &sa.v[node * sa.Nd],
                                                         sa.Nld, &sa.ldata[node * sa.Nld],
-                                                        sa.Ni + node, sa.t_time[node],
+                                                        (int)(sa.Ni + node), sa.t_time[node],
                                                         rate, j);
                                     sa.error = SIMINF_ERR_INVALID_RATE;
                                 }
@@ -245,7 +245,7 @@ SimInf_solver_aem(
                             SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                 sa.Nd, &sa.v[node * sa.Nd],
                                                 sa.Nld, &sa.ldata[node * sa.Nld],
-                                                sa.Ni + node, sa.t_time[node],
+                                                (int)(sa.Ni + node), sa.t_time[node],
                                                 rate, j);
                             sa.error = SIMINF_ERR_INVALID_RATE;
                         }
@@ -301,7 +301,7 @@ SimInf_solver_aem(
                     const int rc = sa.pts_fun(
                         &sa.v_new[node * sa.Nd], &sa.u[node * sa.Nc],
                         &sa.v[node * sa.Nd], &sa.ldata[node * sa.Nld],
-                        sa.gdata, sa.Ni + node, sa.tt);
+                        sa.gdata, (int)(sa.Ni + node), sa.tt);
 
                     if (rc < 0) {
                         sa.error = rc;
@@ -320,7 +320,7 @@ SimInf_solver_aem(
                                 SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                     sa.Nd, &sa.v[node * sa.Nd],
                                                     sa.Nld, &sa.ldata[node * sa.Nld],
-                                                    sa.Ni + node, sa.tt, rate, j);
+                                                    (int)(sa.Ni + node), sa.tt, rate, j);
                                 sa.error = SIMINF_ERR_INVALID_RATE;
                             }
 
