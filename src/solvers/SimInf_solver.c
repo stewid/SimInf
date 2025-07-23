@@ -1012,16 +1012,17 @@ SimInf_compartment_model_create(
 
     /* Allocate memory to keep track of the continuous state in each
      * node. */
-    model[0].v = malloc(args->Nrep * args->Nn * args->Nd * sizeof(double));
+    const R_xlen_t Nrep = args->Nrep;
+    model[0].v = malloc(Nrep * args->Nn * args->Nd * sizeof(double));
     if (!model[0].v)
         goto on_error; /* #nocov */
-    model[0].v_new = malloc(args->Nrep * args->Nn * args->Nd * sizeof(double));
+    model[0].v_new = malloc(Nrep * args->Nn * args->Nd * sizeof(double));
     if (!model[0].v_new)
         goto on_error; /* #nocov */
 
     /* Set continuous state to the initial state in each node. */
-    memcpy(model[0].v, args->v0, args->Nrep * args->Nn * args->Nd * sizeof(double));
-    memcpy(model[0].v_new, args->v0, args->Nrep * args->Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v, args->v0, Nrep * args->Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v_new, args->v0, Nrep * args->Nn * args->Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
@@ -1031,10 +1032,10 @@ SimInf_compartment_model_create(
 
     /* Allocate memory for compartment state and set compartment state
      * to the initial state. */
-    model[0].u = malloc(args->Nrep * args->Nn * args->Nc * sizeof(int));
+    model[0].u = malloc(Nrep * args->Nn * args->Nc * sizeof(int));
     if (!model[0].u)
         goto on_error; /* #nocov */
-    memcpy(model[0].u, args->u0, args->Nrep * args->Nn * args->Nc * sizeof(int));
+    memcpy(model[0].u, args->u0, Nrep * args->Nn * args->Nc * sizeof(int));
 
     for (int i = 0; i < Nthread; i++) {
         /* Constants */
@@ -1045,11 +1046,11 @@ SimInf_compartment_model_create(
         model[i].Nd = args->Nd;
         model[i].Nld = args->Nld;
 
-        if (args->Nrep > 1) {
+        if (Nrep > 1) {
             /* All nodes belong to the same thread when running
              * multiple replicates of a model. */
-            const int l = args->Nrep * i / Nthread;
-            const int u = args->Nrep * (i + 1) / Nthread;
+            const int l = Nrep * i / Nthread;
+            const int u = Nrep * (i + 1) / Nthread;
 
             model[i].Ni = 0;
             model[i].Nn = args->Nn;
