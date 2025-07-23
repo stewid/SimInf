@@ -84,11 +84,6 @@ SimInf_split_events(
     SEXP t,
     SEXP t_end)
 {
-    int t_i = 0;
-    int t_end_i = 0;
-    int *ptr_m;
-    SEXP m;
-
     const int *ptr_t = INTEGER(t);
     const R_xlen_t t_len = XLENGTH(t);
     if (t_len < 1)
@@ -100,16 +95,18 @@ SimInf_split_events(
         Rf_error("'t_end' must be an integer vector with length >= 1.");
 
     /* Create a matrix to hold the result. */
-    PROTECT(m = Rf_allocMatrix(INTSXP, t_end_len, 2));
-    ptr_m = INTEGER(m);
+    SEXP m = PROTECT(Rf_allocMatrix(INTSXP, t_end_len, 2));
+    int *ptr_m = INTEGER(m);
     memset(ptr_m, 0, t_end_len * 2 * sizeof(int));
 
     /* Interate over the event time-points and place each event in the
      * corresponding interval. */
+    R_xlen_t t_i = 0;
+    R_xlen_t t_end_i = 0;
     while (t_i < t_len && t_end_i < t_end_len) {
         if (ptr_t[t_i] <= ptr_t_end[t_end_i]) {
             if (!ptr_m[t_end_i])
-                ptr_m[t_end_i] = t_i + 1;
+                ptr_m[t_end_i] = (int)(t_i + 1);
             ptr_m[t_end_len + t_end_i]++;
             t_i++;
         } else {
