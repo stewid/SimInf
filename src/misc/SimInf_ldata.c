@@ -53,10 +53,6 @@ SimInf_ldata_sp(
     SEXP distance,
     SEXP metric)
 {
-    SEXP result;
-    double *ldata;
-    int *degree = NULL, Nld, m;
-
     /* Check arguments */
     if (SimInf_arg_check_matrix(data))
         Rf_error("Invalid 'data' argument.");
@@ -66,7 +62,7 @@ SimInf_ldata_sp(
         Rf_error("Invalid 'metric' argument.");
 
     /* Extract data from 'data' */
-    const int Nn = INTEGER(R_do_slot(data, R_DimSymbol))[1];
+    const R_xlen_t Nn = INTEGER(R_do_slot(data, R_DimSymbol))[1];
     const double *ld = REAL(data);
 
     /* Extract data from the distance matrix */
@@ -75,7 +71,7 @@ SimInf_ldata_sp(
     const double *val = REAL(R_do_slot(distance, Rf_install("x")));
 
     /* Extract data from 'metric' */
-    m = INTEGER(metric)[0];
+    const R_xlen_t m = INTEGER(metric)[0];
 
     /* Check that the number of nodes are equal in data and
      * distance */
@@ -88,11 +84,11 @@ SimInf_ldata_sp(
 
     /* 1) Determine the maximum number of neighbors in the 'distance'
      * matrix and the number of neighbors (degree) for each node. */
-    degree = malloc(Nn * sizeof(int));
+    int *degree = malloc(Nn * sizeof(int));
     if (!degree)
         Rf_error("Unable to allocate memory buffer."); /* #nocov */
-    Nld = 0;
-    for (int i = 0; i < Nn; i++) {
+    R_xlen_t Nld = 0;
+    for (R_xlen_t i = 0; i < Nn; i++) {
         const int k = jc[i + 1] - jc[i];
         if (k > Nld)
             Nld = k;
@@ -104,23 +100,23 @@ SimInf_ldata_sp(
     Nld = (Nld + 1) * 2;
 
     /*  3) Add space for local model parameters in 'data' */
-    const int n_data = INTEGER(R_do_slot(data, R_DimSymbol))[0];
+    const R_xlen_t n_data = INTEGER(R_do_slot(data, R_DimSymbol))[0];
     Nld += n_data;
 
     /* Allocate and initialize memory for ldata */
-    PROTECT(result = Rf_allocMatrix(REALSXP, Nld, Nn));
-    memset(REAL(result), 0, Nn * Nld * sizeof(double));
-    ldata = REAL(result);
+    SEXP result = PROTECT(Rf_allocMatrix(REALSXP, Nld, Nn));
+    double *ldata = REAL(result);
+    memset(ldata, 0, Nn * Nld * sizeof(double));
 
-    for (int node = 0; node < Nn; node++) {
-        int k = 0;
+    for (R_xlen_t node = 0; node < Nn; node++) {
+        R_xlen_t k = 0;
 
         /* Copy local model parameters */
-        for (int i = 0; i < n_data; i++, k++)
+        for (R_xlen_t i = 0; i < n_data; i++, k++)
             ldata[node * Nld + k] = ld[node * n_data + k];
 
         /* Copy neighbor data */
-        for (int i = jc[node]; i < jc[node + 1]; i++) {
+        for (R_xlen_t i = jc[node]; i < jc[node + 1]; i++) {
             ldata[node * Nld + k++] = ir[i];
             switch (m) {
             case 1:
