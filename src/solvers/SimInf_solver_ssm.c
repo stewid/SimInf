@@ -57,7 +57,7 @@ SimInf_solver_ssm(
              * every node. Store the sum of the transition rates in
              * each node in sum_t_rate. Moreover, initialize time in
              * each node. */
-            for (int node = 0; node < m.Nn; node++) {
+            for (ptrdiff_t node = 0; node < m.Nn; node++) {
                 m.sum_t_rate[node] = 0.0;
                 for (int j = 0; j < m.Nt; j++) {
                     const double rate = (*m.tr_fun[j])(
@@ -102,7 +102,7 @@ SimInf_solver_ssm(
 
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
-                for (int node = 0; node < m.Nn && !m.error; node++) {
+                for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
                     for (;;) {
                         double cum, rand, tau, delta = 0.0;
                         int tr;
@@ -217,7 +217,7 @@ SimInf_solver_ssm(
                  * timestep e.g. update the infectious pressure
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
-                for (int node = 0; node < m.Nn; node++) {
+                for (ptrdiff_t node = 0; node < m.Nn; node++) {
                     const int rc = m.pts_fun(
                         &m.v_new[node * m.Nd], &m.u[node * m.Nc],
                         &m.v[node * m.Nd], &m.ldata[node * m.Nld],
