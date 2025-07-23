@@ -29,9 +29,9 @@
 
 static void
 SimInf_abc_error(
-    int error)
+    int err)
 {
-    switch (error) {
+    switch (err) {
     case 1:                                            /* #nocov */
         Rf_error("Unable to allocate memory buffer."); /* #nocov */
         break;
@@ -44,8 +44,8 @@ SimInf_abc_error(
     case 4:                                       /* #nocov */
         Rf_error("Unable to calculate weights."); /* #nocov */
         break;
-    default:                                        /* #nocov */
-        Rf_error("Unknown error code: %i.", error); /* #nocov */
+    default:                                      /* #nocov */
+        Rf_error("Unknown error code: %i.", err); /* #nocov */
         break;
     }
 }
@@ -88,7 +88,7 @@ SimInf_abc_proposals(
     SEXP w,
     SEXP sigma)
 {
-    int error = 0, n_parameters, len = 0, n_proposals;
+    int err = 0, n_parameters, len = 0, n_proposals;
     gsl_rng *rng = NULL;
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
@@ -128,7 +128,7 @@ SimInf_abc_proposals(
     GetRNGstate();
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
-        error = 1;    /* #nocov */
+        err = 1;      /* #nocov */
         goto cleanup; /* #nocov */
     }
     gsl_rng_set(rng, runif(1, UINT_MAX));
@@ -153,7 +153,7 @@ SimInf_abc_proposals(
                     ptr_xx[d * n_proposals + i] = runif(ptr_p1[d], ptr_p2[d]);
                     break;
                 default:
-                    error = 2;
+                    err = 2;
                     goto cleanup;
                 }
             }
@@ -166,7 +166,7 @@ SimInf_abc_proposals(
     v_sigma = gsl_matrix_view_array(REAL(sigma), n_parameters, n_parameters);
     SIGMA = gsl_matrix_alloc(n_parameters, n_parameters);
     if (!SIGMA) {
-        error = 1;    /* #nocov */
+        err = 1;      /* #nocov */
         goto cleanup; /* #nocov */
     }
     gsl_matrix_memcpy(SIGMA, &v_sigma.matrix);
@@ -178,7 +178,7 @@ SimInf_abc_proposals(
     cdf = (double *)R_alloc(len, sizeof(double));
     for (int i = 0; i < len; i++) {
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
-            error = 3;
+            err = 3;
             goto cleanup;
         }
         cdf[i] = ptr_w[i];
@@ -248,7 +248,7 @@ SimInf_abc_proposals(
                                     0);
                     break;
                 default:
-                    error = 2;
+                    err = 2;
                     goto cleanup;
                 }
 
@@ -263,8 +263,8 @@ cleanup:
     gsl_rng_free(rng);
     PutRNGstate();
 
-    if (error)
-        SimInf_abc_error(error);
+    if (err)
+        SimInf_abc_error(err);
 
     UNPROTECT(3);
 
