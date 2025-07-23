@@ -468,7 +468,7 @@ SimInf_trajectory(
     SEXP id_lbl)
 {
     SEXP colnames, result, vec;
-    int error = 0;
+    int err = 0;
     int nprotect = 0;
     int *p_vec;
     const int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
@@ -511,7 +511,7 @@ SimInf_trajectory(
     rowinfo_vec *ri = NULL;
     if (SimInf_create_rowinfo(&ri, dm, cm, dm_i_len, cm_i_len, dm_sparse,
                               cm_sparse, dm_stride, cm_stride, tlen)) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;   /* #nocov */
         goto cleanup;                           /* #nocov */
     }
     const R_xlen_t nrow = SimInf_number_of_rows(ri, tlen, id_len);
@@ -622,7 +622,7 @@ cleanup:
     if (nprotect)
         UNPROTECT(nprotect);
 
-    if (error)
+    if (err)
         Rf_error("Unable to allocate memory buffer."); /* #nocov */
 
     return result;
