@@ -1014,16 +1014,17 @@ SimInf_compartment_model_create(
      * node. */
     const R_xlen_t Nrep = args->Nrep;
     const R_xlen_t Nn = args->Nn;
-    model[0].v = malloc(Nrep * Nn * args->Nd * sizeof(double));
+    const R_xlen_t Nd = args->Nd;
+    model[0].v = malloc(Nrep * Nn * Nd * sizeof(double));
     if (!model[0].v)
         goto on_error; /* #nocov */
-    model[0].v_new = malloc(Nrep * Nn * args->Nd * sizeof(double));
+    model[0].v_new = malloc(Nrep * Nn * Nd * sizeof(double));
     if (!model[0].v_new)
         goto on_error; /* #nocov */
 
     /* Set continuous state to the initial state in each node. */
-    memcpy(model[0].v, args->v0, Nrep * Nn * args->Nd * sizeof(double));
-    memcpy(model[0].v_new, args->v0, Nrep * Nn * args->Nd * sizeof(double));
+    memcpy(model[0].v, args->v0, Nrep * Nn * Nd * sizeof(double));
+    memcpy(model[0].v_new, args->v0, Nrep * Nn * Nd * sizeof(double));
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */
@@ -1044,7 +1045,7 @@ SimInf_compartment_model_create(
         model[i].Ntot = Nn;
         model[i].Nt = args->Nt;
         model[i].Nc = args->Nc;
-        model[i].Nd = args->Nd;
+        model[i].Nd = Nd;
         model[i].Nld = args->Nld;
 
         if (Nrep > 1) {
@@ -1059,8 +1060,8 @@ SimInf_compartment_model_create(
 
             if (i > 0) {
                 model[i].u = &(model[0].u[l * Nn * args->Nc]);
-                model[i].v = &(model[0].v[l * Nn * args->Nd]);
-                model[i].v_new = &(model[0].v_new[l * Nn * args->Nd]);
+                model[i].v = &(model[0].v[l * Nn * Nd]);
+                model[i].v_new = &(model[0].v_new[l * Nn * Nd]);
 
                 /* Setup vector to keep track of nodes that must be
                  * updated due to scheduled events */
@@ -1072,7 +1073,7 @@ SimInf_compartment_model_create(
             if (args->U)
                 model[i].U = &args->U[args->tlen * l * Nn * args->Nc];
             if (args->V)
-                model[i].V = &args->V[args->tlen * l * Nn * args->Nd];
+                model[i].V = &args->V[args->tlen * l * Nn * Nd];
         } else {
             /* The nodes are split between the threads when running
              * one replicate of a model. */
@@ -1087,8 +1088,8 @@ SimInf_compartment_model_create(
 
             if (i > 0) {
                 model[i].u = &(model[0].u[model[i].Ni * args->Nc]);
-                model[i].v = &(model[0].v[model[i].Ni * args->Nd]);
-                model[i].v_new = &(model[0].v_new[model[i].Ni * args->Nd]);
+                model[i].v = &(model[0].v[model[i].Ni * Nd]);
+                model[i].v_new = &(model[0].v_new[model[i].Ni * Nd]);
                 model[i].update_node = &(model[0].update_node[model[i].Ni]);
             }
 
