@@ -1040,7 +1040,7 @@ SimInf_compartment_model_create(
         goto on_error; /* #nocov */
     memcpy(model[0].u, args->u0, Nrep * Nn * Nc * sizeof(int));
 
-    for (int i = 0; i < Nthread; i++) {
+    for (R_xlen_t i = 0; i < Nthread; i++) {
         /* Constants */
         model[i].Nthread = Nthread;
         model[i].Ntot = Nn;
@@ -1052,8 +1052,8 @@ SimInf_compartment_model_create(
         if (Nrep > 1) {
             /* All nodes belong to the same thread when running
              * multiple replicates of a model. */
-            const int l = Nrep * i / Nthread;
-            const int u = Nrep * (i + 1) / Nthread;
+            const R_xlen_t l = Nrep * i / Nthread;
+            const R_xlen_t u = Nrep * (i + 1) / Nthread;
 
             model[i].Ni = 0;
             model[i].Nn = Nn;
