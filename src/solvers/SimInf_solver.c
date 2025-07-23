@@ -1005,7 +1005,8 @@ SimInf_compartment_model_create(
     SimInf_compartment_model *model = NULL;
 
     /* Allocate memory for the compartment model. */
-    model = calloc(args->Nthread, sizeof(SimInf_compartment_model));
+    const R_xlen_t Nthread = args->Nthread;
+    model = calloc(Nthread, sizeof(SimInf_compartment_model));
     if (!model)
         goto on_error; /* #nocov */
 
@@ -1035,9 +1036,9 @@ SimInf_compartment_model_create(
         goto on_error; /* #nocov */
     memcpy(model[0].u, args->u0, args->Nrep * args->Nn * args->Nc * sizeof(int));
 
-    for (int i = 0; i < args->Nthread; i++) {
+    for (int i = 0; i < Nthread; i++) {
         /* Constants */
-        model[i].Nthread = args->Nthread;
+        model[i].Nthread = Nthread;
         model[i].Ntot = args->Nn;
         model[i].Nt = args->Nt;
         model[i].Nc = args->Nc;
@@ -1047,8 +1048,8 @@ SimInf_compartment_model_create(
         if (args->Nrep > 1) {
             /* All nodes belong to the same thread when running
              * multiple replicates of a model. */
-            const int l = args->Nrep * i / args->Nthread;
-            const int u = args->Nrep * (i + 1) / args->Nthread;
+            const int l = args->Nrep * i / Nthread;
+            const int u = args->Nrep * (i + 1) / Nthread;
 
             model[i].Ni = 0;
             model[i].Nn = args->Nn;
@@ -1073,10 +1074,10 @@ SimInf_compartment_model_create(
         } else {
             /* The nodes are split between the threads when running
              * one replicate of a model. */
-            model[i].Ni = i * (args->Nn / args->Nthread);
-            model[i].Nn = args->Nn / args->Nthread;
-            if (i == (args->Nthread - 1))
-                model[i].Nn += (args->Nn % args->Nthread);
+            model[i].Ni = i * (args->Nn / Nthread);
+            model[i].Nn = args->Nn / Nthread;
+            if (i == (Nthread - 1))
+                model[i].Nn += (args->Nn % Nthread);
 
             /* To ensure allocated memory in a multi-model can be
              * identified and released. */
