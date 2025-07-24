@@ -304,7 +304,7 @@ SimInf_abc_weights(
     SEXP w,
     SEXP sigma)
 {
-    int error = 0;
+    int err = 0;
     int n_parameters, n_particles = Rf_nrows(xx);
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
@@ -334,7 +334,7 @@ SimInf_abc_weights(
     v_sigma = gsl_matrix_view_array(REAL(sigma), n_parameters, n_parameters);
     SIGMA = gsl_matrix_alloc(n_parameters, n_parameters);
     if (!SIGMA) {
-        error = 1;    /* #nocov */
+        err = 1;      /* #nocov */
         goto cleanup; /* #nocov */
     }
     gsl_matrix_memcpy(SIGMA, &v_sigma.matrix);
@@ -374,13 +374,13 @@ SimInf_abc_weights(
                                    1);
                 break;
             default:
-                error = 2;
+                err = 2;
                 goto cleanup;
             }
         }
 
         if (!R_FINITE(ptr_ww[i])) {
-            error = 3;
+            err = 3;
             goto cleanup;
         }
 
@@ -399,7 +399,7 @@ SimInf_abc_weights(
         }
 
         if (!R_FINITE(sum) || sum <= 0.0) {
-            error = 4;    /* #nocov */
+            err = 4;      /* #nocov */
             goto cleanup; /* #nocov */
         }
 
@@ -424,8 +424,8 @@ cleanup:
     gsl_matrix_free(SIGMA);
     gsl_vector_free(work);
 
-    if (error)
-        SimInf_abc_error(error);
+    if (err)
+        SimInf_abc_error(err);
 
     UNPROTECT(1);
 
