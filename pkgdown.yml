@@ -5,7 +5,7 @@ articles:
   mparse: mparse.html
   post-process-data: post-process-data.html
   scheduled-events: scheduled-events.html
-last_built: 2025-07-24T10:14Z
+last_built: 2025-07-24T10:17Z
 urls:
   reference: http://stewid.github.io/SimInf/reference
   article: http://stewid.github.io/SimInf/articles
