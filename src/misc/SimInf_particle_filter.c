@@ -38,7 +38,7 @@ SimInf_systematic_resampling(
     const R_xlen_t n = XLENGTH(w);
 
     double cumsum_w = 0;
-    for (R_xlen_t i = 0; i < n; i++) {
+    for (ptrdiff_t i = 0; i < n; i++) {
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0)
             Rf_error("Invalid weight detected (non-finite or < 0.0).");
         cumsum_w += ptr_w[i];
@@ -55,7 +55,7 @@ SimInf_systematic_resampling(
     SEXP idx = PROTECT(Rf_allocVector(INTSXP, n));
     int *ptr_idx = INTEGER(idx);
     cumsum_w = ptr_w[0];
-    for (R_xlen_t i = 0, j = 0; i < n; i++) {
+    for (ptrdiff_t i = 0, j = 0; i < n; i++) {
         while (u > cumsum_w)
             cumsum_w += ptr_w[++j];
         ptr_idx[i] = (int)(j < n ? j + 1 : n);
