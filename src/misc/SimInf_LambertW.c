@@ -36,7 +36,7 @@ SimInf_lambertW0(
     SEXP x)
 {
     const double *ptr_x = REAL(x);
-    R_xlen_t len = XLENGTH(x);
+    const R_xlen_t len = XLENGTH(x);
     SEXP W0 = PROTECT(Rf_allocVector(REALSXP, len));
     double *ptr_W0 = REAL(W0);
 
