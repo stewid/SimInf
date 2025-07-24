@@ -306,7 +306,6 @@ SimInf_abc_weights(
 {
     int err = 0;
     const int n_particles = Rf_nrows(xx);
-    gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
     gsl_vector *work = NULL;
     double sum, max_ww = 0.0;
@@ -328,7 +327,7 @@ SimInf_abc_weights(
     work = gsl_vector_alloc(n_parameters);
 
     /* Setup variance-covariance matrix. */
-    v_sigma = gsl_matrix_view_array(REAL(sigma), n_parameters, n_parameters);
+    gsl_matrix_view v_sigma = gsl_matrix_view_array(REAL(sigma), n_parameters, n_parameters);
     SIGMA = gsl_matrix_alloc(n_parameters, n_parameters);
     if (!SIGMA) {
         err = 1;      /* #nocov */
