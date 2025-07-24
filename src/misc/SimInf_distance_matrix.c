@@ -26,10 +26,10 @@ static R_xlen_t
 SimInf_Euclidean_distance(
     const double* x,
     const double* y,
-    double cutoff,
-    double min_dist,
-    int na_fail,
-    R_xlen_t len,
+    const double cutoff,
+    const double min_dist,
+    const int na_fail,
+    const R_xlen_t len,
     double *distance,
     int *row_indices,
     int *col_indices)
