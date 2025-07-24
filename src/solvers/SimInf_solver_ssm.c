@@ -267,12 +267,12 @@ SimInf_solver_ssm(
                  * a dense matrix */
                 /* Copy compartment state to U */
                 while (m.U && m.U_it < m.tlen && m.tt > m.tspan[m.U_it])
-                    memcpy(&m.U[m.Nc * ((m.Ntot * m.U_it++) + m.Ni)],
-                           m.u, m.Nn * m.Nc * sizeof(int));
+                    memcpy(&m.U[(ptrdiff_t)m.Nc * ((m.Ntot * m.U_it++) + m.Ni)],
+                           m.u, (ptrdiff_t)m.Nn * (ptrdiff_t)m.Nc * sizeof(int));
                 /* Copy continuous state to V */
                 while (m.V && m.V_it < m.tlen && m.tt > m.tspan[m.V_it])
-                    memcpy(&m.V[m.Nd * ((m.Ntot * m.V_it++) + m.Ni)],
-                           m.v_new, m.Nn * m.Nd * sizeof(double));
+                    memcpy(&m.V[(ptrdiff_t)m.Nd * ((m.Ntot * m.V_it++) + m.Ni)],
+                           m.v_new, (ptrdiff_t)m.Nn * (ptrdiff_t)m.Nd * sizeof(double));
 
                 *&model[i] = m;
             }
