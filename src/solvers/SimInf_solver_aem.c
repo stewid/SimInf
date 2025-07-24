@@ -355,12 +355,12 @@ SimInf_solver_aem(
                  * a dense matrix */
                 /* Copy compartment state to U */
                 while (sa.U && sa.U_it < sa.tlen && sa.tt > sa.tspan[sa.U_it])
-                    memcpy(&sa.U[sa.Nc * ((sa.Ntot * sa.U_it++) + sa.Ni)],
-                           sa.u, sa.Nn * sa.Nc * sizeof(int));
+                    memcpy(&sa.U[(ptrdiff_t)sa.Nc * (((ptrdiff_t)sa.Ntot * sa.U_it++) + sa.Ni)],
+                           sa.u, (ptrdiff_t)sa.Nn * (ptrdiff_t)sa.Nc * sizeof(int));
                 /* Copy continuous state to V */
                 while (sa.V && sa.V_it < sa.tlen && sa.tt > sa.tspan[sa.V_it])
-                    memcpy(&sa.V[sa.Nd * ((sa.Ntot * sa.V_it++) + sa.Ni)],
-                           sa.v_new, sa.Nn * sa.Nd * sizeof(double));
+                    memcpy(&sa.V[(ptrdiff_t)sa.Nd * (((ptrdiff_t)sa.Ntot * sa.V_it++) + sa.Ni)],
+                           sa.v_new, (ptrdiff_t)sa.Nn * (ptrdiff_t)sa.Nd * sizeof(double));
 
                 *&model[i] = sa;
                 *&method[i] = ma;
@@ -444,9 +444,7 @@ SimInf_aem_arguments_create(
     int Nthread,
     gsl_rng *rng)
 {
-    SimInf_aem_arguments *method = NULL;
-
-    method = calloc(Nthread, sizeof(SimInf_aem_arguments));
+    SimInf_aem_arguments *method = calloc(Nthread, sizeof(SimInf_aem_arguments));
     if(!method)
         goto on_error; /* #nocov */
 
@@ -455,24 +453,24 @@ SimInf_aem_arguments_create(
         /* Binary heap storing all reaction events */
         /* we have one for each node. Heap is thus only the size of the # transitions */
         method[i].reactHeapSize = m->Nt;
-        method[i].reactNode = malloc(m->Nn * m->Nt * sizeof(int));
+        method[i].reactNode = malloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt * sizeof(int));
         if (!method[i].reactNode)
             goto on_error; /* #nocov */
 
-        method[i].reactHeap = malloc(m->Nn * m->Nt * sizeof(int));
+        method[i].reactHeap = malloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt * sizeof(int));
         if (!method[i].reactHeap)
             goto on_error; /* #nocov */
 
-        method[i].reactTimes = malloc(m->Nn * m->Nt * sizeof(double));
+        method[i].reactTimes = malloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt * sizeof(double));
         if (!method[i].reactTimes)
             goto on_error; /* #nocov */
 
-        method[i].reactInf = calloc(m->Nn * m->Nt, sizeof(double));
+        method[i].reactInf = calloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt, sizeof(double));
         if (!method[i].reactInf)
             goto on_error; /* #nocov */
 
         /* random generator for sample select with 1 per transition in each node */
-        method[i].rng_vec = calloc(m->Nn * m->Nt, sizeof(gsl_rng*));
+        method[i].rng_vec = calloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt, sizeof(gsl_rng*));
         if (!method[i].rng_vec)
             goto on_error; /* #nocov */
 
