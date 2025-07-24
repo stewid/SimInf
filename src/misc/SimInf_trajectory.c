@@ -458,10 +458,8 @@ SimInf_trajectory(
     SEXP id,
     SEXP id_lbl)
 {
-    SEXP colnames, result, vec;
     int err = 0;
     int nprotect = 0;
-    int *p_vec;
     const int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
     const R_xlen_t dm_i_len = XLENGTH(dm_i);
     const R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
@@ -480,7 +478,7 @@ SimInf_trajectory(
     SimInf_set_num_threads(-1);
 
     /* Create a vector for the column names. */
-    PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
+    SEXP colnames = PROTECT(Rf_allocVector(STRSXP, ncol));
     nprotect++;
     R_xlen_t col = 0;
     SET_STRING_ELT(colnames, col++, STRING_ELT(id_lbl, 0));
@@ -509,16 +507,16 @@ SimInf_trajectory(
 
     /* Create a list for the 'data.frame' and add colnames and a
      * 'data.frame' class attribute. */
-    PROTECT(result = Rf_allocVector(VECSXP, ncol));
+    SEXP result = PROTECT(Rf_allocVector(VECSXP, ncol));
     nprotect++;
     Rf_setAttrib(result, R_NamesSymbol, colnames);
     Rf_setAttrib(result, R_ClassSymbol, Rf_mkString("data.frame"));
 
     /* Add row names to the 'data.frame'. Note that the row names are
      * one-based. */
-    PROTECT(vec = Rf_allocVector(INTSXP, nrow));
+    SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
     nprotect++;
-    p_vec = INTEGER(vec);
+    int *p_vec = INTEGER(vec);
     #ifdef _OPENMP
     #  pragma omp parallel for num_threads(SimInf_num_threads())
     #endif
