@@ -60,7 +60,7 @@ SimInf_find_longest_path(
      * the path must be an enter event. If one of the events is an
      * exit event, then the last event in the path must be an exit
      * event. */
-    for (R_xlen_t i = 0; i < n; i++) {
+    for (ptrdiff_t i = 0; i < n; i++) {
         if (event[i] == ENTER_EVENT)
             must_enter = 1;
         else if (event[i] == EXIT_EVENT)
@@ -69,7 +69,7 @@ SimInf_find_longest_path(
 
     /* Iterate over all events to identify an event that should begin
      * each path. */
-    for (R_xlen_t begin = 0; begin < n; begin++) {
+    for (ptrdiff_t begin = 0; begin < n; begin++) {
         R_xlen_t depth = 1;
 
         if (must_enter && event[begin] != ENTER_EVENT)
@@ -115,7 +115,7 @@ SimInf_find_longest_path(
              * previous event. 'j' is the index to the next event to
              * search from. */
             R_xlen_t from = event[i] == ENTER_EVENT ? node[i] : dest[i];
-            for (R_xlen_t j = i + offset; j < n && path[depth] == 0; j++) {
+            for (ptrdiff_t j = i + offset; j < n && path[depth] == 0; j++) {
                 if (time[j] > time[i] &&
                     from == node[j] &&
                     from != dest[j] &&
@@ -198,7 +198,7 @@ SimInf_individual_events(
     if (XLENGTH(dest) != len)
         Rf_error("'dest' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
 
-    for (R_xlen_t i = 0; i < len; i++) {
+    for (ptrdiff_t i = 0; i < len; i++) {
         switch (ptr_event[i]) {
         case EXIT_EVENT:
         case ENTER_EVENT:
@@ -224,7 +224,7 @@ SimInf_individual_events(
     #  pragma omp parallel num_threads(SimInf_num_threads())
     #  pragma omp single
     #endif
-    for (R_xlen_t i = 0, j = 0; i < len; i++) {
+    for (ptrdiff_t i = 0, j = 0; i < len; i++) {
         /* Check for last event or a new individual. */
         if (i == (len - 1) || ptr_id[i] != ptr_id[i + 1]) {
             #ifdef _OPENMP
