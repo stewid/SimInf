@@ -88,23 +88,23 @@ SimInf_abc_proposals(
     SEXP w,
     SEXP sigma)
 {
-    int err = 0, n_parameters, len = 0, n_proposals;
+    int err = 0, len = 0;
     gsl_rng *rng = NULL;
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
     double *ptr_x = NULL, *ptr_w = NULL, *cdf = NULL;
     double *ptr_p1 = REAL(p1), *ptr_p2 = REAL(p2);
-    SEXP xx, ancestor, dimnames;
+    SEXP ancestor;
     double *ptr_xx;
     int *ptr_ancestor;
 
     /* Check input arguments. */
     if (SimInf_arg_check_integer_gt_zero(n))
         Rf_error("'n' must be an integer > 0.");
-    n_proposals = INTEGER(n)[0];
+    const int n_proposals = INTEGER(n)[0];
     if (!Rf_isString(parameter))
         Rf_error("'parameter' must be a character vector.");
-    n_parameters = Rf_length(parameter);
+    const int n_parameters = Rf_length(parameter);
     if (!Rf_isNull(x)) {
         len = Rf_length(w);
         if (len < 1)
@@ -112,8 +112,8 @@ SimInf_abc_proposals(
     }
 
     /* Setup result matrix. */
-    PROTECT(xx = Rf_allocMatrix(REALSXP, n_proposals, n_parameters));
-    PROTECT(dimnames = Rf_allocVector(VECSXP, 2));
+    SEXP xx = PROTECT(Rf_allocMatrix(REALSXP, n_proposals, n_parameters));
+    SEXP dimnames = PROTECT(Rf_allocVector(VECSXP, 2));
     Rf_setAttrib(xx, R_DimNamesSymbol, dimnames);
     SET_VECTOR_ELT(dimnames, 1, parameter);
     ptr_xx = REAL(xx);
