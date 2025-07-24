@@ -470,7 +470,7 @@ SimInf_aem_arguments_create(
             goto on_error; /* #nocov */
 
         /* random generator for sample select with 1 per transition in each node */
-        method[i].rng_vec = calloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt, sizeof(gsl_rng*));
+        method[i].rng_vec = (gsl_rng**)calloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt, sizeof(gsl_rng*));
         if (!method[i].rng_vec)
             goto on_error; /* #nocov */
 
