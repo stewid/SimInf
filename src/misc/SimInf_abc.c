@@ -305,12 +305,10 @@ SimInf_abc_weights(
     SEXP sigma)
 {
     int err = 0;
-    int n_parameters, n_particles = Rf_nrows(xx);
+    const int n_particles = Rf_nrows(xx);
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
     gsl_vector *work = NULL;
-    const double *ptr_p1, *ptr_p2, *ptr_w;
-    double *ptr_x, *ptr_xx;
     double sum, max_ww = 0.0;
 
     SEXP ww = PROTECT(Rf_allocVector(REALSXP, n_particles));
@@ -321,12 +319,12 @@ SimInf_abc_weights(
         goto cleanup;
     }
 
-    n_parameters = INTEGER(R_do_slot(sigma, R_DimSymbol))[0];
-    ptr_p1 = REAL(p1);
-    ptr_p2 = REAL(p2);
-    ptr_x = REAL(x);
-    ptr_xx = REAL(xx);
-    ptr_w = REAL(w);
+    const int n_parameters = INTEGER(R_do_slot(sigma, R_DimSymbol))[0];
+    const double *ptr_p1 = REAL(p1);
+    const double *ptr_p2 = REAL(p2);
+    double *ptr_x = REAL(x);
+    double *ptr_xx = REAL(xx);
+    const double *ptr_w = REAL(w);
     work = gsl_vector_alloc(n_parameters);
 
     /* Setup variance-covariance matrix. */
