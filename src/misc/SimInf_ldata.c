@@ -21,9 +21,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <R_ext/Visibility.h>
 #include "SimInf.h"
 #include "SimInf_arg.h"
+#include <R_ext/Visibility.h>
 
 /**
  * Combine local model parameters and spatial coupling to neighbors in

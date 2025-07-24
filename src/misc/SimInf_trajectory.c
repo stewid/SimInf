@@ -21,11 +21,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rdefines.h>
-#include <R_ext/Visibility.h>
 #include "SimInf.h"
 #include "SimInf_openmp.h"
 #include "kvec.h"
+#include <R_ext/Visibility.h>
+#include <Rdefines.h>
 
 typedef struct {
     ptrdiff_t id;

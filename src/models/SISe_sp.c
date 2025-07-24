@@ -21,8 +21,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <R_ext/Visibility.h>
 #include "SimInf.h"
+#include <R_ext/Visibility.h>
 
 /* Offset in integer compartment state vector */
 enum {S, I};

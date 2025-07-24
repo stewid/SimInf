@@ -18,14 +18,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "SimInf_arg.h"
 #include <R.h>
-#include <Rmath.h>
 #include <R_ext/Visibility.h>
-#include <gsl/gsl_matrix.h>
+#include <Rmath.h>
 #include <gsl/gsl_linalg.h>
+#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
-#include "SimInf_arg.h"
 
 static void
 SimInf_abc_error(

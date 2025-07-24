@@ -21,15 +21,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rinternals.h>
-#include <R_ext/Visibility.h>
-#include <stdlib.h>
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "SimInf.h"
+#ifdef _OPENMP
+#  include <omp.h>
+#endif
+#include <R_ext/Visibility.h>
+#include <Rinternals.h>
+#include <stdlib.h>
 
 /* This is the maximum number of threads that SimInf will use for
  * OpenMP parallel regions. It is initialised (>= 1) by

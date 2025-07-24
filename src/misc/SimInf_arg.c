@@ -21,9 +21,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rinternals.h>
-#include <R_ext/Visibility.h>
 #include "SimInf.h"
+#include <R_ext/Visibility.h>
+#include <Rinternals.h>
 
 /**
  * Check dgCMatrix argument

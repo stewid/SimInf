@@ -18,8 +18,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rinternals.h>
 #include <R_ext/Visibility.h>
+#include <Rinternals.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_sf_lambert.h>
 

@@ -19,9 +19,9 @@
  */
 
 #include <R.h>
+#include <R_ext/Visibility.h>
 #include <Rinternals.h>
 #include <Rmath.h>
-#include <R_ext/Visibility.h>
 
 /**
  * Systematic resampling of particles.

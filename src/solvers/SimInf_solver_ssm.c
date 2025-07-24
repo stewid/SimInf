@@ -21,15 +21,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <R_ext/Visibility.h>
-#include <string.h>
-#include <math.h>
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
-
 #include "SimInf.h"
-#include "misc/SimInf_openmp.h"
 #include "SimInf_solver.h"
+#include "misc/SimInf_openmp.h"
+#include <R_ext/Visibility.h>
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_rng.h>
+#include <math.h>
+#include <string.h>
 
 /**
  * Siminf solver

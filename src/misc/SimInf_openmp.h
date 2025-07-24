@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2022 Stefan Widgren
+ * Copyright (C) 2015 -- 2025 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_OPENMP_H
-#define INCLUDE_SIMINF_OPENMP_H
+#pragma once
 
 #ifdef _OPENMP
 #  include <omp.h>
@@ -30,5 +29,3 @@
 
 int SimInf_num_threads(void);
 int SimInf_set_num_threads(int threads);
-
-#endif

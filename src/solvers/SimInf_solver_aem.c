@@ -21,17 +21,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "SimInf.h"
+#include "SimInf_solver.h"
+#include "misc/SimInf_openmp.h"
+#include "misc/binheap.h"
 #include <R_ext/Visibility.h>
 #include <float.h>
-#include <string.h>
-#include <math.h>
-#include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
-
-#include "SimInf.h"
-#include "misc/SimInf_openmp.h"
-#include "SimInf_solver.h"
-#include "misc/binheap.h"
+#include <gsl/gsl_rng.h>
+#include <math.h>
+#include <string.h>
 
 /**
  * Structure to hold AEM solver specific data/arguments for simulation.

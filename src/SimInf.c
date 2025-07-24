@@ -21,11 +21,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rdefines.h>
-#include <R_ext/Visibility.h>
 #include "misc/SimInf_arg.h"
 #include "misc/SimInf_openmp.h"
 #include "solvers/SimInf_solver.h"
+#include <R_ext/Visibility.h>
+#include <Rdefines.h>
 
 static void
 SimInf_raise_error(

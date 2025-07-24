@@ -19,11 +19,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <R.h>
-#include <Rinternals.h>
-#include <R_ext/Visibility.h>
 #include "SimInf.h"
 #include "SimInf_openmp.h"
+#include <R.h>
+#include <R_ext/Visibility.h>
+#include <Rinternals.h>
 
 /**
  * Find the longest path through the events.

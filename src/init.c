@@ -21,10 +21,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rinternals.h>
+#include "SimInf.h"
 #include <R_ext/Rdynload.h>
 #include <R_ext/Visibility.h>
-#include "SimInf.h"
+#include <Rinternals.h>
 
 /* Declare functions to register */
 SEXP SEIR_run(SEXP, SEXP);
