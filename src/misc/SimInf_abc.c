@@ -132,9 +132,9 @@ SimInf_abc_proposals(
 
     if (Rf_isNull(x)) {
         /* First generation: sample from priors. */
-        for (int i = 0; i < n_proposals; i++) {
+        for (ptrdiff_t i = 0; i < n_proposals; i++) {
             ptr_ancestor[i] = NA_INTEGER;
-            for (int d = 0; d < n_parameters; d++) {
+            for (ptrdiff_t d = 0; d < n_parameters; d++) {
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
                 case 'g':
                     ptr_xx[d * n_proposals + i] =
@@ -173,7 +173,7 @@ SimInf_abc_proposals(
     ptr_x = REAL(x);
     ptr_w = REAL(w);
     cdf = (double *)R_alloc(len, sizeof(double));
-    for (int i = 0; i < len; i++) {
+    for (ptrdiff_t i = 0; i < len; i++) {
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
             err = 3;
             goto cleanup;
@@ -183,7 +183,7 @@ SimInf_abc_proposals(
             cdf[i] += cdf[i-1];
     }
 
-    for (int i = 0; i < n_proposals; i++) {
+    for (ptrdiff_t i = 0; i < n_proposals; i++) {
         int accept;
         gsl_vector_view X;
         gsl_vector_view proposal = gsl_vector_view_array_with_stride(
@@ -216,7 +216,7 @@ SimInf_abc_proposals(
 
             /* Check that the proposal is valid. */
             accept = 1;
-            for (int d = 0; d < n_parameters; d++) {
+            for (ptrdiff_t d = 0; d < n_parameters; d++) {
                 double density;
 
                 switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
@@ -310,7 +310,7 @@ SimInf_abc_weights(
     SEXP ww = PROTECT(Rf_allocVector(REALSXP, n_particles));
     double *ptr_ww = REAL(ww);
     if (Rf_isNull(w)) {
-        for (int i = 0; i < n_particles; ++i)
+        for (ptrdiff_t i = 0; i < n_particles; ++i)
             ptr_ww[i] = 1.0 / (double)n_particles;
         goto cleanup;
     }
@@ -333,14 +333,14 @@ SimInf_abc_weights(
     gsl_matrix_memcpy(SIGMA, &v_sigma.matrix);
     gsl_linalg_cholesky_decomp1(SIGMA);
 
-    for (int i = 0; i < n_particles; i++) {
+    for (ptrdiff_t i = 0; i < n_particles; i++) {
         gsl_vector_view v_xx = gsl_vector_view_array_with_stride(
             &ptr_xx[i],    /* double *base */
             n_particles,   /* size_t stride */
             n_parameters); /* size_t n */
 
         ptr_ww[i] = 0.0;
-        for (int d = 0; d < n_parameters; d++) {
+        for (ptrdiff_t d = 0; d < n_parameters; d++) {
             switch(R_CHAR(STRING_ELT(distribution, d))[0]) {
             case 'g':
                 ptr_ww[i] += dgamma(ptr_xx[d * n_particles + i],
@@ -378,7 +378,7 @@ SimInf_abc_weights(
         }
 
         sum = 0.0;
-        for (int j = 0; j < n_particles; j++) {
+        for (ptrdiff_t j = 0; j < n_particles; j++) {
             double pdf;
             gsl_vector_view v_x = gsl_vector_view_array_with_stride(
                 &ptr_x[j],     /* double *base */
@@ -403,14 +403,14 @@ SimInf_abc_weights(
     }
 
     sum = 0.0;
-    for (int i = 0; i < n_particles; i++) {
+    for (ptrdiff_t i = 0; i < n_particles; i++) {
         ptr_ww[i] -= max_ww;
         ptr_ww[i] = exp(ptr_ww[i]);
         sum += ptr_ww[i];
     }
 
     /* Normalize. */
-    for (int i = 0; i < n_particles; i++)
+    for (ptrdiff_t i = 0; i < n_particles; i++)
         ptr_ww[i] /= sum;
 
 cleanup:
