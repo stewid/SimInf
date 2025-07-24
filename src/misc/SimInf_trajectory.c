@@ -335,20 +335,20 @@ SimInf_dense2df_int(
     SEXP dst,
     const int *m,
     const int *m_i,
-    R_xlen_t m_i_len,
-    R_xlen_t m_stride,
-    R_xlen_t nrow,
-    R_xlen_t tlen,
-    R_xlen_t id_len,
-    R_xlen_t id_n,
-    R_xlen_t col,
+    const R_xlen_t m_i_len,
+    const R_xlen_t m_stride,
+    const R_xlen_t nrow,
+    const R_xlen_t tlen,
+    const R_xlen_t id_len,
+    const R_xlen_t id_n,
+    const R_xlen_t col,
     const int *p_id)
 {
     for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const int *p_m = m + m_i[i] - 1;
 
         SEXP vec;
-        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
+        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
 
         if (p_id != NULL) {
