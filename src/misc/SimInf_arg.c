@@ -129,8 +129,8 @@ attribute_hidden
 int
 SimInf_sparse(
     SEXP m,
-    R_xlen_t i,
-    R_xlen_t j)
+    ptrdiff_t i,
+    ptrdiff_t j)
 {
     const int *d = INTEGER(R_do_slot(m, Rf_install("Dim")));
     return d[0] == i && d[1] == j;
