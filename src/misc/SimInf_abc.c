@@ -88,12 +88,11 @@ SimInf_abc_proposals(
     SEXP w,
     SEXP sigma)
 {
-    int err = 0, len = 0;
+    int err = 0;
     gsl_rng *rng = NULL;
-    gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
-    double *ptr_x = NULL, *ptr_w = NULL, *cdf = NULL;
-    double *ptr_p1 = REAL(p1), *ptr_p2 = REAL(p2);
+    const double *ptr_p1 = REAL(p1);
+    const double *ptr_p2 = REAL(p2);
 
     /* Check input arguments. */
     if (SimInf_arg_check_integer_gt_zero(n))
@@ -102,6 +101,7 @@ SimInf_abc_proposals(
     if (!Rf_isString(parameter))
         Rf_error("'parameter' must be a character vector.");
     const int n_parameters = Rf_length(parameter);
+    int len = 0;
     if (!Rf_isNull(x)) {
         len = Rf_length(w);
         if (len < 1)
@@ -160,7 +160,7 @@ SimInf_abc_proposals(
     }
 
     /* Setup variance-covariance matrix. */
-    v_sigma = gsl_matrix_view_array(REAL(sigma), n_parameters, n_parameters);
+    gsl_matrix_view v_sigma = gsl_matrix_view_array(REAL(sigma), n_parameters, n_parameters);
     SIGMA = gsl_matrix_alloc(n_parameters, n_parameters);
     if (!SIGMA) {
         err = 1;      /* #nocov */
@@ -170,9 +170,9 @@ SimInf_abc_proposals(
     gsl_linalg_cholesky_decomp1(SIGMA);
 
     /* Setup weights */
-    ptr_x = REAL(x);
-    ptr_w = REAL(w);
-    cdf = (double *)R_alloc(len, sizeof(double));
+    double *ptr_x = REAL(x);
+    const double *ptr_w = REAL(w);
+    double *cdf = (double *)R_alloc(len, sizeof(double));
     for (ptrdiff_t i = 0; i < len; i++) {
         if (!R_FINITE(ptr_w[i]) || ptr_w[i] < 0.0) {
             err = 3;
