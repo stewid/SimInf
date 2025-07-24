@@ -52,14 +52,12 @@ SimInf_find_longest_path(
     int *keep,
     const R_xlen_t n)
 {
-    ptrdiff_t longest_path = 0;
-    int must_enter = 0;
-    int must_exit = 0;
-
     /* If one of the events is an enter event, then the first event in
      * the path must be an enter event. If one of the events is an
      * exit event, then the last event in the path must be an exit
      * event. */
+    int must_enter = 0;
+    int must_exit = 0;
     for (ptrdiff_t i = 0; i < n; i++) {
         if (event[i] == ENTER_EVENT)
             must_enter = 1;
@@ -69,6 +67,7 @@ SimInf_find_longest_path(
 
     /* Iterate over all events to identify an event that should begin
      * each path. */
+    ptrdiff_t longest_path = 0;
     for (ptrdiff_t begin = 0; begin < n; begin++) {
         ptrdiff_t depth = 1;
 
