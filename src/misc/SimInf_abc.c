@@ -309,13 +309,12 @@ SimInf_abc_weights(
     gsl_matrix_view v_sigma;
     gsl_matrix *SIGMA = NULL;
     gsl_vector *work = NULL;
-    SEXP ww;
     const double *ptr_p1, *ptr_p2, *ptr_w;
-    double *ptr_x, *ptr_xx, *ptr_ww;
+    double *ptr_x, *ptr_xx;
     double sum, max_ww = 0.0;
 
-    PROTECT(ww = Rf_allocVector(REALSXP, n_particles));
-    ptr_ww = REAL(ww);
+    SEXP ww = PROTECT(Rf_allocVector(REALSXP, n_particles));
+    double *ptr_ww = REAL(ww);
     if (Rf_isNull(w)) {
         for (int i = 0; i < n_particles; ++i)
             ptr_ww[i] = 1.0 / (double)n_particles;
