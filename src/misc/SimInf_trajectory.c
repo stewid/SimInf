@@ -38,8 +38,8 @@ static int
 SimInf_insert_id_time(
     rowinfo_vec *ri,
     SEXP m,
-    ptrdiff_t m_stride,
-    ptrdiff_t tlen)
+    const ptrdiff_t m_stride,
+    const ptrdiff_t tlen)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
@@ -69,9 +69,9 @@ SimInf_insert_id_time2(
     rowinfo_vec *ri,
     SEXP m1,
     SEXP m2,
-    ptrdiff_t m1_stride,
-    ptrdiff_t m2_stride,
-    ptrdiff_t tlen)
+    const ptrdiff_t m1_stride,
+    const ptrdiff_t m2_stride,
+    const ptrdiff_t tlen)
 {
     const int *m1_ir = INTEGER(R_do_slot(m1, Rf_install("i")));
     const int *m2_ir = INTEGER(R_do_slot(m2, Rf_install("i")));
