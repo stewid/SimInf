@@ -69,8 +69,6 @@ SimInf_find_longest_path(
      * each path. */
     ptrdiff_t longest_path = 0;
     for (ptrdiff_t begin = 0; begin < n; begin++) {
-        ptrdiff_t depth = 1;
-
         if (must_enter && event[begin] != ENTER_EVENT)
             continue;
 
@@ -93,14 +91,14 @@ SimInf_find_longest_path(
 
         /* Perform a depth first search of the events to find the
          * longest path. */
+        ptrdiff_t depth = 1;
         while (depth > 0 &&
                depth < (n - begin) &&
                longest_path < (n - begin))
         {
-            ptrdiff_t offset = 1;
-
             /* Determine where to continue the search. */
             ptrdiff_t i = path[depth - 1] - 1;
+            ptrdiff_t offset = 1;
             if (path[depth] > 0) {
                 /* Since the search is moving up in the search tree,
                  * ensure to continue searching from a non-visited
