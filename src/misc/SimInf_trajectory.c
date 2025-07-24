@@ -381,12 +381,12 @@ SimInf_dense2df_real(
     SEXP dst,
     const double *m,
     const int *m_i,
-    R_xlen_t m_i_len,
-    R_xlen_t m_stride,
-    R_xlen_t nrow,
-    R_xlen_t tlen,
-    R_xlen_t id_len,
-    R_xlen_t id_n,
+    const R_xlen_t m_i_len,
+    const R_xlen_t m_stride,
+    const R_xlen_t nrow,
+    const R_xlen_t tlen,
+    const R_xlen_t id_len,
+    const R_xlen_t id_n,
     R_xlen_t col,
     const int *p_id)
 {
