@@ -124,13 +124,13 @@ SimInf_create_rowinfo(
     rowinfo_vec **out,
     SEXP dm,
     SEXP cm,
-    ptrdiff_t dm_i_len,
-    ptrdiff_t cm_i_len,
-    int dm_sparse,
-    int cm_sparse,
-    ptrdiff_t dm_stride,
-    ptrdiff_t cm_stride,
-    ptrdiff_t tlen)
+    const ptrdiff_t dm_i_len,
+    const ptrdiff_t cm_i_len,
+    const int dm_sparse,
+    const int cm_sparse,
+    const ptrdiff_t dm_stride,
+    const ptrdiff_t cm_stride,
+    const ptrdiff_t tlen)
 {
     if (dm_i_len > 0 && cm_i_len > 0) {
         if (dm_sparse && cm_sparse) {
