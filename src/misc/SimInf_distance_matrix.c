@@ -22,14 +22,14 @@
 #include <R_ext/Visibility.h>
 #include "SimInf.h"
 
-static R_xlen_t
+static ptrdiff_t
 SimInf_Euclidean_distance(
     const double* x,
     const double* y,
     const double cutoff,
     const double min_dist,
     const int na_fail,
-    const R_xlen_t len,
+    const ptrdiff_t len,
     double *distance,
     int *row_indices,
     int *col_indices)
