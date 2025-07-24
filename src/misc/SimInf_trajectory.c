@@ -387,14 +387,14 @@ SimInf_dense2df_real(
     const ptrdiff_t tlen,
     const ptrdiff_t id_len,
     const ptrdiff_t id_n,
-    ptrdiff_t col,
+    const ptrdiff_t col,
     const int *p_id)
 {
     for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const double *p_m = m + m_i[i] - 1;
 
         SEXP vec;
-        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
+        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
 
         if (p_id != NULL) {
