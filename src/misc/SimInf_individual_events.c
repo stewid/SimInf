@@ -41,6 +41,7 @@
  *        indices to the events in the current search.
  * @param keep integer vector for results with 1 for each event to
  *        keep, else 0.
+ * @param n number of events for the individual.
  */
 static void
 SimInf_find_longest_path(
@@ -50,7 +51,7 @@ SimInf_find_longest_path(
     const int *dest,
     int *path,
     int *keep,
-    const R_xlen_t n)
+    const ptrdiff_t n)
 {
     /* If one of the events is an enter event, then the first event in
      * the path must be an enter event. If one of the events is an
