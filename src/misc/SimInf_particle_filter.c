@@ -101,8 +101,8 @@ SimInf_split_events(
 
     /* Interate over the event time-points and place each event in the
      * corresponding interval. */
-    R_xlen_t t_i = 0;
-    R_xlen_t t_end_i = 0;
+    ptrdiff_t t_i = 0;
+    ptrdiff_t t_end_i = 0;
     while (t_i < t_len && t_end_i < t_end_len) {
         if (ptr_t[t_i] <= ptr_t_end[t_end_i]) {
             if (!ptr_m[t_end_i])
