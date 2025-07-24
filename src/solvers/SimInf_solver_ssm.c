@@ -311,32 +311,32 @@ int
 SimInf_run_solver_ssm(
     SimInf_solver_args *args)
 {
-    int error = 0;
+    int err = 0;
     gsl_rng *rng = NULL;
     SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-        goto cleanup;                           /* #nocov */
+        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+        goto cleanup;                         /* #nocov */
     }
     gsl_rng_set(rng, args->seed);
 
-    error = SimInf_compartment_model_create(&model, args);
-    if (error)
+    err = SimInf_compartment_model_create(&model, args);
+    if (err)
         goto cleanup; /* #nocov */
 
-    error = SimInf_scheduled_events_create(&events, args, rng);
-    if (error)
+    err = SimInf_scheduled_events_create(&events, args, rng);
+    if (err)
         goto cleanup; /* #nocov */
 
-    error = SimInf_solver_ssm(model, events);
+    err = SimInf_solver_ssm(model, events);
 
 cleanup:
     gsl_rng_free(rng);
     SimInf_scheduled_events_free(events);
     SimInf_compartment_model_free(model);
 
-    return error;
+    return err;
 }
