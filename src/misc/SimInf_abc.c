@@ -94,9 +94,6 @@ SimInf_abc_proposals(
     gsl_matrix *SIGMA = NULL;
     double *ptr_x = NULL, *ptr_w = NULL, *cdf = NULL;
     double *ptr_p1 = REAL(p1), *ptr_p2 = REAL(p2);
-    SEXP ancestor;
-    double *ptr_xx;
-    int *ptr_ancestor;
 
     /* Check input arguments. */
     if (SimInf_arg_check_integer_gt_zero(n))
@@ -116,13 +113,13 @@ SimInf_abc_proposals(
     SEXP dimnames = PROTECT(Rf_allocVector(VECSXP, 2));
     Rf_setAttrib(xx, R_DimNamesSymbol, dimnames);
     SET_VECTOR_ELT(dimnames, 1, parameter);
-    ptr_xx = REAL(xx);
+    double *ptr_xx = REAL(xx);
 
     /* Setup vector to record 'ancestor' i.e. which particle the
      * proposal was sampled from. */
-    PROTECT(ancestor = Rf_allocVector(INTSXP, n_proposals));
+    SEXP ancestor = PROTECT(Rf_allocVector(INTSXP, n_proposals));
     Rf_setAttrib(xx, Rf_install("ancestor"), ancestor);
-    ptr_ancestor = INTEGER(ancestor);
+    int *ptr_ancestor = INTEGER(ancestor);
 
     /* Setup random number generator. */
     GetRNGstate();
