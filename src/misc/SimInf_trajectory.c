@@ -28,8 +28,8 @@
 #include "kvec.h"
 
 typedef struct {
-    R_xlen_t id;
-    R_xlen_t time;
+    ptrdiff_t id;
+    ptrdiff_t time;
 } rowinfo_t;
 
 typedef kvec_t(rowinfo_t) rowinfo_vec;
@@ -38,8 +38,8 @@ static int
 SimInf_insert_id_time(
     rowinfo_vec *ri,
     SEXP m,
-    R_xlen_t m_stride,
-    R_xlen_t tlen)
+    ptrdiff_t m_stride,
+    ptrdiff_t tlen)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
@@ -48,10 +48,10 @@ SimInf_insert_id_time(
         return -1; /* #nocov */
 
     for (ptrdiff_t t = 0; t < tlen; t++) {
-        R_xlen_t id_last = -1;
+        ptrdiff_t id_last = -1;
 
         for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
-            R_xlen_t id = m_ir[j] / m_stride;
+            ptrdiff_t id = m_ir[j] / m_stride;
 
             if (id > id_last) {
                 rowinfo_t r = {id, t};
@@ -69,9 +69,9 @@ SimInf_insert_id_time2(
     rowinfo_vec *ri,
     SEXP m1,
     SEXP m2,
-    R_xlen_t m1_stride,
-    R_xlen_t m2_stride,
-    R_xlen_t tlen)
+    ptrdiff_t m1_stride,
+    ptrdiff_t m2_stride,
+    ptrdiff_t tlen)
 {
     const int *m1_ir = INTEGER(R_do_slot(m1, Rf_install("i")));
     const int *m2_ir = INTEGER(R_do_slot(m2, Rf_install("i")));
@@ -82,17 +82,17 @@ SimInf_insert_id_time2(
         return -1; /* #nocov */
 
     for (ptrdiff_t t = 0; t < tlen; t++) {
-        R_xlen_t id_last = -1;
-        R_xlen_t j1 = m1_jc[t];
-        R_xlen_t j2 = m2_jc[t];
+        ptrdiff_t id_last = -1;
+        ptrdiff_t j1 = m1_jc[t];
+        ptrdiff_t j2 = m2_jc[t];
 
         while (j1 < m1_jc[t + 1] || j2 < m2_jc[t + 1]) {
-            R_xlen_t id;
+            ptrdiff_t id;
 
             if (j1 < m1_jc[t + 1]) {
                 if (j2 < m2_jc[t + 1]) {
-                    R_xlen_t id1 = m1_ir[j1] / m1_stride;
-                    R_xlen_t id2 = m2_ir[j2] / m2_stride;
+                    ptrdiff_t id1 = m1_ir[j1] / m1_stride;
+                    ptrdiff_t id2 = m2_ir[j2] / m2_stride;
 
                     if (id1 < id2) {
                         id = id1;
@@ -124,13 +124,13 @@ SimInf_create_rowinfo(
     rowinfo_vec **out,
     SEXP dm,
     SEXP cm,
-    R_xlen_t dm_i_len,
-    R_xlen_t cm_i_len,
+    ptrdiff_t dm_i_len,
+    ptrdiff_t cm_i_len,
     int dm_sparse,
     int cm_sparse,
-    R_xlen_t dm_stride,
-    R_xlen_t cm_stride,
-    R_xlen_t tlen)
+    ptrdiff_t dm_stride,
+    ptrdiff_t cm_stride,
+    ptrdiff_t tlen)
 {
     if (dm_i_len > 0 && cm_i_len > 0) {
         if (dm_sparse && cm_sparse) {
@@ -157,11 +157,11 @@ SimInf_create_rowinfo(
     return 0;
 }
 
-static R_xlen_t
+static ptrdiff_t
 SimInf_number_of_rows(
     const rowinfo_vec *ri,
-    const R_xlen_t tlen,
-    const R_xlen_t id_len)
+    const ptrdiff_t tlen,
+    const ptrdiff_t id_len)
 {
     if (ri)
         return kv_size(*ri);
