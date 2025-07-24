@@ -155,10 +155,20 @@ valgrind:
 	$(foreach var,$(test_objects),R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < $(var);)
 
 # Run static code analysis on the C code.
+.PHONY: static-code-analysis
+static-code-analysis: cppcheck clang-tidy
+
 # https://github.com/danmar/cppcheck/
 .PHONY: cppcheck
 cppcheck:
 	cppcheck -I ./inst/include/ --check-level=exhaustive --enable=style src
+
+# https://clang.llvm.org/extra/clang-tidy/
+.PHONY: clang-tidy
+clang-tidy:
+	clang-tidy src/*.c src/misc/*.c src/solvers/*.c \
+          -checks=-*,bugprone*,-bugprone-easily-swappable-parameters \
+          -- -I/usr/lib64/R/include -I./inst/include -I./src
 
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
