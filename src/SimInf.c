@@ -203,7 +203,7 @@ SimInf_run(
     /* Output array (to hold a single trajectory) */
     PROTECT(U_sparse = R_do_slot(result, Rf_install("U_sparse")));
     nprotect++;
-    if (SimInf_sparse(U_sparse, args.Nn * args.Nc, args.tlen)) {
+    if (SimInf_sparse(U_sparse, (ptrdiff_t)args.Nn * (ptrdiff_t)args.Nc, args.tlen)) {
         args.irU = INTEGER(R_do_slot(U_sparse, Rf_install("i")));
         args.jcU = INTEGER(R_do_slot(U_sparse, Rf_install("p")));
         args.prU = REAL(R_do_slot(U_sparse, Rf_install("x")));
@@ -217,7 +217,7 @@ SimInf_run(
     /* Output array (to hold a single trajectory) */
     PROTECT(V_sparse = R_do_slot(result, Rf_install("V_sparse")));
     nprotect++;
-    if (SimInf_sparse(V_sparse, args.Nn * args.Nd, args.tlen)) {
+    if (SimInf_sparse(V_sparse, (ptrdiff_t)args.Nn * (ptrdiff_t)args.Nd, args.tlen)) {
         args.irV = INTEGER(R_do_slot(V_sparse, Rf_install("i")));
         args.jcV = INTEGER(R_do_slot(V_sparse, Rf_install("p")));
         args.prV = REAL(R_do_slot(V_sparse, Rf_install("x")));
