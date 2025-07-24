@@ -174,12 +174,12 @@ SimInf_sparse2df_int(
     rowinfo_vec *ri,
     SEXP m,
     const int *m_i,
-    R_xlen_t m_i_len,
-    R_xlen_t m_stride,
-    R_xlen_t nrow,
-    R_xlen_t tlen,
-    R_xlen_t n_id,
-    R_xlen_t col)
+    const R_xlen_t m_i_len,
+    const R_xlen_t m_stride,
+    const R_xlen_t nrow,
+    const R_xlen_t tlen,
+    const R_xlen_t n_id,
+    const R_xlen_t col)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
@@ -187,7 +187,7 @@ SimInf_sparse2df_int(
 
     for (ptrdiff_t i = 0; i < m_i_len; i++) {
         SEXP vec;
-        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
+        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
 
         if (ri) {
