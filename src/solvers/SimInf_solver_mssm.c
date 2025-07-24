@@ -282,13 +282,13 @@ SimInf_solver_mssm(
                      * solution in a dense matrix (U and/or V non-null
                      * pointers).  Copy compartment state to U */
                     while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it])
-                        memcpy(&m.U[m.Nn * m.Nc * m.U_it++],
-                               m.u, m.Nn * m.Nc * sizeof(int));
+                        memcpy(&m.U[(ptrdiff_t)m.Nn * (ptrdiff_t)m.Nc * m.U_it++],
+                               m.u, (ptrdiff_t)m.Nn * (ptrdiff_t)m.Nc * sizeof(int));
 
                     /* Copy continuous state to V */
                     while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it])
-                        memcpy(&m.V[m.Nd * m.Ntot * m.V_it++],
-                               m.v_new, m.Nn * m.Nd * sizeof(double));
+                        memcpy(&m.V[(ptrdiff_t)m.Nd * (ptrdiff_t)m.Ntot * m.V_it++],
+                               m.v_new, (ptrdiff_t)m.Nn * (ptrdiff_t)m.Nd * sizeof(double));
 
                     /* Swap the pointers to the continuous state
                      * variable so that 'v' equals 'v_new'. */
