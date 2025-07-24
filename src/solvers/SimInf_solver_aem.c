@@ -507,7 +507,7 @@ int
 SimInf_run_solver_aem(
     SimInf_solver_args *args)
 {
-    int error = 0;
+    int err = 0;
     gsl_rng *rng = NULL;
     SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;
@@ -515,24 +515,24 @@ SimInf_run_solver_aem(
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
-        error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-        goto cleanup;                           /* #nocov */
+        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+        goto cleanup;                         /* #nocov */
     }
     gsl_rng_set(rng, args->seed);
 
-    error = SimInf_compartment_model_create(&model, args);
-    if (error)
+    err = SimInf_compartment_model_create(&model, args);
+    if (err)
         goto cleanup; /* #nocov */
 
-    error = SimInf_scheduled_events_create(&events, args, rng);
-    if (error)
+    err = SimInf_scheduled_events_create(&events, args, rng);
+    if (err)
         goto cleanup; /* #nocov */
 
-    error = SimInf_aem_arguments_create(&method, model, args->Nthread, rng);
-    if (error)
+    err = SimInf_aem_arguments_create(&method, model, args->Nthread, rng);
+    if (err)
         goto cleanup; /* #nocov */
 
-    error = SimInf_solver_aem(model, method, events, args->Nthread);
+    err = SimInf_solver_aem(model, method, events, args->Nthread);
 
 cleanup:
     gsl_rng_free(rng);
@@ -540,5 +540,5 @@ cleanup:
     SimInf_aem_arguments_free(method, model, args->Nthread);
     SimInf_compartment_model_free(model);
 
-    return error;
+    return err;
 }
