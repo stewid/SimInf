@@ -36,11 +36,9 @@ int
 SimInf_arg_check_dgCMatrix(
     SEXP arg)
 {
-    SEXP class_name;
-
     if (!Rf_isS4(arg))
         return -1;
-    class_name = Rf_getAttrib(arg, R_ClassSymbol);
+    SEXP class_name = Rf_getAttrib(arg, R_ClassSymbol);
     if (0 != strcmp(CHAR(STRING_ELT(class_name, 0)), "dgCMatrix"))
         return -1;
     return 0;
