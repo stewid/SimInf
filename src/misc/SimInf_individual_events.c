@@ -52,7 +52,7 @@ SimInf_find_longest_path(
     int *keep,
     const R_xlen_t n)
 {
-    R_xlen_t longest_path = 0;
+    ptrdiff_t longest_path = 0;
     int must_enter = 0;
     int must_exit = 0;
 
@@ -70,7 +70,7 @@ SimInf_find_longest_path(
     /* Iterate over all events to identify an event that should begin
      * each path. */
     for (ptrdiff_t begin = 0; begin < n; begin++) {
-        R_xlen_t depth = 1;
+        ptrdiff_t depth = 1;
 
         if (must_enter && event[begin] != ENTER_EVENT)
             continue;
@@ -98,10 +98,10 @@ SimInf_find_longest_path(
                depth < (n - begin) &&
                longest_path < (n - begin))
         {
-            R_xlen_t offset = 1;
+            ptrdiff_t offset = 1;
 
             /* Determine where to continue the search. */
-            R_xlen_t i = path[depth - 1] - 1;
+            ptrdiff_t i = path[depth - 1] - 1;
             if (path[depth] > 0) {
                 /* Since the search is moving up in the search tree,
                  * ensure to continue searching from a non-visited
@@ -114,7 +114,7 @@ SimInf_find_longest_path(
             /* Find an event that is consistent with 'from' in the
              * previous event. 'j' is the index to the next event to
              * search from. */
-            R_xlen_t from = event[i] == ENTER_EVENT ? node[i] : dest[i];
+            ptrdiff_t from = event[i] == ENTER_EVENT ? node[i] : dest[i];
             for (ptrdiff_t j = i + offset; j < n && path[depth] == 0; j++) {
                 if (time[j] > time[i] &&
                     from == node[j] &&
