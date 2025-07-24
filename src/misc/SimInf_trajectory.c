@@ -255,12 +255,12 @@ SimInf_sparse2df_real(
     rowinfo_vec *ri,
     SEXP m,
     const int *m_i,
-    const R_xlen_t m_i_len,
-    const R_xlen_t m_stride,
-    const R_xlen_t nrow,
-    const R_xlen_t tlen,
-    const R_xlen_t n_id,
-    const R_xlen_t col)
+    const ptrdiff_t m_i_len,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t nrow,
+    const ptrdiff_t tlen,
+    const ptrdiff_t n_id,
+    const ptrdiff_t col)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
@@ -273,15 +273,15 @@ SimInf_sparse2df_real(
 
         if (ri) {
             size_t k = 0;
-            R_xlen_t p_vec_i = 0, j = 0;
+            ptrdiff_t p_vec_i = 0, j = 0;
 
             while (k < kv_size(*ri)) {
-                R_xlen_t p_time = kv_A(*ri, k).time;
+                ptrdiff_t p_time = kv_A(*ri, k).time;
 
                 while (m_jc[p_time] <= j && j < m_jc[p_time + 1]) {
                     /* Check if data for column. */
                     if (m_ir[j] % m_stride == (m_i[i] - 1)) {
-                        R_xlen_t m_id = m_ir[j] / m_stride;
+                        ptrdiff_t m_id = m_ir[j] / m_stride;
 
                         if (m_id < kv_A(*ri, k).id) {
                             j++; /* Move on. */
@@ -309,11 +309,11 @@ SimInf_sparse2df_real(
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
-                R_xlen_t id = 0;
+                ptrdiff_t id = 0;
 
                 for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
                     if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
-                        R_xlen_t m_id = m_ir[j] / m_stride;
+                        ptrdiff_t m_id = m_ir[j] / m_stride;
 
                         for (; id < m_id; id++)
                             p_vec[t * n_id + id] = NA_REAL;
