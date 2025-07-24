@@ -47,10 +47,10 @@ SimInf_insert_id_time(
     if (m_stride < 1)
         return -1; /* #nocov */
 
-    for (R_xlen_t t = 0; t < tlen; t++) {
+    for (ptrdiff_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
 
-        for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+        for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
             R_xlen_t id = m_ir[j] / m_stride;
 
             if (id > id_last) {
@@ -81,7 +81,7 @@ SimInf_insert_id_time2(
     if (m1_stride < 1 || m2_stride < 1)
         return -1; /* #nocov */
 
-    for (R_xlen_t t = 0; t < tlen; t++) {
+    for (ptrdiff_t t = 0; t < tlen; t++) {
         R_xlen_t id_last = -1;
         R_xlen_t j1 = m1_jc[t];
         R_xlen_t j2 = m2_jc[t];
@@ -185,7 +185,7 @@ SimInf_sparse2df_int(
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
     const double *m_x = REAL(R_do_slot(m, Rf_install("x")));
 
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    for (ptrdiff_t i = 0; i < m_i_len; i++) {
         SEXP vec;
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
@@ -227,10 +227,10 @@ SimInf_sparse2df_int(
             #ifdef _OPENMP
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
+            for (ptrdiff_t t = 0; t < tlen; t++) {
                 R_xlen_t id = 0;
 
-                for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
                     if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
@@ -266,7 +266,7 @@ SimInf_sparse2df_real(
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
     const double *m_x = REAL(R_do_slot(m, Rf_install("x")));
 
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    for (ptrdiff_t i = 0; i < m_i_len; i++) {
         SEXP vec;
         SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
@@ -308,10 +308,10 @@ SimInf_sparse2df_real(
             #ifdef _OPENMP
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
+            for (ptrdiff_t t = 0; t < tlen; t++) {
                 R_xlen_t id = 0;
 
-                for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
                     if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
                         R_xlen_t m_id = m_ir[j] / m_stride;
 
@@ -344,7 +344,7 @@ SimInf_dense2df_int(
     R_xlen_t col,
     const int *p_id)
 {
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const int *p_m = m + m_i[i] - 1;
 
         SEXP vec;
@@ -356,8 +356,8 @@ SimInf_dense2df_int(
             #ifdef _OPENMP
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t j = 0; j < id_len; j++) {
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                for (ptrdiff_t j = 0; j < id_len; j++) {
                     p_vec[t * id_len + j] =
                         p_m[(t * id_n + p_id[j] - 1) * m_stride];
                 }
@@ -366,8 +366,8 @@ SimInf_dense2df_int(
             #ifdef _OPENMP
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t j = 0; j < id_len; j++) {
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                for (ptrdiff_t j = 0; j < id_len; j++) {
                     p_vec[t * id_len + j] =
                         p_m[(t * id_n + j) * m_stride];
                 }
@@ -390,7 +390,7 @@ SimInf_dense2df_real(
     R_xlen_t col,
     const int *p_id)
 {
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const double *p_m = m + m_i[i] - 1;
 
         SEXP vec;
@@ -402,8 +402,8 @@ SimInf_dense2df_real(
             #ifdef _OPENMP
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t j = 0; j < id_len; j++) {
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                for (ptrdiff_t j = 0; j < id_len; j++) {
                     p_vec[t * id_len + j] =
                         p_m[(t * id_n + p_id[j] - 1) * m_stride];
                 }
@@ -412,8 +412,8 @@ SimInf_dense2df_real(
             #ifdef _OPENMP
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t j = 0; j < id_len; j++) {
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                for (ptrdiff_t j = 0; j < id_len; j++) {
                     p_vec[t * id_len + j] =
                         p_m[(t * id_n + j) * m_stride];
                 }
@@ -485,11 +485,11 @@ SimInf_trajectory(
     R_xlen_t col = 0;
     SET_STRING_ELT(colnames, col++, STRING_ELT(id_lbl, 0));
     SET_STRING_ELT(colnames, col++, Rf_mkChar("time"));
-    for (R_xlen_t i = 0; i < dm_i_len; i++) {
+    for (ptrdiff_t i = 0; i < dm_i_len; i++) {
         const R_xlen_t j = INTEGER(dm_i)[i] - 1;
         SET_STRING_ELT(colnames, col++, STRING_ELT(dm_lbl, j));
     }
-    for (R_xlen_t i = 0; i < cm_i_len; i++) {
+    for (ptrdiff_t i = 0; i < cm_i_len; i++) {
         const R_xlen_t j = INTEGER(cm_i)[i] - 1;
         SET_STRING_ELT(colnames, col++, STRING_ELT(cm_lbl, j));
     }
@@ -522,7 +522,7 @@ SimInf_trajectory(
     #ifdef _OPENMP
     #  pragma omp parallel for num_threads(SimInf_num_threads())
     #endif
-    for (R_xlen_t i = 0; i < nrow; i++) {
+    for (ptrdiff_t i = 0; i < nrow; i++) {
         p_vec[i] = (int)(i + 1);
     }
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
@@ -538,15 +538,15 @@ SimInf_trajectory(
         #ifdef _OPENMP
         #  pragma omp parallel for num_threads(SimInf_num_threads())
         #endif
-        for (R_xlen_t t = 0; t < tlen; t++) {
+        for (ptrdiff_t t = 0; t < tlen; t++) {
             memcpy(&p_vec[t * id_len], p_id, id_len * sizeof(int));
         }
     } else {
         #ifdef _OPENMP
         #  pragma omp parallel for num_threads(SimInf_num_threads())
         #endif
-        for (R_xlen_t t = 0; t < tlen; t++) {
-            for (R_xlen_t i = 0; i < id_len; i++)
+        for (ptrdiff_t t = 0; t < tlen; t++) {
+            for (ptrdiff_t i = 0; i < id_len; i++)
                 p_vec[t * id_len + i] = (int)(i + 1);
         }
     }
@@ -564,8 +564,8 @@ SimInf_trajectory(
             #ifdef _OPENMP
             #  pragma omp parallel for num_threads(SimInf_num_threads())
             #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++)
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                for (ptrdiff_t i = 0; i < id_len; i++)
                     p_vec[t * id_len + i] = (int)p_tspan[t];
             }
         }
@@ -575,11 +575,11 @@ SimInf_trajectory(
 
         SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(STRSXP, nrow));
         if (ri) {
-            for (R_xlen_t i = 0; i < kv_size(*ri); i++)
+            for (ptrdiff_t i = 0; i < kv_size(*ri); i++)
                 SET_STRING_ELT(vec, i, STRING_ELT(lbl_tspan, kv_A(*ri, i).time));
         } else {
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++)
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                for (ptrdiff_t i = 0; i < id_len; i++)
                     SET_STRING_ELT(vec, t * id_len + i, STRING_ELT(lbl_tspan, t));
             }
         }
