@@ -170,6 +170,16 @@ clang-tidy:
           -checks=-*,bugprone*,-bugprone-easily-swappable-parameters \
           -- -I/usr/lib64/R/include -I./inst/include -I./src
 
+# Run the indent program on the C code.
+.PHONY: code-style
+code-style:
+	indent src/*.c src/*.h src/misc/*.c src/models/*.c src/solvers/*.c
+	-rm src/*.c~
+	-rm src/*.h~
+	-rm src/misc/*.c~
+	-rm src/models/*.c~
+	-rm src/solvers/*.c~
+
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
 	chmod +x ./configure
