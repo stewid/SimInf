@@ -37,10 +37,12 @@ enum { BETA, GAMMA };
  * @param t Current time.
  * @return propensity.
  */
-static double
-SIS_S_to_I(const int *u,
-           const double *v,
-           const double *ldata, const double *gdata, double t)
+static double SIS_S_to_I(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     const double S_n = u[S];
     const double I_n = u[I];
@@ -65,10 +67,12 @@ SIS_S_to_I(const int *u,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SIS_I_to_R(const int *u,
-           const double *v,
-           const double *ldata, const double *gdata, double t)
+static double SIS_I_to_R(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(gdata);
@@ -92,12 +96,14 @@ SIS_I_to_R(const int *u,
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int
-SIS_post_time_step(double *v_new,
-                   const int *u,
-                   const double *v,
-                   const double *ldata,
-                   const double *gdata, int node, double t)
+static int SIS_post_time_step(
+    double *v_new,
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    int node,
+    double t)
 {
     SIMINF_UNUSED(v_new);
     SIMINF_UNUSED(u);
@@ -117,7 +123,9 @@ SIS_post_time_step(double *v_new,
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden SEXP SIS_run(SEXP model, SEXP solver)
+attribute_hidden SEXP SIS_run(
+    SEXP model,
+    SEXP solver)
 {
     TRFun tr_fun[] = { &SIS_S_to_I, &SIS_I_to_R };
 

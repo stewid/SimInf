@@ -27,25 +27,99 @@
 #include <Rinternals.h>
 
 /* Declare functions to register */
-SEXP SEIR_run(SEXP, SEXP);
-SEXP SIR_run(SEXP, SEXP);
-SEXP SIS_run(SEXP, SEXP);
-SEXP SISe_run(SEXP, SEXP);
-SEXP SISe3_run(SEXP, SEXP);
-SEXP SISe3_sp_run(SEXP, SEXP);
-SEXP SISe_sp_run(SEXP, SEXP);
-SEXP SimInf_abc_proposals(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-SEXP SimInf_abc_weights(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-SEXP SimInf_distance_matrix(SEXP, SEXP, SEXP, SEXP, SEXP);
-SEXP SimInf_have_openmp(void);
-SEXP SimInf_individual_events(SEXP, SEXP, SEXP, SEXP, SEXP);
-SEXP SimInf_init_threads(SEXP);
-SEXP SimInf_lambertW0(SEXP);
-SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
-SEXP SimInf_split_events(SEXP, SEXP);
-SEXP SimInf_systematic_resampling(SEXP);
-SEXP SimInf_trajectory(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,
-                       SEXP, SEXP);
+SEXP SEIR_run(
+    SEXP,
+    SEXP);
+
+SEXP SIR_run(
+    SEXP,
+    SEXP);
+
+SEXP SIS_run(
+    SEXP,
+    SEXP);
+
+SEXP SISe_run(
+    SEXP,
+    SEXP);
+
+SEXP SISe3_run(
+    SEXP,
+    SEXP);
+
+SEXP SISe3_sp_run(
+    SEXP,
+    SEXP);
+
+SEXP SISe_sp_run(
+    SEXP,
+    SEXP);
+
+SEXP SimInf_abc_proposals(
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP);
+
+SEXP SimInf_abc_weights(
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP);
+
+SEXP SimInf_distance_matrix(
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP);
+
+SEXP SimInf_have_openmp(
+    void);
+
+SEXP SimInf_individual_events(
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP);
+
+SEXP SimInf_init_threads(
+    SEXP);
+
+SEXP SimInf_lambertW0(
+    SEXP);
+
+SEXP SimInf_ldata_sp(
+    SEXP,
+    SEXP,
+    SEXP);
+
+SEXP SimInf_split_events(
+    SEXP,
+    SEXP);
+
+SEXP SimInf_systematic_resampling(
+    SEXP);
+
+SEXP SimInf_trajectory(
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP,
+    SEXP);
 
 #define CALLDEF(name, n) {#name, (DL_FUNC) &(name), (n)}
 
@@ -76,7 +150,8 @@ static const R_CallMethodDef callMethods[] = {
  *
  * @param info Information about the DLL being loaded
  */
-attribute_visible void R_init_SimInf(DllInfo *info)
+attribute_visible void R_init_SimInf(
+    DllInfo *info)
 {
     R_registerRoutines(info, NULL, callMethods, NULL, NULL);
     R_useDynamicSymbols(info, FALSE);

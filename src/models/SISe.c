@@ -48,10 +48,12 @@ enum { UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SISe_S_to_I(const int *u,
-            const double *v,
-            const double *ldata, const double *gdata, double t)
+static double SISe_S_to_I(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(ldata);
     SIMINF_UNUSED(t);
@@ -69,10 +71,12 @@ SISe_S_to_I(const int *u,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SISe_I_to_S(const int *u,
-            const double *v,
-            const double *ldata, const double *gdata, double t)
+static double SISe_I_to_S(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(ldata);
@@ -96,12 +100,14 @@ SISe_I_to_S(const int *u,
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int
-SISe_post_time_step(double *v_new,
-                    const int *u,
-                    const double *v,
-                    const double *ldata,
-                    const double *gdata, int node, double t)
+static int SISe_post_time_step(
+    double *v_new,
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    int node,
+    double t)
 {
     const int day = (int) t % 365;
     const double I_n = u[I];
@@ -141,7 +147,9 @@ SISe_post_time_step(double *v_new,
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden SEXP SISe_run(SEXP model, SEXP solver)
+attribute_hidden SEXP SISe_run(
+    SEXP model,
+    SEXP solver)
 {
     TRFun tr_fun[] = { &SISe_S_to_I, &SISe_I_to_S };
 

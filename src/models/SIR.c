@@ -40,10 +40,12 @@ enum { BETA, GAMMA };
  * @param t Current time.
  * @return propensity.
  */
-static double
-SIR_S_to_I(const int *u,
-           const double *v,
-           const double *ldata, const double *gdata, double t)
+static double SIR_S_to_I(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     const double S_n = u[S];
     const double I_n = u[I];
@@ -68,10 +70,12 @@ SIR_S_to_I(const int *u,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SIR_I_to_R(const int *u,
-           const double *v,
-           const double *ldata, const double *gdata, double t)
+static double SIR_I_to_R(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(gdata);
@@ -95,12 +99,14 @@ SIR_I_to_R(const int *u,
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int
-SIR_post_time_step(double *v_new,
-                   const int *u,
-                   const double *v,
-                   const double *ldata,
-                   const double *gdata, int node, double t)
+static int SIR_post_time_step(
+    double *v_new,
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    int node,
+    double t)
 {
     SIMINF_UNUSED(v_new);
     SIMINF_UNUSED(u);
@@ -120,7 +126,9 @@ SIR_post_time_step(double *v_new,
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden SEXP SIR_run(SEXP model, SEXP solver)
+attribute_hidden SEXP SIR_run(
+    SEXP model,
+    SEXP solver)
 {
     TRFun tr_fun[] = { &SIR_S_to_I, &SIR_I_to_R };
 

@@ -29,7 +29,8 @@
  * @param w a numeric vector with weights for the particles.
  * @return an integer vector with indices.
  */
-attribute_hidden SEXP SimInf_systematic_resampling(SEXP w)
+attribute_hidden SEXP SimInf_systematic_resampling(
+    SEXP w)
 {
     const double *ptr_w = REAL(w);
     const R_xlen_t n = XLENGTH(w);
@@ -75,7 +76,9 @@ attribute_hidden SEXP SimInf_systematic_resampling(SEXP w)
  *         interval, and the second column the number of events in the
  *         interval.
  */
-attribute_hidden SEXP SimInf_split_events(SEXP t, SEXP t_end)
+attribute_hidden SEXP SimInf_split_events(
+    SEXP t,
+    SEXP t_end)
 {
     const int *ptr_t = INTEGER(t);
     const R_xlen_t t_len = XLENGTH(t);

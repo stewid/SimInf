@@ -40,10 +40,12 @@ enum { BETA, EPSILON, GAMMA };
  * @param t Current time.
  * @return propensity.
  */
-static double
-SEIR_S_to_E(const int *u,
-            const double *v,
-            const double *ldata, const double *gdata, double t)
+static double SEIR_S_to_E(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     const double S_n = u[S];
     const double I_n = u[I];
@@ -68,10 +70,12 @@ SEIR_S_to_E(const int *u,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SEIR_E_to_I(const int *u,
-            const double *v,
-            const double *ldata, const double *gdata, double t)
+static double SEIR_E_to_I(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(gdata);
@@ -90,10 +94,12 @@ SEIR_E_to_I(const int *u,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SEIR_I_to_R(const int *u,
-            const double *v,
-            const double *ldata, const double *gdata, double t)
+static double SEIR_I_to_R(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(gdata);
@@ -117,12 +123,14 @@ SEIR_I_to_R(const int *u,
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int
-SEIR_post_time_step(double *v_new,
-                    const int *u,
-                    const double *v,
-                    const double *ldata,
-                    const double *gdata, int node, double t)
+static int SEIR_post_time_step(
+    double *v_new,
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    int node,
+    double t)
 {
     SIMINF_UNUSED(v_new);
     SIMINF_UNUSED(u);
@@ -142,7 +150,9 @@ SEIR_post_time_step(double *v_new,
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden SEXP SEIR_run(SEXP model, SEXP solver)
+attribute_hidden SEXP SEIR_run(
+    SEXP model,
+    SEXP solver)
 {
     TRFun tr_fun[] = { &SEIR_S_to_E, &SEIR_E_to_I, &SEIR_I_to_R };
 

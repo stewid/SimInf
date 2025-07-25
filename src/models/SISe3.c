@@ -48,10 +48,12 @@ enum { UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SISe3_S_1_to_I_1(const int *u,
-                 const double *v,
-                 const double *ldata, const double *gdata, double t)
+static double SISe3_S_1_to_I_1(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(ldata);
     SIMINF_UNUSED(t);
@@ -69,10 +71,12 @@ SISe3_S_1_to_I_1(const int *u,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SISe3_S_2_to_I_2(const int *u,
-                 const double *v,
-                 const double *ldata, const double *gdata, double t)
+static double SISe3_S_2_to_I_2(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(ldata);
     SIMINF_UNUSED(t);
@@ -90,10 +94,12 @@ SISe3_S_2_to_I_2(const int *u,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SISe3_S_3_to_I_3(const int *u,
-                 const double *v,
-                 const double *ldata, const double *gdata, double t)
+static double SISe3_S_3_to_I_3(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(ldata);
     SIMINF_UNUSED(t);
@@ -111,10 +117,12 @@ SISe3_S_3_to_I_3(const int *u,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SISe3_I_1_to_S_1(const int *u,
-                 const double *v,
-                 const double *ldata, const double *gdata, double t)
+static double SISe3_I_1_to_S_1(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(ldata);
@@ -133,10 +141,12 @@ SISe3_I_1_to_S_1(const int *u,
  * @param t Current time.
  * @return propensity.
  */
-static double
-SISe3_I_2_to_S_2(const int *u,
-                 const double *v,
-                 const double *ldata, const double *gdata, double t)
+static double SISe3_I_2_to_S_2(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(ldata);
@@ -155,10 +165,12 @@ SISe3_I_2_to_S_2(const int *u,
  * @param t Current time.
  * @return propensity
  */
-static double
-SISe3_I_3_to_S_3(const int *u,
-                 const double *v,
-                 const double *ldata, const double *gdata, double t)
+static double SISe3_I_3_to_S_3(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(ldata);
@@ -182,12 +194,14 @@ SISe3_I_3_to_S_3(const int *u,
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int
-SISe3_post_time_step(double *v_new,
-                     const int *u,
-                     const double *v,
-                     const double *ldata,
-                     const double *gdata, int node, double t)
+static int SISe3_post_time_step(
+    double *v_new,
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    int node,
+    double t)
 {
     const int day = (int) t % 365;
     const double I_n = u[I_1] + u[I_2] + u[I_3];
@@ -227,7 +241,9 @@ SISe3_post_time_step(double *v_new,
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden SEXP SISe3_run(SEXP model, SEXP solver)
+attribute_hidden SEXP SISe3_run(
+    SEXP model,
+    SEXP solver)
 {
     TRFun tr_fun[] = { &SISe3_S_1_to_I_1, &SISe3_I_1_to_S_1,
         &SISe3_S_2_to_I_2, &SISe3_I_2_to_S_2,

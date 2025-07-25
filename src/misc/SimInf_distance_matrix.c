@@ -22,15 +22,16 @@
 #include <R_ext/Visibility.h>
 #include <Rinternals.h>
 
-static ptrdiff_t
-SimInf_Euclidean_distance(const double *x,
-                          const double *y,
-                          const double cutoff,
-                          const double min_dist,
-                          const int na_fail,
-                          const ptrdiff_t len,
-                          double *distance,
-                          int *row_indices, int *col_indices)
+static ptrdiff_t SimInf_Euclidean_distance(
+    const double *x,
+    const double *y,
+    const double cutoff,
+    const double min_dist,
+    const int na_fail,
+    const ptrdiff_t len,
+    double *distance,
+    int *row_indices,
+    int *col_indices)
 {
     if (col_indices)
         col_indices[0] = 0;
@@ -82,11 +83,12 @@ SimInf_Euclidean_distance(const double *x,
     return n;
 }
 
-attribute_hidden
-    SEXP
-SimInf_distance_matrix(SEXP x_,
-                       SEXP y_,
-                       SEXP cutoff_, SEXP min_dist_, SEXP na_fail_)
+attribute_hidden SEXP SimInf_distance_matrix(
+    SEXP x_,
+    SEXP y_,
+    SEXP cutoff_,
+    SEXP min_dist_,
+    SEXP na_fail_)
 {
     /* Check that the input vectors have an identical length > 0. */
     const R_xlen_t len = XLENGTH(x_);

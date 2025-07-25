@@ -35,12 +35,14 @@ typedef struct {
     ptrdiff_t time;
 } rowinfo_t;
 
-typedef kvec_t(rowinfo_t) rowinfo_vec;
+typedef kvec_t(
+    rowinfo_t) rowinfo_vec;
 
-static int
-SimInf_insert_id_time(rowinfo_vec *ri,
-                      SEXP m,
-                      const ptrdiff_t m_stride, const ptrdiff_t tlen)
+static int SimInf_insert_id_time(
+    rowinfo_vec *ri,
+    SEXP m,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t tlen)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
@@ -65,12 +67,13 @@ SimInf_insert_id_time(rowinfo_vec *ri,
     return 0;
 }
 
-static int
-SimInf_insert_id_time2(rowinfo_vec *ri,
-                       SEXP m1,
-                       SEXP m2,
-                       const ptrdiff_t m1_stride,
-                       const ptrdiff_t m2_stride, const ptrdiff_t tlen)
+static int SimInf_insert_id_time2(
+    rowinfo_vec *ri,
+    SEXP m1,
+    SEXP m2,
+    const ptrdiff_t m1_stride,
+    const ptrdiff_t m2_stride,
+    const ptrdiff_t tlen)
 {
     const int *m1_ir = INTEGER(R_do_slot(m1, Rf_install("i")));
     const int *m2_ir = INTEGER(R_do_slot(m2, Rf_install("i")));
@@ -118,16 +121,17 @@ SimInf_insert_id_time2(rowinfo_vec *ri,
     return 0;
 }
 
-static int
-SimInf_create_rowinfo(rowinfo_vec **out,
-                      SEXP dm,
-                      SEXP cm,
-                      const ptrdiff_t dm_i_len,
-                      const ptrdiff_t cm_i_len,
-                      const int dm_sparse,
-                      const int cm_sparse,
-                      const ptrdiff_t dm_stride,
-                      const ptrdiff_t cm_stride, const ptrdiff_t tlen)
+static int SimInf_create_rowinfo(
+    rowinfo_vec **out,
+    SEXP dm,
+    SEXP cm,
+    const ptrdiff_t dm_i_len,
+    const ptrdiff_t cm_i_len,
+    const int dm_sparse,
+    const int cm_sparse,
+    const ptrdiff_t dm_stride,
+    const ptrdiff_t cm_stride,
+    const ptrdiff_t tlen)
 {
     if (dm_i_len > 0 && cm_i_len > 0) {
         if (dm_sparse && cm_sparse) {
@@ -155,25 +159,27 @@ SimInf_create_rowinfo(rowinfo_vec **out,
     return 0;
 }
 
-static ptrdiff_t
-SimInf_number_of_rows(const rowinfo_vec *ri,
-                      const ptrdiff_t tlen, const ptrdiff_t id_len)
+static ptrdiff_t SimInf_number_of_rows(
+    const rowinfo_vec *ri,
+    const ptrdiff_t tlen,
+    const ptrdiff_t id_len)
 {
     if (ri)
         return kv_size(*ri);
     return tlen * id_len;
 }
 
-static void
-SimInf_sparse2df_int(SEXP dst,
-                     rowinfo_vec *ri,
-                     SEXP m,
-                     const int *m_i,
-                     const ptrdiff_t m_i_len,
-                     const ptrdiff_t m_stride,
-                     const ptrdiff_t nrow,
-                     const ptrdiff_t tlen,
-                     const ptrdiff_t n_id, const ptrdiff_t col)
+static void SimInf_sparse2df_int(
+    SEXP dst,
+    rowinfo_vec *ri,
+    SEXP m,
+    const int *m_i,
+    const ptrdiff_t m_i_len,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t nrow,
+    const ptrdiff_t tlen,
+    const ptrdiff_t n_id,
+    const ptrdiff_t col)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
@@ -243,16 +249,17 @@ SimInf_sparse2df_int(SEXP dst,
     }
 }
 
-static void
-SimInf_sparse2df_real(SEXP dst,
-                      rowinfo_vec *ri,
-                      SEXP m,
-                      const int *m_i,
-                      const ptrdiff_t m_i_len,
-                      const ptrdiff_t m_stride,
-                      const ptrdiff_t nrow,
-                      const ptrdiff_t tlen,
-                      const ptrdiff_t n_id, const ptrdiff_t col)
+static void SimInf_sparse2df_real(
+    SEXP dst,
+    rowinfo_vec *ri,
+    SEXP m,
+    const int *m_i,
+    const ptrdiff_t m_i_len,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t nrow,
+    const ptrdiff_t tlen,
+    const ptrdiff_t n_id,
+    const ptrdiff_t col)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
@@ -322,17 +329,18 @@ SimInf_sparse2df_real(SEXP dst,
     }
 }
 
-static void
-SimInf_dense2df_int(SEXP dst,
-                    const int *m,
-                    const int *m_i,
-                    const ptrdiff_t m_i_len,
-                    const ptrdiff_t m_stride,
-                    const ptrdiff_t nrow,
-                    const ptrdiff_t tlen,
-                    const ptrdiff_t id_len,
-                    const ptrdiff_t id_n,
-                    const ptrdiff_t col, const int *p_id)
+static void SimInf_dense2df_int(
+    SEXP dst,
+    const int *m,
+    const int *m_i,
+    const ptrdiff_t m_i_len,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t nrow,
+    const ptrdiff_t tlen,
+    const ptrdiff_t id_len,
+    const ptrdiff_t id_n,
+    const ptrdiff_t col,
+    const int *p_id)
 {
     for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const int *p_m = m + m_i[i] - 1;
@@ -365,17 +373,18 @@ SimInf_dense2df_int(SEXP dst,
     }
 }
 
-static void
-SimInf_dense2df_real(SEXP dst,
-                     const double *m,
-                     const int *m_i,
-                     const ptrdiff_t m_i_len,
-                     const ptrdiff_t m_stride,
-                     const ptrdiff_t nrow,
-                     const ptrdiff_t tlen,
-                     const ptrdiff_t id_len,
-                     const ptrdiff_t id_n,
-                     const ptrdiff_t col, const int *p_id)
+static void SimInf_dense2df_real(
+    SEXP dst,
+    const double *m,
+    const int *m_i,
+    const ptrdiff_t m_i_len,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t nrow,
+    const ptrdiff_t tlen,
+    const ptrdiff_t id_len,
+    const ptrdiff_t id_n,
+    const ptrdiff_t col,
+    const int *p_id)
 {
     for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const double *p_m = m + m_i[i] - 1;
@@ -430,14 +439,17 @@ SimInf_dense2df_real(SEXP dst,
  *        identifier column.
  * @return A data.frame.
  */
-attribute_hidden
-    SEXP
-SimInf_trajectory(SEXP dm,
-                  SEXP dm_i,
-                  SEXP dm_lbl,
-                  SEXP cm,
-                  SEXP cm_i,
-                  SEXP cm_lbl, SEXP tspan, SEXP id_n, SEXP id, SEXP id_lbl)
+attribute_hidden SEXP SimInf_trajectory(
+    SEXP dm,
+    SEXP dm_i,
+    SEXP dm_lbl,
+    SEXP cm,
+    SEXP cm_i,
+    SEXP cm_lbl,
+    SEXP tspan,
+    SEXP id_n,
+    SEXP id,
+    SEXP id_lbl)
 {
     int err = 0;
     int nprotect = 0;

@@ -46,12 +46,14 @@
  *        keep, else 0.
  * @param n number of events for the individual.
  */
-static void
-SimInf_find_longest_path(const int *event,
-                         const int *time,
-                         const int *node,
-                         const int *dest,
-                         int *path, int *keep, const ptrdiff_t n)
+static void SimInf_find_longest_path(
+    const int *event,
+    const int *time,
+    const int *node,
+    const int *dest,
+    int *path,
+    int *keep,
+    const ptrdiff_t n)
 {
     /* If one of the events is an enter event, then the first event in
      * the path must be an enter event. If one of the events is an
@@ -161,10 +163,12 @@ SimInf_find_longest_path(const int *event,
  * @return a logical vector with TRUE for each event to keep, else
  *         FALSE.
  */
-attribute_hidden
-    SEXP
-SimInf_individual_events(SEXP id,
-                         SEXP event, SEXP time, SEXP node, SEXP dest)
+attribute_hidden SEXP SimInf_individual_events(
+    SEXP id,
+    SEXP event,
+    SEXP time,
+    SEXP node,
+    SEXP dest)
 {
     const int *ptr_id = INTEGER(id);
     const int *ptr_event = INTEGER(event);

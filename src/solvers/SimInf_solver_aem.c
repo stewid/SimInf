@@ -57,10 +57,13 @@ typedef struct SimInf_aem_arguments {
  * @param new_rate, rate after event.
  * @param rng, current value of rng in heap.
  */
-static void
-calcTimes(double *time,
-          double *infTime,
-          double tt, double old_rate, double new_rate, gsl_rng *rng)
+static void calcTimes(
+    double *time,
+    double *infTime,
+    double tt,
+    double old_rate,
+    double new_rate,
+    gsl_rng *rng)
 {
     double oldtime = time[0];
 
@@ -85,10 +88,11 @@ calcTimes(double *time,
  *
  * @return 0 if Ok, else error code.
  */
-static int
-SimInf_solver_aem(SimInf_compartment_model *model,
-                  SimInf_aem_arguments *method,
-                  SimInf_scheduled_events *events, int Nthread)
+static int SimInf_solver_aem(
+    SimInf_compartment_model *model,
+    SimInf_aem_arguments *method,
+    SimInf_scheduled_events *events,
+    int Nthread)
 {
 #ifdef _OPENMP
 #pragma omp parallel num_threads(SimInf_num_threads())
@@ -455,9 +459,10 @@ SimInf_solver_aem(SimInf_compartment_model *model,
  * @param model structure with data about the model
  * @param Nthread number of threads that was used during simulation.
  */
-static void
-SimInf_aem_arguments_free(SimInf_aem_arguments *method,
-                          SimInf_compartment_model *model, int Nthread)
+static void SimInf_aem_arguments_free(
+    SimInf_aem_arguments *method,
+    SimInf_compartment_model *model,
+    int Nthread)
 {
     if (method) {
         for (int i = 0; i < Nthread; i++) {
@@ -493,10 +498,11 @@ SimInf_aem_arguments_free(SimInf_aem_arguments *method,
  * @param rng random number generator.
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-static int
-SimInf_aem_arguments_create(SimInf_aem_arguments **out,
-                            SimInf_compartment_model *model,
-                            int Nthread, gsl_rng *rng)
+static int SimInf_aem_arguments_create(
+    SimInf_aem_arguments **out,
+    SimInf_compartment_model *model,
+    int Nthread,
+    gsl_rng *rng)
 {
     SimInf_aem_arguments *method =
         calloc(Nthread, sizeof(SimInf_aem_arguments));
@@ -564,7 +570,8 @@ on_error:                      /* #nocov */
  * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-attribute_hidden int SimInf_run_solver_aem(SimInf_solver_args *args)
+attribute_hidden int SimInf_run_solver_aem(
+    SimInf_solver_args *args)
 {
     int err = 0;
     gsl_rng *rng = NULL;

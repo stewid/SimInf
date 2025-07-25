@@ -59,16 +59,18 @@
  * @param rng Random number generator.
  * @return 0 if Ok, else error code.
  */
-static int
-SimInf_sample_select(const int *irE,
-                     const int *jcE,
-                     const double *prE,
-                     int Nc,
-                     const int *u,
-                     int node,
-                     int select,
-                     int n,
-                     double proportion, int *individuals, gsl_rng *rng)
+static int SimInf_sample_select(
+    const int *irE,
+    const int *jcE,
+    const double *prE,
+    int Nc,
+    const int *u,
+    int node,
+    int select,
+    int n,
+    double proportion,
+    int *individuals,
+    gsl_rng *rng)
 {
     int i, Nstates, Nindividuals = 0, Nkinds = 0;
 
@@ -239,17 +241,18 @@ sample_biased_urn:
  * @param rng Random number generator.
  * @return 0 if Ok, else error code.
  */
-static int
-SimInf_sample_select_enter(const int *irE,
-                           const int *jcE,
-                           const double *prE,
-                           int Nc,
-                           const int *u,
-                           int node,
-                           int select,
-                           int n,
-                           double proportion,
-                           int *individuals, gsl_rng *rng)
+static int SimInf_sample_select_enter(
+    const int *irE,
+    const int *jcE,
+    const double *prE,
+    int Nc,
+    const int *u,
+    int node,
+    int select,
+    int n,
+    double proportion,
+    int *individuals,
+    gsl_rng *rng)
 {
     int i, Nstates = jcE[select + 1] - jcE[select];
     double w_cum = 0;
@@ -347,17 +350,19 @@ SimInf_sample_select_enter(const int *irE,
  * @param Nn Total number of nodes.
  * @param Nthread Number of threads to use during simulation.
  */
-static void
-SimInf_split_events(SimInf_scheduled_events *out,
-                    int len,
-                    const int *event,
-                    const int *time,
-                    const int *node,
-                    const int *dest,
-                    const int *n,
-                    const double *proportion,
-                    const int *select,
-                    const int *shift, int Nn, int Nthread)
+static void SimInf_split_events(
+    SimInf_scheduled_events *out,
+    int len,
+    const int *event,
+    const int *time,
+    const int *node,
+    const int *dest,
+    const int *n,
+    const double *proportion,
+    const int *select,
+    const int *shift,
+    int Nn,
+    int Nthread)
 {
     const int chunk_size = Nn / Nthread;
 
@@ -399,16 +404,18 @@ SimInf_split_events(SimInf_scheduled_events *out,
  * @param Nn Total number of nodes.
  * @param Nthread Number of threads to use during simulation.
  */
-static void
-SimInf_copy_events(SimInf_scheduled_events *out,
-                   int len,
-                   const int *event,
-                   const int *time,
-                   const int *node,
-                   const int *dest,
-                   const int *n,
-                   const double *proportion,
-                   const int *select, const int *shift, int Nthread)
+static void SimInf_copy_events(
+    SimInf_scheduled_events *out,
+    int len,
+    const int *event,
+    const int *time,
+    const int *node,
+    const int *dest,
+    const int *n,
+    const double *proportion,
+    const int *select,
+    const int *shift,
+    int Nthread)
 {
     for (int i = 0; i < len; i++) {
         const SimInf_scheduled_event e = { event[i], time[i], node[i] - 1,
@@ -431,11 +438,10 @@ SimInf_copy_events(SimInf_scheduled_events *out,
  * @param rng random number generator
  * @return 0 or an error code
  */
-attribute_hidden
-    int
-SimInf_scheduled_events_create(SimInf_scheduled_events **out,
-                               const SimInf_solver_args *args,
-                               gsl_rng *rng)
+attribute_hidden int SimInf_scheduled_events_create(
+    SimInf_scheduled_events **out,
+    const SimInf_solver_args *args,
+    gsl_rng *rng)
 {
     SimInf_scheduled_events *events = NULL;
 
@@ -507,8 +513,8 @@ on_error:                      /* #nocov */
  * @param events SimInf_scheduled_events to free
  * @param Nthread number of threads that was used during simulation.
  */
-attribute_hidden
-    void SimInf_scheduled_events_free(SimInf_scheduled_events *events)
+attribute_hidden void SimInf_scheduled_events_free(
+    SimInf_scheduled_events *events)
 {
     if (events) {
         for (int i = 0; i < events->Nthread; i++) {
@@ -538,12 +544,14 @@ attribute_hidden
  *        offset by node * Nc.
  * @param node The node in u.
  */
-static void
-SimInf_print_event(const SimInf_scheduled_event *e,
-                   const int *irE,
-                   const int *jcE,
-                   const int Nc,
-                   const int *u, const int node, const int dest)
+static void SimInf_print_event(
+    const SimInf_scheduled_event *e,
+    const int *irE,
+    const int *jcE,
+    const int Nc,
+    const int *u,
+    const int node,
+    const int dest)
 {
 #ifdef _OPENMP
 #pragma omp critical
@@ -644,10 +652,10 @@ SimInf_print_event(const SimInf_scheduled_event *e,
  * process both E1 and E2 events.
  * @return 0 if Ok, else error code.
  */
-attribute_hidden
-    void
-SimInf_process_events(SimInf_compartment_model *model,
-                      SimInf_scheduled_events *events, int process_E2)
+attribute_hidden void SimInf_process_events(
+    SimInf_compartment_model *model,
+    SimInf_scheduled_events *events,
+    int process_E2)
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_scheduled_events e = *&events[0];
@@ -917,8 +925,8 @@ done:
  *
  * @param SimInf_compartment_model *model data to store.
  */
-attribute_hidden
-    void SimInf_store_solution_sparse(SimInf_compartment_model *model)
+attribute_hidden void SimInf_store_solution_sparse(
+    SimInf_compartment_model *model)
 {
     while (!model[0].U && model[0].U_it < model[0].tlen &&
            model[0].tt > model[0].tspan[model[0].U_it]) {
@@ -946,8 +954,8 @@ attribute_hidden
  * @param model the data structure to free.
  * @param Nthread number of threads that was used during simulation.
  */
-attribute_hidden
-    void SimInf_compartment_model_free(SimInf_compartment_model *model)
+attribute_hidden void SimInf_compartment_model_free(
+    SimInf_compartment_model *model)
 {
     if (model) {
         for (int i = 0; i < model->Nthread; i++) {
@@ -984,10 +992,9 @@ attribute_hidden
  * @param args structure with data for the solver.
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-attribute_hidden
-    int
-SimInf_compartment_model_create(SimInf_compartment_model **out,
-                                SimInf_solver_args *args)
+attribute_hidden int SimInf_compartment_model_create(
+    SimInf_compartment_model **out,
+    SimInf_solver_args *args)
 {
     SimInf_compartment_model *model = NULL;
 
@@ -1164,17 +1171,17 @@ on_error:                      /* #nocov */
  *        than zero.
  * @param transition Zero-based index with the state transition.
  */
-attribute_hidden
-    void
-SimInf_print_status(const int Nc,
-                    const int *u,
-                    const int Nd,
-                    const double *v,
-                    const int Nld,
-                    const double *ldata,
-                    const int node,
-                    const double tt,
-                    const double rate, const int transition)
+attribute_hidden void SimInf_print_status(
+    const int Nc,
+    const int *u,
+    const int Nd,
+    const double *v,
+    const int Nld,
+    const double *ldata,
+    const int node,
+    const double tt,
+    const double rate,
+    const int transition)
 {
 #ifdef _OPENMP
 #pragma omp critical
