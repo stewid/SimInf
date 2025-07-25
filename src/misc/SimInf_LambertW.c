@@ -30,10 +30,7 @@
  * @param x a numeric vector.
  * @return a numeric vector with the same length as the input vector x.
  */
-attribute_hidden
-SEXP
-SimInf_lambertW0(
-    SEXP x)
+attribute_hidden SEXP SimInf_lambertW0(SEXP x)
 {
     const double *ptr_x = REAL(x);
     const R_xlen_t len = XLENGTH(x);
@@ -49,7 +46,8 @@ SimInf_lambertW0(
             val = NA_REAL;
         else if (xx == R_PosInf)
             val = R_PosInf;
-        else if (R_FINITE(xx) && gsl_sf_lambert_W0_e(xx, &result) == GSL_SUCCESS)
+        else if (R_FINITE(xx)
+                 && gsl_sf_lambert_W0_e(xx, &result) == GSL_SUCCESS)
             val = result.val;
         ptr_W0[i] = val;
     }

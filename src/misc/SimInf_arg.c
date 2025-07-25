@@ -31,10 +31,7 @@
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden
-int
-SimInf_arg_check_dgCMatrix(
-    SEXP arg)
+attribute_hidden int SimInf_arg_check_dgCMatrix(SEXP arg)
 {
     if (!Rf_isS4(arg))
         return -1;
@@ -50,12 +47,10 @@ SimInf_arg_check_dgCMatrix(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden
-int
-SimInf_arg_check_integer(
-    SEXP arg)
+attribute_hidden int SimInf_arg_check_integer(SEXP arg)
 {
-    if (!Rf_isInteger(arg) || Rf_length(arg) != 1 || NA_INTEGER == INTEGER(arg)[0])
+    if (!Rf_isInteger(arg) || Rf_length(arg) != 1
+        || NA_INTEGER == INTEGER(arg)[0])
         return -1;
     return 0;
 }
@@ -66,10 +61,7 @@ SimInf_arg_check_integer(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden
-int
-SimInf_arg_check_integer_gt_zero(
-    SEXP arg)
+attribute_hidden int SimInf_arg_check_integer_gt_zero(SEXP arg)
 {
     if (SimInf_arg_check_integer(arg))
         return -1;
@@ -84,10 +76,7 @@ SimInf_arg_check_integer_gt_zero(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden
-int
-SimInf_arg_check_matrix(
-    SEXP arg)
+attribute_hidden int SimInf_arg_check_matrix(SEXP arg)
 {
     if (!Rf_isMatrix(arg))
         return -1;
@@ -100,12 +89,9 @@ SimInf_arg_check_matrix(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden
-int
-SimInf_arg_check_model(
-    SEXP arg)
+attribute_hidden int SimInf_arg_check_model(SEXP arg)
 {
-    static const char *valid[] = {"SimInf_model", ""};
+    static const char *valid[] = { "SimInf_model", "" };
 
     if (!Rf_isS4(arg) || R_check_class_etc(arg, valid) < 0)
         return -1;
@@ -123,12 +109,7 @@ SimInf_arg_check_model(
  *        in a sparse matrix.
  * @return 1 if data is stored in the sparse matrix, else 0.
  */
-attribute_hidden
-int
-SimInf_sparse(
-    SEXP m,
-    ptrdiff_t i,
-    ptrdiff_t j)
+attribute_hidden int SimInf_sparse(SEXP m, ptrdiff_t i, ptrdiff_t j)
 {
     const int *d = INTEGER(R_do_slot(m, Rf_install("Dim")));
     return d[0] == i && d[1] == j;

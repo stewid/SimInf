@@ -13,23 +13,18 @@
 #include <R_ext/Visibility.h>
 
 static void
-percolate_down(
-    int n1,
-    double *data,
-    int *INDEX,
-    int *INDEX2,
-    int N)
+percolate_down(int n1, double *data, int *INDEX, int *INDEX2, int N)
 {
     int child;
-    int node=n1;
+    int node = n1;
     const double key = data[node];
     const int j = INDEX[node];
 
-    while ((child = (node<<1)+1)<N) {
-        if (child!=N-1 && data[child+1]<data[child])
+    while ((child = (node << 1) + 1) < N) {
+        if (child != N - 1 && data[child + 1] < data[child])
             child++;
 
-        if (data[child]<key) {
+        if (data[child] < key) {
             data[node] = data[child];
             const int rxn = INDEX[child];
             INDEX2[rxn] = node;
@@ -38,7 +33,7 @@ percolate_down(
             break;
         }
 
-        node=child;
+        node = child;
     }
 
     data[node] = key;
@@ -46,21 +41,16 @@ percolate_down(
     INDEX2[j] = node;
 }
 
-static void
-percolate_up(
-    int node,
-    double *data,
-    int *INDEX,
-    int *INDEX2)
+static void percolate_up(int node, double *data, int *INDEX, int *INDEX2)
 {
     int parent;
     const double key = data[node];
     const int j = INDEX[node];
 
     do {
-        parent=(node-1)>>1;
+        parent = (node - 1) >> 1;
 
-        if (key<data[parent]) {
+        if (key < data[parent]) {
             data[node] = data[parent];
             const int rxn = INDEX[parent];
             INDEX2[rxn] = node;
@@ -69,8 +59,8 @@ percolate_up(
             break;
         }
 
-        node=parent;
-    } while (parent>0);
+        node = parent;
+    } while (parent > 0);
 
     data[node] = key;
     INDEX[node] = j;
@@ -78,25 +68,14 @@ percolate_up(
 }
 
 attribute_hidden
-void
-initialize_heap(
-    double *data,
-    int *INDEX,
-    int *INDEX2,
-    int N)
+    void initialize_heap(double *data, int *INDEX, int *INDEX2, int N)
 {
-    for (int i=(N-1)>>1; i>=0; i--)
-        percolate_down(i,data,INDEX,INDEX2,N);
+    for (int i = (N - 1) >> 1; i >= 0; i--)
+        percolate_down(i, data, INDEX, INDEX2, N);
 }
 
 attribute_hidden
-void
-update(
-    int node,
-    double *data,
-    int *INDEX,
-    int *INDEX2,
-    int N)
+    void update(int node, double *data, int *INDEX, int *INDEX2, int N)
 {
     const int parent = (node - 1) >> 1;
 
