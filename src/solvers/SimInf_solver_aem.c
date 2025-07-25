@@ -113,12 +113,12 @@ SimInf_solver_aem(
             /* Calculate the propensity for every reaction */
             for (ptrdiff_t node = 0; node < sa.Nn; node++) {
                 for (int j = 0; j < sa.Nt; j++) {
-                    const double rate =
-                        (*sa.tr_fun[j]) (&sa.u[node * sa.Nc],
-                                         &sa.v[node * sa.Nd],
-                                         &sa.ldata[node * sa.Nld],
-                                         sa.gdata,
-                                         sa.tt);
+                    const double rate = (*sa.tr_fun[j]) (&sa.u[node * sa.Nc],
+                                                         &sa.v[node * sa.Nd],
+                                                         &sa.ldata[node *
+                                                                   sa.Nld],
+                                                         sa.gdata,
+                                                         sa.tt);
                     sa.t_rate[node * sa.Nt + j] = rate;
 
                     if (!R_FINITE(rate) || rate < 0.0) {
@@ -134,8 +134,7 @@ SimInf_solver_aem(
                     /* calculate time until next transition j event */
                     ma.reactTimes[sa.Nt * node + j] =
                         -log(gsl_rng_uniform_pos
-                             (ma.rng_vec[sa.Nt * node + j])) / rate +
-                        sa.tt;
+                             (ma.rng_vec[sa.Nt * node + j])) / rate + sa.tt;
                     if (ma.reactTimes[sa.Nt * node + j] <= 0.0)
                         ma.reactTimes[sa.Nt * node + j] = INFINITY;
 
@@ -146,8 +145,7 @@ SimInf_solver_aem(
                 /* Initialize reaction heap */
                 initialize_heap(&ma.reactTimes[sa.Nt * node],
                                 &ma.reactNode[sa.Nt * node],
-                                &ma.reactHeap[sa.Nt * node],
-                                ma.reactHeapSize);
+                                &ma.reactHeap[sa.Nt * node], ma.reactHeapSize);
                 sa.t_time[node] = sa.tt;
             }
 
@@ -206,16 +204,14 @@ SimInf_solver_aem(
                                                     &sa.ldata[node *
                                                               sa.Nld],
                                                     (int) (sa.Ni + node),
-                                                    sa.t_time[node], 0,
-                                                    tr);
+                                                    sa.t_time[node], 0, tr);
                                 sa.error = SIMINF_ERR_NEGATIVE_STATE;
                             }
                         }
 
 
                         /* 1d) update dependent transitions events. */
-                        for (int ii = sa.jcG[tr]; ii < sa.jcG[tr + 1];
-                             ii++) {
+                        for (int ii = sa.jcG[tr]; ii < sa.jcG[tr + 1]; ii++) {
                             j = sa.irG[ii];
                             if (j != tr) {      /*see code underneath */
                                 old_t_rate = sa.t_rate[node * sa.Nt + j];
@@ -225,8 +221,7 @@ SimInf_solver_aem(
                                                      &sa.v[node * sa.Nd],
                                                      &sa.ldata[node *
                                                                sa.Nld],
-                                                     sa.gdata,
-                                                     sa.t_time[node]);
+                                                     sa.gdata, sa.t_time[node]);
 
                                 sa.t_rate[node * sa.Nt + j] = rate;
 
@@ -249,8 +244,7 @@ SimInf_solver_aem(
 
                                 /* update times and reorder the heap */
                                 calcTimes(&ma.reactTimes[sa.Nt * node +
-                                                         ma.reactHeap[sa.
-                                                                      Nt *
+                                                         ma.reactHeap[sa.Nt *
                                                                       node
                                                                       +
                                                                       j]],
@@ -297,8 +291,7 @@ SimInf_solver_aem(
                         update(ma.reactHeap[sa.Nt * node + j],
                                &ma.reactTimes[sa.Nt * node],
                                &ma.reactNode[sa.Nt * node],
-                               &ma.reactHeap[sa.Nt * node],
-                               ma.reactHeapSize);
+                               &ma.reactHeap[sa.Nt * node], ma.reactHeapSize);
 
                     }
                 }
@@ -408,18 +401,15 @@ SimInf_solver_aem(
                 /* 6a) Handle the case where the solution is stored in
                  * a dense matrix */
                 /* Copy compartment state to U */
-                while (sa.U && sa.U_it < sa.tlen
-                       && sa.tt > sa.tspan[sa.U_it]) {
+                while (sa.U && sa.U_it < sa.tlen && sa.tt > sa.tspan[sa.U_it]) {
                     memcpy(&sa.U[(ptrdiff_t) sa.Nc *
                                  (((ptrdiff_t) sa.Ntot * sa.U_it++) +
                                   sa.Ni)], sa.u,
-                           (ptrdiff_t) sa.Nn * (ptrdiff_t) sa.Nc *
-                           sizeof(int));
+                           (ptrdiff_t) sa.Nn * (ptrdiff_t) sa.Nc * sizeof(int));
                 }
 
                 /* Copy continuous state to V */
-                while (sa.V && sa.V_it < sa.tlen
-                       && sa.tt > sa.tspan[sa.V_it]) {
+                while (sa.V && sa.V_it < sa.tlen && sa.tt > sa.tspan[sa.V_it]) {
                     memcpy(&sa.V[(ptrdiff_t) sa.Nd *
                                  (((ptrdiff_t) sa.Ntot * sa.V_it++) +
                                   sa.Ni)], sa.v_new,

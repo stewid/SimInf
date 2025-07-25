@@ -180,6 +180,7 @@ code-style:
           --break-function-decl-args \
           --leave-preprocessor-space \
           --procnames-start-lines \
+          --line-length80 \
           src/*.c src/*.h src/misc/*.c src/models/*.c src/solvers/*.c
 	-rm src/*.c~
 	-rm src/*.h~

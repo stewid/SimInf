@@ -598,8 +598,7 @@ SimInf_trajectory(
                              dm_stride, nrow, tlen, id_len, col);
     } else {
         SimInf_dense2df_int(result, INTEGER(dm), INTEGER(dm_i), dm_i_len,
-                            dm_stride, nrow, tlen, id_len, c_id_n, col,
-                            p_id);
+                            dm_stride, nrow, tlen, id_len, c_id_n, col, p_id);
     }
 
     /* Copy data from the continuous state matrix. */
@@ -609,8 +608,7 @@ SimInf_trajectory(
                               cm_stride, nrow, tlen, id_len, col);
     } else {
         SimInf_dense2df_real(result, REAL(cm), INTEGER(cm_i), cm_i_len,
-                             cm_stride, nrow, tlen, id_len, c_id_n, col,
-                             p_id);
+                             cm_stride, nrow, tlen, id_len, c_id_n, col, p_id);
     }
 
 cleanup:

@@ -167,8 +167,7 @@ attribute_hidden
     args.node = INTEGER(R_do_slot(ext_events, Rf_install("node")));
     args.dest = INTEGER(R_do_slot(ext_events, Rf_install("dest")));
     args.n = INTEGER(R_do_slot(ext_events, Rf_install("n")));
-    args.proportion =
-        REAL(R_do_slot(ext_events, Rf_install("proportion")));
+    args.proportion = REAL(R_do_slot(ext_events, Rf_install("proportion")));
     args.select = INTEGER(R_do_slot(ext_events, Rf_install("select")));
     args.shift = INTEGER(R_do_slot(ext_events, Rf_install("shift")));
 
@@ -194,8 +193,7 @@ attribute_hidden
     args.Nc = INTEGER(R_do_slot(S, Rf_install("Dim")))[0];
     args.Nt = INTEGER(R_do_slot(S, Rf_install("Dim")))[1];
     args.Nd =
-        INTEGER(R_do_slot
-                (R_do_slot(result, Rf_install("v0")), R_DimSymbol))[0];
+        INTEGER(R_do_slot(R_do_slot(result, Rf_install("v0")), R_DimSymbol))[0];
     args.Nld =
         INTEGER(R_do_slot
                 (R_do_slot(result, Rf_install("ldata")), R_DimSymbol))[0];

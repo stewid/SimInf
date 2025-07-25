@@ -191,8 +191,7 @@ sample_biased_urn:
         /* Elaborate floating point fix: */
         if (i >= jcE[select + 1])
             i = jcE[select + 1] - 1;
-        if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) ==
-            0.0) {
+        if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0) {
             /* Go backwards and try to find the first nonzero
              * compartment */
             for (; i > jcE[select]
@@ -200,8 +199,7 @@ sample_biased_urn:
                      (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0;
                  i--);
 
-            if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) ==
-                0.0) {
+            if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0) {
                 /* No nonzero compartment found. */
                 return SIMINF_ERR_SAMPLE_SELECT;
             }
@@ -475,8 +473,7 @@ SimInf_scheduled_events_create(
         events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
         if (!events[i].rng)
             goto on_error;      /* #nocov */
-        gsl_rng_set(events[i].rng,
-                    gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+        gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
     }
 
     if (args->Nrep > 1) {
@@ -500,8 +497,7 @@ SimInf_scheduled_events_create(
                             args->dest,
                             args->n,
                             args->proportion,
-                            args->select,
-                            args->shift, args->Nn, args->Nthread);
+                            args->select, args->shift, args->Nn, args->Nthread);
     }
 
     *out = events;
@@ -582,8 +578,7 @@ SimInf_print_event(
             }
 
             if (e->n < 0) {
-                REprintf("Cannot sample %i individuals for event.\n",
-                         e->n);
+                REprintf("Cannot sample %i individuals for event.\n", e->n);
             }
 
             REprintf("\n");
@@ -713,8 +708,7 @@ SimInf_process_events(
             m.error =
                 SimInf_sample_select_enter(e.irE, e.jcE, e.prE, m.Nc, m.u,
                                            ee.node - m.Ni, ee.select, ee.n,
-                                           ee.proportion, e.individuals,
-                                           e.rng);
+                                           ee.proportion, e.individuals, e.rng);
 
             if (m.error) {
                 SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
@@ -749,8 +743,7 @@ SimInf_process_events(
                     /* Check that the index to the new compartment is
                      * not out of bounds. */
                     if (jj + ll < 0 || jj + ll >= m.Nc) {
-                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1,
-                                           -1);
+                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
                         m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
                         goto done;
                     }
@@ -878,8 +871,7 @@ SimInf_process_events(
                     /* Check that the index to the new compartment is
                      * not out of bounds. */
                     if (jj + ll < 0 || jj + ll >= m.Nc) {
-                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1,
-                                           -1);
+                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
                         m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
                         goto done;
                     }
@@ -1099,8 +1091,7 @@ SimInf_compartment_model_create(
                 model[i].u = &(model[0].u[model[i].Ni * Nc]);
                 model[i].v = &(model[0].v[model[i].Ni * Nd]);
                 model[i].v_new = &(model[0].v_new[model[i].Ni * Nd]);
-                model[i].update_node =
-                    &(model[0].update_node[model[i].Ni]);
+                model[i].update_node = &(model[0].update_node[model[i].Ni]);
             }
 
             if (args->U) {

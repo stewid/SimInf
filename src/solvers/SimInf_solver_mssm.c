@@ -87,12 +87,12 @@ SimInf_solver_mssm(
                 for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
                     m.sum_t_rate[node] = 0.0;
                     for (int j = 0; j < m.Nt; j++) {
-                        const double rate =
-                            (*m.tr_fun[j]) (&m.u[node * m.Nc],
-                                            &m.v[node * m.Nd],
-                                            &m.ldata[node * m.Nld],
-                                            m.gdata,
-                                            m.tt);
+                        const double rate = (*m.tr_fun[j]) (&m.u[node * m.Nc],
+                                                            &m.v[node * m.Nd],
+                                                            &m.ldata[node *
+                                                                     m.Nld],
+                                                            m.gdata,
+                                                            m.tt);
 
                         m.t_rate[node * m.Nt + j] = rate;
                         m.sum_t_rate[node] += rate;
@@ -115,8 +115,7 @@ SimInf_solver_mssm(
                 for (; !m.error;) {
                     /* (1) Handle internal epidemiological model,
                      * continuous-time Markov chain. */
-                    for (ptrdiff_t node = 0; node < m.Nn && !m.error;
-                         node++) {
+                    for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
                         for (;;) {
                             double cum, rand, tau, delta = 0.0;
                             int tr;
@@ -129,8 +128,7 @@ SimInf_solver_mssm(
                             }
                             tau = -log(gsl_rng_uniform_pos(e.rng)) /
                                 m.sum_t_rate[node];
-                            if ((tau + m.t_time[node]) >=
-                                m.next_unit_of_time) {
+                            if ((tau + m.t_time[node]) >= m.next_unit_of_time) {
                                 m.t_time[node] = m.next_unit_of_time;
                                 break;
                             }
@@ -139,8 +137,7 @@ SimInf_solver_mssm(
                             /* 1b) Determine the transition that did
                              * occur (direct SSA). */
                             rand =
-                                gsl_rng_uniform_pos(e.rng) *
-                                m.sum_t_rate[node];
+                                gsl_rng_uniform_pos(e.rng) * m.sum_t_rate[node];
                             for (tr = 0, cum = m.t_rate[node * m.Nt];
                                  tr < m.Nt && rand > cum;
                                  tr++, cum += m.t_rate[node * m.Nt + tr]);
@@ -180,8 +177,7 @@ SimInf_solver_mssm(
                                                         &m.ldata[node *
                                                                  m.Nld],
                                                         (int) node,
-                                                        m.t_time[node], 0,
-                                                        tr);
+                                                        m.t_time[node], 0, tr);
                                     m.error = SIMINF_ERR_NEGATIVE_STATE;
                                 }
                             }
@@ -192,10 +188,8 @@ SimInf_solver_mssm(
                                 const double old =
                                     m.t_rate[node * m.Nt + m.irG[j]];
                                 const double rate =
-                                    (*m.tr_fun[m.irG[j]]) (&m.
-                                                           u[node * m.Nc],
-                                                           &m.v[node *
-                                                                m.Nd],
+                                    (*m.tr_fun[m.irG[j]]) (&m.u[node * m.Nc],
+                                                           &m.v[node * m.Nd],
                                                            &m.ldata[node *
                                                                     m.Nld],
                                                            m.gdata,
@@ -229,8 +223,7 @@ SimInf_solver_mssm(
                      * each timestep e.g. update the infectious
                      * pressure variable. Moreover, update transition
                      * rates in nodes that are indicated for update */
-                    for (ptrdiff_t node = 0; node < m.Nn && !m.error;
-                         node++) {
+                    for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
                         const int rc = m.pts_fun(&m.v_new[node * m.Nd],
                                                  &m.u[node * m.Nc],
                                                  &m.v[node * m.Nd],
@@ -247,8 +240,7 @@ SimInf_solver_mssm(
                             double delta = 0.0;
 
                             for (int j = 0; j < m.Nt; j++) {
-                                const double old =
-                                    m.t_rate[node * m.Nt + j];
+                                const double old = m.t_rate[node * m.Nt + j];
                                 const double rate =
                                     (*m.tr_fun[j]) (&m.u[node * m.Nc],
                                                     &m.v_new[node * m.Nd],

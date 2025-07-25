@@ -63,8 +63,7 @@ SimInf_solver_ssm(
                 for (int j = 0; j < m.Nt; j++) {
                     const double rate = (*m.tr_fun[j]) (&m.u[node * m.Nc],
                                                         &m.v[node * m.Nd],
-                                                        &m.ldata[node *
-                                                                 m.Nld],
+                                                        &m.ldata[node * m.Nld],
                                                         m.gdata,
                                                         m.tt);
 
@@ -74,8 +73,7 @@ SimInf_solver_ssm(
                         SimInf_print_status(m.Nc, &m.u[node * m.Nc],
                                             m.Nd, &m.v[node * m.Nd],
                                             m.Nld, &m.ldata[node * m.Nld],
-                                            (int) (m.Ni + node), m.tt,
-                                            rate, j);
+                                            (int) (m.Ni + node), m.tt, rate, j);
                         m.error = SIMINF_ERR_INVALID_RATE;
                     }
                 }
@@ -128,9 +126,7 @@ SimInf_solver_ssm(
 
                         /* 1b) Determine the transition that did occur
                          * (direct SSA). */
-                        rand =
-                            gsl_rng_uniform_pos(e.rng) *
-                            m.sum_t_rate[node];
+                        rand = gsl_rng_uniform_pos(e.rng) * m.sum_t_rate[node];
                         for (tr = 0, cum = m.t_rate[node * m.Nt];
                              tr < m.Nt && rand > cum;
                              tr++, cum += m.t_rate[node * m.Nt + tr]);
@@ -143,8 +139,7 @@ SimInf_solver_ssm(
                              * nonzero transition rate */
                             for (;
                                  tr > 0
-                                 && m.t_rate[node * m.Nt + tr] == 0.0;
-                                 tr--);
+                                 && m.t_rate[node * m.Nt + tr] == 0.0; tr--);
 
                             /* No nonzero rate found, but a transition
                                was sampled. This can happen due to
@@ -176,13 +171,11 @@ SimInf_solver_ssm(
                         /* 1d) Recalculate sum_t_rate[node] using
                          * dependency graph. */
                         for (int j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
-                            const double old =
-                                m.t_rate[node * m.Nt + m.irG[j]];
+                            const double old = m.t_rate[node * m.Nt + m.irG[j]];
                             const double rate =
                                 (*m.tr_fun[m.irG[j]]) (&m.u[node * m.Nc],
                                                        &m.v[node * m.Nd],
-                                                       &m.ldata[node *
-                                                                m.Nld],
+                                                       &m.ldata[node * m.Nld],
                                                        m.gdata,
                                                        m.t_time[node]);
 
@@ -297,8 +290,7 @@ SimInf_solver_ssm(
                 while (m.U && m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
                     memcpy(&m.U[(ptrdiff_t) m.Nc *
                                 ((m.Ntot * m.U_it++) + m.Ni)], m.u,
-                           (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
-                           sizeof(int));
+                           (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc * sizeof(int));
                 }
 
                 /* Copy continuous state to V */

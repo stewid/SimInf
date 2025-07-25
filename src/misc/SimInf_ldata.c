@@ -46,8 +46,11 @@
  * Example:
  * end_t1, end_t2, end_t3, end_t4, index, value, index, value, -1, 0.0
  */
-attribute_hidden
-    SEXP SimInf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
+attribute_hidden SEXP
+SimInf_ldata_sp(
+    SEXP data,
+    SEXP distance,
+    SEXP metric)
 {
     /* Check arguments */
     if (SimInf_arg_check_matrix(data))
@@ -72,8 +75,7 @@ attribute_hidden
     /* Check that the number of nodes are equal in data and
      * distance */
     if (Nn != (LENGTH(R_do_slot(distance, Rf_install("p"))) - 1)) {
-        Rf_error
-            ("The number of nodes in 'data' and 'distance' are not equal.");
+        Rf_error("The number of nodes in 'data' and 'distance' are not equal.");
     }
 
     /* Calculate length of 'Nld' in 'ldata' for each node in the

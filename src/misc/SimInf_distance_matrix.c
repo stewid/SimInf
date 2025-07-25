@@ -52,8 +52,7 @@ SimInf_Euclidean_distance(
                     }
 
                     Rf_error("Invalid distance for i=%"
-                             R_PRIdXLEN_T
-                             " and j=%" R_PRIdXLEN_T ".", i, j);
+                             R_PRIdXLEN_T " and j=%" R_PRIdXLEN_T ".", i, j);
                 }
 
                 if (d <= cutoff) {

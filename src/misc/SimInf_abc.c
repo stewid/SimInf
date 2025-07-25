@@ -140,16 +140,13 @@ SimInf_abc_proposals(
                         rgamma(ptr_p1[d], 1.0 / ptr_p2[d]);
                     break;
                 case 'l':
-                    ptr_xx[d * n_proposals + i] =
-                        rlnorm(ptr_p1[d], ptr_p2[d]);
+                    ptr_xx[d * n_proposals + i] = rlnorm(ptr_p1[d], ptr_p2[d]);
                     break;
                 case 'n':
-                    ptr_xx[d * n_proposals + i] =
-                        rnorm(ptr_p1[d], ptr_p2[d]);
+                    ptr_xx[d * n_proposals + i] = rnorm(ptr_p1[d], ptr_p2[d]);
                     break;
                 case 'u':
-                    ptr_xx[d * n_proposals + i] =
-                        runif(ptr_p1[d], ptr_p2[d]);
+                    ptr_xx[d * n_proposals + i] = runif(ptr_p1[d], ptr_p2[d]);
                     break;
                 default:
                     err = 2;
@@ -340,13 +337,11 @@ SimInf_abc_weights(
                 break;
             case 'l':
                 ptr_ww[i] += dlnorm(ptr_xx[d * n_particles + i],
-                                    ptr_x[d * n_particles + i],
-                                    ptr_p2[d], 1);
+                                    ptr_x[d * n_particles + i], ptr_p2[d], 1);
                 break;
             case 'n':
                 ptr_ww[i] += dnorm(ptr_xx[d * n_particles + i],
-                                   ptr_x[d * n_particles + i],
-                                   ptr_p2[d], 1);
+                                   ptr_x[d * n_particles + i], ptr_p2[d], 1);
                 break;
             case 'u':
                 ptr_ww[i] += dunif(ptr_xx[d * n_particles + i],
