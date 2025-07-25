@@ -59,7 +59,8 @@
  * @param rng Random number generator.
  * @return 0 if Ok, else error code.
  */
-static int SimInf_sample_select(
+static int
+SimInf_sample_select(
     const int *irE,
     const int *jcE,
     const double *prE,
@@ -241,7 +242,8 @@ sample_biased_urn:
  * @param rng Random number generator.
  * @return 0 if Ok, else error code.
  */
-static int SimInf_sample_select_enter(
+static int
+SimInf_sample_select_enter(
     const int *irE,
     const int *jcE,
     const double *prE,
@@ -350,7 +352,8 @@ static int SimInf_sample_select_enter(
  * @param Nn Total number of nodes.
  * @param Nthread Number of threads to use during simulation.
  */
-static void SimInf_split_events(
+static void
+SimInf_split_events(
     SimInf_scheduled_events *out,
     int len,
     const int *event,
@@ -404,7 +407,8 @@ static void SimInf_split_events(
  * @param Nn Total number of nodes.
  * @param Nthread Number of threads to use during simulation.
  */
-static void SimInf_copy_events(
+static void
+SimInf_copy_events(
     SimInf_scheduled_events *out,
     int len,
     const int *event,
@@ -438,7 +442,8 @@ static void SimInf_copy_events(
  * @param rng random number generator
  * @return 0 or an error code
  */
-attribute_hidden int SimInf_scheduled_events_create(
+attribute_hidden int
+SimInf_scheduled_events_create(
     SimInf_scheduled_events **out,
     const SimInf_solver_args *args,
     gsl_rng *rng)
@@ -513,7 +518,8 @@ on_error:                      /* #nocov */
  * @param events SimInf_scheduled_events to free
  * @param Nthread number of threads that was used during simulation.
  */
-attribute_hidden void SimInf_scheduled_events_free(
+attribute_hidden void
+SimInf_scheduled_events_free(
     SimInf_scheduled_events *events)
 {
     if (events) {
@@ -544,7 +550,8 @@ attribute_hidden void SimInf_scheduled_events_free(
  *        offset by node * Nc.
  * @param node The node in u.
  */
-static void SimInf_print_event(
+static void
+SimInf_print_event(
     const SimInf_scheduled_event *e,
     const int *irE,
     const int *jcE,
@@ -652,7 +659,8 @@ static void SimInf_print_event(
  * process both E1 and E2 events.
  * @return 0 if Ok, else error code.
  */
-attribute_hidden void SimInf_process_events(
+attribute_hidden void
+SimInf_process_events(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events,
     int process_E2)
@@ -925,7 +933,8 @@ done:
  *
  * @param SimInf_compartment_model *model data to store.
  */
-attribute_hidden void SimInf_store_solution_sparse(
+attribute_hidden void
+SimInf_store_solution_sparse(
     SimInf_compartment_model *model)
 {
     while (!model[0].U && model[0].U_it < model[0].tlen &&
@@ -954,7 +963,8 @@ attribute_hidden void SimInf_store_solution_sparse(
  * @param model the data structure to free.
  * @param Nthread number of threads that was used during simulation.
  */
-attribute_hidden void SimInf_compartment_model_free(
+attribute_hidden void
+SimInf_compartment_model_free(
     SimInf_compartment_model *model)
 {
     if (model) {
@@ -992,7 +1002,8 @@ attribute_hidden void SimInf_compartment_model_free(
  * @param args structure with data for the solver.
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
-attribute_hidden int SimInf_compartment_model_create(
+attribute_hidden int
+SimInf_compartment_model_create(
     SimInf_compartment_model **out,
     SimInf_solver_args *args)
 {
@@ -1171,7 +1182,8 @@ on_error:                      /* #nocov */
  *        than zero.
  * @param transition Zero-based index with the state transition.
  */
-attribute_hidden void SimInf_print_status(
+attribute_hidden void
+SimInf_print_status(
     const int Nc,
     const int *u,
     const int Nd,

@@ -12,7 +12,8 @@
 
 #include <R_ext/Visibility.h>
 
-static void percolate_down(
+static void
+percolate_down(
     int n1,
     double *data,
     int *INDEX,
@@ -45,7 +46,8 @@ static void percolate_down(
     INDEX2[j] = node;
 }
 
-static void percolate_up(
+static void
+percolate_up(
     int node,
     double *data,
     int *INDEX,
@@ -75,7 +77,8 @@ static void percolate_up(
     INDEX2[j] = node;
 }
 
-attribute_hidden void initialize_heap(
+attribute_hidden void
+initialize_heap(
     double *data,
     int *INDEX,
     int *INDEX2,
@@ -85,7 +88,8 @@ attribute_hidden void initialize_heap(
         percolate_down(i, data, INDEX, INDEX2, N);
 }
 
-attribute_hidden void update(
+attribute_hidden void
+update(
     int node,
     double *data,
     int *INDEX,

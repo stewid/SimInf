@@ -30,7 +30,8 @@
  * @param x a numeric vector.
  * @return a numeric vector with the same length as the input vector x.
  */
-attribute_hidden SEXP SimInf_lambertW0(
+attribute_hidden SEXP
+SimInf_lambertW0(
     SEXP x)
 {
     const double *ptr_x = REAL(x);

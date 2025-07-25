@@ -40,7 +40,8 @@ enum { BETA, EPSILON, GAMMA };
  * @param t Current time.
  * @return propensity.
  */
-static double SEIR_S_to_E(
+static double
+SEIR_S_to_E(
     const int *u,
     const double *v,
     const double *ldata,
@@ -70,7 +71,8 @@ static double SEIR_S_to_E(
  * @param t Current time.
  * @return propensity.
  */
-static double SEIR_E_to_I(
+static double
+SEIR_E_to_I(
     const int *u,
     const double *v,
     const double *ldata,
@@ -94,7 +96,8 @@ static double SEIR_E_to_I(
  * @param t Current time.
  * @return propensity.
  */
-static double SEIR_I_to_R(
+static double
+SEIR_I_to_R(
     const int *u,
     const double *v,
     const double *ldata,
@@ -123,7 +126,8 @@ static double SEIR_I_to_R(
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int SEIR_post_time_step(
+static int
+SEIR_post_time_step(
     double *v_new,
     const int *u,
     const double *v,
@@ -150,7 +154,8 @@ static int SEIR_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden SEXP SEIR_run(
+attribute_hidden SEXP
+SEIR_run(
     SEXP model,
     SEXP solver)
 {

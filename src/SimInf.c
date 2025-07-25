@@ -25,7 +25,8 @@
 #include <R_ext/Visibility.h>
 #include <Rdefines.h>
 
-static void SimInf_raise_error(
+static void
+SimInf_raise_error(
     int err)
 {
     switch (err) {

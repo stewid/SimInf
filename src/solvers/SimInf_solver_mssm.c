@@ -37,7 +37,8 @@
  *
  * @return 0 if Ok, else error code.
  */
-static int SimInf_solver_mssm(
+static int
+SimInf_solver_mssm(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events,
     int Nthread)
@@ -338,7 +339,8 @@ static int SimInf_solver_mssm(
  * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-attribute_hidden int SimInf_run_solver_mssm(
+attribute_hidden int
+SimInf_run_solver_mssm(
     SimInf_solver_args *args)
 {
     int err = 0;

@@ -35,10 +35,12 @@ typedef struct {
     ptrdiff_t time;
 } rowinfo_t;
 
-typedef kvec_t(
+typedef
+kvec_t(
     rowinfo_t) rowinfo_vec;
 
-static int SimInf_insert_id_time(
+static int
+SimInf_insert_id_time(
     rowinfo_vec *ri,
     SEXP m,
     const ptrdiff_t m_stride,
@@ -67,7 +69,8 @@ static int SimInf_insert_id_time(
     return 0;
 }
 
-static int SimInf_insert_id_time2(
+static int
+SimInf_insert_id_time2(
     rowinfo_vec *ri,
     SEXP m1,
     SEXP m2,
@@ -121,7 +124,8 @@ static int SimInf_insert_id_time2(
     return 0;
 }
 
-static int SimInf_create_rowinfo(
+static int
+SimInf_create_rowinfo(
     rowinfo_vec **out,
     SEXP dm,
     SEXP cm,
@@ -159,7 +163,8 @@ static int SimInf_create_rowinfo(
     return 0;
 }
 
-static ptrdiff_t SimInf_number_of_rows(
+static ptrdiff_t
+SimInf_number_of_rows(
     const rowinfo_vec *ri,
     const ptrdiff_t tlen,
     const ptrdiff_t id_len)
@@ -169,7 +174,8 @@ static ptrdiff_t SimInf_number_of_rows(
     return tlen * id_len;
 }
 
-static void SimInf_sparse2df_int(
+static void
+SimInf_sparse2df_int(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
@@ -249,7 +255,8 @@ static void SimInf_sparse2df_int(
     }
 }
 
-static void SimInf_sparse2df_real(
+static void
+SimInf_sparse2df_real(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
@@ -329,7 +336,8 @@ static void SimInf_sparse2df_real(
     }
 }
 
-static void SimInf_dense2df_int(
+static void
+SimInf_dense2df_int(
     SEXP dst,
     const int *m,
     const int *m_i,
@@ -373,7 +381,8 @@ static void SimInf_dense2df_int(
     }
 }
 
-static void SimInf_dense2df_real(
+static void
+SimInf_dense2df_real(
     SEXP dst,
     const double *m,
     const int *m_i,
@@ -439,7 +448,8 @@ static void SimInf_dense2df_real(
  *        identifier column.
  * @return A data.frame.
  */
-attribute_hidden SEXP SimInf_trajectory(
+attribute_hidden SEXP
+SimInf_trajectory(
     SEXP dm,
     SEXP dm_i,
     SEXP dm_lbl,

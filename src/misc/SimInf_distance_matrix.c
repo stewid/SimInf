@@ -22,7 +22,8 @@
 #include <R_ext/Visibility.h>
 #include <Rinternals.h>
 
-static ptrdiff_t SimInf_Euclidean_distance(
+static ptrdiff_t
+SimInf_Euclidean_distance(
     const double *x,
     const double *y,
     const double cutoff,
@@ -83,7 +84,8 @@ static ptrdiff_t SimInf_Euclidean_distance(
     return n;
 }
 
-attribute_hidden SEXP SimInf_distance_matrix(
+attribute_hidden SEXP
+SimInf_distance_matrix(
     SEXP x_,
     SEXP y_,
     SEXP cutoff_,

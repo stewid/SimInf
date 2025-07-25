@@ -37,7 +37,8 @@ enum { BETA, GAMMA };
  * @param t Current time.
  * @return propensity.
  */
-static double SIS_S_to_I(
+static double
+SIS_S_to_I(
     const int *u,
     const double *v,
     const double *ldata,
@@ -67,7 +68,8 @@ static double SIS_S_to_I(
  * @param t Current time.
  * @return propensity.
  */
-static double SIS_I_to_R(
+static double
+SIS_I_to_R(
     const int *u,
     const double *v,
     const double *ldata,
@@ -96,7 +98,8 @@ static double SIS_I_to_R(
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int SIS_post_time_step(
+static int
+SIS_post_time_step(
     double *v_new,
     const int *u,
     const double *v,
@@ -123,7 +126,8 @@ static int SIS_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden SEXP SIS_run(
+attribute_hidden SEXP
+SIS_run(
     SEXP model,
     SEXP solver)
 {

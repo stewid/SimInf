@@ -48,7 +48,8 @@ enum { UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4,
  * @param t Current time.
  * @return propensity.
  */
-static double SISe_sp_S_to_I(
+static double
+SISe_sp_S_to_I(
     const int *u,
     const double *v,
     const double *ldata,
@@ -71,7 +72,8 @@ static double SISe_sp_S_to_I(
  * @param t Current time.
  * @return propensity.
  */
-static double SISe_sp_I_to_S(
+static double
+SISe_sp_I_to_S(
     const int *u,
     const double *v,
     const double *ldata,
@@ -102,7 +104,8 @@ static double SISe_sp_I_to_S(
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int SISe_sp_post_time_step(
+static int
+SISe_sp_post_time_step(
     double *v_new,
     const int *u,
     const double *v,
@@ -161,7 +164,8 @@ static int SISe_sp_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden SEXP SISe_sp_run(
+attribute_hidden SEXP
+SISe_sp_run(
     SEXP model,
     SEXP solver)
 {

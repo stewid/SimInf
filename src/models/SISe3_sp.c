@@ -48,7 +48,8 @@ enum { UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
  * @param t Current time.
  * @return propensity.
  */
-static double SISe3_sp_S_1_to_I_1(
+static double
+SISe3_sp_S_1_to_I_1(
     const int *u,
     const double *v,
     const double *ldata,
@@ -71,7 +72,8 @@ static double SISe3_sp_S_1_to_I_1(
  * @param t Current time.
  * @return propensity.
  */
-static double SISe3_sp_S_2_to_I_2(
+static double
+SISe3_sp_S_2_to_I_2(
     const int *u,
     const double *v,
     const double *ldata,
@@ -94,7 +96,8 @@ static double SISe3_sp_S_2_to_I_2(
  * @param t Current time.
  * @return propensity.
  */
-static double SISe3_sp_S_3_to_I_3(
+static double
+SISe3_sp_S_3_to_I_3(
     const int *u,
     const double *v,
     const double *ldata,
@@ -117,7 +120,8 @@ static double SISe3_sp_S_3_to_I_3(
  * @param t Current time.
  * @return propensity.
  */
-static double SISe3_sp_I_1_to_S_1(
+static double
+SISe3_sp_I_1_to_S_1(
     const int *u,
     const double *v,
     const double *ldata,
@@ -141,7 +145,8 @@ static double SISe3_sp_I_1_to_S_1(
  * @param t Current time.
  * @return propensity.
  */
-static double SISe3_sp_I_2_to_S_2(
+static double
+SISe3_sp_I_2_to_S_2(
     const int *u,
     const double *v,
     const double *ldata,
@@ -165,7 +170,8 @@ static double SISe3_sp_I_2_to_S_2(
  * @param t Current time.
  * @return propensity
  */
-static double SISe3_sp_I_3_to_S_3(
+static double
+SISe3_sp_I_3_to_S_3(
     const int *u,
     const double *v,
     const double *ldata,
@@ -196,7 +202,8 @@ static double SISe3_sp_I_3_to_S_3(
  * transition rates, or 0 when it doesn't need to update the
  * transition rates.
  */
-static int SISe3_sp_post_time_step(
+static int
+SISe3_sp_post_time_step(
     double *v_new,
     const int *u,
     const double *v,
@@ -254,7 +261,8 @@ static int SISe3_sp_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden SEXP SISe3_sp_run(
+attribute_hidden SEXP
+SISe3_sp_run(
     SEXP model,
     SEXP solver)
 {

@@ -53,7 +53,8 @@
  * @param beta_t4 The value for beta in interval 4.
  * @return phi * (1.0 - beta) (where beta is the value for the interval)
  */
-attribute_hidden double SimInf_forward_euler_linear_decay(
+attribute_hidden double
+SimInf_forward_euler_linear_decay(
     double phi,
     int day,
     int end_t1,

@@ -31,7 +31,8 @@
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden int SimInf_arg_check_dgCMatrix(
+attribute_hidden int
+SimInf_arg_check_dgCMatrix(
     SEXP arg)
 {
     if (!Rf_isS4(arg))
@@ -48,7 +49,8 @@ attribute_hidden int SimInf_arg_check_dgCMatrix(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden int SimInf_arg_check_integer(
+attribute_hidden int
+SimInf_arg_check_integer(
     SEXP arg)
 {
     if (!Rf_isInteger(arg) || Rf_length(arg) != 1
@@ -63,7 +65,8 @@ attribute_hidden int SimInf_arg_check_integer(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden int SimInf_arg_check_integer_gt_zero(
+attribute_hidden int
+SimInf_arg_check_integer_gt_zero(
     SEXP arg)
 {
     if (SimInf_arg_check_integer(arg))
@@ -79,7 +82,8 @@ attribute_hidden int SimInf_arg_check_integer_gt_zero(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden int SimInf_arg_check_matrix(
+attribute_hidden int
+SimInf_arg_check_matrix(
     SEXP arg)
 {
     if (!Rf_isMatrix(arg))
@@ -93,7 +97,8 @@ attribute_hidden int SimInf_arg_check_matrix(
  * @param arg The arg to check
  * @return 0 if OK, else -1
  */
-attribute_hidden int SimInf_arg_check_model(
+attribute_hidden int
+SimInf_arg_check_model(
     SEXP arg)
 {
     static const char *valid[] = { "SimInf_model", "" };
@@ -114,7 +119,8 @@ attribute_hidden int SimInf_arg_check_model(
  *        in a sparse matrix.
  * @return 1 if data is stored in the sparse matrix, else 0.
  */
-attribute_hidden int SimInf_sparse(
+attribute_hidden int
+SimInf_sparse(
     SEXP m,
     ptrdiff_t i,
     ptrdiff_t j)

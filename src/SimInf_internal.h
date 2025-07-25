@@ -219,7 +219,8 @@ typedef struct SimInf_scheduled_event {
                         *   and external transfer event. */
 } SimInf_scheduled_event;
 
-typedef kvec_t(
+typedef
+kvec_t(
     SimInf_scheduled_event) SimInf_events_t;
 
 /**
@@ -347,36 +348,46 @@ typedef struct SimInf_compartment_model {
                          *   ok. */
 } SimInf_compartment_model;
 
-int SimInf_arg_check_dgCMatrix(
+int
+SimInf_arg_check_dgCMatrix(
     SEXP arg);
 
-int SimInf_arg_check_integer(
+int
+SimInf_arg_check_integer(
     SEXP arg);
 
-int SimInf_arg_check_integer_gt_zero(
+int
+SimInf_arg_check_integer_gt_zero(
     SEXP arg);
 
-int SimInf_arg_check_matrix(
+int
+SimInf_arg_check_matrix(
     SEXP arg);
 
-int SimInf_arg_check_model(
+int
+SimInf_arg_check_model(
     SEXP arg);
 
-int SimInf_compartment_model_create(
+int
+SimInf_compartment_model_create(
     SimInf_compartment_model **out,
     SimInf_solver_args *args);
 
-void SimInf_compartment_model_free(
+void
+SimInf_compartment_model_free(
     SimInf_compartment_model *model);
 
-int SimInf_get_solver(
+int
+SimInf_get_solver(
     int *out,
     SEXP solver);
 
-int SimInf_num_threads(
+int
+SimInf_num_threads(
     void);
 
-void SimInf_print_status(
+void
+SimInf_print_status(
     const int Nc,
     const int *u,
     const int Nd,
@@ -388,46 +399,57 @@ void SimInf_print_status(
     const double rate,
     const int transition);
 
-void SimInf_process_events(
+void
+SimInf_process_events(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events,
     int process_E2);
 
-int SimInf_run_solver_aem(
+int
+SimInf_run_solver_aem(
     SimInf_solver_args *args);
 
-int SimInf_run_solver_mssm(
+int
+SimInf_run_solver_mssm(
     SimInf_solver_args *args);
 
-int SimInf_run_solver_ssm(
+int
+SimInf_run_solver_ssm(
     SimInf_solver_args *args);
 
-int SimInf_scheduled_events_create(
+int
+SimInf_scheduled_events_create(
     SimInf_scheduled_events **out,
     const SimInf_solver_args *args,
     gsl_rng *rng);
 
-void SimInf_scheduled_events_free(
+void
+SimInf_scheduled_events_free(
     SimInf_scheduled_events *events);
 
-int SimInf_set_num_threads(
+int
+SimInf_set_num_threads(
     int threads);
 
-int SimInf_sparse(
+int
+SimInf_sparse(
     SEXP m,
     ptrdiff_t i,
     ptrdiff_t j);
 
-void SimInf_store_solution_sparse(
+void
+SimInf_store_solution_sparse(
     SimInf_compartment_model *model);
 
-void initialize_heap(
+void
+initialize_heap(
     double *data,
     int *INDEX,
     int *INDEX2,
     int N);
 
-void update(
+void
+update(
     int node,
     double *data,
     int *INDEX,

@@ -39,7 +39,8 @@
  * pressure phi among proximal nodes.
  * @return The contribution from neighbors to phi in node i
  */
-attribute_hidden double SimInf_local_spread(
+attribute_hidden double
+SimInf_local_spread(
     const double *neighbors,
     const double *phi,
     const int *u,

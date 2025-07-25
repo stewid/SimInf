@@ -46,7 +46,8 @@
  *        keep, else 0.
  * @param n number of events for the individual.
  */
-static void SimInf_find_longest_path(
+static void
+SimInf_find_longest_path(
     const int *event,
     const int *time,
     const int *node,
@@ -163,7 +164,8 @@ static void SimInf_find_longest_path(
  * @return a logical vector with TRUE for each event to keep, else
  *         FALSE.
  */
-attribute_hidden SEXP SimInf_individual_events(
+attribute_hidden SEXP
+SimInf_individual_events(
     SEXP id,
     SEXP event,
     SEXP time,

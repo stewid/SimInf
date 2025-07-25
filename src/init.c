@@ -150,7 +150,8 @@ static const R_CallMethodDef callMethods[] = {
  *
  * @param info Information about the DLL being loaded
  */
-attribute_visible void R_init_SimInf(
+attribute_visible void
+R_init_SimInf(
     DllInfo *info)
 {
     R_registerRoutines(info, NULL, callMethods, NULL, NULL);
