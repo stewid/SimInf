@@ -224,14 +224,14 @@ SimInf_individual_events(
     memset(ptr_keep, 0, len * sizeof(int));
 
 #ifdef _OPENMP
-#pragma omp parallel num_threads(SimInf_num_threads())
-#pragma omp single
+#  pragma omp parallel num_threads(SimInf_num_threads())
+#  pragma omp single
 #endif
     for (ptrdiff_t i = 0, j = 0; i < len; i++) {
         /* Check for last event or a new individual. */
         if (i == (len - 1) || ptr_id[i] != ptr_id[i + 1]) {
 #ifdef _OPENMP
-#pragma omp task
+#  pragma omp task
 #endif
             SimInf_find_longest_path(&ptr_event[j],
                                      &ptr_time[j],

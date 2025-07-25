@@ -178,7 +178,7 @@ code-style:
           --no-tabs \
           --indent-label0 \
           --break-function-decl-args \
-          --leave-preprocessor-space \
+          --preprocessor-indentation2 \
           --procnames-start-lines \
           --line-length80 \
           src/*.c src/*.h src/misc/*.c src/models/*.c src/solvers/*.c

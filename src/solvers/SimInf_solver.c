@@ -557,7 +557,7 @@ SimInf_print_event(
     const int dest)
 {
 #ifdef _OPENMP
-#pragma omp critical
+#  pragma omp critical
 #endif
     {
         if (irE && jcE && u) {
@@ -1187,7 +1187,7 @@ SimInf_print_status(
     const int transition)
 {
 #ifdef _OPENMP
-#pragma omp critical
+#  pragma omp critical
 #endif
     {
         REprintf("Status:\n");

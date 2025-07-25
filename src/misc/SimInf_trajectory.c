@@ -231,7 +231,7 @@ SimInf_sparse2df_int(
             }
         } else {
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 ptrdiff_t id = 0;
@@ -312,7 +312,7 @@ SimInf_sparse2df_real(
             }
         } else {
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 ptrdiff_t id = 0;
@@ -360,7 +360,7 @@ SimInf_dense2df_int(
         if (p_id != NULL) {
             /* Note that the identifiers are one-based. */
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 for (ptrdiff_t j = 0; j < id_len; j++) {
@@ -370,7 +370,7 @@ SimInf_dense2df_int(
             }
         } else {
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 for (ptrdiff_t j = 0; j < id_len; j++) {
@@ -405,7 +405,7 @@ SimInf_dense2df_real(
         if (p_id != NULL) {
             /* Note that the node identifiers are one-based. */
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 for (ptrdiff_t j = 0; j < id_len; j++) {
@@ -415,7 +415,7 @@ SimInf_dense2df_real(
             }
         } else {
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 for (ptrdiff_t j = 0; j < id_len; j++) {
@@ -523,7 +523,7 @@ SimInf_trajectory(
     nprotect++;
     int *p_vec = INTEGER(vec);
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
     for (ptrdiff_t i = 0; i < nrow; i++) {
         p_vec[i] = (int) (i + 1);
@@ -539,14 +539,14 @@ SimInf_trajectory(
             p_vec[i] = kv_A(*ri, i).id + 1;
     } else if (p_id != NULL) {
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
         for (ptrdiff_t t = 0; t < tlen; t++) {
             memcpy(&p_vec[t * id_len], p_id, id_len * sizeof(int));
         }
     } else {
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
         for (ptrdiff_t t = 0; t < tlen; t++) {
             for (ptrdiff_t i = 0; i < id_len; i++)
@@ -565,7 +565,7 @@ SimInf_trajectory(
                 p_vec[i] = (int) p_tspan[kv_A(*ri, i).time];
         } else {
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(SimInf_num_threads())
+#  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 for (ptrdiff_t i = 0; i < id_len; i++)

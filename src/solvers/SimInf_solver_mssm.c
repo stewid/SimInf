@@ -44,11 +44,11 @@ SimInf_solver_mssm(
     int Nthread)
 {
 #ifdef _OPENMP
-#pragma omp parallel num_threads(SimInf_num_threads())
+#  pragma omp parallel num_threads(SimInf_num_threads())
 #endif
     {
 #ifdef _OPENMP
-#pragma omp for
+#  pragma omp for
 #endif
         for (int i = 0; i < Nthread; i++) {
             SimInf_scheduled_events e = *&events[i];

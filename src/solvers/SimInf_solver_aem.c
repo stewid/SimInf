@@ -97,11 +97,11 @@ SimInf_solver_aem(
     int Nthread)
 {
 #ifdef _OPENMP
-#pragma omp parallel num_threads(SimInf_num_threads())
+#  pragma omp parallel num_threads(SimInf_num_threads())
 #endif
     {
 #ifdef _OPENMP
-#pragma omp for
+#  pragma omp for
 #endif
         for (int i = 0; i < Nthread; i++) {
             SimInf_compartment_model sa = *&model[i];
@@ -162,11 +162,11 @@ SimInf_solver_aem(
     /* Main loop. */
     for (;;) {
 #ifdef _OPENMP
-#pragma omp parallel num_threads(SimInf_num_threads())
+#  pragma omp parallel num_threads(SimInf_num_threads())
 #endif
         {
 #ifdef _OPENMP
-#pragma omp for
+#  pragma omp for
 #endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_compartment_model sa = *&model[i];
@@ -304,11 +304,11 @@ SimInf_solver_aem(
             }
 
 #ifdef _OPENMP
-#pragma omp barrier
+#  pragma omp barrier
 #endif
 
 #ifdef _OPENMP
-#pragma omp master
+#  pragma omp master
 #endif
             {
                 /* (3) Incorporate all scheduled E2 events */
@@ -316,11 +316,11 @@ SimInf_solver_aem(
             }
 
 #ifdef _OPENMP
-#pragma omp barrier
+#  pragma omp barrier
 #endif
 
 #ifdef _OPENMP
-#pragma omp for
+#  pragma omp for
 #endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_compartment_model sa = *&model[i];

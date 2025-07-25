@@ -45,11 +45,11 @@ SimInf_solver_ssm(
     int Nthread = model->Nthread;
 
 #ifdef _OPENMP
-#pragma omp parallel num_threads(SimInf_num_threads())
+#  pragma omp parallel num_threads(SimInf_num_threads())
 #endif
     {
 #ifdef _OPENMP
-#pragma omp for
+#  pragma omp for
 #endif
         for (int i = 0; i < Nthread; i++) {
             SimInf_compartment_model m = *&model[i];
@@ -93,11 +93,11 @@ SimInf_solver_ssm(
     /* Main loop. */
     for (;;) {
 #ifdef _OPENMP
-#pragma omp parallel num_threads(SimInf_num_threads())
+#  pragma omp parallel num_threads(SimInf_num_threads())
 #endif
         {
 #ifdef _OPENMP
-#pragma omp for
+#  pragma omp for
 #endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_scheduled_events e = *&events[i];
@@ -206,11 +206,11 @@ SimInf_solver_ssm(
             }
 
 #ifdef _OPENMP
-#pragma omp barrier
+#  pragma omp barrier
 #endif
 
 #ifdef _OPENMP
-#pragma omp master
+#  pragma omp master
 #endif
             {
                 /* (3) Incorporate all scheduled E2 events */
@@ -218,11 +218,11 @@ SimInf_solver_ssm(
             }
 
 #ifdef _OPENMP
-#pragma omp barrier
+#  pragma omp barrier
 #endif
 
 #ifdef _OPENMP
-#pragma omp for
+#  pragma omp for
 #endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_compartment_model m = *&model[i];
