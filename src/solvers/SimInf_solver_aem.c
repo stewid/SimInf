@@ -58,27 +58,23 @@ typedef struct SimInf_aem_arguments {
  * @param rng, current value of rng in heap.
  */
 static void
-calcTimes(
-    double* time,
-    double* infTime,
-    double tt,
-    double old_rate,
-    double new_rate,
-    gsl_rng* rng)
+calcTimes(double *time,
+          double *infTime,
+          double tt, double old_rate, double new_rate, gsl_rng *rng)
 {
     double oldtime = time[0];
 
     if (isinf(oldtime)) {
-        if (infTime[0] == 0.0) // Waking up first time
+        if (infTime[0] == 0.0)  // Waking up first time
             time[0] = -log(gsl_rng_uniform_pos(rng)) / new_rate + tt;
-        else if (new_rate > 0.0)  // Waking up the 2nd..nth time
+        else if (new_rate > 0.0)        // Waking up the 2nd..nth time
             time[0] = tt + (infTime[0] / new_rate);
     } else if (new_rate >= DBL_MIN) {
-        if (oldtime == tt) // Regular update of current event
+        if (oldtime == tt)      // Regular update of current event
             time[0] = -log(gsl_rng_uniform_pos(rng)) / new_rate + tt;
-        else  // Regular update of dependent events (rescaling)
+        else                    // Regular update of dependent events (rescaling)
             time[0] = ((old_rate / new_rate) * (oldtime - tt)) + tt;
-    } else { // Next event time set to infinity
+    } else {                    // Next event time set to infinity
         infTime[0] = (oldtime - tt) * old_rate;
         time[0] = INFINITY;
     }
@@ -90,19 +86,17 @@ calcTimes(
  * @return 0 if Ok, else error code.
  */
 static int
-SimInf_solver_aem(
-    SimInf_compartment_model *model,
-    SimInf_aem_arguments *method,
-    SimInf_scheduled_events *events,
-    int Nthread)
+SimInf_solver_aem(SimInf_compartment_model *model,
+                  SimInf_aem_arguments *method,
+                  SimInf_scheduled_events *events, int Nthread)
 {
-    #ifdef _OPENMP
-    #  pragma omp parallel num_threads(SimInf_num_threads())
-    #endif
+#ifdef _OPENMP
+#pragma omp parallel num_threads(SimInf_num_threads())
+#endif
     {
-        #ifdef _OPENMP
-        #  pragma omp for
-        #endif
+#ifdef _OPENMP
+#pragma omp for
+#endif
         for (int i = 0; i < Nthread; i++) {
             SimInf_compartment_model sa = *&model[i];
             SimInf_aem_arguments ma = *&method[i];
@@ -110,39 +104,48 @@ SimInf_solver_aem(
             /* Initialize the transition rate for every transition and
              * every node. */
 
-	    /* Calculate the propensity for every reaction*/
-	    for (ptrdiff_t node = 0; node < sa.Nn; node++) {
-                for (int j = 0; j < sa.Nt; j++){
-                    const double rate = (*sa.tr_fun[j])(&sa.u[node * sa.Nc],
-                                                        &sa.v[node * sa.Nd],
-                                                        &sa.ldata[node * sa.Nld],
-                                                        sa.gdata,
-                                                        sa.tt);
+            /* Calculate the propensity for every reaction */
+            for (ptrdiff_t node = 0; node < sa.Nn; node++) {
+                for (int j = 0; j < sa.Nt; j++) {
+                    const double rate =
+                        (*sa.tr_fun[j]) (&sa.u[node * sa.Nc],
+                                         &sa.v[node * sa.Nd],
+                                         &sa.ldata[node * sa.Nld],
+                                         sa.gdata,
+                                         sa.tt);
                     sa.t_rate[node * sa.Nt + j] = rate;
 
                     if (!R_FINITE(rate) || rate < 0.0) {
                         SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                             sa.Nd, &sa.v[node * sa.Nd],
-                                            sa.Nld, &sa.ldata[node * sa.Nld],
-                                            (int)(sa.Ni + node), sa.tt, rate, j);
+                                            sa.Nld,
+                                            &sa.ldata[node * sa.Nld],
+                                            (int) (sa.Ni + node), sa.tt,
+                                            rate, j);
                         sa.error = SIMINF_ERR_INVALID_RATE;
                     }
 
                     /* calculate time until next transition j event */
-                    ma.reactTimes[sa.Nt*node+j] =  -log(gsl_rng_uniform_pos(ma.rng_vec[sa.Nt*node+j]))/rate + sa.tt;
-                    if (ma.reactTimes[sa.Nt*node+j] <= 0.0)
-                        ma.reactTimes[sa.Nt*node+j] = INFINITY;
+                    ma.reactTimes[sa.Nt * node + j] =
+                        -log(gsl_rng_uniform_pos
+                             (ma.rng_vec[sa.Nt * node + j])) / rate +
+                        sa.tt;
+                    if (ma.reactTimes[sa.Nt * node + j] <= 0.0)
+                        ma.reactTimes[sa.Nt * node + j] = INFINITY;
 
-                    ma.reactHeap[sa.Nt*node+j] = ma.reactNode[sa.Nt*node+j] = j;
+                    ma.reactHeap[sa.Nt * node + j] =
+                        ma.reactNode[sa.Nt * node + j] = j;
                 }
 
                 /* Initialize reaction heap */
-                initialize_heap(&ma.reactTimes[sa.Nt*node], &ma.reactNode[sa.Nt*node],
-                                &ma.reactHeap[sa.Nt*node], ma.reactHeapSize);
+                initialize_heap(&ma.reactTimes[sa.Nt * node],
+                                &ma.reactNode[sa.Nt * node],
+                                &ma.reactHeap[sa.Nt * node],
+                                ma.reactHeapSize);
                 sa.t_time[node] = sa.tt;
-	    }
+            }
 
-	    *&model[i] = sa;
+            *&model[i] = sa;
             *&method[i] = ma;
         }
     }
@@ -154,13 +157,13 @@ SimInf_solver_aem(
 
     /* Main loop. */
     for (;;) {
-        #ifdef _OPENMP
-        #  pragma omp parallel num_threads(SimInf_num_threads())
-        #endif
+#ifdef _OPENMP
+#pragma omp parallel num_threads(SimInf_num_threads())
+#endif
         {
-            #ifdef _OPENMP
-            #  pragma omp for
-            #endif
+#ifdef _OPENMP
+#pragma omp for
+#endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_compartment_model sa = *&model[i];
                 SimInf_aem_arguments ma = *&method[i];
@@ -176,88 +179,119 @@ SimInf_solver_aem(
                         sa.t_time[node] = ma.reactTimes[sa.Nt * node];
 
                         /* Break if time is past next unit of time */
-                        if (isinf(sa.t_time[node]) || sa.t_time[node] >= sa.next_unit_of_time) {
+                        if (isinf(sa.t_time[node])
+                            || sa.t_time[node] >= sa.next_unit_of_time) {
                             sa.t_time[node] = sa.next_unit_of_time;
                             break;
                         }
 
                         /* 1b) Determine which transitions that occur */
-                        tr = ma.reactNode[sa.Nt * node]%sa.Nt;
+                        tr = ma.reactNode[sa.Nt * node] % sa.Nt;
 
                         /* 1c) Update the state of the node */
                         for (j = sa.jcS[tr]; j < sa.jcS[tr + 1]; j++) {
                             sa.u[node * sa.Nc + sa.irS[j]] += sa.prS[j];
                             if (sa.u[node * sa.Nc + sa.irS[j]] < 0) {
-                                SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
-                                                    sa.Nd, &sa.v[node * sa.Nd],
-                                                    sa.Nld, &sa.ldata[node * sa.Nld],
-                                                    (int)(sa.Ni + node), sa.t_time[node],
-                                                    0, tr);
+                                SimInf_print_status(sa.Nc,
+                                                    &sa.u[node * sa.Nc],
+                                                    sa.Nd,
+                                                    &sa.v[node * sa.Nd],
+                                                    sa.Nld,
+                                                    &sa.ldata[node *
+                                                              sa.Nld],
+                                                    (int) (sa.Ni + node),
+                                                    sa.t_time[node], 0,
+                                                    tr);
                                 sa.error = SIMINF_ERR_NEGATIVE_STATE;
                             }
                         }
 
 
                         /* 1d) update dependent transitions events. */
-                        for (int ii = sa.jcG[tr]; ii < sa.jcG[tr + 1]; ii++){
+                        for (int ii = sa.jcG[tr]; ii < sa.jcG[tr + 1];
+                             ii++) {
                             j = sa.irG[ii];
-                            if (j != tr) { /*see code underneath */
+                            if (j != tr) {      /*see code underneath */
                                 old_t_rate = sa.t_rate[node * sa.Nt + j];
                                 /* const double rate */
-                                rate = (*sa.tr_fun[j])(
-                                    &sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-                                    &sa.ldata[node * sa.Nld], sa.gdata,
-                                    sa.t_time[node]);
+                                rate =
+                                    (*sa.tr_fun[j]) (&sa.u[node * sa.Nc],
+                                                     &sa.v[node * sa.Nd],
+                                                     &sa.ldata[node *
+                                                               sa.Nld],
+                                                     sa.gdata,
+                                                     sa.t_time[node]);
 
                                 sa.t_rate[node * sa.Nt + j] = rate;
 
                                 if (!R_FINITE(rate) || rate < 0.0) {
-                                    SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
-                                                        sa.Nd, &sa.v[node * sa.Nd],
-                                                        sa.Nld, &sa.ldata[node * sa.Nld],
-                                                        (int)(sa.Ni + node), sa.t_time[node],
+                                    SimInf_print_status(sa.Nc,
+                                                        &sa.u[node *
+                                                              sa.Nc],
+                                                        sa.Nd,
+                                                        &sa.v[node *
+                                                              sa.Nd],
+                                                        sa.Nld,
+                                                        &sa.ldata[node *
+                                                                  sa.Nld],
+                                                        (int) (sa.Ni +
+                                                               node),
+                                                        sa.t_time[node],
                                                         rate, j);
                                     sa.error = SIMINF_ERR_INVALID_RATE;
                                 }
 
                                 /* update times and reorder the heap */
-                                calcTimes(&ma.reactTimes[sa.Nt * node + ma.reactHeap[sa.Nt * node + j]],
+                                calcTimes(&ma.reactTimes[sa.Nt * node +
+                                                         ma.
+                                                         reactHeap[sa.Nt *
+                                                                   node +
+                                                                   j]],
                                           &ma.reactInf[sa.Nt * node + j],
-                                          sa.t_time[node],
-                                          old_t_rate,
+                                          sa.t_time[node], old_t_rate,
                                           sa.t_rate[node * sa.Nt + j],
                                           ma.rng_vec[sa.Nt * node + j]);
-                                update(ma.reactHeap[sa.Nt * node + j], &ma.reactTimes[sa.Nt * node],
-                                       &ma.reactNode[sa.Nt * node], &ma.reactHeap[sa.Nt * node], ma.reactHeapSize);
+                                update(ma.reactHeap[sa.Nt * node + j],
+                                       &ma.reactTimes[sa.Nt * node],
+                                       &ma.reactNode[sa.Nt * node],
+                                       &ma.reactHeap[sa.Nt * node],
+                                       ma.reactHeapSize);
                             }
                         }
                         /* finish with j = re (the one that just happened), which need
                            not be in the dependency graph but must be updated  nevertheless */
                         j = tr;
                         old_t_rate = sa.t_rate[node * sa.Nt + j];
-                        rate = (*sa.tr_fun[j])(&sa.u[node * sa.Nc], &sa.v[node * sa.Nd],
-                                               &sa.ldata[node * sa.Nld], sa.gdata,
-                                               sa.t_time[node]);
+                        rate =
+                            (*sa.tr_fun[j]) (&sa.u[node * sa.Nc],
+                                             &sa.v[node * sa.Nd],
+                                             &sa.ldata[node * sa.Nld],
+                                             sa.gdata, sa.t_time[node]);
                         sa.t_rate[node * sa.Nt + j] = rate;
 
                         if (!R_FINITE(rate) || rate < 0.0) {
                             SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
                                                 sa.Nd, &sa.v[node * sa.Nd],
-                                                sa.Nld, &sa.ldata[node * sa.Nld],
-                                                (int)(sa.Ni + node), sa.t_time[node],
-                                                rate, j);
+                                                sa.Nld,
+                                                &sa.ldata[node * sa.Nld],
+                                                (int) (sa.Ni + node),
+                                                sa.t_time[node], rate, j);
                             sa.error = SIMINF_ERR_INVALID_RATE;
                         }
 
                         /* update times and reorder the heap */
-                        calcTimes(&ma.reactTimes[sa.Nt * node + ma.reactHeap[sa.Nt * node + j]],
+                        calcTimes(&ma.reactTimes[sa.Nt * node +
+                                                 ma.reactHeap[sa.Nt *
+                                                              node + j]],
                                   &ma.reactInf[sa.Nt * node + j],
-                                  sa.t_time[node],
-                                  old_t_rate,
+                                  sa.t_time[node], old_t_rate,
                                   sa.t_rate[node * sa.Nt + j],
                                   ma.rng_vec[sa.Nt * node + j]);
-                        update(ma.reactHeap[sa.Nt * node + j], &ma.reactTimes[sa.Nt * node],
-                               &ma.reactNode[sa.Nt * node], &ma.reactHeap[sa.Nt * node], ma.reactHeapSize);
+                        update(ma.reactHeap[sa.Nt * node + j],
+                               &ma.reactTimes[sa.Nt * node],
+                               &ma.reactNode[sa.Nt * node],
+                               &ma.reactHeap[sa.Nt * node],
+                               ma.reactHeapSize);
 
                     }
                 }
@@ -267,27 +301,27 @@ SimInf_solver_aem(
 
                 /* (2) Incorporate all scheduled E1 events */
                 SimInf_process_events(&model[i], &events[i], 0);
-	    }
+            }
 
-            #ifdef _OPENMP
-            #  pragma omp barrier
-            #endif
+#ifdef _OPENMP
+#pragma omp barrier
+#endif
 
-            #ifdef _OPENMP
-            #  pragma omp master
-            #endif
+#ifdef _OPENMP
+#pragma omp master
+#endif
             {
                 /* (3) Incorporate all scheduled E2 events */
                 SimInf_process_events(model, events, 1);
             }
 
-            #ifdef _OPENMP
-            #  pragma omp barrier
-            #endif
+#ifdef _OPENMP
+#pragma omp barrier
+#endif
 
-            #ifdef _OPENMP
-            #  pragma omp for
-            #endif
+#ifdef _OPENMP
+#pragma omp for
+#endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_compartment_model sa = *&model[i];
                 SimInf_aem_arguments ma = *&method[i];
@@ -297,10 +331,12 @@ SimInf_solver_aem(
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
                 for (ptrdiff_t node = 0; node < sa.Nn; node++) {
-                    const int rc = sa.pts_fun(
-                        &sa.v_new[node * sa.Nd], &sa.u[node * sa.Nc],
-                        &sa.v[node * sa.Nd], &sa.ldata[node * sa.Nld],
-                        sa.gdata, (int)(sa.Ni + node), sa.tt);
+                    const int rc = sa.pts_fun(&sa.v_new[node * sa.Nd],
+                                              &sa.u[node * sa.Nc],
+                                              &sa.v[node * sa.Nd],
+                                              &sa.ldata[node * sa.Nld],
+                                              sa.gdata,
+                                              (int) (sa.Ni + node), sa.tt);
 
                     if (rc < 0) {
                         sa.error = rc;
@@ -309,30 +345,42 @@ SimInf_solver_aem(
                         /* Update transition rates */
                         for (int j = 0; j < sa.Nt; j++) {
                             const double old = sa.t_rate[node * sa.Nt + j];
-                            const double rate = (*sa.tr_fun[j])(
-                                &sa.u[node * sa.Nc], &sa.v_new[node * sa.Nd],
-                                &sa.ldata[node * sa.Nld], sa.gdata, sa.tt);
+                            const double rate =
+                                (*sa.tr_fun[j]) (&sa.u[node * sa.Nc],
+                                                 &sa.v_new[node * sa.Nd],
+                                                 &sa.ldata[node * sa.Nld],
+                                                 sa.gdata, sa.tt);
 
                             sa.t_rate[node * sa.Nt + j] = rate;
 
                             if (!R_FINITE(rate) || rate < 0.0) {
-                                SimInf_print_status(sa.Nc, &sa.u[node * sa.Nc],
-                                                    sa.Nd, &sa.v[node * sa.Nd],
-                                                    sa.Nld, &sa.ldata[node * sa.Nld],
-                                                    (int)(sa.Ni + node), sa.tt, rate, j);
+                                SimInf_print_status(sa.Nc,
+                                                    &sa.u[node * sa.Nc],
+                                                    sa.Nd,
+                                                    &sa.v[node * sa.Nd],
+                                                    sa.Nld,
+                                                    &sa.ldata[node *
+                                                              sa.Nld],
+                                                    (int) (sa.Ni + node),
+                                                    sa.tt, rate, j);
                                 sa.error = SIMINF_ERR_INVALID_RATE;
                             }
 
-			    /* Update times and reorder heap */
-			    calcTimes(&ma.reactTimes[sa.Nt * node + ma.reactHeap[sa.Nt * node + j]],
-				      &ma.reactInf[sa.Nt * node + j],
-				      sa.t_time[node],
-				      old,
-				      sa.t_rate[node * sa.Nt + j],
-				      ma.rng_vec[sa.Nt * node + j]);
+                            /* Update times and reorder heap */
+                            calcTimes(&ma.reactTimes[sa.Nt * node +
+                                                     ma.reactHeap[sa.Nt *
+                                                                  node +
+                                                                  j]],
+                                      &ma.reactInf[sa.Nt * node + j],
+                                      sa.t_time[node], old,
+                                      sa.t_rate[node * sa.Nt + j],
+                                      ma.rng_vec[sa.Nt * node + j]);
 
-			    update(ma.reactHeap[sa.Nt * node + j], &ma.reactTimes[sa.Nt * node],
-                                   &ma.reactNode[sa.Nt * node], &ma.reactHeap[sa.Nt * node], ma.reactHeapSize);
+                            update(ma.reactHeap[sa.Nt * node + j],
+                                   &ma.reactTimes[sa.Nt * node],
+                                   &ma.reactNode[sa.Nt * node],
+                                   &ma.reactHeap[sa.Nt * node],
+                                   ma.reactHeapSize);
                         }
 
                         sa.update_node[node] = 0;
@@ -353,13 +401,24 @@ SimInf_solver_aem(
                 /* 6a) Handle the case where the solution is stored in
                  * a dense matrix */
                 /* Copy compartment state to U */
-                while (sa.U && sa.U_it < sa.tlen && sa.tt > sa.tspan[sa.U_it])
-                    memcpy(&sa.U[(ptrdiff_t)sa.Nc * (((ptrdiff_t)sa.Ntot * sa.U_it++) + sa.Ni)],
-                           sa.u, (ptrdiff_t)sa.Nn * (ptrdiff_t)sa.Nc * sizeof(int));
+                while (sa.U && sa.U_it < sa.tlen
+                       && sa.tt > sa.tspan[sa.U_it]) {
+                    memcpy(&sa.U[(ptrdiff_t) sa.Nc *
+                                 (((ptrdiff_t) sa.Ntot * sa.U_it++) +
+                                  sa.Ni)], sa.u,
+                           (ptrdiff_t) sa.Nn * (ptrdiff_t) sa.Nc *
+                           sizeof(int));
+                }
+
                 /* Copy continuous state to V */
-                while (sa.V && sa.V_it < sa.tlen && sa.tt > sa.tspan[sa.V_it])
-                    memcpy(&sa.V[(ptrdiff_t)sa.Nd * (((ptrdiff_t)sa.Ntot * sa.V_it++) + sa.Ni)],
-                           sa.v_new, (ptrdiff_t)sa.Nn * (ptrdiff_t)sa.Nd * sizeof(double));
+                while (sa.V && sa.V_it < sa.tlen
+                       && sa.tt > sa.tspan[sa.V_it]) {
+                    memcpy(&sa.V[(ptrdiff_t) sa.Nd *
+                                 (((ptrdiff_t) sa.Ntot * sa.V_it++) +
+                                  sa.Ni)], sa.v_new,
+                           (ptrdiff_t) sa.Nn * (ptrdiff_t) sa.Nd *
+                           sizeof(double));
+                }
 
                 *&model[i] = sa;
                 *&method[i] = ma;
@@ -397,10 +456,8 @@ SimInf_solver_aem(
  * @param Nthread number of threads that was used during simulation.
  */
 static void
-SimInf_aem_arguments_free(
-    SimInf_aem_arguments *method,
-    SimInf_compartment_model *model,
-    int Nthread)
+SimInf_aem_arguments_free(SimInf_aem_arguments *method,
+                          SimInf_compartment_model *model, int Nthread)
 {
     if (method) {
         for (int i = 0; i < Nthread; i++) {
@@ -437,48 +494,54 @@ SimInf_aem_arguments_free(
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
 static int
-SimInf_aem_arguments_create(
-    SimInf_aem_arguments **out,
-    SimInf_compartment_model *model,
-    int Nthread,
-    gsl_rng *rng)
+SimInf_aem_arguments_create(SimInf_aem_arguments **out,
+                            SimInf_compartment_model *model,
+                            int Nthread, gsl_rng *rng)
 {
-    SimInf_aem_arguments *method = calloc(Nthread, sizeof(SimInf_aem_arguments));
-    if(!method)
-        goto on_error; /* #nocov */
+    SimInf_aem_arguments *method =
+        calloc(Nthread, sizeof(SimInf_aem_arguments));
+    if (!method)
+        goto on_error;          /* #nocov */
 
     for (int i = 0; i < Nthread; i++) {
         const SimInf_compartment_model *m = &model[i];
         /* Binary heap storing all reaction events */
         /* we have one for each node. Heap is thus only the size of the # transitions */
         method[i].reactHeapSize = m->Nt;
-        method[i].reactNode = malloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt * sizeof(int));
+        method[i].reactNode =
+            malloc((ptrdiff_t) m->Nn * (ptrdiff_t) m->Nt * sizeof(int));
         if (!method[i].reactNode)
-            goto on_error; /* #nocov */
+            goto on_error;      /* #nocov */
 
-        method[i].reactHeap = malloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt * sizeof(int));
+        method[i].reactHeap =
+            malloc((ptrdiff_t) m->Nn * (ptrdiff_t) m->Nt * sizeof(int));
         if (!method[i].reactHeap)
-            goto on_error; /* #nocov */
+            goto on_error;      /* #nocov */
 
-        method[i].reactTimes = malloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt * sizeof(double));
+        method[i].reactTimes =
+            malloc((ptrdiff_t) m->Nn * (ptrdiff_t) m->Nt * sizeof(double));
         if (!method[i].reactTimes)
-            goto on_error; /* #nocov */
+            goto on_error;      /* #nocov */
 
-        method[i].reactInf = calloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt, sizeof(double));
+        method[i].reactInf =
+            calloc((ptrdiff_t) m->Nn * (ptrdiff_t) m->Nt, sizeof(double));
         if (!method[i].reactInf)
-            goto on_error; /* #nocov */
+            goto on_error;      /* #nocov */
 
         /* random generator for sample select with 1 per transition in each node */
-        method[i].rng_vec = (gsl_rng**)calloc((ptrdiff_t)m->Nn * (ptrdiff_t)m->Nt, sizeof(gsl_rng*));
+        method[i].rng_vec =
+            (gsl_rng **) calloc((ptrdiff_t) m->Nn * (ptrdiff_t) m->Nt,
+                                sizeof(gsl_rng *));
         if (!method[i].rng_vec)
-            goto on_error; /* #nocov */
+            goto on_error;      /* #nocov */
 
         for (int node = 0; node < m->Nn; node++) {
             for (int trans = 0; trans < m->Nt; trans++) {
                 /* Random number generator */
-                method[i].rng_vec[m->Nt * node + trans] = gsl_rng_alloc(gsl_rng_mt19937);
+                method[i].rng_vec[m->Nt * node + trans] =
+                    gsl_rng_alloc(gsl_rng_mt19937);
                 if (!method[i].rng_vec[m->Nt * node + trans])
-                    goto on_error; /* #nocov */
+                    goto on_error;      /* #nocov */
 
                 gsl_rng_set(method[i].rng_vec[m->Nt * node + trans],
                             gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
@@ -490,9 +553,9 @@ SimInf_aem_arguments_create(
 
     return 0;
 
-on_error:                                              /* #nocov */
-    SimInf_aem_arguments_free(method, model, Nthread); /* #nocov */
-    return SIMINF_ERR_ALLOC_MEMORY_BUFFER;             /* #nocov */
+  on_error:                    /* #nocov */
+    SimInf_aem_arguments_free(method, model, Nthread);  /* #nocov */
+    return SIMINF_ERR_ALLOC_MEMORY_BUFFER;      /* #nocov */
 }
 
 /**

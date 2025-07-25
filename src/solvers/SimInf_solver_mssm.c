@@ -59,7 +59,8 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
             double *v_new = m.v_new;
             double *V = m.V;
 
-            for (ptrdiff_t replicate = 0; replicate < m.Nrep && !m.error; replicate++) {
+            for (ptrdiff_t replicate = 0; replicate < m.Nrep && !m.error;
+                 replicate++) {
                 /* Clear processed events. */
                 e.events_index = 0;
 
@@ -84,27 +85,23 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
                 for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
                     m.sum_t_rate[node] = 0.0;
                     for (int j = 0; j < m.Nt; j++) {
-                        const double rate = (*m.tr_fun[j])(
-                            &m.u[node * m.Nc],
-                            &m.v[node * m.Nd],
-                            &m.ldata[node * m.Nld],
-                            m.gdata,
-                            m.tt);
+                        const double rate =
+                            (*m.tr_fun[j]) (&m.u[node * m.Nc],
+                                            &m.v[node * m.Nd],
+                                            &m.ldata[node * m.Nld],
+                                            m.gdata,
+                                            m.tt);
 
                         m.t_rate[node * m.Nt + j] = rate;
                         m.sum_t_rate[node] += rate;
                         if (!R_FINITE(rate) || rate < 0.0) {
-                            SimInf_print_status(
-                                m.Nc,
-                                &m.u[node * m.Nc],
-                                m.Nd,
-                                &m.v[node * m.Nd],
-                                m.Nld,
-                                &m.ldata[node * m.Nld],
-                                (int)node,
-                                m.tt,
-                                rate,
-                                j);
+                            SimInf_print_status(m.Nc,
+                                                &m.u[node * m.Nc],
+                                                m.Nd,
+                                                &m.v[node * m.Nd],
+                                                m.Nld,
+                                                &m.ldata[node * m.Nld],
+                                                (int) node, m.tt, rate, j);
                             m.error = SIMINF_ERR_INVALID_RATE;
                         }
                     }
@@ -113,10 +110,11 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
                 }
 
                 /* Main loop. */
-                for (;!m.error;) {
+                for (; !m.error;) {
                     /* (1) Handle internal epidemiological model,
                      * continuous-time Markov chain. */
-                    for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
+                    for (ptrdiff_t node = 0; node < m.Nn && !m.error;
+                         node++) {
                         for (;;) {
                             double cum, rand, tau, delta = 0.0;
                             int tr;
@@ -129,7 +127,8 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
                             }
                             tau = -log(gsl_rng_uniform_pos(e.rng)) /
                                 m.sum_t_rate[node];
-                            if ((tau + m.t_time[node]) >= m.next_unit_of_time) {
+                            if ((tau + m.t_time[node]) >=
+                                m.next_unit_of_time) {
                                 m.t_time[node] = m.next_unit_of_time;
                                 break;
                             }
@@ -137,7 +136,9 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
 
                             /* 1b) Determine the transition that did
                              * occur (direct SSA). */
-                            rand = gsl_rng_uniform_pos(e.rng) * m.sum_t_rate[node];
+                            rand =
+                                gsl_rng_uniform_pos(e.rng) *
+                                m.sum_t_rate[node];
                             for (tr = 0, cum = m.t_rate[node * m.Nt];
                                  tr < m.Nt && rand > cum;
                                  tr++, cum += m.t_rate[node * m.Nt + tr]);
@@ -148,7 +149,10 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
                             if (m.t_rate[node * m.Nt + tr] == 0.0) {
                                 /* Go backwards and try to find first
                                  * nonzero transition rate */
-                                for ( ; tr > 0 && m.t_rate[node * m.Nt + tr] == 0.0; tr--);
+                                for (;
+                                     tr > 0
+                                     && m.t_rate[node * m.Nt + tr] == 0.0;
+                                     tr--);
 
                                 /* No nonzero rate found, but a
                                    transition was sampled. This can
@@ -166,17 +170,16 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
                             for (int j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
                                 m.u[node * m.Nc + m.irS[j]] += m.prS[j];
                                 if (m.u[node * m.Nc + m.irS[j]] < 0) {
-                                    SimInf_print_status(
-                                        m.Nc,
-                                        &m.u[node * m.Nc],
-                                        m.Nd,
-                                        &m.v[node * m.Nd],
-                                        m.Nld,
-                                        &m.ldata[node * m.Nld],
-                                        (int)node,
-                                        m.t_time[node],
-                                        0,
-                                        tr);
+                                    SimInf_print_status(m.Nc,
+                                                        &m.u[node * m.Nc],
+                                                        m.Nd,
+                                                        &m.v[node * m.Nd],
+                                                        m.Nld,
+                                                        &m.ldata[node *
+                                                                 m.Nld],
+                                                        (int) node,
+                                                        m.t_time[node], 0,
+                                                        tr);
                                     m.error = SIMINF_ERR_NEGATIVE_STATE;
                                 }
                             }
@@ -184,28 +187,31 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
                             /* 1d) Recalculate sum_t_rate[node] using
                              * dependency graph. */
                             for (int j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
-                                const double old = m.t_rate[node * m.Nt + m.irG[j]];
-                                const double rate = (*m.tr_fun[m.irG[j]])(
-                                    &m.u[node * m.Nc],
-                                    &m.v[node * m.Nd],
-                                    &m.ldata[node * m.Nld],
-                                    m.gdata,
-                                    m.t_time[node]);
+                                const double old =
+                                    m.t_rate[node * m.Nt + m.irG[j]];
+                                const double rate =
+                                    (*m.tr_fun[m.irG[j]]) (&m.
+                                                           u[node * m.Nc],
+                                                           &m.v[node *
+                                                                m.Nd],
+                                                           &m.ldata[node *
+                                                                    m.Nld],
+                                                           m.gdata,
+                                                           m.t_time[node]);
 
                                 m.t_rate[node * m.Nt + m.irG[j]] = rate;
                                 delta += rate - old;
                                 if (!R_FINITE(rate) || rate < 0.0) {
-                                    SimInf_print_status(
-                                        m.Nc,
-                                        &m.u[node * m.Nc],
-                                        m.Nd,
-                                        &m.v[node * m.Nd],
-                                        m.Nld,
-                                        &m.ldata[node * m.Nld],
-                                        (int)node,
-                                        m.t_time[node],
-                                        rate,
-                                        m.irG[j]);
+                                    SimInf_print_status(m.Nc,
+                                                        &m.u[node * m.Nc],
+                                                        m.Nd,
+                                                        &m.v[node * m.Nd],
+                                                        m.Nld,
+                                                        &m.ldata[node *
+                                                                 m.Nld],
+                                                        (int) node,
+                                                        m.t_time[node],
+                                                        rate, m.irG[j]);
                                     m.error = SIMINF_ERR_INVALID_RATE;
                                 }
                             }
@@ -221,15 +227,15 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
                      * each timestep e.g. update the infectious
                      * pressure variable. Moreover, update transition
                      * rates in nodes that are indicated for update */
-                    for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
-                        const int rc = m.pts_fun(
-                            &m.v_new[node * m.Nd],
-                            &m.u[node * m.Nc],
-                            &m.v[node * m.Nd],
-                            &m.ldata[node * m.Nld],
-                            m.gdata,
-                            (int)node,
-                            m.tt);
+                    for (ptrdiff_t node = 0; node < m.Nn && !m.error;
+                         node++) {
+                        const int rc = m.pts_fun(&m.v_new[node * m.Nd],
+                                                 &m.u[node * m.Nc],
+                                                 &m.v[node * m.Nd],
+                                                 &m.ldata[node * m.Nld],
+                                                 m.gdata,
+                                                 (int) node,
+                                                 m.tt);
 
                         if (rc < 0) {
                             m.error = rc;
@@ -239,28 +245,27 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
                             double delta = 0.0;
 
                             for (int j = 0; j < m.Nt; j++) {
-                                const double old = m.t_rate[node * m.Nt + j];
-                                const double rate = (*m.tr_fun[j])(
-                                    &m.u[node * m.Nc],
-                                    &m.v_new[node * m.Nd],
-                                    &m.ldata[node * m.Nld],
-                                    m.gdata,
-                                    m.tt);
+                                const double old =
+                                    m.t_rate[node * m.Nt + j];
+                                const double rate =
+                                    (*m.tr_fun[j]) (&m.u[node * m.Nc],
+                                                    &m.v_new[node * m.Nd],
+                                                    &m.ldata[node * m.Nld],
+                                                    m.gdata,
+                                                    m.tt);
 
                                 m.t_rate[node * m.Nt + j] = rate;
                                 delta += rate - old;
                                 if (!R_FINITE(rate) || rate < 0.0) {
-                                    SimInf_print_status(
-                                        m.Nc,
-                                        &m.u[node * m.Nc],
-                                        m.Nd,
-                                        &m.v[node * m.Nd],
-                                        m.Nld,
-                                        &m.ldata[node * m.Nld],
-                                        (int)node,
-                                        m.tt,
-                                        rate,
-                                        j);
+                                    SimInf_print_status(m.Nc,
+                                                        &m.u[node * m.Nc],
+                                                        m.Nd,
+                                                        &m.v[node * m.Nd],
+                                                        m.Nld,
+                                                        &m.ldata[node *
+                                                                 m.Nld],
+                                                        (int) node, m.tt,
+                                                        rate, j);
                                     m.error = SIMINF_ERR_INVALID_RATE;
                                 }
                             }
@@ -280,14 +285,20 @@ SimInf_solver_mssm(SimInf_compartment_model *model,
                      * including tt. The mssm solver always stores the
                      * solution in a dense matrix (U and/or V non-null
                      * pointers).  Copy compartment state to U */
-                    while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it])
-                        memcpy(&m.U[(ptrdiff_t)m.Nn * (ptrdiff_t)m.Nc * m.U_it++],
-                               m.u, (ptrdiff_t)m.Nn * (ptrdiff_t)m.Nc * sizeof(int));
+                    while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
+                        memcpy(&m.U[(ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
+                                    m.U_it++], m.u,
+                               (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
+                               sizeof(int));
+                    }
 
                     /* Copy continuous state to V */
-                    while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it])
-                        memcpy(&m.V[(ptrdiff_t)m.Nd * (ptrdiff_t)m.Ntot * m.V_it++],
-                               m.v_new, (ptrdiff_t)m.Nn * (ptrdiff_t)m.Nd * sizeof(double));
+                    while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
+                        memcpy(&m.V[(ptrdiff_t) m.Nd * (ptrdiff_t) m.Ntot *
+                                    m.V_it++], m.v_new,
+                               (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
+                               sizeof(double));
+                    }
 
                     /* Swap the pointers to the continuous state
                      * variable so that 'v' equals 'v_new'. */
