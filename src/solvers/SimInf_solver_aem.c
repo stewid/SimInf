@@ -29,15 +29,14 @@
 #include <gsl/gsl_rng.h>
 #include <math.h>
 #ifdef _OPENMP
-#  include <omp.h>
+#include <omp.h>
 #endif
 #include <string.h>
 
 /**
  * Structure to hold AEM solver specific data/arguments for simulation.
  */
-typedef struct SimInf_aem_arguments
-{
+typedef struct SimInf_aem_arguments {
     gsl_rng **rng_vec;   /**< The random number generator. */
 
     int *reactHeap;      /**< Binary heap storing all reaction events */
@@ -502,10 +501,7 @@ on_error:                                              /* #nocov */
  * @param args Structure with data for the solver.
  * @return 0 if Ok, else error code.
  */
-attribute_hidden
-int
-SimInf_run_solver_aem(
-    SimInf_solver_args *args)
+attribute_hidden int SimInf_run_solver_aem(SimInf_solver_args *args)
 {
     int err = 0;
     gsl_rng *rng = NULL;
@@ -515,26 +511,26 @@ SimInf_run_solver_aem(
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
-        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-        goto cleanup;                         /* #nocov */
+        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;   /* #nocov */
+        goto cleanup;           /* #nocov */
     }
     gsl_rng_set(rng, args->seed);
 
     err = SimInf_compartment_model_create(&model, args);
     if (err)
-        goto cleanup; /* #nocov */
+        goto cleanup;           /* #nocov */
 
     err = SimInf_scheduled_events_create(&events, args, rng);
     if (err)
-        goto cleanup; /* #nocov */
+        goto cleanup;           /* #nocov */
 
     err = SimInf_aem_arguments_create(&method, model, args->Nthread, rng);
     if (err)
-        goto cleanup; /* #nocov */
+        goto cleanup;           /* #nocov */
 
     err = SimInf_solver_aem(model, method, events, args->Nthread);
 
-cleanup:
+  cleanup:
     gsl_rng_free(rng);
     SimInf_scheduled_events_free(events);
     SimInf_aem_arguments_free(method, model, args->Nthread);

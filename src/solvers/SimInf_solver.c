@@ -192,8 +192,7 @@ SimInf_sample_select(const int *irE,
             0.0) {
             /* Go backwards and try to find the first nonzero
              * compartment */
-            for (;
-                 i > jcE[select]
+            for (; i > jcE[select]
                  && (prE[i] *
                      (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0;
                  i--);
