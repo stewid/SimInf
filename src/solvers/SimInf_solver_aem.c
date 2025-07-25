@@ -22,9 +22,9 @@
  */
 
 #include "SimInf.h"
+#include "SimInf_internal.h"
 #include "SimInf_solver.h"
 #include "misc/SimInf_openmp.h"
-#include "misc/binheap.h"
 #include <R_ext/Visibility.h>
 #include <float.h>
 #include <gsl/gsl_randist.h>
