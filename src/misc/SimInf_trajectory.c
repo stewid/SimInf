@@ -591,7 +591,7 @@ SimInf_trajectory(SEXP dm,
                              p_id);
     }
 
-  cleanup:
+cleanup:
     if (ri) {
         kv_destroy(*ri);
         free(ri);

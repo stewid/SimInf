@@ -364,7 +364,7 @@ attribute_hidden int SimInf_run_solver_ssm(SimInf_solver_args *args)
 
     err = SimInf_solver_ssm(model, events);
 
-  cleanup:
+cleanup:
     gsl_rng_free(rng);
     SimInf_scheduled_events_free(events);
     SimInf_compartment_model_free(model);

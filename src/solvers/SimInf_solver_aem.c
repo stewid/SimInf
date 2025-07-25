@@ -553,7 +553,7 @@ SimInf_aem_arguments_create(SimInf_aem_arguments **out,
 
     return 0;
 
-  on_error:                    /* #nocov */
+on_error:                      /* #nocov */
     SimInf_aem_arguments_free(method, model, Nthread);  /* #nocov */
     return SIMINF_ERR_ALLOC_MEMORY_BUFFER;      /* #nocov */
 }
@@ -593,7 +593,7 @@ attribute_hidden int SimInf_run_solver_aem(SimInf_solver_args *args)
 
     err = SimInf_solver_aem(model, method, events, args->Nthread);
 
-  cleanup:
+cleanup:
     gsl_rng_free(rng);
     SimInf_scheduled_events_free(events);
     SimInf_aem_arguments_free(method, model, args->Nthread);

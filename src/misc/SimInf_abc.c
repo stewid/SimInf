@@ -241,7 +241,7 @@ SimInf_abc_proposals(SEXP parameter,
         } while (!accept);
     }
 
-  cleanup:
+cleanup:
     gsl_matrix_free(SIGMA);
     gsl_rng_free(rng);
     PutRNGstate();
@@ -386,7 +386,7 @@ SimInf_abc_weights(SEXP distribution,
     for (ptrdiff_t i = 0; i < n_particles; i++)
         ptr_ww[i] /= sum;
 
-  cleanup:
+cleanup:
     gsl_matrix_free(SIGMA);
     gsl_vector_free(work);
 

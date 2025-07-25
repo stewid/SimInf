@@ -173,7 +173,7 @@ clang-tidy:
 # Run the indent program on the C code.
 .PHONY: code-style
 code-style:
-	indent src/*.c src/*.h src/misc/*.c src/models/*.c src/solvers/*.c
+	indent --k-and-r-style --no-tabs --indent-label0 src/*.c src/*.h src/misc/*.c src/models/*.c src/solvers/*.c
 	-rm src/*.c~
 	-rm src/*.h~
 	-rm src/misc/*.c~

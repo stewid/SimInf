@@ -273,7 +273,7 @@ attribute_hidden
         err = SIMINF_ERR_UNKNOWN_SOLVER;
     }
 
-  cleanup:
+cleanup:
     if (err)
         SimInf_raise_error(err);
 

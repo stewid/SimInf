@@ -155,7 +155,7 @@ SimInf_sample_select(const int *irE,
 
     return 0;
 
-  sample_biased_urn:
+sample_biased_urn:
     /* Non-equal weights. Perform sampling from Wallenius' noncentral
      * hypergeometric distribution by simulating an urn experiment
      * with bias and without replacement. The probability of taking an
@@ -496,7 +496,7 @@ SimInf_scheduled_events_create(SimInf_scheduled_events **out,
     *out = events;
     return 0;
 
-  on_error:                    /* #nocov */
+on_error:                      /* #nocov */
     SimInf_scheduled_events_free(events);       /* #nocov */
     return SIMINF_ERR_ALLOC_MEMORY_BUFFER;      /* #nocov */
 }
@@ -904,7 +904,7 @@ SimInf_process_events(SimInf_compartment_model *model,
         e.events_index++;
     }
 
-  done:
+done:
     *&events[0] = e;
     *&model[0] = m;
 }
@@ -1143,7 +1143,7 @@ SimInf_compartment_model_create(SimInf_compartment_model **out,
     *out = model;
     return 0;
 
-  on_error:                    /* #nocov */
+on_error:                      /* #nocov */
     SimInf_compartment_model_free(model);       /* #nocov */
     return SIMINF_ERR_ALLOC_MEMORY_BUFFER;      /* #nocov */
 }
