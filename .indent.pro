@@ -1,1 +1,0 @@
---k-and-r-style --no-tabs

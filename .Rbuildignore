@@ -5,7 +5,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^covr\.html$
-^\.indent\.pro$
 ^man-roxygen$
 ^lib$
 ^\.lintr$
