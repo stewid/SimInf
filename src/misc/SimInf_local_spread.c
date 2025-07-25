@@ -40,20 +40,17 @@
  * @return The contribution from neighbors to phi in node i
  */
 attribute_hidden
-double
-SimInf_local_spread(
-    const double *neighbors,
-    const double *phi,
-    const int *u,
-    const double N_i,
-    const double phi_i,
-    const int Nc,
-    const double D)
+    double
+SimInf_local_spread(const double *neighbors,
+                    const double *phi,
+                    const int *u,
+                    const double N_i,
+                    const double phi_i, const int Nc, const double D)
 {
     double ls = 0.0;
     const double phi_i_N_i = phi_i * N_i;
 
-    int j = (int)*neighbors++;
+    int j = (int) *neighbors++;
     while (j >= 0) {
         /* Count number of individuals in node j */
         double N_j = 0;
@@ -65,7 +62,7 @@ SimInf_local_spread(
 
         /* Move to next neighbor pair (index, distance) */
         neighbors++;
-        j = (int)*neighbors++;
+        j = (int) *neighbors++;
     }
 
     return ls;

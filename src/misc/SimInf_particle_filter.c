@@ -29,10 +29,7 @@
  * @param w a numeric vector with weights for the particles.
  * @return an integer vector with indices.
  */
-attribute_hidden
-SEXP
-SimInf_systematic_resampling(
-    SEXP w)
+attribute_hidden SEXP SimInf_systematic_resampling(SEXP w)
 {
     const double *ptr_w = REAL(w);
     const R_xlen_t n = XLENGTH(w);
@@ -47,7 +44,7 @@ SimInf_systematic_resampling(
     if (cumsum_w <= 0.0)
         Rf_error("Non-positive sum of weights detected.");
 
-    const double du = cumsum_w / (double)n;
+    const double du = cumsum_w / (double) n;
     GetRNGstate();
     double u = du * unif_rand();
     PutRNGstate();
@@ -58,7 +55,7 @@ SimInf_systematic_resampling(
     for (ptrdiff_t i = 0, j = 0; i < n; i++) {
         while (u > cumsum_w)
             cumsum_w += ptr_w[++j];
-        ptr_idx[i] = (int)(j < n ? j + 1 : n);
+        ptr_idx[i] = (int) (j < n ? j + 1 : n);
         u += du;
     }
 
@@ -78,11 +75,7 @@ SimInf_systematic_resampling(
  *         interval, and the second column the number of events in the
  *         interval.
  */
-attribute_hidden
-SEXP
-SimInf_split_events(
-    SEXP t,
-    SEXP t_end)
+attribute_hidden SEXP SimInf_split_events(SEXP t, SEXP t_end)
 {
     const int *ptr_t = INTEGER(t);
     const R_xlen_t t_len = XLENGTH(t);
@@ -106,7 +99,7 @@ SimInf_split_events(
     while (t_i < t_len && t_end_i < t_end_len) {
         if (ptr_t[t_i] <= ptr_t_end[t_end_i]) {
             if (!ptr_m[t_end_i])
-                ptr_m[t_end_i] = (int)(t_i + 1);
+                ptr_m[t_end_i] = (int) (t_i + 1);
             ptr_m[t_end_len + t_end_i]++;
             t_i++;
         } else {

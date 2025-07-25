@@ -23,7 +23,7 @@
 
 #include "SimInf.h"
 #ifdef _OPENMP
-#  include <omp.h>
+#include <omp.h>
 #endif
 #include <R_ext/Visibility.h>
 #include <Rinternals.h>
@@ -39,10 +39,7 @@ static int SimInf_max_threads = -1;
  * run. */
 static int SimInf_threads = -1;
 
-attribute_hidden
-int
-SimInf_num_threads(
-    void)
+attribute_hidden int SimInf_num_threads(void)
 {
     return SimInf_threads;
 }
@@ -50,10 +47,7 @@ SimInf_num_threads(
 /* Internal function to specify the number of threads to use in a
  * parallel region. Use all avialable threads if the 'threads'
  * argument is <= 0. */
-attribute_hidden
-int
-SimInf_set_num_threads(
-    int threads)
+attribute_hidden int SimInf_set_num_threads(int threads)
 {
     if (threads <= 0 || threads > SimInf_max_threads)
         threads = SimInf_max_threads;
@@ -87,10 +81,7 @@ static int SimInf_get_max_threads(void)
  * find the number of threads. Additionally, it can be controlled by
  * the 'threads' argument when called from 'R'. If called from R, it
  * returns the old value of the maximum number of threads used. */
-attribute_hidden
-SEXP
-SimInf_init_threads(
-    SEXP threads)
+attribute_hidden SEXP SimInf_init_threads(SEXP threads)
 {
     int old_value = SimInf_max_threads;
 
@@ -117,8 +108,7 @@ SimInf_init_threads(
     if (Rf_isInteger(threads) &&
         LENGTH(threads) == 1 &&
         INTEGER(threads)[0] != NA_INTEGER &&
-        INTEGER(threads)[0] < SimInf_max_threads)
-    {
+        INTEGER(threads)[0] < SimInf_max_threads) {
         SimInf_max_threads = INTEGER(threads)[0];
     }
 
@@ -138,10 +128,7 @@ SimInf_init_threads(
 /**
  * Is OpenMP available
  */
-attribute_hidden
-SEXP
-SimInf_have_openmp(
-    void)
+attribute_hidden SEXP SimInf_have_openmp(void)
 {
 #ifdef _OPENMP
     return Rf_ScalarLogical(1);

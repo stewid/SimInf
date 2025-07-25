@@ -47,11 +47,7 @@
  * end_t1, end_t2, end_t3, end_t4, index, value, index, value, -1, 0.0
  */
 attribute_hidden
-SEXP
-SimInf_ldata_sp(
-    SEXP data,
-    SEXP distance,
-    SEXP metric)
+    SEXP SimInf_ldata_sp(SEXP data, SEXP distance, SEXP metric)
 {
     /* Check arguments */
     if (SimInf_arg_check_matrix(data))
@@ -75,8 +71,10 @@ SimInf_ldata_sp(
 
     /* Check that the number of nodes are equal in data and
      * distance */
-    if (Nn != (LENGTH(R_do_slot(distance, Rf_install("p"))) - 1))
-        Rf_error("The number of nodes in 'data' and 'distance' are not equal.");
+    if (Nn != (LENGTH(R_do_slot(distance, Rf_install("p"))) - 1)) {
+        Rf_error
+            ("The number of nodes in 'data' and 'distance' are not equal.");
+    }
 
     /* Calculate length of 'Nld' in 'ldata' for each node in the
      * following three steps: 1), 2), and 3).
@@ -86,7 +84,7 @@ SimInf_ldata_sp(
      * matrix and the number of neighbors (degree) for each node. */
     int *degree = malloc(Nn * sizeof(int));
     if (!degree)
-        Rf_error("Unable to allocate memory buffer."); /* #nocov */
+        Rf_error("Unable to allocate memory buffer.");  /* #nocov */
     ptrdiff_t Nld = 0;
     for (ptrdiff_t i = 0; i < Nn; i++) {
         const int k = jc[i + 1] - jc[i];
