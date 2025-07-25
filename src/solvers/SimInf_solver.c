@@ -22,7 +22,7 @@
  */
 
 #include "SimInf.h"
-#include "SimInf_solver.h"
+#include "SimInf_internal.h"
 #include <R_ext/Visibility.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>

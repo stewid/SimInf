@@ -22,7 +22,6 @@
  */
 
 #include "SimInf_internal.h"
-#include "solvers/SimInf_solver.h"
 #include <R_ext/Visibility.h>
 #include <Rdefines.h>
 

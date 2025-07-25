@@ -23,7 +23,6 @@
 
 #include "SimInf.h"
 #include "SimInf_internal.h"
-#include "SimInf_solver.h"
 #include <R_ext/Visibility.h>
 #include <float.h>
 #include <gsl/gsl_randist.h>
