@@ -25,10 +25,10 @@
 #include <R_ext/Visibility.h>
 
 /* Offset in integer compartment state vector */
-enum {S, I, R};
+enum { S, I, R };
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {BETA, GAMMA};
+enum { BETA, GAMMA };
 
 /**
  * susceptible to infected: S -> I
@@ -41,12 +41,9 @@ enum {BETA, GAMMA};
  * @return propensity.
  */
 static double
-SIR_S_to_I(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SIR_S_to_I(const int *u,
+           const double *v,
+           const double *ldata, const double *gdata, double t)
 {
     const double S_n = u[S];
     const double I_n = u[I];
@@ -72,12 +69,9 @@ SIR_S_to_I(
  * @return propensity.
  */
 static double
-SIR_I_to_R(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SIR_I_to_R(const int *u,
+           const double *v,
+           const double *ldata, const double *gdata, double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(gdata);
@@ -102,14 +96,11 @@ SIR_I_to_R(
  * transition rates.
  */
 static int
-SIR_post_time_step(
-    double *v_new,
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    int node,
-    double t)
+SIR_post_time_step(double *v_new,
+                   const int *u,
+                   const double *v,
+                   const double *ldata,
+                   const double *gdata, int node, double t)
 {
     SIMINF_UNUSED(v_new);
     SIMINF_UNUSED(u);
@@ -129,13 +120,9 @@ SIR_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden
-SEXP
-SIR_run(
-    SEXP model,
-    SEXP solver)
+attribute_hidden SEXP SIR_run(SEXP model, SEXP solver)
 {
-    TRFun tr_fun[] = {&SIR_S_to_I, &SIR_I_to_R};
+    TRFun tr_fun[] = { &SIR_S_to_I, &SIR_I_to_R };
 
     return SimInf_run(model, solver, tr_fun, &SIR_post_time_step);
 }

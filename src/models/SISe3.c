@@ -25,17 +25,18 @@
 #include <R_ext/Visibility.h>
 
 /* Offset in integer compartment state vector */
-enum {S_1, I_1, S_2, I_2, S_3, I_3};
+enum { S_1, I_1, S_2, I_2, S_3, I_3 };
 
 /* Offset in real-valued continuous state vector */
-enum {PHI};
+enum { PHI };
 
 /* Offsets in node local data (ldata) to parameters in the model */
-enum {END_T1, END_T2, END_T3, END_T4};
+enum { END_T1, END_T2, END_T3, END_T4 };
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
-      ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON};
+enum { UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
+    ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, EPSILON
+};
 
 /**
  * In age category 1; susceptible to infected: S -> I
@@ -48,12 +49,9 @@ enum {UPSILON_1, UPSILON_2, UPSILON_3, GAMMA_1, GAMMA_2, GAMMA_3,
  * @return propensity.
  */
 static double
-SISe3_S_1_to_I_1(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SISe3_S_1_to_I_1(const int *u,
+                 const double *v,
+                 const double *ldata, const double *gdata, double t)
 {
     SIMINF_UNUSED(ldata);
     SIMINF_UNUSED(t);
@@ -72,12 +70,9 @@ SISe3_S_1_to_I_1(
  * @return propensity.
  */
 static double
-SISe3_S_2_to_I_2(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SISe3_S_2_to_I_2(const int *u,
+                 const double *v,
+                 const double *ldata, const double *gdata, double t)
 {
     SIMINF_UNUSED(ldata);
     SIMINF_UNUSED(t);
@@ -96,12 +91,9 @@ SISe3_S_2_to_I_2(
  * @return propensity.
  */
 static double
-SISe3_S_3_to_I_3(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SISe3_S_3_to_I_3(const int *u,
+                 const double *v,
+                 const double *ldata, const double *gdata, double t)
 {
     SIMINF_UNUSED(ldata);
     SIMINF_UNUSED(t);
@@ -120,12 +112,9 @@ SISe3_S_3_to_I_3(
  * @return propensity.
  */
 static double
-SISe3_I_1_to_S_1(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SISe3_I_1_to_S_1(const int *u,
+                 const double *v,
+                 const double *ldata, const double *gdata, double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(ldata);
@@ -145,12 +134,9 @@ SISe3_I_1_to_S_1(
  * @return propensity.
  */
 static double
-SISe3_I_2_to_S_2(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SISe3_I_2_to_S_2(const int *u,
+                 const double *v,
+                 const double *ldata, const double *gdata, double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(ldata);
@@ -170,12 +156,9 @@ SISe3_I_2_to_S_2(
  * @return propensity
  */
 static double
-SISe3_I_3_to_S_3(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SISe3_I_3_to_S_3(const int *u,
+                 const double *v,
+                 const double *ldata, const double *gdata, double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(ldata);
@@ -200,16 +183,13 @@ SISe3_I_3_to_S_3(
  * transition rates.
  */
 static int
-SISe3_post_time_step(
-    double *v_new,
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    int node,
-    double t)
+SISe3_post_time_step(double *v_new,
+                     const int *u,
+                     const double *v,
+                     const double *ldata,
+                     const double *gdata, int node, double t)
 {
-    const int day = (int)t % 365;
+    const int day = (int) t % 365;
     const double I_n = u[I_1] + u[I_2] + u[I_3];
     const double n = I_n + u[S_1] + u[S_2] + u[S_3];
     const double phi = v[PHI];
@@ -218,10 +198,15 @@ SISe3_post_time_step(
 
     /* Time dependent beta in each of the four intervals of the
      * year. Forward Euler step. */
-    v_new[PHI] = SimInf_forward_euler_linear_decay(
-        phi, day,
-        ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
-        gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
+    v_new[PHI] = SimInf_forward_euler_linear_decay(phi, day,
+                                                   ldata[END_T1],
+                                                   ldata[END_T2],
+                                                   ldata[END_T3],
+                                                   ldata[END_T4],
+                                                   gdata[BETA_T1],
+                                                   gdata[BETA_T2],
+                                                   gdata[BETA_T3],
+                                                   gdata[BETA_T4]);
 
     if (n > 0.0)
         v_new[PHI] += gdata[ALPHA] * I_n / n + gdata[EPSILON];
@@ -232,7 +217,7 @@ SISe3_post_time_step(
         return SIMINF_ERR_V_IS_NOT_FINITE;
     if (v_new[PHI] < 0.0)
         return SIMINF_ERR_V_IS_NEGATIVE;
-    return phi != v_new[PHI]; /* 1 if needs update */
+    return phi != v_new[PHI];   /* 1 if needs update */
 }
 
 /**
@@ -242,15 +227,12 @@ SISe3_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden
-SEXP
-SISe3_run(
-    SEXP model,
-    SEXP solver)
+attribute_hidden SEXP SISe3_run(SEXP model, SEXP solver)
 {
-    TRFun tr_fun[] = {&SISe3_S_1_to_I_1, &SISe3_I_1_to_S_1,
-                      &SISe3_S_2_to_I_2, &SISe3_I_2_to_S_2,
-                      &SISe3_S_3_to_I_3, &SISe3_I_3_to_S_3};
+    TRFun tr_fun[] = { &SISe3_S_1_to_I_1, &SISe3_I_1_to_S_1,
+        &SISe3_S_2_to_I_2, &SISe3_I_2_to_S_2,
+        &SISe3_S_3_to_I_3, &SISe3_I_3_to_S_3
+    };
 
     return SimInf_run(model, solver, tr_fun, &SISe3_post_time_step);
 }

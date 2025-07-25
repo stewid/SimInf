@@ -25,10 +25,10 @@
 #include <R_ext/Visibility.h>
 
 /* Offset in integer compartment state vector */
-enum {S, E, I, R};
+enum { S, E, I, R };
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {BETA, EPSILON, GAMMA};
+enum { BETA, EPSILON, GAMMA };
 
 /**
  * susceptible to exposed: S -> E
@@ -41,12 +41,9 @@ enum {BETA, EPSILON, GAMMA};
  * @return propensity.
  */
 static double
-SEIR_S_to_E(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SEIR_S_to_E(const int *u,
+            const double *v,
+            const double *ldata, const double *gdata, double t)
 {
     const double S_n = u[S];
     const double I_n = u[I];
@@ -72,12 +69,9 @@ SEIR_S_to_E(
  * @return propensity.
  */
 static double
-SEIR_E_to_I(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SEIR_E_to_I(const int *u,
+            const double *v,
+            const double *ldata, const double *gdata, double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(gdata);
@@ -97,12 +91,9 @@ SEIR_E_to_I(
  * @return propensity.
  */
 static double
-SEIR_I_to_R(
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    double t)
+SEIR_I_to_R(const int *u,
+            const double *v,
+            const double *ldata, const double *gdata, double t)
 {
     SIMINF_UNUSED(v);
     SIMINF_UNUSED(gdata);
@@ -127,14 +118,11 @@ SEIR_I_to_R(
  * transition rates.
  */
 static int
-SEIR_post_time_step(
-    double *v_new,
-    const int *u,
-    const double *v,
-    const double *ldata,
-    const double *gdata,
-    int node,
-    double t)
+SEIR_post_time_step(double *v_new,
+                    const int *u,
+                    const double *v,
+                    const double *ldata,
+                    const double *gdata, int node, double t)
 {
     SIMINF_UNUSED(v_new);
     SIMINF_UNUSED(u);
@@ -154,13 +142,9 @@ SEIR_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden
-SEXP
-SEIR_run(
-    SEXP model,
-    SEXP solver)
+attribute_hidden SEXP SEIR_run(SEXP model, SEXP solver)
 {
-    TRFun tr_fun[] = {&SEIR_S_to_E, &SEIR_E_to_I, &SEIR_I_to_R};
+    TRFun tr_fun[] = { &SEIR_S_to_E, &SEIR_E_to_I, &SEIR_I_to_R };
 
     return SimInf_run(model, solver, tr_fun, &SEIR_post_time_step);
 }
