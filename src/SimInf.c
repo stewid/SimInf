@@ -21,7 +21,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "misc/SimInf_arg.h"
+#include "SimInf_internal.h"
 #include "misc/SimInf_openmp.h"
 #include "solvers/SimInf_solver.h"
 #include <R_ext/Visibility.h>

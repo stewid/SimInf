@@ -18,7 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "SimInf_arg.h"
+#include "SimInf_internal.h"
 #include <R.h>
 #include <R_ext/Visibility.h>
 #include <Rmath.h>

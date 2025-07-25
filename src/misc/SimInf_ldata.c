@@ -22,7 +22,7 @@
  */
 
 #include "SimInf.h"
-#include "SimInf_arg.h"
+#include "SimInf_internal.h"
 #include <R_ext/Visibility.h>
 
 /**
