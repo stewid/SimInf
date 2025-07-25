@@ -44,12 +44,12 @@ SEXP SimInf_lambertW0(SEXP);
 SEXP SimInf_ldata_sp(SEXP, SEXP, SEXP);
 SEXP SimInf_split_events(SEXP, SEXP);
 SEXP SimInf_systematic_resampling(SEXP);
-SEXP SimInf_trajectory(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+SEXP SimInf_trajectory(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,
+                       SEXP, SEXP);
 
 #define CALLDEF(name, n) {#name, (DL_FUNC) &(name), (n)}
 
-static const R_CallMethodDef callMethods[] =
-{
+static const R_CallMethodDef callMethods[] = {
     CALLDEF(SEIR_run, 2),
     CALLDEF(SIR_run, 2),
     CALLDEF(SISe_run, 2),
@@ -68,7 +68,7 @@ static const R_CallMethodDef callMethods[] =
     CALLDEF(SimInf_split_events, 2),
     CALLDEF(SimInf_systematic_resampling, 1),
     CALLDEF(SimInf_trajectory, 10),
-    {NULL, NULL, 0}
+    { NULL, NULL, 0 }
 };
 
 /**
@@ -76,19 +76,15 @@ static const R_CallMethodDef callMethods[] =
  *
  * @param info Information about the DLL being loaded
  */
-attribute_visible
-void
-R_init_SimInf(
-    DllInfo *info)
+attribute_visible void R_init_SimInf(DllInfo *info)
 {
     R_registerRoutines(info, NULL, callMethods, NULL, NULL);
     R_useDynamicSymbols(info, FALSE);
     R_forceSymbols(info, TRUE);
     R_RegisterCCallable("SimInf", "SimInf_local_spread",
-                        (DL_FUNC) &SimInf_local_spread);
+                        (DL_FUNC) & SimInf_local_spread);
     R_RegisterCCallable("SimInf", "SimInf_forward_euler_linear_decay",
-                        (DL_FUNC) &SimInf_forward_euler_linear_decay);
-    R_RegisterCCallable("SimInf", "SimInf_run",
-                        (DL_FUNC) &SimInf_run);
+                        (DL_FUNC) & SimInf_forward_euler_linear_decay);
+    R_RegisterCCallable("SimInf", "SimInf_run", (DL_FUNC) & SimInf_run);
     SimInf_init_threads(R_NilValue);
 }
