@@ -178,6 +178,7 @@ code-style:
           --no-tabs \
           --indent-label0 \
           --break-function-decl-args \
+          --leave-preprocessor-space \
           src/*.c src/*.h src/misc/*.c src/models/*.c src/solvers/*.c
 	-rm src/*.c~
 	-rm src/*.h~

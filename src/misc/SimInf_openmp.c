@@ -22,11 +22,11 @@
  */
 
 #include "SimInf.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 #include <R_ext/Visibility.h>
 #include <Rinternals.h>
+#ifdef _OPENMP
+#  include <omp.h>
+#endif
 #include <stdlib.h>
 
 /* This is the maximum number of threads that SimInf will use for

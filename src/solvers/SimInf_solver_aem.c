@@ -29,7 +29,7 @@
 #include <gsl/gsl_rng.h>
 #include <math.h>
 #ifdef _OPENMP
-#include <omp.h>
+#  include <omp.h>
 #endif
 #include <string.h>
 

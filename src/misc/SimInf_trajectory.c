@@ -27,7 +27,7 @@
 #include <R_ext/Visibility.h>
 #include <Rdefines.h>
 #ifdef _OPENMP
-#include <omp.h>
+#  include <omp.h>
 #endif
 
 typedef struct {
