@@ -25,7 +25,7 @@
 #include <R_ext/Visibility.h>
 #include <Rinternals.h>
 #ifdef _OPENMP
-#  include <omp.h>
+#include <omp.h>
 #endif
 
 /**
@@ -47,14 +47,11 @@
  * @param n number of events for the individual.
  */
 static void
-SimInf_find_longest_path(
-    const int *event,
-    const int *time,
-    const int *node,
-    const int *dest,
-    int *path,
-    int *keep,
-    const ptrdiff_t n)
+SimInf_find_longest_path(const int *event,
+                         const int *time,
+                         const int *node,
+                         const int *dest,
+                         int *path, int *keep, const ptrdiff_t n)
 {
     /* If one of the events is an enter event, then the first event in
      * the path must be an enter event. If one of the events is an
@@ -80,9 +77,8 @@ SimInf_find_longest_path(
          * if there are no more events. */
         if (longest_path == 0) {
             if ((must_exit == 0 && event[begin] == ENTER_EVENT) ||
-                (must_exit == 0 && event[begin] == EXTERNAL_TRANSFER_EVENT) ||
-                (must_exit == 1 && event[begin] == EXIT_EVENT))
-            {
+                (must_exit == 0 && event[begin] == EXTERNAL_TRANSFER_EVENT)
+                || (must_exit == 1 && event[begin] == EXIT_EVENT)) {
                 longest_path = 1;
                 keep[begin] = 1;
             }
@@ -91,15 +87,13 @@ SimInf_find_longest_path(
         /* Initialize the path with the first event. This is the
          * root for the search. */
         memset(path, 0, n * sizeof(int));
-        path[0] = (int)(begin + 1);
+        path[0] = (int) (begin + 1);
 
         /* Perform a depth first search of the events to find the
          * longest path. */
         ptrdiff_t depth = 1;
         while (depth > 0 &&
-               depth < (n - begin) &&
-               longest_path < (n - begin))
-        {
+               depth < (n - begin) && longest_path < (n - begin)) {
             /* Determine where to continue the search. */
             ptrdiff_t i = path[depth - 1] - 1;
             ptrdiff_t offset = 1;
@@ -120,12 +114,11 @@ SimInf_find_longest_path(
                 if (time[j] > time[i] &&
                     from == node[j] &&
                     from != dest[j] &&
-                    (event[j] == EXIT_EVENT || event[j] == EXTERNAL_TRANSFER_EVENT))
-                {
-                    path[depth] = (int)(j + 1);
-                    if (!(must_exit && event[j] == EXTERNAL_TRANSFER_EVENT) &&
-                        (depth + 1) > longest_path)
-                    {
+                    (event[j] == EXIT_EVENT
+                     || event[j] == EXTERNAL_TRANSFER_EVENT)) {
+                    path[depth] = (int) (j + 1);
+                    if (!(must_exit && event[j] == EXTERNAL_TRANSFER_EVENT)
+                        && (depth + 1) > longest_path) {
                         longest_path = depth + 1;
                         memset(keep, 0, n * sizeof(int));
                         for (int k = 0; k < longest_path; k++)
@@ -169,13 +162,9 @@ SimInf_find_longest_path(
  *         FALSE.
  */
 attribute_hidden
-SEXP
-SimInf_individual_events(
-    SEXP id,
-    SEXP event,
-    SEXP time,
-    SEXP node,
-    SEXP dest)
+    SEXP
+SimInf_individual_events(SEXP id,
+                         SEXP event, SEXP time, SEXP node, SEXP dest)
 {
     const int *ptr_id = INTEGER(id);
     const int *ptr_event = INTEGER(event);
@@ -189,15 +178,23 @@ SimInf_individual_events(
 
     /* Check that the input vectors have an identical length >= 0. */
     if (len < 0)
-        Rf_error("'id' must be an integer vector with length >= 0."); /* #nocov */
-    if (XLENGTH(event) != len)
-        Rf_error("'event' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
-    if (XLENGTH(time) != len)
-        Rf_error("'time' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
-    if (XLENGTH(node) != len)
-        Rf_error("'node' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
-    if (XLENGTH(dest) != len)
-        Rf_error("'dest' must be an integer vector with length %" R_PRIdXLEN_T ".", len);
+        Rf_error("'id' must be an integer vector with length >= 0.");   /* #nocov */
+    if (XLENGTH(event) != len) {
+        Rf_error("'event' must be an integer vector with length %"
+                 R_PRIdXLEN_T ".", len);
+    }
+    if (XLENGTH(time) != len) {
+        Rf_error("'time' must be an integer vector with length %"
+                 R_PRIdXLEN_T ".", len);
+    }
+    if (XLENGTH(node) != len) {
+        Rf_error("'node' must be an integer vector with length %"
+                 R_PRIdXLEN_T ".", len);
+    }
+    if (XLENGTH(dest) != len) {
+        Rf_error("'dest' must be an integer vector with length %"
+                 R_PRIdXLEN_T ".", len);
+    }
 
     for (ptrdiff_t i = 0; i < len; i++) {
         switch (ptr_event[i]) {
@@ -213,7 +210,7 @@ SimInf_individual_events(
     /* Allocate transient storage of an integer vector for keeping
      * track of the current path when searching for the longest
      * path. R will reclaim the memory at the end of the call. */
-    int *ptr_path = (int*)R_alloc(len, sizeof(int));
+    int *ptr_path = (int *) R_alloc(len, sizeof(int));
 
     SEXP keep = PROTECT(Rf_allocVector(LGLSXP, len));
     int *ptr_keep = LOGICAL(keep);
@@ -221,24 +218,22 @@ SimInf_individual_events(
     /* The default is to drop all events. */
     memset(ptr_keep, 0, len * sizeof(int));
 
-    #ifdef _OPENMP
-    #  pragma omp parallel num_threads(SimInf_num_threads())
-    #  pragma omp single
-    #endif
+#ifdef _OPENMP
+#pragma omp parallel num_threads(SimInf_num_threads())
+#pragma omp single
+#endif
     for (ptrdiff_t i = 0, j = 0; i < len; i++) {
         /* Check for last event or a new individual. */
         if (i == (len - 1) || ptr_id[i] != ptr_id[i + 1]) {
-            #ifdef _OPENMP
-            #  pragma omp task
-            #endif
-            SimInf_find_longest_path(
-                &ptr_event[j],
-                &ptr_time[j],
-                &ptr_node[j],
-                &ptr_dest[j],
-                &ptr_path[j],
-                &ptr_keep[j],
-                i - j + 1);
+#ifdef _OPENMP
+#pragma omp task
+#endif
+            SimInf_find_longest_path(&ptr_event[j],
+                                     &ptr_time[j],
+                                     &ptr_node[j],
+                                     &ptr_dest[j],
+                                     &ptr_path[j],
+                                     &ptr_keep[j], i - j + 1);
 
             j = i + 1;
         }

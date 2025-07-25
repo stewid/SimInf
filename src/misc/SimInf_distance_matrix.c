@@ -23,16 +23,14 @@
 #include <Rinternals.h>
 
 static ptrdiff_t
-SimInf_Euclidean_distance(
-    const double* x,
-    const double* y,
-    const double cutoff,
-    const double min_dist,
-    const int na_fail,
-    const ptrdiff_t len,
-    double *distance,
-    int *row_indices,
-    int *col_indices)
+SimInf_Euclidean_distance(const double *x,
+                          const double *y,
+                          const double cutoff,
+                          const double min_dist,
+                          const int na_fail,
+                          const ptrdiff_t len,
+                          double *distance,
+                          int *row_indices, int *col_indices)
 {
     if (col_indices)
         col_indices[0] = 0;
@@ -47,16 +45,13 @@ SimInf_Euclidean_distance(
                 if (!R_FINITE(d)) {
                     if ((R_IsNA(x[i]) ||
                          R_IsNA(x[j]) ||
-                         R_IsNA(y[i]) ||
-                         R_IsNA(y[j])) && !na_fail) {
+                         R_IsNA(y[i]) || R_IsNA(y[j])) && !na_fail) {
                         continue;
                     }
 
                     Rf_error("Invalid distance for i=%"
                              R_PRIdXLEN_T
-                             " and j=%"
-                             R_PRIdXLEN_T
-                             ".", i, j);
+                             " and j=%" R_PRIdXLEN_T ".", i, j);
                 }
 
                 if (d <= cutoff) {
@@ -73,7 +68,7 @@ SimInf_Euclidean_distance(
                         distance[n] = d;
 
                     if (row_indices)
-                        row_indices[n] = (int)j;
+                        row_indices[n] = (int) j;
 
                     n++;
                 }
@@ -81,27 +76,26 @@ SimInf_Euclidean_distance(
         }
 
         if (col_indices)
-            col_indices[i + 1] = (int)n;
+            col_indices[i + 1] = (int) n;
     }
 
     return n;
 }
 
 attribute_hidden
-SEXP
-SimInf_distance_matrix(
-    SEXP x_,
-    SEXP y_,
-    SEXP cutoff_,
-    SEXP min_dist_,
-    SEXP na_fail_)
+    SEXP
+SimInf_distance_matrix(SEXP x_,
+                       SEXP y_,
+                       SEXP cutoff_, SEXP min_dist_, SEXP na_fail_)
 {
     /* Check that the input vectors have an identical length > 0. */
     const R_xlen_t len = XLENGTH(x_);
     if (len < 1)
         Rf_error("'x' must be a numeric vector with length > 0.");
-    if (XLENGTH(y_) != len)
-        Rf_error("'y' must be a numeric vector with length %" R_PRIdXLEN_T ".", len);
+    if (XLENGTH(y_) != len) {
+        Rf_error("'y' must be a numeric vector with length %" R_PRIdXLEN_T
+                 ".", len);
+    }
 
     /* Check for valid cutoff. */
     const double cutoff = Rf_asReal(cutoff_);
@@ -110,8 +104,7 @@ SimInf_distance_matrix(
 
     /* Check for a valid na_fail. */
     if (!Rf_isLogical(na_fail_) ||
-        Rf_length(na_fail_) != 1 ||
-        LOGICAL(na_fail_)[0] == NA_LOGICAL) {
+        Rf_length(na_fail_) != 1 || LOGICAL(na_fail_)[0] == NA_LOGICAL) {
         Rf_error("'na_fail' must be TRUE or FALSE.");
     }
     const int na_fail = LOGICAL(na_fail_)[0];
@@ -121,16 +114,15 @@ SimInf_distance_matrix(
     const double *x = REAL(x_);
     const double *y = REAL(y_);
     const double min_dist = Rf_asReal(min_dist_);
-    const ptrdiff_t n = SimInf_Euclidean_distance(
-        x,
-        y,
-        cutoff,
-        min_dist,
-        na_fail,
-        len,
-        NULL,
-        NULL,
-        NULL);
+    const ptrdiff_t n = SimInf_Euclidean_distance(x,
+                                                  y,
+                                                  cutoff,
+                                                  min_dist,
+                                                  na_fail,
+                                                  len,
+                                                  NULL,
+                                                  NULL,
+                                                  NULL);
 
     /* Allocate vectors for the sparse matrix. */
     SEXP distance = PROTECT(Rf_allocVector(REALSXP, n));
@@ -139,16 +131,14 @@ SimInf_distance_matrix(
 
     /* Now, iterate over all the elements again and save the result in
      * the allocated result vectors. */
-    SimInf_Euclidean_distance(
-        x,
-        y,
-        cutoff,
-        min_dist,
-        na_fail,
-        len,
-        REAL(distance),
-        INTEGER(row_indices),
-        INTEGER(col_indices));
+    SimInf_Euclidean_distance(x,
+                              y,
+                              cutoff,
+                              min_dist,
+                              na_fail,
+                              len,
+                              REAL(distance),
+                              INTEGER(row_indices), INTEGER(col_indices));
 
     /* Create the sparse matrix. */
     SEXP class = PROTECT(R_do_MAKE_CLASS("dgCMatrix"));
@@ -156,8 +146,8 @@ SimInf_distance_matrix(
     R_do_slot_assign(result, Rf_install("x"), distance);
     R_do_slot_assign(result, Rf_install("i"), row_indices);
     R_do_slot_assign(result, Rf_install("p"), col_indices);
-    INTEGER(R_do_slot(result, Rf_install("Dim")))[0] = (int)len;
-    INTEGER(R_do_slot(result, Rf_install("Dim")))[1] = (int)len;
+    INTEGER(R_do_slot(result, Rf_install("Dim")))[0] = (int) len;
+    INTEGER(R_do_slot(result, Rf_install("Dim")))[1] = (int) len;
 
     UNPROTECT(5);
 
