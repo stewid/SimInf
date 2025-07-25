@@ -24,8 +24,8 @@
 #pragma once
 
 #include "SimInf.h"
-#include <Rinternals.h>
 #include "misc/kvec.h"
+#include <Rinternals.h>
 #include <gsl/gsl_rng.h>
 
 /* Structure to hold data/arguments to a SimInf solver.
