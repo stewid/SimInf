@@ -22,12 +22,15 @@
  */
 
 #include "SimInf.h"
+#include "SimInf_internal.h"
 #include "SimInf_solver.h"
-#include "misc/SimInf_openmp.h"
 #include <R_ext/Visibility.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 #include <math.h>
+#ifdef _OPENMP
+#  include <omp.h>
+#endif
 #include <string.h>
 
 /**

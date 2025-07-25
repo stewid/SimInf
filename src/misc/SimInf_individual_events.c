@@ -20,10 +20,13 @@
  */
 
 #include "SimInf.h"
-#include "SimInf_openmp.h"
+#include "SimInf_internal.h"
 #include <R.h>
 #include <R_ext/Visibility.h>
 #include <Rinternals.h>
+#ifdef _OPENMP
+#  include <omp.h>
+#endif
 
 /**
  * Find the longest path through the events.

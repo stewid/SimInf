@@ -31,6 +31,8 @@ int SimInf_arg_check_integer_gt_zero(SEXP arg);
 int SimInf_arg_check_matrix(SEXP arg);
 int SimInf_arg_check_model(SEXP arg);
 int SimInf_get_solver(int *out, SEXP solver);
+int SimInf_num_threads(void);
+int SimInf_set_num_threads(int threads);
 int SimInf_sparse(SEXP m, ptrdiff_t i, ptrdiff_t j);
 void initialize_heap(double *data, int *INDEX, int *INDEX2, int N);
 void update(int node, double *data, int *INDEX, int *INDEX2, int N);

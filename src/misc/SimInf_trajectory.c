@@ -22,10 +22,13 @@
  */
 
 #include "SimInf.h"
-#include "SimInf_openmp.h"
+#include "SimInf_internal.h"
 #include "kvec.h"
 #include <R_ext/Visibility.h>
 #include <Rdefines.h>
+#ifdef _OPENMP
+#  include <omp.h>
+#endif
 
 typedef struct {
     ptrdiff_t id;
