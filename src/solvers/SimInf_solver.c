@@ -28,7 +28,7 @@
 #include <gsl/gsl_rng.h>
 #include <math.h>
 #ifdef _OPENMP
-#  include <omp.h>
+#include <omp.h>
 #endif
 #include <string.h>
 
@@ -60,18 +60,15 @@
  * @return 0 if Ok, else error code.
  */
 static int
-SimInf_sample_select(
-    const int *irE,
-    const int *jcE,
-    const double *prE,
-    int Nc,
-    const int *u,
-    int node,
-    int select,
-    int n,
-    double proportion,
-    int *individuals,
-    gsl_rng *rng)
+SimInf_sample_select(const int *irE,
+                     const int *jcE,
+                     const double *prE,
+                     int Nc,
+                     const int *u,
+                     int node,
+                     int select,
+                     int n,
+                     double proportion, int *individuals, gsl_rng *rng)
 {
     int i, Nstates, Nindividuals = 0, Nkinds = 0;
 
@@ -95,13 +92,13 @@ SimInf_sample_select(
     if (n == 0) {
         if (proportion < 0 || proportion > 1)
             return SIMINF_ERR_INVALID_PROPORTION;
-        n = (int)gsl_ran_binomial(rng, proportion, Nindividuals);
+        n = (int) gsl_ran_binomial(rng, proportion, Nindividuals);
     }
 
     /* Error checking. */
-    if (Nstates <= 0 ||     /* No states to sample from, we shouldn't be here. */
-        n > Nindividuals || /* Cannot sample this number of individuals.       */
-        n < 0)              /* Cannot sample negative number of individuals.   */
+    if (Nstates <= 0 ||         /* No states to sample from, we shouldn't be here. */
+        n > Nindividuals ||     /* Cannot sample this number of individuals.       */
+        n < 0)                  /* Cannot sample negative number of individuals.   */
         return SIMINF_ERR_SAMPLE_SELECT;
 
     /* Handle cases that require no random sampling */
@@ -145,9 +142,10 @@ SimInf_sample_select(
         if (n == 0)
             break;
 
-        individuals[irE[i]] = (int)gsl_ran_hypergeometric(
-            rng, u[node * Nc + irE[i]],
-            Nindividuals - u[node * Nc + irE[i]], n);
+        individuals[irE[i]] =
+            (int) gsl_ran_hypergeometric(rng, u[node * Nc + irE[i]],
+                                         Nindividuals - u[node * Nc +
+                                                          irE[i]], n);
 
         Nindividuals -= u[node * Nc + irE[i]];
         n -= individuals[irE[i]];
@@ -157,7 +155,7 @@ SimInf_sample_select(
 
     return 0;
 
-sample_biased_urn:
+  sample_biased_urn:
     /* Non-equal weights. Perform sampling from Wallenius' noncentral
      * hypergeometric distribution by simulating an urn experiment
      * with bias and without replacement. The probability of taking an
@@ -181,21 +179,27 @@ sample_biased_urn:
         /* Use inversion to determine the compartment that was
          * sampled. */
         rand = gsl_rng_uniform_pos(rng) * cum;
-        for (i = jcE[select], cum = prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]]);
+        for (i = jcE[select], cum =
+             prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]]);
              i < jcE[select + 1] && rand > cum;
-             i++, cum += prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]]));
+             i++, cum +=
+             prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]]));
 
         /* Elaborate floating point fix: */
         if (i >= jcE[select + 1])
             i = jcE[select + 1] - 1;
-        if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0) {
+        if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) ==
+            0.0) {
             /* Go backwards and try to find the first nonzero
              * compartment */
             for (;
-                 i > jcE[select] && (prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0;
+                 i > jcE[select]
+                 && (prE[i] *
+                     (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0;
                  i--);
 
-            if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) == 0.0) {
+            if ((prE[i] * (u[node * Nc + irE[i]] - individuals[irE[i]])) ==
+                0.0) {
                 /* No nonzero compartment found. */
                 return SIMINF_ERR_SAMPLE_SELECT;
             }
@@ -237,18 +241,16 @@ sample_biased_urn:
  * @return 0 if Ok, else error code.
  */
 static int
-SimInf_sample_select_enter(
-    const int *irE,
-    const int *jcE,
-    const double *prE,
-    int Nc,
-    const int *u,
-    int node,
-    int select,
-    int n,
-    double proportion,
-    int *individuals,
-    gsl_rng *rng)
+SimInf_sample_select_enter(const int *irE,
+                           const int *jcE,
+                           const double *prE,
+                           int Nc,
+                           const int *u,
+                           int node,
+                           int select,
+                           int n,
+                           double proportion,
+                           int *individuals, gsl_rng *rng)
 {
     int i, Nstates = jcE[select + 1] - jcE[select];
     double w_cum = 0;
@@ -267,12 +269,12 @@ SimInf_sample_select_enter(
          * compartments. */
         for (i = jcE[select]; i < jcE[select + 1]; i++)
             n += u[node * Nc + irE[i]];
-        n = (int)gsl_ran_binomial(rng, proportion, n);
+        n = (int) gsl_ran_binomial(rng, proportion, n);
     }
 
     /* Error checking. */
-    if (Nstates <= 0 || /* No compartments to enter individuals in. */
-        n < 0)          /* No individuals to enter.                 */
+    if (Nstates <= 0 ||         /* No compartments to enter individuals in. */
+        n < 0)                  /* No individuals to enter.                 */
         return SIMINF_ERR_SAMPLE_SELECT;
 
     /* Handle cases that require no random sampling */
@@ -296,8 +298,7 @@ SimInf_sample_select_enter(
         /* Use inversion to determine the compartment that was
          * sampled. */
         for (i = jcE[select], cum = prE[i];
-             i < jcE[select + 1] && rand > cum;
-             i++, cum += prE[i]);
+             i < jcE[select + 1] && rand > cum; i++, cum += prE[i]);
 
         /* Elaborate floating point fix: */
         if (i >= jcE[select + 1])
@@ -348,26 +349,24 @@ SimInf_sample_select_enter(
  * @param Nthread Number of threads to use during simulation.
  */
 static void
-SimInf_split_events(
-    SimInf_scheduled_events *out,
-    int len,
-    const int *event,
-    const int *time,
-    const int *node,
-    const int *dest,
-    const int *n,
-    const double *proportion,
-    const int *select,
-    const int *shift,
-    int Nn,
-    int Nthread)
+SimInf_split_events(SimInf_scheduled_events *out,
+                    int len,
+                    const int *event,
+                    const int *time,
+                    const int *node,
+                    const int *dest,
+                    const int *n,
+                    const double *proportion,
+                    const int *select,
+                    const int *shift, int Nn, int Nthread)
 {
     const int chunk_size = Nn / Nthread;
 
     for (int i = 0; i < len; i++) {
-        const SimInf_scheduled_event e = {event[i], time[i], node[i] - 1,
-                                          dest[i] - 1, n[i], proportion[i],
-                                          select[i] - 1, shift[i] - 1};
+        const SimInf_scheduled_event e = { event[i], time[i], node[i] - 1,
+            dest[i] - 1, n[i], proportion[i],
+            select[i] - 1, shift[i] - 1
+        };
 
         if (event[i] == EXTERNAL_TRANSFER_EVENT) {
             kv_push(SimInf_scheduled_event, out[0].events, e);
@@ -402,23 +401,21 @@ SimInf_split_events(
  * @param Nthread Number of threads to use during simulation.
  */
 static void
-SimInf_copy_events(
-    SimInf_scheduled_events *out,
-    int len,
-    const int *event,
-    const int *time,
-    const int *node,
-    const int *dest,
-    const int *n,
-    const double *proportion,
-    const int *select,
-    const int *shift,
-    int Nthread)
+SimInf_copy_events(SimInf_scheduled_events *out,
+                   int len,
+                   const int *event,
+                   const int *time,
+                   const int *node,
+                   const int *dest,
+                   const int *n,
+                   const double *proportion,
+                   const int *select, const int *shift, int Nthread)
 {
     for (int i = 0; i < len; i++) {
-        const SimInf_scheduled_event e = {event[i], time[i], node[i] - 1,
-                                          dest[i] - 1, n[i], proportion[i],
-                                          select[i] - 1, shift[i] - 1};
+        const SimInf_scheduled_event e = { event[i], time[i], node[i] - 1,
+            dest[i] - 1, n[i], proportion[i],
+            select[i] - 1, shift[i] - 1
+        };
 
         for (int j = 0; j < Nthread; j++) {
             kv_push(SimInf_scheduled_event, out[j].events, e);
@@ -436,17 +433,16 @@ SimInf_copy_events(
  * @return 0 or an error code
  */
 attribute_hidden
-int
-SimInf_scheduled_events_create(
-    SimInf_scheduled_events **out,
-    const SimInf_solver_args *args,
-    gsl_rng *rng)
+    int
+SimInf_scheduled_events_create(SimInf_scheduled_events **out,
+                               const SimInf_solver_args *args,
+                               gsl_rng *rng)
 {
     SimInf_scheduled_events *events = NULL;
 
     events = calloc(args->Nthread, sizeof(SimInf_scheduled_events));
     if (!events)
-        goto on_error; /* #nocov */
+        goto on_error;          /* #nocov */
 
     for (int i = 0; i < args->Nthread; i++) {
         /*** Constants ***/
@@ -459,56 +455,51 @@ SimInf_scheduled_events_create(
         events[i].N = args->N;
 
         /* Scheduled events */
-	kv_init(events[i].events);
+        kv_init(events[i].events);
 
         events[i].individuals = calloc(args->Nc, sizeof(int));
         if (!events[i].individuals)
-            goto on_error; /* #nocov */
+            goto on_error;      /* #nocov */
 
         /* Random number generator */
         events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
         if (!events[i].rng)
-            goto on_error; /* #nocov */
-        gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+            goto on_error;      /* #nocov */
+        gsl_rng_set(events[i].rng,
+                    gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
     }
 
     if (args->Nrep > 1) {
         /* Copy scheduled events into each thread. */
-        SimInf_copy_events(
-            events,
-            args->len,
-            args->event,
-            args->time,
-            args->node,
-            args->dest,
-            args->n,
-            args->proportion,
-            args->select,
-            args->shift,
-            args->Nthread);
+        SimInf_copy_events(events,
+                           args->len,
+                           args->event,
+                           args->time,
+                           args->node,
+                           args->dest,
+                           args->n,
+                           args->proportion,
+                           args->select, args->shift, args->Nthread);
     } else {
         /* Split scheduled events into E1 and E2 events. */
-        SimInf_split_events(
-            events,
-            args->len,
-            args->event,
-            args->time,
-            args->node,
-            args->dest,
-            args->n,
-            args->proportion,
-            args->select,
-            args->shift,
-            args->Nn,
-            args->Nthread);
+        SimInf_split_events(events,
+                            args->len,
+                            args->event,
+                            args->time,
+                            args->node,
+                            args->dest,
+                            args->n,
+                            args->proportion,
+                            args->select,
+                            args->shift, args->Nn, args->Nthread);
     }
 
     *out = events;
     return 0;
 
-on_error:                                  /* #nocov */
-    SimInf_scheduled_events_free(events);  /* #nocov */
-    return SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+  on_error:                    /* #nocov */
+    SimInf_scheduled_events_free(events);       /* #nocov */
+    return SIMINF_ERR_ALLOC_MEMORY_BUFFER;      /* #nocov */
 }
 
 /**
@@ -518,9 +509,7 @@ on_error:                                  /* #nocov */
  * @param Nthread number of threads that was used during simulation.
  */
 attribute_hidden
-void
-SimInf_scheduled_events_free(
-    SimInf_scheduled_events *events)
+    void SimInf_scheduled_events_free(SimInf_scheduled_events *events)
 {
     if (events) {
         for (int i = 0; i < events->Nthread; i++) {
@@ -551,18 +540,15 @@ SimInf_scheduled_events_free(
  * @param node The node in u.
  */
 static void
-SimInf_print_event(
-    const SimInf_scheduled_event *e,
-    const int *irE,
-    const int *jcE,
-    const int Nc,
-    const int *u,
-    const int node,
-    const int dest)
+SimInf_print_event(const SimInf_scheduled_event *e,
+                   const int *irE,
+                   const int *jcE,
+                   const int Nc,
+                   const int *u, const int node, const int dest)
 {
-    #ifdef _OPENMP
-    #  pragma omp critical
-    #endif
+#ifdef _OPENMP
+#pragma omp critical
+#endif
     {
         if (irE && jcE && u) {
             int Nindividuals = 0;
@@ -575,12 +561,16 @@ SimInf_print_event(
             if ((jcE[e->select + 1] - jcE[e->select]) <= 0)
                 Rprintf("No states to sample from.\n");
 
-            if (e->n > Nindividuals)
-                REprintf("Cannot sample %i for event from %i individuals.\n",
-                         e->n, Nindividuals);
+            if (e->n > Nindividuals) {
+                REprintf
+                    ("Cannot sample %i for event from %i individuals.\n",
+                     e->n, Nindividuals);
+            }
 
-            if (e->n < 0)
-                REprintf("Cannot sample %i individuals for event.\n", e->n);
+            if (e->n < 0) {
+                REprintf("Cannot sample %i individuals for event.\n",
+                         e->n);
+            }
 
             REprintf("\n");
         }
@@ -633,12 +623,12 @@ SimInf_print_event(
         }
 
         REprintf("time: %i\n", e->time);
-        REprintf("node: %i\n", e->node + 1); /* One based in events data */
-        REprintf("dest: %i\n", e->dest + 1); /* One based in events data */
+        REprintf("node: %i\n", e->node + 1);    /* One based in events data */
+        REprintf("dest: %i\n", e->dest + 1);    /* One based in events data */
         REprintf("n: %i\n", e->n);
         REprintf("proportion: %g\n", e->proportion);
-        REprintf("select: %i\n", e->select + 1); /* One based in events data */
-        REprintf("shift: %i\n\n", e->shift + 1); /* One based in events data */
+        REprintf("select: %i\n", e->select + 1);        /* One based in events data */
+        REprintf("shift: %i\n\n", e->shift + 1);        /* One based in events data */
 
         R_FlushConsole();
     }
@@ -656,11 +646,9 @@ SimInf_print_event(
  * @return 0 if Ok, else error code.
  */
 attribute_hidden
-void
-SimInf_process_events(
-    SimInf_compartment_model *model,
-    SimInf_scheduled_events *events,
-    int process_E2)
+    void
+SimInf_process_events(SimInf_compartment_model *model,
+                      SimInf_scheduled_events *events, int process_E2)
 {
     SimInf_compartment_model m = *&model[0];
     SimInf_scheduled_events e = *&events[0];
@@ -680,9 +668,10 @@ SimInf_process_events(
 
         switch (ee.event) {
         case EXIT_EVENT:
-            m.error = SimInf_sample_select(
-                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node - m.Ni, ee.select,
-                ee.n, ee.proportion, e.individuals, e.rng);
+            m.error =
+                SimInf_sample_select(e.irE, e.jcE, e.prE, m.Nc, m.u,
+                                     ee.node - m.Ni, ee.select, ee.n,
+                                     ee.proportion, e.individuals, e.rng);
 
             if (m.error) {
                 SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
@@ -706,9 +695,11 @@ SimInf_process_events(
             break;
 
         case ENTER_EVENT:
-            m.error = SimInf_sample_select_enter(
-                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node - m.Ni, ee.select,
-                ee.n, ee.proportion, e.individuals, e.rng);
+            m.error =
+                SimInf_sample_select_enter(e.irE, e.jcE, e.prE, m.Nc, m.u,
+                                           ee.node - m.Ni, ee.select, ee.n,
+                                           ee.proportion, e.individuals,
+                                           e.rng);
 
             if (m.error) {
                 SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
@@ -743,7 +734,8 @@ SimInf_process_events(
                     /* Check that the index to the new compartment is
                      * not out of bounds. */
                     if (jj + ll < 0 || jj + ll >= m.Nc) {
-                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
+                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1,
+                                           -1);
                         m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
                         goto done;
                     }
@@ -775,9 +767,10 @@ SimInf_process_events(
                 goto done;
             }
 
-            m.error = SimInf_sample_select(
-                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node - m.Ni, ee.select,
-                ee.n, ee.proportion, e.individuals, e.rng);
+            m.error =
+                SimInf_sample_select(e.irE, e.jcE, e.prE, m.Nc, m.u,
+                                     ee.node - m.Ni, ee.select, ee.n,
+                                     ee.proportion, e.individuals, e.rng);
 
             if (m.error) {
                 SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
@@ -831,9 +824,10 @@ SimInf_process_events(
                 goto done;
             }
 
-            m.error = SimInf_sample_select(
-                e.irE, e.jcE, e.prE, m.Nc, m.u, ee.node, ee.select, ee.n,
-                ee.proportion, e.individuals, e.rng);
+            m.error =
+                SimInf_sample_select(e.irE, e.jcE, e.prE, m.Nc, m.u,
+                                     ee.node, ee.select, ee.n,
+                                     ee.proportion, e.individuals, e.rng);
 
             if (m.error) {
                 SimInf_print_event(&ee, e.irE, e.jcE, m.Nc,
@@ -869,7 +863,8 @@ SimInf_process_events(
                     /* Check that the index to the new compartment is
                      * not out of bounds. */
                     if (jj + ll < 0 || jj + ll >= m.Nc) {
-                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1, -1);
+                        SimInf_print_event(&ee, NULL, NULL, 0, NULL, -1,
+                                           -1);
                         m.error = SIMINF_ERR_SHIFT_OUT_OF_BOUNDS;
                         goto done;
                     }
@@ -910,7 +905,7 @@ SimInf_process_events(
         e.events_index++;
     }
 
-done:
+  done:
     *&events[0] = e;
     *&model[0] = m;
 }
@@ -924,9 +919,7 @@ done:
  * @param SimInf_compartment_model *model data to store.
  */
 attribute_hidden
-void
-SimInf_store_solution_sparse(
-    SimInf_compartment_model *model)
+    void SimInf_store_solution_sparse(SimInf_compartment_model *model)
 {
     while (!model[0].U && model[0].U_it < model[0].tlen &&
            model[0].tt > model[0].tspan[model[0].U_it]) {
@@ -955,9 +948,7 @@ SimInf_store_solution_sparse(
  * @param Nthread number of threads that was used during simulation.
  */
 attribute_hidden
-void
-SimInf_compartment_model_free(
-    SimInf_compartment_model *model)
+    void SimInf_compartment_model_free(SimInf_compartment_model *model)
 {
     if (model) {
         for (int i = 0; i < model->Nthread; i++) {
@@ -995,10 +986,9 @@ SimInf_compartment_model_free(
  * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
  */
 attribute_hidden
-int
-SimInf_compartment_model_create(
-    SimInf_compartment_model **out,
-    SimInf_solver_args *args)
+    int
+SimInf_compartment_model_create(SimInf_compartment_model **out,
+                                SimInf_solver_args *args)
 {
     SimInf_compartment_model *model = NULL;
 
@@ -1006,7 +996,7 @@ SimInf_compartment_model_create(
     const ptrdiff_t Nthread = args->Nthread;
     model = calloc(Nthread, sizeof(SimInf_compartment_model));
     if (!model)
-        goto on_error; /* #nocov */
+        goto on_error;          /* #nocov */
 
     /* Allocate memory to keep track of the continuous state in each
      * node. */
@@ -1015,10 +1005,10 @@ SimInf_compartment_model_create(
     const ptrdiff_t Nd = args->Nd;
     model[0].v = malloc(Nrep * Nn * Nd * sizeof(double));
     if (!model[0].v)
-        goto on_error; /* #nocov */
+        goto on_error;          /* #nocov */
     model[0].v_new = malloc(Nrep * Nn * Nd * sizeof(double));
     if (!model[0].v_new)
-        goto on_error; /* #nocov */
+        goto on_error;          /* #nocov */
 
     /* Set continuous state to the initial state in each node. */
     memcpy(model[0].v, args->v0, Nrep * Nn * Nd * sizeof(double));
@@ -1028,14 +1018,14 @@ SimInf_compartment_model_create(
      * scheduled events */
     model[0].update_node = calloc(Nn, sizeof(int));
     if (!model[0].update_node)
-        goto on_error; /* #nocov */
+        goto on_error;          /* #nocov */
 
     /* Allocate memory for compartment state and set compartment state
      * to the initial state. */
     const ptrdiff_t Nc = args->Nc;
     model[0].u = malloc(Nrep * Nn * Nc * sizeof(int));
     if (!model[0].u)
-        goto on_error; /* #nocov */
+        goto on_error;          /* #nocov */
     memcpy(model[0].u, args->u0, Nrep * Nn * Nc * sizeof(int));
 
     const ptrdiff_t Nt = args->Nt;
@@ -1043,12 +1033,12 @@ SimInf_compartment_model_create(
     const ptrdiff_t tlen = args->tlen;
     for (ptrdiff_t i = 0; i < Nthread; i++) {
         /* Constants */
-        model[i].Nthread = (int)Nthread;
-        model[i].Ntot = (int)Nn;
-        model[i].Nt = (int)Nt;
-        model[i].Nc = (int)Nc;
-        model[i].Nd = (int)Nd;
-        model[i].Nld = (int)Nld;
+        model[i].Nthread = (int) Nthread;
+        model[i].Ntot = (int) Nn;
+        model[i].Nt = (int) Nt;
+        model[i].Nc = (int) Nc;
+        model[i].Nd = (int) Nd;
+        model[i].Nld = (int) Nld;
 
         if (Nrep > 1) {
             /* All nodes belong to the same thread when running
@@ -1057,8 +1047,8 @@ SimInf_compartment_model_create(
             const ptrdiff_t u = Nrep * (i + 1) / Nthread;
 
             model[i].Ni = 0;
-            model[i].Nn = (int)Nn;
-            model[i].Nrep = (int)(u - l);
+            model[i].Nn = (int) Nn;
+            model[i].Nrep = (int) (u - l);
 
             if (i > 0) {
                 model[i].u = &(model[0].u[l * Nn * Nc]);
@@ -1069,7 +1059,7 @@ SimInf_compartment_model_create(
                  * updated due to scheduled events */
                 model[i].update_node = calloc(Nn, sizeof(int));
                 if (!model[i].update_node)
-                    goto on_error; /* #nocov */
+                    goto on_error;      /* #nocov */
             }
 
             if (args->U)
@@ -1079,10 +1069,10 @@ SimInf_compartment_model_create(
         } else {
             /* The nodes are split between the threads when running
              * one replicate of a model. */
-            model[i].Ni = (int)(i * (Nn / Nthread));
-            model[i].Nn = (int)(Nn / Nthread);
+            model[i].Ni = (int) (i * (Nn / Nthread));
+            model[i].Nn = (int) (Nn / Nthread);
             if (i == (Nthread - 1))
-                model[i].Nn += (int)(Nn % Nthread);
+                model[i].Nn += (int) (Nn % Nthread);
 
             /* To ensure allocated memory in a multi-model can be
              * identified and released. */
@@ -1092,7 +1082,8 @@ SimInf_compartment_model_create(
                 model[i].u = &(model[0].u[model[i].Ni * Nc]);
                 model[i].v = &(model[0].v[model[i].Ni * Nd]);
                 model[i].v_new = &(model[0].v_new[model[i].Ni * Nd]);
-                model[i].update_node = &(model[0].update_node[model[i].Ni]);
+                model[i].update_node =
+                    &(model[0].update_node[model[i].Ni]);
             }
 
             if (args->U) {
@@ -1127,7 +1118,7 @@ SimInf_compartment_model_create(
         model[i].tt = args->tspan[0];
         model[i].next_unit_of_time = floor(model[i].tt) + 1.0;
         model[i].tspan = args->tspan;
-        model[i].tlen = (int)tlen;
+        model[i].tlen = (int) tlen;
         model[i].U_it = 0;
         model[i].V_it = 0;
 
@@ -1141,21 +1132,21 @@ SimInf_compartment_model_create(
          * every node. */
         model[i].t_rate = malloc(Nt * model[i].Nn * sizeof(double));
         if (!model[i].t_rate)
-            goto on_error; /* #nocov */
+            goto on_error;      /* #nocov */
         model[i].sum_t_rate = malloc(model[i].Nn * sizeof(double));
         if (!model[i].sum_t_rate)
-            goto on_error; /* #nocov */
+            goto on_error;      /* #nocov */
         model[i].t_time = malloc(model[i].Nn * sizeof(double));
         if (!model[i].t_time)
-            goto on_error; /* #nocov */
+            goto on_error;      /* #nocov */
     }
 
     *out = model;
     return 0;
 
-on_error:                                  /* #nocov */
-    SimInf_compartment_model_free(model);  /* #nocov */
-    return SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+  on_error:                    /* #nocov */
+    SimInf_compartment_model_free(model);       /* #nocov */
+    return SIMINF_ERR_ALLOC_MEMORY_BUFFER;      /* #nocov */
 }
 
 /**
@@ -1175,28 +1166,26 @@ on_error:                                  /* #nocov */
  * @param transition Zero-based index with the state transition.
  */
 attribute_hidden
-void
-SimInf_print_status(
-    const int Nc,
-    const int *u,
-    const int Nd,
-    const double *v,
-    const int Nld,
-    const double *ldata,
-    const int node,
-    const double tt,
-    const double rate,
-    const int transition)
+    void
+SimInf_print_status(const int Nc,
+                    const int *u,
+                    const int Nd,
+                    const double *v,
+                    const int Nld,
+                    const double *ldata,
+                    const int node,
+                    const double tt,
+                    const double rate, const int transition)
 {
-    #ifdef _OPENMP
-    #  pragma omp critical
-    #endif
+#ifdef _OPENMP
+#pragma omp critical
+#endif
     {
         REprintf("Status:\n");
         REprintf("-------\n");
 
         REprintf("Time: %g\n", tt);
-        REprintf("Node: %i\n", node + 1); /* One based in R */
+        REprintf("Node: %i\n", node + 1);       /* One based in R */
 
         REprintf("Current state in node:\n");
 
@@ -1224,7 +1213,7 @@ SimInf_print_status(
         }
         REprintf("}\n");
 
-        REprintf("Transition: %i\n", transition + 1); /* One based in R */
+        REprintf("Transition: %i\n", transition + 1);   /* One based in R */
 
         if (!R_FINITE(rate) || rate < 0.0)
             REprintf("Rate: %g\n", rate);
