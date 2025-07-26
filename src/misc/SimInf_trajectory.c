@@ -167,11 +167,12 @@ static ptrdiff_t
 SimInf_number_of_rows(
     const rowinfo_vec *ri,
     const ptrdiff_t tlen,
-    const ptrdiff_t id_len)
+    const ptrdiff_t id_len,
+    const ptrdiff_t replicates)
 {
     if (ri)
         return kv_size(*ri);
-    return tlen * id_len;
+    return tlen * id_len * replicates;
 }
 
 static void
@@ -446,6 +447,8 @@ SimInf_dense2df_real(
  *        identifiers to include in the data.frame.
  * @param id_lbl character vector of length one with the name of the
  *        identifier column.
+ * @param n_replicates the number of replicates in the model. This is
+ *        only used when dm and/or cm are dense matrices.
  * @return A data.frame.
  */
 attribute_hidden SEXP
@@ -459,7 +462,8 @@ SimInf_trajectory(
     SEXP tspan,
     SEXP id_n,
     SEXP id,
-    SEXP id_lbl)
+    SEXP id_lbl,
+    SEXP n_replicates)
 {
     int err = 0;
     int nprotect = 0;
@@ -475,9 +479,13 @@ SimInf_trajectory(
     const R_xlen_t tlen = XLENGTH(tspan);
     const R_xlen_t c_id_n = Rf_asInteger(id_n);
     const R_xlen_t id_len = Rf_isNull(id) ? c_id_n : XLENGTH(id);
-    const R_xlen_t ncol = 2 + dm_i_len + cm_i_len;      /* The '2' is for the
-                                                         * 'identifier' and
-                                                         * 'time' columns. */
+    const R_xlen_t replicates = Rf_asInteger(n_replicates);
+
+    /* Determine the number of columns in the resulting
+     * data.frame. The '2' is for the identifier' and 'time'
+     * columns. The '(replicates > 1)' is to add a column for the
+     * replicate of an identifer and time. */
+    const R_xlen_t ncol = 2 + (replicates > 1) + dm_i_len + cm_i_len;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -488,6 +496,8 @@ SimInf_trajectory(
     R_xlen_t col = 0;
     SET_STRING_ELT(colnames, col++, STRING_ELT(id_lbl, 0));
     SET_STRING_ELT(colnames, col++, Rf_mkChar("time"));
+    if (replicates > 1)
+        SET_STRING_ELT(colnames, col++, Rf_mkChar("replicate"));
     for (ptrdiff_t i = 0; i < dm_i_len; i++) {
         const R_xlen_t j = INTEGER(dm_i)[i] - 1;
         SET_STRING_ELT(colnames, col++, STRING_ELT(dm_lbl, j));
@@ -508,7 +518,7 @@ SimInf_trajectory(
         err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;   /* #nocov */
         goto cleanup;           /* #nocov */
     }
-    const R_xlen_t nrow = SimInf_number_of_rows(ri, tlen, id_len);
+    const R_xlen_t nrow = SimInf_number_of_rows(ri, tlen, id_len, replicates);
 
     /* Create a list for the 'data.frame' and add colnames and a
      * 'data.frame' class attribute. */
@@ -589,6 +599,20 @@ SimInf_trajectory(
                                    STRING_ELT(lbl_tspan, t));
                 }
             }
+        }
+    }
+
+    if (replicates > 1) {
+        SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(INTSXP, nrow));
+        p_vec = INTEGER(vec);
+#ifdef _OPENMP
+#  pragma omp parallel for num_threads(SimInf_num_threads())
+#endif
+        for (ptrdiff_t r = 0; r < replicates; r++) {
+            const ptrdiff_t n = tlen * id_len;
+            const ptrdiff_t j = r * n;
+            for (ptrdiff_t i = 0; i < n; i++)
+                p_vec[j + i] = (int) (r + 1);
         }
     }
 

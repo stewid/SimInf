@@ -119,6 +119,7 @@ SEXP SimInf_trajectory(
     SEXP,
     SEXP,
     SEXP,
+    SEXP,
     SEXP);
 
 #define CALLDEF(name, n) {#name, (DL_FUNC) &(name), (n)}
@@ -141,7 +142,7 @@ static const R_CallMethodDef callMethods[] = {
     CALLDEF(SimInf_ldata_sp, 3),
     CALLDEF(SimInf_split_events, 2),
     CALLDEF(SimInf_systematic_resampling, 1),
-    CALLDEF(SimInf_trajectory, 10),
+    CALLDEF(SimInf_trajectory, 11),
     { NULL, NULL, 0 }
 };
 

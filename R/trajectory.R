@@ -219,7 +219,8 @@ setMethod(
               attr(compartments$rhs$U, "available_compartments"),
               trajectory_data(model, "V"), compartments$rhs$V,
               attr(compartments$rhs$V, "available_compartments"),
-              model@tspan, n_nodes(model), index, "node")
+              model@tspan, n_nodes(model), index, "node",
+              n_replicates(model))
     }
 )
 
