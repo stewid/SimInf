@@ -555,12 +555,13 @@ SimInf_trajectory(
             memcpy(&p_vec[t * id_len], p_id, id_len * sizeof(int));
         }
     } else {
-#ifdef _OPENMP
-#  pragma omp parallel for num_threads(SimInf_num_threads())
-#endif
-        for (ptrdiff_t t = 0; t < tlen; t++) {
-            for (ptrdiff_t i = 0; i < id_len; i++)
-                p_vec[t * id_len + i] = (int) (i + 1);
+        for (ptrdiff_t r = 0; r < replicates; r++) {
+            const ptrdiff_t i = r * tlen * id_len;
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                const ptrdiff_t j = t * id_len;
+                for (ptrdiff_t k = 0; k < id_len; k++)
+                    p_vec[i + j + k] = (int) (k + 1);
+            }
         }
     }
 
@@ -574,12 +575,13 @@ SimInf_trajectory(
             for (size_t i = 0; i < kv_size(*ri); i++)
                 p_vec[i] = (int) p_tspan[kv_A(*ri, i).time];
         } else {
-#ifdef _OPENMP
-#  pragma omp parallel for num_threads(SimInf_num_threads())
-#endif
-            for (ptrdiff_t t = 0; t < tlen; t++) {
-                for (ptrdiff_t i = 0; i < id_len; i++)
-                    p_vec[t * id_len + i] = (int) p_tspan[t];
+            for (ptrdiff_t r = 0; r < replicates; r++) {
+                const ptrdiff_t i = r * tlen * id_len;
+                for (ptrdiff_t t = 0; t < tlen; t++) {
+                    const ptrdiff_t j = t * id_len;
+                    for (ptrdiff_t k = 0; k < id_len; k++)
+                        p_vec[i + j + k] = (int) p_tspan[t];
+                }
             }
         }
     } else {
