@@ -365,9 +365,15 @@ SimInf_dense2df_int(
 #  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
-                for (ptrdiff_t j = 0; j < id_len; j++) {
-                    p_vec[t * id_len + j] =
-                        p_m[(t * id_n + p_id[j] - 1) * m_stride];
+                const ptrdiff_t j1 = t * id_len;
+                const ptrdiff_t j2 = t * id_n;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k1 = r * tlen * id_len;
+                    const ptrdiff_t k2 = r * tlen * id_n;
+                    for (ptrdiff_t l = 0; l < id_len; l++) {
+                        p_vec[j1 + k1 + l] =
+                            p_m[(j2 + k2 + p_id[l] - 1) * m_stride];
+                    }
                 }
             }
         } else {
@@ -415,9 +421,15 @@ SimInf_dense2df_real(
 #  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
-                for (ptrdiff_t j = 0; j < id_len; j++) {
-                    p_vec[t * id_len + j] =
-                        p_m[(t * id_n + p_id[j] - 1) * m_stride];
+                const ptrdiff_t j1 = t * id_len;
+                const ptrdiff_t j2 = t * id_n;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k1 = r * tlen * id_len;
+                    const ptrdiff_t k2 = r * tlen * id_n;
+                    for (ptrdiff_t l = 0; l < id_len; l++) {
+                        p_vec[j1 + k1 + l] =
+                            p_m[(j2 + k2 + p_id[l] - 1) * m_stride];
+                    }
                 }
             }
         } else {
