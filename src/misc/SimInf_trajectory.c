@@ -349,7 +349,8 @@ SimInf_dense2df_int(
     const ptrdiff_t id_len,
     const ptrdiff_t id_n,
     const ptrdiff_t col,
-    const int *p_id)
+    const int *p_id,
+    const ptrdiff_t replicates)
 {
     for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const int *p_m = m + m_i[i] - 1;
@@ -374,8 +375,12 @@ SimInf_dense2df_int(
 #  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
-                for (ptrdiff_t j = 0; j < id_len; j++) {
-                    p_vec[t * id_len + j] = p_m[(t * id_n + j) * m_stride];
+                const ptrdiff_t j = t * id_len;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k = r * tlen * id_len;
+                    for (ptrdiff_t l = 0; l < id_len; l++) {
+                        p_vec[j + k + l] = p_m[(j + k + l) * m_stride];
+                    }
                 }
             }
         }
@@ -394,7 +399,8 @@ SimInf_dense2df_real(
     const ptrdiff_t id_len,
     const ptrdiff_t id_n,
     const ptrdiff_t col,
-    const int *p_id)
+    const int *p_id,
+    const ptrdiff_t replicates)
 {
     for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const double *p_m = m + m_i[i] - 1;
@@ -419,8 +425,12 @@ SimInf_dense2df_real(
 #  pragma omp parallel for num_threads(SimInf_num_threads())
 #endif
             for (ptrdiff_t t = 0; t < tlen; t++) {
-                for (ptrdiff_t j = 0; j < id_len; j++) {
-                    p_vec[t * id_len + j] = p_m[(t * id_n + j) * m_stride];
+                const ptrdiff_t j = t * id_len;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k = r * tlen * id_len;
+                    for (ptrdiff_t l = 0; l < id_len; l++) {
+                        p_vec[j + k + l] = p_m[(j + k + l) * m_stride];
+                    }
                 }
             }
         }
@@ -621,7 +631,8 @@ SimInf_trajectory(
                              dm_stride, nrow, tlen, id_len, col);
     } else {
         SimInf_dense2df_int(result, INTEGER(dm), INTEGER(dm_i), dm_i_len,
-                            dm_stride, nrow, tlen, id_len, c_id_n, col, p_id);
+                            dm_stride, nrow, tlen, id_len, c_id_n, col, p_id,
+                            replicates);
     }
 
     /* Copy data from the continuous state matrix. */
@@ -631,7 +642,8 @@ SimInf_trajectory(
                               cm_stride, nrow, tlen, id_len, col);
     } else {
         SimInf_dense2df_real(result, REAL(cm), INTEGER(cm_i), cm_i_len,
-                             cm_stride, nrow, tlen, id_len, c_id_n, col, p_id);
+                             cm_stride, nrow, tlen, id_len, c_id_n, col, p_id,
+                             replicates);
     }
 
 cleanup:
