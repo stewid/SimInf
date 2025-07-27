@@ -570,15 +570,15 @@ SimInf_trajectory(
         for (size_t i = 0; i < kv_size(*ri); i++)
             p_vec[i] = kv_A(*ri, i).id + 1;
     } else {
-        for (ptrdiff_t r = 0; r < replicates; r++) {
-            const ptrdiff_t i = r * tlen * id_len;
-            for (ptrdiff_t t = 0; t < tlen; t++) {
-                const ptrdiff_t j = t * id_len;
+        for (ptrdiff_t t = 0; t < tlen; t++) {
+            const ptrdiff_t j = t * id_len;
+            for (ptrdiff_t r = 0; r < replicates; r++) {
+                const ptrdiff_t k = r * tlen * id_len;
                 if (p_id) {
-                    memcpy(&p_vec[i + j], p_id, id_len * sizeof(int));
+                    memcpy(&p_vec[j + k], p_id, id_len * sizeof(int));
                 } else {
-                    for (ptrdiff_t k = 0; k < id_len; k++)
-                        p_vec[i + j + k] = (int) (k + 1);
+                    for (ptrdiff_t l = 0; l < id_len; l++)
+                        p_vec[j + k + l] = (int) (l + 1);
                 }
             }
         }
@@ -594,12 +594,12 @@ SimInf_trajectory(
             for (size_t i = 0; i < kv_size(*ri); i++)
                 p_vec[i] = (int) p_tspan[kv_A(*ri, i).time];
         } else {
-            for (ptrdiff_t r = 0; r < replicates; r++) {
-                const ptrdiff_t i = r * tlen * id_len;
-                for (ptrdiff_t t = 0; t < tlen; t++) {
-                    const ptrdiff_t j = t * id_len;
-                    for (ptrdiff_t k = 0; k < id_len; k++)
-                        p_vec[i + j + k] = (int) p_tspan[t];
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                const ptrdiff_t j = t * id_len;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k = r * tlen * id_len;
+                    for (ptrdiff_t l = 0; l < id_len; l++)
+                        p_vec[j + k + l] = (int) p_tspan[t];
                 }
             }
         }
