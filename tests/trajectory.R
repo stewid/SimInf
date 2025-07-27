@@ -70,6 +70,36 @@ df_observed <- .Call(
     2L)
 stopifnot(identical(df_observed, df_expected))
 
+## 1 dense discrete matrix.
+## 0 dense continuous matrix.
+## 1 replicate.
+df_expected <- data.frame(
+    node = rep(1:6, 10),
+    time = rep(c("2025-01-01", "2025-01-02", "2025-01-03", "2025-01-04",
+                 "2025-01-05", "2025-01-06", "2025-01-07", "2025-01-08",
+                 "2025-01-09", "2025-01-10"),
+               each = 6),
+    S = seq(from = 1L, by = 3L, length.out = 60L),
+    I = seq(from = 2L, by = 3L, length.out = 60L),
+    R = seq(from = 3L, by = 3L, length.out = 60L))
+df_observed <- .Call(
+    SimInf:::SimInf_trajectory,
+    matrix(1:180, nrow = 18, ncol = 10),
+    1:3,
+    c("S", "I", "R"),
+    matrix(numeric(0), nrow = 0, ncol = 10),
+    integer(0),
+    NULL,
+    c("2025-01-01" = 1, "2025-01-02" = 2, "2025-01-03" = 3,
+      "2025-01-04" = 4, "2025-01-05" = 5, "2025-01-06" = 6,
+      "2025-01-07" = 7, "2025-01-08" = 8, "2025-01-09" = 9,
+      "2025-01-10" = 10),
+    6L,
+    NULL,
+    "node",
+    1L)
+stopifnot(identical(df_observed, df_expected))
+
 ## 1 dense discrete matrix. Subset of columns.
 ## 0 dense continuous matrix.
 ## 1 replicate.
