@@ -30,6 +30,8 @@
 #  include <omp.h>
 #endif
 
+/* A data structure to keep track of which identifiers and times to
+ * extract when data is in sparse matrices. */
 typedef struct {
     ptrdiff_t id;
     ptrdiff_t time;
@@ -39,12 +41,15 @@ typedef
 kvec_t(
     rowinfo_t) rowinfo_vec;
 
+/* Extract identifiers and times when data is in a sparse matrix. */
 static int
 SimInf_insert_id_time(
     rowinfo_vec *ri,
     SEXP m,
     const ptrdiff_t m_stride,
-    const ptrdiff_t tlen)
+    const ptrdiff_t tlen,
+    const int *p_id,
+    const ptrdiff_t id_len)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
@@ -54,14 +59,23 @@ SimInf_insert_id_time(
 
     for (ptrdiff_t t = 0; t < tlen; t++) {
         ptrdiff_t id_last = -1;
+        ptrdiff_t i = 0;
 
         for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
             ptrdiff_t id = m_ir[j] / m_stride;
 
             if (id > id_last) {
+                id_last = id;
+
+                if (p_id) {
+                    /* Note that the identifiers are one-based. */
+                    if (i >= id_len || id < (p_id[i] - 1))
+                        continue;
+                    i++;
+                }
+
                 rowinfo_t r = { id, t };
                 kv_push(rowinfo_t, *ri, r);
-                id_last = id;
             }
         }
     }
@@ -76,7 +90,9 @@ SimInf_insert_id_time2(
     SEXP m2,
     const ptrdiff_t m1_stride,
     const ptrdiff_t m2_stride,
-    const ptrdiff_t tlen)
+    const ptrdiff_t tlen,
+    const int *p_id,
+    const ptrdiff_t id_len)
 {
     const int *m1_ir = INTEGER(R_do_slot(m1, Rf_install("i")));
     const int *m2_ir = INTEGER(R_do_slot(m2, Rf_install("i")));
@@ -88,6 +104,7 @@ SimInf_insert_id_time2(
 
     for (ptrdiff_t t = 0; t < tlen; t++) {
         ptrdiff_t id_last = -1;
+        ptrdiff_t i = 0;
         ptrdiff_t j1 = m1_jc[t];
         ptrdiff_t j2 = m2_jc[t];
 
@@ -114,9 +131,17 @@ SimInf_insert_id_time2(
             }
 
             if (id > id_last) {
+                id_last = id;
+
+                if (p_id) {
+                    /* Note that the identifiers are one-based. */
+                    if (i >= id_len || id < (p_id[i] - 1))
+                        continue;
+                    i++;
+                }
+
                 rowinfo_t r = { id, t };
                 kv_push(rowinfo_t, *ri, r);
-                id_last = id;
             }
         }
     }
@@ -135,7 +160,9 @@ SimInf_create_rowinfo(
     const int cm_sparse,
     const ptrdiff_t dm_stride,
     const ptrdiff_t cm_stride,
-    const ptrdiff_t tlen)
+    const ptrdiff_t tlen,
+    const int *p_id,
+    const ptrdiff_t id_len)
 {
     if (dm_i_len > 0 && cm_i_len > 0) {
         if (dm_sparse && cm_sparse) {
@@ -144,20 +171,20 @@ SimInf_create_rowinfo(
                 return -1;      /* #nocov */
 
             return SimInf_insert_id_time2(*out, dm, cm, dm_stride,
-                                          cm_stride, tlen);
+                                          cm_stride, tlen, p_id, id_len);
         }
     } else if (dm_i_len > 0 && dm_sparse) {
         *out = calloc(1, sizeof(rowinfo_vec));
         if (!*out)
             return -1;          /* #nocov */
 
-        return SimInf_insert_id_time(*out, dm, dm_stride, tlen);
+        return SimInf_insert_id_time(*out, dm, dm_stride, tlen, p_id, id_len);
     } else if (cm_i_len > 0 && cm_sparse) {
         *out = calloc(1, sizeof(rowinfo_vec));
         if (!*out)
             return -1;          /* #nocov */
 
-        return SimInf_insert_id_time(*out, cm, cm_stride, tlen);
+        return SimInf_insert_id_time(*out, cm, cm_stride, tlen, p_id, id_len);
     }
 
     return 0;
@@ -536,7 +563,8 @@ SimInf_trajectory(
      * time information in the sparse matrices. */
     rowinfo_vec *ri = NULL;
     if (SimInf_create_rowinfo(&ri, dm, cm, dm_i_len, cm_i_len, dm_sparse,
-                              cm_sparse, dm_stride, cm_stride, tlen)) {
+                              cm_sparse, dm_stride, cm_stride, tlen, p_id,
+                              id_len)) {
         err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;   /* #nocov */
         goto cleanup;           /* #nocov */
     }
