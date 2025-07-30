@@ -14,6 +14,12 @@
   Additionally, enumeration values are added to all enumeration
   constants.
 
+* Static code analysis of the C codebase has been performed using the
+  `clang-tidy` and `cppcheck` tools in order to improve code.
+
+* The `GNU Indent` program has been used to style the C code for
+  consistency and readability.
+
 # SimInf 9.8.1 (2024-06-21)
 
 ## CHANGES OR IMPROVEMENTS
