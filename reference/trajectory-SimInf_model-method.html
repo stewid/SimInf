@@ -86,8 +86,10 @@ extract data from all nodes.</p></dd>
 <dd><p>the default (<code>format = "data.frame"</code>) is to
 generate a <code>data.frame</code> with one row per node and
 time-step with the number of individuals in each
-compartment. Using <code>format = "matrix"</code> returns the result
-as a matrix, which is the internal format (see
+compartment. When the model contains multiple replicates of
+each node, the <code>data.frame</code> also contains one column
+<code>replicate</code>. Using <code>format = "matrix"</code> returns the
+result as a matrix, which is the internal format (see
 ‘Details’).</p></dd>
 
 </dl></div>
@@ -109,7 +111,12 @@ as a matrix, which is the internal format (see
     <code>tspan[j]</code> etc, where <code>Nc</code> is the number of
     compartments in the model. The dimension of the matrix is
     \(N_n N_c \times\) <code>length(tspan)</code> where \(N_n\) is
-    the number of nodes.</p>
+    the number of nodes. Since version 10, the internal format of
+    <code>U</code> has been expanded to also allow replicates of each
+    node. This new functionality is used by the bootstrap
+    filtering algorithm. Each replicate adds new columns to
+    <code>U</code> so that the data for each replicate is in blocks of
+    <code>length(tspan)</code> columns.</p>
     </div>
     <div class="section level2">
     <h2 id="internal-format-of-the-continuous-state-variables">Internal format of the continuous state variables<a class="anchor" aria-label="anchor" href="#internal-format-of-the-continuous-state-variables"></a></h2>
@@ -120,7 +127,12 @@ as a matrix, which is the internal format (see
     real-valued continuous state. <code>V[, j]</code> contains the
     real-valued state of the system at <code>tspan[j]</code>. The
     dimension of the matrix is \(N_n\)<code>dim(ldata)[1]</code>
-    \(\times\) <code>length(tspan)</code>.</p>
+    \(\times\) <code>length(tspan)</code>. Since version 10, the
+    internal format of <code>V</code> has been expanded to also allow
+    replicates of each node. This new functionality is used by the
+    bootstrap filtering algorithm. Each replicate adds new columns
+    to <code>V</code> so that the data for each replicate is in blocks
+    of <code>length(tspan)</code> columns.</p>
     </div>
 
     <div class="section level2">
