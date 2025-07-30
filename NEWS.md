@@ -2,6 +2,14 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* Added functionality to fit models to time series data using the
+  Particle Markov Chain Monte Carlo ('PMCMC') algorithm of Andrieu and
+  others (2010)
+  [doi:10.1111/j.1467-9868.2009.00736.x](https://doi.org/10.1111/j.1467-9868.2009.00736.x).
+
+* The model parser (`mparse`) now allows the global data vector
+  `gdata` to have parameters without a name.
+
 * On Windows, use gsl from the system, via pkg-config when available.
 
 * Renamed the `abc` function argument `ninit` to `n_init`.
