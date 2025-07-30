@@ -107,11 +107,13 @@ function to evaluate the probability density of the
 observations given the simulated states. The first argument
 passed to the <code>obs_process</code> function is the result from a
 run of the model and it contains one trajectory with simulated
-data for a time-point. The second argument to the
-<code>obs_process</code> function is a <code>data.frame</code> containing
-the rows for the specific time-point that the function is
-called for. Note that the function must return the log of the
-density.</p></dd>
+data for a time-point, where the trajectory contains
+<code>n_particles</code> replicates, see
+<code><a href="trajectory-SimInf_model-method.html">trajectory,SimInf_model-method</a></code>. The second
+argument to the <code>obs_process</code> function is a
+<code>data.frame</code> containing the rows for the specific
+time-point that the function is called for. Note that the
+function must return the log of the density.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
