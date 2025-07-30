@@ -42,7 +42,9 @@
 <h2 class="pkg-version" data-toc-text="development version" id="siminf-development-version">SimInf (development version)<a class="anchor" aria-label="anchor" href="#siminf-development-version"></a></h2>
 <div class="section level3">
 <h3 id="changes-or-improvements-development-version">CHANGES OR IMPROVEMENTS<a class="anchor" aria-label="anchor" href="#changes-or-improvements-development-version"></a></h3>
-<ul><li><p>On Windows, use gsl from the system, via pkg-config when available.</p></li>
+<ul><li><p>Added functionality to fit models to time series data using the Particle Markov Chain Monte Carlo (‘PMCMC’) algorithm of Andrieu and others (2010) <a href="https://doi.org/10.1111/j.1467-9868.2009.00736.x" class="external-link">doi:10.1111/j.1467-9868.2009.00736.x</a>.</p></li>
+<li><p>The model parser (<code>mparse</code>) now allows the global data vector <code>gdata</code> to have parameters without a name.</p></li>
+<li><p>On Windows, use gsl from the system, via pkg-config when available.</p></li>
 <li><p>Renamed the <code>abc</code> function argument <code>ninit</code> to <code>n_init</code>.</p></li>
 <li><p>Renamed the <code>abc</code> function argument <code>npart</code> to <code>n_particles</code>.</p></li>
 <li><p>When using <code>use_enum=TRUE</code> in <code>mparse</code>, the enumeration constants <code>N_COMPARTMENTS_U</code> and <code>N_COMPARTMENTS_V</code> will be automatically added to facilitate indexing ‘u’ and ‘v’ in the C code. Additionally, enumeration values are added to all enumeration constants.</p></li>
