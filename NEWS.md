@@ -1,5 +1,13 @@
 # SimInf (development version)
 
+## BREAKING CHANGES
+
+Backwards incompatible changes that are the reason why the major
+version has been incremented.
+
+* The slot `replicates` was added to the `SimInf_model`. The slot
+  `replicates` holds the number of replicates of each node in a model.
+
 ## CHANGES OR IMPROVEMENTS
 
 * Added functionality to fit models to time series data using the
@@ -206,8 +214,8 @@ version has been incremented.
 
 * Added functionality to fit models to time series data using the
   Approximate Bayesian Computation Sequential Monte Carlo ('ABC-SMC')
-  algorithm of Toni and others (2009) [doi:
-  10.1098/rsif.2008.0172](https://doi.org/10.1098/rsif.2008.0172).
+  algorithm of Toni and others (2009)
+  [doi:10.1098/rsif.2008.0172](https://doi.org/10.1098/rsif.2008.0172).
 
 * Added a vignette about scheduled events. This vignette is
   work-in-progress and not yet complete.
