@@ -5,8 +5,16 @@
 Backwards incompatible changes that are the reason why the major
 version has been incremented.
 
+* Redesigned the S4 class SimInf_pfilter and the interface to using
+  the bootstrap filtering algorithm, see the documentation for the
+  `pfilter` function. Moreover, a variant of the split-step solver
+  (ssm) was added to efficiently simulate multiple particles in one
+  trajectory (mssm).
+
 * The slot `replicates` was added to the `SimInf_model`. The slot
-  `replicates` holds the number of replicates of each node in a model.
+  `replicates` holds the number of replicates of each node in a
+  model. This new functionality is used by the bootstrap filtering
+  algorithm.
 
 ## CHANGES OR IMPROVEMENTS
 
