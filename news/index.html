@@ -41,6 +41,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="siminf-development-version">SimInf (development version)<a class="anchor" aria-label="anchor" href="#siminf-development-version"></a></h2>
 <div class="section level3">
+<h3 id="breaking-changes-development-version">BREAKING CHANGES<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<p>Backwards incompatible changes that are the reason why the major version has been incremented.</p>
+<ul><li>The slot <code>replicates</code> was added to the <code>SimInf_model</code>. The slot <code>replicates</code> holds the number of replicates of each node in a model.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="changes-or-improvements-development-version">CHANGES OR IMPROVEMENTS<a class="anchor" aria-label="anchor" href="#changes-or-improvements-development-version"></a></h3>
 <ul><li><p>Added functionality to fit models to time series data using the Particle Markov Chain Monte Carlo (‘PMCMC’) algorithm of Andrieu and others (2010) <a href="https://doi.org/10.1111/j.1467-9868.2009.00736.x" class="external-link">doi:10.1111/j.1467-9868.2009.00736.x</a>.</p></li>
 <li><p>The model parser (<code>mparse</code>) now allows the global data vector <code>gdata</code> to have parameters without a name.</p></li>
@@ -174,7 +179,7 @@
 <h3 id="changes-or-improvements-8-3-0">CHANGES OR IMPROVEMENTS<a class="anchor" aria-label="anchor" href="#changes-or-improvements-8-3-0"></a></h3>
 <ul><li><p>Changed the R dependency to R(&gt;= 4.0).</p></li>
 <li><p>Refactoring of the build configuration script on Windows.</p></li>
-<li><p>Added functionality to fit models to time series data using the Approximate Bayesian Computation Sequential Monte Carlo (‘ABC-SMC’) algorithm of Toni and others (2009) <a href="https://doi.org/10.1098/rsif.2008.0172" class="external-link">doi: 10.1098/rsif.2008.0172</a>.</p></li>
+<li><p>Added functionality to fit models to time series data using the Approximate Bayesian Computation Sequential Monte Carlo (‘ABC-SMC’) algorithm of Toni and others (2009) <a href="https://doi.org/10.1098/rsif.2008.0172" class="external-link">doi:10.1098/rsif.2008.0172</a>.</p></li>
 <li><p>Added a vignette about scheduled events. This vignette is work-in-progress and not yet complete.</p></li>
 </ul></div>
 </div>
