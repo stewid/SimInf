@@ -43,7 +43,8 @@
 <div class="section level3">
 <h3 id="breaking-changes-development-version">BREAKING CHANGES<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
 <p>Backwards incompatible changes that are the reason why the major version has been incremented.</p>
-<ul><li>The slot <code>replicates</code> was added to the <code>SimInf_model</code>. The slot <code>replicates</code> holds the number of replicates of each node in a model.</li>
+<ul><li><p>Redesigned the S4 class SimInf_pfilter and the interface to using the bootstrap filtering algorithm, see the documentation for the <code>pfilter</code> function. Moreover, a variant of the split-step solver (ssm) was added to efficiently simulate multiple particles in one trajectory (mssm).</p></li>
+<li><p>The slot <code>replicates</code> was added to the <code>SimInf_model</code>. The slot <code>replicates</code> holds the number of replicates of each node in a model. This new functionality is used by the bootstrap filtering algorithm.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-or-improvements-development-version">CHANGES OR IMPROVEMENTS<a class="anchor" aria-label="anchor" href="#changes-or-improvements-development-version"></a></h3>
