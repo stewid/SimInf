@@ -228,18 +228,21 @@ appreciated. Get in touch.
 
 ## Citation
 
-SimInf is research software. To cite SimInf in publications, please
-use:
+If you use SimInf in your research, please cite:
 
-- Widgren S, Bauer P, Eriksson R, Engblom S (2019) SimInf: An R
-  Package for Data-Driven Stochastic Disease Spread Simulations.
-  Journal of Statistical Software, 91(12), 1--42. doi:
-  [10.18637/jss.v091.i12](https://doi.org/10.18637/jss.v091.i12)
+---
 
-- Bauer P, Engblom S, Widgren S (2016) Fast event-based
-  epidemiological simulations on national scales. International
-  Journal of High Performance Computing Applications, 30(4),
-  438--453. doi: [10.1177/1094342016635723](https://doi.org/10.1177/1094342016635723)
+> **Widgren S, Bauer P, Eriksson R, Engblom S (2019).**
+> SimInf: An R Package for Data-Driven Stochastic Disease Spread Simulations.
+> *Journal of Statistical Software, 91(12), 1–42.*
+> [https://doi.org/10.18637/jss.v091.i12](https://doi.org/10.18637/jss.v091.i12)
+
+> **Bauer P, Engblom S, Widgren S (2016).**
+> Fast event-based epidemiological simulations on national scales.
+> *International Journal of High Performance Computing Applications, 30(4), 438–453.*
+> [https://doi.org/10.1177/1094342016635723](https://doi.org/10.1177/1094342016635723)
+
+---
 
 ## Acknowledgments
 
