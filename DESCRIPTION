@@ -36,7 +36,7 @@ Description: Provides an efficient and very flexible framework to
     Approximate Bayesian Computation Sequential Monte Carlo
     ('ABC-SMC') algorithm of Toni and others (2009)
     <doi:10.1098/rsif.2008.0172> or the Particle Markov Chain Monte
-    Carlo ('PMCMC') algorithm of Andrieu and others (2010)
+    Carlo ('PMCMC') algorithm of 'Andrieu' and others (2010)
     <doi:10.1111/j.1467-9868.2009.00736.x>.
 Acknowledgements: This software has been made possible by support from
     the Swedish Research Council within the UPMARC Linnaeus center of
