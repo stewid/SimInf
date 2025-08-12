@@ -82,10 +82,7 @@ setAs(
     from = "SimInf_pmcmc",
     to = "data.frame",
     def = function(from) {
-        ## Skip the first four columns in chain: 'logPost',
-        ## 'logLik', 'logPrior', and 'accept'.
-        j <- seq(from = 5, by = 1, length.out = n_pars(from))
-        as.data.frame(from@chain[, j, drop = FALSE])
+        as.data.frame(from@chain[, seq_pars(from), drop = FALSE])
     }
 )
 
@@ -134,10 +131,7 @@ setMethod(
 
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
-
-            ## Skip first four columns in chain.
-            j <- seq(from = 5, by = 1, length.out = n_pars(object))
-            summary_chain(object@chain[, j, drop = FALSE])
+            summary_chain(object@chain[, seq_pars(object), drop = FALSE])
         }
 
         invisible(object)
@@ -172,11 +166,7 @@ setMethod(
         if (length(object) > 0) {
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
-
-            ## Skip the first four columns in chain: 'logPost',
-            ## 'logLik', 'logPrior', and 'accept'.
-            j <- seq(from = 5, by = 1, length.out = n_pars(object))
-            summary_chain(object@chain[, j, drop = FALSE])
+            summary_chain(object@chain[, seq_pars(object), drop = FALSE])
         }
 
         invisible(NULL)
@@ -460,10 +450,7 @@ pmcmc_progress <- function(object, i, verbose) {
             "Iteration: %i of %i. Time: %s. Acceptance ratio: %.3f",
             i, length(object), format(Sys.time(), "%T"),
             acceptance_ratio(object)))
-
-        ## Skip columns logLik, logPrior and accept in the chain.
-        j <- c(1, seq(from = 5, by = 1, length.out = n_pars(object)))
-        summary_chain(object@chain[seq_len(i), j])
+        summary_chain(object@chain[seq_len(i), c(1L, seq_pars(object))])
     }
 
     invisible(NULL)
@@ -473,9 +460,14 @@ n_pars <- function(x) {
     length(x@pars)
 }
 
+seq_pars <- function(x) {
+    ## Skip the first four columns in chain: 'logPost', 'logLik',
+    ## 'logPrior', and 'accept'.
+    seq(from = 5L, by = 1L, length.out = n_pars(x))
+}
+
 get_theta <- function(x, i) {
-    j <- seq(from = 5, by = 1, length.out = n_pars(x))
-    x@chain[i, j]
+    x@chain[i, seq_pars(x)]
 }
 
 ##' @noRd
@@ -493,7 +485,7 @@ pmcmc_proposal <- function(x, i, n_accepted) {
 }
 
 covmat_empirical <- function(object, i) {
-    j <- seq(from = 5, by = 1, length.out = n_pars(object))
+    j <- seq_pars(object)
     covmat <- stats::cov(object@chain[seq_len(i), j, drop = FALSE])
     if (i == 1)
         covmat[, ] <- 0
@@ -586,8 +578,7 @@ setMethod(
         logPost <- object@chain[i, "logPost"]
         logLik <- object@chain[i, "logLik"]
         logPrior <- object@chain[i, "logPrior"]
-        j <- seq(from = 5, by = 1, length.out = n_pars(object))
-        theta <- object@chain[i, j]
+        theta <- object@chain[i, seq_pars(object)]
 
         for (i in iterations) {
             ## Proposal
