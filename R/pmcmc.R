@@ -298,10 +298,7 @@ setMethod(
                       adaptmix = adaptmix,
                       adaptive = adaptive)
 
-        if (!is.null(chain)) {
-            n_iterations <- check_n_iterations(n_iterations, TRUE)
-            object@chain <- check_chain(object, chain)
-        } else {
+        if (is.null(chain)) {
             n_iterations <- check_n_iterations(n_iterations, FALSE)
             object@chain <- setup_chain(object, 1L)
 
@@ -329,6 +326,9 @@ setMethod(
                 post_particle(object, pf, 1)
 
             n_iterations <- n_iterations - 1L
+        } else {
+            n_iterations <- check_n_iterations(n_iterations, TRUE)
+            object@chain <- check_chain(object, chain)
         }
 
         if (n_iterations == 0)
