@@ -471,25 +471,19 @@ get_theta <- function(x, i) {
 }
 
 ##' @noRd
-pmcmc_proposal <- function(x, i, n_accepted) {
+pmcmc_proposal <- function(x, i, n_accepted, covmat) {
     if (x@adaptive == 0L ||
         i <= x@adaptive ||
         n_accepted == 0 ||
         runif(1) < x@adaptmix) {
         covmat <- x@covmat
     } else {
-        covmat <- 2.38^2 / n_pars(x) * covmat_empirical(x, i - 1)
+        covmat <- 2.38^2 / n_pars(x) * covmat
     }
 
-    mvtnorm::rmvnorm(n = 1, mean = get_theta(x, i - 1), sigma = covmat)[1, ]
-}
-
-covmat_empirical <- function(object, i) {
-    j <- seq_pars(object)
-    covmat <- stats::cov(object@chain[seq_len(i), j, drop = FALSE])
-    if (i == 1)
-        covmat[, ] <- 0
-    covmat
+    as.numeric(mvtnorm::rmvnorm(n = 1,
+                                mean = get_theta(x, i - 1),
+                                sigma = covmat)[1, ])
 }
 
 ##' Length of the MCMC chain
@@ -580,13 +574,40 @@ setMethod(
         logPrior <- object@chain[i, "logPrior"]
         theta <- object@chain[i, seq_pars(object)]
 
+        ## Use Welford's [1] recurrence formulas to compute the
+        ## covariance, described in Knuth [2].
+        ##
+        ## [1] Welford, B. P. (1962). "Note on a method for
+        ##     calculating corrected sums of squares and
+        ##     products". Technometrics. 4 (3):
+        ##     419–420. doi:10.2307/1266577. JSTOR 1266577.
+        ##
+        ## [2] Donald E. Knuth (1998). The Art of Computer
+        ##     Programming, volume 2: Seminumerical Algorithms, 3rd
+        ##     edn., p. 232. Boston: Addison-Wesley.
+        M <- as.numeric(object@chain[1, seq_pars(object)])
+        S <- matrix(0, nrow = length(M), ncol = length(M))
+        for (k in seq_len(i)[-1]) {
+            tmp <- as.numeric(chain[k, seq_pars(object)]) - M
+            M <- M + tmp / k
+            S <- S + tcrossprod(tmp,
+            (as.numeric(object@chain[k, seq_pars(object)]) - M))
+        }
+
+        if (i > 1) {
+            covmat <- S / (i - 1)
+        } else {
+            covmat <- matrix(0, nrow = length(M), ncol = length(M))
+        }
+
         for (i in iterations) {
             ## Proposal
             accept <- 0
             pf <- NULL
             proposal <- pmcmc_proposal(x = object,
                                        i = i,
-                                       n_accepted = n_accepted)
+                                       n_accepted = n_accepted,
+                                       covmat = covmat)
             logPrior_prop <- dpriors(proposal, object@priors)
 
             if (is.finite(logPrior_prop)) {
@@ -618,6 +639,10 @@ setMethod(
 
             ## Save current value of chain.
             object@chain[i, ] <- c(logPost, logLik, logPrior, accept, theta)
+            tmp <- theta - M
+            M <- M + tmp / i
+            S <- S + tcrossprod(tmp, (theta - M))
+            covmat <- S / (i - 1)
             if (is.function(post_particle))
                 post_particle(object, pf, i)
 
