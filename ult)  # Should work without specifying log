@@ -1,0 +1,1202 @@
+Vignettes with name or keyword or title matching ‘plot’ using regular
+expression matching:
+
+
+ggplot2::extending-ggplot2
+                        Extending ggplot2
+ggplot2::ggplot2        Introduction to ggplot2
+ggplot2::ggplot2-in-packages
+                        Using ggplot2 in packages
+ggplot2::ggplot2-specs
+                        Aesthetic specifications
+grid::plotexample       Writing grid Code
+survival::splines       Splines, plots, and interactions
+
+
+Type 'vignette("FOO", package="PKG")' to inspect entries 'PKG::FOO'.
+
+
+
+Demos with name or title matching ‘plot’ using regular expression
+matching:
+
+
+graphics::plotmath      Examples of the use of mathematics annotation
+tcltk::tkcanvas         Creates a canvas widget showing a 2-D plot with
+                        data points that can be dragged with the mouse.
+tcltk::tkdensity        Interactive density plots.
+
+
+Type 'demo(PKG::FOO)' to run demonstration 'PKG::FOO'.
+
+
+
+Help files with alias or concept or title matching ‘plot’ using regular
+expression matching:
+
+
+base::base-defunct      Defunct Functions in Package 'base'
+  Aliases: print.plot, save.plot
+base::expression        Unevaluated Expressions
+  Concepts: Computations Related to Plotting
+base::jitter            'Jitter' (Add Noise) to Numbers
+  Concepts: Computations Related to Plotting
+base::plot              Generic X-Y Plotting
+  Aliases: plot
+  Concepts: High-Level Plots
+base::pretty            Pretty Breakpoints
+  Concepts: Computations Related to Plotting
+boot::envelope          Confidence Envelopes for Curves
+  Concepts: Computations Related to Plotting
+boot::glm.diag          Generalized Linear Model Diagnostics
+  Concepts: Computations Related to Plotting
+boot::glm.diag.plots    Diagnostics plots for generalized linear models
+  Aliases: glm.diag.plots
+  Concepts: Computations Related to Plotting, High-Level Plots
+boot::jack.after.boot   Jackknife-after-Bootstrap Plots
+  Concepts: High-Level Plots
+boot::lines.saddle.distn
+                        Add a Saddlepoint Approximation to a Plot
+  Concepts: Add to Existing Plot / internal plot
+boot::plot.boot         Plots of the Output of a Bootstrap Simulation
+  Aliases: plot.boot
+  Concepts: High-Level Plots
+boot::saddle.distn      Saddlepoint Distribution Approximations for
+                        Bootstrap Statistics
+  Concepts: Computations Related to Plotting
+class::somgrid          Plot SOM Fits
+  Aliases: plot.somgrid, plot.SOM
+classInt::classIntervals
+                        Choose univariate class intervals
+  Aliases: plot.classIntervals
+cluster::bannerplot     Plot Banner (of Hierarchical Clustering)
+  Aliases: bannerplot
+  Concepts: High-Level Plots
+cluster::clusGap        Gap Statistic for Estimating the Number of
+                        Clusters
+  Aliases: plot.clusGap
+cluster::clusplot       Bivariate Cluster Plot (of a Partitioning
+                        Object)
+  Aliases: clusplot, clusplot.partition
+  Concepts: High-Level Plots
+cluster::clusplot.default
+                        Bivariate Cluster Plot (clusplot) Default
+                        Method
+  Aliases: clusplot.default
+  Concepts: High-Level Plots
+cluster::ellipsoidhull
+                        Compute the Ellipsoid Hull or Spanning
+                        Ellipsoid of a Point Set
+  Concepts: Computations Related to Plotting, High-Level Plots
+cluster::plot.agnes     Plots of an Agglomerative Hierarchical
+                        Clustering
+  Aliases: plot.agnes
+  Concepts: High-Level Plots
+cluster::plot.diana     Plots of a Divisive Hierarchical Clustering
+  Aliases: plot.diana
+  Concepts: High-Level Plots
+cluster::plot.mona      Banner of Monothetic Divisive Hierarchical
+                        Clusterings
+  Aliases: plot.mona
+  Concepts: High-Level Plots
+cluster::plot.partition
+                        Plot of a Partition of the Data Set
+  Aliases: plot.partition
+  Concepts: High-Level Plots
+cluster::pltree         Plot Clustering Tree of a Hierarchical
+                        Clustering
+  Concepts: High-Level Plots
+cluster::predict.ellipsoid
+                        Predict Method for Ellipsoid Objects
+  Concepts: Computations Related to Plotting
+cluster::silhouette     Compute or Extract Silhouette Information from
+                        Clustering
+  Aliases: plot.silhouette
+downlit::is_low_change
+                        Compare two recorded plots
+e1071::bclust           Bagged Clustering
+  Aliases: plot.bclust
+e1071::boxplot.bclust   Boxplot of Cluster Profiles
+  Aliases: boxplot.bclust
+  Concepts: High-Level Plots
+e1071::hsv_palette      Sequential color palette based on HSV colors
+  Concepts: High-Level Plots
+e1071::ica              Independent Component Analysis
+  Aliases: plot.ica
+e1071::plot.stft        Plot Short Time Fourier Transforms
+  Aliases: plot.stft
+e1071::plot.svm         Plot SVM Objects
+  Aliases: plot.svm
+e1071::plot.tune        Plot Tuning Object
+  Aliases: plot.tune
+e1071::probplot         Probability Plot
+  Aliases: probplot, lines.probplot
+  Concepts: High-Level Plots
+evaluate::is.message    Object class tests
+  Aliases: is.recordedplot
+evaluate::trim_intermediate_plots
+                        Trim away intermediate plots
+  Aliases: trim_intermediate_plots
+ggplot2::+.gg           Add components to a plot
+ggplot2::autolayer      Create a ggplot layer appropriate to a
+                        particular data type
+  Concepts: plotting automation topics
+ggplot2::automatic_plotting
+                        Tailoring plots to particular data types
+  Aliases: automatic_plotting
+  Concepts: plotting automation topics
+ggplot2::autoplot       Create a complete ggplot appropriate to a
+                        particular data type
+  Aliases: autoplot
+  Concepts: plotting automation topics
+ggplot2::benchplot      Benchmark plot creation time. Broken down into
+                        construct, build, render and draw times.
+  Aliases: benchplot
+ggplot2::draw_key       Key glyphs for legends
+  Aliases: draw_key_boxplot, draw_key_dotplot
+ggplot2::expand_limits
+                        Expand the plot limits, using data
+ggplot2::fortify        Fortify a model with data.
+  Concepts: plotting automation topics
+ggplot2::geom_boxplot   A box and whiskers plot (in the style of Tukey)
+  Aliases: geom_boxplot, stat_boxplot
+ggplot2::geom_dotplot   Dot plot
+  Aliases: geom_dotplot
+ggplot2::geom_qq_line   A quantile-quantile plot
+ggplot2::geom_ribbon    Ribbons and area plots
+ggplot2::geom_rug       Rug plots in the margins
+ggplot2::geom_violin    Violin plot
+ggplot2::get_alt_text   Extract alt text from a plot
+ggplot2::ggplot         Create a new ggplot
+  Aliases: ggplot
+ggplot2::ggplot_add     Add custom objects to ggplot
+  Aliases: ggplot_add
+ggplot2::ggplot_build   Build ggplot for rendering.
+  Aliases: ggplot_build
+ggplot2::ggplot_gtable
+                        Build a plot with all the usual bits and
+                        pieces.
+  Aliases: ggplot_gtable
+ggplot2::ggplot2        ggplot2: Create Elegant Data Visualisations
+                        Using the Grammar of Graphics
+  Aliases: ggplot2, ggplot2-package
+ggplot2::ggplot2-ggproto
+                        Base ggproto classes for ggplot2
+  Aliases: ggplot2-ggproto, GeomBoxplot, GeomDotplot, StatBoxplot
+ggplot2::ggplotGrob     Generate a ggplot2 plot grob.
+  Aliases: ggplotGrob
+ggplot2::ggsave         Save a ggplot (or other grid object) with
+                        sensible defaults
+ggplot2::is_ggproto     Reports wether 'x' is a type of object
+  Aliases: is_ggplot, is.ggplot
+ggplot2::labs           Modify axis, legend, and plot labels
+ggplot2::last_plot      Retrieve the last plot to be modified or
+                        created.
+  Aliases: last_plot
+ggplot2::position_jitter
+                        Jitter points to avoid overplotting
+ggplot2::print.ggplot   Explicitly draw plot
+  Aliases: print.ggplot, plot.ggplot
+  Concepts: High-Level Plots
+ggplot2::qplot          Quick plot
+  Aliases: qplot, quickplot
+ggplot2::set_last_plot
+                        Set the last plot to be fetched by lastplot()
+  Aliases: set_last_plot
+ggplot2::summarise_plot
+                        Summarise built plot objects
+  Aliases: summarise_plot
+ggplot2::summary.ggplot
+                        Displays a useful description of a ggplot
+                        object
+  Aliases: summary.ggplot
+ggplot2::update_geom_defaults
+                        Modify geom/stat aesthetic defaults for future
+                        plots
+graphics::abline        Add Straight Lines to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::arrows        Add Arrows to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::assocplot     Association Plots
+  Aliases: assocplot
+  Concepts: High-Level Plots
+graphics::axis          Add an Axis to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::Axis          Generic Function to Add an Axis to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::axis.POSIXct
+                        Date and Date-time Plotting Functions
+graphics::axTicks       Compute Axis Tickmark Locations
+  Concepts: Computations Related to Plotting
+graphics::barplot       Bar Plots
+  Aliases: barplot, barplot.default, barplot.formula
+  Concepts: High-Level Plots
+graphics::box           Draw a Box around a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::boxplot       Box Plots
+  Aliases: boxplot, boxplot.default, boxplot.formula
+  Concepts: High-Level Plots
+graphics::boxplot.matrix
+                        Draw a Boxplot for each Column (Row) of a
+                        Matrix
+  Aliases: boxplot.matrix
+  Concepts: High-Level Plots
+graphics::bxp           Draw Box Plots from Summaries
+  Concepts: Add to Existing Plot / internal plot
+graphics::cdplot        Conditional Density Plots
+  Aliases: cdplot, cdplot.default, cdplot.formula
+  Concepts: High-Level Plots
+graphics::clip          Set Clipping Region
+  Concepts: Computations Related to Plotting
+graphics::contour       Display Contours
+  Concepts: High-Level Plots, Add to Existing Plot / internal plot
+graphics::coplot        Conditioning Plots
+  Aliases: coplot
+  Concepts: High-Level Plots, Add to Existing Plot / internal plot
+graphics::curve         Draw Function Plots
+  Aliases: plot.function
+  Concepts: High-Level Plots
+graphics::dotchart      Cleveland's Dot Plots
+  Concepts: High-Level Plots
+graphics::filled.contour
+                        Level (Contour) Plots
+  Concepts: High-Level Plots, Add to Existing Plot / internal plot
+graphics::fourfoldplot
+                        Fourfold Plots
+  Aliases: fourfoldplot
+  Concepts: High-Level Plots
+graphics::graphics-defunct
+                        Defunct Functions in Package 'graphics'
+  Aliases: dotplot, stripplot
+graphics::grconvertX    Convert between Graphics Coordinate Systems
+  Concepts: Computations Related to Plotting
+graphics::grid          Add Grid to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::hist          Histograms
+  Concepts: Computations Related to Plotting, High-Level Plots
+graphics::hist.POSIXt   Histogram of a Date or Date-Time Object
+  Concepts: Computations Related to Plotting, High-Level Plots
+graphics::identify      Identify Points in a Scatter Plot
+  Concepts: Interacting with Plots
+graphics::image         Display a Color Image
+  Concepts: High-Level Plots, Add to Existing Plot / internal plot
+graphics::layout        Specifying Complex Plot Arrangements
+  Concepts: Interacting with Plots, Computations Related to Plotting
+graphics::legend        Add Legends to Plots
+  Concepts: Add to Existing Plot / internal plot
+graphics::lines         Add Connected Line Segments to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::locator       Graphical Input
+  Concepts: Interacting with Plots
+graphics::matplot       Plot Columns of Matrices
+  Aliases: matplot
+  Concepts: High-Level Plots, Add to Existing Plot / internal plot
+graphics::mosaicplot    Mosaic Plots
+  Aliases: mosaicplot, mosaicplot.default, mosaicplot.formula
+  Concepts: High-Level Plots
+graphics::mtext         Write Text into the Margins of a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::pairs         Scatterplot Matrices
+  Concepts: High-Level Plots
+graphics::panel.smooth
+                        Simple Panel Plot
+  Concepts: High-Level Plots, Computations Related to Plotting
+graphics::par           Set or Query Graphical Parameters
+  Concepts: Interacting with Plots, Computations Related to Plotting
+graphics::persp         Perspective Plots
+  Concepts: High-Level Plots, Add to Existing Plot / internal plot
+graphics::pie           Pie Charts
+  Concepts: High-Level Plots
+graphics::plot.data.frame
+                        Plot Method for Data Frames
+  Aliases: plot.data.frame
+  Concepts: High-Level Plots
+graphics::plot.default
+                        The Default Scatterplot Function
+  Aliases: plot.default, plot
+  Concepts: High-Level Plots
+graphics::plot.design   Plot Univariate Effects of a Design or Model
+  Aliases: plot.design
+  Concepts: High-Level Plots
+graphics::plot.factor   Plotting Factor Variables
+  Aliases: plot.factor
+  Concepts: High-Level Plots
+graphics::plot.formula
+                        Formula Notation for Scatterplots
+  Aliases: plot.formula
+  Concepts: High-Level Plots, Add to Existing Plot / internal plot
+graphics::plot.histogram
+                        Plot Histograms
+  Aliases: plot.histogram
+  Concepts: High-Level Plots, Interacting with Plots
+graphics::plot.new      Create / Start a New Plot Frame
+  Aliases: plot.new
+  Concepts: Interacting with Plots, Add to Existing Plot / internal
+    plot
+graphics::plot.raster   Plotting Raster Images
+  Aliases: plot.raster
+  Concepts: High-Level Plots
+graphics::plot.table    Plot Methods for 'table' Objects
+  Aliases: plot.table
+  Concepts: High-Level Plots
+graphics::plot.window   Set up World Coordinates for Graphics Window
+  Aliases: plot.window
+  Concepts: Add to Existing Plot / internal plot
+graphics::plot.xy       Basic Internal Plot Function
+  Aliases: plot.xy
+  Concepts: Add to Existing Plot / internal plot
+graphics::points        Add Points to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::polygon       Polygon Drawing
+  Concepts: Add to Existing Plot / internal plot
+graphics::polypath      Path Drawing
+  Concepts: Add to Existing Plot / internal plot
+graphics::rasterImage   Draw One or More Raster Images
+  Concepts: Add to Existing Plot / internal plot
+graphics::rect          Draw One or More Rectangles
+  Concepts: Add to Existing Plot / internal plot
+graphics::rug           Add a Rug to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::screen        Creating and Controlling Multiple Screens on a
+                        Single Device
+  Concepts: Add to Existing Plot / internal plot, Computations Related
+    to Plotting
+graphics::segments      Add Line Segments to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::smoothScatter
+                        Scatterplots with Smoothed Densities Color
+                        Representation
+  Concepts: High-Level Plots
+graphics::spineplot     Spine Plots and Spinograms
+  Aliases: spineplot, spineplot.default, spineplot.formula
+  Concepts: High-Level Plots
+graphics::stars         Star (Spider/Radar) Plots and Segment Diagrams
+  Concepts: High-Level Plots
+graphics::stem          Stem-and-Leaf Plots
+graphics::stripchart    1-D Scatter Plots
+  Concepts: High-Level Plots
+graphics::strwidth      Plotting Dimensions of Character Strings and
+                        Math Expressions
+  Concepts: Computations Related to Plotting
+graphics::sunflowerplot
+                        Produce a Sunflower Scatter Plot
+  Aliases: sunflowerplot, sunflowerplot.default, sunflowerplot.formula
+  Concepts: High-Level Plots
+graphics::symbols       Draw Symbols (Circles, Squares, Stars,
+                        Thermometers, Boxplots)
+  Concepts: boxplot, Add to Existing Plot / internal plot, High-Level
+    Plots
+graphics::text          Add Text to a Plot
+  Concepts: Add to Existing Plot / internal plot
+graphics::title         Plot Annotation
+  Concepts: Add to Existing Plot / internal plot
+graphics::xinch         Graphical Units
+  Concepts: Computations Related to Plotting
+graphics::xspline       Draw an X-spline
+  Concepts: Add to Existing Plot / internal plot
+grDevices::axisTicks    Compute Pretty Axis Tick Scales
+  Concepts: Computations Related to Plotting
+grDevices::boxplot.stats
+                        Box Plot Statistics
+  Aliases: boxplot.stats
+  Concepts: Computations Related to Plotting
+grDevices::cm           Unit Transformation
+  Concepts: Computations Related to Plotting
+grDevices::col2rgb      Color to RGB Conversion
+  Concepts: Computations Related to Plotting
+grDevices::colors       Color Names
+  Concepts: Computations Related to Plotting
+grDevices::contourLines
+                        Calculate Contour Lines
+  Concepts: Computations Related to Plotting
+grDevices::densCols     Colors for Smooth Density Plots
+  Concepts: Computations Related to Plotting
+grDevices::dev.capabilities
+                        Query Capabilities of the Current Graphics
+                        Device
+  Concepts: Computations Related to Plotting
+grDevices::dev.capture
+                        Capture device output as a raster image
+  Concepts: Computations Related to Plotting
+grDevices::dev.cur      Control Multiple Devices
+  Concepts: Interacting with Plots
+grDevices::dev.hold     Hold or Flush Output on an On-Screen Graphics
+                        Device.
+  Concepts: Computations Related to Plotting
+grDevices::dev.size     Find Size of Device Surface
+  Concepts: Computations Related to Plotting
+grDevices::devAskNewPage
+                        Prompt before New Page
+  Concepts: Computations Related to Plotting
+grDevices::extendrange
+                        Extend a Numerical Range by a Small Percentage
+  Concepts: Computations Related to Plotting
+grDevices::getGraphicsEvent
+                        Wait for a mouse or keyboard event from a
+                        graphics window
+  Concepts: Interacting with Plots
+grDevices::hcl          HCL Color Specification
+  Concepts: Computations Related to Plotting
+grDevices::Hershey      Hershey Vector Fonts in R
+  Concepts: Add to Existing Plot / internal plot
+grDevices::hsv          HSV Color Specification
+  Concepts: Computations Related to Plotting
+grDevices::is.raster    Create a Raster Object
+  Concepts: Computations Related to Plotting
+grDevices::Japanese     Japanese characters in R
+  Concepts: Add to Existing Plot / internal plot
+grDevices::n2mfrow      Compute Default 'mfrow' From Number of Plots
+  Concepts: Computations Related to Plotting
+grDevices::plotmath     Mathematical Annotation in R
+  Aliases: plotmath
+  Concepts: Add to Existing Plot / internal plot
+grDevices::pretty.Date
+                        Pretty Breakpoints for Date-Time Classes
+  Concepts: Computations Related to Plotting
+grDevices::rainbow      Color Palettes
+  Concepts: Computations Related to Plotting
+grDevices::replayPlot   Record and Replay Plots
+  Aliases: replayPlot, recordPlot, print.recordedplot
+  Concepts: Interacting with Plots
+grDevices::rgb2hsv      RGB to HSV Conversion
+  Concepts: Computations Related to Plotting
+grDevices::savePlot     Save Cairo X11 Plot to File
+  Aliases: savePlot
+grDevices::trans3d      3D to 2D Transformation for Perspective Plots
+  Concepts: Computations Related to Plotting
+grDevices::windows      Windows Graphics Devices
+  Aliases: print.SavedPlots, [.SavedPlots
+grDevices::xy.coords    Extracting Plotting Structures
+  Concepts: Computations Related to Plotting
+grDevices::xyTable      Multiplicities of (x,y) Points, e.g., for a
+                        Sunflower Plot
+  Concepts: Computations Related to Plotting
+grDevices::xyz.coords   Extracting Plotting Structures
+  Concepts: Computations Related to Plotting
+grid::absolute.size     Absolute Size of a Grob
+  Concepts: Computations Related to Plotting
+grid::arrow             Describe arrows to add to a line.
+  Concepts: Computations Related to Plotting
+grid::as.mask           Define a Soft Mask
+  Concepts: Computations Related to Plotting
+grid::calcStringMetric
+                        Calculate Metric Information for Text
+  Concepts: Computations Related to Plotting
+grid::convertUnit       Convert Between Different grid Coordinate
+                        Systems
+  Concepts: Computations Related to Plotting
+grid::current.viewport
+                        Get the Current Grid Viewport (Tree)
+  Concepts: Computations Related to Plotting
+grid::dataViewport      Create a Viewport with Scales based on Data
+  Concepts: Computations Related to Plotting
+grid::depth             Determine the number of levels in an object.
+  Concepts: Computations Related to Plotting
+grid::deviceLoc         Convert Viewport Location to Device Location
+  Concepts: Computations Related to Plotting
+grid::drawDetails       Customising grid Drawing
+  Concepts: Computations Related to Plotting
+grid::editDetails       Customising grid Editing
+  Concepts: Computations Related to Plotting
+grid::editViewport      Modify a Viewport
+  Concepts: Computations Related to Plotting
+grid::explode           Explode a path into its components.
+  Concepts: Computations Related to Plotting
+grid::gEdit             Create and Apply Edit Objects
+  Concepts: Computations Related to Plotting
+grid::getNames          List the names of grobs on the display list
+  Concepts: Computations Related to Plotting
+grid::gpar              Handling Grid Graphical Parameters
+  Concepts: Computations Related to Plotting
+grid::gPath             Concatenate Grob Names
+  Concepts: Computations Related to Plotting
+grid::Grid              Grid Graphics
+  Concepts: Computations Related to Plotting
+grid::grid.add          Add a Grid Graphical Object
+  Concepts: Computations Related to Plotting
+grid::grid.bezier       Draw a Bezier Curve
+  Concepts: Computations Related to Plotting
+grid::grid.cap          Capture a raster image
+  Concepts: Computations Related to Plotting
+grid::grid.circle       Draw a Circle
+  Concepts: Computations Related to Plotting
+grid::grid.clip         Set the Clipping Region
+  Concepts: Computations Related to Plotting
+grid::grid.copy         Make a Copy of a Grid Graphical Object
+  Concepts: Computations Related to Plotting
+grid::grid.curve        Draw a Curve Between Locations
+  Concepts: Computations Related to Plotting
+grid::grid.delay        Encapsulate calculations and generating a grob
+  Concepts: Computations Related to Plotting
+grid::grid.display.list
+                        Control the Grid Display List
+  Concepts: Computations Related to Plotting
+grid::grid.DLapply      Modify the Grid Display List
+  Concepts: Computations Related to Plotting
+grid::grid.draw         Draw a grid grob
+  Concepts: Computations Related to Plotting
+grid::grid.edit         Edit the Description of a Grid Graphical Object
+  Concepts: Computations Related to Plotting
+grid::grid.force        Force a grob into its components
+  Concepts: Computations Related to Plotting
+grid::grid.frame        Create a Frame for Packing Objects
+  Concepts: Computations Related to Plotting
+grid::grid.function     Draw a curve representing a function
+  Concepts: Computations Related to Plotting
+grid::grid.get          Get a Grid Graphical Object
+  Concepts: Computations Related to Plotting
+grid::grid.glyph        Draw Typeset Glyphs
+  Concepts: Computations Related to Plotting
+grid::grid.grab         Grab the current grid output
+  Concepts: Computations Related to Plotting
+grid::grid.grep         Search for Grobs and/or Viewports
+  Concepts: Computations Related to Plotting
+grid::grid.grill        Draw a Grill
+  Concepts: Computations Related to Plotting
+grid::grid.group        Draw a Group
+  Concepts: Computations Related to Plotting
+grid::grid.layout       Create a Grid Layout
+  Concepts: Computations Related to Plotting
+grid::grid.lines        Draw Lines in a Grid Viewport
+  Concepts: Computations Related to Plotting
+grid::grid.locator      Capture a Mouse Click
+  Concepts: Computations Related to Plotting
+grid::grid.ls           List the names of grobs or viewports
+  Concepts: Computations Related to Plotting
+grid::grid.move.to      Move or Draw to a Specified Position
+  Concepts: Computations Related to Plotting
+grid::grid.newpage      Move to a New Page on a Grid Device
+  Concepts: Computations Related to Plotting
+grid::grid.null         Null Graphical Object
+  Concepts: Computations Related to Plotting
+grid::grid.pack         Pack an Object within a Frame
+  Concepts: Computations Related to Plotting
+grid::grid.path         Draw a Path
+  Concepts: Computations Related to Plotting
+grid::grid.place        Place an Object within a Frame
+  Concepts: Computations Related to Plotting
+grid::grid.plot.and.legend
+                        A Simple Plot and Legend Demo
+  Aliases: grid.plot.and.legend
+  Concepts: Computations Related to Plotting
+grid::grid.points       Draw Data Symbols
+  Concepts: Computations Related to Plotting
+grid::grid.polygon      Draw a Polygon
+  Concepts: Computations Related to Plotting
+grid::grid.pretty       Generate a Sensible ("Pretty") Set of
+                        Breakpoints
+  Concepts: Computations Related to Plotting
+grid::grid.raster       Render a raster object
+  Concepts: Computations Related to Plotting
+grid::grid.record       Encapsulate calculations and drawing
+  Concepts: Computations Related to Plotting
+grid::grid.rect         Draw rectangles
+  Concepts: Computations Related to Plotting
+grid::grid.refresh      Refresh the current grid scene
+  Concepts: Computations Related to Plotting
+grid::grid.remove       Remove a Grid Graphical Object
+  Concepts: Computations Related to Plotting
+grid::grid.reorder      Reorder the children of a gTree
+  Concepts: Computations Related to Plotting
+grid::grid.segments     Draw Line Segments
+  Concepts: Computations Related to Plotting
+grid::grid.set          Set a Grid Graphical Object
+  Concepts: Computations Related to Plotting
+grid::grid.show.layout
+                        Draw a Diagram of a Grid Layout
+  Concepts: Computations Related to Plotting
+grid::grid.show.viewport
+                        Draw a Diagram of a Grid Viewport
+  Concepts: Computations Related to Plotting
+grid::grid.stroke       Stroke or Fill a Path
+  Concepts: Computations Related to Plotting
+grid::grid.text         Draw Text
+  Concepts: Computations Related to Plotting
+grid::grid.xaxis        Draw an X-Axis
+  Concepts: Computations Related to Plotting
+grid::grid.xspline      Draw an Xspline
+  Concepts: Computations Related to Plotting
+grid::grid.yaxis        Draw a Y-Axis
+  Concepts: Computations Related to Plotting
+grid::gridCoords        Create Sets of Coordinates for Grid Grobs
+  Concepts: Computations Related to Plotting
+grid::grob              Create Grid Graphical Objects, aka "Grob"s
+  Concepts: Computations Related to Plotting
+grid::grobCoords        Calculate Points on the Perimeter of a Grob
+  Concepts: Computations Related to Plotting
+grid::grobName          Generate a Name for a Grob
+  Concepts: Computations Related to Plotting
+grid::grobWidth         Create a Unit Describing the Width of a Grob
+  Concepts: Computations Related to Plotting
+grid::grobX             Create a Unit Describing a Grob Boundary
+                        Location
+  Concepts: Computations Related to Plotting
+grid::legendGrob        Constructing a Legend Grob
+  Concepts: Add to Existing Plot / internal plot
+grid::makeContent       Customised grid Grobs
+  Concepts: Computations Related to Plotting
+grid::patterns          Define Gradient and Pattern Fills
+  Concepts: Computations Related to Plotting
+grid::plotViewport      Create a Viewport with a Standard Plot Layout
+  Aliases: plotViewport
+  Concepts: Computations Related to Plotting
+grid::pushViewport      Maintaining and Navigating the Grid Viewport
+                        Tree
+  Concepts: Computations Related to Plotting
+grid::resolveRasterSize
+                        Utility function to resolve the size of a
+                        raster grob
+  Concepts: Computations Related to Plotting
+grid::roundrect         Draw a rectangle with rounded corners
+  Concepts: Computations Related to Plotting
+grid::showGrob          Label grid grobs.
+  Concepts: Computations Related to Plotting
+grid::showViewport      Display grid viewports.
+  Concepts: Computations Related to Plotting
+grid::stringWidth       Create a Unit Describing the Width and Height
+                        of a String or Math Expression
+  Concepts: Computations Related to Plotting
+grid::unit              Function to Create a Unit Object
+  Concepts: Computations Related to Plotting
+grid::unit.c            Combine Unit Objects
+  Concepts: Computations Related to Plotting
+grid::unit.length       Length of a Unit Object
+  Concepts: Computations Related to Plotting
+grid::unit.pmin         Parallel Unit Minima and Maxima
+  Concepts: Computations Related to Plotting
+grid::unit.rep          Replicate Elements of Unit Objects
+  Concepts: Computations Related to Plotting
+grid::unitType          Return the Units of a Unit Object
+  Concepts: Computations Related to Plotting
+grid::valid.just        Validate a Justification
+  Concepts: Computations Related to Plotting
+grid::validDetails      Customising grid grob Validation
+  Concepts: Computations Related to Plotting
+grid::viewport          Create a Grid Viewport
+  Concepts: Computations Related to Plotting
+grid::viewportTransform
+                        Define a Group Transformation
+  Concepts: Computations Related to Plotting
+grid::vpPath            Concatenate Viewport Names
+  Concepts: Computations Related to Plotting
+grid::widthDetails      Width and Height of a grid grob
+  Concepts: Computations Related to Plotting
+grid::xDetails          Boundary of a grid grob
+  Concepts: Computations Related to Plotting
+grid::xsplinePoints     Return the points that would be used to draw an
+                        Xspline (or a Bezier curve).
+  Concepts: Computations Related to Plotting
+htmltools::capturePlot
+                        Capture a plot as a saved file
+  Aliases: capturePlot
+htmltools::plotTag      Capture a plot as a self-contained <img> tag
+  Aliases: plotTag
+isoband::plot_iso       Visualize a single isoband
+  Aliases: plot_iso
+knitr::hook_pdfcrop     Built-in chunk hooks to extend knitr
+  Aliases: hook_plot_custom
+knitr::hook_plot_html   Default plot hooks for different output formats
+  Aliases: hook_plot_html, hook_plot_asciidoc, hook_plot_tex,
+    hook_plot_md, hook_plot_rst, hook_plot_textile
+knitr::is_low_change    Compare two recorded plots
+knitr::plot_crop        Crop a plot (remove the edges) using PDFCrop or
+                        ImageMagick
+  Aliases: plot_crop
+labeling::gnuplot       gnuplot's labeling algorithm
+  Aliases: gnuplot
+labeling::labeling      Axis labeling
+  Concepts: Computations Related to Plotting
+labeling::matplotlib    Matplotlib's labeling algorithm
+  Aliases: matplotlib
+lattice::axis.default   Default axis annotation utilities
+  Concepts: Computations Related to Plotting
+lattice::banking        Banking
+  Concepts: Computations Related to Plotting
+lattice::barchart.table
+                        table methods for barchart and dotplot
+  Aliases: dotplot.table, dotplot.array, dotplot.matrix
+  Concepts: High-Level Plots
+lattice::cloud          3d Scatter Plot and Wireframe Surface Plot
+  Concepts: High-Level Plots
+lattice::current.row    Accessing Auxiliary Information During Plotting
+  Concepts: Computations Related to Plotting
+lattice::draw.colorkey
+                        Produce a colorkey typically for levelplot
+  Concepts: Computations Related to Plotting
+lattice::draw.key       Produce a Legend or Key
+  Concepts: Computations Related to Plotting
+lattice::equal.count    shingles
+  Aliases: plot.shingle
+  Concepts: High-Level Plots
+lattice::histogram      Histograms and Kernel Density Plots
+  Aliases: densityplot, densityplot.numeric, densityplot.formula,
+    densityplot.data.frame
+  Concepts: High-Level Plots
+lattice::larrows        Replacements of traditional graphics functions
+  Aliases: lplot.xy
+  Concepts: Computations Related to Plotting
+lattice::Lattice        Lattice Graphics
+  Concepts: Computations Related to Plotting
+lattice::lattice.options
+                        Low-level Options Controlling Behaviour of
+                        Lattice
+  Concepts: Computations Related to Plotting
+lattice::levelplot      Level plots and contour plots
+  Aliases: levelplot, contourplot, levelplot.formula,
+    levelplot.data.frame, contourplot.formula, contourplot.data.frame,
+    levelplot.table, contourplot.table, levelplot.array,
+    contourplot.array, levelplot.matrix, contourplot.matrix
+  Concepts: High-Level Plots
+lattice::make.groups    Grouped data from multiple vectors
+  Concepts: Computations Related to Plotting
+lattice::oneway         Fit One-way Model
+  Concepts: Computations Related to Plotting
+lattice::packet.panel.default
+                        Associating Packets with Panels
+  Concepts: Computations Related to Plotting
+lattice::panel.axis     Panel Function for Drawing Axis Ticks and
+                        Labels
+  Concepts: Computations Related to Plotting
+lattice::panel.barchart
+                        Default Panel Function for barchart
+  Concepts: Computations Related to Plotting
+lattice::panel.bwplot   Default Panel Function for bwplot
+  Aliases: panel.bwplot
+  Concepts: Computations Related to Plotting
+lattice::panel.cloud    Default Panel Function for cloud
+  Concepts: Computations Related to Plotting
+lattice::panel.densityplot
+                        Default Panel Function for densityplot
+  Aliases: panel.densityplot
+  Concepts: Computations Related to Plotting
+lattice::panel.dotplot
+                        Default Panel Function for dotplot
+  Aliases: panel.dotplot
+  Concepts: Computations Related to Plotting
+lattice::panel.functions
+                        Useful Panel Function Components
+  Concepts: Computations Related to Plotting
+lattice::panel.histogram
+                        Default Panel Function for histogram
+  Concepts: Computations Related to Plotting
+lattice::panel.identify
+                        Functions to Interact with Lattice Plots
+  Concepts: Computations Related to Plotting
+lattice::panel.levelplot
+                        Panel Functions for levelplot and contourplot
+  Aliases: panel.levelplot, panel.contourplot, panel.levelplot.raster
+  Concepts: Computations Related to Plotting
+lattice::panel.loess    Panel Function to Add a LOESS Smooth
+  Concepts: Computations Related to Plotting
+lattice::panel.pairs    Default Superpanel Function for splom
+  Concepts: Computations Related to Plotting
+lattice::panel.parallel
+                        Default Panel Function for parallel
+  Concepts: Computations Related to Plotting
+lattice::panel.qqmath   Default Panel Function for qqmath
+  Concepts: Computations Related to Plotting
+lattice::panel.qqmathline
+                        Useful panel function with qqmath
+  Concepts: Computations Related to Plotting
+lattice::panel.smoothScatter
+                        Lattice panel function analogous to
+                        smoothScatter
+  Concepts: High-Level Plots
+lattice::panel.spline   Panel Function to Add a Spline Smooth
+  Concepts: Computations Related to Plotting
+lattice::panel.stripplot
+                        Default Panel Function for stripplot
+  Aliases: panel.stripplot
+  Concepts: Computations Related to Plotting
+lattice::panel.superpose
+                        Panel Function for Display Marked by groups
+  Concepts: Computations Related to Plotting
+lattice::panel.violin   Panel Function to create Violin Plots
+  Concepts: Computations Related to Plotting
+lattice::panel.xyplot   Default Panel Function for xyplot
+  Aliases: panel.xyplot
+  Concepts: Computations Related to Plotting
+lattice::prepanel.default.bwplot
+                        Default Prepanel Functions
+  Aliases: prepanel.default.bwplot, prepanel.default.xyplot,
+    prepanel.default.levelplot, prepanel.default.densityplot
+  Concepts: Computations Related to Plotting
+lattice::prepanel.lmline
+                        Useful Prepanel Function for Lattice
+  Concepts: Computations Related to Plotting
+lattice::print.trellis
+                        Plot and Summarize Trellis Objects
+  Aliases: plot.trellis
+  Concepts: High-Level Plots
+lattice::qq             Quantile-Quantile Plots of Two Samples
+  Concepts: Computations Related to Plotting
+lattice::qqmath         Q-Q Plot with Theoretical Distribution
+  Concepts: Computations Related to Plotting
+lattice::rfs            Residual and Fit Spread Plots
+  Concepts: Computations Related to Plotting
+lattice::simpleKey      Function to generate a simple key
+  Concepts: Computations Related to Plotting
+lattice::simpleTheme    Function to generate a simple theme
+  Concepts: Computations Related to Plotting
+lattice::splom          Scatter Plot Matrices
+  Aliases: parallelplot, parallelplot.matrix, parallelplot.data.frame,
+    parallelplot.formula
+  Concepts: High-Level Plots
+lattice::standard.theme
+                        Built-in Graphical Themes
+  Concepts: Computations Related to Plotting
+lattice::strip.default
+                        Default Trellis Strip Function
+  Concepts: Computations Related to Plotting
+lattice::tmd            Tukey Mean-Difference Plot
+  Concepts: Computations Related to Plotting
+lattice::trellis.device
+                        Initializing Trellis Displays
+  Concepts: Computations Related to Plotting
+lattice::trellis.object
+                        A Trellis Plot Object
+lattice::trellis.par.get
+                        Graphical Parameters for Trellis Displays
+  Concepts: Computations Related to Plotting
+lattice::update.trellis
+                        Retrieve and Update Trellis Object
+  Concepts: Computations Related to Plotting
+lattice::utilities.3d   Utility functions for 3-D plots
+  Concepts: Computations Related to Plotting
+lattice::xyplot         Common Bivariate Trellis Plots
+  Aliases: xyplot, xyplot.formula, xyplot.data.frame, bwplot,
+    bwplot.formula, bwplot.data.frame, bwplot.numeric, dotplot,
+    dotplot.formula, dotplot.data.frame, dotplot.numeric,
+    dotplot.default, stripplot, stripplot.formula,
+    stripplot.data.frame, stripplot.numeric
+  Concepts: High-Level Plots
+lattice::xyplot.ts      Time series plotting methods
+  Aliases: xyplot.ts
+  Concepts: High-Level Plots
+maps::area.map          Area of projected map regions
+  Concepts: Computations Related to Plotting
+maps::identify.map      Identify regions on a map
+  Concepts: Interacting with Plots
+maps::map               Draw Geographical Maps
+  Concepts: High-Level Plots
+maps::map.axes          Draw Axes on Geographical Maps
+  Concepts: High-Level Plots
+maps::map.cities        Add Cities to Existing Map
+  Concepts: High-Level Plots
+maps::map.scale         Add Scale to Existing Unprojected Map
+  Concepts: High-Level Plots
+maps::map.text          Draw a map with labeled regions
+  Concepts: High-Level Plots
+maps::map.where         Locate points on a map
+  Concepts: Interacting with Plots
+maps::match.map         Index map regions
+  Concepts: Computations Related to Plotting
+maps::smooth.map        Smooth out aggregated data
+  Concepts: Computations Related to Plotting
+MASS::bandwidth.nrd     Bandwidth for density() via Normal Reference
+                        Distribution
+  Concepts: Computations Related to Plotting
+MASS::bcv               Biased Cross-Validation for Bandwidth Selection
+  Concepts: Computations Related to Plotting
+MASS::boxcox            Box-Cox Transformations for Linear Models
+  Concepts: High-Level Plots
+MASS::eqscplot          Plots with Geometrically Equal Scales
+  Aliases: eqscplot
+  Concepts: High-Level Plots
+MASS::hist.scott        Plot a Histogram with Automatic Bin Width
+                        Selection
+  Concepts: High-Level Plots, Computations Related to Plotting
+MASS::kde2d             Two-Dimensional Kernel Density Estimation
+  Concepts: Computations Related to Plotting
+MASS::ldahist           Histograms or Density Plots of Multiple Groups
+  Concepts: Computations Related to Plotting, High-Level Plots
+MASS::lm.ridge          Ridge Regression
+  Aliases: plot.ridgelm
+MASS::logtrans          Estimate log Transformation Parameter
+  Concepts: High-Level Plots
+MASS::pairs.lda         Produce Pairwise Scatterplots from an 'lda' Fit
+  Concepts: High-Level Plots
+MASS::parcoord          Parallel Coordinates Plot
+  Concepts: High-Level Plots
+MASS::plot.lda          Plot Method for Class 'lda'
+  Aliases: plot.lda
+  Concepts: High-Level Plots
+MASS::plot.mca          Plot Method for Objects of Class 'mca'
+  Aliases: plot.mca
+  Concepts: High-Level Plots
+MASS::plot.profile      Plotting Functions for 'profile' Objects
+  Aliases: plot.profile
+  Concepts: High-Level Plots
+MASS::truehist          Plot a Histogram
+  Concepts: High-Level Plots, Computations Related to Plotting
+MASS::ucv               Unbiased Cross-Validation for Bandwidth
+                        Selection
+  Concepts: Computations Related to Plotting
+MASS::width.SJ          Bandwidth Selection by Pilot Estimation of
+                        Derivatives
+  Concepts: Computations Related to Plotting
+Matrix::image           Methods for image() in Package 'Matrix'
+  Concepts: High-Level Plots
+methods::setOldClass    Register Old-Style (S3) Classes and Inheritance
+  Aliases: recordedplot-class
+mgcv::exclude.too.far   Exclude prediction grid points too far from
+                        data
+  Concepts: High-Level Plots
+mgcv::plot.gam          Default GAM plotting
+  Aliases: plot.gam
+  Concepts: High-Level Plots
+mgcv::polys.plot        Plot geographic regions defined as polygons
+  Aliases: polys.plot
+  Concepts: High-Level Plots
+mgcv::qq.gam            QQ plots for gam model residuals
+mgcv::vis.gam           Visualization of GAM objects
+  Concepts: High-Level Plots
+nlme::Alfalfa           Split-Plot Experiment on Varieties of Alfalfa
+nlme::Oats              Split-plot Experiment on Varieties of Oats
+nlme::pairs.compareFits
+                        Pairs Plot of compareFits Object
+nlme::pairs.lme         Pairs Plot of an lme Object
+nlme::pairs.lmList      Pairs Plot of an lmList Object
+nlme::pdMat             Positive-Definite Matrix
+  Aliases: plot.pdMat
+nlme::plot.ACF          Plot an ACF Object
+  Aliases: plot.ACF
+nlme::plot.augPred      Plot an augPred Object
+  Aliases: plot.augPred
+nlme::plot.compareFits
+                        Plot a compareFits Object
+  Aliases: plot.compareFits
+nlme::plot.gls          Plot a gls Object
+  Aliases: plot.gls
+nlme::plot.intervals.lmList
+                        Plot lmList Confidence Intervals
+  Aliases: plot.intervals.lmList
+nlme::plot.lme          Plot an lme or nls object
+  Aliases: plot.lme, plot.nls
+  Concepts: High-Level Plots
+nlme::plot.lmList       Plot an lmList Object
+  Aliases: plot.lmList
+nlme::plot.nffGroupedData
+                        Plot an nffGroupedData Object
+  Aliases: plot.nffGroupedData
+nlme::plot.nfnGroupedData
+                        Plot an nfnGroupedData Object
+  Aliases: plot.nfnGroupedData
+nlme::plot.nmGroupedData
+                        Plot an nmGroupedData Object
+  Aliases: plot.nmGroupedData
+nlme::plot.ranef.lme    Plot a ranef.lme Object
+  Aliases: plot.ranef.lme
+nlme::plot.ranef.lmList
+                        Plot a ranef.lmList Object
+  Aliases: plot.ranef.lmList
+nlme::plot.Variogram    Plot a Variogram Object
+  Aliases: plot.Variogram
+nlme::qqnorm.gls        Normal Plot of Residuals from a gls Object
+nlme::qqnorm.lm         Normal Plot of Residuals or Random Effects from
+                        an lme Object
+nlme::simulate.lme      Simulate Results from 'lme' Models
+  Aliases: plot.simulate.lme
+R.utils::stext.default
+                        Writes text in the margin along the sides of a
+                        plot
+R.utils::subplots.default
+                        Creates a grid of subplots
+  Aliases: subplots.default, subplots
+rpart::meanvar          Mean-Variance Plot for an Rpart Object
+rpart::plot.rpart       Plot an Rpart Object
+  Aliases: plot.rpart
+rpart::plotcp           Plot a Complexity Parameter Table for an Rpart
+                        Fit
+  Aliases: plotcp
+rpart::post.rpart       PostScript Presentation Plot of an Rpart Object
+rpart::rsq.rpart        Plots the Approximate R-Square for the
+                        Different Splits
+rpart::text.rpart       Place Text on a Dendrogram Plot
+rstudioapi::savePlotAsImage
+                        Save active RStudio plot image
+  Aliases: savePlotAsImage
+scales::demo_continuous
+                        Demonstrate scales functions with ggplot2 code
+shiny::brushedPoints    Find rows of data selected on an interactive
+                        plot.
+shiny::clickOpts        Control interactive plot point events
+shiny::plotOutput       Create an plot or image output element
+  Aliases: plotOutput
+shiny::plotPNG          Capture a plot as a PNG file.
+  Aliases: plotPNG
+shiny::renderCachedPlot
+                        Plot output with cached images
+  Aliases: renderCachedPlot
+shiny::renderPlot       Plot Output
+  Aliases: renderPlot
+SimInf::boxplot,SimInf_model-method
+                        Box plot of number of individuals in each
+                        compartment
+  Aliases: boxplot,SimInf_model-method
+SimInf::pairs,SimInf_model-method
+                        Scatterplot of number of individuals in each
+                        compartment
+SimInf::plot,SimInf_abc-method
+                        Display the ABC posterior distribution
+  Aliases: plot,SimInf_abc-method
+SimInf::plot,SimInf_events-method
+                        Display the distribution of scheduled events
+                        over time
+  Aliases: plot,SimInf_events-method
+SimInf::plot,SimInf_indiv_events-method
+                        Display the distribution of individual events
+                        over time
+  Aliases: plot,SimInf_indiv_events-method
+SimInf::plot,SimInf_model-method
+                        Display the outcome from a simulated trajectory
+  Aliases: plot,SimInf_model-method
+SimInf::plot,SimInf_pfilter-method
+                        Diagnostic plot of a particle filter object
+  Aliases: plot,SimInf_pfilter-method
+SimInf::plot,SimInf_pmcmc-method
+                        Display the PMCMC posterior distribution
+  Aliases: plot,SimInf_pmcmc-method
+spatial::trls.influence
+                        Regression diagnostics for trend surfaces
+  Aliases: plot.trls
+stats::approx           Interpolation Functions
+  Concepts: Computations Related to Plotting
+stats::biplot           Biplot of Multivariate Data
+  Aliases: biplot, biplot.default
+  Concepts: High-Level Plots
+stats::biplot.princomp
+                        Biplot for Principal Components
+  Aliases: biplot.princomp, biplot.prcomp
+  Concepts: High-Level Plots
+stats::convolve         Convolution of Sequences via FFT
+  Concepts: Computations Related to Plotting
+stats::cpgram           Plot Cumulative Periodogram
+  Concepts: High-Level Plots
+stats::decompose        Classical Seasonal Decomposition by Moving
+                        Averages
+  Aliases: plot.decomposed.ts
+stats::dendrogram       General Tree Structures
+  Aliases: plot.dendrogram
+  Concepts: High-Level Plots
+stats::ecdf             Empirical Cumulative Distribution Function
+  Aliases: plot.ecdf
+  Concepts: Computations Related to Plotting, High-Level Plots
+stats::fft              Fast Discrete Fourier Transform (FFT)
+  Concepts: Computations Related to Plotting
+stats::hclust           Hierarchical Clustering
+  Aliases: plot.hclust
+stats::heatmap          Draw a Heat Map
+  Concepts: High-Level Plots
+stats::identify.hclust
+                        Identify Clusters in a Dendrogram
+  Concepts: Interacting with Plots
+stats::interaction.plot
+                        Two-way Interaction Plot
+  Aliases: interaction.plot
+  Concepts: High-Level Plots
+stats::kernel           Smoothing Kernel Objects
+  Aliases: plot.tskernel
+stats::lag.plot         Time Series Lag Plots
+  Aliases: lag.plot
+  Concepts: High-Level Plots
+stats::lowess           Scatter Plot Smoothing
+stats::monthplot        Plot a Seasonal or other Subseries from a Time
+                        Series
+  Aliases: monthplot, monthplot.default, monthplot.ts, monthplot.stl,
+    monthplot.StructTS
+  Concepts: High-Level Plots
+stats::plot.acf         Plot Autocovariance and Autocorrelation
+                        Functions
+  Aliases: plot.acf
+  Concepts: High-Level Plots
+stats::plot.density     Plot Method for Kernel Density Estimation
+  Aliases: plot.density
+  Concepts: Computations Related to Plotting
+stats::plot.HoltWinters
+                        Plot function for HoltWinters objects
+  Aliases: plot.HoltWinters
+stats::plot.isoreg      Plot Method for isoreg Objects
+  Aliases: plot.isoreg
+  Concepts: High-Level Plots
+stats::plot.lm          Plot Diagnostics for an 'lm' Object
+  Aliases: plot.lm
+  Concepts: High-Level Plots
+stats::plot.ppr         Plot Ridge Functions for Projection Pursuit
+                        Regression Fit
+  Aliases: plot.ppr
+  Concepts: High-Level Plots
+stats::plot.profile.nls
+                        Plot a profile.nls Object
+  Aliases: plot.profile.nls
+stats::plot.spec        Plotting Spectral Densities
+  Aliases: plot.spec, plot.spec.coherency, plot.spec.phase
+  Concepts: High-Level Plots
+stats::plot.stepfun     Plot Step Functions
+  Aliases: plot.stepfun
+  Concepts: High-Level Plots
+stats::plot.stl         Methods for STL Objects
+  Aliases: plot.stl
+stats::plot.ts          Plotting Time-Series Objects
+  Aliases: plot.ts
+  Concepts: High-Level Plots
+stats::ppoints          Ordinates for Probability Plotting
+  Concepts: Computations Related to Plotting
+stats::prcomp           Principal Components Analysis
+  Aliases: plot.prcomp
+stats::preplot          Pre-computations for a Plotting Object
+  Aliases: preplot
+stats::princomp         Principal Components Analysis
+  Aliases: plot.princomp
+stats::qqnorm           Quantile-Quantile Plots
+  Aliases: qqplot
+  Concepts: normal probability plot, High-Level Plots
+stats::rect.hclust      Draw Rectangles Around Hierarchical Clusters
+  Concepts: Add to Existing Plot / internal plot
+stats::runmed           Running Medians - Robust Scatter Plot Smoothing
+stats::scatter.smooth   Scatter Plot with Smooth Curve Fitted by Loess
+stats::screeplot        Screeplots
+  Aliases: screeplot, screeplot.default
+stats::spline           Interpolating Splines
+  Concepts: Computations Related to Plotting
+stats::stats-defunct    Defunct Functions in Package 'stats'
+  Aliases: plot.mts
+stats::stepfun          Step Functions - Creation and Class
+  Concepts: Computations Related to Plotting
+stats::termplot         Plot Regression Terms
+  Aliases: termplot
+  Concepts: High-Level Plots
+stats::ts.plot          Plot Multiple Time Series
+  Aliases: ts.plot
+stats::tsdiag           Diagnostic Plots for Time-Series Fits
+stats4::plot-methods    Methods for Function 'plot' in Package 'stats4'
+  Aliases: plot-methods, plot,ANY,ANY-method,
+    plot,profile.mle,missing-method
+survival::lines.survfit
+                        Add Lines or Points to a Survival Plot
+survival::Math.Surv     Methods for Surv objects
+  Aliases: plot.Surv
+survival::plot.aareg    Plot an aareg object.
+  Aliases: plot.aareg
+survival::plot.cox.zph
+                        Graphical Test of Proportional Hazards
+  Aliases: plot.cox.zph
+survival::plot.survfit
+                        Plot method for 'survfit' objects
+  Aliases: plot.survfit
+  Concepts: High-Level Plots
+survival::statefig      Draw a state space figure.
+  Concepts: High-Level Plots
+wk::plot.wk_grd_xy      Plot grid objects
+  Aliases: plot.wk_grd_xy, plot.wk_grd_rct
+wk::wk_plot             Plot well-known geometry vectors
+  Aliases: wk_plot, wk_plot.default, plot.wk_wkt, plot.wk_wkb,
+    plot.wk_xy, plot.wk_rct, plot.wk_crc
+
+
+Type '?PKG::FOO' to inspect entries 'PKG::FOO', or 'TYPE?PKG::FOO' for
+entries like 'PKG::FOO-TYPE'.
+
+
+
+
