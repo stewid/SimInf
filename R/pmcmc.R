@@ -588,10 +588,11 @@ setMethod(
         M <- as.numeric(object@chain[1, seq_pars(object)])
         S <- matrix(0, nrow = length(M), ncol = length(M))
         for (k in seq_len(i)[-1]) {
-            tmp <- as.numeric(chain[k, seq_pars(object)]) - M
+            tmp <- as.numeric(object@chain[k, seq_pars(object)]) - M
             M <- M + tmp / k
-            S <- S + tcrossprod(tmp,
-            (as.numeric(object@chain[k, seq_pars(object)]) - M))
+            S <- S + tcrossprod(
+                         tmp,
+                         as.numeric(object@chain[k, seq_pars(object)]) - M)
         }
 
         if (i > 1) {
