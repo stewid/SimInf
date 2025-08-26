@@ -481,9 +481,9 @@ pmcmc_proposal <- function(x, i, n_accepted, covmat) {
         covmat <- 2.38^2 / n_pars(x) * covmat
     }
 
-    as.numeric(mvtnorm::rmvnorm(n = 1,
-                                mean = get_theta(x, i - 1),
-                                sigma = covmat)[1, ])
+    ch <- chol(covmat, pivot = TRUE)
+    Q <- ch[, order(attr(ch, "pivot"))]
+    as.numeric(get_theta(x, i - 1) + rnorm(n = n_pars(x)) %*% Q)
 }
 
 ##' Length of the MCMC chain
