@@ -309,6 +309,11 @@ init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
 }
 
 plot_data <- function(pd, argv, lty, col, frame.plot, legend, log) {
+
+    if (length(grep("y", log)) > 0) {
+    argv$ylim[1] <- 1
+    }
+
     ## Plot lines
     for (i in seq_len(dim(pd$y)[1])) {
         argv$y <- pd$y[i, ]
