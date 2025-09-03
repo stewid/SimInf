@@ -68,9 +68,9 @@ summary_matrix <- function(x) {
 
     ## Summarise parameters without a name.
     fmt <- " Number of parameters without a name: %i\n"
-    i <- which(nchar(rownames(x)) == 0)
-    if (length(i) > 0)
-        cat(sprintf(fmt, length(i)))
+    i <- sum(nchar(rownames(x)) == 0 | is.na(rownames(x)))
+    if (i > 0)
+        cat(sprintf(fmt, i))
     if (is.null(rownames(x)))
         cat(sprintf(fmt, nrow(x)))
 }
@@ -85,9 +85,9 @@ summary_vector <- function(x) {
 
     ## Summarise parameters without a name.
     fmt <- " Number of parameters without a name: %i\n"
-    i <- which(nchar(names(x)) == 0)
-    if (length(i) > 0)
-        cat(sprintf(fmt, length(i)))
+    i <- sum(nchar(names(x)) == 0 | is.na(names(x)))
+    if (i > 0)
+        cat(sprintf(fmt, i))
     if (is.null(names(x)))
         cat(sprintf(fmt, length(x)))
 
