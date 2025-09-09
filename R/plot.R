@@ -308,7 +308,12 @@ init_plot_argv <- function(model, compartments, pd, type, lwd, ...) {
     argv
 }
 
-plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
+plot_data <- function(pd, argv, lty, col, frame.plot, legend, log) {
+
+    if (length(grep("y", log)) > 0) {
+    argv$ylim[1] <- 1
+    }
+
     ## Plot lines
     for (i in seq_len(dim(pd$y)[1])) {
         argv$y <- pd$y[i, ]
@@ -317,7 +322,7 @@ plot_data <- function(pd, argv, lty, col, frame.plot, legend) {
 
         if (i == 1) {
             argv$frame.plot <- frame.plot
-            do.call(plot, argv)
+            do.call(plot, c(argv, log = log))
             argv$frame.plot <- NULL
         } else {
             do.call(lines, argv)
@@ -494,7 +499,7 @@ setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
     function(x, y, level = 1, index = NULL, range = 0.5, type = "s",
-             lwd = 2, frame.plot = FALSE, legend = TRUE, ...) {
+             lwd = 2, frame.plot = FALSE, legend = TRUE, log = "", ...) {
         if (missing(y))
             y <- NULL
 
@@ -514,7 +519,7 @@ setMethod(
         lty <- init_plot_line_type(argv$lty, pd$compartments, pd$each)
         col <- init_plot_color(argv$col, pd$compartments, pd$each)
 
-        plot_data(pd, argv, lty, col, frame.plot, legend)
+        plot_data(pd, argv, lty, col, frame.plot, legend, log)
 
         invisible(NULL)
     }
