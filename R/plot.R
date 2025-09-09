@@ -424,6 +424,10 @@ plot_trace <- function(x, i, j, ...) {
 ##' @template plot-lwd-param
 ##' @template plot-frame-param
 ##' @template plot-legend-param
+##' @param log A character string which contains \code{"x"} if the x
+##'     axis is to be logarithmic, \code{"y"} if the y axis is to be
+##'     logarithmic and \code{"xy"} or \code{"yx"} if both axes are to
+##'     be logarithmic.
 ##' @param ... Other graphical parameters that are passed on to the
 ##'     plot function.
 ##' @rdname plot
