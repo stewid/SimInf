@@ -212,6 +212,21 @@ stopifnot(all(abs(df_observed$gamma - df_expected$gamma) < tol))
 
 stopifnot(isTRUE(SimInf:::valid_SimInf_pmcmc_object(fit)))
 
+## Check that pmcmc fails when it is created from chain data and theta
+## is also provided.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          n_particles = 10,
+          n_iterations = 5,
+          theta = c(beta = 0.16, gamma = 0.077),
+          chain = fit@chain))
+check_error(
+    res,
+    "'theta' must be NULL when 'chain' is provided.")
+
 fit@adaptmix <- 1:2
 stopifnot(identical(SimInf:::valid_SimInf_pmcmc_object(fit),
                     "'adaptmix' must be a value >= 0 and <= 1."))

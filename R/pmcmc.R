@@ -269,8 +269,12 @@ setMethod(
         priors <- parse_priors(priors)
         pars <- match_priors(model, priors)
 
-        if (is.null(theta))
+        if (is.null(theta)) {
             theta <- rpriors(priors)
+        } else if (!is.null(chain)) {
+            stop("'theta' must be NULL when 'chain' is provided.",
+                 call. = FALSE)
+        }
         if (!all(is.atomic(theta),
                  is.numeric(theta),
                  all(priors$parameter %in% names(theta)))) {
