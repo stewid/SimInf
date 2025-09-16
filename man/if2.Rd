@@ -5,9 +5,21 @@
 \alias{if2,SimInf_model-method}
 \title{Iterated filtering algorithm}
 \usage{
-if2(model, obs_process, n_iterations, verbose = getOption("verbose", FALSE))
+if2(
+  model,
+  obs_process,
+  n_particles,
+  n_iterations,
+  verbose = getOption("verbose", FALSE)
+)
 
-\S4method{if2}{SimInf_model}(model, obs_process, n_iterations, verbose = getOption("verbose", FALSE))
+\S4method{if2}{SimInf_model}(
+  model,
+  obs_process,
+  n_particles,
+  n_iterations,
+  verbose = getOption("verbose", FALSE)
+)
 }
 \arguments{
 \item{model}{The model to simulate data from.}
@@ -34,6 +46,9 @@ argument to the \code{obs_process} function is a
 \code{data.frame} containing the rows for the specific
 time-point that the function is called for. Note that the
 function must return the log of the density.}
+
+\item{n_particles}{An integer with the number of particles (> 1)
+to use at each timestep.}
 
 \item{n_iterations}{An integer specifying the number of filtering
 iterations to perform.}

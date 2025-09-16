@@ -66,6 +66,7 @@ setMethod(
 ##'
 ##' @param model The model to simulate data from.
 ##' @template obs_process-param
+##' @template n_particles-param
 ##' @param n_iterations An integer specifying the number of filtering
 ##'     iterations to perform.
 ##' @param verbose prints diagnostic messages when \code{TRUE}. The
@@ -80,6 +81,7 @@ setGeneric(
     signature = "model",
     function(model,
              obs_process,
+             n_particles,
              n_iterations,
              verbose = getOption("verbose", FALSE)) {
         standardGeneric("if2")
@@ -93,8 +95,11 @@ setMethod(
     signature(model = "SimInf_model"),
     function(model,
              obs_process,
+             n_particles,
              n_iterations,
              verbose) {
+        n_particles <- check_n_particles(n_particles)
+        n_iterations <- check_n_iterations(n_iterations, FALSE)
         stop("Not implemented.")
     }
 )
