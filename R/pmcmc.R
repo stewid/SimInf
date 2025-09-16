@@ -437,6 +437,10 @@ check_chain <- function(chain, priors) {
     chain <- chain[, variables, drop = FALSE]
     chain <- as.matrix(chain, dimnames = list(NULL, variables))
     storage.mode(chain) <- "double"
+
+    if (nrow(chain) < 1L)
+        stop("'chain' must contain at least one row.", call. = FALSE)
+
     chain
 }
 

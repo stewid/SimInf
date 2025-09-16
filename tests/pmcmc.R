@@ -227,6 +227,34 @@ check_error(
     res,
     "'theta' must be NULL when 'chain' is provided.")
 
+## Check that pmcmc fails when it is created from chain data and chain
+## does not contain all columns.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          n_particles = 10,
+          n_iterations = 5,
+          chain = fit@chain[, -5]))
+check_error(
+    res,
+    "Missing columns in 'chain'.")
+
+## Check that pmcmc fails when it is created from chain data and chain
+## contains no rows.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          n_particles = 10,
+          n_iterations = 5,
+          chain = fit@chain[0, ]))
+check_error(
+    res,
+    "'chain' must contain at least one row.")
+
 fit@adaptmix <- 1:2
 stopifnot(identical(SimInf:::valid_SimInf_pmcmc_object(fit),
                     "'adaptmix' must be a value >= 0 and <= 1."))
