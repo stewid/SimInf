@@ -207,7 +207,9 @@ setMethod(
 ##'     \code{data.frame}. Only the columns in \code{chain} with a
 ##'     name that matches the names that will be used if this argument
 ##'     is not provided will be used. When this argument is provided,
-##'     \code{n_iterations} can be 0.
+##'     \code{n_iterations} can be 0. Additionally, when the
+##'     \code{chain} argument is provided, then \code{theta} and
+##'     \code{covmat} must be \code{NULL}.
 ##' @template verbose-param-pmcmc
 ##' @references
 ##'
@@ -271,13 +273,7 @@ setMethod(
 
         chain <- check_chain(chain, priors)
         theta <- check_theta(theta, priors, chain)
-
-        if (is.null(covmat)) {
-            covmat <- diag(((theta / 10)^2) / length(theta),
-                           nrow = length(theta))
-            colnames(covmat) <- names(theta)
-            rownames(covmat) <- names(theta)
-        }
+        covmat <- check_covmat(covmat, theta, chain)
 
         object <- new("SimInf_pmcmc",
                       model = model,
@@ -352,6 +348,22 @@ check_adaptmix <- function(adaptmix) {
         stop("'adaptmix' must be a value > 0 and < 1.", call. = FALSE)
     }
     adaptmix
+}
+
+check_covmat <- function(covmat, theta, chain) {
+    if (!is.null(chain) && !is.null(covmat)) {
+        stop("'covmat' must be NULL when 'chain' is provided.",
+             call. = FALSE)
+    }
+
+    if (is.null(covmat)) {
+        covmat <- diag(((theta / 10)^2) / length(theta),
+                       nrow = length(theta))
+        colnames(covmat) <- names(theta)
+        rownames(covmat) <- names(theta)
+    }
+
+    covmat
 }
 
 check_init_model <- function(init_model) {

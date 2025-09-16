@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -238,6 +238,21 @@ res <- assertError(
 check_error(
     res,
     "'theta' must be NULL when 'chain' is provided.")
+
+## Check that pmcmc fails when it is created from chain data and
+## covmat is also provided.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          n_particles = 10,
+          n_iterations = 5,
+          covmat = diag(c(0.000128, 2.9645e-05), ncol = 2),
+          chain = fit@chain))
+check_error(
+    res,
+    "'covmat' must be NULL when 'chain' is provided.")
 
 ## Check that pmcmc fails when it is created from chain data and chain
 ## does not contain all columns.

@@ -136,7 +136,9 @@ particles.}
 \code{data.frame}. Only the columns in \code{chain} with a
 name that matches the names that will be used if this argument
 is not provided will be used. When this argument is provided,
-\code{n_iterations} can be 0.}
+\code{n_iterations} can be 0. Additionally, when the
+\code{chain} argument is provided, then \code{theta} and
+\code{covmat} must be \code{NULL}.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
