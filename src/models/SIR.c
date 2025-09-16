@@ -21,14 +21,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <R_ext/Visibility.h>
 #include "SimInf.h"
+#include <R_ext/Visibility.h>
 
 /* Offset in integer compartment state vector */
-enum {S, I, R};
+enum { S, I, R };
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {BETA, GAMMA};
+enum { BETA, GAMMA };
 
 /**
  * susceptible to infected: S -> I
@@ -129,13 +129,12 @@ SIR_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden
-SEXP
+attribute_hidden SEXP
 SIR_run(
     SEXP model,
     SEXP solver)
 {
-    TRFun tr_fun[] = {&SIR_S_to_I, &SIR_I_to_R};
+    TRFun tr_fun[] = { &SIR_S_to_I, &SIR_I_to_R };
 
     return SimInf_run(model, solver, tr_fun, &SIR_post_time_step);
 }

@@ -21,15 +21,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rinternals.h>
-#include <R_ext/Visibility.h>
-#include <stdlib.h>
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "SimInf.h"
+#include <R_ext/Visibility.h>
+#include <Rinternals.h>
+#ifdef _OPENMP
+#  include <omp.h>
+#endif
+#include <stdlib.h>
 
 /* This is the maximum number of threads that SimInf will use for
  * OpenMP parallel regions. It is initialised (>= 1) by
@@ -41,8 +39,7 @@ static int SimInf_max_threads = -1;
  * run. */
 static int SimInf_threads = -1;
 
-attribute_hidden
-int
+attribute_hidden int
 SimInf_num_threads(
     void)
 {
@@ -52,8 +49,7 @@ SimInf_num_threads(
 /* Internal function to specify the number of threads to use in a
  * parallel region. Use all avialable threads if the 'threads'
  * argument is <= 0. */
-attribute_hidden
-int
+attribute_hidden int
 SimInf_set_num_threads(
     int threads)
 {
@@ -66,7 +62,9 @@ SimInf_set_num_threads(
 /* Get the value of the environmental variable 'SIMINF_NUM_THREADS'
  * (if it exists and is greater than 0). */
 #ifdef _OPENMP
-static int SimInf_get_max_threads(void)
+static int
+SimInf_get_max_threads(
+    void)
 {
     const char *p = getenv("SIMINF_NUM_THREADS");
 
@@ -89,8 +87,7 @@ static int SimInf_get_max_threads(void)
  * find the number of threads. Additionally, it can be controlled by
  * the 'threads' argument when called from 'R'. If called from R, it
  * returns the old value of the maximum number of threads used. */
-attribute_hidden
-SEXP
+attribute_hidden SEXP
 SimInf_init_threads(
     SEXP threads)
 {
@@ -119,8 +116,7 @@ SimInf_init_threads(
     if (Rf_isInteger(threads) &&
         LENGTH(threads) == 1 &&
         INTEGER(threads)[0] != NA_INTEGER &&
-        INTEGER(threads)[0] < SimInf_max_threads)
-    {
+        INTEGER(threads)[0] < SimInf_max_threads) {
         SimInf_max_threads = INTEGER(threads)[0];
     }
 
@@ -140,8 +136,7 @@ SimInf_init_threads(
 /**
  * Is OpenMP available
  */
-attribute_hidden
-SEXP
+attribute_hidden SEXP
 SimInf_have_openmp(
     void)
 {

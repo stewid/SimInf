@@ -21,9 +21,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <R_ext/Visibility.h>
 #include "SimInf.h"
-#include "SimInf_arg.h"
+#include "SimInf_internal.h"
+#include <R_ext/Visibility.h>
 
 /**
  * Combine local model parameters and spatial coupling to neighbors in
@@ -46,17 +46,12 @@
  * Example:
  * end_t1, end_t2, end_t3, end_t4, index, value, index, value, -1, 0.0
  */
-attribute_hidden
-SEXP
+attribute_hidden SEXP
 SimInf_ldata_sp(
     SEXP data,
     SEXP distance,
     SEXP metric)
 {
-    SEXP result;
-    double *val, *ldata, *ld;
-    int *degree = NULL, i, *ir, *jc, Nld, Nn, node, n_data, m;
-
     /* Check arguments */
     if (SimInf_arg_check_matrix(data))
         Rf_error("Invalid 'data' argument.");
@@ -66,21 +61,22 @@ SimInf_ldata_sp(
         Rf_error("Invalid 'metric' argument.");
 
     /* Extract data from 'data' */
-    Nn = INTEGER(R_do_slot(data, R_DimSymbol))[1];
-    ld = REAL(data);
+    const ptrdiff_t Nn = INTEGER(R_do_slot(data, R_DimSymbol))[1];
+    const double *ld = REAL(data);
 
     /* Extract data from the distance matrix */
-    ir = INTEGER(R_do_slot(distance, Rf_install("i")));
-    jc = INTEGER(R_do_slot(distance, Rf_install("p")));
-    val = REAL(R_do_slot(distance, Rf_install("x")));
+    const int *ir = INTEGER(R_do_slot(distance, Rf_install("i")));
+    const int *jc = INTEGER(R_do_slot(distance, Rf_install("p")));
+    const double *val = REAL(R_do_slot(distance, Rf_install("x")));
 
     /* Extract data from 'metric' */
-    m = INTEGER(metric)[0];
+    const ptrdiff_t m = INTEGER(metric)[0];
 
     /* Check that the number of nodes are equal in data and
      * distance */
-    if (Nn != (LENGTH(R_do_slot(distance, Rf_install("p"))) - 1))
+    if (Nn != (LENGTH(R_do_slot(distance, Rf_install("p"))) - 1)) {
         Rf_error("The number of nodes in 'data' and 'distance' are not equal.");
+    }
 
     /* Calculate length of 'Nld' in 'ldata' for each node in the
      * following three steps: 1), 2), and 3).
@@ -88,11 +84,11 @@ SimInf_ldata_sp(
 
     /* 1) Determine the maximum number of neighbors in the 'distance'
      * matrix and the number of neighbors (degree) for each node. */
-    degree = malloc(Nn * sizeof(int));
+    int *degree = malloc(Nn * sizeof(int));
     if (!degree)
-        Rf_error("Unable to allocate memory buffer."); /* #nocov */
-    Nld = 0;
-    for (i = 0; i < Nn; i++) {
+        Rf_error("Unable to allocate memory buffer.");  /* #nocov */
+    ptrdiff_t Nld = 0;
+    for (ptrdiff_t i = 0; i < Nn; i++) {
         const int k = jc[i + 1] - jc[i];
         if (k > Nld)
             Nld = k;
@@ -104,23 +100,23 @@ SimInf_ldata_sp(
     Nld = (Nld + 1) * 2;
 
     /*  3) Add space for local model parameters in 'data' */
-    n_data = INTEGER(R_do_slot(data, R_DimSymbol))[0];
+    const ptrdiff_t n_data = INTEGER(R_do_slot(data, R_DimSymbol))[0];
     Nld += n_data;
 
     /* Allocate and initialize memory for ldata */
-    PROTECT(result = Rf_allocMatrix(REALSXP, Nld, Nn));
-    memset(REAL(result), 0, Nn * Nld * sizeof(double));
-    ldata = REAL(result);
+    SEXP result = PROTECT(Rf_allocMatrix(REALSXP, Nld, Nn));
+    double *ldata = REAL(result);
+    memset(ldata, 0, Nn * Nld * sizeof(double));
 
-    for (node = 0; node < Nn; node++) {
-        int k = 0;
+    for (ptrdiff_t node = 0; node < Nn; node++) {
+        ptrdiff_t k = 0;
 
         /* Copy local model parameters */
-        for (i = 0; i < n_data; i++, k++)
+        for (ptrdiff_t i = 0; i < n_data; i++, k++)
             ldata[node * Nld + k] = ld[node * n_data + k];
 
         /* Copy neighbor data */
-        for (i = jc[node]; i < jc[node + 1]; i++) {
+        for (ptrdiff_t i = jc[node]; i < jc[node + 1]; i++) {
             ldata[node * Nld + k++] = ir[i];
             switch (m) {
             case 1:

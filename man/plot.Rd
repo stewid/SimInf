@@ -14,6 +14,7 @@
   lwd = 2,
   frame.plot = FALSE,
   legend = TRUE,
+  log = "",
   ...
 )
 }
@@ -65,6 +66,11 @@ drawn around the plot.}
 \item{legend}{a logical indicating whether a legend for the
 compartments should be added to the plot. A legend is not
 drawn for a prevalence plot.}
+
+\item{log}{A character string which contains \code{"x"} if the x
+axis is to be logarithmic, \code{"y"} if the y axis is to be
+logarithmic and \code{"xy"} or \code{"yx"} if both axes are to
+be logarithmic.}
 
 \item{...}{Other graphical parameters that are passed on to the
 plot function.}

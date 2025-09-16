@@ -82,10 +82,7 @@ setAs(
     from = "SimInf_pmcmc",
     to = "data.frame",
     def = function(from) {
-        ## Skip the first four columns in chain: 'logPost',
-        ## 'logLik', 'logPrior', and 'accept'.
-        j <- seq(from = 5, by = 1, length.out = n_pars(from))
-        as.data.frame(from@chain[, j, drop = FALSE])
+        as.data.frame(from@chain[, seq_pars(from), drop = FALSE])
     }
 )
 
@@ -134,10 +131,7 @@ setMethod(
 
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
-
-            ## Skip first four columns in chain.
-            j <- seq(from = 5, by = 1, length.out = n_pars(object))
-            summary_chain(object@chain[, j, drop = FALSE])
+            summary_chain(object@chain[, seq_pars(object), drop = FALSE])
         }
 
         invisible(object)
@@ -172,11 +166,7 @@ setMethod(
         if (length(object) > 0) {
             print_title(
                 "Quantiles, mean and standard deviation for each variable")
-
-            ## Skip the first four columns in chain: 'logPost',
-            ## 'logLik', 'logPrior', and 'accept'.
-            j <- seq(from = 5, by = 1, length.out = n_pars(object))
-            summary_chain(object@chain[, j, drop = FALSE])
+            summary_chain(object@chain[, seq_pars(object), drop = FALSE])
         }
 
         invisible(NULL)
@@ -279,16 +269,8 @@ setMethod(
         priors <- parse_priors(priors)
         pars <- match_priors(model, priors)
 
-        if (is.null(theta))
-            theta <- rpriors(priors)
-        if (!all(is.atomic(theta),
-                 is.numeric(theta),
-                 all(priors$parameter %in% names(theta)))) {
-            stop("'theta' must be a vector with initial ",
-                 "values for the parameters.",
-                 call. = FALSE)
-        }
-        theta <- theta[priors$parameter]
+        chain <- check_chain(chain, priors)
+        theta <- check_theta(theta, priors, chain)
 
         if (is.null(covmat)) {
             covmat <- diag(((theta / 10)^2) / length(theta),
@@ -308,10 +290,7 @@ setMethod(
                       adaptmix = adaptmix,
                       adaptive = adaptive)
 
-        if (!is.null(chain)) {
-            n_iterations <- check_n_iterations(n_iterations, TRUE)
-            object@chain <- check_chain(object, chain)
-        } else {
+        if (is.null(chain)) {
             n_iterations <- check_n_iterations(n_iterations, FALSE)
             object@chain <- setup_chain(object, 1L)
 
@@ -339,6 +318,9 @@ setMethod(
                 post_particle(object, pf, 1)
 
             n_iterations <- n_iterations - 1L
+        } else {
+            n_iterations <- check_n_iterations(n_iterations, TRUE)
+            object@chain <- chain
         }
 
         if (n_iterations == 0)
@@ -404,11 +386,42 @@ check_post_particle <- function(post_particle) {
     post_particle
 }
 
+check_theta <- function(theta, priors, chain) {
+    if (!is.null(chain) && !is.null(theta)) {
+        stop("'theta' must be NULL when 'chain' is provided.",
+             call. = FALSE)
+    }
+
+    if (is.null(theta)) {
+        if (is.null(chain)) {
+            theta <- rpriors(priors)
+        } else {
+            ## This occurs if the chain starts from an existing chain
+            ## and may be needed to calculate the covariance matrix if
+            ## it is not specified.
+            theta <- chain[1L, priors$parameter]
+        }
+    }
+
+    if (!all(is.atomic(theta),
+             is.numeric(theta),
+             all(priors$parameter %in% names(theta)))) {
+        stop("'theta' must be a vector with initial ",
+             "values for the parameters.",
+             call. = FALSE)
+    }
+
+    theta[priors$parameter]
+}
+
 is_empty_chain <- function(object) {
     isTRUE(length(object) == 0L)
 }
 
-check_chain <- function(object, chain) {
+check_chain <- function(chain, priors) {
+    if (is.null(chain))
+        return(NULL)
+
     if (!is.data.frame(chain))
         chain <- as.data.frame(chain)
 
@@ -417,13 +430,17 @@ check_chain <- function(object, chain) {
                    "logLik",
                    "logPrior",
                    "accept",
-                   object@priors$parameter)
+                   priors$parameter)
     if (!all(variables %in% colnames(chain)))
         stop("Missing columns in 'chain'.", call. = FALSE)
 
     chain <- chain[, variables, drop = FALSE]
     chain <- as.matrix(chain, dimnames = list(NULL, variables))
     storage.mode(chain) <- "double"
+
+    if (nrow(chain) < 1L)
+        stop("'chain' must contain at least one row.", call. = FALSE)
+
     chain
 }
 
@@ -460,10 +477,7 @@ pmcmc_progress <- function(object, i, verbose) {
             "Iteration: %i of %i. Time: %s. Acceptance ratio: %.3f",
             i, length(object), format(Sys.time(), "%T"),
             acceptance_ratio(object)))
-
-        ## Skip columns logLik, logPrior and accept in the chain.
-        j <- c(1, seq(from = 5, by = 1, length.out = n_pars(object)))
-        summary_chain(object@chain[seq_len(i), j])
+        summary_chain(object@chain[seq_len(i), c(1L, seq_pars(object))])
     }
 
     invisible(NULL)
@@ -473,31 +487,30 @@ n_pars <- function(x) {
     length(x@pars)
 }
 
+seq_pars <- function(x) {
+    ## Skip the first four columns in chain: 'logPost', 'logLik',
+    ## 'logPrior', and 'accept'.
+    seq(from = 5L, by = 1L, length.out = n_pars(x))
+}
+
 get_theta <- function(x, i) {
-    j <- seq(from = 5, by = 1, length.out = n_pars(x))
-    x@chain[i, j]
+    x@chain[i, seq_pars(x)]
 }
 
 ##' @noRd
-pmcmc_proposal <- function(x, i, n_accepted) {
+pmcmc_proposal <- function(x, i, n_accepted, covmat) {
     if (x@adaptive == 0L ||
         i <= x@adaptive ||
         n_accepted == 0 ||
         runif(1) < x@adaptmix) {
         covmat <- x@covmat
     } else {
-        covmat <- 2.38^2 / n_pars(x) * covmat_empirical(x, i - 1)
+        covmat <- 2.38^2 / n_pars(x) * covmat
     }
 
-    mvtnorm::rmvnorm(n = 1, mean = get_theta(x, i - 1), sigma = covmat)[1, ]
-}
-
-covmat_empirical <- function(object, i) {
-    j <- seq(from = 5, by = 1, length.out = n_pars(object))
-    covmat <- stats::cov(object@chain[seq_len(i), j, drop = FALSE])
-    if (i == 1)
-        covmat[, ] <- 0
-    covmat
+    ch <- chol(covmat, pivot = TRUE)
+    Q <- ch[, order(attr(ch, "pivot"))]
+    as.numeric(get_theta(x, i - 1) + rnorm(n = n_pars(x)) %*% Q)
 }
 
 ##' Length of the MCMC chain
@@ -586,8 +599,34 @@ setMethod(
         logPost <- object@chain[i, "logPost"]
         logLik <- object@chain[i, "logLik"]
         logPrior <- object@chain[i, "logPrior"]
-        j <- seq(from = 5, by = 1, length.out = n_pars(object))
-        theta <- object@chain[i, j]
+        theta <- object@chain[i, seq_pars(object)]
+
+        ## Use Welford's [1] recurrence formulas to compute the
+        ## covariance, described in Knuth [2].
+        ##
+        ## [1] Welford, B. P. (1962). "Note on a method for
+        ##     calculating corrected sums of squares and
+        ##     products". Technometrics. 4 (3):
+        ##     419–420. doi:10.2307/1266577. JSTOR 1266577.
+        ##
+        ## [2] Donald E. Knuth (1998). The Art of Computer
+        ##     Programming, volume 2: Seminumerical Algorithms, 3rd
+        ##     edn., p. 232. Boston: Addison-Wesley.
+        M <- as.numeric(object@chain[1, seq_pars(object)])
+        S <- matrix(0, nrow = length(M), ncol = length(M))
+        for (k in seq_len(i)[-1]) {
+            tmp <- as.numeric(object@chain[k, seq_pars(object)]) - M
+            M <- M + tmp / k
+            S <- S + tcrossprod(
+                         tmp,
+                         as.numeric(object@chain[k, seq_pars(object)]) - M)
+        }
+
+        if (i > 1) {
+            covmat <- S / (i - 1)
+        } else {
+            covmat <- matrix(0, nrow = length(M), ncol = length(M))
+        }
 
         for (i in iterations) {
             ## Proposal
@@ -595,7 +634,8 @@ setMethod(
             pf <- NULL
             proposal <- pmcmc_proposal(x = object,
                                        i = i,
-                                       n_accepted = n_accepted)
+                                       n_accepted = n_accepted,
+                                       covmat = covmat)
             logPrior_prop <- dpriors(proposal, object@priors)
 
             if (is.finite(logPrior_prop)) {
@@ -627,6 +667,10 @@ setMethod(
 
             ## Save current value of chain.
             object@chain[i, ] <- c(logPost, logLik, logPrior, accept, theta)
+            tmp <- theta - M
+            M <- M + tmp / i
+            S <- S + tcrossprod(tmp, (theta - M))
+            covmat <- S / (i - 1)
             if (is.function(post_particle))
                 post_particle(object, pf, i)
 

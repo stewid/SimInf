@@ -110,10 +110,10 @@ res <- assertError(pfilter(model = model,
 check_error(res, "'n_particles' must be an integer > 1.")
 
 ## Check the C utility function to split events.
-res <- assertError(.Call(SimInf:::SimInf_split_events, 1, 1L))
+res <- assertError(.Call(SimInf:::SimInf_split_events, integer(0), 1L))
 check_error(res, "'t' must be an integer vector with length >= 1.")
 
-res <- assertError(.Call(SimInf:::SimInf_split_events, 1L, 1))
+res <- assertError(.Call(SimInf:::SimInf_split_events, 1L, integer(0)))
 check_error(res, "'t_end' must be an integer vector with length >= 1.")
 
 stopifnot(identical(.Call(SimInf:::SimInf_split_events, 1L, 1L),

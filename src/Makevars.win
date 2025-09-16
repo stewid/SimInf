@@ -17,10 +17,9 @@ OBJECTS.models = $(SOURCE.models:.c=.o)
 SOURCE.misc = $(wildcard misc/*.c)
 OBJECTS.misc = $(SOURCE.misc:.c=.o)
 
-OBJECTS.solvers = solvers/SimInf_solver.o \
-                  solvers/aem/SimInf_solver_aem.o \
-                  solvers/mssm/SimInf_solver_mssm.o \
-                  solvers/ssm/SimInf_solver_ssm.o
+# List all solver files to compile
+SOURCE.solvers = $(wildcard solvers/*.c)
+OBJECTS.solvers = $(SOURCE.solvers:.c=.o)
 
 OBJECTS = init.o SimInf.o $(OBJECTS.solvers) $(OBJECTS.misc) $(OBJECTS.models)
 

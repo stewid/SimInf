@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2024 Stefan Widgren
+ * Copyright (C) 2015 -- 2025 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SIMINF_SOLVER_H
-#define INCLUDE_SIMINF_SOLVER_H
+#pragma once
 
-#include <gsl/gsl_rng.h>
-
-#include "misc/kvec.h"
 #include "SimInf.h"
+#include "misc/kvec.h"
+#include <Rinternals.h>
+#include <gsl/gsl_rng.h>
 
 /* Structure to hold data/arguments to a SimInf solver.
  *
@@ -42,8 +41,7 @@
  * state vector.
  *
 */
-typedef struct SimInf_solver_args
-{
+typedef struct SimInf_solver_args {
     /* Initial state vector u0. Integer (Nc X Nn). Gives the initial
      * number of individuals in each compartment in every node. */
     const int *u0;
@@ -201,8 +199,7 @@ typedef struct SimInf_solver_args
 /**
  * Structure with data for a scheduled event.
  */
-typedef struct SimInf_scheduled_event
-{
+typedef struct SimInf_scheduled_event {
     int event;         /**< The type of the event. */
     int time;          /**< The time for the event. */
     int node;          /**< The source node of the event. */
@@ -222,13 +219,14 @@ typedef struct SimInf_scheduled_event
                         *   and external transfer event. */
 } SimInf_scheduled_event;
 
-typedef kvec_t(SimInf_scheduled_event) SimInf_events_t;
+typedef
+kvec_t(
+    SimInf_scheduled_event) SimInf_events_t;
 
 /**
  * Structure with data to process scheduled events.
  */
-typedef struct SimInf_scheduled_events
-{
+typedef struct SimInf_scheduled_events {
     /*** Constants ***/
     int Nthread;          /**< Number of threads. */
 
@@ -258,8 +256,7 @@ typedef struct SimInf_scheduled_events
 /**
  * Structure to hold thread specific data/arguments for simulation.
  */
-typedef struct SimInf_compartment_model
-{
+typedef struct SimInf_compartment_model {
     /*** Constants ***/
     int Nthread; /**< Number of threads. */
     int Ntot;  /**< Total number of nodes. */
@@ -316,7 +313,7 @@ typedef struct SimInf_compartment_model
     const int *jcU;   /**< If the solution is written to a sparse
                        *   matrix, index to data of first non-zero
                        *   element in row k. */
-    double    *prU;   /**< If the solution is written to a sparse
+    double *prU;      /**< If the solution is written to a sparse
                        *   matrix, value of item (i, j) in U. */
     double *v;        /**< Vector with the continuous state in each
                        *   node in the thread. */
@@ -333,7 +330,7 @@ typedef struct SimInf_compartment_model
     const int *jcV;   /**< If the solution is written to a sparse
                        *   matrix, index to data of first non-zero
                        *   element in row k. */
-    double    *prV;   /**< If the solution is written to a sparse
+    double *prV;      /**< If the solution is written to a sparse
                        *   matrix, value of item (i, j) in V. */
     const double *ldata; /**< Matrix (Nld X Nn). ldata(:,j) gives a
                           *   local data vector for node #j. */
@@ -351,26 +348,46 @@ typedef struct SimInf_compartment_model
                          *   ok. */
 } SimInf_compartment_model;
 
-int SimInf_compartment_model_create(
-    SimInf_compartment_model **out, SimInf_solver_args *args);
+int
+SimInf_arg_check_dgCMatrix(
+    SEXP arg);
 
-void SimInf_compartment_model_free(
+int
+SimInf_arg_check_integer(
+    SEXP arg);
+
+int
+SimInf_arg_check_integer_gt_zero(
+    SEXP arg);
+
+int
+SimInf_arg_check_matrix(
+    SEXP arg);
+
+int
+SimInf_arg_check_model(
+    SEXP arg);
+
+int
+SimInf_compartment_model_create(
+    SimInf_compartment_model **out,
+    SimInf_solver_args *args);
+
+void
+SimInf_compartment_model_free(
     SimInf_compartment_model *model);
 
-int SimInf_scheduled_events_create(
-    SimInf_scheduled_events **out, SimInf_solver_args *args, gsl_rng *rng);
+int
+SimInf_get_solver(
+    int *out,
+    SEXP solver);
 
-void SimInf_scheduled_events_free(
-    SimInf_scheduled_events *events);
+int
+SimInf_num_threads(
+    void);
 
-void SimInf_process_events(
-    SimInf_compartment_model *model,
-    SimInf_scheduled_events *events,
-    int process_E2);
-
-void SimInf_store_solution_sparse(SimInf_compartment_model *model);
-
-void SimInf_print_status(
+void
+SimInf_print_status(
     const int Nc,
     const int *u,
     const int Nd,
@@ -382,4 +399,59 @@ void SimInf_print_status(
     const double rate,
     const int transition);
 
-#endif
+void
+SimInf_process_events(
+    SimInf_compartment_model *model,
+    SimInf_scheduled_events *events,
+    int process_E2);
+
+int
+SimInf_run_solver_aem(
+    SimInf_solver_args *args);
+
+int
+SimInf_run_solver_mssm(
+    SimInf_solver_args *args);
+
+int
+SimInf_run_solver_ssm(
+    SimInf_solver_args *args);
+
+int
+SimInf_scheduled_events_create(
+    SimInf_scheduled_events **out,
+    const SimInf_solver_args *args,
+    gsl_rng *rng);
+
+void
+SimInf_scheduled_events_free(
+    SimInf_scheduled_events *events);
+
+int
+SimInf_set_num_threads(
+    int threads);
+
+int
+SimInf_sparse(
+    SEXP m,
+    ptrdiff_t i,
+    ptrdiff_t j);
+
+void
+SimInf_store_solution_sparse(
+    SimInf_compartment_model *model);
+
+void
+initialize_heap(
+    double *data,
+    int *INDEX,
+    int *INDEX2,
+    int N);
+
+void
+update(
+    int node,
+    double *data,
+    int *INDEX,
+    int *INDEX2,
+    int N);

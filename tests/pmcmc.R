@@ -201,7 +201,59 @@ summary_expected <- c(
 summary_observed <- capture.output(summary(fit))
 stopifnot(identical(summary_observed, summary_expected))
 
+df_expected <- data.frame(
+    beta = c(0.16, 0.16, 0.151684128334327, 0.167494206136944,
+             0.167494206136944),
+    gamma = c(0.077, 0.077, 0.0692266474978343, 0.0788292483376109,
+              0.0788292483376109))
+df_observed <- as.data.frame(fit)
+stopifnot(all(abs(df_observed$beta - df_expected$beta) < tol))
+stopifnot(all(abs(df_observed$gamma - df_expected$gamma) < tol))
+
 stopifnot(isTRUE(SimInf:::valid_SimInf_pmcmc_object(fit)))
+
+## Check that pmcmc fails when it is created from chain data and theta
+## is also provided.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          n_particles = 10,
+          n_iterations = 5,
+          theta = c(beta = 0.16, gamma = 0.077),
+          chain = fit@chain))
+check_error(
+    res,
+    "'theta' must be NULL when 'chain' is provided.")
+
+## Check that pmcmc fails when it is created from chain data and chain
+## does not contain all columns.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          n_particles = 10,
+          n_iterations = 5,
+          chain = fit@chain[, -5]))
+check_error(
+    res,
+    "Missing columns in 'chain'.")
+
+## Check that pmcmc fails when it is created from chain data and chain
+## contains no rows.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          n_particles = 10,
+          n_iterations = 5,
+          chain = fit@chain[0, ]))
+check_error(
+    res,
+    "'chain' must contain at least one row.")
 
 fit@adaptmix <- 1:2
 stopifnot(identical(SimInf:::valid_SimInf_pmcmc_object(fit),
@@ -301,3 +353,6 @@ fit@target <- "gdata"
 stopifnot(all(
     abs(SimInf:::set_proposal(fit, c(beta = 0.5, gamma = 0.6)) -
         c(beta = 0.5, gamma = 0.6)) < tol))
+
+stopifnot(identical(SimInf:::get_verbose(TRUE), 100L))
+stopifnot(identical(SimInf:::get_verbose(50), 50L))

@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -120,14 +120,24 @@ setGeneric(
 ##'     \code{tspan[j]} etc, where \code{Nc} is the number of
 ##'     compartments in the model. The dimension of the matrix is
 ##'     \eqn{N_n N_c \times} \code{length(tspan)} where \eqn{N_n} is
-##'     the number of nodes.
+##'     the number of nodes. Since version 10, the internal format of
+##'     \code{U} has been expanded to also allow replicates of each
+##'     node. This new functionality is used by the bootstrap
+##'     filtering algorithm. Each replicate adds new columns to
+##'     \code{U} so that the data for each replicate is in blocks of
+##'     \code{length(tspan)} columns.
 ##' @section Internal format of the continuous state variables:
 ##'     Description of the layout of the matrix that is returned if
 ##'     \code{format = "matrix"}. The result matrix for the
 ##'     real-valued continuous state. \code{V[, j]} contains the
 ##'     real-valued state of the system at \code{tspan[j]}. The
 ##'     dimension of the matrix is \eqn{N_n}\code{dim(ldata)[1]}
-##'     \eqn{\times} \code{length(tspan)}.
+##'     \eqn{\times} \code{length(tspan)}. Since version 10, the
+##'     internal format of \code{V} has been expanded to also allow
+##'     replicates of each node. This new functionality is used by the
+##'     bootstrap filtering algorithm. Each replicate adds new columns
+##'     to \code{V} so that the data for each replicate is in blocks
+##'     of \code{length(tspan)} columns.
 ##' @param model the \code{SimInf_model} object to extract the result
 ##'     from.
 ##' @template compartments-param
@@ -135,8 +145,10 @@ setGeneric(
 ##' @param format the default (\code{format = "data.frame"}) is to
 ##'     generate a \code{data.frame} with one row per node and
 ##'     time-step with the number of individuals in each
-##'     compartment. Using \code{format = "matrix"} returns the result
-##'     as a matrix, which is the internal format (see
+##'     compartment. When the model contains multiple replicates of
+##'     each node, the \code{data.frame} also contains one column
+##'     \code{replicate}. Using \code{format = "matrix"} returns the
+##'     result as a matrix, which is the internal format (see
 ##'     \sQuote{Details}).
 ##' @return A \code{data.frame} if \code{format = "data.frame"}, else
 ##'     a matrix.
@@ -219,7 +231,8 @@ setMethod(
               attr(compartments$rhs$U, "available_compartments"),
               trajectory_data(model, "V"), compartments$rhs$V,
               attr(compartments$rhs$V, "available_compartments"),
-              model@tspan, n_nodes(model), index, "node")
+              model@tspan, n_nodes(model), index, "node",
+              n_replicates(model))
     }
 )
 

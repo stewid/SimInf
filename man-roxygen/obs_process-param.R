@@ -13,8 +13,10 @@
 ##'     observations given the simulated states. The first argument
 ##'     passed to the \code{obs_process} function is the result from a
 ##'     run of the model and it contains one trajectory with simulated
-##'     data for a time-point. The second argument to the
-##'     \code{obs_process} function is a \code{data.frame} containing
-##'     the rows for the specific time-point that the function is
-##'     called for. Note that the function must return the log of the
-##'     density.
+##'     data for a time-point, where the trajectory contains
+##'     \code{n_particles} replicates, see
+##'     \code{\link{trajectory,SimInf_model-method}}. The second
+##'     argument to the \code{obs_process} function is a
+##'     \code{data.frame} containing the rows for the specific
+##'     time-point that the function is called for. Note that the
+##'     function must return the log of the density.

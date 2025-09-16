@@ -21,45 +21,61 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <Rdefines.h>
-#include <R_ext/Visibility.h>
 #include "SimInf.h"
-#include "SimInf_openmp.h"
+#include "SimInf_internal.h"
 #include "kvec.h"
+#include <R_ext/Visibility.h>
+#include <Rdefines.h>
+#ifdef _OPENMP
+#  include <omp.h>
+#endif
 
+/* A data structure to keep track of which identifiers and times to
+ * extract when data is in sparse matrices. */
 typedef struct {
-    R_xlen_t id;
-    R_xlen_t time;
+    ptrdiff_t id;
+    ptrdiff_t time;
 } rowinfo_t;
 
-typedef struct {
-    size_t n, m;
-    rowinfo_t *a;
-} rowinfo_vec;
+typedef
+kvec_t(
+    rowinfo_t) rowinfo_vec;
 
+/* Extract identifiers and times when data is in a sparse matrix. */
 static int
 SimInf_insert_id_time(
     rowinfo_vec *ri,
     SEXP m,
-    R_xlen_t m_stride,
-    R_xlen_t tlen)
+    const ptrdiff_t m_stride,
+    const ptrdiff_t tlen,
+    const int *p_id,
+    const ptrdiff_t id_len)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
 
     if (m_stride < 1)
-        return -1;
+        return -1;              /* #nocov */
 
-    for (R_xlen_t t = 0; t < tlen; t++) {
-        R_xlen_t id_last = -1;
+    for (ptrdiff_t t = 0; t < tlen; t++) {
+        ptrdiff_t id_last = -1;
+        ptrdiff_t i = 0;
 
-        for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
-            R_xlen_t id = m_ir[j] / m_stride;
+        for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+            ptrdiff_t id = m_ir[j] / m_stride;
 
             if (id > id_last) {
-                rowinfo_t r = {id, t};
-                kv_push(rowinfo_t, *ri, r);
                 id_last = id;
+
+                if (p_id) {
+                    /* Note that the identifiers are one-based. */
+                    if (i >= id_len || id < (p_id[i] - 1))
+                        continue;
+                    i++;
+                }
+
+                rowinfo_t r = { id, t };
+                kv_push(rowinfo_t, *ri, r);
             }
         }
     }
@@ -72,9 +88,11 @@ SimInf_insert_id_time2(
     rowinfo_vec *ri,
     SEXP m1,
     SEXP m2,
-    R_xlen_t m1_stride,
-    R_xlen_t m2_stride,
-    R_xlen_t tlen)
+    const ptrdiff_t m1_stride,
+    const ptrdiff_t m2_stride,
+    const ptrdiff_t tlen,
+    const int *p_id,
+    const ptrdiff_t id_len)
 {
     const int *m1_ir = INTEGER(R_do_slot(m1, Rf_install("i")));
     const int *m2_ir = INTEGER(R_do_slot(m2, Rf_install("i")));
@@ -82,20 +100,21 @@ SimInf_insert_id_time2(
     const int *m2_jc = INTEGER(R_do_slot(m2, Rf_install("p")));
 
     if (m1_stride < 1 || m2_stride < 1)
-        return -1;
+        return -1;              /* #nocov */
 
-    for (R_xlen_t t = 0; t < tlen; t++) {
-        R_xlen_t id_last = -1;
-        R_xlen_t j1 = m1_jc[t];
-        R_xlen_t j2 = m2_jc[t];
+    for (ptrdiff_t t = 0; t < tlen; t++) {
+        ptrdiff_t id_last = -1;
+        ptrdiff_t i = 0;
+        ptrdiff_t j1 = m1_jc[t];
+        ptrdiff_t j2 = m2_jc[t];
 
         while (j1 < m1_jc[t + 1] || j2 < m2_jc[t + 1]) {
-            R_xlen_t id;
+            ptrdiff_t id;
 
             if (j1 < m1_jc[t + 1]) {
                 if (j2 < m2_jc[t + 1]) {
-                    R_xlen_t id1 = m1_ir[j1] / m1_stride;
-                    R_xlen_t id2 = m2_ir[j2] / m2_stride;
+                    ptrdiff_t id1 = m1_ir[j1] / m1_stride;
+                    ptrdiff_t id2 = m2_ir[j2] / m2_stride;
 
                     if (id1 < id2) {
                         id = id1;
@@ -112,14 +131,75 @@ SimInf_insert_id_time2(
             }
 
             if (id > id_last) {
-                rowinfo_t r = {id, t};
-                kv_push(rowinfo_t, *ri, r);
                 id_last = id;
+
+                if (p_id) {
+                    /* Note that the identifiers are one-based. */
+                    if (i >= id_len || id < (p_id[i] - 1))
+                        continue;
+                    i++;
+                }
+
+                rowinfo_t r = { id, t };
+                kv_push(rowinfo_t, *ri, r);
             }
         }
     }
 
     return 0;
+}
+
+static int
+SimInf_create_rowinfo(
+    rowinfo_vec **out,
+    SEXP dm,
+    SEXP cm,
+    const ptrdiff_t dm_i_len,
+    const ptrdiff_t cm_i_len,
+    const int dm_sparse,
+    const int cm_sparse,
+    const ptrdiff_t dm_stride,
+    const ptrdiff_t cm_stride,
+    const ptrdiff_t tlen,
+    const int *p_id,
+    const ptrdiff_t id_len)
+{
+    if (dm_i_len > 0 && cm_i_len > 0) {
+        if (dm_sparse && cm_sparse) {
+            *out = calloc(1, sizeof(rowinfo_vec));
+            if (!*out)
+                return -1;      /* #nocov */
+
+            return SimInf_insert_id_time2(*out, dm, cm, dm_stride,
+                                          cm_stride, tlen, p_id, id_len);
+        }
+    } else if (dm_i_len > 0 && dm_sparse) {
+        *out = calloc(1, sizeof(rowinfo_vec));
+        if (!*out)
+            return -1;          /* #nocov */
+
+        return SimInf_insert_id_time(*out, dm, dm_stride, tlen, p_id, id_len);
+    } else if (cm_i_len > 0 && cm_sparse) {
+        *out = calloc(1, sizeof(rowinfo_vec));
+        if (!*out)
+            return -1;          /* #nocov */
+
+        return SimInf_insert_id_time(*out, cm, cm_stride, tlen, p_id, id_len);
+    }
+
+    return 0;
+}
+
+static ptrdiff_t
+SimInf_number_of_rows(
+    const rowinfo_vec *ri,
+    const ptrdiff_t tlen,
+    const ptrdiff_t id_len,
+    const ptrdiff_t replicates)
+{
+    if (ri)
+        return kv_size(*ri);
+    return tlen * id_len * replicates;
 }
 
 static void
@@ -128,41 +208,39 @@ SimInf_sparse2df_int(
     rowinfo_vec *ri,
     SEXP m,
     const int *m_i,
-    R_xlen_t m_i_len,
-    R_xlen_t m_stride,
-    R_xlen_t nrow,
-    R_xlen_t tlen,
-    R_xlen_t n_id,
-    R_xlen_t col)
+    const ptrdiff_t m_i_len,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t nrow,
+    const ptrdiff_t tlen,
+    const ptrdiff_t n_id,
+    const ptrdiff_t col)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
     const double *m_x = REAL(R_do_slot(m, Rf_install("x")));
 
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    for (ptrdiff_t i = 0; i < m_i_len; i++) {
         SEXP vec;
-        int *p_vec;
-
-        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
-        p_vec = INTEGER(vec);
+        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(INTSXP, nrow));
+        int *p_vec = INTEGER(vec);
 
         if (ri) {
             size_t k = 0;
-            R_xlen_t p_vec_i = 0, j = 0;
+            ptrdiff_t p_vec_i = 0, j = 0;
 
             while (k < kv_size(*ri)) {
-                R_xlen_t p_time = kv_A(*ri, k).time;
+                ptrdiff_t p_time = kv_A(*ri, k).time;
 
                 while (m_jc[p_time] <= j && j < m_jc[p_time + 1]) {
                     /* Check if data for column. */
                     if (m_ir[j] % m_stride == (m_i[i] - 1)) {
-                        R_xlen_t m_id = m_ir[j] / m_stride;
+                        ptrdiff_t m_id = m_ir[j] / m_stride;
 
                         if (m_id < kv_A(*ri, k).id) {
-                            j++; /* Move on. */
+                            j++;        /* Move on. */
                         } else {
                             if (m_id == kv_A(*ri, k).id)
-                                p_vec[p_vec_i++] = m_x[j++];
+                                p_vec[p_vec_i++] = (int) m_x[j++];
                             else
                                 p_vec[p_vec_i++] = NA_INTEGER;
 
@@ -170,7 +248,7 @@ SimInf_sparse2df_int(
                                 break;
                         }
                     } else {
-                        j++; /* Move on. */
+                        j++;    /* Move on. */
                     }
                 }
 
@@ -180,20 +258,20 @@ SimInf_sparse2df_int(
                 }
             }
         } else {
-            #ifdef _OPENMP
-            #  pragma omp parallel for num_threads(SimInf_num_threads())
-            #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                R_xlen_t id = 0;
+#ifdef _OPENMP
+#  pragma omp parallel for num_threads(SimInf_num_threads())
+#endif
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                ptrdiff_t id = 0;
 
-                for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
                     if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
-                        R_xlen_t m_id = m_ir[j] / m_stride;
+                        ptrdiff_t m_id = m_ir[j] / m_stride;
 
                         for (; id < m_id; id++)
                             p_vec[t * n_id + id] = NA_INTEGER;
 
-                        p_vec[t * n_id + id] = m_x[j];
+                        p_vec[t * n_id + id] = (int) m_x[j];
                         id++;
                     }
                 }
@@ -211,38 +289,36 @@ SimInf_sparse2df_real(
     rowinfo_vec *ri,
     SEXP m,
     const int *m_i,
-    R_xlen_t m_i_len,
-    R_xlen_t m_stride,
-    R_xlen_t nrow,
-    R_xlen_t tlen,
-    R_xlen_t n_id,
-    R_xlen_t col)
+    const ptrdiff_t m_i_len,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t nrow,
+    const ptrdiff_t tlen,
+    const ptrdiff_t n_id,
+    const ptrdiff_t col)
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
     const double *m_x = REAL(R_do_slot(m, Rf_install("x")));
 
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
+    for (ptrdiff_t i = 0; i < m_i_len; i++) {
         SEXP vec;
-        double *p_vec;
-
-        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
-        p_vec = REAL(vec);
+        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(REALSXP, nrow));
+        double *p_vec = REAL(vec);
 
         if (ri) {
             size_t k = 0;
-            R_xlen_t p_vec_i = 0, j = 0;
+            ptrdiff_t p_vec_i = 0, j = 0;
 
             while (k < kv_size(*ri)) {
-                R_xlen_t p_time = kv_A(*ri, k).time;
+                ptrdiff_t p_time = kv_A(*ri, k).time;
 
                 while (m_jc[p_time] <= j && j < m_jc[p_time + 1]) {
                     /* Check if data for column. */
                     if (m_ir[j] % m_stride == (m_i[i] - 1)) {
-                        R_xlen_t m_id = m_ir[j] / m_stride;
+                        ptrdiff_t m_id = m_ir[j] / m_stride;
 
                         if (m_id < kv_A(*ri, k).id) {
-                            j++; /* Move on. */
+                            j++;        /* Move on. */
                         } else {
                             if (m_id == kv_A(*ri, k).id)
                                 p_vec[p_vec_i++] = m_x[j++];
@@ -253,7 +329,7 @@ SimInf_sparse2df_real(
                                 break;
                         }
                     } else {
-                        j++; /* Move on. */
+                        j++;    /* Move on. */
                     }
                 }
 
@@ -263,15 +339,15 @@ SimInf_sparse2df_real(
                 }
             }
         } else {
-            #ifdef _OPENMP
-            #  pragma omp parallel for num_threads(SimInf_num_threads())
-            #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                R_xlen_t id = 0;
+#ifdef _OPENMP
+#  pragma omp parallel for num_threads(SimInf_num_threads())
+#endif
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                ptrdiff_t id = 0;
 
-                for (R_xlen_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+                for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
                     if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
-                        R_xlen_t m_id = m_ir[j] / m_stride;
+                        ptrdiff_t m_id = m_ir[j] / m_stride;
 
                         for (; id < m_id; id++)
                             p_vec[t * n_id + id] = NA_REAL;
@@ -293,42 +369,51 @@ SimInf_dense2df_int(
     SEXP dst,
     const int *m,
     const int *m_i,
-    R_xlen_t m_i_len,
-    R_xlen_t m_stride,
-    R_xlen_t nrow,
-    R_xlen_t tlen,
-    R_xlen_t id_len,
-    R_xlen_t id_n,
-    R_xlen_t col,
-    const int *p_id)
+    const ptrdiff_t m_i_len,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t nrow,
+    const ptrdiff_t tlen,
+    const ptrdiff_t id_len,
+    const ptrdiff_t id_n,
+    const ptrdiff_t col,
+    const int *p_id,
+    const ptrdiff_t replicates)
 {
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
-        SEXP vec;
-        int *p_vec;
+    for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const int *p_m = m + m_i[i] - 1;
 
-        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(INTSXP, nrow));
-        p_vec = INTEGER(vec);
+        SEXP vec;
+        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(INTSXP, nrow));
+        int *p_vec = INTEGER(vec);
 
         if (p_id != NULL) {
             /* Note that the identifiers are one-based. */
-            #ifdef _OPENMP
-            #  pragma omp parallel for num_threads(SimInf_num_threads())
-            #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t j = 0; j < id_len; j++) {
-                    p_vec[t * id_len + j] =
-                        p_m[(t * id_n + p_id[j] - 1) * m_stride];
+#ifdef _OPENMP
+#  pragma omp parallel for num_threads(SimInf_num_threads())
+#endif
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                const ptrdiff_t j1 = t * id_len;
+                const ptrdiff_t j2 = t * id_n;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k1 = r * tlen * id_len;
+                    const ptrdiff_t k2 = r * tlen * id_n;
+                    for (ptrdiff_t l = 0; l < id_len; l++) {
+                        p_vec[j1 + k1 + l] =
+                            p_m[(j2 + k2 + p_id[l] - 1) * m_stride];
+                    }
                 }
             }
         } else {
-            #ifdef _OPENMP
-            #  pragma omp parallel for num_threads(SimInf_num_threads())
-            #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t j = 0; j < id_len; j++) {
-                    p_vec[t * id_len + j] =
-                        p_m[(t * id_n + j) * m_stride];
+#ifdef _OPENMP
+#  pragma omp parallel for num_threads(SimInf_num_threads())
+#endif
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                const ptrdiff_t j = t * id_len;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k = r * tlen * id_len;
+                    for (ptrdiff_t l = 0; l < id_len; l++) {
+                        p_vec[j + k + l] = p_m[(j + k + l) * m_stride];
+                    }
                 }
             }
         }
@@ -340,42 +425,51 @@ SimInf_dense2df_real(
     SEXP dst,
     const double *m,
     const int *m_i,
-    R_xlen_t m_i_len,
-    R_xlen_t m_stride,
-    R_xlen_t nrow,
-    R_xlen_t tlen,
-    R_xlen_t id_len,
-    R_xlen_t id_n,
-    R_xlen_t col,
-    const int *p_id)
+    const ptrdiff_t m_i_len,
+    const ptrdiff_t m_stride,
+    const ptrdiff_t nrow,
+    const ptrdiff_t tlen,
+    const ptrdiff_t id_len,
+    const ptrdiff_t id_n,
+    const ptrdiff_t col,
+    const int *p_id,
+    const ptrdiff_t replicates)
 {
-    for (R_xlen_t i = 0; i < m_i_len; i++) {
-        SEXP vec;
-        double *p_vec;
+    for (ptrdiff_t i = 0; i < m_i_len; i++) {
         const double *p_m = m + m_i[i] - 1;
 
-        SET_VECTOR_ELT(dst, col++, vec = Rf_allocVector(REALSXP, nrow));
-        p_vec = REAL(vec);
+        SEXP vec;
+        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(REALSXP, nrow));
+        double *p_vec = REAL(vec);
 
         if (p_id != NULL) {
             /* Note that the node identifiers are one-based. */
-            #ifdef _OPENMP
-            #  pragma omp parallel for num_threads(SimInf_num_threads())
-            #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t j = 0; j < id_len; j++) {
-                    p_vec[t * id_len + j] =
-                        p_m[(t * id_n + p_id[j] - 1) * m_stride];
+#ifdef _OPENMP
+#  pragma omp parallel for num_threads(SimInf_num_threads())
+#endif
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                const ptrdiff_t j1 = t * id_len;
+                const ptrdiff_t j2 = t * id_n;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k1 = r * tlen * id_len;
+                    const ptrdiff_t k2 = r * tlen * id_n;
+                    for (ptrdiff_t l = 0; l < id_len; l++) {
+                        p_vec[j1 + k1 + l] =
+                            p_m[(j2 + k2 + p_id[l] - 1) * m_stride];
+                    }
                 }
             }
         } else {
-            #ifdef _OPENMP
-            #  pragma omp parallel for num_threads(SimInf_num_threads())
-            #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t j = 0; j < id_len; j++) {
-                    p_vec[t * id_len + j] =
-                        p_m[(t * id_n + j) * m_stride];
+#ifdef _OPENMP
+#  pragma omp parallel for num_threads(SimInf_num_threads())
+#endif
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                const ptrdiff_t j = t * id_len;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k = r * tlen * id_len;
+                    for (ptrdiff_t l = 0; l < id_len; l++) {
+                        p_vec[j + k + l] = p_m[(j + k + l) * m_stride];
+                    }
                 }
             }
         }
@@ -402,10 +496,11 @@ SimInf_dense2df_real(
  *        identifiers to include in the data.frame.
  * @param id_lbl character vector of length one with the name of the
  *        identifier column.
+ * @param n_replicates the number of replicates in the model. This is
+ *        only used when dm and/or cm are dense matrices.
  * @return A data.frame.
  */
-attribute_hidden
-SEXP
+attribute_hidden SEXP
 SimInf_trajectory(
     SEXP dm,
     SEXP dm_i,
@@ -416,43 +511,49 @@ SimInf_trajectory(
     SEXP tspan,
     SEXP id_n,
     SEXP id,
-    SEXP id_lbl)
+    SEXP id_lbl,
+    SEXP n_replicates)
 {
-    SEXP colnames, result, vec;
-    int error = 0;
+    int err = 0;
     int nprotect = 0;
-    int *p_vec;
-    int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
-    R_xlen_t dm_i_len = XLENGTH(dm_i);
-    R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
-    int dm_sparse = Rf_isS4(dm) && Rf_inherits(dm, "dgCMatrix") ? 1 : 0;
-    R_xlen_t cm_i_len = XLENGTH(cm_i);
-    R_xlen_t cm_stride = Rf_isNull(cm_lbl) ? 0 : XLENGTH(cm_lbl);
-    int cm_sparse = Rf_isS4(cm) && Rf_inherits(cm, "dgCMatrix") ? 1 : 0;
-    R_xlen_t tlen = XLENGTH(tspan);
-    R_xlen_t c_id_n = Rf_asInteger(id_n);
-    R_xlen_t id_len = Rf_isNull(id) ? c_id_n : XLENGTH(id);
-    R_xlen_t nrow = tlen * id_len;
-    R_xlen_t ncol = 2 + dm_i_len + cm_i_len; /* The '2' is for the
-                                              * 'identifier' and
-                                              * 'time' columns. */
-    rowinfo_vec *ri = NULL;
+    const int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
+    const R_xlen_t dm_i_len = XLENGTH(dm_i);
+    const R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
+    const int dm_sparse = Rf_isS4(dm)
+        && Rf_inherits(dm, "dgCMatrix") ? 1 : 0;
+    const R_xlen_t cm_i_len = XLENGTH(cm_i);
+    const R_xlen_t cm_stride = Rf_isNull(cm_lbl) ? 0 : XLENGTH(cm_lbl);
+    const int cm_sparse = Rf_isS4(cm)
+        && Rf_inherits(cm, "dgCMatrix") ? 1 : 0;
+    const R_xlen_t tlen = XLENGTH(tspan);
+    const R_xlen_t c_id_n = Rf_asInteger(id_n);
+    const R_xlen_t id_len = Rf_isNull(id) ? c_id_n : XLENGTH(id);
+    const R_xlen_t replicates = Rf_asInteger(n_replicates);
+
+    /* Determine the number of columns in the resulting
+     * data.frame. The '2' is for the identifier' and 'time'
+     * columns. The '(replicates > 1)' is to add a column for the
+     * replicate of an identifer and time. */
+    const R_xlen_t ncol = 2 + (replicates > 1) + dm_i_len + cm_i_len;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
 
     /* Create a vector for the column names. */
-    PROTECT(colnames = Rf_allocVector(STRSXP, ncol));
+    SEXP colnames = PROTECT(Rf_allocVector(STRSXP, ncol));
     nprotect++;
-    SET_STRING_ELT(colnames, 0, STRING_ELT(id_lbl, 0));
-    SET_STRING_ELT(colnames, 1, Rf_mkChar("time"));
-    for (R_xlen_t i = 0; i < dm_i_len; i++) {
-        R_xlen_t j = INTEGER(dm_i)[i] - 1;
-        SET_STRING_ELT(colnames, 2 + i, STRING_ELT(dm_lbl, j));
+    R_xlen_t col = 0;
+    SET_STRING_ELT(colnames, col++, STRING_ELT(id_lbl, 0));
+    SET_STRING_ELT(colnames, col++, Rf_mkChar("time"));
+    if (replicates > 1)
+        SET_STRING_ELT(colnames, col++, Rf_mkChar("replicate"));
+    for (ptrdiff_t i = 0; i < dm_i_len; i++) {
+        const R_xlen_t j = INTEGER(dm_i)[i] - 1;
+        SET_STRING_ELT(colnames, col++, STRING_ELT(dm_lbl, j));
     }
-    for (R_xlen_t i = 0; i < cm_i_len; i++) {
-        R_xlen_t j = INTEGER(cm_i)[i] - 1;
-        SET_STRING_ELT(colnames, 2 + dm_i_len + i, STRING_ELT(cm_lbl, j));
+    for (ptrdiff_t i = 0; i < cm_i_len; i++) {
+        const R_xlen_t j = INTEGER(cm_i)[i] - 1;
+        SET_STRING_ELT(colnames, col++, STRING_ELT(cm_lbl, j));
     }
 
     /* Determine the number of rows that is required for the
@@ -460,142 +561,129 @@ SimInf_trajectory(
      * full data.frame with one row per node and time point, else the
      * number of rows depends on unique combinations of identifier and
      * time information in the sparse matrices. */
-    if (dm_i_len > 0 && cm_i_len > 0) {
-        if (dm_sparse && cm_sparse) {
-            ri = calloc(1, sizeof(rowinfo_vec));
-            if (!ri) {
-                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-                goto cleanup;                           /* #nocov */
-            }
-
-            if (SimInf_insert_id_time2(ri, dm, cm, dm_stride, cm_stride, tlen)) {
-                error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-                goto cleanup;                           /* #nocov */
-            }
-
-            nrow = kv_size(*ri);
-        }
-    } else if (dm_i_len > 0 && dm_sparse) {
-        ri = calloc(1, sizeof(rowinfo_vec));
-        if (!ri) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-            goto cleanup;                           /* #nocov */
-        }
-
-        if (SimInf_insert_id_time(ri, dm, dm_stride, tlen)) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-            goto cleanup;                           /* #nocov */
-        }
-
-        nrow = kv_size(*ri);
-    } else if (cm_i_len > 0 && cm_sparse) {
-        ri = calloc(1, sizeof(rowinfo_vec));
-        if (!ri) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-            goto cleanup;                           /* #nocov */
-        }
-
-        if (SimInf_insert_id_time(ri, cm, cm_stride, tlen)) {
-            error = SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
-            goto cleanup;                           /* #nocov */
-        }
-
-        nrow = kv_size(*ri);
+    rowinfo_vec *ri = NULL;
+    if (SimInf_create_rowinfo(&ri, dm, cm, dm_i_len, cm_i_len, dm_sparse,
+                              cm_sparse, dm_stride, cm_stride, tlen, p_id,
+                              id_len)) {
+        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;   /* #nocov */
+        goto cleanup;           /* #nocov */
     }
+    const R_xlen_t nrow = SimInf_number_of_rows(ri, tlen, id_len, replicates);
 
     /* Create a list for the 'data.frame' and add colnames and a
      * 'data.frame' class attribute. */
-    PROTECT(result = Rf_allocVector(VECSXP, ncol));
+    SEXP result = PROTECT(Rf_allocVector(VECSXP, ncol));
     nprotect++;
     Rf_setAttrib(result, R_NamesSymbol, colnames);
     Rf_setAttrib(result, R_ClassSymbol, Rf_mkString("data.frame"));
 
     /* Add row names to the 'data.frame'. Note that the row names are
      * one-based. */
-    PROTECT(vec = Rf_allocVector(INTSXP, nrow));
+    SEXP vec = PROTECT(Rf_allocVector(INTSXP, nrow));
     nprotect++;
-    p_vec = INTEGER(vec);
-    #ifdef _OPENMP
-    #  pragma omp parallel for num_threads(SimInf_num_threads())
-    #endif
-    for (R_xlen_t i = 0; i < nrow; i++) {
-        p_vec[i] = i + 1;
+    int *p_vec = INTEGER(vec);
+#ifdef _OPENMP
+#  pragma omp parallel for num_threads(SimInf_num_threads())
+#endif
+    for (ptrdiff_t i = 0; i < nrow; i++) {
+        p_vec[i] = (int) (i + 1);
     }
     Rf_setAttrib(result, R_RowNamesSymbol, vec);
 
     /* Add an identifier column to the 'data.frame'. */
-    SET_VECTOR_ELT(result, 0, vec = Rf_allocVector(INTSXP, nrow));
+    col = 0;
+    SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(INTSXP, nrow));
     p_vec = INTEGER(vec);
     if (ri) {
         for (size_t i = 0; i < kv_size(*ri); i++)
             p_vec[i] = kv_A(*ri, i).id + 1;
-    } else if (p_id != NULL) {
-        #ifdef _OPENMP
-        #  pragma omp parallel for num_threads(SimInf_num_threads())
-        #endif
-        for (R_xlen_t t = 0; t < tlen; t++) {
-            memcpy(&p_vec[t * id_len], p_id, id_len * sizeof(int));
-        }
     } else {
-        #ifdef _OPENMP
-        #  pragma omp parallel for num_threads(SimInf_num_threads())
-        #endif
-        for (R_xlen_t t = 0; t < tlen; t++) {
-            for (R_xlen_t i = 0; i < id_len; i++)
-                p_vec[t * id_len + i] = i + 1;
+        for (ptrdiff_t t = 0; t < tlen; t++) {
+            const ptrdiff_t j = t * id_len;
+            for (ptrdiff_t r = 0; r < replicates; r++) {
+                const ptrdiff_t k = r * tlen * id_len;
+                if (p_id) {
+                    memcpy(&p_vec[j + k], p_id, id_len * sizeof(int));
+                } else {
+                    for (ptrdiff_t l = 0; l < id_len; l++)
+                        p_vec[j + k + l] = (int) (l + 1);
+                }
+            }
         }
     }
 
     /* Add a 'time' column to the 'data.frame'. */
     if (Rf_isNull(Rf_getAttrib(tspan, R_NamesSymbol))) {
-        double *p_tspan = REAL(tspan);
+        const double *p_tspan = REAL(tspan);
 
-        SET_VECTOR_ELT(result, 1, vec = Rf_allocVector(INTSXP, nrow));
+        SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(INTSXP, nrow));
         p_vec = INTEGER(vec);
         if (ri) {
             for (size_t i = 0; i < kv_size(*ri); i++)
-                p_vec[i] = p_tspan[kv_A(*ri, i).time];
+                p_vec[i] = (int) p_tspan[kv_A(*ri, i).time];
         } else {
-            #ifdef _OPENMP
-            #  pragma omp parallel for num_threads(SimInf_num_threads())
-            #endif
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++)
-                    p_vec[t * id_len + i] = p_tspan[t];
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                const ptrdiff_t j = t * id_len;
+                for (ptrdiff_t r = 0; r < replicates; r++) {
+                    const ptrdiff_t k = r * tlen * id_len;
+                    for (ptrdiff_t l = 0; l < id_len; l++)
+                        p_vec[j + k + l] = (int) p_tspan[t];
+                }
             }
         }
     } else {
         SEXP lbl_tspan = PROTECT(Rf_getAttrib(tspan, R_NamesSymbol));
         nprotect++;
 
-        SET_VECTOR_ELT(result, 1, vec = Rf_allocVector(STRSXP, nrow));
+        SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(STRSXP, nrow));
         if (ri) {
-            for (size_t i = 0; i < kv_size(*ri); i++)
-                SET_STRING_ELT(vec, i, STRING_ELT(lbl_tspan, kv_A(*ri, i).time));
-        } else {
-            for (R_xlen_t t = 0; t < tlen; t++) {
-                for (R_xlen_t i = 0; i < id_len; i++)
-                    SET_STRING_ELT(vec, t * id_len + i, STRING_ELT(lbl_tspan, t));
+            for (ptrdiff_t i = 0; i < kv_size(*ri); i++) {
+                SET_STRING_ELT(vec, i,
+                               STRING_ELT(lbl_tspan, kv_A(*ri, i).time));
             }
+        } else {
+            for (ptrdiff_t t = 0; t < tlen; t++) {
+                for (ptrdiff_t i = 0; i < id_len; i++) {
+                    SET_STRING_ELT(vec, t * id_len + i,
+                                   STRING_ELT(lbl_tspan, t));
+                }
+            }
+        }
+    }
+
+    if (replicates > 1) {
+        SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(INTSXP, nrow));
+        p_vec = INTEGER(vec);
+#ifdef _OPENMP
+#  pragma omp parallel for num_threads(SimInf_num_threads())
+#endif
+        for (ptrdiff_t r = 0; r < replicates; r++) {
+            const ptrdiff_t n = tlen * id_len;
+            const ptrdiff_t j = r * n;
+            for (ptrdiff_t i = 0; i < n; i++)
+                p_vec[j + i] = (int) (r + 1);
         }
     }
 
     /* Copy data from the discrete state matrix. */
     if (dm_sparse) {
         SimInf_sparse2df_int(result, ri, dm, INTEGER(dm_i), dm_i_len,
-                             dm_stride, nrow, tlen, id_len, 2);
+                             dm_stride, nrow, tlen, id_len, col);
     } else {
         SimInf_dense2df_int(result, INTEGER(dm), INTEGER(dm_i), dm_i_len,
-                            dm_stride, nrow, tlen, id_len, c_id_n, 2, p_id);
+                            dm_stride, nrow, tlen, id_len, c_id_n, col, p_id,
+                            replicates);
     }
 
     /* Copy data from the continuous state matrix. */
+    col += dm_i_len;
     if (cm_sparse) {
         SimInf_sparse2df_real(result, ri, cm, INTEGER(cm_i), cm_i_len,
-                              cm_stride, nrow, tlen, id_len, 2 + dm_i_len);
+                              cm_stride, nrow, tlen, id_len, col);
     } else {
-        SimInf_dense2df_real(result, REAL(cm), INTEGER(cm_i), cm_i_len, cm_stride,
-                             nrow, tlen, id_len, c_id_n, 2 + dm_i_len, p_id);
+        SimInf_dense2df_real(result, REAL(cm), INTEGER(cm_i), cm_i_len,
+                             cm_stride, nrow, tlen, id_len, c_id_n, col, p_id,
+                             replicates);
     }
 
 cleanup:
@@ -607,8 +695,8 @@ cleanup:
     if (nprotect)
         UNPROTECT(nprotect);
 
-    if (error)
-        Rf_error("Unable to allocate memory buffer."); /* #nocov */
+    if (err)
+        Rf_error("Unable to allocate memory buffer.");  /* #nocov */
 
     return result;
 }

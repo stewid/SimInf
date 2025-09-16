@@ -1,6 +1,30 @@
 # SimInf (development version)
 
+## BREAKING CHANGES
+
+Backwards incompatible changes that are the reason why the major
+version has been incremented.
+
+* Redesigned the S4 class SimInf_pfilter and the interface to using
+  the bootstrap filtering algorithm, see the documentation for the
+  `pfilter` function. Moreover, a variant of the split-step solver
+  (ssm) was added to efficiently simulate multiple particles in one
+  trajectory (mssm).
+
+* The slot `replicates` was added to the `SimInf_model`. The slot
+  `replicates` holds the number of replicates of each node in a
+  model. This new functionality is used by the bootstrap filtering
+  algorithm.
+
 ## CHANGES OR IMPROVEMENTS
+
+* Added functionality to fit models to time series data using the
+  Particle Markov Chain Monte Carlo ('PMCMC') algorithm of Andrieu and
+  others (2010)
+  [doi:10.1111/j.1467-9868.2009.00736.x](https://doi.org/10.1111/j.1467-9868.2009.00736.x).
+
+* The model parser (`mparse`) now allows the global data vector
+  `gdata` to have parameters without a name.
 
 * On Windows, use gsl from the system, via pkg-config when available.
 
@@ -13,6 +37,12 @@
   added to facilitate indexing 'u' and 'v' in the C code.
   Additionally, enumeration values are added to all enumeration
   constants.
+
+* Static code analysis of the C codebase has been performed using the
+  `clang-tidy` and `cppcheck` tools in order to improve code.
+
+* The `GNU Indent` program has been used to style the C code for
+  consistency and readability.
 
 # SimInf 9.8.1 (2024-06-21)
 
@@ -192,8 +222,8 @@ version has been incremented.
 
 * Added functionality to fit models to time series data using the
   Approximate Bayesian Computation Sequential Monte Carlo ('ABC-SMC')
-  algorithm of Toni and others (2009) [doi:
-  10.1098/rsif.2008.0172](https://doi.org/10.1098/rsif.2008.0172).
+  algorithm of Toni and others (2009)
+  [doi:10.1098/rsif.2008.0172](https://doi.org/10.1098/rsif.2008.0172).
 
 * Added a vignette about scheduled events. This vignette is
   work-in-progress and not yet complete.

@@ -17,7 +17,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_indiv_events"}
+##' Class \code{"SimInf_individual_events"}
 ##'
 ##' @slot id an integer or character identifier of the individual.
 ##' @slot event four event types are supported: \emph{exit},
@@ -36,7 +36,7 @@
 ##'     node.
 ##' @export
 setClass(
-    "SimInf_indiv_events",
+    "SimInf_individual_events",
     slots = c(id    = "ANY",
               event = "integer",
               time  = "integer",
@@ -45,19 +45,19 @@ setClass(
     )
 )
 
-##' Check if a SimInf_indiv_events object is valid
+##' Check if a SimInf_individual_events object is valid
 ##'
-##' @param object The SimInf_indiv_events object to check.
+##' @param object The SimInf_individual_events object to check.
 ##' @noRd
-valid_SimInf_indiv_events <- function(object) {
+valid_SimInf_individual_events <- function(object) {
     TRUE
 }
 
 ## Assign the function as the validity method for the class.
-setValidity("SimInf_indiv_events", valid_SimInf_indiv_events)
+setValidity("SimInf_individual_events", valid_SimInf_individual_events)
 
 setAs(
-    from = "SimInf_indiv_events",
+    from = "SimInf_individual_events",
     to = "data.frame",
     def = function(from) {
         events <- data.frame(id    = from@id,
@@ -84,22 +84,22 @@ setAs(
 
 ##' Coerce to data frame
 ##'
-##' @method as.data.frame SimInf_indiv_events
+##' @method as.data.frame SimInf_individual_events
 ##'
 ##' @inheritParams base::as.data.frame
 ##' @export
-as.data.frame.SimInf_indiv_events <- function(x, ...) {
+as.data.frame.SimInf_individual_events <- function(x, ...) {
     methods::as(x, "data.frame")
 }
 
-##' Print summary of a \code{SimInf_indiv_events} object
+##' Print summary of a \code{SimInf_individual_events} object
 ##'
-##' @param object The \code{SimInf_indiv_events} object.
+##' @param object The \code{SimInf_individual_events} object.
 ##' @return \code{invisible(object)}.
 ##' @export
 setMethod(
     "show",
-    signature(object = "SimInf_indiv_events"),
+    signature(object = "SimInf_individual_events"),
     function(object) {
         cat(sprintf(
             paste0("Number of individuals: %i\n",
@@ -112,15 +112,15 @@ setMethod(
     }
 )
 
-##' Detailed summary of a \code{SimInf_indiv_events} object
+##' Detailed summary of a \code{SimInf_individual_events} object
 ##'
-##' @param object The \code{SimInf_indiv_events} object
+##' @param object The \code{SimInf_individual_events} object
 ##' @param ... Additional arguments affecting the summary produced.
 ##' @return None (invisible 'NULL').
 ##' @export
 setMethod(
     "summary",
-    signature(object = "SimInf_indiv_events"),
+    signature(object = "SimInf_individual_events"),
     function(object, ...) {
         show(object)
 
@@ -249,6 +249,15 @@ check_indiv_events_nodes <- function(event, node, dest) {
          call. = FALSE)
 }
 
+##' Compare two vectors and return TRUE wherever elements are the
+##' same, including NA's, and FALSE everywhere else.
+##' @noRd
+compareNA <- function(x, y) {
+    z <- (x == y) | (is.na(x) & is.na(y))
+    z[is.na(z)] <- FALSE
+    z
+}
+
 ##' Individual events
 ##'
 ##' In many countries, individual-based livestock data are collected
@@ -279,7 +288,7 @@ check_indiv_events_nodes <- function(event, node, dest) {
 ##' @param events a \code{data.frame} with the columns `id`, `event`,
 ##'     `time`, `node`, and `dest` to define the events, see
 ##'     `details`.
-##' @return \linkS4class{SimInf_indiv_events}
+##' @return \linkS4class{SimInf_individual_events}
 ##' @export
 ##' @seealso \code{\link{node_events}}.
 ##' @md
@@ -298,9 +307,21 @@ individual_events <- function(events) {
     nodes <- check_indiv_events_nodes(event, events$node, events$dest)
 
     ## Ensure the events are sorted.
-    i <- order(id, time, event)
+    i <- order(id, time, event, nodes$node, nodes$dest)
 
-    keep <- .Call(SimInf_clean_indiv_events,
+    ## Remove duplicated events.
+    if (length(i) > 1L) {
+        j <- i[-1L]
+        k <- i[-length(i)]
+        d <- compareNA(id[j], id[k]) &
+            compareNA(time[j], time[k]) &
+            compareNA(event[j], event[k]) &
+            compareNA(nodes$node[j], nodes$node[k]) &
+            compareNA(nodes$dest[j], nodes$dest[k])
+        i <- i[!d]
+    }
+
+    keep <- .Call(SimInf_individual_events,
                   id[i],
                   event[i],
                   time[i],
@@ -317,7 +338,7 @@ individual_events <- function(events) {
     if (!is.null(origin))
         attr(event, "origin") <- origin
 
-    methods::new("SimInf_indiv_events",
+    methods::new("SimInf_individual_events",
                  id    = events$id[i][keep],
                  event = event,
                  time  = time,
@@ -355,12 +376,12 @@ indiv_events_time <- function(events, time) {
     stop(msg, call. = FALSE)
 }
 
-##' Extract individuals from \code{SimInf_indiv_events}
+##' Extract individuals from \code{SimInf_individual_events}
 ##'
 ##' Lookup individuals, in which node they are located and their age
 ##' at a specified time-point.
 ##' @param x an individual events object of class
-##'     \code{SimInf_indiv_events}.
+##'     \code{SimInf_individual_events}.
 ##' @param time the time-point for the lookup of individuals. Default
 ##'     is \code{NULL} which means to extract the individuals at the
 ##'     minimum time-point in the events object \code{x}.
@@ -379,7 +400,7 @@ setGeneric(
 ##' @export
 setMethod(
     "get_individuals",
-    signature(x = "SimInf_indiv_events"),
+    signature(x = "SimInf_individual_events"),
     function(x, time = NULL) {
         ## Check that all individuals have an enter event.
         if (length(setdiff(x@id, x@id[x@event == 1L])))
@@ -413,11 +434,11 @@ setMethod(
 ##' @template plot-frame-param
 ##' @param ... Other graphical parameters that are passed on to the
 ##'     plot function.
-##' @aliases plot,SimInf_indiv_events-method
+##' @aliases plot,SimInf_individual_events-method
 ##' @export
 setMethod(
     "plot",
-    signature(x = "SimInf_indiv_events"),
+    signature(x = "SimInf_individual_events"),
     function(x, frame.plot = FALSE, ...) {
         savepar <- graphics::par(mfrow = c(2, 2),
                                  oma = c(1, 1, 2, 0),
@@ -569,11 +590,11 @@ events_target <- function(events, target) {
 ##' \code{select=4,5,6} for all other events.
 ##'
 ##' @param x an individual events object of class
-##'     \code{SimInf_indiv_events}.
+##'     \code{SimInf_individual_events}.
 ##' @param time All events that occur after \sQuote{time} are
 ##'     included. Default is \code{NULL} which means to extract the
 ##'     events after the minimum time-point in the
-##'     \code{SimInf_indiv_events} object.
+##'     \code{SimInf_individual_events} object.
 ##' @param target The SimInf model ('SEIR', 'SIR', 'SIS', 'SISe3',
 ##'     'SISe3_sp', 'SISe', or 'SISe_sp') to target the events and u0
 ##'     for. The default, \code{NULL}, creates events but they might
@@ -597,7 +618,7 @@ setGeneric(
 ##' @export
 setMethod(
     "node_events",
-    signature(x = "SimInf_indiv_events"),
+    signature(x = "SimInf_individual_events"),
     function(x, time = NULL, target = NULL, age = NULL) {
         age <- check_age(age)
         target <- check_target(target, age)
@@ -719,9 +740,21 @@ events_to_tex <- function(events) {
     nodes$dest <- as.integer(factor(nodes$dest, levels = levels))
 
     ## Ensure the events are sorted.
-    i <- order(id, time, event)
+    i <- order(id, time, event, nodes$node, nodes$dest)
 
-    keep <- .Call(SimInf_clean_indiv_events,
+    ## Remove duplicated events.
+    if (length(i) > 1L) {
+        j <- i[-1L]
+        k <- i[-length(i)]
+        d <- compareNA(id[j], id[k]) &
+            compareNA(time[j], time[k]) &
+            compareNA(event[j], event[k]) &
+            compareNA(nodes$node[j], nodes$node[k]) &
+            compareNA(nodes$dest[j], nodes$dest[k])
+        i <- i[!d]
+    }
+
+    keep <- .Call(SimInf_individual_events,
                   id[i],
                   event[i],
                   time[i],

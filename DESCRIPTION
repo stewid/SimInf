@@ -35,7 +35,9 @@ Description: Provides an efficient and very flexible framework to
     functionality to fit models to time series data using the
     Approximate Bayesian Computation Sequential Monte Carlo
     ('ABC-SMC') algorithm of Toni and others (2009)
-    <doi:10.1098/rsif.2008.0172>.
+    <doi:10.1098/rsif.2008.0172> or the Particle Markov Chain Monte
+    Carlo ('PMCMC') algorithm of 'Andrieu' and others (2010)
+    <doi:10.1111/j.1467-9868.2009.00736.x>.
 Acknowledgements: This software has been made possible by support from
     the Swedish Research Council within the UPMARC Linnaeus center of
     Excellence (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the
@@ -61,7 +63,6 @@ Imports:
     grDevices,
     MASS,
     methods,
-    mvtnorm,
     stats,
     utils,
     Matrix (>= 1.3-0)
@@ -85,7 +86,7 @@ Collate:
     'SimInf-package.R'
     'SimInf.R'
     'SimInf_events.R'
-    'SimInf_indiv_events.R'
+    'SimInf_individual_events.R'
     'run.R'
     'density_ratio.R'
     'abc.R'
@@ -109,7 +110,7 @@ Collate:
     'u0.R'
     'v0.R'
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 VignetteBuilder:
     utils,
     knitr

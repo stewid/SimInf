@@ -21,20 +21,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <R_ext/Visibility.h>
 #include "SimInf.h"
+#include <R_ext/Visibility.h>
 
 /* Offset in integer compartment state vector */
-enum {S, I};
+enum { S, I };
 
 /* Offset in real-valued continuous state vector */
-enum {PHI};
+enum { PHI };
 
 /* Offsets in node local data (ldata) to parameters in the model */
-enum {END_T1, END_T2, END_T3, END_T4, NEIGHBOR};
+enum { END_T1, END_T2, END_T3, END_T4, NEIGHBOR };
 
 /* Offsets in global data (gdata) to parameters in the model */
-enum {UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4, COUPLING};
+enum { UPSILON, GAMMA, ALPHA, BETA_T1, BETA_T2, BETA_T3, BETA_T4,
+    COUPLING
+};
 
 /**
  * susceptible to infected: S -> I
@@ -112,7 +114,7 @@ SISe_sp_post_time_step(
     int node,
     double t)
 {
-    const int day = (int)t % 365;
+    const int day = (int) t % 365;
     const double I_i = u[I];
     const double N_i = u[S] + I_i;
     const double phi = v[PHI];
@@ -126,15 +128,20 @@ SISe_sp_post_time_step(
     /* Deterimine the pointer to the compartment state vector in the
      * first node. Use this to find the number of individuals at
      * neighbours to the current node. */
-    const int *u_0 = &u[-Nc*node];
+    const int *u_0 = &u[-Nc * node];
 
     /* Time dependent decay (beta) of the environmental infectious
      * pressure in each of the four intervals of the year. Forward
      * Euler step. */
-    v_new[PHI] = SimInf_forward_euler_linear_decay(
-        phi, day,
-        ldata[END_T1], ldata[END_T2], ldata[END_T3], ldata[END_T4],
-        gdata[BETA_T1], gdata[BETA_T2], gdata[BETA_T3], gdata[BETA_T4]);
+    v_new[PHI] = SimInf_forward_euler_linear_decay(phi, day,
+                                                   ldata[END_T1],
+                                                   ldata[END_T2],
+                                                   ldata[END_T3],
+                                                   ldata[END_T4],
+                                                   gdata[BETA_T1],
+                                                   gdata[BETA_T2],
+                                                   gdata[BETA_T3],
+                                                   gdata[BETA_T4]);
 
     /* Local spread among proximal nodes. */
     if (N_i > 0.0) {
@@ -147,7 +154,7 @@ SISe_sp_post_time_step(
         return SIMINF_ERR_V_IS_NOT_FINITE;
     if (v_new[PHI] < 0.0)
         return SIMINF_ERR_V_IS_NEGATIVE;
-    return phi != v_new[PHI]; /* 1 if needs update */
+    return phi != v_new[PHI];   /* 1 if needs update */
 }
 
 /**
@@ -157,13 +164,12 @@ SISe_sp_post_time_step(
  * @param solver The numerical solver.
  * @return The simulated trajectory.
  */
-attribute_hidden
-SEXP
+attribute_hidden SEXP
 SISe_sp_run(
     SEXP model,
     SEXP solver)
 {
-    TRFun tr_fun[] = {&SISe_sp_S_to_I, &SISe_sp_I_to_S};
+    TRFun tr_fun[] = { &SISe_sp_S_to_I, &SISe_sp_I_to_S };
 
     return SimInf_run(model, solver, tr_fun, &SISe_sp_post_time_step);
 }

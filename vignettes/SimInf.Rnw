@@ -641,7 +641,11 @@ library("SimInf")
     \mbox{\code{U[($\Ncompartments$ + 1):(2 * $\Ncompartments$), j]}}
     contains the number of individuals in each compartment in node $2$
     at \code{tspan[j]} etc.  Integer matrix ($\Nnodes \Ncompartments
-    \times \text{length}(\text{tspan})$).\\
+    \times \text{length}(\text{tspan})$).  Since version 10, the
+    internal format of \code{U} has been expanded to also allow
+    replicates of each node.  Each replicate adds new columns to
+    \code{U} so that the data for each replicate is in blocks of
+    \code{length(tspan)} columns.\\
 
     \code{U\_sparse} & It is possible to run the simulator and write
     the number of individuals in each compartment to the
@@ -653,7 +657,8 @@ library("SimInf")
     individuals should be written to \code{U\_sparse}.  The layout of
     the data in \code{U\_sparse} is identical to \code{U}.  Please
     note that the data in \code{U\_sparse} is numeric and that the
-    data in \code{U} is integer.\\
+    data in \code{U} is integer.  Also note that replicates (see
+    above) cannot be used when data is written to a sparse matrix.\\
 
     \code{u0} & The initial number of individuals in each compartment
     in every node.  Integer matrix ($\Ncompartments \times
@@ -662,7 +667,11 @@ library("SimInf")
     \code{V} & The result matrix for the real-valued continuous state.
     \mbox{\code{V[, j]}} contains the real-valued state of the system
     at \code{tspan[j]}.  Numeric matrix ($\Nnodes N_{ld} \times
-    \text{length}(\text{tspan})$).\\
+    \text{length}(\text{tspan})$).  Since version 10, the internal
+    format of \code{V} has been expanded to also allow replicates of
+    each node.  Each replicate adds new columns to \code{V} so that
+    the data for each replicate is in blocks of \code{length(tspan)}
+    columns.\\
 
     \code{V\_sparse} & It is possible to run the simulator and write
     the real-valued continuous state to the \code{V\_sparse} sparse
@@ -672,7 +681,9 @@ library("SimInf")
     when \code{run} is called, the non-zero entries in
     \code{V\_sparse} indicates where the real-valued continuous state
     should be written to \code{V\_sparse}.  The layout of the data in
-    \code{V\_sparse} is identical to \code{V}.\\
+    \code{V\_sparse} is identical to \code{V}.  Please note that
+    replicates (see above) cannot be used when data is written to a
+    sparse matrix.\\
 
     \code{v0} & The initial value for the real-valued continuous
     state.  Numeric matrix ($N_{ld} \times \Nnodes$).\\

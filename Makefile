@@ -24,7 +24,7 @@ pdf: roxygen
 
 # Generate README
 README.md: README.Rmd
-	Rscript -e "library(knitr); knit('README.Rmd')"
+	Rscript -e "knitr::knit('README.Rmd')"
 
 # Generate vignette
 .PHONY: vignette
@@ -155,10 +155,38 @@ valgrind:
 	$(foreach var,$(test_objects),R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < $(var);)
 
 # Run static code analysis on the C code.
+.PHONY: static-code-analysis
+static-code-analysis: cppcheck clang-tidy
+
 # https://github.com/danmar/cppcheck/
 .PHONY: cppcheck
 cppcheck:
-	cppcheck -I ./inst/include/ src
+	cppcheck -I ./inst/include/ --check-level=exhaustive --enable=style src
+
+# https://clang.llvm.org/extra/clang-tidy/
+.PHONY: clang-tidy
+clang-tidy:
+	clang-tidy src/*.c src/misc/*.c src/solvers/*.c \
+          -checks=-*,bugprone*,-bugprone-easily-swappable-parameters \
+          -- -I/usr/lib64/R/include -I./inst/include -I./src
+
+# Run the indent program on the C code.
+.PHONY: code-style
+code-style:
+	indent \
+          --k-and-r-style \
+          --no-tabs \
+          --indent-label0 \
+          --break-function-decl-args \
+          --preprocessor-indentation2 \
+          --procnames-start-lines \
+          --line-length80 \
+          src/*.c src/*.h src/misc/*.c src/models/*.c src/solvers/*.c
+	-rm src/*.c~
+	-rm src/*.h~
+	-rm src/misc/*.c~
+	-rm src/models/*.c~
+	-rm src/solvers/*.c~
 
 configure: configure.ac
 	autoconf ./configure.ac > ./configure
