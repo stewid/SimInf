@@ -269,20 +269,8 @@ setMethod(
         priors <- parse_priors(priors)
         pars <- match_priors(model, priors)
 
-        if (is.null(theta)) {
-            theta <- rpriors(priors)
-        } else if (!is.null(chain)) {
-            stop("'theta' must be NULL when 'chain' is provided.",
-                 call. = FALSE)
-        }
-        if (!all(is.atomic(theta),
-                 is.numeric(theta),
-                 all(priors$parameter %in% names(theta)))) {
-            stop("'theta' must be a vector with initial ",
-                 "values for the parameters.",
-                 call. = FALSE)
-        }
-        theta <- theta[priors$parameter]
+        chain <- check_chain(chain, priors)
+        theta <- check_theta(theta, priors, chain)
 
         if (is.null(covmat)) {
             covmat <- diag(((theta / 10)^2) / length(theta),
@@ -332,7 +320,7 @@ setMethod(
             n_iterations <- n_iterations - 1L
         } else {
             n_iterations <- check_n_iterations(n_iterations, TRUE)
-            object@chain <- check_chain(object, chain)
+            object@chain <- chain
         }
 
         if (n_iterations == 0)
@@ -398,11 +386,42 @@ check_post_particle <- function(post_particle) {
     post_particle
 }
 
+check_theta <- function(theta, priors, chain) {
+    if (!is.null(chain) && !is.null(theta)) {
+        stop("'theta' must be NULL when 'chain' is provided.",
+             call. = FALSE)
+    }
+
+    if (is.null(theta)) {
+        if (is.null(chain)) {
+            theta <- rpriors(priors)
+        } else {
+            ## This occurs if the chain starts from an existing chain
+            ## and may be needed to calculate the covariance matrix if
+            ## it is not specified.
+            theta <- chain[1L, priors$parameter]
+        }
+    }
+
+    if (!all(is.atomic(theta),
+             is.numeric(theta),
+             all(priors$parameter %in% names(theta)))) {
+        stop("'theta' must be a vector with initial ",
+             "values for the parameters.",
+             call. = FALSE)
+    }
+
+    theta[priors$parameter]
+}
+
 is_empty_chain <- function(object) {
     isTRUE(length(object) == 0L)
 }
 
-check_chain <- function(object, chain) {
+check_chain <- function(chain, priors) {
+    if (is.null(chain))
+        return(NULL)
+
     if (!is.data.frame(chain))
         chain <- as.data.frame(chain)
 
@@ -411,7 +430,7 @@ check_chain <- function(object, chain) {
                    "logLik",
                    "logPrior",
                    "accept",
-                   object@priors$parameter)
+                   priors$parameter)
     if (!all(variables %in% colnames(chain)))
         stop("Missing columns in 'chain'.", call. = FALSE)
 
