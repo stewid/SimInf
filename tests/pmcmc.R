@@ -107,6 +107,18 @@ res <- assertError(
           verbose = TRUE))
 check_error(res, "'adaptmix' must be a value > 0 and < 1.")
 
+## Check that an invalid 'adaptive' raises an error.
+res <- assertError(
+    pmcmc(model,
+          Iobs ~ poisson(I + 1e-6),
+          infected,
+          priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
+          n_particles = 200,
+          n_iterations = 200,
+          adaptive = -1,
+          verbose = TRUE))
+check_error(res, "'adaptive' must be an integer >= 0.")
+
 ## Check that an invalid 'n_iterations' raises an error.
 res <- assertError(
     pmcmc(model,
