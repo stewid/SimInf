@@ -38,6 +38,9 @@ version has been incremented.
   Additionally, enumeration values are added to all enumeration
   constants.
 
+* The `plot` function of a `SimInf_model` object now accepts a `log`
+  argument, see the documentation. Thanks to Alfredo Acosta in PR #56.
+
 * Static code analysis of the C codebase has been performed using the
   `clang-tidy` and `cppcheck` tools in order to improve code.
 
