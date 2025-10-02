@@ -16,18 +16,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-library(SimInf)
-
-## Specify the number of threads to use.
-set_num_threads(1)
-
-## For debugging
-sessionInfo()
-
-## Define a tolerance
-tol <- 1e-8
-
-stopifnot(identical(lambertW0(c(NA_real_, Inf, -Inf, NaN)),
-                    c(NA_real_, Inf, NaN, NaN)))
-
-stopifnot(all(abs(lambertW0(1) - 0.5671433) < tol))
+##' Lambert W Function
+##'
+##' @param x numeric vector of values.
+##' @export
+lambertW0 <- function(x) {
+    .Call(SimInf_lambertW0, x)
+}
