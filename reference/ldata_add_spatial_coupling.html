@@ -51,27 +51,48 @@ result to <code>ldata</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ldata_add_spatial_coupling</span><span class="op">(</span><span class="va">ldata</span>, <span class="va">distance</span>, metric <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ldata_add_spatial_coupling</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">cutoff</span>,</span>
+<span>  ldata <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  min_dist <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  na_fail <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-ldata">ldata<a class="anchor" aria-label="anchor" href="#arg-ldata"></a></dt>
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dd><p>Projected x coordinate</p></dd>
+
+
+<dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
+<dd><p>Projected y coordinate</p></dd>
+
+
+<dt id="arg-cutoff">cutoff<a class="anchor" aria-label="anchor" href="#arg-cutoff"></a></dt>
+<dd><p>The distance cutoff</p></dd>
+
+
+<dt id="arg-ldata">ldata<a class="anchor" aria-label="anchor" href="#arg-ldata"></a></dt>
 <dd><p>Matrix with local model parameters for each node.</p></dd>
 
 
-<dt id="arg-distance">distance<a class="anchor" aria-label="anchor" href="#arg-distance"></a></dt>
-<dd><p>Sparse matrix
-(<code><a href="https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html" class="external-link">dgCMatrix</a></code>) with
-distances between nodes, see <code><a href="distance_matrix.html">distance_matrix</a></code>.</p></dd>
+<dt id="arg-min-dist">min_dist<a class="anchor" aria-label="anchor" href="#arg-min-dist"></a></dt>
+<dd><p>The minimum distance to separate two nodes.  If
+the coordinates for two nodes are identical, the min_dist must
+be assigned or an error is raised.  Default is <code>NULL</code>,
+i.e., to raise an error.</p></dd>
 
 
-<dt id="arg-metric">metric<a class="anchor" aria-label="anchor" href="#arg-metric"></a></dt>
-<dd><p>The type of value to calculate for each neighbor: 0)
-degree, 1) distance, and 2) 1 / (distance * distance). Default
-is <code>1</code>.</p></dd>
+<dt id="arg-na-fail">na_fail<a class="anchor" aria-label="anchor" href="#arg-na-fail"></a></dt>
+<dd><p>A logical indicating whether missing values in
+<code>x</code> or <code>y</code> should raise an error or assign zero to
+all distances involving missing values.  Default is
+<code>TRUE</code>, i.e., to raise an error.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -89,9 +110,7 @@ neighbor and the value is determined by the metric argument.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="distance_matrix.html">distance_matrix</a></span><span class="op">(</span><span class="va">nodes</span><span class="op">$</span><span class="va">x</span>, <span class="va">nodes</span><span class="op">$</span><span class="va">y</span>, cutoff <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">nodes</span><span class="op">$</span><span class="va">x</span>, <span class="va">nodes</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ldata</span> <span class="op">&lt;-</span> <span class="fu">ldata_add_spatial_coupling</span><span class="op">(</span><span class="va">ldata</span>, <span class="va">d</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ldata</span> <span class="op">&lt;-</span> <span class="fu">ldata_add_spatial_coupling</span><span class="op">(</span><span class="va">nodes</span><span class="op">$</span><span class="va">x</span>, <span class="va">nodes</span><span class="op">$</span><span class="va">y</span>, cutoff <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
