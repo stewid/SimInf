@@ -4,33 +4,18 @@
 \alias{ldata_add_spatial_coupling}
 \title{Add information about spatial coupling between nodes to 'ldata'}
 \usage{
-ldata_add_spatial_coupling(
-  x,
-  y,
-  cutoff,
-  ldata = NULL,
-  min_dist = NULL,
-  na_fail = TRUE
-)
+ldata_add_spatial_coupling(ldata, distance, metric = 1)
 }
 \arguments{
-\item{x}{Projected x coordinate}
-
-\item{y}{Projected y coordinate}
-
-\item{cutoff}{The distance cutoff}
-
 \item{ldata}{Matrix with local model parameters for each node.}
 
-\item{min_dist}{The minimum distance to separate two nodes.  If
-the coordinates for two nodes are identical, the min_dist must
-be assigned or an error is raised.  Default is \code{NULL},
-i.e., to raise an error.}
+\item{distance}{Sparse matrix
+(\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}) with
+distances between nodes, see \code{\link{distance_matrix}}.}
 
-\item{na_fail}{A logical indicating whether missing values in
-\code{x} or \code{y} should raise an error or assign zero to
-all distances involving missing values.  Default is
-\code{TRUE}, i.e., to raise an error.}
+\item{metric}{The type of value to calculate for each neighbor: 0)
+degree, 1) distance, and 2) 1 / (distance * distance). Default
+is \code{1}.}
 }
 \value{
 matrix
@@ -48,5 +33,7 @@ stop pair (-1, 0) where 'index' is the zero-based index to the
 neighbor and the value is determined by the metric argument.
 }
 \examples{
-ldata <- ldata_add_spatial_coupling(nodes$x, nodes$y, cutoff = 5000)
+d <- distance_matrix(nodes$x, nodes$y, cutoff = 5000)
+ldata <- rbind(nodes$x, nodes$y)
+ldata <- ldata_add_spatial_coupling(ldata, d)
 }
