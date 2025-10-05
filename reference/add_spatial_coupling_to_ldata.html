@@ -78,7 +78,12 @@ result to <code>ldata</code>.</p>
 
 
 <dt id="arg-ldata">ldata<a class="anchor" aria-label="anchor" href="#arg-ldata"></a></dt>
-<dd><p>Matrix with local model parameters for each node.</p></dd>
+<dd><p>local data for the nodes. Can either be specified as
+a <code>data.frame</code> with one row per node. Or as a matrix
+where each column <code>ldata[, j]</code> contains the local data
+vector for the node <code>j</code>. The local data vector is passed
+as an argument to the transition rate functions and the post
+time step function.</p></dd>
 
 
 <dt id="arg-min-dist">min_dist<a class="anchor" aria-label="anchor" href="#arg-min-dist"></a></dt>
