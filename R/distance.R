@@ -70,7 +70,7 @@ distance_matrix <- function(x, y, cutoff, min_dist = NULL, na_fail = TRUE) {
 ##' @param x Projected x coordinate
 ##' @param y Projected y coordinate
 ##' @param cutoff The distance cutoff
-##' @param ldata Matrix with local model parameters for each node.
+##' @template ldata-param
 ##' @param min_dist The minimum distance to separate two nodes.  If
 ##'     the coordinates for two nodes are identical, the min_dist must
 ##'     be assigned or an error is raised.  Default is \code{NULL},
