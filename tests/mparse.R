@@ -1014,6 +1014,18 @@ stopifnot(identical(
          compartments = c("S", "I", "R"))))
 
 stopifnot(identical(
+    SimInf:::parse_variable(x = "(int)N <- S + I + R",
+                            compartments = c("S", "I", "R"),
+                            ldata_names = character(0),
+                            gdata_names = character(0),
+                            v0_names = character(0),
+                            use_enum = FALSE),
+    list(variable = "N",
+         tokens = c("u[0]", "+", "u[1]", "+", "u[2]"),
+         type = "int",
+         compartments = c("S", "I", "R"))))
+
+stopifnot(identical(
     SimInf:::parse_variable(x = "N <- S + I + R",
                             compartments = c("S", "I", "R"),
                             ldata_names = character(0),
