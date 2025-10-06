@@ -1001,6 +1001,18 @@ check_error(
     res,
     "Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.")
 
+res <- assertError(
+    SimInf:::parse_variables(variables = c("N <- S + I + R",
+                                           "N <- S + I + R"),
+                             compartments = c("S", "I", "R"),
+                             ldata_names = character(0),
+                             gdata_names = character(0),
+                             v0_names = character(0),
+                             use_enum = FALSE))
+check_error(
+    res,
+    "Variables must have non-duplicated names.")
+
 stopifnot(identical(
     SimInf:::parse_variable(x = "N <- S + I + R",
                             compartments = c("S", "I", "R"),
