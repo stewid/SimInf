@@ -94,9 +94,14 @@ add_spatial_coupling_to_ldata <- function(x, y, cutoff, ldata = NULL,
                                 na_fail = na_fail)
 
     if (is.null(ldata)) {
-        ldata <- matrix(data = numeric(), nrow = 0, ncol = dim(distance)[1])
+        ldata <- matrix(data = numeric(), nrow = 0, ncol = ncol(distance))
     } else {
         ldata <- init_data_matrix(ldata)
+
+        if (ncol(ldata) != ncol(distance)) {
+            stop("Number of nodes in 'ldata' and coordinates must match.",
+                 call. = FALSE)
+        }
     }
 
     .Call(SimInf_ldata_sp, ldata, distance, 1L)
