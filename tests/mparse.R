@@ -1235,3 +1235,7 @@ show_expected <- c(
 
 show_observed <- capture.output(show(model))
 stopifnot(identical(show_observed, show_expected))
+
+stopifnot(identical(
+    SimInf:::C_enumeration_constants("ldata", character(0)),
+    character(0)))
