@@ -16,18 +16,25 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-library(SimInf)
-
-## Specify the number of threads to use.
-set_num_threads(1)
-
-## For debugging
-sessionInfo()
-
-## Define a tolerance
-tol <- 1e-8
-
-stopifnot(identical(lambertW0(c(NA_real_, Inf, -Inf, NaN)),
-                    c(NA_real_, Inf, NaN, NaN)))
-
-stopifnot(all(abs(lambertW0(1) - 0.5671433) < tol))
+##' Lambert W0 function
+##'
+##' W0(x) is the principal branch of the solution of the function
+##' defined by \eqn{We^W = x}{W * exp(W)} for \eqn{x >= -1/e}. The
+##' value is calculated using GNU Scientific Library (GSL).
+##' @param x numeric vector of values.
+##' @references
+##'
+##' GNU Scientific Library <https://www.gnu.org/software/gsl/>
+##' @export
+##' @examples
+##' ## Should equal 1, as 1 * exp(1) = e.
+##' lambertW0(exp(1))
+##'
+##' ## Should equal 0, as 0 * exp(0) = 0.
+##' lambertW0(0)
+##'
+##' ## Should equal -1.
+##' lambertW0(-exp(-1))
+lambertW0 <- function(x) {
+    .Call(SimInf_lambertW0, x)
+}

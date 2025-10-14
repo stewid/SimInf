@@ -775,3 +775,6 @@ res <- assertError(ldata(model, c(0, 0)))
 check_error(res, "Invalid 'node' argument.")
 
 ldata(model, 1)
+
+res <- assertError(SimInf:::init_x0("Invalid"))
+check_error(res, "'Invalid' must be an integer matrix.")

@@ -602,11 +602,11 @@ setMethod(
         init_model <- check_init_model(init_model)
         post_particle <- check_post_particle(post_particle)
         verbose <- get_verbose(verbose)
-        iterations <- length(object) + seq_len(n_iterations)
+        i <- length(object)
+        iterations <- i + n_iterations
         object@chain <- setup_chain(object, n_iterations)
 
         ## Continue from the last iteration in the chain.
-        i <- iterations[1] - 1
         n_accepted <- sum(object@chain[seq_len(i), "accept"])
         logPost <- object@chain[i, "logPost"]
         logLik <- object@chain[i, "logLik"]
@@ -640,7 +640,8 @@ setMethod(
             covmat <- matrix(0, nrow = length(M), ncol = length(M))
         }
 
-        for (i in iterations) {
+        i <- i + 1L
+        while (i <= iterations) {
             ## Proposal
             accept <- 0
             pf <- NULL
@@ -666,15 +667,24 @@ setMethod(
                 logLik_prop <- pf_prop@loglik
 
                 alpha <- exp(logLik_prop + logPrior_prop - logLik - logPrior)
-                if (is.finite(alpha) && runif(1) < alpha) {
-                    logLik <- logLik_prop
-                    logPrior <- logPrior_prop
-                    logPost <- logLik + logPrior
-                    theta <- proposal
-                    pf <- pf_prop
-                    accept <- 1
-                    n_accepted <- n_accepted + 1
+                if (is.finite(alpha)) {
+                    if (runif(1) < alpha) {
+                        logLik <- logLik_prop
+                        logPrior <- logPrior_prop
+                        logPost <- logLik + logPrior
+                        theta <- proposal
+                        pf <- pf_prop
+                        accept <- 1
+                        n_accepted <- n_accepted + 1
+                    }
+                } else {
+                    warning(
+                        "Non-finite log likelihood or log prior encountered.",
+                        call. = FALSE)
                 }
+            } else {
+                warning("Non-finite log prior proposal encountered.",
+                        call. = FALSE)
             }
 
             ## Save current value of chain.
@@ -688,6 +698,7 @@ setMethod(
 
             ## Report progress.
             pmcmc_progress(object, i, verbose)
+            i <- i + 1L
         }
 
         object

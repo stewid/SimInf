@@ -1001,6 +1001,18 @@ check_error(
     res,
     "Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.")
 
+res <- assertError(
+    SimInf:::parse_variables(variables = c("N <- S + I + R",
+                                           "N <- S + I + R"),
+                             compartments = c("S", "I", "R"),
+                             ldata_names = character(0),
+                             gdata_names = character(0),
+                             v0_names = character(0),
+                             use_enum = FALSE))
+check_error(
+    res,
+    "Variables must have non-duplicated names.")
+
 stopifnot(identical(
     SimInf:::parse_variable(x = "N <- S + I + R",
                             compartments = c("S", "I", "R"),
@@ -1011,6 +1023,18 @@ stopifnot(identical(
     list(variable = "N",
          tokens = c("u[0]", "+", "u[1]", "+", "u[2]"),
          type = "double",
+         compartments = c("S", "I", "R"))))
+
+stopifnot(identical(
+    SimInf:::parse_variable(x = "(int)N <- S + I + R",
+                            compartments = c("S", "I", "R"),
+                            ldata_names = character(0),
+                            gdata_names = character(0),
+                            v0_names = character(0),
+                            use_enum = FALSE),
+    list(variable = "N",
+         tokens = c("u[0]", "+", "u[1]", "+", "u[2]"),
+         type = "int",
          compartments = c("S", "I", "R"))))
 
 stopifnot(identical(
@@ -1097,7 +1121,9 @@ stopifnot(identical(
                                     "epsilon", "zeta", "eta", "theta",
                                     "iota", "kappa", "lambda"),
                     gdata_names = structure("beta", value = 4L, n_values = 5L),
-                    v0_names = character(0),
+                    v0_names = structure(c("mu", "nu"),
+                                         value = c(0L, 1L),
+                                         n_values = 2L),
                     use_enum = TRUE),
     c("/* Enumeration constants for indicies in the 'u' vector. */",
       "enum {",
@@ -1105,6 +1131,13 @@ stopifnot(identical(
       "    I = 1,",
       "    R = 2,",
       "    N_COMPARTMENTS_U = 3",
+      "};",
+      "",
+      "/* Enumeration constants for indicies in the 'v' vector. */",
+      "enum {",
+      "    MU = 0,",
+      "    NU = 1,",
+      "    N_COMPARTMENTS_V = 2",
       "};",
       "",
       "/* Enumeration constants for indicies in the 'ldata' vector. */",
@@ -1202,3 +1235,7 @@ show_expected <- c(
 
 show_observed <- capture.output(show(model))
 stopifnot(identical(show_observed, show_expected))
+
+stopifnot(identical(
+    SimInf:::C_enumeration_constants("ldata", character(0)),
+    character(0)))

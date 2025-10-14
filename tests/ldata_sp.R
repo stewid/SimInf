@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2025 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -188,8 +188,18 @@ ldata_exp <- structure(c(91, 182, 273, 365, 1, 1.4142135623731,
                          91, 182, 273, 365, 7, 2.82842712474619,
                          8, 1.4142135623731, -1, 0, 0, 0, 0, 0),
                        .Dim = c(14L, 10L))
-ldata_obs <- .Call(SimInf:::SimInf_ldata_sp, l, d, 1L)
+ldata_obs <- add_spatial_coupling_to_ldata(x = 1:10, y = 1:10,
+                                           cutoff = 3, ldata = l)
 stopifnot(all(abs(ldata_obs - ldata_exp) < tol))
+
+ldata_obs <- add_spatial_coupling_to_ldata(x = 1:10, y = 1:10, cutoff = 3)
+stopifnot(all(abs(ldata_obs - ldata_exp[-(1:4), ]) < tol))
+
+res <- assertError(add_spatial_coupling_to_ldata(x = 1:10,
+                                                 y = 1:10,
+                                                 cutoff = 3,
+                                                 ldata = cbind(l, l)))
+check_error(res, "Number of nodes in 'ldata' and coordinates must match.")
 
 ## Check 'ldata' with metric equal to 1 / distance^2
 ldata_exp <- structure(c(91, 182, 273, 365, 1, 0.499999999999996, 2, 0.125,

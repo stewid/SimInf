@@ -139,7 +139,7 @@ setMethod(
     }
 )
 
-check_indiv_events_id <- function(id) {
+check_individual_events_id <- function(id) {
     msg <- "'id' must be an integer or character vector with non-NA values."
 
     if (anyNA(id))
@@ -160,7 +160,7 @@ check_indiv_events_id <- function(id) {
     stop(msg, call. = FALSE)
 }
 
-check_indiv_events_event <- function(event) {
+check_individual_events_event <- function(event) {
     msg <- "'event' must be an integer or character vector with non-NA values."
 
     if (anyNA(event))
@@ -193,7 +193,7 @@ check_indiv_events_event <- function(event) {
     stop(msg, call. = FALSE)
 }
 
-check_indiv_events_time <- function(time) {
+check_individual_events_time <- function(time) {
     msg <- "'time' must be an integer or character vector with non-NA values."
 
     if (is.numeric(time)) {
@@ -219,7 +219,7 @@ check_indiv_events_time <- function(time) {
     stop(msg, call. = FALSE)
 }
 
-check_indiv_events_nodes <- function(event, node, dest) {
+check_individual_events_nodes <- function(event, node, dest) {
     if (any(anyNA(node), anyNA(dest[event == 3L]))) {
         stop("'node' or 'dest' contain NA values.",
              call. = FALSE)
@@ -300,11 +300,11 @@ individual_events <- function(events) {
         stop("Missing columns in 'events'.", call. = FALSE)
     events <- events[, columns, drop = FALSE]
 
-    id <- check_indiv_events_id(events$id)
-    event <- check_indiv_events_event(events$event)
-    time <- check_indiv_events_time(events$time)
+    id <- check_individual_events_id(events$id)
+    event <- check_individual_events_event(events$event)
+    time <- check_individual_events_time(events$time)
     events$dest[event != 3L] <- NA
-    nodes <- check_indiv_events_nodes(event, events$node, events$dest)
+    nodes <- check_individual_events_nodes(event, events$node, events$dest)
 
     ## Ensure the events are sorted.
     i <- order(id, time, event, nodes$node, nodes$dest)
@@ -728,13 +728,13 @@ events_to_tex <- function(events) {
         stop("Missing columns in 'events'.", call. = FALSE)
     events <- events[, columns, drop = FALSE]
 
-    id <- check_indiv_events_id(events$id)
+    id <- check_individual_events_id(events$id)
     stopifnot(length(unique(id)) == 1)
-    event <- check_indiv_events_event(events$event)
-    time <- check_indiv_events_time(events$time)
+    event <- check_individual_events_event(events$event)
+    time <- check_individual_events_time(events$time)
     time <- as.integer(factor(time - min(time)))
     events$dest[event != 3L] <- NA
-    nodes <- check_indiv_events_nodes(event, events$node, events$dest)
+    nodes <- check_individual_events_nodes(event, events$node, events$dest)
     levels <- sort(unique(c(nodes$node, nodes$dest)))
     nodes$node <- as.integer(factor(nodes$node, levels = levels))
     nodes$dest <- as.integer(factor(nodes$dest, levels = levels))

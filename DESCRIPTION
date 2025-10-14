@@ -95,6 +95,7 @@ Collate:
     'distributions.R'
     'edge_properties.R'
     'iterated-filtering.R'
+    'lambert.R'
     'match_compartments.R'
     'mparse.R'
     'pmcmc.R'

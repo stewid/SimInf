@@ -106,8 +106,13 @@ C_enum <- function(compartments, ldata_names, gdata_names, v0_names,
         attributes(compartments) <- a
     }
 
-    if (length(v0_names) > 0)
+    if (length(v0_names) > 0) {
+        a <- attributes(v0_names)
         v0_names <- c(v0_names, "N_COMPARTMENTS_V")
+        a$value <- c(a$value, a$n_values)
+        a$n_values <- a$n_values + 1L
+        attributes(v0_names) <- a
+    }
 
    c(C_enumeration_constants("u", compartments),
      C_enumeration_constants("v", v0_names),
