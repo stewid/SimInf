@@ -1,0 +1,648 @@
+# SimInf
+
+![](https://raw.githubusercontent.com/stewid/SimInf/main/logo/logo.png)
+
+> A flexible and efficient framework for data-driven stochastic disease
+> spread simulations
+
+[![Build
+Status](https://github.com/stewid/SimInf/actions/workflows/R-CI.yaml/badge.svg)](https://github.com/stewid/SimInf/actions/workflows/R-CI.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/SimInf)](https://CRAN.R-project.org/package=SimInf)
+[![CRAN RStudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/last-month/SimInf)](https://CRAN.R-project.org/package=SimInf)
+[![Code
+coverage](https://codecov.io/gh/stewid/SimInf/branch/main/graph/badge.svg)](https://app.codecov.io/gh/stewid/SimInf)
+
+The package provides an efficient and very flexible framework to conduct
+data-driven epidemiological modeling in realistic large scale disease
+spread simulations. The framework integrates infection dynamics in
+subpopulations as continuous-time Markov chains using the Gillespie
+stochastic simulation algorithm and incorporates available data such as
+births, deaths and movements as scheduled events at predefined
+time-points. Using C code for the numerical solvers and ‘OpenMP’ (if
+available) to divide work over multiple processors ensures high
+performance when simulating a sample outcome. One of our design goals
+was to make the package extendable and enable usage of the numerical
+solvers from other R extension packages in order to facilitate complex
+epidemiological research. The package contains template models and can
+be extended with user-defined models.
+
+## Getting started
+
+You can use one of the predefined compartment models in SimInf, for
+example, SEIR. But you can also define a custom model ‘on the fly’ using
+the model parser method `mparse`. The method takes a character vector of
+transitions in the form of `X -> propensity -> Y` and automatically
+generates the C and R code for the model. The left hand side of the
+first arrow (`->`) is the initial state, the right hand side of the last
+arrow (`->`) is the final state, and the propensity is written between
+the two arrows. The flexibility of the `mparse` approach allows for
+quick prototyping of new models or features. To illustrate the `mparse`
+functionality, let us consider the SIR model in a closed population
+i.e., no births or deaths. Let `beta` denote the transmission rate of
+spread between a susceptible individual and an infectious individual and
+`gamma` the recovery rate from infection (`gamma` = 1 / average duration
+of infection). It is also possible to define variables which can then be
+used in calculations of propensities or in calculations of other
+variables. A variable is defined by the operator `<-`. Using a variable
+for the size of the population, the SIR model can be described as:
+
+``` r
+library(SimInf)
+
+transitions <- c("S -> beta*S*I/N -> I",
+                 "I -> gamma*I -> R",
+                 "N <- S+I+R")
+compartments <- c("S", "I", "R")
+```
+
+The `transitions` and `compartments` variables together with the
+constants `beta` and `gamma` can now be used to generate a model with
+`mparse`. The model also needs to be initialised with the initial
+condition `u0` and `tspan`, a vector of time points where the state of
+the system is to be returned. Let us create a model that consists of
+1000 replicates of a population, denoted a *node* in SimInf, that each
+starts with 99 susceptibles, 5 infected and 0 recovered individuals.
+
+``` r
+n <- 1000
+u0 <- data.frame(S = rep(99, n), I = rep(5, n), R = rep(0, n))
+
+model <- mparse(transitions = transitions,
+                compartments = compartments,
+                gdata = c(beta = 0.16, gamma = 0.077),
+                u0 = u0,
+                tspan = 1:150)
+```
+
+To generate data from the model and then print some basic information
+about the outcome, run the following commands:
+
+``` r
+result <- run(model)
+result
+```
+
+    #> Model: SimInf_model
+    #> Number of nodes: 1000
+    #> Number of transitions: 2
+    #> Number of scheduled events: 0
+    #>
+    #> Global data
+    #> -----------
+    #>  Parameter Value
+    #>  beta      0.160
+    #>  gamma     0.077
+    #>
+    #> Compartments
+    #> ------------
+    #>      Min. 1st Qu. Median   Mean 3rd Qu.   Max.
+    #>  S   1.00   19.00  30.00  40.74   60.00  99.00
+    #>  I   0.00    0.00   4.00   6.87   11.00  47.00
+    #>  R   0.00   28.00  67.00  56.39   83.00 103.00
+
+There are several functions in SimInf to facilitate analysis and
+post-processing of simulated data, for example, `trajectory`,
+`prevalence` and `plot`. The default `plot` will display the median
+count in each compartment across nodes as a colored line together with
+the inter-quartile range using the same color, but with transparency.
+
+``` r
+plot(result)
+```
+
+![plot of chunk mparse-SIR](reference/figures/README-mparse-SIR-1.png)
+
+plot of chunk mparse-SIR
+
+Most modeling and simulation studies require custom data analysis once
+the simulation data has been generated. To support this, SimInf provides
+the `trajectory` method to obtain a `data.frame` with the number of
+individuals in each compartment at the time points specified in `tspan`.
+Below is the first 10 lines of the `data.frame` with simulated data.
+
+``` r
+trajectory(result)
+```
+
+    #>    node time  S I R
+    #> 1     1    1 98 6 0
+    #> 2     2    1 98 6 0
+    #> 3     3    1 98 6 0
+    #> 4     4    1 99 5 0
+    #> 5     5    1 97 7 0
+    #> 6     6    1 98 5 1
+    #> 7     7    1 99 5 0
+    #> 8     8    1 99 5 0
+    #> 9     9    1 97 7 0
+    #> 10   10    1 97 6 1
+    ...
+
+Finally, let us use the `prevalence` method to explore the proportion of
+infected individuals across all nodes. It takes a model object and a
+formula specification, where the left hand side of the formula specifies
+the compartments representing cases i.e., have an attribute or a disease
+and the right hand side of the formula specifies the compartments at
+risk. Below is the first 10 lines of the `data.frame`.
+
+``` r
+prevalence(result, I ~ S + I + R)
+```
+
+    #>    time prevalence
+    #> 1     1 0.05196154
+    #> 2     2 0.05605769
+    #> 3     3 0.06059615
+    #> 4     4 0.06516346
+    #> 5     5 0.06977885
+    #> 6     6 0.07390385
+    #> 7     7 0.07856731
+    #> 8     8 0.08311538
+    #> 9     9 0.08794231
+    #> 10   10 0.09321154
+    ...
+
+## Learn more
+
+See the
+[vignette](https://CRAN.R-project.org/package=SimInf/vignettes/SimInf.pdf)
+to learn more about special features that the SimInf R package provides,
+for example, how to:
+
+- use continuous state variables
+
+- use the SimInf framework from another R package
+
+- incorporate available data such as births, deaths and movements as
+  scheduled events at predefined time-points.
+
+## Installation
+
+You can install the released version of `SimInf` from
+[CRAN](https://CRAN.R-project.org/package=SimInf)
+
+``` r
+install.packages("SimInf")
+```
+
+or use the `remotes` package to install the development version from
+[GitHub](https://github.com/stewid/SimInf)
+
+``` r
+library(remotes)
+install_github("stewid/SimInf")
+```
+
+We refer to section 3.1 in the
+[vignette](https://CRAN.R-project.org/package=SimInf/vignettes/SimInf.pdf)
+for detailed installation instructions.
+
+## Authors
+
+In alphabetical order: Pavol Bauer [![ORCID
+iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-4328-7171),
+Robin Eriksson [![ORCID
+iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-4291-712X),
+Stefan Engblom [![ORCID
+iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-3614-1732),
+and Stefan Widgren [![ORCID
+iD](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-5745-2284)
+**(Maintainer)**
+
+Any suggestions, bug reports, forks and pull requests are appreciated.
+Get in touch.
+
+## Citation
+
+If you use SimInf in your research, please cite:
+
+------------------------------------------------------------------------
+
+> **Widgren S, Bauer P, Eriksson R, Engblom S (2019).** SimInf: An R
+> Package for Data-Driven Stochastic Disease Spread Simulations.
+> *Journal of Statistical Software, 91(12), 1–42.*
+> <https://doi.org/10.18637/jss.v091.i12>
+
+> **Bauer P, Engblom S, Widgren S (2016).** Fast event-based
+> epidemiological simulations on national scales. *International Journal
+> of High Performance Computing Applications, 30(4), 438–453.*
+> <https://doi.org/10.1177/1094342016635723>
+
+------------------------------------------------------------------------
+
+## Acknowledgments
+
+This software has been made possible by support from the Swedish
+Research Council within the UPMARC Linnaeus center of Excellence (Pavol
+Bauer, Robin Eriksson, and Stefan Engblom), the Swedish Research Council
+Formas (Stefan Engblom and Stefan Widgren), the Swedish Board of
+Agriculture (Stefan Widgren), the Swedish strategic research program
+eSSENCE (Stefan Widgren), and in the framework of the Full Force
+project, supported by funding from the European Union’s Horizon 2020
+Research and Innovation programme under grant agreement No 773830: One
+Health European Joint Programme (Stefan Widgren).
+
+## Versioning
+
+The `SimInf` package uses [semantic versioning](https://semver.org/).
+
+## License
+
+The `SimInf` package is licensed under the
+[GPLv3](https://github.com/stewid/SimInf/blob/main/LICENSE).
+
+# Package index
+
+## All functions
+
+- [`C_code()`](http://stewid.github.io/SimInf/reference/C_code.md) :
+
+  Extract the C code from a `SimInf_model` object
+
+- [`SEIR-class`](http://stewid.github.io/SimInf/reference/SEIR-class.md)
+  : Definition of the ‘SEIR’ model
+
+- [`SEIR()`](http://stewid.github.io/SimInf/reference/SEIR.md) :
+
+  Create an SEIR model
+
+- [`SIR-class`](http://stewid.github.io/SimInf/reference/SIR-class.md) :
+
+  Definition of the SIR model
+
+- [`SIR()`](http://stewid.github.io/SimInf/reference/SIR.md) :
+
+  Create an SIR model
+
+- [`SIS-class`](http://stewid.github.io/SimInf/reference/SIS-class.md) :
+
+  Definition of the SIS model
+
+- [`SIS()`](http://stewid.github.io/SimInf/reference/SIS.md) :
+
+  Create an SIS model
+
+- [`SISe-class`](http://stewid.github.io/SimInf/reference/SISe-class.md)
+  :
+
+  Definition of the `SISe` model
+
+- [`SISe()`](http://stewid.github.io/SimInf/reference/SISe.md) : Create
+  a SISe model
+
+- [`SISe3-class`](http://stewid.github.io/SimInf/reference/SISe3-class.md)
+  : Definition of the ‘SISe3’ model
+
+- [`SISe3()`](http://stewid.github.io/SimInf/reference/SISe3.md) :
+
+  Create a `SISe3` model
+
+- [`SISe3_sp-class`](http://stewid.github.io/SimInf/reference/SISe3_sp-class.md)
+  : Definition of the ‘SISe3_sp’ model
+
+- [`SISe3_sp()`](http://stewid.github.io/SimInf/reference/SISe3_sp.md) :
+
+  Create an `SISe3_sp` model
+
+- [`SISe_sp-class`](http://stewid.github.io/SimInf/reference/SISe_sp-class.md)
+  :
+
+  Definition of the `SISe_sp` model
+
+- [`SISe_sp()`](http://stewid.github.io/SimInf/reference/SISe_sp.md) :
+
+  Create a `SISe_sp` model
+
+- [`SimInf-package`](http://stewid.github.io/SimInf/reference/SimInf.md)
+  [`SimInf`](http://stewid.github.io/SimInf/reference/SimInf.md) : A
+  Framework for Data-Driven Stochastic Disease Spread Simulations
+
+- [`SimInf_abc-class`](http://stewid.github.io/SimInf/reference/SimInf_abc-class.md)
+  :
+
+  Class `"SimInf_abc"`
+
+- [`SimInf_events-class`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+  :
+
+  Class `"SimInf_events"`
+
+- [`SimInf_events()`](http://stewid.github.io/SimInf/reference/SimInf_events.md)
+  :
+
+  Create a `SimInf_events` object
+
+- [`SimInf_individual_events-class`](http://stewid.github.io/SimInf/reference/SimInf_individual_events-class.md)
+  :
+
+  Class `"SimInf_individual_events"`
+
+- [`SimInf_model-class`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  :
+
+  Class `"SimInf_model"`
+
+- [`SimInf_model()`](http://stewid.github.io/SimInf/reference/SimInf_model.md)
+  :
+
+  Create a `SimInf_model`
+
+- [`SimInf_pfilter-class`](http://stewid.github.io/SimInf/reference/SimInf_pfilter-class.md)
+  :
+
+  Class `"SimInf_pfilter"`
+
+- [`SimInf_pmcmc-class`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
+  :
+
+  Class `"SimInf_pmcmc"`
+
+- [`abc()`](http://stewid.github.io/SimInf/reference/abc.md) :
+  Approximate Bayesian computation
+
+- [`add_spatial_coupling_to_ldata()`](http://stewid.github.io/SimInf/reference/add_spatial_coupling_to_ldata.md)
+  : Add information about spatial coupling between nodes to 'ldata'
+
+- [`as.data.frame(`*`<SimInf_abc>`*`)`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_abc.md)
+  : Coerce to data frame
+
+- [`as.data.frame(`*`<SimInf_events>`*`)`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_events.md)
+  : Coerce events to a data frame
+
+- [`as.data.frame(`*`<SimInf_individual_events>`*`)`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_individual_events.md)
+  : Coerce to data frame
+
+- [`as.data.frame(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_pmcmc.md)
+  : Coerce to data frame
+
+- [`boxplot(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/boxplot-SimInf_model-method.md)
+  : Box plot of number of individuals in each compartment
+
+- [`continue_abc()`](http://stewid.github.io/SimInf/reference/continue_abc.md)
+  : Run more generations of ABC SMC
+
+- [`continue_pmcmc()`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
+  : Run more iterations of PMCMC
+
+- [`distance_matrix()`](http://stewid.github.io/SimInf/reference/distance_matrix.md)
+  : Create a distance matrix between nodes for spatial models
+
+- [`edge_properties_to_matrix()`](http://stewid.github.io/SimInf/reference/edge_properties_to_matrix.md)
+  : Convert an edge list with properties to a matrix
+
+- [`events()`](http://stewid.github.io/SimInf/reference/events.md) :
+
+  Extract the events from a `SimInf_model` object
+
+- [`events_SEIR()`](http://stewid.github.io/SimInf/reference/events_SEIR.md)
+  : Example data to initialize events for the ‘SEIR’ model
+
+- [`events_SIR()`](http://stewid.github.io/SimInf/reference/events_SIR.md)
+  : Example data to initialize events for the ‘SIR’ model
+
+- [`events_SIS()`](http://stewid.github.io/SimInf/reference/events_SIS.md)
+  : Example data to initialize events for the ‘SIS’ model
+
+- [`events_SISe()`](http://stewid.github.io/SimInf/reference/events_SISe.md)
+  : Example data to initialize events for the ‘SISe’ model
+
+- [`events_SISe3`](http://stewid.github.io/SimInf/reference/events_SISe3.md)
+  : Example data to initialize events for the ‘SISe3’ model
+
+- [`` `gdata<-`() ``](http://stewid.github.io/SimInf/reference/gdata-set.md)
+  :
+
+  Set a global data parameter for a `SimInf_model` object
+
+- [`gdata()`](http://stewid.github.io/SimInf/reference/gdata.md) :
+
+  Extract global data from a `SimInf_model` object
+
+- [`get_individuals()`](http://stewid.github.io/SimInf/reference/get_individuals.md)
+  :
+
+  Extract individuals from `SimInf_individual_events`
+
+- [`indegree()`](http://stewid.github.io/SimInf/reference/indegree.md) :
+  Determine in-degree for each node in a model
+
+- [`individual_events()`](http://stewid.github.io/SimInf/reference/individual_events.md)
+  : Individual events
+
+- [`lambertW0()`](http://stewid.github.io/SimInf/reference/lambertW0.md)
+  : Lambert W0 function
+
+- [`ldata()`](http://stewid.github.io/SimInf/reference/ldata.md) :
+  Extract local data from a node
+
+- [`length(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/length-SimInf_pmcmc-method.md)
+  : Length of the MCMC chain
+
+- [`logLik(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/logLik-SimInf_pfilter-method.md)
+  : Log likelihood
+
+- [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md) :
+
+  Model parser to define new models to run in `SimInf`
+
+- [`n_compartments()`](http://stewid.github.io/SimInf/reference/n_compartments.md)
+  : Determine the number of compartments in a model
+
+- [`n_generations()`](http://stewid.github.io/SimInf/reference/n_generations.md)
+  : Determine the number of generations
+
+- [`n_nodes()`](http://stewid.github.io/SimInf/reference/n_nodes.md) :
+  Determine the number of nodes in a model
+
+- [`n_replicates()`](http://stewid.github.io/SimInf/reference/n_replicates.md)
+  : Determine the number of replicates in a model
+
+- [`node_events()`](http://stewid.github.io/SimInf/reference/node_events.md)
+  : Transform individual events to node events for a model
+
+- [`nodes`](http://stewid.github.io/SimInf/reference/nodes.md) : Example
+  data with spatial distribution of nodes
+
+- [`outdegree()`](http://stewid.github.io/SimInf/reference/outdegree.md)
+  : Determine out-degree for each node in a model
+
+- [`package_skeleton()`](http://stewid.github.io/SimInf/reference/package_skeleton.md)
+  :
+
+  Create a package skeleton from a `SimInf_model`
+
+- [`pairs(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/pairs-SimInf_model-method.md)
+  : Scatterplot of number of individuals in each compartment
+
+- [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md) :
+  Bootstrap particle filter
+
+- [`plot(`*`<SimInf_abc>`*`)`](http://stewid.github.io/SimInf/reference/plot-SimInf_abc-method.md)
+  : Display the ABC posterior distribution
+
+- [`plot(`*`<SimInf_events>`*`)`](http://stewid.github.io/SimInf/reference/plot-SimInf_events-method.md)
+  : Display the distribution of scheduled events over time
+
+- [`plot(`*`<SimInf_individual_events>`*`)`](http://stewid.github.io/SimInf/reference/plot-SimInf_individual_events-method.md)
+  : Display the distribution of individual events over time
+
+- [`plot(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/plot-SimInf_pfilter-method.md)
+  : Diagnostic plot of a particle filter object
+
+- [`plot(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/plot-SimInf_pmcmc-method.md)
+  : Display the PMCMC posterior distribution
+
+- [`plot(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/plot.md)
+  : Display the outcome from a simulated trajectory
+
+- [`pmcmc()`](http://stewid.github.io/SimInf/reference/pmcmc.md) :
+  Particle Markov chain Monte Carlo (PMCMC) algorithm
+
+- [`prevalence(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_model-method.md)
+  : Calculate prevalence from a model object with trajectory data
+
+- [`prevalence(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_pfilter-method.md)
+  : Extract prevalence from running a particle filter
+
+- [`prevalence(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_pmcmc-method.md)
+  : Extract prevalence from fitting a PMCMC algorithm
+
+- [`prevalence()`](http://stewid.github.io/SimInf/reference/prevalence.md)
+  : Generic function to calculate prevalence from trajectory data
+
+- [`` `punchcard<-`() ``](http://stewid.github.io/SimInf/reference/punchcard-set.md)
+  : Set a template for where to record result during a simulation
+
+- [`run()`](http://stewid.github.io/SimInf/reference/run.md) : Run the
+  SimInf stochastic simulation algorithm
+
+- [`` `select_matrix<-`() ``](http://stewid.github.io/SimInf/reference/select_matrix-set.md)
+  :
+
+  Set the select matrix for a `SimInf_model` object
+
+- [`select_matrix()`](http://stewid.github.io/SimInf/reference/select_matrix.md)
+  :
+
+  Extract the select matrix from a `SimInf_model` object
+
+- [`set_num_threads()`](http://stewid.github.io/SimInf/reference/set_num_threads.md)
+  : Specify the number of threads that SimInf should use
+
+- [`` `shift_matrix<-`() ``](http://stewid.github.io/SimInf/reference/shift_matrix-set.md)
+  :
+
+  Set the shift matrix for a `SimInf_model` object
+
+- [`shift_matrix()`](http://stewid.github.io/SimInf/reference/shift_matrix.md)
+  :
+
+  Extract the shift matrix from a `SimInf_model` object
+
+- [`show(`*`<SimInf_abc>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_abc-method.md)
+  :
+
+  Print summary of a `SimInf_abc` object
+
+- [`show(`*`<SimInf_events>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_events-method.md)
+  :
+
+  Brief summary of `SimInf_events`
+
+- [`show(`*`<SimInf_individual_events>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_individual_events-method.md)
+  :
+
+  Print summary of a `SimInf_individual_events` object
+
+- [`show(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_model-method.md)
+  :
+
+  Brief summary of `SimInf_model`
+
+- [`show(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_pfilter-method.md)
+  :
+
+  Brief summary of a `SimInf_pfilter` object
+
+- [`show(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_pmcmc-method.md)
+  :
+
+  Brief summary of a `SimInf_pmcmc` object
+
+- [`summary(`*`<SimInf_abc>`*`)`](http://stewid.github.io/SimInf/reference/summary-SimInf_abc-method.md)
+  :
+
+  Detailed summary of a `SimInf_abc` object
+
+- [`summary(`*`<SimInf_events>`*`)`](http://stewid.github.io/SimInf/reference/summary-SimInf_events-method.md)
+  :
+
+  Detailed summary of a `SimInf_events` object
+
+- [`summary(`*`<SimInf_individual_events>`*`)`](http://stewid.github.io/SimInf/reference/summary-SimInf_individual_events-method.md)
+  :
+
+  Detailed summary of a `SimInf_individual_events` object
+
+- [`summary(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/summary-SimInf_model-method.md)
+  :
+
+  Detailed summary of a `SimInf_model` object
+
+- [`summary(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/summary-SimInf_pfilter-method.md)
+  :
+
+  Detailed summary of a `SimInf_pfilter` object
+
+- [`summary(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/summary-SimInf_pmcmc-method.md)
+  :
+
+  Detailed summary of a `SimInf_pmcmc` object
+
+- [`trajectory(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)
+  : Extract data from a simulated trajectory
+
+- [`trajectory(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_pfilter-method.md)
+  : Extract filtered trajectory from running a particle filter
+
+- [`trajectory(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_pmcmc-method.md)
+  : Extract filtered trajectories from fitting a PMCMC algorithm
+
+- [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md)
+  : Generic function to extract data from a simulated trajectory
+
+- [`` `u0<-`() ``](http://stewid.github.io/SimInf/reference/u0-set.md) :
+  Update the initial compartment state u0 in each node
+
+- [`u0()`](http://stewid.github.io/SimInf/reference/u0.md) : Get the
+  initial compartment state
+
+- [`u0_SEIR()`](http://stewid.github.io/SimInf/reference/u0_SEIR.md) :
+  Example data to initialize the ‘SEIR’ model
+
+- [`u0_SIR()`](http://stewid.github.io/SimInf/reference/u0_SIR.md) :
+  Example data to initialize the ‘SIR’ model
+
+- [`u0_SIS()`](http://stewid.github.io/SimInf/reference/u0_SIS.md) :
+  Example data to initialize the ‘SIS’ model
+
+- [`u0_SISe()`](http://stewid.github.io/SimInf/reference/u0_SISe.md) :
+  Example data to initialize the ‘SISe’ model
+
+- [`u0_SISe3`](http://stewid.github.io/SimInf/reference/u0_SISe3.md) :
+  Example data to initialize the ‘SISe3’ model
+
+- [`` `v0<-`() ``](http://stewid.github.io/SimInf/reference/v0-set.md) :
+  Update the initial continuous state v0 in each node
+
+# Articles
+
+### All vignettes
+
+- [Getting started with
+  \`mparse\`](http://stewid.github.io/SimInf/articles/mparse.md):
+- [Post-process data in a
+  trajectory](http://stewid.github.io/SimInf/articles/post-process-data.md):
+- [Scheduled
+  events](http://stewid.github.io/SimInf/articles/scheduled-events.md):
