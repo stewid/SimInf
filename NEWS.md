@@ -47,6 +47,9 @@ version has been incremented.
 * The `GNU Indent` program has been used to style the C code for
   consistency and readability.
 
+* Add a function to calculate the Lambert W0 function using the GNU
+  Scientific Library (GSL).
+
 # SimInf 9.8.1 (2024-06-21)
 
 ## CHANGES OR IMPROVEMENTS
