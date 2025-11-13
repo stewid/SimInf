@@ -23,7 +23,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/stewid/SimInf/blob/v10.0.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/stewid/SimInf/blob/main/inst/CITATION)
 
 Widgren S, Bauer P, Eriksson R, Engblom S (2019). “SimInf: An R Package
 for Data-Driven Stochastic Disease Spread Simulations.” *Journal of
