@@ -1,4 +1,4 @@
-# SimInf (development version)
+# SimInf 10.0.0 (2025-11-13)
 
 ## BREAKING CHANGES
 
