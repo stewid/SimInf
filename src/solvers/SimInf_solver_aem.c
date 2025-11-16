@@ -410,11 +410,16 @@ SimInf_solver_aem(
 
                 /* Copy continuous state to V */
                 while (sa.V && sa.V_it < sa.tlen && sa.tt > sa.tspan[sa.V_it]) {
-                    memcpy(&sa.V[(ptrdiff_t) sa.Nd *
-                                 (((ptrdiff_t) sa.Ntot * sa.V_it++) +
-                                  sa.Ni)], sa.v_new,
-                           (ptrdiff_t) sa.Nn * (ptrdiff_t) sa.Nd *
-                           sizeof(double));
+                    const ptrdiff_t v_len = (ptrdiff_t) sa.Nn * (ptrdiff_t) sa.Nd *
+                        sizeof(double);
+                    if (v_len > 0) {
+                        memcpy(&sa.V[(ptrdiff_t) sa.Nd *
+                                     (((ptrdiff_t) sa.Ntot * sa.V_it) +
+                                      sa.Ni)],
+                               sa.v_new,
+                               v_len);
+                    }
+                    sa.V_it++;
                 }
 
                 *&model[i] = sa;
