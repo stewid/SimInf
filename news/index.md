@@ -6,6 +6,8 @@
 
 ## SimInf 10.0.0 (2025-11-13)
 
+CRAN release: 2025-11-13
+
 ### BREAKING CHANGES
 
 Backwards incompatible changes that are the reason why the major version
