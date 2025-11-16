@@ -2,6 +2,10 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* Internal change to avoid using memcpy on zero-length continuous
+  state vector, i.e., access elements of a 0-length R vector. This was
+  uncovered by checks on M1mac system on CRAN.
+
 # SimInf 10.0.0 (2025-11-13)
 
 ## BREAKING CHANGES
