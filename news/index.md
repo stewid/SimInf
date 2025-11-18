@@ -1,5 +1,9 @@
 # Changelog
 
+## SimInf (development version)
+
+### CHANGES OR IMPROVEMENTS
+
 ## SimInf 10.1.0 (2025-11-16)
 
 CRAN release: 2025-11-17
