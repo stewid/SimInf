@@ -288,10 +288,14 @@ SimInf_solver_mssm(
 
                     /* Copy continuous state to V */
                     while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
-                        memcpy(&m.V[(ptrdiff_t) m.Nd * (ptrdiff_t) m.Ntot *
-                                    m.V_it++], m.v_new,
-                               (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
-                               sizeof(double));
+                        const ptrdiff_t v_len = (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
+                            sizeof(double);
+                        if (v_len > 0) {
+                            memcpy(&m.V[(ptrdiff_t) m.Nd * (ptrdiff_t) m.Ntot * m.V_it],
+                                   m.v_new,
+                                   v_len);
+                        }
+                        m.V_it++;
                     }
 
                     /* Swap the pointers to the continuous state

@@ -1012,16 +1012,19 @@ SimInf_compartment_model_create(
     const ptrdiff_t Nrep = args->Nrep;
     const ptrdiff_t Nn = args->Nn;
     const ptrdiff_t Nd = args->Nd;
-    model[0].v = malloc(Nrep * Nn * Nd * sizeof(double));
+    const ptrdiff_t v_len = Nrep * Nn * Nd * sizeof(double);
+    model[0].v = malloc(v_len);
     if (!model[0].v)
         goto on_error;          /* #nocov */
-    model[0].v_new = malloc(Nrep * Nn * Nd * sizeof(double));
+    model[0].v_new = malloc(v_len);
     if (!model[0].v_new)
         goto on_error;          /* #nocov */
 
     /* Set continuous state to the initial state in each node. */
-    memcpy(model[0].v, args->v0, Nrep * Nn * Nd * sizeof(double));
-    memcpy(model[0].v_new, args->v0, Nrep * Nn * Nd * sizeof(double));
+    if (v_len > 0) {
+        memcpy(model[0].v, args->v0, v_len);
+        memcpy(model[0].v_new, args->v0, v_len);
+    }
 
     /* Setup vector to keep track of nodes that must be updated due to
      * scheduled events */

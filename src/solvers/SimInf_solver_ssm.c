@@ -295,10 +295,14 @@ SimInf_solver_ssm(
 
                 /* Copy continuous state to V */
                 while (m.V && m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
-                    memcpy(&m.V[(ptrdiff_t) m.Nd *
-                                ((m.Ntot * m.V_it++) + m.Ni)], m.v_new,
-                           (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
-                           sizeof(double));
+                    const ptrdiff_t v_len = (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
+                        sizeof(double);
+                    if (v_len > 0) {
+                        memcpy(&m.V[(ptrdiff_t) m.Nd * ((m.Ntot * m.V_it) + m.Ni)],
+                               m.v_new,
+                               v_len);
+                    }
+                    m.V_it++;
                 }
 
                 *&model[i] = m;

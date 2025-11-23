@@ -1,5 +1,17 @@
 # SimInf (development version)
 
+## CHANGES OR IMPROVEMENTS
+
+# SimInf 10.1.0 (2025-11-16)
+
+## CHANGES OR IMPROVEMENTS
+
+* Internal change to avoid using memcpy on zero-length continuous
+  state vector, i.e., access elements of a 0-length R vector. This was
+  uncovered by checks on M1mac system on CRAN.
+
+# SimInf 10.0.0 (2025-11-13)
+
 ## BREAKING CHANGES
 
 Backwards incompatible changes that are the reason why the major
@@ -46,6 +58,9 @@ version has been incremented.
 
 * The `GNU Indent` program has been used to style the C code for
   consistency and readability.
+
+* Add a function to calculate the Lambert W0 function using the GNU
+  Scientific Library (GSL).
 
 # SimInf 9.8.1 (2024-06-21)
 
