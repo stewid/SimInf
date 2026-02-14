@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -32,9 +32,7 @@ model <- mparse(transitions = c("S -> beta*S*I/(S+I+R) -> I + Icum",
                 events = data.frame(event = 1, time = 25, node = 1,
                                     dest = 0, n = 1, proportion = 0,
                                     select = 1, shift = 0),
-                E = matrix(c(0, 1, 0, 0), nrow = 4, ncol = 1,
-                           dimnames = list(c("S", "I", "Icum", "R"),
-                                           c("1"))),
+                E = data.frame(compartment = "I", select = 1),
                 tspan = 2:75)
 
 ## Check that a non-numeric distance vector raises an error.

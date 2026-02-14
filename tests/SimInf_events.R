@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -51,6 +51,39 @@ N <- matrix(c(2, 0,
             byrow  = TRUE,
             dimnames = list(c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3"),
                             c("1", "2")))
+
+## Check the internal function to create a select matrix E from a
+## data.frame.
+res <- assertError(SimInf:::E_from_data_frame(1, "S_1"))
+check_error(res, "'events' must be a data.frame.")
+
+res <- assertError(SimInf:::E_from_data_frame(data.frame(compartment = "S_1"),
+                                              compartments = "S_1"))
+check_error(res, "Missing columns in 'E'.")
+
+res <- assertError(SimInf:::E_from_data_frame(data.frame(compartment = "S_2",
+                                                         select = 1),
+                                              compartments = "S_1"))
+check_error(res, "Invalid compartment in 'E'.")
+
+E_observed <- SimInf:::E_from_data_frame(
+                           data.frame(compartment = c("S_1",
+                                                      "S_2",
+                                                      "S_3",
+                                                      "S_1", "I_1",
+                                                      "S_2", "I_2",
+                                                      "S_3", "I_3"),
+                                      select = c(1,
+                                                 2,
+                                                 3,
+                                                 4, 4,
+                                                 5, 5,
+                                                 6, 6)),
+                           compartments = c("S_1", "I_1",
+                                            "S_2", "I_2",
+                                            "S_3", "I_3"))
+
+stopifnot(identical(E_observed, as.matrix(E)))
 
 ## Check valid_SimInf_events_object
 events <- SimInf_events(E = E, N = N)

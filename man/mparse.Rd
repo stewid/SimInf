@@ -102,8 +102,10 @@ events. Default is \code{NULL} i.e. no scheduled events in the
 model.}
 
 \item{E}{matrix to handle scheduled events, see
-\code{\linkS4class{SimInf_events}}. Default is \code{NULL}
-i.e. no scheduled events in the model.}
+\code{\linkS4class{SimInf_events}} and
+\code{\linkS4class{SimInf_model}} for how \code{E} can be
+specified. Default is \code{NULL} i.e. no scheduled events in
+the model.}
 
 \item{N}{matrix to handle scheduled events, see
 \code{\linkS4class{SimInf_events}}. Default is \code{NULL}

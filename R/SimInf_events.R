@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -78,16 +78,46 @@ valid_SimInf_events_object <- function(object) {
 ## Assign the function as the validity method for the class.
 setValidity("SimInf_events", valid_SimInf_events_object)
 
+## Utility function to transform the select matrix E specified as a
+## data.frame into a matrix.
+E_from_data_frame <- function(E, compartments) {
+    if (!is.data.frame(E))
+        stop("'events' must be a data.frame.", call. = FALSE)
+
+    ## Ensure the 'compartment' and 'select' columns exist in 'E'.
+    if (!all(c("compartment", "select") %in% names(E)))
+        stop("Missing columns in 'E'.", call. = FALSE)
+
+    ## Ensure all 'compartment' names are valid.
+    E$compartment <- as.character(E$compartment)
+    if (!all(E$compartment %in% compartments))
+        stop("Invalid compartment in 'E'.", call. = FALSE)
+
+    ## Assign default values in case the 'value' column is missing.
+    if (is.null(E$value))
+        E$value <- rep(1, nrow(E))
+
+    E <- E[, c("compartment", "select", "value"), drop = FALSE]
+
+    check_integer_arg(E$select)
+    m <- matrix(data = 0,
+                nrow = length(compartments),
+                ncol = max(E$select),
+                dimnames = list(compartments, seq_len(max(E$select))))
+
+    m[cbind(match(E$compartment, compartments), E$select)] <- E$value
+
+    m
+}
+
 init_E <- function(E, events) {
     if (is.null(E)) {
         if (!is.null(events))
             stop("events is not NULL when E is NULL.", call. = FALSE)
         E <- methods::new("dgCMatrix")
-    } else {
-        E <- init_sparse_matrix(E)
     }
 
-    E
+    init_sparse_matrix(E)
 }
 
 init_events <- function(events, t0) {
@@ -217,14 +247,14 @@ init_events <- function(events, t0) {
 ##'   }
 ##' }
 ##'
-##' @param E Each row corresponds to one compartment in the model. The
-##'     non-zero entries in a column indicates the compartments to
-##'     include in an event.  For the \emph{exit}, \emph{internal
-##'     transfer} and \emph{external transfer} events, a non-zero
-##'     entry indicate the compartments to sample individuals from.
-##'     For the \emph{enter} event, all individuals enter first
-##'     non-zero compartment. \code{E} is sparse matrix of class
-##'     \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
+##' @param E A matrix where each row corresponds to one compartment in
+##'     the model. The non-zero entries in a column indicates the
+##'     compartments to include in an event.  For the \emph{exit},
+##'     \emph{internal transfer} and \emph{external transfer} events,
+##'     a non-zero entry indicate the compartments to sample
+##'     individuals from.  For the \emph{enter} event, all individuals
+##'     enter first non-zero compartment. \code{E} is sparse matrix of
+##'     class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
 ##' @param N Determines how individuals in \emph{internal transfer}
 ##'     and \emph{external transfer} events are shifted to enter
 ##'     another compartment.  Each row corresponds to one compartment

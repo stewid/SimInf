@@ -78,8 +78,23 @@ compartment state (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
 \code{length(tspan)}).  \code{V[, j]} contains the real-valued
 state of the system at \code{tspan[j]}.}
 
-\item{E}{Sparse matrix to handle scheduled events, see
-\code{\linkS4class{SimInf_events}}.}
+\item{E}{A matrix to handle scheduled events, see
+\code{\linkS4class{SimInf_events}}.  Each row in the matrix
+corresponds to one compartment in the model. The non-zero
+entries in a column indicates the compartments to include in
+an event.  For the \emph{exit}, \emph{internal transfer} and
+\emph{external transfer} events, a non-zero entry indicate the
+compartments to sample individuals from.  For the \emph{enter}
+event, all individuals enter first non-zero compartment.  The
+select matrix \code{E} can either be specified as a
+\code{matrix}, or as a \code{data.frame}.  When \code{E} is
+specified as a \code{data.frame}, it must have one column
+named \code{compartment} that defines which compartment is
+referred to, and one column \code{select} that defines the
+column in \code{E}.  In addition, the \code{data.frame} can
+contain an optional column named \code{value} with the value
+in \code{E}.  When the \code{value} column is missing,
+\code{1} is used as the default value.}
 
 \item{N}{Sparse matrix to handle scheduled events, see
 \code{\linkS4class{SimInf_events}}.}
