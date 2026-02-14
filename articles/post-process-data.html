@@ -350,54 +350,54 @@ nodes, or the prevalence. Below are some examples of using the
 infected and recovered individuals.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Plot the median and the middle 95% quantile range of the number of
 susceptible, infected and recovered individuals.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, range <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Plot the median and interquartile range of the number of infected
 individuals.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"I"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Use the formula notation instead to plot the median and interquartile
 range of the number of infected individuals.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="op">~</span><span class="va">I</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Plot the number of susceptible, infected and recovered individuals in
 the first three nodes.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Use plot type line instead.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, range <span class="op">=</span> <span class="cn">FALSE</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Plot the number of infected individuals in the first node.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"I"</span>, index <span class="op">=</span> <span class="fl">1</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Plot the proportion of infected individuals (cases) in the
 population.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Plot the proportion of nodes with infected individuals.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Plot the median and interquartile range of the proportion of infected
 individuals in each node</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Plot the proportion of infected individuals in the first three
 nodes.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">3</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="post-process-data_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" width="672" style="display: block; margin: auto auto auto 0;"></p>
+<p><img src="post-process-data_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
 <p>Please run a couple of <code>plot(run(model))</code> to view the
 stochasticity between trajectories. To find help on the SimInf plot
 function for the model object run:</p>

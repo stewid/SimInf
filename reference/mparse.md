@@ -113,8 +113,11 @@ mparse(
 - E:
 
   matrix to handle scheduled events, see
-  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md).
-  Default is `NULL` i.e. no scheduled events in the model.
+  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+  and
+  [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  for how `E` can be specified. Default is `NULL` i.e. no scheduled
+  events in the model.
 
 - N:
 

@@ -71,12 +71,12 @@ SimInf_events(E = NULL, N = NULL, events = NULL, t0 = NULL)
 
 - E:
 
-  Each row corresponds to one compartment in the model. The non-zero
-  entries in a column indicates the compartments to include in an event.
-  For the *exit*, *internal transfer* and *external transfer* events, a
-  non-zero entry indicate the compartments to sample individuals from.
-  For the *enter* event, all individuals enter first non-zero
-  compartment. `E` is sparse matrix of class
+  A matrix where each row corresponds to one compartment in the model.
+  The non-zero entries in a column indicates the compartments to include
+  in an event. For the *exit*, *internal transfer* and *external
+  transfer* events, a non-zero entry indicate the compartments to sample
+  individuals from. For the *enter* event, all individuals enter first
+  non-zero compartment. `E` is sparse matrix of class
   [`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html).
 
 - N:
