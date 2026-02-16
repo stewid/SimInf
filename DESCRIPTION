@@ -87,6 +87,7 @@ Collate:
     'SimInf.R'
     'SimInf_events.R'
     'SimInf_individual_events.R'
+    'SimInf_raster_model.R'
     'run.R'
     'density_ratio.R'
     'abc.R'
