@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -68,8 +68,23 @@ setValidity("SimInf_model", valid_SimInf_model_object)
 ##'     (\code{dim(ldata)[1]} \eqn{\times N_N}). The continuous state
 ##'     vector is updated by the specific model during the simulation
 ##'     in the post time step function.
-##' @param E Sparse matrix to handle scheduled events, see
-##'     \code{\linkS4class{SimInf_events}}.
+##' @param E A matrix to handle scheduled events, see
+##'     \code{\linkS4class{SimInf_events}}.  Each row in the matrix
+##'     corresponds to one compartment in the model. The non-zero
+##'     entries in a column indicates the compartments to include in
+##'     an event.  For the \emph{exit}, \emph{internal transfer} and
+##'     \emph{external transfer} events, a non-zero entry indicate the
+##'     compartments to sample individuals from.  For the \emph{enter}
+##'     event, all individuals enter first non-zero compartment.  The
+##'     select matrix \code{E} can either be specified as a
+##'     \code{matrix}, or as a \code{data.frame}.  When \code{E} is
+##'     specified as a \code{data.frame}, it must have one column
+##'     named \code{compartment} that defines which compartment is
+##'     referred to, and one column \code{select} that defines the
+##'     column in \code{E}.  In addition, the \code{data.frame} can
+##'     contain an optional column named \code{value} with the value
+##'     in \code{E}.  When the \code{value} column is missing,
+##'     \code{1} is used as the default value.
 ##' @param N Sparse matrix to handle scheduled events, see
 ##'     \code{\linkS4class{SimInf_events}}.
 ##' @param C_code Character vector with optional model C code. If
@@ -108,6 +123,8 @@ SimInf_model <- function(G,
     ## Check events
     if (!any(is.null(events), is.data.frame(events)))
         stop("'events' must be NULL or a data.frame.", call. = FALSE)
+    if (is.data.frame(E))
+        E <- E_from_data_frame(E, rownames(S))
     events <- SimInf_events(E = E, N = N, events = events, t0 = tspan$t0)
 
     methods::new("SimInf_model",
