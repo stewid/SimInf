@@ -10,6 +10,7 @@
 \alias{run,SISe3-method}
 \alias{run,SISe3_sp-method}
 \alias{run,SISe_sp-method}
+\alias{run,SimInf_raster_model-method}
 \alias{run,SimInf_abc-method}
 \title{Run the SimInf stochastic simulation algorithm}
 \usage{
@@ -30,6 +31,8 @@ run(model, ...)
 \S4method{run}{SISe3_sp}(model, solver = c("ssm", "aem"), ...)
 
 \S4method{run}{SISe_sp}(model, solver = c("ssm", "aem"), ...)
+
+\S4method{run}{SimInf_raster_model}(model, ...)
 
 \S4method{run}{SimInf_abc}(model, ...)
 }

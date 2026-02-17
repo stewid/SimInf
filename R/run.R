@@ -239,3 +239,16 @@ setMethod(
         .Call(SISe_sp_run, model, solver)
     }
 )
+
+##' @rdname run
+##' @export
+setMethod(
+    "run",
+    signature(model = "SimInf_raster_model"),
+    function(model, ...) {
+        solver <- "raster"
+        methods::validObject(model)
+        key <- model_dll_key(model)
+        eval(parse(text = .SimInf_model_run))
+    }
+)
