@@ -16,4 +16,38 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+##' Create a \code{SimInf_raster_model}
+##'
+##' Create a \code{SimInf_raster_model} object.  It is a model where
+##' the nodes are not fixed at one position but can move between cells
+##' on a raster.
+##' @inheritParams SimInf_model
 ##' @export
+SimInf_raster_model <- function(G,
+                                S,
+                                tspan,
+                                events = NULL,
+                                ldata  = NULL,
+                                gdata  = NULL,
+                                U      = NULL,
+                                u0     = NULL,
+                                v0     = NULL,
+                                V      = NULL,
+                                E      = NULL,
+                                N      = NULL,
+                                C_code = NULL) {
+
+    model <- SimInf_model(G      = G,
+                          S      = S,
+                          E      = E,
+                          N      = N,
+                          tspan  = tspan,
+                          events = events,
+                          ldata  = ldata,
+                          gdata  = gdata,
+                          u0     = u0,
+                          v0     = v0,
+                          C_code = C_code)
+
+    methods::as(model, "SimInf_raster_model")
+}

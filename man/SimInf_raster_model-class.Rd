@@ -5,9 +5,9 @@
 \alias{SimInf_raster_model-class}
 \title{Class \code{"SimInf_raster_model"}}
 \description{
-Class to handle data for the \code{SimInf_raster_model}.  It is a
-model where the nodes are not fixed at one position but can move
-between cells in a raster.
+Class to handle data for a \code{SimInf_raster_model} object.  It
+is a model where the nodes are not fixed at one position but can
+move between cells on a raster.
 }
 \section{Slots}{
 
