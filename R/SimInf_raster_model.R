@@ -17,7 +17,3 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ##' @export
-setClass(
-    "SimInf_raster_model",
-    contains = "SimInf_model"
-)

@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -138,4 +138,21 @@ setClass(
               events     = "SimInf_events",
               replicates = "integer",
               C_code     = "character")
+)
+
+##' Class \code{"SimInf_raster_model"}
+##'
+##' Class to handle data for a \code{SimInf_raster_model} object.  It
+##' is a model where the nodes are not fixed at one position but can
+##' move between cells on a raster.
+##' @slot cell_S FIXME.
+##' @slot cell_U FIXME.
+##' @slot cell_U_sparse FIXME.
+##' @export
+setClass(
+    "SimInf_raster_model",
+    slots = c(cell_S        = "dgCMatrix",
+              cell_U        = "matrix",
+              cell_U_sparse = "dgCMatrix"),
+    contains = "SimInf_model"
 )
