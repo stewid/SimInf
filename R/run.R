@@ -27,6 +27,9 @@
 .SimInf_model_run <- paste0(".Call(.dll[[key]]$run_fn, model, solver,",
                             " PACKAGE = .dll[[key]]$name)")
 
+.SimInf_raster_model_run <- paste0(".Call(.dll[[key]]$run_fn, model,",
+                                   " PACKAGE = .dll[[key]]$name)")
+
 ##' Compile the model C code
 ##'
 ##' Use 'R CMD SHLIB' to compile the C code for the model and the
@@ -246,9 +249,8 @@ setMethod(
     "run",
     signature(model = "SimInf_raster_model"),
     function(model, ...) {
-        solver <- "raster"
         methods::validObject(model)
         key <- model_dll_key(model)
-        eval(parse(text = .SimInf_model_run))
+        eval(parse(text = .SimInf_raster_model_run))
     }
 )
