@@ -606,7 +606,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
         stop("'row' and 'col' must exist in compartments.",
              call. = FALSE)
     }
-    i <- setdiff(seq_len(length(compartments)), i)
+    i <- setdiff(seq_along(compartments), i)
     u0 <- check_u0(u0, compartments[i])
 
     ## Add enumeration value to compartments.
