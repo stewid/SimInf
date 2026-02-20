@@ -597,8 +597,17 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
              call. = FALSE)
     }
 
-    ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    ## Create an index to split the compartments between the node and
+    ## the cell. If there are any cell compartments, make sure there
+    ## are compartments 'row' and 'column'. Then check 'u0' without
+    ## the cell compartments.
+    i <- grep("^cell[.].+", compartments)
+    if (length(i) && !all(c("row", "col") %in% compartments)) {
+        stop("'row' and 'col' must exist in compartments.",
+             call. = FALSE)
+    }
+    i <- setdiff(seq_len(length(compartments)), i)
+    u0 <- check_u0(u0, compartments[i])
 
     ## Add enumeration value to compartments.
     attr(compartments, "value") <- seq_along(compartments) - 1L

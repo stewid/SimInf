@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -1239,3 +1239,11 @@ stopifnot(identical(show_observed, show_expected))
 stopifnot(identical(
     SimInf:::C_enumeration_constants("ldata", character(0)),
     character(0)))
+
+## Check that mparse fails for a raster model with missing row and col.
+res <- assertError(
+    mparse(transitions = "@->1->S",
+           compartments = c("S", "cell.contamination"),
+           u0 = data.frame(S = 0),
+           tspan = 1:5))
+check_error(res, "'row' and 'col' must exist in compartments.")
