@@ -599,15 +599,19 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
 
     ## Create an index to split the compartments between the node and
     ## the cell. If there are any cell compartments, make sure there
-    ## are compartments 'row' and 'column'. Then check 'u0' without
-    ## the cell compartments.
+    ## are compartments 'row' and 'column'. Additionally, remove the
+    ## prefix 'cell.' from the cell compartments. Finally, check 'u0'
+    ## without the cell compartments.
     i <- grep("^cell[.].+", compartments)
     if (length(i) && !all(c("row", "col") %in% compartments)) {
         stop("'row' and 'col' must exist in compartments.",
              call. = FALSE)
     }
+    cell_compartments <- compartments[i]
+    cell_compartments <- sub("^cell[.]", "", cell_compartments)
     i <- setdiff(seq_along(compartments), i)
-    u0 <- check_u0(u0, compartments[i])
+    compartments <- compartments[i]
+    u0 <- check_u0(u0, compartments)
 
     ## Add enumeration value to compartments.
     attr(compartments, "value") <- seq_along(compartments) - 1L
@@ -623,7 +627,11 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
              call. = FALSE)
     }
 
-    if (any(c("N_COMPARTMENTS_U", "N_COMPARTMENTS_V") %in%
+    ## 'N_COMPARTMENTS_U' and 'N_COMPARTMENTS_V' are enumeration
+    ## constants to make it easier to know how many compartments exist
+    ## in 'u' and 'v'.  Additionally, check that there is no
+    ## compartment that also exists as a cell compartment.
+    if (any(c("N_COMPARTMENTS_U", "N_COMPARTMENTS_V", cell_compartments) %in%
             c(compartments, gdata_names, ldata_names, v0_names))) {
         stop("Invalid compartment or variable name.",
              call. = FALSE)
