@@ -490,11 +490,11 @@ dependency_graph <- function(transitions, S) {
     G
 }
 
-check_compartment_variable_names <- function(cell_compartments,
-                                             compartments,
-                                             gdata_names,
-                                             ldata_names,
-                                             v0_names) {
+check_model_names <- function(cell_compartments,
+                              compartments,
+                              gdata_names,
+                              ldata_names,
+                              v0_names) {
     if (any(duplicated(c(compartments, gdata_names, ldata_names,
                          v0_names, cell_compartments)))) {
         stop("Duplicated compartment or variable name detected.",
@@ -650,8 +650,8 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     gdata_names <- variable_names(gdata, TRUE)
     v0_names <- variable_names(v0, nrow(u0) == 1L)
 
-    check_compartment_variable_names(cell_compartments, compartments,
-                                     gdata_names, ldata_names, v0_names)
+    check_model_names(cell_compartments, compartments,
+                      gdata_names, ldata_names, v0_names)
 
     ## Parse transitions
     transitions <- parse_transitions(transitions, compartments,
