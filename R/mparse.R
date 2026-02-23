@@ -88,7 +88,10 @@ remove_spaces <- function(x) {
     gsub(" ", "", x)
 }
 
-substitute_tokens <- function(tokens, pattern, replacement, use_enum) {
+substitute_tokens <- function(tokens,
+                              pattern,
+                              replacement,
+                              use_enum) {
     i <- match(tokens, pattern)
     j <- which(!is.na(i))
     if (length(j)) {
@@ -104,24 +107,42 @@ substitute_tokens <- function(tokens, pattern, replacement, use_enum) {
     tokens
 }
 
-rewrite_tokens <- function(tokens, compartments, ldata_names,
-                           gdata_names, v0_names, use_enum) {
+rewrite_tokens <- function(tokens,
+                           compartments,
+                           ldata_names,
+                           gdata_names,
+                           v0_names,
+                           use_enum) {
     ## Find compartments in tokens
-    tokens <- substitute_tokens(tokens, compartments, "u", use_enum)
+    tokens <- substitute_tokens(tokens = tokens,
+                                pattern = compartments,
+                                replacement = "u",
+                                use_enum = use_enum)
 
     ## Find ldata parameters in tokens
-    tokens <- substitute_tokens(tokens, ldata_names, "ldata", use_enum)
+    tokens <- substitute_tokens(tokens = tokens,
+                                pattern = ldata_names,
+                                replacement = "ldata",
+                                use_enum = use_enum)
 
     ## Find gdata parameters in tokens
-    tokens <- substitute_tokens(tokens, gdata_names, "gdata", use_enum)
+    tokens <- substitute_tokens(tokens = tokens,
+                                pattern = gdata_names,
+                                replacement = "gdata",
+                                use_enum = use_enum)
 
     ## Find v0 parameters in tokens
-    tokens <- substitute_tokens(tokens, v0_names, "v", use_enum)
+    tokens <- substitute_tokens(tokens = tokens,
+                                pattern = v0_names,
+                                replacement = "v",
+                                use_enum = use_enum)
 
     tokens
 }
 
-propensity_dependencies <- function(tokens, vars, variables,
+propensity_dependencies <- function(tokens,
+                                    vars,
+                                    variables,
                                     compartments) {
     depends <- integer(length(compartments))
 
@@ -157,16 +178,30 @@ propensity_variables <- function(tokens, variables) {
 ## \code{u[compartments[j]]} where \code{j} is the numbering in
 ## compartments. On return, 'depends' contains all compartments upon
 ## which the propensity depends.
-rewrite_propensity <- function(propensity, variables, compartments,
-                               ldata_names, gdata_names, v0_names,
+rewrite_propensity <- function(propensity,
+                               variables,
+                               compartments,
+                               ldata_names,
+                               gdata_names,
+                               v0_names,
                                use_enum) {
     tokens <- tokenize(propensity)
     G_rowname <- paste0(tokens, collapse = "")
-    vars <- propensity_variables(tokens, variables)
-    depends <- propensity_dependencies(tokens, vars, variables,
-                                       compartments)
-    tokens <- rewrite_tokens(tokens, compartments, ldata_names,
-                             gdata_names, v0_names, use_enum)
+
+    vars <- propensity_variables(tokens = tokens,
+                                 variables = variables)
+
+    depends <- propensity_dependencies(tokens = tokens,
+                                       vars = vars,
+                                       variables = variables,
+                                       compartments = compartments)
+
+    tokens <- rewrite_tokens(tokens = tokens,
+                             compartments = compartments,
+                             ldata_names = ldata_names,
+                             gdata_names = gdata_names,
+                             v0_names = v0_names,
+                             use_enum = use_enum)
 
     list(code      = paste0(tokens, collapse = ""),
          depends   = depends,
@@ -224,20 +259,29 @@ parse_compartments <- function(x, compartments) {
     tabulate(i, length(compartments))
 }
 
-parse_propensity <- function(x, variables, compartments, ldata_names,
-                             gdata_names, v0_names, use_enum) {
+parse_propensity <- function(x,
+                             variables,
+                             compartments,
+                             ldata_names,
+                             gdata_names,
+                             v0_names,
+                             use_enum) {
     propensity <- remove_spaces(x[c(-1, -length(x))])
     propensity <- paste0(propensity, collapse = "->")
 
     ## Determine the corresponding column in the state change vector
     ## S.
-    from <- parse_compartments(x[1], compartments)
-    dest <- parse_compartments(x[length(x)], compartments)
+    from <- parse_compartments(x = x[1], compartments = compartments)
+    dest <- parse_compartments(x = x[length(x)], compartments = compartments)
     S <- dest - from
 
-    propensity <- rewrite_propensity(propensity, variables,
-                                     compartments, ldata_names,
-                                     gdata_names, v0_names, use_enum)
+    propensity <- rewrite_propensity(propensity = propensity,
+                                     variables = variables,
+                                     compartments = compartments,
+                                     ldata_names = ldata_names,
+                                     gdata_names = gdata_names,
+                                     v0_names = v0_names,
+                                     use_enum = use_enum)
 
     ## Determine the G rowname
     names(from) <- compartments
@@ -253,8 +297,12 @@ parse_propensity <- function(x, variables, compartments, ldata_names,
          variables  = propensity$variables)
 }
 
-parse_propensities <- function(propensities, variables, compartments,
-                               ldata_names, gdata_names, v0_names,
+parse_propensities <- function(propensities,
+                               variables,
+                               compartments,
+                               ldata_names,
+                               gdata_names,
+                               v0_names,
                                use_enum) {
     propensities <- strsplit(propensities, "->", fixed = TRUE)
 
@@ -266,8 +314,13 @@ parse_propensities <- function(propensities, variables, compartments,
                  call. = FALSE)
         }
 
-        parse_propensity(x, variables, compartments, ldata_names,
-                         gdata_names, v0_names, use_enum)
+        parse_propensity(x = x,
+                         variables = variables,
+                         compartments = compartments,
+                         ldata_names = ldata_names,
+                         gdata_names = gdata_names,
+                         v0_names = v0_names,
+                         use_enum = use_enum)
     })
 }
 
@@ -285,8 +338,12 @@ pattern_variable <- function() {
         collapse = "")
 }
 
-parse_variable <- function(x, compartments, ldata_names, gdata_names,
-                           v0_names, use_enum) {
+parse_variable <- function(x,
+                           compartments,
+                           ldata_names,
+                           gdata_names,
+                           v0_names,
+                           use_enum) {
     m <- regexec(pattern_variable(), x)
     v <- unlist(regmatches(x, m))
     if (length(v) == 0L)
@@ -313,8 +370,12 @@ parse_variable <- function(x, compartments, ldata_names, gdata_names,
     i <- unique(match(tokens, compartments))
     variable_compartments <- compartments[i[!is.na(i)]]
 
-    tokens <- rewrite_tokens(tokens, compartments, ldata_names,
-                             gdata_names, v0_names, use_enum)
+    tokens <- rewrite_tokens(tokens = tokens,
+                             compartments = compartments,
+                             ldata_names = ldata_names,
+                             gdata_names = gdata_names,
+                             v0_names = v0_names,
+                             use_enum = use_enum)
 
     list(variable = variable,
          tokens = tokens,
@@ -322,14 +383,22 @@ parse_variable <- function(x, compartments, ldata_names, gdata_names,
          compartments = variable_compartments)
 }
 
-parse_variables <- function(variables, compartments, ldata_names,
-                            gdata_names, v0_names, use_enum) {
+parse_variables <- function(variables,
+                            compartments,
+                            ldata_names,
+                            gdata_names,
+                            v0_names,
+                            use_enum) {
     if (length(variables) == 0)
         return(list())
 
     variables <- lapply(variables, function(x) {
-        parse_variable(x, compartments, ldata_names, gdata_names,
-                       v0_names, use_enum)
+        parse_variable(x = x,
+                       compartments = compartments,
+                       ldata_names = ldata_names,
+                       gdata_names = gdata_names,
+                       v0_names = v0_names,
+                       use_enum = use_enum)
     })
 
     ## Determine variable names.
@@ -398,23 +467,34 @@ topological_sort <- function(x) {
     x[i, i, drop = FALSE]
 }
 
-parse_transitions <- function(transitions, compartments, ldata_names,
-                              gdata_names, v0_names, use_enum) {
+parse_transitions <- function(transitions,
+                              compartments,
+                              ldata_names,
+                              gdata_names,
+                              v0_names,
+                              use_enum) {
     ## Determine for each transition whether it is a variable or not.
     i <- vapply(transitions, is_variable, logical(1), USE.NAMES = FALSE)
 
     ## Extract the variables from the transitions.
-    variables <- parse_variables(transitions[i], compartments,
-                                 ldata_names, gdata_names, v0_names,
-                                 use_enum)
+    variables <- parse_variables(variables = transitions[i],
+                                 compartments = compartments,
+                                 ldata_names = ldata_names,
+                                 gdata_names = gdata_names,
+                                 v0_names = v0_names,
+                                 use_enum = use_enum)
 
     ## Extract the propensites from the transitions.
-    propensities <- parse_propensities(transitions[!i], variables,
-                                       compartments, ldata_names,
-                                       gdata_names, v0_names,
-                                       use_enum)
+    propensities <- parse_propensities(propensities = transitions[!i],
+                                       variables = variables,
+                                       compartments = compartments,
+                                       ldata_names = ldata_names,
+                                       gdata_names = gdata_names,
+                                       v0_names = v0_names,
+                                       use_enum = use_enum)
 
-    list(propensities = propensities, variables = variables)
+    list(propensities = propensities,
+         variables = variables)
 }
 
 ##' Extract variable names from data

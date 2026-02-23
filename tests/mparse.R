@@ -612,18 +612,26 @@ stopifnot(identical(SimInf:::tokenize("beta*S*I/(S+I+R)"),
                       "I", "+", "R", ")")))
 
 stopifnot(
-    identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", list(),
-                                          c("S", "I", "R"), NULL,
-                                          "beta", NULL, FALSE),
+    identical(SimInf:::rewrite_propensity(propensity = "beta*S*I/(S+I+R)",
+                                          variables = list(),
+                                          compartments = c("S", "I", "R"),
+                                          ldata_names  = NULL,
+                                          gdata_names = "beta",
+                                          v0_names = NULL,
+                                          use_enum = FALSE),
               list(code = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
                    depends = c(1, 1, 1),
                    G_rowname = "beta*S*I/(S+I+R)",
                    variables = character(0))))
 
 stopifnot(
-    identical(SimInf:::rewrite_propensity("beta*S*I/(S+I+R)", list(),
-                                          c("S", "I", "R"), NULL,
-                                          "beta", NULL, TRUE),
+    identical(SimInf:::rewrite_propensity(propensity = "beta*S*I/(S+I+R)",
+                                          variables = list(),
+                                          compartments = c("S", "I", "R"),
+                                          ldata_names = NULL,
+                                          gdata_names = "beta",
+                                          v0_names = NULL,
+                                          use_enum = TRUE),
               list(code = "gdata[BETA]*u[S]*u[I]/(u[S]+u[I]+u[R])",
                    depends = c(1, 1, 1),
                    G_rowname = "beta*S*I/(S+I+R)",
