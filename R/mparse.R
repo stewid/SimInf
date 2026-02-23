@@ -497,7 +497,7 @@ check_compartment_variable_names <- function(cell_compartments,
                                              v0_names) {
     if (any(duplicated(c(compartments, gdata_names, ldata_names,
                          v0_names, cell_compartments)))) {
-        stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
+        stop("Duplicated compartment or variable name detected.",
              call. = FALSE)
     }
 

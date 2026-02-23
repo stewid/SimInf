@@ -165,7 +165,7 @@ res <- assertError(
            gdata = c(c1 = 0.5, c2 = 1, c3 = 0.005, c4 = 0.6),
            u0 = data.frame(D = rep(10, 5), W = 10),
            tspan = 1:5))
-check_error(res, "'u0', 'gdata', 'ldata' and 'v0' have names in common.")
+check_error(res, "Duplicated compartment or variable name detected.")
 
 res <- assertError(
     mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -1268,7 +1268,7 @@ res <- assertError(
                             "cell.contamination"),
            u0 = data.frame(S = 0, row = 0, col = 0, contamination = 0),
            tspan = 1:5))
-check_error(res, "'u0', 'gdata', 'ldata' and 'v0' have names in common.")
+check_error(res, "Duplicated compartment or variable name detected.")
 
 ## Check that mparse fails for a raster model with duplicated cell
 ## compartments.
@@ -1278,4 +1278,4 @@ res <- assertError(
                             "cell.contamination"),
            u0 = data.frame(S = 0, row = 0, col = 0),
            tspan = 1:5))
-check_error(res, "'u0', 'gdata', 'ldata' and 'v0' have names in common.")
+check_error(res, "Duplicated compartment or variable name detected.")
