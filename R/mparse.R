@@ -490,6 +490,32 @@ dependency_graph <- function(transitions, S) {
     G
 }
 
+check_compartment_variable_names <- function(cell_compartments,
+                                             compartments,
+                                             gdata_names,
+                                             ldata_names,
+                                             v0_names) {
+    if (any(duplicated(c(compartments, gdata_names, ldata_names,
+                         v0_names, cell_compartments)))) {
+        stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
+             call. = FALSE)
+    }
+
+    ## 'N_COMPARTMENTS_U', 'N_COMPARTMENTS_V', and
+    ## 'N_COMPARTMENTS_CELL' are enumeration constants to make it
+    ## easier to know how many compartments exist in 'u', 'v', and
+    ## cell.  Additionally, check that there is no compartment that
+    ## also exists as a cell compartment.
+    if (any(c("N_COMPARTMENTS_U", "N_COMPARTMENTS_V", "N_COMPARTMENTS_CELL",
+              cell_compartments) %in%
+            c(compartments, gdata_names, ldata_names, v0_names))) {
+        stop("Invalid compartment or variable name.",
+             call. = FALSE)
+    }
+
+    invisible(NULL)
+}
+
 ##' Model parser to define new models to run in \code{SimInf}
 ##'
 ##' Describe your model in a logical way in R. \code{mparse} creates a
@@ -624,23 +650,8 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     gdata_names <- variable_names(gdata, TRUE)
     v0_names <- variable_names(v0, nrow(u0) == 1L)
 
-    if (any(duplicated(c(compartments, gdata_names, ldata_names,
-                         v0_names, cell_compartments)))) {
-        stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
-             call. = FALSE)
-    }
-
-    ## 'N_COMPARTMENTS_U', 'N_COMPARTMENTS_V', and
-    ## 'N_COMPARTMENTS_CELL' are enumeration constants to make it
-    ## easier to know how many compartments exist in 'u', 'v', and
-    ## cell.  Additionally, check that there is no compartment that
-    ## also exists as a cell compartment.
-    if (any(c("N_COMPARTMENTS_U", "N_COMPARTMENTS_V", "N_COMPARTMENTS_CELL",
-              cell_compartments) %in%
-            c(compartments, gdata_names, ldata_names, v0_names))) {
-        stop("Invalid compartment or variable name.",
-             call. = FALSE)
-    }
+    check_compartment_variable_names(cell_compartments, compartments,
+                                     gdata_names, ldata_names, v0_names)
 
     ## Parse transitions
     transitions <- parse_transitions(transitions, compartments,
