@@ -737,14 +737,20 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     transitions <- parse_transitions(transitions, compartments,
                                      ldata_names, gdata_names,
                                      v0_names, use_enum)
+    S <- state_change_matrix(transitions = transitions$propensities,
+                             compartments = compartments)
 
-    S <- state_change_matrix(transitions$propensities, compartments)
-    G <- dependency_graph(transitions$propensities, S)
+    G <- dependency_graph(transitions = transitions$propensities,
+                          S = S)
 
     ## Generate C code.
-    C_code <- C_code_mparse(transitions, pts_fun, compartments,
-                            ldata_names, gdata_names, v0_names,
-                            use_enum)
+    C_code <- C_code_mparse(transitions = transitions,
+                            pts_fun = pts_fun,
+                            compartments = compartments,
+                            ldata_names = ldata_names,
+                            gdata_names = gdata_names,
+                            v0_names = v0_names,
+                            use_enum = use_enum)
 
     SimInf_model(G      = G,
                  S      = S,
