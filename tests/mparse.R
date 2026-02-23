@@ -197,6 +197,17 @@ res <- assertError(
            tspan = 1:100))
 check_error(res, "Invalid compartment or variable name.")
 
+res <- assertError(
+    mparse(transitions = c("S -> beta*S*I/N -> I",
+                           "I -> gamma*I -> R",
+                           "N <- S+I+R"),
+           compartments = c("S", "I", "R", "N_COMPARTMENTS_CELL"),
+           gdata = c(beta = 0.16, gamma = 0.077),
+           u0 = data.frame(S = 100, I = 1, R = 0,
+                           N_COMPARTMENTS_CELL = 3),
+           tspan = 1:100))
+check_error(res, "Invalid compartment or variable name.")
+
 ## Check mparse
 m <- mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
                             "D+W->c3*D*W->W+W", "W->c4*W->@"),
@@ -1257,7 +1268,7 @@ res <- assertError(
                             "cell.contamination"),
            u0 = data.frame(S = 0, row = 0, col = 0, contamination = 0),
            tspan = 1:5))
-check_error(res, "Invalid compartment or variable name.")
+check_error(res, "'u0', 'gdata', 'ldata' and 'v0' have names in common.")
 
 ## Check that mparse fails for a raster model with duplicated cell
 ## compartments.

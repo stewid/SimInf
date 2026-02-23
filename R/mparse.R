@@ -628,11 +628,13 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
              call. = FALSE)
     }
 
-    ## 'N_COMPARTMENTS_U' and 'N_COMPARTMENTS_V' are enumeration
-    ## constants to make it easier to know how many compartments exist
-    ## in 'u' and 'v'.  Additionally, check that there is no
-    ## compartment that also exists as a cell compartment.
-    if (any(c("N_COMPARTMENTS_U", "N_COMPARTMENTS_V", cell_compartments) %in%
+    ## 'N_COMPARTMENTS_U', 'N_COMPARTMENTS_V', and
+    ## 'N_COMPARTMENTS_CELL' are enumeration constants to make it
+    ## easier to know how many compartments exist in 'u', 'v', and
+    ## cell.  Additionally, check that there is no compartment that
+    ## also exists as a cell compartment.
+    if (any(c("N_COMPARTMENTS_U", "N_COMPARTMENTS_V", "N_COMPARTMENTS_CELL",
+              cell_compartments) %in%
             c(compartments, gdata_names, ldata_names, v0_names))) {
         stop("Invalid compartment or variable name.",
              call. = FALSE)
