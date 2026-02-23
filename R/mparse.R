@@ -616,6 +616,8 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     ## Add enumeration value to compartments.
     attr(compartments, "value") <- seq_along(compartments) - 1L
     attr(compartments, "n_values") <- length(compartments)
+    attr(cell_compartments, "value") <- seq_along(cell_compartments) - 1L
+    attr(cell_compartments, "n_values") <- length(cell_compartments)
 
     ## Extract variable names from data.
     ldata_names <- variable_names(ldata, nrow(u0) == 1L)
