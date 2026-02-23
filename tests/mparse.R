@@ -1258,3 +1258,13 @@ res <- assertError(
            u0 = data.frame(S = 0, row = 0, col = 0, contamination = 0),
            tspan = 1:5))
 check_error(res, "Invalid compartment or variable name.")
+
+## Check that mparse fails for a raster model with duplicated cell
+## compartments.
+res <- assertError(
+    mparse(transitions = "@->1->S",
+           compartments = c("S", "row", "col", "cell.contamination",
+                            "cell.contamination"),
+           u0 = data.frame(S = 0, row = 0, col = 0),
+           tspan = 1:5))
+check_error(res, "'u0', 'gdata', 'ldata' and 'v0' have names in common.")

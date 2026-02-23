@@ -622,7 +622,8 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     gdata_names <- variable_names(gdata, TRUE)
     v0_names <- variable_names(v0, nrow(u0) == 1L)
 
-    if (any(duplicated(c(compartments, gdata_names, ldata_names, v0_names)))) {
+    if (any(duplicated(c(compartments, gdata_names, ldata_names,
+                         v0_names, cell_compartments)))) {
         stop("'u0', 'gdata', 'ldata' and 'v0' have names in common.",
              call. = FALSE)
     }
