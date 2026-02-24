@@ -1005,6 +1005,7 @@ check_error(res, "Invalid usage of the empty set '@'.")
 res <- assertError(
     SimInf:::parse_variable(x = "3N <- S + I + R",
                             compartments = c("S", "I", "R"),
+                            cell_compartments = character(0),
                             ldata_names = character(0),
                             gdata_names = character(0),
                             v0_names = character(0),
@@ -1014,6 +1015,7 @@ check_error(res, "Invalid variable: '3N <- S + I + R'.")
 res <- assertError(
     SimInf:::parse_variable(x = "N <- S + I + R",
                             compartments = c("S", "I", "R"),
+                            cell_compartments = character(0),
                             ldata_names = "N",
                             gdata_names = character(0),
                             v0_names = character(0),
@@ -1026,6 +1028,7 @@ res <- assertError(
     SimInf:::parse_variables(variables = c("N <- S + I + R",
                                            "N <- S + I + R"),
                              compartments = c("S", "I", "R"),
+                             cell_compartments = character(0),
                              ldata_names = character(0),
                              gdata_names = character(0),
                              v0_names = character(0),
@@ -1037,6 +1040,7 @@ check_error(
 stopifnot(identical(
     SimInf:::parse_variable(x = "N <- S + I + R",
                             compartments = c("S", "I", "R"),
+                            cell_compartments = character(0),
                             ldata_names = character(0),
                             gdata_names = character(0),
                             v0_names = character(0),
@@ -1049,6 +1053,7 @@ stopifnot(identical(
 stopifnot(identical(
     SimInf:::parse_variable(x = "(int)N <- S + I + R",
                             compartments = c("S", "I", "R"),
+                            cell_compartments = character(0),
                             ldata_names = character(0),
                             gdata_names = character(0),
                             v0_names = character(0),
@@ -1061,6 +1066,7 @@ stopifnot(identical(
 stopifnot(identical(
     SimInf:::parse_variable(x = "N <- S + I + R",
                             compartments = c("S", "I", "R"),
+                            cell_compartments = character(0),
                             ldata_names = character(0),
                             gdata_names = character(0),
                             v0_names = character(0),
