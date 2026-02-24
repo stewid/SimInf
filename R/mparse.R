@@ -743,12 +743,6 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     compartments <- compartments[i]
     u0 <- check_u0(u0, compartments)
 
-    ## Add enumeration value to compartments.
-    attr(compartments, "value") <- seq_along(compartments) - 1L
-    attr(compartments, "n_values") <- length(compartments)
-    attr(cell_compartments, "value") <- seq_along(cell_compartments) - 1L
-    attr(cell_compartments, "n_values") <- length(cell_compartments)
-
     ## Extract variable names from data.
     ldata_names <- variable_names(ldata, nrow(u0) == 1L)
     gdata_names <- variable_names(gdata, TRUE)
@@ -774,6 +768,12 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
 
     G <- dependency_graph(transitions = transitions$propensities,
                           S = S)
+
+    ## Add enumeration value to compartments.
+    attr(compartments, "value") <- seq_along(compartments) - 1L
+    attr(compartments, "n_values") <- length(compartments)
+    attr(cell_compartments, "value") <- seq_along(cell_compartments) - 1L
+    attr(cell_compartments, "n_values") <- length(cell_compartments)
 
     ## Generate C code.
     C_code <- C_code_mparse(transitions = transitions,
