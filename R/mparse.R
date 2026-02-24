@@ -109,6 +109,7 @@ substitute_tokens <- function(tokens,
 
 rewrite_tokens <- function(tokens,
                            compartments,
+                           cell_compartments,
                            ldata_names,
                            gdata_names,
                            v0_names,
@@ -181,6 +182,7 @@ propensity_variables <- function(tokens, variables) {
 rewrite_propensity <- function(propensity,
                                variables,
                                compartments,
+                               cell_compartments,
                                ldata_names,
                                gdata_names,
                                v0_names,
@@ -262,6 +264,7 @@ parse_compartments <- function(x, compartments) {
 parse_propensity <- function(x,
                              variables,
                              compartments,
+                             cell_compartments,
                              ldata_names,
                              gdata_names,
                              v0_names,
@@ -278,6 +281,7 @@ parse_propensity <- function(x,
     propensity <- rewrite_propensity(propensity = propensity,
                                      variables = variables,
                                      compartments = compartments,
+                                     cell_compartments = cell_compartments,
                                      ldata_names = ldata_names,
                                      gdata_names = gdata_names,
                                      v0_names = v0_names,
@@ -300,6 +304,7 @@ parse_propensity <- function(x,
 parse_propensities <- function(propensities,
                                variables,
                                compartments,
+                               cell_compartments,
                                ldata_names,
                                gdata_names,
                                v0_names,
@@ -317,6 +322,7 @@ parse_propensities <- function(propensities,
         parse_propensity(x = x,
                          variables = variables,
                          compartments = compartments,
+                         cell_compartments = cell_compartments,
                          ldata_names = ldata_names,
                          gdata_names = gdata_names,
                          v0_names = v0_names,
@@ -340,6 +346,7 @@ pattern_variable <- function() {
 
 parse_variable <- function(x,
                            compartments,
+                           cell_compartments,
                            ldata_names,
                            gdata_names,
                            v0_names,
@@ -385,6 +392,7 @@ parse_variable <- function(x,
 
 parse_variables <- function(variables,
                             compartments,
+                            cell_compartments,
                             ldata_names,
                             gdata_names,
                             v0_names,
@@ -395,6 +403,7 @@ parse_variables <- function(variables,
     variables <- lapply(variables, function(x) {
         parse_variable(x = x,
                        compartments = compartments,
+                       cell_compartments = cell_compartments,
                        ldata_names = ldata_names,
                        gdata_names = gdata_names,
                        v0_names = v0_names,
@@ -469,6 +478,7 @@ topological_sort <- function(x) {
 
 parse_transitions <- function(transitions,
                               compartments,
+                              cell_compartments,
                               ldata_names,
                               gdata_names,
                               v0_names,
@@ -479,6 +489,7 @@ parse_transitions <- function(transitions,
     ## Extract the variables from the transitions.
     variables <- parse_variables(variables = transitions[i],
                                  compartments = compartments,
+                                 cell_compartments = cell_compartments,
                                  ldata_names = ldata_names,
                                  gdata_names = gdata_names,
                                  v0_names = v0_names,
@@ -488,6 +499,7 @@ parse_transitions <- function(transitions,
     propensities <- parse_propensities(propensities = transitions[!i],
                                        variables = variables,
                                        compartments = compartments,
+                                       cell_compartments = cell_compartments,
                                        ldata_names = ldata_names,
                                        gdata_names = gdata_names,
                                        v0_names = v0_names,
@@ -570,8 +582,8 @@ dependency_graph <- function(transitions, S) {
     G
 }
 
-check_model_names <- function(cell_compartments,
-                              compartments,
+check_model_names <- function(compartments,
+                              cell_compartments,
                               gdata_names,
                               ldata_names,
                               v0_names) {
@@ -730,13 +742,21 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     gdata_names <- variable_names(gdata, TRUE)
     v0_names <- variable_names(v0, nrow(u0) == 1L)
 
-    check_model_names(cell_compartments, compartments,
-                      gdata_names, ldata_names, v0_names)
+    check_model_names(compartments = compartments,
+                      cell_compartments = cell_compartments,
+                      gdata_names = gdata_names,
+                      ldata_names = ldata_names,
+                      v0_names = v0_names)
 
     ## Parse transitions
-    transitions <- parse_transitions(transitions, compartments,
-                                     ldata_names, gdata_names,
-                                     v0_names, use_enum)
+    transitions <- parse_transitions(transitions = transitions,
+                                     compartments = compartments,
+                                     cell_compartments = cell_compartments,
+                                     ldata_names = ldata_names,
+                                     gdata_names = gdata_names,
+                                     v0_names = v0_names,
+                                     use_enum = use_enum)
+
     S <- state_change_matrix(transitions = transitions$propensities,
                              compartments = compartments)
 
