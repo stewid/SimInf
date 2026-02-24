@@ -88,6 +88,12 @@ remove_spaces <- function(x) {
     gsub(" ", "", x)
 }
 
+prefix_cell_compartments <- function(cell_compartments) {
+    if (length(cell_compartments) > 0)
+        cell_compartments <- paste0("cell.", cell_compartments)
+    cell_compartments
+}
+
 substitute_tokens <- function(tokens,
                               pattern,
                               replacement,
@@ -144,7 +150,10 @@ rewrite_tokens <- function(tokens,
 propensity_dependencies <- function(tokens,
                                     vars,
                                     variables,
-                                    compartments) {
+                                    compartments,
+                                    cell_compartments) {
+    compartments <- c(compartments,
+                      prefix_cell_compartments(cell_compartments))
     depends <- integer(length(compartments))
 
     ## Find compartments in propensity
@@ -196,7 +205,8 @@ rewrite_propensity <- function(propensity,
     depends <- propensity_dependencies(tokens = tokens,
                                        vars = vars,
                                        variables = variables,
-                                       compartments = compartments)
+                                       compartments = compartments,
+                                       cell_compartments = cell_compartments)
 
     tokens <- rewrite_tokens(tokens = tokens,
                              compartments = compartments,
