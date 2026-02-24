@@ -599,6 +599,11 @@ check_model_names <- function(compartments,
                               gdata_names,
                               ldata_names,
                               v0_names) {
+    ## Ensure to check names where cell compartments are checked with
+    ## and without the prefix 'cell.'.
+    cell_compartments <- c(cell_compartments,
+                           sub("^cell[.]", "", cell_compartments))
+
     if (any(duplicated(c(compartments, gdata_names, ldata_names,
                          v0_names, cell_compartments)))) {
         stop("Duplicated compartment or variable name detected.",
@@ -738,7 +743,6 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
              call. = FALSE)
     }
     cell_compartments <- compartments[i]
-    cell_compartments <- sub("^cell[.]", "", cell_compartments)
     i <- setdiff(seq_along(compartments), i)
     compartments <- compartments[i]
     u0 <- check_u0(u0, compartments)
