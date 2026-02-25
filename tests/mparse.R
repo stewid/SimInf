@@ -649,11 +649,11 @@ stopifnot(
                            gdata_names = "beta",
                            v0_names = NULL,
                            use_enum = TRUE),
-              list(
-                code = "gdata[BETA]*u[S]*cell[CONTAMINATION]/(u[S]+u[I]+u[R])",
-                depends = c(1, 1, 1, 1),
-                G_rowname = "beta*S*cell.contamination/(S+I+R)",
-                variables = character(0))))
+              list(code =
+                       "gdata[BETA]*u[S]*cell[CONTAMINATION]/(u[S]+u[I]+u[R])",
+                   depends = c(1, 1, 1, 1),
+                   G_rowname = "beta*S*cell.contamination/(S+I+R)",
+                   variables = character(0))))
 
 stopifnot(
     identical(SimInf:::rewrite_propensity(
