@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -93,7 +93,11 @@ C_enumeration_constants <- function(target, labels) {
     c(lines, "};", "")
 }
 
-C_enum <- function(compartments, ldata_names, gdata_names, v0_names,
+C_enum <- function(compartments,
+                   cell_compartments,
+                   ldata_names,
+                   gdata_names,
+                   v0_names,
                    use_enum) {
     if (!isTRUE(use_enum))
         return(character(0))
@@ -195,7 +199,7 @@ C_trFun <- function(transitions) {
         ## Insert variables.
         lines <- c(
             lines,
-            C_variables(propensity, variables))
+            C_variables(propensity = propensity, variables = variables))
 
         ## Insert propensity.
         lines <- c(
@@ -338,17 +342,26 @@ C_R_init <- function() {
 ##'     curly brackets.
 ##' @return character vector with C code.
 ##' @noRd
-C_code_mparse <- function(transitions, pts_fun, compartments,
-                          ldata_names, gdata_names, v0_names,
+C_code_mparse <- function(transitions,
+                          pts_fun,
+                          compartments,
+                          cell_compartments,
+                          ldata_names,
+                          gdata_names,
+                          v0_names,
                           use_enum) {
     c(C_heading(),
       C_include(),
       C_define(),
-      C_enum(compartments, ldata_names, gdata_names, v0_names,
-             use_enum),
-      C_trFun(transitions),
-      C_ptsFun(pts_fun),
-      C_run(transitions),
+      C_enum(compartments = compartments,
+             cell_compartments = cell_compartments,
+             ldata_names = ldata_names,
+             gdata_names = gdata_names,
+             v0_names = v0_names,
+             use_enum = use_enum),
+      C_trFun(transitions = transitions),
+      C_ptsFun(pts_fun = pts_fun),
+      C_run(transitions = transitions),
       C_calldef(),
       C_R_init())
 }
