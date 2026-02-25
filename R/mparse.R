@@ -379,8 +379,9 @@ parse_variable <- function(x,
 
     variable <- v[3]
     if (variable %in% c(compartments, gdata_names, ldata_names,
-                        v0_names)) {
-        stop("Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.",
+                        v0_names, cell_compartments,
+                        remove_cell_prefix(cell_compartments))) {
+        stop("Invalid variable name.",
              call. = FALSE)
     }
 

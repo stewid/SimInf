@@ -1053,7 +1053,19 @@ res <- assertError(
                             use_enum = FALSE))
 check_error(
     res,
-    "Variable name already exists in 'u0', 'gdata', 'ldata' or 'v0'.")
+    "Invalid variable name.")
+
+res <- assertError(
+    SimInf:::parse_variable(x = "contamination <- 2 * S",
+                            compartments = c("S", "row", "col"),
+                            cell_compartments = "cell.contamination",
+                            ldata_names = character(0),
+                            gdata_names = character(0),
+                            v0_names = character(0),
+                            use_enum = TRUE))
+check_error(
+    res,
+    "Invalid variable name.")
 
 res <- assertError(
     SimInf:::parse_variables(variables = c("N <- S + I + R",
