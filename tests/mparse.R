@@ -640,28 +640,31 @@ stopifnot(
                    variables = character(0))))
 
 stopifnot(
-    identical(SimInf:::rewrite_propensity(propensity = "beta*S*cell.contamination/(S+I+R)",
-                                          variables = list(),
-                                          compartments = c("S", "I", "R"),
-                                          cell_compartments = "cell.contamination",
-                                          ldata_names  = NULL,
-                                          gdata_names = "beta",
-                                          v0_names = NULL,
-                                          use_enum = TRUE),
-              list(code = "gdata[BETA]*u[S]*cell[CONTAMINATION]/(u[S]+u[I]+u[R])",
-                   depends = c(1, 1, 1, 1),
-                   G_rowname = "beta*S*cell.contamination/(S+I+R)",
-                   variables = character(0))))
+    identical(SimInf:::rewrite_propensity(
+                           propensity = "beta*S*cell.contamination/(S+I+R)",
+                           variables = list(),
+                           compartments = c("S", "I", "R"),
+                           cell_compartments = "cell.contamination",
+                           ldata_names  = NULL,
+                           gdata_names = "beta",
+                           v0_names = NULL,
+                           use_enum = TRUE),
+              list(
+                code = "gdata[BETA]*u[S]*cell[CONTAMINATION]/(u[S]+u[I]+u[R])",
+                depends = c(1, 1, 1, 1),
+                G_rowname = "beta*S*cell.contamination/(S+I+R)",
+                variables = character(0))))
 
 stopifnot(
-    identical(SimInf:::rewrite_propensity(propensity = "beta*S*cell.contamination/(S+I+R)",
-                                          variables = list(),
-                                          compartments = c("S", "I", "R"),
-                                          cell_compartments = "cell.contamination",
-                                          ldata_names  = NULL,
-                                          gdata_names = "beta",
-                                          v0_names = NULL,
-                                          use_enum = FALSE),
+    identical(SimInf:::rewrite_propensity(
+                           propensity = "beta*S*cell.contamination/(S+I+R)",
+                           variables = list(),
+                           compartments = c("S", "I", "R"),
+                           cell_compartments = "cell.contamination",
+                           ldata_names  = NULL,
+                           gdata_names = "beta",
+                           v0_names = NULL,
+                           use_enum = FALSE),
               list(code = "gdata[0]*u[0]*cell[0]/(u[0]+u[1]+u[2])",
                    depends = c(1, 1, 1, 1),
                    G_rowname = "beta*S*cell.contamination/(S+I+R)",
