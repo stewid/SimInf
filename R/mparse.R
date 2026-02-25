@@ -88,10 +88,8 @@ remove_spaces <- function(x) {
     gsub(" ", "", x)
 }
 
-prefix_cell_compartments <- function(cell_compartments) {
-    if (length(cell_compartments) > 0)
-        cell_compartments <- paste0("cell.", cell_compartments)
-    cell_compartments
+remove_cell_prefix <- function(x) {
+    sub("^cell[.]", "", x)
 }
 
 substitute_tokens <- function(tokens,
@@ -100,6 +98,7 @@ substitute_tokens <- function(tokens,
                               use_enum) {
     i <- match(tokens, pattern)
     j <- which(!is.na(i))
+    pattern <- remove_cell_prefix(pattern)
     if (length(j)) {
         if (isTRUE(use_enum)) {
             lbl <- toupper(pattern[i[j]])
@@ -124,6 +123,12 @@ rewrite_tokens <- function(tokens,
     tokens <- substitute_tokens(tokens = tokens,
                                 pattern = compartments,
                                 replacement = "u",
+                                use_enum = use_enum)
+
+    ## Find cell compartments in tokens
+    tokens <- substitute_tokens(tokens = tokens,
+                                pattern = cell_compartments,
+                                replacement = "cell",
                                 use_enum = use_enum)
 
     ## Find ldata parameters in tokens
@@ -152,8 +157,7 @@ propensity_dependencies <- function(tokens,
                                     variables,
                                     compartments,
                                     cell_compartments) {
-    compartments <- c(compartments,
-                      prefix_cell_compartments(cell_compartments))
+    compartments <- c(compartments, cell_compartments)
     depends <- integer(length(compartments))
 
     ## Find compartments in propensity
@@ -602,7 +606,7 @@ check_model_names <- function(compartments,
     ## Ensure to check names where cell compartments are checked with
     ## and without the prefix 'cell.'.
     cell_compartments <- c(cell_compartments,
-                           sub("^cell[.]", "", cell_compartments))
+                           remove_cell_prefix(cell_compartments))
 
     if (any(duplicated(c(compartments, gdata_names, ldata_names,
                          v0_names, cell_compartments)))) {
