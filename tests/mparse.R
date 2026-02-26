@@ -925,7 +925,9 @@ G <- new("dgCMatrix", i = integer(0), p = c(0L, 0L),
 stopifnot(identical(m@G, G))
 
 ## Check parsing replicates of compartments
-stopifnot(identical(SimInf:::parse_compartments("S + 2*S", c("S", "I")),
+stopifnot(identical(SimInf:::parse_compartments(x = "S + 2*S",
+                                                compartments = c("S", "I"),
+                                                cell_compartments = character(0)),
                     c(3L, 0L)))
 
 ## Check mparse with a compartment name that contains '.', for
@@ -1187,6 +1189,7 @@ stopifnot(identical(
     SimInf:::C_enum(compartment = structure(c("S", "I", "R"),
                                             value = c(0L, 1L, 2L),
                                             n_values = 3L),
+                    cell_compartments = character(0),
                     ldata_names = c("beta", "gamma", "delta",
                                     "epsilon", "zeta", "eta", "theta",
                                     "iota", "kappa", "lambda"),
