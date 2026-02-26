@@ -244,7 +244,9 @@ G_rownames <- function(transitions) {
     as.character(do.call("rbind", lapply(transitions, "[[", "G_rowname")))
 }
 
-parse_compartments <- function(x, compartments) {
+parse_compartments <- function(x,
+                               compartments,
+                               cell_compartments) {
     ## Split into 'compartment1 + compartment2 + ..'
     x <- unlist(strsplit(x, "+", fixed = TRUE))
 
@@ -269,6 +271,7 @@ parse_compartments <- function(x, compartments) {
 
     ## Assign each compartment into its number according to the
     ## ordering in compartments
+    compartments <- c(compartments, cell_compartments)
     i <- match(x, compartments)
     if (anyNA(i))
         stop(sprintf("Unknown compartment: '%s'.", x[is.na(i)]), call. = FALSE)
@@ -289,8 +292,12 @@ parse_propensity <- function(x,
 
     ## Determine the corresponding column in the state change vector
     ## S.
-    from <- parse_compartments(x = x[1], compartments = compartments)
-    dest <- parse_compartments(x = x[length(x)], compartments = compartments)
+    from <- parse_compartments(x = x[1],
+                               compartments = compartments,
+                               cell_compartments = cell_compartments)
+    dest <- parse_compartments(x = x[length(x)],
+                               compartments = compartments,
+                               cell_compartments = cell_compartments)
     S <- dest - from
 
     propensity <- rewrite_propensity(propensity = propensity,
@@ -583,10 +590,12 @@ variable_names <- function(x, is_vector_ok) {
 }
 
 ## Create the state-change matrix S
-state_change_matrix <- function(transitions, compartments) {
+state_change_matrix <- function(transitions,
+                                compartments,
+                                cell_compartments) {
     S <- do.call("cbind", lapply(transitions, "[[", "S"))
     colnames(S) <- as.character(seq_len(dim(S)[2]))
-    rownames(S) <- as.character(compartments)
+    rownames(S) <- as.character(c(compartments, cell_compartments))
     S
 }
 
@@ -772,14 +781,16 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                                      use_enum = use_enum)
 
     S <- state_change_matrix(transitions = transitions$propensities,
-                             compartments = compartments)
+                             compartments = compartments,
+                             cell_compartments = cell_compartments)
 
     G <- dependency_graph(transitions = transitions$propensities,
                           S = S)
 
-    ## Add enumeration value to compartments.
+    ## Remove cell prefix and add enumeration value to compartments.
     attr(compartments, "value") <- seq_along(compartments) - 1L
     attr(compartments, "n_values") <- length(compartments)
+    cell_compartments <- remove_cell_prefix(cell_compartments)
     attr(cell_compartments, "value") <- seq_along(cell_compartments) - 1L
     attr(cell_compartments, "n_values") <- length(cell_compartments)
 
