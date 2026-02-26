@@ -110,6 +110,14 @@ C_enum <- function(compartments,
         attributes(compartments) <- a
     }
 
+    if (length(cell_compartments) > 0) {
+        a <- attributes(cell_compartments)
+        cell_compartments <- c(cell_compartments, "N_COMPARTMENTS_CELL")
+        a$value <- c(a$value, a$n_values)
+        a$n_values <- a$n_values + 1L
+        attributes(cell_compartments) <- a
+    }
+
     if (length(v0_names) > 0) {
         a <- attributes(v0_names)
         v0_names <- c(v0_names, "N_COMPARTMENTS_V")
@@ -118,10 +126,11 @@ C_enum <- function(compartments,
         attributes(v0_names) <- a
     }
 
-   c(C_enumeration_constants("u", compartments),
-     C_enumeration_constants("v", v0_names),
-     C_enumeration_constants("ldata", ldata_names),
-     C_enumeration_constants("gdata", gdata_names))
+    c(C_enumeration_constants("u", compartments),
+      C_enumeration_constants("cell", cell_compartments),
+      C_enumeration_constants("v", v0_names),
+      C_enumeration_constants("ldata", ldata_names),
+      C_enumeration_constants("gdata", gdata_names))
 }
 
 ##' Generate C code for the variables
