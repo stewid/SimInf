@@ -176,11 +176,18 @@ C_variables <- function(propensity, variables) {
 ##' @param transitions data for the transitions.
 ##' @return character vector with C code.
 ##' @noRd
-C_trFun <- function(transitions) {
+C_trFun <- function(transitions, cell_compartments) {
     propensities <- transitions$propensities
     variables <- transitions$variables
 
+    parameters <- character(0)
+    if (length(cell_compartments) > 0) {
+        parameters <- c(parameters,
+                        "    const int *cell,")
+    }
+
     parameters <- c(
+        parameters,
         "    const int *u,",
         "    const double *v,",
         "    const double *ldata,",
@@ -191,9 +198,15 @@ C_trFun <- function(transitions) {
     for (i in seq_along(propensities)) {
         propensity <- propensities[[i]]
 
+        lines <- c(lines, "/**")
+        if (length(cell_compartments) > 0) {
+            lines <- c(
+                lines,
+                " * @param cell The compartment state vector in the cell.")
+        }
+
         lines <- c(
             lines,
-            "/**",
             " * @param u The compartment state vector in the node.",
             " * @param v The continuous state vector in the node.",
             " * @param ldata The local data vector in the node.",
@@ -368,7 +381,8 @@ C_code_mparse <- function(transitions,
              gdata_names = gdata_names,
              v0_names = v0_names,
              use_enum = use_enum),
-      C_trFun(transitions = transitions),
+      C_trFun(transitions = transitions,
+              cell_compartments = cell_compartments),
       C_ptsFun(pts_fun = pts_fun),
       C_run(transitions = transitions),
       C_calldef(),
