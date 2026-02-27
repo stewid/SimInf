@@ -310,8 +310,8 @@ parse_propensity <- function(x,
                                      use_enum = use_enum)
 
     ## Determine the G rowname
-    names(from) <- compartments
-    names(dest) <- compartments
+    names(from) <- c(compartments, cell_compartments)
+    names(dest) <- c(compartments, cell_compartments)
     from <- G_label(from[which(from > 0)])
     dest <- G_label(dest[which(dest > 0)])
     G_rowname <- paste(from, "->", propensity$G_rowname, "->", dest)
