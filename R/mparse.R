@@ -787,6 +787,12 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     G <- dependency_graph(transitions = transitions$propensities,
                           S = S)
 
+    ## Split the state change matrix between the node and the cell.
+    i <- seq(from = length(compartments) + 1L,
+             length.out = length(cell_compartments))
+    cell_S <- S[i, , drop = FALSE]
+    S <- S[seq_along(compartments), , drop = FALSE]
+
     ## Remove cell prefix and add enumeration value to compartments.
     attr(compartments, "value") <- seq_along(compartments) - 1L
     attr(compartments, "n_values") <- length(compartments)
