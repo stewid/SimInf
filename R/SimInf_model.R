@@ -56,18 +56,13 @@ setValidity("SimInf_model", valid_SimInf_model_object)
 ##' @template ldata-param
 ##' @template gdata-param
 ##' @template tspan-param
-##' @param u0 The initial state vector. Either a matrix (\eqn{N_c
-##'     \times N_n}) or a a \code{data.frame} with the number of
-##'     individuals in each compartment in every node.
+##' @template u0-param
 ##' @param events A \code{data.frame} with the scheduled events.
 ##' @param V The result matrix for the real-valued continous
 ##'     compartment state (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
 ##'     \code{length(tspan)}).  \code{V[, j]} contains the real-valued
 ##'     state of the system at \code{tspan[j]}.
-##' @param v0 The initial continuous state vector in every node.
-##'     (\code{dim(ldata)[1]} \eqn{\times N_N}). The continuous state
-##'     vector is updated by the specific model during the simulation
-##'     in the post time step function.
+##' @template v0-param
 ##' @param E A matrix to handle scheduled events, see
 ##'     \code{\linkS4class{SimInf_events}}.  Each row in the matrix
 ##'     corresponds to one compartment in the model. The non-zero
@@ -87,12 +82,7 @@ setValidity("SimInf_model", valid_SimInf_model_object)
 ##'     \code{1} is used as the default value.
 ##' @param N Sparse matrix to handle scheduled events, see
 ##'     \code{\linkS4class{SimInf_events}}.
-##' @param C_code Character vector with optional model C code. If
-##'     non-empty, the C code is written to a temporary C-file when
-##'     the \code{run} method is called.  The temporary C-file is
-##'     compiled and the resulting DLL is dynamically loaded. The DLL
-##'     is unloaded and the temporary files are removed after running
-##'     the model.
+##' @template C_code-param
 ##' @return \linkS4class{SimInf_model}
 ##' @include init.R
 ##' @export

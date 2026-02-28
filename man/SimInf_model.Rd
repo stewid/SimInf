@@ -64,9 +64,12 @@ individuals in each disease state at
 \code{1} at \code{tspan[j]}. \code{U[(Nc + 1):(2 * Nc), j]}
 contains the state of node \code{2} at \code{tspan[j]} etc.}
 
-\item{u0}{The initial state vector. Either a matrix (\eqn{N_c
-\times N_n}) or a a \code{data.frame} with the number of
-individuals in each compartment in every node.}
+\item{u0}{A \code{data.frame} with the initial state in each node,
+i.e., the number of individuals in each compartment in each
+node when the simulation starts (see \sQuote{Details}). The
+parameter \code{u0} can also be an object that can be coerced
+to a \code{data.frame}, e.g., a named numeric vector will be
+coerced to a one row \code{data.frame}.}
 
 \item{v0}{The initial continuous state vector in every node.
 (\code{dim(ldata)[1]} \eqn{\times N_N}). The continuous state

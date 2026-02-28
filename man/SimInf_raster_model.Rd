@@ -7,16 +7,12 @@
 SimInf_raster_model(
   G,
   S,
+  cell_S,
   tspan,
-  events = NULL,
   ldata = NULL,
   gdata = NULL,
-  U = NULL,
   u0 = NULL,
   v0 = NULL,
-  V = NULL,
-  E = NULL,
-  N = NULL,
   C_code = NULL
 )
 }
@@ -35,6 +31,8 @@ to the state vector of the node where the state transition
 occurred.  Sparse matrix (\eqn{Nc \times Nt}) of object class
 \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
 
+\item{cell_S}{FIXME.}
+
 \item{tspan}{A vector (length >= 1) of increasing time points
 where the state of each node is to be returned. Can be either
 an \code{integer} or a \code{Date} vector. A \code{Date}
@@ -42,8 +40,6 @@ vector is coerced to a numeric vector as days, where
 \code{tspan[1]} becomes the day of the year of the first year
 of \code{tspan}. The dates are added as names to the numeric
 vector.}
-
-\item{events}{A \code{data.frame} with the scheduled events.}
 
 \item{ldata}{local data for the nodes. Can either be specified as
 a \code{data.frame} with one row per node. Or as a matrix
@@ -56,48 +52,17 @@ time step function.}
 all nodes. The global data vector is passed as an argument to
 the transition rate functions and the post time step function.}
 
-\item{U}{The result matrix with the number of individuals in each
-disease state in every node (\eqn{N_n N_c \times}
-\code{length(tspan)}).  \code{U[, j]} contains the number of
-individuals in each disease state at
-\code{tspan[j]}. \code{U[1:Nc, j]} contains the state of node
-\code{1} at \code{tspan[j]}. \code{U[(Nc + 1):(2 * Nc), j]}
-contains the state of node \code{2} at \code{tspan[j]} etc.}
-
-\item{u0}{The initial state vector. Either a matrix (\eqn{N_c
-\times N_n}) or a a \code{data.frame} with the number of
-individuals in each compartment in every node.}
+\item{u0}{A \code{data.frame} with the initial state in each node,
+i.e., the number of individuals in each compartment in each
+node when the simulation starts (see \sQuote{Details}). The
+parameter \code{u0} can also be an object that can be coerced
+to a \code{data.frame}, e.g., a named numeric vector will be
+coerced to a one row \code{data.frame}.}
 
 \item{v0}{The initial continuous state vector in every node.
 (\code{dim(ldata)[1]} \eqn{\times N_N}). The continuous state
 vector is updated by the specific model during the simulation
 in the post time step function.}
-
-\item{V}{The result matrix for the real-valued continous
-compartment state (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
-\code{length(tspan)}).  \code{V[, j]} contains the real-valued
-state of the system at \code{tspan[j]}.}
-
-\item{E}{A matrix to handle scheduled events, see
-\code{\linkS4class{SimInf_events}}.  Each row in the matrix
-corresponds to one compartment in the model. The non-zero
-entries in a column indicates the compartments to include in
-an event.  For the \emph{exit}, \emph{internal transfer} and
-\emph{external transfer} events, a non-zero entry indicate the
-compartments to sample individuals from.  For the \emph{enter}
-event, all individuals enter first non-zero compartment.  The
-select matrix \code{E} can either be specified as a
-\code{matrix}, or as a \code{data.frame}.  When \code{E} is
-specified as a \code{data.frame}, it must have one column
-named \code{compartment} that defines which compartment is
-referred to, and one column \code{select} that defines the
-column in \code{E}.  In addition, the \code{data.frame} can
-contain an optional column named \code{value} with the value
-in \code{E}.  When the \code{value} column is missing,
-\code{1} is used as the default value.}
-
-\item{N}{Sparse matrix to handle scheduled events, see
-\code{\linkS4class{SimInf_events}}.}
 
 \item{C_code}{Character vector with optional model C code. If
 non-empty, the C code is written to a temporary C-file when

@@ -21,17 +21,24 @@
 ##' Create a \code{SimInf_raster_model} object.  It is a model where
 ##' the nodes are not fixed at one position but can move between cells
 ##' on a raster.
-##' @inheritParams SimInf_model
+##' @template G-param
+##' @template S-param
+##' @param cell_S FIXME.
+##' @template tspan-param
+##' @template ldata-param
+##' @template gdata-param
+##' @template u0-param
+##' @template v0-param
+##' @template C_code-param
 ##' @export
 SimInf_raster_model <- function(G,
                                 S,
+                                cell_S,
                                 tspan,
                                 ldata  = NULL,
                                 gdata  = NULL,
-                                U      = NULL,
                                 u0     = NULL,
                                 v0     = NULL,
-                                V      = NULL,
                                 C_code = NULL) {
 
     model <- SimInf_model(G      = G,
