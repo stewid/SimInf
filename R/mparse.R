@@ -810,15 +810,29 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                             v0_names = v0_names,
                             use_enum = use_enum)
 
-    SimInf_model(G      = G,
-                 S      = S,
-                 E      = E,
-                 N      = N,
-                 tspan  = tspan,
-                 events = events,
-                 ldata  = ldata,
-                 gdata  = gdata,
-                 u0     = u0,
-                 v0     = v0,
-                 C_code = C_code)
+    if (length(cell_compartments) > 0) {
+        model <- SimInf_raster_model(G      = G,
+                                     S      = S,
+                                     cell_S = cell_S,
+                                     tspan  = tspan,
+                                     ldata  = ldata,
+                                     gdata  = gdata,
+                                     u0     = u0,
+                                     v0     = v0,
+                                     C_code = C_code)
+    } else {
+        model <- SimInf_model(G      = G,
+                              S      = S,
+                              E      = E,
+                              N      = N,
+                              tspan  = tspan,
+                              events = events,
+                              ldata  = ldata,
+                              gdata  = gdata,
+                              u0     = u0,
+                              v0     = v0,
+                              C_code = C_code)
+    }
+
+    model
 }
