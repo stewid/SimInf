@@ -143,6 +143,7 @@ valid_G <- function(object) {
     transitions <- unique(transitions)
     transitions <- transitions[transitions != "@"]
     transitions <- sub("^[[:digit:]]+[*]", "", transitions)
+    transitions <- transitions[!startsWith(transitions, "cell.")]
     if (!all(transitions %in% rownames(object@S)))
         return("'G' and 'S' must have identical compartments.")
 
