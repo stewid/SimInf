@@ -60,13 +60,16 @@ typedef struct SimInf_solver_args {
 
     /* State-change matrix. irS[k] is the row of S[k]. */
     const int *irS;
+    const int *cell_irS;
 
     /* State-change matrix. Index to data of first non-zero element in
      * row k. */
     const int *jcS;
+    const int *cell_jcS;
 
     /* State-change matrix. Value of item (i, j) in S. */
     const int *prS;
+    const int *cell_prS;
 
     /* Double vector. Output times. tspan[0] is the start time and
      * tspan[length(tspan)-1] is the stop time. */
@@ -190,6 +193,7 @@ typedef struct SimInf_solver_args {
 
     /* Vector of function pointers to transition rate functions. */
     TRFun *tr_fun;
+    TRRasterFun *tr_raster_fun;
 
     /* Function pointer to callback after each time step e.g. to
      * update the infectious pressure. */
@@ -369,6 +373,10 @@ SimInf_arg_check_model(
     SEXP arg);
 
 int
+SimInf_arg_check_raster_model(
+    SEXP arg);
+
+int
 SimInf_compartment_model_create(
     SimInf_compartment_model **out,
     SimInf_solver_args *args);
@@ -411,6 +419,10 @@ SimInf_run_solver_aem(
 
 int
 SimInf_run_solver_mssm(
+    SimInf_solver_args *args);
+
+int
+SimInf_run_solver_raster(
     SimInf_solver_args *args);
 
 int

@@ -110,6 +110,24 @@ SimInf_arg_check_model(
 }
 
 /**
+ * Check raster model argument
+ *
+ * @param arg The arg to check
+ * @return 0 if OK, else -1
+ */
+attribute_hidden int
+SimInf_arg_check_raster_model(
+    SEXP arg)
+{
+    static const char *valid[] = { "SimInf_raster_model", "" };
+
+    if (!Rf_isS4(arg) || R_check_class_etc(arg, valid) < 0)
+        return -1;
+
+    return 0;
+}
+
+/**
  * Check if the trajectory data is stored in a sparse matrix.
  *
  * @param m sparse matrix

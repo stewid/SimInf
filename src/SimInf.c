@@ -94,7 +94,11 @@ SimInf_raise_error(
  *        e.g. update infectious pressure.
  */
 attribute_hidden
-    SEXP SimInf_run(SEXP model, SEXP solver, TRFun *tr_fun, PTSFun pts_fun)
+SEXP SimInf_run(
+    SEXP model,
+    SEXP solver,
+    TRFun *tr_fun,
+    PTSFun pts_fun)
 {
     int err = 0, nprotect = 0;
     SEXP result = R_NilValue;
@@ -291,8 +295,145 @@ cleanup:
  * @param pts_fun Function pointer to callback after each time step.
  */
 attribute_hidden
-    SEXP SimInf_raster_run(SEXP model, TRRasterFun *tr_fun, PTSFun pts_fun)
+SEXP SimInf_raster_run(
+    SEXP model,
+    TRRasterFun *tr_fun,
+    PTSFun pts_fun)
 {
-    /* Not yet implemented. */
-    return R_NilValue;
+    int err = 0, nprotect = 0;
+    SEXP result = R_NilValue;
+    SEXP G, S, prS;
+    SEXP cell_S, cell_prS;
+    SEXP tspan;
+    SEXP U, V, U_sparse, V_sparse;
+    SimInf_solver_args args = { 0 };
+
+    /* If the model ldata is a 0x0 matrix, i.e. Nld == 0, then use
+     * ldata_tmp in the transition rate functions. This is to make
+     * &ldata[node * Nld] work in the solvers. The reason for INFINITY
+     * is to facilitate for the solvers to detect and raise an error
+     * if a model C code uses ldata[0] in the transition rate
+     * functions. */
+    const double ldata_tmp[1] = { INFINITY };
+
+    if (SimInf_arg_check_raster_model(model)) {
+        err = SIMINF_ERR_INVALID_MODEL;
+        goto cleanup;
+    }
+
+    /* seed */
+    GetRNGstate();
+    args.seed = (unsigned long int) (unif_rand() * UINT_MAX);
+    PutRNGstate();
+
+    /* Duplicate model. */
+    PROTECT(result = Rf_duplicate(model));
+    nprotect++;
+
+    /* Dependency graph */
+    PROTECT(G = R_do_slot(result, Rf_install("G")));
+    nprotect++;
+    args.irG = INTEGER(R_do_slot(G, Rf_install("i")));
+    args.jcG = INTEGER(R_do_slot(G, Rf_install("p")));
+
+    /* State change matrix in a node */
+    PROTECT(S = R_do_slot(result, Rf_install("S")));
+    nprotect++;
+    PROTECT(prS = Rf_coerceVector(R_do_slot(S, Rf_install("x")), INTSXP));
+    nprotect++;
+    args.irS = INTEGER(R_do_slot(S, Rf_install("i")));
+    args.jcS = INTEGER(R_do_slot(S, Rf_install("p")));
+    args.prS = INTEGER(prS);
+
+    /* State change matrix in a cell. */
+    PROTECT(cell_S = GET_SLOT(result, Rf_install("cell_S")));
+    nprotect++;
+    PROTECT(cell_prS = Rf_coerceVector(GET_SLOT(cell_S, Rf_install("x")), INTSXP));
+    nprotect++;
+    args.cell_irS = INTEGER(GET_SLOT(cell_S, Rf_install("i")));
+    args.cell_jcS = INTEGER(GET_SLOT(cell_S, Rf_install("p")));
+    args.cell_prS = INTEGER(cell_prS);
+
+    /* tspan */
+    PROTECT(tspan = R_do_slot(result, Rf_install("tspan")));
+    nprotect++;
+    args.tspan = REAL(tspan);
+
+    /* Constants */
+    args.Nrep = INTEGER(R_do_slot(result, Rf_install("replicates")))[0];
+    args.Nn =
+        INTEGER(R_do_slot
+                (R_do_slot(result, Rf_install("u0")),
+                 R_DimSymbol))[1] / args.Nrep;
+    args.Nc = INTEGER(R_do_slot(S, Rf_install("Dim")))[0];
+    args.Nt = INTEGER(R_do_slot(S, Rf_install("Dim")))[1];
+    args.Nd =
+        INTEGER(R_do_slot(R_do_slot(result, Rf_install("v0")), R_DimSymbol))[0];
+    args.Nld =
+        INTEGER(R_do_slot
+                (R_do_slot(result, Rf_install("ldata")), R_DimSymbol))[0];
+    args.tlen = LENGTH(R_do_slot(result, Rf_install("tspan")));
+
+    /* Output array (to hold a single trajectory) */
+    PROTECT(U_sparse = R_do_slot(result, Rf_install("U_sparse")));
+    nprotect++;
+    if (SimInf_sparse
+        (U_sparse, (ptrdiff_t) args.Nn * (ptrdiff_t) args.Nc, args.tlen)) {
+        args.irU = INTEGER(R_do_slot(U_sparse, Rf_install("i")));
+        args.jcU = INTEGER(R_do_slot(U_sparse, Rf_install("p")));
+        args.prU = REAL(R_do_slot(U_sparse, Rf_install("x")));
+    } else {
+        PROTECT(U =
+                Rf_allocMatrix(INTSXP, args.Nn * args.Nc,
+                               args.Nrep * args.tlen));
+        nprotect++;
+        R_do_slot_assign(result, Rf_install("U"), U);
+        args.U = INTEGER(R_do_slot(result, Rf_install("U")));
+    }
+
+    /* Output array (to hold a single trajectory) */
+    PROTECT(V_sparse = R_do_slot(result, Rf_install("V_sparse")));
+    nprotect++;
+    if (SimInf_sparse
+        (V_sparse, (ptrdiff_t) args.Nn * (ptrdiff_t) args.Nd, args.tlen)) {
+        args.irV = INTEGER(R_do_slot(V_sparse, Rf_install("i")));
+        args.jcV = INTEGER(R_do_slot(V_sparse, Rf_install("p")));
+        args.prV = REAL(R_do_slot(V_sparse, Rf_install("x")));
+    } else {
+        PROTECT(V =
+                Rf_allocMatrix(REALSXP, args.Nn * args.Nd,
+                               args.Nrep * args.tlen));
+        nprotect++;
+        R_do_slot_assign(result, Rf_install("V"), V);
+        args.V = REAL(R_do_slot(result, Rf_install("V")));
+    }
+
+    /* Initial state. */
+    args.u0 = INTEGER(R_do_slot(result, Rf_install("u0")));
+    args.v0 = REAL(R_do_slot(result, Rf_install("v0")));
+
+    /* Local data */
+    if (args.Nld > 0)
+        args.ldata = REAL(R_do_slot(result, Rf_install("ldata")));
+    else
+        args.ldata = ldata_tmp;
+
+    /* Global data */
+    args.gdata = REAL(R_do_slot(result, Rf_install("gdata")));
+
+    /* Function pointers */
+    args.tr_raster_fun = tr_fun;
+    args.pts_fun = pts_fun;
+
+    /* Run the simulation solver. */
+    err = SimInf_run_solver_raster(&args);
+
+cleanup:
+    if (err)
+        SimInf_raise_error(err);
+
+    if (nprotect)
+        UNPROTECT(nprotect);
+
+    return result;
 }
