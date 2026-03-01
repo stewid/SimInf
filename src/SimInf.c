@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ SimInf_raise_error(
 }
 
 /**
- * Initiate and run the simulation
+ * Initiate and run a trajectory for a SimInf_model object.
  *
  * @param model The SimInf_model
  * @param solver The numerical solver.
@@ -281,4 +281,18 @@ cleanup:
         UNPROTECT(nprotect);
 
     return result;
+}
+
+/**
+ * Initiate and run a trajectory for a SimInf_raster_model object.
+ *
+ * @param model The SimInf_model
+ * @param tr_fun Vector of function pointers to transition rate functions.
+ * @param pts_fun Function pointer to callback after each time step.
+ */
+attribute_hidden
+    SEXP SimInf_raster_run(SEXP model, TRRasterFun *tr_fun, PTSFun pts_fun)
+{
+    /* Not yet implemented. */
+    return R_NilValue;
 }
