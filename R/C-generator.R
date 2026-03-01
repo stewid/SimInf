@@ -289,51 +289,98 @@ C_ptsFun <- function(pts_fun) {
 ##' @param transitions data for the transitions.
 ##' @return character vector with C code.
 ##' @noRd
-C_run <- function(transitions) {
+C_run <- function(transitions, cell_compartments) {
     n_tr_fn <- length(transitions$propensities)
 
-    c("/**",
-      " * Run a trajectory of the model.",
-      " *",
-      " * @param model The model.",
-      " * @param solver The name of the numerical solver.",
-      " * @return A model with a trajectory attached to it.",
-      " */",
-      "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)",
-      "{",
-      "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
-      sprintf("    TRFun tr_fun[] = {%s};",
-              paste0("&trFun", seq_len(n_tr_fn), collapse = ", ")),
-      "",
-      "    if (!SimInf_run) {",
-      "        SimInf_run = (SEXP(*)(SEXP, SEXP, TRFun*, PTSFun))",
-      "            R_GetCCallable(\"SimInf\", \"SimInf_run\");",
-      "",
-      "        if (!SimInf_run) {",
-      "            Rf_error(\"Cannot find function 'SimInf_run'.\");",
-      "        }",
-      "    }",
-      "",
-      "    return SimInf_run(model, solver, tr_fun, &ptsFun);",
-      "}",
-      "")
+    if (length(cell_compartments) > 0) {
+        lines <- c(
+            "/**",
+            " * Run a trajectory of the model.",
+            " *",
+            " * @param model The model.",
+            " * @return A model with a trajectory attached to it.",
+            " */",
+            "static SEXP SIMINF_MODEL_RUN(SEXP model)",
+            "{",
+            "    static SEXP(*SimInf_run)(SEXP, TRRasterFun*, PTSFun) = NULL;",
+            sprintf("    TRRasterFun tr_fun[] = {%s};",
+                    paste0("&trFun", seq_len(n_tr_fn), collapse = ", ")),
+            "",
+            "    if (!SimInf_run) {",
+            "        SimInf_run = (SEXP(*)(SEXP, TRRasterFun*, PTSFun))",
+            "            R_GetCCallable(\"SimInf\", \"SimInf_raster_run\");",
+            "",
+            "        if (!SimInf_run) {",
+            paste0("            Rf_error(\"Cannot find function ",
+                   "'SimInf_raster_run'.\");"),
+            "        }",
+            "    }",
+            "",
+            "    return SimInf_run(model, tr_fun, &ptsFun);",
+            "}",
+            "")
+    } else {
+        lines <- c(
+            "/**",
+            " * Run a trajectory of the model.",
+            " *",
+            " * @param model The model.",
+            " * @param solver The name of the numerical solver.",
+            " * @return A model with a trajectory attached to it.",
+            " */",
+            "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)",
+            "{",
+            "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
+            sprintf("    TRFun tr_fun[] = {%s};",
+                    paste0("&trFun", seq_len(n_tr_fn), collapse = ", ")),
+            "",
+            "    if (!SimInf_run) {",
+            "        SimInf_run = (SEXP(*)(SEXP, SEXP, TRFun*, PTSFun))",
+            "            R_GetCCallable(\"SimInf\", \"SimInf_run\");",
+            "",
+            "        if (!SimInf_run) {",
+            "            Rf_error(\"Cannot find function 'SimInf_run'.\");",
+            "        }",
+            "    }",
+            "",
+            "    return SimInf_run(model, solver, tr_fun, &ptsFun);",
+            "}",
+            "")
+    }
+
+    lines
 }
 
 ##' Generate C code for the calldef for registering native routines
 ##' @return character vector with C code.
 ##' @noRd
-C_calldef <- function() {
-    c("/**",
-      " * A NULL-terminated array of routines to register for the .Call",
-      " * interface, see section '5.4 Registering native routines' in",
-      " * the 'Writing R Extensions' manual.",
-      " */",
-      "static const R_CallMethodDef callMethods[] =",
-      "{",
-      "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 2),",
-      "    {NULL, NULL, 0}",
-      "};",
-      "")
+C_calldef <- function(cell_compartments) {
+    lines <- c(
+        "/**",
+        " * A NULL-terminated array of routines to register for the .Call",
+        " * interface, see section '5.4 Registering native routines' in",
+        " * the 'Writing R Extensions' manual.",
+        " */",
+        "static const R_CallMethodDef callMethods[] =",
+        "{")
+
+    if (length(cell_compartments) > 0) {
+        lines <- c(
+            lines,
+            "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 1),")
+    } else {
+        lines <- c(
+            lines,
+            "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 2),")
+    }
+
+    lines <- c(
+        lines,
+        "    {NULL, NULL, 0}",
+        "};",
+        "")
+
+    lines
 }
 
 ##' Generate C code for the R init function for registering native
@@ -384,8 +431,9 @@ C_code_mparse <- function(transitions,
       C_trFun(transitions = transitions,
               cell_compartments = cell_compartments),
       C_ptsFun(pts_fun = pts_fun),
-      C_run(transitions = transitions),
-      C_calldef(),
+      C_run(transitions = transitions,
+            cell_compartments = cell_compartments),
+      C_calldef(cell_compartments = cell_compartments),
       C_R_init())
 }
 

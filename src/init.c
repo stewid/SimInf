@@ -163,5 +163,7 @@ R_init_SimInf(
     R_RegisterCCallable("SimInf", "SimInf_forward_euler_linear_decay",
                         (DL_FUNC) & SimInf_forward_euler_linear_decay);
     R_RegisterCCallable("SimInf", "SimInf_run", (DL_FUNC) & SimInf_run);
+    R_RegisterCCallable("SimInf", "SimInf_raster_run",
+                        (DL_FUNC) & SimInf_raster_run);
     SimInf_init_threads(R_NilValue);
 }

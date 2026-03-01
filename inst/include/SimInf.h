@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,8 +83,19 @@ typedef enum {
     SIMINF_ERR_AEM_REPLICATED_MODEL = -19
 } SimInf_error_code;
 
-/* Forward declaration of the transition rate function. */
+/* Forward declaration of the transition rate function for a
+ * SimInf_model. */
 typedef double (*TRFun)(
+    const int *u,
+    const double *v,
+    const double *ldata,
+    const double *gdata,
+    double t);
+
+/* Forward declaration of the transition rate function for a
+ * SimInf_raster_model. */
+typedef double (*TRRasterFun)(
+    const int *cell,
     const int *u,
     const double *v,
     const double *ldata,
@@ -102,11 +113,18 @@ typedef int (*PTSFun)(
     double t);
 
 /* Forward declaration of the function to initiate and run the
- * simulation */
+ * simulation for a SimInf_model object. */
 SEXP SimInf_run(
     SEXP model,
     SEXP solver,
     TRFun *tr_fun,
+    PTSFun pts_fun);
+
+/* Forward declaration of the function to initiate and run the
+ * simulation for a SimInf_raster_model object. */
+SEXP SimInf_raster_run(
+    SEXP model,
+    TRRasterFun *tr_fun,
     PTSFun pts_fun);
 
 /**
