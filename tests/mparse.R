@@ -1314,22 +1314,23 @@ stopifnot(identical(
     SimInf:::C_enumeration_constants("ldata", character(0)),
     character(0)))
 
-## Check that mparse fails for a raster model with missing row and col.
+## Check that mparse fails for a raster model with missing 'cell'
+## compartment.
 res <- assertError(
     mparse(transitions = "@->1->S",
            compartments = c("S", "cell.contamination"),
            u0 = data.frame(S = 0),
            tspan = 1:5))
-check_error(res, "'row' and 'col' must exist in compartments.")
+check_error(res, "'cell' must exist in compartments.")
 
 ## Check that mparse fails for a raster model with duplicated
 ## compartments, i.e., 'cell.contamination' and 'contamination' since
 ## 'cell.contamination' will become 'contamination'.
 res <- assertError(
     mparse(transitions = "@->1->S",
-           compartments = c("S", "row", "col", "contamination",
+           compartments = c("S", "cell", "contamination",
                             "cell.contamination"),
-           u0 = data.frame(S = 0, row = 0, col = 0, contamination = 0),
+           u0 = data.frame(S = 0, cell = 0, contamination = 0),
            tspan = 1:5))
 check_error(res, "Duplicated compartment or variable name detected.")
 
@@ -1337,8 +1338,8 @@ check_error(res, "Duplicated compartment or variable name detected.")
 ## compartments.
 res <- assertError(
     mparse(transitions = "@->1->S",
-           compartments = c("S", "row", "col", "cell.contamination",
+           compartments = c("S", "cell", "cell.contamination",
                             "cell.contamination"),
-           u0 = data.frame(S = 0, row = 0, col = 0),
+           u0 = data.frame(S = 0, cell = 0),
            tspan = 1:5))
 check_error(res, "Duplicated compartment or variable name detected.")

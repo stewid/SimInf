@@ -748,11 +748,11 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
 
     ## Create an index to split the compartments between the node and
     ## the cell. If there are any cell compartments, make sure there
-    ## are compartments 'row' and 'column'. Then, check 'u0' without
-    ## the cell compartments.
+    ## exist a 'cell' compartment. Then, check 'u0' without the cell
+    ## compartments.
     i <- grep("^cell[.].+", compartments)
-    if (length(i) && !all(c("row", "col") %in% compartments)) {
-        stop("'row' and 'col' must exist in compartments.",
+    if (length(i) && !("cell" %in% compartments)) {
+        stop("'cell' must exist in compartments.",
              call. = FALSE)
     }
     cell_compartments <- compartments[i]
