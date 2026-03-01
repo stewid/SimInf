@@ -1343,3 +1343,13 @@ res <- assertError(
            u0 = data.frame(S = 0, cell = 0),
            tspan = 1:5))
 check_error(res, "Duplicated compartment or variable name detected.")
+
+## Check the mparse can create a SimInf_raster_model object.
+model <- mparse(transitions = c("@->1->S",
+                                "@->S*cell.contamination->S",
+                                "cell.contamination->cell.contamination->@"),
+                compartments = c("S", "cell", "cell.contamination"),
+                u0 = data.frame(S = 0, cell = 0),
+                tspan = 1:5,
+                use_enum = TRUE)
+stopifnot(is(model, "SimInf_raster_model"))
