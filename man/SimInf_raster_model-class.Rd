@@ -13,9 +13,5 @@ move between cells on a raster.
 
 \describe{
 \item{\code{cell_S}}{FIXME.}
-
-\item{\code{cell_U}}{FIXME.}
-
-\item{\code{cell_U_sparse}}{FIXME.}
 }}
 
