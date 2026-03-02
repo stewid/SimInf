@@ -21,6 +21,8 @@
 #include "SimInf_internal.h"
 #include <R_ext/Visibility.h>
 
+typedef kvec_t(int) kvec_t_int;
+
 typedef struct SimInf_raster_model
 {
     /*** Data vectors for propensities ***/
