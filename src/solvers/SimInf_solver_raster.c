@@ -82,6 +82,23 @@ typedef struct SimInf_raster_model
                        *   element in row k. */
     double    *prU;   /**< If the solution is written to a sparse
                        *   matrix, value of item (i, j) in U. */
+    double *v;        /**< Vector with the continuous state in each
+                       *   node in the thread. */
+    double *v_new;    /**< Vector with the continuous state in each
+                       *   node in the thread after the post time step
+                       *   function. */
+    double *V;        /**< If the solution is written to a dense
+                       *   matrix the continuous output is a matrix V
+                       *   ((Nn * Nd) X length(tspan)). V(:,j)
+                       *   contains the state of the system at
+                       *   tspan(j). */
+    const int *irV;   /**< If the solution is written to a sparse
+                       *   matrix, irV[k] is the row of V[k]. */
+    const int *jcV;   /**< If the solution is written to a sparse
+                       *   matrix, index to data of first non-zero
+                       *   element in row k. */
+    double *prV;      /**< If the solution is written to a sparse
+                       *   matrix, value of item (i, j) in V. */
     const int *irS;   /**< Node state-change matrix. irS[k] is the row
                        *   of S[k]. */
     const int *jcS;   /**< Node state-change matrix. Index to data of
