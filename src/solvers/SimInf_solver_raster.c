@@ -144,6 +144,65 @@ typedef struct SimInf_raster_model
 } SimInf_raster_model;
 
 /**
+ * Free allocated memory for a raster model.
+ *
+ * @param model the data structure to free.
+ */
+static void
+SimInf_raster_model_free(
+    SimInf_raster_model *model)
+{
+    if (model) {
+        /* Free data vectors for propensities. */
+        free(model->sum_rate);
+        model->sum_rate = NULL;
+        free(model->sum_node_rate);
+        model->sum_node_rate = NULL;
+        free(model->node_rate);
+        model->node_rate = NULL;
+        free(model->sum_cell_rate);
+        model->sum_cell_rate = NULL;
+        free(model->cell_rate);
+        model->cell_rate = NULL;
+
+        /* Free data for binary (min)heap. */
+        free(model->cells);
+        model->cells = NULL;
+        free(model->heap);
+        model->heap = NULL;
+
+        /* Free data to keep track of nodes. */
+        if (model->nodes) {
+            for (int i = 0; i < model->Ncells; i++)
+                kv_destroy(model->nodes[i]);
+            free(model->nodes);
+            model->nodes = NULL;
+        }
+
+        /* Free data to keep track of time. */
+        free(model->cell_time);
+        model->cell_time = NULL;
+
+        /* Free data vectors to keep track of the states in the
+         * nodes. */
+        free(model->u);
+        model->u = NULL;
+        free(model->cell_u);
+        model->cell_u = NULL;
+        free(model->v);
+        model->v = NULL;
+        free(model->v_new);
+        model->v_new = NULL;
+
+        /* Free data for the random number generator. */
+        gsl_rng_free(model->rng);
+        model->rng = NULL;
+
+        free(model);
+    }
+}
+
+/**
  * Initialize and run the SimInf raster solver.
  *
  * @param args Structure with data for the solver.
