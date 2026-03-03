@@ -533,6 +533,56 @@ SimInf_init_raster_solver(
 }
 
 /**
+ * Store the solution if time has passed the next time in tspan.
+ * Report solution up to, but not including the current time in the
+ * simulation.  The solution is stored in a dense matrix when U/V is a
+ * non-null pointer, else the solution stored in a sparse matrix.
+ *
+ * @param model the model with data to store.
+ * @param t current time in the simulation.
+ */
+static void
+SimInf_store_solution(
+    SimInf_raster_model *model,
+    double t)
+{
+    while (model->t_it < model->tlen && t > model->tspan[model->t_it]) {
+        if (model->U) {
+            /* Copy the node compartment states to U. */
+            memcpy(model->U, model->u, model->Nnodes * model->Nc * sizeof(int));
+            model->U += model->Nc * model->Nnodes;
+        } else {
+            /* Copy the node compartment states to U_sparse. */
+            for (int i = model->jcU[model->t_it];
+                 i < model->jcU[model->t_it + 1];
+                 i++)
+            {
+                model->prU[i] = model->u[model->irU[i]];
+            }
+        }
+
+        if (model->V) {
+            /* Copy the node continuous states to V. */
+            const ptrdiff_t v_len = (ptrdiff_t) model->Nnodes *
+                (ptrdiff_t) model->Nd * sizeof(double);
+            if (v_len > 0)
+                memcpy(model->V, model->v_new, v_len);
+            model->V += model->Nd * model->Nnodes;
+        } else {
+            /* Copy the node continuous states to V_sparse. */
+            for (int i = model->jcV[model->t_it];
+                 i < model->jcU[model->t_it + 1];
+                 i++)
+            {
+                model->prV[i] = model->v_new[model->irV[i]];
+            }
+        }
+
+        model->t_it += 1;
+    }
+}
+
+/**
  * Initialize and run the SimInf raster solver.
  *
  * @param args Structure with data for the solver.
