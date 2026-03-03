@@ -146,9 +146,13 @@ setClass(
 ##' is a model where the nodes are not fixed at one position but can
 ##' move between cells on a raster.
 ##' @slot cell_S FIXME.
+##' @slot nrow FIXME.
+##' @slot ncol FIXME.
 ##' @export
 setClass(
     "SimInf_raster_model",
-    slots = c(cell_S = "dgCMatrix"),
+    slots = c(cell_S = "dgCMatrix",
+              nrow = "integer",
+              ncol = "integer"),
     contains = "SimInf_model"
 )

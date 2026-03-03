@@ -13,5 +13,9 @@ move between cells on a raster.
 
 \describe{
 \item{\code{cell_S}}{FIXME.}
+
+\item{\code{nrow}}{FIXME.}
+
+\item{\code{ncol}}{FIXME.}
 }}
 
