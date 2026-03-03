@@ -582,6 +582,30 @@ SimInf_store_solution(
     }
 }
 
+/* Compute time to the next event for this cell and update the
+ * heap. */
+static void
+SimInf_compute_time_to_next_event(
+    SimInf_raster_model *model,
+    int cell,
+    double tt)
+{
+    if (model->sum_rate[cell] > 0.0) {
+        model->cell_time[model->heap[cell]] =
+            -log(gsl_rng_uniform_pos(model->rng)) /
+            model->sum_rate[cell] + tt;
+    } else {
+        model->cell_time[model->heap[cell]] = R_PosInf;
+    }
+
+    update(
+        model->heap[cell],
+        model->cell_time,
+        model->cells,
+        model->heap,
+        model->nrow * model->ncol);
+}
+
 /**
  * Initialize and run the SimInf raster solver.
  *
