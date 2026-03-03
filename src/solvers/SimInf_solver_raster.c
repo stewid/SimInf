@@ -389,6 +389,58 @@ on_error:
     return err;
 }
 
+static void
+SimInf_print_cell_status(
+    const SimInf_raster_model *model,
+    const int cell,
+    const double tt,
+    const int tr,
+    const double rate)
+{
+    REprintf("\nStatus:\n");
+    REprintf("-------\n");
+    REprintf("Time: %g\n", tt);
+
+    if (cell < 0 || cell >= (model->nrow * model->ncol)) {
+        /* Cell is one based in R */
+        REprintf("Cell: %i:\n", cell + 1);
+        R_FlushConsole();
+        return;
+    }
+
+    /* Cell is one based in R */
+    REprintf("Current state in cell = %i: {", cell + 1);
+    for (int i = 0; i < model->cell_Nc; i++) {
+        REprintf("%i", model->cell_u[i]);
+        if (i < (model->cell_Nc - 1))
+            REprintf(", ");
+    }
+    REprintf("}\n");
+
+    for (size_t i = 0; i < kv_size(model->nodes[cell]); i++) {
+        int node = kv_A(model->nodes[cell], i);
+
+        /* Node is one based in R */
+        REprintf("Current state in node = %i: {", node + 1);
+        for (int j = 0; j < model->Nc; j++) {
+            REprintf("%i", model->u[node * model->Nc + j]);
+            if (j < (model->Nc - 1))
+                REprintf(", ");
+        }
+        REprintf("}\n");
+    }
+
+    if (tr >= 0)
+        REprintf("Transition: %i\n", tr + 1); /* One based in R */
+
+    if (!R_FINITE(rate) || rate < 0.0)
+        REprintf("Rate: %g\n", rate);
+
+    REprintf("\n");
+
+    R_FlushConsole();
+}
+
 /**
  * Initialize and run the SimInf raster solver.
  *
