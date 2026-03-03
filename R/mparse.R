@@ -718,6 +718,7 @@ check_model_names <- function(compartments,
 ##'     time step function. The C code should contain only the body of
 ##'     the function i.e. the code between the opening and closing
 ##'     curly brackets.
+##' @param raster FIXME.
 ##' @param use_enum generate enumeration constants for the indices to
 ##'     each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
 ##'     in the generated C code. The name of each enumeration constant
@@ -735,9 +736,18 @@ check_model_names <- function(compartments,
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
 ##' @template mparse-example
-mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
-                   gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
-                   events = NULL, E = NULL, N = NULL, pts_fun = NULL,
+mparse <- function(transitions = NULL,
+                   compartments = NULL,
+                   ldata = NULL,
+                   gdata = NULL,
+                   u0 = NULL,
+                   v0 = NULL,
+                   tspan = NULL,
+                   events = NULL,
+                   E = NULL,
+                   N = NULL,
+                   pts_fun = NULL,
+                   raster = NULL,
                    use_enum = FALSE) {
     ## Check transitions
     if (!is.vector(transitions, mode = "character") ||
@@ -811,7 +821,8 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                             use_enum = use_enum)
 
     if (length(cell_compartments) > 0) {
-        model <- SimInf_raster_model(G      = G,
+        model <- SimInf_raster_model(raster = raster,
+                                     G      = G,
                                      S      = S,
                                      cell_S = cell_S,
                                      tspan  = tspan,

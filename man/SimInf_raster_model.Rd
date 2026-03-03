@@ -5,6 +5,7 @@
 \title{Create a \code{SimInf_raster_model}}
 \usage{
 SimInf_raster_model(
+  raster,
   G,
   S,
   cell_S,
@@ -17,6 +18,8 @@ SimInf_raster_model(
 )
 }
 \arguments{
+\item{raster}{FIXME.}
+
 \item{G}{Dependency graph that indicates the transition rates that
 need to be updated after a given state transition has occured.
 A non-zero entry in element \code{G[i, i]} indicates that

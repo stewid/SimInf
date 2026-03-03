@@ -1351,5 +1351,6 @@ model <- mparse(transitions = c("@->1->S",
                 compartments = c("S", "cell", "cell.contamination"),
                 u0 = data.frame(S = 0, cell = 0),
                 tspan = 1:5,
+                raster = matrix(1:9, nrow = 3, ncol = 3),
                 use_enum = TRUE)
 stopifnot(is(model, "SimInf_raster_model"))

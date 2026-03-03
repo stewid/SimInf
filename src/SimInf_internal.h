@@ -143,7 +143,8 @@ typedef struct SimInf_solver_args {
     /* Number of replicates of the model. */
     int Nrep;
 
-    /* Dimension of a raster model. */
+    /* Data for a raster model. */
+    const int *raster;
     int nrow;
     int ncol;
 

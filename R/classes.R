@@ -146,13 +146,17 @@ setClass(
 ##' is a model where the nodes are not fixed at one position but can
 ##' move between cells on a raster.
 ##' @slot cell_S FIXME.
-##' @slot nrow FIXME.
-##' @slot ncol FIXME.
+##' @slot raster An integer matrix that represents a spatially
+##'     referenced surface divided into two dimensional cells (rows,
+##'     and columns). In the raster, cell numbers start at 1 in the
+##'     upper left corner, and increase from left to right, and then
+##'     from top to bottom. The last cell number equals the number of
+##'     cells of the raster. Row numbers start at 1 at the top, column
+##'     numbers start at 1 at the left.
 ##' @export
 setClass(
     "SimInf_raster_model",
     slots = c(cell_S = "dgCMatrix",
-              nrow = "integer",
-              ncol = "integer"),
+              raster = "matrix"),
     contains = "SimInf_model"
 )

@@ -16,6 +16,7 @@ mparse(
   E = NULL,
   N = NULL,
   pts_fun = NULL,
+  raster = NULL,
   use_enum = FALSE
 )
 }
@@ -115,6 +116,8 @@ i.e. no scheduled events in the model.}
 time step function. The C code should contain only the body of
 the function i.e. the code between the opening and closing
 curly brackets.}
+
+\item{raster}{FIXME.}
 
 \item{use_enum}{generate enumeration constants for the indices to
 each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
