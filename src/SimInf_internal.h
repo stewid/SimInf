@@ -126,6 +126,9 @@ typedef struct SimInf_solver_args {
     /* Number of compartments in each node. */
     int Nc;
 
+    /* Number of compartments in each cell. */
+    int cell_Nc;
+
     /* Number of different transitions. */
     int Nt;
 
@@ -139,6 +142,14 @@ typedef struct SimInf_solver_args {
 
     /* Number of replicates of the model. */
     int Nrep;
+
+    /* Dimension of a raster model. */
+    int nrow;
+    int ncol;
+
+    /* Index to the cell compartment in each node in a raster
+     * model. */
+    int cell_i;
 
     /* Select matrix for events. irE[k] is the row of E[k]. */
     const int *irE;

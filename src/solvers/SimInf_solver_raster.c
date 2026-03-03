@@ -132,7 +132,8 @@ typedef struct SimInf_raster_model
 
     /*** Constants ***/
     int Nnodes;     /**< Number of nodes. */
-    int Ncells;     /**< Number of cells. */
+    int nrow;       /**< Number of rows. */
+    int ncol;       /**< Number of cols. */
     int Nc;         /**< Number of compartments in each node. */
     int cell_Nc;    /**< Number of compartments in each cell. */
     int cell_i;     /**< Index to the cell compartment in each
@@ -173,7 +174,8 @@ SimInf_raster_model_free(
 
         /* Free data to keep track of nodes. */
         if (model->nodes) {
-            for (int i = 0; i < model->Ncells; i++)
+            const int ncells = model->nrow * model->ncol;
+            for (int i = 0; i < ncells; i++)
                 kv_destroy(model->nodes[i]);
             free(model->nodes);
             model->nodes = NULL;
@@ -200,6 +202,191 @@ SimInf_raster_model_free(
 
         free(model);
     }
+}
+
+/**
+ * Create and initialize data to process a raster model. The generated
+ * data structure must be freed by the user.
+ *
+ * @param out the resulting data structure.
+ * @param args structure with data for the solver.
+ * @param rng random number generator
+ * @return 0 or an error code
+ */
+static int
+SimInf_raster_model_create(
+    SimInf_raster_model **out,
+    SimInf_solver_args const *args,
+    gsl_rng *rng)
+{
+    int err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+    SimInf_raster_model *model = NULL;
+
+    model = calloc(1, sizeof(SimInf_raster_model));
+    if (!model)
+        goto on_error;
+
+    /* Callbacks */
+    model->tr_fun = args->tr_raster_fun;
+    model->pts_fun = args->pts_fun;
+
+    /* Constants. */
+    model->Nnodes = args->Nn;
+    model->Nc = args->Nc;
+    model->nrow = args->nrow;
+    model->ncol = args->ncol;
+    if (model->nrow < 1 || model->ncol < 1)
+        goto on_error;
+    model->Nt = args->Nt;
+    model->Nldata = args->Nld;
+
+    /* Keep track of time. */
+    model->tspan = args->tspan;
+    model->tlen = args->tlen;
+
+    /* Number of compartments in each cell. */
+    model->cell_Nc = args->cell_Nc;
+    if (model->cell_Nc < 0)
+        goto on_error;
+
+    /* Index to the cell compartment in each node. */
+    model->cell_i = args->cell_i;
+    if (model->cell_i < 0 || model->cell_i >= args->Nc)
+        goto on_error;
+
+    /* Nodes */
+    const ptrdiff_t n_cells = (ptrdiff_t) model->nrow * (ptrdiff_t) model->ncol;
+    model->nodes = calloc(n_cells, sizeof(kvec_t_int));
+    if (!model->nodes)
+        goto on_error;
+
+    /* Dependency graph. */
+    model->irG = args->irG;
+    model->jcG = args->jcG;
+
+    /* Binary (min)heap. */
+    model->cells = malloc(n_cells * sizeof(int));
+    if (!model->cells)
+        goto on_error;
+
+    model->heap = malloc(n_cells * sizeof(int));
+    if (!model->heap)
+        goto on_error;
+
+    model->cell_time = malloc(n_cells * sizeof(double));
+    if (!model->cell_time)
+        goto on_error;
+
+    /* Data vectors for the nodes. */
+    if (args->U) {
+        model->U = args->U;
+    } else {
+        model->irU = args->irU;
+        model->jcU = args->jcU;
+        model->prU = args->prU;
+    }
+    if (args->V) {
+        model->V = args->V;
+    } else {
+        model->irV = args->irV;
+        model->jcV = args->jcV;
+        model->prV = args->prV;
+    }
+    model->irS = args->irS;
+    model->jcS = args->jcS;
+    model->prS = args->prS;
+
+    /* Check that the state-change-matrix doesn't change the value in
+     * the cell compartment. */
+    for (int i = 0; i < model->Nt; i++) {
+        for (int j = model->jcS[i]; j < model->jcS[i + 1]; j++) {
+            if (model->irS[j] == model->cell_i) {
+                err = SIMINF_ERR_NON_ZERO_CELL_IN_S;
+                goto on_error;
+            }
+        }
+    }
+
+    /* State-change matrix for the cell. */
+    model->cell_irS = args->cell_irS;
+    model->cell_jcS = args->cell_jcS;
+    model->cell_prS = args->cell_prS;
+
+    /* Local and global data. */
+    model->ldata = args->ldata;
+    model->gdata = args->gdata;
+
+    /* Allocate memory for the cell compartment state and set it to
+     * the initial state. */
+    const ptrdiff_t cell_Nc = args->cell_Nc;
+    model->cell_u = calloc(n_cells * cell_Nc, sizeof(int));
+    if (!model->cell_u)
+        goto on_error;
+
+    /* Allocate memory for the node compartment state and set it to
+     * the initial state. */
+    const ptrdiff_t Nn = args->Nn;
+    const ptrdiff_t Nc = args->Nc;
+    model->u = malloc(Nn * Nc * sizeof(int));
+    if (!model->u)
+        goto on_error;
+    memcpy(model->u, args->u0, Nn * Nc * sizeof(int));
+
+    /* Allocate memory to keep track of the continuous state in each
+     * node. */
+    const ptrdiff_t Nd = args->Nd;
+    const ptrdiff_t v_len = Nn * Nd * sizeof(double);
+    model->v = malloc(v_len);
+    if (!model->v)
+        goto on_error;          /* #nocov */
+    model->v_new = malloc(v_len);
+    if (!model->v_new)
+        goto on_error;          /* #nocov */
+
+    /* Set continuous state to the initial state in each node. */
+    if (v_len > 0) {
+        memcpy(model[0].v, args->v0, v_len);
+        memcpy(model[0].v_new, args->v0, v_len);
+    }
+
+    /* Create transition rate matrix (Nt X Nnodes) and total rate
+     * vector. In node_rate we store all propensities for state
+     * transitions, and in sum_node_rate the sum of propensities in
+     * every node. */
+    model->node_rate = calloc(model->Nt * model->Nnodes, sizeof(double));
+    if (!model->node_rate)
+        goto on_error;
+    model->sum_node_rate = calloc(model->Nnodes, sizeof(double));
+    if (!model->sum_node_rate)
+        goto on_error;
+
+    /* Create transition rate matrix (Nt X Ncells) and total rate
+     * vector. In cell_rate we store all propensities for state
+     * transitions, and in sum_cell_rate the sum of propensities in
+     * every cell. */
+    model->cell_rate = calloc(model->Nt * n_cells, sizeof(double));
+    if (!model->cell_rate)
+        goto on_error;
+    model->sum_cell_rate = calloc(n_cells, sizeof(double));
+    if (!model->sum_cell_rate)
+        goto on_error;
+
+    model->sum_rate = calloc(n_cells, sizeof(double));
+    if (!model->sum_rate)
+        goto on_error;
+
+    /* Random number generator */
+    model->rng = gsl_rng_alloc(gsl_rng_mt19937);
+    if (!model->rng)
+        goto on_error;
+    gsl_rng_set(model->rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+
+    *out = model;
+    return 0;
+
+on_error:
+    SimInf_raster_model_free(model);
+    return err;
 }
 
 /**

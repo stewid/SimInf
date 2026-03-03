@@ -78,6 +78,9 @@ SimInf_raise_error(
     case SIMINF_ERR_AEM_REPLICATED_MODEL:
         Rf_error("Cannot run the 'aem' solver on a replicated model.");
         break;
+    case SIMINF_ERR_NON_ZERO_CELL_IN_S:
+        Rf_error("Non-zero elements in 'S' for the 'cell' compartment.");
+        break;
     default:                   /* #nocov */
         Rf_error("Unknown error code: %i.", err);       /* #nocov */
         break;
@@ -366,6 +369,7 @@ SEXP SimInf_raster_run(
                 (R_do_slot(result, Rf_install("u0")),
                  R_DimSymbol))[1] / args.Nrep;
     args.Nc = INTEGER(R_do_slot(S, Rf_install("Dim")))[0];
+    args.cell_Nc = INTEGER(GET_SLOT(cell_S, Rf_install("Dim")))[0];
     args.Nt = INTEGER(R_do_slot(S, Rf_install("Dim")))[1];
     args.Nd =
         INTEGER(R_do_slot(R_do_slot(result, Rf_install("v0")), R_DimSymbol))[0];
@@ -373,6 +377,8 @@ SEXP SimInf_raster_run(
         INTEGER(R_do_slot
                 (R_do_slot(result, Rf_install("ldata")), R_DimSymbol))[0];
     args.tlen = LENGTH(R_do_slot(result, Rf_install("tspan")));
+    args.nrow = INTEGER(R_do_slot(result, Rf_install("nrow")))[0];
+    args.ncol = INTEGER(R_do_slot(result, Rf_install("ncol")))[0];
 
     /* Output array (to hold a single trajectory) */
     PROTECT(U_sparse = R_do_slot(result, Rf_install("U_sparse")));
@@ -424,6 +430,15 @@ SEXP SimInf_raster_run(
     /* Function pointers */
     args.tr_raster_fun = tr_fun;
     args.pts_fun = pts_fun;
+
+    /* Determine the index to the cell compartment in a node. */
+    for (int i = 0; i < args.Nc; i++) {
+        SEXP rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);
+        if (strcmp(CHAR(STRING_ELT(rownames, i)), "cell") == 0) {
+            args.cell_i = i;
+            break;
+        }
+    }
 
     /* Run the simulation solver. */
     err = SimInf_run_solver_raster(&args);

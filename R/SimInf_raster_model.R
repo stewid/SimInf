@@ -50,5 +50,8 @@ SimInf_raster_model <- function(G,
                           v0     = v0,
                           C_code = C_code)
 
-    methods::as(model, "SimInf_raster_model")
+    model <- methods::as(model, "SimInf_raster_model")
+    model@nrow <- 10L
+    model@ncol <- 10L
+    model
 }
