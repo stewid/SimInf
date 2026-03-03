@@ -23,6 +23,12 @@
 
 typedef kvec_t(int) kvec_t_int;
 
+typedef enum {
+    TR_IN_CELL     = 0,
+    TR_IN_NODE     = (1u << 0),
+    TR_IS_MOVEMENT = (1u << 1)
+} SimInf_transition_t;
+
 typedef struct SimInf_raster_model
 {
     /*** Data vectors for propensities ***/
@@ -106,9 +112,8 @@ typedef struct SimInf_raster_model
     const int *prS;   /**< Node state-change matrix. Value of item (i,
                        *   j) in S. */
 
-    const double *ldata; /**< Matrix (Nldata X Nnodes). ldata(:,j)
-                          *   gives a local data vector for node
-                          *   #j. */
+    const double *ldata; /**< Matrix (Nld X Nnodes). ldata(:,j) gives
+                          *   a local data vector for node #j. */
     const double *gdata; /**< The global data vector. */
 
     /*** Data vectors for the cells ***/
@@ -135,13 +140,15 @@ typedef struct SimInf_raster_model
     int nrow;       /**< Number of rows. */
     int ncol;       /**< Number of cols. */
     int Nc;         /**< Number of compartments in each node. */
+    int Nd;         /**< Number of continuous state variables. */
     int cell_Nc;    /**< Number of compartments in each cell. */
     int cell_i;     /**< Index to the cell compartment in each
                      *   node. */
     int Nt;         /**< Total number of different transitions. */
-    int Nldata;     /**< Length of the local data vector 'ldata' for
+    int Nld;        /**< Length of the local data vector 'ldata' for
                      *   each node. The 'ldata' vector is sent to the
-                     *   propensity functions. */
+                     *   propensity functions and the post time step
+                     *   function. */
 } SimInf_raster_model;
 
 /**
@@ -233,12 +240,13 @@ SimInf_raster_model_create(
     /* Constants. */
     model->Nnodes = args->Nn;
     model->Nc = args->Nc;
+    model->Nd = args->Nd;
     model->nrow = args->nrow;
     model->ncol = args->ncol;
     if (model->nrow < 1 || model->ncol < 1)
         goto on_error;
     model->Nt = args->Nt;
-    model->Nldata = args->Nld;
+    model->Nld = args->Nld;
 
     /* Keep track of time. */
     model->tspan = args->tspan;
@@ -439,6 +447,88 @@ SimInf_print_cell_status(
     REprintf("\n");
 
     R_FlushConsole();
+}
+
+static int
+SimInf_init_raster_solver(
+    SimInf_raster_model *model)
+{
+    double tt = model->tspan[0];
+
+    /* Place each node in the assigned cell (location). */
+    for (int node = 0; node < model->Nnodes; node++) {
+        int cell = model->u[node * model->Nc + model->cell_i] - 1;
+
+        if (cell < 0 || cell >= (model->nrow * model->ncol)) {
+            SimInf_print_cell_status(model, cell, tt, -1, 0.0);
+            return SIMINF_ERR_CELL_OUT_OF_BOUNDS;
+        }
+
+        kv_push(int, model->nodes[cell], node);
+    }
+
+    for (int cell = 0; cell < (model->nrow * model->ncol); cell++) {
+        /* Initialize the propensity for every transition. */
+        for (int tr = 0; tr < model->Nt; tr++) {
+            if (model->tr_type[tr] & TR_IN_NODE) {
+                /* Initialize the propensity for every node. */
+                for (size_t i = 0; i < kv_size(model->nodes[cell]); i++) {
+                    int node = kv_A(model->nodes[cell], i);
+                    double rate = (*model->tr_fun[tr])(
+                        NULL,
+                        &model->u[node * model->Nc],
+                        &model->v[node * model->Nd],
+                        &model->ldata[node * model->Nld],
+                        model->gdata,
+                        tt);
+
+                    if (!R_FINITE(rate) || rate < 0.0) {
+                        SimInf_print_cell_status(model, cell, tt, tr, rate);
+                        return SIMINF_ERR_INVALID_RATE;
+                    }
+
+                    model->node_rate[node * model->Nt + tr] = rate;
+                    model->sum_node_rate[node] += rate;
+                    model->sum_rate[cell] += rate;
+                }
+            } else {
+                double rate = (*model->tr_fun[tr])(
+                    NULL, /* cell */
+                    NULL, /* u */
+                    NULL, /* v */
+                    NULL, /* ldata */
+                    model->gdata,
+                    tt);
+
+                if (!R_FINITE(rate) || rate < 0.0) {
+                    SimInf_print_cell_status(model, cell, tt, tr, rate);
+                    return SIMINF_ERR_INVALID_RATE;
+                }
+
+                model->cell_rate[cell * model->Nt + tr] = rate;
+                model->sum_cell_rate[cell] += rate;
+                model->sum_rate[cell] += rate;
+            }
+        }
+
+        /* Compute time to the next event for this cell. */
+        if (model->sum_rate[cell] > 0.0)
+            model->cell_time[cell] = -log(gsl_rng_uniform_pos(model->rng)) /
+                model->sum_rate[cell] + tt;
+        else
+            model->cell_time[cell] = R_PosInf;
+
+        model->heap[cell] = cell;
+        model->cells[cell] = cell;
+    }
+
+    initialize_heap(
+        model->cell_time,
+        model->cells,
+        model->heap,
+        model->nrow * model->ncol);
+
+    return 0;
 }
 
 /**

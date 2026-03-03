@@ -81,6 +81,9 @@ SimInf_raise_error(
     case SIMINF_ERR_NON_ZERO_CELL_IN_S:
         Rf_error("Non-zero elements in 'S' for the 'cell' compartment.");
         break;
+    case SIMINF_ERR_CELL_OUT_OF_BOUNDS:
+        Rf_error("'cell' is out of bounds.");
+        break;
     default:                   /* #nocov */
         Rf_error("Unknown error code: %i.", err);       /* #nocov */
         break;
