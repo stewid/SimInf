@@ -475,7 +475,7 @@ SimInf_init_raster_solver(
                 for (size_t i = 0; i < kv_size(model->nodes[cell]); i++) {
                     int node = kv_A(model->nodes[cell], i);
                     double rate = (*model->tr_fun[tr])(
-                        NULL,
+                        &model->cell_u[cell * model->cell_Nc],
                         &model->u[node * model->Nc],
                         &model->v[node * model->Nd],
                         &model->ldata[node * model->Nld],
@@ -493,7 +493,7 @@ SimInf_init_raster_solver(
                 }
             } else {
                 double rate = (*model->tr_fun[tr])(
-                    NULL, /* cell */
+                    &model->cell_u[cell * model->cell_Nc],
                     NULL, /* u */
                     NULL, /* v */
                     NULL, /* ldata */
@@ -512,11 +512,12 @@ SimInf_init_raster_solver(
         }
 
         /* Compute time to the next event for this cell. */
-        if (model->sum_rate[cell] > 0.0)
+        if (model->sum_rate[cell] > 0.0) {
             model->cell_time[cell] = -log(gsl_rng_uniform_pos(model->rng)) /
                 model->sum_rate[cell] + tt;
-        else
+        } else {
             model->cell_time[cell] = R_PosInf;
+        }
 
         model->heap[cell] = cell;
         model->cells[cell] = cell;
