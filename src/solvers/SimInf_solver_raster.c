@@ -845,6 +845,52 @@ SimInf_update_node(
 }
 
 /**
+ * Update the state of a cell and its node(s)
+ *
+ * @param model structure with data for the model.
+ * @param cell index to the cell in the model to update.
+ * @param node index to the node in the cell to update.
+ *         If < 0, then update all nodes in the cell.
+ * @param tr index to the transition that did occur.
+ * @param tt the current time in the simulation.
+ * @return 0 if Ok, else error code.
+ */
+static int
+SimInf_update_state(
+    SimInf_raster_model *model,
+    int cell,
+    int node,
+    int tr,
+    double tt)
+{
+    if (node < 0) {
+        /* Update the state of nodes within the cell */
+        for (size_t i = 0; i < kv_size(model->nodes[cell]); i++) {
+            node = kv_A(model->nodes[cell], i);
+            const int err = SimInf_update_node(model, cell, node, tr, tt);
+            if (err)
+                return err;
+        }
+    } else {
+        const int err = SimInf_update_node(model, cell, node, tr, tt);
+        if (err)
+            return err;
+    }
+
+    /* Update the state of the cell */
+    for (int i = model->cell_jcS[tr]; i < model->cell_jcS[tr + 1]; i++) {
+        model->cell_u[cell * model->cell_Nc + model->cell_irS[i]] +=
+            model->cell_prS[i];
+        if (model->cell_u[cell * model->cell_Nc + model->cell_irS[i]] < 0) {
+            SimInf_print_cell_status(model, cell, tt, -1, 0.0);
+            return SIMINF_ERR_NEGATIVE_STATE;
+        }
+    }
+
+    return 0;
+}
+
+/**
  * Initialize and run the SimInf raster solver.
  *
  * @param args Structure with data for the solver.
