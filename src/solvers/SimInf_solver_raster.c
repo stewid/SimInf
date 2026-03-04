@@ -675,6 +675,76 @@ SimInf_propensities(
     return 0;
 }
 
+/* Recalculate propensities using the dependency graph.
+ *
+ * @param model data structure for the model.
+ * @param cell zero-based index to the cell.
+ * @param tr index to the transition that did occur.
+ * @param tt current time in the simulation.
+ * @return 0 or an error code.
+ */
+static int
+SimInf_cell_propensities(
+    SimInf_raster_model *model,
+    int cell,
+    int tr,
+    double tt)
+{
+    double cell_delta = 0.0;
+
+    for (int i = model->jcG[tr]; i < model->jcG[tr + 1]; i++) {
+        if (model->tr_type[model->irG[i]] & TR_IN_NODE) {
+            /* Update propensities in all nodes within the cell */
+            for (size_t j = 0; j < kv_size(model->nodes[cell]); j++) {
+                int node = kv_A(model->nodes[cell], j);
+                double old_rate = model->node_rate[node * model->Nt + model->irG[i]];
+                double rate = (*model->tr_fun[model->irG[i]])(
+                    &model->cell_u[cell * model->cell_Nc],
+                    &model->u[node * model->Nc],
+                    &model->v[node * model->Nd],
+                    &model->ldata[node * model->Nld],
+                    model->gdata,
+                    tt);
+
+                if (!R_FINITE(rate) || rate < 0.0) {
+                    SimInf_print_cell_status(model, cell, tt, tr, rate);
+                    return SIMINF_ERR_INVALID_RATE;
+                }
+
+                model->node_rate[node * model->Nt + model->irG[i]] = rate;
+                model->sum_node_rate[node] += (rate - old_rate);
+                model->sum_rate[cell] += (rate - old_rate);
+            }
+        } else {
+            double old_rate = model->cell_rate[cell * model->Nt + model->irG[i]];
+            double rate = (*model->tr_fun[model->irG[i]])(
+                &model->cell_u[cell * model->cell_Nc],
+                NULL, /* u */
+                NULL, /* v */
+                NULL, /* ldata */
+                model->gdata,
+                tt);
+
+            if (!R_FINITE(rate) || rate < 0.0) {
+                SimInf_print_cell_status(model, cell, tt, tr, rate);
+                return SIMINF_ERR_INVALID_RATE;
+            }
+
+            model->cell_rate[cell * model->Nt + model->irG[i]] = rate;
+            cell_delta += (rate - old_rate);
+        }
+    }
+
+    model->sum_cell_rate[cell] += cell_delta;
+    model->sum_rate[cell] += cell_delta;
+
+    /* Compute time to the next event for this cell and update the
+     * heap. */
+    SimInf_compute_time_to_next_event(model, cell, tt);
+
+    return 0;
+}
+
 /**
  * Initialize and run the SimInf raster solver.
  *
