@@ -815,6 +815,36 @@ SimInf_node_propensities(
 }
 
 /**
+ * Update the state of a node
+ *
+ * @param model structure with data for the model.
+ * @param cell index to the cell where the node is located.
+ * @param node index to the node in the cell to update.
+ * @param tr index to the transition that did occur.
+ * @param tt the current time in the simulation.
+ * @return 0 if Ok, else error code.
+ */
+static int
+SimInf_update_node(
+    SimInf_raster_model *model,
+    int cell,
+    int node,
+    int tr,
+    double tt)
+{
+    /* Update the state of the node */
+    for (int i = model->jcS[tr]; i < model->jcS[tr + 1]; i++) {
+        model->u[node * model->Nc + model->irS[i]] += model->prS[i];
+        if (model->u[node * model->Nc + model->irS[i]] < 0) {
+            SimInf_print_cell_status(model, cell, tt, -1, 0.0);
+            return SIMINF_ERR_NEGATIVE_STATE;
+        }
+    }
+
+    return 0;
+}
+
+/**
  * Initialize and run the SimInf raster solver.
  *
  * @param args Structure with data for the solver.
