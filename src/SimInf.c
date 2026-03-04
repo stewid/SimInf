@@ -450,6 +450,10 @@ SEXP SimInf_raster_run(
         }
     }
 
+    /* Keep track of if a transition happens on a cell, in a node and
+     * if it is a movement. */
+    args.tr_type = INTEGER(GET_SLOT(result, Rf_install("tr_type")));
+
     /* Run the simulation solver. */
     err = SimInf_run_solver_raster(&args);
 

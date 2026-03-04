@@ -152,6 +152,10 @@ typedef struct SimInf_solver_args {
      * model. */
     int cell_i;
 
+    /* Keep track of if a transition happens on a cell, in a node or
+     * if it is a movement. */
+    const int *tr_type;
+
     /* Select matrix for events. irE[k] is the row of E[k]. */
     const int *irE;
 

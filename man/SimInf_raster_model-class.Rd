@@ -21,5 +21,7 @@ upper left corner, and increase from left to right, and then
 from top to bottom. The last cell number equals the number of
 cells of the raster. Row numbers start at 1 at the top, column
 numbers start at 1 at the left.}
+
+\item{\code{tr_type}}{FIXME.}
 }}
 

@@ -55,6 +55,7 @@ SimInf_raster_model <- function(raster,
     model <- methods::as(model, "SimInf_raster_model")
 
     model@raster <- init_x0(raster)
+    model@tr_type <- rep(1L, nrow(G))
 
     model
 }

@@ -247,6 +247,7 @@ SimInf_raster_model_create(
         goto on_error;
     model->Nt = args->Nt;
     model->Nld = args->Nld;
+    model->tr_type = args->tr_type;
 
     /* Keep track of time. */
     model->tspan = args->tspan;
