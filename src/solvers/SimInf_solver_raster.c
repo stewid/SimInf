@@ -1095,12 +1095,18 @@ SimInf_solver_raster(
                 cell = model->u[node * model->Nc + model->cell_i] - 1;
                 kv_push(int, model->nodes[cell], node);
                 model->sum_rate[cell] += model->sum_node_rate[node];
-            }
 
-            /* Recalculate propensities using the dependency graph. */
-            err = SimInf_node_propensities(model, cell, node, tr, tt);
-            if (err)
-                return err;
+                /* Recalculate propensities at the new cell
+                 * location. */
+                err = SimInf_propensities(model, cell, tt);
+                if (err)
+                    return err;
+            } else {
+                /* Recalculate propensities using the dependency graph. */
+                err = SimInf_node_propensities(model, cell, node, tr, tt);
+                if (err)
+                    return err;
+            }
         }
 
         /* Store solution and exit if the simulation has reached the
