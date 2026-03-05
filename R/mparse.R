@@ -159,6 +159,7 @@ propensity_dependencies <- function(tokens,
                                     cell_compartments) {
     compartments <- c(compartments, cell_compartments)
     depends <- integer(length(compartments))
+    names(depends) <- compartments
 
     ## Find compartments in propensity
     i <- unique(match(tokens, compartments))

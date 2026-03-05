@@ -621,7 +621,7 @@ stopifnot(
                                           v0_names = NULL,
                                           use_enum = FALSE),
               list(code = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
-                   depends = c(1, 1, 1),
+                   depends = c(S = 1, I = 1, R = 1),
                    G_rowname = "beta*S*I/(S+I+R)",
                    variables = character(0))))
 
@@ -635,7 +635,7 @@ stopifnot(
                                           v0_names = NULL,
                                           use_enum = TRUE),
               list(code = "gdata[BETA]*u[S]*u[I]/(u[S]+u[I]+u[R])",
-                   depends = c(1, 1, 1),
+                   depends = c(S = 1, I = 1, R = 1),
                    G_rowname = "beta*S*I/(S+I+R)",
                    variables = character(0))))
 
@@ -651,7 +651,7 @@ stopifnot(
                            use_enum = TRUE),
               list(code =
                        "gdata[BETA]*u[S]*cell[CONTAMINATION]/(u[S]+u[I]+u[R])",
-                   depends = c(1, 1, 1, 1),
+                   depends = c(S = 1, I = 1, R = 1, cell.contamination = 1),
                    G_rowname = "beta*S*cell.contamination/(S+I+R)",
                    variables = character(0))))
 
@@ -666,7 +666,7 @@ stopifnot(
                            v0_names = NULL,
                            use_enum = FALSE),
               list(code = "gdata[0]*u[0]*cell[0]/(u[0]+u[1]+u[2])",
-                   depends = c(1, 1, 1, 1),
+                   depends = c(S = 1, I = 1, R = 1, cell.contamination = 1),
                    G_rowname = "beta*S*cell.contamination/(S+I+R)",
                    variables = character(0))))
 
