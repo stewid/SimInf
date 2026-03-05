@@ -6,6 +6,7 @@
 \usage{
 SimInf_raster_model(
   raster,
+  tr_type,
   G,
   S,
   cell_S,
@@ -19,6 +20,8 @@ SimInf_raster_model(
 }
 \arguments{
 \item{raster}{FIXME.}
+
+\item{tr_type}{FIXME.}
 
 \item{G}{Dependency graph that indicates the transition rates that
 need to be updated after a given state transition has occured.

@@ -279,6 +279,10 @@ parse_compartments <- function(x,
     tabulate(i, length(compartments))
 }
 
+is_movement <- function(x) {
+    "cell" %in% unique(names(x[which(x > 0)]))
+}
+
 parse_propensity <- function(x,
                              variables,
                              compartments,
@@ -309,9 +313,17 @@ parse_propensity <- function(x,
                                      v0_names = v0_names,
                                      use_enum = use_enum)
 
-    ## Determine the G rowname
+    ## Determine the transition type i.e. does it involve a cell, a
+    ## node, or both, or is it a movement of a node between
+    ## cells. Note that this is only relevant for a
+    ## SimInf_raster_model.
     names(from) <- c(compartments, cell_compartments)
     names(dest) <- c(compartments, cell_compartments)
+    tr_type <- 0L
+    if (is_movement(c(from, dest)))
+        tr_type <- 3L
+
+    ## Determine the G rowname
     from <- G_label(from[which(from > 0)])
     dest <- G_label(dest[which(dest > 0)])
     G_rowname <- paste(from, "->", propensity$G_rowname, "->", dest)
@@ -320,7 +332,8 @@ parse_propensity <- function(x,
          depends    = propensity$depends,
          S          = S,
          G_rowname  = G_rowname,
-         variables  = propensity$variables)
+         variables  = propensity$variables,
+         tr_type    = tr_type)
 }
 
 parse_propensities <- function(propensities,
@@ -821,7 +834,9 @@ mparse <- function(transitions = NULL,
                             use_enum = use_enum)
 
     if (length(cell_compartments) > 0) {
+        tr_type <- sapply(transitions$propensities, "[[", "tr_type")
         model <- SimInf_raster_model(raster = raster,
+                                     tr_type = tr_type,
                                      G      = G,
                                      S      = S,
                                      cell_S = cell_S,

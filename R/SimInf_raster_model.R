@@ -22,6 +22,7 @@
 ##' the nodes are not fixed at one position but can move between cells
 ##' on a raster.
 ##' @param raster FIXME.
+##' @param tr_type FIXME.
 ##' @template G-param
 ##' @template S-param
 ##' @param cell_S FIXME.
@@ -33,6 +34,7 @@
 ##' @template C_code-param
 ##' @export
 SimInf_raster_model <- function(raster,
+                                tr_type,
                                 G,
                                 S,
                                 cell_S,
@@ -53,9 +55,8 @@ SimInf_raster_model <- function(raster,
                           C_code = C_code)
 
     model <- methods::as(model, "SimInf_raster_model")
-
     model@raster <- init_x0(raster)
-    model@tr_type <- rep(1L, nrow(G))
+    model@tr_type <- as.integer(tr_type)
 
     model
 }
