@@ -96,6 +96,7 @@ substitute_tokens <- function(tokens,
                               pattern,
                               replacement,
                               use_enum) {
+    data_source <- character()
     i <- match(tokens, pattern)
     j <- which(!is.na(i))
     pattern <- remove_cell_prefix(pattern)
@@ -107,9 +108,11 @@ substitute_tokens <- function(tokens,
         }
 
         tokens[j] <- sprintf("%s[%s]", replacement, lbl)
+        data_source <- replacement
     }
 
-    tokens
+    list(tokens = tokens,
+         data_source = data_source)
 }
 
 rewrite_tokens <- function(tokens,
@@ -120,36 +123,42 @@ rewrite_tokens <- function(tokens,
                            v0_names,
                            use_enum) {
     ## Find compartments in tokens
-    tokens <- substitute_tokens(tokens = tokens,
+    result <- substitute_tokens(tokens = tokens,
                                 pattern = compartments,
                                 replacement = "u",
                                 use_enum = use_enum)
+    data_source <- result$data_source
 
     ## Find cell compartments in tokens
-    tokens <- substitute_tokens(tokens = tokens,
+    result <- substitute_tokens(tokens = result$tokens,
                                 pattern = cell_compartments,
                                 replacement = "cell",
                                 use_enum = use_enum)
+    data_source <- c(data_source, result$data_source)
 
     ## Find ldata parameters in tokens
-    tokens <- substitute_tokens(tokens = tokens,
+    result <- substitute_tokens(tokens = result$tokens,
                                 pattern = ldata_names,
                                 replacement = "ldata",
                                 use_enum = use_enum)
+    data_source <- c(data_source, result$data_source)
 
     ## Find gdata parameters in tokens
-    tokens <- substitute_tokens(tokens = tokens,
+    result <- substitute_tokens(tokens = result$tokens,
                                 pattern = gdata_names,
                                 replacement = "gdata",
                                 use_enum = use_enum)
+    data_source <- c(data_source, result$data_source)
 
     ## Find v0 parameters in tokens
-    tokens <- substitute_tokens(tokens = tokens,
+    result <- substitute_tokens(tokens = result$tokens,
                                 pattern = v0_names,
                                 replacement = "v",
                                 use_enum = use_enum)
+    data_source <- c(data_source, result$data_source)
 
-    tokens
+    list(tokens = result$tokens,
+         data_source = data_source)
 }
 
 propensity_dependencies <- function(tokens,
@@ -213,7 +222,7 @@ rewrite_propensity <- function(propensity,
                                        compartments = compartments,
                                        cell_compartments = cell_compartments)
 
-    tokens <- rewrite_tokens(tokens = tokens,
+    result <- rewrite_tokens(tokens = tokens,
                              compartments = compartments,
                              cell_compartments = cell_compartments,
                              ldata_names = ldata_names,
@@ -221,10 +230,11 @@ rewrite_propensity <- function(propensity,
                              v0_names = v0_names,
                              use_enum = use_enum)
 
-    list(code      = paste0(tokens, collapse = ""),
-         depends   = depends,
+    list(code = paste0(result$tokens, collapse = ""),
+         depends = depends,
          G_rowname = G_rowname,
-         variables = vars)
+         variables = vars,
+         data_source = result$data_source)
 }
 
 ## Generate the 'from' or 'dest' labels in the G rownames.
@@ -321,8 +331,11 @@ parse_propensity <- function(x,
     names(from) <- c(compartments, cell_compartments)
     names(dest) <- c(compartments, cell_compartments)
     tr_type <- 0L
-    if (is_movement(c(from, dest)))
+    if (is_movement(c(from, dest))) {
         tr_type <- 3L
+    } else if (any(c("u", "v", "ldata") %in% propensity$data_source)) {
+        tr_type <- 1L
+    }
 
     ## Determine the G rowname
     from <- G_label(from[which(from > 0)])
@@ -414,7 +427,7 @@ parse_variable <- function(x,
     i <- unique(match(tokens, compartments))
     variable_compartments <- compartments[i[!is.na(i)]]
 
-    tokens <- rewrite_tokens(tokens = tokens,
+    result <- rewrite_tokens(tokens = tokens,
                              compartments = compartments,
                              cell_compartments = cell_compartments,
                              ldata_names = ldata_names,
@@ -423,7 +436,8 @@ parse_variable <- function(x,
                              use_enum = use_enum)
 
     list(variable = variable,
-         tokens = tokens,
+         tokens = result$tokens,
+         data_source = result$data_source,
          type = type,
          compartments = variable_compartments)
 }
@@ -835,7 +849,7 @@ mparse <- function(transitions = NULL,
                             use_enum = use_enum)
 
     if (length(cell_compartments) > 0) {
-        tr_type <- sapply(transitions$propensities, "[[", "tr_type")
+        tr_type <- vapply(transitions$propensities, "[[", integer(1), "tr_type")
         model <- SimInf_raster_model(raster = raster,
                                      tr_type = tr_type,
                                      G      = G,

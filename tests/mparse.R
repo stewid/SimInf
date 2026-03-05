@@ -623,7 +623,8 @@ stopifnot(
               list(code = "gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2])",
                    depends = c(S = 1, I = 1, R = 1),
                    G_rowname = "beta*S*I/(S+I+R)",
-                   variables = character(0))))
+                   variables = character(0),
+                   data_source = c("u", "gdata"))))
 
 stopifnot(
     identical(SimInf:::rewrite_propensity(propensity = "beta*S*I/(S+I+R)",
@@ -637,7 +638,8 @@ stopifnot(
               list(code = "gdata[BETA]*u[S]*u[I]/(u[S]+u[I]+u[R])",
                    depends = c(S = 1, I = 1, R = 1),
                    G_rowname = "beta*S*I/(S+I+R)",
-                   variables = character(0))))
+                   variables = character(0),
+                   data_source = c("u", "gdata"))))
 
 stopifnot(
     identical(SimInf:::rewrite_propensity(
@@ -653,7 +655,8 @@ stopifnot(
                        "gdata[BETA]*u[S]*cell[CONTAMINATION]/(u[S]+u[I]+u[R])",
                    depends = c(S = 1, I = 1, R = 1, cell.contamination = 1),
                    G_rowname = "beta*S*cell.contamination/(S+I+R)",
-                   variables = character(0))))
+                   variables = character(0),
+                   data_source = c("u", "cell", "gdata"))))
 
 stopifnot(
     identical(SimInf:::rewrite_propensity(
@@ -668,7 +671,8 @@ stopifnot(
               list(code = "gdata[0]*u[0]*cell[0]/(u[0]+u[1]+u[2])",
                    depends = c(S = 1, I = 1, R = 1, cell.contamination = 1),
                    G_rowname = "beta*S*cell.contamination/(S+I+R)",
-                   variables = character(0))))
+                   variables = character(0),
+                   data_source = c("u", "cell", "gdata"))))
 
 ## Check init function
 model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
@@ -1093,6 +1097,7 @@ stopifnot(identical(
                             use_enum = FALSE),
     list(variable = "N",
          tokens = c("u[0]", "+", "u[1]", "+", "u[2]"),
+         data_source = "u",
          type = "double",
          compartments = c("S", "I", "R"))))
 
@@ -1106,6 +1111,7 @@ stopifnot(identical(
                             use_enum = FALSE),
     list(variable = "N",
          tokens = c("u[0]", "+", "u[1]", "+", "u[2]"),
+         data_source = "u",
          type = "int",
          compartments = c("S", "I", "R"))))
 
@@ -1119,6 +1125,7 @@ stopifnot(identical(
                             use_enum = TRUE),
     list(variable = "N",
          tokens = c("u[S]", "+", "u[I]", "+", "u[R]"),
+         data_source = "u",
          type = "double",
          compartments = c("S", "I", "R"))))
 
