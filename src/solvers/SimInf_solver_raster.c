@@ -892,6 +892,229 @@ SimInf_update_state(
 }
 
 /**
+ * Siminf raster solver
+ *
+ * @return 0 if Ok, else error code.
+ */
+static int
+SimInf_solver_raster(
+    SimInf_raster_model *model)
+{
+    double next_unit_of_time = floor(model->tspan[0]) + 1.0;
+    int err = SimInf_init_raster_solver(model);
+    if (err)
+        return err;
+
+    /* Main loop. */
+    for (;;) {
+        /* Process events until next unit of time. */
+        for (;;) {
+            size_t node_i;
+            int node, cell, tr;
+            double cum, rand, tt;
+
+            /* Get the cell in which the next event occurred. This
+             * cell is on top of the heap. */
+            tt = model->cell_time[0];
+            if (tt >= next_unit_of_time)
+                break;
+            cell = model->cells[0];
+
+            /* Determine if it was an event on the cell or in a node. */
+            rand = gsl_rng_uniform_pos(model->rng) * model->sum_rate[cell];
+
+            if (rand <= model->sum_cell_rate[cell]) {
+                /* Cell event. */
+
+                /* Determine the transition that did occur (direct
+                 * SSA). */
+                rand = gsl_rng_uniform_pos(model->rng) * model->sum_cell_rate[cell];
+                for (tr = 0, cum = model->cell_rate[cell * model->Nt];
+                     tr < model->Nt && rand > cum;
+                     tr++, cum += model->cell_rate[cell * model->Nt + tr]);
+
+                /* Elaborate floating point fix. */
+                if (tr >= model->Nt)
+                    tr = model->Nt - 1;
+                if (model->cell_rate[cell * model->Nt + tr] == 0.0) {
+                    /* Go backwards and try to find first nonzero
+                     * transition rate */
+                    for (; tr > 0 && model->cell_rate[cell * model->Nt + tr] == 0.0; tr--);
+
+                    if (model->cell_rate[cell * model->Nt + tr] == 0.0) {
+                        /* No nonzero rate found, but a transition was
+                         * sampled. This can happen due to floating
+                         * point errors in the iterated recalculated
+                         * rates. */
+
+                        /* nil event: zero out and move on */
+                        model->sum_cell_rate[cell] = 0.0;
+                        model->sum_rate[cell] = 0.0;
+                        for (size_t i = 0; i < kv_size(model->nodes[cell]); i++) {
+                            node = kv_A(model->nodes[cell], i);
+                            model->sum_rate[cell] += model->sum_node_rate[node];
+                        }
+
+                        /* Compute time to the next event for this
+                         * cell and update the heap. */
+                        SimInf_compute_time_to_next_event(model, cell, tt);
+
+                        /* Move on to next event. */
+                        continue;
+                    }
+                }
+
+                /* Update the current state in the cell and node. */
+                err = SimInf_update_state(model, cell, -1, tr, tt);
+                if (err)
+                    return err;
+
+                /* Recalculate propensities on the cell using the
+                 * dependency graph. */
+                err = SimInf_cell_propensities(model, cell, tr, tt);
+                if (err)
+                    return err;
+
+                /* Move on to next event. */
+                continue;
+            }
+
+            /* Node event. */
+
+            /* Determine the node where the event occured. */
+            rand -= model->sum_cell_rate[cell];
+            for (node_i = 0, node = kv_A(model->nodes[cell], 0),
+                     cum = model->sum_node_rate[node];
+                 node_i < kv_size(model->nodes[cell]) && rand > cum;
+                 node_i++, node = kv_A(model->nodes[cell], node_i),
+                     cum += model->sum_node_rate[node]);
+
+            /* Elaborate floating point fix: */
+            if (node_i >= kv_size(model->nodes[cell])) {
+                /* Check that we have any nodes in the cell. */
+                if (kv_size(model->nodes[cell]) == 0) {
+                    /* No nonzero rate found, but a transition was
+                     * sampled. This can happen due to floating point
+                     * errors in the iterated recalculated rates. */
+
+                    /* nil event: zero out and move on */
+                    model->sum_rate[cell] = model->sum_cell_rate[cell];
+
+                    /* Compute time to the next event for this cell and
+                     * update the heap. */
+                    SimInf_compute_time_to_next_event(model, cell, tt);
+
+                    /* Move on to next event. */
+                    continue;
+                }
+
+                node_i = kv_size(model->nodes[cell]) - 1;
+                node = kv_A(model->nodes[cell], node_i);
+            }
+            if (model->sum_node_rate[node] == 0.0) {
+                /* Go backwards and try to find first node with a
+                 * nonzero transition rate */
+                for (; node_i > 0 && model->sum_node_rate[node] == 0.0;
+                     node_i--, node = kv_A(model->nodes[cell], node_i));
+
+                if (model->sum_node_rate[node] == 0.0) {
+                    /* No nonzero rate found, but a transition was
+                     * sampled. This can happen due to floating point
+                     * errors in the iterated recalculated rates. */
+
+                    /* nil event: zero out and move on */
+                    model->sum_rate[cell] = model->sum_cell_rate[cell];
+
+                    /* Compute time to the next event for this cell
+                     * and update the heap. */
+                    SimInf_compute_time_to_next_event(model, cell, tt);
+
+                    /* Move on to next event. */
+                    continue;
+                }
+            }
+
+            /* Determine the transition that did occur (direct
+             * SSA). */
+            rand = gsl_rng_uniform_pos(model->rng) * model->sum_node_rate[node];
+            for (tr = 0, cum = model->node_rate[node * model->Nt];
+                 tr < model->Nt && rand > cum;
+                 tr++, cum += model->node_rate[node * model->Nt + tr]);
+
+            /* Elaborate floating point fix: */
+            if (tr >= model->Nt)
+                tr = model->Nt - 1;
+            if (model->node_rate[node * model->Nt + tr] == 0.0) {
+                /* Go backwards and try to find the first nonzero
+                 * transition rate */
+                for ( ; tr > 0 && model->node_rate[node * model->Nt + tr] == 0.0; tr--);
+
+                /* No nonzero rate found, but a transition was
+                 * sampled. This can happen due to floating point
+                 * errors in the iterated recalculated rates. */
+                if (model->node_rate[node * model->Nt + tr] == 0.0) {
+                    /* nil event: zero out and move on */
+                    model->sum_node_rate[node] = 0.0;
+                    model->sum_rate[cell] = model->sum_cell_rate[cell];
+                    for (size_t i = 0; i < kv_size(model->nodes[cell]); i++) {
+                        node = kv_A(model->nodes[cell], i);
+                        model->sum_rate[cell] += model->sum_node_rate[node];
+                    }
+
+                    /* Compute time to the next event for this cell
+                     * and update the heap. */
+                    SimInf_compute_time_to_next_event(model, cell, tt);
+
+                    /* Move on to next event. */
+                    continue;
+                }
+            }
+
+            /* Update the current state in the cell and node. */
+            err = SimInf_update_state(model, cell, node, tr, tt);
+            if (err)
+                return err;
+
+            /* Check if the transition is a movement event. */
+            if (model->tr_type[tr] & TR_IS_MOVEMENT) {
+                /* Remove the node from the current cell */
+                kv_A(model->nodes[cell], node_i) =
+                    kv_A(model->nodes[cell], kv_size(model->nodes[cell]) - 1);
+                model->nodes[cell].n--;
+                model->sum_rate[cell] -= model->sum_node_rate[node];
+
+                /* Recalculate propensities on the cell using the
+                 * dependency graph. */
+                err = SimInf_cell_propensities(model, cell, tr, tt);
+                if (err)
+                    return err;
+
+                /* Add the node to the new cell location. Note that
+                 * the cell location in R is one-based, therefore,
+                 * decrement the cell with one. */
+                cell = model->u[node * model->Nc + model->cell_i] - 1;
+                kv_push(int, model->nodes[cell], node);
+                model->sum_rate[cell] += model->sum_node_rate[node];
+            }
+
+            /* Recalculate propensities using the dependency graph. */
+            err = SimInf_node_propensities(model, cell, node, tr, tt);
+            if (err)
+                return err;
+        }
+
+        /* Store solution and exit if the simulation has reached the
+         * final time. */
+        SimInf_store_solution(model, next_unit_of_time);
+        if (model->t_it >= model->tlen)
+            break;
+        next_unit_of_time += 1.0;
+    }
+
+    return 0;
+}
+
+/**
  * Initialize and run the SimInf raster solver.
  *
  * @param args Structure with data for the solver.
