@@ -1157,6 +1157,26 @@ attribute_hidden int
 SimInf_run_solver_raster(
     SimInf_solver_args *args)
 {
-    /* Not yet implemented. */
-    return 0;
+    int err = 0;
+    gsl_rng *rng = NULL;
+    SimInf_raster_model *model = NULL;
+
+    rng = gsl_rng_alloc(gsl_rng_mt19937);
+    if (!rng) {
+        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+        goto cleanup;
+    }
+    gsl_rng_set(rng, args->seed);
+
+    err = SimInf_raster_model_create(&model, args, rng);
+    if (err)
+        goto cleanup;
+
+    err = SimInf_solver_raster(model);
+
+cleanup:
+    gsl_rng_free(rng);
+    SimInf_raster_model_free(model);
+
+    return err;
 }
