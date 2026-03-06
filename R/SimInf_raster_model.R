@@ -55,6 +55,7 @@ SimInf_raster_model <- function(raster,
                           C_code = C_code)
 
     model <- methods::as(model, "SimInf_raster_model")
+    model@cell_S <- init_sparse_matrix(cell_S)
     model@raster <- init_x0(raster)
     model@tr_type <- as.integer(tr_type)
 
