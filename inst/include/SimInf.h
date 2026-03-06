@@ -97,6 +97,9 @@ typedef double (*TRFun)(
 /* Forward declaration of the transition rate function for a
  * SimInf_raster_model. */
 typedef double (*TRRasterFun)(
+    const int *raster,
+    int nrow,
+    int ncol,
     const int *cell,
     const int *u,
     const double *v,

@@ -112,6 +112,8 @@ typedef struct SimInf_raster_model
     const int *prS;   /**< Node state-change matrix. Value of item (i,
                        *   j) in S. */
 
+    const int *raster;   /**< The raster data vector where raster[i]
+                          *   gives the data value for cell #i. */
     const double *ldata; /**< Matrix (Nld X Nnodes). ldata(:,j) gives
                           *   a local data vector for node #j. */
     const double *gdata; /**< The global data vector. */
@@ -321,7 +323,8 @@ SimInf_raster_model_create(
     model->cell_jcS = args->cell_jcS;
     model->cell_prS = args->cell_prS;
 
-    /* Local and global data. */
+    /* Raster, local and global data. */
+    model->raster = args->raster;
     model->ldata = args->ldata;
     model->gdata = args->gdata;
 
@@ -476,6 +479,9 @@ SimInf_init_raster_solver(
                 for (size_t i = 0; i < kv_size(model->nodes[cell]); i++) {
                     int node = kv_A(model->nodes[cell], i);
                     double rate = (*model->tr_fun[tr])(
+                        model->raster,
+                        model->nrow,
+                        model->ncol,
                         &model->cell_u[cell * model->cell_Nc],
                         &model->u[node * model->Nc],
                         &model->v[node * model->Nd],
@@ -494,6 +500,9 @@ SimInf_init_raster_solver(
                 }
             } else {
                 double rate = (*model->tr_fun[tr])(
+                    model->raster,
+                    model->nrow,
+                    model->ncol,
                     &model->cell_u[cell * model->cell_Nc],
                     NULL, /* u */
                     NULL, /* v */
@@ -630,6 +639,9 @@ SimInf_propensities(
                 int node = kv_A(model->nodes[cell], j);
                 double old_rate = model->node_rate[node * model->Nt + i];
                 double rate = (*model->tr_fun[i])(
+                    model->raster,
+                    model->nrow,
+                    model->ncol,
                     &model->cell_u[cell * model->cell_Nc],
                     &model->u[node * model->Nc],
                     &model->v[node * model->Nd],
@@ -649,6 +661,9 @@ SimInf_propensities(
         } else {
             double old_rate = model->cell_rate[cell * model->Nt + i];
             double rate = (*model->tr_fun[i])(
+                model->raster,
+                model->nrow,
+                model->ncol,
                 &model->cell_u[cell * model->cell_Nc],
                 NULL, /* u */
                 NULL, /* v */
@@ -700,6 +715,9 @@ SimInf_cell_propensities(
                 int node = kv_A(model->nodes[cell], j);
                 double old_rate = model->node_rate[node * model->Nt + model->irG[i]];
                 double rate = (*model->tr_fun[model->irG[i]])(
+                    model->raster,
+                    model->nrow,
+                    model->ncol,
                     &model->cell_u[cell * model->cell_Nc],
                     &model->u[node * model->Nc],
                     &model->v[node * model->Nd],
@@ -719,6 +737,9 @@ SimInf_cell_propensities(
         } else {
             double old_rate = model->cell_rate[cell * model->Nt + model->irG[i]];
             double rate = (*model->tr_fun[model->irG[i]])(
+                model->raster,
+                model->nrow,
+                model->ncol,
                 &model->cell_u[cell * model->cell_Nc],
                 NULL, /* u */
                 NULL, /* v */
@@ -769,6 +790,9 @@ SimInf_node_propensities(
         if (model->tr_type[model->irG[i]] & TR_IN_NODE) {
             double old_rate = model->node_rate[node * model->Nt + model->irG[i]];
             double rate = (*model->tr_fun[model->irG[i]])(
+                model->raster,
+                model->nrow,
+                model->ncol,
                 &model->cell_u[cell * model->cell_Nc],
                 &model->u[node * model->Nc],
                 &model->v[node * model->Nd],
@@ -786,6 +810,9 @@ SimInf_node_propensities(
         } else {
             double old_rate = model->cell_rate[cell * model->Nt + model->irG[i]];
             double rate = (*model->tr_fun[model->irG[i]])(
+                model->raster,
+                model->nrow,
+                model->ncol,
                 &model->cell_u[cell * model->cell_Nc],
                 NULL, /* u */
                 NULL, /* v */

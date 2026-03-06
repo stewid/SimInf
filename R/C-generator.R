@@ -183,6 +183,9 @@ C_trFun <- function(transitions, cell_compartments) {
     parameters <- character(0)
     if (length(cell_compartments) > 0) {
         parameters <- c(parameters,
+                        "    const int *raster,",
+                        "    int nrow,",
+                        "    int ncol,",
                         "    const int *cell,")
     }
 
