@@ -112,7 +112,7 @@ SimInf_solver_mssm(
                 }
 
                 /* Main loop. */
-                for (; !m.error;) {
+                while (!m.error) {
                     /* (1) Handle internal epidemiological model,
                      * continuous-time Markov chain. */
                     for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
