@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -302,10 +302,6 @@ SimInf_solver_aem(
                 /* (2) Incorporate all scheduled E1 events */
                 SimInf_process_events(&model[i], &events[i], 0);
             }
-
-#ifdef _OPENMP
-#  pragma omp barrier
-#endif
 
 #ifdef _OPENMP
 #  pragma omp master
