@@ -160,7 +160,7 @@ SimInf_solver_aem(
             return model[i].error;
 
     /* Main loop. */
-    for (;;) {
+    while (true) {
 #ifdef _OPENMP
 #  pragma omp parallel num_threads(SimInf_num_threads())
 #endif
@@ -175,7 +175,7 @@ SimInf_solver_aem(
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
                 for (ptrdiff_t node = 0; node < sa.Nn && !sa.error; node++) {
-                    for (;;) {
+                    while (true) {
                         int j, tr;
                         double old_t_rate, rate;
 

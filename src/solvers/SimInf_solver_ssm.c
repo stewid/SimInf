@@ -91,7 +91,7 @@ SimInf_solver_ssm(
             return model[i].error;
 
     /* Main loop. */
-    for (;;) {
+    while (true) {
 #ifdef _OPENMP
 #  pragma omp parallel num_threads(SimInf_num_threads())
 #endif
@@ -106,7 +106,7 @@ SimInf_solver_ssm(
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
                 for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
-                    for (;;) {
+                    while (true) {
                         double cum, rand, tau, delta = 0.0;
                         int tr;
 

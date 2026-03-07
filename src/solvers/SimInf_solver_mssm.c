@@ -116,7 +116,7 @@ SimInf_solver_mssm(
                     /* (1) Handle internal epidemiological model,
                      * continuous-time Markov chain. */
                     for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
-                        for (;;) {
+                        while (true) {
                             double cum, rand, tau, delta = 0.0;
                             int tr;
 
