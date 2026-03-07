@@ -319,7 +319,7 @@ SimInf_solver_mssm(
             m.V = V;
             *&model[i] = m;
         }
-    }
+    } /* End of parallel region */
 
     /* Check for error. */
     for (int i = 0; i < Nthread; i++)

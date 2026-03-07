@@ -421,7 +421,7 @@ SimInf_solver_aem(
                 *&model[i] = sa;
                 *&method[i] = ma;
             }
-        }
+        } /* End of parallel region */
 
         /* 6b) Handle the case where the solution is stored in a sparse
          * matrix */
@@ -440,7 +440,7 @@ SimInf_solver_aem(
         /* If the simulation has reached the final time, exit. */
         if (model[0].U_it >= model[0].tlen)
             break;
-    }
+    } /* End of while(true) */
 
     return 0;
 }
