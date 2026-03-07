@@ -96,6 +96,8 @@ SimInf_solver_aem(
     SimInf_scheduled_events *events,
     int Nthread)
 {
+    bool done = false;
+
 #ifdef _OPENMP
 #  pragma omp parallel num_threads(SimInf_num_threads())
 #endif
@@ -152,19 +154,20 @@ SimInf_solver_aem(
             *&model[i] = sa;
             *&method[i] = ma;
         }
-    }
 
-    /* Check for error during initialization. */
-    for (int i = 0; i < Nthread; i++)
-        if (model[i].error)
-            return model[i].error;
-
-    /* Main loop. */
-    while (true) {
 #ifdef _OPENMP
-#  pragma omp parallel num_threads(SimInf_num_threads())
+#  pragma omp single
 #endif
         {
+            /* Check for error during initialization. */
+            for (int i = 0; i < Nthread; i++) {
+                if (model[i].error)
+                    done = true;
+            }
+        }
+
+        /* Main loop. */
+        while (!done) {
 #ifdef _OPENMP
 #  pragma omp for schedule(static)
 #endif
@@ -304,16 +307,12 @@ SimInf_solver_aem(
             }
 
 #ifdef _OPENMP
-#  pragma omp master
+#  pragma omp single
 #endif
             {
                 /* (3) Incorporate all scheduled E2 events */
                 SimInf_process_events(model, events, 1);
             }
-
-#ifdef _OPENMP
-#  pragma omp barrier
-#endif
 
 #ifdef _OPENMP
 #  pragma omp for schedule(static)
@@ -421,26 +420,39 @@ SimInf_solver_aem(
                 *&model[i] = sa;
                 *&method[i] = ma;
             }
-        } /* End of parallel region */
 
-        /* 6b) Handle the case where the solution is stored in a sparse
-         * matrix */
-        SimInf_store_solution_sparse(model);
+#ifdef _OPENMP
+#  pragma omp single
+#endif
+            {
+                /* 6b) Handle the case where the solution is stored in
+                 * a sparse matrix */
+                SimInf_store_solution_sparse(model);
 
-        /* Swap the pointers to the continuous state variable so that
-         * 'v' equals 'v_new'. Moreover, check for error. */
-        for (int i = 0; i < Nthread; i++) {
-            double *v_tmp = model[i].v;
-            model[i].v = model[i].v_new;
-            model[i].v_new = v_tmp;
-            if (model[i].error)
-                return model[i].error;
-        }
+                /* Swap the pointers to the continuous state variable
+                 * so that 'v' equals 'v_new'. Moreover, check for
+                 * error. */
+                for (int i = 0; i < Nthread; i++) {
+                    double *v_tmp = model[i].v;
+                    model[i].v = model[i].v_new;
+                    model[i].v_new = v_tmp;
+                    if (model[i].error)
+                        done = true;
+                }
 
-        /* If the simulation has reached the final time, exit. */
-        if (model[0].U_it >= model[0].tlen)
-            break;
-    } /* End of while(true) */
+                /* If the simulation has reached the final time,
+                 * exit. */
+                if (model[0].U_it >= model[0].tlen)
+                    done = true;
+            }
+        } /* End of while(!done) */
+    }  /* end parallel region */
+
+    /* Check if there is any error during the simulation. */
+    for (int i = 0; i < Nthread; i++) {
+        if (model[i].error)
+            return model[i].error;
+    }
 
     return 0;
 }
