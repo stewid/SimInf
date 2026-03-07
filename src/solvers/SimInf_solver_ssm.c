@@ -49,7 +49,7 @@ SimInf_solver_ssm(
 #endif
     {
 #ifdef _OPENMP
-#  pragma omp for
+#  pragma omp for schedule(static)
 #endif
         for (int i = 0; i < Nthread; i++) {
             SimInf_compartment_model m = *&model[i];
@@ -97,7 +97,7 @@ SimInf_solver_ssm(
 #endif
         {
 #ifdef _OPENMP
-#  pragma omp for
+#  pragma omp for schedule(static)
 #endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_scheduled_events e = *&events[i];
@@ -218,7 +218,7 @@ SimInf_solver_ssm(
 #endif
 
 #ifdef _OPENMP
-#  pragma omp for
+#  pragma omp for schedule(static)
 #endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_compartment_model m = *&model[i];
