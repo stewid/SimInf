@@ -32,6 +32,26 @@
 #endif
 #include <string.h>
 
+typedef struct SimInf_raster_model
+{
+    /*** Callbacks ***/
+    TRRasterFun *tr_fun;  /**< Vector of function pointers to
+                           *   transition rate functions. */
+
+    /*** Data vectors for the cells ***/
+    const int *raster;   /**< The raster data vector where raster[i]
+                          *   gives the data value for cell #i. */
+    int *cell_u;         /**< Vector with the count of each compartment in
+                          *   each cell. */
+
+    /*** Constants ***/
+    int nrow;       /**< Number of rows. */
+    int ncol;       /**< Number of cols. */
+    int cell_Nc;    /**< Number of compartments in each cell. */
+    int cell_i;     /**< Index to the cell compartment in each
+                     *   node. */
+} SimInf_raster_model;
+
 /**
  * Siminf solver
  *
@@ -40,7 +60,8 @@
 static int
 SimInf_solver_raster_ssm(
     SimInf_compartment_model *model,
-    SimInf_scheduled_events *events)
+    SimInf_scheduled_events *events,
+    SimInf_raster_model *raster)
 {
     bool done = false;
     int Nthread = model->Nthread;
@@ -60,13 +81,23 @@ SimInf_solver_raster_ssm(
              * each node in sum_t_rate. Moreover, initialize time in
              * each node. */
             for (ptrdiff_t node = 0; node < m.Nn; node++) {
+                /* Note that the cell location in R is one-based,
+                 * therefore, decrement the cell with one. */
+                const int cell = m.u[node * m.Nc + raster->cell_i] - 1;
+                const int *cell_u = &raster->cell_u[cell * raster->cell_Nc];
+
                 m.sum_t_rate[node] = 0.0;
                 for (int j = 0; j < m.Nt; j++) {
-                    const double rate = (*m.tr_fun[j]) (&m.u[node * m.Nc],
-                                                        &m.v[node * m.Nd],
-                                                        &m.ldata[node * m.Nld],
-                                                        m.gdata,
-                                                        m.tt);
+                    const double rate = (*raster->tr_fun[j]) (
+                        raster->raster,
+                        raster->nrow,
+                        raster->ncol,
+                        cell_u,
+                        &m.u[node * m.Nc],
+                        &m.v[node * m.Nd],
+                        &m.ldata[node * m.Nld],
+                        m.gdata,
+                        m.tt);
 
                     m.t_rate[node * m.Nt + j] = rate;
                     m.sum_t_rate[node] += rate;
@@ -170,16 +201,25 @@ SimInf_solver_raster_ssm(
                             }
                         }
 
-                        /* 1d) Recalculate sum_t_rate[node] using
-                         * dependency graph. */
+                        /* Recalculate sum_t_rate[node] using the
+                         * dependency graph.  Note that the cell
+                         * location in R is one-based, therefore,
+                         * decrement the cell with one. */
+                        const int cell = m.u[node * m.Nc + raster->cell_i] - 1;
+                        const int *cell_u = &raster->cell_u[cell * raster->cell_Nc];
                         for (int j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
                             const double old = m.t_rate[node * m.Nt + m.irG[j]];
                             const double rate =
-                                (*m.tr_fun[m.irG[j]]) (&m.u[node * m.Nc],
-                                                       &m.v[node * m.Nd],
-                                                       &m.ldata[node * m.Nld],
-                                                       m.gdata,
-                                                       m.t_time[node]);
+                                (*raster->tr_fun[m.irG[j]]) (
+                                    raster->raster,
+                                    raster->nrow,
+                                    raster->ncol,
+                                    cell_u,
+                                    &m.u[node * m.Nc],
+                                    &m.v[node * m.Nd],
+                                    &m.ldata[node * m.Nld],
+                                    m.gdata,
+                                    m.t_time[node]);
 
                             m.t_rate[node * m.Nt + m.irG[j]] = rate;
                             delta += rate - old;
@@ -236,16 +276,26 @@ SimInf_solver_raster_ssm(
                         m.error = rc;
                         break;
                     } else if (rc > 0 || m.update_node[node]) {
-                        /* Update transition rates */
+                        /* Update the transition rates.  Note that the
+                         *  cell location in R is one-based,
+                         *  therefore, decrement the cell with one. */
+                        const int cell = m.u[node * m.Nc + raster->cell_i] - 1;
+                        const int *cell_u = &raster->cell_u[cell * raster->cell_Nc];
                         double delta = 0.0;
 
                         for (int j = 0; j < m.Nt; j++) {
                             const double old = m.t_rate[node * m.Nt + j];
                             const double rate =
-                                (*m.tr_fun[j]) (&m.u[node * m.Nc],
-                                                &m.v_new[node * m.Nd],
-                                                &m.ldata[node * m.Nld],
-                                                m.gdata, m.tt);
+                                (*raster->tr_fun[j]) (
+                                    raster->raster,
+                                    raster->nrow,
+                                    raster->ncol,
+                                    cell_u,
+                                    &m.u[node * m.Nc],
+                                    &m.v_new[node * m.Nd],
+                                    &m.ldata[node * m.Nld],
+                                    m.gdata,
+                                    m.tt);
 
                             m.t_rate[node * m.Nt + j] = rate;
                             delta += rate - old;
@@ -345,13 +395,14 @@ SimInf_solver_raster_ssm(
  * @return 0 if Ok, else error code.
  */
 attribute_hidden int
-SimInf_run_solver_raster_ssm(
+SimInf_run_solver_raster(
     SimInf_solver_args *args)
 {
     int err = 0;
     gsl_rng *rng = NULL;
     SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;
+    SimInf_raster_model* raster = NULL;
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
@@ -368,7 +419,7 @@ SimInf_run_solver_raster_ssm(
     if (err)
         goto cleanup;           /* #nocov */
 
-    err = SimInf_solver_raster_ssm(model, events);
+    err = SimInf_solver_raster_ssm(model, events, raster);
 
 cleanup:
     gsl_rng_free(rng);
