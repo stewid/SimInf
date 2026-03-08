@@ -34,6 +34,20 @@
 
 typedef struct SimInf_raster_model
 {
+    /*** Data vectors for propensities ***/
+    double *sum_cell_rate; /**< Vector of length Ncells with the sum
+                            *   of propensities in every cell. */
+    double *cell_rate;     /**< Transition rate matrix (Nt X Ncells)
+                            *   with all propensities for state
+                            *   transitions in cells. */
+
+    /*** Binary (min)heap. ***/
+    int *cells;
+    int *heap;
+
+    /*** Keep track of time ***/
+    double *cell_time;   /**< Time for next event in each cell. */
+
     /*** Callbacks ***/
     TRRasterFun *tr_fun;  /**< Vector of function pointers to
                            *   transition rate functions. */
@@ -62,6 +76,22 @@ SimInf_raster_model_free(
     SimInf_raster_model *model)
 {
     if (model) {
+        /* Free data vectors for propensities. */
+        free(model->sum_cell_rate);
+        model->sum_cell_rate = NULL;
+        free(model->cell_rate);
+        model->cell_rate = NULL;
+
+        /* Free data for binary (min)heap. */
+        free(model->cells);
+        model->cells = NULL;
+        free(model->heap);
+        model->heap = NULL;
+
+        /* Free data to keep track of time. */
+        free(model->cell_time);
+        model->cell_time = NULL;
+
         /* Free data vector to keep track of the states in the
          * cells. */
         free(model->cell_u);
@@ -83,7 +113,6 @@ SimInf_raster_model_create(
     SimInf_raster_model **out,
     SimInf_solver_args const *args)
 {
-    int err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
     SimInf_raster_model *model = NULL;
 
     model = calloc(1, sizeof(SimInf_raster_model));
@@ -97,6 +126,11 @@ SimInf_raster_model_create(
     model->nrow = args->nrow;
     model->ncol = args->ncol;
     if (model->nrow < 1 || model->ncol < 1)
+        goto on_error;
+
+    /* Number of compartments in each cell. */
+    model->cell_Nc = args->cell_Nc;
+    if (model->cell_Nc < 0)
         goto on_error;
 
     /* Index to the cell compartment in each node. */
@@ -119,12 +153,38 @@ SimInf_raster_model_create(
     if (!model->cell_u)
         goto on_error;
 
+    /* Binary (min)heap. */
+    model->cells = malloc(model->nrow * model->ncol * sizeof(int));
+    if (!model->cells)
+        goto on_error;
+
+    model->heap = malloc(model->nrow * model->ncol * sizeof(int));
+    if (!model->heap)
+        goto on_error;
+
+    model->cell_time = malloc(model->nrow * model->ncol * sizeof(double));
+    if (!model->cell_time)
+        goto on_error;
+
+    /* Create transition rate matrix (Nt X Ncells) and total rate
+     * vector. In cell_rate we store all propensities for state
+     * transitions, and in sum_cell_rate the sum of propensities in
+     * every cell. */
+    model->cell_rate = calloc(args->Nt * model->nrow * model->ncol,
+                              sizeof(double));
+    if (!model->cell_rate)
+        goto on_error;
+    model->sum_cell_rate = calloc(model->nrow * model->ncol,
+                                  sizeof(double));
+    if (!model->sum_cell_rate)
+        goto on_error;
+
     *out = model;
     return 0;
 
 on_error:
     SimInf_raster_model_free(model);
-    return err;
+    return SIMINF_ERR_ALLOC_MEMORY_BUFFER;
 }
 
 /**
