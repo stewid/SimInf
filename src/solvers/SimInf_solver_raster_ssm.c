@@ -136,8 +136,8 @@ SimInf_solver_raster_ssm(
                 SimInf_scheduled_events e = *&events[i];
                 SimInf_compartment_model m = *&model[i];
 
-                /* (1) Handle internal epidemiological model,
-                 * continuous-time Markov chain. */
+                /* Handle the continuous-time Markov chain for the
+                 * epidemiological compartment model. */
                 for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
                     while (true) {
                         double cum, rand, tau, delta = 0.0;
@@ -157,7 +157,7 @@ SimInf_solver_raster_ssm(
                         }
                         m.t_time[node] += tau;
 
-                        /* 1b) Determine the transition that did occur
+                        /* Determine the transition that did occur
                          * (direct SSA). */
                         rand = gsl_rng_uniform_pos(e.rng) * m.sum_t_rate[node];
                         for (tr = 0, cum = m.t_rate[node * m.Nt];
@@ -185,7 +185,7 @@ SimInf_solver_raster_ssm(
                             }
                         }
 
-                        /* 1c) Update the state of the node */
+                        /* Update the state of the node */
                         for (int j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
                             m.u[node * m.Nc + m.irS[j]] += m.prS[j];
                             if (m.u[node * m.Nc + m.irS[j]] < 0) {
@@ -243,7 +243,9 @@ SimInf_solver_raster_ssm(
                 *&events[i] = e;
                 *&model[i] = m;
 
-                /* (2) Incorporate all scheduled E1 events */
+                /* Incorporate all scheduled E1 events, i.e., those
+                 * events that operate on the compartments of a single
+                 * node E1 = {enter, internal transfer, exit}. */
                 SimInf_process_events(&model[i], &events[i], 0);
             }
 
@@ -251,7 +253,9 @@ SimInf_solver_raster_ssm(
 #  pragma omp single
 #endif
             {
-                /* (3) Incorporate all scheduled E2 events */
+                /* Incorporate all scheduled E2 events, i.e., those
+                 * events that operate on the compartments of two
+                 * nodes E2 = {external transfer}. */
                 SimInf_process_events(model, events, 1);
             }
 
@@ -261,7 +265,7 @@ SimInf_solver_raster_ssm(
             for (int i = 0; i < Nthread; i++) {
                 SimInf_compartment_model m = *&model[i];
 
-                /* (4) Incorporate model specific actions after each
+                /* Incorporate model specific actions after each
                  * timestep e.g. update the infectious pressure
                  * variable. Moreover, update transition rates in
                  * nodes that are indicated for update */
