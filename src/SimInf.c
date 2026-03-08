@@ -441,6 +441,10 @@ SEXP SimInf_raster_run(
     args.tr_raster_fun = tr_fun;
     args.pts_fun = pts_fun;
 
+    /* Specify the number of threads to use. Make sure to not use more
+     * threads than the number of nodes in the model. */
+    args.Nthread = SimInf_set_num_threads(args.Nn);
+
     /* Determine the index to the cell compartment in a node. */
     for (int i = 0; i < args.Nc; i++) {
         SEXP rownames = VECTOR_ELT(GET_SLOT(S, Rf_install("Dimnames")), 0);

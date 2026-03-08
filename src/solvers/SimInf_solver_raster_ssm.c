@@ -53,6 +53,81 @@ typedef struct SimInf_raster_model
 } SimInf_raster_model;
 
 /**
+ * Free allocated memory for a raster model.
+ *
+ * @param model the data structure to free.
+ */
+static void
+SimInf_raster_model_free(
+    SimInf_raster_model *model)
+{
+    if (model) {
+        /* Free data vector to keep track of the states in the
+         * cells. */
+        free(model->cell_u);
+        model->cell_u = NULL;
+    }
+}
+
+/**
+ * Create and initialize data to process a raster model. The generated
+ * data structure must be freed by the user.
+ *
+ * @param out the resulting data structure.
+ * @param args structure with data for the solver.
+ * @param rng random number generator
+ * @return 0 or an error code
+ */
+static int
+SimInf_raster_model_create(
+    SimInf_raster_model **out,
+    SimInf_solver_args const *args)
+{
+    int err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;
+    SimInf_raster_model *model = NULL;
+
+    model = calloc(1, sizeof(SimInf_raster_model));
+    if (!model)
+        goto on_error;
+
+    /* Callbacks */
+    model->tr_fun = args->tr_raster_fun;
+
+    /* Constants. */
+    model->nrow = args->nrow;
+    model->ncol = args->ncol;
+    if (model->nrow < 1 || model->ncol < 1)
+        goto on_error;
+
+    /* Index to the cell compartment in each node. */
+    model->cell_i = args->cell_i;
+    if (model->cell_i < 0 || model->cell_i >= args->Nc)
+        goto on_error;
+
+    /* Raster data. */
+    model->raster = args->raster;
+
+    /* Number of compartments in each cell. */
+    model->cell_Nc = args->cell_Nc;
+    if (model->cell_Nc < 0)
+        goto on_error;
+
+    /* Allocate memory for the cell compartment state and set it to
+     * zero, the initial state. */
+    model->cell_u = calloc(model->nrow * model->ncol * model->cell_Nc,
+                           sizeof(int));
+    if (!model->cell_u)
+        goto on_error;
+
+    *out = model;
+    return 0;
+
+on_error:
+    SimInf_raster_model_free(model);
+    return err;
+}
+
+/**
  * Siminf solver
  *
  * @return 0 if Ok, else error code.
@@ -423,12 +498,17 @@ SimInf_run_solver_raster(
     if (err)
         goto cleanup;           /* #nocov */
 
+    err = SimInf_raster_model_create(&raster, args);
+    if (err)
+        goto cleanup;           /* #nocov */
+
     err = SimInf_solver_raster_ssm(model, events, raster);
 
 cleanup:
     gsl_rng_free(rng);
     SimInf_scheduled_events_free(events);
     SimInf_compartment_model_free(model);
+    SimInf_raster_model_free(raster);
 
     return err;
 }
