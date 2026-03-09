@@ -200,6 +200,7 @@ SimInf_solver_raster_ssm(
 {
     bool done = false;
     int Nthread = model->Nthread;
+    int Ncells = raster->nrow * raster->ncol;
 
 #ifdef _OPENMP
 #  pragma omp parallel num_threads(SimInf_num_threads())
@@ -259,6 +260,22 @@ SimInf_solver_raster_ssm(
             for (int i = 0; i < Nthread; i++) {
                 if (model[i].error)
                     done = true;
+            }
+
+            /* Next, initialize the time to the next event in every
+             * cell. Initially, all transition rates are zero. */
+            if (!done) {
+                for (int cell = 0; cell < Ncells; cell++) {
+                    raster->cell_time[cell] = R_PosInf;
+                    raster->heap[cell] = cell;
+                    raster->cells[cell] = cell;
+                }
+
+                initialize_heap(
+                    raster->cell_time,
+                    raster->cells,
+                    raster->heap,
+                    Ncells);
             }
         }
 
