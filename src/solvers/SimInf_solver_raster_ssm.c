@@ -262,7 +262,7 @@ SimInf_solver_raster_ssm(
                     done = true;
             }
 
-            /* Next, initialize the time to the next event in every
+            /* Initialize the time to the next event in every
              * cell. Initially, all transition rates are zero. */
             if (!done) {
                 for (int cell = 0; cell < Ncells; cell++) {
@@ -409,6 +409,12 @@ SimInf_solver_raster_ssm(
                  * events that operate on the compartments of two
                  * nodes E2 = {external transfer}. */
                 SimInf_process_events(model, events, 1);
+
+                /* Process cell events until next unit of time.  Get
+                 * the cell in which the next event occurred. This
+                 * cell is on top of the heap. */
+                while (raster->cell_time[0] < model[0].next_unit_of_time) {
+                }
             }
 
 #ifdef _OPENMP
