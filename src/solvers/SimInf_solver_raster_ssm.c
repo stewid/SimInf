@@ -58,6 +58,14 @@ typedef struct SimInf_raster_model
     int *cell_u;         /**< Vector with the count of each compartment in
                           *   each cell. */
 
+    /*** Sparse matrices ***/
+    const int *cell_irS; /**< Cell state-change matrix. cell_irS[k] is
+                          *   the row of cell_S[k]. */
+    const int *cell_jcS; /**< Cell state-change matrix. Index to data
+                          *   of first non-zero element in row k. */
+    const int *cell_prS; /**< Cell state-change matrix. Value of item
+                          *   (i, j) in cell_S. */
+
     /*** Constants ***/
     int nrow;       /**< Number of rows. */
     int ncol;       /**< Number of cols. */
@@ -152,6 +160,11 @@ SimInf_raster_model_create(
                            sizeof(int));
     if (!model->cell_u)
         goto on_error;
+
+    /* State-change matrix for the cell. */
+    model->cell_irS = args->cell_irS;
+    model->cell_jcS = args->cell_jcS;
+    model->cell_prS = args->cell_prS;
 
     /* Binary (min)heap. */
     model->cells = malloc(model->nrow * model->ncol * sizeof(int));
