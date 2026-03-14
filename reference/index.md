@@ -129,7 +129,7 @@
   : Run more generations of ABC SMC
 
 - [`continue_pmcmc()`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
-  : Run more iterations of PMCMC
+  : Continue PMCMC from an Existing Chain
 
 - [`distance_matrix()`](http://stewid.github.io/SimInf/reference/distance_matrix.md)
   : Create a distance matrix between nodes for spatial models

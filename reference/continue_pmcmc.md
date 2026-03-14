@@ -1,6 +1,8 @@
-# Run more iterations of PMCMC
+# Continue PMCMC from an Existing Chain
 
-Run more iterations of PMCMC
+Extends a previously computed PMCMC chain by running additional
+iterations of the Metropolis-Hastings sampler, continuing from the final
+state of the previous chain.
 
 ## Usage
 
@@ -31,7 +33,9 @@ continue_pmcmc(
 
 - object:
 
-  The `SimInf_pmcmc` object to continue from.
+  A
+  [`SimInf_pmcmc`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
+  object from a previous `pmcmc` or `continue_pmcmc` call.
 
 - obs_process:
 
@@ -71,12 +75,10 @@ continue_pmcmc(
 
 - init_model:
 
-  An optional function that, if non-NULL, is applied in the particle
-  filter before running each proposal. The function must accept one
-  argument of type `SimInf_model` with the current model of the fitting
-  process. This function can be useful to specify the initial state of
-  `u0` or `v0` of the model before running a trajectory with proposed
-  parameters.
+  Optional function applied before each particle filter run. Must accept
+  a `SimInf_model` object and return the modified model. Useful for
+  setting initial states (`u0`, `v0`) before running trajectories with
+  proposed parameters.
 
 - post_particle:
 
@@ -97,3 +99,14 @@ continue_pmcmc(
   `verbose=TRUE`, information is printed every 100 iterations. For
   pmcmc, it is possible to get information every nth information by
   specifying `verbose=n`, for example, `verbose=1` or `verbose=10`.
+
+## Value
+
+The updated
+[`SimInf_pmcmc`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
+object with the chain extended by `n_iterations` new rows.
+
+## See also
+
+[`pmcmc`](http://stewid.github.io/SimInf/reference/pmcmc.md) for
+initiating a new PMCMC chain.

@@ -1,6 +1,8 @@
 # Particle Markov chain Monte Carlo (PMCMC) algorithm
 
-Particle Markov chain Monte Carlo (PMCMC) algorithm
+Estimates model parameters using the PMCMC algorithm, which combines a
+particle filter for likelihood evaluation with a Metropolis-Hastings
+MCMC sampler for parameter estimation.
 
 ## Usage
 
@@ -47,7 +49,7 @@ pmcmc(
 
 - model:
 
-  The model to simulate data from.
+  The `SimInf_model` object to estimate parameters for.
 
 - obs_process:
 
@@ -96,26 +98,26 @@ pmcmc(
 
 - theta:
 
-  A named vector of initial values for the parameters of the model.
-  Default is `NULL`, and then these are sampled from the prior
-  distribution(s).
+  A named numeric vector with initial parameter values. Default is
+  `NULL`, which triggers sampling from the prior distribution(s).
 
 - covmat:
 
-  A named numeric `(npars x npars)` matrix with covariances to use as
-  initial proposal matrix. If left unspecified then defaults to
+  A named numeric `(npars x npars)` covariance matrix for the proposal
+  distribution. Default is `NULL`, which uses
   `diag((theta/10)^2/npars)`.
 
 - adaptmix:
 
-  Mixing proportion for adaptive proposal. Must be a value between zero
-  and one. Default is `adaptmix = 0.05`.
+  Numeric mixing proportion (0 \< value \< 1) for adaptive covariance
+  proposal. Default: 0.05. Larger values increase the likelihood of
+  using the fixed initial covariance instead of the adaptive estimate.
 
 - adaptive:
 
-  Controls when to start adaptive update. Must be greater or equal to
-  zero. If `adaptive=0`, then adaptive update is not performed. Default
-  is `adaptive = 100`.
+  Integer (\>= 0) specifying the iteration at which to start adaptive
+  covariance updates. Default: 100. Set to 0 to disable adaptive
+  updates.
 
 - post_proposal:
 
@@ -130,12 +132,10 @@ pmcmc(
 
 - init_model:
 
-  An optional function that, if non-NULL, is applied in the particle
-  filter before running each proposal. The function must accept one
-  argument of type `SimInf_model` with the current model of the fitting
-  process. This function can be useful to specify the initial state of
-  `u0` or `v0` of the model before running a trajectory with proposed
-  parameters.
+  Optional function applied before each particle filter run. Must accept
+  a `SimInf_model` object and return the modified model. Useful for
+  setting initial states (`u0`, `v0`) before running trajectories with
+  proposed parameters.
 
 - post_particle:
 
@@ -151,12 +151,9 @@ pmcmc(
 
 - chain:
 
-  An optional chain to start from. Must be a `data.frame` or an object
-  that can be coerced to a `data.frame`. Only the columns in `chain`
-  with a name that matches the names that will be used if this argument
-  is not provided will be used. When this argument is provided,
-  `n_iterations` can be 0. Additionally, when the `chain` argument is
-  provided, then `theta` and `covmat` must be `NULL`.
+  Optional `data.frame` or object coercible to one, containing a
+  previous PMCMC chain to continue from. If provided, `theta` and
+  `covmat` must be `NULL`, and `n_iterations` can be 0.
 
 - verbose:
 
@@ -165,6 +162,13 @@ pmcmc(
   `verbose=TRUE`, information is printed every 100 iterations. For
   pmcmc, it is possible to get information every nth information by
   specifying `verbose=n`, for example, `verbose=1` or `verbose=10`.
+
+## Value
+
+A
+[`SimInf_pmcmc`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
+object containing the fitted parameters and diagnostic information for
+all iterations.
 
 ## References
 
@@ -179,4 +183,5 @@ of computational and graphical statistics*, **18**(2), 349–367, 2009.
 
 ## See also
 
-[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md).
+[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
+for running additional iterations.
