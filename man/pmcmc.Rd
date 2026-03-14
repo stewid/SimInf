@@ -42,7 +42,8 @@ pmcmc(
 )
 }
 \arguments{
-\item{model}{The model to simulate data from.}
+\item{model}{The \code{SimInf_model} object to estimate parameters
+for.}
 
 \item{obs_process}{Specification of the stochastic observation
 process. The \code{obs_process} can be specified as a
@@ -85,21 +86,22 @@ to use at each timestep.}
 \item{n_iterations}{An integer specifying the number of iterations
 to run the PMCMC.}
 
-\item{theta}{A named vector of initial values for the parameters
-of the model.  Default is \code{NULL}, and then these are
-sampled from the prior distribution(s).}
+\item{theta}{A named numeric vector with initial parameter values.
+Default is \code{NULL}, which triggers sampling from the prior
+distribution(s).}
 
-\item{covmat}{A named numeric \code{(npars x npars)} matrix with
-covariances to use as initial proposal matrix. If left
-unspecified then defaults to \code{diag((theta/10)^2/npars)}.}
+\item{covmat}{A named numeric \code{(npars x npars)} covariance
+matrix for the proposal distribution. Default is \code{NULL},
+which uses \code{diag((theta/10)^2/npars)}.}
 
-\item{adaptmix}{Mixing proportion for adaptive proposal.  Must be
-a value between zero and one. Default is \code{adaptmix =
-0.05}.}
+\item{adaptmix}{Numeric mixing proportion (0 < value < 1) for
+adaptive covariance proposal. Default: 0.05. Larger values
+increase the likelihood of using the fixed initial covariance
+instead of the adaptive estimate.}
 
-\item{adaptive}{Controls when to start adaptive update. Must be
-greater or equal to zero. If \code{adaptive=0}, then adaptive
-update is not performed. Default is \code{adaptive = 100}.}
+\item{adaptive}{Integer (>= 0) specifying the iteration at which
+to start adaptive covariance updates. Default: 100. Set to 0
+to disable adaptive updates.}
 
 \item{post_proposal}{An optional function that, if
 non-\code{NULL}, is applied on the model after the proposal
@@ -111,13 +113,11 @@ process. This function can be useful to update, for example,
 proposed parameters. The function must return the model object
 which is then used in the particle filter.}
 
-\item{init_model}{An optional function that, if non-NULL, is
-applied in the particle filter before running each
-proposal. The function must accept one argument of type
-\code{SimInf_model} with the current model of the fitting
-process. This function can be useful to specify the initial
-state of \code{u0} or \code{v0} of the model before running a
-trajectory with proposed parameters.}
+\item{init_model}{Optional function applied before each particle
+filter run. Must accept a \code{SimInf_model} object and
+return the modified model. Useful for setting initial states
+(\code{u0}, \code{v0}) before running trajectories with
+proposed parameters.}
 
 \item{post_particle}{An optional function that, if non-NULL, is
 applied after each completed particle. The function must
@@ -131,14 +131,10 @@ that the second \code{SimInf_pfilter} argument, is non-NULL
 only for the first particle in the chain, and for accepted
 particles.}
 
-\item{chain}{An optional chain to start from. Must be a
-\code{data.frame} or an object that can be coerced to a
-\code{data.frame}. Only the columns in \code{chain} with a
-name that matches the names that will be used if this argument
-is not provided will be used. When this argument is provided,
-\code{n_iterations} can be 0. Additionally, when the
-\code{chain} argument is provided, then \code{theta} and
-\code{covmat} must be \code{NULL}.}
+\item{chain}{Optional \code{data.frame} or object coercible to
+one, containing a previous PMCMC chain to continue from. If
+provided, \code{theta} and \code{covmat} must be \code{NULL},
+and \code{n_iterations} can be 0.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}. The
 default is to retrieve the global option \code{verbose} and
@@ -148,8 +144,15 @@ possible to get information every nth information by
 specifying \code{verbose=n}, for example, \code{verbose=1} or
 \code{verbose=10}.}
 }
+\value{
+A \code{\linkS4class{SimInf_pmcmc}} object containing the
+    fitted parameters and diagnostic information for all
+    iterations.
+}
 \description{
-Particle Markov chain Monte Carlo (PMCMC) algorithm
+Estimates model parameters using the PMCMC algorithm, which
+combines a particle filter for likelihood evaluation with a
+Metropolis-Hastings MCMC sampler for parameter estimation.
 }
 \references{
 \Andrieu2010
@@ -157,5 +160,6 @@ Particle Markov chain Monte Carlo (PMCMC) algorithm
 \Roberts2009
 }
 \seealso{
-\code{\link{continue_pmcmc}}.
+\code{\link{continue_pmcmc}} for running additional
+    iterations.
 }
