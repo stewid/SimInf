@@ -75,6 +75,19 @@ typedef struct SimInf_raster_model
 } SimInf_raster_model;
 
 /**
+ * Structure with data for a scheduled event.
+ */
+typedef struct SimInf_cell_event {
+    int cell;       /**< The cell of the event. */
+    int transition; /**< The transition of the events. */
+    int time;       /**< The time for the event. */
+} SimInf_cell_event;
+
+typedef
+kvec_t(
+    SimInf_cell_event) SimInf_cell_events_t;
+
+/**
  * Free allocated memory for a raster model.
  *
  * @param model the data structure to free.
@@ -214,6 +227,10 @@ SimInf_solver_raster_ssm(
     bool done = false;
     int Nthread = model->Nthread;
     int Ncells = raster->nrow * raster->ncol;
+    SimInf_cell_events_t cell_events;
+
+    /* Accumulated cell events */
+    kv_init(cell_events);
 
 #ifdef _OPENMP
 #  pragma omp parallel num_threads(SimInf_num_threads())
@@ -402,6 +419,19 @@ SimInf_solver_raster_ssm(
                             }
                         }
                         m.sum_t_rate[node] += delta;
+
+                        /* Update the state of the cell */
+                        for (int j = raster->cell_jcS[tr];
+                             j < raster->cell_jcS[tr + 1];
+                             j++) {
+#ifdef _OPENMP
+#  pragma omp critical(cell_event)
+#endif
+                            {
+                                const SimInf_cell_event e = {cell, tr, m.t_time[node]};
+                                kv_push(SimInf_cell_event, cell_events, e);
+                            }
+                        }
                     }
                 }
 
@@ -427,6 +457,91 @@ SimInf_solver_raster_ssm(
                  * the cell in which the next event occurred. This
                  * cell is on top of the heap. */
                 while (raster->cell_time[0] < model[0].next_unit_of_time) {
+                    double cum, rand;
+                    double tt = raster->cell_time[0];
+                    int cell = raster->cells[0];
+
+                    /* Determine the transition that did occur (direct
+                     * SSA). */
+                    rand = gsl_rng_uniform_pos(events[0].rng) * raster->sum_cell_rate[cell];
+                    int tr;
+                    for (tr = 0, cum = raster->cell_rate[cell * model->Nt];
+                         tr < model->Nt && rand > cum;
+                         tr++, cum += raster->cell_rate[cell * model->Nt + tr]);
+
+                    /* Elaborate floating point fix. */
+                    if (tr >= model->Nt)
+                        tr = model->Nt - 1;
+                    if (raster->cell_rate[cell * model->Nt + tr] == 0.0) {
+                        /* Go backwards and try to find first nonzero
+                         * transition rate */
+                        for (; tr > 0 && raster->cell_rate[cell * model->Nt + tr] == 0.0; tr--);
+
+                        if (raster->cell_rate[cell * model->Nt + tr] == 0.0) {
+                            /* No nonzero rate found, but a transition
+                             * was sampled. This can happen due to
+                             * floating point errors in the iterated
+                             * recalculated rates. */
+
+                            /* nil event: zero out and move on */
+                            raster->sum_cell_rate[cell] = 0.0;
+
+                            /* Compute time to the next event for this
+                             * cell and update the heap. */
+                            raster->cell_time[raster->heap[cell]] = R_PosInf;
+                            update(
+                                raster->heap[cell],
+                                raster->cell_time,
+                                raster->cells,
+                                raster->heap,
+                                raster->nrow * raster->ncol);
+
+                            /* Move on to next event. */
+                            continue;
+                        }
+                    }
+
+                    /* Update the state of the cell */
+                    for (int i = raster->cell_jcS[tr];
+                         i < raster->cell_jcS[tr + 1];
+                         i++) {
+                        const int j = cell * raster->cell_Nc + raster->cell_irS[i];
+                        raster->cell_u[j] += raster->cell_prS[i];
+                        if (raster->cell_u[j] < 0) {
+                            /* SimInf_print_cell_status(model, cell, tt, -1, 0.0); */
+                            model[0].error = SIMINF_ERR_NEGATIVE_STATE;
+                        }
+                    }
+
+                    /* Compute time to the next event for this cell
+                     * and update the heap. */
+                    for (int i = model->jcG[tr]; i < model->jcG[tr + 1]; i++) {
+                        if (model->tr_type[model->irG[i]] & TR_IN_NODE) {
+                        }
+                    }
+
+                    update(
+                        raster->heap[cell],
+                        raster->cell_time,
+                        raster->cells,
+                        raster->heap,
+                        raster->nrow * raster->ncol);
+                }
+
+                /* Process the accumulated cell events. */
+                while (kv_size(cell_events)) {
+                    const SimInf_cell_event e = kv_pop(cell_events);
+
+                    for (int j = raster->cell_jcS[e.transition];
+                         j < raster->cell_jcS[e.transition + 1];
+                         j++) {
+                        raster->cell_u[e.cell * raster->cell_Nc + raster->cell_irS[j]] +=
+                            raster->cell_prS[j];
+                        if (raster->cell_u[e.cell * raster->cell_Nc + raster->cell_irS[j]] < 0) {
+                            /* SimInf_print_cell_status(model, cell, tt, -1, 0.0); */
+                            model[0].error = SIMINF_ERR_NEGATIVE_STATE;
+                        }
+                    }
                 }
             }
 
@@ -553,6 +668,9 @@ SimInf_solver_raster_ssm(
             }
         } /* End of while(!done) */
     }  /* end parallel region */
+
+    /* The cell_events vector needs to be freed. */
+    kv_destroy(cell_events);
 
     /* Check if there is any error during the simulation. */
     for (int i = 0; i < Nthread; i++) {
