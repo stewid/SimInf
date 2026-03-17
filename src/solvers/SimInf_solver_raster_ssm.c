@@ -32,6 +32,12 @@
 #endif
 #include <string.h>
 
+typedef enum {
+    TR_IN_CELL     = 0,
+    TR_IN_NODE     = (1u << 0),
+    TR_IS_MOVEMENT = (1u << 1)
+} SimInf_transition_t;
+
 typedef struct SimInf_raster_model
 {
     /*** Data vectors for propensities ***/
@@ -51,6 +57,11 @@ typedef struct SimInf_raster_model
     /*** Callbacks ***/
     TRRasterFun *tr_fun;  /**< Vector of function pointers to
                            *   transition rate functions. */
+
+    /*** Transition type ***/
+    const int *tr_type;  /**< Keep track of if a transition happens on
+                          *   a cell, in a node or if it is a
+                          *   movement. */
 
     /*** Data vectors for the cells ***/
     const int *raster;   /**< The raster data vector where raster[i]
@@ -161,6 +172,9 @@ SimInf_raster_model_create(
 
     /* Raster data. */
     model->raster = args->raster;
+
+    /* Transition type. */
+    model->tr_type = args->tr_type;
 
     /* Number of compartments in each cell. */
     model->cell_Nc = args->cell_Nc;
@@ -516,7 +530,7 @@ SimInf_solver_raster_ssm(
                     /* Compute time to the next event for this cell
                      * and update the heap. */
                     for (int i = model->jcG[tr]; i < model->jcG[tr + 1]; i++) {
-                        if (model->tr_type[model->irG[i]] & TR_IN_NODE) {
+                        if (raster->tr_type[model->irG[i]] & TR_IN_NODE) {
                         }
                     }
 
