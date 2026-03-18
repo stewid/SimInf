@@ -503,7 +503,7 @@ SimInf_solver_raster_ssm(
                             /* Compute time to the next event for this
                              * cell and update the heap. */
                             raster->cell_time[raster->heap[cell]] = R_PosInf;
-                            update(
+                            update_heap(
                                 raster->heap[cell],
                                 raster->cell_time,
                                 raster->cells,
@@ -534,7 +534,7 @@ SimInf_solver_raster_ssm(
                         }
                     }
 
-                    update(
+                    update_heap(
                         raster->heap[cell],
                         raster->cell_time,
                         raster->cells,

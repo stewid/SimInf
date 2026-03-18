@@ -477,7 +477,7 @@ initialize_heap(
     int N);
 
 void
-update(
+update_heap(
     int node,
     double *data,
     int *INDEX,

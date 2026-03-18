@@ -255,11 +255,11 @@ SimInf_solver_aem(
                                           sa.t_time[node], old_t_rate,
                                           sa.t_rate[node * sa.Nt + j],
                                           ma.rng_vec[sa.Nt * node + j]);
-                                update(ma.reactHeap[sa.Nt * node + j],
-                                       &ma.reactTimes[sa.Nt * node],
-                                       &ma.reactNode[sa.Nt * node],
-                                       &ma.reactHeap[sa.Nt * node],
-                                       ma.reactHeapSize);
+                                update_heap(ma.reactHeap[sa.Nt * node + j],
+                                            &ma.reactTimes[sa.Nt * node],
+                                            &ma.reactNode[sa.Nt * node],
+                                            &ma.reactHeap[sa.Nt * node],
+                                            ma.reactHeapSize);
                             }
                         }
                         /* finish with j = re (the one that just happened), which need
@@ -291,11 +291,11 @@ SimInf_solver_aem(
                                   sa.t_time[node], old_t_rate,
                                   sa.t_rate[node * sa.Nt + j],
                                   ma.rng_vec[sa.Nt * node + j]);
-                        update(ma.reactHeap[sa.Nt * node + j],
-                               &ma.reactTimes[sa.Nt * node],
-                               &ma.reactNode[sa.Nt * node],
-                               &ma.reactHeap[sa.Nt * node], ma.reactHeapSize);
-
+                        update_heap(ma.reactHeap[sa.Nt * node + j],
+                                    &ma.reactTimes[sa.Nt * node],
+                                    &ma.reactNode[sa.Nt * node],
+                                    &ma.reactHeap[sa.Nt * node],
+                                    ma.reactHeapSize);
                     }
                 }
 
@@ -371,11 +371,11 @@ SimInf_solver_aem(
                                       sa.t_rate[node * sa.Nt + j],
                                       ma.rng_vec[sa.Nt * node + j]);
 
-                            update(ma.reactHeap[sa.Nt * node + j],
-                                   &ma.reactTimes[sa.Nt * node],
-                                   &ma.reactNode[sa.Nt * node],
-                                   &ma.reactHeap[sa.Nt * node],
-                                   ma.reactHeapSize);
+                            update_heap(ma.reactHeap[sa.Nt * node + j],
+                                        &ma.reactTimes[sa.Nt * node],
+                                        &ma.reactNode[sa.Nt * node],
+                                        &ma.reactHeap[sa.Nt * node],
+                                        ma.reactHeapSize);
                         }
 
                         sa.update_node[node] = 0;

@@ -89,7 +89,7 @@ initialize_heap(
 }
 
 attribute_hidden void
-update(
+update_heap(
     int node,
     double *data,
     int *INDEX,
