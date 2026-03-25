@@ -55,7 +55,7 @@ N <- matrix(c(2, 0,
 ## Check the internal function to create a select matrix E from a
 ## data.frame.
 res <- assertError(SimInf:::E_from_data_frame(1, "S_1"))
-check_error(res, "'events' must be a data.frame.")
+check_error(res, "'E' must be a data.frame.")
 
 res <- assertError(SimInf:::E_from_data_frame(data.frame(compartment = "S_1"),
                                               compartments = "S_1"))

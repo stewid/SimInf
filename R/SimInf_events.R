@@ -82,7 +82,7 @@ setValidity("SimInf_events", valid_SimInf_events_object)
 ## data.frame into a matrix.
 E_from_data_frame <- function(E, compartments) {
     if (!is.data.frame(E))
-        stop("'events' must be a data.frame.", call. = FALSE)
+        stop("'E' must be a data.frame.", call. = FALSE)
 
     ## Ensure the 'compartment' and 'select' columns exist in 'E'.
     if (!all(c("compartment", "select") %in% names(E)))
