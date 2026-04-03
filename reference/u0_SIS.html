@@ -83,9 +83,7 @@ immunity.</p>
 
 
 </dl><p>The herd size distribution reflects realistic heterogeneity
-observed in cattle populations, making it suitable for testing
-disease dynamics in endemic situations where immunity is temporary
-or absent.</p>
+observed in cattle populations.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -97,18 +95,18 @@ demographic events</p></div>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co">## For reproducibility, call the set.seed() function and specify</span></span></span>
-<span class="r-in"><span><span class="co">## the number of threads to use. To use all available threads,</span></span></span>
-<span class="r-in"><span><span class="co">## remove the set_num_threads() call.</span></span></span>
+<span class="r-in"><span><span class="co">## For reproducibility, call the set.seed() function and specify the</span></span></span>
+<span class="r-in"><span><span class="co">## number of threads to use. To use all available threads, remove the</span></span></span>
+<span class="r-in"><span><span class="co">## set_num_threads() call.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Create an 'SIS' model with 1600 cattle herds (nodes) and</span></span></span>
-<span class="r-in"><span><span class="co">## initialize it to run over 4*365 days. Add one infected animal</span></span></span>
-<span class="r-in"><span><span class="co">## to the first herd to seed the outbreak. Define 'tspan' to record</span></span></span>
-<span class="r-in"><span><span class="co">## the state of the system at daily time-points. Load scheduled</span></span></span>
-<span class="r-in"><span><span class="co">## events for the population of nodes with births, deaths and</span></span></span>
-<span class="r-in"><span><span class="co">## between-node movements of individuals.</span></span></span>
+<span class="r-in"><span><span class="co">## Create an 'SIS' model with 1600 cattle herds (nodes) and initialize</span></span></span>
+<span class="r-in"><span><span class="co">## it to run over 4*365 days. Add one infected animal to the first</span></span></span>
+<span class="r-in"><span><span class="co">## herd to seed the outbreak. Define 'tspan' to record the state of</span></span></span>
+<span class="r-in"><span><span class="co">## the system at daily time-points. Load scheduled events for the</span></span></span>
+<span class="r-in"><span><span class="co">## population of nodes with births, deaths and between-node movements</span></span></span>
+<span class="r-in"><span><span class="co">## of individuals.</span></span></span>
 <span class="r-in"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu">u0_SIS</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">u0</span><span class="op">$</span><span class="va">I</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SIS.html">SIS</a></span><span class="op">(</span>u0     <span class="op">=</span> <span class="va">u0</span>,</span></span>
@@ -117,14 +115,21 @@ demographic events</p></div>
 <span class="r-in"><span>             beta   <span class="op">=</span> <span class="fl">0.16</span>,</span></span>
 <span class="r-in"><span>             gamma  <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Display the number of cattle affected by each event type per day.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="events.html">events</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Run the model to generate a single stochastic trajectory.</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot the median and interquartile range of the number of</span></span></span>
+<span class="r-in"><span><span class="co">## susceptible, infected and recovered individuals.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot the trajectory for the first herd.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Summarize trajectory</span></span></span>
+<span class="r-in"><span><span class="co">## Summarize the trajectory. The summary includes the number of events</span></span></span>
+<span class="r-in"><span><span class="co">## by event type.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>

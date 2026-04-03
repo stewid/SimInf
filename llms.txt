@@ -406,7 +406,9 @@ The `SimInf` package is licensed under the
   Example Event Data for the SIR Model with Cattle Herds
 
 - [`events_SIS()`](http://stewid.github.io/SimInf/reference/events_SIS.md)
-  : Example data to initialize events for the ‘SIS’ model
+  :
+
+  Example Event Data for the SIS Model with Cattle Herds
 
 - [`events_SISe()`](http://stewid.github.io/SimInf/reference/events_SISe.md)
   : Example data to initialize events for the ‘SISe’ model
