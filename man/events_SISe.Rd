@@ -2,7 +2,7 @@
 % Please edit documentation in R/SISe.R
 \name{events_SISe}
 \alias{events_SISe}
-\title{Example Event Data for the \acronym{SISe} Model with Cattle Herds}
+\title{Example event data for the \acronym{SISe} model with cattle herds}
 \usage{
 events_SISe()
 }

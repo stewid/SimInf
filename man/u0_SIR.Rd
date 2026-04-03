@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIR.R
 \name{u0_SIR}
 \alias{u0_SIR}
-\title{Example Initial Population Data for the \acronym{SIR} Model}
+\title{Example initial population data for the \acronym{SIR} model}
 \usage{
 u0_SIR()
 }

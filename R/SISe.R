@@ -180,7 +180,7 @@ SISe <- function(u0,
     methods::as(model, "SISe")
 }
 
-##' Example Event Data for the \acronym{SISe} Model with Cattle Herds
+##' Example event data for the \acronym{SISe} model with cattle herds
 ##'
 ##' Dataset containing 466,692 scheduled events for a population of
 ##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
@@ -233,7 +233,7 @@ events_SISe <- function() {
     events_SISe3
 }
 
-##' Example Initial Population Data for the \acronym{SISe} Model
+##' Example initial population data for the \acronym{SISe} model
 ##'
 ##' Dataset containing the initial number of susceptible and infected
 ##' cattle across 1,600 herds, for the environment-based transmission

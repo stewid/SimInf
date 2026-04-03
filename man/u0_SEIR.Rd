@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEIR.R
 \name{u0_SEIR}
 \alias{u0_SEIR}
-\title{Example Initial Population Data for the \acronym{SEIR} Model}
+\title{Example Initial population data for the \acronym{SEIR} model}
 \usage{
 u0_SEIR()
 }

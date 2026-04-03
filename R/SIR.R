@@ -149,7 +149,7 @@ SIR <- function(u0,
     methods::as(model, "SIR")
 }
 
-##' Example Event Data for the \acronym{SIR} Model with Cattle Herds
+##' Example event data for the \acronym{SIR} model with cattle herds
 ##'
 ##' Dataset containing 466,692 scheduled events for a population of
 ##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
@@ -205,7 +205,7 @@ events_SIR <- function() {
     events_SISe3
 }
 
-##' Example Initial Population Data for the \acronym{SIR} Model
+##' Example initial population data for the \acronym{SIR} model
 ##'
 ##' Dataset containing the initial number of susceptible, infected,
 ##' and recovered cattle across 1,600 herds. Provides realistic

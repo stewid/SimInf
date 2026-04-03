@@ -143,7 +143,7 @@ SIS <- function(u0,
     methods::as(model, "SIS")
 }
 
-##' Example Event Data for the \acronym{SIS} Model with Cattle Herds
+##' Example event data for the \acronym{SIS} model with cattle herds
 ##'
 ##' Dataset containing 466,692 scheduled events for a population of
 ##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
@@ -196,7 +196,7 @@ events_SIS <- function() {
     events_SISe()
 }
 
-##' Example Initial Population Data for the \acronym{SIS} Model
+##' Example initial population data for the \acronym{SIS} model
 ##'
 ##' Dataset containing the initial number of susceptible and infected
 ##' cattle across 1,600 herds. Provides realistic population structure

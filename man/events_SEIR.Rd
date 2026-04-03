@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEIR.R
 \name{events_SEIR}
 \alias{events_SEIR}
-\title{Example Event Data for the \acronym{SEIR} Model with Cattle Herds}
+\title{Example event data for the \acronym{SEIR} model with cattle herds}
 \usage{
 events_SEIR()
 }

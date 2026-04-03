@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIR.R
 \name{events_SIR}
 \alias{events_SIR}
-\title{Example Event Data for the \acronym{SIR} Model with Cattle Herds}
+\title{Example event data for the \acronym{SIR} model with cattle herds}
 \usage{
 events_SIR()
 }
