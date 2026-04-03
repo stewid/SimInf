@@ -2,29 +2,45 @@
 % Please edit documentation in R/SISe.R
 \name{events_SISe}
 \alias{events_SISe}
-\title{Example data to initialize events for the \sQuote{SISe} model}
+\title{Example Event Data for the \acronym{SISe} Model with Cattle Herds}
 \usage{
 events_SISe()
 }
 \value{
-A \code{data.frame}
+A \code{data.frame} with columns:
+  \describe{
+    \item{event}{Event type: "exit", "enter", or "extTrans"}
+    \item{time}{Day when event occurs (1-1460)}
+    \item{node}{Affected herd identifier (1-1600)}
+    \item{dest}{Destination herd for external transfer events}
+    \item{n}{Number of cattle affected}
+    \item{select}{Model compartment to affect (see
+      \code{\linkS4class{SimInf_events}})}
+  }
 }
 \description{
-Example data to initialize scheduled events for a population of
-1600 nodes and demonstrate the \code{\linkS4class{SISe}} model.
+Dataset containing 466,692 scheduled events for a population of
+1,600 cattle herds over 1,460 days (4 years). Demonstrates how
+demographic and movement events affect SISe dynamics in a cattle
+disease context.
 }
 \details{
-Example data to initialize scheduled events (see
-\code{\linkS4class{SimInf_events}}) for a population of 1600 nodes
-and demonstrate the \code{\linkS4class{SISe}} model. The dataset
-contains 466692 events for 1600 nodes distributed over 4 * 365
-days. The events are divided into three types: \sQuote{Exit}
-events remove individuals from the population (n = 182535),
-\sQuote{Enter} events add individuals to the population (n =
-182685), and \sQuote{External transfer} events move individuals
-between nodes in the population (n = 101472). The vignette
-contains a detailed description of how scheduled events operate on
-a model.
+The event data contains three types of scheduled events that affect
+cattle herds:
+\describe{
+  \item{Exit}{Deaths or removal of cattle from a herd (n =
+    182,535). These events decrease the population in susceptible
+    and infected compartments.}
+  \item{Enter}{Births or introduction of cattle to a herd (n =
+    182,685). These events add susceptible cattle to herds.}
+  \item{External transfer}{Movement of cattle between herds (n =
+    101,472). These events transfer cattle from one herd to
+    another, potentially introducing infected animals.}
+}
+
+Events are distributed across all 1,600 herds over the 4-year
+period, reflecting realistic patterns of cattle demographic change
+and herd-to-herd movement.
 }
 \examples{
 \dontrun{
@@ -76,4 +92,10 @@ plot(result, index = 1)
 ## by event type.
 summary(result)
 }
+}
+\seealso{
+\code{\link{u0_SISe}} for the corresponding initial cattle
+population, \code{\link{SISe}} for creating SISe models with these
+events and \code{\linkS4class{SimInf_events}} for event structure
+details
 }
