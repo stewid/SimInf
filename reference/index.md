@@ -157,7 +157,9 @@
   Example Event Data for the SIS Model with Cattle Herds
 
 - [`events_SISe()`](http://stewid.github.io/SimInf/reference/events_SISe.md)
-  : Example data to initialize events for the ‘SISe’ model
+  :
+
+  Example Event Data for the SISe Model with Cattle Herds
 
 - [`events_SISe3`](http://stewid.github.io/SimInf/reference/events_SISe3.md)
   : Example data to initialize events for the ‘SISe3’ model

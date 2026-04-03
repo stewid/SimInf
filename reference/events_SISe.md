@@ -1,8 +1,8 @@
-# Example data to initialize events for the ‘SISe’ model
+# Example Event Data for the SISe Model with Cattle Herds
 
-Example data to initialize scheduled events for a population of 1600
-nodes and demonstrate the
-[`SISe`](http://stewid.github.io/SimInf/reference/SISe-class.md) model.
+Dataset containing 466,692 scheduled events for a population of 1,600
+cattle herds over 1,460 days (4 years). Demonstrates how demographic and
+movement events affect SISe dynamics in a cattle disease context.
 
 ## Usage
 
@@ -12,21 +12,66 @@ events_SISe()
 
 ## Value
 
-A `data.frame`
+A `data.frame` with columns:
+
+- event:
+
+  Event type: "exit", "enter", or "extTrans"
+
+- time:
+
+  Day when event occurs (1-1460)
+
+- node:
+
+  Affected herd identifier (1-1600)
+
+- dest:
+
+  Destination herd for external transfer events
+
+- n:
+
+  Number of cattle affected
+
+- select:
+
+  Model compartment to affect (see
+  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md))
 
 ## Details
 
-Example data to initialize scheduled events (see
-[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md))
-for a population of 1600 nodes and demonstrate the
-[`SISe`](http://stewid.github.io/SimInf/reference/SISe-class.md) model.
-The dataset contains 466692 events for 1600 nodes distributed over 4 \*
-365 days. The events are divided into three types: ‘Exit’ events remove
-individuals from the population (n = 182535), ‘Enter’ events add
-individuals to the population (n = 182685), and ‘External transfer’
-events move individuals between nodes in the population (n = 101472).
-The vignette contains a detailed description of how scheduled events
-operate on a model.
+The event data contains three types of scheduled events that affect
+cattle herds:
+
+- Exit:
+
+  Deaths or removal of cattle from a herd (n = 182,535). These events
+  decrease the population in susceptible and infected compartments.
+
+- Enter:
+
+  Births or introduction of cattle to a herd (n = 182,685). These events
+  add susceptible cattle to herds.
+
+- External transfer:
+
+  Movement of cattle between herds (n = 101,472). These events transfer
+  cattle from one herd to another, potentially introducing infected
+  animals.
+
+Events are distributed across all 1,600 herds over the 4-year period,
+reflecting realistic patterns of cattle demographic change and
+herd-to-herd movement.
+
+## See also
+
+[`u0_SISe`](http://stewid.github.io/SimInf/reference/u0_SISe.md) for the
+corresponding initial cattle population,
+[`SISe`](http://stewid.github.io/SimInf/reference/SISe.md) for creating
+SISe models with these events and
+[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+for event structure details
 
 ## Examples
 

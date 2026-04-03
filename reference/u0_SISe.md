@@ -26,11 +26,10 @@ A `data.frame` with 1,600 rows (one per herd) and 2 columns:
 ## Details
 
 This dataset represents initial disease states in a population of 1,600
-cattle herds (nodes). Each row represents a single herd (node), derived
-from the cattle population data by extracting susceptible and infected
-compartments. The SISe model extends the SIS model with an environmental
-compartment for pathogen shedding, suitable for diseases transmitted
-through environmental contamination.
+cattle herds (nodes). Each row represents a single herd (node). The SISe
+model extends the SIS model with an environmental compartment for
+pathogen shedding, suitable for diseases transmitted through
+environmental contamination.
 
 The data contains:
 
