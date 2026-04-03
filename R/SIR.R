@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -52,7 +52,14 @@ compartments_SIR <- function() {
     c("S", "I", "R")
 }
 
-##' The select matrix 'E' for an SIR model
+##' Select matrix for events in the \acronym{SIR} model
+##'
+##' Internal function returning the 3x4 select matrix (E) that maps
+##' SIR compartments (rows) to event types (columns) for event
+##' processing.
+##'
+##' @return A 3x4 numeric matrix with compartments as rows and event
+##'     types as columns. Used internally by SimInf_events.
 ##' @noRd
 select_matrix_SIR <- function() {
     matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1),

@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -32,7 +32,14 @@ compartments_SEIR <- function() {
     c("S", "E", "I", "R")
 }
 
-##' The select matrix 'E' for an SEIR model
+##' Select matrix for events in the \acronym{SEIR} model
+##'
+##' Internal function returning the 4x2 select matrix (E) that maps
+##' SEIR compartments (rows) to event types (columns) for event
+##' processing.
+##'
+##' @return A 4x2 numeric matrix with compartments as rows and event
+##'     types as columns. Used internally by SimInf_events.
 ##' @noRd
 select_matrix_SEIR <- function() {
     matrix(c(1, 0, 0, 0, 1, 1, 1, 1),

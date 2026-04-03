@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -32,7 +32,14 @@ compartments_SISe3 <- function() {
     c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
 }
 
-##' The select matrix 'E' for an SISe3 model
+##' Select matrix for events in the \acronym{SISe3} model
+##'
+##' Internal function returning the 6x6 select matrix (E) that maps
+##' SISe3 compartments (rows) to event types (columns) for event
+##' processing.
+##'
+##' @return A 6x6 numeric matrix with compartments as rows and event
+##'     types as columns. Used internally by SimInf_events.
 ##' @noRd
 select_matrix_SISe3 <- function() {
     matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
