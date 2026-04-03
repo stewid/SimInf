@@ -381,7 +381,8 @@
   Example Initial Population Data for the SISe Model
 
 - [`u0_SISe3`](http://stewid.github.io/SimInf/reference/u0_SISe3.md) :
-  Example data to initialize the ‘SISe3’ model
+
+  Example Initial Population Data for the SISe3 Model
 
 - [`` `v0<-`() ``](http://stewid.github.io/SimInf/reference/v0-set.md) :
   Update the initial continuous state v0 in each node
