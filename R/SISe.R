@@ -47,10 +47,10 @@ select_matrix_SISe <- function() {
 
 ##' Create a SISe model
 ##'
-##' Create an \sQuote{SISe} model to be used by the simulation
+##' Create an \acronym{SISe} model to be used by the simulation
 ##' framework.
 ##'
-##' The \sQuote{SISe} model contains two compartments; number of
+##' The \acronym{SISe} model contains two compartments; number of
 ##' susceptible (S) and number of infectious (I). Additionally, it
 ##' contains an environmental compartment to model shedding of a
 ##' pathogen to the environment. Consequently, the model has two state

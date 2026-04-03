@@ -19,7 +19,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \sQuote{SEIR} model
+##' Definition of the \acronym{SEIR} model
 ##'
 ##' Class to handle the SEIR \code{\link{SimInf_model}}.
 ##' @include SimInf_model.R

@@ -19,7 +19,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \sQuote{SISe3} model
+##' Definition of the \acronym{SISe3} model
 ##'
 ##' Class to handle the SISe3 \code{\link{SimInf_model}} model.
 ##' @include SimInf_model.R
