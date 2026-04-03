@@ -75,6 +75,7 @@ summary(result)
 }
 }
 \seealso{
-\code{\link{SIR}} for creating cattle disease models with this initial state
-\code{\link{events_SIR}} for associated cattle movement and demographic events
+\code{\link{SIR}} for creating cattle disease models with this
+initial state and \code{\link{events_SIR}} for associated cattle
+movement and demographic events
 }

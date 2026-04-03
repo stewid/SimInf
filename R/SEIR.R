@@ -208,9 +208,9 @@ events_SEIR <- function() {
 ##'
 ##' @details
 ##' This dataset represents initial disease states in a population of
-##' 1,600 cattle herds. Each row represents a single herd, derived
-##' from the structured cattle population data by adding an exposed
-##' compartment to the SIR model structure.
+##' 1,600 cattle herds (nodes). Each row represents a single herd
+##' (node), derived from the structured cattle population data by
+##' adding an exposed compartment to the SIR model structure.
 ##'
 ##' The data contains:
 ##' \describe{
@@ -233,8 +233,9 @@ events_SEIR <- function() {
 ##'   }
 ##'
 ##' @seealso
-##' \code{\link{SEIR}} for creating SEIR models with this initial state
-##' \code{\link{events_SEIR}} for associated cattle movement and demographic events
+##' \code{\link{SEIR}} for creating SEIR models with this initial
+##' state and \code{\link{events_SEIR}} for associated cattle movement
+##' and demographic events
 ##'
 ##' @export
 ##' @examples

@@ -195,15 +195,44 @@ events_SIS <- function() {
     events_SISe()
 }
 
-##' Example data to initialize the \sQuote{SIS} model
+##' Example Initial Population Data for the \acronym{SIS} Model
 ##'
-##' Example data to initialize a population of 1600 nodes and
-##' demonstrate the \code{\linkS4class{SIS}} model.
+##' Dataset containing the initial number of susceptible and infected
+##' cattle across 1,600 herds. Provides realistic population structure
+##' for demonstrating SIS model simulations in a cattle disease
+##' epidemiology context.
 ##'
-##' A \code{data.frame} with the number of individuals in the
-##' \sQuote{S}, and \sQuote{I} compartments in 1600 nodes. Note that
-##' the \sQuote{I} compartment is zero.
-##' @return A \code{data.frame}
+##' @details
+##'
+##' This dataset represents initial disease states in a population of
+##' 1,600 cattle herds (nodes). Each row represents a single herd
+##' (node), derived from the cattle population data by extracting
+##' susceptible and infected compartments. The SIS model is
+##' appropriate for diseases where recovered individuals do not gain
+##' immunity.
+##'
+##' The data contains:
+##' \describe{
+##'   \item{S}{Total susceptible cattle in the herd}
+##'   \item{I}{Total infected cattle (initialized to zero)}
+##' }
+##'
+##' The herd size distribution reflects realistic heterogeneity
+##' observed in cattle populations, making it suitable for testing
+##' disease dynamics in endemic situations where immunity is temporary
+##' or absent.
+##'
+##' @return A \code{data.frame} with 1,600 rows (one per herd) and 2 columns:
+##'   \describe{
+##'     \item{S}{Number of susceptible cattle in the herd}
+##'     \item{I}{Number of infected cattle in the herd (all zero at start)}
+##'   }
+##'
+##' @seealso
+##' \code{\link{SIS}} for creating SIS models with this initial state
+##' and \code{\link{events_SIS}} for associated cattle movement and
+##' demographic events
+##'
 ##' @export
 ##' @examples
 ##' \dontrun{
@@ -213,9 +242,9 @@ events_SIS <- function() {
 ##' set.seed(123)
 ##' set_num_threads(1)
 ##'
-##' ## Create an 'SIS' model with 1600 nodes and initialize
-##' ## it to run over 4*365 days. Add one infected individual
-##' ## to the first node.
+##' ## Create an 'SIS' model with 1600 cattle herds (nodes) and initialize
+##' ## it to run over 4*365 days. Add one infected animal to the
+##' ## first herd.
 ##' u0 <- u0_SIS()
 ##' u0$I[1] <- 1
 ##' tspan <- seq(from = 1, to = 4*365, by = 1)
@@ -227,7 +256,9 @@ events_SIS <- function() {
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
 ##' result <- run(model)
-##' plot(result)
+##'
+##' ## Plot the trajectory for the first herd.
+##' plot(result, index = 1)
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
