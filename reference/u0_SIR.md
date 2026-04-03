@@ -1,8 +1,9 @@
-# Example data to initialize the ‘SIR’ model
+# Example Initial Population Data for the SIR Model
 
-Example data to initialize a population of 1600 nodes and demonstrate
-the [`SIR`](http://stewid.github.io/SimInf/reference/SIR-class.md)
-model.
+Dataset containing the initial number of susceptible, infected, and
+recovered cattle across 1,600 herds. Provides realistic population
+structure for demonstrating SIR model simulations in a cattle disease
+epidemiology context.
 
 ## Usage
 
@@ -12,13 +13,58 @@ u0_SIR()
 
 ## Value
 
-A `data.frame`
+A `data.frame` with 1,600 rows (one per herd) and 3 columns:
+
+- S:
+
+  Number of susceptible cattle in the herd
+
+- I:
+
+  Number of infected cattle in the herd (all zero at start)
+
+- R:
+
+  Number of recovered cattle in the herd (all zero at start)
 
 ## Details
 
-A `data.frame` with the number of individuals in the ‘S’, ‘I’ and ‘R’
-compartments in 1600 nodes. Note that the ‘I’ and ‘R’ compartments are
-zero.
+This dataset represents initial disease states in a population of 1,600
+cattle herds. Each node (row) represents a single herd, and the data is
+derived from the structured `u0_SISe3` data by aggregating
+age-stratified compartments into single S, I, and R compartments for
+each herd.
+
+The aggregated values represent:
+
+- S:
+
+  Total susceptible cattle across all age groups in the herd
+
+- I:
+
+  Total infected cattle (initialized to zero)
+
+- R:
+
+  Total recovered cattle (initialized to zero)
+
+The herd size distribution reflects realistic heterogeneity observed in
+cattle populations, making it suitable for testing spatial disease
+dynamics at the herd level, such as:
+
+- Transmission within and between herds
+
+- Impact of cattle movement on disease spread
+
+- Effectiveness of herd-level interventions
+
+## See also
+
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md) for creating
+cattle disease models with this initial state
+[`events_SIR`](http://stewid.github.io/SimInf/reference/events_SIR.md)
+for associated cattle movement and demographic events
 
 ## Examples
 
@@ -30,9 +76,9 @@ if (FALSE) { # \dontrun{
 set.seed(123)
 set_num_threads(1)
 
-## Create an 'SIR' model with 1600 nodes and initialize
-## it to run over 4*365 days. Add one infected individual
-## to the first node.
+## Create an 'SIR' model with 1600 cattle herds (nodes) and initialize
+## it to run over 4*365 days. Add one infected animal to the
+## first herd to seed the outbreak.
 u0 <- u0_SIR()
 u0$I[1] <- 1
 tspan <- seq(from = 1, to = 4*365, by = 1)
@@ -45,6 +91,9 @@ model <- SIR(u0     = u0,
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
 plot(result)
+
+## Plot the trajectory for the first herd.
+plot(result, index = 1)
 
 ## Summarize trajectory
 summary(result)

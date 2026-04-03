@@ -365,10 +365,12 @@
   initial compartment state
 
 - [`u0_SEIR()`](http://stewid.github.io/SimInf/reference/u0_SEIR.md) :
-  Example data to initialize the ‘SEIR’ model
+
+  Example Initial Population Data for the SEIR Model
 
 - [`u0_SIR()`](http://stewid.github.io/SimInf/reference/u0_SIR.md) :
-  Example data to initialize the ‘SIR’ model
+
+  Example Initial Population Data for the SIR Model
 
 - [`u0_SIS()`](http://stewid.github.io/SimInf/reference/u0_SIS.md) :
   Example data to initialize the ‘SIS’ model
