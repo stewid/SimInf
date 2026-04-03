@@ -178,7 +178,7 @@ the following columns:
 
 - S_1:
 
-  The number of sucsceptible in age category 1
+  The number of susceptible in age category 1
 
 - I_1:
 
@@ -186,7 +186,7 @@ the following columns:
 
 - S_2:
 
-  The number of sucsceptible in age category 2
+  The number of susceptible in age category 2
 
 - I_2:
 
@@ -194,7 +194,7 @@ the following columns:
 
 - S_3:
 
-  The number of sucsceptible in age category 3
+  The number of susceptible in age category 3
 
 - I_3:
 

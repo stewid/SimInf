@@ -65,7 +65,7 @@ the following columns:
 
 - S:
 
-  The number of sucsceptible in each node
+  The number of susceptible in each node
 
 - I:
 

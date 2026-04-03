@@ -155,7 +155,7 @@ the following columns:
 
 - S:
 
-  The number of sucsceptible
+  The number of susceptible
 
 - I:
 
