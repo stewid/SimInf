@@ -98,33 +98,52 @@ and demographic events</p></div>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co">## For reproducibility, call the set.seed() function and specify</span></span></span>
-<span class="r-in"><span><span class="co">## the number of threads to use. To use all available threads,</span></span></span>
-<span class="r-in"><span><span class="co">## remove the set_num_threads() call.</span></span></span>
+<span class="r-in"><span><span class="co">## For reproducibility, call the set.seed() function and specify the</span></span></span>
+<span class="r-in"><span><span class="co">## number of threads to use. To use all available threads, remove the</span></span></span>
+<span class="r-in"><span><span class="co">## set_num_threads() call.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Create an 'SISe' model with 1600 cattle herds (nodes) and</span></span></span>
-<span class="r-in"><span><span class="co">## initialize it to run over 4*365 days. Add ten infected animals</span></span></span>
-<span class="r-in"><span><span class="co">## to the first herd. Define 'tspan' to record the state of the</span></span></span>
-<span class="r-in"><span><span class="co">## system at daily time-points.</span></span></span>
+<span class="r-in"><span><span class="co">## initialize it to run over 4*365 days. Add ten infected animals to</span></span></span>
+<span class="r-in"><span><span class="co">## the first herd. Define 'tspan' to record the state of the system at</span></span></span>
+<span class="r-in"><span><span class="co">## weekly time-points. Load scheduled events for the population of</span></span></span>
+<span class="r-in"><span><span class="co">## nodes with births, deaths and between-node movements of</span></span></span>
+<span class="r-in"><span><span class="co">## individuals.</span></span></span>
 <span class="r-in"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu">u0_SISe</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">u0</span><span class="op">$</span><span class="va">I</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></span>
-<span class="r-in"><span><span class="va">tspan</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="fl">4</span><span class="op">*</span><span class="fl">365</span>, by <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SISe.html">SISe</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="va">u0</span>, tspan <span class="op">=</span> <span class="va">tspan</span>, events <span class="op">=</span> <span class="fu"><a href="events_SISe.html">events_SISe</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              phi <span class="op">=</span> <span class="fl">0</span>, upsilon <span class="op">=</span> <span class="fl">1.8e-2</span>, gamma <span class="op">=</span> <span class="fl">0.1</span>, alpha <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>              beta_t1 <span class="op">=</span> <span class="fl">1.0e-1</span>, beta_t2 <span class="op">=</span> <span class="fl">1.0e-1</span>, beta_t3 <span class="op">=</span> <span class="fl">1.25e-1</span>,</span></span>
-<span class="r-in"><span>              beta_t4 <span class="op">=</span> <span class="fl">1.25e-1</span>, end_t1 <span class="op">=</span> <span class="fl">91</span>, end_t2 <span class="op">=</span> <span class="fl">182</span>,</span></span>
-<span class="r-in"><span>              end_t3 <span class="op">=</span> <span class="fl">273</span>, end_t4 <span class="op">=</span> <span class="fl">365</span>, epsilon <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SISe.html">SISe</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="va">u0</span>,</span></span>
+<span class="r-in"><span>              tspan <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="fl">4</span><span class="op">*</span><span class="fl">365</span>, by <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              events <span class="op">=</span> <span class="fu"><a href="events_SISe.html">events_SISe</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              phi <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>              upsilon <span class="op">=</span> <span class="fl">1.8e-2</span>,</span></span>
+<span class="r-in"><span>              gamma <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
+<span class="r-in"><span>              alpha <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>              beta_t1 <span class="op">=</span> <span class="fl">1.0e-1</span>,</span></span>
+<span class="r-in"><span>              beta_t2 <span class="op">=</span> <span class="fl">1.0e-1</span>,</span></span>
+<span class="r-in"><span>              beta_t3 <span class="op">=</span> <span class="fl">1.25e-1</span>,</span></span>
+<span class="r-in"><span>              beta_t4 <span class="op">=</span> <span class="fl">1.25e-1</span>,</span></span>
+<span class="r-in"><span>              end_t1 <span class="op">=</span> <span class="fl">91</span>,</span></span>
+<span class="r-in"><span>              end_t2 <span class="op">=</span> <span class="fl">182</span>,</span></span>
+<span class="r-in"><span>              end_t3 <span class="op">=</span> <span class="fl">273</span>,</span></span>
+<span class="r-in"><span>              end_t4 <span class="op">=</span> <span class="fl">365</span>,</span></span>
+<span class="r-in"><span>              epsilon <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Display the number of cattle affected by each event type per day.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="events.html">events</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Run the model to generate a single stochastic trajectory.</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot the median and interquartile range of the number of</span></span></span>
+<span class="r-in"><span><span class="co">## susceptible, infected and recovered individuals.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot the trajectory for the first herd.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Summarize trajectory</span></span></span>
+<span class="r-in"><span><span class="co">## Summarize the trajectory. The summary includes the number of events</span></span></span>
+<span class="r-in"><span><span class="co">## by event type.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
