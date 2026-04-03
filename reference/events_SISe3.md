@@ -1,9 +1,9 @@
-# Example data to initialize events for the ‘SISe3’ model
+# Example event data for the SISe3 model with cattle herds
 
-Example data to initialize scheduled events for a population of 1600
-nodes and demonstrate the
-[`SISe3`](http://stewid.github.io/SimInf/reference/SISe3-class.md)
-model.
+Dataset containing 783,773 scheduled events for a population of 1,600
+cattle herds stratified by age over 1,460 days (4 years). Demonstrates
+how demographic, movement, and age-transition events affect SISe3
+dynamics in a cattle disease context.
 
 ## Usage
 
@@ -17,19 +17,82 @@ A `data.frame`
 
 ## Details
 
-Example data to initialize scheduled events (see
-[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md))
-for a population of 1600 nodes and demonstrate the
-[`SISe3`](http://stewid.github.io/SimInf/reference/SISe3-class.md)
-model. The dataset contains 783773 events for 1600 nodes distributed
-over 4 \* 365 days. The events are divided into three types: ‘Exit’
-events remove individuals from the population (n = 182535), ‘Enter’
-events add individuals to the population (n = 182685), ‘Internal
-transfer’ events move individuals between compartmens within one node
-e.g. ageing (n = 317081), and ‘External transfer’ events move
-individuals between nodes in the population (n = 101472). The vignette
-contains a detailed description of how scheduled events operate on a
-model.
+This dataset contains four types of scheduled events that affect cattle
+herds (nodes) with age structure:
+
+- Exit:
+
+  Deaths or removal of cattle from a herd (n = 182,535). These events
+  remove cattle from susceptible or infected compartments across age
+  categories.
+
+- Enter:
+
+  Births or introduction of cattle to a herd (n = 182,685). These events
+  add susceptible cattle, typically to the youngest age category.
+
+- Internal transfer:
+
+  Age transitions or within-herd movements (n = 317,081). These events
+  move cattle between age categories within a herd, reflecting
+  maturation and changing infection risk with age.
+
+- External transfer:
+
+  Movement of cattle between herds (n = 101,472). These events transfer
+  cattle from one herd to another across age categories, potentially
+  introducing infected animals.
+
+Events are distributed across all 1,600 herds over the 4-year period,
+reflecting realistic patterns of cattle demographic change, herd-to-herd
+movement, and age progression in a livestock production system. The
+higher event count compared to non-age-structured models reflects the
+addition of internal transfer events for age category transitions.
+
+The data contains:
+
+- event:
+
+  Event type: "exit", "enter", "intTrans", or "extTrans".
+
+- time:
+
+  Day when event occurs (1-1460).
+
+- node:
+
+  Affected herd identifier (1-1600).
+
+- dest:
+
+  Destination herd for external transfer events, else 0.
+
+- n:
+
+  Number of cattle affected.
+
+- select:
+
+  Model compartment to affect (see
+  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)).
+
+- proportion:
+
+  0\. Not used in this example.
+
+- shift:
+
+  Determines how individuals in internal transfer events are shifted to
+  enter another compartment.
+
+## See also
+
+[`u0_SISe3`](http://stewid.github.io/SimInf/reference/u0_SISe3.md) for
+the corresponding initial cattle population with age structure,
+[`SISe3`](http://stewid.github.io/SimInf/reference/SISe3.md) for
+creating SISe3 models with these events and
+[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+for event structure details
 
 ## Examples
 
