@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -48,7 +48,14 @@ compartments_SIS <- function() {
     c("S", "I")
 }
 
-##' The select matrix 'E' for an SIS model
+##' Select matrix for events in the \acronym{SIS} model
+##'
+##' Internal function returning the 2x2 select matrix (E) that maps
+##' SIS compartments (rows) to event types (columns) for event
+##' processing.
+##'
+##' @return A 2x2 numeric matrix with compartments as rows and event
+##'     types as columns. Used internally by SimInf_events.
 ##' @noRd
 select_matrix_SIS <- function() {
     matrix(c(1, 0, 1, 1),
@@ -73,7 +80,7 @@ select_matrix_SIS <- function() {
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
-##' \item{S}{The number of sucsceptible in each node}
+##' \item{S}{The number of susceptible in each node}
 ##' \item{I}{The number of infected in each node}
 ##' }
 ##'

@@ -86,7 +86,7 @@ select_matrix_SISe_sp <- function() {
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
-##' \item{S}{The number of sucsceptible}
+##' \item{S}{The number of susceptible}
 ##' \item{I}{The number of infected}
 ##' }
 ##'

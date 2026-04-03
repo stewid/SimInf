@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -32,7 +32,14 @@ compartments_SISe3_sp <- function() {
     compartments_SISe3()
 }
 
-##' The select matrix 'E' for an SISe3_sp model
+##' Select matrix for events in the \acronym{SISe3_sp} model
+##'
+##' Internal function returning the 6x6 select matrix (E) that maps
+##' SISe3_sp compartments (rows) to event types (columns) for event
+##' processing.
+##'
+##' @return A 6x6 numeric matrix with compartments as rows and event
+##'     types as columns. Used internally by SimInf_events.
 ##' @noRd
 select_matrix_SISe3_sp <- function() {
     select_matrix_SISe3()
@@ -101,11 +108,11 @@ select_matrix_SISe3_sp <- function() {
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
-##' \item{S_1}{The number of sucsceptible in age category 1}
+##' \item{S_1}{The number of susceptible in age category 1}
 ##' \item{I_1}{The number of infected in age category 1}
-##' \item{S_2}{The number of sucsceptible in age category 2}
+##' \item{S_2}{The number of susceptible in age category 2}
 ##' \item{I_2}{The number of infected in age category 2}
-##' \item{S_3}{The number of sucsceptible in age category 3}
+##' \item{S_3}{The number of susceptible in age category 3}
 ##' \item{I_3}{The number of infected in age category 3}
 ##' }
 ##'
