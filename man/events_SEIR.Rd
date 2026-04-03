@@ -81,7 +81,8 @@ plot(result)
 ## Plot the trajectory for the first herd.
 plot(result, index = 1)
 
-## Summarize trajectory
+## Summarize the trajectory. The summary includes the number of events
+## by event type.
 summary(result)
 }
 }
