@@ -236,15 +236,45 @@ events_SISe <- function() {
     events_SISe3
 }
 
-##' Example data to initialize the \sQuote{SISe} model
+##' Example Initial Population Data for the \acronym{SISe} Model
 ##'
-##' Example data to initialize a population of 1600 nodes and
-##' demonstrate the \code{\linkS4class{SISe}} model.
+##' Dataset containing the initial number of susceptible and infected
+##' cattle across 1,600 herds, for the environment-based transmission
+##' model. Provides realistic population structure for demonstrating
+##' SISe model simulations in a cattle disease epidemiology context.
 ##'
-##' A \code{data.frame} with the number of individuals in the
-##' \sQuote{S} and \sQuote{I} compartments in 1600 nodes. Note that
-##' the \sQuote{I} compartment is zero.
-##' @return A \code{data.frame}
+##' @details
+##'
+##' This dataset represents initial disease states in a population of
+##' 1,600 cattle herds (nodes). Each row represents a single herd
+##' (node), derived from the cattle population data by extracting
+##' susceptible and infected compartments. The SISe model extends the
+##' SIS model with an environmental compartment for pathogen shedding,
+##' suitable for diseases transmitted through environmental
+##' contamination.
+##'
+##' The data contains:
+##' \describe{
+##'   \item{S}{Total susceptible cattle in the herd}
+##'   \item{I}{Total infected cattle (initialized to zero)}
+##' }
+##'
+##' The herd size distribution reflects realistic heterogeneity
+##' observed in cattle populations, making it suitable for testing
+##' environmentally- mediated transmission dynamics where pathogen
+##' survival in the environment is important.
+##'
+##' @return A \code{data.frame} with 1,600 rows (one per herd) and 2 columns:
+##'   \describe{
+##'     \item{S}{Number of susceptible cattle in the herd}
+##'     \item{I}{Number of infected cattle in the herd (all zero at start)}
+##'   }
+##'
+##' @seealso
+##' \code{\link{SISe}} for creating SISe models with this initial
+##' state and \code{\link{events_SISe}} for associated cattle movement
+##' and demographic events
+##'
 ##' @export
 ##' @examples
 ##' \dontrun{
@@ -254,23 +284,13 @@ events_SISe <- function() {
 ##' set.seed(123)
 ##' set_num_threads(1)
 ##'
-##' ## Create an 'SISe' model with 1600 nodes and initialize it to
-##' ## run over 4*365 days and record data at weekly time-points.
-##'
-##' ## Load the initial population and add ten infected individuals to
-##' ## the first node.
+##' ## Create an 'SISe' model with 1600 cattle herds (nodes) and
+##' ## initialize it to run over 4*365 days. Add ten infected animals
+##' ## to the first herd. Define 'tspan' to record the state of the
+##' ## system at daily time-points.
 ##' u0 <- u0_SISe()
 ##' u0$I[1] <- 10
-##'
-##' ## Define 'tspan' to run the simulation over 4*365 and record the
-##' ## state of the system at weekly time-points.
 ##' tspan <- seq(from = 1, to = 4*365, by = 7)
-##'
-##' ## Load scheduled events for the population of nodes with births,
-##' ## deaths and between-node movements of individuals.
-##' events <- events_SISe()
-##'
-##' ## Create an 'SISe' model
 ##' model <- SISe(u0 = u0, tspan = tspan, events = events_SISe(),
 ##'               phi = 0, upsilon = 1.8e-2, gamma = 0.1, alpha = 1,
 ##'               beta_t1 = 1.0e-1, beta_t2 = 1.0e-1, beta_t3 = 1.25e-1,
@@ -279,13 +299,13 @@ events_SISe <- function() {
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
 ##' result <- run(model)
+##' plot(result)
+##'
+##' ## Plot the trajectory for the first herd.
+##' plot(result, index = 1)
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
-##'
-##' ## Plot the proportion of nodes with at least one infected
-##' ## individual.
-##' plot(result, I~S+I, level = 2, type = "l")
 ##' }
 u0_SISe <- function() {
     u0 <- u0_SIR()

@@ -46,20 +46,23 @@ or absent.
 set.seed(123)
 set_num_threads(1)
 
-## Create an 'SIS' model with 1600 cattle herds (nodes) and initialize
-## it to run over 4*365 days. Add one infected animal to the
-## first herd.
+## Create an 'SIS' model with 1600 cattle herds (nodes) and
+## initialize it to run over 4*365 days. Add one infected animal
+## to the first herd to seed the outbreak. Define 'tspan' to record
+## the state of the system at daily time-points. Load scheduled
+## events for the population of nodes with births, deaths and
+## between-node movements of individuals.
 u0 <- u0_SIS()
 u0$I[1] <- 1
-tspan <- seq(from = 1, to = 4*365, by = 1)
 model <- SIS(u0     = u0,
-             tspan  = tspan,
+             tspan  = seq(from = 1, to = 4*365, by = 1),
              events = events_SIS(),
              beta   = 0.16,
              gamma  = 0.01)
 
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
+plot(result)
 
 ## Plot the trajectory for the first herd.
 plot(result, index = 1)

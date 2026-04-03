@@ -256,14 +256,16 @@ events_SIR <- function() {
 ##' set.seed(123)
 ##' set_num_threads(1)
 ##'
-##' ## Create an 'SIR' model with 1600 cattle herds (nodes) and initialize
-##' ## it to run over 4*365 days. Add one infected animal to the
-##' ## first herd to seed the outbreak.
+##' ## Create an 'SIR' model with 1600 cattle herds (nodes) and
+##' ## initialize it to run over 4*365 days. Add one infected animal
+##' ## to the first herd to seed the outbreak. Define 'tspan' to record
+##' ## the state of the system at daily time-points. Load scheduled
+##' ## events for the population of nodes with births, deaths and
+##' ## between-node movements of individuals.
 ##' u0 <- u0_SIR()
 ##' u0$I[1] <- 1
-##' tspan <- seq(from = 1, to = 4*365, by = 1)
 ##' model <- SIR(u0     = u0,
-##'              tspan  = tspan,
+##'              tspan  = seq(from = 1, to = 4*365, by = 1),
 ##'              events = events_SIR(),
 ##'              beta   = 0.16,
 ##'              gamma  = 0.01)
