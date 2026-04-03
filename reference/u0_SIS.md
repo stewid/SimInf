@@ -1,4 +1,4 @@
-# Example Initial Population Data for the SIS Model
+# Example initial population data for the SIS model
 
 Dataset containing the initial number of susceptible and infected cattle
 across 1,600 herds. Provides realistic population structure for

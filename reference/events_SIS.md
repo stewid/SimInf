@@ -1,4 +1,4 @@
-# Example Event Data for the SIS Model with Cattle Herds
+# Example event data for the SIS model with cattle herds
 
 Dataset containing 466,692 scheduled events for a population of 1,600
 cattle herds over 1,460 days (4 years). Demonstrates how demographic and

@@ -1,4 +1,4 @@
-# Example Initial Population Data for the SISe Model
+# Example initial population data for the SISe model
 
 Dataset containing the initial number of susceptible and infected cattle
 across 1,600 herds, for the environment-based transmission model.

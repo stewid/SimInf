@@ -1,4 +1,4 @@
-# Example Initial Population Data for the SIR Model
+# Example initial population data for the SIR model
 
 Dataset containing the initial number of susceptible, infected, and
 recovered cattle across 1,600 herds. Provides realistic population

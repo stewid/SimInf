@@ -398,22 +398,22 @@ The `SimInf` package is licensed under the
 - [`events_SEIR()`](http://stewid.github.io/SimInf/reference/events_SEIR.md)
   :
 
-  Example Event Data for the SEIR Model with Cattle Herds
+  Example event data for the SEIR model with cattle herds
 
 - [`events_SIR()`](http://stewid.github.io/SimInf/reference/events_SIR.md)
   :
 
-  Example Event Data for the SIR Model with Cattle Herds
+  Example event data for the SIR model with cattle herds
 
 - [`events_SIS()`](http://stewid.github.io/SimInf/reference/events_SIS.md)
   :
 
-  Example Event Data for the SIS Model with Cattle Herds
+  Example event data for the SIS model with cattle herds
 
 - [`events_SISe()`](http://stewid.github.io/SimInf/reference/events_SISe.md)
   :
 
-  Example Event Data for the SISe Model with Cattle Herds
+  Example event data for the SISe model with cattle herds
 
 - [`events_SISe3`](http://stewid.github.io/SimInf/reference/events_SISe3.md)
   : Example data to initialize events for the ‘SISe3’ model
@@ -628,23 +628,23 @@ The `SimInf` package is licensed under the
 
 - [`u0_SEIR()`](http://stewid.github.io/SimInf/reference/u0_SEIR.md) :
 
-  Example Initial Population Data for the SEIR Model
+  Example Initial population data for the SEIR model
 
 - [`u0_SIR()`](http://stewid.github.io/SimInf/reference/u0_SIR.md) :
 
-  Example Initial Population Data for the SIR Model
+  Example initial population data for the SIR model
 
 - [`u0_SIS()`](http://stewid.github.io/SimInf/reference/u0_SIS.md) :
 
-  Example Initial Population Data for the SIS Model
+  Example initial population data for the SIS model
 
 - [`u0_SISe()`](http://stewid.github.io/SimInf/reference/u0_SISe.md) :
 
-  Example Initial Population Data for the SISe Model
+  Example initial population data for the SISe model
 
 - [`u0_SISe3`](http://stewid.github.io/SimInf/reference/u0_SISe3.md) :
 
-  Example Initial Population Data for the SISe3 Model
+  Example initial population data for the SISe3 model
 
 - [`` `v0<-`() ``](http://stewid.github.io/SimInf/reference/v0-set.md) :
   Update the initial continuous state v0 in each node

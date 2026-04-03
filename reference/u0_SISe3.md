@@ -1,4 +1,4 @@
-# Example Initial Population Data for the SISe3 Model
+# Example initial population data for the SISe3 model
 
 Dataset containing the initial number of susceptible and infected cattle
 across three age categories in 1,600 herds. Provides realistic

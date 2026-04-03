@@ -1,4 +1,4 @@
-# Example Initial Population Data for the SEIR Model
+# Example Initial population data for the SEIR model
 
 Dataset containing the initial number of susceptible, exposed, infected,
 and recovered cattle across 1,600 herds. Provides realistic population
