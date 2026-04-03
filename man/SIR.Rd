@@ -57,7 +57,7 @@ recovery rate, and \eqn{N=S+I+R}.
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
-\item{S}{The number of sucsceptible in each node}
+\item{S}{The number of susceptible in each node}
 \item{I}{The number of infected in each node}
 \item{R}{The number of recovered in each node}
 }
