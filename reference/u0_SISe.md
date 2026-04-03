@@ -96,7 +96,7 @@ plot(events(model))
 result <- run(model)
 
 ## Plot the median and interquartile range of the number of
-## susceptible, infected and recovered individuals.
+## susceptible and infected individuals.
 plot(result)
 
 ## Plot the trajectory for the first herd.
