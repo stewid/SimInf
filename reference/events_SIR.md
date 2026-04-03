@@ -1,8 +1,8 @@
-# Example data to initialize events for the ‘SIR’ model
+# Example Event Data for the SIR Model with Cattle Herds
 
-Example data to initialize scheduled events for a population of 1600
-nodes and demonstrate the
-[`SIR`](http://stewid.github.io/SimInf/reference/SIR-class.md) model.
+Dataset containing 466,692 scheduled events for a population of 1,600
+cattle herds over 1,460 days (4 years). Demonstrates how demographic and
+movement events affect SIR dynamics in a cattle disease context.
 
 ## Usage
 
@@ -12,21 +12,67 @@ events_SIR()
 
 ## Value
 
-A `data.frame`
+A `data.frame` with columns:
+
+- event:
+
+  Event type: "exit", "enter", or "extTrans"
+
+- time:
+
+  Day when event occurs (1-1460)
+
+- node:
+
+  Affected herd identifier (1-1600)
+
+- dest:
+
+  Destination herd for external transfer events
+
+- n:
+
+  Number of cattle affected
+
+- select:
+
+  Model compartment to affect (see
+  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md))
 
 ## Details
 
-Example data to initialize scheduled events (see
-[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md))
-for a population of 1600 nodes and demonstrate the
-[`SIR`](http://stewid.github.io/SimInf/reference/SIR-class.md) model.
-The dataset contains 466692 events for 1600 nodes distributed over 4 \*
-365 days. The events are divided into three types: ‘Exit’ events remove
-individuals from the population (n = 182535), ‘Enter’ events add
-individuals to the population (n = 182685), and ‘External transfer’
-events move individuals between nodes in the population (n = 101472).
-The vignette contains a detailed description of how scheduled events
-operate on a model.
+The event data contains three types of scheduled events that affect
+cattle herds (nodes):
+
+- Exit:
+
+  Deaths or removal of cattle from a herd (n = 182,535). These events
+  decrease the population and remove cattle from the disease system.
+
+- Enter:
+
+  Births or introduction of cattle to a herd (n = 182,685). These events
+  add susceptible cattle to herds, increasing potential targets for
+  infection.
+
+- External transfer:
+
+  Movement of cattle between herds (n = 101,472). These events transfer
+  cattle from one herd to another, potentially spreading disease across
+  the herd network.
+
+Events are distributed across all 1,600 herds over the 4-year period,
+reflecting realistic patterns of cattle demographic change and
+herd-to-herd movement in a livestock production system.
+
+## See also
+
+[`u0_SIR`](http://stewid.github.io/SimInf/reference/u0_SIR.md) for the
+corresponding initial cattle population,
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md) for creating
+SIR models with these events, and
+[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+for event structure details
 
 ## Examples
 
@@ -37,9 +83,9 @@ operate on a model.
 set.seed(123)
 set_num_threads(1)
 
-## Create an 'SIR' model with 1600 nodes and initialize
-## it to run over 4*365 days. Add one infected individual
-## to the first node.
+## Create an 'SIR' model with 1600 cattle herds and initialize
+## it to run over 4*365 days. Add one infected animal to the
+## first herd to seed the outbreak.
 u0 <- u0_SIR()
 u0$I[1] <- 1
 tspan <- seq(from = 1, to = 4*365, by = 1)
@@ -49,18 +95,14 @@ model <- SIR(u0     = u0,
              beta   = 0.16,
              gamma  = 0.01)
 
-## Display the number of individuals affected by each event type
-## per day.
+## Display the number of cattle affected by each event type per day.
 plot(events(model))
 
 
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
-plot(result)
 
-
-## Summarize the trajectory. The summary includes the number of
-## events by event type.
+## Summarize the trajectory.
 summary(result)
 #> Model: SIR
 #> Number of nodes: 1600

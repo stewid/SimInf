@@ -147,7 +147,9 @@
   Example Event Data for the SEIR Model with Cattle Herds
 
 - [`events_SIR()`](http://stewid.github.io/SimInf/reference/events_SIR.md)
-  : Example data to initialize events for the ‘SIR’ model
+  :
+
+  Example Event Data for the SIR Model with Cattle Herds
 
 - [`events_SIS()`](http://stewid.github.io/SimInf/reference/events_SIS.md)
   : Example data to initialize events for the ‘SIS’ model
