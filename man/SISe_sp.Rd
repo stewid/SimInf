@@ -138,7 +138,7 @@ saved at the time-points specified in \code{tspan}.
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
-\item{S}{The number of sucsceptible}
+\item{S}{The number of susceptible}
 \item{I}{The number of infected}
 }
 }

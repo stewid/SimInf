@@ -170,11 +170,11 @@ evolved each time unit by the Euler forward method. The value of
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
-\item{S_1}{The number of sucsceptible in age category 1}
+\item{S_1}{The number of susceptible in age category 1}
 \item{I_1}{The number of infected in age category 1}
-\item{S_2}{The number of sucsceptible in age category 2}
+\item{S_2}{The number of susceptible in age category 2}
 \item{I_2}{The number of infected in age category 2}
-\item{S_3}{The number of sucsceptible in age category 3}
+\item{S_3}{The number of susceptible in age category 3}
 \item{I_3}{The number of infected in age category 3}
 }
 }
