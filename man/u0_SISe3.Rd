@@ -3,7 +3,7 @@
 \docType{data}
 \name{u0_SISe3}
 \alias{u0_SISe3}
-\title{Example data to initialize the \sQuote{SISe3} model}
+\title{Example Initial Population Data for the \acronym{SISe3} Model}
 \format{
 A \code{data.frame}
 }
@@ -11,15 +11,35 @@ A \code{data.frame}
 data(u0_SISe3)
 }
 \description{
-Example data to initialize a population of 1600 nodes and
-demonstrate the \code{\linkS4class{SISe3}} model.
+Dataset containing the initial number of susceptible and infected
+cattle across three age categories in 1,600 herds. Provides
+realistic population structure for demonstrating SISe3 model
+simulations in a cattle disease epidemiology context with age
+structure.
 }
 \details{
-A \code{data.frame} with the number of individuals in the
-\sQuote{S_1}, \sQuote{S_2}, \sQuote{S_3}, \sQuote{I_1},
-\sQuote{I_2} and \sQuote{I_3} compartments in 1600 nodes. Note
-that the \sQuote{I_1}, \sQuote{I_2} and \sQuote{I_3} compartments
-are zero.
+This dataset represents initial disease states in a population of
+1,600 cattle herds (nodes) stratified into three age
+categories. Each row represents a single herd (node). The SISe3
+model extends the SISe model with age-structured compartments
+(S_1, I_1, S_2, I_2, S_3, I_3) and an environmental compartment
+for pathogen shedding. This is appropriate for diseases where
+transmission rates or recovery rates differ by age group.
+
+The data contains:
+\describe{
+  \item{S_1}{Total susceptible cattle in age category 1}
+  \item{I_1}{Total infected cattle in age category 1 (initialized to zero)}
+  \item{S_2}{Total susceptible cattle in age category 2}
+  \item{I_2}{Total infected cattle in age category 2 (initialized to zero)}
+  \item{S_3}{Total susceptible cattle in age category 3}
+  \item{I_3}{Total infected cattle in age category 3 (initialized to zero)}
+}
+
+The herd size distribution and age structure reflect realistic
+heterogeneity observed in cattle populations, making it suitable
+for testing age-dependent disease dynamics with environmental
+transmission.
 }
 \examples{
 \dontrun{
@@ -29,30 +49,36 @@ are zero.
 set.seed(123)
 set_num_threads(1)
 
-## Create an 'SISe3' model with 1600 nodes and initialize it to
-## run over 4*365 days and record data at weekly time-points.
-
-## Load the initial population and add ten infected individuals to
-## I_1 in the first node.
+## Create an 'SISe3' model with 1600 cattle herds (nodes)
+## stratified by age, initialize it to run over 4*365 days and
+## record data at weekly time-points. Add ten infected animals to
+## age category 1 in the first herd to seed the outbreak.  Define
+## 'tspan' to record the state of the system at weekly
+## time-points. Load scheduled events events for the population of
+## nodes with births, deaths and between-node movements of
+## individuals.
 u0 <- u0_SISe3
 u0$I_1[1] <- 10
-
-## Define 'tspan' to run the simulation over 4*365 and record the
-## state of the system at weekly time-points.
-tspan <- seq(from = 1, to = 4*365, by = 7)
-
-## Load scheduled events for the population of nodes with births,
-## deaths and between-node movements of individuals.
-events <- events_SISe3
-
-## Create a 'SISe3' model
-model <- SISe3(u0 = u0, tspan = tspan, events = events,
-               phi = rep(0, nrow(u0)), upsilon_1 = 1.8e-2,
-               upsilon_2 = 1.8e-2, upsilon_3 = 1.8e-2,
-               gamma_1 = 0.1, gamma_2 = 0.1, gamma_3 = 0.1,
-               alpha = 1, beta_t1 = 1.0e-1, beta_t2 = 1.0e-1,
-               beta_t3 = 1.25e-1, beta_t4 = 1.25e-1, end_t1 = 91,
-               end_t2 = 182, end_t3 = 273, end_t4 = 365, epsilon = 0)
+model <- SISe3(u0 = u0,
+               tspan = seq(from = 1, to = 4*365, by = 7),
+               events = events_SISe3,
+               phi = rep(0, nrow(u0)),
+               upsilon_1 = 1.8e-2,
+               upsilon_2 = 1.8e-2,
+               upsilon_3 = 1.8e-2,
+               gamma_1 = 0.1,
+               gamma_2 = 0.1,
+               gamma_3 = 0.1,
+               alpha = 1,
+               beta_t1 = 1.0e-1,
+               beta_t2 = 1.0e-1,
+               beta_t3 = 1.25e-1,
+               beta_t4 = 1.25e-1,
+               end_t1 = 91,
+               end_t2 = 182,
+               end_t3 = 273,
+               end_t4 = 365,
+               epsilon = 0)
 
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
@@ -63,6 +89,14 @@ summary(result)
 ## Plot the proportion of nodes with at least one infected
 ## individual.
 plot(result, I_1 + I_2 + I_3 ~ ., level = 2, type = "l")
+
+## Plot the trajectory for the first herd.
+plot(result, index = 1)
 }
+}
+\seealso{
+\code{\link{SISe3}} for creating SISe3 models with this initial
+state and \code{\link{events_SISe3}} for associated cattle
+movement and demographic events
 }
 \keyword{dataset}
