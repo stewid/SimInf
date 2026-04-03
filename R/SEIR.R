@@ -199,16 +199,43 @@ events_SEIR <- function() {
     events_SISe3
 }
 
-##' Example data to initialize the \sQuote{SEIR} model
+##' Example Initial Population Data for the \acronym{SEIR} Model
 ##'
-##' Example data to initialize a population of 1600 nodes and
-##' demonstrate the \code{\linkS4class{SEIR}} model.
+##' Dataset containing the initial number of susceptible, exposed,
+##' infected, and recovered cattle across 1,600 herds. Provides
+##' realistic population structure for demonstrating SEIR model
+##' simulations in a cattle disease epidemiology context.
 ##'
-##' A \code{data.frame} with the number of individuals in the
-##' \sQuote{S}, \sQuote{E}, \sQuote{I} and \sQuote{R} compartments in
-##' 1600 nodes. Note that the \sQuote{E}, \sQuote{I} and \sQuote{R}
-##' compartments are zero.
-##' @return A \code{data.frame}
+##' @details
+##' This dataset represents initial disease states in a population of
+##' 1,600 cattle herds. Each row represents a single herd, derived
+##' from the structured cattle population data by adding an exposed
+##' compartment to the SIR model structure.
+##'
+##' The data contains:
+##' \describe{
+##'   \item{S}{Total susceptible cattle in the herd}
+##'   \item{E}{Total exposed cattle (initialized to zero)}
+##'   \item{I}{Total infected cattle (initialized to zero)}
+##'   \item{R}{Total recovered cattle (initialized to zero)}
+##' }
+##'
+##' The herd size distribution reflects realistic heterogeneity
+##' observed in cattle populations, making it suitable for testing
+##' disease dynamics with an explicit latent period.
+##'
+##' @return A \code{data.frame} with 1,600 rows (one per herd) and 4 columns:
+##'   \describe{
+##'     \item{S}{Number of susceptible cattle in the herd}
+##'     \item{E}{Number of exposed cattle in the herd (all zero at start)}
+##'     \item{I}{Number of infected cattle in the herd (all zero at start)}
+##'     \item{R}{Number of recovered cattle in the herd (all zero at start)}
+##'   }
+##'
+##' @seealso
+##' \code{\link{SEIR}} for creating SEIR models with this initial state
+##' \code{\link{events_SEIR}} for associated cattle movement and demographic events
+##'
 ##' @export
 ##' @examples
 ##' \dontrun{
@@ -218,11 +245,11 @@ events_SEIR <- function() {
 ##' set.seed(123)
 ##' set_num_threads(1)
 ##'
-##' ## Create an 'SEIR' model with 1600 nodes and initialize it to
-##' ## run over 4*365 days and record data at weekly time-points.
-##' ## Add ten infected individuals to the first node.
+##' ## Create a 'SEIR' model with 1600 cattle herds (nodes) and initialize
+##' ## it to run over 4*365 days. Add ten exposed animals to the
+##' ## first herd.
 ##' u0 <- u0_SEIR()
-##' u0$I[1] <- 10
+##' u0$E[1] <- 10
 ##' tspan <- seq(from = 1, to = 4*365, by = 7)
 ##' model <- SEIR(u0      = u0,
 ##'               tspan   = tspan,
@@ -234,6 +261,9 @@ events_SEIR <- function() {
 ##' ## Run the model to generate a single stochastic trajectory.
 ##' result <- run(model)
 ##' plot(result)
+##'
+##' ## Plot the trajectory for the first herd.
+##' plot(result, index = 1)
 ##'
 ##' ## Summarize trajectory
 ##' summary(result)
