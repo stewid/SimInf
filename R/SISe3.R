@@ -231,23 +231,61 @@ SISe3 <- function(u0,
     methods::as(model, "SISe3")
 }
 
-##' Example data to initialize events for the \sQuote{SISe3} model
+##' Example event data for the \acronym{SISe3} model with cattle herds
 ##'
-##' Example data to initialize scheduled events for a population of
-##' 1600 nodes and demonstrate the \code{\linkS4class{SISe3}} model.
+##' Dataset containing 783,773 scheduled events for a population of
+##' 1,600 cattle herds stratified by age over 1,460 days (4
+##' years). Demonstrates how demographic, movement, and age-transition
+##' events affect SISe3 dynamics in a cattle disease context.
 ##'
-##' Example data to initialize scheduled events (see
-##' \code{\linkS4class{SimInf_events}}) for a population of 1600 nodes
-##' and demonstrate the \code{\linkS4class{SISe3}} model. The dataset
-##' contains 783773 events for 1600 nodes distributed over 4 * 365
-##' days. The events are divided into three types: \sQuote{Exit}
-##' events remove individuals from the population (n = 182535),
-##' \sQuote{Enter} events add individuals to the population (n =
-##' 182685), \sQuote{Internal transfer} events move individuals
-##' between compartmens within one node e.g. ageing (n = 317081), and
-##' \sQuote{External transfer} events move individuals between nodes
-##' in the population (n = 101472). The vignette contains a detailed
-##' description of how scheduled events operate on a model.
+##' @details
+##' This dataset contains four types of scheduled events that affect
+##' cattle herds (nodes) with age structure:
+##'
+##' \describe{
+##'   \item{Exit}{Deaths or removal of cattle from a herd (n =
+##'     182,535). These events remove cattle from susceptible or
+##'     infected compartments across age categories.}
+##'   \item{Enter}{Births or introduction of cattle to a herd (n =
+##'     182,685). These events add susceptible cattle, typically to
+##'     the youngest age category.}
+##'   \item{Internal transfer}{Age transitions or within-herd
+##'     movements (n = 317,081). These events move cattle between age
+##'     categories within a herd, reflecting maturation and changing
+##'     infection risk with age.}
+##'   \item{External transfer}{Movement of cattle between herds (n =
+##'     101,472).  These events transfer cattle from one herd to
+##'     another across age categories, potentially introducing
+##'     infected animals.}
+##' }
+##'
+##' Events are distributed across all 1,600 herds over the 4-year
+##' period, reflecting realistic patterns of cattle demographic
+##' change, herd-to-herd movement, and age progression in a livestock
+##' production system. The higher event count compared to
+##' non-age-structured models reflects the addition of internal
+##' transfer events for age category transitions.
+##'
+##' The data contains:
+##' \describe{
+##'   \item{event}{Event type: "exit", "enter", "intTrans", or "extTrans".}
+##'   \item{time}{Day when event occurs (1-1460).}
+##'   \item{node}{Affected herd identifier (1-1600).}
+##'   \item{dest}{Destination herd for external transfer events, else 0.}
+##'   \item{n}{Number of cattle affected.}
+##'   \item{select}{Model compartment to affect (see
+##'     \code{\linkS4class{SimInf_events}}).}
+##'   \item{proportion}{0. Not used in this example.}
+##'   \item{shift}{Determines how individuals in internal transfer
+##'     events are shifted to enter another compartment.}
+##' }
+##'
+##' @seealso
+##' \code{\link{u0_SISe3}} for the corresponding initial cattle
+##' population with age structure, \code{\link{SISe3}} for creating
+##' SISe3 models with these events and
+##' \code{\linkS4class{SimInf_events}} for event structure details
+##'
 ##' @name events_SISe3
 ##' @docType data
 ##' @usage data(events_SISe3)
