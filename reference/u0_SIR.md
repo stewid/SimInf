@@ -62,7 +62,7 @@ dynamics at the herd level, such as:
 ## See also
 
 [`SIR`](http://stewid.github.io/SimInf/reference/SIR.md) for creating
-cattle disease models with this initial state
+cattle disease models with this initial state and
 [`events_SIR`](http://stewid.github.io/SimInf/reference/events_SIR.md)
 for associated cattle movement and demographic events
 

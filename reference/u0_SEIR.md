@@ -34,9 +34,9 @@ A `data.frame` with 1,600 rows (one per herd) and 4 columns:
 ## Details
 
 This dataset represents initial disease states in a population of 1,600
-cattle herds. Each row represents a single herd, derived from the
-structured cattle population data by adding an exposed compartment to
-the SIR model structure.
+cattle herds (nodes). Each row represents a single herd (node), derived
+from the structured cattle population data by adding an exposed
+compartment to the SIR model structure.
 
 The data contains:
 
@@ -63,7 +63,7 @@ an explicit latent period.
 ## See also
 
 [`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md) for creating
-SEIR models with this initial state
+SEIR models with this initial state and
 [`events_SEIR`](http://stewid.github.io/SimInf/reference/events_SEIR.md)
 for associated cattle movement and demographic events
 

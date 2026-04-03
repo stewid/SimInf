@@ -373,7 +373,8 @@
   Example Initial Population Data for the SIR Model
 
 - [`u0_SIS()`](http://stewid.github.io/SimInf/reference/u0_SIS.md) :
-  Example data to initialize the ‘SIS’ model
+
+  Example Initial Population Data for the SIS Model
 
 - [`u0_SISe()`](http://stewid.github.io/SimInf/reference/u0_SISe.md) :
   Example data to initialize the ‘SISe’ model
