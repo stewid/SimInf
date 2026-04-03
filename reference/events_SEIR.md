@@ -1,8 +1,8 @@
-# Example data to initialize events for the ‘SEIR’ model
+# Example Event Data for the SEIR Model with Cattle Herds
 
-Example data to initialize scheduled events for a population of 1600
-nodes and demonstrate the
-[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR-class.md) model.
+Dataset containing 466,692 scheduled events for a population of 1,600
+cattle herds over 1,460 days (4 years). Demonstrates how demographic and
+movement events affect SEIR dynamics in a cattle disease context.
 
 ## Usage
 
@@ -12,96 +12,107 @@ events_SEIR()
 
 ## Value
 
-A `data.frame`
+A `data.frame` with columns:
+
+- event:
+
+  Event type: "exit", "enter", or "extTrans"
+
+- time:
+
+  Day when event occurs (1-1460)
+
+- node:
+
+  Affected herd identifier (1-1600)
+
+- dest:
+
+  Destination herd for external transfer events
+
+- n:
+
+  Number of cattle affected
+
+- select:
+
+  Model compartment to affect (see
+  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md))
 
 ## Details
 
-Example data to initialize scheduled events (see
-[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md))
-for a population of 1600 nodes and demonstrate the
-[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR-class.md) model.
-The dataset contains 466692 events for 1600 nodes distributed over 4 \*
-365 days. The events are divided into three types: ‘Exit’ events remove
-individuals from the population (n = 182535), ‘Enter’ events add
-individuals to the population (n = 182685), and ‘External transfer’
-events move individuals between nodes in the population (n = 101472).
-The vignette contains a detailed description of how scheduled events
-operate on a model.
+The event data contains three types of scheduled events that affect
+cattle herds (nodes):
+
+- Exit:
+
+  Deaths or removal of cattle from a herd (n = 182,535). These events
+  decrease the population and affect all disease compartments
+  proportionally.
+
+- Enter:
+
+  Births or introduction of cattle to a herd (n = 182,685). These events
+  add susceptible cattle to herds, increasing overall herd size.
+
+- External transfer:
+
+  Movement of cattle between herds (n = 101,472). These events transfer
+  cattle from one herd to another, potentially facilitating between-herd
+  disease transmission.
+
+Events are distributed across all 1,600 herds over the 4-year period,
+reflecting realistic patterns of cattle demographic change and
+herd-to-herd movement. The timing and frequency of events can
+significantly influence disease dynamics simulated by the model.
+
+## See also
+
+[`u0_SEIR`](http://stewid.github.io/SimInf/reference/u0_SEIR.md) for the
+corresponding initial cattle population,
+[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md) for creating
+SEIR models with these events, and
+[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+for event structure details
 
 ## Examples
 
 ``` r
-## For reproducibility, call the set.seed() function and specify
-## the number of threads to use. To use all available threads,
-## remove the set_num_threads() call.
+if (FALSE) { # \dontrun{
+## For reproducibility, call the set.seed() function and specify the
+## number of threads to use. To use all available threads, remove the
+## set_num_threads() call.
 set.seed(123)
 set_num_threads(1)
 
-## Create an 'SEIR' model with 1600 nodes and initialize
-## it to run over 4*365 days. Add one infected individual
-## to the first node.
+## Create a 'SEIR' model with 1600 cattle herds (nodes) and initialize
+## it to run over 4*365 days. Add ten exposed animals to the first
+## herd. Define 'tspan' to record the state of the system at weekly
+## time-points. Load scheduled events for the population of nodes with
+## births, deaths and between-node movements of individuals.
 u0 <- u0_SEIR()
-u0$I[1] <- 1
-tspan <- seq(from = 1, to = 4*365, by = 1)
+u0$E[1] <- 10
 model <- SEIR(u0      = u0,
-              tspan   = tspan,
+              tspan   = seq(from = 1, to = 4*365, by = 7),
               events  = events_SEIR(),
               beta    = 0.16,
               epsilon = 0.25,
               gamma   = 0.01)
 
-## Display the number of individuals affected by each event type
-## per day.
+## Display the number of cattle affected by each event type per day.
 plot(events(model))
-
 
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
+
+## Plot the median and interquartile range of the number of
+## susceptible, infected and recovered individuals.
 plot(result)
 
+## Plot the trajectory for the first herd.
+plot(result, index = 1)
 
-## Summarize the trajectory. The summary includes the number of
-## events by event type.
+## Summarize trajectory
 summary(result)
-#> Model: SEIR
-#> Number of nodes: 1600
-#> 
-#> Transitions
-#> -----------
-#>  S -> beta*S*I/(S+E+I+R) -> E
-#>  E -> epsilon*E -> I
-#>  I -> gamma*I -> R
-#> 
-#> Global data
-#> -----------
-#>  Number of parameters without a name: 0
-#>  - None
-#> 
-#> Local data
-#> ----------
-#>  Parameter Value
-#>  beta      0.16 
-#>  epsilon   0.25 
-#>  gamma     0.01 
-#> 
-#> Scheduled events
-#> ----------------
-#>  Exit: 182535
-#>  Enter: 182685
-#>  Internal transfer: 0
-#>  External transfer: 101472
-#> 
-#> Network summary
-#> ---------------
-#>             Min. 1st Qu. Median Mean 3rd Qu. Max.
-#>  Indegree:  40.0    57.0   62.0 62.1    68.0 90.0
-#>  Outdegree: 36.0    57.0   62.0 62.1    67.0 89.0
-#> 
-#> Compartments
-#> ------------
-#>       Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-#>  S   0.000   5.000  13.000  55.083 111.000 221.000
-#>  E   0.000   0.000   0.000   0.479   0.000  34.000
-#>  I   0.000   0.000   4.000  10.865  11.000 165.000
-#>  R   0.000   0.000  63.000  58.098 105.000 218.000
+} # }
 ```

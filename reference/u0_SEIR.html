@@ -106,18 +106,17 @@ and demographic events</p></div>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co">## For reproducibility, call the set.seed() function and specify</span></span></span>
-<span class="r-in"><span><span class="co">## the number of threads to use. To use all available threads,</span></span></span>
-<span class="r-in"><span><span class="co">## remove the set_num_threads() call.</span></span></span>
+<span class="r-in"><span><span class="co">## For reproducibility, call the set.seed() function and specify the</span></span></span>
+<span class="r-in"><span><span class="co">## number of threads to use. To use all available threads, remove the</span></span></span>
+<span class="r-in"><span><span class="co">## set_num_threads() call.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Create a 'SEIR' model with 1600 cattle herds (nodes) and</span></span></span>
-<span class="r-in"><span><span class="co">## initialize it to run over 4*365 days. Add ten exposed animals</span></span></span>
-<span class="r-in"><span><span class="co">## to the first herd. Define 'tspan' to record the state of the</span></span></span>
-<span class="r-in"><span><span class="co">## system at weekly time-points. Load scheduled events for the</span></span></span>
-<span class="r-in"><span><span class="co">## population of nodes with births, deaths and between-node</span></span></span>
-<span class="r-in"><span><span class="co">## movements of individuals.</span></span></span>
+<span class="r-in"><span><span class="co">## Create a 'SEIR' model with 1600 cattle herds (nodes) and initialize</span></span></span>
+<span class="r-in"><span><span class="co">## it to run over 4*365 days. Add ten exposed animals to the first</span></span></span>
+<span class="r-in"><span><span class="co">## herd. Define 'tspan' to record the state of the system at weekly</span></span></span>
+<span class="r-in"><span><span class="co">## time-points. Load scheduled events for the population of nodes with</span></span></span>
+<span class="r-in"><span><span class="co">## births, deaths and between-node movements of individuals.</span></span></span>
 <span class="r-in"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu">u0_SEIR</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">u0</span><span class="op">$</span><span class="va">E</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></span>
 <span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SEIR.html">SEIR</a></span><span class="op">(</span>u0      <span class="op">=</span> <span class="va">u0</span>,</span></span>
@@ -127,8 +126,14 @@ and demographic events</p></div>
 <span class="r-in"><span>              epsilon <span class="op">=</span> <span class="fl">0.25</span>,</span></span>
 <span class="r-in"><span>              gamma   <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Display the number of cattle affected by each event type per day.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="events.html">events</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Run the model to generate a single stochastic trajectory.</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot the median and interquartile range of the number of</span></span></span>
+<span class="r-in"><span><span class="co">## susceptible, infected and recovered individuals.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot the trajectory for the first herd.</span></span></span>

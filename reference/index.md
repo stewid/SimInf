@@ -142,7 +142,9 @@
   Extract the events from a `SimInf_model` object
 
 - [`events_SEIR()`](http://stewid.github.io/SimInf/reference/events_SEIR.md)
-  : Example data to initialize events for the ‘SEIR’ model
+  :
+
+  Example Event Data for the SEIR Model with Cattle Herds
 
 - [`events_SIR()`](http://stewid.github.io/SimInf/reference/events_SIR.md)
   : Example data to initialize events for the ‘SIR’ model
