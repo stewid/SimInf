@@ -198,35 +198,7 @@ SISe <- function(u0,
 ##' a model.
 ##' @return A \code{data.frame}
 ##' @export
-##' @examples
-##' ## For reproducibility, call the set.seed() function and specify
-##' ## the number of threads to use. To use all available threads,
-##' ## remove the set_num_threads() call.
-##' set.seed(123)
-##' set_num_threads(1)
-##'
-##' ## Create an 'SISe' model with 1600 nodes and initialize
-##' ## it to run over 4*365 days. Add one infected individual
-##' ## to the first node.
-##' u0 <- u0_SISe()
-##' u0$I[1] <- 1
-##' tspan <- seq(from = 1, to = 4*365, by = 1)
-##' model <- SISe(u0 = u0, tspan = tspan, events = events_SISe(),
-##'               phi = 0, upsilon = 1.8e-2, gamma = 0.1, alpha = 1,
-##'               beta_t1 = 1.0e-1, beta_t2 = 1.0e-1, beta_t3 = 1.25e-1,
-##'               beta_t4 = 1.25e-1, end_t1 = 91, end_t2 = 182,
-##'               end_t3 = 273, end_t4 = 365, epsilon = 0)
-##'
-##' ## Display the number of individuals affected by each event type
-##' ## per day.
-##' plot(events(model))
-##'
-##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model)
-##'
-##' ## Summarize the trajectory. The summary includes the number of
-##' ## events by event type.
-##' summary(result)
+##' @example man/examples/SISe.R
 events_SISe <- function() {
     utils::data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 2L
@@ -276,37 +248,7 @@ events_SISe <- function() {
 ##' and demographic events
 ##'
 ##' @export
-##' @examples
-##' \dontrun{
-##' ## For reproducibility, call the set.seed() function and specify
-##' ## the number of threads to use. To use all available threads,
-##' ## remove the set_num_threads() call.
-##' set.seed(123)
-##' set_num_threads(1)
-##'
-##' ## Create an 'SISe' model with 1600 cattle herds (nodes) and
-##' ## initialize it to run over 4*365 days. Add ten infected animals
-##' ## to the first herd. Define 'tspan' to record the state of the
-##' ## system at daily time-points.
-##' u0 <- u0_SISe()
-##' u0$I[1] <- 10
-##' tspan <- seq(from = 1, to = 4*365, by = 7)
-##' model <- SISe(u0 = u0, tspan = tspan, events = events_SISe(),
-##'               phi = 0, upsilon = 1.8e-2, gamma = 0.1, alpha = 1,
-##'               beta_t1 = 1.0e-1, beta_t2 = 1.0e-1, beta_t3 = 1.25e-1,
-##'               beta_t4 = 1.25e-1, end_t1 = 91, end_t2 = 182,
-##'               end_t3 = 273, end_t4 = 365, epsilon = 0)
-##'
-##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model)
-##' plot(result)
-##'
-##' ## Plot the trajectory for the first herd.
-##' plot(result, index = 1)
-##'
-##' ## Summarize trajectory
-##' summary(result)
-##' }
+##' @example man/examples/SISe.R
 u0_SISe <- function() {
     u0 <- u0_SIR()
     u0[, c("S", "I")]
