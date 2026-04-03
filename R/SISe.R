@@ -207,13 +207,15 @@ SISe <- function(u0,
 ##'
 ##' @return A \code{data.frame} with columns:
 ##'   \describe{
-##'     \item{event}{Event type: "exit", "enter", or "extTrans"}
-##'     \item{time}{Day when event occurs (1-1460)}
-##'     \item{node}{Affected herd identifier (1-1600)}
-##'     \item{dest}{Destination herd for external transfer events}
-##'     \item{n}{Number of cattle affected}
+##'     \item{event}{Event type: "exit", "enter", or "extTrans".}
+##'     \item{time}{Day when event occurs (1-1460).}
+##'     \item{node}{Affected herd identifier (1-1600).}
+##'     \item{dest}{Destination herd for external transfer events.}
+##'     \item{n}{Number of cattle affected.}
+##'     \item{proportion}{0. Not used in this example.}
 ##'     \item{select}{Model compartment to affect (see
-##'       \code{\linkS4class{SimInf_events}})}
+##'       \code{\linkS4class{SimInf_events}}).}
+##'     \item{shift}{0. Not used in this example.}
 ##'   }
 ##'
 ##' @seealso
