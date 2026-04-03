@@ -77,14 +77,16 @@ if (FALSE) { # \dontrun{
 set.seed(123)
 set_num_threads(1)
 
-## Create a 'SEIR' model with 1600 cattle herds (nodes) and initialize
-## it to run over 4*365 days. Add ten exposed animals to the
-## first herd.
+## Create a 'SEIR' model with 1600 cattle herds (nodes) and
+## initialize it to run over 4*365 days. Add ten exposed animals
+## to the first herd. Define 'tspan' to record the state of the
+## system at weekly time-points. Load scheduled events for the
+## population of nodes with births, deaths and between-node
+## movements of individuals.
 u0 <- u0_SEIR()
 u0$E[1] <- 10
-tspan <- seq(from = 1, to = 4*365, by = 7)
 model <- SEIR(u0      = u0,
-              tspan   = tspan,
+              tspan   = seq(from = 1, to = 4*365, by = 7),
               events  = events_SEIR(),
               beta    = 0.16,
               epsilon = 0.25,
