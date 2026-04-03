@@ -16,28 +16,36 @@ A `data.frame` with columns:
 
 - event:
 
-  Event type: "exit", "enter", or "extTrans"
+  Event type: "exit", "enter", or "extTrans".
 
 - time:
 
-  Day when event occurs (1-1460)
+  Day when event occurs (1-1460).
 
 - node:
 
-  Affected herd identifier (1-1600)
+  Affected herd identifier (1-1600).
 
 - dest:
 
-  Destination herd for external transfer events
+  Destination herd for external transfer events.
 
 - n:
 
-  Number of cattle affected
+  Number of cattle affected.
+
+- proportion:
+
+  0\. Not used in this example.
 
 - select:
 
   Model compartment to affect (see
-  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md))
+  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)).
+
+- shift:
+
+  0\. Not used in this example.
 
 ## Details
 
