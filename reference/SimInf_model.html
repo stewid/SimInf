@@ -156,10 +156,10 @@ the <em>enter</em> event, the values in <code>E[, select]</code> are
 used as weights when determining which compartment to add
 individuals to. If the column <code>E[, select]</code> contains
 several non-zero entries, the compartment is sampled with
-probability proportional to the weight in <code>E[,
-select]</code>. The select matrix <code>E</code> can either be specified
-as a <code>matrix</code>, or as a <code>data.frame</code>.  When <code>E</code>
-is specified as a <code>data.frame</code>, it must have one column
+probability proportional to the weight in <code>E[, select]</code>.
+The select matrix <code>E</code> can either be specified as a
+<code>matrix</code>, or as a <code>data.frame</code>.  When <code>E</code> is
+specified as a <code>data.frame</code>, it must have one column
 named <code>compartment</code> that defines which compartment is
 referred to, and one column <code>select</code> that defines the
 column in <code>E</code>.  In addition, the <code>data.frame</code> can
