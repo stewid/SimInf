@@ -237,13 +237,13 @@ init_events <- function(events, t0) {
 ##'     select[i]]}, where \code{select} is an integer vector.
 ##'   }
 ##'   \item{shift}{
-##'     Determines how individuals in \emph{internal transfer} and
-##'     \emph{external transfer} events are shifted to enter another
-##'     compartment.  The sampled individuals are shifted according to
-##'     column \code{shift[i]} in matrix \code{N} i.e., \code{N[,
-##'     shift[i]]}, where \code{shift} is an integer vector.  See
-##'     above for a description of \code{N}. Unsued for the other
-##'     event types.
+##'     Determines how individuals in \emph{enter}, \emph{internal
+##'     transfer} and \emph{external transfer} events are shifted to
+##'     enter another compartment.  The sampled individuals are
+##'     shifted according to column \code{shift[i]} in matrix \code{N}
+##'     i.e., \code{N[, shift[i]]}, where \code{shift} is an integer
+##'     vector.  See above for a description of \code{N}. Unsued for
+##'     the other event types.
 ##'   }
 ##' }
 ##'

@@ -90,8 +90,25 @@ setValidity("SimInf_model", valid_SimInf_model_object)
 ##'     contain an optional column named \code{value} with the value
 ##'     in \code{E}.  When the \code{value} column is missing,
 ##'     \code{1} is used as the default value.
-##' @param N Sparse matrix to handle scheduled events, see
-##'     \code{\linkS4class{SimInf_events}}.
+##' @param N A matrix to handle scheduled events, see
+##'     \code{\linkS4class{SimInf_events}}. Each row in the matrix
+##'     corresponds to one compartment in the model. The values in a
+##'     column define how to move sampled individuals before adding
+##'     them to the destination. Let \code{q <- shift}, then each
+##'     non-zero entry in \code{N[, q]} defines the number of rows to
+##'     move sampled individuals from that compartment i.e., sampled
+##'     individuals from compartment \code{p} are moved to compartment
+##'     \code{N[p, q] + p}, where \code{1 <= N[p, q] + p <=
+##'     N_compartments}. This matrix is used for \emph{enter},
+##'     \emph{internal transfer} and \emph{external transfer} events.
+##'     The shift matrix \code{N} can either be specified as a
+##'     \code{matrix}, or as a \code{data.frame}.  When \code{N} is
+##'     specified as a \code{data.frame}, it must have one column
+##'     named \code{compartment} that defines which compartment is
+##'     referred to, and one column \code{shift} that defines the
+##'     column in \code{N}.  In addition, the \code{data.frame} must
+##'     contain a column named \code{value} with the integer value in
+##'     \code{N}.
 ##' @param C_code Character vector with optional model C code. If
 ##'     non-empty, the C code is written to a temporary C-file when
 ##'     the \code{run} method is called.  The temporary C-file is

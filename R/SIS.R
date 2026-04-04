@@ -193,7 +193,7 @@ SIS <- function(u0,
 ##' details
 ##'
 ##' @export
-##' @example man/example/SIS.R
+##' @example man/examples/SIS.R
 events_SIS <- function() {
     events_SISe()
 }
