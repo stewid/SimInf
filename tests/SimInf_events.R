@@ -593,11 +593,22 @@ check_error(res, "'value' must have one row for each compartment in the model.")
 ## Check get/set shift_matrix
 model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
 
-## Set the shift matrix
+## Set the shift matrix using a matrix
 shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
 
 N_expected <- structure(c(2L, 1L, 0L), .Dim = c(3L, 1L),
                         .Dimnames = list(c("S", "I", "R"), "1"))
+
+## Extract the shift matrix from the model
+N_observed <- shift_matrix(model)
+
+stopifnot(identical(N_expected, N_observed))
+
+## Set the shift matrix using a data.frame
+shift_matrix(model) <- data.frame(
+    compartment = c("S", "I", "R"),
+    shift = c(1, 1, 1),
+    value = c(2, 1, 0))
 
 ## Extract the shift matrix from the model
 N_observed <- shift_matrix(model)

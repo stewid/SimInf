@@ -147,6 +147,8 @@ SimInf_model <- function(G,
         stop("'events' must be NULL or a data.frame.", call. = FALSE)
     if (is.data.frame(E))
         E <- E_from_data_frame(E, rownames(S))
+    if (is.data.frame(N))
+        N <- N_from_data_frame(N, rownames(S))
     events <- SimInf_events(E = E, N = N, events = events, t0 = tspan$t0)
 
     methods::new("SimInf_model",

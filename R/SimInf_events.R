@@ -78,6 +78,37 @@ valid_SimInf_events_object <- function(object) {
 ## Assign the function as the validity method for the class.
 setValidity("SimInf_events", valid_SimInf_events_object)
 
+## Utility function to transform the shift matrix N specified as a
+## data.frame into a matrix.
+N_from_data_frame <- function(N, compartments) {
+    if (!is.data.frame(N))
+        stop("'N' must be a data.frame.", call. = FALSE)
+
+    ## Ensure the 'compartment', 'shift', and 'value' columns exist in
+    ## 'N'.
+    if (!all(c("compartment", "shift", "value") %in% names(N)))
+        stop("Missing columns in 'N'.", call. = FALSE)
+
+    ## Ensure all 'compartment' names are valid.
+    N$compartment <- as.character(N$compartment)
+    if (!all(N$compartment %in% compartments))
+        stop("Invalid compartment in 'N'.", call. = FALSE)
+
+    N <- N[, c("compartment", "shift", "value"), drop = FALSE]
+
+    check_integer_arg(N$shift)
+    check_integer_arg(N$value)
+    m <- matrix(data = 0L,
+                nrow = length(compartments),
+                ncol = max(N$shift),
+                dimnames = list(compartments, seq_len(max(N$shift))))
+
+    m[cbind(match(N$compartment, compartments), N$shift)] <-
+        as.integer(N$value)
+
+    m
+}
+
 ## Utility function to transform the select matrix E specified as a
 ## data.frame into a matrix.
 E_from_data_frame <- function(E, compartments) {
@@ -609,11 +640,31 @@ setMethod(
 
 ##' Set the shift matrix for a \code{SimInf_model} object
 ##'
-##' Utility function to set \code{events@@N} in a \code{SimInf_model}
-##' object, see \code{\linkS4class{SimInf_events}}
-##' @param model The \code{model} to set the shift matrix
-##'     \code{events@@N}.
-##' @param value A matrix.
+##' Utility function to set \code{events@N} in a \code{SimInf_model}
+##' object, see \code{\linkS4class{SimInf_events}}.
+##'
+##' @param model The \code{SimInf_model} object to set the shift
+##'     matrix for.
+##' @param value The new value for \code{N} in the model. \code{N} is
+##'     a matrix to handle scheduled events, see
+##'     \code{\linkS4class{SimInf_events}}. Each row in \code{N}
+##'     corresponds to one compartment in the model. The values in a
+##'     column define how to move sampled individuals before adding
+##'     them to the destination. Let \code{q <- shift}, then each
+##'     non-zero entry in \code{N[, q]} defines the number of rows to
+##'     move sampled individuals from that compartment i.e., sampled
+##'     individuals from compartment \code{p} are moved to compartment
+##'     \code{N[p, q] + p}, where \code{1 <= N[p, q] + p <=
+##'     N_compartments}. This matrix is used for \emph{enter},
+##'     \emph{internal transfer} and \emph{external transfer} events.
+##'     The shift matrix \code{N} can either be specified as a
+##'     \code{matrix}, or as a \code{data.frame}.  When \code{N} is
+##'     specified as a \code{data.frame}, it must have one column
+##'     named \code{compartment} that defines which compartment is
+##'     referred to, and one column \code{shift} that defines the
+##'     column in \code{N}.  In addition, the \code{data.frame} must
+##'     contain a column named \code{value} with the integer value in
+##'     \code{N}.
 ##' @return \code{SimInf_model} object
 ##' @export
 ##' @examples
@@ -621,10 +672,19 @@ setMethod(
 ##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
 ##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
 ##'
-##' ## Set the shift matrix
+##' ## Set the shift matrix.
 ##' shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
 ##'
-##' ## Extract the shift matrix from the model
+##' ## Extract the shift matrix from the model.
+##' shift_matrix(model)
+##'
+##' ## Set the shift matrix using a data.frame instead.
+##' shift_matrix(model) <- data.frame(
+##'     compartment = c("S", "I", "R"),
+##'     shift = c(1, 1, 1),
+##'     value = c(2, 1, 0))
+##'
+##' ## Extract the shift matrix from the model.
 ##' shift_matrix(model)
 setGeneric(
     "shift_matrix<-",
@@ -640,6 +700,8 @@ setMethod(
     "shift_matrix<-",
     signature(model = "SimInf_model"),
     function(model, value) {
+        if (is.data.frame(value))
+            value <- N_from_data_frame(value, rownames(model@S))
         model@events@N <- check_N(value)
 
         if (nrow(model@events@N) > 0 && is.null(rownames(model@events@N)))
