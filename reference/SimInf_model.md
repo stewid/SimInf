@@ -99,17 +99,22 @@ SimInf_model(
   A matrix to handle scheduled events, see
   [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md).
   Each row in the matrix corresponds to one compartment in the model.
-  The non-zero entries in a column indicates the compartments to include
+  The non-zero entries in a column indicate the compartments to include
   in an event. For the *exit*, *internal transfer* and *external
-  transfer* events, a non-zero entry indicate the compartments to sample
-  individuals from. For the *enter* event, all individuals enter first
-  non-zero compartment. The select matrix `E` can either be specified as
-  a `matrix`, or as a `data.frame`. When `E` is specified as a
-  `data.frame`, it must have one column named `compartment` that defines
-  which compartment is referred to, and one column `select` that defines
-  the column in `E`. In addition, the `data.frame` can contain an
-  optional column named `value` with the value in `E`. When the `value`
-  column is missing, `1` is used as the default value.
+  transfer* events, the values in `E[, select]` are used as weights when
+  sampling individuals without replacement, with probability
+  proportional to the weight. For the *enter* event, the values in
+  `E[, select]` are used as weights when determining which compartment
+  to add individuals to. If the column `E[, select]` contains several
+  non-zero entries, the compartment is sampled with probability
+  proportional to the weight in `E[, select]`. The select matrix `E` can
+  either be specified as a `matrix`, or as a `data.frame`. When `E` is
+  specified as a `data.frame`, it must have one column named
+  `compartment` that defines which compartment is referred to, and one
+  column `select` that defines the column in `E`. In addition, the
+  `data.frame` can contain an optional column named `value` with the
+  value in `E`. When the `value` column is missing, `1` is used as the
+  default value.
 
 - N:
 
