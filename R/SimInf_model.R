@@ -71,14 +71,19 @@ setValidity("SimInf_model", valid_SimInf_model_object)
 ##' @param E A matrix to handle scheduled events, see
 ##'     \code{\linkS4class{SimInf_events}}.  Each row in the matrix
 ##'     corresponds to one compartment in the model. The non-zero
-##'     entries in a column indicates the compartments to include in
-##'     an event.  For the \emph{exit}, \emph{internal transfer} and
-##'     \emph{external transfer} events, a non-zero entry indicate the
-##'     compartments to sample individuals from.  For the \emph{enter}
-##'     event, all individuals enter first non-zero compartment.  The
-##'     select matrix \code{E} can either be specified as a
-##'     \code{matrix}, or as a \code{data.frame}.  When \code{E} is
-##'     specified as a \code{data.frame}, it must have one column
+##'     entries in a column indicate the compartments to include in an
+##'     event. For the \emph{exit}, \emph{internal transfer} and
+##'     \emph{external transfer} events, the values in \code{E[,
+##'     select]} are used as weights when sampling individuals without
+##'     replacement, with probability proportional to the weight. For
+##'     the \emph{enter} event, the values in \code{E[, select]} are
+##'     used as weights when determining which compartment to add
+##'     individuals to. If the column \code{E[, select]} contains
+##'     several non-zero entries, the compartment is sampled with
+##'     probability proportional to the weight in \code{E[,
+##'     select]}. The select matrix \code{E} can either be specified
+##'     as a \code{matrix}, or as a \code{data.frame}.  When \code{E}
+##'     is specified as a \code{data.frame}, it must have one column
 ##'     named \code{compartment} that defines which compartment is
 ##'     referred to, and one column \code{select} that defines the
 ##'     column in \code{E}.  In addition, the \code{data.frame} can
