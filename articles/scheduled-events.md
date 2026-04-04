@@ -389,8 +389,8 @@ default, however, for clarity we specifically set that value.
 ``` r
 select_matrix(model) <- data.frame(
   compartment = c("S", "R"),
-  select =      c( 1,   1),
-  value  =      c( 1,   1))
+  select      = c(1, 1),
+  value       = c(1, 1))
 ```
 
 Now, verify the select matrix.
@@ -422,8 +422,8 @@ S compartment compared to the R compartment.
 ``` r
 select_matrix(model) <- data.frame(
   compartment = c("S", "R"),
-  select =      c( 1,   1),
-  value  =      c( 2,   1))
+  select      = c(1, 1),
+  value       = c(2, 1))
 ```
 
 ``` r
@@ -432,7 +432,53 @@ plot(run(model))
 
 ![\*\*Figure 9.\*\* Individuals are more likely to enter as susceptible
 (\$S\$) compared to as recovered
-(\$R)](scheduled-events_files/figure-html/unnamed-chunk-26-1.png)
+(\$R\$)](scheduled-events_files/figure-html/unnamed-chunk-26-1.png)
 
 **Figure 9.** Individuals are more likely to enter as susceptible ($S$)
-compared to as recovered (\$R)
+compared to as recovered ($R$)
+
+## Exit events: Removing individuals
+
+Exit events remove individuals from a node. Common use cases include
+natural mortality or culling. Like enter events, the E matrix weights
+determine which compartments individuals are removed from when multiple
+compartments are selected.
+
+## Example: Natural mortality
+
+Let us create a model where individuals die at scheduled times.
+
+``` r
+u0 <- data.frame(S = 20, I = 10, R = 0)
+```
+
+``` r
+events <- data.frame(
+  event      = rep("exit", 3),  ## "exit" remove individuals from a node
+  time       = c(5, 10, 15),    ## The time that the event happens
+  node       = c(1, 1, 1),      ## In which node does the event occur
+  dest       = c(0, 0, 0),      ## Not used for exit events
+  n          = c(5, 5, 5),      ## How many individuals are removed
+  proportion = c(0, 0, 0),      ## Not used when n > 0
+  select     = c(1, 1, 1),      ## Target the S compartment
+  shift      = c(0, 0, 0))      ## Not used in this example
+```
+
+``` r
+model <- SIR(u0 = u0,
+             tspan = 0:20,
+             events = events,
+             beta = 0,
+             gamma = 0)
+```
+
+``` r
+plot(run(model))
+```
+
+![\*\*Figure 10.\*\* The number of susceptible (\$S\$) individuals
+decreases by 5 individuals at each scheduled
+event.](scheduled-events_files/figure-html/unnamed-chunk-30-1.png)
+
+**Figure 10.** The number of susceptible ($S$) individuals decreases by
+5 individuals at each scheduled event.
