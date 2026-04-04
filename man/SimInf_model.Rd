@@ -90,10 +90,10 @@ the \emph{enter} event, the values in \code{E[, select]} are
 used as weights when determining which compartment to add
 individuals to. If the column \code{E[, select]} contains
 several non-zero entries, the compartment is sampled with
-probability proportional to the weight in \code{E[,
-select]}. The select matrix \code{E} can either be specified
-as a \code{matrix}, or as a \code{data.frame}.  When \code{E}
-is specified as a \code{data.frame}, it must have one column
+probability proportional to the weight in \code{E[, select]}.
+The select matrix \code{E} can either be specified as a
+\code{matrix}, or as a \code{data.frame}.  When \code{E} is
+specified as a \code{data.frame}, it must have one column
 named \code{compartment} that defines which compartment is
 referred to, and one column \code{select} that defines the
 column in \code{E}.  In addition, the \code{data.frame} can
