@@ -81,6 +81,21 @@ Events can, for example, be used to simulate disese spread among
 multiple subpopulations (e.g., farms) when individuals can move between
 the subpopulations and thus transfer infection, see Figure 1. In SimInf,
 we use <code>node</code> to denote a subpopulation.</p>
+<p>SimInf supports four types of scheduled events:</p>
+<ul>
+<li>
+<strong>Enter</strong>: Add individuals to a node (e.g.,
+births)</li>
+<li>
+<strong>Exit</strong>: Remove individuals from a node (e.g.,
+deaths)</li>
+<li>
+<strong>Internal transfer</strong>: Move individuals between
+compartments within one node (e.g., vaccination, ageing)</li>
+<li>
+<strong>External transfer</strong>: Move individuals between nodes
+(e.g., livestock movements)</li>
+</ul>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mspace width="0.222em"></mspace><annotation encoding="application/x-tex">~</annotation></semantics></math></p>
 <div class="figure" style="text-align: left">
 <img src="img/temporal-network.svg" class="r-plt" alt="**Figure 1.** Illustration of movements between nodes. Each time step depicts movements during one time unit, for example, a day. The network has *N=4* nodes where node *1* is infected and nodes *2*--*4* are non-infected. Arrows indicate movements of individuals from a source node to a destination node and labels denote the size of the shipment. Here, infection may spread from node *1* to node *3* at *t=2* and then from node *3* to node *2* at *t=3*." width="100%"><p class="caption">
@@ -96,7 +111,7 @@ denote the size of the shipment. Here, infection may spread from node
 </div>
 </div>
 <div class="section level2">
-<h2 id="a-first-example">A first example<a class="anchor" aria-label="anchor" href="#a-first-example"></a>
+<h2 id="a-first-example-external-transfer-events">A first example: External transfer events<a class="anchor" aria-label="anchor" href="#a-first-example-external-transfer-events"></a>
 </h2>
 <p>Let us define the <strong>6</strong> movement events in Figure 1 to
 include them in an SIR model. Below is a <code>data.frame</code>, that
@@ -322,6 +337,51 @@ compartments are more likely of being selected for a movement event
 compared to individuals in the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
 compartment.
+</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="enter-events-adding-individuals">Enter events: Adding individuals<a class="anchor" aria-label="anchor" href="#enter-events-adding-individuals"></a>
+</h2>
+<p>Enter events are used to add individuals to a node. A common use case
+is modelling births in a population. New individuals can be added to
+specific compartments, and the E matrix weights determine which
+compartments receive the new individuals when multiple compartments are
+selected.</p>
+</div>
+<div class="section level2">
+<h2 id="example-births-entering-a-population">Example: Births entering a population<a class="anchor" aria-label="anchor" href="#example-births-entering-a-population"></a>
+</h2>
+<p>Let us create a simple model where births occur at regular intervals.
+Newborns enter the susceptible compartment.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">20</span>, I <span class="op">=</span> <span class="fl">10</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p>We schedule births at times 5, 10, and 15, adding 10 individuals each
+time. All newborns enter the susceptible compartment (column 1 in the E
+matrix).</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"enter"</span>, <span class="fl">3</span><span class="op">)</span>, <span class="co">## "enter" add new individuals to a node</span></span>
+<span>  time       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span>,    <span class="co">## The time that the event happens</span></span>
+<span>  node       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,      <span class="co">## In which node does the event occur</span></span>
+<span>  dest       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,      <span class="co">## Not used for enter events</span></span>
+<span>  n          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>,   <span class="co">## How many individuals are added</span></span>
+<span>  proportion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,      <span class="co">## Not used when n &gt; 0</span></span>
+<span>  select     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,      <span class="co">## Target the S compartment</span></span>
+<span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>      <span class="co">## Not used in this example</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>             tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,</span>
+<span>             events <span class="op">=</span> <span class="va">events</span>,</span>
+<span>             beta <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>             gamma <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="**Figure 7.** The number of susceptible ($S$) individuals increases by 10 individuals at each scheduled event." width="672"><p class="caption">
+<strong>Figure 7.</strong> The number of susceptible
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
+individuals increases by 10 individuals at each scheduled event.
 </p>
 </div>
 </div>

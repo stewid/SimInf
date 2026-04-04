@@ -11,6 +11,15 @@ multiple subpopulations (e.g., farms) when individuals can move between
 the subpopulations and thus transfer infection, see Figure 1. In SimInf,
 we use `node` to denote a subpopulation.
 
+SimInf supports four types of scheduled events:
+
+- **Enter**: Add individuals to a node (e.g., births)
+- **Exit**: Remove individuals from a node (e.g., deaths)
+- **Internal transfer**: Move individuals between compartments within
+  one node (e.g., vaccination, ageing)
+- **External transfer**: Move individuals between nodes (e.g., livestock
+  movements)
+
 $\ $
 
 ![\*\*Figure 1.\*\* Illustration of movements between nodes. Each time
@@ -30,7 +39,7 @@ node to a destination node and labels denote the size of the shipment.
 Here, infection may spread from node *1* to node *3* at *t=2* and then
 from node *3* to node *2* at *t=3*.
 
-## A first example
+## A first example: External transfer events
 
 Let us define the **6** movement events in Figure 1 to include them in
 an SIR model. Below is a `data.frame`, that contains the movements.
@@ -280,3 +289,55 @@ compartment.](scheduled-events_files/figure-html/unnamed-chunk-14-1.png)
 **Figure 6.** The individuals in the $I$ and $R$ compartments are more
 likely of being selected for a movement event compared to individuals in
 the $S$ compartment.
+
+## Enter events: Adding individuals
+
+Enter events are used to add individuals to a node. A common use case is
+modelling births in a population. New individuals can be added to
+specific compartments, and the E matrix weights determine which
+compartments receive the new individuals when multiple compartments are
+selected.
+
+## Example: Births entering a population
+
+Let us create a simple model where births occur at regular intervals.
+Newborns enter the susceptible compartment.
+
+``` r
+u0 <- data.frame(S = 20, I = 10, R = 0)
+```
+
+We schedule births at times 5, 10, and 15, adding 10 individuals each
+time. All newborns enter the susceptible compartment (column 1 in the E
+matrix).
+
+``` r
+events <- data.frame(
+  event      = rep("enter", 3), ## "enter" add new individuals to a node
+  time       = c(5, 10, 15),    ## The time that the event happens
+  node       = c(1, 1, 1),      ## In which node does the event occur
+  dest       = c(0, 0, 0),      ## Not used for enter events
+  n          = c(10, 10, 10),   ## How many individuals are added
+  proportion = c(0, 0, 0),      ## Not used when n > 0
+  select     = c(1, 1, 1),      ## Target the S compartment
+  shift      = c(0, 0, 0))      ## Not used in this example
+```
+
+``` r
+model <- SIR(u0 = u0,
+             tspan = 0:20,
+             events = events,
+             beta = 0,
+             gamma = 0)
+```
+
+``` r
+plot(run(model))
+```
+
+![\*\*Figure 7.\*\* The number of susceptible (\$S\$) individuals
+increases by 10 individuals at each scheduled
+event.](scheduled-events_files/figure-html/unnamed-chunk-18-1.png)
+
+**Figure 7.** The number of susceptible ($S$) individuals increases by
+10 individuals at each scheduled event.
