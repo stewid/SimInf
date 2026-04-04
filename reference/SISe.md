@@ -1,6 +1,6 @@
 # Create a SISe model
 
-Create an ‘SISe’ model to be used by the simulation framework.
+Create an SISe model to be used by the simulation framework.
 
 ## Usage
 
@@ -112,8 +112,8 @@ SISe(
 
 ## Details
 
-The ‘SISe’ model contains two compartments; number of susceptible (S)
-and number of infectious (I). Additionally, it contains an environmental
+The SISe model contains two compartments; number of susceptible (S) and
+number of infectious (I). Additionally, it contains an environmental
 compartment to model shedding of a pathogen to the environment.
 Consequently, the model has two state transitions,
 

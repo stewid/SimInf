@@ -8,11 +8,17 @@ individuals in a node at a pre-defined time t.
 - `E`:
 
   Each row corresponds to one compartment in the model. The non-zero
-  entries in a column indicates the compartments to include in an event.
+  entries in a column indicate the compartments to include in an event.
   For the *exit*, *internal transfer* and *external transfer* events, a
-  non-zero entry indicate the compartments to sample individuals from.
-  For the *enter* event, all individuals enter first non-zero
-  compartment. `E` is sparse matrix of class
+  non-zero entry indicates the compartments to sample individuals from,
+  where the values in `E[, select]` are used as weights. Individuals are
+  sampled without replacement with probability proportional to the
+  weight in `E[, select]`. For the *enter* event, the values in
+  `E[, select]` are used as weights when determining which compartment
+  to add individuals to. If the column `E[, select]` contains several
+  non-zero entries, the compartment is sampled with probability
+  proportional to the weight in `E[, select]`. `E` is sparse matrix of
+  class
   [`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html).
 
 - `N`:

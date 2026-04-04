@@ -7,7 +7,9 @@
   Extract the C code from a `SimInf_model` object
 
 - [`SEIR-class`](http://stewid.github.io/SimInf/reference/SEIR-class.md)
-  : Definition of the ‘SEIR’ model
+  :
+
+  Definition of the SEIR model
 
 - [`SEIR()`](http://stewid.github.io/SimInf/reference/SEIR.md) :
 
@@ -38,14 +40,18 @@
   a SISe model
 
 - [`SISe3-class`](http://stewid.github.io/SimInf/reference/SISe3-class.md)
-  : Definition of the ‘SISe3’ model
+  :
+
+  Definition of the SISe3 model
 
 - [`SISe3()`](http://stewid.github.io/SimInf/reference/SISe3.md) :
 
   Create a `SISe3` model
 
 - [`SISe3_sp-class`](http://stewid.github.io/SimInf/reference/SISe3_sp-class.md)
-  : Definition of the ‘SISe3_sp’ model
+  :
+
+  Definition of the SISe3_sp model
 
 - [`SISe3_sp()`](http://stewid.github.io/SimInf/reference/SISe3_sp.md) :
 
