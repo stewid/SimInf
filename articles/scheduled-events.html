@@ -554,6 +554,65 @@ individuals decreases faster compared to susceptibles
 </p>
 </div>
 </div>
+<div class="section level2">
+<h2 id="internal-transfer-events-moving-within-a-node">Internal transfer events: Moving within a node<a class="anchor" aria-label="anchor" href="#internal-transfer-events-moving-within-a-node"></a>
+</h2>
+<p>Internal transfer events move individuals between compartments within
+the same node. Common use cases include vaccination (moving from S to R
+or V), ageing between age-structured compartments, or treatment
+effects.</p>
+</div>
+<div class="section level2">
+<h2 id="example-vaccination-of-cattle-herd">Example: Vaccination of cattle herd<a class="anchor" aria-label="anchor" href="#example-vaccination-of-cattle-herd"></a>
+</h2>
+<p>Let us create a model where a vaccination campaign moves susceptible
+individuals to the recovered compartment at a specific time. We will use
+<code>shift=1</code> and show how we can adjust the shift matrix to move
+susceptible to recovered.</p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">100</span>, I <span class="op">=</span> <span class="fl">10</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p>At time 10, we vaccinate 30 susceptible individuals, moving them to
+the R compartment.</p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  event      <span class="op">=</span> <span class="st">"intTrans"</span>, <span class="co">## "intTrans" move individuals within a node</span></span>
+<span>  time       <span class="op">=</span> <span class="fl">10</span>,         <span class="co">## The time that the event happens</span></span>
+<span>  node       <span class="op">=</span> <span class="fl">1</span>,          <span class="co">## In which node does the event occur</span></span>
+<span>  dest       <span class="op">=</span> <span class="fl">0</span>,          <span class="co">## Not used for intTrans events</span></span>
+<span>  n          <span class="op">=</span> <span class="fl">30</span>,         <span class="co">## How many individuals are vaccinated</span></span>
+<span>  proportion <span class="op">=</span> <span class="fl">0</span>,          <span class="co">## Not used when n &gt; 0</span></span>
+<span>  select     <span class="op">=</span> <span class="fl">1</span>,          <span class="co">## Target the S compartment</span></span>
+<span>  shift      <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>          <span class="co">## Use shift column 1 (after modifying N)</span></span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>             tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,</span>
+<span>             events <span class="op">=</span> <span class="va">events</span>,</span>
+<span>             beta <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>             gamma <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p>Let us now change the shift matrix so that we can use our events as
+expected. Susceptible individuals will be moved to the recovered
+compartment. With compartments ordered S=1, I=2, R=3, a value of 2 means
+individuals from compartment 1 (S) move to compartment 1+2=3 (R).</p>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/shift_matrix.html">shift_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>compartment <span class="op">=</span> <span class="st">"S"</span>, shift <span class="op">=</span> <span class="fl">1</span>, value <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p>Now, verify the shift matrix.</p>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/shift_matrix.html">shift_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##   1</span></span>
+<span><span class="co">## S 2</span></span>
+<span><span class="co">## I 0</span></span>
+<span><span class="co">## R 0</span></span></code></pre>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-41-1.png" class="r-plt" alt="**Figure 11.** The number of recovered ($R$) individuals increase at $t=10$." width="672"><p class="caption">
+<strong>Figure 11.</strong> The number of recovered
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>)
+individuals increase at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">t=10</annotation></semantics></math>.
+</p>
+</div>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

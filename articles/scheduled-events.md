@@ -534,3 +534,74 @@ decreases faster compared to susceptibles
 
 **Figure 11.** The number of infected ($I$) individuals decreases faster
 compared to susceptibles ($S$).
+
+## Internal transfer events: Moving within a node
+
+Internal transfer events move individuals between compartments within
+the same node. Common use cases include vaccination (moving from S to R
+or V), ageing between age-structured compartments, or treatment effects.
+
+## Example: Vaccination of cattle herd
+
+Let us create a model where a vaccination campaign moves susceptible
+individuals to the recovered compartment at a specific time. We will use
+`shift=1` and show how we can adjust the shift matrix to move
+susceptible to recovered.
+
+``` r
+u0 <- data.frame(S = 100, I = 10, R = 0)
+```
+
+At time 10, we vaccinate 30 susceptible individuals, moving them to the
+R compartment.
+
+``` r
+events <- data.frame(
+  event      = "intTrans", ## "intTrans" move individuals within a node
+  time       = 10,         ## The time that the event happens
+  node       = 1,          ## In which node does the event occur
+  dest       = 0,          ## Not used for intTrans events
+  n          = 30,         ## How many individuals are vaccinated
+  proportion = 0,          ## Not used when n > 0
+  select     = 1,          ## Target the S compartment
+  shift      = 1)          ## Use shift column 1 (after modifying N)
+```
+
+``` r
+model <- SIR(u0 = u0,
+             tspan = 0:20,
+             events = events,
+             beta = 0,
+             gamma = 0)
+```
+
+Let us now change the shift matrix so that we can use our events as
+expected. Susceptible individuals will be moved to the recovered
+compartment. With compartments ordered S=1, I=2, R=3, a value of 2 means
+individuals from compartment 1 (S) move to compartment 1+2=3 (R).
+
+``` r
+shift_matrix(model) <- data.frame(compartment = "S", shift = 1, value = 2)
+```
+
+Now, verify the shift matrix.
+
+``` r
+shift_matrix(model)
+```
+
+    ##   1
+    ## S 2
+    ## I 0
+    ## R 0
+
+``` r
+plot(run(model))
+```
+
+![\*\*Figure 11.\*\* The number of recovered (\$R\$) individuals
+increase at
+\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-41-1.png)
+
+**Figure 11.** The number of recovered ($R$) individuals increase at
+$t = 10$.
