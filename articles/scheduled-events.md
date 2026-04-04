@@ -112,7 +112,7 @@ use the 4^(th) column which means that all compartments can be sampled
 in each movement event (see below).
 
 ``` r
-model@events@E
+select_matrix(model)
 ```
 
     ## 3 x 4 sparse Matrix of class "dgCMatrix"
@@ -341,3 +341,75 @@ event.](scheduled-events_files/figure-html/unnamed-chunk-18-1.png)
 
 **Figure 7.** The number of susceptible ($S$) individuals increases by
 10 individuals at each scheduled event.
+
+## Weighted sampling for enter events
+
+When the $E\lbrack,select\rbrack$ column contains multiple non-zero
+entries, the new individuals are distributed among the compartments with
+probability proportional to the weights. Let us demonstrate this by
+creating a scenario where newborns can enter either $S$ or $R$
+compartments. First, create the initial state and the scheduled events.
+We will use `select=1` and show how we can adjust the select matrix to
+include both the $S$ and $R$ compartments for that select value.
+
+``` r
+u0 <- data.frame(S = 20, I = 10, R = 0)
+```
+
+We schedule one birth event per day for 300 days, adding 1 individual
+each time. We want each newborn to enter either the susceptible or the
+recovered compartment, with probability proportional to the weights in
+column 1 of the E matrix.
+
+``` r
+events <- data.frame(
+  event      = rep("enter", 300), ## "enter" add new individuals to a node
+  time       = 1:300,             ## The time that the event happens
+  node       = rep(1, 300),       ## In which node does the event occur
+  dest       = rep(0, 300),       ## Not used for enter events
+  n          = rep(1, 300),       ## How many individuals are added
+  proportion = rep(0, 300),       ## Not used when n > 0
+  select     = rep(1, 300),       ## Target the S and R compartments
+                                  ## (after modifying E)
+  shift      = rep(0, 300))       ## Not used in this example
+```
+
+``` r
+model <- SIR(u0 = u0,
+             tspan = 0:300,
+             events = events,
+             beta = 0,
+             gamma = 0)
+```
+
+Let us now change the select matrix so that we can use our events as
+expected.
+
+``` r
+select_matrix(model) <- data.frame(
+  compartment = c("S", "R"),
+  select =       c(1,   1))
+```
+
+Now, verify the select matrix.
+
+``` r
+select_matrix(model)
+```
+
+    ## 3 x 1 sparse Matrix of class "dgCMatrix"
+    ##   1
+    ## S 1
+    ## I .
+    ## R 1
+
+``` r
+plot(run(model))
+```
+
+![\*\*Figure 8.\*\* The number of susceptible (\$S\$) and recovered
+(\$R) individuals increases over
+time.](scheduled-events_files/figure-html/unnamed-chunk-24-1.png)
+
+**Figure 8.** The number of susceptible ($S$) and recovered (\$R)
+individuals increases over time.

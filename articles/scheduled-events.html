@@ -180,7 +180,7 @@ E for an event is determined by the event select value. In this example,
 we use the 4<sup>th</sup> column which means that all compartments can
 be sampled in each movement event (see below).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span><span class="op">@</span><span class="va">events</span><span class="op">@</span><span class="va">E</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 3 x 4 sparse Matrix of class "dgCMatrix"</span></span>
 <span><span class="co">##   1 2 3 4</span></span>
 <span><span class="co">## S 1 . . 1</span></span>
@@ -382,6 +382,72 @@ matrix).</p>
 <strong>Figure 7.</strong> The number of susceptible
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
 individuals increases by 10 individuals at each scheduled event.
+</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="weighted-sampling-for-enter-events">Weighted sampling for enter events<a class="anchor" aria-label="anchor" href="#weighted-sampling-for-enter-events"></a>
+</h2>
+<p>When the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mo>,</mo><mi>s</mi><mi>e</mi><mi>l</mi><mi>e</mi><mi>c</mi><mi>t</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">E[, select]</annotation></semantics></math>
+column contains multiple non-zero entries, the new individuals are
+distributed among the compartments with probability proportional to the
+weights. Let us demonstrate this by creating a scenario where newborns
+can enter either
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+compartments. First, create the initial state and the scheduled events.
+We will use <code>select=1</code> and show how we can adjust the select
+matrix to include both the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+compartments for that select value.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">20</span>, I <span class="op">=</span> <span class="fl">10</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p>We schedule one birth event per day for 300 days, adding 1 individual
+each time. We want each newborn to enter either the susceptible or the
+recovered compartment, with probability proportional to the weights in
+column 1 of the E matrix.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"enter"</span>, <span class="fl">300</span><span class="op">)</span>, <span class="co">## "enter" add new individuals to a node</span></span>
+<span>  time       <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">300</span>,             <span class="co">## The time that the event happens</span></span>
+<span>  node       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">300</span><span class="op">)</span>,       <span class="co">## In which node does the event occur</span></span>
+<span>  dest       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span>,       <span class="co">## Not used for enter events</span></span>
+<span>  n          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">300</span><span class="op">)</span>,       <span class="co">## How many individuals are added</span></span>
+<span>  proportion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span>,       <span class="co">## Not used when n &gt; 0</span></span>
+<span>  select     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">300</span><span class="op">)</span>,       <span class="co">## Target the S and R compartments</span></span>
+<span>                                  <span class="co">## (after modifying E)</span></span>
+<span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span><span class="op">)</span>       <span class="co">## Not used in this example</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>             tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">300</span>,</span>
+<span>             events <span class="op">=</span> <span class="va">events</span>,</span>
+<span>             beta <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>             gamma <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p>Let us now change the select matrix so that we can use our events as
+expected.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>  select <span class="op">=</span>       <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,   <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Now, verify the select matrix.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 3 x 1 sparse Matrix of class "dgCMatrix"</span></span>
+<span><span class="co">##   1</span></span>
+<span><span class="co">## S 1</span></span>
+<span><span class="co">## I .</span></span>
+<span><span class="co">## R 1</span></span></code></pre>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" alt="**Figure 8.** The number of susceptible ($S$) and recovered ($R) individuals increases over time." width="672"><p class="caption">
+<strong>Figure 8.</strong> The number of susceptible
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
+and recovered ($R) individuals increases over time.
 </p>
 </div>
 </div>
