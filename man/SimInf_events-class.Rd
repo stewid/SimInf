@@ -27,16 +27,19 @@ probability proportional to the weight in \code{E[, select]}.
 \code{E} is sparse matrix of class
 \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
 
-\item{\code{N}}{Determines how individuals in \emph{internal transfer} and
-\emph{external transfer} events are shifted to enter another
-compartment.  Each row corresponds to one compartment in the
-model.  The values in a column are added to the current
-compartment of sampled individuals to specify the destination
-compartment, for example, a value of \code{1} in an entry
-means that sampled individuals in this compartment are moved
-to the next compartment.  Which column to use for each event
-is specified by the \code{shift} vector (see below).  \code{N}
-is an integer matrix.}
+\item{\code{N}}{Determines how individuals in \emph{enter}, \emph{internal
+transfer} and \emph{external transfer} events are shifted to
+enter another compartment. Each row corresponds to one
+compartment in the model. The values in a column define how to
+move sampled individuals before adding them to the
+destination.  Let \code{q <- shift}, then each non-zero entry
+in \code{N[, q]} defines the number of rows to move sampled
+individuals from that compartment i.e., sampled individuals
+from compartment \code{p} are moved to compartment \code{N[p,
+q] + p}, where \code{1 <= N[p, q] + p <=
+N_compartments}. Which column to use for each event is
+specified by the \code{shift} vector (see below). \code{N} is
+an integer matrix.}
 
 \item{\code{event}}{Type of event: 0) \emph{exit}, 1) \emph{enter}, 2)
 \emph{internal transfer}, and 3) \emph{external transfer}.
@@ -76,12 +79,11 @@ corresponding to the non-zero entries in the specified column
 in \code{E[, select[i]]}, where \code{select} is an integer
 vector.}
 
-\item{\code{shift}}{Determines how individuals in \emph{internal transfer}
-and \emph{external transfer} events are shifted to enter
-another compartment.  The sampled individuals are shifted
-according to column \code{shift[i]} in matrix \code{N} i.e.,
-\code{N[, shift[i]]}, where \code{shift} is an integer vector.
-See above for a description of \code{N}. Unsued for the other
-event types.}
+\item{\code{shift}}{Determines how individuals in \emph{enter},
+\emph{internal transfer} and \emph{external transfer} events
+are shifted to enter another compartment. The sampled
+individuals are shifted according to column \code{shift[i]} in
+matrix \code{N} i.e., \code{N[, shift[i]]}, where \code{shift}
+is an integer vector.  Unused for \emph{exit} events.}
 }}
 
