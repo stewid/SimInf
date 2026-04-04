@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -24,12 +24,19 @@
 ##' Class to hold data for scheduled events to modify the discrete
 ##' state of individuals in a node at a pre-defined time t.
 ##' @slot E Each row corresponds to one compartment in the model. The
-##'     non-zero entries in a column indicates the compartments to
-##'     include in an event.  For the \emph{exit}, \emph{internal
+##'     non-zero entries in a column indicate the compartments to
+##'     include in an event. For the \emph{exit}, \emph{internal
 ##'     transfer} and \emph{external transfer} events, a non-zero
-##'     entry indicate the compartments to sample individuals from.
-##'     For the \emph{enter} event, all individuals enter first
-##'     non-zero compartment. \code{E} is sparse matrix of class
+##'     entry indicates the compartments to sample individuals from,
+##'     where the values in \code{E[, select]} are used as weights.
+##'     Individuals are sampled without replacement with probability
+##'     proportional to the weight in \code{E[, select]}. For the
+##'     \emph{enter} event, the values in \code{E[, select]} are used
+##'     as weights when determining which compartment to add
+##'     individuals to. If the column \code{E[, select]} contains
+##'     several non-zero entries, the compartment is sampled with
+##'     probability proportional to the weight in \code{E[, select]}.
+##'     \code{E} is sparse matrix of class
 ##'     \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
 ##' @slot N Determines how individuals in \emph{internal transfer} and
 ##'     \emph{external transfer} events are shifted to enter another
