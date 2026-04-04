@@ -10,13 +10,36 @@ select_matrix(model) <- value
 \S4method{select_matrix}{SimInf_model}(model) <- value
 }
 \arguments{
-\item{model}{The \code{model} to set the select matrix for.}
+\item{model}{The \code{SimInf_model} object to set the select
+matrix for.}
 
-\item{value}{A matrix.}
+\item{value}{The new value for \code{E} in the model. \code{E} is
+a matrix to handle scheduled events, see
+\code{\linkS4class{SimInf_events}}. Each row in \code{E}
+corresponds to one compartment in the model. The non-zero
+entries in a column indicate the compartments to include in an
+event. For the \emph{exit}, \emph{internal transfer} and
+\emph{external transfer} events, the values in \code{E[,
+select]} are used as weights when sampling individuals without
+replacement, with probability proportional to the weight. For
+the \emph{enter} event, the values in \code{E[, select]} are
+used as weights when determining which compartment to add
+individuals to. If the column \code{E[, select]} contains
+several non-zero entries, the compartment is sampled with
+probability proportional to the weight in \code{E[, select]}.
+The select matrix \code{E} can either be specified as a
+\code{matrix}, or as a \code{data.frame}.  When \code{E} is
+specified as a \code{data.frame}, it must have one column
+named \code{compartment} that defines which compartment is
+referred to, and one column \code{select} that defines the
+column in \code{E}.  In addition, the \code{data.frame} can
+contain an optional column named \code{value} with the value
+in \code{E}.  When the \code{value} column is missing,
+\code{1} is used as the default value.}
 }
 \description{
 Utility function to set \code{events@E} in a \code{SimInf_model}
-object, see \code{\linkS4class{SimInf_events}}
+object, see \code{\linkS4class{SimInf_events}}.
 }
 \examples{
 ## Create an SIR model

@@ -576,6 +576,16 @@ E_observed <- select_matrix(model)
 
 stopifnot(identical(E_expected, E_observed))
 
+## Set the select matrix using a data.frame
+select_matrix(model) <- data.frame(
+    compartment = c("S", "S", "I", "R", "R"),
+    select = c(1, 2, 2, 2, 3))
+
+E_observed <- select_matrix(model)
+
+stopifnot(identical(E_expected, E_observed))
+
+## check that an error is raised if not all compartment exists.
 m <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0), nrow = 2)
 res <- assertError(select_matrix(model) <- m)
 check_error(res, "'value' must have one row for each compartment in the model.")
