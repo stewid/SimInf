@@ -23,14 +23,17 @@ individuals in a node at a pre-defined time t.
 
 - `N`:
 
-  Determines how individuals in *internal transfer* and *external
-  transfer* events are shifted to enter another compartment. Each row
-  corresponds to one compartment in the model. The values in a column
-  are added to the current compartment of sampled individuals to specify
-  the destination compartment, for example, a value of `1` in an entry
-  means that sampled individuals in this compartment are moved to the
-  next compartment. Which column to use for each event is specified by
-  the `shift` vector (see below). `N` is an integer matrix.
+  Determines how individuals in *enter*, *internal transfer* and
+  *external transfer* events are shifted to enter another compartment.
+  Each row corresponds to one compartment in the model. The values in a
+  column define how to move sampled individuals before adding them to
+  the destination. Let `q <- shift`, then each non-zero entry in
+  `N[, q]` defines the number of rows to move sampled individuals from
+  that compartment i.e., sampled individuals from compartment `p` are
+  moved to compartment `N[p, q] + p`, where
+  `1 <= N[p, q] + p <= N_compartments`. Which column to use for each
+  event is specified by the `shift` vector (see below). `N` is an
+  integer matrix.
 
 - `event`:
 
@@ -80,8 +83,8 @@ individuals in a node at a pre-defined time t.
 
 - `shift`:
 
-  Determines how individuals in *internal transfer* and *external
-  transfer* events are shifted to enter another compartment. The sampled
-  individuals are shifted according to column `shift[i]` in matrix `N`
-  i.e., `N[, shift[i]]`, where `shift` is an integer vector. See above
-  for a description of `N`. Unsued for the other event types.
+  Determines how individuals in *enter*, *internal transfer* and
+  *external transfer* events are shifted to enter another compartment.
+  The sampled individuals are shifted according to column `shift[i]` in
+  matrix `N` i.e., `N[, shift[i]]`, where `shift` is an integer vector.
+  Unused for *exit* events.
