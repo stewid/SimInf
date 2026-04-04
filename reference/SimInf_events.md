@@ -55,11 +55,11 @@ The argument events must be a `data.frame` with the following columns:
 
 - shift:
 
-  Determines how individuals in *internal transfer* and *external
-  transfer* events are shifted to enter another compartment. The sampled
-  individuals are shifted according to column `shift[i]` in matrix `N`
-  i.e., `N[, shift[i]]`, where `shift` is an integer vector. See above
-  for a description of `N`. Unsued for the other event types.
+  Determines how individuals in *enter*, *internal transfer* and
+  *external transfer* events are shifted to enter another compartment.
+  The sampled individuals are shifted according to column `shift[i]` in
+  matrix `N` i.e., `N[, shift[i]]`, where `shift` is an integer vector.
+  See above for a description of `N`. Unsued for the other event types.
 
 ## Usage
 
