@@ -383,12 +383,14 @@ model <- SIR(u0 = u0,
 ```
 
 Let us now change the select matrix so that we can use our events as
-expected.
+expected. It is not necessary to use `value=1` since that is the
+default, however, for clarity we specifically set that value.
 
 ``` r
 select_matrix(model) <- data.frame(
   compartment = c("S", "R"),
-  select =       c(1,   1))
+  select =      c( 1,   1),
+  value  =      c( 1,   1))
 ```
 
 Now, verify the select matrix.
@@ -413,3 +415,24 @@ time.](scheduled-events_files/figure-html/unnamed-chunk-24-1.png)
 
 **Figure 8.** The number of susceptible ($S$) and recovered (\$R)
 individuals increases over time.
+
+Let us modify the E matrix so that newborns are more likely to enter the
+S compartment compared to the R compartment.
+
+``` r
+select_matrix(model) <- data.frame(
+  compartment = c("S", "R"),
+  select =      c( 1,   1),
+  value  =      c( 2,   1))
+```
+
+``` r
+plot(run(model))
+```
+
+![\*\*Figure 9.\*\* Individuals are more likely to enter as susceptible
+(\$S\$) compared to as recovered
+(\$R)](scheduled-events_files/figure-html/unnamed-chunk-26-1.png)
+
+**Figure 9.** Individuals are more likely to enter as susceptible ($S$)
+compared to as recovered (\$R)

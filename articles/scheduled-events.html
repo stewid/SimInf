@@ -428,11 +428,13 @@ column 1 of the E matrix.</p>
 <span>             beta <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>             gamma <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 <p>Let us now change the select matrix so that we can use our events as
-expected.</p>
+expected. It is not necessary to use <code>value=1</code> since that is
+the default, however, for clarity we specifically set that value.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
-<span>  select <span class="op">=</span>       <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,   <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  select <span class="op">=</span>      <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fl">1</span>,   <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  value  <span class="op">=</span>      <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fl">1</span>,   <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Now, verify the select matrix.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
@@ -448,6 +450,23 @@ expected.</p>
 <strong>Figure 8.</strong> The number of susceptible
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
 and recovered ($R) individuals increases over time.
+</p>
+</div>
+<p>Let us modify the E matrix so that newborns are more likely to enter
+the S compartment compared to the R compartment.</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>  select <span class="op">=</span>      <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fl">1</span>,   <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  value  <span class="op">=</span>      <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fl">2</span>,   <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-26-1.png" class="r-plt" alt="**Figure 9.** Individuals are more likely to enter as susceptible ($S$) compared to as recovered ($R)" width="672"><p class="caption">
+<strong>Figure 9.</strong> Individuals are more likely to enter as
+susceptible
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
+compared to as recovered ($R)
 </p>
 </div>
 </div>
