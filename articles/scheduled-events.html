@@ -480,7 +480,7 @@ determine which compartments individuals are removed from when multiple
 compartments are selected.</p>
 </div>
 <div class="section level2">
-<h2 id="example-natural-mortality">Example: Natural mortality<a class="anchor" aria-label="anchor" href="#example-natural-mortality"></a>
+<h2 id="example-mortality">Example: Mortality<a class="anchor" aria-label="anchor" href="#example-mortality"></a>
 </h2>
 <p>Let us create a model where individuals die at scheduled times.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
@@ -508,6 +508,49 @@ compartments are selected.</p>
 <strong>Figure 10.</strong> The number of susceptible
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
 individuals decreases by 5 individuals at each scheduled event.
+</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="weighted-sampling-for-exit-events">Weighted sampling for exit events<a class="anchor" aria-label="anchor" href="#weighted-sampling-for-exit-events"></a>
+</h2>
+<p>We can also use weights to make certain compartments more likely to
+lose individuals. For example, infected individuals might have higher
+mortality risk.</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">100</span>, I <span class="op">=</span> <span class="fl">100</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"enter"</span>, <span class="fl">100</span><span class="op">)</span>, <span class="co">## "enter" add new individuals to a node</span></span>
+<span>  time       <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>,             <span class="co">## The time that the event happens</span></span>
+<span>  node       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">100</span><span class="op">)</span>,       <span class="co">## In which node does the event occur</span></span>
+<span>  dest       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>,       <span class="co">## Not used for enter events</span></span>
+<span>  n          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">100</span><span class="op">)</span>,       <span class="co">## How many individuals are added</span></span>
+<span>  proportion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>,       <span class="co">## Not used when n &gt; 0</span></span>
+<span>  select     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">100</span><span class="op">)</span>,       <span class="co">## Target the S and I compartments</span></span>
+<span>                                  <span class="co">## (after modifying E)</span></span>
+<span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span>       <span class="co">## Not used in this example</span></span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>             tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">100</span>,</span>
+<span>             events <span class="op">=</span> <span class="va">events</span>,</span>
+<span>             beta <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>             gamma <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p>Let us increase the weight for the I compartment to make infected
+individuals more likely to be removed:</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span><span class="op">)</span>,</span>
+<span>  select      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  value       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-35-1.png" class="r-plt" alt="**Figure 11.** The number of infected ($I$) individuals decreases faster compared to susceptibles ($S$)." width="672"><p class="caption">
+<strong>Figure 11.</strong> The number of infected
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>)
+individuals decreases faster compared to susceptibles
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>).
 </p>
 </div>
 </div>

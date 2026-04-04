@@ -444,7 +444,7 @@ natural mortality or culling. Like enter events, the E matrix weights
 determine which compartments individuals are removed from when multiple
 compartments are selected.
 
-## Example: Natural mortality
+## Example: Mortality
 
 Let us create a model where individuals die at scheduled times.
 
@@ -482,3 +482,55 @@ event.](scheduled-events_files/figure-html/unnamed-chunk-30-1.png)
 
 **Figure 10.** The number of susceptible ($S$) individuals decreases by
 5 individuals at each scheduled event.
+
+## Weighted sampling for exit events
+
+We can also use weights to make certain compartments more likely to lose
+individuals. For example, infected individuals might have higher
+mortality risk.
+
+``` r
+u0 <- data.frame(S = 100, I = 100, R = 0)
+```
+
+``` r
+events <- data.frame(
+  event      = rep("enter", 100), ## "enter" add new individuals to a node
+  time       = 1:100,             ## The time that the event happens
+  node       = rep(1, 100),       ## In which node does the event occur
+  dest       = rep(0, 100),       ## Not used for enter events
+  n          = rep(1, 100),       ## How many individuals are added
+  proportion = rep(0, 100),       ## Not used when n > 0
+  select     = rep(1, 100),       ## Target the S and I compartments
+                                  ## (after modifying E)
+  shift      = rep(0, 100))       ## Not used in this example
+```
+
+``` r
+model <- SIR(u0 = u0,
+             tspan = 0:100,
+             events = events,
+             beta = 0,
+             gamma = 0)
+```
+
+Let us increase the weight for the I compartment to make infected
+individuals more likely to be removed:
+
+``` r
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I"),
+  select      = c(1, 1),
+  value       = c(1, 5))
+```
+
+``` r
+plot(run(model))
+```
+
+![\*\*Figure 11.\*\* The number of infected (\$I\$) individuals
+decreases faster compared to susceptibles
+(\$S\$).](scheduled-events_files/figure-html/unnamed-chunk-35-1.png)
+
+**Figure 11.** The number of infected ($I$) individuals decreases faster
+compared to susceptibles ($S$).
