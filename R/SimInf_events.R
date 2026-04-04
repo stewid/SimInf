@@ -719,14 +719,22 @@ setMethod(
 ##'     \code{1} is used as the default value.
 ##' @export
 ##' @examples
-##' ## Create an SIR model
+##' ## Create an SIR model.
 ##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
 ##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
 ##'
-##' ## Set the select matrix
+##' ## Set the select matrix.
 ##' select_matrix(model) <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 3)
 ##'
-##' ## Extract the select matrix from the model
+##' ## Extract the select matrix from the model.
+##' select_matrix(model)
+##'
+##' ## Set the select matrix using a data.frame instead.
+##' select_matrix(model) <- data.frame(
+##'     compartment = c("S", "S", "I", "R", "R"),
+##'     select      = c( 1,   2,   2,   2,   3))
+##'
+##' ## Extract the select matrix from the model.
 ##' select_matrix(model)
 setGeneric(
     "select_matrix<-",
