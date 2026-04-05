@@ -123,7 +123,7 @@ and plot the results. For reproducibility, we first call the
 `set.seed()` function since there is random sampling involved when
 picking individuals from the compartments.
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="Figure 1. Classic SIR epidemic curve generated with mparse."}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 1.** Classic SIR epidemic curve generated with mparse."}
 set.seed(22)
 plot(run(model))
 ```
@@ -197,7 +197,7 @@ Running the model produces the same results as before, but the
 transition definitions are now more concise and easier to manage. Note
 that we use the same seed value as before.
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="Figure 2. SIR epidemic curve using a defined variable for population size. The results are identical to Figure 1."}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 2.** SIR epidemic curve using a defined variable for population size. The results are identical to Figure 1."}
 set.seed(22)
 plot(run(model))
 ```
@@ -251,7 +251,7 @@ model <- mparse(
 )
 ```
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="Figure 3. SIR model using a ternary operator to prevent division by zero. Although the curve is identical to previous examples (as the population did not reach zero), this syntax ensures the simulation continues safely if the node becomes empty."}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 3.** SIR model using a ternary operator to prevent division by zero. Although the curve is identical to previous examples (as the population did not reach zero), this syntax ensures the simulation continues safely if the node becomes empty."}
 set.seed(22)
 plot(run(model))
 ```
@@ -348,7 +348,7 @@ plot() function can display the trajectories for each node separately
 if we use range = FALSE to display the trajectory lines without the
 shaded range bands.
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="Figure 4. Epidemic curves for two farms with different transmission rates in a single stochastic realization. Farm 2 (higher `beta_farm`) shows a faster outbreak compared to Farm 1, reflecting the expected impact of the higher transmission rate, though exact outcome varies due to randomness."}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 4.** Epidemic curves for two farms with different transmission rates in a single stochastic realization. Farm 2 (higher `beta_farm`) shows a faster outbreak compared to Farm 1, reflecting the expected impact of the higher transmission rate, though exact outcome varies due to randomness."}
 set.seed(22)
 result <- run(model)
 plot(result, range = FALSE)
@@ -366,7 +366,7 @@ populations without rewriting the transition logic.
 To inspect the results for a specific node, we can use the `index`
 argument in `plot()` or `trajectory()`.
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="Figure 5. Trajectory for Farm 2 only, showing the rapid spread due to the high transmission rate in this specific realization."}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 5.** Trajectory for Farm 2 only, showing the rapid spread due to the high transmission rate in this specific realization."}
 plot(result, index = 2)
 ```
 
@@ -485,7 +485,7 @@ stochastic, we might see the predators go extinct in some
 realizations, while in others, the populations oscillate around a
 stable limit cycle.
 
-```{r, fig.width=7, fig.height=6, fig.align="left", fig.cap="Figure 6. One stochastic realization of the Rosenzweig-MacArthur predator-prey model. The populations exhibit cyclic oscillations characteristic of the deterministic limit cycle, but stochastic fluctuations eventually lead to the extinction of the predator population in this specific run."}
+```{r, fig.width=7, fig.height=6, fig.align="left", fig.cap="**Figure 6.** One stochastic realization of the Rosenzweig-MacArthur predator-prey model. The populations exhibit cyclic oscillations characteristic of the deterministic limit cycle, but stochastic fluctuations eventually lead to the extinction of the predator population in this specific run."}
 set.seed(3)
 result <- run(model)
 plot(result)
@@ -495,7 +495,7 @@ To better visualize the dynamics, we can plot the **phase plane**
 (predators vs. prey) for a single realization. This shows the cyclic
 nature of the interaction.
 
-```{r, fig.width=7, fig.height=6, fig.align="left", fig.cap="Figure 7. Phase plane trajectory of the predator-prey model. The path spirals outward from the initial conditions, tracing the characteristic limit cycle of the Rosenzweig-MacArthur model before stochastic fluctuations drive the predator population to extinction."}
+```{r, fig.width=7, fig.height=6, fig.align="left", fig.cap="**Figure 7.** Phase plane trajectory of the predator-prey model. The path spirals outward from the initial conditions, tracing the characteristic limit cycle of the Rosenzweig-MacArthur model before stochastic fluctuations drive the predator population to extinction."}
 plot(F ~ R, data = trajectory(result), type = "l", col = "darkgreen",
      xlab = "Prey (R)", ylab = "Predators (F)", main = "")
 ```
@@ -572,7 +572,7 @@ We run the simulation and plot the results. The trajectory will show
 the infection spreading through the stages (`I1` to `I4`) before
 individuals recover.
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="Figure 8. One realization of a stochastic SIR model with an Erlang-distributed infectious period (shape=4). The trajectory shows the infection progressing sequentially through the four infectious stages (`I1 -> I2 -> I3 -> I4`) before individuals recover."}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 8.** One realization of a stochastic SIR model with an Erlang-distributed infectious period (shape=4). The trajectory shows the infection progressing sequentially through the four infectious stages (`I1 -> I2 -> I3 -> I4`) before individuals recover."}
 set.seed(3)
 result <- run(model)
 plot(result)
@@ -584,7 +584,7 @@ which is the proportion of individuals in any of the infectious stages
 where the left-hand side defines the "cases" and the right-hand side
 defines the "at-risk" population.
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="Figure 9. Prevalence of infection over time, calculated as the sum of individuals in all infectious stages (`I1 + I2 + I3 + I4`). This demonstrates how to aggregate multiple compartments to track the total burden of disease in a stage-structured model."}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 9.** Prevalence of infection over time, calculated as the sum of individuals in all infectious stages (`I1 + I2 + I3 + I4`). This demonstrates how to aggregate multiple compartments to track the total burden of disease in a stage-structured model."}
 plot(result, I1 + I2 + I3 + I4 ~ ., col = "blue", lwd = 2, ylab = "Prevalence")
 ```
 
