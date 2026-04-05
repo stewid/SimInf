@@ -346,20 +346,30 @@ population. In many epidemiological scenarios, however, parameters vary
 between subpopulations (nodes). For example, different farms might have
 different contact rates due to management practices, while the
 biological recovery rate remains constant across all farms.</p>
-<p>SimInf distinguishes between two types of data: - <strong>Global Data
-(<code>gdata</code>)</strong>: Parameters shared by all nodes (e.g.,
-recovery rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>).
-- <strong>Local Data (<code>ldata</code>)</strong>: Parameters specific
-to each node (e.g., transmission rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>).</p>
+<p>SimInf distinguishes between two types of data:</p>
+<ul>
+<li>
+<strong>Global Data (<code>gdata</code>)</strong>: Parameters shared
+by all nodes (e.g., recovery rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>).</li>
+<li>
+<strong>Local Data (<code>ldata</code>)</strong>: Parameters
+specific to each node (e.g., transmission rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>).</li>
+</ul>
 <div class="section level3">
 <h3 id="a-two-farm-model">A Two-Farm Model<a class="anchor" aria-label="anchor" href="#a-two-farm-model"></a>
 </h3>
-<p>Let us create a model with two independent farms (nodes). We assume:
-- Both farms have the same recovery rate (<code>gamma = 0.077</code>). -
-Farm 1 has a low transmission rate (<code>beta_farm = 0.1</code>). -
-Farm 2 has a high transmission rate (<code>beta_farm = 0.4</code>).</p>
+<p>Let us create a model with two independent farms (nodes). We
+assume:</p>
+<ul>
+<li>Both farms have the same recovery rate
+(<code>gamma = 0.077</code>).</li>
+<li>Farm 1 has a low transmission rate
+(<code>beta_farm = 0.1</code>).</li>
+<li>Farm 2 has a high transmission rate
+(<code>beta_farm = 0.4</code>).</li>
+</ul>
 <p>We define the transition using a placeholder name for the local
 parameter, <code>beta_farm</code>. Note that we also include the safety
 check for division by zero using the ternary operator, as discussed
@@ -429,12 +439,12 @@ range bands.</p>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="Figure 4. Epidemic curves for two farms with different transmission rates in a single stochastic realization. Farm 2 (higher `beta_farm`) shows a faster outbreak compared to Farm 1, reflecting the expected impact of the higher transmission rate, though exact timing varies due to randomness." width="672"><p class="caption">
+<img src="mparse_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="Figure 4. Epidemic curves for two farms with different transmission rates in a single stochastic realization. Farm 2 (higher `beta_farm`) shows a faster outbreak compared to Farm 1, reflecting the expected impact of the higher transmission rate, though exact outcome varies due to randomness." width="672"><p class="caption">
 Figure 4. Epidemic curves for two farms with different transmission
 rates in a single stochastic realization. Farm 2 (higher
 <code>beta_farm</code>) shows a faster outbreak compared to Farm 1,
 reflecting the expected impact of the higher transmission rate, though
-exact timing varies due to randomness.
+exact outcome varies due to randomness.
 </p>
 </div>
 <p>In this realization, Farm 2 (the one with the higher
@@ -462,6 +472,175 @@ the high transmission rate in this specific realization.
 <p>This flexibility makes mparse ideal for spatial models where each
 node has unique characteristics, such as different herd sizes,
 management practices, or risk factors.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="modeling-open-populations-the-empty-set">Modeling Open Populations: The Empty Set<a class="anchor" aria-label="anchor" href="#modeling-open-populations-the-empty-set"></a>
+</h2>
+<p>So far, our models have been “closed,” meaning the total number of
+individuals remains constant (except for transitions between
+compartments). In reality, populations change due to births and
+deaths.</p>
+<p>SimInf offers two ways to model these changes:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Continuous rates</strong> using the special symbol
+<code>@</code> (the empty set), which we cover here. This is ideal for
+natural mortality or constant birth rates that happen continuously over
+time.</li>
+<li>
+<strong>Scheduled events</strong>, as described in the <em>Scheduled
+Events</em> vignette. This is better for discrete, deterministic events
+(e.g., a specific culling date or a one-time introduction of
+animals).</li>
+</ol>
+<p>In this section, we focus on the <code>@</code> syntax for continuous
+processes.</p>
+<ul>
+<li>
+<strong>Deaths</strong>: Individuals leaving the system are directed
+to <code>@</code>. Example: <code>I -&gt; mu * I -&gt; @</code> removes
+infected individuals at rate <code>mu</code>.</li>
+<li>
+<strong>Births</strong>: Individuals entering the system come from
+<code>@</code>. Example: <code>@ -&gt; lambda -&gt; S</code> adds new
+susceptible individuals at rate <code>lambda</code>.</li>
+</ul>
+<div class="section level3">
+<h3 id="example-predator-prey-dynamics">Example: Predator-Prey Dynamics<a class="anchor" aria-label="anchor" href="#example-predator-prey-dynamics"></a>
+</h3>
+<p>To illustrate a more complex system where births and deaths drive the
+dynamics, consider the Rosenzweig-MacArthur predator-prey model. In this
+model, prey
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>)
+grow logistically and are consumed by predators
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math>),
+while predators die naturally and reproduce based on consumption.</p>
+<p>This example demonstrates how <code>mparse</code> handles:</p>
+<ul>
+<li>
+<strong>Non-linear propensity functions</strong> (e.g., the Type-II
+functional response).</li>
+<li>
+<strong>Multiple birth and death processes</strong> using the empty
+set <code>@</code>.</li>
+<li>
+<strong>Density-dependent growth</strong> (logistic term).</li>
+</ul>
+<p>The model consists of five transitions:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Prey Birth</strong>: New prey are born at a rate dependent
+on the current population.
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>∅</mi><mover><mo>→</mo><mrow><msub><mi>b</mi><mi>R</mi></msub><mo>⋅</mo><mi>R</mi></mrow></mover><mi>R</mi></mrow><annotation encoding="application/x-tex"> \emptyset \xrightarrow{b_R \cdot R} R </annotation></semantics></math>
+</li>
+<li>
+<strong>Prey Death (Natural)</strong>: Prey die due to competition
+or natural causes.
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mover><mo>→</mo><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>d</mi><mi>R</mi></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>b</mi><mi>R</mi></msub><mo>−</mo><msub><mi>d</mi><mi>R</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>R</mi><mi>/</mi><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>R</mi></mrow></mover><mi>∅</mi></mrow><annotation encoding="application/x-tex"> R \xrightarrow{(d_R + (b_R - d_R) \cdot R / K) \cdot
+R} \emptyset </annotation></semantics></math>
+</li>
+<li>
+<strong>Prey Death (Predation)</strong>: Prey are eaten by
+predators.
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mover><mo>→</mo><mrow><mfrac><mi>α</mi><mrow><mn>1</mn><mo>+</mo><mi>w</mi><mo>⋅</mo><mi>R</mi></mrow></mfrac><mo>⋅</mo><mi>R</mi><mo>⋅</mo><mi>F</mi></mrow></mover><mi>∅</mi></mrow><annotation encoding="application/x-tex"> R
+\xrightarrow{\frac{\alpha}{1 + w \cdot R} \cdot R \cdot F}
+\emptyset </annotation></semantics></math>
+</li>
+<li>
+<strong>Predator Birth</strong>: Predators reproduce based on the
+energy gained from eating prey.
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>∅</mi><mover><mo>→</mo><mrow><msub><mi>b</mi><mi>F</mi></msub><mo>⋅</mo><mfrac><mi>α</mi><mrow><mn>1</mn><mo>+</mo><mi>w</mi><mo>⋅</mo><mi>R</mi></mrow></mfrac><mo>⋅</mo><mi>R</mi><mo>⋅</mo><mi>F</mi></mrow></mover><mi>F</mi></mrow><annotation encoding="application/x-tex"> \emptyset \xrightarrow{b_F \cdot
+\frac{\alpha}{1 + w \cdot R} \cdot R \cdot F} F </annotation></semantics></math>
+</li>
+<li>
+<strong>Predator Death</strong>: Predators die naturally.
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mover><mo>→</mo><mrow><msub><mi>d</mi><mi>F</mi></msub><mo>⋅</mo><mi>F</mi></mrow></mover><mi>∅</mi></mrow><annotation encoding="application/x-tex"> F
+\xrightarrow{d_F \cdot F} \emptyset </annotation></semantics></math>
+</li>
+</ol>
+<p>In <code>mparse</code> syntax, these transitions are written as:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"@ -&gt; bR * R -&gt; R"</span>,</span>
+<span>  <span class="st">"R -&gt; (dR + (bR - dR) * R / K) * R -&gt; @"</span>,</span>
+<span>  <span class="st">"R -&gt; alpha / (1 + w * R) * R * F -&gt; @"</span>,</span>
+<span>  <span class="st">"@ -&gt; bF * alpha / (1 + w * R) * R * F -&gt; F"</span>,</span>
+<span>  <span class="st">"F -&gt; dF * F -&gt; @"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Here, <code>@</code> appears on the left side for births (adding
+individuals) and on the right side for deaths (removing individuals).
+The parameters are defined as:</p>
+<ul>
+<li>
+<code>bR</code>, <code>dR</code>: Prey birth and death rates.</li>
+<li>
+<code>K</code>: Carrying capacity of the prey.</li>
+<li>
+<code>alpha</code>: Predation efficiency.</li>
+<li>
+<code>w</code>: Degree of predator saturation.</li>
+<li>
+<code>bF</code>, <code>dF</code>: Predator birth and death
+rates.</li>
+</ul>
+<p>Let us define the parameters and initial conditions. We assume an
+initial population of 1000 prey and 100 predators.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  bR <span class="op">=</span> <span class="fl">2</span>, bF <span class="op">=</span> <span class="fl">2</span>, dR <span class="op">=</span> <span class="fl">1</span>, K <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.007</span>, w <span class="op">=</span> <span class="fl">0.0035</span>, dF <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">1000</span>, F <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+<p>Now we create the model. Since there are no between-node movements in
+this example, we can simulate a single node or replicate it to see the
+distribution of outcomes.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span></span>
+<span>  transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>  compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R"</span>, <span class="st">"F"</span><span class="op">)</span>,</span>
+<span>  gdata <span class="op">=</span> <span class="va">parameters</span>,</span>
+<span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We run the simulation and plot the results. Because the system is
+stochastic, we might see the predators go extinct in some realizations,
+while in others, the populations oscillate around a stable limit
+cycle.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="mparse_files/figure-html/unnamed-chunk-23-1.png" class="r-plt" alt="Figure 6. One stochastic realization of the Rosenzweig-MacArthur predator-prey model. The populations exhibit cyclic oscillations characteristic of the deterministic limit cycle, but stochastic fluctuations eventually lead to the extinction of the predator population in this specific run." width="672"><p class="caption">
+Figure 6. One stochastic realization of the Rosenzweig-MacArthur
+predator-prey model. The populations exhibit cyclic oscillations
+characteristic of the deterministic limit cycle, but stochastic
+fluctuations eventually lead to the extinction of the predator
+population in this specific run.
+</p>
+</div>
+<p>To better visualize the dynamics, we can plot the <strong>phase
+plane</strong> (predators vs. prey) for a single realization. This shows
+the cyclic nature of the interaction.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="cn">F</span> <span class="op">~</span> <span class="va">R</span>, data <span class="op">=</span> <span class="fu"><a href="../reference/trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"darkgreen"</span>,</span>
+<span>     xlab <span class="op">=</span> <span class="st">"Prey (R)"</span>, ylab <span class="op">=</span> <span class="st">"Predators (F)"</span>, main <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="mparse_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" alt="Figure 7. Phase plane trajectory of the predator-prey model. The path spirals outward from the initial conditions, tracing the characteristic limit cycle of the Rosenzweig-MacArthur model before stochastic fluctuations drive the predator population to extinction." width="672"><p class="caption">
+Figure 7. Phase plane trajectory of the predator-prey model. The path
+spirals outward from the initial conditions, tracing the characteristic
+limit cycle of the Rosenzweig-MacArthur model before stochastic
+fluctuations drive the predator population to extinction.
+</p>
+</div>
+<p>In this example, the <code>@</code> symbol allows us to elegantly
+model the open nature of the ecosystem, where individuals enter and
+leave the system continuously. The non-linear terms (like
+<code>1 / (1 + w * R)</code>) are handled seamlessly by the parser,
+demonstrating the flexibility of mparse for complex ecological
+models.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

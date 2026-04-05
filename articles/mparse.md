@@ -268,17 +268,20 @@ example, different farms might have different contact rates due to
 management practices, while the biological recovery rate remains
 constant across all farms.
 
-SimInf distinguishes between two types of data: - **Global Data
-(`gdata`)**: Parameters shared by all nodes (e.g., recovery rate
-$\gamma$). - **Local Data (`ldata`)**: Parameters specific to each node
-(e.g., transmission rate $\beta$).
+SimInf distinguishes between two types of data:
+
+- **Global Data (`gdata`)**: Parameters shared by all nodes (e.g.,
+  recovery rate $\gamma$).
+- **Local Data (`ldata`)**: Parameters specific to each node (e.g.,
+  transmission rate $\beta$).
 
 ### A Two-Farm Model
 
-Let us create a model with two independent farms (nodes). We assume: -
-Both farms have the same recovery rate (`gamma = 0.077`). - Farm 1 has a
-low transmission rate (`beta_farm = 0.1`). - Farm 2 has a high
-transmission rate (`beta_farm = 0.4`).
+Let us create a model with two independent farms (nodes). We assume:
+
+- Both farms have the same recovery rate (`gamma = 0.077`).
+- Farm 1 has a low transmission rate (`beta_farm = 0.1`).
+- Farm 2 has a high transmission rate (`beta_farm = 0.4`).
 
 We define the transition using a placeholder name for the local
 parameter, `beta_farm`. Note that we also include the safety check for
@@ -357,13 +360,13 @@ plot(result, range = FALSE)
 ![Figure 4. Epidemic curves for two farms with different transmission
 rates in a single stochastic realization. Farm 2 (higher \`beta_farm\`)
 shows a faster outbreak compared to Farm 1, reflecting the expected
-impact of the higher transmission rate, though exact timing varies due
+impact of the higher transmission rate, though exact outcome varies due
 to randomness.](mparse_files/figure-html/unnamed-chunk-17-1.png)
 
 Figure 4. Epidemic curves for two farms with different transmission
 rates in a single stochastic realization. Farm 2 (higher `beta_farm`)
 shows a faster outbreak compared to Farm 1, reflecting the expected
-impact of the higher transmission rate, though exact timing varies due
+impact of the higher transmission rate, though exact outcome varies due
 to randomness.
 
 In this realization, Farm 2 (the one with the higher `beta_farm`) shows
@@ -393,3 +396,153 @@ the high transmission rate in this specific realization.
 This flexibility makes mparse ideal for spatial models where each node
 has unique characteristics, such as different herd sizes, management
 practices, or risk factors.
+
+## Modeling Open Populations: The Empty Set
+
+So far, our models have been “closed,” meaning the total number of
+individuals remains constant (except for transitions between
+compartments). In reality, populations change due to births and deaths.
+
+SimInf offers two ways to model these changes:
+
+1.  **Continuous rates** using the special symbol `@` (the empty set),
+    which we cover here. This is ideal for natural mortality or constant
+    birth rates that happen continuously over time.
+2.  **Scheduled events**, as described in the *Scheduled Events*
+    vignette. This is better for discrete, deterministic events (e.g., a
+    specific culling date or a one-time introduction of animals).
+
+In this section, we focus on the `@` syntax for continuous processes.
+
+- **Deaths**: Individuals leaving the system are directed to `@`.
+  Example: `I -> mu * I -> @` removes infected individuals at rate `mu`.
+- **Births**: Individuals entering the system come from `@`. Example:
+  `@ -> lambda -> S` adds new susceptible individuals at rate `lambda`.
+
+### Example: Predator-Prey Dynamics
+
+To illustrate a more complex system where births and deaths drive the
+dynamics, consider the Rosenzweig-MacArthur predator-prey model. In this
+model, prey ($R$) grow logistically and are consumed by predators ($F$),
+while predators die naturally and reproduce based on consumption.
+
+This example demonstrates how `mparse` handles:
+
+- **Non-linear propensity functions** (e.g., the Type-II functional
+  response).
+- **Multiple birth and death processes** using the empty set `@`.
+- **Density-dependent growth** (logistic term).
+
+The model consists of five transitions:
+
+1.  **Prey Birth**: New prey are born at a rate dependent on the current
+    population. $$\varnothing\overset{b_{R} \cdot R}{\rightarrow}R$$
+2.  **Prey Death (Natural)**: Prey die due to competition or natural
+    causes.
+    $$R\overset{{(d_{R} + {(b_{R} - d_{R})} \cdot R/K)} \cdot R}{\rightarrow}\varnothing$$
+3.  **Prey Death (Predation)**: Prey are eaten by predators.
+    $$R\overset{\frac{\alpha}{1 + w \cdot R} \cdot R \cdot F}{\rightarrow}\varnothing$$
+4.  **Predator Birth**: Predators reproduce based on the energy gained
+    from eating prey.
+    $$\varnothing\overset{b_{F} \cdot \frac{\alpha}{1 + w \cdot R} \cdot R \cdot F}{\rightarrow}F$$
+5.  **Predator Death**: Predators die naturally.
+    $$F\overset{d_{F} \cdot F}{\rightarrow}\varnothing$$
+
+In `mparse` syntax, these transitions are written as:
+
+``` r
+transitions <- c(
+  "@ -> bR * R -> R",
+  "R -> (dR + (bR - dR) * R / K) * R -> @",
+  "R -> alpha / (1 + w * R) * R * F -> @",
+  "@ -> bF * alpha / (1 + w * R) * R * F -> F",
+  "F -> dF * F -> @"
+)
+```
+
+Here, `@` appears on the left side for births (adding individuals) and
+on the right side for deaths (removing individuals). The parameters are
+defined as:
+
+- `bR`, `dR`: Prey birth and death rates.
+- `K`: Carrying capacity of the prey.
+- `alpha`: Predation efficiency.
+- `w`: Degree of predator saturation.
+- `bF`, `dF`: Predator birth and death rates.
+
+Let us define the parameters and initial conditions. We assume an
+initial population of 1000 prey and 100 predators.
+
+``` r
+parameters <- c(
+  bR = 2, bF = 2, dR = 1, K = 1000,
+  alpha = 0.007, w = 0.0035, dF = 2
+)
+```
+
+``` r
+u0 <- data.frame(R = 1000, F = 100)
+```
+
+Now we create the model. Since there are no between-node movements in
+this example, we can simulate a single node or replicate it to see the
+distribution of outcomes.
+
+``` r
+model <- mparse(
+  transitions = transitions,
+  compartments = c("R", "F"),
+  gdata = parameters,
+  u0 = u0,
+  tspan = 1:100
+)
+```
+
+We run the simulation and plot the results. Because the system is
+stochastic, we might see the predators go extinct in some realizations,
+while in others, the populations oscillate around a stable limit cycle.
+
+``` r
+set.seed(3)
+result <- run(model)
+plot(result)
+```
+
+![Figure 6. One stochastic realization of the Rosenzweig-MacArthur
+predator-prey model. The populations exhibit cyclic oscillations
+characteristic of the deterministic limit cycle, but stochastic
+fluctuations eventually lead to the extinction of the predator
+population in this specific
+run.](mparse_files/figure-html/unnamed-chunk-23-1.png)
+
+Figure 6. One stochastic realization of the Rosenzweig-MacArthur
+predator-prey model. The populations exhibit cyclic oscillations
+characteristic of the deterministic limit cycle, but stochastic
+fluctuations eventually lead to the extinction of the predator
+population in this specific run.
+
+To better visualize the dynamics, we can plot the **phase plane**
+(predators vs. prey) for a single realization. This shows the cyclic
+nature of the interaction.
+
+``` r
+plot(F ~ R, data = trajectory(result), type = "l", col = "darkgreen",
+     xlab = "Prey (R)", ylab = "Predators (F)", main = "")
+```
+
+![Figure 7. Phase plane trajectory of the predator-prey model. The path
+spirals outward from the initial conditions, tracing the characteristic
+limit cycle of the Rosenzweig-MacArthur model before stochastic
+fluctuations drive the predator population to
+extinction.](mparse_files/figure-html/unnamed-chunk-24-1.png)
+
+Figure 7. Phase plane trajectory of the predator-prey model. The path
+spirals outward from the initial conditions, tracing the characteristic
+limit cycle of the Rosenzweig-MacArthur model before stochastic
+fluctuations drive the predator population to extinction.
+
+In this example, the `@` symbol allows us to elegantly model the open
+nature of the ecosystem, where individuals enter and leave the system
+continuously. The non-linear terms (like `1 / (1 + w * R)`) are handled
+seamlessly by the parser, demonstrating the flexibility of mparse for
+complex ecological models.
