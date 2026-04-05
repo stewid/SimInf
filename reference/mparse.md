@@ -56,23 +56,21 @@ mparse(
 
   optional data for the nodes. Can be specified as a `data.frame` with
   one row per node, as a numeric matrix where column `ldata[, j]`
-  contains the local data vector for the node `j`, or as a as a named
-  vector when the model only contains one node. If `ldata` is specified
-  as a `data.frame`, each column is one parameter. If `v0` is specified
-  as a matrix, it must have row names to identify the parameters in the
-  transitions. If `v0` is specified as a named vector, the names
-  identify the parameters. The local data vector is passed as an
-  argument to the transition rate functions and the post time step
-  function.
+  contains the local data vector for the node `j`, or as a named vector
+  when the model only contains one node. If `ldata` is specified as a
+  `data.frame`, each column is one parameter. If `ldata` is specified as
+  a matrix, it must have row names to identify the parameters in the
+  transitions. If `ldata` is specified as a named vector, the names
+  identify the parameters.
 
 - gdata:
 
   optional data that are common to all nodes in the model. Can be
-  specified either as a optionally named numeric vector or as as a
-  one-row data.frame. The names are used to identify the parameters in
-  the transitions. When `gdata` is specified as a vector, it is possible
-  to have parameters without names, however, these parameters will not
-  be automatically identified by mparse but need to be identified in the
+  specified either as an optionally named numeric vector or as a one-row
+  data.frame. The names are used to identify the parameters in the
+  transitions. When `gdata` is specified as a vector, it is possible to
+  have parameters without names, however, these parameters will not be
+  automatically identified by mparse but need to be identified in the
   code by the user. The global data vector is passed as an argument to
   the transition rate functions and the post time step function.
 
@@ -112,18 +110,47 @@ mparse(
 
 - E:
 
-  matrix to handle scheduled events, see
+  A matrix to handle scheduled events, see
   [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
   and
   [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
-  for how `E` can be specified. Default is `NULL` i.e. no scheduled
+  for how `E` can be specified. Each row in the matrix corresponds to
+  one compartment in the model. The non-zero entries in a column
+  indicate the compartments to include in an event. For the *exit*,
+  *internal transfer* and *external transfer* events, the values in
+  `E[, select]` are used as weights when sampling individuals without
+  replacement, with probability proportional to the weight. For the
+  *enter* event, the values in `E[, select]` are used as weights when
+  determining which compartment to add individuals to. If the column
+  `E[, select]` contains several non-zero entries, the compartment is
+  sampled with probability proportional to the weight in `E[, select]`.
+  The select matrix `E` can either be specified as a `matrix`, or as a
+  `data.frame`. When `E` is specified as a `data.frame`, it must have
+  one column named `compartment` that defines which compartment is
+  referred to, and one column `select` that defines the column in `E`.
+  In addition, the `data.frame` can contain an optional column named
+  `value` with the value in `E`. When the `value` column is missing, `1`
+  is used as the default value. Default is `NULL` i.e. no scheduled
   events in the model.
 
 - N:
 
-  matrix to handle scheduled events, see
+  A matrix to handle scheduled events, see
   [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md).
-  Default is `NULL` i.e. no scheduled events in the model.
+  Each row in the matrix corresponds to one compartment in the model.
+  The values in a column define how to move sampled individuals before
+  adding them to the destination. Let `q <- shift`, then each non-zero
+  entry in `N[, q]` defines the number of rows to move sampled
+  individuals from that compartment i.e., sampled individuals from
+  compartment `p` are moved to compartment `N[p, q] + p`, where
+  `1 <= N[p, q] + p <= N_compartments`. This matrix is used for *enter*,
+  *internal transfer* and *external transfer* events. The shift matrix
+  `N` can either be specified as a `matrix`, or as a `data.frame`. When
+  `N` is specified as a `data.frame`, it must have one column named
+  `compartment` that defines which compartment is referred to, and one
+  column `shift` that defines the column in `N`. In addition, the
+  `data.frame` must contain a column named `value` with the integer
+  value in `N`. Default is `NULL` i.e. no scheduled events in the model.
 
 - pts_fun:
 

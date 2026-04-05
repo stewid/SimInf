@@ -105,20 +105,19 @@ compartments, for example, <code>compartments = c("S", "I",
 <dd><p>optional data for the nodes. Can be specified as a
 <code>data.frame</code> with one row per node, as a numeric matrix
 where column <code>ldata[, j]</code> contains the local data vector
-for the node <code>j</code>, or as a as a named vector when the
-model only contains one node. If <code>ldata</code> is specified as
-a <code>data.frame</code>, each column is one parameter. If
-<code>v0</code> is specified as a matrix, it must have row names to
-identify the parameters in the transitions. If <code>v0</code> is
-specified as a named vector, the names identify the
-parameters. The local data vector is passed as an argument to
-the transition rate functions and the post time step function.</p></dd>
+for the node <code>j</code>, or as a named vector when the model
+only contains one node. If <code>ldata</code> is specified as a
+<code>data.frame</code>, each column is one parameter. If
+<code>ldata</code> is specified as a matrix, it must have row names
+to identify the parameters in the transitions. If <code>ldata</code>
+is specified as a named vector, the names identify the
+parameters.</p></dd>
 
 
 <dt id="arg-gdata">gdata<a class="anchor" aria-label="anchor" href="#arg-gdata"></a></dt>
 <dd><p>optional data that are common to all nodes in the
-model. Can be specified either as a optionally named numeric
-vector or as as a one-row data.frame. The names are used to
+model. Can be specified either as an optionally named numeric
+vector or as a one-row data.frame. The names are used to
 identify the parameters in the transitions. When <code>gdata</code>
 is specified as a vector, it is possible to have parameters
 without names, however, these parameters will not be
@@ -169,17 +168,54 @@ model.</p></dd>
 
 
 <dt id="arg-e">E<a class="anchor" aria-label="anchor" href="#arg-e"></a></dt>
-<dd><p>matrix to handle scheduled events, see
+<dd><p>A matrix to handle scheduled events, see
 <code><a href="SimInf_events-class.html">SimInf_events</a></code> and
 <code><a href="SimInf_model-class.html">SimInf_model</a></code> for how <code>E</code> can be
-specified. Default is <code>NULL</code> i.e. no scheduled events in
-the model.</p></dd>
+specified. Each row in the matrix corresponds to one
+compartment in the model. The non-zero entries in a column
+indicate the compartments to include in an event. For the
+<em>exit</em>, <em>internal transfer</em> and <em>external
+transfer</em> events, the values in <code>E[, select]</code> are used as
+weights when sampling individuals without replacement, with
+probability proportional to the weight. For the <em>enter</em>
+event, the values in <code>E[, select]</code> are used as weights
+when determining which compartment to add individuals to. If
+the column <code>E[, select]</code> contains several non-zero
+entries, the compartment is sampled with probability
+proportional to the weight in <code>E[, select]</code>. The select
+matrix <code>E</code> can either be specified as a <code>matrix</code>, or
+as a <code>data.frame</code>.  When <code>E</code> is specified as a
+<code>data.frame</code>, it must have one column named
+<code>compartment</code> that defines which compartment is referred
+to, and one column <code>select</code> that defines the column in
+<code>E</code>.  In addition, the <code>data.frame</code> can contain an
+optional column named <code>value</code> with the value in <code>E</code>.
+When the <code>value</code> column is missing, <code>1</code> is used as
+the default value. Default is <code>NULL</code> i.e. no scheduled
+events in the model.</p></dd>
 
 
 <dt id="arg-n">N<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>matrix to handle scheduled events, see
-<code><a href="SimInf_events-class.html">SimInf_events</a></code>. Default is <code>NULL</code>
-i.e. no scheduled events in the model.</p></dd>
+<dd><p>A matrix to handle scheduled events, see
+<code><a href="SimInf_events-class.html">SimInf_events</a></code>. Each row in the matrix
+corresponds to one compartment in the model. The values in a
+column define how to move sampled individuals before adding
+them to the destination. Let <code>q &lt;- shift</code>, then each
+non-zero entry in <code>N[, q]</code> defines the number of rows to
+move sampled individuals from that compartment i.e., sampled
+individuals from compartment <code>p</code> are moved to compartment
+<code>N[p, q] + p</code>, where <code>1 &lt;= N[p, q] + p &lt;=
+N_compartments</code>. This matrix is used for <em>enter</em>,
+<em>internal transfer</em> and <em>external transfer</em> events.
+The shift matrix <code>N</code> can either be specified as a
+<code>matrix</code>, or as a <code>data.frame</code>.  When <code>N</code> is
+specified as a <code>data.frame</code>, it must have one column
+named <code>compartment</code> that defines which compartment is
+referred to, and one column <code>shift</code> that defines the
+column in <code>N</code>.  In addition, the <code>data.frame</code> must
+contain a column named <code>value</code> with the integer value in
+<code>N</code>. Default is <code>NULL</code> i.e. no scheduled events in
+the model.</p></dd>
 
 
 <dt id="arg-pts-fun">pts_fun<a class="anchor" aria-label="anchor" href="#arg-pts-fun"></a></dt>
