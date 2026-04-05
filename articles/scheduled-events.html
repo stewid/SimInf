@@ -71,13 +71,12 @@
 
     
     
-<p>NB: This vignette is work-in-progress and not yet complete.</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>This vignette describes how births, deaths and movements can be
 incorporated into a model as scheduled events at predefined time-points.
-Events can, for example, be used to simulate disese spread among
+Events can, for example, be used to simulate disease spread among
 multiple subpopulations (e.g., farms) when individuals can move between
 the subpopulations and thus transfer infection, see Figure 1. In SimInf,
 we use <code>node</code> to denote a subpopulation.</p>
@@ -196,7 +195,10 @@ involved when picking inviduals from the compartments.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p>And plot (Figure 2) the number of individuals in each node.</p>
+<p>And plot (Figure 2) the number of individuals in each node. We use
+<code>range = FALSE</code> to display the trajectory lines without the
+shaded range bands, making it easier to read the exact compartment
+counts.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
@@ -595,6 +597,14 @@ compartment. With compartments ordered S=1, I=2, R=3, a value of 2 means
 individuals from compartment 1 (S) move to compartment 1+2=3 (R).</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/shift_matrix.html">shift_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>compartment <span class="op">=</span> <span class="st">"S"</span>, shift <span class="op">=</span> <span class="fl">1</span>, value <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Note:</strong> Unlike the <code><a href="../reference/select_matrix.html">select_matrix()</a></code>
+function where the value column is optional (defaulting to 1), the value
+column is <strong>mandatory</strong> when using a data.frame with
+<code><a href="../reference/shift_matrix.html">shift_matrix()</a></code>. This is because the N matrix stores integer
+offsets (how many rows to shift) rather than just presence/absence
+indicators, so the specific shift amount must be explicitly defined. The
+shift parameter works together with the shift matrix (N) to determine
+the destination compartment.</p>
 <p>Now, verify the shift matrix.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/shift_matrix.html">shift_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
@@ -602,16 +612,186 @@ individuals from compartment 1 (S) move to compartment 1+2=3 (R).</p>
 <span><span class="co">## S 2</span></span>
 <span><span class="co">## I 0</span></span>
 <span><span class="co">## R 0</span></span></code></pre>
+<p>Each column in N defines a different transfer pattern. The shift
+value selects which column to use. The value N[p, q] indicates how many
+rows to move from compartment p.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-41-1.png" class="r-plt" alt="**Figure 11.** The number of recovered ($R$) individuals increase at $t=10$." width="672"><p class="caption">
-<strong>Figure 11.</strong> The number of recovered
+<img src="scheduled-events_files/figure-html/unnamed-chunk-41-1.png" class="r-plt" alt="**Figure 12.** The number of recovered ($R$) individuals increases at $t=10$." width="672"><p class="caption">
+<strong>Figure 12.</strong> The number of recovered
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>)
-individuals increase at
+individuals increases at
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">t=10</annotation></semantics></math>.
 </p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="stochastic-events-using-proportion">Stochastic events using proportion<a class="anchor" aria-label="anchor" href="#stochastic-events-using-proportion"></a>
+</h2>
+<p>Instead of specifying a fixed number n, events can use proportion to
+sample a proportion of individuals from the selected compartments. This
+is useful when you want to remove or move a percentage of the
+population.</p>
+</div>
+<div class="section level2">
+<h2 id="example-proportional-culling">Example: Proportional culling<a class="anchor" aria-label="anchor" href="#example-proportional-culling"></a>
+</h2>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">20</span>, I <span class="op">=</span> <span class="fl">15</span>, R <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<p>Remove 20% of the population at time 10:</p>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  event      <span class="op">=</span> <span class="st">"exit"</span>, <span class="co">## "exit" remove individuals from a node</span></span>
+<span>  time       <span class="op">=</span> <span class="fl">10</span>,     <span class="co">## The time that the event happens</span></span>
+<span>  node       <span class="op">=</span> <span class="fl">1</span>,      <span class="co">## In which node does the event occur</span></span>
+<span>  dest       <span class="op">=</span> <span class="fl">0</span>,      <span class="co">## Not used for exit events</span></span>
+<span>  n          <span class="op">=</span> <span class="fl">0</span>,      <span class="co">## n = 0 triggers proportion sampling</span></span>
+<span>  proportion <span class="op">=</span> <span class="fl">0.2</span>,    <span class="co">## Remove 20% of selected individuals</span></span>
+<span>  select     <span class="op">=</span> <span class="fl">4</span>,      <span class="co">## Target all compartments</span></span>
+<span>  shift      <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>      <span class="co">## Not used in this example</span></span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>             tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,</span>
+<span>             events <span class="op">=</span> <span class="va">events</span>,</span>
+<span>             beta <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>             gamma <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-45-1.png" class="r-plt" alt="**Figure 13.** The number of individuals decrease at $t=10$." width="672"><p class="caption">
+<strong>Figure 13.</strong> The number of individuals decrease at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">t=10</annotation></semantics></math>.
+</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="processing-order-of-simultaneous-events">Processing order of simultaneous events<a class="anchor" aria-label="anchor" href="#processing-order-of-simultaneous-events"></a>
+</h2>
+<p>When multiple events are scheduled at the same time point, they are
+processed in a specific order:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Exit</strong> events (removals)</li>
+<li>
+<strong>Enter</strong> events (additions)</li>
+<li>
+<strong>Internal</strong> transfer events (within-node
+movements)</li>
+<li>
+<strong>External</strong> transfer events (between-node
+movements)</li>
+</ol>
+<p>This ordering ensures that removals happen before additions, and
+within-node movements happen before between-node movements.</p>
+</div>
+<div class="section level2">
+<h2 id="example-multiple-events-at-the-same-time">Example: Multiple events at the same time<a class="anchor" aria-label="anchor" href="#example-multiple-events-at-the-same-time"></a>
+</h2>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">30</span><span class="op">)</span>,</span>
+<span>  I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">25</span><span class="op">)</span>,</span>
+<span>  R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>At time 5, we schedule:</p>
+<ul>
+<li>10 deaths (exit)</li>
+<li>20 births (enter)</li>
+<li>5 vaccinations (internal transfer)</li>
+<li>15 movements to node 2 (external transfer)</li>
+</ul>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exit"</span>, <span class="st">"enter"</span>, <span class="st">"intTrans"</span>, <span class="st">"extTrans"</span><span class="op">)</span>,</span>
+<span>  time       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>  node       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  dest       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  n          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">5</span>, <span class="fl">15</span><span class="op">)</span>,</span>
+<span>  proportion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  select     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>             tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span>,</span>
+<span>             events <span class="op">=</span> <span class="va">events</span>,</span>
+<span>             beta <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>             gamma <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/shift_matrix.html">shift_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>compartment <span class="op">=</span> <span class="st">"S"</span>, shift <span class="op">=</span> <span class="fl">1</span>, value <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-50-1.png" class="r-plt" alt="**Figure 14.** Multiple events have been processed at $t=5$." width="672"><p class="caption">
+<strong>Figure 14.</strong> Multiple events have been processed at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">t=5</annotation></semantics></math>.
+</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+</h2>
+<p>This vignette demonstrated the four types of scheduled events in
+SimInf:</p>
+<table class="table">
+<colgroup>
+<col width="12%">
+<col width="44%">
+<col width="43%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Event type</th>
+<th align="left">Purpose</th>
+<th align="left">Key parameters</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>enter</code></td>
+<td align="left">Add individuals to a node</td>
+<td align="left">
+<code>n</code> or <code>proportion</code>,
+<code>select</code>, <code>shift</code>
+</td>
+</tr>
+<tr class="even">
+<td align="left"><code>exit</code></td>
+<td align="left">Remove individuals from a node</td>
+<td align="left">
+<code>n</code> or <code>proportion</code>,
+<code>select</code>
+</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>intTrans</code></td>
+<td align="left">Move individuals within a node</td>
+<td align="left">
+<code>n</code> or <code>proportion</code>,
+<code>select</code>, <code>shift</code>
+</td>
+</tr>
+<tr class="even">
+<td align="left"><code>extTrans</code></td>
+<td align="left">Move individuals between nodes</td>
+<td align="left">
+<code>n</code> or <code>proportion</code>,
+<code>select</code>, <code>shift</code>, <code>dest</code>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Key points to remember:</p>
+<ul>
+<li>The E matrix determines which compartments are affected by each
+event type via the select parameter</li>
+<li>Values in the E matrix are used as weights for sampling individuals
+when multiple compartments are selected</li>
+<li>Events at the same time are processed in the order: exit, enter,
+internal transfer, external transfer</li>
+<li>Use n for deterministic numbers or proportion for stochastic
+sampling</li>
+</ul>
+<p>For more detailed information about the SimInf_events class and the
+underlying algorithms, see the package documentation and the
+accompanying technical paper.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

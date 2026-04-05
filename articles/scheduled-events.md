@@ -1,12 +1,10 @@
 # Scheduled events
 
-NB: This vignette is work-in-progress and not yet complete.
-
 ## Overview
 
 This vignette describes how births, deaths and movements can be
 incorporated into a model as scheduled events at predefined time-points.
-Events can, for example, be used to simulate disese spread among
+Events can, for example, be used to simulate disease spread among
 multiple subpopulations (e.g., farms) when individuals can move between
 the subpopulations and thus transfer infection, see Figure 1. In SimInf,
 we use `node` to denote a subpopulation.
@@ -135,7 +133,9 @@ set_num_threads(1)
 result <- run(model)
 ```
 
-And plot (Figure 2) the number of individuals in each node.
+And plot (Figure 2) the number of individuals in each node. We use
+`range = FALSE` to display the trajectory lines without the shaded range
+bands, making it easier to read the exact compartment counts.
 
 ``` r
 plot(result, range = FALSE)
@@ -584,6 +584,17 @@ individuals from compartment 1 (S) move to compartment 1+2=3 (R).
 shift_matrix(model) <- data.frame(compartment = "S", shift = 1, value = 2)
 ```
 
+**Note:** Unlike the
+[`select_matrix()`](http://stewid.github.io/SimInf/reference/select_matrix.md)
+function where the value column is optional (defaulting to 1), the value
+column is **mandatory** when using a data.frame with
+[`shift_matrix()`](http://stewid.github.io/SimInf/reference/shift_matrix.md).
+This is because the N matrix stores integer offsets (how many rows to
+shift) rather than just presence/absence indicators, so the specific
+shift amount must be explicitly defined. The shift parameter works
+together with the shift matrix (N) to determine the destination
+compartment.
+
 Now, verify the shift matrix.
 
 ``` r
@@ -595,13 +606,148 @@ shift_matrix(model)
     ## I 0
     ## R 0
 
+Each column in N defines a different transfer pattern. The shift value
+selects which column to use. The value N\[p, q\] indicates how many rows
+to move from compartment p.
+
 ``` r
 plot(run(model))
 ```
 
-![\*\*Figure 11.\*\* The number of recovered (\$R\$) individuals
-increase at
+![\*\*Figure 12.\*\* The number of recovered (\$R\$) individuals
+increases at
 \$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-41-1.png)
 
-**Figure 11.** The number of recovered ($R$) individuals increase at
+**Figure 12.** The number of recovered ($R$) individuals increases at
 $t = 10$.
+
+## Stochastic events using proportion
+
+Instead of specifying a fixed number n, events can use proportion to
+sample a proportion of individuals from the selected compartments. This
+is useful when you want to remove or move a percentage of the
+population.
+
+## Example: Proportional culling
+
+``` r
+u0 <- data.frame(S = 20, I = 15, R = 10)
+```
+
+Remove 20% of the population at time 10:
+
+``` r
+events <- data.frame(
+  event      = "exit", ## "exit" remove individuals from a node
+  time       = 10,     ## The time that the event happens
+  node       = 1,      ## In which node does the event occur
+  dest       = 0,      ## Not used for exit events
+  n          = 0,      ## n = 0 triggers proportion sampling
+  proportion = 0.2,    ## Remove 20% of selected individuals
+  select     = 4,      ## Target all compartments
+  shift      = 0)      ## Not used in this example
+```
+
+``` r
+model <- SIR(u0 = u0,
+             tspan = 0:20,
+             events = events,
+             beta = 0,
+             gamma = 0)
+```
+
+``` r
+plot(run(model))
+```
+
+![\*\*Figure 13.\*\* The number of individuals decrease at
+\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-45-1.png)
+
+**Figure 13.** The number of individuals decrease at $t = 10$.
+
+## Processing order of simultaneous events
+
+When multiple events are scheduled at the same time point, they are
+processed in a specific order:
+
+1.  **Exit** events (removals)
+2.  **Enter** events (additions)
+3.  **Internal** transfer events (within-node movements)
+4.  **External** transfer events (between-node movements)
+
+This ordering ensures that removals happen before additions, and
+within-node movements happen before between-node movements.
+
+## Example: Multiple events at the same time
+
+``` r
+u0 <- data.frame(
+  S = c(20, 30),
+  I = c(15, 25),
+  R = c(10, 5))
+```
+
+At time 5, we schedule:
+
+- 10 deaths (exit)
+- 20 births (enter)
+- 5 vaccinations (internal transfer)
+- 15 movements to node 2 (external transfer)
+
+``` r
+events <- data.frame(
+  event      = c("exit", "enter", "intTrans", "extTrans"),
+  time       = c(5, 5, 5, 5),
+  node       = c(1, 1, 1, 1),
+  dest       = c(0, 0, 0, 2),
+  n          = c(10, 20, 5, 15),
+  proportion = c(0, 0, 0, 0),
+  select     = c(4, 1, 1, 4),
+  shift      = c(0, 0, 1, 0))
+```
+
+``` r
+model <- SIR(u0 = u0,
+             tspan = 0:10,
+             events = events,
+             beta = 0,
+             gamma = 0)
+```
+
+``` r
+shift_matrix(model) <- data.frame(compartment = "S", shift = 1, value = 2)
+```
+
+``` r
+plot(run(model), range = FALSE)
+```
+
+![\*\*Figure 14.\*\* Multiple events have been processed at
+\$t=5\$.](scheduled-events_files/figure-html/unnamed-chunk-50-1.png)
+
+**Figure 14.** Multiple events have been processed at $t = 5$.
+
+## Summary
+
+This vignette demonstrated the four types of scheduled events in SimInf:
+
+| Event type | Purpose                        | Key parameters                                 |
+|:-----------|:-------------------------------|:-----------------------------------------------|
+| `enter`    | Add individuals to a node      | `n` or `proportion`, `select`, `shift`         |
+| `exit`     | Remove individuals from a node | `n` or `proportion`, `select`                  |
+| `intTrans` | Move individuals within a node | `n` or `proportion`, `select`, `shift`         |
+| `extTrans` | Move individuals between nodes | `n` or `proportion`, `select`, `shift`, `dest` |
+
+Key points to remember:
+
+- The E matrix determines which compartments are affected by each event
+  type via the select parameter
+- Values in the E matrix are used as weights for sampling individuals
+  when multiple compartments are selected
+- Events at the same time are processed in the order: exit, enter,
+  internal transfer, external transfer
+- Use n for deterministic numbers or proportion for stochastic sampling
+
+For more detailed information about the SimInf_events class and the
+underlying algorithms, see the package documentation and the
+accompanying technical paper.
