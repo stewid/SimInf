@@ -193,3 +193,53 @@ that we use the same seed value as before.
 set.seed(22)
 plot(run(model))
 ```
+
+### Handling Edge Cases: Division by Zero
+
+In stochastic simulations, it is possible for a node to become empty
+(e.g., all individuals die or move away). If a transition involves
+dividing by the total population $N$, and $N$ becomes zero, the
+simulation would crash with a "division by zero" error.
+
+Since `mparse` translates the propensity expressions into C code, we
+can use the C **ternary operator** (`condition ? true_value :
+false_value`) to handle this gracefully.
+
+The syntax `a ? b : c` evaluates to `b` if `a` is true, and `c`
+otherwise.  For example, to avoid dividing by zero when $N = 0$, we
+can write:
+
+```{r}
+transitions <- c("S -> N > 0 ? beta * S * I / N : 0 -> I",
+                 "I -> gamma * I -> R",
+                 "(int)N <- S + I + R")
+```
+
+Here, the expression `N > 0 ? beta * S * I / N : 0` works as follows:
+
+- If $N>0$, the force of infection is calculated normally.
+- If $N=0$, the rate is set to 0, preventing the division and allowing
+  the simulation to continue (effectively, no new infections can occur
+  in an empty population).
+
+This is a robust pattern for any propensity that involves division by
+a dynamic quantity, such as the total population size.
+
+### Creating the Model
+
+Let us create the model with this safety check. Note that the logic
+remains the same, but the simulation is now robust against empty
+nodes.
+
+```{r}
+model <- mparse(transitions = transitions,
+                compartments = c("S", "I", "R"),
+                gdata = c(beta = 0.16, gamma = 0.077),
+                u0 = data.frame(S = 99, I = 1, R = 0),
+                tspan = 1:100)
+```
+
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="Figure 3. SIR model using a ternary operator to prevent division by zero. Although the curve is identical to previous examples (as the population did not reach zero), this syntax ensures the simulation continues safely if the node becomes empty."}
+set.seed(22)
+plot(run(model))
+```
