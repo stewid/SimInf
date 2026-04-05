@@ -261,6 +261,69 @@ size. The results are identical to Figure 1.
 </p>
 </div>
 </div>
+<div class="section level3">
+<h3 id="handling-edge-cases-division-by-zero">Handling Edge Cases: Division by Zero<a class="anchor" aria-label="anchor" href="#handling-edge-cases-division-by-zero"></a>
+</h3>
+<p>In stochastic simulations, it is possible for a node to become empty
+(e.g., all individuals die or move away). If a transition involves
+dividing by the total population
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+becomes zero, the simulation would crash with a “division by zero”
+error.</p>
+<p>Since <code>mparse</code> translates the propensity expressions into
+C code, we can use the C <strong>ternary operator</strong>
+(<code>condition ? true_value : false_value</code>) to handle this
+gracefully.</p>
+<p>The syntax <code>a ? b : c</code> evaluates to <code>b</code> if
+<code>a</code> is true, and <code>c</code> otherwise. For example, to
+avoid dividing by zero when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">N = 0</annotation></semantics></math>,
+we can write:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S -&gt; N &gt; 0 ? beta * S * I / N : 0 -&gt; I"</span>,</span>
+<span>                 <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
+<span>                 <span class="st">"(int)N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
+<p>Here, the expression <code>N &gt; 0 ? beta * S * I / N : 0</code>
+works as follows:</p>
+<ul>
+<li>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">N&gt;0</annotation></semantics></math>,
+the force of infection is calculated normally.</li>
+<li>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">N=0</annotation></semantics></math>,
+the rate is set to 0, preventing the division and allowing the
+simulation to continue (effectively, no new infections can occur in an
+empty population).</li>
+</ul>
+<p>This is a robust pattern for any propensity that involves division by
+a dynamic quantity, such as the total population size.</p>
+</div>
+<div class="section level3">
+<h3 id="creating-the-model">Creating the Model<a class="anchor" aria-label="anchor" href="#creating-the-model"></a>
+</h3>
+<p>Let us create the model with this safety check. Note that the logic
+remains the same, but the simulation is now robust against empty
+nodes.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span>transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>                compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>                gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
+<span>                u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>                tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="mparse_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="Figure 3. SIR model using a ternary operator to prevent division by zero. Although the curve is identical to previous examples (as the population did not reach zero), this syntax ensures the simulation continues safely if the node becomes empty." width="672"><p class="caption">
+Figure 3. SIR model using a ternary operator to prevent division by
+zero. Although the curve is identical to previous examples (as the
+population did not reach zero), this syntax ensures the simulation
+continues safely if the node becomes empty.
+</p>
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
