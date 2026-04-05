@@ -42,7 +42,6 @@ for testing age-dependent disease dynamics with environmental
 transmission.
 }
 \examples{
-\dontrun{
 ## For reproducibility, call the set.seed() function and specify the
 ## number of threads to use. To use all available threads, remove the
 ## set_num_threads() call.
@@ -98,7 +97,6 @@ plot(result, index = 1)
 ## Summarize the trajectory. The summary includes the number of events
 ## by event type.
 summary(result)
-}
 }
 \seealso{
 \code{\link{SISe3}} for creating SISe3 models with this initial

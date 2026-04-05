@@ -44,7 +44,6 @@ spatial disease dynamics at the herd level, such as:
 }
 }
 \examples{
-\dontrun{
 ## For reproducibility, call the set.seed() function and specify the
 ## number of threads to use. To use all available threads, remove the
 ## set_num_threads() call.
@@ -81,7 +80,6 @@ plot(result, index = 1)
 ## Summarize the trajectory. The summary includes the number of events
 ## by event type.
 summary(result)
-}
 }
 \seealso{
 \code{\link{SIR}} for creating cattle disease models with this
