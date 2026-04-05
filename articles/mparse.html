@@ -147,8 +147,10 @@ infected individuals recover and move to the recovered compartment (R).
 The recovery rate is typically
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\gamma I</annotation></semantics></math>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S -&gt; beta * S * I / (S + I + R) -&gt; I"</span>,</span>
-<span>                 <span class="st">"I -&gt; gamma * I -&gt; R"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"S -&gt; beta * S * I / (S + I + R) -&gt; I"</span>,</span>
+<span>  <span class="st">"I -&gt; gamma * I -&gt; R"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Now we have a complete model definition. Let us create the model
 object. We need to specify:</p>
 <ul>
@@ -169,11 +171,13 @@ duration of the simulation and the time points at which the state of the
 system is recorded.</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span>transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
-<span>                compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
-<span>                gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
-<span>                u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
-<span>                tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span></span>
+<span>  transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>  compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>  gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
+<span>  u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The <code>mparse</code> function prepares the model definition.
 Compilation occurs when <code><a href="../reference/run.html">run()</a></code> is first called, and the
 compiled code is cached for efficiency. Subsequent calls to
@@ -215,9 +219,10 @@ modify.</p>
 <code>transitions</code> vector. The order of definitions does not
 matter; <code>mparse</code> will resolve dependencies automatically.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S -&gt; beta * S * I / N -&gt; I"</span>,</span>
-<span>                 <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
-<span>                 <span class="st">"N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"S -&gt; beta * S * I / N -&gt; I"</span>,</span>
+<span>  <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
+<span>  <span class="st">"N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="data-types-integer-vs--double">Data Types: Integer vs. Double<a class="anchor" aria-label="anchor" href="#data-types-integer-vs--double"></a>
@@ -227,11 +232,12 @@ matter; <code>mparse</code> will resolve dependencies automatically.</p>
 variable. By default, variables are treated as double (floating-point
 numbers). However, for population counts, it is often semantically
 clearer to define them as integers. We can enforce this by prefixing the
-variable name with (int).</p>
+variable name with <code>(int)</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S -&gt; beta * S * I / N -&gt; I"</span>,</span>
-<span>                 <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
-<span>                 <span class="st">"(int)N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"S -&gt; beta * S * I / N -&gt; I"</span>,</span>
+<span>  <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
+<span>  <span class="st">"(int)N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
 <p>Using <code>(int)N</code> tells mparse to treat N as an integer.
 While the compiler may optimize repeated calculations of
 <code>S + I + R</code> anyway, explicitly defining N ensures that the
@@ -243,11 +249,13 @@ logic is centralized and the code remains easy to read.</p>
 <p>Let us create the model using the variable definition. Note that we
 no longer need to calculate it inline in the propensity expression.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span>transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
-<span>                compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
-<span>                gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
-<span>                u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
-<span>                tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span></span>
+<span>  transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>  compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>  gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
+<span>  u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Running the model produces the same results as before, but the
 transition definitions are now more concise and easier to manage. Note
 that we use the same seed value as before.</p>
@@ -270,7 +278,7 @@ dividing by the total population
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>,
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
-becomes zero, the simulation would crash with a “division by zero”
+becomes zero, the simulation would stop with a “division by zero”
 error.</p>
 <p>Since <code>mparse</code> translates the propensity expressions into
 C code, we can use the C <strong>ternary operator</strong>
@@ -282,9 +290,11 @@ avoid dividing by zero when
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">N = 0</annotation></semantics></math>,
 we can write:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S -&gt; N &gt; 0 ? beta * S * I / N : 0 -&gt; I"</span>,</span>
-<span>                 <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
-<span>                 <span class="st">"(int)N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"S -&gt; N &gt; 0 ? beta * S * I / N : 0 -&gt; I"</span>,</span>
+<span>  <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
+<span>  <span class="st">"(int)N &lt;- S + I + R"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Here, the expression <code>N &gt; 0 ? beta * S * I / N : 0</code>
 works as follows:</p>
 <ul>
@@ -307,11 +317,13 @@ a dynamic quantity, such as the total population size.</p>
 remains the same, but the simulation is now robust against empty
 nodes.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span>transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
-<span>                compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
-<span>                gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
-<span>                u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
-<span>                tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span></span>
+<span>  transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>  compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>  gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
+<span>  u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -323,6 +335,133 @@ population did not reach zero), this syntax ensures the simulation
 continues safely if the node becomes empty.
 </p>
 </div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="incorporating-global-and-local-data">Incorporating Global and Local Data<a class="anchor" aria-label="anchor" href="#incorporating-global-and-local-data"></a>
+</h2>
+<p>So far, we have defined models where all parameters (like
+<code>beta</code> and <code>gamma</code>) are the same for the entire
+population. In many epidemiological scenarios, however, parameters vary
+between subpopulations (nodes). For example, different farms might have
+different contact rates due to management practices, while the
+biological recovery rate remains constant across all farms.</p>
+<p>SimInf distinguishes between two types of data: - <strong>Global Data
+(<code>gdata</code>)</strong>: Parameters shared by all nodes (e.g.,
+recovery rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>).
+- <strong>Local Data (<code>ldata</code>)</strong>: Parameters specific
+to each node (e.g., transmission rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>).</p>
+<div class="section level3">
+<h3 id="a-two-farm-model">A Two-Farm Model<a class="anchor" aria-label="anchor" href="#a-two-farm-model"></a>
+</h3>
+<p>Let us create a model with two independent farms (nodes). We assume:
+- Both farms have the same recovery rate (<code>gamma = 0.077</code>). -
+Farm 1 has a low transmission rate (<code>beta_farm = 0.1</code>). -
+Farm 2 has a high transmission rate (<code>beta_farm = 0.4</code>).</p>
+<p>We define the transition using a placeholder name for the local
+parameter, <code>beta_farm</code>. Note that we also include the safety
+check for division by zero using the ternary operator, as discussed
+previously.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"S -&gt; N &gt; 0 ? beta_farm * S * I / N : 0 -&gt; I"</span>,</span>
+<span>  <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
+<span>  <span class="st">"(int)N &lt;- S + I + R"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="defining-global-and-local-data">Defining Global and Local Data<a class="anchor" aria-label="anchor" href="#defining-global-and-local-data"></a>
+</h3>
+<p>We pass the global parameter <code>gamma</code> in gdata. For the
+local parameter <code>beta_farm</code>, we create a data.frame where
+each row corresponds to a node. The column name must match the variable
+name used in the transitions.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  beta_farm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.4</span><span class="op">)</span>  <span class="co"># Farm 1: 0.1, Farm 2: 0.4</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="initial-conditions-for-multiple-nodes">Initial Conditions for Multiple Nodes<a class="anchor" aria-label="anchor" href="#initial-conditions-for-multiple-nodes"></a>
+</h3>
+<p>The initial state <code>u0</code> must also be a
+<code>data.frame</code> with one row per node. The columns correspond to
+the compartments. The order of rows in <code>u0</code> and
+<code>ldata</code> must match (row 1 is Node 1, row 2 is Node 2,
+etc.).</p>
+<p>It is crucial that the number of rows in <code>u0</code> matches the
+number of rows in <code>ldata</code>. The rows must be aligned by node
+index: the first row of both data frames corresponds to Node 1, the
+second row to Node 2, and so on. If the row counts differ or the order
+is mixed, the model will assign parameters to the wrong nodes, leading
+to incorrect results.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">99</span>, <span class="fl">95</span><span class="op">)</span>,  <span class="co"># Farm 1: 99 S, Farm 2: 95 S</span></span>
+<span>  I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,    <span class="co"># Farm 1: 1 I, Farm 2: 5 I</span></span>
+<span>  R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>     <span class="co"># Both start with 0 R</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="creating-and-running-the-model-1">Creating and Running the Model<a class="anchor" aria-label="anchor" href="#creating-and-running-the-model-1"></a>
+</h3>
+<p>Now we create the model. mparse automatically associates the rows of
+ldata and u0 with the nodes (1, 2, …).</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span></span>
+<span>  transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>  compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>  gdata <span class="op">=</span> <span class="va">gdata</span>,</span>
+<span>  ldata <span class="op">=</span> <span class="va">ldata</span>,</span>
+<span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We can now run the simulation. Since we have multiple nodes, the
+plot() function can display the trajectories for each node separately if
+we use range = FALSE to display the trajectory lines without the shaded
+range bands.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="mparse_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="Figure 4. Epidemic curves for two farms with different transmission rates in a single stochastic realization. Farm 2 (higher `beta_farm`) shows a faster outbreak compared to Farm 1, reflecting the expected impact of the higher transmission rate, though exact timing varies due to randomness." width="672"><p class="caption">
+Figure 4. Epidemic curves for two farms with different transmission
+rates in a single stochastic realization. Farm 2 (higher
+<code>beta_farm</code>) shows a faster outbreak compared to Farm 1,
+reflecting the expected impact of the higher transmission rate, though
+exact timing varies due to randomness.
+</p>
+</div>
+<p>In this realization, Farm 2 (the one with the higher
+<code>beta_farm</code>) shows a faster outbreak compared to Farm 1. On
+average, the higher transmission rate leads to a steeper rise in
+infections, though individual stochastic runs may vary. This
+demonstrates how <code>ldata</code> allows us to easily simulate
+heterogeneity across a network of populations without rewriting the
+transition logic.</p>
+</div>
+<div class="section level3">
+<h3 id="inspecting-results-by-node">Inspecting Results by Node<a class="anchor" aria-label="anchor" href="#inspecting-results-by-node"></a>
+</h3>
+<p>To inspect the results for a specific node, we can use the
+<code>index</code> argument in <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> or
+<code><a href="../reference/trajectory.html">trajectory()</a></code>.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="mparse_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="Figure 5. Trajectory for Farm 2 only, showing the rapid spread due to the high transmission rate in this specific realization." width="672"><p class="caption">
+Figure 5. Trajectory for Farm 2 only, showing the rapid spread due to
+the high transmission rate in this specific realization.
+</p>
+</div>
+<p>This flexibility makes mparse ideal for spatial models where each
+node has unique characteristics, such as different herd sizes,
+management practices, or risk factors.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
