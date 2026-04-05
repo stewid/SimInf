@@ -350,10 +350,9 @@ is modelling births in a population. New individuals can be added to
 specific compartments, and the E matrix weights determine which
 compartments receive the new individuals when multiple compartments are
 selected.</p>
-</div>
-<div class="section level2">
-<h2 id="example-births-entering-a-population">Example: Births entering a population<a class="anchor" aria-label="anchor" href="#example-births-entering-a-population"></a>
-</h2>
+<div class="section level3">
+<h3 id="example-births-entering-a-population">Example: Births entering a population<a class="anchor" aria-label="anchor" href="#example-births-entering-a-population"></a>
+</h3>
 <p>Let us create a simple model where births occur at regular intervals.
 Newborns enter the susceptible compartment.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
@@ -387,9 +386,9 @@ individuals increases by 10 individuals at each scheduled event.
 </p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="weighted-sampling-for-enter-events">Weighted sampling for enter events<a class="anchor" aria-label="anchor" href="#weighted-sampling-for-enter-events"></a>
-</h2>
+<div class="section level3">
+<h3 id="weighted-sampling-for-enter-events">Weighted sampling for enter events<a class="anchor" aria-label="anchor" href="#weighted-sampling-for-enter-events"></a>
+</h3>
 <p>When the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mo>,</mo><mi>s</mi><mi>e</mi><mi>l</mi><mi>e</mi><mi>c</mi><mi>t</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">E[, select]</annotation></semantics></math>
 column contains multiple non-zero entries, the new individuals are
@@ -473,6 +472,7 @@ compared to as recovered
 </p>
 </div>
 </div>
+</div>
 <div class="section level2">
 <h2 id="exit-events-removing-individuals">Exit events: Removing individuals<a class="anchor" aria-label="anchor" href="#exit-events-removing-individuals"></a>
 </h2>
@@ -480,10 +480,9 @@ compared to as recovered
 natural mortality or culling. Like enter events, the E matrix weights
 determine which compartments individuals are removed from when multiple
 compartments are selected.</p>
-</div>
-<div class="section level2">
-<h2 id="example-mortality">Example: Mortality<a class="anchor" aria-label="anchor" href="#example-mortality"></a>
-</h2>
+<div class="section level3">
+<h3 id="example-mortality">Example: Mortality<a class="anchor" aria-label="anchor" href="#example-mortality"></a>
+</h3>
 <p>Let us create a model where individuals die at scheduled times.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">20</span>, I <span class="op">=</span> <span class="fl">10</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
@@ -513,9 +512,9 @@ individuals decreases by 5 individuals at each scheduled event.
 </p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="weighted-sampling-for-exit-events">Weighted sampling for exit events<a class="anchor" aria-label="anchor" href="#weighted-sampling-for-exit-events"></a>
-</h2>
+<div class="section level3">
+<h3 id="weighted-sampling-for-exit-events">Weighted sampling for exit events<a class="anchor" aria-label="anchor" href="#weighted-sampling-for-exit-events"></a>
+</h3>
 <p>We can also use weights to make certain compartments more likely to
 lose individuals. For example, infected individuals might have higher
 mortality risk.</p>
@@ -556,6 +555,7 @@ individuals decreases faster compared to susceptibles
 </p>
 </div>
 </div>
+</div>
 <div class="section level2">
 <h2 id="internal-transfer-events-moving-within-a-node">Internal transfer events: Moving within a node<a class="anchor" aria-label="anchor" href="#internal-transfer-events-moving-within-a-node"></a>
 </h2>
@@ -563,10 +563,9 @@ individuals decreases faster compared to susceptibles
 the same node. Common use cases include vaccination (moving from S to R
 or V), ageing between age-structured compartments, or treatment
 effects.</p>
-</div>
-<div class="section level2">
-<h2 id="example-vaccination-of-cattle-herd">Example: Vaccination of cattle herd<a class="anchor" aria-label="anchor" href="#example-vaccination-of-cattle-herd"></a>
-</h2>
+<div class="section level3">
+<h3 id="example-vaccination-of-cattle-herd">Example: Vaccination of cattle herd<a class="anchor" aria-label="anchor" href="#example-vaccination-of-cattle-herd"></a>
+</h3>
 <p>Let us create a model where a vaccination campaign moves susceptible
 individuals to the recovered compartment at a specific time. We will use
 <code>shift=1</code> and show how we can adjust the shift matrix to move
@@ -626,6 +625,7 @@ individuals increases at
 </p>
 </div>
 </div>
+</div>
 <div class="section level2">
 <h2 id="stochastic-events-using-proportion">Stochastic events using proportion<a class="anchor" aria-label="anchor" href="#stochastic-events-using-proportion"></a>
 </h2>
@@ -633,10 +633,9 @@ individuals increases at
 sample a proportion of individuals from the selected compartments. This
 is useful when you want to remove or move a percentage of the
 population.</p>
-</div>
-<div class="section level2">
-<h2 id="example-proportional-culling">Example: Proportional culling<a class="anchor" aria-label="anchor" href="#example-proportional-culling"></a>
-</h2>
+<div class="section level3">
+<h3 id="example-proportional-culling">Example: Proportional culling<a class="anchor" aria-label="anchor" href="#example-proportional-culling"></a>
+</h3>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">20</span>, I <span class="op">=</span> <span class="fl">15</span>, R <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p>Remove 20% of the population at time 10:</p>
@@ -665,6 +664,7 @@ population.</p>
 </p>
 </div>
 </div>
+</div>
 <div class="section level2">
 <h2 id="processing-order-of-simultaneous-events">Processing order of simultaneous events<a class="anchor" aria-label="anchor" href="#processing-order-of-simultaneous-events"></a>
 </h2>
@@ -684,10 +684,9 @@ movements)</li>
 </ol>
 <p>This ordering ensures that removals happen before additions, and
 within-node movements happen before between-node movements.</p>
-</div>
-<div class="section level2">
-<h2 id="example-multiple-events-at-the-same-time">Example: Multiple events at the same time<a class="anchor" aria-label="anchor" href="#example-multiple-events-at-the-same-time"></a>
-</h2>
+<div class="section level3">
+<h3 id="example-multiple-events-at-the-same-time">Example: Multiple events at the same time<a class="anchor" aria-label="anchor" href="#example-multiple-events-at-the-same-time"></a>
+</h3>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">30</span><span class="op">)</span>,</span>
@@ -725,6 +724,7 @@ within-node movements happen before between-node movements.</p>
 <strong>Figure 14.</strong> Multiple events have been processed at
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">t=5</annotation></semantics></math>.
 </p>
+</div>
 </div>
 </div>
 <div class="section level2">

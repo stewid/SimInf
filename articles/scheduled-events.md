@@ -298,7 +298,7 @@ specific compartments, and the E matrix weights determine which
 compartments receive the new individuals when multiple compartments are
 selected.
 
-## Example: Births entering a population
+### Example: Births entering a population
 
 Let us create a simple model where births occur at regular intervals.
 Newborns enter the susceptible compartment.
@@ -342,7 +342,7 @@ event.](scheduled-events_files/figure-html/unnamed-chunk-18-1.png)
 **Figure 7.** The number of susceptible ($S$) individuals increases by
 10 individuals at each scheduled event.
 
-## Weighted sampling for enter events
+### Weighted sampling for enter events
 
 When the $E\lbrack,select\rbrack$ column contains multiple non-zero
 entries, the new individuals are distributed among the compartments with
@@ -444,7 +444,7 @@ natural mortality or culling. Like enter events, the E matrix weights
 determine which compartments individuals are removed from when multiple
 compartments are selected.
 
-## Example: Mortality
+### Example: Mortality
 
 Let us create a model where individuals die at scheduled times.
 
@@ -483,7 +483,7 @@ event.](scheduled-events_files/figure-html/unnamed-chunk-30-1.png)
 **Figure 10.** The number of susceptible ($S$) individuals decreases by
 5 individuals at each scheduled event.
 
-## Weighted sampling for exit events
+### Weighted sampling for exit events
 
 We can also use weights to make certain compartments more likely to lose
 individuals. For example, infected individuals might have higher
@@ -541,7 +541,7 @@ Internal transfer events move individuals between compartments within
 the same node. Common use cases include vaccination (moving from S to R
 or V), ageing between age-structured compartments, or treatment effects.
 
-## Example: Vaccination of cattle herd
+### Example: Vaccination of cattle herd
 
 Let us create a model where a vaccination campaign moves susceptible
 individuals to the recovered compartment at a specific time. We will use
@@ -628,7 +628,7 @@ sample a proportion of individuals from the selected compartments. This
 is useful when you want to remove or move a percentage of the
 population.
 
-## Example: Proportional culling
+### Example: Proportional culling
 
 ``` r
 u0 <- data.frame(S = 20, I = 15, R = 10)
@@ -678,7 +678,7 @@ processed in a specific order:
 This ordering ensures that removals happen before additions, and
 within-node movements happen before between-node movements.
 
-## Example: Multiple events at the same time
+### Example: Multiple events at the same time
 
 ``` r
 u0 <- data.frame(
