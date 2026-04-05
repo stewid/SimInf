@@ -85,10 +85,182 @@ simulation.</p>
 models in R and the computational speed of compiled C code. It is
 particularly powerful for models with complex propensity functions,
 multiple compartments, or node-specific parameters.</p>
-<p>In this vignette, we will explore: - The basic syntax for defining
-transitions. - How to define variables and population sizes. - How to
-incorporate global and local data. - How to run and visualize the
-resulting model.</p>
+<p>In this vignette, we will explore:</p>
+<ul>
+<li>The basic syntax for defining transitions.</li>
+<li>How to define variables and population sizes.</li>
+<li>How to incorporate global and local data.</li>
+<li>How to run and visualize the resulting model.</li>
+</ul>
+<p>Let us first load the SimInf package.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/stewid/SimInf" class="external-link">SimInf</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="the-basic-syntax-transitions">The Basic Syntax: Transitions<a class="anchor" aria-label="anchor" href="#the-basic-syntax-transitions"></a>
+</h2>
+<p>The heart of <code>mparse</code> is the <code>transitions</code>
+argument, which is a character vector describing how individuals move
+between compartments. Each transition follows a standard format:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Source</mtext><mo>→</mo><mtext mathvariant="normal">Propensity</mtext><mo>→</mo><mtext mathvariant="normal">Destination</mtext></mrow><annotation encoding="application/x-tex">
+\text{Source} \rightarrow \text{Propensity} \rightarrow \text{Destination}
+</annotation></semantics></math></p>
+<ul>
+<li>
+<strong>Source</strong>: The compartment the individual leaves.</li>
+<li>
+<strong>Propensity</strong>: The rate at which the transition occurs
+(a mathematical expression).</li>
+<li>
+<strong>Destination</strong>: The compartment the individual
+enters.</li>
+</ul>
+<div class="section level3">
+<h3 id="a-simple-si-model">A Simple SI Model<a class="anchor" aria-label="anchor" href="#a-simple-si-model"></a>
+</h3>
+<p>Let us start with a classic SI model where susceptible individuals
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
+become infected
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>)
+upon contact. The force of infection is often modeled as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mi>I</mi><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>S</mi><mo>+</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta I / (S + I)</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+is the transmission rate and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>+</mo><mi>I</mi></mrow><annotation encoding="application/x-tex">S + I</annotation></semantics></math>
+is the total population.</p>
+<p>We define the transition as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="st">"S -&gt; beta * S * I / (S + I) -&gt; I"</span></span></code></pre></div>
+<p>Here:</p>
+<ul>
+<li>S is the source compartment.</li>
+<li>beta * S * I / (S + I) is the propensity (rate).</li>
+<li>I is the destination compartment.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="adding-recovery-the-sir-model">Adding Recovery: The SIR Model<a class="anchor" aria-label="anchor" href="#adding-recovery-the-sir-model"></a>
+</h3>
+<p>To create a standard SIR model, we add a second transition where
+infected individuals recover and move to the recovered compartment (R).
+The recovery rate is typically
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\gamma I</annotation></semantics></math>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S -&gt; beta * S * I / (S + I + R) -&gt; I"</span>,</span>
+<span>                 <span class="st">"I -&gt; gamma * I -&gt; R"</span><span class="op">)</span></span></code></pre></div>
+<p>Now we have a complete model definition. Let us create the model
+object. We need to specify:</p>
+<ul>
+<li>
+<code>transitions</code>: The vector we just created.</li>
+<li>
+<code>compartments</code>: A vector of all unique compartment
+names.</li>
+<li>
+<code>gdata</code>: A named vector of global parameters (beta and
+gamma).</li>
+<li>
+<code>u0</code>: The initial state vector (number of individuals in
+each compartment).</li>
+<li>
+<code>tspan</code>: vector of time points that determines both the
+duration of the simulation and the time points at which the state of the
+system is recorded.</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span>transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>                compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>                gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
+<span>                u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>                tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>mparse</code> function prepares the model definition.
+Compilation occurs when <code><a href="../reference/run.html">run()</a></code> is first called, and the
+compiled code is cached for efficiency. Subsequent calls to
+<code><a href="../reference/run.html">run()</a></code> detect the compiled code and skip the compilation
+step. Once created, we can run the simulation and plot the results. For
+reproducibility, we first call the <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> function
+since there is random sampling involved when picking individuals from
+the compartments.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="mparse_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Figure 1. Classic SIR epidemic curve generated with mparse." width="672"><p class="caption">
+Figure 1. Classic SIR epidemic curve generated with mparse.
+</p>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="defining-variables-and-population-size">Defining Variables and Population Size<a class="anchor" aria-label="anchor" href="#defining-variables-and-population-size"></a>
+</h2>
+<p>In the previous example, we calculated the total population size
+directly in the propensity expression as <code>(S + I + R)</code>. While
+this works perfectly for simple models, repeating the same expression in
+multiple transitions can make the code hard to read and maintain. If the
+definition of the population changes (e.g., excluding a specific
+compartment), you would have to update every transition where it
+appears.</p>
+<p><code>mparse</code> allows us to define variables using the
+assignment operator <code>&lt;-</code>. These variables are evaluated
+within the transition rate functions and can be reused across multiple
+transitions. This makes the model definition cleaner and easier to
+modify.</p>
+<div class="section level3">
+<h3 id="defining-the-total-population">Defining the Total Population<a class="anchor" aria-label="anchor" href="#defining-the-total-population"></a>
+</h3>
+<p>Let us rewrite the SIR model to define the total population
+<code>N</code> as a variable. We place the variable definition in the
+<code>transitions</code> vector. The order of definitions does not
+matter; <code>mparse</code> will resolve dependencies automatically.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S -&gt; beta * S * I / N -&gt; I"</span>,</span>
+<span>                 <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
+<span>                 <span class="st">"N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="data-types-integer-vs--double">Data Types: Integer vs. Double<a class="anchor" aria-label="anchor" href="#data-types-integer-vs--double"></a>
+</h3>
+<p>Although the primary benefit of variables is readability,
+<code>mparse</code> also allows you to control the data type of the
+variable. By default, variables are treated as double (floating-point
+numbers). However, for population counts, it is often semantically
+clearer to define them as integers. We can enforce this by prefixing the
+variable name with (int).</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S -&gt; beta * S * I / N -&gt; I"</span>,</span>
+<span>                 <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
+<span>                 <span class="st">"(int)N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
+<p>Using <code>(int)N</code> tells mparse to treat N as an integer.
+While the compiler may optimize repeated calculations of
+<code>S + I + R</code> anyway, explicitly defining N ensures that the
+logic is centralized and the code remains easy to read.</p>
+</div>
+<div class="section level3">
+<h3 id="creating-and-running-the-model">Creating and Running the Model<a class="anchor" aria-label="anchor" href="#creating-and-running-the-model"></a>
+</h3>
+<p>Let us create the model using the variable definition. Note that we
+no longer need to calculate it inline in the propensity expression.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span>transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>                compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>                gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
+<span>                u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>                tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+<p>Running the model produces the same results as before, but the
+transition definitions are now more concise and easier to manage. Note
+that we use the same seed value as before.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="mparse_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Figure 2. SIR epidemic curve using a defined variable for population size. The results are identical to Figure 1." width="672"><p class="caption">
+Figure 2. SIR epidemic curve using a defined variable for population
+size. The results are identical to Figure 1.
+</p>
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -125,7 +125,7 @@ column. Now, let us run the model and generate data from it. For
 reproducibility, we first call the
 [`set.seed()`](https://rdrr.io/r/base/Random.html) function and specify
 the number of threads to use since there is random sampling involved
-when picking inviduals from the compartments.
+when picking individuals from the compartments.
 
 ``` r
 set.seed(1)

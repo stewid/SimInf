@@ -14,7 +14,174 @@ models in R and the computational speed of compiled C code. It is
 particularly powerful for models with complex propensity functions,
 multiple compartments, or node-specific parameters.
 
-In this vignette, we will explore: - The basic syntax for defining
-transitions. - How to define variables and population sizes. - How to
-incorporate global and local data. - How to run and visualize the
-resulting model.
+In this vignette, we will explore:
+
+- The basic syntax for defining transitions.
+- How to define variables and population sizes.
+- How to incorporate global and local data.
+- How to run and visualize the resulting model.
+
+Let us first load the SimInf package.
+
+``` r
+library(SimInf)
+```
+
+## The Basic Syntax: Transitions
+
+The heart of `mparse` is the `transitions` argument, which is a
+character vector describing how individuals move between compartments.
+Each transition follows a standard format:
+
+$$\left. \text{Source}\rightarrow\text{Propensity}\rightarrow\text{Destination} \right.$$
+
+- **Source**: The compartment the individual leaves.
+- **Propensity**: The rate at which the transition occurs (a
+  mathematical expression).
+- **Destination**: The compartment the individual enters.
+
+### A Simple SI Model
+
+Let us start with a classic SI model where susceptible individuals ($S$)
+become infected ($I$) upon contact. The force of infection is often
+modeled as $\beta I/(S + I)$, where $\beta$ is the transmission rate and
+$S + I$ is the total population.
+
+We define the transition as follows:
+
+``` r
+transitions <- "S -> beta * S * I / (S + I) -> I"
+```
+
+Here:
+
+- S is the source compartment.
+- beta \* S \* I / (S + I) is the propensity (rate).
+- I is the destination compartment.
+
+### Adding Recovery: The SIR Model
+
+To create a standard SIR model, we add a second transition where
+infected individuals recover and move to the recovered compartment (R).
+The recovery rate is typically $\gamma I$.
+
+``` r
+transitions <- c("S -> beta * S * I / (S + I + R) -> I",
+                 "I -> gamma * I -> R")
+```
+
+Now we have a complete model definition. Let us create the model object.
+We need to specify:
+
+- `transitions`: The vector we just created.
+- `compartments`: A vector of all unique compartment names.
+- `gdata`: A named vector of global parameters (beta and gamma).
+- `u0`: The initial state vector (number of individuals in each
+  compartment).
+- `tspan`: vector of time points that determines both the duration of
+  the simulation and the time points at which the state of the system is
+  recorded.
+
+``` r
+model <- mparse(transitions = transitions,
+                compartments = c("S", "I", "R"),
+                gdata = c(beta = 0.16, gamma = 0.077),
+                u0 = data.frame(S = 99, I = 1, R = 0),
+                tspan = 1:100)
+```
+
+The `mparse` function prepares the model definition. Compilation occurs
+when [`run()`](http://stewid.github.io/SimInf/reference/run.md) is first
+called, and the compiled code is cached for efficiency. Subsequent calls
+to [`run()`](http://stewid.github.io/SimInf/reference/run.md) detect the
+compiled code and skip the compilation step. Once created, we can run
+the simulation and plot the results. For reproducibility, we first call
+the [`set.seed()`](https://rdrr.io/r/base/Random.html) function since
+there is random sampling involved when picking individuals from the
+compartments.
+
+``` r
+set.seed(22)
+plot(run(model))
+```
+
+![Figure 1. Classic SIR epidemic curve generated with
+mparse.](mparse_files/figure-html/unnamed-chunk-5-1.png)
+
+Figure 1. Classic SIR epidemic curve generated with mparse.
+
+## Defining Variables and Population Size
+
+In the previous example, we calculated the total population size
+directly in the propensity expression as `(S + I + R)`. While this works
+perfectly for simple models, repeating the same expression in multiple
+transitions can make the code hard to read and maintain. If the
+definition of the population changes (e.g., excluding a specific
+compartment), you would have to update every transition where it
+appears.
+
+`mparse` allows us to define variables using the assignment operator
+`<-`. These variables are evaluated within the transition rate functions
+and can be reused across multiple transitions. This makes the model
+definition cleaner and easier to modify.
+
+### Defining the Total Population
+
+Let us rewrite the SIR model to define the total population `N` as a
+variable. We place the variable definition in the `transitions` vector.
+The order of definitions does not matter; `mparse` will resolve
+dependencies automatically.
+
+``` r
+transitions <- c("S -> beta * S * I / N -> I",
+                 "I -> gamma * I -> R",
+                 "N <- S + I + R")
+```
+
+### Data Types: Integer vs. Double
+
+Although the primary benefit of variables is readability, `mparse` also
+allows you to control the data type of the variable. By default,
+variables are treated as double (floating-point numbers). However, for
+population counts, it is often semantically clearer to define them as
+integers. We can enforce this by prefixing the variable name with (int).
+
+``` r
+transitions <- c("S -> beta * S * I / N -> I",
+                 "I -> gamma * I -> R",
+                 "(int)N <- S + I + R")
+```
+
+Using `(int)N` tells mparse to treat N as an integer. While the compiler
+may optimize repeated calculations of `S + I + R` anyway, explicitly
+defining N ensures that the logic is centralized and the code remains
+easy to read.
+
+### Creating and Running the Model
+
+Let us create the model using the variable definition. Note that we no
+longer need to calculate it inline in the propensity expression.
+
+``` r
+model <- mparse(transitions = transitions,
+                compartments = c("S", "I", "R"),
+                gdata = c(beta = 0.16, gamma = 0.077),
+                u0 = data.frame(S = 99, I = 1, R = 0),
+                tspan = 1:100)
+```
+
+Running the model produces the same results as before, but the
+transition definitions are now more concise and easier to manage. Note
+that we use the same seed value as before.
+
+``` r
+set.seed(22)
+plot(run(model))
+```
+
+![Figure 2. SIR epidemic curve using a defined variable for population
+size. The results are identical to Figure
+1.](mparse_files/figure-html/unnamed-chunk-9-1.png)
+
+Figure 2. SIR epidemic curve using a defined variable for population
+size. The results are identical to Figure 1.
