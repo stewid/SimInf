@@ -643,6 +643,107 @@ demonstrating the flexibility of mparse for complex ecological
 models.</p>
 </div>
 </div>
+<div class="section level2">
+<h2 id="non-exponential-passage-times-erlang-distribution">Non-Exponential Passage Times (Erlang Distribution)<a class="anchor" aria-label="anchor" href="#non-exponential-passage-times-erlang-distribution"></a>
+</h2>
+<p>For many diseases, it is unrealistic to assume that the duration of
+the infectious period is exponentially distributed. A more realistic
+assumption is often a Gamma distribution with an integer shape
+parameter, also known as an <strong>Erlang distribution</strong>.</p>
+<p>In SimInf, the Erlang distribution can be implemented by splitting
+the infectious stage into a sequence of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+independent compartments
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mn>1</mn></msub><mo>,</mo><msub><mi>I</mi><mn>2</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>I</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">I_1, I_2, \dots, I_k</annotation></semantics></math>).
+An individual must pass through each stage sequentially before
+recovering. This results in a waiting time that follows an Erlang
+distribution with shape
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>.</p>
+<p>Let us illustrate this with an SIR model where the infectious period
+follows an Erlang distribution with shape
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">k=4</annotation></semantics></math>.
+We define four infectious compartments:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mn>1</mn></msub><mo>,</mo><msub><mi>I</mi><mn>2</mn></msub><mo>,</mo><msub><mi>I</mi><mn>3</mn></msub><mo>,</mo><msub><mi>I</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">I_1, I_2, I_3, I_4</annotation></semantics></math>.</p>
+<p>The transitions are:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Infection</strong>: Susceptible individuals move to the
+first infectious stage
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mn>1</mn></msub><annotation encoding="application/x-tex">I_1</annotation></semantics></math>).</li>
+<li>
+<strong>Progression</strong>: Individuals move from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mn>1</mn></msub><mo>→</mo><msub><mi>I</mi><mn>2</mn></msub><mo>→</mo><msub><mi>I</mi><mn>3</mn></msub><mo>→</mo><msub><mi>I</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">I_1 \to I_2 \to I_3 \to
+I_4</annotation></semantics></math> at rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>.</li>
+<li>
+<strong>Recovery</strong>: Individuals move from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mn>4</mn></msub><mo>→</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">I_4 \to R</annotation></semantics></math>
+at rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>.</li>
+</ol>
+<p>In <code>mparse</code> syntax:</p>
+<p>Notice that we can define variables that depend on other variables.
+Here, we first define <code>I</code> as the sum of all infectious
+stages, and then use <code>I</code> to calculate the total population
+<code>N</code>. This modular approach keeps the transition expressions
+clean and avoids repetitive calculations.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"S -&gt; beta * S * I / N -&gt; I1"</span>,</span>
+<span>  <span class="st">"I1 -&gt; gamma * I1 -&gt; I2"</span>,</span>
+<span>  <span class="st">"I2 -&gt; gamma * I2 -&gt; I3"</span>,</span>
+<span>  <span class="st">"I3 -&gt; gamma * I3 -&gt; I4"</span>,</span>
+<span>  <span class="st">"I4 -&gt; gamma * I4 -&gt; R"</span>,</span>
+<span>  <span class="st">"I &lt;- I1 + I2 + I3 + I4"</span>,</span>
+<span>  <span class="st">"N &lt;- S + I + R"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Note that the force of infection depends on the total number of
+infected individuals <code>I1+I2+I3+I4</code>, but the progression
+happens step-by-step.</p>
+<p>Let us define the parameters and initial conditions. We start with 5
+individuals in the first infectious stage (<code>I1</code>).</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mparse.html">mparse</a></span><span class="op">(</span></span>
+<span>  transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>  compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I1"</span>, <span class="st">"I2"</span>, <span class="st">"I3"</span>, <span class="st">"I4"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
+<span>  gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
+<span>  u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">100</span>, I1 <span class="op">=</span> <span class="fl">5</span>, I2 <span class="op">=</span> <span class="fl">0</span>, I3 <span class="op">=</span> <span class="fl">0</span>, I4 <span class="op">=</span> <span class="fl">0</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We run the simulation and plot the results. The trajectory will show
+the infection spreading through the stages (<code>I1</code> to
+<code>I4</code>) before individuals recover.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="mparse_files/figure-html/unnamed-chunk-27-1.png" class="r-plt" alt="Figure 8. One realization of a stochastic SIR model with an Erlang-distributed infectious period (shape=4). The trajectory shows the infection progressing sequentially through the four infectious stages (`I1 -&gt; I2 -&gt; I3 -&gt; I4`) before individuals recover." width="672"><p class="caption">
+Figure 8. One realization of a stochastic SIR model with an
+Erlang-distributed infectious period (shape=4). The trajectory shows the
+infection progressing sequentially through the four infectious stages
+(<code>I1 -&gt; I2 -&gt; I3 -&gt; I4</code>) before individuals recover.
+</p>
+</div>
+<p>To analyze the results, we can calculate the prevalence of infection,
+which is the proportion of individuals in any of the infectious stages
+(<code>I1+I2+I3+I4</code>). The <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function allows us
+to specify a formula where the left-hand side defines the “cases” and
+the right-hand side defines the “at-risk” population.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I1</span> <span class="op">+</span> <span class="va">I2</span> <span class="op">+</span> <span class="va">I3</span> <span class="op">+</span> <span class="va">I4</span> <span class="op">~</span> <span class="va">.</span>, col <span class="op">=</span> <span class="st">"blue"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, ylab <span class="op">=</span> <span class="st">"Prevalence"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: left">
+<img src="mparse_files/figure-html/unnamed-chunk-28-1.png" class="r-plt" alt="Figure 9. Prevalence of infection over time, calculated as the sum of individuals in all infectious stages (`I1 + I2 + I3 + I4`). This demonstrates how to aggregate multiple compartments to track the total burden of disease in a stage-structured model." width="672"><p class="caption">
+Figure 9. Prevalence of infection over time, calculated as the sum of
+individuals in all infectious stages (<code>I1 + I2 + I3 + I4</code>).
+This demonstrates how to aggregate multiple compartments to track the
+total burden of disease in a stage-structured model.
+</p>
+</div>
+<p>This example demonstrates how mparse makes it easy to extend basic
+models to include more realistic biological assumptions, such as
+non-exponential waiting times, without writing any C code.</p>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

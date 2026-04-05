@@ -546,3 +546,113 @@ nature of the ecosystem, where individuals enter and leave the system
 continuously. The non-linear terms (like `1 / (1 + w * R)`) are handled
 seamlessly by the parser, demonstrating the flexibility of mparse for
 complex ecological models.
+
+## Non-Exponential Passage Times (Erlang Distribution)
+
+For many diseases, it is unrealistic to assume that the duration of the
+infectious period is exponentially distributed. A more realistic
+assumption is often a Gamma distribution with an integer shape
+parameter, also known as an **Erlang distribution**.
+
+In SimInf, the Erlang distribution can be implemented by splitting the
+infectious stage into a sequence of $k$ independent compartments
+($I_{1},I_{2},\ldots,I_{k}$). An individual must pass through each stage
+sequentially before recovering. This results in a waiting time that
+follows an Erlang distribution with shape $k$.
+
+Let us illustrate this with an SIR model where the infectious period
+follows an Erlang distribution with shape $k = 4$. We define four
+infectious compartments: $I_{1},I_{2},I_{3},I_{4}$.
+
+The transitions are:
+
+1.  **Infection**: Susceptible individuals move to the first infectious
+    stage ($I_{1}$).
+2.  **Progression**: Individuals move from
+    $\left. I_{1}\rightarrow I_{2}\rightarrow I_{3}\rightarrow I_{4} \right.$
+    at rate $\gamma$.
+3.  **Recovery**: Individuals move from
+    $\left. I_{4}\rightarrow R \right.$ at rate $\gamma$.
+
+In `mparse` syntax:
+
+Notice that we can define variables that depend on other variables.
+Here, we first define `I` as the sum of all infectious stages, and then
+use `I` to calculate the total population `N`. This modular approach
+keeps the transition expressions clean and avoids repetitive
+calculations.
+
+``` r
+transitions <- c(
+  "S -> beta * S * I / N -> I1",
+  "I1 -> gamma * I1 -> I2",
+  "I2 -> gamma * I2 -> I3",
+  "I3 -> gamma * I3 -> I4",
+  "I4 -> gamma * I4 -> R",
+  "I <- I1 + I2 + I3 + I4",
+  "N <- S + I + R"
+)
+```
+
+Note that the force of infection depends on the total number of infected
+individuals `I1+I2+I3+I4`, but the progression happens step-by-step.
+
+Let us define the parameters and initial conditions. We start with 5
+individuals in the first infectious stage (`I1`).
+
+``` r
+model <- mparse(
+  transitions = transitions,
+  compartments = c("S", "I1", "I2", "I3", "I4", "R"),
+  gdata = c(beta = 0.16, gamma = 0.077),
+  u0 = data.frame(S = 100, I1 = 5, I2 = 0, I3 = 0, I4 = 0, R = 0),
+  tspan = 1:100
+)
+```
+
+We run the simulation and plot the results. The trajectory will show the
+infection spreading through the stages (`I1` to `I4`) before individuals
+recover.
+
+``` r
+set.seed(3)
+result <- run(model)
+plot(result)
+```
+
+![Figure 8. One realization of a stochastic SIR model with an
+Erlang-distributed infectious period (shape=4). The trajectory shows the
+infection progressing sequentially through the four infectious stages
+(\`I1 -\> I2 -\> I3 -\> I4\`) before individuals
+recover.](mparse_files/figure-html/unnamed-chunk-27-1.png)
+
+Figure 8. One realization of a stochastic SIR model with an
+Erlang-distributed infectious period (shape=4). The trajectory shows the
+infection progressing sequentially through the four infectious stages
+(`I1 -> I2 -> I3 -> I4`) before individuals recover.
+
+To analyze the results, we can calculate the prevalence of infection,
+which is the proportion of individuals in any of the infectious stages
+(`I1+I2+I3+I4`). The
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) function allows
+us to specify a formula where the left-hand side defines the “cases” and
+the right-hand side defines the “at-risk” population.
+
+``` r
+plot(result, I1 + I2 + I3 + I4 ~ ., col = "blue", lwd = 2, ylab = "Prevalence")
+```
+
+![Figure 9. Prevalence of infection over time, calculated as the sum of
+individuals in all infectious stages (\`I1 + I2 + I3 + I4\`). This
+demonstrates how to aggregate multiple compartments to track the total
+burden of disease in a stage-structured
+model.](mparse_files/figure-html/unnamed-chunk-28-1.png)
+
+Figure 9. Prevalence of infection over time, calculated as the sum of
+individuals in all infectious stages (`I1 + I2 + I3 + I4`). This
+demonstrates how to aggregate multiple compartments to track the total
+burden of disease in a stage-structured model.
+
+This example demonstrates how mparse makes it easy to extend basic
+models to include more realistic biological assumptions, such as
+non-exponential waiting times, without writing any C code.
