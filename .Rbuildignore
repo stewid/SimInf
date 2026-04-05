@@ -25,7 +25,6 @@
 ^vignettes/img/[^.]+\.tex$
 ^vignettes/img/SIR.pdf$
 ^vignettes/img/SISe3_sp.pdf$
-^vignettes/mparse.Rmd$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
