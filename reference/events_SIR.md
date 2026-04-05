@@ -85,7 +85,6 @@ for event structure details
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 ## For reproducibility, call the set.seed() function and specify the
 ## number of threads to use. To use all available threads, remove the
 ## set_num_threads() call.
@@ -109,6 +108,7 @@ model <- SIR(u0     = u0,
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))
 
+
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
 
@@ -116,11 +116,50 @@ result <- run(model)
 ## susceptible, infected and recovered individuals.
 plot(result)
 
+
 ## Plot the trajectory for the first herd.
 plot(result, index = 1)
+
 
 ## Summarize the trajectory. The summary includes the number of events
 ## by event type.
 summary(result)
-} # }
+#> Model: SIR
+#> Number of nodes: 1600
+#> 
+#> Transitions
+#> -----------
+#>  S -> beta*S*I/(S+I+R) -> I
+#>  I -> gamma*I -> R
+#> 
+#> Global data
+#> -----------
+#>  Number of parameters without a name: 0
+#>  - None
+#> 
+#> Local data
+#> ----------
+#>  Parameter Value
+#>  beta      0.16 
+#>  gamma     0.01 
+#> 
+#> Scheduled events
+#> ----------------
+#>  Exit: 182535
+#>  Enter: 182685
+#>  Internal transfer: 0
+#>  External transfer: 101472
+#> 
+#> Network summary
+#> ---------------
+#>             Min. 1st Qu. Median Mean 3rd Qu. Max.
+#>  Indegree:  40.0    57.0   62.0 62.1    68.0 90.0
+#>  Outdegree: 36.0    57.0   62.0 62.1    67.0 89.0
+#> 
+#> Compartments
+#> ------------
+#>     Min. 1st Qu. Median  Mean 3rd Qu.  Max.
+#>  S   0.0     5.0   13.0  55.6   112.0 219.0
+#>  I   0.0     0.0    4.0  10.9    11.0 168.0
+#>  R   0.0     0.0   62.0  58.0   105.0 221.0
 ```

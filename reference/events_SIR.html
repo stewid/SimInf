@@ -121,8 +121,7 @@ details</p></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co">## For reproducibility, call the set.seed() function and specify the</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, call the set.seed() function and specify the</span></span></span>
 <span class="r-in"><span><span class="co">## number of threads to use. To use all available threads, remove the</span></span></span>
 <span class="r-in"><span><span class="co">## set_num_threads() call.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
@@ -144,6 +143,7 @@ details</p></div>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Display the number of cattle affected by each event type per day.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="events.html">events</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="events_SIR-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Run the model to generate a single stochastic trajectory.</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
@@ -151,14 +151,53 @@ details</p></div>
 <span class="r-in"><span><span class="co">## Plot the median and interquartile range of the number of</span></span></span>
 <span class="r-in"><span><span class="co">## susceptible, infected and recovered individuals.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="events_SIR-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot the trajectory for the first herd.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="events_SIR-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Summarize the trajectory. The summary includes the number of events</span></span></span>
 <span class="r-in"><span><span class="co">## by event type.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model: SIR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of nodes: 1600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Transitions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -----------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  S -&gt; beta*S*I/(S+I+R) -&gt; I</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  I -&gt; gamma*I -&gt; R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Global data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -----------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of parameters without a name: 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - None</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Local data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter Value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  beta      0.16 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  gamma     0.01 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Scheduled events</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Exit: 182535</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Enter: 182685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Internal transfer: 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  External transfer: 101472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Network summary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Min. 1st Qu. Median Mean 3rd Qu. Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Indegree:  40.0    57.0   62.0 62.1    68.0 90.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Outdegree: 36.0    57.0   62.0 62.1    67.0 89.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Compartments</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Min. 1st Qu. Median  Mean 3rd Qu.  Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  S   0.0     5.0   13.0  55.6   112.0 219.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  I   0.0     0.0    4.0  10.9    11.0 168.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  R   0.0     0.0   62.0  58.0   105.0 221.0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

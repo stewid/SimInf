@@ -87,7 +87,6 @@ for event structure details
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 ## For reproducibility, call the set.seed() function and specify the
 ## number of threads to use. To use all available threads, remove the
 ## set_num_threads() call.
@@ -111,6 +110,7 @@ model <- SIS(u0     = u0,
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))
 
+
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
 
@@ -118,11 +118,49 @@ result <- run(model)
 ## susceptible and infected individuals.
 plot(result)
 
+
 ## Plot the trajectory for the first herd.
 plot(result, index = 1)
+
 
 ## Summarize the trajectory. The summary includes the number of events
 ## by event type.
 summary(result)
-} # }
+#> Model: SIS
+#> Number of nodes: 1600
+#> 
+#> Transitions
+#> -----------
+#>  S -> upsilon*S*I -> I
+#>  I -> gamma*I -> S
+#> 
+#> Global data
+#> -----------
+#>  Number of parameters without a name: 0
+#>  - None
+#> 
+#> Local data
+#> ----------
+#>  Parameter Value
+#>  beta      0.16 
+#>  gamma     0.01 
+#> 
+#> Scheduled events
+#> ----------------
+#>  Exit: 182535
+#>  Enter: 182685
+#>  Internal transfer: 0
+#>  External transfer: 101472
+#> 
+#> Network summary
+#> ---------------
+#>             Min. 1st Qu. Median Mean 3rd Qu. Max.
+#>  Indegree:  40.0    57.0   62.0 62.1    68.0 90.0
+#>  Outdegree: 36.0    57.0   62.0 62.1    67.0 89.0
+#> 
+#> Compartments
+#> ------------
+#>     Min. 1st Qu. Median  Mean 3rd Qu.  Max.
+#>  S   0.0     7.0   10.0  44.2    96.0 218.0
+#>  I   0.0     0.0   96.0  80.3   125.0 228.0
 ```

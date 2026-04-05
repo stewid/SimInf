@@ -56,7 +56,6 @@ for associated cattle movement and demographic events
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 ## For reproducibility, call the set.seed() function and specify the
 ## number of threads to use. To use all available threads, remove the
 ## set_num_threads() call.
@@ -91,6 +90,7 @@ model <- SISe(u0 = u0,
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))
 
+
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
 
@@ -98,11 +98,63 @@ result <- run(model)
 ## susceptible and infected individuals.
 plot(result)
 
+
 ## Plot the trajectory for the first herd.
 plot(result, index = 1)
+
 
 ## Summarize the trajectory. The summary includes the number of events
 ## by event type.
 summary(result)
-} # }
+#> Model: SISe
+#> Number of nodes: 1600
+#> 
+#> Transitions
+#> -----------
+#>  S -> upsilon*phi*S -> I
+#>  I -> gamma*I -> S
+#> 
+#> Global data
+#> -----------
+#>  Parameter Value
+#>  upsilon   0.018
+#>  gamma     0.100
+#>  alpha     1.000
+#>  beta_t1   0.100
+#>  beta_t2   0.100
+#>  beta_t3   0.125
+#>  beta_t4   0.125
+#>  epsilon   0.000
+#> 
+#> Local data
+#> ----------
+#>  Parameter Value
+#>  end_t1     91  
+#>  end_t2    182  
+#>  end_t3    273  
+#>  end_t4    365  
+#> 
+#> Scheduled events
+#> ----------------
+#>  Exit: 182535
+#>  Enter: 182685
+#>  Internal transfer: 0
+#>  External transfer: 101472
+#> 
+#> Network summary
+#> ---------------
+#>             Min. 1st Qu. Median Mean 3rd Qu. Max.
+#>  Indegree:  40.0    57.0   62.0 62.1    68.0 90.0
+#>  Outdegree: 36.0    57.0   62.0 62.1    67.0 89.0
+#> 
+#> Continuous state variables
+#> --------------------------
+#>       Min. 1st Qu. Median  Mean 3rd Qu.  Max.
+#>  phi 0.000   0.000  0.000 0.108   0.000 5.548
+#> 
+#> Compartments
+#> ------------
+#>      Min. 1st Qu. Median   Mean 3rd Qu.   Max.
+#>  S  18.00  100.00 120.00 122.97  145.00 237.00
+#>  I   0.00    0.00   0.00   1.57    0.00 100.00
 ```
