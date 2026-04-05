@@ -109,10 +109,10 @@ set.seed(22)
 plot(run(model))
 ```
 
-![Figure 1. Classic SIR epidemic curve generated with
+![\*\*Figure 1.\*\* Classic SIR epidemic curve generated with
 mparse.](mparse_files/figure-html/unnamed-chunk-5-1.png)
 
-Figure 1. Classic SIR epidemic curve generated with mparse.
+**Figure 1.** Classic SIR epidemic curve generated with mparse.
 
 ## Defining Variables and Population Size
 
@@ -188,11 +188,11 @@ set.seed(22)
 plot(run(model))
 ```
 
-![Figure 2. SIR epidemic curve using a defined variable for population
-size. The results are identical to Figure
+![\*\*Figure 2.\*\* SIR epidemic curve using a defined variable for
+population size. The results are identical to Figure
 1.](mparse_files/figure-html/unnamed-chunk-9-1.png)
 
-Figure 2. SIR epidemic curve using a defined variable for population
+**Figure 2.** SIR epidemic curve using a defined variable for population
 size. The results are identical to Figure 1.
 
 ### Handling Edge Cases: Division by Zero
@@ -248,13 +248,13 @@ set.seed(22)
 plot(run(model))
 ```
 
-![Figure 3. SIR model using a ternary operator to prevent division by
-zero. Although the curve is identical to previous examples (as the
-population did not reach zero), this syntax ensures the simulation
-continues safely if the node becomes
+![\*\*Figure 3.\*\* SIR model using a ternary operator to prevent
+division by zero. Although the curve is identical to previous examples
+(as the population did not reach zero), this syntax ensures the
+simulation continues safely if the node becomes
 empty.](mparse_files/figure-html/unnamed-chunk-12-1.png)
 
-Figure 3. SIR model using a ternary operator to prevent division by
+**Figure 3.** SIR model using a ternary operator to prevent division by
 zero. Although the curve is identical to previous examples (as the
 population did not reach zero), this syntax ensures the simulation
 continues safely if the node becomes empty.
@@ -357,13 +357,14 @@ result <- run(model)
 plot(result, range = FALSE)
 ```
 
-![Figure 4. Epidemic curves for two farms with different transmission
-rates in a single stochastic realization. Farm 2 (higher \`beta_farm\`)
-shows a faster outbreak compared to Farm 1, reflecting the expected
-impact of the higher transmission rate, though exact outcome varies due
-to randomness.](mparse_files/figure-html/unnamed-chunk-17-1.png)
+![\*\*Figure 4.\*\* Epidemic curves for two farms with different
+transmission rates in a single stochastic realization. Farm 2 (higher
+\`beta_farm\`) shows a faster outbreak compared to Farm 1, reflecting
+the expected impact of the higher transmission rate, though exact
+outcome varies due to
+randomness.](mparse_files/figure-html/unnamed-chunk-17-1.png)
 
-Figure 4. Epidemic curves for two farms with different transmission
+**Figure 4.** Epidemic curves for two farms with different transmission
 rates in a single stochastic realization. Farm 2 (higher `beta_farm`)
 shows a faster outbreak compared to Farm 1, reflecting the expected
 impact of the higher transmission rate, though exact outcome varies due
@@ -386,12 +387,12 @@ argument in [`plot()`](https://rdrr.io/r/graphics/plot.default.html) or
 plot(result, index = 2)
 ```
 
-![Figure 5. Trajectory for Farm 2 only, showing the rapid spread due to
-the high transmission rate in this specific
+![\*\*Figure 5.\*\* Trajectory for Farm 2 only, showing the rapid spread
+due to the high transmission rate in this specific
 realization.](mparse_files/figure-html/unnamed-chunk-18-1.png)
 
-Figure 5. Trajectory for Farm 2 only, showing the rapid spread due to
-the high transmission rate in this specific realization.
+**Figure 5.** Trajectory for Farm 2 only, showing the rapid spread due
+to the high transmission rate in this specific realization.
 
 This flexibility makes mparse ideal for spatial models where each node
 has unique characteristics, such as different herd sizes, management
@@ -508,14 +509,14 @@ result <- run(model)
 plot(result)
 ```
 
-![Figure 6. One stochastic realization of the Rosenzweig-MacArthur
-predator-prey model. The populations exhibit cyclic oscillations
-characteristic of the deterministic limit cycle, but stochastic
-fluctuations eventually lead to the extinction of the predator
-population in this specific
+![\*\*Figure 6.\*\* One stochastic realization of the
+Rosenzweig-MacArthur predator-prey model. The populations exhibit cyclic
+oscillations characteristic of the deterministic limit cycle, but
+stochastic fluctuations eventually lead to the extinction of the
+predator population in this specific
 run.](mparse_files/figure-html/unnamed-chunk-23-1.png)
 
-Figure 6. One stochastic realization of the Rosenzweig-MacArthur
+**Figure 6.** One stochastic realization of the Rosenzweig-MacArthur
 predator-prey model. The populations exhibit cyclic oscillations
 characteristic of the deterministic limit cycle, but stochastic
 fluctuations eventually lead to the extinction of the predator
@@ -530,16 +531,16 @@ plot(F ~ R, data = trajectory(result), type = "l", col = "darkgreen",
      xlab = "Prey (R)", ylab = "Predators (F)", main = "")
 ```
 
-![Figure 7. Phase plane trajectory of the predator-prey model. The path
-spirals outward from the initial conditions, tracing the characteristic
-limit cycle of the Rosenzweig-MacArthur model before stochastic
-fluctuations drive the predator population to
+![\*\*Figure 7.\*\* Phase plane trajectory of the predator-prey model.
+The path spirals outward from the initial conditions, tracing the
+characteristic limit cycle of the Rosenzweig-MacArthur model before
+stochastic fluctuations drive the predator population to
 extinction.](mparse_files/figure-html/unnamed-chunk-24-1.png)
 
-Figure 7. Phase plane trajectory of the predator-prey model. The path
-spirals outward from the initial conditions, tracing the characteristic
-limit cycle of the Rosenzweig-MacArthur model before stochastic
-fluctuations drive the predator population to extinction.
+**Figure 7.** Phase plane trajectory of the predator-prey model. The
+path spirals outward from the initial conditions, tracing the
+characteristic limit cycle of the Rosenzweig-MacArthur model before
+stochastic fluctuations drive the predator population to extinction.
 
 In this example, the `@` symbol allows us to elegantly model the open
 nature of the ecosystem, where individuals enter and leave the system
@@ -620,13 +621,13 @@ result <- run(model)
 plot(result)
 ```
 
-![Figure 8. One realization of a stochastic SIR model with an
+![\*\*Figure 8.\*\* One realization of a stochastic SIR model with an
 Erlang-distributed infectious period (shape=4). The trajectory shows the
 infection progressing sequentially through the four infectious stages
 (\`I1 -\> I2 -\> I3 -\> I4\`) before individuals
 recover.](mparse_files/figure-html/unnamed-chunk-27-1.png)
 
-Figure 8. One realization of a stochastic SIR model with an
+**Figure 8.** One realization of a stochastic SIR model with an
 Erlang-distributed infectious period (shape=4). The trajectory shows the
 infection progressing sequentially through the four infectious stages
 (`I1 -> I2 -> I3 -> I4`) before individuals recover.
@@ -642,14 +643,14 @@ the right-hand side defines the “at-risk” population.
 plot(result, I1 + I2 + I3 + I4 ~ ., col = "blue", lwd = 2, ylab = "Prevalence")
 ```
 
-![Figure 9. Prevalence of infection over time, calculated as the sum of
-individuals in all infectious stages (\`I1 + I2 + I3 + I4\`). This
-demonstrates how to aggregate multiple compartments to track the total
-burden of disease in a stage-structured
+![\*\*Figure 9.\*\* Prevalence of infection over time, calculated as the
+sum of individuals in all infectious stages (\`I1 + I2 + I3 + I4\`).
+This demonstrates how to aggregate multiple compartments to track the
+total burden of disease in a stage-structured
 model.](mparse_files/figure-html/unnamed-chunk-28-1.png)
 
-Figure 9. Prevalence of infection over time, calculated as the sum of
-individuals in all infectious stages (`I1 + I2 + I3 + I4`). This
+**Figure 9.** Prevalence of infection over time, calculated as the sum
+of individuals in all infectious stages (`I1 + I2 + I3 + I4`). This
 demonstrates how to aggregate multiple compartments to track the total
 burden of disease in a stage-structured model.
 

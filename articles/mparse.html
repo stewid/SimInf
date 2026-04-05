@@ -190,8 +190,9 @@ the compartments.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Figure 1. Classic SIR epidemic curve generated with mparse." width="672"><p class="caption">
-Figure 1. Classic SIR epidemic curve generated with mparse.
+<img src="mparse_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="**Figure 1.** Classic SIR epidemic curve generated with mparse." width="672"><p class="caption">
+<strong>Figure 1.</strong> Classic SIR epidemic curve generated with
+mparse.
 </p>
 </div>
 </div>
@@ -263,9 +264,9 @@ that we use the same seed value as before.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Figure 2. SIR epidemic curve using a defined variable for population size. The results are identical to Figure 1." width="672"><p class="caption">
-Figure 2. SIR epidemic curve using a defined variable for population
-size. The results are identical to Figure 1.
+<img src="mparse_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="**Figure 2.** SIR epidemic curve using a defined variable for population size. The results are identical to Figure 1." width="672"><p class="caption">
+<strong>Figure 2.</strong> SIR epidemic curve using a defined variable
+for population size. The results are identical to Figure 1.
 </p>
 </div>
 </div>
@@ -328,11 +329,11 @@ nodes.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="Figure 3. SIR model using a ternary operator to prevent division by zero. Although the curve is identical to previous examples (as the population did not reach zero), this syntax ensures the simulation continues safely if the node becomes empty." width="672"><p class="caption">
-Figure 3. SIR model using a ternary operator to prevent division by
-zero. Although the curve is identical to previous examples (as the
-population did not reach zero), this syntax ensures the simulation
-continues safely if the node becomes empty.
+<img src="mparse_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="**Figure 3.** SIR model using a ternary operator to prevent division by zero. Although the curve is identical to previous examples (as the population did not reach zero), this syntax ensures the simulation continues safely if the node becomes empty." width="672"><p class="caption">
+<strong>Figure 3.</strong> SIR model using a ternary operator to prevent
+division by zero. Although the curve is identical to previous examples
+(as the population did not reach zero), this syntax ensures the
+simulation continues safely if the node becomes empty.
 </p>
 </div>
 </div>
@@ -439,9 +440,9 @@ range bands.</p>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="Figure 4. Epidemic curves for two farms with different transmission rates in a single stochastic realization. Farm 2 (higher `beta_farm`) shows a faster outbreak compared to Farm 1, reflecting the expected impact of the higher transmission rate, though exact outcome varies due to randomness." width="672"><p class="caption">
-Figure 4. Epidemic curves for two farms with different transmission
-rates in a single stochastic realization. Farm 2 (higher
+<img src="mparse_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="**Figure 4.** Epidemic curves for two farms with different transmission rates in a single stochastic realization. Farm 2 (higher `beta_farm`) shows a faster outbreak compared to Farm 1, reflecting the expected impact of the higher transmission rate, though exact outcome varies due to randomness." width="672"><p class="caption">
+<strong>Figure 4.</strong> Epidemic curves for two farms with different
+transmission rates in a single stochastic realization. Farm 2 (higher
 <code>beta_farm</code>) shows a faster outbreak compared to Farm 1,
 reflecting the expected impact of the higher transmission rate, though
 exact outcome varies due to randomness.
@@ -464,9 +465,9 @@ transition logic.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="Figure 5. Trajectory for Farm 2 only, showing the rapid spread due to the high transmission rate in this specific realization." width="672"><p class="caption">
-Figure 5. Trajectory for Farm 2 only, showing the rapid spread due to
-the high transmission rate in this specific realization.
+<img src="mparse_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="**Figure 5.** Trajectory for Farm 2 only, showing the rapid spread due to the high transmission rate in this specific realization." width="672"><p class="caption">
+<strong>Figure 5.</strong> Trajectory for Farm 2 only, showing the rapid
+spread due to the high transmission rate in this specific realization.
 </p>
 </div>
 <p>This flexibility makes mparse ideal for spatial models where each
@@ -613,12 +614,12 @@ cycle.</p>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-23-1.png" class="r-plt" alt="Figure 6. One stochastic realization of the Rosenzweig-MacArthur predator-prey model. The populations exhibit cyclic oscillations characteristic of the deterministic limit cycle, but stochastic fluctuations eventually lead to the extinction of the predator population in this specific run." width="672"><p class="caption">
-Figure 6. One stochastic realization of the Rosenzweig-MacArthur
-predator-prey model. The populations exhibit cyclic oscillations
-characteristic of the deterministic limit cycle, but stochastic
-fluctuations eventually lead to the extinction of the predator
-population in this specific run.
+<img src="mparse_files/figure-html/unnamed-chunk-23-1.png" class="r-plt" alt="**Figure 6.** One stochastic realization of the Rosenzweig-MacArthur predator-prey model. The populations exhibit cyclic oscillations characteristic of the deterministic limit cycle, but stochastic fluctuations eventually lead to the extinction of the predator population in this specific run." width="672"><p class="caption">
+<strong>Figure 6.</strong> One stochastic realization of the
+Rosenzweig-MacArthur predator-prey model. The populations exhibit cyclic
+oscillations characteristic of the deterministic limit cycle, but
+stochastic fluctuations eventually lead to the extinction of the
+predator population in this specific run.
 </p>
 </div>
 <p>To better visualize the dynamics, we can plot the <strong>phase
@@ -628,11 +629,11 @@ the cyclic nature of the interaction.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="cn">F</span> <span class="op">~</span> <span class="va">R</span>, data <span class="op">=</span> <span class="fu"><a href="../reference/trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"darkgreen"</span>,</span>
 <span>     xlab <span class="op">=</span> <span class="st">"Prey (R)"</span>, ylab <span class="op">=</span> <span class="st">"Predators (F)"</span>, main <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" alt="Figure 7. Phase plane trajectory of the predator-prey model. The path spirals outward from the initial conditions, tracing the characteristic limit cycle of the Rosenzweig-MacArthur model before stochastic fluctuations drive the predator population to extinction." width="672"><p class="caption">
-Figure 7. Phase plane trajectory of the predator-prey model. The path
-spirals outward from the initial conditions, tracing the characteristic
-limit cycle of the Rosenzweig-MacArthur model before stochastic
-fluctuations drive the predator population to extinction.
+<img src="mparse_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" alt="**Figure 7.** Phase plane trajectory of the predator-prey model. The path spirals outward from the initial conditions, tracing the characteristic limit cycle of the Rosenzweig-MacArthur model before stochastic fluctuations drive the predator population to extinction." width="672"><p class="caption">
+<strong>Figure 7.</strong> Phase plane trajectory of the predator-prey
+model. The path spirals outward from the initial conditions, tracing the
+characteristic limit cycle of the Rosenzweig-MacArthur model before
+stochastic fluctuations drive the predator population to extinction.
 </p>
 </div>
 <p>In this example, the <code>@</code> symbol allows us to elegantly
@@ -718,11 +719,12 @@ the infection spreading through the stages (<code>I1</code> to
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-27-1.png" class="r-plt" alt="Figure 8. One realization of a stochastic SIR model with an Erlang-distributed infectious period (shape=4). The trajectory shows the infection progressing sequentially through the four infectious stages (`I1 -&gt; I2 -&gt; I3 -&gt; I4`) before individuals recover." width="672"><p class="caption">
-Figure 8. One realization of a stochastic SIR model with an
-Erlang-distributed infectious period (shape=4). The trajectory shows the
-infection progressing sequentially through the four infectious stages
-(<code>I1 -&gt; I2 -&gt; I3 -&gt; I4</code>) before individuals recover.
+<img src="mparse_files/figure-html/unnamed-chunk-27-1.png" class="r-plt" alt="**Figure 8.** One realization of a stochastic SIR model with an Erlang-distributed infectious period (shape=4). The trajectory shows the infection progressing sequentially through the four infectious stages (`I1 -&gt; I2 -&gt; I3 -&gt; I4`) before individuals recover." width="672"><p class="caption">
+<strong>Figure 8.</strong> One realization of a stochastic SIR model
+with an Erlang-distributed infectious period (shape=4). The trajectory
+shows the infection progressing sequentially through the four infectious
+stages (<code>I1 -&gt; I2 -&gt; I3 -&gt; I4</code>) before individuals
+recover.
 </p>
 </div>
 <p>To analyze the results, we can calculate the prevalence of infection,
@@ -733,11 +735,12 @@ the right-hand side defines the “at-risk” population.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I1</span> <span class="op">+</span> <span class="va">I2</span> <span class="op">+</span> <span class="va">I3</span> <span class="op">+</span> <span class="va">I4</span> <span class="op">~</span> <span class="va">.</span>, col <span class="op">=</span> <span class="st">"blue"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, ylab <span class="op">=</span> <span class="st">"Prevalence"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="mparse_files/figure-html/unnamed-chunk-28-1.png" class="r-plt" alt="Figure 9. Prevalence of infection over time, calculated as the sum of individuals in all infectious stages (`I1 + I2 + I3 + I4`). This demonstrates how to aggregate multiple compartments to track the total burden of disease in a stage-structured model." width="672"><p class="caption">
-Figure 9. Prevalence of infection over time, calculated as the sum of
-individuals in all infectious stages (<code>I1 + I2 + I3 + I4</code>).
-This demonstrates how to aggregate multiple compartments to track the
-total burden of disease in a stage-structured model.
+<img src="mparse_files/figure-html/unnamed-chunk-28-1.png" class="r-plt" alt="**Figure 9.** Prevalence of infection over time, calculated as the sum of individuals in all infectious stages (`I1 + I2 + I3 + I4`). This demonstrates how to aggregate multiple compartments to track the total burden of disease in a stage-structured model." width="672"><p class="caption">
+<strong>Figure 9.</strong> Prevalence of infection over time, calculated
+as the sum of individuals in all infectious stages
+(<code>I1 + I2 + I3 + I4</code>). This demonstrates how to aggregate
+multiple compartments to track the total burden of disease in a
+stage-structured model.
 </p>
 </div>
 <p>This example demonstrates how mparse makes it easy to extend basic
