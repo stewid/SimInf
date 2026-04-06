@@ -140,7 +140,8 @@ Interface* **6**, 187–202, 2009.
 
 U. Simola, J. Cisewski-Kehe, M. U. Gutmann, J. Corander. Adaptive
 Approximate Bayesian Computation Tolerance Selection. *Bayesian
-Analysis*, **16**(2), 397–423, 2021. doi: 10.1214/20-BA1211
+Analysis*, **16**(2), 397–423, 2021.
+[doi:10.1214/20-BA1211](https://doi.org/10.1214/20-BA1211)
 
 ## See also
 

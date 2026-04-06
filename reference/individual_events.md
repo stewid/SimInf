@@ -48,6 +48,10 @@ the following columns:
   for movement events, and 'dest' will be replaced with `NA` for
   non-movement events.
 
+## References
+
+2025
+
 ## See also
 
 [`node_events`](http://stewid.github.io/SimInf/reference/node_events.md).
