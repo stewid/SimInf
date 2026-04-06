@@ -121,7 +121,7 @@ SIS <- function(u0,
     ## Arguments seem ok...go on
 
     G <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2,
-                dimnames = list(c("S -> upsilon*S*I -> I",
+                dimnames = list(c("S -> beta*S*I/(S+I) -> I",
                                   "I -> gamma*I -> S"),
                                 c("1", "2")))
 
@@ -165,6 +165,16 @@ SIS <- function(u0,
 ##'     another, potentially spreading disease across the herd
 ##'     network. Either susceptible or infected animals may be
 ##'     transferred.}
+##' }
+##'
+##' The \code{select} column in the returned data frame is mapped to
+##' the columns of the internal select matrix:
+##' \itemize{
+##'   \item \code{select = 1} corresponds to \strong{Enter} events,
+##'     targeting the Susceptible (S) compartment.
+##'   \item \code{select = 2} corresponds to \strong{Exit} and
+##'     \strong{External Transfer} events, targeting all compartments
+##'     (S and I).
 ##' }
 ##'
 ##' Events are distributed across all 1,600 herds over the 4-year
