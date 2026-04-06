@@ -289,6 +289,9 @@ compareNA <- function(x, y) {
 ##'     `time`, `node`, and `dest` to define the events, see
 ##'     `details`.
 ##' @return \linkS4class{SimInf_individual_events}
+##' @references
+##'
+##' \Ewerlof2025
 ##' @export
 ##' @seealso \code{\link{node_events}}.
 ##' @md

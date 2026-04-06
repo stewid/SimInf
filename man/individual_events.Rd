@@ -44,6 +44,9 @@ node for movement events, and 'dest' will be replaced with
 \code{NA} for non-movement events.
 }
 }
+\references{
+\Ewerlof2025
+}
 \seealso{
 \code{\link{node_events}}.
 }
