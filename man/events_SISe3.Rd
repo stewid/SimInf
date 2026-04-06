@@ -37,6 +37,25 @@ cattle herds (nodes) with age structure:
     infected animals.}
 }
 
+The \code{select} column in the returned data frame is mapped to
+the columns of the internal select matrix as follows:
+\itemize{
+  \item \code{select = 1}: Targets \strong{S_1} (Susceptible, age 1).
+  \item \code{select = 2}: Targets \strong{S_2} (Susceptible, age 2).
+  \item \code{select = 3}: Targets \strong{S_3} (Susceptible, age 3).
+  \item \code{select = 4}: Targets \strong{S_1} and \strong{I_1}
+    (Susceptible and Infected, age 1).
+  \item \code{select = 5}: Targets \strong{S_2} and \strong{I_2}
+    (Susceptible and Infected, age 2).
+  \item \code{select = 6}: Targets \strong{S_3} and \strong{I_3}
+    (Susceptible and Infected, age 3).
+}
+
+The \code{shift} column is used for \strong{Internal transfer} events
+to define the destination compartment. It corresponds to the column
+index in the internal \code{N} matrix that specifies the transition
+(e.g., moving from age 1 to age 2).
+
 Events are distributed across all 1,600 herds over the 4-year
 period, reflecting realistic patterns of cattle demographic
 change, herd-to-herd movement, and age progression in a livestock
