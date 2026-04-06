@@ -52,7 +52,7 @@ setGeneric(
     "v0<-",
     signature = "model",
     function(model, value)
-        standardGeneric("v0<-")
+        standardGeneric("v0<-") # nolint: brace_linter
 )
 
 ##' @rdname v0-set

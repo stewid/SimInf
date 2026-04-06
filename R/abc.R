@@ -138,7 +138,7 @@ setGeneric(
     "n_generations",
     signature = "object",
     function(object)
-        standardGeneric("n_generations")
+        standardGeneric("n_generations") # nolint: brace_linter
 )
 
 ##' @rdname n_generations
@@ -850,7 +850,7 @@ setGeneric(
              verbose = getOption("verbose", FALSE),
              post_gen = NULL,
              init_model = NULL)
-        standardGeneric("abc")
+        standardGeneric("abc") # nolint: brace_linter
 )
 
 ##' @rdname abc
@@ -928,7 +928,7 @@ setGeneric(
              data = NULL,
              verbose = getOption("verbose", FALSE),
              post_gen = NULL)
-        standardGeneric("continue_abc")
+        standardGeneric("continue_abc") # nolint: brace_linter
 )
 
 ##' @rdname continue_abc

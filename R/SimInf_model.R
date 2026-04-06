@@ -188,7 +188,7 @@ setGeneric(
     "gdata",
     signature = "model",
     function(model)
-        standardGeneric("gdata")
+        standardGeneric("gdata") # nolint: brace_linter
 )
 
 ##' @rdname gdata
@@ -225,7 +225,7 @@ setGeneric(
     "gdata<-",
     signature = "model",
     function(model, parameter, value)
-        standardGeneric("gdata<-")
+        standardGeneric("gdata<-") # nolint: brace_linter
 )
 
 ##' @rdname gdata-set
@@ -277,7 +277,7 @@ setGeneric(
     "ldata",
     signature = "model",
     function(model, node)
-        standardGeneric("ldata")
+        standardGeneric("ldata") # nolint: brace_linter
 )
 
 ##' @rdname ldata

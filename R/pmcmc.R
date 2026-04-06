@@ -240,7 +240,7 @@ setGeneric(
              post_particle = NULL,
              chain = NULL,
              verbose = getOption("verbose", FALSE))
-        standardGeneric("pmcmc")
+        standardGeneric("pmcmc") # nolint: brace_linter
 )
 
 ##' @rdname pmcmc
@@ -588,7 +588,7 @@ setGeneric(
              init_model = NULL,
              post_particle = NULL,
              verbose = getOption("verbose", FALSE))
-        standardGeneric("continue_pmcmc")
+        standardGeneric("continue_pmcmc") # nolint: brace_linter
 )
 
 ##' @rdname continue_pmcmc

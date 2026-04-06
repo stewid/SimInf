@@ -392,7 +392,7 @@ setGeneric(
     "get_individuals",
     signature = "x",
     function(x, time = NULL)
-        standardGeneric("get_individuals")
+        standardGeneric("get_individuals") # nolint: brace_linter
 )
 
 ##' @rdname get_individuals
@@ -609,7 +609,7 @@ setGeneric(
     "node_events",
     signature = "x",
     function(x, time = NULL, target = NULL, age = NULL)
-        standardGeneric("node_events")
+        standardGeneric("node_events") # nolint: brace_linter
 )
 
 ##' @rdname node_events

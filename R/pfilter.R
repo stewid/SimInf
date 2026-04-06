@@ -477,7 +477,7 @@ setGeneric(
              data,
              n_particles,
              init_model = NULL)
-        standardGeneric("pfilter")
+        standardGeneric("pfilter") # nolint: brace_linter
 )
 
 ##' @rdname pfilter

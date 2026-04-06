@@ -149,7 +149,7 @@ setGeneric(
              level = 1,
              index = NULL,
              ...)
-        standardGeneric("prevalence")
+        standardGeneric("prevalence") # nolint: brace_linter
 )
 
 ##' Calculate prevalence from a model object with trajectory data

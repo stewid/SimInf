@@ -137,7 +137,7 @@ setGeneric(
     "run",
     signature = "model",
     function(model, ...)
-        standardGeneric("run")
+        standardGeneric("run") # nolint: brace_linter
 )
 
 ##' @rdname run

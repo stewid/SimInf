@@ -45,7 +45,7 @@ setGeneric(
     "is_trajectory_empty",
     signature = "model",
     function(model)
-        standardGeneric("is_trajectory_empty")
+        standardGeneric("is_trajectory_empty") # nolint: brace_linter
 )
 
 ##' @include SimInf_model.R
@@ -100,7 +100,7 @@ setGeneric(
     "trajectory",
     signature = "model",
     function(model, compartments = NULL, index = NULL, ...)
-        standardGeneric("trajectory")
+        standardGeneric("trajectory") # nolint: brace_linter
 )
 
 ##' Extract data from a simulated trajectory

@@ -37,7 +37,7 @@ setGeneric(
     "n_nodes",
     signature = "model",
     function(model)
-        standardGeneric("n_nodes")
+        standardGeneric("n_nodes") # nolint: brace_linter
 )
 
 ##' @rdname n_nodes
@@ -91,7 +91,7 @@ setGeneric(
     "n_replicates",
     signature = "model",
     function(model)
-        standardGeneric("n_replicates")
+        standardGeneric("n_replicates") # nolint: brace_linter
 )
 
 ##' @rdname n_replicates
@@ -123,7 +123,7 @@ setGeneric(
     "n_compartments",
     signature = "model",
     function(model)
-        standardGeneric("n_compartments")
+        standardGeneric("n_compartments") # nolint: brace_linter
 )
 
 ##' @rdname n_compartments
@@ -160,7 +160,7 @@ setGeneric(
     "n_transitions",
     signature = "model",
     function(model)
-        standardGeneric("n_transitions")
+        standardGeneric("n_transitions") # nolint: brace_linter
 )
 
 ##' @rdname n_transitions
