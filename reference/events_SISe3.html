@@ -88,7 +88,21 @@ cattle herds (nodes) with age structure:</p>
     infected animals.</p></dd>
 
 
-</dl><p>Events are distributed across all 1,600 herds over the 4-year
+</dl><p>The <code>select</code> column in the returned data frame is mapped to
+the columns of the internal select matrix as follows:</p><ul><li><p><code>select = 1</code>: Targets <strong>S_1</strong> (Susceptible, age 1).</p></li>
+<li><p><code>select = 2</code>: Targets <strong>S_2</strong> (Susceptible, age 2).</p></li>
+<li><p><code>select = 3</code>: Targets <strong>S_3</strong> (Susceptible, age 3).</p></li>
+<li><p><code>select = 4</code>: Targets <strong>S_1</strong> and <strong>I_1</strong>
+    (Susceptible and Infected, age 1).</p></li>
+<li><p><code>select = 5</code>: Targets <strong>S_2</strong> and <strong>I_2</strong>
+    (Susceptible and Infected, age 2).</p></li>
+<li><p><code>select = 6</code>: Targets <strong>S_3</strong> and <strong>I_3</strong>
+    (Susceptible and Infected, age 3).</p></li>
+</ul><p>The <code>shift</code> column is used for <strong>Internal transfer</strong> events
+to define the destination compartment. It corresponds to the column
+index in the internal <code>N</code> matrix that specifies the transition
+(e.g., moving from age 1 to age 2).</p>
+<p>Events are distributed across all 1,600 herds over the 4-year
 period, reflecting realistic patterns of cattle demographic
 change, herd-to-herd movement, and age progression in a livestock
 production system. The higher event count compared to
