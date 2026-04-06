@@ -6,8 +6,8 @@ The `mparse` function is the core engine for defining custom stochastic
 disease models in SimInf. Instead of writing complex C code manually,
 `mparse` allows you to describe your model’s transitions using a simple,
 human-readable string syntax in R. The function then parses this
-description, generates optimized C code, compiles it, and returns a
-`SimInf_model` object ready for simulation.
+description, generates efficient C code, and returns a `SimInf_model`
+object ready for simulation.
 
 This approach offers the best of both worlds: the ease of defining
 models in R and the computational speed of compiled C code. It is
@@ -634,10 +634,10 @@ infection progressing sequentially through the four infectious stages
 
 To analyze the results, we can calculate the prevalence of infection,
 which is the proportion of individuals in any of the infectious stages
-(`I1+I2+I3+I4`). The
-[`plot()`](https://rdrr.io/r/graphics/plot.default.html) function allows
-us to specify a formula where the left-hand side defines the “cases” and
-the right-hand side defines the “at-risk” population.
+(`I1+I2+I3+I4`). As described in *Post-process data in a trajectory*
+vignette, the [`plot()`](https://rdrr.io/r/graphics/plot.default.html)
+function allows us to specify a formula where the left-hand side defines
+the “cases” and the right-hand side defines the “at-risk” population.
 
 ``` r
 plot(result, I1 + I2 + I3 + I4 ~ ., col = "blue", lwd = 2, ylab = "Prevalence")

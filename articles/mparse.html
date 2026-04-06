@@ -78,9 +78,8 @@
 custom stochastic disease models in SimInf. Instead of writing complex C
 code manually, <code>mparse</code> allows you to describe your model’s
 transitions using a simple, human-readable string syntax in R. The
-function then parses this description, generates optimized C code,
-compiles it, and returns a <code>SimInf_model</code> object ready for
-simulation.</p>
+function then parses this description, generates efficient C code, and
+returns a <code>SimInf_model</code> object ready for simulation.</p>
 <p>This approach offers the best of both worlds: the ease of defining
 models in R and the computational speed of compiled C code. It is
 particularly powerful for models with complex propensity functions,
@@ -729,9 +728,10 @@ recover.
 </div>
 <p>To analyze the results, we can calculate the prevalence of infection,
 which is the proportion of individuals in any of the infectious stages
-(<code>I1+I2+I3+I4</code>). The <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function allows us
-to specify a formula where the left-hand side defines the “cases” and
-the right-hand side defines the “at-risk” population.</p>
+(<code>I1+I2+I3+I4</code>). As described in <em>Post-process data in a
+trajectory</em> vignette, the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function allows us to
+specify a formula where the left-hand side defines the “cases” and the
+right-hand side defines the “at-risk” population.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I1</span> <span class="op">+</span> <span class="va">I2</span> <span class="op">+</span> <span class="va">I3</span> <span class="op">+</span> <span class="va">I4</span> <span class="op">~</span> <span class="va">.</span>, col <span class="op">=</span> <span class="st">"blue"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, ylab <span class="op">=</span> <span class="st">"Prevalence"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
