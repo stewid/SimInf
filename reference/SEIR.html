@@ -110,17 +110,17 @@ the beta value is repeated in all nodes.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The <acronym>SEIR</acronym> model contains four compartments; number of
+    <p>The <acronym>SEIR</acronym> model contains four compartments: number of
 susceptible (S), number of exposed (E) (those who have been
 infected but are not yet infectious), number of infectious (I),
 and number of recovered (R).  Moreover, it has three state
-transitions,</p>
+transitions:</p>
 <p>$$S \stackrel{\beta S I / N}{\longrightarrow} E$$
 $$E \stackrel{\epsilon E}{\longrightarrow} I$$
 $$I \stackrel{\gamma I}{\longrightarrow} R$$</p>
 <p>where \(\beta\) is the transmission rate, \(\epsilon\) is the
-incubation rate, \(\gamma\) is the recovery rate, and
-\(N=S+E+I+R\).</p>
+incubation rate (inverse of the latent period), \(\gamma\) is the
+recovery rate, and \(N = S + E + I + R\) is the total population.</p>
 <p>The argument <code>u0</code> must be a <code>data.frame</code> with one row for
 each node with the following columns:</p><dl><dt>S</dt>
 <dd><p>The number of susceptible in each node</p></dd>
