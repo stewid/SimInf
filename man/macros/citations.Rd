@@ -6,7 +6,7 @@
 
 \newcommand{\CisewskiKehe2019}{J. Cisewski-Kehe, G. Weller and C. Schafer. A preferential attachment model for the stellar initial mass function. \emph{Electronic Journal of Statistics}, \strong{13}(1), 1580--1607, 2019. \doi{10.1214/19-EJS1556}}
 
-\newcommand{Ewerlof2025}{I. R. Ewerlöf, J. Frössling, M. Tråvén, S. Gunnarsson, L. Stengärde, E. Hurri, and S. Widgren. Exploring structural changes in the Swedish cattle population and between-holding movements. \emph{Preventive Veterinary Medicine}, \strong{243}, 106608, 2025. \doi{10.1016/j.prevetmed.2025.106608}}
+\newcommand{\Ewerlof2025}{I. R. Ewerlöf, J. Frössling, M. Tråvén, S. Gunnarsson, L. Stengärde, E. Hurri, and S. Widgren. Exploring structural changes in the Swedish cattle population and between-holding movements. \emph{Preventive Veterinary Medicine}, \strong{243}, 106608, 2025. \doi{10.1016/j.prevetmed.2025.106608}}
 
 \newcommand{\Gordon1993}{N. J. Gordon, D. J. Salmond, and A. F. M. Smith. Novel Approach to Nonlinear/Non-Gaussian Bayesian State Estimation. \emph{Radar and Signal Processing, IEE Proceedings F}, \strong{140}(2) 107--113, 1993. \doi{10.1049/ip-f-2.1993.0015}}
 
