@@ -1,7 +1,9 @@
 # Display the outcome from a simulated trajectory
 
-Plot either the median and the quantile range of the counts in all
-nodes, or plot the counts in specified nodes.
+Plot the median and quantile range of the counts in all nodes, the
+counts in specified nodes, or the prevalence of a disease. The function
+supports formula notation for specifying compartments and prevalence
+calculations.
 
 ## Usage
 
@@ -90,21 +92,18 @@ plot(
 
 - ...:
 
-  Other graphical parameters that are passed on to the plot function.
+  Other graphical parameters (e.g. `xlab`, `ylab`, `main`) that are
+  passed on to the plot function.
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 ## For reproducibility, call the set.seed() function and specify
-## the number of threads to use. To use all available threads,
-## remove the set_num_threads() call.
+## the number of threads to use.
 set.seed(123)
 set_num_threads(1)
 
-## Create an 'SIR' model with 100 nodes and initialise
-## it with 990 susceptible individuals and 10 infected
-## individuals in each node. Run the model over 100 days.
+## Create an 'SIR' model with 100 nodes.
 model <- SIR(u0 = data.frame(S = rep(990, 100),
                              I = rep(10, 100),
                              R = rep(0, 100)),
@@ -115,46 +114,44 @@ model <- SIR(u0 = data.frame(S = rep(990, 100),
 ## Run the model and save the result.
 result <- run(model)
 
-## Plot the median and interquartile range of the number
-## of susceptible, infected and recovered individuals.
+## 1. Plotting counts
+
+## Plot the median and interquartile range of all compartments.
 plot(result)
 
-## Plot the median and the middle 95\
-## number of susceptible, infected and recovered individuals.
+
+## Plot the median and the middle 95% quantile range.
 plot(result, range = 0.95)
 
-## Plot the median and interquartile range of the  number
-## of infected individuals.
+
+## Plot only the infected individuals (using character string).
 plot(result, "I")
 
-## Use the formula notation instead to plot the median and
-## interquartile range of the number of infected individuals.
+
+## Plot only the infected individuals (using formula notation).
 plot(result, ~I)
 
-## Plot the number of susceptible, infected
-## and recovered individuals in the first
-## three nodes.
+## Plot individual trajectories for the first three nodes.
 plot(result, index = 1:3, range = FALSE)
 
-## Use plot type line instead.
-plot(result, index = 1:3, range = FALSE, type = "l")
 
-## Plot the number of infected individuals in the first node.
-plot(result, "I", index = 1, range = FALSE)
+## 2. Plotting prevalence
 
-## Plot the proportion of infected individuals (cases)
-## in the population.
+## Plot the proportion of infected individuals in the population.
 plot(result, I ~ S + I + R)
+
 
 ## Plot the proportion of nodes with infected individuals.
 plot(result, I ~ S + I + R, level = 2)
 
-## Plot the median and interquartile range of the proportion
-## of infected individuals in each node
+
+## Plot the median prevalence within each node.
 plot(result, I ~ S + I + R, level = 3)
 
-## Plot the proportion of infected individuals in the first
-## three nodes.
-plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
-} # }
+
+## 3. Customization
+
+## Customize axis labels and title.
+plot(result, "I", xlab = "Time (days)", ylab = "Number of Infected",
+     main = "SIR Model Trajectory")
 ```
