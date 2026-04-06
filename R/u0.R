@@ -32,11 +32,15 @@
 ##'
 ##' ## Get the initial compartment state.
 ##' u0(model)
+## nolint start: brace_linter
 setGeneric(
     "u0",
     signature = "object",
     function(object,
-             ...) standardGeneric("u0"))
+             ...)
+        standardGeneric("u0")
+)
+## nolint end
 
 ##' @rdname u0
 ##' @export
@@ -182,11 +186,15 @@ setMethod(
 ##' u0(model) <- data.frame(S = 990, I = 10, R = 0)
 ##' result <- run(model)
 ##' plot(result)
+## nolint start: brace_linter
 setGeneric(
     "u0<-",
     signature = "model",
     function(model,
-             value) standardGeneric("u0<-"))
+             value)
+        standardGeneric("u0<-")
+)
+## nolint end
 
 ##' @rdname u0-set
 ##' @export

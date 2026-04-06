@@ -586,11 +586,15 @@ setMethod(
 ##'
 ##' ## Extract the scheduled events from the model and plot them
 ##' plot(events(model))
+## nolint start: brace_linter
 setGeneric(
     "events",
     signature = "object",
     function(object,
-             ...) standardGeneric("events"))
+             ...)
+        standardGeneric("events")
+)
+## nolint end
 
 ##' @rdname events
 ##' @export
@@ -618,10 +622,14 @@ setMethod(
 ##'
 ##' ## Extract the shift matrix from the model
 ##' shift_matrix(model)
+## nolint start: brace_linter
 setGeneric(
     "shift_matrix",
     signature = "model",
-    function(model) standardGeneric("shift_matrix"))
+    function(model)
+        standardGeneric("shift_matrix")
+)
+## nolint end
 
 ##' @rdname shift_matrix
 ##' @export
@@ -681,11 +689,15 @@ setMethod(
 ##'
 ##' ## Extract the shift matrix from the model.
 ##' shift_matrix(model)
+## nolint start: brace_linter
 setGeneric(
     "shift_matrix<-",
     signature = "model",
     function(model,
-             value) standardGeneric("shift_matrix<-"))
+             value)
+        standardGeneric("shift_matrix<-")
+)
+## nolint end
 
 ##' @rdname shift_matrix-set
 ##' @export
@@ -724,10 +736,14 @@ setMethod(
 ##'
 ##' ## Extract the select matrix from the model
 ##' select_matrix(model)
+## nolint start: brace_linter
 setGeneric(
     "select_matrix",
     signature = "model",
-    function(model) standardGeneric("select_matrix"))
+    function(model)
+        standardGeneric("select_matrix")
+)
+## nolint end
 
 ##' @rdname select_matrix
 ##' @export
@@ -788,11 +804,15 @@ setMethod(
 ##'
 ##' ## Extract the select matrix from the model.
 ##' select_matrix(model)
+## nolint start: brace_linter
 setGeneric(
     "select_matrix<-",
     signature = "model",
     function(model,
-             value) standardGeneric("select_matrix<-"))
+             value)
+        standardGeneric("select_matrix<-")
+)
+## nolint end
 
 ##' @rdname select_matrix-set
 ##' @export

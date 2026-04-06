@@ -391,11 +391,15 @@ indiv_events_time <- function(events, time) {
 ##' @return a \code{data.frame} with the columns \code{id},
 ##'     \code{node}, and \code{age}.
 ##' @export
+## nolint start: brace_linter
 setGeneric(
     "get_individuals",
     signature = "x",
     function(x,
-             time = NULL) standardGeneric("get_individuals"))
+             time = NULL)
+        standardGeneric("get_individuals")
+)
+## nolint end
 
 ##' @rdname get_individuals
 ##' @export
@@ -607,13 +611,17 @@ events_target <- function(events, target) {
 ##'     \code{proportion}, \code{select}, and \code{shift}.
 ##' @seealso \code{\link{individual_events}}.
 ##' @export
+## nolint start: brace_linter
 setGeneric(
     "node_events",
     signature = "x",
     function(x,
              time = NULL,
              target = NULL,
-             age = NULL) standardGeneric("node_events"))
+             age = NULL)
+        standardGeneric("node_events")
+)
+## nolint end
 
 ##' @rdname node_events
 ##' @export

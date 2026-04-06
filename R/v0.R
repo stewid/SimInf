@@ -48,11 +48,15 @@
 ##' v0(model) <- data.frame(phi = 1)
 ##' result <- run(model)
 ##' plot(result)
+## nolint start: brace_linter
 setGeneric(
     "v0<-",
     signature = "model",
     function(model,
-             value) standardGeneric("v0<-"))
+             value)
+        standardGeneric("v0<-")
+)
+## nolint end
 
 ##' @rdname v0-set
 ##' @export

@@ -41,10 +41,14 @@ do_is_trajectory_empty <- function(model, slots) {
 
 ##' Determine if the trajectory is empty.
 ##' @noRd
+## nolint start: brace_linter
 setGeneric(
     "is_trajectory_empty",
     signature = "model",
-    function(model) standardGeneric("is_trajectory_empty"))
+    function(model)
+        standardGeneric("is_trajectory_empty")
+)
+## nolint end
 
 ##' @include SimInf_model.R
 ##' @noRd
@@ -94,13 +98,17 @@ trajectory_data <- function(model, name) {
 ##' @template index-param
 ##' @param ... Additional arguments, see
 ##'     \code{\link{trajectory,SimInf_model-method}}
+## nolint start: brace_linter
 setGeneric(
     "trajectory",
     signature = "model",
     function(model,
              compartments = NULL,
              index = NULL,
-             ...) standardGeneric("trajectory"))
+             ...)
+        standardGeneric("trajectory")
+)
+## nolint end
 
 ##' Extract data from a simulated trajectory
 ##'

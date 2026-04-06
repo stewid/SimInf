@@ -184,10 +184,14 @@ SimInf_model <- function(G,
 ##'
 ##' ## Extract the global data vector that is common to all nodes
 ##' gdata(model)
+## nolint start: brace_linter
 setGeneric(
     "gdata",
     signature = "model",
-    function(model) standardGeneric("gdata"))
+    function(model)
+        standardGeneric("gdata")
+)
+## nolint end
 
 ##' @rdname gdata
 ##' @export
@@ -219,12 +223,16 @@ setMethod(
 ##'
 ##' ## Extract the global data vector that is common to all nodes
 ##' gdata(model)
+## nolint start: brace_linter
 setGeneric(
     "gdata<-",
     signature = "model",
     function(model,
              parameter,
-             value) standardGeneric("gdata<-"))
+             value)
+        standardGeneric("gdata<-")
+)
+## nolint end
 
 ##' @rdname gdata-set
 ##' @export
@@ -271,11 +279,15 @@ setMethod(
 ##' ## Display local data from the first two nodes.
 ##' ldata(model, node = 1)
 ##' ldata(model, node = 2)
+## nolint start: brace_linter
 setGeneric(
     "ldata",
     signature = "model",
     function(model,
-             node) standardGeneric("ldata"))
+             node)
+        standardGeneric("ldata")
+)
+## nolint end
 
 ##' @rdname ldata
 ##' @export
