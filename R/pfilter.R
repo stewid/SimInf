@@ -476,9 +476,7 @@ setGeneric(
              obs_process,
              data,
              n_particles,
-             init_model = NULL) # nolint: brace_linter
-        standardGeneric("pfilter")
-)
+             init_model = NULL) standardGeneric("pfilter"))
 
 ##' @rdname pfilter
 ##' @export

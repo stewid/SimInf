@@ -44,9 +44,7 @@ do_is_trajectory_empty <- function(model, slots) {
 setGeneric(
     "is_trajectory_empty",
     signature = "model",
-    function(model) # nolint: brace_linter
-        standardGeneric("is_trajectory_empty")
-)
+    function(model) standardGeneric("is_trajectory_empty"))
 
 ##' @include SimInf_model.R
 ##' @noRd
@@ -102,9 +100,7 @@ setGeneric(
     function(model,
              compartments = NULL,
              index = NULL,
-             ...) # nolint: brace_linter
-        standardGeneric("trajectory")
-)
+             ...) standardGeneric("trajectory"))
 
 ##' Extract data from a simulated trajectory
 ##'

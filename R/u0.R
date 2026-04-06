@@ -36,9 +36,7 @@ setGeneric(
     "u0",
     signature = "object",
     function(object,
-             ...) # nolint: brace_linter
-        standardGeneric("u0")
-)
+             ...) standardGeneric("u0"))
 
 ##' @rdname u0
 ##' @export
@@ -188,9 +186,7 @@ setGeneric(
     "u0<-",
     signature = "model",
     function(model,
-             value) # nolint: brace_linter
-        standardGeneric("u0<-")
-)
+             value) standardGeneric("u0<-"))
 
 ##' @rdname u0-set
 ##' @export

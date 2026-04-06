@@ -137,9 +137,7 @@ setGeneric(
     "run",
     signature = "model",
     function(model,
-             ...) # nolint: brace_linter
-        standardGeneric("run")
-)
+             ...) standardGeneric("run"))
 
 ##' @rdname run
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.

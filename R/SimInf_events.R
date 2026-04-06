@@ -590,9 +590,7 @@ setGeneric(
     "events",
     signature = "object",
     function(object,
-             ...) # nolint: brace_linter
-        standardGeneric("events")
-)
+             ...) standardGeneric("events"))
 
 ##' @rdname events
 ##' @export
@@ -623,9 +621,7 @@ setMethod(
 setGeneric(
     "shift_matrix",
     signature = "model",
-    function(model) # nolint: brace_linter
-        standardGeneric("shift_matrix")
-)
+    function(model) standardGeneric("shift_matrix"))
 
 ##' @rdname shift_matrix
 ##' @export
@@ -689,9 +685,7 @@ setGeneric(
     "shift_matrix<-",
     signature = "model",
     function(model,
-             value) # nolint: brace_linter
-        standardGeneric("shift_matrix<-")
-)
+             value) standardGeneric("shift_matrix<-"))
 
 ##' @rdname shift_matrix-set
 ##' @export
@@ -733,9 +727,7 @@ setMethod(
 setGeneric(
     "select_matrix",
     signature = "model",
-    function(model) # nolint: brace_linter
-        standardGeneric("select_matrix")
-)
+    function(model) standardGeneric("select_matrix"))
 
 ##' @rdname select_matrix
 ##' @export
@@ -800,9 +792,7 @@ setGeneric(
     "select_matrix<-",
     signature = "model",
     function(model,
-             value) # nolint: brace_linter
-        standardGeneric("select_matrix<-")
-)
+             value) standardGeneric("select_matrix<-"))
 
 ##' @rdname select_matrix-set
 ##' @export

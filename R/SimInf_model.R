@@ -187,9 +187,7 @@ SimInf_model <- function(G,
 setGeneric(
     "gdata",
     signature = "model",
-    function(model) # nolint: brace_linter
-        standardGeneric("gdata")
-)
+    function(model) standardGeneric("gdata"))
 
 ##' @rdname gdata
 ##' @export
@@ -226,9 +224,7 @@ setGeneric(
     signature = "model",
     function(model,
              parameter,
-             value) # nolint: brace_linter
-        standardGeneric("gdata<-")
-)
+             value) standardGeneric("gdata<-"))
 
 ##' @rdname gdata-set
 ##' @export
@@ -279,9 +275,7 @@ setGeneric(
     "ldata",
     signature = "model",
     function(model,
-             node) # nolint: brace_linter
-        standardGeneric("ldata")
-)
+             node) standardGeneric("ldata"))
 
 ##' @rdname ldata
 ##' @export
