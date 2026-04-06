@@ -58,7 +58,7 @@ final state of the previous chain.</p>
 <span>  post_proposal <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  init_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  post_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"verbose"</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SimInf_pmcmc'</span></span>
@@ -69,7 +69,7 @@ final state of the previous chain.</p>
 <span>  post_proposal <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  init_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  post_particle <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"verbose"</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -147,12 +147,11 @@ particles.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>prints diagnostic messages when <code>TRUE</code>. The
-default is to retrieve the global option <code>verbose</code> and
-use <code>FALSE</code> if it is not set. When <code>verbose=TRUE</code>,
-information is printed every 100 iterations. For pmcmc, it is
-possible to get information every nth information by
-specifying <code>verbose=n</code>, for example, <code>verbose=1</code> or
+<dd><p>prints diagnostic messages when <code>TRUE</code>.
+Default is <code>FALSE</code>. When <code>verbose=TRUE</code>, information
+is printed every 100 iterations. For pmcmc, it is possible to
+get information every nth information by specifying
+<code>verbose=n</code>, for example, <code>verbose=1</code> or
 <code>verbose=10</code>.</p></dd>
 
 </dl></div>

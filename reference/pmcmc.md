@@ -22,7 +22,7 @@ pmcmc(
   init_model = NULL,
   post_particle = NULL,
   chain = NULL,
-  verbose = getOption("verbose", FALSE)
+  verbose = FALSE
 )
 
 # S4 method for class 'SimInf_model'
@@ -41,7 +41,7 @@ pmcmc(
   init_model = NULL,
   post_particle = NULL,
   chain = NULL,
-  verbose = getOption("verbose", FALSE)
+  verbose = FALSE
 )
 ```
 
@@ -157,8 +157,7 @@ pmcmc(
 
 - verbose:
 
-  prints diagnostic messages when `TRUE`. The default is to retrieve the
-  global option `verbose` and use `FALSE` if it is not set. When
+  prints diagnostic messages when `TRUE`. Default is `FALSE`. When
   `verbose=TRUE`, information is printed every 100 iterations. For
   pmcmc, it is possible to get information every nth information by
   specifying `verbose=n`, for example, `verbose=1` or `verbose=10`.

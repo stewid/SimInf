@@ -13,7 +13,7 @@ abc(
   distance = NULL,
   tolerance = NULL,
   data = NULL,
-  verbose = getOption("verbose", FALSE),
+  verbose = FALSE,
   post_gen = NULL,
   init_model = NULL
 )
@@ -27,7 +27,7 @@ abc(
   distance = NULL,
   tolerance = NULL,
   data = NULL,
-  verbose = getOption("verbose", FALSE),
+  verbose = FALSE,
   post_gen = NULL,
   init_model = NULL
 )
@@ -108,8 +108,7 @@ abc(
 
 - verbose:
 
-  prints diagnostic messages when `TRUE`. The default is to retrieve the
-  global option `verbose` and use `FALSE` if it is not set.
+  prints diagnostic messages when `TRUE`. Default is `FALSE`.
 
 - post_gen:
 
