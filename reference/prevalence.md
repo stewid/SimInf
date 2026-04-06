@@ -1,8 +1,19 @@
 # Generic function to calculate prevalence from trajectory data
 
-Calculate the proportion of individuals with disease in the population,
-or the proportion of nodes with at least one diseased individual, or the
-proportion of individuals with disease in each node.
+Calculate the proportion of *cases* (specified on the left-hand side of
+the formula) relative to the *population at risk* (specified on the
+right-hand side) at different aggregation levels. The function supports
+three levels of calculation:
+
+- **Level 1 (Population Prevalence):** The proportion of cases in the
+  total population at risk across all nodes.
+
+- **Level 2 (Node Prevalence):** The proportion of nodes that contain at
+  least one case, considering only nodes where the population at risk is
+  greater than zero.
+
+- **Level 3 (Within-Node Prevalence):** The proportion of cases relative
+  to the population at risk calculated separately for each node.
 
 ## Usage
 

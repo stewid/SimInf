@@ -1,7 +1,19 @@
 # Extract prevalence from fitting a PMCMC algorithm
 
-Extract prevalence from the filtered trajectories from a particle Markov
-chain Monte Carlo algorithm.
+Calculate the proportion of *cases* (specified on the left-hand side of
+the formula) relative to the *population at risk* (specified on the
+right-hand side) at different aggregation levels. The function supports
+three levels of calculation:
+
+- **Level 1 (Population Prevalence):** The proportion of cases in the
+  total population at risk across all nodes.
+
+- **Level 2 (Node Prevalence):** The proportion of nodes that contain at
+  least one case, considering only nodes where the population at risk is
+  greater than zero.
+
+- **Level 3 (Within-Node Prevalence):** The proportion of cases relative
+  to the population at risk calculated separately for each node.
 
 ## Usage
 
