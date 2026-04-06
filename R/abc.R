@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -137,9 +137,8 @@ as.data.frame.SimInf_abc <- function(x, ...) {
 setGeneric(
     "n_generations",
     signature = "object",
-    function(object) {
+    function(object)
         standardGeneric("n_generations")
-    }
 )
 
 ##' @rdname n_generations
@@ -850,9 +849,8 @@ setGeneric(
              data = NULL,
              verbose = getOption("verbose", FALSE),
              post_gen = NULL,
-             init_model = NULL) {
+             init_model = NULL)
         standardGeneric("abc")
-    }
 )
 
 ##' @rdname abc
@@ -929,9 +927,8 @@ setGeneric(
              tolerance = NULL,
              data = NULL,
              verbose = getOption("verbose", FALSE),
-             post_gen = NULL) {
+             post_gen = NULL)
         standardGeneric("continue_abc")
-    }
 )
 
 ##' @rdname continue_abc

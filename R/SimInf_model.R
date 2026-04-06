@@ -187,9 +187,8 @@ SimInf_model <- function(G,
 setGeneric(
     "gdata",
     signature = "model",
-    function(model) {
+    function(model)
         standardGeneric("gdata")
-    }
 )
 
 ##' @rdname gdata
@@ -225,9 +224,8 @@ setMethod(
 setGeneric(
     "gdata<-",
     signature = "model",
-    function(model, parameter, value) {
+    function(model, parameter, value)
         standardGeneric("gdata<-")
-    }
 )
 
 ##' @rdname gdata-set
@@ -278,9 +276,8 @@ setMethod(
 setGeneric(
     "ldata",
     signature = "model",
-    function(model, node) {
+    function(model, node)
         standardGeneric("ldata")
-    }
 )
 
 ##' @rdname ldata

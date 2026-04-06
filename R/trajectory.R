@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -44,9 +44,8 @@ do_is_trajectory_empty <- function(model, slots) {
 setGeneric(
     "is_trajectory_empty",
     signature = "model",
-    function(model) {
+    function(model)
         standardGeneric("is_trajectory_empty")
-    }
 )
 
 ##' @include SimInf_model.R
@@ -100,9 +99,8 @@ trajectory_data <- function(model, name) {
 setGeneric(
     "trajectory",
     signature = "model",
-    function(model, compartments = NULL, index = NULL, ...) {
+    function(model, compartments = NULL, index = NULL, ...)
         standardGeneric("trajectory")
-    }
 )
 
 ##' Extract data from a simulated trajectory

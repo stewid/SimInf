@@ -2,7 +2,7 @@
 ## disease spread simulations.
 ##
 ## Copyright (C) 2022 -- 2023 Ivana Rodriguez Ewerlöf
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -391,9 +391,8 @@ indiv_events_time <- function(events, time) {
 setGeneric(
     "get_individuals",
     signature = "x",
-    function(x, time = NULL) {
+    function(x, time = NULL)
         standardGeneric("get_individuals")
-    }
 )
 
 ##' @rdname get_individuals
@@ -609,9 +608,8 @@ events_target <- function(events, target) {
 setGeneric(
     "node_events",
     signature = "x",
-    function(x, time = NULL, target = NULL, age = NULL) {
+    function(x, time = NULL, target = NULL, age = NULL)
         standardGeneric("node_events")
-    }
 )
 
 ##' @rdname node_events

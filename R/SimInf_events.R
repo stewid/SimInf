@@ -589,9 +589,8 @@ setMethod(
 setGeneric(
     "events",
     signature = "object",
-    function(object, ...) {
+    function(object, ...)
         standardGeneric("events")
-    }
 )
 
 ##' @rdname events
@@ -623,9 +622,8 @@ setMethod(
 setGeneric(
     "shift_matrix",
     signature = "model",
-    function(model) {
+    function(model)
         standardGeneric("shift_matrix")
-    }
 )
 
 ##' @rdname shift_matrix
@@ -689,9 +687,8 @@ setMethod(
 setGeneric(
     "shift_matrix<-",
     signature = "model",
-    function(model, value) {
+    function(model, value)
         standardGeneric("shift_matrix<-")
-    }
 )
 
 ##' @rdname shift_matrix-set
@@ -734,9 +731,8 @@ setMethod(
 setGeneric(
     "select_matrix",
     signature = "model",
-    function(model) {
+    function(model)
         standardGeneric("select_matrix")
-    }
 )
 
 ##' @rdname select_matrix
@@ -801,9 +797,8 @@ setMethod(
 setGeneric(
     "select_matrix<-",
     signature = "model",
-    function(model, value) {
+    function(model, value)
         standardGeneric("select_matrix<-")
-    }
 )
 
 ##' @rdname select_matrix-set

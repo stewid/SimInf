@@ -239,9 +239,8 @@ setGeneric(
              init_model = NULL,
              post_particle = NULL,
              chain = NULL,
-             verbose = getOption("verbose", FALSE)) {
+             verbose = getOption("verbose", FALSE))
         standardGeneric("pmcmc")
-    }
 )
 
 ##' @rdname pmcmc
@@ -588,9 +587,8 @@ setGeneric(
              post_proposal = NULL,
              init_model = NULL,
              post_particle = NULL,
-             verbose = getOption("verbose", FALSE)) {
+             verbose = getOption("verbose", FALSE))
         standardGeneric("continue_pmcmc")
-    }
 )
 
 ##' @rdname continue_pmcmc
