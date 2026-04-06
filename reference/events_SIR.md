@@ -69,6 +69,15 @@ cattle herds (nodes):
   cattle from one herd to another, potentially spreading disease across
   the herd network.
 
+The `select` column in the returned data frame is mapped to the columns
+of the internal select matrix (`select_matrix_SIR`):
+
+- `select = 1` corresponds to **Enter** events, targeting the
+  Susceptible (S) compartment.
+
+- `select = 4` corresponds to **Exit** and **External Transfer** events,
+  targeting all compartments (S, I, and R).
+
 Events are distributed across all 1,600 herds over the 4-year period,
 reflecting realistic patterns of cattle demographic change and
 herd-to-herd movement in a livestock production system.

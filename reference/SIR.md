@@ -57,8 +57,8 @@ The SIR model contains three compartments; number of susceptible (S),
 number of infectious (I), and number of recovered (R). Moreover, it has
 two state transitions, \$\$S \stackrel{\beta S I / N}{\longrightarrow}
 I\$\$ \$\$I \stackrel{\gamma I}{\longrightarrow} R\$\$ where \\\beta\\
-is the transmission rate, \\\gamma\\ is the recovery rate, and
-\\N=S+I+R\\.
+is the transmission rate, \\\gamma\\ is the recovery rate, and \\N = S +
+I + R\\ is the total population.
 
 The argument `u0` must be a `data.frame` with one row for each node with
 the following columns:
