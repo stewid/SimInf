@@ -92,11 +92,11 @@ Create an \acronym{SISe} model to be used by the simulation
 framework.
 }
 \details{
-The \acronym{SISe} model contains two compartments; number of
-susceptible (S) and number of infectious (I). Additionally, it
-contains an environmental compartment to model shedding of a
-pathogen to the environment. Consequently, the model has two state
-transitions,
+The \acronym{SISe} model contains two compartments: number of
+susceptible (S) and number of infectious (I)
+individuals. Additionally, it contains a continuous environmental
+compartment to model shedding of a pathogen to the
+environment. Consequently, the model has two state transitions:
 
 \deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{
 S -- upsilon phi S --> I}

@@ -50,11 +50,11 @@ select_matrix_SISe <- function() {
 ##' Create an \acronym{SISe} model to be used by the simulation
 ##' framework.
 ##'
-##' The \acronym{SISe} model contains two compartments; number of
-##' susceptible (S) and number of infectious (I). Additionally, it
-##' contains an environmental compartment to model shedding of a
-##' pathogen to the environment. Consequently, the model has two state
-##' transitions,
+##' The \acronym{SISe} model contains two compartments: number of
+##' susceptible (S) and number of infectious (I)
+##' individuals. Additionally, it contains a continuous environmental
+##' compartment to model shedding of a pathogen to the
+##' environment. Consequently, the model has two state transitions:
 ##'
 ##' \deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{
 ##' S -- upsilon phi S --> I}
@@ -199,6 +199,16 @@ SISe <- function(u0,
 ##'   \item{External transfer}{Movement of cattle between herds (n =
 ##'     101,472). These events transfer cattle from one herd to
 ##'     another, potentially introducing infected animals.}
+##' }
+##'
+##' The \code{select} column in the returned data frame is mapped to
+##' the columns of the internal select matrix (\code{select_matrix_SISe}):
+##' \itemize{
+##'   \item \code{select = 1} corresponds to \strong{Enter} events,
+##'     targeting the Susceptible (S) compartment.
+##'   \item \code{select = 2} corresponds to \strong{Exit} and
+##'     \strong{External Transfer} events, targeting all compartments
+##'     (S and I).
 ##' }
 ##'
 ##' Events are distributed across all 1,600 herds over the 4-year
