@@ -11,7 +11,7 @@
 * Added a new vignette "Getting started with mparse" to illustrate how
   to create custom models using the `mparse()` function. It covers
   basic syntax, variables, global/local data, open populations
-  (births/deaths), and stage-structured models (Erlang distribution).
+  (births/deaths), and multi-stage models (Erlang distribution).
 
 * Updated the "Post-process data in a trajectory" vignette, detailing
   how to extract data with `trajectory()`, calculate prevalence with
