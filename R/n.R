@@ -36,8 +36,8 @@
 setGeneric(
     "n_nodes",
     signature = "model",
-    function(model)
-        standardGeneric("n_nodes") # nolint: brace_linter
+    function(model) # nolint: brace_linter
+        standardGeneric("n_nodes")
 )
 
 ##' @rdname n_nodes
@@ -90,8 +90,8 @@ setMethod(
 setGeneric(
     "n_replicates",
     signature = "model",
-    function(model)
-        standardGeneric("n_replicates") # nolint: brace_linter
+    function(model) # nolint: brace_linter
+        standardGeneric("n_replicates")
 )
 
 ##' @rdname n_replicates
@@ -122,8 +122,8 @@ setMethod(
 setGeneric(
     "n_compartments",
     signature = "model",
-    function(model)
-        standardGeneric("n_compartments") # nolint: brace_linter
+    function(model) # nolint: brace_linter
+        standardGeneric("n_compartments")
 )
 
 ##' @rdname n_compartments
@@ -159,8 +159,8 @@ Nc <- function(model) {
 setGeneric(
     "n_transitions",
     signature = "model",
-    function(model)
-        standardGeneric("n_transitions") # nolint: brace_linter
+    function(model) # nolint: brace_linter
+        standardGeneric("n_transitions")
 )
 
 ##' @rdname n_transitions

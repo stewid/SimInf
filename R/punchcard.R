@@ -109,8 +109,9 @@
 setGeneric(
     "punchcard<-",
     signature = "model",
-    function(model, value)
-        standardGeneric("punchcard<-") # nolint: brace_linter
+    function(model,
+             value) # nolint: brace_linter
+        standardGeneric("punchcard<-")
 )
 
 ##' @rdname punchcard-set

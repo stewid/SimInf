@@ -137,8 +137,8 @@ as.data.frame.SimInf_abc <- function(x, ...) {
 setGeneric(
     "n_generations",
     signature = "object",
-    function(object)
-        standardGeneric("n_generations") # nolint: brace_linter
+    function(object) # nolint: brace_linter
+        standardGeneric("n_generations")
 )
 
 ##' @rdname n_generations
@@ -849,8 +849,8 @@ setGeneric(
              data = NULL,
              verbose = getOption("verbose", FALSE),
              post_gen = NULL,
-             init_model = NULL)
-        standardGeneric("abc") # nolint: brace_linter
+             init_model = NULL) # nolint: brace_linter
+        standardGeneric("abc")
 )
 
 ##' @rdname abc
@@ -927,8 +927,8 @@ setGeneric(
              tolerance = NULL,
              data = NULL,
              verbose = getOption("verbose", FALSE),
-             post_gen = NULL)
-        standardGeneric("continue_abc") # nolint: brace_linter
+             post_gen = NULL) # nolint: brace_linter
+        standardGeneric("continue_abc")
 )
 
 ##' @rdname continue_abc

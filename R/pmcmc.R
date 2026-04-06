@@ -239,8 +239,8 @@ setGeneric(
              init_model = NULL,
              post_particle = NULL,
              chain = NULL,
-             verbose = getOption("verbose", FALSE))
-        standardGeneric("pmcmc") # nolint: brace_linter
+             verbose = getOption("verbose", FALSE)) # nolint: brace_linter
+        standardGeneric("pmcmc")
 )
 
 ##' @rdname pmcmc
@@ -587,8 +587,8 @@ setGeneric(
              post_proposal = NULL,
              init_model = NULL,
              post_particle = NULL,
-             verbose = getOption("verbose", FALSE))
-        standardGeneric("continue_pmcmc") # nolint: brace_linter
+             verbose = getOption("verbose", FALSE)) # nolint: brace_linter
+        standardGeneric("continue_pmcmc")
 )
 
 ##' @rdname continue_pmcmc

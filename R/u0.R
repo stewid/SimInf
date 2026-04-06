@@ -35,8 +35,9 @@
 setGeneric(
     "u0",
     signature = "object",
-    function(object, ...)
-        standardGeneric("u0") # nolint: brace_linter
+    function(object,
+             ...) # nolint: brace_linter
+        standardGeneric("u0")
 )
 
 ##' @rdname u0
@@ -186,8 +187,9 @@ setMethod(
 setGeneric(
     "u0<-",
     signature = "model",
-    function(model, value)
-        standardGeneric("u0<-") # nolint: brace_linter
+    function(model,
+             value) # nolint: brace_linter
+        standardGeneric("u0<-")
 )
 
 ##' @rdname u0-set

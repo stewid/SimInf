@@ -391,8 +391,9 @@ indiv_events_time <- function(events, time) {
 setGeneric(
     "get_individuals",
     signature = "x",
-    function(x, time = NULL)
-        standardGeneric("get_individuals") # nolint: brace_linter
+    function(x,
+             time = NULL) # nolint: brace_linter
+        standardGeneric("get_individuals")
 )
 
 ##' @rdname get_individuals
@@ -608,8 +609,11 @@ events_target <- function(events, target) {
 setGeneric(
     "node_events",
     signature = "x",
-    function(x, time = NULL, target = NULL, age = NULL)
-        standardGeneric("node_events") # nolint: brace_linter
+    function(x,
+             time = NULL,
+             target = NULL,
+             age = NULL) # nolint: brace_linter
+        standardGeneric("node_events")
 )
 
 ##' @rdname node_events

@@ -136,8 +136,9 @@ model_dll_key <- function(model) {
 setGeneric(
     "run",
     signature = "model",
-    function(model, ...)
-        standardGeneric("run") # nolint: brace_linter
+    function(model,
+             ...) # nolint: brace_linter
+        standardGeneric("run")
 )
 
 ##' @rdname run
