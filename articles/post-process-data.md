@@ -1,27 +1,28 @@
 # Post-process data in a trajectory
 
 After a model is created, a simulation is started with a call to the
-[`run()`](http://stewid.github.io/SimInf/reference/run.md) function with
-the model as the first argument. The function returns a modified model
-object with a single stochastic solution trajectory attached to it.
-Trajectory data contains the state of each compartment, recorded at
-every time-point in `tspan`. This document introduces you to
-functionality in `SimInf` to post-process and explore that trajectory
-data.
+[`run()`](http://stewid.github.io/SimInf/reference/run.md) function. The
+function returns a modified model object containing a single stochastic
+solution trajectory. This trajectory includes the state of each
+compartment recorded at every time-point specified in `tspan`.
+
+This vignette introduces the functionality in `SimInf` to post-process
+and explore this trajectory data.
 
 ## Extract trajectory data with `trajectory()`
 
-Most modelling and simulation studies require custom data analysis once
-the simulation data has been generated. To support this, SimInf provides
-the
+Most modeling studies require custom data analysis beyond simple
+plotting. To support this, `SimInf` provides the
 [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md)
-method to obtain a `data.frame` with the number of individuals in each
-compartment at the time points specified in `tspan`.
+method to extract the raw data as a `data.frame`. This is useful if you
+need to:
+
+- Perform custom statistical calculations (e.g., time to peak).
+- Export data to CSV for use in other software.
+- Combine results from multiple simulation runs.
 
 Let’s simulate 10 days of data from an SIR model with 6 nodes. For
-reproducibility, we first call the
-[`set.seed()`](https://rdrr.io/r/base/Random.html) function and specify
-the number of threads to use for the simulation.
+reproducibility, we set the seed and specify the number of threads.
 
 ``` r
 library(SimInf)
@@ -29,20 +30,23 @@ library(SimInf)
 set.seed(123)
 set_num_threads(1)
 
-u0 <- data.frame(S = c(100, 101, 102, 103, 104, 105),
-                 I = c(1, 2, 3, 4, 5, 6),
-                 R = c(0, 0, 0, 0, 0, 0))
+u0 <- data.frame(
+  S = c(100, 101, 102, 103, 104, 105),
+  I = c(1, 2, 3, 4, 5, 6),
+  R = c(0, 0, 0, 0, 0, 0)
+)
 
-model  <- SIR(u0 = u0,
-              tspan = 1:10,
-              beta = 0.16,
-              gamma = 0.077)
+model  <- SIR(
+  u0 = u0,
+  tspan = 1:10,
+  beta = 0.16,
+  gamma = 0.077
+)
 
 result <- run(model)
 ```
 
-Extract the number of individuals in each compartment at the time-points
-in `tspan`.
+Extract the full trajectory data (all compartments, all nodes).
 
 ``` r
 trajectory(result)
@@ -110,7 +114,7 @@ trajectory(result)
     ## 59    5   10  93  9 7
     ## 60    6   10  98  8 5
 
-Extract the number of recovered individuals in the first node.
+Extract the number of recovered individuals (R) in the first node only.
 
 ``` r
 trajectory(result, compartments = "R", index = 1)
@@ -128,7 +132,8 @@ trajectory(result, compartments = "R", index = 1)
     ## 9     1    9 1
     ## 10    1   10 1
 
-Extract the number of recovered individuals in the first and third node.
+Extract the number of recovered individuals in the first and third
+nodes.
 
 ``` r
 trajectory(result, compartments = "R", index = c(1, 3))
@@ -156,22 +161,27 @@ trajectory(result, compartments = "R", index = c(1, 3))
     ## 19    1   10 1
     ## 20    3   10 3
 
-Consult the help page for other
-[`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md)
-parameter options.
-
 ## Calculate prevalence from a trajectory using `prevalence()`
 
-Use the `prevalence` function to calculate the proportion of individuals
-with disease in the population. The
+The
 [`prevalence()`](http://stewid.github.io/SimInf/reference/prevalence.md)
-function takes a model object and a formula specification, where the
-left-hand-side of the formula specifies the compartments representing
-cases i.e. have an attribute or a disease. The right-hand-side of the
-formula specifies the compartments at risk.
+function calculates the proportion of individuals with the disease. It
+takes a model object and a formula:
 
-Let’s use the previously simulated data and determine the proportion of
-infected individuals in the population at the time-points in `tspan`.
+- **Left-hand side (LHS):** Compartments representing “cases” (e.g., I).
+- **Right-hand side (RHS):** Compartments representing the “at-risk”
+  population (e.g., S + I + R).
+
+The function also supports a `level` argument to change the aggregation
+level:
+
+- `level = 1` (default): Prevalence aggregated over all nodes (global).
+- `level = 2`: Proportion of nodes that have at least one case.
+- `level = 3`: Prevalence calculated within each node (returns a
+  matrix).
+
+Let’s determine the proportion of infected individuals in the total
+population.
 
 ``` r
 prevalence(result, I ~ S + I + R)
@@ -189,7 +199,8 @@ prevalence(result, I ~ S + I + R)
     ## 9     9 0.06132075
     ## 10   10 0.06446541
 
-Identical result is obtained with the shorthand ‘I ~ .’
+Identical result is obtained with the shorthand `I ~ .` (where `.` means
+“all compartments”).
 
 ``` r
 prevalence(result, I ~ .)
@@ -207,11 +218,8 @@ prevalence(result, I ~ .)
     ## 9     9 0.06132075
     ## 10   10 0.06446541
 
-The prevalence function has an argument `level` which has a default
-`level = 1`. This returns the prevalence at the whole population level.
-Since we have several nodes (farms if you like) in the model now, we can
-also ask for the proportion of nodes with infected individuals by
-specifying `level = 2`.
+Calculate the proportion of nodes that are infected (at least one I
+individual).
 
 ``` r
 prevalence(result, I ~ S + I + R, level = 2)
@@ -229,8 +237,7 @@ prevalence(result, I ~ S + I + R, level = 2)
     ## 9     9          1
     ## 10   10          1
 
-Finally, we may wish to know the proportion of infected individuals
-within each node with `level = 3`.
+Calculate the prevalence **within each node** individually.
 
 ``` r
 prevalence(result, I ~ S + I + R, level = 3)
@@ -298,21 +305,21 @@ prevalence(result, I ~ S + I + R, level = 3)
     ## 59    5   10 0.08256881
     ## 60    6   10 0.07207207
 
-Consult the help page for other
-[`prevalence()`](http://stewid.github.io/SimInf/reference/prevalence.md)
-parameter options.
-
 ## Visualize a trajectory with `plot()`
 
-The [`plot()`](https://rdrr.io/r/graphics/plot.default.html) function is
-another useful way of inspecting the outcome of a trajectory. It can
-display either the median and the quantile range of the counts in all
-nodes, plot the counts in specified nodes, or the prevalence. Below are
-some examples of using the
-[`plot()`](https://rdrr.io/r/graphics/plot.default.html) function.
+The [`plot()`](https://rdrr.io/r/graphics/plot.default.html) function
+provides a quick way to inspect the outcome. It can display:
 
-Plot the median and interquartile range of the number of susceptible,
-infected and recovered individuals.
+- The median and quantile range across all nodes.
+- Individual trajectories for specific nodes.
+- Prevalence curves.
+
+*Note: Since the simulation is stochastic, the exact lines shown below
+will vary unless set.seed() is used.*
+
+### Aggregated View (Median and Range)
+
+Plot the median and interquartile range (IQR) of all compartments.
 
 ``` r
 plot(result)
@@ -320,8 +327,7 @@ plot(result)
 
 ![](post-process-data_files/figure-html/unnamed-chunk-9-1.png)
 
-Plot the median and the middle 95% quantile range of the number of
-susceptible, infected and recovered individuals.
+Plot the median and the middle 95% quantile range.
 
 ``` r
 plot(result, range = 0.95)
@@ -329,8 +335,7 @@ plot(result, range = 0.95)
 
 ![](post-process-data_files/figure-html/unnamed-chunk-10-1.png)
 
-Plot the median and interquartile range of the number of infected
-individuals.
+Plot only the infected individuals (I).
 
 ``` r
 plot(result, "I")
@@ -338,8 +343,7 @@ plot(result, "I")
 
 ![](post-process-data_files/figure-html/unnamed-chunk-11-1.png)
 
-Use the formula notation instead to plot the median and interquartile
-range of the number of infected individuals.
+Use formula notation to plot the infected individuals.
 
 ``` r
 plot(result, ~I)
@@ -347,8 +351,10 @@ plot(result, ~I)
 
 ![](post-process-data_files/figure-html/unnamed-chunk-12-1.png)
 
-Plot the number of susceptible, infected and recovered individuals in
-the first three nodes.
+### Individual Node View
+
+Plot the trajectories for the first three nodes. We use `range = FALSE`
+to suppress the shaded median/range bands and show the individual lines.
 
 ``` r
 plot(result, index = 1:3, range = FALSE)
@@ -356,7 +362,7 @@ plot(result, index = 1:3, range = FALSE)
 
 ![](post-process-data_files/figure-html/unnamed-chunk-13-1.png)
 
-Use plot type line instead.
+Use `type = "l"` to draw a line.
 
 ``` r
 plot(result, index = 1:3, range = FALSE, type = "l")
@@ -364,7 +370,7 @@ plot(result, index = 1:3, range = FALSE, type = "l")
 
 ![](post-process-data_files/figure-html/unnamed-chunk-14-1.png)
 
-Plot the number of infected individuals in the first node.
+Plot the infected individuals in the first node only.
 
 ``` r
 plot(result, "I", index = 1, range = FALSE)
@@ -372,7 +378,9 @@ plot(result, "I", index = 1, range = FALSE)
 
 ![](post-process-data_files/figure-html/unnamed-chunk-15-1.png)
 
-Plot the proportion of infected individuals (cases) in the population.
+### Prevalence Plots
+
+Plot the proportion of infected individuals in the population.
 
 ``` r
 plot(result, I ~ S + I + R)
@@ -380,7 +388,7 @@ plot(result, I ~ S + I + R)
 
 ![](post-process-data_files/figure-html/unnamed-chunk-16-1.png)
 
-Plot the proportion of nodes with infected individuals.
+Plot the proportion of nodes with infected individuals (`level = 2`).
 
 ``` r
 plot(result, I ~ S + I + R, level = 2)
@@ -388,8 +396,8 @@ plot(result, I ~ S + I + R, level = 2)
 
 ![](post-process-data_files/figure-html/unnamed-chunk-17-1.png)
 
-Plot the median and interquartile range of the proportion of infected
-individuals in each node
+Plot the median and IQR of the prevalence **within in each node**
+(`level = 3`).
 
 ``` r
 plot(result, I ~ S + I + R, level = 3)
@@ -397,7 +405,7 @@ plot(result, I ~ S + I + R, level = 3)
 
 ![](post-process-data_files/figure-html/unnamed-chunk-18-1.png)
 
-Plot the proportion of infected individuals in the first three nodes.
+Plot the prevalence in the first three nodes.
 
 ``` r
 plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
@@ -405,9 +413,18 @@ plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
 
 ![](post-process-data_files/figure-html/unnamed-chunk-19-1.png)
 
-Please run a couple of `plot(run(model))` to view the stochasticity
-between trajectories. To find help on the SimInf plot function for the
-model object run:
+## Summary
+
+- Use
+  [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md)
+  to extract raw data for custom analysis.
+- Use
+  [`prevalence()`](http://stewid.github.io/SimInf/reference/prevalence.md)
+  to calculate disease proportions at different aggregation levels.
+- Use [`plot()`](https://rdrr.io/r/graphics/plot.default.html) for quick
+  visual inspection of medians, ranges, or individual trajectories.
+
+To find more details on the plot method for `SimInf_model` objects, run:
 
 ``` r
 help("plot,SimInf_model-method", package = "SimInf")

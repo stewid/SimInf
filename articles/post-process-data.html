@@ -72,41 +72,47 @@
     
     
 <p>After a model is created, a simulation is started with a call to the
-<code><a href="../reference/run.html">run()</a></code> function with the model as the first argument. The
-function returns a modified model object with a single stochastic
-solution trajectory attached to it. Trajectory data contains the state
-of each compartment, recorded at every time-point in <code>tspan</code>.
-This document introduces you to functionality in <code>SimInf</code> to
-post-process and explore that trajectory data.</p>
+<code><a href="../reference/run.html">run()</a></code> function. The function returns a modified model
+object containing a single stochastic solution trajectory. This
+trajectory includes the state of each compartment recorded at every
+time-point specified in <code>tspan</code>.</p>
+<p>This vignette introduces the functionality in <code>SimInf</code> to
+post-process and explore this trajectory data.</p>
 <div class="section level2">
 <h2 id="extract-trajectory-data-with-trajectory">Extract trajectory data with <code>trajectory()</code><a class="anchor" aria-label="anchor" href="#extract-trajectory-data-with-trajectory"></a>
 </h2>
-<p>Most modelling and simulation studies require custom data analysis
-once the simulation data has been generated. To support this, SimInf
-provides the <code><a href="../reference/trajectory.html">trajectory()</a></code> method to obtain a
-<code>data.frame</code> with the number of individuals in each
-compartment at the time points specified in <code>tspan</code>.</p>
+<p>Most modeling studies require custom data analysis beyond simple
+plotting. To support this, <code>SimInf</code> provides the
+<code><a href="../reference/trajectory.html">trajectory()</a></code> method to extract the raw data as a
+<code>data.frame</code>. This is useful if you need to:</p>
+<ul>
+<li>Perform custom statistical calculations (e.g., time to peak).</li>
+<li>Export data to CSV for use in other software.</li>
+<li>Combine results from multiple simulation runs.</li>
+</ul>
 <p>Let’s simulate 10 days of data from an SIR model with 6 nodes. For
-reproducibility, we first call the <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> function and
-specify the number of threads to use for the simulation.</p>
+reproducibility, we set the seed and specify the number of threads.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/stewid/SimInf" class="external-link">SimInf</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">101</span>, <span class="fl">102</span>, <span class="fl">103</span>, <span class="fl">104</span>, <span class="fl">105</span><span class="op">)</span>,</span>
-<span>                 I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span>,</span>
-<span>                 R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">101</span>, <span class="fl">102</span>, <span class="fl">103</span>, <span class="fl">104</span>, <span class="fl">105</span><span class="op">)</span>,</span>
+<span>  I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span>,</span>
+<span>  R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">model</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="va">u0</span>,</span>
-<span>              tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
-<span>              beta <span class="op">=</span> <span class="fl">0.16</span>,</span>
-<span>              gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span></span>
+<span><span class="va">model</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
+<span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
+<span>  beta <span class="op">=</span> <span class="fl">0.16</span>,</span>
+<span>  gamma <span class="op">=</span> <span class="fl">0.077</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p>Extract the number of individuals in each compartment at the
-time-points in <code>tspan</code>.</p>
+<p>Extract the full trajectory data (all compartments, all nodes).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    node time   S  I R</span></span>
@@ -170,7 +176,8 @@ time-points in <code>tspan</code>.</p>
 <span><span class="co">## 58    4   10  89 11 7</span></span>
 <span><span class="co">## 59    5   10  93  9 7</span></span>
 <span><span class="co">## 60    6   10  98  8 5</span></span></code></pre>
-<p>Extract the number of recovered individuals in the first node.</p>
+<p>Extract the number of recovered individuals (R) in the first node
+only.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result</span>, compartments <span class="op">=</span> <span class="st">"R"</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    node time R</span></span>
@@ -185,7 +192,7 @@ time-points in <code>tspan</code>.</p>
 <span><span class="co">## 9     1    9 1</span></span>
 <span><span class="co">## 10    1   10 1</span></span></code></pre>
 <p>Extract the number of recovered individuals in the first and third
-node.</p>
+nodes.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result</span>, compartments <span class="op">=</span> <span class="st">"R"</span>, index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    node time R</span></span>
@@ -209,22 +216,36 @@ node.</p>
 <span><span class="co">## 18    3    9 3</span></span>
 <span><span class="co">## 19    1   10 1</span></span>
 <span><span class="co">## 20    3   10 3</span></span></code></pre>
-<p>Consult the help page for other <code><a href="../reference/trajectory.html">trajectory()</a></code> parameter
-options.</p>
 </div>
 <div class="section level2">
 <h2 id="calculate-prevalence-from-a-trajectory-using-prevalence">Calculate prevalence from a trajectory using
 <code>prevalence()</code><a class="anchor" aria-label="anchor" href="#calculate-prevalence-from-a-trajectory-using-prevalence"></a>
 </h2>
-<p>Use the <code>prevalence</code> function to calculate the proportion
-of individuals with disease in the population. The
-<code><a href="../reference/prevalence.html">prevalence()</a></code> function takes a model object and a formula
-specification, where the left-hand-side of the formula specifies the
-compartments representing cases i.e. have an attribute or a disease. The
-right-hand-side of the formula specifies the compartments at risk.</p>
-<p>Let’s use the previously simulated data and determine the proportion
-of infected individuals in the population at the time-points in
-<code>tspan</code>.</p>
+<p>The <code><a href="../reference/prevalence.html">prevalence()</a></code> function calculates the proportion of
+individuals with the disease. It takes a model object and a formula:</p>
+<ul>
+<li>
+<strong>Left-hand side (LHS):</strong> Compartments representing
+“cases” (e.g., I).</li>
+<li>
+<strong>Right-hand side (RHS):</strong> Compartments representing
+the “at-risk” population (e.g., S + I + R).</li>
+</ul>
+<p>The function also supports a <code>level</code> argument to change
+the aggregation level:</p>
+<ul>
+<li>
+<code>level = 1</code> (default): Prevalence aggregated over all
+nodes (global).</li>
+<li>
+<code>level = 2</code>: Proportion of nodes that have at least one
+case.</li>
+<li>
+<code>level = 3</code>: Prevalence calculated within each node
+(returns a matrix).</li>
+</ul>
+<p>Let’s determine the proportion of infected individuals in the total
+population.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    time prevalence</span></span>
@@ -238,7 +259,8 @@ of infected individuals in the population at the time-points in
 <span><span class="co">## 8     8 0.06289308</span></span>
 <span><span class="co">## 9     9 0.06132075</span></span>
 <span><span class="co">## 10   10 0.06446541</span></span></code></pre>
-<p>Identical result is obtained with the shorthand ‘I ~ .’</p>
+<p>Identical result is obtained with the shorthand <code>I ~ .</code>
+(where <code>.</code> means “all compartments”).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    time prevalence</span></span>
@@ -252,11 +274,8 @@ of infected individuals in the population at the time-points in
 <span><span class="co">## 8     8 0.06289308</span></span>
 <span><span class="co">## 9     9 0.06132075</span></span>
 <span><span class="co">## 10   10 0.06446541</span></span></code></pre>
-<p>The prevalence function has an argument <code>level</code> which has
-a default <code>level = 1</code>. This returns the prevalence at the
-whole population level. Since we have several nodes (farms if you like)
-in the model now, we can also ask for the proportion of nodes with
-infected individuals by specifying <code>level = 2</code>.</p>
+<p>Calculate the proportion of nodes that are infected (at least one I
+individual).</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    time prevalence</span></span>
@@ -270,8 +289,8 @@ infected individuals by specifying <code>level = 2</code>.</p>
 <span><span class="co">## 8     8          1</span></span>
 <span><span class="co">## 9     9          1</span></span>
 <span><span class="co">## 10   10          1</span></span></code></pre>
-<p>Finally, we may wish to know the proportion of infected individuals
-within each node with <code>level = 3</code>.</p>
+<p>Calculate the prevalence <strong>within each node</strong>
+individually.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    node time prevalence</span></span>
@@ -335,72 +354,94 @@ within each node with <code>level = 3</code>.</p>
 <span><span class="co">## 58    4   10 0.10280374</span></span>
 <span><span class="co">## 59    5   10 0.08256881</span></span>
 <span><span class="co">## 60    6   10 0.07207207</span></span></code></pre>
-<p>Consult the help page for other <code><a href="../reference/prevalence.html">prevalence()</a></code> parameter
-options.</p>
 </div>
 <div class="section level2">
 <h2 id="visualize-a-trajectory-with-plot">Visualize a trajectory with <code>plot()</code><a class="anchor" aria-label="anchor" href="#visualize-a-trajectory-with-plot"></a>
 </h2>
-<p>The <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function is another useful way of inspecting
-the outcome of a trajectory. It can display either the median and the
-quantile range of the counts in all nodes, plot the counts in specified
-nodes, or the prevalence. Below are some examples of using the
-<code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function.</p>
-<p>Plot the median and interquartile range of the number of susceptible,
-infected and recovered individuals.</p>
+<p>The <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function provides a quick way to inspect the
+outcome. It can display:</p>
+<ul>
+<li>The median and quantile range across all nodes.</li>
+<li>Individual trajectories for specific nodes.</li>
+<li>Prevalence curves.</li>
+</ul>
+<p><em>Note: Since the simulation is stochastic, the exact lines shown
+below will vary unless set.seed() is used.</em></p>
+<div class="section level3">
+<h3 id="aggregated-view-median-and-range">Aggregated View (Median and Range)<a class="anchor" aria-label="anchor" href="#aggregated-view-median-and-range"></a>
+</h3>
+<p>Plot the median and interquartile range (IQR) of all
+compartments.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Plot the median and the middle 95% quantile range of the number of
-susceptible, infected and recovered individuals.</p>
+<p>Plot the median and the middle 95% quantile range.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, range <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Plot the median and interquartile range of the number of infected
-individuals.</p>
+<p>Plot only the infected individuals (I).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"I"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Use the formula notation instead to plot the median and interquartile
-range of the number of infected individuals.</p>
+<p>Use formula notation to plot the infected individuals.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="op">~</span><span class="va">I</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Plot the number of susceptible, infected and recovered individuals in
-the first three nodes.</p>
+</div>
+<div class="section level3">
+<h3 id="individual-node-view">Individual Node View<a class="anchor" aria-label="anchor" href="#individual-node-view"></a>
+</h3>
+<p>Plot the trajectories for the first three nodes. We use
+<code>range = FALSE</code> to suppress the shaded median/range bands and
+show the individual lines.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Use plot type line instead.</p>
+<p>Use <code>type = "l"</code> to draw a line.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, range <span class="op">=</span> <span class="cn">FALSE</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Plot the number of infected individuals in the first node.</p>
+<p>Plot the infected individuals in the first node only.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"I"</span>, index <span class="op">=</span> <span class="fl">1</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Plot the proportion of infected individuals (cases) in the
-population.</p>
+</div>
+<div class="section level3">
+<h3 id="prevalence-plots">Prevalence Plots<a class="anchor" aria-label="anchor" href="#prevalence-plots"></a>
+</h3>
+<p>Plot the proportion of infected individuals in the population.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Plot the proportion of nodes with infected individuals.</p>
+<p>Plot the proportion of nodes with infected individuals
+(<code>level = 2</code>).</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Plot the median and interquartile range of the proportion of infected
-individuals in each node</p>
+<p>Plot the median and IQR of the prevalence <strong>within in each
+node</strong> (<code>level = 3</code>).</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Plot the proportion of infected individuals in the first three
-nodes.</p>
+<p>Plot the prevalence in the first three nodes.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">3</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-process-data_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto auto auto 0;"></p>
-<p>Please run a couple of <code>plot(run(model))</code> to view the
-stochasticity between trajectories. To find help on the SimInf plot
-function for the model object run:</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+</h2>
+<ul>
+<li>Use <code><a href="../reference/trajectory.html">trajectory()</a></code> to extract raw data for custom
+analysis.</li>
+<li>Use <code><a href="../reference/prevalence.html">prevalence()</a></code> to calculate disease proportions at
+different aggregation levels.</li>
+<li>Use <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> for quick visual inspection of medians,
+ranges, or individual trajectories.</li>
+</ul>
+<p>To find more details on the plot method for <code>SimInf_model</code>
+objects, run:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"plot,SimInf_model-method"</span>, package <span class="op">=</span> <span class="st">"SimInf"</span><span class="op">)</span></span></code></pre></div>
 </div>
