@@ -43,6 +43,15 @@ cattle herds (nodes):
     transmission.}
 }
 
+The \code{select} column in the returned data frame is mapped to
+the columns of the internal select matrix:
+\itemize{
+  \item \code{select = 1} corresponds to \strong{Enter} events,
+    targeting the Susceptible (S) compartment.
+  \item \code{select = 2} corresponds to \strong{Exit} and
+    \strong{External Transfer} events, targeting all compartments.
+}
+
 Events are distributed across all 1,600 herds over the 4-year
 period, reflecting realistic patterns of cattle demographic change
 and herd-to-herd movement. The timing and frequency of events can

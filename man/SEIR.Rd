@@ -52,11 +52,11 @@ Create an \acronym{SEIR} model to be used by the simulation
 framework.
 }
 \details{
-The \acronym{SEIR} model contains four compartments; number of
+The \acronym{SEIR} model contains four compartments: number of
 susceptible (S), number of exposed (E) (those who have been
 infected but are not yet infectious), number of infectious (I),
 and number of recovered (R).  Moreover, it has three state
-transitions,
+transitions:
 
 \deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{
   S -- beta S I / N --> E}
@@ -64,8 +64,8 @@ transitions,
 \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 
 where \eqn{\beta} is the transmission rate, \eqn{\epsilon} is the
-incubation rate, \eqn{\gamma} is the recovery rate, and
-\eqn{N=S+E+I+R}.
+incubation rate (inverse of the latent period), \eqn{\gamma} is the
+recovery rate, and \eqn{N = S + E + I + R} is the total population.
 
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:

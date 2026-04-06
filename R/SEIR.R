@@ -53,11 +53,11 @@ select_matrix_SEIR <- function() {
 ##' Create an \acronym{SEIR} model to be used by the simulation
 ##' framework.
 ##'
-##' The \acronym{SEIR} model contains four compartments; number of
+##' The \acronym{SEIR} model contains four compartments: number of
 ##' susceptible (S), number of exposed (E) (those who have been
 ##' infected but are not yet infectious), number of infectious (I),
 ##' and number of recovered (R).  Moreover, it has three state
-##' transitions,
+##' transitions:
 ##'
 ##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{
 ##'   S -- beta S I / N --> E}
@@ -65,8 +65,8 @@ select_matrix_SEIR <- function() {
 ##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 ##'
 ##' where \eqn{\beta} is the transmission rate, \eqn{\epsilon} is the
-##' incubation rate, \eqn{\gamma} is the recovery rate, and
-##' \eqn{N=S+E+I+R}.
+##' incubation rate (inverse of the latent period), \eqn{\gamma} is the
+##' recovery rate, and \eqn{N = S + E + I + R} is the total population.
 ##'
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
@@ -163,6 +163,15 @@ SEIR <- function(u0,
 ##'     101,472).  These events transfer cattle from one herd to
 ##'     another, potentially facilitating between-herd disease
 ##'     transmission.}
+##' }
+##'
+##' The \code{select} column in the returned data frame is mapped to
+##' the columns of the internal select matrix:
+##' \itemize{
+##'   \item \code{select = 1} corresponds to \strong{Enter} events,
+##'     targeting the Susceptible (S) compartment.
+##'   \item \code{select = 2} corresponds to \strong{Exit} and
+##'     \strong{External Transfer} events, targeting all compartments.
 ##' }
 ##'
 ##' Events are distributed across all 1,600 herds over the 4-year
