@@ -141,6 +141,7 @@ calculate_prevalence <- function(model, compartments, level,
 ##' @template index-param
 ##' @param ... Additional arguments, see
 ##'     \code{\link{prevalence,SimInf_model-method}}
+## nolint start: brace_linter
 setGeneric(
     "prevalence",
     signature = c("model"),
@@ -148,7 +149,10 @@ setGeneric(
              formula,
              level = 1,
              index = NULL,
-             ...) standardGeneric("prevalence"))
+             ...)
+        standardGeneric("prevalence")
+)
+## nolint end
 
 ##' Calculate prevalence from a model object with trajectory data
 ##'

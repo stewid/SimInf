@@ -106,11 +106,15 @@
 ##' punchcard(model) <- NULL
 ##' result <- run(model)
 ##' trajectory(result)
+## nolint start: brace_linter
 setGeneric(
     "punchcard<-",
     signature = "model",
     function(model,
-             value) standardGeneric("punchcard<-"))
+             value)
+        standardGeneric("punchcard<-")
+)
+## nolint end
 
 ##' @rdname punchcard-set
 ##' @export

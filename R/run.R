@@ -133,11 +133,15 @@ model_dll_key <- function(model) {
 ##' ## Plot the proportion of susceptible, infected and recovered
 ##' ## individuals.
 ##' plot(result)
+## nolint start: brace_linter
 setGeneric(
     "run",
     signature = "model",
     function(model,
-             ...) standardGeneric("run"))
+             ...)
+        standardGeneric("run")
+)
+## nolint end
 
 ##' @rdname run
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.
