@@ -4,6 +4,60 @@
 
 ### CHANGES OR IMPROVEMENTS
 
+- The
+  [`SimInf_model()`](http://stewid.github.io/SimInf/reference/SimInf_model.md),
+  [`select_matrix()`](http://stewid.github.io/SimInf/reference/select_matrix.md)
+  and
+  [`shift_matrix()`](http://stewid.github.io/SimInf/reference/shift_matrix.md)
+  functions now accept a data.frame as input to define the E (select)
+  and N (shift) matrices using a simple tabular format, eliminating the
+  need to manually construct sparse matrices for complex event
+  definitions.
+
+- Added a new vignette “Getting started with mparse” to illustrate how
+  to create custom models using the
+  [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md)
+  function. It covers basic syntax, variables, global/local data, open
+  populations (births/deaths), and stage-structured models (Erlang
+  distribution).
+
+- Updated the “Post-process data in a trajectory” vignette, detailing
+  how to extract data with
+  [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md),
+  calculate prevalence with
+  [`prevalence()`](http://stewid.github.io/SimInf/reference/prevalence.md)
+  at different aggregation levels, and visualize results with
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html).
+
+- Updated the “Scheduled events” vignette to demonstrate the new
+  data.frame interface for `select_matrix` and `shift_matrix`, providing
+  clearer examples of how to specify scheduled events.
+
+- Improved documentation for
+  [`prevalence()`](http://stewid.github.io/SimInf/reference/prevalence.md),
+  [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md),
+  and [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods,
+  with clearer explanations of formula notation, aggregation levels, and
+  output formats.
+
+- Fixed several typos and clarified descriptions in function
+  documentation.
+
+- Refactored S4 generic function definitions by removing unnecessary
+  curly braces.
+
+- Eliminated repeated `#pragma omp parallel` directives in the ssm and
+  aem solvers to improve OpenMP efficiency.
+
+- Assigned unique names to OpenMP critical sections to prevent potential
+  conflicts in parallel execution.
+
+- Refactored loop structures in C code for improved readability
+  (replacing `for(;;)` with `while(true)`).
+
+- Fixed error messages in internal `E_from_data_frame()` function to
+  provide clearer feedback for non-data.frame inputs.
+
 ## SimInf 10.1.0 (2025-11-16)
 
 CRAN release: 2025-11-17
