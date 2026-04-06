@@ -43,6 +43,16 @@ affect cattle herds (nodes):
     network.}
 }
 
+The \code{select} column in the returned data frame is mapped to
+the columns of the internal select matrix (\code{select_matrix_SIR}):
+\itemize{
+  \item \code{select = 1} corresponds to \strong{Enter} events,
+    targeting the Susceptible (S) compartment.
+  \item \code{select = 4} corresponds to \strong{Exit} and
+    \strong{External Transfer} events, targeting all compartments
+    (S, I, and R).
+}
+
 Events are distributed across all 1,600 herds over the 4-year
 period, reflecting realistic patterns of cattle demographic change
 and herd-to-herd movement in a livestock production system.

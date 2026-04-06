@@ -80,7 +80,7 @@ select_matrix_SIR <- function() {
 ##'   S -- beta S I / N --> I}
 ##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 ##' where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-##' recovery rate, and \eqn{N=S+I+R}.
+##' recovery rate, and \eqn{N = S + I + R} is the total population.
 ##'
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
@@ -171,6 +171,16 @@ SIR <- function(u0,
 ##'     101,472).  These events transfer cattle from one herd to
 ##'     another, potentially spreading disease across the herd
 ##'     network.}
+##' }
+##'
+##' The \code{select} column in the returned data frame is mapped to
+##' the columns of the internal select matrix (\code{select_matrix_SIR}):
+##' \itemize{
+##'   \item \code{select = 1} corresponds to \strong{Enter} events,
+##'     targeting the Susceptible (S) compartment.
+##'   \item \code{select = 4} corresponds to \strong{Exit} and
+##'     \strong{External Transfer} events, targeting all compartments
+##'     (S, I, and R).
 ##' }
 ##'
 ##' Events are distributed across all 1,600 herds over the 4-year
