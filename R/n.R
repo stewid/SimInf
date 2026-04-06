@@ -33,10 +33,14 @@
 ##'
 ##' ## Display the number of nodes in the model.
 ##' n_nodes(model)
+## nolint start: brace_linter
 setGeneric(
     "n_nodes",
     signature = "model",
-    function(model) standardGeneric("n_nodes"))
+    function(model)
+        standardGeneric("n_nodes")
+)
+## nolint end
 
 ##' @rdname n_nodes
 ##' @include SimInf_model.R
@@ -85,10 +89,14 @@ setMethod(
 ##'
 ##' ## Display the number of replicates in the model.
 ##' n_replicates(model)
+## nolint start: brace_linter
 setGeneric(
     "n_replicates",
     signature = "model",
-    function(model) standardGeneric("n_replicates"))
+    function(model)
+        standardGeneric("n_replicates")
+)
+## nolint end
 
 ##' @rdname n_replicates
 ##' @include SimInf_model.R
@@ -115,10 +123,14 @@ setMethod(
 ##'
 ##' ## Display the number of compartments in the model.
 ##' n_compartments(model)
+## nolint start: brace_linter
 setGeneric(
     "n_compartments",
     signature = "model",
-    function(model) standardGeneric("n_compartments"))
+    function(model)
+        standardGeneric("n_compartments")
+)
+## nolint end
 
 ##' @rdname n_compartments
 ##' @include SimInf_model.R
@@ -150,10 +162,14 @@ Nc <- function(model) {
 ##'
 ##' ## Display the number of transitions in the model.
 ##' n_transitions(model)
+## nolint start: brace_linter
 setGeneric(
     "n_transitions",
     signature = "model",
-    function(model) standardGeneric("n_transitions"))
+    function(model)
+        standardGeneric("n_transitions")
+)
+## nolint end
 
 ##' @rdname n_transitions
 ##' @include SimInf_model.R

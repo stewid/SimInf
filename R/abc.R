@@ -134,10 +134,14 @@ as.data.frame.SimInf_abc <- function(x, ...) {
 ##'     of generations for.
 ##' @return an integer with the number of generations.
 ##' @export
+## nolint start: brace_linter
 setGeneric(
     "n_generations",
     signature = "object",
-    function(object) standardGeneric("n_generations"))
+    function(object)
+        standardGeneric("n_generations")
+)
+## nolint end
 
 ##' @rdname n_generations
 ##' @export
@@ -835,6 +839,7 @@ abc_internal <- function(object,
 ##' @export
 ##' @seealso \code{\link{continue_abc}}.
 ##' @example man/examples/abc.R
+## nolint start: brace_linter
 setGeneric(
     "abc",
     signature = "model",
@@ -847,7 +852,10 @@ setGeneric(
              data = NULL,
              verbose = FALSE,
              post_gen = NULL,
-             init_model = NULL) standardGeneric("abc"))
+             init_model = NULL)
+        standardGeneric("abc")
+)
+## nolint end
 
 ##' @rdname abc
 ##' @export
@@ -916,6 +924,7 @@ setMethod(
 ##' @template post_gen-param
 ##' @return A \code{SimInf_abc} object.
 ##' @export
+## nolint start: brace_linter
 setGeneric(
     "continue_abc",
     signature = "object",
@@ -923,7 +932,10 @@ setGeneric(
              tolerance = NULL,
              data = NULL,
              verbose = FALSE,
-             post_gen = NULL) standardGeneric("continue_abc"))
+             post_gen = NULL)
+        standardGeneric("continue_abc")
+)
+## nolint end
 
 ##' @rdname continue_abc
 ##' @export

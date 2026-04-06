@@ -469,6 +469,7 @@ pfilter_internal <- function(model,
 ##' \Gordon1993
 ##' @export
 ##' @example man/examples/pfilter.R
+## nolint start: brace_linter
 setGeneric(
     "pfilter",
     signature = "model",
@@ -476,7 +477,10 @@ setGeneric(
              obs_process,
              data,
              n_particles,
-             init_model = NULL) standardGeneric("pfilter"))
+             init_model = NULL)
+        standardGeneric("pfilter")
+)
+## nolint end
 
 ##' @rdname pfilter
 ##' @export
