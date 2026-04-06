@@ -54,5 +54,18 @@ A \code{data.frame} if \code{format = "data.frame"}, else
     a matrix.
 }
 \description{
-Extract prevalence from running a particle filter
+Calculate the proportion of \emph{cases} (specified on the
+left-hand side of the formula) relative to the \emph{population at
+risk} (specified on the right-hand side) at different aggregation
+levels. The function supports three levels of calculation:
+\itemize{
+  \item \strong{Level 1 (Population Prevalence):} The proportion
+    of cases in the total population at risk across all nodes.
+  \item \strong{Level 2 (Node Prevalence):} The proportion of
+    nodes that contain at least one case, considering only nodes
+    where the population at risk is greater than zero.
+  \item \strong{Level 3 (Within-Node Prevalence):} The proportion
+    of cases relative to the population at risk calculated
+    separately for each node.
+}
 }
