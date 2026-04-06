@@ -50,7 +50,11 @@ the following columns:
 
 ## References
 
-2025
+I. R. Ewerlöf, J. Frössling, M. Tråvén, S. Gunnarsson, L. Stengärde, E.
+Hurri, and S. Widgren. Exploring structural changes in the Swedish
+cattle population and between-holding movements. *Preventive Veterinary
+Medicine*, **243**, 106608, 2025.
+[doi:10.1016/j.prevetmed.2025.106608](https://doi.org/10.1016/j.prevetmed.2025.106608)
 
 ## See also
 
