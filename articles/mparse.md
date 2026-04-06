@@ -585,7 +585,7 @@ calculations.
 
 ``` r
 transitions <- c(
-  "S -> beta * S * I / N -> I1",
+  "S -> N > 0 ? beta * S * I / N : 0 -> I1",
   "I1 -> gamma * I1 -> I2",
   "I2 -> gamma * I2 -> I3",
   "I3 -> gamma * I3 -> I4",

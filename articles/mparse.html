@@ -690,7 +690,7 @@ stages, and then use <code>I</code> to calculate the total population
 clean and avoids repetitive calculations.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"S -&gt; beta * S * I / N -&gt; I1"</span>,</span>
+<span>  <span class="st">"S -&gt; N &gt; 0 ? beta * S * I / N : 0 -&gt; I1"</span>,</span>
 <span>  <span class="st">"I1 -&gt; gamma * I1 -&gt; I2"</span>,</span>
 <span>  <span class="st">"I2 -&gt; gamma * I2 -&gt; I3"</span>,</span>
 <span>  <span class="st">"I3 -&gt; gamma * I3 -&gt; I4"</span>,</span>
