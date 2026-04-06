@@ -98,7 +98,7 @@ summary(result)
 #> 
 #> Transitions
 #> -----------
-#>  S -> upsilon*S*I -> I
+#>  S -> beta*S*I/(S+I) -> I
 #>  I -> gamma*I -> S
 #> 
 #> Global data

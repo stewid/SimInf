@@ -107,7 +107,13 @@ affect cattle herds (nodes):</p>
     transferred.</p></dd>
 
 
-</dl><p>Events are distributed across all 1,600 herds over the 4-year
+</dl><p>The <code>select</code> column in the returned data frame is mapped to
+the columns of the internal select matrix:</p><ul><li><p><code>select = 1</code> corresponds to <strong>Enter</strong> events,
+    targeting the Susceptible (S) compartment.</p></li>
+<li><p><code>select = 2</code> corresponds to <strong>Exit</strong> and
+    <strong>External Transfer</strong> events, targeting all compartments
+    (S and I).</p></li>
+</ul><p>Events are distributed across all 1,600 herds over the 4-year
 period, reflecting realistic patterns of cattle demographic change
 and herd-to-herd movement. In SIS dynamics, these events can
 introduce disease to previously unaffected herds or remove
@@ -167,7 +173,7 @@ details</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Transitions</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -----------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  S -&gt; upsilon*S*I -&gt; I</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  S -&gt; beta*S*I/(S+I) -&gt; I</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  I -&gt; gamma*I -&gt; S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global data</span>
