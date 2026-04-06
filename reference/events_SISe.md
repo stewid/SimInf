@@ -68,6 +68,15 @@ cattle herds:
   cattle from one herd to another, potentially introducing infected
   animals.
 
+The `select` column in the returned data frame is mapped to the columns
+of the internal select matrix (`select_matrix_SISe`):
+
+- `select = 1` corresponds to **Enter** events, targeting the
+  Susceptible (S) compartment.
+
+- `select = 2` corresponds to **Exit** and **External Transfer** events,
+  targeting all compartments (S and I).
+
 Events are distributed across all 1,600 herds over the 4-year period,
 reflecting realistic patterns of cattle demographic change and
 herd-to-herd movement.

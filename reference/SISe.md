@@ -112,10 +112,10 @@ SISe(
 
 ## Details
 
-The SISe model contains two compartments; number of susceptible (S) and
-number of infectious (I). Additionally, it contains an environmental
-compartment to model shedding of a pathogen to the environment.
-Consequently, the model has two state transitions,
+The SISe model contains two compartments: number of susceptible (S) and
+number of infectious (I) individuals. Additionally, it contains a
+continuous environmental compartment to model shedding of a pathogen to
+the environment. Consequently, the model has two state transitions:
 
 \$\$S \stackrel{\upsilon \varphi S}{\longrightarrow} I\$\$
 
