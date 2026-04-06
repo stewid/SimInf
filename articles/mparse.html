@@ -78,8 +78,8 @@
 custom stochastic disease models in SimInf. Instead of writing complex C
 code manually, <code>mparse</code> allows you to describe your model’s
 transitions using a simple, human-readable string syntax in R. The
-function then parses this description, generates efficient C code, and
-returns a <code>SimInf_model</code> object ready for simulation.</p>
+function then parses this description, generates model-specific C code,
+and returns a <code>SimInf_model</code> object ready for simulation.</p>
 <p>This approach offers the best of both worlds: the ease of defining
 models in R and the computational speed of compiled C code. It is
 particularly powerful for models with complex propensity functions,

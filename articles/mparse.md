@@ -6,8 +6,8 @@ The `mparse` function is the core engine for defining custom stochastic
 disease models in SimInf. Instead of writing complex C code manually,
 `mparse` allows you to describe your model’s transitions using a simple,
 human-readable string syntax in R. The function then parses this
-description, generates efficient C code, and returns a `SimInf_model`
-object ready for simulation.
+description, generates model-specific C code, and returns a
+`SimInf_model` object ready for simulation.
 
 This approach offers the best of both worlds: the ease of defining
 models in R and the computational speed of compiled C code. It is
