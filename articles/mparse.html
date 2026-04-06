@@ -74,16 +74,16 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The <code>mparse</code> function is the core engine for defining
-custom stochastic disease models in SimInf. Instead of writing complex C
-code manually, <code>mparse</code> allows you to describe your model’s
+<p>The <code>mparse</code> function is the primary interface for
+defining custom compartment models in SimInf. Instead of writing complex
+C code manually, <code>mparse</code> allows you to describe your model’s
 transitions using a simple, human-readable string syntax in R. The
 function then parses this description, generates model-specific C code,
 and returns a <code>SimInf_model</code> object ready for simulation.</p>
-<p>This approach offers the best of both worlds: the ease of defining
-models in R and the computational speed of compiled C code. It is
-particularly powerful for models with complex propensity functions,
-multiple compartments, or node-specific parameters.</p>
+<p>This approach combines the ease of defining models in R with the
+computational speed of compiled C code. It is particularly well-suited
+for models with complex propensity functions, multiple compartments, or
+node-specific parameters.</p>
 <p>In this vignette, we will explore:</p>
 <ul>
 <li>The basic syntax for defining transitions.</li>
@@ -98,9 +98,10 @@ multiple compartments, or node-specific parameters.</p>
 <div class="section level2">
 <h2 id="the-basic-syntax-transitions">The Basic Syntax: Transitions<a class="anchor" aria-label="anchor" href="#the-basic-syntax-transitions"></a>
 </h2>
-<p>The heart of <code>mparse</code> is the <code>transitions</code>
-argument, which is a character vector describing how individuals move
-between compartments. Each transition follows a standard format:</p>
+<p>The core component of <code>mparse</code> is the
+<code>transitions</code> argument, which is a character vector
+describing how individuals move between compartments. Each transition
+follows a standard format:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Source</mtext><mo>→</mo><mtext mathvariant="normal">Propensity</mtext><mo>→</mo><mtext mathvariant="normal">Destination</mtext></mrow><annotation encoding="application/x-tex">
 \text{Source} \rightarrow \text{Propensity} \rightarrow \text{Destination}
 </annotation></semantics></math></p>

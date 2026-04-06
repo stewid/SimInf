@@ -2,17 +2,17 @@
 
 ## Overview
 
-The `mparse` function is the core engine for defining custom stochastic
-disease models in SimInf. Instead of writing complex C code manually,
-`mparse` allows you to describe your model’s transitions using a simple,
-human-readable string syntax in R. The function then parses this
-description, generates model-specific C code, and returns a
+The `mparse` function is the primary interface for defining custom
+compartment models in SimInf. Instead of writing complex C code
+manually, `mparse` allows you to describe your model’s transitions using
+a simple, human-readable string syntax in R. The function then parses
+this description, generates model-specific C code, and returns a
 `SimInf_model` object ready for simulation.
 
-This approach offers the best of both worlds: the ease of defining
-models in R and the computational speed of compiled C code. It is
-particularly powerful for models with complex propensity functions,
-multiple compartments, or node-specific parameters.
+This approach combines the ease of defining models in R with the
+computational speed of compiled C code. It is particularly well-suited
+for models with complex propensity functions, multiple compartments, or
+node-specific parameters.
 
 In this vignette, we will explore:
 
@@ -29,7 +29,7 @@ library(SimInf)
 
 ## The Basic Syntax: Transitions
 
-The heart of `mparse` is the `transitions` argument, which is a
+The core component of `mparse` is the `transitions` argument, which is a
 character vector describing how individuals move between compartments.
 Each transition follows a standard format:
 
