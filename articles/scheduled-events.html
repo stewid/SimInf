@@ -161,14 +161,21 @@ individuals from node <strong>4</strong> to node <strong>2</strong>
 <span><span class="co">## 4 extTrans    2    4    3 3          0      4     0</span></span>
 <span><span class="co">## 5 extTrans    3    3    2 5          0      4     0</span></span>
 <span><span class="co">## 6 extTrans    3    4    2 4          0      4     0</span></span></code></pre>
-<p>Now, create an SIR model where we turn off the disease dynamics
-(beta=0, gamma=0) to focus on the scheduled events. Let us start with
-different number of individuals in each node.</p>
+<p>Now, we create an SIR model where we turn off the disease dynamics
+(<code>beta = 0</code>, <code>gamma = 0</code>) to focus exclusively on
+the scheduled events. First, we define the initial state with different
+numbers of individuals in each node:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">25</span><span class="op">)</span>,</span>
+<span>  I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,  <span class="fl">0</span>,  <span class="fl">0</span>,  <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,  <span class="fl">0</span>,  <span class="fl">0</span>,  <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Next, we create the model using this initial state and the events
+defined above:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
-<span>  u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">25</span><span class="op">)</span>,</span>
-<span>                  I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,  <span class="fl">0</span>,  <span class="fl">0</span>,  <span class="fl">0</span><span class="op">)</span>,</span>
-<span>                  R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,  <span class="fl">0</span>,  <span class="fl">0</span>,  <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
 <span>  tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">3</span>,</span>
 <span>  beta <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -182,7 +189,7 @@ sample individuals from when processing an event. Which column to use in
 E for an event is determined by the event select value. In this example,
 we use the 4<sup>th</sup> column which means that all compartments can
 be sampled in each movement event (see below).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 3 x 4 sparse Matrix of class "dgCMatrix"</span></span>
 <span><span class="co">##   1 2 3 4</span></span>
@@ -195,7 +202,7 @@ column. Now, let us run the model and generate data from it. For
 reproducibility, we first call the <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> function and
 specify the number of threads to use since there is random sampling
 involved when picking individuals from the compartments.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
@@ -203,10 +210,10 @@ involved when picking individuals from the compartments.</p>
 <code>range = FALSE</code> to display the trajectory lines without the
 shaded range bands, making it easier to read the exact compartment
 counts.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="**Figure 2.** Number of susceptible, infected and recovered individuals in each node." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="**Figure 2.** Number of susceptible, infected and recovered individuals in each node." width="672"><p class="caption">
 <strong>Figure 2.</strong> Number of susceptible, infected and recovered
 individuals in each node.
 </p>
@@ -214,7 +221,7 @@ individuals in each node.
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mspace width="0.222em"></mspace><annotation encoding="application/x-tex">~</annotation></semantics></math></p>
 <p>Or use the <code><a href="../reference/trajectory.html">trajectory()</a></code> function to more easily inspect
 the outcome in each node in detail.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    node time  S I R</span></span>
 <span><span class="co">## 1     1    0 10 5 0</span></span>
@@ -249,26 +256,26 @@ built-in SIR model, where we start with 300 individuals
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">R = 100</annotation></semantics></math>)
 in the first node and then move them, one by one, to the second
 node.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  event <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"extTrans"</span>, <span class="fl">300</span><span class="op">)</span>, <span class="co">## Event "extTrans" is a movement between nodes</span></span>
-<span>  time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">300</span>,                 <span class="co">## The time that the event happens</span></span>
-<span>  node <span class="op">=</span> <span class="fl">1</span>,                     <span class="co">## In which node does the event occur</span></span>
-<span>  dest <span class="op">=</span> <span class="fl">2</span>,                     <span class="co">## Which node is the destination node</span></span>
-<span>  n <span class="op">=</span> <span class="fl">1</span>,                        <span class="co">## How many individuals are moved</span></span>
-<span>  proportion <span class="op">=</span> <span class="fl">0</span>,               <span class="co">## This is not used when n &gt; 0</span></span>
-<span>  select <span class="op">=</span> <span class="fl">4</span>,                   <span class="co">## Use the 4th column in the model select matrix</span></span>
-<span>  shift <span class="op">=</span> <span class="fl">0</span>                     <span class="co">## Not used in this example</span></span>
+<span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"extTrans"</span>, <span class="fl">300</span><span class="op">)</span>, <span class="co">## Event "extTrans" is a movement between nodes</span></span>
+<span>  time       <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">300</span>,                <span class="co">## The time that the event happens</span></span>
+<span>  node       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">300</span><span class="op">)</span>,          <span class="co">## In which node does the event occur</span></span>
+<span>  dest       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">300</span><span class="op">)</span>,          <span class="co">## Which node is the destination node</span></span>
+<span>  n          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">300</span><span class="op">)</span>,          <span class="co">## How many individuals are moved</span></span>
+<span>  proportion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span>,          <span class="co">## This is not used when n &gt; 0</span></span>
+<span>  select     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">300</span><span class="op">)</span>,          <span class="co">## Use the 4th column in the model select matrix</span></span>
+<span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span>           <span class="co">## Not used in this example</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now, create the model. Then run it, and plot the number of
 individuals in the second node.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
 <span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
 <span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">300</span>,</span>
@@ -276,10 +283,10 @@ individuals in the second node.</p>
 <span>  beta <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="**Figure 3.** The individuals have an equal probability of being selected regardless of compartment." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="**Figure 3.** The individuals have an equal probability of being selected regardless of compartment." width="672"><p class="caption">
 <strong>Figure 3.</strong> The individuals have an equal probability of
 being selected regardless of compartment.
 </p>
@@ -306,11 +313,11 @@ weights amongst the remaining items. Let us now double the weight to
 sample individuals from the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
 compartment and then run the model again.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span><span class="op">@</span><span class="va">events</span><span class="op">@</span><span class="va">E</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="**Figure 4.** The individuals in the $I$ compartment are more likely of being selected for a movement event." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="**Figure 4.** The individuals in the $I$ compartment are more likely of being selected for a movement event." width="672"><p class="caption">
 <strong>Figure 4.</strong> The individuals in the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
 compartment are more likely of being selected for a movement event.
@@ -320,11 +327,11 @@ compartment are more likely of being selected for a movement event.
 <p>And a much larger weight to sample individuals from the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
 compartment.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span><span class="op">@</span><span class="va">events</span><span class="op">@</span><span class="va">E</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="**Figure 5.** The individuals in the $I$ compartment are even more likely of being selected for a movement event compared to the previous example." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="**Figure 5.** The individuals in the $I$ compartment are even more likely of being selected for a movement event compared to the previous example." width="672"><p class="caption">
 <strong>Figure 5.</strong> The individuals in the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
 compartment are even more likely of being selected for a movement event
@@ -335,11 +342,11 @@ compared to the previous example.
 <p>Increase the weight for the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
 compartment and run the model again.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span><span class="op">@</span><span class="va">events</span><span class="op">@</span><span class="va">E</span><span class="op">[</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="**Figure 6.** The individuals in the $I$ and $R$ compartments are more likely of being selected for a movement event compared to individuals in the $S$ compartment." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="**Figure 6.** The individuals in the $I$ and $R$ compartments are more likely of being selected for a movement event compared to individuals in the $S$ compartment." width="672"><p class="caption">
 <strong>Figure 6.</strong> The individuals in the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
 and
@@ -364,7 +371,7 @@ selected.</p>
 </h3>
 <p>Let us create a simple model where births occur at regular intervals.
 Newborns enter the susceptible compartment.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  I <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -373,7 +380,7 @@ Newborns enter the susceptible compartment.</p>
 <p>We schedule births at times 5, 10, and 15, adding 10 individuals each
 time. All newborns enter the susceptible compartment (column 1 in the E
 matrix).</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"enter"</span>, <span class="fl">3</span><span class="op">)</span>, <span class="co">## "enter" add new individuals to a node</span></span>
 <span>  time       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span>,    <span class="co">## The time that the event happens</span></span>
@@ -384,7 +391,7 @@ matrix).</p>
 <span>  select     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,      <span class="co">## Target the S compartment</span></span>
 <span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>       <span class="co">## Not used in this example</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
 <span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
 <span>  tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,</span>
@@ -392,10 +399,10 @@ matrix).</p>
 <span>  beta <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" alt="**Figure 7.** The number of susceptible ($S$) individuals increases by 10 individuals at each scheduled event." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-20-1.png" class="r-plt" alt="**Figure 7.** The number of susceptible ($S$) individuals increases by 10 individuals at each scheduled event." width="672"><p class="caption">
 <strong>Figure 7.</strong> The number of susceptible
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
 individuals increases by 10 individuals at each scheduled event.
@@ -421,7 +428,7 @@ matrix to include both the
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
 compartments for that select value.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  I <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -431,7 +438,7 @@ compartments for that select value.</p>
 each time. We want each newborn to enter either the susceptible or the
 recovered compartment, with probability proportional to the weights in
 column 1 of the E matrix.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"enter"</span>, <span class="fl">300</span><span class="op">)</span>, <span class="co">## "enter" add new individuals to a node</span></span>
 <span>  time       <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">300</span>,             <span class="co">## The time that the event happens</span></span>
@@ -443,7 +450,7 @@ column 1 of the E matrix.</p>
 <span>                                  <span class="co">## (after modifying E)</span></span>
 <span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">300</span><span class="op">)</span>        <span class="co">## Not used in this example</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
 <span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
 <span>  tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">300</span>,</span>
@@ -454,24 +461,24 @@ column 1 of the E matrix.</p>
 <p>Let us now change the select matrix so that we can use our events as
 expected. It is not necessary to use <code>value=1</code> since that is
 the default, however, for clarity we specifically set that value.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
 <span>  select      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  value       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now, verify the select matrix.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 3 x 1 sparse Matrix of class "dgCMatrix"</span></span>
 <span><span class="co">##   1</span></span>
 <span><span class="co">## S 1</span></span>
 <span><span class="co">## I .</span></span>
 <span><span class="co">## R 1</span></span></code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-25-1.png" class="r-plt" alt="**Figure 8.** The number of susceptible ($S$) and recovered ($R) individuals increases over time." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-26-1.png" class="r-plt" alt="**Figure 8.** The number of susceptible ($S$) and recovered ($R) individuals increases over time." width="672"><p class="caption">
 <strong>Figure 8.</strong> The number of susceptible
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
 and recovered ($R) individuals increases over time.
@@ -479,16 +486,16 @@ and recovered ($R) individuals increases over time.
 </div>
 <p>Let us modify the E matrix so that newborns are more likely to enter
 the S compartment compared to the R compartment.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
 <span>  select      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  value       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-27-1.png" class="r-plt" alt="**Figure 9.** Individuals are more likely to enter as susceptible ($S$) compared to as recovered ($R$)" width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-28-1.png" class="r-plt" alt="**Figure 9.** Individuals are more likely to enter as susceptible ($S$) compared to as recovered ($R$)" width="672"><p class="caption">
 <strong>Figure 9.</strong> Individuals are more likely to enter as
 susceptible
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
@@ -509,13 +516,13 @@ compartments are selected.</p>
 <h3 id="example-mortality">Example: Mortality<a class="anchor" aria-label="anchor" href="#example-mortality"></a>
 </h3>
 <p>Let us create a model where individuals die at scheduled times.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  I <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  R <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"exit"</span>, <span class="fl">3</span><span class="op">)</span>,  <span class="co">## "exit" remove individuals from a node</span></span>
 <span>  time       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span>,    <span class="co">## The time that the event happens</span></span>
@@ -526,7 +533,7 @@ compartments are selected.</p>
 <span>  select     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,      <span class="co">## Target the S compartment</span></span>
 <span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>       <span class="co">## Not used in this example</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
 <span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
 <span>  tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,</span>
@@ -534,10 +541,10 @@ compartments are selected.</p>
 <span>  beta <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-31-1.png" class="r-plt" alt="**Figure 10.** The number of susceptible ($S$) individuals decreases by 5 individuals at each scheduled event." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-32-1.png" class="r-plt" alt="**Figure 10.** The number of susceptible ($S$) individuals decreases by 5 individuals at each scheduled event." width="672"><p class="caption">
 <strong>Figure 10.</strong> The number of susceptible
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
 individuals decreases by 5 individuals at each scheduled event.
@@ -550,13 +557,13 @@ individuals decreases by 5 individuals at each scheduled event.
 <p>We can also use weights to make certain compartments more likely to
 lose individuals. For example, infected individuals might have higher
 mortality risk.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  I <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  R <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"exit"</span>, <span class="fl">100</span><span class="op">)</span>, <span class="co">## "exit" remove individuals from a node</span></span>
 <span>  time       <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>,            <span class="co">## The time that the event happens</span></span>
@@ -568,7 +575,7 @@ mortality risk.</p>
 <span>                                 <span class="co">## (after modifying E)</span></span>
 <span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>       <span class="co">## Not used in this example</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
 <span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
 <span>  tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">100</span>,</span>
@@ -578,16 +585,16 @@ mortality risk.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Let us increase the weight for the I compartment to make infected
 individuals more likely to be removed:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span><span class="op">)</span>,</span>
 <span>  select      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  value       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-36-1.png" class="r-plt" alt="**Figure 11.** The number of infected ($I$) individuals decreases faster compared to susceptibles ($S$)." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-37-1.png" class="r-plt" alt="**Figure 11.** The number of infected ($I$) individuals decreases faster compared to susceptibles ($S$)." width="672"><p class="caption">
 <strong>Figure 11.</strong> The number of infected
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>)
 individuals decreases faster compared to susceptibles
@@ -610,7 +617,7 @@ effects.</p>
 individuals to the recovered compartment at a specific time. We will use
 <code>shift=1</code> and show how we can adjust the shift matrix to move
 susceptible to recovered.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  I <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -618,7 +625,7 @@ susceptible to recovered.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>At time 10, we vaccinate 30 susceptible individuals, moving them to
 the R compartment.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  event      <span class="op">=</span> <span class="st">"intTrans"</span>, <span class="co">## "intTrans" move individuals within a node</span></span>
 <span>  time       <span class="op">=</span> <span class="fl">10</span>,         <span class="co">## The time that the event happens</span></span>
@@ -629,7 +636,7 @@ the R compartment.</p>
 <span>  select     <span class="op">=</span> <span class="fl">1</span>,          <span class="co">## Target the S compartment</span></span>
 <span>  shift      <span class="op">=</span> <span class="fl">1</span>           <span class="co">## Use shift column 1 (after modifying N)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
 <span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
 <span>  tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,</span>
@@ -641,7 +648,7 @@ the R compartment.</p>
 expected. Susceptible individuals will be moved to the recovered
 compartment. With compartments ordered S=1, I=2, R=3, a value of 2 means
 individuals from compartment 1 (S) move to compartment 1+2=3 (R).</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/shift_matrix.html">shift_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  compartment <span class="op">=</span> <span class="st">"S"</span>,</span>
 <span>  shift <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -656,7 +663,7 @@ indicators, so the specific shift amount must be explicitly defined. The
 shift parameter works together with the shift matrix (N) to determine
 the destination compartment.</p>
 <p>Now, verify the shift matrix.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/shift_matrix.html">shift_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   1</span></span>
 <span><span class="co">## S 2</span></span>
@@ -665,10 +672,10 @@ the destination compartment.</p>
 <p>Each column in N defines a different transfer pattern. The shift
 value selects which column to use. The value N[p, q] indicates how many
 rows to move from compartment p.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-42-1.png" class="r-plt" alt="**Figure 12.** The number of recovered ($R$) individuals increases at $t=10$." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-43-1.png" class="r-plt" alt="**Figure 12.** The number of recovered ($R$) individuals increases at $t=10$." width="672"><p class="caption">
 <strong>Figure 12.</strong> The number of recovered
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>)
 individuals increases at
@@ -687,14 +694,14 @@ population.</p>
 <div class="section level3">
 <h3 id="example-proportional-culling">Example: Proportional culling<a class="anchor" aria-label="anchor" href="#example-proportional-culling"></a>
 </h3>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  I <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>  R <span class="op">=</span> <span class="fl">10</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Remove 20% of the population at time 10:</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  event      <span class="op">=</span> <span class="st">"exit"</span>, <span class="co">## "exit" remove individuals from a node</span></span>
 <span>  time       <span class="op">=</span> <span class="fl">10</span>,     <span class="co">## The time that the event happens</span></span>
@@ -705,7 +712,7 @@ population.</p>
 <span>  select     <span class="op">=</span> <span class="fl">4</span>,      <span class="co">## Target all compartments</span></span>
 <span>  shift      <span class="op">=</span> <span class="fl">0</span>       <span class="co">## Not used in this example</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
 <span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
 <span>  tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,</span>
@@ -713,10 +720,10 @@ population.</p>
 <span>  beta <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-46-1.png" class="r-plt" alt="**Figure 13.** The number of individuals decrease at $t=10$." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-47-1.png" class="r-plt" alt="**Figure 13.** The number of individuals decrease at $t=10$." width="672"><p class="caption">
 <strong>Figure 13.</strong> The number of individuals decrease at
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">t=10</annotation></semantics></math>.
 </p>
@@ -745,7 +752,7 @@ within-node movements happen before between-node movements.</p>
 <div class="section level3">
 <h3 id="example-multiple-events-at-the-same-time">Example: Multiple events at the same time<a class="anchor" aria-label="anchor" href="#example-multiple-events-at-the-same-time"></a>
 </h3>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">30</span><span class="op">)</span>,</span>
 <span>  I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">25</span><span class="op">)</span>,</span>
@@ -758,7 +765,7 @@ within-node movements happen before between-node movements.</p>
 <li>5 vaccinations (internal transfer)</li>
 <li>15 movements to node 2 (external transfer)</li>
 </ul>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  event      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exit"</span>, <span class="st">"enter"</span>, <span class="st">"intTrans"</span>, <span class="st">"extTrans"</span><span class="op">)</span>,</span>
 <span>  time       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span>,</span>
@@ -769,7 +776,7 @@ within-node movements happen before between-node movements.</p>
 <span>  select     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span>
 <span>  shift      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SIR.html">SIR</a></span><span class="op">(</span></span>
 <span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
 <span>  tspan <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span>,</span>
@@ -777,16 +784,16 @@ within-node movements happen before between-node movements.</p>
 <span>  beta <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/shift_matrix.html">shift_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  compartment <span class="op">=</span> <span class="st">"S"</span>,</span>
 <span>  shift <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  value <span class="op">=</span> <span class="fl">2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
-<img src="scheduled-events_files/figure-html/unnamed-chunk-51-1.png" class="r-plt" alt="**Figure 14.** Multiple events have been processed at $t=5$." width="672"><p class="caption">
+<img src="scheduled-events_files/figure-html/unnamed-chunk-52-1.png" class="r-plt" alt="**Figure 14.** Multiple events have been processed at $t=5$." width="672"><p class="caption">
 <strong>Figure 14.</strong> Multiple events have been processed at
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">t=5</annotation></semantics></math>.
 </p>

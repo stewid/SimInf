@@ -91,15 +91,25 @@ events
     ## 5 extTrans    3    3    2 5          0      4     0
     ## 6 extTrans    3    4    2 4          0      4     0
 
-Now, create an SIR model where we turn off the disease dynamics (beta=0,
-gamma=0) to focus on the scheduled events. Let us start with different
-number of individuals in each node.
+Now, we create an SIR model where we turn off the disease dynamics
+(`beta = 0`, `gamma = 0`) to focus exclusively on the scheduled events.
+First, we define the initial state with different numbers of individuals
+in each node:
+
+``` r
+u0 <- data.frame(
+  S = c(10, 15, 20, 25),
+  I = c(5,  0,  0,  0),
+  R = c(0,  0,  0,  0)
+)
+```
+
+Next, we create the model using this initial state and the events
+defined above:
 
 ``` r
 model <- SIR(
-  u0 = data.frame(S = c(10, 15, 20, 25),
-                  I = c(5,  0,  0,  0),
-                  R = c(0,  0,  0,  0)),
+  u0 = u0,
   tspan = 0:3,
   beta = 0,
   gamma = 0,
@@ -150,7 +160,7 @@ plot(result, range = FALSE)
 
 ![\*\*Figure 2.\*\* Number of susceptible, infected and recovered
 individuals in each
-node.](scheduled-events_files/figure-html/unnamed-chunk-7-1.png)
+node.](scheduled-events_files/figure-html/unnamed-chunk-8-1.png)
 
 **Figure 2.** Number of susceptible, infected and recovered individuals
 in each node.
@@ -203,14 +213,14 @@ u0 <- data.frame(
 
 ``` r
 events <- data.frame(
-  event = rep("extTrans", 300), ## Event "extTrans" is a movement between nodes
-  time = 1:300,                 ## The time that the event happens
-  node = 1,                     ## In which node does the event occur
-  dest = 2,                     ## Which node is the destination node
-  n = 1,                        ## How many individuals are moved
-  proportion = 0,               ## This is not used when n > 0
-  select = 4,                   ## Use the 4th column in the model select matrix
-  shift = 0                     ## Not used in this example
+  event      = rep("extTrans", 300), ## Event "extTrans" is a movement between nodes
+  time       = 1:300,                ## The time that the event happens
+  node       = rep(1, 300),          ## In which node does the event occur
+  dest       = rep(2, 300),          ## Which node is the destination node
+  n          = rep(1, 300),          ## How many individuals are moved
+  proportion = rep(0, 300),          ## This is not used when n > 0
+  select     = rep(4, 300),          ## Use the 4th column in the model select matrix
+  shift      = rep(0, 300)           ## Not used in this example
 )
 ```
 
@@ -233,7 +243,7 @@ plot(run(model), index = 2)
 
 ![\*\*Figure 3.\*\* The individuals have an equal probability of being
 selected regardless of
-compartment.](scheduled-events_files/figure-html/unnamed-chunk-12-1.png)
+compartment.](scheduled-events_files/figure-html/unnamed-chunk-13-1.png)
 
 **Figure 3.** The individuals have an equal probability of being
 selected regardless of compartment.
@@ -261,7 +271,7 @@ plot(run(model), index = 2)
 
 ![\*\*Figure 4.\*\* The individuals in the \$I\$ compartment are more
 likely of being selected for a movement
-event.](scheduled-events_files/figure-html/unnamed-chunk-13-1.png)
+event.](scheduled-events_files/figure-html/unnamed-chunk-14-1.png)
 
 **Figure 4.** The individuals in the $I$ compartment are more likely of
 being selected for a movement event.
@@ -278,7 +288,7 @@ plot(run(model), index = 2)
 ![\*\*Figure 5.\*\* The individuals in the \$I\$ compartment are even
 more likely of being selected for a movement event compared to the
 previous
-example.](scheduled-events_files/figure-html/unnamed-chunk-14-1.png)
+example.](scheduled-events_files/figure-html/unnamed-chunk-15-1.png)
 
 **Figure 5.** The individuals in the $I$ compartment are even more
 likely of being selected for a movement event compared to the previous
@@ -296,7 +306,7 @@ plot(run(model), index = 2)
 ![\*\*Figure 6.\*\* The individuals in the \$I\$ and \$R\$ compartments
 are more likely of being selected for a movement event compared to
 individuals in the \$S\$
-compartment.](scheduled-events_files/figure-html/unnamed-chunk-15-1.png)
+compartment.](scheduled-events_files/figure-html/unnamed-chunk-16-1.png)
 
 **Figure 6.** The individuals in the $I$ and $R$ compartments are more
 likely of being selected for a movement event compared to individuals in
@@ -356,7 +366,7 @@ plot(run(model))
 
 ![\*\*Figure 7.\*\* The number of susceptible (\$S\$) individuals
 increases by 10 individuals at each scheduled
-event.](scheduled-events_files/figure-html/unnamed-chunk-19-1.png)
+event.](scheduled-events_files/figure-html/unnamed-chunk-20-1.png)
 
 **Figure 7.** The number of susceptible ($S$) individuals increases by
 10 individuals at each scheduled event.
@@ -438,7 +448,7 @@ plot(run(model))
 
 ![\*\*Figure 8.\*\* The number of susceptible (\$S\$) and recovered
 (\$R) individuals increases over
-time.](scheduled-events_files/figure-html/unnamed-chunk-25-1.png)
+time.](scheduled-events_files/figure-html/unnamed-chunk-26-1.png)
 
 **Figure 8.** The number of susceptible ($S$) and recovered (\$R)
 individuals increases over time.
@@ -460,7 +470,7 @@ plot(run(model))
 
 ![\*\*Figure 9.\*\* Individuals are more likely to enter as susceptible
 (\$S\$) compared to as recovered
-(\$R\$)](scheduled-events_files/figure-html/unnamed-chunk-27-1.png)
+(\$R\$)](scheduled-events_files/figure-html/unnamed-chunk-28-1.png)
 
 **Figure 9.** Individuals are more likely to enter as susceptible ($S$)
 compared to as recovered ($R$)
@@ -513,7 +523,7 @@ plot(run(model))
 
 ![\*\*Figure 10.\*\* The number of susceptible (\$S\$) individuals
 decreases by 5 individuals at each scheduled
-event.](scheduled-events_files/figure-html/unnamed-chunk-31-1.png)
+event.](scheduled-events_files/figure-html/unnamed-chunk-32-1.png)
 
 **Figure 10.** The number of susceptible ($S$) individuals decreases by
 5 individuals at each scheduled event.
@@ -573,7 +583,7 @@ plot(run(model))
 
 ![\*\*Figure 11.\*\* The number of infected (\$I\$) individuals
 decreases faster compared to susceptibles
-(\$S\$).](scheduled-events_files/figure-html/unnamed-chunk-36-1.png)
+(\$S\$).](scheduled-events_files/figure-html/unnamed-chunk-37-1.png)
 
 **Figure 11.** The number of infected ($I$) individuals decreases faster
 compared to susceptibles ($S$).
@@ -670,7 +680,7 @@ plot(run(model))
 
 ![\*\*Figure 12.\*\* The number of recovered (\$R\$) individuals
 increases at
-\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-42-1.png)
+\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-43-1.png)
 
 **Figure 12.** The number of recovered ($R$) individuals increases at
 $t = 10$.
@@ -722,7 +732,7 @@ plot(run(model))
 ```
 
 ![\*\*Figure 13.\*\* The number of individuals decrease at
-\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-46-1.png)
+\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-47-1.png)
 
 **Figure 13.** The number of individuals decrease at $t = 10$.
 
@@ -792,7 +802,7 @@ plot(run(model), range = FALSE)
 ```
 
 ![\*\*Figure 14.\*\* Multiple events have been processed at
-\$t=5\$.](scheduled-events_files/figure-html/unnamed-chunk-51-1.png)
+\$t=5\$.](scheduled-events_files/figure-html/unnamed-chunk-52-1.png)
 
 **Figure 14.** Multiple events have been processed at $t = 5$.
 
