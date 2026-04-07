@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -133,13 +133,15 @@ model_dll_key <- function(model) {
 ##' ## Plot the proportion of susceptible, infected and recovered
 ##' ## individuals.
 ##' plot(result)
+## nolint start: brace_linter
 setGeneric(
     "run",
     signature = "model",
-    function(model, ...) {
+    function(model,
+             ...)
         standardGeneric("run")
-    }
 )
+## nolint end
 
 ##' @rdname run
 ##' @param solver Which numerical solver to utilize. Default is 'ssm'.

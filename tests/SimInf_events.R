@@ -55,7 +55,7 @@ N <- matrix(c(2, 0,
 ## Check the internal function to create a select matrix E from a
 ## data.frame.
 res <- assertError(SimInf:::E_from_data_frame(1, "S_1"))
-check_error(res, "'events' must be a data.frame.")
+check_error(res, "'E' must be a data.frame.")
 
 res <- assertError(SimInf:::E_from_data_frame(data.frame(compartment = "S_1"),
                                               compartments = "S_1"))
@@ -576,6 +576,16 @@ E_observed <- select_matrix(model)
 
 stopifnot(identical(E_expected, E_observed))
 
+## Set the select matrix using a data.frame
+select_matrix(model) <- data.frame(
+    compartment = c("S", "S", "I", "R", "R"),
+    select = c(1, 2, 2, 2, 3))
+
+E_observed <- select_matrix(model)
+
+stopifnot(identical(E_expected, E_observed))
+
+## check that an error is raised if not all compartment exists.
 m <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0), nrow = 2)
 res <- assertError(select_matrix(model) <- m)
 check_error(res, "'value' must have one row for each compartment in the model.")
@@ -583,11 +593,22 @@ check_error(res, "'value' must have one row for each compartment in the model.")
 ## Check get/set shift_matrix
 model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
 
-## Set the shift matrix
+## Set the shift matrix using a matrix
 shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
 
 N_expected <- structure(c(2L, 1L, 0L), .Dim = c(3L, 1L),
                         .Dimnames = list(c("S", "I", "R"), "1"))
+
+## Extract the shift matrix from the model
+N_observed <- shift_matrix(model)
+
+stopifnot(identical(N_expected, N_observed))
+
+## Set the shift matrix using a data.frame
+shift_matrix(model) <- data.frame(
+    compartment = c("S", "I", "R"),
+    shift = c(1, 1, 1),
+    value = c(2, 1, 0))
 
 ## Extract the shift matrix from the model
 N_observed <- shift_matrix(model)

@@ -3,7 +3,7 @@
 \docType{data}
 \name{events_SISe3}
 \alias{events_SISe3}
-\title{Example data to initialize events for the \sQuote{SISe3} model}
+\title{Example event data for the \acronym{SISe3} model with cattle herds}
 \format{
 A \code{data.frame}
 }
@@ -11,54 +11,133 @@ A \code{data.frame}
 data(events_SISe3)
 }
 \description{
-Example data to initialize scheduled events for a population of
-1600 nodes and demonstrate the \code{\linkS4class{SISe3}} model.
+Dataset containing 783,773 scheduled events for a population of
+1,600 cattle herds stratified by age over 1,460 days (4
+years). Demonstrates how demographic, movement, and age-transition
+events affect SISe3 dynamics in a cattle disease context.
 }
 \details{
-Example data to initialize scheduled events (see
-\code{\linkS4class{SimInf_events}}) for a population of 1600 nodes
-and demonstrate the \code{\linkS4class{SISe3}} model. The dataset
-contains 783773 events for 1600 nodes distributed over 4 * 365
-days. The events are divided into three types: \sQuote{Exit}
-events remove individuals from the population (n = 182535),
-\sQuote{Enter} events add individuals to the population (n =
-182685), \sQuote{Internal transfer} events move individuals
-between compartmens within one node e.g. ageing (n = 317081), and
-\sQuote{External transfer} events move individuals between nodes
-in the population (n = 101472). The vignette contains a detailed
-description of how scheduled events operate on a model.
+This dataset contains four types of scheduled events that affect
+cattle herds (nodes) with age structure:
+
+\describe{
+  \item{Exit}{Deaths or removal of cattle from a herd (n =
+    182,535). These events remove cattle from susceptible or
+    infected compartments across age categories.}
+  \item{Enter}{Births or introduction of cattle to a herd (n =
+    182,685). These events add susceptible cattle, typically to
+    the youngest age category.}
+  \item{Internal transfer}{Age transitions or within-herd
+    movements (n = 317,081). These events move cattle between age
+    categories within a herd, reflecting maturation and changing
+    infection risk with age.}
+  \item{External transfer}{Movement of cattle between herds (n =
+    101,472).  These events transfer cattle from one herd to
+    another across age categories, potentially introducing
+    infected animals.}
+}
+
+The \code{select} column in the returned data frame is mapped to
+the columns of the internal select matrix as follows:
+\itemize{
+  \item \code{select = 1}: Targets \strong{S_1} (Susceptible, age 1).
+  \item \code{select = 2}: Targets \strong{S_2} (Susceptible, age 2).
+  \item \code{select = 3}: Targets \strong{S_3} (Susceptible, age 3).
+  \item \code{select = 4}: Targets \strong{S_1} and \strong{I_1}
+    (Susceptible and Infected, age 1).
+  \item \code{select = 5}: Targets \strong{S_2} and \strong{I_2}
+    (Susceptible and Infected, age 2).
+  \item \code{select = 6}: Targets \strong{S_3} and \strong{I_3}
+    (Susceptible and Infected, age 3).
+}
+
+The \code{shift} column is used for \strong{Internal transfer} events
+to define the destination compartment. It corresponds to the column
+index in the internal \code{N} matrix that specifies the transition
+(e.g., moving from age 1 to age 2).
+
+Events are distributed across all 1,600 herds over the 4-year
+period, reflecting realistic patterns of cattle demographic
+change, herd-to-herd movement, and age progression in a livestock
+production system. The higher event count compared to
+non-age-structured models reflects the addition of internal
+transfer events for age category transitions.
+
+The data contains:
+\describe{
+  \item{event}{Event type: "exit", "enter", "intTrans", or "extTrans".}
+  \item{time}{Day when event occurs (1-1460).}
+  \item{node}{Affected herd identifier (1-1600).}
+  \item{dest}{Destination herd for external transfer events, else 0.}
+  \item{n}{Number of cattle affected.}
+  \item{select}{Model compartment to affect (see
+    \code{\linkS4class{SimInf_events}}).}
+  \item{proportion}{0. Not used in this example.}
+  \item{shift}{Determines how individuals in internal transfer
+    events are shifted to enter another compartment.}
+}
 }
 \examples{
-## For reproducibility, call the set.seed() function and specify
-## the number of threads to use. To use all available threads,
-## remove the set_num_threads() call.
+## For reproducibility, call the set.seed() function and specify the
+## number of threads to use. To use all available threads, remove the
+## set_num_threads() call.
 set.seed(123)
 set_num_threads(1)
 
-## Create an 'SISe3' model with 1600 nodes and initialize
-## it to run over 4*365 days. Add one infected individual
-## to the first node.
-data("u0_SISe3", package = "SimInf")
-data("events_SISe3", package = "SimInf")
-u0_SISe3$I_1[1] <- 1
-tspan <- seq(from = 1, to = 4*365, by = 1)
-model <- SISe3(u0 = u0_SISe3, tspan = tspan, events = events_SISe3,
-               phi = rep(0, nrow(u0_SISe3)), upsilon_1 = 1.8e-2,
-               upsilon_2 = 1.8e-2, upsilon_3 = 1.8e-2,
-               gamma_1 = 0.1, gamma_2 = 0.1, gamma_3 = 0.1,
-               alpha = 1, beta_t1 = 1.0e-1, beta_t2 = 1.0e-1,
-               beta_t3 = 1.25e-1, beta_t4 = 1.25e-1, end_t1 = 91,
-               end_t2 = 182, end_t3 = 273, end_t4 = 365, epsilon = 0)
+## Create an 'SISe3' model with 1600 cattle herds (nodes) stratified
+## by age, initialize it to run over 4*365 days and record data at
+## weekly time-points. Add ten infected animals to age category 1 in
+## the first herd to seed the outbreak.  Define 'tspan' to record the
+## state of the system at weekly time-points. Load scheduled events
+## events for the population of nodes with births, deaths and
+## between-node movements of individuals.
+u0 <- u0_SISe3
+u0$I_1[1] <- 10
+model <- SISe3(u0 = u0,
+               tspan = seq(from = 1, to = 4*365, by = 7),
+               events = events_SISe3,
+               phi = rep(0, nrow(u0)),
+               upsilon_1 = 1.8e-2,
+               upsilon_2 = 1.8e-2,
+               upsilon_3 = 1.8e-2,
+               gamma_1 = 0.1,
+               gamma_2 = 0.1,
+               gamma_3 = 0.1,
+               alpha = 1,
+               beta_t1 = 1.0e-1,
+               beta_t2 = 1.0e-1,
+               beta_t3 = 1.25e-1,
+               beta_t4 = 1.25e-1,
+               end_t1 = 91,
+               end_t2 = 182,
+               end_t3 = 273,
+               end_t4 = 365,
+               epsilon = 0)
 
-## Display the number of individuals affected by each event type
-## per day.
+## Display the number of cattle affected by each event type per day.
 plot(events(model))
 
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
 
-## Summarize the trajectory. The summary includes the number of
-## events by event type.
+## Plot the median and interquartile range of the number of
+## susceptible and infected individuals.
+plot(result)
+
+## Plot the proportion of nodes with at least one infected individual.
+plot(result, I_1 + I_2 + I_3 ~ ., level = 2, type = "l")
+
+## Plot the trajectory for the first herd.
+plot(result, index = 1)
+
+## Summarize the trajectory. The summary includes the number of events
+## by event type.
 summary(result)
+}
+\seealso{
+\code{\link{u0_SISe3}} for the corresponding initial cattle
+population with age structure, \code{\link{SISe3}} for creating
+SISe3 models with these events and
+\code{\linkS4class{SimInf_events}} for event structure details
 }
 \keyword{dataset}

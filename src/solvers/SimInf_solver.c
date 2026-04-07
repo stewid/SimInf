@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -557,7 +557,7 @@ SimInf_print_event(
     const int dest)
 {
 #ifdef _OPENMP
-#  pragma omp critical
+#  pragma omp critical(print_event)
 #endif
     {
         if (irE && jcE && u) {
@@ -1190,7 +1190,7 @@ SimInf_print_status(
     const int transition)
 {
 #ifdef _OPENMP
-#  pragma omp critical
+#  pragma omp critical(print_status)
 #endif
     {
         REprintf("Status:\n");

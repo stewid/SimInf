@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -32,13 +32,15 @@
 ##'
 ##' ## Get the initial compartment state.
 ##' u0(model)
+## nolint start: brace_linter
 setGeneric(
     "u0",
     signature = "object",
-    function(object, ...) {
+    function(object,
+             ...)
         standardGeneric("u0")
-    }
 )
+## nolint end
 
 ##' @rdname u0
 ##' @export
@@ -184,13 +186,15 @@ setMethod(
 ##' u0(model) <- data.frame(S = 990, I = 10, R = 0)
 ##' result <- run(model)
 ##' plot(result)
+## nolint start: brace_linter
 setGeneric(
     "u0<-",
     signature = "model",
-    function(model, value) {
+    function(model,
+             value)
         standardGeneric("u0<-")
-    }
 )
+## nolint end
 
 ##' @rdname u0-set
 ##' @export

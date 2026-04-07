@@ -10,26 +10,54 @@ shift_matrix(model) <- value
 \S4method{shift_matrix}{SimInf_model}(model) <- value
 }
 \arguments{
-\item{model}{The \code{model} to set the shift matrix
-\code{events@N}.}
+\item{model}{The \code{SimInf_model} object to set the shift
+matrix for.}
 
-\item{value}{A matrix.}
+\item{value}{The new value for \code{N} in the model. \code{N} is
+a matrix to handle scheduled events, see
+\code{\linkS4class{SimInf_events}}. Each row in \code{N}
+corresponds to one compartment in the model. The values in a
+column define how to move sampled individuals before adding
+them to the destination. Let \code{q <- shift}, then each
+non-zero entry in \code{N[, q]} defines the number of rows to
+move sampled individuals from that compartment i.e., sampled
+individuals from compartment \code{p} are moved to compartment
+\code{N[p, q] + p}, where \code{1 <= N[p, q] + p <=
+N_compartments}. This matrix is used for \emph{enter},
+\emph{internal transfer} and \emph{external transfer} events.
+The shift matrix \code{N} can either be specified as a
+\code{matrix}, or as a \code{data.frame}.  When \code{N} is
+specified as a \code{data.frame}, it must have one column
+named \code{compartment} that defines which compartment is
+referred to, and one column \code{shift} that defines the
+column in \code{N}.  In addition, the \code{data.frame} must
+contain a column named \code{value} with the integer value in
+\code{N}.}
 }
 \value{
 \code{SimInf_model} object
 }
 \description{
 Utility function to set \code{events@N} in a \code{SimInf_model}
-object, see \code{\linkS4class{SimInf_events}}
+object, see \code{\linkS4class{SimInf_events}}.
 }
 \examples{
 ## Create an SIR model
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              tspan = 1:5, beta = 0.16, gamma = 0.077)
 
-## Set the shift matrix
+## Set the shift matrix.
 shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
 
-## Extract the shift matrix from the model
+## Extract the shift matrix from the model.
+shift_matrix(model)
+
+## Set the shift matrix using a data.frame instead.
+shift_matrix(model) <- data.frame(
+    compartment = c("S", "I", "R"),
+    shift = c(1, 1, 1),
+    value = c(2, 1, 0))
+
+## Extract the shift matrix from the model.
 shift_matrix(model)
 }

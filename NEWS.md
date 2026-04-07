@@ -2,6 +2,48 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* The `SimInf_model()`, `select_matrix()` and `shift_matrix()`
+  functions now accept a data.frame as input to define the E (select)
+  and N (shift) matrices using a simple tabular format, eliminating
+  the need to manually construct matrices for complex event
+  definitions.
+
+* Added a new vignette "Getting started with mparse" to illustrate how
+  to create custom models using the `mparse()` function. It covers
+  basic syntax, variables, global/local data, open populations
+  (births/deaths), and multi-stage models (Erlang distribution).
+
+* Updated the "Post-process data in a trajectory" vignette, detailing
+  how to extract data with `trajectory()`, calculate prevalence with
+  `prevalence()` at different aggregation levels, and visualize
+  results with `plot()`.
+
+* Updated the "Scheduled events" vignette to demonstrate the new
+  data.frame interface for `select_matrix` and `shift_matrix`,
+  providing clearer examples of how to specify scheduled events.
+
+* Improved documentation for `prevalence()`, `trajectory()`, and
+  `plot()` methods, with clearer explanations of formula notation,
+  aggregation levels, and output formats.
+
+* Fixed several typos and clarified descriptions in function
+  documentation.
+
+* Refactored S4 generic function definitions by removing unnecessary
+  curly braces.
+
+* Eliminated repeated `#pragma omp parallel` directives in the ssm and
+  aem solvers to improve OpenMP efficiency.
+
+* Assigned unique names to OpenMP critical sections to prevent
+  potential conflicts in parallel execution.
+
+* Refactored loop structures in C code for improved readability
+  (replacing `for(;;)` with `while(true)`).
+
+* Fixed error messages in internal `E_from_data_frame()` function to
+  provide clearer feedback for non-data.frame inputs.
+
 # SimInf 10.1.0 (2025-11-16)
 
 ## CHANGES OR IMPROVEMENTS

@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ SimInf_solver_ssm(
     SimInf_compartment_model *model,
     SimInf_scheduled_events *events)
 {
+    bool done = false;
     int Nthread = model->Nthread;
 
 #ifdef _OPENMP
@@ -49,7 +50,7 @@ SimInf_solver_ssm(
 #endif
     {
 #ifdef _OPENMP
-#  pragma omp for
+#  pragma omp for schedule(static)
 #endif
         for (int i = 0; i < Nthread; i++) {
             SimInf_compartment_model m = *&model[i];
@@ -83,21 +84,22 @@ SimInf_solver_ssm(
 
             *&model[i] = m;
         }
-    }
 
-    /* Check for error during initialization. */
-    for (int i = 0; i < Nthread; i++)
-        if (model[i].error)
-            return model[i].error;
-
-    /* Main loop. */
-    for (;;) {
 #ifdef _OPENMP
-#  pragma omp parallel num_threads(SimInf_num_threads())
+#  pragma omp single
 #endif
         {
+            /* Check for error during initialization. */
+            for (int i = 0; i < Nthread; i++) {
+                if (model[i].error)
+                    done = true;
+            }
+        }
+
+        /* Main loop. */
+        while (!done) {
 #ifdef _OPENMP
-#  pragma omp for
+#  pragma omp for schedule(static)
 #endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_scheduled_events e = *&events[i];
@@ -106,7 +108,7 @@ SimInf_solver_ssm(
                 /* (1) Handle internal epidemiological model,
                  * continuous-time Markov chain. */
                 for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
-                    for (;;) {
+                    while (true) {
                         double cum, rand, tau, delta = 0.0;
                         int tr;
 
@@ -206,11 +208,7 @@ SimInf_solver_ssm(
             }
 
 #ifdef _OPENMP
-#  pragma omp barrier
-#endif
-
-#ifdef _OPENMP
-#  pragma omp master
+#  pragma omp single
 #endif
             {
                 /* (3) Incorporate all scheduled E2 events */
@@ -218,11 +216,7 @@ SimInf_solver_ssm(
             }
 
 #ifdef _OPENMP
-#  pragma omp barrier
-#endif
-
-#ifdef _OPENMP
-#  pragma omp for
+#  pragma omp for schedule(static)
 #endif
             for (int i = 0; i < Nthread; i++) {
                 SimInf_compartment_model m = *&model[i];
@@ -307,25 +301,38 @@ SimInf_solver_ssm(
 
                 *&model[i] = m;
             }
-        }
 
-        /* 6b) Handle the case where the solution is stored in a sparse
-         * matrix */
-        SimInf_store_solution_sparse(model);
+#ifdef _OPENMP
+#  pragma omp single
+#endif
+            {
+                /* 6b) Handle the case where the solution is stored in
+                 * a sparse matrix */
+                SimInf_store_solution_sparse(model);
 
-        /* Swap the pointers to the continuous state variable so that
-         * 'v' equals 'v_new'. Moreover, check for error. */
-        for (int i = 0; i < Nthread; i++) {
-            double *v_tmp = model[i].v;
-            model[i].v = model[i].v_new;
-            model[i].v_new = v_tmp;
-            if (model[i].error)
-                return model[i].error;
-        }
+                /* Swap the pointers to the continuous state variable
+                 * so that 'v' equals 'v_new'. Moreover, check for
+                 * error. */
+                for (int i = 0; i < Nthread; i++) {
+                    double *v_tmp = model[i].v;
+                    model[i].v = model[i].v_new;
+                    model[i].v_new = v_tmp;
+                    if (model[i].error)
+                        done = true;
+                }
 
-        /* If the simulation has reached the final time, exit. */
-        if (model[0].U_it >= model[0].tlen)
-            break;
+                /* If the simulation has reached the final time,
+                 * exit. */
+                if (model[0].U_it >= model[0].tlen)
+                    done = true;
+            }
+        } /* End of while(!done) */
+    }  /* end parallel region */
+
+    /* Check if there is any error during the simulation. */
+    for (int i = 0; i < Nthread; i++) {
+        if (model[i].error)
+            return model[i].error;
     }
 
     return 0;

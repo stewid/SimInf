@@ -3,7 +3,7 @@
 \name{continue_pmcmc}
 \alias{continue_pmcmc}
 \alias{continue_pmcmc,SimInf_pmcmc-method}
-\title{Run more iterations of PMCMC}
+\title{Continue PMCMC from an Existing Chain}
 \usage{
 continue_pmcmc(
   object,
@@ -12,7 +12,7 @@ continue_pmcmc(
   post_proposal = NULL,
   init_model = NULL,
   post_particle = NULL,
-  verbose = getOption("verbose", FALSE)
+  verbose = FALSE
 )
 
 \S4method{continue_pmcmc}{SimInf_pmcmc}(
@@ -22,11 +22,12 @@ continue_pmcmc(
   post_proposal = NULL,
   init_model = NULL,
   post_particle = NULL,
-  verbose = getOption("verbose", FALSE)
+  verbose = FALSE
 )
 }
 \arguments{
-\item{object}{The \code{SimInf_pmcmc} object to continue from.}
+\item{object}{A \code{\linkS4class{SimInf_pmcmc}} object from a
+previous \code{pmcmc} or \code{continue_pmcmc} call.}
 
 \item{obs_process}{Specification of the stochastic observation
 process. The \code{obs_process} can be specified as a
@@ -64,13 +65,11 @@ process. This function can be useful to update, for example,
 proposed parameters. The function must return the model object
 which is then used in the particle filter.}
 
-\item{init_model}{An optional function that, if non-NULL, is
-applied in the particle filter before running each
-proposal. The function must accept one argument of type
-\code{SimInf_model} with the current model of the fitting
-process. This function can be useful to specify the initial
-state of \code{u0} or \code{v0} of the model before running a
-trajectory with proposed parameters.}
+\item{init_model}{Optional function applied before each particle
+filter run. Must accept a \code{SimInf_model} object and
+return the modified model. Useful for setting initial states
+(\code{u0}, \code{v0}) before running trajectories with
+proposed parameters.}
 
 \item{post_particle}{An optional function that, if non-NULL, is
 applied after each completed particle. The function must
@@ -84,14 +83,22 @@ that the second \code{SimInf_pfilter} argument, is non-NULL
 only for the first particle in the chain, and for accepted
 particles.}
 
-\item{verbose}{prints diagnostic messages when \code{TRUE}. The
-default is to retrieve the global option \code{verbose} and
-use \code{FALSE} if it is not set. When \code{verbose=TRUE},
-information is printed every 100 iterations. For pmcmc, it is
-possible to get information every nth information by
-specifying \code{verbose=n}, for example, \code{verbose=1} or
+\item{verbose}{prints diagnostic messages when \code{TRUE}.
+Default is \code{FALSE}. When \code{verbose=TRUE}, information
+is printed every 100 iterations. For pmcmc, it is possible to
+get information every nth information by specifying
+\code{verbose=n}, for example, \code{verbose=1} or
 \code{verbose=10}.}
 }
+\value{
+The updated \code{\linkS4class{SimInf_pmcmc}} object with
+    the chain extended by \code{n_iterations} new rows.
+}
 \description{
-Run more iterations of PMCMC
+Extends a previously computed PMCMC chain by running additional
+iterations of the Metropolis-Hastings sampler, continuing from the
+final state of the previous chain.
+}
+\seealso{
+\code{\link{pmcmc}} for initiating a new PMCMC chain.
 }

@@ -8,12 +8,17 @@ SimInf_events(E = NULL, N = NULL, events = NULL, t0 = NULL)
 }
 \arguments{
 \item{E}{A matrix where each row corresponds to one compartment in
-the model. The non-zero entries in a column indicates the
-compartments to include in an event.  For the \emph{exit},
+the model. The non-zero entries in a column indicate the
+compartments to include in an event. For the \emph{exit},
 \emph{internal transfer} and \emph{external transfer} events,
-a non-zero entry indicate the compartments to sample
-individuals from.  For the \emph{enter} event, all individuals
-enter first non-zero compartment. \code{E} is sparse matrix of
+the values in \code{E[, select]} are used as weights when
+sampling individuals without replacement, with probability
+proportional to the weight. For the \emph{enter} event, the
+values in \code{E[, select]} are used as weights when
+determining which compartment to add individuals to. If the
+column \code{E[, select]} contains several non-zero entries,
+the compartment is sampled with probability proportional to
+the weight in \code{E[, select]}. \code{E} is sparse matrix of
 class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
 
 \item{N}{Determines how individuals in \emph{internal transfer}
@@ -93,13 +98,13 @@ columns:
     select[i]]}, where \code{select} is an integer vector.
   }
   \item{shift}{
-    Determines how individuals in \emph{internal transfer} and
-    \emph{external transfer} events are shifted to enter another
-    compartment.  The sampled individuals are shifted according to
-    column \code{shift[i]} in matrix \code{N} i.e., \code{N[,
-    shift[i]]}, where \code{shift} is an integer vector.  See
-    above for a description of \code{N}. Unsued for the other
-    event types.
+    Determines how individuals in \emph{enter}, \emph{internal
+    transfer} and \emph{external transfer} events are shifted to
+    enter another compartment.  The sampled individuals are
+    shifted according to column \code{shift[i]} in matrix \code{N}
+    i.e., \code{N[, shift[i]]}, where \code{shift} is an integer
+    vector.  See above for a description of \code{N}. Unsued for
+    the other event types.
   }
 }
 }

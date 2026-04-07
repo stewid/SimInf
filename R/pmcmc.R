@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -175,49 +175,54 @@ setMethod(
 
 ##' Particle Markov chain Monte Carlo (PMCMC) algorithm
 ##'
-##' @param model The model to simulate data from.
+##' Estimates model parameters using the PMCMC algorithm, which
+##' combines a particle filter for likelihood evaluation with a
+##' Metropolis-Hastings MCMC sampler for parameter estimation.
+##'
+##' @param model The \code{SimInf_model} object to estimate parameters
+##'     for.
 ##' @template obs_process-param
 ##' @template data-param
 ##' @template priors-param
 ##' @template n_particles-param
 ##' @template n_iterations-param
-##' @param theta A named vector of initial values for the parameters
-##'     of the model.  Default is \code{NULL}, and then these are
-##'     sampled from the prior distribution(s).
-##' @param covmat A named numeric \code{(npars x npars)} matrix with
-##'     covariances to use as initial proposal matrix. If left
-##'     unspecified then defaults to \code{diag((theta/10)^2/npars)}.
-##' @param adaptmix Mixing proportion for adaptive proposal.  Must be
-##'     a value between zero and one. Default is \code{adaptmix =
-##'     0.05}.
-##' @param adaptive Controls when to start adaptive update. Must be
-##'     greater or equal to zero. If \code{adaptive=0}, then adaptive
-##'     update is not performed. Default is \code{adaptive = 100}.
+##' @param theta A named numeric vector with initial parameter values.
+##'     Default is \code{NULL}, which triggers sampling from the prior
+##'     distribution(s).
+##' @param covmat A named numeric \code{(npars x npars)} covariance
+##'     matrix for the proposal distribution. Default is \code{NULL},
+##'     which uses \code{diag((theta/10)^2/npars)}.
+##' @param adaptmix Numeric mixing proportion (0 < value < 1) for
+##'     adaptive covariance proposal. Default: 0.05. Larger values
+##'     increase the likelihood of using the fixed initial covariance
+##'     instead of the adaptive estimate.
+##' @param adaptive Integer (>= 0) specifying the iteration at which
+##'     to start adaptive covariance updates. Default: 100. Set to 0
+##'     to disable adaptive updates.
 ##' @template post_proposal-param
-##' @param init_model An optional function that, if non-NULL, is
-##'     applied in the particle filter before running each
-##'     proposal. The function must accept one argument of type
-##'     \code{SimInf_model} with the current model of the fitting
-##'     process. This function can be useful to specify the initial
-##'     state of \code{u0} or \code{v0} of the model before running a
-##'     trajectory with proposed parameters.
+##' @param init_model Optional function applied before each particle
+##'     filter run. Must accept a \code{SimInf_model} object and
+##'     return the modified model. Useful for setting initial states
+##'     (\code{u0}, \code{v0}) before running trajectories with
+##'     proposed parameters.
 ##' @template post-particle-param
-##' @param chain An optional chain to start from. Must be a
-##'     \code{data.frame} or an object that can be coerced to a
-##'     \code{data.frame}. Only the columns in \code{chain} with a
-##'     name that matches the names that will be used if this argument
-##'     is not provided will be used. When this argument is provided,
-##'     \code{n_iterations} can be 0. Additionally, when the
-##'     \code{chain} argument is provided, then \code{theta} and
-##'     \code{covmat} must be \code{NULL}.
+##' @param chain Optional \code{data.frame} or object coercible to
+##'     one, containing a previous PMCMC chain to continue from. If
+##'     provided, \code{theta} and \code{covmat} must be \code{NULL},
+##'     and \code{n_iterations} can be 0.
 ##' @template verbose-param-pmcmc
+##' @return A \code{\linkS4class{SimInf_pmcmc}} object containing the
+##'     fitted parameters and diagnostic information for all
+##'     iterations.
 ##' @references
 ##'
 ##' \Andrieu2010
 ##'
 ##' \Roberts2009
+##' @seealso \code{\link{continue_pmcmc}} for running additional
+##'     iterations.
 ##' @export
-##' @seealso \code{\link{continue_pmcmc}}.
+## nolint start: brace_linter
 setGeneric(
     "pmcmc",
     signature = "model",
@@ -235,10 +240,10 @@ setGeneric(
              init_model = NULL,
              post_particle = NULL,
              chain = NULL,
-             verbose = getOption("verbose", FALSE)) {
+             verbose = FALSE)
         standardGeneric("pmcmc")
-    }
 )
+## nolint end
 
 ##' @rdname pmcmc
 ##' @export
@@ -553,22 +558,29 @@ get_verbose <- function(verbose) {
     NULL
 }
 
-##' Run more iterations of PMCMC
+##' Continue PMCMC from an Existing Chain
 ##'
-##' @param object The \code{SimInf_pmcmc} object to continue from.
+##' Extends a previously computed PMCMC chain by running additional
+##' iterations of the Metropolis-Hastings sampler, continuing from the
+##' final state of the previous chain.
+##'
+##' @param object A \code{\linkS4class{SimInf_pmcmc}} object from a
+##'     previous \code{pmcmc} or \code{continue_pmcmc} call.
 ##' @template obs_process-param
 ##' @template n_iterations-param
 ##' @template post_proposal-param
-##' @param init_model An optional function that, if non-NULL, is
-##'     applied in the particle filter before running each
-##'     proposal. The function must accept one argument of type
-##'     \code{SimInf_model} with the current model of the fitting
-##'     process. This function can be useful to specify the initial
-##'     state of \code{u0} or \code{v0} of the model before running a
-##'     trajectory with proposed parameters.
+##' @param init_model Optional function applied before each particle
+##'     filter run. Must accept a \code{SimInf_model} object and
+##'     return the modified model. Useful for setting initial states
+##'     (\code{u0}, \code{v0}) before running trajectories with
+##'     proposed parameters.
 ##' @template post-particle-param
 ##' @template verbose-param-pmcmc
+##' @return The updated \code{\linkS4class{SimInf_pmcmc}} object with
+##'     the chain extended by \code{n_iterations} new rows.
+##' @seealso \code{\link{pmcmc}} for initiating a new PMCMC chain.
 ##' @export
+## nolint start: brace_linter
 setGeneric(
     "continue_pmcmc",
     signature = "object",
@@ -578,10 +590,10 @@ setGeneric(
              post_proposal = NULL,
              init_model = NULL,
              post_particle = NULL,
-             verbose = getOption("verbose", FALSE)) {
+             verbose = FALSE)
         standardGeneric("continue_pmcmc")
-    }
 )
+## nolint end
 
 ##' @rdname continue_pmcmc
 ##' @export

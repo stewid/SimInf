@@ -88,15 +88,15 @@ of nrow(u0).}
 \code{SISe}
 }
 \description{
-Create an \sQuote{SISe} model to be used by the simulation
+Create an \acronym{SISe} model to be used by the simulation
 framework.
 }
 \details{
-The \sQuote{SISe} model contains two compartments; number of
-susceptible (S) and number of infectious (I). Additionally, it
-contains an environmental compartment to model shedding of a
-pathogen to the environment. Consequently, the model has two state
-transitions,
+The \acronym{SISe} model contains two compartments: number of
+susceptible (S) and number of infectious (I)
+individuals. Additionally, it contains a continuous environmental
+compartment to model shedding of a pathogen to the
+environment. Consequently, the model has two state transitions:
 
 \deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{
 S -- upsilon phi S --> I}
@@ -130,7 +130,7 @@ specified in \code{tspan}.
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
-\item{S}{The number of sucsceptible in each node}
+\item{S}{The number of susceptible in each node}
 \item{I}{The number of infected in each node}
 }
 }

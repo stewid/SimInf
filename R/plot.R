@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -413,8 +413,10 @@ plot_trace <- function(x, i, j, ...) {
 
 ##' Display the outcome from a simulated trajectory
 ##'
-##' Plot either the median and the quantile range of the counts in all
-##' nodes, or plot the counts in specified nodes.
+##' Plot the median and quantile range of the counts in all nodes, the
+##' counts in specified nodes, or the prevalence of a disease. The
+##' function supports formula notation for specifying compartments and
+##' prevalence calculations.
 ##' @param x The \code{model} to plot.
 ##' @template plot-y-param
 ##' @template prevalence-level-param
@@ -428,23 +430,20 @@ plot_trace <- function(x, i, j, ...) {
 ##'     axis is to be logarithmic, \code{"y"} if the y axis is to be
 ##'     logarithmic and \code{"xy"} or \code{"yx"} if both axes are to
 ##'     be logarithmic.
-##' @param ... Other graphical parameters that are passed on to the
-##'     plot function.
+##' @param ... Other graphical parameters (e.g. \code{xlab},
+##'     \code{ylab}, \code{main}) that are passed on to the plot
+##'     function.
 ##' @rdname plot
 ##' @aliases plot,SimInf_model-method
 ##' @export
 ##' @include SimInf_model.R
 ##' @examples
-##' \dontrun{
 ##' ## For reproducibility, call the set.seed() function and specify
-##' ## the number of threads to use. To use all available threads,
-##' ## remove the set_num_threads() call.
+##' ## the number of threads to use.
 ##' set.seed(123)
 ##' set_num_threads(1)
 ##'
-##' ## Create an 'SIR' model with 100 nodes and initialise
-##' ## it with 990 susceptible individuals and 10 infected
-##' ## individuals in each node. Run the model over 100 days.
+##' ## Create an 'SIR' model with 100 nodes.
 ##' model <- SIR(u0 = data.frame(S = rep(990, 100),
 ##'                              I = rep(10, 100),
 ##'                              R = rep(0, 100)),
@@ -455,48 +454,39 @@ plot_trace <- function(x, i, j, ...) {
 ##' ## Run the model and save the result.
 ##' result <- run(model)
 ##'
-##' ## Plot the median and interquartile range of the number
-##' ## of susceptible, infected and recovered individuals.
+##' ## 1. Plotting counts
+##'
+##' ## Plot the median and interquartile range of all compartments.
 ##' plot(result)
 ##'
-##' ## Plot the median and the middle 95\% quantile range of the
-##' ## number of susceptible, infected and recovered individuals.
+##' ## Plot the median and the middle 95% quantile range.
 ##' plot(result, range = 0.95)
 ##'
-##' ## Plot the median and interquartile range of the  number
-##' ## of infected individuals.
+##' ## Plot only the infected individuals (using character string).
 ##' plot(result, "I")
 ##'
-##' ## Use the formula notation instead to plot the median and
-##' ## interquartile range of the number of infected individuals.
+##' ## Plot only the infected individuals (using formula notation).
 ##' plot(result, ~I)
 ##'
-##' ## Plot the number of susceptible, infected
-##' ## and recovered individuals in the first
-##' ## three nodes.
+##' ## Plot individual trajectories for the first three nodes.
 ##' plot(result, index = 1:3, range = FALSE)
 ##'
-##' ## Use plot type line instead.
-##' plot(result, index = 1:3, range = FALSE, type = "l")
+##' ## 2. Plotting prevalence
 ##'
-##' ## Plot the number of infected individuals in the first node.
-##' plot(result, "I", index = 1, range = FALSE)
-##'
-##' ## Plot the proportion of infected individuals (cases)
-##' ## in the population.
+##' ## Plot the proportion of infected individuals in the population.
 ##' plot(result, I ~ S + I + R)
 ##'
 ##' ## Plot the proportion of nodes with infected individuals.
 ##' plot(result, I ~ S + I + R, level = 2)
 ##'
-##' ## Plot the median and interquartile range of the proportion
-##' ## of infected individuals in each node
+##' ## Plot the median prevalence within each node.
 ##' plot(result, I ~ S + I + R, level = 3)
 ##'
-##' ## Plot the proportion of infected individuals in the first
-##' ## three nodes.
-##' plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
-##' }
+##' ## 3. Customization
+##'
+##' ## Customize axis labels and title.
+##' plot(result, "I", xlab = "Time (days)", ylab = "Number of Infected",
+##'      main = "SIR Model Trajectory")
 setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
