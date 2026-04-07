@@ -43,11 +43,17 @@ $~$
 knitr::include_graphics("img/temporal-network.svg")
 ```
 
+Let us first load the SimInf package.
+
+```{r}
+library(SimInf)
+```
+
 ## A first example: External transfer events
 
-Let us define the **6** movement events in Figure 1 to include them in
-an SIR model. Below is a `data.frame`, that contains the
-movements. Interpret it as follows:
+We define the **6** movement events shown in Figure 1 using a
+`data.frame`. Each row represents a single movement, and the columns
+are interpreted as follows:
 
 1. In time step **1** we move **9** individuals from node **3** to node **2**
 2. In time step **1** we move **2** individuals from node **3** to node **4**
@@ -67,7 +73,8 @@ events <- data.frame(
   proportion = c(0, 0, 0, 0, 0, 0), ## This is not used when n > 0
   select     = c(4, 4, 4, 4, 4, 4), ## Use the 4th column in
                                     ## the model select matrix
-  shift      = c(0, 0, 0, 0, 0, 0)) ## Not used in this example
+  shift      = c(0, 0, 0, 0, 0, 0)  ## Not used in this example
+)
 ```
 
 and have a look at the `data.frame`
@@ -81,15 +88,15 @@ Now, create an SIR model where we turn off the disease dynamics
 different number of individuals in each node.
 
 ```{r}
-library(SimInf)
-
-model <- SIR(u0 = data.frame(S = c(10, 15, 20, 25),
-                             I = c(5,  0,  0,  0),
-                             R = c(0,  0,  0,  0)),
-             tspan = 0:3,
-             beta = 0,
-             gamma = 0,
-             events = events)
+model <- SIR(
+  u0 = data.frame(S = c(10, 15, 20, 25),
+                  I = c(5,  0,  0,  0),
+                  R = c(0,  0,  0,  0)),
+  tspan = 0:3,
+  beta = 0,
+  gamma = 0,
+  events = events
+)
 ```
 
 The compartments that an event operates on, is controlled by the
@@ -146,9 +153,11 @@ nodes for the built-in SIR model, where we start with 300 individuals
 them, one by one, to the second node.
 
 ```{r}
-u0 <- data.frame(S = c(100, 0),
-                 I = c(100, 0),
-                 R = c(100, 0))
+u0 <- data.frame(
+  S = c(100, 0),
+  I = c(100, 0),
+  R = c(100, 0)
+)
 ```
 
 ```{r}
@@ -160,18 +169,21 @@ events <- data.frame(
   n = 1,                        ## How many individuals are moved
   proportion = 0,               ## This is not used when n > 0
   select = 4,                   ## Use the 4th column in the model select matrix
-  shift = 0)                    ## Not used in this example
+  shift = 0                     ## Not used in this example
+)
 ```
 
 Now, create the model. Then run it, and plot the number of individuals
 in the second node.
 
 ```{r}
-model <- SIR(u0 = u0,
-             tspan = 1:300,
-             events = events,
-             beta = 0,
-             gamma = 0)
+model <- SIR(
+  u0 = u0,
+  tspan = 1:300,
+  events = events,
+  beta = 0,
+  gamma = 0
+)
 ```
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 3.** The individuals have an equal probability of being selected regardless of compartment."}
@@ -238,7 +250,11 @@ Let us create a simple model where births occur at regular
 intervals. Newborns enter the susceptible compartment.
 
 ```{r}
-u0 <- data.frame(S = 20, I = 10, R = 0)
+u0 <- data.frame(
+  S = 20,
+  I = 10,
+  R = 0
+)
 ```
 
 We schedule births at times 5, 10, and 15, adding 10 individuals each
@@ -254,15 +270,18 @@ events <- data.frame(
   n          = c(10, 10, 10),   ## How many individuals are added
   proportion = c(0, 0, 0),      ## Not used when n > 0
   select     = c(1, 1, 1),      ## Target the S compartment
-  shift      = c(0, 0, 0))      ## Not used in this example
+  shift      = c(0, 0, 0)       ## Not used in this example
+)
 ```
 
 ```{r}
-model <- SIR(u0 = u0,
-             tspan = 0:20,
-             events = events,
-             beta = 0,
-             gamma = 0)
+model <- SIR(
+  u0 = u0,
+  tspan = 0:20,
+  events = events,
+  beta = 0,
+  gamma = 0
+)
 ```
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 7.** The number of susceptible ($S$) individuals increases by 10 individuals at each scheduled event."}
@@ -281,7 +300,11 @@ matrix to include both the $S$ and $R$ compartments for that select
 value.
 
 ```{r}
-u0 <- data.frame(S = 20, I = 10, R = 0)
+u0 <- data.frame(
+  S = 20,
+  I = 10,
+  R = 0
+)
 ```
 
 We schedule one birth event per day for 300 days, adding 1 individual
@@ -299,15 +322,18 @@ events <- data.frame(
   proportion = rep(0, 300),       ## Not used when n > 0
   select     = rep(1, 300),       ## Target the S and R compartments
                                   ## (after modifying E)
-  shift      = rep(0, 300))       ## Not used in this example
+  shift      = rep(0, 300)        ## Not used in this example
+)
 ```
 
 ```{r}
-model <- SIR(u0 = u0,
-             tspan = 0:300,
-             events = events,
-             beta = 0,
-             gamma = 0)
+model <- SIR(
+  u0 = u0,
+  tspan = 0:300,
+  events = events,
+  beta = 0,
+  gamma = 0
+)
 ```
 
 Let us now change the select matrix so that we can use our events as
@@ -318,7 +344,8 @@ default, however, for clarity we specifically set that value.
 select_matrix(model) <- data.frame(
   compartment = c("S", "R"),
   select      = c(1, 1),
-  value       = c(1, 1))
+  value       = c(1, 1)
+)
 ```
 
 Now, verify the select matrix.
@@ -338,7 +365,8 @@ the S compartment compared to the R compartment.
 select_matrix(model) <- data.frame(
   compartment = c("S", "R"),
   select      = c(1, 1),
-  value       = c(2, 1))
+  value       = c(2, 1)
+)
 ```
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 9.** Individuals are more likely to enter as susceptible ($S$) compared to as recovered ($R$)"}
@@ -357,7 +385,11 @@ multiple compartments are selected.
 Let us create a model where individuals die at scheduled times.
 
 ```{r}
-u0 <- data.frame(S = 20, I = 10, R = 0)
+u0 <- data.frame(
+  S = 20,
+  I = 10,
+  R = 0
+)
 ```
 
 ```{r}
@@ -369,15 +401,18 @@ events <- data.frame(
   n          = c(5, 5, 5),      ## How many individuals are removed
   proportion = c(0, 0, 0),      ## Not used when n > 0
   select     = c(1, 1, 1),      ## Target the S compartment
-  shift      = c(0, 0, 0))      ## Not used in this example
+  shift      = c(0, 0, 0)       ## Not used in this example
+)
 ```
 
 ```{r}
-model <- SIR(u0 = u0,
-             tspan = 0:20,
-             events = events,
-             beta = 0,
-             gamma = 0)
+model <- SIR(
+  u0 = u0,
+  tspan = 0:20,
+  events = events,
+  beta = 0,
+  gamma = 0
+)
 ```
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 10.** The number of susceptible ($S$) individuals decreases by 5 individuals at each scheduled event."}
@@ -391,7 +426,11 @@ lose individuals. For example, infected individuals might have higher
 mortality risk.
 
 ```{r}
-u0 <- data.frame(S = 100, I = 100, R = 0)
+u0 <- data.frame(
+  S = 100,
+  I = 100,
+  R = 0
+)
 ```
 
 ```{r}
@@ -404,15 +443,18 @@ events <- data.frame(
   proportion = rep(0, 100),      ## Not used when n > 0
   select     = rep(1, 100),      ## Target the S and I compartments
                                  ## (after modifying E)
-  shift      = rep(0, 100))      ## Not used in this example
+  shift      = rep(0, 100)       ## Not used in this example
+)
 ```
 
 ```{r}
-model <- SIR(u0 = u0,
-             tspan = 0:100,
-             events = events,
-             beta = 0,
-             gamma = 0)
+model <- SIR(
+  u0 = u0,
+  tspan = 0:100,
+  events = events,
+  beta = 0,
+  gamma = 0
+)
 ```
 
 Let us increase the weight for the I compartment to make infected
@@ -422,7 +464,8 @@ individuals more likely to be removed:
 select_matrix(model) <- data.frame(
   compartment = c("S", "I"),
   select      = c(1, 1),
-  value       = c(1, 5))
+  value       = c(1, 5)
+)
 ```
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 11.** The number of infected ($I$) individuals decreases faster compared to susceptibles ($S$)."}
@@ -444,7 +487,11 @@ use `shift=1` and show how we can adjust the shift matrix to move
 susceptible to recovered.
 
 ```{r}
-u0 <- data.frame(S = 100, I = 10, R = 0)
+u0 <- data.frame(
+  S = 100,
+  I = 10,
+  R = 0
+)
 ```
 
 At time 10, we vaccinate 30 susceptible individuals, moving them to
@@ -459,15 +506,18 @@ events <- data.frame(
   n          = 30,         ## How many individuals are vaccinated
   proportion = 0,          ## Not used when n > 0
   select     = 1,          ## Target the S compartment
-  shift      = 1)          ## Use shift column 1 (after modifying N)
+  shift      = 1           ## Use shift column 1 (after modifying N)
+)
 ```
 
 ```{r}
-model <- SIR(u0 = u0,
-             tspan = 0:20,
-             events = events,
-             beta = 0,
-             gamma = 0)
+model <- SIR(
+  u0 = u0,
+  tspan = 0:20,
+  events = events,
+  beta = 0,
+  gamma = 0
+)
 ```
 
 Let us now change the shift matrix so that we can use our events as
@@ -477,7 +527,11 @@ means individuals from compartment 1 (S) move to compartment 1+2=3
 (R).
 
 ```{r}
-shift_matrix(model) <- data.frame(compartment = "S", shift = 1, value = 2)
+shift_matrix(model) <- data.frame(
+  compartment = "S",
+  shift = 1,
+  value = 2
+)
 ```
 
 **Note:** Unlike the `select_matrix()` function where the value column
@@ -512,7 +566,11 @@ percentage of the population.
 ### Example: Proportional culling
 
 ```{r}
-u0 <- data.frame(S = 20, I = 15, R = 10)
+u0 <- data.frame(
+  S = 20,
+  I = 15,
+  R = 10
+)
 ```
 
 Remove 20% of the population at time 10:
@@ -526,15 +584,18 @@ events <- data.frame(
   n          = 0,      ## n = 0 triggers proportion sampling
   proportion = 0.2,    ## Remove 20% of selected individuals
   select     = 4,      ## Target all compartments
-  shift      = 0)      ## Not used in this example
+  shift      = 0       ## Not used in this example
+)
 ```
 
 ```{r}
-model <- SIR(u0 = u0,
-             tspan = 0:20,
-             events = events,
-             beta = 0,
-             gamma = 0)
+model <- SIR(
+  u0 = u0,
+  tspan = 0:20,
+  events = events,
+  beta = 0,
+  gamma = 0
+)
 ```
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 13.** The number of individuals decrease at $t=10$."}
@@ -560,7 +621,8 @@ within-node movements happen before between-node movements.
 u0 <- data.frame(
   S = c(20, 30),
   I = c(15, 25),
-  R = c(10, 5))
+  R = c(10, 5)
+)
 ```
 
 At time 5, we schedule:
@@ -579,19 +641,26 @@ events <- data.frame(
   n          = c(10, 20, 5, 15),
   proportion = c(0, 0, 0, 0),
   select     = c(4, 1, 1, 4),
-  shift      = c(0, 0, 1, 0))
+  shift      = c(0, 0, 1, 0)
+)
 ```
 
 ```{r}
-model <- SIR(u0 = u0,
-             tspan = 0:10,
-             events = events,
-             beta = 0,
-             gamma = 0)
+model <- SIR(
+  u0 = u0,
+  tspan = 0:10,
+  events = events,
+  beta = 0,
+  gamma = 0
+)
 ```
 
 ```{r}
-shift_matrix(model) <- data.frame(compartment = "S", shift = 1, value = 2)
+shift_matrix(model) <- data.frame(
+  compartment = "S",
+  shift = 1,
+  value = 2
+)
 ```
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 14.** Multiple events have been processed at $t=5$."}
