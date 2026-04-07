@@ -86,15 +86,25 @@ and have a look at the `data.frame`
 events
 ```
 
-Now, create an SIR model where we turn off the disease dynamics
-(beta=0, gamma=0) to focus on the scheduled events. Let us start with
-different number of individuals in each node.
+Now, we create an SIR model where we turn off the disease dynamics
+(`beta = 0`, `gamma = 0`) to focus exclusively on the scheduled
+events. First, we define the initial state with different numbers of
+individuals in each node:
+
+```{r}
+u0 <- data.frame(
+  S = c(10, 15, 20, 25),
+  I = c(5,  0,  0,  0),
+  R = c(0,  0,  0,  0)
+)
+```
+
+Next, we create the model using this initial state and the events
+defined above:
 
 ```{r}
 model <- SIR(
-  u0 = data.frame(S = c(10, 15, 20, 25),
-                  I = c(5,  0,  0,  0),
-                  R = c(0,  0,  0,  0)),
+  u0 = u0,
   tspan = 0:3,
   beta = 0,
   gamma = 0,
@@ -165,14 +175,14 @@ u0 <- data.frame(
 
 ```{r}
 events <- data.frame(
-  event = rep("extTrans", 300), ## Event "extTrans" is a movement between nodes
-  time = 1:300,                 ## The time that the event happens
-  node = 1,                     ## In which node does the event occur
-  dest = 2,                     ## Which node is the destination node
-  n = 1,                        ## How many individuals are moved
-  proportion = 0,               ## This is not used when n > 0
-  select = 4,                   ## Use the 4th column in the model select matrix
-  shift = 0                     ## Not used in this example
+  event      = rep("extTrans", 300), ## Event "extTrans" is a movement between nodes
+  time       = 1:300,                ## The time that the event happens
+  node       = rep(1, 300),          ## In which node does the event occur
+  dest       = rep(2, 300),          ## Which node is the destination node
+  n          = rep(1, 300),          ## How many individuals are moved
+  proportion = rep(0, 300),          ## This is not used when n > 0
+  select     = rep(4, 300),          ## Use the 4th column in the model select matrix
+  shift      = rep(0, 300),          ## Not used in this example
 )
 ```
 
