@@ -14,7 +14,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Getting started with mparse}
+  %\VignetteIndexEntry{Getting started with `mparse`}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
