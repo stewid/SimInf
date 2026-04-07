@@ -40,7 +40,9 @@ SimInf supports four types of scheduled events:
 $~$
 
 ```{r pressure, echo=FALSE, fig.align="left", fig.cap="**Figure 1.** Illustration of movements between nodes. Each time step depicts movements during one time unit, for example, a day. The network has *N=4* nodes where node *1* is infected and nodes *2*--*4* are non-infected. Arrows indicate movements of individuals from a source node to a destination node and labels denote the size of the shipment. Here, infection may spread from node *1* to node *3* at *t=2* and then from node *3* to node *2* at *t=3*.", out.width = '100%'}
-url <- "https://raw.githubusercontent.com/stewid/SimInf/refs/heads/main/vignettes/img/temporal-network.svg"
+url <- paste0(
+  "https://raw.githubusercontent.com/",
+  "stewid/SimInf/refs/heads/main/vignettes/img/temporal-network.svg")
 knitr::include_graphics(url)
 ```
 
