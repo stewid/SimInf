@@ -205,9 +205,7 @@ u0 <- data.frame(
   I = c(100, 0),
   R = c(100, 0)
 )
-```
 
-``` r
 events <- data.frame(
   event      = rep("extTrans", 300), ## "extTrans" is a movement between nodes
   time       = 1:300,                ## The time that the event happens
@@ -231,15 +229,13 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-``` r
 plot(run(model), index = 2)
 ```
 
 ![\*\*Figure 3.\*\* The individuals have an equal probability of being
 selected regardless of
-compartment.](scheduled-events_files/figure-html/unnamed-chunk-13-1.png)
+compartment.](scheduled-events_files/figure-html/unnamed-chunk-11-1.png)
 
 **Figure 3.** The individuals have an equal probability of being
 selected regardless of compartment.
@@ -283,7 +279,7 @@ plot(run(model), index = 2)
 
 ![\*\*Figure 4.\*\* The individuals in the \$I\$ compartment are more
 likely of being selected for a movement
-event.](scheduled-events_files/figure-html/unnamed-chunk-15-1.png)
+event.](scheduled-events_files/figure-html/unnamed-chunk-13-1.png)
 
 **Figure 4.** The individuals in the $I$ compartment are more likely of
 being selected for a movement event.
@@ -303,7 +299,7 @@ plot(run(model), index = 2)
 ![\*\*Figure 5.\*\* The individuals in the \$I\$ compartment are even
 more likely of being selected for a movement event compared to the
 previous
-example.](scheduled-events_files/figure-html/unnamed-chunk-16-1.png)
+example.](scheduled-events_files/figure-html/unnamed-chunk-14-1.png)
 
 **Figure 5.** The individuals in the $I$ compartment are even more
 likely of being selected for a movement event compared to the previous
@@ -324,7 +320,7 @@ plot(run(model), index = 2)
 ![\*\*Figure 6.\*\* The individuals in the \$I\$ and \$R\$ compartments
 are more likely of being selected for a movement event compared to
 individuals in the \$S\$
-compartment.](scheduled-events_files/figure-html/unnamed-chunk-17-1.png)
+compartment.](scheduled-events_files/figure-html/unnamed-chunk-15-1.png)
 
 **Figure 6.** The individuals in the $I$ and $R$ compartments are more
 likely of being selected for a movement event compared to individuals in
@@ -366,9 +362,7 @@ events <- data.frame(
   select     = c(1, 1, 1),      ## Target the S compartment
   shift      = c(0, 0, 0)       ## Not used in this example
 )
-```
 
-``` r
 model <- SIR(
   u0 = u0,
   tspan = 0:20,
@@ -376,15 +370,13 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-``` r
 plot(run(model))
 ```
 
 ![\*\*Figure 7.\*\* The number of susceptible (\$S\$) individuals
 increases by 10 individuals at each scheduled
-event.](scheduled-events_files/figure-html/unnamed-chunk-21-1.png)
+event.](scheduled-events_files/figure-html/unnamed-chunk-17-1.png)
 
 **Figure 7.** The number of susceptible ($S$) individuals increases by
 10 individuals at each scheduled event.
@@ -424,9 +416,7 @@ events <- data.frame(
                                   ## (after modifying E)
   shift      = rep(0, 300)        ## Not used in this example
 )
-```
 
-``` r
 model <- SIR(
   u0 = u0,
   tspan = 0:300,
@@ -466,7 +456,7 @@ plot(run(model))
 
 ![\*\*Figure 8.\*\* The number of susceptible (\$S\$) and recovered
 (\$R) individuals increases over
-time.](scheduled-events_files/figure-html/unnamed-chunk-27-1.png)
+time.](scheduled-events_files/figure-html/unnamed-chunk-22-1.png)
 
 **Figure 8.** The number of susceptible ($S$) and recovered (\$R)
 individuals increases over time.
@@ -480,15 +470,13 @@ select_matrix(model) <- data.frame(
   select      = c(1, 1),
   value       = c(2, 1)
 )
-```
 
-``` r
 plot(run(model))
 ```
 
 ![\*\*Figure 9.\*\* Individuals are more likely to enter as susceptible
 (\$S\$) compared to as recovered
-(\$R\$)](scheduled-events_files/figure-html/unnamed-chunk-29-1.png)
+(\$R\$)](scheduled-events_files/figure-html/unnamed-chunk-23-1.png)
 
 **Figure 9.** Individuals are more likely to enter as susceptible ($S$)
 compared to as recovered ($R$)
@@ -510,9 +498,7 @@ u0 <- data.frame(
   I = 10,
   R = 0
 )
-```
 
-``` r
 events <- data.frame(
   event      = rep("exit", 3),  ## "exit" remove individuals from a node
   time       = c(5, 10, 15),    ## The time that the event happens
@@ -523,9 +509,7 @@ events <- data.frame(
   select     = c(1, 1, 1),      ## Target the S compartment
   shift      = c(0, 0, 0)       ## Not used in this example
 )
-```
 
-``` r
 model <- SIR(
   u0 = u0,
   tspan = 0:20,
@@ -533,15 +517,13 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-``` r
 plot(run(model))
 ```
 
 ![\*\*Figure 10.\*\* The number of susceptible (\$S\$) individuals
 decreases by 5 individuals at each scheduled
-event.](scheduled-events_files/figure-html/unnamed-chunk-33-1.png)
+event.](scheduled-events_files/figure-html/unnamed-chunk-24-1.png)
 
 **Figure 10.** The number of susceptible ($S$) individuals decreases by
 5 individuals at each scheduled event.
@@ -558,9 +540,7 @@ u0 <- data.frame(
   I = 100,
   R = 0
 )
-```
 
-``` r
 events <- data.frame(
   event      = rep("exit", 100), ## "exit" remove individuals from a node
   time       = 1:100,            ## The time that the event happens
@@ -572,9 +552,7 @@ events <- data.frame(
                                  ## (after modifying E)
   shift      = rep(0, 100)       ## Not used in this example
 )
-```
 
-``` r
 model <- SIR(
   u0 = u0,
   tspan = 0:100,
@@ -593,15 +571,13 @@ select_matrix(model) <- data.frame(
   select      = c(1, 1),
   value       = c(1, 5)
 )
-```
 
-``` r
 plot(run(model))
 ```
 
 ![\*\*Figure 11.\*\* The number of infected (\$I\$) individuals
 decreases faster compared to susceptibles
-(\$S\$).](scheduled-events_files/figure-html/unnamed-chunk-38-1.png)
+(\$S\$).](scheduled-events_files/figure-html/unnamed-chunk-26-1.png)
 
 **Figure 11.** The number of infected ($I$) individuals decreases faster
 compared to susceptibles ($S$).
@@ -641,9 +617,7 @@ events <- data.frame(
   select     = 1,          ## Target the S compartment
   shift      = 1           ## Use shift column 1 (after modifying N)
 )
-```
 
-``` r
 model <- SIR(
   u0 = u0,
   tspan = 0:20,
@@ -698,7 +672,7 @@ plot(run(model))
 
 ![\*\*Figure 12.\*\* The number of recovered (\$R\$) individuals
 increases at
-\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-44-1.png)
+\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-31-1.png)
 
 **Figure 12.** The number of recovered ($R$) individuals increases at
 $t = 10$.
@@ -733,9 +707,7 @@ events <- data.frame(
   select     = 4,      ## Target all compartments
   shift      = 0       ## Not used in this example
 )
-```
 
-``` r
 model <- SIR(
   u0 = u0,
   tspan = 0:20,
@@ -743,14 +715,12 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-``` r
 plot(run(model))
 ```
 
 ![\*\*Figure 13.\*\* The number of individuals decrease at
-\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-48-1.png)
+\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-33-1.png)
 
 **Figure 13.** The number of individuals decrease at $t = 10$.
 
@@ -795,9 +765,7 @@ events <- data.frame(
   select     = c(4, 1, 1, 4),
   shift      = c(0, 0, 1, 0)
 )
-```
 
-``` r
 model <- SIR(
   u0 = u0,
   tspan = 0:10,
@@ -805,22 +773,18 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-``` r
 shift_matrix(model) <- data.frame(
   compartment = "S",
   shift = 1,
   value = 2
 )
-```
 
-``` r
 plot(run(model), range = FALSE)
 ```
 
 ![\*\*Figure 14.\*\* Multiple events have been processed at
-\$t=5\$.](scheduled-events_files/figure-html/unnamed-chunk-53-1.png)
+\$t=5\$.](scheduled-events_files/figure-html/unnamed-chunk-35-1.png)
 
 **Figure 14.** Multiple events have been processed at $t = 5$.
 
