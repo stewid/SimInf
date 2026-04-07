@@ -5,7 +5,7 @@
 * The `SimInf_model()`, `select_matrix()` and `shift_matrix()`
   functions now accept a data.frame as input to define the E (select)
   and N (shift) matrices using a simple tabular format, eliminating
-  the need to manually construct sparse matrices for complex event
+  the need to manually construct matrices for complex event
   definitions.
 
 * Added a new vignette "Getting started with mparse" to illustrate how
