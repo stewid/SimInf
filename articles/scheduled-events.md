@@ -18,8 +18,6 @@ SimInf supports four types of scheduled events:
 - **External transfer**: Move individuals between nodes (e.g., livestock
   movements)
 
-$\ $
-
 ![\*\*Figure 1.\*\* Illustration of movements between nodes. Each time
 step depicts movements during one time unit, for example, a day. The
 network has \*N=4\* nodes where node \*1\* is infected and nodes
@@ -165,8 +163,6 @@ node.](scheduled-events_files/figure-html/unnamed-chunk-8-1.png)
 **Figure 2.** Number of susceptible, infected and recovered individuals
 in each node.
 
-$\ $
-
 Or use the
 [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md)
 function to more easily inspect the outcome in each node in detail.
@@ -248,8 +244,6 @@ compartment.](scheduled-events_files/figure-html/unnamed-chunk-13-1.png)
 **Figure 3.** The individuals have an equal probability of being
 selected regardless of compartment.
 
-$\ $
-
 The probability to sample an individual from each compartment is
 
 $$p_{S} = \frac{w_{S}*S}{w_{S}*S + w_{I}*I + w_{R}*R}$$
@@ -294,8 +288,6 @@ event.](scheduled-events_files/figure-html/unnamed-chunk-15-1.png)
 **Figure 4.** The individuals in the $I$ compartment are more likely of
 being selected for a movement event.
 
-$\ $
-
 Next, let us apply a much larger weight to the $I$ compartment.
 
 ``` r
@@ -316,8 +308,6 @@ example.](scheduled-events_files/figure-html/unnamed-chunk-16-1.png)
 **Figure 5.** The individuals in the $I$ compartment are even more
 likely of being selected for a movement event compared to the previous
 example.
-
-$\ $
 
 Finally, increase the weight for the $R$ compartment as well.
 

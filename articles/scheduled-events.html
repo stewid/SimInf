@@ -95,7 +95,6 @@ compartments within one node (e.g., vaccination, ageing)</li>
 <strong>External transfer</strong>: Move individuals between nodes
 (e.g., livestock movements)</li>
 </ul>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mspace width="0.222em"></mspace><annotation encoding="application/x-tex">~</annotation></semantics></math></p>
 <div class="figure" style="text-align: left">
 <img src="https://raw.githubusercontent.com/stewid/SimInf/refs/heads/main/vignettes/img/temporal-network.svg" class="r-plt" alt="**Figure 1.** Illustration of movements between nodes. Each time step depicts movements during one time unit, for example, a day. The network has *N=4* nodes where node *1* is infected and nodes *2*--*4* are non-infected. Arrows indicate movements of individuals from a source node to a destination node and labels denote the size of the shipment. Here, infection may spread from node *1* to node *3* at *t=2* and then from node *3* to node *2* at *t=3*." width="100%"><p class="caption">
 <strong>Figure 1.</strong> Illustration of movements between nodes. Each
@@ -218,7 +217,6 @@ counts.</p>
 individuals in each node.
 </p>
 </div>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mspace width="0.222em"></mspace><annotation encoding="application/x-tex">~</annotation></semantics></math></p>
 <p>Or use the <code><a href="../reference/trajectory.html">trajectory()</a></code> function to more easily inspect
 the outcome in each node in detail.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -291,7 +289,6 @@ individuals in the second node.</p>
 being selected regardless of compartment.
 </p>
 </div>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mspace width="0.222em"></mspace><annotation encoding="application/x-tex">~</annotation></semantics></math></p>
 <p>The probability to sample an individual from each compartment is</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>S</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>w</mi><mi>S</mi></msub><mo>*</mo><mi>S</mi></mrow><mrow><msub><mi>w</mi><mi>S</mi></msub><mo>*</mo><mi>S</mi><mo>+</mo><msub><mi>w</mi><mi>I</mi></msub><mo>*</mo><mi>I</mi><mo>+</mo><msub><mi>w</mi><mi>R</mi></msub><mo>*</mo><mi>R</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">
 p_S = \frac{w_S * S}{w_S * S + w_I * I + w_R * R}
@@ -338,7 +335,6 @@ name, the column index (<code>select = 4</code>), and the desired weight
 compartment are more likely of being selected for a movement event.
 </p>
 </div>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mspace width="0.222em"></mspace><annotation encoding="application/x-tex">~</annotation></semantics></math></p>
 <p>Next, let us apply a much larger weight to the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
 compartment.</p>
@@ -358,7 +354,6 @@ compartment are even more likely of being selected for a movement event
 compared to the previous example.
 </p>
 </div>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mspace width="0.222em"></mspace><annotation encoding="application/x-tex">~</annotation></semantics></math></p>
 <p>Finally, increase the weight for the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
 compartment as well.</p>
