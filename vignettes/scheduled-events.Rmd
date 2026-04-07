@@ -175,13 +175,13 @@ u0 <- data.frame(
 
 ```{r}
 events <- data.frame(
-  event      = rep("extTrans", 300), ## Event "extTrans" is a movement between nodes
+  event      = rep("extTrans", 300), ## "extTrans" is a movement between nodes
   time       = 1:300,                ## The time that the event happens
   node       = rep(1, 300),          ## In which node does the event occur
   dest       = rep(2, 300),          ## Which node is the destination node
   n          = rep(1, 300),          ## How many individuals are moved
   proportion = rep(0, 300),          ## This is not used when n > 0
-  select     = rep(4, 300),          ## Use the 4th column in the model select matrix
+  select     = rep(4, 300),          ## Use the 4th column in the select matrix
   shift      = rep(0, 300)           ## Not used in this example
 )
 ```
