@@ -9,6 +9,12 @@ compartment recorded at every time-point specified in `tspan`.
 This vignette introduces the functionality in `SimInf` to post-process
 and explore this trajectory data.
 
+Let us first load the SimInf package.
+
+``` r
+library(SimInf)
+```
+
 ## Extract trajectory data with `trajectory()`
 
 Most modeling studies require custom data analysis beyond simple
@@ -25,8 +31,6 @@ Let’s simulate 10 days of data from an SIR model with 6 nodes. For
 reproducibility, we set the seed and specify the number of threads.
 
 ``` r
-library(SimInf)
-
 set.seed(123)
 set_num_threads(1)
 
@@ -325,7 +329,7 @@ Plot the median and interquartile range (IQR) of all compartments.
 plot(result)
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-9-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-10-1.png)
 
 Plot the median and the middle 95% quantile range.
 
@@ -333,7 +337,7 @@ Plot the median and the middle 95% quantile range.
 plot(result, range = 0.95)
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-10-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-11-1.png)
 
 Plot only the infected individuals (I).
 
@@ -341,7 +345,7 @@ Plot only the infected individuals (I).
 plot(result, "I")
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-11-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-12-1.png)
 
 Use formula notation to plot the infected individuals.
 
@@ -349,7 +353,7 @@ Use formula notation to plot the infected individuals.
 plot(result, ~I)
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-12-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-13-1.png)
 
 ### Individual Node View
 
@@ -360,7 +364,7 @@ to suppress the shaded median/range bands and show the individual lines.
 plot(result, index = 1:3, range = FALSE)
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-13-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-14-1.png)
 
 Use `type = "l"` to draw a line.
 
@@ -368,7 +372,7 @@ Use `type = "l"` to draw a line.
 plot(result, index = 1:3, range = FALSE, type = "l")
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-14-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-15-1.png)
 
 Plot the infected individuals in the first node only.
 
@@ -376,7 +380,7 @@ Plot the infected individuals in the first node only.
 plot(result, "I", index = 1, range = FALSE)
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-15-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-16-1.png)
 
 ### Prevalence Plots
 
@@ -386,7 +390,7 @@ Plot the proportion of infected individuals in the population.
 plot(result, I ~ S + I + R)
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-16-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-17-1.png)
 
 Plot the proportion of nodes with infected individuals (`level = 2`).
 
@@ -394,7 +398,7 @@ Plot the proportion of nodes with infected individuals (`level = 2`).
 plot(result, I ~ S + I + R, level = 2)
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-17-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-18-1.png)
 
 Plot the median and IQR of the prevalence **within in each node**
 (`level = 3`).
@@ -403,7 +407,7 @@ Plot the median and IQR of the prevalence **within in each node**
 plot(result, I ~ S + I + R, level = 3)
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-18-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-19-1.png)
 
 Plot the prevalence in the first three nodes.
 
@@ -411,7 +415,7 @@ Plot the prevalence in the first three nodes.
 plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
 ```
 
-![](post-process-data_files/figure-html/unnamed-chunk-19-1.png)
+![](post-process-data_files/figure-html/unnamed-chunk-20-1.png)
 
 ## Summary
 
