@@ -28,6 +28,12 @@ specified in `tspan`.
 This vignette introduces the functionality in `SimInf` to post-process
 and explore this trajectory data.
 
+Let us first load the SimInf package.
+
+```{r}
+library(SimInf)
+```
+
 ## Extract trajectory data with `trajectory()`
 
 Most modeling studies require custom data analysis beyond simple
@@ -43,8 +49,6 @@ Let's simulate 10 days of data from an SIR model with 6 nodes. For
 reproducibility, we set the seed and specify the number of threads.
 
 ```{r}
-library(SimInf)
-
 set.seed(123)
 set_num_threads(1)
 
