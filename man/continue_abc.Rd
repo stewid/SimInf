@@ -9,7 +9,7 @@ continue_abc(
   object,
   tolerance = NULL,
   data = NULL,
-  verbose = getOption("verbose", FALSE),
+  verbose = FALSE,
   post_gen = NULL
 )
 
@@ -17,7 +17,7 @@ continue_abc(
   object,
   tolerance = NULL,
   data = NULL,
-  verbose = getOption("verbose", FALSE),
+  verbose = FALSE,
   post_gen = NULL
 )
 }
@@ -35,9 +35,8 @@ run.}
 \item{data}{Optional data to be passed to the
 \code{SimInf_abc@fn} function. Default is \code{NULL}.}
 
-\item{verbose}{prints diagnostic messages when \code{TRUE}. The
-default is to retrieve the global option \code{verbose} and
-use \code{FALSE} if it is not set.}
+\item{verbose}{prints diagnostic messages when \code{TRUE}.
+Default is \code{FALSE}.}
 
 \item{post_gen}{An optional function that, if non-NULL, is applied
 after each completed generation. The function must accept one

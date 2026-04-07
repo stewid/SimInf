@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -120,10 +120,20 @@ calculate_prevalence <- function(model, compartments, level,
 
 ##' Generic function to calculate prevalence from trajectory data
 ##'
-##' Calculate the proportion of individuals with disease in the
-##' population, or the proportion of nodes with at least one diseased
-##' individual, or the proportion of individuals with disease in each
-##' node.
+##' Calculate the proportion of \emph{cases} (specified on the
+##' left-hand side of the formula) relative to the \emph{population at
+##' risk} (specified on the right-hand side) at different aggregation
+##' levels. The function supports three levels of calculation:
+##' \itemize{
+##'   \item \strong{Level 1 (Population Prevalence):} The proportion
+##'     of cases in the total population at risk across all nodes.
+##'   \item \strong{Level 2 (Node Prevalence):} The proportion of
+##'     nodes that contain at least one case, considering only nodes
+##'     where the population at risk is greater than zero.
+##'   \item \strong{Level 3 (Within-Node Prevalence):} The proportion
+##'     of cases relative to the population at risk calculated
+##'     separately for each node.
+##' }
 ##' @param model The \code{model} with trajectory data to calculate
 ##'     the prevalence from.
 ##' @template prevalence-formula-param
@@ -131,6 +141,7 @@ calculate_prevalence <- function(model, compartments, level,
 ##' @template index-param
 ##' @param ... Additional arguments, see
 ##'     \code{\link{prevalence,SimInf_model-method}}
+## nolint start: brace_linter
 setGeneric(
     "prevalence",
     signature = c("model"),
@@ -138,17 +149,27 @@ setGeneric(
              formula,
              level = 1,
              index = NULL,
-             ...) {
+             ...)
         standardGeneric("prevalence")
-    }
 )
+## nolint end
 
 ##' Calculate prevalence from a model object with trajectory data
 ##'
-##' Calculate the proportion of individuals with disease in the
-##' population, or the proportion of nodes with at least one diseased
-##' individual, or the proportion of individuals with disease in each
-##' node.
+##' Calculate the proportion of \emph{cases} (specified on the
+##' left-hand side of the formula) relative to the \emph{population at
+##' risk} (specified on the right-hand side) at different aggregation
+##' levels. The function supports three levels of calculation:
+##' \itemize{
+##'   \item \strong{Level 1 (Population Prevalence):} The proportion
+##'     of cases in the total population at risk across all nodes.
+##'   \item \strong{Level 2 (Node Prevalence):} The proportion of
+##'     nodes that contain at least one case, considering only nodes
+##'     where the population at risk is greater than zero.
+##'   \item \strong{Level 3 (Within-Node Prevalence):} The proportion
+##'     of cases relative to the population at risk calculated
+##'     separately for each node.
+##' }
 ##' @param model The \code{model} with trajectory data to calculate
 ##'     the prevalence from.
 ##' @template prevalence-formula-param
@@ -164,32 +185,36 @@ setGeneric(
 ##' @include match_compartments.R
 ##' @export
 ##' @examples
-##' ## Create an 'SIR' model with 6 nodes and initialize
-##' ## it to run over 10 days.
+##' ## Create an 'SIR' model with 6 nodes.
 ##' u0 <- data.frame(S = 100:105, I = c(0, 1, 0, 2, 0, 3), R = rep(0, 6))
 ##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
 ##'
-##' ## Run the model to generate a single stochastic trajectory.
+##' ## Run the model. For reproducibility, we first call the
+##' ## set.seed() function and specify the number of threads to use
+##' ## since there is random sampling involved when picking individuals
+##' ## from the compartments.
+##' set.seed(1)
+##' set_num_threads(1)
 ##' result <- run(model)
 ##'
-##' ## Determine the proportion of infected individuals (cases)
-##' ## in the population at the time-points in 'tspan'.
+##' ## 1. Population Prevalence (level = 1, default)
+##' ## Proportion of infected individuals in the total population.
 ##' prevalence(result, I ~ S + I + R)
 ##'
-##' ## Identical result is obtained with the shorthand 'I~.'
+##' ## Shorthand: '.' represents all compartments in the model (S + I + R).
 ##' prevalence(result, I ~ .)
 ##'
-##' ## Determine the proportion of nodes with infected individuals at
-##' ## the time-points in 'tspan'.
+##' ## 2. Node Prevalence (level = 2)
+##' ## Proportion of nodes with at least one infected individual.
 ##' prevalence(result, I ~ S + I + R, level = 2)
 ##'
-##' ## Determine the proportion of infected individuals in each node
-##' ## at the time-points in 'tspan'.
+##' ## 3. Within-Node Prevalence (level = 3)
+##' ## Prevalence calculated separately for each node.
 ##' prevalence(result, I ~ S + I + R, level = 3)
 ##'
-##' ## Determine the proportion of infected individuals in each node
-##' ## at the time-points in 'tspan' when the number of recovered is
-##' ## zero.
+##' ## 4. Conditional Prevalence
+##' ## Calculate prevalence only in nodes where the number of
+##' ## recovered is zero.
 ##' prevalence(result, I ~ S + I + R | R == 0, level = 3)
 setMethod(
     "prevalence",
@@ -220,6 +245,20 @@ setMethod(
 
 ##' Extract prevalence from running a particle filter
 ##'
+##' Calculate the proportion of \emph{cases} (specified on the
+##' left-hand side of the formula) relative to the \emph{population at
+##' risk} (specified on the right-hand side) at different aggregation
+##' levels. The function supports three levels of calculation:
+##' \itemize{
+##'   \item \strong{Level 1 (Population Prevalence):} The proportion
+##'     of cases in the total population at risk across all nodes.
+##'   \item \strong{Level 2 (Node Prevalence):} The proportion of
+##'     nodes that contain at least one case, considering only nodes
+##'     where the population at risk is greater than zero.
+##'   \item \strong{Level 3 (Within-Node Prevalence):} The proportion
+##'     of cases relative to the population at risk calculated
+##'     separately for each node.
+##' }
 ##' @param model the \code{SimInf_pfilter} object to extract the
 ##'     prevalence from.
 ##' @template prevalence-formula-param
@@ -244,8 +283,20 @@ setMethod(
 
 ##' Extract prevalence from fitting a PMCMC algorithm
 ##'
-##' Extract prevalence from the filtered trajectories from a particle
-##' Markov chain Monte Carlo algorithm.
+##' Calculate the proportion of \emph{cases} (specified on the
+##' left-hand side of the formula) relative to the \emph{population at
+##' risk} (specified on the right-hand side) at different aggregation
+##' levels. The function supports three levels of calculation:
+##' \itemize{
+##'   \item \strong{Level 1 (Population Prevalence):} The proportion
+##'     of cases in the total population at risk across all nodes.
+##'   \item \strong{Level 2 (Node Prevalence):} The proportion of
+##'     nodes that contain at least one case, considering only nodes
+##'     where the population at risk is greater than zero.
+##'   \item \strong{Level 3 (Within-Node Prevalence):} The proportion
+##'     of cases relative to the population at risk calculated
+##'     separately for each node.
+##' }
 ##' @param model the \code{SimInf_pmcmc} object to extract the
 ##'     prevalence from.
 ##' @template prevalence-formula-param

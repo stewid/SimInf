@@ -80,7 +80,7 @@ select_matrix_SIR <- function() {
 ##'   S -- beta S I / N --> I}
 ##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
 ##' where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-##' recovery rate, and \eqn{N=S+I+R}.
+##' recovery rate, and \eqn{N = S + I + R} is the total population.
 ##'
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
@@ -149,54 +149,65 @@ SIR <- function(u0,
     methods::as(model, "SIR")
 }
 
-##' Example data to initialize events for the \sQuote{SIR} model
+##' Example event data for the \acronym{SIR} model with cattle herds
 ##'
-##' Example data to initialize scheduled events for a population of
-##' 1600 nodes and demonstrate the \code{\linkS4class{SIR}} model.
+##' Dataset containing 466,692 scheduled events for a population of
+##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
+##' demographic and movement events affect SIR dynamics in a cattle
+##' disease context.
 ##'
-##' Example data to initialize scheduled events (see
-##' \code{\linkS4class{SimInf_events}}) for a population of 1600 nodes
-##' and demonstrate the \code{\linkS4class{SIR}} model. The dataset
-##' contains 466692 events for 1600 nodes distributed over 4 * 365
-##' days. The events are divided into three types: \sQuote{Exit}
-##' events remove individuals from the population (n = 182535),
-##' \sQuote{Enter} events add individuals to the population (n =
-##' 182685), and \sQuote{External transfer} events move individuals
-##' between nodes in the population (n = 101472). The vignette
-##' contains a detailed description of how scheduled events operate on
-##' a model.
-##' @return A \code{data.frame}
+##' @details
+##' The event data contains three types of scheduled events that
+##' affect cattle herds (nodes):
+##'
+##' \describe{
+##'   \item{Exit}{Deaths or removal of cattle from a herd (n =
+##'     182,535).  These events decrease the population and remove
+##'     cattle from the disease system.}
+##'   \item{Enter}{Births or introduction of cattle to a herd (n =
+##'     182,685).  These events add susceptible cattle to herds,
+##'     increasing potential targets for infection.}
+##'   \item{External transfer}{Movement of cattle between herds (n =
+##'     101,472).  These events transfer cattle from one herd to
+##'     another, potentially spreading disease across the herd
+##'     network.}
+##' }
+##'
+##' The \code{select} column in the returned data frame is mapped to
+##' the columns of the internal select matrix (\code{select_matrix_SIR}):
+##' \itemize{
+##'   \item \code{select = 1} corresponds to \strong{Enter} events,
+##'     targeting the Susceptible (S) compartment.
+##'   \item \code{select = 4} corresponds to \strong{Exit} and
+##'     \strong{External Transfer} events, targeting all compartments
+##'     (S, I, and R).
+##' }
+##'
+##' Events are distributed across all 1,600 herds over the 4-year
+##' period, reflecting realistic patterns of cattle demographic change
+##' and herd-to-herd movement in a livestock production system.
+##'
+##' @return A \code{data.frame} with columns:
+##'   \describe{
+##'     \item{event}{Event type: "exit", "enter", or "extTrans".}
+##'     \item{time}{Day when event occurs (1-1460).}
+##'     \item{node}{Affected herd identifier (1-1600).}
+##'     \item{dest}{Destination herd for external transfer events.}
+##'     \item{n}{Number of cattle affected.}
+##'     \item{proportion}{0. Not used in this example.}
+##'     \item{select}{Model compartment to affect (see
+##'       \code{\linkS4class{SimInf_events}}).}
+##'     \item{shift}{0. Not used in this example.}
+##'   }
+##'
+##' @seealso
+##' \code{\link{u0_SIR}} for the corresponding initial cattle
+##' population, \code{\link{SIR}} for creating SIR models with these
+##' events, and \code{\linkS4class{SimInf_events}} for event structure
+##' details
+##'
 ##' @export
-##' @examples
-##' ## For reproducibility, call the set.seed() function and specify
-##' ## the number of threads to use. To use all available threads,
-##' ## remove the set_num_threads() call.
-##' set.seed(123)
-##' set_num_threads(1)
-##'
-##' ## Create an 'SIR' model with 1600 nodes and initialize
-##' ## it to run over 4*365 days. Add one infected individual
-##' ## to the first node.
-##' u0 <- u0_SIR()
-##' u0$I[1] <- 1
-##' tspan <- seq(from = 1, to = 4*365, by = 1)
-##' model <- SIR(u0     = u0,
-##'              tspan  = tspan,
-##'              events = events_SIR(),
-##'              beta   = 0.16,
-##'              gamma  = 0.01)
-##'
-##' ## Display the number of individuals affected by each event type
-##' ## per day.
-##' plot(events(model))
-##'
-##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model)
-##' plot(result)
-##'
-##' ## Summarize the trajectory. The summary includes the number of
-##' ## events by event type.
-##' summary(result)
+##' @example man/examples/SIR.R
 events_SIR <- function() {
     utils::data("events_SISe3", package = "SimInf", envir = environment())
     events_SISe3$select[events_SISe3$event == "exit"] <- 4L
@@ -206,44 +217,49 @@ events_SIR <- function() {
     events_SISe3
 }
 
-##' Example data to initialize the \sQuote{SIR} model
+##' Example initial population data for the \acronym{SIR} model
 ##'
-##' Example data to initialize a population of 1600 nodes and
-##' demonstrate the \code{\linkS4class{SIR}} model.
+##' Dataset containing the initial number of susceptible, infected,
+##' and recovered cattle across 1,600 herds. Provides realistic
+##' population structure for demonstrating SIR model simulations in a
+##' cattle disease epidemiology context.
 ##'
-##' A \code{data.frame} with the number of individuals in the
-##' \sQuote{S}, \sQuote{I} and \sQuote{R} compartments in 1600
-##' nodes. Note that the \sQuote{I} and \sQuote{R} compartments are
-##' zero.
-##' @return A \code{data.frame}
-##' @export
-##' @examples
-##' \dontrun{
-##' ## For reproducibility, call the set.seed() function and specify
-##' ## the number of threads to use. To use all available threads,
-##' ## remove the set_num_threads() call.
-##' set.seed(123)
-##' set_num_threads(1)
+##' This dataset represents initial disease states in a population of
+##' 1,600 cattle herds. Each node (row) represents a single herd, and
+##' the data is derived from the structured \code{u0_SISe3} data by
+##' aggregating age-stratified compartments into single S, I, and R
+##' compartments for each herd.
 ##'
-##' ## Create an 'SIR' model with 1600 nodes and initialize
-##' ## it to run over 4*365 days. Add one infected individual
-##' ## to the first node.
-##' u0 <- u0_SIR()
-##' u0$I[1] <- 1
-##' tspan <- seq(from = 1, to = 4*365, by = 1)
-##' model <- SIR(u0     = u0,
-##'              tspan  = tspan,
-##'              events = events_SIR(),
-##'              beta   = 0.16,
-##'              gamma  = 0.01)
-##'
-##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model)
-##' plot(result)
-##'
-##' ## Summarize trajectory
-##' summary(result)
+##' The aggregated values represent:
+##' \describe{
+##'   \item{S}{Total susceptible cattle across all age groups in the herd}
+##'   \item{I}{Total infected cattle (initialized to zero)}
+##'   \item{R}{Total recovered cattle (initialized to zero)}
 ##' }
+##'
+##' The herd size distribution reflects realistic heterogeneity
+##' observed in cattle populations, making it suitable for testing
+##' spatial disease dynamics at the herd level, such as:
+##' \itemize{
+##'   \item Transmission within and between herds
+##'   \item Impact of cattle movement on disease spread
+##'   \item Effectiveness of herd-level interventions
+##' }
+##'
+##' @return A \code{data.frame} with 1,600 rows (one per herd) and 3 columns:
+##'   \describe{
+##'     \item{S}{Number of susceptible cattle in the herd}
+##'     \item{I}{Number of infected cattle in the herd (all zero at start)}
+##'     \item{R}{Number of recovered cattle in the herd (all zero at start)}
+##'   }
+##'
+##' @seealso
+##' \code{\link{SIR}} for creating cattle disease models with this
+##' initial state and \code{\link{events_SIR}} for associated cattle
+##' movement and demographic events
+##'
+##' @export
+##' @example man/examples/SIR.R
 u0_SIR <- function() {
     utils::data("u0_SISe3", package = "SimInf", envir = environment())
     u0_SISe3$S <- u0_SISe3$S_1 + u0_SISe3$S_2 + u0_SISe3$S_3

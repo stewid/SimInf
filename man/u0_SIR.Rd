@@ -2,48 +2,87 @@
 % Please edit documentation in R/SIR.R
 \name{u0_SIR}
 \alias{u0_SIR}
-\title{Example data to initialize the \sQuote{SIR} model}
+\title{Example initial population data for the \acronym{SIR} model}
 \usage{
 u0_SIR()
 }
 \value{
-A \code{data.frame}
+A \code{data.frame} with 1,600 rows (one per herd) and 3 columns:
+  \describe{
+    \item{S}{Number of susceptible cattle in the herd}
+    \item{I}{Number of infected cattle in the herd (all zero at start)}
+    \item{R}{Number of recovered cattle in the herd (all zero at start)}
+  }
 }
 \description{
-Example data to initialize a population of 1600 nodes and
-demonstrate the \code{\linkS4class{SIR}} model.
+Dataset containing the initial number of susceptible, infected,
+and recovered cattle across 1,600 herds. Provides realistic
+population structure for demonstrating SIR model simulations in a
+cattle disease epidemiology context.
 }
 \details{
-A \code{data.frame} with the number of individuals in the
-\sQuote{S}, \sQuote{I} and \sQuote{R} compartments in 1600
-nodes. Note that the \sQuote{I} and \sQuote{R} compartments are
-zero.
+This dataset represents initial disease states in a population of
+1,600 cattle herds. Each node (row) represents a single herd, and
+the data is derived from the structured \code{u0_SISe3} data by
+aggregating age-stratified compartments into single S, I, and R
+compartments for each herd.
+
+The aggregated values represent:
+\describe{
+  \item{S}{Total susceptible cattle across all age groups in the herd}
+  \item{I}{Total infected cattle (initialized to zero)}
+  \item{R}{Total recovered cattle (initialized to zero)}
+}
+
+The herd size distribution reflects realistic heterogeneity
+observed in cattle populations, making it suitable for testing
+spatial disease dynamics at the herd level, such as:
+\itemize{
+  \item Transmission within and between herds
+  \item Impact of cattle movement on disease spread
+  \item Effectiveness of herd-level interventions
+}
 }
 \examples{
-\dontrun{
-## For reproducibility, call the set.seed() function and specify
-## the number of threads to use. To use all available threads,
-## remove the set_num_threads() call.
+## For reproducibility, call the set.seed() function and specify the
+## number of threads to use. To use all available threads, remove the
+## set_num_threads() call.
 set.seed(123)
 set_num_threads(1)
 
-## Create an 'SIR' model with 1600 nodes and initialize
-## it to run over 4*365 days. Add one infected individual
-## to the first node.
+## Create an 'SIR' model with 1600 cattle herds (nodes) and initialize
+## it to run over 4*365 days. Add one infected animal to the first
+## herd to seed the outbreak. Define 'tspan' to record the state of
+## the system at daily time-points. Load scheduled events for the
+## population of nodes with births, deaths and between-node movements
+## of individuals.
 u0 <- u0_SIR()
 u0$I[1] <- 1
-tspan <- seq(from = 1, to = 4*365, by = 1)
 model <- SIR(u0     = u0,
-             tspan  = tspan,
+             tspan  = seq(from = 1, to = 4*365, by = 1),
              events = events_SIR(),
              beta   = 0.16,
              gamma  = 0.01)
 
+## Display the number of cattle affected by each event type per day.
+plot(events(model))
+
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
+
+## Plot the median and interquartile range of the number of
+## susceptible, infected and recovered individuals.
 plot(result)
 
-## Summarize trajectory
+## Plot the trajectory for the first herd.
+plot(result, index = 1)
+
+## Summarize the trajectory. The summary includes the number of events
+## by event type.
 summary(result)
 }
+\seealso{
+\code{\link{SIR}} for creating cattle disease models with this
+initial state and \code{\link{events_SIR}} for associated cattle
+movement and demographic events
 }

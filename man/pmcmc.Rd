@@ -20,7 +20,7 @@ pmcmc(
   init_model = NULL,
   post_particle = NULL,
   chain = NULL,
-  verbose = getOption("verbose", FALSE)
+  verbose = FALSE
 )
 
 \S4method{pmcmc}{SimInf_model}(
@@ -38,7 +38,7 @@ pmcmc(
   init_model = NULL,
   post_particle = NULL,
   chain = NULL,
-  verbose = getOption("verbose", FALSE)
+  verbose = FALSE
 )
 }
 \arguments{
@@ -136,12 +136,11 @@ one, containing a previous PMCMC chain to continue from. If
 provided, \code{theta} and \code{covmat} must be \code{NULL},
 and \code{n_iterations} can be 0.}
 
-\item{verbose}{prints diagnostic messages when \code{TRUE}. The
-default is to retrieve the global option \code{verbose} and
-use \code{FALSE} if it is not set. When \code{verbose=TRUE},
-information is printed every 100 iterations. For pmcmc, it is
-possible to get information every nth information by
-specifying \code{verbose=n}, for example, \code{verbose=1} or
+\item{verbose}{prints diagnostic messages when \code{TRUE}.
+Default is \code{FALSE}. When \code{verbose=TRUE}, information
+is printed every 100 iterations. For pmcmc, it is possible to
+get information every nth information by specifying
+\code{verbose=n}, for example, \code{verbose=1} or
 \code{verbose=10}.}
 }
 \value{

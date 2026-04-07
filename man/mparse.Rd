@@ -50,18 +50,17 @@ compartments, for example, \code{compartments = c("S", "I",
 \item{ldata}{optional data for the nodes. Can be specified as a
 \code{data.frame} with one row per node, as a numeric matrix
 where column \code{ldata[, j]} contains the local data vector
-for the node \code{j}, or as a as a named vector when the
-model only contains one node. If \code{ldata} is specified as
-a \code{data.frame}, each column is one parameter. If
-\code{v0} is specified as a matrix, it must have row names to
-identify the parameters in the transitions. If \code{v0} is
-specified as a named vector, the names identify the
-parameters. The local data vector is passed as an argument to
-the transition rate functions and the post time step function.}
+for the node \code{j}, or as a named vector when the model
+only contains one node. If \code{ldata} is specified as a
+\code{data.frame}, each column is one parameter. If
+\code{ldata} is specified as a matrix, it must have row names
+to identify the parameters in the transitions. If \code{ldata}
+is specified as a named vector, the names identify the
+parameters.}
 
 \item{gdata}{optional data that are common to all nodes in the
-model. Can be specified either as a optionally named numeric
-vector or as as a one-row data.frame. The names are used to
+model. Can be specified either as an optionally named numeric
+vector or as a one-row data.frame. The names are used to
 identify the parameters in the transitions. When \code{gdata}
 is specified as a vector, it is possible to have parameters
 without names, however, these parameters will not be
@@ -102,15 +101,52 @@ vector.}
 events. Default is \code{NULL} i.e. no scheduled events in the
 model.}
 
-\item{E}{matrix to handle scheduled events, see
+\item{E}{A matrix to handle scheduled events, see
 \code{\linkS4class{SimInf_events}} and
 \code{\linkS4class{SimInf_model}} for how \code{E} can be
-specified. Default is \code{NULL} i.e. no scheduled events in
-the model.}
+specified. Each row in the matrix corresponds to one
+compartment in the model. The non-zero entries in a column
+indicate the compartments to include in an event. For the
+\emph{exit}, \emph{internal transfer} and \emph{external
+transfer} events, the values in \code{E[, select]} are used as
+weights when sampling individuals without replacement, with
+probability proportional to the weight. For the \emph{enter}
+event, the values in \code{E[, select]} are used as weights
+when determining which compartment to add individuals to. If
+the column \code{E[, select]} contains several non-zero
+entries, the compartment is sampled with probability
+proportional to the weight in \code{E[, select]}. The select
+matrix \code{E} can either be specified as a \code{matrix}, or
+as a \code{data.frame}.  When \code{E} is specified as a
+\code{data.frame}, it must have one column named
+\code{compartment} that defines which compartment is referred
+to, and one column \code{select} that defines the column in
+\code{E}.  In addition, the \code{data.frame} can contain an
+optional column named \code{value} with the value in \code{E}.
+When the \code{value} column is missing, \code{1} is used as
+the default value. Default is \code{NULL} i.e. no scheduled
+events in the model.}
 
-\item{N}{matrix to handle scheduled events, see
-\code{\linkS4class{SimInf_events}}. Default is \code{NULL}
-i.e. no scheduled events in the model.}
+\item{N}{A matrix to handle scheduled events, see
+\code{\linkS4class{SimInf_events}}. Each row in the matrix
+corresponds to one compartment in the model. The values in a
+column define how to move sampled individuals before adding
+them to the destination. Let \code{q <- shift}, then each
+non-zero entry in \code{N[, q]} defines the number of rows to
+move sampled individuals from that compartment i.e., sampled
+individuals from compartment \code{p} are moved to compartment
+\code{N[p, q] + p}, where \code{1 <= N[p, q] + p <=
+N_compartments}. This matrix is used for \emph{enter},
+\emph{internal transfer} and \emph{external transfer} events.
+The shift matrix \code{N} can either be specified as a
+\code{matrix}, or as a \code{data.frame}.  When \code{N} is
+specified as a \code{data.frame}, it must have one column
+named \code{compartment} that defines which compartment is
+referred to, and one column \code{shift} that defines the
+column in \code{N}.  In addition, the \code{data.frame} must
+contain a column named \code{value} with the integer value in
+\code{N}. Default is \code{NULL} i.e. no scheduled events in
+the model.}
 
 \item{pts_fun}{optional character vector with C code for the post
 time step function. The C code should contain only the body of

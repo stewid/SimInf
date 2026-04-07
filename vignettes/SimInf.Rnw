@@ -766,15 +766,16 @@ concentration variable $\Y$.
     use for each event is specified by the \code{select} vector (see
     below).  \code{E} is a sparse matrix of class \code{dgCMatrix}.\\
 
-    \code{N} & Determines how individuals in internal transfer and
-    external transfer events are shifted to enter another compartment.
-    Each row corresponds to one compartment in the model.  The values
-    in a column are added to the current compartment of sampled
-    individuals to specify the destination compartment, for example, a
-    value of \code{1} in an entry means that sampled individuals in
-    this compartment are moved to the next compartment.  Which column
-    to use for each event is specified by the \code{shift} vector (see
-    below).  \code{N} is an integer matrix.\\
+    \code{N} & Determines how individuals in enter, internal transfer
+    and external transfer events are shifted to enter another
+    compartment.  Each row corresponds to one compartment in the
+    model.  The values in a column are added to the current
+    compartment of sampled individuals to specify the destination
+    compartment, for example, a value of \code{1} in an entry means
+    that sampled individuals in this compartment are moved to the next
+    compartment.  Which column to use for each event is specified by
+    the \code{shift} vector (see below).  \code{N} is an integer
+    matrix.\\
 
     \code{event} & Four event types are supported by the current
     solvers: exit, enter, internal transfer, and external transfer.

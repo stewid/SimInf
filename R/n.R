@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -33,13 +33,14 @@
 ##'
 ##' ## Display the number of nodes in the model.
 ##' n_nodes(model)
+## nolint start: brace_linter
 setGeneric(
     "n_nodes",
     signature = "model",
-    function(model) {
+    function(model)
         standardGeneric("n_nodes")
-    }
 )
+## nolint end
 
 ##' @rdname n_nodes
 ##' @include SimInf_model.R
@@ -88,13 +89,14 @@ setMethod(
 ##'
 ##' ## Display the number of replicates in the model.
 ##' n_replicates(model)
+## nolint start: brace_linter
 setGeneric(
     "n_replicates",
     signature = "model",
-    function(model) {
+    function(model)
         standardGeneric("n_replicates")
-    }
 )
+## nolint end
 
 ##' @rdname n_replicates
 ##' @include SimInf_model.R
@@ -121,13 +123,14 @@ setMethod(
 ##'
 ##' ## Display the number of compartments in the model.
 ##' n_compartments(model)
+## nolint start: brace_linter
 setGeneric(
     "n_compartments",
     signature = "model",
-    function(model) {
+    function(model)
         standardGeneric("n_compartments")
-    }
 )
+## nolint end
 
 ##' @rdname n_compartments
 ##' @include SimInf_model.R
@@ -159,13 +162,14 @@ Nc <- function(model) {
 ##'
 ##' ## Display the number of transitions in the model.
 ##' n_transitions(model)
+## nolint start: brace_linter
 setGeneric(
     "n_transitions",
     signature = "model",
-    function(model) {
+    function(model)
         standardGeneric("n_transitions")
-    }
 )
+## nolint end
 
 ##' @rdname n_transitions
 ##' @include SimInf_model.R

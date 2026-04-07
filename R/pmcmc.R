@@ -222,6 +222,7 @@ setMethod(
 ##' @seealso \code{\link{continue_pmcmc}} for running additional
 ##'     iterations.
 ##' @export
+## nolint start: brace_linter
 setGeneric(
     "pmcmc",
     signature = "model",
@@ -239,10 +240,10 @@ setGeneric(
              init_model = NULL,
              post_particle = NULL,
              chain = NULL,
-             verbose = getOption("verbose", FALSE)) {
+             verbose = FALSE)
         standardGeneric("pmcmc")
-    }
 )
+## nolint end
 
 ##' @rdname pmcmc
 ##' @export
@@ -579,6 +580,7 @@ get_verbose <- function(verbose) {
 ##'     the chain extended by \code{n_iterations} new rows.
 ##' @seealso \code{\link{pmcmc}} for initiating a new PMCMC chain.
 ##' @export
+## nolint start: brace_linter
 setGeneric(
     "continue_pmcmc",
     signature = "object",
@@ -588,10 +590,10 @@ setGeneric(
              post_proposal = NULL,
              init_model = NULL,
              post_particle = NULL,
-             verbose = getOption("verbose", FALSE)) {
+             verbose = FALSE)
         standardGeneric("continue_pmcmc")
-    }
 )
+## nolint end
 
 ##' @rdname continue_pmcmc
 ##' @export

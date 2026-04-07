@@ -12,7 +12,7 @@ continue_pmcmc(
   post_proposal = NULL,
   init_model = NULL,
   post_particle = NULL,
-  verbose = getOption("verbose", FALSE)
+  verbose = FALSE
 )
 
 \S4method{continue_pmcmc}{SimInf_pmcmc}(
@@ -22,7 +22,7 @@ continue_pmcmc(
   post_proposal = NULL,
   init_model = NULL,
   post_particle = NULL,
-  verbose = getOption("verbose", FALSE)
+  verbose = FALSE
 )
 }
 \arguments{
@@ -83,12 +83,11 @@ that the second \code{SimInf_pfilter} argument, is non-NULL
 only for the first particle in the chain, and for accepted
 particles.}
 
-\item{verbose}{prints diagnostic messages when \code{TRUE}. The
-default is to retrieve the global option \code{verbose} and
-use \code{FALSE} if it is not set. When \code{verbose=TRUE},
-information is printed every 100 iterations. For pmcmc, it is
-possible to get information every nth information by
-specifying \code{verbose=n}, for example, \code{verbose=1} or
+\item{verbose}{prints diagnostic messages when \code{TRUE}.
+Default is \code{FALSE}. When \code{verbose=TRUE}, information
+is printed every 100 iterations. For pmcmc, it is possible to
+get information every nth information by specifying
+\code{verbose=n}, for example, \code{verbose=1} or
 \code{verbose=10}.}
 }
 \value{
