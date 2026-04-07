@@ -239,6 +239,7 @@ select_matrix(model) <- data.frame(
   select      = c(4, 4, 4),
   value       = c(1, 2, 1)
 )
+```
 
 Now, run the model again to see the effect.
 
