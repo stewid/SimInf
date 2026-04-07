@@ -261,34 +261,57 @@ $$p_{R} = \frac{w_{R}*R}{w_{S}*S + w_{I}*I + w_{R}*R}$$
 Where $w_{S}$, $w_{I}$ and $w_{R}$ are the weights in E. These
 probabilities are applied sequentially, that is the probability of
 choosing the next item is proportional to the weights amongst the
-remaining items. Let us now double the weight to sample individuals from
-the $I$ compartment and then run the model again.
+remaining items.
+
+To modify these weights, we can use the
+[`select_matrix()`](http://stewid.github.io/SimInf/reference/select_matrix.md)
+replacement function with a `data.frame` to modify a model’s internal
+select matrix. In the SIR model, the 4th column of the select matrix
+($E\lbrack,4\rbrack$) is used for exit and transfer events, targeting
+all compartments (S, I, and R). By default, the weights are 1 for each
+compartment. Let us double the weight for the $I$ compartment while
+keeping the others at 1. We specify the compartment name, the column
+index (`select = 4`), and the desired weight (`value`).
 
 ``` r
-model@events@E[2, 4] <- 2
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R"),
+  select      = c(4, 4, 4),
+  value       = c(1, 2, 1)
+)
+```
+
+Now, run the model again to see the effect.
+
+``` r
 plot(run(model), index = 2)
 ```
 
 ![\*\*Figure 4.\*\* The individuals in the \$I\$ compartment are more
 likely of being selected for a movement
-event.](scheduled-events_files/figure-html/unnamed-chunk-14-1.png)
+event.](scheduled-events_files/figure-html/unnamed-chunk-15-1.png)
 
 **Figure 4.** The individuals in the $I$ compartment are more likely of
 being selected for a movement event.
 
 $\ $
 
-And a much larger weight to sample individuals from the $I$ compartment.
+Next, let us apply a much larger weight to the $I$ compartment.
 
 ``` r
-model@events@E[2, 4] <- 10
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R"),
+  select      = c(4, 4, 4),
+  value       = c(1, 10, 1)
+)
+
 plot(run(model), index = 2)
 ```
 
 ![\*\*Figure 5.\*\* The individuals in the \$I\$ compartment are even
 more likely of being selected for a movement event compared to the
 previous
-example.](scheduled-events_files/figure-html/unnamed-chunk-15-1.png)
+example.](scheduled-events_files/figure-html/unnamed-chunk-16-1.png)
 
 **Figure 5.** The individuals in the $I$ compartment are even more
 likely of being selected for a movement event compared to the previous
@@ -296,17 +319,22 @@ example.
 
 $\ $
 
-Increase the weight for the $R$ compartment and run the model again.
+Finally, increase the weight for the $R$ compartment as well.
 
 ``` r
-model@events@E[3, 4] <- 4
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R"),
+  select      = c(4, 4, 4),
+  value       = c(1, 10, 4)
+)
+
 plot(run(model), index = 2)
 ```
 
 ![\*\*Figure 6.\*\* The individuals in the \$I\$ and \$R\$ compartments
 are more likely of being selected for a movement event compared to
 individuals in the \$S\$
-compartment.](scheduled-events_files/figure-html/unnamed-chunk-16-1.png)
+compartment.](scheduled-events_files/figure-html/unnamed-chunk-17-1.png)
 
 **Figure 6.** The individuals in the $I$ and $R$ compartments are more
 likely of being selected for a movement event compared to individuals in
@@ -366,7 +394,7 @@ plot(run(model))
 
 ![\*\*Figure 7.\*\* The number of susceptible (\$S\$) individuals
 increases by 10 individuals at each scheduled
-event.](scheduled-events_files/figure-html/unnamed-chunk-20-1.png)
+event.](scheduled-events_files/figure-html/unnamed-chunk-21-1.png)
 
 **Figure 7.** The number of susceptible ($S$) individuals increases by
 10 individuals at each scheduled event.
@@ -448,7 +476,7 @@ plot(run(model))
 
 ![\*\*Figure 8.\*\* The number of susceptible (\$S\$) and recovered
 (\$R) individuals increases over
-time.](scheduled-events_files/figure-html/unnamed-chunk-26-1.png)
+time.](scheduled-events_files/figure-html/unnamed-chunk-27-1.png)
 
 **Figure 8.** The number of susceptible ($S$) and recovered (\$R)
 individuals increases over time.
@@ -470,7 +498,7 @@ plot(run(model))
 
 ![\*\*Figure 9.\*\* Individuals are more likely to enter as susceptible
 (\$S\$) compared to as recovered
-(\$R\$)](scheduled-events_files/figure-html/unnamed-chunk-28-1.png)
+(\$R\$)](scheduled-events_files/figure-html/unnamed-chunk-29-1.png)
 
 **Figure 9.** Individuals are more likely to enter as susceptible ($S$)
 compared to as recovered ($R$)
@@ -523,7 +551,7 @@ plot(run(model))
 
 ![\*\*Figure 10.\*\* The number of susceptible (\$S\$) individuals
 decreases by 5 individuals at each scheduled
-event.](scheduled-events_files/figure-html/unnamed-chunk-32-1.png)
+event.](scheduled-events_files/figure-html/unnamed-chunk-33-1.png)
 
 **Figure 10.** The number of susceptible ($S$) individuals decreases by
 5 individuals at each scheduled event.
@@ -583,7 +611,7 @@ plot(run(model))
 
 ![\*\*Figure 11.\*\* The number of infected (\$I\$) individuals
 decreases faster compared to susceptibles
-(\$S\$).](scheduled-events_files/figure-html/unnamed-chunk-37-1.png)
+(\$S\$).](scheduled-events_files/figure-html/unnamed-chunk-38-1.png)
 
 **Figure 11.** The number of infected ($I$) individuals decreases faster
 compared to susceptibles ($S$).
@@ -680,7 +708,7 @@ plot(run(model))
 
 ![\*\*Figure 12.\*\* The number of recovered (\$R\$) individuals
 increases at
-\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-43-1.png)
+\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-44-1.png)
 
 **Figure 12.** The number of recovered ($R$) individuals increases at
 $t = 10$.
@@ -732,7 +760,7 @@ plot(run(model))
 ```
 
 ![\*\*Figure 13.\*\* The number of individuals decrease at
-\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-47-1.png)
+\$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-48-1.png)
 
 **Figure 13.** The number of individuals decrease at $t = 10$.
 
@@ -802,7 +830,7 @@ plot(run(model), range = FALSE)
 ```
 
 ![\*\*Figure 14.\*\* Multiple events have been processed at
-\$t=5\$.](scheduled-events_files/figure-html/unnamed-chunk-52-1.png)
+\$t=5\$.](scheduled-events_files/figure-html/unnamed-chunk-53-1.png)
 
 **Figure 14.** Multiple events have been processed at $t = 5$.
 
