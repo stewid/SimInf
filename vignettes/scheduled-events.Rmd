@@ -37,8 +37,6 @@ SimInf supports four types of scheduled events:
 - **External transfer**: Move individuals between nodes (e.g.,
     livestock movements)
 
-$~$
-
 ```{r pressure, echo=FALSE, fig.align="left", fig.cap="**Figure 1.** Illustration of movements between nodes. Each time step depicts movements during one time unit, for example, a day. The network has *N=4* nodes where node *1* is infected and nodes *2*--*4* are non-infected. Arrows indicate movements of individuals from a source node to a destination node and labels denote the size of the shipment. Here, infection may spread from node *1* to node *3* at *t=2* and then from node *3* to node *2* at *t=3*.", out.width = '100%'}
 url <- paste0(
   "https://raw.githubusercontent.com/",
@@ -146,8 +144,6 @@ range bands, making it easier to read the exact compartment counts.
 plot(result, range = FALSE)
 ```
 
-$~$
-
 Or use the `trajectory()` function to more easily inspect the outcome
 in each node in detail.
 
@@ -203,8 +199,6 @@ model <- SIR(
 plot(run(model), index = 2)
 ```
 
-$~$
-
 The probability to sample an individual from each compartment is
 
 $$
@@ -247,8 +241,6 @@ Now, run the model again to see the effect.
 plot(run(model), index = 2)
 ```
 
-$~$
-
 Next, let us apply a much larger weight to the $I$ compartment.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 5.** The individuals in the $I$ compartment are even more likely of being selected for a movement event compared to the previous example."}
@@ -260,8 +252,6 @@ select_matrix(model) <- data.frame(
 
 plot(run(model), index = 2)
 ```
-
-$~$
 
 Finally, increase the weight for the $R$ compartment as well.
 
