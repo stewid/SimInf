@@ -27,7 +27,7 @@ network has \*N=4\* nodes where node \*1\* is infected and nodes
 from a source node to a destination node and labels denote the size of
 the shipment. Here, infection may spread from node \*1\* to node \*3\*
 at \*t=2\* and then from node \*3\* to node \*2\* at
-\*t=3\*.](https://github.com/stewid/SimInf/blob/main/vignettes/img/temporal-network.svg)
+\*t=3\*.](https://raw.githubusercontent.com/stewid/SimInf/refs/heads/main/vignettes/img/temporal-network.svg)
 
 **Figure 1.** Illustration of movements between nodes. Each time step
 depicts movements during one time unit, for example, a day. The network
