@@ -222,30 +222,55 @@ $$
 Where $w_S$, $w_I$ and $w_R$ are the weights in E.  These
 probabilities are applied sequentially, that is the probability of
 choosing the next item is proportional to the weights amongst the
-remaining items.  Let us now double the weight to sample individuals
-from the $I$ compartment and then run the model again.
+remaining items.
+
+To modify these weights, we can use the `select_matrix()` replacement
+function with a `data.frame` to modify a model's internal select
+matrix.  In the SIR model, the 4th column of the select matrix ($E[,
+4]$) is used for exit and transfer events, targeting all compartments
+(S, I, and R).  By default, the weights are 1 for each
+compartment. Let us double the weight for the $I$ compartment while
+keeping the others at 1. We specify the compartment name, the column
+index (`select = 4`), and the desired weight (`value`).
+
+```{r}
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R"),
+  select      = c(4, 4, 4),
+  value       = c(1, 2, 1)
+)
+
+Now, run the model again to see the effect.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 4.** The individuals in the $I$ compartment are more likely of being selected for a movement event."}
-model@events@E[2, 4] <- 2
 plot(run(model), index = 2)
 ```
 
 $~$
 
-And a much larger weight to sample individuals from the $I$
-compartment.
+Next, let us apply a much larger weight to the $I$ compartment.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 5.** The individuals in the $I$ compartment are even more likely of being selected for a movement event compared to the previous example."}
-model@events@E[2, 4] <- 10
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R"),
+  select      = c(4, 4, 4),
+  value       = c(1, 10, 1)
+)
+
 plot(run(model), index = 2)
 ```
 
 $~$
 
-Increase the weight for the $R$ compartment and run the model again.
+Finally, increase the weight for the $R$ compartment as well.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 6.** The individuals in the $I$ and $R$ compartments are more likely of being selected for a movement event compared to individuals in the $S$ compartment."}
-model@events@E[3, 4] <- 4
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R"),
+  select      = c(4, 4, 4),
+  value       = c(1, 10, 4)
+)
+
 plot(run(model), index = 2)
 ```
 
