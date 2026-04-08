@@ -5,8 +5,35 @@
 \alias{SEIR-class}
 \title{Definition of the \acronym{SEIR} model}
 \description{
-Class to handle the \acronym{SEIR} \code{\link{SimInf_model}}.
+Class to handle the \acronym{SEIR} model. This class inherits from
+\code{\linkS4class{SimInf_model}}, meaning that \acronym{SEIR}
+objects are fully compatible with all generic functions defined
+for \code{SimInf_model}, such as \code{\link{run}},
+\code{\link{plot}}, \code{\link{trajectory}}, and
+\code{\link{prevalence}}.
+}
+\details{
+The \acronym{SEIR} model extends the standard \acronym{SIR} model
+by adding an \strong{Exposed} (E) compartment for individuals who
+have been infected but are not yet infectious. This accounts for
+the latent period of the disease.
+
+The model is defined by three state transitions:
+\deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{ S -- beta S
+  I / N --> E}
+\deqn{E \stackrel{\epsilon E}{\longrightarrow} I}{E -- epsilon E
+--> I}
+\deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I -->
+R}
+
+where \eqn{\beta} is the transmission rate, \eqn{\epsilon} is the
+incubation rate (inverse of the latent period), \eqn{\gamma} is
+the recovery rate, and \eqn{N = S + E + I + R} is the total
+population.
 }
 \seealso{
-\code{\link{SEIR}} for creating an \acronym{SEIR} model
+\code{\link{SEIR}} for creating an \acronym{SEIR} model object,
+\code{\linkS4class{SimInf_model}} for the parent class definition,
+and \code{\link{SIR}} for the base model without the latent
+period.
 }
