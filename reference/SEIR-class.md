@@ -12,7 +12,7 @@ and
 
 ## Details
 
-The SEIR model extends the standard SIR model by adding an **Exposed**
+The SEIR model extends the standard SIR model by adding an **E**xposed
 (E) compartment for individuals who have been infected but are not yet
 infectious. This accounts for the latent period of the disease.
 
@@ -23,7 +23,10 @@ R\$\$
 
 where \\\beta\\ is the transmission rate, \\\epsilon\\ is the incubation
 rate (inverse of the latent period), \\\gamma\\ is the recovery rate,
-and \\N = S + E + I + R\\ is the total population.
+and \\N = S + E + I + R\\ is the total population size in each node.
+Here, \\S\\, \\E\\, \\I\\, and \\R\\ represent the number of
+susceptible, exposed, infected, and recovered individuals in that
+specific node.
 
 ## See also
 

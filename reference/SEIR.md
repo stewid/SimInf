@@ -60,18 +60,21 @@ of class `SEIR`
 
 ## Details
 
-The SEIR model contains four compartments: number of susceptible (S),
-number of exposed (E) (those who have been infected but are not yet
-infectious), number of infectious (I), and number of recovered (R).
-Moreover, it has three state transitions:
+The SEIR model extends the standard SIR model by adding an **E**xposed
+(E) compartment for individuals who have been infected but are not yet
+infectious. This accounts for the latent period of the disease.
 
-\$\$S \stackrel{\beta S I / N}{\longrightarrow} E\$\$ \$\$E
-\stackrel{\epsilon E}{\longrightarrow} I\$\$ \$\$I \stackrel{\gamma
-I}{\longrightarrow} R\$\$
+The model is defined by three state transitions: \$\$S \stackrel{\beta S
+I / N}{\longrightarrow} E\$\$ \$\$E \stackrel{\epsilon
+E}{\longrightarrow} I\$\$ \$\$I \stackrel{\gamma I}{\longrightarrow}
+R\$\$
 
 where \\\beta\\ is the transmission rate, \\\epsilon\\ is the incubation
 rate (inverse of the latent period), \\\gamma\\ is the recovery rate,
-and \\N = S + E + I + R\\ is the total population.
+and \\N = S + E + I + R\\ is the total population size in each node.
+Here, \\S\\, \\E\\, \\I\\, and \\R\\ represent the number of
+susceptible, exposed, infected, and recovered individuals in that
+specific node.
 
 The argument `u0` must be a `data.frame` with one row for each node with
 the following columns:

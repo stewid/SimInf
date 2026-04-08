@@ -62,7 +62,7 @@ for <code>SimInf_model</code>, such as <code><a href="run.html">run</a></code>,
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The <acronym>SEIR</acronym> model extends the standard <acronym>SIR</acronym> model
-by adding an <strong>Exposed</strong> (E) compartment for individuals who
+by adding an <strong>E</strong>xposed (E) compartment for individuals who
 have been infected but are not yet infectious. This accounts for
 the latent period of the disease.</p>
 <p>The model is defined by three state transitions:
@@ -72,7 +72,9 @@ $$I \stackrel{\gamma I}{\longrightarrow} R$$</p>
 <p>where \(\beta\) is the transmission rate, \(\epsilon\) is the
 incubation rate (inverse of the latent period), \(\gamma\) is
 the recovery rate, and \(N = S + E + I + R\) is the total
-population.</p>
+population size in each node. Here, \(S\), \(E\), \(I\), and
+\(R\) represent the number of susceptible, exposed, infected,
+and recovered individuals in that specific node.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
