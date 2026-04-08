@@ -19,9 +19,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \code{SISe} model
+##' Definition of the \acronym{SISe} model
 ##'
-##' Class to handle the SISe \code{\link{SimInf_model}}.
+##' Class to handle the \acronym{SISe} \code{\link{SimInf_model}}.
+##' @seealso \code{\link{SISe}} for creating an SISe model
 ##' @include SimInf_model.R
 ##' @export
 setClass("SISe", contains = c("SimInf_model"))
@@ -45,7 +46,7 @@ select_matrix_SISe <- function() {
     select_matrix_SIS()
 }
 
-##' Create a SISe model
+##' Create an \acronym{SISe} model
 ##'
 ##' Create an \acronym{SISe} model to be used by the simulation
 ##' framework.

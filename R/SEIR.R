@@ -21,7 +21,8 @@
 
 ##' Definition of the \acronym{SEIR} model
 ##'
-##' Class to handle the SEIR \code{\link{SimInf_model}}.
+##' Class to handle the \acronym{SEIR} \code{\link{SimInf_model}}.
+##' @seealso \code{\link{SEIR}} for creating an \acronym{SEIR} model
 ##' @include SimInf_model.R
 ##' @export
 setClass("SEIR", contains = c("SimInf_model"))
@@ -87,12 +88,14 @@ select_matrix_SEIR <- function() {
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
-##' ## Create a SEIR model object.
-##' model <- SEIR(u0 = data.frame(S = 99, E = 0, I = 1, R = 0),
-##'               tspan = 1:100,
-##'               beta = 0.16,
-##'               epsilon = 0.25,
-##'               gamma = 0.077)
+##' ## Create an SEIR model object.
+##' model <- SEIR(
+##'   u0 = data.frame(S = 99, E = 0, I = 1, R = 0),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   epsilon = 0.25,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Run the SEIR model and plot the result.
 ##' set.seed(3)

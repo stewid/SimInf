@@ -5,5 +5,8 @@
 \alias{SEIR-class}
 \title{Definition of the \acronym{SEIR} model}
 \description{
-Class to handle the SEIR \code{\link{SimInf_model}}.
+Class to handle the \acronym{SEIR} \code{\link{SimInf_model}}.
+}
+\seealso{
+\code{\link{SEIR}} for creating an \acronym{SEIR} model
 }
