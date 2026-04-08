@@ -81,10 +81,10 @@ vector.</p></dd>
 
 <dt id="arg-beta">beta<a class="anchor" aria-label="anchor" href="#arg-beta"></a></dt>
 <dd><p>A numeric vector with the transmission rate from
-susceptible to infected where each node can have a different
-beta value. The vector must have length 1 or <code>nrow(u0)</code>.
-If the vector has length 1, but the model contains more nodes,
-the beta value is repeated in all nodes.</p></dd>
+susceptible to infected. Each node can have a different beta
+value.  The vector must have length 1 or <code>nrow(u0)</code>. If
+the vector has length 1 but the model contains more nodes, the
+beta value is repeated for all nodes.</p></dd>
 
 
 <dt id="arg-epsilon">epsilon<a class="anchor" aria-label="anchor" href="#arg-epsilon"></a></dt>
@@ -98,10 +98,10 @@ nodes.</p></dd>
 
 <dt id="arg-gamma">gamma<a class="anchor" aria-label="anchor" href="#arg-gamma"></a></dt>
 <dd><p>A numeric vector with the recovery rate from infected
-to recovered where each node can have a different gamma
-value. The vector must have length 1 or <code>nrow(u0)</code>. If
-the vector has length 1, but the model contains more nodes,
-the beta value is repeated in all nodes.</p></dd>
+to recovered. Each node can have a different gamma value.  The
+vector must have length 1 or <code>nrow(u0)</code>. If the vector
+has length 1 but the model contains more nodes, the gamma
+value is repeated for all nodes.</p></dd>
 
 </dl></div>
     <div class="section level2">

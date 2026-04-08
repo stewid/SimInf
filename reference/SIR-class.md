@@ -22,7 +22,9 @@ The model is defined by two state transitions: \$\$S \stackrel{\beta S I
 R\$\$
 
 where \\\beta\\ is the transmission rate, \\\gamma\\ is the recovery
-rate, and \\N = S + I + R\\ is the total population size.
+rate, and \\N = S + I + R\\ is the total population size in each node.
+Here, \\S\\, \\I\\, and \\R\\ represent the number of susceptible,
+infected, and recovered individuals in that specific node.
 
 ## See also
 

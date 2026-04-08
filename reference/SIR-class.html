@@ -64,14 +64,15 @@ for <code>SimInf_model</code>, such as <code><a href="run.html">run</a></code>,
     <p>The <acronym>SIR</acronym> model is a commonly used compartmental model for
 infectious diseases, dividing the population into three states:
 <strong>S</strong>usceptible, <strong>I</strong>nfected, and <strong>R</strong>ecovered.
-It assumes that individuals gain permanent immunity after
-recovery.</p>
+It assumes that individuals gain permanent immunity after recovery.</p>
 <p>The model is defined by two state transitions:
 $$S \stackrel{\beta S I / N}{\longrightarrow} I$$
 $$I \stackrel{\gamma I}{\longrightarrow} R$$</p>
 <p>where \(\beta\) is the transmission rate, \(\gamma\) is the
 recovery rate, and \(N = S + I + R\) is the total population
-size.</p>
+size in each node. Here, \(S\), \(I\), and \(R\) represent
+the number of susceptible, infected, and recovered individuals in
+that specific node.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

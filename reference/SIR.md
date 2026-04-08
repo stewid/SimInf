@@ -34,16 +34,16 @@ SIR(u0, tspan, events = NULL, beta = NULL, gamma = NULL)
 - beta:
 
   A numeric vector with the transmission rate from susceptible to
-  infected where each node can have a different beta value. The vector
-  must have length 1 or `nrow(u0)`. If the vector has length 1, but the
-  model contains more nodes, the beta value is repeated in all nodes.
+  infected. Each node can have a different beta value. The vector must
+  have length 1 or `nrow(u0)`. If the vector has length 1 but the model
+  contains more nodes, the beta value is repeated for all nodes.
 
 - gamma:
 
-  A numeric vector with the recovery rate from infected to recovered
-  where each node can have a different gamma value. The vector must have
-  length 1 or `nrow(u0)`. If the vector has length 1, but the model
-  contains more nodes, the beta value is repeated in all nodes.
+  A numeric vector with the recovery rate from infected to recovered.
+  Each node can have a different gamma value. The vector must have
+  length 1 or `nrow(u0)`. If the vector has length 1 but the model
+  contains more nodes, the gamma value is repeated for all nodes.
 
 ## Value
 
@@ -53,27 +53,34 @@ of class `SIR`
 
 ## Details
 
-The SIR model contains three compartments; number of susceptible (S),
-number of infectious (I), and number of recovered (R). Moreover, it has
-two state transitions, \$\$S \stackrel{\beta S I / N}{\longrightarrow}
-I\$\$ \$\$I \stackrel{\gamma I}{\longrightarrow} R\$\$ where \\\beta\\
-is the transmission rate, \\\gamma\\ is the recovery rate, and \\N = S +
-I + R\\ is the total population.
+The SIR model is a commonly used compartmental model for infectious
+diseases, dividing the population into three states: **S**usceptible,
+**I**nfected, and **R**ecovered. It assumes that individuals gain
+permanent immunity after recovery.
+
+The model is defined by two state transitions: \$\$S \stackrel{\beta S I
+/ N}{\longrightarrow} I\$\$ \$\$I \stackrel{\gamma I}{\longrightarrow}
+R\$\$
+
+where \\\beta\\ is the transmission rate, \\\gamma\\ is the recovery
+rate, and \\N = S + I + R\\ is the total population size in each node.
+Here, \\S\\, \\I\\, and \\R\\ represent the number of susceptible,
+infected, and recovered individuals in that specific node.
 
 The argument `u0` must be a `data.frame` with one row for each node with
 the following columns:
 
 - S:
 
-  The number of susceptible in each node
+  The number of susceptible individuals in each node
 
 - I:
 
-  The number of infected in each node
+  The number of infected individuals in each node
 
 - R:
 
-  The number of recovered in each node
+  The number of recovered individuals in each node
 
 ## Examples
 

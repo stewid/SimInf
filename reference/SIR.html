@@ -81,18 +81,18 @@ vector.</p></dd>
 
 <dt id="arg-beta">beta<a class="anchor" aria-label="anchor" href="#arg-beta"></a></dt>
 <dd><p>A numeric vector with the transmission rate from
-susceptible to infected where each node can have a different
-beta value. The vector must have length 1 or <code>nrow(u0)</code>.
-If the vector has length 1, but the model contains more nodes,
-the beta value is repeated in all nodes.</p></dd>
+susceptible to infected. Each node can have a different beta
+value.  The vector must have length 1 or <code>nrow(u0)</code>. If
+the vector has length 1 but the model contains more nodes, the
+beta value is repeated for all nodes.</p></dd>
 
 
 <dt id="arg-gamma">gamma<a class="anchor" aria-label="anchor" href="#arg-gamma"></a></dt>
 <dd><p>A numeric vector with the recovery rate from infected
-to recovered where each node can have a different gamma
-value. The vector must have length 1 or <code>nrow(u0)</code>. If
-the vector has length 1, but the model contains more nodes,
-the beta value is repeated in all nodes.</p></dd>
+to recovered. Each node can have a different gamma value.  The
+vector must have length 1 or <code>nrow(u0)</code>. If the vector
+has length 1 but the model contains more nodes, the gamma
+value is repeated for all nodes.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -101,22 +101,27 @@ the beta value is repeated in all nodes.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The <acronym>SIR</acronym> model contains three compartments; number of
-susceptible (S), number of infectious (I), and number of
-recovered (R).  Moreover, it has two state transitions,
+    <p>The <acronym>SIR</acronym> model is a commonly used compartmental model for
+infectious diseases, dividing the population into three states:
+<strong>S</strong>usceptible, <strong>I</strong>nfected, and <strong>R</strong>ecovered.
+It assumes that individuals gain permanent immunity after recovery.</p>
+<p>The model is defined by two state transitions:
 $$S \stackrel{\beta S I / N}{\longrightarrow} I$$
-$$I \stackrel{\gamma I}{\longrightarrow} R$$
-where \(\beta\) is the transmission rate, \(\gamma\) is the
-recovery rate, and \(N = S + I + R\) is the total population.</p>
+$$I \stackrel{\gamma I}{\longrightarrow} R$$</p>
+<p>where \(\beta\) is the transmission rate, \(\gamma\) is the
+recovery rate, and \(N = S + I + R\) is the total population
+size in each node. Here, \(S\), \(I\), and \(R\) represent
+the number of susceptible, infected, and recovered individuals in
+that specific node.</p>
 <p>The argument <code>u0</code> must be a <code>data.frame</code> with one row for
 each node with the following columns:</p><dl><dt>S</dt>
-<dd><p>The number of susceptible in each node</p></dd>
+<dd><p>The number of susceptible individuals in each node</p></dd>
 
 <dt>I</dt>
-<dd><p>The number of infected in each node</p></dd>
+<dd><p>The number of infected individuals in each node</p></dd>
 
 <dt>R</dt>
-<dd><p>The number of recovered in each node</p></dd>
+<dd><p>The number of recovered individuals in each node</p></dd>
 
 
 </dl></div>
