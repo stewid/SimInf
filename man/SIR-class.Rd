@@ -5,27 +5,33 @@
 \alias{SIR-class}
 \title{Definition of the \acronym{SIR} model}
 \description{
-Class to handle the \acronym{SIR} \code{\link{SimInf_model}}.
+Class to handle the \acronym{SIR} model. This class inherits from
+\code{\linkS4class{SimInf_model}}, meaning that \acronym{SIR}
+objects are fully compatible with all generic functions defined
+for \code{SimInf_model}, such as \code{\link{run}},
+\code{\link{plot}}, \code{\link{trajectory}}, and
+\code{\link{prevalence}}.
 }
 \details{
-The \acronym{SIR} model contains three compartments; number of
-susceptible (S), number of infectious (I), and number of
-recovered (R).  Moreover, it has two state transitions,
-\deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
-  S -- beta S I / N --> I}
-\deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
-where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-recovery rate, and \eqn{N=S+I+R}.
-}
-\examples{
-## Create an SIR model object.
-model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+The \acronym{SIR} model is a commonly used compartmental model for
+infectious diseases, dividing the population into three states:
+\strong{S}usceptible, \strong{I}nfected, and \strong{R}ecovered.
+It assumes that individuals gain permanent immunity after
+recovery.
 
-## Run the SIR model and plot the result.
-set.seed(22)
-result <- run(model)
-plot(result)
+The model is defined by two state transitions:
+\deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{ S -- beta S
+  I / N --> I}
+\deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I -->
+R}
+
+where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
+recovery rate, and \eqn{N = S + I + R} is the total population
+size.
+}
+\seealso{
+\code{\link{SIR}} for creating an \acronym{SIR} model object,
+\code{\linkS4class{SimInf_model}} for the parent class definition,
+\code{\link{SEIR}} for a model including a latent period, and
+\code{\link{SIS}} for a model without immunity.
 }
