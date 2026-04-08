@@ -53,22 +53,30 @@ of class `SIS`
 
 ## Details
 
-The SIS model contains two compartments; number of susceptible (S), and
-number of infectious (I). Moreover, it has two state transitions, \$\$S
-\stackrel{\beta S I / N}{\longrightarrow} I\$\$ \$\$I \stackrel{\gamma
-I}{\longrightarrow} S\$\$ where \\\beta\\ is the transmission rate,
-\\\gamma\\ is the recovery rate, and \\N=S+I\\.
+The SIS model is a commonly used compartmental model for infectious
+diseases where individuals do not gain permanent immunity after
+recovery. Instead, they return to the susceptible state. It divides the
+population into two states: **S**usceptible and **I**nfected.
+
+The model is defined by two state transitions: \$\$S \stackrel{\beta S I
+/ N}{\longrightarrow} I\$\$ \$\$I \stackrel{\gamma I}{\longrightarrow}
+S\$\$
+
+where \\\beta\\ is the transmission rate, \\\gamma\\ is the recovery
+rate, and \\N = S + I\\ is the total population size in each node. Here,
+\\S\\ and \\I\\ represent the number of susceptible and infected
+individuals in that specific node.
 
 The argument `u0` must be a `data.frame` with one row for each node with
 the following columns:
 
 - S:
 
-  The number of susceptible in each node
+  The number of susceptible individuals in each node
 
 - I:
 
-  The number of infected in each node
+  The number of infected individuals in each node
 
 ## Examples
 
