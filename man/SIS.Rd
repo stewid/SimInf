@@ -45,19 +45,28 @@ Create an \acronym{SIS} model to be used by the simulation
 framework.
 }
 \details{
-The \acronym{SIS} model contains two compartments; number of
-susceptible (S), and number of infectious (I).  Moreover, it has
-two state transitions, \deqn{S \stackrel{\beta S I /
-N}{\longrightarrow} I}{ S -- beta S I / N --> I} \deqn{I
-\stackrel{\gamma I}{\longrightarrow} S}{I -- gamma I --> S} where
-\eqn{\beta} is the transmission rate, \eqn{\gamma} is the recovery
-rate, and \eqn{N=S+I}.
+The \acronym{SIS} model is a commonly used compartmental model for
+infectious diseases where individuals do not gain permanent
+immunity after recovery. Instead, they return to the susceptible
+state.  It divides the population into two states:
+\strong{S}usceptible and \strong{I}nfected.
+
+The model is defined by two state transitions:
+\deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{S --> beta S
+  I / N --> I}
+\deqn{I \stackrel{\gamma I}{\longrightarrow} S}{I --> gamma I -->
+S}
+
+where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
+recovery rate, and \eqn{N = S + I} is the total population size in
+each node. Here, \eqn{S} and \eqn{I} represent the number of
+susceptible and infected individuals in that specific node.
 
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
-\item{S}{The number of susceptible in each node}
-\item{I}{The number of infected in each node}
+\item{S}{The number of susceptible individuals in each node}
+\item{I}{The number of infected individuals in each node}
 }
 }
 \examples{

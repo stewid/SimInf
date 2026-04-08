@@ -5,26 +5,34 @@
 \alias{SIS-class}
 \title{Definition of the \acronym{SIS} model}
 \description{
-Class to handle the \acronym{SIS} \code{\link{SimInf_model}}.
+Class to handle the \acronym{SIS} model. This class inherits from
+\code{\linkS4class{SimInf_model}}, meaning that \acronym{SIS}
+objects are fully compatible with all generic functions defined
+for \code{SimInf_model}, such as \code{\link{run}},
+\code{\link{plot}}, \code{\link{trajectory}}, and
+\code{\link{prevalence}}.
 }
 \details{
-The \acronym{SIS} model contains two compartments; number of
-susceptible (S), and number of infectious (I).  Moreover, it has
-two state transitions, \deqn{S \stackrel{\beta S I /
-N}{\longrightarrow} I}{ S -- beta S I / N --> I} \deqn{I
-\stackrel{\gamma I}{\longrightarrow} S}{I -- gamma I --> S} where
-\eqn{\beta} is the transmission rate, \eqn{\gamma} is the recovery
-rate, and \eqn{N=S+I}.
-}
-\examples{
-## Create an SIS model object.
-model <- SIS(u0 = data.frame(S = 99, I = 1),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+The \acronym{SIS} model is a commonly used compartmental model for
+infectious diseases where individuals do not gain permanent
+immunity after recovery. Instead, they return to the susceptible
+state.  It divides the population into two states:
+\strong{S}usceptible and \strong{I}nfected.
 
-## Run the SIS model and plot the result.
-set.seed(22)
-result <- run(model)
-plot(result)
+The model is defined by two state transitions:
+\deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{S --> beta S
+  I / N --> I}
+\deqn{I \stackrel{\gamma I}{\longrightarrow} S}{I --> gamma I -->
+S}
+
+where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
+recovery rate, and \eqn{N = S + I} is the total population size in
+each node. Here, \eqn{S} and \eqn{I} represent the number of
+susceptible and infected individuals in that specific node.
+}
+\seealso{
+\code{\link{SIS}} for creating an \acronym{SIS} model object,
+\code{\linkS4class{SimInf_model}} for the parent class definition,
+\code{\link{SIR}} for a model with permanent immunity, and
+\code{\link{SEIR}} for a model including a latent period.
 }
