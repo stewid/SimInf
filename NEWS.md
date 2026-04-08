@@ -1,5 +1,9 @@
 # SimInf (development version)
 
+This release focuses primarily on enhancing the package documentation,
+including a new vignette, improved function descriptions, and clearer
+examples.
+
 ## CHANGES OR IMPROVEMENTS
 
 * The `SimInf_model()`, `select_matrix()` and `shift_matrix()`
