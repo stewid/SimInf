@@ -1,4 +1,4 @@
-# Create a SISe model
+# Create an SISe model
 
 Create an SISe model to be used by the simulation framework.
 

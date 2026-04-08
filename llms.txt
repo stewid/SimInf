@@ -288,10 +288,11 @@ The `SimInf` package is licensed under the
 - [`SISe-class`](http://stewid.github.io/SimInf/reference/SISe-class.md)
   :
 
-  Definition of the `SISe` model
+  Definition of the SISe model
 
-- [`SISe()`](http://stewid.github.io/SimInf/reference/SISe.md) : Create
-  a SISe model
+- [`SISe()`](http://stewid.github.io/SimInf/reference/SISe.md) :
+
+  Create an SISe model
 
 - [`SISe3-class`](http://stewid.github.io/SimInf/reference/SISe3-class.md)
   :
