@@ -40,10 +40,10 @@ SEIR(u0, tspan, events = NULL, beta = NULL, epsilon = NULL, gamma = NULL)
 
 - epsilon:
 
-  A numeric vector with the incubation rate from exposed to infected
-  where each node can have a different epsilon value. The vector must
-  have length 1 or `nrow(u0)`. If the vector has length 1, but the model
-  contains more nodes, the epsilon value is repeated in all nodes.
+  A numeric vector with the incubation rate from exposed to infected.
+  Each node can have a different value. The vector must have length 1 or
+  `nrow(u0)`. If the vector has length 1 but the model contains more
+  nodes, the value is repeated for all nodes.
 
 - gamma:
 

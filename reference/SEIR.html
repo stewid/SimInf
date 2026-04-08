@@ -89,11 +89,10 @@ beta value is repeated for all nodes.</p></dd>
 
 <dt id="arg-epsilon">epsilon<a class="anchor" aria-label="anchor" href="#arg-epsilon"></a></dt>
 <dd><p>A numeric vector with the incubation rate from
-exposed to infected where each node can have a different
-epsilon value. The vector must have length 1 or
-<code>nrow(u0)</code>.  If the vector has length 1, but the model
-contains more nodes, the epsilon value is repeated in all
-nodes.</p></dd>
+exposed to infected. Each node can have a different value. The
+vector must have length 1 or <code>nrow(u0)</code>. If the vector
+has length 1 but the model contains more nodes, the value is
+repeated for all nodes.</p></dd>
 
 
 <dt id="arg-gamma">gamma<a class="anchor" aria-label="anchor" href="#arg-gamma"></a></dt>
