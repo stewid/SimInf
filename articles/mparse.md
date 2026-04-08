@@ -200,7 +200,8 @@ size. The results are identical to Figure 1.
 In stochastic simulations, it is possible for a node to become empty
 (e.g., all individuals die or move away). If a transition involves
 dividing by the total population $N$, and $N$ becomes zero, the
-simulation would stop with a “division by zero” error.
+resulting rate is undefined. SimInf detects this issue and stops the
+simulation with an “Invalid rate detected” error.
 
 Since `mparse` translates the propensity expressions into C code, we can
 use the C **ternary operator** (`condition ? true_value : false_value`)

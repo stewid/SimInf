@@ -279,8 +279,8 @@ dividing by the total population
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>,
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
-becomes zero, the simulation would stop with a “division by zero”
-error.</p>
+becomes zero, the resulting rate is undefined. SimInf detects this issue
+and stops the simulation with an “Invalid rate detected” error.</p>
 <p>Since <code>mparse</code> translates the propensity expressions into
 C code, we can use the C <strong>ternary operator</strong>
 (<code>condition ? true_value : false_value</code>) to handle this
