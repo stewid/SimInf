@@ -71,10 +71,10 @@ select_matrix_SEIR <- function() {
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
-##' \item{S}{The number of susceptible in each node}
-##' \item{E}{The number of exposed in each node}
-##' \item{I}{The number of infected in each node}
-##' \item{R}{The number of recovered in each node}
+##' \item{S}{The number of susceptible individuals in each node}
+##' \item{E}{The number of exposed individuals in each node}
+##' \item{I}{The number of infected individuals in each node}
+##' \item{R}{The number of recovered individuals in each node}
 ##' }
 ##'
 ##' @template u0-param
