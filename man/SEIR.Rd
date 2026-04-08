@@ -32,11 +32,10 @@ the vector has length 1 but the model contains more nodes, the
 beta value is repeated for all nodes.}
 
 \item{epsilon}{A numeric vector with the incubation rate from
-exposed to infected where each node can have a different
-epsilon value. The vector must have length 1 or
-\code{nrow(u0)}.  If the vector has length 1, but the model
-contains more nodes, the epsilon value is repeated in all
-nodes.}
+exposed to infected. Each node can have a different value. The
+vector must have length 1 or \code{nrow(u0)}. If the vector
+has length 1 but the model contains more nodes, the value is
+repeated for all nodes.}
 
 \item{gamma}{A numeric vector with the recovery rate from infected
 to recovered. Each node can have a different gamma value.  The
