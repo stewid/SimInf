@@ -45,21 +45,28 @@ Create an \acronym{SIR} model to be used by the simulation
 framework.
 }
 \details{
-The \acronym{SIR} model contains three compartments; number of
-susceptible (S), number of infectious (I), and number of
-recovered (R).  Moreover, it has two state transitions,
+The \acronym{SIR} model is a commonly used compartmental model for
+infectious diseases, dividing the population into three states:
+\strong{S}usceptible, \strong{I}nfected, and \strong{R}ecovered.
+It assumes that individuals gain permanent immunity after recovery.
+
+The model is defined by two state transitions:
 \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
   S -- beta S I / N --> I}
 \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
+
 where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-recovery rate, and \eqn{N = S + I + R} is the total population.
+recovery rate, and \eqn{N = S + I + R} is the total population
+size in each node. Here, \eqn{S}, \eqn{I}, and \eqn{R} represent
+the number of susceptible, infected, and recovered individuals in
+that specific node.
 
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
-\item{S}{The number of susceptible in each node}
-\item{I}{The number of infected in each node}
-\item{R}{The number of recovered in each node}
+\item{S}{The number of susceptible individuals in each node}
+\item{I}{The number of infected individuals in each node}
+\item{R}{The number of recovered individuals in each node}
 }
 }
 \examples{
