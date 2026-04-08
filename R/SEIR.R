@@ -28,23 +28,7 @@
 ##' \code{\link{plot}}, \code{\link{trajectory}}, and
 ##' \code{\link{prevalence}}.
 ##'
-##' The \acronym{SEIR} model extends the standard \acronym{SIR} model
-##' by adding an \strong{Exposed} (E) compartment for individuals who
-##' have been infected but are not yet infectious. This accounts for
-##' the latent period of the disease.
-##'
-##' The model is defined by three state transitions:
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{ S -- beta S
-##'   I / N --> E}
-##' \deqn{E \stackrel{\epsilon E}{\longrightarrow} I}{E -- epsilon E
-##' --> I}
-##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I -->
-##' R}
-##'
-##' where \eqn{\beta} is the transmission rate, \eqn{\epsilon} is the
-##' incubation rate (inverse of the latent period), \eqn{\gamma} is
-##' the recovery rate, and \eqn{N = S + E + I + R} is the total
-##' population.
+##' @template SEIR-details
 ##'
 ##' @seealso
 ##' \code{\link{SEIR}} for creating an \acronym{SEIR} model object,
@@ -82,21 +66,8 @@ select_matrix_SEIR <- function() {
 ##' Create an \acronym{SEIR} model to be used by the simulation
 ##' framework.
 ##'
-##' The \acronym{SEIR} model contains four compartments: number of
-##' susceptible (S), number of exposed (E) (those who have been
-##' infected but are not yet infectious), number of infectious (I),
-##' and number of recovered (R).  Moreover, it has three state
-##' transitions:
-##'
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{
-##'   S -- beta S I / N --> E}
-##' \deqn{E \stackrel{\epsilon E}{\longrightarrow} I}{E -- epsilon E --> I}
-##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
-##'
-##' where \eqn{\beta} is the transmission rate, \eqn{\epsilon} is the
-##' incubation rate (inverse of the latent period), \eqn{\gamma} is the
-##' recovery rate, and \eqn{N = S + E + I + R} is the total population.
-##'
+##' @template SEIR-details
+##' @details
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{

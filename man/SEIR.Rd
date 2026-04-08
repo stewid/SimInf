@@ -52,20 +52,25 @@ Create an \acronym{SEIR} model to be used by the simulation
 framework.
 }
 \details{
-The \acronym{SEIR} model contains four compartments: number of
-susceptible (S), number of exposed (E) (those who have been
-infected but are not yet infectious), number of infectious (I),
-and number of recovered (R).  Moreover, it has three state
-transitions:
+The \acronym{SEIR} model extends the standard \acronym{SIR} model
+by adding an \strong{E}xposed (E) compartment for individuals who
+have been infected but are not yet infectious. This accounts for
+the latent period of the disease.
 
-\deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{
-  S -- beta S I / N --> E}
-\deqn{E \stackrel{\epsilon E}{\longrightarrow} I}{E -- epsilon E --> I}
-\deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
+The model is defined by three state transitions:
+\deqn{S \stackrel{\beta S I / N}{\longrightarrow} E}{ S -- beta S
+  I / N --> E}
+\deqn{E \stackrel{\epsilon E}{\longrightarrow} I}{E -- epsilon E
+--> I}
+\deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I -->
+R}
 
 where \eqn{\beta} is the transmission rate, \eqn{\epsilon} is the
-incubation rate (inverse of the latent period), \eqn{\gamma} is the
-recovery rate, and \eqn{N = S + E + I + R} is the total population.
+incubation rate (inverse of the latent period), \eqn{\gamma} is
+the recovery rate, and \eqn{N = S + E + I + R} is the total
+population size in each node. Here, \eqn{S}, \eqn{E}, \eqn{I}, and
+\eqn{R} represent the number of susceptible, exposed, infected,
+and recovered individuals in that specific node.
 
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:

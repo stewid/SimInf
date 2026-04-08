@@ -14,7 +14,7 @@ for \code{SimInf_model}, such as \code{\link{run}},
 }
 \details{
 The \acronym{SEIR} model extends the standard \acronym{SIR} model
-by adding an \strong{Exposed} (E) compartment for individuals who
+by adding an \strong{E}xposed (E) compartment for individuals who
 have been infected but are not yet infectious. This accounts for
 the latent period of the disease.
 
@@ -29,7 +29,9 @@ R}
 where \eqn{\beta} is the transmission rate, \eqn{\epsilon} is the
 incubation rate (inverse of the latent period), \eqn{\gamma} is
 the recovery rate, and \eqn{N = S + E + I + R} is the total
-population.
+population size in each node. Here, \eqn{S}, \eqn{E}, \eqn{I}, and
+\eqn{R} represent the number of susceptible, exposed, infected,
+and recovered individuals in that specific node.
 }
 \seealso{
 \code{\link{SEIR}} for creating an \acronym{SEIR} model object,
