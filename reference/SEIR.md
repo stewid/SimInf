@@ -81,19 +81,19 @@ the following columns:
 
 - S:
 
-  The number of susceptible in each node
+  The number of susceptible individuals in each node
 
 - E:
 
-  The number of exposed in each node
+  The number of exposed individuals in each node
 
 - I:
 
-  The number of infected in each node
+  The number of infected individuals in each node
 
 - R:
 
-  The number of recovered in each node
+  The number of recovered individuals in each node
 
 ## Examples
 
