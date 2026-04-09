@@ -193,11 +193,11 @@ trajectory(result)
 
 It is possible to assign different probabillities for the compartments
 that an event sample individuals from. If the weights in the select
-matrix $E$ are non-identical, individuals are sampled from a biased urn.
+matrix E are non-identical, individuals are sampled from a biased urn.
 To illustrate this, let us create movement events between two nodes for
-the built-in SIR model, where we start with 300 individuals ($S = 100$,
-$I = 100$, $R = 100$) in the first node and then move them, one by one,
-to the second node.
+the built-in SIR model, where we start with 300 individuals (S = 100, I
+= 100, R = 100) in the first node and then move them, one by one, to the
+second node.
 
 ``` r
 u0 <- data.frame(
@@ -242,24 +242,23 @@ selected regardless of compartment.
 
 The probability to sample an individual from each compartment is
 
-$$p_{S} = \frac{w_{S}*S}{w_{S}*S + w_{I}*I + w_{R}*R}$$
+p_S = \frac{w_S \* S}{w_S \* S + w_I \* I + w_R \* R}
 
-$$p_{I} = \frac{w_{I}*I}{w_{S}*S + w_{I}*I + w_{R}*R}$$
+p_I = \frac{w_I \* I}{w_S \* S + w_I \* I + w_R \* R}
 
-$$p_{R} = \frac{w_{R}*R}{w_{S}*S + w_{I}*I + w_{R}*R}$$
+p_R = \frac{w_R \* R}{w_S \* S + w_I \* I + w_R \* R}
 
-Where $w_{S}$, $w_{I}$ and $w_{R}$ are the weights in E. These
-probabilities are applied sequentially, that is the probability of
-choosing the next item is proportional to the weights amongst the
-remaining items.
+Where w_S, w_I and w_R are the weights in E. These probabilities are
+applied sequentially, that is the probability of choosing the next item
+is proportional to the weights amongst the remaining items.
 
 To modify these weights, we can use the
 [`select_matrix()`](http://stewid.github.io/SimInf/reference/select_matrix.md)
 replacement function with a `data.frame` to modify a model’s internal
 select matrix. In the SIR model, the 4th column of the select matrix
-($E\lbrack,4\rbrack$) is used for exit and transfer events, targeting
-all compartments (S, I, and R). By default, the weights are 1 for each
-compartment. Let us double the weight for the $I$ compartment while
+(E\[, 4\]) is used for exit and transfer events, targeting all
+compartments (S, I, and R). By default, the weights are 1 for each
+compartment. Let us double the weight for the I compartment while
 keeping the others at 1. We specify the compartment name, the column
 index (`select = 4`), and the desired weight (`value`).
 
@@ -281,10 +280,10 @@ plot(run(model), index = 2)
 likely of being selected for a movement
 event.](scheduled-events_files/figure-html/unnamed-chunk-13-1.png)
 
-**Figure 4.** The individuals in the $I$ compartment are more likely of
+**Figure 4.** The individuals in the I compartment are more likely of
 being selected for a movement event.
 
-Next, let us apply a much larger weight to the $I$ compartment.
+Next, let us apply a much larger weight to the I compartment.
 
 ``` r
 select_matrix(model) <- data.frame(
@@ -301,11 +300,10 @@ more likely of being selected for a movement event compared to the
 previous
 example.](scheduled-events_files/figure-html/unnamed-chunk-14-1.png)
 
-**Figure 5.** The individuals in the $I$ compartment are even more
-likely of being selected for a movement event compared to the previous
-example.
+**Figure 5.** The individuals in the I compartment are even more likely
+of being selected for a movement event compared to the previous example.
 
-Finally, increase the weight for the $R$ compartment as well.
+Finally, increase the weight for the R compartment as well.
 
 ``` r
 select_matrix(model) <- data.frame(
@@ -322,9 +320,9 @@ are more likely of being selected for a movement event compared to
 individuals in the \$S\$
 compartment.](scheduled-events_files/figure-html/unnamed-chunk-15-1.png)
 
-**Figure 6.** The individuals in the $I$ and $R$ compartments are more
+**Figure 6.** The individuals in the I and R compartments are more
 likely of being selected for a movement event compared to individuals in
-the $S$ compartment.
+the S compartment.
 
 ## Enter events: Adding individuals
 
@@ -378,18 +376,18 @@ plot(run(model))
 increases by 10 individuals at each scheduled
 event.](scheduled-events_files/figure-html/unnamed-chunk-17-1.png)
 
-**Figure 7.** The number of susceptible ($S$) individuals increases by
-10 individuals at each scheduled event.
+**Figure 7.** The number of susceptible (S) individuals increases by 10
+individuals at each scheduled event.
 
 ### Weighted sampling for enter events
 
-When the $E\lbrack,select\rbrack$ column contains multiple non-zero
-entries, the new individuals are distributed among the compartments with
-probability proportional to the weights. Let us demonstrate this by
-creating a scenario where newborns can enter either $S$ or $R$
-compartments. First, create the initial state and the scheduled events.
-We will use `select=1` and show how we can adjust the select matrix to
-include both the $S$ and $R$ compartments for that select value.
+When the E\[, select\] column contains multiple non-zero entries, the
+new individuals are distributed among the compartments with probability
+proportional to the weights. Let us demonstrate this by creating a
+scenario where newborns can enter either S or R compartments. First,
+create the initial state and the scheduled events. We will use
+`select=1` and show how we can adjust the select matrix to include both
+the S and R compartments for that select value.
 
 ``` r
 u0 <- data.frame(
@@ -458,7 +456,7 @@ plot(run(model))
 (\$R) individuals increases over
 time.](scheduled-events_files/figure-html/unnamed-chunk-22-1.png)
 
-**Figure 8.** The number of susceptible ($S$) and recovered (\$R)
+**Figure 8.** The number of susceptible (S) and recovered (\$R)
 individuals increases over time.
 
 Let us modify the E matrix so that newborns are more likely to enter the
@@ -478,8 +476,8 @@ plot(run(model))
 (\$S\$) compared to as recovered
 (\$R\$)](scheduled-events_files/figure-html/unnamed-chunk-23-1.png)
 
-**Figure 9.** Individuals are more likely to enter as susceptible ($S$)
-compared to as recovered ($R$)
+**Figure 9.** Individuals are more likely to enter as susceptible (S)
+compared to as recovered (R)
 
 ## Exit events: Removing individuals
 
@@ -525,8 +523,8 @@ plot(run(model))
 decreases by 5 individuals at each scheduled
 event.](scheduled-events_files/figure-html/unnamed-chunk-24-1.png)
 
-**Figure 10.** The number of susceptible ($S$) individuals decreases by
-5 individuals at each scheduled event.
+**Figure 10.** The number of susceptible (S) individuals decreases by 5
+individuals at each scheduled event.
 
 ### Weighted sampling for exit events
 
@@ -579,8 +577,8 @@ plot(run(model))
 decreases faster compared to susceptibles
 (\$S\$).](scheduled-events_files/figure-html/unnamed-chunk-26-1.png)
 
-**Figure 11.** The number of infected ($I$) individuals decreases faster
-compared to susceptibles ($S$).
+**Figure 11.** The number of infected (I) individuals decreases faster
+compared to susceptibles (S).
 
 ## Internal transfer events: Moving within a node
 
@@ -674,8 +672,8 @@ plot(run(model))
 increases at
 \$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-31-1.png)
 
-**Figure 12.** The number of recovered ($R$) individuals increases at
-$t = 10$.
+**Figure 12.** The number of recovered (R) individuals increases at
+t=10.
 
 ## Stochastic events using proportion
 
@@ -722,7 +720,7 @@ plot(run(model))
 ![\*\*Figure 13.\*\* The number of individuals decrease at
 \$t=10\$.](scheduled-events_files/figure-html/unnamed-chunk-33-1.png)
 
-**Figure 13.** The number of individuals decrease at $t = 10$.
+**Figure 13.** The number of individuals decrease at t=10.
 
 ## Processing order of simultaneous events
 
@@ -786,7 +784,7 @@ plot(run(model), range = FALSE)
 ![\*\*Figure 14.\*\* Multiple events have been processed at
 \$t=5\$.](scheduled-events_files/figure-html/unnamed-chunk-35-1.png)
 
-**Figure 14.** Multiple events have been processed at $t = 5$.
+**Figure 14.** Multiple events have been processed at t=5.
 
 ## Summary
 

@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Getting started with `mparse` • SimInf</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -102,9 +103,10 @@ node-specific parameters.</p>
 <code>transitions</code> argument, which is a character vector
 describing how individuals move between compartments. Each transition
 follows a standard format:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Source</mtext><mo>→</mo><mtext mathvariant="normal">Propensity</mtext><mo>→</mo><mtext mathvariant="normal">Destination</mtext></mrow><annotation encoding="application/x-tex">
-\text{Source} \rightarrow \text{Propensity} \rightarrow \text{Destination}
-</annotation></semantics></math></p>
+<p><span class="math display">
+\text{Source} \rightarrow \text{Propensity} \rightarrow
+\text{Destination}
+</span></p>
 <ul>
 <li>
 <strong>Source</strong>: The compartment the individual leaves.</li>
@@ -119,16 +121,10 @@ enters.</li>
 <h3 id="a-simple-si-model">A Simple SI Model<a class="anchor" aria-label="anchor" href="#a-simple-si-model"></a>
 </h3>
 <p>Let us start with a classic SI model where susceptible individuals
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
-become infected
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>)
-upon contact. The force of infection is often modeled as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mi>I</mi><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>S</mi><mo>+</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta I / (S + I)</annotation></semantics></math>,
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-is the transmission rate and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>+</mo><mi>I</mi></mrow><annotation encoding="application/x-tex">S + I</annotation></semantics></math>
-is the total population.</p>
+(<span class="math inline">S</span>) become infected (<span class="math inline">I</span>) upon contact. The force of infection is
+often modeled as <span class="math inline">\beta I / (S + I)</span>,
+where <span class="math inline">\beta</span> is the transmission rate
+and <span class="math inline">S + I</span> is the total population.</p>
 <p>We define the transition as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="st">"S -&gt; beta * S * I / (S + I) -&gt; I"</span></span></code></pre></div>
@@ -144,8 +140,8 @@ is the total population.</p>
 </h3>
 <p>To create a standard SIR model, we add a second transition where
 infected individuals recover and move to the recovered compartment (R).
-The recovery rate is typically
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\gamma I</annotation></semantics></math>.</p>
+The recovery rate is typically <span class="math inline">\gamma
+I</span>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"S -&gt; beta * S * I / (S + I + R) -&gt; I"</span>,</span>
@@ -275,21 +271,18 @@ for population size. The results are identical to Figure 1.
 </h3>
 <p>In stochastic simulations, it is possible for a node to become empty
 (e.g., all individuals die or move away). If a transition involves
-dividing by the total population
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>,
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
-becomes zero, the resulting rate is undefined. SimInf detects this issue
-and stops the simulation with an “Invalid rate detected” error.</p>
+dividing by the total population <span class="math inline">N</span>, and
+<span class="math inline">N</span> becomes zero, the resulting rate is
+undefined. SimInf detects this issue and stops the simulation with an
+“Invalid rate detected” error.</p>
 <p>Since <code>mparse</code> translates the propensity expressions into
 C code, we can use the C <strong>ternary operator</strong>
 (<code>condition ? true_value : false_value</code>) to handle this
 gracefully.</p>
 <p>The syntax <code>a ? b : c</code> evaluates to <code>b</code> if
 <code>a</code> is true, and <code>c</code> otherwise. For example, to
-avoid dividing by zero when
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">N = 0</annotation></semantics></math>,
-we can write:</p>
+avoid dividing by zero when <span class="math inline">N = 0</span>, we
+can write:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"S -&gt; N &gt; 0 ? beta * S * I / N : 0 -&gt; I"</span>,</span>
@@ -299,14 +292,11 @@ we can write:</p>
 <p>Here, the expression <code>N &gt; 0 ? beta * S * I / N : 0</code>
 works as follows:</p>
 <ul>
-<li>If
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">N&gt;0</annotation></semantics></math>,
-the force of infection is calculated normally.</li>
-<li>If
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">N=0</annotation></semantics></math>,
-the rate is set to 0, preventing the division and allowing the
-simulation to continue (effectively, no new infections can occur in an
-empty population).</li>
+<li>If <span class="math inline">N&gt;0</span>, the force of infection
+is calculated normally.</li>
+<li>If <span class="math inline">N=0</span>, the rate is set to 0,
+preventing the division and allowing the simulation to continue
+(effectively, no new infections can occur in an empty population).</li>
 </ul>
 <p>This is a robust pattern for any propensity that involves division by
 a dynamic quantity, such as the total population size.</p>
@@ -351,12 +341,10 @@ biological recovery rate remains constant across all farms.</p>
 <ul>
 <li>
 <strong>Global Data (<code>gdata</code>)</strong>: Parameters shared
-by all nodes (e.g., recovery rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>).</li>
+by all nodes (e.g., recovery rate <span class="math inline">\gamma</span>).</li>
 <li>
 <strong>Local Data (<code>ldata</code>)</strong>: Parameters
-specific to each node (e.g., transmission rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>).</li>
+specific to each node (e.g., transmission rate <span class="math inline">\beta</span>).</li>
 </ul>
 <div class="section level3">
 <h3 id="a-two-farm-model">A Two-Farm Model<a class="anchor" aria-label="anchor" href="#a-two-farm-model"></a>
@@ -512,11 +500,9 @@ susceptible individuals at rate <code>lambda</code>.</li>
 </h3>
 <p>To illustrate a more complex system where births and deaths drive the
 dynamics, consider the Rosenzweig-MacArthur predator-prey model. In this
-model, prey
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>)
-grow logistically and are consumed by predators
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math>),
-while predators die naturally and reproduce based on consumption.</p>
+model, prey (<span class="math inline">R</span>) grow logistically and
+are consumed by predators (<span class="math inline">F</span>), while
+predators die naturally and reproduce based on consumption.</p>
 <p>This example demonstrates how <code>mparse</code> handles:</p>
 <ul>
 <li>
@@ -532,32 +518,30 @@ set <code>@</code>.</li>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Prey Birth</strong>: New prey are born at a rate dependent
-on the current population.
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>∅</mi><mover><mo>→</mo><mrow><msub><mi>b</mi><mi>R</mi></msub><mo>⋅</mo><mi>R</mi></mrow></mover><mi>R</mi></mrow><annotation encoding="application/x-tex"> \emptyset \xrightarrow{b_R \cdot R} R </annotation></semantics></math>
+on the current population. <span class="math display"> \emptyset
+\xrightarrow{b_R \cdot R} R </span>
 </li>
 <li>
 <strong>Prey Death (Natural)</strong>: Prey die due to competition
-or natural causes.
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mover><mo>→</mo><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>d</mi><mi>R</mi></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>b</mi><mi>R</mi></msub><mo>−</mo><msub><mi>d</mi><mi>R</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>R</mi><mi>/</mi><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>R</mi></mrow></mover><mi>∅</mi></mrow><annotation encoding="application/x-tex"> R \xrightarrow{(d_R + (b_R - d_R) \cdot R / K) \cdot
-R} \emptyset </annotation></semantics></math>
+or natural causes. <span class="math display"> R \xrightarrow{(d_R +
+(b_R - d_R) \cdot R / K) \cdot
+R} \emptyset </span>
 </li>
 <li>
 <strong>Prey Death (Predation)</strong>: Prey are eaten by
-predators.
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mover><mo>→</mo><mrow><mfrac><mi>α</mi><mrow><mn>1</mn><mo>+</mo><mi>w</mi><mo>⋅</mo><mi>R</mi></mrow></mfrac><mo>⋅</mo><mi>R</mi><mo>⋅</mo><mi>F</mi></mrow></mover><mi>∅</mi></mrow><annotation encoding="application/x-tex"> R
+predators. <span class="math display"> R
 \xrightarrow{\frac{\alpha}{1 + w \cdot R} \cdot R \cdot F}
-\emptyset </annotation></semantics></math>
+\emptyset </span>
 </li>
 <li>
 <strong>Predator Birth</strong>: Predators reproduce based on the
-energy gained from eating prey.
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>∅</mi><mover><mo>→</mo><mrow><msub><mi>b</mi><mi>F</mi></msub><mo>⋅</mo><mfrac><mi>α</mi><mrow><mn>1</mn><mo>+</mo><mi>w</mi><mo>⋅</mo><mi>R</mi></mrow></mfrac><mo>⋅</mo><mi>R</mi><mo>⋅</mo><mi>F</mi></mrow></mover><mi>F</mi></mrow><annotation encoding="application/x-tex"> \emptyset \xrightarrow{b_F \cdot
-\frac{\alpha}{1 + w \cdot R} \cdot R \cdot F} F </annotation></semantics></math>
+energy gained from eating prey. <span class="math display"> \emptyset
+\xrightarrow{b_F \cdot
+\frac{\alpha}{1 + w \cdot R} \cdot R \cdot F} F </span>
 </li>
 <li>
-<strong>Predator Death</strong>: Predators die naturally.
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mover><mo>→</mo><mrow><msub><mi>d</mi><mi>F</mi></msub><mo>⋅</mo><mi>F</mi></mrow></mover><mi>∅</mi></mrow><annotation encoding="application/x-tex"> F
-\xrightarrow{d_F \cdot F} \emptyset </annotation></semantics></math>
+<strong>Predator Death</strong>: Predators die naturally. <span class="math display"> F
+\xrightarrow{d_F \cdot F} \emptyset </span>
 </li>
 </ol>
 <p>In <code>mparse</code> syntax, these transitions are written as:</p>
@@ -652,35 +636,22 @@ the infectious period is exponentially distributed. A more realistic
 assumption is often a Gamma distribution with an integer shape
 parameter, also known as an <strong>Erlang distribution</strong>.</p>
 <p>In SimInf, the Erlang distribution can be implemented by splitting
-the infectious stage into a sequence of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-independent compartments
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mn>1</mn></msub><mo>,</mo><msub><mi>I</mi><mn>2</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>I</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">I_1, I_2, \dots, I_k</annotation></semantics></math>).
-An individual must pass through each stage sequentially before
-recovering. This results in a waiting time that follows an Erlang
-distribution with shape
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>.</p>
+the infectious stage into a sequence of <span class="math inline">k</span> independent compartments (<span class="math inline">I_1, I_2, \dots, I_k</span>). An individual must
+pass through each stage sequentially before recovering. This results in
+a waiting time that follows an Erlang distribution with shape <span class="math inline">k</span>.</p>
 <p>Let us illustrate this with an SIR model where the infectious period
-follows an Erlang distribution with shape
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">k=4</annotation></semantics></math>.
-We define four infectious compartments:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mn>1</mn></msub><mo>,</mo><msub><mi>I</mi><mn>2</mn></msub><mo>,</mo><msub><mi>I</mi><mn>3</mn></msub><mo>,</mo><msub><mi>I</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">I_1, I_2, I_3, I_4</annotation></semantics></math>.</p>
+follows an Erlang distribution with shape <span class="math inline">k=4</span>. We define four infectious compartments:
+<span class="math inline">I_1, I_2, I_3, I_4</span>.</p>
 <p>The transitions are:</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Infection</strong>: Susceptible individuals move to the
-first infectious stage
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mn>1</mn></msub><annotation encoding="application/x-tex">I_1</annotation></semantics></math>).</li>
+first infectious stage (<span class="math inline">I_1</span>).</li>
 <li>
-<strong>Progression</strong>: Individuals move from
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mn>1</mn></msub><mo>→</mo><msub><mi>I</mi><mn>2</mn></msub><mo>→</mo><msub><mi>I</mi><mn>3</mn></msub><mo>→</mo><msub><mi>I</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">I_1 \to I_2 \to I_3 \to
-I_4</annotation></semantics></math> at rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>.</li>
+<strong>Progression</strong>: Individuals move from <span class="math inline">I_1 \to I_2 \to I_3 \to
+I_4</span> at rate <span class="math inline">\gamma</span>.</li>
 <li>
-<strong>Recovery</strong>: Individuals move from
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mn>4</mn></msub><mo>→</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">I_4 \to R</annotation></semantics></math>
-at rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>.</li>
+<strong>Recovery</strong>: Individuals move from <span class="math inline">I_4 \to R</span> at rate <span class="math inline">\gamma</span>.</li>
 </ol>
 <p>In <code>mparse</code> syntax:</p>
 <p>Notice that we can define variables that depend on other variables.

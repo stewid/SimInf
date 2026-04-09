@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Scheduled events • SimInf</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -244,16 +245,12 @@ the outcome in each node in detail.</p>
 </h2>
 <p>It is possible to assign different probabillities for the
 compartments that an event sample individuals from. If the weights in
-the select matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
-are non-identical, individuals are sampled from a biased urn. To
-illustrate this, let us create movement events between two nodes for the
-built-in SIR model, where we start with 300 individuals
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">S = 100</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">I = 100</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">R = 100</annotation></semantics></math>)
-in the first node and then move them, one by one, to the second
-node.</p>
+the select matrix <span class="math inline">E</span> are non-identical,
+individuals are sampled from a biased urn. To illustrate this, let us
+create movement events between two nodes for the built-in SIR model,
+where we start with 300 individuals (<span class="math inline">S =
+100</span>, <span class="math inline">I = 100</span>, <span class="math inline">R = 100</span>) in the first node and then move
+them, one by one, to the second node.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span><span class="op">)</span>,</span>
@@ -290,34 +287,28 @@ being selected regardless of compartment.
 </p>
 </div>
 <p>The probability to sample an individual from each compartment is</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>S</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>w</mi><mi>S</mi></msub><mo>*</mo><mi>S</mi></mrow><mrow><msub><mi>w</mi><mi>S</mi></msub><mo>*</mo><mi>S</mi><mo>+</mo><msub><mi>w</mi><mi>I</mi></msub><mo>*</mo><mi>I</mi><mo>+</mo><msub><mi>w</mi><mi>R</mi></msub><mo>*</mo><mi>R</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">
 p_S = \frac{w_S * S}{w_S * S + w_I * I + w_R * R}
-</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>I</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>w</mi><mi>I</mi></msub><mo>*</mo><mi>I</mi></mrow><mrow><msub><mi>w</mi><mi>S</mi></msub><mo>*</mo><mi>S</mi><mo>+</mo><msub><mi>w</mi><mi>I</mi></msub><mo>*</mo><mi>I</mi><mo>+</mo><msub><mi>w</mi><mi>R</mi></msub><mo>*</mo><mi>R</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+</span></p>
+<p><span class="math display">
 p_I = \frac{w_I * I}{w_S * S + w_I * I + w_R * R}
-</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>R</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>w</mi><mi>R</mi></msub><mo>*</mo><mi>R</mi></mrow><mrow><msub><mi>w</mi><mi>S</mi></msub><mo>*</mo><mi>S</mi><mo>+</mo><msub><mi>w</mi><mi>I</mi></msub><mo>*</mo><mi>I</mi><mo>+</mo><msub><mi>w</mi><mi>R</mi></msub><mo>*</mo><mi>R</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+</span></p>
+<p><span class="math display">
 p_R = \frac{w_R * R}{w_S * S + w_I * I + w_R * R}
-</annotation></semantics></math></p>
-<p>Where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>S</mi></msub><annotation encoding="application/x-tex">w_S</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>I</mi></msub><annotation encoding="application/x-tex">w_I</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>R</mi></msub><annotation encoding="application/x-tex">w_R</annotation></semantics></math>
+</span></p>
+<p>Where <span class="math inline">w_S</span>, <span class="math inline">w_I</span> and <span class="math inline">w_R</span>
 are the weights in E. These probabilities are applied sequentially, that
 is the probability of choosing the next item is proportional to the
 weights amongst the remaining items.</p>
 <p>To modify these weights, we can use the <code><a href="../reference/select_matrix.html">select_matrix()</a></code>
 replacement function with a <code>data.frame</code> to modify a model’s
 internal select matrix. In the SIR model, the 4th column of the select
-matrix
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mo>,</mo><mn>4</mn><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">E[,
-4]</annotation></semantics></math>) is used for exit and transfer
-events, targeting all compartments (S, I, and R). By default, the
-weights are 1 for each compartment. Let us double the weight for the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
-compartment while keeping the others at 1. We specify the compartment
-name, the column index (<code>select = 4</code>), and the desired weight
+matrix (<span class="math inline">E[,
+4]</span>) is used for exit and transfer events, targeting all
+compartments (S, I, and R). By default, the weights are 1 for each
+compartment. Let us double the weight for the <span class="math inline">I</span> compartment while keeping the others at 1.
+We specify the compartment name, the column index
+(<code>select = 4</code>), and the desired weight
 (<code>value</code>).</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -330,14 +321,11 @@ name, the column index (<code>select = 4</code>), and the desired weight
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="**Figure 4.** The individuals in the $I$ compartment are more likely of being selected for a movement event." width="672"><p class="caption">
-<strong>Figure 4.</strong> The individuals in the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
-compartment are more likely of being selected for a movement event.
+<strong>Figure 4.</strong> The individuals in the <span class="math inline">I</span> compartment are more likely of being
+selected for a movement event.
 </p>
 </div>
-<p>Next, let us apply a much larger weight to the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
-compartment.</p>
+<p>Next, let us apply a much larger weight to the <span class="math inline">I</span> compartment.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
@@ -348,15 +336,11 @@ compartment.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="**Figure 5.** The individuals in the $I$ compartment are even more likely of being selected for a movement event compared to the previous example." width="672"><p class="caption">
-<strong>Figure 5.</strong> The individuals in the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
-compartment are even more likely of being selected for a movement event
-compared to the previous example.
+<strong>Figure 5.</strong> The individuals in the <span class="math inline">I</span> compartment are even more likely of being
+selected for a movement event compared to the previous example.
 </p>
 </div>
-<p>Finally, increase the weight for the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
-compartment as well.</p>
+<p>Finally, increase the weight for the <span class="math inline">R</span> compartment as well.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_matrix.html">select_matrix</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span>
@@ -367,13 +351,9 @@ compartment as well.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="**Figure 6.** The individuals in the $I$ and $R$ compartments are more likely of being selected for a movement event compared to individuals in the $S$ compartment." width="672"><p class="caption">
-<strong>Figure 6.</strong> The individuals in the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+<strong>Figure 6.</strong> The individuals in the <span class="math inline">I</span> and <span class="math inline">R</span>
 compartments are more likely of being selected for a movement event
-compared to individuals in the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+compared to individuals in the <span class="math inline">S</span>
 compartment.
 </p>
 </div>
@@ -423,31 +403,22 @@ matrix).</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="**Figure 7.** The number of susceptible ($S$) individuals increases by 10 individuals at each scheduled event." width="672"><p class="caption">
-<strong>Figure 7.</strong> The number of susceptible
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
-individuals increases by 10 individuals at each scheduled event.
+<strong>Figure 7.</strong> The number of susceptible (<span class="math inline">S</span>) individuals increases by 10 individuals at
+each scheduled event.
 </p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="weighted-sampling-for-enter-events">Weighted sampling for enter events<a class="anchor" aria-label="anchor" href="#weighted-sampling-for-enter-events"></a>
 </h3>
-<p>When the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">[</mo><mo>,</mo><mi>s</mi><mi>e</mi><mi>l</mi><mi>e</mi><mi>c</mi><mi>t</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">E[, select]</annotation></semantics></math>
-column contains multiple non-zero entries, the new individuals are
-distributed among the compartments with probability proportional to the
-weights. Let us demonstrate this by creating a scenario where newborns
-can enter either
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-or
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+<p>When the <span class="math inline">E[, select]</span> column contains
+multiple non-zero entries, the new individuals are distributed among the
+compartments with probability proportional to the weights. Let us
+demonstrate this by creating a scenario where newborns can enter either
+<span class="math inline">S</span> or <span class="math inline">R</span>
 compartments. First, create the initial state and the scheduled events.
 We will use <code>select=1</code> and show how we can adjust the select
-matrix to include both the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
-compartments for that select value.</p>
+matrix to include both the <span class="math inline">S</span> and <span class="math inline">R</span> compartments for that select value.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fl">20</span>,</span>
@@ -499,9 +470,8 @@ the default, however, for clarity we specifically set that value.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-22-1.png" class="r-plt" alt="**Figure 8.** The number of susceptible ($S$) and recovered ($R) individuals increases over time." width="672"><p class="caption">
-<strong>Figure 8.</strong> The number of susceptible
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
-and recovered ($R) individuals increases over time.
+<strong>Figure 8.</strong> The number of susceptible (<span class="math inline">S</span>) and recovered ($R) individuals increases
+over time.
 </p>
 </div>
 <p>Let us modify the E matrix so that newborns are more likely to enter
@@ -517,10 +487,8 @@ the S compartment compared to the R compartment.</p>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-23-1.png" class="r-plt" alt="**Figure 9.** Individuals are more likely to enter as susceptible ($S$) compared to as recovered ($R$)" width="672"><p class="caption">
 <strong>Figure 9.</strong> Individuals are more likely to enter as
-susceptible
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
-compared to as recovered
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>)
+susceptible (<span class="math inline">S</span>) compared to as
+recovered (<span class="math inline">R</span>)
 </p>
 </div>
 </div>
@@ -565,9 +533,8 @@ compartments are selected.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" alt="**Figure 10.** The number of susceptible ($S$) individuals decreases by 5 individuals at each scheduled event." width="672"><p class="caption">
-<strong>Figure 10.</strong> The number of susceptible
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>)
-individuals decreases by 5 individuals at each scheduled event.
+<strong>Figure 10.</strong> The number of susceptible (<span class="math inline">S</span>) individuals decreases by 5 individuals at
+each scheduled event.
 </p>
 </div>
 </div>
@@ -615,10 +582,8 @@ individuals more likely to be removed:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-26-1.png" class="r-plt" alt="**Figure 11.** The number of infected ($I$) individuals decreases faster compared to susceptibles ($S$)." width="672"><p class="caption">
-<strong>Figure 11.</strong> The number of infected
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>)
-individuals decreases faster compared to susceptibles
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>).
+<strong>Figure 11.</strong> The number of infected (<span class="math inline">I</span>) individuals decreases faster compared to
+susceptibles (<span class="math inline">S</span>).
 </p>
 </div>
 </div>
@@ -696,10 +661,7 @@ rows to move from compartment p.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-31-1.png" class="r-plt" alt="**Figure 12.** The number of recovered ($R$) individuals increases at $t=10$." width="672"><p class="caption">
-<strong>Figure 12.</strong> The number of recovered
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>)
-individuals increases at
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">t=10</annotation></semantics></math>.
+<strong>Figure 12.</strong> The number of recovered (<span class="math inline">R</span>) individuals increases at <span class="math inline">t=10</span>.
 </p>
 </div>
 </div>
@@ -744,8 +706,7 @@ population.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-33-1.png" class="r-plt" alt="**Figure 13.** The number of individuals decrease at $t=10$." width="672"><p class="caption">
-<strong>Figure 13.</strong> The number of individuals decrease at
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">t=10</annotation></semantics></math>.
+<strong>Figure 13.</strong> The number of individuals decrease at <span class="math inline">t=10</span>.
 </p>
 </div>
 </div>
@@ -814,8 +775,7 @@ within-node movements happen before between-node movements.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-35-1.png" class="r-plt" alt="**Figure 14.** Multiple events have been processed at $t=5$." width="672"><p class="caption">
-<strong>Figure 14.</strong> Multiple events have been processed at
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">t=5</annotation></semantics></math>.
+<strong>Figure 14.</strong> Multiple events have been processed at <span class="math inline">t=5</span>.
 </p>
 </div>
 </div>

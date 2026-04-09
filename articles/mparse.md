@@ -33,7 +33,8 @@ The core component of `mparse` is the `transitions` argument, which is a
 character vector describing how individuals move between compartments.
 Each transition follows a standard format:
 
-$$\left. \text{Source}\rightarrow\text{Propensity}\rightarrow\text{Destination} \right.$$
+\text{Source} \rightarrow \text{Propensity} \rightarrow
+\text{Destination}
 
 - **Source**: The compartment the individual leaves.
 - **Propensity**: The rate at which the transition occurs (a
@@ -42,10 +43,10 @@ $$\left. \text{Source}\rightarrow\text{Propensity}\rightarrow\text{Destination} 
 
 ### A Simple SI Model
 
-Let us start with a classic SI model where susceptible individuals ($S$)
-become infected ($I$) upon contact. The force of infection is often
-modeled as $\beta I/(S + I)$, where $\beta$ is the transmission rate and
-$S + I$ is the total population.
+Let us start with a classic SI model where susceptible individuals (S)
+become infected (I) upon contact. The force of infection is often
+modeled as \beta I / (S + I), where \beta is the transmission rate and
+S + I is the total population.
 
 We define the transition as follows:
 
@@ -63,7 +64,7 @@ Here:
 
 To create a standard SIR model, we add a second transition where
 infected individuals recover and move to the recovered compartment (R).
-The recovery rate is typically $\gamma I$.
+The recovery rate is typically \gamma I.
 
 ``` r
 transitions <- c(
@@ -199,16 +200,16 @@ size. The results are identical to Figure 1.
 
 In stochastic simulations, it is possible for a node to become empty
 (e.g., all individuals die or move away). If a transition involves
-dividing by the total population $N$, and $N$ becomes zero, the
-resulting rate is undefined. SimInf detects this issue and stops the
-simulation with an “Invalid rate detected” error.
+dividing by the total population N, and N becomes zero, the resulting
+rate is undefined. SimInf detects this issue and stops the simulation
+with an “Invalid rate detected” error.
 
 Since `mparse` translates the propensity expressions into C code, we can
 use the C **ternary operator** (`condition ? true_value : false_value`)
 to handle this gracefully.
 
 The syntax `a ? b : c` evaluates to `b` if `a` is true, and `c`
-otherwise. For example, to avoid dividing by zero when $N = 0$, we can
+otherwise. For example, to avoid dividing by zero when N = 0, we can
 write:
 
 ``` r
@@ -221,10 +222,10 @@ transitions <- c(
 
 Here, the expression `N > 0 ? beta * S * I / N : 0` works as follows:
 
-- If $N > 0$, the force of infection is calculated normally.
-- If $N = 0$, the rate is set to 0, preventing the division and allowing
-  the simulation to continue (effectively, no new infections can occur
-  in an empty population).
+- If N\>0, the force of infection is calculated normally.
+- If N=0, the rate is set to 0, preventing the division and allowing the
+  simulation to continue (effectively, no new infections can occur in an
+  empty population).
 
 This is a robust pattern for any propensity that involves division by a
 dynamic quantity, such as the total population size.
@@ -270,9 +271,9 @@ constant across all farms.
 SimInf distinguishes between two types of data:
 
 - **Global Data (`gdata`)**: Parameters shared by all nodes (e.g.,
-  recovery rate $\gamma$).
+  recovery rate \gamma).
 - **Local Data (`ldata`)**: Parameters specific to each node (e.g.,
-  transmission rate $\beta$).
+  transmission rate \beta).
 
 ### A Two-Farm Model
 
@@ -423,7 +424,7 @@ In this section, we focus on the `@` syntax for continuous processes.
 
 To illustrate a more complex system where births and deaths drive the
 dynamics, consider the Rosenzweig-MacArthur predator-prey model. In this
-model, prey ($R$) grow logistically and are consumed by predators ($F$),
+model, prey (R) grow logistically and are consumed by predators (F),
 while predators die naturally and reproduce based on consumption.
 
 This example demonstrates how `mparse` handles:
@@ -436,17 +437,17 @@ This example demonstrates how `mparse` handles:
 The model consists of five transitions:
 
 1.  **Prey Birth**: New prey are born at a rate dependent on the current
-    population. $$\varnothing\overset{b_{R} \cdot R}{\rightarrow}R$$
+    population. \emptyset \xrightarrow{b_R \cdot R} R
 2.  **Prey Death (Natural)**: Prey die due to competition or natural
-    causes.
-    $$R\overset{{(d_{R} + {(b_{R} - d_{R})} \cdot R/K)} \cdot R}{\rightarrow}\varnothing$$
-3.  **Prey Death (Predation)**: Prey are eaten by predators.
-    $$R\overset{\frac{\alpha}{1 + w \cdot R} \cdot R \cdot F}{\rightarrow}\varnothing$$
+    causes. R \xrightarrow{(d_R + (b_R - d_R) \cdot R / K) \cdot R}
+    \emptyset
+3.  **Prey Death (Predation)**: Prey are eaten by predators. R
+    \xrightarrow{\frac{\alpha}{1 + w \cdot R} \cdot R \cdot F} \emptyset
 4.  **Predator Birth**: Predators reproduce based on the energy gained
-    from eating prey.
-    $$\varnothing\overset{b_{F} \cdot \frac{\alpha}{1 + w \cdot R} \cdot R \cdot F}{\rightarrow}F$$
-5.  **Predator Death**: Predators die naturally.
-    $$F\overset{d_{F} \cdot F}{\rightarrow}\varnothing$$
+    from eating prey. \emptyset \xrightarrow{b_F \cdot \frac{\alpha}{1 +
+    w \cdot R} \cdot R \cdot F} F
+5.  **Predator Death**: Predators die naturally. F \xrightarrow{d_F
+    \cdot F} \emptyset
 
 In `mparse` syntax, these transitions are written as:
 
@@ -553,24 +554,22 @@ assumption is often a Gamma distribution with an integer shape
 parameter, also known as an **Erlang distribution**.
 
 In SimInf, the Erlang distribution can be implemented by splitting the
-infectious stage into a sequence of $k$ independent compartments
-($I_{1},I_{2},\ldots,I_{k}$). An individual must pass through each stage
+infectious stage into a sequence of k independent compartments (I_1,
+I_2, \dots, I_k). An individual must pass through each stage
 sequentially before recovering. This results in a waiting time that
-follows an Erlang distribution with shape $k$.
+follows an Erlang distribution with shape k.
 
 Let us illustrate this with an SIR model where the infectious period
-follows an Erlang distribution with shape $k = 4$. We define four
-infectious compartments: $I_{1},I_{2},I_{3},I_{4}$.
+follows an Erlang distribution with shape k=4. We define four infectious
+compartments: I_1, I_2, I_3, I_4.
 
 The transitions are:
 
 1.  **Infection**: Susceptible individuals move to the first infectious
-    stage ($I_{1}$).
-2.  **Progression**: Individuals move from
-    $\left. I_{1}\rightarrow I_{2}\rightarrow I_{3}\rightarrow I_{4} \right.$
-    at rate $\gamma$.
-3.  **Recovery**: Individuals move from
-    $\left. I_{4}\rightarrow R \right.$ at rate $\gamma$.
+    stage (I_1).
+2.  **Progression**: Individuals move from I_1 \to I_2 \to I_3 \to I_4
+    at rate \gamma.
+3.  **Recovery**: Individuals move from I_4 \to R at rate \gamma.
 
 In `mparse` syntax:
 
