@@ -516,10 +516,31 @@ setMethod(
 
 ##' Display the ABC posterior distribution
 ##'
-##' @param x The \code{SimInf_abc} object to plot.
-##' @param y The generation to plot. The default is to display the
-##'     last generation.
-##' @param ... Additional arguments affecting the plot.
+##' Produce diagnostic plots of the Approximate Bayesian Computation
+##' (ABC) posterior distribution stored in a \code{SimInf_abc} object.
+##'
+##' The function generates a scatterplot matrix of the parameter
+##' values for the specified generation:
+##' \itemize{
+##'   \item \strong{Diagonal panels}: Display a normalized density
+##'     estimate with a rug plot showing individual samples.
+##'   \item \strong{Upper triangular panels}: Display scatterplots of
+##'     the raw parameter samples for each pair of variables.
+##'   \item \strong{Lower triangular panels}: Display contour lines
+##'     representing the 2D kernel density estimate of the joint
+##'     distribution between parameter pairs.
+##' }
+##' If only a single parameter is selected, a single density plot with
+##' a rug is produced.
+##'
+##' @param x The \code{SimInf_abc} object containing the ABC results.
+##' @param y The generation number to plot. The default is
+##'     \code{NULL}, which displays the \strong{last} generation (the
+##'     final posterior).  Specify an integer to view intermediate
+##'     generations for convergence diagnostics.
+##' @param ... Additional graphical arguments passed to the underlying
+##'     plotting functions (e.g., \code{col} for contour colors,
+##'     \code{lwd}).
 ##' @aliases plot,SimInf_abc-method
 ##' @export
 ##' @include abc.R
