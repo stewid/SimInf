@@ -45,7 +45,7 @@ compartments_SEIR <- function() {
     c("S", "E", "I", "R")
 }
 
-##' Select matrix for events in the \acronym{SEIR} model
+##' Select matrix for events in the SEIR model
 ##'
 ##' Internal function returning the 4x2 select matrix (E) that maps
 ##' SEIR compartments (rows) to event types (columns) for event
