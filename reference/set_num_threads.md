@@ -1,12 +1,7 @@
 # Specify the number of threads that SimInf should use
 
 Set the number of threads to be used in SimInf code that is parallelized
-with OpenMP (if available). The number of threads is initialized when
-SimInf is first loaded in the R session using optional envioronment
-variables (see ‘Details’). It is also possible to specify the number of
-threads by calling `set_num_threads`. If the environment variables that
-affect the number of threads change, then `set_num_threads` must be
-called again for it to take effect.
+with OpenMP (if available).
 
 ## Usage
 
@@ -18,29 +13,35 @@ set_num_threads(threads = NULL)
 
 - threads:
 
-  integer with maximum number of threads to use in functions that are
-  parallelized with OpenMP (if available). Default is NULL, i.e. to use
-  all available processors and then check for limits in the environment
-  varibles (see ‘Details’).
+  Integer specifying the maximum number of threads to use in
+  OpenMP-parallelized functions. If `NULL` (default), SimInf attempts to
+  use all available processors, subject to the limits imposed by the
+  environment variables listed above.
 
 ## Value
 
-The previous value is returned (invisible).
+The previous value of the thread count is returned invisibly.
 
 ## Details
 
-The `omp_get_num_procs()` function is used to determine the number of
-processors that are available to the device at the time the routine is
-called. The number of threads is then limited by
-`omp_get_thread_limit()` and the current values of the environmental
-variables (if set)
+The number of threads is initialized when SimInf is first loaded in the
+R session, based on optional environment variables (see ‘Details’). It
+can also be explicitly set by calling `set_num_threads`. If the
+environment variables affecting the thread count change,
+`set_num_threads` must be called again for the new values to take
+effect.
 
-- `Sys.getenv("OMP_THREAD_LIMIT")`
+The function determines the number of available processors using
+`omp_get_num_procs()` and limits the thread count based on
+`omp_get_thread_limit()` and the following environment variables
+(checked in order of precedence):
 
-- `Sys.getenv("OMP_NUM_THREADS")`
+- `SIMINF_NUM_THREADS`: Specific limit for SimInf.
 
-- `Sys.getenv("SIMINF_NUM_THREADS")`
+- `OMP_NUM_THREADS`: General OpenMP limit.
 
-Additionally, the maximum number of threads can be controlled by the
-`threads` argument, given that its value is not above any of the limits
-described above.
+- `OMP_THREAD_LIMIT`: Maximum thread limit.
+
+The `threads` argument allows you to override these limits, provided the
+requested value does not exceed the maximum allowed by the environment
+or hardware constraints.
