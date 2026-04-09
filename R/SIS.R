@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SIS} model
+##' Class SIS
 ##'
 ##' Class to handle the \acronym{SIS} model. This class inherits from
 ##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIS}
@@ -42,7 +42,7 @@ compartments_SIS <- function() {
     c("S", "I")
 }
 
-##' Select matrix for events in the \acronym{SIS} model
+##' Select matrix for events in the SIS model
 ##'
 ##' Internal function returning the 2x2 select matrix (E) that maps
 ##' SIS compartments (rows) to event types (columns) for event
@@ -58,7 +58,7 @@ select_matrix_SIS <- function() {
            dimnames = list(compartments_SIS(), seq_len(2)))
 }
 
-##' Create an \acronym{SIS} model
+##' Create an SIS model
 ##'
 ##' Create an \acronym{SIS} model to be used by the simulation
 ##' framework.
@@ -131,7 +131,7 @@ SIS <- function(u0,
     methods::as(model, "SIS")
 }
 
-##' Example event data for the \acronym{SIS} model with cattle herds
+##' Example event data for the SIS model with cattle herds
 ##'
 ##' Dataset containing 466,692 scheduled events for a population of
 ##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
@@ -196,7 +196,7 @@ events_SIS <- function() {
     events_SISe()
 }
 
-##' Example initial population data for the \acronym{SIS} model
+##' Example initial population data for the SIS model
 ##'
 ##' Dataset containing the initial number of susceptible and infected
 ##' cattle across 1,600 herds. Provides realistic population structure

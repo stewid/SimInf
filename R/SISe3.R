@@ -19,7 +19,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SISe3} model
+##' Class SISe3
 ##'
 ##' Class to handle the SISe3 \code{\link{SimInf_model}} model.
 ##' @include SimInf_model.R
@@ -32,7 +32,7 @@ compartments_SISe3 <- function() {
     c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
 }
 
-##' Select matrix for events in the \acronym{SISe3} model
+##' Select matrix for events in the SISe3 model
 ##'
 ##' Internal function returning the 6x6 select matrix (E) that maps
 ##' SISe3 compartments (rows) to event types (columns) for event
@@ -231,7 +231,7 @@ SISe3 <- function(u0,
     methods::as(model, "SISe3")
 }
 
-##' Example event data for the \acronym{SISe3} model with cattle herds
+##' Example event data for the SISe3 model with cattle herds
 ##'
 ##' Dataset containing 783,773 scheduled events for a population of
 ##' 1,600 cattle herds stratified by age over 1,460 days (4
@@ -313,7 +313,7 @@ SISe3 <- function(u0,
 ##' @example man/examples/SISe3.R
 NULL
 
-##' Example initial population data for the \acronym{SISe3} model
+##' Example initial population data for the SISe3 model
 ##'
 ##' Dataset containing the initial number of susceptible and infected
 ##' cattle across three age categories in 1,600 herds. Provides

@@ -19,7 +19,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SISe} model
+##' Class SISe
 ##'
 ##' Class to handle the \acronym{SISe} \code{\link{SimInf_model}}.
 ##' @seealso \code{\link{SISe}} for creating an SISe model
@@ -33,7 +33,7 @@ compartments_SISe <- function() {
     compartments_SIS()
 }
 
-##' Select matrix for events in the \acronym{SISe} model
+##' Select matrix for events in the SISe model
 ##'
 ##' Internal function returning the 2x2 select matrix (E) that maps
 ##' SISe compartments (rows) to event types (columns) for event
@@ -46,7 +46,7 @@ select_matrix_SISe <- function() {
     select_matrix_SIS()
 }
 
-##' Create an \acronym{SISe} model
+##' Create an SISe model
 ##'
 ##' Create an \acronym{SISe} model to be used by the simulation
 ##' framework.
@@ -181,7 +181,7 @@ SISe <- function(u0,
     methods::as(model, "SISe")
 }
 
-##' Example event data for the \acronym{SISe} model with cattle herds
+##' Example event data for the SISe model with cattle herds
 ##'
 ##' Dataset containing 466,692 scheduled events for a population of
 ##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
@@ -246,7 +246,7 @@ events_SISe <- function() {
     events_SISe3
 }
 
-##' Example initial population data for the \acronym{SISe} model
+##' Example initial population data for the SISe model
 ##'
 ##' Dataset containing the initial number of susceptible and infected
 ##' cattle across 1,600 herds, for the environment-based transmission

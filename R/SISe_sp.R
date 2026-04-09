@@ -19,7 +19,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \code{SISe_sp} model
+##' Class SISe_sp
 ##'
 ##' Class to handle the \code{SISe_sp} \code{\link{SimInf_model}}.
 ##' @include SimInf_model.R
@@ -32,13 +32,13 @@ compartments_SISe_sp <- function() {
     compartments_SIS()
 }
 
-##' The select matrix 'E' for an SISe_sp model
+##' Select matrix for events in the SISe_sp model
 ##' @noRd
 select_matrix_SISe_sp <- function() {
     select_matrix_SIS()
 }
 
-##' Create a \code{SISe_sp} model
+##' Create an SISe_sp model
 ##'
 ##' Create a \code{SISe_sp} model to be used by the simulation
 ##' framework.

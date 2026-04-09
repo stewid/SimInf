@@ -19,7 +19,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SISe3_sp} model
+##' Class SISe3_sp
 ##'
 ##' Class to handle the SISe3_sp \code{\link{SimInf_model}} model.
 ##' @include SimInf_model.R
@@ -32,7 +32,7 @@ compartments_SISe3_sp <- function() {
     compartments_SISe3()
 }
 
-##' Select matrix for events in the \acronym{SISe3_sp} model
+##' Select matrix for events in the SISe3_sp model
 ##'
 ##' Internal function returning the 6x6 select matrix (E) that maps
 ##' SISe3_sp compartments (rows) to event types (columns) for event
@@ -45,7 +45,7 @@ select_matrix_SISe3_sp <- function() {
     select_matrix_SISe3()
 }
 
-##' Create an \code{SISe3_sp} model
+##' Create an SISe3_sp model
 ##'
 ##' Create an \code{SISe3_sp} model to be used by the simulation
 ##' framework.
