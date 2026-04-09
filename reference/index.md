@@ -208,7 +208,7 @@
   Create a package skeleton from a `SimInf_model`
 
 - [`pairs(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/pairs-SimInf_model-method.md)
-  : Scatterplot of number of individuals in each compartment
+  : Scatterplot matrix of number of individuals in each compartment
 
 - [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md) :
   Bootstrap particle filter
