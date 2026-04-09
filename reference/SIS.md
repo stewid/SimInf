@@ -78,6 +78,26 @@ the following columns:
 
   The number of infected individuals in each node
 
+## See also
+
+[`SIS`](http://stewid.github.io/SimInf/reference/SIS-class.md) for the
+class definition.
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md),
+[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md),
+[`SISe`](http://stewid.github.io/SimInf/reference/SISe.md),
+[`SISe3`](http://stewid.github.io/SimInf/reference/SISe3.md) and
+[`SISe_sp`](http://stewid.github.io/SimInf/reference/SISe_sp.md) for
+other predefined models.
+[`mparse`](http://stewid.github.io/SimInf/reference/mparse.md) for
+creating custom models.
+[`run`](http://stewid.github.io/SimInf/reference/run.md) for running the
+simulation.
+[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md),
+[`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md)
+and
+[`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md)
+for post-processing and visualization.
+
 ## Examples
 
 ``` r
