@@ -1,5 +1,4 @@
 ##' @details
-##'
 ##' The \acronym{SEIR} model extends the standard \acronym{SIR} model
 ##' by adding an \strong{E}xposed (E) compartment for individuals who
 ##' have been infected but are not yet infectious. This accounts for

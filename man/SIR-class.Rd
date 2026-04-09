@@ -13,10 +13,11 @@ for \code{SimInf_model}, such as \code{\link{run}},
 \code{\link{prevalence}}.
 }
 \details{
-The \acronym{SIR} model is a commonly used compartmental model for
-infectious diseases, dividing the population into three states:
+The \acronym{SIR} model is a compartmental model for infectious
+diseases that divides the population into three states:
 \strong{S}usceptible, \strong{I}nfected, and \strong{R}ecovered.
-It assumes that individuals gain permanent immunity after recovery.
+It assumes that individuals gain permanent immunity after
+recovery.
 
 The model is defined by two state transitions:
 \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
