@@ -3,7 +3,7 @@
 \docType{class}
 \name{SIS-class}
 \alias{SIS-class}
-\title{Definition of the \acronym{SIS} model}
+\title{Class SIS}
 \description{
 Class to handle the \acronym{SIS} model. This class inherits from
 \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIS}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIS.R
 \name{u0_SIS}
 \alias{u0_SIS}
-\title{Example initial population data for the \acronym{SIS} model}
+\title{Example initial population data for the SIS model}
 \usage{
 u0_SIS()
 }

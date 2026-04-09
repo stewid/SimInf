@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIS.R
 \name{SIS}
 \alias{SIS}
-\title{Create an \acronym{SIS} model}
+\title{Create an SIS model}
 \usage{
 SIS(u0, tspan, events = NULL, beta = NULL, gamma = NULL)
 }

@@ -3,7 +3,7 @@
 \docType{data}
 \name{events_SISe3}
 \alias{events_SISe3}
-\title{Example event data for the \acronym{SISe3} model with cattle herds}
+\title{Example event data for the SISe3 model with cattle herds}
 \format{
 A \code{data.frame}
 }

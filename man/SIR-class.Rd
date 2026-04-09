@@ -3,7 +3,7 @@
 \docType{class}
 \name{SIR-class}
 \alias{SIR-class}
-\title{Definition of the \acronym{SIR} model}
+\title{Class SIR}
 \description{
 Class to handle the \acronym{SIR} model. This class inherits from
 \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIR}

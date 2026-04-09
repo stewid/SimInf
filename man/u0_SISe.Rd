@@ -2,7 +2,7 @@
 % Please edit documentation in R/SISe.R
 \name{u0_SISe}
 \alias{u0_SISe}
-\title{Example initial population data for the \acronym{SISe} model}
+\title{Example initial population data for the SISe model}
 \usage{
 u0_SISe()
 }

@@ -3,7 +3,7 @@
 \docType{data}
 \name{u0_SISe3}
 \alias{u0_SISe3}
-\title{Example initial population data for the \acronym{SISe3} model}
+\title{Example initial population data for the SISe3 model}
 \format{
 A \code{data.frame}
 }

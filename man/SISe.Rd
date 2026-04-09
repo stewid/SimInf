@@ -2,7 +2,7 @@
 % Please edit documentation in R/SISe.R
 \name{SISe}
 \alias{SISe}
-\title{Create an \acronym{SISe} model}
+\title{Create an SISe model}
 \usage{
 SISe(
   u0,

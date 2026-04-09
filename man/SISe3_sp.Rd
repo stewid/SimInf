@@ -2,7 +2,7 @@
 % Please edit documentation in R/SISe3_sp.R
 \name{SISe3_sp}
 \alias{SISe3_sp}
-\title{Create an \code{SISe3_sp} model}
+\title{Create an SISe3_sp model}
 \usage{
 SISe3_sp(
   u0,

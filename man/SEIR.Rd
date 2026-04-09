@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEIR.R
 \name{SEIR}
 \alias{SEIR}
-\title{Create an \acronym{SEIR} model}
+\title{Create an SEIR model}
 \usage{
 SEIR(u0, tspan, events = NULL, beta = NULL, epsilon = NULL, gamma = NULL)
 }

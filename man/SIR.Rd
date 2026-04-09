@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIR.R
 \name{SIR}
 \alias{SIR}
-\title{Create an \acronym{SIR} model}
+\title{Create an SIR model}
 \usage{
 SIR(u0, tspan, events = NULL, beta = NULL, gamma = NULL)
 }

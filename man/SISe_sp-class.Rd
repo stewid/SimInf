@@ -3,7 +3,7 @@
 \docType{class}
 \name{SISe_sp-class}
 \alias{SISe_sp-class}
-\title{Definition of the \code{SISe_sp} model}
+\title{Class SISe_sp}
 \description{
 Class to handle the \code{SISe_sp} \code{\link{SimInf_model}}.
 }

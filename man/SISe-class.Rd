@@ -3,7 +3,7 @@
 \docType{class}
 \name{SISe-class}
 \alias{SISe-class}
-\title{Definition of the \acronym{SISe} model}
+\title{Class SISe}
 \description{
 Class to handle the \acronym{SISe} \code{\link{SimInf_model}}.
 }
