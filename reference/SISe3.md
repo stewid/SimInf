@@ -87,7 +87,8 @@ SISe3(
 
 - alpha:
 
-  Shed rate from infected individuals
+  Shedding rate of the pathogen to the environment per infected
+  individual.
 
 - beta_t1:
 
