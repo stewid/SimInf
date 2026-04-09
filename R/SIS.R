@@ -78,6 +78,15 @@ select_matrix_SIS <- function() {
 ##' @template beta-param
 ##' @template gamma-param
 ##' @return A \code{\link{SimInf_model}} of class \code{SIS}
+##' @seealso
+##' \code{\linkS4class{SIS}} for the class definition.
+##' \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SISe}},
+##' \code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
+##' models.  \code{\link{mparse}} for creating custom models.
+##' \code{\link{run}} for running the simulation.
+##' \code{\link{trajectory}}, \code{\link{prevalence}} and
+##' \code{\link{plot,SimInf_model-method}} for post-processing and
+##' visualization.
 ##' @include check_arguments.R
 ##' @export
 ##' @examples

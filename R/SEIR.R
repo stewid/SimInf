@@ -88,6 +88,15 @@ select_matrix_SEIR <- function() {
 ##'     repeated for all nodes.
 ##' @template gamma-param
 ##' @return A \code{\link{SimInf_model}} of class \code{SEIR}
+##' @seealso
+##' \code{\linkS4class{SEIR}} for the class definition.
+##' \code{\link{SIR}}, \code{\link{SIS}}, \code{\link{SISe}},
+##' \code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
+##' models.  \code{\link{mparse}} for creating custom models.
+##' \code{\link{run}} for running the simulation.
+##' \code{\link{trajectory}}, \code{\link{prevalence}} and
+##' \code{\link{plot,SimInf_model-method}} for post-processing and
+##' visualization.
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
