@@ -1,4 +1,4 @@
-# Definition of the SIS model
+# Class SIS
 
 Class to handle the SIS model. This class inherits from
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md),

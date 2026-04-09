@@ -1,4 +1,4 @@
-# Definition of the SEIR model
+# Class SEIR
 
 Class to handle the SEIR model. This class inherits from
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md),

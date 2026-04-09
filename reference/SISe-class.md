@@ -1,4 +1,4 @@
-# Definition of the SISe model
+# Class SISe
 
 Class to handle the SISe
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model.md).

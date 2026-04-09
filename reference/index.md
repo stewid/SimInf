@@ -7,65 +7,47 @@
   Extract the C code from a `SimInf_model` object
 
 - [`SEIR-class`](http://stewid.github.io/SimInf/reference/SEIR-class.md)
-  :
+  : Class SEIR
 
-  Definition of the SEIR model
-
-- [`SEIR()`](http://stewid.github.io/SimInf/reference/SEIR.md) :
-
-  Create an SEIR model
+- [`SEIR()`](http://stewid.github.io/SimInf/reference/SEIR.md) : Create
+  an SEIR model
 
 - [`SIR-class`](http://stewid.github.io/SimInf/reference/SIR-class.md) :
+  Class SIR
 
-  Definition of the SIR model
-
-- [`SIR()`](http://stewid.github.io/SimInf/reference/SIR.md) :
-
-  Create an SIR model
+- [`SIR()`](http://stewid.github.io/SimInf/reference/SIR.md) : Create an
+  SIR model
 
 - [`SIS-class`](http://stewid.github.io/SimInf/reference/SIS-class.md) :
+  Class SIS
 
-  Definition of the SIS model
-
-- [`SIS()`](http://stewid.github.io/SimInf/reference/SIS.md) :
-
-  Create an SIS model
+- [`SIS()`](http://stewid.github.io/SimInf/reference/SIS.md) : Create an
+  SIS model
 
 - [`SISe-class`](http://stewid.github.io/SimInf/reference/SISe-class.md)
-  :
+  : Class SISe
 
-  Definition of the SISe model
-
-- [`SISe()`](http://stewid.github.io/SimInf/reference/SISe.md) :
-
-  Create an SISe model
+- [`SISe()`](http://stewid.github.io/SimInf/reference/SISe.md) : Create
+  an SISe model
 
 - [`SISe3-class`](http://stewid.github.io/SimInf/reference/SISe3-class.md)
-  :
-
-  Definition of the SISe3 model
+  : Class SISe3
 
 - [`SISe3()`](http://stewid.github.io/SimInf/reference/SISe3.md) :
 
   Create a `SISe3` model
 
 - [`SISe3_sp-class`](http://stewid.github.io/SimInf/reference/SISe3_sp-class.md)
-  :
-
-  Definition of the SISe3_sp model
+  : Class SISe3_sp
 
 - [`SISe3_sp()`](http://stewid.github.io/SimInf/reference/SISe3_sp.md) :
-
-  Create an `SISe3_sp` model
+  Create an SISe3_sp model
 
 - [`SISe_sp-class`](http://stewid.github.io/SimInf/reference/SISe_sp-class.md)
-  :
-
-  Definition of the `SISe_sp` model
+  : Class SISe_sp
 
 - [`SISe_sp()`](http://stewid.github.io/SimInf/reference/SISe_sp.md) :
-
-  Create a `SISe_sp` model
+  Create an SISe_sp model
 
 - [`SimInf-package`](http://stewid.github.io/SimInf/reference/SimInf.md)
   [`SimInf`](http://stewid.github.io/SimInf/reference/SimInf.md) : A
@@ -149,29 +131,19 @@
   Extract the events from a `SimInf_model` object
 
 - [`events_SEIR()`](http://stewid.github.io/SimInf/reference/events_SEIR.md)
-  :
-
-  Example event data for the SEIR model with cattle herds
+  : Example event data for the SEIR model with cattle herds
 
 - [`events_SIR()`](http://stewid.github.io/SimInf/reference/events_SIR.md)
-  :
-
-  Example event data for the SIR model with cattle herds
+  : Example event data for the SIR model with cattle herds
 
 - [`events_SIS()`](http://stewid.github.io/SimInf/reference/events_SIS.md)
-  :
-
-  Example event data for the SIS model with cattle herds
+  : Example event data for the SIS model with cattle herds
 
 - [`events_SISe()`](http://stewid.github.io/SimInf/reference/events_SISe.md)
-  :
-
-  Example event data for the SISe model with cattle herds
+  : Example event data for the SISe model with cattle herds
 
 - [`events_SISe3`](http://stewid.github.io/SimInf/reference/events_SISe3.md)
-  :
-
-  Example event data for the SISe3 model with cattle herds
+  : Example event data for the SISe3 model with cattle herds
 
 - [`` `gdata<-`() ``](http://stewid.github.io/SimInf/reference/gdata-set.md)
   :
@@ -382,23 +354,18 @@
   initial compartment state
 
 - [`u0_SEIR()`](http://stewid.github.io/SimInf/reference/u0_SEIR.md) :
-
   Example Initial population data for the SEIR model
 
 - [`u0_SIR()`](http://stewid.github.io/SimInf/reference/u0_SIR.md) :
-
   Example initial population data for the SIR model
 
 - [`u0_SIS()`](http://stewid.github.io/SimInf/reference/u0_SIS.md) :
-
   Example initial population data for the SIS model
 
 - [`u0_SISe()`](http://stewid.github.io/SimInf/reference/u0_SISe.md) :
-
   Example initial population data for the SISe model
 
 - [`u0_SISe3`](http://stewid.github.io/SimInf/reference/u0_SISe3.md) :
-
   Example initial population data for the SISe3 model
 
 - [`` `v0<-`() ``](http://stewid.github.io/SimInf/reference/v0-set.md) :

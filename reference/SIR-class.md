@@ -1,4 +1,4 @@
-# Definition of the SIR model
+# Class SIR
 
 Class to handle the SIR model. This class inherits from
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md),

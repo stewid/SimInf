@@ -1,4 +1,4 @@
-# Create an `SISe3_sp` model
+# Create an SISe3_sp model
 
 Create an `SISe3_sp` model to be used by the simulation framework.
 
