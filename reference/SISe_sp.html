@@ -110,7 +110,11 @@ infectious pressure</p></dd>
 
 
 <dt id="arg-gamma">gamma<a class="anchor" aria-label="anchor" href="#arg-gamma"></a></dt>
-<dd><p>The recovery rate from infected to susceptible</p></dd>
+<dd><p>A numeric vector with the recovery rate from infected
+to susceptible.  Each node can have a different gamma
+value. The vector must have length 1 or <code>nrow(u0)</code>. If
+the vector has length 1 but the model contains more nodes, the
+value is repeated for all nodes.</p></dd>
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>

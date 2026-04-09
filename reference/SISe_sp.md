@@ -61,7 +61,10 @@ SISe_sp(
 
 - gamma:
 
-  The recovery rate from infected to susceptible
+  A numeric vector with the recovery rate from infected to susceptible.
+  Each node can have a different gamma value. The vector must have
+  length 1 or `nrow(u0)`. If the vector has length 1 but the model
+  contains more nodes, the value is repeated for all nodes.
 
 - alpha:
 
