@@ -17,8 +17,8 @@ An integer vector where each element corresponds to a
 }
 \description{
 Calculate the in-degree of each node based on \strong{external
-transfer} events (\code{"extTrans"}) in the model's event
-schedule.
+transfer} events (\code{"extTrans"}) in the model's schedules
+events.
 }
 \details{
 The in-degree is defined as the number of \strong{unique source
