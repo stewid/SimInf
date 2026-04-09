@@ -52,7 +52,8 @@ infectious pressure}
 
 \item{gamma}{The recovery rate from infected to susceptible}
 
-\item{alpha}{Shed rate from infected individuals}
+\item{alpha}{Shedding rate of the pathogen to the environment per
+infected individual.}
 
 \item{beta_t1}{The decay of the environmental infectious pressure
 in interval 1.}

@@ -101,7 +101,7 @@ select_matrix_SISe <- function() {
 ##' @param upsilon Indirect transmission rate of the environmental
 ##'     infectious pressure
 ##' @param gamma The recovery rate from infected to susceptible
-##' @param alpha Shed rate from infected individuals
+##' @template alpha-param
 ##' @template beta-end-param
 ##' @param epsilon The background environmental infectious pressure
 ##' @return \code{SISe}

@@ -98,7 +98,7 @@ select_matrix_SISe_sp <- function() {
 ##' @param upsilon Indirect transmission rate of the environmental
 ##'     infectious pressure
 ##' @param gamma The recovery rate from infected to susceptible
-##' @param alpha Shed rate from infected individuals
+##' @template alpha-param
 ##' @template beta-end-param
 ##' @param coupling The coupling between neighboring nodes
 ##' @param distance The distance matrix between neighboring nodes

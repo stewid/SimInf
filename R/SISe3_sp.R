@@ -133,7 +133,7 @@ select_matrix_SISe3_sp <- function() {
 ##' age category 2
 ##' @param gamma_3 The recovery rate from infected to susceptible for
 ##' age category 3
-##' @param alpha Shed rate from infected individuals
+##' @template alpha-param
 ##' @template beta-end-param
 ##' @param coupling The coupling between neighboring nodes
 ##' @param distance The distance matrix between neighboring nodes

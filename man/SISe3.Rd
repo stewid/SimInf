@@ -69,7 +69,8 @@ age category 2}
 \item{gamma_3}{The recovery rate from infected to susceptible for
 age category 3}
 
-\item{alpha}{Shed rate from infected individuals}
+\item{alpha}{Shedding rate of the pathogen to the environment per
+infected individual.}
 
 \item{beta_t1}{The decay of the environmental infectious pressure
 in interval 1.}

@@ -130,7 +130,7 @@ select_matrix_SISe3 <- function() {
 ##' age category 2
 ##' @param gamma_3 The recovery rate from infected to susceptible for
 ##' age category 3
-##' @param alpha Shed rate from infected individuals
+##' @template alpha-param
 ##' @template beta-end-param
 ##' @param epsilon The background environmental infectious pressure
 ##' @return \code{SISe3}
