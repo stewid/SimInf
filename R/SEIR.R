@@ -61,7 +61,7 @@ select_matrix_SEIR <- function() {
            dimnames = list(compartments_SEIR(), seq_len(2)))
 }
 
-##' Create an \acronym{SEIR} model
+##' Create an SEIR model
 ##'
 ##' Create an \acronym{SEIR} model to be used by the simulation
 ##' framework.
@@ -147,7 +147,7 @@ SEIR <- function(u0,
     methods::as(model, "SEIR")
 }
 
-##' Example event data for the \acronym{SEIR} model with cattle herds
+##' Example event data for the SEIR model with cattle herds
 ##'
 ##' Dataset containing 466,692 scheduled events for a population of
 ##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
@@ -215,7 +215,7 @@ events_SEIR <- function() {
     events_SISe3
 }
 
-##' Example Initial population data for the \acronym{SEIR} model
+##' Example Initial population data for the SEIR model
 ##'
 ##' Dataset containing the initial number of susceptible, exposed,
 ##' infected, and recovered cattle across 1,600 herds. Provides
