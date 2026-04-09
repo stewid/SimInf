@@ -19,7 +19,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SIR} model
+##' Class SIR
 ##'
 ##' Class to handle the \acronym{SIR} model. This class inherits from
 ##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIR}
@@ -45,7 +45,7 @@ compartments_SIR <- function() {
     c("S", "I", "R")
 }
 
-##' Select matrix for events in the \acronym{SIR} model
+##' Select matrix for events in the SIR model
 ##'
 ##' Internal function returning the 3x4 select matrix (E) that maps
 ##' SIR compartments (rows) to event types (columns) for event
@@ -61,7 +61,7 @@ select_matrix_SIR <- function() {
            dimnames = list(compartments_SIR(), seq_len(4)))
 }
 
-##' Create an \acronym{SIR} model
+##' Create an SIR model
 ##'
 ##' Create an \acronym{SIR} model to be used by the simulation
 ##' framework.
@@ -135,7 +135,7 @@ SIR <- function(u0,
     methods::as(model, "SIR")
 }
 
-##' Example event data for the \acronym{SIR} model with cattle herds
+##' Example event data for the SIR model with cattle herds
 ##'
 ##' Dataset containing 466,692 scheduled events for a population of
 ##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
@@ -203,7 +203,7 @@ events_SIR <- function() {
     events_SISe3
 }
 
-##' Example initial population data for the \acronym{SIR} model
+##' Example initial population data for the SIR model
 ##'
 ##' Dataset containing the initial number of susceptible, infected,
 ##' and recovered cattle across 1,600 herds. Provides realistic
