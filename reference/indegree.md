@@ -1,7 +1,7 @@
 # Determine in-degree for each node in a model
 
 Calculate the in-degree of each node based on **external transfer**
-events (`"extTrans"`) in the model's event schedule.
+events (`"extTrans"`) in the model's schedules events.
 
 ## Usage
 
