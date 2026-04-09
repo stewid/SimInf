@@ -608,7 +608,7 @@ The `SimInf` package is licensed under the
   initial compartment state
 
 - [`u0_SEIR()`](http://stewid.github.io/SimInf/reference/u0_SEIR.md) :
-  Example Initial population data for the SEIR model
+  Example initial population data for the SEIR model
 
 - [`u0_SIR()`](http://stewid.github.io/SimInf/reference/u0_SIR.md) :
   Example initial population data for the SIR model
