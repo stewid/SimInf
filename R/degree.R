@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -41,21 +41,48 @@ degree <- function(model, a, b) {
 
 ##' Determine in-degree for each node in a model
 ##'
-##' The number of nodes with inward \emph{external transfer} events to
-##' each node.
-##' @param model determine in-degree for each node in the model.
-##' @return vector with in-degree for each node.
+##' Calculate the in-degree of each node based on \strong{external
+##' transfer} events (\code{"extTrans"}) in the model's event
+##' schedule.
+##'
+##' The in-degree is defined as the number of \strong{unique source
+##' nodes} that have sent individuals to the target node at least
+##' once.  This metric measures the connectivity of the network,
+##' indicating how many different neighbors directly supply
+##' individuals to a specific node.
+##'
+##' @param model A \code{SimInf_model} object containing the event
+##'     schedule.
+##' @return An integer vector where each element corresponds to a
+##'     node, containing the count of unique source nodes sending
+##'     individuals to it.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
-##' ## Create an 'SIR' model with 1600 nodes and initialize
-##' ## it with example data.
-##' model <- SIR(u0 = u0_SIR(), tspan = 1:1460, events = events_SIR(),
-##'              beta   = 0.16, gamma  = 0.077)
+##' ## Create an 'SIR' model with example data.
+##' model <- SIR(
+##'   u0 = u0_SIR(),
+##'   tspan = 1:1460,
+##'   events = events_SIR(),
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
-##' ## Display indegree for each node in the model.
-##' plot(indegree(model))
+##' ## Calculate the in-degree for each node.
+##' deg <- indegree(model)
+##'
+##' ## View the in-degree for the first 6 nodes.
+##' head(deg)
+##'
+##' ## Plot the distribution of in-degrees across all nodes.  This
+##' ## shows how many source nodes typically send individuals to a given
+##' ## node.
+##' hist(
+##'   deg,
+##'   main = "Distribution of In-Degree (Unique Sources)",
+##'   xlab = "Number of Unique Source Nodes"
+##' )
 indegree <- function(model) {
     degree(model, "node", "dest")
 }
