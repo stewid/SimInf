@@ -19,7 +19,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SEIR} model
+##' Class SEIR
 ##'
 ##' Class to handle the \acronym{SEIR} model. This class inherits from
 ##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SEIR}
