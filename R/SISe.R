@@ -100,7 +100,11 @@ select_matrix_SISe <- function() {
 ##' @template phi-param
 ##' @param upsilon Indirect transmission rate of the environmental
 ##'     infectious pressure
-##' @param gamma The recovery rate from infected to susceptible
+##' @param gamma A numeric vector with the recovery rate from infected
+##'     to susceptible.  Each node can have a different gamma
+##'     value. The vector must have length 1 or \code{nrow(u0)}. If
+##'     the vector has length 1 but the model contains more nodes, the
+##'     value is repeated for all nodes.
 ##' @template alpha-param
 ##' @template beta-end-param
 ##' @param epsilon The background environmental infectious pressure
