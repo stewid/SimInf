@@ -12,10 +12,10 @@ and
 
 ## Details
 
-The SIS model is a commonly used compartmental model for infectious
-diseases where individuals do not gain permanent immunity after
-recovery. Instead, they return to the susceptible state. It divides the
-population into two states: **S**usceptible and **I**nfected.
+The SIS model is a compartmental model for infectious diseases where
+individuals do not gain permanent immunity after recovery. Instead, they
+return to the susceptible state. It divides the population into two
+states: **S**usceptible and **I**nfected.
 
 The model is defined by two state transitions: \$\$S \stackrel{\beta S I
 / N}{\longrightarrow} I\$\$ \$\$I \stackrel{\gamma I}{\longrightarrow}

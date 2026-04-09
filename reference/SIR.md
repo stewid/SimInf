@@ -53,10 +53,10 @@ of class `SIR`
 
 ## Details
 
-The SIR model is a commonly used compartmental model for infectious
-diseases, dividing the population into three states: **S**usceptible,
-**I**nfected, and **R**ecovered. It assumes that individuals gain
-permanent immunity after recovery.
+The SIR model is a compartmental model for infectious diseases that
+divides the population into three states: **S**usceptible, **I**nfected,
+and **R**ecovered. It assumes that individuals gain permanent immunity
+after recovery.
 
 The model is defined by two state transitions: \$\$S \stackrel{\beta S I
 / N}{\longrightarrow} I\$\$ \$\$I \stackrel{\gamma I}{\longrightarrow}
