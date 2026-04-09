@@ -7,29 +7,34 @@
 \S4method{boxplot}{SimInf_model}(x, compartments = NULL, index = NULL, ...)
 }
 \arguments{
-\item{x}{The \code{model} to plot}
+\item{x}{The \code{SimInf_model} object containing the trajectory
+data.}
 
-\item{compartments}{specify the names of the compartments to
-extract data from. The compartments can be specified as a
-character vector e.g. \code{compartments = c('S', 'I', 'R')},
-or as a formula e.g. \code{compartments = ~S+I+R} (see
-\sQuote{Examples}). Default (\code{compartments=NULL})
-includes all compartments.}
+\item{compartments}{Specify the names of the compartments to
+include.  Can be a character vector (e.g., \code{c("S", "I",
+"R")}) or a formula (e.g., \code{~S + I + R}). If \code{NULL}
+(default), all compartments in the model are included.}
 
-\item{index}{indices specifying the nodes to include when plotting
-data. Default \code{index = NULL} include all nodes in the
-model.}
+\item{index}{Indices of the nodes to include in the plot.  If
+\code{NULL} (default), data from all nodes are pooled
+together.  If a vector (e.g., \code{1:2}), only data from
+those specific nodes are used.}
 
-\item{...}{Additional arguments affecting the plot produced.}
+\item{...}{Additional graphical arguments passed to
+\code{boxplot()}.}
 }
 \description{
-Produce box-and-whisker plot(s) of the number of individuals in
-each model compartment.
+Produce box-and-whisker plots summarizing the distribution of the
+number of individuals in specified model compartments. The plots
+aggregate data across all time points in \code{tspan} and the
+selected nodes (specified by \code{index}).
+}
+\details{
+This function is useful for visualizing the variability and range
+of compartment counts across the entire simulation trajectory.
 }
 \examples{
-## Create an 'SIR' model with 10 nodes and initialise
-## it with 99 susceptible individuals and one infected
-## individual. Let the model run over 100 days.
+## Create an 'SIR' model with 10 nodes.
 model <- SIR(u0 = data.frame(S = rep(99, 10),
                              I = rep(1, 10),
                              R = rep(0, 10)),
@@ -37,13 +42,14 @@ model <- SIR(u0 = data.frame(S = rep(99, 10),
              beta = 0.16,
              gamma = 0.077)
 
-## Run the model and save the result.
+## Run the model.
 result <- run(model)
 
-## Create a boxplot that includes all compartments in all nodes.
+## Create a boxplot for all compartments across all nodes and time
+## points.
 boxplot(result)
 
-## Create a boxplot that includes the S and I compartments in
+## Create a boxplot for the S and I compartments, but only for
 ## nodes 1 and 2.
-boxplot(result, ~S+I, 1:2)
+boxplot(result, compartments = c("S", "I"), index = 1:2)
 }
