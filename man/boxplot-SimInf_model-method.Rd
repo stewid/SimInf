@@ -34,6 +34,10 @@ This function is useful for visualizing the variability and range
 of compartment counts across the entire simulation trajectory.
 }
 \examples{
+## For reproducibility, set the seed and number of threads.
+set.seed(123)
+set_num_threads(1)
+
 ## Create an 'SIR' model with 10 nodes.
 model <- SIR(u0 = data.frame(S = rep(99, 10),
                              I = rep(1, 10),
