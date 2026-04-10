@@ -54,10 +54,9 @@ the columns of the internal select matrix:
 }
 
 Events are distributed across all 1,600 herds over the 4-year
-period, reflecting realistic patterns of cattle demographic change
-and herd-to-herd movement. In SIS dynamics, these events can
-introduce disease to previously unaffected herds or remove
-infected cattle from the system.
+period. These are synthetic data generated to illustrate how to
+incorporate scheduled events (such as births, deaths, and
+movements) into a compartment model in the SimInf framework.
 }
 \examples{
 ## For reproducibility, call the set.seed() function and specify the

@@ -279,11 +279,12 @@ SISe3 <- function(u0,
 ##' (e.g., moving from age 1 to age 2).
 ##'
 ##' Events are distributed across all 1,600 herds over the 4-year
-##' period, reflecting realistic patterns of cattle demographic
-##' change, herd-to-herd movement, and age progression in a livestock
-##' production system. The higher event count compared to
+##' period. These are synthetic data generated to illustrate how to
+##' incorporate scheduled events (including births, deaths, movements,
+##' and age transitions) into an age-structured compartment model in
+##' the SimInf framework. The higher event count compared to
 ##' non-age-structured models reflects the addition of internal
-##' transfer events for age category transitions.
+##' transfer events required for age category transitions.
 ##'
 ##' The data contains:
 ##' \describe{

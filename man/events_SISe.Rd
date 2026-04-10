@@ -51,8 +51,9 @@ the columns of the internal select matrix (\code{select_matrix_SISe}):
 }
 
 Events are distributed across all 1,600 herds over the 4-year
-period, reflecting realistic patterns of cattle demographic change
-and herd-to-herd movement.
+period. These are synthetic data generated to illustrate how to
+incorporate scheduled events (such as births, deaths, and
+movements) into a compartment model in the SimInf framework.
 }
 \examples{
 ## For reproducibility, call the set.seed() function and specify the

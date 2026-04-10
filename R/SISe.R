@@ -217,8 +217,9 @@ SISe <- function(u0,
 ##' }
 ##'
 ##' Events are distributed across all 1,600 herds over the 4-year
-##' period, reflecting realistic patterns of cattle demographic change
-##' and herd-to-herd movement.
+##' period. These are synthetic data generated to illustrate how to
+##' incorporate scheduled events (such as births, deaths, and
+##' movements) into a compartment model in the SimInf framework.
 ##'
 ##' @return A \code{data.frame} with columns:
 ##'   \describe{
