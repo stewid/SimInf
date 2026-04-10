@@ -81,6 +81,9 @@ each node with the following columns:
 }
 }
 \examples{
+## For reproducibility, set the seed.
+set.seed(3)
+
 ## Create an SEIR model object.
 model <- SEIR(
   u0 = data.frame(S = 99, E = 0, I = 1, R = 0),
@@ -91,7 +94,6 @@ model <- SEIR(
 )
 
 ## Run the SEIR model and plot the result.
-set.seed(3)
 result <- run(model)
 plot(result)
 }
