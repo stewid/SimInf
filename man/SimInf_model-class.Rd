@@ -3,83 +3,103 @@
 \docType{class}
 \name{SimInf_model-class}
 \alias{SimInf_model-class}
-\title{Class \code{"SimInf_model"}}
+\title{Class \code{SimInf_model}}
 \description{
-Class to handle data for the \code{SimInf_model}.
+The core class for storing the state, parameters, and results of a
+stochastic simulation in \pkg{SimInf}. This class holds the model
+definition (transition graphs, matrices), initial conditions,
+scheduled events, and the simulation output.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{G}}{Dependency graph that indicates the transition rates that
-need to be updated after a given state transition has occured.
-A non-zero entry in element \code{G[i, i]} indicates that
-transition rate \code{i} needs to be recalculated if the state
-transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
-of object class
-\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
+\item{\code{G}}{\strong{Dependency Graph} (sparse matrix, class
+\code{dgCMatrix}).  Indicates which transition rates need to
+be updated after a state transition occurs. A non-zero entry
+\code{G[i, j]} means that transition rate \code{i} must be
+recalculated if transition \code{j} occurs. This optimizes
+performance by avoiding unnecessary updates.  Dimensions:
+\eqn{N_t \times N_t}, where \eqn{N_t} is the number of
+transitions.}
 
-\item{\code{S}}{Each column corresponds to a state transition, and
-execution of state transition \code{j} amounts to adding the
-\code{S[, j]} column to the state vector \code{u[, i]} of node
-\emph{i} where the transition occurred. Sparse matrix (\eqn{Nc
-\times Nt}) of object class
-\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
+\item{\code{S}}{\strong{State Transition Matrix} (sparse matrix, class
+\code{dgCMatrix}).  Defines the change in the state vector for
+each transition.  Executing transition \code{j} adds the
+column \code{S[, j]} to the state vector of the affected node.
+Dimensions: \eqn{N_c \times N_t}, where \eqn{N_c} is the
+number of compartments.}
 
-\item{\code{U}}{The result matrix with the number of individuals in each
-compartment in every node. \code{U[, j]} contains the number
-of individuals in each compartment at
-\code{tspan[j]}. \code{U[1:Nc, j]} contains the number of
-individuals in node 1 at \code{tspan[j]}. \code{U[(Nc + 1):(2
-* Nc), j]} contains the number of individuals in node 2 at
-\code{tspan[j]} etc. Integer matrix (\eqn{N_n N_c \times}
-\code{length(tspan)}).}
+\item{\code{U}}{\strong{Discrete State Result Matrix} (integer matrix).
+Contains the number of individuals in each compartment for
+every node at each time point in \code{tspan}.
+\itemize{
+  \item \code{U[, j]}: State at time \code{tspan[j]}.
+  \item Rows are ordered by node, then by compartment:
+    \itemize{
+      \item Rows \code{1:Nc}: Node 1.
+      \item Rows \code{(Nc+1):(2*Nc)}: Node 2.
+      \item ... and so on.
+    }
+}
+Dimensions: \eqn{N_n \times N_c \times \text{length(tspan)}}.
+\emph{Note: If the model was run with sparse output, this slot
+is empty.}}
 
-\item{\code{U_sparse}}{If the model was configured to write the solution
-to a sparse matrix
-(\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}) the
-\code{U_sparse} contains the data and \code{U} is empty. The
-layout of the data in \code{U_sparse} is identical to
-\code{U}. Please note that \code{U_sparse} is numeric and
-\code{U} is integer.}
+\item{\code{U_sparse}}{\strong{Sparse Discrete State Result} (sparse
+matrix, class \code{dgCMatrix}).  Contains the simulation
+results if the model was configured for sparse output.  The
+layout is identical to \code{U}, but stored as a sparse matrix
+to save memory.  \emph{Note: Only one of \code{U} or
+\code{U_sparse} will contain data.}}
 
-\item{\code{V}}{The result matrix for the real-valued continuous
-state. \code{V[, j]} contains the real-valued state of the
-system at \code{tspan[j]}. Numeric matrix
-(\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
-\code{length(tspan)}).}
+\item{\code{V}}{\strong{Continuous State Result Matrix} (numeric matrix).
+Contains the values of continuous state variables (e.g.,
+environmental pathogen load) for every node at each time
+point.  Dimensions: \eqn{N_n \times N_{ld} \times
+\text{length(tspan)}}, where \eqn{N_{ld}} is the number of
+local data variables (continuous states).  \emph{Note: If
+sparse output was used, this slot is empty.}}
 
-\item{\code{V_sparse}}{If the model was configured to write the solution
-to a sparse matrix
-(\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}) the
-\code{V_sparse} contains the data and \code{V} is empty. The
-layout of the data in \code{V_sparse} is identical to
-\code{V}.}
+\item{\code{V_sparse}}{\strong{Sparse Continuous State Result} (sparse
+matrix, class \code{dgCMatrix}).  Contains the continuous
+state results if sparse output was enabled.  Layout identical
+to \code{V}.  \emph{Note: Only one of \code{V} or
+\code{V_sparse} will contain data.}}
 
-\item{\code{ldata}}{A matrix with local data for the nodes. The column
-\code{ldata[, j]} contains the local data vector for the node
-\code{j}. The local data vector is passed as an argument to
-the transition rate functions and the post time step function.}
+\item{\code{ldata}}{\strong{Local Data Matrix} (numeric matrix).
+Parameters specific to each node (e.g., node-specific
+transmission rates).  Column \code{ldata[, j]} contains the
+local data vector for node \code{j}.  Passed to transition
+rate functions and post-step functions.  Dimensions:
+\eqn{N_{ld} \times N_n}.}
 
-\item{\code{gdata}}{A numeric vector with global data that is common to
-all nodes.  The global data vector is passed as an argument to
-the transition rate functions and the post time step function.}
+\item{\code{gdata}}{\strong{Global Data Vector} (numeric vector).
+Parameters common to all nodes (e.g., global recovery rate).
+Passed to transition rate functions and post-step functions.}
 
-\item{\code{tspan}}{A vector of increasing time points where the state of
-each node is to be returned.}
+\item{\code{tspan}}{\strong{Time Span} (numeric vector).  Increasing time
+points where the state of each node is recorded.}
 
-\item{\code{u0}}{The initial state vector (\eqn{N_c \times N_n}) with the
-number of individuals in each compartment in every node.}
+\item{\code{u0}}{\strong{Initial State Matrix} (integer matrix).  Initial
+number of individuals in each compartment for every node.
+Dimensions: \eqn{N_c \times N_n}.}
 
-\item{\code{v0}}{The initial value for the real-valued continuous state.
-Numeric matrix (\code{dim(ldata)[1]} \eqn{\times N_n}).}
+\item{\code{v0}}{\strong{Initial Continuous State Matrix} (numeric
+matrix).  Initial values for continuous state variables for
+every node.  Dimensions: \eqn{N_{ld} \times N_n}.}
 
-\item{\code{events}}{Scheduled events \code{\linkS4class{SimInf_events}}}
+\item{\code{events}}{\strong{Scheduled Events}
+(\code{\linkS4class{SimInf_events}}).  Object containing the
+schedule of discrete events (e.g., movements, births).}
 
-\item{\code{replicates}}{Number of replicates of the model.}
+\item{\code{replicates}}{\strong{Number of Replicates} (integer).  Number
+of parallel replicates simulated for this model (used in
+filtering algorithms).}
 
-\item{\code{C_code}}{Character vector with optional model C code. If
-non-empty, the C code is written to a temporary C-file when
-the \code{run} method is called.  The temporary C-file is
-compiled and the resulting DLL is dynamically loaded.}
+\item{\code{C_code}}{\strong{C Source Code} (character vector).  Optional
+C code defining the model's transition rates. If non-empty,
+this code is written to a temporary file, compiled, and loaded
+when \code{run()} is called.  Typically generated by
+\code{\link{mparse}}.}
 }}
 
