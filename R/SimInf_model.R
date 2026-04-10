@@ -48,72 +48,110 @@ valid_SimInf_model_object <- function(object) {
 ## Assign the function as the validity method for the class.
 setValidity("SimInf_model", valid_SimInf_model_object)
 
-##' Create a \code{SimInf_model}
+##' Create a \code{SimInf_model} object
 ##'
-##' @template G-param
-##' @template S-param
-##' @template U-param
-##' @template ldata-param
-##' @template gdata-param
-##' @template tspan-param
-##' @param u0 The initial state vector. Either a matrix (\eqn{N_c
-##'     \times N_n}) or a a \code{data.frame} with the number of
-##'     individuals in each compartment in every node.
-##' @param events A \code{data.frame} with the scheduled events.
-##' @param V The result matrix for the real-valued continous
-##'     compartment state (\eqn{N_n}\code{dim(ldata)[1]} \eqn{\times}
-##'     \code{length(tspan)}).  \code{V[, j]} contains the real-valued
-##'     state of the system at \code{tspan[j]}.
-##' @param v0 The initial continuous state vector in every node.
-##'     (\code{dim(ldata)[1]} \eqn{\times N_N}). The continuous state
-##'     vector is updated by the specific model during the simulation
-##'     in the post time step function.
-##' @param E A matrix to handle scheduled events, see
-##'     \code{\linkS4class{SimInf_events}}.  Each row in the matrix
-##'     corresponds to one compartment in the model. The non-zero
-##'     entries in a column indicate the compartments to include in an
-##'     event. For the \emph{exit}, \emph{internal transfer} and
-##'     \emph{external transfer} events, the values in \code{E[,
-##'     select]} are used as weights when sampling individuals without
-##'     replacement, with probability proportional to the weight. For
-##'     the \emph{enter} event, the values in \code{E[, select]} are
-##'     used as weights when determining which compartment to add
-##'     individuals to. If the column \code{E[, select]} contains
-##'     several non-zero entries, the compartment is sampled with
-##'     probability proportional to the weight in \code{E[, select]}.
-##'     The select matrix \code{E} can either be specified as a
-##'     \code{matrix}, or as a \code{data.frame}.  When \code{E} is
-##'     specified as a \code{data.frame}, it must have one column
-##'     named \code{compartment} that defines which compartment is
-##'     referred to, and one column \code{select} that defines the
-##'     column in \code{E}.  In addition, the \code{data.frame} can
-##'     contain an optional column named \code{value} with the value
-##'     in \code{E}.  When the \code{value} column is missing,
-##'     \code{1} is used as the default value.
-##' @param N A matrix to handle scheduled events, see
-##'     \code{\linkS4class{SimInf_events}}. Each row in the matrix
-##'     corresponds to one compartment in the model. The values in a
-##'     column define how to move sampled individuals before adding
-##'     them to the destination. Let \code{q <- shift}, then each
-##'     non-zero entry in \code{N[, q]} defines the number of rows to
-##'     move sampled individuals from that compartment i.e., sampled
-##'     individuals from compartment \code{p} are moved to compartment
-##'     \code{N[p, q] + p}, where \code{1 <= N[p, q] + p <=
-##'     N_compartments}. This matrix is used for \emph{enter},
-##'     \emph{internal transfer} and \emph{external transfer} events.
-##'     The shift matrix \code{N} can either be specified as a
-##'     \code{matrix}, or as a \code{data.frame}.  When \code{N} is
-##'     specified as a \code{data.frame}, it must have one column
-##'     named \code{compartment} that defines which compartment is
-##'     referred to, and one column \code{shift} that defines the
-##'     column in \code{N}.  In addition, the \code{data.frame} must
-##'     contain a column named \code{value} with the integer value in
-##'     \code{N}.
-##' @param C_code Character vector with optional model C code. If
-##'     non-empty, the C code is written to a temporary C-file when
-##'     the \code{run} method is called.  The temporary C-file is
-##'     compiled and the resulting DLL is dynamically loaded.
-##' @return \linkS4class{SimInf_model}
+##' Construct a low-level \code{SimInf_model} object. This function is
+##' typically used internally by model constructors (e.g.,
+##' \code{SIR()}, \code{mparse()}) or for advanced usage where custom
+##' model definitions (e.g., user-provided C code or non-standard
+##' matrices) are required.
+##'
+##' @param G \strong{Dependency Graph}.  Indicates which transition
+##'     rates need updating after a state transition.  Can be provided
+##'     as a sparse matrix (class \code{dgCMatrix}) or a dense matrix.
+##'     If a dense matrix is provided, it is automatically converted
+##'     to a sparse format internally.  See
+##'     \code{\linkS4class{SimInf_model}} for detailed matrix layout.
+##'
+##' @param S \strong{State Transition Matrix}.  Defines the change in
+##'     the state vector for each transition.  Can be provided as a
+##'     sparse matrix (class \code{dgCMatrix}) or a dense matrix.  If
+##'     a dense matrix is provided, it is automatically converted to a
+##'     sparse format internally.  See
+##'     \code{\linkS4class{SimInf_model}} for detailed matrix layout.
+##'
+##' @param U \strong{Result Matrix} (integer matrix).  Usually empty
+##'     at creation.  See \code{\linkS4class{SimInf_model}} for
+##'     detailed matrix layout.
+##'
+##' @param ldata \strong{Local Data}.
+##'     Parameters specific to each node. Can be:
+##'     \itemize{
+##'       \item A \code{data.frame} with one row per node.
+##'       \item A matrix where each column \code{ldata[, j]} is the
+##'       data vector for node \code{j}.
+##'     }
+##'     Passed to transition rate and post-step functions.
+##'
+##' @param gdata \strong{Global Data} (numeric vector).  Parameters
+##'     common to all nodes. Passed to transition rate and post-step
+##'     functions.
+##'
+##' @param tspan \strong{Time Span} (numeric or Date vector).
+##'     Increasing time points for output. If \code{Date}, converted
+##'     to days with names, where \code{tspan[1]} becomes the day of
+##'     the year of the first year of \code{tspan}. The dates are
+##'     added as names to the numeric vector.
+##'
+##' @param u0 \strong{Initial State}.  Initial number of individuals
+##'     per compartment/node. Can be:
+##'     \itemize{
+##'       \item A matrix (\eqn{N_c \times N_n}).
+##'       \item A \code{data.frame} with columns corresponding to
+##'       compartments.
+##'       \item Any object coercible to a \code{data.frame} (e.g., a
+##'         named numeric vector will be coerced to a one-row
+##'         \code{data.frame}).
+##'     }
+##'
+##' @param events \strong{Scheduled Events}.  A \code{data.frame}
+##'     defining the event schedule (see
+##'     \code{\linkS4class{SimInf_events}}).
+##'
+##' @param V \strong{Continuous State Result Matrix} (numeric matrix).
+##'     Usually empty at creation.  See
+##'     \code{\linkS4class{SimInf_model}} for layout.
+##'
+##' @param v0 \strong{Initial Continuous State} (numeric matrix).
+##'     Initial values for continuous states per node.
+##'
+##' @param E \strong{Select Matrix} (matrix or \code{data.frame}).
+##'     Defines which compartments are affected by events and their
+##'     sampling weights.
+##'     \itemize{
+##'       \item \strong{Matrix}: Standard sparse matrix.
+##'       \item \strong{data.frame}: Must have columns
+##'         \code{compartment} and \code{select}.  Optional column
+##'         \code{value} (default \code{1}) sets the weight.
+##'     }
+##'     See \code{\linkS4class{SimInf_events}} for usage details.
+##'
+##' @param N \strong{Shift Matrix} (matrix or \code{data.frame}).
+##'     Defines how individuals are moved between compartments during
+##'     events.
+##'     \itemize{
+##'       \item \strong{Matrix}: Standard integer matrix.
+##'       \item \strong{data.frame}: Must have columns
+##'         \code{compartment}, \code{shift}, and \code{value}
+##'         (integer offset).
+##'     }
+##'     See \code{\linkS4class{SimInf_events}} for usage details.
+##'
+##' @param C_code \strong{C Source Code} (character vector).  Optional
+##'     C code for custom transition rates. If provided, it is
+##'     compiled and loaded when \code{run()} is called.
+##'
+##' @return A \code{\linkS4class{SimInf_model}} object.
+##'
+##' @seealso
+##'   \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+##'   \code{\link{SISe}} for high-level model constructors that handle
+##'   argument validation and matrix setup.  \code{\link{mparse}} for
+##'   creating custom models using a simple string syntax.
+##'   \code{\linkS4class{SimInf_model}} for details on the class
+##'   structure and slots.  \code{\link{SimInf_events}} for details on
+##'   the event schedule format.
+##'
 ##' @include init.R
 ##' @export
 SimInf_model <- function(G,
