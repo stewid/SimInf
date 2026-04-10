@@ -93,3 +93,18 @@ of individuals in a node at a pre-defined time `t`.
 
   Integer vector specifying which **column** of the matrix `N` to use
   for shifting individuals for each event. Unused for *exit* events.
+
+## See also
+
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model.md)
+for the main model class that holds the events.
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md),
+[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md),
+[`SIS`](http://stewid.github.io/SimInf/reference/SIS.md),
+[`SISe`](http://stewid.github.io/SimInf/reference/SISe.md) for examples
+of how events are passed to model constructors.
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model.md)
+(constructor) for details on the `E` and `N` matrices used to define
+event behavior. [`run`](http://stewid.github.io/SimInf/reference/run.md)
+for executing the simulation with scheduled events. Vignette
+`"Scheduled events"` for detailed examples of defining and using events.

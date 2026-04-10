@@ -150,10 +150,11 @@ object.
 [`SIR`](http://stewid.github.io/SimInf/reference/SIR.md),
 [`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md),
 [`SIS`](http://stewid.github.io/SimInf/reference/SIS.md),
-[`SISe`](http://stewid.github.io/SimInf/reference/SISe.md) for
-high-level model constructors that handle argument validation and matrix
-setup. [`mparse`](http://stewid.github.io/SimInf/reference/mparse.md)
-for creating custom models using a simple string syntax.
+[`SISe`](http://stewid.github.io/SimInf/reference/SISe.md) for examples
+of compartment model constructors that handle argument validation and
+matrix setup.
+[`mparse`](http://stewid.github.io/SimInf/reference/mparse.md) for
+creating custom models using a simple string syntax.
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
 for details on the class structure and slots.
 [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events.md)
