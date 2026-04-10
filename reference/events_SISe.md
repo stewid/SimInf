@@ -77,9 +77,10 @@ of the internal select matrix (`select_matrix_SISe`):
 - `select = 2` corresponds to **Exit** and **External Transfer** events,
   targeting all compartments (S and I).
 
-Events are distributed across all 1,600 herds over the 4-year period,
-reflecting realistic patterns of cattle demographic change and
-herd-to-herd movement.
+Events are distributed across all 1,600 herds over the 4-year period.
+These are synthetic data generated to illustrate how to incorporate
+scheduled events (such as births, deaths, and movements) into a
+compartment model in the SimInf framework.
 
 ## See also
 
