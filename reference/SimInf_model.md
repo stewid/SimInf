@@ -1,6 +1,11 @@
-# Create a `SimInf_model`
+# Create a `SimInf_model` object
 
-Create a `SimInf_model`
+Construct a low-level `SimInf_model` object. This function is typically
+used internally by model constructors (e.g.,
+[`SIR()`](http://stewid.github.io/SimInf/reference/SIR.md),
+[`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md)) or for
+advanced usage where custom model definitions (e.g., user-provided C
+code or non-standard matrices) are required.
 
 ## Usage
 
@@ -26,122 +31,130 @@ SimInf_model(
 
 - G:
 
-  Dependency graph that indicates the transition rates that need to be
-  updated after a given state transition has occured. A non-zero entry
-  in element `G[i, i]` indicates that transition rate `i` needs to be
-  recalculated if the state transition `j` occurs. Sparse matrix (\\Nt
-  \times Nt\\) of object class
-  [`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html).
+  **Dependency Graph**. Indicates which transition rates need updating
+  after a state transition. Can be provided as a sparse matrix (class
+  `dgCMatrix`) or a dense matrix. If a dense matrix is provided, it is
+  automatically converted to a sparse format internally. See
+  [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  for detailed matrix layout.
 
 - S:
 
-  Each column corresponds to a transition, and execution of state
-  transition `j` amounts to adding the `S[, j]` to the state vector of
-  the node where the state transition occurred. Sparse matrix (\\Nc
-  \times Nt\\) of object class
-  [`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html).
+  **State Transition Matrix**. Defines the change in the state vector
+  for each transition. Can be provided as a sparse matrix (class
+  `dgCMatrix`) or a dense matrix. If a dense matrix is provided, it is
+  automatically converted to a sparse format internally. See
+  [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  for detailed matrix layout.
 
 - tspan:
 
-  A vector (length \>= 1) of increasing time points where the state of
-  each node is to be returned. Can be either an `integer` or a `Date`
-  vector. A `Date` vector is coerced to a numeric vector as days, where
-  `tspan[1]` becomes the day of the year of the first year of `tspan`.
-  The dates are added as names to the numeric vector.
+  **Time Span** (numeric or Date vector). Increasing time points for
+  output. If `Date`, converted to days with names, where `tspan[1]`
+  becomes the day of the year of the first year of `tspan`. The dates
+  are added as names to the numeric vector.
 
 - events:
 
-  A `data.frame` with the scheduled events.
+  **Scheduled Events**. A `data.frame` defining the event schedule (see
+  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)).
 
 - ldata:
 
-  local data for the nodes. Can either be specified as a `data.frame`
-  with one row per node. Or as a matrix where each column `ldata[, j]`
-  contains the local data vector for the node `j`. The local data vector
-  is passed as an argument to the transition rate functions and the post
-  time step function.
+  **Local Data**. Parameters specific to each node. Can be:
+
+  - A `data.frame` with one row per node.
+
+  - A matrix where each column `ldata[, j]` is the data vector for node
+    `j`.
+
+  Passed to transition rate and post-step functions.
 
 - gdata:
 
-  A numeric vector with global data that is common to all nodes. The
-  global data vector is passed as an argument to the transition rate
-  functions and the post time step function.
+  **Global Data** (numeric vector). Parameters common to all nodes.
+  Passed to transition rate and post-step functions.
 
 - U:
 
-  The result matrix with the number of individuals in each disease state
-  in every node (\\N_n N_c \times\\ `length(tspan)`). `U[, j]` contains
-  the number of individuals in each disease state at `tspan[j]`.
-  `U[1:Nc, j]` contains the state of node `1` at `tspan[j]`.
-  `U[(Nc + 1):(2 * Nc), j]` contains the state of node `2` at `tspan[j]`
-  etc.
+  **Result Matrix** (integer matrix). Usually empty at creation. See
+  [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  for detailed matrix layout.
 
 - u0:
 
-  The initial state vector. Either a matrix (\\N_c \times N_n\\) or a a
-  `data.frame` with the number of individuals in each compartment in
-  every node.
+  **Initial State**. Initial number of individuals per compartment/node.
+  Can be:
+
+  - A matrix (\\N_c \times N_n\\).
+
+  - A `data.frame` with columns corresponding to compartments.
+
+  - Any object coercible to a `data.frame` (e.g., a named numeric vector
+    will be coerced to a one-row `data.frame`).
 
 - v0:
 
-  The initial continuous state vector in every node. (`dim(ldata)[1]`
-  \\\times N_N\\). The continuous state vector is updated by the
-  specific model during the simulation in the post time step function.
+  **Initial Continuous State** (numeric matrix). Initial values for
+  continuous states per node.
 
 - V:
 
-  The result matrix for the real-valued continous compartment state
-  (\\N_n\\`dim(ldata)[1]` \\\times\\ `length(tspan)`). `V[, j]` contains
-  the real-valued state of the system at `tspan[j]`.
+  **Continuous State Result Matrix** (numeric matrix). Usually empty at
+  creation. See
+  [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  for layout.
 
 - E:
 
-  A matrix to handle scheduled events, see
-  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md).
-  Each row in the matrix corresponds to one compartment in the model.
-  The non-zero entries in a column indicate the compartments to include
-  in an event. For the *exit*, *internal transfer* and *external
-  transfer* events, the values in `E[, select]` are used as weights when
-  sampling individuals without replacement, with probability
-  proportional to the weight. For the *enter* event, the values in
-  `E[, select]` are used as weights when determining which compartment
-  to add individuals to. If the column `E[, select]` contains several
-  non-zero entries, the compartment is sampled with probability
-  proportional to the weight in `E[, select]`. The select matrix `E` can
-  either be specified as a `matrix`, or as a `data.frame`. When `E` is
-  specified as a `data.frame`, it must have one column named
-  `compartment` that defines which compartment is referred to, and one
-  column `select` that defines the column in `E`. In addition, the
-  `data.frame` can contain an optional column named `value` with the
-  value in `E`. When the `value` column is missing, `1` is used as the
-  default value.
+  **Select Matrix** (matrix or `data.frame`). Defines which compartments
+  are affected by events and their sampling weights.
+
+  - **Matrix**: Standard sparse matrix.
+
+  - **data.frame**: Must have columns `compartment` and `select`.
+    Optional column `value` (default `1`) sets the weight.
+
+  See
+  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+  for usage details.
 
 - N:
 
-  A matrix to handle scheduled events, see
-  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md).
-  Each row in the matrix corresponds to one compartment in the model.
-  The values in a column define how to move sampled individuals before
-  adding them to the destination. Let `q <- shift`, then each non-zero
-  entry in `N[, q]` defines the number of rows to move sampled
-  individuals from that compartment i.e., sampled individuals from
-  compartment `p` are moved to compartment `N[p, q] + p`, where
-  `1 <= N[p, q] + p <= N_compartments`. This matrix is used for *enter*,
-  *internal transfer* and *external transfer* events. The shift matrix
-  `N` can either be specified as a `matrix`, or as a `data.frame`. When
-  `N` is specified as a `data.frame`, it must have one column named
-  `compartment` that defines which compartment is referred to, and one
-  column `shift` that defines the column in `N`. In addition, the
-  `data.frame` must contain a column named `value` with the integer
-  value in `N`.
+  **Shift Matrix** (matrix or `data.frame`). Defines how individuals are
+  moved between compartments during events.
+
+  - **Matrix**: Standard integer matrix.
+
+  - **data.frame**: Must have columns `compartment`, `shift`, and
+    `value` (integer offset).
+
+  See
+  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+  for usage details.
 
 - C_code:
 
-  Character vector with optional model C code. If non-empty, the C code
-  is written to a temporary C-file when the `run` method is called. The
-  temporary C-file is compiled and the resulting DLL is dynamically
-  loaded.
+  **C Source Code** (character vector). Optional C code for custom
+  transition rates. If provided, it is compiled and loaded when
+  [`run()`](http://stewid.github.io/SimInf/reference/run.md) is called.
 
 ## Value
 
-[SimInf_model](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+A
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+object.
+
+## See also
+
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md),
+[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md),
+[`SIS`](http://stewid.github.io/SimInf/reference/SIS.md),
+[`SISe`](http://stewid.github.io/SimInf/reference/SISe.md) for
+high-level model constructors that handle argument validation and matrix
+setup. [`mparse`](http://stewid.github.io/SimInf/reference/mparse.md)
+for creating custom models using a simple string syntax.
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+for details on the class structure and slots.
+[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events.md)
+for details on the event schedule format.

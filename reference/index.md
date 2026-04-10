@@ -81,7 +81,7 @@
 - [`SimInf_model()`](http://stewid.github.io/SimInf/reference/SimInf_model.md)
   :
 
-  Create a `SimInf_model`
+  Create a `SimInf_model` object
 
 - [`SimInf_pfilter-class`](http://stewid.github.io/SimInf/reference/SimInf_pfilter-class.md)
   :
