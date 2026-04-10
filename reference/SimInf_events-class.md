@@ -1,90 +1,95 @@
-# Class `"SimInf_events"`
+# Class `SimInf_events`
 
-Class to hold data for scheduled events to modify the discrete state of
-individuals in a node at a pre-defined time t.
+Class to hold data for scheduled events that modify the discrete state
+of individuals in a node at a pre-defined time `t`.
 
 ## Slots
 
 - `E`:
 
-  Each row corresponds to one compartment in the model. The non-zero
-  entries in a column indicate the compartments to include in an event.
-  For the *exit*, *internal transfer* and *external transfer* events, a
-  non-zero entry indicates the compartments to sample individuals from,
-  where the values in `E[, select]` are used as weights. Individuals are
-  sampled without replacement with probability proportional to the
-  weight in `E[, select]`. For the *enter* event, the values in
-  `E[, select]` are used as weights when determining which compartment
-  to add individuals to. If the column `E[, select]` contains several
-  non-zero entries, the compartment is sampled with probability
-  proportional to the weight in `E[, select]`. `E` is sparse matrix of
-  class
-  [`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html).
+  The **select matrix** (sparse matrix of class
+  [`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html)).
+  Each row corresponds to a model compartment.
+
+  - **Sampling (Exit, Internal/External Transfer):** Non-zero entries in
+    a column indicate which compartments individuals are sampled from.
+    The values in `E[, select]` act as **weights** for sampling
+    individuals without replacement (probability proportional to
+    weight).
+
+  - **Targeting (Enter):** Non-zero entries in a column indicate which
+    compartments new individuals are added to. The values in
+    `E[, select]` act as **weights** for distributing new individuals
+    among the target compartments.
 
 - `N`:
 
-  Determines how individuals in *enter*, *internal transfer* and
-  *external transfer* events are shifted to enter another compartment.
-  Each row corresponds to one compartment in the model. The values in a
-  column define how to move sampled individuals before adding them to
-  the destination. Let `q <- shift`, then each non-zero entry in
-  `N[, q]` defines the number of rows to move sampled individuals from
-  that compartment i.e., sampled individuals from compartment `p` are
-  moved to compartment `N[p, q] + p`, where
-  `1 <= N[p, q] + p <= N_compartments`. Which column to use for each
-  event is specified by the `shift` vector (see below). `N` is an
-  integer matrix.
+  The **shift matrix** (integer matrix). Determines how individuals are
+  moved between compartments during *enter*, *internal transfer*, and
+  *external transfer* events.
+
+  - Each row corresponds to a source compartment.
+
+  - Each column corresponds to a specific `shift` value.
+
+  - If `q <- shift`, the entry `N[p, q]` defines the **offset** (number
+    of rows to move) for individuals sampled from compartment `p`.
+
+  - The destination compartment is calculated as:
+    `destination = p + N[p, q]`.
+
+  - Constraint: `1 <= destination <= number of compartments`.
 
 - `event`:
 
-  Type of event: 0) *exit*, 1) *enter*, 2) *internal transfer*, and 3)
-  *external transfer*. Other values are reserved for future event types
-  and not supported by the current solvers. Integer vector.
+  Integer vector specifying the event type for each row:
+
+  - `0`: *exit* (remove individuals).
+
+  - `1`: *enter* (add individuals).
+
+  - `2`: *internal transfer* (move within node).
+
+  - `3`: *external transfer* (move between nodes).
+
+  Other values are reserved for future use.
 
 - `time`:
 
-  Time of when the event occurs i.e., the event is processed when time
-  is reached in the simulation. `time` is an integer vector.
+  Integer vector specifying the time step when each event occurs.
 
 - `node`:
 
-  The node that the event operates on. Also the source node for an
-  *external transfer* event. Integer vector. 1 \<= `node[i]` \<= Number
-  of nodes.
+  Integer vector specifying the **source node** for the event. For
+  *external transfer*, this is the node individuals are moved *from*.
+  Range: `1 <= node <= number of nodes`.
 
 - `dest`:
 
-  The destination node for an *external transfer* event i.e.,
-  individuals are moved from `node` to `dest`, where 1 \<= `dest[i]` \<=
-  Number of nodes. Set `event = 0` for the other event types. `dest` is
-  an integer vector.
+  Integer vector specifying the **destination node** for *external
+  transfer* events (individuals moved *to*). For other event types, this
+  value is ignored (typically set to 0). Range:
+  `1 <= dest <= number of nodes`.
 
 - `n`:
 
-  The number of individuals affected by the event. Integer vector.
-  n\[i\] \>= 0.
+  Integer vector specifying the **number of individuals** affected by
+  the event. Must be `n >= 0`.
 
 - `proportion`:
 
-  If `n[i]` equals zero, the number of individuals affected by
-  `event[i]` is calculated by sampling the number of individuals from a
-  binomial distribution using the `proportion[i]` and the number of
-  individuals in the compartments. Numeric vector. 0 \<= proportion\[i\]
-  \<= 1.
+  Numeric vector. If `n[i] == 0`, the number of individuals is sampled
+  from a binomial distribution using `proportion[i]` and the current
+  population size in the selected compartments. Range:
+  `0 <= proportion <= 1`.
 
 - `select`:
 
-  To process `event[i]`, the compartments affected by the event are
-  specified with `select[i]` together with the matrix `E`, where
-  `select[i]` determines which column in `E` to use. The specific
-  individuals affected by the event are proportionally sampled from the
-  compartments corresponding to the non-zero entries in the specified
-  column in `E[, select[i]]`, where `select` is an integer vector.
+  Integer vector specifying which **column** of the matrix `E` to use
+  for sampling/targeting for each event. The specific individuals are
+  chosen based on the non-zero entries in `E[, select[i]]`.
 
 - `shift`:
 
-  Determines how individuals in *enter*, *internal transfer* and
-  *external transfer* events are shifted to enter another compartment.
-  The sampled individuals are shifted according to column `shift[i]` in
-  matrix `N` i.e., `N[, shift[i]]`, where `shift` is an integer vector.
-  Unused for *exit* events.
+  Integer vector specifying which **column** of the matrix `N` to use
+  for shifting individuals for each event. Unused for *exit* events.

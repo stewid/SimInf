@@ -61,7 +61,7 @@
 - [`SimInf_events-class`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
   :
 
-  Class `"SimInf_events"`
+  Class `SimInf_events`
 
 - [`SimInf_events()`](http://stewid.github.io/SimInf/reference/SimInf_events.md)
   :
