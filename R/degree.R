@@ -56,6 +56,13 @@ degree <- function(model, a, b) {
 ##' @return An integer vector where each element corresponds to a
 ##'     node, containing the count of unique source nodes sending
 ##'     individuals to it.
+##' @seealso
+##' \code{\link{outdegree}} for calculating the number of unique
+##' destination nodes a node sends individuals to.
+##' \code{\link{events_SIR}} for example event data used in network
+##' analysis.
+##' \code{\linkS4class{SimInf_events}} for details on the structure of
+##' scheduled events.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
 ##' @export
