@@ -71,12 +71,14 @@ set_num_threads(1)
 ## births, deaths and between-node movements of individuals.
 u0 <- u0_SEIR()
 u0$E[1] <- 10
-model <- SEIR(u0      = u0,
-              tspan   = seq(from = 1, to = 4*365, by = 7),
-              events  = events_SEIR(),
-              beta    = 0.16,
-              epsilon = 0.25,
-              gamma   = 0.01)
+model <- SEIR(
+    u0      = u0,
+    tspan   = seq(from = 1, to = 4*365, by = 7),
+    events  = events_SEIR(),
+    beta    = 0.16,
+    epsilon = 0.25,
+    gamma   = 0.01
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))

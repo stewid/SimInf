@@ -7,37 +7,42 @@
 u0_SEIR()
 }
 \value{
-A \code{data.frame} with 1,600 rows (one per herd) and 4 columns:
-  \describe{
-    \item{S}{Number of susceptible cattle in the herd}
-    \item{E}{Number of exposed cattle in the herd (all zero at start)}
-    \item{I}{Number of infected cattle in the herd (all zero at start)}
-    \item{R}{Number of recovered cattle in the herd (all zero at start)}
-  }
+A \code{data.frame} with 1,600 rows (one per node) and 4
+    columns:
+    \describe{
+      \item{S}{Number of susceptible individuals in the node}
+      \item{E}{Number of exposed individuals in the node (all zero
+      at start)}
+      \item{I}{Number of infected individuals in the node (all
+      zero at start)}
+      \item{R}{Number of recovered individuals in the node (all
+      zero at start)}
+    }
 }
 \description{
-Dataset containing the initial number of susceptible, exposed,
-infected, and recovered cattle across 1,600 herds. Provides
-realistic population structure for demonstrating SEIR model
-simulations in a cattle disease epidemiology context.
+Synthetic dataset containing the initial number of susceptible,
+exposed, infected, and recovered individuals across 1,600 nodes.
+Provides a heterogeneous population structure for demonstrating
+SEIR model simulations in a compartmental modeling context.
 }
 \details{
 This dataset represents initial disease states in a population of
-1,600 cattle herds (nodes). Each row represents a single herd
-(node), derived from the structured cattle population data by
-adding an exposed compartment to the SIR model structure.
+1,600 nodes. Each row represents a single node, derived from a
+synthetic population structure by adding an exposed compartment to
+the SIR model framework.
 
 The data contains:
 \describe{
-  \item{S}{Total susceptible cattle in the herd}
-  \item{E}{Total exposed cattle (initialized to zero)}
-  \item{I}{Total infected cattle (initialized to zero)}
-  \item{R}{Total recovered cattle (initialized to zero)}
+  \item{S}{Total susceptible individuals in the node}
+  \item{E}{Total exposed individuals (initialized to zero)}
+  \item{I}{Total infected individuals (initialized to zero)}
+  \item{R}{Total recovered individuals (initialized to zero)}
 }
 
-The herd size distribution reflects realistic heterogeneity
-observed in cattle populations, making it suitable for testing
-disease dynamics with an explicit latent period.
+The herd size distribution is synthetically generated to reflect
+heterogeneity typical of large-scale populations, making it
+suitable for illustrating how to incorporate scheduled events in
+the SimInf framework.
 }
 \examples{
 ## For reproducibility, call the set.seed() function and specify the
@@ -53,12 +58,14 @@ set_num_threads(1)
 ## births, deaths and between-node movements of individuals.
 u0 <- u0_SEIR()
 u0$E[1] <- 10
-model <- SEIR(u0      = u0,
-              tspan   = seq(from = 1, to = 4*365, by = 7),
-              events  = events_SEIR(),
-              beta    = 0.16,
-              epsilon = 0.25,
-              gamma   = 0.01)
+model <- SEIR(
+    u0      = u0,
+    tspan   = seq(from = 1, to = 4*365, by = 7),
+    events  = events_SEIR(),
+    beta    = 0.16,
+    epsilon = 0.25,
+    gamma   = 0.01
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))
@@ -78,7 +85,7 @@ plot(result, index = 1)
 summary(result)
 }
 \seealso{
-\code{\link{SEIR}} for creating SEIR models with this initial
-state and \code{\link{events_SEIR}} for associated cattle movement
-and demographic events
+\code{\link{SEIR}} for creating SEIR models with this
+    initial state and \code{\link{events_SEIR}} for associated
+    movement and demographic events
 }

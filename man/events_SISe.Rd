@@ -70,22 +70,24 @@ set_num_threads(1)
 ## individuals.
 u0 <- u0_SISe()
 u0$I[1] <- 10
-model <- SISe(u0 = u0,
-              tspan = seq(from = 1, to = 4*365, by = 7),
-              events = events_SISe(),
-              phi = 0,
-              upsilon = 1.8e-2,
-              gamma = 0.1,
-              alpha = 1,
-              beta_t1 = 1.0e-1,
-              beta_t2 = 1.0e-1,
-              beta_t3 = 1.25e-1,
-              beta_t4 = 1.25e-1,
-              end_t1 = 91,
-              end_t2 = 182,
-              end_t3 = 273,
-              end_t4 = 365,
-              epsilon = 0)
+model <- SISe(
+    u0 = u0,
+    tspan = seq(from = 1, to = 4*365, by = 7),
+    events = events_SISe(),
+    phi = 0,
+    upsilon = 1.8e-2,
+    gamma = 0.1,
+    alpha = 1,
+    beta_t1 = 1.0e-1,
+    beta_t2 = 1.0e-1,
+    beta_t3 = 1.25e-1,
+    beta_t4 = 1.25e-1,
+    end_t1 = 91,
+    end_t2 = 182,
+    end_t3 = 273,
+    end_t4 = 365,
+    epsilon = 0
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))
