@@ -142,11 +142,13 @@ details</p></div>
 <span class="r-in"><span><span class="co">## of individuals.</span></span></span>
 <span class="r-in"><span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="u0_SIS.html">u0_SIS</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">u0</span><span class="op">$</span><span class="va">I</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SIS.html">SIS</a></span><span class="op">(</span>u0     <span class="op">=</span> <span class="va">u0</span>,</span></span>
-<span class="r-in"><span>             tspan  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="fl">4</span><span class="op">*</span><span class="fl">365</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>             events <span class="op">=</span> <span class="fu">events_SIS</span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>             beta   <span class="op">=</span> <span class="fl">0.16</span>,</span></span>
-<span class="r-in"><span>             gamma  <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SIS.html">SIS</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    u0     <span class="op">=</span> <span class="va">u0</span>,</span></span>
+<span class="r-in"><span>    tspan  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="fl">4</span><span class="op">*</span><span class="fl">365</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    events <span class="op">=</span> <span class="fu">events_SIS</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    beta   <span class="op">=</span> <span class="fl">0.16</span>,</span></span>
+<span class="r-in"><span>    gamma  <span class="op">=</span> <span class="fl">0.01</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Display the number of cattle affected by each event type per day.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="events.html">events</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></span>

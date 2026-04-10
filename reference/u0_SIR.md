@@ -83,11 +83,13 @@ set_num_threads(1)
 ## of individuals.
 u0 <- u0_SIR()
 u0$I[1] <- 1
-model <- SIR(u0     = u0,
-             tspan  = seq(from = 1, to = 4*365, by = 1),
-             events = events_SIR(),
-             beta   = 0.16,
-             gamma  = 0.01)
+model <- SIR(
+    u0     = u0,
+    tspan  = seq(from = 1, to = 4*365, by = 1),
+    events = events_SIR(),
+    beta   = 0.16,
+    gamma  = 0.01
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))
