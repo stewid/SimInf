@@ -101,14 +101,18 @@ for post-processing and visualization.
 ## Examples
 
 ``` r
+## For reproducibility, set the seed.
+set.seed(22)
+
 ## Create an SIS model object.
-model <- SIS(u0 = data.frame(S = 99, I = 1),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+model <- SIS(
+  u0 = data.frame(S = 99, I = 1),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
 
 ## Run the SIS model and plot the result.
-set.seed(22)
 result <- run(model)
 plot(result)
 ```
