@@ -143,14 +143,13 @@ setValidity("SimInf_model", valid_SimInf_model_object)
 ##'
 ##' @return A \code{\linkS4class{SimInf_model}} object.
 ##'
-##' @seealso
-##'   \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
-##'   \code{\link{SISe}} for high-level model constructors that handle
-##'   argument validation and matrix setup.  \code{\link{mparse}} for
-##'   creating custom models using a simple string syntax.
-##'   \code{\linkS4class{SimInf_model}} for details on the class
-##'   structure and slots.  \code{\link{SimInf_events}} for details on
-##'   the event schedule format.
+##' @seealso \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+##'     \code{\link{SISe}} for examples of compartment model
+##'     constructors that handle argument validation and matrix setup.
+##'     \code{\link{mparse}} for creating custom models using a simple
+##'     string syntax.  \code{\linkS4class{SimInf_model}} for details
+##'     on the class structure and slots.  \code{\link{SimInf_events}}
+##'     for details on the event schedule format.
 ##'
 ##' @include init.R
 ##' @export

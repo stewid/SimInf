@@ -86,3 +86,14 @@ matrix \code{N} to use for shifting individuals for each
 event.  Unused for \emph{exit} events.}
 }}
 
+\seealso{
+\code{\link{SimInf_model}} for the main model class that
+    holds the events.  \code{\link{SIR}}, \code{\link{SEIR}},
+    \code{\link{SIS}}, \code{\link{SISe}} for examples of how
+    events are passed to model constructors.
+    \code{\link{SimInf_model}} (constructor) for details on the
+    \code{E} and \code{N} matrices used to define event behavior.
+    \code{\link{run}} for executing the simulation with scheduled
+    events.  Vignette \code{"Scheduled events"} for detailed
+    examples of defining and using events.
+}
