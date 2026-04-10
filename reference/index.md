@@ -76,7 +76,7 @@
 - [`SimInf_model-class`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
   :
 
-  Class `"SimInf_model"`
+  Class `SimInf_model`
 
 - [`SimInf_model()`](http://stewid.github.io/SimInf/reference/SimInf_model.md)
   :

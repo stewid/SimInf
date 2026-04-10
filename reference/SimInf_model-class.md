@@ -1,96 +1,119 @@
-# Class `"SimInf_model"`
+# Class `SimInf_model`
 
-Class to handle data for the `SimInf_model`.
+The core class for storing the state, parameters, and results of a
+stochastic simulation in SimInf. This class holds the model definition
+(transition graphs, matrices), initial conditions, scheduled events, and
+the simulation output.
 
 ## Slots
 
 - `G`:
 
-  Dependency graph that indicates the transition rates that need to be
-  updated after a given state transition has occured. A non-zero entry
-  in element `G[i, i]` indicates that transition rate `i` needs to be
-  recalculated if the state transition `j` occurs. Sparse matrix (\\Nt
-  \times Nt\\) of object class
-  [`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html).
+  **Dependency Graph** (sparse matrix, class `dgCMatrix`). Indicates
+  which transition rates need to be updated after a state transition
+  occurs. A non-zero entry `G[i, j]` means that transition rate `i` must
+  be recalculated if transition `j` occurs. This optimizes performance
+  by avoiding unnecessary updates. Dimensions: \\N_t \times N_t\\, where
+  \\N_t\\ is the number of transitions.
 
 - `S`:
 
-  Each column corresponds to a state transition, and execution of state
-  transition `j` amounts to adding the `S[, j]` column to the state
-  vector `u[, i]` of node *i* where the transition occurred. Sparse
-  matrix (\\Nc \times Nt\\) of object class
-  [`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html).
+  **State Transition Matrix** (sparse matrix, class `dgCMatrix`).
+  Defines the change in the state vector for each transition. Executing
+  transition `j` adds the column `S[, j]` to the state vector of the
+  affected node. Dimensions: \\N_c \times N_t\\, where \\N_c\\ is the
+  number of compartments.
 
 - `U`:
 
-  The result matrix with the number of individuals in each compartment
-  in every node. `U[, j]` contains the number of individuals in each
-  compartment at `tspan[j]`. `U[1:Nc, j]` contains the number of
-  individuals in node 1 at `tspan[j]`. `U[(Nc + 1):(2 * Nc), j]`
-  contains the number of individuals in node 2 at `tspan[j]` etc.
-  Integer matrix (\\N_n N_c \times\\ `length(tspan)`).
+  **Discrete State Result Matrix** (integer matrix). Contains the number
+  of individuals in each compartment for every node at each time point
+  in `tspan`.
+
+  - `U[, j]`: State at time `tspan[j]`.
+
+  - Rows are ordered by node, then by compartment:
+
+    - Rows `1:Nc`: Node 1.
+
+    - Rows `(Nc+1):(2*Nc)`: Node 2.
+
+    - ... and so on.
+
+  Dimensions: \\N_n \times N_c \times \text{length(tspan)}\\. *Note: If
+  the model was run with sparse output, this slot is empty.*
 
 - `U_sparse`:
 
-  If the model was configured to write the solution to a sparse matrix
-  ([`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html))
-  the `U_sparse` contains the data and `U` is empty. The layout of the
-  data in `U_sparse` is identical to `U`. Please note that `U_sparse` is
-  numeric and `U` is integer.
+  **Sparse Discrete State Result** (sparse matrix, class `dgCMatrix`).
+  Contains the simulation results if the model was configured for sparse
+  output. The layout is identical to `U`, but stored as a sparse matrix
+  to save memory. *Note: Only one of `U` or `U_sparse` will contain
+  data.*
 
 - `V`:
 
-  The result matrix for the real-valued continuous state. `V[, j]`
-  contains the real-valued state of the system at `tspan[j]`. Numeric
-  matrix (\\N_n\\`dim(ldata)[1]` \\\times\\ `length(tspan)`).
+  **Continuous State Result Matrix** (numeric matrix). Contains the
+  values of continuous state variables (e.g., environmental pathogen
+  load) for every node at each time point. Dimensions: \\N_n \times
+  N\_{ld} \times \text{length(tspan)}\\, where \\N\_{ld}\\ is the number
+  of local data variables (continuous states). *Note: If sparse output
+  was used, this slot is empty.*
 
 - `V_sparse`:
 
-  If the model was configured to write the solution to a sparse matrix
-  ([`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html))
-  the `V_sparse` contains the data and `V` is empty. The layout of the
-  data in `V_sparse` is identical to `V`.
+  **Sparse Continuous State Result** (sparse matrix, class `dgCMatrix`).
+  Contains the continuous state results if sparse output was enabled.
+  Layout identical to `V`. *Note: Only one of `V` or `V_sparse` will
+  contain data.*
 
 - `ldata`:
 
-  A matrix with local data for the nodes. The column `ldata[, j]`
-  contains the local data vector for the node `j`. The local data vector
-  is passed as an argument to the transition rate functions and the post
-  time step function.
+  **Local Data Matrix** (numeric matrix). Parameters specific to each
+  node (e.g., node-specific transmission rates). Column `ldata[, j]`
+  contains the local data vector for node `j`. Passed to transition rate
+  functions and post-step functions. Dimensions: \\N\_{ld} \times N_n\\.
 
 - `gdata`:
 
-  A numeric vector with global data that is common to all nodes. The
-  global data vector is passed as an argument to the transition rate
-  functions and the post time step function.
+  **Global Data Vector** (numeric vector). Parameters common to all
+  nodes (e.g., global recovery rate). Passed to transition rate
+  functions and post-step functions.
 
 - `tspan`:
 
-  A vector of increasing time points where the state of each node is to
-  be returned.
+  **Time Span** (numeric vector). Increasing time points where the state
+  of each node is recorded.
 
 - `u0`:
 
-  The initial state vector (\\N_c \times N_n\\) with the number of
-  individuals in each compartment in every node.
+  **Initial State Matrix** (integer matrix). Initial number of
+  individuals in each compartment for every node. Dimensions: \\N_c
+  \times N_n\\.
 
 - `v0`:
 
-  The initial value for the real-valued continuous state. Numeric matrix
-  (`dim(ldata)[1]` \\\times N_n\\).
+  **Initial Continuous State Matrix** (numeric matrix). Initial values
+  for continuous state variables for every node. Dimensions: \\N\_{ld}
+  \times N_n\\.
 
 - `events`:
 
-  Scheduled events
-  [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+  **Scheduled Events**
+  ([`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)).
+  Object containing the schedule of discrete events (e.g., movements,
+  births).
 
 - `replicates`:
 
-  Number of replicates of the model.
+  **Number of Replicates** (integer). Number of parallel replicates
+  simulated for this model (used in filtering algorithms).
 
 - `C_code`:
 
-  Character vector with optional model C code. If non-empty, the C code
-  is written to a temporary C-file when the `run` method is called. The
-  temporary C-file is compiled and the resulting DLL is dynamically
-  loaded.
+  **C Source Code** (character vector). Optional C code defining the
+  model's transition rates. If non-empty, this code is written to a
+  temporary file, compiled, and loaded when
+  [`run()`](http://stewid.github.io/SimInf/reference/run.md) is called.
+  Typically generated by
+  [`mparse`](http://stewid.github.io/SimInf/reference/mparse.md).
