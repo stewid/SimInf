@@ -60,9 +60,8 @@ degree <- function(model, a, b) {
 ##' \code{\link{outdegree}} for calculating the number of unique
 ##' destination nodes a node sends individuals to.
 ##' \code{\link{events_SIR}} for example event data used in network
-##' analysis.
-##' \code{\linkS4class{SimInf_events}} for details on the structure of
-##' scheduled events.
+##' analysis.  \code{\linkS4class{SimInf_events}} for details on the
+##' structure of scheduled events.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
 ##' @export
