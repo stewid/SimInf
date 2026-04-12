@@ -27,6 +27,16 @@ have sent individuals to the target node at least once. This metric
 measures the connectivity of the network, indicating how many different
 neighbors directly supply individuals to a specific node.
 
+## See also
+
+[`outdegree`](http://stewid.github.io/SimInf/reference/outdegree.md) for
+calculating the number of unique destination nodes a node sends
+individuals to.
+[`events_SIR`](http://stewid.github.io/SimInf/reference/events_SIR.md)
+for example event data used in network analysis.
+[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+for details on the structure of scheduled events.
+
 ## Examples
 
 ``` r
