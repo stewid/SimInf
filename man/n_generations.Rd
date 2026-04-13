@@ -3,19 +3,25 @@
 \name{n_generations}
 \alias{n_generations}
 \alias{n_generations,SimInf_abc-method}
-\title{Determine the number of generations}
+\title{Determine the number of generations in an ABC analysis}
 \usage{
 n_generations(object)
 
 \S4method{n_generations}{SimInf_abc}(object)
 }
 \arguments{
-\item{object}{the \code{SimInf_abc} object to determine the number
-of generations for.}
+\item{object}{A \code{SimInf_abc} object containing the results of
+an ABC analysis.}
 }
 \value{
-an integer with the number of generations.
+An integer scalar representing the total number of
+    generations executed in the analysis.
 }
 \description{
-Determine the number of generations
+Extract the number of generations performed in an Approximate
+Bayesian Computation (ABC) analysis from a \code{SimInf_abc} object.
+Each generation represents a sequential round of the algorithm,
+involving the simulation of particles, acceptance/rejection based
+on the distance threshold, and parameter perturbation for the next
+round.
 }
