@@ -247,7 +247,7 @@
   : Generic function to calculate prevalence from trajectory data
 
 - [`` `punchcard<-`() ``](http://stewid.github.io/SimInf/reference/punchcard-set.md)
-  : Set a template for where to record result during a simulation
+  : Set a sparse recording template for simulation results
 
 - [`run()`](http://stewid.github.io/SimInf/reference/run.md) : Run the
   SimInf stochastic simulation algorithm
