@@ -175,10 +175,9 @@ between compartments during events.  See
 
 
 <dt id="arg-pts-fun">pts_fun<a class="anchor" aria-label="anchor" href="#arg-pts-fun"></a></dt>
-<dd><p>optional character vector with C code for the post
-time step function. The C code should contain only the body of
-the function i.e. the code between the opening and closing
-curly brackets.</p></dd>
+<dd><p>Optional character vector with C code for the
+post-time-step function.  Should contain only the function
+body (code between curly brackets).</p></dd>
 
 
 <dt id="arg-use-enum">use_enum<a class="anchor" aria-label="anchor" href="#arg-use-enum"></a></dt>
@@ -203,6 +202,17 @@ by integer indices).</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>a <code><a href="SimInf_model-class.html">SimInf_model</a></code> object</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="SimInf_model.html">SimInf_model</a></code> for the class definition of the
+  returned model object.  <code><a href="SIR.html">SIR</a></code>, <code><a href="SEIR.html">SEIR</a></code>,
+  <code><a href="SIS.html">SIS</a></code>, <code><a href="SISe.html">SISe</a></code> for high-level model
+  constructors that use predefined structures.  Vignette
+  <code>"Getting started with mparse"</code> for a comprehensive
+  tutorial on defining custom models, including syntax, variables,
+  and event handling.  <code><a href="package_skeleton.html">package_skeleton</a></code> for creating
+  an installable R package from a <code>mparse</code> model.</p></div>
     </div>
 
     <div class="section level2">

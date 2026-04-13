@@ -132,9 +132,8 @@ mparse(
 
 - pts_fun:
 
-  optional character vector with C code for the post time step function.
-  The C code should contain only the body of the function i.e. the code
-  between the opening and closing curly brackets.
+  Optional character vector with C code for the post-time-step function.
+  Should contain only the function body (code between curly brackets).
 
 - use_enum:
 
@@ -159,6 +158,20 @@ mparse(
 a
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
 object
+
+## See also
+
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model.md)
+for the class definition of the returned model object.
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md),
+[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md),
+[`SIS`](http://stewid.github.io/SimInf/reference/SIS.md),
+[`SISe`](http://stewid.github.io/SimInf/reference/SISe.md) for
+high-level model constructors that use predefined structures. Vignette
+`"Getting started with mparse"` for a comprehensive tutorial on defining
+custom models, including syntax, variables, and event handling.
+[`package_skeleton`](http://stewid.github.io/SimInf/reference/package_skeleton.md)
+for creating an installable R package from a `mparse` model.
 
 ## Examples
 
