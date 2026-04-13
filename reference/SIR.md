@@ -24,7 +24,8 @@ SIR(u0, tspan, events = NULL, beta = NULL, gamma = NULL)
   each node is to be returned. Can be either an `integer` or a `Date`
   vector.
 
-  - If `integer`: Represents absolute time steps.
+  - If `integer`: Represents the specific time points (e.g., days,
+    hours) at which to record the state.
 
   - If `Date`: Coerced to a numeric vector representing the **day of the
     year** (1–366) relative to the first date in the vector. The
