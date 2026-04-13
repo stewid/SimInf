@@ -27,6 +27,16 @@ that receive individuals from the source node at least once. This metric
 measures the connectivity of the network, indicating how many different
 neighbors a specific node directly sends individuals to.
 
+## See also
+
+[`indegree`](http://stewid.github.io/SimInf/reference/indegree.md) for
+calculating the number of unique source nodes that send individuals to a
+node.
+[`events_SIR`](http://stewid.github.io/SimInf/reference/events_SIR.md)
+for example event data used in network analysis.
+[`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
+for details on the structure of scheduled events.
+
 ## Examples
 
 ``` r
