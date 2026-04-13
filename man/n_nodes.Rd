@@ -23,8 +23,8 @@ An integer scalar representing the total number of nodes
     in the model.
 }
 \description{
-Extract the number of nodes from a \code{SimInf_model} object.
-A node represents a distinct sub-population in the model, but its
+Extract the number of nodes from a \code{SimInf_model} object.  A
+node represents a distinct sub-population in the model, but its
 definition is determined by the modeller. For example, a node can
 represent a cattle herd, a pen within a herd, or even a single
 individual, depending on the research question and the scale of
