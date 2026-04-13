@@ -110,20 +110,25 @@ time step function. The C code should contain only the body of
 the function i.e. the code between the opening and closing
 curly brackets.}
 
-\item{use_enum}{generate enumeration constants for the indices to
-each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
-in the generated C code. The name of each enumeration constant
-will be transformed to the upper-case name of the
-corresponding parameter, for example, a parameter 'beta' will
-become 'BETA'. The enumeration constants 'N_COMPARTMENTS_U'
-and 'N_COMPARTMENTS_V' will be automatically added to
-facilitate indexing 'u' and 'v' in the C code. These two
-enumeration constants cannot be used as a compartment or
-variable name. Using enumeration constants can make it easier
-to modify the C code afterwards, or when writing C code for
-the \code{pts_fun} parameter. Default is \code{FALSE}, i.e.,
-the parameters are specified by using integer indices for the
-parameters.}
+\item{use_enum}{Logical. If \code{TRUE}, generates C enumeration
+constants for parameters found in the \code{u}, \code{v},
+\code{gdata}, and \code{ldata} vectors to facilitate manual C
+code modification or use in \code{pts_fun}.  The name of each
+enumeration constant is the upper-case version of the
+corresponding parameter name (e.g., \code{beta} becomes
+\code{BETA}).  Additionally, the following constants are
+automatically generated:
+\itemize{
+  \item \code{N_COMPARTMENTS_U}: The number of discrete
+  compartments.
+  \item \code{N_COMPARTMENTS_V}: The number of continuous
+  state variables.
+}
+These constants facilitate indexing of the \code{u} and
+\code{v} vectors in C code.  Note that \code{N_COMPARTMENTS_U}
+and \code{N_COMPARTMENTS_V} cannot be used as compartment or
+variable names. Default is \code{FALSE} (parameters accessed
+by integer indices).}
 }
 \value{
 a \code{\linkS4class{SimInf_model}} object
