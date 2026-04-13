@@ -1,9 +1,9 @@
-# Model parser to define new models to run in `SimInf`
+# Model parser to define new models for `SimInf`
 
-Describe your model in a logical way in R. `mparse` creates a
+Describe your model using a simple string syntax in R. `mparse` parses
+this description, generates model-specific C code, and returns a
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
-object with your model definition that is ready to
-[`run`](http://stewid.github.io/SimInf/reference/run.md).
+object ready for simulation.
 
 ## Usage
 
@@ -28,59 +28,57 @@ mparse(
 
 - transitions:
 
-  character vector containing transitions on the form `"X -> ... -> Y"`.
-  The left (right) side is the initial (final) state and the propensity
-  is written in between the `->`-signs. The special symbol `@` is
-  reserved for the empty set. For example,
-  `transitions = c("S -> beta*S*I/(S+I+R) -> I", "I -> gamma*I -> R")`
-  expresses the SIR model. It is also possible to define variables which
-  can then be used in calculations of propensities or in calculations of
-  other variables. A variable is defined by the operator `<-`. Using a
-  variable for the size of the population, the SIR model can instead be
-  written
-  `transitions = c("S -> beta*S*I/N -> I", "I -> gamma*I -> R", "N <- S+I+R")`.
-  By default, the type of a variable is defined as a double in the
-  generated C code, but it is possible to also define it as an integer
-  by writing `(int)` before the variable name. For example, for the SIR
-  model, the population size can be defined as `"(int)N <- S+I+R"`. It
-  is also possible to explicitly use (double) in front of the variable
-  name, but it is not needed because it is the default. Note that the
-  order of propensities and variables does not matter.
+  Character vector defining the state transitions. Each element follows
+  the format `"Source -> Propensity -> Target"`.
+
+  - **Syntax**: `"X -> rate_expr -> Y"` moves individuals from
+    compartment `X` to `Y` with rate `rate_expr`.
+
+  - **Empty Set**: Use `@` for the empty set (e.g., `"I -> mu*I -> @"`
+    for death, or `"@ -> lambda -> S"` for birth).
+
+  - **Variables**: Define intermediate variables using `<-`. Example:
+    `"N <- S + I + R"`. Variables can be used in propensity expressions.
+    Order does not matter.
+
+  - **Types**: By default, variables are `double`. Use `(int)` to force
+    integer type (e.g., `"(int)N <- S+I+R"`).
+
+  Example:
+  `c("S -> beta*S*I/N -> I", "I -> gamma*I -> R", "N <- S+I+R")`.
 
 - compartments:
 
-  contains the names of the involved compartments, for example,
-  `compartments = c("S", "I", "R")`.
+  Character vector of compartment names (e.g., `c("S", "I", "R")`).
 
 - ldata:
 
-  optional data for the nodes. Can be specified as a `data.frame` with
-  one row per node, as a numeric matrix where column `ldata[, j]`
-  contains the local data vector for the node `j`, or as a named vector
-  when the model only contains one node. If `ldata` is specified as a
-  `data.frame`, each column is one parameter. If `ldata` is specified as
-  a matrix, it must have row names to identify the parameters in the
-  transitions. If `ldata` is specified as a named vector, the names
-  identify the parameters.
+  Optional local data (node-specific parameters). Can be:
+
+  - A `data.frame` with one row per node (columns = parameters).
+
+  - A numeric matrix where columns are nodes and row names are
+    parameters.
+
+  - A named vector (for single-node models).
 
 - gdata:
 
-  optional data that are common to all nodes in the model. Can be
-  specified either as an optionally named numeric vector or as a one-row
-  data.frame. The names are used to identify the parameters in the
-  transitions. When `gdata` is specified as a vector, it is possible to
-  have parameters without names, however, these parameters will not be
-  automatically identified by mparse but need to be identified in the
-  code by the user. The global data vector is passed as an argument to
-  the transition rate functions and the post time step function.
+  Optional global data (common to all nodes). Can be:
+
+  - A named numeric vector (names identify parameters).
+
+  - A one-row `data.frame`.
+
+  Unnamed parameters in a vector must be referenced by index in the
+  transitions.
 
 - u0:
 
-  A `data.frame` with the initial state in each node, i.e., the number
-  of individuals in each compartment in each node when the simulation
-  starts (see ‘Details’). The parameter `u0` can also be an object that
-  can be coerced to a `data.frame`, e.g., a named numeric vector will be
-  coerced to a one row `data.frame`.
+  Initial state vector. Can be a `data.frame`, matrix, or named vector.
+  See
+  [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  for details.
 
 - v0:
 

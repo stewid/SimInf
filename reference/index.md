@@ -179,7 +179,7 @@
 
 - [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md) :
 
-  Model parser to define new models to run in `SimInf`
+  Model parser to define new models for `SimInf`
 
 - [`n_compartments()`](http://stewid.github.io/SimInf/reference/n_compartments.md)
   : Determine the number of compartments in a model
