@@ -145,17 +145,32 @@ setMethod(
 
 ##' Determine the number of compartments in a model
 ##'
-##' @param model the \code{model} object to extract the number of
-##'     compartments from.
-##' @return the number of compartments in the model.
+##' Extract the number of compartments from a \code{SimInf_model}
+##' object.  Compartments represent the distinct states an individual
+##' can occupy within a node (e.g., Susceptible, Infected,
+##' Recovered). This count is equivalent to the number of columns in
+##' the initial state vector \code{u0}.
+##'
+##' @param model A \code{SimInf_model} object.
+##' @return An integer scalar representing the total number of
+##'     compartments in the model.
 ##' @export
 ##' @examples
-##' ## Create an 'SIR' model with 100 nodes, with 99 susceptible,
-##' ## 1 infected and 0 recovered in each node.
-##' u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
-##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##' ## Create an 'SIR' model with 3 compartments (S, I, R).
+##' u0 <- data.frame(
+##'   S = rep(99, 100),
+##'   I = rep(1, 100),
+##'   R = rep(0, 100)
+##' )
 ##'
-##' ## Display the number of compartments in the model.
+##' model <- SIR(
+##'   u0 = u0,
+##'   tspan = 1:10,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Get the number of compartments.
 ##' n_compartments(model)
 ## nolint start: brace_linter
 setGeneric(
