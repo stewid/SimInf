@@ -466,30 +466,44 @@ create_model_run_man_file <- function(path, name) {
 
 ##' Create a package skeleton from a \code{SimInf_model}
 ##'
-##' Describe your model in a logical way in R, then \code{mparse}
-##' creates a \code{\linkS4class{SimInf_model}} object with your model
-##' definition that can be installed as an add-on R package.
-##' @param model The \code{model} \code{\linkS4class{SimInf_model}}
-##'     object with your model to create the package skeleton from.
-##' @param name Character string with the package name. It should
-##'     contain only (ASCII) letters, numbers and dot, have at least
-##'     two characters and start with a letter and not end in a dot.
+##' Generate a source package directory from a
+##' \code{\linkS4class{SimInf_model}} object, allowing the model to be
+##' installed as a standalone add-on R package. This is useful for
+##' distributing custom models or for improving startup performance by
+##' compiling the C code once during package installation rather than
+##' on the first call to \code{run()}.
+##'
+##' The typical workflow is:
+##' \enumerate{
+##'   \item Define the model using \code{\link{mparse}} or
+##'     \code{\link{SimInf_model}}.
+##'   \item Call \code{package_skeleton} to generate the package
+##'
+##'   \item Install the package using \code{\link{install.packages}}
+##'     or \code{R CMD INSTALL}.
+##' }
+##'
+##' @param model A \code{\linkS4class{SimInf_model}} object to create
+##'     the package skeleton from.
+##' @param name Character string with the package name. It must
+##'     contain only ASCII letters, numbers, and dots; have at least
+##'     two characters; start with a letter; and not end in a dot.
 ##'     The package name is also used for the class name of the model
 ##'     and the directory name of the package.
-##' @param path Path to put the package directory in. Default is '.'
-##'     i.e. the current directory.
+##' @param path Path to put the package directory in. Default is
+##'     \code{"."} (the current directory).
 ##' @param author Author of the package.
-##' @param email Email of the package maintainer.
+##' @param email Email address of the package maintainer.
 ##' @param maintainer Maintainer of the package.
-##' @param license License of the package. Default is 'GPL-3'.
-##' @return invisible \code{NULL}.
-##' @export
+##' @param license License of the package. Default is \code{"GPL-3"}.
+##' @return \code{invisible(NULL)}.
+##' @seealso \code{\link{mparse}} for creating a \code{SimInf_model}
+##'     object from a model specification.  \code{\link{INSTALL}} and
+##'     \code{\link{install.packages}} for installing the generated
+##'     package.
 ##' @references Read the \emph{Writing R Extensions} manual for more
-##'     details.
-##'
-##' Once you have created a \emph{source} package you need to install
-##' it: see the \emph{R Installation and Administration} manual,
-##' \code{\link{INSTALL}} and \code{\link{install.packages}}.
+##'     details on building R packages.
+##' @export
 package_skeleton <- function(model, name = NULL, path = ".",
                              author = NULL, email = NULL,
                              maintainer = NULL, license = "GPL-3") {
