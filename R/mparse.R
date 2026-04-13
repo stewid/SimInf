@@ -555,7 +555,9 @@ dependency_graph <- function(transitions, S) {
 ##'     \sQuote{v} vector is passed as an argument to the transition
 ##'     rate functions and the post time step function. The continuous
 ##'     state can be updated in the post time step function.
+##'
 ##' @template tspan-param
+##'
 ##' @param events A \code{data.frame} with the scheduled
 ##'     events. Default is \code{NULL} i.e. no scheduled events in the
 ##'     model.
@@ -601,7 +603,26 @@ dependency_graph <- function(transitions, S) {
 ##'
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##' @export
-##' @template mparse-example
+##' @examples
+##' ## For reproducibility, set the seed.
+##' set.seed(22)
+##'
+##' ## Create an SIR model with a defined population size variable.
+##' model <- mparse(
+##'   transitions = c(
+##'     "S -> beta * S * I / N -> I",
+##'     "I -> gamma * I -> R",
+##'     "N <- S + I + R"
+##'   ),
+##'   compartments = c("S", "I", "R"),
+##'   gdata = c(beta = 0.16, gamma = 0.077),
+##'   u0 = data.frame(S = 100, I = 1, R = 0),
+##'   tspan = 1:100
+##' )
+##'
+##' ## Run and plot the result.
+##' result <- run(model)
+##' plot(result)
 mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                    gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
                    events = NULL, E = NULL, N = NULL, pts_fun = NULL,
