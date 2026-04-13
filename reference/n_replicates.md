@@ -1,6 +1,12 @@
 # Determine the number of replicates in a model
 
-Determine the number of replicates in a model
+Extract the number of replicates from a `SimInf_model` object.
+Replicates are independent copies of the model state used by the
+**particle filter**
+([`pfilter`](http://stewid.github.io/SimInf/reference/pfilter.md)). This
+value is set **internally** by `pfilter` and is not specified when
+creating a standard model. If the model has not been processed by a
+filter, the value will be 1.
 
 ## Usage
 
@@ -15,21 +21,31 @@ n_replicates(model)
 
 - model:
 
-  the `model` object to extract the number of replicates from.
+  A `SimInf_model` object.
 
 ## Value
 
-the number of replicates in the model.
+An integer scalar representing the number of replicates in the model.
 
 ## Examples
 
 ``` r
-## Create an 'SIR' model with 100 nodes, with 99 susceptible,
-## 1 infected and 0 recovered in each node.
-u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
-model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+## Create a standard 'SIR' model.
+u0 <- data.frame(
+  S = rep(99, 100),
+  I = rep(1, 100),
+  R = rep(0, 100)
+)
 
-## Display the number of replicates in the model.
+model <- SIR(
+  u0 = u0,
+  tspan = 1:10,
+  beta = 0.16,
+  gamma = 0.077
+)
+
+## Get the number of replicates (default is 1 for standard
+## models).
 n_replicates(model)
 #> [1] 1
 ```
