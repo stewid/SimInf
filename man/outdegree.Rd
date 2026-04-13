@@ -52,3 +52,10 @@ hist(
   xlab = "Number of Unique Destination Nodes"
 )
 }
+\seealso{
+\code{\link{indegree}} for calculating the number of unique source
+nodes that send individuals to a node.  \code{\link{events_SIR}}
+for example event data used in network analysis.
+\code{\linkS4class{SimInf_events}} for details on the structure of
+scheduled events.
+}

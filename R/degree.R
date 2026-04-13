@@ -110,6 +110,12 @@ indegree <- function(model) {
 ##' @return An integer vector where each element corresponds to a
 ##'     node, containing the count of unique destination nodes
 ##'     receiving individuals from it.
+##' @seealso
+##' \code{\link{indegree}} for calculating the number of unique source
+##' nodes that send individuals to a node.  \code{\link{events_SIR}}
+##' for example event data used in network analysis.
+##' \code{\linkS4class{SimInf_events}} for details on the structure of
+##' scheduled events.
 ##' @include SimInf_model.R
 ##' @include check_arguments.R
 ##' @export
