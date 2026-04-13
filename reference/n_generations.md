@@ -1,6 +1,10 @@
-# Determine the number of generations
+# Determine the number of generations in an ABC analysis
 
-Determine the number of generations
+Extract the number of generations performed in an Approximate Bayesian
+Computation (ABC) analysis from a `SimInf_abc` object. Each generation
+represents a sequential round of the algorithm, involving the simulation
+of particles, acceptance/rejection based on the distance threshold, and
+parameter perturbation for the next round.
 
 ## Usage
 
@@ -15,8 +19,9 @@ n_generations(object)
 
 - object:
 
-  the `SimInf_abc` object to determine the number of generations for.
+  A `SimInf_abc` object containing the results of an ABC analysis.
 
 ## Value
 
-an integer with the number of generations.
+An integer scalar representing the total number of generations executed
+in the analysis.

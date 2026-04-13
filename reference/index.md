@@ -185,7 +185,7 @@
   : Determine the number of compartments in a model
 
 - [`n_generations()`](http://stewid.github.io/SimInf/reference/n_generations.md)
-  : Determine the number of generations
+  : Determine the number of generations in an ABC analysis
 
 - [`n_nodes()`](http://stewid.github.io/SimInf/reference/n_nodes.md) :
   Determine the number of nodes in a model
