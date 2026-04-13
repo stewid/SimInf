@@ -1,7 +1,11 @@
 ##' @param tspan A vector (length >= 1) of increasing time points
 ##'     where the state of each node is to be returned. Can be either
-##'     an \code{integer} or a \code{Date} vector. A \code{Date}
-##'     vector is coerced to a numeric vector as days, where
-##'     \code{tspan[1]} becomes the day of the year of the first year
-##'     of \code{tspan}. The dates are added as names to the numeric
-##'     vector.
+##'     an \code{integer} or a \code{Date} vector.
+##'     \itemize{
+##'       \item If \code{integer}: Represents absolute time steps.
+##'       \item If \code{Date}: Coerced to a numeric vector
+##'         representing the \strong{day of the year} (1–366) relative
+##'         to the first date in the vector. The original \code{Date}
+##'         objects are preserved as names for the numeric vector,
+##'         facilitating time-series plotting.
+##'     }
