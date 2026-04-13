@@ -88,11 +88,13 @@ coerced to a one row <code>data.frame</code>.</p></dd>
 <dt id="arg-tspan">tspan<a class="anchor" aria-label="anchor" href="#arg-tspan"></a></dt>
 <dd><p>A vector (length &gt;= 1) of increasing time points
 where the state of each node is to be returned. Can be either
-an <code>integer</code> or a <code>Date</code> vector. A <code>Date</code>
-vector is coerced to a numeric vector as days, where
-<code>tspan[1]</code> becomes the day of the year of the first year
-of <code>tspan</code>. The dates are added as names to the numeric
-vector.</p></dd>
+an <code>integer</code> or a <code>Date</code> vector.</p><ul><li><p>If <code>integer</code>: Represents absolute time steps.</p></li>
+<li><p>If <code>Date</code>: Coerced to a numeric vector
+    representing the <strong>day of the year</strong> (1–366) relative
+    to the first date in the vector. The original <code>Date</code>
+    objects are preserved as names for the numeric vector,
+    facilitating time-series plotting.</p></li>
+</ul></dd>
 
 
 <dt id="arg-events">events<a class="anchor" aria-label="anchor" href="#arg-events"></a></dt>

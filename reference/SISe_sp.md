@@ -40,9 +40,14 @@ SISe_sp(
 
   A vector (length \>= 1) of increasing time points where the state of
   each node is to be returned. Can be either an `integer` or a `Date`
-  vector. A `Date` vector is coerced to a numeric vector as days, where
-  `tspan[1]` becomes the day of the year of the first year of `tspan`.
-  The dates are added as names to the numeric vector.
+  vector.
+
+  - If `integer`: Represents absolute time steps.
+
+  - If `Date`: Coerced to a numeric vector representing the **day of the
+    year** (1–366) relative to the first date in the vector. The
+    original `Date` objects are preserved as names for the numeric
+    vector, facilitating time-series plotting.
 
 - events:
 
