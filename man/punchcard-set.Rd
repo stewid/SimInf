@@ -3,98 +3,104 @@
 \name{punchcard<-}
 \alias{punchcard<-}
 \alias{punchcard<-,SimInf_model-method}
-\title{Set a template for where to record result during a simulation}
+\title{Set a sparse recording template for simulation results}
 \usage{
 punchcard(model) <- value
 
 \S4method{punchcard}{SimInf_model}(model) <- value
 }
 \arguments{
-\item{model}{The \code{model} to set a template for where to
-record result.}
+\item{model}{A \code{SimInf_model} object.}
 
-\item{value}{A \code{data.frame} that specify the nodes,
-time-points and compartments to record the number of
-individuals at \code{tspan}. Use \code{NULL} to reset the
-model to record the number of inidividuals in each compartment
-in every node at each time-point in tspan.}
+\item{value}{A \code{data.frame} defining the recording template,
+or \code{NULL} to reset the model to record all compartments
+for all nodes at all time-points in \code{tspan}.}
 }
 \description{
-Using a sparse result matrix can save a lot of memory if the model
-contains many nodes and time-points, but where only a few of the
-data points are of interest for post-processing.
+Define a template (or "punchcard") specifying which data points
+(nodes, time-points, and compartments) should be recorded during a
+simulation. This feature is useful for saving memory when the
+model has many nodes or time-points, but only a subset of the data
+is needed for post-processing.
 }
 \details{
-Using a sparse result matrix can save a lot of memory if the model
-contains many nodes and time-points, but where only a few of the
-data points are of interest for post-processing. To use this
-feature, a template has to be defined for which data points to
-record. This is done using a \code{data.frame} that specifies the
-time-points (column \sQuote{time}) and nodes (column
-\sQuote{node}) to record the state of the compartments, see
-\sQuote{Examples}. The specified time-points, nodes and
-compartments must exist in the model, or an error is raised. Note
-that specifying a template only affects which data-points are
-recorded for post-processing, it does not affect how the solver
-simulates the trajectory.
+The template is specified as a \code{data.frame} with columns:
+\itemize{
+  \item \code{time}: The time-points to record.
+  \item \code{node}: The node indices to record.
+  \item \code{CompartmentName}: Logical columns (e.g., \code{S},
+    \code{I}, \code{R}) indicating whether to record that specific
+    compartment for the corresponding row. If a compartment column
+    is omitted, it defaults to \code{FALSE} (not recorded). If
+    only \code{time} and \code{node} are provided, all
+    compartments are recorded for those points.
+}
+
+\strong{Important:} The specified \code{time} values, \code{node}
+indices, and compartment names must exist in the model. If any
+value in the template does not match the model's configuration
+(e.g., a time point not in \code{tspan} or a compartment not
+defined in the model), an \strong{error will be raised} when the
+template is set.
+
+Note that the template only affects which data is stored in the
+result object; it does not affect how the solver simulates the
+trajectory.
 }
 \examples{
-## For reproducibility, call the set.seed() function and specify
-## the number of threads to use. To use all available threads,
-## remove the set_num_threads() call.
+## For reproducibility, set the seed and number of threads.
 set.seed(123)
 set_num_threads(1)
 
-## Create an 'SIR' model with 6 nodes and initialize it to run over 10 days.
-u0 <- data.frame(S = 100:105, I = 1:6, R = rep(0, 6))
-model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+## Create an 'SIR' model with 6 nodes
+u0 <- data.frame(
+  S = 100:105,
+  I = 1:6,
+  R = rep(0, 6)
+)
+model <- SIR(
+  u0 = u0,
+  tspan = 1:10,
+  beta = 0.16,
+  gamma = 0.077
+)
 
-## Run the model.
-result <- run(model)
+## Run the model with default recording (all data)
+result_full <- run(model)
+head(trajectory(result_full))
 
-## Display the trajectory with data for every node at each
-## time-point in tspan.
-trajectory(result)
-
-## Assume we are only interested in nodes '2' and '4' at the
-## time-points '3' and '5'
-df <- data.frame(time = c(3, 5, 3, 5),
-                 node = c(2, 2, 4, 4),
-                 S = c(TRUE, TRUE, TRUE, TRUE),
-                 I = c(TRUE, TRUE, TRUE, TRUE),
-                 R = c(TRUE, TRUE, TRUE, TRUE))
+## Define a template to record only nodes 2 and 4 at times 3 and 5
+## for all compartments.
+df <- data.frame(
+  time = c(3, 5, 3, 5),
+  node = c(2, 2, 4, 4),
+  S = TRUE, I = TRUE, R = TRUE
+)
 punchcard(model) <- df
-result <- run(model)
-trajectory(result)
 
-## We can also specify to record only some of the compartments in
-## each time-step.
-df <- data.frame(time = c(3, 5, 3, 5),
-                 node = c(2, 2, 4, 4),
-                 S = c(FALSE, TRUE, TRUE, TRUE),
-                 I = c(TRUE, FALSE, TRUE, FALSE),
-                 R = c(TRUE, FALSE, TRUE, TRUE))
+result_sparse <- run(model)
+trajectory(result_sparse)
+
+## Record only specific compartments (e.g., S and R, but not I)
+df <- data.frame(
+  time = c(3, 5, 3, 5),
+  node = c(2, 2, 4, 4),
+  S = TRUE, I = FALSE, R = TRUE
+)
 punchcard(model) <- df
-result <- run(model)
-trajectory(result)
+result_partial <- run(model)
+trajectory(result_partial)
 
-## A shortcut to specify to record all of the compartments in
-## each time-step is to only inlude node and time.
-df <- data.frame(time = c(3, 5, 3, 5),
-                 node = c(2, 2, 4, 4))
+## Shortcut: If only 'time' and 'node' are specified, all
+## compartments are recorded.
+df <- data.frame(
+  time = c(3, 5, 3, 5),
+  node = c(2, 2, 4, 4)
+)
 punchcard(model) <- df
-result <- run(model)
-trajectory(result)
 
-## It is possible to use an empty 'data.frame' to specify
-## that no data-points should be recorded for the trajectory.
-punchcard(model) <- data.frame()
-result <- run(model)
-trajectory(result)
-
-## Use 'NULL' to reset the model to record data for every node at
-## each time-point in tspan.
+## Reset to record all data (equivalent to no template)
 punchcard(model) <- NULL
-result <- run(model)
-trajectory(result)
+result_reset <- run(model)
+head(trajectory(result_reset))
 }
