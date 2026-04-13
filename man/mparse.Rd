@@ -2,7 +2,7 @@
 % Please edit documentation in R/mparse.R
 \name{mparse}
 \alias{mparse}
-\title{Model parser to define new models to run in \code{SimInf}}
+\title{Model parser to define new models for \code{SimInf}}
 \usage{
 mparse(
   transitions = NULL,
@@ -20,60 +20,51 @@ mparse(
 )
 }
 \arguments{
-\item{transitions}{character vector containing transitions on the
-form \code{"X -> ... -> Y"}. The left (right) side is the
-initial (final) state and the propensity is written in between
-the \code{->}-signs. The special symbol \code{@} is reserved
-for the empty set. For example, \code{transitions =
-c("S -> beta*S*I/(S+I+R) -> I", "I -> gamma*I -> R")}
-expresses the SIR model. It is also possible to define
-variables which can then be used in calculations of
-propensities or in calculations of other variables. A variable
-is defined by the operator \code{<-}. Using a variable for the
-size of the population, the SIR model can instead be written
-\code{transitions = c("S -> beta*S*I/N -> I",
-"I -> gamma*I -> R", "N <- S+I+R")}. By default, the type of a
-variable is defined as a double in the generated C code, but
-it is possible to also define it as an integer by writing
-\code{(int)} before the variable name. For example, for the
-SIR model, the population size can be defined as
-\code{"(int)N <- S+I+R"}. It is also possible to explicitly
-use (double) in front of the variable name, but it is not
-needed because it is the default. Note that the order of
-propensities and variables does not matter.}
+\item{transitions}{Character vector defining the state
+transitions.  Each element follows the format
+\code{"Source -> Propensity -> Target"}.
+\itemize{
+  \item \strong{Syntax}: \code{"X -> rate_expr -> Y"} moves
+    individuals from compartment \code{X} to \code{Y} with
+    rate \code{rate_expr}.
+  \item \strong{Empty Set}: Use \code{@} for the empty set
+    (e.g., \code{"I -> mu*I -> @"} for death, or
+    \code{"@ -> lambda -> S"} for birth).
+  \item \strong{Variables}: Define intermediate variables
+    using \code{<-}.  Example:
+    \code{"N <- S + I + R"}. Variables can be used in
+    propensity expressions. Order does not matter.
+  \item \strong{Types}: By default, variables are
+    \code{double}.  Use \code{(int)} to force integer type
+    (e.g., \code{"(int)N <- S+I+R"}).
+}
+Example: \code{c("S -> beta*S*I/N -> I", "I -> gamma*I -> R",
+"N <- S+I+R")}.}
 
-\item{compartments}{contains the names of the involved
-compartments, for example, \code{compartments = c("S", "I",
-"R")}.}
+\item{compartments}{Character vector of compartment names (e.g.,
+\code{c("S", "I", "R")}).}
 
-\item{ldata}{optional data for the nodes. Can be specified as a
-\code{data.frame} with one row per node, as a numeric matrix
-where column \code{ldata[, j]} contains the local data vector
-for the node \code{j}, or as a named vector when the model
-only contains one node. If \code{ldata} is specified as a
-\code{data.frame}, each column is one parameter. If
-\code{ldata} is specified as a matrix, it must have row names
-to identify the parameters in the transitions. If \code{ldata}
-is specified as a named vector, the names identify the
-parameters.}
+\item{ldata}{Optional local data (node-specific parameters). Can
+be:
+\itemize{
+  \item A \code{data.frame} with one row per node (columns =
+  parameters).
+  \item A numeric matrix where columns are nodes and row names
+  are parameters.
+  \item A named vector (for single-node models).
+}}
 
-\item{gdata}{optional data that are common to all nodes in the
-model. Can be specified either as an optionally named numeric
-vector or as a one-row data.frame. The names are used to
-identify the parameters in the transitions. When \code{gdata}
-is specified as a vector, it is possible to have parameters
-without names, however, these parameters will not be
-automatically identified by mparse but need to be identified
-in the code by the user. The global data vector is passed as
-an argument to the transition rate functions and the post time
-step function.}
+\item{gdata}{Optional global data (common to all nodes). Can be:
+\itemize{
+  \item A named numeric vector (names identify parameters).
+  \item A one-row \code{data.frame}.
+}
+Unnamed parameters in a vector must be referenced by index in
+the transitions.}
 
-\item{u0}{A \code{data.frame} with the initial state in each node,
-i.e., the number of individuals in each compartment in each
-node when the simulation starts (see \sQuote{Details}). The
-parameter \code{u0} can also be an object that can be coerced
-to a \code{data.frame}, e.g., a named numeric vector will be
-coerced to a one row \code{data.frame}.}
+\item{u0}{Initial state vector. Can be a \code{data.frame},
+matrix, or named vector.  See
+\code{\linkS4class{SimInf_model}} for details.}
 
 \item{v0}{optional data with the initial continuous state in each
 node. \code{v0} can be specified as a \code{data.frame} with
@@ -171,9 +162,10 @@ parameters.}
 a \code{\linkS4class{SimInf_model}} object
 }
 \description{
-Describe your model in a logical way in R. \code{mparse} creates a
-\code{\linkS4class{SimInf_model}} object with your model
-definition that is ready to \code{\link{run}}.
+Describe your model using a simple string syntax in
+R. \code{mparse} parses this description, generates model-specific
+C code, and returns a \code{\linkS4class{SimInf_model}} object
+ready for simulation.
 }
 \examples{
 \dontrun{
