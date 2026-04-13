@@ -179,20 +179,22 @@ curly brackets.</p></dd>
 
 
 <dt id="arg-use-enum">use_enum<a class="anchor" aria-label="anchor" href="#arg-use-enum"></a></dt>
-<dd><p>generate enumeration constants for the indices to
-each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
-in the generated C code. The name of each enumeration constant
-will be transformed to the upper-case name of the
-corresponding parameter, for example, a parameter 'beta' will
-become 'BETA'. The enumeration constants 'N_COMPARTMENTS_U'
-and 'N_COMPARTMENTS_V' will be automatically added to
-facilitate indexing 'u' and 'v' in the C code. These two
-enumeration constants cannot be used as a compartment or
-variable name. Using enumeration constants can make it easier
-to modify the C code afterwards, or when writing C code for
-the <code>pts_fun</code> parameter. Default is <code>FALSE</code>, i.e.,
-the parameters are specified by using integer indices for the
-parameters.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, generates C enumeration
+constants for parameters found in the <code>u</code>, <code>v</code>,
+<code>gdata</code>, and <code>ldata</code> vectors to facilitate manual C
+code modification or use in <code>pts_fun</code>.  The name of each
+enumeration constant is the upper-case version of the
+corresponding parameter name (e.g., <code>beta</code> becomes
+<code>BETA</code>).  Additionally, the following constants are
+automatically generated:</p><ul><li><p><code>N_COMPARTMENTS_U</code>: The number of discrete
+  compartments.</p></li>
+<li><p><code>N_COMPARTMENTS_V</code>: The number of continuous
+  state variables.</p></li>
+</ul><p>These constants facilitate indexing of the <code>u</code> and
+<code>v</code> vectors in C code.  Note that <code>N_COMPARTMENTS_U</code>
+and <code>N_COMPARTMENTS_V</code> cannot be used as compartment or
+variable names. Default is <code>FALSE</code> (parameters accessed
+by integer indices).</p></dd>
 
 </dl></div>
     <div class="section level2">

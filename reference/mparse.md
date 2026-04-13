@@ -132,18 +132,21 @@ mparse(
 
 - use_enum:
 
-  generate enumeration constants for the indices to each parameter in
-  the 'u', 'v', 'ldata', and 'gdata' vectors in the generated C code.
-  The name of each enumeration constant will be transformed to the
-  upper-case name of the corresponding parameter, for example, a
-  parameter 'beta' will become 'BETA'. The enumeration constants
-  'N_COMPARTMENTS_U' and 'N_COMPARTMENTS_V' will be automatically added
-  to facilitate indexing 'u' and 'v' in the C code. These two
-  enumeration constants cannot be used as a compartment or variable
-  name. Using enumeration constants can make it easier to modify the C
-  code afterwards, or when writing C code for the `pts_fun` parameter.
-  Default is `FALSE`, i.e., the parameters are specified by using
-  integer indices for the parameters.
+  Logical. If `TRUE`, generates C enumeration constants for parameters
+  found in the `u`, `v`, `gdata`, and `ldata` vectors to facilitate
+  manual C code modification or use in `pts_fun`. The name of each
+  enumeration constant is the upper-case version of the corresponding
+  parameter name (e.g., `beta` becomes `BETA`). Additionally, the
+  following constants are automatically generated:
+
+  - `N_COMPARTMENTS_U`: The number of discrete compartments.
+
+  - `N_COMPARTMENTS_V`: The number of continuous state variables.
+
+  These constants facilitate indexing of the `u` and `v` vectors in C
+  code. Note that `N_COMPARTMENTS_U` and `N_COMPARTMENTS_V` cannot be
+  used as compartment or variable names. Default is `FALSE` (parameters
+  accessed by integer indices).
 
 ## Value
 
