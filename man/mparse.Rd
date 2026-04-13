@@ -110,10 +110,9 @@ between compartments during events.  See
 \code{data.frame} columns (\code{compartment}, \code{shift},
 \code{value}).  Default is \code{NULL} (no events).}
 
-\item{pts_fun}{optional character vector with C code for the post
-time step function. The C code should contain only the body of
-the function i.e. the code between the opening and closing
-curly brackets.}
+\item{pts_fun}{Optional character vector with C code for the
+post-time-step function.  Should contain only the function
+body (code between curly brackets).}
 
 \item{use_enum}{Logical. If \code{TRUE}, generates C enumeration
 constants for parameters found in the \code{u}, \code{v},
@@ -164,4 +163,14 @@ model <- mparse(
 ## Run and plot the result.
 result <- run(model)
 plot(result)
+}
+\seealso{
+\code{\link{SimInf_model}} for the class definition of the
+  returned model object.  \code{\link{SIR}}, \code{\link{SEIR}},
+  \code{\link{SIS}}, \code{\link{SISe}} for high-level model
+  constructors that use predefined structures.  Vignette
+  \code{"Getting started with mparse"} for a comprehensive
+  tutorial on defining custom models, including syntax, variables,
+  and event handling.  \code{\link{package_skeleton}} for creating
+  an installable R package from a \code{mparse} model.
 }
