@@ -229,22 +229,27 @@ events_SEIR <- function() {
 ##' Example initial population data for the SEIR model
 ##'
 ##' Synthetic dataset containing the initial number of susceptible,
-##' exposed, infected, and recovered individuals across 1,600 nodes.
-##' Provides a heterogeneous population structure for demonstrating
-##' SEIR model simulations in a compartmental modeling context.
+##' exposed, infected, and recovered cattle (individuals) across 1,600
+##' cattle herds (nodes).  Provides a heterogeneous population
+##' structure for demonstrating SEIR model simulations in a
+##' compartmental modeling context.
 ##'
 ##' @details
 ##' This dataset represents initial disease states in a population of
-##' 1,600 nodes. Each row represents a single node, derived from a
-##' synthetic population structure by adding an exposed compartment to
-##' the SIR model framework.
+##' 1,600 cattle herds (nodes). Each row represents a single herd
+##' (node), derived from a synthetic population structure by adding an
+##' exposed compartment to the SIR model framework.
 ##'
 ##' The data contains:
 ##' \describe{
-##'   \item{S}{Total susceptible individuals in the node}
-##'   \item{E}{Total exposed individuals (initialized to zero)}
-##'   \item{I}{Total infected individuals (initialized to zero)}
-##'   \item{R}{Total recovered individuals (initialized to zero)}
+##'   \item{S}{Total susceptible cattle (individuals) in the node}
+##'   \item{E}{Total exposed cattle (individuals) (initialized to
+##'   zero)}
+##'   \item{I}{Total infected cattle (individuals) (initialized to
+##'   zero)}
+##'   \item{R}{Total recovered cattle (individuals) (initialized to
+##'   zero)}
+##'
 ##' }
 ##'
 ##' The herd size distribution is synthetically generated to reflect
@@ -255,13 +260,14 @@ events_SEIR <- function() {
 ##' @return A \code{data.frame} with 1,600 rows (one per node) and 4
 ##'     columns:
 ##'     \describe{
-##'       \item{S}{Number of susceptible individuals in the node}
-##'       \item{E}{Number of exposed individuals in the node (all zero
-##'       at start)}
-##'       \item{I}{Number of infected individuals in the node (all
-##'       zero at start)}
-##'       \item{R}{Number of recovered individuals in the node (all
-##'       zero at start)}
+##'       \item{S}{Number of susceptible cattle (individuals) in the
+##'       herd (node)}
+##'       \item{E}{Number of exposed cattle (individuals) in the herd
+##'       (node) (all zero at start)}
+##'       \item{I}{Number of infected cattle (individuals) in the herd
+##'       (node) (all zero at start)}
+##'       \item{R}{Number of recovered cattle (individuals) in the
+##'       herd (node) (all zero at start)}
 ##'     }
 ##'
 ##' @seealso \code{\link{SEIR}} for creating SEIR models with this
