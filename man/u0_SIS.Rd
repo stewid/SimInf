@@ -7,34 +7,38 @@
 u0_SIS()
 }
 \value{
-A \code{data.frame} with 1,600 rows (one per herd) and 2 columns:
-  \describe{
-    \item{S}{Number of susceptible cattle in the herd}
-    \item{I}{Number of infected cattle in the herd (all zero at start)}
-  }
+A \code{data.frame} with 1,600 rows (one per node) and 4
+    columns:
+    \describe{
+      \item{S}{Number of susceptible cattle (individuals) in the
+      herd (node)}
+      \item{I}{Number of infected cattle (individuals) in the herd
+      (node) (all zero at start)}
+    }
 }
 \description{
-Dataset containing the initial number of susceptible and infected
-cattle across 1,600 herds. Provides realistic population structure
-for demonstrating SIS model simulations in a cattle disease
-epidemiology context.
+Synthetic dataset containing the initial number of susceptible,
+and infected cattle (individuals) across 1,600 cattle
+herds (nodes).  Provides a heterogeneous population structure for
+demonstrating SIS model simulations in a compartmental modeling
+context.
 }
 \details{
-This dataset represents initial disease states in a population of
-1,600 cattle herds (nodes). Each row represents a single herd
-(node), derived from the cattle population data by extracting
-susceptible and infected compartments. The SIS model is
-appropriate for diseases where recovered individuals do not gain
-immunity.
+This dataset represents initial disease states in a synthetic
+population of 1,600 cattle herds (nodes). Each row represents a
+single herd (node).
 
 The data contains:
 \describe{
-  \item{S}{Total susceptible cattle in the herd}
-  \item{I}{Total infected cattle (initialized to zero)}
+  \item{S}{Total susceptible cattle (individuals) in the node}
+  \item{I}{Total infected cattle (individuals) (initialized to
+  zero)}
 }
 
-The herd size distribution reflects realistic heterogeneity
-observed in cattle populations.
+The herd size distribution is synthetically generated to reflect
+heterogeneity typical of large-scale populations, making it
+suitable for illustrating how to incorporate scheduled events in
+the SimInf framework.
 }
 \examples{
 ## For reproducibility, call the set.seed() function and specify the
@@ -77,7 +81,7 @@ plot(result, index = 1)
 summary(result)
 }
 \seealso{
-\code{\link{SIS}} for creating SIS models with this initial state
-and \code{\link{events_SIS}} for associated cattle movement and
-demographic events
+\code{\link{SIS}} for creating SIS models with this
+    initial state and \code{\link{events_SIS}} for associated
+    movement and demographic events
 }
