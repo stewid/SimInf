@@ -21,32 +21,58 @@
 
 ##' Create a distance matrix between nodes for spatial models
 ##'
-##' Calculate the euclidian distances beween coordinates for all
-##' coordinates within the cutoff.
-##' @param x Projected x coordinate
-##' @param y Projected y coordinate
-##' @param cutoff The distance cutoff
-##' @param min_dist The minimum distance to separate two nodes.  If
-##'     the coordinates for two nodes are identical, the min_dist must
-##'     be assigned or an error is raised.  Default is \code{NULL},
-##'     i.e., to raise an error.
-##' @param na_fail A logical indicating whether missing values in
-##'     \code{x} or \code{y} should raise an error or assign zero to
-##'     all distances involving missing values.  Default is
-##'     \code{TRUE}, i.e., to raise an error.
-##' @return \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}
+##' Calculate the Euclidean distances between all pairs of nodes based
+##' on their projected coordinates (\code{x}, \code{y}). Distances
+##' greater than the specified \code{cutoff} are excluded from the
+##' result (stored as zeros in the sparse matrix).
+##'
+##' The result is a symmetric sparse matrix (\code{dgCMatrix}) where
+##' the element \code{d[i, j]} contains the distance between node
+##' \code{i} and node \code{j} if it is less than or equal to
+##' \code{cutoff}, and \code{0} otherwise.
+##'
+##' @param x Numeric vector of projected x coordinates for each node.
+##' @param y Numeric vector of projected y coordinates for each node.
+##' @param cutoff Numeric scalar. The maximum distance to include in
+##'     the matrix. Pairs of nodes farther apart than this value are
+##'     excluded from the sparse structure (stored as zeros).
+##' @param min_dist Numeric scalar. The value to use for the distance
+##'     between two nodes if their coordinates are identical (distance
+##'     = 0).  This prevents division by zero errors in downstream
+##'     calculations (e.g., inverse distance weighting). If
+##'     \code{NULL} (default) and identical coordinates are found, an
+##'     error is raised.
+##' @param na_fail Logical. If \code{TRUE} (default), missing values
+##'     (\code{NA}) in \code{x} or \code{y} will raise an error. If
+##'     \code{FALSE}, distances involving missing coordinates are set
+##'     to zero.
+##' @return A symmetric sparse matrix of class
+##'     \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.  Non-zero
+##'     entries represent distances \eqn{\le} \code{cutoff}; entries
+##'     outside the cutoff are implicitly zero.
 ##' @export
 ##' @examples
-##' ## Generate a grid 10 x 10 and place one node in each cell
-##' ## separated by 100m.
-##' nodes <- expand.grid(x = (0:9) * 100, y = (0:9) * 100)
-##' plot(y ~ x, nodes)
+##' ## Generate a 10 x 10 grid of nodes separated by 100m.
+##' nodes <- expand.grid(
+##'   x = seq(from = 0, to = 900, by = 100),
+##'   y = seq(from = 0, to = 900, by = 100)
+##' )
+##' plot(nodes, main = "Node Grid")
 ##'
-##' ## Define the cutoff to only include neighbors within 300m.
-##' d <- distance_matrix(x = nodes$x, y = nodes$y, cutoff = 300)
+##' ## Calculate distances with a 300m cutoff.
+##' ## Only neighbors within 300m will have non-zero entries.
+##' d <- distance_matrix(
+##'   x = nodes$x,
+##'   y = nodes$y,
+##'   cutoff = 300
+##' )
 ##'
-##' ## View the first 10 rows and columns in the distance matrix
+##' ## Inspect the sparse matrix structure.
+##' ## Note: The matrix is symmetric and the diagonal is zero.
 ##' d[1:10, 1:10]
+##'
+##' ## Count the number of neighbors for the first node.
+##' sum(d[1, ] > 0)
 distance_matrix <- function(x, y, cutoff, min_dist = NULL, na_fail = TRUE) {
     .Call(SimInf_distance_matrix,
           as.numeric(x),
