@@ -1,7 +1,9 @@
 # Convert an edge list with properties to a matrix
 
-A utility function to facilitate preparing edge properties for `ldata`
-in a model.
+A utility function to convert a data frame of edge properties (e.g.,
+movement rates, counts) into the specific matrix format required for
+`ldata` in spatial models. This format allows the C code to efficiently
+iterate over neighbors and their associated properties.
 
 ## Usage
 
@@ -13,44 +15,58 @@ edge_properties_to_matrix(edges, n_nodes)
 
 - edges:
 
-  a `data.frame` with properties assigned for each edge 'from' –\> 'to',
-  for example, weight or count. The `data.frame` must contain the
-  columns '`from`' and '`to`' with valid indices to the nodes (1 \<=
-  index \<= n_nodes).
+  A `data.frame` with properties assigned for each edge (`from` –\>
+  `to`). Must contain columns `from` and `to` (integer indices, 1-based)
+  and any number of numeric property columns.
 
 - n_nodes:
 
-  the total number of nodes in the model. The resulting matrix will have
-  the number of columns equal to `n_nodes`.
+  The total number of nodes in the model. The resulting matrix will have
+  `n_nodes` columns.
 
 ## Value
 
-a numeric matrix with the number of rows equal to
-`max(table(edges$to)) * (ncol(edges) - 1) + 1` and the number of columns
-equal to `n_nodes`.
+A numeric matrix with dimensions determined by the maximum number of
+incoming edges for any node. Columns correspond to `to` nodes. Entries
+are `NaN` where no data exists.
 
 ## Details
 
-The edge properties will be converted to a matrix where each row in
-`edges` will become a sequence of (index, value_1, value_2, ...,
-value_n) where 'index' is the zero-based index of the `from` node. The
-reason for a zero-based index is to facilitate it's usage in C code. The
-sequence will be added to the 'to' column in the matrix. There will
-always be at least one stop value=-1 in each column. All other values in
-the matrix will be set to `NaN`. See ‘Examples’.
+The function converts the `edges` data frame into a numeric matrix
+where:
+
+- Each **column** corresponds to a `to` node.
+
+- Each column contains a sequence of blocks, one for each incoming edge.
+
+- Each block starts with the **zero-based index** of the `from` node.
+
+- The subsequent rows in the block contain the property values (e.g.,
+  rate, count).
+
+- Each block ends with a **stop marker** (`-1`) in the first column.
+
+- Unused cells in the matrix are filled with `NaN`.
+
+The `edges` data frame must contain columns `from` and `to` with valid
+node indices (1-based). All edges pointing to the same `to` node must be
+unique (no duplicate `from -> to` pairs).
 
 ## Examples
 
 ``` r
-## Let us consider the following edge properties.
+## Define edge properties: from, to, rate, and count.
 edges <- data.frame(
-    from  = c(  2,    3,     4,  1,   4,    5,   1,   3,   1,   3),
-    to    = c(  1,    1,     1,  2,   3,    3,   4,   4,   5,   5),
-    rate  = c(0.2, 0.01,  0.79,  1, 0.2, 0.05, 0.2, 0.8, 0.2, 0.8),
-    count = c(  5,    5,     5, 50,  10,   10,   5,   5,   5,   5))
+  from  = c(2, 3, 4, 1, 4, 5, 1, 3, 1, 3),
+  to    = c(1, 1, 1, 2, 3, 3, 4, 4, 5, 5),
+  rate  = c(0.2, 0.01, 0.79, 1, 0.2, 0.05, 0.2, 0.8, 0.2, 0.8),
+  count = c(5, 5, 5, 50, 10, 10, 5, 5, 5, 5)
+)
 
-## Converting the edge properties into a matrix
-edge_properties_to_matrix(edges, 6)
+## Convert to matrix for 6 nodes.
+## Note: NaN values are printed as '.' for clarity.
+mat <- edge_properties_to_matrix(edges, 6)
+print(mat, na.print = ".")
 #>        [,1] [,2]  [,3] [,4] [,5] [,6]
 #>  [1,]  1.00    0  3.00  0.0  0.0   -1
 #>  [2,]  0.20    1  0.20  0.2  0.2  NaN
@@ -63,23 +79,9 @@ edge_properties_to_matrix(edges, 6)
 #>  [9,]  5.00  NaN   NaN  NaN  NaN  NaN
 #> [10,] -1.00  NaN   NaN  NaN  NaN  NaN
 
-## Gives the following output. The first column contains first the
-## properties for the edge from = 2 --> to = 1, where the first
-## row is the zero-based index of from, i.e., 1. The second row
-## contains the rate=0.2 and the third row count=5. On the fourth
-## row starts the next sequence with the values in the second row
-## in the edges data.frame. The stop value in the first column is
-## on row 10. As can be seen in column 6, there are no edge
-## properties for node=6.
-##        [,1] [,2]  [,3] [,4] [,5] [,6]
-##  [1,]  1.00    0  3.00  0.0  0.0   -1
-##  [2,]  0.20    1  0.20  0.2  0.2  NaN
-##  [3,]  5.00   50 10.00  5.0  5.0  NaN
-##  [4,]  2.00   -1  4.00  2.0  2.0  NaN
-##  [5,]  0.01  NaN  0.05  0.8  0.8  NaN
-##  [6,]  5.00  NaN 10.00  5.0  5.0  NaN
-##  [7,]  3.00  NaN -1.00 -1.0 -1.0  NaN
-##  [8,]  0.79  NaN   NaN  NaN  NaN  NaN
-##  [9,]  5.00  NaN   NaN  NaN  NaN  NaN
-## [10,] -1.00  NaN   NaN  NaN  NaN  NaN
+## Interpretation of Column 1 (to node 1):
+## Row 1: Index of 'from' node (2-1 = 1), then stop marker (-1) at row 4.
+## Block 1: from=2 (idx 1), rate=0.2, count=5.
+## Block 2: from=3 (idx 2), rate=0.01, count=5.
+## Block 3: from=4 (idx 3), rate=0.79, count=5.
 ```
