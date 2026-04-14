@@ -1,7 +1,9 @@
 # Create a distance matrix between nodes for spatial models
 
-Calculate the euclidian distances beween coordinates for all coordinates
-within the cutoff.
+Calculate the Euclidean distances between all pairs of nodes based on
+their projected coordinates (`x`, `y`). Distances greater than the
+specified `cutoff` are excluded from the result (stored as zeros in the
+sparse matrix).
 
 ## Usage
 
@@ -13,45 +15,66 @@ distance_matrix(x, y, cutoff, min_dist = NULL, na_fail = TRUE)
 
 - x:
 
-  Projected x coordinate
+  Numeric vector of projected x coordinates for each node.
 
 - y:
 
-  Projected y coordinate
+  Numeric vector of projected y coordinates for each node.
 
 - cutoff:
 
-  The distance cutoff
+  Numeric scalar. The maximum distance to include in the matrix. Pairs
+  of nodes farther apart than this value are excluded from the sparse
+  structure (stored as zeros).
 
 - min_dist:
 
-  The minimum distance to separate two nodes. If the coordinates for two
-  nodes are identical, the min_dist must be assigned or an error is
-  raised. Default is `NULL`, i.e., to raise an error.
+  Numeric scalar. The value to use for the distance between two nodes if
+  their coordinates are identical (distance = 0). This prevents division
+  by zero errors in downstream calculations (e.g., inverse distance
+  weighting). If `NULL` (default) and identical coordinates are found,
+  an error is raised.
 
 - na_fail:
 
-  A logical indicating whether missing values in `x` or `y` should raise
-  an error or assign zero to all distances involving missing values.
-  Default is `TRUE`, i.e., to raise an error.
+  Logical. If `TRUE` (default), missing values (`NA`) in `x` or `y` will
+  raise an error. If `FALSE`, distances involving missing coordinates
+  are set to zero.
 
 ## Value
 
-[`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html)
+A symmetric sparse matrix of class
+[`dgCMatrix`](https://rdrr.io/pkg/Matrix/man/dgCMatrix-class.html).
+Non-zero entries represent distances \\\le\\ `cutoff`; entries outside
+the cutoff are implicitly zero.
+
+## Details
+
+The result is a symmetric sparse matrix (`dgCMatrix`) where the element
+`d[i, j]` contains the distance between node `i` and node `j` if it is
+less than or equal to `cutoff`, and `0` otherwise.
 
 ## Examples
 
 ``` r
-## Generate a grid 10 x 10 and place one node in each cell
-## separated by 100m.
-nodes <- expand.grid(x = (0:9) * 100, y = (0:9) * 100)
-plot(y ~ x, nodes)
+## Generate a 10 x 10 grid of nodes separated by 100m.
+nodes <- expand.grid(
+  x = seq(from = 0, to = 900, by = 100),
+  y = seq(from = 0, to = 900, by = 100)
+)
+plot(nodes, main = "Node Grid")
 
 
-## Define the cutoff to only include neighbors within 300m.
-d <- distance_matrix(x = nodes$x, y = nodes$y, cutoff = 300)
+## Calculate distances with a 300m cutoff.
+## Only neighbors within 300m will have non-zero entries.
+d <- distance_matrix(
+  x = nodes$x,
+  y = nodes$y,
+  cutoff = 300
+)
 
-## View the first 10 rows and columns in the distance matrix
+## Inspect the sparse matrix structure.
+## Note: The matrix is symmetric and the diagonal is zero.
 d[1:10, 1:10]
 #> 10 x 10 sparse Matrix of class "dgCMatrix"
 #>                                              
@@ -65,4 +88,8 @@ d[1:10, 1:10]
 #>  [8,]   .   .   .   . 300 200 100   . 100 200
 #>  [9,]   .   .   .   .   . 300 200 100   . 100
 #> [10,]   .   .   .   .   .   . 300 200 100   .
+
+## Count the number of neighbors for the first node.
+sum(d[1, ] > 0)
+#> [1] 10
 ```
