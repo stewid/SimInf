@@ -205,7 +205,12 @@ SIS <- function(u0,
 ##' @export
 ##' @example man/examples/SIS.R
 events_SIS <- function() {
-    events_SISe()
+    utils::data("events_SISe3", package = "SimInf", envir = environment())
+    events_SISe3$select[events_SISe3$event == "exit"] <- 2L
+    events_SISe3$select[events_SISe3$event == "enter"] <- 1L
+    events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
+    events_SISe3$select[events_SISe3$event == "extTrans"] <- 2L
+    events_SISe3
 }
 
 ##' Example initial population data for the SIS model
@@ -248,5 +253,6 @@ events_SIS <- function() {
 ##' @export
 ##' @example man/examples/SIS.R
 u0_SIS <- function() {
-    u0_SISe()
+    u0 <- u0_SIR()
+    u0[, c("S", "I")]
 }
