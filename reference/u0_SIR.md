@@ -13,7 +13,7 @@ u0_SIR()
 
 ## Value
 
-A `data.frame` with 1,600 rows (one per node) and 4 columns:
+A `data.frame` with 1,600 rows (one per node) and 3 columns:
 
 - S:
 
