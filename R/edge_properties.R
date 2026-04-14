@@ -35,8 +35,10 @@
 ##'   \item The subsequent rows in the block contain the property
 ##'   values (e.g., rate, count).
 ##'   \item The sequence for a node ends with a \strong{stop marker}
-##'     (\code{-1}) in the first column. This marker appears only once
-##'     per column, after the last incoming edge.
+##'     (\code{-1}) in the \strong{first row of the block} (the
+##'     position where the \code{from} index is stored).  This marker
+##'     appears exactly once per column, immediately after the last
+##'     incoming edge.
 ##'   \item Unused cells in the matrix (below the stop marker) are
 ##'   filled with \code{NaN}.
 ##' }
