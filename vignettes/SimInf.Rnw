@@ -1505,8 +1505,8 @@ square kilometer region.  Load the data with the following commands
 
 <<load-SISe_sp-data>>=
 data("nodes", package = "SimInf")
-u0 <- u0_SISe()
-events <- events_SISe()
+u0 <- u0_SIS()
+events <- events_SIS()
 @
 
 where the location of each farm is in \code{nodes}, \code{u0} defines
