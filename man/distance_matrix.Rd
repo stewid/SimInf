@@ -51,7 +51,7 @@ nodes <- expand.grid(
   x = seq(from = 0, to = 900, by = 100),
   y = seq(from = 0, to = 900, by = 100)
 )
-plot(nodes, main = "Node Grid")
+plot(nodes, main = "Node Grid", asp = 1)
 
 ## Calculate distances with a 300m cutoff.
 ## Only neighbors within 300m will have non-zero entries.
