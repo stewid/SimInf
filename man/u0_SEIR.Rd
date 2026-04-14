@@ -42,7 +42,6 @@ The data contains:
   zero)}
   \item{R}{Total recovered cattle (individuals) (initialized to
   zero)}
-
 }
 
 The herd size distribution is synthetically generated to reflect
