@@ -139,9 +139,6 @@
 - [`events_SIS()`](http://stewid.github.io/SimInf/reference/events_SIS.md)
   : Example event data for the SIS model with cattle herds
 
-- [`events_SISe()`](http://stewid.github.io/SimInf/reference/events_SISe.md)
-  : Example event data for the SISe model with cattle herds
-
 - [`events_SISe3`](http://stewid.github.io/SimInf/reference/events_SISe3.md)
   : Example event data for the SISe3 model with cattle herds
 
@@ -361,9 +358,6 @@
 
 - [`u0_SIS()`](http://stewid.github.io/SimInf/reference/u0_SIS.md) :
   Example initial population data for the SIS model
-
-- [`u0_SISe()`](http://stewid.github.io/SimInf/reference/u0_SISe.md) :
-  Example initial population data for the SISe model
 
 - [`u0_SISe3`](http://stewid.github.io/SimInf/reference/u0_SISe3.md) :
   Example initial population data for the SISe3 model

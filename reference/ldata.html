@@ -77,11 +77,24 @@ rate functions and the post time step function.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Create an 'SISe' model with 1600 nodes.</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SISe.html">SISe</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="fu"><a href="u0_SISe.html">u0_SISe</a></span><span class="op">(</span><span class="op">)</span>, tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, events <span class="op">=</span> <span class="fu"><a href="events_SISe.html">events_SISe</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              phi <span class="op">=</span> <span class="fl">0</span>, upsilon <span class="op">=</span> <span class="fl">1.8e-2</span>, gamma <span class="op">=</span> <span class="fl">0.1</span>, alpha <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>              beta_t1 <span class="op">=</span> <span class="fl">1.0e-1</span>, beta_t2 <span class="op">=</span> <span class="fl">1.0e-1</span>, beta_t3 <span class="op">=</span> <span class="fl">1.25e-1</span>,</span></span>
-<span class="r-in"><span>              beta_t4 <span class="op">=</span> <span class="fl">1.25e-1</span>, end_t1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">91</span>, <span class="fl">101</span><span class="op">)</span>, end_t2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">182</span>, <span class="fl">185</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              end_t3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">273</span>, <span class="fl">275</span><span class="op">)</span>, end_t4 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">365</span>, <span class="fl">360</span><span class="op">)</span>, epsilon <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SISe.html">SISe</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  u0 <span class="op">=</span> <span class="fu"><a href="u0_SIS.html">u0_SIS</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  events <span class="op">=</span> <span class="fu"><a href="events_SIS.html">events_SIS</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  phi <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  upsilon <span class="op">=</span> <span class="fl">1.8e-2</span>,</span></span>
+<span class="r-in"><span>  gamma <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
+<span class="r-in"><span>  alpha <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  beta_t1 <span class="op">=</span> <span class="fl">1.0e-1</span>,</span></span>
+<span class="r-in"><span>  beta_t2 <span class="op">=</span> <span class="fl">1.0e-1</span>,</span></span>
+<span class="r-in"><span>  beta_t3 <span class="op">=</span> <span class="fl">1.25e-1</span>,</span></span>
+<span class="r-in"><span>  beta_t4 <span class="op">=</span> <span class="fl">1.25e-1</span>,</span></span>
+<span class="r-in"><span>  end_t1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">91</span>, <span class="fl">101</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  end_t2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">182</span>, <span class="fl">185</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  end_t3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">273</span>, <span class="fl">275</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  end_t4 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">365</span>, <span class="fl">360</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  epsilon <span class="op">=</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Display local data from the first two nodes.</span></span></span>
 <span class="r-in"><span><span class="fu">ldata</span><span class="op">(</span><span class="va">model</span>, node <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
