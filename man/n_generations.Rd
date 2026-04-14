@@ -19,9 +19,9 @@ An integer scalar representing the total number of
 }
 \description{
 Extract the number of generations performed in an Approximate
-Bayesian Computation (ABC) analysis from a \code{SimInf_abc} object.
-Each generation represents a sequential round of the algorithm,
-involving the simulation of particles, acceptance/rejection based
-on the distance threshold, and parameter perturbation for the next
-round.
+Bayesian Computation (ABC) analysis from a \code{SimInf_abc}
+object.  Each generation represents a sequential round of the
+algorithm, involving the simulation of particles,
+acceptance/rejection based on the distance threshold, and
+parameter perturbation for the next round.
 }
