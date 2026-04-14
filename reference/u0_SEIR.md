@@ -1,9 +1,9 @@
 # Example initial population data for the SEIR model
 
 Synthetic dataset containing the initial number of susceptible, exposed,
-infected, and recovered individuals across 1,600 nodes. Provides a
-heterogeneous population structure for demonstrating SEIR model
-simulations in a compartmental modeling context.
+infected, and recovered cattle (individuals) across 1,600 cattle herds
+(nodes). Provides a heterogeneous population structure for demonstrating
+SEIR model simulations in a compartmental modeling context.
 
 ## Usage
 
@@ -17,44 +17,47 @@ A `data.frame` with 1,600 rows (one per node) and 4 columns:
 
 - S:
 
-  Number of susceptible individuals in the node
+  Number of susceptible cattle (individuals) in the herd (node)
 
 - E:
 
-  Number of exposed individuals in the node (all zero at start)
+  Number of exposed cattle (individuals) in the herd (node) (all zero at
+  start)
 
 - I:
 
-  Number of infected individuals in the node (all zero at start)
+  Number of infected cattle (individuals) in the herd (node) (all zero
+  at start)
 
 - R:
 
-  Number of recovered individuals in the node (all zero at start)
+  Number of recovered cattle (individuals) in the herd (node) (all zero
+  at start)
 
 ## Details
 
 This dataset represents initial disease states in a population of 1,600
-nodes. Each row represents a single node, derived from a synthetic
-population structure by adding an exposed compartment to the SIR model
-framework.
+cattle herds (nodes). Each row represents a single herd (node), derived
+from a synthetic population structure by adding an exposed compartment
+to the SIR model framework.
 
 The data contains:
 
 - S:
 
-  Total susceptible individuals in the node
+  Total susceptible cattle (individuals) in the node
 
 - E:
 
-  Total exposed individuals (initialized to zero)
+  Total exposed cattle (individuals) (initialized to zero)
 
 - I:
 
-  Total infected individuals (initialized to zero)
+  Total infected cattle (individuals) (initialized to zero)
 
 - R:
 
-  Total recovered individuals (initialized to zero)
+  Total recovered cattle (individuals) (initialized to zero)
 
 The herd size distribution is synthetically generated to reflect
 heterogeneity typical of large-scale populations, making it suitable for
