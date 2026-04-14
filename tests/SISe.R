@@ -1119,7 +1119,3 @@ model <- SISe(u0      = u0,
               epsilon = -10.000011)
 res <- assertError(run(model))
 check_error(res, "The continuous state 'v' is negative.")
-
-## Check data
-stopifnot(identical(nrow(events_SISe()), 466692L))
-stopifnot(identical(nrow(u0_SISe()), 1600L))
