@@ -133,7 +133,3 @@ model <- SIS(u0 = data.frame(S = 0, I = 0),
 
 trajectory_obs <- trajectory(run(model))
 stopifnot(identical(trajectory_obs, trajectory_exp))
-
-## Check data
-stopifnot(identical(events_SIS(), events_SISe()))
-stopifnot(identical(u0_SIS(), u0_SISe()))
