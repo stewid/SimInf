@@ -219,7 +219,8 @@ matter; <code>mparse</code> will resolve dependencies automatically.</p>
 <code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"S -&gt; beta * S * I / N -&gt; I"</span>,</span>
 <span>  <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
-<span>  <span class="st">"N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="st">"N &lt;- S + I + R"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="data-types-integer-vs--double">Data Types: Integer vs. Double<a class="anchor" aria-label="anchor" href="#data-types-integer-vs--double"></a>
@@ -234,7 +235,8 @@ variable name with <code>(int)</code>.</p>
 <code class="sourceCode R"><span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"S -&gt; beta * S * I / N -&gt; I"</span>,</span>
 <span>  <span class="st">"I -&gt; gamma * I -&gt; R"</span>,</span>
-<span>  <span class="st">"(int)N &lt;- S + I + R"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="st">"(int)N &lt;- S + I + R"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Using <code>(int)N</code> tells mparse to treat N as an integer.
 While the compiler may optimize repeated calculations of
 <code>S + I + R</code> anyway, explicitly defining N ensures that the

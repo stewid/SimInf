@@ -141,7 +141,8 @@ dependencies automatically.
 transitions <- c(
   "S -> beta * S * I / N -> I",
   "I -> gamma * I -> R",
-  "N <- S + I + R")
+  "N <- S + I + R"
+)
 ```
 
 ### Data Types: Integer vs. Double
@@ -157,7 +158,8 @@ integers. We can enforce this by prefixing the variable name with
 transitions <- c(
   "S -> beta * S * I / N -> I",
   "I -> gamma * I -> R",
-  "(int)N <- S + I + R")
+  "(int)N <- S + I + R"
+)
 ```
 
 Using `(int)N` tells mparse to treat N as an integer. While the compiler
