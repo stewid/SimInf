@@ -28,7 +28,8 @@ the C code to efficiently iterate over neighbors and their
 associated properties.
 }
 \details{
-The function converts the \code{edges} data frame into a numeric matrix where:
+The function converts the \code{edges} data frame into a numeric
+matrix where:
 \itemize{
   \item Each \strong{column} corresponds to a \code{to} node.
   \item Each column contains a sequence of blocks, one for each
