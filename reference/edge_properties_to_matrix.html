@@ -93,8 +93,10 @@ matrix where:</p><ul><li><p>Each <strong>column</strong> corresponds to a <code>
 <li><p>The subsequent rows in the block contain the property
   values (e.g., rate, count).</p></li>
 <li><p>The sequence for a node ends with a <strong>stop marker</strong>
-    (<code>-1</code>) in the first column. This marker appears only once
-    per column, after the last incoming edge.</p></li>
+    (<code>-1</code>) in the <strong>first row of the block</strong> (the
+    position where the <code>from</code> index is stored).  This marker
+    appears exactly once per column, immediately after the last
+    incoming edge.</p></li>
 <li><p>Unused cells in the matrix (below the stop marker) are
   filled with <code>NaN</code>.</p></li>
 </ul><p>The <code>edges</code> data frame must contain columns <code>from</code> and

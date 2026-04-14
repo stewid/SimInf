@@ -46,8 +46,9 @@ where:
   rate, count).
 
 - The sequence for a node ends with a **stop marker** (`-1`) in the
-  first column. This marker appears only once per column, after the last
-  incoming edge.
+  **first row of the block** (the position where the `from` index is
+  stored). This marker appears exactly once per column, immediately
+  after the last incoming edge.
 
 - Unused cells in the matrix (below the stop marker) are filled with
   `NaN`.
