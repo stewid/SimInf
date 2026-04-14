@@ -566,26 +566,48 @@ setMethod(
     }
 )
 
-##' Extract the events from a \code{SimInf_model} object
+##' Extract the scheduled events from a \code{SimInf_model} object
 ##'
-##' Extract the scheduled events from a \code{SimInf_model} object.
-##' @param object The \code{model} to extract the events from.
-##' @param ... Additional arguments affecting the generated events.
-##' @return \code{\linkS4class{SimInf_events}} object.
+##' Retrieve the \code{SimInf_events} object containing the schedule
+##' of discrete events (e.g., births, deaths, movements) associated
+##' with a \code{SimInf_model}. This object holds the timing,
+##' location, and type of each event, as well as the matrices defining
+##' how events affect the model state.
+##'
+##' @param object A \code{SimInf_model} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{\linkS4class{SimInf_events}} object containing the
+##'     event schedule and associated matrices (\code{E} and
+##'     \code{N}).
+##' @seealso
+##' \code{\linkS4class{SimInf_events}} for details on the structure of
+##' the returned event object (slots \code{E} (select matrix),
+##' \code{N} (shift matrix), \code{event}, etc.).
+##' \code{\link{events_SIR}}, \code{\link{events_SEIR}},
+##' \code{\link{events_SISe3}} for examples of pre-defined event
+##' datasets.  \code{\link{mparse}} for defining custom models with
+##' event schedules.  \code{\link{run}} for executing the simulation
+##' with the scheduled events.  Vignette \code{"Scheduled events"} for
+##' a comprehensive tutorial on defining event data, using the
+##' \strong{select} (\code{E}) and \strong{shift} (\code{N}) matrices,
+##' and simulating complex demographic and movement processes.
 ##' @export
 ##' @examples
-##' ## Create an SIR model that includes scheduled events.
-##' model <- SIR(u0     = u0_SIR(),
-##'              tspan  = 1:(4 * 365),
-##'              events = events_SIR(),
-##'              beta   = 0.16,
-##'              gamma  = 0.077)
+##' ## Create an SIR model with scheduled events.
+##' model <- SIR(
+##'   u0     = u0_SIR(),
+##'   tspan  = 1:(4 * 365),
+##'   events = events_SIR(),
+##'   beta   = 0.16,
+##'   gamma  = 0.077
+##' )
 ##'
-##' ## Extract the scheduled events from the model and display summary
-##' summary(events(model))
+##' ## Extract the events and display a summary.
+##' ev <- events(model)
+##' summary(ev)
 ##'
-##' ## Extract the scheduled events from the model and plot them
-##' plot(events(model))
+##' ## Plot the event schedule over time.
+##' plot(ev)
 ## nolint start: brace_linter
 setGeneric(
     "events",
