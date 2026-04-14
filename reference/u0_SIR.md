@@ -31,10 +31,8 @@ A `data.frame` with 1,600 rows (one per node) and 4 columns:
 
 ## Details
 
-This dataset represents initial disease states in a population of 1,600
-cattle herds (nodes). Each row represents a single herd (node), derived
-from a synthetic population structure by adding an exposed compartment
-to the SIR model framework.
+This dataset represents initial disease states in a synthetic population
+of 1,600 cattle herds (nodes). Each row represents a single herd (node).
 
 The data contains:
 
