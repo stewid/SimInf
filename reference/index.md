@@ -128,7 +128,7 @@
 
 - [`events()`](http://stewid.github.io/SimInf/reference/events.md) :
 
-  Extract the events from a `SimInf_model` object
+  Extract the scheduled events from a `SimInf_model` object
 
 - [`events_SEIR()`](http://stewid.github.io/SimInf/reference/events_SEIR.md)
   : Example event data for the SEIR model with cattle herds
