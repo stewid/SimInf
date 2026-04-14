@@ -244,7 +244,7 @@ events_SIR <- function() {
 ##' suitable for illustrating how to incorporate scheduled events in
 ##' the SimInf framework.
 ##'
-##' @return A \code{data.frame} with 1,600 rows (one per node) and 4
+##' @return A \code{data.frame} with 1,600 rows (one per node) and 3
 ##'     columns:
 ##'     \describe{
 ##'       \item{S}{Number of susceptible cattle (individuals) in the

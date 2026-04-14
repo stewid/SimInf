@@ -7,7 +7,7 @@
 u0_SIS()
 }
 \value{
-A \code{data.frame} with 1,600 rows (one per node) and 4
+A \code{data.frame} with 1,600 rows (one per node) and 2
     columns:
     \describe{
       \item{S}{Number of susceptible cattle (individuals) in the
