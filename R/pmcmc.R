@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_pmcmc"}
+##' Class \code{SimInf_pmcmc}
 ##'
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.

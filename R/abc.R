@@ -16,10 +16,17 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_abc"}
+##' Class \code{SimInf_abc}
 ##'
-##' @slot model The \code{SimInf_model} object to estimate parameters
-##'     in.
+##' Storage class for the results of an Approximate Bayesian
+##' Computation (ABC) parameter estimation using Sequential Monte
+##' Carlo (SMC). The \code{SimInf_abc} class holds the model
+##' definition, prior distributions, accepted parameter values
+##' (particles), weights, distances, and convergence diagnostics.
+##'
+##' @slot model A \code{SimInf_model} object containing the model
+##'     structure (transitions, compartments, etc.) for which
+##'     parameters are being estimated.
 ##' @template priors-slot
 ##' @slot target Character vector (\code{gdata} or \code{ldata}) that
 ##'     determines if the ABC-SMC method estimates parameters in

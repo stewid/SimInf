@@ -5,13 +5,18 @@
 \alias{SimInf_abc-class}
 \title{Class \code{SimInf_abc}}
 \description{
-Class \code{SimInf_abc}
+Storage class for the results of an Approximate Bayesian
+Computation (ABC) parameter estimation using Sequential Monte
+Carlo (SMC). The \code{SimInf_abc} class holds the model
+definition, prior distributions, accepted parameter values
+(particles), weights, distances, and convergence diagnostics.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{model}}{The \code{SimInf_model} object to estimate parameters
-in.}
+\item{\code{model}}{A \code{SimInf_model} object containing the model
+structure (transitions, compartments, etc.) for which
+parameters are being estimated.}
 
 \item{\code{priors}}{A \code{data.frame} defining the prior distributions
 for the parameters. It contains four columns:
