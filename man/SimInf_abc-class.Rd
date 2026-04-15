@@ -14,9 +14,9 @@ definition, prior distributions, accepted parameter values
 \section{Slots}{
 
 \describe{
-\item{\code{model}}{A \code{SimInf_model} object containing the model
-structure (transitions, compartments, etc.) for which
-parameters are being estimated.}
+\item{\code{model}}{A \code{\linkS4class{SimInf_model}} object containing
+the model structure (transitions, compartments, etc.) for
+which parameters are being estimated.}
 
 \item{\code{priors}}{A \code{data.frame} defining the prior distributions
 for the parameters. It contains four columns:

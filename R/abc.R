@@ -24,9 +24,9 @@
 ##' definition, prior distributions, accepted parameter values
 ##' (particles), weights, distances, and convergence diagnostics.
 ##'
-##' @slot model A \code{SimInf_model} object containing the model
-##'     structure (transitions, compartments, etc.) for which
-##'     parameters are being estimated.
+##' @slot model A \code{\linkS4class{SimInf_model}} object containing
+##'     the model structure (transitions, compartments, etc.) for
+##'     which parameters are being estimated.
 ##' @template priors-slot
 ##' @slot target Character vector (\code{gdata} or \code{ldata}) that
 ##'     determines if the ABC-SMC method estimates parameters in
