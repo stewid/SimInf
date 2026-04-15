@@ -1,12 +1,17 @@
 # Class `SimInf_abc`
 
-Class `SimInf_abc`
+Storage class for the results of an Approximate Bayesian Computation
+(ABC) parameter estimation using Sequential Monte Carlo (SMC). The
+`SimInf_abc` class holds the model definition, prior distributions,
+accepted parameter values (particles), weights, distances, and
+convergence diagnostics.
 
 ## Slots
 
 - `model`:
 
-  The `SimInf_model` object to estimate parameters in.
+  A `SimInf_model` object containing the model structure (transitions,
+  compartments, etc.) for which parameters are being estimated.
 
 - `priors`:
 
