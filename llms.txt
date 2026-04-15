@@ -351,7 +351,7 @@ The `SimInf` package is licensed under the
   Approximate Bayesian computation
 
 - [`add_spatial_coupling_to_ldata()`](http://stewid.github.io/SimInf/reference/add_spatial_coupling_to_ldata.md)
-  : Add information about spatial coupling between nodes to 'ldata'
+  : Add spatial coupling information to local data
 
 - [`as.data.frame(`*`<SimInf_abc>`*`)`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_abc.md)
   : Coerce to data frame
