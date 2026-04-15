@@ -56,7 +56,7 @@
 - [`SimInf_abc-class`](http://stewid.github.io/SimInf/reference/SimInf_abc-class.md)
   :
 
-  Class `"SimInf_abc"`
+  Class `SimInf_abc`
 
 - [`SimInf_events-class`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
   :
@@ -91,7 +91,7 @@
 - [`SimInf_pmcmc-class`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
   :
 
-  Class `"SimInf_pmcmc"`
+  Class `SimInf_pmcmc`
 
 - [`abc()`](http://stewid.github.io/SimInf/reference/abc.md) :
   Approximate Bayesian computation

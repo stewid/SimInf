@@ -1,6 +1,6 @@
-# Class `"SimInf_abc"`
+# Class `SimInf_abc`
 
-Class `"SimInf_abc"`
+Class `SimInf_abc`
 
 ## Slots
 
@@ -10,16 +10,33 @@ Class `"SimInf_abc"`
 
 - `priors`:
 
-  A `data.frame` containing the four columns `parameter`,
-  `distribution`, `p1` and `p2`. The column `parameter` gives the name
-  of the parameter referred to in the model. The column `distribution`
-  contains the name of the prior distribution. Valid distributions are
-  'gamma', 'normal' or 'uniform'. The column `p1` is a numeric vector
-  with the first hyperparameter for each prior: 'gamma') shape,
-  'lognormal') logmean, 'normal') mean, and 'uniform') lower bound. The
-  column `p2` is a numeric vector with the second hyperparameter for
-  each prior: 'gamma') rate, 'lognormal') standard deviation on the log
-  scale, 'normal') standard deviation, and 'uniform') upper bound.
+  A `data.frame` defining the prior distributions for the parameters. It
+  contains four columns:
+
+  - `parameter`: The name of the parameter in the model.
+
+  - `distribution`: The prior distribution type. Valid values are
+    `"gamma"`, `"lognormal"`, `"normal"`, or `"uniform"`.
+
+  - `p1`: The first hyperparameter:
+
+    - `"gamma"`: *shape*
+
+    - `"lognormal"`: *meanlog* (mean on the log scale)
+
+    - `"normal"`: *mean*
+
+    - `"uniform"`: *lower* bound
+
+  - `p2`: The second hyperparameter:
+
+    - `"gamma"`: *rate*
+
+    - `"lognormal"`: *sdlog* (standard deviation on the log scale)
+
+    - `"normal"`: *sd* (standard deviation)
+
+    - `"uniform"`: *upper* bound
 
 - `target`:
 
