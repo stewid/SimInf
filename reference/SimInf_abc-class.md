@@ -10,8 +10,10 @@ convergence diagnostics.
 
 - `model`:
 
-  A `SimInf_model` object containing the model structure (transitions,
-  compartments, etc.) for which parameters are being estimated.
+  A
+  [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  object containing the model structure (transitions, compartments,
+  etc.) for which parameters are being estimated.
 
 - `priors`:
 
