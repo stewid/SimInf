@@ -3,9 +3,9 @@
 \docType{class}
 \name{SimInf_abc-class}
 \alias{SimInf_abc-class}
-\title{Class \code{"SimInf_abc"}}
+\title{Class \code{SimInf_abc}}
 \description{
-Class \code{"SimInf_abc"}
+Class \code{SimInf_abc}
 }
 \section{Slots}{
 
@@ -13,19 +13,31 @@ Class \code{"SimInf_abc"}
 \item{\code{model}}{The \code{SimInf_model} object to estimate parameters
 in.}
 
-\item{\code{priors}}{A \code{data.frame} containing the four columns
-\code{parameter}, \code{distribution}, \code{p1} and
-\code{p2}. The column \code{parameter} gives the name of the
-parameter referred to in the model. The column
-\code{distribution} contains the name of the prior
-distribution. Valid distributions are 'gamma', 'normal' or
-'uniform'. The column \code{p1} is a numeric vector with the
-first hyperparameter for each prior: 'gamma') shape,
-'lognormal') logmean, 'normal') mean, and 'uniform') lower
-bound. The column \code{p2} is a numeric vector with the
-second hyperparameter for each prior: 'gamma') rate,
-'lognormal') standard deviation on the log scale, 'normal')
-standard deviation, and 'uniform') upper bound.}
+\item{\code{priors}}{A \code{data.frame} defining the prior distributions
+for the parameters. It contains four columns:
+\itemize{
+  \item \code{parameter}: The name of the parameter in the
+  model.
+  \item \code{distribution}: The prior distribution
+    type. Valid values are \code{"gamma"}, \code{"lognormal"},
+    \code{"normal"}, or \code{"uniform"}.
+  \item \code{p1}: The first hyperparameter:
+    \itemize{
+      \item \code{"gamma"}: \emph{shape}
+      \item \code{"lognormal"}: \emph{meanlog} (mean on the
+      log scale)
+      \item \code{"normal"}: \emph{mean}
+      \item \code{"uniform"}: \emph{lower} bound
+    }
+  \item \code{p2}: The second hyperparameter:
+    \itemize{
+      \item \code{"gamma"}: \emph{rate}
+      \item \code{"lognormal"}: \emph{sdlog} (standard
+      deviation on the log scale)
+      \item \code{"normal"}: \emph{sd} (standard deviation)
+      \item \code{"uniform"}: \emph{upper} bound
+    }
+}}
 
 \item{\code{target}}{Character vector (\code{gdata} or \code{ldata}) that
 determines if the ABC-SMC method estimates parameters in
