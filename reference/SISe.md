@@ -122,47 +122,40 @@ SISe(
 
 ## Details
 
-The SISe model contains two compartments: number of susceptible (S) and
-number of infectious (I) individuals. Additionally, it contains a
-continuous environmental compartment to model shedding of a pathogen to
-the environment. Consequently, the model has two state transitions:
+The `SISe` model contains two compartments: **S**usceptible (\\S\\) and
+**I**nfected (\\I\\). Additionally, it includes a continuous
+**environmental** compartment (\\\varphi\\) to model the shedding of a
+pathogen to the environment.
 
-\$\$S \stackrel{\upsilon \varphi S}{\longrightarrow} I\$\$
+The model is defined by two state transitions:
 
-\$\$I \stackrel{\gamma I}{\longrightarrow} S\$\$
+\$\$S \stackrel{\upsilon \varphi S}{\longrightarrow} I\$\$ \$\$I
+\stackrel{\gamma I}{\longrightarrow} S\$\$
 
-where the transition rate per unit of time from susceptible to infected
-is proportional to the concentration of the environmental contamination
-\\\varphi\\ in each node. Moreover, the transition rate from infected to
-susceptible is the recovery rate \\\gamma\\, measured per individual and
-per unit of time. Finally, the environmental infectious pressure in each
-node is evolved by,
+where the transition rate from susceptible to infected is proportional
+to the environmental contamination \\\varphi\\ and the transmission rate
+\\\upsilon\\. The recovery rate \\\gamma\\ moves individuals from
+infected back to susceptible.
+
+The environmental infectious pressure \\\varphi(t)\\ in each node
+evolves according to:
 
 \$\$\frac{d\varphi(t)}{dt} = \frac{\alpha I(t)}{N(t)} - \beta(t)
 \varphi(t) + \epsilon\$\$
 
-where \\\alpha\\ is the average shedding rate of the pathogen to the
-environment per infected individual and \\N = S + I\\ the size of the
-node. The seasonal decay and removal of the pathogen is captured by
-\\\beta(t)\\. It is also possible to include a small background
-infectious pressure \\\epsilon\\ to allow for other indirect sources of
-environmental contamination. The environmental infectious pressure
-\\\varphi(t)\\ in each node is evolved each time unit by the Euler
-forward method. The value of \\\varphi(t)\\ is saved at the time-points
-specified in `tspan`.
+where:
 
-The argument `u0` must be a `data.frame` with one row for each node with
-the following columns:
+- \\\alpha\\ is the shedding rate per infected individual.
 
-- S:
+- \\N(t) = S + I\\ is the total population size in the node.
 
-  The number of susceptible in each node
+- \\\beta(t)\\ is the seasonal decay/removal rate, which varies
+  throughout the year.
 
-- I:
+- \\\epsilon\\ is the background infectious pressure.
 
-  The number of infected in each node
-
-## Beta
+The environmental pressure is evolved using the Euler forward method and
+saved at time points in `tspan`.
 
 **Seasonal Decay (\\\beta(t)\\):** The decay rate \\\beta(t)\\ is
 piecewise constant, defined by four intervals determined by the
@@ -211,3 +204,34 @@ first endpoint. Three orderings are supported:
 
 These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.
+
+The argument `u0` must be a `data.frame` with one row for each node with
+the following columns:
+
+- S:
+
+  The number of susceptible in each node
+
+- I:
+
+  The number of infected in each node
+
+## See also
+
+[`SISe`](http://stewid.github.io/SimInf/reference/SISe-class.md) for the
+class definition.
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md),
+[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md),
+[`SIS`](http://stewid.github.io/SimInf/reference/SIS.md),
+[`SISe3`](http://stewid.github.io/SimInf/reference/SISe3.md) and
+[`SISe_sp`](http://stewid.github.io/SimInf/reference/SISe_sp.md) for
+other predefined models.
+[`mparse`](http://stewid.github.io/SimInf/reference/mparse.md) for
+creating custom models.
+[`run`](http://stewid.github.io/SimInf/reference/run.md) for running the
+simulation.
+[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md),
+[`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md)
+and
+[`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md)
+for post-processing and visualization.

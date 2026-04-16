@@ -178,45 +178,30 @@ of nrow(u0).</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The <acronym>SISe</acronym> model contains two compartments: number of
-susceptible (S) and number of infectious (I)
-individuals. Additionally, it contains a continuous environmental
-compartment to model shedding of a pathogen to the
-environment. Consequently, the model has two state transitions:</p>
-<p>$$S \stackrel{\upsilon \varphi S}{\longrightarrow} I$$</p>
-<p>$$I \stackrel{\gamma I}{\longrightarrow} S$$</p>
-<p>where the transition rate per unit of time from susceptible to
-infected is proportional to the concentration of the environmental
-contamination \(\varphi\) in each node. Moreover, the
-transition rate from infected to susceptible is the recovery rate
-\(\gamma\), measured per individual and per unit of
-time. Finally, the environmental infectious pressure in each node
-is evolved by,</p>
+    <p>The <code>SISe</code> model contains two compartments:
+<strong>S</strong>usceptible (\(S\)) and <strong>I</strong>nfected
+(\(I\)). Additionally, it includes a continuous
+<strong>environmental</strong> compartment (\(\varphi\)) to model the
+shedding of a pathogen to the environment.</p>
+<p>The model is defined by two state transitions:</p>
+<p>$$S \stackrel{\upsilon \varphi S}{\longrightarrow} I$$ $$I \stackrel{\gamma
+  I}{\longrightarrow} S$$</p>
+<p>where the transition rate from susceptible to infected is
+proportional to the environmental contamination \(\varphi\) and
+the transmission rate \(\upsilon\). The recovery rate
+\(\gamma\) moves individuals from infected back to susceptible.</p>
+<p>The environmental infectious pressure \(\varphi(t)\) in each
+node evolves according to:</p>
 <p>$$\frac{d\varphi(t)}{dt} = \frac{\alpha I(t)}{N(t)} - \beta(t)
 \varphi(t) + \epsilon$$</p>
-<p>where \(\alpha\) is the average shedding rate of the pathogen to
-the environment per infected individual and \(N = S + I\) the
-size of the node. The seasonal decay and removal of the pathogen
-is captured by \(\beta(t)\). It is also possible to include a
-small background infectious pressure \(\epsilon\) to allow for
-other indirect sources of environmental contamination. The
-environmental infectious pressure \(\varphi(t)\) in each
-node is evolved each time unit by the Euler forward method. The
-value of \(\varphi(t)\) is saved at the time-points
-specified in <code>tspan</code>.</p>
-<p>The argument <code>u0</code> must be a <code>data.frame</code> with one row for
-each node with the following columns:</p><dl><dt>S</dt>
-<dd><p>The number of susceptible in each node</p></dd>
-
-<dt>I</dt>
-<dd><p>The number of infected in each node</p></dd>
-
-
-</dl></div>
-    <div class="section level2">
-    <h2 id="beta">Beta<a class="anchor" aria-label="anchor" href="#beta"></a></h2>
-
-
+<p>where:</p><ul><li><p>\(\alpha\) is the shedding rate per infected individual.</p></li>
+<li><p>\(N(t) = S + I\) is the total population size in the
+    node.</p></li>
+<li><p>\(\beta(t)\) is the seasonal decay/removal rate, which
+    varies throughout the year.</p></li>
+<li><p>\(\epsilon\) is the background infectious pressure.</p></li>
+</ul><p>The environmental pressure is evolved using the Euler forward method
+and saved at time points in <code>tspan</code>.</p>
 <p><strong>Seasonal Decay (\(\beta(t)\)):</strong>
 The decay rate \(\beta(t)\) is piecewise constant, defined by four
 intervals determined by the parameters <code>end_t1</code>, <code>end_t2</code>,
@@ -243,6 +228,25 @@ preceding the first endpoint. Three orderings are supported:</p>
 <li><p>Interval 4 (wrap-around): <code>[end_t3, 365)</code> with rate <code>beta_t4</code></p></li>
 </ul><p>These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.</p>
+<p>The argument <code>u0</code> must be a <code>data.frame</code> with one row
+for each node with the following columns:</p><dl><dt>S</dt>
+<dd><p>The number of susceptible in each node</p></dd>
+
+<dt>I</dt>
+<dd><p>The number of infected in each node</p></dd>
+
+
+</dl></div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="SISe-class.html">SISe</a></code> for the class definition.
+<code><a href="SIR.html">SIR</a></code>, <code><a href="SEIR.html">SEIR</a></code>, <code><a href="SIS.html">SIS</a></code>,
+<code><a href="SISe3.html">SISe3</a></code> and <code><a href="SISe_sp.html">SISe_sp</a></code> for other predefined
+models.  <code><a href="mparse.html">mparse</a></code> for creating custom models.
+<code><a href="run.html">run</a></code> for running the simulation.
+<code><a href="trajectory.html">trajectory</a></code>, <code><a href="prevalence.html">prevalence</a></code> and
+<code><a href="plot.html">plot,SimInf_model-method</a></code> for post-processing and
+visualization.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
