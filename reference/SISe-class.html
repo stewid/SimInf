@@ -60,11 +60,66 @@ for <code>SimInf_model</code>, such as <code><a href="run.html">run</a></code>,
 
 
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The <code>SISe</code> model contains two compartments:
+<strong>S</strong>usceptible (\(S\)) and <strong>I</strong>nfected
+(\(I\)). Additionally, it includes a continuous
+<strong>environmental</strong> compartment (\(\varphi\)) to model the
+shedding of a pathogen to the environment.</p>
+<p>The model is defined by two state transitions:</p>
+<p>$$S \stackrel{\upsilon \varphi S}{\longrightarrow} I$$ $$I \stackrel{\gamma
+  I}{\longrightarrow} S$$</p>
+<p>where the transition rate from susceptible to infected is
+proportional to the environmental contamination \(\varphi\) and
+the transmission rate \(\upsilon\). The recovery rate
+\(\gamma\) moves individuals from infected back to susceptible.</p>
+<p>The environmental infectious pressure \(\varphi(t)\) in each
+node evolves according to:</p>
+<p>$$\frac{d\varphi(t)}{dt} = \frac{\alpha I(t)}{N(t)} - \beta(t)
+\varphi(t) + \epsilon$$</p>
+<p>where:</p><ul><li><p>\(\alpha\) is the shedding rate per infected individual.</p></li>
+<li><p>\(N(t) = S + I\) is the total population size in the
+    node.</p></li>
+<li><p>\(\beta(t)\) is the seasonal decay/removal rate, which
+    varies throughout the year.</p></li>
+<li><p>\(\epsilon\) is the background infectious pressure.</p></li>
+</ul><p>The environmental pressure is evolved using the Euler forward method
+and saved at time points in <code>tspan</code>.</p>
+<p><strong>Seasonal Decay (\(\beta(t)\)):</strong>
+The decay rate \(\beta(t)\) is piecewise constant, defined by four
+intervals determined by the parameters <code>end_t1</code>, <code>end_t2</code>,
+<code>end_t3</code>, and <code>end_t4</code> (days of the year, where
+<code>0 &lt;= day &lt; 365</code>). The year is divided into four intervals based
+on the sorted order of these endpoints. The interval that wraps around
+the year boundary (from the last endpoint to day 365, then from day 0
+to the first endpoint) receives the same rate as the interval
+preceding the first endpoint. Three orderings are supported:</p>
+<p><strong>Case 1:</strong> <code>end_t1 &lt; end_t2 &lt; end_t3 &lt; end_t4</code></p><ul><li><p>Interval 1: <code>[0, end_t1)</code> with rate <code>beta_t1</code></p></li>
+<li><p>Interval 2: <code>[end_t1, end_t2)</code> with rate <code>beta_t2</code></p></li>
+<li><p>Interval 3: <code>[end_t2, end_t3)</code> with rate <code>beta_t3</code></p></li>
+<li><p>Interval 4: <code>[end_t3, end_t4)</code> with rate <code>beta_t4</code></p></li>
+<li><p>Interval 1 (wrap-around): <code>[end_t4, 365)</code> with rate <code>beta_t1</code></p></li>
+</ul><p><strong>Case 2:</strong> <code>end_t3 &lt; end_t4 &lt; end_t1 &lt; end_t2</code></p><ul><li><p>Interval 3: <code>[0, end_t3)</code> with rate <code>beta_t3</code></p></li>
+<li><p>Interval 4: <code>[end_t3, end_t4)</code> with rate <code>beta_t4</code></p></li>
+<li><p>Interval 1: <code>[end_t4, end_t1)</code> with rate <code>beta_t1</code></p></li>
+<li><p>Interval 2: <code>[end_t1, end_t2)</code> with rate <code>beta_t2</code></p></li>
+<li><p>Interval 3 (wrap-around): <code>[end_t2, 365)</code> with rate <code>beta_t3</code></p></li>
+</ul><p><strong>Case 3:</strong> <code>end_t4 &lt; end_t1 &lt; end_t2 &lt; end_t3</code></p><ul><li><p>Interval 4: <code>[0, end_t4)</code> with rate <code>beta_t4</code></p></li>
+<li><p>Interval 1: <code>[end_t4, end_t1)</code> with rate <code>beta_t1</code></p></li>
+<li><p>Interval 2: <code>[end_t1, end_t2)</code> with rate <code>beta_t2</code></p></li>
+<li><p>Interval 3: <code>[end_t2, end_t3)</code> with rate <code>beta_t3</code></p></li>
+<li><p>Interval 4 (wrap-around): <code>[end_t3, 365)</code> with rate <code>beta_t4</code></p></li>
+</ul><p>These different orderings allow the model to handle seasonal patterns
+where, for example, a winter peak crosses the year boundary.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="SISe.html">SISe</a></code> for creating an SISe model</p></div>
+    <div class="dont-index"><p><code><a href="SISe.html">SISe</a></code> for creating an <acronym>SISe</acronym> model object and
+<code><a href="SimInf_model-class.html">SimInf_model</a></code> for the parent class definition.</p></div>
     </div>
 
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
