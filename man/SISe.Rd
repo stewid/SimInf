@@ -102,49 +102,42 @@ Create an \acronym{SISe} model to be used by the simulation
 framework.
 }
 \details{
-The \acronym{SISe} model contains two compartments: number of
-susceptible (S) and number of infectious (I)
-individuals. Additionally, it contains a continuous environmental
-compartment to model shedding of a pathogen to the
-environment. Consequently, the model has two state transitions:
+The \code{SISe} model contains two compartments:
+\strong{S}usceptible (\eqn{S}) and \strong{I}nfected
+(\eqn{I}). Additionally, it includes a continuous
+\strong{environmental} compartment (\eqn{\varphi}) to model the
+shedding of a pathogen to the environment.
 
-\deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{
-S -- upsilon phi S --> I}
+The model is defined by two state transitions:
 
-\deqn{I \stackrel{\gamma I}{\longrightarrow} S}{
-I -- gamma I --> S}
+\deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{ S --
+  upsilon phi S --> I} \deqn{I \stackrel{\gamma
+  I}{\longrightarrow} S}{ I -- gamma I --> S}
 
-where the transition rate per unit of time from susceptible to
-infected is proportional to the concentration of the environmental
-contamination \eqn{\varphi}{phi} in each node. Moreover, the
-transition rate from infected to susceptible is the recovery rate
-\eqn{\gamma}, measured per individual and per unit of
-time. Finally, the environmental infectious pressure in each node
-is evolved by,
+where the transition rate from susceptible to infected is
+proportional to the environmental contamination \eqn{\varphi} and
+the transmission rate \eqn{\upsilon}. The recovery rate
+\eqn{\gamma} moves individuals from infected back to susceptible.
+
+The environmental infectious pressure \eqn{\varphi(t)} in each
+node evolves according to:
 
 \deqn{\frac{d\varphi(t)}{dt} = \frac{\alpha I(t)}{N(t)} - \beta(t)
-\varphi(t) + \epsilon}{
-dphi(t) / dt = alpha I(t) / N(t) - beta(t) phi(t) + epsilon}
+\varphi(t) + \epsilon}{dphi/dt = alpha * sum(I) / N - beta(t) *
+phi + epsilon}
 
-where \eqn{\alpha} is the average shedding rate of the pathogen to
-the environment per infected individual and \eqn{N = S + I} the
-size of the node. The seasonal decay and removal of the pathogen
-is captured by \eqn{\beta(t)}. It is also possible to include a
-small background infectious pressure \eqn{\epsilon} to allow for
-other indirect sources of environmental contamination. The
-environmental infectious pressure \eqn{\varphi(t)}{phi(t)} in each
-node is evolved each time unit by the Euler forward method. The
-value of \eqn{\varphi(t)}{phi(t)} is saved at the time-points
-specified in \code{tspan}.
+where:
+\itemize{
+  \item \eqn{\alpha} is the shedding rate per infected individual.
+  \item \eqn{N(t) = S + I} is the total population size in the
+    node.
+  \item \eqn{\beta(t)} is the seasonal decay/removal rate, which
+    varies throughout the year.
+  \item \eqn{\epsilon} is the background infectious pressure.
+}
 
-The argument \code{u0} must be a \code{data.frame} with one row for
-each node with the following columns:
-\describe{
-\item{S}{The number of susceptible in each node}
-\item{I}{The number of infected in each node}
-}
-}
-\section{Beta}{
+The environmental pressure is evolved using the Euler forward method
+and saved at time points in \code{tspan}.
 
 \strong{Seasonal Decay (\eqn{\beta(t)}):}
 The decay rate \eqn{\beta(t)} is piecewise constant, defined by four
@@ -185,5 +178,21 @@ preceding the first endpoint. Three orderings are supported:
 
 These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.
-}
 
+The argument \code{u0} must be a \code{data.frame} with one row
+for each node with the following columns:
+\describe{
+\item{S}{The number of susceptible in each node}
+\item{I}{The number of infected in each node}
+}
+}
+\seealso{
+\code{\linkS4class{SISe}} for the class definition.
+\code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+\code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
+models.  \code{\link{mparse}} for creating custom models.
+\code{\link{run}} for running the simulation.
+\code{\link{trajectory}}, \code{\link{prevalence}} and
+\code{\link{plot,SimInf_model-method}} for post-processing and
+visualization.
+}
