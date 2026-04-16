@@ -100,3 +100,10 @@ first endpoint. Three orderings are supported:
 
 These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.
+
+## See also
+
+[`SISe3`](http://stewid.github.io/SimInf/reference/SISe3.md) for
+creating an SISe3 model object and
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+for the parent class definition.
