@@ -12,3 +12,51 @@ functions defined for \code{SimInf_model}, such as
 \code{\link{run}}, \code{\link{plot}}, \code{\link{trajectory}},
 and \code{\link{prevalence}}.
 }
+\details{
+The \code{SISe3} model contains two compartments in three age
+categories: \strong{S}usceptible (\eqn{S_1, S_2, S_3}) and
+\strong{I}nfected (\eqn{I_1, I_2, I_3}). Additionally, it includes
+a continuous \strong{environmental} compartment (\eqn{\varphi})
+to model the shedding of a pathogen to the environment.
+
+The model is defined by six state transitions:
+
+\deqn{S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1}{
+  S_1 -- upsilon_1 phi S_1 --> I_1}
+\deqn{I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1}{
+  I_1 -- gamma_1 I_1 --> S_1}
+\deqn{S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2}{
+  S_2 -- upsilon_2 phi S_2 --> I_2}
+\deqn{I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2}{
+  I_2 -- gamma_2 I_2 --> S_2}
+\deqn{S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3}{
+  S_3 -- upsilon_3 phi S_3 --> I_3}
+\deqn{I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3}{
+  I_3 -- gamma_3 I_3 --> S_3}
+
+where the transition rate from susceptible to infected in age
+category \eqn{k} is proportional to the environmental
+contamination \eqn{\varphi} and the transmission rate
+\eqn{\upsilon_k}. The recovery rate \eqn{\gamma_k} moves
+individuals from infected back to susceptible.
+
+The environmental infectious pressure \eqn{\varphi(t)} in each
+node evolves according to:
+
+\deqn{\frac{d\varphi(t)}{dt} = \frac{\alpha \left(I_1(t) + I_2(t)
++ I_3(t)\right)}{N(t)} - \beta(t) \varphi(t) + \epsilon}{
+  dphi/dt = alpha * sum(I) / N - beta(t) * phi + epsilon}
+
+where:
+\itemize{
+  \item \eqn{\alpha} is the shedding rate per infected individual.
+  \item \eqn{N(t) = S_1 + S_2 + S_3 + I_1 + I_2 + I_3} is the total
+    population size in the node.
+  \item \eqn{\beta(t)} is the seasonal decay/removal rate, which
+    varies throughout the year.
+  \item \eqn{\epsilon} is the background infectious pressure.
+}
+
+The environmental pressure is evolved using the Euler forward method
+and saved at time points in \code{tspan}.
+}

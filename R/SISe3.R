@@ -28,6 +28,8 @@
 ##' \code{\link{run}}, \code{\link{plot}}, \code{\link{trajectory}},
 ##' and \code{\link{prevalence}}.
 ##'
+##' @template SISe3-details
+##'
 ##' @include SimInf_model.R
 ##' @export
 setClass("SISe3", contains = c("SimInf_model"))
