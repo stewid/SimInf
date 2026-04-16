@@ -22,11 +22,11 @@
 ##' Class SISe_sp
 ##'
 ##' Class to handle the \acronym{SISe_sp} model. This class inherits
-##' from \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIR}
-##' objects are fully compatible with all generic functions defined
-##' for \code{SimInf_model}, such as \code{\link{run}},
-##' \code{\link{plot}}, \code{\link{trajectory}}, and
-##' \code{\link{prevalence}}.
+##' from \code{\linkS4class{SimInf_model}}, meaning that
+##' \acronym{SISe_sp} objects are fully compatible with all generic
+##' functions defined for \code{SimInf_model}, such as
+##' \code{\link{run}}, \code{\link{plot}}, \code{\link{trajectory}},
+##' and \code{\link{prevalence}}.
 ##'
 ##' @include SimInf_model.R
 ##' @export

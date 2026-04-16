@@ -6,9 +6,9 @@
 \title{Class SISe3}
 \description{
 Class to handle the \acronym{SISe3} model. This class inherits
-from \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIR}
-objects are fully compatible with all generic functions defined
-for \code{SimInf_model}, such as \code{\link{run}},
-\code{\link{plot}}, \code{\link{trajectory}}, and
-\code{\link{prevalence}}.
+from \code{\linkS4class{SimInf_model}}, meaning that
+\acronym{SISe3} objects are fully compatible with all generic
+functions defined for \code{SimInf_model}, such as
+\code{\link{run}}, \code{\link{plot}}, \code{\link{trajectory}},
+and \code{\link{prevalence}}.
 }
