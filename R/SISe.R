@@ -21,7 +21,13 @@
 
 ##' Class SISe
 ##'
-##' Class to handle the \acronym{SISe} \code{\link{SimInf_model}}.
+##' Class to handle the \acronym{SISe} model. This class inherits from
+##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIR}
+##' objects are fully compatible with all generic functions defined
+##' for \code{SimInf_model}, such as \code{\link{run}},
+##' \code{\link{plot}}, \code{\link{trajectory}}, and
+##' \code{\link{prevalence}}.
+##'
 ##' @seealso \code{\link{SISe}} for creating an SISe model
 ##' @include SimInf_model.R
 ##' @export

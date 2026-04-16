@@ -5,5 +5,10 @@
 \alias{SISe_sp-class}
 \title{Class SISe_sp}
 \description{
-Class to handle the \code{SISe_sp} \code{\link{SimInf_model}}.
+Class to handle the \acronym{SISe_sp} model. This class inherits
+from \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIR}
+objects are fully compatible with all generic functions defined
+for \code{SimInf_model}, such as \code{\link{run}},
+\code{\link{plot}}, \code{\link{trajectory}}, and
+\code{\link{prevalence}}.
 }
