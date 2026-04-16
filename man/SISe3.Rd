@@ -213,3 +213,13 @@ each node with the following columns:
 \item{I_3}{The number of infected in age category 3}
 }
 }
+\seealso{
+\code{\linkS4class{SISe3}} for the class definition.
+\code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+\code{\link{SISe}} and \code{\link{SISe_sp}} for other predefined
+models.  \code{\link{mparse}} for creating custom models.
+\code{\link{run}} for running the simulation.
+\code{\link{trajectory}}, \code{\link{prevalence}} and
+\code{\link{plot,SimInf_model-method}} for post-processing and
+visualization.
+}
