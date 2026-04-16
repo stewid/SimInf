@@ -218,18 +218,50 @@ the following columns:
 
 ## Beta
 
-The time dependent beta is divided into four intervals of the year
+**Seasonal Decay (\\\beta(t)\\):** The decay rate \\\beta(t)\\ is
+piecewise constant, defined by four intervals determined by the
+parameters `end_t1`, `end_t2`, `end_t3`, and `end_t4` (days of the year,
+where `0 <= day < 365`). The year is divided into four intervals based
+on the sorted order of these endpoints. The interval that wraps around
+the year boundary (from the last endpoint to day 365, then from day 0 to
+the first endpoint) receives the same rate as the interval preceding the
+first endpoint. Three orderings are supported:
 
-    where 0 <= day < 365
+**Case 1:** `end_t1 < end_t2 < end_t3 < end_t4`
 
-    Case 1: END_1 < END_2 < END_3 < END_4
-    INTERVAL_1 INTERVAL_2     INTERVAL_3     INTERVAL_4     INTERVAL_1
-    [0, END_1) [END_1, END_2) [END_2, END_3) [END_3, END_4) [END_4, 365)
+- Interval 1: `[0, end_t1)` with rate `beta_t1`
 
-    Case 2: END_3 < END_4 < END_1 < END_2
-    INTERVAL_3 INTERVAL_4     INTERVAL_1     INTERVAL_2     INTERVAL_3
-    [0, END_3) [END_3, END_4) [END_4, END_1) [END_1, END_2) [END_2, 365)
+- Interval 2: `[end_t1, end_t2)` with rate `beta_t2`
 
-    Case 3: END_4 < END_1 < END_2 < END_3
-    INTERVAL_4 INTERVAL_1     INTERVAL_2     INTERVAL_3     INTERVAL_4
-    [0, END_4) [END_4, END_1) [END_1, END_2) [END_2, END_3) [END_3, 365)
+- Interval 3: `[end_t2, end_t3)` with rate `beta_t3`
+
+- Interval 4: `[end_t3, end_t4)` with rate `beta_t4`
+
+- Interval 1 (wrap-around): `[end_t4, 365)` with rate `beta_t1`
+
+**Case 2:** `end_t3 < end_t4 < end_t1 < end_t2`
+
+- Interval 3: `[0, end_t3)` with rate `beta_t3`
+
+- Interval 4: `[end_t3, end_t4)` with rate `beta_t4`
+
+- Interval 1: `[end_t4, end_t1)` with rate `beta_t1`
+
+- Interval 2: `[end_t1, end_t2)` with rate `beta_t2`
+
+- Interval 3 (wrap-around): `[end_t2, 365)` with rate `beta_t3`
+
+**Case 3:** `end_t4 < end_t1 < end_t2 < end_t3`
+
+- Interval 4: `[0, end_t4)` with rate `beta_t4`
+
+- Interval 1: `[end_t4, end_t1)` with rate `beta_t1`
+
+- Interval 2: `[end_t1, end_t2)` with rate `beta_t2`
+
+- Interval 3: `[end_t2, end_t3)` with rate `beta_t3`
+
+- Interval 4 (wrap-around): `[end_t3, 365)` with rate `beta_t4`
+
+These different orderings allow the model to handle seasonal patterns
+where, for example, a winter peak crosses the year boundary.

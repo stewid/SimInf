@@ -254,22 +254,32 @@ each node with the following columns:</p><dl><dt>S_1</dt>
     <h2 id="beta">Beta<a class="anchor" aria-label="anchor" href="#beta"></a></h2>
 
 
-<p>The time dependent beta is divided into four intervals of the year</p><div class="sourceCode"><pre><code>
-where 0 &lt;= day &lt; 365
-
-Case 1: END_1 &lt; END_2 &lt; END_3 &lt; END_4
-INTERVAL_1 INTERVAL_2     INTERVAL_3     INTERVAL_4     INTERVAL_1
-[0, END_1) [END_1, END_2) [END_2, END_3) [END_3, END_4) [END_4, 365)
-
-Case 2: END_3 &lt; END_4 &lt; END_1 &lt; END_2
-INTERVAL_3 INTERVAL_4     INTERVAL_1     INTERVAL_2     INTERVAL_3
-[0, END_3) [END_3, END_4) [END_4, END_1) [END_1, END_2) [END_2, 365)
-
-Case 3: END_4 &lt; END_1 &lt; END_2 &lt; END_3
-INTERVAL_4 INTERVAL_1     INTERVAL_2     INTERVAL_3     INTERVAL_4
-[0, END_4) [END_4, END_1) [END_1, END_2) [END_2, END_3) [END_3, 365)
-</code></pre></div>
-
+<p><strong>Seasonal Decay (\(\beta(t)\)):</strong>
+The decay rate \(\beta(t)\) is piecewise constant, defined by four
+intervals determined by the parameters <code>end_t1</code>, <code>end_t2</code>,
+<code>end_t3</code>, and <code>end_t4</code> (days of the year, where
+<code>0 &lt;= day &lt; 365</code>). The year is divided into four intervals based
+on the sorted order of these endpoints. The interval that wraps around
+the year boundary (from the last endpoint to day 365, then from day 0
+to the first endpoint) receives the same rate as the interval
+preceding the first endpoint. Three orderings are supported:</p>
+<p><strong>Case 1:</strong> <code>end_t1 &lt; end_t2 &lt; end_t3 &lt; end_t4</code></p><ul><li><p>Interval 1: <code>[0, end_t1)</code> with rate <code>beta_t1</code></p></li>
+<li><p>Interval 2: <code>[end_t1, end_t2)</code> with rate <code>beta_t2</code></p></li>
+<li><p>Interval 3: <code>[end_t2, end_t3)</code> with rate <code>beta_t3</code></p></li>
+<li><p>Interval 4: <code>[end_t3, end_t4)</code> with rate <code>beta_t4</code></p></li>
+<li><p>Interval 1 (wrap-around): <code>[end_t4, 365)</code> with rate <code>beta_t1</code></p></li>
+</ul><p><strong>Case 2:</strong> <code>end_t3 &lt; end_t4 &lt; end_t1 &lt; end_t2</code></p><ul><li><p>Interval 3: <code>[0, end_t3)</code> with rate <code>beta_t3</code></p></li>
+<li><p>Interval 4: <code>[end_t3, end_t4)</code> with rate <code>beta_t4</code></p></li>
+<li><p>Interval 1: <code>[end_t4, end_t1)</code> with rate <code>beta_t1</code></p></li>
+<li><p>Interval 2: <code>[end_t1, end_t2)</code> with rate <code>beta_t2</code></p></li>
+<li><p>Interval 3 (wrap-around): <code>[end_t2, 365)</code> with rate <code>beta_t3</code></p></li>
+</ul><p><strong>Case 3:</strong> <code>end_t4 &lt; end_t1 &lt; end_t2 &lt; end_t3</code></p><ul><li><p>Interval 4: <code>[0, end_t4)</code> with rate <code>beta_t4</code></p></li>
+<li><p>Interval 1: <code>[end_t4, end_t1)</code> with rate <code>beta_t1</code></p></li>
+<li><p>Interval 2: <code>[end_t1, end_t2)</code> with rate <code>beta_t2</code></p></li>
+<li><p>Interval 3: <code>[end_t2, end_t3)</code> with rate <code>beta_t3</code></p></li>
+<li><p>Interval 4 (wrap-around): <code>[end_t3, 365)</code> with rate <code>beta_t4</code></p></li>
+</ul><p>These different orderings allow the model to handle seasonal patterns
+where, for example, a winter peak crosses the year boundary.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
