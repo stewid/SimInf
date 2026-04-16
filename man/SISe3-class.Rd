@@ -100,3 +100,8 @@ preceding the first endpoint. Three orderings are supported:
 These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.
 }
+\seealso{
+\code{\link{SISe3}} for creating an \acronym{SISe3} model object
+and \code{\linkS4class{SimInf_model}} for the parent class
+definition.
+}

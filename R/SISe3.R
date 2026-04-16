@@ -30,6 +30,10 @@
 ##'
 ##' @template SISe3-details
 ##'
+##' @seealso
+##' \code{\link{SISe3}} for creating an \acronym{SISe3} model object
+##' and \code{\linkS4class{SimInf_model}} for the parent class
+##' definition.
 ##' @include SimInf_model.R
 ##' @export
 setClass("SISe3", contains = c("SimInf_model"))
