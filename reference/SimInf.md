@@ -60,7 +60,7 @@ Useful links:
 
 - <https://github.com/stewid/SimInf>
 
-- <http://stewid.github.io/SimInf/>
+- <https://stewid.github.io/SimInf/>
 
 - Report bugs at <https://github.com/stewid/SimInf/issues>
 
