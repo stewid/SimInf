@@ -22,8 +22,8 @@
 ##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIS}
 ##' objects are fully compatible with all generic functions defined
 ##' for \code{SimInf_model}, such as \code{\link{run}},
-##' \code{\link{plot}}, \code{\link{trajectory}}, and
-##' \code{\link{prevalence}}.
+##' \code{\link{plot,SimInf_model-method}}, \code{\link{trajectory}},
+##' and \code{\link{prevalence}}.
 ##'
 ##' @template SIS-details
 ##'
