@@ -42,7 +42,7 @@ framework."></head><body>
     </div>
 
     <div class="ref-description section level2">
-    <p>Create a <code>SISe3</code> model to be used by the simulation
+    <p>Create a <acronym>SISe3</acronym> model to be used by the simulation
 framework.</p>
     </div>
 
@@ -200,60 +200,34 @@ of nrow(u0).</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The <code>SISe3</code> model contains two compartments in three age
-categories; number of susceptible (S_1, S_2, S_3) and number of
-infectious (I_1, I_2, I_3). Additionally, it contains an
-environmental compartment to model shedding of a pathogen to the
-environment. Consequently, the model has six state transitions,</p>
-<p>$$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1$$</p>
-<p>$$I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1$$</p>
-<p>$$S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2$$</p>
-<p>$$I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2$$</p>
-<p>$$S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3$$</p>
-<p>$$I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3$$</p>
-<p>where the transition rate per unit of time from susceptible to
-infected is proportional to the concentration of the environmental
-contamination \(\varphi\) in each node. Moreover, the
-transition rate from infected to susceptible is the recovery rate
-\(\gamma_1, \gamma_2, \gamma_3\), measured per individual and
-per unit of time. Finally, the environmental infectious pressure
-in each node is evolved by,</p>
+categories: <strong>S</strong>usceptible (\(S_1, S_2, S_3\)) and
+<strong>I</strong>nfected (\(I_1, I_2, I_3\)). Additionally, it includes
+a continuous <strong>environmental</strong> compartment (\(\varphi\))
+to model the shedding of a pathogen to the environment.</p>
+<p>The model is defined by six state transitions:</p>
+<p>$$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1$$
+$$I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1$$
+$$S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2$$
+$$I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2$$
+$$S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3$$
+$$I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3$$</p>
+<p>where the transition rate from susceptible to infected in age
+category \(k\) is proportional to the environmental
+contamination \(\varphi\) and the transmission rate
+\(\upsilon_k\). The recovery rate \(\gamma_k\) moves
+individuals from infected back to susceptible.</p>
+<p>The environmental infectious pressure \(\varphi(t)\) in each
+node evolves according to:</p>
 <p>$$\frac{d\varphi(t)}{dt} = \frac{\alpha \left(I_1(t) + I_2(t)
 + I_3(t)\right)}{N(t)} - \beta(t) \varphi(t) + \epsilon$$</p>
-<p>where \(\alpha\) is the average shedding rate of the pathogen to
-the environment per infected individual and \(N = S_1 + S_2 +
-S_3 + I_1 + I_2 + I_3\) the size of the node. The seasonal decay
-and removal of the pathogen is captured by \(\beta(t)\). It is
-also possible to include a small background infectious pressure
-\(\epsilon\) to allow for other indirect sources of
-environmental contamination. The environmental infectious pressure
-\(\varphi(t)\) in each node is evolved each time unit by
-the Euler forward method. The value of \(\varphi(t)\) is
-saved at the time-points specified in <code>tspan</code>.</p>
-<p>The argument <code>u0</code> must be a <code>data.frame</code> with one row for
-each node with the following columns:</p><dl><dt>S_1</dt>
-<dd><p>The number of susceptible in age category 1</p></dd>
-
-<dt>I_1</dt>
-<dd><p>The number of infected in age category 1</p></dd>
-
-<dt>S_2</dt>
-<dd><p>The number of susceptible in age category 2</p></dd>
-
-<dt>I_2</dt>
-<dd><p>The number of infected in age category 2</p></dd>
-
-<dt>S_3</dt>
-<dd><p>The number of susceptible in age category 3</p></dd>
-
-<dt>I_3</dt>
-<dd><p>The number of infected in age category 3</p></dd>
-
-
-</dl></div>
-    <div class="section level2">
-    <h2 id="beta">Beta<a class="anchor" aria-label="anchor" href="#beta"></a></h2>
-
-
+<p>where:</p><ul><li><p>\(\alpha\) is the shedding rate per infected individual.</p></li>
+<li><p>\(N(t) = S_1 + S_2 + S_3 + I_1 + I_2 + I_3\) is the total
+    population size in the node.</p></li>
+<li><p>\(\beta(t)\) is the seasonal decay/removal rate, which
+    varies throughout the year.</p></li>
+<li><p>\(\epsilon\) is the background infectious pressure.</p></li>
+</ul><p>The environmental pressure is evolved using the Euler forward method
+and saved at time points in <code>tspan</code>.</p>
 <p><strong>Seasonal Decay (\(\beta(t)\)):</strong>
 The decay rate \(\beta(t)\) is piecewise constant, defined by four
 intervals determined by the parameters <code>end_t1</code>, <code>end_t2</code>,
@@ -280,7 +254,27 @@ preceding the first endpoint. Three orderings are supported:</p>
 <li><p>Interval 4 (wrap-around): <code>[end_t3, 365)</code> with rate <code>beta_t4</code></p></li>
 </ul><p>These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.</p>
-    </div>
+<p>The argument <code>u0</code> must be a <code>data.frame</code> with one row for
+each node with the following columns:</p><dl><dt>S_1</dt>
+<dd><p>The number of susceptible in age category 1</p></dd>
+
+<dt>I_1</dt>
+<dd><p>The number of infected in age category 1</p></dd>
+
+<dt>S_2</dt>
+<dd><p>The number of susceptible in age category 2</p></dd>
+
+<dt>I_2</dt>
+<dd><p>The number of infected in age category 2</p></dd>
+
+<dt>S_3</dt>
+<dd><p>The number of susceptible in age category 3</p></dd>
+
+<dt>I_3</dt>
+<dd><p>The number of infected in age category 3</p></dd>
+
+
+</dl></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

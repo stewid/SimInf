@@ -1,6 +1,6 @@
 # Create a `SISe3` model
 
-Create a `SISe3` model to be used by the simulation framework.
+Create a SISe3 model to be used by the simulation framework.
 
 ## Usage
 
@@ -142,72 +142,46 @@ SISe3(
 
 ## Details
 
-The `SISe3` model contains two compartments in three age categories;
-number of susceptible (S_1, S_2, S_3) and number of infectious (I_1,
-I_2, I_3). Additionally, it contains an environmental compartment to
-model shedding of a pathogen to the environment. Consequently, the model
-has six state transitions,
+The `SISe3` model contains two compartments in three age categories:
+**S**usceptible (\\S_1, S_2, S_3\\) and **I**nfected (\\I_1, I_2,
+I_3\\). Additionally, it includes a continuous **environmental**
+compartment (\\\varphi\\) to model the shedding of a pathogen to the
+environment.
+
+The model is defined by six state transitions:
 
 \$\$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1\$\$
+\$\$I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1\$\$ \$\$S_2
+\stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2\$\$ \$\$I_2
+\stackrel{\gamma_2 I_2}{\longrightarrow} S_2\$\$ \$\$S_3
+\stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3\$\$ \$\$I_3
+\stackrel{\gamma_3 I_3}{\longrightarrow} S_3\$\$
 
-\$\$I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1\$\$
+where the transition rate from susceptible to infected in age category
+\\k\\ is proportional to the environmental contamination \\\varphi\\ and
+the transmission rate \\\upsilon_k\\. The recovery rate \\\gamma_k\\
+moves individuals from infected back to susceptible.
 
-\$\$S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2\$\$
-
-\$\$I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2\$\$
-
-\$\$S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3\$\$
-
-\$\$I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3\$\$
-
-where the transition rate per unit of time from susceptible to infected
-is proportional to the concentration of the environmental contamination
-\\\varphi\\ in each node. Moreover, the transition rate from infected to
-susceptible is the recovery rate \\\gamma_1, \gamma_2, \gamma_3\\,
-measured per individual and per unit of time. Finally, the environmental
-infectious pressure in each node is evolved by,
+The environmental infectious pressure \\\varphi(t)\\ in each node
+evolves according to:
 
 \$\$\frac{d\varphi(t)}{dt} = \frac{\alpha \left(I_1(t) + I_2(t) +
 I_3(t)\right)}{N(t)} - \beta(t) \varphi(t) + \epsilon\$\$
 
-where \\\alpha\\ is the average shedding rate of the pathogen to the
-environment per infected individual and \\N = S_1 + S_2 + S_3 + I_1 +
-I_2 + I_3\\ the size of the node. The seasonal decay and removal of the
-pathogen is captured by \\\beta(t)\\. It is also possible to include a
-small background infectious pressure \\\epsilon\\ to allow for other
-indirect sources of environmental contamination. The environmental
-infectious pressure \\\varphi(t)\\ in each node is evolved each time
-unit by the Euler forward method. The value of \\\varphi(t)\\ is saved
-at the time-points specified in `tspan`.
+where:
 
-The argument `u0` must be a `data.frame` with one row for each node with
-the following columns:
+- \\\alpha\\ is the shedding rate per infected individual.
 
-- S_1:
+- \\N(t) = S_1 + S_2 + S_3 + I_1 + I_2 + I_3\\ is the total population
+  size in the node.
 
-  The number of susceptible in age category 1
+- \\\beta(t)\\ is the seasonal decay/removal rate, which varies
+  throughout the year.
 
-- I_1:
+- \\\epsilon\\ is the background infectious pressure.
 
-  The number of infected in age category 1
-
-- S_2:
-
-  The number of susceptible in age category 2
-
-- I_2:
-
-  The number of infected in age category 2
-
-- S_3:
-
-  The number of susceptible in age category 3
-
-- I_3:
-
-  The number of infected in age category 3
-
-## Beta
+The environmental pressure is evolved using the Euler forward method and
+saved at time points in `tspan`.
 
 **Seasonal Decay (\\\beta(t)\\):** The decay rate \\\beta(t)\\ is
 piecewise constant, defined by four intervals determined by the
@@ -256,3 +230,30 @@ first endpoint. Three orderings are supported:
 
 These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.
+
+The argument `u0` must be a `data.frame` with one row for each node with
+the following columns:
+
+- S_1:
+
+  The number of susceptible in age category 1
+
+- I_1:
+
+  The number of infected in age category 1
+
+- S_2:
+
+  The number of susceptible in age category 2
+
+- I_2:
+
+  The number of infected in age category 2
+
+- S_3:
+
+  The number of susceptible in age category 3
+
+- I_3:
+
+  The number of infected in age category 3
