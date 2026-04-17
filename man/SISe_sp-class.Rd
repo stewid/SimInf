@@ -12,3 +12,8 @@ functions defined for \code{SimInf_model}, such as
 \code{\link{run}}, \code{\link{plot,SimInf_model-method}},
 \code{\link{trajectory}}, and \code{\link{prevalence}}.
 }
+\seealso{
+\code{\link{SISe_sp}} for creating an \acronym{SISe_sp} model
+object and \code{\linkS4class{SimInf_model}} for the parent class
+definition.
+}
