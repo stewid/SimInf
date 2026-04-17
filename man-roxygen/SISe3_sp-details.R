@@ -1,29 +1,27 @@
+##' @details
 ##' The \code{SISe3_sp} model contains two compartments in three age
-##' categories; number of susceptible (S_1, S_2, S_3) and number of
-##' infectious (I_1, I_2, I_3). Additionally, it contains an
-##' environmental compartment to model shedding of a pathogen to the
-##' environment. Moreover, it also includes a spatial coupling of the
-##' environmental contamination among proximal nodes to capture
-##' between-node spread unrelated to moving infected
-##' individuals. Consequently, the model has six state transitions,
+##' categories: \strong{S}usceptible (\eqn{S_1, S_2, S_3}) and
+##' \strong{I}nfected (\eqn{I_1, I_2, I_3}). Additionally, it includes
+##' a continuous \strong{environmental} compartment (\eqn{\varphi}) to
+##' model shedding of a pathogen to the environment. Moreover, it
+##' includes a spatial coupling of the environmental contamination
+##' among proximal nodes to capture between-node spread unrelated to
+##' moving infected individuals.
+##'
+##' The model is defined by six state transitions:
 ##'
 ##' \deqn{S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1}{
 ##' S_1 -- upsilon_1 phi S_1 --> I_1}
-##'
-##' \deqn{I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1}{
-##' I_1 -- gamma_1 I_1 --> S_1}
-##'
+##' \deqn{I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1}{ I_1 --
+##' gamma_1 I_1 --> S_1}
 ##' \deqn{S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2}{
 ##' S_2 -- upsilon_2 phi S_2 --> I_2}
-##'
-##' \deqn{I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2}{
-##' I_2 -- gamma_2 I_2 --> S_2}
-##'
+##' \deqn{I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2}{ I_2 --
+##' gamma_2 I_2 --> S_2}
 ##' \deqn{S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3}{
 ##' S_3 -- upsilon_3 phi S_3 --> I_3}
-##'
-##' \deqn{I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3}{
-##' I_3 -- gamma_3 I_3 --> S_3}
+##' \deqn{I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3}{ I_3 --
+##' gamma_3 I_3 --> S_3}
 ##'
 ##' where the transition rate per unit of time from susceptible to
 ##' infected is proportional to the concentration of the environmental
