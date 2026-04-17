@@ -23,13 +23,14 @@
 ##' \deqn{I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3}{ I_3 --
 ##' gamma_3 I_3 --> S_3}
 ##'
-##' where the transition rate per unit of time from susceptible to
-##' infected is proportional to the concentration of the environmental
-##' contamination \eqn{\varphi}{phi} in each node. Moreover, the
-##' transition rate from infected to susceptible is the recovery rate
-##' \eqn{\gamma_1, \gamma_2, \gamma_3}, measured per individual and
-##' per unit of time. Finally, the environmental infectious pressure
-##' in each node is evolved by,
+##' where the transition rate from susceptible to infected in age
+##' category \eqn{k} is proportional to the environmental
+##' contamination \eqn{\varphi} and the transmission rate
+##' \eqn{\upsilon_k}. The recovery rate \eqn{\gamma_k} moves
+##' individuals from infected back to susceptible.
+##'
+##' The environmental infectious pressure \eqn{\varphi(t)} in each
+##' node evolves according to:
 ##'
 ##' \deqn{\frac{d \varphi_i(t)}{dt} = \frac{\alpha \left(I_{i,1}(t) +
 ##' I_{i,2}(t) + I_{i,3}(t)\right)}{N_i(t)} +
