@@ -145,15 +145,6 @@ captured by \eqn{\beta(t)}. The environmental infectious pressure
 the Euler forward method. The value of \eqn{\varphi(t)}{phi(t)} is
 saved at the time-points specified in \code{tspan}.
 
-The argument \code{u0} must be a \code{data.frame} with one row for
-each node with the following columns:
-\describe{
-\item{S}{The number of susceptible}
-\item{I}{The number of infected}
-}
-}
-\section{Beta}{
-
 \strong{Seasonal Decay (\eqn{\beta(t)}):}
 The decay rate \eqn{\beta(t)} is piecewise constant, defined by four
 intervals determined by the parameters \code{end_t1}, \code{end_t2},
@@ -193,5 +184,21 @@ preceding the first endpoint. Three orderings are supported:
 
 These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.
-}
 
+The argument \code{u0} must be a \code{data.frame} with one row for
+each node with the following columns:
+\describe{
+\item{S}{The number of susceptible}
+\item{I}{The number of infected}
+}
+}
+\seealso{
+\code{\linkS4class{SISe_sp}} for the class definition.
+\code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+\code{\link{SISe}} and \code{\link{SISe3_sp}} for other predefined
+models.  \code{\link{mparse}} for creating custom models.
+\code{\link{run}} for running the simulation.
+\code{\link{trajectory}}, \code{\link{prevalence}} and
+\code{\link{plot,SimInf_model-method}} for post-processing and
+visualization.
+}

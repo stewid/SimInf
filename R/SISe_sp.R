@@ -28,6 +28,8 @@
 ##' \code{\link{run}}, \code{\link{plot,SimInf_model-method}},
 ##' \code{\link{trajectory}}, and \code{\link{prevalence}}.
 ##'
+##' @template SISe_sp-details
+##'
 ##' @seealso
 ##' \code{\link{SISe_sp}} for creating an \acronym{SISe_sp} model
 ##' object and \code{\linkS4class{SimInf_model}} for the parent class
@@ -53,46 +55,8 @@ select_matrix_SISe_sp <- function() {
 ##' Create a \code{SISe_sp} model to be used by the simulation
 ##' framework.
 ##'
-##' The \code{SISe_sp} model contains two compartments; number of
-##' susceptible (S) and number of infectious (I). Additionally, it
-##' contains an environmental compartment to model shedding of a
-##' pathogen to the environment. Moreover, it also includes a spatial
-##' coupling of the environmental contamination among proximal nodes
-##' to capture between-node spread unrelated to moving infected
-##' individuals. Consequently, the model has two state transitions,
-##'
-##' \deqn{S \stackrel{\upsilon \varphi S}{\longrightarrow} I}{
-##' S -- upsilon phi S --> I}
-##'
-##' \deqn{I \stackrel{\gamma I}{\longrightarrow} S}{
-##' I -- gamma I --> S}
-##'
-##' where the transition rate per unit of time from susceptible to
-##' infected is proportional to the concentration of the environmental
-##' contamination \eqn{\varphi}{phi} in each node. Moreover, the
-##' transition rate from infected to susceptible is the recovery rate
-##' \eqn{\gamma}, measured per individual and per unit of
-##' time. Finally, the environmental infectious pressure in each node
-##' is evolved by,
-##'
-##' \deqn{\frac{d \varphi_i(t)}{dt} = \frac{\alpha I_{i}(t)}{N_i(t)} +
-##' \sum_k{\frac{\varphi_k(t) N_k(t) - \varphi_i(t) N_i(t)}{N_i(t)}
-##' \cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t)}{
-##' dphi(t)/dt=
-##' alpha I / N +
-##' D*sum_k(phi_k*N_k-phi_i*N_i)/(d_ik*N_i)-beta*phi_i}
-##'
-##' where \eqn{\alpha} is the average shedding rate of the pathogen to
-##' the environment per infected individual and \eqn{N = S + I} the
-##' size of the node. Next comes the spatial coupling among proximal
-##' nodes, where \eqn{D} is the rate of the local spread and
-##' \eqn{d_{ik}} the distance between holdings \eqn{i} and
-##' \eqn{k}. The seasonal decay and removal of the pathogen is
-##' captured by \eqn{\beta(t)}. The environmental infectious pressure
-##' \eqn{\varphi(t)}{phi(t)} in each node is evolved each time unit by
-##' the Euler forward method. The value of \eqn{\varphi(t)}{phi(t)} is
-##' saved at the time-points specified in \code{tspan}.
-##'
+##' @template SISe_sp-details
+##' @details
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
@@ -100,7 +64,6 @@ select_matrix_SISe_sp <- function() {
 ##' \item{I}{The number of infected}
 ##' }
 ##'
-##' @template beta-section
 ##' @template u0-param
 ##' @template tspan-param
 ##' @template events-param
@@ -117,6 +80,15 @@ select_matrix_SISe_sp <- function() {
 ##' @param coupling The coupling between neighboring nodes
 ##' @param distance The distance matrix between neighboring nodes
 ##' @return \code{SISe_sp}
+##' @seealso
+##' \code{\linkS4class{SISe_sp}} for the class definition.
+##' \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+##' \code{\link{SISe}} and \code{\link{SISe3_sp}} for other predefined
+##' models.  \code{\link{mparse}} for creating custom models.
+##' \code{\link{run}} for running the simulation.
+##' \code{\link{trajectory}}, \code{\link{prevalence}} and
+##' \code{\link{plot,SimInf_model-method}} for post-processing and
+##' visualization.
 ##' @include check_arguments.R
 ##' @export
 SISe_sp <- function(u0,
