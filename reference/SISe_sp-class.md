@@ -9,3 +9,10 @@ functions defined for `SimInf_model`, such as
 [`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md),
 and
 [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md).
+
+## See also
+
+[`SISe_sp`](http://stewid.github.io/SimInf/reference/SISe_sp.md) for
+creating an SISe_sp model object and
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+for the parent class definition.
