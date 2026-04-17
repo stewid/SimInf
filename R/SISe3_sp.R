@@ -28,6 +28,10 @@
 ##' \code{\link{run}}, \code{\link{plot,SimInf_model-method}},
 ##' \code{\link{trajectory}}, and \code{\link{prevalence}}.
 ##'
+##' @seealso
+##' \code{\link{SISe3_sp}} for creating an \acronym{SISe3_sp} model
+##' object and \code{\linkS4class{SimInf_model}} for the parent class
+##' definition.
 ##' @include SimInf_model.R
 ##' @export
 setClass("SISe3_sp", contains = c("SimInf_model"))
