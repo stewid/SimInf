@@ -50,8 +50,8 @@ where:
 
 - \\\epsilon\\ is the background infectious pressure.
 
-The environmental pressure is evolved using the Euler forward method and
-saved at time points in `tspan`.
+The environmental infectious pressure \\\varphi(t)\\ is evolved using
+the Euler forward method and saved at time points in `tspan`.
 
 **Seasonal Decay (\\\beta(t)\\):** The decay rate \\\beta(t)\\ is
 piecewise constant, defined by four intervals determined by the

@@ -78,8 +78,8 @@ category \(k\) is proportional to the environmental
 contamination \(\varphi\) and the transmission rate
 \(\upsilon_k\). The recovery rate \(\gamma_k\) moves
 individuals from infected back to susceptible.</p>
-<p>The environmental infectious pressure \(\varphi(t)\) in each
-node evolves according to:</p>
+<p>The environmental infectious pressure \(\varphi(t)\) in
+each node evolves according to:</p>
 <p>$$\frac{d\varphi(t)}{dt} = \frac{\alpha \left(I_1(t) + I_2(t)
 + I_3(t)\right)}{N(t)} - \beta(t) \varphi(t) + \epsilon$$</p>
 <p>where:</p><ul><li><p>\(\alpha\) is the shedding rate per infected individual.</p></li>
@@ -88,8 +88,9 @@ node evolves according to:</p>
 <li><p>\(\beta(t)\) is the seasonal decay/removal rate, which
     varies throughout the year.</p></li>
 <li><p>\(\epsilon\) is the background infectious pressure.</p></li>
-</ul><p>The environmental pressure is evolved using the Euler forward method
-and saved at time points in <code>tspan</code>.</p>
+</ul><p>The environmental infectious pressure \(\varphi(t)\) is
+evolved using the Euler forward method and saved at time points in
+<code>tspan</code>.</p>
 <p><strong>Seasonal Decay (\(\beta(t)\)):</strong>
 The decay rate \(\beta(t)\) is piecewise constant, defined by four
 intervals determined by the parameters <code>end_t1</code>, <code>end_t2</code>,

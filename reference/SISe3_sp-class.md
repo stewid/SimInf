@@ -42,15 +42,22 @@ I\_{i,2}(t) + I\_{i,3}(t)\right)}{N_i(t)} + \sum_k{\frac{\varphi_k(t)
 N_k(t) - \varphi_i(t) N_i(t)}{N_i(t)} \cdot \frac{D}{d\_{ik}}} -
 \beta(t) \varphi_i(t)\$\$
 
-where \\\alpha\\ is the average shedding rate of the pathogen to the
-environment per infected individual and \\N = S_1 + S_2 + S_3 + I_1 +
-I_2 + I_3\\ the size of the node. Next comes the spatial coupling among
-proximal nodes, where \\D\\ is the rate of the local spread and
-\\d\_{ik}\\ the distance between holdings \\i\\ and \\k\\. The seasonal
-decay and removal of the pathogen is captured by \\\beta(t)\\. The
-environmental infectious pressure \\\varphi(t)\\ in each node is evolved
-each time unit by the Euler forward method. The value of \\\varphi(t)\\
-is saved at the time-points specified in `tspan`.
+where:
+
+- \\\alpha\\ is the shedding rate per infected individual.
+
+- \\N(t) = S_1 + S_2 + S_3 + I_1 + I_2 + I_3\\ is the total population
+  size in the node.
+
+- \\\beta(t)\\ is the seasonal decay/removal rate, which varies
+  throughout the year.
+
+- the last term is the spatial coupling among proximal nodes. \\D\\ is
+  the rate of the local spread and \\d\_{ik}\\ the distance between
+  holdings \\i\\ and \\k\\.
+
+The environmental infectious pressure \\\varphi(t)\\ is evolved using
+the Euler forward method and saved at time points in `tspan`.
 
 **Seasonal Decay (\\\beta(t)\\):** The decay rate \\\beta(t)\\ is
 piecewise constant, defined by four intervals determined by the
