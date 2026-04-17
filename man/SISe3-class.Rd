@@ -40,8 +40,8 @@ contamination \eqn{\varphi} and the transmission rate
 \eqn{\upsilon_k}. The recovery rate \eqn{\gamma_k} moves
 individuals from infected back to susceptible.
 
-The environmental infectious pressure \eqn{\varphi(t)} in each
-node evolves according to:
+The environmental infectious pressure \eqn{\varphi(t)}{phi(t)} in
+each node evolves according to:
 
 \deqn{\frac{d\varphi(t)}{dt} = \frac{\alpha \left(I_1(t) + I_2(t)
 + I_3(t)\right)}{N(t)} - \beta(t) \varphi(t) + \epsilon}{
@@ -57,8 +57,9 @@ where:
   \item \eqn{\epsilon} is the background infectious pressure.
 }
 
-The environmental pressure is evolved using the Euler forward method
-and saved at time points in \code{tspan}.
+The environmental infectious pressure \eqn{\varphi(t)}{phi(t)} is
+evolved using the Euler forward method and saved at time points in
+\code{tspan}.
 
 \strong{Seasonal Decay (\eqn{\beta(t)}):}
 The decay rate \eqn{\beta(t)} is piecewise constant, defined by four

@@ -29,8 +29,8 @@
 ##' \eqn{\upsilon_k}. The recovery rate \eqn{\gamma_k} moves
 ##' individuals from infected back to susceptible.
 ##'
-##' The environmental infectious pressure \eqn{\varphi(t)} in each
-##' node evolves according to:
+##' The environmental infectious pressure \eqn{\varphi(t)}{phi(t)} in
+##' each node evolves according to:
 ##'
 ##' \deqn{\frac{d \varphi_i(t)}{dt} = \frac{\alpha \left(I_{i,1}(t) +
 ##' I_{i,2}(t) + I_{i,3}(t)\right)}{N_i(t)} +
@@ -40,16 +40,21 @@
 ##' alpha (I_1+I_2+I_3)/N+
 ##' D*sum_k(phi_k*N_k-phi_i*N_i)/(d_ik*N_i)-beta*phi_i}
 ##'
-##' where \eqn{\alpha} is the average shedding rate of the pathogen to
-##' the environment per infected individual and \eqn{N = S_1 + S_2 +
-##' S_3 + I_1 + I_2 + I_3} the size of the node. Next comes the
-##' spatial coupling among proximal nodes, where \eqn{D} is the rate
-##' of the local spread and \eqn{d_{ik}} the distance between holdings
-##' \eqn{i} and \eqn{k}. The seasonal decay and removal of the
-##' pathogen is captured by \eqn{\beta(t)}. The environmental
-##' infectious pressure \eqn{\varphi(t)}{phi(t)} in each node is
-##' evolved each time unit by the Euler forward method. The value of
-##' \eqn{\varphi(t)}{phi(t)} is saved at the time-points specified in
+##' where:
+##' \itemize{
+##'   \item \eqn{\alpha} is the shedding rate per infected individual.
+##'   \item \eqn{N(t) = S_1 + S_2 + S_3 + I_1 + I_2 + I_3} is the
+##'     total population size in the node.
+##'   \item \eqn{\beta(t)} is the seasonal decay/removal rate, which
+##'     varies throughout the year.
+##'   \item the last term is the spatial coupling among proximal
+##'     nodes. \eqn{D} is the rate of the local spread and
+##'     \eqn{d_{ik}} the distance between holdings \eqn{i} and
+##'     \eqn{k}.
+##' }
+##'
+##' The environmental infectious pressure \eqn{\varphi(t)}{phi(t)} is
+##' evolved using the Euler forward method and saved at time points in
 ##' \code{tspan}.
 ##'
 ##' \strong{Seasonal Decay (\eqn{\beta(t)}):}
