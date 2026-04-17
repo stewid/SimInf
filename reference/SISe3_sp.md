@@ -2,6 +2,8 @@
 
 Create an `SISe3_sp` model to be used by the simulation framework.
 
+\$\$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1\$\$
+
 ## Usage
 
 ``` r
@@ -147,16 +149,6 @@ SISe3_sp(
 
 ## Details
 
-The `SISe3_sp` model contains two compartments in three age categories;
-number of susceptible (S_1, S_2, S_3) and number of infectious (I_1,
-I_2, I_3). Additionally, it contains an environmental compartment to
-model shedding of a pathogen to the environment. Moreover, it also
-includes a spatial coupling of the environmental contamination among
-proximal nodes to capture between-node spread unrelated to moving
-infected individuals. Consequently, the model has six state transitions,
-
-\$\$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1\$\$
-
 \$\$I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1\$\$
 
 \$\$S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2\$\$
@@ -188,35 +180,6 @@ decay and removal of the pathogen is captured by \\\beta(t)\\. The
 environmental infectious pressure \\\varphi(t)\\ in each node is evolved
 each time unit by the Euler forward method. The value of \\\varphi(t)\\
 is saved at the time-points specified in `tspan`.
-
-The argument `u0` must be a `data.frame` with one row for each node with
-the following columns:
-
-- S_1:
-
-  The number of susceptible in age category 1
-
-- I_1:
-
-  The number of infected in age category 1
-
-- S_2:
-
-  The number of susceptible in age category 2
-
-- I_2:
-
-  The number of infected in age category 2
-
-- S_3:
-
-  The number of susceptible in age category 3
-
-- I_3:
-
-  The number of infected in age category 3
-
-## Beta
 
 **Seasonal Decay (\\\beta(t)\\):** The decay rate \\\beta(t)\\ is
 piecewise constant, defined by four intervals determined by the
@@ -265,3 +228,50 @@ first endpoint. Three orderings are supported:
 
 These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.
+
+The argument `u0` must be a `data.frame` with one row for each node with
+the following columns:
+
+- S_1:
+
+  The number of susceptible in age category 1
+
+- I_1:
+
+  The number of infected in age category 1
+
+- S_2:
+
+  The number of susceptible in age category 2
+
+- I_2:
+
+  The number of infected in age category 2
+
+- S_3:
+
+  The number of susceptible in age category 3
+
+- I_3:
+
+  The number of infected in age category 3
+
+## See also
+
+[`SISe3_sp`](http://stewid.github.io/SimInf/reference/SISe3_sp-class.md)
+for the class definition.
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md),
+[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md),
+[`SIS`](http://stewid.github.io/SimInf/reference/SIS.md),
+[`SISe3`](http://stewid.github.io/SimInf/reference/SISe3.md) and
+[`SISe_sp`](http://stewid.github.io/SimInf/reference/SISe_sp.md) for
+other predefined models.
+[`mparse`](http://stewid.github.io/SimInf/reference/mparse.md) for
+creating custom models.
+[`run`](http://stewid.github.io/SimInf/reference/run.md) for running the
+simulation.
+[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md),
+[`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md)
+and
+[`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md)
+for post-processing and visualization.
