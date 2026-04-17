@@ -116,20 +116,11 @@ of nrow(u0).}
 \description{
 Create an \code{SISe3_sp} model to be used by the simulation
 framework.
-}
-\details{
-The \code{SISe3_sp} model contains two compartments in three age
-categories; number of susceptible (S_1, S_2, S_3) and number of
-infectious (I_1, I_2, I_3). Additionally, it contains an
-environmental compartment to model shedding of a pathogen to the
-environment. Moreover, it also includes a spatial coupling of the
-environmental contamination among proximal nodes to capture
-between-node spread unrelated to moving infected
-individuals. Consequently, the model has six state transitions,
 
 \deqn{S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1}{
 S_1 -- upsilon_1 phi S_1 --> I_1}
-
+}
+\details{
 \deqn{I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1}{
 I_1 -- gamma_1 I_1 --> S_1}
 
@@ -173,19 +164,6 @@ evolved each time unit by the Euler forward method. The value of
 \eqn{\varphi(t)}{phi(t)} is saved at the time-points specified in
 \code{tspan}.
 
-The argument \code{u0} must be a \code{data.frame} with one row for
-each node with the following columns:
-\describe{
-\item{S_1}{The number of susceptible in age category 1}
-\item{I_1}{The number of infected in age category 1}
-\item{S_2}{The number of susceptible in age category 2}
-\item{I_2}{The number of infected in age category 2}
-\item{S_3}{The number of susceptible in age category 3}
-\item{I_3}{The number of infected in age category 3}
-}
-}
-\section{Beta}{
-
 \strong{Seasonal Decay (\eqn{\beta(t)}):}
 The decay rate \eqn{\beta(t)} is piecewise constant, defined by four
 intervals determined by the parameters \code{end_t1}, \code{end_t2},
@@ -225,5 +203,25 @@ preceding the first endpoint. Three orderings are supported:
 
 These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.
-}
 
+The argument \code{u0} must be a \code{data.frame} with one row for
+each node with the following columns:
+\describe{
+\item{S_1}{The number of susceptible in age category 1}
+\item{I_1}{The number of infected in age category 1}
+\item{S_2}{The number of susceptible in age category 2}
+\item{I_2}{The number of infected in age category 2}
+\item{S_3}{The number of susceptible in age category 3}
+\item{I_3}{The number of infected in age category 3}
+}
+}
+\seealso{
+\code{\linkS4class{SISe3_sp}} for the class definition.
+\code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+\code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
+models.  \code{\link{mparse}} for creating custom models.
+\code{\link{run}} for running the simulation.
+\code{\link{trajectory}}, \code{\link{prevalence}} and
+\code{\link{plot,SimInf_model-method}} for post-processing and
+visualization.
+}

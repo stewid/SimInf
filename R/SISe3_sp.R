@@ -28,6 +28,8 @@
 ##' \code{\link{run}}, \code{\link{plot,SimInf_model-method}},
 ##' \code{\link{trajectory}}, and \code{\link{prevalence}}.
 ##'
+##' @template SISe3_sp-details
+##'
 ##' @seealso
 ##' \code{\link{SISe3_sp}} for creating an \acronym{SISe3_sp} model
 ##' object and \code{\linkS4class{SimInf_model}} for the parent class
@@ -60,61 +62,8 @@ select_matrix_SISe3_sp <- function() {
 ##' Create an \code{SISe3_sp} model to be used by the simulation
 ##' framework.
 ##'
-##' The \code{SISe3_sp} model contains two compartments in three age
-##' categories; number of susceptible (S_1, S_2, S_3) and number of
-##' infectious (I_1, I_2, I_3). Additionally, it contains an
-##' environmental compartment to model shedding of a pathogen to the
-##' environment. Moreover, it also includes a spatial coupling of the
-##' environmental contamination among proximal nodes to capture
-##' between-node spread unrelated to moving infected
-##' individuals. Consequently, the model has six state transitions,
-##'
-##' \deqn{S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1}{
-##' S_1 -- upsilon_1 phi S_1 --> I_1}
-##'
-##' \deqn{I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1}{
-##' I_1 -- gamma_1 I_1 --> S_1}
-##'
-##' \deqn{S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2}{
-##' S_2 -- upsilon_2 phi S_2 --> I_2}
-##'
-##' \deqn{I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2}{
-##' I_2 -- gamma_2 I_2 --> S_2}
-##'
-##' \deqn{S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3}{
-##' S_3 -- upsilon_3 phi S_3 --> I_3}
-##'
-##' \deqn{I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3}{
-##' I_3 -- gamma_3 I_3 --> S_3}
-##'
-##' where the transition rate per unit of time from susceptible to
-##' infected is proportional to the concentration of the environmental
-##' contamination \eqn{\varphi}{phi} in each node. Moreover, the
-##' transition rate from infected to susceptible is the recovery rate
-##' \eqn{\gamma_1, \gamma_2, \gamma_3}, measured per individual and
-##' per unit of time. Finally, the environmental infectious pressure
-##' in each node is evolved by,
-##'
-##' \deqn{\frac{d \varphi_i(t)}{dt} = \frac{\alpha \left(I_{i,1}(t) +
-##' I_{i,2}(t) + I_{i,3}(t)\right)}{N_i(t)} +
-##' \sum_k{\frac{\varphi_k(t) N_k(t) - \varphi_i(t) N_i(t)}{N_i(t)}
-##' \cdot \frac{D}{d_{ik}}} - \beta(t) \varphi_i(t)}{
-##' dphi(t)/dt=
-##' alpha (I_1+I_2+I_3)/N+
-##' D*sum_k(phi_k*N_k-phi_i*N_i)/(d_ik*N_i)-beta*phi_i}
-##'
-##' where \eqn{\alpha} is the average shedding rate of the pathogen to
-##' the environment per infected individual and \eqn{N = S_1 + S_2 +
-##' S_3 + I_1 + I_2 + I_3} the size of the node. Next comes the
-##' spatial coupling among proximal nodes, where \eqn{D} is the rate
-##' of the local spread and \eqn{d_{ik}} the distance between holdings
-##' \eqn{i} and \eqn{k}. The seasonal decay and removal of the
-##' pathogen is captured by \eqn{\beta(t)}. The environmental
-##' infectious pressure \eqn{\varphi(t)}{phi(t)} in each node is
-##' evolved each time unit by the Euler forward method. The value of
-##' \eqn{\varphi(t)}{phi(t)} is saved at the time-points specified in
-##' \code{tspan}.
-##'
+##' @template SISe3_sp-details
+##' @details
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
@@ -126,7 +75,6 @@ select_matrix_SISe3_sp <- function() {
 ##' \item{I_3}{The number of infected in age category 3}
 ##' }
 ##'
-##' @template beta-section
 ##' @template u0-param
 ##' @template tspan-param
 ##' @template events-param
@@ -148,6 +96,15 @@ select_matrix_SISe3_sp <- function() {
 ##' @param coupling The coupling between neighboring nodes
 ##' @param distance The distance matrix between neighboring nodes
 ##' @return \code{SISe3_sp}
+##' @seealso
+##' \code{\linkS4class{SISe3_sp}} for the class definition.
+##' \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+##' \code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
+##' models.  \code{\link{mparse}} for creating custom models.
+##' \code{\link{run}} for running the simulation.
+##' \code{\link{trajectory}}, \code{\link{prevalence}} and
+##' \code{\link{plot,SimInf_model-method}} for post-processing and
+##' visualization.
 ##' @include check_arguments.R
 ##' @export
 SISe3_sp <- function(u0,
