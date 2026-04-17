@@ -1,9 +1,9 @@
 # Example initial population data for the SISe3 model
 
 Dataset containing the initial number of susceptible and infected cattle
-across three age categories in 1,600 herds. Provides realistic
-population structure for demonstrating SISe3 model simulations in a
-cattle disease epidemiology context with age structure.
+(individuals) across three age categories in 1,600 herds (nodes).
+Provides a heterogeneous population structure for demonstrating SISe3
+model simulations in a compartmental modeling context.
 
 ## Usage
 
