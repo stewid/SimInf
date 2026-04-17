@@ -164,12 +164,13 @@ The model is defined by six state transitions:
 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3\$\$ \$\$I_3
 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3\$\$
 
-where the transition rate per unit of time from susceptible to infected
-is proportional to the concentration of the environmental contamination
-\\\varphi\\ in each node. Moreover, the transition rate from infected to
-susceptible is the recovery rate \\\gamma_1, \gamma_2, \gamma_3\\,
-measured per individual and per unit of time. Finally, the environmental
-infectious pressure in each node is evolved by,
+where the transition rate from susceptible to infected in age category
+\\k\\ is proportional to the environmental contamination \\\varphi\\ and
+the transmission rate \\\upsilon_k\\. The recovery rate \\\gamma_k\\
+moves individuals from infected back to susceptible.
+
+The environmental infectious pressure \\\varphi(t)\\ in each node
+evolves according to:
 
 \$\$\frac{d \varphi_i(t)}{dt} = \frac{\alpha \left(I\_{i,1}(t) +
 I\_{i,2}(t) + I\_{i,3}(t)\right)}{N_i(t)} + \sum_k{\frac{\varphi_k(t)
