@@ -4,14 +4,12 @@ from SimInf_model, meaning that
 SISe3_sp objects are fully compatible with all generic
 functions defined for SimInf_model, such as
 run, plot,SimInf_model-method,
-trajectory, and prevalence.
-$$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1$$"><meta property="og:description" content="Class to handle the SISe3_sp model. This class inherits
+trajectory, and prevalence."><meta property="og:description" content="Class to handle the SISe3_sp model. This class inherits
 from SimInf_model, meaning that
 SISe3_sp objects are fully compatible with all generic
 functions defined for SimInf_model, such as
 run, plot,SimInf_model-method,
-trajectory, and prevalence.
-$$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1$$"></head><body>
+trajectory, and prevalence."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -58,17 +56,26 @@ from <code><a href="SimInf_model-class.html">SimInf_model</a></code>, meaning th
 functions defined for <code>SimInf_model</code>, such as
 <code><a href="run.html">run</a></code>, <code><a href="plot.html">plot,SimInf_model-method</a></code>,
 <code><a href="trajectory.html">trajectory</a></code>, and <code><a href="prevalence.html">prevalence</a></code>.</p>
-<p>$$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1$$</p>
     </div>
 
 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>$$I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1$$</p>
-<p>$$S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2$$</p>
-<p>$$I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2$$</p>
-<p>$$S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3$$</p>
-<p>$$I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3$$</p>
+    <p>The <code>SISe3_sp</code> model contains two compartments in three age
+categories: <strong>S</strong>usceptible (\(S_1, S_2, S_3\)) and
+<strong>I</strong>nfected (\(I_1, I_2, I_3\)). Additionally, it includes
+a continuous <strong>environmental</strong> compartment (\(\varphi\)) to
+model shedding of a pathogen to the environment. Moreover, it
+includes a spatial coupling of the environmental contamination
+among proximal nodes to capture between-node spread unrelated to
+moving infected individuals.</p>
+<p>The model is defined by six state transitions:</p>
+<p>$$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1$$
+$$I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1$$
+$$S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2$$
+$$I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2$$
+$$S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3$$
+$$I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3$$</p>
 <p>where the transition rate per unit of time from susceptible to
 infected is proportional to the concentration of the environmental
 contamination \(\varphi\) in each node. Moreover, the

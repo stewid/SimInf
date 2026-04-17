@@ -10,19 +10,24 @@ functions defined for `SimInf_model`, such as
 and
 [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md).
 
-\$\$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1\$\$
-
 ## Details
 
-\$\$I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1\$\$
+The `SISe3_sp` model contains two compartments in three age categories:
+**S**usceptible (\\S_1, S_2, S_3\\) and **I**nfected (\\I_1, I_2,
+I_3\\). Additionally, it includes a continuous **environmental**
+compartment (\\\varphi\\) to model shedding of a pathogen to the
+environment. Moreover, it includes a spatial coupling of the
+environmental contamination among proximal nodes to capture between-node
+spread unrelated to moving infected individuals.
 
-\$\$S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2\$\$
+The model is defined by six state transitions:
 
-\$\$I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2\$\$
-
-\$\$S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3\$\$
-
-\$\$I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3\$\$
+\$\$S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1\$\$
+\$\$I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1\$\$ \$\$S_2
+\stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2\$\$ \$\$I_2
+\stackrel{\gamma_2 I_2}{\longrightarrow} S_2\$\$ \$\$S_3
+\stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3\$\$ \$\$I_3
+\stackrel{\gamma_3 I_3}{\longrightarrow} S_3\$\$
 
 where the transition rate per unit of time from susceptible to infected
 is proportional to the concentration of the environmental contamination
