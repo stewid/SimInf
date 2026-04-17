@@ -160,19 +160,6 @@ is captured by \\\beta(t)\\. The environmental infectious pressure
 forward method. The value of \\\varphi(t)\\ is saved at the time-points
 specified in `tspan`.
 
-The argument `u0` must be a `data.frame` with one row for each node with
-the following columns:
-
-- S:
-
-  The number of susceptible
-
-- I:
-
-  The number of infected
-
-## Beta
-
 **Seasonal Decay (\\\beta(t)\\):** The decay rate \\\beta(t)\\ is
 piecewise constant, defined by four intervals determined by the
 parameters `end_t1`, `end_t2`, `end_t3`, and `end_t4` (days of the year,
@@ -220,3 +207,34 @@ first endpoint. Three orderings are supported:
 
 These different orderings allow the model to handle seasonal patterns
 where, for example, a winter peak crosses the year boundary.
+
+The argument `u0` must be a `data.frame` with one row for each node with
+the following columns:
+
+- S:
+
+  The number of susceptible
+
+- I:
+
+  The number of infected
+
+## See also
+
+[`SISe_sp`](http://stewid.github.io/SimInf/reference/SISe_sp-class.md)
+for the class definition.
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md),
+[`SEIR`](http://stewid.github.io/SimInf/reference/SEIR.md),
+[`SIS`](http://stewid.github.io/SimInf/reference/SIS.md),
+[`SISe`](http://stewid.github.io/SimInf/reference/SISe.md) and
+[`SISe3_sp`](http://stewid.github.io/SimInf/reference/SISe3_sp.md) for
+other predefined models.
+[`mparse`](http://stewid.github.io/SimInf/reference/mparse.md) for
+creating custom models.
+[`run`](http://stewid.github.io/SimInf/reference/run.md) for running the
+simulation.
+[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md),
+[`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md)
+and
+[`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md)
+for post-processing and visualization.
