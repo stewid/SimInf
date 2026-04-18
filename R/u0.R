@@ -160,31 +160,89 @@ setMethod(
     }
 )
 
-##' Update the initial compartment state u0 in each node
+##' Update the initial compartment state (\code{u0}) in each node
 ##'
-##' @param model The model to update the initial compartment state
-##'     \code{u0}.
-##' @param value A \code{data.frame} with the initial state in each
-##'     node. Each row is one node, and the number of rows in
-##'     \code{u0} must match the number of nodes in \code{model}. Only
-##'     the columns in \code{u0} with a name that matches a
-##'     compartment in the \code{model} will be used.
+##' Replace the initial state vector (\code{u0}) of a
+##' \code{SimInf_model} object with a new \code{data.frame}. This
+##' allows you to modify the starting conditions of a model without
+##' recreating the object.
+##'
+##' The \code{value} argument accepts a \code{data.frame},
+##' \code{matrix}, or \code{named numeric vector}. If the input is not
+##' a \code{data.frame}, it will be automatically coerced to one. The
+##' function handles the following formats:
+##' \itemize{
+##'   \item \strong{Single Node}: If \code{value} is a named vector or
+##'     a one-row matrix/data.frame, it is applied to the single node
+##'     in the model.
+##'   \item \strong{Multiple Nodes}: If \code{value} is a matrix or
+##'     data.frame with multiple rows, each row corresponds to one
+##'     node. The number of rows must exactly match the number of
+##'     nodes in the \code{model}.
+##'   \item \strong{Column Matching}: Column names must match the
+##'     compartment names defined in the model (e.g., \code{"S"},
+##'     \code{"I"}, \code{"R"}).  Only matching columns are used;
+##'     extra columns are ignored, and missing compartments will
+##'     trigger an error.
+##' }
+##'
+##' The function validates the input and ensures the new state is
+##' consistent with the model structure before updating.
+##'
+##' @param model A \code{SimInf_model} object.
+##' @param value An object containing the new initial state. Can be a
+##'     \code{data.frame}, \code{matrix}, or \code{named numeric
+##'     vector}.  Non-data.frame inputs will be coerced to a
+##'     \code{data.frame}.
+##' @return The modified \code{SimInf_model} object.
 ##' @export
 ##' @examples
-##' ## Create an SIR model object.
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:100,
-##'              beta = 0.16,
-##'              gamma = 0.077)
-##'
-##' ## Run the SIR model and plot the result.
+##' ## For reproducibility, set the seed.
 ##' set.seed(22)
+##'
+##' ## Create a single-node SIR model.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = 99,
+##'     I = 1,
+##'     R = 0
+##'   ),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Update u0 using a named vector (automatically coerced to one
+##' ## row).
+##' u0(model) <- c(
+##'   S = 990,
+##'   I = 10,
+##'   R = 0
+##' )
+##'
 ##' result <- run(model)
 ##' plot(result)
 ##'
-##' ## Update u0 and run the model again
-##' u0(model) <- data.frame(S = 990, I = 10, R = 0)
-##' result <- run(model)
+##' ## Create a multi-node model (2 nodes).
+##' model_multi <- SIR(
+##'   u0 = data.frame(
+##'     S = c(100, 50),
+##'     I = c(1, 0),
+##'     R = c(0, 0)
+##'   ),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Update u0 using a data.frame with multiple rows.
+##' u0(model_multi) <- data.frame(
+##'   S = c(200, 100),
+##'   I = c(5, 2),
+##'   R = c(0, 0)
+##' )
+##'
+##' result <- run(model_multi)
 ##' plot(result)
 ## nolint start: brace_linter
 setGeneric(
