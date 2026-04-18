@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2024 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -34,17 +34,20 @@ v0(model) <- data.frame(phi = 1:3)
 stopifnot(identical(model@v0, matrix(numeric(0), nrow = 0, ncol = 0)))
 
 ## Check that a matrix is coerced to a data.frame.
-res <- SimInf:::check_v0(matrix(1:9,
-                                ncol = 3,
-                                dimnames = list(NULL, c("A", "B", "C"))),
-                         c("A", "B", "C"))
+res <- SimInf:::check_initial_state(
+                    matrix(1:9,
+                           ncol = 3,
+                           dimnames = list(NULL, c("A", "B", "C"))),
+                    c("A", "B", "C"))
 stopifnot(identical(res,
                     data.frame(A = 1:3,
                                B = 4:6,
                                C = 7:9)))
 
 ## Check that a named vector is coerced to a data.frame.
-res <- SimInf:::check_v0(c(A = 1, B = 4, C = 7), c("A", "B", "C"))
+res <- SimInf:::check_initial_state(
+                    c(A = 1, B = 4, C = 7),
+                    c("A", "B", "C"))
 stopifnot(identical(res,
                     data.frame(A = 1,
                                B = 4,
@@ -59,7 +62,7 @@ model <- SISe(u0 = data.frame(S = 100:105, I = 1:6), tspan = 1:10,
 
 res <- assertError(
     v0(model) <- data.frame(A = 1:6))
-check_error(res, "Missing columns in 'v0'.")
+check_error(res, "Missing columns in initial state.")
 
 v0(model) <- data.frame(phi = 1:6)
 stopifnot(identical(model@v0,

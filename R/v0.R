@@ -68,7 +68,7 @@ setMethod(
         if (is.null(variables))
             variables <- character(0)
 
-        value <- check_v0(value, variables)
+        value <- check_initial_state(value, variables)
         if (!identical(nrow(value), n_nodes(model))) {
             stop("The number of rows in 'v0' must match nodes in 'model'.",
                  call. = FALSE)

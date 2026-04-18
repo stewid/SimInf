@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ sessionInfo()
 
 ## Check invalid u0
 res <- assertError(SIR(u0 = "u0"))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
                  I  = c(0, 0, 0, 0, 0, 0),
@@ -39,13 +39,13 @@ u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
 
 ## Check missing columns in u0
 res <- assertError(SIR(u0 = u0[, c("I", "R"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SIR(u0 = u0[, c("S", "R"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SIR(u0 = u0[, c("S", "I"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 ## Check missing beta
 res <- assertError(SIR(u0     = u0,

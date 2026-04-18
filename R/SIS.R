@@ -112,7 +112,7 @@ SIS <- function(u0,
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments_SIS())
+    u0 <- check_initial_state(u0, compartments_SIS())
 
     ## Check for non-numeric parameters
     check_ldata_arg(nrow(u0), beta, gamma)

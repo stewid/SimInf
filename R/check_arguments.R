@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -253,50 +253,27 @@ check_compartments <- function(compartments) {
     invisible(NULL)
 }
 
-##' Check u0
+##' Check initial state u0 or v0
 ##'
-##' Raise an error if any of the 'u0' or 'compartments' arguments are
+##' Raise an error if any of the 'x0' or 'columns' arguments are
 ##' invalid.
-##' @param u0 the initial state for the model.
-##' @param compartments the compartments in u0.
-##' @return u0 with columns ordered by the compartments.
+##' @param x0 the initial state for the model.
+##' @param columns the columns in x0.
+##' @return x0 with columns ordered by the columns argunment.
 ##' @noRd
-check_u0 <- function(u0, compartments) {
-    check_compartments(compartments)
+check_initial_state <- function(x0, columns) {
+    check_compartments(columns)
 
-    ## Check u0
-    if (!is.data.frame(u0)) {
-        if (is.vector(x = u0, mode = "numeric"))
-            u0 <- t(u0)
-        u0 <- as.data.frame(u0)
+    ## Check u0/v0
+    if (!is.data.frame(x0)) {
+        if (is.vector(x = x0, mode = "numeric"))
+            x0 <- t(x0)
+        x0 <- as.data.frame(x0)
     }
-    if (!all(compartments %in% names(u0)))
-        stop("Missing columns in u0.", call. = FALSE)
+    if (!all(columns %in% names(x0)))
+        stop("Missing columns in initial state.", call. = FALSE)
 
-    u0[, compartments, drop = FALSE]
-}
-
-##' Check v0
-##'
-##' Raise an error if any of the 'v0' or 'compartments' arguments are
-##' invalid.
-##' @param v0 the initial continuous state for the model.
-##' @param variables the variables in v0.
-##' @return v0 with columns ordered by the variables.
-##' @noRd
-check_v0 <- function(v0, variables) {
-    check_compartments(variables)
-
-    ## Check v0
-    if (!is.data.frame(v0)) {
-        if (is.vector(x = v0, mode = "numeric"))
-            v0 <- t(v0)
-        v0 <- as.data.frame(v0)
-    }
-    if (!all(variables %in% names(v0)))
-        stop("Missing columns in 'v0'.", call. = FALSE)
-
-    v0[, variables, drop = FALSE]
+    x0[, columns, drop = FALSE]
 }
 
 ##' Check distance matrix

@@ -261,7 +261,7 @@ setMethod(
     signature(model = "SimInf_model"),
     function(model, value) {
         compartments <- rownames(model@S)
-        value <- check_u0(value, compartments)
+        value <- check_initial_state(value, compartments)
         if (!identical(nrow(value), n_nodes(model))) {
             stop("The number of rows in 'u0' must match nodes in 'model'.",
                  call. = FALSE)

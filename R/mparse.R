@@ -645,7 +645,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     }
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_initial_state(u0, compartments)
 
     ## Add enumeration value to compartments.
     attr(compartments, "value") <- seq_along(compartments) - 1L

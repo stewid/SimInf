@@ -134,7 +134,7 @@ SISe3 <- function(u0,
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments_SISe3())
+    u0 <- check_initial_state(u0, compartments_SISe3())
 
     ## Check initial infectious pressure
     if (is.null(phi))

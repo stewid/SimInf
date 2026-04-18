@@ -31,7 +31,7 @@ sessionInfo()
 
 ## Check invalid u0
 res <- assertError(SEIR(u0 = "u0"))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
                  E  = c(0, 0, 0, 0, 0, 0),
@@ -40,16 +40,16 @@ u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
 
 ## Check missing columns in u0
 res <- assertError(SEIR(u0 = u0[, c("E", "I", "R"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SEIR(u0 = u0[, c("S", "I", "R"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SEIR(u0 = u0[, c("S", "E", "R"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SEIR(u0 = u0[, c("S", "E", "I"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state."g)
 
 ## Check missing beta
 res <- assertError(SEIR(u0      = u0,

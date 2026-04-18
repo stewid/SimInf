@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ res <- assertError(
            u0 = matrix(c(10, 10), nrow = 1, ncol = 2,
                        dimnames = list(NULL, c("A", "W"))),
            tspan = 1:5))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(
     mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
