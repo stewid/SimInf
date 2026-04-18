@@ -16,38 +16,81 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Update the initial continuous state v0 in each node
+##' Update the initial continuous state (\code{v0}) in each node
 ##'
-##' @param model The model to update the initial continuous state
-##'     \code{v0}.
-##' @param value the initial continuous state in each node. Must be a
-##'     \code{data.frame} or an object that can be coerced to a
-##'     \code{data.frame}. A named numeric vector will be coerced to a
-##'     one-row \code{data.frame}. Each row is one node, and the
-##'     number of rows in \code{v0} must match the number of nodes in
-##'     \code{model}. Only the columns in \code{v0} with a name that
-##'     matches a continuous state in \code{v0} in the \code{model}
-##'     will be used
+##' Replace the initial continuous state vector (\code{v0}) of a
+##' \code{SimInf_model} object with new data. This allows you to
+##' modify the starting conditions of continuous variables (e.g.,
+##' environmental pathogen concentration) without recreating the
+##' object.
+##'
+##' The \code{value} argument accepts a \code{data.frame},
+##' \code{matrix}, or \code{named numeric vector}. If the input is not
+##' a \code{data.frame}, it will be automatically coerced to one. The
+##' function handles the following formats:
+##' \itemize{
+##'   \item \strong{Single Node}: If \code{value} is a named vector or
+##'     a one-row matrix/data.frame, it is applied to the single node
+##'     in the model.
+##'   \item \strong{Multiple Nodes}: If \code{value} is a matrix or
+##'     data.frame with multiple rows, each row corresponds to one
+##'     node. The number of rows must exactly match the number of
+##'     nodes in the \code{model}.
+##'   \item \strong{Column Matching}: Column names must match the
+##'     continuous state variable names defined in the model (e.g.,
+##'     \code{"phi"}).  Only matching columns are used; extra columns
+##'     are ignored, and missing variables will trigger an error.
+##' }
+##'
+##' The function validates the input and ensures the new state is
+##' consistent with the model structure before updating.
+##'
+##' @param model A \code{SimInf_model} object.
+##' @param value An object containing the new initial continuous
+##'     state.  Can be a \code{data.frame}, \code{matrix}, or
+##'     \code{named numeric vector}.  Non-data.frame inputs will be
+##'     coerced to a \code{data.frame}.
+##' @return The modified \code{SimInf_model} object.
+##' @seealso \code{\link{u0<-}} for updating the initial discrete
+##'     compartment state.
 ##' @export
 ##' @examples
+##' ## For reproducibility, set the seed.
+##' set.seed(22)
+##'
 ##' ## Create an 'SISe' model with no infected individuals and no
-##' ## infectious pressure (phi = 0, epsilon = 0).
-##' model <- SISe(u0 = data.frame(S = 100, I = 0), tspan = 1:100,
-##'               phi = 0, upsilon = 0.02, gamma = 0.1, alpha = 1,
-##'               epsilon = 0, beta_t1 = 0.15, beta_t2 = 0.15,
-##'               beta_t3 = 0.15, beta_t4 = 0.15, end_t1 = 91,
-##'               end_t2 = 182, end_t3 = 273, end_t4 = 365)
+##' ## infectious pressure (phi = 0).
+##' model <- SISe(
+##'   u0 = data.frame(S = 100, I = 0),
+##'   tspan = 1:100,
+##'   phi = 0,
+##'   upsilon = 0.02,
+##'   gamma = 0.1,
+##'   alpha = 1,
+##'   epsilon = 0,
+##'   beta_t1 = 0.15,
+##'   beta_t2 = 0.15,
+##'   beta_t3 = 0.15,
+##'   beta_t4 = 0.15,
+##'   end_t1 = 91,
+##'   end_t2 = 182,
+##'   end_t3 = 273,
+##'   end_t4 = 365
+##' )
 ##'
 ##' ## Run the 'SISe' model and plot the result.
-##' set.seed(22)
 ##' result <- run(model)
 ##' plot(result)
 ##'
-##' ## Update the infectious pressure 'phi' in 'v0' and run
-##' ## the model again.
-##' v0(model) <- data.frame(phi = 1)
+##' ## Update the infectious pressure 'phi' in 'v0' using a named
+##' ## vector.  (Automatically coerced to one row for the single
+##' ## node).
+##' v0(model) <- c(phi = 1)
 ##' result <- run(model)
 ##' plot(result)
+##'
+##' ## For a multi-node model, use a data.frame with multiple rows:
+##' ## v0(model) <- data.frame(phi = c(1.0, 0.5, 0.0))
 ## nolint start: brace_linter
 setGeneric(
     "v0<-",

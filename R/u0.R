@@ -163,9 +163,9 @@ setMethod(
 ##' Update the initial compartment state (\code{u0}) in each node
 ##'
 ##' Replace the initial state vector (\code{u0}) of a
-##' \code{SimInf_model} object with a new \code{data.frame}. This
-##' allows you to modify the starting conditions of a model without
-##' recreating the object.
+##' \code{SimInf_model} object with new data. This allows you to
+##' modify the starting conditions of a model without recreating the
+##' object.
 ##'
 ##' The \code{value} argument accepts a \code{data.frame},
 ##' \code{matrix}, or \code{named numeric vector}. If the input is not
@@ -195,6 +195,8 @@ setMethod(
 ##'     vector}.  Non-data.frame inputs will be coerced to a
 ##'     \code{data.frame}.
 ##' @return The modified \code{SimInf_model} object.
+##' @seealso \code{\link{v0<-}} for updating the initial continuous
+##'     state.
 ##' @export
 ##' @examples
 ##' ## For reproducibility, set the seed.

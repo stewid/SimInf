@@ -22,9 +22,9 @@ The modified \code{SimInf_model} object.
 }
 \description{
 Replace the initial state vector (\code{u0}) of a
-\code{SimInf_model} object with a new \code{data.frame}. This
-allows you to modify the starting conditions of a model without
-recreating the object.
+\code{SimInf_model} object with new data. This allows you to
+modify the starting conditions of a model without recreating the
+object.
 }
 \details{
 The \code{value} argument accepts a \code{data.frame},
@@ -97,4 +97,8 @@ u0(model_multi) <- data.frame(
 
 result <- run(model_multi)
 plot(result)
+}
+\seealso{
+\code{\link{v0<-}} for updating the initial continuous
+    state.
 }
