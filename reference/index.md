@@ -364,4 +364,5 @@
   Example initial population data for the SISe3 model
 
 - [`` `v0<-`() ``](http://stewid.github.io/SimInf/reference/v0-set.md) :
-  Update the initial continuous state v0 in each node
+
+  Update the initial continuous state (`v0`) in each node

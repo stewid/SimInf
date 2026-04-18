@@ -1,8 +1,8 @@
 # Update the initial compartment state (`u0`) in each node
 
 Replace the initial state vector (`u0`) of a `SimInf_model` object with
-a new `data.frame`. This allows you to modify the starting conditions of
-a model without recreating the object.
+new data. This allows you to modify the starting conditions of a model
+without recreating the object.
 
 ## Usage
 
@@ -50,6 +50,10 @@ formats:
 
 The function validates the input and ensures the new state is consistent
 with the model structure before updating.
+
+## See also
+
+`v0<-` for updating the initial continuous state.
 
 ## Examples
 
