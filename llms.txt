@@ -599,7 +599,8 @@ The `SimInf` package is licensed under the
   : Generic function to extract data from a simulated trajectory
 
 - [`` `u0<-`() ``](http://stewid.github.io/SimInf/reference/u0-set.md) :
-  Update the initial compartment state u0 in each node
+
+  Update the initial compartment state (`u0`) in each node
 
 - [`u0()`](http://stewid.github.io/SimInf/reference/u0.md) : Get the
   initial compartment state
