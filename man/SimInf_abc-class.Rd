@@ -44,18 +44,21 @@ for the parameters. It contains four columns:
     }
 }}
 
-\item{\code{target}}{Character vector (\code{gdata} or \code{ldata}) that
-determines if the ABC-SMC method estimates parameters in
-\code{model@gdata} or in \code{model@ldata}.}
+\item{\code{target}}{Character vector (\code{"gdata"} or \code{"ldata"})
+that determines if the ABC-SMC method estimates parameters in
+\code{model@gdata} (global data) or in \code{model@ldata}
+(local data).}
 
-\item{\code{pars}}{Index to the parameters in \code{target}.}
+\item{\code{pars}}{An integer vector with the indices of the parameters in
+\code{target} that are being estimated.}
 
 \item{\code{nprop}}{An integer vector with the number of simulated
-proposals in each generation.}
+proposals (particles) generated in each generation.}
 
-\item{\code{fn}}{A function for calculating the summary statistics for the
-simulated trajectory and determine the distance for each
-particle, see \code{\link{abc}} for more details.}
+\item{\code{fn}}{A function used to calculate summary statistics from the
+simulated trajectory and compute the distance for each
+particle.  See \code{\link{abc}} for details on the required
+function signature.}
 
 \item{\code{tolerance}}{A numeric matrix (number of summary statistics
 \eqn{\times} number of generations) where each column contains
@@ -86,11 +89,13 @@ normalized weight of particle \eqn{i} in generation \eqn{g}.}
 \item{\code{init_model}}{An optional function that, if non-NULL, is
 applied before running each proposal. The function must accept
 one argument of type \code{SimInf_model} with the current
-model of the fitting process. This function can be useful to
-specify the initial state of \code{u0} or \code{v0} of the
-model before running a trajectory with proposed parameters.}
+model of the fitting process and return a modified model. This
+function can be useful to specify the initial state of
+\code{u0} or \code{v0} of the model before running a
+trajectory with proposed parameters.}
 }}
 
 \seealso{
-\code{\link{abc}} and \code{\link{continue_abc}}.
+\code{\link{abc}} for the main ABC function and
+    \code{\link{continue_abc}} for continuing an ABC run.
 }
