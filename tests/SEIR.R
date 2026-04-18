@@ -49,7 +49,7 @@ res <- assertError(SEIR(u0 = u0[, c("S", "E", "R"), drop = FALSE]))
 check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SEIR(u0 = u0[, c("S", "E", "I"), drop = FALSE]))
-check_error(res, "Missing columns in initial state."g)
+check_error(res, "Missing columns in initial state.")
 
 ## Check missing beta
 res <- assertError(SEIR(u0      = u0,
