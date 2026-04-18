@@ -89,24 +89,27 @@ for the parameters. It contains four columns:</p><ul><li><p><code>parameter</cod
 
 
 <dt><code>target</code></dt>
-<dd><p>Character vector (<code>gdata</code> or <code>ldata</code>) that
-determines if the ABC-SMC method estimates parameters in
-<code>model@gdata</code> or in <code>model@ldata</code>.</p></dd>
+<dd><p>Character vector (<code>"gdata"</code> or <code>"ldata"</code>)
+that determines if the ABC-SMC method estimates parameters in
+<code>model@gdata</code> (global data) or in <code>model@ldata</code>
+(local data).</p></dd>
 
 
 <dt><code>pars</code></dt>
-<dd><p>Index to the parameters in <code>target</code>.</p></dd>
+<dd><p>An integer vector with the indices of the parameters in
+<code>target</code> that are being estimated.</p></dd>
 
 
 <dt><code>nprop</code></dt>
 <dd><p>An integer vector with the number of simulated
-proposals in each generation.</p></dd>
+proposals (particles) generated in each generation.</p></dd>
 
 
 <dt><code>fn</code></dt>
-<dd><p>A function for calculating the summary statistics for the
-simulated trajectory and determine the distance for each
-particle, see <code><a href="abc.html">abc</a></code> for more details.</p></dd>
+<dd><p>A function used to calculate summary statistics from the
+simulated trajectory and compute the distance for each
+particle.  See <code><a href="abc.html">abc</a></code> for details on the required
+function signature.</p></dd>
 
 
 <dt><code>tolerance</code></dt>
@@ -148,15 +151,17 @@ normalized weight of particle \(i\) in generation \(g\).</p></dd>
 <dd><p>An optional function that, if non-NULL, is
 applied before running each proposal. The function must accept
 one argument of type <code>SimInf_model</code> with the current
-model of the fitting process. This function can be useful to
-specify the initial state of <code>u0</code> or <code>v0</code> of the
-model before running a trajectory with proposed parameters.</p></dd>
+model of the fitting process and return a modified model. This
+function can be useful to specify the initial state of
+<code>u0</code> or <code>v0</code> of the model before running a
+trajectory with proposed parameters.</p></dd>
 
 
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="abc.html">abc</a></code> and <code><a href="continue_abc.html">continue_abc</a></code>.</p></div>
+    <div class="dont-index"><p><code><a href="abc.html">abc</a></code> for the main ABC function and
+    <code><a href="continue_abc.html">continue_abc</a></code> for continuing an ABC run.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

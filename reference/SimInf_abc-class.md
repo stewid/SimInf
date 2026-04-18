@@ -47,24 +47,26 @@ convergence diagnostics.
 
 - `target`:
 
-  Character vector (`gdata` or `ldata`) that determines if the ABC-SMC
-  method estimates parameters in `model@gdata` or in `model@ldata`.
+  Character vector (`"gdata"` or `"ldata"`) that determines if the
+  ABC-SMC method estimates parameters in `model@gdata` (global data) or
+  in `model@ldata` (local data).
 
 - `pars`:
 
-  Index to the parameters in `target`.
+  An integer vector with the indices of the parameters in `target` that
+  are being estimated.
 
 - `nprop`:
 
-  An integer vector with the number of simulated proposals in each
-  generation.
+  An integer vector with the number of simulated proposals (particles)
+  generated in each generation.
 
 - `fn`:
 
-  A function for calculating the summary statistics for the simulated
-  trajectory and determine the distance for each particle, see
-  [`abc`](http://stewid.github.io/SimInf/reference/abc.md) for more
-  details.
+  A function used to calculate summary statistics from the simulated
+  trajectory and compute the distance for each particle. See
+  [`abc`](http://stewid.github.io/SimInf/reference/abc.md) for details
+  on the required function signature.
 
 - `tolerance`:
 
@@ -105,11 +107,14 @@ convergence diagnostics.
 
   An optional function that, if non-NULL, is applied before running each
   proposal. The function must accept one argument of type `SimInf_model`
-  with the current model of the fitting process. This function can be
-  useful to specify the initial state of `u0` or `v0` of the model
-  before running a trajectory with proposed parameters.
+  with the current model of the fitting process and return a modified
+  model. This function can be useful to specify the initial state of
+  `u0` or `v0` of the model before running a trajectory with proposed
+  parameters.
 
 ## See also
 
-[`abc`](http://stewid.github.io/SimInf/reference/abc.md) and
-[`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md).
+[`abc`](http://stewid.github.io/SimInf/reference/abc.md) for the main
+ABC function and
+[`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md)
+for continuing an ABC run.
