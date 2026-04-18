@@ -14,7 +14,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Getting started with mparse}
+  %\VignetteIndexEntry{Getting started with `mparse`}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -154,7 +154,8 @@ resolve dependencies automatically.
 transitions <- c(
   "S -> beta * S * I / N -> I",
   "I -> gamma * I -> R",
-  "N <- S + I + R")
+  "N <- S + I + R"
+)
 ```
 
 ### Data Types: Integer vs. Double
@@ -170,7 +171,8 @@ integers. We can enforce this by prefixing the variable name with
 transitions <- c(
   "S -> beta * S * I / N -> I",
   "I -> gamma * I -> R",
-  "(int)N <- S + I + R")
+  "(int)N <- S + I + R"
+)
 ```
 
 Using `(int)N` tells mparse to treat N as an integer. While the
@@ -207,7 +209,8 @@ plot(run(model))
 In stochastic simulations, it is possible for a node to become empty
 (e.g., all individuals die or move away). If a transition involves
 dividing by the total population $N$, and $N$ becomes zero, the
-simulation would stop with a "division by zero" error.
+resulting rate is undefined. SimInf detects this issue and stops the
+simulation with an "Invalid rate detected" error.
 
 Since `mparse` translates the propensity expressions into C code, we
 can use the C **ternary operator** (`condition ? true_value :
@@ -241,7 +244,7 @@ Let us create the model with this safety check. Note that the logic
 remains the same, but the simulation is now robust against empty
 nodes.
 
-```{r}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 3.** SIR model using a ternary operator to prevent division by zero. Although the curve is identical to previous examples (as the population did not reach zero), this syntax ensures the simulation continues safely if the node becomes empty."}
 model <- mparse(
   transitions = transitions,
   compartments = c("S", "I", "R"),
@@ -249,9 +252,7 @@ model <- mparse(
   u0 = data.frame(S = 99, I = 1, R = 0),
   tspan = 1:100
 )
-```
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 3.** SIR model using a ternary operator to prevent division by zero. Although the curve is identical to previous examples (as the population did not reach zero), this syntax ensures the simulation continues safely if the node becomes empty."}
 set.seed(22)
 plot(run(model))
 ```
@@ -460,9 +461,7 @@ parameters <- c(
   bR = 2, bF = 2, dR = 1, K = 1000,
   alpha = 0.007, w = 0.0035, dF = 2
 )
-```
 
-```{r}
 u0 <- data.frame(R = 1000, F = 100)
 ```
 

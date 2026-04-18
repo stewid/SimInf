@@ -185,16 +185,25 @@ setGeneric(
 ##' @include match_compartments.R
 ##' @export
 ##' @examples
-##' ## Create an 'SIR' model with 6 nodes.
-##' u0 <- data.frame(S = 100:105, I = c(0, 1, 0, 2, 0, 3), R = rep(0, 6))
-##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-##'
-##' ## Run the model. For reproducibility, we first call the
-##' ## set.seed() function and specify the number of threads to use
-##' ## since there is random sampling involved when picking individuals
-##' ## from the compartments.
+##' ## For reproducibility, set the seed and number of threads.
 ##' set.seed(1)
 ##' set_num_threads(1)
+##'
+##' ## Create an 'SIR' model with 6 nodes.
+##' u0 <- data.frame(
+##'   S = 100:105,
+##'   I = c(0, 1, 0, 2, 0, 3),
+##'   R = rep(0, 6)
+##' )
+##'
+##' model <- SIR(
+##'   u0 = u0,
+##'   tspan = 1:10,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Run the model.
 ##' result <- run(model)
 ##'
 ##' ## 1. Population Prevalence (level = 1, default)

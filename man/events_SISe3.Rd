@@ -3,7 +3,7 @@
 \docType{data}
 \name{events_SISe3}
 \alias{events_SISe3}
-\title{Example event data for the \acronym{SISe3} model with cattle herds}
+\title{Example event data for the SISe3 model with cattle herds}
 \format{
 A \code{data.frame}
 }
@@ -57,11 +57,12 @@ index in the internal \code{N} matrix that specifies the transition
 (e.g., moving from age 1 to age 2).
 
 Events are distributed across all 1,600 herds over the 4-year
-period, reflecting realistic patterns of cattle demographic
-change, herd-to-herd movement, and age progression in a livestock
-production system. The higher event count compared to
+period. These are synthetic data generated to illustrate how to
+incorporate scheduled events (including births, deaths, movements,
+and age transitions) into an age-structured compartment model in
+the SimInf framework. The higher event count compared to
 non-age-structured models reflects the addition of internal
-transfer events for age category transitions.
+transfer events required for age category transitions.
 
 The data contains:
 \describe{
@@ -93,26 +94,28 @@ set_num_threads(1)
 ## between-node movements of individuals.
 u0 <- u0_SISe3
 u0$I_1[1] <- 10
-model <- SISe3(u0 = u0,
-               tspan = seq(from = 1, to = 4*365, by = 7),
-               events = events_SISe3,
-               phi = rep(0, nrow(u0)),
-               upsilon_1 = 1.8e-2,
-               upsilon_2 = 1.8e-2,
-               upsilon_3 = 1.8e-2,
-               gamma_1 = 0.1,
-               gamma_2 = 0.1,
-               gamma_3 = 0.1,
-               alpha = 1,
-               beta_t1 = 1.0e-1,
-               beta_t2 = 1.0e-1,
-               beta_t3 = 1.25e-1,
-               beta_t4 = 1.25e-1,
-               end_t1 = 91,
-               end_t2 = 182,
-               end_t3 = 273,
-               end_t4 = 365,
-               epsilon = 0)
+model <- SISe3(
+    u0 = u0,
+    tspan = seq(from = 1, to = 4*365, by = 7),
+    events = events_SISe3,
+    phi = rep(0, nrow(u0)),
+    upsilon_1 = 1.8e-2,
+    upsilon_2 = 1.8e-2,
+    upsilon_3 = 1.8e-2,
+    gamma_1 = 0.1,
+    gamma_2 = 0.1,
+    gamma_3 = 0.1,
+    alpha = 1,
+    beta_t1 = 1.0e-1,
+    beta_t2 = 1.0e-1,
+    beta_t3 = 1.25e-1,
+    beta_t4 = 1.25e-1,
+    end_t1 = 91,
+    end_t2 = 182,
+    end_t3 = 273,
+    end_t4 = 365,
+    epsilon = 0
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))

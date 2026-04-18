@@ -19,31 +19,24 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SIR} model
+##' Class SIR
 ##'
-##' Class to handle the \acronym{SIR} \code{\link{SimInf_model}}.
+##' Class to handle the \acronym{SIR} model. This class inherits from
+##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIR}
+##' objects are fully compatible with all generic functions defined
+##' for \code{SimInf_model}, such as \code{\link{run}},
+##' \code{\link{plot,SimInf_model-method}}, \code{\link{trajectory}},
+##' and \code{\link{prevalence}}.
 ##'
-##' The \acronym{SIR} model contains three compartments; number of
-##' susceptible (S), number of infectious (I), and number of
-##' recovered (R).  Moreover, it has two state transitions,
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
-##'   S -- beta S I / N --> I}
-##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
-##' where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-##' recovery rate, and \eqn{N=S+I+R}.
+##' @template SIR-details
+##'
+##' @seealso
+##' \code{\link{SIR}} for creating an \acronym{SIR} model object,
+##' \code{\linkS4class{SimInf_model}} for the parent class definition,
+##' \code{\link{SEIR}} for a model including a latent period, and
+##' \code{\link{SIS}} for a model without immunity.
 ##' @include SimInf_model.R
 ##' @export
-##' @examples
-##' ## Create an SIR model object.
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:100,
-##'              beta = 0.16,
-##'              gamma = 0.077)
-##'
-##' ## Run the SIR model and plot the result.
-##' set.seed(22)
-##' result <- run(model)
-##' plot(result)
 setClass("SIR", contains = c("SimInf_model"))
 
 ##' The compartments in an SIR model
@@ -52,7 +45,7 @@ compartments_SIR <- function() {
     c("S", "I", "R")
 }
 
-##' Select matrix for events in the \acronym{SIR} model
+##' Select matrix for events in the SIR model
 ##'
 ##' Internal function returning the 3x4 select matrix (E) that maps
 ##' SIR compartments (rows) to event types (columns) for event
@@ -68,26 +61,19 @@ select_matrix_SIR <- function() {
            dimnames = list(compartments_SIR(), seq_len(4)))
 }
 
-##' Create an \acronym{SIR} model
+##' Create an SIR model
 ##'
 ##' Create an \acronym{SIR} model to be used by the simulation
 ##' framework.
 ##'
-##' The \acronym{SIR} model contains three compartments; number of
-##' susceptible (S), number of infectious (I), and number of
-##' recovered (R).  Moreover, it has two state transitions,
-##' \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
-##'   S -- beta S I / N --> I}
-##' \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
-##' where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-##' recovery rate, and \eqn{N = S + I + R} is the total population.
-##'
+##' @template SIR-details
+##' @details
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
-##' \item{S}{The number of susceptible in each node}
-##' \item{I}{The number of infected in each node}
-##' \item{R}{The number of recovered in each node}
+##' \item{S}{The number of susceptible individuals in each node}
+##' \item{I}{The number of infected individuals in each node}
+##' \item{R}{The number of recovered individuals in each node}
 ##' }
 ##'
 ##' @template u0-param
@@ -96,17 +82,30 @@ select_matrix_SIR <- function() {
 ##' @template beta-param
 ##' @template gamma-param
 ##' @return A \code{\link{SimInf_model}} of class \code{SIR}
+##' @seealso
+##' \code{\linkS4class{SIR}} for the class definition.
+##' \code{\link{SEIR}}, \code{\link{SIS}}, \code{\link{SISe}},
+##' \code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
+##' models.  \code{\link{mparse}} for creating custom models.
+##' \code{\link{run}} for running the simulation.
+##' \code{\link{trajectory}}, \code{\link{prevalence}} and
+##' \code{\link{plot,SimInf_model-method}} for post-processing and
+##' visualization.
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
+##' ## For reproducibility, set the seed.
+##' set.seed(22)
+##'
 ##' ## Create an SIR model object.
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:100,
-##'              beta = 0.16,
-##'              gamma = 0.077)
+##' model <- SIR(
+##'   u0 = data.frame(S = 99, I = 1, R = 0),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Run the SIR model and plot the result.
-##' set.seed(22)
 ##' result <- run(model)
 ##' plot(result)
 SIR <- function(u0,
@@ -149,7 +148,7 @@ SIR <- function(u0,
     methods::as(model, "SIR")
 }
 
-##' Example event data for the \acronym{SIR} model with cattle herds
+##' Example event data for the SIR model with cattle herds
 ##'
 ##' Dataset containing 466,692 scheduled events for a population of
 ##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
@@ -184,8 +183,9 @@ SIR <- function(u0,
 ##' }
 ##'
 ##' Events are distributed across all 1,600 herds over the 4-year
-##' period, reflecting realistic patterns of cattle demographic change
-##' and herd-to-herd movement in a livestock production system.
+##' period. These are synthetic data generated to illustrate how to
+##' incorporate scheduled events (such as births, deaths, and
+##' movements) into a compartment model in the SimInf framework.
 ##'
 ##' @return A \code{data.frame} with columns:
 ##'   \describe{
@@ -217,47 +217,47 @@ events_SIR <- function() {
     events_SISe3
 }
 
-##' Example initial population data for the \acronym{SIR} model
+##' Example initial population data for the SIR model
 ##'
-##' Dataset containing the initial number of susceptible, infected,
-##' and recovered cattle across 1,600 herds. Provides realistic
-##' population structure for demonstrating SIR model simulations in a
-##' cattle disease epidemiology context.
+##' Synthetic dataset containing the initial number of susceptible,
+##' infected, and recovered cattle (individuals) across 1,600 cattle
+##' herds (nodes).  Provides a heterogeneous population structure for
+##' demonstrating SIR model simulations in a compartmental modeling
+##' context.
 ##'
-##' This dataset represents initial disease states in a population of
-##' 1,600 cattle herds. Each node (row) represents a single herd, and
-##' the data is derived from the structured \code{u0_SISe3} data by
-##' aggregating age-stratified compartments into single S, I, and R
-##' compartments for each herd.
+##' @details
+##' This dataset represents initial disease states in a synthetic
+##' population of 1,600 cattle herds (nodes). Each row represents a
+##' single herd (node).
 ##'
-##' The aggregated values represent:
+##' The data contains:
 ##' \describe{
-##'   \item{S}{Total susceptible cattle across all age groups in the herd}
-##'   \item{I}{Total infected cattle (initialized to zero)}
-##'   \item{R}{Total recovered cattle (initialized to zero)}
+##'   \item{S}{Total susceptible cattle (individuals) in the node}
+##'   \item{I}{Total infected cattle (individuals) (initialized to
+##'   zero)}
+##'   \item{R}{Total recovered cattle (individuals) (initialized to
+##'   zero)}
 ##' }
 ##'
-##' The herd size distribution reflects realistic heterogeneity
-##' observed in cattle populations, making it suitable for testing
-##' spatial disease dynamics at the herd level, such as:
-##' \itemize{
-##'   \item Transmission within and between herds
-##'   \item Impact of cattle movement on disease spread
-##'   \item Effectiveness of herd-level interventions
-##' }
+##' The herd size distribution is synthetically generated to reflect
+##' heterogeneity typical of large-scale populations, making it
+##' suitable for illustrating how to incorporate scheduled events in
+##' the SimInf framework.
 ##'
-##' @return A \code{data.frame} with 1,600 rows (one per herd) and 3 columns:
-##'   \describe{
-##'     \item{S}{Number of susceptible cattle in the herd}
-##'     \item{I}{Number of infected cattle in the herd (all zero at start)}
-##'     \item{R}{Number of recovered cattle in the herd (all zero at start)}
-##'   }
+##' @return A \code{data.frame} with 1,600 rows (one per node) and 3
+##'     columns:
+##'     \describe{
+##'       \item{S}{Number of susceptible cattle (individuals) in the
+##'       herd (node)}
+##'       \item{I}{Number of infected cattle (individuals) in the herd
+##'       (node) (all zero at start)}
+##'       \item{R}{Number of recovered cattle (individuals) in the
+##'       herd (node) (all zero at start)}
+##'     }
 ##'
-##' @seealso
-##' \code{\link{SIR}} for creating cattle disease models with this
-##' initial state and \code{\link{events_SIR}} for associated cattle
-##' movement and demographic events
-##'
+##' @seealso \code{\link{SIR}} for creating SIR models with this
+##'     initial state and \code{\link{events_SIR}} for associated
+##'     movement and demographic events
 ##' @export
 ##' @example man/examples/SIR.R
 u0_SIR <- function() {

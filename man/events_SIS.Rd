@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIS.R
 \name{events_SIS}
 \alias{events_SIS}
-\title{Example event data for the \acronym{SIS} model with cattle herds}
+\title{Example event data for the SIS model with cattle herds}
 \usage{
 events_SIS()
 }
@@ -54,10 +54,9 @@ the columns of the internal select matrix:
 }
 
 Events are distributed across all 1,600 herds over the 4-year
-period, reflecting realistic patterns of cattle demographic change
-and herd-to-herd movement. In SIS dynamics, these events can
-introduce disease to previously unaffected herds or remove
-infected cattle from the system.
+period. These are synthetic data generated to illustrate how to
+incorporate scheduled events (such as births, deaths, and
+movements) into a compartment model in the SimInf framework.
 }
 \examples{
 ## For reproducibility, call the set.seed() function and specify the
@@ -74,11 +73,13 @@ set_num_threads(1)
 ## of individuals.
 u0 <- u0_SIS()
 u0$I[1] <- 1
-model <- SIS(u0     = u0,
-             tspan  = seq(from = 1, to = 4*365, by = 1),
-             events = events_SIS(),
-             beta   = 0.16,
-             gamma  = 0.01)
+model <- SIS(
+    u0     = u0,
+    tspan  = seq(from = 1, to = 4*365, by = 1),
+    events = events_SIS(),
+    beta   = 0.16,
+    gamma  = 0.01
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))

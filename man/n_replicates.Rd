@@ -10,21 +10,36 @@ n_replicates(model)
 \S4method{n_replicates}{SimInf_model}(model)
 }
 \arguments{
-\item{model}{the \code{model} object to extract the number of
-replicates from.}
+\item{model}{A \code{SimInf_model} object.}
 }
 \value{
-the number of replicates in the model.
+An integer scalar representing the number of replicates
+    in the model.
 }
 \description{
-Determine the number of replicates in a model
+Extract the number of replicates from a \code{SimInf_model}
+object.  Replicates are independent copies of the model state used
+by the \strong{particle filter} (\code{\link{pfilter}}).  This
+value is set \strong{internally} by \code{pfilter} and is not
+specified when creating a standard model. If the model has not
+been processed by a filter, the value will be 1.
 }
 \examples{
-## Create an 'SIR' model with 100 nodes, with 99 susceptible,
-## 1 infected and 0 recovered in each node.
-u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
-model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+## Create a standard 'SIR' model.
+u0 <- data.frame(
+  S = rep(99, 100),
+  I = rep(1, 100),
+  R = rep(0, 100)
+)
 
-## Display the number of replicates in the model.
+model <- SIR(
+  u0 = u0,
+  tspan = 1:10,
+  beta = 0.16,
+  gamma = 0.077
+)
+
+## Get the number of replicates (default is 1 for standard
+## models).
 n_replicates(model)
 }

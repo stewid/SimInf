@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIR.R
 \name{events_SIR}
 \alias{events_SIR}
-\title{Example event data for the \acronym{SIR} model with cattle herds}
+\title{Example event data for the SIR model with cattle herds}
 \usage{
 events_SIR()
 }
@@ -54,8 +54,9 @@ the columns of the internal select matrix (\code{select_matrix_SIR}):
 }
 
 Events are distributed across all 1,600 herds over the 4-year
-period, reflecting realistic patterns of cattle demographic change
-and herd-to-herd movement in a livestock production system.
+period. These are synthetic data generated to illustrate how to
+incorporate scheduled events (such as births, deaths, and
+movements) into a compartment model in the SimInf framework.
 }
 \examples{
 ## For reproducibility, call the set.seed() function and specify the
@@ -72,11 +73,13 @@ set_num_threads(1)
 ## of individuals.
 u0 <- u0_SIR()
 u0$I[1] <- 1
-model <- SIR(u0     = u0,
-             tspan  = seq(from = 1, to = 4*365, by = 1),
-             events = events_SIR(),
-             beta   = 0.16,
-             gamma  = 0.01)
+model <- SIR(
+    u0     = u0,
+    tspan  = seq(from = 1, to = 4*365, by = 1),
+    events = events_SIR(),
+    beta   = 0.16,
+    gamma  = 0.01
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))

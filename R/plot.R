@@ -21,26 +21,35 @@
 
 ##' Box plot of number of individuals in each compartment
 ##'
-##' Produce box-and-whisker plot(s) of the number of individuals in
-##' each model compartment.
-##' @param x The \code{model} to plot
-##' @param compartments specify the names of the compartments to
-##'     extract data from. The compartments can be specified as a
-##'     character vector e.g. \code{compartments = c('S', 'I', 'R')},
-##'     or as a formula e.g. \code{compartments = ~S+I+R} (see
-##'     \sQuote{Examples}). Default (\code{compartments=NULL})
-##'     includes all compartments.
-##' @param index indices specifying the nodes to include when plotting
-##'     data. Default \code{index = NULL} include all nodes in the
-##'     model.
-##' @param ... Additional arguments affecting the plot produced.
+##' Produce box-and-whisker plots summarizing the distribution of the
+##' number of individuals in specified model compartments. The plots
+##' aggregate data across all time points in \code{tspan} and the
+##' selected nodes (specified by \code{index}).
+##'
+##' This function is useful for visualizing the variability and range
+##' of compartment counts across the entire simulation trajectory.
+##'
+##' @param x The \code{SimInf_model} object containing the trajectory
+##'     data.
+##' @param compartments Specify the names of the compartments to
+##'     include.  Can be a character vector (e.g., \code{c("S", "I",
+##'     "R")}) or a formula (e.g., \code{~S + I + R}). If \code{NULL}
+##'     (default), all compartments in the model are included.
+##' @param index Indices of the nodes to include in the plot.  If
+##'     \code{NULL} (default), data from all nodes are pooled
+##'     together.  If a vector (e.g., \code{1:2}), only data from
+##'     those specific nodes are used.
+##' @param ... Additional graphical arguments passed to
+##'     \code{boxplot()}.
 ##' @aliases boxplot,SimInf_model-method
 ##' @export
 ##' @include SimInf_model.R
 ##' @examples
-##' ## Create an 'SIR' model with 10 nodes and initialise
-##' ## it with 99 susceptible individuals and one infected
-##' ## individual. Let the model run over 100 days.
+##' ## For reproducibility, set the seed and number of threads.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
+##' ## Create an 'SIR' model with 10 nodes.
 ##' model <- SIR(u0 = data.frame(S = rep(99, 10),
 ##'                              I = rep(1, 10),
 ##'                              R = rep(0, 10)),
@@ -48,15 +57,16 @@
 ##'              beta = 0.16,
 ##'              gamma = 0.077)
 ##'
-##' ## Run the model and save the result.
+##' ## Run the model.
 ##' result <- run(model)
 ##'
-##' ## Create a boxplot that includes all compartments in all nodes.
+##' ## Create a boxplot for all compartments across all nodes and time
+##' ## points.
 ##' boxplot(result)
 ##'
-##' ## Create a boxplot that includes the S and I compartments in
+##' ## Create a boxplot for the S and I compartments, but only for
 ##' ## nodes 1 and 2.
-##' boxplot(result, ~S+I, 1:2)
+##' boxplot(result, compartments = c("S", "I"), index = 1:2)
 setMethod(
     "boxplot",
     signature(x = "SimInf_model"),
@@ -66,34 +76,38 @@ setMethod(
     }
 )
 
-##' Scatterplot of number of individuals in each compartment
+##' Scatterplot matrix of number of individuals in each compartment
 ##'
-##' A matrix of scatterplots with the number of individuals in each
-##' compartment is produced. The \code{ij}th scatterplot contains
-##' \code{x[,i]} plotted against \code{x[,j]}.
-##' @param x The \code{model} to plot
-##' @param compartments specify the names of the compartments to
-##'     extract data from. The compartments can be specified as a
-##'     character vector e.g. \code{compartments = c('S', 'I', 'R')},
-##'     or as a formula e.g. \code{compartments = ~S+I+R} (see
-##'     \sQuote{Examples}). Default (\code{compartments=NULL})
-##'     includes all compartments.
-##' @param index indices specifying the nodes to include when plotting
-##'     data. Default \code{index = NULL} include all nodes in the
-##'     model.
-##' @param ... Additional arguments affecting the plot produced.
+##' Produce a matrix of scatterplots showing the relationship between
+##' the number of individuals in different model compartments.  The
+##' \code{ij}th panel displays the counts of compartment \code{j}
+##' plotted against compartment \code{i}.
+##'
+##' Data is aggregated across all time points in \code{tspan} and the
+##' selected nodes (specified by \code{index}). This allows for
+##' visualizing the correlation structure between compartments
+##' throughout the simulation.
+##'
+##' @param x The \code{SimInf_model} object containing the trajectory
+##'     data.
+##' @param compartments Specify the names of the compartments to
+##'     include.  Can be a character vector (e.g., \code{c("S", "I",
+##'     "R")}) or a formula (e.g., \code{~S + I + R}). If \code{NULL}
+##'     (default), all compartments in the model are included.
+##' @param index Indices of the nodes to include in the plot.  If
+##'     \code{NULL} (default), data from all nodes are pooled
+##'     together.  If a vector (e.g., \code{1:2}), only data from
+##'     those specific nodes are used.
+##' @param ... Additional graphical arguments passed to
+##'     \code{pairs()}.
 ##' @export
 ##' @include SimInf_model.R
 ##' @examples
-##' ## For reproducibility, call the set.seed() function and specify
-##' ## the number of threads to use. To use all available threads,
-##' ## remove the set_num_threads() call.
+##' ## For reproducibility, set the seed and number of threads.
 ##' set.seed(123)
 ##' set_num_threads(1)
 ##'
-##' ## Create an 'SIR' model with 10 nodes and initialise
-##' ## it with 99 susceptible individuals and one infected
-##' ## individual. Let the model run over 100 days.
+##' ## Create an 'SIR' model with 10 nodes.
 ##' model <- SIR(u0 = data.frame(S = rep(99, 10),
 ##'                              I = rep(1, 10),
 ##'                              R = rep(0, 10)),
@@ -101,16 +115,16 @@ setMethod(
 ##'              beta = 0.16,
 ##'              gamma = 0.077)
 ##'
-##' ## Run the model and save the result.
+##' ## Run the model.
 ##' result <- run(model)
 ##'
-##' ## Create a scatter plot that includes all compartments in all
+##' ## Create a scatterplot matrix for all compartments across all
 ##' ## nodes.
 ##' pairs(result)
 ##'
-##' ## Create a scatter plot that includes the S and I compartments in
-##' ## nodes 1 and 2.
-##' pairs(result, ~S+I, 1:2)
+##' ## Create a scatterplot matrix for the S and I compartments,
+##' ## using only data from nodes 1 and 2.
+##' pairs(result, compartments = c("S", "I"), index = 1:2)
 setMethod(
     "pairs",
     signature(x = "SimInf_model"),
@@ -417,6 +431,12 @@ plot_trace <- function(x, i, j, ...) {
 ##' counts in specified nodes, or the prevalence of a disease. The
 ##' function supports formula notation for specifying compartments and
 ##' prevalence calculations.
+##'
+##' For a comprehensive tutorial with detailed explanations and more
+##' examples, see the
+##' \code{vignette("Post-process data in a trajectory", package =
+##' "SimInf")}.
+##'
 ##' @param x The \code{model} to plot.
 ##' @template plot-y-param
 ##' @template prevalence-level-param
@@ -438,8 +458,7 @@ plot_trace <- function(x, i, j, ...) {
 ##' @export
 ##' @include SimInf_model.R
 ##' @examples
-##' ## For reproducibility, call the set.seed() function and specify
-##' ## the number of threads to use.
+##' ## For reproducibility, set the seed and number of threads.
 ##' set.seed(123)
 ##' set_num_threads(1)
 ##'
@@ -451,42 +470,20 @@ plot_trace <- function(x, i, j, ...) {
 ##'              beta = 0.16,
 ##'              gamma = 0.077)
 ##'
-##' ## Run the model and save the result.
+##' ## Run the model.
 ##' result <- run(model)
 ##'
-##' ## 1. Plotting counts
-##'
-##' ## Plot the median and interquartile range of all compartments.
+##' ## Plot counts (median and IQR)
 ##' plot(result)
 ##'
-##' ## Plot the median and the middle 95% quantile range.
-##' plot(result, range = 0.95)
-##'
-##' ## Plot only the infected individuals (using character string).
-##' plot(result, "I")
-##'
-##' ## Plot only the infected individuals (using formula notation).
-##' plot(result, ~I)
-##'
-##' ## Plot individual trajectories for the first three nodes.
+##' ## Plot individual trajectories for specific nodes
 ##' plot(result, index = 1:3, range = FALSE)
 ##'
-##' ## 2. Plotting prevalence
-##'
-##' ## Plot the proportion of infected individuals in the population.
+##' ## Plot prevalence (proportion of infected)
 ##' plot(result, I ~ S + I + R)
 ##'
-##' ## Plot the proportion of nodes with infected individuals.
-##' plot(result, I ~ S + I + R, level = 2)
-##'
-##' ## Plot the median prevalence within each node.
-##' plot(result, I ~ S + I + R, level = 3)
-##'
-##' ## 3. Customization
-##'
-##' ## Customize axis labels and title.
-##' plot(result, "I", xlab = "Time (days)", ylab = "Number of Infected",
-##'      main = "SIR Model Trajectory")
+##' ## Customize labels
+##' plot(result, "I", xlab = "Time", ylab = "Count", main = "Infections")
 setMethod(
     "plot",
     signature(x = "SimInf_model", y = "ANY"),
@@ -519,10 +516,31 @@ setMethod(
 
 ##' Display the ABC posterior distribution
 ##'
-##' @param x The \code{SimInf_abc} object to plot.
-##' @param y The generation to plot. The default is to display the
-##'     last generation.
-##' @param ... Additional arguments affecting the plot.
+##' Produce diagnostic plots of the Approximate Bayesian Computation
+##' (ABC) posterior distribution stored in a \code{SimInf_abc} object.
+##'
+##' The function generates a scatterplot matrix of the parameter
+##' values for the specified generation:
+##' \itemize{
+##'   \item \strong{Diagonal panels}: Display a normalized density
+##'     estimate with a rug plot showing individual samples.
+##'   \item \strong{Upper triangular panels}: Display scatterplots of
+##'     the raw parameter samples for each pair of variables.
+##'   \item \strong{Lower triangular panels}: Display contour lines
+##'     representing the 2D kernel density estimate of the joint
+##'     distribution between parameter pairs.
+##' }
+##' If only a single parameter is selected, a single density plot with
+##' a rug is produced.
+##'
+##' @param x The \code{SimInf_abc} object containing the ABC results.
+##' @param y The generation number to plot. The default is
+##'     \code{NULL}, which displays the \strong{last} generation (the
+##'     final posterior).  Specify an integer to view intermediate
+##'     generations for convergence diagnostics.
+##' @param ... Additional graphical arguments passed to the underlying
+##'     plotting functions (e.g., \code{col} for contour colors,
+##'     \code{lwd}).
 ##' @aliases plot,SimInf_abc-method
 ##' @export
 ##' @include abc.R

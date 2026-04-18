@@ -37,11 +37,16 @@ coerced to a one row \code{data.frame}.}
 
 \item{tspan}{A vector (length >= 1) of increasing time points
 where the state of each node is to be returned. Can be either
-an \code{integer} or a \code{Date} vector. A \code{Date}
-vector is coerced to a numeric vector as days, where
-\code{tspan[1]} becomes the day of the year of the first year
-of \code{tspan}. The dates are added as names to the numeric
-vector.}
+an \code{integer} or a \code{Date} vector.
+\itemize{
+  \item If \code{integer}: Represents the specific time points
+    (e.g., days, hours) at which to record the state.
+  \item If \code{Date}: Coerced to a numeric vector
+    representing the \strong{day of the year} (1–366) relative
+    to the first date in the vector. The original \code{Date}
+    objects are preserved as names for the numeric vector,
+    facilitating time-series plotting.
+}}
 
 \item{events}{a \code{data.frame} with the scheduled events, see
 \code{\link{SimInf_model}}.}
@@ -69,7 +74,8 @@ age category 2}
 \item{gamma_3}{The recovery rate from infected to susceptible for
 age category 3}
 
-\item{alpha}{Shed rate from infected individuals}
+\item{alpha}{Shedding rate of the pathogen to the environment per
+infected individual.}
 
 \item{beta_t1}{The decay of the environmental infectious pressure
 in interval 1.}
@@ -105,57 +111,97 @@ of nrow(u0).}
 \code{SISe3}
 }
 \description{
-Create a \code{SISe3} model to be used by the simulation
+Create a \acronym{SISe3} model to be used by the simulation
 framework.
 }
 \details{
 The \code{SISe3} model contains two compartments in three age
-categories; number of susceptible (S_1, S_2, S_3) and number of
-infectious (I_1, I_2, I_3). Additionally, it contains an
-environmental compartment to model shedding of a pathogen to the
-environment. Consequently, the model has six state transitions,
+categories: \strong{S}usceptible (\eqn{S_1, S_2, S_3}) and
+\strong{I}nfected (\eqn{I_1, I_2, I_3}). Additionally, it includes
+a continuous \strong{environmental} compartment (\eqn{\varphi})
+to model the shedding of a pathogen to the environment.
+
+The model is defined by six state transitions:
 
 \deqn{S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1}{
-S_1 -- upsilon_1 phi S_1 --> I_1}
-
+  S_1 -- upsilon_1 phi S_1 --> I_1}
 \deqn{I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1}{
-I_1 -- gamma_1 I_1 --> S_1}
-
+  I_1 -- gamma_1 I_1 --> S_1}
 \deqn{S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2}{
-S_2 -- upsilon_2 phi S_2 --> I_2}
-
+  S_2 -- upsilon_2 phi S_2 --> I_2}
 \deqn{I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2}{
-I_2 -- gamma_2 I_2 --> S_2}
-
+  I_2 -- gamma_2 I_2 --> S_2}
 \deqn{S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3}{
-S_3 -- upsilon_3 phi S_3 --> I_3}
-
+  S_3 -- upsilon_3 phi S_3 --> I_3}
 \deqn{I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3}{
-I_3 -- gamma_3 I_3 --> S_3}
+  I_3 -- gamma_3 I_3 --> S_3}
 
-where the transition rate per unit of time from susceptible to
-infected is proportional to the concentration of the environmental
-contamination \eqn{\varphi}{phi} in each node. Moreover, the
-transition rate from infected to susceptible is the recovery rate
-\eqn{\gamma_1, \gamma_2, \gamma_3}, measured per individual and
-per unit of time. Finally, the environmental infectious pressure
-in each node is evolved by,
+where the transition rate from susceptible to infected in age
+category \eqn{k} is proportional to the environmental
+contamination \eqn{\varphi} and the transmission rate
+\eqn{\upsilon_k}. The recovery rate \eqn{\gamma_k} moves
+individuals from infected back to susceptible.
+
+The environmental infectious pressure \eqn{\varphi(t)}{phi(t)} in
+each node evolves according to:
 
 \deqn{\frac{d\varphi(t)}{dt} = \frac{\alpha \left(I_1(t) + I_2(t)
 + I_3(t)\right)}{N(t)} - \beta(t) \varphi(t) + \epsilon}{
-dphi(t) / dt = alpha (I_1(t) + I_2(t) + I_3(t)) / N(t)
-- beta(t) phi(t) + epsilon}
+  dphi/dt = alpha * sum(I) / N - beta(t) * phi + epsilon}
 
-where \eqn{\alpha} is the average shedding rate of the pathogen to
-the environment per infected individual and \eqn{N = S_1 + S_2 +
-S_3 + I_1 + I_2 + I_3} the size of the node. The seasonal decay
-and removal of the pathogen is captured by \eqn{\beta(t)}. It is
-also possible to include a small background infectious pressure
-\eqn{\epsilon} to allow for other indirect sources of
-environmental contamination. The environmental infectious pressure
-\eqn{\varphi(t)}{phi(t)} in each node is evolved each time unit by
-the Euler forward method. The value of \eqn{\varphi(t)}{phi(t)} is
-saved at the time-points specified in \code{tspan}.
+where:
+\itemize{
+  \item \eqn{\alpha} is the shedding rate per infected individual.
+  \item \eqn{N(t) = S_1 + S_2 + S_3 + I_1 + I_2 + I_3} is the total
+    population size in the node.
+  \item \eqn{\beta(t)} is the seasonal decay/removal rate, which
+    varies throughout the year.
+  \item \eqn{\epsilon} is the background infectious pressure.
+}
+
+The environmental infectious pressure \eqn{\varphi(t)}{phi(t)} is
+evolved using the Euler forward method and saved at time points in
+\code{tspan}.
+
+\strong{Seasonal Decay (\eqn{\beta(t)}):}
+The decay rate \eqn{\beta(t)} is piecewise constant, defined by four
+intervals determined by the parameters \code{end_t1}, \code{end_t2},
+\code{end_t3}, and \code{end_t4} (days of the year, where
+\code{0 <= day < 365}). The year is divided into four intervals based
+on the sorted order of these endpoints. The interval that wraps around
+the year boundary (from the last endpoint to day 365, then from day 0
+to the first endpoint) receives the same rate as the interval
+preceding the first endpoint. Three orderings are supported:
+
+\strong{Case 1:} \code{end_t1 < end_t2 < end_t3 < end_t4}
+\itemize{
+  \item Interval 1: \code{[0, end_t1)} with rate \code{beta_t1}
+  \item Interval 2: \code{[end_t1, end_t2)} with rate \code{beta_t2}
+  \item Interval 3: \code{[end_t2, end_t3)} with rate \code{beta_t3}
+  \item Interval 4: \code{[end_t3, end_t4)} with rate \code{beta_t4}
+  \item Interval 1 (wrap-around): \code{[end_t4, 365)} with rate \code{beta_t1}
+}
+
+\strong{Case 2:} \code{end_t3 < end_t4 < end_t1 < end_t2}
+\itemize{
+  \item Interval 3: \code{[0, end_t3)} with rate \code{beta_t3}
+  \item Interval 4: \code{[end_t3, end_t4)} with rate \code{beta_t4}
+  \item Interval 1: \code{[end_t4, end_t1)} with rate \code{beta_t1}
+  \item Interval 2: \code{[end_t1, end_t2)} with rate \code{beta_t2}
+  \item Interval 3 (wrap-around): \code{[end_t2, 365)} with rate \code{beta_t3}
+}
+
+\strong{Case 3:} \code{end_t4 < end_t1 < end_t2 < end_t3}
+\itemize{
+  \item Interval 4: \code{[0, end_t4)} with rate \code{beta_t4}
+  \item Interval 1: \code{[end_t4, end_t1)} with rate \code{beta_t1}
+  \item Interval 2: \code{[end_t1, end_t2)} with rate \code{beta_t2}
+  \item Interval 3: \code{[end_t2, end_t3)} with rate \code{beta_t3}
+  \item Interval 4 (wrap-around): \code{[end_t3, 365)} with rate \code{beta_t4}
+}
+
+These different orderings allow the model to handle seasonal patterns
+where, for example, a winter peak crosses the year boundary.
 
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
@@ -168,23 +214,13 @@ each node with the following columns:
 \item{I_3}{The number of infected in age category 3}
 }
 }
-\section{Beta}{
-
-The time dependent beta is divided into four intervals of the year
-\preformatted{
-where 0 <= day < 365
-
-Case 1: END_1 < END_2 < END_3 < END_4
-INTERVAL_1 INTERVAL_2     INTERVAL_3     INTERVAL_4     INTERVAL_1
-[0, END_1) [END_1, END_2) [END_2, END_3) [END_3, END_4) [END_4, 365)
-
-Case 2: END_3 < END_4 < END_1 < END_2
-INTERVAL_3 INTERVAL_4     INTERVAL_1     INTERVAL_2     INTERVAL_3
-[0, END_3) [END_3, END_4) [END_4, END_1) [END_1, END_2) [END_2, 365)
-
-Case 3: END_4 < END_1 < END_2 < END_3
-INTERVAL_4 INTERVAL_1     INTERVAL_2     INTERVAL_3     INTERVAL_4
-[0, END_4) [END_4, END_1) [END_1, END_2) [END_2, END_3) [END_3, 365)
+\seealso{
+\code{\linkS4class{SISe3}} for the class definition.
+\code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+\code{\link{SISe}} and \code{\link{SISe_sp}} for other predefined
+models.  \code{\link{mparse}} for creating custom models.
+\code{\link{run}} for running the simulation.
+\code{\link{trajectory}}, \code{\link{prevalence}} and
+\code{\link{plot,SimInf_model-method}} for post-processing and
+visualization.
 }
-}
-

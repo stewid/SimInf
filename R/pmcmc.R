@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_pmcmc"}
+##' Class \code{SimInf_pmcmc}
 ##'
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
@@ -532,8 +532,13 @@ pmcmc_proposal <- function(x, i, n_accepted, covmat) {
 
 ##' Length of the MCMC chain
 ##'
-##' @param x The \code{SimInf_pmcmc} object determine the length of
-##'     the MCMC chain for.
+##' Get the number of iterations (samples) in the Markov Chain Monte
+##' Carlo (MCMC) chain stored in a \code{SimInf_pmcmc} object.
+##'
+##' @param x A \code{SimInf_pmcmc} object containing the MCMC results.
+##' @return An integer scalar representing the number of rows in the
+##'     \code{chain} slot (i.e., the total number of samples in the
+##'     chain).
 ##' @export
 setMethod(
     "length",

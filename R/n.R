@@ -21,17 +21,34 @@
 
 ##' Determine the number of nodes in a model
 ##'
-##' @param model the \code{model} object to extract the number of
-##'     nodes from.
-##' @return the number of nodes in the model.
+##' Extract the number of nodes from a \code{SimInf_model} object.  A
+##' node represents a distinct sub-population in the model, but its
+##' definition is determined by the modeller. For example, a node can
+##' represent a cattle herd, a pen within a herd, or even a single
+##' individual, depending on the research question and the scale of
+##' the study. This count is equivalent to the number of rows in the
+##' initial state vector \code{u0}.
+##'
+##' @param model A \code{SimInf_model} object.
+##' @return An integer scalar representing the total number of nodes
+##'     in the model.
 ##' @export
 ##' @examples
-##' ## Create an 'SIR' model with 100 nodes, with 99 susceptible,
-##' ## 1 infected and 0 recovered in each node.
-##' u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
-##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##' ## Create an 'SIR' model with 100 nodes.
+##' u0 <- data.frame(
+##'   S = rep(99, 100),
+##'   I = rep(1, 100),
+##'   R = rep(0, 100)
+##' )
 ##'
-##' ## Display the number of nodes in the model.
+##' model <- SIR(
+##'   u0 = u0,
+##'   tspan = 1:10,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Get the number of nodes.
 ##' n_nodes(model)
 ## nolint start: brace_linter
 setGeneric(
@@ -77,17 +94,34 @@ setMethod(
 
 ##' Determine the number of replicates in a model
 ##'
-##' @param model the \code{model} object to extract the number of
-##'     replicates from.
-##' @return the number of replicates in the model.
+##' Extract the number of replicates from a \code{SimInf_model}
+##' object.  Replicates are independent copies of the model state used
+##' by the \strong{particle filter} (\code{\link{pfilter}}).  This
+##' value is set \strong{internally} by \code{pfilter} and is not
+##' specified when creating a standard model. If the model has not
+##' been processed by a filter, the value will be 1.
+##'
+##' @param model A \code{SimInf_model} object.
+##' @return An integer scalar representing the number of replicates
+##'     in the model.
 ##' @export
 ##' @examples
-##' ## Create an 'SIR' model with 100 nodes, with 99 susceptible,
-##' ## 1 infected and 0 recovered in each node.
-##' u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
-##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##' ## Create a standard 'SIR' model.
+##' u0 <- data.frame(
+##'   S = rep(99, 100),
+##'   I = rep(1, 100),
+##'   R = rep(0, 100)
+##' )
 ##'
-##' ## Display the number of replicates in the model.
+##' model <- SIR(
+##'   u0 = u0,
+##'   tspan = 1:10,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Get the number of replicates (default is 1 for standard
+##' ## models).
 ##' n_replicates(model)
 ## nolint start: brace_linter
 setGeneric(
@@ -111,17 +145,32 @@ setMethod(
 
 ##' Determine the number of compartments in a model
 ##'
-##' @param model the \code{model} object to extract the number of
-##'     compartments from.
-##' @return the number of compartments in the model.
+##' Extract the number of compartments from a \code{SimInf_model}
+##' object.  Compartments represent the distinct states an individual
+##' can occupy within a node (e.g., Susceptible, Infected,
+##' Recovered). This count is equivalent to the number of columns in
+##' the initial state vector \code{u0}.
+##'
+##' @param model A \code{SimInf_model} object.
+##' @return An integer scalar representing the total number of
+##'     compartments in the model.
 ##' @export
 ##' @examples
-##' ## Create an 'SIR' model with 100 nodes, with 99 susceptible,
-##' ## 1 infected and 0 recovered in each node.
-##' u0 <- data.frame(S = rep(99, 100), I = rep(1, 100), R = rep(0, 100))
-##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
+##' ## Create an 'SIR' model with 3 compartments (S, I, R).
+##' u0 <- data.frame(
+##'   S = rep(99, 100),
+##'   I = rep(1, 100),
+##'   R = rep(0, 100)
+##' )
 ##'
-##' ## Display the number of compartments in the model.
+##' model <- SIR(
+##'   u0 = u0,
+##'   tspan = 1:10,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Get the number of compartments.
 ##' n_compartments(model)
 ## nolint start: brace_linter
 setGeneric(

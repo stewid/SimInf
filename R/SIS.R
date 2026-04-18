@@ -16,30 +16,24 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SIS} model
+##' Class SIS
 ##'
-##' Class to handle the \acronym{SIS} \code{\link{SimInf_model}}.
+##' Class to handle the \acronym{SIS} model. This class inherits from
+##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIS}
+##' objects are fully compatible with all generic functions defined
+##' for \code{SimInf_model}, such as \code{\link{run}},
+##' \code{\link{plot,SimInf_model-method}}, \code{\link{trajectory}},
+##' and \code{\link{prevalence}}.
 ##'
-##' The \acronym{SIS} model contains two compartments; number of
-##' susceptible (S), and number of infectious (I).  Moreover, it has
-##' two state transitions, \deqn{S \stackrel{\beta S I /
-##' N}{\longrightarrow} I}{ S -- beta S I / N --> I} \deqn{I
-##' \stackrel{\gamma I}{\longrightarrow} S}{I -- gamma I --> S} where
-##' \eqn{\beta} is the transmission rate, \eqn{\gamma} is the recovery
-##' rate, and \eqn{N=S+I}.
+##' @template SIS-details
+##'
+##' @seealso
+##' \code{\link{SIS}} for creating an \acronym{SIS} model object,
+##' \code{\linkS4class{SimInf_model}} for the parent class definition,
+##' \code{\link{SIR}} for a model with permanent immunity, and
+##' \code{\link{SEIR}} for a model including a latent period.
 ##' @include SimInf_model.R
 ##' @export
-##' @examples
-##' ## Create an SIS model object.
-##' model <- SIS(u0 = data.frame(S = 99, I = 1),
-##'              tspan = 1:100,
-##'              beta = 0.16,
-##'              gamma = 0.077)
-##'
-##' ## Run the SIS model and plot the result.
-##' set.seed(22)
-##' result <- run(model)
-##' plot(result)
 setClass("SIS", contains = c("SimInf_model"))
 
 ##' The compartments in an SIS model
@@ -48,7 +42,7 @@ compartments_SIS <- function() {
     c("S", "I")
 }
 
-##' Select matrix for events in the \acronym{SIS} model
+##' Select matrix for events in the SIS model
 ##'
 ##' Internal function returning the 2x2 select matrix (E) that maps
 ##' SIS compartments (rows) to event types (columns) for event
@@ -64,24 +58,18 @@ select_matrix_SIS <- function() {
            dimnames = list(compartments_SIS(), seq_len(2)))
 }
 
-##' Create an \acronym{SIS} model
+##' Create an SIS model
 ##'
 ##' Create an \acronym{SIS} model to be used by the simulation
 ##' framework.
 ##'
-##' The \acronym{SIS} model contains two compartments; number of
-##' susceptible (S), and number of infectious (I).  Moreover, it has
-##' two state transitions, \deqn{S \stackrel{\beta S I /
-##' N}{\longrightarrow} I}{ S -- beta S I / N --> I} \deqn{I
-##' \stackrel{\gamma I}{\longrightarrow} S}{I -- gamma I --> S} where
-##' \eqn{\beta} is the transmission rate, \eqn{\gamma} is the recovery
-##' rate, and \eqn{N=S+I}.
-##'
+##' @template SIS-details
+##' @details
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
-##' \item{S}{The number of susceptible in each node}
-##' \item{I}{The number of infected in each node}
+##' \item{S}{The number of susceptible individuals in each node}
+##' \item{I}{The number of infected individuals in each node}
 ##' }
 ##'
 ##' @template u0-param
@@ -90,17 +78,30 @@ select_matrix_SIS <- function() {
 ##' @template beta-param
 ##' @template gamma-param
 ##' @return A \code{\link{SimInf_model}} of class \code{SIS}
+##' @seealso
+##' \code{\linkS4class{SIS}} for the class definition.
+##' \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SISe}},
+##' \code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
+##' models.  \code{\link{mparse}} for creating custom models.
+##' \code{\link{run}} for running the simulation.
+##' \code{\link{trajectory}}, \code{\link{prevalence}} and
+##' \code{\link{plot,SimInf_model-method}} for post-processing and
+##' visualization.
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
+##' ## For reproducibility, set the seed.
+##' set.seed(22)
+##'
 ##' ## Create an SIS model object.
-##' model <- SIS(u0 = data.frame(S = 99, I = 1),
-##'              tspan = 1:100,
-##'              beta = 0.16,
-##'              gamma = 0.077)
+##' model <- SIS(
+##'   u0 = data.frame(S = 99, I = 1),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Run the SIS model and plot the result.
-##' set.seed(22)
 ##' result <- run(model)
 ##' plot(result)
 SIS <- function(u0,
@@ -143,7 +144,7 @@ SIS <- function(u0,
     methods::as(model, "SIS")
 }
 
-##' Example event data for the \acronym{SIS} model with cattle herds
+##' Example event data for the SIS model with cattle herds
 ##'
 ##' Dataset containing 466,692 scheduled events for a population of
 ##' 1,600 cattle herds over 1,460 days (4 years). Demonstrates how
@@ -178,10 +179,9 @@ SIS <- function(u0,
 ##' }
 ##'
 ##' Events are distributed across all 1,600 herds over the 4-year
-##' period, reflecting realistic patterns of cattle demographic change
-##' and herd-to-herd movement. In SIS dynamics, these events can
-##' introduce disease to previously unaffected herds or remove
-##' infected cattle from the system.
+##' period. These are synthetic data generated to illustrate how to
+##' incorporate scheduled events (such as births, deaths, and
+##' movements) into a compartment model in the SimInf framework.
 ##'
 ##' @return A \code{data.frame} with columns:
 ##'   \describe{
@@ -205,46 +205,54 @@ SIS <- function(u0,
 ##' @export
 ##' @example man/examples/SIS.R
 events_SIS <- function() {
-    events_SISe()
+    utils::data("events_SISe3", package = "SimInf", envir = environment())
+    events_SISe3$select[events_SISe3$event == "exit"] <- 2L
+    events_SISe3$select[events_SISe3$event == "enter"] <- 1L
+    events_SISe3 <- events_SISe3[events_SISe3$event != "intTrans", ]
+    events_SISe3$select[events_SISe3$event == "extTrans"] <- 2L
+    events_SISe3
 }
 
-##' Example initial population data for the \acronym{SIS} model
+##' Example initial population data for the SIS model
 ##'
-##' Dataset containing the initial number of susceptible and infected
-##' cattle across 1,600 herds. Provides realistic population structure
-##' for demonstrating SIS model simulations in a cattle disease
-##' epidemiology context.
+##' Synthetic dataset containing the initial number of susceptible,
+##' and infected cattle (individuals) across 1,600 cattle
+##' herds (nodes).  Provides a heterogeneous population structure for
+##' demonstrating SIS model simulations in a compartmental modeling
+##' context.
 ##'
 ##' @details
-##' This dataset represents initial disease states in a population of
-##' 1,600 cattle herds (nodes). Each row represents a single herd
-##' (node), derived from the cattle population data by extracting
-##' susceptible and infected compartments. The SIS model is
-##' appropriate for diseases where recovered individuals do not gain
-##' immunity.
+##' This dataset represents initial disease states in a synthetic
+##' population of 1,600 cattle herds (nodes). Each row represents a
+##' single herd (node).
 ##'
 ##' The data contains:
 ##' \describe{
-##'   \item{S}{Total susceptible cattle in the herd}
-##'   \item{I}{Total infected cattle (initialized to zero)}
+##'   \item{S}{Total susceptible cattle (individuals) in the node}
+##'   \item{I}{Total infected cattle (individuals) (initialized to
+##'   zero)}
 ##' }
 ##'
-##' The herd size distribution reflects realistic heterogeneity
-##' observed in cattle populations.
+##' The herd size distribution is synthetically generated to reflect
+##' heterogeneity typical of large-scale populations, making it
+##' suitable for illustrating how to incorporate scheduled events in
+##' the SimInf framework.
 ##'
-##' @return A \code{data.frame} with 1,600 rows (one per herd) and 2 columns:
-##'   \describe{
-##'     \item{S}{Number of susceptible cattle in the herd}
-##'     \item{I}{Number of infected cattle in the herd (all zero at start)}
-##'   }
+##' @return A \code{data.frame} with 1,600 rows (one per node) and 2
+##'     columns:
+##'     \describe{
+##'       \item{S}{Number of susceptible cattle (individuals) in the
+##'       herd (node)}
+##'       \item{I}{Number of infected cattle (individuals) in the herd
+##'       (node) (all zero at start)}
+##'     }
 ##'
-##' @seealso
-##' \code{\link{SIS}} for creating SIS models with this initial state
-##' and \code{\link{events_SIS}} for associated cattle movement and
-##' demographic events
-##'
+##' @seealso \code{\link{SIS}} for creating SIS models with this
+##'     initial state and \code{\link{events_SIS}} for associated
+##'     movement and demographic events
 ##' @export
 ##' @example man/examples/SIS.R
 u0_SIS <- function() {
-    u0_SISe()
+    u0 <- u0_SIR()
+    u0[, c("S", "I")]
 }

@@ -16,10 +16,17 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_abc"}
+##' Class \code{SimInf_abc}
 ##'
-##' @slot model The \code{SimInf_model} object to estimate parameters
-##'     in.
+##' Storage class for the results of an Approximate Bayesian
+##' Computation (ABC) parameter estimation using Sequential Monte
+##' Carlo (SMC). The \code{SimInf_abc} class holds the model
+##' definition, prior distributions, accepted parameter values
+##' (particles), weights, distances, and convergence diagnostics.
+##'
+##' @slot model A \code{\linkS4class{SimInf_model}} object containing
+##'     the model structure (transitions, compartments, etc.) for
+##'     which parameters are being estimated.
 ##' @template priors-slot
 ##' @slot target Character vector (\code{gdata} or \code{ldata}) that
 ##'     determines if the ABC-SMC method estimates parameters in
@@ -128,11 +135,19 @@ as.data.frame.SimInf_abc <- function(x, ...) {
     methods::as(x, "data.frame")
 }
 
-##' Determine the number of generations
+##' Determine the number of generations in an ABC analysis
 ##'
-##' @param object the \code{SimInf_abc} object to determine the number
-##'     of generations for.
-##' @return an integer with the number of generations.
+##' Extract the number of generations performed in an Approximate
+##' Bayesian Computation (ABC) analysis from a \code{SimInf_abc}
+##' object.  Each generation represents a sequential round of the
+##' algorithm, involving the simulation of particles,
+##' acceptance/rejection based on the distance threshold, and
+##' parameter perturbation for the next round.
+##'
+##' @param object A \code{SimInf_abc} object containing the results of
+##'     an ABC analysis.
+##' @return An integer scalar representing the total number of
+##'     generations executed in the analysis.
 ##' @export
 ## nolint start: brace_linter
 setGeneric(

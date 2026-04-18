@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIS.R
 \name{SIS}
 \alias{SIS}
-\title{Create an \acronym{SIS} model}
+\title{Create an SIS model}
 \usage{
 SIS(u0, tspan, events = NULL, beta = NULL, gamma = NULL)
 }
@@ -16,26 +16,31 @@ coerced to a one row \code{data.frame}.}
 
 \item{tspan}{A vector (length >= 1) of increasing time points
 where the state of each node is to be returned. Can be either
-an \code{integer} or a \code{Date} vector. A \code{Date}
-vector is coerced to a numeric vector as days, where
-\code{tspan[1]} becomes the day of the year of the first year
-of \code{tspan}. The dates are added as names to the numeric
-vector.}
+an \code{integer} or a \code{Date} vector.
+\itemize{
+  \item If \code{integer}: Represents the specific time points
+    (e.g., days, hours) at which to record the state.
+  \item If \code{Date}: Coerced to a numeric vector
+    representing the \strong{day of the year} (1–366) relative
+    to the first date in the vector. The original \code{Date}
+    objects are preserved as names for the numeric vector,
+    facilitating time-series plotting.
+}}
 
 \item{events}{a \code{data.frame} with the scheduled events, see
 \code{\link{SimInf_model}}.}
 
 \item{beta}{A numeric vector with the transmission rate from
-susceptible to infected where each node can have a different
-beta value. The vector must have length 1 or \code{nrow(u0)}.
-If the vector has length 1, but the model contains more nodes,
-the beta value is repeated in all nodes.}
+susceptible to infected. Each node can have a different beta
+value.  The vector must have length 1 or \code{nrow(u0)}. If
+the vector has length 1 but the model contains more nodes, the
+beta value is repeated for all nodes.}
 
 \item{gamma}{A numeric vector with the recovery rate from infected
-to recovered where each node can have a different gamma
-value. The vector must have length 1 or \code{nrow(u0)}. If
-the vector has length 1, but the model contains more nodes,
-the beta value is repeated in all nodes.}
+to recovered. Each node can have a different gamma value.  The
+vector must have length 1 or \code{nrow(u0)}. If the vector
+has length 1 but the model contains more nodes, the gamma
+value is repeated for all nodes.}
 }
 \value{
 A \code{\link{SimInf_model}} of class \code{SIS}
@@ -45,30 +50,53 @@ Create an \acronym{SIS} model to be used by the simulation
 framework.
 }
 \details{
-The \acronym{SIS} model contains two compartments; number of
-susceptible (S), and number of infectious (I).  Moreover, it has
-two state transitions, \deqn{S \stackrel{\beta S I /
-N}{\longrightarrow} I}{ S -- beta S I / N --> I} \deqn{I
-\stackrel{\gamma I}{\longrightarrow} S}{I -- gamma I --> S} where
-\eqn{\beta} is the transmission rate, \eqn{\gamma} is the recovery
-rate, and \eqn{N=S+I}.
+The \acronym{SIS} model is a compartmental model for infectious
+diseases where individuals do not gain permanent immunity after
+recovery. Instead, they return to the susceptible state.  It
+divides the population into two states: \strong{S}usceptible and
+\strong{I}nfected.
+
+The model is defined by two state transitions:
+\deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{S --> beta S
+  I / N --> I}
+\deqn{I \stackrel{\gamma I}{\longrightarrow} S}{I --> gamma I -->
+S}
+
+where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
+recovery rate, and \eqn{N = S + I} is the total population size in
+each node. Here, \eqn{S} and \eqn{I} represent the number of
+susceptible and infected individuals in that specific node.
 
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
-\item{S}{The number of susceptible in each node}
-\item{I}{The number of infected in each node}
+\item{S}{The number of susceptible individuals in each node}
+\item{I}{The number of infected individuals in each node}
 }
 }
 \examples{
+## For reproducibility, set the seed.
+set.seed(22)
+
 ## Create an SIS model object.
-model <- SIS(u0 = data.frame(S = 99, I = 1),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+model <- SIS(
+  u0 = data.frame(S = 99, I = 1),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
 
 ## Run the SIS model and plot the result.
-set.seed(22)
 result <- run(model)
 plot(result)
+}
+\seealso{
+\code{\linkS4class{SIS}} for the class definition.
+\code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SISe}},
+\code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
+models.  \code{\link{mparse}} for creating custom models.
+\code{\link{run}} for running the simulation.
+\code{\link{trajectory}}, \code{\link{prevalence}} and
+\code{\link{plot,SimInf_model-method}} for post-processing and
+visualization.
 }

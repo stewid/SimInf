@@ -19,9 +19,21 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Definition of the \acronym{SISe3} model
+##' Class SISe3
 ##'
-##' Class to handle the SISe3 \code{\link{SimInf_model}} model.
+##' Class to handle the \acronym{SISe3} model. This class inherits
+##' from \code{\linkS4class{SimInf_model}}, meaning that
+##' \acronym{SISe3} objects are fully compatible with all generic
+##' functions defined for \code{SimInf_model}, such as
+##' \code{\link{run}}, \code{\link{plot,SimInf_model-method}},
+##' \code{\link{trajectory}}, and \code{\link{prevalence}}.
+##'
+##' @template SISe3-details
+##'
+##' @seealso
+##' \code{\link{SISe3}} for creating an \acronym{SISe3} model object
+##' and \code{\linkS4class{SimInf_model}} for the parent class
+##' definition.
 ##' @include SimInf_model.R
 ##' @export
 setClass("SISe3", contains = c("SimInf_model"))
@@ -32,7 +44,7 @@ compartments_SISe3 <- function() {
     c("S_1", "I_1", "S_2", "I_2", "S_3", "I_3")
 }
 
-##' Select matrix for events in the \acronym{SISe3} model
+##' Select matrix for events in the SISe3 model
 ##'
 ##' Internal function returning the 6x6 select matrix (E) that maps
 ##' SISe3 compartments (rows) to event types (columns) for event
@@ -51,57 +63,11 @@ select_matrix_SISe3 <- function() {
 
 ##' Create a \code{SISe3} model
 ##'
-##' Create a \code{SISe3} model to be used by the simulation
+##' Create a \acronym{SISe3} model to be used by the simulation
 ##' framework.
 ##'
-##' The \code{SISe3} model contains two compartments in three age
-##' categories; number of susceptible (S_1, S_2, S_3) and number of
-##' infectious (I_1, I_2, I_3). Additionally, it contains an
-##' environmental compartment to model shedding of a pathogen to the
-##' environment. Consequently, the model has six state transitions,
-##'
-##' \deqn{S_1 \stackrel{\upsilon_1 \varphi S_1}{\longrightarrow} I_1}{
-##' S_1 -- upsilon_1 phi S_1 --> I_1}
-##'
-##' \deqn{I_1 \stackrel{\gamma_1 I_1}{\longrightarrow} S_1}{
-##' I_1 -- gamma_1 I_1 --> S_1}
-##'
-##' \deqn{S_2 \stackrel{\upsilon_2 \varphi S_2}{\longrightarrow} I_2}{
-##' S_2 -- upsilon_2 phi S_2 --> I_2}
-##'
-##' \deqn{I_2 \stackrel{\gamma_2 I_2}{\longrightarrow} S_2}{
-##' I_2 -- gamma_2 I_2 --> S_2}
-##'
-##' \deqn{S_3 \stackrel{\upsilon_3 \varphi S_3}{\longrightarrow} I_3}{
-##' S_3 -- upsilon_3 phi S_3 --> I_3}
-##'
-##' \deqn{I_3 \stackrel{\gamma_3 I_3}{\longrightarrow} S_3}{
-##' I_3 -- gamma_3 I_3 --> S_3}
-##'
-##' where the transition rate per unit of time from susceptible to
-##' infected is proportional to the concentration of the environmental
-##' contamination \eqn{\varphi}{phi} in each node. Moreover, the
-##' transition rate from infected to susceptible is the recovery rate
-##' \eqn{\gamma_1, \gamma_2, \gamma_3}, measured per individual and
-##' per unit of time. Finally, the environmental infectious pressure
-##' in each node is evolved by,
-##'
-##' \deqn{\frac{d\varphi(t)}{dt} = \frac{\alpha \left(I_1(t) + I_2(t)
-##' + I_3(t)\right)}{N(t)} - \beta(t) \varphi(t) + \epsilon}{
-##' dphi(t) / dt = alpha (I_1(t) + I_2(t) + I_3(t)) / N(t)
-##' - beta(t) phi(t) + epsilon}
-##'
-##' where \eqn{\alpha} is the average shedding rate of the pathogen to
-##' the environment per infected individual and \eqn{N = S_1 + S_2 +
-##' S_3 + I_1 + I_2 + I_3} the size of the node. The seasonal decay
-##' and removal of the pathogen is captured by \eqn{\beta(t)}. It is
-##' also possible to include a small background infectious pressure
-##' \eqn{\epsilon} to allow for other indirect sources of
-##' environmental contamination. The environmental infectious pressure
-##' \eqn{\varphi(t)}{phi(t)} in each node is evolved each time unit by
-##' the Euler forward method. The value of \eqn{\varphi(t)}{phi(t)} is
-##' saved at the time-points specified in \code{tspan}.
-##'
+##' @template SISe3-details
+##' @details
 ##' The argument \code{u0} must be a \code{data.frame} with one row for
 ##' each node with the following columns:
 ##' \describe{
@@ -113,7 +79,6 @@ select_matrix_SISe3 <- function() {
 ##' \item{I_3}{The number of infected in age category 3}
 ##' }
 ##'
-##' @template beta-section
 ##' @template u0-param
 ##' @template tspan-param
 ##' @template events-param
@@ -130,10 +95,19 @@ select_matrix_SISe3 <- function() {
 ##' age category 2
 ##' @param gamma_3 The recovery rate from infected to susceptible for
 ##' age category 3
-##' @param alpha Shed rate from infected individuals
+##' @template alpha-param
 ##' @template beta-end-param
 ##' @param epsilon The background environmental infectious pressure
 ##' @return \code{SISe3}
+##' @seealso
+##' \code{\linkS4class{SISe3}} for the class definition.
+##' \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+##' \code{\link{SISe}} and \code{\link{SISe_sp}} for other predefined
+##' models.  \code{\link{mparse}} for creating custom models.
+##' \code{\link{run}} for running the simulation.
+##' \code{\link{trajectory}}, \code{\link{prevalence}} and
+##' \code{\link{plot,SimInf_model-method}} for post-processing and
+##' visualization.
 ##' @include check_arguments.R
 ##' @export
 SISe3 <- function(u0,
@@ -231,7 +205,7 @@ SISe3 <- function(u0,
     methods::as(model, "SISe3")
 }
 
-##' Example event data for the \acronym{SISe3} model with cattle herds
+##' Example event data for the SISe3 model with cattle herds
 ##'
 ##' Dataset containing 783,773 scheduled events for a population of
 ##' 1,600 cattle herds stratified by age over 1,460 days (4
@@ -279,11 +253,12 @@ SISe3 <- function(u0,
 ##' (e.g., moving from age 1 to age 2).
 ##'
 ##' Events are distributed across all 1,600 herds over the 4-year
-##' period, reflecting realistic patterns of cattle demographic
-##' change, herd-to-herd movement, and age progression in a livestock
-##' production system. The higher event count compared to
+##' period. These are synthetic data generated to illustrate how to
+##' incorporate scheduled events (including births, deaths, movements,
+##' and age transitions) into an age-structured compartment model in
+##' the SimInf framework. The higher event count compared to
 ##' non-age-structured models reflects the addition of internal
-##' transfer events for age category transitions.
+##' transfer events required for age category transitions.
 ##'
 ##' The data contains:
 ##' \describe{
@@ -313,13 +288,13 @@ SISe3 <- function(u0,
 ##' @example man/examples/SISe3.R
 NULL
 
-##' Example initial population data for the \acronym{SISe3} model
+##' Example initial population data for the SISe3 model
 ##'
 ##' Dataset containing the initial number of susceptible and infected
-##' cattle across three age categories in 1,600 herds. Provides
-##' realistic population structure for demonstrating SISe3 model
-##' simulations in a cattle disease epidemiology context with age
-##' structure.
+##' cattle (individuals) across three age categories in 1,600 herds
+##' (nodes). Provides a heterogeneous population structure for
+##' demonstrating SISe3 model simulations in a compartmental modeling
+##' context.
 ##'
 ##' @details
 ##' This dataset represents initial disease states in a population of

@@ -2,7 +2,7 @@
 % Please edit documentation in R/SIR.R
 \name{SIR}
 \alias{SIR}
-\title{Create an \acronym{SIR} model}
+\title{Create an SIR model}
 \usage{
 SIR(u0, tspan, events = NULL, beta = NULL, gamma = NULL)
 }
@@ -16,26 +16,31 @@ coerced to a one row \code{data.frame}.}
 
 \item{tspan}{A vector (length >= 1) of increasing time points
 where the state of each node is to be returned. Can be either
-an \code{integer} or a \code{Date} vector. A \code{Date}
-vector is coerced to a numeric vector as days, where
-\code{tspan[1]} becomes the day of the year of the first year
-of \code{tspan}. The dates are added as names to the numeric
-vector.}
+an \code{integer} or a \code{Date} vector.
+\itemize{
+  \item If \code{integer}: Represents the specific time points
+    (e.g., days, hours) at which to record the state.
+  \item If \code{Date}: Coerced to a numeric vector
+    representing the \strong{day of the year} (1–366) relative
+    to the first date in the vector. The original \code{Date}
+    objects are preserved as names for the numeric vector,
+    facilitating time-series plotting.
+}}
 
 \item{events}{a \code{data.frame} with the scheduled events, see
 \code{\link{SimInf_model}}.}
 
 \item{beta}{A numeric vector with the transmission rate from
-susceptible to infected where each node can have a different
-beta value. The vector must have length 1 or \code{nrow(u0)}.
-If the vector has length 1, but the model contains more nodes,
-the beta value is repeated in all nodes.}
+susceptible to infected. Each node can have a different beta
+value.  The vector must have length 1 or \code{nrow(u0)}. If
+the vector has length 1 but the model contains more nodes, the
+beta value is repeated for all nodes.}
 
 \item{gamma}{A numeric vector with the recovery rate from infected
-to recovered where each node can have a different gamma
-value. The vector must have length 1 or \code{nrow(u0)}. If
-the vector has length 1, but the model contains more nodes,
-the beta value is repeated in all nodes.}
+to recovered. Each node can have a different gamma value.  The
+vector must have length 1 or \code{nrow(u0)}. If the vector
+has length 1 but the model contains more nodes, the gamma
+value is repeated for all nodes.}
 }
 \value{
 A \code{\link{SimInf_model}} of class \code{SIR}
@@ -45,32 +50,54 @@ Create an \acronym{SIR} model to be used by the simulation
 framework.
 }
 \details{
-The \acronym{SIR} model contains three compartments; number of
-susceptible (S), number of infectious (I), and number of
-recovered (R).  Moreover, it has two state transitions,
+The \acronym{SIR} model is a compartmental model for infectious
+diseases that divides the population into three states:
+\strong{S}usceptible, \strong{I}nfected, and \strong{R}ecovered.
+It assumes that individuals gain permanent immunity after
+recovery.
+
+The model is defined by two state transitions:
 \deqn{S \stackrel{\beta S I / N}{\longrightarrow} I}{
   S -- beta S I / N --> I}
 \deqn{I \stackrel{\gamma I}{\longrightarrow} R}{I -- gamma I --> R}
+
 where \eqn{\beta} is the transmission rate, \eqn{\gamma} is the
-recovery rate, and \eqn{N = S + I + R} is the total population.
+recovery rate, and \eqn{N = S + I + R} is the total population
+size in each node. Here, \eqn{S}, \eqn{I}, and \eqn{R} represent
+the number of susceptible, infected, and recovered individuals in
+that specific node.
 
 The argument \code{u0} must be a \code{data.frame} with one row for
 each node with the following columns:
 \describe{
-\item{S}{The number of susceptible in each node}
-\item{I}{The number of infected in each node}
-\item{R}{The number of recovered in each node}
+\item{S}{The number of susceptible individuals in each node}
+\item{I}{The number of infected individuals in each node}
+\item{R}{The number of recovered individuals in each node}
 }
 }
 \examples{
+## For reproducibility, set the seed.
+set.seed(22)
+
 ## Create an SIR model object.
-model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+model <- SIR(
+  u0 = data.frame(S = 99, I = 1, R = 0),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
 
 ## Run the SIR model and plot the result.
-set.seed(22)
 result <- run(model)
 plot(result)
+}
+\seealso{
+\code{\linkS4class{SIR}} for the class definition.
+\code{\link{SEIR}}, \code{\link{SIS}}, \code{\link{SISe}},
+\code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
+models.  \code{\link{mparse}} for creating custom models.
+\code{\link{run}} for running the simulation.
+\code{\link{trajectory}}, \code{\link{prevalence}} and
+\code{\link{plot,SimInf_model-method}} for post-processing and
+visualization.
 }
