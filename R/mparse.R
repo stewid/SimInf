@@ -667,56 +667,59 @@ check_model_names <- function(compartments,
     invisible(NULL)
 }
 
-##' Model parser to define new models to run in \code{SimInf}
+##' Model parser to define new models for \code{SimInf}
 ##'
-##' Describe your model in a logical way in R. \code{mparse} creates a
-##' \code{\linkS4class{SimInf_model}} object with your model
-##' definition that is ready to \code{\link{run}}.
-##' @param transitions character vector containing transitions on the
-##'     form \code{"X -> ... -> Y"}. The left (right) side is the
-##'     initial (final) state and the propensity is written in between
-##'     the \code{->}-signs. The special symbol \code{@} is reserved
-##'     for the empty set. For example, \code{transitions =
-##'     c("S -> beta*S*I/(S+I+R) -> I", "I -> gamma*I -> R")}
-##'     expresses the SIR model. It is also possible to define
-##'     variables which can then be used in calculations of
-##'     propensities or in calculations of other variables. A variable
-##'     is defined by the operator \code{<-}. Using a variable for the
-##'     size of the population, the SIR model can instead be written
-##'     \code{transitions = c("S -> beta*S*I/N -> I",
-##'     "I -> gamma*I -> R", "N <- S+I+R")}. By default, the type of a
-##'     variable is defined as a double in the generated C code, but
-##'     it is possible to also define it as an integer by writing
-##'     \code{(int)} before the variable name. For example, for the
-##'     SIR model, the population size can be defined as
-##'     \code{"(int)N <- S+I+R"}. It is also possible to explicitly
-##'     use (double) in front of the variable name, but it is not
-##'     needed because it is the default. Note that the order of
-##'     propensities and variables does not matter.
-##' @param compartments contains the names of the involved
-##'     compartments, for example, \code{compartments = c("S", "I",
-##'     "R")}.
-##' @param ldata optional data for the nodes. Can be specified as a
-##'     \code{data.frame} with one row per node, as a numeric matrix
-##'     where column \code{ldata[, j]} contains the local data vector
-##'     for the node \code{j}, or as a named vector when the model
-##'     only contains one node. If \code{ldata} is specified as a
-##'     \code{data.frame}, each column is one parameter. If
-##'     \code{ldata} is specified as a matrix, it must have row names
-##'     to identify the parameters in the transitions. If \code{ldata}
-##'     is specified as a named vector, the names identify the
-##'     parameters.
-##' @param gdata optional data that are common to all nodes in the
-##'     model. Can be specified either as an optionally named numeric
-##'     vector or as a one-row data.frame. The names are used to
-##'     identify the parameters in the transitions. When \code{gdata}
-##'     is specified as a vector, it is possible to have parameters
-##'     without names, however, these parameters will not be
-##'     automatically identified by mparse but need to be identified
-##'     in the code by the user. The global data vector is passed as
-##'     an argument to the transition rate functions and the post time
-##'     step function.
-##' @template u0-param
+##' Describe your model using a simple string syntax in
+##' R. \code{mparse} parses this description, generates model-specific
+##' C code, and returns a \code{\linkS4class{SimInf_model}} object
+##' ready for simulation.
+##'
+##' @param transitions Character vector defining the state
+##'     transitions.  Each element follows the format
+##'     \code{"Source -> Propensity -> Target"}.
+##'     \itemize{
+##'       \item \strong{Syntax}: \code{"X -> rate_expr -> Y"} moves
+##'         individuals from compartment \code{X} to \code{Y} with
+##'         rate \code{rate_expr}.
+##'       \item \strong{Empty Set}: Use \code{@} for the empty set
+##'         (e.g., \code{"I -> mu*I -> @"} for death, or
+##'         \code{"@ -> lambda -> S"} for birth).
+##'       \item \strong{Variables}: Define intermediate variables
+##'         using \code{<-}.  Example:
+##'         \code{"N <- S + I + R"}. Variables can be used in
+##'         propensity expressions. Order does not matter.
+##'       \item \strong{Types}: By default, variables are
+##'         \code{double}.  Use \code{(int)} to force integer type
+##'         (e.g., \code{"(int)N <- S+I+R"}).
+##'     }
+##'     Example: \code{c("S -> beta*S*I/N -> I", "I -> gamma*I -> R",
+##'     "N <- S+I+R")}.
+##'
+##' @param compartments Character vector of compartment names (e.g.,
+##'     \code{c("S", "I", "R")}).
+##'
+##' @param ldata Optional local data (node-specific parameters). Can
+##'     be:
+##'     \itemize{
+##'       \item A \code{data.frame} with one row per node (columns =
+##'       parameters).
+##'       \item A numeric matrix where columns are nodes and row names
+##'       are parameters.
+##'       \item A named vector (for single-node models).
+##'     }
+##'
+##' @param gdata Optional global data (common to all nodes). Can be:
+##'     \itemize{
+##'       \item A named numeric vector (names identify parameters).
+##'       \item A one-row \code{data.frame}.
+##'     }
+##'     Unnamed parameters in a vector must be referenced by index in
+##'     the transitions.
+##'
+##' @param u0 Initial state vector. Can be a \code{data.frame},
+##'     matrix, or named vector.  See
+##'     \code{\linkS4class{SimInf_model}} for details.
+##'
 ##' @param v0 optional data with the initial continuous state in each
 ##'     node. \code{v0} can be specified as a \code{data.frame} with
 ##'     one row per node, as a numeric matrix where column \code{v0[,
@@ -729,77 +732,86 @@ check_model_names <- function(compartments,
 ##'     \sQuote{v} vector is passed as an argument to the transition
 ##'     rate functions and the post time step function. The continuous
 ##'     state can be updated in the post time step function.
+##'
 ##' @template tspan-param
+##'
 ##' @param events A \code{data.frame} with the scheduled
 ##'     events. Default is \code{NULL} i.e. no scheduled events in the
 ##'     model.
-##' @param E A matrix to handle scheduled events, see
-##'     \code{\linkS4class{SimInf_events}} and
-##'     \code{\linkS4class{SimInf_model}} for how \code{E} can be
-##'     specified. Each row in the matrix corresponds to one
-##'     compartment in the model. The non-zero entries in a column
-##'     indicate the compartments to include in an event. For the
-##'     \emph{exit}, \emph{internal transfer} and \emph{external
-##'     transfer} events, the values in \code{E[, select]} are used as
-##'     weights when sampling individuals without replacement, with
-##'     probability proportional to the weight. For the \emph{enter}
-##'     event, the values in \code{E[, select]} are used as weights
-##'     when determining which compartment to add individuals to. If
-##'     the column \code{E[, select]} contains several non-zero
-##'     entries, the compartment is sampled with probability
-##'     proportional to the weight in \code{E[, select]}. The select
-##'     matrix \code{E} can either be specified as a \code{matrix}, or
-##'     as a \code{data.frame}.  When \code{E} is specified as a
-##'     \code{data.frame}, it must have one column named
-##'     \code{compartment} that defines which compartment is referred
-##'     to, and one column \code{select} that defines the column in
-##'     \code{E}.  In addition, the \code{data.frame} can contain an
-##'     optional column named \code{value} with the value in \code{E}.
-##'     When the \code{value} column is missing, \code{1} is used as
-##'     the default value. Default is \code{NULL} i.e. no scheduled
-##'     events in the model.
-##' @param N A matrix to handle scheduled events, see
-##'     \code{\linkS4class{SimInf_events}}. Each row in the matrix
-##'     corresponds to one compartment in the model. The values in a
-##'     column define how to move sampled individuals before adding
-##'     them to the destination. Let \code{q <- shift}, then each
-##'     non-zero entry in \code{N[, q]} defines the number of rows to
-##'     move sampled individuals from that compartment i.e., sampled
-##'     individuals from compartment \code{p} are moved to compartment
-##'     \code{N[p, q] + p}, where \code{1 <= N[p, q] + p <=
-##'     N_compartments}. This matrix is used for \emph{enter},
-##'     \emph{internal transfer} and \emph{external transfer} events.
-##'     The shift matrix \code{N} can either be specified as a
-##'     \code{matrix}, or as a \code{data.frame}.  When \code{N} is
-##'     specified as a \code{data.frame}, it must have one column
-##'     named \code{compartment} that defines which compartment is
-##'     referred to, and one column \code{shift} that defines the
-##'     column in \code{N}.  In addition, the \code{data.frame} must
-##'     contain a column named \code{value} with the integer value in
-##'     \code{N}. Default is \code{NULL} i.e. no scheduled events in
-##'     the model.
-##' @param pts_fun optional character vector with C code for the post
-##'     time step function. The C code should contain only the body of
-##'     the function i.e. the code between the opening and closing
-##'     curly brackets.
+##'
+##' @param E Optional select matrix for events. Can be a \code{matrix}
+##'     or \code{data.frame}.  Defines which compartments are affected
+##'     by events and their sampling weights.  See
+##'     \code{\linkS4class{SimInf_events}} for detailed logic on
+##'     \code{data.frame} columns (\code{compartment}, \code{select},
+##'     \code{value}).  Default is \code{NULL} (no events).
+##'
+##' @param N Optional shift matrix for events. Can be a \code{matrix}
+##'     or \code{data.frame}.  Defines how individuals are moved
+##'     between compartments during events.  See
+##'     \code{\linkS4class{SimInf_events}} for detailed logic on
+##'     \code{data.frame} columns (\code{compartment}, \code{shift},
+##'     \code{value}).  Default is \code{NULL} (no events).
+##'
+##' @param pts_fun Optional character vector with C code for the
+##'     post-time-step function.  Should contain only the function
+##'     body (code between curly brackets).
+##'
 ##' @param raster FIXME.
-##' @param use_enum generate enumeration constants for the indices to
-##'     each parameter in the 'u', 'v', 'ldata', and 'gdata' vectors
-##'     in the generated C code. The name of each enumeration constant
-##'     will be transformed to the upper-case name of the
-##'     corresponding parameter, for example, a parameter 'beta' will
-##'     become 'BETA'. The enumeration constants 'N_COMPARTMENTS_U'
-##'     and 'N_COMPARTMENTS_V' will be automatically added to
-##'     facilitate indexing 'u' and 'v' in the C code. These two
-##'     enumeration constants cannot be used as a compartment or
-##'     variable name. Using enumeration constants can make it easier
-##'     to modify the C code afterwards, or when writing C code for
-##'     the \code{pts_fun} parameter. Default is \code{FALSE}, i.e.,
-##'     the parameters are specified by using integer indices for the
-##'     parameters.
+##'
+##' @param use_enum Logical. If \code{TRUE}, generates C enumeration
+##'     constants for parameters found in the \code{u}, \code{v},
+##'     \code{gdata}, and \code{ldata} vectors to facilitate manual C
+##'     code modification or use in \code{pts_fun}.  The name of each
+##'     enumeration constant is the upper-case version of the
+##'     corresponding parameter name (e.g., \code{beta} becomes
+##'     \code{BETA}).  Additionally, the following constants are
+##'     automatically generated:
+##'     \itemize{
+##'       \item \code{N_COMPARTMENTS_U}: The number of discrete
+##'       compartments.
+##'       \item \code{N_COMPARTMENTS_V}: The number of continuous
+##'       state variables.
+##'     }
+##'     These constants facilitate indexing of the \code{u} and
+##'     \code{v} vectors in C code.  Note that \code{N_COMPARTMENTS_U}
+##'     and \code{N_COMPARTMENTS_V} cannot be used as compartment or
+##'     variable names. Default is \code{FALSE} (parameters accessed
+##'     by integer indices).
+##'
 ##' @return a \code{\linkS4class{SimInf_model}} object
+##'
+##' @seealso
+##'   \code{\link{SimInf_model}} for the class definition of the
+##'   returned model object.  \code{\link{SIR}}, \code{\link{SEIR}},
+##'   \code{\link{SIS}}, \code{\link{SISe}} for high-level model
+##'   constructors that use predefined structures.  Vignette
+##'   \code{"Getting started with mparse"} for a comprehensive
+##'   tutorial on defining custom models, including syntax, variables,
+##'   and event handling.  \code{\link{package_skeleton}} for creating
+##'   an installable R package from a \code{mparse} model.
+##'
 ##' @export
-##' @template mparse-example
+##' @examples
+##' ## For reproducibility, set the seed.
+##' set.seed(22)
+##'
+##' ## Create an SIR model with a defined population size variable.
+##' model <- mparse(
+##'   transitions = c(
+##'     "S -> beta * S * I / N -> I",
+##'     "I -> gamma * I -> R",
+##'     "N <- S + I + R"
+##'   ),
+##'   compartments = c("S", "I", "R"),
+##'   gdata = c(beta = 0.16, gamma = 0.077),
+##'   u0 = data.frame(S = 100, I = 1, R = 0),
+##'   tspan = 1:100
+##' )
+##'
+##' ## Run and plot the result.
+##' result <- run(model)
+##' plot(result)
 mparse <- function(transitions = NULL,
                    compartments = NULL,
                    ldata = NULL,
