@@ -21,10 +21,8 @@
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
 ##' @template priors-slot
-##' @slot target Character vector (\code{gdata} or \code{ldata}) that
-##'     determines if the \code{pmcmc} method estimates parameters in
-##'     \code{model@@gdata} or in \code{model@@ldata}.
-##' @slot pars Index to the parameters in \code{target}.
+##' @template target-slot
+##' @template pars-slot
 ##' @slot n_particles An integer with the number of particles (> 1) to
 ##'     use in the bootstrap particle filter.
 ##' @slot data A \code{data.frame} holding the time series data for

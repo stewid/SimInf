@@ -39,11 +39,13 @@ for the parameters. It contains four columns:
     }
 }}
 
-\item{\code{target}}{Character vector (\code{gdata} or \code{ldata}) that
-determines if the \code{pmcmc} method estimates parameters in
-\code{model@gdata} or in \code{model@ldata}.}
+\item{\code{target}}{Character vector (\code{"gdata"} or \code{"ldata"})
+that determines if the ABC-SMC method estimates parameters in
+\code{model@gdata} (global data) or in \code{model@ldata}
+(local data).}
 
-\item{\code{pars}}{Index to the parameters in \code{target}.}
+\item{\code{pars}}{An integer vector with the indices of the parameters in
+\code{target} that are being estimated.}
 
 \item{\code{n_particles}}{An integer with the number of particles (> 1) to
 use in the bootstrap particle filter.}

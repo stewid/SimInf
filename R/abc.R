@@ -28,12 +28,8 @@
 ##'     the model structure (transitions, compartments, etc.) for
 ##'     which parameters are being estimated.
 ##' @template priors-slot
-##' @slot target Character vector (\code{"gdata"} or \code{"ldata"})
-##'     that determines if the ABC-SMC method estimates parameters in
-##'     \code{model@@gdata} (global data) or in \code{model@@ldata}
-##'     (local data).
-##' @slot pars An integer vector with the indices of the parameters in
-##'     \code{target} that are being estimated.
+##' @template target-slot
+##' @template pars-slot
 ##' @slot nprop An integer vector with the number of simulated
 ##'     proposals (particles) generated in each generation.
 ##' @slot fn A function used to calculate summary statistics from the
