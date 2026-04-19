@@ -618,6 +618,9 @@ The `SimInf` package is licensed under the
 - [`u0_SISe3`](http://stewid.github.io/SimInf/reference/u0_SISe3.md) :
   Example initial population data for the SISe3 model
 
+- [`u0_from_individual_events()`](http://stewid.github.io/SimInf/reference/u0_from_individual_events.md)
+  : Derive the initial compartment state from individual events
+
 - [`` `v0<-`() ``](http://stewid.github.io/SimInf/reference/v0-set.md) :
 
   Update the initial continuous state (`v0`) in each node
