@@ -71,7 +71,7 @@
 - [`SimInf_individual_events-class`](http://stewid.github.io/SimInf/reference/SimInf_individual_events-class.md)
   :
 
-  Class `"SimInf_individual_events"`
+  Class `SimInf_individual_events`
 
 - [`SimInf_model-class`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
   :
