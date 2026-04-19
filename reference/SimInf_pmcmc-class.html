@@ -76,13 +76,15 @@ for the parameters. It contains four columns:</p><ul><li><p><code>parameter</cod
 
 
 <dt><code>target</code></dt>
-<dd><p>Character vector (<code>gdata</code> or <code>ldata</code>) that
-determines if the <code>pmcmc</code> method estimates parameters in
-<code>model@gdata</code> or in <code>model@ldata</code>.</p></dd>
+<dd><p>Character vector (<code>"gdata"</code> or <code>"ldata"</code>)
+that determines if the ABC-SMC method estimates parameters in
+<code>model@gdata</code> (global data) or in <code>model@ldata</code>
+(local data).</p></dd>
 
 
 <dt><code>pars</code></dt>
-<dd><p>Index to the parameters in <code>target</code>.</p></dd>
+<dd><p>An integer vector with the indices of the parameters in
+<code>target</code> that are being estimated.</p></dd>
 
 
 <dt><code>n_particles</code></dt>

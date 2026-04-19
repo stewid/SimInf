@@ -40,12 +40,14 @@ Class `SimInf_pmcmc`
 
 - `target`:
 
-  Character vector (`gdata` or `ldata`) that determines if the `pmcmc`
-  method estimates parameters in `model@gdata` or in `model@ldata`.
+  Character vector (`"gdata"` or `"ldata"`) that determines if the
+  ABC-SMC method estimates parameters in `model@gdata` (global data) or
+  in `model@ldata` (local data).
 
 - `pars`:
 
-  Index to the parameters in `target`.
+  An integer vector with the indices of the parameters in `target` that
+  are being estimated.
 
 - `n_particles`:
 
