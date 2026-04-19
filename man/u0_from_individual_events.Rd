@@ -3,11 +3,14 @@
 \name{u0_from_individual_events}
 \alias{u0_from_individual_events}
 \alias{u0_from_individual_events,SimInf_individual_events-method}
+\alias{u0_from_individual_events,data.frame-method}
 \title{Derive the initial compartment state from individual events}
 \usage{
 u0_from_individual_events(events, time = NULL, target = NULL, age = NULL)
 
 \S4method{u0_from_individual_events}{SimInf_individual_events}(events, time = NULL, target = NULL, age = NULL)
+
+\S4method{u0_from_individual_events}{data.frame}(events, time = NULL, target = NULL, age = NULL)
 }
 \arguments{
 \item{events}{A \code{SimInf_individual_events} object containing
@@ -61,12 +64,23 @@ A \code{data.frame} with one row per node and columns
 }
 \description{
 Compute the initial number of individuals in each compartment for
-each node based on a set of cleaned individual events processed by
-\code{\link{individual_events}}. The function sums the net effect
-of all events occurring before a specified \code{time} point to
-determine the starting state of the simulation.
+each node based on a set of individual events. The function sums
+the net effect of all events occurring before a specified
+\code{time} point to determine the starting state of the
+simulation.
 }
 \details{
+This function accepts two types of input for the \code{events}
+argument:
+\itemize{
+  \item A \code{SimInf_individual_events} object (already cleaned
+    by \code{\link{individual_events}}).
+  \item A raw \code{data.frame} of events. If a data frame is
+    provided, it is automatically cleaned and processed using
+    \code{\link{individual_events}} before the initial state is
+    calculated.
+}
+
 This is particularly useful for initializing models from
 historical movement or demographic data, ensuring the simulation
 starts with the correct population structure derived from the

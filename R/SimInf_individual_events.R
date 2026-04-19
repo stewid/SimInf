@@ -725,16 +725,39 @@ setMethod(
 ##' Derive the initial compartment state from individual events
 ##'
 ##' Compute the initial number of individuals in each compartment for
-##' each node based on a set of cleaned individual events processed by
-##' \code{\link{individual_events}}. The function sums the net effect
-##' of all events occurring before a specified \code{time} point to
-##' determine the starting state of the simulation.
+##' each node based on a set of individual events. The function sums
+##' the net effect of all events occurring before a specified
+##' \code{time} point to determine the starting state of the
+##' simulation.
+##'
+##' This function accepts two types of input for the \code{events}
+##' argument:
+##' \itemize{
+##'   \item A \code{SimInf_individual_events} object (already cleaned
+##'     by \code{\link{individual_events}}).
+##'   \item A raw \code{data.frame} of events. If a data frame is
+##'     provided, it is automatically cleaned and processed using
+##'     \code{\link{individual_events}} before the initial state is
+##'     calculated.
+##' }
 ##'
 ##' This is particularly useful for initializing models from
 ##' historical movement or demographic data, ensuring the simulation
 ##' starts with the correct population structure derived from the
 ##' event log.
 ##'
+##' @param events A \code{SimInf_individual_events} object OR a raw
+##'     \code{data.frame} containing individual events.
+##'     \itemize{
+##'       \item If a \code{SimInf_individual_events} object is
+##'       provided, it is used directly.
+##'       \item If a \code{data.frame} is provided, it is
+##'         automatically cleaned and processed using
+##'         \code{\link{individual_events}}. The data frame must
+##'         conform to the input format required by
+##'         \code{\link{individual_events}} (see its documentation for
+##'         details on required columns).
+##'     }
 ##' @param events A \code{SimInf_individual_events} object containing
 ##'     cleaned individual events (e.g., births, deaths, movements)
 ##'     processed by \code{\link{individual_events}}.
@@ -888,6 +911,23 @@ setMethod(
         u0 <- u0[, c("key", "node", S_columns), drop = FALSE]
 
         u0_target(u0, target)
+    }
+)
+
+##' @rdname u0_from_individual_events
+##' @export
+setMethod(
+    "u0_from_individual_events",
+    signature(events = "data.frame"),
+    function(events,
+             time,
+             target,
+             age) {
+        events <- individual_events(events)
+        u0_from_individual_events(events = events,
+                                  time = time,
+                                  target = target,
+                                  age = age)
     }
 )
 
