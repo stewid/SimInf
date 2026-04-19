@@ -338,9 +338,6 @@
 - [`trajectory(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_pfilter-method.md)
   : Extract filtered trajectory from running a particle filter
 
-- [`trajectory(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_pmcmc-method.md)
-  : Extract filtered trajectories from fitting a PMCMC algorithm
-
 - [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md)
   : Generic function to extract data from a simulated trajectory
 
