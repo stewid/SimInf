@@ -64,9 +64,6 @@ The typical workflow is:
 ## See also
 
 [`individual_events`](http://stewid.github.io/SimInf/reference/individual_events.md)
-for cleaning and processing raw event data into this class format.
-
-[`individual_events`](http://stewid.github.io/SimInf/reference/individual_events.md)
 for cleaning and processing raw event data into this class format,
 [`u0_from_individual_events`](http://stewid.github.io/SimInf/reference/u0_from_individual_events.md)
 for deriving the initial state from these events, and
