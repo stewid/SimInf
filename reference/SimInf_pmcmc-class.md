@@ -84,5 +84,6 @@ Class `SimInf_pmcmc`
 [`pmcmc`](http://stewid.github.io/SimInf/reference/pmcmc.md) for the
 main PMCMC function,
 [`continue_pmcmc`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
-for continuing an existing PMCMC run, and `SimInf_abc` for ABC-SMC
+for continuing an existing PMCMC run, and
+[`abc`](http://stewid.github.io/SimInf/reference/abc.md) for ABC-SMC
 parameter estimation.
