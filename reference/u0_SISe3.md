@@ -17,18 +17,19 @@ A `data.frame`
 
 ## Details
 
-This dataset represents initial disease states in a population of 1,600
-cattle herds (nodes) stratified into three age categories. Each row
-represents a single herd (node). The SISe3 model extends the SISe model
-with age-structured compartments (S_1, I_1, S_2, I_2, S_3, I_3) and an
-environmental compartment for pathogen shedding. This is appropriate for
-diseases where transmission rates or recovery rates differ by age group.
+This dataset represents initial disease states in a synthetic population
+of 1,600 cattle herds (nodes) stratified into three age categories. Each
+row represents a single herd (node). The SISe3 model extends the SISe
+model with age-structured compartments (S_1, I_1, S_2, I_2, S_3, I_3)
+and an environmental compartment for pathogen shedding. This is
+appropriate for diseases where transmission rates or recovery rates
+differ by age group.
 
 The data contains:
 
 - S_1:
 
-  Total susceptible cattle in age category 1
+  Total susceptible cattle (individuals) in age category 1 in the node
 
 - I_1:
 
@@ -50,9 +51,10 @@ The data contains:
 
   Total infected cattle in age category 3 (initialized to zero)
 
-The herd size distribution and age structure reflect realistic
-heterogeneity observed in cattle populations, making it suitable for
-testing age-dependent disease dynamics with environmental transmission.
+The herd size distribution and age structure is synthetically generated
+to reflect heterogeneity typical of large-scale populations, making it
+suitable for illustrating how to incorporate scheduled events in the
+SimInf framework.
 
 ## See also
 
