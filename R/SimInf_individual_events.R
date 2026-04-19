@@ -62,8 +62,6 @@
 ##' @slot dest An integer or character vector identifying the
 ##'     \strong{destination} node. For \emph{exit} and \emph{enter}
 ##'     events, this value is typically \code{NA} or unused.
-##' @seealso \code{\link{individual_events}} for cleaning and
-##'     processing raw event data into this class format.
 ##' @seealso
 ##' \code{\link{individual_events}} for cleaning and processing raw
 ##' event data into this class format,

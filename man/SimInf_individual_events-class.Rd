@@ -59,9 +59,6 @@ events, this value is typically \code{NA} or unused.}
 }}
 
 \seealso{
-\code{\link{individual_events}} for cleaning and
-    processing raw event data into this class format.
-
 \code{\link{individual_events}} for cleaning and processing raw
 event data into this class format,
 \code{\link{u0_from_individual_events}} for deriving the initial
