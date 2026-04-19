@@ -71,13 +71,18 @@ Class `SimInf_pmcmc`
 
 - `adaptmix`:
 
-  Mixing proportion for adaptive proposal.
+  A numeric scalar specifying the mixing proportion for the adaptive
+  proposal distribution.
 
 - `adaptive`:
 
-  Controls when to start adaptive update.
+  An integer specifying when to start the adaptive update of the
+  proposal distribution (iteration number).
 
 ## See also
 
-[`pmcmc`](http://stewid.github.io/SimInf/reference/pmcmc.md) and
-[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md).
+[`pmcmc`](http://stewid.github.io/SimInf/reference/pmcmc.md) for the
+main PMCMC function,
+[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
+for continuing an existing PMCMC run, and `SimInf_abc` for ABC-SMC
+parameter estimation.
