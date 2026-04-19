@@ -60,11 +60,16 @@ the observation process.}
 \item{\code{covmat}}{A named numeric \code{(npars x npars)} matrix with
 covariances to use as initial proposal matrix.}
 
-\item{\code{adaptmix}}{Mixing proportion for adaptive proposal.}
+\item{\code{adaptmix}}{A numeric scalar specifying the mixing proportion
+for the adaptive proposal distribution.}
 
-\item{\code{adaptive}}{Controls when to start adaptive update.}
+\item{\code{adaptive}}{An integer specifying when to start the adaptive
+update of the proposal distribution (iteration number).}
 }}
 
 \seealso{
-\code{\link{pmcmc}} and \code{\link{continue_pmcmc}}.
+\code{\link{pmcmc}} for the main PMCMC function,
+    \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+    run, and \code{\link{SimInf_abc}} for ABC-SMC parameter
+    estimation.
 }

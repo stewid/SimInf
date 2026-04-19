@@ -32,9 +32,14 @@
 ##'     \code{parameters} for each iteration.
 ##' @slot covmat A named numeric \code{(npars x npars)} matrix with
 ##'     covariances to use as initial proposal matrix.
-##' @slot adaptmix Mixing proportion for adaptive proposal.
-##' @slot adaptive Controls when to start adaptive update.
-##' @seealso \code{\link{pmcmc}} and \code{\link{continue_pmcmc}}.
+##' @slot adaptmix A numeric scalar specifying the mixing proportion
+##'     for the adaptive proposal distribution.
+##' @slot adaptive An integer specifying when to start the adaptive
+##'     update of the proposal distribution (iteration number).
+##' @seealso \code{\link{pmcmc}} for the main PMCMC function,
+##'     \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+##'     run, and \code{\link{SimInf_abc}} for ABC-SMC parameter
+##'     estimation.
 ##' @export
 setClass(
     "SimInf_pmcmc",
