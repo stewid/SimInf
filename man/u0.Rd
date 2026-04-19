@@ -4,7 +4,7 @@
 \alias{u0}
 \alias{u0,SimInf_model-method}
 \alias{u0,SimInf_individual_events-method}
-\title{Get the initial compartment state}
+\title{Get the initial compartment state (\code{u0}) in each node}
 \usage{
 u0(object, ...)
 
@@ -13,8 +13,7 @@ u0(object, ...)
 \S4method{u0}{SimInf_individual_events}(object, time = NULL, target = NULL, age = NULL)
 }
 \arguments{
-\item{object}{The object to get the initial compartment state
-\code{u0} from.}
+\item{object}{A \code{SimInf_model} object.}
 
 \item{...}{Additional arguments.}
 
@@ -41,15 +40,40 @@ to the same age category.}
 a \code{data.frame} with the initial compartment state.
 }
 \description{
-Get the initial compartment state
+Extract the initial state vector (\code{u0}) from a
+\code{SimInf_model} object as a \code{data.frame}.
+}
+\details{
+The returned data frame has one row per node and one column per
+compartment (e.g., \code{S}, \code{I}, \code{R}). This format is
+convenient for inspection, modification, or exporting the initial
+conditions.
 }
 \examples{
 ## Create an SIR model object.
-model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+model <- SIR(
+  u0 = data.frame(S = 99, I = 1, R = 0),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
 
 ## Get the initial compartment state.
 u0(model)
+
+## Modify the initial state (e.g., add 10 infected individuals to
+## node 1).
+new_u0 <- u0(model)
+new_u0[1, "I"] <- new_u0[1, "I"] + 10
+
+## Create a new model with the modified initial state.
+new_model <- SIR(
+  u0 = new_u0,
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
+
+## Alternatively, update the existing model using the setter:
+u0(model) <- new_u0
 }
