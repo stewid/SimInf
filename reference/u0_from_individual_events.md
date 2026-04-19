@@ -1,11 +1,9 @@
 # Derive the initial compartment state from individual events
 
 Compute the initial number of individuals in each compartment for each
-node based on a set of cleaned individual events processed by
-[`individual_events`](http://stewid.github.io/SimInf/reference/individual_events.md).
-The function sums the net effect of all events occurring before a
-specified `time` point to determine the starting state of the
-simulation.
+node based on a set of individual events. The function sums the net
+effect of all events occurring before a specified `time` point to
+determine the starting state of the simulation.
 
 ## Usage
 
@@ -13,6 +11,9 @@ simulation.
 u0_from_individual_events(events, time = NULL, target = NULL, age = NULL)
 
 # S4 method for class 'SimInf_individual_events'
+u0_from_individual_events(events, time = NULL, target = NULL, age = NULL)
+
+# S4 method for class 'data.frame'
 u0_from_individual_events(events, time = NULL, target = NULL, age = NULL)
 ```
 
@@ -74,6 +75,16 @@ initial state. The columns include:
   specified, initialized to zero.
 
 ## Details
+
+This function accepts two types of input for the `events` argument:
+
+- A `SimInf_individual_events` object (already cleaned by
+  [`individual_events`](http://stewid.github.io/SimInf/reference/individual_events.md)).
+
+- A raw `data.frame` of events. If a data frame is provided, it is
+  automatically cleaned and processed using
+  [`individual_events`](http://stewid.github.io/SimInf/reference/individual_events.md)
+  before the initial state is calculated.
 
 This is particularly useful for initializing models from historical
 movement or demographic data, ensuring the simulation starts with the
