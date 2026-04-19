@@ -348,8 +348,9 @@
 
   Update the initial compartment state (`u0`) in each node
 
-- [`u0()`](http://stewid.github.io/SimInf/reference/u0.md) : Get the
-  initial compartment state
+- [`u0()`](http://stewid.github.io/SimInf/reference/u0.md) :
+
+  Get the initial compartment state (`u0`) in each node
 
 - [`u0_SEIR()`](http://stewid.github.io/SimInf/reference/u0_SEIR.md) :
   Example initial population data for the SEIR model
