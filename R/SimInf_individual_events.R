@@ -722,6 +722,175 @@ setMethod(
     }
 )
 
+##' Derive the initial compartment state from individual events
+##'
+##' Compute the initial number of individuals in each compartment for
+##' each node based on a set of cleaned individual events processed by
+##' \code{\link{individual_events}}. The function sums the net effect
+##' of all events occurring before a specified \code{time} point to
+##' determine the starting state of the simulation.
+##'
+##' This is particularly useful for initializing models from
+##' historical movement or demographic data, ensuring the simulation
+##' starts with the correct population structure derived from the
+##' event log.
+##'
+##' @param events A \code{SimInf_individual_events} object containing
+##'     cleaned individual events (e.g., births, deaths, movements)
+##'     processed by \code{\link{individual_events}}.
+##' @param time A numeric scalar specifying the time point at which to
+##'     calculate the initial state. If \code{NULL} (default), the
+##'     earliest time point among the events is used.
+##' @param target A character string specifying the target model type
+##'     (e.g., \code{"SIR"}, \code{"SEIR"}, \code{"SISe3"}). If
+##'     provided, the function ensures the output \code{u0} includes
+##'     all required compartments for that model (e.g., adding
+##'     zero-initialized \code{I}, \code{R}, or age-specific
+##'     compartments like \code{S_1}, \code{S_2}).  If \code{NULL}
+##'     (default), the output contains only the compartments derived
+##'     from the events (typically \code{S} or age-stratified
+##'     \code{S_*}), which may require manual renaming or expansion
+##'     for specific models.
+##' @param age An integer vector of break points (in days) defining
+##'     age categories. The intervals are defined as:
+##'     \itemize{
+##'       \item Category 1: Age < \code{age[1]}
+##'       \item Category 2: \code{age[1]} <= Age < \code{age[2]}
+##'       \item ...
+##'       \item Last Category: Age >= \code{tail(age, 1)}
+##'     }
+##'     If \code{NULL} (default), all individuals are assigned to a
+##'     single non-age-stratified susceptible compartment
+##'     (\code{S}). If provided, the output will include columns
+##'     \code{S_1}, \code{S_2}, etc., corresponding to the defined age
+##'     intervals.
+##'
+##' @return A \code{data.frame} with one row per node and columns
+##'     representing the initial state. The columns include:
+##'     \itemize{
+##'       \item \code{key}: The original node identifier from the
+##'       events.
+##'       \item \code{node}: A sequential integer node index (1, 2,
+##'       ...).
+##'       \item \code{S_*}: Columns for susceptible individuals
+##'         (either \code{S} or age-stratified \code{S_1}, \code{S_2},
+##'         etc.).
+##'       \item Additional compartments (e.g., \code{I}, \code{R},
+##'         \code{E}) if \code{target} is specified, initialized to
+##'         zero.
+##'     }
+##' @seealso
+##' \code{\link{individual_events}} for processing raw event data,
+##' \code{\link{u0}} for retrieving the initial state of a model, and
+##' \code{\link{u0<-}} for updating the initial state.
+##' @export
+## nolint start: brace_linter
+setGeneric(
+    "u0_from_individual_events",
+    signature = "events",
+    function(events,
+             time = NULL,
+             target = NULL,
+             age = NULL)
+        standardGeneric("u0_from_individual_events")
+)
+## nolint end
+
+u0_target <- function(u0, target) {
+    if (is.null(target))
+        return(u0)
+
+    if (target %in% c("SISe3", "SISe3_sp")) {
+        u0$I_1 <- 0L
+        u0$I_2 <- 0L
+        u0$I_3 <- 0L
+        return(u0)
+    }
+
+    if (target %in% c("SIS", "SISe", "SISe_sp")) {
+        colnames(u0) <- c("key", "node", "S")
+        u0$I <- 0L
+        return(u0)
+    }
+
+    if (target %in% c("SIR")) {
+        colnames(u0) <- c("key", "node", "S")
+        u0$I <- 0L
+        u0$R <- 0L
+        return(u0)
+    }
+
+    if (target %in% c("SEIR")) {
+        colnames(u0) <- c("key", "node", "S")
+        u0$E <- 0L
+        u0$I <- 0L
+        u0$R <- 0L
+        return(u0)
+    }
+
+    stop("Invalid 'target' for 'u0'.", call. = FALSE)
+}
+
+##' @rdname u0_from_individual_events
+##' @export
+setMethod(
+    "u0_from_individual_events",
+    signature(events = "SimInf_individual_events"),
+    function(events,
+             time,
+             target,
+             age) {
+        age <- check_age(age)
+        target <- check_target(target, age)
+
+        ## Determine the location and age for all individuals.
+        individuals <- get_individuals(events, time)
+
+        ## Ensure all nodes are included in u0.
+        all_nodes <- unique(c(events@node, events@dest))
+        all_nodes <- all_nodes[!is.na(all_nodes)]
+        missing_nodes <- setdiff(all_nodes, individuals$node)
+        S_columns <- paste0("S_", seq_along(age))
+
+        if (nrow(individuals)) {
+            ## Determine the age categories.
+            age_category <- paste0("S_", findInterval(individuals$age, age))
+            age_category <- c(age_category,
+                              rep(NA_character_, length(missing_nodes)))
+
+            ## Create u0.
+            nodes <- c(individuals$node, missing_nodes)
+            u0 <- as.data.frame.matrix(table(nodes, age_category))
+
+            ## Ensure all age categories exist in u0
+            age_category <- setdiff(S_columns, colnames(u0))
+            if (length(age_category)) {
+                u0 <- cbind(u0,
+                            matrix(data = 0L,
+                                   nrow = length(all_nodes),
+                                   ncol = length(age_category),
+                                   dimnames = list(NULL, age_category)))
+            }
+        } else {
+            ## Create an empty u0.
+            u0 <- as.data.frame.matrix(
+                matrix(data = 0L,
+                       nrow = length(all_nodes),
+                       ncol = length(age),
+                       dimnames = list(all_nodes, S_columns)))
+        }
+
+        u0 <- cbind(key = rownames(u0), u0)
+        mode(u0$key) <- mode(all_nodes)
+        rownames(u0) <- NULL
+        u0 <- u0[order(u0$key), ]
+        u0$node <- seq_len(nrow(u0))
+        u0 <- u0[, c("key", "node", S_columns), drop = FALSE]
+
+        u0_target(u0, target)
+    }
+)
+
 ##' Non-exported utility function to display events for an individual
 ##' @param events a \code{data.frame} with the columns `id`, `event`,
 ##'     `time`, `node`, and `dest` to define the events, see
