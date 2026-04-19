@@ -17,23 +17,59 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_individual_events"}
+##' Class \code{SimInf_individual_events}
 ##'
-##' @slot id an integer or character identifier of the individual.
-##' @slot event four event types are supported: \emph{exit},
-##'     \emph{enter}, \emph{internal transfer}, and \emph{external
-##'     transfer}.  When assigning the events, they can either be
-##'     coded as a numerical value or a character string: \emph{exit;}
-##'     \code{0} or \code{'exit'}, \emph{enter;} \code{1} or
-##'     \code{'enter'}, \emph{internal transfer;} \code{2} or
-##'     \code{'intTrans'}, and \emph{external transfer;} \code{3} or
-##'     \code{'extTrans'}.
-##' @slot time an integer, character, or date (of class \code{Date})
-##'     for when the event occured. If it's a character it must be
-##'     able to coerce to \code{Date}.
-##' @slot node an integer or character identifier of the source node.
-##' @slot dest an integer or character identifier of the destination
-##'     node.
+##' Storage class for cleaned individual-level event data, such as
+##' births, deaths, and movements. This class serves as an
+##' intermediate step in the data preparation pipeline, holding raw
+##' records that will later be aggregated into the scheduled events
+##' (\code{\linkS4class{SimInf_events}}) required by a
+##' \code{\linkS4class{SimInf_model}} at predefined time-points.
+##'
+##' The typical workflow is:
+##' \enumerate{
+##'   \item Collect raw individual event data (e.g., from a database).
+##'   \item Clean and validate it using
+##'     \code{\link{individual_events}}, which returns a
+##'     \code{SimInf_individual_events} object.
+##'   \item Aggregate the individual events into node-level scheduled
+##'     events for the model, for example using
+##'     \code{\link{u0_from_individual_events}} to derive the initial
+##'     state.
+##' }
+##'
+##' @slot id An integer or character vector serving as a unique
+##'     identifier for each individual.
+##' @slot event The type of event. Four types are supported:
+##'     \emph{exit}, \emph{enter}, \emph{internal transfer}, and
+##'     \emph{external transfer}.  These can be specified as either a
+##'     numeric code or a character string:
+##'     \itemize{
+##'       \item \code{0} or \code{"exit"}: Individual leaves the
+##'       system.
+##'       \item \code{1} or \code{"enter"}: Individual enters the
+##'       system.
+##'       \item \code{2} or \code{"intTrans"}: Individual moves within
+##'       the same node.
+##'       \item \code{3} or \code{"extTrans"}: Individual moves to a
+##'       different node.
+##'     }
+##' @slot time A numeric, character, or \code{Date} vector indicating
+##'     when the event occurred. Character strings must be coercible
+##'     to \code{Date} (e.g., "2023-01-15").
+##' @slot node An integer or character vector identifying the
+##'     \strong{source} node for the event.
+##' @slot dest An integer or character vector identifying the
+##'     \strong{destination} node. For \emph{exit} and \emph{enter}
+##'     events, this value is typically \code{NA} or unused.
+##' @seealso \code{\link{individual_events}} for cleaning and
+##'     processing raw event data into this class format.
+##' @seealso
+##' \code{\link{individual_events}} for cleaning and processing raw
+##' event data into this class format,
+##' \code{\link{u0_from_individual_events}} for deriving the initial
+##' state from these events, and \code{\linkS4class{SimInf_events}}
+##' for the node-level aggregated event format used by the solver.
 ##' @export
 setClass(
     "SimInf_individual_events",
