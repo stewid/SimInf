@@ -1,6 +1,7 @@
-# Coerce to data frame
+# Coerce a `SimInf_pmcmc` object to a `data.frame`
 
-Coerce to data frame
+Extract the posterior samples from the MCMC chain stored in a
+`SimInf_pmcmc` object and convert them into a `data.frame`.
 
 ## Usage
 
@@ -13,8 +14,20 @@ as.data.frame(x, ...)
 
 - x:
 
-  any R object.
+  A `SimInf_pmcmc` object.
 
 - ...:
 
-  additional arguments to be passed to or from methods.
+  Additional arguments (currently ignored).
+
+## Value
+
+A `data.frame` where rows represent MCMC iterations and columns
+represent the posterior samples of the parameters.
+
+## Details
+
+The resulting `data.frame` contains one row per MCMC iteration and one
+column per parameter. These samples represent the joint posterior
+distribution of the parameters. This format is convenient for
+post-processing and visualization.

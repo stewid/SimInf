@@ -109,7 +109,9 @@
   : Coerce to data frame
 
 - [`as.data.frame(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_pmcmc.md)
-  : Coerce to data frame
+  :
+
+  Coerce a `SimInf_pmcmc` object to a `data.frame`
 
 - [`boxplot(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/boxplot-SimInf_model-method.md)
   : Box plot of number of individuals in each compartment
