@@ -126,11 +126,28 @@ setAs(
     }
 )
 
-##' Coerce to data frame
+##' Coerce a \code{SimInf_abc} object to a \code{data.frame}
 ##'
+##' Convert the results of an Approximate Bayesian Computation (ABC)
+##' analysis into a single \code{data.frame}. This function extracts
+##' the particle parameters, their acceptance weights, and the
+##' generation number for every particle across all generations.
+##'
+##' The resulting \code{data.frame} has one row per particle. The
+##' columns include:
+##' \itemize{
+##'   \item \code{generation}: The generation number (integer).
+##'   \item \code{weight}: The normalized weight of the particle
+##'   (numeric).
+##'   \item \code{...}: Columns corresponding to the parameter names
+##'     defined in the ABC analysis (e.g., \code{beta}, \code{gamma}).
+##' }
+##'
+##' @param x A \code{SimInf_abc} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} containing all particles from all
+##'     generations.
 ##' @method as.data.frame SimInf_abc
-##'
-##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_abc <- function(x, ...) {
     methods::as(x, "data.frame")
