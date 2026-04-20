@@ -4,8 +4,8 @@ Convert the scheduled events stored in a `SimInf_events` object into a
 standard `data.frame`. This function extracts the event type, time,
 source node, destination node, number of individuals, proportion, and
 the specific columns from the select (`E`) and shift (`N`) matrices that
-define the transition logic for each event. The resulting `data.frame`
-has one row per scheduled event.
+define how each event modifies the compartment state. The resulting
+`data.frame` has one row per scheduled event.
 
 ## Usage
 
