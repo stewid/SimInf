@@ -2,15 +2,27 @@
 % Please edit documentation in R/pmcmc.R
 \name{as.data.frame.SimInf_pmcmc}
 \alias{as.data.frame.SimInf_pmcmc}
-\title{Coerce to data frame}
+\title{Coerce a \code{SimInf_pmcmc} object to a \code{data.frame}}
 \usage{
 \method{as.data.frame}{SimInf_pmcmc}(x, ...)
 }
 \arguments{
-\item{x}{any \R object.}
+\item{x}{A \code{SimInf_pmcmc} object.}
 
-\item{...}{additional arguments to be passed to or from methods.}
+\item{...}{Additional arguments (currently ignored).}
+}
+\value{
+A \code{data.frame} where rows represent MCMC iterations
+    and columns represent the posterior samples of the parameters.
 }
 \description{
-Coerce to data frame
+Extract the posterior samples from the MCMC chain stored in a
+\code{SimInf_pmcmc} object and convert them into a
+\code{data.frame}.
+}
+\details{
+The resulting \code{data.frame} contains one row per MCMC
+iteration and one column per parameter. These samples represent
+the joint posterior distribution of the parameters.  This format
+is convenient for post-processing and visualization.
 }

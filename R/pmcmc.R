@@ -88,11 +88,22 @@ setAs(
     }
 )
 
-##' Coerce to data frame
+##' Coerce a \code{SimInf_pmcmc} object to a \code{data.frame}
 ##'
+##' Extract the posterior samples from the MCMC chain stored in a
+##' \code{SimInf_pmcmc} object and convert them into a
+##' \code{data.frame}.
+##'
+##' The resulting \code{data.frame} contains one row per MCMC
+##' iteration and one column per parameter. These samples represent
+##' the joint posterior distribution of the parameters.  This format
+##' is convenient for post-processing and visualization.
+##'
+##' @param x A \code{SimInf_pmcmc} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} where rows represent MCMC iterations
+##'     and columns represent the posterior samples of the parameters.
 ##' @method as.data.frame SimInf_pmcmc
-##'
-##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_pmcmc <- function(x, ...) {
     methods::as(x, "data.frame")
