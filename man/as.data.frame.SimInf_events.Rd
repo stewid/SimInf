@@ -2,15 +2,64 @@
 % Please edit documentation in R/SimInf_events.R
 \name{as.data.frame.SimInf_events}
 \alias{as.data.frame.SimInf_events}
-\title{Coerce events to a data frame}
+\title{Coerce a \code{SimInf_events} object to a \code{data.frame}}
 \usage{
 \method{as.data.frame}{SimInf_events}(x, ...)
 }
 \arguments{
-\item{x}{any \R object.}
+\item{x}{A \code{SimInf_events} object.}
 
-\item{...}{additional arguments to be passed to or from methods.}
+\item{...}{Additional arguments (currently ignored).}
+}
+\value{
+A \code{data.frame} with columns:
+  \itemize{
+    \item \code{event}: Event type (numeric or character,
+    depending on input).
+    \item \code{time}: Time of the event (numeric or \code{Date},
+    depending on input).
+    \item \code{node}: Source node identifier.
+    \item \code{dest}: Destination node identifier (may be
+    \code{NA}).
+    \item \code{n}: Number of individuals affected.
+    \item \code{proportion}: Proportion of the population affected
+    (if applicable).
+    \item \code{select}: The column vector from the select matrix
+      (\code{E}) that defines how the event modifies the
+      compartment state.
+    \item \code{shift}: The column vector from the shift matrix
+      (\code{N}) that defines how the event modifies the
+      compartment state.
+  }
 }
 \description{
-Coerce events to a data frame
+Convert the scheduled events stored in a \code{SimInf_events} object
+into a standard \code{data.frame}. This function extracts the event type,
+time, source node, destination node, number of individuals, proportion,
+and the specific columns from the select (\code{E}) and shift (\code{N})
+matrices that define the transition logic for each event.
+The resulting \code{data.frame} has one row per scheduled
+event.
+}
+\examples{
+## Create an 'SIR' model with 1600 cattle herds (nodes) and
+## initialize it to run over 4*365 days. Define 'tspan' to record
+## the state of the system at daily time-points. Load scheduled
+## events for the population of nodes with births, deaths and
+## between-node movements of individuals.
+model <- SIR(
+  u0     = u0_SIR(),
+  tspan  = seq(from = 1, to = 4*365, by = 1),
+  events = events_SIR(),
+  beta   = 0.16,
+  gamma  = 0.01
+)
+
+## Extract the events from the model and convert to a data frame.
+head(as.data.frame(events(model)))
+}
+\seealso{
+\code{\linkS4class{SimInf_events}} for the class
+    definition and \code{\link{events}} for extracting events from
+    a model.
 }
