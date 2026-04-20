@@ -433,13 +433,13 @@ setAs(
 
 ##' Coerce a \code{SimInf_events} object to a \code{data.frame}
 ##'
-##' Convert the scheduled events stored in a \code{SimInf_events} object
-##' into a standard \code{data.frame}. This function extracts the event type,
-##' time, source node, destination node, number of individuals, proportion,
-##' and the specific columns from the select (\code{E}) and shift (\code{N})
-##' matrices that define the transition logic for each event.
-##' The resulting \code{data.frame} has one row per scheduled
-##' event.
+##' Convert the scheduled events stored in a \code{SimInf_events}
+##' object into a standard \code{data.frame}. This function extracts
+##' the event type, time, source node, destination node, number of
+##' individuals, proportion, and the specific columns from the select
+##' (\code{E}) and shift (\code{N}) matrices that define how each
+##' event modifies the compartment state.  The resulting
+##' \code{data.frame} has one row per scheduled event.
 ##'
 ##' @param x A \code{SimInf_events} object.
 ##' @param ... Additional arguments (currently ignored).
