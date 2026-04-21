@@ -214,8 +214,12 @@ SimInf_model <- function(G,
 ##' @export
 ##' @examples
 ##' ## Create an SIR model
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##' model <- SIR(
+##'   u0 = data.frame(S = 99, I = 1, R = 0),
+##'   tspan = 1:5,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Set 'beta' to a new value
 ##' gdata(model, "beta") <- 2
@@ -256,8 +260,12 @@ setMethod(
 ##' @export
 ##' @examples
 ##' ## Create an SIR model
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##' model <- SIR(
+##'   u0 = data.frame(S = 99, I = 1, R = 0),
+##'   tspan = 1:5,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Set 'beta' to a new value
 ##' gdata(model, "beta") <- 2
