@@ -31,3 +31,8 @@ gdata(model, "beta") <- 2
 ## Extract the global data vector that is common to all nodes
 gdata(model)
 }
+\seealso{
+\code{\link{ldata}} for retrieving local data
+    (node-specific), and \code{\linkS4class{SimInf_model}} for the
+    class definition and overview of model structure.
+}

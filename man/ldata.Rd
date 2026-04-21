@@ -47,3 +47,8 @@ model <- SISe(
 ldata(model, node = 1)
 ldata(model, node = 2)
 }
+\seealso{
+\code{\link{gdata}} for retrieving global data (common to
+    all nodes), and \code{\linkS4class{SimInf_model}} for the
+    class definition and overview of model structure.
+}

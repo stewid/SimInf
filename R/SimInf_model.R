@@ -208,6 +208,9 @@ SimInf_model <- function(G,
 ##' rate functions and the post time step function.
 ##' @param model The \code{model} to get global data from.
 ##' @return a numeric vector
+##' @seealso \code{\link{ldata}} for retrieving local data
+##'     (node-specific), and \code{\linkS4class{SimInf_model}} for the
+##'     class definition and overview of model structure.
 ##' @export
 ##' @examples
 ##' ## Create an SIR model
@@ -247,6 +250,9 @@ setMethod(
 ##' @param parameter The name of the parameter to set.
 ##' @param value A numeric value.
 ##' @return a \code{SimInf_model} object
+##' @seealso \code{\link{ldata}} for retrieving local data
+##'     (node-specific), and \code{\linkS4class{SimInf_model}} for the
+##'     class definition and overview of model structure.
 ##' @export
 ##' @examples
 ##' ## Create an SIR model
@@ -302,6 +308,9 @@ setMethod(
 ##' @param model The \code{model} to get local data from.
 ##' @param node index to node to extract local data from.
 ##' @return a numeric vector
+##' @seealso \code{\link{gdata}} for retrieving global data (common to
+##'     all nodes), and \code{\linkS4class{SimInf_model}} for the
+##'     class definition and overview of model structure.
 ##' @export
 ##' @examples
 ##' ## Create an 'SISe' model with 1600 nodes.
